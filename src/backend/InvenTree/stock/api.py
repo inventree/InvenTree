@@ -218,6 +218,17 @@ class StockTransfer(StockAdjustView):
     serializer_class = StockSerializers.StockTransferSerializer
 
 
+class StockReturn(StockAdjustView):
+    """API endpoint for returning items into stock.
+
+    This API endpoint is for items that are initially considered "not in stock",
+    and the user wants to return them to stock, marking them as
+    "available" for further consumption or sale.
+    """
+
+    serializer_class = StockSerializers.StockReturnSerializer
+
+
 class StockAssign(CreateAPI):
     """API endpoint for assigning stock to a particular customer."""
 
@@ -1600,6 +1611,7 @@ stock_api_urls = [
     path('add/', StockAdd.as_view(), name='api-stock-add'),
     path('remove/', StockRemove.as_view(), name='api-stock-remove'),
     path('transfer/', StockTransfer.as_view(), name='api-stock-transfer'),
+    path('return/', StockReturn.as_view(), name='api-stock-return'),
     path('assign/', StockAssign.as_view(), name='api-stock-assign'),
     path('merge/', StockMerge.as_view(), name='api-stock-merge'),
     path('change_status/', StockChangeStatus.as_view(), name='api-stock-change-status'),

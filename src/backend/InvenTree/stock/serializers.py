@@ -1776,7 +1776,7 @@ class StockTransferSerializer(StockAdjustmentSerializer):
         fields = ['items', 'notes', 'location']
 
     location = serializers.PrimaryKeyRelatedField(
-        queryset=StockLocation.objects.all(),
+        queryset=StockLocation.objects.filter(structural=False),
         many=False,
         required=True,
         allow_null=False,
@@ -1810,6 +1810,56 @@ class StockTransferSerializer(StockAdjustmentSerializer):
                 stock_item.move(
                     location, notes, request.user, quantity=quantity, **kwargs
                 )
+
+
+class StockReturnSerializer(StockAdjustmentSerializer):
+    """Serializer class for returning stock item(s) into stock."""
+
+    class Meta:
+        """Metaclass options."""
+
+        fields = ['items', 'notes', 'location']
+
+    location = serializers.PrimaryKeyRelatedField(
+        queryset=StockLocation.objects.filter(structural=False),
+        many=False,
+        required=True,
+        allow_null=False,
+        label=_('Location'),
+        help_text=_('Destination stock location'),
+    )
+
+    merge = serializers.BooleanField(
+        default=False,
+        required=False,
+        label=_('Merge into existing stock'),
+        help_text=_('Merge returned items into existing stock items if possible'),
+    )
+
+    def save(self):
+        """Return the provided items into stock."""
+        request = self.context['request']
+        data = self.validated_data
+        items = data['items']
+        merge = data.get('merge', False)
+        notes = data.get('notes', '')
+        location = data['location']
+
+        with transaction.atomic():
+            for item in items:
+                # TODO... return into stock
+                print('- item:', item)
+
+                # Optional fields
+                kwargs = {'notes': notes}
+
+                for field_name in StockItem.optional_transfer_fields():
+                    if field_value := item.get(field_name, None):
+                        kwargs[field_name] = field_value
+
+                item.return_to_stock(location, merge=merge, user=request.user, **kwargs)
+
+        raise ValidationError('no can do sonny jim')
 
 
 class StockItemSerialNumbersSerializer(InvenTreeModelSerializer):

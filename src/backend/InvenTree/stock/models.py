@@ -1387,8 +1387,29 @@ class StockItem(
 
         If the selected location is the same as the parent, merge stock back into the parent.
         Otherwise create the stock in the new location.
+
+        Note that this function is provided for legacy compatibility,
+        and the 'return_to_stock' function should be used instead.
+        """
+        self.return_to_stock(
+            location,
+            user,
+            tracking_code=StockHistoryCode.RETURNED_FROM_CUSTOMER,
+            **kwargs,
+        )
+
+    @transaction.atomic
+    def return_to_stock(self, location, user=None, merge: bool = False, **kwargs):
+        """Return stock item into stock, removing any consumption status.
+
+        Arguments:
+            location: The location to return the stock item to
+            user: The user performing the action
+            merge: If True, attempt to merge this stock item back into the parent stock item
         """
         notes = kwargs.get('notes', '')
+
+        tracking_code = kwargs.get('tracking_code', StockHistoryCode.RETURNED_TO_STOCK)
 
         tracking_info = {'location': location.pk}
 
@@ -1396,7 +1417,11 @@ class StockItem(
             tracking_info['customer'] = self.customer.id
             tracking_info['customer_name'] = self.customer.name
 
+        if self.consumed_by:
+            tracking_info['build_order'] = self.consumed_by.id
+
         # Clear out allocation information for the stock item
+        self.consumed_by = None
         self.customer = None
         self.belongs_to = None
         self.sales_order = None
@@ -1412,17 +1437,22 @@ class StockItem(
         self.clearAllocations()
 
         self.add_tracking_entry(
-            StockHistoryCode.RETURNED_FROM_CUSTOMER,
-            user,
-            notes=notes,
-            deltas=tracking_info,
-            location=location,
+            tracking_code, user, notes=notes, deltas=tracking_info, location=location
         )
 
-        trigger_event(StockEvents.ITEM_RETURNED_FROM_CUSTOMER, id=self.id)
+        trigger_event(StockEvents.ITEM_RETURNED_TO_STOCK, id=self.id)
 
-        """If new location is the same as the parent location, merge this stock back in the parent"""
-        if self.parent and self.location == self.parent.location:
+        # Attempt to merge returned item into parent item:
+        # - 'merge' parameter is True
+        # - The parent location is the same as the current location
+        # - The item does not have a serial number
+
+        if (
+            merge
+            and not self.serialized
+            and self.parent
+            and self.location == self.parent.location
+        ):
             self.parent.merge_stock_items(
                 {self}, user=user, location=location, notes=notes
             )
