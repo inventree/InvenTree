@@ -721,6 +721,7 @@ export default function BuildOutputTable({
             },
             enableLabels: true,
             enableReports: true,
+            modelType: ModelType.stockitem,
             dataFormatter: formatRecords,
             tableFilters: tableFilters,
             tableActions: tableActions,
