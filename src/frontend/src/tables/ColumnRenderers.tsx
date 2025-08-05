@@ -16,6 +16,7 @@ import type { ModelType } from '@lib/enums/ModelType';
 import { resolveItem } from '@lib/functions/Conversion';
 import { cancelEvent } from '@lib/functions/Events';
 import type { TableColumn, TableColumnProps } from '@lib/types/Tables';
+import { useMemo } from 'react';
 import { Thumbnail } from '../components/images/Thumbnail';
 import { TableStatusRenderer } from '../components/render/StatusRenderer';
 import { RenderOwner, RenderUser } from '../components/render/User';
@@ -34,18 +35,15 @@ export function PartColumn({
   part: any;
   full_name?: boolean;
 }) {
-  const get_image_src = () => {
-    // Get primary image source
-    const primary_image = part?.images?.find(
-      (img: any) => img.primary === true
-    );
-    return primary_image?.thumbnail ?? primary_image?.image;
-  };
+  const imageSrc = useMemo<string | undefined>(() => {
+    const primaryImage = part?.images?.find((img: any) => img.primary === true);
+    return primaryImage?.thumbnail ?? primaryImage?.image;
+  }, [part?.images]);
 
   return part ? (
     <Group justify='space-between' wrap='nowrap'>
       <Thumbnail
-        src={get_image_src()}
+        src={imageSrc}
         text={full_name ? part?.full_name : part?.name}
         hover
       />
