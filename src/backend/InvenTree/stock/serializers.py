@@ -1612,6 +1612,14 @@ class StockAdjustmentItemSerializer(serializers.Serializer):
 
         fields = ['pk', 'quantity', 'batch', 'status', 'packaging']
 
+    def __init__(self, *args, **kwargs):
+        """Initialize the serializer."""
+        # Store the 'require_in_stock' status
+        # Either True / False / None
+        self.require_in_stock = kwargs.pop('require_in_stock', True)
+
+        super().__init__(*args, **kwargs)
+
     pk = serializers.PrimaryKeyRelatedField(
         queryset=StockItem.objects.all(),
         many=False,
@@ -1623,14 +1631,18 @@ class StockAdjustmentItemSerializer(serializers.Serializer):
 
     def validate_pk(self, stock_item: StockItem) -> StockItem:
         """Ensure the stock item is valid."""
-        allow_out_of_stock_transfer = get_global_setting(
-            'STOCK_ALLOW_OUT_OF_STOCK_TRANSFER', backup_value=False, cache=False
-        )
+        if self.require_in_stock == True:
+            allow_out_of_stock_transfer = get_global_setting(
+                'STOCK_ALLOW_OUT_OF_STOCK_TRANSFER', backup_value=False, cache=False
+            )
 
-        if not allow_out_of_stock_transfer and not stock_item.is_in_stock(
-            check_status=False, check_quantity=False
-        ):
-            raise ValidationError(_('Stock item is not in stock'))
+            if not allow_out_of_stock_transfer and not stock_item.is_in_stock(
+                check_status=False, check_quantity=False
+            ):
+                raise ValidationError(_('Stock item is not in stock'))
+        elif self.require_in_stock == False:
+            if stock_item.is_in_stock():
+                raise ValidationError(_('Stock item is already in stock'))
 
         return stock_item
 
@@ -1820,6 +1832,8 @@ class StockReturnSerializer(StockAdjustmentSerializer):
 
         fields = ['items', 'notes', 'location']
 
+    items = StockAdjustmentItemSerializer(many=True, require_in_stock=False)
+
     location = serializers.PrimaryKeyRelatedField(
         queryset=StockLocation.objects.filter(structural=False),
         many=False,
@@ -1847,8 +1861,8 @@ class StockReturnSerializer(StockAdjustmentSerializer):
 
         with transaction.atomic():
             for item in items:
-                # TODO... return into stock
-                print('- item:', item)
+                stock_item = item['pk']
+                quantity = item.get('quantity', None)
 
                 # Optional fields
                 kwargs = {'notes': notes}
@@ -1857,9 +1871,13 @@ class StockReturnSerializer(StockAdjustmentSerializer):
                     if field_value := item.get(field_name, None):
                         kwargs[field_name] = field_value
 
-                item.return_to_stock(location, merge=merge, user=request.user, **kwargs)
-
-        raise ValidationError('no can do sonny jim')
+                stock_item.return_to_stock(
+                    location,
+                    quantity=quantity,
+                    merge=merge,
+                    user=request.user,
+                    **kwargs,
+                )
 
 
 class StockItemSerialNumbersSerializer(InvenTreeModelSerializer):
