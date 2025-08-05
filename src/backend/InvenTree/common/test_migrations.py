@@ -248,7 +248,7 @@ class TestCurrencyMigrationNo(MigratorTestCase):
 
     def prepare(self):
         """Prepare the environment for the migration test."""
-        prep_currency_migration(self, 'XXX,YYY,ZZZ')
+        prep_currency_migration(self, 'YYY,ZZZ')
 
     def test_currency_migration(self):
         """Test that no currency migration occurs if wrong currencies are set."""
