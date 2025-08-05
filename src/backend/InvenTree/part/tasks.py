@@ -319,15 +319,18 @@ def scheduled_stocktake_reports():
     import part.stocktake
     from part.models import PartStocktake
 
-    # First let's delete any old stock history entries
-    delete_n_days = int(get_global_setting('STOCKTAKE_DELETE_DAYS', 365, cache=False))
+    if get_global_setting('STOCKTAKE_DELETE_OLD_ENTRIES', False, cache=False):
+        # First let's delete any old stock history entries
+        delete_n_days = int(
+            get_global_setting('STOCKTAKE_DELETE_DAYS', 365, cache=False)
+        )
 
-    threshold = datetime.now() - timedelta(days=delete_n_days)
-    old_entries = PartStocktake.objects.filter(date__lt=threshold)
+        threshold = datetime.now() - timedelta(days=delete_n_days)
+        old_entries = PartStocktake.objects.filter(date__lt=threshold)
 
-    if old_entries.count() > 0:
-        logger.info('Deleting %s old stock entries', old_entries.count())
-        old_entries.delete()
+        if old_entries.count() > 0:
+            logger.info('Deleting %s old stock entries', old_entries.count())
+            old_entries.delete()
 
     # Next, check if stocktake functionality is enabled
     if not get_global_setting('STOCKTAKE_ENABLE', False, cache=False):

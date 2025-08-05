@@ -1089,6 +1089,14 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': 7,
         'units': _('days'),
     },
+    'STOCKTAKE_DELETE_OLD_ENTRIES': {
+        'name': _('Delete Old Stock History Entries'),
+        'description': _(
+            'Delete stock history entries older than the specified number of days'
+        ),
+        'default': False,
+        'validator': bool,
+    },
     'STOCKTAKE_DELETE_DAYS': {
         'name': _('Stock History Deletion Interval'),
         'description': _(
