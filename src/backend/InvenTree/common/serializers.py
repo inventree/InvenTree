@@ -593,7 +593,7 @@ class FailedTaskSerializer(InvenTreeModelSerializer):
 ALLOWED_IMAGE_CTS = common.validators.get_model_options(InvenTreeImageUploadMixin)
 
 
-class UploadedImageSerializer(
+class InvenTreeImageSerializer(
     InvenTree.serializers.RemoteImageMixin, InvenTreeModelSerializer
 ):
     """Serializer for InvenTreeImage without using SlugRelatedField."""
@@ -618,7 +618,7 @@ class UploadedImageSerializer(
     )
 
     class Meta:
-        """Meta options for the UploadedImageSerializer."""
+        """Meta options for the InvenTreeImageSerializer."""
 
         model = common_models.InvenTreeImage
         fields = [
@@ -696,7 +696,7 @@ class UploadedImageSerializer(
         return fields
 
 
-class UploadedImageThumbSerializer(serializers.Serializer):
+class InvenTreeImageThumbSerializer(serializers.Serializer):
     """Serializer for a thumbnail of an uploaded image."""
 
     image = serializers.URLField(read_only=True)

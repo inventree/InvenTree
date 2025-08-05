@@ -786,15 +786,15 @@ class AttachmentDetail(RetrieveUpdateDestroyAPI):
         return super().destroy(request, *args, **kwargs)
 
 
-class UploadImageList(ListCreateAPI):
+class InvenTreeImageImageList(ListCreateAPI):
     """Detail API endpoint for InvenTreeImage objects."""
 
     queryset = common.models.InvenTreeImage.objects.all()
-    serializer_class = common.serializers.UploadedImageSerializer
+    serializer_class = common.serializers.InvenTreeImageSerializer
     permission_classes = [IsAuthenticatedOrReadScope]
 
 
-class UploadImageThumbFilter(rest_filters.FilterSet):
+class InvenTreeImageThumbFilter(rest_filters.FilterSet):
     """Allows filtering.
 
     - content_type__model   (the name of the model, e.g. 'part', 'build', etc.)
@@ -816,22 +816,22 @@ class UploadImageThumbFilter(rest_filters.FilterSet):
     )
 
     class Meta:
-        """Meta options for the UploadImageThumbFilter."""
+        """Meta options for the InvenTreeImageThumbFilter."""
 
         model = common.models.InvenTreeImage
         fields = ['content_model', 'object_id']
 
 
-class UploadImageThumbs(ListAPI):
+class InvenTreeImageThumbs(ListAPI):
     """List API endpoint for InvenTreeImage thumbnails."""
 
     queryset = common.models.InvenTreeImage.objects.all()
-    serializer_class = common.serializers.UploadedImageThumbSerializer
+    serializer_class = common.serializers.InvenTreeImageThumbSerializer
     permission_classes = [IsAuthenticatedOrReadScope]
 
     filter_backends = [rest_filters.DjangoFilterBackend, InvenTreeSearchFilter]
 
-    filterset_class = UploadImageThumbFilter
+    filterset_class = InvenTreeImageThumbFilter
 
     search_fields = ['image']
 
@@ -854,11 +854,11 @@ class UploadImageThumbs(ListAPI):
         return Response(serializer.data)
 
 
-class UploadImageDetail(RetrieveUpdateDestroyAPI):
+class InvenTreeImageDetail(RetrieveUpdateDestroyAPI):
     """Detail API endpoint for InvenTreeImage objects."""
 
     queryset = common.models.InvenTreeImage.objects.all()
-    serializer_class = common.serializers.UploadedImageSerializer
+    serializer_class = common.serializers.InvenTreeImageSerializer
     permission_classes = [IsAuthenticatedOrReadScope]
 
 
@@ -1113,20 +1113,24 @@ common_api_urls = [
         ]),
     ),
     path(
-        'upload-image/',
+        'image/',
         include([
             path(
                 '<int:pk>/',
                 include([
-                    path('', UploadImageDetail.as_view(), name='api-uploadImage-detail')
+                    path(
+                        '',
+                        InvenTreeImageDetail.as_view(),
+                        name='api-uploadImage-detail',
+                    )
                 ]),
             ),
             path(
                 'thumbs/',
-                UploadImageThumbs.as_view(),
+                InvenTreeImageThumbs.as_view(),
                 name='api-uploadImageThumbs-list',
             ),
-            path('', UploadImageList.as_view(), name='api-uploadImage-list'),
+            path('', InvenTreeImageImageList.as_view(), name='api-uploadImage-list'),
         ]),
     ),
     path(

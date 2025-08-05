@@ -364,7 +364,7 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         read_only=True, allow_null=True
     )
 
-    # images = common_serializers.UploadedImageSerializer(
+    # images = common_serializers.InvenTreeImageSerializer(
     #     source='get_images', many=True, read_only=True, allow_null=True
     # )
 
@@ -993,7 +993,7 @@ class PartSerializer(
         required=False, label=_('Minimum Stock'), default=0
     )
 
-    images = common_serializers.UploadedImageSerializer(
+    images = common_serializers.InvenTreeImageSerializer(
         many=True,
         read_only=True,
         source='all_images',
@@ -1075,9 +1075,8 @@ class PartSerializer(
                 instance.notes = original.notes
                 instance.save()
 
-            # if duplicate.get('copy_image', False):
-            #     instance.image = original.image
-            #     instance.save()
+            if duplicate.get('copy_image', False):
+                original.copy_images_to(target_pk=instance.pk)
 
             if duplicate.get('copy_parameters', False):
                 instance.copy_parameters_from(original)

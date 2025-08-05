@@ -4,6 +4,7 @@ from datetime import datetime
 from string import Formatter
 
 from django.contrib.auth import get_user_model
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import QuerySet
@@ -1117,6 +1118,23 @@ class InvenTreeImageUploadMixin(models.Model):
         if img:
             return img.get_thumbnail_url()
         return InvenTree.helpers.getBlankThumbnail()
+
+    def copy_images_to(self, target_pk):
+        """Copy all images from this instance to another instance of the same model with pk."""
+        from common.models import InvenTreeImage
+
+        ct = ContentType.objects.get_for_model(self, for_concrete_model=False)
+        new_images = []
+        for img in self.images.all():
+            new_img = InvenTreeImage(
+                content_type=ct,
+                object_id=target_pk,
+                primary=img.primary,
+                image=img.image.name,
+            )
+            new_images.append(new_img)
+
+        InvenTreeImage.objects.bulk_create(new_images)
 
 
 class InvenTreeBarcodeMixin(models.Model):

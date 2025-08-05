@@ -63,7 +63,7 @@ class CompanyBriefSerializer(InvenTreeModelSerializer):
             image = obj.images.first()
         else:
             return None
-        return common_serializers.UploadedImageSerializer(
+        return common_serializers.InvenTreeImageSerializer(
             image, context=self.context
         ).data
 
@@ -195,7 +195,7 @@ class CompanySerializer(
         images = getattr(obj, 'primary_img', None)
         if images and len(images) > 0:
             img_obj = images[0]
-            return common_serializers.UploadedImageSerializer(
+            return common_serializers.InvenTreeImageSerializer(
                 img_obj, context=self.context
             ).data
         return None
