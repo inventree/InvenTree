@@ -930,11 +930,82 @@ class PluginSettingsApiTest(PluginMixin, InvenTreeAPITestCase):
             "Plugin 'sample' has no setting matching 'doesnotexist'", str(response.data)
         )
 
-    def test_invalid_setting_key(self):
-        """Test that an invalid setting key returns a 404."""
-
     def test_uninitialized_setting(self):
         """Test that requesting an uninitialized setting creates the setting."""
+        from plugin.models import PluginSetting
+
+        slug = 'sample'
+        key = 'PROTECTED_SETTING'
+
+        registry.set_plugin_state(slug, True)
+
+        plugin = registry.get_plugin(slug)
+
+        # Ensure that the setting does not exist
+        PluginSetting.objects.filter(plugin=plugin.pk, key=key).delete()
+        self.assertFalse(
+            PluginSetting.objects.filter(plugin=plugin.pk, key=key).exists()
+        )
+
+        url = reverse('api-plugin-setting-detail', kwargs={'plugin': slug, 'key': key})
+
+        data = self.get(url, expected_code=200).data
+
+        self.assertEqual(data['key'], key)
+        self.assertEqual(data['plugin'], slug)
+        self.assertEqual(data['value'], '***')  # Protected setting should return '***'
+
+        # Check that the setting has been created
+        self.assertTrue(
+            PluginSetting.objects.filter(plugin=plugin.pk, key=key).exists()
+        )
+
+    def test_cast(self):
+        """Test type casting for plugin settings."""
+        slug = 'sample'
+        key = 'NUMERICAL_SETTING'
+
+        registry.set_plugin_state(slug, True)
+        url = reverse('api-plugin-setting-detail', kwargs={'plugin': slug, 'key': key})
+
+        for value in ['-1', '0', '7777']:
+            response = self.patch(url, {'value': value}, expected_code=200)
+
+            # Check that the returned response is correctly cast to an integer
+            self.assertEqual(response.data['value'], int(value))
+
+
+class PluginUserSettingsApiTest(PluginMixin, InvenTreeAPITestCase):
+    """Tests for the plugin user settings API."""
+
+    def setUp(self):
+        """Ensure plugin is activated."""
+        registry.set_plugin_state('sample', True)
+
+        super().setUp()
+
+    def test_user_setting_list(self):
+        """Test the plugin user setting list API."""
+        url = reverse('api-plugin-user-setting-list', kwargs={'plugin': 'sample'})
+
+        response = self.get(url, expected_code=200)
+        self.assertEqual(len(response.data), 3)
+
+    def test_cast(self):
+        """Test the plugin values are cast appropriately."""
+        slug = 'sample'
+        key = 'USER_SETTING_2'
+
+        url = reverse(
+            'api-plugin-user-setting-detail', kwargs={'plugin': slug, 'key': key}
+        )
+
+        for value in [True, False]:
+            response = self.patch(url, {'value': str(value)})
+
+            self.assertEqual(response.data['value'], value)
+            self.assertEqual(response.data['key'], key)
+            self.assertEqual(response.data['name'], 'User Setting 2')
 
 
 class ErrorReportTest(InvenTreeAPITestCase):

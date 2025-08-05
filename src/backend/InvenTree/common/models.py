@@ -201,6 +201,10 @@ class BaseInvenTreeSetting(models.Model):
 
         abstract = True
 
+    def to_native_value(self):
+        """Return the 'native' value of this setting."""
+        return self.__class__.get_setting(self.key, plugin=self.plugin)
+
     def save(self, *args, **kwargs):
         """Enforce validation and clean before saving."""
         self.key = str(self.key).upper()
