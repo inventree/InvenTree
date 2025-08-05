@@ -279,12 +279,12 @@ def str2bool(text, test=True):
     return str(text).lower() in ['0', 'n', 'no', 'none', 'f', 'false', 'off']
 
 
-def is_bool(text):
+def is_bool(text: str) -> bool:
     """Determine if a string value 'looks' like a boolean."""
     return str2bool(text, True) or str2bool(text, False)
 
 
-def isNull(text):
+def isNull(text: str) -> bool:
     """Test if a string 'looks' like a null value. This is useful for querying the API against a null key.
 
     Args:
@@ -304,10 +304,13 @@ def isNull(text):
     ]
 
 
-def normalize(d):
+def normalize(d, rounding: Optional[int] = None) -> Decimal:
     """Normalize a decimal number, and remove exponential formatting."""
     if type(d) is not Decimal:
         d = Decimal(d)
+
+    if rounding is not None:
+        d = round(d, rounding)
 
     d = d.normalize()
 
