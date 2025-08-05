@@ -457,7 +457,9 @@ class StockTest(StockTestBase):
         it.refresh_from_db()
         self.assertEqual(it.quantity, 10)
 
-        ait.return_from_customer(it.location, None, notes='Stock removed from customer')
+        ait.return_from_customer(
+            it.location, None, merge=True, notes='Stock returned from customer'
+        )
 
         # When returned stock is returned to its original (parent) location, check that the parent has correct quantity
         it.refresh_from_db()

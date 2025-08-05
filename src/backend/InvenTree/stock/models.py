@@ -1400,7 +1400,7 @@ class StockItem(
 
     @transaction.atomic
     def return_to_stock(
-        self, location, user=None, quantity=None, merge: bool = False, **kwargs
+        self, location, user=None, quantity=None, merge: bool = True, **kwargs
     ):
         """Return stock item into stock, removing any consumption status.
 
@@ -1414,6 +1414,8 @@ class StockItem(
 
         tracking_code = kwargs.get('tracking_code', StockHistoryCode.RETURNED_TO_STOCK)
 
+        item = self
+
         if quantity is not None and not self.serialized:
             # If quantity is specified, we are splitting the stock item
             if quantity <= 0:
@@ -1426,11 +1428,9 @@ class StockItem(
                     'quantity': _('Quantity exceeds available stock')
                 })
 
-            # Split the stock item
-            item = self.splitStock(quantity, None, user)
-        else:
-            # Any further operations will be performed on this stock item
-            item = self
+            if quantity < self.quantity:
+                # Split the stock item
+                item = self.splitStock(quantity, None, user)
 
         tracking_info = {}
 
