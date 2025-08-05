@@ -944,3 +944,56 @@ class PartNotificationTest(InvenTreeTestCase):
         from error_report.models import Error
 
         self.assertEqual(Error.objects.count(), 0)
+
+
+class PartStockHistoryTest(InvenTreeTestCase):
+    """Test generation of stock history entries."""
+
+    fixtures = ['category', 'part', 'location', 'stock']
+
+    def test_stock_history(self):
+        """Test that stock history entries are generated correctly."""
+        from part.models import Part, PartStocktake
+        from part.stocktake import perform_stocktake
+
+        N_STOCKTAKE = PartStocktake.objects.count()
+
+        # Cache the initial count of stocktake entries
+        stock_history_entries = {
+            part.pk: part.stocktakes.count() for part in Part.objects.all()
+        }
+
+        # Initially, run with stocktake functionality disabled
+        set_global_setting('STOCKTAKE_ENABLE', False)
+
+        perform_stocktake()
+
+        # No change, as functionality is disabled
+        self.assertEqual(PartStocktake.objects.count(), N_STOCKTAKE)
+
+        for p in Part.objects.all():
+            self.assertEqual(p.stocktakes.count(), stock_history_entries[part.pk])
+
+        # Now enable stocktake functionality
+        set_global_setting('STOCKTAKE_ENABLE', True)
+
+        # Ensure that there is at least one inactive part
+        p = Part.objects.first()
+        p.active = False
+        p.save()
+
+        perform_stocktake()
+        self.assertGreater(PartStocktake.objects.count(), N_STOCKTAKE)
+
+        for p in Part.objects.all():
+            if p.active:
+                # Active parts should have stocktake entries created
+                self.assertGreater(p.stocktakes.count(), stock_history_entries[p.pk])
+            else:
+                # Inactive parts should not have stocktake entries created
+                self.assertEqual(p.stocktakes.count(), stock_history_entries[p.pk])
+
+        # Now, run again - should not create any new entries
+        N_STOCKTAKE = PartStocktake.objects.count()
+        perform_stocktake()
+        self.assertEqual(PartStocktake.objects.count(), N_STOCKTAKE)
