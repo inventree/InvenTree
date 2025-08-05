@@ -751,7 +751,10 @@ function stockReturnFields(items: any[]): ApiFormFieldSet {
     return {};
   }
 
-  const records = Object.fromEntries(items.map((item) => [item.pk, item]));
+  // Only include items that are currently *not* in stock
+  const records = Object.fromEntries(
+    items.filter((item) => !item.in_stock).map((item) => [item.pk, item])
+  );
 
   const fields: ApiFormFieldSet = {
     items: {
@@ -784,6 +787,7 @@ function stockReturnFields(items: any[]): ApiFormFieldSet {
         structural: false
       }
     },
+    merge: {},
     notes: {}
   };
 
@@ -1228,7 +1232,7 @@ export function useReturnStockItem(props: StockOperationProps) {
     successMessage: t`Stock returned`,
     preFormContent: (
       <Alert color='blue'>
-        {t`Return selected items into stock, in the specified location.`}
+        {t`Return selected items into stock, to the specified location.`}
       </Alert>
     )
   });

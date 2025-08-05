@@ -77,7 +77,7 @@ export function useStockAdjustActions(
     props.merge != false && modals.push(mergeStock);
     props.remove != false && modals.push(removeStock);
     props.transfer != false && modals.push(transferStock);
-    props.return != false && modals.push(returnStock);
+    props.return === true && modals.push(returnStock);
     props.delete != false &&
       user.hasDeleteRole(UserRoles.stock) &&
       modals.push(deleteStock);
@@ -163,7 +163,7 @@ export function useStockAdjustActions(
         }
       });
 
-    props.return != false &&
+    props.return === true &&
       menuActions.push({
         name: t`Return Stock`,
         icon: <InvenTreeIcon icon='return' iconProps={{ color: 'blue' }} />,
