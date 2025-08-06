@@ -1100,13 +1100,13 @@ class InvenTreeImageMixin(models.Model):
         return self.images.all()
 
     @property
-    def primary_image(self):
+    def image(self):
         """Return the primary image, or None."""
         return self.images.filter(primary=True).first()
 
     def get_image_url(self) -> str:
         """Return the URL of the primary image, or a blank fallback."""
-        img = self.primary_image
+        img = self.image
         if img:
             return img.get_image_url()
 
@@ -1114,7 +1114,7 @@ class InvenTreeImageMixin(models.Model):
 
     def get_thumbnail_url(self) -> str:
         """Return the URL of the primary image thumbnail, or a blank fallback."""
-        img = self.primary_image
+        img = self.image
         if img:
             return img.get_thumbnail_url()
         return InvenTree.helpers.getBlankThumbnail()

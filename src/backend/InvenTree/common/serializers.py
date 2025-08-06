@@ -662,19 +662,27 @@ class InvenTreeImageSerializer(
 
     def _process_images(self, instance, data):
         """Move any existing_image or remote_image_file into instance.image, then save."""
+        # Handle an existing image filename on disk
         existing = data.get('existing_image', None)
         if existing:
             instance.image = existing
             instance.save()
 
+        # Handle a remote image fetched via RemoteImageMixin
         remote_img = getattr(self, 'remote_image_file', None)
         if remote_img:
-            fmt = remote_img.format or 'PNG'
-            buffer = io.BytesIO()
-            remote_img.save(buffer, format=fmt)
-            filename = f'part_{instance.pk}_image.{fmt.lower()}'
-            instance.image.save(filename, ContentFile(buffer.getvalue()))
+            try:
+                fmt = remote_img.format or 'PNG'
+                buffer = io.BytesIO()
+                remote_img.save(buffer, format=fmt)
+                buffer.seek(0)
 
+                filename = f'part_{instance.pk}_image.{fmt.lower()}'
+                instance.image.save(filename, ContentFile(buffer.read()), save=True)
+            except Exception as e:
+                raise ValidationError(
+                    _('Failed to process remote image: {error}').format(error=str(e))
+                )
         return instance
 
     def create(self, validated_data):
