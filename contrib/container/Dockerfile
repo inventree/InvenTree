@@ -9,7 +9,7 @@
 # - Runs InvenTree web server under django development server
 # - Monitors source files for any changes, and live-reloads server
 
-FROM python:3.11-alpine3.20@sha256:520924f35357a374aa1beaa81b867f449f9f12a53f00b69ad03c3d697fdf4aad AS inventree_base
+FROM python:3.11-alpine3.22@sha256:9ce54d7ed458f71129c977478dd106cf6165a49b73fa38c217cc54de8f3e2bd0 AS inventree_base
 
 # Version pins
 ARG N_VERSION_NODE=22.18.0
