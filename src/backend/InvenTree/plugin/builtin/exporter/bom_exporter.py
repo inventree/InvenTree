@@ -7,6 +7,7 @@ from django.utils.translation import gettext_lazy as _
 
 import rest_framework.serializers as serializers
 
+from InvenTree.helpers import normalize
 from part.models import BomItem
 from plugin import InvenTreePlugin
 from plugin.mixins import DataExportMixin
@@ -231,7 +232,7 @@ class BomExporterPlugin(DataExportMixin, InvenTreePlugin):
         if self.export_total_quantity:
             # Calculate the total quantity for this BOM item
             total_quantity = Decimal(bom_item.quantity) * multiplier
-            row['total_quantity'] = total_quantity
+            row['total_quantity'] = normalize(total_quantity)
 
         self.bom_data.append(row)
 
