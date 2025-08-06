@@ -726,7 +726,7 @@ class UserSettingsApiTest(InvenTreeAPITestCase):
 
         response = self.get(url, expected_code=200)
 
-        self.assertEqual(response.data['value'], 'True')
+        self.assertEqual(response.data['value'], True)
 
         self.patch(url, {'value': 'False'}, expected_code=200)
 
@@ -823,7 +823,7 @@ class UserSettingsApiTest(InvenTreeAPITestCase):
 
             response = self.get(url)
 
-            self.assertEqual(response.data['value'], str(v))
+            self.assertEqual(response.data['value'], v)
 
         # Set valid options via the api
         for v in [5, 15, 25]:

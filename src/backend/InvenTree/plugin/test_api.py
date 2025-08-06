@@ -388,7 +388,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
             expected_code=200,
         )
 
-        self.assertEqual(response.data['value'], '456')
+        self.assertEqual(response.data['value'], 456)
 
         # Retrieve the value again
         response = self.get(
@@ -399,7 +399,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
             expected_code=200,
         )
 
-        self.assertEqual(response.data['value'], '456')
+        self.assertEqual(response.data['value'], 456)
 
     def test_plugin_user_settings(self):
         """Test the PluginUserSetting API endpoints."""
