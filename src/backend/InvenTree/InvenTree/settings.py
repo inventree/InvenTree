@@ -1538,3 +1538,64 @@ OAUTH2_CHECK_EXCLUDED = [  # This setting mutes schema checks for these rule/met
 
 if SITE_URL and not TESTING:
     SPECTACULAR_SETTINGS['SERVERS'] = [{'url': SITE_URL}]
+
+# Storage backends
+STORAGE_TARGET = get_setting(
+    'INVENTREE_STORAGE_TARGET', 'storage.target', 'local', typecast=str
+)
+STORAGE_OPTIONS = {}
+if STORAGE_TARGET == 's3':
+    STORAGE_OPTIONS = {
+        'access_key': get_setting(
+            'INVENTREE_S3_ACCESS_KEY', 'storage.s3.access_key', None, typecast=str
+        ),
+        'secret_key': get_setting(
+            'INVENTREE_S3_SECRET_KEY', 'storage.s3.secret_key', None, typecast=str
+        ),
+        'bucket_name': get_setting(
+            'INVENTREE_S3_BUCKET_NAME', 'storage.s3.bucket_name', None, typecast=str
+        ),
+        'default_acl': get_setting(
+            'INVENTREE_S3_DEFAULT_ACL', 'storage.s3.default_acl', None, typecast=str
+        ),
+        'region_name': get_setting(
+            'INVENTREE_S3_REGION_NAME', 'storage.s3.region_name', None, typecast=str
+        ),
+        'endpoint_url': get_setting(
+            'INVENTREE_S3_ENDPOINT_URL', 'storage.s3.endpoint_url', None, typecast=str
+        ),
+        'verify': get_boolean_setting(
+            'INVENTREE_S3_VERIFY_SSL', 'storage.s3.verify_ssl', True
+        ),
+        'location': get_setting(
+            'INVENTREE_S3_LOCATION',
+            'storage.s3.location',
+            'inventree-server',
+            typecast=str,
+        ),
+    }
+elif STORAGE_TARGET == 'sftp':
+    STORAGE_OPTIONS = {
+        'host': get_setting('INVENTREE_SFTP_HOST', 'sftp.host', None, typecast=str),
+        'uid': get_setting('INVENTREE_SFTP_UID', 'sftp.uid', None, typecast=int),
+        'gid': get_setting('INVENTREE_SFTP_GID', 'sftp.gid', None, typecast=int),
+        'location': get_setting(
+            'INVENTREE_SFTP_LOCATION', 'sftp.location', 'inventree-server', typecast=str
+        ),
+        'params': get_setting(
+            'INVENTREE_SFTP_PARAMS', 'sftp.params', {}, typecast=dict
+        ),
+    }
+backend_map = {
+    'local': 'django.core.files.storage.FileSystemStorage',
+    's3': 'storages.backends.s3.S3Storage',
+    'sftp': 'storages.backends.sftpstorage.SFTPStorage',
+}
+STORAGES = {
+    'default': {
+        'BACKEND': backend_map.get(
+            STORAGE_TARGET, 'django.core.files.storage.FileSystemStorage'
+        ),
+        'OPTIONS': STORAGE_OPTIONS,
+    }
+}
