@@ -38,17 +38,30 @@ class SettingsValueField(serializers.Field):
         """Return the object instance, not the attribute value."""
         return instance
 
-    def to_representation(self, instance) -> str:
+    def to_representation(self, instance: common_models.InvenTreeSetting) -> str:
         """Return the value of the setting.
 
         Protected settings are returned as '***'
         """
         if instance.protected:
             return '***'
-        elif instance.value is None:
-            return ''
         else:
-            return instance.to_native_value()
+            value = instance.value
+
+            if value is None:
+                value = ''
+
+            # Attempt to coerce the value to a native type
+            if instance.is_int():
+                value = instance.as_int()
+
+            elif instance.is_float():
+                value = instance.as_float()
+
+            elif instance.is_bool():
+                value = instance.as_bool()
+
+            return value
 
     def to_internal_value(self, data) -> str:
         """Return the internal value of the setting."""

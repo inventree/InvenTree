@@ -667,7 +667,7 @@ class GlobalSettingsApiTest(InvenTreeAPITestCase):
         InvenTreeSetting.objects.filter(key=key).delete()
 
         # Fetch all settings
-        response = self.get(reverse('api-global-setting-list'))
+        response = self.get(reverse('api-global-setting-list'), max_query_count=50)
 
         # Find the associated setting
         setting = next((s for s in response.data if s['key'] == key), None)
