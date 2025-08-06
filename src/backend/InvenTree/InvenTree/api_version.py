@@ -1,11 +1,14 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 379
+INVENTREE_API_VERSION = 380
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v380 -> 2025-08-06 : https://github.com/inventree/InvenTree/pull/10135
+    - Fixes "issued_by" filter for the BuildOrder list API endpoint
 
 v379 -> 2025-08-04 : https://github.com/inventree/InvenTree/pull/10124
     - Removes "PartStocktakeReport" model and associated API endpoints
