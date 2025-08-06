@@ -27,7 +27,7 @@ from importer.registry import register_importer
 from InvenTree.helpers import get_objectreference
 from InvenTree.helpers_model import construct_absolute_url
 from InvenTree.mixins import DataImportExportSerializerMixin
-from InvenTree.models import InvenTreeAttachmentMixin, InvenTreeImageUploadMixin
+from InvenTree.models import InvenTreeAttachmentMixin, InvenTreeImageMixin
 from InvenTree.serializers import (
     InvenTreeAttachmentSerializerField,
     InvenTreeImageSerializerField,
@@ -590,13 +590,13 @@ class FailedTaskSerializer(InvenTreeModelSerializer):
     result = serializers.CharField()
 
 
-ALLOWED_IMAGE_CTS = common.validators.get_model_options(InvenTreeImageUploadMixin)
+ALLOWED_IMAGE_CTS = common.validators.get_model_options(InvenTreeImageMixin)
 
 
 class InvenTreeImageSerializer(
     InvenTree.serializers.RemoteImageMixin, InvenTreeModelSerializer
 ):
-    """Serializer for InvenTreeImage without using SlugRelatedField."""
+    """Serializer for InvenTreeImage."""
 
     image = serializers.ImageField(required=False, allow_null=True)
     thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)

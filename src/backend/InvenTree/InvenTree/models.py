@@ -1065,7 +1065,7 @@ class InvenTreeNotesMixin(models.Model):
 from django.contrib.contenttypes.fields import GenericRelation
 
 
-class InvenTreeImageUploadMixin(models.Model):
+class InvenTreeImageMixin(models.Model):
     """A mixin to add image  capability to any model.
 
     Provides a GenericRelation back to InvenTreeImage, plus helpers for primary image logic.

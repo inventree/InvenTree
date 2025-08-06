@@ -80,7 +80,7 @@ from stdimage.models import StdImageField
 
 class Company(
     InvenTree.models.InvenTreeAttachmentMixin,
-    InvenTree.models.InvenTreeImageUploadMixin,
+    InvenTree.models.InvenTreeImageMixin,
     InvenTree.models.InvenTreeNotesMixin,
     report.mixins.InvenTreeReportMixin,
     InvenTree.models.InvenTreeMetadataModel,

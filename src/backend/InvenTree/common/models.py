@@ -55,6 +55,7 @@ import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
 import users.models
+from common.helpers import UPLOADED_IMAGE_DIR
 from common.setting.type import InvenTreeSettingsKeyType, SettingsKeyType
 from common.settings import global_setting_overrides
 from generic.enums import StringEnum
@@ -1885,9 +1886,6 @@ def rename_attachment(instance, filename: str):
     )
 
 
-UPLOAD_IMAGE_DIR = 'upload_images'
-
-
 class CustomStdImage(StdImageField):
     """Overrides the post_delete behavior to prevent deleting an image file that is still in use by other objects."""
 
@@ -1935,7 +1933,7 @@ class InvenTreeImage(models.Model):
 
     primary = models.BooleanField(default=False)
     image = CustomStdImage(
-        upload_to=UPLOAD_IMAGE_DIR,
+        upload_to=UPLOADED_IMAGE_DIR,
         null=True,
         blank=True,
         variations={'thumbnail': (128, 128), 'preview': (256, 256)},

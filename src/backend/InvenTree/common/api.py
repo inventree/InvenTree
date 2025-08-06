@@ -795,9 +795,9 @@ class InvenTreeImageImageList(ListCreateAPI):
 
 
 class InvenTreeImageThumbFilter(rest_filters.FilterSet):
-    """Allows filtering.
+    """Allows filtering for image thumbnails.
 
-    - content_type__model   (the name of the model, e.g. 'part', 'build', etc.)
+    - content_type__model   (the name of the model, e.g. 'part')
     - object_id             (the PK of the related object)
     """
 
@@ -823,7 +823,7 @@ class InvenTreeImageThumbFilter(rest_filters.FilterSet):
 
 
 class InvenTreeImageThumbs(ListAPI):
-    """List API endpoint for InvenTreeImage thumbnails."""
+    """List API endpoint for Image thumbnails."""
 
     queryset = common.models.InvenTreeImage.objects.all()
     serializer_class = common.serializers.InvenTreeImageThumbSerializer
@@ -1118,11 +1118,7 @@ common_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        '',
-                        InvenTreeImageDetail.as_view(),
-                        name='api-uploadImage-detail',
-                    )
+                    path('', InvenTreeImageDetail.as_view(), name='api-image-detail')
                 ]),
             ),
             path(
@@ -1130,7 +1126,7 @@ common_api_urls = [
                 InvenTreeImageThumbs.as_view(),
                 name='api-uploadImageThumbs-list',
             ),
-            path('', InvenTreeImageImageList.as_view(), name='api-uploadImage-list'),
+            path('', InvenTreeImageImageList.as_view(), name='api-image-list'),
         ]),
     ),
     path(

@@ -413,7 +413,7 @@ from stdimage.models import StdImageField
 class Part(
     InvenTree.models.PluginValidationMixin,
     InvenTree.models.InvenTreeAttachmentMixin,
-    InvenTree.models.InvenTreeImageUploadMixin,
+    InvenTree.models.InvenTreeImageMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,
     report.mixins.InvenTreeReportMixin,

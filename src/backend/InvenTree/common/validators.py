@@ -71,11 +71,11 @@ def validate_notes_model_type(value):
 
 
 def limit_image_content_types():
-    """Limit the content types for image uploads to those supported by InvenTreeImageUploadMixin."""
+    """Limit the content types for image uploads to those supported by InvenTreeImageMixin."""
     import InvenTree.models
 
     allowed_models = [
-        m[0] for m in get_model_options(InvenTree.models.InvenTreeImageUploadMixin)
+        m[0] for m in get_model_options(InvenTree.models.InvenTreeImageMixin)
     ]
 
     return {'model__in': allowed_models}
