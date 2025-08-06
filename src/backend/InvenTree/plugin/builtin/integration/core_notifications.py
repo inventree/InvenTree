@@ -32,6 +32,7 @@ class InvenTreeUINotifications(NotificationMixin, InvenTreePlugin):
         """Create a UI notification entry for specified users."""
         from common.models import NotificationMessage
 
+        ctx = context if context else {}
         entries = []
 
         if not users:
@@ -45,8 +46,8 @@ class InvenTreeUINotifications(NotificationMixin, InvenTreePlugin):
                     source_object=user,
                     user=user,
                     category=category,
-                    name=context['name'],
-                    message=context['message'],
+                    name=ctx.get('name'),
+                    message=ctx.get('message'),
                 )
             )
 
