@@ -1,5 +1,8 @@
 """Multi-level BOM exporter plugin."""
 
+from decimal import Decimal
+from typing import Optional
+
 from django.utils.translation import gettext_lazy as _
 
 import rest_framework.serializers as serializers
@@ -13,10 +16,18 @@ class BomExporterOptionsSerializer(serializers.Serializer):
     """Custom export options for the BOM exporter plugin."""
 
     export_levels = serializers.IntegerField(
-        default=1,
+        default=0,
         label=_('Levels'),
-        help_text=_('Number of levels to export'),
+        help_text=_(
+            'Number of levels to export - set to zero to export all BOM levels'
+        ),
         min_value=0,
+    )
+
+    export_total_quantity = serializers.BooleanField(
+        default=True,
+        label=_('Total Quantity'),
+        help_text=_('Include total quantity of each part in the BOM'),
     )
 
     export_stock_data = serializers.BooleanField(
@@ -57,7 +68,7 @@ class BomExporterPlugin(DataExportMixin, InvenTreePlugin):
     SLUG = 'bom-exporter'
     TITLE = _('Multi-Level BOM Exporter')
     DESCRIPTION = _('Provides support for exporting multi-level BOMs')
-    VERSION = '1.0.0'
+    VERSION = '1.1.0'
     AUTHOR = _('InvenTree contributors')
 
     ExportOptionsSerializer = BomExporterOptionsSerializer
@@ -68,6 +79,8 @@ class BomExporterPlugin(DataExportMixin, InvenTreePlugin):
 
     def update_headers(self, headers, context, **kwargs):
         """Update headers for the BOM export."""
+        export_total_quantity = context.get('export_total_quantity', True)
+
         if not self.export_stock_data:
             # Remove stock data from the headers
             for field in [
@@ -94,6 +107,10 @@ class BomExporterPlugin(DataExportMixin, InvenTreePlugin):
 
         # Append a "BOM Level" field
         headers['level'] = _('BOM Level')
+
+        if export_total_quantity:
+            # Append a 'total quantity' field
+            headers['total_quantity'] = _('Total Quantity')
 
         # Append variant part columns
         if self.export_substitute_data and self.n_substitute_cols > 0:
@@ -167,6 +184,7 @@ class BomExporterPlugin(DataExportMixin, InvenTreePlugin):
         self.export_manufacturer_data = context.get('export_manufacturer_data', True)
         self.export_substitute_data = context.get('export_substitute_data', True)
         self.export_parameter_data = context.get('export_parameter_data', True)
+        self.export_total_quantity = context.get('export_total_quantity', True)
 
         # Pre-fetch related data to reduce database queries
         queryset = self.prefetch_queryset(queryset)
@@ -179,17 +197,22 @@ class BomExporterPlugin(DataExportMixin, InvenTreePlugin):
 
         return self.bom_data
 
-    def process_bom_row(self, bom_item, level, **kwargs) -> list:
+    def process_bom_row(
+        self, bom_item, level: int = 1, multiplier: Optional[Decimal] = None, **kwargs
+    ) -> list:
         """Process a single BOM row.
 
         Arguments:
             bom_item: The BomItem object to process
             level: The current level of export
-
+            multiplier: The multiplier for the quantity (used for recursive calls)
         """
         # Add this row to the output dataset
         row = self.serializer_class(bom_item, exporting=True).data
         row['level'] = level
+
+        if multiplier is None:
+            multiplier = Decimal(1)
 
         # Extend with additional data
 
@@ -205,6 +228,11 @@ class BomExporterPlugin(DataExportMixin, InvenTreePlugin):
         if self.export_parameter_data:
             row.update(self.get_parameter_data(bom_item))
 
+        if self.export_total_quantity:
+            # Calculate the total quantity for this BOM item
+            total_quantity = Decimal(bom_item.quantity) * multiplier
+            row['total_quantity'] = total_quantity
+
         self.bom_data.append(row)
 
         # If we have reached the maximum export level, return just this bom item
@@ -215,7 +243,12 @@ class BomExporterPlugin(DataExportMixin, InvenTreePlugin):
             sub_items = self.prefetch_queryset(sub_items)
 
             for item in sub_items.all():
-                self.process_bom_row(item, level + 1, **kwargs)
+                self.process_bom_row(
+                    item,
+                    level=level + 1,
+                    multiplier=multiplier * bom_item.quantity,
+                    **kwargs,
+                )
 
     def get_substitute_data(self, bom_item: BomItem) -> dict:
         """Return substitute part data for a BomItem."""
