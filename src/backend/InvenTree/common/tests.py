@@ -659,6 +659,33 @@ class GlobalSettingsApiTest(InvenTreeAPITestCase):
 
         self.assertEqual(response.data['value'], 'My new title')
 
+    def test_cast(self):
+        """Test that values are cast to the correct type."""
+        key = 'INVENTREE_RESTRICT_ABOUT'
+
+        # Delete the associated setting object
+        InvenTreeSetting.objects.filter(key=key).delete()
+
+        # Fetch all settings
+        response = self.get(reverse('api-global-setting-list'), max_query_count=50)
+
+        # Find the associated setting
+        setting = next((s for s in response.data if s['key'] == key), None)
+
+        # Check default value (should be False, not 'False')
+        self.assertIsNotNone(setting)
+        self.assertFalse(setting['value'])
+
+        # Check that we can manually set the value
+        for v in [True, False]:
+            set_global_setting(key, v)
+
+            # Check the 'detail' API endpoint
+            response = self.get(
+                reverse('api-global-setting-detail', kwargs={'key': key})
+            )
+            self.assertEqual(response.data['value'], v)
+
 
 class UserSettingsApiTest(InvenTreeAPITestCase):
     """Tests for the user settings API."""
@@ -701,7 +728,7 @@ class UserSettingsApiTest(InvenTreeAPITestCase):
 
         response = self.get(url, expected_code=200)
 
-        self.assertEqual(response.data['value'], 'True')
+        self.assertEqual(response.data['value'], True)
 
         self.patch(url, {'value': 'False'}, expected_code=200)
 
@@ -798,7 +825,7 @@ class UserSettingsApiTest(InvenTreeAPITestCase):
 
             response = self.get(url)
 
-            self.assertEqual(response.data['value'], str(v))
+            self.assertEqual(response.data['value'], v)
 
         # Set valid options via the api
         for v in [5, 15, 25]:
@@ -811,6 +838,37 @@ class UserSettingsApiTest(InvenTreeAPITestCase):
         # Note that this particular setting has a MinValueValidator(1) associated with it
         for v in [0, -1, -5]:
             response = self.patch(url, {'value': v}, expected_code=400)
+
+    def test_cast(self):
+        """Test numerical typecast for user settings."""
+        key = 'SEARCH_PREVIEW_RESULTS'
+
+        # Delete the associated setting object
+        InvenTreeUserSetting.objects.filter(key=key, user=self.user).delete()
+
+        # Fetch all settings
+        response = self.get(reverse('api-user-setting-list'))
+
+        # Find the associated setting
+        setting = next((s for s in response.data if s['key'] == key), None)
+
+        # Check default value (should be 10, not '10')
+        self.assertIsNotNone(setting)
+        self.assertEqual(setting['value'], 10)
+
+        # Check that writing an invalid value returns an error
+        url = reverse('api-user-setting-detail', kwargs={'key': key})
+
+        self.patch(url, {'value': 'not a number'}, expected_code=400)
+        self.patch(url, {'value': 0}, expected_code=400)
+
+        # Check that we can manually set the value
+        for v in [1, 2, 3]:
+            InvenTreeUserSetting.set_setting(key, v, None, user=self.user)
+
+            # Check the 'detail' API endpoint
+            response = self.get(reverse('api-user-setting-detail', kwargs={'key': key}))
+            self.assertEqual(response.data['value'], v)
 
 
 class PluginSettingsApiTest(PluginMixin, InvenTreeAPITestCase):
@@ -874,11 +932,82 @@ class PluginSettingsApiTest(PluginMixin, InvenTreeAPITestCase):
             "Plugin 'sample' has no setting matching 'doesnotexist'", str(response.data)
         )
 
-    def test_invalid_setting_key(self):
-        """Test that an invalid setting key returns a 404."""
-
     def test_uninitialized_setting(self):
         """Test that requesting an uninitialized setting creates the setting."""
+        from plugin.models import PluginSetting
+
+        slug = 'sample'
+        key = 'PROTECTED_SETTING'
+
+        registry.set_plugin_state(slug, True)
+
+        plugin = registry.get_plugin(slug)
+
+        # Ensure that the setting does not exist
+        PluginSetting.objects.filter(plugin=plugin.pk, key=key).delete()
+        self.assertFalse(
+            PluginSetting.objects.filter(plugin=plugin.pk, key=key).exists()
+        )
+
+        url = reverse('api-plugin-setting-detail', kwargs={'plugin': slug, 'key': key})
+
+        data = self.get(url, expected_code=200).data
+
+        self.assertEqual(data['key'], key)
+        self.assertEqual(data['plugin'], slug)
+        self.assertEqual(data['value'], '***')  # Protected setting should return '***'
+
+        # Check that the setting has been created
+        self.assertTrue(
+            PluginSetting.objects.filter(plugin=plugin.pk, key=key).exists()
+        )
+
+    def test_cast(self):
+        """Test type casting for plugin settings."""
+        slug = 'sample'
+        key = 'NUMERICAL_SETTING'
+
+        registry.set_plugin_state(slug, True)
+        url = reverse('api-plugin-setting-detail', kwargs={'plugin': slug, 'key': key})
+
+        for value in ['-1', '0', '7777']:
+            response = self.patch(url, {'value': value}, expected_code=200)
+
+            # Check that the returned response is correctly cast to an integer
+            self.assertEqual(response.data['value'], int(value))
+
+
+class PluginUserSettingsApiTest(PluginMixin, InvenTreeAPITestCase):
+    """Tests for the plugin user settings API."""
+
+    def setUp(self):
+        """Ensure plugin is activated."""
+        registry.set_plugin_state('sample', True)
+
+        super().setUp()
+
+    def test_user_setting_list(self):
+        """Test the plugin user setting list API."""
+        url = reverse('api-plugin-user-setting-list', kwargs={'plugin': 'sample'})
+
+        response = self.get(url, expected_code=200)
+        self.assertEqual(len(response.data), 3)
+
+    def test_cast(self):
+        """Test the plugin values are cast appropriately."""
+        slug = 'sample'
+        key = 'USER_SETTING_2'
+
+        url = reverse(
+            'api-plugin-user-setting-detail', kwargs={'plugin': slug, 'key': key}
+        )
+
+        for value in [True, False]:
+            response = self.patch(url, {'value': str(value)})
+
+            self.assertEqual(response.data['value'], value)
+            self.assertEqual(response.data['key'], key)
+            self.assertEqual(response.data['name'], 'User Setting 2')
 
 
 class ErrorReportTest(InvenTreeAPITestCase):
