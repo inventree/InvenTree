@@ -11,6 +11,13 @@
 
 FROM python:3.11-alpine3.20@sha256:520924f35357a374aa1beaa81b867f449f9f12a53f00b69ad03c3d697fdf4aad AS inventree_base
 
+# Version pins
+ARG N_VERSION_NODE=22.18.0
+ARG APK_VERSION_NODEJS=20.15.1-r0
+ARG APK_VERSION_NPM=10.9.1-r0
+ARG APK_VERSION_YARN=1.22.22-r0
+ARG APK_VERSION_BASH=5.2.26-r0
+
 # Build arguments for this image
 ARG commit_tag=""
 ARG commit_hash=""
@@ -108,9 +115,9 @@ RUN ./install_build_packages.sh --no-cache --virtual .build-deps && \
 # Frontend builder image:
 FROM prebuild AS frontend
 
-RUN apk add --no-cache --update nodejs npm yarn bash
+RUN apk add --no-cache --update nodejs={APK_VERSION_NODEJS} npm={APK_VERSION_NPM} yarn={APK_VERSION_YARN} bash={APK_VERSION_BASH}
 RUN npm install -g --ignore-scripts n@10.1.0
-RUN bash -c "n lts"
+RUN bash -c "n ${N_VERSION_NODE}"
 RUN yarn config set network-timeout 600000 -g
 COPY src ${INVENTREE_HOME}/src
 COPY tasks.py ${INVENTREE_HOME}/tasks.py
@@ -152,9 +159,9 @@ RUN pip install --require-hashes -r base_requirements.txt --no-cache
 
 # Install nodejs / npm / yarn
 
-RUN apk add --no-cache --update nodejs npm yarn bash
+RUN apk add --no-cache --update nodejs={APK_VERSION_NODEJS} npm={APK_VERSION_NPM} yarn={APK_VERSION_YARN} bash={APK_VERSION_BASH}
 RUN npm install -g --ignore-scripts n@10.1.0
-RUN bash -c "n lts"
+RUN bash -c "n ${N_VERSION_NODE}"
 RUN yarn config set network-timeout 600000 -g
 
 # The development image requires the source code to be mounted to /home/inventree/
