@@ -85,6 +85,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
             {'confirm': True, 'packagename': self.PKG_NAME},
             expected_code=201,
             max_query_time=30,
+            max_query_count=400,
         ).data
 
         self.assertEqual(data['success'], 'Installed plugin successfully')
@@ -388,7 +389,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
             expected_code=200,
         )
 
-        self.assertEqual(response.data['value'], '456')
+        self.assertEqual(response.data['value'], 456)
 
         # Retrieve the value again
         response = self.get(
@@ -399,7 +400,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
             expected_code=200,
         )
 
-        self.assertEqual(response.data['value'], '456')
+        self.assertEqual(response.data['value'], 456)
 
     def test_plugin_user_settings(self):
         """Test the PluginUserSetting API endpoints."""
@@ -594,3 +595,55 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
 
             self.assertEqual(Y_MANDATORY_2, Y_MANDATORY + 1)
             self.assertEqual(N_MANDATORY_2, N_MANDATORY - 1)
+
+
+class PluginFullAPITest(PluginMixin, InvenTreeAPITestCase):
+    """Tests the plugin API endpoints."""
+
+    superuser = True
+
+    @override_settings(PLUGIN_TESTING_SETUP=True)
+    def test_full_process(self):
+        """Test the full plugin install/uninstall process via API."""
+        install_slug = 'inventree-brother-plugin'
+        slug = 'brother'
+
+        # Install a plugin
+        data = self.post(
+            reverse('api-plugin-install'),
+            {'confirm': True, 'packagename': install_slug},
+            expected_code=201,
+            max_query_time=30,
+            max_query_count=370,
+        ).data
+        self.assertEqual(data['success'], 'Installed plugin successfully')
+
+        # Activate the plugin
+        data = self.patch(
+            reverse('api-plugin-detail-activate', kwargs={'plugin': slug}),
+            data={'active': True},
+            max_query_count=320,
+        ).data
+        self.assertEqual(data['active'], True)
+
+        # Check if the plugin is installed
+        test_plg = PluginConfig.objects.get(key=slug)
+        self.assertIsNotNone(test_plg, 'Test plugin not found')
+        self.assertTrue(test_plg.is_active())
+
+        # De-activate and uninstall the plugin
+        data = self.patch(
+            reverse('api-plugin-detail-activate', kwargs={'plugin': slug}),
+            data={'active': False},
+            max_query_count=380,
+        ).data
+        self.assertEqual(data['active'], False)
+        response = self.patch(
+            reverse('api-plugin-uninstall', kwargs={'plugin': slug}),
+            max_query_count=350,
+        )
+        self.assertEqual(response.status_code, 200)
+
+        # Successful uninstallation
+        with self.assertRaises(PluginConfig.DoesNotExist):
+            PluginConfig.objects.get(key=slug)

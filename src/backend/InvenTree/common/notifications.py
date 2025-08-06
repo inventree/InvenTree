@@ -22,92 +22,6 @@ logger = structlog.get_logger('inventree')
 
 
 # region methods
-class NotificationMethod:
-    """Base class for notification methods."""
-
-    METHOD_NAME = ''
-    METHOD_ICON = None
-    CONTEXT_BUILTIN = ['name', 'message']
-    CONTEXT_EXTRA = []
-    GLOBAL_SETTING = None
-    USER_SETTING = None
-
-    def __init__(self, obj: Model, category: str, targets: list, context) -> None:
-        """Check that the method is read.
-
-        This checks that:
-        - All needed functions are implemented
-        - The method is not disabled via plugin
-        - All needed context values were provided
-        """
-        # Check if a sending fnc is defined
-        if (not hasattr(self, 'send')) and (not hasattr(self, 'send_bulk')):
-            raise NotImplementedError(
-                'A NotificationMethod must either define a `send` or a `send_bulk` method'
-            )
-
-        # No method name is no good
-        if self.METHOD_NAME in ('', None):
-            raise NotImplementedError(
-                f'The NotificationMethod {self.__class__} did not provide a METHOD_NAME'
-            )
-
-        # Check if plugin is disabled - if so do not gather targets etc.
-        if self.global_setting_disable():
-            self.targets = None
-            return
-
-        # Define arguments
-        self.obj = obj
-        self.category = category
-        self.targets = targets
-        self.context = self.check_context(context)
-
-        # Gather targets
-        self.targets = self.get_targets()
-
-    def check_context(self, context):
-        """Check that all values defined in the methods CONTEXT were provided in the current context."""
-
-        def check(ref, obj):
-            # the obj is not accessible so we are on the end
-            if not isinstance(obj, (list, dict, tuple)):
-                return ref
-
-            # check if the ref exists
-            if isinstance(ref, str):
-                if not obj.get(ref):
-                    return ref
-                return False
-
-            # nested
-            elif isinstance(ref, (tuple, list)):
-                if len(ref) == 1:
-                    return check(ref[0], obj)
-                ret = check(ref[0], obj)
-                if ret:
-                    return ret
-                return check(ref[1:], obj[ref[0]])
-
-            # other cases -> raise
-            raise NotImplementedError(
-                'This type can not be used as a context reference'
-            )
-
-        missing = []
-        for item in (*self.CONTEXT_BUILTIN, *self.CONTEXT_EXTRA):
-            ret = check(item, context)
-            if ret:
-                missing.append(ret)
-
-        if missing:
-            raise NotImplementedError(
-                f'The `context` is missing the following items:\n{missing}'
-            )
-
-        return context
-
-
 @dataclass()
 class NotificationBody:
     """Information needed to create a notification.
@@ -182,7 +96,7 @@ def trigger_notification(
         kwargs: Additional arguments to pass to the notification method
     """
     # Check if data is importing currently
-    if isImportingData() or isRebuildingData():
+    if isImportingData() or isRebuildingData():  # pragma: no cover
         return
 
     targets = kwargs.get('targets')
