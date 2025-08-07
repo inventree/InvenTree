@@ -5,6 +5,7 @@ import type { ReactNode } from 'react';
 import { ModelType } from '@lib/enums/ModelType';
 import { formatDecimal } from '@lib/functions/Formatting';
 import { getDetailUrl } from '@lib/functions/Navigation';
+import { shortenString } from '../../functions/tables';
 import { TableHoverCard } from '../../tables/TableHoverCard';
 import { ApiIcon } from '../items/ApiIcon';
 import {
@@ -21,6 +22,24 @@ export function RenderStockLocation(
 ): ReactNode {
   const { instance } = props;
 
+  const suffix: ReactNode = (
+    <Group gap='xs'>
+      <TableHoverCard
+        value=''
+        position='bottom-end'
+        zIndex={10000}
+        icon='sitemap'
+        title={t`Location`}
+        extra={[<Text>{instance.pathstring}</Text>]}
+      />
+    </Group>
+  );
+
+  const location = shortenString({
+    str: instance.pathstring,
+    len: 50
+  });
+
   return (
     <RenderInlineModel
       {...props}
@@ -31,8 +50,9 @@ export function RenderStockLocation(
           {instance.icon && <ApiIcon name={instance.icon} />}
         </>
       }
-      primary={instance.pathstring}
+      primary={location}
       secondary={instance.description}
+      suffix={suffix}
       url={
         props.link
           ? getDetailUrl(ModelType.stocklocation, instance.pk)
