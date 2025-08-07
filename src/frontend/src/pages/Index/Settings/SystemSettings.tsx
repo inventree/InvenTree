@@ -66,7 +66,8 @@ export default function SystemSettings() {
               'INVENTREE_DELETE_TASKS_DAYS',
               'INVENTREE_DELETE_ERRORS_DAYS',
               'INVENTREE_DELETE_NOTIFICATIONS_DAYS',
-              'INVENTREE_DELETE_EMAIL_DAYS'
+              'INVENTREE_DELETE_EMAIL_DAYS',
+              'INVENTREE_PROTECT_EMAIL_LOG'
             ]}
           />
         )
