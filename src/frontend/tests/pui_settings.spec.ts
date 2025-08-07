@@ -113,6 +113,13 @@ test('Settings - User', async ({ browser }) => {
   await loadTab(page, 'Reporting');
   await page.getByText('Inline report display').waitFor();
 
+  // Toggle boolean setting
+  await page
+    .getByLabel('setting-LABEL_INLINE-wrapper')
+    .locator('span')
+    .nth(1)
+    .click();
+
   await loadTab(page, 'Plugin Settings');
   await page
     .getByRole('button', { name: 'InvenTree Email Notifications' })
@@ -135,6 +142,31 @@ test('Settings - Global', async ({ browser, request }) => {
   });
 
   await loadTab(page, 'Server');
+
+  // edit some settings here
+  await page
+    .getByRole('button', { name: 'edit-setting-INVENTREE_COMPANY_NAME' })
+    .click();
+  await page
+    .getByRole('textbox', { name: 'text-field-value' })
+    .fill('some data');
+  await page.getByRole('button', { name: 'Cancel' }).click();
+
+  // Toggle a boolean setting
+  await page
+    .getByLabel('setting-INVENTREE_ANNOUNCE_ID-wrapper')
+    .locator('span')
+    .nth(1)
+    .click();
+  await page
+    .getByText('Setting INVENTREE_ANNOUNCE_ID updated successfully')
+    .waitFor();
+  await page
+    .getByLabel('setting-INVENTREE_ANNOUNCE_ID-wrapper')
+    .locator('span')
+    .nth(1)
+    .click();
+
   await loadTab(page, 'Authentication');
   await loadTab(page, 'Barcodes');
   await loadTab(page, 'Pricing');
