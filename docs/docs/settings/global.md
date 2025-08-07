@@ -41,6 +41,7 @@ Configuration of basic server settings:
 {{ globalsetting("INVENTREE_DELETE_ERRORS_DAYS") }}
 {{ globalsetting("INVENTREE_DELETE_NOTIFICATIONS_DAYS") }}
 {{ globalsetting("INVENTREE_DELETE_EMAIL_DAYS") }}
+{{ globalsetting("INVENTREE_PROTECT_EMAIL_LOG") }}
 
 
 ### Login Settings
@@ -211,7 +212,6 @@ Configuration of stock item options
 {{ globalsetting("STOCK_ENFORCE_BOM_INSTALLATION") }}
 {{ globalsetting("STOCK_ALLOW_OUT_OF_STOCK_TRANSFER") }}
 {{ globalsetting("TEST_STATION_DATA") }}
-{{ globalsetting("TEST_UPLOAD_CREATE_TEMPLATE") }}
 
 ### Build Orders
 

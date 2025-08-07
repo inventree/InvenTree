@@ -263,15 +263,18 @@ class StockItemTestResultSerializer(
         """Validate the test result data."""
         stock_item = data['stock_item']
         template = data.get('template', None)
-
-        # To support legacy API, we can accept a test name instead of a template
-        # In such a case, we use the test name to lookup the appropriate template
-        test_name = self.context['request'].data.get('test', None)
-
-        if not template and not test_name:
-            raise ValidationError(_('Template ID or test name must be provided'))
+        test_name = None
 
         if not template:
+            # To support legacy API, we can accept a test name instead of a template
+            # In such a case, we use the test name to lookup the appropriate template
+            request_data = self.context['request'].data
+
+            if type(request_data) is list and len(request_data) > 0:
+                request_data = request_data[0]
+
+            test_name = request_data.get('test', test_name)
+
             test_key = InvenTree.helpers.generateTestKey(test_name)
 
             ancestors = stock_item.part.get_ancestors(include_self=True)
@@ -282,16 +285,8 @@ class StockItemTestResultSerializer(
             ).first():
                 data['template'] = template
 
-            elif get_global_setting('TEST_UPLOAD_CREATE_TEMPLATE', False):
-                logger.debug(
-                    "No matching test template found for '%s' - creating a new template",
-                    test_name,
-                )
-
-                # Create a new test template based on the provided data
-                data['template'] = part_models.PartTestTemplate.objects.create(
-                    part=stock_item.part, test_name=test_name
-                )
+        if not template:
+            raise ValidationError(_('Template ID or test name must be provided'))
 
         data = super().validate(data)
 

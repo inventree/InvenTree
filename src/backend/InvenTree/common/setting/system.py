@@ -340,6 +340,12 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'units': _('days'),
         'validator': [int, MinValueValidator(7)],
     },
+    'INVENTREE_PROTECT_EMAIL_LOG': {
+        'name': _('Protect Email Log'),
+        'description': _('Prevent deletion of email log entries'),
+        'default': False,
+        'validator': bool,
+    },
     'BARCODE_ENABLE': {
         'name': _('Barcode Support'),
         'description': _('Enable barcode scanner support in the web interface'),
@@ -1122,14 +1128,6 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'name': _('Enable Test Station Data'),
         'description': _('Enable test station data collection for test results'),
         'default': False,
-        'validator': bool,
-    },
-    'TEST_UPLOAD_CREATE_TEMPLATE': {
-        'name': _('Create Template on Upload'),
-        'description': _(
-            'Create a new test template when uploading test data which does not match an existing template'
-        ),
-        'default': True,
         'validator': bool,
     },
 }
