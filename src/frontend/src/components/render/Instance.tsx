@@ -1,5 +1,14 @@
 import { t } from '@lingui/core/macro';
-import { Alert, Anchor, Group, Skeleton, Space, Text } from '@mantine/core';
+import {
+  Alert,
+  Anchor,
+  Group,
+  type MantineSize,
+  Paper,
+  Skeleton,
+  Space,
+  Text
+} from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useCallback } from 'react';
 
@@ -158,8 +167,8 @@ export function RenderInlineModel({
   showSecondary = true,
   tooltip
 }: Readonly<{
-  primary: string;
-  secondary?: string;
+  primary: ReactNode;
+  secondary?: ReactNode;
   showSecondary?: boolean;
   prefix?: ReactNode;
   suffix?: ReactNode;
@@ -180,15 +189,23 @@ export function RenderInlineModel({
     [url, navigate]
   );
 
-  const primaryText = shortenString({
-    str: primary,
-    len: 50
-  });
+  if (typeof primary === 'string') {
+    primary = shortenString({
+      str: primary,
+      len: 50
+    });
 
-  const secondaryText = shortenString({
-    str: secondary,
-    len: 75
-  });
+    primary = <Text size='sm'>{primary}</Text>;
+  }
+
+  if (typeof secondary === 'string') {
+    secondary = shortenString({
+      str: secondary,
+      len: 75
+    });
+
+    secondary = <InlineSecondaryBadge text={secondary} />;
+  }
 
   return (
     <Group gap='xs' justify='space-between' wrap='nowrap' title={tooltip}>
@@ -197,12 +214,12 @@ export function RenderInlineModel({
         {image && <Thumbnail src={image} size={18} />}
         {url ? (
           <Anchor href='' onClick={(event: any) => onClick(event)}>
-            <Text size='sm'>{primaryText}</Text>
+            {primary}
           </Anchor>
         ) : (
-          <Text size='sm'>{primaryText}</Text>
+          primary
         )}
-        {showSecondary && secondary && <Text size='xs'>{secondaryText}</Text>}
+        {showSecondary && secondary && secondary}
       </Group>
       {suffix && (
         <>
@@ -221,4 +238,30 @@ export function UnknownRenderer({
 }>): ReactNode {
   const model_name = model ? model.toString() : 'undefined';
   return <Alert color='red' title={t`Unknown model: ${model_name}`} />;
+}
+
+/**
+ * Render a "badge like" component with a text label
+ */
+export function InlineSecondaryBadge({
+  text,
+  title,
+  size = 'xs'
+}: {
+  text: string;
+  title?: string;
+  size?: MantineSize;
+}): ReactNode {
+  return (
+    <Paper p={2} withBorder style={{ backgroundColor: 'transparent' }}>
+      <Group gap='xs'>
+        {title && (
+          <Text size={size} title={title}>
+            {title}:
+          </Text>
+        )}
+        <Text size={size ?? 'xs'}>{text}</Text>
+      </Group>
+    </Paper>
+  );
 }
