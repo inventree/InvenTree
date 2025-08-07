@@ -1893,33 +1893,30 @@ class StockTestResultTest(StockAPITestCase):
         """Test creation of a new test result."""
         url = self.get_url()
 
-        response = self.client.get(url)
-        n = len(response.data)
+        item = StockItem.objects.get(pk=105)
+        part = item.part
+
+        # Create a new test template for this part
+        test_template = PartTestTemplate.objects.create(
+            part=part,
+            test_name='Checked Steam Valve',
+            description='Test to check the steam valve pressure',
+        )
 
         # Test upload using test name (legacy method)
-        # Note that a new test template will be created
         data = {
             'stock_item': 105,
-            'test': 'Checked Steam Valve',
+            'test': 'checkedsteamvalve',
             'result': False,
             'value': '150kPa',
             'notes': 'I guess there was just too much pressure?',
         }
 
-        # Check that a new test template has been created
-        test_template = PartTestTemplate.objects.get(key='checkedsteamvalve')
+        data = self.post(url, data, expected_code=201).data
 
-        response = self.client.get(url)
-        self.assertEqual(len(response.data), n + 1)
-
-        # And read out again
-        response = self.client.get(url, data={'test': 'Checked Steam Valve'})
-
-        self.assertEqual(len(response.data), 1)
-
-        test = response.data[0]
-        self.assertEqual(test['value'], '150kPa')
-        self.assertEqual(test['user'], self.user.pk)
+        self.assertEqual(data['result'], False)
+        self.assertEqual(data['stock_item'], 105)
+        self.assertEqual(data['template'], test_template.pk)
 
         # Test upload using template reference
         data = {
@@ -1931,7 +1928,7 @@ class StockTestResultTest(StockAPITestCase):
 
         response = self.post(url, data, expected_code=201)
 
-        # Check that a new test template has been created
+        # Check that a new test result has been created
         self.assertEqual(test_template.test_results.all().count(), 2)
 
         # List test results against the template
