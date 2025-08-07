@@ -1,7 +1,7 @@
 """Machine registry."""
 
 import functools
-from typing import Union, cast
+from typing import Optional, Union, cast
 from uuid import UUID
 
 from django.core.cache import cache
@@ -28,6 +28,8 @@ def machine_registry_entrypoint(method):
         """Wrapper function to ensure the machine registry is up-to-date."""
         # Ensure the plugin registry is up-to-date
         from plugin import registry as plg_registry
+
+        print('machine_registry_entrypoint:', method.__name__)  # Debugging line
 
         if plg_registry.check_reload():
             # The plugin registry changed - update the machine registry too
@@ -150,6 +152,7 @@ class MachineRegistry(
 
         logger.debug('Found %s machine drivers', len(self.drivers.keys()))
 
+    @machine_registry_entrypoint
     def get_driver_instance(self, slug: str):
         """Return or create a driver instance if needed."""
         if slug not in self.driver_instances:
@@ -193,6 +196,7 @@ class MachineRegistry(
         self.machines = {}
         self.load_machines()
 
+    @machine_registry_entrypoint
     def add_machine(self, machine_config, initialize=True, update_registry_hash=True):
         """Add a machine to the machine registry."""
         machine_type = self.machine_types.get(machine_config.machine_type, None)
@@ -209,6 +213,7 @@ class MachineRegistry(
         if update_registry_hash:
             self._update_registry_hash()
 
+    @machine_registry_entrypoint
     def update_machine(
         self, old_machine_state, machine_config, update_registry_hash=True
     ):
@@ -219,10 +224,12 @@ class MachineRegistry(
             if update_registry_hash:
                 self._update_registry_hash()
 
+    @machine_registry_entrypoint
     def restart_machine(self, machine):
         """Restart a machine."""
         machine.restart()
 
+    @machine_registry_entrypoint
     def remove_machine(self, machine: BaseMachineType):
         """Remove a machine from the registry."""
         self.machines.pop(str(machine.pk), None)
@@ -282,17 +289,39 @@ class MachineRegistry(
         return list(filter(filter_machine, self.machines.values()))
 
     @machine_registry_entrypoint
+    def get_machine_types(self):
+        """Get all machine types."""
+        return list(self.machine_types.values())
+
+    @machine_registry_entrypoint
     def get_machine(self, pk: Union[str, UUID]):
         """Get machine from registry by pk."""
         return self.machines.get(str(pk), None)
 
     @machine_registry_entrypoint
-    def get_drivers(self, machine_type: str):
-        """Get all drivers for a specific machine type."""
+    def get_driver_types(self, machine_type: Optional[str] = None):
+        """Return a list of all registered driver types.
+
+        Arguments:
+            machine_type: Optional machine type to filter drivers by their machine type
+        """
+        return [
+            driver
+            for driver in self.drivers.values()
+            if machine_type is None or driver.machine_type == machine_type
+        ]
+
+    @machine_registry_entrypoint
+    def get_drivers(self, machine_type: Optional[str] = None):
+        """Get all drivers for a specific machine type.
+
+        Arguments:
+            machine_type: Optional machine type to filter drivers by their machine type
+        """
         return [
             driver
             for driver in self.driver_instances.values()
-            if driver.machine_type == machine_type
+            if machine_type is None or driver.machine_type == machine_type
         ]
 
     def _calculate_registry_hash(self):
