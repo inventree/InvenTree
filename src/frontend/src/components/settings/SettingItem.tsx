@@ -125,6 +125,9 @@ function SettingValue({
           disabled={setting.read_only}
           checked={setting.value.toString().toLowerCase() == 'true'}
           onChange={toggleSetting}
+          wrapperProps={{
+            'aria-label': `setting-${setting.key}-wrapper`
+          }}
           style={{
             paddingRight: '20px'
           }}
