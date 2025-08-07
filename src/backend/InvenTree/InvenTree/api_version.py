@@ -1,11 +1,15 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 381
+INVENTREE_API_VERSION = 382
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v382 -> 2025-08-07 : https://github.com/inventree/InvenTree/pull/10146
+    - Adds ability to "bulk create" test results via the API
+    - Removes legacy functionality to auto-create test result templates based on provided test names
 
 v381 -> 2025-08-06 : https://github.com/inventree/InvenTree/pull/10132
     - Refactor the "return stock item" API endpoint to align with other stock adjustment actions

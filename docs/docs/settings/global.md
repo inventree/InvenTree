@@ -211,7 +211,6 @@ Configuration of stock item options
 {{ globalsetting("STOCK_ENFORCE_BOM_INSTALLATION") }}
 {{ globalsetting("STOCK_ALLOW_OUT_OF_STOCK_TRANSFER") }}
 {{ globalsetting("TEST_STATION_DATA") }}
-{{ globalsetting("TEST_UPLOAD_CREATE_TEMPLATE") }}
 
 ### Build Orders
 
