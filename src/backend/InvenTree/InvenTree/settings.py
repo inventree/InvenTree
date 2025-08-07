@@ -1546,8 +1546,6 @@ STORAGE_TARGET = get_setting(
 )
 STORAGE_OPTIONS = {}
 if STORAGE_TARGET == 's3':
-    from botocore.config import Config
-
     s3_bucket = get_setting(
         'INVENTREE_S3_BUCKET_NAME', 'storage.s3.bucket_name', None, typecast=str
     )
@@ -1580,12 +1578,12 @@ if STORAGE_TARGET == 's3':
             'INVENTREE_S3_VERIFY_SSL', 'storage.s3.verify_ssl', True
         ),
         'location': s3_location,
-        'client_config': Config(
-            request_checksum_calculation='when_required',
-            response_checksum_validation='when_required',
+        'file_overwrite': get_boolean_setting(
+            'INVENTREE_S3_OVERWRITE', 'storage.s3.overwrite', True
         ),
-        'file_overwrite': False,
-        'addressing_style': 'virtual',
+        'addressing_style': 'virtual'
+        if get_boolean_setting('INVENTREE_S3_VIRTUAL', 'storage.s3.virtual', False)
+        else 'path',
         'object_parameters': {'CacheControl': 'public,max-age=86400'},
     }
 elif STORAGE_TARGET == 'sftp':

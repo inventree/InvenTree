@@ -237,11 +237,13 @@ storage:
 #     access_key: 'abc123-key'
 #     secret_key: 'abc123-secret'
 #     bucket_name: 'my-bucket'
-#     default_acl: private
 #     region_name: 'fsn1'
 #     endpoint_url: 'https://fsn1.your-objectstorage.com'
-#     verify_ssl: true
 #     location: 'inventree-server_subdir'
+#     default_acl: private
+#     verify_ssl: true
+#     overwrite: true
+#     virtual: true
   # sftp:
   #   host: 'sftp://ftp-target.example.org:22'
   #   uid: 1000

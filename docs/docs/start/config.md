@@ -391,13 +391,16 @@ It is also possible to use alternative storage backends for static and media fil
 | *Not specified* |
 | INVENTREE_S3_BUCKET_NAME | storage.s3.bucket_name | Bucket name, required by most providers |
 | *Not specified* |
-| INVENTREE_S3_DEFAULT_ACL | storage.s3.default_acl | Default ACL for uploaded files, defaults to provider default if not set | *Not specified* |
 | INVENTREE_S3_REGION_NAME | storage.s3.region_name | S3 region name |
 | *Not specified* |
 | INVENTREE_S3_ENDPOINT_URL | storage.s3.endpoint_url | Custom S3 endpoint URL, defaults to AWS endpoints if not set |
 | *Not specified* |
-| INVENTREE_S3_VERIFY_SSL | storage.s3.verify_ssl | Verify SSL certificate for S3 endpoint | True |
 | INVENTREE_S3_LOCATION | storage.s3.location | Sub-Location that should be used | inventree-server |
+| INVENTREE_S3_DEFAULT_ACL | storage.s3.default_acl | Default ACL for uploaded files, defaults to provider default if not set | *Not specified* |
+| INVENTREE_S3_VERIFY_SSL | storage.s3.verify_ssl | Verify SSL certificate for S3 endpoint | True |
+| INVENTREE_S3_OVERWRITE | storage.s3.overwrite | Overwrite existing files in S3 bucket | False |
+| INVENTREE_S3_VIRTUAL | storage.s3.virtual | Use virtual addressing style - by default False -> `path` style, `virtual` style if True | False |
+
 | INVENTREE_SFTP_HOST | storage.sftp.host | SFTP host | *Not specified* |
 | INVENTREE_SFTP_PARAMS | storage.sftp.params | SFTP connection parameters, see https://docs.paramiko.org/en/latest/api/client.html#paramiko.client.SSHClient.connect; e.g. `{'port': 22, 'user': 'usr', 'password': 'pwd'}` | *Not specified* |
 | INVENTREE_SFTP_UID | storage.sftp.uid | SFTP user ID - not required | *Not specified* |
