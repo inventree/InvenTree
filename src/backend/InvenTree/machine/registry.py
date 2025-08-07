@@ -1,7 +1,7 @@
 """Machine registry."""
 
 import functools
-from typing import Optional, Union, cast
+from typing import Any, Optional, Union, cast
 from uuid import UUID
 
 from django.core.cache import cache
@@ -10,38 +10,76 @@ from django.db.utils import IntegrityError, OperationalError, ProgrammingError
 import structlog
 
 from common.settings import get_global_setting, set_global_setting
+from InvenTree.exceptions import log_error
 from InvenTree.helpers_mixin import get_shared_class_instance_state_mixin
 from machine.machine_type import BaseDriver, BaseMachineType
 
 logger = structlog.get_logger('inventree')
 
 
-def machine_registry_entrypoint(method):
+def machine_registry_entrypoint(
+    check_reload: bool = True, check_ready: bool = True, default_value: Any = None
+) -> Any:
     """Decorator for any method which should be registered as a machine registry entrypoint.
 
     This decorator ensures that the plugin registry is up-to-date,
     and reloads the machine registry if necessary.
     """
 
-    @functools.wraps(method)
-    def wrapper(self, *args, **kwargs):
-        """Wrapper function to ensure the machine registry is up-to-date."""
-        # Ensure the plugin registry is up-to-date
-        from plugin import registry as plg_registry
+    def decorator(method):
+        """Internal decorator for the machine registry entrypoint."""
 
-        if plg_registry.check_reload():
-            # The plugin registry changed - update the machine registry too
-            logger.info('Plugin registry changed - reloading machine registry')
-            self.reload_machines()
+        @functools.wraps(method)
+        def wrapper(self, *args, **kwargs):
+            """Wrapper function to ensure the machine registry is up-to-date."""
+            # Ensure the plugin registry is up-to-date
+            from plugin import registry as plg_registry
 
-        else:
-            # Check if the machine registry needs to be reloaded
-            self._check_reload()
+            logger.debug("machine_registry_entrypoint: '%s'", method.__name__)
 
-        # Call the original method
-        return method(self, *args, **kwargs)
+            if check_ready and not self.ready:
+                logger.warning(
+                    "Machine registry is not ready - cannot call method '%s'",
+                    method.__name__,
+                )
 
-    return wrapper
+                return default_value
+
+            do_reload = False
+
+            # Avoid recursive reloads
+            if not getattr(self, '__checking_reload', False):
+                do_reload = True
+                self.__checking_reload = True
+
+                if check_reload:
+                    if plg_registry.check_reload():
+                        # The plugin registry changed - update the machine registry too
+                        logger.info(
+                            'Plugin registry changed - reloading machine registry'
+                        )
+                        self.reload_machines()
+
+                    else:
+                        # Check if the machine registry needs to be reloaded
+                        self._check_reload()
+
+            # Call the original method
+            try:
+                result = method(self, *args, **kwargs)
+            except Exception:
+                log_error(method.__name__, scope='machine_registry')
+                result = default_value
+            finally:
+                # If we reloaded the registry, we need to update the registry hash
+                if do_reload:
+                    self._update_registry_hash()
+
+            return result
+
+        return wrapper
+
+    return decorator
 
 
 class MachineRegistry(
@@ -61,6 +99,8 @@ class MachineRegistry(
 
         self.base_drivers: list[type[BaseDriver]] = []
 
+        self.ready: bool = False
+
         # Keep an internal hash of the machine registry state
         self._hash = None
 
@@ -69,15 +109,24 @@ class MachineRegistry(
         """List of registry errors."""
         return cast(list[Union[str, Exception]], self.get_shared_state('errors', []))
 
+    @property
+    def is_ready(self) -> bool:
+        """Check if the machine registry is ready."""
+        return self.ready
+
     def handle_error(self, error: Union[Exception, str]):
         """Helper function for capturing errors with the machine registry."""
         self.set_shared_state('errors', [*self.errors, error])
 
+    @machine_registry_entrypoint(check_reload=False, check_ready=False)
     def initialize(self, main: bool = False):
         """Initialize the machine registry."""
         # clear cache for machines (only needed for global redis cache)
+
         if main and hasattr(cache, 'delete_pattern'):  # pragma: no cover
             cache.delete_pattern('machine:*')
+
+        self.ready = True
 
         self.discover_machine_types()
         self.discover_drivers()
@@ -161,6 +210,7 @@ class MachineRegistry(
 
         return self.driver_instances.get(slug, None)
 
+    @machine_registry_entrypoint()
     def load_machines(self, main: bool = False):
         """Load all machines defined in the database into the machine registry."""
         # Imports need to be in this level to prevent early db model imports
@@ -193,6 +243,7 @@ class MachineRegistry(
         self.machines = {}
         self.load_machines()
 
+    @machine_registry_entrypoint()
     def add_machine(self, machine_config, initialize=True, update_registry_hash=True):
         """Add a machine to the machine registry."""
         machine_type = self.machine_types.get(machine_config.machine_type, None)
@@ -209,6 +260,7 @@ class MachineRegistry(
         if update_registry_hash:
             self._update_registry_hash()
 
+    @machine_registry_entrypoint()
     def update_machine(
         self, old_machine_state, machine_config, update_registry_hash=True
     ):
@@ -219,16 +271,18 @@ class MachineRegistry(
             if update_registry_hash:
                 self._update_registry_hash()
 
+    @machine_registry_entrypoint()
     def restart_machine(self, machine):
         """Restart a machine."""
         machine.restart()
 
+    @machine_registry_entrypoint()
     def remove_machine(self, machine: BaseMachineType):
         """Remove a machine from the registry."""
         self.machines.pop(str(machine.pk), None)
         self._update_registry_hash()
 
-    @machine_registry_entrypoint
+    @machine_registry_entrypoint(default_value=False)
     def get_machines(self, **kwargs):
         """Get loaded machines from registry (By default only initialized machines).
 
@@ -281,17 +335,17 @@ class MachineRegistry(
 
         return list(filter(filter_machine, self.machines.values()))
 
-    @machine_registry_entrypoint
+    @machine_registry_entrypoint(default_value=[])
     def get_machine_types(self):
         """Get all machine types."""
         return list(self.machine_types.values())
 
-    @machine_registry_entrypoint
+    @machine_registry_entrypoint()
     def get_machine(self, pk: Union[str, UUID]):
         """Get machine from registry by pk."""
         return self.machines.get(str(pk), None)
 
-    @machine_registry_entrypoint
+    @machine_registry_entrypoint(default_value=[])
     def get_driver_types(self, machine_type: Optional[str] = None):
         """Return a list of all registered driver types.
 
@@ -304,7 +358,7 @@ class MachineRegistry(
             if machine_type is None or driver.machine_type == machine_type
         ]
 
-    @machine_registry_entrypoint
+    @machine_registry_entrypoint(default_value=[])
     def get_drivers(self, machine_type: Optional[str] = None):
         """Get all drivers for a specific machine type.
 
@@ -375,10 +429,10 @@ class MachineRegistry(
             except Exception as exc:
                 logger.exception('Failed to update machine registry hash: %s', str(exc))
 
-    @machine_registry_entrypoint
+    @machine_registry_entrypoint()
     def call_machine_function(
         self, machine_id: str, function_name: str, *args, **kwargs
-    ):
+    ) -> Any:
         """Call a named function against a machine instance.
 
         Arguments:
