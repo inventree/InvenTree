@@ -123,7 +123,7 @@ function SettingValue({
           radius='lg'
           aria-label={`toggle-setting-${setting.key}`}
           disabled={setting.read_only}
-          checked={setting.value.toLowerCase() == 'true'}
+          checked={setting.value.toString().toLowerCase() == 'true'}
           onChange={toggleSetting}
           style={{
             paddingRight: '20px'
