@@ -1939,6 +1939,43 @@ class StockTestResultTest(StockAPITestCase):
         for item in response.data:
             self.assertEqual(item['template'], test_template.pk)
 
+    def test_bulk_create(self):
+        """Test bulk creation of test results against the API."""
+        url = self.get_url()
+
+        test_template = PartTestTemplate.objects.get(pk=9)
+        part = test_template.part
+
+        N = test_template.test_results.count()
+
+        location = StockLocation.objects.filter(structural=False).first()
+
+        stock_items = [
+            StockItem.objects.create(part=part, quantity=1, location=location)
+            for _ in range(10)
+        ]
+
+        # Generate data to bulk-create test results
+        test_data = [
+            {
+                'stock_item': item.pk,
+                'template': test_template.pk,
+                'result': True,
+                'value': f'Test value: {item.pk}',
+            }
+            for item in stock_items
+        ]
+
+        data = self.post(url, data=test_data, expected_code=201).data
+
+        self.assertEqual(len(data), 10)
+        self.assertEqual(test_template.test_results.count(), N + 10)
+
+        for item in data:
+            item_id = item['stock_item']
+            self.assertEqual(item['template'], test_template.pk)
+            self.assertEqual(item['value'], f'Test value: {item_id}')
+
     def test_post_bitmap(self):
         """2021-08-25.
 
