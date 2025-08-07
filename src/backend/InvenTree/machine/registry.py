@@ -31,7 +31,12 @@ def machine_registry_entrypoint(method):
 
         if plg_registry.check_reload():
             # The plugin registry changed - update the machine registry too
+            logger.info('Plugin registry changed - reloading machine registry')
             self.reload_machines()
+
+        else:
+            # Check if the machine registry needs to be reloaded
+            self._check_reload()
 
         # Call the original method
         return method(self, *args, **kwargs)
@@ -223,6 +228,7 @@ class MachineRegistry(
         self.machines.pop(str(machine.pk), None)
         self._update_registry_hash()
 
+    @machine_registry_entrypoint
     def get_machines(self, **kwargs):
         """Get loaded machines from registry (By default only initialized machines).
 
@@ -234,8 +240,6 @@ class MachineRegistry(
             active: (bool)
             base_driver: base driver (class)
         """
-        self._check_reload()
-
         allowed_fields = [
             'name',
             'machine_type',
@@ -277,11 +281,12 @@ class MachineRegistry(
 
         return list(filter(filter_machine, self.machines.values()))
 
+    @machine_registry_entrypoint
     def get_machine(self, pk: Union[str, UUID]):
         """Get machine from registry by pk."""
-        self._check_reload()
         return self.machines.get(str(pk), None)
 
+    @machine_registry_entrypoint
     def get_drivers(self, machine_type: str):
         """Get all drivers for a specific machine type."""
         return [
@@ -348,6 +353,7 @@ class MachineRegistry(
             except Exception as exc:
                 logger.exception('Failed to update machine registry hash: %s', str(exc))
 
+    @machine_registry_entrypoint
     def call_machine_function(
         self, machine_id: str, function_name: str, *args, **kwargs
     ):
@@ -360,8 +366,6 @@ class MachineRegistry(
         logger.info('call_machine_function: %s -> %s', machine_id, function_name)
 
         raise_error = kwargs.pop('raise_error', True)
-
-        self._check_reload()
 
         # Fetch the machine instance based on the provided UUID
         machine = self.get_machine(machine_id)
