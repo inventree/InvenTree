@@ -12,7 +12,7 @@ import type { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import type { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableColumn } from '@lib/types/Tables';
-import { formatCurrency, formatDecimal } from '../../defaults/formatters';
+import { formatCurrency } from '../../defaults/formatters';
 import { extraLineItemFields } from '../../forms/CommonForms';
 import {
   useCreateApiFormModal,
@@ -21,7 +21,12 @@ import {
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import { DescriptionColumn, LinkColumn, NoteColumn } from '../ColumnRenderers';
+import {
+  DecimalColumn,
+  DescriptionColumn,
+  LinkColumn,
+  NoteColumn
+} from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 export default function ExtraLineItemTable({
@@ -47,11 +52,10 @@ export default function ExtraLineItemTable({
         switchable: false
       },
       DescriptionColumn({}),
-      {
+      DecimalColumn({
         accessor: 'quantity',
-        switchable: false,
-        render: (record: any) => formatDecimal(record.quantity)
-      },
+        switchable: false
+      }),
       {
         accessor: 'price',
         title: t`Unit Price`,

@@ -145,6 +145,12 @@ class MachineSetting(common.models.BaseInvenTreeSetting):
         MACHINE = 'M', _('Machine')
         DRIVER = 'D', _('Driver')
 
+    def to_native_value(self):
+        """Return the 'native' value of this setting."""
+        return self.__class__.get_setting(
+            self.key, machine_config=self.machine_config, config_type=self.config_type
+        )
+
     machine_config = models.ForeignKey(
         MachineConfig,
         related_name='settings',

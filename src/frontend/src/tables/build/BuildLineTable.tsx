@@ -42,6 +42,7 @@ import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import {
   BooleanColumn,
+  DecimalColumn,
   DescriptionColumn,
   LocationColumn,
   PartColumn
@@ -445,6 +446,26 @@ export default function BuildLineTable({
         switchable: false,
         render: renderAvailableColumn
       },
+      {
+        accessor: 'in_production',
+        render: (record: any) => {
+          if (record.scheduled_to_build > 0) {
+            return (
+              <ProgressBar
+                progressLabel={true}
+                value={record.in_production}
+                maximum={record.scheduled_to_build}
+              />
+            );
+          } else {
+            return record.part_detail?.is_assembly ? 0 : '-';
+          }
+        }
+      },
+      DecimalColumn({
+        accessor: 'on_order',
+        defaultVisible: false
+      }),
       {
         accessor: 'allocated',
         switchable: false,

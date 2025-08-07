@@ -8,6 +8,7 @@ class StockEvents(BaseEventEnum):
 
     # StockItem events
     ITEM_ASSIGNED_TO_CUSTOMER = 'stockitem.assignedtocustomer'
+    ITEM_RETURNED_TO_STOCK = 'stockitem.returnedtostock'
     ITEM_RETURNED_FROM_CUSTOMER = 'stockitem.returnedfromcustomer'
     ITEM_SPLIT = 'stockitem.split'
     ITEM_MOVED = 'stockitem.moved'

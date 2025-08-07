@@ -288,7 +288,7 @@ class BaseInvenTreeSetting(models.Model):
 
         try:
             cache.set(key, self, timeout=3600)
-        except Exception:
+        except Exception:  # pragma: no cover
             pass
 
     @classmethod
@@ -558,7 +558,7 @@ class BaseInvenTreeSetting(models.Model):
             or InvenTree.ready.isRunningMigrations()
             or InvenTree.ready.isRebuildingData()
             or InvenTree.ready.isRunningBackup()
-        ):
+        ):  # pragma: no cover
             create = False
             access_global_cache = False
 
@@ -706,7 +706,7 @@ class BaseInvenTreeSetting(models.Model):
             or InvenTree.ready.isRunningMigrations()
             or InvenTree.ready.isRebuildingData()
             or InvenTree.ready.isRunningBackup()
-        ):
+        ):  # pragma: no cover
             return
 
         attempts = int(kwargs.get('attempts', 3))
@@ -731,7 +731,7 @@ class BaseInvenTreeSetting(models.Model):
                 logger.warning("Database is locked, cannot set setting '%s'", key)
             # Likely the DB is locked - not much we can do here
             return
-        except Exception as exc:
+        except Exception as exc:  # pragma: no cover
             logger.exception(
                 "Error setting setting '%s' for %s: %s", key, str(cls), str(type(exc))
             )
@@ -766,7 +766,7 @@ class BaseInvenTreeSetting(models.Model):
         except (OperationalError, ProgrammingError):
             logger.warning("Database is locked, cannot set setting '%s'", key)
             # Likely the DB is locked - not much we can do here
-        except Exception as exc:
+        except Exception as exc:  # pragma: no cover
             # Some other error
             logger.exception(
                 "Error setting setting '%s' for %s: %s", key, str(cls), str(type(exc))
@@ -814,13 +814,13 @@ class BaseInvenTreeSetting(models.Model):
 
         # Encode as native values
         if self.is_int():
-            self.value = self.as_int()
+            self.value = self.as_int(raise_error=True)
 
         elif self.is_bool():
             self.value = self.as_bool()
 
         elif self.is_float():
-            self.value = self.as_float()
+            self.value = self.as_float(raise_error=True)
 
         validator = self.__class__.get_setting_validator(
             self.key, **self.get_filters_for_instance()
@@ -1120,7 +1120,7 @@ class BaseInvenTreeSetting(models.Model):
 
         return False
 
-    def as_float(self):
+    def as_float(self, raise_error: bool = False) -> float:
         """Return the value of this setting converted to a float value.
 
         If an error occurs, return the default value
@@ -1128,6 +1128,8 @@ class BaseInvenTreeSetting(models.Model):
         try:
             value = float(self.value)
         except (ValueError, TypeError):
+            if raise_error:
+                raise ValidationError('Provided value is not a valid float')
             value = self.default_value
 
         return value
@@ -1153,7 +1155,7 @@ class BaseInvenTreeSetting(models.Model):
 
         return False
 
-    def as_int(self):
+    def as_int(self, raise_error: bool = False) -> int:
         """Return the value of this setting converted to a boolean value.
 
         If an error occurs, return the default value
@@ -1161,6 +1163,8 @@ class BaseInvenTreeSetting(models.Model):
         try:
             value = int(self.value)
         except (ValueError, TypeError):
+            if raise_error:
+                raise ValidationError('Provided value is not a valid integer')
             value = self.default_value
 
         return value
