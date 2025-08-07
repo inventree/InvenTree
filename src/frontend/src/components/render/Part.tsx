@@ -1,10 +1,12 @@
 import { t } from '@lingui/core/macro';
-import { Badge } from '@mantine/core';
+import { Badge, Group, Text } from '@mantine/core';
 import type { ReactNode } from 'react';
 
 import { ModelType } from '@lib/enums/ModelType';
 import { formatDecimal } from '@lib/functions/Formatting';
 import { getDetailUrl } from '@lib/functions/Navigation';
+import { shortenString } from '../../functions/tables';
+import { TableHoverCard } from '../../tables/TableHoverCard';
 import { ApiIcon } from '../items/ApiIcon';
 import { type InstanceRenderInterface, RenderInlineModel } from './Instance';
 
@@ -58,6 +60,24 @@ export function RenderPartCategory(
 ): ReactNode {
   const { instance } = props;
 
+  const suffix: ReactNode = (
+    <Group gap='xs'>
+      <TableHoverCard
+        value=''
+        position='bottom-end'
+        zIndex={10000}
+        icon='sitemap'
+        title={t`Category`}
+        extra={[<Text>{instance.pathstring}</Text>]}
+      />
+    </Group>
+  );
+
+  const category = shortenString({
+    str: instance.pathstring,
+    len: 50
+  });
+
   return (
     <RenderInlineModel
       {...props}
@@ -68,8 +88,9 @@ export function RenderPartCategory(
           {instance.icon && <ApiIcon name={instance.icon} />}
         </>
       }
-      primary={instance.pathstring}
+      primary={category}
       secondary={instance.description}
+      suffix={suffix}
       url={
         props.link
           ? getDetailUrl(ModelType.partcategory, instance.pk)
