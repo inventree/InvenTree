@@ -487,9 +487,7 @@ export function MachineListTable({
         accessor: 'status',
         sortable: false,
         render: (record) => {
-          const renderer = TableStatusRenderer(
-            `MachineStatus__${record.status_model}` as any
-          );
+          const renderer = TableStatusRenderer(`${record.status_model}` as any);
           if (renderer && record.status !== -1) {
             return renderer(record);
           }
