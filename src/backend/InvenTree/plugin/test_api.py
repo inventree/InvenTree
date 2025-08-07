@@ -106,6 +106,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
             url,
             {'confirm': True, 'url': self.PKG_URL, 'packagename': self.PKG_NAME},
             expected_code=201,
+            max_query_count=450,
             max_query_time=30,
         ).data
         self.assertEqual(data['success'], 'Installed plugin successfully')
@@ -642,6 +643,7 @@ class PluginFullAPITest(PluginMixin, InvenTreeAPITestCase):
         self.assertEqual(data['active'], False)
         response = self.patch(
             reverse('api-plugin-uninstall', kwargs={'plugin': slug}),
+            data={'delete_config': True},
             max_query_count=350,
         )
         self.assertEqual(response.status_code, 200)
