@@ -265,19 +265,16 @@ class StockItemTestResultSerializer(
         template = data.get('template', None)
         test_name = None
 
-        # To support legacy API, we can accept a test name instead of a template
-        # In such a case, we use the test name to lookup the appropriate template
-        data = self.context['request'].data
-
-        if type(data) is dict:
-            test_name = data.get('test')
-        elif type(data) is list and len(data) > 0:
-            test_name = data[0].get('test')
-
-        if not template and not test_name:
-            raise ValidationError(_('Template ID or test name must be provided'))
-
         if not template:
+            # To support legacy API, we can accept a test name instead of a template
+            # In such a case, we use the test name to lookup the appropriate template
+            request_data = self.context['request'].data
+
+            if type(request_data) is list and len(request_data) > 0:
+                request_data = request_data[0]
+
+            test_name = request_data.get('test', test_name)
+
             test_key = InvenTree.helpers.generateTestKey(test_name)
 
             ancestors = stock_item.part.get_ancestors(include_self=True)
@@ -287,6 +284,9 @@ class StockItemTestResultSerializer(
                 part__tree_id=stock_item.part.tree_id, part__in=ancestors, key=test_key
             ).first():
                 data['template'] = template
+
+        if not template:
+            raise ValidationError(_('Template ID or test name must be provided'))
 
         data = super().validate(data)
 

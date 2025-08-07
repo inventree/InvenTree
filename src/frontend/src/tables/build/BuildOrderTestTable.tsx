@@ -91,7 +91,7 @@ export default function BuildOrderTestTable({
   });
 
   const multipleTestResultFields: ApiFormFieldSet = useMemo(() => {
-    const fields: ApiFormFieldSet = testResultFields;
+    const fields: ApiFormFieldSet = { ...testResultFields };
 
     // Do not allow attachment for multiple test results
     delete fields.attachment;
