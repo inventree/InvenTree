@@ -285,6 +285,10 @@ class PluginSetting(common.models.BaseInvenTreeSetting):
 
         unique_together = [('plugin', 'key')]
 
+    def to_native_value(self):
+        """Return the 'native' value of this setting."""
+        return self.__class__.get_setting(self.key, plugin=self.plugin)
+
     plugin = models.ForeignKey(
         PluginConfig,
         related_name='settings',

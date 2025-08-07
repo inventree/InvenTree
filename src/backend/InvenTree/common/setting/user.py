@@ -212,10 +212,8 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         ],
     },
     'DISPLAY_STOCKTAKE_TAB': {
-        'name': _('Part Stocktake'),
-        'description': _(
-            'Display part stocktake information (if stocktake functionality is enabled)'
-        ),
+        'name': _('Show Stock History'),
+        'description': _('Display stock history information in the part detail page'),
         'default': True,
         'validator': bool,
     },

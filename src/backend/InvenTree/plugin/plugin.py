@@ -332,7 +332,8 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
         for name in child_methods:
             if name in final_methods:
                 raise TypeError(
-                    f"Plugin '{cls.__name__}' cannot override final method '{name}' from InvenTreePlugin."
+                    'INVE-E11: '
+                    + f"Plugin '{cls.__name__}' cannot override final method '{name}' from InvenTreePlugin."
                 )
 
         return super().__init_subclass__()

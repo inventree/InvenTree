@@ -208,6 +208,21 @@ coverage html -i
 
 The coverage database is also generated in the CI-pipeline and exposd for 14 days as a artifact named `coverage`.
 
+### Database Query Profiling
+
+It may be useful during development to profile parts of the backend code to see how many database queries are executed. To that end, the `count_queries` context manager can be used to count the number of queries executed in a specific code block.
+
+```python
+from InvenTree.helpers import count_queries
+
+with count_queries("My code block"):
+    # Code block to profile
+    ...
+```
+
+A developer can use this to profile a specific code block, and the number of queries executed will be printed to the console.
+
+
 ## Code Style
 
 Code style is automatically checked as part of the project's CI pipeline on GitHub. This means that any pull requests which do not conform to the style guidelines will fail CI checks.

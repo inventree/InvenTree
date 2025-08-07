@@ -99,9 +99,9 @@ export function RelatedModelField({
               );
             }
 
+            onChange(value);
             setInitialData(value);
             dataRef.current = [value];
-            setPk(data.results[0][pk_field]);
           }
         }
       });
@@ -364,8 +364,8 @@ export function RelatedModelField({
         options={data}
         filterOption={null}
         onInputChange={(value: any) => {
+          console.log('onInputChange', value);
           setValue(value);
-          resetSearch();
         }}
         onChange={onChange}
         onMenuScrollToBottom={() => setOffset(offset + limit)}

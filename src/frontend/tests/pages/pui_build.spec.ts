@@ -79,11 +79,14 @@ test('Build Order - Basic Tests', async ({ browser }) => {
   await loadTab(page, 'Test Results');
   await page.getByText('Quantity: 25').waitFor();
   await page.getByText('Continuity Checks').waitFor();
-  await page
+
+  const button = await page
     .getByRole('row', { name: 'Quantity: 16' })
-    .getByRole('button')
-    .hover();
-  await page.getByText('Add Test Result').waitFor();
+    .getByLabel('add-test-result');
+
+  await button.click();
+  await page.getByRole('textbox', { name: 'text-field-value' }).waitFor();
+  await page.getByRole('button', { name: 'Cancel' }).click();
 
   // Click through to the "parent" build
   await loadTab(page, 'Build Details');
@@ -160,6 +163,27 @@ test('Build Order - Build Outputs', async ({ browser }) => {
 
   await page.getByRole('cell', { name: 'BO0011' }).click();
   await loadTab(page, 'Incomplete Outputs');
+
+  // Check the "printing" actions for the selected outputs
+  await page.getByRole('checkbox', { name: 'Select all records' }).click();
+  await page
+    .getByRole('tabpanel', { name: 'Incomplete Outputs' })
+    .getByLabel('action-menu-printing-actions')
+    .click();
+  await page
+    .getByRole('menuitem', {
+      name: 'action-menu-printing-actions-print-labels'
+    })
+    .waitFor();
+  await page
+    .getByRole('menuitem', {
+      name: 'action-menu-printing-actions-print-reports'
+    })
+    .click();
+  await page.getByRole('button', { name: 'Print', exact: true }).click();
+  await page.getByText('Errors exist for one or more form fields').waitFor();
+  await page.getByRole('button', { name: 'Cancel', exact: true }).click();
+  await page.getByRole('checkbox', { name: 'Select all records' }).click();
 
   // Create a new build output
   await page.getByLabel('action-button-add-build-output').click();
@@ -331,6 +355,22 @@ test('Build Order - Tracked Outputs', async ({ browser }) => {
     url: 'manufacturing/build-order/10/incomplete-outputs'
   });
 
+  const cancelBuildOutput = async (cell) => {
+    await clickOnRowMenu(cell);
+    await page.getByRole('menuitem', { name: 'Cancel' }).click();
+    await page.getByRole('button', { name: 'Submit' }).click();
+    await page.getByText('Build outputs have been cancelled').waitFor();
+  };
+
+  // Ensure table has loaded
+  await page.getByRole('cell', { name: '# 13' }).waitFor();
+
+  // Check if the build output "#15" exists. If so, remove it.
+  const existingCell = await page.getByRole('cell', { name: '# 15' });
+  if (await existingCell.isVisible()) {
+    await cancelBuildOutput(existingCell);
+  }
+
   // Create a new build output, serial number 15
   await page
     .getByRole('button', { name: 'action-button-add-build-output' })
@@ -362,8 +402,11 @@ test('Build Order - Tracked Outputs', async ({ browser }) => {
     .waitFor();
 
   // The stock item should be pre-filled based on serial number
+  await page.getByRole('cell', { name: 'Thumbnail 002.01-PCBA |' }).waitFor();
   await page.getByRole('button', { name: 'Submit' }).isEnabled();
   await page.getByRole('button', { name: 'Submit' }).click();
+
+  await page.getByText('Stock items allocated').waitFor();
 
   await allocationRow.getByText('1 / 1').waitFor();
 
@@ -375,12 +418,15 @@ test('Build Order - Tracked Outputs', async ({ browser }) => {
   await row.getByText('0 / 2').waitFor();
 
   // Cancel the build output to return to the original state
-  await clickOnRowMenu(cell);
-  await page.getByRole('menuitem', { name: 'Cancel' }).click();
-  await page.getByRole('button', { name: 'Submit' }).click();
-  await page.getByText('Build outputs have been cancelled').waitFor();
+  await cancelBuildOutput(cell);
 
   // Next, complete a new output and auto-allocate items based on serial number
+  // Cancel build output "#16" if it exists
+  const existingCell16 = await page.getByRole('cell', { name: '# 16' });
+  if (await existingCell16.isVisible()) {
+    await cancelBuildOutput(existingCell16);
+  }
+
   await page
     .getByRole('button', { name: 'action-button-add-build-output' })
     .click();
@@ -401,10 +447,7 @@ test('Build Order - Tracked Outputs', async ({ browser }) => {
   await newRow.getByText('0 / 2').waitFor();
 
   // Cancel this output too
-  await clickOnRowMenu(newCell);
-  await page.getByRole('menuitem', { name: 'Cancel' }).click();
-  await page.getByRole('button', { name: 'Submit' }).click();
-  await page.getByText('Build outputs have been cancelled').waitFor();
+  await cancelBuildOutput(newCell);
 });
 
 test('Build Order - Filters', async ({ browser }) => {
