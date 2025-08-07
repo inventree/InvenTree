@@ -164,6 +164,7 @@ export default function BuildOrderTestTable({
                   <ActionIcon
                     size='lg'
                     color='green'
+                    aria-label='add-test-result'
                     variant='transparent'
                     onClick={(event: any) => {
                       cancelEvent(event);
