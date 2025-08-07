@@ -204,7 +204,7 @@ export function RenderInlineModel({
       len: 75
     });
 
-    secondary = <InlineSecondaryBadge text={secondary} />;
+    secondary = <InlineSecondaryBadge text={secondary.toString()} />;
   }
 
   return (
