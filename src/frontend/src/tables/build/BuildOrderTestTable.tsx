@@ -70,7 +70,9 @@ export default function BuildOrderTestTable({
   }, [testTemplates]);
 
   const [selectedOutput, setSelectedOutput] = useState<number>(0);
-  const [selectedTemplate, setSelectedTemplate] = useState<number>(0);
+  const [selectedTemplate, setSelectedTemplate] = useState<number | undefined>(
+    undefined
+  );
 
   const testResultFields: ApiFormFieldSet = useTestResultFields({
     partId: partId,
@@ -286,6 +288,21 @@ export default function BuildOrderTestTable({
     ];
   }, [table.hasSelectedRecords]);
 
+  const rowActions = useCallback((record: any) => {
+    return [
+      {
+        icon: <IconCirclePlus />,
+        color: 'green',
+        title: t`Add Test Result`,
+        onClick: (event: any) => {
+          setSelectedOutput(record.pk);
+          setSelectedTemplate(undefined);
+          createTestResult.open();
+        }
+      }
+    ];
+  }, []);
+
   return (
     <>
       {createTestResult.modal}
@@ -302,6 +319,7 @@ export default function BuildOrderTestTable({
             build: buildId
           },
           enableSelection: true,
+          rowActions: rowActions,
           tableFilters: tableFilters,
           tableActions: tableActions,
           modelType: ModelType.stockitem
