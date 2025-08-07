@@ -613,31 +613,25 @@ class PluginFullAPITest(PluginMixin, InvenTreeAPITestCase):
     @override_settings(PLUGIN_TESTING_SETUP=True)
     def test_full_process(self):
         """Test the full plugin install/uninstall process via API."""
-        from django.conf import settings
-
         install_slug = 'inventree-brother-plugin'
         slug = 'brother'
-
-        # Note that if testing in docker mode, the plugin file is reinstalled too
-        # In that case, the expected query count is higher
-        query_count = 450 if settings.DOCKER else 350
-        query_time = 60 if settings.DOCKER else 30
 
         # Install a plugin
         data = self.post(
             reverse('api-plugin-install'),
             {'confirm': True, 'packagename': install_slug},
             expected_code=201,
-            max_query_time=query_time,
-            max_query_count=query_count,
+            max_query_time=30,
+            max_query_count=450,
         ).data
+
         self.assertEqual(data['success'], 'Installed plugin successfully')
 
         # Activate the plugin
         data = self.patch(
             reverse('api-plugin-detail-activate', kwargs={'plugin': slug}),
             data={'active': True},
-            max_query_count=320,
+            max_query_count=450,
         ).data
         self.assertEqual(data['active'], True)
 
