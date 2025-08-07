@@ -1597,5 +1597,11 @@ STORAGES = {
             STORAGE_TARGET, 'django.core.files.storage.FileSystemStorage'
         ),
         'OPTIONS': STORAGE_OPTIONS,
-    }
+    },
+    'staticfiles': {
+        'BACKEND': backend_map.get(
+            STORAGE_TARGET, 'django.core.files.storage.FileSystemStorage'
+        ),
+        'OPTIONS': STORAGE_OPTIONS,
+    },
 }
