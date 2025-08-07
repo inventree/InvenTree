@@ -29,8 +29,6 @@ def machine_registry_entrypoint(method):
         # Ensure the plugin registry is up-to-date
         from plugin import registry as plg_registry
 
-        print('machine_registry_entrypoint:', method.__name__)  # Debugging line
-
         if plg_registry.check_reload():
             # The plugin registry changed - update the machine registry too
             logger.info('Plugin registry changed - reloading machine registry')
@@ -152,7 +150,6 @@ class MachineRegistry(
 
         logger.debug('Found %s machine drivers', len(self.drivers.keys()))
 
-    @machine_registry_entrypoint
     def get_driver_instance(self, slug: str):
         """Return or create a driver instance if needed."""
         if slug not in self.driver_instances:
@@ -196,7 +193,6 @@ class MachineRegistry(
         self.machines = {}
         self.load_machines()
 
-    @machine_registry_entrypoint
     def add_machine(self, machine_config, initialize=True, update_registry_hash=True):
         """Add a machine to the machine registry."""
         machine_type = self.machine_types.get(machine_config.machine_type, None)
@@ -213,7 +209,6 @@ class MachineRegistry(
         if update_registry_hash:
             self._update_registry_hash()
 
-    @machine_registry_entrypoint
     def update_machine(
         self, old_machine_state, machine_config, update_registry_hash=True
     ):
@@ -224,12 +219,10 @@ class MachineRegistry(
             if update_registry_hash:
                 self._update_registry_hash()
 
-    @machine_registry_entrypoint
     def restart_machine(self, machine):
         """Restart a machine."""
         machine.restart()
 
-    @machine_registry_entrypoint
     def remove_machine(self, machine: BaseMachineType):
         """Remove a machine from the registry."""
         self.machines.pop(str(machine.pk), None)
