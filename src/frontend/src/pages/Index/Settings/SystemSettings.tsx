@@ -3,6 +3,7 @@ import { Skeleton, Stack } from '@mantine/core';
 import {
   IconBellCog,
   IconCategory,
+  IconClipboardList,
   IconCurrencyDollar,
   IconFileAnalytics,
   IconFingerprint,
@@ -239,6 +240,22 @@ export default function SystemSettings() {
               'STOCK_ALLOW_OUT_OF_STOCK_TRANSFER',
               'TEST_STATION_DATA',
               'TEST_UPLOAD_CREATE_TEMPLATE'
+            ]}
+          />
+        )
+      },
+      {
+        name: 'stock-history',
+        label: t`Stock History`,
+        icon: <IconClipboardList />,
+        content: (
+          <GlobalSettingList
+            keys={[
+              'STOCKTAKE_ENABLE',
+              'STOCKTAKE_EXCLUDE_EXTERNAL',
+              'STOCKTAKE_AUTO_DAYS',
+              'STOCKTAKE_DELETE_OLD_ENTRIES',
+              'STOCKTAKE_DELETE_DAYS'
             ]}
           />
         )

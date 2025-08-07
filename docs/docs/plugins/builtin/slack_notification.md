@@ -9,3 +9,7 @@ This plugin provides a mechanism to send notifications to a Slack channel when c
 ### API Key
 
 To use this plugin, you need to provide a Slack API key. This key is used to authenticate the plugin with the Slack API and send messages to the specified channel.
+
+### Activation
+
+This plugin is an *optional* plugin, and must be enabled in the InvenTree settings.

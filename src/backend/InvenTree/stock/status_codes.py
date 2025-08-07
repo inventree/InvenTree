@@ -54,6 +54,8 @@ class StockHistoryCode(StatusCode):
     STOCK_ADD = 11, _('Stock manually added')
     STOCK_REMOVE = 12, _('Stock manually removed')
 
+    RETURNED_TO_STOCK = 15, _('Returned to stock')  # Stock item returned to stock
+
     # Location operations
     STOCK_MOVE = 20, _('Location changed')
     STOCK_UPDATE = 25, _('Stock updated')

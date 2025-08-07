@@ -671,10 +671,14 @@ class Build(
             get_global_setting('BUILDORDER_REQUIRE_CLOSED_CHILDS')
             and self.has_open_child_builds
         ):
-            return
+            raise ValidationError(
+                _('Cannot complete build order with open child builds')
+            )
 
         if self.incomplete_count > 0:
-            return
+            raise ValidationError(
+                _('Cannot complete build order with incomplete outputs')
+            )
 
         if trim_allocated_stock:
             self.trim_allocated_stock()

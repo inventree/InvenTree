@@ -146,6 +146,16 @@ The *Consumed Stock* tab displays all stock items which have been *consumed* by 
 !!! info "No BOM"
 	If the part being built does not have a BOM, then the *Consumed Stock* tab will not be displayed.
 
+#### Return to Stock
+
+After stock items have been *consumed* by a build order, it may be required to recover some of that stock back into the inventory. This can be done by selecting the desired items, and pressing the *Return to Stock* button:
+
+{{ image("build/build_return_stock.png", title="Return Stock") }}
+
+This will open the following dialog, which allows the user to specify the quantity of stock to return, and the location where the stock should be returned:
+
+{{ image("build/build_return_stock_dialog.png", title="Return Stock Dialog") }}
+
 ### Incomplete Outputs
 
 The *Incomplete Outputs* panel shows the list of in-progress [build outputs](./output.md) (created stock items) associated with this build.

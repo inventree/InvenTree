@@ -257,6 +257,7 @@ nav:
         - BOM Exporter: plugins/builtin/bom_exporter.md
         - InvenTree Exporter: plugins/builtin/inventree_exporter.md
         - Parameter Exporter: plugins/builtin/part_parameter_exporter.md
+        - Stocktake Exporter: plugins/builtin/stocktake_exporter.md
       - Label Printing:
         - Label Printer: plugins/builtin/inventree_label.md
         - Label Machine: plugins/builtin/inventree_label_machine.md

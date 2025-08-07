@@ -1,11 +1,29 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 378
+INVENTREE_API_VERSION = 381
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v381 -> 2025-08-06 : https://github.com/inventree/InvenTree/pull/10132
+    - Refactor the "return stock item" API endpoint to align with other stock adjustment actions
+
+v380 -> 2025-08-06 : https://github.com/inventree/InvenTree/pull/10135
+    - Fixes "issued_by" filter for the BuildOrder list API endpoint
+
+v380 -> 2025-08-06 : https://github.com/inventree/InvenTree/pull/10132
+    - Refactor the "return stock item" API endpoint to align with other stock adjustment actions
+
+v380 -> 2025-08-06 : https://github.com/inventree/InvenTree/pull/10135
+    - Fixes "issued_by" filter for the BuildOrder list API endpoint
+
+v379 -> 2025-08-04 : https://github.com/inventree/InvenTree/pull/10124
+    - Removes "PartStocktakeReport" model and associated API endpoints
+    - Remove "last_stocktake" field from the Part model
+    - Remove "user" field from PartStocktake model
+    - Remove "note" field from PartStocktake model
 
 v378 -> 2025-08-01 : https://github.com/inventree/InvenTree/pull/10111
     - Adds "scheduled_to_build" annotated field to BuildLine serializer
