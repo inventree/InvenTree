@@ -8,6 +8,7 @@ import re
 import time
 from contextlib import contextmanager
 from pathlib import Path
+from typing import Optional
 from unittest import mock
 
 from django.contrib.auth import get_user_model
@@ -23,6 +24,33 @@ from rest_framework.test import APITestCase
 
 from plugin import registry
 from plugin.models import PluginConfig
+
+
+@contextmanager
+def count_queries(
+    msg: Optional[str] = None, log_to_file: bool = False, using: str = 'default'
+):  # pragma: no cover
+    """Helper function to count the number of queries executed.
+
+    Arguments:
+        msg: Optional message to print after counting queries
+        log_to_file: If True, log the queries to a file (default = False)
+        using: The database connection to use (default = 'default')
+    """
+    with CaptureQueriesContext(connections[using]) as context:
+        yield
+
+    n = len(context.captured_queries)
+
+    if log_to_file:
+        with open('queries.txt', 'w', encoding='utf-8') as f:
+            for q in context.captured_queries:
+                f.write(str(q['sql']) + '\n\n')
+
+    if msg:
+        print(f'{msg}: Executed {n} queries')
+    else:
+        print(f'Executed {n} queries')
 
 
 def addUserPermission(user: User, app_name: str, model_name: str, perm: str) -> None:
