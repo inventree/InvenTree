@@ -2,16 +2,24 @@ import { t } from '@lingui/core/macro';
 import { ActionIcon, Badge, Group, Text, Tooltip } from '@mantine/core';
 import { IconCirclePlus } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { type ReactNode, useEffect, useMemo, useState } from 'react';
+import {
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState
+} from 'react';
 
 import { PassFailButton } from '@lib/components/YesNoButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import { cancelEvent } from '@lib/functions/Events';
+import { AddItemButton } from '@lib/index';
 import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
+import type { UseFormReturn } from 'react-hook-form';
 import { RenderUser } from '../../components/render/User';
 import { useApi } from '../../contexts/ApiContext';
 import { formatDate } from '../../defaults/formatters';
@@ -80,6 +88,48 @@ export default function BuildOrderTestTable({
     },
     onFormSuccess: () => table.refreshTable(),
     successMessage: t`Test result added`
+  });
+
+  const multipleTestResultFields: ApiFormFieldSet = useMemo(() => {
+    const fields: ApiFormFieldSet = testResultFields;
+
+    // Do not allow attachment for multiple test results
+    delete fields.attachment;
+    delete fields.stock_item;
+
+    fields.template.disabled = false;
+
+    return fields;
+  }, [partId, testResultFields]);
+
+  const generateTestResults = useCallback(
+    (data: any, form: UseFormReturn) => {
+      // Generate a list of test results for each selected output
+      const results = table.selectedRecords.map((record: any) => {
+        return {
+          ...data,
+          stock_item: record.pk
+        };
+      });
+
+      return results;
+    },
+    [table.selectedIds]
+  );
+
+  const createTestResultMultiple = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.stock_test_result_list),
+    title: t`Add Test Results`,
+    fields: multipleTestResultFields,
+    initialData: {
+      result: true
+    },
+    onFormSuccess: () => {
+      table.clearSelectedRecords();
+      table.refreshTable();
+    },
+    processFormData: generateTestResults,
+    successMessage: t`Test results added`
   });
 
   // Generate a table column for each test template
@@ -224,12 +274,22 @@ export default function BuildOrderTestTable({
   }, []);
 
   const tableActions = useMemo(() => {
-    return [];
-  }, []);
+    return [
+      <AddItemButton
+        key='add-test-result'
+        tooltip={t`Add Test Result`}
+        disabled={!table.hasSelectedRecords}
+        onClick={(event: any) => {
+          createTestResultMultiple.open();
+        }}
+      />
+    ];
+  }, [table.hasSelectedRecords]);
 
   return (
     <>
       {createTestResult.modal}
+      {createTestResultMultiple.modal}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.stock_item_list)}
         tableState={table}
@@ -241,6 +301,7 @@ export default function BuildOrderTestTable({
             tests: true,
             build: buildId
           },
+          enableSelection: true,
           tableFilters: tableFilters,
           tableActions: tableActions,
           modelType: ModelType.stockitem

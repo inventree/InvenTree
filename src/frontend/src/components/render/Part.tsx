@@ -125,7 +125,7 @@ export function RenderPartTestTemplate({
   return (
     <RenderInlineModel
       primary={instance.test_name}
-      secondary={instance.description}
+      suffix={instance.description}
     />
   );
 }

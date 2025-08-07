@@ -263,10 +263,16 @@ class StockItemTestResultSerializer(
         """Validate the test result data."""
         stock_item = data['stock_item']
         template = data.get('template', None)
+        test_name = None
 
         # To support legacy API, we can accept a test name instead of a template
         # In such a case, we use the test name to lookup the appropriate template
-        test_name = self.context['request'].data.get('test', None)
+        data = self.context['request'].data
+
+        if type(data) is dict:
+            test_name = data.get('test')
+        elif type(data) is list and len(data) > 0:
+            test_name = data[0].get('test')
 
         if not template and not test_name:
             raise ValidationError(_('Template ID or test name must be provided'))
@@ -281,17 +287,6 @@ class StockItemTestResultSerializer(
                 part__tree_id=stock_item.part.tree_id, part__in=ancestors, key=test_key
             ).first():
                 data['template'] = template
-
-            elif get_global_setting('TEST_UPLOAD_CREATE_TEMPLATE', False):
-                logger.debug(
-                    "No matching test template found for '%s' - creating a new template",
-                    test_name,
-                )
-
-                # Create a new test template based on the provided data
-                data['template'] = part_models.PartTestTemplate.objects.create(
-                    part=stock_item.part, test_name=test_name
-                )
 
         data = super().validate(data)
 

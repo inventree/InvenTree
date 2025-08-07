@@ -209,6 +209,10 @@ export function RenderInlineModel({
     }
   }
 
+  if (typeof suffix === 'string') {
+    suffix = <Text size='xs'>{suffix}</Text>;
+  }
+
   return (
     <Group gap='xs' justify='space-between' wrap='nowrap' title={tooltip}>
       <Group gap='xs' justify='left' wrap='nowrap'>
@@ -226,7 +230,7 @@ export function RenderInlineModel({
       {suffix && (
         <>
           <Space />
-          <div style={{ fontSize: 'xs', lineHeight: 'xs' }}>{suffix}</div>
+          {suffix}
         </>
       )}
     </Group>

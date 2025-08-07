@@ -1124,12 +1124,4 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
-    'TEST_UPLOAD_CREATE_TEMPLATE': {
-        'name': _('Create Template on Upload'),
-        'description': _(
-            'Create a new test template when uploading test data which does not match an existing template'
-        ),
-        'default': True,
-        'validator': bool,
-    },
 }

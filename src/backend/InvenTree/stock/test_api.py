@@ -1906,16 +1906,6 @@ class StockTestResultTest(StockAPITestCase):
             'notes': 'I guess there was just too much pressure?',
         }
 
-        # First, test with TEST_UPLOAD_CREATE_TEMPLATE set to False
-        InvenTreeSetting.set_setting('TEST_UPLOAD_CREATE_TEMPLATE', False, self.user)
-
-        response = self.post(url, data, expected_code=400)
-
-        # Again, with the setting enabled
-        InvenTreeSetting.set_setting('TEST_UPLOAD_CREATE_TEMPLATE', True, self.user)
-
-        response = self.post(url, data, expected_code=201)
-
         # Check that a new test template has been created
         test_template = PartTestTemplate.objects.get(key='checkedsteamvalve')
 
@@ -1931,7 +1921,7 @@ class StockTestResultTest(StockAPITestCase):
         self.assertEqual(test['value'], '150kPa')
         self.assertEqual(test['user'], self.user.pk)
 
-        # Test upload using template reference (new method)
+        # Test upload using template reference
         data = {
             'stock_item': 105,
             'template': test_template.pk,

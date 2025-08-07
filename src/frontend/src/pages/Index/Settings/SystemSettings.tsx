@@ -237,8 +237,7 @@ export default function SystemSettings() {
               'STOCK_SHOW_INSTALLED_ITEMS',
               'STOCK_ENFORCE_BOM_INSTALLATION',
               'STOCK_ALLOW_OUT_OF_STOCK_TRANSFER',
-              'TEST_STATION_DATA',
-              'TEST_UPLOAD_CREATE_TEMPLATE'
+              'TEST_STATION_DATA'
             ]}
           />
         )
