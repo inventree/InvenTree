@@ -2809,7 +2809,7 @@ class BomItemTest(InvenTreeAPITestCase):
             )
 
         # Check that the correct exporter plugin has been used
-        required_cols.extend(['BOM Level'])
+        required_cols.extend(['BOM Level', 'Total Quantity'])
 
         # Next, download BOM data for a specific sub-assembly, and use the BOM exporter
         with self.export_data(

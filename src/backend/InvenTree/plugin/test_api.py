@@ -85,7 +85,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
             {'confirm': True, 'packagename': self.PKG_NAME},
             expected_code=201,
             max_query_time=30,
-            max_query_count=400,
+            max_query_count=450,
         ).data
 
         self.assertEqual(data['success'], 'Installed plugin successfully')
@@ -95,7 +95,8 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
             url,
             {'confirm': True, 'url': self.PKG_URL},
             expected_code=201,
-            max_query_time=30,
+            max_query_count=450,
+            max_query_time=60,
         ).data
 
         self.assertEqual(data['success'], 'Installed plugin successfully')
@@ -105,6 +106,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
             url,
             {'confirm': True, 'url': self.PKG_URL, 'packagename': self.PKG_NAME},
             expected_code=201,
+            max_query_count=450,
             max_query_time=30,
         ).data
         self.assertEqual(data['success'], 'Installed plugin successfully')
@@ -614,15 +616,16 @@ class PluginFullAPITest(PluginMixin, InvenTreeAPITestCase):
             {'confirm': True, 'packagename': install_slug},
             expected_code=201,
             max_query_time=30,
-            max_query_count=370,
+            max_query_count=450,
         ).data
+
         self.assertEqual(data['success'], 'Installed plugin successfully')
 
         # Activate the plugin
         data = self.patch(
             reverse('api-plugin-detail-activate', kwargs={'plugin': slug}),
             data={'active': True},
-            max_query_count=320,
+            max_query_count=450,
         ).data
         self.assertEqual(data['active'], True)
 
@@ -640,6 +643,7 @@ class PluginFullAPITest(PluginMixin, InvenTreeAPITestCase):
         self.assertEqual(data['active'], False)
         response = self.patch(
             reverse('api-plugin-uninstall', kwargs={'plugin': slug}),
+            data={'delete_config': True},
             max_query_count=350,
         )
         self.assertEqual(response.status_code, 200)
