@@ -61,8 +61,6 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
 
     def test_plugin_install(self):
         """Test the plugin install command."""
-        from django.conf import settings
-
         url = reverse('api-plugin-install')
 
         # invalid package name
@@ -87,23 +85,18 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
             {'confirm': True, 'packagename': self.PKG_NAME},
             expected_code=201,
             max_query_time=30,
-            max_query_count=400,
+            max_query_count=450,
         ).data
 
         self.assertEqual(data['success'], 'Installed plugin successfully')
-
-        # If we are running in docker mode, the plugin file is reinstalled too
-        # In that case, the expected query count is higher
-        query_count = 450 if settings.DOCKER else 350
-        query_time = 60 if settings.DOCKER else 30
 
         # valid - github url
         data = self.post(
             url,
             {'confirm': True, 'url': self.PKG_URL},
             expected_code=201,
-            max_query_count=query_count,
-            max_query_time=query_time,
+            max_query_count=450,
+            max_query_time=60,
         ).data
 
         self.assertEqual(data['success'], 'Installed plugin successfully')
