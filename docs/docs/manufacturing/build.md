@@ -187,6 +187,22 @@ For *trackable* parts, test results can be recorded against each build output. T
 
 This table provides a summary of the test results for each build output, and allows test results to be quickly added for each build output.
 
+### Adding Test Results
+
+There are multiple ways to add test results against build outputs from this table view:
+
+#### Row Actions
+
+Open the row actions menu for a specific build output, and select the *Add Test Result* option.
+
+#### Table Buttons
+
+Each available test is rendered in the table as a separate column. Any output which does not already have a result registered for that test will display a button in the table cell, labelled *Add Test Result*. Clicking on this button will open the *Add Test Result* dialog for that test.
+
+#### Bulk Add Test Results
+
+Select the build outputs for which you wish to add test results, then click on the *Add Test Results* button at the top of the table. This will open the *Add Test Result* dialog, allowing you to select the test and enter the result for all selected outputs.
+
 ### Attachments
 
 Files attachments can be uploaded against the build order, and displayed in the *Attachments* tab:
