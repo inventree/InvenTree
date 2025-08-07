@@ -1882,11 +1882,11 @@ class StockTestResultTest(StockAPITestCase):
 
         self.post(url, data={'test': 'A test', 'result': True}, expected_code=400)
 
-        # This one should pass!
+        # This one should fail (no matching test template)
         self.post(
             url,
             data={'test': 'A test', 'stock_item': 105, 'result': True},
-            expected_code=201,
+            expected_code=400,
         )
 
     def test_post(self):
@@ -2022,17 +2022,24 @@ class StockTestResultTest(StockAPITestCase):
         p.testable = True
         p.save()
 
+        # Create a test template to record test results against
+        test_template = PartTestTemplate.objects.create(
+            part=p, test_name='Test Template', description='A test template for testing'
+        )
+
         # Create some objects (via the API)
         for _ii in range(50):
             response = self.post(
                 url,
                 {
                     'stock_item': stock_item.pk,
-                    'test': f'Some test {_ii}',
+                    'test': test_template.key,
                     'result': True,
                     'value': 'Test result value',
                 },
             )
+
+            self.assertEqual(response.data['template'], test_template.pk)
 
             tests.append(response.data['pk'])
 
