@@ -400,5 +400,12 @@ registry: MachineRegistry = MachineRegistry()
 
 
 def call_machine_function(machine_id: str, function: str, *args, **kwargs):
-    """Global helper function to call a specific function on a machine instance."""
+    """Global helper function to call a specific function on a machine instance.
+
+    Arguments:
+        machine_id: The UUID of the machine to call the function against
+        function: The name of the function to call
+        *args: Positional arguments to pass to the function
+        **kwargs: Keyword arguments to pass to the function
+    """
     return registry.call_machine_function(machine_id, function, *args, **kwargs)
