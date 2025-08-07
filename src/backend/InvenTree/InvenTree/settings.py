@@ -330,6 +330,7 @@ INSTALLED_APPS = [
     'django_ical',  # For exporting calendars
     'django_mailbox',  # For email import
     'anymail',  # For email sending/receiving via ESPs
+    'storages',
 ]
 
 MIDDLEWARE = CONFIG.get(
@@ -1545,6 +1546,23 @@ STORAGE_TARGET = get_setting(
 )
 STORAGE_OPTIONS = {}
 if STORAGE_TARGET == 's3':
+    from botocore.config import Config
+
+    s3_bucket = get_setting(
+        'INVENTREE_S3_BUCKET_NAME', 'storage.s3.bucket_name', None, typecast=str
+    )
+    s3_acl = get_setting(
+        'INVENTREE_S3_DEFAULT_ACL', 'storage.s3.default_acl', None, typecast=str
+    )
+    s3_endpoint = get_setting(
+        'INVENTREE_S3_ENDPOINT_URL', 'storage.s3.endpoint_url', None, typecast=str
+    )
+    s3_location = get_setting(
+        'INVENTREE_S3_LOCATION', 'storage.s3.location', 'inventree-server', typecast=str
+    )
+
+    MEDIA_URL = f'{s3_endpoint}/{s3_bucket}/{s3_location}/'
+    PRESIGNED_URL_EXPIRATION = 600
     STORAGE_OPTIONS = {
         'access_key': get_setting(
             'INVENTREE_S3_ACCESS_KEY', 'storage.s3.access_key', None, typecast=str
@@ -1552,27 +1570,23 @@ if STORAGE_TARGET == 's3':
         'secret_key': get_setting(
             'INVENTREE_S3_SECRET_KEY', 'storage.s3.secret_key', None, typecast=str
         ),
-        'bucket_name': get_setting(
-            'INVENTREE_S3_BUCKET_NAME', 'storage.s3.bucket_name', None, typecast=str
-        ),
-        'default_acl': get_setting(
-            'INVENTREE_S3_DEFAULT_ACL', 'storage.s3.default_acl', None, typecast=str
-        ),
+        'bucket_name': s3_bucket,
+        'default_acl': s3_acl,
         'region_name': get_setting(
             'INVENTREE_S3_REGION_NAME', 'storage.s3.region_name', None, typecast=str
         ),
-        'endpoint_url': get_setting(
-            'INVENTREE_S3_ENDPOINT_URL', 'storage.s3.endpoint_url', None, typecast=str
-        ),
+        'endpoint_url': s3_endpoint,
         'verify': get_boolean_setting(
             'INVENTREE_S3_VERIFY_SSL', 'storage.s3.verify_ssl', True
         ),
-        'location': get_setting(
-            'INVENTREE_S3_LOCATION',
-            'storage.s3.location',
-            'inventree-server',
-            typecast=str,
+        'location': s3_location,
+        'client_config': Config(
+            request_checksum_calculation='when_required',
+            response_checksum_validation='when_required',
         ),
+        'file_overwrite': False,
+        'addressing_style': 'virtual',
+        'object_parameters': {'CacheControl': 'public,max-age=86400'},
     }
 elif STORAGE_TARGET == 'sftp':
     STORAGE_OPTIONS = {
@@ -1598,10 +1612,5 @@ STORAGES = {
         ),
         'OPTIONS': STORAGE_OPTIONS,
     },
-    'staticfiles': {
-        'BACKEND': backend_map.get(
-            STORAGE_TARGET, 'django.core.files.storage.FileSystemStorage'
-        ),
-        'OPTIONS': STORAGE_OPTIONS,
-    },
+    'staticfiles': {'BACKEND': 'whitenoise.storage.CompressedStaticFilesStorage'},
 }

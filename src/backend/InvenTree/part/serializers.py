@@ -255,7 +255,7 @@ class PartThumbSerializer(serializers.Serializer):
     Used to serve and display existing Part images.
     """
 
-    image = serializers.URLField(read_only=True)
+    image = InvenTree.serializers.InvenTreeImageSerializerField(read_only=True)
     count = serializers.IntegerField(read_only=True)
 
 
