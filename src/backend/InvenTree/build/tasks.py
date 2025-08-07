@@ -50,11 +50,11 @@ def complete_build_allocations(build_id: int, user_id: int):
         try:
             user = User.objects.get(pk=user_id)
         except User.DoesNotExist:
+            user = None
             logger.warning(
                 'Could not complete build allocations for BuildOrder <%s> - User does not exist',
                 build_id,
             )
-            return
     else:
         user = None
 

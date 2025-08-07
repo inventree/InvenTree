@@ -144,6 +144,7 @@ export enum ApiEndpoints {
   stock_test_result_list = 'stock/test/',
   stock_transfer = 'stock/transfer/',
   stock_remove = 'stock/remove/',
+  stock_return = 'stock/return/',
   stock_add = 'stock/add/',
   stock_count = 'stock/count/',
   stock_change_status = 'stock/change_status/',
@@ -153,7 +154,6 @@ export enum ApiEndpoints {
   stock_install = 'stock/:id/install/',
   stock_uninstall = 'stock/:id/uninstall/',
   stock_serialize = 'stock/:id/serialize/',
-  stock_return = 'stock/:id/return/',
   stock_serial_info = 'stock/:id/serial-numbers/',
 
   // Generator API endpoints

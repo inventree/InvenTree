@@ -1586,16 +1586,33 @@ class StockItemTest(StockAPITestCase):
 
         n_entries = item.tracking_info_count
 
-        url = reverse('api-stock-item-return', kwargs={'pk': item.pk})
+        url = reverse('api-stock-return')
 
         # Empty POST will fail
         response = self.post(url, {}, expected_code=400)
 
+        self.assertIn('This field is required', str(response.data['items']))
         self.assertIn('This field is required', str(response.data['location']))
+
+        # Test condition where provided quantity is zero
+        response = self.post(
+            url,
+            {'items': [{'pk': item.pk, 'quantity': 0}], 'location': '1'},
+            expected_code=400,
+        )
+
+        self.assertIn(
+            'Quantity must be greater than zero',
+            str(response.data['items'][0]['quantity']),
+        )
 
         response = self.post(
             url,
-            {'location': '1', 'notes': 'Returned from this customer for testing'},
+            {
+                'items': [{'pk': item.pk, 'quantity': item.quantity}],
+                'location': '1',
+                'notes': 'Returned from this customer for testing',
+            },
             expected_code=201,
         )
 
