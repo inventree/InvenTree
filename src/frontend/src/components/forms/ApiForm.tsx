@@ -356,12 +356,7 @@ export function ApiForm({
 
     let hasFiles = false;
 
-    // Optionally pre-process the data before submitting it
-    if (props.processFormData) {
-      data = props.processFormData(data, form);
-    }
-
-    const jsonData = { ...data };
+    let jsonData = { ...data };
     const formData = new FormData();
 
     Object.keys(data).forEach((key: string) => {
@@ -396,6 +391,11 @@ export function ApiForm({
         formData.append(key, value);
       }
     });
+
+    // Optionally pre-process the data before submitting it
+    if (props.processFormData) {
+      jsonData = props.processFormData(jsonData, form);
+    }
 
     /* Set the timeout for the request:
      * - If a timeout is provided in the props, use that

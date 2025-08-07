@@ -1882,56 +1882,43 @@ class StockTestResultTest(StockAPITestCase):
 
         self.post(url, data={'test': 'A test', 'result': True}, expected_code=400)
 
-        # This one should pass!
+        # This one should fail (no matching test template)
         self.post(
             url,
             data={'test': 'A test', 'stock_item': 105, 'result': True},
-            expected_code=201,
+            expected_code=400,
         )
 
     def test_post(self):
         """Test creation of a new test result."""
         url = self.get_url()
 
-        response = self.client.get(url)
-        n = len(response.data)
+        item = StockItem.objects.get(pk=105)
+        part = item.part
+
+        # Create a new test template for this part
+        test_template = PartTestTemplate.objects.create(
+            part=part,
+            test_name='Checked Steam Valve',
+            description='Test to check the steam valve pressure',
+        )
 
         # Test upload using test name (legacy method)
-        # Note that a new test template will be created
         data = {
             'stock_item': 105,
-            'test': 'Checked Steam Valve',
+            'test': 'checkedsteamvalve',
             'result': False,
             'value': '150kPa',
             'notes': 'I guess there was just too much pressure?',
         }
 
-        # First, test with TEST_UPLOAD_CREATE_TEMPLATE set to False
-        InvenTreeSetting.set_setting('TEST_UPLOAD_CREATE_TEMPLATE', False, self.user)
+        data = self.post(url, data, expected_code=201).data
 
-        response = self.post(url, data, expected_code=400)
+        self.assertEqual(data['result'], False)
+        self.assertEqual(data['stock_item'], 105)
+        self.assertEqual(data['template'], test_template.pk)
 
-        # Again, with the setting enabled
-        InvenTreeSetting.set_setting('TEST_UPLOAD_CREATE_TEMPLATE', True, self.user)
-
-        response = self.post(url, data, expected_code=201)
-
-        # Check that a new test template has been created
-        test_template = PartTestTemplate.objects.get(key='checkedsteamvalve')
-
-        response = self.client.get(url)
-        self.assertEqual(len(response.data), n + 1)
-
-        # And read out again
-        response = self.client.get(url, data={'test': 'Checked Steam Valve'})
-
-        self.assertEqual(len(response.data), 1)
-
-        test = response.data[0]
-        self.assertEqual(test['value'], '150kPa')
-        self.assertEqual(test['user'], self.user.pk)
-
-        # Test upload using template reference (new method)
+        # Test upload using template reference
         data = {
             'stock_item': 105,
             'template': test_template.pk,
@@ -1941,7 +1928,7 @@ class StockTestResultTest(StockAPITestCase):
 
         response = self.post(url, data, expected_code=201)
 
-        # Check that a new test template has been created
+        # Check that a new test result has been created
         self.assertEqual(test_template.test_results.all().count(), 2)
 
         # List test results against the template
@@ -1951,6 +1938,43 @@ class StockTestResultTest(StockAPITestCase):
 
         for item in response.data:
             self.assertEqual(item['template'], test_template.pk)
+
+    def test_bulk_create(self):
+        """Test bulk creation of test results against the API."""
+        url = self.get_url()
+
+        test_template = PartTestTemplate.objects.get(pk=9)
+        part = test_template.part
+
+        N = test_template.test_results.count()
+
+        location = StockLocation.objects.filter(structural=False).first()
+
+        stock_items = [
+            StockItem.objects.create(part=part, quantity=1, location=location)
+            for _ in range(10)
+        ]
+
+        # Generate data to bulk-create test results
+        test_data = [
+            {
+                'stock_item': item.pk,
+                'template': test_template.pk,
+                'result': True,
+                'value': f'Test value: {item.pk}',
+            }
+            for item in stock_items
+        ]
+
+        data = self.post(url, data=test_data, expected_code=201).data
+
+        self.assertEqual(len(data), 10)
+        self.assertEqual(test_template.test_results.count(), N + 10)
+
+        for item in data:
+            item_id = item['stock_item']
+            self.assertEqual(item['template'], test_template.pk)
+            self.assertEqual(item['value'], f'Test value: {item_id}')
 
     def test_post_bitmap(self):
         """2021-08-25.
@@ -1998,17 +2022,24 @@ class StockTestResultTest(StockAPITestCase):
         p.testable = True
         p.save()
 
+        # Create a test template to record test results against
+        test_template = PartTestTemplate.objects.create(
+            part=p, test_name='Test Template', description='A test template for testing'
+        )
+
         # Create some objects (via the API)
         for _ii in range(50):
             response = self.post(
                 url,
                 {
                     'stock_item': stock_item.pk,
-                    'test': f'Some test {_ii}',
+                    'test': test_template.key,
                     'result': True,
                     'value': 'Test result value',
                 },
             )
+
+            self.assertEqual(response.data['template'], test_template.pk)
 
             tests.append(response.data['pk'])
 
