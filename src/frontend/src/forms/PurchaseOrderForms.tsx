@@ -228,6 +228,9 @@ export function usePurchaseOrderFields({
           };
         }
       },
+      delivery_address: {
+        icon: <IconAddressBook />
+      },
       responsible: {
         filters: {
           is_active: true
