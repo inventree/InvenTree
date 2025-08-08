@@ -786,16 +786,8 @@ class AttachmentDetail(RetrieveUpdateDestroyAPI):
         return super().destroy(request, *args, **kwargs)
 
 
-class InvenTreeImageImageList(ListCreateAPI):
-    """Detail API endpoint for InvenTreeImage objects."""
-
-    queryset = common.models.InvenTreeImage.objects.all()
-    serializer_class = common.serializers.InvenTreeImageSerializer
-    permission_classes = [IsAuthenticatedOrReadScope]
-
-
-class InvenTreeImageThumbFilter(rest_filters.FilterSet):
-    """Allows filtering for image thumbnails.
+class InvenTreeImageFilter(rest_filters.FilterSet):
+    """Allows filtering for images.
 
     - content_type__model   (the name of the model, e.g. 'part')
     - object_id             (the PK of the related object)
@@ -815,11 +807,30 @@ class InvenTreeImageThumbFilter(rest_filters.FilterSet):
         help_text=_('Primary key of the related object'),
     )
 
+    primary = rest_filters.BooleanFilter(
+        field_name='primary',
+        lookup_expr='exact',
+        label=_('Primary'),
+        help_text=_('Filter for primary image'),
+    )
+
     class Meta:
-        """Meta options for the InvenTreeImageThumbFilter."""
+        """Meta options for the InvenTreeImageFilter."""
 
         model = common.models.InvenTreeImage
-        fields = ['content_model', 'object_id']
+        fields = ['content_model', 'object_id', 'primary']
+
+
+class InvenTreeImageImageList(ListCreateAPI):
+    """Detail API endpoint for InvenTreeImage objects."""
+
+    queryset = common.models.InvenTreeImage.objects.all()
+    serializer_class = common.serializers.InvenTreeImageSerializer
+    permission_classes = [IsAuthenticatedOrReadScope]
+
+    filter_backends = [rest_filters.DjangoFilterBackend, InvenTreeSearchFilter]
+
+    filterset_class = InvenTreeImageFilter
 
 
 class InvenTreeImageThumbs(ListAPI):
@@ -831,7 +842,7 @@ class InvenTreeImageThumbs(ListAPI):
 
     filter_backends = [rest_filters.DjangoFilterBackend, InvenTreeSearchFilter]
 
-    filterset_class = InvenTreeImageThumbFilter
+    filterset_class = InvenTreeImageFilter
 
     search_fields = ['image']
 

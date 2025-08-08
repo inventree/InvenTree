@@ -598,7 +598,7 @@ class InvenTreeImageSerializer(
 ):
     """Serializer for InvenTreeImage."""
 
-    image = serializers.ImageField(required=False, allow_null=True)
+    image = serializers.ImageField(required=True, allow_null=False)
     thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
 
     # we accept the model name here

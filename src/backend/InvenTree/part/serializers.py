@@ -332,7 +332,7 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'revision',
             'full_name',
             'description',
-            # 'images',
+            'images',
             'active',
             'locked',
             'assembly',
@@ -364,9 +364,12 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         read_only=True, allow_null=True
     )
 
-    # images = common_serializers.InvenTreeImageSerializer(
-    #     source='get_images', many=True, read_only=True, allow_null=True
-    # )
+    images = common_serializers.InvenTreeImageSerializer(
+        many=True,
+        read_only=True,
+        source='all_images',
+        help_text=_('All images for this Part'),
+    )
 
     IPN = serializers.CharField(
         required=False,
@@ -648,6 +651,7 @@ class PartSerializer(
     """
 
     import_exclude_fields = ['creation_date', 'creation_user', 'duplicate']
+    export_exclude_fields = ['images']
 
     class Meta:
         """Metaclass defining serializer fields."""

@@ -1,6 +1,5 @@
 """Unit tests for the various part API endpoints."""
 
-import os
 from datetime import datetime
 from decimal import Decimal
 from enum import IntEnum
@@ -1525,7 +1524,7 @@ class PartCreationTests(PartAPITestBase):
         self.assertEqual(prt.parameters.count(), 3)
 
 
-class PartDetailTests(PartImageTestMixin, PartAPITestBase):
+class PartDetailTests(PartAPITestBase):
     """Test that we can create / edit / delete Part objects via the API."""
 
     @classmethod
@@ -1665,138 +1664,6 @@ class PartDetailTests(PartImageTestMixin, PartAPITestBase):
 
         # But we *can* change it to a unique revision code
         response = self.patch(url, {'revision': 'C'}, expected_code=200)
-
-    def test_image_upload(self):
-        """Test that we can upload an image to the part API."""
-        self.assignRole('part.add')
-
-        # Create a new part
-        response = self.post(
-            reverse('api-part-list'),
-            {'name': 'imagine', 'description': 'All the people', 'category': 1},
-            expected_code=201,
-        )
-
-        pk = response.data['pk']
-
-        url = reverse('api-part-detail', kwargs={'pk': pk})
-
-        p = Part.objects.get(pk=pk)
-
-        # Part should not have an image!
-        with self.assertRaises(ValueError):
-            print(p.image.file)
-
-        # Try to upload a non-image file
-        test_path = get_testfolder_dir() / 'dummy_image'
-        with open(f'{test_path}.txt', 'w', encoding='utf-8') as dummy_image:
-            dummy_image.write('hello world')
-
-        with open(f'{test_path}.txt', 'rb') as dummy_image:
-            response = self.upload_client.patch(
-                url, {'image': dummy_image}, format='multipart', expected_code=400
-            )
-
-            self.assertIn('Upload a valid image', str(response.data))
-
-        # Now try to upload a valid image file, in multiple formats
-        for fmt in ['jpg', 'j2k', 'png', 'bmp', 'webp']:
-            fn = f'{test_path}.{fmt}'
-
-            img = PIL.Image.new('RGB', (128, 128), color='red')
-            img.save(fn)
-
-            with open(fn, 'rb') as dummy_image:
-                response = self.upload_client.patch(
-                    url, {'image': dummy_image}, format='multipart', expected_code=200
-                )
-
-            # And now check that the image has been set
-            p = Part.objects.get(pk=pk)
-            self.assertIsNotNone(p.image)
-
-    def test_existing_image(self):
-        """Test that we can allocate an existing uploaded image to a new Part."""
-        # First, upload an image for an existing part
-        image_name = self.create_test_image()
-
-        # Attempt to create, but with an invalid image name
-        response = self.post(
-            reverse('api-part-list'),
-            {
-                'name': 'New part',
-                'description': 'New Part description',
-                'category': 1,
-                'existing_image': 'does_not_exist.png',
-            },
-            expected_code=400,
-        )
-
-        # Now, create a new part and assign the same image
-        response = self.post(
-            reverse('api-part-list'),
-            {
-                'name': 'New part',
-                'description': 'New part description',
-                'category': 1,
-                'existing_image': image_name.split(os.path.sep)[-1],
-            },
-            expected_code=201,
-        )
-
-        self.assertEqual(response.data['image'], image_name)
-
-    def test_update_existing_image(self):
-        """Test that we can update the image of an existing part with an already existing image."""
-        # First, upload an image for an existing part
-        p = Part.objects.first()
-
-        fn = get_testfolder_dir() / 'part_image_123abc.png'
-
-        img = PIL.Image.new('RGB', (128, 128), color='blue')
-        img.save(fn)
-
-        # Upload the image to a part
-        with open(fn, 'rb') as img_file:
-            response = self.upload_client.patch(
-                reverse('api-part-detail', kwargs={'pk': p.pk}),
-                {'image': img_file},
-                expected_code=200,
-            )
-
-            image_name = response.data['image']
-            self.assertTrue(image_name.startswith('/media/part_images/part_image'))
-
-        # Create a new part without an image
-        response = self.post(
-            reverse('api-part-list'),
-            {
-                'name': 'Some New Part',
-                'description': 'Description of the part',
-                'category': 1,
-            },
-            expected_code=201,
-        )
-
-        self.assertEqual(response.data['image'], None)
-        part_pk = response.data['pk']
-
-        # Add image from the first part to the new part
-        response = self.patch(
-            reverse('api-part-detail', kwargs={'pk': part_pk}),
-            {'existing_image': image_name},
-            expected_code=200,
-        )
-
-        self.assertEqual(response.data['image'], image_name)
-
-        # Attempt to add a non-existent image to an existing part
-        last_p = Part.objects.last()
-        response = self.patch(
-            reverse('api-part-detail', kwargs={'pk': last_p.pk}),
-            {'existing_image': 'bogus_image.jpg'},
-            expected_code=400,
-        )
 
     def test_details(self):
         """Test that the required details are available."""

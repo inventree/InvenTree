@@ -8,8 +8,8 @@ from django.core.files.base import ContentFile
 from django.test import override_settings
 
 from django_test_migrations.contrib.unittest_case import MigratorTestCase
-from PIL import Image
 
+from common.helpers import generate_image
 from InvenTree import unit_test
 
 
@@ -212,19 +212,6 @@ class TestLegacyAttachmentMigration(MigratorTestCase):
             'stockitem',
         ]:
             self.assertEqual(Attachment.objects.filter(model_type=model).count(), 2)
-
-
-def generate_image(filename: str = 'test.png', fmt: str = 'PNG') -> ContentFile:
-    """Generate a Django dummy image for test inventreeimage."""
-    color = (255, 0, 0)
-
-    img = Image.new(mode='RGB', size=(100, 100), color=color)
-
-    buffer = io.BytesIO()
-    img.save(buffer, format=fmt)
-    buffer.seek(0)
-
-    return ContentFile(buffer.read(), name=filename)
 
 
 class TestLegacyImageMigration(MigratorTestCase):
