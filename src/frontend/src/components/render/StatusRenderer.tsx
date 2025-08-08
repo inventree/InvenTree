@@ -74,14 +74,16 @@ export function getStatusCodes(
   const statusCodeList = useGlobalStatusState.getState().status;
 
   if (statusCodeList === undefined) {
-    console.log('StatusRenderer: statusCodeList is undefined');
+    console.warn('StatusRenderer: statusCodeList is undefined');
     return null;
   }
 
   const statusCodes = statusCodeList[type];
 
   if (statusCodes === undefined) {
-    console.log('StatusRenderer: statusCodes is undefined');
+    console.warn(
+      `StatusRenderer: statusCodes is undefined for model '${type}'`
+    );
     return null;
   }
 

@@ -210,7 +210,7 @@ export const createMachineSettingsState = ({
 }: CreateMachineSettingStateProps) => {
   const pathParams: PathParams = { machine, config_type: configType };
 
-  return createStore<SettingsStateProps>()((set, get) => ({
+  const store = createStore<SettingsStateProps>()((set, get) => ({
     settings: [],
     lookup: {},
     loaded: false,
@@ -255,6 +255,12 @@ export const createMachineSettingsState = ({
       return isTrue(value);
     }
   }));
+
+  useEffect(() => {
+    store.getState().fetchSettings();
+  }, [machine, configType]);
+
+  return store;
 };
 
 /*
