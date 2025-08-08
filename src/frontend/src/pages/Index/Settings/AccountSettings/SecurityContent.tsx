@@ -1,3 +1,4 @@
+import { create } from '@github/webauthn-json/browser-ponyfill';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import { type AuthConfig, type AuthProvider, FlowEnum } from '@lib/types/Auth';
@@ -391,6 +392,18 @@ function MfaSection() {
       getReauthText
     );
   };
+  const removeWebauthn = (code: string) => {
+    runActionWithFallback(
+      () =>
+        authApi(apiUrl(ApiEndpoints.auth_webauthn), undefined, 'delete', {
+          authenticators: [code]
+        }).then(() => {
+          refetch();
+          return ResultType.success;
+        }),
+      getReauthText
+    );
+  };
 
   const parseDate = (date: number) =>
     date == null ? 'Never' : new Date(date * 1000).toLocaleString();
@@ -411,6 +424,16 @@ function MfaSection() {
           {token.type == 'recovery_codes' && (
             <Button onClick={viewRecoveryCodes}>
               <Trans>View</Trans>
+            </Button>
+          )}
+          {token.type == 'webauthn' && (
+            <Button
+              color='red'
+              onClick={() => {
+                removeWebauthn(token.id);
+              }}
+            >
+              <Trans>Remove</Trans>
             </Button>
           )}
         </Table.Td>
@@ -564,6 +587,62 @@ function MfaAddSection({
       getReauthText
     );
   };
+  const registerWebauthn = async () => {
+    let data: any = {};
+    await runActionWithFallback(
+      () =>
+        authApi(apiUrl(ApiEndpoints.auth_webauthn), undefined, 'get').then(
+          (res) => {
+            data = res.data?.data;
+            if (data?.creation_options) {
+              return ResultType.success;
+            } else {
+              return ResultType.error;
+            }
+          }
+        ),
+      getReauthText
+    );
+    if (data?.creation_options == undefined) {
+      showNotification({
+        title: t`Error while registering WebAuthn authenticator`,
+        message: t`Please reload page and try again.`,
+        color: 'red',
+        icon: <IconX />
+      });
+    }
+
+    // register the webauthn authenticator with the browser
+    const resp = await create({
+      publicKey: PublicKeyCredential.parseCreationOptionsFromJSON(
+        data.creation_options.publicKey
+      )
+    });
+    authApi(apiUrl(ApiEndpoints.auth_webauthn), undefined, 'post', {
+      name: 'Master Key',
+      credential: JSON.stringify(resp)
+    })
+      .then(() => {
+        showNotification({
+          title: t`WebAuthn authenticator registered successfully`,
+          message: t`You can now use this authenticator for multi-factor authentication.`,
+          color: 'green'
+        });
+        refetch();
+        return ResultType.success;
+      })
+      .catch((err) => {
+        showNotification({
+          title: t`Error while registering WebAuthn authenticator`,
+          message: err.response.data.errors
+            .map((error: any) => error.message)
+            .join('\n'),
+          color: 'red',
+          icon: <IconX />
+        });
+        return ResultType.error;
+      });
+  };
 
   const possibleFactors = useMemo(() => {
     return [
@@ -580,6 +659,13 @@ function MfaAddSection({
         description: t`One-Time pre-generated recovery codes`,
         function: registerRecoveryCodes,
         used: usedFactors?.includes('recovery_codes')
+      },
+      {
+        type: 'webauthn',
+        name: t`WebAuthn`,
+        description: t`Web Authentication (WebAuthn) is a web standard for secure authentication`,
+        function: registerWebauthn,
+        used: usedFactors?.includes('webauthn')
       }
     ].filter((factor) => {
       return auth_config?.mfa?.supported_types.includes(factor.type);
