@@ -432,6 +432,8 @@ class InvenTreeAttachmentSerializerField(serializers.FileField):
         if not value:
             return None
 
+        if settings.STORAGE_TARGET == 's3':
+            return str(value.url)
         return os.path.join(str(settings.MEDIA_URL), str(value))
 
 
@@ -446,6 +448,8 @@ class InvenTreeImageSerializerField(serializers.ImageField):
         if not value:
             return None
 
+        if settings.STORAGE_TARGET == 's3':
+            return str(value.url)
         return os.path.join(str(settings.MEDIA_URL), str(value))
 
 
