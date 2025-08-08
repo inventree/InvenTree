@@ -12,6 +12,7 @@ import common.serializers as common_serializers
 import company.filters
 import part.filters
 import part.serializers as part_serializers
+from common.filters import prefetch_related_images
 from importer.registry import register_importer
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.ready import isGeneratingSchema
@@ -42,32 +43,23 @@ class CompanyBriefSerializer(InvenTreeModelSerializer):
         """Metaclass options."""
 
         model = Company
-        fields = [
-            'pk',
-            'active',
-            'name',
-            'description',
-            'image',
-            # 'thumbnail',
-            'currency',
-            'tax_id',
-        ]
+        fields = ['pk', 'active', 'name', 'description', 'image', 'currency', 'tax_id']
         read_only_fields = ['currency']
 
-    # image = InvenTreeImageSerializerField(read_only=True)
-    image = serializers.SerializerMethodField()
+    image = serializers.SerializerMethodField(
+        help_text=_('The primary image for this Company (if any)')
+    )
 
-    def get_image(self, obj):
+    def get_image(self, company):
         """Return the image associated with this Company instance."""
-        if obj.images:
-            image = obj.images.first()
-        else:
-            return None
-        return common_serializers.InvenTreeImageSerializer(
-            image, context=self.context
-        ).data
+        images = getattr(company, 'all_images', None)
+        if images and len(images) > 0:
+            img_obj = images[0]
+            return common_serializers.InvenTreeImageSerializer(
+                img_obj, context=self.context
+            ).data
 
-    # thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
+        return None
 
 
 @register_importer()
@@ -187,6 +179,7 @@ class CompanySerializer(
         read_only=True,
     )
 
+    # TODO: I suspect this field might be causing an N+1 query issue because it relies on a property on the Company model.
     primary_address = AddressSerializer(allow_null=True, read_only=True)
     image = serializers.SerializerMethodField(read_only=True)
 
@@ -487,6 +480,9 @@ class SupplierPartSerializer(
         queryset = queryset.annotate(
             on_order=company.filters.annotate_on_order_quantity()
         )
+
+        queryset = prefetch_related_images(queryset, reference='part')
+        queryset = prefetch_related_images(queryset, reference='supplier')
 
         return queryset
 

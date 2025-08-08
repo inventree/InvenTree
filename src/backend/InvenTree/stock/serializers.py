@@ -27,6 +27,7 @@ import part.models as part_models
 import part.serializers as part_serializers
 import stock.filters
 import stock.status_codes
+from common.filters import prefetch_related_images
 from common.settings import get_global_setting
 from generic.states.fields import InvenTreeCustomStatusSerializerMixin
 from importer.registry import register_importer
@@ -580,6 +581,8 @@ class StockItemSerializer(
 
         # Annotate with the total number of "child items" (split stock items)
         queryset = queryset.annotate(child_items=SubqueryCount('children'))
+
+        queryset = prefetch_related_images(queryset, reference='part')
 
         return queryset
 

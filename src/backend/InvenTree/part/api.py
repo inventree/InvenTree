@@ -16,6 +16,7 @@ from rest_framework.response import Response
 
 import InvenTree.permissions
 import part.filters
+from common.filters import prefetch_related_images
 from data_exporter.mixins import DataExportViewMixin
 from InvenTree.api import BulkUpdateMixin, ListCreateDestroyAPIView, MetadataView
 from InvenTree.filters import (
@@ -1339,6 +1340,8 @@ class PartParameterAPIMixin:
         """Override get_queryset method to prefetch related fields."""
         queryset = super().get_queryset(*args, **kwargs)
         queryset = queryset.prefetch_related('part', 'template', 'updated_by')
+        queryset = prefetch_related_images(queryset, reference='part')
+
         return queryset
 
     def get_serializer_context(self):

@@ -617,6 +617,8 @@ class InvenTreeImageSerializer(
         label=_('Existing Image'),
     )
 
+    object_id = serializers.IntegerField(write_only=True)
+
     class Meta:
         """Meta options for the InvenTreeImageSerializer."""
 

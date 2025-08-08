@@ -28,6 +28,7 @@ import InvenTree.helpers
 import InvenTree.tasks
 import part.filters
 import part.serializers as part_serializers
+from common.filters import prefetch_related_images
 from common.serializers import ProjectCodeSerializer
 from common.settings import get_global_setting
 from generic.states.fields import InvenTreeCustomStatusSerializerMixin
@@ -165,6 +166,8 @@ class BuildSerializer(
                 default=Value(False, output_field=BooleanField()),
             )
         )
+
+        queryset = prefetch_related_images(queryset, reference='part')
 
         return queryset
 
@@ -1677,5 +1680,12 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
                 output_field=FloatField(),
             )
         )
+
+        queryset = prefetch_related_images(
+            queryset, reference='allocations__stock_item__part'
+        )
+        queryset = prefetch_related_images(queryset, reference='build__part')
+        queryset = prefetch_related_images(queryset, reference='bom_item__part')
+        queryset = prefetch_related_images(queryset, reference='bom_item__sub_part')
 
         return queryset

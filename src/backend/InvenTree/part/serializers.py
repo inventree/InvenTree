@@ -31,6 +31,7 @@ import part.stocktake
 import part.tasks
 import stock.models
 import users.models
+from common.filters import prefetch_related_images
 from importer.registry import register_importer
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.ready import isGeneratingSchema
@@ -332,7 +333,7 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'revision',
             'full_name',
             'description',
-            'images',
+            'image',
             'active',
             'locked',
             'assembly',
@@ -364,12 +365,22 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         read_only=True, allow_null=True
     )
 
-    images = common_serializers.InvenTreeImageSerializer(
-        many=True,
-        read_only=True,
-        source='all_images',
-        help_text=_('All images for this Part'),
+    image = serializers.SerializerMethodField(
+        help_text=_('The primary image for this Part (if any)')
     )
+
+    def get_image(self, part):
+        """Return the primary image associated with this Part instance."""
+        images = getattr(part, 'all_images', None)
+
+        if images and len(images) > 0:
+            for img in images:
+                if img.primary:
+                    return common_serializers.InvenTreeImageSerializer(
+                        img, context=self.context
+                    ).data
+
+        return None
 
     IPN = serializers.CharField(
         required=False,
@@ -1843,6 +1854,9 @@ class BomItemSerializer(
 
         # Annotate available stock and "can_build" quantities
         queryset = part_filters.annotate_bom_item_can_build(queryset)
+
+        queryset = prefetch_related_images(queryset, reference='part')
+        queryset = prefetch_related_images(queryset, reference='sub_part')
 
         return queryset
 
