@@ -177,7 +177,9 @@ export const StatusRenderer = ({
   }
 
   if (statusCodes === undefined || statusCodes === null) {
-    console.warn('StatusRenderer: statusCodes is undefined');
+    console.warn(
+      `StatusRenderer: statusCodes is undefined for model '${type}'`
+    );
     return null;
   }
 
