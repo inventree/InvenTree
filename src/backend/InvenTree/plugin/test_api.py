@@ -610,6 +610,8 @@ class PluginFullAPITest(PluginMixin, InvenTreeAPITestCase):
         install_slug = 'inventree-brother-plugin'
         slug = 'brother'
 
+        print('test_full_process:')
+
         # Install a plugin
         data = self.post(
             reverse('api-plugin-install'),
@@ -627,6 +629,7 @@ class PluginFullAPITest(PluginMixin, InvenTreeAPITestCase):
             data={'active': True},
             max_query_count=450,
         ).data
+
         self.assertEqual(data['active'], True)
 
         # Check if the plugin is installed

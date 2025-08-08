@@ -214,17 +214,22 @@ def update_plugins_file(install_name, full_package=None, version=None, remove=Fa
     if not found and not remove:
         output.append(new_value)
 
+    print('--- Writing plugins file ---')
+
     # Write file back to disk
     try:
         with pf.open(mode='w') as f:
             for line in output:
                 f.write(line)
+                print(line)
 
                 if not line.endswith('\n'):
                     f.write('\n')
     except Exception as exc:
         logger.exception('Failed to add plugin to plugins file: %s', str(exc))
         log_error('update_plugins_file', scope='plugins')
+
+    print('--- Plugins file updated ---')
 
 
 def install_plugin(url=None, packagename=None, user=None, version=None):
@@ -333,10 +338,14 @@ def uninstall_plugin(cfg: plugin.models.PluginConfig, user=None, delete_config=T
     """
     from plugin.registry import registry
 
+    print('=== uninstall_plugin:', cfg.key, '===')
+
     if settings.PLUGINS_INSTALL_DISABLED:
+        print('- Plugin uninstalling is disabled')
         raise ValidationError(_('Plugin uninstalling is disabled'))
 
     if cfg.active:
+        print('- Plugin is active')
         raise ValidationError(
             _('Plugin cannot be uninstalled as it is currently active')
         )
@@ -378,10 +387,13 @@ def uninstall_plugin(cfg: plugin.models.PluginConfig, user=None, delete_config=T
         # No matching install target found
         raise ValidationError(_('Plugin installation not found'))
 
+    print('--- updating plugins file ---')
+
     # Update the plugins file
     update_plugins_file(package_name, remove=True)
 
     if delete_config:
+        print('--- deleting plugin configuration ---')
         # Remove the plugin configuration from the database
         cfg.delete()
 
