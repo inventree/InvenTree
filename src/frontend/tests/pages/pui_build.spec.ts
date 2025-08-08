@@ -79,11 +79,14 @@ test('Build Order - Basic Tests', async ({ browser }) => {
   await loadTab(page, 'Test Results');
   await page.getByText('Quantity: 25').waitFor();
   await page.getByText('Continuity Checks').waitFor();
-  await page
+
+  const button = await page
     .getByRole('row', { name: 'Quantity: 16' })
-    .getByRole('button')
-    .hover();
-  await page.getByText('Add Test Result').waitFor();
+    .getByLabel('add-test-result');
+
+  await button.click();
+  await page.getByRole('textbox', { name: 'text-field-value' }).waitFor();
+  await page.getByRole('button', { name: 'Cancel' }).click();
 
   // Click through to the "parent" build
   await loadTab(page, 'Build Details');

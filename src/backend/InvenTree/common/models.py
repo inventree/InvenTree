@@ -54,7 +54,7 @@ import InvenTree.ready
 import InvenTree.tasks
 import users.models
 from common.setting.type import InvenTreeSettingsKeyType, SettingsKeyType
-from common.settings import global_setting_overrides
+from common.settings import get_global_setting, global_setting_overrides
 from generic.enums import StringEnum
 from generic.states import ColorEnum
 from generic.states.custom import state_color_mappings
@@ -2522,6 +2522,28 @@ class Priority(models.IntegerChoices):
 HEADER_PRIORITY = 'X-Priority'
 HEADER_MSG_ID = 'Message-ID'
 
+del_error_msg = _(
+    'INVE-E8: Email log deletion is protected. Set INVENTREE_PROTECT_EMAIL_LOG to False to allow deletion.'
+)
+
+
+class NoDeleteQuerySet(models.query.QuerySet):
+    """Custom QuerySet to prevent deletion of EmailLog entries."""
+
+    def delete(self):
+        """Override delete method to prevent deletion of EmailLog entries."""
+        if get_global_setting('INVENTREE_PROTECT_EMAIL_LOG'):
+            raise ValidationError(del_error_msg)
+        super().delete()
+
+
+class NoDeleteManager(models.Manager):
+    """Custom Manager to use NoDeleteQuerySet."""
+
+    def get_queryset(self):
+        """Return a NoDeleteQuerySet."""
+        return NoDeleteQuerySet(self.model, using=self._db)
+
 
 class EmailMessage(models.Model):
     """Model for storing email messages sent or received by the system.
@@ -2662,6 +2684,14 @@ class EmailMessage(models.Model):
             self.save()
 
         return ret
+
+    objects = NoDeleteManager()
+
+    def delete(self, *kwargs):
+        """Delete entry - if not protected."""
+        if get_global_setting('INVENTREE_PROTECT_EMAIL_LOG'):
+            raise ValidationError(del_error_msg)
+        return super().delete(*kwargs)
 
 
 class EmailThread(InvenTree.models.InvenTreeMetadataModel):

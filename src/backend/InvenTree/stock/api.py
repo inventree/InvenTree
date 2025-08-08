@@ -28,7 +28,12 @@ from company.models import Company, SupplierPart
 from company.serializers import CompanySerializer
 from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import StatusView
-from InvenTree.api import BulkUpdateMixin, ListCreateDestroyAPIView, MetadataView
+from InvenTree.api import (
+    BulkCreateMixin,
+    BulkUpdateMixin,
+    ListCreateDestroyAPIView,
+    MetadataView,
+)
 from InvenTree.filters import (
     ORDER_FILTER_ALIAS,
     SEARCH_ORDER_FILTER,
@@ -115,12 +120,13 @@ class StockItemContextMixin:
         return context
 
 
+@extend_schema(responses={201: StockSerializers.StockItemSerializer(many=True)})
 class StockItemSerialize(StockItemContextMixin, CreateAPI):
     """API endpoint for serializing a stock item."""
 
     serializer_class = StockSerializers.SerializeStockItemSerializer
+    pagination_class = None
 
-    @extend_schema(responses={201: StockSerializers.StockItemSerializer(many=True)})
     def create(self, request, *args, **kwargs):
         """Serialize the provided StockItem."""
         serializer = self.get_serializer(data=request.data)
@@ -1177,7 +1183,7 @@ class StockList(DataExportViewMixin, StockApiMixin, ListCreateDestroyAPIView):
 
                 item.save(user=user)
 
-                response_data = serializer.data
+                response_data = [serializer.data]
 
         return Response(
             response_data,
@@ -1360,7 +1366,9 @@ class StockItemTestResultFilter(rest_filters.FilterSet):
         return queryset.filter(template__key=key)
 
 
-class StockItemTestResultList(StockItemTestResultMixin, ListCreateDestroyAPIView):
+class StockItemTestResultList(
+    BulkCreateMixin, StockItemTestResultMixin, ListCreateDestroyAPIView
+):
     """API endpoint for listing (and creating) a StockItemTestResult object."""
 
     filterset_class = StockItemTestResultFilter
