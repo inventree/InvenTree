@@ -56,7 +56,7 @@ jobs:
   # Build the docker image
   build:
     needs: paths-filter
-    if: needs.paths-filter.outputs.docker == 'true' || github.event_name == 'release' || github.event_name == 'push'
+    if: needs.paths-filter.outputs.docker == 'true' || github.event_name == 'release' || github.event_name == 'push' || contains(github.event.pull_request.labels.*.name, 'full-run')
     permissions:
       contents: read
       packages: write
