@@ -1,11 +1,14 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 382
+INVENTREE_API_VERSION = 383
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+v383 -> 2025-08-08 : https://github.com/inventree/InvenTree/pull/9969
+    - Correctly apply changes listed in v358
+    - Breaking: StockCreate now always returns a list of StockItem
 
 v382 -> 2025-08-07 : https://github.com/inventree/InvenTree/pull/10146
     - Adds ability to "bulk create" test results via the API
