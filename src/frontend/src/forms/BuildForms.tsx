@@ -1,7 +1,8 @@
 import { t } from '@lingui/core/macro';
-import { Alert, List, Stack, Table } from '@mantine/core';
+import { Alert, Divider, List, Stack, Table } from '@mantine/core';
 import {
   IconCalendar,
+  IconInfoCircle,
   IconLink,
   IconList,
   IconSitemap,
@@ -16,27 +17,32 @@ import { ModelType } from '@lib/enums/ModelType';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
 
+import { ProgressBar } from '@lib/components/ProgressBar';
 import { apiUrl } from '@lib/functions/Api';
 import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
 import {
   TableFieldErrorWrapper,
   type TableFieldRowProps
 } from '../components/forms/fields/TableField';
-import { ProgressBar } from '../components/items/ProgressBar';
 import { StatusRenderer } from '../components/render/StatusRenderer';
+import { RenderStockItem } from '../components/render/Stock';
 import { useCreateApiFormModal } from '../hooks/UseForm';
-import { useBatchCodeGenerator } from '../hooks/UseGenerator';
-import { useSerialNumberPlaceholder } from '../hooks/UsePlaceholder';
-import { useGlobalSettingsState } from '../states/SettingsState';
+import {
+  useBatchCodeGenerator,
+  useSerialNumberGenerator
+} from '../hooks/UseGenerator';
+import { useGlobalSettingsState } from '../states/SettingsStates';
 import { PartColumn } from '../tables/ColumnRenderers';
 
 /**
  * Field set for BuildOrder forms
  */
 export function useBuildOrderFields({
-  create
+  create,
+  modalId
 }: {
   create: boolean;
+  modalId: string;
 }): ApiFormFieldSet {
   const [destination, setDestination] = useState<number | null | undefined>(
     null
@@ -44,9 +50,10 @@ export function useBuildOrderFields({
 
   const [batchCode, setBatchCode] = useState<string>('');
 
-  const batchGenerator = useBatchCodeGenerator((value: any) => {
-    if (!batchCode) {
-      setBatchCode(value);
+  const batchGenerator = useBatchCodeGenerator({
+    modalId: modalId,
+    onGenerate: (value: any) => {
+      setBatchCode((batch: any) => batch || value);
     }
   });
 
@@ -96,6 +103,9 @@ export function useBuildOrderFields({
         icon: <IconTruckDelivery />
       },
       batch: {
+        placeholder:
+          batchGenerator.result &&
+          `${t`Next batch code`}: ${batchGenerator.result}`,
         value: batchCode,
         onValueChange: (value: any) => setBatchCode(value)
       },
@@ -126,25 +136,28 @@ export function useBuildOrderFields({
         filters: {
           is_active: true
         }
-      }
+      },
+      external: {}
     };
-
-    if (create) {
-      fields.create_child_builds = {};
-    }
 
     if (!globalSettings.isSet('PROJECT_CODES_ENABLED', true)) {
       delete fields.project_code;
     }
 
+    if (!globalSettings.isSet('BUILDORDER_EXTERNAL_BUILDS', true)) {
+      delete fields.external;
+    }
+
     return fields;
-  }, [create, destination, batchCode, globalSettings]);
+  }, [create, destination, batchCode, batchGenerator.result, globalSettings]);
 }
 
 export function useBuildOrderOutputFields({
-  build
+  build,
+  modalId
 }: {
   build: any;
+  modalId: string;
 }): ApiFormFieldSet {
   const trackable: boolean = useMemo(() => {
     return build.part_detail?.trackable ?? false;
@@ -165,10 +178,19 @@ export function useBuildOrderOutputFields({
     setQuantity(Math.max(0, build_quantity - build_complete));
   }, [build]);
 
-  const serialPlaceholder = useSerialNumberPlaceholder({
-    partId: build.part_detail?.pk,
-    key: 'build-output',
-    enabled: build.part_detail?.trackable
+  const serialGenerator = useSerialNumberGenerator({
+    modalId: modalId,
+    initialQuery: {
+      part: build.part || build.part_detail?.pk
+    }
+  });
+
+  const batchGenerator = useBatchCodeGenerator({
+    modalId: modalId,
+    initialQuery: {
+      part: build.part || build.part_detail?.pk,
+      quantity: build.quantity
+    }
   });
 
   return useMemo(() => {
@@ -181,9 +203,15 @@ export function useBuildOrderOutputFields({
       },
       serial_numbers: {
         hidden: !trackable,
-        placeholder: serialPlaceholder
+        placeholder:
+          serialGenerator.result &&
+          `${t`Next serial number`}: ${serialGenerator.result}`
       },
-      batch_code: {},
+      batch_code: {
+        placeholder:
+          batchGenerator.result &&
+          `${t`Next batch code`}: ${batchGenerator.result}`
+      },
       location: {
         value: location,
         onValueChange: (value: any) => {
@@ -194,7 +222,7 @@ export function useBuildOrderOutputFields({
         hidden: !trackable
       }
     };
-  }, [quantity, serialPlaceholder, trackable]);
+  }, [quantity, batchGenerator.result, serialGenerator.result, trackable]);
 }
 
 function BuildOutputFormRow({
@@ -447,10 +475,12 @@ export function useCancelBuildOutputsForm({
 // Construct a single row in the 'allocate stock to build' table
 function BuildAllocateLineRow({
   props,
+  output,
   record,
   sourceLocation
 }: Readonly<{
   props: TableFieldRowProps;
+  output: any;
   record: any;
   sourceLocation: number | undefined;
 }>) {
@@ -459,6 +489,10 @@ function BuildAllocateLineRow({
       field_type: 'related field',
       api_url: apiUrl(ApiEndpoints.stock_item_list),
       model: ModelType.stockitem,
+      autoFill: !!output?.serial,
+      autoFillFilters: {
+        serial: output?.serial
+      },
       filters: {
         available: true,
         part_detail: true,
@@ -538,12 +572,14 @@ function BuildAllocateLineRow({
  */
 export function useAllocateStockToBuildForm({
   buildId,
+  output,
   outputId,
   build,
   lineItems,
   onFormSuccess
 }: {
   buildId?: number;
+  output?: any;
   outputId?: number | null;
   build?: any;
   lineItems: any[];
@@ -572,6 +608,7 @@ export function useAllocateStockToBuildForm({
           return (
             <BuildAllocateLineRow
               key={row.idx}
+              output={output}
               props={row}
               record={record}
               sourceLocation={sourceLocation}
@@ -582,7 +619,7 @@ export function useAllocateStockToBuildForm({
     };
 
     return fields;
-  }, [lineItems, sourceLocation]);
+  }, [output, lineItems, sourceLocation]);
 
   useEffect(() => {
     setSourceLocation(build?.take_from);
@@ -607,10 +644,22 @@ export function useAllocateStockToBuildForm({
   const preFormContent = useMemo(() => {
     return (
       <Stack gap='xs'>
+        {output?.pk && (
+          <Stack gap='xs'>
+            <Alert
+              color='blue'
+              icon={<IconInfoCircle />}
+              title={t`Build Output`}
+            >
+              <RenderStockItem instance={output} />
+            </Alert>
+            <Divider />
+          </Stack>
+        )}
         <StandaloneField fieldDefinition={sourceLocationField} />
       </Stack>
     );
-  }, [sourceLocationField]);
+  }, [output, sourceLocationField]);
 
   return useCreateApiFormModal({
     url: ApiEndpoints.build_order_allocate,

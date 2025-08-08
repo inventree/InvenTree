@@ -135,7 +135,7 @@ Generate a list of all active customers:
 {% raw %}
 {% load report %}
 
-{% filter_db_model company.company is_customer=True active=True as active_customers %}
+{% filter_db_model 'company.company' is_customer=True active=True as active_customers %}
 
 <ul>
     {% for customer in active_customers %}
@@ -280,9 +280,12 @@ Simple mathematical operators are available, as demonstrated in the example temp
 {% add 1 3 %} <!-- Add two numbers together -->
 {% subtract 4 3 %} <!-- Subtract 3 from 4 -->
 {% multiply 1.2 3.4 %} <!-- Multiply two numbers -->
-{% divide 10 2  as division_result %} <!-- Divide 10 by 2 -->
+
+<!-- Perform a calculation and store the result -->
+{% divide 10 2 as division_result %} <!-- Divide 10 by 2 -->
 
 Division Result: {{ division_result }}
+
 
 {% endraw %}
 ```

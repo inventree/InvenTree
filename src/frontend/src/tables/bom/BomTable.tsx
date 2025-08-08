@@ -1,9 +1,10 @@
 import { t } from '@lingui/core/macro';
-import { Alert, Group, Stack, Text } from '@mantine/core';
+import { ActionIcon, Alert, Group, Stack, Text, Tooltip } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import {
   IconArrowRight,
   IconCircleCheck,
+  IconExclamationCircle,
   IconFileArrowLeft,
   IconLock,
   IconSwitch3
@@ -11,15 +12,21 @@ import {
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { ActionButton } from '@lib/components/ActionButton';
+import { AddItemButton } from '@lib/components/AddItemButton';
+import {
+  type RowAction,
+  RowDeleteAction,
+  RowEditAction
+} from '@lib/components/RowActions';
+import { YesNoButton } from '@lib/components/YesNoButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { navigateToLink } from '@lib/functions/Navigation';
 import type { TableFilter } from '@lib/types/Filters';
-import { ActionButton } from '../../components/buttons/ActionButton';
-import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { YesNoButton } from '../../components/buttons/YesNoButton';
+import type { TableColumn } from '@lib/types/Tables';
 import { Thumbnail } from '../../components/images/Thumbnail';
 import ImporterDrawer from '../../components/importer/ImporterDrawer';
 import { RenderPart } from '../../components/render/Part';
@@ -28,22 +35,20 @@ import { formatDecimal, formatPriceRange } from '../../defaults/formatters';
 import { bomItemFields, useEditBomSubstitutesForm } from '../../forms/BomForms';
 import { dataImporterSessionFields } from '../../forms/ImporterForms';
 import {
-  useApiFormModal,
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import {
   BooleanColumn,
   DescriptionColumn,
   NoteColumn,
   ReferenceColumn
 } from '../ColumnRenderers';
+import { PartCategoryFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
 
 // Calculate the total stock quantity available for a given BomItem
@@ -88,7 +93,7 @@ export function BomTable({
         accessor: 'sub_part',
         switchable: false,
         sortable: true,
-        render: (record) => {
+        render: (record: any) => {
           const part = record.sub_part_detail;
           const extra = [];
 
@@ -100,17 +105,26 @@ export function BomTable({
 
           return (
             part && (
-              <TableHoverCard
-                value={
-                  <Thumbnail
-                    src={part.thumbnail || part.image}
-                    alt={part.description}
-                    text={part.full_name}
-                  />
-                }
-                extra={extra}
-                title={t`Part Information`}
-              />
+              <Group gap='xs' justify='space-between' wrap='nowrap'>
+                <TableHoverCard
+                  value={
+                    <Thumbnail
+                      src={part.thumbnail || part.image}
+                      alt={part.description}
+                      text={part.full_name}
+                    />
+                  }
+                  extra={extra}
+                  title={t`Part Information`}
+                />
+                {!record.validated && (
+                  <Tooltip label={t`This BOM item has not been validated`}>
+                    <ActionIcon color='red' variant='transparent' size='sm'>
+                      <IconExclamationCircle />
+                    </ActionIcon>
+                  </Tooltip>
+                )}
+              </Group>
             )
           );
         }
@@ -135,17 +149,77 @@ export function BomTable({
           const units = record.sub_part_detail?.units;
 
           return (
-            <Group justify='space-between' grow>
-              <Text>{quantity}</Text>
-              {record.overage && <Text size='xs'>+{record.overage}</Text>}
-              {units && <Text size='xs'>{units}</Text>}
+            <Group justify='space-between'>
+              <Group gap='xs'>
+                <Text>{quantity}</Text>
+                {record.setup_quantity && record.setup_quantity > 0 && (
+                  <Text size='xs'>{`(+${record.setup_quantity})`}</Text>
+                )}
+                {record.attrition && record.attrition > 0 && (
+                  <Text size='xs'>{`(+${record.attrition}%)`}</Text>
+                )}
+              </Group>
+              {units && <Text size='xs'>[{units}]</Text>}
             </Group>
           );
         }
       },
       {
+        accessor: 'setup_quantity',
+        defaultVisible: false,
+        sortable: true,
+        render: (record: any) => {
+          const setup_quantity = record.setup_quantity;
+          const units = record.sub_part_detail?.units;
+          if (setup_quantity == null || setup_quantity === 0) {
+            return '-';
+          } else {
+            return (
+              <Group gap='xs' justify='space-between'>
+                <Text size='xs'>{formatDecimal(setup_quantity)}</Text>
+                {units && <Text size='xs'>[{units}]</Text>}
+              </Group>
+            );
+          }
+        }
+      },
+      {
+        accessor: 'attrition',
+        defaultVisible: false,
+        sortable: true,
+        render: (record: any) => {
+          const attrition = record.attrition;
+          if (attrition == null || attrition === 0) {
+            return '-';
+          } else {
+            return <Text size='xs'>{`${formatDecimal(attrition)}%`}</Text>;
+          }
+        }
+      },
+      {
+        accessor: 'rounding_multiple',
+        defaultVisible: false,
+        sortable: false,
+        render: (record: any) => {
+          const units = record.sub_part_detail?.units;
+          const multiple: number | null = record.round_up_multiple;
+
+          if (multiple == null) {
+            return '-';
+          } else {
+            return (
+              <Group gap='xs' justify='space-between'>
+                <Text>{formatDecimal(multiple)}</Text>
+                {units && <Text size='xs'>[{units}]</Text>}
+              </Group>
+            );
+          }
+        }
+      },
+      {
         accessor: 'substitutes',
-        render: (row) => {
+        defaultVisible: false,
+        render: (row: any) => {
           const substitutes = row.substitutes ?? [];
 
           return substitutes.length > 0 ? (
@@ -162,21 +236,24 @@ export function BomTable({
         }
       },
       BooleanColumn({
-        accessor: 'optional'
+        accessor: 'optional',
+        defaultVisible: false
       }),
       BooleanColumn({
-        accessor: 'consumable'
+        accessor: 'consumable',
+        defaultVisible: false
       }),
       BooleanColumn({
-        accessor: 'allow_variants'
+        accessor: 'allow_variants',
+        defaultVisible: false
       }),
       BooleanColumn({
-        accessor: 'inherited'
-        // TODO: Custom renderer for this column
-        // TODO: See bom.js for existing implementation
+        accessor: 'inherited',
+        defaultVisible: false
       }),
       BooleanColumn({
-        accessor: 'validated'
+        accessor: 'validated',
+        defaultVisible: false
       }),
       {
         accessor: 'price_range',
@@ -184,6 +261,7 @@ export function BomTable({
         ordering: 'pricing_max',
         sortable: true,
         switchable: true,
+        defaultVisible: false,
         render: (record: any) =>
           formatPriceRange(record.pricing_min, record.pricing_max)
       },
@@ -199,7 +277,7 @@ export function BomTable({
       {
         accessor: 'available_stock',
         sortable: true,
-        render: (record) => {
+        render: (record: any) => {
           const extra: ReactNode[] = [];
 
           const available_stock: number = availableStockQuantity(record);
@@ -210,13 +288,13 @@ export function BomTable({
             available_stock <= 0 ? (
               <Text c='red' style={{ fontStyle: 'italic' }}>{t`No stock`}</Text>
             ) : (
-              available_stock
+              `${formatDecimal(available_stock)}`
             );
 
           if (record.external_stock > 0) {
             extra.push(
               <Text key='external'>
-                {t`External stock`}: {record.external_stock}
+                {t`External stock`}: {formatDecimal(record.external_stock)}
               </Text>
             );
           }
@@ -225,7 +303,7 @@ export function BomTable({
             extra.push(
               <Text key='substitute'>
                 {t`Includes substitute stock`}:{' '}
-                {record.available_substitute_stock}
+                {formatDecimal(record.available_substitute_stock)}
               </Text>
             );
           }
@@ -233,7 +311,8 @@ export function BomTable({
           if (record.allow_variants && record.available_variant_stock > 0) {
             extra.push(
               <Text key='variant'>
-                {t`Includes variant stock`}: {record.available_variant_stock}
+                {t`Includes variant stock`}:{' '}
+                {formatDecimal(record.available_variant_stock)}
               </Text>
             );
           }
@@ -285,7 +364,7 @@ export function BomTable({
               fs={record.consumable && 'italic'}
               c={can_build <= 0 && !record.consumable ? 'red' : undefined}
             >
-              {can_build}
+              {formatDecimal(can_build)}
             </Text>
           );
 
@@ -364,7 +443,8 @@ export function BomTable({
         name: 'has_pricing',
         label: t`Has Pricing`,
         description: t`Show items with pricing`
-      }
+      },
+      PartCategoryFilter()
     ];
   }, [partId, params]);
 
@@ -423,30 +503,10 @@ export function BomTable({
 
   const editSubstitues = useEditBomSubstitutesForm({
     bomItemId: selectedBomItem.pk,
-    substitutes: selectedBomItem?.substitutes ?? [],
+    bomItem: selectedBomItem,
     onClose: () => {
       table.refreshTable();
     }
-  });
-
-  const validateBom = useApiFormModal({
-    url: ApiEndpoints.bom_validate,
-    method: 'PUT',
-    fields: {
-      valid: {
-        hidden: true,
-        value: true
-      }
-    },
-    title: t`Validate BOM`,
-    pk: partId,
-    preFormContent: (
-      <Alert color='green' icon={<IconCircleCheck />} title={t`Validate BOM`}>
-        <Text>{t`Do you want to validate the bill of materials for this assembly?`}</Text>
-      </Alert>
-    ),
-    successMessage: t`BOM validated`,
-    onFormSuccess: () => table.refreshTable()
   });
 
   const validateBomItem = useCallback((record: any) => {
@@ -496,7 +556,9 @@ export function BomTable({
             record.validated ||
             !user.hasChangeRole(UserRoles.part),
           icon: <IconCircleCheck />,
-          onClick: () => validateBomItem(record)
+          onClick: () => {
+            validateBomItem(record);
+          }
         },
         RowEditAction({
           hidden: partLocked || !user.hasChangeRole(UserRoles.part),
@@ -536,13 +598,6 @@ export function BomTable({
         icon={<IconFileArrowLeft />}
         onClick={() => importBomItem.open()}
       />,
-      <ActionButton
-        key='validate-bom'
-        hidden={partLocked || !user.hasChangeRole(UserRoles.part)}
-        tooltip={t`Validate BOM`}
-        icon={<IconCircleCheck />}
-        onClick={() => validateBom.open()}
-      />,
       <AddItemButton
         key='add-bom-item'
         hidden={partLocked || !user.hasAddRole(UserRoles.part)}
@@ -557,7 +612,6 @@ export function BomTable({
       {importBomItem.modal}
       {newBomItem.modal}
       {editBomItem.modal}
-      {validateBom.modal}
       {deleteBomItem.modal}
       {editSubstitues.modal}
       <Stack gap='xs'>

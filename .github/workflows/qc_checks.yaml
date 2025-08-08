@@ -254,7 +254,7 @@ jobs:
           echo "after move"
           ls -la artifact
           rm -rf artifact
-      - uses: stefanzweifel/git-auto-commit-action@b863ae1933cb653a53c021fe36dbb774e1fb9403 # pin@v5.2.0
+      - uses: stefanzweifel/git-auto-commit-action@778341af668090896ca464160c2def5d1d1a3eb0 # pin@v6.0.1
         name: Commit schema changes
         with:
           commit_message: "Update API schema for ${{ env.version }} / ${{ github.sha }}"
@@ -341,7 +341,7 @@ jobs:
       - name: Check Migration Files
         run: python3 .github/scripts/check_migration_files.py
       - name: Coverage Tests
-        run: invoke dev.test --coverage --translations
+        run: invoke dev.test --check --coverage --translations
       - name: Upload raw coverage to artifacts
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # pin@v4.6.2
         with:
@@ -369,7 +369,7 @@ jobs:
       INVENTREE_DB_HOST: "127.0.0.1"
       INVENTREE_DB_PORT: 5432
       INVENTREE_DEBUG: true
-      INVENTREE_LOG_LEVEL: WARNING
+      INVENTREE_LOG_LEVEL: INFO
       INVENTREE_CONSOLE_LOG: false
       INVENTREE_CACHE_HOST: localhost
       INVENTREE_PLUGINS_ENABLED: true
@@ -400,7 +400,7 @@ jobs:
           dev-install: true
           update: true
       - name: Run Tests
-        run: invoke dev.test --translations
+        run: invoke dev.test --check --translations
       - name: Data Export Test
         uses: ./.github/actions/migration
 
@@ -448,7 +448,7 @@ jobs:
           dev-install: true
           update: true
       - name: Run Tests
-        run: invoke dev.test --translations
+        run: invoke dev.test --check --translations
       - name: Data Export Test
         uses: ./.github/actions/migration
 
@@ -490,7 +490,7 @@ jobs:
           dev-install: true
           update: true
       - name: Run Tests
-        run: invoke dev.test --migrations --report --coverage --translations
+        run: invoke dev.test --check --migrations --report --coverage --translations
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@18283e04ce6e62d37312384ff67231eb8fd56d24 # pin@v5.4.3
         if: always()
@@ -609,7 +609,7 @@ jobs:
           invoke int.rebuild-thumbnails
       - name: Install dependencies
         run: |
-          invoke int.frontend-compile
+          invoke int.frontend-compile --extract
           cd src/frontend && npx playwright install --with-deps
       - name: Run Playwright tests
         id: tests
@@ -621,17 +621,14 @@ jobs:
           path: src/frontend/playwright-report/
           retention-days: 14
       - name: Report coverage
-        if: github.event_name != 'pull_request'
         run: cd src/frontend && npx nyc report --report-dir ./coverage --temp-dir .nyc_output --reporter=lcov --exclude-after-remap false
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@18283e04ce6e62d37312384ff67231eb8fd56d24 # pin@v5.4.3
-        if: github.event_name != 'pull_request'
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: inventree/InvenTree
           flags: web
       - name: Upload bundler info
-        if: github.event_name != 'pull_request'
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         run: |
@@ -687,7 +684,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@ff0a06e83cb2de871e5a09832bc6a81e7276941f # pin@v3
+        uses: github/codeql-action/upload-sarif@d6bbdef45e766d081b84a2def353b0055f728d3e # pin@v3
         with:
           sarif_file: results.sarif
           category: zizmor

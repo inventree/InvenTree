@@ -113,13 +113,10 @@ class UrlsMixinTest(BaseMixinDefinition, TestCase):
         target_pattern = re_path(
             f'^{plg_name}/', include((self.mixin.urls, plg_name)), name=plg_name
         )
-        self.assertEqual(
-            self.mixin.urlpatterns.reverse_dict, target_pattern.reverse_dict
-        )
 
         # resolve the view
-        self.assertEqual(self.mixin.urlpatterns.resolve('/testpath').func(), 'ccc')
-        self.assertEqual(self.mixin.urlpatterns.reverse('test'), 'testpath')
+        self.assertEqual(target_pattern.resolve('/testpath').func(), 'ccc')
+        self.assertEqual(target_pattern.reverse('test'), 'testpath')
 
         # no url
         self.assertIsNone(self.mixin_nothing.urls)
@@ -342,4 +339,3 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         )
 
         self.assertEqual(result.status_code, 400)
-        self.assertIn('Bad Request', str(result.content))

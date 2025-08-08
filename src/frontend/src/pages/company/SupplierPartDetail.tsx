@@ -56,8 +56,7 @@ export default function SupplierPartDetail() {
   const {
     instance: supplierPart,
     instanceQuery,
-    refreshInstance,
-    requestStatus
+    refreshInstance
   } = useInstance({
     endpoint: ApiEndpoints.supplier_part_list,
     pk: id,
@@ -185,14 +184,14 @@ export default function SupplierPartDetail() {
 
     const tr: DetailsField[] = [
       {
-        type: 'string',
+        type: 'number',
         name: 'in_stock',
         label: t`In Stock`,
         copy: true,
         icon: 'stock'
       },
       {
-        type: 'string',
+        type: 'number',
         name: 'on_order',
         label: t`On Order`,
         copy: true,
@@ -266,7 +265,10 @@ export default function SupplierPartDetail() {
         label: t`Purchase Orders`,
         icon: <IconShoppingCart />,
         content: supplierPart?.pk ? (
-          <PurchaseOrderTable supplierPartId={supplierPart.pk} />
+          <PurchaseOrderTable
+            supplierId={supplierPart.supplier}
+            supplierPartId={supplierPart.pk}
+          />
         ) : (
           <Skeleton />
         )
@@ -398,8 +400,7 @@ export default function SupplierPartDetail() {
       {duplicateSupplierPart.modal}
       {editSupplierPart.modal}
       <InstanceDetail
-        status={requestStatus}
-        loading={instanceQuery.isFetching}
+        query={instanceQuery}
         requiredRole={UserRoles.purchase_order}
       >
         <Stack gap='xs'>

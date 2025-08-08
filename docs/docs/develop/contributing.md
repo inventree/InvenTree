@@ -208,6 +208,21 @@ coverage html -i
 
 The coverage database is also generated in the CI-pipeline and exposd for 14 days as a artifact named `coverage`.
 
+### Database Query Profiling
+
+It may be useful during development to profile parts of the backend code to see how many database queries are executed. To that end, the `count_queries` context manager can be used to count the number of queries executed in a specific code block.
+
+```python
+from InvenTree.helpers import count_queries
+
+with count_queries("My code block"):
+    # Code block to profile
+    ...
+```
+
+A developer can use this to profile a specific code block, and the number of queries executed will be printed to the console.
+
+
 ## Code Style
 
 Code style is automatically checked as part of the project's CI pipeline on GitHub. This means that any pull requests which do not conform to the style guidelines will fail CI checks.
@@ -245,6 +260,12 @@ T002: Double quotes should be used in tags
 ## Documentation
 
 New features or updates to existing features should be accompanied by user documentation.
+
+### Stable link references
+
+The documentation framework enables addition of redirections. This is used to build stable references for linking in external resources.
+
+New references can be added in `docs/mkdocs.yml` in the `redirect_maps` section. Both external targets and documentation pages are possible targets. All references are linted in the docs CI pipeline.
 
 ## Translations
 

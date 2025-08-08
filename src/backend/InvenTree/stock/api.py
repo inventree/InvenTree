@@ -11,7 +11,7 @@ from django.utils.translation import gettext_lazy as _
 
 from django_filters import rest_framework as rest_filters
 from drf_spectacular.types import OpenApiTypes
-from drf_spectacular.utils import extend_schema_field
+from drf_spectacular.utils import extend_schema, extend_schema_field
 from rest_framework import status
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
@@ -28,7 +28,12 @@ from company.models import Company, SupplierPart
 from company.serializers import CompanySerializer
 from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import StatusView
-from InvenTree.api import BulkUpdateMixin, ListCreateDestroyAPIView, MetadataView
+from InvenTree.api import (
+    BulkCreateMixin,
+    BulkUpdateMixin,
+    ListCreateDestroyAPIView,
+    MetadataView,
+)
 from InvenTree.filters import (
     ORDER_FILTER_ALIAS,
     SEARCH_ORDER_FILTER,
@@ -115,10 +120,28 @@ class StockItemContextMixin:
         return context
 
 
+@extend_schema(responses={201: StockSerializers.StockItemSerializer(many=True)})
 class StockItemSerialize(StockItemContextMixin, CreateAPI):
     """API endpoint for serializing a stock item."""
 
     serializer_class = StockSerializers.SerializeStockItemSerializer
+    pagination_class = None
+
+    def create(self, request, *args, **kwargs):
+        """Serialize the provided StockItem."""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        # Perform the actual serialization step
+        items = serializer.save()
+
+        queryset = StockSerializers.StockItemSerializer.annotate_queryset(items)
+
+        response = StockSerializers.StockItemSerializer(
+            queryset, many=True, context=self.get_serializer_context()
+        )
+
+        return Response(response.data, status=status.HTTP_201_CREATED)
 
 
 class StockItemInstall(StockItemContextMixin, CreateAPI):
@@ -142,12 +165,6 @@ class StockItemConvert(StockItemContextMixin, CreateAPI):
     """API endpoint for converting a stock item to a variant part."""
 
     serializer_class = StockSerializers.ConvertStockItemSerializer
-
-
-class StockItemReturn(StockItemContextMixin, CreateAPI):
-    """API endpoint for returning a stock item from a customer."""
-
-    serializer_class = StockSerializers.ReturnStockItemSerializer
 
 
 class StockAdjustView(CreateAPI):
@@ -199,6 +216,17 @@ class StockTransfer(StockAdjustView):
     """API endpoint for performing stock movements."""
 
     serializer_class = StockSerializers.StockTransferSerializer
+
+
+class StockReturn(StockAdjustView):
+    """API endpoint for returning items into stock.
+
+    This API endpoint is for items that are initially considered "not in stock",
+    and the user wants to return them to stock, marking them as
+    "available" for further consumption or sale.
+    """
+
+    serializer_class = StockSerializers.StockReturnSerializer
 
 
 class StockAssign(CreateAPI):
@@ -1010,6 +1038,10 @@ class StockList(DataExportViewMixin, StockApiMixin, ListCreateDestroyAPIView):
         # Check if a set of serial numbers was provided
         serial_numbers = data.pop('serial_numbers', '')
 
+        # Exclude 'serial' from submitted data
+        # We use 'serial_numbers' for item creation
+        data.pop('serial', None)
+
         # Check if the supplier_part has a package size defined, which is not 1
         if supplier_part_id := data.get('supplier_part', None):
             try:
@@ -1047,6 +1079,11 @@ class StockList(DataExportViewMixin, StockApiMixin, ListCreateDestroyAPIView):
         # Now remove the flag from data, so that it doesn't interfere with saving
         # Do this regardless of results above
         data.pop('use_pack_size', None)
+
+        # Extract 'status' flag from data
+        status_raw = data.pop('status', None)
+        status_custom = data.pop('status_custom_key', None)
+        status_value = status_custom or status_raw
 
         # Assign serial numbers for a trackable part
         if serial_numbers:
@@ -1111,10 +1148,14 @@ class StockList(DataExportViewMixin, StockApiMixin, ListCreateDestroyAPIView):
                 tracking = []
 
                 for item in items:
+                    if status_value and not item.compare_status(status_value):
+                        item.set_status(status_value)
+                        item.save()
+
                     if entry := item.add_tracking_entry(
                         StockHistoryCode.CREATED,
                         user,
-                        deltas={'status': item.status},
+                        deltas={'status': status_value},
                         location=location,
                         quantity=float(item.quantity),
                         commit=False,
@@ -1123,15 +1164,26 @@ class StockList(DataExportViewMixin, StockApiMixin, ListCreateDestroyAPIView):
 
                 StockItemTracking.objects.bulk_create(tracking)
 
-                response_data = {'quantity': quantity, 'serial_numbers': serials}
+                # Annotate the stock items with part information
+                queryset = StockSerializers.StockItemSerializer.annotate_queryset(items)
+
+                response = StockSerializers.StockItemSerializer(
+                    queryset, many=True, context=self.get_serializer_context()
+                )
+
+                response_data = response.data
 
             else:
                 # Create a single StockItem object
                 # Note: This automatically creates a tracking entry
                 item = serializer.save()
+
+                if status_value and not item.compare_status(status_value):
+                    item.set_status(status_value)
+
                 item.save(user=user)
 
-                response_data = serializer.data
+                response_data = [serializer.data]
 
         return Response(
             response_data,
@@ -1314,7 +1366,9 @@ class StockItemTestResultFilter(rest_filters.FilterSet):
         return queryset.filter(template__key=key)
 
 
-class StockItemTestResultList(StockItemTestResultMixin, ListCreateDestroyAPIView):
+class StockItemTestResultList(
+    BulkCreateMixin, StockItemTestResultMixin, ListCreateDestroyAPIView
+):
     """API endpoint for listing (and creating) a StockItemTestResult object."""
 
     filterset_class = StockItemTestResultFilter
@@ -1559,6 +1613,7 @@ stock_api_urls = [
     path('add/', StockAdd.as_view(), name='api-stock-add'),
     path('remove/', StockRemove.as_view(), name='api-stock-remove'),
     path('transfer/', StockTransfer.as_view(), name='api-stock-transfer'),
+    path('return/', StockReturn.as_view(), name='api-stock-return'),
     path('assign/', StockAssign.as_view(), name='api-stock-assign'),
     path('merge/', StockMerge.as_view(), name='api-stock-merge'),
     path('change_status/', StockChangeStatus.as_view(), name='api-stock-change-status'),
@@ -1616,7 +1671,6 @@ stock_api_urls = [
                 MetadataView.as_view(model=StockItem),
                 name='api-stock-item-metadata',
             ),
-            path('return/', StockItemReturn.as_view(), name='api-stock-item-return'),
             path(
                 'serialize/',
                 StockItemSerialize.as_view(),

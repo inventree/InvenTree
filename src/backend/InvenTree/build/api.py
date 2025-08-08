@@ -8,13 +8,16 @@ from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
 
 from django_filters import rest_framework as rest_filters
-from drf_spectacular.utils import extend_schema_field
-from rest_framework import serializers
+from drf_spectacular.utils import extend_schema, extend_schema_field
+from rest_framework import serializers, status
 from rest_framework.exceptions import ValidationError
+from rest_framework.response import Response
 
 import build.serializers
 import common.models
 import part.models as part_models
+import stock.models as stock_models
+import stock.serializers
 from build.models import Build, BuildItem, BuildLine
 from build.status_codes import BuildStatus, BuildStatusGroups
 from data_exporter.mixins import DataExportViewMixin
@@ -33,7 +36,7 @@ class BuildFilter(rest_filters.FilterSet):
         """Metaclass options."""
 
         model = Build
-        fields = ['sales_order']
+        fields = ['issued_by', 'sales_order', 'external']
 
     status = rest_filters.NumberFilter(label=_('Order Status'), method='filter_status')
 
@@ -146,21 +149,6 @@ class BuildFilter(rest_filters.FilterSet):
         if value:
             return queryset.filter(responsible__in=owners)
         return queryset.exclude(responsible__in=owners)
-
-    issued_by = rest_filters.ModelChoiceFilter(
-        queryset=Owner.objects.all(), label=_('Issued By'), method='filter_issued_by'
-    )
-
-    def filter_issued_by(self, queryset, name, owner):
-        """Filter by 'owner' which issued the order."""
-        if owner.label() == 'user':
-            user = User.objects.get(pk=owner.owner_id)
-            return queryset.filter(issued_by=user)
-        elif owner.label() == 'group':
-            group = User.objects.filter(groups__pk=owner.owner_id)
-            return queryset.filter(issued_by__in=group)
-        else:
-            return queryset.none()
 
     assigned_to = rest_filters.ModelChoiceFilter(
         queryset=Owner.objects.all(), field_name='responsible', label=_('Assigned To')
@@ -355,6 +343,7 @@ class BuildList(DataExportViewMixin, BuildMixin, ListCreateAPI):
         'project_code',
         'priority',
         'level',
+        'external',
     ]
 
     ordering_field_aliases = {
@@ -528,8 +517,11 @@ class BuildLineEndpoint:
         try:
             params = self.request.query_params
 
+            kwargs['bom_item_detail'] = str2bool(params.get('bom_item_detail', True))
+            kwargs['assembly_detail'] = str2bool(params.get('assembly_detail', True))
             kwargs['part_detail'] = str2bool(params.get('part_detail', True))
             kwargs['build_detail'] = str2bool(params.get('build_detail', False))
+            kwargs['allocations'] = str2bool(params.get('allocations', True))
         except AttributeError:
             pass
 
@@ -639,12 +631,28 @@ class BuildOrderContextMixin:
         return ctx
 
 
+@extend_schema(responses={201: stock.serializers.StockItemSerializer(many=True)})
 class BuildOutputCreate(BuildOrderContextMixin, CreateAPI):
     """API endpoint for creating new build output(s)."""
 
     queryset = Build.objects.none()
 
     serializer_class = build.serializers.BuildOutputCreateSerializer
+    pagination_class = None
+
+    def create(self, request, *args, **kwargs):
+        """Override the create method to handle the creation of build outputs."""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        # Create the build output(s)
+        outputs = serializer.save()
+
+        queryset = stock.serializers.StockItemSerializer.annotate_queryset(outputs)
+        response = stock.serializers.StockItemSerializer(queryset, many=True)
+
+        # Return the created outputs
+        return Response(response.data, status=status.HTTP_201_CREATED)
 
 
 class BuildOutputScrap(BuildOrderContextMixin, CreateAPI):
@@ -704,7 +712,7 @@ class BuildAutoAllocate(BuildOrderContextMixin, CreateAPI):
     - Only looks at 'untracked' parts
     - If stock exists in a single location, easy!
     - If user decides that stock items are "fungible", allocate against multiple stock items
-    - If the user wants to, allocate substite parts if the primary parts are not available.
+    - If the user wants to, allocate substitute parts if the primary parts are not available.
     """
 
     queryset = Build.objects.none()
@@ -812,6 +820,18 @@ class BuildItemFilter(rest_filters.FilterSet):
         if str2bool(value):
             return queryset.exclude(install_into=None)
         return queryset.filter(install_into=None)
+
+    location = rest_filters.ModelChoiceFilter(
+        queryset=stock_models.StockLocation.objects.all(),
+        label=_('Location'),
+        method='filter_location',
+    )
+
+    @extend_schema_field(serializers.IntegerField(help_text=_('Location')))
+    def filter_location(self, queryset, name, location):
+        """Filter the queryset based on the specified location."""
+        locations = location.get_descendants(include_self=True)
+        return queryset.filter(stock_item__location__in=locations)
 
 
 class BuildItemList(DataExportViewMixin, BulkDeleteMixin, ListCreateAPI):

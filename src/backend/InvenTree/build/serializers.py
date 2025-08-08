@@ -15,7 +15,7 @@ from django.db.models import (
     Value,
     When,
 )
-from django.db.models.functions import Coalesce
+from django.db.models.functions import Coalesce, Greatest
 from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
@@ -42,7 +42,7 @@ from stock.generators import generate_batch_code
 from stock.models import StockItem, StockLocation
 from stock.serializers import (
     LocationBriefSerializer,
-    StockItemSerializerBrief,
+    StockItemSerializer,
     StockStatusCustomSerializer,
 )
 from stock.status_codes import StockStatus
@@ -73,6 +73,7 @@ class BuildSerializer(
             'completed',
             'completion_date',
             'destination',
+            'external',
             'parent',
             'part',
             'part_name',
@@ -98,8 +99,6 @@ class BuildSerializer(
             'responsible_detail',
             'priority',
             'level',
-            # Additional fields used only for build order creation
-            'create_child_builds',
         ]
 
         read_only_fields = [
@@ -148,14 +147,6 @@ class BuildSerializer(
         source='project_code', many=False, read_only=True, allow_null=True
     )
 
-    create_child_builds = serializers.BooleanField(
-        default=False,
-        required=False,
-        write_only=True,
-        label=_('Create Child Builds'),
-        help_text=_('Automatically generate child build orders'),
-    )
-
     @staticmethod
     def annotate_queryset(queryset):
         """Add custom annotations to the BuildSerializer queryset, performing database queries as efficiently as possible.
@@ -180,22 +171,15 @@ class BuildSerializer(
     def __init__(self, *args, **kwargs):
         """Determine if extra serializer fields are required."""
         part_detail = kwargs.pop('part_detail', True)
-        create = kwargs.pop('create', False)
+        kwargs.pop('create', False)
 
         super().__init__(*args, **kwargs)
 
         if isGeneratingSchema():
             return
 
-        if not create:
-            self.fields.pop('create_child_builds', None)
-
         if not part_detail:
             self.fields.pop('part_detail', None)
-
-    def skip_create_fields(self):
-        """Return a list of fields to skip during model creation."""
-        return ['create_child_builds']
 
     def validate_reference(self, reference):
         """Custom validation for the Build reference field."""
@@ -203,21 +187,6 @@ class BuildSerializer(
         Build.validate_reference_field(reference)
 
         return reference
-
-    @transaction.atomic
-    def create(self, validated_data):
-        """Save the Build object."""
-        build_order = super().create(validated_data)
-
-        create_child_builds = self.validated_data.pop('create_child_builds', False)
-
-        if create_child_builds:
-            # Pass child build creation off to the background thread
-            InvenTree.tasks.offload_task(
-                build.tasks.create_child_builds, build_order.pk, group='build'
-            )
-
-        return build_order
 
 
 class BuildOutputSerializer(serializers.Serializer):
@@ -452,7 +421,7 @@ class BuildOutputCreateSerializer(serializers.Serializer):
         request = self.context.get('request')
         build = self.get_build()
 
-        build.create_build_output(
+        return build.create_build_output(
             data['quantity'],
             serials=self.serials,
             batch=data.get('batch_code', ''),
@@ -611,9 +580,17 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
                     and not stock_item.passedAllRequiredTests()
                 ):
                     serial = stock_item.serial
-                    errors.append(
-                        _(f'Build output {serial} has not passed all required tests')
-                    )
+
+                    if serial:
+                        errors.append(
+                            _(
+                                f'Build output {serial} has not passed all required tests'
+                            )
+                        )
+                    else:
+                        errors.append(
+                            _('Build output has not passed all required tests')
+                        )
 
             if errors:
                 raise ValidationError(errors)
@@ -1136,7 +1113,6 @@ class BuildAutoAllocationSerializer(serializers.Serializer):
 
     def save(self):
         """Perform the auto-allocation step."""
-        import build.tasks
         import InvenTree.tasks
 
         data = self.validated_data
@@ -1259,8 +1235,15 @@ class BuildItemSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
         pricing=False,
     )
 
-    stock_item_detail = StockItemSerializerBrief(
-        source='stock_item', read_only=True, allow_null=True, label=_('Stock Item')
+    stock_item_detail = StockItemSerializer(
+        source='stock_item',
+        read_only=True,
+        allow_null=True,
+        label=_('Stock Item'),
+        part_detail=False,
+        location_detail=False,
+        supplier_part_detail=False,
+        path_detail=False,
     )
 
     location = serializers.PrimaryKeyRelatedField(
@@ -1333,6 +1316,7 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
             # Annotated fields
             'allocated',
             'in_production',
+            'scheduled_to_build',
             'on_order',
             'available_stock',
             'available_substitute_stock',
@@ -1344,6 +1328,7 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
             'part_category_name',
             # Extra detail (related field) serializers
             'bom_item_detail',
+            'assembly_detail',
             'part_detail',
             'build_detail',
         ]
@@ -1353,18 +1338,30 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
     def __init__(self, *args, **kwargs):
         """Determine which extra details fields should be included."""
         part_detail = kwargs.pop('part_detail', True)
+        assembly_detail = kwargs.pop('assembly_detail', True)
+        bom_item_detail = kwargs.pop('bom_item_detail', True)
         build_detail = kwargs.pop('build_detail', True)
+        allocations = kwargs.pop('allocations', True)
 
         super().__init__(*args, **kwargs)
 
         if isGeneratingSchema():
             return
 
+        if not bom_item_detail:
+            self.fields.pop('bom_item_detail', None)
+
         if not part_detail:
             self.fields.pop('part_detail', None)
 
         if not build_detail:
             self.fields.pop('build_detail', None)
+
+        if not allocations:
+            self.fields.pop('allocations', None)
+
+        if not assembly_detail:
+            self.fields.pop('assembly_detail', None)
 
     # Build info fields
     build_reference = serializers.CharField(
@@ -1421,6 +1418,16 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
         substitutes=False,
         sub_part_detail=False,
         part_detail=False,
+        can_build=False,
+    )
+
+    assembly_detail = part_serializers.PartBriefSerializer(
+        label=_('Assembly'),
+        source='bom_item.part',
+        many=False,
+        read_only=True,
+        allow_null=True,
+        pricing=False,
     )
 
     part_detail = part_serializers.PartBriefSerializer(
@@ -1440,13 +1447,12 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
     )
 
     # Annotated (calculated) fields
-
-    # Total quantity of allocated stock
     allocated = serializers.FloatField(label=_('Allocated Stock'), read_only=True)
-
     on_order = serializers.FloatField(label=_('On Order'), read_only=True)
-
     in_production = serializers.FloatField(label=_('In Production'), read_only=True)
+    scheduled_to_build = serializers.FloatField(
+        label=_('Scheduled to Build'), read_only=True
+    )
 
     external_stock = serializers.FloatField(read_only=True, label=_('External Stock'))
     available_stock = serializers.FloatField(read_only=True, label=_('Available Stock'))
@@ -1466,6 +1472,7 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
         - available: Total stock available for allocation against this build line
         - on_order: Total stock on order for this build line
         - in_production: Total stock currently in production for this build line
+        - scheduled_to_build: Total stock scheduled to be built for this build line
 
         Arguments:
             queryset: The queryset to annotate
@@ -1575,7 +1582,10 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
 
         # Annotate the "in_production" quantity
         queryset = queryset.annotate(
-            in_production=part.filters.annotate_in_production_quantity(reference=ref)
+            in_production=part.filters.annotate_in_production_quantity(reference=ref),
+            scheduled_to_build=part.filters.annotate_scheduled_to_build_quantity(
+                reference=ref
+            ),
         )
 
         # Annotate the "on_order" quantity
@@ -1598,10 +1608,14 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
 
         # Calculate 'available_stock' based on previously annotated fields
         queryset = queryset.annotate(
-            available_stock=ExpressionWrapper(
-                F('total_stock')
-                - F('allocated_to_sales_orders')
-                - F('allocated_to_build_orders'),
+            available_stock=Greatest(
+                ExpressionWrapper(
+                    F('total_stock')
+                    - F('allocated_to_sales_orders')
+                    - F('allocated_to_build_orders'),
+                    output_field=models.DecimalField(),
+                ),
+                0,
                 output_field=models.DecimalField(),
             )
         )
@@ -1635,10 +1649,14 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
 
         # Calculate 'available_substitute_stock' field
         queryset = queryset.annotate(
-            available_substitute_stock=ExpressionWrapper(
-                F('substitute_stock')
-                - F('substitute_build_allocations')
-                - F('substitute_sales_allocations'),
+            available_substitute_stock=Greatest(
+                ExpressionWrapper(
+                    F('substitute_stock')
+                    - F('substitute_build_allocations')
+                    - F('substitute_sales_allocations'),
+                    output_field=models.DecimalField(),
+                ),
+                0,
                 output_field=models.DecimalField(),
             )
         )
@@ -1661,10 +1679,14 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
         )
 
         queryset = queryset.annotate(
-            available_variant_stock=ExpressionWrapper(
-                F('variant_stock_total')
-                - F('variant_bo_allocations')
-                - F('variant_so_allocations'),
+            available_variant_stock=Greatest(
+                ExpressionWrapper(
+                    F('variant_stock_total')
+                    - F('variant_bo_allocations')
+                    - F('variant_so_allocations'),
+                    output_field=FloatField(),
+                ),
+                0,
                 output_field=FloatField(),
             )
         )

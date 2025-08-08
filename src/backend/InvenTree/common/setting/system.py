@@ -162,6 +162,12 @@ class BaseURLValidator(URLValidator):
             super().__call__(value)
 
 
+class SystemSetId:
+    """Shared system settings identifiers."""
+
+    GLOBAL_WARNING = '_GLOBAL_WARNING'
+
+
 SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
     'SERVER_RESTART_REQUIRED': {
         'name': _('Restart required'),
@@ -175,6 +181,13 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'description': _('Number of pending database migrations'),
         'default': 0,
         'validator': int,
+    },
+    SystemSetId.GLOBAL_WARNING: {
+        'name': _('Active warning codes'),
+        'description': _('A dict of active warning codes'),
+        'validator': json.loads,
+        'default': '{}',
+        'hidden': True,
     },
     'INVENTREE_INSTANCE_ID': {
         'name': _('Instance ID'),
@@ -317,6 +330,21 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': 30,
         'units': _('days'),
         'validator': [int, MinValueValidator(7)],
+    },
+    'INVENTREE_DELETE_EMAIL_DAYS': {
+        'name': _('Email Deletion Interval'),
+        'description': _(
+            'Email messages will be deleted after specified number of days'
+        ),
+        'default': 30,
+        'units': _('days'),
+        'validator': [int, MinValueValidator(7)],
+    },
+    'INVENTREE_PROTECT_EMAIL_LOG': {
+        'name': _('Protect Email Log'),
+        'description': _('Prevent deletion of email log entries'),
+        'default': False,
+        'validator': bool,
     },
     'BARCODE_ENABLE': {
         'name': _('Barcode Support'),
@@ -575,12 +603,20 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'PRICING_AUTO_UPDATE': {
+        'name': _('Auto Update Pricing'),
+        'description': _(
+            'Automatically update part pricing when internal data changes'
+        ),
+        'default': True,
+        'validator': bool,
+    },
     'PRICING_UPDATE_DAYS': {
         'name': _('Pricing Rebuild Interval'),
         'description': _('Number of days before part pricing is automatically updated'),
         'units': _('days'),
         'default': 30,
-        'validator': [int, MinValueValidator(10)],
+        'validator': [int, MinValueValidator(0)],
     },
     'PART_INTERNAL_PRICE': {
         'name': _('Internal Prices'),
@@ -637,12 +673,6 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
     'SERIAL_NUMBER_GLOBALLY_UNIQUE': {
         'name': _('Globally Unique Serials'),
         'description': _('Serial numbers for stock items must be globally unique'),
-        'default': False,
-        'validator': bool,
-    },
-    'SERIAL_NUMBER_AUTOFILL': {
-        'name': _('Autofill Serial Numbers'),
-        'description': _('Autofill serial numbers in forms'),
         'default': False,
         'validator': bool,
     },
@@ -753,6 +783,12 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'description': _(
             'Prevent build order completion until all child orders are closed'
         ),
+        'default': False,
+        'validator': bool,
+    },
+    'BUILDORDER_EXTERNAL_BUILDS': {
+        'name': _('External Build Orders'),
+        'description': _('Enable external build order functionality'),
         'default': False,
         'validator': bool,
     },
@@ -1023,6 +1059,13 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'validator': bool,
         'after_save': reload_plugin_registry,
     },
+    'ENABLE_PLUGINS_MAILS': {
+        'name': _('Enable mail integration'),
+        'description': _('Enable plugins to process outgoing/incoming mails'),
+        'default': False,
+        'validator': bool,
+        'after_save': reload_plugin_registry,
+    },
     'PROJECT_CODES_ENABLED': {
         'name': _('Enable project codes'),
         'description': _('Enable project codes for tracking projects'),
@@ -1030,9 +1073,9 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'validator': bool,
     },
     'STOCKTAKE_ENABLE': {
-        'name': _('Stocktake Functionality'),
+        'name': _('Enable Stock History'),
         'description': _(
-            'Enable stocktake functionality for recording stock levels and calculating stock value'
+            'Enable functionality for recording historical stock levels and value'
         ),
         'validator': bool,
         'default': False,
@@ -1040,27 +1083,34 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
     'STOCKTAKE_EXCLUDE_EXTERNAL': {
         'name': _('Exclude External Locations'),
         'description': _(
-            'Exclude stock items in external locations from stocktake calculations'
+            'Exclude stock items in external locations from stock history calculations'
         ),
         'validator': bool,
         'default': False,
     },
     'STOCKTAKE_AUTO_DAYS': {
         'name': _('Automatic Stocktake Period'),
-        'description': _(
-            'Number of days between automatic stocktake recording (set to zero to disable)'
-        ),
-        'validator': [int, MinValueValidator(0)],
-        'default': 0,
-    },
-    'STOCKTAKE_DELETE_REPORT_DAYS': {
-        'name': _('Report Deletion Interval'),
-        'description': _(
-            'Stocktake reports will be deleted after specified number of days'
-        ),
-        'default': 30,
+        'description': _('Number of days between automatic stock history recording'),
+        'validator': [int, MinValueValidator(1)],
+        'default': 7,
         'units': _('days'),
-        'validator': [int, MinValueValidator(7)],
+    },
+    'STOCKTAKE_DELETE_OLD_ENTRIES': {
+        'name': _('Delete Old Stock History Entries'),
+        'description': _(
+            'Delete stock history entries older than the specified number of days'
+        ),
+        'default': False,
+        'validator': bool,
+    },
+    'STOCKTAKE_DELETE_DAYS': {
+        'name': _('Stock History Deletion Interval'),
+        'description': _(
+            'Stock history entries will be deleted after specified number of days'
+        ),
+        'default': 365,
+        'units': _('days'),
+        'validator': [int, MinValueValidator(30)],
     },
     'DISPLAY_FULL_NAMES': {
         'name': _('Display Users full names'),
@@ -1078,14 +1128,6 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'name': _('Enable Test Station Data'),
         'description': _('Enable test station data collection for test results'),
         'default': False,
-        'validator': bool,
-    },
-    'TEST_UPLOAD_CREATE_TEMPLATE': {
-        'name': _('Create Template on Upload'),
-        'description': _(
-            'Create a new test template when uploading test data which does not match an existing template'
-        ),
-        'default': True,
         'validator': bool,
     },
 }

@@ -1,9 +1,12 @@
 import { t } from '@lingui/core/macro';
-import { Badge } from '@mantine/core';
+import { Badge, Group, Text } from '@mantine/core';
 import type { ReactNode } from 'react';
 
 import { ModelType } from '@lib/enums/ModelType';
+import { formatDecimal } from '@lib/functions/Formatting';
 import { getDetailUrl } from '@lib/functions/Navigation';
+import { shortenString } from '../../functions/tables';
+import { TableHoverCard } from '../../tables/TableHoverCard';
 import { ApiIcon } from '../items/ApiIcon';
 import { type InstanceRenderInterface, RenderInlineModel } from './Instance';
 
@@ -27,7 +30,7 @@ export function RenderPart(
     badgeColor = 'orange';
     badgeText = t`No stock`;
   } else if (stock != null) {
-    badgeText = `${t`Stock`}: ${stock}`;
+    badgeText = `${t`Stock`}: ${formatDecimal(stock)}`;
     badgeColor = instance.minimum_stock > stock ? 'yellow' : 'green';
   }
 
@@ -43,7 +46,7 @@ export function RenderPart(
       primary={instance.full_name ?? instance.name}
       secondary={instance.description}
       suffix={badge}
-      image={instance.thumnbnail || instance.image}
+      image={instance.thumbnail || instance.image}
       url={props.link ? getDetailUrl(ModelType.part, instance.pk) : undefined}
     />
   );
@@ -57,6 +60,24 @@ export function RenderPartCategory(
 ): ReactNode {
   const { instance } = props;
 
+  const suffix: ReactNode = (
+    <Group gap='xs'>
+      <TableHoverCard
+        value=''
+        position='bottom-end'
+        zIndex={10000}
+        icon='sitemap'
+        title={t`Category`}
+        extra={[<Text>{instance.pathstring}</Text>]}
+      />
+    </Group>
+  );
+
+  const category = shortenString({
+    str: instance.pathstring,
+    len: 50
+  });
+
   return (
     <RenderInlineModel
       {...props}
@@ -67,8 +88,9 @@ export function RenderPartCategory(
           {instance.icon && <ApiIcon name={instance.icon} />}
         </>
       }
-      primary={instance.pathstring}
+      primary={category}
       secondary={instance.description}
+      suffix={suffix}
       url={
         props.link
           ? getDetailUrl(ModelType.partcategory, instance.pk)
@@ -103,7 +125,7 @@ export function RenderPartTestTemplate({
   return (
     <RenderInlineModel
       primary={instance.test_name}
-      secondary={instance.description}
+      suffix={instance.description}
     />
   );
 }

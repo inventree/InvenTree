@@ -35,7 +35,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { api } from '../../../../App';
 import { StylishText } from '../../../../components/items/StylishText';
 import { ProviderLogin, authApi } from '../../../../functions/auth';
-import { useServerApiState } from '../../../../states/ApiState';
+import { useServerApiState } from '../../../../states/ServerApiState';
 import { ApiTokenTable } from '../../../../tables/settings/ApiTokenTable';
 import { QrRegistrationForm } from './QrRegistrationForm';
 import { useReauth } from './useConfirm';
@@ -133,13 +133,15 @@ function EmailSection() {
   return (
     <SimpleGrid cols={{ xs: 1, md: 2 }} spacing='sm'>
       {emailAvailable ? (
-        <Alert
-          icon={<IconAlertCircle size='1rem' />}
-          title={t`Not Configured`}
-          color='yellow'
-        >
-          <Trans>Currently no email addresses are registered.</Trans>
-        </Alert>
+        <Stack gap='xs'>
+          <Alert
+            icon={<IconAlertCircle size='1rem' />}
+            title={t`Not Configured`}
+            color='yellow'
+          >
+            <Trans>Currently no email addresses are registered.</Trans>
+          </Alert>
+        </Stack>
       ) : (
         <Radio.Group
           value={selectedEmail}
@@ -289,13 +291,15 @@ function ProviderSection({
     <Grid>
       <Grid.Col span={6}>
         {data.length == 0 ? (
-          <Alert
-            icon={<IconAlertCircle size='1rem' />}
-            title={t`Not Configured`}
-            color='yellow'
-          >
-            <Trans>There are no providers connected to this account.</Trans>
-          </Alert>
+          <Stack gap='xs'>
+            <Alert
+              icon={<IconAlertCircle size='1rem' />}
+              title={t`Not Configured`}
+              color='yellow'
+            >
+              <Trans>There are no providers connected to this account.</Trans>
+            </Alert>
+          </Stack>
         ) : (
           <Stack>
             <Radio.Group
@@ -426,13 +430,15 @@ function MfaSection() {
       <ReauthModal />
       <SimpleGrid cols={{ xs: 1, md: 2 }} spacing='sm'>
         {data.length == 0 ? (
-          <Alert
-            title={t`Not Configured`}
-            icon={<IconAlertCircle size='1rem' />}
-            color='yellow'
-          >
-            <Trans>No multi-factor tokens configured for this account</Trans>
-          </Alert>
+          <Stack gap='xs'>
+            <Alert
+              title={t`Not Configured`}
+              icon={<IconAlertCircle size='1rem' />}
+              color='yellow'
+            >
+              <Trans>No multi-factor tokens configured for this account</Trans>
+            </Alert>
+          </Stack>
         ) : (
           <Table stickyHeader striped highlightOnHover withTableBorder>
             <Table.Thead>

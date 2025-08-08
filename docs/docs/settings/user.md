@@ -20,12 +20,13 @@ The *Display Settings* screen shows general display configuration options:
 | ---- | ----------- | ------- | ----- |
 {{ usersetting("ICONS_IN_NAVBAR") }}
 {{ usersetting("STICKY_HEADER") }}
+{{ usersetting("STICKY_TABLE_HEADER") }}
 {{ usersetting("DATE_DISPLAY_FORMAT") }}
 {{ usersetting("FORMS_CLOSE_USING_ESCAPE") }}
-{{ usersetting("PART_SHOW_QUANTITY_IN_FORMS") }}
-{{ usersetting("DISPLAY_SCHEDULE_TAB") }}
 {{ usersetting("DISPLAY_STOCKTAKE_TAB") }}
+{{ usersetting("SHOW_FULL_CATEGORY_IN_TABLES")}}
 {{ usersetting("ENABLE_LAST_BREADCRUMB") }}
+{{ usersetting("SHOW_FULL_LOCATION_IN_TABLES") }}
 
 ### Search Settings
 

@@ -12,7 +12,6 @@ class RuleSetEnum(StringEnum):
     ADMIN = 'admin'
     PART_CATEGORY = 'part_category'
     PART = 'part'
-    STOCKTAKE = 'stocktake'
     STOCK_LOCATION = 'stock_location'
     STOCK = 'stock'
     BUILD = 'build'
@@ -27,7 +26,6 @@ RULESET_CHOICES = [
     (RuleSetEnum.ADMIN, _('Admin')),
     (RuleSetEnum.PART_CATEGORY, _('Part Categories')),
     (RuleSetEnum.PART, _('Parts')),
-    (RuleSetEnum.STOCKTAKE, _('Stocktake')),
     (RuleSetEnum.STOCK_LOCATION, _('Stock Locations')),
     (RuleSetEnum.STOCK, _('Stock Items')),
     (RuleSetEnum.BUILD, _('Build Orders')),
@@ -79,7 +77,7 @@ def get_ruleset_models() -> dict:
             # Plugins
             'plugin_pluginconfig',
             'plugin_pluginsetting',
-            'plugin_notificationusersetting',
+            'plugin_pluginusersetting',
             # Misc
             'common_barcodescanresult',
             'common_newsfeedentry',
@@ -88,6 +86,12 @@ def get_ruleset_models() -> dict:
             'flags_flagstate',
             'machine_machineconfig',
             'machine_machinesetting',
+            # common / comms
+            'common_emailmessage',
+            'common_emailthread',
+            'django_mailbox_mailbox',
+            'django_mailbox_messageattachment',
+            'django_mailbox_message',
         ],
         RuleSetEnum.PART_CATEGORY: [
             'part_partcategory',
@@ -106,12 +110,12 @@ def get_ruleset_models() -> dict:
             'part_partparameter',
             'part_partrelated',
             'part_partstar',
+            'part_partstocktake',
             'part_partcategorystar',
             'company_supplierpart',
             'company_manufacturerpart',
             'company_manufacturerpartparameter',
         ],
-        RuleSetEnum.STOCKTAKE: ['part_partstocktake', 'part_partstocktakereport'],
         RuleSetEnum.STOCK_LOCATION: ['stock_stocklocation', 'stock_stocklocationtype'],
         RuleSetEnum.STOCK: [
             'stock_stockitem',

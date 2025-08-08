@@ -52,14 +52,7 @@ class PartPricingAdmin(admin.ModelAdmin):
 class PartStocktakeAdmin(admin.ModelAdmin):
     """Admin class for PartStocktake model."""
 
-    list_display = ['part', 'date', 'quantity', 'user']
-
-
-@admin.register(models.PartStocktakeReport)
-class PartStocktakeReportAdmin(admin.ModelAdmin):
-    """Admin class for PartStocktakeReport model."""
-
-    list_display = ['date', 'user']
+    list_display = ['part', 'date', 'quantity']
 
 
 @admin.register(models.PartCategory)
@@ -120,6 +113,8 @@ class ParameterAdmin(admin.ModelAdmin):
     """Admin class for the PartParameter model."""
 
     list_display = ('part', 'template', 'data')
+
+    readonly_fields = ('updated', 'updated_by')
 
     autocomplete_fields = ('part', 'template')
 

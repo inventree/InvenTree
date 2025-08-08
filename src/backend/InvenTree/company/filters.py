@@ -3,7 +3,7 @@
 from decimal import Decimal
 
 from django.db.models import DecimalField, ExpressionWrapper, F, Q
-from django.db.models.functions import Coalesce
+from django.db.models.functions import Coalesce, Greatest
 
 from sql_util.utils import SubquerySum
 
@@ -24,9 +24,13 @@ def annotate_on_order_quantity():
 
     return Coalesce(
         SubquerySum(
-            ExpressionWrapper(
-                F('purchase_order_line_items__quantity')
-                - F('purchase_order_line_items__received'),
+            Greatest(
+                ExpressionWrapper(
+                    F('purchase_order_line_items__quantity')
+                    - F('purchase_order_line_items__received'),
+                    output_field=DecimalField(),
+                ),
+                0,
                 output_field=DecimalField(),
             ),
             filter=order_filter,

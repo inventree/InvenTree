@@ -24,14 +24,15 @@ import {
 } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
 
+import { ActionButton } from '@lib/components/ActionButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { IconCalendarExclamation } from '@tabler/icons-react';
 import dayjs from 'dayjs';
-import { ActionButton } from '../components/buttons/ActionButton';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
 
+import { ProgressBar } from '@lib/components/ProgressBar';
 import { apiUrl } from '@lib/functions/Api';
 import type {
   ApiFormAdjustFilterType,
@@ -42,7 +43,6 @@ import {
   type TableFieldRowProps
 } from '../components/forms/fields/TableField';
 import { Thumbnail } from '../components/images/Thumbnail';
-import { ProgressBar } from '../components/items/ProgressBar';
 import { StylishText } from '../components/items/StylishText';
 import { getStatusCodeOptions } from '../components/render/StatusRenderer';
 import { InvenTreeIcon } from '../functions/icons';
@@ -51,7 +51,7 @@ import {
   useBatchCodeGenerator,
   useSerialNumberGenerator
 } from '../hooks/UseGenerator';
-import { useGlobalSettingsState } from '../states/SettingsState';
+import { useGlobalSettingsState } from '../states/SettingsStates';
 /*
  * Construct a set of fields for creating / editing a PurchaseOrderLineItem instance
  */
@@ -64,8 +64,13 @@ export function usePurchaseOrderLineItemFields({
   orderId?: number;
   create?: boolean;
 }) {
+  const globalSettings = useGlobalSettingsState();
+
   const [purchasePrice, setPurchasePrice] = useState<string>('');
   const [autoPricing, setAutoPricing] = useState(true);
+
+  // Internal part information
+  const [part, setPart] = useState<any>({});
 
   useEffect(() => {
     if (autoPricing) {
@@ -91,6 +96,9 @@ export function usePurchaseOrderLineItemFields({
           supplier_detail: true,
           active: true,
           part_active: true
+        },
+        onValueChange: (value, record) => {
+          setPart(record?.part_detail ?? {});
         },
         adjustFilters: (adjust: ApiFormAdjustFilterType) => {
           return {
@@ -119,6 +127,14 @@ export function usePurchaseOrderLineItemFields({
       destination: {
         icon: <IconSitemap />
       },
+      build_order: {
+        disabled: !part?.assembly,
+        filters: {
+          external: true,
+          outstanding: true,
+          part: part?.pk
+        }
+      },
       notes: {
         icon: <IconNotes />
       },
@@ -127,12 +143,24 @@ export function usePurchaseOrderLineItemFields({
       }
     };
 
+    if (!globalSettings.isSet('BUILDORDER_EXTERNAL_BUILDS', false)) {
+      delete fields.build_order;
+    }
+
     if (create) {
       fields['merge_items'] = {};
     }
 
     return fields;
-  }, [create, orderId, supplierId, autoPricing, purchasePrice]);
+  }, [
+    create,
+    orderId,
+    part,
+    globalSettings,
+    supplierId,
+    autoPricing,
+    purchasePrice
+  ]);
 
   return fields;
 }
@@ -267,16 +295,22 @@ function LineItemFormRow({
   }, [record.destination]);
 
   // Batch code generator
-  const batchCodeGenerator = useBatchCodeGenerator((value: any) => {
-    if (value) {
-      props.changeFn(props.idx, 'batch_code', value);
+  const batchCodeGenerator = useBatchCodeGenerator({
+    isEnabled: () => batchOpen,
+    onGenerate: (value: any) => {
+      if (value) {
+        props.changeFn(props.idx, 'batch_code', value);
+      }
     }
   });
 
   // Serial number generator
-  const serialNumberGenerator = useSerialNumberGenerator((value: any) => {
-    if (value) {
-      props.changeFn(props.idx, 'serial_numbers', value);
+  const serialNumberGenerator = useSerialNumberGenerator({
+    isEnabled: () => batchOpen && trackable,
+    onGenerate: (value: any) => {
+      if (value) {
+        props.changeFn(props.idx, 'serial_numbers', value);
+      }
     }
   });
 
@@ -402,7 +436,10 @@ function LineItemFormRow({
     }
 
     // Selected location is base part's default location
-    if (location === record.part_detail.default_location) {
+    if (
+      record.part_detail?.default_location &&
+      location === record.part_detail.default_location
+    ) {
       return t`Default location selected`;
     }
 
@@ -450,8 +487,10 @@ function LineItemFormRow({
             fieldDefinition={{
               field_type: 'number',
               value: props.item.quantity,
-              onValueChange: (value) =>
-                props.changeFn(props.idx, 'quantity', value)
+              onValueChange: (value) => {
+                props.changeFn(props.idx, 'quantity', value);
+                serialNumberGenerator.update({ quantity: value });
+              }
             }}
             error={props.rowErrors?.quantity?.message}
           />

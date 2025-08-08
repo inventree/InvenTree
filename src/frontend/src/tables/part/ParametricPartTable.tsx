@@ -1,16 +1,11 @@
 import { t } from '@lingui/core/macro';
-import {
-  ActionIcon,
-  Group,
-  SegmentedControl,
-  Select,
-  TextInput
-} from '@mantine/core';
+import { Group } from '@mantine/core';
 import { useHover } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { YesNoButton } from '@lib/components/YesNoButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
@@ -20,8 +15,7 @@ import { getDetailUrl } from '@lib/functions/Navigation';
 import { navigateToLink } from '@lib/functions/Navigation';
 import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
-import { IconCircleX } from '@tabler/icons-react';
-import { YesNoButton } from '../../components/buttons/YesNoButton';
+import type { TableColumn } from '@lib/types/Tables';
 import { useApi } from '../../contexts/ApiContext';
 import { formatDecimal } from '../../defaults/formatters';
 import { usePartParameterFields } from '../../forms/PartForms';
@@ -31,10 +25,13 @@ import {
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import { DescriptionColumn, PartColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { TableHoverCard } from '../TableHoverCard';
+import {
+  PARAMETER_FILTER_OPERATORS,
+  ParameterFilter
+} from './ParametricPartTableFilters';
 
 // Render an individual parameter cell
 function ParameterCell({
@@ -97,115 +94,6 @@ function ParameterCell({
   );
 }
 
-function ParameterFilter({
-  template,
-  filterValue,
-  setFilter,
-  clearFilter,
-  closeFilter
-}: {
-  template: any;
-  filterValue?: string;
-  setFilter: (templateId: number, value: string, operator: string) => void;
-  clearFilter: (templateId: number) => void;
-  closeFilter: () => void;
-}) {
-  const [operator, setOperator] = useState<string>('=');
-
-  const clearFilterButton = useMemo(() => {
-    return (
-      <ActionIcon
-        aria-label={`clear-filter-${template.name}`}
-        variant='transparent'
-        color='red'
-        size='sm'
-        onClick={() => {
-          clearFilter(template.pk);
-          closeFilter();
-        }}
-      >
-        <IconCircleX />
-      </ActionIcon>
-    );
-  }, [clearFilter, template.pk]);
-
-  // Filter input element (depends on template type)
-  return useMemo(() => {
-    if (template.checkbox) {
-      setOperator('=');
-      return (
-        <Select
-          aria-label={`filter-${template.name}`}
-          data={[t`True`, t`False`]}
-          value={filterValue}
-          defaultValue={filterValue}
-          onChange={(val) => setFilter(template.pk, val ?? '', '')}
-          placeholder={t`Select a choice`}
-          rightSection={clearFilterButton}
-        />
-      );
-    } else if (!!template.choices) {
-      setOperator('=');
-      return (
-        <Select
-          aria-label={`filter-${template.name}`}
-          data={template.choices
-            .split(',')
-            .map((choice: string) => choice.trim())}
-          value={filterValue}
-          defaultValue={filterValue}
-          onChange={(val) => setFilter(template.pk, val ?? '', '')}
-          placeholder={t`Select a choice`}
-          searchable
-          rightSection={clearFilterButton}
-        />
-      );
-    } else {
-      let placeholder: string = t`Enter a value`;
-
-      if (template.units) {
-        placeholder += ` [${template.units}]`;
-      }
-
-      return (
-        <Group gap='xs' align='left'>
-          <TextInput
-            onKeyDown={(event) => {
-              if (event.key === 'Enter') {
-                setFilter(
-                  template.pk,
-                  event.currentTarget.value || '',
-                  operator
-                );
-                closeFilter();
-              }
-            }}
-            aria-label={`filter-${template.name}`}
-            placeholder={placeholder}
-            defaultValue={filterValue}
-            rightSection={clearFilterButton}
-            leftSectionWidth={75}
-            leftSectionProps={{
-              style: {
-                paddingRight: '10px'
-              }
-            }}
-            leftSection={
-              <SegmentedControl
-                defaultValue='='
-                value={operator}
-                onChange={(value: string) => setOperator(value)}
-                size='xs'
-                data={['=', '<', '>']}
-              />
-            }
-          />
-        </Group>
-      );
-    }
-  }, [template, filterValue, setFilter, clearFilterButton, operator]);
-}
-
 export default function ParametricPartTable({
   categoryId
 }: Readonly<{
@@ -225,29 +113,68 @@ export default function ParametricPartTable({
             category: categoryId
           }
         })
-        .then((response) => response.data)
-        .catch((_error) => []);
+        .then((response) => response.data);
     },
     refetchOnMount: true
   });
 
-  // Filters against selected part parameters
+  /* Store filters against selected part parameters.
+   * These are stored in the format:
+   * {
+   *   parameter_1: {
+   *    '=': 'value1',
+   *    '<': 'value2',
+   *    ...
+   *   },
+   *   parameter_2: {
+   *    '=': 'value3',
+   *   },
+   *   ...
+   * }
+   *
+   * Which allows multiple filters to be applied against each parameter template.
+   */
   const [parameterFilters, setParameterFilters] = useState<any>({});
 
+  /* Remove filters for a specific parameter template
+   * - If no operator is specified, remove all filters for this template
+   * - If an operator is specified, remove filters for that operator only
+   */
   const clearParameterFilter = useCallback(
-    (templateId: number) => {
+    (templateId: number, operator?: string) => {
       const filterName = `parameter_${templateId}`;
 
-      setParameterFilters((prev: any) => {
-        const newFilters = { ...prev };
-        Object.keys(newFilters).forEach((key: string) => {
+      if (!operator) {
+        // If no operator is specified, remove all filters for this template
+        setParameterFilters((prev: any) => {
+          const newFilters = { ...prev };
           // Remove any filters that match the template ID
-          if (key.startsWith(filterName)) {
-            delete newFilters[key];
-          }
+          Object.keys(newFilters).forEach((key: string) => {
+            if (key == filterName) {
+              delete newFilters[key];
+            }
+          });
+          return newFilters;
         });
 
-        return newFilters;
+        return;
+      }
+
+      // An operator is specified, so we remove filters for that operator only
+      setParameterFilters((prev: any) => {
+        const filters = { ...prev };
+
+        const paramFilters = filters[filterName] || {};
+
+        if (paramFilters[operator]) {
+          // Remove the specific operator filter
+          delete paramFilters[operator];
+        }
+
+        return {
+          ...filters,
+          [filterName]: paramFilters
+        };
       });
 
       table.refreshTable();
@@ -255,36 +182,50 @@ export default function ParametricPartTable({
     [setParameterFilters, table.refreshTable]
   );
 
+  /**
+   * Add (or update) a filter for a specific parameter template.
+   * @param templateId - The ID of the parameter template to filter on.
+   * @param value - The value to filter by.
+   * @param operator - The operator to use for filtering (e.g., '=', '<', '>', etc.).
+   */
   const addParameterFilter = useCallback(
     (templateId: number, value: string, operator: string) => {
-      // First, clear any existing filters for this template
-      clearParameterFilter(templateId);
+      const filterName = `parameter_${templateId}`;
 
-      // Map the operator to a more API-friendly format
-      const operations: Record<string, string> = {
-        '=': '',
-        '<': 'lt',
-        '>': 'gt',
-        '<=': 'lte',
-        '>=': 'gte'
-      };
+      setParameterFilters((prev: any) => {
+        const filters = { ...prev };
+        const paramFilters = filters[filterName] || {};
 
-      const op = operations[operator] ?? '';
-      let filterName = `parameter_${templateId}`;
+        paramFilters[operator] = value;
 
-      if (op) {
-        filterName += `_${op}`;
-      }
-
-      setParameterFilters((prev: any) => ({
-        ...prev,
-        [filterName]: value?.trim() ?? ''
-      }));
+        return {
+          ...filters,
+          [filterName]: paramFilters
+        };
+      });
 
       table.refreshTable();
     },
     [setParameterFilters, clearParameterFilter, table.refreshTable]
   );
+
+  // Construct the query filters for the table based on the parameter filters
+  const parametricQueryFilters = useMemo(() => {
+    const filters: Record<string, string> = {};
+
+    Object.keys(parameterFilters).forEach((key: string) => {
+      const paramFilters: any = parameterFilters[key];
+
+      Object.keys(paramFilters).forEach((operator: string) => {
+        const name = `${key}${PARAMETER_FILTER_OPERATORS[operator] || ''}`;
+        const value = paramFilters[operator];
+
+        filters[name] = value;
+      });
+    });
+
+    return filters;
+  }, [parameterFilters]);
 
   const [selectedPart, setSelectedPart] = useState<number>(0);
   const [selectedTemplate, setSelectedTemplate] = useState<number>(0);
@@ -348,7 +289,7 @@ export default function ParametricPartTable({
   );
 
   const parameterColumns: TableColumn[] = useMemo(() => {
-    const data = categoryParameters.data ?? [];
+    const data = categoryParameters?.data || [];
 
     return data.map((template: any) => {
       let title = template.name;
@@ -357,9 +298,7 @@ export default function ParametricPartTable({
         title += ` [${template.units}]`;
       }
 
-      const filterKey = Object.keys(parameterFilters).find((key: string) =>
-        key.startsWith(`parameter_${template.pk}`)
-      );
+      const filters = parameterFilters[`parameter_${template.pk}`] || {};
 
       return {
         accessor: `parameter_${template.pk}`,
@@ -375,16 +314,18 @@ export default function ParametricPartTable({
             canEdit={user.hasChangeRole(UserRoles.part)}
           />
         ),
-        filtering: !!filterKey,
-        filter: ({ close }: { close: () => void }) => (
-          <ParameterFilter
-            template={template}
-            filterValue={filterKey && parameterFilters[filterKey]}
-            setFilter={addParameterFilter}
-            clearFilter={clearParameterFilter}
-            closeFilter={close}
-          />
-        )
+        filtering: Object.keys(filters).length > 0,
+        filter: ({ close }: { close: () => void }) => {
+          return (
+            <ParameterFilter
+              template={template}
+              filters={parameterFilters[`parameter_${template.pk}`] || {}}
+              setFilter={addParameterFilter}
+              clearFilter={clearParameterFilter}
+              closeFilter={close}
+            />
+          );
+        }
       };
     });
   }, [user, categoryParameters.data, parameterFilters]);
@@ -426,15 +367,19 @@ export default function ParametricPartTable({
     const partColumns: TableColumn[] = [
       {
         accessor: 'name',
+        title: t`Part`,
         sortable: true,
         switchable: false,
         noWrap: true,
         render: (record: any) => PartColumn({ part: record })
       },
-      DescriptionColumn({}),
+      DescriptionColumn({
+        defaultVisible: false
+      }),
       {
         accessor: 'IPN',
-        sortable: true
+        sortable: true,
+        defaultVisible: false
       },
       {
         accessor: 'total_in_stock',
@@ -461,7 +406,7 @@ export default function ParametricPartTable({
             cascade: true,
             category_detail: true,
             parameters: true,
-            ...parameterFilters
+            ...parametricQueryFilters
           },
           onCellClick: ({ event, record, index, column, columnIndex }) => {
             cancelEvent(event);

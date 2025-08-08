@@ -7,26 +7,32 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.db.models import Sum
-from django.test import TestCase
 from django.test.utils import override_settings
+from django.urls import reverse
 
 import structlog
 
 import build.tasks
 import common.models
+import company.models
 from build.models import Build, BuildItem, BuildLine, generate_next_build_reference
 from build.status_codes import BuildStatus
 from common.settings import set_global_setting
 from InvenTree import status_codes as status
-from InvenTree.unit_test import findOffloadedEvent
+from InvenTree.unit_test import (
+    InvenTreeAPITestCase,
+    InvenTreeTestCase,
+    findOffloadedEvent,
+)
+from order.models import PurchaseOrder, PurchaseOrderLineItem
 from part.models import BomItem, BomItemSubstitute, Part, PartTestTemplate
-from stock.models import StockItem, StockItemTestResult
+from stock.models import StockItem, StockItemTestResult, StockLocation
 from users.models import Owner
 
 logger = structlog.get_logger('inventree')
 
 
-class BuildTestBase(TestCase):
+class BuildTestBase(InvenTreeTestCase):
     """Run some tests to ensure that the Build model is working properly."""
 
     fixtures = ['users']
@@ -492,9 +498,44 @@ class BuildTest(BuildTestBase):
         self.assertEqual(StockItem.objects.get(pk=self.stock_3_1.pk).quantity, 980)
 
         # Check that the "consumed_by" item count has increased
-        self.assertEqual(
-            StockItem.objects.filter(consumed_by=self.build).count(), n + 8
-        )
+        consumed_items = StockItem.objects.filter(consumed_by=self.build)
+        self.assertEqual(consumed_items.count(), n + 8)
+
+        # Finally, return the items into stock
+        location = StockLocation.objects.filter(structural=False).first()
+
+        for item in consumed_items:
+            item.return_to_stock(location)
+
+        # No consumed items should remain
+        self.assertEqual(StockItem.objects.filter(consumed_by=self.build).count(), 0)
+
+    def test_return_consumed(self):
+        """Test returning consumed stock items to stock."""
+        self.build.auto_allocate_stock(interchangeable=True)
+
+        self.build.incomplete_outputs.delete()
+
+        self.assertGreater(self.build.allocated_stock.count(), 0)
+
+        self.build.complete_build(self.user)
+        consumed_items = StockItem.objects.filter(consumed_by=self.build)
+        self.assertGreater(consumed_items.count(), 0)
+
+        location = StockLocation.objects.filter(structural=False).last()
+
+        # Return a partial quantity of each item to stock
+        for item in consumed_items:
+            self.assertEqual(item.get_descendant_count(), 0)
+            q = item.quantity
+            self.assertGreater(item.quantity, 1)
+            item.return_to_stock(location, merge=False, quantity=1)
+            item.refresh_from_db()
+            self.assertEqual(item.quantity, q - 1)
+            self.assertEqual(item.get_descendant_count(), 1)
+            self.assertFalse(item.is_in_stock())
+            child = item.get_descendants().first()
+            self.assertTrue(child.is_in_stock())
 
     def test_change_part(self):
         """Try to change target part after creating a build."""
@@ -616,6 +657,8 @@ class BuildTest(BuildTestBase):
 
     def test_overdue_notification(self):
         """Test sending of notifications when a build order is overdue."""
+        self.ensurePluginsLoaded()
+
         self.build.target_date = datetime.now().date() - timedelta(days=1)
         self.build.save()
 
@@ -809,3 +852,142 @@ class AutoAllocationTests(BuildTestBase):
 
         self.assertEqual(self.line_1.unallocated_quantity(), 0)
         self.assertEqual(self.line_2.unallocated_quantity(), 0)
+
+
+class ExternalBuildTest(InvenTreeAPITestCase):
+    """Unit tests for external build order functionality."""
+
+    def test_validation(self):
+        """Test validation of external build logic."""
+        part = Part.objects.create(
+            name='Test part', description='A test part', purchaseable=False
+        )
+
+        # Create a build order
+        # Cannot create an external build for a non-purchaseable part
+        with self.assertRaises(ValidationError) as err:
+            build = Build.objects.create(
+                part=part, title='Test build order', quantity=10, external=True
+            )
+
+            build.clean()
+
+        self.assertIn(
+            'Build orders can only be externally fulfilled for purchaseable parts',
+            str(err.exception.messages),
+        )
+
+    def test_logic(self):
+        """Test external build logic."""
+        # Create a purchaseable assembly part
+        assembly = Part.objects.create(
+            name='Test assembly',
+            description='A test assembly',
+            purchaseable=True,
+            assembly=True,
+            active=True,
+        )
+
+        # Create a supplier part
+        supplier = company.models.Company.objects.create(
+            name='Test supplier', active=True, is_supplier=True
+        )
+
+        supplier_part = company.models.SupplierPart.objects.create(
+            part=assembly, supplier=supplier, SKU='TEST-123'
+        )
+
+        # Create a build order against the assembly
+        build = Build.objects.create(
+            part=assembly, title='Test build order', quantity=10, external=True
+        )
+
+        # Order some parts
+        po = PurchaseOrder.objects.create(supplier=supplier, reference='PO-9999')
+
+        # Create a line item to fulfil the build order
+        po_line = PurchaseOrderLineItem.objects.create(
+            order=po, part=supplier_part, quantity=10, build_order=build
+        )
+
+        # Validate starting conditions
+        self.assertEqual(build.quantity, 10)
+        self.assertEqual(build.completed, 0)
+        self.assertEqual(build.build_outputs.count(), 0)
+        self.assertEqual(build.consumed_stock.count(), 0)
+
+        # PLACE the order
+        po.place_order()
+
+        location = StockLocation.objects.first()
+
+        # Receive half the items against the purchase order
+        po.receive_line_item(po_line, location, 5, self.user)
+
+        # As the order was incomplete, the build output has been marked as "building"
+        self.assertEqual(build.quantity, 10)
+        self.assertEqual(build.completed, 0)
+        self.assertEqual(build.build_outputs.count(), 1)
+
+        output = build.build_outputs.first()
+        self.assertTrue(output.is_building)
+
+        build.complete_build_output(output, self.user)
+        build.refresh_from_db()
+        self.assertEqual(build.completed, 5)
+
+        output.refresh_from_db()
+        self.assertFalse(output.is_building)
+
+        # Mark the build order as completed
+        build.complete_build(self.user)
+        self.assertEqual(build.status, BuildStatus.COMPLETE)
+
+        # Receive the rest of the line item
+        po.receive_line_item(po_line, location, 5, self.user)
+        po_line.refresh_from_db()
+        self.assertEqual(po_line.received, 10)
+
+        build.refresh_from_db()
+        self.assertEqual(build.completed, 10)
+        self.assertEqual(build.build_outputs.count(), 2)
+
+        # As the build was already completed, output has been marked as "complete" too
+        output = build.build_outputs.order_by('-pk').first()
+        self.assertFalse(output.is_building)
+
+    def test_api_filter(self):
+        """Test that the 'external' API filter works as expected."""
+        self.assignRole('build.view')
+
+        # Create a purchaseable assembly part
+        assembly = Part.objects.create(
+            name='Test assembly',
+            description='A test assembly',
+            purchaseable=True,
+            assembly=True,
+            active=True,
+        )
+
+        # Create some build orders
+        for i in range(5):
+            Build.objects.create(
+                part=assembly,
+                title=f'Test build order {i}',
+                quantity=10,
+                external=i % 2 == 0,
+            )
+
+        url = reverse('api-build-list')
+
+        response = self.get(url)
+
+        self.assertEqual(len(response.data), 5)
+
+        # Filter by 'external'
+        response = self.get(url, {'external': 'true'})
+        self.assertEqual(len(response.data), 3)
+
+        # Filter by 'not external'
+        response = self.get(url, {'external': 'false'})
+        self.assertEqual(len(response.data), 2)

@@ -82,6 +82,12 @@ Each parameter column indicates whether a filter is currently applied:
 
 {{ image("part/multiple_param_filters.png", "Multiple Parameter Filters") }}
 
+#### Multiple Filters Against the Same Parameter
+
+It is possible to apply multiple filters against the same parameter. For example, you can filter for parts with a *Resistance* parameter greater than 10kΩ and less than 100kΩ by adding two filters for the *Resistance* parameter:
+
+{{ image("part/multiple_filters_same_param.png", "Multiple Filters on Same Parameter") }}
+
 #### Unit-Aware Filtering
 
 When filtering against a parameter which has a unit defined, you can specify the value in any compatible unit. The system will automatically convert the value to the base unit defined for that parameter template.
@@ -90,12 +96,23 @@ For example, to show all parts with a *Resistance* parameter of greater than 10k
 
 {{ image("part/filter_with_unit.png", "Unit Aware Filters") }}
 
-#### Remove Filter
+#### Removing Filters
 
 To remove a filter against a given parameter, click on the {{ icon("circle-x", color='red') }} button associated with that filter:
 
 {{ image("part/remove_param_filter.png", "Remove Parameter Filter") }}
 
+#### Available Filter Operators
+
+The following filter operators are available for parameter filtering:
+
+- `=`: Equal to
+- `>`: Greater than
+- `>=`: Greater than or equal to
+- `<`: Less than
+- `<=`: Less than or equal to
+- `!=`: Not equal to
+- `~`: Contains (for text parameters)
 
 ## Parameter Units
 

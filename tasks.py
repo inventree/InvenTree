@@ -22,6 +22,11 @@ def is_true(x):
     return str(x).strip().lower() in ['1', 'y', 'yes', 't', 'true', 'on']
 
 
+def is_devcontainer_environment():
+    """Check if the InvenTree environment is running in a development container."""
+    return is_true(os.environ.get('INVENTREE_DEVCONTAINER', 'False'))
+
+
 def is_docker_environment():
     """Check if the InvenTree environment is running in a Docker container."""
     return is_true(os.environ.get('INVENTREE_DOCKER', 'False'))
@@ -217,7 +222,7 @@ def envcheck_invoke_cmd():
     intendded = ['/bin/invoke', '/bin/inv']
 
     correct_cmd: Optional[str] = None
-    if is_rtd_environment() or is_docker_environment():
+    if is_rtd_environment() or is_docker_environment() or is_devcontainer_environment():
         pass
     elif is_pkg_installer(load_content=True) and not is_pkg_installer_by_path():
         correct_cmd = 'inventree run invoke'
@@ -269,6 +274,7 @@ def content_excludes(
     allow_tokens: bool = True,
     allow_plugins: bool = True,
     allow_sso: bool = True,
+    allow_session: bool = True,
 ):
     """Returns a list of content types to exclude from import / export.
 
@@ -277,6 +283,7 @@ def content_excludes(
         allow_tokens (bool): Allow tokens to be exported / imported
         allow_plugins (bool): Allow plugin information to be exported / imported
         allow_sso (bool): Allow SSO tokens to be exported / imported
+        allow_session (bool): Allow user session data to be exported / imported
     """
     excludes = [
         'contenttypes',
@@ -289,6 +296,7 @@ def content_excludes(
         'exchange.rate',
         'exchange.exchangebackend',
         'common.dataoutput',
+        'common.newsfeedentry',
         'common.notificationentry',
         'common.notificationmessage',
         'importer.dataimportsession',
@@ -314,6 +322,11 @@ def content_excludes(
     if not allow_sso:
         excludes.append('socialaccount.socialapp')
         excludes.append('socialaccount.socialtoken')
+
+    # Optionally exclude user session information
+    if not allow_session:
+        excludes.append('sessions.session')
+        excludes.append('usersessions.usersession')
 
     return ' '.join([f'--exclude {e}' for e in excludes])
 
@@ -628,7 +641,7 @@ def translate(c, ignore_static=False, no_frontend=False):
     manage(c, 'compilemessages')
 
     if not no_frontend and node_available():
-        frontend_compile(c)
+        frontend_compile(c, extract=True)
 
     # Update static files
     if not ignore_static:
@@ -824,6 +837,7 @@ def update(
         'include_tokens': 'Include API tokens in the output file (default = False)',
         'exclude_plugins': 'Exclude plugin data from the output file (default = False)',
         'include_sso': 'Include SSO token data in the output file (default = False)',
+        'include_session': 'Include user session data in the output file (default = False)',
         'retain_temp': 'Retain temporary files (containing permissions) at end of process (default = False)',
     }
 )
@@ -835,6 +849,7 @@ def export_records(
     include_tokens=False,
     exclude_plugins=False,
     include_sso=False,
+    include_session=False,
     retain_temp=False,
 ):
     """Export all database records to a file.
@@ -868,6 +883,7 @@ def export_records(
     excludes = content_excludes(
         allow_tokens=include_tokens,
         allow_plugins=not exclude_plugins,
+        allow_session=include_session,
         allow_sso=include_sso,
     )
 
@@ -934,7 +950,7 @@ def import_records(
         sys.exit(1)
 
     if clear:
-        delete_data(c, force=True)
+        delete_data(c, force=True, migrate=True)
 
     info(f"Importing database records from '{target}'")
 
@@ -1003,13 +1019,21 @@ def import_records(
     info('Data import completed')
 
 
-@task
-def delete_data(c, force=False):
+@task(
+    help={
+        'force': 'Force deletion of all data without confirmation',
+        'migrate': 'Run migrations before deleting data (default = False)',
+    }
+)
+def delete_data(c, force: bool = False, migrate: bool = False):
     """Delete all database records!
 
     Warning: This will REALLY delete all records in the database!!
     """
     info('Deleting all data from InvenTree database...')
+
+    if migrate:
+        manage(c, 'migrate --run-syncdb')
 
     if force:
         manage(c, 'flush --noinput')
@@ -1189,32 +1213,28 @@ def test_translations(c):
 
 @task(
     help={
+        'check': 'Run sanity check on the django install (default = False)',
         'disable_pty': 'Disable PTY',
         'runtest': 'Specify which tests to run, in format <module>.<file>.<class>.<method>',
         'migrations': 'Run migration unit tests',
         'report': 'Display a report of slow tests',
         'coverage': 'Run code coverage analysis (requires coverage package)',
+        'translations': 'Compile translations before running tests',
+        'keepdb': 'Keep the test database after running tests (default = False)',
     }
 )
 def test(
     c,
+    check=False,
     disable_pty=False,
     runtest='',
     migrations=False,
     report=False,
     coverage=False,
     translations=False,
+    keepdb=False,
 ):
     """Run unit-tests for InvenTree codebase.
-
-    Args:
-        c: Command line context.
-        disable_pty (bool): Disable PTY (default = False)
-        runtest (str): Specify which tests to run, in format <module>.<file>.<class>.<method> (default = '')
-        migrations (bool): Run migration unit tests (default = False)
-        report (bool): Display a report of slow tests (default = False)
-        coverage (bool): Run code coverage analysis (requires coverage package) (default = False)
-        translations (bool): Compile translations before running tests (default = False)
 
     To run only certain test, use the argument --runtest.
     This can filter all the way down to:
@@ -1225,7 +1245,8 @@ def test(
     will run tests in the company/test_api.py file.
     """
     # Run sanity check on the django install
-    manage(c, 'check')
+    if check:
+        manage(c, 'check')
 
     if translations:
         try:
@@ -1249,6 +1270,9 @@ def test(
     if report:
         cmd += ' --slowreport'
 
+    if keepdb:
+        cmd += ' --keepdb'
+
     if migrations:
         cmd += ' --tag migration_test'
     else:
@@ -1267,6 +1291,7 @@ def test(
     help={
         'dev': 'Set up development environment at the end',
         'validate_files': 'Validate media files are correctly copied',
+        'use_ssh': 'Use SSH protocol for cloning the demo dataset (requires SSH key)',
     }
 )
 def setup_test(
@@ -1274,6 +1299,7 @@ def setup_test(
     ignore_update=False,
     dev=False,
     validate_files=False,
+    use_ssh=False,
     path='inventree-demo-dataset',
 ):
     """Setup a testing environment."""
@@ -1289,12 +1315,15 @@ def setup_test(
         info('Removing old data ...')
         run(c, f'rm {template_dir} -r')
 
+    URL = 'https://github.com/inventree/demo-dataset'
+
+    if use_ssh:
+        # Use SSH protocol for cloning the demo dataset
+        URL = 'git@github.com:inventree/demo-dataset.git'
+
     # Get test data
     info('Cloning demo dataset ...')
-    run(
-        c,
-        f'git clone https://github.com/inventree/demo-dataset {template_dir} -v --depth=1',
-    )
+    run(c, f'git clone {URL} {template_dir} -v --depth=1')
 
     # Make sure migrations are done - might have just deleted sqlite database
     if not ignore_update:
@@ -1442,6 +1471,17 @@ def version(c):
     NOT_SPECIFIED = wrap_color('NOT SPECIFIED', '91')
     NA = wrap_color('N/A', '93')
 
+    platform = NOT_SPECIFIED
+
+    if is_pkg_installer():
+        platform = 'Package Installer'
+    elif is_docker_environment():
+        platform = 'Docker'
+    elif is_devcontainer_environment():
+        platform = 'Devcontainer'
+    elif is_rtd_environment():
+        platform = 'ReadTheDocs'
+
     print(
         f"""
 InvenTree - inventree.org
@@ -1469,9 +1509,8 @@ Node        {node if node else NA}
 Yarn        {yarn if yarn else NA}
 
 Environment:
-Docker      {is_docker_environment()}
-RTD         {is_rtd_environment()}
-PKG         {is_pkg_installer()}
+Platform    {platform}
+Debug       {is_debug_environment()}
 
 Commit hash: {InvenTreeVersion.inventreeCommitHash()}
 Commit date: {InvenTreeVersion.inventreeCommitDate()}"""
@@ -1492,17 +1531,18 @@ def frontend_check(c):
     print(node_available())
 
 
-@task
+@task(help={'extract': 'Extract translation strings. Default: False'})
 @state_logger('TASK06')
-def frontend_compile(c):
+def frontend_compile(c, extract: bool = False):
     """Generate react frontend.
 
-    Args:
+    Arguments:
         c: Context variable
+        extract (bool): Whether to extract translations from source code. Defaults to False.
     """
     info('Compiling frontend code...')
     frontend_install(c)
-    frontend_trans(c, extract=False)
+    frontend_trans(c, extract=extract)
     frontend_build(c)
     success('Frontend compilation complete')
 
@@ -1553,6 +1593,21 @@ def frontend_server(c):
     info('Starting frontend development server')
     yarn(c, 'yarn run compile')
     yarn(c, 'yarn run dev --host')
+
+
+@task
+def frontend_test(c, host: str = '0.0.0.0'):
+    """Start the playwright test runner for the frontend code."""
+    info('Starting frontend test runner')
+
+    frontend_path = local_dir().joinpath('src', 'frontend').resolve()
+
+    cmd = 'npx playwright test --ui'
+
+    if host:
+        cmd += f' --ui-host={host}'
+
+    run(c, cmd, path=frontend_path)
 
 
 @task(
@@ -1826,6 +1881,12 @@ def clear_generated(c):
     run(c, 'find src -name "messages.mo" -exec rm -f {} +')
 
 
+@task(pre=[wait])
+def monitor(c):
+    """Monitor the worker performance."""
+    manage(c, 'qmonitor', pty=True)
+
+
 # endregion tasks
 
 # Collection sorting
@@ -1833,6 +1894,7 @@ development = Collection(
     delete_data,
     docs_server,
     frontend_server,
+    frontend_test,
     gunicorn,
     import_fixtures,
     schema,
@@ -1876,6 +1938,7 @@ ns = Collection(
     version,
     wait,
     worker,
+    monitor,
     build_docs,
 )
 

@@ -1,7 +1,8 @@
 # Please keep this list sorted - if you pin a version provide a reason
 Django<5.0                              # Django package
-coreapi                                 # API documentation for djangorestframework
+blessed                                 # CLI for Q Monitor
 cryptography>=44.0.0                    # Core cryptographic functionality
+django-anymail[amazon_ses,postal]       # Email backend for various providers
 django-allauth[mfa,socialaccount,saml,openid]   # SSO for external providers via OpenID
 django-cleanup                          # Automated deletion of old / unused uploaded files
 django-cors-headers                     # CORS headers extension for DRF
@@ -11,6 +12,7 @@ django-filter                           # Extended filtering options
 django-flags                            # Feature flags
 django-ical                             # iCal export for calendar views
 django-maintenance-mode                 # Shut down application while reloading etc.
+django-mailbox                          # Email scraping
 django-markdownify                      # Markdown rendering
 django-mptt                             # Modified Preorder Tree Traversal
 django-markdownify                      # Markdown rendering
@@ -35,6 +37,7 @@ docutils                                # Documentation utilities for auto admin
 drf-spectacular                         # DRF API documentation
 feedparser                              # RSS newsfeed parser
 gunicorn                                # Gunicorn web server
+jinja2                                  # Jinja2 templating engine
 pdf2image                               # PDF to image conversion
 pillow                                  # Image manipulation
 pint                                    # Unit conversion
@@ -60,6 +63,11 @@ opentelemetry-exporter-otlp
 opentelemetry-instrumentation-django
 opentelemetry-instrumentation-requests
 opentelemetry-instrumentation-redis
+opentelemetry-instrumentation-sqlite3
+opentelemetry-instrumentation-system_metrics
+opentelemetry-instrumentation-wsgi
+opentelemetry-instrumentation-psycopg
+opentelemetry-instrumentation-pymysql
 
 # Pins
 xmlsec==1.3.14  # 2025-06-02 pinned to avoid issues with builds - see https://github.com/inventree/InvenTree/pull/9713

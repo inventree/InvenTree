@@ -2,9 +2,7 @@
 
 import json
 import os
-import random
 import re
-import time
 import warnings
 from dataclasses import dataclass
 from datetime import datetime, timedelta
@@ -12,12 +10,13 @@ from typing import Callable, Optional
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.core.exceptions import AppRegistryNotReady
+from django.core.exceptions import AppRegistryNotReady, ValidationError
 from django.core.management import call_command
 from django.db import DEFAULT_DB_ALIAS, connections
 from django.db.migrations.executor import MigrationExecutor
 from django.db.utils import NotSupportedError, OperationalError, ProgrammingError
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 import requests
 import structlog
@@ -26,6 +25,7 @@ from maintenance_mode.core import (
     maintenance_mode_on,
     set_maintenance_mode,
 )
+from opentelemetry import trace
 
 from common.settings import get_global_setting, set_global_setting
 from InvenTree.config import get_setting
@@ -34,6 +34,7 @@ from plugin import registry
 from .version import isInvenTreeUpToDate
 
 logger = structlog.get_logger('inventree')
+tracer = trace.get_tracer(__name__)
 
 
 def schedule_task(taskname, **kwargs):
@@ -92,17 +93,11 @@ def check_daily_holdoff(task_name: str, n_days: int = 1) -> bool:
     Note that this function creates some *hidden* global settings (designated with the _ prefix),
     which are used to keep a running track of when the particular task was was last run.
     """
-    from InvenTree.ready import isInTestMode
-
     if n_days <= 0:
         logger.info(
             "Specified interval for task '%s' < 1 - task will not run", task_name
         )
         return False
-
-    # Sleep a random number of seconds to prevent worker conflict
-    if not isInTestMode():
-        time.sleep(random.randint(1, 5))
 
     attempt_key = f'_{task_name}_ATTEMPT'
     success_key = f'_{task_name}_SUCCESS'
@@ -205,13 +200,14 @@ def offload_task(
         # Running as asynchronous task
         try:
             task = AsyncTask(taskname, *args, group=group, **kwargs)
-            task.run()
+            with tracer.start_as_current_span(f'async worker: {taskname}'):
+                task.run()
         except ImportError:
             raise_warning(f"WARNING: '{taskname}' not offloaded - Function not found")
             return False
         except Exception as exc:
             raise_warning(f"WARNING: '{taskname}' not offloaded due to {exc!s}")
-            log_error('InvenTree.offload_task')
+            log_error('offload_task', scope='worker')
             return False
     else:
         if callable(taskname):
@@ -232,7 +228,7 @@ def offload_task(
             try:
                 _mod = importlib.import_module(app_mod)
             except ModuleNotFoundError:
-                log_error('InvenTree.offload_task')
+                log_error('offload_task', scope='worker')
                 raise_warning(
                     f"WARNING: '{taskname}' not started - No module named '{app_mod}'"
                 )
@@ -249,7 +245,7 @@ def offload_task(
                 if not _func:
                     _func = eval(func)  # pragma: no cover
             except NameError:
-                log_error('InvenTree.offload_task')
+                log_error('offload_task', scope='worker')
                 raise_warning(
                     f"WARNING: '{taskname}' not started - No function named '{func}'"
                 )
@@ -257,9 +253,10 @@ def offload_task(
 
         # Workers are not running: run it as synchronous task
         try:
-            _func(*args, **kwargs)
+            with tracer.start_as_current_span(f'sync worker: {taskname}'):
+                _func(*args, **kwargs)
         except Exception as exc:
-            log_error('InvenTree.offload_task')
+            log_error('offload_task', scope='worker')
             raise_warning(f"WARNING: '{taskname}' failed due to {exc!s}")
             raise exc
 
@@ -345,6 +342,7 @@ def scheduled_task(
     return _task_wrapper
 
 
+@tracer.start_as_current_span('heartbeat')
 @scheduled_task(ScheduledTask.MINUTES, 5)
 def heartbeat():
     """Simple task which runs at 5 minute intervals, so we can determine that the background worker is actually running.
@@ -373,6 +371,7 @@ def heartbeat():
             task.delete()
 
 
+@tracer.start_as_current_span('delete_successful_tasks')
 @scheduled_task(ScheduledTask.DAILY)
 def delete_successful_tasks():
     """Delete successful task logs which are older than a specified period."""
@@ -395,6 +394,7 @@ def delete_successful_tasks():
         )
 
 
+@tracer.start_as_current_span('delete_failed_tasks')
 @scheduled_task(ScheduledTask.DAILY)
 def delete_failed_tasks():
     """Delete failed task logs which are older than a specified period."""
@@ -415,6 +415,7 @@ def delete_failed_tasks():
         logger.info("Could not perform 'delete_failed_tasks' - App registry not ready")
 
 
+@tracer.start_as_current_span('delete_old_error_logs')
 @scheduled_task(ScheduledTask.DAILY)
 def delete_old_error_logs():
     """Delete old error logs from the server."""
@@ -437,6 +438,7 @@ def delete_old_error_logs():
         )
 
 
+@tracer.start_as_current_span('delete_old_notifications')
 @scheduled_task(ScheduledTask.DAILY)
 def delete_old_notifications():
     """Delete old notification logs."""
@@ -464,11 +466,41 @@ def delete_old_notifications():
         )
 
 
+@tracer.start_as_current_span('delete_old_emails')
+@scheduled_task(ScheduledTask.DAILY)
+def delete_old_emails():
+    """Delete old email messages."""
+    try:
+        from common.models import EmailMessage
+
+        days = get_global_setting('INVENTREE_DELETE_EMAIL_DAYS', 30)
+        threshold = timezone.now() - timedelta(days=days)
+
+        emails = EmailMessage.objects.filter(timestamp__lte=threshold)
+
+        if emails.count() > 0:
+            try:
+                emails.delete()
+                logger.info('Deleted %s old email messages', emails.count())
+            except ValidationError:
+                logger.info(
+                    'Did not delete %s old email messages because of a validation error',
+                    emails.count(),
+                )
+
+    except AppRegistryNotReady:  # pragma: no cover
+        logger.info("Could not perform 'delete_old_emails' - App registry not ready")
+
+
+@tracer.start_as_current_span('check_for_updates')
 @scheduled_task(ScheduledTask.DAILY)
 def check_for_updates():
     """Check if there is an update for InvenTree."""
     try:
-        from common.notifications import trigger_superuser_notification
+        from common.notifications import trigger_notification
+        from plugin.builtin.integration.core_notifications import (
+            InvenTreeUINotifications,
+        )
     except AppRegistryNotReady:  # pragma: no cover
         # Apps not yet loaded!
         logger.info("Could not perform 'check_for_updates' - App registry not ready")
@@ -531,22 +563,20 @@ def check_for_updates():
 
     # Send notification if there is a new version
     if not isInvenTreeUpToDate():
-        logger.warning('InvenTree is not up-to-date, sending notification')
-
-        plg = registry.get_plugin('InvenTreeCoreNotificationsPlugin')
-        if not plg:
-            logger.warning('Cannot send notification - plugin not found')
-            return
-        plg = plg.plugin_config()
-        if not plg:
-            logger.warning('Cannot send notification - plugin config not found')
-            return
-        # Send notification
-        trigger_superuser_notification(
-            plg, f'An update for InvenTree to version {tag} is available'
+        # Send notification to superusers
+        trigger_notification(
+            None,
+            'update_available',
+            targets=get_user_model().objects.filter(is_superuser=True),
+            delivery_methods={InvenTreeUINotifications},
+            context={
+                'name': _('Update Available'),
+                'message': _('An update for InvenTree is available'),
+            },
         )
 
 
+@tracer.start_as_current_span('update_exchange_rates')
 @scheduled_task(ScheduledTask.DAILY)
 def update_exchange_rates(force: bool = False):
     """Update currency exchange rates.
@@ -597,6 +627,7 @@ def update_exchange_rates(force: bool = False):
         logger.exception('Error updating exchange rates: %s', str(type(e)))
 
 
+@tracer.start_as_current_span('run_backup')
 @scheduled_task(ScheduledTask.DAILY)
 def run_backup():
     """Run the backup command."""
@@ -628,6 +659,7 @@ def get_migration_plan():
     return plan
 
 
+@tracer.start_as_current_span('check_for_migrations')
 @scheduled_task(ScheduledTask.DAILY)
 def check_for_migrations(force: bool = False, reload_registry: bool = True) -> bool:
     """Checks if migrations are needed.
@@ -636,7 +668,6 @@ def check_for_migrations(force: bool = False, reload_registry: bool = True) -> b
 
     Returns bool indicating if migrations are up to date
     """
-    from plugin import registry
 
     def set_pending_migrations(n: int):
         """Helper function to inform the user about pending migrations."""
@@ -720,6 +751,7 @@ def email_user(user_id: int, subject: str, message: str) -> None:
         send_email(subject, message, [email])
 
 
+@tracer.start_as_current_span('run_oauth_maintenance')
 @scheduled_task(ScheduledTask.DAILY)
 def run_oauth_maintenance():
     """Run the OAuth maintenance task(s)."""

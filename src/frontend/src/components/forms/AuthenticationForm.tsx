@@ -1,7 +1,9 @@
-import { ApiEndpoints, apiUrl } from '@lib/index';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import {
+  Alert,
   Anchor,
   Button,
   Divider,
@@ -9,6 +11,7 @@ import {
   Loader,
   PasswordInput,
   Stack,
+  Text,
   TextInput,
   VisuallyHidden
 } from '@mantine/core';
@@ -26,9 +29,10 @@ import {
   followRedirect
 } from '../../functions/auth';
 import { showLoginNotification } from '../../functions/notifications';
-import { useServerApiState } from '../../states/ApiState';
+import { useServerApiState } from '../../states/ServerApiState';
 import { useUserState } from '../../states/UserState';
 import { SsoButton } from '../buttons/SSOButton';
+import { errorCodeLink } from '../nav/Alerts';
 
 export function AuthenticationForm() {
   const classicForm = useForm({
@@ -339,6 +343,12 @@ export function RegistrationForm() {
             <SsoButton provider={provider} key={provider.id} />
           ))}
         </Group>
+      )}
+      {!registration_enabled() && !sso_registration() && (
+        <Alert title={t`Registration not active`} color='orange'>
+          <Text>{t`This might be related to missing mail settings or could be a deliberate decision.`}</Text>
+          {errorCodeLink('INVE-W11')}
+        </Alert>
       )}
     </>
   );

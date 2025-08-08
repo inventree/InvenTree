@@ -47,9 +47,22 @@ def isRunningBackup():
 
 def isGeneratingSchema():
     """Return true if schema generation is being executed."""
+    if isInServerThread() or isInWorkerThread():
+        return False
+
+    if isRunningMigrations() or isRunningBackup() or isRebuildingData():
+        return False
+
+    if isImportingData():
+        return False
+
+    if isInTestMode():
+        return False
+
     if 'schema' in sys.argv:
         return True
 
+    # This is a very inefficient call - so we only use it as a last resort
     return any('drf_spectacular' in frame.filename for frame in inspect.stack())
 
 
