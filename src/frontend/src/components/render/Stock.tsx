@@ -83,8 +83,7 @@ export function RenderStockItem(
       secondary={batch_string}
       suffix={<Text size='xs'>{quantity_string}</Text>}
       image={
-        instance.part_detail?.image?.thumbnail ||
-        instance.part_detail?.image?.image
+        instance.part_detail?.thumbnail_url || instance.part_detail?.image_url
       }
       url={
         props.link ? getDetailUrl(ModelType.stockitem, instance.pk) : undefined

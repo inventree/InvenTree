@@ -257,7 +257,7 @@ export default function ReturnOrderDetail() {
         <Grid grow>
           <DetailsImage
             appRole={UserRoles.purchase_order}
-            src={order.customer_detail?.image?.image}
+            src={order.customer_detail?.image_url}
             pk={order.customer}
           />
           <Grid.Col span={{ base: 12, sm: 8 }}>

@@ -966,7 +966,7 @@ export default function PartDetail() {
       <Alert color='red' title={t`Deleting this part cannot be reversed`}>
         <Stack gap='xs'>
           <Thumbnail
-            src={part?.image?.thumbnail ?? part?.image?.image}
+            src={part?.thumbnail_url ?? part?.image_url}
             text={part.full_name}
           />
         </Stack>
@@ -1098,7 +1098,7 @@ export default function PartDetail() {
               ) : undefined
             }
             subtitle={part.description}
-            imageUrl={part?.image?.image}
+            imageUrl={part?.image_url}
             badges={badges}
             breadcrumbs={
               user.hasViewRole(UserRoles.part_category)

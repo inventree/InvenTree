@@ -737,8 +737,7 @@ export default function BuildDetail() {
             editAction={editBuild.open}
             editEnabled={user.hasChangePermission(ModelType.part)}
             imageUrl={
-              build.part_detail?.image?.image ??
-              build.part_detail?.image?.thumbnail
+              build.part_detail?.image_url ?? build.part_detail?.thumbnail_url
             }
             breadcrumbs={[{ name: t`Manufacturing`, url: '/manufacturing' }]}
             lastCrumb={[

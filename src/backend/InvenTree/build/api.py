@@ -330,6 +330,8 @@ class BuildMixin:
             'part__pricing_data',
         )
 
+        queryset = prefetch_related_images(queryset, reference='part')
+
         return queryset
 
 

@@ -7,6 +7,7 @@ from django.utils.translation import gettext_lazy as _
 from django_filters import rest_framework as rest_filters
 
 import part.models
+from common.filters import prefetch_related_images
 from data_exporter.mixins import DataExportViewMixin
 from InvenTree.api import ListCreateDestroyAPIView, MetadataView
 from InvenTree.filters import SEARCH_ORDER_FILTER, SEARCH_ORDER_FILTER_ALIAS
@@ -156,6 +157,14 @@ class ManufacturerPartList(DataExportViewMixin, ListCreateDestroyAPIView):
     queryset = ManufacturerPart.objects.all().prefetch_related(
         'part', 'manufacturer', 'supplier_parts', 'tags'
     )
+
+    def get_queryset(self, *args, **kwargs):
+        """Return annotated queryset for the ManufacturerPart list endpoint."""
+        queryset = super().get_queryset(*args, **kwargs)
+        queryset = prefetch_related_images(queryset, reference='part')
+        queryset = prefetch_related_images(queryset, reference='manufacturer')
+
+        return queryset
 
     serializer_class = ManufacturerPartSerializer
     filterset_class = ManufacturerPartFilter

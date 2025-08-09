@@ -62,7 +62,7 @@ export function RelatedPartTable({
                 navigate(`/part/${part.pk}/`);
               }}
             >
-              <Thumbnail src={part?.image?.thumbnail || part?.image.image} />
+              <Thumbnail src={part?.thumbnail_url || part?.image_url} />
               <Text>{part.name}</Text>
             </Group>
           );

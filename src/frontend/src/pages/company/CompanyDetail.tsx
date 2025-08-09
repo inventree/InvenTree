@@ -154,7 +154,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
         <Grid grow>
           <DetailsImage
             appRole={UserRoles.purchase_order}
-            src={company?.image?.image}
+            src={company?.image_url}
             pk={company.pk}
             image_id={company?.image?.pk}
             content_type={ModelType.company}
@@ -162,7 +162,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
             EditImageActions={{
               uploadFile: true,
               downloadImage: true,
-              deleteFile: company?.image?.image
+              deleteFile: company?.image_url
             }}
           />
           <Grid.Col span={{ base: 12, sm: 8 }}>
@@ -341,7 +341,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
             title={`${t`Company`}: ${company.name}`}
             subtitle={company.description}
             actions={companyActions}
-            imageUrl={company?.image?.thumbnail}
+            imageUrl={company?.thumbnail_url}
             breadcrumbs={props.breadcrumbs}
             lastCrumb={[
               {

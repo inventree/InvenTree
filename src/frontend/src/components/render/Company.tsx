@@ -36,7 +36,7 @@ export function RenderCompany(
   return (
     <RenderInlineModel
       {...props}
-      image={instance?.image.thumbnail || instance?.image.image}
+      image={instance?.thumbnail_url || instance?.image_url}
       primary={instance.name}
       secondary={instance.description}
       url={

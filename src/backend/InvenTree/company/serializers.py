@@ -45,7 +45,17 @@ class CompanyBriefSerializer(
         """Metaclass options."""
 
         model = Company
-        fields = ['pk', 'active', 'name', 'description', 'image', 'currency', 'tax_id']
+        fields = [
+            'pk',
+            'active',
+            'name',
+            'description',
+            'image',
+            'image_url',
+            'thumbnail_url',
+            'currency',
+            'tax_id',
+        ]
         read_only_fields = ['currency']
 
 
@@ -127,6 +137,8 @@ class CompanySerializer(
             'contact',
             'link',
             'image',
+            'image_url',
+            'thumbnail_url',
             'active',
             'is_customer',
             'is_manufacturer',
@@ -171,17 +183,6 @@ class CompanySerializer(
 
     # TODO: I suspect this field might be causing an N+1 query issue because it relies on a property on the Company model.
     primary_address = AddressSerializer(allow_null=True, read_only=True)
-    # image = serializers.SerializerMethodField(read_only=True)
-
-    # def get_image(self, obj):
-    #     """Return the primary image associated with this Company instance."""
-    #     images = getattr(obj, 'primary_img', None)
-    #     if images and len(images) > 0:
-    #         img_obj = images[0]
-    #         return common_serializers.InvenTreeImageSerializer(
-    #             img_obj, context=self.context
-    #         ).data
-    #     return None
 
     email = serializers.EmailField(
         required=False, default='', allow_blank=True, allow_null=True

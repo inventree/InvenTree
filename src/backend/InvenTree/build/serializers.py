@@ -167,8 +167,6 @@ class BuildSerializer(
             )
         )
 
-        queryset = prefetch_related_images(queryset, reference='part')
-
         return queryset
 
     def __init__(self, *args, **kwargs):

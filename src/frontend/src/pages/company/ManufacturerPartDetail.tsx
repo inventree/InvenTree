@@ -134,7 +134,7 @@ export default function ManufacturerPartDetail() {
         <Grid grow>
           <DetailsImage
             appRole={UserRoles.part}
-            src={manufacturerPart?.part_detail?.image?.image}
+            src={manufacturerPart?.part_detail?.image_url}
             pk={manufacturerPart?.part_detail?.pk}
           />
           <Grid.Col span={{ base: 12, sm: 8 }}>

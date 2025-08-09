@@ -337,7 +337,7 @@ class PartBriefSerializer(
             'revision',
             'full_name',
             'description',
-            'image',
+            'images',
             'image_url',
             'thumbnail_url',
             'active',
