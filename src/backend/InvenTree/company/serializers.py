@@ -36,7 +36,9 @@ from .models import (
 )
 
 
-class CompanyBriefSerializer(InvenTreeModelSerializer):
+class CompanyBriefSerializer(
+    common_serializers.InvenTreeImageMixin, InvenTreeModelSerializer
+):
     """Serializer for Company object (limited detail)."""
 
     class Meta:
@@ -45,21 +47,6 @@ class CompanyBriefSerializer(InvenTreeModelSerializer):
         model = Company
         fields = ['pk', 'active', 'name', 'description', 'image', 'currency', 'tax_id']
         read_only_fields = ['currency']
-
-    image = serializers.SerializerMethodField(
-        help_text=_('The primary image for this Company (if any)')
-    )
-
-    def get_image(self, company):
-        """Return the image associated with this Company instance."""
-        images = getattr(company, 'all_images', None)
-        if images and len(images) > 0:
-            img_obj = images[0]
-            return common_serializers.InvenTreeImageSerializer(
-                img_obj, context=self.context
-            ).data
-
-        return None
 
 
 @register_importer()
@@ -112,7 +99,10 @@ from django.contrib.contenttypes.models import ContentType
 
 @register_importer()
 class CompanySerializer(
-    DataImportExportSerializerMixin, NotesFieldMixin, InvenTreeModelSerializer
+    common_serializers.InvenTreeImageMixin,
+    DataImportExportSerializerMixin,
+    NotesFieldMixin,
+    InvenTreeModelSerializer,
 ):
     """Serializer for Company object (full detail)."""
 
@@ -167,7 +157,7 @@ class CompanySerializer(
         )
 
         queryset = queryset.prefetch_related(
-            Prefetch('images', queryset=primary_qs, to_attr='primary_img')
+            Prefetch('images', queryset=primary_qs, to_attr='all_images')
         )
         return queryset
 
@@ -181,17 +171,17 @@ class CompanySerializer(
 
     # TODO: I suspect this field might be causing an N+1 query issue because it relies on a property on the Company model.
     primary_address = AddressSerializer(allow_null=True, read_only=True)
-    image = serializers.SerializerMethodField(read_only=True)
+    # image = serializers.SerializerMethodField(read_only=True)
 
-    def get_image(self, obj):
-        """Return the primary image associated with this Company instance."""
-        images = getattr(obj, 'primary_img', None)
-        if images and len(images) > 0:
-            img_obj = images[0]
-            return common_serializers.InvenTreeImageSerializer(
-                img_obj, context=self.context
-            ).data
-        return None
+    # def get_image(self, obj):
+    #     """Return the primary image associated with this Company instance."""
+    #     images = getattr(obj, 'primary_img', None)
+    #     if images and len(images) > 0:
+    #         img_obj = images[0]
+    #         return common_serializers.InvenTreeImageSerializer(
+    #             img_obj, context=self.context
+    #         ).data
+    #     return None
 
     email = serializers.EmailField(
         required=False, default='', allow_blank=True, allow_null=True

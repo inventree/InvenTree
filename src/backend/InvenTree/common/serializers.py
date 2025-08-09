@@ -706,6 +706,64 @@ class InvenTreeImageSerializer(
         return fields
 
 
+class InvenTreeImageMixin(metaclass=serializers.SerializerMetaclass):
+    """Mixin to add image fields to a serializer."""
+
+    image_url = serializers.SerializerMethodField(
+        help_text=_('The URL of the primary image for this instance (if any)')
+    )
+    thumbnail_url = serializers.SerializerMethodField(
+        help_text=_('The URL of the thumbnail for the primary image (if any)')
+    )
+
+    images = InvenTreeImageSerializer(
+        many=True,
+        read_only=True,
+        source='all_images',
+        help_text=_('All images for the instance'),
+    )
+
+    image = serializers.SerializerMethodField(
+        help_text=_('The primary image for this instance (if any)')
+    )
+
+    def get_image(self, part):
+        """Return the primary image associated with this instance."""
+        images = getattr(part, 'all_images', None)
+
+        if images and len(images) > 0:
+            for img in images:
+                if img.primary:
+                    return InvenTreeImageSerializer(img, context=self.context).data
+
+        return None
+
+    def _get_primary(self, instance):
+        """Return the primary image for the instance, if it exists."""
+        images = getattr(instance, 'all_images', None)
+        if not images or len(images) == 0:
+            return None
+        return next((img for img in images if img.primary), images[0])
+
+    def get_image_url(self, instance):
+        """Return the URL of the primary image for this instance."""
+        primary = self._get_primary(instance)
+        if not primary or not primary.image:
+            return None
+
+        field = InvenTreeImageSerializerField()
+        return field.to_representation(primary.image)
+
+    def get_thumbnail_url(self, instance):
+        """Return the URL of the thumbnail for the primary image."""
+        primary = self._get_primary(instance)
+        if not primary or not getattr(primary.image, 'thumbnail', None):
+            return None
+
+        field = InvenTreeImageSerializerField()
+        return field.to_representation(primary.image.thumbnail)
+
+
 class InvenTreeImageThumbSerializer(serializers.Serializer):
     """Serializer for a thumbnail of an uploaded image."""
 

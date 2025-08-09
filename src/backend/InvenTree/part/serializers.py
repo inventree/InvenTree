@@ -32,6 +32,7 @@ import part.tasks
 import stock.models
 import users.models
 from common.filters import prefetch_related_images
+from common.serializers import InvenTreeImageMixin
 from importer.registry import register_importer
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.ready import isGeneratingSchema
@@ -315,7 +316,10 @@ class PartParameterTemplateSerializer(
         return queryset.annotate(parts=SubqueryCount('instances'))
 
 
-class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+class PartBriefSerializer(
+    common_serializers.InvenTreeImageMixin,
+    InvenTree.serializers.InvenTreeModelSerializer,
+):
     """Serializer for Part (brief detail)."""
 
     class Meta:
@@ -334,6 +338,8 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'full_name',
             'description',
             'image',
+            'image_url',
+            'thumbnail_url',
             'active',
             'locked',
             'assembly',
@@ -364,23 +370,6 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     category_default_location = serializers.IntegerField(
         read_only=True, allow_null=True
     )
-
-    image = serializers.SerializerMethodField(
-        help_text=_('The primary image for this Part (if any)')
-    )
-
-    def get_image(self, part):
-        """Return the primary image associated with this Part instance."""
-        images = getattr(part, 'all_images', None)
-
-        if images and len(images) > 0:
-            for img in images:
-                if img.primary:
-                    return common_serializers.InvenTreeImageSerializer(
-                        img, context=self.context
-                    ).data
-
-        return None
 
     IPN = serializers.CharField(
         required=False,
@@ -652,6 +641,7 @@ class DefaultLocationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
 @register_importer()
 class PartSerializer(
+    InvenTreeImageMixin,
     DataImportExportSerializerMixin,
     InvenTree.serializers.NotesFieldMixin,
     InvenTree.serializers.InvenTreeTagModelSerializer,
@@ -687,6 +677,8 @@ class PartSerializer(
             'description',
             'full_name',
             'images',
+            'image_url',
+            'thumbnail_url',
             'IPN',
             'is_template',
             'keywords',
@@ -1006,13 +998,6 @@ class PartSerializer(
 
     minimum_stock = serializers.FloatField(
         required=False, label=_('Minimum Stock'), default=0
-    )
-
-    images = common_serializers.InvenTreeImageSerializer(
-        many=True,
-        read_only=True,
-        source='all_images',
-        help_text=_('All images for this Part'),
     )
 
     starred = serializers.SerializerMethodField()
