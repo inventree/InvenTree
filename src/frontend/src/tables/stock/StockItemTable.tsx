@@ -1,6 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { Group, Text } from '@mantine/core';
 import { type ReactNode, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { ActionButton } from '@lib/components/ActionButton';
 import { AddItemButton } from '@lib/components/AddItemButton';
@@ -8,6 +9,7 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import { getDetailUrl } from '@lib/functions/Navigation';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
@@ -463,12 +465,14 @@ export function StockItemTable({
   allowAdd = false,
   showLocation = true,
   showPricing = true,
+  allowReturn = false,
   tableName = 'stockitems'
 }: Readonly<{
   params?: any;
   allowAdd?: boolean;
   showLocation?: boolean;
   showPricing?: boolean;
+  allowReturn?: boolean;
   tableName: string;
 }>) {
   const table = useTable(tableName);
@@ -480,6 +484,8 @@ export function StockItemTable({
     () => settings.isSet('STOCK_ENABLE_EXPIRY'),
     [settings]
   );
+
+  const navigate = useNavigate();
 
   const tableColumns = useMemo(
     () =>
@@ -526,7 +532,12 @@ export function StockItemTable({
     },
     follow: true,
     table: table,
-    modelType: ModelType.stockitem
+    onFormSuccess: (response: any) => {
+      // Returns a list that may contain multiple serialized stock items
+      // Navigate to the first result
+      navigate(getDetailUrl(ModelType.stockitem, response[0].pk));
+    },
+    successMessage: t`Stock item serialized`
   });
 
   const [partsToOrder, setPartsToOrder] = useState<any[]>([]);
@@ -536,7 +547,8 @@ export function StockItemTable({
   });
 
   const stockAdjustActions = useStockAdjustActions({
-    formProps: stockOperationProps
+    formProps: stockOperationProps,
+    return: allowReturn
   });
 
   const tableActions = useMemo(() => {

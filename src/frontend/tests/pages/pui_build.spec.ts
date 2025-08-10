@@ -79,11 +79,14 @@ test('Build Order - Basic Tests', async ({ browser }) => {
   await loadTab(page, 'Test Results');
   await page.getByText('Quantity: 25').waitFor();
   await page.getByText('Continuity Checks').waitFor();
-  await page
+
+  const button = await page
     .getByRole('row', { name: 'Quantity: 16' })
-    .getByRole('button')
-    .hover();
-  await page.getByText('Add Test Result').waitFor();
+    .getByLabel('add-test-result');
+
+  await button.click();
+  await page.getByRole('textbox', { name: 'text-field-value' }).waitFor();
+  await page.getByRole('button', { name: 'Cancel' }).click();
 
   // Click through to the "parent" build
   await loadTab(page, 'Build Details');
@@ -160,6 +163,27 @@ test('Build Order - Build Outputs', async ({ browser }) => {
 
   await page.getByRole('cell', { name: 'BO0011' }).click();
   await loadTab(page, 'Incomplete Outputs');
+
+  // Check the "printing" actions for the selected outputs
+  await page.getByRole('checkbox', { name: 'Select all records' }).click();
+  await page
+    .getByRole('tabpanel', { name: 'Incomplete Outputs' })
+    .getByLabel('action-menu-printing-actions')
+    .click();
+  await page
+    .getByRole('menuitem', {
+      name: 'action-menu-printing-actions-print-labels'
+    })
+    .waitFor();
+  await page
+    .getByRole('menuitem', {
+      name: 'action-menu-printing-actions-print-reports'
+    })
+    .click();
+  await page.getByRole('button', { name: 'Print', exact: true }).click();
+  await page.getByText('Errors exist for one or more form fields').waitFor();
+  await page.getByRole('button', { name: 'Cancel', exact: true }).click();
+  await page.getByRole('checkbox', { name: 'Select all records' }).click();
 
   // Create a new build output
   await page.getByLabel('action-button-add-build-output').click();

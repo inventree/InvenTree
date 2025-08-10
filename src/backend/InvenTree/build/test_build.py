@@ -498,9 +498,44 @@ class BuildTest(BuildTestBase):
         self.assertEqual(StockItem.objects.get(pk=self.stock_3_1.pk).quantity, 980)
 
         # Check that the "consumed_by" item count has increased
-        self.assertEqual(
-            StockItem.objects.filter(consumed_by=self.build).count(), n + 8
-        )
+        consumed_items = StockItem.objects.filter(consumed_by=self.build)
+        self.assertEqual(consumed_items.count(), n + 8)
+
+        # Finally, return the items into stock
+        location = StockLocation.objects.filter(structural=False).first()
+
+        for item in consumed_items:
+            item.return_to_stock(location)
+
+        # No consumed items should remain
+        self.assertEqual(StockItem.objects.filter(consumed_by=self.build).count(), 0)
+
+    def test_return_consumed(self):
+        """Test returning consumed stock items to stock."""
+        self.build.auto_allocate_stock(interchangeable=True)
+
+        self.build.incomplete_outputs.delete()
+
+        self.assertGreater(self.build.allocated_stock.count(), 0)
+
+        self.build.complete_build(self.user)
+        consumed_items = StockItem.objects.filter(consumed_by=self.build)
+        self.assertGreater(consumed_items.count(), 0)
+
+        location = StockLocation.objects.filter(structural=False).last()
+
+        # Return a partial quantity of each item to stock
+        for item in consumed_items:
+            self.assertEqual(item.get_descendant_count(), 0)
+            q = item.quantity
+            self.assertGreater(item.quantity, 1)
+            item.return_to_stock(location, merge=False, quantity=1)
+            item.refresh_from_db()
+            self.assertEqual(item.quantity, q - 1)
+            self.assertEqual(item.get_descendant_count(), 1)
+            self.assertFalse(item.is_in_stock())
+            child = item.get_descendants().first()
+            self.assertTrue(child.is_in_stock())
 
     def test_change_part(self):
         """Try to change target part after creating a build."""

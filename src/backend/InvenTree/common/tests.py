@@ -8,6 +8,7 @@ from http import HTTPStatus
 from unittest import mock
 
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
@@ -21,6 +22,7 @@ from django.urls import reverse
 import PIL
 
 import common.validators
+from common.notifications import trigger_notification
 from common.settings import get_global_setting, set_global_setting
 from InvenTree.helpers import str2bool
 from InvenTree.unit_test import (
@@ -657,6 +659,33 @@ class GlobalSettingsApiTest(InvenTreeAPITestCase):
 
         self.assertEqual(response.data['value'], 'My new title')
 
+    def test_cast(self):
+        """Test that values are cast to the correct type."""
+        key = 'INVENTREE_RESTRICT_ABOUT'
+
+        # Delete the associated setting object
+        InvenTreeSetting.objects.filter(key=key).delete()
+
+        # Fetch all settings
+        response = self.get(reverse('api-global-setting-list'), max_query_count=50)
+
+        # Find the associated setting
+        setting = next((s for s in response.data if s['key'] == key), None)
+
+        # Check default value (should be False, not 'False')
+        self.assertIsNotNone(setting)
+        self.assertFalse(setting['value'])
+
+        # Check that we can manually set the value
+        for v in [True, False]:
+            set_global_setting(key, v)
+
+            # Check the 'detail' API endpoint
+            response = self.get(
+                reverse('api-global-setting-detail', kwargs={'key': key})
+            )
+            self.assertEqual(response.data['value'], v)
+
 
 class UserSettingsApiTest(InvenTreeAPITestCase):
     """Tests for the user settings API."""
@@ -699,7 +728,7 @@ class UserSettingsApiTest(InvenTreeAPITestCase):
 
         response = self.get(url, expected_code=200)
 
-        self.assertEqual(response.data['value'], 'True')
+        self.assertEqual(response.data['value'], True)
 
         self.patch(url, {'value': 'False'}, expected_code=200)
 
@@ -796,7 +825,7 @@ class UserSettingsApiTest(InvenTreeAPITestCase):
 
             response = self.get(url)
 
-            self.assertEqual(response.data['value'], str(v))
+            self.assertEqual(response.data['value'], v)
 
         # Set valid options via the api
         for v in [5, 15, 25]:
@@ -809,6 +838,37 @@ class UserSettingsApiTest(InvenTreeAPITestCase):
         # Note that this particular setting has a MinValueValidator(1) associated with it
         for v in [0, -1, -5]:
             response = self.patch(url, {'value': v}, expected_code=400)
+
+    def test_cast(self):
+        """Test numerical typecast for user settings."""
+        key = 'SEARCH_PREVIEW_RESULTS'
+
+        # Delete the associated setting object
+        InvenTreeUserSetting.objects.filter(key=key, user=self.user).delete()
+
+        # Fetch all settings
+        response = self.get(reverse('api-user-setting-list'))
+
+        # Find the associated setting
+        setting = next((s for s in response.data if s['key'] == key), None)
+
+        # Check default value (should be 10, not '10')
+        self.assertIsNotNone(setting)
+        self.assertEqual(setting['value'], 10)
+
+        # Check that writing an invalid value returns an error
+        url = reverse('api-user-setting-detail', kwargs={'key': key})
+
+        self.patch(url, {'value': 'not a number'}, expected_code=400)
+        self.patch(url, {'value': 0}, expected_code=400)
+
+        # Check that we can manually set the value
+        for v in [1, 2, 3]:
+            InvenTreeUserSetting.set_setting(key, v, None, user=self.user)
+
+            # Check the 'detail' API endpoint
+            response = self.get(reverse('api-user-setting-detail', kwargs={'key': key}))
+            self.assertEqual(response.data['value'], v)
 
 
 class PluginSettingsApiTest(PluginMixin, InvenTreeAPITestCase):
@@ -872,11 +932,82 @@ class PluginSettingsApiTest(PluginMixin, InvenTreeAPITestCase):
             "Plugin 'sample' has no setting matching 'doesnotexist'", str(response.data)
         )
 
-    def test_invalid_setting_key(self):
-        """Test that an invalid setting key returns a 404."""
-
     def test_uninitialized_setting(self):
         """Test that requesting an uninitialized setting creates the setting."""
+        from plugin.models import PluginSetting
+
+        slug = 'sample'
+        key = 'PROTECTED_SETTING'
+
+        registry.set_plugin_state(slug, True)
+
+        plugin = registry.get_plugin(slug)
+
+        # Ensure that the setting does not exist
+        PluginSetting.objects.filter(plugin=plugin.pk, key=key).delete()
+        self.assertFalse(
+            PluginSetting.objects.filter(plugin=plugin.pk, key=key).exists()
+        )
+
+        url = reverse('api-plugin-setting-detail', kwargs={'plugin': slug, 'key': key})
+
+        data = self.get(url, expected_code=200).data
+
+        self.assertEqual(data['key'], key)
+        self.assertEqual(data['plugin'], slug)
+        self.assertEqual(data['value'], '***')  # Protected setting should return '***'
+
+        # Check that the setting has been created
+        self.assertTrue(
+            PluginSetting.objects.filter(plugin=plugin.pk, key=key).exists()
+        )
+
+    def test_cast(self):
+        """Test type casting for plugin settings."""
+        slug = 'sample'
+        key = 'NUMERICAL_SETTING'
+
+        registry.set_plugin_state(slug, True)
+        url = reverse('api-plugin-setting-detail', kwargs={'plugin': slug, 'key': key})
+
+        for value in ['-1', '0', '7777']:
+            response = self.patch(url, {'value': value}, expected_code=200)
+
+            # Check that the returned response is correctly cast to an integer
+            self.assertEqual(response.data['value'], int(value))
+
+
+class PluginUserSettingsApiTest(PluginMixin, InvenTreeAPITestCase):
+    """Tests for the plugin user settings API."""
+
+    def setUp(self):
+        """Ensure plugin is activated."""
+        registry.set_plugin_state('sample', True)
+
+        super().setUp()
+
+    def test_user_setting_list(self):
+        """Test the plugin user setting list API."""
+        url = reverse('api-plugin-user-setting-list', kwargs={'plugin': 'sample'})
+
+        response = self.get(url, expected_code=200)
+        self.assertEqual(len(response.data), 3)
+
+    def test_cast(self):
+        """Test the plugin values are cast appropriately."""
+        slug = 'sample'
+        key = 'USER_SETTING_2'
+
+        url = reverse(
+            'api-plugin-user-setting-detail', kwargs={'plugin': slug, 'key': key}
+        )
+
+        for value in [True, False]:
+            response = self.patch(url, {'value': str(value)})
+
+            self.assertEqual(response.data['value'], value)
+            self.assertEqual(response.data['key'], key)
+            self.assertEqual(response.data['name'], 'User Setting 2')
 
 
 class ErrorReportTest(InvenTreeAPITestCase):
@@ -1073,6 +1204,7 @@ class NotificationTest(InvenTreeAPITestCase):
     """Tests for NotificationEntry."""
 
     fixtures = ['users']
+    roles = ['admin.view']
 
     def test_check_notification_entries(self):
         """Test that notification entries can be created."""
@@ -1161,6 +1293,72 @@ class NotificationTest(InvenTreeAPITestCase):
         # as the notifications associated with other users must remain untouched
         self.assertEqual(NotificationMessage.objects.count(), 13)
         self.assertEqual(NotificationMessage.objects.filter(user=self.user).count(), 3)
+
+    def test_simple(self):
+        """Test that a simple notification can be created."""
+        trigger_notification(
+            Group.objects.get(name='Sales'),
+            user=self.user,
+            data={'message': 'This is a test notification'},
+        )
+
+    def test_with_group(self):
+        """Test that a notification can be created with a group."""
+        grp = Group.objects.get(name='Sales')
+        trigger_notification(
+            grp,
+            user=self.user,
+            data={'message': 'This is a test notification with group'},
+            targets=[grp],
+        )
+
+    def test_wrong_target(self):
+        """Test that a notification with an invalid target raises an error."""
+        with self.assertLogs() as cm:
+            trigger_notification(
+                Group.objects.get(name='Sales'),
+                user=self.user,
+                data={'message': 'This is a test notification'},
+                targets=['invalid_target'],
+            )
+        self.assertIn('Unknown target passed to t', str(cm[1]))
+
+    def test_wrong_obj(self):
+        """Test that a object without a reference is raising an issue."""
+
+        class SampleObj:
+            pass
+
+        with self.assertRaises(KeyError) as cm:
+            trigger_notification(
+                SampleObj(),
+                user=self.user,
+                data={'message': 'This is a test notification'},
+            )
+        self.assertIn('Could not resolve an object reference for', str(cm.exception))
+
+        # Without reference, it should not raise an error
+        trigger_notification(
+            Group.objects.get(name='Sales'),
+            user=self.user,
+            data={'message': 'This is a test notification'},
+        )
+
+    def test_recent(self):
+        """Test that a notification is not created if it was already sent recently."""
+        grp = Group.objects.get(name='Sales')
+        trigger_notification(  #
+            grp, category='core', context={'name': 'test'}, targets=[self.user]
+        )
+        self.assertEqual(NotificationMessage.objects.count(), 1)
+
+        # Should not create a new notification
+        with self.assertLogs(logger='inventree') as cm:
+            trigger_notification(
+                grp, category='core', context={'name': 'test'}, targets=[self.user]
+            )
+        self.assertEqual(NotificationMessage.objects.count(), 1)
+        self.assertIn('as recently been sent for', str(cm[1]))
 
 
 class CommonTest(InvenTreeAPITestCase):

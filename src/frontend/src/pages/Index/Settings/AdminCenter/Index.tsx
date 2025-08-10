@@ -1,7 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { Stack } from '@mantine/core';
 import {
-  IconClipboardCheck,
   IconCoins,
   IconCpu,
   IconDevicesPc,
@@ -103,8 +102,6 @@ const LocationTypesTable = Loadable(
   lazy(() => import('../../../../tables/stock/LocationTypesTable'))
 );
 
-const StocktakePanel = Loadable(lazy(() => import('./StocktakePanel')));
-
 export default function AdminCenter() {
   const user = useUserState();
 
@@ -196,13 +193,6 @@ export default function AdminCenter() {
         icon: <IconSitemap />,
         content: <PartCategoryTemplateTable />,
         hidden: !user.hasViewRole(UserRoles.part_category)
-      },
-      {
-        name: 'stocktake',
-        label: t`Stocktake`,
-        icon: <IconClipboardCheck />,
-        content: <StocktakePanel />,
-        hidden: !user.hasViewRole(UserRoles.stocktake)
       },
       {
         name: 'labels',
