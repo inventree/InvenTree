@@ -749,16 +749,17 @@ async function runActionWithFallback(
   action: () => Promise<ResultType>,
   getReauthText: (props: any) => any
 ) {
-  const { setAuthContext } = useServerApiState.getState();
+  const { setAuthContext, setMfaContext, mfa_context } =
+    useServerApiState.getState();
   const result = await action().catch((err) => {
     setAuthContext(err.response.data?.data);
     // check if we need to re-authenticate
     if (err.status == 401) {
-      if (
-        err.response.data.data.flows.find(
-          (flow: any) => flow.id == FlowEnum.MfaReauthenticate
-        )
-      ) {
+      const mfaFlow = err.response.data.data.flows.find(
+        (flow: any) => flow.id == FlowEnum.MfaReauthenticate
+      );
+      if (mfaFlow) {
+        setMfaContext(mfaFlow);
         return ResultType.mfareauth;
       } else if (
         err.response.data.data.flows.find(
@@ -774,11 +775,12 @@ async function runActionWithFallback(
     }
   });
   if (result == ResultType.mfareauth) {
+    const mfa_types = mfa_context?.types || [];
     authApi(apiUrl(ApiEndpoints.auth_mfa_reauthenticate), undefined, 'post', {
       code: await getReauthText({
         label: t`TOTP Code`,
         name: 'TOTP',
-        description: t`Enter your TOTP or recovery code`
+        description: t`Enter one of your codes: ${mfa_types}`
       })
     })
       .then((response) => {

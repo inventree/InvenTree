@@ -71,7 +71,7 @@ export async function doBasicLogin(
   const { getHost } = useLocalState.getState();
   const { clearUserState, setAuthenticated, fetchUserState } =
     useUserState.getState();
-  const { setAuthContext } = useServerApiState.getState();
+  const { setAuthContext, setMfaContext } = useServerApiState.getState();
 
   if (username.length == 0 || password.length == 0) {
     return;
@@ -134,6 +134,7 @@ export async function doBasicLogin(
       (flow: any) => flow.id == FlowEnum.MfaAuthenticate
     );
     if (mfa_flow?.is_pending) {
+      setMfaContext(mfa_flow);
       // MFA is required - we might already have a code
       if (code && code.length > 0) {
         const rslt = await handleMfaLogin(
