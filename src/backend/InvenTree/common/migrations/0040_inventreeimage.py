@@ -26,7 +26,6 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'InvenTree Image',
                 'verbose_name_plural': 'InvenTree Images',
-                'unique_together': {('content_type', 'object_id')},
             },
         ),
     ]

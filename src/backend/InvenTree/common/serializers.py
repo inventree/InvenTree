@@ -3,6 +3,7 @@
 import io
 from pathlib import Path
 
+from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.files.base import ContentFile
 from django.db.models import Count, OuterRef, Subquery
@@ -24,7 +25,7 @@ import common.validators
 import generic.states.custom
 import InvenTree.serializers
 from importer.registry import register_importer
-from InvenTree.helpers import get_objectreference
+from InvenTree.helpers import get_objectreference, getBlankImage
 from InvenTree.helpers_model import construct_absolute_url
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.models import InvenTreeAttachmentMixin, InvenTreeImageMixin
@@ -598,7 +599,7 @@ class InvenTreeImageSerializer(
 ):
     """Serializer for InvenTreeImage."""
 
-    image = serializers.ImageField(required=True, allow_null=False)
+    image = InvenTreeImageSerializerField(required=True, allow_null=False)
     thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
 
     # we accept the model name here
@@ -706,7 +707,7 @@ class InvenTreeImageSerializer(
         return fields
 
 
-class InvenTreeImageMixin(metaclass=serializers.SerializerMetaclass):
+class InvenTreeImageSerializerMixin(metaclass=serializers.SerializerMetaclass):
     """Mixin to add image fields to a serializer."""
 
     image_url = serializers.SerializerMethodField(
@@ -749,19 +750,17 @@ class InvenTreeImageMixin(metaclass=serializers.SerializerMetaclass):
         """Return the URL of the primary image for this instance."""
         primary = self._get_primary(instance)
         if not primary or not primary.image:
-            return None
+            return getBlankImage()
 
-        field = InvenTreeImageSerializerField()
-        return field.to_representation(primary.image)
+        return str(Path(settings.MEDIA_URL) / str(primary.image))
 
     def get_thumbnail_url(self, instance):
         """Return the URL of the thumbnail for the primary image."""
         primary = self._get_primary(instance)
         if not primary or not getattr(primary.image, 'thumbnail', None):
-            return None
+            return getBlankImage()
 
-        field = InvenTreeImageSerializerField()
-        return field.to_representation(primary.image.thumbnail)
+        return str(Path(settings.MEDIA_URL) / str(primary.image.thumbnail))
 
 
 class InvenTreeImageThumbSerializer(serializers.Serializer):

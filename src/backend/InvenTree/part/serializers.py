@@ -32,7 +32,7 @@ import part.tasks
 import stock.models
 import users.models
 from common.filters import prefetch_related_images
-from common.serializers import InvenTreeImageMixin
+from common.serializers import InvenTreeImageSerializerMixin
 from importer.registry import register_importer
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.ready import isGeneratingSchema
@@ -317,7 +317,7 @@ class PartParameterTemplateSerializer(
 
 
 class PartBriefSerializer(
-    common_serializers.InvenTreeImageMixin,
+    common_serializers.InvenTreeImageSerializerMixin,
     InvenTree.serializers.InvenTreeModelSerializer,
 ):
     """Serializer for Part (brief detail)."""
@@ -641,7 +641,7 @@ class DefaultLocationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
 @register_importer()
 class PartSerializer(
-    InvenTreeImageMixin,
+    InvenTreeImageSerializerMixin,
     DataImportExportSerializerMixin,
     InvenTree.serializers.NotesFieldMixin,
     InvenTree.serializers.InvenTreeTagModelSerializer,

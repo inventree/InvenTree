@@ -286,7 +286,7 @@ export default function ManufacturerPartDetail() {
               }
             ]}
             actions={manufacturerPartActions}
-            imageUrl={manufacturerPart?.part_detail?.thumbnail}
+            imageUrl={manufacturerPart?.image_url}
             editAction={editManufacturerPart.open}
             editEnabled={user.hasChangePermission(ModelType.manufacturerpart)}
           />

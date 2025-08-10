@@ -587,7 +587,8 @@ class PurchaseOrderLineItemSerializer(
             )
         )
 
-        queryset = prefetch_related_images(queryset, reference='part')
+        queryset = prefetch_related_images(queryset, reference='part__part')
+        queryset = prefetch_related_images(queryset, reference='part__supplier')
 
         return queryset
 

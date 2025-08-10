@@ -37,7 +37,7 @@ from .models import (
 
 
 class CompanyBriefSerializer(
-    common_serializers.InvenTreeImageMixin, InvenTreeModelSerializer
+    common_serializers.InvenTreeImageSerializerMixin, InvenTreeModelSerializer
 ):
     """Serializer for Company object (limited detail)."""
 
@@ -109,7 +109,7 @@ from django.contrib.contenttypes.models import ContentType
 
 @register_importer()
 class CompanySerializer(
-    common_serializers.InvenTreeImageMixin,
+    common_serializers.InvenTreeImageSerializerMixin,
     DataImportExportSerializerMixin,
     NotesFieldMixin,
     InvenTreeModelSerializer,

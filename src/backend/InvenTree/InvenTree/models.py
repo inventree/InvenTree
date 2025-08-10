@@ -1104,21 +1104,6 @@ class InvenTreeImageMixin(models.Model):
         """Return the primary image, or None."""
         return self.images.filter(primary=True).first()
 
-    def get_image_url(self) -> str:
-        """Return the URL of the primary image, or a blank fallback."""
-        img = self.image
-        if img:
-            return img.get_image_url()
-
-        return InvenTree.helpers.getBlankImage()
-
-    def get_thumbnail_url(self) -> str:
-        """Return the URL of the primary image thumbnail, or a blank fallback."""
-        img = self.image
-        if img:
-            return img.get_thumbnail_url()
-        return InvenTree.helpers.getBlankThumbnail()
-
     def copy_images_to(self, target_pk):
         """Copy all images from this instance to another instance of the same model with pk."""
         from common.models import InvenTreeImage

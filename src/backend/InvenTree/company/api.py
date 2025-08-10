@@ -212,6 +212,16 @@ class ManufacturerPartDetail(RetrieveUpdateDestroyAPI):
     queryset = ManufacturerPart.objects.all()
     serializer_class = ManufacturerPartSerializer
 
+    def get_queryset(self, *args, **kwargs):
+        """Annotate the queryset for this endpoint."""
+        queryset = super().get_queryset(*args, **kwargs)
+
+        queryset = queryset.prefetch_related('part', 'manufacturer')
+        queryset = prefetch_related_images(queryset, reference='part')
+        queryset = prefetch_related_images(queryset, reference='manufacturer')
+
+        return queryset
+
 
 class ManufacturerPartParameterFilter(rest_filters.FilterSet):
     """Custom filterset for the ManufacturerPartParameterList API endpoint."""
