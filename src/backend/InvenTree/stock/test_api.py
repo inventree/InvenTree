@@ -1133,9 +1133,9 @@ class CustomStockItemStatusTest(StockAPITestCase):
             },
             expected_code=201,
         )
-        self.assertEqual(response.data['status'], self.status.logical_key)
-        self.assertEqual(response.data['status_custom_key'], self.status.key)
-        pk = response.data['pk']
+        self.assertEqual(response.data[0]['status'], self.status.logical_key)
+        self.assertEqual(response.data[0]['status_custom_key'], self.status.key)
+        pk = response.data[0]['pk']
 
         # Update the stock item with another custom status code via the API
         response = self.patch(
@@ -1167,8 +1167,8 @@ class CustomStockItemStatusTest(StockAPITestCase):
             },
             expected_code=201,
         )
-        self.assertEqual(response.data['status'], self.status.logical_key)
-        self.assertEqual(response.data['status_custom_key'], self.status.logical_key)
+        self.assertEqual(response.data[0]['status'], self.status.logical_key)
+        self.assertEqual(response.data[0]['status_custom_key'], self.status.logical_key)
 
         # Test case with wrong key
         response = self.patch(
@@ -1216,7 +1216,7 @@ class StockItemTest(StockAPITestCase):
             self.list_url, data={'part': 4, 'quantity': 10}, expected_code=201
         )
 
-        self.assertEqual(response.data['location'], 2)
+        self.assertEqual(response.data[0]['location'], 2)
 
         # What if we explicitly set the location to a different value?
 
@@ -1225,7 +1225,7 @@ class StockItemTest(StockAPITestCase):
             data={'part': 4, 'quantity': 20, 'location': 1},
             expected_code=201,
         )
-        self.assertEqual(response.data['location'], 1)
+        self.assertEqual(response.data[0]['location'], 1)
 
         # And finally, what if we set the location explicitly to None?
 
@@ -1235,7 +1235,7 @@ class StockItemTest(StockAPITestCase):
             expected_code=201,
         )
 
-        self.assertEqual(response.data['location'], None)
+        self.assertEqual(response.data[0]['location'], None)
 
     def test_stock_item_create(self):
         """Test creation of a StockItem via the API."""
@@ -1306,7 +1306,7 @@ class StockItemTest(StockAPITestCase):
         # Reload part, count stock again
         part_4 = part.models.Part.objects.get(pk=4)
         self.assertEqual(part_4.available_stock, current_count + 3)
-        stock_4 = StockItem.objects.get(pk=response.data['pk'])
+        stock_4 = StockItem.objects.get(pk=response.data[0]['pk'])
         self.assertEqual(stock_4.purchase_price, Money('123.450000', 'USD'))
 
         # POST with valid supplier part, no pack size defined
@@ -1330,7 +1330,7 @@ class StockItemTest(StockAPITestCase):
         # Reload part, count stock again
         part_4 = part.models.Part.objects.get(pk=4)
         self.assertEqual(part_4.available_stock, current_count + 12)
-        stock_4 = StockItem.objects.get(pk=response.data['pk'])
+        stock_4 = StockItem.objects.get(pk=response.data[0]['pk'])
         self.assertEqual(stock_4.purchase_price, Money('123.450000', 'USD'))
 
         # POST with valid supplier part, WITH pack size defined - but ignore
@@ -1352,7 +1352,7 @@ class StockItemTest(StockAPITestCase):
         # Reload part, count stock again
         part_4 = part.models.Part.objects.get(pk=4)
         self.assertEqual(part_4.available_stock, current_count + 3)
-        stock_4 = StockItem.objects.get(pk=response.data['pk'])
+        stock_4 = StockItem.objects.get(pk=response.data[0]['pk'])
         self.assertEqual(stock_4.purchase_price, Money('123.450000', 'USD'))
 
         # POST with valid supplier part, WITH pack size defined and used
@@ -1374,7 +1374,7 @@ class StockItemTest(StockAPITestCase):
         # Reload part, count stock again
         part_4 = part.models.Part.objects.get(pk=4)
         self.assertEqual(part_4.available_stock, current_count + 3 * 100)
-        stock_4 = StockItem.objects.get(pk=response.data['pk'])
+        stock_4 = StockItem.objects.get(pk=response.data[0]['pk'])
         self.assertEqual(stock_4.purchase_price, Money('1.234500', 'USD'))
 
     def test_creation_with_serials(self):
@@ -1450,15 +1450,15 @@ class StockItemTest(StockAPITestCase):
 
         response = self.post(self.list_url, data, expected_code=201)
 
-        self.assertIsNone(response.data['expiry_date'])
+        self.assertIsNone(response.data[0]['expiry_date'])
 
         # Second test - create a new StockItem with an explicit expiry date
         data['expiry_date'] = '2022-12-12'
 
         response = self.post(self.list_url, data, expected_code=201)
 
-        self.assertIsNotNone(response.data['expiry_date'])
-        self.assertEqual(response.data['expiry_date'], '2022-12-12')
+        self.assertIsNotNone(response.data[0]['expiry_date'])
+        self.assertEqual(response.data[0]['expiry_date'], '2022-12-12')
 
         # Third test - create a new StockItem for a Part which has a default expiry time
         data = {'part': 25, 'quantity': 10}
@@ -1468,13 +1468,13 @@ class StockItemTest(StockAPITestCase):
         # Expected expiry date is 10 days in the future
         expiry = datetime.now().date() + timedelta(10)
 
-        self.assertEqual(response.data['expiry_date'], expiry.isoformat())
+        self.assertEqual(response.data[0]['expiry_date'], expiry.isoformat())
 
         # Test result when sending a blank value
         data['expiry_date'] = None
 
         response = self.post(self.list_url, data, expected_code=201)
-        self.assertEqual(response.data['expiry_date'], expiry.isoformat())
+        self.assertEqual(response.data[0]['expiry_date'], expiry.isoformat())
 
     def test_purchase_price(self):
         """Test that we can correctly read and adjust purchase price information via the API."""
@@ -1843,7 +1843,7 @@ class StockItemDeletionTest(StockAPITestCase):
                 expected_code=201,
             )
 
-            pk = response.data['pk']
+            pk = response.data[0]['pk']
 
             self.assertEqual(StockItem.objects.count(), n + 1)
 

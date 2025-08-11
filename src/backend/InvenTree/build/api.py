@@ -631,14 +631,15 @@ class BuildOrderContextMixin:
         return ctx
 
 
+@extend_schema(responses={201: stock.serializers.StockItemSerializer(many=True)})
 class BuildOutputCreate(BuildOrderContextMixin, CreateAPI):
     """API endpoint for creating new build output(s)."""
 
     queryset = Build.objects.none()
 
     serializer_class = build.serializers.BuildOutputCreateSerializer
+    pagination_class = None
 
-    @extend_schema(responses={201: stock.serializers.StockItemSerializer(many=True)})
     def create(self, request, *args, **kwargs):
         """Override the create method to handle the creation of build outputs."""
         serializer = self.get_serializer(data=request.data)
