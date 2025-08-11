@@ -214,8 +214,6 @@ def update_plugins_file(install_name, full_package=None, version=None, remove=Fa
     if not found and not remove:
         output.append(new_value)
 
-    print('--- Writing plugins file ---')
-
     # Write file back to disk
     try:
         with pf.open(mode='w') as f:
@@ -228,8 +226,6 @@ def update_plugins_file(install_name, full_package=None, version=None, remove=Fa
     except Exception as exc:
         logger.exception('Failed to add plugin to plugins file: %s', str(exc))
         log_error('update_plugins_file', scope='plugins')
-
-    print('--- Plugins file updated ---')
 
 
 def install_plugin(url=None, packagename=None, user=None, version=None):
@@ -387,13 +383,11 @@ def uninstall_plugin(cfg: plugin.models.PluginConfig, user=None, delete_config=T
         # No matching install target found
         raise ValidationError(_('Plugin installation not found'))
 
-    print('--- updating plugins file ---')
-
     # Update the plugins file
     update_plugins_file(package_name, remove=True)
 
     if delete_config:
-        print('--- deleting plugin configuration ---')
+        logger.info('Deleting plugin configuration from database: %s', cfg.key)
         # Remove the plugin configuration from the database
         cfg.delete()
 
