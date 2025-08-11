@@ -463,14 +463,41 @@ test('Parts - Parameters', async ({ browser }) => {
   // Select the "polarized" parameter template (should create a "checkbox" field)
   await page.getByLabel('related-field-template').fill('Polarized');
   await page.getByText('Is this part polarized?').click();
+
+  // Submit with "false" value
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Check for the expected values in the table
+  let row = await getRowFromCell(
+    await page.getByRole('cell', { name: 'Polarized', exact: true })
+  );
+  await row.getByRole('cell', { name: 'No', exact: true }).waitFor();
+  await row.getByRole('cell', { name: 'allaccess' }).waitFor();
+  await row.getByLabel(/row-action-menu-/i).click();
+  await page.getByRole('menuitem', { name: 'Edit' }).click();
+
+  // Toggle false to true
   await page
     .locator('label')
     .filter({ hasText: 'DataParameter Value' })
     .locator('div')
     .first()
     .click();
+  await page.getByRole('button', { name: 'Submit' }).click();
 
-  await page.getByRole('button', { name: 'Cancel' }).click();
+  row = await getRowFromCell(
+    await page.getByRole('cell', { name: 'Polarized', exact: true })
+  );
+  await row.getByRole('cell', { name: 'Yes', exact: true }).waitFor();
+
+  await page.getByText('1 - 1 / 1').waitFor();
+
+  // Finally, delete the parameter
+  await row.getByLabel(/row-action-menu-/i).click();
+  await page.getByRole('menuitem', { name: 'Delete' }).click();
+  await page.getByRole('button', { name: 'Delete' }).click();
+
+  await page.getByText('No records found').first().waitFor();
 });
 
 test('Parts - Parameter Filtering', async ({ browser }) => {

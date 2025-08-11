@@ -160,9 +160,6 @@ function BasePanelGroup({
       });
     }
 
-    console.log('_allPanels:', _allpanels);
-    console.log('_groupedPanels:', _grouped_panels);
-
     return [_allpanels, _grouped_panels];
   }, [groups, panels, pluginPanelSet]);
 

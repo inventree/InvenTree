@@ -397,14 +397,48 @@ export default function BuildLineTable({
         defaultVisible: false,
         switchable: false,
         render: (record: any) => {
+          // Include information about the BOM item (if available)
+          const extra: any[] = [];
+
+          if (record?.bom_item_detail?.setup_quantity) {
+            extra.push(
+              <Text key='setup-quantity' size='sm'>
+                {t`Setup Quantity`}: {record.bom_item_detail.setup_quantity}
+              </Text>
+            );
+          }
+
+          if (record?.bom_item_detail?.attrition) {
+            extra.push(
+              <Text key='attrition' size='sm'>
+                {t`Attrition`}: {record.bom_item_detail.attrition}%
+              </Text>
+            );
+          }
+
+          if (record?.bom_item_detail?.rounding_multiple) {
+            extra.push(
+              <Text key='rounding-multiple' size='sm'>
+                {t`Rounding Multiple`}:{' '}
+                {record.bom_item_detail.rounding_multiple}
+              </Text>
+            );
+          }
+
           // If a build output is specified, use the provided quantity
           return (
-            <Group justify='space-between' wrap='nowrap'>
-              <Text>{record.requiredQuantity}</Text>
-              {record?.part_detail?.units && (
-                <Text size='xs'>[{record.part_detail.units}]</Text>
-              )}
-            </Group>
+            <TableHoverCard
+              title={t`BOM Information`}
+              extra={extra}
+              value={
+                <Group justify='space-between' wrap='nowrap'>
+                  <Text>{record.requiredQuantity}</Text>
+                  {record?.part_detail?.units && (
+                    <Text size='xs'>[{record.part_detail.units}]</Text>
+                  )}
+                </Group>
+              }
+            />
           );
         }
       },

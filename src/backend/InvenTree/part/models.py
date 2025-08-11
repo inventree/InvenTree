@@ -15,10 +15,14 @@ from typing import Optional, cast
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.core.validators import MinLengthValidator, MinValueValidator
+from django.core.validators import (
+    MaxValueValidator,
+    MinLengthValidator,
+    MinValueValidator,
+)
 from django.db import models, transaction
-from django.db.models import ExpressionWrapper, F, Q, QuerySet, Sum, UniqueConstraint
-from django.db.models.functions import Coalesce, Greatest
+from django.db.models import F, Q, QuerySet, Sum, UniqueConstraint
+from django.db.models.functions import Coalesce
 from django.db.models.signals import post_delete, post_save
 from django.db.utils import IntegrityError
 from django.dispatch import receiver
@@ -908,7 +912,7 @@ class Part(
 
         # Generate a query for any stock items for this part variant tree with non-empty serial numbers
         if not get_global_setting('SERIAL_NUMBER_GLOBALLY_UNIQUE', False):
-            # Serial numbers are unique acros part trees
+            # Serial numbers are unique across part trees
             stock = stock.filter(part__tree_id=self.tree_id)
 
         # There are no matching StockItem objects (skip further tests)
@@ -1558,115 +1562,28 @@ class Part(
         if not self.has_bom:
             return 0
 
-        total = None
-
         # Prefetch related tables, to reduce query expense
         queryset = self.get_bom_items()
 
         # Ignore 'consumable' BOM items for this calculation
         queryset = queryset.filter(consumable=False)
 
-        queryset = queryset.prefetch_related(
-            'sub_part__stock_items',
-            'sub_part__stock_items__allocations',
-            'sub_part__stock_items__sales_order_allocations',
-            'substitutes',
-            'substitutes__part__stock_items',
-        )
+        # Annotate the queryset with the 'can_build' quantity
+        queryset = part.filters.annotate_bom_item_can_build(queryset)
 
-        # Annotate the 'available stock' for each part in the BOM
-        ref = 'sub_part__'
-        queryset = queryset.alias(
-            total_stock=part.filters.annotate_total_stock(reference=ref),
-            so_allocations=part.filters.annotate_sales_order_allocations(reference=ref),
-            bo_allocations=part.filters.annotate_build_order_allocations(reference=ref),
-        )
+        can_build_quantity = None
 
-        # Calculate the 'available stock' based on previous annotations
-        queryset = queryset.annotate(
-            available_stock=Greatest(
-                ExpressionWrapper(
-                    F('total_stock') - F('so_allocations') - F('bo_allocations'),
-                    output_field=models.DecimalField(),
-                ),
-                0,
-                output_field=models.DecimalField(),
-            )
-        )
+        for value in queryset.values_list('can_build', flat=True):
+            if can_build_quantity is None:
+                can_build_quantity = value
+            else:
+                can_build_quantity = min(can_build_quantity, value)
 
-        # Extract similar information for any 'substitute' parts
-        ref = 'substitutes__part__'
-        queryset = queryset.alias(
-            sub_total_stock=part.filters.annotate_total_stock(reference=ref),
-            sub_so_allocations=part.filters.annotate_sales_order_allocations(
-                reference=ref
-            ),
-            sub_bo_allocations=part.filters.annotate_build_order_allocations(
-                reference=ref
-            ),
-        )
+        if can_build_quantity is None:
+            # No BOM items, or no items which can be built
+            return 0
 
-        queryset = queryset.annotate(
-            substitute_stock=Greatest(
-                ExpressionWrapper(
-                    F('sub_total_stock')
-                    - F('sub_so_allocations')
-                    - F('sub_bo_allocations'),
-                    output_field=models.DecimalField(),
-                ),
-                0,
-                output_field=models.DecimalField(),
-            )
-        )
-
-        # Extract similar information for any 'variant' parts
-        variant_stock_query = part.filters.variant_stock_query(reference='sub_part__')
-
-        queryset = queryset.alias(
-            var_total_stock=part.filters.annotate_variant_quantity(
-                variant_stock_query, reference='quantity'
-            ),
-            var_bo_allocations=part.filters.annotate_variant_quantity(
-                variant_stock_query, reference='allocations__quantity'
-            ),
-            var_so_allocations=part.filters.annotate_variant_quantity(
-                variant_stock_query, reference='sales_order_allocations__quantity'
-            ),
-        )
-
-        queryset = queryset.annotate(
-            variant_stock=Greatest(
-                ExpressionWrapper(
-                    F('var_total_stock')
-                    - F('var_bo_allocations')
-                    - F('var_so_allocations'),
-                    output_field=models.DecimalField(),
-                ),
-                0,
-                output_field=models.DecimalField(),
-            )
-        )
-
-        for item in queryset.all():
-            if item.quantity <= 0:
-                # Ignore zero-quantity items
-                continue
-
-            # Iterate through each item in the queryset, work out the limiting quantity
-            quantity = item.available_stock + item.substitute_stock
-
-            if item.allow_variants:
-                quantity += item.variant_stock
-
-            n = int(quantity / item.quantity)
-
-            if total is None or n < total:
-                total = n
-
-        if total is None:
-            total = 0
-
-        return max(total, 0)
+        return int(max(can_build_quantity, 0))
 
     @property
     def active_builds(self):
@@ -1923,7 +1840,7 @@ class Part(
     ):
         """Return a BomItem queryset which returns all BomItem instances which refer to *this* part.
 
-        As the BOM allocation logic is somewhat complicted, there are some considerations:
+        As the BOM allocation logic is somewhat complicated, there are some considerations:
 
         A) This part may be directly specified in a BomItem instance
         B) This part may be a *variant* of a part which is directly specified in a BomItem instance
@@ -4330,7 +4247,9 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         optional: Boolean field describing if this BomItem is optional
         consumable: Boolean field describing if this BomItem is considered a 'consumable'
         reference: BOM reference field (e.g. part designators)
-        overage: Estimated losses for a Build. Can be expressed as absolute value (e.g. '7') or a percentage (e.g. '2%')
+        setup_quantity: Extra required quantity for a build, to account for setup losses
+        attrition: Estimated losses for a Build, expressed as a percentage (e.g. '2%')
+        rounding_multiple: Rounding quantity when calculating the required quantity for a build
         note: Note field for this BOM item
         checksum: Validation checksum for the particular BOM line item
         inherited: This BomItem can be inherited by the BOMs of variant parts
@@ -4498,12 +4417,37 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         help_text=_('This BOM item is consumable (it is not tracked in build orders)'),
     )
 
-    overage = models.CharField(
-        max_length=24,
+    setup_quantity = models.DecimalField(
+        default=0,
+        max_digits=15,
+        decimal_places=5,
+        validators=[MinValueValidator(0)],
+        verbose_name=_('Setup Quantity'),
+        help_text=_('Extra required quantity for a build, to account for setup losses'),
+    )
+
+    attrition = models.DecimalField(
+        default=0,
+        max_digits=6,
+        decimal_places=3,
+        validators=[MinValueValidator(0), MaxValueValidator(100)],
+        verbose_name=_('Attrition'),
+        help_text=_(
+            'Estimated attrition for a build, expressed as a percentage (0-100)'
+        ),
+    )
+
+    rounding_multiple = models.DecimalField(
+        null=True,
         blank=True,
-        validators=[validators.validate_overage],
-        verbose_name=_('Overage'),
-        help_text=_('Estimated build wastage quantity (absolute or percentage)'),
+        default=None,
+        max_digits=15,
+        decimal_places=5,
+        validators=[MinValueValidator(0)],
+        verbose_name=_('Rounding Multiple'),
+        help_text=_(
+            'Round up required production quantity to nearest multiple of this value'
+        ),
     )
 
     reference = models.CharField(
@@ -4567,6 +4511,9 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
             self.part.pk,
             self.sub_part.pk,
             normalize(self.quantity),
+            self.setup_quantity,
+            self.attrition,
+            self.rounding_multiple,
             self.reference,
             self.optional,
             self.inherited,
@@ -4642,60 +4589,66 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         except Part.DoesNotExist:
             raise ValidationError({'sub_part': _('Sub part must be specified')})
 
-    def get_overage_quantity(self, quantity):
-        """Calculate overage quantity."""
-        # Most of the time overage string will be empty
-        if len(self.overage) == 0:
-            return 0
+    def can_build_quantity(self, available_stock: float) -> int:
+        """Calculate the number of assemblies that can be built with the available stock.
 
-        overage = str(self.overage).strip()
-
-        # Is the overage a numerical value?
-        try:
-            ovg = float(overage)
-
-            ovg = max(ovg, 0)
-
-            return ovg
-        except ValueError:
-            pass
-
-        # Is the overage a percentage?
-        if overage.endswith('%'):
-            overage = overage[:-1].strip()
-
-            try:
-                percent = float(overage) / 100.0
-                percent = min(percent, 1)
-                percent = max(percent, 0)
-
-                # Must be represented as a decimal
-                percent = Decimal(percent)
-
-                return float(percent * quantity)
-
-            except ValueError:
-                pass
-
-        # Default = No overage
-        return 0
-
-    def get_required_quantity(self, build_quantity):
-        """Calculate the required part quantity, based on the supplier build_quantity. Includes overage estimate in the returned value.
-
-        Args:
-            build_quantity: Number of parts to build
+        Arguments:
+            available_stock: The amount of stock available for this BOM item
 
         Returns:
-            Quantity required for this build (including overage)
+            The number of assemblies that can be built with the available stock.
+            Returns 0 if the available stock is insufficient.
+        """
+        # Account for setup quantity
+        available_stock = Decimal(max(0, available_stock - self.setup_quantity))
+        quantity_decimal = Decimal(self.quantity)
+        attrition_decimal = Decimal(self.attrition) / 100
+        n = quantity_decimal * (1 + attrition_decimal)
+
+        if n <= 0:
+            return 0.0
+
+        return int(available_stock / n)
+
+    def get_required_quantity(self, build_quantity: float) -> float:
+        """Calculate the required part quantity, based on the supplied build_quantity.
+
+        Arguments:
+            build_quantity: Number of assemblies to build
+
+        Returns:
+            Production quantity required for this component
         """
         # Base quantity requirement
-        base_quantity = self.quantity * build_quantity
+        required = self.quantity * build_quantity
 
-        # Overage requirement
-        overage_quantity = self.get_overage_quantity(base_quantity)
+        # Account for attrition
+        if self.attrition > 0:
+            try:
+                # Convert attrition percentage to decimal
+                attrition = Decimal(self.attrition) / Decimal(100)
+                required *= 1 + attrition
+            except Exception:
+                log_error('bom_item.get_required_quantity')
 
-        required = float(base_quantity) + float(overage_quantity)
+        # Account for setup quantity
+        if self.setup_quantity > 0:
+            try:
+                setup_quantity = Decimal(self.setup_quantity)
+                required += setup_quantity
+            except Exception:
+                log_error('bom_item.get_required_quantity')
+
+        # We now have the total requirement
+        # If a "rounding_multiple" is specified, then round up to the nearest multiple
+        if self.rounding_multiple and self.rounding_multiple > 0:
+            try:
+                round_up = Decimal(self.rounding_multiple)
+                value = Decimal(required)
+                value = math.ceil(value / round_up) * round_up
+                required = float(value)
+            except InvalidOperation:
+                log_error('bom_item.get_required_quantity')
 
         return required
 
@@ -4704,23 +4657,23 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         """Return the price-range for this BOM item."""
         # get internal price setting
         use_internal = get_global_setting('PART_BOM_USE_INTERNAL_PRICE', False)
-        prange = self.sub_part.get_price_range(
+        p_range = self.sub_part.get_price_range(
             self.quantity, internal=use_internal and internal
         )
 
-        if prange is None:
-            return prange
+        if p_range is None:
+            return p_range
 
-        pmin, pmax = prange
+        p_min, p_max = p_range
 
-        if pmin == pmax:
-            return decimal2money(pmin)
+        if p_min == p_max:
+            return decimal2money(p_min)
 
         # Convert to better string representation
-        pmin = decimal2money(pmin)
-        pmax = decimal2money(pmax)
+        p_min = decimal2money(p_min)
+        p_max = decimal2money(p_max)
 
-        return f'{pmin} to {pmax}'
+        return f'{p_min} to {p_max}'
 
 
 @receiver(post_save, sender=BomItem, dispatch_uid='update_bom_build_lines')
