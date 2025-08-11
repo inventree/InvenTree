@@ -576,6 +576,10 @@ class PluginsRegistry:
             ):
                 # Collect plugins from setup entry points
                 for entry in get_entrypoints():
+                    logger.debug(
+                        "Loading plugin '%s' from module '%s'", entry.name, entry.module
+                    )
+
                     try:
                         plugin = entry.load()
                         plugin.is_package = True
