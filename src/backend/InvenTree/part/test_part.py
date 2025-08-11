@@ -7,11 +7,8 @@ from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
-from allauth.account.models import EmailAddress
-
 import part.settings
 from common.models import NotificationEntry, NotificationMessage
-from common.notifications import UIMessageNotification, storage
 from common.settings import get_global_setting, set_global_setting
 from InvenTree import version
 from InvenTree.templatetags import inventree_extras
@@ -23,7 +20,6 @@ from .models import (
     PartCategoryStar,
     PartRelated,
     PartStar,
-    PartStocktake,
     PartTestTemplate,
     rename_part_image,
 )
@@ -343,18 +339,6 @@ class PartTest(TestCase):
         self.r2.save()
         self.r2.delete()
         self.assertEqual(PartRelated.objects.count(), countbefore)
-
-    def test_stocktake(self):
-        """Test for adding stocktake data."""
-        # Grab a part
-        p = Part.objects.all().first()
-
-        self.assertIsNone(p.last_stocktake)
-
-        ps = PartStocktake.objects.create(part=p, quantity=100)
-
-        self.assertIsNotNone(p.last_stocktake)
-        self.assertEqual(p.last_stocktake, ps.date)
 
     def test_delete(self):
         """Test delete operation for a Part instance."""
@@ -925,67 +909,92 @@ class PartSubscriptionTests(InvenTreeTestCase):
         self.assertTrue(self.part.is_starred_by(self.user))
 
 
-class BaseNotificationIntegrationTest(InvenTreeTestCase):
-    """Integration test for notifications."""
+class PartNotificationTest(InvenTreeTestCase):
+    """Integration test for part notifications."""
 
     fixtures = ['location', 'category', 'part', 'stock']
 
-    @classmethod
-    def setUpTestData(cls):
-        """Add an email address as part of initialization."""
-        super().setUpTestData()
-
-        # Add email address
-        EmailAddress.objects.create(user=cls.user, email='test@testing.com')
-
-        # Define part that will be tested
-        cls.part = Part.objects.get(name='R_2K2_0805')
-
-    def _notification_run(self, run_class=None):
-        """Run a notification test suit through.
-
-        If you only want to test one class pass it to run_class
-        """
-        # reload notification methods
-        storage.collect(run_class)
-
+    def test_low_stock_notification(self):
+        """Test that a low stocknotification is generated."""
         NotificationEntry.objects.all().delete()
+        NotificationMessage.objects.all().delete()
 
-        # There should be no notification runs
+        part = Part.objects.get(name='R_2K2_0805')
+
+        part.minimum_stock = part.get_stock_count() + 1
+
+        part.save()
+
+        # There should be no notifications created yet,
+        # as there are no "subscribed" users for this part
         self.assertEqual(NotificationEntry.objects.all().count(), 0)
+        self.assertEqual(NotificationMessage.objects.all().count(), 0)
 
-        # Test that notifications run through without errors
-        self.part.minimum_stock = (
-            self.part.get_stock_count() + 1
-        )  # make sure minimum is one higher than current count
-        self.part.save()
-
-        # There should be no notification as no-one is subscribed
-        self.assertEqual(NotificationEntry.objects.all().count(), 0)
-
-        # Subscribe and run again
+        # Subscribe the user to the part
         addUserPermission(self.user, 'part', 'part', 'view')
         self.user.is_active = True
         self.user.save()
-        self.part.set_starred(self.user, True)
-        self.part.save()
+        part.set_starred(self.user, True)
+        part.save()
 
-        # There should be 1 (or 2) notifications - in some cases an error is generated, which creates a subsequent notification
-        self.assertIn(NotificationEntry.objects.all().count(), [1, 2])
+        # Check that a UI notification entry has been created
+        self.assertGreaterEqual(NotificationEntry.objects.all().count(), 1)
+        self.assertGreaterEqual(NotificationMessage.objects.all().count(), 1)
+
+        # No errors were generated during notification process
+        from error_report.models import Error
+
+        self.assertEqual(Error.objects.count(), 0)
 
 
-class PartNotificationTest(BaseNotificationIntegrationTest):
-    """Integration test for part notifications."""
+class PartStockHistoryTest(InvenTreeTestCase):
+    """Test generation of stock history entries."""
 
-    def test_notification(self):
-        """Test that a notification is generated."""
-        self._notification_run(UIMessageNotification)
+    fixtures = ['category', 'part', 'location', 'stock']
 
-        # There should be 1 notification message right now
-        self.assertEqual(NotificationMessage.objects.all().count(), 1)
+    def test_stock_history(self):
+        """Test that stock history entries are generated correctly."""
+        from part.models import Part, PartStocktake
+        from part.stocktake import perform_stocktake
 
-        # Try again -> cover the already send line
-        self.part.save()
+        N_STOCKTAKE = PartStocktake.objects.count()
 
-        # There should not be more messages
-        self.assertEqual(NotificationMessage.objects.all().count(), 1)
+        # Cache the initial count of stocktake entries
+        stock_history_entries = {
+            part.pk: part.stocktakes.count() for part in Part.objects.all()
+        }
+
+        # Initially, run with stocktake functionality disabled
+        set_global_setting('STOCKTAKE_ENABLE', False)
+
+        perform_stocktake()
+
+        # No change, as functionality is disabled
+        self.assertEqual(PartStocktake.objects.count(), N_STOCKTAKE)
+
+        for p in Part.objects.all():
+            self.assertEqual(p.stocktakes.count(), stock_history_entries[p.pk])
+
+        # Now enable stocktake functionality
+        set_global_setting('STOCKTAKE_ENABLE', True)
+
+        # Ensure that there is at least one inactive part
+        p = Part.objects.first()
+        p.active = False
+        p.save()
+
+        perform_stocktake()
+        self.assertGreater(PartStocktake.objects.count(), N_STOCKTAKE)
+
+        for p in Part.objects.all():
+            if p.active:
+                # Active parts should have stocktake entries created
+                self.assertGreater(p.stocktakes.count(), stock_history_entries[p.pk])
+            else:
+                # Inactive parts should not have stocktake entries created
+                self.assertEqual(p.stocktakes.count(), stock_history_entries[p.pk])
+
+        # Now, run again - should not create any new entries
+        N_STOCKTAKE = PartStocktake.objects.count()
+        perform_stocktake()
+        self.assertEqual(PartStocktake.objects.count(), N_STOCKTAKE)

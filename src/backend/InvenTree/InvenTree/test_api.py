@@ -580,9 +580,15 @@ class GeneralApiTests(InvenTreeAPITestCase):
 
     def test_info_view(self):
         """Test that we can read the 'info-view' endpoint."""
+        from plugin import PluginMixinEnum
+        from plugin.models import PluginConfig
+        from plugin.registry import registry
+
+        self.ensurePluginsLoaded()
+
         url = reverse('api-inventree-info')
 
-        response = self.get(url, max_query_count=275, expected_code=200)
+        response = self.get(url, max_query_count=20, expected_code=200)
 
         data = response.json()
         self.assertIn('server', data)
@@ -592,13 +598,41 @@ class GeneralApiTests(InvenTreeAPITestCase):
         self.assertEqual('InvenTree', data['server'])
 
         # Test with token
-        token = self.get(url=reverse('api-token')).data['token']
+        token = self.get(url=reverse('api-token'), max_query_count=20).data['token']
         self.client.logout()
 
         # Anon
-        response = self.get(url)
-        self.assertEqual(response.json()['database'], None)
+        response = self.get(url, max_query_count=20)
+        data = response.json()
+        self.assertEqual(data['database'], None)
+
+        # No active plugin info for anon user
+        self.assertIsNone(data.get('active_plugins'))
 
         # Staff
-        response = self.get(url, headers={'Authorization': f'Token {token}'})
+        response = self.get(
+            url, headers={'Authorization': f'Token {token}'}, max_query_count=20
+        )
         self.assertGreater(len(response.json()['database']), 4)
+
+        data = response.json()
+
+        # Check for active plugin list
+        self.assertIn('active_plugins', data)
+        plugins = data['active_plugins']
+
+        # Check that all active plugins are listed
+        N = len(plugins)
+        self.assertGreater(N, 0, 'No active plugins found')
+        self.assertLess(N, PluginConfig.objects.count(), 'Too many plugins found')
+        self.assertEqual(
+            N,
+            len(registry.with_mixin(PluginMixinEnum.BASE, active=True)),
+            'Incorrect number of active plugins found',
+        )
+
+        keys = [plugin['slug'] for plugin in plugins]
+
+        self.assertIn('bom-exporter', keys)
+        self.assertIn('inventree-ui-notification', keys)
+        self.assertIn('inventreelabel', keys)

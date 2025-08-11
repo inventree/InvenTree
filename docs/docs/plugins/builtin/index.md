@@ -12,24 +12,27 @@ Some of the provided builtin plugins are *mandatory*, as they provide core funct
 
 The following builtin plugins are available in InvenTree:
 
-| Plugin Name | Description | Mandatory |
-| ----------- | ----------- | --------- |
-| [Auto Create Child Builds](./auto_create_builds.md) | Automatically create child build orders for sub-assemblies | No |
-| [Auto Issue Orders](./auto_issue.md) | Automatically issue pending orders when target date is reached | No |
-| [BOM Exporter](./bom_exporter.md) | Custom [exporter](../mixins/export.md) for BOM data | Yes |
-| [Currency Exchange](./currency_exchange.md) | Currency exchange rate plugin | Yes |
-| [DigiKey](./barcode_digikey.md) | DigiKey barcode support | No |
-| [InvenTree Barcode](./inventree_barcode.md) | Internal barcode support | Yes |
-| [InvenTree Core Notifications](./notifications.md) | Core notification system | Yes |
-| [InvenTree Exporter](./inventree_exporter.md) | Custom [exporter](../mixins/export.md) for InvenTree data | Yes |
-| [Label Printer](./inventree_label.md) | Custom [label](../mixins/label.md) for InvenTree data | Yes |
-| [Label Machine](./inventree_label_machine.md) | Custom [label](../mixins/label.md) for InvenTree data | Yes |
-| [Label Sheet](./inventree_label_sheet.md) | Custom [label](../mixins/label.md) for InvenTree data | Yes |
-| [LCSC](./barcode_lcsc.md) | LCSC barcode support | No |
-| [Mouser](./barcode_mouser.md) | Mouser barcode support | No |
-| [Parameter Exporter](./part_parameter_exporter.md) | Custom [exporter](../mixins/export.md) for part parameter data | Yes |
-| [Part Notifications](./part_notifications.md) | Notifications for part changes | No |
-| [TME](./barcode_tme.md) | TME barcode support | No |
+| Category | Plugin Name | Description | Mandatory |
+| -------- | ----------- | ----------- | --------- |
+| Barcodes | [DigiKey](./barcode_digikey.md) | DigiKey barcode support | No |
+| Barcodes | [InvenTree Barcode](./inventree_barcode.md) | Internal barcode support | Yes |
+| Barcodes | [LCSC](./barcode_lcsc.md) | LCSC barcode support | No |
+| Barcodes | [Mouser](./barcode_mouser.md) | Mouser barcode support | No |
+| Barcodes | [TME](./barcode_tme.md) | TME barcode support | No |
+| Data Export | [BOM Exporter](./bom_exporter.md) | Custom [exporter](../mixins/export.md) for BOM data | Yes |
+| Data Export | [InvenTree Exporter](./inventree_exporter.md) | Custom [exporter](../mixins/export.md) for InvenTree data | Yes |
+| Data Export | [Parameter Exporter](./part_parameter_exporter.md) | Custom [exporter](../mixins/export.md) for part parameter data | Yes |
+| Data Export | [Stocktake Exporter](./stocktake_exporter.md) | Custom [exporter](../mixins/export.md) for stocktake data | No |
+| Events | [Auto Create Child Builds](./auto_create_builds.md) | Automatically create child build orders for sub-assemblies | No |
+| Events | [Auto Issue Orders](./auto_issue.md) | Automatically issue pending orders when target date is reached | No |
+| Label Printing | [Label Printer](./inventree_label.md) | Custom [label](../mixins/label.md) for InvenTree data | Yes |
+| Label Printing | [Label Machine](./inventree_label_machine.md) | Custom [label](../mixins/label.md) for InvenTree data | Yes |
+| Label Printing | [Label Sheet](./inventree_label_sheet.md) | Custom [label](../mixins/label.md) for InvenTree data | Yes |
+| Notifications | [Email Notification](./email_notification.md) | Email notification plugin | Yes |
+| Notifications | [Part Update Notifications](./part_notifications.md) | Notifications for part changes | No |
+| Notifications | [Slack Notification](./slack_notification.md) | Slack notification plugin | No |
+| Notifications | [UI Notification](./ui_notification.md) | UI notification plugin | Yes |
+| Pricing | [Currency Exchange](./currency_exchange.md) | Currency exchange rate plugin | Yes |
 
 ### Plugin Table
 

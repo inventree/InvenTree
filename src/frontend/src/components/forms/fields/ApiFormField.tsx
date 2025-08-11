@@ -1,11 +1,11 @@
 import { t } from '@lingui/core/macro';
-import { Alert, FileInput, NumberInput, Stack, Switch } from '@mantine/core';
+import { Alert, FileInput, NumberInput, Stack } from '@mantine/core';
 import { useId } from '@mantine/hooks';
 import { useCallback, useEffect, useMemo } from 'react';
 import { type Control, type FieldValues, useController } from 'react-hook-form';
 
-import { isTrue } from '@lib/functions/Conversion';
 import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
+import { BooleanField } from './BooleanField';
 import { ChoiceField } from './ChoiceField';
 import DateField from './DateField';
 import { DependentField } from './DependentField';
@@ -72,6 +72,8 @@ export function ApiFormField({
   const reducedDefinition = useMemo(() => {
     return {
       ...fieldDefinition,
+      autoFill: undefined,
+      autoFillFilters: undefined,
       onValueChange: undefined,
       adjustFilters: undefined,
       adjustValue: undefined,
@@ -126,11 +128,6 @@ export function ApiFormField({
     return val;
   }, [definition.field_type, value]);
 
-  // Coerce the value to a (stringified) boolean value
-  const booleanValue: boolean = useMemo(() => {
-    return isTrue(value);
-  }, [value]);
-
   // Construct the individual field
   const fieldInstance = useMemo(() => {
     switch (fieldDefinition.field_type) {
@@ -174,16 +171,13 @@ export function ApiFormField({
         );
       case 'boolean':
         return (
-          <Switch
-            {...reducedDefinition}
-            checked={booleanValue}
-            ref={ref}
-            id={fieldId}
-            aria-label={`boolean-field-${fieldName}`}
-            radius='lg'
-            size='sm'
-            error={definition.error ?? error?.message}
-            onChange={(event: any) => onChange(event.currentTarget.checked)}
+          <BooleanField
+            controller={controller}
+            definition={reducedDefinition}
+            fieldName={fieldName}
+            onChange={(value: boolean) => {
+              onChange(value);
+            }}
           />
         );
       case 'date':
@@ -273,7 +267,6 @@ export function ApiFormField({
         );
     }
   }, [
-    booleanValue,
     control,
     controller,
     definition,

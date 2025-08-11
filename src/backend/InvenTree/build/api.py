@@ -37,7 +37,7 @@ class BuildFilter(rest_filters.FilterSet):
         """Metaclass options."""
 
         model = Build
-        fields = ['sales_order', 'external']
+        fields = ['issued_by', 'sales_order', 'external']
 
     status = rest_filters.NumberFilter(label=_('Order Status'), method='filter_status')
 
@@ -150,21 +150,6 @@ class BuildFilter(rest_filters.FilterSet):
         if value:
             return queryset.filter(responsible__in=owners)
         return queryset.exclude(responsible__in=owners)
-
-    issued_by = rest_filters.ModelChoiceFilter(
-        queryset=Owner.objects.all(), label=_('Issued By'), method='filter_issued_by'
-    )
-
-    def filter_issued_by(self, queryset, name, owner):
-        """Filter by 'owner' which issued the order."""
-        if owner.label() == 'user':
-            user = User.objects.get(pk=owner.owner_id)
-            return queryset.filter(issued_by=user)
-        elif owner.label() == 'group':
-            group = User.objects.filter(groups__pk=owner.owner_id)
-            return queryset.filter(issued_by__in=group)
-        else:
-            return queryset.none()
 
     assigned_to = rest_filters.ModelChoiceFilter(
         queryset=Owner.objects.all(), field_name='responsible', label=_('Assigned To')
@@ -649,14 +634,15 @@ class BuildOrderContextMixin:
         return ctx
 
 
+@extend_schema(responses={201: stock.serializers.StockItemSerializer(many=True)})
 class BuildOutputCreate(BuildOrderContextMixin, CreateAPI):
     """API endpoint for creating new build output(s)."""
 
     queryset = Build.objects.none()
 
     serializer_class = build.serializers.BuildOutputCreateSerializer
+    pagination_class = None
 
-    @extend_schema(responses={201: stock.serializers.StockItemSerializer(many=True)})
     def create(self, request, *args, **kwargs):
         """Override the create method to handle the creation of build outputs."""
         serializer = self.get_serializer(data=request.data)

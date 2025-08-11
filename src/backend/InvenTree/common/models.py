@@ -57,7 +57,7 @@ import InvenTree.tasks
 import users.models
 from common.helpers import UPLOADED_IMAGE_DIR
 from common.setting.type import InvenTreeSettingsKeyType, SettingsKeyType
-from common.settings import global_setting_overrides
+from common.settings import get_global_setting, global_setting_overrides
 from generic.enums import StringEnum
 from generic.states import ColorEnum
 from generic.states.custom import state_color_mappings
@@ -292,7 +292,7 @@ class BaseInvenTreeSetting(models.Model):
 
         try:
             cache.set(key, self, timeout=3600)
-        except Exception:
+        except Exception:  # pragma: no cover
             pass
 
     @classmethod
@@ -562,7 +562,7 @@ class BaseInvenTreeSetting(models.Model):
             or InvenTree.ready.isRunningMigrations()
             or InvenTree.ready.isRebuildingData()
             or InvenTree.ready.isRunningBackup()
-        ):
+        ):  # pragma: no cover
             create = False
             access_global_cache = False
 
@@ -607,7 +607,15 @@ class BaseInvenTreeSetting(models.Model):
         if not setting and create:
             # Attempt to create a new settings object
             default_value = cls.get_setting_default(key, **kwargs)
-            setting = cls(key=key, value=default_value, **kwargs)
+
+            extra_fields = {}
+
+            # Provide extra default fields
+            for field in cls.extra_unique_fields:
+                if field in kwargs:
+                    extra_fields[field] = kwargs[field]
+
+            setting = cls(key=key, value=default_value, **extra_fields)
 
             try:
                 # Wrap this statement in "atomic", so it can be rolled back if it fails
@@ -702,7 +710,7 @@ class BaseInvenTreeSetting(models.Model):
             or InvenTree.ready.isRunningMigrations()
             or InvenTree.ready.isRebuildingData()
             or InvenTree.ready.isRunningBackup()
-        ):
+        ):  # pragma: no cover
             return
 
         attempts = int(kwargs.get('attempts', 3))
@@ -727,7 +735,7 @@ class BaseInvenTreeSetting(models.Model):
                 logger.warning("Database is locked, cannot set setting '%s'", key)
             # Likely the DB is locked - not much we can do here
             return
-        except Exception as exc:
+        except Exception as exc:  # pragma: no cover
             logger.exception(
                 "Error setting setting '%s' for %s: %s", key, str(cls), str(type(exc))
             )
@@ -762,7 +770,7 @@ class BaseInvenTreeSetting(models.Model):
         except (OperationalError, ProgrammingError):
             logger.warning("Database is locked, cannot set setting '%s'", key)
             # Likely the DB is locked - not much we can do here
-        except Exception as exc:
+        except Exception as exc:  # pragma: no cover
             # Some other error
             logger.exception(
                 "Error setting setting '%s' for %s: %s", key, str(cls), str(type(exc))
@@ -810,13 +818,13 @@ class BaseInvenTreeSetting(models.Model):
 
         # Encode as native values
         if self.is_int():
-            self.value = self.as_int()
+            self.value = self.as_int(raise_error=True)
 
         elif self.is_bool():
             self.value = self.as_bool()
 
         elif self.is_float():
-            self.value = self.as_float()
+            self.value = self.as_float(raise_error=True)
 
         validator = self.__class__.get_setting_validator(
             self.key, **self.get_filters_for_instance()
@@ -1116,7 +1124,7 @@ class BaseInvenTreeSetting(models.Model):
 
         return False
 
-    def as_float(self):
+    def as_float(self, raise_error: bool = False) -> float:
         """Return the value of this setting converted to a float value.
 
         If an error occurs, return the default value
@@ -1124,6 +1132,8 @@ class BaseInvenTreeSetting(models.Model):
         try:
             value = float(self.value)
         except (ValueError, TypeError):
+            if raise_error:
+                raise ValidationError('Provided value is not a valid float')
             value = self.default_value
 
         return value
@@ -1149,7 +1159,7 @@ class BaseInvenTreeSetting(models.Model):
 
         return False
 
-    def as_int(self):
+    def as_int(self, raise_error: bool = False) -> int:
         """Return the value of this setting converted to a boolean value.
 
         If an error occurs, return the default value
@@ -1157,6 +1167,8 @@ class BaseInvenTreeSetting(models.Model):
         try:
             value = int(self.value)
         except (ValueError, TypeError):
+            if raise_error:
+                raise ValidationError('Provided value is not a valid integer')
             value = self.default_value
 
         return value
@@ -2645,6 +2657,28 @@ class Priority(models.IntegerChoices):
 HEADER_PRIORITY = 'X-Priority'
 HEADER_MSG_ID = 'Message-ID'
 
+del_error_msg = _(
+    'INVE-E8: Email log deletion is protected. Set INVENTREE_PROTECT_EMAIL_LOG to False to allow deletion.'
+)
+
+
+class NoDeleteQuerySet(models.query.QuerySet):
+    """Custom QuerySet to prevent deletion of EmailLog entries."""
+
+    def delete(self):
+        """Override delete method to prevent deletion of EmailLog entries."""
+        if get_global_setting('INVENTREE_PROTECT_EMAIL_LOG'):
+            raise ValidationError(del_error_msg)
+        super().delete()
+
+
+class NoDeleteManager(models.Manager):
+    """Custom Manager to use NoDeleteQuerySet."""
+
+    def get_queryset(self):
+        """Return a NoDeleteQuerySet."""
+        return NoDeleteQuerySet(self.model, using=self._db)
+
 
 class EmailMessage(models.Model):
     """Model for storing email messages sent or received by the system.
@@ -2785,6 +2819,14 @@ class EmailMessage(models.Model):
             self.save()
 
         return ret
+
+    objects = NoDeleteManager()
+
+    def delete(self, *kwargs):
+        """Delete entry - if not protected."""
+        if get_global_setting('INVENTREE_PROTECT_EMAIL_LOG'):
+            raise ValidationError(del_error_msg)
+        return super().delete(*kwargs)
 
 
 class EmailThread(InvenTree.models.InvenTreeMetadataModel):

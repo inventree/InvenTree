@@ -1646,7 +1646,7 @@ class ReturnOrderLineItemList(
     ordering_fields = ['reference', 'target_date', 'received_date']
 
     search_fields = [
-        'item_serial',
+        'item__serial',
         'item__part__name',
         'item__part__description',
         'reference',

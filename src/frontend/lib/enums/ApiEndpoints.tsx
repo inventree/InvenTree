@@ -118,8 +118,6 @@ export enum ApiEndpoints {
   part_pricing_internal = 'part/internal-price/',
   part_pricing_sale = 'part/sale-price/',
   part_stocktake_list = 'part/stocktake/',
-  part_stocktake_report_list = 'part/stocktake/report/',
-  part_stocktake_report_generate = 'part/stocktake/report/generate/',
   category_list = 'part/category/',
   category_tree = 'part/category/tree/',
   category_parameter_list = 'part/category/parameters/',
@@ -146,6 +144,7 @@ export enum ApiEndpoints {
   stock_test_result_list = 'stock/test/',
   stock_transfer = 'stock/transfer/',
   stock_remove = 'stock/remove/',
+  stock_return = 'stock/return/',
   stock_add = 'stock/add/',
   stock_count = 'stock/count/',
   stock_change_status = 'stock/change_status/',
@@ -155,7 +154,6 @@ export enum ApiEndpoints {
   stock_install = 'stock/:id/install/',
   stock_uninstall = 'stock/:id/uninstall/',
   stock_serialize = 'stock/:id/serialize/',
-  stock_return = 'stock/:id/return/',
   stock_serial_info = 'stock/:id/serial-numbers/',
 
   // Generator API endpoints
@@ -208,6 +206,7 @@ export enum ApiEndpoints {
   // Plugin API endpoints
   plugin_list = 'plugins/',
   plugin_setting_list = 'plugins/:plugin/settings/',
+  plugin_user_setting_list = 'plugins/:plugin/user-settings/',
   plugin_registry_status = 'plugins/status/',
   plugin_install = 'plugins/install/',
   plugin_reload = 'plugins/reload/',

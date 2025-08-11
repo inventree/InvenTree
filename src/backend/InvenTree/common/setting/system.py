@@ -331,6 +331,21 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'units': _('days'),
         'validator': [int, MinValueValidator(7)],
     },
+    'INVENTREE_DELETE_EMAIL_DAYS': {
+        'name': _('Email Deletion Interval'),
+        'description': _(
+            'Email messages will be deleted after specified number of days'
+        ),
+        'default': 30,
+        'units': _('days'),
+        'validator': [int, MinValueValidator(7)],
+    },
+    'INVENTREE_PROTECT_EMAIL_LOG': {
+        'name': _('Protect Email Log'),
+        'description': _('Prevent deletion of email log entries'),
+        'default': False,
+        'validator': bool,
+    },
     'BARCODE_ENABLE': {
         'name': _('Barcode Support'),
         'description': _('Enable barcode scanner support in the web interface'),
@@ -1058,9 +1073,9 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'validator': bool,
     },
     'STOCKTAKE_ENABLE': {
-        'name': _('Stocktake Functionality'),
+        'name': _('Enable Stock History'),
         'description': _(
-            'Enable stocktake functionality for recording stock levels and calculating stock value'
+            'Enable functionality for recording historical stock levels and value'
         ),
         'validator': bool,
         'default': False,
@@ -1068,27 +1083,34 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
     'STOCKTAKE_EXCLUDE_EXTERNAL': {
         'name': _('Exclude External Locations'),
         'description': _(
-            'Exclude stock items in external locations from stocktake calculations'
+            'Exclude stock items in external locations from stock history calculations'
         ),
         'validator': bool,
         'default': False,
     },
     'STOCKTAKE_AUTO_DAYS': {
         'name': _('Automatic Stocktake Period'),
-        'description': _(
-            'Number of days between automatic stocktake recording (set to zero to disable)'
-        ),
-        'validator': [int, MinValueValidator(0)],
-        'default': 0,
-    },
-    'STOCKTAKE_DELETE_REPORT_DAYS': {
-        'name': _('Report Deletion Interval'),
-        'description': _(
-            'Stocktake reports will be deleted after specified number of days'
-        ),
-        'default': 30,
+        'description': _('Number of days between automatic stock history recording'),
+        'validator': [int, MinValueValidator(1)],
+        'default': 7,
         'units': _('days'),
-        'validator': [int, MinValueValidator(7)],
+    },
+    'STOCKTAKE_DELETE_OLD_ENTRIES': {
+        'name': _('Delete Old Stock History Entries'),
+        'description': _(
+            'Delete stock history entries older than the specified number of days'
+        ),
+        'default': False,
+        'validator': bool,
+    },
+    'STOCKTAKE_DELETE_DAYS': {
+        'name': _('Stock History Deletion Interval'),
+        'description': _(
+            'Stock history entries will be deleted after specified number of days'
+        ),
+        'default': 365,
+        'units': _('days'),
+        'validator': [int, MinValueValidator(30)],
     },
     'DISPLAY_FULL_NAMES': {
         'name': _('Display Users full names'),
@@ -1106,14 +1128,6 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'name': _('Enable Test Station Data'),
         'description': _('Enable test station data collection for test results'),
         'default': False,
-        'validator': bool,
-    },
-    'TEST_UPLOAD_CREATE_TEMPLATE': {
-        'name': _('Create Template on Upload'),
-        'description': _(
-            'Create a new test template when uploading test data which does not match an existing template'
-        ),
-        'default': True,
         'validator': bool,
     },
 }

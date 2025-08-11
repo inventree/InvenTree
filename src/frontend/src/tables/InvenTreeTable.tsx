@@ -29,6 +29,7 @@ import { useApi } from '../contexts/ApiContext';
 import { extractAvailableFields, mapFields } from '../functions/forms';
 import { showApiErrorMessage } from '../functions/notifications';
 import { useLocalState } from '../states/LocalState';
+import { useUserSettingsState } from '../states/SettingsStates';
 import { useStoredTableState } from '../states/StoredTableState';
 import InvenTreeTableHeader from './InvenTreeTableHeader';
 
@@ -90,6 +91,12 @@ export function InvenTreeTable<T extends Record<string, any>>({
   const api = useApi();
   const navigate = useNavigate();
   const { showContextMenu } = useContextMenu();
+
+  const userSettings = useUserSettingsState();
+
+  const stickyTableHeader = useMemo(() => {
+    return userSettings.isSet('STICKY_TABLE_HEADER');
+  }, [userSettings]);
 
   // Key used for caching table data
   const cacheKey = useMemo(() => {
@@ -328,12 +335,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
     ) {
       tableColumns.setColumnsOrder(dataColumnsOrder);
     }
-  }, [
-    cacheKey,
-    dataColumnsOrder,
-    tableColumns.columnsOrder,
-    tableColumns.setColumnsOrder
-  ]);
+  }, [cacheKey, dataColumnsOrder]);
 
   // Reset the pagination state when the search term changes
   useEffect(() => {
@@ -747,6 +749,10 @@ export function InvenTreeTable<T extends Record<string, any>>({
         <Boundary label={`InvenTreeTable-${cacheKey}`}>
           <Box pos='relative'>
             <DataTable
+              style={{
+                stickyHeader: stickyTableHeader ? 'top' : undefined
+              }}
+              height={stickyTableHeader ? '80vh' : undefined}
               withTableBorder={!tableProps.noHeader}
               withColumnBorders
               striped

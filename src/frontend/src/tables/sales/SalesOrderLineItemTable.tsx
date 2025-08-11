@@ -12,6 +12,7 @@ import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ActionButton } from '@lib/components/ActionButton';
+import { AddItemButton } from '@lib/components/AddItemButton';
 import { ProgressBar } from '@lib/components/ProgressBar';
 import {
   type RowAction,
@@ -26,7 +27,6 @@ import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
-import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { RenderPart } from '../../components/render/Part';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { formatCurrency } from '../../defaults/formatters';
@@ -45,6 +45,7 @@ import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import {
   DateColumn,
+  DecimalColumn,
   DescriptionColumn,
   LinkColumn,
   PartColumn
@@ -102,10 +103,10 @@ export default function SalesOrderLineItemTable({
         sortable: false,
         switchable: true
       },
-      {
+      DecimalColumn({
         accessor: 'quantity',
         sortable: true
-      },
+      }),
       {
         accessor: 'sale_price',
         render: (record: any) =>

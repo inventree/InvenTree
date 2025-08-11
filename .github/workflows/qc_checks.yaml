@@ -369,7 +369,7 @@ jobs:
       INVENTREE_DB_HOST: "127.0.0.1"
       INVENTREE_DB_PORT: 5432
       INVENTREE_DEBUG: true
-      INVENTREE_LOG_LEVEL: WARNING
+      INVENTREE_LOG_LEVEL: INFO
       INVENTREE_CONSOLE_LOG: false
       INVENTREE_CACHE_HOST: localhost
       INVENTREE_PLUGINS_ENABLED: true
@@ -684,7 +684,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@181d5eefc20863364f96762470ba6f862bdef56b # pin@v3
+        uses: github/codeql-action/upload-sarif@d6bbdef45e766d081b84a2def353b0055f728d3e # pin@v3
         with:
           sarif_file: results.sarif
           category: zizmor

@@ -671,10 +671,14 @@ class Build(
             get_global_setting('BUILDORDER_REQUIRE_CLOSED_CHILDS')
             and self.has_open_child_builds
         ):
-            return
+            raise ValidationError(
+                _('Cannot complete build order with open child builds')
+            )
 
         if self.incomplete_count > 0:
-            return
+            raise ValidationError(
+                _('Cannot complete build order with incomplete outputs')
+            )
 
         if trim_allocated_stock:
             self.trim_allocated_stock()
@@ -759,6 +763,11 @@ class Build(
             self.save()
 
             trigger_event(BuildEvents.ISSUED, id=self.pk)
+
+            from build.tasks import check_build_stock
+
+            # Run checks on required parts
+            InvenTree.tasks.offload_task(check_build_stock, self, group='build')
 
     @transaction.atomic
     def hold_build(self):
@@ -1504,19 +1513,12 @@ def after_save_build(sender, instance: Build, created: bool, **kwargs):
     ):
         return
 
-    from . import tasks as build_tasks
-
     if instance:
         if created:
             # A new Build has just been created
 
             # Generate initial BuildLine objects for the Build
             instance.create_build_line_items()
-
-            # Run checks on required parts
-            InvenTree.tasks.offload_task(
-                build_tasks.check_build_stock, instance, group='build'
-            )
 
             # Notify the responsible users that the build order has been created
             InvenTree.helpers_model.notify_responsible(

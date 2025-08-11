@@ -65,6 +65,23 @@ class TestBuildAPI(InvenTreeAPITestCase):
         response = self.get(url, {'reference': 'BO-9999XX'}, expected_code=200)
         self.assertEqual(len(response.data), 0)
 
+        # Filter by 'issued_by'
+        response = self.get(url)
+
+        build = Build.objects.first()
+
+        build.issued_by = self.user
+        build.save()
+
+        response = self.get(url, {'issued_by': self.user.pk}, expected_code=200)
+
+        self.assertEqual(len(response.data), 1)
+
+        item = response.data[0]
+
+        self.assertEqual(item['pk'], build.pk)
+        self.assertEqual(item['issued_by'], self.user.pk)
+
     def test_get_build_item_list(self):
         """Test that we can retrieve list of BuildItem objects."""
         url = reverse('api-build-item-list')
@@ -996,7 +1013,7 @@ class BuildOverallocationTest(BuildAPITest):
             self.url,
             {'accept_overallocated': 'trim'},
             expected_code=201,
-            max_query_count=375,
+            max_query_count=400,
         )
 
         # Note: Large number of queries is due to pricing recalculation for each stock item

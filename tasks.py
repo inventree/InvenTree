@@ -1291,6 +1291,7 @@ def test(
     help={
         'dev': 'Set up development environment at the end',
         'validate_files': 'Validate media files are correctly copied',
+        'use_ssh': 'Use SSH protocol for cloning the demo dataset (requires SSH key)',
     }
 )
 def setup_test(
@@ -1298,6 +1299,7 @@ def setup_test(
     ignore_update=False,
     dev=False,
     validate_files=False,
+    use_ssh=False,
     path='inventree-demo-dataset',
 ):
     """Setup a testing environment."""
@@ -1314,12 +1316,15 @@ def setup_test(
         run(c, f'rm {template_dir} -r')
 
     # TODO: The test dataset loader needs to be updated to handle the `UploadImage` model and include sample images.
+    URL = 'https://github.com/inventree/demo-dataset'
+
+    if use_ssh:
+        # Use SSH protocol for cloning the demo dataset
+        URL = 'git@github.com:inventree/demo-dataset.git'
+
     # Get test data
     info('Cloning demo dataset ...')
-    run(
-        c,
-        f'git clone https://github.com/inventree/demo-dataset {template_dir} -v --depth=1',
-    )
+    run(c, f'git clone {URL} {template_dir} -v --depth=1')
 
     # Make sure migrations are done - might have just deleted sqlite database
     if not ignore_update:
@@ -1589,6 +1594,21 @@ def frontend_server(c):
     info('Starting frontend development server')
     yarn(c, 'yarn run compile')
     yarn(c, 'yarn run dev --host')
+
+
+@task
+def frontend_test(c, host: str = '0.0.0.0'):
+    """Start the playwright test runner for the frontend code."""
+    info('Starting frontend test runner')
+
+    frontend_path = local_dir().joinpath('src', 'frontend').resolve()
+
+    cmd = 'npx playwright test --ui'
+
+    if host:
+        cmd += f' --ui-host={host}'
+
+    run(c, cmd, path=frontend_path)
 
 
 @task(
@@ -1875,6 +1895,7 @@ development = Collection(
     delete_data,
     docs_server,
     frontend_server,
+    frontend_test,
     gunicorn,
     import_fixtures,
     schema,

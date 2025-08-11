@@ -19,7 +19,11 @@ import type { TableColumn, TableColumnProps } from '@lib/types/Tables';
 import { Thumbnail } from '../components/images/Thumbnail';
 import { TableStatusRenderer } from '../components/render/StatusRenderer';
 import { RenderOwner, RenderUser } from '../components/render/User';
-import { formatCurrency, formatDate } from '../defaults/formatters';
+import {
+  formatCurrency,
+  formatDate,
+  formatDecimal
+} from '../defaults/formatters';
 import {
   useGlobalSettingsState,
   useUserSettingsState
@@ -212,6 +216,16 @@ export function BooleanColumn(props: TableColumn): TableColumn {
   };
 }
 
+export function DecimalColumn(props: TableColumn): TableColumn {
+  return {
+    render: (record: any) => {
+      const value = resolveItem(record, props.accessor ?? '');
+      return formatDecimal(value);
+    },
+    ...props
+  };
+}
+
 export function DescriptionColumn(props: TableColumnProps): TableColumn {
   return {
     accessor: 'description',
@@ -369,7 +383,9 @@ export function DateColumn(props: TableColumnProps): TableColumn {
     title: t`Date`,
     switchable: true,
     render: (record: any) =>
-      formatDate(resolveItem(record, props.accessor ?? 'date')),
+      formatDate(resolveItem(record, props.accessor ?? 'date'), {
+        showTime: props.extra?.showTime
+      }),
     ...props
   };
 }

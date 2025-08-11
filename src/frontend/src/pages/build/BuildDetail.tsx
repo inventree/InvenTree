@@ -443,6 +443,7 @@ export default function BuildDetail() {
             allowAdd={false}
             tableName='build-consumed'
             showLocation={false}
+            allowReturn
             params={{
               consumed_by: id
             }}

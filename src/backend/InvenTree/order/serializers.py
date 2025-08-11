@@ -1453,7 +1453,11 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
     )
 
     shipment_detail = SalesOrderShipmentSerializer(
-        source='shipment', order_detail=False, many=False, read_only=True
+        source='shipment',
+        order_detail=False,
+        many=False,
+        read_only=True,
+        allow_null=True,
     )
 
 

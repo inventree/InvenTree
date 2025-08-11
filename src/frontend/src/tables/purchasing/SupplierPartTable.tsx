@@ -2,6 +2,7 @@ import { t } from '@lingui/core/macro';
 import { Text } from '@mantine/core';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 
+import { AddItemButton } from '@lib/components/AddItemButton';
 import {
   type RowAction,
   RowDeleteAction,
@@ -13,7 +14,6 @@ import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
-import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { useSupplierPartFields } from '../../forms/CompanyForms';
 import {
   useCreateApiFormModal,
@@ -25,6 +25,7 @@ import { useUserState } from '../../states/UserState';
 import {
   BooleanColumn,
   CompanyColumn,
+  DecimalColumn,
   DescriptionColumn,
   LinkColumn,
   NoteColumn,
@@ -89,10 +90,10 @@ export function SupplierPartTable({
         switchable: true,
         defaultVisible: false
       }),
-      {
+      DecimalColumn({
         accessor: 'in_stock',
         sortable: true
-      },
+      }),
       {
         accessor: 'packaging',
         sortable: true,

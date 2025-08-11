@@ -3,6 +3,7 @@ import { Group, Text } from '@mantine/core';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { AddItemButton } from '@lib/components/AddItemButton';
 import {
   type RowAction,
   RowDeleteAction,
@@ -13,7 +14,6 @@ import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
-import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { Thumbnail } from '../../components/images/Thumbnail';
 import {
   useCreateApiFormModal,

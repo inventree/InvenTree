@@ -1,6 +1,7 @@
 """Data migration unit tests for the 'common' app."""
 
 import io
+import os
 import shutil
 import tempfile
 
@@ -340,3 +341,49 @@ class TestLegacyImageMigration(MigratorTestCase):
             InvenTreeImage.objects.get(
                 content_type_id=ct_part.pk, object_id=self.no_image_part_pk
             )
+
+
+def prep_currency_migration(self, vals: str):
+    """Prepare the environment for the currency migration tests."""
+    # Set keys
+    os.environ['INVENTREE_CURRENCIES'] = vals
+
+    # And setting
+    InvenTreeSetting = self.old_state.apps.get_model('common', 'InvenTreeSetting')
+
+    setting = InvenTreeSetting(key='CURRENCY_CODES', value='123')
+    setting.save()
+
+
+class TestCurrencyMigration(MigratorTestCase):
+    """Test currency migration."""
+
+    migrate_from = ('common', '0022_projectcode_responsible')
+    migrate_to = ('common', '0023_auto_20240602_1332')
+
+    def prepare(self):
+        """Prepare the environment for the migration test."""
+        prep_currency_migration(self, 'USD,EUR,GBP')
+
+    def test_currency_migration(self):
+        """Test that the currency migration works."""
+        InvenTreeSetting = self.old_state.apps.get_model('common', 'InvenTreeSetting')
+        setting = InvenTreeSetting.objects.filter(key='CURRENCY_CODES').first()
+        self.assertEqual(setting.value, 'EUR,GBP,USD')
+
+
+class TestCurrencyMigrationNo(MigratorTestCase):
+    """Test currency migration."""
+
+    migrate_from = ('common', '0022_projectcode_responsible')
+    migrate_to = ('common', '0023_auto_20240602_1332')
+
+    def prepare(self):
+        """Prepare the environment for the migration test."""
+        prep_currency_migration(self, 'YYY,ZZZ')
+
+    def test_currency_migration(self):
+        """Test that no currency migration occurs if wrong currencies are set."""
+        InvenTreeSetting = self.old_state.apps.get_model('common', 'InvenTreeSetting')
+        setting = InvenTreeSetting.objects.filter(key='CURRENCY_CODES').first()
+        self.assertEqual(setting.value, '123')

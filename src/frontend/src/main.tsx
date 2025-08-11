@@ -16,6 +16,10 @@ import * as ReactDOM from 'react-dom';
 import * as ReactDOMClient from 'react-dom/client';
 import './styles/overrides.css';
 
+// Lingui imports (required for plugin translation)
+import * as LinguiCore from '@lingui/core';
+import * as LinguiReact from '@lingui/react';
+
 import { getBaseUrl } from '@lib/functions/Navigation';
 import type { HostList } from '@lib/types/Server';
 import MainView from './views/MainView';
@@ -107,6 +111,8 @@ if (window.INVENTREE_SETTINGS.sentry_dsn) {
 (window as any).ReactDOMClient = ReactDOMClient;
 (window as any).MantineCore = MantineCore;
 (window as any).MantineNotifications = MantineNotifications;
+(window as any).LinguiCore = LinguiCore;
+(window as any).LinguiReact = LinguiReact;
 
 // Redirect to base url if on /
 if (window.location.pathname === '/') {

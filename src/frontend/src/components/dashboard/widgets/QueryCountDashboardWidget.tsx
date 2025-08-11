@@ -95,7 +95,7 @@ function QueryCountWidget({
   }, [query.isFetching, query.isError, query.data]);
 
   return (
-    <Anchor href='#' onClick={onFollowLink}>
+    <Anchor href='#' onClick={onFollowLink} underline='never'>
       <Group
         gap='xs'
         wrap='nowrap'
