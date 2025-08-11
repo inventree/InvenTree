@@ -599,7 +599,7 @@ class InvenTreeImageSerializer(
 ):
     """Serializer for InvenTreeImage."""
 
-    image = InvenTreeImageSerializerField(required=True, allow_null=False)
+    image = InvenTreeImageSerializerField(required=False)
     thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
 
     # we accept the model name here
@@ -690,7 +690,24 @@ class InvenTreeImageSerializer(
 
     def create(self, validated_data):
         """Create a new InvenTreeImage instance with the provided data."""
+        # Extract the fields from validated data
+        image = validated_data.get('image', None)
+        existing_image = validated_data.get('existing_image', None)
+        remote_image = validated_data.get(
+            'remote_image', None
+        )  # comes from RemoteImageMixin
+
+        # Validation: Ensure at least one image source is provided
+        if not image and not existing_image and not remote_image:
+            raise ValidationError(
+                _(
+                    "You must provide at least one of: 'image', 'existing_image', or 'remote_image'."
+                )
+            )
+
+        # Continue with normal creation
         instance = super().create(validated_data)
+
         return self._process_images(instance, validated_data)
 
     def update(self, instance, validated_data):

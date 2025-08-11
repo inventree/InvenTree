@@ -1,8 +1,5 @@
 """testing InvenTreeImage API endpoints."""
 
-import shutil
-import tempfile
-
 from django.contrib.contenttypes.models import ContentType
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import override_settings
@@ -12,15 +9,12 @@ from rest_framework.test import APIClient
 
 from common.helpers import generate_image
 from common.models import InvenTreeImage
+from InvenTree.config import get_testfolder_dir
 from InvenTree.unit_test import InvenTreeAPITestCase
 from part.models import Part
 
 
-class ImageTestMixin:
-    """Mixin for testing part images."""
-
-
-@override_settings(MEDIA_ROOT=tempfile.mkdtemp(prefix='inventree_test_media_'))
+@override_settings(MEDIA_ROOT=get_testfolder_dir())
 class InvenTreeImageTest(InvenTreeAPITestCase):
     """Series of tests for the InvenTreeImage DRF API."""
 
@@ -56,31 +50,14 @@ class InvenTreeImageTest(InvenTreeAPITestCase):
             image=cls.image_file_1,
             primary=True,
         )
+        cls.img1.image.save('test1.png', cls.image_file_1)
         cls.img2 = InvenTreeImage.objects.create(
             content_type=cls.content_type,
             object_id=cls.part.pk,
             image=cls.image_file_2,
             primary=True,
         )
-
-    @classmethod
-    def setUpClass(cls):
-        """Custom setup routine for this class."""
-        super().setUpClass()
-        # Create a temp dir and override MEDIA_ROOT to point there
-        cls._temp_media = tempfile.mkdtemp(prefix='invenree_test_media_')
-        cls._override = override_settings(MEDIA_ROOT=cls._temp_media)
-        cls._override.enable()
-
-    @classmethod
-    def tearDownClass(cls):
-        """Custom teardown routine for this class."""
-        # Disable the override first (restores original MEDIA_ROOT)
-        cls._override.disable()
-        # Remove everything in the temp dir
-        shutil.rmtree(cls._temp_media, ignore_errors=True)
-
-        super().tearDownClass()
+        cls.img2.image.save('test2.png', cls.image_file_2)
 
     def test_image_list_and_filtering(self):
         """Test listing images and filtering by object_id/primary."""
@@ -129,6 +106,71 @@ class InvenTreeImageTest(InvenTreeAPITestCase):
         resp1 = self.get(url1, expected_code=200)
         self.assertFalse(resp1.data['primary'])
 
+    def test_create_invalid_payload(self):
+        """Test error responses when required fields are missing or invalid."""
+        url = reverse('api-image-list')
+
+        # Missing image file
+        self.post(
+            url, {'content_type': 'part', 'object_id': self.part.pk}, expected_code=400
+        )
+
+        # Invalid content_type
+        bad_file = SimpleUploadedFile('bad.png', b'123', content_type='image/png')
+        self.post(
+            url,
+            {'content_type': 9999, 'object_id': self.part.pk, 'image': bad_file},
+            expected_code=400,
+        )
+
+    def test_existing_image_create_success(self):
+        """Test creating an image with an existing image file."""
+        file_name = self.img2.image.name
+        url = reverse('api-image-list')
+        data = {
+            'content_type': 'part',
+            'object_id': self.part.pk,
+            'existing_image': file_name,
+        }
+
+        response = self.upload_client.post(url, data, format='json')
+        # Should be created
+        self.assertEqual(response.status_code, 201, response.data)
+
+        # Verify the DB record and its image path
+        new_img = InvenTreeImage.objects.get(pk=response.data['pk'])
+        # The stored image.name should end with our dummy filename
+        self.assertTrue(str(new_img.image.name).endswith(file_name))
+
+    def test_thumbnail_list_endpoint(self):
+        """Test the thumbnails list API endpoint."""
+        url = reverse('api-uploadImageThumbs-list')
+
+        # Thumbnails list should aggregate by image file with usage count
+        response = self.get(url, expected_code=200)
+
+        # Since we have exactly 2 unique image files, should return 2 entries
+        self.assertEqual(len(response.data), 2)
+
+        # Check that each entry has an 'image' and 'count'
+        for entry in response.data:
+            self.assertIn('image', entry)
+            self.assertIn('count', entry)
+
+        # The counts should match the actual usage
+        counts = {str(img.image): 1 for img in [self.img1, self.img2]}
+        for entry in response.data:
+            img_name = entry['image']
+            self.assertEqual(entry['count'], counts.get(img_name, 0))
+
+        # Test filtering by object_id
+        response = self.get(url, {'object_id': self.part.pk}, expected_code=200)
+        self.assertEqual(len(response.data), 2)  # Still both images
+
+        # Test filtering for a non-existent object returns empty
+        response = self.get(url, {'object_id': 99999}, expected_code=200)
+        self.assertEqual(len(response.data), 0)
+
     def test_delete_primary_reassigns_successor(self):
         """Test deleting a primary image reassigns primary to another image."""
         # Mark img1 as primary
@@ -143,45 +185,3 @@ class InvenTreeImageTest(InvenTreeAPITestCase):
         url2 = reverse('api-image-detail', kwargs={'pk': self.img2.pk})
         response = self.get(url2, expected_code=200)
         self.assertTrue(response.data['primary'])
-
-    def test_create_invalid_payload(self):
-        """Test error responses when required fields are missing or invalid."""
-        url = reverse('api-image-list')
-
-        # Missing image file
-        response = self.post(
-            url, {'content_type': 'part', 'object_id': self.part.pk}, expected_code=400
-        )
-        self.assertIn('image', response.data)
-
-        # Invalid content_type
-        bad_file = SimpleUploadedFile('bad.png', b'123', content_type='image/png')
-        response = self.post(
-            url,
-            {'content_type': 9999, 'object_id': self.part.pk, 'image': bad_file},
-            expected_code=400,
-        )
-        self.assertIn('content_type', response.data)
-
-    def test_existing_image_create_success(self):
-        """Test creating an image with an existing image file."""
-        file_name = self.img1.image.name
-        url = reverse('api-image-list')
-        data = {
-            'content_type': 'part',
-            'object_id': self.part.pk,
-            'existing_image': file_name,
-        }
-
-        response = self.upload_client.post(url, data, format='json')
-        # Should be created
-        self.assertEqual(response.status_code, 201, response.data)
-
-        # The response should echo back the existing_image field
-        self.assertIn('existing_image', response.data)
-        self.assertEqual(response.data['existing_image'], file_name)
-
-        # Verify the DB record and its image path
-        new_img = InvenTreeImage.objects.get(pk=response.data['pk'])
-        # The stored image.name should end with our dummy filename
-        self.assertTrue(str(new_img.image.name).endswith(file_name))

@@ -75,9 +75,6 @@ class CompanyReportContext(report.mixins.BaseReportContext):
     address: str
 
 
-from stdimage.models import StdImageField
-
-
 class Company(
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeImageMixin,
@@ -226,15 +223,6 @@ class Company(
         blank=True,
         verbose_name=_('Tax ID'),
         help_text=_('Company Tax ID'),
-    )
-
-    image = StdImageField(
-        upload_to=rename_company_image,
-        null=True,
-        blank=True,
-        variations={'thumbnail': (128, 128), 'preview': (256, 256)},
-        delete_orphans=False,
-        verbose_name=_('Image'),
     )
 
     @property

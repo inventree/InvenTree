@@ -1129,7 +1129,12 @@ common_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path('', InvenTreeImageDetail.as_view(), name='api-image-detail')
+                    path(
+                        'metadata/',
+                        MetadataView.as_view(model=common.models.InvenTreeImage),
+                        name='api-image-metadata',
+                    ),
+                    path('', InvenTreeImageDetail.as_view(), name='api-image-detail'),
                 ]),
             ),
             path(

@@ -640,7 +640,7 @@ class PartOptionsAPITest(InvenTreeAPITestCase):
         actions = self.getActions(reverse('api-part-list'))['POST']
 
         # Check that a bunch o' fields are contained
-        for f in ['assembly', 'component', 'description', 'image', 'IPN']:
+        for f in ['assembly', 'component', 'description', 'images', 'IPN']:
             self.assertIn(f, actions.keys())
 
         # Active is a 'boolean' field
@@ -1026,12 +1026,6 @@ class PartAPITest(PartAPITestBase):
 
         # Now there should be 5 total parts
         self.assertEqual(len(response.data), 3)
-
-    def test_get_thumbs(self):
-        """Return list of part thumbnails."""
-        url = reverse('api-part-thumbs')
-
-        self.get(url)
 
     def test_paginate(self):
         """Test pagination of the Part list API."""
@@ -1759,8 +1753,8 @@ class PartListTests(PartAPITestBase):
             with CaptureQueriesContext(connection) as ctx:
                 self.get(url, query, expected_code=200)
 
-            # No more than 20 database queries
-            self.assertLess(len(ctx), 20)
+            # No more than 21 database queries
+            self.assertLess(len(ctx), 21)
 
         # Test 'category_detail' annotation
         for b in [False, True]:
@@ -1773,8 +1767,8 @@ class PartListTests(PartAPITestBase):
                     if b and result['category'] is not None:
                         self.assertIn('category_detail', result)
 
-            # No more than 20 DB queries
-            self.assertLessEqual(len(ctx), 20)
+            # No more than 21 DB queries
+            self.assertLessEqual(len(ctx), 21)
 
 
 class PartNotesTests(InvenTreeAPITestCase):

@@ -54,6 +54,7 @@ import users.models
 from build import models as BuildModels
 from build.status_codes import BuildStatusGroups
 from common.currency import currency_code_default
+from common.helpers import UPLOADED_IMAGE_DIR
 from common.icons import validate_icon
 from common.settings import get_global_setting
 from company.models import SupplierPart
@@ -345,7 +346,7 @@ def rename_part_image(instance, filename):
     Returns:
         Cleaned filename in format part_<n>_img
     """
-    base = part_helpers.PART_IMAGE_DIR
+    base = UPLOADED_IMAGE_DIR
     fname = os.path.basename(filename)
 
     return os.path.join(base, fname)
@@ -404,9 +405,6 @@ class PartReportContext(report.mixins.BaseReportContext):
     revision: Optional[str]
     test_template_list: report.mixins.QuerySet[PartTestTemplate]
     test_templates: dict[str, PartTestTemplate]
-
-
-from stdimage.models import StdImageField
 
 
 @cleanup.ignore
@@ -1278,15 +1276,6 @@ class Part(
 
     last_stocktake = models.DateField(
         blank=True, null=True, verbose_name=_('Last Stocktake')
-    )
-
-    image = StdImageField(
-        upload_to=rename_part_image,
-        null=True,
-        blank=True,
-        variations={'thumbnail': (128, 128), 'preview': (256, 256)},
-        delete_orphans=False,
-        verbose_name=_('Image'),
     )
 
     @property

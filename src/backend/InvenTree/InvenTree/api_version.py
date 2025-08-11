@@ -7,9 +7,11 @@ INVENTREE_API_VERSION = 371
 
 INVENTREE_API_TEXT = """
 
-v372 -> 2025-08-04 : https://github.com/inventree/InvenTree/pull/10069
-    - Moves all "Image"  into a single table
-    - All "Image" operations are now performed at /api/image/
+v372 -> 2025-08-11 : https://github.com/inventree/InvenTree/pull/10069
+    - Introduces new 'InvenTreeImage' model with GenericForeignKey for image associations
+    - Adds 'image_url' and 'thumbnail_url' fields to relevant API serializers
+    - Updates Part and Company API endpoints to use new image architecture
+    - Adds API endpoint for managing 'InvenTreeImage' objects
 
 v371 -> 2025-07-18 : https://github.com/inventree/InvenTree/pull/10042
     - Adds "setup_quantity" and "attrition" fields to BomItem API endpoints
