@@ -21,6 +21,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ActionButton } from '@lib/components/ActionButton';
+import { AddItemButton } from '@lib/components/AddItemButton';
 import { ProgressBar } from '@lib/components/ProgressBar';
 import {
   type RowAction,
@@ -33,7 +34,6 @@ import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
-import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { StylishText } from '../../components/items/StylishText';
 import { useApi } from '../../contexts/ApiContext';
 import {
@@ -160,7 +160,7 @@ export default function BuildOutputTable({
   const buildStatus = useStatusCodes({ modelType: ModelType.build });
 
   // Fetch the test templates associated with the partId
-  const { data: testTemplates } = useQuery({
+  const { data: testTemplates, refetch: refetchTestTemplates } = useQuery({
     queryKey: ['buildoutputtests', partId, build],
     queryFn: async () => {
       if (!partId || partId < 0) {
@@ -291,7 +291,12 @@ export default function BuildOutputTable({
       batch_code: build.batch,
       location: build.destination ?? build.part_detail?.default_location
     },
-    table: table
+    onFormSuccess: () => {
+      // Refresh all associated table data
+      refetchTrackedItems();
+      refetchTestTemplates();
+      table.refreshTable(true);
+    }
   });
 
   const [selectedOutputs, setSelectedOutputs] = useState<any[]>([]);
@@ -716,6 +721,7 @@ export default function BuildOutputTable({
             },
             enableLabels: true,
             enableReports: true,
+            modelType: ModelType.stockitem,
             dataFormatter: formatRecords,
             tableFilters: tableFilters,
             tableActions: tableActions,

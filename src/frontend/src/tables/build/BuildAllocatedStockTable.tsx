@@ -24,6 +24,7 @@ import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import {
+  DecimalColumn,
   LocationColumn,
   PartColumn,
   ReferenceColumn,
@@ -133,17 +134,16 @@ export default function BuildAllocatedStockTable({
         switchable: true,
         render: (record: any) => record?.stock_item_detail?.batch
       },
-      {
+      DecimalColumn({
         accessor: 'available',
-        title: t`Available Quantity`,
-        render: (record: any) => record?.stock_item_detail?.quantity
-      },
-      {
+        title: t`Available Quantity`
+      }),
+      DecimalColumn({
         accessor: 'quantity',
         title: t`Allocated Quantity`,
         sortable: true,
         switchable: false
-      },
+      }),
       LocationColumn({
         accessor: 'location_detail',
         switchable: true,

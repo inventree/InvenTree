@@ -1,14 +1,63 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 371
+INVENTREE_API_VERSION = 384
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
-v370 -> 2025-06-16 : https://github.com/inventree/InvenTree/pull/8191
+v384 -> 2025-08-11 : https://github.com/inventree/InvenTree/pull/8191
     - Adds "consumed" field to the BuildItem API
     - Adds API endpoint to consume stock against a BuildOrder
+
+v383 -> 2025-08-08 : https://github.com/inventree/InvenTree/pull/9969
+    - Correctly apply changes listed in v358
+    - Breaking: StockCreate now always returns a list of StockItem
+
+v382 -> 2025-08-07 : https://github.com/inventree/InvenTree/pull/10146
+    - Adds ability to "bulk create" test results via the API
+    - Removes legacy functionality to auto-create test result templates based on provided test names
+
+v381 -> 2025-08-06 : https://github.com/inventree/InvenTree/pull/10132
+    - Refactor the "return stock item" API endpoint to align with other stock adjustment actions
+
+v380 -> 2025-08-06 : https://github.com/inventree/InvenTree/pull/10135
+    - Fixes "issued_by" filter for the BuildOrder list API endpoint
+
+v380 -> 2025-08-06 : https://github.com/inventree/InvenTree/pull/10132
+    - Refactor the "return stock item" API endpoint to align with other stock adjustment actions
+
+v380 -> 2025-08-06 : https://github.com/inventree/InvenTree/pull/10135
+    - Fixes "issued_by" filter for the BuildOrder list API endpoint
+
+v379 -> 2025-08-04 : https://github.com/inventree/InvenTree/pull/10124
+    - Removes "PartStocktakeReport" model and associated API endpoints
+    - Remove "last_stocktake" field from the Part model
+    - Remove "user" field from PartStocktake model
+    - Remove "note" field from PartStocktake model
+
+v378 -> 2025-08-01 : https://github.com/inventree/InvenTree/pull/10111
+    - Adds "scheduled_to_build" annotated field to BuildLine serializer
+
+v377 -> 2025-08-01 : https://github.com/inventree/InvenTree/pull/10109
+    - Allow email records to be deleted via the API
+
+v376 -> 2025-08-01 : https://github.com/inventree/InvenTree/pull/10108
+    - Fix search fields for ReturnOrderLineItem API list endpoint
+
+v375 -> 2025-07-28 : https://github.com/inventree/InvenTree/pull/10095
+    - Sorts searched fields to keep API stable
+
+v374 -> 2025-07-28 : https://github.com/inventree/InvenTree/pull/10092
+    - Add nullable to a few details fields that lack it
+    - Add the list of searched fields to the search parameter comments
+
+v373 -> 2025-06-21 : https://github.com/inventree/InvenTree/pull/9735
+    - Adds PluginUserSetting model (and associated endpoints)
+    - Remove NotificationSetting model (and associated endpoints)
+
+v372 -> 2025-07-19 : https://github.com/inventree/InvenTree/pull/10056
+    - Adds BOM validation information to the Part API
 
 v371 -> 2025-07-18 : https://github.com/inventree/InvenTree/pull/10042
     - Adds "setup_quantity" and "attrition" fields to BomItem API endpoints
@@ -83,7 +132,7 @@ v352 -> 2025-06-18 : https://github.com/inventree/InvenTree/pull/9803
     - Add valid fields to ordering field descriptions
 
 v351 -> 2025-06-18 : https://github.com/inventree/InvenTree/pull/9602
-    - Adds passwort reset API endpoint for admin users
+    - Adds password reset API endpoint for admin users
 
 v350 -> 2025-06-17 : https://github.com/inventree/InvenTree/pull/9798
     - Adds "can_build" field to the part requirements API endpoint
