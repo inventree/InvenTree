@@ -219,7 +219,6 @@ def update_plugins_file(install_name, full_package=None, version=None, remove=Fa
         with pf.open(mode='w') as f:
             for line in output:
                 f.write(line)
-                print(line)
 
                 if not line.endswith('\n'):
                     f.write('\n')
@@ -334,14 +333,10 @@ def uninstall_plugin(cfg: plugin.models.PluginConfig, user=None, delete_config=T
     """
     from plugin.registry import registry
 
-    print('=== uninstall_plugin:', cfg.key, '===')
-
     if settings.PLUGINS_INSTALL_DISABLED:
-        print('- Plugin uninstalling is disabled')
         raise ValidationError(_('Plugin uninstalling is disabled'))
 
     if cfg.active:
-        print('- Plugin is active')
         raise ValidationError(
             _('Plugin cannot be uninstalled as it is currently active')
         )
