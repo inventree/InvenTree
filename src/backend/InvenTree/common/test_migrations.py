@@ -238,7 +238,7 @@ class TestCurrencyMigration(MigratorTestCase):
         InvenTreeSetting = self.old_state.apps.get_model('common', 'InvenTreeSetting')
         setting = InvenTreeSetting.objects.filter(key='CURRENCY_CODES').first()
 
-        codes = setting.split(',')
+        codes = str(setting.value).split(',')
 
         self.assertEqual(len(codes), 3)
 
