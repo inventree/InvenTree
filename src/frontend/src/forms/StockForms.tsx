@@ -46,6 +46,7 @@ import {
 import { Thumbnail } from '../components/images/Thumbnail';
 import { StylishText } from '../components/items/StylishText';
 import { StatusRenderer } from '../components/render/StatusRenderer';
+import { RenderStockLocation } from '../components/render/Stock';
 import { InvenTreeIcon } from '../functions/icons';
 import {
   useApiFormModal,
@@ -576,7 +577,7 @@ function StockOperationsRow({
           </Stack>
         </Table.Td>
         <Table.Td>
-          {record.location ? record.location_detail?.pathstring : '-'}
+          <RenderStockLocation instance={record.location_detail} />
         </Table.Td>
         <Table.Td>{record.batch ? record.batch : '-'}</Table.Td>
         <Table.Td>

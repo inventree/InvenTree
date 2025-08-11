@@ -1,24 +1,31 @@
 import { t } from '@lingui/core/macro';
-import { Badge, Skeleton } from '@mantine/core';
+import { Badge, type MantineColor, Skeleton } from '@mantine/core';
 
 import { isTrue } from '../functions/Conversion';
 
 export function PassFailButton({
   value,
   passText,
-  failText
+  failText,
+  passColor,
+  failColor
 }: Readonly<{
   value: any;
   passText?: string;
   failText?: string;
+  passColor?: MantineColor;
+  failColor?: MantineColor;
 }>) {
   const v = isTrue(value);
   const pass = passText ?? t`Pass`;
   const fail = failText ?? t`Fail`;
 
+  const pColor = passColor ?? 'green';
+  const fColor = failColor ?? 'red';
+
   return (
     <Badge
-      color={v ? 'green' : 'red'}
+      color={v ? pColor : fColor}
       variant='filled'
       radius='lg'
       size='sm'
@@ -30,7 +37,14 @@ export function PassFailButton({
 }
 
 export function YesNoButton({ value }: Readonly<{ value: any }>) {
-  return <PassFailButton value={value} passText={t`Yes`} failText={t`No`} />;
+  return (
+    <PassFailButton
+      value={value}
+      passText={t`Yes`}
+      failText={t`No`}
+      failColor={'orange.6'}
+    />
+  );
 }
 
 export function YesNoUndefinedButton({ value }: Readonly<{ value?: boolean }>) {

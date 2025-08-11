@@ -1,11 +1,15 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 383
+INVENTREE_API_VERSION = 384
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+v384 -> 2025-08-11 : https://github.com/inventree/InvenTree/pull/8191
+    - Adds "consumed" field to the BuildItem API
+    - Adds API endpoint to consume stock against a BuildOrder
+
 v383 -> 2025-08-08 : https://github.com/inventree/InvenTree/pull/9969
     - Correctly apply changes listed in v358
     - Breaking: StockCreate now always returns a list of StockItem
