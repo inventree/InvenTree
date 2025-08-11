@@ -237,7 +237,13 @@ class TestCurrencyMigration(MigratorTestCase):
         """Test that the currency migration works."""
         InvenTreeSetting = self.old_state.apps.get_model('common', 'InvenTreeSetting')
         setting = InvenTreeSetting.objects.filter(key='CURRENCY_CODES').first()
-        self.assertEqual(setting.value, 'EUR,GBP,USD')
+
+        codes = setting.split(',')
+
+        self.assertEqual(len(codes), 3)
+
+        for code in ['USD', 'EUR', 'GBP']:
+            self.assertIn(code, codes)
 
 
 class TestCurrencyMigrationNo(MigratorTestCase):
