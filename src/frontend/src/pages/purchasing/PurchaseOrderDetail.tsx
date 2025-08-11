@@ -528,7 +528,7 @@ export default function PurchaseOrderDetail() {
         <Stack gap='xs'>
           <PageDetail
             title={`${t`Purchase Order`}: ${order.reference}`}
-            subtitle={order.description}
+            subtitle={subtitle}
             imageUrl={order.supplier_detail?.image_url}
             breadcrumbs={[{ name: t`Purchasing`, url: '/purchasing/' }]}
             lastCrumb={[
