@@ -67,9 +67,10 @@ def machine_registry_entrypoint(
             # Call the original method
             try:
                 result = method(self, *args, **kwargs)
-            except Exception:
+            except Exception as e:
                 log_error(method.__name__, scope='machine_registry')
                 result = default_value
+                raise e
             finally:
                 # If we reloaded the registry, we need to update the registry hash
                 if do_reload:
