@@ -1082,10 +1082,7 @@ class InvenTreeImageMixin(models.Model):
     )
 
     class Meta:
-        """Metaclass options for this mixin.
-
-        Note: abstract must be true, as this is only a mixin, not a separate table
-        """
+        """Metaclass options for this mixin."""
 
         abstract = True
 
@@ -1096,7 +1093,7 @@ class InvenTreeImageMixin(models.Model):
         return super().delete(*args, **kwargs)
 
     def get_images(self):
-        """Return a queryset of all attached images."""
+        """Return a queryset of all images."""
         return self.images.all()
 
     @property

@@ -148,7 +148,6 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
         icon: 'customers'
       }
     ];
-
     return (
       <ItemDetailsGrid>
         <Grid grow>
@@ -162,7 +161,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
             EditImageActions={{
               uploadFile: true,
               downloadImage: true,
-              deleteFile: company?.image_url
+              deleteFile: company?.image
             }}
           />
           <Grid.Col span={{ base: 12, sm: 8 }}>
