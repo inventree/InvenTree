@@ -173,6 +173,8 @@ def constructPathString(path: list[str], max_chars: int = 250) -> str:
 
 def getMediaUrl(filename):
     """Return the qualified access path for the given file, under the media directory."""
+    if settings.STORAGE_TARGET == 's3':
+        return str(filename)
     return os.path.join(MEDIA_URL, str(filename))
 
 

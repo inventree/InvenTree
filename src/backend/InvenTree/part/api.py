@@ -504,9 +504,7 @@ class PartThumbs(ListAPI):
         queryset = self.filter_queryset(self.get_queryset())
 
         # Return the most popular parts first
-        data = (
-            queryset.values('image').annotate(count=Count('image')).order_by('-count')
-        )
+        data = queryset.annotate(count=Count('image')).order_by('-count')
 
         page = self.paginate_queryset(data)
 
