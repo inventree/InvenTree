@@ -134,32 +134,53 @@ class MachineRegistry(
         self.load_machines(main=main)
 
     def discover_machine_types(self):
-        """Discovers all machine types by inferring all classes that inherit the BaseMachineType class."""
-        import InvenTree.helpers
+        """Discovers all machine types by discovering all plugins which implement the Machine mixin class."""
+        from plugin import PluginMixinEnum
+        from plugin.registry import registry as plugin_registry
 
         logger.debug('Collecting machine types')
 
         machine_types: dict[str, type[BaseMachineType]] = {}
         base_drivers: list[type[BaseDriver]] = []
 
-        discovered_machine_types: set[type[BaseMachineType]] = (
-            InvenTree.helpers.inheritors(BaseMachineType)
-        )
-        for machine_type in discovered_machine_types:
+        print('- discover machine types:')
+
+        for plugin in plugin_registry.with_mixin(PluginMixinEnum.MACHINE):
+            print('--', 'checking plugin:', plugin.slug)
+
             try:
-                machine_type.validate()
-            except NotImplementedError as error:
-                self.handle_error(error)
-                continue
+                for machine_type in plugin.get_machine_types():
+                    if not isinstance(machine_type, BaseMachineType):
+                        logger.error(
+                            'INVE-E12: Plugin %s returned invalid machine type',
+                            plugin.slug,
+                        )
+                        continue
 
-            if machine_type.SLUG in machine_types:
-                self.handle_error(
-                    ValueError(f"Cannot re-register machine type '{machine_type.SLUG}'")
+                    try:
+                        machine_type.validate()
+                    except NotImplementedError as error:
+                        self.handle_error(error)
+                        continue
+
+                    if machine_type.SLUG in machine_types:
+                        self.handle_error(
+                            ValueError(
+                                f"Cannot re-register machine type '{machine_type.SLUG}'"
+                            )
+                        )
+                        continue
+
+                    machine_types[machine_type.SLUG] = machine_type
+                    base_drivers.append(machine_type.base_driver)
+
+            except Exception as error:
+                log_error(
+                    'discover_machine_types',
+                    plugin=plugin.slug,
+                    scope='MachineRegistry',
                 )
-                continue
-
-            machine_types[machine_type.SLUG] = machine_type
-            base_drivers.append(machine_type.base_driver)
+                self.handle_error(error)
 
         self.machine_types = machine_types
         self.base_drivers = base_drivers
