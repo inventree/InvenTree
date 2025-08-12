@@ -214,7 +214,7 @@ export function RenderInlineModel({
   }
 
   return (
-    <Group gap='xs' justify='space-between' wrap='nowrap' title={tooltip}>
+    <Group gap='xs' justify='space-between' title={tooltip}>
       <Group gap='xs' justify='left' wrap='nowrap'>
         {prefix}
         {image && <Thumbnail src={image} size={18} />}
@@ -260,7 +260,7 @@ export function InlineSecondaryBadge({
 }): ReactNode {
   return (
     <Paper p={2} withBorder style={{ backgroundColor: 'transparent' }}>
-      <Group gap='xs'>
+      <Group gap='xs' wrap='nowrap'>
         {title && (
           <Text size={size} title={title}>
             {title}:
