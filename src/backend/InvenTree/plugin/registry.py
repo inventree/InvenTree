@@ -94,6 +94,7 @@ class PluginsRegistry:
         'bom-exporter',
         'inventree-exporter',
         'inventree-ui-notification',
+        'inventree-machines',
         'inventree-email-notification',
         'inventreecurrencyexchange',
         'inventreelabel',

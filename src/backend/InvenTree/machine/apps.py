@@ -9,7 +9,6 @@ from InvenTree.ready import (
     canAppAccessDatabase,
     isImportingData,
     isInMainThread,
-    isInWorkerThread,
     isPluginRegistryLoaded,
     isRunningMigrations,
 )
@@ -37,7 +36,7 @@ class MachineConfig(AppConfig):
 
         try:
             logger.info('Loading InvenTree machines')
-            registry.initialize(main=isInMainThread() or isInWorkerThread())
+            registry.initialize(main=isInMainThread())
         except (OperationalError, ProgrammingError):
             # Database might not yet be ready
             logger.warn('Database was not ready for initializing machines')

@@ -4,26 +4,14 @@ from django.db import models
 
 import structlog
 
+from machine.machine_type import BaseDriver
 from plugin import InvenTreePlugin
 from plugin.machine import BaseMachineType
 from plugin.machine.machine_types import LabelPrinterBaseDriver, LabelPrinterMachine
-from plugin.mixins import SettingsMixin
+from plugin.mixins import MachineDriverMixin, SettingsMixin
 from report.models import LabelTemplate
 
 logger = structlog.get_logger('inventree')
-
-
-class SamplePrinterMachine(SettingsMixin, InvenTreePlugin):
-    """A very simple example of a 'printer' machine plugin.
-
-    This plugin class simply prints a message to the logger.
-    """
-
-    NAME = 'SamplePrinterMachine'
-    SLUG = 'sampleprinter'
-    TITLE = 'Sample dummy plugin for printing labels'
-
-    VERSION = '0.1'
 
 
 class SamplePrinterDriver(LabelPrinterBaseDriver):
@@ -52,3 +40,20 @@ class SamplePrinterDriver(LabelPrinterBaseDriver):
         **kwargs,
     ) -> None:
         """Send the label to the printer."""
+
+
+class SamplePrinterMachine(MachineDriverMixin, SettingsMixin, InvenTreePlugin):
+    """A very simple example of a 'printer' machine plugin.
+
+    This plugin class simply prints a message to the logger.
+    """
+
+    NAME = 'SamplePrinterMachine'
+    SLUG = 'sampleprinter'
+    TITLE = 'Sample dummy plugin for printing labels'
+
+    VERSION = '0.1'
+
+    def get_machine_drivers(self) -> list[BaseDriver]:
+        """Return a list of drivers registered by this plugin."""
+        return [SamplePrinterDriver]

@@ -143,14 +143,10 @@ class MachineRegistry(
         machine_types: dict[str, type[BaseMachineType]] = {}
         base_drivers: list[type[BaseDriver]] = []
 
-        print('- discover machine types:')
-
         for plugin in plugin_registry.with_mixin(PluginMixinEnum.MACHINE):
-            print('--', 'checking plugin:', plugin.slug)
-
             try:
                 for machine_type in plugin.get_machine_types():
-                    if not isinstance(machine_type, BaseMachineType):
+                    if not issubclass(machine_type, BaseMachineType):
                         logger.error(
                             'INVE-E12: Plugin %s returned invalid machine type',
                             plugin.slug,
@@ -188,34 +184,42 @@ class MachineRegistry(
         logger.debug('Found %s machine types', len(self.machine_types.keys()))
 
     def discover_drivers(self):
-        """Discovers all machine drivers by inferring all classes that inherit the BaseDriver class."""
-        import InvenTree.helpers
+        """Discovers all machine drivers by discovering all plugins which implement the Machine mixin class."""
+        from plugin import PluginMixinEnum
+        from plugin.registry import registry as plugin_registry
 
         logger.debug('Collecting machine drivers')
 
         drivers: dict[str, type[BaseDriver]] = {}
 
-        discovered_drivers: set[type[BaseDriver]] = InvenTree.helpers.inheritors(
-            BaseDriver
-        )
-        for driver in discovered_drivers:
-            # skip discovered drivers that define a base driver for a machine type
-            if driver in self.base_drivers:
-                continue
-
+        for plugin in plugin_registry.with_mixin(PluginMixinEnum.MACHINE):
             try:
-                driver.validate()
-            except NotImplementedError as error:
-                self.handle_error(error)
-                continue
+                for driver in plugin.get_machine_drivers():
+                    if not issubclass(driver, BaseDriver):
+                        logger.error(
+                            'INVE-E12: Plugin %s returned invalid driver type',
+                            plugin.slug,
+                        )
+                        continue
 
-            if driver.SLUG in drivers:
-                self.handle_error(
-                    ValueError(f"Cannot re-register driver '{driver.SLUG}'")
+                    try:
+                        driver.validate()
+                    except NotImplementedError as error:
+                        self.handle_error(error)
+                        continue
+
+                    if driver.SLUG in drivers:
+                        self.handle_error(
+                            ValueError(f"Cannot re-register driver '{driver.SLUG}'")
+                        )
+                        continue
+
+                    drivers[driver.SLUG] = driver
+            except Exception as error:
+                log_error(
+                    'discover_drivers', plugin=plugin.slug, scope='MachineRegistry'
                 )
-                continue
-
-            drivers[driver.SLUG] = driver
+                self.handle_error(error)
 
         self.drivers = drivers
 
