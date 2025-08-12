@@ -237,7 +237,6 @@ class PartTest(TestCase):
         self.assertIsNone(orphan.category)
         self.assertEqual(orphan.category_path, '')
 
-    # FIXME: After migrate images to InvenTreeImage model this test don't works!
     def test_rename_img(self):
         """Test that an image can be renamed."""
         img = rename_part_image(self.r1, 'hello.png')

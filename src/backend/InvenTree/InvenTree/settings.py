@@ -330,7 +330,6 @@ INSTALLED_APPS = [
     'django_ical',  # For exporting calendars
     'django_mailbox',  # For email import
     'anymail',  # For email sending/receiving via ESPs
-    'django_extensions',
 ]
 
 MIDDLEWARE = CONFIG.get(
