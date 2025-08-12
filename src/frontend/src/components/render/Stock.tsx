@@ -111,7 +111,7 @@ export function RenderStockItem(
 
   // Form the "suffix" text to display
   const suffix: ReactNode = (
-    <Group gap='xs'>
+    <Group gap='xs' wrap='nowrap'>
       <Text size='xs'>{quantity_string}</Text>
       {location && (
         <TableHoverCard
