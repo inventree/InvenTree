@@ -8,7 +8,7 @@ msgstr ""
 "Language: cs\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-08-08 01:17\n"
+"PO-Revision-Date: 2025-08-11 12:24\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Plural-Forms: nplurals=4; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 3;\n"
@@ -357,7 +357,7 @@ msgstr ""
 
 #: lib/enums/ModelInformation.tsx:172
 msgid "Sales Order Shipments"
-msgstr ""
+msgstr "Nastavení prodejních objednávek"
 
 #: lib/enums/ModelInformation.tsx:178
 #: src/pages/sales/ReturnOrderDetail.tsx:516
@@ -542,7 +542,7 @@ msgstr "Chyby"
 
 #: lib/enums/Roles.tsx:31
 msgid "Admin"
-msgstr ""
+msgstr "Administrace"
 
 #: lib/enums/Roles.tsx:33
 #: src/pages/Index/Settings/SystemSettings.tsx:264
@@ -639,7 +639,7 @@ msgstr "Nebyly nalezeny žádné odpovídající položky"
 
 #: src/components/barcodes/BarcodeScanDialog.tsx:134
 msgid "Barcode does not match the expected model type"
-msgstr ""
+msgstr "Čárkový kód neodpovídá očekávanému typu modelu"
 
 #: src/components/barcodes/BarcodeScanDialog.tsx:145
 #: src/components/editors/NotesEditor.tsx:84
@@ -653,7 +653,7 @@ msgstr "Dokončeno"
 
 #: src/components/barcodes/BarcodeScanDialog.tsx:151
 msgid "Failed to handle barcode"
-msgstr ""
+msgstr "Skenování čárového kódu se nezdařilo"
 
 #: src/components/barcodes/BarcodeScanDialog.tsx:167
 #: src/pages/Index/Scan.tsx:129
@@ -662,11 +662,11 @@ msgstr "Skenování čárového kódu se nezdařilo"
 
 #: src/components/barcodes/QRCode.tsx:94
 msgid "Low (7%)"
-msgstr ""
+msgstr "Nízké (7%)"
 
 #: src/components/barcodes/QRCode.tsx:95
 msgid "Medium (15%)"
-msgstr ""
+msgstr "Střední (15%)"
 
 #: src/components/barcodes/QRCode.tsx:96
 msgid "Quartile (25%)"
@@ -674,7 +674,7 @@ msgstr ""
 
 #: src/components/barcodes/QRCode.tsx:97
 msgid "High (30%)"
-msgstr ""
+msgstr "Vysoké (30 %)"
 
 #: src/components/barcodes/QRCode.tsx:107
 msgid "Custom barcode"
@@ -826,7 +826,7 @@ msgstr "Otevřít spotlight"
 
 #: src/components/buttons/StarredToggleButton.tsx:36
 msgid "Subscription Updated"
-msgstr ""
+msgstr "Odběr aktualizován"
 
 #: src/components/buttons/StarredToggleButton.tsx:57
 #~ msgid "Unsubscribe from part"
@@ -834,11 +834,11 @@ msgstr ""
 
 #: src/components/buttons/StarredToggleButton.tsx:66
 msgid "Unsubscribe from notifications"
-msgstr ""
+msgstr "Zrušit odběr oznámení"
 
 #: src/components/buttons/StarredToggleButton.tsx:67
 msgid "Subscribe to notifications"
-msgstr ""
+msgstr "Přihlásit se k odběru oznámení"
 
 #: src/components/calendar/Calendar.tsx:99
 #: src/components/calendar/Calendar.tsx:162
@@ -954,11 +954,11 @@ msgstr "Zobrazit počet kategorií, ke kterým jste se přihlásili"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:38
 msgid "Invalid BOMs"
-msgstr ""
+msgstr "Neplatné kusovníky"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:39
 msgid "Assemblies requiring bill of materials validation"
-msgstr ""
+msgstr "Sestavy vyžadující ověření kusovníku"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:50
 #: src/tables/part/PartTable.tsx:254
@@ -1169,7 +1169,7 @@ msgstr "Personál"
 
 #: src/components/details/Details.tsx:125
 msgid "Email: "
-msgstr ""
+msgstr "E-mail: "
 
 #: src/components/details/Details.tsx:407
 msgid "No name defined"
@@ -1336,7 +1336,7 @@ msgstr "Kód"
 
 #: src/components/editors/TemplateEditor/PdfPreview/PdfPreview.tsx:50
 msgid "Error rendering preview"
-msgstr ""
+msgstr "Chyba při vykreslování náhledu"
 
 #: src/components/editors/TemplateEditor/PdfPreview/PdfPreview.tsx:120
 msgid "Preview not available, click \"Reload Preview\"."
@@ -1618,7 +1618,7 @@ msgstr "Chyba vstupu"
 
 #: src/components/forms/AuthenticationForm.tsx:281
 msgid "Check your input and try again. "
-msgstr ""
+msgstr "Zkontrolujte vstup a zkuste to znovu"
 
 #: src/components/forms/AuthenticationForm.tsx:305
 msgid "This will be used for a confirmation"
@@ -1644,11 +1644,11 @@ msgstr "Nebo použijte SSO"
 
 #: src/components/forms/AuthenticationForm.tsx:348
 msgid "Registration not active"
-msgstr ""
+msgstr "Registrace není aktivní"
 
 #: src/components/forms/AuthenticationForm.tsx:349
 msgid "This might be related to missing mail settings or could be a deliberate decision."
-msgstr ""
+msgstr "Příčinou může být chybějící nastavení e-mailu, případně to bylo rozhodnuto záměrně"
 
 #: src/components/forms/HostOptionsForm.tsx:36
 #: src/components/forms/HostOptionsForm.tsx:67
@@ -2114,11 +2114,11 @@ msgstr "Tyto informace jsou dostupné pouze pro uživatele"
 
 #: src/components/items/RoleTable.tsx:81
 msgid "Updating"
-msgstr ""
+msgstr "Aktualizace"
 
 #: src/components/items/RoleTable.tsx:82
 msgid "Updating group roles"
-msgstr ""
+msgstr "Aktualizace skupinových rolí"
 
 #: src/components/items/RoleTable.tsx:118
 #: src/components/settings/ConfigValueList.tsx:42
@@ -2130,20 +2130,20 @@ msgstr "Aktualizováno"
 
 #: src/components/items/RoleTable.tsx:119
 msgid "Group roles updated"
-msgstr ""
+msgstr "Skupinové role byly aktualizovány"
 
 #: src/components/items/RoleTable.tsx:135
 msgid "Role"
-msgstr ""
+msgstr "Role"
 
 #: src/components/items/RoleTable.tsx:140
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:413
 msgid "View"
-msgstr ""
+msgstr "Zobrazení"
 
 #: src/components/items/RoleTable.tsx:145
 msgid "Change"
-msgstr ""
+msgstr "Změnit"
 
 #: src/components/items/RoleTable.tsx:150
 #: src/forms/StockForms.tsx:866
@@ -2153,19 +2153,19 @@ msgstr "Přidat"
 
 #: src/components/items/RoleTable.tsx:203
 msgid "Reset group roles"
-msgstr ""
+msgstr "Obnovit skupinové role"
 
 #: src/components/items/RoleTable.tsx:212
 msgid "Reset"
-msgstr ""
+msgstr "Resetovat"
 
 #: src/components/items/RoleTable.tsx:215
 msgid "Save group roles"
-msgstr ""
+msgstr "Uložit skupinové role"
 
 #: src/components/items/TransferList.tsx:65
 msgid "No items"
-msgstr ""
+msgstr "Žádné položky"
 
 #: src/components/items/TransferList.tsx:161
 #: src/components/render/Stock.tsx:92
@@ -2181,7 +2181,7 @@ msgstr "K dispozici"
 
 #: src/components/items/TransferList.tsx:162
 msgid "Selected"
-msgstr ""
+msgstr "Vybrané"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:103
 #~ msgid "Your InvenTree version status is"
@@ -2396,7 +2396,7 @@ msgstr ""
 
 #: src/components/nav/Alerts.tsx:59
 msgid "Email settings"
-msgstr ""
+msgstr "Nastavení e-mailů"
 
 #: src/components/nav/Alerts.tsx:68
 msgid "Server Restart"
@@ -2420,7 +2420,7 @@ msgstr "Výstrahy"
 
 #: src/components/nav/Alerts.tsx:141
 msgid "Learn more about {code}"
-msgstr ""
+msgstr "Další informace o {code}"
 
 #: src/components/nav/Header.tsx:167
 #: src/components/nav/NavigationDrawer.tsx:141
@@ -2560,7 +2560,7 @@ msgstr "O aplikaci"
 
 #: src/components/nav/NavigationTree.tsx:211
 msgid "Error loading navigation tree."
-msgstr ""
+msgstr "Chyba při načítání navigačního stromu."
 
 #: src/components/nav/NotificationDrawer.tsx:183
 #: src/pages/Notifications.tsx:74
@@ -2577,7 +2577,7 @@ msgstr "Nemáš žádné nové notifikace."
 
 #: src/components/nav/NotificationDrawer.tsx:238
 msgid "Error loading notifications."
-msgstr ""
+msgstr "Chyba při načítání oznámení."
 
 #: src/components/nav/SearchDrawer.tsx:106
 msgid "No Overview Available"
@@ -2645,7 +2645,7 @@ msgstr "Použít regulární výraz pro vyhledávání"
 
 #: src/components/nav/SearchDrawer.tsx:527
 msgid "Notes search"
-msgstr ""
+msgstr "Vyhledat poznámky"
 
 #: src/components/nav/SearchDrawer.tsx:575
 msgid "An error occurred during search query"
@@ -2672,15 +2672,15 @@ msgstr "Poznámky"
 
 #: src/components/panels/PanelGroup.tsx:158
 msgid "Plugin Provided"
-msgstr ""
+msgstr "Plugin poskytnutý"
 
 #: src/components/panels/PanelGroup.tsx:275
 msgid "Collapse panels"
-msgstr ""
+msgstr "Sbalit panely"
 
 #: src/components/panels/PanelGroup.tsx:275
 msgid "Expand panels"
-msgstr ""
+msgstr "Rozbalit panely"
 
 #: src/components/plugins/LocateItemButton.tsx:68
 #: src/components/plugins/LocateItemButton.tsx:88
@@ -2846,7 +2846,7 @@ msgstr "Při načítání obsahu pluginu došlo k chybě"
 
 #: src/components/render/Instance.tsx:246
 msgid "Unknown model: {model_name}"
-msgstr ""
+msgstr "Neznámý model: {model_name}"
 
 #: src/components/render/ModelType.tsx:234
 #~ msgid "Purchase Order Line Item"
@@ -2975,11 +2975,11 @@ msgstr "Dávka"
 
 #: src/components/settings/ConfigValueList.tsx:36
 msgid "Setting"
-msgstr ""
+msgstr "Nastavení"
 
 #: src/components/settings/ConfigValueList.tsx:39
 msgid "Source"
-msgstr ""
+msgstr "Zdroj"
 
 #: src/components/settings/SettingItem.tsx:47
 #: src/components/settings/SettingItem.tsx:100
@@ -3009,7 +3009,7 @@ msgstr "Při úpravě nastavení došlo k chybě"
 
 #: src/components/settings/SettingList.tsx:146
 msgid "Error loading settings"
-msgstr ""
+msgstr "Chyba při načítání nastavení"
 
 #: src/components/settings/SettingList.tsx:187
 msgid "No settings specified"
@@ -3402,7 +3402,7 @@ msgstr "Položka přidána k objednávce"
 
 #: src/components/wizards/OrderPartsWizard.tsx:156
 msgid "Select supplier part"
-msgstr ""
+msgstr "Vyberte položku dodavatele"
 
 #: src/components/wizards/OrderPartsWizard.tsx:171
 msgid "New supplier part"

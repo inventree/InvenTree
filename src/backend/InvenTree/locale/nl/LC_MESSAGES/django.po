@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-08 01:14+0000\n"
-"PO-Revision-Date: 2025-08-08 01:17\n"
+"POT-Creation-Date: 2025-08-12 02:55+0000\n"
+"PO-Revision-Date: 2025-08-12 02:58\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -4058,11 +4058,11 @@ msgstr "Bedrijfsnaam"
 msgid "In Stock"
 msgstr "Op voorraad"
 
-#: data_exporter/mixins.py:324 data_exporter/mixins.py:391
+#: data_exporter/mixins.py:324 data_exporter/mixins.py:402
 msgid "Error occurred during data export"
 msgstr "Fout opgetreden tijdens data export"
 
-#: data_exporter/mixins.py:373
+#: data_exporter/mixins.py:380
 msgid "Data export plugin returned incorrect data format"
 msgstr "Gegevensexport plug-in geeft onjuiste gegevensindeling terug"
 
@@ -7288,7 +7288,7 @@ msgstr "De plug-in is niet geïnstalleerd"
 msgid "Plugin installation not found"
 msgstr "Plug-in installatie niet gevonden"
 
-#: plugin/installer.py:394
+#: plugin/installer.py:395
 msgid "Uninstalled plugin successfully"
 msgstr "Deïnstalleerde plug-in succesvol"
 
@@ -7344,17 +7344,17 @@ msgstr "Plug-in"
 msgid "No author found"
 msgstr "Geen auteur gevonden"
 
-#: plugin/registry.py:748
+#: plugin/registry.py:752
 #, python-brace-format
 msgid "Plugin '{p}' is not compatible with the current InvenTree version {v}"
 msgstr "De plug-in '{p}' is niet compatibel met de huidige InvenTree versie {v}"
 
-#: plugin/registry.py:751
+#: plugin/registry.py:755
 #, python-brace-format
 msgid "Plugin requires at least version {v}"
 msgstr "De plug-in vereist minimaal versie {v}"
 
-#: plugin/registry.py:753
+#: plugin/registry.py:757
 #, python-brace-format
 msgid "Plugin requires at most version {v}"
 msgstr "Plug-in vereist op de hoogste versie {v}"
