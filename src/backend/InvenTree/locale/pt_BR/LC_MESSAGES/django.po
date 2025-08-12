@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-08 01:14+0000\n"
-"PO-Revision-Date: 2025-08-08 01:17\n"
+"POT-Creation-Date: 2025-08-12 02:55+0000\n"
+"PO-Revision-Date: 2025-08-12 02:58\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "Language: pt_BR\n"
@@ -55,7 +55,7 @@ msgstr "Nenhum item corresponde com os critérios fornecidos"
 
 #: InvenTree/api.py:493
 msgid "No data provided"
-msgstr ""
+msgstr "Nenhum dado fornecido"
 
 #: InvenTree/api.py:743
 msgid "User does not have permission to view this model"
@@ -893,11 +893,11 @@ msgstr "Código do projeto para esta ordem de compilação"
 
 #: build/models.py:675
 msgid "Cannot complete build order with open child builds"
-msgstr ""
+msgstr "Não é possível concluir o pedido de produção com pedidos secundários abertos"
 
 #: build/models.py:680
 msgid "Cannot complete build order with incomplete outputs"
-msgstr ""
+msgstr "Não é possível concluir o pedido com saídas incompletas"
 
 #: build/models.py:699 build/models.py:827
 msgid "Failed to offload task to complete build allocations"
@@ -2006,7 +2006,7 @@ msgstr "Ocorreu um erro"
 
 #: common/models.py:2526
 msgid "INVE-E8: Email log deletion is protected. Set INVENTREE_PROTECT_EMAIL_LOG to False to allow deletion."
-msgstr ""
+msgstr "INVE-E8: exclusão de registro de e-mail está protegida. Defina INVENTREE_PROTECT_EMAIL_LOG para Falso para permitir a exclusão."
 
 #: common/models.py:2573
 msgid "Email Message"
@@ -2459,11 +2459,11 @@ msgstr "Mensagens de e-mail serão excluídas após um determinado número de di
 
 #: common/setting/system.py:344
 msgid "Protect Email Log"
-msgstr ""
+msgstr "Proteger o Log de E-mail"
 
 #: common/setting/system.py:345
 msgid "Prevent deletion of email log entries"
-msgstr ""
+msgstr "Evitar exclusão de entradas de registros de e-mail"
 
 #: common/setting/system.py:350
 msgid "Barcode Support"
@@ -3569,91 +3569,91 @@ msgstr "A posição da barra de navegação está fixa no topo da tela"
 
 #: common/setting/user.py:189
 msgid "Fixed Table Headers"
-msgstr ""
+msgstr "Cabeçalhos da Tabela Fixa"
 
 #: common/setting/user.py:190
 msgid "Table headers are fixed to the top of the table"
-msgstr ""
+msgstr "Cabeçalhos de tabela são fixos no topo da tabela"
 
 #: common/setting/user.py:195
 msgid "Navigation Icons"
-msgstr ""
+msgstr "Ícones de Navegação"
 
 #: common/setting/user.py:196
 msgid "Display icons in the navigation bar"
-msgstr ""
+msgstr "Exibir ícones na barra de navegação"
 
 #: common/setting/user.py:201
 msgid "Date Format"
-msgstr ""
+msgstr "Formato da data"
 
 #: common/setting/user.py:202
 msgid "Preferred format for displaying dates"
-msgstr ""
+msgstr "Formato preferido para exibir datas"
 
 #: common/setting/user.py:215
 msgid "Show Stock History"
-msgstr ""
+msgstr "Mostrar histórico de ações"
 
 #: common/setting/user.py:216
 msgid "Display stock history information in the part detail page"
-msgstr ""
+msgstr "Mostrar informações do histórico de estoque na página de detalhes do capítulo"
 
 #: common/setting/user.py:221
 msgid "Show Last Breadcrumb"
-msgstr ""
+msgstr "Mostrar última navegação"
 
 #: common/setting/user.py:222
 msgid "Show the current page in breadcrumbs"
-msgstr ""
+msgstr "Mostrar a página atual em breadcrumbs"
 
 #: common/setting/user.py:227
 msgid "Show full stock location in tables"
-msgstr ""
+msgstr "Mostrar localização completa do estoque nas tabelas"
 
 #: common/setting/user.py:229
 msgid "Disabled: The full location path is displayed as a hover tooltip. Enabled: The full location path is displayed as plain text."
-msgstr ""
+msgstr "Desativado: O caminho completo da localização é exibido como uma dica do mouse. Ativado: O caminho completo da localização é exibido como texto sem formatação."
 
 #: common/setting/user.py:235
 msgid "Show full part categories in tables"
-msgstr ""
+msgstr "Mostrar categorias completas do capítulo nas tabelas"
 
 #: common/setting/user.py:237
 msgid "Disabled: The full category path is displayed as a hover tooltip. Enabled: The full category path is displayed as plain text."
-msgstr ""
+msgstr "Desativado: O caminho completo da categoria é exibido como uma dica do mouse. Habilitado: O caminho completo da categoria é exibido como texto sem formatação."
 
 #: common/setting/user.py:243
 msgid "Receive error reports"
-msgstr ""
+msgstr "Receber relatório de erros"
 
 #: common/setting/user.py:244
 msgid "Receive notifications for system errors"
-msgstr ""
+msgstr "Receber notificações para erros do sistema"
 
 #: common/setting/user.py:249
 msgid "Last used printing machines"
-msgstr ""
+msgstr "Últimas máquinas de impressão utilizadas"
 
 #: common/setting/user.py:250
 msgid "Save the last used printing machines for a user"
-msgstr ""
+msgstr "Salvar as últimas máquinas de impressão usadas para um usuário"
 
 #: common/validators.py:35
 msgid "No attachment model type provided"
-msgstr ""
+msgstr "Nenhum modelo de anexo fornecido"
 
 #: common/validators.py:41
 msgid "Invalid attachment model type"
-msgstr ""
+msgstr "Categoria de modelo de anexo inválido"
 
 #: common/validators.py:82
 msgid "Minimum places cannot be greater than maximum places"
-msgstr ""
+msgstr "Os lugares mínimos não podem ser maiores que os máximos"
 
 #: common/validators.py:94
 msgid "Maximum places cannot be less than minimum places"
-msgstr ""
+msgstr "Os lugares maiores não podem ser menores que os máximos"
 
 #: common/validators.py:105
 msgid "An empty domain is not allowed."
@@ -3695,260 +3695,260 @@ msgstr "O fornecedor está Ativo"
 #: company/api.py:299 company/models.py:539 company/serializers.py:446
 #: part/serializers.py:575
 msgid "Manufacturer"
-msgstr ""
+msgstr "Fabricante"
 
 #: company/api.py:306 company/models.py:119 company/models.py:411
 #: stock/api.py:877
 msgid "Company"
-msgstr ""
+msgstr "Empresa"
 
 #: company/api.py:316
 msgid "Has Stock"
-msgstr ""
+msgstr "Tem estoque"
 
 #: company/models.py:120
 msgid "Companies"
-msgstr ""
+msgstr "Empresas"
 
 #: company/models.py:148
 msgid "Company description"
-msgstr ""
+msgstr "Descrição da empresa"
 
 #: company/models.py:149
 msgid "Description of the company"
-msgstr ""
+msgstr "Descrição da empresa"
 
 #: company/models.py:155
 msgid "Website"
-msgstr ""
+msgstr "Página Web"
 
 #: company/models.py:156
 msgid "Company website URL"
-msgstr ""
+msgstr "URL do Site da empresa"
 
 #: company/models.py:162
 msgid "Phone number"
-msgstr ""
+msgstr "Número de telefone"
 
 #: company/models.py:164
 msgid "Contact phone number"
-msgstr ""
+msgstr "Número de telefone do contato"
 
 #: company/models.py:171
 msgid "Contact email address"
-msgstr ""
+msgstr "Endereço de e-mail do contato"
 
 #: company/models.py:176 company/models.py:315 order/models.py:506
 #: users/models.py:567
 msgid "Contact"
-msgstr ""
+msgstr "Contato"
 
 #: company/models.py:178
 msgid "Point of contact"
-msgstr ""
+msgstr "Ponto de contato"
 
 #: company/models.py:184
 msgid "Link to external company information"
-msgstr ""
+msgstr "Link para informações externas da empresa"
 
 #: company/models.py:198
 msgid "Is this company active?"
-msgstr ""
+msgstr "Esta empresa está ativa?"
 
 #: company/models.py:203
 msgid "Is customer"
-msgstr ""
+msgstr "É um cliente"
 
 #: company/models.py:204
 msgid "Do you sell items to this company?"
-msgstr ""
+msgstr "Você vende itens para esta empresa?"
 
 #: company/models.py:209
 msgid "Is supplier"
-msgstr ""
+msgstr "É fornecedor"
 
 #: company/models.py:210
 msgid "Do you purchase items from this company?"
-msgstr ""
+msgstr "Você compra itens desta empresa?"
 
 #: company/models.py:215
 msgid "Is manufacturer"
-msgstr ""
+msgstr "É fabricante"
 
 #: company/models.py:216
 msgid "Does this company manufacture parts?"
-msgstr ""
+msgstr "Esta empresa fabrica peças?"
 
 #: company/models.py:224
 msgid "Default currency used for this company"
-msgstr ""
+msgstr "Moeda padrão utilizada para esta empresa"
 
 #: company/models.py:231
 msgid "Tax ID"
-msgstr ""
+msgstr "CNPJ"
 
 #: company/models.py:232
 msgid "Company Tax ID"
-msgstr ""
+msgstr "CNPJ da empresa"
 
 #: company/models.py:354 order/models.py:516
 msgid "Address"
-msgstr ""
+msgstr "Endereço"
 
 #: company/models.py:355
 msgid "Addresses"
-msgstr ""
+msgstr "Endereços"
 
 #: company/models.py:412
 msgid "Select company"
-msgstr ""
+msgstr "Selecione a Empresa"
 
 #: company/models.py:417
 msgid "Address title"
-msgstr ""
+msgstr "Título do endereço"
 
 #: company/models.py:418
 msgid "Title describing the address entry"
-msgstr ""
+msgstr "Título descrevendo a entrada do endereço"
 
 #: company/models.py:424
 msgid "Primary address"
-msgstr ""
+msgstr "Endereço Principal"
 
 #: company/models.py:425
 msgid "Set as primary address"
-msgstr ""
+msgstr "Definir como endereço principal"
 
 #: company/models.py:430
 msgid "Line 1"
-msgstr ""
+msgstr "Linha 1"
 
 #: company/models.py:431
 msgid "Address line 1"
-msgstr ""
+msgstr "Linha de endereço 1"
 
 #: company/models.py:437
 msgid "Line 2"
-msgstr ""
+msgstr "Linha 2"
 
 #: company/models.py:438
 msgid "Address line 2"
-msgstr ""
+msgstr "Linha de endereço 2"
 
 #: company/models.py:444 company/models.py:445
 msgid "Postal code"
-msgstr ""
+msgstr "CEP"
 
 #: company/models.py:451
 msgid "City/Region"
-msgstr ""
+msgstr "Cidade/Região"
 
 #: company/models.py:452
 msgid "Postal code city/region"
-msgstr ""
+msgstr "Cidade CEP / região"
 
 #: company/models.py:458
 msgid "State/Province"
-msgstr ""
+msgstr "Estado/Provincia"
 
 #: company/models.py:459
 msgid "State or province"
-msgstr ""
+msgstr "Estado ou Província"
 
 #: company/models.py:465
 msgid "Country"
-msgstr ""
+msgstr "País"
 
 #: company/models.py:466
 msgid "Address country"
-msgstr ""
+msgstr "País do endereço"
 
 #: company/models.py:472
 msgid "Courier shipping notes"
-msgstr ""
+msgstr "Notas de envio por correio"
 
 #: company/models.py:473
 msgid "Notes for shipping courier"
-msgstr ""
+msgstr "Notas para o envio da transportadora"
 
 #: company/models.py:479
 msgid "Internal shipping notes"
-msgstr ""
+msgstr "Notas de envio interno"
 
 #: company/models.py:480
 msgid "Shipping notes for internal use"
-msgstr ""
+msgstr "Notas de envio para uso interno"
 
 #: company/models.py:487
 msgid "Link to address information (external)"
-msgstr ""
+msgstr "Link para as informações do endereço (externo)"
 
 #: company/models.py:511 company/models.py:628 company/models.py:850
 #: company/serializers.py:460
 msgid "Manufacturer Part"
-msgstr ""
+msgstr "Fabricante da peça"
 
 #: company/models.py:528 company/models.py:818 stock/models.py:1018
 #: stock/serializers.py:444
 msgid "Base Part"
-msgstr ""
+msgstr "Peça base"
 
 #: company/models.py:530 company/models.py:820
 msgid "Select part"
-msgstr ""
+msgstr "Selecionar peça"
 
 #: company/models.py:540
 msgid "Select manufacturer"
-msgstr ""
+msgstr "Selecionar fabricante"
 
 #: company/models.py:546 company/serializers.py:468 order/serializers.py:672
 #: part/serializers.py:585
 msgid "MPN"
-msgstr ""
+msgstr "NPF"
 
 #: company/models.py:547 stock/serializers.py:606
 msgid "Manufacturer Part Number"
-msgstr ""
+msgstr "Número de Peça do Fabricante"
 
 #: company/models.py:554
 msgid "URL for external manufacturer part link"
-msgstr ""
+msgstr "URL do link externo da peça do fabricante"
 
 #: company/models.py:563
 msgid "Manufacturer part description"
-msgstr ""
+msgstr "Descrição da peça do fabricante"
 
 #: company/models.py:616
 msgid "Manufacturer Part Parameter"
-msgstr ""
+msgstr "Parâmetro da peça do fabricante"
 
 #: company/models.py:635
 msgid "Parameter name"
-msgstr ""
+msgstr "Nome do parâmetro"
 
 #: company/models.py:642
 msgid "Parameter value"
-msgstr ""
+msgstr "Valor do Parâmetro"
 
 #: company/models.py:649 part/models.py:1216 part/models.py:3849
 msgid "Units"
-msgstr ""
+msgstr "Unidades"
 
 #: company/models.py:650
 msgid "Parameter units"
-msgstr ""
+msgstr "Unidades do parâmetro"
 
 #: company/models.py:758
 msgid "Pack units must be compatible with the base part units"
-msgstr ""
+msgstr "Unidades de pacote devem ser compatíveis com as unidades de peça base"
 
 #: company/models.py:765
 msgid "Pack units must be greater than zero"
-msgstr ""
+msgstr "Unidades de pacote devem ser maior que zero"
 
 #: company/models.py:779
 msgid "Linked manufacturer part must reference the same base part"
-msgstr ""
+msgstr "Parte do fabricante vinculado deve fazer referência à mesma peça base"
 
 #: company/models.py:828 company/serializers.py:438 company/serializers.py:456
 #: order/models.py:632 part/serializers.py:559
@@ -3956,31 +3956,31 @@ msgstr ""
 #: plugin/builtin/suppliers/mouser.py:25 plugin/builtin/suppliers/tme.py:27
 #: stock/api.py:544 templates/email/overdue_purchase_order.html:16
 msgid "Supplier"
-msgstr ""
+msgstr "Fornecedor"
 
 #: company/models.py:829
 msgid "Select supplier"
-msgstr ""
+msgstr "Selecione o fornecedor"
 
 #: company/models.py:835 part/serializers.py:570
 msgid "Supplier stock keeping unit"
-msgstr ""
+msgstr "Unidade de reserva de estoque fornecedor"
 
 #: company/models.py:841
 msgid "Is this supplier part active?"
-msgstr ""
+msgstr "Esta parte de fornecedor está ativa?"
 
 #: company/models.py:851
 msgid "Select manufacturer part"
-msgstr ""
+msgstr "Selecionar peça do fabricante"
 
 #: company/models.py:858
 msgid "URL for external supplier part link"
-msgstr ""
+msgstr "URL do link externo da peça do fabricante"
 
 #: company/models.py:867
 msgid "Supplier part description"
-msgstr ""
+msgstr "Descrição da peça fornecedor"
 
 #: company/models.py:874 order/serializers.py:826 order/serializers.py:2053
 #: part/models.py:4062 part/models.py:4437 part/models.py:4806
@@ -3991,124 +3991,124 @@ msgstr ""
 #: report/templates/report/inventree_stock_location_report.html:105
 #: stock/serializers.py:836
 msgid "Note"
-msgstr ""
+msgstr "Anotação"
 
 #: company/models.py:883 part/models.py:2244
 msgid "base cost"
-msgstr ""
+msgstr "preço base"
 
 #: company/models.py:884 part/models.py:2245
 msgid "Minimum charge (e.g. stocking fee)"
-msgstr ""
+msgstr "Taxa mínima (ex.: taxa de estoque)"
 
 #: company/models.py:891 order/serializers.py:818 stock/models.py:1049
 #: stock/serializers.py:1642
 msgid "Packaging"
-msgstr ""
+msgstr "Embalagem"
 
 #: company/models.py:892
 msgid "Part packaging"
-msgstr ""
+msgstr "Embalagem de peças"
 
 #: company/models.py:897
 msgid "Pack Quantity"
-msgstr ""
+msgstr "Quantidade de embalagens"
 
 #: company/models.py:899
 msgid "Total quantity supplied in a single pack. Leave empty for single items."
-msgstr ""
+msgstr "Quantidade total fornecida em um único pacote. Deixe em branco para itens individuais."
 
 #: company/models.py:918 part/models.py:2251
 msgid "multiple"
-msgstr ""
+msgstr "múltiplo"
 
 #: company/models.py:919
 msgid "Order multiple"
-msgstr ""
+msgstr "Pedido múltiplo"
 
 #: company/models.py:931
 msgid "Quantity available from supplier"
-msgstr ""
+msgstr "Quantidade disponível do fornecedor"
 
 #: company/models.py:937
 msgid "Availability Updated"
-msgstr ""
+msgstr "Disponibilidade Atualizada"
 
 #: company/models.py:938
 msgid "Date of last update of availability data"
-msgstr ""
+msgstr "Data da última atualização de dados disponíveis"
 
 #: company/models.py:1066
 msgid "Supplier Price Break"
-msgstr ""
+msgstr "Parcelamento de Preço do Fornecedor"
 
 #: company/serializers.py:168
 msgid "Return the string representation for the primary address. This property exists for backwards compatibility."
-msgstr ""
+msgstr "Retorna a representação de cadeia de caracteres para o endereço primário. Esta propriedade existe para compatibilidade retroativa."
 
 #: company/serializers.py:187
 msgid "Default currency used for this supplier"
-msgstr ""
+msgstr "Moeda padrão utilizada para este fornecedor"
 
 #: company/serializers.py:223
 msgid "Company Name"
-msgstr ""
+msgstr "Nome da Empresa"
 
 #: company/serializers.py:422 part/serializers.py:948 stock/serializers.py:462
 msgid "In Stock"
-msgstr ""
+msgstr "Em Estoque"
 
-#: data_exporter/mixins.py:324 data_exporter/mixins.py:391
+#: data_exporter/mixins.py:324 data_exporter/mixins.py:402
 msgid "Error occurred during data export"
-msgstr ""
+msgstr "Ocorreu um erro ao exportar os dados"
 
-#: data_exporter/mixins.py:373
+#: data_exporter/mixins.py:380
 msgid "Data export plugin returned incorrect data format"
-msgstr ""
+msgstr "A extensão de exportação de dados retornou dados incorretos"
 
 #: data_exporter/serializers.py:74
 msgid "Export Format"
-msgstr ""
+msgstr "Formato de Exportação"
 
 #: data_exporter/serializers.py:75
 msgid "Select export file format"
-msgstr ""
+msgstr "Selecionar formato do arquivo de exportação"
 
 #: data_exporter/serializers.py:82
 msgid "Export Plugin"
-msgstr ""
+msgstr "Exportar extensão"
 
 #: data_exporter/serializers.py:83
 msgid "Select export plugin"
-msgstr ""
+msgstr "Selecionar extensão de exportação"
 
 #: generic/states/fields.py:146
 msgid "Additional status information for this item"
-msgstr ""
+msgstr "Informação adicional de status para este item"
 
 #: generic/states/fields.py:160
 msgid "Custom status key"
-msgstr ""
+msgstr "Tecla de status personalizada"
 
 #: generic/states/serializers.py:26
 msgid "Custom"
-msgstr ""
+msgstr "Personalizado"
 
 #: generic/states/serializers.py:37
 msgid "Class"
-msgstr ""
+msgstr "Turma"
 
 #: generic/states/serializers.py:40
 msgid "Values"
-msgstr ""
+msgstr "Valores"
 
 #: generic/states/tests.py:22 order/status_codes.py:13
 msgid "Placed"
-msgstr ""
+msgstr "Localizado"
 
 #: generic/states/validators.py:21
 msgid "Invalid status code"
-msgstr ""
+msgstr "Código de status inválido"
 
 #: importer/models.py:70
 msgid "Data File"
@@ -4116,368 +4116,368 @@ msgstr "Arquivo de dados"
 
 #: importer/models.py:71
 msgid "Data file to import"
-msgstr ""
+msgstr "Arquivo de dados para importar"
 
 #: importer/models.py:80
 msgid "Columns"
-msgstr ""
+msgstr "Colunas"
 
 #: importer/models.py:87
 msgid "Target model type for this import session"
-msgstr ""
+msgstr "Categoria de modelo de destino para esta sessão de importação"
 
 #: importer/models.py:93
 msgid "Import status"
-msgstr ""
+msgstr "Status de importação"
 
 #: importer/models.py:103
 msgid "Field Defaults"
-msgstr ""
+msgstr "Campos padrões"
 
 #: importer/models.py:110
 msgid "Field Overrides"
-msgstr ""
+msgstr "Substituições de campo"
 
 #: importer/models.py:117
 msgid "Field Filters"
-msgstr ""
+msgstr "Campo de Filtros"
 
 #: importer/models.py:250
 msgid "Some required fields have not been mapped"
-msgstr ""
+msgstr "Alguns campos necessários não foram mapeados"
 
 #: importer/models.py:407
 msgid "Column is already mapped to a database field"
-msgstr ""
+msgstr "A coluna já está mapeada a um campo de banco de dados"
 
 #: importer/models.py:412
 msgid "Field is already mapped to a data column"
-msgstr ""
+msgstr "O campo já está mapeado para uma coluna de dados"
 
 #: importer/models.py:421
 msgid "Column mapping must be linked to a valid import session"
-msgstr ""
+msgstr "Mapeamento de coluna deve ser ligado a uma sessão de importação válida"
 
 #: importer/models.py:426
 msgid "Column does not exist in the data file"
-msgstr ""
+msgstr "A coluna não existe no arquivo de dados"
 
 #: importer/models.py:433
 msgid "Field does not exist in the target model"
-msgstr ""
+msgstr "O campo não existe no modelo de destino"
 
 #: importer/models.py:437
 msgid "Selected field is read-only"
-msgstr ""
+msgstr "O campo selecionado é somente leitura"
 
 #: importer/models.py:442 importer/models.py:513
 msgid "Import Session"
-msgstr ""
+msgstr "Importar Sessão"
 
 #: importer/models.py:446
 msgid "Field"
-msgstr ""
+msgstr "Campo"
 
 #: importer/models.py:448
 msgid "Column"
-msgstr ""
+msgstr "Coluna"
 
 #: importer/models.py:517
 msgid "Row Index"
-msgstr ""
+msgstr "Índice de fileira"
 
 #: importer/models.py:520
 msgid "Original row data"
-msgstr ""
+msgstr "Dados da linha original"
 
 #: importer/models.py:525 machine/models.py:110
 msgid "Errors"
-msgstr ""
+msgstr "Erros"
 
 #: importer/models.py:527 part/serializers.py:1239
 msgid "Valid"
-msgstr ""
+msgstr "Válido"
 
 #: importer/operations.py:28 importer/operations.py:49
 msgid "Unsupported data file format"
-msgstr ""
+msgstr "Formato de arquivo de dados não suportado"
 
 #: importer/operations.py:40
 msgid "Failed to open data file"
-msgstr ""
+msgstr "Falha ao abrir o arquivo de dados"
 
 #: importer/operations.py:51
 msgid "Invalid data file dimensions"
-msgstr ""
+msgstr "Dimensões de arquivo de dados inválidas"
 
 #: importer/serializers.py:91
 msgid "Invalid field defaults"
-msgstr ""
+msgstr "Padrão de campo inválido"
 
 #: importer/serializers.py:104
 msgid "Invalid field overrides"
-msgstr ""
+msgstr "Substituição de campo inválida"
 
 #: importer/serializers.py:117
 msgid "Invalid field filters"
-msgstr ""
+msgstr "Filtros de campo inválidos"
 
 #: importer/serializers.py:176
 msgid "Rows"
-msgstr ""
+msgstr "Linhas"
 
 #: importer/serializers.py:177
 msgid "List of row IDs to accept"
-msgstr ""
+msgstr "Lista de ID das linhas para aceitar"
 
 #: importer/serializers.py:190
 msgid "No rows provided"
-msgstr ""
+msgstr "Nenhuma linha fornecida"
 
 #: importer/serializers.py:194
 msgid "Row does not belong to this session"
-msgstr ""
+msgstr "A linha não pertence a esta sessão"
 
 #: importer/serializers.py:197
 msgid "Row contains invalid data"
-msgstr ""
+msgstr "A linha contém dados inválidos"
 
 #: importer/serializers.py:200
 msgid "Row has already been completed"
-msgstr ""
+msgstr "A linha já foi concluída"
 
 #: importer/status_codes.py:13
 msgid "Initializing"
-msgstr ""
+msgstr "Inicialização"
 
 #: importer/status_codes.py:18
 msgid "Mapping Columns"
-msgstr ""
+msgstr "Mapeando Colunas"
 
 #: importer/status_codes.py:21
 msgid "Importing Data"
-msgstr ""
+msgstr "Importando dados"
 
 #: importer/status_codes.py:24
 msgid "Processing Data"
-msgstr ""
+msgstr "Processando dados"
 
 #: importer/validators.py:21
 msgid "Data file exceeds maximum size limit"
-msgstr ""
+msgstr "O arquivo de dados excede o limite de tamanho máximo"
 
 #: importer/validators.py:26
 msgid "Data file contains no headers"
-msgstr ""
+msgstr "O arquivo de dados não contém cabeçalhos"
 
 #: importer/validators.py:29
 msgid "Data file contains too many columns"
-msgstr ""
+msgstr "Arquivo de dados contém colunas em excesso"
 
 #: importer/validators.py:32
 msgid "Data file contains too many rows"
-msgstr ""
+msgstr "Arquivo de dados contém linhas em excesso"
 
 #: importer/validators.py:53
 msgid "Value must be a valid dictionary object"
-msgstr ""
+msgstr "Valor deve ser um objeto de dicionário válido"
 
 #: machine/machine_types/label_printer.py:212
 msgid "Copies"
-msgstr ""
+msgstr "Cópias"
 
 #: machine/machine_types/label_printer.py:213
 msgid "Number of copies to print for each label"
-msgstr ""
+msgstr "Número de cópias para cada rótulo"
 
 #: machine/machine_types/label_printer.py:228
 msgid "Connected"
-msgstr ""
+msgstr "Conectado"
 
 #: machine/machine_types/label_printer.py:229 order/api.py:1748
 msgid "Unknown"
-msgstr ""
+msgstr "Desconhecido"
 
 #: machine/machine_types/label_printer.py:230
 msgid "Printing"
-msgstr ""
+msgstr "Imprimindo"
 
 #: machine/machine_types/label_printer.py:231
 msgid "No media"
-msgstr ""
+msgstr "Sem mídia"
 
 #: machine/machine_types/label_printer.py:232
 msgid "Paper jam"
-msgstr ""
+msgstr "Papel enroscado"
 
 #: machine/machine_types/label_printer.py:233
 msgid "Disconnected"
-msgstr ""
+msgstr "Desconectado"
 
 #: machine/machine_types/label_printer.py:240
 msgid "Label Printer"
-msgstr ""
+msgstr "Impressora de etiqueta"
 
 #: machine/machine_types/label_printer.py:241
 msgid "Directly print labels for various items."
-msgstr ""
+msgstr "Imprima etiquetas diretamente para vários itens."
 
 #: machine/machine_types/label_printer.py:247
 msgid "Printer Location"
-msgstr ""
+msgstr "Local da impressora"
 
 #: machine/machine_types/label_printer.py:248
 msgid "Scope the printer to a specific location"
-msgstr ""
+msgstr "Escopo da impressora para um local específico"
 
 #: machine/models.py:25
 msgid "Name of machine"
-msgstr ""
+msgstr "Nome da máquina"
 
 #: machine/models.py:29
 msgid "Machine Type"
-msgstr ""
+msgstr "Categoria de máquina"
 
 #: machine/models.py:29
 msgid "Type of machine"
-msgstr ""
+msgstr "Categoria de máquina"
 
 #: machine/models.py:34 machine/models.py:146
 msgid "Driver"
-msgstr ""
+msgstr "Controlador"
 
 #: machine/models.py:35
 msgid "Driver used for the machine"
-msgstr ""
+msgstr "Controlador utilizado para a máquina"
 
 #: machine/models.py:39
 msgid "Machines can be disabled"
-msgstr ""
+msgstr "Máquinas podem ser desativadas"
 
 #: machine/models.py:95
 msgid "Driver available"
-msgstr ""
+msgstr "Controlador disponível"
 
 #: machine/models.py:100
 msgid "No errors"
-msgstr ""
+msgstr "Nenhum erro"
 
 #: machine/models.py:105
 msgid "Initialized"
-msgstr ""
+msgstr "Iniciado"
 
 #: machine/models.py:117
 msgid "Machine status"
-msgstr ""
+msgstr "Estado da máquina"
 
 #: machine/models.py:145
 msgid "Machine"
-msgstr ""
+msgstr "Máquina"
 
 #: machine/models.py:157
 msgid "Machine Config"
-msgstr ""
+msgstr "Configuração da Máquina"
 
 #: machine/models.py:162
 msgid "Config type"
-msgstr ""
+msgstr "Categoria de configuração"
 
 #: order/api.py:120
 msgid "Order Reference"
-msgstr ""
+msgstr "Referência do Pedido"
 
 #: order/api.py:148 order/api.py:1187
 msgid "Outstanding"
-msgstr ""
+msgstr "Pendente"
 
 #: order/api.py:164
 msgid "Has Project Code"
-msgstr ""
+msgstr "Tem código do projeto"
 
 #: order/api.py:178 order/models.py:481
 msgid "Created By"
-msgstr ""
+msgstr "Criado por"
 
 #: order/api.py:182
 msgid "Created Before"
-msgstr ""
+msgstr "Criado Antes"
 
 #: order/api.py:186
 msgid "Created After"
-msgstr ""
+msgstr "Criado Após"
 
 #: order/api.py:190
 msgid "Has Start Date"
-msgstr ""
+msgstr "Tem Data Inicial"
 
 #: order/api.py:198
 msgid "Start Date Before"
-msgstr ""
+msgstr "Data Inicial Antes"
 
 #: order/api.py:202
 msgid "Start Date After"
-msgstr ""
+msgstr "Data Inicial Após"
 
 #: order/api.py:206
 msgid "Has Target Date"
-msgstr ""
+msgstr "Tem Data Prevista"
 
 #: order/api.py:214
 msgid "Target Date Before"
-msgstr ""
+msgstr "Data Prevista Antes"
 
 #: order/api.py:218
 msgid "Target Date After"
-msgstr ""
+msgstr "Data Prevista Antes"
 
 #: order/api.py:269
 msgid "Has Pricing"
-msgstr ""
+msgstr "Tem Preço"
 
 #: order/api.py:322 order/api.py:792 order/api.py:1444
 msgid "Completed Before"
-msgstr ""
+msgstr "Concluído Antes"
 
 #: order/api.py:326 order/api.py:796 order/api.py:1448
 msgid "Completed After"
-msgstr ""
+msgstr "Concluído Após"
 
 #: order/api.py:332 order/api.py:336
 msgid "External Build Order"
-msgstr ""
+msgstr "Pedido de Produção Vencido"
 
 #: order/api.py:509 order/api.py:894 order/api.py:1150 order/models.py:1756
 #: order/models.py:1885 order/models.py:1936 order/models.py:2090
 #: order/models.py:2256 order/models.py:2778 order/models.py:2844
 msgid "Order"
-msgstr ""
+msgstr "Pedido"
 
 #: order/api.py:513 order/api.py:962
 msgid "Order Complete"
-msgstr ""
+msgstr "Pedido Completo"
 
 #: order/api.py:545 order/api.py:549 order/serializers.py:683
 msgid "Internal Part"
-msgstr ""
+msgstr "Peça Interna"
 
 #: order/api.py:567
 msgid "Order Pending"
-msgstr ""
+msgstr "Pedido pendente"
 
 #: order/api.py:947
 msgid "Completed"
-msgstr ""
+msgstr "Concluído"
 
 #: order/api.py:1203
 msgid "Has Shipment"
-msgstr ""
+msgstr "Possui Envio"
 
 #: order/api.py:1742 order/models.py:545 order/models.py:1757
 #: order/models.py:1886
 #: report/templates/report/inventree_purchase_order_report.html:14
 #: stock/serializers.py:128 templates/email/overdue_purchase_order.html:15
 msgid "Purchase Order"
-msgstr ""
+msgstr "Pedido de Compra"
 
 #: order/api.py:1744 order/models.py:1127 order/models.py:1937
 #: order/models.py:2091 order/models.py:2257
@@ -4486,347 +4486,347 @@ msgstr ""
 #: report/templates/report/inventree_sales_order_shipment_report.html:15
 #: templates/email/overdue_sales_order.html:15
 msgid "Sales Order"
-msgstr ""
+msgstr "Pedido de Venda"
 
 #: order/api.py:1746 order/models.py:2428 order/models.py:2779
 #: order/models.py:2845
 #: report/templates/report/inventree_return_order_report.html:13
 #: templates/email/overdue_return_order.html:15
 msgid "Return Order"
-msgstr ""
+msgstr "Pedido de Devolução"
 
 #: order/models.py:90
 #: report/templates/report/inventree_purchase_order_report.html:38
 #: report/templates/report/inventree_sales_order_report.html:31
 msgid "Total Price"
-msgstr ""
+msgstr "Preço Total"
 
 #: order/models.py:91
 msgid "Total price for this order"
-msgstr ""
+msgstr "Preço total deste pedido"
 
 #: order/models.py:96 order/serializers.py:76
 msgid "Order Currency"
-msgstr ""
+msgstr "Moeda do Pedido"
 
 #: order/models.py:99 order/serializers.py:77
 msgid "Currency for this order (leave blank to use company default)"
-msgstr ""
+msgstr "Moeda para este pedido (deixe em branco para usar o padrão da empresa)"
 
 #: order/models.py:324
 msgid "This order is locked and cannot be modified"
-msgstr ""
+msgstr "Este pedido está bloqueado e não pode ser modificado"
 
 #: order/models.py:376
 msgid "Contact does not match selected company"
-msgstr ""
+msgstr "O contato não corresponde à empresa selecionada"
 
 #: order/models.py:383
 msgid "Start date must be before target date"
-msgstr ""
+msgstr "Data inicial deve ser anterior à data limite"
 
 #: order/models.py:436
 msgid "Order description (optional)"
-msgstr ""
+msgstr "Descrição do pedido (opcional)"
 
 #: order/models.py:445
 msgid "Select project code for this order"
-msgstr ""
+msgstr "Selecione o código do projeto para este pedido"
 
 #: order/models.py:451 order/models.py:1633 order/models.py:2145
 msgid "Link to external page"
-msgstr ""
+msgstr "Link para página externa"
 
 #: order/models.py:458
 msgid "Start date"
-msgstr ""
+msgstr "Data inicial"
 
 #: order/models.py:459
 msgid "Scheduled start date for this order"
-msgstr ""
+msgstr "Data de início programada para esta encomenda"
 
 #: order/models.py:465 order/models.py:1640 order/serializers.py:270
 #: report/templates/report/inventree_build_order_report.html:125
 msgid "Target Date"
-msgstr ""
+msgstr "Data Prevista"
 
 #: order/models.py:467
 msgid "Expected date for order delivery. Order will be overdue after this date."
-msgstr ""
+msgstr "Data esperada para entrega do pedido. O Pedido estará atrasado após esta data."
 
 #: order/models.py:487
 msgid "Issue Date"
-msgstr ""
+msgstr "Data de emissão"
 
 #: order/models.py:488
 msgid "Date order was issued"
-msgstr ""
+msgstr "Dia que o pedido foi feito"
 
 #: order/models.py:496
 msgid "User or group responsible for this order"
-msgstr ""
+msgstr "Usuário ou grupo responsável para este pedido"
 
 #: order/models.py:507
 msgid "Point of contact for this order"
-msgstr ""
+msgstr "Ponto de contato para este pedido"
 
 #: order/models.py:517
 msgid "Company address for this order"
-msgstr ""
+msgstr "Endereço da empresa para este pedido"
 
 #: order/models.py:608 order/models.py:1188
 msgid "Order reference"
-msgstr ""
+msgstr "Referência do pedido"
 
 #: order/models.py:617 order/models.py:1212 order/models.py:2516
 #: stock/serializers.py:593 stock/serializers.py:1011 users/models.py:548
 msgid "Status"
-msgstr ""
+msgstr "Situação"
 
 #: order/models.py:618
 msgid "Purchase order status"
-msgstr ""
+msgstr "Estado do pedido"
 
 #: order/models.py:633
 msgid "Company from which the items are being ordered"
-msgstr ""
+msgstr "Empresa da qual os itens estão sendo encomendados"
 
 #: order/models.py:644
 msgid "Supplier Reference"
-msgstr ""
+msgstr "Referencia do fornecedor"
 
 #: order/models.py:645
 msgid "Supplier order reference code"
-msgstr ""
+msgstr "Código de referência do pedido fornecedor"
 
 #: order/models.py:654
 msgid "received by"
-msgstr ""
+msgstr "recebido por"
 
 #: order/models.py:661 order/models.py:2531
 msgid "Date order was completed"
-msgstr ""
+msgstr "Dia que o pedido foi concluído"
 
 #: order/models.py:670 order/models.py:1815
 msgid "Destination"
-msgstr ""
+msgstr "Destino"
 
 #: order/models.py:671 order/models.py:1819
 msgid "Destination for received items"
-msgstr ""
+msgstr "Destino para os itens recebidos"
 
 #: order/models.py:717
 msgid "Part supplier must match PO supplier"
-msgstr ""
+msgstr "Fornecedor de peça deve corresponder a fornecedor da OC"
 
 #: order/models.py:977
 msgid "Quantity must be a positive number"
-msgstr ""
+msgstr "Quantidade deve ser um número positivo"
 
 #: order/models.py:1199 order/models.py:2503 stock/models.py:1071
 #: stock/models.py:1072 stock/serializers.py:1358
 #: templates/email/overdue_return_order.html:16
 #: templates/email/overdue_sales_order.html:16
 msgid "Customer"
-msgstr ""
+msgstr "Cliente"
 
 #: order/models.py:1200
 msgid "Company to which the items are being sold"
-msgstr ""
+msgstr "Empresa para qual os itens foi vendidos"
 
 #: order/models.py:1213
 msgid "Sales order status"
-msgstr ""
+msgstr "Situação do Pedido de Venda"
 
 #: order/models.py:1224 order/models.py:2523
 msgid "Customer Reference "
-msgstr ""
+msgstr "Referência do Cliente "
 
 #: order/models.py:1225 order/models.py:2524
 msgid "Customer order reference code"
-msgstr ""
+msgstr "Código de Referência do pedido do cliente"
 
 #: order/models.py:1229 order/models.py:2097
 msgid "Shipment Date"
-msgstr ""
+msgstr "Data de envio"
 
 #: order/models.py:1238
 msgid "shipped by"
-msgstr ""
+msgstr "enviado por"
 
 #: order/models.py:1277
 msgid "Order is already complete"
-msgstr ""
+msgstr "O pedido já está completo"
 
 #: order/models.py:1280
 msgid "Order is already cancelled"
-msgstr ""
+msgstr "O pedido já está cancelado"
 
 #: order/models.py:1284
 msgid "Only an open order can be marked as complete"
-msgstr ""
+msgstr "Apenas um pedido aberto pode ser marcado como completo"
 
 #: order/models.py:1288
 msgid "Order cannot be completed as there are incomplete shipments"
-msgstr ""
+msgstr "Pedido não pode ser concluído, pois, há envios incompletos"
 
 #: order/models.py:1293
 msgid "Order cannot be completed as there are incomplete allocations"
-msgstr ""
+msgstr "O pedido não pode ser concluído, pois, há alocações incompletas"
 
 #: order/models.py:1298
 msgid "Order cannot be completed as there are incomplete line items"
-msgstr ""
+msgstr "O pedido não pode ser concluído, pois, há itens de linha incompletos"
 
 #: order/models.py:1582 order/models.py:1595
 msgid "The order is locked and cannot be modified"
-msgstr ""
+msgstr "O pedido está bloqueado e não pode ser modificado"
 
 #: order/models.py:1603
 msgid "Item quantity"
-msgstr ""
+msgstr "Quantidade do item"
 
 #: order/models.py:1620
 msgid "Line item reference"
-msgstr ""
+msgstr "Referência do Item em Linha"
 
 #: order/models.py:1627
 msgid "Line item notes"
-msgstr ""
+msgstr "Observações do Item de Linha"
 
 #: order/models.py:1642
 msgid "Target date for this line item (leave blank to use the target date from the order)"
-msgstr ""
+msgstr "Data limite para este item de linha (deixe em branco para usar a data limite do pedido)"
 
 #: order/models.py:1663
 msgid "Line item description (optional)"
-msgstr ""
+msgstr "Descrição do item de linha (opcional)"
 
 #: order/models.py:1670
 msgid "Additional context for this line"
-msgstr ""
+msgstr "Contexto adicional para esta linha"
 
 #: order/models.py:1680
 msgid "Unit price"
-msgstr ""
+msgstr "Preço Unitário"
 
 #: order/models.py:1699
 msgid "Purchase Order Line Item"
-msgstr ""
+msgstr "Item de linha de pedido de compra"
 
 #: order/models.py:1723
 msgid "Supplier part must match supplier"
-msgstr ""
+msgstr "A peça do fornecedor deve corresponder ao fornecedor"
 
 #: order/models.py:1728
 msgid "Build order must be marked as external"
-msgstr ""
+msgstr "Pedido de produção deve ser marcada como externa"
 
 #: order/models.py:1735
 msgid "Build orders can only be linked to assembly parts"
-msgstr ""
+msgstr "Os pedidos de produção só podem ser vinculados a partes de montagem"
 
 #: order/models.py:1741
 msgid "Build order part must match line item part"
-msgstr ""
+msgstr "Criar parte do pedido deve combinar a parte do item de linha"
 
 #: order/models.py:1776
 msgid "Supplier part"
-msgstr ""
+msgstr "Fornecedor da Peça"
 
 #: order/models.py:1783
 msgid "Received"
-msgstr ""
+msgstr "Recebido"
 
 #: order/models.py:1784
 msgid "Number of items received"
-msgstr ""
+msgstr "Número de itens recebidos"
 
 #: order/models.py:1792 stock/models.py:1194 stock/serializers.py:660
 msgid "Purchase Price"
-msgstr ""
+msgstr "Preço de Compra"
 
 #: order/models.py:1793
 msgid "Unit purchase price"
-msgstr ""
+msgstr "Preço unitário de compra"
 
 #: order/models.py:1809
 msgid "External Build Order to be fulfilled by this line item"
-msgstr ""
+msgstr "Pedido de produção externa para ser preenchida por este item de linha"
 
 #: order/models.py:1874
 msgid "Purchase Order Extra Line"
-msgstr ""
+msgstr "Linha Extra do Pedido de Compra"
 
 #: order/models.py:1903
 msgid "Sales Order Line Item"
-msgstr ""
+msgstr "Item de Linha de Pedido de Vendas"
 
 #: order/models.py:1924
 msgid "Virtual part cannot be assigned to a sales order"
-msgstr ""
+msgstr "Peça virtual não pode ser atribuída a um pedido de venda"
 
 #: order/models.py:1929
 msgid "Only salable parts can be assigned to a sales order"
-msgstr ""
+msgstr "Apenas peças vendáveis podem ser atribuídas a um pedido de venda"
 
 #: order/models.py:1955
 msgid "Sale Price"
-msgstr ""
+msgstr "Preço de Venda"
 
 #: order/models.py:1956
 msgid "Unit sale price"
-msgstr ""
+msgstr "Preço de venda unitário"
 
 #: order/models.py:1965 order/status_codes.py:50
 msgid "Shipped"
-msgstr ""
+msgstr "Enviado"
 
 #: order/models.py:1966
 msgid "Shipped quantity"
-msgstr ""
+msgstr "Quantidade enviada"
 
 #: order/models.py:2066
 msgid "Sales Order Shipment"
-msgstr ""
+msgstr "Envio do Pedido de Venda"
 
 #: order/models.py:2098
 msgid "Date of shipment"
-msgstr ""
+msgstr "Data do envio"
 
 #: order/models.py:2104
 msgid "Delivery Date"
-msgstr ""
+msgstr "Data de Entrega"
 
 #: order/models.py:2105
 msgid "Date of delivery of shipment"
-msgstr ""
+msgstr "Data da entrega do envio"
 
 #: order/models.py:2113
 msgid "Checked By"
-msgstr ""
+msgstr "Verificado por"
 
 #: order/models.py:2114
 msgid "User who checked this shipment"
-msgstr ""
+msgstr "Usuário que verificou este envio"
 
 #: order/models.py:2121 order/models.py:2353 order/serializers.py:1711
 #: order/serializers.py:1835
 #: report/templates/report/inventree_sales_order_shipment_report.html:14
 msgid "Shipment"
-msgstr ""
+msgstr "Envio"
 
 #: order/models.py:2122
 msgid "Shipment number"
-msgstr ""
+msgstr "Número do Envio"
 
 #: order/models.py:2130
 msgid "Tracking Number"
-msgstr ""
+msgstr "Número de rastreio"
 
 #: order/models.py:2131
 msgid "Shipment tracking information"
-msgstr ""
+msgstr "Informação de rastreamento"
 
 #: order/models.py:2138
 msgid "Invoice Number"
@@ -4882,7 +4882,7 @@ msgstr ""
 
 #: order/models.py:2343
 msgid "Line"
-msgstr ""
+msgstr "Linha"
 
 #: order/models.py:2354
 msgid "Sales order shipment reference"
@@ -4890,7 +4890,7 @@ msgstr ""
 
 #: order/models.py:2367 order/models.py:2786
 msgid "Item"
-msgstr ""
+msgstr "Item"
 
 #: order/models.py:2368
 msgid "Select stock item to allocate"
@@ -5041,7 +5041,7 @@ msgstr ""
 
 #: order/serializers.py:656
 msgid "Merge Items"
-msgstr ""
+msgstr "Mesclar Itens"
 
 #: order/serializers.py:658
 msgid "Merge items with the same part, destination and target date into one line item"
@@ -5049,7 +5049,7 @@ msgstr ""
 
 #: order/serializers.py:665 part/serializers.py:569
 msgid "SKU"
-msgstr ""
+msgstr "Código (SKU)"
 
 #: order/serializers.py:679 part/models.py:1101 part/serializers.py:374
 msgid "Internal Part Number"
@@ -5114,7 +5114,7 @@ msgstr ""
 
 #: order/serializers.py:834
 msgid "Barcode"
-msgstr ""
+msgstr "Código de barras"
 
 #: order/serializers.py:835
 msgid "Scanned barcode"
@@ -5214,15 +5214,15 @@ msgstr ""
 
 #: order/status_codes.py:17 order/status_codes.py:54 stock/status_codes.py:16
 msgid "Lost"
-msgstr ""
+msgstr "Perdido"
 
 #: order/status_codes.py:18 order/status_codes.py:55 stock/status_codes.py:24
 msgid "Returned"
-msgstr ""
+msgstr "Devolvido"
 
 #: order/status_codes.py:47 order/status_codes.py:79
 msgid "In Progress"
-msgstr ""
+msgstr "Em andamento"
 
 #: order/status_codes.py:105
 msgid "Return"
@@ -5230,7 +5230,7 @@ msgstr ""
 
 #: order/status_codes.py:108
 msgid "Repair"
-msgstr ""
+msgstr "Consertar"
 
 #: order/status_codes.py:111
 msgid "Replace"
@@ -5242,7 +5242,7 @@ msgstr ""
 
 #: order/status_codes.py:117
 msgid "Reject"
-msgstr ""
+msgstr "Rejeitado"
 
 #: order/tasks.py:47
 msgid "Overdue Purchase Order"
@@ -5382,12 +5382,12 @@ msgstr ""
 
 #: part/models.py:142 stock/models.py:98 stock/models.py:199
 msgid "Icon"
-msgstr ""
+msgstr "Ícone"
 
 #: part/models.py:143 part/serializers.py:147 part/serializers.py:166
 #: stock/models.py:200
 msgid "Icon (optional)"
-msgstr ""
+msgstr "Ícone (opcional)"
 
 #: part/models.py:187
 msgid "You cannot make this part category structural because some parts are already assigned to it!"
@@ -5396,7 +5396,7 @@ msgstr ""
 #: part/models.py:473 part/serializers.py:121 part/serializers.py:305
 #: users/ruleset.py:28
 msgid "Parts"
-msgstr ""
+msgstr "Peças"
 
 #: part/models.py:525
 msgid "Cannot delete this part as it is locked"
@@ -5471,11 +5471,11 @@ msgstr ""
 
 #: part/models.py:1051
 msgid "Part name"
-msgstr ""
+msgstr "Nome da peça"
 
 #: part/models.py:1056
 msgid "Is Template"
-msgstr ""
+msgstr "É um modelo"
 
 #: part/models.py:1057
 msgid "Is this part a template part?"
@@ -5495,7 +5495,7 @@ msgstr ""
 
 #: part/models.py:1082
 msgid "Keywords"
-msgstr ""
+msgstr "Palavras-chaves"
 
 #: part/models.py:1083
 msgid "Part keywords to improve visibility in search results"
@@ -5548,7 +5548,7 @@ msgstr ""
 
 #: part/models.py:1207 part/serializers.py:996
 msgid "Minimum Stock"
-msgstr ""
+msgstr "Estoque Mínimo"
 
 #: part/models.py:1208
 msgid "Minimum allowed stock level"
@@ -5788,7 +5788,7 @@ msgstr ""
 
 #: part/models.py:3450 report/templates/report/inventree_test_report.html:106
 msgid "Date"
-msgstr ""
+msgstr "Data"
 
 #: part/models.py:3451
 msgid "Date stocktake was performed"
@@ -5860,7 +5860,7 @@ msgstr ""
 
 #: part/models.py:3697 report/models.py:287
 msgid "Enabled"
-msgstr ""
+msgstr "Habilitado"
 
 #: part/models.py:3697
 msgid "Is this test enabled?"
@@ -5868,7 +5868,7 @@ msgstr ""
 
 #: part/models.py:3702
 msgid "Required"
-msgstr ""
+msgstr "Obrigatório"
 
 #: part/models.py:3703
 msgid "Is this test required to pass?"
@@ -5916,7 +5916,7 @@ msgstr ""
 
 #: part/models.py:3843
 msgid "Parameter Name"
-msgstr ""
+msgstr "Nome do Parâmetro"
 
 #: part/models.py:3850
 msgid "Physical units for this parameter"
@@ -5928,7 +5928,7 @@ msgstr ""
 
 #: part/models.py:3864
 msgid "Checkbox"
-msgstr ""
+msgstr "Caixa de seleção"
 
 #: part/models.py:3865
 msgid "Is this parameter a checkbox?"
@@ -5976,7 +5976,7 @@ msgstr ""
 
 #: part/models.py:4169
 msgid "Default Value"
-msgstr ""
+msgstr "Valor Padrão"
 
 #: part/models.py:4170
 msgid "Default Parameter Value"
@@ -5996,7 +5996,7 @@ msgstr ""
 
 #: part/models.py:4366
 msgid "Sub part"
-msgstr ""
+msgstr "Sub peça"
 
 #: part/models.py:4367
 msgid "Select part to be used in BOM"
@@ -6383,7 +6383,7 @@ msgstr ""
 
 #: part/serializers.py:1498
 msgid "Update"
-msgstr ""
+msgstr "Atualizar"
 
 #: part/serializers.py:1499
 msgid "Update pricing for this part"
@@ -6491,15 +6491,15 @@ msgstr ""
 
 #: plugin/api.py:92
 msgid "Mandatory"
-msgstr ""
+msgstr "Obrigatório"
 
 #: plugin/api.py:107
 msgid "Sample"
-msgstr ""
+msgstr "Exemplo"
 
 #: plugin/api.py:121 plugin/models.py:166
 msgid "Installed"
-msgstr ""
+msgstr "Instalado"
 
 #: plugin/api.py:188
 msgid "Plugin cannot be deleted as it is currently active"
@@ -6507,7 +6507,7 @@ msgstr ""
 
 #: plugin/base/action/api.py:34
 msgid "No action specified"
-msgstr ""
+msgstr "Nenhuma ação especificada"
 
 #: plugin/base/action/api.py:46
 msgid "No matching action found"
@@ -6523,7 +6523,7 @@ msgstr ""
 
 #: plugin/base/barcodes/api.py:253 plugin/base/barcodes/serializers.py:77
 msgid "Model is not supported"
-msgstr ""
+msgstr "Modelo não suportado"
 
 #: plugin/base/barcodes/api.py:258
 msgid "Model instance not found"
@@ -7061,7 +7061,7 @@ msgstr ""
 
 #: plugin/builtin/integration/core_notifications.py:158
 msgid "Open link"
-msgstr ""
+msgstr "Abrir link"
 
 #: plugin/builtin/integration/currency_exchange.py:22
 msgid "InvenTree Currency Exchange"
@@ -7081,7 +7081,7 @@ msgstr ""
 
 #: plugin/builtin/integration/part_notifications.py:31
 msgid "Send notifications"
-msgstr ""
+msgstr "Enviar notificações"
 
 #: plugin/builtin/integration/part_notifications.py:32
 msgid "Send notifications for part changes to subscribed users"
@@ -7128,7 +7128,7 @@ msgstr ""
 
 #: plugin/builtin/labels/inventree_machine.py:179
 msgid "Options"
-msgstr ""
+msgstr "Opções"
 
 #: plugin/builtin/labels/label_sheet.py:30
 msgid "Page size for the label sheet"
@@ -7136,7 +7136,7 @@ msgstr ""
 
 #: plugin/builtin/labels/label_sheet.py:35
 msgid "Skip Labels"
-msgstr ""
+msgstr "Pular Etiquetas"
 
 #: plugin/builtin/labels/label_sheet.py:36
 msgid "Skip this number of labels when printing label sheets"
@@ -7144,7 +7144,7 @@ msgstr ""
 
 #: plugin/builtin/labels/label_sheet.py:43
 msgid "Border"
-msgstr ""
+msgstr "Margem"
 
 #: plugin/builtin/labels/label_sheet.py:44
 msgid "Print a border around each label"
@@ -7152,7 +7152,7 @@ msgstr ""
 
 #: plugin/builtin/labels/label_sheet.py:49 report/models.py:387
 msgid "Landscape"
-msgstr ""
+msgstr "Paisagem"
 
 #: plugin/builtin/labels/label_sheet.py:50
 msgid "Print the label sheet in landscape mode"
@@ -7160,7 +7160,7 @@ msgstr ""
 
 #: plugin/builtin/labels/label_sheet.py:55
 msgid "Page Margin"
-msgstr ""
+msgstr "Margem da Página"
 
 #: plugin/builtin/labels/label_sheet.py:56
 msgid "Margin around the page in mm"
@@ -7287,7 +7287,7 @@ msgstr ""
 msgid "Plugin installation not found"
 msgstr ""
 
-#: plugin/installer.py:394
+#: plugin/installer.py:395
 msgid "Uninstalled plugin successfully"
 msgstr ""
 
@@ -7343,17 +7343,17 @@ msgstr ""
 msgid "No author found"
 msgstr ""
 
-#: plugin/registry.py:748
+#: plugin/registry.py:752
 #, python-brace-format
 msgid "Plugin '{p}' is not compatible with the current InvenTree version {v}"
 msgstr ""
 
-#: plugin/registry.py:751
+#: plugin/registry.py:755
 #, python-brace-format
 msgid "Plugin requires at least version {v}"
 msgstr ""
 
-#: plugin/registry.py:753
+#: plugin/registry.py:757
 #, python-brace-format
 msgid "Plugin requires at most version {v}"
 msgstr ""
@@ -7660,7 +7660,7 @@ msgstr ""
 
 #: report/models.py:314
 msgid "Filters"
-msgstr ""
+msgstr "Filtros"
 
 #: report/models.py:315
 msgid "Template query filters (comma-separated list of key=value pairs)"
@@ -7668,7 +7668,7 @@ msgstr ""
 
 #: report/models.py:374 report/models.py:661
 msgid "Template file"
-msgstr ""
+msgstr "Arquivo Modelo"
 
 #: report/models.py:382
 msgid "Page size for PDF reports"
@@ -7680,7 +7680,7 @@ msgstr ""
 
 #: report/models.py:393
 msgid "Merge"
-msgstr ""
+msgstr "Mesclar"
 
 #: report/models.py:394
 msgid "Render a single report against selected items"
@@ -7709,19 +7709,19 @@ msgstr ""
 
 #: report/models.py:667
 msgid "Width [mm]"
-msgstr ""
+msgstr "Largura [mm]"
 
 #: report/models.py:668
 msgid "Label width, specified in mm"
-msgstr ""
+msgstr "Largura da Etiqueta, em mm"
 
 #: report/models.py:674
 msgid "Height [mm]"
-msgstr ""
+msgstr "Altura [mm]"
 
 #: report/models.py:675
 msgid "Label height, specified in mm"
-msgstr ""
+msgstr "Altura da Etiqueta, em mm"
 
 #: report/models.py:780
 msgid "Error printing labels"
@@ -7775,12 +7775,12 @@ msgstr ""
 #: report/templates/label/stockitem_qr.html:21
 #: report/templates/label/stocklocation_qr.html:20
 msgid "QR Code"
-msgstr ""
+msgstr "Código QR"
 
 #: report/templates/label/part_label_code128.html:31
 #: report/templates/label/stocklocation_qr_and_text.html:31
 msgid "QR code"
-msgstr ""
+msgstr "Código QR"
 
 #: report/templates/report/inventree_bill_of_materials_report.html:100
 msgid "Bill of Materials"
@@ -7835,7 +7835,7 @@ msgstr ""
 #: report/templates/report/inventree_purchase_order_report.html:79
 #: report/templates/report/inventree_sales_order_report.html:72
 msgid "Total"
-msgstr ""
+msgstr "Total"
 
 #: report/templates/report/inventree_return_order_report.html:25
 #: report/templates/report/inventree_sales_order_shipment_report.html:45
@@ -7876,19 +7876,19 @@ msgstr ""
 
 #: report/templates/report/inventree_test_report.html:97
 msgid "Test Results"
-msgstr ""
+msgstr "Resultados do teste"
 
 #: report/templates/report/inventree_test_report.html:102
 msgid "Test"
-msgstr ""
+msgstr "Teste"
 
 #: report/templates/report/inventree_test_report.html:129
 msgid "Pass"
-msgstr ""
+msgstr "Aprovado"
 
 #: report/templates/report/inventree_test_report.html:131
 msgid "Fail"
-msgstr ""
+msgstr "Reprovado"
 
 #: report/templates/report/inventree_test_report.html:138
 msgid "No result (required)"
@@ -7960,11 +7960,11 @@ msgstr ""
 
 #: stock/api.py:623
 msgid "Minimum stock"
-msgstr ""
+msgstr "Estoque mínimo"
 
 #: stock/api.py:627
 msgid "Maximum stock"
-msgstr ""
+msgstr "Estoque máximo"
 
 #: stock/api.py:630
 msgid "Status Code"
@@ -8056,11 +8056,11 @@ msgstr ""
 
 #: stock/models.py:210 stock/models.py:1203
 msgid "Owner"
-msgstr ""
+msgstr "Responsável"
 
 #: stock/models.py:211 stock/models.py:1204
 msgid "Select Owner"
-msgstr ""
+msgstr "Selecionar Responsável"
 
 #: stock/models.py:219
 msgid "Stock items may not be directly located into a structural stock locations, but may be located to child locations."
@@ -8634,7 +8634,7 @@ msgstr ""
 
 #: stock/status_codes.py:11
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: stock/status_codes.py:12
 msgid "Attention needed"
@@ -8766,7 +8766,7 @@ msgstr ""
 
 #: templates/403.html:6 templates/403.html:10 templates/403_csrf.html:7
 msgid "Permission Denied"
-msgstr ""
+msgstr "Permissão Negada"
 
 #: templates/403.html:11
 msgid "You do not have permission to view this page."
@@ -8782,7 +8782,7 @@ msgstr ""
 
 #: templates/404.html:6 templates/404.html:10
 msgid "Page Not Found"
-msgstr ""
+msgstr "Página Não Encontrada"
 
 #: templates/404.html:11
 msgid "The requested page does not exist"
@@ -8790,7 +8790,7 @@ msgstr ""
 
 #: templates/500.html:6 templates/500.html:10
 msgid "Internal Server Error"
-msgstr ""
+msgstr "Erro Interno do Servidor"
 
 #: templates/500.html:11
 #, python-format
@@ -8803,7 +8803,7 @@ msgstr ""
 
 #: templates/503.html:11 templates/503.html:15
 msgid "Site is in Maintenance"
-msgstr ""
+msgstr "Site em Manutenção"
 
 #: templates/503.html:17
 msgid "The site is currently in maintenance and should be up again soon!"
@@ -8811,7 +8811,7 @@ msgstr ""
 
 #: templates/base.html:51
 msgid "Server Restart Required"
-msgstr ""
+msgstr "Reinicialização do Servidor é Necessária"
 
 #: templates/base.html:54
 msgid "A configuration option has been changed which requires a server restart"
@@ -8904,7 +8904,7 @@ msgstr ""
 
 #: users/admin.py:101
 msgid "Users"
-msgstr ""
+msgstr "Usuários"
 
 #: users/admin.py:102
 msgid "Select which users are assigned to this group"
@@ -8912,11 +8912,11 @@ msgstr ""
 
 #: users/admin.py:137
 msgid "Personal info"
-msgstr ""
+msgstr "Informações pessoais"
 
 #: users/admin.py:139
 msgid "Permissions"
-msgstr ""
+msgstr "Permissões"
 
 #: users/admin.py:142
 msgid "Important dates"
@@ -8968,7 +8968,7 @@ msgstr ""
 
 #: users/models.py:244
 msgid "Group"
-msgstr ""
+msgstr "Grupo"
 
 #: users/models.py:248
 msgid "View"
@@ -8976,31 +8976,31 @@ msgstr ""
 
 #: users/models.py:248
 msgid "Permission to view items"
-msgstr ""
+msgstr "Permissão para exibir itens"
 
 #: users/models.py:252
 msgid "Add"
-msgstr ""
+msgstr "Adicionar"
 
 #: users/models.py:252
 msgid "Permission to add items"
-msgstr ""
+msgstr "Permissão para adicionar itens"
 
 #: users/models.py:256
 msgid "Change"
-msgstr ""
+msgstr "Alterar"
 
 #: users/models.py:258
 msgid "Permissions to edit items"
-msgstr ""
+msgstr "Permissões para editar itens"
 
 #: users/models.py:262
 msgid "Delete"
-msgstr ""
+msgstr "Excluir"
 
 #: users/models.py:264
 msgid "Permission to delete items"
-msgstr ""
+msgstr "Permissão para excluir itens"
 
 #: users/models.py:501
 msgid "Bot"
@@ -9008,23 +9008,23 @@ msgstr ""
 
 #: users/models.py:502
 msgid "Internal"
-msgstr ""
+msgstr "Interno"
 
 #: users/models.py:504
 msgid "Guest"
-msgstr ""
+msgstr "Convidado"
 
 #: users/models.py:513
 msgid "Language"
-msgstr ""
+msgstr "Idioma"
 
 #: users/models.py:514
 msgid "Preferred language for the user"
-msgstr ""
+msgstr "Idioma preferencial para o usuário"
 
 #: users/models.py:519
 msgid "Theme"
-msgstr ""
+msgstr "Tema"
 
 #: users/models.py:520
 msgid "Settings for the web UI as JSON - do not edit manually!"
@@ -9032,7 +9032,7 @@ msgstr ""
 
 #: users/models.py:525
 msgid "Widgets"
-msgstr ""
+msgstr "Widgets"
 
 #: users/models.py:527
 msgid "Settings for the dashboard widgets as JSON - do not edit manually!"
@@ -9040,15 +9040,15 @@ msgstr ""
 
 #: users/models.py:534
 msgid "Display Name"
-msgstr ""
+msgstr "Nome de Exibição"
 
 #: users/models.py:535
 msgid "Chosen display name for the user"
-msgstr ""
+msgstr "Nome de exibição escolhido para o usuário"
 
 #: users/models.py:541
 msgid "Position"
-msgstr ""
+msgstr "Cargo"
 
 #: users/models.py:542
 msgid "Main job title or position"
@@ -9056,7 +9056,7 @@ msgstr ""
 
 #: users/models.py:549
 msgid "User status message"
-msgstr ""
+msgstr "Mensagem de status do usuário"
 
 #: users/models.py:556
 msgid "User location information"
@@ -9072,7 +9072,7 @@ msgstr ""
 
 #: users/models.py:574
 msgid "User Type"
-msgstr ""
+msgstr "Tipo de Usuário"
 
 #: users/models.py:575
 msgid "Which type of user is this?"
@@ -9080,7 +9080,7 @@ msgstr ""
 
 #: users/models.py:581
 msgid "Organisation"
-msgstr ""
+msgstr "Organização"
 
 #: users/models.py:582
 msgid "Users primary organisation/affiliation"
@@ -9096,7 +9096,7 @@ msgstr ""
 
 #: users/ruleset.py:26
 msgid "Admin"
-msgstr ""
+msgstr "Admin"
 
 #: users/ruleset.py:32
 msgid "Purchase Orders"
@@ -9112,19 +9112,19 @@ msgstr ""
 
 #: users/serializers.py:196
 msgid "Username"
-msgstr ""
+msgstr "Nome de usuário"
 
 #: users/serializers.py:199
 msgid "First Name"
-msgstr ""
+msgstr "Primeiro Nome"
 
 #: users/serializers.py:199
 msgid "First name of the user"
-msgstr ""
+msgstr "Primeiro nome do usuário"
 
 #: users/serializers.py:203
 msgid "Last Name"
-msgstr ""
+msgstr "Sobrenome"
 
 #: users/serializers.py:203
 msgid "Last name of the user"
@@ -9132,7 +9132,7 @@ msgstr "Sobrenome do usuário"
 
 #: users/serializers.py:207
 msgid "Email address of the user"
-msgstr ""
+msgstr "Endereço de e-mail do usuário"
 
 #: users/serializers.py:326
 msgid "Staff"
@@ -9144,7 +9144,7 @@ msgstr ""
 
 #: users/serializers.py:332
 msgid "Superuser"
-msgstr ""
+msgstr "Superusuário"
 
 #: users/serializers.py:332
 msgid "Is this user a superuser"
@@ -9160,11 +9160,11 @@ msgstr ""
 
 #: users/serializers.py:376
 msgid "Password"
-msgstr ""
+msgstr "Senha"
 
 #: users/serializers.py:377
 msgid "Password for the user"
-msgstr ""
+msgstr "Senha do usuário"
 
 #: users/serializers.py:383
 msgid "Override warning"
@@ -9180,11 +9180,11 @@ msgstr ""
 
 #: users/serializers.py:431
 msgid "You do not have permission to create users"
-msgstr ""
+msgstr "Você não tem permissão para criar usuários"
 
 #: users/serializers.py:452
 msgid "Your account has been created."
-msgstr ""
+msgstr "Sua conta foi criada."
 
 #: users/serializers.py:454
 msgid "Please use the password reset function to login"
@@ -9192,5 +9192,5 @@ msgstr ""
 
 #: users/serializers.py:460
 msgid "Welcome to InvenTree"
-msgstr ""
+msgstr "Bem-vindo(a) ao InvenTree"
 
