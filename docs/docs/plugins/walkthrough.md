@@ -150,7 +150,7 @@ export default function AttachmentCarousel() {
 
   return (
     <AspectRatio ratio={1920 / 1080} >
-      <Carousel withIndicators={indicators} emblaOptions={{loop:loop}} styles={{control: {backgroundColor: 'var(--mantine-color-white)', color: 'var(--mantine-color-black'}, indicator: {backgroundColor: 'var(--mantine-color-white)',}}}>{slides}</Carousel>
+      <Carousel withIndicators={indicators} emblaOptions={{loop:loop}} styles={{control: {backgroundColor: 'var(--mantine-color-white)', color: 'var(--mantine-color-black)'}, indicator: {backgroundColor: 'var(--mantine-color-white)'}}}>{slides}</Carousel>
     </AspectRatio>
   );
 }
@@ -243,7 +243,7 @@ export default function AttachmentCarousel({context}: { context: any }) {
 
   return (
     <AspectRatio ratio={1920 / 1080} >
-      <Carousel withIndicators={indicators} emblaOptions={{loop:loop}} styles={{control: {backgroundColor: 'var(--mantine-color-white)', color: 'var(--mantine-color-black'}, indicator: {backgroundColor: 'var(--mantine-color-white)',}}}>{slides}</Carousel>
+      <Carousel withIndicators={indicators} emblaOptions={{loop:loop}} styles={{control: {backgroundColor: 'var(--mantine-color-white)', color: 'var(--mantine-color-black)'}, indicator: {backgroundColor: 'var(--mantine-color-white)'}}}>{slides}</Carousel>
     </AspectRatio>
   );
 }
@@ -479,7 +479,7 @@ Update `AttachmentCarousel.tsx` to use the new styles,
 ```diff
 ...
 <AspectRatio ratio={1920 / 1080} >
--<Carousel withIndicators={indicators} emblaOptions={{loop:loop}} styles={{control: {backgroundColor: 'var(--mantine-color-white)', color: 'var(--mantine-color-black'}, indicator: {backgroundColor: 'var(--mantine-color-white)',}}}>{slides}</Carousel>
+-<Carousel withIndicators={indicators} emblaOptions={{loop:loop}} styles={{control: {backgroundColor: 'var(--mantine-color-white)', color: 'var(--mantine-color-black)'}, indicator: {backgroundColor: 'var(--mantine-color-white)'}}}>{slides}</Carousel>
 +<Carousel withIndicators={indicators} emblaOptions={{loop:loop}} classNames={{control: 'control'}}>{slides}</Carousel>
 </AspectRatio>
 ...
