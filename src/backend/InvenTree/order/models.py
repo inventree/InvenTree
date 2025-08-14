@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models, transaction
-from django.db.models import F, Q, Sum
+from django.db.models import F, Q, QuerySet, Sum
 from django.db.models.functions import Coalesce
 from django.db.models.signals import post_save
 from django.dispatch.dispatcher import receiver
@@ -782,10 +782,16 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
             self.save()
 
+            unique_parts = set()
+
             # Schedule pricing update for any referenced parts
-            for line in self.lines.all():
+            for line in self.lines.all().prefetch_related('part__part'):
+                # Ensure we only check 'unique' parts
                 if line.part and line.part.part:
-                    line.part.part.schedule_pricing_update(create=True)
+                    unique_parts.add(line.part.part)
+
+            for part in unique_parts:
+                part.schedule_pricing_update(create=True, refresh=False)
 
             trigger_event(PurchaseOrderEvents.COMPLETED, id=self.pk)
 
@@ -916,13 +922,18 @@ class PurchaseOrder(TotalPriceMixin, Order):
         return self.pending_line_items().count() == 0
 
     @transaction.atomic
-    def receive_line_items(self, location, items: list, user: User, **kwargs):
+    def receive_line_items(
+        self, location, items: list, user: User, **kwargs
+    ) -> QuerySet:
         """Receive multiple line items against this PurchaseOrder.
 
         Arguments:
             location: The StockLocation to receive the items into
             items: A list of line item IDs and quantities to receive
             user: The User performing the action
+
+        Returns:
+            A QuerySet of the newly created StockItem objects
 
         The 'items' list values contain:
             line_item: The PurchaseOrderLineItem instance
@@ -1134,6 +1145,11 @@ class PurchaseOrder(TotalPriceMixin, Order):
             exclude=user,
             content=InvenTreeNotificationBodies.ItemsReceived,
             extra_users=line.part.part.get_subscribers(),
+        )
+
+        # Return a list of the created stock items
+        return stock.models.StockItem.objects.filter(
+            pk__in=[item.pk for item in stock_items]
         )
 
     @transaction.atomic

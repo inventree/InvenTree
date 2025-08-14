@@ -970,7 +970,7 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
 
         return data
 
-    def save(self):
+    def save(self) -> list[stock.models.StockItem]:
         """Perform the actual database transaction to receive purchase order items."""
         data = self.validated_data
 
@@ -983,10 +983,15 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
         location = data.get('location', order.destination)
 
         try:
-            order.receive_line_items(location, items, request.user if request else None)
+            items = order.receive_line_items(
+                location, items, request.user if request else None
+            )
         except (ValidationError, DjangoValidationError) as exc:
             # Catch model errors and re-throw as DRF errors
             raise ValidationError(detail=serializers.as_serializer_error(exc))
+
+        # Returns a list of the created items
+        return items
 
 
 @register_importer()
