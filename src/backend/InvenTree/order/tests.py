@@ -258,6 +258,7 @@ class OrderTest(ExchangeRateMixin, PluginRegistryMixin, TestCase):
 
         order.receive_line_item(line, loc, 50, user=None)
 
+        line.refresh_from_db()
         self.assertEqual(line.remaining(), 50)
 
         self.assertEqual(part.on_order, 1350)

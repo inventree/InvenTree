@@ -940,6 +940,9 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
         if len(items) == 0:
             raise ValidationError(_('Line items must be provided'))
 
+        # Ensure barcodes are unique
+        unique_barcodes = set()
+
         # Check if the location is not specified for any particular item
         for item in items:
             line = item['line_item']
@@ -957,10 +960,6 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
                     'location': _('Destination location must be specified')
                 })
 
-        # Ensure barcodes are unique
-        unique_barcodes = set()
-
-        for item in items:
             barcode = item.get('barcode', '')
 
             if barcode:
@@ -983,33 +982,14 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
         # Location can be provided, or default to the order destination
         location = data.get('location', order.destination)
 
-        # Now we can actually receive the items into stock
-        with transaction.atomic():
-            for item in items:
-                # Select location (in descending order of priority)
-                loc = (
-                    item.get('location', None)
-                    or location
-                    or item['line_item'].get_destination()
-                )
+        try:
+            order.receive_line_items(location, items, request.user if request else None)
+        except (ValidationError, DjangoValidationError) as exc:
+            # Catch model errors and re-throw as DRF errors
+            raise ValidationError(detail=serializers.as_serializer_error(exc))
 
-                try:
-                    order.receive_line_item(
-                        item['line_item'],
-                        loc,
-                        item['quantity'],
-                        request.user if request else None,
-                        status=item['status'],
-                        barcode=item.get('barcode', ''),
-                        batch_code=item.get('batch_code', ''),
-                        expiry_date=item.get('expiry_date', None),
-                        packaging=item.get('packaging', ''),
-                        serials=item.get('serials', None),
-                        notes=item.get('note', None),
-                    )
-                except (ValidationError, DjangoValidationError) as exc:
-                    # Catch model errors and re-throw as DRF errors
-                    raise ValidationError(detail=serializers.as_serializer_error(exc))
+        # Save the order after all line items have been processed
+        order.save()
 
 
 @register_importer()
