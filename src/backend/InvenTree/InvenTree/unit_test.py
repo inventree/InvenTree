@@ -37,8 +37,12 @@ def count_queries(
         log_to_file: If True, log the queries to a file (default = False)
         using: The database connection to use (default = 'default')
     """
+    t1 = time.time()
+
     with CaptureQueriesContext(connections[using]) as context:
         yield
+
+    dt = time.time() - t1
 
     n = len(context.captured_queries)
 
@@ -47,10 +51,12 @@ def count_queries(
             for q in context.captured_queries:
                 f.write(str(q['sql']) + '\n\n')
 
+    output = f'Executed {n} queries in {dt:.4f}s'
+
     if msg:
-        print(f'{msg}: Executed {n} queries')
+        print(f'{msg}: {output}')
     else:
-        print(f'Executed {n} queries')
+        print(output)
 
 
 def addUserPermission(user: User, app_name: str, model_name: str, perm: str) -> None:
