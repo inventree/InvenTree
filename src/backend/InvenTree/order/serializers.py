@@ -988,9 +988,6 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
             # Catch model errors and re-throw as DRF errors
             raise ValidationError(detail=serializers.as_serializer_error(exc))
 
-        # Save the order after all line items have been processed
-        order.save()
-
 
 @register_importer()
 class SalesOrderSerializer(
