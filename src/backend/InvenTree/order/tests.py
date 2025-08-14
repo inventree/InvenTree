@@ -349,6 +349,9 @@ class OrderTest(ExchangeRateMixin, PluginRegistryMixin, TestCase):
         # Receive 5x item against line_2
         po.receive_line_item(line_2, loc, 5, user=None)
 
+        line_1.refresh_from_db()
+        line_2.refresh_from_db()
+
         # Check that the line items have been updated correctly
         self.assertEqual(line_1.quantity, 3)
         self.assertEqual(line_1.received, 1)
