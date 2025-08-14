@@ -28,7 +28,10 @@ from plugin.models import PluginConfig
 
 @contextmanager
 def count_queries(
-    msg: Optional[str] = None, log_to_file: bool = False, using: str = 'default'
+    msg: Optional[str] = None,
+    log_to_file: bool = False,
+    using: str = 'default',
+    threshold: int = 10,
 ):  # pragma: no cover
     """Helper function to count the number of queries executed.
 
@@ -36,6 +39,7 @@ def count_queries(
         msg: Optional message to print after counting queries
         log_to_file: If True, log the queries to a file (default = False)
         using: The database connection to use (default = 'default')
+        threshold: Minimum number of queries to log (default = 10)
     """
     t1 = time.time()
 
@@ -53,10 +57,11 @@ def count_queries(
 
     output = f'Executed {n} queries in {dt:.4f}s'
 
-    if msg:
-        print(f'{msg}: {output}')
-    else:
-        print(output)
+    if threshold and n >= threshold:
+        if msg:
+            print(f'{msg}: {output}')
+        else:
+            print(output)
 
 
 def addUserPermission(user: User, app_name: str, model_name: str, perm: str) -> None:
