@@ -6,6 +6,7 @@ from django.core.files.base import ContentFile
 from django.db.models import Prefetch
 from django.utils.translation import gettext_lazy as _
 
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 from sql_util.utils import SubqueryCount
 from taggit.serializers import TagListSerializerField
@@ -172,23 +173,25 @@ class CompanySerializer(
 
         return queryset
 
-    primary_address = serializers.SerializerMethodField(
+    address = serializers.SerializerMethodField(
         label=_(
             'Return the string representation for the primary address. This property exists for backwards compatibility.'
         )
     )
-    address = serializers.SerializerMethodField()
+    primary_address = serializers.SerializerMethodField()
 
-    def get_primary_address(self, obj):
-        """Return full address object for primary address using prefetch data."""
-        if hasattr(obj, 'primary_address_list') and obj.primary_address_list:
-            return AddressSerializer(obj.primary_address_list[0]).data
-        return None
-
+    @extend_schema_field(serializers.CharField(allow_null=True))
     def get_address(self, obj):
         """Return string version of primary address (for backwards compatibility)."""
         if hasattr(obj, 'primary_address_list') and obj.primary_address_list:
             return str(obj.primary_address_list[0])
+        return None
+
+    @extend_schema_field(AddressSerializer(allow_null=True))
+    def get_primary_address(self, obj):
+        """Return full address object for primary address using prefetch data."""
+        if hasattr(obj, 'primary_address_list') and obj.primary_address_list:
+            return AddressSerializer(obj.primary_address_list[0]).data
         return None
 
     image = InvenTreeImageSerializerField(required=False, allow_null=True)
