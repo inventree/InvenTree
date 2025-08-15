@@ -616,11 +616,7 @@ test('Parts - Bulk Edit', async ({ browser }) => {
   await page.getByLabel('action-menu-part-actions').click();
   await page.getByLabel('action-menu-part-actions-set-category').click();
   await page.getByLabel('related-field-category').fill('rnitu');
-  await page
-    .getByRole('option', { name: '- Furniture/Chairs' })
-    .getByRole('paragraph')
-    .click();
-
+  await page.getByRole('option', { name: '- Furniture/Chairs' }).click;
   await page.getByRole('button', { name: 'Update' }).click();
   await page.getByText('Items Updated').waitFor();
 });
