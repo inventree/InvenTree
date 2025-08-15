@@ -7,6 +7,7 @@ import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 import { getActions } from '../../defaults/actions';
 import * as classes from '../../main.css';
+import { useUserSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import { Boundary } from '../Boundary';
 import { Footer } from './Footer';
@@ -37,6 +38,7 @@ export const [firstStore, firstSpotlight] = createSpotlight();
 export default function LayoutComponent() {
   const navigate = useNavigate();
   const location = useLocation();
+  const userSettings = useUserSettingsState();
 
   const defaultActions = getActions(navigate);
   const [actions, setActions] = useState(defaultActions);
@@ -68,17 +70,19 @@ export default function LayoutComponent() {
         </Container>
         <Space h='xl' />
         <Footer />
-        <Spotlight
-          actions={actions}
-          store={firstStore}
-          highlightQuery
-          searchProps={{
-            leftSection: <IconSearch size='1.2rem' />,
-            placeholder: t`Search...`
-          }}
-          shortcut={['mod + K']}
-          nothingFound={t`Nothing found...`}
-        />
+        {userSettings.isSet('SHOW_SPOTLIGHT') && (
+          <Spotlight
+            actions={actions}
+            store={firstStore}
+            highlightQuery
+            searchProps={{
+              leftSection: <IconSearch size='1.2rem' />,
+              placeholder: t`Search...`
+            }}
+            shortcut={['mod + K']}
+            nothingFound={t`Nothing found...`}
+          />
+        )}
       </Flex>
     </ProtectedRoute>
   );

@@ -65,6 +65,12 @@ export function Header() {
       () => {
         openSearchDrawer();
       }
+    ],
+    [
+      'mod+/',
+      () => {
+        openSearchDrawer();
+      }
     ]
   ]);
 
@@ -168,7 +174,7 @@ export function Header() {
                 <IconSearch />
               </ActionIcon>
             </Tooltip>
-            <SpotlightButton />
+            {userSettings.isSet('SHOW_SPOTLIGHT') && <SpotlightButton />}
             {globalSettings.isSet('BARCODE_ENABLE') && <ScanButton />}
             <Indicator
               radius='lg'
