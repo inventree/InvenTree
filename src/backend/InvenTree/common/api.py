@@ -20,7 +20,7 @@ from djmoney.contrib.exchange.models import ExchangeBackend, Rate
 from drf_spectacular.utils import OpenApiResponse, extend_schema
 from error_report.models import Error
 from pint._typing import UnitLike
-from rest_framework import serializers
+from rest_framework import generics, serializers
 from rest_framework.exceptions import NotAcceptable, NotFound, PermissionDenied
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
@@ -43,6 +43,7 @@ from InvenTree.mixins import (
     ListAPI,
     ListCreateAPI,
     RetrieveAPI,
+    RetrieveDestroyAPI,
     RetrieveUpdateAPI,
     RetrieveUpdateDestroyAPI,
 )
@@ -55,8 +56,6 @@ from InvenTree.permissions import (
     IsSuperuserOrSuperScope,
     UserSettingsPermissionsOrScope,
 )
-from plugin.models import NotificationUserSetting
-from plugin.serializers import NotificationUserSettingSerializer
 
 
 class CsrfExemptMixin:
@@ -277,6 +276,9 @@ class UserSettingsList(SettingsList):
 
         queryset = super().filter_queryset(queryset)
 
+        if not user.is_authenticated:  # pragma: no cover
+            raise PermissionDenied('User must be authenticated to access user settings')
+
         queryset = queryset.filter(user=user)
 
         return queryset
@@ -306,36 +308,6 @@ class UserSettingsDetail(RetrieveUpdateAPI):
         return common.models.InvenTreeUserSetting.get_setting_object(
             key, user=self.request.user, cache=False, create=True
         )
-
-
-class NotificationUserSettingsList(SettingsList):
-    """API endpoint for accessing a list of notification user settings objects."""
-
-    queryset = NotificationUserSetting.objects.all()
-    serializer_class = NotificationUserSettingSerializer
-    permission_classes = [UserSettingsPermissionsOrScope]
-
-    def filter_queryset(self, queryset):
-        """Only list settings which apply to the current user."""
-        try:
-            user = self.request.user
-        except AttributeError:
-            return NotificationUserSetting.objects.none()
-
-        queryset = super().filter_queryset(queryset)
-        queryset = queryset.filter(user=user)
-        return queryset
-
-
-class NotificationUserSettingsDetail(RetrieveUpdateAPI):
-    """Detail view for an individual "notification user setting" object.
-
-    - User can only view / edit settings their own settings objects
-    """
-
-    queryset = NotificationUserSetting.objects.all()
-    serializer_class = NotificationUserSettingSerializer
-    permission_classes = [UserSettingsPermissionsOrScope]
 
 
 class NotificationMessageMixin:
@@ -383,6 +355,10 @@ class NotificationList(NotificationMessageMixin, BulkDeleteMixin, ListAPI):
             return common.models.NotificationMessage.objects.none()
 
         queryset = super().filter_queryset(queryset)
+
+        if not user.is_authenticated:  # pragma: no cover
+            raise PermissionDenied('User must be authenticated to access notifications')
+
         queryset = queryset.filter(user=user)
         return queryset
 
@@ -852,9 +828,10 @@ class DataOutputList(DataOutputEndpointMixin, BulkDeleteMixin, ListAPI):
 
     filter_backends = SEARCH_ORDER_FILTER
     ordering_fields = ['pk', 'user', 'plugin', 'output_type', 'created']
+    filterset_fields = ['user']
 
 
-class DataOutputDetail(DataOutputEndpointMixin, RetrieveAPI):
+class DataOutputDetail(DataOutputEndpointMixin, generics.DestroyAPIView, RetrieveAPI):
     """Detail view for a DataOutput object."""
 
 
@@ -866,7 +843,7 @@ class EmailMessageMixin:
     permission_classes = [IsSuperuserOrSuperScope]
 
 
-class EmailMessageList(EmailMessageMixin, ListAPI):
+class EmailMessageList(EmailMessageMixin, BulkDeleteMixin, ListAPI):
     """List view for email objects."""
 
     filter_backends = SEARCH_ORDER_FILTER
@@ -889,7 +866,7 @@ class EmailMessageList(EmailMessageMixin, ListAPI):
     ]
 
 
-class EmailMessageDetail(EmailMessageMixin, RetrieveAPI):
+class EmailMessageDetail(EmailMessageMixin, RetrieveDestroyAPI):
     """Detail view for an email object."""
 
 
@@ -959,24 +936,6 @@ settings_api_urls = [
             ),
             # User Settings List
             path('', UserSettingsList.as_view(), name='api-user-setting-list'),
-        ]),
-    ),
-    # Notification settings
-    path(
-        'notification/',
-        include([
-            # Notification Settings Detail
-            path(
-                '<int:pk>/',
-                NotificationUserSettingsDetail.as_view(),
-                name='api-notification-setting-detail',
-            ),
-            # Notification Settings List
-            path(
-                '',
-                NotificationUserSettingsList.as_view(),
-                name='api-notification-setting-list',
-            ),
         ]),
     ),
     # Global settings

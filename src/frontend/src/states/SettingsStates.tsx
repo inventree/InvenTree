@@ -5,6 +5,7 @@ import { create, createStore } from 'zustand';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
+import { isTrue } from '@lib/functions/Conversion';
 import type { PathParams } from '@lib/types/Core';
 import type {
   Setting,
@@ -13,7 +14,6 @@ import type {
 } from '@lib/types/Settings';
 import { useEffect } from 'react';
 import { api } from '../App';
-import { isTrue } from '../functions/conversion';
 import { useUserState } from './UserState';
 
 /**
@@ -123,10 +123,12 @@ export const useUserSettingsState = create<SettingsStateProps>((set, get) => ({
  */
 interface CreatePluginSettingStateProps {
   plugin: string;
+  endpoint: ApiEndpoints;
 }
 
 export const createPluginSettingsState = ({
-  plugin
+  plugin,
+  endpoint
 }: CreatePluginSettingStateProps) => {
   const pathParams: PathParams = { plugin };
 
@@ -135,7 +137,7 @@ export const createPluginSettingsState = ({
     lookup: {},
     loaded: false,
     isError: false,
-    endpoint: ApiEndpoints.plugin_setting_list,
+    endpoint: endpoint,
     pathParams,
     fetchSettings: async () => {
       let success = true;
@@ -155,7 +157,7 @@ export const createPluginSettingsState = ({
       });
 
       await api
-        .get(apiUrl(ApiEndpoints.plugin_setting_list, undefined, { plugin }))
+        .get(apiUrl(endpoint, undefined, { plugin }))
         .then((response) => {
           const settings = response.data;
           set({
@@ -166,7 +168,9 @@ export const createPluginSettingsState = ({
           });
         })
         .catch((_error) => {
-          console.error(`Error fetching plugin settings for plugin ${plugin}`);
+          console.error(
+            `ERR: Could not fetch plugin settings for plugin ${plugin}`
+          );
           success = false;
           set({
             loaded: false,
@@ -186,7 +190,6 @@ export const createPluginSettingsState = ({
   }));
 
   useEffect(() => {
-    console.log('fetching plugin settings for', plugin);
     store.getState().fetchSettings();
   }, [plugin]);
 

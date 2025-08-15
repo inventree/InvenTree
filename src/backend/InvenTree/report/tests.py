@@ -357,12 +357,9 @@ class PrintTestMixins:
 
     def do_activate_plugin(self):
         """Activate the 'samplelabel' plugin."""
+        registry.set_plugin_state(self.plugin_ref, True)
         plugin = registry.get_plugin(self.plugin_ref)
         self.assertIsNotNone(plugin)
-        config = plugin.plugin_config()
-        self.assertIsNotNone(config)
-        config.active = True
-        config.save()
 
     def run_print_test(self, qs, model_type, label: bool = True):
         """Run tests on single and multiple page printing.
@@ -396,7 +393,7 @@ class PrintTestMixins:
             },
             expected_code=201,
             max_query_time=15,
-            max_query_count=500 * len(qs),
+            max_query_count=150 * len(qs),
         )
 
         # Test with wrong dimensions

@@ -21,7 +21,7 @@ import {
 import { type ReactNode, useMemo } from 'react';
 
 import type { ModelType } from '@lib/enums/ModelType';
-import { identifierString } from '../../functions/conversion';
+import { identifierString } from '@lib/functions/Conversion';
 import { InvenTreeIcon } from '../../functions/icons';
 import { InvenTreeQRCode, QRCodeLink, QRCodeUnlink } from '../barcodes/QRCode';
 import { StylishText } from './StylishText';
@@ -57,7 +57,7 @@ export function ActionDropdown({
   disabled?: boolean;
   hidden?: boolean;
   noindicator?: boolean;
-}) {
+}): ReactNode {
   const hasActions = useMemo(() => {
     return actions.some((action) => !action.hidden);
   }, [actions]);

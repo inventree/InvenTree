@@ -3,18 +3,26 @@ import { Text } from '@mantine/core';
 import { IconFileArrowLeft, IconSquareArrowRight } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
+import { ActionButton } from '@lib/components/ActionButton';
+import { AddItemButton } from '@lib/components/AddItemButton';
+import { ProgressBar } from '@lib/components/ProgressBar';
+import {
+  type RowAction,
+  RowDeleteAction,
+  RowDuplicateAction,
+  RowEditAction,
+  RowViewAction
+} from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import { formatDecimal } from '@lib/functions/Formatting';
 import type { TableFilter } from '@lib/types/Filters';
+import type { TableColumn } from '@lib/types/Tables';
 import { useNavigate } from 'react-router-dom';
-import { ActionButton } from '../../components/buttons/ActionButton';
-import { AddItemButton } from '../../components/buttons/AddItemButton';
 import ImporterDrawer from '../../components/importer/ImporterDrawer';
-import { ProgressBar } from '../../components/items/ProgressBar';
 import { RenderInstance } from '../../components/render/Instance';
-import { RenderStockLocation } from '../../components/render/Stock';
 import { dataImporterSessionFields } from '../../forms/ImporterForms';
 import {
   usePurchaseOrderLineItemFields,
@@ -28,24 +36,17 @@ import {
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import {
   CurrencyColumn,
   DescriptionColumn,
   LinkColumn,
+  LocationColumn,
   NoteColumn,
   PartColumn,
   ReferenceColumn,
   TargetDateColumn
 } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import {
-  type RowAction,
-  RowDeleteAction,
-  RowDuplicateAction,
-  RowEditAction,
-  RowViewAction
-} from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
 
 /*
@@ -123,6 +124,7 @@ export function PurchaseOrderLineItemTable({
     formProps: {
       // Timeout is a small hack to prevent function being called before re-render
       onClose: () => {
+        table.clearSelectedRecords();
         table.refreshTable();
         setTimeout(() => setSingleRecord(null), 500);
       }
@@ -197,7 +199,7 @@ export function PurchaseOrderLineItemTable({
 
           return (
             <TableHoverCard
-              value={record.quantity}
+              value={formatDecimal(record.quantity)}
               extra={extra}
               title={t`Quantity`}
             />
@@ -258,15 +260,11 @@ export function PurchaseOrderLineItemTable({
         title: t`Total Price`
       }),
       TargetDateColumn({}),
-      {
-        accessor: 'destination',
-        title: t`Destination`,
+      LocationColumn({
+        accessor: 'destination_detail',
         sortable: false,
-        render: (record: any) =>
-          record.destination
-            ? RenderStockLocation({ instance: record.destination_detail })
-            : '-'
-      },
+        title: t`Destination`
+      }),
       NoteColumn({}),
       LinkColumn({})
     ];

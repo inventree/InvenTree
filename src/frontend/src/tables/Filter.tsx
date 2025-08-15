@@ -249,6 +249,15 @@ export function HasProjectCodeFilter(): TableFilter {
   };
 }
 
+export function IncludeVariantsFilter(): TableFilter {
+  return {
+    name: 'include_variants',
+    type: 'boolean',
+    label: t`Include Variants`,
+    description: t`Include results for part variants`
+  };
+}
+
 export function OrderStatusFilter({
   model
 }: { model: ModelType }): TableFilter {
@@ -324,6 +333,32 @@ export function UserFilter({
   };
 }
 
+export function ManufacturerFilter(): TableFilter {
+  return {
+    name: 'manufacturer',
+    label: t`Manufacturer`,
+    description: t`Filter by manufacturer`,
+    type: 'api',
+    apiUrl: apiUrl(ApiEndpoints.company_list),
+    model: ModelType.company,
+    modelRenderer: (instance: any) => instance.name,
+    apiFilter: { is_manufacturer: true }
+  };
+}
+
+export function SupplierFilter(): TableFilter {
+  return {
+    name: 'supplier',
+    label: t`Supplier`,
+    description: t`Filter by supplier`,
+    type: 'api',
+    apiUrl: apiUrl(ApiEndpoints.company_list),
+    model: ModelType.company,
+    modelRenderer: (instance: any) => instance.name,
+    apiFilter: { is_supplier: true }
+  };
+}
+
 export function CreatedByFilter(): TableFilter {
   return UserFilter({
     name: 'created_by',
@@ -343,10 +378,21 @@ export function IssuedByFilter(): TableFilter {
 export function PartCategoryFilter(): TableFilter {
   return {
     name: 'category',
-    label: t`Category`,
+    label: t`Part Category`,
     description: t`Filter by part category`,
     apiUrl: apiUrl(ApiEndpoints.category_list),
     model: ModelType.partcategory,
+    modelRenderer: (instance: any) => instance.name
+  };
+}
+
+export function StockLocationFilter(): TableFilter {
+  return {
+    name: 'location',
+    label: t`Location`,
+    description: t`Filter by stock location`,
+    apiUrl: apiUrl(ApiEndpoints.stock_location_list),
+    model: ModelType.stocklocation,
     modelRenderer: (instance: any) => instance.name
   };
 }

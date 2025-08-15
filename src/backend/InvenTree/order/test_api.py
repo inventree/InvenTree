@@ -1182,8 +1182,7 @@ class PurchaseOrderReceiveTest(OrderTest):
 
         n = StockItem.objects.count()
 
-        # TODO: 2024-12-10 - This API query needs to be refactored!
-        self.post(self.url, data, expected_code=201, max_query_count=500)
+        self.post(self.url, data, expected_code=201, max_query_count=275)
 
         # Check that the expected number of stock items has been created
         self.assertEqual(n + 11, StockItem.objects.count())
@@ -1590,6 +1589,8 @@ class SalesOrderTest(OrderTest):
 
     def test_export(self):
         """Test we can export the SalesOrder list."""
+        set_global_setting(models.SalesOrder.UNLOCK_SETTING, True)
+
         n = models.SalesOrder.objects.count()
 
         # Check there are some sales orders
@@ -1917,6 +1918,11 @@ class SalesOrderDownloadTest(OrderTest):
 class SalesOrderAllocateTest(OrderTest):
     """Unit tests for allocating stock items against a SalesOrder."""
 
+    @classmethod
+    def setUpTestData(cls):
+        """Init routine for this unit test class."""
+        super().setUpTestData()
+
     def setUp(self):
         """Init routines for this unit testing class."""
         super().setUp()
@@ -2006,7 +2012,10 @@ class SalesOrderAllocateTest(OrderTest):
         data = {'items': [], 'shipment': self.shipment.pk}
 
         for line in self.order.lines.all():
-            stock_item = line.part.stock_items.last()
+            for stock_item in line.part.stock_items.all():
+                # Find a non-serialized stock item to allocate
+                if not stock_item.serialized:
+                    break
 
             # Fully-allocate each line
             data['items'].append({
@@ -2038,11 +2047,22 @@ class SalesOrderAllocateTest(OrderTest):
         for line in filter(check_template, self.order.lines.all()):
             stock_item = None
 
+            stock_item = None
+
             # Allocate a matching variant
             parts = Part.objects.filter(salable=True).filter(variant_of=line.part.pk)
             for part in parts:
                 stock_item = part.stock_items.last()
-                break
+
+                for item in part.stock_items.all():
+                    if item.serialized:
+                        continue
+
+                    stock_item = item
+                    break
+
+                if stock_item is not None:
+                    break
 
             # Fully-allocate each line
             data['items'].append({
@@ -2486,6 +2506,50 @@ class ReturnOrderTests(InvenTreeAPITestCase):
         response = self.get(url, expected_code=200, format=None)
         calendar = Calendar.from_ical(response.content)
         self.assertIsInstance(calendar, Calendar)
+
+    def test_export(self):
+        """Test data export for the ReturnOrder API endpoints."""
+        # Export return orders
+        data = self.export_data(
+            reverse('api-return-order-list'),
+            export_format='csv',
+            decode=True,
+            expected_code=200,
+        )
+
+        self.process_csv(
+            data,
+            required_cols=['Reference', 'Customer'],
+            required_rows=models.ReturnOrder.objects.count(),
+        )
+
+        N = models.ReturnOrderLineItem.objects.count()
+        self.assertGreater(N, 0, 'No ReturnOrderLineItems found!')
+
+        # Export return order lines
+        data = self.export_data(
+            reverse('api-return-order-line-list'),
+            export_format='csv',
+            decode=True,
+            expected_code=200,
+        )
+
+        self.process_csv(
+            data, required_rows=N, required_cols=['Order', 'Reference', 'Target Date']
+        )
+
+        # Export again, with a search term
+        data = self.export_data(
+            reverse('api-return-order-line-list'),
+            params={'search': 'xyz'},
+            export_format='csv',
+            decode=True,
+            expected_code=200,
+        )
+
+        self.process_csv(
+            data, required_rows=0, required_cols=['Order', 'Reference', 'Target Date']
+        )
 
 
 class OrderMetadataAPITest(InvenTreeAPITestCase):
