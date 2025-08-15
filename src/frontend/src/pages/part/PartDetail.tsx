@@ -844,13 +844,6 @@ export default function PartDetail() {
         )
       },
       {
-        name: 'builds',
-        label: t`Build Orders`,
-        icon: <IconTools />,
-        hidden: !part.assembly || !user.hasViewRole(UserRoles.build),
-        content: part.pk ? <BuildOrderTable partId={part.pk} /> : <Skeleton />
-      },
-      {
         name: 'used_in',
         label: t`Used In`,
         icon: <IconStack2 />,
@@ -904,6 +897,13 @@ export default function PartDetail() {
           !user.hasViewRole(UserRoles.return_order) ||
           !globalSettings.isSet('RETURNORDER_ENABLED'),
         content: part.pk ? <ReturnOrderTable partId={part.pk} /> : <Skeleton />
+      },
+      {
+        name: 'builds',
+        label: t`Build Orders`,
+        icon: <IconTools />,
+        hidden: !part.assembly || !user.hasViewRole(UserRoles.build),
+        content: part.pk ? <BuildOrderTable partId={part.pk} /> : <Skeleton />
       },
       {
         name: 'stocktake',
