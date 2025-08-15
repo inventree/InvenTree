@@ -64,6 +64,8 @@ def machine_registry_entrypoint(
                         # Check if the machine registry needs to be reloaded
                         self._check_reload()
 
+                self.__checking_reload = False
+
             # Call the original method
             try:
                 result = method(self, *args, **kwargs)
@@ -189,7 +191,6 @@ class MachineRegistry(
         from plugin.registry import registry as plugin_registry
 
         logger.debug('Collecting machine drivers')
-
         drivers: dict[str, type[BaseDriver]] = {}
 
         for plugin in plugin_registry.with_mixin(PluginMixinEnum.MACHINE):
@@ -267,6 +268,8 @@ class MachineRegistry(
     def reload_machines(self):
         """Reload all machines from the database."""
         self.machines = {}
+        self.discover_machine_types()
+        self.discover_drivers()
         self.load_machines()
 
     @machine_registry_entrypoint()
@@ -421,6 +424,14 @@ class MachineRegistry(
 
     def _check_reload(self):
         """Check if the registry needs to be reloaded, and reload it."""
+        from plugin import registry as plg_registry
+
+        do_reload: bool = False
+        plugin_registry_hash = getattr(self, '_plugin_registry_hash', None)
+
+        if plugin_registry_hash != plg_registry.registry_hash:
+            do_reload = True
+
         if not self._hash:
             self._hash = self._calculate_registry_hash()
 
@@ -432,14 +443,19 @@ class MachineRegistry(
 
         if reg_hash and reg_hash != self._hash:
             logger.info('Machine registry has changed - reloading machines')
-            self.reload_machines()
-            return True
+            do_reload = True
 
-        return False
+        if do_reload:
+            self.reload_machines()
+
+        return do_reload
 
     def _update_registry_hash(self):
         """Save the current registry hash."""
+        from plugin import registry as plg_registry
+
         self._hash = self._calculate_registry_hash()
+        self._plugin_registry_hash = plg_registry.registry_hash
 
         try:
             old_hash = get_global_setting('_MACHINE_REGISTRY_HASH')
