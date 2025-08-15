@@ -112,9 +112,16 @@ RUN apk add --no-cache --update nodejs npm yarn bash
 RUN npm install -g --ignore-scripts n@10.1.0
 RUN bash -c "n lts"
 RUN yarn config set network-timeout 600000 -g
+RUN npm install --global corepack@latest --force && \
+    corepack enable pnpm && \
+    corepack prepare pnpm@latest-10 --activate
+
 COPY src ${INVENTREE_HOME}/src
 COPY tasks.py ${INVENTREE_HOME}/tasks.py
-RUN cd ${INVENTREE_HOME} && invoke int.frontend-compile
+# Set pnpm store directory in the frontend directory before compilation
+RUN cd ${INVENTREE_HOME}/src/frontend && \
+    pnpm config set store-dir .pnpm-store && \
+    cd ${INVENTREE_HOME} && invoke int.frontend-compile
 
 # InvenTree production image:
 # - Copies required files from local directory
@@ -153,9 +160,12 @@ RUN pip install --require-hashes -r base_requirements.txt --no-cache
 # Install nodejs / npm / yarn
 
 RUN apk add --no-cache --update nodejs npm yarn bash
-RUN npm install -g --ignore-scripts n@10.1.0
+RUN npm install -g --ignore-scripts n@10.2.0
 RUN bash -c "n lts"
 RUN yarn config set network-timeout 600000 -g
+RUN npm install --global corepack@latest --force && \
+    corepack enable pnpm && \
+    corepack prepare pnpm@latest-10 --activate
 
 # The development image requires the source code to be mounted to /home/inventree/
 # So from here, we don't actually "do" anything, apart from some file management
