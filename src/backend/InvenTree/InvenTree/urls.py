@@ -39,10 +39,16 @@ from .api import (
     VersionTextView,
     VersionView,
 )
+from .config import get_setting
 from .magic_login import GetSimpleLoginView
 from .views import auth_request
 
-admin.site.site_header = 'InvenTree Admin'
+# Set admin header from config or use default
+admin.site.site_header = get_setting(
+    'INVENTREE_SITE_HEADER',
+    'customize.site_header',
+    'InvenTree Admin'
+)
 
 
 apipatterns = [
