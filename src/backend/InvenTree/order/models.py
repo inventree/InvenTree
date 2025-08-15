@@ -951,8 +951,11 @@ class PurchaseOrder(TotalPriceMixin, Order):
                 "Lines can only be received against an order marked as 'PLACED'"
             )
 
-        # List of stock items to create
+        # List of stock items which have been created
         stock_items: list[stock.models.StockItem] = []
+
+        # List of stock items to bulk create
+        bulk_create_items: list[stock.models.StockItem] = []
 
         # List of tracking entries to create
         tracking_entries: list[stock.models.StockItemTracking] = []
@@ -1097,12 +1100,25 @@ class PurchaseOrder(TotalPriceMixin, Order):
                 if barcode:
                     new_item.assign_barcode(barcode_data=barcode, save=False)
 
-                new_item.save()
-                stock_items.append(new_item)
+                # new_item.save()
+                bulk_create_items.append(new_item)
 
             # Update the line item quantity
             line.received += quantity
             line_items_to_update.append(line)
+
+        # Bulk create new stock items
+        if len(bulk_create_items) > 0:
+            stock.models.StockItem.objects.bulk_create(bulk_create_items)
+
+            # Fetch them back again
+            tree_ids = [item.tree_id for item in bulk_create_items]
+
+            created_items = stock.models.StockItem.objects.filter(
+                tree_id__in=tree_ids, level=0, lft=1, rght=2, purchase_order=self
+            ).prefetch_related('location')
+
+            stock_items.extend(created_items)
 
         # Generate a new tracking entry for each stock item
         for item in stock_items:
