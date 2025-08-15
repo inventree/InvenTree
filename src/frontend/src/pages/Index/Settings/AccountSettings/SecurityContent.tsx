@@ -751,6 +751,7 @@ async function runActionWithFallback(
 ) {
   const { setAuthContext, setMfaContext, mfa_context } =
     useServerApiState.getState();
+
   const result = await action().catch((err) => {
     setAuthContext(err.response.data?.data);
     // check if we need to re-authenticate
@@ -774,14 +775,18 @@ async function runActionWithFallback(
       return ResultType.error;
     }
   });
+
+  // run the re-authentication flows as needed
   if (result == ResultType.mfareauth) {
     const mfa_types = mfa_context?.types || [];
+    const mfaCode = await getReauthText({
+      label: t`TOTP Code`,
+      name: 'TOTP',
+      description: t`Enter one of your codes: ${mfa_types}`
+    });
+
     authApi(apiUrl(ApiEndpoints.auth_mfa_reauthenticate), undefined, 'post', {
-      code: await getReauthText({
-        label: t`TOTP Code`,
-        name: 'TOTP',
-        description: t`Enter one of your codes: ${mfa_types}`
-      })
+      code: mfaCode
     })
       .then((response) => {
         setAuthContext(response.data?.data);
@@ -791,12 +796,14 @@ async function runActionWithFallback(
         setAuthContext(err.response.data?.data);
       });
   } else if (result == ResultType.reauth) {
+    const passwordInput = await getReauthText({
+      label: t`Password`,
+      name: 'password',
+      description: t`Enter your password`
+    });
+
     authApi(apiUrl(ApiEndpoints.auth_reauthenticate), undefined, 'post', {
-      password: await getReauthText({
-        label: t`Password`,
-        name: 'password',
-        description: t`Enter your password`
-      })
+      password: passwordInput
     })
       .then((response) => {
         setAuthContext(response.data?.data);
