@@ -981,9 +981,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
         # after we have fetched *all* line itemes in a single DB query
         for line_item in line_item_map.values():
             if line_item.order != self:
-                raise ValidationError({
-                    _('Line item does not match this purchase order')
-                })
+                raise ValidationError({_('Line item does not match purchase order')})
 
             if not line_item.part or not line_item.part.part:
                 raise ValidationError({_('Line item is missing a linked part')})
