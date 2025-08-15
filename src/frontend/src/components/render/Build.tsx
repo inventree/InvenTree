@@ -22,7 +22,9 @@ export function RenderBuildOrder(
         status: instance.status_custom_key,
         type: ModelType.build
       })}
-      image={instance.part_detail?.thumbnail || instance.part_detail?.image}
+      image={
+        instance.part_detail?.thumbnail_url || instance.part_detail?.image_url
+      }
       url={props.link ? getDetailUrl(ModelType.build, instance.pk) : undefined}
     />
   );
@@ -42,7 +44,9 @@ export function RenderBuildLine({
         status: instance.status_custom_key,
         type: ModelType.build
       })}
-      image={instance.part_detail.thumbnail || instance.part_detail.image}
+      image={
+        instance.part_detail?.thumbnail_url || instance.part_detail?.image_url
+      }
     />
   );
 }

@@ -267,8 +267,7 @@ export default function SalesOrderDetail() {
         <Grid grow>
           <DetailsImage
             appRole={UserRoles.purchase_order}
-            apiPath={ApiEndpoints.company_list}
-            src={order.customer_detail?.image}
+            src={order.customer_detail?.image_url}
             pk={order.customer}
           />
           <Grid.Col span={{ base: 12, sm: 8 }}>
@@ -585,7 +584,7 @@ export default function SalesOrderDetail() {
           <PageDetail
             title={`${t`Sales Order`}: ${order.reference}`}
             subtitle={subtitle}
-            imageUrl={order.customer_detail?.image}
+            imageUrl={order.customer_detail?.image_url}
             badges={orderBadges}
             actions={soActions}
             breadcrumbs={[{ name: t`Sales`, url: '/sales/' }]}

@@ -41,7 +41,7 @@ export function PartColumn({
   return part ? (
     <Group justify='space-between' wrap='nowrap'>
       <Thumbnail
-        src={part?.thumbnail ?? part?.image}
+        src={part?.thumbnail_url ?? part?.image_url}
         text={full_name ? part?.full_name : part?.name}
         hover
       />
@@ -76,7 +76,7 @@ export function CompanyColumn({
   return company ? (
     <Group gap='xs' wrap='nowrap'>
       <Thumbnail
-        src={company.thumbnail ?? company.image ?? ''}
+        src={company.thumbnail_url ?? company.image_url ?? ''}
         alt={company.name}
         size={24}
         hover

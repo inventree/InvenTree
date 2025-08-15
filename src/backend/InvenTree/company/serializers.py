@@ -1,29 +1,28 @@
 """JSON serializers for Company app."""
 
-import io
-
-from django.core.files.base import ContentFile
+from django.db.models import Prefetch
 from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
 from sql_util.utils import SubqueryCount
 from taggit.serializers import TagListSerializerField
 
+import common.models as common_models
+import common.serializers as common_serializers
 import company.filters
 import part.filters
 import part.serializers as part_serializers
+from common.filters import prefetch_related_images
 from importer.registry import register_importer
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.ready import isGeneratingSchema
 from InvenTree.serializers import (
     InvenTreeCurrencySerializer,
     InvenTreeDecimalField,
-    InvenTreeImageSerializerField,
     InvenTreeModelSerializer,
     InvenTreeMoneySerializer,
     InvenTreeTagModelSerializer,
     NotesFieldMixin,
-    RemoteImageMixin,
 )
 
 from .models import (
@@ -37,7 +36,9 @@ from .models import (
 )
 
 
-class CompanyBriefSerializer(InvenTreeModelSerializer):
+class CompanyBriefSerializer(
+    common_serializers.InvenTreeImageSerializerMixin, InvenTreeModelSerializer
+):
     """Serializer for Company object (limited detail)."""
 
     class Meta:
@@ -50,15 +51,12 @@ class CompanyBriefSerializer(InvenTreeModelSerializer):
             'name',
             'description',
             'image',
-            'thumbnail',
+            'image_url',
+            'thumbnail_url',
             'currency',
             'tax_id',
         ]
         read_only_fields = ['currency']
-
-    image = InvenTreeImageSerializerField(read_only=True)
-
-    thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
 
 
 @register_importer()
@@ -106,11 +104,14 @@ class AddressBriefSerializer(InvenTreeModelSerializer):
         ]
 
 
+from django.contrib.contenttypes.models import ContentType
+
+
 @register_importer()
 class CompanySerializer(
+    common_serializers.InvenTreeImageSerializerMixin,
     DataImportExportSerializerMixin,
     NotesFieldMixin,
-    RemoteImageMixin,
     InvenTreeModelSerializer,
 ):
     """Serializer for Company object (full detail)."""
@@ -136,6 +137,8 @@ class CompanySerializer(
             'contact',
             'link',
             'image',
+            'image_url',
+            'thumbnail_url',
             'active',
             'is_customer',
             'is_manufacturer',
@@ -143,7 +146,6 @@ class CompanySerializer(
             'notes',
             'parts_supplied',
             'parts_manufactured',
-            'remote_image',
             'address_count',
             'primary_address',
             'tax_id',
@@ -161,6 +163,14 @@ class CompanySerializer(
 
         queryset = queryset.annotate(address_count=SubqueryCount('addresses'))
 
+        ct = ContentType.objects.get_for_model(Company)
+        primary_qs = common_models.InvenTreeImage.objects.filter(
+            content_type=ct, primary=True
+        )
+
+        queryset = queryset.prefetch_related(
+            Prefetch('images', queryset=primary_qs, to_attr='all_images')
+        )
         return queryset
 
     address = serializers.CharField(
@@ -171,9 +181,8 @@ class CompanySerializer(
         read_only=True,
     )
 
+    # TODO: I suspect this field might be causing an N+1 query issue because it relies on a property on the Company model.
     primary_address = AddressSerializer(allow_null=True, read_only=True)
-
-    image = InvenTreeImageSerializerField(required=False, allow_null=True)
 
     email = serializers.EmailField(
         required=False, default='', allow_blank=True, allow_null=True
@@ -186,27 +195,6 @@ class CompanySerializer(
     currency = InvenTreeCurrencySerializer(
         help_text=_('Default currency used for this supplier'), required=True
     )
-
-    def save(self):
-        """Save the Company instance."""
-        super().save()
-
-        company = self.instance
-
-        # Check if an image was downloaded from a remote URL
-        remote_img = getattr(self, 'remote_image_file', None)
-
-        if remote_img and company:
-            fmt = remote_img.format or 'PNG'
-            buffer = io.BytesIO()
-            remote_img.save(buffer, format=fmt)
-
-            # Construct a simplified name for the image
-            filename = f'company_{company.pk}_image.{fmt.lower()}'
-
-            company.image.save(filename, ContentFile(buffer.getvalue()))
-
-        return self.instance
 
 
 @register_importer()
@@ -483,6 +471,9 @@ class SupplierPartSerializer(
         queryset = queryset.annotate(
             on_order=company.filters.annotate_on_order_quantity()
         )
+
+        queryset = prefetch_related_images(queryset, reference='part')
+        queryset = prefetch_related_images(queryset, reference='supplier')
 
         return queryset
 

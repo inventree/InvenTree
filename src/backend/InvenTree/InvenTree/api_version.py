@@ -1,11 +1,17 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 384
+INVENTREE_API_VERSION = 385
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+v385 -> 2025-08-11 : https://github.com/inventree/InvenTree/pull/10069
+    - Introduces new 'InvenTreeImage' model with GenericForeignKey for image associations
+    - Adds 'image_url' and 'thumbnail_url' fields to relevant API serializers
+    - Updates Part and Company API endpoints to use new image architecture
+    - Adds API endpoint for managing 'InvenTreeImage' objects
+
 v384 -> 2025-08-08 : https://github.com/inventree/InvenTree/pull/9969
     - Bump allauth
 
