@@ -976,6 +976,18 @@ class PurchaseOrder(TotalPriceMixin, Order):
         # Map order line items to their corresponding stock items
         line_item_map = {line.pk: line for line in line_items}
 
+        # Before we continue, validate that each line item is valid
+        # We validate this here because it is far more efficient,
+        # after we have fetched *all* line itemes in a single DB query
+        for line_item in line_item_map.values():
+            if line_item.order != self:
+                raise ValidationError({
+                    _('Line item does not match this purchase order')
+                })
+
+            if not line_item.part or not line_item.part.part:
+                raise ValidationError({_('Line item is missing a linked part')})
+
         for item in items:
             # Extract required information
             line_item_id = item['line_item'].pk

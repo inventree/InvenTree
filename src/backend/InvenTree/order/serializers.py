@@ -755,18 +755,10 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
 
     line_item = serializers.PrimaryKeyRelatedField(
         queryset=order.models.PurchaseOrderLineItem.objects.all(),
-        many=False,
         allow_null=False,
         required=True,
         label=_('Line Item'),
     )
-
-    def validate_line_item(self, item):
-        """Validation for the 'line_item' field."""
-        if item.order != self.context['order']:
-            raise ValidationError(_('Line item does not match purchase order'))
-
-        return item
 
     location = serializers.PrimaryKeyRelatedField(
         queryset=stock.models.StockLocation.objects.all(),
@@ -864,19 +856,12 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
         quantity = data['quantity']
         serial_numbers = data.get('serial_numbers', '').strip()
 
-        base_part = line_item.part.part
-        base_quantity = line_item.part.base_quantity(quantity)
-
-        # Does the quantity need to be "integer" (for trackable parts?)
-        if base_part.trackable and Decimal(base_quantity) != int(base_quantity):
-            raise ValidationError({
-                'quantity': _(
-                    'An integer quantity must be provided for trackable parts'
-                )
-            })
-
         # If serial numbers are provided
         if serial_numbers:
+            supplier_part = line_item.part
+            base_part = supplier_part.part
+            base_quantity = supplier_part.base_quantity(quantity)
+
             try:
                 # Pass the serial numbers through to the parent serializer once validated
                 data['serials'] = extract_serial_numbers(
