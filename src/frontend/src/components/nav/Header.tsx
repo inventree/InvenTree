@@ -8,7 +8,11 @@ import {
   Tooltip,
   UnstyledButton
 } from '@mantine/core';
-import { useDisclosure, useDocumentVisibility } from '@mantine/hooks';
+import {
+  useDisclosure,
+  useDocumentVisibility,
+  useHotkeys
+} from '@mantine/hooks';
 import { IconBell, IconSearch } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useEffect, useMemo, useState } from 'react';
@@ -49,10 +53,20 @@ export function Header() {
   const [server] = useServerApiState(useShallow((state) => [state.server]));
   const [navDrawerOpened, { open: openNavDrawer, close: closeNavDrawer }] =
     useDisclosure(navigationOpen);
+
   const [
     searchDrawerOpened,
     { open: openSearchDrawer, close: closeSearchDrawer }
   ] = useDisclosure(false);
+
+  useHotkeys([
+    [
+      '/',
+      () => {
+        openSearchDrawer();
+      }
+    ]
+  ]);
 
   const [
     notificationDrawerOpened,

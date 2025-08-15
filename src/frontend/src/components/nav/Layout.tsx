@@ -76,7 +76,7 @@ export default function LayoutComponent() {
             leftSection: <IconSearch size='1.2rem' />,
             placeholder: t`Search...`
           }}
-          shortcut={['mod + K', '/']}
+          shortcut={['mod + K']}
           nothingFound={t`Nothing found...`}
         />
       </Flex>
