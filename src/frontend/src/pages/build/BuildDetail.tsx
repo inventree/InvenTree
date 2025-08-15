@@ -2,6 +2,7 @@ import { t } from '@lingui/core/macro';
 import { Alert, Grid, Skeleton, Stack, Text } from '@mantine/core';
 import {
   IconChecklist,
+  IconCircleCheck,
   IconClipboardCheck,
   IconClipboardList,
   IconInfoCircle,
@@ -19,6 +20,7 @@ import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { getDetailUrl } from '@lib/functions/Navigation';
+import type { ApiFormFieldSet } from '@lib/types/Forms';
 import AdminButton from '../../components/buttons/AdminButton';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
@@ -130,6 +132,10 @@ export default function BuildDetail() {
       endpoint: ApiEndpoints.build_line_list,
       params: {
         build: id,
+        allocations: false,
+        part_detail: false,
+        build_detail: false,
+        bom_item_detail: false,
         limit: 1
       },
       disabled: !id,
@@ -417,7 +423,8 @@ export default function BuildDetail() {
         icon: <IconList />,
         hidden:
           build.status == buildStatus.COMPLETE ||
-          build.status == buildStatus.CANCELLED,
+          build.status == buildStatus.CANCELLED ||
+          (buildLineData?.count ?? 0) <= 0, // Hide if no required parts
         content: (
           <BuildAllocationsPanel
             build={build}
@@ -430,11 +437,13 @@ export default function BuildDetail() {
         name: 'consumed-stock',
         label: t`Consumed Stock`,
         icon: <IconListCheck />,
+        hidden: (buildLineData?.count ?? 0) <= 0, // Hide if no required parts
         content: (
           <StockItemTable
             allowAdd={false}
             tableName='build-consumed'
             showLocation={false}
+            allowReturn
             params={{
               consumed_by: id
             }}
@@ -590,17 +599,33 @@ export default function BuildDetail() {
     successMessage: t`Order issued`
   });
 
+  const completeOrderFields: ApiFormFieldSet = useMemo(() => {
+    const hasBom = (buildLineData?.count ?? 0) > 0;
+
+    return {
+      accept_overallocated: {
+        hidden: !hasBom
+      },
+      accept_unallocated: {
+        hidden: !hasBom
+      },
+      accept_incomplete: {}
+    };
+  }, [buildLineData.count]);
+
   const completeOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.build_order_complete, build.pk),
     title: t`Complete Build Order`,
     onFormSuccess: refreshInstance,
-    preFormWarning: t`Mark this order as complete`,
+    preFormContent: (
+      <Alert
+        color='green'
+        icon={<IconCircleCheck />}
+        title={t`Mark this order as complete`}
+      />
+    ),
     successMessage: t`Order completed`,
-    fields: {
-      accept_overallocated: {},
-      accept_unallocated: {},
-      accept_incomplete: {}
-    }
+    fields: completeOrderFields
   });
 
   const buildActions = useMemo(() => {
@@ -708,7 +733,7 @@ export default function BuildDetail() {
         <Stack gap='xs'>
           <PageDetail
             title={`${t`Build Order`}: ${build.reference}`}
-            subtitle={build.title}
+            subtitle={`${build.quantity} x ${build.part_detail?.full_name}`}
             badges={buildBadges}
             editAction={editBuild.open}
             editEnabled={user.hasChangePermission(ModelType.part)}

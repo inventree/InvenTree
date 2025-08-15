@@ -1,7 +1,7 @@
 {
     "name": "@inventreedb/ui",
     "description": "UI components for the InvenTree project",
-    "version": "0.2.3",
+    "version": "0.4.0",
     "private": false,
     "type": "module",
     "license": "MIT",
@@ -57,8 +57,8 @@
         "@fullcalendar/daygrid": "^6.1.15",
         "@fullcalendar/interaction": "^6.1.15",
         "@fullcalendar/react": "^6.1.15",
-        "@lingui/core": "^5.3.0",
-        "@lingui/react": "^5.3.0",
+        "@lingui/core": "^5.3.1",
+        "@lingui/react": "^5.3.1",
         "@mantine/carousel": "^7.16.0",
         "@mantine/charts": "^7.16.0",
         "@mantine/core": "^7.16.0",
@@ -109,9 +109,9 @@
         "@babel/preset-typescript": "^7.27.0",
         "@babel/runtime": "^7.27.0",
         "@codecov/vite-plugin": "^1.9.0",
-        "@lingui/babel-plugin-lingui-macro": "^5.3.0",
+        "@lingui/babel-plugin-lingui-macro": "^5.3.1",
         "@lingui/cli": "^5.3.1",
-        "@lingui/macro": "^5.3.0",
+        "@lingui/macro": "^5.3.1",
         "@playwright/test": "^1.52.0",
         "@types/node": "^22.13.14",
         "@types/qrcode": "^1.5.5",
@@ -131,6 +131,7 @@
         "vite": "^6.2.6",
         "vite-plugin-babel-macros": "^1.0.6",
         "vite-plugin-dts": "^4.5.3",
+        "vite-plugin-externals": "^0.6.2",
         "vite-plugin-istanbul": "^6.0.2"
     }
 }

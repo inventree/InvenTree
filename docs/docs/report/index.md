@@ -184,7 +184,7 @@ Snippets are included in a template as follows:
 {% raw %}{% include 'snippets/<snippet_name.html>' %}{% endraw %}
 ```
 
-For example, consider a stocktake report for a particular stock location, where we wish to render a table with a row for each item in that location.
+For example, consider a custom stocktake report for a particular stock location, where we wish to render a table with a row for each item in that location.
 
 ```html
 {% raw %}

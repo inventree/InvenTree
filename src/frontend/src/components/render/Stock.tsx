@@ -1,11 +1,18 @@
 import { t } from '@lingui/core/macro';
-import { Text } from '@mantine/core';
+import { Group, Text } from '@mantine/core';
 import type { ReactNode } from 'react';
 
 import { ModelType } from '@lib/enums/ModelType';
+import { formatDecimal } from '@lib/functions/Formatting';
 import { getDetailUrl } from '@lib/functions/Navigation';
+import { shortenString } from '../../functions/tables';
+import { TableHoverCard } from '../../tables/TableHoverCard';
 import { ApiIcon } from '../items/ApiIcon';
-import { type InstanceRenderInterface, RenderInlineModel } from './Instance';
+import {
+  InlineSecondaryBadge,
+  type InstanceRenderInterface,
+  RenderInlineModel
+} from './Instance';
 
 /**
  * Inline rendering of a single StockLocation instance
@@ -14,6 +21,24 @@ export function RenderStockLocation(
   props: Readonly<InstanceRenderInterface>
 ): ReactNode {
   const { instance } = props;
+
+  const suffix: ReactNode = (
+    <Group gap='xs'>
+      <TableHoverCard
+        value=''
+        position='bottom-end'
+        zIndex={10000}
+        icon='sitemap'
+        title={t`Location`}
+        extra={[<Text>{instance.pathstring}</Text>]}
+      />
+    </Group>
+  );
+
+  const location = shortenString({
+    str: instance.pathstring,
+    len: 50
+  });
 
   return (
     <RenderInlineModel
@@ -25,8 +50,9 @@ export function RenderStockLocation(
           {instance.icon && <ApiIcon name={instance.icon} />}
         </>
       }
-      primary={instance.pathstring}
+      primary={location}
       secondary={instance.description}
+      suffix={suffix}
       url={
         props.link
           ? getDetailUrl(ModelType.stocklocation, instance.pk)
@@ -57,24 +83,55 @@ export function RenderStockItem(
   const { instance } = props;
   let quantity_string = '';
 
+  const allocated: number = Math.max(0, instance?.allocated ?? 0);
+
   if (instance?.serial !== null && instance?.serial !== undefined) {
     quantity_string += `${t`Serial Number`}: ${instance.serial}`;
+  } else if (allocated > 0) {
+    const available: number = Math.max(0, instance.quantity - allocated);
+    quantity_string = `${t`Available`}: ${formatDecimal(available)} / ${formatDecimal(instance.quantity)}`;
   } else if (instance?.quantity) {
-    quantity_string = `${t`Quantity`}: ${instance.quantity}`;
+    quantity_string = `${t`Quantity`}: ${formatDecimal(instance.quantity)}`;
   }
 
-  let batch_string = '';
+  const showLocation: boolean = props.extra?.show_location !== false;
+  const location: any = props.instance?.location_detail;
 
-  if (!!instance.batch) {
-    batch_string = `${t`Batch`}: ${instance.batch}`;
-  }
+  // Form the "secondary" text to display
+  const secondary: ReactNode = (
+    <Group gap='xs' style={{ paddingLeft: '5px' }}>
+      {showLocation && location?.name && (
+        <InlineSecondaryBadge title={t`Location`} text={location.name} />
+      )}
+      {instance.batch && (
+        <InlineSecondaryBadge title={t`Batch`} text={instance.batch} />
+      )}
+    </Group>
+  );
+
+  // Form the "suffix" text to display
+  const suffix: ReactNode = (
+    <Group gap='xs' wrap='nowrap'>
+      <Text size='xs'>{quantity_string}</Text>
+      {location && (
+        <TableHoverCard
+          value=''
+          position='bottom-end'
+          zIndex={10000}
+          icon='sitemap'
+          title={t`Location`}
+          extra={[<Text>{location.pathstring}</Text>]}
+        />
+      )}
+    </Group>
+  );
 
   return (
     <RenderInlineModel
       {...props}
       primary={instance.part_detail?.full_name}
-      secondary={batch_string}
-      suffix={<Text size='xs'>{quantity_string}</Text>}
+      secondary={secondary}
+      suffix={suffix}
       image={instance.part_detail?.thumbnail || instance.part_detail?.image}
       url={
         props.link ? getDetailUrl(ModelType.stockitem, instance.pk) : undefined

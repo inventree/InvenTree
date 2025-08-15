@@ -1,7 +1,8 @@
 import { t } from '@lingui/core/macro';
-import { Alert, List, Stack, Table } from '@mantine/core';
+import { Alert, Divider, List, Stack, Table } from '@mantine/core';
 import {
   IconCalendar,
+  IconInfoCircle,
   IconLink,
   IconList,
   IconSitemap,
@@ -16,14 +17,15 @@ import { ModelType } from '@lib/enums/ModelType';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
 
+import { ProgressBar } from '@lib/components/ProgressBar';
 import { apiUrl } from '@lib/functions/Api';
 import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
 import {
   TableFieldErrorWrapper,
   type TableFieldRowProps
 } from '../components/forms/fields/TableField';
-import { ProgressBar } from '../components/items/ProgressBar';
 import { StatusRenderer } from '../components/render/StatusRenderer';
+import { RenderStockItem } from '../components/render/Stock';
 import { useCreateApiFormModal } from '../hooks/UseForm';
 import {
   useBatchCodeGenerator,
@@ -473,10 +475,12 @@ export function useCancelBuildOutputsForm({
 // Construct a single row in the 'allocate stock to build' table
 function BuildAllocateLineRow({
   props,
+  output,
   record,
   sourceLocation
 }: Readonly<{
   props: TableFieldRowProps;
+  output: any;
   record: any;
   sourceLocation: number | undefined;
 }>) {
@@ -485,6 +489,10 @@ function BuildAllocateLineRow({
       field_type: 'related field',
       api_url: apiUrl(ApiEndpoints.stock_item_list),
       model: ModelType.stockitem,
+      autoFill: !!output?.serial,
+      autoFillFilters: {
+        serial: output?.serial
+      },
       filters: {
         available: true,
         part_detail: true,
@@ -564,12 +572,14 @@ function BuildAllocateLineRow({
  */
 export function useAllocateStockToBuildForm({
   buildId,
+  output,
   outputId,
   build,
   lineItems,
   onFormSuccess
 }: {
   buildId?: number;
+  output?: any;
   outputId?: number | null;
   build?: any;
   lineItems: any[];
@@ -598,6 +608,7 @@ export function useAllocateStockToBuildForm({
           return (
             <BuildAllocateLineRow
               key={row.idx}
+              output={output}
               props={row}
               record={record}
               sourceLocation={sourceLocation}
@@ -608,7 +619,7 @@ export function useAllocateStockToBuildForm({
     };
 
     return fields;
-  }, [lineItems, sourceLocation]);
+  }, [output, lineItems, sourceLocation]);
 
   useEffect(() => {
     setSourceLocation(build?.take_from);
@@ -633,10 +644,22 @@ export function useAllocateStockToBuildForm({
   const preFormContent = useMemo(() => {
     return (
       <Stack gap='xs'>
+        {output?.pk && (
+          <Stack gap='xs'>
+            <Alert
+              color='blue'
+              icon={<IconInfoCircle />}
+              title={t`Build Output`}
+            >
+              <RenderStockItem instance={output} />
+            </Alert>
+            <Divider />
+          </Stack>
+        )}
         <StandaloneField fieldDefinition={sourceLocationField} />
       </Stack>
     );
-  }, [sourceLocationField]);
+  }, [output, sourceLocationField]);
 
   return useCreateApiFormModal({
     url: ApiEndpoints.build_order_allocate,

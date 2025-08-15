@@ -102,9 +102,9 @@ idna==3.10 \
     --hash=sha256:12f65c9b470abda6dc35cf8e63cc574b1c52b11df2c86030af0ac09b01b13ea9 \
     --hash=sha256:946d195a0d259cbba61165e88e65941f16e9b36ea6ddb97f00452bae8b1287d3
     # via requests
-jc==1.25.4 \
-    --hash=sha256:1e4f45d2e5b72cf9d300b0d9df0578c0d3b553843e3ad37a525d93bb0e94aca1 \
-    --hash=sha256:a32eaf029c56b582dadae48895f20784d0f84f2fa28a8e2b32f377a8bffa8b39
+jc==1.25.5 \
+    --hash=sha256:a2ec1e7bcadeb977f278b36a1619d85ea9070ab2b81aba74b7ee2c36470c3f8f \
+    --hash=sha256:f8ac0e4bc427b0ee8a3bdb07a254cc9df6b6036cd440f6c425e2e519cdbda78a
     # via -r contrib/dev_reqs/requirements.in
 pygments==2.19.1 \
     --hash=sha256:61c16d2a8576dc0649d9f39e089b5f02bcd27fba10d8fb4dcc28173f7a45151f \

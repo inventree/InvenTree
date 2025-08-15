@@ -125,9 +125,7 @@ class DataImportSessionSerializer(InvenTreeModelSerializer):
         """
         session = super().create(validated_data)
 
-        request = self.context.get('request', None)
-
-        if request:
+        if request := self.context.get('request', None):
             session.user = request.user
             session.save()
 
