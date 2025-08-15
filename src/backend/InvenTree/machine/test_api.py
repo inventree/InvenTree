@@ -7,8 +7,7 @@ from django.urls import reverse
 
 from InvenTree.unit_test import InvenTreeAPITestCase
 from machine import registry
-from machine.machine_type import BaseDriver, BaseMachineType
-from machine.machine_types import LabelPrinterBaseDriver
+from machine.machine_type import BaseDriver
 from machine.models import MachineConfig
 from machine.tests import TestMachineRegistryMixin
 from stock.models import StockLocation
@@ -21,55 +20,6 @@ class MachineAPITest(TestMachineRegistryMixin, InvenTreeAPITestCase):
 
     def setUp(self):
         """Setup some testing drivers/machines."""
-
-        class TestingLabelPrinterDriver(LabelPrinterBaseDriver):
-            """Test driver for label printing."""
-
-            SLUG = 'test-label-printer-api'
-            NAME = 'Test label printer'
-            DESCRIPTION = 'This is a test label printer driver for testing.'
-
-            MACHINE_SETTINGS = {
-                'TEST_SETTING': {
-                    'name': 'Test setting',
-                    'description': 'This is a test setting',
-                }
-            }
-
-            def restart_machine(self, machine: BaseMachineType):
-                """Override restart_machine."""
-                machine.set_status_text('Restarting...')
-
-            def print_label(self, *args, **kwargs) -> None:
-                """Override print_label."""
-
-        class TestingLabelPrinterDriverError1(LabelPrinterBaseDriver):
-            """Test driver for label printing."""
-
-            SLUG = 'test-label-printer-error'
-            NAME = 'Test label printer error'
-            DESCRIPTION = 'This is a test label printer driver for testing.'
-
-            def print_label(self, *args, **kwargs) -> None:
-                """Override print_label."""
-
-        class TestingLabelPrinterDriverError2(LabelPrinterBaseDriver):
-            """Test driver for label printing."""
-
-            SLUG = 'test-label-printer-error'
-            NAME = 'Test label printer error'
-            DESCRIPTION = 'This is a test label printer driver for testing.'
-
-            def print_label(self, *args, **kwargs) -> None:
-                """Override print_label."""
-
-        class TestingLabelPrinterDriverNotImplemented(LabelPrinterBaseDriver):
-            """Test driver for label printing."""
-
-            SLUG = 'test-label-printer-not-implemented'
-            NAME = 'Test label printer error not implemented'
-            DESCRIPTION = 'This is a test label printer driver for testing.'
-
         registry.initialize()
 
         super().setUp()
@@ -99,6 +49,10 @@ class MachineAPITest(TestMachineRegistryMixin, InvenTreeAPITestCase):
 
     def test_machine_driver_list(self):
         """Test machine driver list API endpoint."""
+        # Enable the built-in
+
+        print(reverse('api-machine-drivers'))
+
         response = self.get(reverse('api-machine-drivers'))
         driver = [a for a in response.data if a['slug'] == 'test-label-printer-api']
         self.assertEqual(len(driver), 1)

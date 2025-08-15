@@ -483,6 +483,9 @@ class PluginsRegistry:
                 dirs.append('plugin.samples')
 
             if settings.TESTING:
+                dirs.append('plugin.testing')
+
+            if settings.TESTING:
                 custom_dirs = os.getenv('INVENTREE_PLUGIN_TEST_DIR', None)
             else:  # pragma: no cover
                 custom_dirs = get_plugin_dir()
