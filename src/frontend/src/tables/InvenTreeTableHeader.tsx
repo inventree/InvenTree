@@ -247,38 +247,42 @@ export default function InvenTreeTableHeader({
                 variant='transparent'
                 aria-label='table-select-filters'
               >
-                <Tooltip label={t`Table Filters`} position='top-end'>
-                  <HoverCard
-                    position='bottom-end'
-                    withinPortal={true}
-                    disabled={!tableState.filterSet.activeFilters?.length}
-                  >
-                    <HoverCard.Target>
+                <HoverCard
+                  position='bottom-end'
+                  withinPortal={true}
+                  disabled={!tableState.filterSet.activeFilters?.length}
+                >
+                  <HoverCard.Target>
+                    <Tooltip
+                      label={t`Table Filters`}
+                      position='top-end'
+                      disabled={!!tableState.filterSet.activeFilters?.length}
+                    >
                       <IconFilter
                         onClick={() => setFiltersVisible(!filtersVisible)}
                       />
-                    </HoverCard.Target>
-                    <HoverCard.Dropdown>
-                      <Paper p='sm' withBorder>
-                        <Stack gap='xs'>
-                          <StylishText size='md'>{t`Active Filters`}</StylishText>
-                          <Divider />
-                          {tableState.filterSet.activeFilters?.map((filter) => (
-                            <Group
-                              key={filter.name}
-                              justify='space-between'
-                              gap='xl'
-                              wrap='nowrap'
-                            >
-                              <Text size='sm'>{filter.label}</Text>
-                              <Text size='xs'>{filter.displayValue}</Text>
-                            </Group>
-                          ))}
-                        </Stack>
-                      </Paper>
-                    </HoverCard.Dropdown>
-                  </HoverCard>
-                </Tooltip>
+                    </Tooltip>
+                  </HoverCard.Target>
+                  <HoverCard.Dropdown>
+                    <Paper p='sm' withBorder>
+                      <Stack gap='xs'>
+                        <StylishText size='md'>{t`Active Filters`}</StylishText>
+                        <Divider />
+                        {tableState.filterSet.activeFilters?.map((filter) => (
+                          <Group
+                            key={filter.name}
+                            justify='space-between'
+                            gap='xl'
+                            wrap='nowrap'
+                          >
+                            <Text size='sm'>{filter.label}</Text>
+                            <Text size='xs'>{filter.displayValue}</Text>
+                          </Group>
+                        ))}
+                      </Stack>
+                    </Paper>
+                  </HoverCard.Dropdown>
+                </HoverCard>
               </ActionIcon>
             </Indicator>
           )}

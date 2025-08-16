@@ -58,6 +58,7 @@ export default function UserSettings() {
               'ICONS_IN_NAVBAR',
               'STICKY_HEADER',
               'STICKY_TABLE_HEADER',
+              'SHOW_SPOTLIGHT',
               'DATE_DISPLAY_FORMAT',
               'FORMS_CLOSE_USING_ESCAPE',
               'DISPLAY_STOCKTAKE_TAB',

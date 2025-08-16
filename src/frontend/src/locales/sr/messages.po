@@ -8,7 +8,7 @@ msgstr ""
 "Language: sr\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-08-08 01:17\n"
+"PO-Revision-Date: 2025-08-15 22:15\n"
 "Last-Translator: \n"
 "Language-Team: Serbian (Latin)\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
@@ -67,9 +67,9 @@ msgid "Actions"
 msgstr "Akcije"
 
 #: lib/components/SearchInput.tsx:34
-#: src/components/forms/fields/RelatedModelField.tsx:388
-#: src/components/nav/Header.tsx:148
-#: src/pages/Index/Settings/UserSettings.tsx:73
+#: src/components/forms/fields/RelatedModelField.tsx:387
+#: src/components/nav/Header.tsx:168
+#: src/pages/Index/Settings/UserSettings.tsx:74
 #: src/pages/part/PartDetail.tsx:1161
 msgid "Search"
 msgstr "Pretraga"
@@ -315,7 +315,7 @@ msgstr "Narudžbenica"
 #: src/pages/Index/Settings/SystemSettings.tsx:283
 #: src/pages/company/CompanyDetail.tsx:205
 #: src/pages/company/SupplierPartDetail.tsx:265
-#: src/pages/part/PartDetail.tsx:881
+#: src/pages/part/PartDetail.tsx:874
 #: src/pages/purchasing/PurchasingIndex.tsx:60
 msgid "Purchase Orders"
 msgstr "Narudžbenice"
@@ -345,7 +345,7 @@ msgstr "Nalog za prodaju"
 #: lib/enums/Roles.tsx:43
 #: src/pages/Index/Settings/SystemSettings.tsx:299
 #: src/pages/company/CompanyDetail.tsx:225
-#: src/pages/part/PartDetail.tsx:893
+#: src/pages/part/PartDetail.tsx:886
 #: src/pages/sales/SalesIndex.tsx:82
 msgid "Sales Orders"
 msgstr "Naloti za prodaju"
@@ -369,7 +369,7 @@ msgstr "Nalog za povrat"
 #: lib/enums/Roles.tsx:41
 #: src/pages/Index/Settings/SystemSettings.tsx:315
 #: src/pages/company/CompanyDetail.tsx:232
-#: src/pages/part/PartDetail.tsx:900
+#: src/pages/part/PartDetail.tsx:893
 #: src/pages/sales/SalesIndex.tsx:103
 msgid "Return Orders"
 msgstr "Nalozi za povrat"
@@ -528,7 +528,7 @@ msgstr "Liste selekcija"
 #: src/pages/part/PartPricingPanel.tsx:71
 #: src/states/IconState.tsx:46
 #: src/states/IconState.tsx:76
-#: src/tables/InvenTreeTableHeader.tsx:119
+#: src/tables/InvenTreeTableHeader.tsx:125
 #: src/tables/bom/BomTable.tsx:528
 #: src/tables/stock/StockItemTestResultTable.tsx:335
 msgid "Error"
@@ -547,7 +547,7 @@ msgstr ""
 #: lib/enums/Roles.tsx:33
 #: src/pages/Index/Settings/SystemSettings.tsx:264
 #: src/pages/build/BuildIndex.tsx:75
-#: src/pages/part/PartDetail.tsx:848
+#: src/pages/part/PartDetail.tsx:903
 #: src/pages/sales/SalesOrderDetail.tsx:394
 msgid "Build Orders"
 msgstr "Nalozi za izradu"
@@ -858,7 +858,7 @@ msgid "Next month"
 msgstr ""
 
 #: src/components/calendar/Calendar.tsx:175
-#: src/tables/InvenTreeTableHeader.tsx:254
+#: src/tables/InvenTreeTableHeader.tsx:291
 msgid "Download data"
 msgstr ""
 
@@ -1788,7 +1788,7 @@ msgid "Uncategorized"
 msgstr "Nepoznato"
 
 #: src/components/forms/fields/IconField.tsx:211
-#: src/components/nav/Layout.tsx:77
+#: src/components/nav/Layout.tsx:80
 #: src/tables/part/PartThumbTable.tsx:201
 msgid "Search..."
 msgstr "Pretraži…"
@@ -1806,13 +1806,13 @@ msgstr "Izaberi pakovanje"
 msgid "{0} icons"
 msgstr "{0} ikone"
 
-#: src/components/forms/fields/RelatedModelField.tsx:389
+#: src/components/forms/fields/RelatedModelField.tsx:388
 #: src/components/modals/AboutInvenTreeModal.tsx:94
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:332
 msgid "Loading"
 msgstr "Učitavanje"
 
-#: src/components/forms/fields/RelatedModelField.tsx:391
+#: src/components/forms/fields/RelatedModelField.tsx:390
 msgid "No results found"
 msgstr "Nema pronađenih rezultata"
 
@@ -2018,8 +2018,8 @@ msgstr "Opcije"
 #~ msgstr "Link custom barcode"
 
 #: src/components/items/ActionDropdown.tsx:169
-#: src/tables/InvenTreeTableHeader.tsx:187
-#: src/tables/InvenTreeTableHeader.tsx:188
+#: src/tables/InvenTreeTableHeader.tsx:193
+#: src/tables/InvenTreeTableHeader.tsx:194
 msgid "Barcode Actions"
 msgstr "Akcije Barkoda"
 
@@ -2168,7 +2168,7 @@ msgid "No items"
 msgstr ""
 
 #: src/components/items/TransferList.tsx:161
-#: src/components/render/Stock.tsx:92
+#: src/components/render/Stock.tsx:91
 #: src/pages/part/PartDetail.tsx:980
 #: src/pages/stock/StockDetail.tsx:262
 #: src/pages/stock/StockDetail.tsx:913
@@ -2422,17 +2422,17 @@ msgstr ""
 msgid "Learn more about {code}"
 msgstr ""
 
-#: src/components/nav/Header.tsx:167
+#: src/components/nav/Header.tsx:187
 #: src/components/nav/NavigationDrawer.tsx:141
 #: src/components/nav/NotificationDrawer.tsx:181
 #: src/pages/Index/Settings/SystemSettings.tsx:121
-#: src/pages/Index/Settings/UserSettings.tsx:105
+#: src/pages/Index/Settings/UserSettings.tsx:106
 #: src/pages/Notifications.tsx:45
 #: src/pages/Notifications.tsx:130
 msgid "Notifications"
 msgstr "Obaveštenja"
 
-#: src/components/nav/Layout.tsx:80
+#: src/components/nav/Layout.tsx:83
 msgid "Nothing found..."
 msgstr "Ništa nije pronađeno….."
 
@@ -2449,7 +2449,7 @@ msgid "Settings"
 msgstr "Podešavanje"
 
 #: src/components/nav/MainMenu.tsx:59
-#: src/pages/Index/Settings/UserSettings.tsx:144
+#: src/pages/Index/Settings/UserSettings.tsx:145
 msgid "Account Settings"
 msgstr "Podešavanje naloga"
 
@@ -2546,7 +2546,7 @@ msgstr "Prodaja"
 
 #: src/components/nav/NavigationDrawer.tsx:147
 #: src/components/nav/SettingsHeader.tsx:40
-#: src/pages/Index/Settings/UserSettings.tsx:140
+#: src/pages/Index/Settings/UserSettings.tsx:141
 msgid "User Settings"
 msgstr "Korisnička podešavanja"
 
@@ -2601,7 +2601,7 @@ msgstr ""
 
 #: src/components/nav/SearchDrawer.tsx:288
 #: src/pages/company/ManufacturerPartDetail.tsx:176
-#: src/pages/part/PartDetail.tsx:868
+#: src/pages/part/PartDetail.tsx:861
 #: src/pages/part/PartSupplierDetail.tsx:15
 #: src/pages/purchasing/PurchasingIndex.tsx:81
 msgid "Suppliers"
@@ -2783,7 +2783,7 @@ msgstr "Paket"
 #: src/components/plugins/PluginDrawer.tsx:133
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:55
 #: src/pages/Index/Settings/SystemSettings.tsx:330
-#: src/pages/Index/Settings/UserSettings.tsx:127
+#: src/pages/Index/Settings/UserSettings.tsx:128
 msgid "Plugin Settings"
 msgstr "Podešavanje ekstenzija"
 
@@ -2864,13 +2864,14 @@ msgstr ""
 #~ msgid "Unknown Models"
 #~ msgstr "Unknown Models"
 
-#: src/components/render/Order.tsx:121
+#: src/components/render/Order.tsx:122
 #: src/tables/sales/SalesOrderAllocationTable.tsx:174
 msgid "Shipment"
 msgstr "Pošiljka"
 
 #: src/components/render/Part.tsx:28
 #: src/components/render/Plugin.tsx:17
+#: src/components/render/User.tsx:37
 #: src/pages/company/CompanyDetail.tsx:325
 #: src/pages/company/SupplierPartDetail.tsx:368
 #: src/pages/core/UserDetail.tsx:211
@@ -2894,8 +2895,8 @@ msgid "Category"
 msgstr "Kategorija"
 
 #: src/components/render/Stock.tsx:32
-#: src/components/render/Stock.tsx:104
-#: src/components/render/Stock.tsx:122
+#: src/components/render/Stock.tsx:103
+#: src/components/render/Stock.tsx:121
 #: src/forms/PurchaseOrderForms.tsx:592
 #: src/forms/StockForms.tsx:732
 #: src/forms/StockForms.tsx:778
@@ -2916,7 +2917,7 @@ msgstr "Kategorija"
 msgid "Location"
 msgstr "Lokacija"
 
-#: src/components/render/Stock.tsx:89
+#: src/components/render/Stock.tsx:88
 #: src/pages/stock/StockDetail.tsx:195
 #: src/pages/stock/StockDetail.tsx:901
 #: src/tables/build/BuildAllocatedStockTable.tsx:122
@@ -2925,7 +2926,7 @@ msgstr "Lokacija"
 msgid "Serial Number"
 msgstr "Serijski broj"
 
-#: src/components/render/Stock.tsx:94
+#: src/components/render/Stock.tsx:93
 #: src/components/wizards/OrderPartsWizard.tsx:222
 #: src/forms/BuildForms.tsx:239
 #: src/forms/BuildForms.tsx:601
@@ -2952,7 +2953,7 @@ msgstr "Serijski broj"
 msgid "Quantity"
 msgstr "Količina"
 
-#: src/components/render/Stock.tsx:107
+#: src/components/render/Stock.tsx:106
 #: src/forms/BuildForms.tsx:308
 #: src/forms/BuildForms.tsx:382
 #: src/forms/BuildForms.tsx:446
@@ -5825,7 +5826,7 @@ msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:259
 #: src/pages/Index/Settings/SystemSettings.tsx:175
-#: src/pages/Index/Settings/UserSettings.tsx:117
+#: src/pages/Index/Settings/UserSettings.tsx:118
 msgid "Reporting"
 msgstr "Izveštavanje"
 
@@ -6034,7 +6035,7 @@ msgstr "Barkodovi"
 #~ msgstr "This panel is a placeholder."
 
 #: src/pages/Index/Settings/SystemSettings.tsx:127
-#: src/pages/Index/Settings/UserSettings.tsx:111
+#: src/pages/Index/Settings/UserSettings.tsx:112
 msgid "The settings below are specific to each available notification method"
 msgstr ""
 
@@ -7076,11 +7077,11 @@ msgstr "Alokacije"
 msgid "Bill of Materials"
 msgstr "Spisak materijala"
 
-#: src/pages/part/PartDetail.tsx:855
+#: src/pages/part/PartDetail.tsx:848
 msgid "Used In"
 msgstr "Korišćeno u"
 
-#: src/pages/part/PartDetail.tsx:862
+#: src/pages/part/PartDetail.tsx:855
 msgid "Part Pricing"
 msgstr "Cena dela"
 
@@ -8328,7 +8329,7 @@ msgid "Filter"
 msgstr "Filter"
 
 #: src/tables/FilterSelectDrawer.tsx:313
-#: src/tables/InvenTreeTableHeader.tsx:244
+#: src/tables/InvenTreeTableHeader.tsx:257
 msgid "Table Filters"
 msgstr "Filteri tabele"
 
@@ -8403,39 +8404,43 @@ msgstr ""
 #~ msgid "Clear custom query filters"
 #~ msgstr "Clear custom query filters"
 
-#: src/tables/InvenTreeTableHeader.tsx:98
+#: src/tables/InvenTreeTableHeader.tsx:104
 msgid "Delete Selected Items"
 msgstr "Obriši izabrane stavke"
 
-#: src/tables/InvenTreeTableHeader.tsx:102
+#: src/tables/InvenTreeTableHeader.tsx:108
 msgid "Are you sure you want to delete the selected items?"
 msgstr "Da li ste sigurni da želite da obrišete ove izabrane stavke?"
 
-#: src/tables/InvenTreeTableHeader.tsx:104
+#: src/tables/InvenTreeTableHeader.tsx:110
 #: src/tables/plugin/PluginListTable.tsx:316
 msgid "This action cannot be undone"
 msgstr "Ova akcija se ne može poništiti"
 
-#: src/tables/InvenTreeTableHeader.tsx:115
+#: src/tables/InvenTreeTableHeader.tsx:121
 msgid "Items deleted"
 msgstr ""
 
-#: src/tables/InvenTreeTableHeader.tsx:120
+#: src/tables/InvenTreeTableHeader.tsx:126
 msgid "Failed to delete items"
 msgstr ""
 
-#: src/tables/InvenTreeTableHeader.tsx:171
+#: src/tables/InvenTreeTableHeader.tsx:177
 msgid "Custom table filters are active"
 msgstr "Prilagođeni filteri tabele su aktivni"
 
-#: src/tables/InvenTreeTableHeader.tsx:197
+#: src/tables/InvenTreeTableHeader.tsx:203
 #: src/tables/general/BarcodeScanTable.tsx:93
 msgid "Delete selected records"
 msgstr "Obriši izabrane zapise"
 
-#: src/tables/InvenTreeTableHeader.tsx:217
+#: src/tables/InvenTreeTableHeader.tsx:223
 msgid "Refresh data"
 msgstr "Osveži podatke"
+
+#: src/tables/InvenTreeTableHeader.tsx:269
+msgid "Active Filters"
+msgstr ""
 
 #: src/tables/TableHoverCard.tsx:35
 #~ msgid "item-{idx}"

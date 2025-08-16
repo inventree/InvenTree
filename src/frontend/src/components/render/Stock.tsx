@@ -25,7 +25,7 @@ export function RenderStockLocation(
   const suffix: ReactNode = (
     <Group gap='xs'>
       <TableHoverCard
-        value=''
+        value={<Text size='sm'>{instance.description}</Text>}
         position='bottom-end'
         zIndex={10000}
         icon='sitemap'
@@ -51,7 +51,6 @@ export function RenderStockLocation(
         </>
       }
       primary={location}
-      secondary={instance.description}
       suffix={suffix}
       url={
         props.link

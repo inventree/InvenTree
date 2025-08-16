@@ -28,7 +28,7 @@ from order.status_codes import (
     SalesOrderStatusGroups,
 )
 from part.models import Part
-from stock.models import StockItem
+from stock.models import StockItem, StockLocation
 from stock.status_codes import StockStatus
 from users.models import Owner
 
@@ -1207,6 +1207,60 @@ class PurchaseOrderReceiveTest(OrderTest):
 
         self.assertEqual(item.quantity, 10)
         self.assertEqual(item.batch, 'B-xyz-789')
+
+    def test_receive_large_quantity(self):
+        """Test receipt of a large number of items."""
+        sp = SupplierPart.objects.first()
+
+        # Create a new order
+        po = models.PurchaseOrder.objects.create(
+            reference='PO-9999', supplier=sp.supplier
+        )
+
+        N_LINES = 250
+
+        # Create some line items
+        models.PurchaseOrderLineItem.objects.bulk_create([
+            models.PurchaseOrderLineItem(order=po, part=sp, quantity=1000 + i)
+            for i in range(N_LINES)
+        ])
+
+        # Place the order
+        po.place_order()
+
+        url = reverse('api-po-receive', kwargs={'pk': po.pk})
+
+        lines = po.lines.all()
+        location = StockLocation.objects.filter(structural=False).first()
+
+        N_ITEMS = StockItem.objects.count()
+
+        # Receive all items in a single request
+        response = self.post(
+            url,
+            {
+                'items': [
+                    {'line_item': line.pk, 'quantity': line.quantity} for line in lines
+                ],
+                'location': location.pk,
+            },
+            max_query_count=100 + 2 * N_LINES,
+        ).data
+
+        # Check for expected response
+        self.assertEqual(len(response), N_LINES)
+        self.assertEqual(N_ITEMS + N_LINES, StockItem.objects.count())
+
+        for item in response:
+            self.assertEqual(item['purchase_order'], po.pk)
+
+        # Check that the order has been completed
+        po.refresh_from_db()
+        self.assertEqual(po.status, PurchaseOrderStatus.COMPLETE)
+
+        for line in lines:
+            line.refresh_from_db()
+            self.assertEqual(line.received, line.quantity)
 
     def test_packaging(self):
         """Test that we can supply a 'packaging' value when receiving items."""
