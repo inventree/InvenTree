@@ -1,6 +1,7 @@
 import { t } from '@lingui/core/macro';
 import {
   Accordion,
+  Alert,
   Badge,
   Box,
   Card,
@@ -23,9 +24,11 @@ import { AddItemButton } from '@lib/components/AddItemButton';
 import { YesNoButton } from '@lib/components/YesNoButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
-import type { TableColumn } from '@lib/types/Tables';
+import { RowDeleteAction, RowEditAction } from '@lib/index';
+import type { RowAction, TableColumn } from '@lib/types/Tables';
 import type { InvenTreeTableProps } from '@lib/types/Tables';
 import { Trans } from '@lingui/react/macro';
+import { api } from '../../App';
 import {
   DeleteItemAction,
   EditItemAction,
@@ -98,6 +101,32 @@ function MachineStatusIndicator({ machine }: Readonly<{ machine: MachineI }>) {
       <Box />
     </Indicator>
   );
+}
+
+/**
+ * Helper function to restart a machine with the provided ID
+ */
+function restartMachine({
+  machinePk,
+  callback
+}: {
+  machinePk: string;
+  callback?: () => void;
+}) {
+  api
+    .post(
+      apiUrl(ApiEndpoints.machine_restart, undefined, {
+        machine: machinePk
+      })
+    )
+    .then(() => {
+      notifications.show({
+        message: t`Machine restarted`,
+        color: 'green',
+        icon: <IconCheck size='1rem' />
+      });
+      callback?.();
+    });
 }
 
 export function useMachineTypeDriver({
@@ -192,26 +221,6 @@ function MachineDrawer({
     refreshTable();
   }, [refetch, refreshTable]);
 
-  const restartMachine = useCallback(
-    (machinePk: string) => {
-      api
-        .post(
-          apiUrl(ApiEndpoints.machine_restart, undefined, {
-            machine: machinePk
-          })
-        )
-        .then(() => {
-          refreshAll();
-          notifications.show({
-            message: t`Machine restarted`,
-            color: 'green',
-            icon: <IconCheck size='1rem' />
-          });
-        });
-    },
-    [refreshAll]
-  );
-
   const machineEditModal = useEditApiFormModal({
     title: t`Edit machine`,
     url: ApiEndpoints.machine_list,
@@ -232,7 +241,9 @@ function MachineDrawer({
     url: ApiEndpoints.machine_list,
     pk: machinePk,
     preFormContent: (
-      <Text>{t`Are you sure you want to remove the machine "${machine?.name ?? 'unknown'}"?`}</Text>
+      <Alert color='red'>
+        {t`Are you sure you want to remove this machine?`}
+      </Alert>
     ),
     onFormSuccess: () => {
       refreshTable();
@@ -245,7 +256,6 @@ function MachineDrawer({
       <Stack gap='xs'>
         {machineEditModal.modal}
         {machineDeleteModal.modal}
-
         <Group justify='space-between'>
           <Group>
             {machine && <MachineStatusIndicator machine={machine} />}
@@ -279,7 +289,14 @@ function MachineDrawer({
                   indicator: machine?.restart_required
                     ? { color: 'red' }
                     : undefined,
-                  onClick: () => machine && restartMachine(machine?.pk)
+                  onClick: () => {
+                    if (machine) {
+                      restartMachine({
+                        machinePk: machine?.pk,
+                        callback: refreshAll
+                      });
+                    }
+                  }
                 }
               ]}
             />
@@ -487,9 +504,7 @@ export function MachineListTable({
         accessor: 'status',
         sortable: false,
         render: (record) => {
-          const renderer = TableStatusRenderer(
-            `MachineStatus__${record.status_model}` as any
-          );
+          const renderer = TableStatusRenderer(`${record.status_model}` as any);
           if (renderer && record.status !== -1) {
             return renderer(record);
           }
@@ -552,6 +567,65 @@ export function MachineListTable({
     }
   });
 
+  const [selectedMachinePk, setSelectedMachinePk] = useState<
+    string | undefined
+  >(undefined);
+
+  const deleteMachineForm = useDeleteApiFormModal({
+    title: t`Delete Machine`,
+    successMessage: t`Machine successfully deleted.`,
+    url: ApiEndpoints.machine_list,
+    pk: selectedMachinePk,
+    preFormContent: (
+      <Alert color='red'>
+        {t`Are you sure you want to remove this machine?`}
+      </Alert>
+    ),
+    table: table
+  });
+
+  const editMachineForm = useEditApiFormModal({
+    title: t`Edit Machine`,
+    url: ApiEndpoints.machine_list,
+    pk: selectedMachinePk,
+    fields: {
+      name: {},
+      active: {}
+    },
+    table: table
+  });
+
+  const rowActions = useCallback((record: any): RowAction[] => {
+    return [
+      {
+        icon: <IconRefresh />,
+        title: t`Restart Machine`,
+        onClick: () => {
+          restartMachine({
+            machinePk: record.pk,
+            callback: () => {
+              table.refreshTable();
+            }
+          });
+        }
+      },
+      RowEditAction({
+        title: t`Edit machine`,
+        onClick: () => {
+          setSelectedMachinePk(record.pk);
+          editMachineForm.open();
+        }
+      }),
+      RowDeleteAction({
+        title: t`Delete Machine`,
+        onClick: () => {
+          setSelectedMachinePk(record.pk);
+          deleteMachineForm.open();
+        }
+      })
+    ];
+  }, []);
+
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
@@ -568,6 +642,8 @@ export function MachineListTable({
   return (
     <>
       {createMachineForm.modal}
+      {editMachineForm.modal}
+      {deleteMachineForm.modal}
       {renderMachineDrawer && (
         <DetailDrawer
           title={t`Machine Detail`}
@@ -596,7 +672,8 @@ export function MachineListTable({
                 ? `machine-${machine.pk}/`
                 : `../machine-${machine.pk}/`
             ),
-          tableActions,
+          rowActions: rowActions,
+          tableActions: tableActions,
           params: {
             ...props.params
           },

@@ -272,6 +272,10 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
             offload_task(
                 plugin.staticfiles.copy_plugin_static_files, self.key, group='plugin'
             )
+        else:
+            offload_task(
+                plugin.staticfiles.clear_plugin_static_files, self.key, group='plugin'
+            )
 
 
 class PluginSetting(common.models.BaseInvenTreeSetting):

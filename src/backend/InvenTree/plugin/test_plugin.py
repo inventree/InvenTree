@@ -489,9 +489,12 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
         # Start with a 'clean slate'
         PluginConfig.objects.all().delete()
 
+        # Change this value whenever a new mandatory plugin is added
+        N_MANDATORY_PLUGINS = 10
+
         registry.reload_plugins(full_reload=True, collect=True)
         mandatory = registry.MANDATORY_PLUGINS
-        self.assertEqual(len(mandatory), 9)
+        self.assertEqual(len(mandatory), N_MANDATORY_PLUGINS)
 
         # Check that the mandatory plugins are loaded
         self.assertEqual(

@@ -40,7 +40,7 @@ export function RenderUser({
         }
         suffix={
           <Group gap='xs'>
-            <Text size='sm'>
+            <Text size='xs'>
               {instance.first_name} {instance.last_name}
             </Text>
             <IconUser size={16} />

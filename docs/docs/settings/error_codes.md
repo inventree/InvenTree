@@ -75,6 +75,11 @@ A plugin is not allowed to override a *final method* from the `InvenTreePlugin` 
 
 This is a security measure to prevent plugins from changing the core functionality of InvenTree. The code of the plugin must be changed to not override functions that are marked as *final*.
 
+#### INVE-E12
+**Plugin returned invalid machine type - Backend**
+
+An error occurred when discovering or initializing a machine type from a plugin. This likely indicates a faulty or incompatible plugin.
+
 ### INVE-W (InvenTree Warning)
 Warnings - These are non-critical errors which should be addressed when possible.
 

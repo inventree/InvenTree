@@ -167,7 +167,8 @@ class MachineDriverSerializer(BaseMachineClassSerializer):
 
     def get_errors(self, obj) -> list[str]:
         """Serializer method for the errors field."""
-        driver_instance = registry.driver_instances.get(obj.SLUG, None)
+        driver_instance = registry.get_driver_instance(obj.SLUG)
+
         if driver_instance is None:
             return []
         return [str(err) for err in driver_instance.errors]

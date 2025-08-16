@@ -38,7 +38,7 @@ export function RenderCompany(
       {...props}
       image={instance.thumbnail || instance.image}
       primary={instance.name}
-      secondary={instance.description}
+      suffix={instance.description}
       url={
         props.link ? getDetailUrl(ModelType.company, instance.pk) : undefined
       }

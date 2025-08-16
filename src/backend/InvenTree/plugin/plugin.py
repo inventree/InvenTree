@@ -67,6 +67,7 @@ class PluginMixinEnum(StringEnum):
     ICON_PACK = 'icon_pack'
     LABELS = 'labels'
     LOCATE = 'locate'
+    MACHINE = 'machine'
     MAIL = 'mail'
     NAVIGATION = 'navigation'
     NOTIFICATION = 'notification'
