@@ -1,6 +1,22 @@
 import test from 'playwright/test';
 import { clickOnRowMenu } from './helpers';
 import { doCachedLogin } from './login';
+import { setPluginState } from './settings';
+
+test('Machines - Admin Panel', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    username: 'admin',
+    password: 'inventree',
+    url: 'settings/admin/machine'
+  });
+
+  await page.getByRole('button', { name: 'Machines' }).click();
+  await page.getByRole('button', { name: 'Machine Drivers' }).click();
+  await page.getByRole('button', { name: 'Machine Types' }).click();
+  await page.getByRole('button', { name: 'Machine Errors' }).click();
+
+  await page.getByText('There are no machine registry errors').waitFor();
+});
 
 test('Machines - Activation', async ({ browser, request }) => {
   const page = await doCachedLogin(browser, {
@@ -8,6 +24,15 @@ test('Machines - Activation', async ({ browser, request }) => {
     password: 'inventree',
     url: 'settings/admin/machine'
   });
+
+  // Ensure that the sample machine plugin is enabled
+  await setPluginState({
+    request,
+    plugin: 'sample-printer-machine-plugin',
+    state: true
+  });
+
+  await page.reload();
 
   await page.getByRole('button', { name: 'action-button-add-machine' }).click();
   await page
