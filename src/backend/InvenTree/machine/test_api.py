@@ -10,6 +10,7 @@ from machine import registry
 from machine.machine_type import BaseDriver
 from machine.models import MachineConfig
 from machine.tests import TestMachineRegistryMixin
+from plugin.registry import registry as plg_registry
 from stock.models import StockLocation
 
 
@@ -21,6 +22,9 @@ class MachineAPITest(TestMachineRegistryMixin, InvenTreeAPITestCase):
     def setUp(self):
         """Setup some testing drivers/machines."""
         registry.initialize()
+
+        # Ensure the test plugin is loaded
+        plg_registry.set_plugin_state('label-printer-test-plugin', True)
 
         super().setUp()
 
@@ -68,7 +72,11 @@ class MachineAPITest(TestMachineRegistryMixin, InvenTreeAPITestCase):
                 'driver_errors': [],
             },
         )
-        self.assertEqual(driver['provider_file'], __file__)
+
+        # Check that the driver is provided from the correct plugin file
+        self.assertTrue(
+            driver['provider_file'].endswith('plugin/testing/label_machines.py')
+        )
 
         # Test driver with errors
         driver_instance = cast(
@@ -85,7 +93,11 @@ class MachineAPITest(TestMachineRegistryMixin, InvenTreeAPITestCase):
 
     def test_machine_status(self):
         """Test machine status API endpoint."""
-        response = self.get(reverse('api-machine-registry-status'))
+        # Force a registry reload to ensure all machines are registered
+        registry.reload_machines()
+
+        url = reverse('api-machine-registry-status')
+        response = self.get(url)
         errors_msgs = [e['message'] for e in response.data['registry_errors']]
 
         required_patterns = [
@@ -149,8 +161,9 @@ class MachineAPITest(TestMachineRegistryMixin, InvenTreeAPITestCase):
         }
 
         # Create a machine
+        # Note: Many DB hits as the entire machine registry is reloaded
         response = self.post(
-            reverse('api-machine-list'), machine_data, max_query_count=150
+            reverse('api-machine-list'), machine_data, max_query_count=300
         )
 
         self.assertEqual(response.data, {**response.data, **machine_data})

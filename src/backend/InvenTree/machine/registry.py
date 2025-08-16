@@ -270,6 +270,8 @@ class MachineRegistry(
         self.driver_instances = {}
         self.machines = {}
 
+        InvenTree.cache.set_session_cache('machine_registry_checked', False)
+
         self.set_shared_state('errors', [])
 
         self.discover_machine_types()
