@@ -40,6 +40,10 @@ class SamplePrinterDriver(LabelPrinterBaseDriver):
         **kwargs,
     ) -> None:
         """Send the label to the printer."""
+        print('MOCK LABEL PRINTING:')
+        print('- machine:', machine)
+        print('- label:', label)
+        print('- item:', item)
 
 
 class SamplePrinterMachine(MachineDriverMixin, SettingsMixin, InvenTreePlugin):

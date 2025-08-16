@@ -4,7 +4,6 @@ import functools
 from typing import Any, Optional, Union, cast
 from uuid import UUID
 
-from django.core.cache import cache
 from django.db.utils import IntegrityError, OperationalError, ProgrammingError
 
 import structlog
@@ -131,11 +130,6 @@ class MachineRegistry(
     @machine_registry_entrypoint(check_reload=False, check_ready=False)
     def initialize(self, main: bool = False):
         """Initialize the machine registry."""
-        # clear cache for machines (only needed for global redis cache)
-
-        if main and hasattr(cache, 'delete_pattern'):  # pragma: no cover
-            cache.delete_pattern('machine:*')
-
         self.ready = True
 
         self.discover_machine_types()

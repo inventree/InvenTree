@@ -1,10 +1,14 @@
 """Plugins for testing label machines."""
 
+import structlog
+
 from machine.machine_type import BaseDriver
 from plugin import InvenTreePlugin
 from plugin.machine import BaseMachineType
 from plugin.machine.machine_types import LabelPrinterBaseDriver
 from plugin.mixins import MachineDriverMixin, SettingsMixin
+
+logger = structlog.get_logger('inventree')
 
 
 class TestingLabelPrinterDriver(LabelPrinterBaseDriver):
@@ -25,8 +29,17 @@ class TestingLabelPrinterDriver(LabelPrinterBaseDriver):
         """Override restart_machine."""
         machine.set_status_text('Restarting...')
 
-    def print_label(self, *args, **kwargs) -> None:
+    def print_label(self, machine, label, item, **kwargs) -> None:
         """Override print_label."""
+        # Simply output some warning messages,
+        # which we can check for in the unit test
+        logger.warn('Printing Label: TestingLabelPrinterDriver')
+        logger.warn(f'machine: {machine.pk}')
+        logger.warn(f'label: {label.pk}')
+        logger.warn(f'item: {item.pk}')
+
+        for k, v in kwargs['printing_options'].items():
+            logger.warn(f'options: {k}: {v}')
 
 
 class TestingLabelPrinterDriverError1(LabelPrinterBaseDriver):
