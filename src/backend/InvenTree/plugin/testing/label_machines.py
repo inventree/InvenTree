@@ -41,6 +41,10 @@ class TestingLabelPrinterDriver(LabelPrinterBaseDriver):
         for k, v in kwargs['printing_options'].items():
             logger.warn(f'options: {k}: {v}')
 
+    def custom_func(self, *args, x=0, y=0):
+        """A custom function for the driver."""
+        return x * y
+
 
 class TestingLabelPrinterDriverError1(LabelPrinterBaseDriver):
     """Test driver for label printing."""

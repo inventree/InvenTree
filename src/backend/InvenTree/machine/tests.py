@@ -191,6 +191,19 @@ class TestLabelPrinterMachineType(InvenTreeAPITestCase):
 
         return machine
 
+    def test_call_function(self):
+        """Test arbitrary function calls against a machine."""
+        from machine.registry import call_machine_function
+
+        machine = self.create_machine()
+
+        with self.assertRaises(AttributeError):
+            call_machine_function(machine.pk, 'fake_function', custom_arg=123)
+
+        result = call_machine_function(machine.pk, 'custom_func', x=3, y=4)
+
+        self.assertEqual(result, 12)
+
     def test_print_label(self):
         """Test the print label method."""
         plugin_ref = 'inventreelabelmachine'
