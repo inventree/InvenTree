@@ -178,7 +178,7 @@ class CompanySerializer(
             'Return the string representation for the primary address. This property exists for backwards compatibility.'
         )
     )
-    primary_address = serializers.SerializerMethodField()
+    primary_address = serializers.SerializerMethodField(allow_null=True)
 
     @extend_schema_field(serializers.CharField(allow_null=True))
     def get_address(self, obj):
@@ -187,7 +187,7 @@ class CompanySerializer(
             return str(obj.primary_address_list[0])
         return None
 
-    @extend_schema_field(AddressSerializer(allow_null=True))
+    @extend_schema_field(AddressSerializer())
     def get_primary_address(self, obj):
         """Return full address object for primary address using prefetch data."""
         if hasattr(obj, 'primary_address_list') and obj.primary_address_list:
