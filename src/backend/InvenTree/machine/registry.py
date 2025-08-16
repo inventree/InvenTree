@@ -131,10 +131,7 @@ class MachineRegistry(
     def initialize(self, main: bool = False):
         """Initialize the machine registry."""
         self.ready = True
-
-        self.discover_machine_types()
-        self.discover_drivers()
-        self.load_machines(main=main)
+        self.reload_machines(main=main)
 
     def discover_machine_types(self):
         """Discovers all machine types by discovering all plugins which implement the Machine mixin class."""
@@ -267,15 +264,17 @@ class MachineRegistry(
 
         self._update_registry_hash()
 
-    def reload_machines(self):
+    def reload_machines(self, main: bool = False):
         """Reload all machines from the database."""
         self.drivers = {}
         self.driver_instances = {}
         self.machines = {}
 
+        self.set_shared_state('errors', [])
+
         self.discover_machine_types()
         self.discover_drivers()
-        self.load_machines()
+        self.load_machines(main=main)
 
     @machine_registry_entrypoint()
     def add_machine(self, machine_config, initialize=True, update_registry_hash=True):

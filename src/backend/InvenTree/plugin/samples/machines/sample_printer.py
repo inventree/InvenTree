@@ -17,7 +17,7 @@ logger = structlog.get_logger('inventree')
 class SamplePrinterDriver(LabelPrinterBaseDriver):
     """Sample printer driver."""
 
-    SLUG = 'sample-printer'
+    SLUG = 'sample-printer-driver'
     NAME = 'Sample Label Printer Driver'
     DESCRIPTION = 'Sample label printing driver for InvenTree'
 
@@ -53,7 +53,7 @@ class SamplePrinterMachine(MachineDriverMixin, SettingsMixin, InvenTreePlugin):
     """
 
     NAME = 'SamplePrinterMachine'
-    SLUG = 'sampleprinter'
+    SLUG = 'sample-printer-machine-plugin'
     TITLE = 'Sample dummy plugin for printing labels'
 
     VERSION = '0.1'

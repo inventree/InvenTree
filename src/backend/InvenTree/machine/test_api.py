@@ -51,8 +51,6 @@ class MachineAPITest(TestMachineRegistryMixin, InvenTreeAPITestCase):
         """Test machine driver list API endpoint."""
         # Enable the built-in
 
-        print(reverse('api-machine-drivers'))
-
         response = self.get(reverse('api-machine-drivers'))
         driver = [a for a in response.data if a['slug'] == 'test-label-printer-api']
         self.assertEqual(len(driver), 1)

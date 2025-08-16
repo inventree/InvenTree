@@ -57,6 +57,7 @@ class TestingLabelPrinterDriverError2(LabelPrinterBaseDriver):
     """Test driver for label printing."""
 
     SLUG = 'test-label-printer-error'
+
     NAME = 'Test label printer error'
     DESCRIPTION = 'This is a test label printer driver for testing.'
 
