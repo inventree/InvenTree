@@ -9,6 +9,7 @@ from django.db.utils import IntegrityError, OperationalError, ProgrammingError
 
 import structlog
 
+import InvenTree.cache
 from common.settings import get_global_setting, set_global_setting
 from InvenTree.exceptions import log_error
 from InvenTree.helpers_mixin import get_shared_class_instance_state_mixin
@@ -47,8 +48,12 @@ def machine_registry_entrypoint(
 
             do_reload = False
 
-            # Avoid recursive reloads
-            if not getattr(self, '__checking_reload', False):
+            if InvenTree.cache.get_session_cache('machine_registry_checked'):
+                # Short circuit if we have already checked within this session
+                pass
+
+            elif not getattr(self, '__checking_reload', False):
+                # Avoid recursive reloads
                 do_reload = True
                 self.__checking_reload = True
 
@@ -65,6 +70,8 @@ def machine_registry_entrypoint(
                         self._check_reload()
 
                 self.__checking_reload = False
+
+            InvenTree.cache.set_session_cache('machine_registry_checked', True)
 
             # Call the original method
             try:
