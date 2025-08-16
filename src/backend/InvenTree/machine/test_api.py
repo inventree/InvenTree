@@ -255,6 +255,29 @@ class MachineAPITest(TestMachineRegistryMixin, InvenTreeAPITestCase):
             [(s['config_type'], s['key']) for s in response.data],
         )
 
+    def test_machine_settings_list(self):
+        """Test machine settings list API endpoint."""
+        machine = MachineConfig.objects.create(
+            machine_type='label-printer',
+            driver='test-label-printer-api',
+            name='Test Machine',
+            active=True,
+        )
+
+        url = reverse('api-machine-settings', kwargs={'pk': machine.pk})
+        response = self.get(url)
+
+        self.assertEqual(len(response.data), 2)
+
+        keys = [s['key'] for s in response.data]
+
+        self.assertIn('LOCATION', keys)
+        self.assertIn('TEST_SETTING', keys)
+
+        for item in response.data:
+            for key in ['api_url', 'pk', 'typ', 'key']:
+                self.assertIn(key, item)
+
     def test_machine_restart(self):
         """Test machine restart API endpoint."""
         machine = MachineConfig.objects.create(
