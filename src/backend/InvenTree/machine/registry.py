@@ -226,6 +226,7 @@ class MachineRegistry(
 
         logger.debug('Found %s machine drivers', len(self.drivers.keys()))
 
+    @machine_registry_entrypoint()
     def get_driver_instance(self, slug: str):
         """Return or create a driver instance if needed."""
         if slug not in self.driver_instances:
@@ -267,7 +268,10 @@ class MachineRegistry(
 
     def reload_machines(self):
         """Reload all machines from the database."""
+        self.drivers = {}
+        self.driver_instances = {}
         self.machines = {}
+
         self.discover_machine_types()
         self.discover_drivers()
         self.load_machines()
