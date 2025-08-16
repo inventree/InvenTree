@@ -314,7 +314,7 @@ mkdocs==1.6.1 \
     --hash=sha256:7b432f01d928c084353ab39c57282f29f92136665bdd6abf7c1ec8d822ef86f2 \
     --hash=sha256:db91759624d1647f3f34aa0c3f327dd2601beae39a366d6e064c03468d35c20e
     # via
-    #   -r requirements.in
+    #   -r docs/requirements.in
     #   mkdocs-autorefs
     #   mkdocs-git-revision-date-localized-plugin
     #   mkdocs-include-markdown-plugin
@@ -338,19 +338,19 @@ mkdocs-get-deps==0.2.0 \
 mkdocs-git-revision-date-localized-plugin==1.4.7 \
     --hash=sha256:056c0a90242409148f1dc94d5c9d2c25b5b8ddd8de45489fa38f7fa7ccad2bc4 \
     --hash=sha256:10a49eff1e1c3cb766e054b9d8360c904ce4fe8c33ac3f6cc083ac6459c91953
-    # via -r requirements.in
+    # via -r docs/requirements.in
 mkdocs-include-markdown-plugin==7.1.6 \
     --hash=sha256:7975a593514887c18ecb68e11e35c074c5499cfa3e51b18cd16323862e1f7345 \
     --hash=sha256:a0753cb82704c10a287f1e789fc9848f82b6beb8749814b24b03dd9f67816677
-    # via -r requirements.in
+    # via -r docs/requirements.in
 mkdocs-macros-plugin==1.3.9 \
     --hash=sha256:01b6003fbe9b55fdc97c0abb66f811d65abfd291dcf70f277990165553faa99a \
     --hash=sha256:c52351295efdbdbb37a9f0ea639719055ddb64a00115457289940e85696a81d9
-    # via -r requirements.in
+    # via -r docs/requirements.in
 mkdocs-material==9.6.17 \
     --hash=sha256:221dd8b37a63f52e580bcab4a7e0290e4a6f59bd66190be9c3d40767e05f9417 \
     --hash=sha256:48ae7aec72a3f9f501a70be3fbd329c96ff5f5a385b67a1563e5ed5ce064affe
-    # via -r requirements.in
+    # via -r docs/requirements.in
 mkdocs-material-extensions==1.3.1 \
     --hash=sha256:10c9511cea88f568257f960358a467d12b970e1f7b2c0e5fb2bb48cab1928443 \
     --hash=sha256:adff8b62700b25cb77b53358dad940f3ef973dd6db797907c49e3c2ef3ab4e31
@@ -358,20 +358,20 @@ mkdocs-material-extensions==1.3.1 \
 mkdocs-mermaid2-plugin==1.2.1 \
     --hash=sha256:22d2cf2c6867d4959a5e0903da2dde78d74581fc0b107b791bc4c7ceb9ce9741 \
     --hash=sha256:9c7694c73a65905ac1578f966e5c193325c4d5a5bc1836727e74ac9f99d0e921
-    # via -r requirements.in
+    # via -r docs/requirements.in
 mkdocs-redirects==1.2.2 \
     --hash=sha256:3094981b42ffab29313c2c1b8ac3969861109f58b2dd58c45fc81cd44bfa0095 \
     --hash=sha256:7dbfa5647b79a3589da4401403d69494bd1f4ad03b9c15136720367e1f340ed5
-    # via -r requirements.in
+    # via -r docs/requirements.in
 mkdocs-simple-hooks==0.1.5 \
     --hash=sha256:dddbdf151a18723c9302a133e5cf79538be8eb9d274e8e07d2ac3ac34890837c \
     --hash=sha256:efeabdbb98b0850a909adee285f3404535117159d5cb3a34f541d6eaa644d50a
-    # via -r requirements.in
+    # via -r docs/requirements.in
 mkdocstrings[python]==0.30.0 \
     --hash=sha256:5d8019b9c31ddacd780b6784ffcdd6f21c408f34c0bd1103b5351d609d5b4444 \
     --hash=sha256:ae9e4a0d8c1789697ac776f2e034e2ddd71054ae1cf2c2bb1433ccfd07c226f2
     # via
-    #   -r requirements.in
+    #   -r docs/requirements.in
     #   mkdocstrings-python
 mkdocstrings-python==1.16.12 \
     --hash=sha256:22ded3a63b3d823d57457a70ff9860d5a4de9e8b1e482876fc9baabaf6f5f374 \
@@ -380,7 +380,7 @@ mkdocstrings-python==1.16.12 \
 neoteroi-mkdocs==1.1.3 \
     --hash=sha256:3ecfb825e898d10a6d703a3ef3f0484d823b7b5660425e76af421e316ac18036 \
     --hash=sha256:772aee317c9bb10a89d67e71e322730f92cc349d5eecc8a08e8fb079398e514b
-    # via -r requirements.in
+    # via -r docs/requirements.in
 packaging==25.0 \
     --hash=sha256:29572ef2b1f17581046b3a2227d5c611fb25ec70ca1ba8554b24b0e69331a484 \
     --hash=sha256:d443872c98d677bf60f6a1f2f8c1cb748e8fe762d2bf9d3148b5599295b0fc4f
@@ -499,6 +499,10 @@ rich==14.1.0 \
     --hash=sha256:536f5f1785986d6dbdea3c75205c473f970777b4a0d6c6dd1b696aa05a3fa04f \
     --hash=sha256:e497a48b844b0320d45007cdebfeaeed8db2a4f4bcf49f15e455cfc4af11eaa8
     # via neoteroi-mkdocs
+setuptools==80.9.0 \
+    --hash=sha256:062d34222ad13e0cc312a4c02d73f059e86a4acbfbdea8f8f76b28c99f306922 \
+    --hash=sha256:f36b47402ecde768dbfafc46e8e4207b4360c654f1f3bb84475f0a28628fb19c
+    # via mkdocs-mermaid2-plugin
 six==1.17.0 \
     --hash=sha256:4721f391ed90541fddacab5acf947aa0d3dc7d27b2e1e8eda2be8970586c3274 \
     --hash=sha256:ff70335d468e7eb6ec65b95b99d3a2836546063f63acc5171de367e834932a81
