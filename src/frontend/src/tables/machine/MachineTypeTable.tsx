@@ -50,6 +50,52 @@ export interface MachineDriverI {
   driver_errors: string[];
 }
 
+export function MachineDriverTable({
+  machineType,
+  prefix
+}: {
+  machineType?: string;
+  prefix?: string;
+}) {
+  const navigate = useNavigate();
+  const table = useTable('machine-drivers');
+
+  const tableColumns: TableColumn[] = useMemo(() => {
+    return [
+      {
+        accessor: 'name',
+        title: t`Name`
+      },
+      DescriptionColumn({}),
+      BooleanColumn({
+        accessor: 'is_builtin',
+        title: t`Builtin driver`
+      })
+    ];
+  }, []);
+
+  return (
+    <InvenTreeTable
+      url={apiUrl(ApiEndpoints.machine_driver_list)}
+      tableState={table}
+      columns={tableColumns}
+      props={{
+        enableDownload: false,
+        enableSearch: false,
+        onRowClick: (machine) => {
+          navigate(`${prefix ?? '.'}/driver-${machine.slug}/`);
+        },
+        dataFormatter: (data: any) => {
+          if (machineType) {
+            return data.filter((d: any) => d.machine_type === machineType);
+          }
+          return data;
+        }
+      }}
+    />
+  );
+}
+
 function MachineTypeDrawer({
   machineTypeSlug
 }: Readonly<{ machineTypeSlug: string }>) {
@@ -162,22 +208,7 @@ function MachineTypeDrawer({
             </Accordion.Control>
             <Accordion.Panel>
               <Card withBorder>
-                <InvenTreeTable
-                  url={apiUrl(ApiEndpoints.machine_driver_list)}
-                  tableState={table}
-                  columns={machineDriverTableColumns}
-                  props={{
-                    dataFormatter: (data: any) => {
-                      return data.filter(
-                        (d: any) => d.machine_type === machineTypeSlug
-                      );
-                    },
-                    enableDownload: false,
-                    enableSearch: false,
-                    onRowClick: (machine) =>
-                      navigate(`../driver-${machine.slug}/`)
-                  }}
-                />
+                <MachineDriverTable machineType={machineTypeSlug} prefix='..' />
               </Card>
             </Accordion.Panel>
           </Accordion.Item>

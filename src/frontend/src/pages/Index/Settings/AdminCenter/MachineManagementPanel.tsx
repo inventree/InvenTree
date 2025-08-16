@@ -18,7 +18,10 @@ import { apiUrl } from '@lib/functions/Api';
 import { api } from '../../../../App';
 import { StylishText } from '../../../../components/items/StylishText';
 import { MachineListTable } from '../../../../tables/machine/MachineListTable';
-import { MachineTypeListTable } from '../../../../tables/machine/MachineTypeTable';
+import {
+  MachineDriverTable,
+  MachineTypeListTable
+} from '../../../../tables/machine/MachineTypeTable';
 
 interface MachineRegistryStatusI {
   registry_errors: { message: string }[];
@@ -42,13 +45,21 @@ export default function MachineManagementPanel() {
   }, [registryStatus]);
 
   return (
-    <Accordion multiple defaultValue={['machinelist', 'machinetypes']}>
+    <Accordion multiple defaultValue={['machinelist']}>
       <Accordion.Item value='machinelist'>
         <Accordion.Control>
           <StylishText size='lg'>{t`Machines`}</StylishText>
         </Accordion.Control>
         <Accordion.Panel>
           <MachineListTable props={{}} />
+        </Accordion.Panel>
+      </Accordion.Item>
+      <Accordion.Item value='drivertypes'>
+        <Accordion.Control>
+          <StylishText size='lg'>{t`Available Drivers`}</StylishText>
+        </Accordion.Control>
+        <Accordion.Panel>
+          <MachineDriverTable />
         </Accordion.Panel>
       </Accordion.Item>
       <Accordion.Item value='machinetypes'>
