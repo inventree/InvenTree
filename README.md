@@ -127,6 +127,113 @@ wget -qO install.sh https://get.inventree.org && bash install.sh
 
 Refer to the [getting started guide](https://docs.inventree.org/en/latest/start/install/) for a full set of installation and setup instructions.
 
+<!-- Testing -->
+## :test_tube: Testing
+
+InvenTree includes a comprehensive test suite to ensure code quality and reliability. Here are the different ways to run tests:
+
+### Running Tests with Invoke
+
+The project uses `invoke` tasks for running tests. Make sure you have the development dependencies installed:
+
+```bash
+# Install development dependencies
+pip install -r src/backend/requirements-dev.txt
+
+# Run all tests
+invoke test
+
+# Run tests with coverage analysis
+invoke test --coverage
+
+# Keep the test database (useful for debugging)
+invoke test --keepdb
+
+# Show slow test report
+invoke test --report
+```
+
+### Running Specific Tests
+
+You can run specific tests using the `--runtest` parameter:
+
+```bash
+# Run tests from a specific app
+invoke test --runtest=company
+
+# Run tests from a specific test file
+invoke test --runtest=company.test_api
+
+# Run tests from a specific test class
+invoke test --runtest=company.test_api.TestCompanyAPI
+
+# Run a specific test method
+invoke test --runtest=company.test_api.TestCompanyAPI.test_create_company
+```
+
+### Running Tests with Django
+
+You can also run Django tests directly:
+
+```bash
+cd src/backend/InvenTree
+
+# Run all tests
+python manage.py test
+
+# Run tests from a specific app
+python manage.py test company
+
+# Run tests from a specific test file
+python manage.py test company.test_api
+
+# Run tests from a specific test class
+python manage.py test company.test_api.TestCompanyAPI
+
+# Run a specific test method
+python manage.py test company.test_api.TestCompanyAPI.test_create_company
+```
+
+### Test Organization
+
+Tests are organized by app in the `src/backend/InvenTree/` directory:
+- `company/test_api.py` - Company-related API tests
+- `part/test_api.py` - Part-related API tests
+- `stock/test_api.py` - Stock-related API tests
+- `users/test_api.py` - User-related API tests
+- And many more...
+
+### Additional Test Options
+
+```bash
+# Include migration tests
+invoke test --migrations
+
+# Run Django check before tests
+invoke test --check
+
+# Compile translations before tests
+invoke test --translations
+
+# Run tests with specific tags
+python manage.py test --tag=api
+python manage.py test --tag=slow
+```
+
+### Setting Up Test Environment
+
+To set up a testing environment with sample data:
+
+```bash
+# Setup test environment with demo dataset
+invoke setup_test
+
+# Setup test environment and install development dependencies
+invoke setup_test --dev
+```
+
+For more detailed testing information, refer to the [development documentation](https://docs.inventree.org/en/latest/develop/).
+
 <!-- Mobile App -->
 ## 	:iphone: Mobile App
 
