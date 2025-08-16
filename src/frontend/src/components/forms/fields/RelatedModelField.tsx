@@ -364,7 +364,6 @@ export function RelatedModelField({
         options={data}
         filterOption={null}
         onInputChange={(value: any) => {
-          console.log('onInputChange', value);
           setValue(value);
         }}
         onChange={onChange}
