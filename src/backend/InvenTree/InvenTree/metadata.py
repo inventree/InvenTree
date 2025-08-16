@@ -396,7 +396,7 @@ class InvenTreeMetadata(SimpleMetadata):
 
                 # Special case for special models
                 if field_info['model'] == 'user':
-                    field_info['api_url'] = (reverse('api-user-list'),)
+                    field_info['api_url'] = reverse('api-user-list')
                 elif field_info['model'] == 'group':
                     field_info['api_url'] = reverse('api-group-list')
                 elif field_info['model'] == 'contenttype':

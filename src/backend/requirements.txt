@@ -423,8 +423,8 @@ django==4.2.23 \
     #   djangorestframework
     #   djangorestframework-simplejwt
     #   drf-spectacular
-django-allauth[mfa, openid, saml, socialaccount]==65.9.0 \
-    --hash=sha256:a06bca9974df44321e94c33bcf770bb6f924d1a44b57defbce4d7ec54a55483e
+django-allauth[mfa, openid, saml, socialaccount]==65.10.0 \
+    --hash=sha256:47daa3b0e11a1d75724ea32995de37bd2b8963e9e4cce2b3a7fd64eb6d3b3c48
     # via -r src/backend/requirements.in
 django-anymail[amazon-ses, postal]==13.0.1 \
     --hash=sha256:f2c20c9f240d93789aa8da2ee54d701c6b0345d101133d65d67e9355a914af81 \
@@ -929,8 +929,8 @@ oauthlib==3.3.1 \
     --hash=sha256:0f0f8aa759826a193cf66c12ea1af1637f87b9b4622d46e866952bb022e538c9 \
     --hash=sha256:88119c938d2b8fb88561af5f6ee0eec8cc8d552b7bb1f712743136eb7523b7a1
     # via
+    #   django-allauth
     #   django-oauth-toolkit
-    #   requests-oauthlib
 openpyxl==3.1.5 \
     --hash=sha256:5282c12b107bffeef825f4617dc029afaf41d0ea60823bbb665ef3079dc79de2 \
     --hash=sha256:cf0e3cf56142039133628b5acffe8ef0c12bc902d2aadd3e0fe5878dc08d1050
@@ -1467,11 +1467,6 @@ requests==2.32.4 \
     #   django-anymail
     #   django-oauth-toolkit
     #   opentelemetry-exporter-otlp-proto-http
-    #   requests-oauthlib
-requests-oauthlib==2.0.0 \
-    --hash=sha256:7dd8a5c40426b779b0868c404bdef9768deccf22749cde15852df527e6269b36 \
-    --hash=sha256:b3dffaebd884d8cd778494369603a9e7b58d29111bf6b41bdc2dcd87203af4e9
-    # via django-allauth
 rpds-py==0.27.0 \
     --hash=sha256:010c4843a3b92b54373e3d2291a7447d6c3fc29f591772cc2ea0e9f5c1da434b \
     --hash=sha256:05284439ebe7d9f5f5a668d4d8a0a1d851d16f7d47c78e1fab968c8ad30cab04 \

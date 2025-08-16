@@ -42,6 +42,24 @@ class UserAPITests(InvenTreeAPITestCase):
             fields['is_staff']['help_text'], 'Does this user have staff permissions'
         )
 
+    def test_api_url(self):
+        """Test the 'api_url attribute in related API endpoints.
+
+        Ref: https://github.com/inventree/InvenTree/pull/10182
+        """
+        self.user.is_superuser = True
+        self.user.save()
+
+        url = reverse('api-build-list')
+        response = self.options(url)
+        actions = response.data['actions']['POST']
+        issued_by = actions['issued_by']
+
+        self.assertEqual(issued_by['pk_field'], 'pk')
+        self.assertEqual(issued_by['model'], 'user')
+        self.assertEqual(issued_by['api_url'], reverse('api-user-list'))
+        self.assertEqual(issued_by['default'], self.user.pk)
+
     def test_user_api(self):
         """Tests for User API endpoints."""
         url = reverse('api-user-list')

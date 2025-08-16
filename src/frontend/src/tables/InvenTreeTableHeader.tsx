@@ -2,9 +2,14 @@ import { t } from '@lingui/core/macro';
 import {
   ActionIcon,
   Alert,
+  Divider,
   Group,
+  HoverCard,
   Indicator,
+  Paper,
   Space,
+  Stack,
+  Text,
   Tooltip
 } from '@mantine/core';
 import {
@@ -28,6 +33,7 @@ import type { InvenTreeTableProps } from '@lib/types/Tables';
 import { showNotification } from '@mantine/notifications';
 import { Boundary } from '../components/Boundary';
 import { PrintingActions } from '../components/buttons/PrintingActions';
+import { StylishText } from '../components/items/StylishText';
 import useDataExport from '../hooks/UseDataExport';
 import { useDeleteApiFormModal } from '../hooks/UseForm';
 import { TableColumnSelect } from './ColumnSelect';
@@ -241,11 +247,42 @@ export default function InvenTreeTableHeader({
                 variant='transparent'
                 aria-label='table-select-filters'
               >
-                <Tooltip label={t`Table Filters`} position='top-end'>
-                  <IconFilter
-                    onClick={() => setFiltersVisible(!filtersVisible)}
-                  />
-                </Tooltip>
+                <HoverCard
+                  position='bottom-end'
+                  withinPortal={true}
+                  disabled={!tableState.filterSet.activeFilters?.length}
+                >
+                  <HoverCard.Target>
+                    <Tooltip
+                      label={t`Table Filters`}
+                      position='top-end'
+                      disabled={!!tableState.filterSet.activeFilters?.length}
+                    >
+                      <IconFilter
+                        onClick={() => setFiltersVisible(!filtersVisible)}
+                      />
+                    </Tooltip>
+                  </HoverCard.Target>
+                  <HoverCard.Dropdown>
+                    <Paper p='sm' withBorder>
+                      <Stack gap='xs'>
+                        <StylishText size='md'>{t`Active Filters`}</StylishText>
+                        <Divider />
+                        {tableState.filterSet.activeFilters?.map((filter) => (
+                          <Group
+                            key={filter.name}
+                            justify='space-between'
+                            gap='xl'
+                            wrap='nowrap'
+                          >
+                            <Text size='sm'>{filter.label}</Text>
+                            <Text size='xs'>{filter.displayValue}</Text>
+                          </Group>
+                        ))}
+                      </Stack>
+                    </Paper>
+                  </HoverCard.Dropdown>
+                </HoverCard>
               </ActionIcon>
             </Indicator>
           )}
