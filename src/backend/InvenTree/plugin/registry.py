@@ -298,17 +298,25 @@ class PluginsRegistry:
             active (bool, optional): Filter by 'active' status of plugin. Defaults to True.
             builtin (bool, optional): Filter by 'builtin' status of plugin. Defaults to None.
         """
-        try:
-            # Pre-fetch the PluginConfig objects to avoid multiple database queries
-            from plugin.models import PluginConfig
+        # We can store the PluginConfig objects against the session cache,
+        # which allows us to avoid hitting the database multiple times (per session)
+        # As we have already checked the registry hash, this is a valid cache key
+        cache_key = f'plugin_configs:{self.registry_hash}'
 
-            plugin_configs = PluginConfig.objects.all()
+        configs = InvenTree.cache.get_session_cache(cache_key)
 
-            configs = {config.key: config for config in plugin_configs}
-        except (ProgrammingError, OperationalError):
-            # The database is not ready yet
-            logger.warning('plugin.registry.with_mixin: Database not ready')
-            return []
+        if not configs:
+            try:
+                # Pre-fetch the PluginConfig objects to avoid multiple database queries
+                from plugin.models import PluginConfig
+
+                plugin_configs = PluginConfig.objects.all()
+                configs = {config.key: config for config in plugin_configs}
+                InvenTree.cache.set_session_cache(cache_key, configs)
+            except (ProgrammingError, OperationalError):
+                # The database is not ready yet
+                logger.warning('plugin.registry.with_mixin: Database not ready')
+                return []
 
         mixin = str(mixin).lower().strip()
 
