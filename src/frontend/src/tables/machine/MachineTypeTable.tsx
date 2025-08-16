@@ -67,6 +67,10 @@ export function MachineDriverTable({
         title: t`Name`
       },
       DescriptionColumn({}),
+      {
+        accessor: 'machine_type',
+        title: t`Driver Type`
+      },
       BooleanColumn({
         accessor: 'is_builtin',
         title: t`Builtin driver`
@@ -107,23 +111,6 @@ function MachineTypeDrawer({
   const machineType = useMemo(
     () => machineTypes?.find((m) => m.slug === machineTypeSlug),
     [machineTypes, machineTypeSlug]
-  );
-
-  const table = useTable('machineDrivers');
-
-  const machineDriverTableColumns = useMemo<TableColumn<MachineDriverI>[]>(
-    () => [
-      {
-        accessor: 'name',
-        title: t`Name`
-      },
-      DescriptionColumn({}),
-      BooleanColumn({
-        accessor: 'is_builtin',
-        title: t`Builtin driver`
-      })
-    ],
-    []
   );
 
   return (
@@ -410,7 +397,7 @@ export function MachineTypeListTable({
           ...props,
           enableDownload: false,
           enableSearch: false,
-          onRowClick: (machine) => navigate(`type-${machine.slug}/`),
+          onRowClick: (machine) => navigate(`./type-${machine.slug}/`),
           params: {
             ...props.params
           }
