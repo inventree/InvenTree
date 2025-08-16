@@ -230,7 +230,7 @@ class ApiTests(InvenTreeAPITestCase):
         response = self.get(reverse('api-status-all'))
 
         # 10 built-in state classes, plus the added GeneralState class
-        self.assertEqual(len(response.data), 12)
+        self.assertEqual(len(response.data), 11)
 
         # Test the BuildStatus model
         build_status = response.data['BuildStatus']
