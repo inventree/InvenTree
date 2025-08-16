@@ -56,7 +56,7 @@ export default function MachineManagementPanel() {
       </Accordion.Item>
       <Accordion.Item value='drivertypes'>
         <Accordion.Control>
-          <StylishText size='lg'>{t`Available Drivers`}</StylishText>
+          <StylishText size='lg'>{t`Machine Drivers`}</StylishText>
         </Accordion.Control>
         <Accordion.Panel>
           <MachineDriverTable />

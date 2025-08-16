@@ -270,7 +270,7 @@ class ApiTests(InvenTreeAPITestCase):
         )
         response = self.get(reverse('api-status-all'))
 
-        self.assertEqual(len(response.data), 12)
+        self.assertEqual(len(response.data), 11)
 
         stock_status_cstm = response.data['StockStatus']
         self.assertEqual(stock_status_cstm['status_class'], 'StockStatus')
