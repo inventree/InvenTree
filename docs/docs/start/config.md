@@ -434,6 +434,7 @@ The logo and custom messages can be changed/set:
 | --- | --- | --- | --- |
 | INVENTREE_CUSTOM_LOGO | customize.logo | Path to custom logo in the static files directory | *Not specified* |
 | INVENTREE_CUSTOM_SPLASH | customize.splash | Path to custom splash screen in the static files directory | *Not specified* |
+| INVENTREE_CUSTOMIZE | customize.site_header | Custom site header in the Django admin | InvenTree Admin |
 | INVENTREE_CUSTOMIZE | customize.login_message | Custom message for login page | *Not specified* |
 | INVENTREE_CUSTOMIZE | customize.navbar_message | Custom message for navbar | *Not specified* |
 
