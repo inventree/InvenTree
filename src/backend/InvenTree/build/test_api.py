@@ -1391,7 +1391,10 @@ class BuildLineTests(BuildAPITest):
         for line in lines:
             StockItem.objects.create(part=line.bom_item.sub_part, quantity=60)
 
-        response = self.get(url, {'build': build.pk, 'available': True})
+        # Note: The max_query_time is bumped up here, as postgresql backend has some strange issues (only during testing)
+        response = self.get(
+            url, {'build': build.pk, 'available': True}, max_query_time=15
+        )
 
         # We expect 2 lines to have "available" stock
         self.assertEqual(len(response.data), 2)
