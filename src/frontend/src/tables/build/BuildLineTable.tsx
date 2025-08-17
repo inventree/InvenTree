@@ -937,6 +937,7 @@ export default function BuildLineTable({
           params: {
             ...params,
             build: build.pk,
+            assembly_detail: false,
             part_detail: true
           },
           tableActions: tableActions,

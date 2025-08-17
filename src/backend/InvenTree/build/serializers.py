@@ -1394,7 +1394,7 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
         read_only=True,
     )
 
-    allocations = BuildItemSerializer(many=True, read_only=True)
+    allocations = BuildItemSerializer(many=True, read_only=True, build_detail=False)
 
     # BOM item info fields
     reference = serializers.CharField(
