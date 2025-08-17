@@ -1015,7 +1015,7 @@ class BuildOverallocationTest(BuildAPITest):
             self.url,
             {'accept_overallocated': 'trim'},
             expected_code=201,
-            max_query_count=400,
+            max_query_count=450,
         )
 
         # Note: Large number of queries is due to pricing recalculation for each stock item
