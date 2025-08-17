@@ -133,6 +133,7 @@ click==8.1.8 \
     --hash=sha256:ed53c9d8990d83c2a27deae68e4ee337473f6330c040a31d4225c9574d16096a
     # via
     #   mkdocs
+    #   mkdocs-material
     #   neoteroi-mkdocs
 colorama==0.4.6 \
     --hash=sha256:08695f5cb7ed6e0531a20572697297273c47b8cae5a63ffc6d6ed5c201be6e44 \
@@ -342,13 +343,13 @@ mkdocs-include-markdown-plugin==7.1.6 \
     --hash=sha256:7975a593514887c18ecb68e11e35c074c5499cfa3e51b18cd16323862e1f7345 \
     --hash=sha256:a0753cb82704c10a287f1e789fc9848f82b6beb8749814b24b03dd9f67816677
     # via -r docs/requirements.in
-mkdocs-macros-plugin==1.3.7 \
-    --hash=sha256:02432033a5b77fb247d6ec7924e72fc4ceec264165b1644ab8d0dc159c22ce59 \
-    --hash=sha256:17c7fd1a49b94defcdb502fd453d17a1e730f8836523379d21292eb2be4cb523
+mkdocs-macros-plugin==1.3.9 \
+    --hash=sha256:01b6003fbe9b55fdc97c0abb66f811d65abfd291dcf70f277990165553faa99a \
+    --hash=sha256:c52351295efdbdbb37a9f0ea639719055ddb64a00115457289940e85696a81d9
     # via -r docs/requirements.in
-mkdocs-material==9.6.16 \
-    --hash=sha256:8d1a1282b892fe1fdf77bfeb08c485ba3909dd743c9ba69a19a40f637c6ec18c \
-    --hash=sha256:d07011df4a5c02ee0877496d9f1bfc986cfb93d964799b032dd99fe34c0e9d19
+mkdocs-material==9.6.17 \
+    --hash=sha256:221dd8b37a63f52e580bcab4a7e0290e4a6f59bd66190be9c3d40767e05f9417 \
+    --hash=sha256:48ae7aec72a3f9f501a70be3fbd329c96ff5f5a385b67a1563e5ed5ce064affe
     # via -r docs/requirements.in
 mkdocs-material-extensions==1.3.1 \
     --hash=sha256:10c9511cea88f568257f960358a467d12b970e1f7b2c0e5fb2bb48cab1928443 \
