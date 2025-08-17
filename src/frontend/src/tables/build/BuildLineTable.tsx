@@ -507,6 +507,7 @@ export default function BuildLineTable({
       },
       {
         accessor: 'consumed',
+        sortable: true,
         render: (record: any) => {
           return record?.bom_item_detail?.consumable ? (
             <Text style={{ fontStyle: 'italic' }}>{t`Consumable item`}</Text>

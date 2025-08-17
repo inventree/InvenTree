@@ -1325,3 +1325,78 @@ class BuildLineTests(BuildAPITest):
         self.assertGreater(n_f, 0)
 
         self.assertEqual(n_t + n_f, BuildLine.objects.count())
+
+    def test_filter_consumed(self):
+        """Filter for the 'consumed' status."""
+        # Create a new build order
+        assembly = Part.objects.create(
+            name='Test Assembly',
+            description='Test Assembly Description',
+            assembly=True,
+            trackable=True,
+        )
+
+        for idx in range(3):
+            component = Part.objects.create(
+                name=f'Test Component {idx}',
+                description=f'Test Component Description {idx}',
+                trackable=True,
+                component=True,
+            )
+
+            # Create a BOM item for the assembly
+            BomItem.objects.create(part=assembly, sub_part=component, quantity=10)
+
+        build = Build.objects.create(
+            part=assembly, reference='BO-12348', quantity=10, title='Test Build'
+        )
+
+        lines = list(build.build_lines.all())
+        self.assertEqual(len(lines), 3)
+
+        for line in lines:
+            self.assertEqual(line.quantity, 100)
+            self.assertEqual(line.consumed, 0)
+
+        # Artificially "consume" some of the build lines
+        lines[0].consumed = 1
+        lines[0].save()
+
+        lines[1].consumed = 50
+        lines[1].save()
+
+        lines[2].consumed = 100
+        lines[2].save()
+
+        url = reverse('api-build-line-list')
+
+        response = self.get(url, {'build': build.pk, 'consumed': True})
+
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['pk'], lines[2].pk)
+        self.assertEqual(response.data[0]['consumed'], 100)
+        self.assertEqual(response.data[0]['quantity'], 100)
+
+        response = self.get(url, {'build': build.pk, 'consumed': False})
+
+        self.assertEqual(len(response.data), 2)
+        self.assertEqual(response.data[0]['pk'], lines[0].pk)
+        self.assertEqual(response.data[0]['consumed'], 1)
+        self.assertEqual(response.data[0]['quantity'], 100)
+        self.assertEqual(response.data[1]['pk'], lines[1].pk)
+        self.assertEqual(response.data[1]['consumed'], 50)
+        self.assertEqual(response.data[1]['quantity'], 100)
+
+        # Check that the 'available' filter works correctly also when lines are partially consumed
+        for line in lines:
+            StockItem.objects.create(part=line.bom_item.sub_part, quantity=60)
+
+        response = self.get(url, {'build': build.pk, 'available': True})
+
+        # We expect 2 lines to have "available" stock
+        self.assertEqual(len(response.data), 2)
+
+        response = self.get(url, {'build': build.pk, 'available': False})
+
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['pk'], lines[0].pk)

@@ -502,6 +502,7 @@ class BuildLineFilter(rest_filters.FilterSet):
         """
         flt = Q(
             quantity__lte=F('allocated')
+            + F('consumed')
             + F('available_stock')
             + F('available_substitute_stock')
             + F('available_variant_stock')
@@ -570,6 +571,7 @@ class BuildLineList(BuildLineMixin, DataExportViewMixin, ListCreateAPI):
     ordering_fields = [
         'part',
         'allocated',
+        'consumed',
         'reference',
         'quantity',
         'consumable',
