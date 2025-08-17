@@ -1,34 +1,34 @@
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
 exclude: |
-    (?x)^(
-        src/backend/InvenTree/InvenTree/static/.*|
-        src/backend/InvenTree/locale/.*|
-        src/frontend/src/locales/.* |
-        .*/migrations/.* |
-        src/frontend/yarn.lock
-    )$
+  (?x)^(
+      src/backend/InvenTree/InvenTree/static/.*|
+      src/backend/InvenTree/locale/.*|
+      src/frontend/src/locales/.* |
+      .*/migrations/.* |
+      src/frontend/yarn.lock
+  )$
 repos:
--   repo: https://github.com/pre-commit/pre-commit-hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
     hooks:
-    -   id: trailing-whitespace
-    -   id: end-of-file-fixer
-    -   id: check-yaml
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
         exclude: mkdocs.yml
-    -   id: mixed-line-ending
--   repo: https://github.com/astral-sh/ruff-pre-commit
+      - id: mixed-line-ending
+  - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.11.13
     hooks:
-    - id: ruff-format
-      args: [--preview]
-    - id: ruff
-      args: [
-        --fix,
-        # --unsafe-fixes,
-        --preview
-      ]
--   repo: https://github.com/astral-sh/uv-pre-commit
+      - id: ruff-format
+        args: [--preview]
+      - id: ruff
+        args: [
+            --fix,
+            # --unsafe-fixes,
+            --preview,
+          ]
+  - repo: https://github.com/astral-sh/uv-pre-commit
     rev: 0.7.12
     hooks:
       - id: pip-compile
@@ -41,7 +41,16 @@ repos:
         files: src/backend/requirements\.(in|txt)$
       - id: pip-compile
         name: pip-compile requirements.txt
-        args: [contrib/dev_reqs/requirements.in, -o, contrib/dev_reqs/requirements.txt, --no-strip-extras, --generate-hashes, -b, src/backend/requirements.txt]
+        args:
+          [
+            contrib/dev_reqs/requirements.in,
+            -o,
+            contrib/dev_reqs/requirements.txt,
+            --no-strip-extras,
+            --generate-hashes,
+            -b,
+            src/backend/requirements.txt,
+          ]
         files: contrib/dev_reqs/requirements\.(in|txt)$
       - id: pip-compile
         name: pip-compile requirements.txt
@@ -49,43 +58,54 @@ repos:
         files: docs/requirements\.(in|txt)$
       - id: pip-compile
         name: pip-compile requirements.txt
-        args: [contrib/container/requirements.in, -o, contrib/container/requirements.txt, --python-version=3.11, --no-strip-extras, --generate-hashes, -b, src/backend/requirements.txt]
+        args:
+          [
+            contrib/container/requirements.in,
+            -o,
+            contrib/container/requirements.txt,
+            --python-version=3.11,
+            --no-strip-extras,
+            --generate-hashes,
+            -b,
+            src/backend/requirements.txt,
+          ]
         files: contrib/container/requirements\.(in|txt)$
--   repo: https://github.com/Riverside-Healthcare/djLint
+  - repo: https://github.com/Riverside-Healthcare/djLint
     rev: v1.36.4
     hooks:
       - id: djlint-django
-- repo: https://github.com/codespell-project/codespell
-  rev: v2.4.1
-  hooks:
-  - id: codespell
-    additional_dependencies:
-      - tomli
-    exclude: >
-      (?x)^(
-          docs/docs/stylesheets/.*|
-          docs/docs/javascripts/.*|
-          docs/docs/webfonts/.* |
-          src/frontend/src/locales/.* |
-          pyproject.toml |
-          src/frontend/vite.config.ts |
-      )$
--   repo: https://github.com/biomejs/pre-commit
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.4.1
+    hooks:
+      - id: codespell
+        additional_dependencies:
+          - tomli
+        exclude: >
+          (?x)^(
+              docs/docs/stylesheets/.*|
+              docs/docs/javascripts/.*|
+              docs/docs/webfonts/.* |
+              src/frontend/src/locales/.* |
+              pyproject.toml |
+              src/frontend/vite.config.ts |
+               src/backend/InvenTree/web/static/.*|
+          )$
+  - repo: https://github.com/biomejs/pre-commit
     rev: v2.0.0-beta.5
     hooks:
-    -   id: biome-check
-        additional_dependencies: ["@biomejs/biome@1.9.4"]
+      - id: biome-check
+        additional_dependencies: ['@biomejs/biome@1.9.4']
         files: ^src/frontend/.*\.(js|ts|tsx)$
--   repo: https://github.com/gitleaks/gitleaks
+  - repo: https://github.com/gitleaks/gitleaks
     rev: v8.27.2
     hooks:
-    -   id: gitleaks
+      - id: gitleaks
         language_version: 1.23.6
-#-   repo: https://github.com/jumanjihouse/pre-commit-hooks
-#    rev: 3.0.0
-#    hooks:
-#    -   id: shellcheck
--   repo: https://github.com/isidentical/teyit
+  #-   repo: https://github.com/jumanjihouse/pre-commit-hooks
+  #    rev: 3.0.0
+  #    hooks:
+  #    -   id: shellcheck
+  - repo: https://github.com/isidentical/teyit
     rev: 0.4.3
     hooks:
-    -   id: teyit
+      - id: teyit
