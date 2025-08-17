@@ -509,7 +509,7 @@ export default function BuildLineTable({
         accessor: 'consumed',
         render: (record: any) => {
           return record?.bom_item_detail?.consumable ? (
-            <Text style={{ fontStyle: 'italic' }}>{t`Consumable Item`}</Text>
+            <Text style={{ fontStyle: 'italic' }}>{t`Consumable item`}</Text>
           ) : (
             <ProgressBar
               progressLabel={true}
