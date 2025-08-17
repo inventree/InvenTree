@@ -1,5 +1,5 @@
 import test from 'playwright/test';
-import { clickOnRowMenu } from './helpers';
+import { clickOnRowMenu, navigate } from './helpers';
 import { doCachedLogin } from './login';
 import { setPluginState } from './settings';
 
@@ -74,6 +74,36 @@ test('Machines - Activation', async ({ browser, request }) => {
   await page.getByRole('menuitem', { name: 'Edit' }).waitFor();
   await page.getByRole('menuitem', { name: 'Restart' }).click();
   await page.getByText('Machine restarted').waitFor();
+
+  // Let's print something with the machine
+  await navigate(page, 'stock/location/1/stock-items');
+
+  await page.getByRole('checkbox', { name: 'Select all records' }).click();
+  await page
+    .getByRole('tabpanel', { name: 'Stock Items' })
+    .getByLabel('action-menu-printing-actions')
+    .click();
+  await page
+    .getByRole('menuitem', {
+      name: 'action-menu-printing-actions-print-labels'
+    })
+    .click();
+
+  await page.getByLabel('related-field-plugin').fill('machine');
+  await page.getByText('InvenTreeLabelMachine').click();
+
+  await page
+    .getByRole('textbox', { name: 'choice-field-machine' })
+    .fill('dummy');
+  await page.getByRole('option', { name: 'my-dummy-machine' }).click();
+
+  await page
+    .getByRole('button', { name: 'Print', exact: true })
+    .first()
+    .click();
+  await page.getByText('Process completed successfully').waitFor();
+
+  await navigate(page, 'settings/admin/machine/');
 
   // Finally, delete the machine configuration
   await clickOnRowMenu(cell);
