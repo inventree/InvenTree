@@ -2,6 +2,7 @@ import { t } from '@lingui/core/macro';
 import { Alert, Group, Paper, Text } from '@mantine/core';
 import {
   IconArrowRight,
+  IconCircleCheck,
   IconCircleDashedCheck,
   IconCircleMinus,
   IconShoppingCart,
@@ -387,12 +388,6 @@ export default function BuildLineTable({
         }
       },
       {
-        accessor: 'available_stock',
-        sortable: true,
-        switchable: false,
-        render: renderAvailableColumn
-      },
-      {
         accessor: 'quantity',
         title: t`Required Quantity`,
         sortable: true,
@@ -490,11 +485,14 @@ export default function BuildLineTable({
 
           if (required <= 0) {
             return (
-              <Text size='sm' style={{ fontStyle: 'italic' }}>
-                {record.consumed >= record.quantity
-                  ? t`Fully consumed`
-                  : t`Fully allocated`}
-              </Text>
+              <Group gap='xs' wrap='nowrap'>
+                <IconCircleCheck size={14} color='green' />
+                <Text size='sm' style={{ fontStyle: 'italic' }}>
+                  {record.consumed >= record.quantity
+                    ? t`Fully consumed`
+                    : t`Fully allocated`}
+                </Text>
+              </Group>
             );
           }
 
@@ -582,6 +580,7 @@ export default function BuildLineTable({
     buildId: build.pk,
     lineItems: selectedRows,
     onFormSuccess: () => {
+      table.clearSelectedRecords();
       table.refreshTable();
     }
   });
@@ -612,7 +611,10 @@ export default function BuildLineTable({
       </Alert>
     ),
     successMessage: t`Stock has been deallocated`,
-    table: table
+    onFormSuccess: () => {
+      table.clearSelectedRecords();
+      table.refreshTable();
+    }
   });
 
   const [selectedAllocation, setSelectedAllocation] = useState<number>(0);
@@ -647,6 +649,7 @@ export default function BuildLineTable({
     buildId: build.pk,
     buildLines: selectedRows,
     onFormSuccess: () => {
+      table.clearSelectedRecords();
       table.refreshTable();
     }
   });
