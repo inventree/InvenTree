@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models, transaction
-from django.db.models import F, Q, Sum
+from django.db.models import F, Q, QuerySet, Sum
 from django.db.models.functions import Coalesce
 from django.db.models.signals import post_save
 from django.dispatch.dispatcher import receiver
@@ -870,7 +870,7 @@ class Build(
         allocations.delete()
 
     @transaction.atomic
-    def create_build_output(self, quantity, **kwargs) -> list[stock.models.StockItem]:
+    def create_build_output(self, quantity, **kwargs) -> QuerySet:
         """Create a new build output against this BuildOrder.
 
         Arguments:
@@ -883,7 +883,7 @@ class Build(
             auto_allocate: Automatically allocate stock with matching serial numbers
 
         Returns:
-            A list of the created output (StockItem) objects.
+            A QuerySet of the created output (StockItem) objects.
         """
         trackable_parts = self.part.get_trackable_parts()
 

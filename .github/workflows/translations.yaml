@@ -32,7 +32,7 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # pin@v5.0.0
         with:
           persist-credentials: true
       - name: Environment Setup
@@ -56,7 +56,7 @@ jobs:
           echo "Resetting to HEAD~"
           git reset HEAD~ || true
       - name: crowdin action
-        uses: crowdin/github-action@9fd07c1c5b36b15f082d1d860dc399f16f849bd7 # pin@v2
+        uses: crowdin/github-action@590c05e09a29f392b203faf4d6aa8e0cd32c7835 # pin@v2
         with:
           upload_sources: true
           upload_translations: false
