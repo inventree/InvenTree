@@ -1399,7 +1399,10 @@ class BuildLineTests(BuildAPITest):
         # We expect 2 lines to have "available" stock
         self.assertEqual(len(response.data), 2)
 
-        response = self.get(url, {'build': build.pk, 'available': False})
+        # Note: The max_query_time is bumped up here, as postgresql backend has some strange issues (only during testing)
+        response = self.get(
+            url, {'build': build.pk, 'available': False}, max_query_time=15
+        )
 
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]['pk'], lines[0].pk)
