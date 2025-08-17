@@ -80,6 +80,7 @@ export function PrintingActions({
     // Override field values
     fields.template = {
       ...fields.template,
+      autoFill: true,
       filters: {
         enabled: true,
         model_type: modelType,
@@ -132,6 +133,7 @@ export function PrintingActions({
     timeout: 5000,
     fields: {
       template: {
+        autoFill: true,
         filters: {
           enabled: true,
           model_type: modelType,

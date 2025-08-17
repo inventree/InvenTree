@@ -627,7 +627,11 @@ class StockItem(
 
         for serial in serials:
             data['serial'] = serial
-            data['serial_int'] = StockItem.convert_serial_to_int(serial)
+
+            if serial is not None:
+                data['serial_int'] = StockItem.convert_serial_to_int(serial) or 0
+            else:
+                data['serial_int'] = 0
 
             data['tree_id'] = tree_id
 
@@ -650,8 +654,17 @@ class StockItem(
             )
             stock.tasks.rebuild_stock_item_tree(parent.tree_id)
 
+        # Fetch the new StockItem objects from the database
+        items = StockItem.objects.filter(part=part, serial__in=serials)
+
+        # Trigger a 'created' event for the new items
+        # Note that instead of a single event for each item,
+        # we trigger a single event for all items created
+        stock_ids = list(items.values_list('id', flat=True).distinct())
+        trigger_event(StockEvents.ITEMS_CREATED, ids=stock_ids)
+
         # Return the newly created StockItem objects
-        return StockItem.objects.filter(part=part, serial__in=serials)
+        return items
 
     @staticmethod
     def convert_serial_to_int(serial: str) -> int:
@@ -694,6 +707,10 @@ class StockItem(
         This is used for efficient numerical sorting
         """
         serial = str(getattr(self, 'serial', '')).strip()
+
+        if not serial:
+            self.serial_int = 0
+            return
 
         serial_int = self.convert_serial_to_int(serial)
 
@@ -1378,47 +1395,101 @@ class StockItem(
 
         If the selected location is the same as the parent, merge stock back into the parent.
         Otherwise create the stock in the new location.
+
+        Note that this function is provided for legacy compatibility,
+        and the 'return_to_stock' function should be used instead.
+        """
+        self.return_to_stock(
+            location,
+            user,
+            tracking_code=StockHistoryCode.RETURNED_FROM_CUSTOMER,
+            **kwargs,
+        )
+
+    @transaction.atomic
+    def return_to_stock(
+        self, location, user=None, quantity=None, merge: bool = True, **kwargs
+    ):
+        """Return stock item into stock, removing any consumption status.
+
+        Arguments:
+            location: The location to return the stock item to
+            user: The user performing the action
+            quantity: If specified, the quantity to return to stock (default is the full quantity)
+            merge: If True, attempt to merge this stock item back into the parent stock item
         """
         notes = kwargs.get('notes', '')
 
-        tracking_info = {'location': location.pk}
+        tracking_code = kwargs.get('tracking_code', StockHistoryCode.RETURNED_TO_STOCK)
 
-        if self.customer:
-            tracking_info['customer'] = self.customer.id
-            tracking_info['customer_name'] = self.customer.name
+        item = self
+
+        if quantity is not None and not self.serialized:
+            # If quantity is specified, we are splitting the stock item
+            if quantity <= 0:
+                raise ValidationError({
+                    'quantity': _('Quantity must be greater than zero')
+                })
+
+            if quantity > self.quantity:
+                raise ValidationError({
+                    'quantity': _('Quantity exceeds available stock')
+                })
+
+            if quantity < self.quantity:
+                # Split the stock item
+                item = self.splitStock(quantity, None, user)
+
+        tracking_info = {}
+
+        if location:
+            tracking_info['location'] = location.pk
+
+        if item.customer:
+            tracking_info['customer'] = item.customer.id
+            tracking_info['customer_name'] = item.customer.name
+
+        if item.consumed_by:
+            tracking_info['build_order'] = item.consumed_by.id
 
         # Clear out allocation information for the stock item
-        self.customer = None
-        self.belongs_to = None
-        self.sales_order = None
-        self.location = location
+        item.consumed_by = None
+        item.customer = None
+        item.belongs_to = None
+        item.sales_order = None
+        item.location = location
 
         if status := kwargs.pop('status', None):
-            if not self.compare_status(status):
-                self.set_status(status)
+            if not item.compare_status(status):
+                item.set_status(status)
                 tracking_info['status'] = status
 
-        self.save()
+        item.save()
 
-        self.clearAllocations()
+        item.clearAllocations()
 
-        self.add_tracking_entry(
-            StockHistoryCode.RETURNED_FROM_CUSTOMER,
-            user,
-            notes=notes,
-            deltas=tracking_info,
-            location=location,
+        item.add_tracking_entry(
+            tracking_code, user, notes=notes, deltas=tracking_info, location=location
         )
 
-        trigger_event(StockEvents.ITEM_RETURNED_FROM_CUSTOMER, id=self.id)
+        trigger_event(StockEvents.ITEM_RETURNED_TO_STOCK, id=item.id)
 
-        """If new location is the same as the parent location, merge this stock back in the parent"""
-        if self.parent and self.location == self.parent.location:
+        # Attempt to merge returned item into parent item:
+        # - 'merge' parameter is True
+        # - The parent location is the same as the current location
+        # - The item does not have a serial number
+
+        if (
+            merge
+            and not item.serialized
+            and self.parent
+            and item.location == self.parent.location
+        ):
             self.parent.merge_stock_items(
-                {self}, user=user, location=location, notes=notes
+                {item}, user=user, location=location, notes=notes
             )
         else:
-            self.save(add_note=False)
+            item.save(add_note=False)
 
     def is_allocated(self):
         """Return True if this StockItem is allocated to a SalesOrder or a Build."""

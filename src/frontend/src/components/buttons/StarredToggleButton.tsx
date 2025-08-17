@@ -51,6 +51,10 @@ export default function StarredToggleButton({
       });
   }
 
+  if (!instance || !instance.pk) {
+    return <></>;
+  }
+
   return (
     <ActionButton
       icon={<IconBell />}

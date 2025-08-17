@@ -333,6 +333,32 @@ export function UserFilter({
   };
 }
 
+export function ManufacturerFilter(): TableFilter {
+  return {
+    name: 'manufacturer',
+    label: t`Manufacturer`,
+    description: t`Filter by manufacturer`,
+    type: 'api',
+    apiUrl: apiUrl(ApiEndpoints.company_list),
+    model: ModelType.company,
+    modelRenderer: (instance: any) => instance.name,
+    apiFilter: { is_manufacturer: true }
+  };
+}
+
+export function SupplierFilter(): TableFilter {
+  return {
+    name: 'supplier',
+    label: t`Supplier`,
+    description: t`Filter by supplier`,
+    type: 'api',
+    apiUrl: apiUrl(ApiEndpoints.company_list),
+    model: ModelType.company,
+    modelRenderer: (instance: any) => instance.name,
+    apiFilter: { is_supplier: true }
+  };
+}
+
 export function CreatedByFilter(): TableFilter {
   return UserFilter({
     name: 'created_by',

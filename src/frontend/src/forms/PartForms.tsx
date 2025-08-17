@@ -245,10 +245,19 @@ export function usePartParameterFields({
         type: fieldType,
         field_type: fieldType,
         choices: fieldType === 'choice' ? choices : undefined,
-        default: fieldType === 'boolean' ? 'false' : undefined,
+        default: fieldType === 'boolean' ? false : undefined,
         adjustValue: (value: any) => {
           // Coerce boolean value into a string (required by backend)
-          return value.toString();
+
+          let v: string = value.toString().trim();
+
+          if (fieldType === 'boolean') {
+            if (v.toLowerCase() !== 'true') {
+              v = 'false';
+            }
+          }
+
+          return v;
         }
       },
       note: {}
@@ -268,16 +277,5 @@ export function partStocktakeFields(): ApiFormFieldSet {
     cost_max: {},
     cost_max_currency: {},
     note: {}
-  };
-}
-
-export function generateStocktakeReportFields(): ApiFormFieldSet {
-  return {
-    part: {},
-    category: {},
-    location: {},
-    exclude_external: {},
-    generate_report: {},
-    update_parts: {}
   };
 }

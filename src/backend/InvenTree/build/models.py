@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models, transaction
-from django.db.models import F, Q, Sum
+from django.db.models import F, Q, QuerySet, Sum
 from django.db.models.functions import Coalesce
 from django.db.models.signals import post_save
 from django.dispatch.dispatcher import receiver
@@ -671,10 +671,14 @@ class Build(
             get_global_setting('BUILDORDER_REQUIRE_CLOSED_CHILDS')
             and self.has_open_child_builds
         ):
-            return
+            raise ValidationError(
+                _('Cannot complete build order with open child builds')
+            )
 
         if self.incomplete_count > 0:
-            return
+            raise ValidationError(
+                _('Cannot complete build order with incomplete outputs')
+            )
 
         if trim_allocated_stock:
             self.trim_allocated_stock()
@@ -759,6 +763,11 @@ class Build(
             self.save()
 
             trigger_event(BuildEvents.ISSUED, id=self.pk)
+
+            from build.tasks import check_build_stock
+
+            # Run checks on required parts
+            InvenTree.tasks.offload_task(check_build_stock, self, group='build')
 
     @transaction.atomic
     def hold_build(self):
@@ -861,7 +870,7 @@ class Build(
         allocations.delete()
 
     @transaction.atomic
-    def create_build_output(self, quantity, **kwargs) -> list[stock.models.StockItem]:
+    def create_build_output(self, quantity, **kwargs) -> QuerySet:
         """Create a new build output against this BuildOrder.
 
         Arguments:
@@ -874,7 +883,7 @@ class Build(
             auto_allocate: Automatically allocate stock with matching serial numbers
 
         Returns:
-            A list of the created output (StockItem) objects.
+            A QuerySet of the created output (StockItem) objects.
         """
         trackable_parts = self.part.get_trackable_parts()
 
@@ -1504,19 +1513,12 @@ def after_save_build(sender, instance: Build, created: bool, **kwargs):
     ):
         return
 
-    from . import tasks as build_tasks
-
     if instance:
         if created:
             # A new Build has just been created
 
             # Generate initial BuildLine objects for the Build
             instance.create_build_line_items()
-
-            # Run checks on required parts
-            InvenTree.tasks.offload_task(
-                build_tasks.check_build_stock, instance, group='build'
-            )
 
             # Notify the responsible users that the build order has been created
             InvenTree.helpers_model.notify_responsible(

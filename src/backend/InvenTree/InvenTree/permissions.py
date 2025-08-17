@@ -363,7 +363,18 @@ class UserSettingsPermissionsOrScope(OASTokenMixin, permissions.BasePermission):
         except AttributeError:  # pragma: no cover
             return False
 
+        if not user.is_authenticated:
+            return False
+
         return user == obj.user
+
+    def has_permission(self, request, view):
+        """Check that the requesting user is authenticated."""
+        try:
+            user = request.user
+            return user.is_authenticated
+        except AttributeError:
+            return False
 
     def get_required_alternate_scopes(self, request, view):
         """Return the required scopes for the current request."""

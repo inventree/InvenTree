@@ -1,7 +1,7 @@
 {
     "name": "@inventreedb/ui",
     "description": "UI components for the InvenTree project",
-    "version": "0.3.1",
+    "version": "0.4.0",
     "private": false,
     "type": "module",
     "license": "MIT",
@@ -114,7 +114,7 @@
         "@lingui/cli": "^5.3.1",
         "@lingui/macro": "^5.3.0",
         "@playwright/test": "^1.53.1",
-        "@types/node": "^24.0.15",
+        "@types/node": "^22.13.14",
         "@types/qrcode": "^1.5.5",
         "@types/react": "^18.3.8",
         "@types/react-dom": "^18.3.0",
@@ -132,6 +132,7 @@
         "vite": "^6.3.5",
         "vite-plugin-babel-macros": "^1.0.6",
         "vite-plugin-dts": "^4.5.3",
+        "vite-plugin-externals": "^0.6.2",
         "vite-plugin-istanbul": "^6.0.2"
     },
     "resolutions": {
