@@ -1400,3 +1400,96 @@ class BuildLineTests(BuildAPITest):
 
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]['pk'], lines[0].pk)
+
+
+class BuildConsumeTest(BuildAPITest):
+    """Test consuming allocated stock."""
+
+    def setUp(self):
+        """Set up test data."""
+        super().setUp()
+
+        self.assembly = Part.objects.create(
+            name='Test Assembly', description='Test Assembly Description', assembly=True
+        )
+
+        self.components = [
+            Part.objects.create(
+                name=f'Test Component {i}',
+                description=f'Test Component Description {i}',
+                component=True,
+            )
+            for i in range(3)
+        ]
+
+        self.stock_items = [
+            StockItem.objects.create(part=component, quantity=1000)
+            for component in self.components
+        ]
+
+        self.bom_items = [
+            BomItem.objects.create(part=self.assembly, sub_part=component, quantity=10)
+            for component in self.components
+        ]
+
+        self.build = Build.objects.create(
+            part=self.assembly, reference='BO-12349', quantity=10, title='Test Build'
+        )
+
+    def allocate_stock(self):
+        """Allocate stock items to the build."""
+        data = {
+            'items': [
+                {'build_line': line.pk, 'stock_item': si.pk, 'quantity': 100}
+                for line, si in zip(self.build.build_lines.all(), self.stock_items)
+            ]
+        }
+
+        self.post(
+            reverse('api-build-allocate', kwargs={'pk': self.build.pk}),
+            data,
+            expected_code=201,
+        )
+
+    def test_consume_lines(self):
+        """Test consuming against build lines."""
+        self.allocate_stock()
+
+        self.assertEqual(self.build.allocated_stock.count(), 3)
+        self.assertEqual(self.build.consumed_stock.count(), 0)
+        url = reverse('api-build-consume', kwargs={'pk': self.build.pk})
+
+        data = {
+            'lines': [{'build_line': line.pk} for line in self.build.build_lines.all()]
+        }
+
+        self.post(url, data, expected_code=201)
+
+        self.assertEqual(self.build.allocated_stock.count(), 0)
+        self.assertEqual(self.build.consumed_stock.count(), 3)
+
+        for line in self.build.build_lines.all():
+            self.assertEqual(line.consumed, 100)
+
+    def test_consume_items(self):
+        """Test consuming against build items."""
+        self.allocate_stock()
+
+        self.assertEqual(self.build.allocated_stock.count(), 3)
+        self.assertEqual(self.build.consumed_stock.count(), 0)
+        url = reverse('api-build-consume', kwargs={'pk': self.build.pk})
+
+        data = {
+            'items': [
+                {'build_item': item.pk, 'quantity': item.quantity}
+                for item in self.build.allocated_stock.all()
+            ]
+        }
+
+        self.post(url, data, expected_code=201)
+
+        self.assertEqual(self.build.allocated_stock.count(), 0)
+        self.assertEqual(self.build.consumed_stock.count(), 3)
+
+        for line in self.build.build_lines.all():
+            self.assertEqual(line.consumed, 100)
