@@ -171,6 +171,9 @@ class BuildSerializer(
     def __init__(self, *args, **kwargs):
         """Determine if extra serializer fields are required."""
         part_detail = kwargs.pop('part_detail', True)
+        user_detail = kwargs.pop('user_detail', True)
+        project_code_detail = kwargs.pop('project_code_detail', True)
+
         kwargs.pop('create', False)
 
         super().__init__(*args, **kwargs)
@@ -180,6 +183,15 @@ class BuildSerializer(
 
         if not part_detail:
             self.fields.pop('part_detail', None)
+
+        if not user_detail:
+            self.fields.pop('issued_by_detail', None)
+            self.fields.pop('responsible_detail', None)
+
+        if not project_code_detail:
+            self.fields.pop('project_code', None)
+            self.fields.pop('project_code_label', None)
+            self.fields.pop('project_code_detail', None)
 
     def validate_reference(self, reference):
         """Custom validation for the Build reference field."""
@@ -1355,6 +1367,7 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
 
         if not part_detail:
             self.fields.pop('part_detail', None)
+            self.fields.pop('part_category_name', None)
 
         if not build_detail:
             self.fields.pop('build_detail', None)
@@ -1440,13 +1453,16 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
         read_only=True,
         pricing=False,
     )
+
     build_detail = BuildSerializer(
         label=_('Build'),
         source='build',
-        part_detail=False,
         many=False,
         read_only=True,
         allow_null=True,
+        part_detail=False,
+        user_detail=False,
+        project_code_detail=False,
     )
 
     # Annotated (calculated) fields
@@ -1504,6 +1520,9 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
             'allocations__stock_item',
             'allocations__stock_item__part',
             'allocations__stock_item__location',
+            'bom_item',
+            'bom_item__part',
+            'bom_item__sub_part',
             'bom_item__sub_part__stock_items',
             'bom_item__sub_part__stock_items__allocations',
             'bom_item__sub_part__stock_items__sales_order_allocations',
@@ -1524,7 +1543,6 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
                 'build__destination',
                 'build__take_from',
                 'build__completed_by',
-                'build__issued_by',
                 'build__sales_order',
                 'build__parent',
                 'build__notes',

@@ -512,7 +512,7 @@ class BuildLineFilter(rest_filters.FilterSet):
         return queryset.exclude(flt)
 
 
-class BuildLineEndpoint:
+class BuildLineMixin:
     """Mixin class for BuildLine API endpoints."""
 
     queryset = BuildLine.objects.all()
@@ -561,7 +561,7 @@ class BuildLineEndpoint:
         )
 
 
-class BuildLineList(BuildLineEndpoint, DataExportViewMixin, ListCreateAPI):
+class BuildLineList(BuildLineMixin, DataExportViewMixin, ListCreateAPI):
     """API endpoint for accessing a list of BuildLine objects."""
 
     filterset_class = BuildLineFilter
@@ -613,7 +613,7 @@ class BuildLineList(BuildLineEndpoint, DataExportViewMixin, ListCreateAPI):
         return source_build
 
 
-class BuildLineDetail(BuildLineEndpoint, RetrieveUpdateDestroyAPI):
+class BuildLineDetail(BuildLineMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a BuildLine object."""
 
     def get_source_build(self) -> Build | None:
