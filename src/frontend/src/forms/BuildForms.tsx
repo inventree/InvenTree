@@ -804,7 +804,7 @@ function BuildConsumeLineRow({
   const remaining: number = Math.max(0, required - record.consumed);
 
   return (
-    <Table.Tr key='table-row-${record.pk}'>
+    <Table.Tr key={`table-row-${record.pk}`}>
       <Table.Td>
         <PartColumn part={record.part_detail} />
       </Table.Td>
