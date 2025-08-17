@@ -1,7 +1,8 @@
 import { t } from '@lingui/core/macro';
-import { Alert, Divider, List, Stack, Table } from '@mantine/core';
+import { Alert, Divider, Group, List, Stack, Table, Text } from '@mantine/core';
 import {
   IconCalendar,
+  IconCircleCheck,
   IconInfoCircle,
   IconLink,
   IconList,
@@ -809,7 +810,16 @@ function BuildConsumeLineRow({
         <PartColumn part={record.part_detail} />
       </Table.Td>
       <Table.Td>
-        <ProgressBar value={allocated} maximum={remaining} progressLabel />
+        {remaining <= 0 ? (
+          <Group gap='xs'>
+            <IconCircleCheck size={16} color='green' />
+            <Text size='sm' style={{ fontStyle: 'italic' }}>
+              {t`Fully consumed`}
+            </Text>
+          </Group>
+        ) : (
+          <ProgressBar value={allocated} maximum={remaining} progressLabel />
+        )}
       </Table.Td>
       <Table.Td>
         <ProgressBar
@@ -837,6 +847,10 @@ export function useConsumeBuildLinesForm({
   buildLines: any[];
   onFormSuccess: (response: any) => void;
 }) {
+  const filteredLines = useMemo(() => {
+    return buildLines.filter((line) => !line.part_detail?.trackable);
+  }, [buildLines]);
+
   const consumeFields: ApiFormFieldSet = useMemo(() => {
     return {
       lines: {
@@ -848,7 +862,7 @@ export function useConsumeBuildLinesForm({
           { title: t`Consumed` }
         ],
         modelRenderer: (row: TableFieldRowProps) => {
-          const record = buildLines.find(
+          const record = filteredLines.find(
             (item) => item.pk == row.item.build_line
           );
 
@@ -859,7 +873,7 @@ export function useConsumeBuildLinesForm({
       },
       notes: {}
     };
-  }, [buildLines]);
+  }, [filteredLines]);
 
   return useCreateApiFormModal({
     url: ApiEndpoints.build_order_consume,
@@ -869,7 +883,7 @@ export function useConsumeBuildLinesForm({
     onFormSuccess: onFormSuccess,
     fields: consumeFields,
     initialData: {
-      lines: buildLines.map((item) => {
+      lines: filteredLines.map((item) => {
         return {
           build_line: item.pk
         };

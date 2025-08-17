@@ -481,12 +481,17 @@ export default function BuildLineTable({
             );
           }
 
-          const required = Math.max(0, record.quantity - record.consumed);
+          let required = Math.max(0, record.quantity - record.consumed);
+
+          if (output?.pk) {
+            // If an output is specified, we show the allocated quantity for that output
+            required = record.bom_item_detail?.quantity;
+          }
 
           if (required <= 0) {
             return (
               <Group gap='xs' wrap='nowrap'>
-                <IconCircleCheck size={14} color='green' />
+                <IconCircleCheck size={16} color='green' />
                 <Text size='sm' style={{ fontStyle: 'italic' }}>
                   {record.consumed >= record.quantity
                     ? t`Fully consumed`
@@ -508,6 +513,7 @@ export default function BuildLineTable({
       {
         accessor: 'consumed',
         sortable: true,
+        hidden: !!output?.pk,
         render: (record: any) => {
           return record?.bom_item_detail?.consumable ? (
             <Text style={{ fontStyle: 'italic' }}>{t`Consumable item`}</Text>
@@ -714,7 +720,7 @@ export default function BuildLineTable({
           icon: <IconCircleDashedCheck />,
           title: t`Consume Stock`,
           color: 'green',
-          hidden: !canConsume,
+          hidden: !canConsume || hasOutput,
           onClick: () => {
             setSelectedRows([record]);
             consumeLines.open();

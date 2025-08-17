@@ -1863,6 +1863,11 @@ class BuildConsumeSerializer(serializers.Serializer):
                 build_item = item['build_item']
                 quantity = item['quantity']
 
+                if build_item.install_into:
+                    # If the build item is tracked into an output, we do not consume now
+                    # Instead, it gets consumed when the output is completed
+                    continue
+
                 build_item.complete_allocation(
                     quantity=quantity,
                     notes=notes,
@@ -1875,6 +1880,11 @@ class BuildConsumeSerializer(serializers.Serializer):
 
                 # In this case, perform full consumption of all allocated stock
                 for item in build_line.allocations.all():
+                    # If the build item is tracked into an output, we do not consume now
+                    # Instead, it gets consumed when the output is completed
+                    if item.install_into:
+                        continue
+
                     item.complete_allocation(
                         quantity=item.quantity,
                         notes=notes,
