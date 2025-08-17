@@ -1,6 +1,7 @@
 """Middleware for InvenTree."""
 
 import sys
+from urllib.parse import urlsplit
 
 from django.conf import settings
 from django.contrib.auth.middleware import PersistentRemoteUserMiddleware
@@ -8,6 +9,7 @@ from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import resolve, reverse_lazy
 from django.utils.deprecation import MiddlewareMixin
+from django.utils.http import is_same_domain
 
 import structlog
 from error_report.middleware import ExceptionProcessor
@@ -242,9 +244,13 @@ class InvenTreeHostSettingsMiddleware(MiddlewareMixin):
             )
 
         # Check trusted origins
+        referer = urlsplit(accessed_scheme)
         if not any(
-            accessed_scheme.startswith(origin)
-            for origin in settings.CSRF_TRUSTED_ORIGINS
+            is_same_domain(referer.netloc, host)
+            for host in [
+                urlsplit(origin).netloc.lstrip('*')
+                for origin in settings.CSRF_TRUSTED_ORIGINS
+            ]
         ):
             msg = f'INVE-E7: The used path `{accessed_scheme}` is not in the TRUSTED_ORIGINS'
             logger.error(msg)

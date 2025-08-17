@@ -4,6 +4,7 @@ import { IconX } from '@tabler/icons-react';
 
 import { Boundary } from '../Boundary';
 
+import type { ModelType } from '@lib/index';
 import type { JSX } from 'react';
 
 /**
@@ -20,6 +21,7 @@ export interface DashboardWidgetProps {
   enabled?: boolean;
   minWidth?: number;
   minHeight?: number;
+  modelType?: ModelType;
   render: () => JSX.Element;
   visible?: () => boolean;
 }

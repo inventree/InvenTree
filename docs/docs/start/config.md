@@ -307,6 +307,7 @@ The following cache settings are available:
 | INVENTREE_CACHE_ENABLED | cache.enabled | Enable redis caching | False |
 | INVENTREE_CACHE_HOST | cache.host | Cache server host | *Not specified* |
 | INVENTREE_CACHE_PORT | cache.port | Cache server port | 6379 |
+| INVENTREE_CACHE_PASSWORD | cache.password | Cache server password | none |
 | INVENTREE_CACHE_CONNECT_TIMEOUT | cache.connect_timeout | Cache connection timeout (seconds) | 3 |
 | INVENTREE_CACHE_TIMEOUT | cache.timeout | Cache timeout (seconds) | 3 |
 | INVENTREE_CACHE_TCP_KEEPALIVE | cache.tcp_keepalive | Cache TCP keepalive | True |
@@ -433,6 +434,7 @@ The logo and custom messages can be changed/set:
 | --- | --- | --- | --- |
 | INVENTREE_CUSTOM_LOGO | customize.logo | Path to custom logo in the static files directory | *Not specified* |
 | INVENTREE_CUSTOM_SPLASH | customize.splash | Path to custom splash screen in the static files directory | *Not specified* |
+| INVENTREE_CUSTOMIZE | customize.site_header | Custom site header in the Django admin | InvenTree Admin |
 | INVENTREE_CUSTOMIZE | customize.login_message | Custom message for login page | *Not specified* |
 | INVENTREE_CUSTOMIZE | customize.navbar_message | Custom message for navbar | *Not specified* |
 
@@ -463,6 +465,9 @@ The following [plugin](../plugins/index.md) configuration options are available:
 | INVENTREE_PLUGIN_NOINSTALL | plugin_noinstall | Disable Plugin installation via API - only use plugins.txt file | False |
 | INVENTREE_PLUGIN_FILE | plugins_plugin_file | Location of plugin installation file | *Not specified* |
 | INVENTREE_PLUGIN_DIR | plugins_plugin_dir | Location of external plugin directory | *Not specified* |
+| INVENTREE_PLUGINS_MANDATORY | plugins_mandatory | List of [plugins which are considered mandatory](../plugins/index.md#mandatory-third-party-plugins) | *Not specified* |
+| INVENTREE_PLUGIN_DEV_SLUG | plugin_dev.slug | Specify plugin to run in [development mode](../plugins/creator.md#backend-configuration) | *Not specified* |
+| INVENTREE_PLUGIN_DEV_HOST | plugin_dev.host | Specify host for development mode plugin | http://localhost:5174 |
 
 ## Override Global Settings
 

@@ -1,11 +1,11 @@
 import { t } from '@lingui/core/macro';
-import { Alert, FileInput, NumberInput, Stack, Switch } from '@mantine/core';
+import { Alert, FileInput, NumberInput, Stack } from '@mantine/core';
 import { useId } from '@mantine/hooks';
 import { useCallback, useEffect, useMemo } from 'react';
 import { type Control, type FieldValues, useController } from 'react-hook-form';
 
 import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
-import { isTrue } from '../../../functions/conversion';
+import { BooleanField } from './BooleanField';
 import { ChoiceField } from './ChoiceField';
 import DateField from './DateField';
 import { DependentField } from './DependentField';
@@ -72,6 +72,8 @@ export function ApiFormField({
   const reducedDefinition = useMemo(() => {
     return {
       ...fieldDefinition,
+      autoFill: undefined,
+      autoFillFilters: undefined,
       onValueChange: undefined,
       adjustFilters: undefined,
       adjustValue: undefined,
@@ -99,8 +101,12 @@ export function ApiFormField({
   );
 
   // Coerce the value to a numerical value
-  const numericalValue: number | '' = useMemo(() => {
-    let val: number | '' = 0;
+  const numericalValue: number | null = useMemo(() => {
+    let val: number | null = 0;
+
+    if (value == null) {
+      return null;
+    }
 
     switch (definition.field_type) {
       case 'integer':
@@ -116,16 +122,11 @@ export function ApiFormField({
     }
 
     if (Number.isNaN(val) || !Number.isFinite(val)) {
-      val = '';
+      val = null;
     }
 
     return val;
   }, [definition.field_type, value]);
-
-  // Coerce the value to a (stringified) boolean value
-  const booleanValue: boolean = useMemo(() => {
-    return isTrue(value);
-  }, [value]);
 
   // Construct the individual field
   const fieldInstance = useMemo(() => {
@@ -170,16 +171,13 @@ export function ApiFormField({
         );
       case 'boolean':
         return (
-          <Switch
-            {...reducedDefinition}
-            checked={booleanValue}
-            ref={ref}
-            id={fieldId}
-            aria-label={`boolean-field-${fieldName}`}
-            radius='lg'
-            size='sm'
-            error={definition.error ?? error?.message}
-            onChange={(event) => onChange(event.currentTarget.checked)}
+          <BooleanField
+            controller={controller}
+            definition={reducedDefinition}
+            fieldName={fieldName}
+            onChange={(value: boolean) => {
+              onChange(value);
+            }}
           />
         );
       case 'date':
@@ -198,10 +196,16 @@ export function ApiFormField({
             ref={field.ref}
             id={fieldId}
             aria-label={`number-field-${field.name}`}
-            value={numericalValue}
+            value={numericalValue === null ? '' : numericalValue}
             error={definition.error ?? error?.message}
             decimalScale={definition.field_type == 'integer' ? 0 : 10}
-            onChange={(value: number | string | null) => onChange(value)}
+            onChange={(value: number | string | null) => {
+              if (value != null && value.toString().trim() === '') {
+                onChange(null);
+              } else {
+                onChange(value);
+              }
+            }}
             step={1}
           />
         );
@@ -217,6 +221,7 @@ export function ApiFormField({
         return (
           <FileInput
             {...reducedDefinition}
+            aria-label={`file-field-${fieldName}`}
             id={fieldId}
             ref={field.ref}
             radius='sm'
@@ -262,7 +267,6 @@ export function ApiFormField({
         );
     }
   }, [
-    booleanValue,
     control,
     controller,
     definition,

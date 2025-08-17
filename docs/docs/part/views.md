@@ -107,9 +107,9 @@ This tab is only displayed if the part is marked as *Purchaseable*.
 
 The *Sales Orders* tab shows a list of the sales orders for this part. It provides a view for important sales order information like customer, status, creation and shipment dates.
 
-### Stocktake
+### Stock History
 
-The *Stocktake* tab provide historical stock level information, based on user-provided stocktake data. Refer to the [stocktake documentation](./stocktake.md) for further information.
+The *Stock History* tab provide historical stock level information. Refer to the [stock history documentation](./stocktake.md) for further information.
 
 ### Test Templates
 

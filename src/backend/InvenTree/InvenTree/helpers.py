@@ -154,7 +154,7 @@ def generateTestKey(test_name: str) -> str:
     return key
 
 
-def constructPathString(path, max_chars=250):
+def constructPathString(path: list[str], max_chars: int = 250) -> str:
     """Construct a 'path string' for the given path.
 
     Arguments:
@@ -279,12 +279,12 @@ def str2bool(text, test=True):
     return str(text).lower() in ['0', 'n', 'no', 'none', 'f', 'false', 'off']
 
 
-def is_bool(text):
+def is_bool(text: str) -> bool:
     """Determine if a string value 'looks' like a boolean."""
     return str2bool(text, True) or str2bool(text, False)
 
 
-def isNull(text):
+def isNull(text: str) -> bool:
     """Test if a string 'looks' like a null value. This is useful for querying the API against a null key.
 
     Args:
@@ -304,10 +304,13 @@ def isNull(text):
     ]
 
 
-def normalize(d):
+def normalize(d, rounding: Optional[int] = None) -> Decimal:
     """Normalize a decimal number, and remove exponential formatting."""
     if type(d) is not Decimal:
         d = Decimal(d)
+
+    if rounding is not None:
+        d = round(d, rounding)
 
     d = d.normalize()
 
@@ -1095,16 +1098,17 @@ def pui_url(subpath: str) -> str:
 
 def plugins_info(*args, **kwargs):
     """Return information about activated plugins."""
+    from plugin import PluginMixinEnum
     from plugin.registry import registry
 
     # Check if plugins are even enabled
     if not settings.PLUGINS_ENABLED:
         return False
 
-    # Fetch plugins
-    plug_list = [plg for plg in registry.plugins.values() if plg.plugin_config().active]
+    # Fetch active plugins
+    plugins = registry.with_mixin(PluginMixinEnum.BASE)
+
     # Format list
     return [
-        {'name': plg.name, 'slug': plg.slug, 'version': plg.version}
-        for plg in plug_list
+        {'name': plg.name, 'slug': plg.slug, 'version': plg.version} for plg in plugins
     ]
