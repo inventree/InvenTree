@@ -828,6 +828,52 @@ def update(
     success('InvenTree update complete!')
 
 
+@task(
+    help={
+        'skip_backup': 'Skip backup before update',
+        'skip_static': 'Skip static file collection',
+        'uv': 'Use UV (experimental package manager)',
+    }
+)
+def fz_updateServer(
+    c, skip_backup: bool = False, skip_static: bool = False, uv: bool = False
+):
+    """Update InvenTree server installation (skips frontend operations).
+
+    This command should be invoked after source code has been updated,
+    e.g. downloading new code from GitHub.
+
+    The following tasks are performed, in order:
+
+    - install
+    - backup (optional)
+    - migrate
+    - static (optional)
+    - clean_settings
+
+    Note: This task skips frontend compilation and download operations.
+    """
+    info('Updating InvenTree server installation (skipping frontend)...')
+
+    # Ensure required components are installed
+    install(c, uv=uv)
+
+    if not skip_backup:
+        backup(c)
+
+    # Perform database migrations
+    migrate(c)
+
+    # Skip frontend operations entirely
+    info('Skipping frontend update (server-only mode)')
+
+    if not skip_static:
+        # Collect static files
+        static(c, frontend=False)
+
+    success('InvenTree server update complete!')
+
+
 # Data tasks
 @task(
     help={
@@ -1926,6 +1972,7 @@ ns = Collection(
     backup,
     export_records,
     frontend_download,
+    fz_updateServer,
     import_records,
     install,
     migrate,
