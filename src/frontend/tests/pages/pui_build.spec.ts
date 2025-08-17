@@ -350,6 +350,43 @@ test('Build Order - Allocation', async ({ browser }) => {
     .waitFor();
 });
 
+// Test partial stock consumption against build order
+test('Build Order - Consume Stock', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    url: 'manufacturing/build-order/24/line-items'
+  });
+
+  // Check for expected progress values
+  await page.getByText('2 / 2', { exact: true }).waitFor();
+  await page.getByText('8 / 10', { exact: true }).waitFor();
+  await page.getByText('5 / 35', { exact: true }).waitFor();
+  await page.getByText('5 / 40', { exact: true }).waitFor();
+
+  // Open the "Allocate Stock" dialog
+  await page.getByRole('checkbox', { name: 'Select all records' }).click();
+  await page
+    .getByRole('button', { name: 'action-button-allocate-stock' })
+    .click();
+  await page
+    .getByLabel('Allocate Stock')
+    .getByText('5 / 35', { exact: true })
+    .waitFor();
+  await page.getByRole('button', { name: 'Cancel' }).click();
+
+  // Open the "Consume Stock" dialog
+  await page
+    .getByRole('button', { name: 'action-button-consume-stock' })
+    .click();
+  await page.getByLabel('Consume Stock').getByText('2 / 2').waitFor();
+  await page.getByLabel('Consume Stock').getByText('8 / 10').waitFor();
+  await page.getByLabel('Consume Stock').getByText('5 / 35').waitFor();
+  await page.getByLabel('Consume Stock').getByText('5 / 40').waitFor();
+  await page
+    .getByRole('textbox', { name: 'text-field-notes' })
+    .fill('some notes here...');
+  await page.getByRole('button', { name: 'Cancel' }).click();
+});
+
 test('Build Order - Tracked Outputs', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
     url: 'manufacturing/build-order/10/incomplete-outputs'

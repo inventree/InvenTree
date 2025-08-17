@@ -545,7 +545,7 @@ function BuildAllocateLineRow({
       <Table.Td>
         <ProgressBar
           value={record.allocatedQuantity}
-          maximum={record.requiredQuantity}
+          maximum={record.requiredQuantity - record.consumed}
           progressLabel
         />
       </Table.Td>
@@ -673,14 +673,21 @@ export function useAllocateStockToBuildForm({
     successMessage: t`Stock items allocated`,
     onFormSuccess: onFormSuccess,
     initialData: {
-      items: lineItems.map((item) => {
-        return {
-          build_line: item.pk,
-          stock_item: undefined,
-          quantity: Math.max(0, item.requiredQuantity - item.allocatedQuantity),
-          output: outputId
-        };
-      })
+      items: lineItems
+        .filter((item) => {
+          return item.requiredQuantity > item.allocatedQuantity + item.consumed;
+        })
+        .map((item) => {
+          return {
+            build_line: item.pk,
+            stock_item: undefined,
+            quantity: Math.max(
+              0,
+              item.requiredQuantity - item.allocatedQuantity - item.consumed
+            ),
+            output: outputId
+          };
+        })
     },
     size: '80%'
   });
