@@ -29,7 +29,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { authApi, doLogout } from '../../functions/auth';
 import * as classes from '../../main.css';
 import { parseDate } from '../../pages/Index/Settings/AccountSettings/SecurityContent';
-import { useServerApiState } from '../../states/ApiState';
+import { useServerApiState } from '../../states/ServerApiState';
 import { useUserState } from '../../states/UserState';
 import type { ServerAPIProps } from '../../states/states';
 import { vars } from '../../theme';
