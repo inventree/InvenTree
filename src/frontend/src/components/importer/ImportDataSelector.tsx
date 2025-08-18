@@ -153,6 +153,10 @@ export default function ImporterDataSelector({
           };
         }
 
+        if (field == 'id') {
+          continue; // Skip the ID field
+        }
+
         fields[field] = {
           ...fieldDef,
           field_type: fieldDef.type,
