@@ -119,7 +119,7 @@ export function RenderSalesOrderShipment({
   return (
     <RenderInlineModel
       primary={order.reference}
-      suffix={<Text size='sm'>{`${t`Shipment`} ${instance.reference}`}</Text>}
+      suffix={<Text size='xs'>{`${t`Shipment`} ${instance.reference}`}</Text>}
     />
   );
 }
