@@ -223,7 +223,7 @@ def envcheck_invoke_cmd():
 
     correct_cmd: Optional[str] = None
     if is_rtd_environment() or is_docker_environment() or is_devcontainer_environment():
-        pass
+        return  # Skip invoke command check for Docker/RTD/DevContainer environments
     elif is_pkg_installer(load_content=True) and not is_pkg_installer_by_path():
         correct_cmd = 'inventree run invoke'
     else:
