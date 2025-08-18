@@ -135,7 +135,7 @@ export function BuildLineSubTable({
         columns={tableColumns}
         tableData={lineItem.filteredAllocations ?? lineItem.allocations}
         props={{
-          minHeight: 50,
+          minHeight: 200,
           enableSearch: false,
           enableRefresh: false,
           enableColumnSwitching: false,

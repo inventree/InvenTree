@@ -160,10 +160,9 @@ export default function PartBuildAllocationsTable({
       tableState={table}
       columns={tableColumns}
       props={{
-        minHeight: 200,
+        minHeight: 300,
         params: {
           part: partId,
-          allocations: false,
           consumable: false,
           part_detail: false,
           bom_item_detail: false,
