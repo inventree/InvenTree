@@ -229,6 +229,10 @@ export default function ImporterDataSelector({
 
   const editCell = useCallback(
     (row: any, col: any) => {
+      if (col.field == 'id') {
+        return; // Cannot edit the ID field
+      }
+
       setSelectedRow(row);
       setSelectedFieldNames([col.field]);
       editRow.open();
