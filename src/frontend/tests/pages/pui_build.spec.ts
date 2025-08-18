@@ -385,6 +385,22 @@ test('Build Order - Consume Stock', async ({ browser }) => {
     .getByRole('textbox', { name: 'text-field-notes' })
     .fill('some notes here...');
   await page.getByRole('button', { name: 'Cancel' }).click();
+
+  // Try with a different build order
+  await navigate(page, 'manufacturing/build-order/26/line-items');
+  await page.getByRole('checkbox', { name: 'Select all records' }).click();
+  await page
+    .getByRole('button', { name: 'action-button-consume-stock' })
+    .click();
+
+  await page.getByLabel('Consume Stock').getByText('306 / 1,900').waitFor();
+  await page
+    .getByLabel('Consume Stock')
+    .getByText('Fully consumed')
+    .first()
+    .waitFor();
+
+  await page.waitForTimeout(1000);
 });
 
 test('Build Order - Tracked Outputs', async ({ browser }) => {
