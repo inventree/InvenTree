@@ -181,7 +181,7 @@ class CompanySerializer(
     )
     primary_address = serializers.SerializerMethodField(allow_null=True)
 
-    @extend_schema_field(serializers.CharField(allow_null=True))
+    @extend_schema_field(serializers.CharField())
     def get_address(self, obj):
         """Return string version of primary address (for backwards compatibility)."""
         if hasattr(obj, 'primary_address_list') and obj.primary_address_list:
