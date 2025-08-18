@@ -42,7 +42,9 @@ export default function ImportSessionTable() {
   const newImportSession = useCreateApiFormModal({
     url: ApiEndpoints.import_session_list,
     title: t`Create Import Session`,
-    fields: dataImporterSessionFields(),
+    fields: dataImporterSessionFields({
+      allowUpdate: true
+    }),
     onFormSuccess: (response: any) => {
       setSelectedSession(response.pk);
       setOpened(true);
