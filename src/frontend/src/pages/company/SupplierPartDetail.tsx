@@ -13,6 +13,7 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import { formatDecimal } from '@lib/functions/Formatting';
 import { getDetailUrl } from '@lib/functions/Navigation';
 import AdminButton from '../../components/buttons/AdminButton';
 import {
@@ -370,7 +371,7 @@ export default function SupplierPartDetail() {
         visible={supplierPart.active == false}
       />,
       <DetailsBadge
-        label={`${t`In Stock`}: ${supplierPart.in_stock}`}
+        label={`${t`In Stock`}: ${formatDecimal(supplierPart.in_stock)}`}
         color={'green'}
         visible={
           supplierPart?.active &&
@@ -386,7 +387,7 @@ export default function SupplierPartDetail() {
         key='no_stock'
       />,
       <DetailsBadge
-        label={`${t`On Order`}: ${supplierPart.on_order}`}
+        label={`${t`On Order`}: ${formatDecimal(supplierPart.on_order)}`}
         color='blue'
         visible={supplierPart.on_order > 0}
         key='on_order'
