@@ -655,11 +655,13 @@ class DataImportRow(models.Model):
 
         return data
 
-    def construct_serializer(self, request=None):
+    def construct_serializer(self, instance=None, request=None):
         """Construct a serializer object for this row."""
         if serializer_class := self.session.serializer_class:
             return serializer_class(
-                data=self.serializer_data(), context={'request': request}
+                instance=instance,
+                data=self.serializer_data(),
+                context={'request': request},
             )
 
     def validate(self, commit=False, request=None) -> bool:
@@ -679,7 +681,24 @@ class DataImportRow(models.Model):
             # Row has already been completed
             return True
 
-        serializer = self.construct_serializer(request=request)
+        if self.session.update_records:
+            # Extract the ID field from the data
+            instance_id = self.data.get(self.session.ID_FIELD_LABEL, None)
+
+            if not instance_id:
+                raise DjangoValidationError(
+                    _('ID is required for updating existing records.')
+                )
+
+            try:
+                instance = self.session.model_class.objects.get(pk=instance_id)
+            except (self.session.model_class.DoesNotExist, ValueError):
+                raise DjangoValidationError(_('No record found with the provided ID.'))
+
+            serializer = self.construct_serializer(instance=instance, request=request)
+
+        else:
+            serializer = self.construct_serializer(request=request)
 
         if not serializer:
             self.errors = {
