@@ -118,6 +118,12 @@ class DataImportSession(models.Model):
         validators=[importer.validators.validate_field_defaults],
     )
 
+    update_records = models.BooleanField(
+        default=False,
+        verbose_name=_('Update Existing Records'),
+        help_text=_('If enabled, existing records will be updated with new data'),
+    )
+
     @property
     def field_mapping(self) -> dict:
         """Construct a dict of field mappings for this import session.

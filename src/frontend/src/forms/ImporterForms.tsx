@@ -4,6 +4,7 @@ export function dataImporterSessionFields(): ApiFormFieldSet {
   return {
     data_file: {},
     model_type: {},
+    update_records: {},
     field_defaults: {
       hidden: true,
       value: {}
