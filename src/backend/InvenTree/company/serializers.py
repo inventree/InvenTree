@@ -176,7 +176,8 @@ class CompanySerializer(
     address = serializers.SerializerMethodField(
         label=_(
             'Return the string representation for the primary address. This property exists for backwards compatibility.'
-        )
+        ),
+        allow_null=True,
     )
     primary_address = serializers.SerializerMethodField(allow_null=True)
 
