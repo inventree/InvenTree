@@ -346,11 +346,14 @@ export function InvenTreeTable<T extends Record<string, any>>({
     tableState.queryFilters
   ]);
 
+  // Account for invalid page offsets
   useEffect(() => {
     if (
       tableState.page > 1 &&
       pageSize * tableState.page > tableState.recordCount
     ) {
+      tableState.setPage(1);
+    } else if (tableState.page < 1) {
       tableState.setPage(1);
     }
   }, [tableState.records, tableState.page, pageSize]);
@@ -718,7 +721,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
         ..._params,
         totalRecords: tableState.recordCount,
         recordsPerPage: tablePageSize,
-        page: tableState.page,
+        page: Math.max(1, tableState.page),
         onPageChange: tableState.setPage,
         recordsPerPageOptions: PAGE_SIZES,
         onRecordsPerPageChange: updatePageSize
