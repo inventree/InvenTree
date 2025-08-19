@@ -15,7 +15,7 @@ export function dataImporterSessionFields({
       hidden: modelType != undefined
     },
     update_records: {
-      hidden: allowUpdate != true,
+      hidden: allowUpdate !== true,
       value: allowUpdate ? undefined : false
     },
     field_defaults: {
