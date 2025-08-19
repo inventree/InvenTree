@@ -1400,9 +1400,10 @@ class Part(
 
             # Match BOM item to build
             for bom_item in bom_items:
-                build_quantity = build.quantity * bom_item.quantity
+                build_line = build.build_lines.filter(bom_item=bom_item).first()
 
-                quantity += build_quantity
+                line_quantity = max(0, build_line.quantity - build_line.consumed)
+                quantity += line_quantity
 
         return quantity
 

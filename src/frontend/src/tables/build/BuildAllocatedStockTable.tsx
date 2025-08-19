@@ -10,8 +10,11 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import { ActionButton } from '@lib/index';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
+import { IconCircleDashedCheck } from '@tabler/icons-react';
+import { useConsumeBuildItemsForm } from '../../forms/BuildForms';
 import type { StockOperationProps } from '../../forms/StockForms';
 import {
   useDeleteApiFormModal,
@@ -160,10 +163,10 @@ export default function BuildAllocatedStockTable({
     ];
   }, []);
 
-  const [selectedItem, setSelectedItem] = useState<number>(0);
+  const [selectedItemId, setSelectedItemId] = useState<number>(0);
 
   const editItem = useEditApiFormModal({
-    pk: selectedItem,
+    pk: selectedItemId,
     url: ApiEndpoints.build_item_list,
     title: t`Edit Stock Allocation`,
     fields: {
@@ -176,10 +179,21 @@ export default function BuildAllocatedStockTable({
   });
 
   const deleteItem = useDeleteApiFormModal({
-    pk: selectedItem,
+    pk: selectedItemId,
     url: ApiEndpoints.build_item_list,
     title: t`Delete Stock Allocation`,
     table: table
+  });
+
+  const [selectedItems, setSelectedItems] = useState<any[]>([]);
+
+  const consumeStock = useConsumeBuildItemsForm({
+    buildId: buildId ?? 0,
+    allocatedItems: selectedItems,
+    onFormSuccess: () => {
+      table.clearSelectedRecords();
+      table.refreshTable();
+    }
   });
 
   const stockOperationProps: StockOperationProps = useMemo(() => {
@@ -216,17 +230,28 @@ export default function BuildAllocatedStockTable({
   const rowActions = useCallback(
     (record: any): RowAction[] => {
       return [
+        {
+          color: 'green',
+          icon: <IconCircleDashedCheck />,
+          title: t`Consume`,
+          tooltip: t`Consume Stock`,
+          hidden: !user.hasChangeRole(UserRoles.build),
+          onClick: () => {
+            setSelectedItems([record]);
+            consumeStock.open();
+          }
+        },
         RowEditAction({
           hidden: !user.hasChangeRole(UserRoles.build),
           onClick: () => {
-            setSelectedItem(record.pk);
+            setSelectedItemId(record.pk);
             editItem.open();
           }
         }),
         RowDeleteAction({
           hidden: !user.hasDeleteRole(UserRoles.build),
           onClick: () => {
-            setSelectedItem(record.pk);
+            setSelectedItemId(record.pk);
             deleteItem.open();
           }
         })
@@ -236,13 +261,28 @@ export default function BuildAllocatedStockTable({
   );
 
   const tableActions = useMemo(() => {
-    return [stockAdjustActions.dropdown];
-  }, [stockAdjustActions.dropdown]);
+    return [
+      stockAdjustActions.dropdown,
+      <ActionButton
+        key='consume-stock'
+        icon={<IconCircleDashedCheck />}
+        tooltip={t`Consume Stock`}
+        hidden={!user.hasChangeRole(UserRoles.build)}
+        disabled={table.selectedRecords.length == 0}
+        color='green'
+        onClick={() => {
+          setSelectedItems(table.selectedRecords);
+          consumeStock.open();
+        }}
+      />
+    ];
+  }, [user, table.selectedRecords, stockAdjustActions.dropdown]);
 
   return (
     <>
       {editItem.modal}
       {deleteItem.modal}
+      {consumeStock.modal}
       {stockAdjustActions.modals.map((modal) => modal.modal)}
       <InvenTreeTable
         tableState={table}
