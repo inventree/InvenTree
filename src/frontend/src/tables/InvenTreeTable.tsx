@@ -356,6 +356,11 @@ export function InvenTreeTable<T extends Record<string, any>>({
     } else if (tableState.page < 1) {
       tableState.setPage(1);
     }
+
+    if (pageSize < 10) {
+      // Default page size
+      setPageSize(25);
+    }
   }, [tableState.records, tableState.page, pageSize]);
 
   // Data Sorting
