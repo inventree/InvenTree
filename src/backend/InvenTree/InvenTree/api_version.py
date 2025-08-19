@@ -1,11 +1,15 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 385
+INVENTREE_API_VERSION = 386
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+v386 -> 2025-08-11 : https://github.com/inventree/InvenTree/pull/8191
+    - Adds "consumed" field to the BuildItem API
+    - Adds API endpoint to consume stock against a BuildOrder
+
 v385 -> 2025-08-15 : https://github.com/inventree/InvenTree/pull/10174
     - Adjust return type of PurchaseOrderReceive API serializer
     - Now returns list of of the created stock items when receiving
