@@ -121,7 +121,7 @@
         "@types/react-router-dom": "^5.3.3",
         "@types/react-window": "^1.8.8",
         "@vanilla-extract/vite-plugin": "^5.0.1",
-        "@vitejs/plugin-react": "^4.3.4",
+        "@vitejs/plugin-react": "^5.0.1",
         "babel-plugin-macros": "^3.1.0",
         "nyc": "^17.1.0",
         "path": "^0.12.7",
