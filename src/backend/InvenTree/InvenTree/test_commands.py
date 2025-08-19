@@ -47,12 +47,12 @@ class CommandTestCase(TestCase):
         my_admin2 = User.objects.create_user(
             username='admin2', email='admin@example.org'
         )
-        my_admin2.emailaddress_set.create(email='123')
         my_admin2.emailaddress_set.create(email='456')
+        my_admin2.emailaddress_set.create(email='123')
         with self.assertLogs('inventree') as cm:
             self.assertFalse(
                 call_command('remove_mfa', 'admin@example.org', verbosity=0)
             )
-        self.assertIn('More than one user found with this mail', str(cm[1]))
+        self.assertIn('Multiple users found with the provided email', str(cm[1]))
         self.assertIn('admin, admin2', str(cm[1]))
-        self.assertIn('admin@example.org, 123, 456', str(cm[1]))
+        self.assertIn('123, 456, admin@example.org', str(cm[1]))
