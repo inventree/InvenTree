@@ -12,11 +12,11 @@ from InvenTree.unit_test import AdminTestCase, InvenTreeAPITestCase, InvenTreeTe
 class ImporterMixin:
     """Helpers for import tests."""
 
-    def helper_file(self, fn):
+    def helper_file(self, fn: str) -> ContentFile:
         """Return test data."""
-        fn = os.path.join(os.path.dirname(__file__), 'test_data', fn)
+        file_path = os.path.join(os.path.dirname(__file__), 'test_data', fn)
 
-        with open(fn, encoding='utf-8') as input_file:
+        with open(file_path, encoding='utf-8') as input_file:
             data = input_file.read()
 
         return ContentFile(data, fn)
@@ -31,8 +31,10 @@ class ImporterTest(ImporterMixin, InvenTreeTestCase):
 
         n = Company.objects.count()
 
+        data_file = self.helper_file('companies.csv')
+
         session = DataImportSession.objects.create(
-            data_file=self.helper_content(), model_type='company'
+            data_file=data_file, model_type='company'
         )
 
         session.extract_columns()
