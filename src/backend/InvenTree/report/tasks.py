@@ -68,6 +68,9 @@ def print_labels(
     model = template.get_model()
     items = model.objects.filter(pk__in=item_ids)
 
+    # Ensure they are sorted by the order of the provided item IDs
+    items = sorted(items, key=lambda item: item_ids.index(item.pk))
+
     plugin = registry.get_plugin(plugin_slug, active=True)
 
     if not plugin:
