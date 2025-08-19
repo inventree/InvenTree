@@ -36,8 +36,10 @@ class CommandTestCase(TestCase):
         # correct removal
         my_admin = User.objects.create_user(username='admin', email='admin@example.org')
         my_admin.authenticator_set.create(type='TOTP', data={})
+        self.assertEqual(my_admin.authenticator_set.all().count(), 1)
         output = call_command('remove_mfa', 'admin@example.org', verbosity=0)
         self.assertEqual(output, 'done')
+        self.assertEqual(my_admin.authenticator_set.all().count(), 0)
 
         # two users with same email
         User.objects.create_user(username='admin2', email='admin@example.org')
