@@ -31,8 +31,7 @@ class Command(BaseCommand):
             print('More than one user found with this mail')
         else:
             # and clean out all MFA methods
-            # backup codes
-            mfa_user[0].staticdevice_set.all().delete()
-            # TOTP tokens
-            mfa_user[0].totpdevice_set.all().delete()
-            print(f'Removed all MFA methods for user {mfa_user[0]!s}')
+            auths = mfa_user[0].authenticator_set.all()
+            length = len(auths)
+            auths.delete()
+            print(f'Removed all len ({length}) MFA methods for user {mfa_user[0]!s}')
