@@ -3,6 +3,10 @@
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 
+import structlog
+
+logger = structlog.get_logger('inventree')
+
 
 class Command(BaseCommand):
     """Remove MFA for a user."""
@@ -26,12 +30,18 @@ class Command(BaseCommand):
         ]
 
         if len(mfa_user) == 0:
-            print('No user with this mail associated')
+            logger.warning('No user with this mail associated')
         elif len(mfa_user) > 1:
-            print('More than one user found with this mail')
+            logger.error('More than one user found with this mail')
         else:
             # and clean out all MFA methods
             auths = mfa_user[0].authenticator_set.all()
             length = len(auths)
             auths.delete()
-            print(f'Removed all len ({length}) MFA methods for user {mfa_user[0]!s}')
+
+            # log the result
+            msg = f'Removed all ({length}) MFA methods for user {mfa_user[0]!s}'
+            logger.info(msg)
+            print(msg)
+            return 'done'
+        return False
