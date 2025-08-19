@@ -12,6 +12,7 @@ import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
+import { IconCircleCheck } from '@tabler/icons-react';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import {
@@ -92,13 +93,30 @@ export default function PartBuildAllocationsTable({
         sortable: true,
         switchable: false,
         title: t`Required Stock`,
-        render: (record: any) => (
-          <ProgressBar
-            progressLabel
-            value={record.allocated}
-            maximum={record.quantity}
-          />
-        )
+        render: (record: any) => {
+          const required = Math.max(0, record.quantity - record.consumed);
+
+          if (required <= 0) {
+            return (
+              <Group gap='xs' wrap='nowrap'>
+                <IconCircleCheck size={14} color='green' />
+                <Text size='sm' style={{ fontStyle: 'italic' }}>
+                  {record.consumed >= record.quantity
+                    ? t`Fully consumed`
+                    : t`Fully allocated`}
+                </Text>
+              </Group>
+            );
+          }
+
+          return (
+            <ProgressBar
+              progressLabel
+              value={record.allocated}
+              maximum={required}
+            />
+          );
+        }
       }
     ];
   }, [table.isRowExpanded]);
@@ -142,11 +160,13 @@ export default function PartBuildAllocationsTable({
       tableState={table}
       columns={tableColumns}
       props={{
-        minHeight: 200,
+        minHeight: 300,
         params: {
           part: partId,
           consumable: false,
-          part_detail: true,
+          part_detail: false,
+          bom_item_detail: false,
+          project_code_detail: true,
           assembly_detail: true,
           build_detail: true,
           order_outstanding: true
