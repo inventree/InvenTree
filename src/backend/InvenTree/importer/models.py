@@ -692,7 +692,6 @@ class DataImportRow(models.Model):
 
             try:
                 instance = self.session.model_class.objects.get(pk=instance_id)
-            except (self.session.model_class.DoesNotExist, ValueError):
             except self.session.model_class.DoesNotExist:
                 raise DjangoValidationError(_('No record found with the provided ID.'))
             except ValueError:
