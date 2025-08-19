@@ -33,7 +33,7 @@ export function RenderUser({
         primary={instance.username}
         secondary={
           <Group gap='xs'>
-            {!instance.is_active && (
+            {instance.is_active === false && (
               <Badge autoContrast color='red'>{t`Inactive`}</Badge>
             )}
           </Group>

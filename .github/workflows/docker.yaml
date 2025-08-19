@@ -175,7 +175,7 @@ jobs:
       - name: Push Docker Images
         id: push-docker
         if: github.event_name != 'pull_request'
-        uses: depot/build-push-action@2583627a84956d07561420dcc1d0eb1f2af3fac0 # pin@v1
+        uses: depot/build-push-action@9785b135c3c76c33db102e45be96a25ab55cd507 # pin@v1
         with:
           project: jczzbjkk68
           context: .

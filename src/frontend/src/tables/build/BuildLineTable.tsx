@@ -1,21 +1,21 @@
 import { t } from '@lingui/core/macro';
-import { Alert, Group, Paper, Stack, Text } from '@mantine/core';
+import { Alert, Group, Paper, Text } from '@mantine/core';
 import {
   IconArrowRight,
+  IconCircleCheck,
+  IconCircleDashedCheck,
   IconCircleMinus,
   IconShoppingCart,
   IconTool,
   IconWand
 } from '@tabler/icons-react';
-import { DataTable, type DataTableRowExpansionProps } from 'mantine-datatable';
+import type { DataTableRowExpansionProps } from 'mantine-datatable';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ActionButton } from '@lib/components/ActionButton';
 import { ProgressBar } from '@lib/components/ProgressBar';
 import {
-  type RowAction,
-  RowActions,
   RowDeleteAction,
   RowEditAction,
   RowViewAction
@@ -26,11 +26,12 @@ import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { formatDecimal } from '@lib/functions/Formatting';
 import type { TableFilter } from '@lib/types/Filters';
-import type { TableColumn } from '@lib/types/Tables';
+import type { RowAction, TableColumn } from '@lib/types/Tables';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import {
   useAllocateStockToBuildForm,
-  useBuildOrderFields
+  useBuildOrderFields,
+  useConsumeBuildLinesForm
 } from '../../forms/BuildForms';
 import {
   useCreateApiFormModal,
@@ -70,6 +71,7 @@ export function BuildLineSubTable({
 }>) {
   const user = useUserState();
   const navigate = useNavigate();
+  const table = useTable('buildline-subtable');
 
   const tableColumns: any[] = useMemo(() => {
     return [
@@ -96,59 +98,52 @@ export function BuildLineSubTable({
       },
       LocationColumn({
         accessor: 'location_detail'
-      }),
-      {
-        accessor: '---actions---',
-        title: ' ',
-        width: 50,
-        render: (record: any) => {
-          return (
-            <RowActions
-              title={t`Actions`}
-              index={record.pk}
-              actions={[
-                RowViewAction({
-                  title: t`View Stock Item`,
-                  modelType: ModelType.stockitem,
-                  modelId: record.stock_item,
-                  navigate: navigate
-                }),
-                RowEditAction({
-                  hidden:
-                    !onEditAllocation || !user.hasChangeRole(UserRoles.build),
-                  onClick: () => {
-                    onEditAllocation?.(record.pk);
-                  }
-                }),
-                RowDeleteAction({
-                  hidden:
-                    !onDeleteAllocation || !user.hasDeleteRole(UserRoles.build),
-                  onClick: () => {
-                    onDeleteAllocation?.(record.pk);
-                  }
-                })
-              ]}
-            />
-          );
-        }
-      }
+      })
     ];
-  }, [user, onEditAllocation, onDeleteAllocation]);
+  }, []);
+
+  const rowActions = useCallback(
+    (record: any): RowAction[] => {
+      return [
+        RowViewAction({
+          title: t`View Stock Item`,
+          modelType: ModelType.stockitem,
+          modelId: record.stock_item,
+          navigate: navigate
+        }),
+        RowEditAction({
+          hidden: !onEditAllocation || !user.hasChangeRole(UserRoles.build),
+          onClick: () => {
+            onEditAllocation?.(record.pk);
+          }
+        }),
+        RowDeleteAction({
+          hidden: !onDeleteAllocation || !user.hasDeleteRole(UserRoles.build),
+          onClick: () => {
+            onDeleteAllocation?.(record.pk);
+          }
+        })
+      ];
+    },
+    [user, onEditAllocation, onDeleteAllocation]
+  );
 
   return (
-    <Paper p='md'>
-      <Stack gap='xs'>
-        <DataTable
-          minHeight={50}
-          withTableBorder
-          withColumnBorders
-          striped
-          pinLastColumn
-          idAccessor='pk'
-          columns={tableColumns}
-          records={lineItem.filteredAllocations ?? lineItem.allocations}
-        />
-      </Stack>
+    <Paper p='xs'>
+      <InvenTreeTable
+        tableState={table}
+        columns={tableColumns}
+        tableData={lineItem.filteredAllocations ?? lineItem.allocations}
+        props={{
+          minHeight: 200,
+          enableSearch: false,
+          enableRefresh: false,
+          enableColumnSwitching: false,
+          enableFilters: false,
+          rowActions: rowActions,
+          noRecordsText: ''
+        }}
+      />
     </Paper>
   );
 }
@@ -186,7 +181,12 @@ export default function BuildLineTable({
       {
         name: 'allocated',
         label: t`Allocated`,
-        description: t`Show allocated lines`
+        description: t`Show fully allocated lines`
+      },
+      {
+        name: 'consumed',
+        label: t`Consumed`,
+        description: t`Show fully consumed lines`
       },
       {
         name: 'available',
@@ -472,12 +472,55 @@ export default function BuildLineTable({
         sortable: true,
         hidden: !isActive,
         render: (record: any) => {
+          if (record?.bom_item_detail?.consumable) {
+            return (
+              <Text
+                size='sm'
+                style={{ fontStyle: 'italic' }}
+              >{t`Consumable item`}</Text>
+            );
+          }
+
+          let required = Math.max(0, record.quantity - record.consumed);
+
+          if (output?.pk) {
+            // If an output is specified, we show the allocated quantity for that output
+            required = record.bom_item_detail?.quantity;
+          }
+
+          if (required <= 0) {
+            return (
+              <Group gap='xs' wrap='nowrap'>
+                <IconCircleCheck size={16} color='green' />
+                <Text size='sm' style={{ fontStyle: 'italic' }}>
+                  {record.consumed >= record.quantity
+                    ? t`Fully consumed`
+                    : t`Fully allocated`}
+                </Text>
+              </Group>
+            );
+          }
+
+          return (
+            <ProgressBar
+              progressLabel={true}
+              value={record.allocatedQuantity}
+              maximum={required}
+            />
+          );
+        }
+      },
+      {
+        accessor: 'consumed',
+        sortable: true,
+        hidden: !!output?.pk,
+        render: (record: any) => {
           return record?.bom_item_detail?.consumable ? (
             <Text style={{ fontStyle: 'italic' }}>{t`Consumable item`}</Text>
           ) : (
             <ProgressBar
               progressLabel={true}
-              value={record.allocatedQuantity}
+              value={record.consumed}
               maximum={record.requiredQuantity}
             />
           );
@@ -544,6 +587,7 @@ export default function BuildLineTable({
     buildId: build.pk,
     lineItems: selectedRows,
     onFormSuccess: () => {
+      table.clearSelectedRecords();
       table.refreshTable();
     }
   });
@@ -574,7 +618,10 @@ export default function BuildLineTable({
       </Alert>
     ),
     successMessage: t`Stock has been deallocated`,
-    table: table
+    onFormSuccess: () => {
+      table.clearSelectedRecords();
+      table.refreshTable();
+    }
   });
 
   const [selectedAllocation, setSelectedAllocation] = useState<number>(0);
@@ -605,6 +652,15 @@ export default function BuildLineTable({
     parts: partsToOrder
   });
 
+  const consumeLines = useConsumeBuildLinesForm({
+    buildId: build.pk,
+    buildLines: selectedRows,
+    onFormSuccess: () => {
+      table.clearSelectedRecords();
+      table.refreshTable();
+    }
+  });
+
   const rowActions = useCallback(
     (record: any): RowAction[] => {
       const part = record.part_detail ?? {};
@@ -613,11 +669,24 @@ export default function BuildLineTable({
 
       const hasOutput = !!output?.pk;
 
+      const required = Math.max(
+        0,
+        record.quantity - record.consumed - record.allocated
+      );
+
+      // Can consume
+      const canConsume =
+        in_production &&
+        !consumable &&
+        record.allocated > 0 &&
+        user.hasChangeRole(UserRoles.build);
+
       // Can allocate
       const canAllocate =
         in_production &&
         !consumable &&
         user.hasChangeRole(UserRoles.build) &&
+        required > 0 &&
         record.trackable == hasOutput;
 
       // Can de-allocate
@@ -645,6 +714,16 @@ export default function BuildLineTable({
           onClick: () => {
             setSelectedRows([record]);
             allocateStock.open();
+          }
+        },
+        {
+          icon: <IconCircleDashedCheck />,
+          title: t`Consume Stock`,
+          color: 'green',
+          hidden: !canConsume || hasOutput,
+          onClick: () => {
+            setSelectedRows([record]);
+            consumeLines.open();
           }
         },
         {
@@ -758,6 +837,18 @@ export default function BuildLineTable({
           setSelectedLine(null);
           deallocateStock.open();
         }}
+      />,
+      <ActionButton
+        key='consume-stock'
+        icon={<IconCircleDashedCheck />}
+        tooltip={t`Consume Stock`}
+        hidden={!visible || hasOutput}
+        disabled={!table.hasSelectedRecords}
+        color='green'
+        onClick={() => {
+          setSelectedRows(table.selectedRecords);
+          consumeLines.open();
+        }}
       />
     ];
   }, [
@@ -843,6 +934,7 @@ export default function BuildLineTable({
       {deallocateStock.modal}
       {editAllocation.modal}
       {deleteAllocation.modal}
+      {consumeLines.modal}
       {orderPartsWizard.wizard}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.build_line_list)}
@@ -852,6 +944,7 @@ export default function BuildLineTable({
           params: {
             ...params,
             build: build.pk,
+            assembly_detail: false,
             part_detail: true
           },
           tableActions: tableActions,

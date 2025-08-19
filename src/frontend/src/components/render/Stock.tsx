@@ -22,6 +22,10 @@ export function RenderStockLocation(
 ): ReactNode {
   const { instance } = props;
 
+  if (!instance) {
+    return '';
+  }
+
   const suffix: ReactNode = (
     <Group gap='xs'>
       <TableHoverCard

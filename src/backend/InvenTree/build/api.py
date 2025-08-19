@@ -479,6 +479,14 @@ class BuildLineFilter(rest_filters.FilterSet):
             return queryset.filter(allocated__gte=F('quantity'))
         return queryset.filter(allocated__lt=F('quantity'))
 
+    consumed = rest_filters.BooleanFilter(label=_('Consumed'), method='filter_consumed')
+
+    def filter_consumed(self, queryset, name, value):
+        """Filter by whether each BuildLine is fully consumed."""
+        if str2bool(value):
+            return queryset.filter(consumed__gte=F('quantity'))
+        return queryset.filter(consumed__lt=F('quantity'))
+
     available = rest_filters.BooleanFilter(
         label=_('Available'), method='filter_available'
     )
@@ -494,6 +502,7 @@ class BuildLineFilter(rest_filters.FilterSet):
         """
         flt = Q(
             quantity__lte=F('allocated')
+            + F('consumed')
             + F('available_stock')
             + F('available_substitute_stock')
             + F('available_variant_stock')
@@ -504,7 +513,7 @@ class BuildLineFilter(rest_filters.FilterSet):
         return queryset.exclude(flt)
 
 
-class BuildLineEndpoint:
+class BuildLineMixin:
     """Mixin class for BuildLine API endpoints."""
 
     queryset = BuildLine.objects.all()
@@ -553,7 +562,7 @@ class BuildLineEndpoint:
         )
 
 
-class BuildLineList(BuildLineEndpoint, DataExportViewMixin, ListCreateAPI):
+class BuildLineList(BuildLineMixin, DataExportViewMixin, ListCreateAPI):
     """API endpoint for accessing a list of BuildLine objects."""
 
     filterset_class = BuildLineFilter
@@ -562,6 +571,7 @@ class BuildLineList(BuildLineEndpoint, DataExportViewMixin, ListCreateAPI):
     ordering_fields = [
         'part',
         'allocated',
+        'consumed',
         'reference',
         'quantity',
         'consumable',
@@ -605,7 +615,7 @@ class BuildLineList(BuildLineEndpoint, DataExportViewMixin, ListCreateAPI):
         return source_build
 
 
-class BuildLineDetail(BuildLineEndpoint, RetrieveUpdateDestroyAPI):
+class BuildLineDetail(BuildLineMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a BuildLine object."""
 
     def get_source_build(self) -> Build | None:
@@ -732,6 +742,13 @@ class BuildAllocate(BuildOrderContextMixin, CreateAPI):
 
     queryset = Build.objects.none()
     serializer_class = build.serializers.BuildAllocationSerializer
+
+
+class BuildConsume(BuildOrderContextMixin, CreateAPI):
+    """API endpoint to consume stock against a build order."""
+
+    queryset = Build.objects.none()
+    serializer_class = build.serializers.BuildConsumeSerializer
 
 
 class BuildIssue(BuildOrderContextMixin, CreateAPI):
@@ -953,6 +970,7 @@ build_api_urls = [
         '<int:pk>/',
         include([
             path('allocate/', BuildAllocate.as_view(), name='api-build-allocate'),
+            path('consume/', BuildConsume.as_view(), name='api-build-consume'),
             path(
                 'auto-allocate/',
                 BuildAutoAllocate.as_view(),
