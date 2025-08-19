@@ -14,6 +14,14 @@ test('Importing - Admin Center', async ({ browser }) => {
 
   const fileInput = await page.locator('input[type="file"]');
   await fileInput.setInputFiles('./tests/fixtures/bom_data.csv');
+
+  await page
+    .locator('label')
+    .filter({ hasText: 'Update Existing RecordsIf' })
+    .locator('div')
+    .first()
+    .click();
+
   await page.getByRole('button', { name: 'Submit' }).click();
 
   // Submitting without selecting model type, should show error
@@ -22,14 +30,47 @@ test('Importing - Admin Center', async ({ browser }) => {
 
   await page
     .getByRole('textbox', { name: 'choice-field-model_type' })
-    .fill('Cat');
-  await page
-    .getByRole('option', { name: 'Part Category', exact: true })
-    .click();
+    .fill('bom');
+  await page.getByRole('option', { name: 'BOM Item', exact: true }).click();
   await page.getByRole('button', { name: 'Submit' }).click();
 
-  await page.getByText('Description (optional)').waitFor();
-  await page.getByText('Parent Category').waitFor();
+  await page.getByText('Select the parent assembly').waitFor();
+  await page.getByText('Select the component part').waitFor();
+  await page.getByText('Existing database identifier for the record').waitFor();
+
+  await page
+    .getByRole('textbox', { name: 'import-column-map-reference' })
+    .click();
+  await page.getByRole('option', { name: 'Ignore this field' }).click();
+
+  await page.getByRole('button', { name: 'Accept Column Mapping' }).click();
+
+  // Check for expected ID values
+  for (const itemId of ['16', '17', '15', '23']) {
+    await page.getByRole('cell', { name: itemId, exact: true });
+  }
+
+  // Import all the records
+  await page
+    .getByRole('row', { name: 'Select all records Row Not' })
+    .getByLabel('Select all records')
+    .click();
+  await page
+    .getByRole('button', { name: 'action-button-import-selected' })
+    .click();
+
+  await page.getByText('Data has been imported successfully').waitFor();
+  await page.getByRole('button', { name: 'Close' }).click();
+
+  // Confirmation of full import success
+  await page.getByRole('cell', { name: '4 / 4 100%' }).first().waitFor();
+
+  // Manually delete records
+  await page.getByRole('checkbox', { name: 'Select all records' }).click();
+  await page
+    .getByRole('button', { name: 'action-button-delete-selected' })
+    .click();
+  await page.getByRole('button', { name: 'Delete', exact: true }).click();
 });
 
 test('Importing - BOM', async ({ browser }) => {
