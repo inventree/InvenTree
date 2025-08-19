@@ -15,12 +15,8 @@ class Command(BaseCommand):
         """Add the arguments."""
         parser.add_argument('mail', type=str)
 
-    def handle(self, *args, **kwargs):
+    def handle(self, *args, mail, **kwargs):
         """Remove MFA for the supplied user (by mail)."""
-        # general settings
-        mail = kwargs.get('mail')
-        if not mail:
-            raise KeyError('A mail is required')
         user = get_user_model()
         mfa_user = [
             *set(
