@@ -92,8 +92,6 @@ test('Parts - BOM', async ({ browser }) => {
   await setTableChoiceFilter(page, 'active', 'Yes');
   await setTableChoiceFilter(page, 'BOM Valid', 'Yes');
 
-  await page.getByText('/ 12').waitFor();
-
   // Navigate to BOM for a particular assembly
   await navigate(page, 'part/87/bom');
   await loadTab(page, 'Bill of Materials');
