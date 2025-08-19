@@ -175,7 +175,10 @@ class LabelPrint(GenericAPIView):
 
         instances = template.get_model().objects.filter(pk__in=items)
 
-        if instances.count() == 0:
+        # Sort the instances by the order of the provided items
+        instances = sorted(instances, key=lambda item: items.index(item.pk))
+
+        if len(instances) == 0:
             raise ValidationError(_('No valid items provided to template'))
 
         return self.print(template, instances, plugin, request)
@@ -254,7 +257,10 @@ class ReportPrint(GenericAPIView):
 
         instances = template.get_model().objects.filter(pk__in=items)
 
-        if instances.count() == 0:
+        # Sort the instances by the order of the provided items
+        instances = sorted(instances, key=lambda item: items.index(item.pk))
+
+        if len(instances) == 0:
             raise ValidationError(_('No valid items provided to template'))
 
         return self.print(template, instances, request)
