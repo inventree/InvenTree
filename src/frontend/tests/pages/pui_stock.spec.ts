@@ -323,6 +323,7 @@ test('Stock - Return Items', async ({ browser }) => {
       name: 'action-menu-stock-operations-return-stock'
     })
     .click();
+
   await page.getByText('#128').waitFor();
   await page.getByText('Merge into existing stock').waitFor();
   await page.getByRole('textbox', { name: 'number-field-quantity' }).fill('0');
