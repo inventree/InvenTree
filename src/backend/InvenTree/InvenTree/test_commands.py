@@ -34,17 +34,25 @@ class CommandTestCase(TestCase):
         self.assertIn('No user with this mail associated', str(cm[1]))
 
         # correct removal
-        my_admin = User.objects.create_user(username='admin', email='admin@example.org')
-        my_admin.authenticator_set.create(type='TOTP', data={})
-        self.assertEqual(my_admin.authenticator_set.all().count(), 1)
+        my_admin1 = User.objects.create_user(
+            username='admin', email='admin@example.org'
+        )
+        my_admin1.authenticator_set.create(type='TOTP', data={})
+        self.assertEqual(my_admin1.authenticator_set.all().count(), 1)
         output = call_command('remove_mfa', 'admin@example.org', verbosity=0)
         self.assertEqual(output, 'done')
-        self.assertEqual(my_admin.authenticator_set.all().count(), 0)
+        self.assertEqual(my_admin1.authenticator_set.all().count(), 0)
 
         # two users with same email
-        User.objects.create_user(username='admin2', email='admin@example.org')
+        my_admin2 = User.objects.create_user(
+            username='admin2', email='admin@example.org'
+        )
+        my_admin2.emailaddress_set.create(email='123')
+        my_admin2.emailaddress_set.create(email='456')
         with self.assertLogs('inventree') as cm:
             self.assertFalse(
                 call_command('remove_mfa', 'admin@example.org', verbosity=0)
             )
         self.assertIn('More than one user found with this mail', str(cm[1]))
+        self.assertIn('admin, admin2', str(cm[1]))
+        self.assertIn('admin@example.org, 123, 456', str(cm[1]))
