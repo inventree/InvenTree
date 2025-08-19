@@ -135,7 +135,9 @@ export const getPluginTemplatePreview = (
     const elRef = useRef<HTMLDivElement | null>(null);
     const [error, setError] = useState<string | undefined>(undefined);
 
-    const updatePreviewRef = useRef<PreviewAreaRef['updatePreview'] | null>(null);
+    const updatePreviewRef = useRef<PreviewAreaRef['updatePreview'] | null>(
+      null
+    );
 
     useImperativeHandle(ref, () => ({
       updatePreview: (...args) => updatePreviewRef.current?.(...args)

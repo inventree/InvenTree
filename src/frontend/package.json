@@ -108,6 +108,7 @@
         "@babel/preset-react": "^7.26.3",
         "@babel/preset-typescript": "^7.27.0",
         "@babel/runtime": "^7.27.0",
+        "@biomejs/biome": "1.9.4",
         "@codecov/vite-plugin": "^1.9.0",
         "@lingui/babel-plugin-lingui-macro": "^5.3.1",
         "@lingui/cli": "^5.3.1",
