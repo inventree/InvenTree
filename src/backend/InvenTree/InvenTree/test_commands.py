@@ -1,5 +1,7 @@
 """Tests for custom InvenTree management commands."""
 
+from pathlib import Path
+
 from django.contrib.auth.models import User
 from django.core.management import call_command
 from django.test import TestCase
@@ -12,6 +14,8 @@ class CommandTestCase(TestCase):
         """Test the schema generation command."""
         output = call_command('schema', file='schema.yml', verbosity=0)
         self.assertEqual(output, 'done')
+
+        Path('schema.yml').unlink()  # cleanup
 
     def test_remove_mfa(self):
         """Test the remove_mfa command."""
