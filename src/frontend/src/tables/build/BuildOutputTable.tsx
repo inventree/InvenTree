@@ -95,20 +95,24 @@ function OutputAllocationDrawer({
       position='bottom'
       size='lg'
       title={
-        <Group p='md' wrap='nowrap' justify='space-apart'>
+        <Group p='xs' wrap='nowrap' justify='space-apart'>
           <StylishText size='lg'>{t`Build Output Stock Allocation`}</StylishText>
           <Space h='lg' />
-          <PartColumn part={build.part_detail} />
-          {output?.serial && (
-            <Text size='sm'>
-              {t`Serial Number`}: {output.serial}
-            </Text>
-          )}
-          {output?.batch && (
-            <Text size='sm'>
-              {t`Batch Code`}: {output.batch}
-            </Text>
-          )}
+          <Paper withBorder p='sm'>
+            <Group gap='xs'>
+              <PartColumn part={build.part_detail} />
+              {output?.serial && (
+                <Text size='sm'>
+                  {t`Serial Number`}: {output.serial}
+                </Text>
+              )}
+              {output?.batch && (
+                <Text size='sm'>
+                  {t`Batch Code`}: {output.batch}
+                </Text>
+              )}
+            </Group>
+          </Paper>
           <Space h='lg' />
         </Group>
       }
