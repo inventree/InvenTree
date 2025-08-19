@@ -755,7 +755,8 @@ def validateFilterString(value: str, model=None) -> dict:
     if not value or len(value) == 0:
         return results
 
-    groups = value.split(',')
+    # Split by comma, but ignore commas within square brackets
+    groups = re.split(r',(?![^\[]*\])', value)
 
     for group in groups:
         group = group.strip()
