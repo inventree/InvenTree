@@ -8,7 +8,7 @@ msgstr ""
 "Language: ja\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-08-15 22:15\n"
+"PO-Revision-Date: 2025-08-18 04:06\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -158,7 +158,7 @@ msgstr "部品試験テンプレート"
 
 #: lib/enums/ModelInformation.tsx:52
 #: src/components/wizards/OrderPartsWizard.tsx:143
-#: src/pages/company/SupplierPartDetail.tsx:408
+#: src/pages/company/SupplierPartDetail.tsx:409
 #: src/pages/stock/StockDetail.tsx:286
 #: src/tables/build/BuildAllocatedStockTable.tsx:156
 #: src/tables/part/PartPurchaseOrdersTable.tsx:50
@@ -314,7 +314,7 @@ msgstr "注文"
 #: lib/enums/Roles.tsx:39
 #: src/pages/Index/Settings/SystemSettings.tsx:283
 #: src/pages/company/CompanyDetail.tsx:205
-#: src/pages/company/SupplierPartDetail.tsx:265
+#: src/pages/company/SupplierPartDetail.tsx:266
 #: src/pages/part/PartDetail.tsx:874
 #: src/pages/purchasing/PurchasingIndex.tsx:60
 msgid "Purchase Orders"
@@ -2528,7 +2528,7 @@ msgstr "製造"
 #: src/pages/company/ManufacturerDetail.tsx:9
 #: src/pages/company/ManufacturerPartDetail.tsx:260
 #: src/pages/company/SupplierDetail.tsx:9
-#: src/pages/company/SupplierPartDetail.tsx:355
+#: src/pages/company/SupplierPartDetail.tsx:356
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:534
 #: src/pages/purchasing/PurchasingIndex.tsx:122
 msgid "Purchasing"
@@ -2709,7 +2709,7 @@ msgstr "プラグイン情報"
 #: src/pages/company/CompanyDetail.tsx:93
 #: src/pages/company/ManufacturerPartDetail.tsx:91
 #: src/pages/company/ManufacturerPartDetail.tsx:118
-#: src/pages/company/SupplierPartDetail.tsx:143
+#: src/pages/company/SupplierPartDetail.tsx:144
 #: src/pages/part/CategoryDetail.tsx:106
 #: src/pages/part/PartDetail.tsx:461
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:144
@@ -2873,7 +2873,7 @@ msgstr "発送"
 #: src/components/render/Plugin.tsx:17
 #: src/components/render/User.tsx:37
 #: src/pages/company/CompanyDetail.tsx:325
-#: src/pages/company/SupplierPartDetail.tsx:368
+#: src/pages/company/SupplierPartDetail.tsx:369
 #: src/pages/core/UserDetail.tsx:211
 #: src/pages/part/PartDetail.tsx:1012
 msgid "Inactive"
@@ -4233,21 +4233,21 @@ msgstr "受け取った商品の有効期限を入力してください。"
 
 #: src/forms/PurchaseOrderForms.tsx:700
 #: src/forms/StockForms.tsx:671
-#: src/pages/company/SupplierPartDetail.tsx:171
-#: src/pages/company/SupplierPartDetail.tsx:235
+#: src/pages/company/SupplierPartDetail.tsx:172
+#: src/pages/company/SupplierPartDetail.tsx:236
 #: src/pages/stock/StockDetail.tsx:416
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:225
 msgid "Packaging"
 msgstr "パッケージング"
 
 #: src/forms/PurchaseOrderForms.tsx:724
-#: src/pages/company/SupplierPartDetail.tsx:118
+#: src/pages/company/SupplierPartDetail.tsx:119
 #: src/tables/ColumnRenderers.tsx:286
 msgid "Note"
 msgstr "備考"
 
 #: src/forms/PurchaseOrderForms.tsx:792
-#: src/pages/company/SupplierPartDetail.tsx:136
+#: src/pages/company/SupplierPartDetail.tsx:137
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:49
 msgid "SKU"
 msgstr "SKU"
@@ -4338,8 +4338,8 @@ msgstr "戻る"
 #: src/forms/StockForms.tsx:981
 #: src/forms/StockForms.tsx:1029
 #: src/forms/StockForms.tsx:1073
-#: src/pages/company/SupplierPartDetail.tsx:189
-#: src/pages/company/SupplierPartDetail.tsx:373
+#: src/pages/company/SupplierPartDetail.tsx:190
+#: src/pages/company/SupplierPartDetail.tsx:374
 #: src/pages/part/PartDetail.tsx:535
 #: src/pages/part/PartDetail.tsx:970
 #: src/tables/purchasing/SupplierPartTable.tsx:197
@@ -6123,7 +6123,7 @@ msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:190
 #: src/pages/company/ManufacturerPartDetail.tsx:83
-#: src/pages/company/SupplierPartDetail.tsx:94
+#: src/pages/company/SupplierPartDetail.tsx:95
 #: src/pages/part/PartDetail.tsx:454
 #: src/pages/stock/StockDetail.tsx:153
 #: src/tables/bom/BomTable.tsx:134
@@ -6509,9 +6509,9 @@ msgstr "デフォルトの通貨"
 
 #: src/pages/company/CompanyDetail.tsx:136
 #: src/pages/company/SupplierDetail.tsx:8
-#: src/pages/company/SupplierPartDetail.tsx:128
-#: src/pages/company/SupplierPartDetail.tsx:234
-#: src/pages/company/SupplierPartDetail.tsx:359
+#: src/pages/company/SupplierPartDetail.tsx:129
+#: src/pages/company/SupplierPartDetail.tsx:235
+#: src/pages/company/SupplierPartDetail.tsx:360
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:138
 #: src/tables/Filter.tsx:352
 #: src/tables/company/CompanyTable.tsx:95
@@ -6525,7 +6525,7 @@ msgstr "仕入先"
 #: src/pages/company/ManufacturerDetail.tsx:8
 #: src/pages/company/ManufacturerPartDetail.tsx:102
 #: src/pages/company/ManufacturerPartDetail.tsx:264
-#: src/pages/company/SupplierPartDetail.tsx:150
+#: src/pages/company/SupplierPartDetail.tsx:151
 #: src/tables/Filter.tsx:339
 #: src/tables/company/CompanyTable.tsx:100
 #: src/tables/purchasing/SupplierPartTable.tsx:73
@@ -6584,23 +6584,23 @@ msgid "Company Actions"
 msgstr "会社の動き"
 
 #: src/pages/company/ManufacturerPartDetail.tsx:76
-#: src/pages/company/SupplierPartDetail.tsx:87
+#: src/pages/company/SupplierPartDetail.tsx:88
 msgid "Internal Part"
 msgstr "内部パーツ"
 
 #: src/pages/company/ManufacturerPartDetail.tsx:110
-#: src/pages/company/SupplierPartDetail.tsx:159
+#: src/pages/company/SupplierPartDetail.tsx:160
 #: src/tables/purchasing/ManufacturerPartTable.tsx:59
 msgid "Manufacturer Part Number"
 msgstr "メーカー品番"
 
 #: src/pages/company/ManufacturerPartDetail.tsx:127
-#: src/pages/company/SupplierPartDetail.tsx:111
+#: src/pages/company/SupplierPartDetail.tsx:112
 msgid "External Link"
 msgstr "外部リンク"
 
 #: src/pages/company/ManufacturerPartDetail.tsx:146
-#: src/pages/company/SupplierPartDetail.tsx:231
+#: src/pages/company/SupplierPartDetail.tsx:232
 #: src/pages/part/PartDetail.tsx:787
 msgid "Part Details"
 msgstr "部品詳細"
@@ -6642,12 +6642,12 @@ msgstr "メーカー品番"
 msgid "ManufacturerPart"
 msgstr "メーカー部品"
 
-#: src/pages/company/SupplierPartDetail.tsx:102
+#: src/pages/company/SupplierPartDetail.tsx:103
 #: src/tables/part/RelatedPartTable.tsx:82
 msgid "Part Description"
 msgstr "パーツ説明"
 
-#: src/pages/company/SupplierPartDetail.tsx:178
+#: src/pages/company/SupplierPartDetail.tsx:179
 #: src/tables/part/PartPurchaseOrdersTable.tsx:73
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:189
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:231
@@ -6655,61 +6655,61 @@ msgstr "パーツ説明"
 msgid "Pack Quantity"
 msgstr "パック数量"
 
-#: src/pages/company/SupplierPartDetail.tsx:196
-#: src/pages/company/SupplierPartDetail.tsx:389
+#: src/pages/company/SupplierPartDetail.tsx:197
+#: src/pages/company/SupplierPartDetail.tsx:390
 #: src/pages/part/PartDetail.tsx:1000
 #: src/tables/bom/BomTable.tsx:414
 #: src/tables/part/PartTable.tsx:99
 msgid "On Order"
 msgstr "注文中"
 
-#: src/pages/company/SupplierPartDetail.tsx:203
+#: src/pages/company/SupplierPartDetail.tsx:204
 msgid "Supplier Availability"
 msgstr "サプライヤーの空き状況"
 
-#: src/pages/company/SupplierPartDetail.tsx:211
+#: src/pages/company/SupplierPartDetail.tsx:212
 msgid "Availability Updated"
 msgstr "空席状況更新"
 
-#: src/pages/company/SupplierPartDetail.tsx:236
+#: src/pages/company/SupplierPartDetail.tsx:237
 msgid "Availability"
 msgstr "有効性"
 
-#: src/pages/company/SupplierPartDetail.tsx:245
+#: src/pages/company/SupplierPartDetail.tsx:246
 msgid "Supplier Part Details"
 msgstr "サプライヤー部品詳細"
 
-#: src/pages/company/SupplierPartDetail.tsx:251
+#: src/pages/company/SupplierPartDetail.tsx:252
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:361
 msgid "Received Stock"
 msgstr "受入在庫"
 
-#: src/pages/company/SupplierPartDetail.tsx:278
+#: src/pages/company/SupplierPartDetail.tsx:279
 #: src/pages/part/PartPricingPanel.tsx:113
 #: src/pages/part/pricing/PricingOverviewPanel.tsx:232
 msgid "Supplier Pricing"
 msgstr "サプライヤー価格"
 
-#: src/pages/company/SupplierPartDetail.tsx:303
+#: src/pages/company/SupplierPartDetail.tsx:304
 msgid "Supplier Part Actions"
 msgstr "サプライヤー"
 
-#: src/pages/company/SupplierPartDetail.tsx:327
+#: src/pages/company/SupplierPartDetail.tsx:328
 #: src/tables/purchasing/SupplierPartTable.tsx:210
 msgid "Edit Supplier Part"
 msgstr "サプライヤーパーツの編集"
 
-#: src/pages/company/SupplierPartDetail.tsx:335
+#: src/pages/company/SupplierPartDetail.tsx:336
 #: src/tables/purchasing/SupplierPartTable.tsx:218
 msgid "Delete Supplier Part"
 msgstr "サプライヤーの削除"
 
-#: src/pages/company/SupplierPartDetail.tsx:343
+#: src/pages/company/SupplierPartDetail.tsx:344
 #: src/tables/purchasing/SupplierPartTable.tsx:157
 msgid "Add Supplier Part"
 msgstr "サプライヤー部品の追加"
 
-#: src/pages/company/SupplierPartDetail.tsx:383
+#: src/pages/company/SupplierPartDetail.tsx:384
 #: src/pages/part/PartDetail.tsx:988
 msgid "No Stock"
 msgstr "在庫切れ"
