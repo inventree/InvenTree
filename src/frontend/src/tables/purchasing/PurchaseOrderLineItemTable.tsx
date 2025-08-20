@@ -79,10 +79,9 @@ export function PurchaseOrderLineItemTable({
   );
 
   const importSessionFields = useMemo(() => {
-    const fields = dataImporterSessionFields();
-
-    fields.model_type.hidden = true;
-    fields.model_type.value = ModelType.purchaseorderlineitem;
+    const fields = dataImporterSessionFields({
+      modelType: ModelType.purchaseorderlineitem
+    });
 
     // Specify override values for import
     fields.field_overrides.value = {

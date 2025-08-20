@@ -31,7 +31,6 @@ const BASE_URL: string = IS_CI
   : 'http://localhost:5173';
 
 console.log('Running Playwright Tests:');
-console.log(`- CI Mode: ${IS_CI}`);
 console.log('- Base URL:', BASE_URL);
 
 export default defineConfig({

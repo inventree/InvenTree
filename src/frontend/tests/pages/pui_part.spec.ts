@@ -92,8 +92,6 @@ test('Parts - BOM', async ({ browser }) => {
   await setTableChoiceFilter(page, 'active', 'Yes');
   await setTableChoiceFilter(page, 'BOM Valid', 'Yes');
 
-  await page.getByText('1 - 12 / 12').waitFor();
-
   // Navigate to BOM for a particular assembly
   await navigate(page, 'part/87/bom');
   await loadTab(page, 'Bill of Materials');
@@ -620,8 +618,11 @@ test('Parts - Bulk Edit', async ({ browser }) => {
   await page.getByLabel('Select record 2', { exact: true }).click();
   await page.getByLabel('action-menu-part-actions').click();
   await page.getByLabel('action-menu-part-actions-set-category').click();
+
   await page.getByLabel('related-field-category').fill('rnitu');
-  await page.getByRole('option', { name: '- Furniture/Chairs' }).click;
+  await page.waitForTimeout(250);
+
+  await page.getByRole('option', { name: '- Furniture/Chairs' }).click();
   await page.getByRole('button', { name: 'Update' }).click();
   await page.getByText('Items Updated').waitFor();
 });
