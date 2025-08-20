@@ -229,7 +229,7 @@ class CustomHeadlessAdapter(DefaultHeadlessAdapter):
         if urlname not in HEADLESS_FRONTEND_URLS:
             raise ValueError(
                 f'URL name "{urlname}" not found in HEADLESS_FRONTEND_URLS'
-            )
+            )  # pragma: no cover
 
         return self.request.build_absolute_uri(
             f'/{settings.FRONTEND_URL_BASE}/{HEADLESS_FRONTEND_URLS[urlname].format(**kwargs)}'

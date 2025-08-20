@@ -350,7 +350,6 @@ class MFALoginTest(InvenTreeAPITestCase):
         self._helper_meta_val(response)
 
         # Add MFA
-        # if code == format_hotp_value(value):
         response = self.post(
             reverse('browser:mfa:manage_totp'),
             {'code': self.get_topt()},
