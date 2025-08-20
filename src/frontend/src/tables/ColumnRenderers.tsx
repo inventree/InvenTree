@@ -326,17 +326,19 @@ export function NoteColumn(props: TableColumnProps): TableColumn {
   };
 }
 
-export function LineItemsProgressColumn(): TableColumn {
+export function LineItemsProgressColumn(props: TableColumnProps): TableColumn {
   return {
     accessor: 'line_items',
     sortable: true,
+    minWidth: 125,
     render: (record: any) => (
       <ProgressBar
         progressLabel={true}
         value={record.completed_lines}
         maximum={record.line_items}
       />
-    )
+    ),
+    ...props
   };
 }
 
