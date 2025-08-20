@@ -89,6 +89,8 @@ export function BuildOrderTable({
       },
       {
         accessor: 'completed',
+        title: t`Completed`,
+        minWidth: 125,
         sortable: true,
         switchable: false,
         render: (record: any) => (

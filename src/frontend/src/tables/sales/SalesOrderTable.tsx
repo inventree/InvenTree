@@ -145,6 +145,7 @@ export function SalesOrderTable({
       {
         accessor: 'shipments_count',
         title: t`Shipments`,
+        minWidth: 125,
         render: (record: any) => (
           <ProgressBar
             progressLabel
