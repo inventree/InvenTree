@@ -48,7 +48,7 @@ import {
   DecimalColumn,
   DescriptionColumn,
   LinkColumn,
-  PartColumn
+  RenderPartColumn
 } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import RowExpansionIcon from '../RowExpansionIcon';
@@ -78,6 +78,7 @@ export default function SalesOrderLineItemTable({
         accessor: 'part',
         sortable: true,
         switchable: false,
+        minWidth: 175,
         render: (record: any) => {
           return (
             <Group wrap='nowrap'>
@@ -85,7 +86,7 @@ export default function SalesOrderLineItemTable({
                 enabled={record.allocated}
                 expanded={table.isRowExpanded(record.pk)}
               />
-              <PartColumn part={record.part_detail} />
+              <RenderPartColumn part={record.part_detail} />
             </Group>
           );
         }

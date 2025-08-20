@@ -60,10 +60,14 @@ export function RenderPartCategory(
 ): ReactNode {
   const { instance } = props;
 
+  if (!instance) {
+    return '';
+  }
+
   const suffix: ReactNode = (
     <Group gap='xs'>
       <TableHoverCard
-        value={<Text size='sm'>{instance.description}</Text>}
+        value={<Text size='xs'>{instance.description}</Text>}
         position='bottom-end'
         zIndex={10000}
         icon='sitemap'

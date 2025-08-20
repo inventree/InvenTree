@@ -76,3 +76,37 @@ Each individual row can be imported, or removed (deleted) by the user. Once all 
 ### Import Completed
 
 Once all records have been processed, the import session is considered complete. The import session can be closed, and the imported records are now stored in the database.
+
+## Updating Existing Records
+
+The data import process can also be used to update existing records in the database. This requires that the imported data file contains a unique identifier for each record, which can be used to match the records in the database.
+
+The basic outline of this process is:
+
+1. Export the existing records to a CSV file.
+2. Modify the CSV file to update the records as required.
+3. Upload the modified CSV file to the import session.
+
+!!! note "Mixing Creation and Update"
+    It is not possible to mix the creation of new records with the updating of existing records in a single import session. If you wish to create new records, you must create a separate import session for that purpose.
+
+### Create Import Session
+
+!!! note "Admin Center"
+    Updating existing records can only be performed when creating a new import session from the [Admin Center](./admin.md#admin-center).
+
+Create a new import session, and ensure that the *Update Existing Records* option is selected. This will allow the import session to update existing records in the database.
+
+{{ image("admin/import_session_create_update.png", "Update existing records") }}
+
+### Map Data Fields
+
+When mapping the data fields, ensure that the `ID` field is correctly mapped to the corresponding column in the file:
+
+{{ image("admin/import_select_id.png", "Update existing records") }}
+
+### Process Data
+
+When processing the data, each row will be matched against an existing record in the database. If a match is found, the existing record will be updated with the new data from the imported file.
+
+{{ image("admin/import_update_process.png", "Update existing records") }}

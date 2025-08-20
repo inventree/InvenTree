@@ -79,10 +79,9 @@ export function PurchaseOrderLineItemTable({
   );
 
   const importSessionFields = useMemo(() => {
-    const fields = dataImporterSessionFields();
-
-    fields.model_type.hidden = true;
-    fields.model_type.value = ModelType.purchaseorderlineitem;
+    const fields = dataImporterSessionFields({
+      modelType: ModelType.purchaseorderlineitem
+    });
 
     // Specify override values for import
     fields.field_overrides.value = {
@@ -133,14 +132,10 @@ export function PurchaseOrderLineItemTable({
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
-      {
-        accessor: 'part',
-        title: t`Part`,
-        sortable: true,
-        ordering: 'part_name',
-        switchable: false,
-        render: (record: any) => PartColumn({ part: record.part_detail })
-      },
+      PartColumn({
+        part: 'part_detail',
+        ordering: 'part_name'
+      }),
       {
         accessor: 'part_detail.IPN',
         sortable: true,
