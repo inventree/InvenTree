@@ -93,7 +93,7 @@ test('Parts - BOM', async ({ browser }) => {
   await setTableChoiceFilter(page, 'BOM Valid', 'Yes');
 
   // Navigate to BOM for a particular assembly
-  await navigate(page, 'part/87/bom');
+  await navigate(page, 'part/109/bom');
   await loadTab(page, 'Bill of Materials');
 
   // Mouse-hover to display BOM validation info for this assembly
