@@ -14,7 +14,7 @@ import { useSupplierPartFields } from '../../forms/CompanyForms';
 import { usePurchaseOrderFields } from '../../forms/PurchaseOrderForms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import useWizard from '../../hooks/UseWizard';
-import { PartColumn } from '../../tables/ColumnRenderers';
+import { RenderPartColumn } from '../../tables/ColumnRenderers';
 import RemoveRowButton from '../buttons/RemoveRowButton';
 import { StandaloneField } from '../forms/StandaloneField';
 import Expand from '../items/Expand';
@@ -133,7 +133,7 @@ function SelectPartsStep({
         render: (record: PartOrderRecord) => (
           <Tooltip label={record.part?.description}>
             <Paper p='xs'>
-              <PartColumn part={record.part} />
+              <RenderPartColumn part={record.part} />
             </Paper>
           </Tooltip>
         )

@@ -29,7 +29,7 @@ export function RenderStockLocation(
   const suffix: ReactNode = (
     <Group gap='xs'>
       <TableHoverCard
-        value={<Text size='sm'>{instance.description}</Text>}
+        value={<Text size='xs'>{instance.description}</Text>}
         position='bottom-end'
         zIndex={10000}
         icon='sitemap'
@@ -75,7 +75,7 @@ export function RenderStockLocationType({
     <RenderInlineModel
       primary={instance.name}
       prefix={instance.icon && <ApiIcon name={instance.icon} />}
-      secondary={`${instance.description} (${instance.location_count})`}
+      suffix={`${instance.description} (${instance.location_count})`}
     />
   );
 }

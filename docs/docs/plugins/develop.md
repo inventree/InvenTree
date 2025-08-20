@@ -135,6 +135,8 @@ Supported mixin classes are:
 | [EventMixin](./mixins/event.md) | Respond to events |
 | [LabelPrintingMixin](./mixins/label.md) | Custom label printing support |
 | [LocateMixin](./mixins/locate.md) | Locate and identify stock items |
+| [MachineDriverMixin](./mixins/machine.md) | Integrate custom machine drivers
+| [MailMixin](./mixins/mail.md) | Send custom emails |
 | [NavigationMixin](./mixins/navigation.md) | Add custom pages to the web interface |
 | [NotificationMixin](./mixins/notification.md) | Send custom notifications in response to system events |
 | [ReportMixin](./mixins/report.md) | Add custom context data to reports |

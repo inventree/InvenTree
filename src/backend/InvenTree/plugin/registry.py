@@ -94,6 +94,7 @@ class PluginsRegistry:
         'bom-exporter',
         'inventree-exporter',
         'inventree-ui-notification',
+        'inventree-machines',
         'inventree-email-notification',
         'inventreecurrencyexchange',
         'inventreelabel',
@@ -488,6 +489,9 @@ class PluginsRegistry:
             if settings.TESTING or settings.DEBUG:
                 # If in TEST or DEBUG mode, load plugins from the 'samples' directory
                 dirs.append('plugin.samples')
+
+            if settings.TESTING:
+                dirs.append('plugin.testing')
 
             if settings.TESTING:
                 custom_dirs = os.getenv('INVENTREE_PLUGIN_TEST_DIR', None)
