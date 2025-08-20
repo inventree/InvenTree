@@ -141,7 +141,7 @@ export function SalesOrderTable({
         title: t`Customer Reference`
       },
       DescriptionColumn({}),
-      LineItemsProgressColumn(),
+      LineItemsProgressColumn({}),
       {
         accessor: 'shipments_count',
         title: t`Shipments`,
