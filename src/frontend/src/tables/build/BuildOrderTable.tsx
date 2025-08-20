@@ -68,12 +68,9 @@ export function BuildOrderTable({
   const tableColumns = useMemo(() => {
     return [
       ReferenceColumn({}),
-      {
-        accessor: 'part',
-        sortable: true,
-        switchable: false,
-        render: (record: any) => PartColumn({ part: record.part_detail })
-      },
+      PartColumn({
+        switchable: false
+      }),
       {
         accessor: 'part_detail.IPN',
         sortable: true,

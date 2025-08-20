@@ -46,7 +46,8 @@ import {
   DecimalColumn,
   DescriptionColumn,
   LocationColumn,
-  PartColumn
+  PartColumn,
+  RenderPartColumn
 } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import RowExpansionIcon from '../RowExpansionIcon';
@@ -75,13 +76,9 @@ export function BuildLineSubTable({
 
   const tableColumns: any[] = useMemo(() => {
     return [
-      {
-        accessor: 'part',
-        title: t`Part`,
-        render: (record: any) => {
-          return <PartColumn part={record.part_detail} />;
-        }
-      },
+      PartColumn({
+        part: 'part_detail'
+      }),
       {
         accessor: 'quantity',
         title: t`Quantity`,
@@ -305,9 +302,9 @@ export default function BuildLineTable({
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
-      {
+      PartColumn({
         accessor: 'bom_item',
-        title: t`Component`,
+        part: 'part_detail',
         ordering: 'part',
         sortable: true,
         switchable: false,
@@ -320,11 +317,11 @@ export default function BuildLineTable({
                 enabled={hasAllocatedItems}
                 expanded={table.isRowExpanded(record.pk)}
               />
-              <PartColumn part={record.part_detail} />
+              <RenderPartColumn part={record.part_detail} />
             </Group>
           );
         }
-      },
+      }),
       {
         accessor: 'part_detail.IPN',
         sortable: false,
@@ -471,6 +468,7 @@ export default function BuildLineTable({
         switchable: false,
         sortable: true,
         hidden: !isActive,
+        minWidth: 125,
         render: (record: any) => {
           if (record?.bom_item_detail?.consumable) {
             return (
@@ -514,6 +512,7 @@ export default function BuildLineTable({
         accessor: 'consumed',
         sortable: true,
         hidden: !!output?.pk,
+        minWidth: 125,
         render: (record: any) => {
           return record?.bom_item_detail?.consumable ? (
             <Text style={{ fontStyle: 'italic' }}>{t`Consumable item`}</Text>

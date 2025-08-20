@@ -53,11 +53,9 @@ export default function PartSalesAllocationsTable({
       DescriptionColumn({
         accessor: 'order_detail.description'
       }),
-      {
-        accessor: 'part_detail',
-        title: t`Part`,
-        render: (record: any) => <PartColumn part={record.part_detail} />
-      },
+      PartColumn({
+        part: 'part_detail'
+      }),
       {
         accessor: 'part_detail.IPN',
         title: t`IPN`

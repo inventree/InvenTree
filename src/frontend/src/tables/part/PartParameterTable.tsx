@@ -52,11 +52,9 @@ export function PartParameterTable({
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
-      {
-        accessor: 'part',
-        sortable: true,
-        render: (record: any) => PartColumn({ part: record?.part_detail })
-      },
+      PartColumn({
+        part: 'part_detail'
+      }),
       {
         accessor: 'part_detail.IPN',
         sortable: false,

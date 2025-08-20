@@ -25,13 +25,11 @@ export default function VariantPricingPanel({
 
   const columns: TableColumn[] = useMemo(() => {
     return [
-      {
-        accessor: 'name',
+      PartColumn({
         title: t`Variant Part`,
-        sortable: true,
-        switchable: false,
-        render: (record: any) => PartColumn({ part: record, full_name: true })
-      },
+        part: '',
+        full_name: true
+      }),
       {
         accessor: 'pricing_min',
         title: t`Minimum Price`,
