@@ -146,6 +146,7 @@ export function LocationColumn(props: TableColumnProps): TableColumn {
       title: t`Location`,
       sortable: true,
       ordering: 'location',
+      minWidth: '150px',
       ...props
     });
   } else {
@@ -154,6 +155,7 @@ export function LocationColumn(props: TableColumnProps): TableColumn {
       title: t`Location`,
       sortable: true,
       ordering: 'location',
+      minWidth: '125px',
       ...props
     });
   }
@@ -192,6 +194,7 @@ export function CategoryColumn(props: TableColumnProps): TableColumn {
       title: t`Category`,
       sortable: true,
       ordering: 'category',
+      minWidth: '150px',
       ...props
     });
   } else {
@@ -200,6 +203,7 @@ export function CategoryColumn(props: TableColumnProps): TableColumn {
       title: t`Category`,
       sortable: true,
       ordering: 'category',
+      minWidth: '125px',
       ...props
     });
   }
@@ -209,6 +213,7 @@ export function BooleanColumn(props: TableColumn): TableColumn {
   return {
     sortable: true,
     switchable: true,
+    minWidth: '75px',
     render: (record: any) => (
       <Center>
         <YesNoButton value={resolveItem(record, props.accessor ?? '')} />
