@@ -234,7 +234,7 @@ export function DescriptionColumn(props: TableColumnProps): TableColumn {
     title: t`Description`,
     sortable: false,
     switchable: true,
-    width: 300,
+    minWidth: '200px',
     ...props
   };
 }
@@ -326,31 +326,20 @@ export function ProjectCodeColumn(props: TableColumnProps): TableColumn {
   };
 }
 
-export function StatusColumn({
-  model,
-  sortable,
-  switchable,
-  ordering,
-  accessor,
-  title,
-  hidden
-}: {
+export type StatusColumnProps = TableColumnProps & {
   model: ModelType;
-  sortable?: boolean;
-  switchable?: boolean;
-  accessor?: string;
-  ordering?: string;
-  hidden?: boolean;
-  title?: string;
-}) {
+};
+
+export function StatusColumn(props: StatusColumnProps): TableColumn {
+  const accessor: string = props.accessor ?? 'status';
+
   return {
-    accessor: accessor ?? 'status',
-    sortable: sortable ?? true,
-    switchable: switchable ?? true,
-    ordering: ordering,
-    title: title,
-    hidden: hidden,
-    render: TableStatusRenderer(model, accessor ?? 'status_custom_key')
+    accessor: 'status',
+    sortable: true,
+    switchable: true,
+    minWidth: '50px',
+    render: TableStatusRenderer(props.model, accessor ?? 'status_custom_key'),
+    ...props
   };
 }
 
