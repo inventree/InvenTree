@@ -260,7 +260,12 @@ export function InvenTreeTable<T extends Record<string, any>>({
         ...col,
         hidden: hidden,
         resizable: col.resizable ?? true,
-        title: col.title ?? fieldNames[col.accessor] ?? `${col.accessor}`
+        title: col.title ?? fieldNames[col.accessor] ?? `${col.accessor}`,
+        titleStyle: (record: any, index: number) => {
+          return {
+            minWidth: (col as any).minWidth ?? '100px'
+          };
+        }
       };
     });
 
