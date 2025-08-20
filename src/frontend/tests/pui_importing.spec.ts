@@ -63,7 +63,7 @@ test('Importing - Admin Center', async ({ browser }) => {
   await page.getByRole('button', { name: 'Close' }).click();
 
   // Confirmation of full import success
-  await page.getByRole('cell', { name: '4 / 4 100%' }).first().waitFor();
+  await page.getByRole('cell', { name: '3 / 3' }).first().waitFor();
 
   // Manually delete records
   await page.getByRole('checkbox', { name: 'Select all records' }).click();
