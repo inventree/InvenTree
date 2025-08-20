@@ -55,22 +55,18 @@ export default function PartBuildAllocationsTable({
           </Group>
         )
       },
-      {
-        accessor: 'assembly_detail',
-        title: t`Assembly`,
-        switchable: false,
-        render: (record: any) => <PartColumn part={record.assembly_detail} />
-      },
+      PartColumn({
+        part: 'assembly_detail',
+        title: t`Assembly`
+      }),
       {
         accessor: 'assembly_detail.IPN',
         title: t`Assembly IPN`
       },
-      {
-        accessor: 'part_detail',
-        title: t`Part`,
-        defaultVisible: false,
-        render: (record: any) => <PartColumn part={record.part_detail} />
-      },
+      PartColumn({
+        part: 'part_detail',
+        defaultVisible: false
+      }),
       {
         accessor: 'part_detail.IPN',
         defaultVisible: false,

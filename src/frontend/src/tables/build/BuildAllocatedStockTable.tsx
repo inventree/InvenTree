@@ -97,14 +97,10 @@ export default function BuildAllocatedStockTable({
         title: t`Order Status`,
         hidden: showBuildInfo != true
       }),
-      {
-        accessor: 'part',
+      PartColumn({
         hidden: !showPartInfo,
-        title: t`Part`,
-        sortable: true,
-        switchable: false,
-        render: (record: any) => PartColumn({ part: record.part_detail })
-      },
+        switchable: false
+      }),
       {
         accessor: 'part_detail.IPN',
         ordering: 'IPN',
@@ -136,11 +132,11 @@ export default function BuildAllocatedStockTable({
       },
       DecimalColumn({
         accessor: 'available',
-        title: t`Available Quantity`
+        title: t`Available`
       }),
       DecimalColumn({
         accessor: 'quantity',
-        title: t`Allocated Quantity`,
+        title: t`Allocated`,
         sortable: true,
         switchable: false
       }),

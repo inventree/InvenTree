@@ -36,7 +36,7 @@ import {
   useSerialNumberGenerator
 } from '../hooks/UseGenerator';
 import { useGlobalSettingsState } from '../states/SettingsStates';
-import { PartColumn } from '../tables/ColumnRenderers';
+import { RenderPartColumn } from '../tables/ColumnRenderers';
 
 /**
  * Field set for BuildOrder forms
@@ -248,7 +248,7 @@ function BuildOutputFormRow({
     <>
       <Table.Tr>
         <Table.Td>
-          <PartColumn part={record.part_detail} />
+          <RenderPartColumn part={record.part_detail} />
         </Table.Td>
         <Table.Td>
           <TableFieldErrorWrapper props={props} errorKey='output'>
@@ -541,7 +541,7 @@ function BuildAllocateLineRow({
   return (
     <Table.Tr key={`table-row-${record.pk}`}>
       <Table.Td>
-        <PartColumn part={record.part_detail} />
+        <RenderPartColumn part={record.part_detail} />
       </Table.Td>
       <Table.Td>
         <ProgressBar
@@ -704,7 +704,7 @@ function BuildConsumeItemRow({
   return (
     <Table.Tr key={`table-row-${record.pk}`}>
       <Table.Td>
-        <PartColumn part={record.part_detail} />
+        <RenderPartColumn part={record.part_detail} />
       </Table.Td>
       <Table.Td>
         <RenderStockItem instance={record.stock_item_detail} />
@@ -807,7 +807,7 @@ function BuildConsumeLineRow({
   return (
     <Table.Tr key={`table-row-${record.pk}`}>
       <Table.Td>
-        <PartColumn part={record.part_detail} />
+        <RenderPartColumn part={record.part_detail} />
       </Table.Td>
       <Table.Td>
         {remaining <= 0 ? (
