@@ -240,12 +240,19 @@ class MachineRegistry(
     def load_machines(self, main: bool = False):
         """Load all machines defined in the database into the machine registry."""
         # Imports need to be in this level to prevent early db model imports
-        from machine.models import MachineConfig
 
-        for machine_config in MachineConfig.objects.all():
-            self.add_machine(
-                machine_config, initialize=False, update_registry_hash=False
-            )
+        try:
+            from machine.models import MachineConfig
+
+            for machine_config in MachineConfig.objects.all():
+                self.add_machine(
+                    machine_config, initialize=False, update_registry_hash=False
+                )
+        except (OperationalError, ProgrammingError):
+            logger.warning('Database is not ready - cannot load machines')
+
+            self._update_registry_hash()
+            return
 
         # initialize machines only in main thread
         if main:
