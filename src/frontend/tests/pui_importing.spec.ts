@@ -77,7 +77,7 @@ test('Importing - BOM', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
     username: 'steven',
     password: 'wizardstaff',
-    url: 'part/87/bom'
+    url: 'part/109/bom'
   });
 
   await page
@@ -94,10 +94,10 @@ test('Importing - BOM', async ({ browser }) => {
   await page.waitForTimeout(500);
 
   await page.getByText('Importing Data').waitFor();
-  await page.getByText('0 / 4').waitFor();
+  await page.getByText('0 / 3').waitFor();
 
-  await page.getByText('Torx head screw, M3 thread, 10.0mm').first().waitFor();
-  await page.getByText('Small plastic enclosure, black').first().waitFor();
+  await page.getByText('Screw for fixing wood').first().waitFor();
+  await page.getByText('Leg for a chair or a table').first().waitFor();
 
   // Select some rows
   await page
@@ -131,15 +131,16 @@ test('Importing - BOM', async ({ browser }) => {
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.waitForTimeout(250);
 
-  await page.getByText('0 / 2', { exact: true }).waitFor();
+  await page.getByText('0 / 1', { exact: true }).waitFor();
 
   // Submit a row
   await page
     .getByRole('row', { name: 'Select record 1 2 Thumbnail' })
     .getByLabel('row-action-menu-')
     .click();
+
   await page.getByRole('menuitem', { name: 'Accept' }).click();
-  await page.getByText('1 / 2', { exact: true }).waitFor();
+  await page.getByText('0 / 1', { exact: true }).waitFor();
 });
 
 test('Importing - Purchase Order', async ({ browser }) => {
