@@ -56,7 +56,12 @@ import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import { LocationColumn, PartColumn, StatusColumn } from '../ColumnRenderers';
+import {
+  LocationColumn,
+  PartColumn,
+  RenderPartColumn,
+  StatusColumn
+} from '../ColumnRenderers';
 import {
   BatchFilter,
   HasBatchCodeFilter,
@@ -100,7 +105,7 @@ function OutputAllocationDrawer({
           <Space h='lg' />
           <Paper withBorder p='sm'>
             <Group gap='xs'>
-              <PartColumn part={build.part_detail} />
+              <RenderPartColumn part={build.part_detail} />
               {output?.serial && (
                 <Text size='sm'>
                   {t`Serial Number`}: {output.serial}
@@ -578,11 +583,7 @@ export default function BuildOutputTable({
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
-      {
-        accessor: 'part',
-        sortable: true,
-        render: (record: any) => PartColumn({ part: record?.part_detail })
-      },
+      PartColumn({}),
       {
         accessor: 'quantity',
         ordering: 'stock',

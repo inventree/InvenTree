@@ -106,12 +106,9 @@ export default function ReturnOrderLineItemTable({
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
-      {
-        accessor: 'part',
-        title: t`Part`,
-        switchable: false,
-        render: (record: any) => PartColumn({ part: record?.part_detail })
-      },
+      PartColumn({
+        part: 'part_detail'
+      }),
       {
         accessor: 'part_detail.IPN',
         sortable: false

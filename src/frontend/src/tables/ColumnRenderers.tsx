@@ -30,15 +30,24 @@ import {
 } from '../states/SettingsStates';
 import { ProjectCodeHoverCard, TableHoverCard } from './TableHoverCard';
 
-// Render a Part instance within a table
-export function PartColumn({
+export type PartColumnProps = TableColumnProps & {
+  part?: string;
+  full_name?: boolean;
+};
+
+// Extract rendering function for Part column
+export function RenderPartColumn({
   part,
   full_name
 }: {
   part: any;
   full_name?: boolean;
 }) {
-  return part ? (
+  if (!part) {
+    return <Skeleton />;
+  }
+
+  return (
     <Group justify='space-between' wrap='nowrap'>
       <Thumbnail
         src={part?.thumbnail ?? part?.image}
@@ -63,9 +72,30 @@ export function PartColumn({
         )}
       </Group>
     </Group>
-  ) : (
-    <Skeleton />
   );
+}
+
+// Render a Part instance within a table
+export function PartColumn(props: PartColumnProps): TableColumn {
+  return {
+    accessor: 'part',
+    title: t`Part`,
+    sortable: true,
+    switchable: false,
+    minWidth: '175px',
+    render: (record: any) => {
+      const part =
+        props.part === ''
+          ? record
+          : resolveItem(record, props.part ?? props.accessor ?? 'part_detail');
+
+      return RenderPartColumn({
+        part: part,
+        full_name: props.full_name ?? false
+      });
+    },
+    ...props
+  };
 }
 
 export function CompanyColumn({
