@@ -7,7 +7,7 @@ INVENTREE_API_VERSION = 388
 
 INVENTREE_API_TEXT = """
 
-v388 - 2025-02-20 : https://github.com/inventree/InvenTree/pull/8596
+v388 -> 2025-08-28 : https://github.com/inventree/InvenTree/pull/8596
     - Adds ReferenceSource and Reference endpoints to the API
 
 v387 -> 2025-08-19 : https://github.com/inventree/InvenTree/pull/10188
