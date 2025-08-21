@@ -12,8 +12,8 @@ import importer.registry
 from InvenTree.serializers import (
     InvenTreeAttachmentSerializerField,
     InvenTreeModelSerializer,
-    UserSerializer,
 )
+from users.serializers import UserSerializer
 
 
 class DataImportColumnMapSerializer(InvenTreeModelSerializer):
@@ -41,6 +41,7 @@ class DataImportSessionSerializer(InvenTreeModelSerializer):
             'pk',
             'timestamp',
             'data_file',
+            'update_records',
             'model_type',
             'available_fields',
             'status',
@@ -125,9 +126,7 @@ class DataImportSessionSerializer(InvenTreeModelSerializer):
         """
         session = super().create(validated_data)
 
-        request = self.context.get('request', None)
-
-        if request:
+        if request := self.context.get('request', None):
             session.user = request.user
             session.save()
 

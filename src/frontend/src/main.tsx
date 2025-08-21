@@ -7,12 +7,21 @@ import '@mantine/spotlight/styles.css';
 import * as Sentry from '@sentry/react';
 import 'mantine-contextmenu/styles.css';
 import 'mantine-datatable/styles.css';
-import React from 'react';
-import ReactDOM from 'react-dom/client';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
+import * as MantineCore from '@mantine/core';
+import * as MantineNotifications from '@mantine/notifications';
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
+import * as ReactDOMClient from 'react-dom/client';
+import './styles/overrides.css';
 
-import type { HostList } from './states/states';
+// Lingui imports (required for plugin translation)
+import * as LinguiCore from '@lingui/core';
+import * as LinguiReact from '@lingui/react';
+
+import { getBaseUrl } from '@lib/functions/Navigation';
+import type { HostList } from '@lib/types/Server';
 import MainView from './views/MainView';
 
 // define settings
@@ -22,20 +31,28 @@ declare global {
       server_list: HostList;
       default_server: string;
       show_server_selector: boolean;
-      base_url: string;
+      base_url?: string;
+      api_host?: string;
       sentry_dsn?: string;
       environment?: string;
     };
+    react: typeof React;
     React: typeof React;
+    ReactDOM: typeof ReactDOM;
+    ReactDOMClient: typeof ReactDOMClient;
+    MantineCore: typeof MantineCore;
+    MantineNotifications: typeof MantineNotifications;
   }
 }
 
+// Running in dev mode (i.e. vite)
 export const IS_DEV = import.meta.env.DEV;
 export const IS_DEMO = import.meta.env.VITE_DEMO === 'true';
 export const IS_DEV_OR_DEMO = IS_DEV || IS_DEMO;
 
 // Filter out any settings that are not defined
 const loaded_vals = (window.INVENTREE_SETTINGS || {}) as any;
+
 Object.keys(loaded_vals).forEach((key) => {
   if (loaded_vals[key] === undefined) {
     delete loaded_vals[key];
@@ -48,13 +65,9 @@ Object.keys(loaded_vals).forEach((key) => {
 
 window.INVENTREE_SETTINGS = {
   server_list: {
-    'mantine-cqj63coxn': {
-      host: `${window.location.origin}/`,
-      name: 'Current Server'
-    },
     ...(IS_DEV
       ? {
-          'mantine-2j5j5j5j5': {
+          'server-localhost': {
             host: 'http://localhost:8000',
             name: 'Localhost'
           }
@@ -62,21 +75,25 @@ window.INVENTREE_SETTINGS = {
       : {}),
     ...(IS_DEV_OR_DEMO
       ? {
-          'mantine-u56l5jt85': {
+          'server-demo': {
             host: 'https://demo.inventree.org/',
             name: 'InvenTree Demo'
           }
         }
-      : {})
+      : {}),
+    'server-current': {
+      host: `${window.location.origin}/`,
+      name: 'Current Server'
+    }
   },
   default_server: IS_DEV
-    ? 'mantine-2j5j5j5j5'
+    ? 'server-localhost'
     : IS_DEMO
-      ? 'mantine-u56l5jt85'
-      : 'mantine-cqj63coxn',
+      ? 'server-demo'
+      : 'server-current',
   show_server_selector: IS_DEV_OR_DEMO,
 
-  // merge in settings that are already set via django's spa_view or for development
+  // Merge in settings that are already set via django's spa_view or for development
   ...loaded_vals
 };
 
@@ -89,17 +106,23 @@ if (window.INVENTREE_SETTINGS.sentry_dsn) {
   });
 }
 
-export const base_url = window.INVENTREE_SETTINGS.base_url || 'platform';
+(window as any).React = React;
+(window as any).ReactDOM = ReactDOM;
+(window as any).ReactDOMClient = ReactDOMClient;
+(window as any).MantineCore = MantineCore;
+(window as any).MantineNotifications = MantineNotifications;
+(window as any).LinguiCore = LinguiCore;
+(window as any).LinguiReact = LinguiReact;
 
-ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
+// Redirect to base url if on /
+if (window.location.pathname === '/') {
+  window.location.replace(`/${getBaseUrl()}`);
+}
+
+ReactDOMClient.createRoot(
+  document.getElementById('root') as HTMLElement
+).render(
   <React.StrictMode>
     <MainView />
   </React.StrictMode>
 );
-
-// Redirect to base url if on /
-if (window.location.pathname === '/') {
-  window.location.replace(`/${base_url}`);
-}
-
-window.React = React;

@@ -59,7 +59,7 @@ class CompanySimpleTest(TestCase):
     def test_company_url(self):
         """Test the detail URL for a company."""
         c = Company.objects.get(pk=1)
-        self.assertEqual(c.get_absolute_url(), '/platform/purchasing/manufacturer/1')
+        self.assertEqual(c.get_absolute_url(), '/web/purchasing/manufacturer/1')
 
     def test_image_renamer(self):
         """Test the company image upload functionality."""

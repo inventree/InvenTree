@@ -1,13 +1,13 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { BarChart } from '@mantine/charts';
 import { SimpleGrid } from '@mantine/core';
 import { useMemo } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
+import type { TableColumn } from '@lib/types/Tables';
 import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
-import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { useTable } from '../../../hooks/UseTable';
-import { apiUrl } from '../../../states/ApiState';
-import type { TableColumn } from '../../../tables/Column';
 import { InvenTreeTable } from '../../../tables/InvenTreeTable';
 import {
   SupplierPriceBreakColumns,
@@ -36,7 +36,7 @@ export default function SupplierPricingPanel({
       table.records?.map((record: any) => {
         return {
           quantity: record.quantity,
-          supplier_price: record.price,
+          supplier_price: Number.parseFloat(record.price),
           unit_price: calculateSupplierPartUnitPrice(record),
           name: record.part_detail?.SKU
         };

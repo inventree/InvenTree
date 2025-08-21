@@ -14,7 +14,8 @@ from django_q.models import Schedule, Task
 from error_report.models import Error
 
 import InvenTree.tasks
-from common.models import InvenTreeSetting
+from common.models import InvenTreeSetting, InvenTreeUserSetting
+from InvenTree.unit_test import PluginRegistryMixin
 
 threshold = timezone.now() - timedelta(days=30)
 threshold_low = threshold - timedelta(days=1)
@@ -55,7 +56,7 @@ def get_result():
     return 'abc'
 
 
-class InvenTreeTaskTests(TestCase):
+class InvenTreeTaskTests(PluginRegistryMixin, TestCase):
     """Unit tests for tasks."""
 
     def test_offloading(self):
@@ -87,7 +88,7 @@ class InvenTreeTaskTests(TestCase):
         ):
             InvenTree.tasks.offload_task('InvenTree.test_tasks.doesnotexist')
 
-    def test_task_hearbeat(self):
+    def test_task_heartbeat(self):
         """Test the task heartbeat."""
         InvenTree.tasks.offload_task(InvenTree.tasks.heartbeat)
 
@@ -190,26 +191,44 @@ class InvenTreeTaskTests(TestCase):
         from common.models import NotificationEntry, NotificationMessage
 
         # Create a staff user (to ensure notifications are sent)
-        User.objects.create_user(username='staff', password='staffpass', is_staff=True)
+        user = User.objects.create_user(
+            username='i_am_staff', password='staffpass', is_staff=False, is_active=True
+        )
 
         n_tasks = Task.objects.count()
         n_entries = NotificationEntry.objects.count()
         n_messages = NotificationMessage.objects.count()
 
+        test_data = {
+            'name': 'failed_task',
+            'func': 'InvenTree.tasks.failed_task',
+            'group': 'test',
+            'success': False,
+            'started': timezone.now(),
+            'stopped': timezone.now(),
+            'attempt_count': 10,
+        }
+
         # Create a 'failed' task in the database
         # Note: The 'attempt count' is set to 10 to ensure that the task is properly marked as 'failed'
-        Task.objects.create(
-            id=n_tasks + 1,
-            name='failed_task',
-            func='InvenTree.tasks.failed_task',
-            group='test',
-            success=False,
-            started=timezone.now(),
-            stopped=timezone.now(),
-            attempt_count=10,
-        )
+        Task.objects.create(id=n_tasks + 1, **test_data)
 
-        # A new notification entry should be created
+        # A new notification entry should NOT be created (yet) - due to lack of permission for the user
+        self.assertEqual(NotificationEntry.objects.count(), n_entries + 0)
+        self.assertEqual(NotificationMessage.objects.count(), n_messages + 0)
+
+        # Give them all the required staff level permissions
+        user.is_staff = True
+        user.save()
+
+        # Ensure error notifications are enabled for this user
+        InvenTreeUserSetting.set_setting('NOTIFICATION_ERROR_REPORT', True, user=user)
+
+        # Create a 'failed' task in the database
+        # Note: The 'attempt count' is set to 10 to ensure that the task is properly marked as 'failed'
+        Task.objects.create(id=n_tasks + 2, **test_data)
+
+        # A new notification entry should be created (as the user now has permission to see it)
         self.assertEqual(NotificationEntry.objects.count(), n_entries + 1)
         self.assertEqual(NotificationMessage.objects.count(), n_messages + 1)
 
@@ -220,3 +239,61 @@ class InvenTreeTaskTests(TestCase):
             msg.message,
             "Background worker task 'InvenTree.tasks.failed_task' failed after 10 attempts",
         )
+
+    def test_delete_old_emails(self):
+        """Test the delete_old_emails task."""
+        from common.models import EmailMessage
+
+        # Create an email message
+        self.create_mails()
+
+        # Run the task
+        InvenTreeSetting.set_setting('INVENTREE_DELETE_EMAIL_DAYS', 31)
+        InvenTree.tasks.offload_task(InvenTree.tasks.delete_old_emails, force_sync=True)
+
+        # Check that the email message has been deleted
+        emails = EmailMessage.objects.all()
+        self.assertEqual(len(emails), 1)
+        self.assertEqual(emails[0].subject, 'Test Email 2')
+
+        # Set the setting higher than the threshold
+        InvenTreeSetting.set_setting('INVENTREE_DELETE_EMAIL_DAYS', 30)
+
+        # Run the task again
+        InvenTree.tasks.offload_task(InvenTree.tasks.delete_old_emails, force_sync=True)
+        emails = EmailMessage.objects.all()
+        self.assertEqual(len(emails), 0)
+
+        # Re-Add messages and enable a proper log
+        self.create_mails()
+
+        # Set the setting lower than the threshold
+        InvenTreeSetting.set_setting('INVENTREE_DELETE_EMAIL_DAYS', 7)
+        InvenTreeSetting.set_setting('INVENTREE_PROTECT_EMAIL_LOG', True)
+
+        # Run the task again
+        InvenTree.tasks.offload_task(InvenTree.tasks.delete_old_emails, force_sync=True)
+
+        # Check that the email message has not been deleted
+        emails = EmailMessage.objects.all()
+        self.assertEqual(len(emails), 2)
+
+    def create_mails(self):
+        """Create some email messages for testing."""
+        from common.models import EmailMessage
+
+        start_mails = [
+            ['Test Email 1', 'This is a test email.', 'abc@example.org', threshold_low],
+            [
+                'Test Email 2',
+                'This is another test email.',
+                'def@example.org',
+                threshold,
+            ],
+        ]
+        for subject, body, to, timestamp in start_mails:
+            msg = EmailMessage.objects.create(
+                subject=subject, body=body, to=to, priority=1
+            )
+            msg.timestamp = timestamp
+            msg.save()

@@ -1,4 +1,4 @@
-import type { ModelType } from '../../enums/ModelType';
+import type { ModelType } from '@lib/enums/ModelType';
 
 /**
  * Interface defining a single barcode scan item

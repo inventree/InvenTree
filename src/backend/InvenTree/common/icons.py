@@ -73,13 +73,13 @@ def get_icon_packs():
         ]
 
         from InvenTree.exceptions import log_error
-        from plugin import registry
+        from plugin import PluginMixinEnum, registry
 
-        for plugin in registry.with_mixin('icon_pack', active=True):
+        for plugin in registry.with_mixin(PluginMixinEnum.ICON_PACK, active=True):
             try:
                 icon_packs.extend(plugin.icon_packs())
             except Exception as e:
-                log_error('get_icon_packs')
+                log_error('get_icon_packs', plugin=plugin.slug)
                 logger.warning('Error loading icon pack from plugin %s: %s', plugin, e)
 
         _icon_packs = {pack.prefix: pack for pack in icon_packs}

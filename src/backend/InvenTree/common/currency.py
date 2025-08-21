@@ -15,12 +15,14 @@ import InvenTree.helpers
 logger = structlog.get_logger('inventree')
 
 
-def currency_code_default():
+def currency_code_default(create: bool = True):
     """Returns the default currency code (or USD if not specified)."""
     from common.settings import get_global_setting
 
     try:
-        code = get_global_setting('INVENTREE_DEFAULT_CURRENCY', create=True, cache=True)
+        code = get_global_setting(
+            'INVENTREE_DEFAULT_CURRENCY', create=create, cache=True
+        )
     except Exception:  # pragma: no cover
         # Database may not yet be ready, no need to throw an error here
         code = ''
@@ -75,7 +77,7 @@ def currency_codes() -> list:
 
 def currency_code_mappings() -> list:
     """Returns the current currency choices."""
-    return [(a, CURRENCIES[a].name) for a in currency_codes()]
+    return [(a, f'{a} - {CURRENCIES[a].name}') for a in currency_codes()]
 
 
 def after_change_currency(setting) -> None:
@@ -132,9 +134,9 @@ def validate_currency_codes(value):
 def currency_exchange_plugins() -> Optional[list]:
     """Return a list of plugin choices which can be used for currency exchange."""
     try:
-        from plugin import registry
+        from plugin import PluginMixinEnum, registry
 
-        plugs = registry.with_mixin('currencyexchange', active=True)
+        plugs = registry.with_mixin(PluginMixinEnum.CURRENCY_EXCHANGE, active=True)
     except Exception:
         plugs = []
 

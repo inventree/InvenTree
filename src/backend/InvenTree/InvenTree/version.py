@@ -26,13 +26,21 @@ logger = logging.getLogger('inventree')
 
 # Discover git
 try:
+    from dulwich.errors import NotGitRepository
     from dulwich.porcelain import active_branch
     from dulwich.repo import Repo
 
-    main_repo = Repo(pathlib.Path(__file__).parent.parent.parent.parent.parent)
-    main_commit = main_repo[main_repo.head()]
     try:
-        main_branch = active_branch(main_repo)
+        main_repo = Repo(pathlib.Path(__file__).parent.parent.parent.parent.parent)
+        main_commit = main_repo[main_repo.head()]
+    except NotGitRepository:
+        # If we are running in a docker container, the repo may not be available
+        logger.warning('INVE-W3: Could not detect git information.')
+        main_repo = None
+        main_commit = None
+
+    try:
+        main_branch = active_branch(main_repo) if main_repo else None
     except (KeyError, IndexError):
         logger.warning('INVE-W1: Current branch could not be detected.')
         main_branch = None
@@ -129,11 +137,6 @@ def inventreeAppUrl():
     return 'https://docs.inventree.org/app/'
 
 
-def inventreeCreditsUrl():
-    """Return URL for InvenTree credits site."""
-    return 'https://docs.inventree.org/en/latest/credits/'
-
-
 def inventreeGithubUrl():
     """Return URL for InvenTree github site."""
     return 'https://github.com/InvenTree/InvenTree/'
@@ -172,22 +175,27 @@ def parse_version_text():
     # Remove first newline on latest version
     patched_data[0] = patched_data[0].replace('\n', '', 1)
 
+    latest_version = f'v{INVENTREE_API_VERSION}'
     version_data = {}
     for version in patched_data:
         data = version.split('\n')
 
         version_split = data[0].split(' -> ')
+        version_string = version_split[0].strip()
+        if version_string == '':
+            continue
+
         version_detail = (
             version_split[1].split(':', 1) if len(version_split) > 1 else ['']
         )
         new_data = {
-            'version': version_split[0].strip(),
+            'version': version_string,
             'date': version_detail[0].strip(),
             'gh': version_detail[1].strip() if len(version_detail) > 1 else None,
             'text': data[1:],
-            'latest': False,
+            'latest': latest_version == version_string,
         }
-        version_data[new_data['version']] = new_data
+        version_data[version_string] = new_data
     return version_data
 
 
@@ -206,7 +214,7 @@ def inventreeApiText(versions: int = 10, start_version: int = 0):
 
     # Define the range of versions to return
     if start_version == 0:
-        start_version = INVENTREE_API_VERSION - versions
+        start_version = INVENTREE_API_VERSION - versions + 1
 
     return {
         f'v{a}': version_data.get(f'v{a}', None)
@@ -254,22 +262,6 @@ def inventreeCommitDate():
     return str(commit_dt.date())
 
 
-def inventreeInstaller():
-    """Returns the installer for the running codebase - if set."""
-    # First look in the environment variables, e.g. if running in docker
-
-    installer = os.environ.get('INVENTREE_PKG_INSTALLER', '')
-
-    if installer:
-        return installer
-    elif settings.DOCKER:
-        return 'DOC'
-    elif main_commit is not None:
-        return 'GIT'
-
-    return None
-
-
 def inventreeBranch():
     """Returns the branch for the running codebase - if set."""
     # First look in the environment variables, e.g. if running in docker
@@ -298,5 +290,15 @@ def inventreePlatform():
 
 def inventreeDatabase():
     """Return the InvenTree database backend e.g. 'postgresql'."""
-    db = settings.DATABASES['default']
-    return db.get('ENGINE', None).replace('django.db.backends.', '')
+    return settings.DB_ENGINE
+
+
+def inventree_identifier(override_announce: bool = False):
+    """Return the InvenTree instance ID."""
+    from common.settings import get_global_setting
+
+    if override_announce or get_global_setting(
+        'INVENTREE_ANNOUNCE_ID', enviroment_key='INVENTREE_ANNOUNCE_ID'
+    ):
+        return get_global_setting('INVENTREE_INSTANCE_ID', default='')
+    return None

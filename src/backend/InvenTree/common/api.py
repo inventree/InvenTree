@@ -20,9 +20,9 @@ from djmoney.contrib.exchange.models import ExchangeBackend, Rate
 from drf_spectacular.utils import OpenApiResponse, extend_schema
 from error_report.models import Error
 from pint._typing import UnitLike
-from rest_framework import permissions, serializers
+from rest_framework import generics, serializers
 from rest_framework.exceptions import NotAcceptable, NotFound, PermissionDenied
-from rest_framework.permissions import IsAdminUser
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -31,22 +31,31 @@ import common.serializers
 import InvenTree.conversion
 from common.icons import get_icon_packs
 from common.settings import get_global_setting
+from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import urlpattern as generic_states_api_urls
-from importer.mixins import DataExportViewMixin
 from InvenTree.api import BulkDeleteMixin, MetadataView
 from InvenTree.config import CONFIG_LOOKUPS
 from InvenTree.filters import ORDER_FILTER, SEARCH_ORDER_FILTER
 from InvenTree.helpers import inheritors
+from InvenTree.helpers_email import send_email
 from InvenTree.mixins import (
+    CreateAPI,
     ListAPI,
     ListCreateAPI,
     RetrieveAPI,
+    RetrieveDestroyAPI,
     RetrieveUpdateAPI,
     RetrieveUpdateDestroyAPI,
 )
-from InvenTree.permissions import IsStaffOrReadOnly, IsSuperuser
-from plugin.models import NotificationUserSetting
-from plugin.serializers import NotificationUserSettingSerializer
+from InvenTree.permissions import (
+    AllowAnyOrReadScope,
+    GlobalSettingsPermissions,
+    IsAdminOrAdminScope,
+    IsAuthenticatedOrReadScope,
+    IsStaffOrReadOnlyScope,
+    IsSuperuserOrSuperScope,
+    UserSettingsPermissionsOrScope,
+)
 
 
 class CsrfExemptMixin:
@@ -54,7 +63,7 @@ class CsrfExemptMixin:
 
     @method_decorator(csrf_exempt)
     def dispatch(self, *args, **kwargs):
-        """Overwrites dispatch to be extempt from csrf checks."""
+        """Overwrites dispatch to be exempt from CSRF checks."""
         return super().dispatch(*args, **kwargs)
 
 
@@ -134,7 +143,7 @@ class WebhookView(CsrfExemptMixin, APIView):
 class CurrencyExchangeView(APIView):
     """API endpoint for displaying currency information."""
 
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadScope]
     serializer_class = None
 
     @extend_schema(responses={200: common.serializers.CurrencyExchangeSerializer})
@@ -178,7 +187,7 @@ class CurrencyRefreshView(APIView):
     User must be a 'staff' user to access this endpoint
     """
 
-    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+    permission_classes = [IsAuthenticatedOrReadScope, IsAdminUser]
     serializer_class = None
 
     def post(self, request, *args, **kwargs):
@@ -208,28 +217,12 @@ class GlobalSettingsList(SettingsList):
 
     queryset = common.models.InvenTreeSetting.objects.exclude(key__startswith='_')
     serializer_class = common.serializers.GlobalSettingsSerializer
+    permission_classes = [IsAuthenticated, GlobalSettingsPermissions]
 
     def list(self, request, *args, **kwargs):
         """Ensure all global settings are created."""
         common.models.InvenTreeSetting.build_default_values()
         return super().list(request, *args, **kwargs)
-
-
-class GlobalSettingsPermissions(permissions.BasePermission):
-    """Special permission class to determine if the user is "staff"."""
-
-    def has_permission(self, request, view):
-        """Check that the requesting user is 'admin'."""
-        try:
-            user = request.user
-
-            if request.method in ['GET', 'HEAD', 'OPTIONS']:
-                return True
-            # Any other methods require staff access permissions
-            return user.is_staff
-
-        except AttributeError:  # pragma: no cover
-            return False
 
 
 class GlobalSettingsDetail(RetrieveUpdateAPI):
@@ -241,6 +234,7 @@ class GlobalSettingsDetail(RetrieveUpdateAPI):
     lookup_field = 'key'
     queryset = common.models.InvenTreeSetting.objects.exclude(key__startswith='_')
     serializer_class = common.serializers.GlobalSettingsSerializer
+    permission_classes = [IsAuthenticated, GlobalSettingsPermissions]
 
     def get_object(self):
         """Attempt to find a global setting object with the provided key."""
@@ -253,14 +247,13 @@ class GlobalSettingsDetail(RetrieveUpdateAPI):
             key, cache=False, create=True
         )
 
-    permission_classes = [permissions.IsAuthenticated, GlobalSettingsPermissions]
-
 
 class UserSettingsList(SettingsList):
     """API endpoint for accessing a list of user settings objects."""
 
     queryset = common.models.InvenTreeUserSetting.objects.all()
     serializer_class = common.serializers.UserSettingsSerializer
+    permission_classes = [UserSettingsPermissionsOrScope]
 
     def list(self, request, *args, **kwargs):
         """Ensure all user settings are created."""
@@ -283,22 +276,12 @@ class UserSettingsList(SettingsList):
 
         queryset = super().filter_queryset(queryset)
 
+        if not user.is_authenticated:  # pragma: no cover
+            raise PermissionDenied('User must be authenticated to access user settings')
+
         queryset = queryset.filter(user=user)
 
         return queryset
-
-
-class UserSettingsPermissions(permissions.BasePermission):
-    """Special permission class to determine if the user can view / edit a particular setting."""
-
-    def has_object_permission(self, request, view, obj):
-        """Check if the user that requested is also the object owner."""
-        try:
-            user = request.user
-        except AttributeError:  # pragma: no cover
-            return False
-
-        return user == obj.user
 
 
 class UserSettingsDetail(RetrieveUpdateAPI):
@@ -310,6 +293,7 @@ class UserSettingsDetail(RetrieveUpdateAPI):
     lookup_field = 'key'
     queryset = common.models.InvenTreeUserSetting.objects.all()
     serializer_class = common.serializers.UserSettingsSerializer
+    permission_classes = [UserSettingsPermissionsOrScope]
 
     def get_object(self):
         """Attempt to find a user setting object with the provided key."""
@@ -325,44 +309,13 @@ class UserSettingsDetail(RetrieveUpdateAPI):
             key, user=self.request.user, cache=False, create=True
         )
 
-    permission_classes = [UserSettingsPermissions]
-
-
-class NotificationUserSettingsList(SettingsList):
-    """API endpoint for accessing a list of notification user settings objects."""
-
-    queryset = NotificationUserSetting.objects.all()
-    serializer_class = NotificationUserSettingSerializer
-
-    def filter_queryset(self, queryset):
-        """Only list settings which apply to the current user."""
-        try:
-            user = self.request.user
-        except AttributeError:
-            return NotificationUserSetting.objects.none()
-
-        queryset = super().filter_queryset(queryset)
-        queryset = queryset.filter(user=user)
-        return queryset
-
-
-class NotificationUserSettingsDetail(RetrieveUpdateAPI):
-    """Detail view for an individual "notification user setting" object.
-
-    - User can only view / edit settings their own settings objects
-    """
-
-    queryset = NotificationUserSetting.objects.all()
-    serializer_class = NotificationUserSettingSerializer
-    permission_classes = [UserSettingsPermissions]
-
 
 class NotificationMessageMixin:
     """Generic mixin for NotificationMessage."""
 
     queryset = common.models.NotificationMessage.objects.all()
     serializer_class = common.serializers.NotificationMessageSerializer
-    permission_classes = [UserSettingsPermissions]
+    permission_classes = [UserSettingsPermissionsOrScope]
 
     def get_queryset(self):
         """Return prefetched queryset."""
@@ -384,7 +337,7 @@ class NotificationMessageMixin:
 class NotificationList(NotificationMessageMixin, BulkDeleteMixin, ListAPI):
     """List view for all notifications of the current user."""
 
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadScope]
 
     filter_backends = SEARCH_ORDER_FILTER
 
@@ -402,6 +355,10 @@ class NotificationList(NotificationMessageMixin, BulkDeleteMixin, ListAPI):
             return common.models.NotificationMessage.objects.none()
 
         queryset = super().filter_queryset(queryset)
+
+        if not user.is_authenticated:  # pragma: no cover
+            raise PermissionDenied('User must be authenticated to access notifications')
+
         queryset = queryset.filter(user=user)
         return queryset
 
@@ -437,7 +394,7 @@ class NewsFeedMixin:
 
     queryset = common.models.NewsFeedEntry.objects.all()
     serializer_class = common.serializers.NewsFeedEntrySerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsAdminOrAdminScope]
 
 
 class NewsFeedEntryList(NewsFeedMixin, BulkDeleteMixin, ListAPI):
@@ -461,14 +418,17 @@ class ConfigList(ListAPI):
 
     queryset = CONFIG_LOOKUPS
     serializer_class = common.serializers.ConfigSerializer
-    permission_classes = [IsSuperuser]
+    permission_classes = [IsSuperuserOrSuperScope]
+
+    # Specifically disable pagination for this view
+    pagination_class = None
 
 
 class ConfigDetail(RetrieveAPI):
     """Detail view for an individual configuration."""
 
     serializer_class = common.serializers.ConfigSerializer
-    permission_classes = [IsSuperuser]
+    permission_classes = [IsSuperuserOrSuperScope]
 
     def get_object(self):
         """Attempt to find a config object with the provided key."""
@@ -484,7 +444,7 @@ class NotesImageList(ListCreateAPI):
 
     queryset = common.models.NotesImage.objects.all()
     serializer_class = common.serializers.NotesImageSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadScope]
 
     filter_backends = SEARCH_ORDER_FILTER
 
@@ -502,7 +462,7 @@ class ProjectCodeList(DataExportViewMixin, ListCreateAPI):
 
     queryset = common.models.ProjectCode.objects.all()
     serializer_class = common.serializers.ProjectCodeSerializer
-    permission_classes = [permissions.IsAuthenticated, IsStaffOrReadOnly]
+    permission_classes = [IsStaffOrReadOnlyScope]
     filter_backends = SEARCH_ORDER_FILTER
 
     ordering_fields = ['code']
@@ -515,7 +475,7 @@ class ProjectCodeDetail(RetrieveUpdateDestroyAPI):
 
     queryset = common.models.ProjectCode.objects.all()
     serializer_class = common.serializers.ProjectCodeSerializer
-    permission_classes = [permissions.IsAuthenticated, IsStaffOrReadOnly]
+    permission_classes = [IsStaffOrReadOnlyScope]
 
 
 class CustomUnitList(DataExportViewMixin, ListCreateAPI):
@@ -523,7 +483,7 @@ class CustomUnitList(DataExportViewMixin, ListCreateAPI):
 
     queryset = common.models.CustomUnit.objects.all()
     serializer_class = common.serializers.CustomUnitSerializer
-    permission_classes = [permissions.IsAuthenticated, IsStaffOrReadOnly]
+    permission_classes = [IsStaffOrReadOnlyScope]
     filter_backends = SEARCH_ORDER_FILTER
 
 
@@ -532,14 +492,14 @@ class CustomUnitDetail(RetrieveUpdateDestroyAPI):
 
     queryset = common.models.CustomUnit.objects.all()
     serializer_class = common.serializers.CustomUnitSerializer
-    permission_classes = [permissions.IsAuthenticated, IsStaffOrReadOnly]
+    permission_classes = [IsStaffOrReadOnlyScope]
 
 
-class AllUnitList(ListAPI):
+class AllUnitList(RetrieveAPI):
     """List of all defined units."""
 
     serializer_class = common.serializers.AllUnitListResponseSerializer
-    permission_classes = [permissions.IsAuthenticated, IsStaffOrReadOnly]
+    permission_classes = [IsStaffOrReadOnlyScope]
 
     def get(self, request, *args, **kwargs):
         """Return a list of all available units."""
@@ -570,7 +530,7 @@ class ErrorMessageList(BulkDeleteMixin, ListAPI):
 
     queryset = Error.objects.all()
     serializer_class = common.serializers.ErrorMessageSerializer
-    permission_classes = [permissions.IsAuthenticated, IsAdminUser]
+    permission_classes = [IsAuthenticatedOrReadScope, IsAdminUser]
 
     filter_backends = SEARCH_ORDER_FILTER
 
@@ -586,13 +546,13 @@ class ErrorMessageDetail(RetrieveUpdateDestroyAPI):
 
     queryset = Error.objects.all()
     serializer_class = common.serializers.ErrorMessageSerializer
-    permission_classes = [permissions.IsAuthenticated, IsAdminUser]
+    permission_classes = [IsAuthenticatedOrReadScope, IsAdminUser]
 
 
 class BackgroundTaskOverview(APIView):
     """Provides an overview of the background task queue status."""
 
-    permission_classes = [permissions.IsAuthenticated, IsAdminUser]
+    permission_classes = [IsAuthenticatedOrReadScope, IsAdminUser]
     serializer_class = None
 
     def get(self, request, fmt=None):
@@ -614,7 +574,7 @@ class BackgroundTaskOverview(APIView):
 class PendingTaskList(BulkDeleteMixin, ListAPI):
     """Provides a read-only list of currently pending tasks."""
 
-    permission_classes = [permissions.IsAuthenticated, IsAdminUser]
+    permission_classes = [IsAuthenticatedOrReadScope, IsAdminUser]
 
     queryset = django_q.models.OrmQ.objects.all()
     serializer_class = common.serializers.PendingTaskSerializer
@@ -623,7 +583,7 @@ class PendingTaskList(BulkDeleteMixin, ListAPI):
 class ScheduledTaskList(ListAPI):
     """Provides a read-only list of currently scheduled tasks."""
 
-    permission_classes = [permissions.IsAuthenticated, IsAdminUser]
+    permission_classes = [IsAuthenticatedOrReadScope, IsAdminUser]
 
     queryset = django_q.models.Schedule.objects.all()
     serializer_class = common.serializers.ScheduledTaskSerializer
@@ -643,7 +603,7 @@ class ScheduledTaskList(ListAPI):
 class FailedTaskList(BulkDeleteMixin, ListAPI):
     """Provides a read-only list of currently failed tasks."""
 
-    permission_classes = [permissions.IsAuthenticated, IsAdminUser]
+    permission_classes = [IsAuthenticatedOrReadScope, IsAdminUser]
 
     queryset = django_q.models.Failure.objects.all()
     serializer_class = common.serializers.FailedTaskSerializer
@@ -660,14 +620,14 @@ class FlagList(ListAPI):
 
     queryset = settings.FLAGS
     serializer_class = common.serializers.FlagSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [AllowAnyOrReadScope]
 
 
 class FlagDetail(RetrieveAPI):
     """Detail view for an individual feature flag."""
 
     serializer_class = common.serializers.FlagSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [AllowAnyOrReadScope]
 
     def get_object(self):
         """Attempt to find a config object with the provided key."""
@@ -683,7 +643,7 @@ class ContentTypeList(ListAPI):
 
     queryset = ContentType.objects.all()
     serializer_class = common.serializers.ContentTypeSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadScope]
     filter_backends = SEARCH_ORDER_FILTER
     search_fields = ['app_label', 'model']
 
@@ -693,10 +653,9 @@ class ContentTypeDetail(RetrieveAPI):
 
     queryset = ContentType.objects.all()
     serializer_class = common.serializers.ContentTypeSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadScope]
 
 
-@extend_schema(operation_id='contenttype_retrieve_model')
 class ContentTypeModelDetail(ContentTypeDetail):
     """Detail view for a ContentType model."""
 
@@ -710,6 +669,11 @@ class ContentTypeModelDetail(ContentTypeDetail):
             except ContentType.DoesNotExist:
                 raise NotFound()
         raise NotFound()
+
+    @extend_schema(operation_id='contenttype_retrieve_model')
+    def get(self, request, *args, **kwargs):
+        """Detail view for a ContentType model."""
+        return super().get(request, *args, **kwargs)
 
 
 class AttachmentFilter(rest_filters.FilterSet):
@@ -743,7 +707,7 @@ class AttachmentList(BulkDeleteMixin, ListCreateAPI):
 
     queryset = common.models.Attachment.objects.all()
     serializer_class = common.serializers.AttachmentSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadScope]
 
     filter_backends = SEARCH_ORDER_FILTER
     filterset_class = AttachmentFilter
@@ -764,7 +728,7 @@ class AttachmentList(BulkDeleteMixin, ListCreateAPI):
         - Ensure that the user has correct 'delete' permissions for each model
         """
         from common.validators import attachment_model_class_from_label
-        from users.models import check_user_permission
+        from users.permissions import check_user_permission
 
         model_types = queryset.values_list('model_type', flat=True).distinct()
 
@@ -781,7 +745,7 @@ class AttachmentDetail(RetrieveUpdateDestroyAPI):
 
     queryset = common.models.Attachment.objects.all()
     serializer_class = common.serializers.AttachmentSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadScope]
 
     def destroy(self, request, *args, **kwargs):
         """Check user permissions before deleting an attachment."""
@@ -800,11 +764,11 @@ class IconList(ListAPI):
     """List view for available icon packages."""
 
     serializer_class = common.serializers.IconPackageSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [AllowAnyOrReadScope]
 
     def get_queryset(self):
         """Return a list of all available icon packages."""
-        return get_icon_packs().values()
+        return list(get_icon_packs().values())
 
 
 class SelectionListList(ListCreateAPI):
@@ -812,7 +776,7 @@ class SelectionListList(ListCreateAPI):
 
     queryset = common.models.SelectionList.objects.all()
     serializer_class = common.serializers.SelectionListSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadScope]
 
     def get_queryset(self):
         """Override the queryset method to include entry count."""
@@ -824,7 +788,7 @@ class SelectionListDetail(RetrieveUpdateDestroyAPI):
 
     queryset = common.models.SelectionList.objects.all()
     serializer_class = common.serializers.SelectionListSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadScope]
 
 
 class EntryMixin:
@@ -832,7 +796,7 @@ class EntryMixin:
 
     queryset = common.models.SelectionListEntry.objects.all()
     serializer_class = common.serializers.SelectionEntrySerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadScope]
     lookup_url_kwarg = 'entrypk'
 
     def get_queryset(self):
@@ -849,6 +813,82 @@ class SelectionEntryList(EntryMixin, ListCreateAPI):
 
 class SelectionEntryDetail(EntryMixin, RetrieveUpdateDestroyAPI):
     """Detail view for a SelectionEntry object."""
+
+
+class DataOutputEndpointMixin:
+    """Mixin class for DataOutput endpoints."""
+
+    queryset = common.models.DataOutput.objects.all()
+    serializer_class = common.serializers.DataOutputSerializer
+    permission_classes = [IsAuthenticatedOrReadScope]
+
+
+class DataOutputList(DataOutputEndpointMixin, BulkDeleteMixin, ListAPI):
+    """List view for DataOutput objects."""
+
+    filter_backends = SEARCH_ORDER_FILTER
+    ordering_fields = ['pk', 'user', 'plugin', 'output_type', 'created']
+    filterset_fields = ['user']
+
+
+class DataOutputDetail(DataOutputEndpointMixin, generics.DestroyAPIView, RetrieveAPI):
+    """Detail view for a DataOutput object."""
+
+
+class EmailMessageMixin:
+    """Mixin class for Email endpoints."""
+
+    queryset = common.models.EmailMessage.objects.all()
+    serializer_class = common.serializers.EmailMessageSerializer
+    permission_classes = [IsSuperuserOrSuperScope]
+
+
+class EmailMessageList(EmailMessageMixin, BulkDeleteMixin, ListAPI):
+    """List view for email objects."""
+
+    filter_backends = SEARCH_ORDER_FILTER
+    ordering_fields = [
+        'created',
+        'subject',
+        'to',
+        'sender',
+        'status',
+        'timestamp',
+        'direction',
+    ]
+    search_fields = [
+        'subject',
+        'to',
+        'sender',
+        'global_id',
+        'message_id_key',
+        'thread_id_key',
+    ]
+
+
+class EmailMessageDetail(EmailMessageMixin, RetrieveDestroyAPI):
+    """Detail view for an email object."""
+
+
+class TestEmail(CreateAPI):
+    """Send a test email."""
+
+    serializer_class = common.serializers.TestEmailSerializer
+    permission_classes = [IsSuperuserOrSuperScope]
+
+    def perform_create(self, serializer):
+        """Send a test email."""
+        data = serializer.validated_data
+
+        delivered, reason = send_email(
+            subject='Test email from InvenTree',
+            body='This is a test email from InvenTree.',
+            recipients=[data['email']],
+        )
+        if not delivered:
+            raise serializers.ValidationError(
+                detail=f'Failed to send test email: "{reason}"'
+            )  # pragma: no cover
 
 
 selection_urls = [
@@ -888,7 +928,7 @@ class ReferenceSourceList(ListCreateAPI):
 
     queryset = common.models.ReferenceSource.objects.all()
     serializer_class = common.serializers.ReferenceSourceSerializer
-    permission_classes = [permissions.IsAuthenticated, IsStaffOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadScope, IsStaffOrReadOnlyScope]
     filter_backends = SEARCH_ORDER_FILTER
 
     ordering_fields = [
@@ -909,7 +949,7 @@ class ReferenceSourceDetail(RetrieveUpdateDestroyAPI):
 
     queryset = common.models.ReferenceSource.objects.all()
     serializer_class = common.serializers.ReferenceSourceSerializer
-    permission_classes = [permissions.IsAuthenticated, IsStaffOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadScope, IsStaffOrReadOnlyScope]
 
 
 class ReferenceList(ListCreateAPI):
@@ -917,7 +957,7 @@ class ReferenceList(ListCreateAPI):
 
     queryset = common.models.Reference.objects.all()
     serializer_class = common.serializers.ReferenceSerializer
-    permission_classes = [permissions.IsAuthenticated, IsStaffOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadScope, IsStaffOrReadOnlyScope]
     filter_backends = SEARCH_ORDER_FILTER
 
     ordering_fields = [
@@ -948,7 +988,7 @@ class ReferenceDetail(RetrieveUpdateDestroyAPI):
 
     queryset = common.models.Reference.objects.all()
     serializer_class = common.serializers.ReferenceSerializer
-    permission_classes = [permissions.IsAuthenticated, IsStaffOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadScope, IsStaffOrReadOnlyScope]
 
     def get_queryset(self):
         """Return prefetched queryset."""
@@ -1009,24 +1049,6 @@ settings_api_urls = [
             path('', UserSettingsList.as_view(), name='api-user-setting-list'),
         ]),
     ),
-    # Notification settings
-    path(
-        'notification/',
-        include([
-            # Notification Settings Detail
-            path(
-                '<int:pk>/',
-                NotificationUserSettingsDetail.as_view(),
-                name='api-notification-setting-detail',
-            ),
-            # Notification Settings List
-            path(
-                '',
-                NotificationUserSettingsList.as_view(),
-                name='api-notification-setting-list',
-            ),
-        ]),
-    ),
     # Global settings
     path(
         'global/',
@@ -1071,8 +1093,7 @@ common_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': common.models.Attachment},
+                        MetadataView.as_view(model=common.models.Attachment),
                         name='api-attachment-metadata',
                     ),
                     path('', AttachmentDetail.as_view(), name='api-attachment-detail'),
@@ -1097,8 +1118,10 @@ common_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': common.models.ProjectCode},
+                        MetadataView.as_view(
+                            model=common.models.ProjectCode,
+                            permission_classes=[IsStaffOrReadOnlyScope],
+                        ),
                         name='api-project-code-metadata',
                     ),
                     path(
@@ -1206,10 +1229,29 @@ common_api_urls = [
     path('selection/', include(selection_urls)),
     # References
     path('reference/', include(reference_urls)),
+    # Data output
+    path(
+        'data-output/',
+        include([
+            path(
+                '<int:pk>/', DataOutputDetail.as_view(), name='api-data-output-detail'
+            ),
+            path('', DataOutputList.as_view(), name='api-data-output-list'),
+        ]),
+    ),
 ]
 
 admin_api_urls = [
     # Admin
     path('config/', ConfigList.as_view(), name='api-config-list'),
     path('config/<str:key>/', ConfigDetail.as_view(), name='api-config-detail'),
+    # Email
+    path(
+        'email/',
+        include([
+            path('test/', TestEmail.as_view(), name='api-email-test'),
+            path('<str:pk>/', EmailMessageDetail.as_view(), name='api-email-detail'),
+            path('', EmailMessageList.as_view(), name='api-email-list'),
+        ]),
+    ),
 ]

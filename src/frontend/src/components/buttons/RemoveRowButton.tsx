@@ -1,7 +1,7 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 
+import { ActionButton } from '@lib/components/ActionButton';
 import { InvenTreeIcon } from '../../functions/icons';
-import { ActionButton } from './ActionButton';
 
 export default function RemoveRowButton({
   onClick,
@@ -15,7 +15,7 @@ export default function RemoveRowButton({
       onClick={onClick}
       icon={<InvenTreeIcon icon='square_x' />}
       tooltip={tooltip}
-      tooltipAlignment='top'
+      tooltipAlignment='top-end'
       color='red'
     />
   );

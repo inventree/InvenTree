@@ -1,6 +1,7 @@
 """Model definitions for the 'importer' app."""
 
 import json
+from collections import OrderedDict
 from typing import Optional
 
 from django.contrib.auth.models import User
@@ -18,6 +19,7 @@ import importer.registry
 import importer.tasks
 import importer.validators
 import InvenTree.helpers
+from common.models import RenderChoices
 from importer.status_codes import DataImportStatusCode
 
 logger = structlog.get_logger('inventree')
@@ -37,6 +39,13 @@ class DataImportSession(models.Model):
         field_overrides: JSONField for field override values - used to force a value for a field
         field_filters: JSONField for field filter values - optional field API filters
     """
+
+    ID_FIELD_LABEL = 'id'
+
+    class ModelChoices(RenderChoices):
+        """Model choices for data import sessions."""
+
+        choice_fnc = importer.registry.supported_models
 
     @staticmethod
     def get_api_url():
@@ -77,6 +86,8 @@ class DataImportSession(models.Model):
         blank=False,
         max_length=100,
         validators=[importer.validators.validate_importer_model_type],
+        verbose_name=_('Model Type'),
+        help_text=_('Target model type for this import session'),
     )
 
     status = models.PositiveIntegerField(
@@ -108,6 +119,12 @@ class DataImportSession(models.Model):
         null=True,
         verbose_name=_('Field Filters'),
         validators=[importer.validators.validate_field_defaults],
+    )
+
+    update_records = models.BooleanField(
+        default=False,
+        verbose_name=_('Update Existing Records'),
+        help_text=_('If enabled, existing records will be updated with new data'),
     )
 
     @property
@@ -257,7 +274,7 @@ class DataImportSession(models.Model):
         self.status = DataImportStatusCode.IMPORTING.value
         self.save()
 
-        offload_task(importer.tasks.import_data, self.pk)
+        offload_task(importer.tasks.import_data, self.pk, group='importer')
 
     def import_data(self) -> None:
         """Perform the data import process for this session."""
@@ -343,13 +360,25 @@ class DataImportSession(models.Model):
 
         metadata = InvenTreeMetadata()
 
+        fields = OrderedDict()
+
+        if self.update_records:
+            # If we are updating records, ensure the ID field is included
+            fields[self.ID_FIELD_LABEL] = {
+                'label': _('ID'),
+                'help_text': _('Existing database identifier for the record'),
+                'type': 'integer',
+                'required': True,
+                'read_only': False,
+            }
+
         if serializer_class := self.serializer_class:
             serializer = serializer_class(data={}, importing=True)
-            fields = metadata.get_serializer_info(serializer)
-        else:
-            fields = {}
+            fields.update(metadata.get_serializer_info(serializer))
 
+        # Cache the available fields against this instance
         self._available_fields = fields
+
         return fields
 
     def required_fields(self) -> dict:
@@ -360,6 +389,10 @@ class DataImportSession(models.Model):
 
         for field, info in fields.items():
             if info.get('required', False):
+                required[field] = info
+
+            elif self.update_records and field == self.ID_FIELD_LABEL:
+                # If we are updating records, the ID field is required
                 required[field] = info
 
         return required
@@ -622,11 +655,13 @@ class DataImportRow(models.Model):
 
         return data
 
-    def construct_serializer(self, request=None):
+    def construct_serializer(self, instance=None, request=None):
         """Construct a serializer object for this row."""
         if serializer_class := self.session.serializer_class:
             return serializer_class(
-                data=self.serializer_data(), context={'request': request}
+                instance=instance,
+                data=self.serializer_data(),
+                context={'request': request},
             )
 
     def validate(self, commit=False, request=None) -> bool:
@@ -646,7 +681,26 @@ class DataImportRow(models.Model):
             # Row has already been completed
             return True
 
-        serializer = self.construct_serializer(request=request)
+        if self.session.update_records:
+            # Extract the ID field from the data
+            instance_id = self.data.get(self.session.ID_FIELD_LABEL, None)
+
+            if not instance_id:
+                raise DjangoValidationError(
+                    _('ID is required for updating existing records.')
+                )
+
+            try:
+                instance = self.session.model_class.objects.get(pk=instance_id)
+            except self.session.model_class.DoesNotExist:
+                raise DjangoValidationError(_('No record found with the provided ID.'))
+            except ValueError:
+                raise DjangoValidationError(_('Invalid ID format provided.'))
+
+            serializer = self.construct_serializer(instance=instance, request=request)
+
+        else:
+            serializer = self.construct_serializer(request=request)
 
         if not serializer:
             self.errors = {

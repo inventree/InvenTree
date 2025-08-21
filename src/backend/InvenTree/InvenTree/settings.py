@@ -13,21 +13,33 @@ import logging
 import os
 import sys
 from pathlib import Path
+from typing import Optional
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 import django.conf.locale
 import django.core.exceptions
 from django.core.validators import URLValidator
-from django.http import Http404
+from django.http import Http404, HttpResponseGone
 
 import structlog
+from corsheaders.defaults import default_headers as default_cors_headers
 from dotenv import load_dotenv
 
 from InvenTree.cache import get_cache_config, is_global_cache_enabled
-from InvenTree.config import get_boolean_setting, get_custom_file, get_setting
+from InvenTree.config import (
+    get_boolean_setting,
+    get_custom_file,
+    get_oidc_private_key,
+    get_setting,
+)
 from InvenTree.ready import isInMainThread
 from InvenTree.sentry import default_sentry_dsn, init_sentry
-from InvenTree.version import checkMinPythonVersion, inventreeApiVersion
+from InvenTree.version import (
+    checkMinPythonVersion,
+    inventreeApiVersion,
+    inventreeCommitHash,
+)
+from users.oauth2_scopes import oauth2_scopes
 
 from . import config, locales
 
@@ -47,18 +59,11 @@ if TESTING:
     TEST_RUNNER = 'django_slowtests.testrunner.DiscoverSlowestTestsRunner'
     NUM_SLOW_TESTS = 25
 
-    # Note: The following fix is "required" for docker build workflow
-    # Note: 2022-12-12 still unsure why...
-    if os.getenv('INVENTREE_DOCKER'):
-        # Ensure that sys.path includes global python libs
-        site_packages = '/usr/local/lib/python3.9/site-packages'
-
-        if site_packages not in sys.path:
-            print('Adding missing site-packages path:', site_packages)
-            sys.path.append(site_packages)
 
 # Are environment variables manipulated by tests? Needs to be set by testing code
 TESTING_ENV = False
+# Are we bypassing exceptions?
+TESTING_BYPASS_MAILCHECK = False  # Bypass email disablement for tests
 
 # New requirement for django 3.2+
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
@@ -70,9 +75,8 @@ BASE_DIR = config.get_base_dir()
 CONFIG = config.load_config_data(set_cache=True)
 
 # Load VERSION data if it exists
-version_file = BASE_DIR.parent.parent.parent.joinpath('VERSION')
+version_file = config.get_root_dir().joinpath('VERSION')
 if version_file.exists():
-    print('load version from file')
     load_dotenv(version_file)
 
 # Default action is to run the system in Debug mode
@@ -188,6 +192,10 @@ PLUGINS_ENABLED = get_boolean_setting(
     'INVENTREE_PLUGINS_ENABLED', 'plugins_enabled', False
 )
 
+PLUGINS_MANDATORY = get_setting(
+    'INVENTREE_PLUGINS_MANDATORY', 'plugins_mandatory', typecast=list, default_value=[]
+)
+
 PLUGINS_INSTALL_DISABLED = get_boolean_setting(
     'INVENTREE_PLUGIN_NOINSTALL', 'plugin_noinstall', False
 )
@@ -206,6 +214,15 @@ PLUGIN_TESTING_SETUP = get_setting(
 PLUGIN_TESTING_EVENTS = False  # Flag if events are tested right now
 PLUGIN_TESTING_EVENTS_ASYNC = False  # Flag if events are tested asynchronously
 PLUGIN_TESTING_RELOAD = False  # Flag if plugin reloading is in testing (check_reload)
+
+# Plugin development settings
+PLUGIN_DEV_SLUG = (
+    get_setting('INVENTREE_PLUGIN_DEV_SLUG', 'plugin_dev.slug') if DEBUG else None
+)
+
+PLUGIN_DEV_HOST = get_setting(
+    'INVENTREE_PLUGIN_DEV_HOST', 'plugin_dev.host', 'http://localhost:5174'
+)  # Host for the plugin development server
 
 PLUGIN_RETRY = get_setting(
     'INVENTREE_PLUGIN_RETRY', 'PLUGIN_RETRY', 3, typecast=int
@@ -260,14 +277,15 @@ INSTALLED_APPS = [
     # InvenTree apps
     'build.apps.BuildConfig',
     'common.apps.CommonConfig',
-    'company.apps.CompanyConfig',
     'plugin.apps.PluginAppConfig',  # Plugin app runs before all apps that depend on the isPluginRegistryLoaded function
+    'company.apps.CompanyConfig',
     'order.apps.OrderConfig',
     'part.apps.PartConfig',
     'report.apps.ReportConfig',
     'stock.apps.StockConfig',
     'users.apps.UsersConfig',
     'machine.apps.MachineConfig',
+    'data_exporter.apps.DataExporterConfig',
     'importer.apps.ImporterConfig',
     'web',
     'generic',
@@ -275,7 +293,8 @@ INSTALLED_APPS = [
     # Core django modules
     'django.contrib.auth',
     'django.contrib.contenttypes',
-    'user_sessions',  # db user sessions
+    'django.contrib.sessions',
+    'django.contrib.humanize',
     'whitenoise.runserver_nostatic',
     'django.contrib.messages',
     'django.contrib.staticfiles',
@@ -299,15 +318,18 @@ INSTALLED_APPS = [
     'django_structlog',  # Structured logging
     'allauth',  # Base app for SSO
     'allauth.account',  # Extend user with accounts
+    'allauth.headless',  # APIs for auth
     'allauth.socialaccount',  # Use 'social' providers
+    'allauth.mfa',  # MFA for for allauth
+    'allauth.usersessions',  # DB sessions
     'django_otp',  # OTP is needed for MFA - base package
     'django_otp.plugins.otp_totp',  # Time based OTP
     'django_otp.plugins.otp_static',  # Backup codes
-    'allauth_2fa',  # MFA flow for allauth
-    'dj_rest_auth',  # Authentication APIs - dj-rest-auth
-    'dj_rest_auth.registration',  # Registration APIs - dj-rest-auth'
+    'oauth2_provider',  # OAuth2 provider and API access
     'drf_spectacular',  # API documentation
     'django_ical',  # For exporting calendars
+    'django_mailbox',  # For email import
+    'anymail',  # For email sending/receiving via ESPs
 ]
 
 MIDDLEWARE = CONFIG.get(
@@ -315,7 +337,8 @@ MIDDLEWARE = CONFIG.get(
     [
         'django.middleware.security.SecurityMiddleware',
         'x_forwarded_for.middleware.XForwardedForMiddleware',
-        'user_sessions.middleware.SessionMiddleware',  # db user sessions
+        'django.contrib.sessions.middleware.SessionMiddleware',
+        'allauth.usersessions.middleware.UserSessionsMiddleware',  # DB user sessions
         'django.middleware.locale.LocaleMiddleware',
         'django.middleware.csrf.CsrfViewMiddleware',
         'corsheaders.middleware.CorsMiddleware',
@@ -323,16 +346,16 @@ MIDDLEWARE = CONFIG.get(
         'django.middleware.common.CommonMiddleware',
         'django.contrib.auth.middleware.AuthenticationMiddleware',
         'InvenTree.middleware.InvenTreeRemoteUserMiddleware',  # Remote / proxy auth
-        'django_otp.middleware.OTPMiddleware',  # MFA support
-        'InvenTree.middleware.CustomAllauthTwoFactorMiddleware',  # Flow control for allauth
         'allauth.account.middleware.AccountMiddleware',
         'django.contrib.messages.middleware.MessageMiddleware',
         'django.middleware.clickjacking.XFrameOptionsMiddleware',
         'InvenTree.middleware.AuthRequiredMiddleware',
         'InvenTree.middleware.Check2FAMiddleware',  # Check if the user should be forced to use MFA
+        'oauth2_provider.middleware.OAuth2TokenMiddleware',  # oauth2_provider
         'maintenance_mode.middleware.MaintenanceModeMiddleware',
         'InvenTree.middleware.InvenTreeExceptionProcessor',  # Error reporting
         'InvenTree.middleware.InvenTreeRequestCacheMiddleware',  # Request caching
+        'InvenTree.middleware.InvenTreeHostSettingsMiddleware',  # Ensuring correct hosting/security settings
         'django_structlog.middlewares.RequestMiddleware',  # Structured logging
     ],
 )
@@ -362,6 +385,7 @@ QUERYCOUNT = {
 AUTHENTICATION_BACKENDS = CONFIG.get(
     'authentication_backends',
     [
+        'oauth2_provider.backends.OAuth2Backend',  # OAuth2 provider
         'django.contrib.auth.backends.RemoteUserBackend',  # proxy login
         'django.contrib.auth.backends.ModelBackend',
         'allauth.account.auth_backends.AuthenticationBackend',  # SSO login via external providers
@@ -538,14 +562,16 @@ REST_FRAMEWORK = {
         'users.authentication.ApiTokenAuthentication',
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
+        'users.authentication.ExtendedOAuth2Authentication',
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
         'rest_framework.permissions.DjangoModelPermissions',
         'InvenTree.permissions.RolePermission',
+        'InvenTree.permissions.InvenTreeTokenMatchesOASRequirements',
     ],
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_SCHEMA_CLASS': 'InvenTree.schema.ExtendedAutoSchema',
     'DEFAULT_METADATA_CLASS': 'InvenTree.metadata.InvenTreeMetadata',
     'DEFAULT_RENDERER_CLASSES': ['rest_framework.renderers.JSONRenderer'],
     'TOKEN_MODEL': 'users.models.ApiToken',
@@ -557,30 +583,12 @@ if DEBUG:
         'rest_framework.renderers.BrowsableAPIRenderer'
     )
 
-# JWT switch
-USE_JWT = get_boolean_setting('INVENTREE_USE_JWT', 'use_jwt', False)
-REST_USE_JWT = USE_JWT
-
-# dj-rest-auth
-REST_AUTH = {
-    'SESSION_LOGIN': True,
-    'TOKEN_MODEL': 'users.models.ApiToken',
-    'TOKEN_CREATOR': 'users.models.default_create_token',
-    'USE_JWT': USE_JWT,
-    'REGISTER_SERIALIZER': 'InvenTree.auth_overrides.RegisterSerializer',
-}
-
-OLD_PASSWORD_FIELD_ENABLED = True
-
 # JWT settings - rest_framework_simplejwt
+USE_JWT = get_boolean_setting('INVENTREE_USE_JWT', 'use_jwt', False)
 if USE_JWT:
     JWT_AUTH_COOKIE = 'inventree-auth'
     JWT_AUTH_REFRESH_COOKIE = 'inventree-token'
-    REST_FRAMEWORK['DEFAULT_AUTHENTICATION_CLASSES'].append(
-        'dj_rest_auth.jwt_auth.JWTCookieAuthentication'
-    )
     INSTALLED_APPS.append('rest_framework_simplejwt')
-
 
 # WSGI default setting
 WSGI_APPLICATION = 'InvenTree.wsgi.application'
@@ -642,25 +650,25 @@ It can be specified in config.yaml (or envvar) as either (for example):
 - django.db.backends.postgresql
 """
 
-db_engine = db_config['ENGINE'].lower()
+DB_ENGINE = db_config['ENGINE'].lower()
 
 # Correct common misspelling
-if db_engine == 'sqlite':
-    db_engine = 'sqlite3'  # pragma: no cover
+if DB_ENGINE == 'sqlite':
+    DB_ENGINE = 'sqlite3'  # pragma: no cover
 
-if db_engine in ['sqlite3', 'postgresql', 'mysql']:
+if DB_ENGINE in ['sqlite3', 'postgresql', 'mysql']:
     # Prepend the required python module string
-    db_engine = f'django.db.backends.{db_engine}'
-    db_config['ENGINE'] = db_engine
+    DB_ENGINE = f'django.db.backends.{DB_ENGINE}'
+    db_config['ENGINE'] = DB_ENGINE
 
 db_name = db_config['NAME']
 db_host = db_config.get('HOST', "''")
 
-if 'sqlite' in db_engine:
+if 'sqlite' in DB_ENGINE:
     db_name = str(Path(db_name).resolve())
     db_config['NAME'] = db_name
 
-logger.info('DB_ENGINE: %s', db_engine)
+logger.info('DB_ENGINE: %s', DB_ENGINE)
 logger.info('DB_NAME: %s', db_name)
 logger.info('DB_HOST: %s', db_host)
 
@@ -681,7 +689,7 @@ if db_options is None:
     db_options = {}
 
 # Specific options for postgres backend
-if 'postgres' in db_engine:  # pragma: no cover
+if 'postgres' in DB_ENGINE:  # pragma: no cover
     from django.db.backends.postgresql.psycopg_any import IsolationLevel
 
     # Connection timeout
@@ -754,7 +762,7 @@ if 'postgres' in db_engine:  # pragma: no cover
         )
 
 # Specific options for MySql / MariaDB backend
-elif 'mysql' in db_engine:  # pragma: no cover
+elif 'mysql' in DB_ENGINE:  # pragma: no cover
     # TODO TCP time outs and keepalives
 
     # MariaDB's default isolation level is Repeatable Read which is
@@ -772,7 +780,7 @@ elif 'mysql' in db_engine:  # pragma: no cover
         )
 
 # Specific options for sqlite backend
-elif 'sqlite' in db_engine:
+elif 'sqlite' in DB_ENGINE:
     # TODO: Verify timeouts are not an issue because no network is involved for SQLite
 
     # SQLite's default isolation level is Serializable due to SQLite's
@@ -788,7 +796,7 @@ db_config['OPTIONS'] = db_options
 db_config['TEST'] = {'CHARSET': 'utf8'}
 
 # Set collation option for mysql test database
-if 'mysql' in db_engine:
+if 'mysql' in DB_ENGINE:
     db_config['TEST']['COLLATION'] = 'utf8_general_ci'  # pragma: no cover
 
 DATABASES = {'default': db_config}
@@ -807,10 +815,11 @@ inventree_tags = {
     'docker': DOCKER,
     'debug': DEBUG,
     'remote': REMOTE_LOGIN,
+    'commit': inventreeCommitHash(),
 }
 
 # sentry.io integration for error reporting
-SENTRY_ENABLED = get_boolean_setting(
+SENTRY_ENABLED = not TESTING and get_boolean_setting(
     'INVENTREE_SENTRY_ENABLED', 'sentry_enabled', False
 )
 
@@ -820,13 +829,14 @@ SENTRY_SAMPLE_RATE = float(
     get_setting('INVENTREE_SENTRY_SAMPLE_RATE', 'sentry_sample_rate', 0.1)
 )
 
-if SENTRY_ENABLED and SENTRY_DSN:  # pragma: no cover
+if SENTRY_ENABLED and SENTRY_DSN and not TESTING:  # pragma: no cover
     init_sentry(SENTRY_DSN, SENTRY_SAMPLE_RATE, inventree_tags)
 
 # OpenTelemetry tracing
 TRACING_ENABLED = get_boolean_setting(
     'INVENTREE_TRACING_ENABLED', 'tracing.enabled', False
 )
+TRACING_DETAILS: Optional[dict] = None
 
 if TRACING_ENABLED:  # pragma: no cover
     from InvenTree.tracing import setup_instruments, setup_tracing
@@ -840,35 +850,42 @@ if TRACING_ENABLED:  # pragma: no cover
     if _t_endpoint:
         logger.info('OpenTelemetry tracing enabled')
 
-        _t_resources = get_setting(
-            'INVENTREE_TRACING_RESOURCES',
-            'tracing.resources',
-            default_value=None,
-            typecast=dict,
+        TRACING_DETAILS = (
+            TRACING_DETAILS
+            if TRACING_DETAILS
+            else {
+                'endpoint': _t_endpoint,
+                'headers': _t_headers,
+                'resources_input': {
+                    **{'inventree.env.' + k: v for k, v in inventree_tags.items()},
+                    **get_setting(
+                        'INVENTREE_TRACING_RESOURCES',
+                        'tracing.resources',
+                        default_value=None,
+                        typecast=dict,
+                    ),
+                },
+                'console': get_boolean_setting(
+                    'INVENTREE_TRACING_CONSOLE', 'tracing.console', False
+                ),
+                'auth': get_setting(
+                    'INVENTREE_TRACING_AUTH',
+                    'tracing.auth',
+                    default_value=None,
+                    typecast=dict,
+                ),
+                'is_http': get_setting(
+                    'INVENTREE_TRACING_IS_HTTP', 'tracing.is_http', True
+                ),
+                'append_http': get_boolean_setting(
+                    'INVENTREE_TRACING_APPEND_HTTP', 'tracing.append_http', True
+                ),
+            }
         )
-        cstm_tags = {'inventree.env.' + k: v for k, v in inventree_tags.items()}
-        tracing_resources = {**cstm_tags, **_t_resources}
 
-        setup_tracing(
-            _t_endpoint,
-            _t_headers,
-            resources_input=tracing_resources,
-            console=get_boolean_setting(
-                'INVENTREE_TRACING_CONSOLE', 'tracing.console', False
-            ),
-            auth=get_setting(
-                'INVENTREE_TRACING_AUTH',
-                'tracing.auth',
-                default_value=None,
-                typecast=dict,
-            ),
-            is_http=get_setting('INVENTREE_TRACING_IS_HTTP', 'tracing.is_http', True),
-            append_http=get_boolean_setting(
-                'INVENTREE_TRACING_APPEND_HTTP', 'tracing.append_http', True
-            ),
-        )
         # Run tracing/logging instrumentation
-        setup_instruments()
+        setup_tracing(**TRACING_DETAILS)
+        setup_instruments(DB_ENGINE)
     else:
         logger.warning('OpenTelemetry tracing not enabled because endpoint is not set')
 
@@ -920,13 +937,8 @@ if GLOBAL_CACHE_ENABLED:  # pragma: no cover
     # as well
     Q_CLUSTER['django_redis'] = 'worker'
 
-# database user sessions
-SESSION_ENGINE = 'user_sessions.backends.db'
-LOGOUT_REDIRECT_URL = get_setting(
-    'INVENTREE_LOGOUT_REDIRECT_URL', 'logout_redirect_url', 'index'
-)
 
-SILENCED_SYSTEM_CHECKS = ['admin.E410', 'templates.E003', 'templates.W003']
+SILENCED_SYSTEM_CHECKS = ['templates.E003', 'templates.W003']
 
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
@@ -988,22 +1000,28 @@ CURRENCY_DECIMAL_PLACES = 6
 # Custom currency exchange backend
 EXCHANGE_BACKEND = 'InvenTree.exchange.InvenTreeExchange'
 
+# region email
 # Email configuration options
-EMAIL_BACKEND = get_setting(
+EMAIL_BACKEND = 'InvenTree.backends.InvenTreeMailLoggingBackend'
+INTERNAL_EMAIL_BACKEND = get_setting(
     'INVENTREE_EMAIL_BACKEND',
     'email.backend',
     'django.core.mail.backends.smtp.EmailBackend',
 )
+# SMTP backend
 EMAIL_HOST = get_setting('INVENTREE_EMAIL_HOST', 'email.host', '')
 EMAIL_PORT = get_setting('INVENTREE_EMAIL_PORT', 'email.port', 25, typecast=int)
 EMAIL_HOST_USER = get_setting('INVENTREE_EMAIL_USERNAME', 'email.username', '')
 EMAIL_HOST_PASSWORD = get_setting('INVENTREE_EMAIL_PASSWORD', 'email.password', '')
+EMAIL_USE_TLS = get_boolean_setting('INVENTREE_EMAIL_TLS', 'email.tls', False)
+EMAIL_USE_SSL = get_boolean_setting('INVENTREE_EMAIL_SSL', 'email.ssl', False)
+# Anymail
+if INTERNAL_EMAIL_BACKEND.startswith('anymail.backends.'):
+    ANYMAIL = get_setting('INVENTREE_ANYMAIL', 'email.anymail', None, dict)
+
 EMAIL_SUBJECT_PREFIX = get_setting(
     'INVENTREE_EMAIL_PREFIX', 'email.prefix', '[InvenTree] '
 )
-EMAIL_USE_TLS = get_boolean_setting('INVENTREE_EMAIL_TLS', 'email.tls', False)
-EMAIL_USE_SSL = get_boolean_setting('INVENTREE_EMAIL_SSL', 'email.ssl', False)
-
 DEFAULT_FROM_EMAIL = get_setting('INVENTREE_EMAIL_SENDER', 'email.sender', '')
 
 # If "from" email not specified, default to the username
@@ -1012,6 +1030,7 @@ if not DEFAULT_FROM_EMAIL:
 
 EMAIL_USE_LOCALTIME = False
 EMAIL_TIMEOUT = 60
+# endregion email
 
 LOCALE_PATHS = (BASE_DIR.joinpath('locale/'),)
 
@@ -1035,6 +1054,7 @@ DATE_INPUT_FORMATS = ['%Y-%m-%d']
 SITE_URL = get_setting('INVENTREE_SITE_URL', 'site_url', None)
 
 if SITE_URL:
+    SITE_URL = str(SITE_URL).strip().rstrip('/')
     logger.info('Using Site URL: %s', SITE_URL)
 
     # Check that the site URL is valid
@@ -1120,6 +1140,7 @@ if DEBUG:
         'http://localhost',
         'http://*.localhost',
         'http://*localhost:8000',
+        'http://*localhost:4173',
         'http://*localhost:5173',
     ]:
         if origin not in CSRF_TRUSTED_ORIGINS:
@@ -1201,6 +1222,7 @@ USE_X_FORWARDED_PORT = get_boolean_setting(
 # Refer to the django-cors-headers documentation for more information
 # Ref: https://github.com/adamchainz/django-cors-headers
 
+
 # Extract CORS options from configuration file
 CORS_ALLOW_ALL_ORIGINS = get_boolean_setting(
     'INVENTREE_CORS_ORIGIN_ALLOW_ALL', config_key='cors.allow_all', default_value=DEBUG
@@ -1233,6 +1255,11 @@ CORS_ALLOWED_ORIGIN_REGEXES = get_setting(
     typecast=list,
 )
 
+# Allow extra CORS headers in DEBUG mode
+# Required for serving /static/ and /media/ files
+if DEBUG:
+    CORS_ALLOW_HEADERS = (*default_cors_headers, 'cache-control', 'pragma', 'expires')
+
 # In debug mode allow CORS requests from localhost
 # This allows connection from the frontend development server
 if DEBUG:
@@ -1247,6 +1274,11 @@ else:
     if CORS_ALLOWED_ORIGIN_REGEXES:
         logger.info('CORS: Whitelisted origin regexes: %s', CORS_ALLOWED_ORIGIN_REGEXES)
 
+# Load settings for the frontend interface
+FRONTEND_SETTINGS = config.get_frontend_settings(debug=DEBUG)
+FRONTEND_URL_BASE = FRONTEND_SETTINGS['base_url']
+
+# region auth
 for app in SOCIAL_BACKENDS:
     # Ensure that the app starts with 'allauth.socialaccount.providers'
     social_prefix = 'allauth.socialaccount.providers.'
@@ -1271,6 +1303,9 @@ SOCIALACCOUNT_OPENID_CONNECT_URL_PREFIX = ''
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = get_setting(
     'INVENTREE_LOGIN_CONFIRM_DAYS', 'login_confirm_days', 3, typecast=int
 )
+ACCOUNT_EMAIL_UNKNOWN_ACCOUNTS = False
+ACCOUNT_EMAIL_NOTIFICATIONS = True
+USERSESSIONS_TRACK_ACTIVITY = True
 
 # allauth rate limiting: https://docs.allauth.org/en/latest/account/rate_limits.html
 # The default login rate limit is "5/m/user,5/m/ip,5/m/key"
@@ -1315,12 +1350,29 @@ ACCOUNT_FORMS = {
     'disconnect': 'allauth.socialaccount.forms.DisconnectForm',
 }
 
-ALLAUTH_2FA_FORMS = {'setup': 'InvenTree.auth_overrides.CustomTOTPDeviceForm'}
-# Determine if multi-factor authentication is enabled for this server (default = True)
-MFA_ENABLED = get_boolean_setting('INVENTREE_MFA_ENABLED', 'mfa_enabled', True)
-
 SOCIALACCOUNT_ADAPTER = 'InvenTree.auth_overrides.CustomSocialAccountAdapter'
 ACCOUNT_ADAPTER = 'InvenTree.auth_overrides.CustomAccountAdapter'
+HEADLESS_ADAPTER = 'InvenTree.auth_overrides.CustomHeadlessAdapter'
+ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True
+
+HEADLESS_ONLY = True
+HEADLESS_TOKEN_STRATEGY = 'InvenTree.auth_overrides.DRFTokenStrategy'
+HEADLESS_CLIENTS = 'browser'
+MFA_ENABLED = get_boolean_setting(
+    'INVENTREE_MFA_ENABLED', 'mfa_enabled', True
+)  # TODO re-implement
+MFA_SUPPORTED_TYPES = get_setting(
+    'INVENTREE_MFA_SUPPORTED_TYPES',
+    'mfa_supported_types',
+    ['totp', 'recovery_codes'],
+    typecast=list,
+)
+MFA_TRUST_ENABLED = True
+
+LOGOUT_REDIRECT_URL = get_setting(
+    'INVENTREE_LOGOUT_REDIRECT_URL', 'logout_redirect_url', 'index'
+)
+# endregion auth
 
 # Markdownify configuration
 # Ref: https://django-markdownify.readthedocs.io/en/latest/settings.html
@@ -1363,7 +1415,7 @@ MARKDOWNIFY = {
 }
 
 # Ignore these error types for in-database error logging
-IGNORED_ERRORS = [Http404, django.core.exceptions.PermissionDenied]
+IGNORED_ERRORS = [Http404, HttpResponseGone, django.core.exceptions.PermissionDenied]
 
 # Maintenance mode
 MAINTENANCE_MODE_RETRY_AFTER = 10
@@ -1374,6 +1426,24 @@ TESTING_TABLE_EVENTS = False
 
 # Flag to allow pricing recalculations during testing
 TESTING_PRICING = False
+
+# Global settings overrides
+# If provided, these values will override any "global" settings (and prevent them from being set)
+GLOBAL_SETTINGS_OVERRIDES = get_setting(
+    'INVENTREE_GLOBAL_SETTINGS', 'global_settings', typecast=dict
+)
+
+# Override site URL setting
+if SITE_URL:
+    GLOBAL_SETTINGS_OVERRIDES['INVENTREE_BASE_URL'] = SITE_URL
+
+if len(GLOBAL_SETTINGS_OVERRIDES) > 0:
+    logger.info(
+        'INVE-I1: Global settings overrides: %s', str(GLOBAL_SETTINGS_OVERRIDES)
+    )
+    for key in GLOBAL_SETTINGS_OVERRIDES:
+        # Set the global setting
+        logger.debug('- Override value for %s = ********', key)
 
 # User interface customization values
 CUSTOM_LOGO = get_custom_file(
@@ -1386,10 +1456,6 @@ CUSTOM_SPLASH = get_custom_file(
 CUSTOMIZE = get_setting(
     'INVENTREE_CUSTOMIZE', 'customize', default_value=None, typecast=dict
 )
-
-# Load settings for the frontend interface
-FRONTEND_SETTINGS = config.get_frontend_settings(debug=DEBUG)
-FRONTEND_URL_BASE = FRONTEND_SETTINGS['base_url']
 
 if DEBUG:
     logger.info('InvenTree running with DEBUG enabled')
@@ -1406,6 +1472,7 @@ FLAGS = {
     'NEXT_GEN': [
         {'condition': 'parameter', 'value': 'ngen='}
     ],  # Should next-gen features be turned on?
+    'OIDC': [{'condition': 'parameter', 'value': 'oidc='}],
 }
 
 # Get custom flags from environment/yaml
@@ -1421,7 +1488,7 @@ if CUSTOM_FLAGS:
 SESAME_MAX_AGE = 300
 LOGIN_REDIRECT_URL = '/api/auth/login-redirect/'
 
-# Configuration for API schema generation
+# Configuration for API schema generation / oAuth2
 SPECTACULAR_SETTINGS = {
     'TITLE': 'InvenTree API',
     'DESCRIPTION': 'API for InvenTree - the intuitive open source inventory management system',
@@ -1436,7 +1503,38 @@ SPECTACULAR_SETTINGS = {
     'VERSION': str(inventreeApiVersion()),
     'SERVE_INCLUDE_SCHEMA': False,
     'SCHEMA_PATH_PREFIX': '/api/',
+    'POSTPROCESSING_HOOKS': [
+        'drf_spectacular.hooks.postprocess_schema_enums',
+        'InvenTree.schema.postprocess_required_nullable',
+        'InvenTree.schema.postprocess_print_stats',
+    ],
+    'ENUM_NAME_OVERRIDES': {
+        'UserTypeEnum': 'users.models.UserProfile.UserType',
+        'TemplateModelTypeEnum': 'report.models.ReportTemplateBase.ModelChoices',
+        'AttachmentModelTypeEnum': 'common.models.Attachment.ModelChoices',
+        'DataImportSessionModelTypeEnum': 'importer.models.DataImportSession.ModelChoices',
+        # Allauth
+        'UnauthorizedStatus': [[401, 401]],
+        'IsTrueEnum': [[True, True]],
+    },
+    # oAuth2
+    'OAUTH2_FLOWS': ['authorizationCode', 'clientCredentials'],
+    'OAUTH2_AUTHORIZATION_URL': '/o/authorize/',
+    'OAUTH2_TOKEN_URL': '/o/token/',
+    'OAUTH2_REFRESH_URL': '/o/revoke_token/',
 }
+OAUTH2_PROVIDER = {
+    # default scopes
+    'SCOPES': oauth2_scopes,
+    # OIDC
+    'OIDC_ENABLED': True,
+    'OIDC_RSA_PRIVATE_KEY': get_oidc_private_key(),
+    'PKCE_REQUIRED': False,
+}
+OAUTH2_CHECK_EXCLUDED = [  # This setting mutes schema checks for these rule/method combinations
+    '/api/email/generate/:post',
+    '/api/webhook/{endpoint}/:post',
+]
 
 if SITE_URL and not TESTING:
     SPECTACULAR_SETTINGS['SERVERS'] = [{'url': SITE_URL}]

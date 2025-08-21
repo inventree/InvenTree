@@ -1,7 +1,5 @@
 """Custom field validators for InvenTree."""
 
-from decimal import Decimal, InvalidOperation
-
 from django.conf import settings
 from django.core import validators
 from django.core.exceptions import ValidationError
@@ -65,7 +63,10 @@ class AllowedURLValidator(validators.URLValidator):
         # Determine if 'strict' URL validation is required (i.e. if the URL must have a schema prefix)
         strict_urls = get_global_setting('INVENTREE_STRICT_URLS', cache=False)
 
-        if not strict_urls:
+        if value is not None:
+            value = str(value).strip()
+
+        if value and not strict_urls:
             # Allow URLs which do not have a provided schema
             if '://' not in value:
                 # Validate as if it were http
@@ -92,46 +93,3 @@ def validate_sales_order_reference(value):
 
 def validate_tree_name(value):
     """Placeholder for legacy function used in migrations."""
-
-
-def validate_overage(value):
-    """Validate that a BOM overage string is properly formatted.
-
-    An overage string can look like:
-
-    - An integer number ('1' / 3 / 4)
-    - A decimal number ('0.123')
-    - A percentage ('5%' / '10 %')
-    """
-    value = str(value).lower().strip()
-
-    # First look for a simple numerical value
-    try:
-        i = Decimal(value)
-
-        if i < 0:
-            raise ValidationError(_('Overage value must not be negative'))
-
-        # Looks like a number
-        return
-    except (ValueError, InvalidOperation):
-        pass
-
-    # Now look for a percentage value
-    if value.endswith('%'):
-        v = value[:-1].strip()
-
-        # Does it look like a number?
-        try:
-            f = float(v)
-
-            if f < 0:
-                raise ValidationError(_('Overage value must not be negative'))
-            elif f > 100:
-                raise ValidationError(_('Overage must not exceed 100%'))
-
-            return
-        except ValueError:
-            pass
-
-    raise ValidationError(_('Invalid value for overage'))

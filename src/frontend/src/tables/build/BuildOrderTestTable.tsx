@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { ActionIcon, Badge, Group, Text, Tooltip } from '@mantine/core';
 import { IconCirclePlus } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
@@ -10,22 +10,24 @@ import {
   useState
 } from 'react';
 
-import { PassFailButton } from '../../components/buttons/YesNoButton';
-import type { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
+import { PassFailButton } from '@lib/components/YesNoButton';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
+import { cancelEvent } from '@lib/functions/Events';
+import { AddItemButton } from '@lib/index';
+import type { TableFilter } from '@lib/types/Filters';
+import type { ApiFormFieldSet } from '@lib/types/Forms';
+import type { TableColumn } from '@lib/types/Tables';
+import type { UseFormReturn } from 'react-hook-form';
 import { RenderUser } from '../../components/render/User';
 import { useApi } from '../../contexts/ApiContext';
 import { formatDate } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { useTestResultFields } from '../../forms/StockForms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
-import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import { LocationColumn } from '../ColumnRenderers';
-import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import type { RowAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
 
 /**
@@ -39,7 +41,6 @@ export default function BuildOrderTestTable({
   partId: number;
 }>) {
   const table = useTable('build-tests');
-  const user = useUserState();
   const api = useApi();
 
   // Fetch the test templates required for this build order
@@ -59,8 +60,7 @@ export default function BuildOrderTestTable({
             required: true
           }
         })
-        .then((res) => res.data)
-        .catch((err) => []);
+        .then((res) => res.data);
     }
   });
 
@@ -70,7 +70,9 @@ export default function BuildOrderTestTable({
   }, [testTemplates]);
 
   const [selectedOutput, setSelectedOutput] = useState<number>(0);
-  const [selectedTemplate, setSelectedTemplate] = useState<number>(0);
+  const [selectedTemplate, setSelectedTemplate] = useState<number | undefined>(
+    undefined
+  );
 
   const testResultFields: ApiFormFieldSet = useTestResultFields({
     partId: partId,
@@ -88,6 +90,48 @@ export default function BuildOrderTestTable({
     },
     onFormSuccess: () => table.refreshTable(),
     successMessage: t`Test result added`
+  });
+
+  const multipleTestResultFields: ApiFormFieldSet = useMemo(() => {
+    const fields: ApiFormFieldSet = { ...testResultFields };
+
+    // Do not allow attachment for multiple test results
+    delete fields.attachment;
+    delete fields.stock_item;
+
+    fields.template.disabled = false;
+
+    return fields;
+  }, [partId, testResultFields]);
+
+  const generateTestResults = useCallback(
+    (data: any, form: UseFormReturn) => {
+      // Generate a list of test results for each selected output
+      const results = table.selectedRecords.map((record: any) => {
+        return {
+          ...data,
+          stock_item: record.pk
+        };
+      });
+
+      return results;
+    },
+    [table.selectedIds]
+  );
+
+  const createTestResultMultiple = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.stock_test_result_list),
+    title: t`Add Test Results`,
+    fields: multipleTestResultFields,
+    initialData: {
+      result: true
+    },
+    onFormSuccess: () => {
+      table.clearSelectedRecords();
+      table.refreshTable();
+    },
+    processFormData: generateTestResults,
+    successMessage: t`Test results added`
   });
 
   // Generate a table column for each test template
@@ -118,10 +162,12 @@ export default function BuildOrderTestTable({
                 <Badge color='lightblue' variant='filled'>{t`No Result`}</Badge>
                 <Tooltip label={t`Add Test Result`}>
                   <ActionIcon
-                    size='xs'
+                    size='lg'
                     color='green'
+                    aria-label='add-test-result'
                     variant='transparent'
-                    onClick={() => {
+                    onClick={(event: any) => {
+                      cancelEvent(event);
                       setSelectedOutput(record.pk);
                       setSelectedTemplate(template.pk);
                       createTestResult.open();
@@ -231,19 +277,37 @@ export default function BuildOrderTestTable({
   }, []);
 
   const tableActions = useMemo(() => {
-    return [];
-  }, []);
+    return [
+      <AddItemButton
+        key='add-test-result'
+        tooltip={t`Add Test Result`}
+        disabled={!table.hasSelectedRecords}
+        onClick={(event: any) => {
+          createTestResultMultiple.open();
+        }}
+      />
+    ];
+  }, [table.hasSelectedRecords]);
 
-  const rowActions = useCallback(
-    (record: any): RowAction[] => {
-      return [];
-    },
-    [user]
-  );
+  const rowActions = useCallback((record: any) => {
+    return [
+      {
+        icon: <IconCirclePlus />,
+        color: 'green',
+        title: t`Add Test Result`,
+        onClick: (event: any) => {
+          setSelectedOutput(record.pk);
+          setSelectedTemplate(undefined);
+          createTestResult.open();
+        }
+      }
+    ];
+  }, []);
 
   return (
     <>
       {createTestResult.modal}
+      {createTestResultMultiple.modal}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.stock_item_list)}
         tableState={table}
@@ -255,9 +319,11 @@ export default function BuildOrderTestTable({
             tests: true,
             build: buildId
           },
+          enableSelection: true,
           rowActions: rowActions,
           tableFilters: tableFilters,
-          tableActions: tableActions
+          tableActions: tableActions,
+          modelType: ModelType.stockitem
         }}
       />
     </>

@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import {
   Accordion,
   ActionIcon,
@@ -13,12 +13,15 @@ import { IconInfoCircle, IconRefresh } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
 import { api } from '../../../../App';
 import { StylishText } from '../../../../components/items/StylishText';
-import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
-import { apiUrl } from '../../../../states/ApiState';
 import { MachineListTable } from '../../../../tables/machine/MachineListTable';
-import { MachineTypeListTable } from '../../../../tables/machine/MachineTypeTable';
+import {
+  MachineDriverTable,
+  MachineTypeListTable
+} from '../../../../tables/machine/MachineTypeTable';
 
 interface MachineRegistryStatusI {
   registry_errors: { message: string }[];
@@ -42,13 +45,21 @@ export default function MachineManagementPanel() {
   }, [registryStatus]);
 
   return (
-    <Accordion multiple defaultValue={['machinelist', 'machinetypes']}>
+    <Accordion multiple defaultValue={['machinelist']}>
       <Accordion.Item value='machinelist'>
         <Accordion.Control>
           <StylishText size='lg'>{t`Machines`}</StylishText>
         </Accordion.Control>
         <Accordion.Panel>
           <MachineListTable props={{}} />
+        </Accordion.Panel>
+      </Accordion.Item>
+      <Accordion.Item value='drivertypes'>
+        <Accordion.Control>
+          <StylishText size='lg'>{t`Machine Drivers`}</StylishText>
+        </Accordion.Control>
+        <Accordion.Panel>
+          <MachineDriverTable />
         </Accordion.Panel>
       </Accordion.Item>
       <Accordion.Item value='machinetypes'>

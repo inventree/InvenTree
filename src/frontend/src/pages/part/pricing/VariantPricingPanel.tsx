@@ -1,15 +1,15 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { BarChart } from '@mantine/charts';
 import { SimpleGrid, Stack } from '@mantine/core';
 import { type ReactNode, useMemo } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
+import type { TableColumn } from '@lib/types/Tables';
 import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
 import { formatCurrency } from '../../../defaults/formatters';
-import { ApiEndpoints } from '../../../enums/ApiEndpoints';
-import { ModelType } from '../../../enums/ModelType';
 import { useTable } from '../../../hooks/UseTable';
-import { apiUrl } from '../../../states/ApiState';
-import type { TableColumn } from '../../../tables/Column';
 import { DateColumn, PartColumn } from '../../../tables/ColumnRenderers';
 import { InvenTreeTable } from '../../../tables/InvenTreeTable';
 import { NoPricingData } from './PricingPanel';
@@ -25,13 +25,11 @@ export default function VariantPricingPanel({
 
   const columns: TableColumn[] = useMemo(() => {
     return [
-      {
-        accessor: 'name',
+      PartColumn({
         title: t`Variant Part`,
-        sortable: true,
-        switchable: false,
-        render: (record: any) => PartColumn({ part: record, full_name: true })
-      },
+        part: '',
+        full_name: true
+      }),
       {
         accessor: 'pricing_min',
         title: t`Minimum Price`,
@@ -63,8 +61,10 @@ export default function VariantPricingPanel({
       return {
         part: variant,
         name: variant.full_name,
-        pmin: variant.pricing_min ?? variant.pricing_max ?? 0,
-        pmax: variant.pricing_max ?? variant.pricing_min ?? 0
+        pmin: Number.parseFloat(
+          variant.pricing_min ?? variant.pricing_max ?? 0
+        ),
+        pmax: Number.parseFloat(variant.pricing_max ?? variant.pricing_min ?? 0)
       };
     });
 

@@ -9,8 +9,7 @@
 # - Runs InvenTree web server under django development server
 # - Monitors source files for any changes, and live-reloads server
 
-FROM python:3.11-alpine3.21 AS inventree_base
-ARG base_image
+FROM python:3.11-alpine3.20@sha256:520924f35357a374aa1beaa81b867f449f9f12a53f00b69ad03c3d697fdf4aad AS inventree_base
 
 # Build arguments for this image
 ARG commit_tag=""
@@ -19,8 +18,8 @@ ARG commit_date=""
 
 ARG data_dir="data"
 
-ENV PYTHONUNBUFFERED 1
-ENV PIP_DISABLE_PIP_VERSION_CHECK 1
+ENV PYTHONUNBUFFERED=1
+ENV PIP_DISABLE_PIP_VERSION_CHECK=1
 ENV INVOKE_RUN_SHELL="/bin/ash"
 
 ENV INVENTREE_DOCKER="true"
@@ -38,6 +37,7 @@ ENV INVENTREE_BACKEND_DIR="${INVENTREE_HOME}/src/backend"
 # InvenTree configuration files
 ENV INVENTREE_CONFIG_FILE="${INVENTREE_DATA_DIR}/config.yaml"
 ENV INVENTREE_SECRET_KEY_FILE="${INVENTREE_DATA_DIR}/secret_key.txt"
+ENV INVENTREE_OIDC_PRIVATE_KEY_FILE="${INVENTREE_DATA_DIR}/oidc.pem"
 ENV INVENTREE_PLUGIN_FILE="${INVENTREE_DATA_DIR}/plugins.txt"
 
 # Worker configuration (can be altered by user)
@@ -48,8 +48,7 @@ ENV INVENTREE_BACKGROUND_WORKERS="4"
 ENV INVENTREE_WEB_ADDR=0.0.0.0
 ENV INVENTREE_WEB_PORT=8000
 
-LABEL org.opencontainers.image.created=${DATE} \
-      org.opencontainers.image.vendor="inventree" \
+LABEL org.opencontainers.image.vendor="inventree" \
       org.opencontainers.image.title="InvenTree backend server" \
       org.opencontainers.image.description="InvenTree is the open-source inventory management system" \
       org.opencontainers.image.url="https://inventree.org" \
@@ -57,7 +56,6 @@ LABEL org.opencontainers.image.created=${DATE} \
       org.opencontainers.image.source="https://github.com/inventree/InvenTree" \
       org.opencontainers.image.revision=${commit_hash} \
       org.opencontainers.image.licenses="MIT" \
-      org.opencontainers.image.base.name="docker.io/library/${base_image}" \
       org.opencontainers.image.version=${commit_tag}
 
 
@@ -68,8 +66,8 @@ RUN apk add --no-cache \
     libjpeg libwebp zlib \
     # Weasyprint requirements : https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#alpine-3-12
     py3-pip py3-pillow py3-cffi py3-brotli pango poppler-utils openldap \
-    # Postgres client (note: backwards compatible with postgres server <= 17)
-    postgresql17-client \
+    # Postgres client (note: backwards compatible with postgres server <= 16)
+    postgresql16-client \
     # MySQL / MariaDB client
     mariadb-client mariadb-connector-c \
     && \
@@ -110,7 +108,9 @@ RUN ./install_build_packages.sh --no-cache --virtual .build-deps && \
 # Frontend builder image:
 FROM prebuild AS frontend
 
-RUN apk add --no-cache --update nodejs npm yarn
+RUN apk add --no-cache --update nodejs npm yarn bash
+RUN npm install -g --ignore-scripts n@10.1.0
+RUN bash -c "n lts"
 RUN yarn config set network-timeout 600000 -g
 COPY src ${INVENTREE_HOME}/src
 COPY tasks.py ${INVENTREE_HOME}/tasks.py
@@ -137,6 +137,9 @@ COPY src/backend/InvenTree ${INVENTREE_BACKEND_DIR}/InvenTree
 COPY src/backend/requirements.txt ${INVENTREE_BACKEND_DIR}/requirements.txt
 COPY --from=frontend ${INVENTREE_BACKEND_DIR}/InvenTree/web/static/web ${INVENTREE_BACKEND_DIR}/InvenTree/web/static/web
 
+# Fix invoke command path for InvenTree environment check
+RUN ln -sf /root/.local/bin/invoke /bin/invoke
+
 # Launch the production server
 CMD gunicorn -c ./gunicorn.conf.py InvenTree.wsgi -b 0.0.0.0:8000 --chdir ${INVENTREE_BACKEND_DIR}/InvenTree
 
@@ -152,7 +155,9 @@ RUN pip install --require-hashes -r base_requirements.txt --no-cache
 
 # Install nodejs / npm / yarn
 
-RUN apk add --no-cache --update nodejs npm yarn
+RUN apk add --no-cache --update nodejs npm yarn bash
+RUN npm install -g --ignore-scripts n@10.1.0
+RUN bash -c "n lts"
 RUN yarn config set network-timeout 600000 -g
 
 # The development image requires the source code to be mounted to /home/inventree/

@@ -1,57 +1,18 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
+import type { TableFilter, TableFilterChoice } from '@lib/types/Filters';
 import type {
   StatusCodeInterface,
   StatusCodeListInterface
 } from '../components/render/StatusRenderer';
-import type { ModelType } from '../enums/ModelType';
-import { useGlobalSettingsState } from '../states/SettingsState';
-import { type StatusLookup, useGlobalStatusState } from '../states/StatusState';
-
-/**
- * Interface for the table filter choice
- */
-export type TableFilterChoice = {
-  value: string;
-  label: string;
-};
-
-/**
- * Available filter types
- *
- * boolean: A simple true/false filter
- * choice: A filter which allows selection from a list of (supplied)
- * date: A filter which allows selection from a date input
- * text: A filter which allows raw text input
- */
-export type TableFilterType = 'boolean' | 'choice' | 'date' | 'text';
-
-/**
- * Interface for the table filter type. Provides a number of options for selecting filter value:
- *
- * name: The name of the filter (used for query string)
- * label: The label to display in the UI (human readable)
- * description: A description of the filter (human readable)
- * type: The type of filter (see TableFilterType)
- * choices: A list of TableFilterChoice objects
- * choiceFunction: A function which returns a list of TableFilterChoice objects
- * defaultValue: The default value for the filter
- * value: The current value of the filter
- * displayValue: The current display value of the filter
- * active: Whether the filter is active (false = hidden, not used)
- */
-export type TableFilter = {
-  name: string;
-  label: string;
-  description?: string;
-  type?: TableFilterType;
-  choices?: TableFilterChoice[];
-  choiceFunction?: () => TableFilterChoice[];
-  defaultValue?: any;
-  value?: any;
-  displayValue?: any;
-  active?: boolean;
-};
+import {
+  type StatusLookup,
+  useGlobalStatusState
+} from '../states/GlobalStatusState';
+import { useGlobalSettingsState } from '../states/SettingsStates';
 
 /**
  * Return list of available filter options for a given filter
@@ -107,6 +68,58 @@ export function StatusFilterOptions(
 }
 
 // Define some commonly used filters
+
+export function HasBatchCodeFilter(): TableFilter {
+  return {
+    name: 'has_batch',
+    label: t`Has Batch Code`,
+    description: t`Show items which have a batch code`
+  };
+}
+
+export function BatchFilter(): TableFilter {
+  return {
+    name: 'batch',
+    label: t`Batch Code`,
+    description: t`Filter items by batch code`,
+    type: 'text'
+  };
+}
+
+export function IsSerializedFilter(): TableFilter {
+  return {
+    name: 'serialized',
+    label: t`Is Serialized`,
+    description: t`Show items which have a serial number`
+  };
+}
+
+export function SerialFilter(): TableFilter {
+  return {
+    name: 'serial',
+    label: t`Serial`,
+    description: t`Filter items by serial number`,
+    type: 'text'
+  };
+}
+
+export function SerialLTEFilter(): TableFilter {
+  return {
+    name: 'serial_lte',
+    label: t`Serial Below`,
+    description: t`Show items with serial numbers less than or equal to a given value`,
+    type: 'text'
+  };
+}
+
+export function SerialGTEFilter(): TableFilter {
+  return {
+    name: 'serial_gte',
+    label: t`Serial Above`,
+    description: t`Show items with serial numbers greater than or equal to a given value`,
+    type: 'text'
+  };
+}
 
 export function AssignedToMeFilter(): TableFilter {
   return {
@@ -236,6 +249,15 @@ export function HasProjectCodeFilter(): TableFilter {
   };
 }
 
+export function IncludeVariantsFilter(): TableFilter {
+  return {
+    name: 'include_variants',
+    type: 'boolean',
+    label: t`Include Variants`,
+    description: t`Include results for part variants`
+  };
+}
+
 export function OrderStatusFilter({
   model
 }: { model: ModelType }): TableFilter {
@@ -247,9 +269,7 @@ export function OrderStatusFilter({
   };
 }
 
-export function ProjectCodeFilter({
-  choices
-}: { choices: TableFilterChoice[] }): TableFilter {
+export function ProjectCodeFilter(): TableFilter {
   const globalSettings = useGlobalSettingsState.getState();
   const enabled = globalSettings.isSet('PROJECT_CODES_ENABLED', true);
 
@@ -258,28 +278,121 @@ export function ProjectCodeFilter({
     label: t`Project Code`,
     description: t`Filter by project code`,
     active: enabled,
-    choices: choices
+    type: 'api',
+    apiUrl: apiUrl(ApiEndpoints.project_code_list),
+    model: ModelType.projectcode,
+    modelRenderer: (instance) => instance.code
   };
 }
 
-export function ResponsibleFilter({
-  choices
-}: { choices: TableFilterChoice[] }): TableFilter {
+export function OwnerFilter({
+  name,
+  label,
+  description
+}: {
+  name: string;
+  label: string;
+  description: string;
+}): TableFilter {
   return {
+    name: name,
+    label: label,
+    description: description,
+    type: 'api',
+    apiUrl: apiUrl(ApiEndpoints.owner_list),
+    model: ModelType.owner,
+    modelRenderer: (instance: any) => instance.name
+  };
+}
+
+export function ResponsibleFilter(): TableFilter {
+  return OwnerFilter({
     name: 'assigned_to',
     label: t`Responsible`,
-    description: t`Filter by responsible owner`,
-    choices: choices
+    description: t`Filter by responsible owner`
+  });
+}
+
+export function UserFilter({
+  name,
+  label,
+  description
+}: {
+  name?: string;
+  label?: string;
+  description?: string;
+}): TableFilter {
+  return {
+    name: name ?? 'user',
+    label: label ?? t`User`,
+    description: description ?? t`Filter by user`,
+    type: 'api',
+    apiUrl: apiUrl(ApiEndpoints.user_list),
+    model: ModelType.user,
+    modelRenderer: (instance: any) => instance.username
   };
 }
 
-export function CreatedByFilter({
-  choices
-}: { choices: TableFilterChoice[] }): TableFilter {
+export function ManufacturerFilter(): TableFilter {
   return {
+    name: 'manufacturer',
+    label: t`Manufacturer`,
+    description: t`Filter by manufacturer`,
+    type: 'api',
+    apiUrl: apiUrl(ApiEndpoints.company_list),
+    model: ModelType.company,
+    modelRenderer: (instance: any) => instance.name,
+    apiFilter: { is_manufacturer: true }
+  };
+}
+
+export function SupplierFilter(): TableFilter {
+  return {
+    name: 'supplier',
+    label: t`Supplier`,
+    description: t`Filter by supplier`,
+    type: 'api',
+    apiUrl: apiUrl(ApiEndpoints.company_list),
+    model: ModelType.company,
+    modelRenderer: (instance: any) => instance.name,
+    apiFilter: { is_supplier: true }
+  };
+}
+
+export function CreatedByFilter(): TableFilter {
+  return UserFilter({
     name: 'created_by',
     label: t`Created By`,
-    description: t`Filter by user who created the order`,
-    choices: choices
+    description: t`Filter by user who created the order`
+  });
+}
+
+export function IssuedByFilter(): TableFilter {
+  return UserFilter({
+    name: 'issued_by',
+    label: t`Issued By`,
+    description: t`Filter by user who issued the order`
+  });
+}
+
+export function PartCategoryFilter(): TableFilter {
+  return {
+    name: 'category',
+    label: t`Part Category`,
+    description: t`Filter by part category`,
+    apiUrl: apiUrl(ApiEndpoints.category_list),
+    model: ModelType.partcategory,
+    modelRenderer: (instance: any) => instance.name
+  };
+}
+
+export function StockLocationFilter(): TableFilter {
+  return {
+    name: 'location',
+    label: t`Location`,
+    description: t`Filter by stock location`,
+    apiUrl: apiUrl(ApiEndpoints.stock_location_list),
+    model: ModelType.stocklocation,
+    modelRenderer: (instance: any) => instance.name
   };
 }

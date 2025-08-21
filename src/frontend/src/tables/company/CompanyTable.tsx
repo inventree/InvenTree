@@ -1,26 +1,28 @@
-import { t } from '@lingui/macro';
-import { Group, Text } from '@mantine/core';
+import { t } from '@lingui/core/macro';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { Thumbnail } from '../../components/images/Thumbnail';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
+import { AddItemButton } from '@lib/components/AddItemButton';
+import { type RowAction, RowEditAction } from '@lib/components/RowActions';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import { navigateToLink } from '@lib/functions/Navigation';
+import type { TableFilter } from '@lib/types/Filters';
 import { companyFields } from '../../forms/CompanyForms';
-import { navigateToLink } from '../../functions/navigation';
 import {
   useCreateApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
-import type { TableFilter } from '../Filter';
+import {
+  BooleanColumn,
+  CompanyColumn,
+  DescriptionColumn
+} from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { type RowAction, RowEditAction } from '../RowActions';
 
 /**
  * A table which displays a list of company records,
@@ -42,18 +44,11 @@ export function CompanyTable({
     return [
       {
         accessor: 'name',
+        title: t`Company`,
         sortable: true,
+        switchable: false,
         render: (record: any) => {
-          return (
-            <Group gap='xs' wrap='nowrap'>
-              <Thumbnail
-                src={record.thumbnail ?? record.image ?? ''}
-                alt={record.name}
-                size={24}
-              />
-              <Text>{record.name}</Text>
-            </Group>
-          );
+          return <CompanyColumn company={record} />;
         }
       },
       DescriptionColumn({}),
@@ -168,6 +163,8 @@ export function CompanyTable({
           tableFilters: tableFilters,
           tableActions: tableActions,
           enableDownload: true,
+          enableSelection: true,
+          enableReports: true,
           rowActions: rowActions
         }}
       />

@@ -1,4 +1,7 @@
 #!/bin/bash
+set -e
+
+echo "Running postCreateCommand.sh ..."
 
 # Avoiding Dubious Ownership in Dev Containers for setup commands that use git
 git config --global --add safe.directory /home/inventree
@@ -24,7 +27,7 @@ python3 -m pip install --upgrade pip
 pip3 install --ignore-installed --upgrade invoke Pillow
 
 # install base level packages
-pip3 install -Ur contrib/container/requirements.txt
+pip3 install -Ur contrib/container/requirements.txt --require-hashes
 
 # Run initial InvenTree server setup
 invoke update -s
@@ -34,6 +37,3 @@ invoke dev.setup-dev
 
 # Install required frontend packages
 invoke int.frontend-install
-
-# Install playwright dependencies
-cd src/frontend && sudo npx playwright install-deps

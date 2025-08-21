@@ -14,8 +14,11 @@ import {
   IconLogin
 } from '@tabler/icons-react';
 
-import { t } from '@lingui/macro';
-import type { Provider } from '../../states/states';
+import type { AuthProvider } from '@lib/types/Auth';
+import { t } from '@lingui/core/macro';
+import { ProviderLogin } from '../../functions/auth';
+
+import type { JSX } from 'react';
 
 const brandIcons: { [key: string]: JSX.Element } = {
   google: <IconBrandGoogle />,
@@ -31,31 +34,22 @@ const brandIcons: { [key: string]: JSX.Element } = {
   microsoft: <IconBrandAzure />
 };
 
-export function SsoButton({ provider }: Readonly<{ provider: Provider }>) {
-  function login() {
-    window.location.href = provider.login;
-  }
-
+export function SsoButton({ provider }: Readonly<{ provider: AuthProvider }>) {
   return (
     <Tooltip
-      label={
-        provider.login
-          ? t`You will be redirected to the provider for further actions.`
-          : t`This provider is not full set up.`
-      }
+      label={t`You will be redirected to the provider for further actions.`}
     >
       <Button
         leftSection={getBrandIcon(provider)}
         radius='xl'
         component='a'
-        onClick={login}
-        disabled={!provider.login}
+        onClick={() => ProviderLogin(provider)}
       >
-        {provider.display_name}
+        {provider.name}
       </Button>
     </Tooltip>
   );
 }
-function getBrandIcon(provider: Provider) {
+function getBrandIcon(provider: AuthProvider) {
   return brandIcons[provider.id] || <IconLogin />;
 }

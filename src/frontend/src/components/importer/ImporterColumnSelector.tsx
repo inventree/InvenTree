@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import {
   Alert,
   Button,
@@ -13,12 +13,12 @@ import {
 import { IconCheck } from '@tabler/icons-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
+import type { ApiFormFieldType } from '@lib/types/Forms';
 import { useApi } from '../../contexts/ApiContext';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import type { ImportSessionState } from '../../hooks/UseImportSession';
-import { apiUrl } from '../../states/ApiState';
 import { StandaloneField } from '../forms/StandaloneField';
-import type { ApiFormFieldType } from '../forms/fields/ApiFormField';
 
 function ImporterColumn({
   column,
@@ -61,6 +61,7 @@ function ImporterColumn({
 
   return (
     <Select
+      aria-label={`import-column-map-${column.field}`}
       error={errorMessage}
       clearable
       searchable

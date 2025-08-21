@@ -33,6 +33,8 @@ Result: {{ myvar }}
 {% endraw %}
 ```
 
+Note the use of the `as` keyword to assign the output of the function to a variable. This can be used to assign the result of a function to a named variable, which can then be used later in the template.
+
 ## Data Structure Access
 
 A number of helper functions are available for accessing data contained in a particular structure format:
@@ -86,8 +88,6 @@ A number of helper functions are available for accessing database objects:
 
 The `filter_queryset` function allows for arbitrary filtering of the provided querysert. It takes a queryset and a list of filter arguments, and returns a filtered queryset.
 
-
-
 ::: report.templatetags.report.filter_queryset
     options:
         show_docstring_description: false
@@ -135,7 +135,7 @@ Generate a list of all active customers:
 {% raw %}
 {% load report %}
 
-{% filter_db_model company.company is_customer=True active=True as active_customers %}
+{% filter_db_model 'company.company' is_customer=True active=True as active_customers %}
 
 <ul>
     {% for customer in active_customers %}
@@ -148,7 +148,7 @@ Generate a list of all active customers:
 
 ### Advanced Database Queries
 
-More advanced database filtering should be achieved using a [report plugin](../extend/plugins/report.md), and adding custom context data to the report template.
+More advanced database filtering should be achieved using a [report plugin](../plugins/mixins/report.md), and adding custom context data to the report template.
 
 ## Number Formatting
 
@@ -280,9 +280,12 @@ Simple mathematical operators are available, as demonstrated in the example temp
 {% add 1 3 %} <!-- Add two numbers together -->
 {% subtract 4 3 %} <!-- Subtract 3 from 4 -->
 {% multiply 1.2 3.4 %} <!-- Multiply two numbers -->
-{% divide 10 2  as division_result %} <!-- Divide 10 by 2 -->
+
+<!-- Perform a calculation and store the result -->
+{% divide 10 2 as division_result %} <!-- Divide 10 by 2 -->
 
 Division Result: {{ division_result }}
+
 
 {% endraw %}
 ```
@@ -466,7 +469,7 @@ If you have a custom logo, but explicitly wish to load the InvenTree logo itself
 
 ## Report Assets
 
-[Report Assets](./templates.md#report-assets) are files specifically uploaded by the user for inclusion in generated reports and labels.
+[Report Assets](./index.md#report-assets) are files specifically uploaded by the user for inclusion in generated reports and labels.
 
 You can add asset images to the reports and labels by using the `{% raw %}{% asset ... %}{% endraw %}` template tag:
 
@@ -489,7 +492,7 @@ If you need to load a part parameter for a particular Part, within the context o
 
 ### Example
 
-The following example assumes that you have a report or label which contains a valid [Part](../part/part.md) instance:
+The following example assumes that you have a report or label which contains a valid [Part](../part/index.md) instance:
 
 ```
 {% raw %}
@@ -512,6 +515,26 @@ A [Part Parameter](../part/parameter.md) has the following available attributes:
 | Data | The *value* of the parameter (e.g. "123.4") |
 | Units | The *units* of the parameter (e.g. "km") |
 | Template | A reference to a [PartParameterTemplate](../part/parameter.md#parameter-templates) |
+
+## Rendering Markdown
+
+Some data fields (such as the *Notes* field available on many internal database models) support [markdown formatting](https://en.wikipedia.org/wiki/Markdown). To render markdown content in a custom report, there are template filters made available through the [django-markdownify](https://github.com/erwinmatijsen/django-markdownify) library. This library provides functionality for converting markdown content to HTML representation, allowing it to be then rendered to PDF by the InvenTree report generation pipeline.
+
+To render markdown content in a report, consider the following simplified example:
+
+```html
+{% raw %}
+
+{% load markdownify %}
+
+<h3>Part Notes</h3>
+<p>
+    {{ part.notes | markdownify }}
+</p>
+{% endraw %}
+```
+
+You can read further details in the [django-markdownify documentation](https://django-markdownify.readthedocs.io/en/latest/).
 
 ## List of tags and filters
 

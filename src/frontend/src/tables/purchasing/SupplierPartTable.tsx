@@ -1,12 +1,19 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Text } from '@mantine/core';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 
-import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { Thumbnail } from '../../components/images/Thumbnail';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
+import { AddItemButton } from '@lib/components/AddItemButton';
+import {
+  type RowAction,
+  RowDeleteAction,
+  RowEditAction
+} from '@lib/components/RowActions';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import type { TableFilter } from '@lib/types/Filters';
+import type { TableColumn } from '@lib/types/Tables';
 import { useSupplierPartFields } from '../../forms/CompanyForms';
 import {
   useCreateApiFormModal,
@@ -14,19 +21,17 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import {
   BooleanColumn,
+  CompanyColumn,
+  DecimalColumn,
   DescriptionColumn,
   LinkColumn,
   NoteColumn,
   PartColumn
 } from '../ColumnRenderers';
-import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
 
 /*
@@ -43,27 +48,16 @@ export function SupplierPartTable({
   // Construct table columns for this table
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
-      {
-        accessor: 'part',
+      PartColumn({
         switchable: 'part' in params,
-        sortable: true,
-        render: (record: any) => PartColumn({ part: record?.part_detail })
-      },
+        part: 'part_detail'
+      }),
       {
         accessor: 'supplier',
         sortable: true,
-        render: (record: any) => {
-          const supplier = record?.supplier_detail ?? {};
-
-          return supplier?.pk ? (
-            <Thumbnail
-              src={supplier?.thumbnail ?? supplier.image}
-              text={supplier.name}
-            />
-          ) : (
-            '-'
-          );
-        }
+        render: (record: any) => (
+          <CompanyColumn company={record?.supplier_detail} />
+        )
       },
       {
         accessor: 'SKU',
@@ -73,20 +67,11 @@ export function SupplierPartTable({
       DescriptionColumn({}),
       {
         accessor: 'manufacturer',
-
+        title: t`Manufacturer`,
         sortable: true,
-        render: (record: any) => {
-          const manufacturer = record?.manufacturer_detail ?? {};
-
-          return manufacturer?.pk ? (
-            <Thumbnail
-              src={manufacturer?.thumbnail ?? manufacturer.image}
-              text={manufacturer.name}
-            />
-          ) : (
-            '-'
-          );
-        }
+        render: (record: any) => (
+          <CompanyColumn company={record?.manufacturer_detail} />
+        )
       },
       {
         accessor: 'MPN',
@@ -99,15 +84,17 @@ export function SupplierPartTable({
         accessor: 'active',
         title: t`Active`,
         sortable: true,
-        switchable: true
+        switchable: true,
+        defaultVisible: false
       }),
-      {
+      DecimalColumn({
         accessor: 'in_stock',
         sortable: true
-      },
+      }),
       {
         accessor: 'packaging',
-        sortable: true
+        sortable: true,
+        defaultVisible: false
       },
       {
         accessor: 'pack_quantity',
@@ -140,7 +127,7 @@ export function SupplierPartTable({
       {
         accessor: 'available',
         sortable: true,
-
+        defaultVisible: false,
         render: (record: any) => {
           const extra = [];
 

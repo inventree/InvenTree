@@ -32,11 +32,17 @@
 # INVENTREE_TAG=0.7.5
 #
 
+# ----------------------------
+# Docker compose customization
+# ----------------------------
+# If you wish to customize the docker-compose script, you should only do so if you understand the stack!
+# Do not expect support for customizations that are not part of the standard InvenTree setup!
+
 services:
     # Database service
     # Use PostgreSQL as the database backend
     inventree-db:
-        image: postgres:17
+        image: postgres:16
         container_name: inventree-db
         expose:
             - ${INVENTREE_DB_PORT:-5432}/tcp
@@ -114,17 +120,3 @@ services:
             - ${INVENTREE_EXT_VOLUME}:/var/log:z
             - ${INVENTREE_EXT_VOLUME}:/data:z
             - ${INVENTREE_EXT_VOLUME}:/config:z
-
-    # alternative: run nginx as reverse proxy
-    # inventree-proxy:
-    #     container_name: inventree-proxy
-    #     image: nginx:stable
-    #     restart: always
-    #     depends_on:
-    #         - inventree-server
-    #     ports:
-    #         - ${INVENTREE_WEB_PORT:-80}:80
-    #         - 443:443
-    #     volumes:
-    #         - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro,z
-    #         - ${INVENTREE_EXT_VOLUME}:/var/www:z

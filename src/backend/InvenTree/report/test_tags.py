@@ -12,6 +12,7 @@ from djmoney.money import Money
 from PIL import Image
 
 from common.models import InvenTreeSetting
+from InvenTree.config import get_testfolder_dir
 from InvenTree.unit_test import InvenTreeTestCase
 from part.models import Part, PartParameter, PartParameterTemplate
 from part.test_api import PartImageTestMixin
@@ -175,8 +176,8 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
         # Test might return one of two results, depending on test env
         # If INVENTREE_SITE_URL is not set in the CI environment, the link will be relative
         options = [
-            f'<a href="http://localhost:8000/platform/part/{obj.pk}">test</a>',
-            f'<a href="/platform/part/{obj.pk}">test</a>',
+            f'<a href="http://localhost:8000/web/part/{obj.pk}">test</a>',
+            f'<a href="/web/part/{obj.pk}">test</a>',
         ]
 
         self.assertIn(link, options)
@@ -196,9 +197,14 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
     def test_maths_tags(self):
         """Simple tests for mathematical operator tags."""
         self.assertEqual(report_tags.add(1, 2), 3)
+        self.assertEqual(report_tags.add('-33', '33'), 0)
         self.assertEqual(report_tags.subtract(10, 4.2), 5.8)
         self.assertEqual(report_tags.multiply(2.3, 4), 9.2)
+        self.assertEqual(report_tags.multiply('-2', 4), -8.0)
         self.assertEqual(report_tags.divide(100, 5), 20)
+
+        with self.assertRaises(ZeroDivisionError):
+            report_tags.divide(100, 0)
 
     def test_number_tags(self):
         """Simple tests for number formatting tags."""
@@ -309,7 +315,7 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
     def test_encode_svg_image(self):
         """Test the encode_svg_image template tag."""
         # Generate smallest possible SVG for testing
-        svg_path = settings.BASE_DIR / '_testfolder' / 'part_image_123abc.png'
+        svg_path = get_testfolder_dir() / 'part_image_123abc.png'
         with open(svg_path, 'w', encoding='utf8') as f:
             f.write('<svg xmlns="http://www.w3.org/2000/svg>')
 

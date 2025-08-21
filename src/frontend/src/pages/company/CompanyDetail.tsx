@@ -1,7 +1,6 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Grid, Skeleton, Stack } from '@mantine/core';
 import {
-  IconBuildingFactory2,
   IconBuildingWarehouse,
   IconInfoCircle,
   IconMap2,
@@ -15,7 +14,12 @@ import {
 import { type ReactNode, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
 import AdminButton from '../../components/buttons/AdminButton';
+import { PrintingActions } from '../../components/buttons/PrintingActions';
 import {
   type DetailsField,
   DetailsTable
@@ -35,16 +39,12 @@ import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import { companyFields } from '../../forms/CompanyForms';
 import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { AddressTable } from '../../tables/company/AddressTable';
 import { ContactTable } from '../../tables/company/ContactTable';
@@ -73,8 +73,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
   const {
     instance: company,
     refreshInstance,
-    instanceQuery,
-    requestStatus
+    instanceQuery
   } = useInstance({
     endpoint: ApiEndpoints.company_list,
     pk: id,
@@ -115,6 +114,13 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
         label: t`Email Address`,
         copy: true,
         hidden: !company.email
+      },
+      {
+        type: 'text',
+        name: 'tax_id',
+        label: t`Tax ID`,
+        copy: true,
+        hidden: !company.tax_id
       }
     ];
 
@@ -177,21 +183,21 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
         content: detailsPanel
       },
       {
-        name: 'manufactured-parts',
-        label: t`Manufactured Parts`,
-        icon: <IconBuildingFactory2 />,
-        hidden: !company?.is_manufacturer,
-        content: company?.pk && (
-          <ManufacturerPartTable params={{ manufacturer: company.pk }} />
-        )
-      },
-      {
         name: 'supplied-parts',
         label: t`Supplied Parts`,
-        icon: <IconBuildingWarehouse />,
+        icon: <IconPackageExport />,
         hidden: !company?.is_supplier,
         content: company?.pk && (
           <SupplierPartTable params={{ supplier: company.pk }} />
+        )
+      },
+      {
+        name: 'manufactured-parts',
+        label: t`Manufactured Parts`,
+        icon: <IconBuildingWarehouse />,
+        hidden: !company?.is_manufacturer,
+        content: company?.pk && (
+          <ManufacturerPartTable params={{ manufacturer: company.pk }} />
         )
       },
       {
@@ -242,6 +248,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
             allowAdd={false}
             tableName='assigned-stock'
             showLocation={false}
+            allowReturn
             params={{ customer: company.pk }}
           />
         ) : (
@@ -291,6 +298,11 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
   const companyActions = useMemo(() => {
     return [
       <AdminButton model={ModelType.company} id={company.pk} />,
+      <PrintingActions
+        modelType={ModelType.company}
+        items={[company.pk]}
+        enableReports
+      />,
       <OptionsActionDropdown
         tooltip={t`Company Actions`}
         actions={[
@@ -321,7 +333,10 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
     <>
       {editCompany.modal}
       {deleteCompany.modal}
-      <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
+      <InstanceDetail
+        query={instanceQuery}
+        requiredPermission={ModelType.company}
+      >
         <Stack gap='xs'>
           <PageDetail
             title={`${t`Company`}: ${company.name}`}
@@ -343,6 +358,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
             pageKey='company'
             panels={companyPanels}
             instance={company}
+            reloadInstance={refreshInstance}
             model={ModelType.company}
             id={company.pk}
           />

@@ -41,6 +41,29 @@
       "justMyCode": false
     },
     {
+      "name": "InvenTree invoke schema",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/.venv/lib/python3.9/site-packages/invoke/__main__.py",
+      "cwd": "${workspaceFolder}",
+      "args": [
+        "dev.schema","--ignore-warnings"
+      ],
+      "justMyCode": false
+    },
+    {
+      "name": "schema generation",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/src/backend/InvenTree/manage.py",
+      "args": [
+        "schema",
+        "--file","src/frontend/schema.yml"
+      ],
+      "django": true,
+      "justMyCode": false
+    },
+    {
       "name": "InvenTree Frontend - Vite",
       "type": "chrome",
       "request": "launch",

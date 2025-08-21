@@ -26,6 +26,8 @@ class GeneralExtraLineMeta:
 class PurchaseOrderLineItemInlineAdmin(admin.StackedInline):
     """Inline admin class for the PurchaseOrderLineItem model."""
 
+    autocomplete_fields = ['part', 'destination', 'build_order']
+
     model = models.PurchaseOrderLineItem
     extra = 0
 
@@ -42,7 +44,25 @@ class PurchaseOrderAdmin(admin.ModelAdmin):
 
     inlines = [PurchaseOrderLineItemInlineAdmin]
 
-    autocomplete_fields = ['supplier', 'project_code', 'contact', 'address']
+    autocomplete_fields = [
+        'address',
+        'contact',
+        'created_by',
+        'destination',
+        'supplier',
+        'project_code',
+        'received_by',
+        'responsible',
+    ]
+
+
+class SalesOrderLineItemInlineAdmin(admin.StackedInline):
+    """Inline admin class for the SalesOrderLineItem model."""
+
+    model = models.SalesOrderLineItem
+    extra = 0
+
+    autocomplete_fields = ['part']
 
 
 @admin.register(models.SalesOrder)
@@ -55,7 +75,17 @@ class SalesOrderAdmin(admin.ModelAdmin):
 
     search_fields = ['reference', 'customer__name', 'description']
 
-    autocomplete_fields = ['customer', 'project_code', 'contact', 'address']
+    inlines = [SalesOrderLineItemInlineAdmin]
+
+    autocomplete_fields = [
+        'address',
+        'contact',
+        'created_by',
+        'customer',
+        'project_code',
+        'responsible',
+        'shipped_by',
+    ]
 
 
 @admin.register(models.PurchaseOrderLineItem)
@@ -103,7 +133,7 @@ class SalesOrderShipmentAdmin(admin.ModelAdmin):
 
     search_fields = ['reference', 'order__reference', 'order__customer__name']
 
-    autocomplete_fields = ('order',)
+    autocomplete_fields = ('order', 'checked_by')
 
 
 @admin.register(models.SalesOrderAllocation)
@@ -133,6 +163,8 @@ class ReturnOrderLineItemAdmin(admin.ModelAdmin):
     """Admin class for ReturnOrderLine model."""
 
     list_display = ['order', 'item', 'reference']
+
+    autocomplete_fields = ['item', 'order']
 
 
 @admin.register(models.ReturnOrderExtraLine)

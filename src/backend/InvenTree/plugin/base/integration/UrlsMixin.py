@@ -1,11 +1,11 @@
 """Plugin mixin class for UrlsMixin."""
 
 from django.conf import settings
-from django.urls import include, re_path
 
 import structlog
 
 from common.settings import get_global_setting
+from plugin import PluginMixinEnum
 from plugin.urls import PLUGIN_BASE
 
 logger = structlog.get_logger('inventree')
@@ -22,7 +22,7 @@ class UrlsMixin:
     def __init__(self):
         """Register mixin."""
         super().__init__()
-        self.add_mixin('urls', 'has_urls', __class__)
+        self.add_mixin(PluginMixinEnum.URLS, 'has_urls', __class__)
         self.urls = self.setup_urls()
 
     @classmethod
@@ -48,7 +48,7 @@ class UrlsMixin:
             urls_changed = False
             # check whether an activated plugin extends UrlsMixin
             for _key, plugin in plugins:
-                if plugin.mixin_enabled('urls'):
+                if plugin.mixin_enabled(PluginMixinEnum.URLS):
                     urls_changed = True
             # if apps were changed or force loading base apps -> reload
             if urls_changed or force_reload or full_reload:
@@ -71,12 +71,8 @@ class UrlsMixin:
 
     @property
     def urlpatterns(self):
-        """Urlpatterns for this plugin."""
-        if self.has_urls:
-            return re_path(
-                f'^{self.slug}/', include((self.urls, self.slug)), name=self.slug
-            )
-        return None
+        """URL patterns for this plugin."""
+        return self.urls or None
 
     @property
     def has_urls(self):

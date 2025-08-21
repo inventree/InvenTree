@@ -1,5 +1,3 @@
-import { baseUrl } from './defaults';
-
 /**
  * Open the filter drawer for the currently visible table
  * @param page - The page object
@@ -37,6 +35,7 @@ export const clearTableFilters = async (page) => {
   await openFilterDrawer(page);
   await clickButtonIfVisible(page, 'Clear Filters');
   await closeFilterDrawer(page);
+  await page.waitForLoadState('networkidle');
 };
 
 export const setTableChoiceFilter = async (page, filter, value) => {
@@ -54,6 +53,7 @@ export const setTableChoiceFilter = async (page, filter, value) => {
   await page.getByPlaceholder('Select filter value').click();
   await page.getByRole('option', { name: value }).click();
 
+  await page.waitForLoadState('networkidle');
   await closeFilterDrawer(page);
 };
 
@@ -65,21 +65,60 @@ export const getRowFromCell = async (cell) => {
   return cell.locator('xpath=ancestor::tr').first();
 };
 
+export const clickOnRowMenu = async (cell) => {
+  const row = await getRowFromCell(cell);
+
+  await row.getByLabel(/row-action-menu-/i).click();
+};
+
+interface NavigateOptions {
+  waitUntil?: 'load' | 'domcontentloaded' | 'networkidle';
+  baseUrl?: string;
+}
+
 /**
  * Navigate to the provided page, and wait for loading to complete
  * @param page
  * @param url
  */
-export const navigate = async (page, url: string) => {
-  if (!url.startsWith(baseUrl)) {
-    if (url.startsWith('/')) {
-      url = url.slice(1);
-    }
-
-    url = `${baseUrl}/${url}`;
+export const navigate = async (
+  page,
+  url: string,
+  options?: NavigateOptions
+) => {
+  if (!url.startsWith('http') && !url.includes('web')) {
+    url = `/web/${url}`.replaceAll('//', '/');
   }
 
-  await page.goto(url, { waitUntil: 'domcontentloaded' });
+  const path: string = options?.baseUrl
+    ? new URL(url, options.baseUrl).toString()
+    : url;
+
+  await page.goto(path, { waitUntil: options?.waitUntil ?? 'load' });
+};
+
+/**
+ * CLick on the 'tab' element with the provided name
+ */
+export const loadTab = async (page, tabName, exact?) => {
+  await page
+    .getByLabel(/panel-tabs-/)
+    .getByRole('tab', { name: tabName, exact: exact ?? false })
+    .click();
+
+  await page.waitForLoadState('networkidle');
+};
+
+// Activate "table" view in certain contexts
+export const activateTableView = async (page) => {
+  await page.getByLabel('segmented-icon-control-table').click();
+  await page.waitForLoadState('networkidle');
+};
+
+// Activate "calendar" view in certain contexts
+export const activateCalendarView = async (page) => {
+  await page.getByLabel('segmented-icon-control-calendar').click();
+  await page.waitForLoadState('networkidle');
 };
 
 /**

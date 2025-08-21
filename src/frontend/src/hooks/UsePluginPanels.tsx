@@ -1,33 +1,20 @@
-import { useQuery } from '@tanstack/react-query';
+import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import type { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
+import type { InvenTreePluginContext } from '@lib/types/Plugins';
 import { api } from '../App';
 import { ApiIcon } from '../components/items/ApiIcon';
 import type { PanelType } from '../components/panels/Panel';
-import {
-  type InvenTreeContext,
-  useInvenTreeContext
-} from '../components/plugins/PluginContext';
+import { useInvenTreeContext } from '../components/plugins/PluginContext';
 import PluginPanelContent from '../components/plugins/PluginPanel';
 import {
   type PluginUIFeature,
   PluginUIFeatureType
 } from '../components/plugins/PluginUIFeature';
-import { ApiEndpoints } from '../enums/ApiEndpoints';
-import type { ModelType } from '../enums/ModelType';
-import { apiUrl } from '../states/ApiState';
-import { useGlobalSettingsState } from '../states/SettingsState';
-
-/**
- * @param model - The model type for the plugin (e.g. 'part' / 'purchaseorder')
- * @param id - The ID (primary key) of the model instance for the plugin
- * @param instance - The model instance data (if available)
- */
-export type PluginPanelContext = InvenTreeContext & {
-  model?: ModelType | string;
-  id?: string | number | null;
-  instance?: any;
-};
+import { useGlobalSettingsState } from '../states/SettingsStates';
 
 /**
  * Type definition for a plugin panel which extends the standard PanelType
@@ -35,17 +22,26 @@ export type PluginPanelContext = InvenTreeContext & {
  */
 export type PluginPanelType = PanelType & {
   pluginName: string;
+  isLoading: boolean;
+};
+
+export type PluginPanelSet = {
+  panels: PluginPanelType[];
+  query: UseQueryResult;
+  isLoading: boolean;
 };
 
 export function usePluginPanels({
   instance,
+  reloadFunc,
   model,
   id
 }: {
   instance?: any;
+  reloadFunc?: () => void;
   model?: ModelType | string;
   id?: string | number | null;
-}): PluginPanelType[] {
+}): PluginPanelSet {
   const globalSettings = useGlobalSettingsState();
 
   const pluginPanelsEnabled: boolean = useMemo(
@@ -54,9 +50,13 @@ export function usePluginPanels({
   );
 
   // API query to fetch initial information on available plugin panels
-  const { data: pluginData } = useQuery({
+  const pluginQuery = useQuery({
     enabled: pluginPanelsEnabled && !!model && id !== undefined,
     queryKey: ['custom-plugin-panels', model, id],
+    throwOnError: (error: any) => {
+      console.error('ERR: Failed to fetch plugin panels');
+      return false;
+    },
     queryFn: async () => {
       if (!pluginPanelsEnabled || !model) {
         return Promise.resolve([]);
@@ -73,32 +73,30 @@ export function usePluginPanels({
             target_id: id
           }
         })
-        .then((response: any) => response.data)
-        .catch((_error: any) => {
-          console.error('ERR: Failed to fetch plugin panels');
-          return [];
-        });
+        .then((response: any) => response.data);
     }
   });
 
   // Cache the context data which is delivered to the plugins
   const inventreeContext = useInvenTreeContext();
 
-  const contextData = useMemo<PluginPanelContext>(() => {
-    return {
-      model: model,
-      id: id,
-      instance: instance,
-      ...inventreeContext
-    };
-  }, [model, id, instance, inventreeContext]);
+  const contextData: InvenTreePluginContext =
+    useMemo<InvenTreePluginContext>(() => {
+      return {
+        ...inventreeContext,
+        id: id,
+        model: model,
+        instance: instance,
+        reloadInstance: reloadFunc
+      };
+    }, [model, id, instance, inventreeContext]);
 
   const pluginPanels: PluginPanelType[] = useMemo(() => {
     return (
-      pluginData?.map((props: PluginUIFeature) => {
+      pluginQuery?.data?.map((props: PluginUIFeature) => {
         const iconName: string = props?.icon || 'ti:plug:outline';
 
-        const pluginContext: any = {
+        const ctx: InvenTreePluginContext = {
           ...contextData,
           context: props.context
         };
@@ -109,15 +107,20 @@ export function usePluginPanels({
           label: props.title,
           icon: <ApiIcon name={iconName} />,
           content: (
-            <PluginPanelContent
-              pluginFeature={props}
-              pluginContext={pluginContext}
-            />
+            <PluginPanelContent pluginFeature={props} pluginContext={ctx} />
           )
         };
       }) ?? []
     );
-  }, [pluginData, contextData]);
+  }, [pluginQuery.data, contextData]);
 
-  return pluginPanels;
+  const panelSet: PluginPanelSet = useMemo(() => {
+    return {
+      panels: pluginPanels,
+      isLoading: pluginQuery.isLoading || pluginQuery.isFetching,
+      query: pluginQuery
+    };
+  }, [pluginPanels, pluginQuery]);
+
+  return panelSet;
 }

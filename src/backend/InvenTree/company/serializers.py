@@ -3,8 +3,10 @@
 import io
 
 from django.core.files.base import ContentFile
+from django.db.models import Prefetch
 from django.utils.translation import gettext_lazy as _
 
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 from sql_util.utils import SubqueryCount
 from taggit.serializers import TagListSerializerField
@@ -12,8 +14,9 @@ from taggit.serializers import TagListSerializerField
 import company.filters
 import part.filters
 import part.serializers as part_serializers
-from importer.mixins import DataImportExportSerializerMixin
 from importer.registry import register_importer
+from InvenTree.mixins import DataImportExportSerializerMixin
+from InvenTree.ready import isGeneratingSchema
 from InvenTree.serializers import (
     InvenTreeCurrencySerializer,
     InvenTreeDecimalField,
@@ -51,6 +54,7 @@ class CompanyBriefSerializer(InvenTreeModelSerializer):
             'image',
             'thumbnail',
             'currency',
+            'tax_id',
         ]
         read_only_fields = ['currency']
 
@@ -113,7 +117,7 @@ class CompanySerializer(
 ):
     """Serializer for Company object (full detail)."""
 
-    export_exclude_fields = ['url', 'primary_address']
+    export_exclude_fields = ['primary_address']
 
     import_exclude_fields = ['image']
 
@@ -123,7 +127,6 @@ class CompanySerializer(
         model = Company
         fields = [
             'pk',
-            'url',
             'name',
             'description',
             'website',
@@ -145,6 +148,7 @@ class CompanySerializer(
             'remote_image',
             'address_count',
             'primary_address',
+            'tax_id',
         ]
 
     @staticmethod
@@ -159,11 +163,37 @@ class CompanySerializer(
 
         queryset = queryset.annotate(address_count=SubqueryCount('addresses'))
 
+        queryset = queryset.prefetch_related(
+            Prefetch(
+                'addresses',
+                queryset=Address.objects.filter(primary=True),
+                to_attr='primary_address_list',
+            )
+        )
+
         return queryset
 
-    primary_address = AddressSerializer(required=False, allow_null=True, read_only=True)
+    address = serializers.SerializerMethodField(
+        label=_(
+            'Return the string representation for the primary address. This property exists for backwards compatibility.'
+        ),
+        allow_null=True,
+    )
+    primary_address = serializers.SerializerMethodField(allow_null=True)
 
-    url = serializers.CharField(source='get_absolute_url', read_only=True)
+    @extend_schema_field(serializers.CharField())
+    def get_address(self, obj):
+        """Return string version of primary address (for backwards compatibility)."""
+        if hasattr(obj, 'primary_address_list') and obj.primary_address_list:
+            return str(obj.primary_address_list[0])
+        return None
+
+    @extend_schema_field(AddressSerializer())
+    def get_primary_address(self, obj):
+        """Return full address object for primary address using prefetch data."""
+        if hasattr(obj, 'primary_address_list') and obj.primary_address_list:
+            return AddressSerializer(obj.primary_address_list[0]).data
+        return None
 
     image = InvenTreeImageSerializerField(required=False, allow_null=True)
 
@@ -251,6 +281,9 @@ class ManufacturerPartSerializer(
 
         super().__init__(*args, **kwargs)
 
+        if isGeneratingSchema():
+            return
+
         if part_detail is not True:
             self.fields.pop('part_detail', None)
 
@@ -261,14 +294,14 @@ class ManufacturerPartSerializer(
             self.fields.pop('pretty_name', None)
 
     part_detail = part_serializers.PartBriefSerializer(
-        source='part', many=False, read_only=True
+        source='part', many=False, read_only=True, allow_null=True
     )
 
     manufacturer_detail = CompanyBriefSerializer(
-        source='manufacturer', many=False, read_only=True
+        source='manufacturer', many=False, read_only=True, allow_null=True
     )
 
-    pretty_name = serializers.CharField(read_only=True)
+    pretty_name = serializers.CharField(read_only=True, allow_null=True)
 
     manufacturer = serializers.PrimaryKeyRelatedField(
         queryset=Company.objects.filter(is_manufacturer=True)
@@ -301,11 +334,11 @@ class ManufacturerPartParameterSerializer(
 
         super().__init__(*args, **kwargs)
 
-        if not man_detail:
+        if not man_detail and not isGeneratingSchema():
             self.fields.pop('manufacturer_part_detail', None)
 
     manufacturer_part_detail = ManufacturerPartSerializer(
-        source='manufacturer_part', many=False, read_only=True
+        source='manufacturer_part', many=False, read_only=True, allow_null=True
     )
 
 
@@ -353,7 +386,6 @@ class SupplierPartSerializer(
             'SKU',
             'supplier',
             'supplier_detail',
-            'url',
             'updated',
             'notes',
             'tags',
@@ -385,6 +417,9 @@ class SupplierPartSerializer(
 
         super().__init__(*args, **kwargs)
 
+        if isGeneratingSchema():
+            return
+
         if part_detail is not True:
             self.fields.pop('part_detail', None)
 
@@ -405,20 +440,28 @@ class SupplierPartSerializer(
             self.fields.pop('availability_updated')
 
     # Annotated field showing total in-stock quantity
-    in_stock = serializers.FloatField(read_only=True, label=_('In Stock'))
+    in_stock = serializers.FloatField(
+        read_only=True, allow_null=True, label=_('In Stock')
+    )
 
-    on_order = serializers.FloatField(read_only=True, label=_('On Order'))
+    on_order = serializers.FloatField(
+        read_only=True, allow_null=True, label=_('On Order')
+    )
 
     available = serializers.FloatField(required=False, label=_('Available'))
 
     pack_quantity_native = serializers.FloatField(read_only=True)
 
     part_detail = part_serializers.PartBriefSerializer(
-        label=_('Part'), source='part', many=False, read_only=True
+        label=_('Part'), source='part', many=False, read_only=True, allow_null=True
     )
 
     supplier_detail = CompanyBriefSerializer(
-        label=_('Supplier'), source='supplier', many=False, read_only=True
+        label=_('Supplier'),
+        source='supplier',
+        many=False,
+        read_only=True,
+        allow_null=True,
     )
 
     manufacturer_detail = CompanyBriefSerializer(
@@ -426,9 +469,10 @@ class SupplierPartSerializer(
         source='manufacturer_part.manufacturer',
         many=False,
         read_only=True,
+        allow_null=True,
     )
 
-    pretty_name = serializers.CharField(read_only=True)
+    pretty_name = serializers.CharField(read_only=True, allow_null=True)
 
     supplier = serializers.PrimaryKeyRelatedField(
         label=_('Supplier'), queryset=Company.objects.filter(is_supplier=True)
@@ -439,13 +483,12 @@ class SupplierPartSerializer(
         source='manufacturer_part',
         part_detail=False,
         read_only=True,
+        allow_null=True,
     )
 
     MPN = serializers.CharField(
-        source='manufacturer_part.MPN', read_only=True, label=_('MPN')
+        source='manufacturer_part.MPN', read_only=True, allow_null=True, label=_('MPN')
     )
-
-    url = serializers.CharField(source='get_absolute_url', read_only=True)
 
     # Date fields
     updated = serializers.DateTimeField(allow_null=True, read_only=True)
@@ -527,6 +570,9 @@ class SupplierPriceBreakSerializer(
 
         super().__init__(*args, **kwargs)
 
+        if isGeneratingSchema():
+            return
+
         if not supplier_detail:
             self.fields.pop('supplier_detail', None)
 
@@ -551,10 +597,10 @@ class SupplierPriceBreakSerializer(
     )
 
     supplier_detail = CompanyBriefSerializer(
-        source='part.supplier', many=False, read_only=True
+        source='part.supplier', many=False, read_only=True, allow_null=True
     )
 
     # Detail serializer for SupplierPart
     part_detail = SupplierPartSerializer(
-        source='part', brief=True, many=False, read_only=True
+        source='part', brief=True, many=False, read_only=True, allow_null=True
     )

@@ -1,8 +1,9 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
+import { Text } from '@mantine/core';
 import type { ReactNode } from 'react';
 
-import { ModelType } from '../../enums/ModelType';
-import { getDetailUrl } from '../../functions/urls';
+import { ModelType } from '@lib/enums/ModelType';
+import { getDetailUrl } from '@lib/functions/Navigation';
 import { type InstanceRenderInterface, RenderInlineModel } from './Instance';
 import { StatusRenderer } from './StatusRenderer';
 
@@ -24,7 +25,7 @@ export function RenderPurchaseOrder(
         status: instance.status_custom_key,
         type: ModelType.purchaseorder
       })}
-      image={supplier.thumnbnail || supplier.image}
+      image={supplier.thumbnail || supplier.image}
       url={
         props.link
           ? getDetailUrl(ModelType.purchaseorder, instance.pk)
@@ -52,7 +53,7 @@ export function RenderReturnOrder(
         status: instance.status_custom_key,
         type: ModelType.returnorder
       })}
-      image={customer.thumnbnail || customer.image}
+      image={customer.thumbnail || customer.image}
       url={
         props.link
           ? getDetailUrl(ModelType.returnorder, instance.pk)
@@ -97,7 +98,7 @@ export function RenderSalesOrder(
         status: instance.status_custom_key,
         type: ModelType.salesorder
       })}
-      image={customer.thumnbnail || customer.image}
+      image={customer.thumbnail || customer.image}
       url={
         props.link ? getDetailUrl(ModelType.salesorder, instance.pk) : undefined
       }
@@ -118,7 +119,7 @@ export function RenderSalesOrderShipment({
   return (
     <RenderInlineModel
       primary={order.reference}
-      secondary={`${t`Shipment`} ${instance.reference}`}
+      suffix={<Text size='xs'>{`${t`Shipment`} ${instance.reference}`}</Text>}
     />
   );
 }

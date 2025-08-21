@@ -1,8 +1,11 @@
 """Configuration for Sentry.io error reporting."""
 
+from typing import Optional
+
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.http import Http404
+from django.template.exceptions import TemplateSyntaxError
 
 import rest_framework.exceptions
 import sentry_sdk
@@ -28,6 +31,7 @@ def sentry_ignore_errors():
     return [
         Http404,
         MissingRate,
+        TemplateSyntaxError,
         ValidationError,
         rest_framework.exceptions.AuthenticationFailed,
         rest_framework.exceptions.NotAuthenticated,
@@ -62,13 +66,17 @@ def init_sentry(dsn, sample_rate, tags):
     sentry_sdk.set_tag('git_date', InvenTree.version.inventreeCommitDate())
 
 
-def report_exception(exc):
+def report_exception(exc, scope: Optional[dict] = None):
     """Report an exception to sentry.io."""
+    assert settings.TESTING == False, (
+        'report_exception should not be called in testing mode'
+    )
+
     if settings.SENTRY_ENABLED and settings.SENTRY_DSN:
         if not any(isinstance(exc, e) for e in sentry_ignore_errors()):
             logger.info('Reporting exception to sentry.io: %s', exc)
 
             try:
-                sentry_sdk.capture_exception(exc)
+                sentry_sdk.capture_exception(exc, scope=scope)
             except Exception:
                 logger.warning('Failed to report exception to sentry.io')

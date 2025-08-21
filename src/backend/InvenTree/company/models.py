@@ -21,14 +21,12 @@ from taggit.managers import TaggableManager
 
 import common.currency
 import common.models
-import common.settings
 import InvenTree.conversion
-import InvenTree.fields
 import InvenTree.helpers
 import InvenTree.models
 import InvenTree.ready
-import InvenTree.tasks
 import InvenTree.validators
+import report.mixins
 from common.currency import currency_code_default
 from InvenTree.fields import InvenTreeURLField, RoundingDecimalField
 from order.status_codes import PurchaseOrderStatusGroups
@@ -56,9 +54,32 @@ def rename_company_image(instance, filename):
     return os.path.join(base, fn)
 
 
+class CompanyReportContext(report.mixins.BaseReportContext):
+    """Report context for the Company model.
+
+    Attributes:
+        company: The Company object associated with this context
+        name: The name of the Company
+        description: A description of the Company
+        website: The website URL for the Company
+        phone: The contact phone number for the Company
+        email: The contact email address for the Company
+        address: The primary address associated with the Company
+    """
+
+    company: 'Company'
+    name: str
+    description: str
+    website: str
+    phone: str
+    email: str
+    address: str
+
+
 class Company(
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeNotesMixin,
+    report.mixins.InvenTreeReportMixin,
     InvenTree.models.InvenTreeMetadataModel,
 ):
     """A Company object represents an external company.
@@ -85,6 +106,7 @@ class Company(
         is_supplier: boolean value, is this company a supplier
         is_manufacturer: boolean value, is this company a manufacturer
         currency_code: Specifies the default currency for the company
+        tax_id: Tax ID for the company
     """
 
     class Meta:
@@ -102,6 +124,18 @@ class Company(
         """Return the API URL associated with the Company model."""
         return reverse('api-company-list')
 
+    def report_context(self) -> CompanyReportContext:
+        """Generate a dict of context data to provide to the reporting framework."""
+        return {
+            'company': self,
+            'name': self.name,
+            'description': self.description,
+            'website': self.website,
+            'phone': self.phone,
+            'email': self.email,
+            'address': str(self.address) if self.address else '',
+        }
+
     name = models.CharField(
         max_length=100,
         blank=False,
@@ -117,7 +151,10 @@ class Company(
     )
 
     website = InvenTreeURLField(
-        blank=True, verbose_name=_('Website'), help_text=_('Company website URL')
+        blank=True,
+        verbose_name=_('Website'),
+        help_text=_('Company website URL'),
+        max_length=2000,
     )
 
     phone = models.CharField(
@@ -145,6 +182,7 @@ class Company(
         blank=True,
         verbose_name=_('Link'),
         help_text=_('Link to external company information'),
+        max_length=2000,
     )
 
     image = StdImageField(
@@ -185,6 +223,13 @@ class Company(
         default=currency_code_default,
         help_text=_('Default currency used for this company'),
         validators=[InvenTree.validators.validate_currency_code],
+    )
+
+    tax_id = models.CharField(
+        max_length=50,
+        blank=True,
+        verbose_name=_('Tax ID'),
+        help_text=_('Company Tax ID'),
     )
 
     @property
@@ -440,6 +485,7 @@ class Address(InvenTree.models.InvenTreeModel):
         blank=True,
         verbose_name=_('Link'),
         help_text=_('Link to address information (external)'),
+        max_length=2000,
     )
 
 

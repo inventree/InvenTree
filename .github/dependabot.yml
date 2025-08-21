@@ -14,23 +14,15 @@ updates:
     schedule:
       interval: weekly
 
+  - package-ecosystem: docker
+    directory: /.devcontainer
+    schedule:
+      interval: weekly
+
   - package-ecosystem: pip
     directories:
     - /docs
     - /contrib/dev_reqs
-    schedule:
-      interval: weekly
-      day: friday
-    groups:
-      dependencies:
-        patterns:
-          - "*" # Include all dependencies
-    assignees:
-      - "matmair"
-    versioning-strategy: increase
-
-  - package-ecosystem: pip
-    directories:
     - /contrib/container
     - /src/backend
     schedule:
@@ -47,7 +39,6 @@ updates:
   - package-ecosystem: npm
     directories:
     - /src/frontend
-    - /src/backend
     schedule:
       interval: weekly
     groups:

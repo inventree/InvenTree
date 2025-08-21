@@ -5,8 +5,16 @@ import { Loadable } from './functions/loading';
 
 // Lazy loaded pages
 export const LayoutComponent = Loadable(
-  lazy(() => import('./components/nav/Layout'))
+  lazy(() => import('./components/nav/Layout')),
+  true,
+  true
 );
+export const LoginLayoutComponent = Loadable(
+  lazy(() => import('./pages/Auth/Layout')),
+  true,
+  true
+);
+
 export const Home = Loadable(lazy(() => import('./pages/Index/Home')));
 
 export const CompanyDetail = Loadable(
@@ -100,20 +108,41 @@ export const AdminCenter = Loadable(
   lazy(() => import('./pages/Index/Settings/AdminCenter/Index'))
 );
 
+// Core object
+export const CoreIndex = Loadable(lazy(() => import('./pages/core/CoreIndex')));
+export const UserDetail = Loadable(
+  lazy(() => import('./pages/core/UserDetail'))
+);
+export const GroupDetail = Loadable(
+  lazy(() => import('./pages/core/GroupDetail'))
+);
+
 export const NotFound = Loadable(
   lazy(() => import('./components/errors/NotFound'))
 );
-export const Login = Loadable(lazy(() => import('./pages/Auth/Login')));
-export const Logout = Loadable(lazy(() => import('./pages/Auth/Logout')));
-export const Logged_In = Loadable(lazy(() => import('./pages/Auth/Logged-In')));
-export const Reset = Loadable(lazy(() => import('./pages/Auth/Reset')));
 
+// Auth
+export const Login = Loadable(lazy(() => import('./pages/Auth/Login')));
+export const LoggedIn = Loadable(
+  lazy(() => import('./pages/Auth/LoggedIn')),
+  true,
+  true
+);
+export const Logout = Loadable(lazy(() => import('./pages/Auth/Logout')));
+export const Register = Loadable(lazy(() => import('./pages/Auth/Register')));
+export const Mfa = Loadable(lazy(() => import('./pages/Auth/MFA')));
+export const MfaSetup = Loadable(lazy(() => import('./pages/Auth/MFASetup')));
 export const ChangePassword = Loadable(
   lazy(() => import('./pages/Auth/ChangePassword'))
 );
-
+export const Reset = Loadable(lazy(() => import('./pages/Auth/Reset')));
 export const ResetPassword = Loadable(
   lazy(() => import('./pages/Auth/ResetPassword'))
+);
+export const VerifyEmail = Loadable(
+  lazy(() => import('./pages/Auth/VerifyEmail')),
+  true,
+  true
 );
 
 // Routes
@@ -167,14 +196,28 @@ export const routes = (
         <Route path='return-order/:id/*' element={<ReturnOrderDetail />} />
         <Route path='customer/:id/*' element={<CustomerDetail />} />
       </Route>
+      <Route path='core/'>
+        <Route index element={<Navigate to='index/' />} />
+        <Route path='index/*' element={<CoreIndex />} />
+        <Route path='user/:id/*' element={<UserDetail />} />
+        <Route path='group/:id/*' element={<GroupDetail />} />
+      </Route>
     </Route>
-    <Route path='/' errorElement={<ErrorPage />}>
+    <Route
+      path='/'
+      element={<LoginLayoutComponent />}
+      errorElement={<ErrorPage />}
+    >
       <Route path='/login' element={<Login />} />,
+      <Route path='/logged-in' element={<LoggedIn />} />
       <Route path='/logout' element={<Logout />} />,
-      <Route path='/logged-in' element={<Logged_In />} />
+      <Route path='/register' element={<Register />} />,
+      <Route path='/mfa' element={<Mfa />} />,
+      <Route path='/mfa-setup' element={<MfaSetup />} />,
+      <Route path='/change-password' element={<ChangePassword />} />
       <Route path='/reset-password' element={<Reset />} />
       <Route path='/set-password' element={<ResetPassword />} />
-      <Route path='/change-password' element={<ChangePassword />} />
+      <Route path='/verify-email/:key' element={<VerifyEmail />} />
     </Route>
   </Routes>
 );

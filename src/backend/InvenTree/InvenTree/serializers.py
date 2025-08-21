@@ -6,7 +6,6 @@ from copy import deepcopy
 from decimal import Decimal
 
 from django.conf import settings
-from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -14,8 +13,9 @@ from django.utils.translation import gettext_lazy as _
 from djmoney.contrib.django_rest_framework.fields import MoneyField
 from djmoney.money import Money
 from djmoney.utils import MONEY_CLASSES, get_currency_field_name
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
-from rest_framework.exceptions import PermissionDenied, ValidationError
+from rest_framework.exceptions import ValidationError
 from rest_framework.fields import empty
 from rest_framework.mixins import ListModelMixin
 from rest_framework.serializers import DecimalField
@@ -23,6 +23,7 @@ from rest_framework.utils import model_meta
 from taggit.serializers import TaggitSerializer
 
 import common.models as common_models
+import InvenTree.ready
 from common.currency import currency_code_default, currency_code_mappings
 from InvenTree.fields import InvenTreeRestURLField, InvenTreeURLField
 
@@ -44,6 +45,12 @@ class InvenTreeMoneySerializer(MoneyField):
         kwargs['required'] = kwargs.get('required', False)
 
         super().__init__(*args, **kwargs)
+
+    def to_representation(self, obj):
+        """Convert the Money object to a decimal value for representation."""
+        val = super().to_representation(obj)
+
+        return float(val)
 
     def get_value(self, data):
         """Test that the returned amount is a valid Decimal."""
@@ -73,9 +80,14 @@ class InvenTreeMoneySerializer(MoneyField):
         ):
             return Money(amount, currency)
 
-        return amount
+        try:
+            fp_amount = float(amount)
+            return fp_amount
+        except Exception:
+            return amount
 
 
+@extend_schema_field(serializers.CharField())
 class InvenTreeCurrencySerializer(serializers.ChoiceField):
     """Custom serializers for selecting currency option."""
 
@@ -100,6 +112,14 @@ class InvenTreeCurrencySerializer(serializers.ChoiceField):
 
         if 'help_text' not in kwargs:
             kwargs['help_text'] = _('Select currency from available options')
+
+        if InvenTree.ready.isGeneratingSchema():
+            kwargs['help_text'] = (
+                kwargs['help_text']
+                + '\n\n'
+                + '\n'.join(f'* `{value}` - {label}' for value, label in choices)
+                + "\n\nOther valid currencies may be found in the 'CURRENCY_CODES' global setting."
+            )
 
         super().__init__(*args, **kwargs)
 
@@ -390,153 +410,6 @@ class InvenTreeTagModelSerializer(InvenTreeTaggitSerializer, InvenTreeModelSeria
     """Combination of InvenTreeTaggitSerializer and InvenTreeModelSerializer."""
 
 
-class UserSerializer(InvenTreeModelSerializer):
-    """Serializer for a User."""
-
-    class Meta:
-        """Metaclass defines serializer fields."""
-
-        model = User
-        fields = ['pk', 'username', 'first_name', 'last_name', 'email']
-
-        read_only_fields = ['username', 'email']
-
-    username = serializers.CharField(label=_('Username'), help_text=_('Username'))
-
-    first_name = serializers.CharField(
-        label=_('First Name'), help_text=_('First name of the user'), allow_blank=True
-    )
-
-    last_name = serializers.CharField(
-        label=_('Last Name'), help_text=_('Last name of the user'), allow_blank=True
-    )
-
-    email = serializers.EmailField(
-        label=_('Email'), help_text=_('Email address of the user'), allow_blank=True
-    )
-
-
-class ExtendedUserSerializer(UserSerializer):
-    """Serializer for a User with a bit more info."""
-
-    from users.serializers import GroupSerializer
-
-    groups = GroupSerializer(read_only=True, many=True)
-
-    class Meta(UserSerializer.Meta):
-        """Metaclass defines serializer fields."""
-
-        fields = [
-            *UserSerializer.Meta.fields,
-            'groups',
-            'is_staff',
-            'is_superuser',
-            'is_active',
-        ]
-
-        read_only_fields = [*UserSerializer.Meta.read_only_fields, 'groups']
-
-    is_staff = serializers.BooleanField(
-        label=_('Staff'), help_text=_('Does this user have staff permissions')
-    )
-
-    is_superuser = serializers.BooleanField(
-        label=_('Superuser'), help_text=_('Is this user a superuser')
-    )
-
-    is_active = serializers.BooleanField(
-        label=_('Active'), help_text=_('Is this user account active')
-    )
-
-    def validate(self, attrs):
-        """Expanded validation for changing user role."""
-        # Check if is_staff or is_superuser is in attrs
-        role_change = 'is_staff' in attrs or 'is_superuser' in attrs
-        request_user = self.context['request'].user
-
-        if role_change:
-            if request_user.is_superuser:
-                # Superusers can change any role
-                pass
-            elif request_user.is_staff and 'is_superuser' not in attrs:
-                # Staff can change any role except is_superuser
-                pass
-            else:
-                raise PermissionDenied(
-                    _('You do not have permission to change this user role.')
-                )
-        return super().validate(attrs)
-
-
-class MeUserSerializer(ExtendedUserSerializer):
-    """API serializer specifically for the 'me' endpoint."""
-
-    class Meta(ExtendedUserSerializer.Meta):
-        """Metaclass options.
-
-        Extends the ExtendedUserSerializer.Meta options,
-        but ensures that certain fields are read-only.
-        """
-
-        read_only_fields = [
-            *ExtendedUserSerializer.Meta.read_only_fields,
-            'is_active',
-            'is_staff',
-            'is_superuser',
-        ]
-
-
-class UserCreateSerializer(ExtendedUserSerializer):
-    """Serializer for creating a new User."""
-
-    class Meta(ExtendedUserSerializer.Meta):
-        """Metaclass options for the UserCreateSerializer."""
-
-        # Prevent creation of users with superuser or staff permissions
-        read_only_fields = ['groups', 'is_staff', 'is_superuser']
-
-    def validate(self, attrs):
-        """Expanded valiadation for auth."""
-        # Check that the user trying to create a new user is a superuser
-        if not self.context['request'].user.is_superuser:
-            raise serializers.ValidationError(_('Only superusers can create new users'))
-
-        # Generate a random password
-        password = User.objects.make_random_password(length=14)
-        attrs.update({'password': password})
-        return super().validate(attrs)
-
-    def create(self, validated_data):
-        """Send an e email to the user after creation."""
-        from InvenTree.helpers_model import get_base_url
-        from InvenTree.tasks import email_user, offload_task
-
-        base_url = get_base_url()
-
-        instance = super().create(validated_data)
-
-        # Make sure the user cannot login until they have set a password
-        instance.set_unusable_password()
-
-        message = (
-            _('Your account has been created.')
-            + '\n\n'
-            + _('Please use the password reset function to login')
-        )
-
-        if base_url:
-            message += f'\n\nURL: {base_url}'
-
-        subject = _('Welcome to InvenTree')
-
-        # Send the user an onboarding email (from current site)
-        offload_task(
-            email_user, instance.pk, str(subject), str(message), force_async=True
-        )
-
-        return instance
-
-
 class InvenTreeAttachmentSerializerField(serializers.FileField):
     """Override the DRF native FileField serializer, to remove the leading server path.
 
@@ -606,7 +479,10 @@ class NotesFieldMixin:
 
         if hasattr(self, 'context'):
             if view := self.context.get('view', None):
-                if issubclass(view.__class__, ListModelMixin):
+                if (
+                    issubclass(view.__class__, ListModelMixin)
+                    and not InvenTree.ready.isGeneratingSchema()
+                ):
                     self.fields.pop('notes', None)
 
 

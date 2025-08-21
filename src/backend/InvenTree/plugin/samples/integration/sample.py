@@ -47,6 +47,26 @@ class SampleIntegrationPlugin(
             path('ho/', include(he_urls), name='ho'),
         ]
 
+    USER_SETTINGS = {
+        'USER_SETTING_1': {
+            'name': _('User Setting 1'),
+            'description': _('A user setting that can be changed by the user'),
+            'default': 'Default Value',
+        },
+        'USER_SETTING_2': {
+            'name': _('User Setting 2'),
+            'description': _('Another user setting'),
+            'default': True,
+            'validator': bool,
+        },
+        'USER_SETTING_3': {
+            'name': _('User Setting 3'),
+            'description': _('A user setting with choices'),
+            'choices': [('X', 'Choice X'), ('Y', 'Choice Y'), ('Z', 'Choice Z')],
+            'default': 'X',
+        },
+    }
+
     SETTINGS = {
         'PO_FUNCTION_ENABLE': {
             'name': _('Enable PO'),
@@ -64,6 +84,7 @@ class SampleIntegrationPlugin(
             'description': _('A numerical setting'),
             'validator': int,
             'default': 123,
+            'units': 'metres',
         },
         'CHOICE_SETTING': {
             'name': _('Choice Setting'),
@@ -72,14 +93,16 @@ class SampleIntegrationPlugin(
             'default': 'A',
         },
         'SELECT_COMPANY': {
-            'name': 'Company',
-            'description': 'Select a company object from the database',
+            'name': 'Supplier',
+            'description': 'Select a supplier object from the database',
             'model': 'company.company',
+            'model_filters': {'is_supplier': True},
         },
         'SELECT_PART': {
             'name': 'Part',
             'description': 'Select a part object from the database',
             'model': 'part.part',
+            'model_filters': {'active': True},
         },
         'PROTECTED_SETTING': {
             'name': 'Protected Setting',

@@ -1,6 +1,5 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Stack } from '@mantine/core';
-import { modals } from '@mantine/modals';
 import {
   IconBellCheck,
   IconBellExclamation,
@@ -11,13 +10,13 @@ import {
 } from '@tabler/icons-react';
 import { useCallback, useMemo } from 'react';
 
-import { ActionButton } from '../components/buttons/ActionButton';
+import { ActionButton } from '@lib/components/ActionButton';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
 import { PageDetail } from '../components/nav/PageDetail';
 import { PanelGroup } from '../components/panels/PanelGroup';
 import { useApi } from '../contexts/ApiContext';
-import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { useTable } from '../hooks/UseTable';
-import { apiUrl } from '../states/ApiState';
 import { NotificationTable } from '../tables/notifications/NotificationTable';
 
 export default function NotificationsPage() {
@@ -37,26 +36,6 @@ export default function NotificationsPage() {
         readTable.refreshTable();
       })
       .catch((_error) => {});
-  }, []);
-
-  const deleteNotifications = useCallback(() => {
-    modals.openConfirmModal({
-      title: t`Delete Notifications`,
-      onConfirm: () => {
-        api
-          .delete(apiUrl(ApiEndpoints.notifications_list), {
-            data: {
-              filters: {
-                read: true
-              }
-            }
-          })
-          .then((_response) => {
-            readTable.refreshTable();
-          })
-          .catch((_error) => {});
-      }
-    });
   }, []);
 
   const notificationPanels = useMemo(() => {
@@ -139,14 +118,7 @@ export default function NotificationsPage() {
                 }
               }
             ]}
-            tableActions={[
-              <ActionButton
-                color='red'
-                icon={<IconTrash />}
-                tooltip={t`Delete notifications`}
-                onClick={deleteNotifications}
-              />
-            ]}
+            tableActions={[]}
           />
         )
       }
