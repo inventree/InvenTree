@@ -1,6 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 
+import { AddItemButton } from '@lib/components/AddItemButton';
 import {
   type RowAction,
   RowDeleteAction,
@@ -11,7 +12,6 @@ import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableColumn } from '@lib/types/Tables';
-import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { useManufacturerPartFields } from '../../forms/CompanyForms';
 import {
   useCreateApiFormModal,
@@ -41,12 +41,9 @@ export function ManufacturerPartTable({
   // Construct table columns for this table
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
-      {
-        accessor: 'part',
-        switchable: 'part' in params,
-        sortable: true,
-        render: (record: any) => PartColumn({ part: record?.part_detail })
-      },
+      PartColumn({
+        switchable: 'part' in params
+      }),
       {
         accessor: 'manufacturer',
         sortable: true,
@@ -56,7 +53,7 @@ export function ManufacturerPartTable({
       },
       {
         accessor: 'MPN',
-        title: t`Manufacturer Part Number`,
+        title: t`MPN`,
         sortable: true
       },
       DescriptionColumn({}),

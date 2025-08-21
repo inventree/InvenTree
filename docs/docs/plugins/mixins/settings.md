@@ -9,13 +9,69 @@ The *SettingsMixin* allows the plugin to save and load persistent settings to th
 - Plugin settings are stored against the individual plugin, and thus do not have to be unique
 - Plugin settings are stored using a "key:value" pair
 
-Use the class constant `SETTINGS` for a dict of settings that should be added as global database settings.
+## Plugin Settings
+
+Use the class attribute `SETTINGS` for a dict of settings that should be added as global database settings.
 
 The dict must be formatted similar to the following sample that shows how to use validator choices and default.
 
 Take a look at the settings defined in `InvenTree.common.models.InvenTreeSetting` for all possible parameters.
 
-### Example Plugin
+### get_setting
+
+Use the `get_setting` method to retrieve a setting value based on the provided key.
+
+::: plugin.base.integration.SettingsMixin.SettingsMixin.get_setting
+    options:
+      show_bases: False
+      show_root_heading: False
+      show_root_toc_entry: False
+      summary: False
+      members: []
+
+### set_setting
+
+Use the `set_setting` method to set a value for a specific setting key.
+
+::: plugin.base.integration.SettingsMixin.SettingsMixin.set_setting
+    options:
+      show_bases: False
+      show_root_heading: False
+      show_root_toc_entry: False
+      summary: False
+      members: []
+
+## User Settings
+
+Plugins may also define user-specific settings, which allow users to customize the behavior of the plugin on a per-user basis.
+
+To add user-specific settings, use the `USER_SETTINGS` class attribute in a similar way to the `SETTINGS` attribute.
+
+### get_user_setting
+
+Use the `get_user_setting` method to retrieve a user-specific setting value based on the provided key and user.
+
+::: plugin.base.integration.SettingsMixin.SettingsMixin.get_user_setting
+    options:
+      show_bases: False
+      show_root_heading: False
+      show_root_toc_entry: False
+      summary: False
+      members: []
+
+### set_user_setting
+
+Use the `set_user_setting` method to set a value for a specific user setting key.
+
+::: plugin.base.integration.SettingsMixin.SettingsMixin.set_user_setting
+    options:
+      show_bases: False
+      show_root_heading: False
+      show_root_toc_entry: False
+      summary: False
+      members: []
+
+## Example Plugin
 
 Below is a simple example of how a plugin can implement settings:
 

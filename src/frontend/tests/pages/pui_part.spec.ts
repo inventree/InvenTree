@@ -4,7 +4,8 @@ import {
   clickOnRowMenu,
   getRowFromCell,
   loadTab,
-  navigate
+  navigate,
+  setTableChoiceFilter
 } from '../helpers';
 import { doCachedLogin } from '../login';
 
@@ -81,10 +82,30 @@ test('Parts - Supplier Parts', async ({ browser }) => {
 });
 
 test('Parts - BOM', async ({ browser }) => {
-  const page = await doCachedLogin(browser, { url: 'part/87/bom' });
+  const page = await doCachedLogin(browser, {
+    url: 'part/category/index/parts'
+  });
 
+  // Display all active assemblies with validated BOMs
+  await clearTableFilters(page);
+  await setTableChoiceFilter(page, 'assembly', 'Yes');
+  await setTableChoiceFilter(page, 'active', 'Yes');
+  await setTableChoiceFilter(page, 'BOM Valid', 'Yes');
+
+  // Navigate to BOM for a particular assembly
+  await navigate(page, 'part/87/bom');
   await loadTab(page, 'Bill of Materials');
-  await page.waitForLoadState('networkidle');
+
+  // Mouse-hover to display BOM validation info for this assembly
+  await page.getByRole('button', { name: 'bom-validation-info' }).hover();
+  await page
+    .getByText('The Bill of Materials for this part has been validated')
+    .waitFor();
+  await page.getByText('Validated On: 2025-07-23').waitFor();
+  await page.getByText('Robert Shuruncle').waitFor();
+
+  // Move the mouse away
+  await page.getByRole('link', { name: 'Bill of Materials' }).hover();
 
   const cell = await page.getByRole('cell', {
     name: 'Small plastic enclosure, black',
@@ -176,12 +197,15 @@ test('Parts - Details', async ({ browser }) => {
   await page.getByText('Can Build').waitFor();
 
   await page.getByText('0 / 10').waitFor();
-  await page.getByText('4 / 49').waitFor();
+
+  // Depending on the state of other tests, the "In Production" value may vary
+  // This could be either 4 / 49, or 5 / 49
+  await page.getByText(/[4|5] \/ 49/).waitFor();
 
   // Badges
   await page.getByText('Required: 10').waitFor();
   await page.getByText('No Stock').waitFor();
-  await page.getByText('In Production: 4').waitFor();
+  await page.getByText(/In Production: [4|5]/).waitFor();
 
   await page.getByText('Creation Date').waitFor();
   await page.getByText('2022-04-29').waitFor();
@@ -223,7 +247,13 @@ test('Parts - Requirements', async ({ browser }) => {
   await page.getByText('5 / 100').waitFor(); // Allocated to sales orders
   await page.getByText('10 / 125').waitFor(); // In production
 
-  await page.waitForTimeout(2500);
+  // Also check requirements for part with open build orders which have been partially consumed
+  await navigate(page, 'part/105/details');
+
+  await page.getByText('Required: 2').waitFor();
+  await page.getByText('Available: 32').waitFor();
+  await page.getByText('In Stock: 34').waitFor();
+  await page.getByText('2 / 2').waitFor(); // Allocated to build orders
 });
 
 test('Parts - Allocations', async ({ browser }) => {
@@ -351,7 +381,6 @@ test('Parts - Pricing (Supplier)', async ({ browser }) => {
 
   // Supplier Pricing
   await page.getByRole('button', { name: 'Supplier Pricing' }).click();
-  await page.waitForTimeout(500);
   await page.getByRole('button', { name: 'SKU Not sorted' }).waitFor();
 
   // Supplier Pricing - linkjumping
@@ -463,14 +492,41 @@ test('Parts - Parameters', async ({ browser }) => {
   // Select the "polarized" parameter template (should create a "checkbox" field)
   await page.getByLabel('related-field-template').fill('Polarized');
   await page.getByText('Is this part polarized?').click();
+
+  // Submit with "false" value
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Check for the expected values in the table
+  let row = await getRowFromCell(
+    await page.getByRole('cell', { name: 'Polarized', exact: true })
+  );
+  await row.getByRole('cell', { name: 'No', exact: true }).waitFor();
+  await row.getByRole('cell', { name: 'allaccess' }).waitFor();
+  await row.getByLabel(/row-action-menu-/i).click();
+  await page.getByRole('menuitem', { name: 'Edit' }).click();
+
+  // Toggle false to true
   await page
     .locator('label')
     .filter({ hasText: 'DataParameter Value' })
     .locator('div')
     .first()
     .click();
+  await page.getByRole('button', { name: 'Submit' }).click();
 
-  await page.getByRole('button', { name: 'Cancel' }).click();
+  row = await getRowFromCell(
+    await page.getByRole('cell', { name: 'Polarized', exact: true })
+  );
+  await row.getByRole('cell', { name: 'Yes', exact: true }).waitFor();
+
+  await page.getByText('1 - 1 / 1').waitFor();
+
+  // Finally, delete the parameter
+  await row.getByLabel(/row-action-menu-/i).click();
+  await page.getByRole('menuitem', { name: 'Delete' }).click();
+  await page.getByRole('button', { name: 'Delete' }).click();
+
+  await page.getByText('No records found').first().waitFor();
 });
 
 test('Parts - Parameter Filtering', async ({ browser }) => {
@@ -562,12 +618,11 @@ test('Parts - Bulk Edit', async ({ browser }) => {
   await page.getByLabel('Select record 2', { exact: true }).click();
   await page.getByLabel('action-menu-part-actions').click();
   await page.getByLabel('action-menu-part-actions-set-category').click();
-  await page.getByLabel('related-field-category').fill('rnitu');
-  await page
-    .getByRole('option', { name: '- Furniture/Chairs' })
-    .getByRole('paragraph')
-    .click();
 
+  await page.getByLabel('related-field-category').fill('rnitu');
+  await page.waitForTimeout(250);
+
+  await page.getByRole('option', { name: '- Furniture/Chairs' }).click();
   await page.getByRole('button', { name: 'Update' }).click();
   await page.getByText('Items Updated').waitFor();
 });

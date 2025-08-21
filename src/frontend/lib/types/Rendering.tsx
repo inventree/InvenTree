@@ -8,6 +8,7 @@ export interface InstanceRenderInterface {
   link?: boolean;
   navigate?: any;
   showSecondary?: boolean;
+  extra?: Record<string, any>;
 }
 
 type EnumDictionary<T extends string | symbol | number, U> = {

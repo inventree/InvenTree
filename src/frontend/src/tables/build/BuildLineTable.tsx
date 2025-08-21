@@ -1,21 +1,21 @@
 import { t } from '@lingui/core/macro';
-import { Alert, Group, Paper, Stack, Text } from '@mantine/core';
+import { Alert, Group, Paper, Text } from '@mantine/core';
 import {
   IconArrowRight,
+  IconCircleCheck,
+  IconCircleDashedCheck,
   IconCircleMinus,
   IconShoppingCart,
   IconTool,
   IconWand
 } from '@tabler/icons-react';
-import { DataTable, type DataTableRowExpansionProps } from 'mantine-datatable';
+import type { DataTableRowExpansionProps } from 'mantine-datatable';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ActionButton } from '@lib/components/ActionButton';
 import { ProgressBar } from '@lib/components/ProgressBar';
 import {
-  type RowAction,
-  RowActions,
   RowDeleteAction,
   RowEditAction,
   RowViewAction
@@ -24,12 +24,14 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import { formatDecimal } from '@lib/functions/Formatting';
 import type { TableFilter } from '@lib/types/Filters';
-import type { TableColumn } from '@lib/types/Tables';
+import type { RowAction, TableColumn } from '@lib/types/Tables';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import {
   useAllocateStockToBuildForm,
-  useBuildOrderFields
+  useBuildOrderFields,
+  useConsumeBuildLinesForm
 } from '../../forms/BuildForms';
 import {
   useCreateApiFormModal,
@@ -41,9 +43,11 @@ import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import {
   BooleanColumn,
+  DecimalColumn,
   DescriptionColumn,
   LocationColumn,
-  PartColumn
+  PartColumn,
+  RenderPartColumn
 } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import RowExpansionIcon from '../RowExpansionIcon';
@@ -68,16 +72,13 @@ export function BuildLineSubTable({
 }>) {
   const user = useUserState();
   const navigate = useNavigate();
+  const table = useTable('buildline-subtable');
 
   const tableColumns: any[] = useMemo(() => {
     return [
-      {
-        accessor: 'part',
-        title: t`Part`,
-        render: (record: any) => {
-          return <PartColumn part={record.part_detail} />;
-        }
-      },
+      PartColumn({
+        part: 'part_detail'
+      }),
       {
         accessor: 'quantity',
         title: t`Quantity`,
@@ -94,59 +95,52 @@ export function BuildLineSubTable({
       },
       LocationColumn({
         accessor: 'location_detail'
-      }),
-      {
-        accessor: '---actions---',
-        title: ' ',
-        width: 50,
-        render: (record: any) => {
-          return (
-            <RowActions
-              title={t`Actions`}
-              index={record.pk}
-              actions={[
-                RowViewAction({
-                  title: t`View Stock Item`,
-                  modelType: ModelType.stockitem,
-                  modelId: record.stock_item,
-                  navigate: navigate
-                }),
-                RowEditAction({
-                  hidden:
-                    !onEditAllocation || !user.hasChangeRole(UserRoles.build),
-                  onClick: () => {
-                    onEditAllocation?.(record.pk);
-                  }
-                }),
-                RowDeleteAction({
-                  hidden:
-                    !onDeleteAllocation || !user.hasDeleteRole(UserRoles.build),
-                  onClick: () => {
-                    onDeleteAllocation?.(record.pk);
-                  }
-                })
-              ]}
-            />
-          );
-        }
-      }
+      })
     ];
-  }, [user, onEditAllocation, onDeleteAllocation]);
+  }, []);
+
+  const rowActions = useCallback(
+    (record: any): RowAction[] => {
+      return [
+        RowViewAction({
+          title: t`View Stock Item`,
+          modelType: ModelType.stockitem,
+          modelId: record.stock_item,
+          navigate: navigate
+        }),
+        RowEditAction({
+          hidden: !onEditAllocation || !user.hasChangeRole(UserRoles.build),
+          onClick: () => {
+            onEditAllocation?.(record.pk);
+          }
+        }),
+        RowDeleteAction({
+          hidden: !onDeleteAllocation || !user.hasDeleteRole(UserRoles.build),
+          onClick: () => {
+            onDeleteAllocation?.(record.pk);
+          }
+        })
+      ];
+    },
+    [user, onEditAllocation, onDeleteAllocation]
+  );
 
   return (
-    <Paper p='md'>
-      <Stack gap='xs'>
-        <DataTable
-          minHeight={50}
-          withTableBorder
-          withColumnBorders
-          striped
-          pinLastColumn
-          idAccessor='pk'
-          columns={tableColumns}
-          records={lineItem.filteredAllocations ?? lineItem.allocations}
-        />
-      </Stack>
+    <Paper p='xs'>
+      <InvenTreeTable
+        tableState={table}
+        columns={tableColumns}
+        tableData={lineItem.filteredAllocations ?? lineItem.allocations}
+        props={{
+          minHeight: 200,
+          enableSearch: false,
+          enableRefresh: false,
+          enableColumnSwitching: false,
+          enableFilters: false,
+          rowActions: rowActions,
+          noRecordsText: ''
+        }}
+      />
     </Paper>
   );
 }
@@ -184,7 +178,12 @@ export default function BuildLineTable({
       {
         name: 'allocated',
         label: t`Allocated`,
-        description: t`Show allocated lines`
+        description: t`Show fully allocated lines`
+      },
+      {
+        name: 'consumed',
+        label: t`Consumed`,
+        description: t`Show fully consumed lines`
       },
       {
         name: 'available',
@@ -248,7 +247,7 @@ export default function BuildLineTable({
     if (record.in_production > 0) {
       extra.push(
         <Text key='production' size='sm'>
-          {t`In production`}: {record.in_production}
+          {t`In production`}: {formatDecimal(record.in_production)}
         </Text>
       );
     }
@@ -257,7 +256,7 @@ export default function BuildLineTable({
     if (record.on_order > 0) {
       extra.push(
         <Text key='on-order' size='sm'>
-          {t`On order`}: {record.on_order}
+          {t`On order`}: {formatDecimal(record.on_order)}
         </Text>
       );
     }
@@ -266,7 +265,7 @@ export default function BuildLineTable({
     if (record.external_stock > 0) {
       extra.push(
         <Text key='external' size='sm'>
-          {t`External stock`}: {record.external_stock}
+          {t`External stock`}: {formatDecimal(record.external_stock)}
         </Text>
       );
     }
@@ -287,7 +286,7 @@ export default function BuildLineTable({
         iconColor={sufficient ? 'blue' : 'orange'}
         value={
           available > 0 ? (
-            available
+            `${formatDecimal(available)}`
           ) : (
             <Text
               c='red'
@@ -303,9 +302,9 @@ export default function BuildLineTable({
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
-      {
+      PartColumn({
         accessor: 'bom_item',
-        title: t`Component`,
+        part: 'part_detail',
         ordering: 'part',
         sortable: true,
         switchable: false,
@@ -318,11 +317,11 @@ export default function BuildLineTable({
                 enabled={hasAllocatedItems}
                 expanded={table.isRowExpanded(record.pk)}
               />
-              <PartColumn part={record.part_detail} />
+              <RenderPartColumn part={record.part_detail} />
             </Group>
           );
         }
-      },
+      }),
       {
         accessor: 'part_detail.IPN',
         sortable: false,
@@ -398,7 +397,8 @@ export default function BuildLineTable({
           if (record?.bom_item_detail?.setup_quantity) {
             extra.push(
               <Text key='setup-quantity' size='sm'>
-                {t`Setup Quantity`}: {record.bom_item_detail.setup_quantity}
+                {t`Setup Quantity`}:{' '}
+                {formatDecimal(record.bom_item_detail.setup_quantity)}
               </Text>
             );
           }
@@ -427,7 +427,7 @@ export default function BuildLineTable({
               extra={extra}
               value={
                 <Group justify='space-between' wrap='nowrap'>
-                  <Text>{record.requiredQuantity}</Text>
+                  <Text>{formatDecimal(record.requiredQuantity)}</Text>
                   {record?.part_detail?.units && (
                     <Text size='xs'>[{record.part_detail.units}]</Text>
                   )}
@@ -444,17 +444,82 @@ export default function BuildLineTable({
         render: renderAvailableColumn
       },
       {
+        accessor: 'in_production',
+        render: (record: any) => {
+          if (record.scheduled_to_build > 0) {
+            return (
+              <ProgressBar
+                progressLabel={true}
+                value={record.in_production}
+                maximum={record.scheduled_to_build}
+              />
+            );
+          } else {
+            return record.part_detail?.is_assembly ? 0 : '-';
+          }
+        }
+      },
+      DecimalColumn({
+        accessor: 'on_order',
+        defaultVisible: false
+      }),
+      {
         accessor: 'allocated',
         switchable: false,
         sortable: true,
         hidden: !isActive,
+        minWidth: 125,
+        render: (record: any) => {
+          if (record?.bom_item_detail?.consumable) {
+            return (
+              <Text
+                size='sm'
+                style={{ fontStyle: 'italic' }}
+              >{t`Consumable item`}</Text>
+            );
+          }
+
+          let required = Math.max(0, record.quantity - record.consumed);
+
+          if (output?.pk) {
+            // If an output is specified, we show the allocated quantity for that output
+            required = record.bom_item_detail?.quantity;
+          }
+
+          if (required <= 0) {
+            return (
+              <Group gap='xs' wrap='nowrap'>
+                <IconCircleCheck size={16} color='green' />
+                <Text size='sm' style={{ fontStyle: 'italic' }}>
+                  {record.consumed >= record.quantity
+                    ? t`Fully consumed`
+                    : t`Fully allocated`}
+                </Text>
+              </Group>
+            );
+          }
+
+          return (
+            <ProgressBar
+              progressLabel={true}
+              value={record.allocatedQuantity}
+              maximum={required}
+            />
+          );
+        }
+      },
+      {
+        accessor: 'consumed',
+        sortable: true,
+        hidden: !!output?.pk,
+        minWidth: 125,
         render: (record: any) => {
           return record?.bom_item_detail?.consumable ? (
             <Text style={{ fontStyle: 'italic' }}>{t`Consumable item`}</Text>
           ) : (
             <ProgressBar
               progressLabel={true}
-              value={record.allocatedQuantity}
+              value={record.consumed}
               maximum={record.requiredQuantity}
             />
           );
@@ -516,10 +581,12 @@ export default function BuildLineTable({
 
   const allocateStock = useAllocateStockToBuildForm({
     build: build,
+    output: output,
     outputId: output?.pk ?? null,
     buildId: build.pk,
     lineItems: selectedRows,
     onFormSuccess: () => {
+      table.clearSelectedRecords();
       table.refreshTable();
     }
   });
@@ -550,7 +617,10 @@ export default function BuildLineTable({
       </Alert>
     ),
     successMessage: t`Stock has been deallocated`,
-    table: table
+    onFormSuccess: () => {
+      table.clearSelectedRecords();
+      table.refreshTable();
+    }
   });
 
   const [selectedAllocation, setSelectedAllocation] = useState<number>(0);
@@ -581,6 +651,15 @@ export default function BuildLineTable({
     parts: partsToOrder
   });
 
+  const consumeLines = useConsumeBuildLinesForm({
+    buildId: build.pk,
+    buildLines: selectedRows,
+    onFormSuccess: () => {
+      table.clearSelectedRecords();
+      table.refreshTable();
+    }
+  });
+
   const rowActions = useCallback(
     (record: any): RowAction[] => {
       const part = record.part_detail ?? {};
@@ -589,11 +668,24 @@ export default function BuildLineTable({
 
       const hasOutput = !!output?.pk;
 
+      const required = Math.max(
+        0,
+        record.quantity - record.consumed - record.allocated
+      );
+
+      // Can consume
+      const canConsume =
+        in_production &&
+        !consumable &&
+        record.allocated > 0 &&
+        user.hasChangeRole(UserRoles.build);
+
       // Can allocate
       const canAllocate =
         in_production &&
         !consumable &&
         user.hasChangeRole(UserRoles.build) &&
+        required > 0 &&
         record.trackable == hasOutput;
 
       // Can de-allocate
@@ -621,6 +713,16 @@ export default function BuildLineTable({
           onClick: () => {
             setSelectedRows([record]);
             allocateStock.open();
+          }
+        },
+        {
+          icon: <IconCircleDashedCheck />,
+          title: t`Consume Stock`,
+          color: 'green',
+          hidden: !canConsume || hasOutput,
+          onClick: () => {
+            setSelectedRows([record]);
+            consumeLines.open();
           }
         },
         {
@@ -734,6 +836,18 @@ export default function BuildLineTable({
           setSelectedLine(null);
           deallocateStock.open();
         }}
+      />,
+      <ActionButton
+        key='consume-stock'
+        icon={<IconCircleDashedCheck />}
+        tooltip={t`Consume Stock`}
+        hidden={!visible || hasOutput}
+        disabled={!table.hasSelectedRecords}
+        color='green'
+        onClick={() => {
+          setSelectedRows(table.selectedRecords);
+          consumeLines.open();
+        }}
       />
     ];
   }, [
@@ -819,6 +933,7 @@ export default function BuildLineTable({
       {deallocateStock.modal}
       {editAllocation.modal}
       {deleteAllocation.modal}
+      {consumeLines.modal}
       {orderPartsWizard.wizard}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.build_line_list)}
@@ -828,6 +943,7 @@ export default function BuildLineTable({
           params: {
             ...params,
             build: build.pk,
+            assembly_detail: false,
             part_detail: true
           },
           tableActions: tableActions,

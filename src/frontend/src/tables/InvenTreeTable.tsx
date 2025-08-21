@@ -29,6 +29,7 @@ import { useApi } from '../contexts/ApiContext';
 import { extractAvailableFields, mapFields } from '../functions/forms';
 import { showApiErrorMessage } from '../functions/notifications';
 import { useLocalState } from '../states/LocalState';
+import { useUserSettingsState } from '../states/SettingsStates';
 import { useStoredTableState } from '../states/StoredTableState';
 import InvenTreeTableHeader from './InvenTreeTableHeader';
 
@@ -90,6 +91,12 @@ export function InvenTreeTable<T extends Record<string, any>>({
   const api = useApi();
   const navigate = useNavigate();
   const { showContextMenu } = useContextMenu();
+
+  const userSettings = useUserSettingsState();
+
+  const stickyTableHeader = useMemo(() => {
+    return userSettings.isSet('STICKY_TABLE_HEADER');
+  }, [userSettings]);
 
   // Key used for caching table data
   const cacheKey = useMemo(() => {
@@ -253,7 +260,12 @@ export function InvenTreeTable<T extends Record<string, any>>({
         ...col,
         hidden: hidden,
         resizable: col.resizable ?? true,
-        title: col.title ?? fieldNames[col.accessor] ?? `${col.accessor}`
+        title: col.title ?? fieldNames[col.accessor] ?? `${col.accessor}`,
+        titleStyle: (record: any, index: number) => {
+          return {
+            minWidth: (col as any).minWidth ?? '100px'
+          };
+        }
       };
     });
 
@@ -328,17 +340,33 @@ export function InvenTreeTable<T extends Record<string, any>>({
     ) {
       tableColumns.setColumnsOrder(dataColumnsOrder);
     }
-  }, [
-    cacheKey,
-    dataColumnsOrder,
-    tableColumns.columnsOrder,
-    tableColumns.setColumnsOrder
-  ]);
+  }, [cacheKey, dataColumnsOrder]);
 
   // Reset the pagination state when the search term changes
   useEffect(() => {
     tableState.setPage(1);
-  }, [tableState.searchTerm]);
+  }, [
+    tableState.searchTerm,
+    tableState.filterSet.activeFilters,
+    tableState.queryFilters
+  ]);
+
+  // Account for invalid page offsets
+  useEffect(() => {
+    if (
+      tableState.page > 1 &&
+      pageSize * tableState.page > tableState.recordCount
+    ) {
+      tableState.setPage(1);
+    } else if (tableState.page < 1) {
+      tableState.setPage(1);
+    }
+
+    if (pageSize < 10) {
+      // Default page size
+      setPageSize(25);
+    }
+  }, [tableState.records, tableState.page, pageSize]);
 
   // Data Sorting
   const [sortStatus, setSortStatus] = useState<DataTableSortStatus<T>>({
@@ -703,7 +731,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
         ..._params,
         totalRecords: tableState.recordCount,
         recordsPerPage: tablePageSize,
-        page: tableState.page,
+        page: Math.max(1, tableState.page),
         onPageChange: tableState.setPage,
         recordsPerPageOptions: PAGE_SIZES,
         onRecordsPerPageChange: updatePageSize
@@ -747,6 +775,10 @@ export function InvenTreeTable<T extends Record<string, any>>({
         <Boundary label={`InvenTreeTable-${cacheKey}`}>
           <Box pos='relative'>
             <DataTable
+              style={{
+                stickyHeader: stickyTableHeader ? 'top' : undefined
+              }}
+              height={stickyTableHeader ? '80vh' : undefined}
               withTableBorder={!tableProps.noHeader}
               withColumnBorders
               striped

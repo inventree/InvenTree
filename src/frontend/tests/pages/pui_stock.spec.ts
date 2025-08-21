@@ -299,6 +299,40 @@ test('Stock - Stock Actions', async ({ browser }) => {
   await page.getByLabel('action-menu-stock-operations-return').click();
 });
 
+test('Stock - Return Items', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    url: 'sales/customer/32/assigned-stock'
+  });
+
+  // Return stock items assigned to customer
+  await page.getByRole('cell', { name: 'Select all records' }).click();
+  await page.getByRole('button', { name: 'action-menu-stock-actions' }).click();
+  await page
+    .getByRole('menuitem', { name: 'action-menu-stock-actions-return-stock' })
+    .click();
+  await page.getByText('Return selected items into stock').first().waitFor();
+  await page.getByRole('button', { name: 'Cancel' }).click();
+
+  // Location detail
+  await navigate(page, 'stock/item/1253');
+  await page
+    .getByRole('button', { name: 'action-menu-stock-operations' })
+    .click();
+  await page
+    .getByRole('menuitem', {
+      name: 'action-menu-stock-operations-return-stock'
+    })
+    .click();
+
+  await page.getByText('#128').waitFor();
+  await page.getByText('Merge into existing stock').waitFor();
+  await page.getByRole('textbox', { name: 'number-field-quantity' }).fill('0');
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  await page.getByText('Quantity must be greater than zero').waitFor();
+  await page.getByText('This field is required.').waitFor();
+});
+
 test('Stock - Tracking', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: 'stock/item/176/details' });
 

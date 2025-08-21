@@ -1,4 +1,5 @@
 import { t } from '@lingui/core/macro';
+import { Text } from '@mantine/core';
 import type { ReactNode } from 'react';
 
 import { ModelType } from '@lib/enums/ModelType';
@@ -118,7 +119,7 @@ export function RenderSalesOrderShipment({
   return (
     <RenderInlineModel
       primary={order.reference}
-      secondary={`${t`Shipment`} ${instance.reference}`}
+      suffix={<Text size='xs'>{`${t`Shipment`} ${instance.reference}`}</Text>}
     />
   );
 }

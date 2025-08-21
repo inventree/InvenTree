@@ -2,6 +2,7 @@
 
 from datetime import datetime
 from string import Formatter
+from typing import Optional
 
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
@@ -1154,12 +1155,16 @@ class InvenTreeBarcodeMixin(models.Model):
         return self.format_barcode()
 
     @classmethod
-    def lookup_barcode(cls, barcode_hash):
+    def lookup_barcode(cls, barcode_hash: str) -> models.Model:
         """Check if a model instance exists with the specified third-party barcode hash."""
         return cls.objects.filter(barcode_hash=barcode_hash).first()
 
     def assign_barcode(
-        self, barcode_hash=None, barcode_data=None, raise_error=True, save=True
+        self,
+        barcode_hash: Optional[str] = None,
+        barcode_data: Optional[str] = None,
+        raise_error: bool = True,
+        save: bool = True,
     ):
         """Assign an external (third-party) barcode to this object."""
         # Must provide either barcode_hash or barcode_data
@@ -1199,10 +1204,11 @@ def notify_staff_users_of_error(instance, label: str, context: dict):
     """Helper function to notify staff users of an error."""
     import common.models
     import common.notifications
+    from plugin.builtin.integration.core_notifications import InvenTreeUINotifications
 
     try:
         # Get all staff users
-        staff_users = get_user_model().objects.filter(is_staff=True)
+        staff_users = get_user_model().objects.filter(is_active=True, is_staff=True)
 
         target_users = []
 
@@ -1219,7 +1225,7 @@ def notify_staff_users_of_error(instance, label: str, context: dict):
                 label,
                 context=context,
                 targets=target_users,
-                delivery_methods={common.notifications.UIMessageNotification},
+                delivery_methods={InvenTreeUINotifications},
             )
 
     except Exception as exc:

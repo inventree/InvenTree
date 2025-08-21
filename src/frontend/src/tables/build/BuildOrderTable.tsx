@@ -1,13 +1,13 @@
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 
+import { AddItemButton } from '@lib/components/AddItemButton';
 import { ProgressBar } from '@lib/components/ProgressBar';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
-import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { RenderUser } from '../../components/render/User';
 import { useBuildOrderFields } from '../../forms/BuildForms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
@@ -68,12 +68,9 @@ export function BuildOrderTable({
   const tableColumns = useMemo(() => {
     return [
       ReferenceColumn({}),
-      {
-        accessor: 'part',
-        sortable: true,
-        switchable: false,
-        render: (record: any) => PartColumn({ part: record.part_detail })
-      },
+      PartColumn({
+        switchable: false
+      }),
       {
         accessor: 'part_detail.IPN',
         sortable: true,
@@ -92,6 +89,8 @@ export function BuildOrderTable({
       },
       {
         accessor: 'completed',
+        title: t`Completed`,
+        minWidth: 125,
         sortable: true,
         switchable: false,
         render: (record: any) => (

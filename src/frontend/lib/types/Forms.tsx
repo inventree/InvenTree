@@ -56,6 +56,8 @@ export type ApiFormFieldHeader = {
  * @param description : The description to display for the field
  * @param preFieldContent : Content to render before the field
  * @param postFieldContent : Content to render after the field
+ * @param autoFill: Whether to automatically fill the field with data from the API
+ * @param autoFillFilters: Optional filters to apply when auto-filling the field
  * @param onValueChange : Callback function to call when the field value changes
  * @param adjustFilters : Callback function to adjust the filters for a related field before a query is made
  * @param adjustValue : Callback function to adjust the value of the field before it is sent to the API
@@ -104,6 +106,8 @@ export type ApiFormFieldType = {
   description?: string;
   preFieldContent?: JSX.Element;
   postFieldContent?: JSX.Element;
+  autoFill?: boolean;
+  autoFillFilters?: any;
   adjustValue?: (value: any) => any;
   onValueChange?: (value: any, record?: any) => void;
   adjustFilters?: (value: ApiFormAdjustFilterType) => any;

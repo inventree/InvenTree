@@ -1,6 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { useCallback, useMemo, useState } from 'react';
 
+import { AddItemButton } from '@lib/components/AddItemButton';
 import {
   type RowAction,
   RowDeleteAction,
@@ -14,7 +15,6 @@ import { getDetailUrl } from '@lib/functions/Navigation';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
 import { useNavigate } from 'react-router-dom';
-import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { RenderInlineModel } from '../../components/render/Instance';
 import {
   useCreateApiFormModal,

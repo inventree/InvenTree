@@ -31,7 +31,6 @@ const BASE_URL: string = IS_CI
   : 'http://localhost:5173';
 
 console.log('Running Playwright Tests:');
-console.log(`- CI Mode: ${IS_CI}`);
 console.log('- Base URL:', BASE_URL);
 
 export default defineConfig({
@@ -80,7 +79,8 @@ export default defineConfig({
         INVENTREE_FRONTEND_API_HOST: 'http://localhost:8000',
         INVENTREE_CORS_ORIGIN_ALLOW_ALL: 'True',
         INVENTREE_COOKIE_SAMESITE: 'False',
-        INVENTREE_LOGIN_ATTEMPTS: '100'
+        INVENTREE_LOGIN_ATTEMPTS: '100',
+        INVENTREE_PLUGINS_MANDATORY: 'samplelocate'
       },
       url: 'http://localhost:8000/api/',
       reuseExistingServer: IS_CI,

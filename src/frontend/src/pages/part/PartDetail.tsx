@@ -1,9 +1,13 @@
 import { t } from '@lingui/core/macro';
 import {
+  ActionIcon,
   Alert,
   Center,
   Grid,
+  Group,
+  HoverCard,
   Loader,
+  type MantineColor,
   Skeleton,
   Stack,
   Text
@@ -11,11 +15,14 @@ import {
 import {
   IconBookmarks,
   IconBuilding,
+  IconCircleCheck,
   IconClipboardList,
   IconCurrencyDollar,
+  IconExclamationCircle,
   IconInfoCircle,
   IconLayersLinked,
   IconList,
+  IconListCheck,
   IconListTree,
   IconLock,
   IconPackages,
@@ -38,6 +45,7 @@ import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { getDetailUrl } from '@lib/functions/Navigation';
+import { ActionButton } from '@lib/index';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import AdminButton from '../../components/buttons/AdminButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
@@ -66,15 +74,17 @@ import NotesPanel from '../../components/panels/NotesPanel';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { RenderPart } from '../../components/render/Part';
+import { RenderUser } from '../../components/render/User';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { useApi } from '../../contexts/ApiContext';
-import { formatPriceRange } from '../../defaults/formatters';
+import { formatDecimal, formatPriceRange } from '../../defaults/formatters';
 import { usePartFields } from '../../forms/PartForms';
 import {
   type StockOperationProps,
   useFindSerialNumberForm
 } from '../../forms/StockForms';
 import {
+  useApiFormModal,
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
@@ -99,7 +109,7 @@ import { SalesOrderTable } from '../../tables/sales/SalesOrderTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 import PartAllocationPanel from './PartAllocationPanel';
 import PartPricingPanel from './PartPricingPanel';
-import PartStocktakeDetail from './PartStocktakeDetail';
+import PartStockHistoryDetail from './PartStockHistoryDetail';
 import PartSupplierDetail from './PartSupplierDetail';
 
 /**
@@ -140,6 +150,118 @@ function RevisionSelector({
         menuList: (base: any) => ({ ...base, zIndex: 9999 })
       }}
     />
+  );
+}
+
+/**
+ * A hover-over component which displays information about the BOM validation for a given part
+ */
+function BomValidationInformation({
+  partId
+}: {
+  partId: number;
+}) {
+  const { instance: bomInformation, instanceQuery: bomInformationQuery } =
+    useInstance({
+      endpoint: ApiEndpoints.bom_validate,
+      pk: partId,
+      hasPrimaryKey: true,
+      refetchOnMount: true
+    });
+
+  const validateBom = useApiFormModal({
+    url: ApiEndpoints.bom_validate,
+    method: 'PUT',
+    fields: {
+      valid: {
+        hidden: true,
+        value: true
+      }
+    },
+    title: t`Validate BOM`,
+    pk: partId,
+    preFormContent: (
+      <Alert color='green' icon={<IconCircleCheck />} title={t`Validate BOM`}>
+        <Text>{t`Do you want to validate the bill of materials for this assembly?`}</Text>
+      </Alert>
+    ),
+    successMessage: t`BOM validated`,
+    onFormSuccess: () => {
+      bomInformationQuery.refetch();
+    }
+  });
+
+  if (bomInformationQuery.isFetching) {
+    return <Loader size='sm' />;
+  }
+
+  let icon: ReactNode;
+  let color: MantineColor;
+  let title = '';
+  let description = '';
+
+  if (bomInformation?.bom_validated) {
+    color = 'green';
+    icon = <IconListCheck />;
+    title = t`BOM Validated`;
+    description = t`The Bill of Materials for this part has been validated`;
+  } else if (bomInformation?.bom_checked_date) {
+    color = 'yellow';
+    icon = <IconExclamationCircle />;
+    title = t`BOM Not Validated`;
+    description = t`The Bill of Materials for this part has previously been checked, but requires revalidation`;
+  } else {
+    color = 'red';
+    icon = <IconExclamationCircle />;
+    title = t`BOM Not Validated`;
+    description = t`The Bill of Materials for this part has not yet been validated`;
+  }
+
+  return (
+    <>
+      {validateBom.modal}
+      <Group gap='xs' justify='flex-end'>
+        {!bomInformation.bom_validated && (
+          <ActionButton
+            icon={<IconCircleCheck />}
+            color='green'
+            tooltip={t`Validate BOM`}
+            onClick={validateBom.open}
+          />
+        )}
+        <HoverCard position='bottom-end'>
+          <HoverCard.Target>
+            <ActionIcon
+              color={color}
+              variant='transparent'
+              aria-label='bom-validation-info'
+            >
+              {icon}
+            </ActionIcon>
+          </HoverCard.Target>
+          <HoverCard.Dropdown>
+            <Alert color={color} icon={icon} title={title}>
+              <Stack gap='xs'>
+                <Text size='sm'>{description}</Text>
+                {bomInformation?.bom_checked_date && (
+                  <Text size='sm'>
+                    {t`Validated On`}: {bomInformation.bom_checked_date}
+                  </Text>
+                )}
+                {bomInformation?.bom_checked_by_detail && (
+                  <Group gap='xs'>
+                    <Text size='sm'>{t`Validated By`}: </Text>
+                    <RenderUser
+                      instance={bomInformation.bom_checked_by_detail}
+                    />
+                  </Group>
+                )}
+              </Stack>
+            </Alert>
+          </HoverCard.Dropdown>
+        </HoverCard>
+      </Group>
+    </>
   );
 }
 
@@ -712,6 +834,7 @@ export default function PartDetail() {
       {
         name: 'bom',
         label: t`Bill of Materials`,
+        controls: <BomValidationInformation partId={part.pk ?? -1} />,
         icon: <IconListTree />,
         hidden: !part.assembly,
         content: part?.pk ? (
@@ -719,13 +842,6 @@ export default function PartDetail() {
         ) : (
           <Skeleton />
         )
-      },
-      {
-        name: 'builds',
-        label: t`Build Orders`,
-        icon: <IconTools />,
-        hidden: !part.assembly || !user.hasViewRole(UserRoles.build),
-        content: part.pk ? <BuildOrderTable partId={part.pk} /> : <Skeleton />
       },
       {
         name: 'used_in',
@@ -783,12 +899,22 @@ export default function PartDetail() {
         content: part.pk ? <ReturnOrderTable partId={part.pk} /> : <Skeleton />
       },
       {
+        name: 'builds',
+        label: t`Build Orders`,
+        icon: <IconTools />,
+        hidden: !part.assembly || !user.hasViewRole(UserRoles.build),
+        content: part.pk ? <BuildOrderTable partId={part.pk} /> : <Skeleton />
+      },
+      {
         name: 'stocktake',
         label: t`Stock History`,
         icon: <IconClipboardList />,
-        content: part ? <PartStocktakeDetail partId={part.pk} /> : <Skeleton />,
+        content: part ? (
+          <PartStockHistoryDetail partId={part.pk} />
+        ) : (
+          <Skeleton />
+        ),
         hidden:
-          !user.hasViewRole(UserRoles.stocktake) ||
           !globalSettings.isSet('STOCKTAKE_ENABLE') ||
           !userSettings.isSet('DISPLAY_STOCKTAKE_TAB')
       },
@@ -807,7 +933,7 @@ export default function PartDetail() {
         name: 'related_parts',
         label: t`Related Parts`,
         icon: <IconLayersLinked />,
-        content: <RelatedPartTable partId={part.pk ?? -1} />
+        content: <RelatedPartTable partId={part.pk} />
       },
       AttachmentPanel({
         model_type: ModelType.part,
@@ -841,7 +967,7 @@ export default function PartDetail() {
 
     return [
       <DetailsBadge
-        label={`${t`In Stock`}: ${partRequirements.total_stock}`}
+        label={`${t`In Stock`}: ${formatDecimal(partRequirements.total_stock)}`}
         color={
           partRequirements.total_stock >= part.minimum_stock
             ? 'green'
@@ -851,7 +977,7 @@ export default function PartDetail() {
         key='in_stock'
       />,
       <DetailsBadge
-        label={`${t`Available`}: ${partRequirements.unallocated_stock}`}
+        label={`${t`Available`}: ${formatDecimal(partRequirements.unallocated_stock)}`}
         color='yellow'
         key='available_stock'
         visible={
@@ -865,19 +991,19 @@ export default function PartDetail() {
         key='no_stock'
       />,
       <DetailsBadge
-        label={`${t`Required`}: ${required}`}
+        label={`${t`Required`}: ${formatDecimal(required)}`}
         color='grape'
         visible={required > 0}
         key='required'
       />,
       <DetailsBadge
-        label={`${t`On Order`}: ${partRequirements.ordering}`}
+        label={`${t`On Order`}: ${formatDecimal(partRequirements.ordering)}`}
         color='blue'
         visible={partRequirements.ordering > 0}
         key='on_order'
       />,
       <DetailsBadge
-        label={`${t`In Production`}: ${partRequirements.building}`}
+        label={`${t`In Production`}: ${formatDecimal(partRequirements.building)}`}
         color='blue'
         visible={partRequirements.building > 0}
         key='in_production'

@@ -1,7 +1,6 @@
 import { t } from '@lingui/core/macro';
 import {
   Accordion,
-  Alert,
   Button,
   Grid,
   Group,
@@ -65,7 +64,7 @@ import LocateItemButton from '../../components/plugins/LocateItemButton';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { useApi } from '../../contexts/ApiContext';
-import { formatCurrency } from '../../defaults/formatters';
+import { formatCurrency, formatDecimal } from '../../defaults/formatters';
 import {
   type StockOperationProps,
   useFindSerialNumberForm,
@@ -725,6 +724,8 @@ export default function StockDetail() {
   const stockAdjustActions = useStockAdjustActions({
     formProps: stockOperationProps,
     delete: false,
+    assign: !!stockitem.in_stock,
+    return: !!stockitem.consumed_by || !!stockitem.customer,
     merge: false
   });
 
@@ -754,30 +755,6 @@ export default function StockDetail() {
       }
     },
     successMessage: t`Stock item serialized`
-  });
-
-  const returnStockItem = useCreateApiFormModal({
-    url: ApiEndpoints.stock_return,
-    pk: stockitem.pk,
-    title: t`Return Stock Item`,
-    preFormContent: (
-      <Alert color='blue'>
-        {t`Return this item into stock. This will remove the customer assignment.`}
-      </Alert>
-    ),
-    fields: {
-      location: {},
-      status: {},
-      notes: {}
-    },
-    initialData: {
-      location: stockitem.location ?? stockitem.part_detail?.default_location,
-      status: stockitem.status_custom_key ?? stockitem.status
-    },
-    successMessage: t`Item returned to stock`,
-    onFormSuccess: () => {
-      refreshInstance();
-    }
   });
 
   const orderPartsWizard = OrderPartsWizard({
@@ -884,20 +861,6 @@ export default function StockDetail() {
             onClick: () => {
               orderPartsWizard.openWizard();
             }
-          },
-          {
-            name: t`Return`,
-            tooltip: t`Return from customer`,
-            hidden: !stockitem.customer,
-            icon: (
-              <InvenTreeIcon
-                icon='return_orders'
-                iconProps={{ color: 'blue' }}
-              />
-            ),
-            onClick: () => {
-              stockitem.pk && returnStockItem.open();
-            }
           }
         ]}
       />,
@@ -941,13 +904,13 @@ export default function StockDetail() {
           />,
           <DetailsBadge
             color='blue'
-            label={`${t`Quantity`}: ${stockitem.quantity}`}
+            label={`${t`Quantity`}: ${formatDecimal(stockitem.quantity)}`}
             visible={!stockitem.serial}
             key='quantity'
           />,
           <DetailsBadge
             color='yellow'
-            label={`${t`Available`}: ${available}`}
+            label={`${t`Available`}: ${formatDecimal(available)}`}
             visible={
               stockitem.in_stock &&
               !stockitem.serial &&
@@ -1045,7 +1008,6 @@ export default function StockDetail() {
       {duplicateStockItem.modal}
       {deleteStockItem.modal}
       {serializeStockItem.modal}
-      {returnStockItem.modal}
       {stockAdjustActions.modals.map((modal) => modal.modal)}
       {orderPartsWizard.wizard}
     </>

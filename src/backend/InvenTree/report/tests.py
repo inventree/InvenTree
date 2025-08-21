@@ -349,6 +349,47 @@ class LabelTest(InvenTreeAPITestCase):
         self.assertEqual(output.plugin, 'inventreelabel')
         self.assertTrue(output.output.name.endswith('.pdf'))
 
+    def test_filters(self):
+        """Test that template filters are correctly validated."""
+        from django.core.exceptions import ValidationError
+
+        from InvenTree.helpers import validateFilterString
+
+        invalid = [
+            'name=widget, category=6, invalid_field=123',
+            'category__in=[1,',
+            'foo=bar',
+        ]
+
+        valid = [
+            'name=widget, category=6',
+            'category__in=[1,2,3]',
+            'name=widget  , id__in  =    [99, 199        ]   ',
+            'pk__in=[1,2,3], active=True',
+            'pk__in=[1, 99], category__in=[1,2,3]',
+        ]
+
+        template = LabelTemplate.objects.filter(enabled=True, model_type='part').first()
+
+        for f in invalid:
+            with self.assertRaises(ValidationError):
+                template.filters = f
+                template.clean()
+
+        for f in valid:
+            template.filters = f
+            template.clean()
+
+        # Test a specific example
+        example = '    location__in =[1,2 , 3 ] , status= 3  , id__in=[4,5,6]  , part__active=False'
+
+        result = validateFilterString(example, model=StockItem)
+
+        self.assertEqual(result['location__in'], [1, 2, 3])
+        self.assertEqual(result['status'], '3')
+        self.assertEqual(result['id__in'], [4, 5, 6])
+        self.assertEqual(result['part__active'], 'False')
+
 
 class PrintTestMixins:
     """Mixin that enables e2e printing tests."""
@@ -393,7 +434,7 @@ class PrintTestMixins:
             },
             expected_code=201,
             max_query_time=15,
-            max_query_count=500 * len(qs),
+            max_query_count=150 * len(qs),
         )
 
         # Test with wrong dimensions

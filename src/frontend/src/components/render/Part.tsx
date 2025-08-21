@@ -1,9 +1,12 @@
 import { t } from '@lingui/core/macro';
-import { Badge } from '@mantine/core';
+import { Badge, Group, Text } from '@mantine/core';
 import type { ReactNode } from 'react';
 
 import { ModelType } from '@lib/enums/ModelType';
+import { formatDecimal } from '@lib/functions/Formatting';
 import { getDetailUrl } from '@lib/functions/Navigation';
+import { shortenString } from '../../functions/tables';
+import { TableHoverCard } from '../../tables/TableHoverCard';
 import { ApiIcon } from '../items/ApiIcon';
 import { type InstanceRenderInterface, RenderInlineModel } from './Instance';
 
@@ -27,7 +30,7 @@ export function RenderPart(
     badgeColor = 'orange';
     badgeText = t`No stock`;
   } else if (stock != null) {
-    badgeText = `${t`Stock`}: ${stock}`;
+    badgeText = `${t`Stock`}: ${formatDecimal(stock)}`;
     badgeColor = instance.minimum_stock > stock ? 'yellow' : 'green';
   }
 
@@ -57,6 +60,28 @@ export function RenderPartCategory(
 ): ReactNode {
   const { instance } = props;
 
+  if (!instance) {
+    return '';
+  }
+
+  const suffix: ReactNode = (
+    <Group gap='xs'>
+      <TableHoverCard
+        value={<Text size='xs'>{instance.description}</Text>}
+        position='bottom-end'
+        zIndex={10000}
+        icon='sitemap'
+        title={t`Category`}
+        extra={[<Text>{instance.pathstring}</Text>]}
+      />
+    </Group>
+  );
+
+  const category = shortenString({
+    str: instance.pathstring,
+    len: 50
+  });
+
   return (
     <RenderInlineModel
       {...props}
@@ -67,8 +92,8 @@ export function RenderPartCategory(
           {instance.icon && <ApiIcon name={instance.icon} />}
         </>
       }
-      primary={instance.pathstring}
-      secondary={instance.description}
+      primary={category}
+      suffix={suffix}
       url={
         props.link
           ? getDetailUrl(ModelType.partcategory, instance.pk)
@@ -103,7 +128,7 @@ export function RenderPartTestTemplate({
   return (
     <RenderInlineModel
       primary={instance.test_name}
-      secondary={instance.description}
+      suffix={instance.description}
     />
   );
 }

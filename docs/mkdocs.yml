@@ -210,8 +210,10 @@ nav:
   - Plugins:
     - Overview: plugins/index.md
     - Installation: plugins/install.md
-    - Developing a Plugin: plugins/how_to.md
-    - Plugin Development Walkthrough: plugins/walkthrough.md
+    - Developing a Plugin: plugins/develop.md
+    - Frontend Integration: plugins/frontend.md
+    - Plugin Creator: plugins/creator.md
+    - Plugin Walkthrough: plugins/walkthrough.md
     - Model Metadata: plugins/metadata.md
     - Tags: plugins/tags.md
     - Unit Test: plugins/test.md
@@ -226,10 +228,14 @@ nav:
       - Icon Pack Mixin: plugins/mixins/icon.md
       - Label Printing Mixin: plugins/mixins/label.md
       - Locate Mixin: plugins/mixins/locate.md
+      - Machine Mixin: plugins/mixins/machine.md
+      - Mail Mixin: plugins/mixins/mail.md
       - Navigation Mixin: plugins/mixins/navigation.md
+      - Notification Mixin: plugins/mixins/notification.md
       - Report Mixin: plugins/mixins/report.md
       - Schedule Mixin: plugins/mixins/schedule.md
       - Settings Mixin: plugins/mixins/settings.md
+      - Transition Mixin: plugins/mixins/transition.md
       - URL Mixin: plugins/mixins/urls.md
       - User Interface Mixin: plugins/mixins/ui.md
       - Validation Mixin: plugins/mixins/validation.md
@@ -238,25 +244,31 @@ nav:
       - Label Printer: plugins/machines/label_printer.md
     - Builtin Plugins:
       - Builtin Plugins: plugins/builtin/index.md
-      - Auto Create Builds: plugins/builtin/auto_create_builds.md
-      - Auto Issue: plugins/builtin/auto_issue.md
-      - BOM Exporter: plugins/builtin/bom_exporter.md
-      - Currency Exchange: plugins/builtin/currency_exchange.md
-      - InvenTree Barcode: plugins/builtin/inventree_barcode.md
-      - InvenTree Exporter: plugins/builtin/inventree_exporter.md
-      - Label Printer: plugins/builtin/inventree_label.md
-      - Label Machine: plugins/builtin/inventree_label_machine.md
-      - Label Sheet: plugins/builtin/inventree_label_sheet.md
-      - Notification: plugins/builtin/notifications.md
-      - Parameter Exporter: plugins/builtin/part_parameter_exporter.md
-      - Part Notifications: plugins/builtin/part_notifications.md
       - Barcode Plugins:
         - Barcode Plugins: plugins/builtin/barcode_index.md
+        - InvenTree Barcode: plugins/builtin/inventree_barcode.md
         - DigiKey Barcode Plugin: plugins/builtin/barcode_digikey.md
         - LCSC Barcode Plugin: plugins/builtin/barcode_lcsc.md
         - Mouser Barcode Plugin: plugins/builtin/barcode_mouser.md
         - TME Barcode Plugin: plugins/builtin/barcode_tme.md
-    - Third-Party: plugins/integrate.md
+      - Event Plugins:
+        - Auto Create Builds: plugins/builtin/auto_create_builds.md
+        - Auto Issue: plugins/builtin/auto_issue.md
+        - Part Update Notification: plugins/builtin/part_notifications.md
+      - Export Plugins:
+        - BOM Exporter: plugins/builtin/bom_exporter.md
+        - InvenTree Exporter: plugins/builtin/inventree_exporter.md
+        - Parameter Exporter: plugins/builtin/part_parameter_exporter.md
+        - Stocktake Exporter: plugins/builtin/stocktake_exporter.md
+      - Label Printing:
+        - Label Printer: plugins/builtin/inventree_label.md
+        - Label Machine: plugins/builtin/inventree_label_machine.md
+        - Label Sheet: plugins/builtin/inventree_label_sheet.md
+      - Notification Plugins:
+        - Email Notifications: plugins/builtin/email_notification.md
+        - Slack Notifications: plugins/builtin/slack_notification.md
+        - UI Notifications: plugins/builtin/ui_notification.md
+      - Currency Exchange: plugins/builtin/currency_exchange.md
 
 # Plugins
 plugins:
