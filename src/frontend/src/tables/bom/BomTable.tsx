@@ -358,7 +358,8 @@ export function BomTable({
             return '-';
           }
 
-          const can_build = Math.trunc(record.can_build);
+          const can_build = Math.max(0, Math.trunc(record.can_build));
+
           const value = (
             <Text
               fs={record.consumable && 'italic'}
