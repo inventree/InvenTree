@@ -862,7 +862,7 @@ class ReferenceSerializer(InvenTreeModelSerializer):
         ]
 
     source = serializers.PrimaryKeyRelatedField(
-        queryset=common_models.Reference.objects.all(), many=False
+        queryset=common_models.ReferenceSource.objects.all(), many=False
     )
     target = serializers.SerializerMethodField()  # read_only=True)
 
