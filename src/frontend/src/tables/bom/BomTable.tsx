@@ -22,6 +22,7 @@ import {
 } from '@lib/components/RowActions';
 import { YesNoButton } from '@lib/components/YesNoButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { navigateToLink } from '@lib/functions/Navigation';
@@ -687,8 +688,9 @@ export function BomTable({
             },
             tableActions: tableActions,
             tableFilters: tableFilters,
-            // modelType: ModelType.part,
-            // modelField: 'sub_part',
+            modelType: ModelType.part,
+            modelField: 'sub_part',
+            onCellClick: () => {},
             rowActions: isEditing ? rowActions : undefined,
             enableSelection: isEditing && !partLocked,
             enableBulkDelete:
