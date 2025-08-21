@@ -46,6 +46,7 @@ from .models import (
     NotificationEntry,
     NotificationMessage,
     ProjectCode,
+    ReferenceSource,
     SelectionList,
     SelectionListEntry,
     WebhookEndpoint,
@@ -2061,6 +2062,146 @@ class SelectionListTest(InvenTreeAPITestCase):
             expected_code=201,
         )
         self.assertEqual(response.data['data'], self.entry1.value)
+
+
+class ReferenceStuffTest(InvenTreeAPITestCase):
+    """Test Reference and ReferenceSource things."""
+
+    def setUp(self):
+        """Setup for all tests."""
+        self.source1 = ReferenceSource.objects.create(name='Test Source')
+        return super().setUp()
+
+    def test_ReferenceSource_lock_api(self):
+        """Test that the reference source can be locked."""
+        self.assertEqual(self.source1.name, str(self.source1))
+
+        url = reverse('api-reference-source-detail', kwargs={'pk': self.source1.pk})
+        response = self.patch(url, {'locked': True, 'active': False}, expected_code=200)
+        self.assertTrue(response.data['locked'])
+        self.source1.refresh_from_db()
+        self.assertEqual(self.source1.name + ' (Inactive)', str(self.source1))
+
+        # Should not be able to edit
+        response = self.patch(url, {'name': 'New Name'}, expected_code=400)
+        self.assertIn('Reference source is locked', response.data['locked'])
+
+        # Unlock
+        response = self.patch(url, {'locked': False}, expected_code=400)
+        self.assertIn('Reference source is locked', response.data['locked'])
+        self.source1.locked = False
+        self.source1.save()
+
+        # Should be able to edit
+        response = self.patch(
+            url, {'name': 'New Name', 'active': False}, expected_code=200
+        )
+        self.assertEqual(response.data['name'], 'New Name')
+
+    def test_ReferenceSource_api(self):
+        """Test the ReferenceSource API."""
+        url = reverse('api-reference-source-list')
+        response = self.get(url, expected_code=200)
+        self.assertEqual(len(response.data), 1)
+
+        url = reverse('api-reference-source-detail', kwargs={'pk': self.source1.pk})
+        response = self.get(url, expected_code=200)
+        self.assertEqual(response.data['name'], 'Test Source')
+
+    def test_Reference_api(self):
+        """Test the Reference API."""
+        url = reverse('api-reference-list')
+        response = self.get(url, expected_code=200)
+        self.assertEqual(len(response.data), 0)
+
+        # Add reference
+        response = self.post(
+            url,
+            {
+                'source': self.source1.pk,
+                'target': self.source1,
+                'value': 'Test Reference',
+            },
+            expected_code=201,
+        )
+        self.assertEqual(response.data['value'], 'Test Reference')
+        self.assertEqual(response.data['source'], self.source1.pk)
+
+        # Edit reference
+        url = reverse('api-reference-detail', kwargs={'pk': response.data['pk']})
+        response = self.patch(url, {'value': 'New Reference'}, expected_code=200)
+        self.assertEqual(response.data['value'], 'New Reference')
+
+    def test_Reference_validation(self):
+        """Test the Reference validation."""
+        url = reverse('api-reference-list')
+
+        # Valid reference
+        response = self.post(
+            url,
+            {
+                'source': self.source1.pk,
+                'target': self.source1.pk,
+                'value': 'Test Reference',
+            },
+            expected_code=201,
+        )
+        self.assertEqual(response.data['value'], 'Test Reference')
+
+        # No empty value
+        response = self.post(
+            url, {'source': self.source1.pk, 'value': ''}, expected_code=400
+        )
+        self.assertIn('This field may not be blank.', response.data['value'])
+
+        # Test max_length
+        self.source1.max_length = 10
+        self.source1.save()
+        response = self.post(
+            url, {'source': self.source1.pk, 'value': 'a' * 100}, expected_code=400
+        )
+        self.assertIn(
+            'Ensure this field has no more than 10 characters.', response.data['value']
+        )
+        self.source1.max_length = 100
+
+        # Test validation_pattern
+        self.source1.validation_pattern = '[0-9]+'
+        self.source1.save()
+        response = self.post(
+            url, {'source': self.source1.pk, 'value': 'abc'}, expected_code=400
+        )
+        self.assertIn('Enter a valid value.', response.data['value'])
+        self.source1.validation_pattern = None
+
+        # Test reference_is_link
+        self.source1.reference_is_link = True
+        self.source1.save()
+        response = self.post(
+            url, {'source': self.source1.pk, 'value': 'abc'}, expected_code=400
+        )
+        self.assertIn('This value must be a valid URL.', response.data['value'])
+        # Test valid URL
+        response = self.post(
+            url,
+            {'source': self.source1.pk, 'value': 'https://www.example.com'},
+            expected_code=201,
+        )
+        self.assertEqual(response.data['value'], 'https://www.example.com')
+        self.source1.reference_is_link = False
+
+        # Test reference_is_unique_global
+        self.source1.reference_is_unique_global = True
+        self.source1.save()
+        response = self.post(
+            url,
+            {'source': self.source1.pk, 'value': 'Test Reference'},
+            expected_code=400,
+        )
+        self.assertIn(
+            'Reference with this Source and Value already exists.',
+            response.data['non_field_errors'],
+        )
 
 
 class AdminTest(AdminTestCase):
