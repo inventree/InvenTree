@@ -27,7 +27,6 @@ import { apiUrl } from '@lib/functions/Api';
 import { navigateToLink } from '@lib/functions/Navigation';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
-import { Thumbnail } from '../../components/images/Thumbnail';
 import ImporterDrawer from '../../components/importer/ImporterDrawer';
 import { RenderPart } from '../../components/render/Part';
 import { useApi } from '../../contexts/ApiContext';
@@ -45,10 +44,12 @@ import {
   BooleanColumn,
   DescriptionColumn,
   NoteColumn,
-  ReferenceColumn
+  ReferenceColumn,
+  RenderPartColumn
 } from '../ColumnRenderers';
 import { PartCategoryFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
+import RowExpansionIcon from '../RowExpansionIcon';
 import { TableHoverCard } from '../TableHoverCard';
 
 // Calculate the total stock quantity available for a given BomItem
@@ -81,6 +82,8 @@ export function BomTable({
   const table = useTable('bom');
   const navigate = useNavigate();
 
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+
   const [importOpened, setImportOpened] = useState<boolean>(false);
 
   const [selectedSession, setSelectedSession] = useState<number | undefined>(
@@ -93,6 +96,7 @@ export function BomTable({
         accessor: 'sub_part',
         switchable: false,
         sortable: true,
+        minWidth: 250,
         render: (record: any) => {
           const part = record.sub_part_detail;
           const extra = [];
@@ -105,18 +109,16 @@ export function BomTable({
 
           return (
             part && (
-              <Group gap='xs' justify='space-between' wrap='nowrap'>
-                <TableHoverCard
-                  value={
-                    <Thumbnail
-                      src={part.thumbnail || part.image}
-                      alt={part.description}
-                      text={part.full_name}
+              <Group justify='space-between'>
+                <Group gap='xs' wrap='nowrap'>
+                  {!isEditing && part?.assembly && (
+                    <RowExpansionIcon
+                      enabled={part?.assembly}
+                      expanded={table.isRowExpanded(record.pk)}
                     />
-                  }
-                  extra={extra}
-                  title={t`Part Information`}
-                />
+                  )}
+                  <RenderPartColumn part={part} />
+                </Group>
                 {!record.validated && (
                   <Tooltip label={t`This BOM item has not been validated`}>
                     <ActionIcon color='red' variant='transparent' size='sm'>
@@ -386,7 +388,7 @@ export function BomTable({
       },
       NoteColumn({})
     ];
-  }, [partId, params]);
+  }, [isEditing, partId, params]);
 
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
