@@ -28,7 +28,16 @@ class Command(BaseCommand):
         if len(mfa_user) == 0:
             logger.warning('No user with this mail associated')
         elif len(mfa_user) > 1:
-            logger.error('More than one user found with this mail')
+            emails_list = ', '.join(
+                sorted(
+                    {b.email for a in mfa_user for b in a.emailaddress_set.all()}
+                    | {a.email for a in mfa_user}
+                )
+            )
+            usernames_list = ', '.join(sorted({a.username for a in mfa_user}))
+            logger.error(
+                f"Multiple users found with the provided email; Usernames: '{usernames_list}', Emails: '{emails_list}'"
+            )
         else:
             # and clean out all MFA methods
             auths = mfa_user[0].authenticator_set.all()
