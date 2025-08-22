@@ -347,9 +347,9 @@ mkdocs-macros-plugin==1.3.9 \
     --hash=sha256:01b6003fbe9b55fdc97c0abb66f811d65abfd291dcf70f277990165553faa99a \
     --hash=sha256:c52351295efdbdbb37a9f0ea639719055ddb64a00115457289940e85696a81d9
     # via -r docs/requirements.in
-mkdocs-material==9.6.17 \
-    --hash=sha256:221dd8b37a63f52e580bcab4a7e0290e4a6f59bd66190be9c3d40767e05f9417 \
-    --hash=sha256:48ae7aec72a3f9f501a70be3fbd329c96ff5f5a385b67a1563e5ed5ce064affe
+mkdocs-material==9.6.18 \
+    --hash=sha256:a2eb253bcc8b66f8c6eaf8379c10ed6e9644090c2e2e9d0971c7722dc7211c05 \
+    --hash=sha256:dbc1e146a0ecce951a4d84f97b816a54936cdc9e1edd1667fc6868878ac06701
     # via -r docs/requirements.in
 mkdocs-material-extensions==1.3.1 \
     --hash=sha256:10c9511cea88f568257f960358a467d12b970e1f7b2c0e5fb2bb48cab1928443 \
@@ -489,9 +489,9 @@ pyyaml-env-tag==1.1 \
     --hash=sha256:17109e1a528561e32f026364712fee1264bc2ea6715120891174ed1b980d2e04 \
     --hash=sha256:2eb38b75a2d21ee0475d6d97ec19c63287a7e140231e4214969d0eac923cd7ff
     # via mkdocs
-requests==2.32.4 \
-    --hash=sha256:27babd3cda2a6d50b30443204ee89830707d396671944c998b5975b031ac2b2c \
-    --hash=sha256:27d0316682c8a29834d3264820024b62a36942083d52caf2f14c0591336d3422
+requests==2.32.5 \
+    --hash=sha256:2462f94637a34fd532264295e186976db0f5d453d1cdd31473c85a6a161affb6 \
+    --hash=sha256:dbba0bac56e100853db0ea71b82b4dfd5fe2bf6d3754a8893c3af500cec7d7cf
     # via
     #   mkdocs-material
     #   mkdocs-mermaid2-plugin
