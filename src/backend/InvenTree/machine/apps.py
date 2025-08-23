@@ -36,7 +36,8 @@ class MachineConfig(AppConfig):
 
         try:
             logger.info('Loading InvenTree machines')
-            registry.initialize(main=isInMainThread())
+            if not registry.is_ready:
+                registry.initialize(main=isInMainThread())
         except (OperationalError, ProgrammingError):
             # Database might not yet be ready
             logger.warn('Database was not ready for initializing machines')

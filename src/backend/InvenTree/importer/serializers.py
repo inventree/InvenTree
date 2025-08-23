@@ -41,6 +41,7 @@ class DataImportSessionSerializer(InvenTreeModelSerializer):
             'pk',
             'timestamp',
             'data_file',
+            'update_records',
             'model_type',
             'available_fields',
             'status',

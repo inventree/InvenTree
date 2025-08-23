@@ -23,7 +23,7 @@ import type {
 import type { TableFieldRowProps } from '../components/forms/fields/TableField';
 import { useCreateApiFormModal } from '../hooks/UseForm';
 import { useGlobalSettingsState } from '../states/SettingsStates';
-import { PartColumn } from '../tables/ColumnRenderers';
+import { RenderPartColumn } from '../tables/ColumnRenderers';
 
 export function useSalesOrderFields({
   duplicateOrderId
@@ -197,7 +197,7 @@ function SalesOrderAllocateLineRow({
   return (
     <Table.Tr key={`table-row-${props.idx}-${record.pk}`}>
       <Table.Td>
-        <PartColumn part={record.part_detail} />
+        <RenderPartColumn part={record.part_detail} />
       </Table.Td>
       <Table.Td>
         <ProgressBar

@@ -365,14 +365,10 @@ export default function ParametricPartTable({
 
   const tableColumns: TableColumn[] = useMemo(() => {
     const partColumns: TableColumn[] = [
-      {
-        accessor: 'name',
-        title: t`Part`,
-        sortable: true,
-        switchable: false,
-        noWrap: true,
-        render: (record: any) => PartColumn({ part: record })
-      },
+      PartColumn({
+        part: '',
+        switchable: false
+      }),
       DescriptionColumn({
         defaultVisible: false
       }),

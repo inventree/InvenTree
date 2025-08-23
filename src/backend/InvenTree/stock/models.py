@@ -627,7 +627,11 @@ class StockItem(
 
         for serial in serials:
             data['serial'] = serial
-            data['serial_int'] = StockItem.convert_serial_to_int(serial)
+
+            if serial is not None:
+                data['serial_int'] = StockItem.convert_serial_to_int(serial) or 0
+            else:
+                data['serial_int'] = 0
 
             data['tree_id'] = tree_id
 
@@ -703,6 +707,10 @@ class StockItem(
         This is used for efficient numerical sorting
         """
         serial = str(getattr(self, 'serial', '')).strip()
+
+        if not serial:
+            self.serial_int = 0
+            return
 
         serial_int = self.convert_serial_to_int(serial)
 

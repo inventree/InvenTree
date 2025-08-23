@@ -451,10 +451,9 @@ export function BomTable({
   const [selectedBomItem, setSelectedBomItem] = useState<any>({});
 
   const importSessionFields = useMemo(() => {
-    const fields = dataImporterSessionFields();
-
-    fields.model_type.hidden = true;
-    fields.model_type.value = 'bomitem';
+    const fields = dataImporterSessionFields({
+      modelType: 'bomitem'
+    });
 
     fields.field_overrides.value = {
       part: partId

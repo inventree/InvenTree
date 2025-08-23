@@ -228,6 +228,8 @@ nav:
       - Icon Pack Mixin: plugins/mixins/icon.md
       - Label Printing Mixin: plugins/mixins/label.md
       - Locate Mixin: plugins/mixins/locate.md
+      - Machine Mixin: plugins/mixins/machine.md
+      - Mail Mixin: plugins/mixins/mail.md
       - Navigation Mixin: plugins/mixins/navigation.md
       - Notification Mixin: plugins/mixins/notification.md
       - Report Mixin: plugins/mixins/report.md

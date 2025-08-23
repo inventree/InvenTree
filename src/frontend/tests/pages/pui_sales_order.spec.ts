@@ -2,6 +2,7 @@ import { expect } from '@playwright/test';
 import { test } from '../baseFixtures.ts';
 import {
   clearTableFilters,
+  clickOnRowMenu,
   globalSearch,
   loadTab,
   setTableChoiceFilter
@@ -111,9 +112,11 @@ test('Sales Orders - Shipments', async ({ browser }) => {
   await loadTab(page, 'Sales Orders');
 
   await clearTableFilters(page);
+
   // Click through to a particular sales order
   await page.getByRole('cell', { name: 'SO0006' }).first().click();
   await loadTab(page, 'Shipments');
+  await clearTableFilters(page);
 
   // Create a new shipment
   await page.getByLabel('action-button-add-shipment').click();
@@ -129,7 +132,8 @@ test('Sales Orders - Shipments', async ({ browser }) => {
   await page.getByRole('button', { name: 'Cancel' }).click();
 
   // Edit one of the existing shipments
-  await page.getByLabel('row-action-menu-0').click();
+  const cell = page.getByRole('cell', { name: /SHIP-XYZ/ });
+  await clickOnRowMenu(cell);
   await page.getByRole('menuitem', { name: 'Edit' }).click();
 
   // Ensure the form has loaded
@@ -155,8 +159,7 @@ test('Sales Orders - Shipments', async ({ browser }) => {
   await page.getByRole('button', { name: 'Submit' }).click();
 
   // Click through to a particular shipment
-  await page.getByLabel('row-action-menu-0').click();
-  await page.getByRole('menuitem', { name: 'View Shipment' }).click();
+  await page.getByRole('cell', { name: tracking_number }).click();
 
   // Click through the various tabs
   await loadTab(page, 'Attachments');
@@ -176,14 +179,16 @@ test('Sales Orders - Shipments', async ({ browser }) => {
 
   // Let's try to allocate some stock
   await loadTab(page, 'Line Items');
-  await page.getByLabel('row-action-menu-1').click();
+
+  await clickOnRowMenu(page.getByRole('cell', { name: 'WID-REV-A' }));
   await page.getByRole('menuitem', { name: 'Allocate stock' }).click();
   await page
     .getByText('Select the source location for the stock allocation')
     .waitFor();
   await page.getByLabel('number-field-quantity').fill('123');
-  await page.getByLabel('related-field-stock_item').click();
-  await page.getByText('Quantity: 42').click();
+  await page.getByLabel('related-field-stock_item').fill('42');
+
+  await page.getByText('Serial Number: 42').click();
   await page.getByRole('button', { name: 'Cancel' }).click();
 
   // Search for shipment by tracking number

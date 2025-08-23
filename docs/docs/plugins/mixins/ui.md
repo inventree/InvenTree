@@ -2,7 +2,7 @@
 title: User Interface Mixin
 ---
 
-## User Interface Mixin
+## UserInterfaceMixin
 
 The `UserInterfaceMixin` class provides a set of methods to implement custom functionality for the InvenTree web interface.
 

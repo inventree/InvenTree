@@ -61,11 +61,10 @@ function stockItemTableColumns({
   showPricing: boolean;
 }): TableColumn[] {
   return [
-    {
+    PartColumn({
       accessor: 'part',
-      sortable: true,
-      render: (record: any) => PartColumn({ part: record?.part_detail })
-    },
+      part: 'part_detail'
+    }),
     {
       accessor: 'part_detail.IPN',
       title: t`IPN`,
