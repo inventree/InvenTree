@@ -850,6 +850,24 @@ class BuildItemFilter(rest_filters.FilterSet):
         locations = location.get_descendants(include_self=True)
         return queryset.filter(stock_item__location__in=locations)
 
+    output = rest_filters.NumberFilter(
+        label=_('Output'),
+        method='filter_output',
+        help_text=_(
+            "Filter by output stock item ID. Use 'null' to find uninstalled build items."
+        ),
+    )
+
+    def filter_output(self, queryset, name, value):
+        """Filter queryset by output target.
+
+        If 'null', return items not installed into any output item.
+        If an integer, return items installed into that specific output item.
+        """
+        if isNull(value):
+            return queryset.filter(install_into=None)
+        return queryset.filter(install_into=value)
+
 
 class BuildItemList(DataExportViewMixin, BulkDeleteMixin, ListCreateAPI):
     """API endpoint for accessing a list of BuildItem objects.
@@ -888,6 +906,11 @@ class BuildItemList(DataExportViewMixin, BulkDeleteMixin, ListCreateAPI):
         queryset = queryset.select_related(
             'build_line',
             'build_line__build',
+            'build_line__build__part',
+            'build_line__build__responsible',
+            'build_line__build__issued_by',
+            'build_line__build__project_code',
+            'build_line__build__part__pricing_data',
             'build_line__bom_item',
             'build_line__bom_item__part',
             'build_line__bom_item__sub_part',
@@ -899,24 +922,7 @@ class BuildItemList(DataExportViewMixin, BulkDeleteMixin, ListCreateAPI):
             'stock_item__supplier_part__supplier',
             'stock_item__supplier_part__manufacturer_part',
             'stock_item__supplier_part__manufacturer_part__manufacturer',
-        ).prefetch_related('stock_item__location__tags')
-
-        return queryset
-
-    def filter_queryset(self, queryset):
-        """Custom query filtering for the BuildItem list."""
-        queryset = super().filter_queryset(queryset)
-
-        params = self.request.query_params
-
-        # Filter by output target
-        output = params.get('output', None)
-
-        if output:
-            if isNull(output):
-                queryset = queryset.filter(install_into=None)
-            else:
-                queryset = queryset.filter(install_into=output)
+        ).prefetch_related('stock_item__location__tags', 'stock_item__tags')
 
         return queryset
 
