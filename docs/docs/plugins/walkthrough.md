@@ -128,6 +128,7 @@ export function renderAttachmentCarouselPanel(context: InvenTreePluginContext) {
 Create a new file called `AttachmentCarousel.tsx` and add the carousel code,
 
 ``` TypeScript
+{% raw %}
 import { Carousel } from '@mantine/carousel';
 import { Image, AspectRatio } from '@mantine/core';
 
@@ -154,6 +155,7 @@ export default function AttachmentCarousel() {
     </AspectRatio>
   );
 }
+{% endraw %}
 ```
 
 As detailed earlier, run/build the plugin. You should now see that the plugin has been update to show a carousel. 
@@ -198,6 +200,7 @@ function AttachmentCarouselPanel({context}: {context: InvenTreePluginContext;}) 
 Update `Attachment_carousel.tsx` to use TanStack Query and query for all part attachments,
 
 ``` TypeScript
+{% raw %}
 import { Carousel } from '@mantine/carousel';
 import { Image, AspectRatio } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
@@ -247,6 +250,7 @@ export default function AttachmentCarousel({context}: { context: any }) {
     </AspectRatio>
   );
 }
+{% endraw %}
 ```
 
 Upload some appropriately sized images in the specified file type (see code), re-bundle the plugin, and update it in Inventree.
@@ -478,10 +482,12 @@ Update `AttachmentCarousel.tsx` to use the new styles,
 
 ```diff
 ...
+{% raw %}
 <AspectRatio ratio={1920 / 1080} >
 -<Carousel withIndicators={indicators} emblaOptions={{loop:loop}} styles={{control: {backgroundColor: 'var(--mantine-color-white)', color: 'var(--mantine-color-black)'}, indicator: {backgroundColor: 'var(--mantine-color-white)'}}}>{slides}</Carousel>
 +<Carousel withIndicators={indicators} emblaOptions={{loop:loop}} classNames={{control: 'control'}}>{slides}</Carousel>
 </AspectRatio>
+{% endraw %}
 ...
 ```
 
