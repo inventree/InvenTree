@@ -1,11 +1,14 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 387
+INVENTREE_API_VERSION = 388
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+v388 -> 2025-08-23 : https://github.com/inventree/InvenTree/pull/10213
+    - Disable paging on PurchaseOrderReceive call
+
 v387 -> 2025-08-19 : https://github.com/inventree/InvenTree/pull/10188
     - Adds "update_records" field to the DataImportSession API
 
