@@ -74,7 +74,7 @@ npm install
 npm run build
 ```
 
-Copy the built `attachment_carousel` diretory to the `inventree-data/plugins` directory and enable it via the admin interface.
+Copy the built `attachment_carousel` directory to the `inventree-data/plugins` directory and enable it via the admin interface.
 
 ![Attachment Carousel in Inventree panel screenshot](../assets/images/plugin/plugin_walkthrough_default.png "Attachment Carousel in Inventree panel screenshot")
 
@@ -158,7 +158,7 @@ export default function AttachmentCarousel() {
 {% endraw %}
 ```
 
-As detailed earlier, run/build the plugin. You should now see that the plugin has been update to show a carousel. 
+As detailed earlier, run/build the plugin. You should now see that the plugin has been update to show a carousel.
 
 ![Mantine UI carousel screenshot](../assets/images/plugin/plugin_walkthrough_attachment_carousel_picsum.png "Mantine UI carousel screenshot")
 
@@ -211,7 +211,7 @@ export default function AttachmentCarousel({context}: { context: any }) {
     const loop = true
     const vaildAttachmentTypes: string[] = ["jpg", "jpeg"] // Add more items to the array if you want to support more file types.
     let imageUrls: string[] = new Array();
-  
+
     const { data: attachments } = useQuery({
       queryKey: ["attachment"],
       queryFn: async () => {
@@ -226,7 +226,7 @@ export default function AttachmentCarousel({context}: { context: any }) {
         return await response.data.results
       }
     })
-  
+
     if (attachments) {
       attachments.forEach((element: { attachment: string; filename: string; }) => {
         if (vaildAttachmentTypes.includes(element.filename.split('.').pop() || "")) {
@@ -237,7 +237,7 @@ export default function AttachmentCarousel({context}: { context: any }) {
     else {
       imageUrls = [""];
     }
-  
+
     const slides = imageUrls.map((url) => (
       <Carousel.Slide key={url}>
         <Image src={url} />
