@@ -492,6 +492,7 @@ class PurchaseOrderReceive(PurchaseOrderContextMixin, CreateAPI):
 
     queryset = models.PurchaseOrderLineItem.objects.none()
     serializer_class = serializers.PurchaseOrderReceiveSerializer
+    pagination_class = None
 
     def create(self, request, *args, **kwargs):
         """Override the create method to handle stock item creation."""
