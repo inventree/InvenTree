@@ -9,8 +9,7 @@
 # - Runs InvenTree web server under django development server
 # - Monitors source files for any changes, and live-reloads server
 
-# FROM python:3.11-alpine3.20@sha256:520924f35357a374aa1beaa81b867f449f9f12a53f00b69ad03c3d697fdf4aad AS inventree_base
-FROM python:3.11-slim-trixie AS inventree_base
+FROM python:3.11-slim-trixie@sha256:10c3875a6435af5b2461c6f99c52bfa11716aae0ca8b27b77f81df9faab93b16 AS inventree_base
 
 # Build arguments for this image
 ARG commit_tag=""
@@ -82,7 +81,7 @@ RUN rm -rf /usr/lib/python3/dist-packages/numpy \
 EXPOSE 8000
 
 # Fix invoke command path for InvenTree environment check
-RUN ln -sf /root/.local/bin/invoke /usr/bin/invoke
+RUN pip install -U invoke && ln -sf /root/.local/bin/invoke /usr/local/bin/invoke
 
 RUN mkdir -p ${INVENTREE_HOME}
 WORKDIR ${INVENTREE_HOME}
@@ -113,7 +112,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-RUN pip install -U invoke
 RUN npm install -g n --ignore-scripts
 RUN npm install -g yarn
 RUN bash -c "n lts"
@@ -145,9 +143,6 @@ FROM inventree_base AS dev
 EXPOSE 5173
 
 # Install packages required for building python packages
-# RUN ./install_build_packages.sh
-
-RUN pip install -U invoke
 RUN pip install --require-hashes -r base_requirements.txt --no-cache
 
 # Install nodejs / npm / yarn
