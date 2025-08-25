@@ -2,6 +2,12 @@
 
 This file contains historical changelog information for the InvenTree UI components library.
 
+### 0.5.0 - August 2025
+
+This release updates the base `react` major version from `18.3.1` to `19.1.1`. This change may introduce breaking changes for plugins that rely on the InvenTree UI components library (plugin developers should test their plugins against this new version).
+
+Ref: https://github.com/inventree/InvenTree/pull/10202/
+
 ### 0.4.0 - July 2025
 
 Externalize React, Lingui and Mantine libraries in the plugin library build step to avoid version conflicts. This ensures that the components provided as part of the @inventreedb/ui package *does not bundle* the React and Mantine libraries, but instead expects them to be provided by the InvenTree server.
