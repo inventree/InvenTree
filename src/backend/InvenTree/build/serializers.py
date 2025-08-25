@@ -1519,7 +1519,10 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
             'allocations',
             'allocations__stock_item',
             'allocations__stock_item__part',
+            'allocations__stock_item__supplier_part',
+            'allocations__stock_item__supplier_part__manufacturer_part',
             'allocations__stock_item__location',
+            'allocations__stock_item__tags',
             'bom_item',
             'bom_item__part',
             'bom_item__sub_part',
@@ -1603,6 +1606,8 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
                 location__rght__lte=location.rght,
                 location__level__gte=location.level,
             )
+        else:
+            location = None
 
         # Annotate the "in_production" quantity
         queryset = queryset.annotate(
@@ -1623,10 +1628,10 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
                 reference=ref, filter=stock_filter
             ),
             allocated_to_sales_orders=part.filters.annotate_sales_order_allocations(
-                reference=ref
+                reference=ref, location=location
             ),
             allocated_to_build_orders=part.filters.annotate_build_order_allocations(
-                reference=ref
+                reference=ref, location=location
             ),
         )
 
