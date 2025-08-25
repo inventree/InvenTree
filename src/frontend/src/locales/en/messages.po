@@ -525,8 +525,8 @@ msgid "Error"
 msgstr "Error"
 
 #: lib/enums/ModelInformation.tsx:275
-#: src/tables/machine/MachineListTable.tsx:354
-#: src/tables/machine/MachineTypeTable.tsx:281
+#: src/tables/machine/MachineListTable.tsx:371
+#: src/tables/machine/MachineTypeTable.tsx:299
 msgid "Errors"
 msgstr "Errors"
 
@@ -1653,10 +1653,10 @@ msgstr "Host"
 #: src/pages/part/CategoryDetail.tsx:86
 #: src/pages/part/PartDetail.tsx:447
 #: src/pages/stock/LocationDetail.tsx:84
-#: src/tables/machine/MachineTypeTable.tsx:72
-#: src/tables/machine/MachineTypeTable.tsx:118
-#: src/tables/machine/MachineTypeTable.tsx:236
-#: src/tables/machine/MachineTypeTable.tsx:339
+#: src/tables/machine/MachineTypeTable.tsx:67
+#: src/tables/machine/MachineTypeTable.tsx:151
+#: src/tables/machine/MachineTypeTable.tsx:254
+#: src/tables/machine/MachineTypeTable.tsx:357
 #: src/tables/plugin/PluginErrorTable.tsx:33
 #: src/tables/purchasing/ManufacturerPartParameterTable.tsx:36
 #: src/tables/settings/ApiTokenTable.tsx:58
@@ -2709,8 +2709,8 @@ msgstr "Plugin Information"
 #: src/pages/stock/LocationDetail.tsx:104
 #: src/tables/ColumnRenderers.tsx:269
 #: src/tables/build/BuildAllocatedStockTable.tsx:91
-#: src/tables/machine/MachineTypeTable.tsx:128
-#: src/tables/machine/MachineTypeTable.tsx:239
+#: src/tables/machine/MachineTypeTable.tsx:161
+#: src/tables/machine/MachineTypeTable.tsx:257
 #: src/tables/plugin/PluginListTable.tsx:110
 msgid "Description"
 msgstr "Description"
@@ -2736,8 +2736,8 @@ msgstr "Date"
 #: src/tables/bom/UsedInTable.tsx:90
 #: src/tables/company/CompanyTable.tsx:57
 #: src/tables/company/CompanyTable.tsx:91
-#: src/tables/machine/MachineListTable.tsx:336
-#: src/tables/machine/MachineListTable.tsx:606
+#: src/tables/machine/MachineListTable.tsx:353
+#: src/tables/machine/MachineListTable.tsx:683
 #: src/tables/part/ParametricPartTable.tsx:350
 #: src/tables/part/PartTable.tsx:184
 #: src/tables/part/PartVariantTable.tsx:15
@@ -2760,8 +2760,8 @@ msgid "Installation Path"
 msgstr "Installation Path"
 
 #: src/components/plugins/PluginDrawer.tsx:116
-#: src/tables/machine/MachineTypeTable.tsx:151
-#: src/tables/machine/MachineTypeTable.tsx:275
+#: src/tables/machine/MachineTypeTable.tsx:184
+#: src/tables/machine/MachineTypeTable.tsx:293
 #: src/tables/plugin/PluginListTable.tsx:101
 #: src/tables/plugin/PluginListTable.tsx:417
 msgid "Builtin"
@@ -2811,11 +2811,11 @@ msgstr "Error occurred while rendering the template editor."
 msgid "Error Loading Plugin Editor"
 msgstr "Error Loading Plugin Editor"
 
-#: src/components/plugins/PluginUIFeature.tsx:155
+#: src/components/plugins/PluginUIFeature.tsx:157
 msgid "Error occurred while rendering the template preview."
 msgstr "Error occurred while rendering the template preview."
 
-#: src/components/plugins/PluginUIFeature.tsx:166
+#: src/components/plugins/PluginUIFeature.tsx:168
 msgid "Error Loading Plugin Preview"
 msgstr "Error Loading Plugin Preview"
 
@@ -3972,7 +3972,7 @@ msgstr "Build Output"
 #: src/pages/stock/StockDetail.tsx:162
 #: src/tables/Filter.tsx:266
 #: src/tables/build/BuildOutputTable.tsx:408
-#: src/tables/machine/MachineListTable.tsx:339
+#: src/tables/machine/MachineListTable.tsx:356
 #: src/tables/part/PartPurchaseOrdersTable.tsx:38
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:135
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:172
@@ -5829,8 +5829,8 @@ msgstr "Location Types"
 #~ msgstr "Quick Actions"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:225
-#: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:48
-#: src/tables/machine/MachineTypeTable.tsx:307
+#: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:51
+#: src/tables/machine/MachineTypeTable.tsx:325
 msgid "Machines"
 msgstr "Machines"
 
@@ -5876,31 +5876,35 @@ msgstr "Advanced Options"
 #~ msgid "Machine Error Stack"
 #~ msgstr "Machine Error Stack"
 
-#: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:56
-msgid "Machine Types"
-msgstr "Machine Types"
+#: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:59
+msgid "Machine Drivers"
+msgstr "Machine Drivers"
 
 #: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:62
 #~ msgid "There are no machine registry errors."
 #~ msgstr "There are no machine registry errors."
 
-#: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:64
+#: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:67
+msgid "Machine Types"
+msgstr "Machine Types"
+
+#: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:75
 msgid "Machine Errors"
 msgstr "Machine Errors"
 
-#: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:77
+#: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:88
 msgid "Registry Registry Errors"
 msgstr "Registry Registry Errors"
 
-#: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:80
+#: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:91
 msgid "There are machine registry errors"
 msgstr "There are machine registry errors"
 
-#: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:86
+#: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:97
 msgid "Machine Registry Errors"
 msgstr "Machine Registry Errors"
 
-#: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:89
+#: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:100
 msgid "There are no machine registry errors"
 msgstr "There are no machine registry errors"
 
@@ -6152,7 +6156,7 @@ msgstr "The assembled part may not have a Bill of Materials (BOM) defined, or th
 #: src/tables/bom/UsedInTable.tsx:40
 #: src/tables/build/BuildAllocatedStockTable.tsx:108
 #: src/tables/build/BuildLineTable.tsx:328
-#: src/tables/build/BuildOrderTable.tsx:78
+#: src/tables/build/BuildOrderTable.tsx:79
 #: src/tables/part/PartSalesAllocationsTable.tsx:61
 #: src/tables/part/RelatedPartTable.tsx:73
 #: src/tables/sales/SalesOrderAllocationTable.tsx:132
@@ -6174,7 +6178,7 @@ msgstr "IPN"
 #: src/pages/build/BuildDetail.tsx:198
 #: src/pages/part/PartDetail.tsx:481
 #: src/tables/bom/UsedInTable.tsx:44
-#: src/tables/build/BuildOrderTable.tsx:82
+#: src/tables/build/BuildOrderTable.tsx:83
 #: src/tables/stock/StockItemTable.tsx:75
 msgid "Revision"
 msgstr "Revision"
@@ -6195,8 +6199,8 @@ msgstr "Custom Status"
 #: src/pages/build/BuildDetail.tsx:716
 #: src/pages/build/BuildIndex.tsx:28
 #: src/pages/stock/LocationDetail.tsx:142
-#: src/tables/build/BuildOrderTable.tsx:122
-#: src/tables/build/BuildOrderTable.tsx:184
+#: src/tables/build/BuildOrderTable.tsx:123
+#: src/tables/build/BuildOrderTable.tsx:185
 #: src/tables/stock/StockLocationTable.tsx:48
 msgid "External"
 msgstr "External"
@@ -6296,7 +6300,7 @@ msgid "Target Date"
 msgstr "Target Date"
 
 #: src/pages/build/BuildDetail.tsx:368
-#: src/tables/build/BuildOrderTable.tsx:92
+#: src/tables/build/BuildOrderTable.tsx:93
 #: src/tables/sales/SalesOrderLineItemTable.tsx:324
 msgid "Completed"
 msgstr "Completed"
@@ -6351,8 +6355,8 @@ msgid "Edit Build Order"
 msgstr "Edit Build Order"
 
 #: src/pages/build/BuildDetail.tsx:566
-#: src/tables/build/BuildOrderTable.tsx:208
-#: src/tables/build/BuildOrderTable.tsx:224
+#: src/tables/build/BuildOrderTable.tsx:209
+#: src/tables/build/BuildOrderTable.tsx:225
 msgid "Add Build Order"
 msgstr "Add Build Order"
 
@@ -6488,7 +6492,7 @@ msgstr "Build Order"
 #~ msgstr "Build order created"
 
 #: src/pages/build/BuildIndex.tsx:29
-#: src/tables/build/BuildOrderTable.tsx:185
+#: src/tables/build/BuildOrderTable.tsx:186
 msgid "Show external build orders"
 msgstr "Show external build orders"
 
@@ -7551,7 +7555,7 @@ msgstr "Issue Date"
 #: src/pages/sales/ReturnOrderDetail.tsx:249
 #: src/pages/sales/SalesOrderDetail.tsx:259
 #: src/tables/ColumnRenderers.tsx:448
-#: src/tables/build/BuildOrderTable.tsx:136
+#: src/tables/build/BuildOrderTable.tsx:137
 #: src/tables/part/PartPurchaseOrdersTable.tsx:106
 msgid "Completion Date"
 msgstr "Completion Date"
@@ -8925,28 +8929,28 @@ msgstr "View Part"
 #~ msgid "Filter by whether the purchase order has a project code"
 #~ msgstr "Filter by whether the purchase order has a project code"
 
-#: src/tables/build/BuildOrderTable.tsx:167
+#: src/tables/build/BuildOrderTable.tsx:168
 #: src/tables/purchasing/PurchaseOrderTable.tsx:83
 #: src/tables/sales/ReturnOrderTable.tsx:79
 #: src/tables/sales/SalesOrderTable.tsx:80
 msgid "Has Target Date"
 msgstr "Has Target Date"
 
-#: src/tables/build/BuildOrderTable.tsx:168
+#: src/tables/build/BuildOrderTable.tsx:169
 #: src/tables/purchasing/PurchaseOrderTable.tsx:84
 #: src/tables/sales/ReturnOrderTable.tsx:80
 #: src/tables/sales/SalesOrderTable.tsx:81
 msgid "Show orders with a target date"
 msgstr "Show orders with a target date"
 
-#: src/tables/build/BuildOrderTable.tsx:173
+#: src/tables/build/BuildOrderTable.tsx:174
 #: src/tables/purchasing/PurchaseOrderTable.tsx:89
 #: src/tables/sales/ReturnOrderTable.tsx:85
 #: src/tables/sales/SalesOrderTable.tsx:86
 msgid "Has Start Date"
 msgstr "Has Start Date"
 
-#: src/tables/build/BuildOrderTable.tsx:174
+#: src/tables/build/BuildOrderTable.tsx:175
 #: src/tables/purchasing/PurchaseOrderTable.tsx:90
 #: src/tables/sales/ReturnOrderTable.tsx:86
 #: src/tables/sales/SalesOrderTable.tsx:87
@@ -9282,51 +9286,57 @@ msgstr "Delete Line Item"
 msgid "Add Extra Line Item"
 msgstr "Add Extra Line Item"
 
-#: src/tables/machine/MachineListTable.tsx:206
+#: src/tables/machine/MachineListTable.tsx:124
 msgid "Machine restarted"
 msgstr "Machine restarted"
 
-#: src/tables/machine/MachineListTable.tsx:216
-#: src/tables/machine/MachineListTable.tsx:264
+#: src/tables/machine/MachineListTable.tsx:225
+#: src/tables/machine/MachineListTable.tsx:274
+#: src/tables/machine/MachineListTable.tsx:613
 msgid "Edit machine"
 msgstr "Edit machine"
 
-#: src/tables/machine/MachineListTable.tsx:230
-#: src/tables/machine/MachineListTable.tsx:268
+#: src/tables/machine/MachineListTable.tsx:235
+#~ msgid "Are you sure you want to remove the machine \"{0}\"?"
+#~ msgstr "Are you sure you want to remove the machine \"{0}\"?"
+
+#: src/tables/machine/MachineListTable.tsx:239
+#: src/tables/machine/MachineListTable.tsx:278
 msgid "Delete machine"
 msgstr "Delete machine"
 
-#: src/tables/machine/MachineListTable.tsx:231
+#: src/tables/machine/MachineListTable.tsx:240
+#: src/tables/machine/MachineListTable.tsx:576
 msgid "Machine successfully deleted."
 msgstr "Machine successfully deleted."
 
-#. placeholder {0}: machine?.name ?? 'unknown'
-#: src/tables/machine/MachineListTable.tsx:235
-msgid "Are you sure you want to remove the machine \"{0}\"?"
-msgstr "Are you sure you want to remove the machine \"{0}\"?"
+#: src/tables/machine/MachineListTable.tsx:245
+#: src/tables/machine/MachineListTable.tsx:581
+msgid "Are you sure you want to remove this machine?"
+msgstr "Are you sure you want to remove this machine?"
 
-#: src/tables/machine/MachineListTable.tsx:252
+#: src/tables/machine/MachineListTable.tsx:262
 msgid "Machine"
 msgstr "Machine"
 
-#: src/tables/machine/MachineListTable.tsx:257
-#: src/tables/machine/MachineListTable.tsx:444
+#: src/tables/machine/MachineListTable.tsx:267
+#: src/tables/machine/MachineListTable.tsx:461
 msgid "Restart required"
 msgstr "Restart required"
 
-#: src/tables/machine/MachineListTable.tsx:261
+#: src/tables/machine/MachineListTable.tsx:271
 msgid "Machine Actions"
 msgstr "Machine Actions"
 
-#: src/tables/machine/MachineListTable.tsx:273
+#: src/tables/machine/MachineListTable.tsx:283
 msgid "Restart"
 msgstr "Restart"
 
-#: src/tables/machine/MachineListTable.tsx:275
+#: src/tables/machine/MachineListTable.tsx:285
 msgid "Restart machine"
 msgstr "Restart machine"
 
-#: src/tables/machine/MachineListTable.tsx:277
+#: src/tables/machine/MachineListTable.tsx:287
 msgid "manual restart required"
 msgstr "manual restart required"
 
@@ -9334,33 +9344,33 @@ msgstr "manual restart required"
 #~ msgid "Machine information"
 #~ msgstr "Machine information"
 
-#: src/tables/machine/MachineListTable.tsx:295
+#: src/tables/machine/MachineListTable.tsx:312
 msgid "Machine Information"
 msgstr "Machine Information"
 
-#: src/tables/machine/MachineListTable.tsx:305
-#: src/tables/machine/MachineListTable.tsx:611
+#: src/tables/machine/MachineListTable.tsx:322
+#: src/tables/machine/MachineListTable.tsx:688
 msgid "Machine Type"
 msgstr "Machine Type"
 
-#: src/tables/machine/MachineListTable.tsx:318
+#: src/tables/machine/MachineListTable.tsx:335
 msgid "Machine Driver"
 msgstr "Machine Driver"
 
-#: src/tables/machine/MachineListTable.tsx:333
+#: src/tables/machine/MachineListTable.tsx:350
 msgid "Initialized"
 msgstr "Initialized"
 
-#: src/tables/machine/MachineListTable.tsx:362
-#: src/tables/machine/MachineTypeTable.tsx:289
+#: src/tables/machine/MachineListTable.tsx:379
+#: src/tables/machine/MachineTypeTable.tsx:307
 msgid "No errors reported"
 msgstr "No errors reported"
 
-#: src/tables/machine/MachineListTable.tsx:381
+#: src/tables/machine/MachineListTable.tsx:398
 msgid "Machine Settings"
 msgstr "Machine Settings"
 
-#: src/tables/machine/MachineListTable.tsx:397
+#: src/tables/machine/MachineListTable.tsx:414
 msgid "Driver Settings"
 msgstr "Driver Settings"
 
@@ -9368,78 +9378,95 @@ msgstr "Driver Settings"
 #~ msgid "Create machine"
 #~ msgstr "Create machine"
 
-#: src/tables/machine/MachineListTable.tsx:517
+#: src/tables/machine/MachineListTable.tsx:532
 msgid "Add Machine"
 msgstr "Add Machine"
-
-#: src/tables/machine/MachineListTable.tsx:559
-msgid "Add machine"
-msgstr "Add machine"
 
 #: src/tables/machine/MachineListTable.tsx:561
 #~ msgid "Machine detail"
 #~ msgstr "Machine detail"
 
-#: src/tables/machine/MachineListTable.tsx:573
+#: src/tables/machine/MachineListTable.tsx:575
+#: src/tables/machine/MachineListTable.tsx:620
+msgid "Delete Machine"
+msgstr "Delete Machine"
+
+#: src/tables/machine/MachineListTable.tsx:588
+msgid "Edit Machine"
+msgstr "Edit Machine"
+
+#: src/tables/machine/MachineListTable.tsx:602
+msgid "Restart Machine"
+msgstr "Restart Machine"
+
+#: src/tables/machine/MachineListTable.tsx:633
+msgid "Add machine"
+msgstr "Add machine"
+
+#: src/tables/machine/MachineListTable.tsx:649
 msgid "Machine Detail"
 msgstr "Machine Detail"
 
-#: src/tables/machine/MachineListTable.tsx:620
+#: src/tables/machine/MachineListTable.tsx:697
 msgid "Driver"
 msgstr "Driver"
 
-#: src/tables/machine/MachineTypeTable.tsx:77
+#: src/tables/machine/MachineTypeTable.tsx:72
+msgid "Driver Type"
+msgstr "Driver Type"
+
+#: src/tables/machine/MachineTypeTable.tsx:76
 msgid "Builtin driver"
 msgstr "Builtin driver"
-
-#: src/tables/machine/MachineTypeTable.tsx:95
-msgid "Not Found"
-msgstr "Not Found"
-
-#: src/tables/machine/MachineTypeTable.tsx:98
-msgid "Machine type not found."
-msgstr "Machine type not found."
 
 #: src/tables/machine/MachineTypeTable.tsx:99
 #~ msgid "Machine type information"
 #~ msgstr "Machine type information"
 
-#: src/tables/machine/MachineTypeTable.tsx:108
+#: src/tables/machine/MachineTypeTable.tsx:128
+msgid "Not Found"
+msgstr "Not Found"
+
+#: src/tables/machine/MachineTypeTable.tsx:131
+msgid "Machine type not found."
+msgstr "Machine type not found."
+
+#: src/tables/machine/MachineTypeTable.tsx:141
 msgid "Machine Type Information"
 msgstr "Machine Type Information"
-
-#: src/tables/machine/MachineTypeTable.tsx:123
-#: src/tables/machine/MachineTypeTable.tsx:237
-msgid "Slug"
-msgstr "Slug"
-
-#: src/tables/machine/MachineTypeTable.tsx:134
-#: src/tables/machine/MachineTypeTable.tsx:258
-msgid "Provider plugin"
-msgstr "Provider plugin"
-
-#: src/tables/machine/MachineTypeTable.tsx:146
-#: src/tables/machine/MachineTypeTable.tsx:270
-msgid "Provider file"
-msgstr "Provider file"
 
 #: src/tables/machine/MachineTypeTable.tsx:148
 #~ msgid "Available drivers"
 #~ msgstr "Available drivers"
 
-#: src/tables/machine/MachineTypeTable.tsx:161
+#: src/tables/machine/MachineTypeTable.tsx:156
+#: src/tables/machine/MachineTypeTable.tsx:255
+msgid "Slug"
+msgstr "Slug"
+
+#: src/tables/machine/MachineTypeTable.tsx:167
+#: src/tables/machine/MachineTypeTable.tsx:276
+msgid "Provider plugin"
+msgstr "Provider plugin"
+
+#: src/tables/machine/MachineTypeTable.tsx:179
+#: src/tables/machine/MachineTypeTable.tsx:288
+msgid "Provider file"
+msgstr "Provider file"
+
+#: src/tables/machine/MachineTypeTable.tsx:194
 msgid "Available Drivers"
 msgstr "Available Drivers"
 
-#: src/tables/machine/MachineTypeTable.tsx:216
+#: src/tables/machine/MachineTypeTable.tsx:234
 msgid "Machine driver not found."
 msgstr "Machine driver not found."
 
-#: src/tables/machine/MachineTypeTable.tsx:224
+#: src/tables/machine/MachineTypeTable.tsx:242
 msgid "Machine driver information"
 msgstr "Machine driver information"
 
-#: src/tables/machine/MachineTypeTable.tsx:244
+#: src/tables/machine/MachineTypeTable.tsx:262
 msgid "Machine type"
 msgstr "Machine type"
 
@@ -9447,19 +9474,19 @@ msgstr "Machine type"
 #~ msgid "Machine type detail"
 #~ msgstr "Machine type detail"
 
-#: src/tables/machine/MachineTypeTable.tsx:344
-msgid "Builtin type"
-msgstr "Builtin type"
-
 #: src/tables/machine/MachineTypeTable.tsx:348
 #~ msgid "Machine driver detail"
 #~ msgstr "Machine driver detail"
 
-#: src/tables/machine/MachineTypeTable.tsx:353
+#: src/tables/machine/MachineTypeTable.tsx:362
+msgid "Builtin type"
+msgstr "Builtin type"
+
+#: src/tables/machine/MachineTypeTable.tsx:371
 msgid "Machine Type Detail"
 msgstr "Machine Type Detail"
 
-#: src/tables/machine/MachineTypeTable.tsx:363
+#: src/tables/machine/MachineTypeTable.tsx:381
 msgid "Machine Driver Detail"
 msgstr "Machine Driver Detail"
 

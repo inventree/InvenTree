@@ -8,7 +8,7 @@ msgstr ""
 "Language: zh\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-08-20 11:54\n"
+"PO-Revision-Date: 2025-08-25 05:23\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -530,8 +530,8 @@ msgid "Error"
 msgstr "错误"
 
 #: lib/enums/ModelInformation.tsx:275
-#: src/tables/machine/MachineListTable.tsx:354
-#: src/tables/machine/MachineTypeTable.tsx:281
+#: src/tables/machine/MachineListTable.tsx:371
+#: src/tables/machine/MachineTypeTable.tsx:299
 msgid "Errors"
 msgstr "错误"
 
@@ -1658,10 +1658,10 @@ msgstr "主机"
 #: src/pages/part/CategoryDetail.tsx:86
 #: src/pages/part/PartDetail.tsx:447
 #: src/pages/stock/LocationDetail.tsx:84
-#: src/tables/machine/MachineTypeTable.tsx:72
-#: src/tables/machine/MachineTypeTable.tsx:118
-#: src/tables/machine/MachineTypeTable.tsx:236
-#: src/tables/machine/MachineTypeTable.tsx:339
+#: src/tables/machine/MachineTypeTable.tsx:67
+#: src/tables/machine/MachineTypeTable.tsx:151
+#: src/tables/machine/MachineTypeTable.tsx:254
+#: src/tables/machine/MachineTypeTable.tsx:357
 #: src/tables/plugin/PluginErrorTable.tsx:33
 #: src/tables/purchasing/ManufacturerPartParameterTable.tsx:36
 #: src/tables/settings/ApiTokenTable.tsx:58
@@ -2714,8 +2714,8 @@ msgstr "插件信息"
 #: src/pages/stock/LocationDetail.tsx:104
 #: src/tables/ColumnRenderers.tsx:269
 #: src/tables/build/BuildAllocatedStockTable.tsx:91
-#: src/tables/machine/MachineTypeTable.tsx:128
-#: src/tables/machine/MachineTypeTable.tsx:239
+#: src/tables/machine/MachineTypeTable.tsx:161
+#: src/tables/machine/MachineTypeTable.tsx:257
 #: src/tables/plugin/PluginListTable.tsx:110
 msgid "Description"
 msgstr "描述"
@@ -2741,8 +2741,8 @@ msgstr "日期"
 #: src/tables/bom/UsedInTable.tsx:90
 #: src/tables/company/CompanyTable.tsx:57
 #: src/tables/company/CompanyTable.tsx:91
-#: src/tables/machine/MachineListTable.tsx:336
-#: src/tables/machine/MachineListTable.tsx:606
+#: src/tables/machine/MachineListTable.tsx:353
+#: src/tables/machine/MachineListTable.tsx:683
 #: src/tables/part/ParametricPartTable.tsx:350
 #: src/tables/part/PartTable.tsx:184
 #: src/tables/part/PartVariantTable.tsx:15
@@ -2765,8 +2765,8 @@ msgid "Installation Path"
 msgstr "安装路径"
 
 #: src/components/plugins/PluginDrawer.tsx:116
-#: src/tables/machine/MachineTypeTable.tsx:151
-#: src/tables/machine/MachineTypeTable.tsx:275
+#: src/tables/machine/MachineTypeTable.tsx:184
+#: src/tables/machine/MachineTypeTable.tsx:293
 #: src/tables/plugin/PluginListTable.tsx:101
 #: src/tables/plugin/PluginListTable.tsx:417
 msgid "Builtin"
@@ -2816,11 +2816,11 @@ msgstr "渲染模板编辑器时出错。"
 msgid "Error Loading Plugin Editor"
 msgstr "加载插件编辑器出错"
 
-#: src/components/plugins/PluginUIFeature.tsx:155
+#: src/components/plugins/PluginUIFeature.tsx:157
 msgid "Error occurred while rendering the template preview."
 msgstr "渲染模板预览时出错。"
 
-#: src/components/plugins/PluginUIFeature.tsx:166
+#: src/components/plugins/PluginUIFeature.tsx:168
 msgid "Error Loading Plugin Preview"
 msgstr "加载插件预览出错"
 
@@ -3977,7 +3977,7 @@ msgstr "生产产出"
 #: src/pages/stock/StockDetail.tsx:162
 #: src/tables/Filter.tsx:266
 #: src/tables/build/BuildOutputTable.tsx:408
-#: src/tables/machine/MachineListTable.tsx:339
+#: src/tables/machine/MachineListTable.tsx:356
 #: src/tables/part/PartPurchaseOrdersTable.tsx:38
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:135
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:172
@@ -5834,8 +5834,8 @@ msgstr "位置类型"
 #~ msgstr "Quick Actions"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:225
-#: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:48
-#: src/tables/machine/MachineTypeTable.tsx:307
+#: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:51
+#: src/tables/machine/MachineTypeTable.tsx:325
 msgid "Machines"
 msgstr "设备"
 
@@ -5881,31 +5881,35 @@ msgstr "高级选项"
 #~ msgid "Machine Error Stack"
 #~ msgstr "Machine Error Stack"
 
-#: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:56
-msgid "Machine Types"
-msgstr "设备类型"
+#: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:59
+msgid "Machine Drivers"
+msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:62
 #~ msgid "There are no machine registry errors."
 #~ msgstr "There are no machine registry errors."
 
-#: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:64
+#: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:67
+msgid "Machine Types"
+msgstr "设备类型"
+
+#: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:75
 msgid "Machine Errors"
 msgstr "设备错误"
 
-#: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:77
+#: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:88
 msgid "Registry Registry Errors"
 msgstr "注册表错误"
 
-#: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:80
+#: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:91
 msgid "There are machine registry errors"
 msgstr "存在设备注册错误"
 
-#: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:86
+#: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:97
 msgid "Machine Registry Errors"
 msgstr "设备注册错误"
 
-#: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:89
+#: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:100
 msgid "There are no machine registry errors"
 msgstr "没有设备注册错误"
 
@@ -6157,7 +6161,7 @@ msgstr ""
 #: src/tables/bom/UsedInTable.tsx:40
 #: src/tables/build/BuildAllocatedStockTable.tsx:108
 #: src/tables/build/BuildLineTable.tsx:328
-#: src/tables/build/BuildOrderTable.tsx:78
+#: src/tables/build/BuildOrderTable.tsx:79
 #: src/tables/part/PartSalesAllocationsTable.tsx:61
 #: src/tables/part/RelatedPartTable.tsx:73
 #: src/tables/sales/SalesOrderAllocationTable.tsx:132
@@ -6179,7 +6183,7 @@ msgstr "内部零件编码 IPN"
 #: src/pages/build/BuildDetail.tsx:198
 #: src/pages/part/PartDetail.tsx:481
 #: src/tables/bom/UsedInTable.tsx:44
-#: src/tables/build/BuildOrderTable.tsx:82
+#: src/tables/build/BuildOrderTable.tsx:83
 #: src/tables/stock/StockItemTable.tsx:75
 msgid "Revision"
 msgstr "版本"
@@ -6200,8 +6204,8 @@ msgstr "自定义状态"
 #: src/pages/build/BuildDetail.tsx:716
 #: src/pages/build/BuildIndex.tsx:28
 #: src/pages/stock/LocationDetail.tsx:142
-#: src/tables/build/BuildOrderTable.tsx:122
-#: src/tables/build/BuildOrderTable.tsx:184
+#: src/tables/build/BuildOrderTable.tsx:123
+#: src/tables/build/BuildOrderTable.tsx:185
 #: src/tables/stock/StockLocationTable.tsx:48
 msgid "External"
 msgstr "外部"
@@ -6301,7 +6305,7 @@ msgid "Target Date"
 msgstr "预计日期"
 
 #: src/pages/build/BuildDetail.tsx:368
-#: src/tables/build/BuildOrderTable.tsx:92
+#: src/tables/build/BuildOrderTable.tsx:93
 #: src/tables/sales/SalesOrderLineItemTable.tsx:324
 msgid "Completed"
 msgstr "已完成"
@@ -6356,8 +6360,8 @@ msgid "Edit Build Order"
 msgstr "编辑生产订单"
 
 #: src/pages/build/BuildDetail.tsx:566
-#: src/tables/build/BuildOrderTable.tsx:208
-#: src/tables/build/BuildOrderTable.tsx:224
+#: src/tables/build/BuildOrderTable.tsx:209
+#: src/tables/build/BuildOrderTable.tsx:225
 msgid "Add Build Order"
 msgstr "添加生产订单"
 
@@ -6493,7 +6497,7 @@ msgstr "生产订单"
 #~ msgstr "Build order created"
 
 #: src/pages/build/BuildIndex.tsx:29
-#: src/tables/build/BuildOrderTable.tsx:185
+#: src/tables/build/BuildOrderTable.tsx:186
 msgid "Show external build orders"
 msgstr ""
 
@@ -7556,7 +7560,7 @@ msgstr "签发日期"
 #: src/pages/sales/ReturnOrderDetail.tsx:249
 #: src/pages/sales/SalesOrderDetail.tsx:259
 #: src/tables/ColumnRenderers.tsx:448
-#: src/tables/build/BuildOrderTable.tsx:136
+#: src/tables/build/BuildOrderTable.tsx:137
 #: src/tables/part/PartPurchaseOrdersTable.tsx:106
 msgid "Completion Date"
 msgstr "完成日期"
@@ -8930,28 +8934,28 @@ msgstr ""
 #~ msgid "Filter by whether the purchase order has a project code"
 #~ msgstr "Filter by whether the purchase order has a project code"
 
-#: src/tables/build/BuildOrderTable.tsx:167
+#: src/tables/build/BuildOrderTable.tsx:168
 #: src/tables/purchasing/PurchaseOrderTable.tsx:83
 #: src/tables/sales/ReturnOrderTable.tsx:79
 #: src/tables/sales/SalesOrderTable.tsx:80
 msgid "Has Target Date"
 msgstr ""
 
-#: src/tables/build/BuildOrderTable.tsx:168
+#: src/tables/build/BuildOrderTable.tsx:169
 #: src/tables/purchasing/PurchaseOrderTable.tsx:84
 #: src/tables/sales/ReturnOrderTable.tsx:80
 #: src/tables/sales/SalesOrderTable.tsx:81
 msgid "Show orders with a target date"
 msgstr "显示目标日期的订单"
 
-#: src/tables/build/BuildOrderTable.tsx:173
+#: src/tables/build/BuildOrderTable.tsx:174
 #: src/tables/purchasing/PurchaseOrderTable.tsx:89
 #: src/tables/sales/ReturnOrderTable.tsx:85
 #: src/tables/sales/SalesOrderTable.tsx:86
 msgid "Has Start Date"
 msgstr "有开始日期"
 
-#: src/tables/build/BuildOrderTable.tsx:174
+#: src/tables/build/BuildOrderTable.tsx:175
 #: src/tables/purchasing/PurchaseOrderTable.tsx:90
 #: src/tables/sales/ReturnOrderTable.tsx:86
 #: src/tables/sales/SalesOrderTable.tsx:87
@@ -9287,51 +9291,57 @@ msgstr "删除行项目"
 msgid "Add Extra Line Item"
 msgstr "添加额外行项目"
 
-#: src/tables/machine/MachineListTable.tsx:206
+#: src/tables/machine/MachineListTable.tsx:124
 msgid "Machine restarted"
 msgstr "设备已重启"
 
-#: src/tables/machine/MachineListTable.tsx:216
-#: src/tables/machine/MachineListTable.tsx:264
+#: src/tables/machine/MachineListTable.tsx:225
+#: src/tables/machine/MachineListTable.tsx:274
+#: src/tables/machine/MachineListTable.tsx:613
 msgid "Edit machine"
 msgstr "编辑设备"
 
-#: src/tables/machine/MachineListTable.tsx:230
-#: src/tables/machine/MachineListTable.tsx:268
+#: src/tables/machine/MachineListTable.tsx:235
+#~ msgid "Are you sure you want to remove the machine \"{0}\"?"
+#~ msgstr "Are you sure you want to remove the machine \"{0}\"?"
+
+#: src/tables/machine/MachineListTable.tsx:239
+#: src/tables/machine/MachineListTable.tsx:278
 msgid "Delete machine"
 msgstr "删除设备"
 
-#: src/tables/machine/MachineListTable.tsx:231
+#: src/tables/machine/MachineListTable.tsx:240
+#: src/tables/machine/MachineListTable.tsx:576
 msgid "Machine successfully deleted."
 msgstr "设备已成功删除。"
 
-#. placeholder {0}: machine?.name ?? 'unknown'
-#: src/tables/machine/MachineListTable.tsx:235
-msgid "Are you sure you want to remove the machine \"{0}\"?"
-msgstr "你确定要删除设备 \"{0}\" 吗?"
+#: src/tables/machine/MachineListTable.tsx:245
+#: src/tables/machine/MachineListTable.tsx:581
+msgid "Are you sure you want to remove this machine?"
+msgstr ""
 
-#: src/tables/machine/MachineListTable.tsx:252
+#: src/tables/machine/MachineListTable.tsx:262
 msgid "Machine"
 msgstr "设备"
 
-#: src/tables/machine/MachineListTable.tsx:257
-#: src/tables/machine/MachineListTable.tsx:444
+#: src/tables/machine/MachineListTable.tsx:267
+#: src/tables/machine/MachineListTable.tsx:461
 msgid "Restart required"
 msgstr "需要重启"
 
-#: src/tables/machine/MachineListTable.tsx:261
+#: src/tables/machine/MachineListTable.tsx:271
 msgid "Machine Actions"
 msgstr "设备操作"
 
-#: src/tables/machine/MachineListTable.tsx:273
+#: src/tables/machine/MachineListTable.tsx:283
 msgid "Restart"
 msgstr "重新启动"
 
-#: src/tables/machine/MachineListTable.tsx:275
+#: src/tables/machine/MachineListTable.tsx:285
 msgid "Restart machine"
 msgstr "重启设备"
 
-#: src/tables/machine/MachineListTable.tsx:277
+#: src/tables/machine/MachineListTable.tsx:287
 msgid "manual restart required"
 msgstr "需要手动重启"
 
@@ -9339,33 +9349,33 @@ msgstr "需要手动重启"
 #~ msgid "Machine information"
 #~ msgstr "Machine information"
 
-#: src/tables/machine/MachineListTable.tsx:295
+#: src/tables/machine/MachineListTable.tsx:312
 msgid "Machine Information"
 msgstr "设备信息"
 
-#: src/tables/machine/MachineListTable.tsx:305
-#: src/tables/machine/MachineListTable.tsx:611
+#: src/tables/machine/MachineListTable.tsx:322
+#: src/tables/machine/MachineListTable.tsx:688
 msgid "Machine Type"
 msgstr "设备类型"
 
-#: src/tables/machine/MachineListTable.tsx:318
+#: src/tables/machine/MachineListTable.tsx:335
 msgid "Machine Driver"
 msgstr "设备驱动程序"
 
-#: src/tables/machine/MachineListTable.tsx:333
+#: src/tables/machine/MachineListTable.tsx:350
 msgid "Initialized"
 msgstr "已初始化"
 
-#: src/tables/machine/MachineListTable.tsx:362
-#: src/tables/machine/MachineTypeTable.tsx:289
+#: src/tables/machine/MachineListTable.tsx:379
+#: src/tables/machine/MachineTypeTable.tsx:307
 msgid "No errors reported"
 msgstr "未报告错误"
 
-#: src/tables/machine/MachineListTable.tsx:381
+#: src/tables/machine/MachineListTable.tsx:398
 msgid "Machine Settings"
 msgstr "设备设置"
 
-#: src/tables/machine/MachineListTable.tsx:397
+#: src/tables/machine/MachineListTable.tsx:414
 msgid "Driver Settings"
 msgstr "驱动设置"
 
@@ -9373,78 +9383,95 @@ msgstr "驱动设置"
 #~ msgid "Create machine"
 #~ msgstr "Create machine"
 
-#: src/tables/machine/MachineListTable.tsx:517
+#: src/tables/machine/MachineListTable.tsx:532
 msgid "Add Machine"
-msgstr "添加设备"
-
-#: src/tables/machine/MachineListTable.tsx:559
-msgid "Add machine"
 msgstr "添加设备"
 
 #: src/tables/machine/MachineListTable.tsx:561
 #~ msgid "Machine detail"
 #~ msgstr "Machine detail"
 
-#: src/tables/machine/MachineListTable.tsx:573
+#: src/tables/machine/MachineListTable.tsx:575
+#: src/tables/machine/MachineListTable.tsx:620
+msgid "Delete Machine"
+msgstr ""
+
+#: src/tables/machine/MachineListTable.tsx:588
+msgid "Edit Machine"
+msgstr ""
+
+#: src/tables/machine/MachineListTable.tsx:602
+msgid "Restart Machine"
+msgstr ""
+
+#: src/tables/machine/MachineListTable.tsx:633
+msgid "Add machine"
+msgstr "添加设备"
+
+#: src/tables/machine/MachineListTable.tsx:649
 msgid "Machine Detail"
 msgstr "设备详情"
 
-#: src/tables/machine/MachineListTable.tsx:620
+#: src/tables/machine/MachineListTable.tsx:697
 msgid "Driver"
 msgstr "驱动"
 
-#: src/tables/machine/MachineTypeTable.tsx:77
+#: src/tables/machine/MachineTypeTable.tsx:72
+msgid "Driver Type"
+msgstr ""
+
+#: src/tables/machine/MachineTypeTable.tsx:76
 msgid "Builtin driver"
 msgstr "内置驱动"
-
-#: src/tables/machine/MachineTypeTable.tsx:95
-msgid "Not Found"
-msgstr "未找到"
-
-#: src/tables/machine/MachineTypeTable.tsx:98
-msgid "Machine type not found."
-msgstr "找不到设备类型。"
 
 #: src/tables/machine/MachineTypeTable.tsx:99
 #~ msgid "Machine type information"
 #~ msgstr "Machine type information"
 
-#: src/tables/machine/MachineTypeTable.tsx:108
+#: src/tables/machine/MachineTypeTable.tsx:128
+msgid "Not Found"
+msgstr "未找到"
+
+#: src/tables/machine/MachineTypeTable.tsx:131
+msgid "Machine type not found."
+msgstr "找不到设备类型。"
+
+#: src/tables/machine/MachineTypeTable.tsx:141
 msgid "Machine Type Information"
 msgstr "设备类型信息"
-
-#: src/tables/machine/MachineTypeTable.tsx:123
-#: src/tables/machine/MachineTypeTable.tsx:237
-msgid "Slug"
-msgstr "别名"
-
-#: src/tables/machine/MachineTypeTable.tsx:134
-#: src/tables/machine/MachineTypeTable.tsx:258
-msgid "Provider plugin"
-msgstr "供应商插件"
-
-#: src/tables/machine/MachineTypeTable.tsx:146
-#: src/tables/machine/MachineTypeTable.tsx:270
-msgid "Provider file"
-msgstr "供应商文件"
 
 #: src/tables/machine/MachineTypeTable.tsx:148
 #~ msgid "Available drivers"
 #~ msgstr "Available drivers"
 
-#: src/tables/machine/MachineTypeTable.tsx:161
+#: src/tables/machine/MachineTypeTable.tsx:156
+#: src/tables/machine/MachineTypeTable.tsx:255
+msgid "Slug"
+msgstr "别名"
+
+#: src/tables/machine/MachineTypeTable.tsx:167
+#: src/tables/machine/MachineTypeTable.tsx:276
+msgid "Provider plugin"
+msgstr "供应商插件"
+
+#: src/tables/machine/MachineTypeTable.tsx:179
+#: src/tables/machine/MachineTypeTable.tsx:288
+msgid "Provider file"
+msgstr "供应商文件"
+
+#: src/tables/machine/MachineTypeTable.tsx:194
 msgid "Available Drivers"
 msgstr "可用驱动程序"
 
-#: src/tables/machine/MachineTypeTable.tsx:216
+#: src/tables/machine/MachineTypeTable.tsx:234
 msgid "Machine driver not found."
 msgstr "未找到设备驱动程序。"
 
-#: src/tables/machine/MachineTypeTable.tsx:224
+#: src/tables/machine/MachineTypeTable.tsx:242
 msgid "Machine driver information"
 msgstr "设备驱动信息"
 
-#: src/tables/machine/MachineTypeTable.tsx:244
+#: src/tables/machine/MachineTypeTable.tsx:262
 msgid "Machine type"
 msgstr "设备类型"
 
@@ -9452,19 +9479,19 @@ msgstr "设备类型"
 #~ msgid "Machine type detail"
 #~ msgstr "Machine type detail"
 
-#: src/tables/machine/MachineTypeTable.tsx:344
-msgid "Builtin type"
-msgstr "内置类型"
-
 #: src/tables/machine/MachineTypeTable.tsx:348
 #~ msgid "Machine driver detail"
 #~ msgstr "Machine driver detail"
 
-#: src/tables/machine/MachineTypeTable.tsx:353
+#: src/tables/machine/MachineTypeTable.tsx:362
+msgid "Builtin type"
+msgstr "内置类型"
+
+#: src/tables/machine/MachineTypeTable.tsx:371
 msgid "Machine Type Detail"
 msgstr "设备类型详情"
 
-#: src/tables/machine/MachineTypeTable.tsx:363
+#: src/tables/machine/MachineTypeTable.tsx:381
 msgid "Machine Driver Detail"
 msgstr "设备驱动详情"
 
@@ -11008,11 +11035,11 @@ msgstr "用户组"
 
 #: src/tables/settings/UserTable.tsx:332
 msgid "Lock user"
-msgstr ""
+msgstr "锁定用户"
 
 #: src/tables/settings/UserTable.tsx:342
 msgid "Unlock user"
-msgstr ""
+msgstr "解锁用户"
 
 #: src/tables/settings/UserTable.tsx:358
 msgid "Delete user"
@@ -11036,11 +11063,11 @@ msgstr "已添加用户"
 
 #: src/tables/settings/UserTable.tsx:382
 msgid "Set Password"
-msgstr ""
+msgstr "设定密码"
 
 #: src/tables/settings/UserTable.tsx:387
 msgid "Password updated"
-msgstr ""
+msgstr "密码已更新"
 
 #: src/tables/settings/UserTable.tsx:398
 msgid "Add user"
@@ -11072,7 +11099,7 @@ msgstr ""
 
 #: src/tables/settings/UserTable.tsx:483
 msgid "Error updating user"
-msgstr ""
+msgstr "更新用户时出错"
 
 #: src/tables/stock/InstalledItemsTable.tsx:37
 #: src/tables/stock/InstalledItemsTable.tsx:89
@@ -11511,7 +11538,7 @@ msgstr "检测到手机视图"
 
 #: src/views/MobileAppView.tsx:28
 msgid "InvenTree UI is optimized for Tablets and Desktops, you can use the official app for a mobile experience."
-msgstr ""
+msgstr "InventTree UI 是为平板电脑和桌面端优化的，您可以使用官方应用程序进行小尺寸设备的体验。"
 
 #: src/views/MobileAppView.tsx:34
 msgid "Read the docs"
