@@ -42,7 +42,7 @@ from build.status_codes import BuildStatusGroups
 from order.status_codes import PurchaseOrderStatusGroups, SalesOrderStatusGroups
 
 
-def annotate_in_production_quantity(reference=''):
+def annotate_in_production_quantity(reference: str = '') -> QuerySet:
     """Annotate the 'in production' quantity for each part in a queryset.
 
     - Sum the 'quantity' field for all stock items which are 'in production' for each part.
@@ -63,7 +63,7 @@ def annotate_in_production_quantity(reference=''):
     )
 
 
-def annotate_scheduled_to_build_quantity(reference: str = ''):
+def annotate_scheduled_to_build_quantity(reference: str = '') -> QuerySet:
     """Annotate the 'scheduled to build' quantity for each part in a queryset.
 
     - This is total scheduled quantity for all build orders which are 'active'
@@ -91,7 +91,7 @@ def annotate_scheduled_to_build_quantity(reference: str = ''):
     )
 
 
-def annotate_on_order_quantity(reference: str = ''):
+def annotate_on_order_quantity(reference: str = '') -> QuerySet:
     """Annotate the 'on order' quantity for each part in a queryset.
 
     Sum the 'remaining quantity' of each line item for any open purchase orders for each part:
@@ -137,7 +137,7 @@ def annotate_on_order_quantity(reference: str = ''):
     )
 
 
-def annotate_total_stock(reference: str = '', filter: Q = None):
+def annotate_total_stock(reference: str = '', filter: Q = None) -> QuerySet:
     """Annotate 'total stock' quantity against a queryset.
 
     - This function calculates the 'total stock' for a given part
@@ -161,7 +161,7 @@ def annotate_total_stock(reference: str = '', filter: Q = None):
     )
 
 
-def annotate_build_order_requirements(reference: str = ''):
+def annotate_build_order_requirements(reference: str = '') -> QuerySet:
     """Annotate the total quantity of each part required for build orders.
 
     - Only interested in 'active' build orders
@@ -179,7 +179,7 @@ def annotate_build_order_requirements(reference: str = ''):
     )
 
 
-def annotate_build_order_allocations(reference: str = '', location=None):
+def annotate_build_order_allocations(reference: str = '', location=None) -> QuerySet:
     """Annotate the total quantity of each part allocated to build orders.
 
     - This function calculates the total part quantity allocated to open build orders
@@ -212,7 +212,7 @@ def annotate_build_order_allocations(reference: str = '', location=None):
     )
 
 
-def annotate_sales_order_requirements(reference: str = ''):
+def annotate_sales_order_requirements(reference: str = '') -> QuerySet:
     """Annotate the total quantity of each part required for sales orders.
 
     - Only interested in 'active' sales orders
@@ -232,7 +232,7 @@ def annotate_sales_order_requirements(reference: str = ''):
     )
 
 
-def annotate_sales_order_allocations(reference: str = '', location=None):
+def annotate_sales_order_allocations(reference: str = '', location=None) -> QuerySet:
     """Annotate the total quantity of each part allocated to sales orders.
 
     - This function calculates the total part quantity allocated to open sales orders"
@@ -269,7 +269,7 @@ def annotate_sales_order_allocations(reference: str = '', location=None):
     )
 
 
-def variant_stock_query(reference: str = '', filter: Q = None):
+def variant_stock_query(reference: str = '', filter: Q = None) -> QuerySet:
     """Create a queryset to retrieve all stock items for variant parts under the specified part.
 
     - Useful for annotating a queryset with aggregated information about variant parts
@@ -290,7 +290,7 @@ def variant_stock_query(reference: str = '', filter: Q = None):
     ).filter(stock_filter)
 
 
-def annotate_variant_quantity(subquery: Q, reference: str = 'quantity'):
+def annotate_variant_quantity(subquery: Q, reference: str = 'quantity') -> QuerySet:
     """Create a subquery annotation for all variant part stock items on the given parent query.
 
     Args:
@@ -310,7 +310,7 @@ def annotate_variant_quantity(subquery: Q, reference: str = 'quantity'):
     )
 
 
-def annotate_category_parts():
+def annotate_category_parts() -> QuerySet:
     """Construct a queryset annotation which returns the number of parts in a particular category.
 
     - Includes parts in subcategories also
@@ -337,7 +337,7 @@ def annotate_category_parts():
     )
 
 
-def annotate_default_location(reference=''):
+def annotate_default_location(reference: str = '') -> QuerySet:
     """Construct a queryset that finds the closest default location in the part's category tree.
 
     If the part's category has its own default_location, this is returned.
@@ -360,7 +360,7 @@ def annotate_default_location(reference=''):
     )
 
 
-def annotate_sub_categories():
+def annotate_sub_categories() -> QuerySet:
     """Construct a queryset annotation which returns the number of subcategories for each provided category."""
     subquery = part.models.PartCategory.objects.filter(
         tree_id=OuterRef('tree_id'),
@@ -524,7 +524,9 @@ def annotate_bom_item_can_build(queryset: QuerySet, reference: str = '') -> Quer
 PARAMETER_FILTER_OPERATORS: list[str] = ['gt', 'gte', 'lt', 'lte', 'ne', 'icontains']
 
 
-def filter_by_parameter(queryset, template_id: int, value: str, func: str = ''):
+def filter_by_parameter(
+    queryset: QuerySet, template_id: int, value: str, func: str = ''
+) -> QuerySet:
     """Filter the given queryset by a given template parameter.
 
     Parts which do not have a value for the given parameter are excluded.
@@ -618,7 +620,9 @@ def filter_by_parameter(queryset, template_id: int, value: str, func: str = ''):
         return queryset.filter(q).distinct()
 
 
-def order_by_parameter(queryset, template_id: int, ascending=True):
+def order_by_parameter(
+    queryset: QuerySet, template_id: int, ascending: bool = True
+) -> QuerySet:
     """Order the given queryset by a given template parameter.
 
     Parts which do not have a value for the given parameter are ordered last.
