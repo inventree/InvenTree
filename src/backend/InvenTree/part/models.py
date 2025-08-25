@@ -1402,6 +1402,9 @@ class Part(
             for bom_item in bom_items:
                 build_line = build.build_lines.filter(bom_item=bom_item).first()
 
+                if not build_line:
+                    continue
+
                 line_quantity = max(0, build_line.quantity - build_line.consumed)
                 quantity += line_quantity
 
@@ -1450,6 +1453,10 @@ class Part(
 
         for line in open_lines:
             # Determine the quantity "remaining" to be shipped out
+
+            if not line:
+                continue
+
             remaining = max(line.quantity - line.shipped, 0)
             quantity += remaining
 
