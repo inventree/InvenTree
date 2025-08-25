@@ -87,9 +87,6 @@ RUN ln -sf /root/.local/bin/invoke /usr/bin/invoke
 RUN mkdir -p ${INVENTREE_HOME}
 WORKDIR ${INVENTREE_HOME}
 
-# COPY contrib/container/install_build_packages.sh .
-# RUN chmod +x install_build_packages.sh
-
 COPY contrib/container/requirements.txt base_requirements.txt
 
 COPY tasks.py \
