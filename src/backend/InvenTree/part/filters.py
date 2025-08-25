@@ -229,9 +229,8 @@ def annotate_sales_order_allocations(reference: str = ''):
     - Finds all sales order allocations for each part (using the provided filter)
     - Aggregates the 'allocated quantity' for each relevant sales order allocation item
 
-    Args:
+    Arguments:
         reference: The relationship reference of the part from the current model
-        order_filter: Q object which defines how to filter the allocation items
     """
     # Order filter only returns incomplete shipments for open orders
     order_filter = Q(
