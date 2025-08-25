@@ -179,19 +179,29 @@ def annotate_build_order_requirements(reference: str = ''):
     )
 
 
-def annotate_build_order_allocations(reference: str = ''):
+def annotate_build_order_allocations(reference: str = '', location=None):
     """Annotate the total quantity of each part allocated to build orders.
 
     - This function calculates the total part quantity allocated to open build orders
     - Finds all build order allocations for each part (using the provided filter)
     - Aggregates the 'allocated quantity' for each relevant build order allocation item
 
-    Args:
+    Arguments:
         reference: The relationship reference of the part from the current model
-        build_filter: Q object which defines how to filter the allocation items
+        location: If provided, only allocated stock items from this location are considered
     """
     # Build filter only returns 'active' build orders
     build_filter = Q(build_line__build__status__in=BuildStatusGroups.ACTIVE_CODES)
+
+    if location is not None:
+        # Filter by location (including any child locations)
+
+        build_filter &= Q(
+            stock_item__location__tree_id=location.tree_id,
+            stock_item__location__lft__gte=location.lft,
+            stock_item__location__rght__lte=location.rght,
+            stock_item__location__level__gte=location.level,
+        )
 
     return Coalesce(
         SubquerySum(
@@ -222,7 +232,7 @@ def annotate_sales_order_requirements(reference: str = ''):
     )
 
 
-def annotate_sales_order_allocations(reference: str = ''):
+def annotate_sales_order_allocations(reference: str = '', location=None):
     """Annotate the total quantity of each part allocated to sales orders.
 
     - This function calculates the total part quantity allocated to open sales orders"
@@ -231,12 +241,23 @@ def annotate_sales_order_allocations(reference: str = ''):
 
     Arguments:
         reference: The relationship reference of the part from the current model
+        location: If provided, only allocated stock items from this location are considered
     """
     # Order filter only returns incomplete shipments for open orders
     order_filter = Q(
         line__order__status__in=SalesOrderStatusGroups.OPEN,
         shipment__shipment_date=None,
     )
+
+    if location is not None:
+        # Filter by location (including any child locations)
+
+        order_filter &= Q(
+            item__location__tree_id=location.tree_id,
+            item__location__lft__gte=location.lft,
+            item__location__rght__lte=location.rght,
+            item__location__level__gte=location.level,
+        )
 
     return Coalesce(
         SubquerySum(
