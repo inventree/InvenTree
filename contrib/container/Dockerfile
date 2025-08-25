@@ -147,6 +147,7 @@ EXPOSE 5173
 # Install packages required for building python packages
 # RUN ./install_build_packages.sh
 
+RUN pip install -U invoke
 RUN pip install --require-hashes -r base_requirements.txt --no-cache
 
 # Install nodejs / npm / yarn
