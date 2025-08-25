@@ -260,7 +260,7 @@ class GroupSerializer(InvenTreeModelSerializer):
                 if not user_detail:
                     self.fields.pop('users', None)
 
-        except AppRegistryNotReady:
+        except AppRegistryNotReady:  # pragma: no cover
             pass
 
     permissions = serializers.SerializerMethodField(allow_null=True, read_only=True)
@@ -404,13 +404,8 @@ class UserCreateSerializer(ExtendedUserSerializer):
         user = self.context['request'].user
 
         # Check that the user trying to create a new user is a superuser
-        if not user.is_staff:
-            raise serializers.ValidationError(
-                _('Only staff users can create new users')
-            )
-
-        if not check_user_role(user, RuleSetEnum.ADMIN, 'add'):
-            raise serializers.ValidationError(
+        if not user.is_staff or not check_user_role(user, RuleSetEnum.ADMIN, 'add'):
+            raise serializers.ValidationError(  # pragma: no cover # Handled by permissions already
                 _('You do not have permission to create users')
             )
 
