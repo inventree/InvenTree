@@ -36,7 +36,7 @@ RUN apt install -y \
    yarn nodejs npm
 
 # Update to the latest stable node version
-RUN npm install -g n@10.1.0 --ignore-scripts && n lts
+RUN npm install -g n --ignore-scripts && n lts
 
 RUN yarn config set network-timeout 600000 -g
 

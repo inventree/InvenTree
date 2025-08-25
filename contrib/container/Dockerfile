@@ -9,7 +9,8 @@
 # - Runs InvenTree web server under django development server
 # - Monitors source files for any changes, and live-reloads server
 
-FROM python:3.11-alpine3.20@sha256:520924f35357a374aa1beaa81b867f449f9f12a53f00b69ad03c3d697fdf4aad AS inventree_base
+# FROM python:3.11-alpine3.20@sha256:520924f35357a374aa1beaa81b867f449f9f12a53f00b69ad03c3d697fdf4aad AS inventree_base
+FROM python:3.11-slim-trixie AS inventree_base
 
 # Build arguments for this image
 ARG commit_tag=""
@@ -20,7 +21,7 @@ ARG data_dir="data"
 
 ENV PYTHONUNBUFFERED=1
 ENV PIP_DISABLE_PIP_VERSION_CHECK=1
-ENV INVOKE_RUN_SHELL="/bin/ash"
+ENV INVOKE_RUN_SHELL="/bin/bash"
 
 ENV INVENTREE_DOCKER="true"
 
@@ -58,62 +59,68 @@ LABEL org.opencontainers.image.vendor="inventree" \
       org.opencontainers.image.licenses="MIT" \
       org.opencontainers.image.version=${commit_tag}
 
-
-# Install required system level packages
-RUN apk add --no-cache \
-    git gettext py-cryptography \
-    # Image format support
-    libjpeg libwebp zlib \
+# Install basic system level packages
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gettext libldap2 wget curl \
     # Weasyprint requirements : https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#alpine-3-12
-    py3-pip py3-pillow py3-cffi py3-brotli pango poppler-utils openldap \
-    # Postgres client (note: backwards compatible with postgres server <= 16)
-    postgresql16-client \
-    # MySQL / MariaDB client
-    mariadb-client mariadb-connector-c \
-    && \
+    weasyprint libpango-1.0-0 libcairo2 poppler-utils \
+    # Additional python dependency packages
+    python3-pip python3-invoke python3-brotli python3-cffi python3-pillow \
+    # Database client libraries
+    postgresql-client mariadb-client \
     # font support
-    apk --update --upgrade --no-cache add fontconfig ttf-freefont font-terminus font-noto font-noto-cjk font-noto-extra \
-    && fc-cache -f
+    fontconfig fonts-freefont-ttf fonts-terminus fonts-noto-core fonts-noto-cjk \
+    # Cleanup
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Remove heavy python packages installed by weasyprint (that we don't need)
+RUN rm -rf /usr/lib/python3/dist-packages/numpy \
+    && rm -rf /usr/lib/python3/dist-packages/scipy \
+    && rm -rf /usr/lib/python3/dist-packages/sympy
 
 EXPOSE 8000
+
+# Fix invoke command path for InvenTree environment check
+RUN ln -sf /root/.local/bin/invoke /usr/bin/invoke
 
 RUN mkdir -p ${INVENTREE_HOME}
 WORKDIR ${INVENTREE_HOME}
 
+# COPY contrib/container/install_build_packages.sh .
+# RUN chmod +x install_build_packages.sh
+
 COPY contrib/container/requirements.txt base_requirements.txt
-COPY src/backend/requirements.txt ./
-COPY contrib/container/install_build_packages.sh .
-RUN chmod +x install_build_packages.sh
 
-# For ARMv7 architecture, add the piwheels repo (for cryptography library)
-# Otherwise, we have to build from source, which is difficult
-# Ref: https://github.com/inventree/InvenTree/pull/4598
-RUN if [ `apk --print-arch` = "armv7" ]; then \
-    printf "[global]\nextra-index-url=https://www.piwheels.org/simple\n" > /etc/pip.conf ; \
-    fi
-
-COPY tasks.py contrib/container/gunicorn.conf.py contrib/container/init.sh ./
+COPY tasks.py \
+     src/backend/requirements.txt \
+     contrib/container/gunicorn.conf.py \
+     contrib/container/init.sh \
+     ./
 RUN chmod +x init.sh
 
-ENTRYPOINT ["/bin/ash", "./init.sh"]
+ENTRYPOINT ["/bin/bash", "./init.sh"]
 
 FROM inventree_base AS prebuild
-
-ENV PATH=/root/.local/bin:$PATH
-RUN ./install_build_packages.sh --no-cache --virtual .build-deps && \
-    pip install --user --require-hashes -r base_requirements.txt --no-cache && \
-    pip install --user --require-hashes -r requirements.txt --no-cache && \
-    apk --purge del .build-deps
 
 # Frontend builder image:
 FROM prebuild AS frontend
 
-RUN apk add --no-cache --update nodejs npm yarn bash
-RUN npm install -g --ignore-scripts n@10.1.0
-RUN bash -c "n lts"
-RUN yarn config set network-timeout 600000 -g
+# Copy source files
 COPY src ${INVENTREE_HOME}/src
 COPY tasks.py ${INVENTREE_HOME}/tasks.py
+
+# Install and build frontend
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    nodejs npm \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN pip install -U invoke
+RUN npm install -g n --ignore-scripts
+RUN npm install -g yarn
+RUN bash -c "n lts"
+RUN yarn config set network-timeout 600000 -g
 RUN cd ${INVENTREE_HOME} && invoke int.frontend-compile
 
 # InvenTree production image:
@@ -127,18 +134,10 @@ ENV INVENTREE_DEBUG=False
 ENV INVENTREE_COMMIT_HASH="${commit_hash}"
 ENV INVENTREE_COMMIT_DATE="${commit_date}"
 
-# use dependencies and compiled wheels from the prebuild image
-ENV PATH=/root/.local/bin:$PATH
-COPY --from=prebuild /root/.local /root/.local
-
-
 # Copy source code
 COPY src/backend/InvenTree ${INVENTREE_BACKEND_DIR}/InvenTree
 COPY src/backend/requirements.txt ${INVENTREE_BACKEND_DIR}/requirements.txt
 COPY --from=frontend ${INVENTREE_BACKEND_DIR}/InvenTree/web/static/web ${INVENTREE_BACKEND_DIR}/InvenTree/web/static/web
-
-# Fix invoke command path for InvenTree environment check
-RUN ln -sf /root/.local/bin/invoke /bin/invoke
 
 # Launch the production server
 CMD gunicorn -c ./gunicorn.conf.py InvenTree.wsgi -b 0.0.0.0:8000 --chdir ${INVENTREE_BACKEND_DIR}/InvenTree
@@ -149,16 +148,16 @@ FROM inventree_base AS dev
 EXPOSE 5173
 
 # Install packages required for building python packages
-RUN ./install_build_packages.sh
+# RUN ./install_build_packages.sh
 
 RUN pip install --require-hashes -r base_requirements.txt --no-cache
 
 # Install nodejs / npm / yarn
-
-RUN apk add --no-cache --update nodejs npm yarn bash
-RUN npm install -g --ignore-scripts n@10.1.0
-RUN bash -c "n lts"
+RUN apt-get update && apt-get install -y --no-install-recommends nodejs npm
+RUN npm install -g n --ignore-scripts
+RUN npm install -g yarn
 RUN yarn config set network-timeout 600000 -g
+RUN bash -c "n lts"
 
 # The development image requires the source code to be mounted to /home/inventree/
 # So from here, we don't actually "do" anything, apart from some file management
@@ -172,7 +171,7 @@ ENV INVENTREE_PY_ENV="${INVENTREE_DATA_DIR}/env"
 WORKDIR ${INVENTREE_HOME}
 
 # Entrypoint ensures that we are running in the python virtual environment
-ENTRYPOINT ["/bin/ash", "./contrib/container/init.sh"]
+ENTRYPOINT ["/bin/bash", "./contrib/container/init.sh"]
 
 # Launch the development server
 CMD ["invoke", "dev.server", "-a", "${INVENTREE_WEB_ADDR}:${INVENTREE_WEB_PORT}"]
