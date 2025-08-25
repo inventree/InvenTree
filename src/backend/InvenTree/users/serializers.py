@@ -117,23 +117,6 @@ def generate_permission_dict(permissions) -> dict:
     return perms
 
 
-def generate_roles_dict(roles) -> dict:
-    """Generate a dictionary of roles for a given set of roles."""
-    # Build out an (initially empty) dictionary of roles
-    role_dict = {name: [] for name, _ in RULESET_CHOICES}
-
-    for role in roles:
-        permissions = []
-
-        for permission in ['view', 'add', 'change', 'delete']:
-            if getattr(role, f'can_{permission}', False):
-                permissions.append(permission)
-
-        role_dict[role.name] = permissions
-
-    return role_dict
-
-
 class GetAuthTokenSerializer(serializers.Serializer):
     """Serializer for the GetAuthToken API endpoint."""
 
