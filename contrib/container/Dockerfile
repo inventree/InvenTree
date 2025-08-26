@@ -9,7 +9,7 @@
 # - Runs InvenTree web server under django development server
 # - Monitors source files for any changes, and live-reloads server
 
-FROM python:3.11-slim-trixie@sha256:10c3875a6435af5b2461c6f99c52bfa11716aae0ca8b27b77f81df9faab93b16 AS inventree_base
+FROM python:3.11-slim-trixie AS inventree_base
 
 # Build arguments for this image
 ARG commit_tag=""
@@ -63,8 +63,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     gettext libldap2 wget curl \
     # Weasyprint requirements : https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#alpine-3-12
     weasyprint libpango-1.0-0 libcairo2 poppler-utils \
-    # Additional python dependency packages
-    python3-pip python3-invoke python3-brotli python3-cffi python3-pillow \
     # Database client libraries
     postgresql-client mariadb-client \
     # font support
@@ -81,7 +79,7 @@ RUN rm -rf /usr/lib/python3/dist-packages/numpy \
 EXPOSE 8000
 
 # Fix invoke command path for InvenTree environment check
-RUN pip install -U invoke && ln -sf /root/.local/bin/invoke /usr/local/bin/invoke
+RUN python -m pip install -U invoke
 
 RUN mkdir -p ${INVENTREE_HOME}
 WORKDIR ${INVENTREE_HOME}
@@ -97,16 +95,28 @@ RUN chmod +x init.sh
 
 ENTRYPOINT ["/bin/bash", "./init.sh"]
 
-FROM inventree_base AS prebuild
-
-# Frontend builder image:
-FROM prebuild AS frontend
+# Multi-stage build to compile project requirements
+FROM inventree_base AS builder_stage
 
 # Copy source files
 COPY src ${INVENTREE_HOME}/src
 COPY tasks.py ${INVENTREE_HOME}/tasks.py
 
-# Install and build frontend
+# Install backend build dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    pkg-config build-essential \
+    libldap2-dev libsasl2-dev libssl-dev \
+    libmariadb-dev \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Build and install python dependencies
+RUN pip install --user --require-hashes -r base_requirements.txt --no-cache && \
+    pip install --user --require-hashes -r requirements.txt --no-cache && \
+    pip cache purge && \
+    rm -rf /root/.cache/pip
+
+# Install frontend build dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     nodejs npm \
     && apt-get clean \
@@ -116,7 +126,7 @@ RUN npm install -g n --ignore-scripts
 RUN npm install -g yarn
 RUN bash -c "n lts"
 RUN yarn config set network-timeout 600000 -g
-RUN cd ${INVENTREE_HOME} && invoke int.frontend-compile
+RUN cd ${INVENTREE_HOME} && invoke int.frontend-compile --extract
 
 # InvenTree production image:
 # - Copies required files from local directory
@@ -132,25 +142,19 @@ ENV INVENTREE_COMMIT_DATE="${commit_date}"
 # Copy source code
 COPY src/backend/InvenTree ${INVENTREE_BACKEND_DIR}/InvenTree
 COPY src/backend/requirements.txt ${INVENTREE_BACKEND_DIR}/requirements.txt
-COPY --from=frontend ${INVENTREE_BACKEND_DIR}/InvenTree/web/static/web ${INVENTREE_BACKEND_DIR}/InvenTree/web/static/web
+
+# Copy compiled dependencies from prebuild image
+ENV PATH=/root/.local/bin:$PATH
+COPY --from=builder_stage ${INVENTREE_BACKEND_DIR}/InvenTree/web/static/web ${INVENTREE_BACKEND_DIR}/InvenTree/web/static/web
+COPY --from=builder_stage /root/.local /root/.local
 
 # Launch the production server
 CMD gunicorn -c ./gunicorn.conf.py InvenTree.wsgi -b 0.0.0.0:8000 --chdir ${INVENTREE_BACKEND_DIR}/InvenTree
 
-FROM inventree_base AS dev
+FROM builder_stage AS dev
 
 # Vite server (for local frontend development)
 EXPOSE 5173
-
-# Install packages required for building python packages
-RUN pip install --require-hashes -r base_requirements.txt --no-cache
-
-# Install nodejs / npm / yarn
-RUN apt-get update && apt-get install -y --no-install-recommends nodejs npm
-RUN npm install -g n --ignore-scripts
-RUN npm install -g yarn
-RUN yarn config set network-timeout 600000 -g
-RUN bash -c "n lts"
 
 # The development image requires the source code to be mounted to /home/inventree/
 # So from here, we don't actually "do" anything, apart from some file management
