@@ -58,13 +58,9 @@ def default_token_expiry():
 
 def default_create_token(token_model, user, serializer):
     """Generate a default value for the token."""
-    token = token_model.objects.filter(user=user, name='', revoked=False)
-
-    if token.exists():
-        return token.first()
-
-    else:
-        return token_model.objects.create(user=user, name='')
+    # this implementation only works for inventree API tokens
+    assert token_model is ApiToken
+    return ApiToken.get_or_create(user=user, token_name='')
 
 
 class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
@@ -93,6 +89,28 @@ class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
         suffix = '-' + str(datetime.datetime.now().date().isoformat().replace('-', ''))
 
         return prefix + str(AuthToken.generate_key()) + suffix
+
+    @classmethod
+    def get_or_create(cls, user, token_name: str):
+        """Gets or creates a valid API token for the given user. Only call from authenticated context."""
+        token_name = cls.sanitize_name(token_name)
+        today = datetime.date.today()
+
+        # Find existing token, which has not expired
+        token = cls.objects.filter(
+            user=user, name=token_name, revoked=False, expiry__gte=today
+        ).first()
+
+        # create new token if no matching one exists.
+        if not token:
+            token = cls.objects.create(user=user, name=token_name)
+            logger.info(
+                "Created new API token for user '%s' (name='%s')",
+                user.username,
+                token_name,
+            )
+
+        return token
 
     # Override the 'key' field - force it to be unique
     key = models.CharField(
