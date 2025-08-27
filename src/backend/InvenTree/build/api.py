@@ -23,8 +23,12 @@ from build.status_codes import BuildStatus, BuildStatusGroups
 from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import StatusView
 from InvenTree.api import BulkDeleteMixin, MetadataView
-from InvenTree.filters import SEARCH_ORDER_FILTER_ALIAS, InvenTreeDateFilter
-from InvenTree.helpers import isNull, str2bool
+from InvenTree.filters import (
+    SEARCH_ORDER_FILTER_ALIAS,
+    InvenTreeDateFilter,
+    NumberOrNullFilter,
+)
+from InvenTree.helpers import str2bool
 from InvenTree.mixins import CreateAPI, ListCreateAPI, RetrieveUpdateDestroyAPI
 from users.models import Owner
 
@@ -850,23 +854,13 @@ class BuildItemFilter(rest_filters.FilterSet):
         locations = location.get_descendants(include_self=True)
         return queryset.filter(stock_item__location__in=locations)
 
-    output = rest_filters.NumberFilter(
+    output = NumberOrNullFilter(
+        field_name='install_into',
         label=_('Output'),
-        method='filter_output',
         help_text=_(
             "Filter by output stock item ID. Use 'null' to find uninstalled build items."
         ),
     )
-
-    def filter_output(self, queryset, name, value):
-        """Filter queryset by output target.
-
-        If 'null', return items not installed into any output item.
-        If an integer, return items installed into that specific output item.
-        """
-        if isNull(value):
-            return queryset.filter(install_into=None)
-        return queryset.filter(install_into=value)
 
 
 class BuildItemList(DataExportViewMixin, BulkDeleteMixin, ListCreateAPI):

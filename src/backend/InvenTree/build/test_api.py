@@ -21,7 +21,7 @@ class TestBuildAPI(InvenTreeAPITestCase):
     - Tests for BuildItem API
     """
 
-    fixtures = ['category', 'part', 'location', 'build']
+    fixtures = ['category', 'part', 'location', 'build', 'stock']
 
     roles = ['build.change', 'build.add', 'build.delete']
 
@@ -83,15 +83,30 @@ class TestBuildAPI(InvenTreeAPITestCase):
         self.assertEqual(item['issued_by'], self.user.pk)
 
     def test_get_build_item_list(self):
-        """Test that we can retrieve list of BuildItem objects."""
+        """Test retrieving BuildItem list and applying filters like 'part' and 'output'."""
         url = reverse('api-build-item-list')
 
+        #   Retrieve the full list of BuildItem objects
         response = self.get(url, expected_code=200)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 2)
 
-        # Test again, filtering by park ID
+        #  Filter by part ID (only items for part ID=1 expected)
         response = self.get(url, {'part': '1'}, expected_code=200)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+
+        # Filter: output=null (install_into=None)
+        response = self.get(url, {'output': 'null'}, expected_code=200)
+        ids = [item['pk'] for item in response.data]
+        self.assertIn(1, ids)
+        self.assertNotIn(2, ids)
+
+        #  Filter: output=<id> (install_into specific ID)
+        response = self.get(url, {'output': 100}, expected_code=200)
+        ids = [item['pk'] for item in response.data]
+        self.assertIn(2, ids)
+        self.assertNotIn(1, ids)
 
 
 class BuildAPITest(InvenTreeAPITestCase):
