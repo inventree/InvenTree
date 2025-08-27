@@ -33,7 +33,7 @@ export const clickButtonIfVisible = async (page, name, timeout = 500) => {
  */
 export const clearTableFilters = async (page) => {
   await openFilterDrawer(page);
-  await clickButtonIfVisible(page, 'Clear Filters');
+  await clickButtonIfVisible(page, 'Clear Filters', 250);
   await closeFilterDrawer(page);
   await page.waitForLoadState('networkidle');
 };
