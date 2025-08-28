@@ -355,7 +355,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
   useEffect(() => {
     if (
       tableState.page > 1 &&
-      pageSize * tableState.page > tableState.recordCount
+      pageSize * (tableState.page - 1) > tableState.recordCount
     ) {
       tableState.setPage(1);
     } else if (tableState.page < 1) {
