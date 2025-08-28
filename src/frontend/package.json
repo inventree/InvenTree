@@ -93,7 +93,7 @@
         "react": "^19.1.1",
         "react-dom": "^19.1.1",
         "react-grid-layout": "1.4.4",
-        "react-hook-form": "^7.54.2",
+        "react-hook-form": "^7.62.0",
         "react-is": "^19.1.1",
         "react-router-dom": "^6.26.2",
         "react-select": "^5.9.0",
