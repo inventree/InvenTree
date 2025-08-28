@@ -68,7 +68,7 @@ test('Tables - Pagination', async ({ browser }) => {
   await page.getByRole('button', { name: '10' }).click();
   await page.getByRole('menuitem', { name: '25', exact: true }).click();
 
-  await page.getByText(/1 - 25 \/ 2[2|8]/).waitFor();
+  await page.getByText(/1 - 25 \/ 2[7|8]/).waitFor();
 });
 
 test('Tables - Columns', async ({ browser }) => {
