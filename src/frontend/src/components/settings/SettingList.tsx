@@ -19,9 +19,9 @@ import { IconExclamationCircle } from '@tabler/icons-react';
 import { useApi } from '../../contexts/ApiContext';
 import { useEditApiFormModal } from '../../hooks/UseForm';
 import {
-  createMachineSettingsState,
   createPluginSettingsState,
   useGlobalSettingsState,
+  useMachineSettingsState,
   useUserSettingsState
 } from '../../states/SettingsStates';
 import { SettingItem } from './SettingItem';
@@ -249,13 +249,20 @@ export function MachineSettingList({
   configType: 'M' | 'D';
   onChange?: () => void;
 }>) {
-  const machineSettingsStore = useRef(
-    createMachineSettingsState({
-      machine: machinePk,
-      configType: configType
-    })
-  ).current;
-  const machineSettings = useStore(machineSettingsStore);
+  const store = useMemo(
+    () =>
+      useMachineSettingsState({
+        machine: machinePk,
+        configType: configType
+      }),
+    [machinePk, configType]
+  );
+
+  const machineSettings = useStore(store);
+
+  useEffect(() => {
+    machineSettings.fetchSettings();
+  }, [machineSettings.fetchSettings]);
 
   return <SettingList settingsState={machineSettings} onChange={onChange} />;
 }

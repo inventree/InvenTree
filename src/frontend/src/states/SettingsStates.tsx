@@ -204,13 +204,13 @@ interface CreateMachineSettingStateProps {
   configType: 'M' | 'D';
 }
 
-export const createMachineSettingsState = ({
+export const useMachineSettingsState = ({
   machine,
   configType
 }: CreateMachineSettingStateProps) => {
   const pathParams: PathParams = { machine, config_type: configType };
 
-  const store = createStore<SettingsStateProps>()((set, get) => ({
+  return createStore<SettingsStateProps>((set, get) => ({
     settings: [],
     lookup: {},
     loaded: false,
@@ -255,12 +255,6 @@ export const createMachineSettingsState = ({
       return isTrue(value);
     }
   }));
-
-  useEffect(() => {
-    store.getState().fetchSettings();
-  }, [machine, configType]);
-
-  return store;
 };
 
 /*
