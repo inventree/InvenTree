@@ -15,13 +15,13 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import type { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import type { Setting, SettingsStateProps } from '@lib/types/Settings';
-import { IconExclamationCircle } from '@tabler/icons-react';
+import { IconExclamationCircle, IconInfoCircle } from '@tabler/icons-react';
 import { useApi } from '../../contexts/ApiContext';
 import { useEditApiFormModal } from '../../hooks/UseForm';
 import {
+  createMachineSettingsState,
   createPluginSettingsState,
   useGlobalSettingsState,
-  useMachineSettingsState,
   useUserSettingsState
 } from '../../states/SettingsStates';
 import { SettingItem } from './SettingItem';
@@ -152,6 +152,14 @@ export function SettingList({
     return <Skeleton animate />;
   }
 
+  if ((keys || allKeys).length === 0) {
+    return (
+      <Alert color='blue' icon={<IconInfoCircle />} title={t`No Settings`}>
+        <Text>{t`There are no configurable settings available`}</Text>
+      </Alert>
+    );
+  }
+
   return (
     <>
       {editSettingModal.modal}
@@ -211,13 +219,20 @@ export function PluginSettingList({
   pluginKey: string;
   onLoaded?: (settings: SettingsStateProps) => void;
 }>) {
-  const pluginSettingsStore = useRef(
-    createPluginSettingsState({
-      plugin: pluginKey,
-      endpoint: ApiEndpoints.plugin_setting_list
-    })
-  ).current;
-  const pluginSettings = useStore(pluginSettingsStore);
+  const store = useMemo(
+    () =>
+      createPluginSettingsState({
+        plugin: pluginKey,
+        endpoint: ApiEndpoints.plugin_setting_list
+      }),
+    [pluginKey]
+  );
+
+  const pluginSettings = useStore(store);
+
+  useEffect(() => {
+    pluginSettings.fetchSettings();
+  }, [pluginSettings.fetchSettings]);
 
   return <SettingList settingsState={pluginSettings} onLoaded={onLoaded} />;
 }
@@ -251,7 +266,7 @@ export function MachineSettingList({
 }>) {
   const store = useMemo(
     () =>
-      useMachineSettingsState({
+      createMachineSettingsState({
         machine: machinePk,
         configType: configType
       }),
