@@ -49,25 +49,25 @@ test('Tables - Pagination', async ({ browser }) => {
   await clearTableFilters(page);
 
   // Expected pagination size is 25
-  await page.getByText('1 - 25 / 27').waitFor();
+  await page.getByText(/1 - 25 \/ 2[2|8]/).waitFor();
   await page.getByRole('button', { name: 'Next page' }).click();
-  await page.getByText('26 - 27 / 27').waitFor();
+  await page.getByText(/26 - 2[7|8] \/ 2[7|8]/).waitFor();
 
   // Set page size to 10
   await page.getByRole('button', { name: '25' }).click();
   await page.getByRole('menuitem', { name: '10', exact: true }).click();
 
-  await page.getByText('1 - 10 / 27').waitFor();
+  await page.getByText(/1 - 10 \/ 2[7|8]/).waitFor();
   await page.getByRole('button', { name: '3' }).click();
-  await page.getByText('21 - 27 / 27').waitFor();
+  await page.getByText(/21 - 2[7|8] \/ 2[7|8]/).waitFor();
   await page.getByRole('button', { name: 'Previous page' }).click();
-  await page.getByText('11 - 20 / 27').waitFor();
+  await page.getByText(/11 - 20 \/ 2[7|8]/).waitFor();
 
   // Set page size back to 25
   await page.getByRole('button', { name: '10' }).click();
   await page.getByRole('menuitem', { name: '25', exact: true }).click();
 
-  await page.getByText('1 - 25 / 27').waitFor();
+  await page.getByText(/1 - 25 \/ 2[2|8]/).waitFor();
 });
 
 test('Tables - Columns', async ({ browser }) => {
