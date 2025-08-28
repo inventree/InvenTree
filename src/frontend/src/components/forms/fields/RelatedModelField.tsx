@@ -46,6 +46,7 @@ export function RelatedModelField({
   // Keep track of the primary key value for this field
   const [pk, setPk] = useState<number | null>(null);
 
+  // Handle condition where the form is rebuilt dynamically
   useEffect(() => {
     const value = field.value || pk;
     if (value && value != form.getValues()[fieldName]) {

@@ -73,9 +73,14 @@ test('Machines - Activation', async ({ browser, request }) => {
 
   // Edit the available setting
   await page.getByRole('button', { name: 'edit-setting-CONNECTION' }).click();
+
+  const setting_value = await page
+    .getByRole('textbox', { name: 'text-field-value' })
+    .inputValue();
+
   await page
     .getByRole('textbox', { name: 'text-field-value' })
-    .fill('a new value');
+    .fill(`${setting_value}-2`);
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByText('Setting CONNECTION updated successfully').waitFor();
 
