@@ -120,6 +120,7 @@ export function PrintingActions({
   const labelModal = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.label_print),
     title: t`Print Label`,
+    modalId: 'print-labels',
     fields: labelFields,
     timeout: 5000,
     onClose: () => {
@@ -134,8 +135,9 @@ export function PrintingActions({
   });
 
   const reportModal = useCreateApiFormModal({
-    title: t`Print Report`,
     url: apiUrl(ApiEndpoints.report_print),
+    title: t`Print Report`,
+    modalId: 'print-reports',
     timeout: 5000,
     fields: {
       template: {

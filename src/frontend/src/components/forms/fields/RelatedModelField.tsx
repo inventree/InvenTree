@@ -46,6 +46,13 @@ export function RelatedModelField({
   // Keep track of the primary key value for this field
   const [pk, setPk] = useState<number | null>(null);
 
+  useEffect(() => {
+    const value = field.value || pk;
+    if (value && value != form.getValues()[fieldName]) {
+      form.setValue(fieldName, value);
+    }
+  }, [pk, field.value]);
+
   const [offset, setOffset] = useState<number>(0);
 
   const [initialData, setInitialData] = useState<{}>({});
