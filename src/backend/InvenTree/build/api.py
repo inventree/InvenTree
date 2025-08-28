@@ -23,8 +23,12 @@ from build.status_codes import BuildStatus, BuildStatusGroups
 from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import StatusView
 from InvenTree.api import BulkDeleteMixin, MetadataView
-from InvenTree.filters import SEARCH_ORDER_FILTER_ALIAS, InvenTreeDateFilter
-from InvenTree.helpers import isNull, str2bool
+from InvenTree.filters import (
+    SEARCH_ORDER_FILTER_ALIAS,
+    InvenTreeDateFilter,
+    NumberOrNullFilter,
+)
+from InvenTree.helpers import str2bool
 from InvenTree.mixins import CreateAPI, ListCreateAPI, RetrieveUpdateDestroyAPI
 from users.models import Owner
 
@@ -850,6 +854,14 @@ class BuildItemFilter(rest_filters.FilterSet):
         locations = location.get_descendants(include_self=True)
         return queryset.filter(stock_item__location__in=locations)
 
+    output = NumberOrNullFilter(
+        field_name='install_into',
+        label=_('Output'),
+        help_text=_(
+            "Filter by output stock item ID. Use 'null' to find uninstalled build items."
+        ),
+    )
+
 
 class BuildItemList(DataExportViewMixin, BulkDeleteMixin, ListCreateAPI):
     """API endpoint for accessing a list of BuildItem objects.
@@ -888,6 +900,11 @@ class BuildItemList(DataExportViewMixin, BulkDeleteMixin, ListCreateAPI):
         queryset = queryset.select_related(
             'build_line',
             'build_line__build',
+            'build_line__build__part',
+            'build_line__build__responsible',
+            'build_line__build__issued_by',
+            'build_line__build__project_code',
+            'build_line__build__part__pricing_data',
             'build_line__bom_item',
             'build_line__bom_item__part',
             'build_line__bom_item__sub_part',
@@ -899,24 +916,7 @@ class BuildItemList(DataExportViewMixin, BulkDeleteMixin, ListCreateAPI):
             'stock_item__supplier_part__supplier',
             'stock_item__supplier_part__manufacturer_part',
             'stock_item__supplier_part__manufacturer_part__manufacturer',
-        ).prefetch_related('stock_item__location__tags')
-
-        return queryset
-
-    def filter_queryset(self, queryset):
-        """Custom query filtering for the BuildItem list."""
-        queryset = super().filter_queryset(queryset)
-
-        params = self.request.query_params
-
-        # Filter by output target
-        output = params.get('output', None)
-
-        if output:
-            if isNull(output):
-                queryset = queryset.filter(install_into=None)
-            else:
-                queryset = queryset.filter(install_into=output)
+        ).prefetch_related('stock_item__location__tags', 'stock_item__tags')
 
         return queryset
 
