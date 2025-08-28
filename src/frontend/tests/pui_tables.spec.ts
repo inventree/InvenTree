@@ -49,6 +49,7 @@ test('Tables - Pagination', async ({ browser }) => {
   await clearTableFilters(page);
 
   // Expected pagination size is 25
+  // Note: Due to other tests, there may be more than 25 items in the list
   await page.getByText(/1 - 25 \/ 2[2|8]/).waitFor();
   await page.getByRole('button', { name: 'Next page' }).click();
   await page.getByText(/26 - 2[7|8] \/ 2[7|8]/).waitFor();
