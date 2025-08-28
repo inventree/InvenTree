@@ -93,7 +93,7 @@
         "react": "^19.1.1",
         "react-dom": "^19.1.1",
         "react-grid-layout": "1.4.4",
-        "react-hook-form": "^7.54.2",
+        "react-hook-form": "^7.62.0",
         "react-is": "^19.1.1",
         "react-router-dom": "^6.26.2",
         "react-select": "^5.9.0",
@@ -101,7 +101,7 @@
         "react-window": "1.8.11",
         "recharts": "^2.15.0",
         "styled-components": "^6.1.14",
-        "zustand": "^5.0.3"
+        "zustand": "^5.0.8"
     },
     "devDependencies": {
         "@babel/core": "^7.26.10",
