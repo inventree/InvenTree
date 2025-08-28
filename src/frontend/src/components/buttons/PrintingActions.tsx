@@ -34,7 +34,12 @@ export function PrintingActions({
 
   const enabled = useMemo(() => items.length > 0, [items]);
 
-  const [pluginKey, setPluginKey] = useState<string>('');
+  const defaultLabelPlugin = useMemo(
+    () => userSettings.getSetting('LABEL_DEFAULT_PRINTER'),
+    [userSettings]
+  );
+
+  const [pluginKey, setPluginKey] = useState<string | null>(null);
 
   const labelPrintingEnabled = useMemo(() => {
     return enableLabels && globalSettings.isSet('LABEL_ENABLE');
@@ -96,7 +101,8 @@ export function PrintingActions({
 
     fields['plugin'] = {
       ...fields['plugin'],
-      value: userSettings.getSetting('LABEL_DEFAULT_PRINTER'),
+      default: defaultLabelPlugin,
+      value: pluginKey,
       filters: {
         active: true,
         mixin: 'labels'
@@ -109,7 +115,7 @@ export function PrintingActions({
     };
 
     return fields;
-  }, [printingFields.data, items]);
+  }, [defaultLabelPlugin, pluginKey, printingFields.data, items]);
 
   const labelModal = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.label_print),

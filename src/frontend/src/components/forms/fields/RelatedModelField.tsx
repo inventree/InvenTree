@@ -118,12 +118,10 @@ export function RelatedModelField({
     // If the value is unchanged, do nothing
     if (field.value === pk) return;
 
-    if (
-      field?.value !== null &&
-      field?.value !== undefined &&
-      field?.value !== ''
-    ) {
-      const url = `${definition.api_url}${field.value}/`;
+    const id = pk || field.value;
+
+    if (id !== null && id !== undefined && id !== '') {
+      const url = `${definition.api_url}${id}/`;
 
       if (!url) {
         setPk(null);
