@@ -33,21 +33,35 @@ test('Machines - Activation', async ({ browser, request }) => {
   });
 
   await page.reload();
+  await page.waitForLoadState('networkidle');
+  await page.waitForTimeout(1000);
 
-  await page.getByRole('button', { name: 'action-button-add-machine' }).click();
-  await page
-    .getByRole('textbox', { name: 'text-field-name' })
-    .fill('my-dummy-machine');
-  await page
-    .getByRole('textbox', { name: 'choice-field-machine_type' })
-    .fill('label');
-  await page.getByRole('option', { name: 'Label Printer' }).click();
+  // Create machine config if it does not already exist
+  const exists: boolean = await page
+    .getByRole('cell', { name: 'my-dummy-machine' })
+    .isVisible({ timeout: 250 });
 
-  await page.getByRole('textbox', { name: 'choice-field-driver' }).click();
-  await page
-    .getByRole('option', { name: 'Sample Label Printer Driver' })
-    .click();
-  await page.getByRole('button', { name: 'Submit' }).click();
+  if (!exists) {
+    await page
+      .getByRole('button', { name: 'action-button-add-machine' })
+      .click();
+    await page
+      .getByRole('textbox', { name: 'text-field-name' })
+      .fill('my-dummy-machine');
+    await page
+      .getByRole('textbox', { name: 'choice-field-machine_type' })
+      .fill('label');
+    await page.getByRole('option', { name: 'Label Printer' }).click();
+
+    await page.getByRole('textbox', { name: 'choice-field-driver' }).click();
+    await page
+      .getByRole('option', { name: 'Sample Label Printer Driver' })
+      .click();
+    await page.getByRole('button', { name: 'Submit' }).click();
+  } else {
+    // Machine already exists - just click on it to open the "machine drawer"
+    await page.getByRole('cell', { name: 'my-dummy-machine' }).click();
+  }
 
   // Creating the new machine opens the "machine drawer"
 
