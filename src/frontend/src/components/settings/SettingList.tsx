@@ -2,13 +2,7 @@ import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { Alert, Skeleton, Stack, Text } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState
-} from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useStore } from 'zustand';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
@@ -244,13 +238,20 @@ export function PluginUserSettingList({
   pluginKey: string;
   onLoaded?: (settings: SettingsStateProps) => void;
 }>) {
-  const pluginUserSettingsState = useRef(
-    createPluginSettingsState({
-      plugin: pluginKey,
-      endpoint: ApiEndpoints.plugin_user_setting_list
-    })
-  ).current;
-  const pluginUserSettings = useStore(pluginUserSettingsState);
+  const store = useMemo(
+    () =>
+      createPluginSettingsState({
+        plugin: pluginKey,
+        endpoint: ApiEndpoints.plugin_user_setting_list
+      }),
+    [pluginKey]
+  );
+
+  const pluginUserSettings = useStore(store);
+
+  useEffect(() => {
+    pluginUserSettings.fetchSettings();
+  }, [pluginUserSettings.fetchSettings]);
 
   return <SettingList settingsState={pluginUserSettings} onLoaded={onLoaded} />;
 }
