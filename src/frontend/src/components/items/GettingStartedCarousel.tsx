@@ -39,6 +39,10 @@ export function GettingStartedCarousel({
     <Carousel
       slideSize={{ base: '100%', sm: '50%', md: '33.333333%' }}
       slideGap={{ base: 0, sm: 'md' }}
+      emblaOptions={{
+        loop: true,
+        slidesToScroll: 3
+      }}
     >
       {slides}
     </Carousel>
