@@ -307,7 +307,10 @@ function MachineDrawer({
           multiple
           defaultValue={['machine-info', 'machine-settings', 'driver-settings']}
         >
-          <Accordion.Item value='machine-info'>
+          <Accordion.Item
+            key={`machine-info-${machinePk}`}
+            value='machine-info'
+          >
             <Accordion.Control>
               <StylishText size='lg'>{t`Machine Information`}</StylishText>
             </Accordion.Control>
@@ -393,7 +396,10 @@ function MachineDrawer({
             </Accordion.Panel>
           </Accordion.Item>
           {machine?.is_driver_available && (
-            <Accordion.Item value='machine-settings'>
+            <Accordion.Item
+              key={`machine-settings-${machinePk}`}
+              value='machine-settings'
+            >
               <Accordion.Control>
                 <StylishText size='lg'>{t`Machine Settings`}</StylishText>
               </Accordion.Control>
@@ -409,7 +415,10 @@ function MachineDrawer({
             </Accordion.Item>
           )}
           {machine?.is_driver_available && (
-            <Accordion.Item value='driver-settings'>
+            <Accordion.Item
+              key={`driver-settings-${machinePk}`}
+              value='driver-settings'
+            >
               <Accordion.Control>
                 <StylishText size='lg'>{t`Driver Settings`}</StylishText>
               </Accordion.Control>
