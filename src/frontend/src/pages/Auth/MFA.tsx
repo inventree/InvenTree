@@ -4,7 +4,9 @@ import { Button, Checkbox, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useShallow } from 'zustand/react/shallow';
 import { handleMfaLogin } from '../../functions/auth';
+import { useServerApiState } from '../../states/ServerApiState';
 import { Wrapper } from './Layout';
 
 export default function Mfa() {
@@ -12,14 +14,18 @@ export default function Mfa() {
   const navigate = useNavigate();
   const location = useLocation();
   const [loginError, setLoginError] = useState<string | undefined>(undefined);
+  const [mfa_context] = useServerApiState(
+    useShallow((state) => [state.mfa_context])
+  );
 
+  const mfa_types = mfa_context?.types || [];
   return (
     <Wrapper titleText={t`Multi-Factor Authentication`} logOff>
       <TextInput
         required
         label={t`TOTP Code`}
         name='TOTP'
-        description={t`Enter your TOTP or recovery code`}
+        description={t`Enter one of your codes: ${mfa_types}`}
         {...simpleForm.getInputProps('code')}
         error={loginError}
       />
