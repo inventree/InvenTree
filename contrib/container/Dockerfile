@@ -145,6 +145,7 @@ COPY src/backend/requirements.txt ${INVENTREE_BACKEND_DIR}/requirements.txt
 
 # Copy compiled dependencies from prebuild image
 ENV PATH=/root/.local/bin:$PATH
+
 COPY --from=builder_stage ${INVENTREE_BACKEND_DIR}/InvenTree/web/static/web ${INVENTREE_BACKEND_DIR}/InvenTree/web/static/web
 COPY --from=builder_stage /root/.local /root/.local
 
@@ -152,6 +153,8 @@ COPY --from=builder_stage /root/.local /root/.local
 CMD gunicorn -c ./gunicorn.conf.py InvenTree.wsgi -b 0.0.0.0:8000 --chdir ${INVENTREE_BACKEND_DIR}/InvenTree
 
 FROM builder_stage AS dev
+
+ENV PATH=/root/.local/bin:$PATH
 
 # Vite server (for local frontend development)
 EXPOSE 5173
