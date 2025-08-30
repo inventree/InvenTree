@@ -18,7 +18,7 @@ services:
     # Use PostgreSQL as the database backend
     # Note: This can be changed to a different backend if required
     inventree-dev-db:
-        image: postgres:13
+        image: postgres:17
         expose:
             - 5432/tcp
         environment:
