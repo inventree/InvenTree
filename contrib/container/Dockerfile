@@ -154,6 +154,9 @@ CMD gunicorn -c ./gunicorn.conf.py InvenTree.wsgi -b 0.0.0.0:8000 --chdir ${INVE
 
 FROM builder_stage AS dev
 
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git
+
 ENV PATH=/root/.local/bin:$PATH
 
 # Vite server (for local frontend development)
