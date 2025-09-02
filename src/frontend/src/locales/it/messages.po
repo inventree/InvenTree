@@ -8,7 +8,7 @@ msgstr ""
 "Language: it\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-08-28 07:05\n"
+"PO-Revision-Date: 2025-08-28 23:00\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -3013,11 +3013,11 @@ msgstr "Errore nel caricamento delle impostazioni"
 
 #: src/components/settings/SettingList.tsx:151
 msgid "No Settings"
-msgstr ""
+msgstr "Nessuna impostazione"
 
 #: src/components/settings/SettingList.tsx:152
 msgid "There are no configurable settings available"
-msgstr ""
+msgstr "Non ci sono impostazioni configurabili disponibili"
 
 #: src/components/settings/SettingList.tsx:189
 msgid "No settings specified"

@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-25 08:39+0000\n"
-"PO-Revision-Date: 2025-08-25 08:43\n"
+"POT-Creation-Date: 2025-08-28 22:57+0000\n"
+"PO-Revision-Date: 2025-08-28 23:00\n"
 "Last-Translator: \n"
 "Language-Team: Thai\n"
 "Language: th_TH\n"
@@ -526,20 +526,20 @@ msgstr ""
 msgid "Not a valid currency code"
 msgstr ""
 
-#: build/api.py:41 order/api.py:107 order/api.py:266 order/serializers.py:129
+#: build/api.py:45 order/api.py:107 order/api.py:266 order/serializers.py:129
 msgid "Order Status"
 msgstr ""
 
-#: build/api.py:67 build/models.py:263
+#: build/api.py:71 build/models.py:263
 msgid "Parent Build"
 msgstr ""
 
-#: build/api.py:71 build/api.py:792 order/api.py:542 order/api.py:762
+#: build/api.py:75 build/api.py:796 order/api.py:542 order/api.py:762
 #: order/api.py:1166 order/api.py:1415 stock/api.py:550
 msgid "Include Variants"
 msgstr ""
 
-#: build/api.py:87 build/api.py:458 build/api.py:806 build/models.py:269
+#: build/api.py:91 build/api.py:462 build/api.py:810 build/models.py:269
 #: build/serializers.py:1242 build/serializers.py:1388
 #: build/serializers.py:1450 company/models.py:1085 company/serializers.py:456
 #: order/api.py:294 order/api.py:298 order/api.py:921 order/api.py:1179
@@ -568,128 +568,128 @@ msgstr ""
 msgid "Part"
 msgstr ""
 
-#: build/api.py:107 build/api.py:110 part/api.py:1292 part/api.py:1565
+#: build/api.py:111 build/api.py:114 part/api.py:1292 part/api.py:1565
 #: part/models.py:1092 part/models.py:3574 part/models.py:4168 stock/api.py:846
 msgid "Category"
 msgstr ""
 
-#: build/api.py:118 build/api.py:122
+#: build/api.py:122 build/api.py:126
 msgid "Ancestor Build"
 msgstr ""
 
-#: build/api.py:139 order/api.py:125
+#: build/api.py:143 order/api.py:125
 msgid "Assigned to me"
 msgstr ""
 
-#: build/api.py:154
+#: build/api.py:158
 msgid "Assigned To"
 msgstr ""
 
-#: build/api.py:189
+#: build/api.py:193
 msgid "Created before"
 msgstr ""
 
-#: build/api.py:193
+#: build/api.py:197
 msgid "Created after"
 msgstr ""
 
-#: build/api.py:197
+#: build/api.py:201
 msgid "Has start date"
 msgstr ""
 
-#: build/api.py:205
+#: build/api.py:209
 msgid "Start date before"
 msgstr ""
 
-#: build/api.py:209
+#: build/api.py:213
 msgid "Start date after"
 msgstr ""
 
-#: build/api.py:213
+#: build/api.py:217
 msgid "Has target date"
 msgstr ""
 
-#: build/api.py:221
+#: build/api.py:225
 msgid "Target date before"
 msgstr ""
 
-#: build/api.py:225
+#: build/api.py:229
 msgid "Target date after"
 msgstr ""
 
-#: build/api.py:229
+#: build/api.py:233
 msgid "Completed before"
 msgstr ""
 
-#: build/api.py:233
+#: build/api.py:237
 msgid "Completed after"
 msgstr ""
 
-#: build/api.py:236 order/api.py:222
+#: build/api.py:240 order/api.py:222
 msgid "Min Date"
 msgstr ""
 
-#: build/api.py:259 order/api.py:241
+#: build/api.py:263 order/api.py:241
 msgid "Max Date"
 msgstr ""
 
-#: build/api.py:284 build/api.py:287 part/api.py:220
+#: build/api.py:288 build/api.py:291 part/api.py:220
 msgid "Exclude Tree"
 msgstr ""
 
-#: build/api.py:397
+#: build/api.py:401
 msgid "Build must be cancelled before it can be deleted"
 msgstr ""
 
-#: build/api.py:441 build/serializers.py:1404 part/models.py:4403
+#: build/api.py:445 build/serializers.py:1404 part/models.py:4403
 msgid "Consumable"
 msgstr ""
 
-#: build/api.py:444 build/serializers.py:1407 part/models.py:4397
+#: build/api.py:448 build/serializers.py:1407 part/models.py:4397
 msgid "Optional"
 msgstr ""
 
-#: build/api.py:447 build/serializers.py:1441 common/setting/system.py:457
+#: build/api.py:451 build/serializers.py:1441 common/setting/system.py:457
 #: part/models.py:1223 part/serializers.py:1701 part/serializers.py:1710
 #: stock/api.py:616
 msgid "Assembly"
 msgstr ""
 
-#: build/api.py:450
+#: build/api.py:454
 msgid "Tracked"
 msgstr ""
 
-#: build/api.py:453 build/serializers.py:1410 part/models.py:1241
+#: build/api.py:457 build/serializers.py:1410 part/models.py:1241
 msgid "Testable"
 msgstr ""
 
-#: build/api.py:463 order/api.py:985
+#: build/api.py:467 order/api.py:985
 msgid "Order Outstanding"
 msgstr ""
 
-#: build/api.py:473 build/serializers.py:1471 order/api.py:944
+#: build/api.py:477 build/serializers.py:1471 order/api.py:944
 msgid "Allocated"
 msgstr ""
 
-#: build/api.py:482 build/models.py:1623 build/serializers.py:1423
+#: build/api.py:486 build/models.py:1623 build/serializers.py:1423
 msgid "Consumed"
 msgstr ""
 
-#: build/api.py:491 company/models.py:930 company/serializers.py:451
+#: build/api.py:495 company/models.py:930 company/serializers.py:451
 #: templates/email/build_order_required_stock.html:19
 #: templates/email/low_stock_notification.html:17
 #: templates/email/part_event_notification.html:18
 msgid "Available"
 msgstr ""
 
-#: build/api.py:829 build/models.py:116 order/models.py:1916
+#: build/api.py:833 build/models.py:116 order/models.py:1916
 #: report/templates/report/inventree_build_order_report.html:105
 #: stock/serializers.py:92 templates/email/build_order_completed.html:16
 #: templates/email/overdue_build_order.html:15
 msgid "Build Order"
 msgstr ""
 
-#: build/api.py:843 build/api.py:847 build/serializers.py:370
+#: build/api.py:847 build/api.py:851 build/serializers.py:370
 #: build/serializers.py:495 build/serializers.py:565 build/serializers.py:1262
 #: build/serializers.py:1266 order/api.py:1226 order/api.py:1231
 #: order/serializers.py:768 order/serializers.py:908 order/serializers.py:2015
@@ -699,6 +699,14 @@ msgstr ""
 #: users/models.py:555
 msgid "Location"
 msgstr "สถานที่"
+
+#: build/api.py:859
+msgid "Output"
+msgstr ""
+
+#: build/api.py:861
+msgid "Filter by output stock item ID. Use 'null' to find uninstalled build items."
+msgstr ""
 
 #: build/models.py:117 users/ruleset.py:31
 msgid "Build Orders"
