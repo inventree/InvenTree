@@ -60,7 +60,7 @@ LABEL org.opencontainers.image.vendor="inventree" \
 
 # Install basic system level packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    gettext libldap2 wget curl \
+    git gettext libldap2 wget curl ssh \
     # Weasyprint requirements : https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#alpine-3-12
     weasyprint libpango-1.0-0 libcairo2 poppler-utils \
     # Database client libraries
@@ -150,12 +150,9 @@ COPY --from=builder_stage ${INVENTREE_BACKEND_DIR}/InvenTree/web/static/web ${IN
 COPY --from=builder_stage /root/.local /root/.local
 
 # Launch the production server
-CMD gunicorn -c ./gunicorn.conf.py InvenTree.wsgi -b 0.0.0.0:8000 --chdir ${INVENTREE_BACKEND_DIR}/InvenTree
+CMD ["sh", "-c", "exec gunicorn -c ./gunicorn.conf.py InvenTree.wsgi -b 0.0.0.0:8000 --chdir ${INVENTREE_BACKEND_DIR}/InvenTree"]
 
 FROM builder_stage AS dev
-
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    git
 
 ENV PATH=/root/.local/bin:$PATH
 
