@@ -339,9 +339,9 @@ mkdocs-git-revision-date-localized-plugin==1.4.7 \
     --hash=sha256:056c0a90242409148f1dc94d5c9d2c25b5b8ddd8de45489fa38f7fa7ccad2bc4 \
     --hash=sha256:10a49eff1e1c3cb766e054b9d8360c904ce4fe8c33ac3f6cc083ac6459c91953
     # via -r docs/requirements.in
-mkdocs-include-markdown-plugin==7.1.6 \
-    --hash=sha256:7975a593514887c18ecb68e11e35c074c5499cfa3e51b18cd16323862e1f7345 \
-    --hash=sha256:a0753cb82704c10a287f1e789fc9848f82b6beb8749814b24b03dd9f67816677
+mkdocs-include-markdown-plugin==7.1.7 \
+    --hash=sha256:677637e04c2d3497c50340be522e2a7f614124f592c7982d88b859f88d527a4c \
+    --hash=sha256:a0c13efe4f6b05a419c022e201055bf43145eed90de65f2353c33fb4005b6aa5
     # via -r docs/requirements.in
 mkdocs-macros-plugin==1.3.9 \
     --hash=sha256:01b6003fbe9b55fdc97c0abb66f811d65abfd291dcf70f277990165553faa99a \
@@ -355,9 +355,9 @@ mkdocs-material-extensions==1.3.1 \
     --hash=sha256:10c9511cea88f568257f960358a467d12b970e1f7b2c0e5fb2bb48cab1928443 \
     --hash=sha256:adff8b62700b25cb77b53358dad940f3ef973dd6db797907c49e3c2ef3ab4e31
     # via mkdocs-material
-mkdocs-mermaid2-plugin==1.2.1 \
-    --hash=sha256:22d2cf2c6867d4959a5e0903da2dde78d74581fc0b107b791bc4c7ceb9ce9741 \
-    --hash=sha256:9c7694c73a65905ac1578f966e5c193325c4d5a5bc1836727e74ac9f99d0e921
+mkdocs-mermaid2-plugin==1.2.2 \
+    --hash=sha256:20a44440d32cf5fd1811b3e261662adb3e1b98be272e6f6fb9a476f3e28fd507 \
+    --hash=sha256:a003dddd6346ecc0ad530f48f577fe6f8b21ea23fbee09eabf0172bbc1f23df8
     # via -r docs/requirements.in
 mkdocs-redirects==1.2.2 \
     --hash=sha256:3094981b42ffab29313c2c1b8ac3969861109f58b2dd58c45fc81cd44bfa0095 \
