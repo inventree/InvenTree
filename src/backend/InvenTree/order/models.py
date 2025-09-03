@@ -1581,8 +1581,11 @@ class SalesOrder(TotalPriceMixin, Order):
         return self.lines.filter(shipped__gte=F('quantity'))
 
     def pending_line_items(self):
-        """Return a queryset of the pending line items for this order."""
-        return self.lines.filter(shipped__lt=F('quantity'))
+        """Return a queryset of the pending line items for this order.
+
+        Note: We exclude "virtual" parts here, as they do not get allocated
+        """
+        return self.lines.filter(shipped__lt=F('quantity')).exclude(part__virtual=True)
 
     @property
     def completed_line_count(self):
