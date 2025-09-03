@@ -82,10 +82,12 @@ export default function SalesOrderLineItemTable({
         render: (record: any) => {
           return (
             <Group wrap='nowrap'>
-              <RowExpansionIcon
-                enabled={record.allocated}
-                expanded={table.isRowExpanded(record.pk)}
-              />
+              {record.part_detail?.virtual || (
+                <RowExpansionIcon
+                  enabled={record.allocated}
+                  expanded={table.isRowExpanded(record.pk)}
+                />
+              )}
               <RenderPartColumn part={record.part_detail} />
             </Group>
           );
@@ -133,6 +135,10 @@ export default function SalesOrderLineItemTable({
         accessor: 'stock',
         title: t`Available Stock`,
         render: (record: any) => {
+          if (record.part_detail?.virtual) {
+            return <Text size='sm' fs='italic'>{t`Virtual part`}</Text>;
+          }
+
           const part_stock = record?.available_stock ?? 0;
           const variant_stock = record?.available_variant_stock ?? 0;
           const available = part_stock + variant_stock;
@@ -186,24 +192,36 @@ export default function SalesOrderLineItemTable({
       {
         accessor: 'allocated',
         sortable: true,
-        render: (record: any) => (
-          <ProgressBar
-            progressLabel={true}
-            value={record.allocated}
-            maximum={record.quantity}
-          />
-        )
+        render: (record: any) => {
+          if (record.part_detail?.virtual) {
+            return <Text size='sm' fs='italic'>{t`Virtual part`}</Text>;
+          }
+
+          return (
+            <ProgressBar
+              progressLabel={true}
+              value={record.allocated}
+              maximum={record.quantity}
+            />
+          );
+        }
       },
       {
         accessor: 'shipped',
         sortable: true,
-        render: (record: any) => (
-          <ProgressBar
-            progressLabel={true}
-            value={record.shipped}
-            maximum={record.quantity}
-          />
-        )
+        render: (record: any) => {
+          if (record.part_detail?.virtual) {
+            return <Text size='sm' fs='italic'>{t`Virtual part`}</Text>;
+          }
+
+          return (
+            <ProgressBar
+              progressLabel={true}
+              value={record.shipped}
+              maximum={record.quantity}
+            />
+          );
+        }
       },
       {
         accessor: 'notes'
@@ -371,6 +389,7 @@ export default function SalesOrderLineItemTable({
   const rowActions = useCallback(
     (record: any): RowAction[] => {
       const allocated = (record?.allocated ?? 0) > (record?.quantity ?? 0);
+      const virtual = record?.part_detail?.virtual ?? false;
 
       return [
         RowViewAction({
@@ -383,6 +402,7 @@ export default function SalesOrderLineItemTable({
         {
           hidden:
             allocated ||
+            virtual ||
             !editable ||
             !user.hasChangeRole(UserRoles.sales_order),
           title: t`Allocate Stock`,
@@ -397,6 +417,7 @@ export default function SalesOrderLineItemTable({
           hidden:
             !record?.part_detail?.trackable ||
             allocated ||
+            virtual ||
             !editable ||
             !user.hasChangeRole(UserRoles.sales_order),
           title: t`Allocate serials`,
@@ -414,6 +435,7 @@ export default function SalesOrderLineItemTable({
         {
           hidden:
             allocated ||
+            virtual ||
             !user.hasAddRole(UserRoles.build) ||
             !record?.part_detail?.assembly,
           title: t`Build stock`,
@@ -431,6 +453,7 @@ export default function SalesOrderLineItemTable({
         {
           hidden:
             allocated ||
+            virtual ||
             !user.hasAddRole(UserRoles.purchase_order) ||
             !record?.part_detail?.purchaseable,
           title: t`Order stock`,
@@ -472,6 +495,9 @@ export default function SalesOrderLineItemTable({
     return {
       allowMultiple: true,
       expandable: ({ record }: { record: any }) => {
+        if (record?.part_detail?.virtual) {
+          return false;
+        }
         return table.isRowExpanded(record.pk) || record.allocated > 0;
       },
       content: ({ record }: { record: any }) => {
