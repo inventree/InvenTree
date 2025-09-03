@@ -207,6 +207,8 @@ class LabelPrint(GenericAPIView):
             output=None,
         )
 
+        output.refresh_from_db()
+
         offload_task(
             report.tasks.print_labels,
             template.pk,

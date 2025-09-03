@@ -18,6 +18,7 @@ import {
   BooleanColumn,
   CreationDateColumn,
   DateColumn,
+  DescriptionColumn,
   PartColumn,
   ProjectCodeColumn,
   ReferenceColumn,
@@ -83,10 +84,10 @@ export function BuildOrderTable({
         sortable: true,
         defaultVisible: false
       },
-      {
+      DescriptionColumn({
         accessor: 'title',
         sortable: false
-      },
+      }),
       {
         accessor: 'completed',
         title: t`Completed`,

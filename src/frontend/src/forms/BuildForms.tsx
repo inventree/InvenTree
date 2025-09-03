@@ -676,7 +676,14 @@ export function useAllocateStockToBuildForm({
     initialData: {
       items: lineItems
         .filter((item) => {
-          return item.requiredQuantity > item.allocatedQuantity + item.consumed;
+          if (outputId) {
+            // Do not filter items for tracked outputs
+            return true;
+          } else {
+            return (
+              item.requiredQuantity > item.allocatedQuantity + item.consumed
+            );
+          }
         })
         .map((item) => {
           return {
