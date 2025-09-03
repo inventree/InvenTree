@@ -2052,7 +2052,7 @@ class SalesOrderLineItem(OrderLineItem):
         null=True,
         verbose_name=_('Part'),
         help_text=_('Part'),
-        limit_choices_to={'salable': True, 'virtual': False},
+        limit_choices_to={'salable': True},
     )
 
     sale_price = InvenTreeModelMoneyField(
