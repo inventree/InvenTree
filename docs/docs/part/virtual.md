@@ -14,6 +14,10 @@ Virtual parts can be used to represent things such as:
 
 Apart from the fact that virtual parts cannot have stock items, they behave in the same way as regular parts.
 
+### Stock Items
+
+Virtual parts cannot have stock items associated with them. User interface elements related to stock items are hidden when viewing a virtual part.
+
 ### Bills of Material
 
 Virtual parts can be added as a subcomponent to the [Bills of Material](../manufacturing/bom.md) for an assembled part. This can be useful to represent labor costs, or other non-physical components which are required to build an assembly.
@@ -22,7 +26,7 @@ Even though the virtual parts are not allocated during the build process, they a
 
 ### Build Orders
 
-When creating a [Build Order](../manufacturing/build_order.md) for an assembly which includes virtual parts in its BOM, the virtual parts will be hidden from the list of required parts. This is because virtual parts do not need to be allocated during the build process.
+When creating a [Build Order](../manufacturing/build.md) for an assembly which includes virtual parts in its BOM, the virtual parts will be hidden from the list of required parts. This is because virtual parts do not need to be allocated during the build process.
 
 The parts are still available in the BOM, and the cost of the virtual parts will be included in the total cost of the build.
 
