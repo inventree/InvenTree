@@ -830,7 +830,7 @@ export default function PartDetail() {
         name: 'allocations',
         label: t`Allocations`,
         icon: <IconBookmarks />,
-        hidden: !part.component && !part.salable,
+        hidden: (!part.component && !part.salable) || part.virtual,
         content: part.pk ? <PartAllocationPanel part={part} /> : <Skeleton />
       },
       {
@@ -917,6 +917,8 @@ export default function PartDetail() {
           <Skeleton />
         ),
         hidden:
+          part.virtual ||
+          !user.hasViewRole(UserRoles.stock) ||
           !globalSettings.isSet('STOCKTAKE_ENABLE') ||
           !userSettings.isSet('DISPLAY_STOCKTAKE_TAB')
       },
