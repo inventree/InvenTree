@@ -803,6 +803,7 @@ export default function PartDetail() {
         name: 'stock',
         label: t`Stock`,
         icon: <IconPackages />,
+        hidden: part.virtual || !user.hasViewRole(UserRoles.stock),
         content: part.pk ? (
           <StockItemTable
             tableName='part-stock'
