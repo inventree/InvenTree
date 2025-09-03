@@ -1461,7 +1461,8 @@ class Build(
         """Create BuildLine objects for each BOM line in this BuildOrder."""
         lines = []
 
-        bom_items = self.part.get_bom_items()
+        # Find all non-virtual BOM items for the parent part
+        bom_items = self.part.get_bom_items(include_virtual=False)
 
         logger.info(
             'Creating BuildLine objects for BuildOrder %s (%s items)',

@@ -103,6 +103,7 @@ export function useStockFields({
         value: partId || partInstance?.pk,
         disabled: !create,
         filters: {
+          virtual: false,
           active: create ? true : undefined
         },
         onValueChange: (value, record) => {
