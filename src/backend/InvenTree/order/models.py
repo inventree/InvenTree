@@ -2105,6 +2105,10 @@ class SalesOrderLineItem(OrderLineItem):
 
     def is_fully_allocated(self):
         """Return True if this line item is fully allocated."""
+        # If the linked part is "virtual", then we cannot allocate stock against it
+        if self.part and self.part.virtual:
+            return True
+
         if self.order.status == SalesOrderStatus.SHIPPED:
             return self.fulfilled_quantity() >= self.quantity
 
@@ -2116,6 +2120,10 @@ class SalesOrderLineItem(OrderLineItem):
 
     def is_completed(self):
         """Return True if this line item is completed (has been fully shipped)."""
+        # A "virtual" part is always considered to be "completed"
+        if self.part and self.part.virtual:
+            return True
+
         return self.shipped >= self.quantity
 
 
