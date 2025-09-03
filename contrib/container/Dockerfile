@@ -122,10 +122,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-RUN npm install -g n --ignore-scripts
-RUN npm install -g yarn --ignore-scripts
+RUN npm install -g n yarn --ignore-scripts && \
+    yarn config set network-timeout 600000 -g
 RUN bash -c "n lts"
-RUN yarn config set network-timeout 600000 -g
 RUN cd "${INVENTREE_HOME}" && invoke int.frontend-compile --extract
 
 # InvenTree production image:
