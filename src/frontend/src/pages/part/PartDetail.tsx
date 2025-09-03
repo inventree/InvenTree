@@ -1018,6 +1018,12 @@ export default function PartDetail() {
         color='red'
         visible={!part.active}
         key='inactive'
+      />,
+      <DetailsBadge
+        label={t`Virtual Part`}
+        color='cyan.4'
+        visible={part.virtual}
+        key='virtual'
       />
     ];
   }, [partRequirements, partRequirementsQuery.isFetching, part]);
