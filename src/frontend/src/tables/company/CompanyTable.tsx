@@ -44,6 +44,7 @@ export function CompanyTable({
     return [
       {
         accessor: 'name',
+        title: t`Company`,
         sortable: true,
         switchable: false,
         render: (record: any) => {

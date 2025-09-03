@@ -46,6 +46,7 @@ import NotesPanel from '../../components/panels/NotesPanel';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
+import { RenderStockLocation } from '../../components/render/Stock';
 import { useBuildOrderFields } from '../../forms/BuildForms';
 import {
   useCreateApiFormModal,
@@ -86,6 +87,13 @@ function BuildLinesPanel({
   isLoading: boolean;
   hasItems: boolean;
 }>) {
+  const buildLocation = useInstance({
+    endpoint: ApiEndpoints.stock_location_list,
+    pk: build?.take_from,
+    hasPrimaryKey: true,
+    defaultValue: {}
+  });
+
   if (isLoading || !build.pk) {
     return <Skeleton w={'100%'} h={400} animate />;
   }
@@ -94,7 +102,16 @@ function BuildLinesPanel({
     return <NoItems />;
   }
 
-  return <BuildLineTable build={build} />;
+  return (
+    <Stack gap='xs'>
+      {buildLocation.instance.pk && (
+        <Alert color='blue' icon={<IconSitemap />} title={t`Source Location`}>
+          <RenderStockLocation instance={buildLocation.instance} />
+        </Alert>
+      )}
+      <BuildLineTable build={build} />
+    </Stack>
+  );
 }
 
 function BuildAllocationsPanel({

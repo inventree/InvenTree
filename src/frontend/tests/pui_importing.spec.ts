@@ -14,6 +14,14 @@ test('Importing - Admin Center', async ({ browser }) => {
 
   const fileInput = await page.locator('input[type="file"]');
   await fileInput.setInputFiles('./tests/fixtures/bom_data.csv');
+
+  await page
+    .locator('label')
+    .filter({ hasText: 'Update Existing RecordsIf' })
+    .locator('div')
+    .first()
+    .click();
+
   await page.getByRole('button', { name: 'Submit' }).click();
 
   // Submitting without selecting model type, should show error
@@ -22,21 +30,54 @@ test('Importing - Admin Center', async ({ browser }) => {
 
   await page
     .getByRole('textbox', { name: 'choice-field-model_type' })
-    .fill('Cat');
-  await page
-    .getByRole('option', { name: 'Part Category', exact: true })
-    .click();
+    .fill('bom');
+  await page.getByRole('option', { name: 'BOM Item', exact: true }).click();
   await page.getByRole('button', { name: 'Submit' }).click();
 
-  await page.getByText('Description (optional)').waitFor();
-  await page.getByText('Parent Category').waitFor();
+  await page.getByText('Select the parent assembly').waitFor();
+  await page.getByText('Select the component part').waitFor();
+  await page.getByText('Existing database identifier for the record').waitFor();
+
+  await page
+    .getByRole('textbox', { name: 'import-column-map-reference' })
+    .click();
+  await page.getByRole('option', { name: 'Ignore this field' }).click();
+
+  await page.getByRole('button', { name: 'Accept Column Mapping' }).click();
+
+  // Check for expected ID values
+  for (const itemId of ['16', '17', '15', '23']) {
+    await page.getByRole('cell', { name: itemId, exact: true });
+  }
+
+  // Import all the records
+  await page
+    .getByRole('row', { name: 'Select all records Row Not' })
+    .getByLabel('Select all records')
+    .click();
+  await page
+    .getByRole('button', { name: 'action-button-import-selected' })
+    .click();
+
+  await page.getByText('Data has been imported successfully').waitFor();
+  await page.getByRole('button', { name: 'Close' }).click();
+
+  // Confirmation of full import success
+  await page.getByRole('cell', { name: '3 / 3' }).first().waitFor();
+
+  // Manually delete records
+  await page.getByRole('checkbox', { name: 'Select all records' }).click();
+  await page
+    .getByRole('button', { name: 'action-button-delete-selected' })
+    .click();
+  await page.getByRole('button', { name: 'Delete', exact: true }).click();
 });
 
 test('Importing - BOM', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
     username: 'steven',
     password: 'wizardstaff',
-    url: 'part/87/bom'
+    url: 'part/109/bom'
   });
 
   await page
@@ -53,10 +94,10 @@ test('Importing - BOM', async ({ browser }) => {
   await page.waitForTimeout(500);
 
   await page.getByText('Importing Data').waitFor();
-  await page.getByText('0 / 4').waitFor();
+  await page.getByText('0 / 3').waitFor();
 
-  await page.getByText('Torx head screw, M3 thread, 10.0mm').first().waitFor();
-  await page.getByText('Small plastic enclosure, black').first().waitFor();
+  await page.getByText('Screw for fixing wood').first().waitFor();
+  await page.getByText('Leg for a chair or a table').first().waitFor();
 
   // Select some rows
   await page
@@ -90,15 +131,16 @@ test('Importing - BOM', async ({ browser }) => {
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.waitForTimeout(250);
 
-  await page.getByText('0 / 2', { exact: true }).waitFor();
+  await page.getByText('0 / 1', { exact: true }).waitFor();
 
   // Submit a row
   await page
     .getByRole('row', { name: 'Select record 1 2 Thumbnail' })
     .getByLabel('row-action-menu-')
     .click();
+
   await page.getByRole('menuitem', { name: 'Accept' }).click();
-  await page.getByText('1 / 2', { exact: true }).waitFor();
+  await page.getByText('0 / 1', { exact: true }).waitFor();
 });
 
 test('Importing - Purchase Order', async ({ browser }) => {

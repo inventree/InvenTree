@@ -12,13 +12,11 @@ import structlog
 from allauth.account.adapter import DefaultAccountAdapter
 from allauth.account.forms import LoginForm, SignupForm, set_form_field_order
 from allauth.headless.adapter import DefaultHeadlessAdapter
-from allauth.headless.tokens.sessions import SessionTokenStrategy
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 
 import InvenTree.sso
 from common.settings import get_global_setting
 from InvenTree.exceptions import log_error
-from users.models import ApiToken
 
 from .helpers_email import is_email_configured
 
@@ -231,17 +229,8 @@ class CustomHeadlessAdapter(DefaultHeadlessAdapter):
         if urlname not in HEADLESS_FRONTEND_URLS:
             raise ValueError(
                 f'URL name "{urlname}" not found in HEADLESS_FRONTEND_URLS'
-            )
+            )  # pragma: no cover
 
         return self.request.build_absolute_uri(
             f'/{settings.FRONTEND_URL_BASE}/{HEADLESS_FRONTEND_URLS[urlname].format(**kwargs)}'
         )
-
-
-class DRFTokenStrategy(SessionTokenStrategy):
-    """Strategy that InvenTrees own included Token model."""
-
-    def create_access_token(self, request):
-        """Create a new access token for the user."""
-        token, _ = ApiToken.objects.get_or_create(user=request.user)
-        return token.key

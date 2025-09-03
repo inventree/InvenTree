@@ -1106,7 +1106,7 @@ class Build(
 
         # Remove stock
         for item in items:
-            item.complete_allocation(user)
+            item.complete_allocation(user=user)
 
         # Delete allocation
         items.all().delete()
@@ -1151,7 +1151,7 @@ class Build(
         # Complete or discard allocations
         for build_item in allocated_items:
             if not discard_allocations:
-                build_item.complete_allocation(user)
+                build_item.complete_allocation(user=user)
 
         # Delete allocations
         allocated_items.delete()
@@ -1200,7 +1200,7 @@ class Build(
 
         for build_item in allocated_items:
             # Complete the allocation of stock for that item
-            build_item.complete_allocation(user)
+            build_item.complete_allocation(user=user)
 
         # Delete the BuildItem objects from the database
         allocated_items.all().delete()
@@ -1461,7 +1461,8 @@ class Build(
         """Create BuildLine objects for each BOM line in this BuildOrder."""
         lines = []
 
-        bom_items = self.part.get_bom_items()
+        # Find all non-virtual BOM items for the parent part
+        bom_items = self.part.get_bom_items(include_virtual=False)
 
         logger.info(
             'Creating BuildLine objects for BuildOrder %s (%s items)',
@@ -1569,6 +1570,7 @@ class BuildLine(report.mixins.InvenTreeReportMixin, InvenTree.models.InvenTreeMo
         build: Link to a Build object
         bom_item: Link to a BomItem object
         quantity: Number of units required for the Build
+        consumed: Number of units which have been consumed against this line item
     """
 
     class Meta:
@@ -1614,6 +1616,15 @@ class BuildLine(report.mixins.InvenTreeReportMixin, InvenTree.models.InvenTreeMo
         help_text=_('Required quantity for build order'),
     )
 
+    consumed = models.DecimalField(
+        decimal_places=5,
+        max_digits=15,
+        default=0,
+        validators=[MinValueValidator(0)],
+        verbose_name=_('Consumed'),
+        help_text=_('Quantity of consumed stock'),
+    )
+
     @property
     def part(self):
         """Return the sub_part reference from the link bom_item."""
@@ -1644,6 +1655,10 @@ class BuildLine(report.mixins.InvenTreeReportMixin, InvenTree.models.InvenTreeMo
     def is_overallocated(self):
         """Return True if this BuildLine is over-allocated."""
         return self.allocated_quantity() > self.quantity
+
+    def is_fully_consumed(self):
+        """Return True if this BuildLine is fully consumed."""
+        return self.consumed >= self.quantity
 
 
 class BuildItem(InvenTree.models.InvenTreeMetadataModel):
@@ -1812,20 +1827,36 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
         return self.build_line.bom_item if self.build_line else None
 
     @transaction.atomic
-    def complete_allocation(self, user, notes=''):
+    def complete_allocation(self, quantity=None, notes='', user=None):
         """Complete the allocation of this BuildItem into the output stock item.
+
+        Arguments:
+            quantity: The quantity to allocate (default is the full quantity)
+            notes: Additional notes to add to the transaction
+            user: The user completing the allocation
 
         - If the referenced part is trackable, the stock item will be *installed* into the build output
         - If the referenced part is *not* trackable, the stock item will be *consumed* by the build order
 
         TODO: This is quite expensive (in terms of number of database hits) - and requires some thought
+        TODO: Revisit, and refactor!
 
         """
+        # If the quantity is not provided, use the quantity of this BuildItem
+        if quantity is None:
+            quantity = self.quantity
+
         item = self.stock_item
 
+        # Ensure we are not allocating more than available
+        if quantity > item.quantity:
+            raise ValidationError({
+                'quantity': _('Allocated quantity exceeds available stock quantity')
+            })
+
         # Split the allocated stock if there are more available than allocated
-        if item.quantity > self.quantity:
-            item = item.splitStock(self.quantity, None, user, notes=notes)
+        if item.quantity > quantity:
+            item = item.splitStock(quantity, None, user, notes=notes)
 
         # For a trackable part, special consideration needed!
         if item.part.trackable:
@@ -1835,7 +1866,7 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
 
             # Install the stock item into the output
             self.install_into.installStockItem(
-                item, self.quantity, user, notes, build=self.build
+                item, quantity, user, notes, build=self.build
             )
 
         else:
@@ -1850,6 +1881,18 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
                 notes=notes,
                 deltas={'buildorder': self.build.pk, 'quantity': float(item.quantity)},
             )
+
+        # Increase the "consumed" count for the associated BuildLine
+        self.build_line.consumed += quantity
+        self.build_line.save()
+
+        # Decrease the allocated quantity
+        self.quantity = max(0, self.quantity - quantity)
+
+        if self.quantity <= 0:
+            self.delete()
+        else:
+            self.save()
 
     build_line = models.ForeignKey(
         BuildLine, on_delete=models.CASCADE, null=True, related_name='allocations'

@@ -1,11 +1,29 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 385
+INVENTREE_API_VERSION = 390
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+v390 -> 2025-09-03 : https://github.com/inventree/InvenTree/pull/10257
+    - Fixes limitation on adding virtual parts to a SalesOrder
+    - Additional query filter options for BomItem API endpoint
+
+v389 -> 2025-08-27 : https://github.com/inventree/InvenTree/pull/10214
+    - Adds "output" filter to the BuildItem API endpoint
+    - Removes undocumented 'output' query parameter handling
+
+v388 -> 2025-08-23 : https://github.com/inventree/InvenTree/pull/10213
+    - Disable paging on PurchaseOrderReceive call
+
+v387 -> 2025-08-19 : https://github.com/inventree/InvenTree/pull/10188
+    - Adds "update_records" field to the DataImportSession API
+
+v386 -> 2025-08-11 : https://github.com/inventree/InvenTree/pull/8191
+    - Adds "consumed" field to the BuildItem API
+    - Adds API endpoint to consume stock against a BuildOrder
+
 v385 -> 2025-08-15 : https://github.com/inventree/InvenTree/pull/10174
     - Adjust return type of PurchaseOrderReceive API serializer
     - Now returns list of of the created stock items when receiving

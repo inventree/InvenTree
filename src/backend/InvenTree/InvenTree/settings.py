@@ -1356,7 +1356,6 @@ HEADLESS_ADAPTER = 'InvenTree.auth_overrides.CustomHeadlessAdapter'
 ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True
 
 HEADLESS_ONLY = True
-HEADLESS_TOKEN_STRATEGY = 'InvenTree.auth_overrides.DRFTokenStrategy'
 HEADLESS_CLIENTS = 'browser'
 MFA_ENABLED = get_boolean_setting(
     'INVENTREE_MFA_ENABLED', 'mfa_enabled', True

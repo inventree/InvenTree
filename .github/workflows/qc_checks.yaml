@@ -349,7 +349,7 @@ jobs:
           path: .coverage
           retention-days: 14
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@18283e04ce6e62d37312384ff67231eb8fd56d24 # pin@v5.4.3
+        uses: codecov/codecov-action@fdcc8476540edceab3de004e990f80d881c6cc00 # pin@v5.5.0
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -492,7 +492,7 @@ jobs:
       - name: Run Tests
         run: invoke dev.test --check --migrations --report --coverage --translations
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@18283e04ce6e62d37312384ff67231eb8fd56d24 # pin@v5.4.3
+        uses: codecov/codecov-action@fdcc8476540edceab3de004e990f80d881c6cc00 # pin@v5.5.0
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -623,7 +623,7 @@ jobs:
       - name: Report coverage
         run: cd src/frontend && npx nyc report --report-dir ./coverage --temp-dir .nyc_output --reporter=lcov --exclude-after-remap false
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@18283e04ce6e62d37312384ff67231eb8fd56d24 # pin@v5.4.3
+        uses: codecov/codecov-action@fdcc8476540edceab3de004e990f80d881c6cc00 # pin@v5.5.0
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: inventree/InvenTree
@@ -684,7 +684,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@76621b61decf072c1cee8dd1ce2d2a82d33c17ed # pin@v3
+        uses: github/codeql-action/upload-sarif@2d92b76c45b91eb80fc44c74ce3fce0ee94e8f9d # pin@v3
         with:
           sarif_file: results.sarif
           category: zizmor

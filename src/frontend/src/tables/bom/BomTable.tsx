@@ -137,6 +137,11 @@ export function BomTable({
       DescriptionColumn({
         accessor: 'sub_part_detail.description'
       }),
+      BooleanColumn({
+        accessor: 'sub_part_detail.virtual',
+        defaultVisible: false,
+        title: t`Virtual Part`
+      }),
       ReferenceColumn({
         switchable: true
       }),
@@ -405,6 +410,11 @@ export function BomTable({
         description: t`Show assembled items`
       },
       {
+        name: 'sub_part_virtual',
+        label: t`Virtual Part`,
+        description: t`Show virtual items`
+      },
+      {
         name: 'available_stock',
         label: t`Available Stock`,
         description: t`Show items with available stock`
@@ -451,10 +461,9 @@ export function BomTable({
   const [selectedBomItem, setSelectedBomItem] = useState<any>({});
 
   const importSessionFields = useMemo(() => {
-    const fields = dataImporterSessionFields();
-
-    fields.model_type.hidden = true;
-    fields.model_type.value = 'bomitem';
+    const fields = dataImporterSessionFields({
+      modelType: 'bomitem'
+    });
 
     fields.field_overrides.value = {
       part: partId
