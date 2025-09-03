@@ -974,7 +974,7 @@ export default function PartDetail() {
             ? 'green'
             : 'orange'
         }
-        visible={partRequirements.total_stock > 0}
+        visible={!part.virtual && partRequirements.total_stock > 0}
         key='in_stock'
       />,
       <DetailsBadge
@@ -982,13 +982,14 @@ export default function PartDetail() {
         color='yellow'
         key='available_stock'
         visible={
+          !part.virtual &&
           partRequirements.unallocated_stock != partRequirements.total_stock
         }
       />,
       <DetailsBadge
         label={t`No Stock`}
         color='orange'
-        visible={partRequirements.total_stock == 0}
+        visible={!part.virtual && partRequirements.total_stock == 0}
         key='no_stock'
       />,
       <DetailsBadge
