@@ -1,10 +1,11 @@
 import { ApiEndpoints, apiUrl } from '@lib/index';
 import { Group, Space } from '@mantine/core';
+import { useLocalStorage } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
 import {
   DataTable,
-  type DataTableRowExpansionProps,
-  useDataTableColumns
+  type DataTableColumn,
+  type DataTableRowExpansionProps
 } from 'mantine-datatable';
 import { useMemo, useState } from 'react';
 import { api } from '../../App';
@@ -28,34 +29,48 @@ export default function BomSubassemblyTable({
 }) {
   const [expandedRecords, setExpandedRecords] = useState<string[]>([]);
 
-  const assemblyColumns: any[] = useMemo(() => {
+  // Observe column widths from top-level BOM table
+  const [columnWidths] = useLocalStorage({
+    key: 'table-bom-columns-width',
+    defaultValue: []
+  });
+
+  const assemblyColumns: DataTableColumn[] = useMemo(() => {
     return columns.map((col) => {
       // Handle the 'part' column differently based on depth and subassembly ID
+      const column = { ...col };
+
       if (col.accessor == 'sub_part') {
-        return {
-          ...col,
-          render: (record: any) => (
-            <Group wrap='nowrap'>
-              <Space w={depth * 10} />
+        column.render = (record: any) => (
+          <Group wrap='nowrap'>
+            <Space w={depth * 10} />
+            {record.sub_part_detail?.assembly && (
               <RowExpansionIcon
                 enabled={record.sub_part_detail?.assembly}
                 expanded={expandedRecords.includes(record.pk)}
               />
-              <RenderPartColumn part={record.sub_part_detail} />
-            </Group>
-          )
-        };
-      } else {
-        return col;
+            )}
+            <RenderPartColumn part={record.sub_part_detail} />
+          </Group>
+        );
       }
-    });
-  }, [columns, expandedRecords]);
 
-  // Observe column widths from top-level BOM table
-  const tableColumns = useDataTableColumns({
-    key: 'table-bom',
-    columns: assemblyColumns
-  });
+      // Find matching column width
+      const matchingWidth = columnWidths.find(
+        (cw: any) => Object.keys(cw)[0] === col.accessor
+      );
+
+      if (matchingWidth) {
+        column.cellsStyle = (record: any, index: number) => {
+          return {
+            width: Object.values(matchingWidth)[0]
+          };
+        };
+      }
+
+      return column;
+    });
+  }, [columns, columnWidths, expandedRecords]);
 
   const subassemblyData = useQuery({
     enabled: !!partId,
@@ -99,7 +114,8 @@ export default function BomSubassemblyTable({
     <DataTable
       noHeader
       withColumnBorders
-      columns={tableColumns.effectiveColumns}
+      columns={assemblyColumns}
+      // columns={tableColumns.effectiveColumns}
       records={subassemblyData.data || []}
       rowExpansion={rowExpansionProps}
     />
