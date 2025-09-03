@@ -464,7 +464,7 @@ test('Parts - Attachments', async ({ browser }) => {
   await page.getByLabel('text-field-comment').fill('a sample comment');
 
   // Note: Text field values are debounced for 250ms
-  await page.waitForTimeout(500);
+  await page.waitForTimeout(300);
 
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByRole('cell', { name: 'a sample comment' }).first().waitFor();
@@ -549,7 +549,9 @@ test('Parts - Parameter Filtering', async ({ browser }) => {
 
   const clearParamFilter = async (name: string) => {
     await clickOnParamFilter(name);
+    await page.getByLabel(`clear-filter-${name}`).waitFor();
     await page.getByLabel(`clear-filter-${name}`).click();
+    // await page.getByLabel(`clear-filter-${name}`).click();
   };
 
   // Let's filter by color
@@ -561,6 +563,7 @@ test('Parts - Parameter Filtering', async ({ browser }) => {
 
   // Reset the filter
   await clearParamFilter('Color');
+
   await page.getByText('/ 425').waitFor();
 });
 
