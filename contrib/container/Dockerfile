@@ -9,7 +9,7 @@
 # - Runs InvenTree web server under django development server
 # - Monitors source files for any changes, and live-reloads server
 
-FROM python:3.11-slim-trixie AS inventree_base
+FROM python:3.11-slim-trixie@sha256:1d6131b5d479888b43200645e03a78443c7157efbdb730e6b48129740727c312 AS inventree_base
 
 # Build arguments for this image
 ARG commit_tag=""
@@ -79,7 +79,7 @@ RUN rm -rf /usr/lib/python3/dist-packages/numpy \
 EXPOSE 8000
 
 # Fix invoke command path for InvenTree environment check
-RUN python -m pip install -U invoke
+RUN python -m pip install --no-cache-dir -U invoke
 
 RUN mkdir -p ${INVENTREE_HOME}
 WORKDIR ${INVENTREE_HOME}
@@ -111,8 +111,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Build and install python dependencies
-RUN pip install --user --require-hashes -r base_requirements.txt --no-cache && \
-    pip install --user --require-hashes -r requirements.txt --no-cache && \
+RUN pip install --user --require-hashes -r base_requirements.txt --no-cache-dir && \
+    pip install --user --require-hashes -r requirements.txt --no-cache-dir && \
     pip cache purge && \
     rm -rf /root/.cache/pip
 
@@ -122,11 +122,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-RUN npm install -g n --ignore-scripts
-RUN npm install -g yarn
+RUN npm install -g n yarn --ignore-scripts && \
+    yarn config set network-timeout 600000 -g
 RUN bash -c "n lts"
-RUN yarn config set network-timeout 600000 -g
-RUN cd ${INVENTREE_HOME} && invoke int.frontend-compile --extract
+RUN cd "${INVENTREE_HOME}" && invoke int.frontend-compile --extract
 
 # InvenTree production image:
 # - Copies required files from local directory
