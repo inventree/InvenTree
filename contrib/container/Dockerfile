@@ -126,7 +126,7 @@ RUN npm install -g n --ignore-scripts
 RUN npm install -g yarn --ignore-scripts
 RUN bash -c "n lts"
 RUN yarn config set network-timeout 600000 -g
-RUN cd ${INVENTREE_HOME} && invoke int.frontend-compile --extract
+RUN cd "${INVENTREE_HOME}" && invoke int.frontend-compile --extract
 
 # InvenTree production image:
 # - Copies required files from local directory
