@@ -115,7 +115,7 @@ export function PurchaseOrderTable({
       {
         accessor: 'supplier_reference'
       },
-      LineItemsProgressColumn(),
+      LineItemsProgressColumn({}),
       StatusColumn({ model: ModelType.purchaseorder }),
       ProjectCodeColumn({
         defaultVisible: false

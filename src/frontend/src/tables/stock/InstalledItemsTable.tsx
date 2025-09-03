@@ -58,11 +58,9 @@ export default function InstalledItemsTable({
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
-      {
-        accessor: 'part',
-        switchable: false,
-        render: (record: any) => PartColumn({ part: record?.part_detail })
-      },
+      PartColumn({
+        part: 'part'
+      }),
       {
         accessor: 'quantity',
         switchable: false,

@@ -100,12 +100,17 @@ def update_build_order_lines(bom_item_pk: int):
         q = bom_item.get_required_quantity(bo.quantity)
 
         if line:
+            # If the BOM item points to a "virtual" part, delete the BuildLine instance
+            if bom_item.sub_part.virtual:
+                line.delete()
+                continue
+
             # Ensure quantity is correct
             if line.quantity != q:
                 line.quantity = q
                 line.save()
-        else:
-            # Create a new line item
+        elif not bom_item.sub_part.virtual:
+            # Create a new line item (for non-virtual parts)
             BuildLine.objects.create(build=bo, bom_item=bom_item, quantity=q)
 
     if builds.count() > 0:
@@ -141,7 +146,8 @@ def check_build_stock(build):
         logger.exception("Invalid build.part passed to 'build.tasks.check_build_stock'")
         return
 
-    for bom_item in part.get_bom_items():
+    # Iterate through each non-virtual BOM item for this part
+    for bom_item in part.get_bom_items(include_virtual=False):
         sub_part = bom_item.sub_part
 
         # The 'in stock' quantity depends on whether the bom_item allows variants

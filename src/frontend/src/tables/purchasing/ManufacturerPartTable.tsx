@@ -41,12 +41,9 @@ export function ManufacturerPartTable({
   // Construct table columns for this table
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
-      {
-        accessor: 'part',
-        switchable: 'part' in params,
-        sortable: true,
-        render: (record: any) => PartColumn({ part: record?.part_detail })
-      },
+      PartColumn({
+        switchable: 'part' in params
+      }),
       {
         accessor: 'manufacturer',
         sortable: true,
@@ -56,7 +53,7 @@ export function ManufacturerPartTable({
       },
       {
         accessor: 'MPN',
-        title: t`Manufacturer Part Number`,
+        title: t`MPN`,
         sortable: true
       },
       DescriptionColumn({}),

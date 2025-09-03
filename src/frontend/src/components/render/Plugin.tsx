@@ -12,8 +12,8 @@ export function RenderPlugin({
   return (
     <RenderInlineModel
       primary={instance.name}
-      secondary={instance.meta?.description}
-      suffix={
+      suffix={instance.meta?.description}
+      secondary={
         !instance.active && <Badge size='sm' color='red'>{t`Inactive`}</Badge>
       }
     />

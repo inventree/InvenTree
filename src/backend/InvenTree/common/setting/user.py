@@ -191,6 +191,12 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'SHOW_SPOTLIGHT': {
+        'name': _('Show Spotlight'),
+        'description': _('Enable spotlight navigation functionality'),
+        'default': True,
+        'validator': bool,
+    },
     'ICONS_IN_NAVBAR': {
         'name': _('Navigation Icons'),
         'description': _('Display icons in the navigation bar'),

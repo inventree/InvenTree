@@ -41,7 +41,7 @@ jobs:
       requirements: ${{ steps.filter.outputs.requirements }}
 
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # pin@v5.0.0
         with:
           persist-credentials: false
       - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # pin@v3.0.2
@@ -82,7 +82,7 @@ jobs:
     if: needs.paths-filter.outputs.cicd == 'true' || needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.frontend == 'true' || needs.paths-filter.outputs.requirements == 'true' || needs.paths-filter.outputs.force == 'true'
 
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # pin@v5.0.0
         with:
           persist-credentials: false
       - name: Set up Python ${{ env.python_version }}
@@ -105,7 +105,7 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # pin@v5.0.0
         with:
           persist-credentials: false
       - name: Set up Python ${{ env.python_version }}
@@ -143,7 +143,7 @@ jobs:
       version: ${{ steps.version.outputs.version }}
 
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # pin@v5.0.0
         with:
           persist-credentials: false
       - name: Environment Setup
@@ -228,7 +228,7 @@ jobs:
       version: ${{ needs.schema.outputs.version }}
 
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # pin@v5.0.0
         name: Checkout Code
         with:
           repository: inventree/schema
@@ -237,7 +237,7 @@ jobs:
       - name: Create artifact directory
         run: mkdir -p artifact
       - name: Download schema artifact
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # pin@v4.3.0
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # pin@v5.0.0
         with:
           path: artifact
           merge-multiple: true
@@ -281,7 +281,7 @@ jobs:
       INVENTREE_LOG_LEVEL: WARNING
 
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # pin@v5.0.0
         with:
           persist-credentials: true
       - name: Environment Setup
@@ -325,7 +325,7 @@ jobs:
       python_version: ${{ matrix.python_version }}
 
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # pin@v5.0.0
         with:
           persist-credentials: false
       - name: Environment Setup
@@ -349,7 +349,7 @@ jobs:
           path: .coverage
           retention-days: 14
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@18283e04ce6e62d37312384ff67231eb8fd56d24 # pin@v5.4.3
+        uses: codecov/codecov-action@fdcc8476540edceab3de004e990f80d881c6cc00 # pin@v5.5.0
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -389,7 +389,7 @@ jobs:
           - 6379:6379
 
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # pin@v5.0.0
         with:
           persist-credentials: false
       - name: Environment Setup
@@ -437,7 +437,7 @@ jobs:
           - 3306:3306
 
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # pin@v5.0.0
         with:
           persist-credentials: false
       - name: Environment Setup
@@ -479,7 +479,7 @@ jobs:
           - 5432:5432
 
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # pin@v5.0.0
         with:
           persist-credentials: false
       - name: Environment Setup
@@ -492,7 +492,7 @@ jobs:
       - name: Run Tests
         run: invoke dev.test --check --migrations --report --coverage --translations
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@18283e04ce6e62d37312384ff67231eb8fd56d24 # pin@v5.4.3
+        uses: codecov/codecov-action@fdcc8476540edceab3de004e990f80d881c6cc00 # pin@v5.5.0
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -513,7 +513,7 @@ jobs:
       INVENTREE_PLUGINS_ENABLED: false
 
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # pin@v5.0.0
         with:
           persist-credentials: false
         name: Checkout Code
@@ -548,14 +548,14 @@ jobs:
       - name: 0.16.0 Database
         run: |
           rm /home/runner/work/InvenTree/db.sqlite3
-          cp test-db/stable_0.13.5.sqlite3 /home/runner/work/InvenTree/db.sqlite3
+          cp test-db/stable_0.16.0.sqlite3 /home/runner/work/InvenTree/db.sqlite3
           chmod +rw /home/runner/work/InvenTree/db.sqlite3
           invoke migrate
 
       - name: 0.17.0 Database
         run: |
           rm /home/runner/work/InvenTree/db.sqlite3
-          cp test-db/stable_0.13.5.sqlite3 /home/runner/work/InvenTree/db.sqlite3
+          cp test-db/stable_0.17.0.sqlite3 /home/runner/work/InvenTree/db.sqlite3
           chmod +rw /home/runner/work/InvenTree/db.sqlite3
           invoke migrate
 
@@ -592,7 +592,7 @@ jobs:
       VITE_COVERAGE_BUILD: true
 
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # pin@v5.0.0
         with:
           persist-credentials: false
       - name: Environment Setup
@@ -623,7 +623,7 @@ jobs:
       - name: Report coverage
         run: cd src/frontend && npx nyc report --report-dir ./coverage --temp-dir .nyc_output --reporter=lcov --exclude-after-remap false
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@18283e04ce6e62d37312384ff67231eb8fd56d24 # pin@v5.4.3
+        uses: codecov/codecov-action@fdcc8476540edceab3de004e990f80d881c6cc00 # pin@v5.5.0
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: inventree/InvenTree
@@ -642,7 +642,7 @@ jobs:
     timeout-minutes: 60
 
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # pin@v5.0.0
         with:
           persist-credentials: false
       - name: Environment Setup
@@ -675,7 +675,7 @@ jobs:
       security-events: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # pin@v5.0.0
         with:
           persist-credentials: false
       - uses: hynek/setup-cached-uv@757bedc3f972eb7227a1aa657651f15a8527c817 # pin@v2
@@ -684,7 +684,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@d6bbdef45e766d081b84a2def353b0055f728d3e # pin@v3
+        uses: github/codeql-action/upload-sarif@2d92b76c45b91eb80fc44c74ce3fce0ee94e8f9d # pin@v3
         with:
           sarif_file: results.sarif
           category: zizmor

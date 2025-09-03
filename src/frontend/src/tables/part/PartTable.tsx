@@ -39,14 +39,10 @@ import { TableHoverCard } from '../TableHoverCard';
  */
 function partTableColumns(): TableColumn[] {
   return [
-    {
-      accessor: 'name',
-      title: t`Part`,
-      sortable: true,
-      noWrap: true,
-      switchable: false,
-      render: (record: any) => PartColumn({ part: record })
-    },
+    PartColumn({
+      part: '',
+      accessor: 'name'
+    }),
     {
       accessor: 'IPN',
       sortable: true
