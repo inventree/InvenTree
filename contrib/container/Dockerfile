@@ -79,7 +79,7 @@ RUN rm -rf /usr/lib/python3/dist-packages/numpy \
 EXPOSE 8000
 
 # Fix invoke command path for InvenTree environment check
-RUN python -m pip install -U invoke
+RUN python -m pip install --no-cache-dir -U invoke
 
 RUN mkdir -p ${INVENTREE_HOME}
 WORKDIR ${INVENTREE_HOME}
@@ -111,8 +111,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Build and install python dependencies
-RUN pip install --user --require-hashes -r base_requirements.txt --no-cache && \
-    pip install --user --require-hashes -r requirements.txt --no-cache && \
+RUN pip install --user --require-hashes -r base_requirements.txt --no-cache-dir && \
+    pip install --user --require-hashes -r requirements.txt --no-cache-dir && \
     pip cache purge && \
     rm -rf /root/.cache/pip
 
