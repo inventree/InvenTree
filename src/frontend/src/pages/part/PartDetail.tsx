@@ -532,7 +532,8 @@ export default function PartDetail() {
         type: 'number',
         name: 'total_in_stock',
         unit: part.units,
-        label: t`In Stock`
+        label: t`In Stock`,
+        hidden: part.virtual
       },
       {
         type: 'progressbar',
@@ -540,7 +541,7 @@ export default function PartDetail() {
         total: data.total_in_stock,
         progress: data.unallocated,
         label: t`Available Stock`,
-        hidden: data.total_in_stock == data.unallocated
+        hidden: part.virtual || data.total_in_stock == data.unallocated
       },
       {
         type: 'number',
@@ -1145,6 +1146,7 @@ export default function PartDetail() {
       <ActionDropdown
         tooltip={t`Stock Actions`}
         icon={<IconPackages />}
+        hidden={part.virtual || !user.hasViewRole(UserRoles.stock)}
         actions={[
           ...stockAdjustActions.menuActions,
           {
