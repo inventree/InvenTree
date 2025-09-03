@@ -159,7 +159,6 @@ export default function SupplierPartDetail() {
         model_field: 'MPN',
         label: t`Manufacturer Part Number`,
         model: ModelType.manufacturerpart,
-        copy: true,
         icon: 'reference',
         hidden: !data.manufacturer_part
       }
