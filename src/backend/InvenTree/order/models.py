@@ -2027,11 +2027,6 @@ class SalesOrderLineItem(OrderLineItem):
         super().clean()
 
         if self.part:
-            if self.part.virtual:
-                raise ValidationError({
-                    'part': _('Virtual part cannot be assigned to a sales order')
-                })
-
             if not self.part.salable:
                 raise ValidationError({
                     'part': _('Only salable parts can be assigned to a sales order')
