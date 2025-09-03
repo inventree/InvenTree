@@ -1796,8 +1796,14 @@ class Part(
         """
         return self.get_stock_count(include_variants=True)
 
-    def get_bom_item_filter(self, include_inherited=True):
+    def get_bom_item_filter(
+        self, include_inherited: bool = True, include_virtual: bool = True
+    ):
         """Returns a query filter for all BOM items associated with this Part.
+
+        Arguments:
+            include_inherited: If True, include BomItem entries defined for parent parts
+            include_virtual: If True, include BomItem entries which are virtual
 
         There are some considerations:
 
@@ -1824,15 +1830,24 @@ class Part(
                 # OR the filters together
                 bom_filter |= parent_filter
 
+        if not include_virtual:
+            bom_filter &= Q(sub_part__virtual=False)
+
         return bom_filter
 
-    def get_bom_items(self, include_inherited=True) -> QuerySet[BomItem]:
+    def get_bom_items(
+        self, include_inherited: bool = True, include_virtual: bool = True
+    ) -> QuerySet[BomItem]:
         """Return a queryset containing all BOM items for this part.
 
-        By default, will include inherited BOM items
+        Arguments:
+            include_inherited (bool): If set, include BomItem entries defined for parent parts
+            include_virtual (bool): If set, include BomItem entries which are virtual parts
         """
         queryset = BomItem.objects.filter(
-            self.get_bom_item_filter(include_inherited=include_inherited)
+            self.get_bom_item_filter(
+                include_inherited=include_inherited, include_virtual=include_virtual
+            )
         )
 
         return queryset.prefetch_related('part', 'sub_part')
@@ -2332,7 +2347,7 @@ class Part(
         return None
 
     @transaction.atomic
-    def copy_bom_from(self, other, clear=True, **kwargs):
+    def copy_bom_from(self, other, clear: bool = True, **kwargs):
         """Copy the BOM from another part.
 
         Args:
