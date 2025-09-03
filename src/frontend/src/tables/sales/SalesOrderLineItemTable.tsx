@@ -135,6 +135,10 @@ export default function SalesOrderLineItemTable({
         accessor: 'stock',
         title: t`Available Stock`,
         render: (record: any) => {
+          if (record.part_detail?.virtual) {
+            return <Text size='sm' fs='italic'>{t`Virtual part`}</Text>;
+          }
+
           const part_stock = record?.available_stock ?? 0;
           const variant_stock = record?.available_variant_stock ?? 0;
           const available = part_stock + variant_stock;
