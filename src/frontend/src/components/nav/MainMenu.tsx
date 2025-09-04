@@ -1,19 +1,14 @@
 import { Trans } from '@lingui/react/macro';
 import {
-  Button,
   Group,
-  HoverCard,
-  List,
   Menu,
   Skeleton,
-  Table,
   Text,
   UnstyledButton,
   useMantineColorScheme
 } from '@mantine/core';
 import {
   IconChevronDown,
-  IconInfoCircle,
   IconLogout,
   IconMoonStars,
   IconSettings,
@@ -22,16 +17,10 @@ import {
   IconUserCog
 } from '@tabler/icons-react';
 import { Link, useNavigate } from 'react-router-dom';
-
-import { ApiEndpoints, apiUrl } from '@lib/index';
-import type { AuthContext } from '@lib/types/Auth';
 import { useShallow } from 'zustand/react/shallow';
-import { authApi, doLogout } from '../../functions/auth';
+import { doLogout } from '../../functions/auth';
 import * as classes from '../../main.css';
-import { parseDate } from '../../pages/Index/Settings/AccountSettings/SecurityContent';
-import { useServerApiState } from '../../states/ServerApiState';
 import { useUserState } from '../../states/UserState';
-import type { ServerAPIProps } from '../../states/states';
 import { vars } from '../../theme';
 
 export function MainMenu() {
@@ -40,26 +29,9 @@ export function MainMenu() {
     useShallow((state) => [state.user, state.username])
   );
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
-  const [server, auth_context] = useServerApiState(
-    useShallow((state) => [state.server, state.auth_context])
-  );
+
   return (
     <>
-      {user?.is_superuser && (
-        <HoverCard shadow='md' openDelay={500} closeDelay={500} withArrow>
-          <HoverCard.Target>
-            <IconInfoCircle />
-          </HoverCard.Target>
-          <HoverCard.Dropdown>
-            {
-              <AuthContextInformation
-                server={server}
-                auth_context={auth_context}
-              />
-            }
-          </HoverCard.Dropdown>
-        </HoverCard>
-      )}
       <Menu width={260} position='bottom-end'>
         <Menu.Target>
           <UnstyledButton className={classes.layoutHeaderUser}>
@@ -129,79 +101,6 @@ export function MainMenu() {
           </Menu.Item>
         </Menu.Dropdown>
       </Menu>
-    </>
-  );
-}
-
-function AuthContextInformation({
-  server,
-  auth_context
-}: Readonly<{
-  server: ServerAPIProps;
-  auth_context: AuthContext | undefined;
-}>) {
-  const [setAuthContext] = useServerApiState(
-    useShallow((state) => [state.setAuthContext])
-  );
-
-  function fetchAuthContext() {
-    authApi(apiUrl(ApiEndpoints.auth_session)).then((resp) => {
-      setAuthContext(resp.data.data);
-    });
-  }
-
-  const rows = [
-    { name: 'Server version', value: server.version },
-    { name: 'API version', value: server.apiVersion },
-    { name: 'User ID', value: auth_context?.user?.id }
-  ];
-  return (
-    <>
-      <Table>
-        <Table.Thead>
-          <Table.Tr>
-            <Table.Th>
-              <Trans>Name</Trans>
-            </Table.Th>
-            <Table.Th>
-              <Trans>Value</Trans>
-            </Table.Th>
-          </Table.Tr>
-        </Table.Thead>
-        <Table.Tbody>
-          {rows.map((element) => (
-            <Table.Tr key={element.name}>
-              <Table.Td>{element.name}</Table.Td>
-              <Table.Td>{element.value}</Table.Td>
-            </Table.Tr>
-          ))}
-        </Table.Tbody>
-      </Table>
-      {auth_context?.methods && (
-        <>
-          <Text size='sm'>
-            <Trans>Methods</Trans>
-          </Text>
-
-          <List type='ordered'>
-            {auth_context?.methods.map((method: any) => (
-              <List.Item key={method.at}>
-                <strong>{parseDate(method.at)}</strong>: {method.method}
-              </List.Item>
-            ))}
-          </List>
-        </>
-      )}
-      <Button
-        variant='light'
-        size='compact-md'
-        onClick={(e) => {
-          e.preventDefault();
-          fetchAuthContext();
-        }}
-      >
-        <Trans>Reload</Trans>
-      </Button>
     </>
   );
 }
