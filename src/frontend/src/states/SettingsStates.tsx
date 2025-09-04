@@ -12,7 +12,6 @@ import type {
   SettingsLookup,
   SettingsStateProps
 } from '@lib/types/Settings';
-import { useEffect } from 'react';
 import { api } from '../App';
 import { useUserState } from './UserState';
 
@@ -132,7 +131,7 @@ export const createPluginSettingsState = ({
 }: CreatePluginSettingStateProps) => {
   const pathParams: PathParams = { plugin };
 
-  const store = createStore<SettingsStateProps>()((set, get) => ({
+  return createStore<SettingsStateProps>()((set, get) => ({
     settings: [],
     lookup: {},
     loaded: false,
@@ -188,12 +187,6 @@ export const createPluginSettingsState = ({
       return isTrue(value);
     }
   }));
-
-  useEffect(() => {
-    store.getState().fetchSettings();
-  }, [plugin]);
-
-  return store;
 };
 
 /**
@@ -210,7 +203,7 @@ export const createMachineSettingsState = ({
 }: CreateMachineSettingStateProps) => {
   const pathParams: PathParams = { machine, config_type: configType };
 
-  const store = createStore<SettingsStateProps>()((set, get) => ({
+  return createStore<SettingsStateProps>((set, get) => ({
     settings: [],
     lookup: {},
     loaded: false,
@@ -255,12 +248,6 @@ export const createMachineSettingsState = ({
       return isTrue(value);
     }
   }));
-
-  useEffect(() => {
-    store.getState().fetchSettings();
-  }, [machine, configType]);
-
-  return store;
 };
 
 /*

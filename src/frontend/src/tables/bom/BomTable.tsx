@@ -137,6 +137,11 @@ export function BomTable({
       DescriptionColumn({
         accessor: 'sub_part_detail.description'
       }),
+      BooleanColumn({
+        accessor: 'sub_part_detail.virtual',
+        defaultVisible: false,
+        title: t`Virtual Part`
+      }),
       ReferenceColumn({
         switchable: true
       }),
@@ -403,6 +408,11 @@ export function BomTable({
         name: 'sub_part_assembly',
         label: t`Assembled Part`,
         description: t`Show assembled items`
+      },
+      {
+        name: 'sub_part_virtual',
+        label: t`Virtual Part`,
+        description: t`Show virtual items`
       },
       {
         name: 'available_stock',

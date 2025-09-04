@@ -261,9 +261,16 @@ export function InvenTreeTable<T extends Record<string, any>>({
         hidden: hidden,
         resizable: col.resizable ?? true,
         title: col.title ?? fieldNames[col.accessor] ?? `${col.accessor}`,
-        titleStyle: (record: any, index: number) => {
+        cellsStyle: (record: any, index: number) => {
+          const width = (col as any).minWidth ?? 100;
           return {
-            minWidth: (col as any).minWidth ?? '100px'
+            minWidth: width
+          };
+        },
+        titleStyle: (record: any, index: number) => {
+          const width = (col as any).minWidth ?? 100;
+          return {
+            minWidth: width
           };
         }
       };
@@ -355,7 +362,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
   useEffect(() => {
     if (
       tableState.page > 1 &&
-      pageSize * tableState.page > tableState.recordCount
+      pageSize * (tableState.page - 1) > tableState.recordCount
     ) {
       tableState.setPage(1);
     } else if (tableState.page < 1) {

@@ -175,7 +175,7 @@ test('Sales Orders - Shipments', async ({ browser }) => {
   await page.getByText(tracking_number).waitFor();
 
   // Link back to sales order
-  await page.getByRole('link', { name: 'SO0006' }).click();
+  await page.getByRole('link', { name: 'breadcrumb-1-so0006' }).click();
 
   // Let's try to allocate some stock
   await loadTab(page, 'Line Items');

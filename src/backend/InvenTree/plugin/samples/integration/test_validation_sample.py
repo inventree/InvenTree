@@ -12,7 +12,7 @@ from plugin.registry import registry
 class SampleValidatorPluginTest(InvenTreeAPITestCase, InvenTreeTestCase):
     """Tests for the SampleValidatonPlugin class."""
 
-    fixtures = ['part', 'category', 'location', 'build']
+    fixtures = ['part', 'category', 'location', 'build', 'stock']
 
     def setUp(self):
         """Set up the test environment."""

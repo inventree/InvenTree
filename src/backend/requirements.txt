@@ -481,9 +481,9 @@ django-money==3.5.4 \
     --hash=sha256:25933ed6177f8dc981114db813c7c5d36c7c89bc4017f2b1b2bb0209b5f68876 \
     --hash=sha256:628b3afb6671edc2cbd26743d858c31d3b99a735357f7acb6a399ab3ab008d2b
     # via -r src/backend/requirements.in
-django-mptt==0.17.0 \
-    --hash=sha256:e2dca00536450b91bdc80d8fc1454993b84307728394ae42c72947fc09574d3d \
-    --hash=sha256:e77dd4b4d0de14f50239b0900def44c1d31403664ab3682b80b27fa1319fe7f0
+django-mptt==0.18.0 \
+    --hash=sha256:bfa3f01627e3966a1df901aeca74570a3e933e66809ebf58d9df673e63627afb \
+    --hash=sha256:cf5661357ff22bc64e20d3341c26e538aa54583aea0763cfe6aaec0ab8e3a8ee
     # via -r src/backend/requirements.in
 django-oauth-toolkit==3.0.1 \
     --hash=sha256:3ef00b062a284f2031b0732b32dc899e3bbf0eac221bbb1cffcb50b8932e55ed \
@@ -1253,9 +1253,9 @@ pyphen==0.17.2 \
     --hash=sha256:3a07fb017cb2341e1d9ff31b8634efb1ae4dc4b130468c7c39dd3d32e7c3affd \
     --hash=sha256:f60647a9c9b30ec6c59910097af82bc5dd2d36576b918e44148d8b07ef3b4aa3
     # via weasyprint
-python-barcode[images]==0.15.1 \
-    --hash=sha256:057636fba37369c22852410c8535b36adfbeb965ddfd4e5b6924455d692e0886 \
-    --hash=sha256:3b1825fbdb11e597466dff4286b4ea9b1e86a57717b59e563ae679726fc854de
+python-barcode[images]==0.16.1 \
+    --hash=sha256:5776567478c9a0dae473374bb86631ba0b5ea99aaf302763b364e367ac51f367 \
+    --hash=sha256:665ed09516b0088b5593061c5ac8662caa0b08d56bdad328388b1cab39939ac5
     # via -r src/backend/requirements.in
 python-dateutil==2.9.0.post0 \
     --hash=sha256:37dd54208da7e1cd875388217d5e00ebd4179249f90fb72437e91a35459a0ad3 \
@@ -1459,9 +1459,9 @@ referencing==0.36.2 \
     # via
     #   jsonschema
     #   jsonschema-specifications
-requests==2.32.4 \
-    --hash=sha256:27babd3cda2a6d50b30443204ee89830707d396671944c998b5975b031ac2b2c \
-    --hash=sha256:27d0316682c8a29834d3264820024b62a36942083d52caf2f14c0591336d3422
+requests==2.32.5 \
+    --hash=sha256:2462f94637a34fd532264295e186976db0f5d453d1cdd31473c85a6a161affb6 \
+    --hash=sha256:dbba0bac56e100853db0ea71b82b4dfd5fe2bf6d3754a8893c3af500cec7d7cf
     # via
     #   django-allauth
     #   django-anymail
@@ -1630,9 +1630,9 @@ s3transfer==0.13.1 \
     --hash=sha256:a981aa7429be23fe6dfc13e80e4020057cbab622b08c0315288758d67cabc724 \
     --hash=sha256:c3fdba22ba1bd367922f27ec8032d6a1cf5f10c934fb5d68cf60fd5a23d936cf
     # via boto3
-sentry-sdk==2.35.0 \
-    --hash=sha256:5ea58d352779ce45d17bc2fa71ec7185205295b83a9dbb5707273deb64720092 \
-    --hash=sha256:6e0c29b9a5d34de8575ffb04d289a987ff3053cf2c98ede445bea995e3830263
+sentry-sdk==2.35.1 \
+    --hash=sha256:13b6d6cfdae65d61fe1396a061cf9113b20f0ec1bcb257f3826b88f01bb55720 \
+    --hash=sha256:241b41e059632fe1f7c54ae6e1b93af9456aebdfc297be9cf7ecfd6da5167e8e
     # via
     #   -r src/backend/requirements.in
     #   django-q-sentry
