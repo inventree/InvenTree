@@ -4,6 +4,7 @@ import json
 from collections import OrderedDict
 from typing import Optional
 
+from django.apps import apps
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.core.validators import FileExtensionValidator
@@ -312,6 +313,24 @@ class DataImportSession(models.Model):
                 available_fields=available_fields,
                 commit=False,
             )
+
+            for key in row.data:
+                if f'_reference_{key}' in self.field_overrides:
+                    reference = self.field_overrides.get(f'_reference_{key}')
+                    Part = apps.get_model('part', 'Part')
+                    parts = []
+
+                    if reference == 'ipn':
+                        part_ipn = row.data.get(key)
+                        parts = Part.objects.filter(IPN=part_ipn)
+                    elif reference == 'name':
+                        part_name = row.data.get(key)
+                        parts = Part.objects.filter(name=part_name)
+
+                    if parts.count() == 1:
+                        part = parts.first()
+                        # Update the 'part' value in the row
+                        row.data[key] = part.pk if part is not None else None
 
             row.valid = row.validate(commit=False)
             imported_rows.append(row)

@@ -2,6 +2,7 @@ import { t } from '@lingui/core/macro';
 import {
   Alert,
   Button,
+  Flex,
   Group,
   Paper,
   Select,
@@ -126,6 +127,60 @@ function ImporterDefaultField({
   );
 }
 
+function ImporterPartReferenceSelect({
+  column,
+  session
+}: {
+  column: any;
+  session: ImportSessionState;
+}) {
+  const api = useApi();
+  const [partReference, setPartReference] = useState<string>('id');
+  const referenceKey = `_reference_${column.field}`;
+
+  useEffect(() => {
+    const value = session.fieldOverrides?.[referenceKey] ?? 'id';
+    setPartReference(value);
+  }, [session.fieldOverrides, column.field]);
+
+  const onChange = useCallback(
+    (value: any) => {
+      const importSettings = {
+        ...session.fieldOverrides,
+        [referenceKey]: value
+      };
+
+      api
+        .patch(apiUrl(ApiEndpoints.import_session_list, session.sessionId), {
+          field_overrides: importSettings
+        })
+        .then((response) => {
+          const value = response.data?.field_overrides?.[referenceKey] ?? 'id';
+          setPartReference(value);
+        })
+        .catch((error) => {
+          // TODO: Error message?
+        });
+    },
+    [column]
+  );
+
+  return (
+    <Select
+      data={[
+        { value: 'id', label: 'Import by ID' },
+        { value: 'ipn', label: 'Import by IPN' },
+        { value: 'name', label: 'Import by Name' }
+      ]}
+      value={partReference}
+      onChange={onChange}
+      placeholder='Select reference'
+      size='sm'
+      w={180}
+    />
+  );
+}
+
 function ImporterColumnTableRow({
   session,
   column,
@@ -150,7 +205,12 @@ function ImporterColumnTableRow({
         </Group>
       </Table.Td>
       <Table.Td>
-        <Text size='sm'>{column.description}</Text>
+        <Flex justify='space-between' align='center'>
+          <Text size='sm'>{column.description}</Text>
+          {column.field === 'sub_part' && (
+            <ImporterPartReferenceSelect column={column} session={session} />
+          )}
+        </Flex>
       </Table.Td>
       <Table.Td>
         <ImporterColumn column={column} options={options} />
