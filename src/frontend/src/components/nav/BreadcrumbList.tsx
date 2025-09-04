@@ -64,7 +64,7 @@ export function BreadcrumbList({
             return (
               <Anchor
                 key={`${index}-${breadcrumb.name}`}
-                href={`${baseUrl}${breadcrumb.url}`}
+                href={`/${baseUrl}${breadcrumb.url}`}
                 aria-label={`breadcrumb-${index}-${identifierString(
                   breadcrumb.name
                 )}`}
