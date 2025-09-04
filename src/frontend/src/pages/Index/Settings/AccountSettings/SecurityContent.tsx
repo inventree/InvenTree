@@ -392,9 +392,6 @@ function MfaSection() {
     );
   };
 
-  const parseDate = (date: number) =>
-    date == null ? 'Never' : new Date(date * 1000).toLocaleString();
-
   const rows = useMemo(() => {
     if (isLoading || !data) return null;
     return data.map((token: any) => (
@@ -719,3 +716,6 @@ async function runActionWithFallback(
       });
   }
 }
+
+export const parseDate = (date: number) =>
+  date == null ? 'Never' : new Date(date * 1000).toLocaleString();
