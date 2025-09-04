@@ -767,7 +767,9 @@ class Build(
             from build.tasks import check_build_stock
 
             # Run checks on required parts
-            InvenTree.tasks.offload_task(check_build_stock, self, group='build')
+            InvenTree.tasks.offload_task(
+                check_build_stock, self, group='build', force_async=True
+            )
 
     @transaction.atomic
     def hold_build(self):
