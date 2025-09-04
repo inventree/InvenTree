@@ -22,7 +22,7 @@ import { YesNoButton } from '@lib/components/YesNoButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
-import { getDetailUrl } from '@lib/functions/Navigation';
+import { getBaseUrl, getDetailUrl } from '@lib/functions/Navigation';
 import { navigateToLink } from '@lib/functions/Navigation';
 import type { InvenTreeIconType } from '@lib/types/Icons';
 import { useApi } from '../../contexts/ApiContext';
@@ -369,6 +369,10 @@ function TableAnchorValue(props: Readonly<FieldProps>) {
     [detailUrl]
   );
 
+  const absoluteUrl = useMemo(() => {
+    return `/${getBaseUrl()}${detailUrl}`;
+  }, [detailUrl]);
+
   if (!data || data.isLoading || data.isFetching) {
     return <Skeleton height={12} radius='md' />;
   }
@@ -412,7 +416,7 @@ function TableAnchorValue(props: Readonly<FieldProps>) {
   return (
     <>
       {make_link ? (
-        <Anchor href='#' onClick={handleLinkClick}>
+        <Anchor href={absoluteUrl} onClick={handleLinkClick}>
           <Text>{value}</Text>
         </Anchor>
       ) : (
@@ -518,6 +522,14 @@ export function DetailsTable({
   fields: DetailsField[];
   title?: string;
 }>) {
+  const visibleFields = useMemo(() => {
+    return fields.filter((field) => !field.hidden);
+  }, [fields]);
+
+  if (!visibleFields?.length) {
+    return <div />;
+  }
+
   return (
     <Paper
       p='xs'
@@ -528,11 +540,9 @@ export function DetailsTable({
         {title && <StylishText size='lg'>{title}</StylishText>}
         <Table striped verticalSpacing={5} horizontalSpacing='sm'>
           <Table.Tbody>
-            {fields
-              .filter((field: DetailsField) => !field.hidden)
-              .map((field: DetailsField, index: number) => (
-                <DetailsTableField field={field} item={item} key={index} />
-              ))}
+            {visibleFields.map((field: DetailsField, index: number) => (
+              <DetailsTableField field={field} item={item} key={index} />
+            ))}
           </Table.Tbody>
         </Table>
       </Stack>
