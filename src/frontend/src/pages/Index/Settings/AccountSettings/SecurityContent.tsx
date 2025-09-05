@@ -38,6 +38,7 @@ import { api } from '../../../../App';
 import { StylishText } from '../../../../components/items/StylishText';
 import { ProviderLogin, authApi } from '../../../../functions/auth';
 import { useServerApiState } from '../../../../states/ServerApiState';
+import { useUserState } from '../../../../states/UserState';
 import { ApiTokenTable } from '../../../../tables/settings/ApiTokenTable';
 import { QrRegistrationForm } from './QrRegistrationForm';
 import { useReauth } from './useConfirm';
@@ -46,6 +47,8 @@ export function SecurityContent() {
   const [auth_config, sso_enabled] = useServerApiState(
     useShallow((state) => [state.auth_config, state.sso_enabled])
   );
+
+  const user = useUserState();
 
   return (
     <Stack>
@@ -92,14 +95,16 @@ export function SecurityContent() {
             <ApiTokenTable only_myself />
           </Accordion.Panel>
         </Accordion.Item>
-        <Accordion.Item value='session'>
-          <Accordion.Control>
-            <StylishText size='lg'>{t`Session Information`}</StylishText>
-          </Accordion.Control>
-          <Accordion.Panel>
-            <AuthContextSection />
-          </Accordion.Panel>
-        </Accordion.Item>
+        {user.isSuperuser() && (
+          <Accordion.Item value='session'>
+            <Accordion.Control>
+              <StylishText size='lg'>{t`Session Information`}</StylishText>
+            </Accordion.Control>
+            <Accordion.Panel>
+              <AuthContextSection />
+            </Accordion.Panel>
+          </Accordion.Item>
+        )}
       </Accordion>
     </Stack>
   );
