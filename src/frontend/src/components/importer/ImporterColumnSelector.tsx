@@ -180,7 +180,7 @@ function ImporterPartImportAsSelect({
   return (
     <Select
       data={options}
-      placeholder={t`Select import type`}
+      placeholder={t`Import as`}
       value={importAsValue}
       onChange={onChange}
       size='sm'
