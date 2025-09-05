@@ -2674,6 +2674,11 @@ class Part(
         """Returns True if the total stock for this part is less than the minimum stock level."""
         return self.get_stock_count() < self.minimum_stock
 
+    @staticmethod
+    def import_as_fields():
+        """Return a list of potential ID fields for import."""
+        return ['id', 'IPN', 'name']
+
 
 @receiver(post_save, sender=Part, dispatch_uid='part_post_save_log')
 def after_save_part(sender, instance: Part, created, **kwargs):

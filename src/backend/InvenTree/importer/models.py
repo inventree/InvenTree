@@ -315,22 +315,23 @@ class DataImportSession(models.Model):
             )
 
             for key in row.data:
-                if f'_reference_{key}' in self.field_overrides:
-                    reference = self.field_overrides.get(f'_reference_{key}')
-                    Part = apps.get_model('part', 'Part')
-                    parts = []
+                if f'_import_as_{key}' in self.field_overrides:
+                    row_value = row.data.get(key)
+                    import_as = self.field_overrides.get(f'_import_as_{key}')
+                    results_with_pk = []
 
-                    if reference == 'ipn':
-                        part_ipn = row.data.get(key)
-                        parts = Part.objects.filter(IPN=part_ipn)
-                    elif reference == 'name':
-                        part_name = row.data.get(key)
-                        parts = Part.objects.filter(name=part_name)
+                    if import_as == 'Part.IPN':
+                        Part = apps.get_model('part', 'Part')
+                        results_with_pk = Part.objects.filter(IPN=row_value)
 
-                    if parts.count() == 1:
-                        part = parts.first()
-                        # Update the 'part' value in the row
-                        row.data[key] = part.pk if part is not None else None
+                    elif import_as == 'Part.name':
+                        Part = apps.get_model('part', 'Part')
+                        results_with_pk = Part.objects.filter(name=row_value)
+
+                    if results_with_pk.count() == 1:
+                        results_with_pk = results_with_pk.first()
+                        # Update the value in the row
+                        row.data[key] = results_with_pk.pk
 
             row.valid = row.validate(commit=False)
             imported_rows.append(row)

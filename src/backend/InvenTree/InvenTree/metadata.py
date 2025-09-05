@@ -297,6 +297,13 @@ class InvenTreeMetadata(SimpleMetadata):
                 if name in model_default_values:
                     serializer_info[name]['default'] = model_default_values[name]
 
+                model = relation.model_field.related_model
+                if hasattr(model, 'import_as_fields'):
+                    serializer_info[name]['import_as'] = [
+                        f'{model.__name__}.{field}'
+                        for field in model.import_as_fields()
+                    ]
+
         except AttributeError:
             pass
 
