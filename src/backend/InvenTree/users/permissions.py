@@ -55,19 +55,6 @@ def split_permission(app: str, perm: str) -> tuple[str, str]:
     return perm, model
 
 
-def model_permission_string(model: models.Model, permission: str) -> str:
-    """Generate a permission string for a given model and permission type.
-
-    Arguments:
-        model: The model class to check (e.g. 'part')
-        permission: The permission to check (e.g. 'view' / 'delete')
-
-    Returns:
-        str: The permission string (e.g. 'part.view_part')
-    """
-    return f'{model._meta.app_label}.{permission}_{model._meta.model_name}'
-
-
 def check_user_role(
     user: User, role: str, permission: str, allow_inactive: bool = False
 ) -> bool:
