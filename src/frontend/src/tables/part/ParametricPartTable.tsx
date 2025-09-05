@@ -166,7 +166,7 @@ export default function ParametricPartTable({
 
         const paramFilters = filters[filterName] || {};
 
-        if (paramFilters[operator]) {
+        if (paramFilters[operator] !== undefined) {
           // Remove the specific operator filter
           delete paramFilters[operator];
         }
@@ -192,19 +192,23 @@ export default function ParametricPartTable({
     (templateId: number, value: string, operator: string) => {
       const filterName = `parameter_${templateId}`;
 
-      setParameterFilters((prev: any) => {
-        const filters = { ...prev };
-        const paramFilters = filters[filterName] || {};
+      const filterValue = value?.toString().trim() ?? '';
 
-        paramFilters[operator] = value;
+      if (filterValue.length > 0) {
+        setParameterFilters((prev: any) => {
+          const filters = { ...prev };
+          const paramFilters = filters[filterName] || {};
 
-        return {
-          ...filters,
-          [filterName]: paramFilters
-        };
-      });
+          paramFilters[operator] = filterValue;
 
-      table.refreshTable();
+          return {
+            ...filters,
+            [filterName]: paramFilters
+          };
+        });
+
+        table.refreshTable();
+      }
     },
     [setParameterFilters, clearParameterFilter, table.refreshTable]
   );
