@@ -48,7 +48,7 @@ function ParameterCell({
   // Find matching template parameter
   const parameter = useMemo(() => {
     return record.parameters?.find((p: any) => p.template == template.pk);
-  }, [record.parameters, template]);
+  }, [record, template]);
 
   const extra: any[] = [];
 
@@ -285,7 +285,7 @@ export default function ParametricPartTable({
 
       table.updateRecord(records[partIndex]);
     },
-    [table.updateRecord]
+    [table.records, table.updateRecord]
   );
 
   const parameterColumns: TableColumn[] = useMemo(() => {
