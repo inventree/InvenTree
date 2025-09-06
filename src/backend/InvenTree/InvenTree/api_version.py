@@ -1,11 +1,16 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 390
+INVENTREE_API_VERSION = 391
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v391 -> 2025-09-06 : https://github.com/inventree/InvenTree/pull/10259
+    - Refactors 'exclude_tree', 'cascade', and 'location' filters in StockList API endpoint
+    - Removes undocumented 'filter_queryset' method in StockList view
+
 v390 -> 2025-09-03 : https://github.com/inventree/InvenTree/pull/10257
     - Fixes limitation on adding virtual parts to a SalesOrder
     - Additional query filter options for BomItem API endpoint
