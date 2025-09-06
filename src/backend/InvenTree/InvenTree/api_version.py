@@ -7,7 +7,7 @@ INVENTREE_API_VERSION = 391
 
 INVENTREE_API_TEXT = """
 
-v391 -> 2025-09-06 : https://github.com/inventree/InvenTree/pull/10259
+v391 -> 2025-09-06 : https://github.com/inventree/InvenTree/pull/10279
     - Refactors 'exclude_tree', 'cascade', and 'location' filters in StockList API endpoint
     - Removes undocumented 'filter_queryset' method in StockList view
 
