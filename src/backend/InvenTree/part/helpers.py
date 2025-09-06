@@ -3,9 +3,9 @@
 import os
 
 from django.conf import settings
+from django.template import Engine
 
 import structlog
-from jinja2 import Environment, select_autoescape
 
 from common.settings import get_global_setting
 
@@ -37,15 +37,11 @@ def compile_full_name_template(*args, **kwargs):
     # Cache the template string
     _part_full_name_template_string = template_string
 
-    env = Environment(
-        autoescape=select_autoescape(default_for_string=False, default=False),
-        variable_start_string='{{',
-        variable_end_string='}}',
-    )
+    eng = Engine(autoescape=False)
 
     # Compile the template
     try:
-        _part_full_name_template = env.from_string(template_string)
+        _part_full_name_template = eng.from_string(template_string)
     except Exception:
         _part_full_name_template = None
 
