@@ -32,7 +32,7 @@ import { InvenTreeTable } from '../../tables/InvenTreeTable';
 function ChartTooltip({ label, payload }: Readonly<ChartTooltipProps>) {
   const formattedLabel: string = useMemo(() => {
     if (label && typeof label === 'number') {
-      return formatDate(dayjs().format('YYYY-MM-DD')) ?? label;
+      return formatDate(dayjs(label).format('YYYY-MM-DD')) ?? label;
     } else if (!!label) {
       return label.toString();
     } else {
@@ -190,7 +190,7 @@ export default function PartStockHistoryDetail({
             enableBulkDelete: true,
             params: {
               part: partId,
-              ordering: 'date'
+              ordering: '-date'
             },
             rowActions: rowActions
           }}
@@ -225,7 +225,7 @@ export default function PartStockHistoryDetail({
               type: 'number',
               domain: chartLimits,
               tickFormatter: (value: number) => {
-                return formatDate(dayjs().format('YYYY-MM-DD'));
+                return formatDate(dayjs(value).format('YYYY-MM-DD'));
               }
             }}
             series={[
