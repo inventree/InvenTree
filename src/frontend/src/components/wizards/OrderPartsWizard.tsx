@@ -5,11 +5,12 @@ import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
-import { Alert, Group, Paper, Tooltip } from '@mantine/core';
+import { Alert, Center, Group, Loader, Paper, Tooltip } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import { IconShoppingCart } from '@tabler/icons-react';
 import { DataTable } from 'mantine-datatable';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useApi } from '../../contexts/ApiContext';
 import { useSupplierPartFields } from '../../forms/CompanyForms';
 import { usePurchaseOrderFields } from '../../forms/PurchaseOrderForms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
@@ -40,13 +41,15 @@ function SelectPartsStep({
   onRemovePart,
   onSelectQuantity,
   onSelectSupplierPart,
-  onSelectPurchaseOrder
+  onSelectPurchaseOrder,
+  isLoading
 }: {
   records: PartOrderRecord[];
   onRemovePart: (part: any) => void;
   onSelectQuantity: (partId: number, quantity: number) => void;
   onSelectSupplierPart: (partId: number, supplierPart: any) => void;
   onSelectPurchaseOrder: (partId: number, purchaseOrder: any) => void;
+  isLoading: boolean;
 }) {
   const [selectedRecord, setSelectedRecord] = useState<PartOrderRecord | null>(
     null
@@ -264,6 +267,16 @@ function SelectPartsStep({
     ];
   }, [onRemovePart]);
 
+  if (isLoading) {
+    return (
+      <Paper p='xl' shadow='xs' radius='md'>
+        <Center>
+          <Loader />
+        </Center>
+      </Paper>
+    );
+  }
+
   if (records.length === 0) {
     return (
       <Alert color='red' title={t`No parts selected`}>
@@ -287,6 +300,9 @@ export default function OrderPartsWizard({
 }: {
   parts: any[];
 }) {
+  const api = useApi();
+  const [isLoading, setIsLoading] = useState(false);
+
   // Track a list of selected parts
   const [selectedParts, setSelectedParts] = useState<PartOrderRecord[]>([]);
 
@@ -370,10 +386,11 @@ export default function OrderPartsWizard({
           onSelectQuantity={selectQuantity}
           onSelectSupplierPart={selectSupplierPart}
           onSelectPurchaseOrder={selectPurchaseOrder}
+          isLoading={isLoading}
         />
       );
     },
-    [selectedParts]
+    [selectedParts, isLoading]
   );
 
   const canStepForward = useCallback(
@@ -432,40 +449,65 @@ export default function OrderPartsWizard({
     const records: PartOrderRecord[] = [];
 
     if (wizard.opened) {
-      parts
+      setIsLoading(true);
+      const promises = parts
         .filter((part) => part.purchaseable && part.active)
-        .forEach((part) => {
-          // Prevent duplicate entries based on pk
+        .map((part) => {
           if (
-            !records.find(
+            records.find(
               (record: PartOrderRecord) => record.part?.pk === part.pk
             )
           ) {
-            // TODO: Make this calculation generic and reusable
-            // Calculate the "to order" quantity
-            const required =
-              (part.minimum_stock ?? 0) +
-              (part.required_for_build_orders ?? 0) +
-              (part.required_for_sales_orders ?? 0);
-            const on_hand = part.total_in_stock ?? 0;
-            const on_order = part.ordering ?? 0;
-            const in_production = part.building ?? 0;
-
-            const to_order = required - on_hand - on_order - in_production;
-
-            records.push({
-              part: part,
-              supplier_part: undefined,
-              purchase_order: undefined,
-              quantity: Math.max(to_order, 0),
-              errors: {}
-            });
+            return Promise.resolve(null);
           }
+
+          return api
+            .get(
+              apiUrl(ApiEndpoints.part_requirements, undefined, { id: part.pk })
+            )
+            .then((response) => {
+              // TODO: Make this calculation generic and reusable
+              // Calculate the "to order" quantity
+              const part_requirements = response.data;
+              const required =
+                (part_requirements.minimum_stock ?? 0) +
+                (part_requirements.required_for_build_orders ?? 0) +
+                (part_requirements.required_for_sales_orders ?? 0);
+              const on_hand = part_requirements.total_stock ?? 0;
+              const on_order = part_requirements.ordering ?? 0;
+              const in_production = part_requirements.building ?? 0;
+              const to_order = Number(
+                (required - on_hand - on_order - in_production).toFixed(4)
+              );
+
+              return {
+                part: part,
+                supplier_part: undefined,
+                purchase_order: undefined,
+                quantity: Math.max(to_order, 0),
+                errors: {}
+              };
+            });
         });
 
-      setSelectedParts(records);
+      Promise.all(promises)
+        .then((newRecords) => {
+          const validRecords = newRecords.filter(
+            (record) => record !== null
+          ) as PartOrderRecord[];
+          records.push(...validRecords);
+          setSelectedParts([...records]);
+        })
+        .catch((error) => {
+          wizard.setError(t`Error`);
+          wizard.setErrorDetail(error);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
     } else {
       setSelectedParts([]);
+      setIsLoading(false);
     }
   }, [wizard.opened]);
 

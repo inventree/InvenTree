@@ -1263,6 +1263,7 @@ class PartRequirementsSerializer(InvenTree.serializers.InvenTreeModelSerializer)
             'allocated_to_build_orders',
             'required_for_sales_orders',
             'allocated_to_sales_orders',
+            'minimum_stock',
         ]
 
     total_stock = serializers.FloatField(read_only=True, label=_('Total Stock'))
@@ -1305,6 +1306,10 @@ class PartRequirementsSerializer(InvenTree.serializers.InvenTreeModelSerializer)
 
     allocated_to_sales_orders = serializers.SerializerMethodField(
         read_only=True, label=_('Allocated to Sales Orders')
+    )
+
+    minimum_stock = serializers.FloatField(
+        required=False, label=_('Minimum Stock'), default=0
     )
 
     def get_allocated_to_sales_orders(self, part) -> float:
