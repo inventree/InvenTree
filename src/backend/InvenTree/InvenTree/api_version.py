@@ -9,7 +9,6 @@ INVENTREE_API_TEXT = """
 
 v391 -> 2025-09-06 : https://github.com/inventree/InvenTree/pull/10279
     - Refactors 'exclude_tree', 'cascade', and 'location' filters in StockList API endpoint
-    - Removes undocumented 'filter_queryset' method in StockList view
 
 v390 -> 2025-09-03 : https://github.com/inventree/InvenTree/pull/10257
     - Fixes limitation on adding virtual parts to a SalesOrder
