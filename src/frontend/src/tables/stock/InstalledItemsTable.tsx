@@ -59,7 +59,7 @@ export default function InstalledItemsTable({
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
       PartColumn({
-        part: 'part'
+        part: 'part_detail'
       }),
       {
         accessor: 'quantity',
