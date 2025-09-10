@@ -174,8 +174,8 @@ class StaleStockNotificationTests(InvenTreeTestCase):
     def test_check_stale_stock_no_stale_items(self):
         """Test check_stale_stock when no stale items exist."""
         # Clear all existing stock items
+        stock.models.StockItem.objects.update(parent=None)
         stock.models.StockItem.objects.all().delete()
-
         # Create only future expiry items
         today = helpers.current_date()
         stock.models.StockItem.objects.create(
@@ -194,6 +194,7 @@ class StaleStockNotificationTests(InvenTreeTestCase):
     def test_check_stale_stock_with_stale_items(self, mock_offload):
         """Test check_stale_stock when stale items exist."""
         # Clear existing stock items
+        stock.models.StockItem.objects.update(parent=None)
         stock.models.StockItem.objects.all().delete()
 
         self.create_stock_items_with_expiry()
@@ -229,6 +230,7 @@ class StaleStockNotificationTests(InvenTreeTestCase):
     def test_check_stale_stock_filtering(self):
         """Test that check_stale_stock properly filters stock items."""
         # Clear all existing stock items first
+        stock.models.StockItem.objects.update(parent=None)
         stock.models.StockItem.objects.all().delete()
 
         today = helpers.current_date()

@@ -274,18 +274,19 @@
     tree_id: 9
     level: 0
     lft: 1
-    rght: 2
+    rght: 4
 
 - model: stock.stockitem
   pk: 1001
   fields:
     part: 100
+    parent: 1000
     location: 1
     quantity: 11
-    tree_id: 14
-    level: 0
-    lft: 1
-    rght: 2
+    tree_id: 9
+    level: 1
+    lft: 2
+    rght: 3
 
 - model: stock.stockitem
   pk: 1002
