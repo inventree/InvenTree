@@ -39,8 +39,9 @@ from InvenTree.filters import (
     SEARCH_ORDER_FILTER,
     SEARCH_ORDER_FILTER_ALIAS,
     InvenTreeDateFilter,
+    NumberOrNullFilter,
 )
-from InvenTree.helpers import extract_serial_numbers, generateTestKey, isNull, str2bool
+from InvenTree.helpers import extract_serial_numbers, generateTestKey, str2bool
 from InvenTree.mixins import (
     CreateAPI,
     CustomRetrieveUpdateDestroyAPI,
@@ -933,6 +934,66 @@ class StockFilter(rest_filters.FilterSet):
         else:
             return queryset.exclude(stale_filter)
 
+    exclude_tree = rest_filters.NumberFilter(
+        method='filter_exclude_tree',
+        label=_('Exclude Tree'),
+        help_text=_(
+            'Provide a StockItem PK to exclude that item and all its descendants'
+        ),
+    )
+
+    def filter_exclude_tree(self, queryset, name, value):
+        """Exclude a StockItem and all of its descendants from the queryset."""
+        try:
+            root = StockItem.objects.get(pk=value)
+            pks_to_exclude = [
+                item.pk for item in root.get_descendants(include_self=True)
+            ]
+            return queryset.exclude(pk__in=pks_to_exclude)
+        except (ValueError, StockItem.DoesNotExist):
+            # If the value is invalid or the object doesn't exist, do nothing.
+            return queryset
+
+    cascade = rest_filters.BooleanFilter(
+        method='filter_cascade',
+        label=_('Cascade Locations'),
+        help_text=_('If true, include items in child locations of the given location'),
+    )
+
+    location = NumberOrNullFilter(
+        method='filter_location',
+        label=_('Location'),
+        help_text=_("Filter by numeric Location ID or the literal 'null'"),
+    )
+
+    def filter_cascade(self, queryset, name, value):
+        """Dummy filter method for 'cascade'.
+
+        - Ensures 'cascade' appears in API documentation
+        - Does NOT actually filter the queryset directly
+        """
+        return queryset
+
+    def filter_location(self, queryset, name, value):
+        """Filter for location that also applies cascade logic."""
+        cascade = str2bool(self.data.get('cascade', True))
+
+        if value == 'null':
+            if not cascade:
+                return queryset.filter(location=None)
+            return queryset
+
+        if not cascade:
+            return queryset.filter(location=value)
+
+        try:
+            loc_obj = StockLocation.objects.get(pk=value)
+        except StockLocation.DoesNotExist:
+            return queryset
+
+        children = loc_obj.getUniqueChildren()
+        return queryset.filter(location__in=children)
+
 
 class StockApiMixin:
     """Mixin class for StockItem API endpoints."""
@@ -1190,52 +1251,6 @@ class StockList(DataExportViewMixin, StockApiMixin, ListCreateDestroyAPIView):
             status=status.HTTP_201_CREATED,
             headers=self.get_success_headers(serializer.data),
         )
-
-    def filter_queryset(self, queryset):
-        """Custom filtering for the StockItem queryset."""
-        params = self.request.query_params
-
-        queryset = super().filter_queryset(queryset)
-
-        # Exclude stock item tree
-        exclude_tree = params.get('exclude_tree', None)
-
-        if exclude_tree is not None:
-            try:
-                item = StockItem.objects.get(pk=exclude_tree)
-
-                queryset = queryset.exclude(
-                    pk__in=[it.pk for it in item.get_descendants(include_self=True)]
-                )
-
-            except (ValueError, StockItem.DoesNotExist):  # pragma: no cover
-                pass
-
-        # Does the client wish to filter by stock location?
-        loc_id = params.get('location', None)
-
-        cascade = str2bool(params.get('cascade', True))
-
-        if loc_id is not None:
-            # Filter by 'null' location (i.e. top-level items)
-            if isNull(loc_id):
-                if not cascade:
-                    queryset = queryset.filter(location=None)
-            else:
-                try:
-                    # If '?cascade=true' then include items which exist in sub-locations
-                    if cascade:
-                        location = StockLocation.objects.get(pk=loc_id)
-                        queryset = queryset.filter(
-                            location__in=location.getUniqueChildren()
-                        )
-                    else:
-                        queryset = queryset.filter(location=loc_id)
-
-                except (ValueError, StockLocation.DoesNotExist):  # pragma: no cover
-                    pass
-
-        return queryset
 
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
