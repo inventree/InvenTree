@@ -23,7 +23,34 @@ REPO = os.getenv('GITHUB_REPOSITORY', 'inventree/inventree')
 GITHUB_API_URL = os.getenv('GITHUB_API_URL', 'https://api.github.com')
 
 
-def get_existing_release_tags(include_prerelease=True):
+def version_number_to_tuple(version_string: str) -> tuple[int, int, int, str]:
+    """Validate a version number string, and convert to a tuple of integers.
+
+    e.g. 1.1.0
+    e.g. 1.1.0 dev
+    e.g. 1.2.3-rc2
+    """
+    pattern = r'^(\d+)\.(\d+)\.(\d+)[\s-]?(.*)?$'
+
+    match = re.match(pattern, version_string)
+
+    if not match or len(match.groups()) < 3:
+        raise ValueError(
+            f"Version string '{version_string}' did not match required pattern"
+        )
+
+    result = tuple(int(x) for x in match.groups()[:3])
+
+    # Add optional prerelease tag
+    if len(match.groups()) > 3:
+        result += (match.groups()[3] or '',)
+    else:
+        result += ('',)
+
+    return result
+
+
+def get_existing_release_tags(include_prerelease: bool = True):
     """Request information on existing releases via the GitHub API."""
     # Check for github token
     token = os.getenv('GITHUB_TOKEN', None)
@@ -46,16 +73,9 @@ def get_existing_release_tags(include_prerelease=True):
 
     for release in data:
         tag = release['tag_name'].strip()
-        match = re.match(r'^.*(\d+)\.(\d+)\.(\d+).*$', tag)
 
-        if len(match.groups()) != 3:
-            print(f"Version '{tag}' did not match expected pattern")
-            continue
-
-        if not include_prerelease and release['prerelease']:
-            continue
-
-        tags.append([int(x) for x in match.groups()])
+        version_tuple = version_number_to_tuple(tag)
+        tags.append(version_tuple)
 
     return tags
 
@@ -67,15 +87,7 @@ def check_version_number(version_string, allow_duplicate=False):
     """
     print(f"Checking version '{version_string}'")
 
-    # Check that the version string matches the required format
-    match = re.match(r'^(\d+)\.(\d+)\.(\d+)(?: dev)?$', version_string)
-
-    if not match or len(match.groups()) != 3:
-        raise ValueError(
-            f"Version string '{version_string}' did not match required pattern"
-        )
-
-    version_tuple = [int(x) for x in match.groups()]
+    version_tuple = version_number_to_tuple(version_string)
 
     # Look through the existing releases
     existing = get_existing_release_tags(include_prerelease=False)
