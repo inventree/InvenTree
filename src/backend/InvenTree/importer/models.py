@@ -693,9 +693,20 @@ class DataImportRow(models.Model):
             try:
                 instance = self.session.model_class.objects.get(pk=instance_id)
             except self.session.model_class.DoesNotExist:
-                raise DjangoValidationError(_('No record found with the provided ID.'))
+                self.errors = {
+                    'non_field_errors': _('No record found with the provided ID')
+                    + f': {instance_id}'
+                }
+                return False
             except ValueError:
-                raise DjangoValidationError(_('Invalid ID format provided.'))
+                self.errors = {
+                    'non_field_errors': _('Invalid ID format provided')
+                    + f': {instance_id}'
+                }
+                return False
+            except Exception as e:
+                self.errors = {'non_field_errors': str(e)}
+                return False
 
             serializer = self.construct_serializer(instance=instance, request=request)
 
