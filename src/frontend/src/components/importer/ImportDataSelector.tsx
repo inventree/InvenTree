@@ -285,7 +285,7 @@ export default function ImporterDataSelector({
                 <IconCircleDashedCheck color='blue' size={16} />
               )}
               {!row.complete && !row.valid && (
-                <HoverCard openDelay={50} closeDelay={100}>
+                <HoverCard openDelay={50} closeDelay={100} position='top-start'>
                   <HoverCard.Target>
                     <IconExclamationCircle color='red' size={16} />
                   </HoverCard.Target>
