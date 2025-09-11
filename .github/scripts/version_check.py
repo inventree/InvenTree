@@ -238,7 +238,10 @@ if __name__ == '__main__':
     print(f'GITHUB_REF_TYPE: {GITHUB_REF_TYPE}')
     print(f'GITHUB_BASE_REF: {GITHUB_BASE_REF}')
 
-    print(f"InvenTree Version: '{inventree_version}'")
+    print(
+        f"InvenTree Version: '{inventree_version}' - {version_number_to_tuple(inventree_version)}"
+    )
+    print(f"InvenTree API Version: '{inventree_api_version}'")
 
     # Check version number and look for existing versions
     # If a release is found which matches the current tag, throw an error
