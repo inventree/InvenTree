@@ -8,7 +8,7 @@ msgstr ""
 "Language: zh\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-09-08 01:37\n"
+"PO-Revision-Date: 2025-09-11 23:38\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -2842,7 +2842,7 @@ msgstr "加载插件内容时出错"
 #~ msgid "Unknown model: {model}"
 #~ msgstr "Unknown model: {model}"
 
-#: src/components/render/Instance.tsx:246
+#: src/components/render/Instance.tsx:249
 msgid "Unknown model: {model_name}"
 msgstr "未知模型: {model_name}"
 
@@ -5512,7 +5512,7 @@ msgstr "访问令牌"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:101
 msgid "Session Information"
-msgstr ""
+msgstr "会话信息"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:139
 #: src/tables/general/BarcodeScanTable.tsx:60
@@ -5524,7 +5524,7 @@ msgstr "时间戳"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:140
 msgid "Method"
-msgstr ""
+msgstr "认证方式"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:183
 msgid "Error while updating email"
