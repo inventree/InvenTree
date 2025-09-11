@@ -212,7 +212,7 @@ if __name__ == '__main__':
         sys.exit(0)
 
     if args.show_api_version:
-        if args.decrement_api.lower() == 'true':
+        if str(args.decrement_api).strip().lower() == 'true':
             inventree_api_version -= 1
         print(inventree_api_version)
         sys.exit(0)
