@@ -320,9 +320,9 @@ distlib==0.4.0 \
     --hash=sha256:9659f7d87e46584a30b5780e43ac7a2143098441670ff0a49d5f9034c54a6c16 \
     --hash=sha256:feec40075be03a04501a973d81f633735b4b69f98b05450592310c0f401a4e0d
     # via virtualenv
-django==4.2.23 \
-    --hash=sha256:42fdeaba6e6449d88d4f66de47871015097dc6f1b87910db00a91946295cfae4 \
-    --hash=sha256:dafbfaf52c2f289bd65f4ab935791cb4fb9a198f2a5ba9faf35d7338a77e9803
+django==4.2.24 \
+    --hash=sha256:40cd7d3f53bc6cd1902eadce23c337e97200888df41e4a73b42d682f23e71d80 \
+    --hash=sha256:a6527112c58821a0dfc5ab73013f0bdd906539790a17196658e36e66af43c350
     # via
     #   -c src/backend/requirements.txt
     #   django-slowtests
