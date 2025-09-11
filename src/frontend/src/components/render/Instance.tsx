@@ -15,7 +15,7 @@ import { type ReactNode, useCallback } from 'react';
 import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
-import { navigateToLink } from '@lib/functions/Navigation';
+import { getBaseUrl, navigateToLink } from '@lib/functions/Navigation';
 import type {
   ModelRendererDict,
   RenderInstanceProps
@@ -219,7 +219,10 @@ export function RenderInlineModel({
         {prefix}
         {image && <Thumbnail src={image} size={18} />}
         {url ? (
-          <Anchor href='' onClick={(event: any) => onClick(event)}>
+          <Anchor
+            href={`/${getBaseUrl()}${url}`}
+            onClick={(event: any) => onClick(event)}
+          >
             {primary}
           </Anchor>
         ) : (
