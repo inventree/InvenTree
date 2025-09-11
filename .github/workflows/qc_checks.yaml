@@ -165,7 +165,7 @@ jobs:
         run: |
           pip install --require-hashes -r contrib/dev_reqs/requirements.txt >/dev/null 2>&1
           version="$(python3 .github/scripts/version_check.py --show-api-version --decrement-api=${API} 2>&1)"
-          echo "Version: $version"
+          echo "API Version: $version"
           url="https://raw.githubusercontent.com/inventree/schema/main/export/${version}/api.yaml"
           echo "URL: $url"
           code=$(curl -s -o api.yaml $url --write-out '%{http_code}' --silent)
@@ -199,7 +199,7 @@ jobs:
         run: |
           pip install --require-hashes -r contrib/dev_reqs/requirements.txt >/dev/null 2>&1
           version="$(python3 .github/scripts/version_check.py --show-api-version 2>&1)"
-          echo "Version: $version"
+          echo "API Version: $version"
           echo "version=$version" >> "$GITHUB_OUTPUT"
       - name: Extract settings / tags
         run: invoke int.export-definitions --basedir docs
