@@ -177,6 +177,9 @@ def check_version_number(version_string, allow_duplicate=False):
             highest_release = False
             print(f'Found newer release: {release!s}')
 
+    if highest_release:
+        print(f"-- Version '{version_string}' is the highest release")
+
     return highest_release
 
 
@@ -218,6 +221,8 @@ if __name__ == '__main__':
     if os.environ.get('GITHUB_ACTIONS', '') != 'true':
         print('This script is intended to be run within a GitHub Action!')
         sys.exit(1)
+
+    print('Running InvenTree version check...')
 
     # GITHUB_REF_TYPE may be either 'branch' or 'tag'
     GITHUB_REF_TYPE = os.environ['GITHUB_REF_TYPE']
@@ -271,6 +276,7 @@ if __name__ == '__main__':
     elif GITHUB_REF_TYPE == 'branch':
         # Otherwise we know we are targeting the 'master' branch
         docker_tags = ['latest']
+        highest_release = False
 
     else:
         print('Unsupported branch / version combination:')
