@@ -39,7 +39,7 @@ class SampleSupplierPlugin(SupplierMixin, InvenTreePlugin):
                             5000: [0.5, 'EUR'],
                         },
                         'link': f'https://example.com/sample-part-{size}-{length}-{material}',
-                        'image_url': r'https://demo.inventree.org/media/part_images/flat-head.png',
+                        'image_url': r'https://github.com/inventree/demo-dataset/blob/main/media/part_images/flat-head.png?raw=true',
                         'brand': 'Bolt Manufacturer',
                     })
 
