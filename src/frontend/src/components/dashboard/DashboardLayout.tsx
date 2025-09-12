@@ -29,15 +29,23 @@ export default function DashboardLayout() {
   const [widgets, setWidgets] = useState<DashboardWidgetProps[]>([]);
 
   // local/remote storage values for widget / layout
-  const [remoteWidgets, setRemoteWidgets, remoteLayouts, setRemoteLayouts] =
-    useLocalState(
-      useShallow((state) => [
-        state.widgets,
-        state.setWidgets,
-        state.layouts,
-        state.setLayouts
-      ])
-    );
+  const [
+    remoteWidgets,
+    setRemoteWidgets,
+    remoteLayouts,
+    setRemoteLayouts,
+    showSampleDashboard,
+    setShowSampleDashboard
+  ] = useLocalState(
+    useShallow((state) => [
+      state.widgets,
+      state.setWidgets,
+      state.layouts,
+      state.setLayouts,
+      state.showSampleDashboard,
+      state.setShowSampleDashboard
+    ])
+  );
 
   const [editing, setEditing] = useDisclosure(false);
   const [removing, setRemoving] = useDisclosure(false);
@@ -83,6 +91,9 @@ export default function DashboardLayout() {
       );
 
       if (newWidget) {
+        if (showSampleDashboard) {
+          setShowSampleDashboard(false);
+        }
         setWidgets([...widgets, newWidget]);
       }
 
@@ -203,6 +214,9 @@ export default function DashboardLayout() {
 
   // Clear all widgets from the dashboard
   const clearWidgets = useCallback(() => {
+    if (showSampleDashboard) {
+      setShowSampleDashboard(false);
+    }
     setWidgets([]);
     setLayouts({});
   }, []);
@@ -283,14 +297,18 @@ export default function DashboardLayout() {
                   </Alert>
                 </Card>
               </Center>
-              <Space h='lg' />
-              {WidgetGrid(
-                defaultLayouts,
-                () => {},
-                editing,
-                defaultWidgets,
-                removing,
-                () => {}
+              {showSampleDashboard && (
+                <>
+                  <Space h='lg' />
+                  {WidgetGrid(
+                    defaultLayouts,
+                    () => {},
+                    editing,
+                    defaultWidgets,
+                    removing,
+                    () => {}
+                  )}
+                </>
               )}
             </>
           ) : (
