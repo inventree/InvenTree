@@ -22,7 +22,7 @@ class SampleSupplierTest(InvenTreeAPITestCase):
     def test_search(self):
         """Check if the event is issued."""
         # Activate plugin
-        config = registry.get_plugin('samplesupplier').plugin_config()
+        config = registry.get_plugin('samplesupplier', active=None).plugin_config()
         config.active = True
         config.save()
 
@@ -42,7 +42,7 @@ class SampleSupplierTest(InvenTreeAPITestCase):
     def test_import_part(self):
         """Test importing a part by supplier."""
         # Activate plugin
-        plugin = registry.get_plugin('samplesupplier')
+        plugin = registry.get_plugin('samplesupplier', active=None)
         config = plugin.plugin_config()
         config.active = True
         config.save()
