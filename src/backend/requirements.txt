@@ -434,13 +434,13 @@ django-cleanup==9.0.0 \
     --hash=sha256:19f8b0e830233f9f0f683b17181f414672a0f48afe3ea3cc80ba47ae40ad880c \
     --hash=sha256:bb9fb560aaf62959c81e31fa40885c36bbd5854d5aa21b90df2c7e4ba633531e
     # via -r src/backend/requirements.in
-django-cors-headers==4.7.0 \
-    --hash=sha256:6fdf31bf9c6d6448ba09ef57157db2268d515d94fc5c89a0a1028e1fc03ee52b \
-    --hash=sha256:f1c125dcd58479fe7a67fe2499c16ee38b81b397463cf025f0e2c42937421070
+django-cors-headers==4.8.0 \
+    --hash=sha256:0a12a2efcd59a3cea741e44db8ab589e929949de5bc4cdf35a29c6ae77297686 \
+    --hash=sha256:3b883f4c6d07848673218456a5e070d8ab51f97341c1f27d0242ca167e7272ab
     # via -r src/backend/requirements.in
-django-dbbackup==4.3.0 \
-    --hash=sha256:3549c8ccfdb167f20ca2c26eb0dfa55c79aa3f31ea4e4dbfa0816bc18ceec6dc \
-    --hash=sha256:b4003b353d49d914ffbc033c793198426572d0a2b137ec795ddb2fb82225b960
+django-dbbackup==5.0.0 \
+    --hash=sha256:a0301b14a4bb3c7243a2fde76d09f8f572f16cd7639f75f4cd42d898fc1b82a2 \
+    --hash=sha256:aa9cc88e1413adfec0e547dd91e0afed6dbb91a02459697663a9b988dbc71f18
     # via -r src/backend/requirements.in
 django-error-report-2==0.4.2 \
     --hash=sha256:1dd99c497af09b7ea99f5fbaf910501838150a9d5390796ea00e187bc62f6c1b \
@@ -590,9 +590,9 @@ et-xmlfile==2.0.0 \
     --hash=sha256:7a91720bc756843502c3b7504c77b8fe44217c85c537d85037f0f536151b2caa \
     --hash=sha256:dab3f4764309081ce75662649be815c4c9081e88f0837825f90fd28317d4da54
     # via openpyxl
-feedparser==6.0.11 \
-    --hash=sha256:0be7ee7b395572b19ebeb1d6aafb0028dee11169f1c934e0ed67d54992f4ad45 \
-    --hash=sha256:c9d0407b64c6f2a065d0ebb292c2b35c01050cc0dc33757461aaabdc4c4184d5
+feedparser==6.0.12 \
+    --hash=sha256:64f76ce90ae3e8ef5d1ede0f8d3b50ce26bcce71dd8ae5e82b1cd2d4a5f94228 \
+    --hash=sha256:6bbff10f5a52662c00a2e3f86a38928c37c48f77b3c511aedcd51de933549324
     # via -r src/backend/requirements.in
 fido2==1.2.0 \
     --hash=sha256:e39f95920122d64283fda5e5581d95a206e704fa42846bfa4662f86aa0d3333b \
@@ -1285,10 +1285,6 @@ python3-saml==1.16.0 \
     --hash=sha256:97c9669aecabc283c6e5fb4eb264f446b6e006f5267d01c9734f9d8bffdac133 \
     --hash=sha256:c49097863c278ff669a337a96c46dc1f25d16307b4bb2679d2d1733cc4f5176a
     # via django-allauth
-pytz==2025.2 \
-    --hash=sha256:360b9e3dbb49a209c21ad61809c7fb453643e048b38924c765813546746e81c3 \
-    --hash=sha256:5ddf76296dd8c44c26eb8f4b6f35488f3ccbf6fbbd7adee0b7262d43f0ec2f00
-    # via django-dbbackup
 pyyaml==6.0.2 \
     --hash=sha256:01179a4a8559ab5de078078f37e5c1a30d76bb88519906844fd7bdea1b7729ff \
     --hash=sha256:0833f8694549e586547b576dcfaba4a6b55b9e96098b36cdc7ebefe667dfed48 \
@@ -1630,9 +1626,9 @@ s3transfer==0.13.1 \
     --hash=sha256:a981aa7429be23fe6dfc13e80e4020057cbab622b08c0315288758d67cabc724 \
     --hash=sha256:c3fdba22ba1bd367922f27ec8032d6a1cf5f10c934fb5d68cf60fd5a23d936cf
     # via boto3
-sentry-sdk==2.35.1 \
-    --hash=sha256:13b6d6cfdae65d61fe1396a061cf9113b20f0ec1bcb257f3826b88f01bb55720 \
-    --hash=sha256:241b41e059632fe1f7c54ae6e1b93af9456aebdfc297be9cf7ecfd6da5167e8e
+sentry-sdk==2.37.1 \
+    --hash=sha256:531751da91aa62a909b42a7be155b41f6bb0de9df6ae98441d23b95de2f98475 \
+    --hash=sha256:baaaea6608ed3a639766a69ded06b254b106d32ad9d180bdbe58f3db9364592b
     # via
     #   -r src/backend/requirements.in
     #   django-q-sentry
@@ -1763,9 +1759,9 @@ webencodings==0.5.1 \
     #   cssselect2
     #   tinycss2
     #   tinyhtml5
-whitenoise==6.9.0 \
-    --hash=sha256:8c4a7c9d384694990c26f3047e118c691557481d624f069b7f7752a2f735d609 \
-    --hash=sha256:c8a489049b7ee9889617bb4c274a153f3d979e8f51d2efd0f5b403caf41c57df
+whitenoise==6.10.0 \
+    --hash=sha256:7b7e53de65d749cb1ce4a7100e751d9742e323b52746f9f93944c0d348ea2d02 \
+    --hash=sha256:bad74a40b33b055ba59731b6048dd08d5647f273b72bef922aa43ddd287b02da
     # via -r src/backend/requirements.in
 wrapt==1.17.2 \
     --hash=sha256:08e7ce672e35efa54c5024936e559469436f8b8096253404faeb54d2a878416f \
