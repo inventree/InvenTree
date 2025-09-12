@@ -22,12 +22,12 @@ import {
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { type JSX, Suspense, useEffect, useMemo, useState } from 'react';
 
+import { ActionButton } from '@lib/components/ActionButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import dayjs from 'dayjs';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../App';
-import { ActionButton } from '../components/buttons/ActionButton';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
 
@@ -46,6 +46,7 @@ import {
 import { Thumbnail } from '../components/images/Thumbnail';
 import { StylishText } from '../components/items/StylishText';
 import { StatusRenderer } from '../components/render/StatusRenderer';
+import { RenderStockLocation } from '../components/render/Stock';
 import { InvenTreeIcon } from '../functions/icons';
 import {
   useApiFormModal,
@@ -140,6 +141,7 @@ export function useStockFields({
         value: partInstance.pk,
         disabled: !create || !!partId,
         filters: {
+          virtual: false,
           active: create ? true : undefined
         },
         onValueChange: (value, record) => {
@@ -393,9 +395,10 @@ export function useStockItemSerializeFields({
   partId: number;
   trackable: boolean;
   modalId: string;
-}) {
+}): ApiFormFieldSet {
   const serialGenerator = useSerialNumberGenerator({
     modalId: modalId,
+    isEnabled: () => trackable,
     initialQuery: {
       part: partId
     }
@@ -628,7 +631,7 @@ function StockOperationsRow({
           </Stack>
         </Table.Td>
         <Table.Td>
-          {record.location ? record.location_detail?.pathstring : '-'}
+          <RenderStockLocation instance={record.location_detail} />
         </Table.Td>
         <Table.Td>{record.batch ? record.batch : '-'}</Table.Td>
         <Table.Td>
@@ -795,6 +798,54 @@ function stockTransferFields(items: any[]): ApiFormFieldSet {
     },
     notes: {}
   };
+  return fields;
+}
+
+function stockReturnFields(items: any[]): ApiFormFieldSet {
+  if (!items) {
+    return {};
+  }
+
+  // Only include items that are currently *not* in stock
+  const records = Object.fromEntries(
+    items.filter((item) => !item.in_stock).map((item) => [item.pk, item])
+  );
+
+  const fields: ApiFormFieldSet = {
+    items: {
+      field_type: 'table',
+      value: mapAdjustmentItems(items),
+      modelRenderer: (row: TableFieldRowProps) => {
+        const record = records[row.item.pk];
+
+        return (
+          <StockOperationsRow
+            props={row}
+            key={record.pk}
+            record={record}
+            transfer
+            changeStatus
+          />
+        );
+      },
+      headers: [
+        { title: t`Part` },
+        { title: t`Location` },
+        { title: t`Batch` },
+        { title: t`Quantity` },
+        { title: t`Return`, style: { width: '200px' } },
+        { title: t`Actions` }
+      ]
+    },
+    location: {
+      filters: {
+        structural: false
+      }
+    },
+    merge: {},
+    notes: {}
+  };
+
   return fields;
 }
 
@@ -987,7 +1038,7 @@ function stockMergeFields(items: any[]): ApiFormFieldSet {
       ]
     },
     location: {
-      default: items[0]?.part_detail.default_location,
+      default: items[0]?.part_detail?.default_location,
       filters: {
         structural: false
       }
@@ -1188,7 +1239,12 @@ export function useAddStockItem(props: StockOperationProps) {
     fieldGenerator: stockAddFields,
     endpoint: ApiEndpoints.stock_add,
     title: t`Add Stock`,
-    successMessage: t`Stock added`
+    successMessage: t`Stock added`,
+    preFormContent: (
+      <Alert color='blue'>
+        {t`Increase the quantity of the selected stock items by a given amount.`}
+      </Alert>
+    )
   });
 }
 
@@ -1198,7 +1254,12 @@ export function useRemoveStockItem(props: StockOperationProps) {
     fieldGenerator: stockRemoveFields,
     endpoint: ApiEndpoints.stock_remove,
     title: t`Remove Stock`,
-    successMessage: t`Stock removed`
+    successMessage: t`Stock removed`,
+    preFormContent: (
+      <Alert color='blue'>
+        {t`Decrease the quantity of the selected stock items by a given amount.`}
+      </Alert>
+    )
   });
 }
 
@@ -1208,7 +1269,27 @@ export function useTransferStockItem(props: StockOperationProps) {
     fieldGenerator: stockTransferFields,
     endpoint: ApiEndpoints.stock_transfer,
     title: t`Transfer Stock`,
-    successMessage: t`Stock transferred`
+    successMessage: t`Stock transferred`,
+    preFormContent: (
+      <Alert color='blue'>
+        {t`Transfer selected items to the specified location.`}
+      </Alert>
+    )
+  });
+}
+
+export function useReturnStockItem(props: StockOperationProps) {
+  return useStockOperationModal({
+    ...props,
+    fieldGenerator: stockReturnFields,
+    endpoint: ApiEndpoints.stock_return,
+    title: t`Return Stock`,
+    successMessage: t`Stock returned`,
+    preFormContent: (
+      <Alert color='blue'>
+        {t`Return selected items into stock, to the specified location.`}
+      </Alert>
+    )
   });
 }
 
@@ -1218,7 +1299,12 @@ export function useCountStockItem(props: StockOperationProps) {
     fieldGenerator: stockCountFields,
     endpoint: ApiEndpoints.stock_count,
     title: t`Count Stock`,
-    successMessage: t`Stock counted`
+    successMessage: t`Stock counted`,
+    preFormContent: (
+      <Alert color='blue'>
+        {t`Count the selected stock items, and adjust the quantity accordingly.`}
+      </Alert>
+    )
   });
 }
 
@@ -1228,7 +1314,12 @@ export function useChangeStockStatus(props: StockOperationProps) {
     fieldGenerator: stockChangeStatusFields,
     endpoint: ApiEndpoints.stock_change_status,
     title: t`Change Stock Status`,
-    successMessage: t`Stock status changed`
+    successMessage: t`Stock status changed`,
+    preFormContent: (
+      <Alert color='blue'>
+        {t`Change the status of the selected stock items.`}
+      </Alert>
+    )
   });
 }
 
@@ -1274,7 +1365,12 @@ export function useDeleteStockItem(props: StockOperationProps) {
     endpoint: ApiEndpoints.stock_item_list,
     modalFunc: useDeleteApiFormModal,
     title: t`Delete Stock Items`,
-    successMessage: t`Stock deleted`
+    successMessage: t`Stock deleted`,
+    preFormContent: (
+      <Alert color='red'>
+        {t`This operation will permanently delete the selected stock items.`}
+      </Alert>
+    )
   });
 }
 

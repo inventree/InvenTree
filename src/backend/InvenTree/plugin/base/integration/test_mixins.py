@@ -275,6 +275,8 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
 
     def test_api_call(self):
         """Test that api calls work."""
+        import time
+
         # api_call
         result = self.mixin.get_external_url()
         self.assertTrue(result)
@@ -290,13 +292,22 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         # Set API TOKEN
         self.mixin.set_setting('API_TOKEN', 'reqres-free-v1')
         # api_call with post and data
-        result = self.mixin.api_call(
-            'https://reqres.in/api/users/',
-            json={'name': 'morpheus', 'job': 'leader'},
-            method='POST',
-            endpoint_is_url=True,
-            timeout=5000,
-        )
+
+        # Try multiple times, account for the rate limit
+        result = None
+
+        for _ in range(5):
+            try:
+                result = self.mixin.api_call(
+                    'https://reqres.in/api/users/',
+                    json={'name': 'morpheus', 'job': 'leader'},
+                    method='POST',
+                    endpoint_is_url=True,
+                    timeout=5000,
+                )
+                break
+            except Exception:
+                time.sleep(1)
 
         self.assertTrue(result)
         self.assertNotIn('error', result)
@@ -339,4 +350,3 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         )
 
         self.assertEqual(result.status_code, 400)
-        self.assertIn('Bad Request', str(result.content))

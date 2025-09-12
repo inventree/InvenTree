@@ -341,6 +341,22 @@ def uninstall_plugin(cfg: plugin.models.PluginConfig, user=None, delete_config=T
             _('Plugin cannot be uninstalled as it is currently active')
         )
 
+    if cfg.is_mandatory():  # pragma: no cover
+        # This is only an additional check, as mandatory plugins cannot be deactivated
+        raise ValidationError(
+            'INVE-E10' + _('Plugin cannot be uninstalled as it is mandatory')
+        )
+
+    if cfg.is_sample():
+        raise ValidationError(
+            'INVE-E10' + _('Plugin cannot be uninstalled as it is a sample plugin')
+        )
+
+    if cfg.is_builtin():
+        raise ValidationError(
+            'INVE-E10' + _('Plugin cannot be uninstalled as it is a built-in plugin')
+        )
+
     if not cfg.is_installed():
         raise ValidationError(_('Plugin is not installed'))
 
@@ -366,6 +382,7 @@ def uninstall_plugin(cfg: plugin.models.PluginConfig, user=None, delete_config=T
     update_plugins_file(package_name, remove=True)
 
     if delete_config:
+        logger.info('Deleting plugin configuration from database: %s', cfg.key)
         # Remove the plugin configuration from the database
         cfg.delete()
 

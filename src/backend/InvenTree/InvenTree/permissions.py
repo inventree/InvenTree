@@ -13,6 +13,7 @@ from users.oauth2_scopes import (
     DEFAULT_READ,
     DEFAULT_STAFF,
     DEFAULT_SUPERUSER,
+    _roles,
     get_granular_scope,
 )
 
@@ -46,6 +47,7 @@ def map_scope(
     read_name=DEFAULT_READ,
     map_read: Optional[list[str]] = None,
     map_read_name=DEFAULT_READ,
+    override_all_actions: Optional[str] = None,
 ) -> dict:
     """Generate the required scopes for OAS permission views.
 
@@ -55,6 +57,7 @@ def map_scope(
         read_name (str): The read scope name to use when `only_read` is True.
         map_read (Optional[list[str]]): A list of HTTP methods that should map to the default read scope (use if some actions requirea differing role).
         map_read_name (str): The read scope name to use for methods specified in `map_read` when `map_read` is specified.
+        override_all_actions (Optional[str]): If specified, all actions will be overridden to use the provided action name instead of the default action names.
 
     Returns:
         dict: A dictionary mapping HTTP methods to their corresponding scopes.
@@ -71,7 +74,7 @@ def map_scope(
     def get_scope(method, action):
         if map_read and method in map_read:
             return [[map_read_name]]
-        return scope_name(action)
+        return scope_name(override_all_actions if override_all_actions else action)
 
     return {
         method: get_scope(method, action) if method != 'OPTIONS' else [[DEFAULT_READ]]
@@ -92,8 +95,12 @@ for role, tables in roles.items():
 class OASTokenMixin:
     """Mixin that combines the permissions of normal classes and token classes."""
 
+    ENFORCE_USER_PERMS: bool = False
+
     def has_permission(self, request, view):
         """Check if the user has the required scopes or was authenticated another way."""
+        if self.ENFORCE_USER_PERMS:
+            return super().has_permission(request, view)
         return self.check_oauth2_authentication(
             request, view
         ) or super().has_permission(request, view)
@@ -356,7 +363,18 @@ class UserSettingsPermissionsOrScope(OASTokenMixin, permissions.BasePermission):
         except AttributeError:  # pragma: no cover
             return False
 
+        if not user.is_authenticated:
+            return False
+
         return user == obj.user
+
+    def has_permission(self, request, view):
+        """Check that the requesting user is authenticated."""
+        try:
+            user = request.user
+            return user.is_authenticated
+        except AttributeError:
+            return False
 
     def get_required_alternate_scopes(self, request, view):
         """Return the required scopes for the current request."""
@@ -384,3 +402,42 @@ class GlobalSettingsPermissions(OASTokenMixin, permissions.BasePermission):
         return map_scope(
             only_read=True, read_name=DEFAULT_STAFF, map_read=permissions.SAFE_METHODS
         )
+
+
+class DataImporterPermission(OASTokenMixin, permissions.BasePermission):
+    """Mixin class for determining if the user has correct permissions."""
+
+    ENFORCE_USER_PERMS = True
+
+    def has_permission(self, request, view):
+        """Class level permission checks are handled via InvenTree.permissions.IsAuthenticatedOrReadScope."""
+        return request.user and request.user.is_authenticated
+
+    def get_required_alternate_scopes(self, request, view):
+        """Return the required scopes for the current request."""
+        return map_scope(
+            roles=_roles,
+            map_read=permissions.SAFE_METHODS,
+            override_all_actions='change',  # this is done to match the custom has_object_permission method
+        )
+
+    def has_object_permission(self, request, view, obj):
+        """Check if the user has permission to access the imported object."""
+        import importer.models
+
+        # For safe methods (GET, HEAD, OPTIONS), allow access
+        if request.method in permissions.SAFE_METHODS:
+            return True
+
+        if isinstance(obj, importer.models.DataImportSession):
+            session = obj
+        else:
+            session = getattr(obj, 'session', None)
+
+        if session:
+            if model_class := session.model_class:
+                return users.permissions.check_user_permission(
+                    request.user, model_class, 'change'
+                )
+
+        return True

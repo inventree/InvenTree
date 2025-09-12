@@ -6,10 +6,10 @@ import { type ReactNode, useMemo } from 'react';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
+import type { TableColumn } from '@lib/types/Tables';
 import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
 import { formatCurrency } from '../../../defaults/formatters';
 import { useTable } from '../../../hooks/UseTable';
-import type { TableColumn } from '../../../tables/Column';
 import { DateColumn, PartColumn } from '../../../tables/ColumnRenderers';
 import { InvenTreeTable } from '../../../tables/InvenTreeTable';
 import { NoPricingData } from './PricingPanel';
@@ -25,13 +25,11 @@ export default function VariantPricingPanel({
 
   const columns: TableColumn[] = useMemo(() => {
     return [
-      {
-        accessor: 'name',
+      PartColumn({
         title: t`Variant Part`,
-        sortable: true,
-        switchable: false,
-        render: (record: any) => PartColumn({ part: record, full_name: true })
-      },
+        part: '',
+        full_name: true
+      }),
       {
         accessor: 'pricing_min',
         title: t`Minimum Price`,

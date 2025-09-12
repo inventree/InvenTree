@@ -16,14 +16,19 @@ from rest_framework.response import Response
 import build.serializers
 import common.models
 import part.models as part_models
+import stock.models as stock_models
 import stock.serializers
 from build.models import Build, BuildItem, BuildLine
 from build.status_codes import BuildStatus, BuildStatusGroups
 from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import StatusView
 from InvenTree.api import BulkDeleteMixin, MetadataView
-from InvenTree.filters import SEARCH_ORDER_FILTER_ALIAS, InvenTreeDateFilter
-from InvenTree.helpers import isNull, str2bool
+from InvenTree.filters import (
+    SEARCH_ORDER_FILTER_ALIAS,
+    InvenTreeDateFilter,
+    NumberOrNullFilter,
+)
+from InvenTree.helpers import str2bool
 from InvenTree.mixins import CreateAPI, ListCreateAPI, RetrieveUpdateDestroyAPI
 from users.models import Owner
 
@@ -35,7 +40,7 @@ class BuildFilter(rest_filters.FilterSet):
         """Metaclass options."""
 
         model = Build
-        fields = ['sales_order', 'external']
+        fields = ['issued_by', 'sales_order', 'external']
 
     status = rest_filters.NumberFilter(label=_('Order Status'), method='filter_status')
 
@@ -148,21 +153,6 @@ class BuildFilter(rest_filters.FilterSet):
         if value:
             return queryset.filter(responsible__in=owners)
         return queryset.exclude(responsible__in=owners)
-
-    issued_by = rest_filters.ModelChoiceFilter(
-        queryset=Owner.objects.all(), label=_('Issued By'), method='filter_issued_by'
-    )
-
-    def filter_issued_by(self, queryset, name, owner):
-        """Filter by 'owner' which issued the order."""
-        if owner.label() == 'user':
-            user = User.objects.get(pk=owner.owner_id)
-            return queryset.filter(issued_by=user)
-        elif owner.label() == 'group':
-            group = User.objects.filter(groups__pk=owner.owner_id)
-            return queryset.filter(issued_by__in=group)
-        else:
-            return queryset.none()
 
     assigned_to = rest_filters.ModelChoiceFilter(
         queryset=Owner.objects.all(), field_name='responsible', label=_('Assigned To')
@@ -493,6 +483,14 @@ class BuildLineFilter(rest_filters.FilterSet):
             return queryset.filter(allocated__gte=F('quantity'))
         return queryset.filter(allocated__lt=F('quantity'))
 
+    consumed = rest_filters.BooleanFilter(label=_('Consumed'), method='filter_consumed')
+
+    def filter_consumed(self, queryset, name, value):
+        """Filter by whether each BuildLine is fully consumed."""
+        if str2bool(value):
+            return queryset.filter(consumed__gte=F('quantity'))
+        return queryset.filter(consumed__lt=F('quantity'))
+
     available = rest_filters.BooleanFilter(
         label=_('Available'), method='filter_available'
     )
@@ -508,6 +506,7 @@ class BuildLineFilter(rest_filters.FilterSet):
         """
         flt = Q(
             quantity__lte=F('allocated')
+            + F('consumed')
             + F('available_stock')
             + F('available_substitute_stock')
             + F('available_variant_stock')
@@ -518,7 +517,7 @@ class BuildLineFilter(rest_filters.FilterSet):
         return queryset.exclude(flt)
 
 
-class BuildLineEndpoint:
+class BuildLineMixin:
     """Mixin class for BuildLine API endpoints."""
 
     queryset = BuildLine.objects.all()
@@ -531,8 +530,11 @@ class BuildLineEndpoint:
         try:
             params = self.request.query_params
 
+            kwargs['bom_item_detail'] = str2bool(params.get('bom_item_detail', True))
+            kwargs['assembly_detail'] = str2bool(params.get('assembly_detail', True))
             kwargs['part_detail'] = str2bool(params.get('part_detail', True))
             kwargs['build_detail'] = str2bool(params.get('build_detail', False))
+            kwargs['allocations'] = str2bool(params.get('allocations', True))
         except AttributeError:
             pass
 
@@ -564,7 +566,7 @@ class BuildLineEndpoint:
         )
 
 
-class BuildLineList(BuildLineEndpoint, DataExportViewMixin, ListCreateAPI):
+class BuildLineList(BuildLineMixin, DataExportViewMixin, ListCreateAPI):
     """API endpoint for accessing a list of BuildLine objects."""
 
     filterset_class = BuildLineFilter
@@ -573,6 +575,7 @@ class BuildLineList(BuildLineEndpoint, DataExportViewMixin, ListCreateAPI):
     ordering_fields = [
         'part',
         'allocated',
+        'consumed',
         'reference',
         'quantity',
         'consumable',
@@ -616,7 +619,7 @@ class BuildLineList(BuildLineEndpoint, DataExportViewMixin, ListCreateAPI):
         return source_build
 
 
-class BuildLineDetail(BuildLineEndpoint, RetrieveUpdateDestroyAPI):
+class BuildLineDetail(BuildLineMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a BuildLine object."""
 
     def get_source_build(self) -> Build | None:
@@ -642,14 +645,15 @@ class BuildOrderContextMixin:
         return ctx
 
 
+@extend_schema(responses={201: stock.serializers.StockItemSerializer(many=True)})
 class BuildOutputCreate(BuildOrderContextMixin, CreateAPI):
     """API endpoint for creating new build output(s)."""
 
     queryset = Build.objects.none()
 
     serializer_class = build.serializers.BuildOutputCreateSerializer
+    pagination_class = None
 
-    @extend_schema(responses={201: stock.serializers.StockItemSerializer(many=True)})
     def create(self, request, *args, **kwargs):
         """Override the create method to handle the creation of build outputs."""
         serializer = self.get_serializer(data=request.data)
@@ -658,7 +662,8 @@ class BuildOutputCreate(BuildOrderContextMixin, CreateAPI):
         # Create the build output(s)
         outputs = serializer.save()
 
-        response = stock.serializers.StockItemSerializer(outputs, many=True)
+        queryset = stock.serializers.StockItemSerializer.annotate_queryset(outputs)
+        response = stock.serializers.StockItemSerializer(queryset, many=True)
 
         # Return the created outputs
         return Response(response.data, status=status.HTTP_201_CREATED)
@@ -741,6 +746,13 @@ class BuildAllocate(BuildOrderContextMixin, CreateAPI):
 
     queryset = Build.objects.none()
     serializer_class = build.serializers.BuildAllocationSerializer
+
+
+class BuildConsume(BuildOrderContextMixin, CreateAPI):
+    """API endpoint to consume stock against a build order."""
+
+    queryset = Build.objects.none()
+    serializer_class = build.serializers.BuildConsumeSerializer
 
 
 class BuildIssue(BuildOrderContextMixin, CreateAPI):
@@ -830,6 +842,26 @@ class BuildItemFilter(rest_filters.FilterSet):
             return queryset.exclude(install_into=None)
         return queryset.filter(install_into=None)
 
+    location = rest_filters.ModelChoiceFilter(
+        queryset=stock_models.StockLocation.objects.all(),
+        label=_('Location'),
+        method='filter_location',
+    )
+
+    @extend_schema_field(serializers.IntegerField(help_text=_('Location')))
+    def filter_location(self, queryset, name, location):
+        """Filter the queryset based on the specified location."""
+        locations = location.get_descendants(include_self=True)
+        return queryset.filter(stock_item__location__in=locations)
+
+    output = NumberOrNullFilter(
+        field_name='install_into',
+        label=_('Output'),
+        help_text=_(
+            "Filter by output stock item ID. Use 'null' to find uninstalled build items."
+        ),
+    )
+
 
 class BuildItemList(DataExportViewMixin, BulkDeleteMixin, ListCreateAPI):
     """API endpoint for accessing a list of BuildItem objects.
@@ -868,6 +900,11 @@ class BuildItemList(DataExportViewMixin, BulkDeleteMixin, ListCreateAPI):
         queryset = queryset.select_related(
             'build_line',
             'build_line__build',
+            'build_line__build__part',
+            'build_line__build__responsible',
+            'build_line__build__issued_by',
+            'build_line__build__project_code',
+            'build_line__build__part__pricing_data',
             'build_line__bom_item',
             'build_line__bom_item__part',
             'build_line__bom_item__sub_part',
@@ -879,24 +916,7 @@ class BuildItemList(DataExportViewMixin, BulkDeleteMixin, ListCreateAPI):
             'stock_item__supplier_part__supplier',
             'stock_item__supplier_part__manufacturer_part',
             'stock_item__supplier_part__manufacturer_part__manufacturer',
-        ).prefetch_related('stock_item__location__tags')
-
-        return queryset
-
-    def filter_queryset(self, queryset):
-        """Custom query filtering for the BuildItem list."""
-        queryset = super().filter_queryset(queryset)
-
-        params = self.request.query_params
-
-        # Filter by output target
-        output = params.get('output', None)
-
-        if output:
-            if isNull(output):
-                queryset = queryset.filter(install_into=None)
-            else:
-                queryset = queryset.filter(install_into=output)
+        ).prefetch_related('stock_item__location__tags', 'stock_item__tags')
 
         return queryset
 
@@ -950,6 +970,7 @@ build_api_urls = [
         '<int:pk>/',
         include([
             path('allocate/', BuildAllocate.as_view(), name='api-build-allocate'),
+            path('consume/', BuildConsume.as_view(), name='api-build-consume'),
             path(
                 'auto-allocate/',
                 BuildAutoAllocate.as_view(),

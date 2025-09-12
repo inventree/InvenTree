@@ -152,11 +152,6 @@ def setting_object(key, *args, **kwargs):
             key, plugin=plg, cache=cache
         )
 
-    elif 'method' in kwargs:
-        return plugin.models.NotificationUserSetting.get_setting_object(
-            key, user=kwargs['user'], method=kwargs['method'], cache=cache
-        )
-
     elif 'user' in kwargs:
         return common.models.InvenTreeUserSetting.get_setting_object(
             key, user=kwargs['user'], cache=cache

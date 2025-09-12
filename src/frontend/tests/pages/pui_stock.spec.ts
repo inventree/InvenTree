@@ -1,4 +1,4 @@
-import { test } from '../baseFixtures.js';
+import { expect, test } from '../baseFixtures.js';
 import {
   clearTableFilters,
   clickButtonIfVisible,
@@ -199,12 +199,27 @@ test('Stock - Serialize', async ({ browser }) => {
   await page.getByLabel('action-menu-stock-operations').click();
   await page.getByLabel('action-menu-stock-operations-serialize').click();
 
+  // Check for expected placeholder value
+  await expect(
+    page.getByRole('textbox', { name: 'text-field-serial_numbers' })
+  ).toHaveAttribute('placeholder', 'Next serial number: 365');
+
   await page.getByLabel('text-field-serial_numbers').fill('200-250');
 
   await page.getByRole('button', { name: 'Submit' }).click();
+
   await page
-    .getByText('Group range 200-250 exceeds allowed quantity')
+    .getByText('Number of unique serial numbers (51) must match quantity (100)')
     .waitFor();
+
+  await page.getByLabel('text-field-serial_numbers').fill('1, 2, 3');
+  await page.waitForTimeout(250);
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  await page
+    .getByText('Number of unique serial numbers (3) must match quantity (100)')
+    .waitFor();
+
   await page.getByRole('button', { name: 'Cancel' }).click();
 });
 
@@ -282,6 +297,40 @@ test('Stock - Stock Actions', async ({ browser }) => {
   await page.getByText('Unavailable').waitFor();
   await page.getByLabel('action-menu-stock-operations').click();
   await page.getByLabel('action-menu-stock-operations-return').click();
+});
+
+test('Stock - Return Items', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    url: 'sales/customer/32/assigned-stock'
+  });
+
+  // Return stock items assigned to customer
+  await page.getByRole('cell', { name: 'Select all records' }).click();
+  await page.getByRole('button', { name: 'action-menu-stock-actions' }).click();
+  await page
+    .getByRole('menuitem', { name: 'action-menu-stock-actions-return-stock' })
+    .click();
+  await page.getByText('Return selected items into stock').first().waitFor();
+  await page.getByRole('button', { name: 'Cancel' }).click();
+
+  // Location detail
+  await navigate(page, 'stock/item/1253');
+  await page
+    .getByRole('button', { name: 'action-menu-stock-operations' })
+    .click();
+  await page
+    .getByRole('menuitem', {
+      name: 'action-menu-stock-operations-return-stock'
+    })
+    .click();
+
+  await page.getByText('#128').waitFor();
+  await page.getByText('Merge into existing stock').waitFor();
+  await page.getByRole('textbox', { name: 'number-field-quantity' }).fill('0');
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  await page.getByText('Quantity must be greater than zero').waitFor();
+  await page.getByText('This field is required.').waitFor();
 });
 
 test('Stock - Tracking', async ({ browser }) => {

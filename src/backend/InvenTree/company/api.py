@@ -60,7 +60,7 @@ class CompanyList(DataExportViewMixin, ListCreateAPI):
         'active',
     ]
 
-    search_fields = ['name', 'description', 'website']
+    search_fields = ['name', 'description', 'website', 'tax_id']
 
     ordering_fields = ['active', 'name', 'parts_supplied', 'parts_manufactured']
 
@@ -335,7 +335,9 @@ class SupplierPartMixin:
         queryset = super().get_queryset(*args, **kwargs)
         queryset = SupplierPartSerializer.annotate_queryset(queryset)
 
-        queryset = queryset.prefetch_related('part', 'part__pricing_data')
+        queryset = queryset.prefetch_related(
+            'part', 'part__pricing_data', 'manufacturer_part__tags'
+        )
 
         return queryset
 

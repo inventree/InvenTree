@@ -117,63 +117,6 @@ def generate_permission_dict(permissions) -> dict:
     return perms
 
 
-def generate_roles_dict(roles) -> dict:
-    """Generate a dictionary of roles for a given set of roles."""
-    # Build out an (initially empty) dictionary of roles
-    role_dict = {name: [] for name, _ in RULESET_CHOICES}
-
-    for role in roles:
-        permissions = []
-
-        for permission in ['view', 'add', 'change', 'delete']:
-            if getattr(role, f'can_{permission}', False):
-                permissions.append(permission)
-
-        role_dict[role.name] = permissions
-
-    return role_dict
-
-
-class ApiTokenSerializer(InvenTreeModelSerializer):
-    """Serializer for the ApiToken model."""
-
-    in_use = serializers.SerializerMethodField(read_only=True)
-    user = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), required=False
-    )
-
-    def get_in_use(self, token: ApiToken) -> bool:
-        """Return True if the token is currently used to call the endpoint."""
-        from InvenTree.middleware import get_token_from_request
-
-        request = self.context.get('request')
-        rq_token = get_token_from_request(request)
-        return token.key == rq_token
-
-    class Meta:
-        """Meta options for ApiTokenSerializer."""
-
-        model = ApiToken
-        fields = [
-            'created',
-            'expiry',
-            'id',
-            'last_seen',
-            'name',
-            'token',
-            'active',
-            'revoked',
-            'user',
-            'in_use',
-        ]
-
-    def validate(self, data):
-        """Validate the data for the serializer."""
-        if 'user' not in data:
-            data['user'] = self.context['request'].user
-        return super().validate(data)
-
-
 class GetAuthTokenSerializer(serializers.Serializer):
     """Serializer for the GetAuthToken API endpoint."""
 
@@ -248,6 +191,49 @@ class UserSerializer(InvenTreeModelSerializer):
     )
 
 
+class ApiTokenSerializer(InvenTreeModelSerializer):
+    """Serializer for the ApiToken model."""
+
+    in_use = serializers.SerializerMethodField(read_only=True)
+    user = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), required=False
+    )
+
+    def get_in_use(self, token: ApiToken) -> bool:
+        """Return True if the token is currently used to call the endpoint."""
+        from InvenTree.middleware import get_token_from_request
+
+        request = self.context.get('request')
+        rq_token = get_token_from_request(request)
+        return token.key == rq_token
+
+    class Meta:
+        """Meta options for ApiTokenSerializer."""
+
+        model = ApiToken
+        fields = [
+            'created',
+            'expiry',
+            'id',
+            'last_seen',
+            'name',
+            'token',
+            'active',
+            'revoked',
+            'user',
+            'user_detail',
+            'in_use',
+        ]
+
+    def validate(self, data):
+        """Validate the data for the serializer."""
+        if 'user' not in data:
+            data['user'] = self.context['request'].user
+        return super().validate(data)
+
+    user_detail = UserSerializer(source='user', read_only=True)
+
+
 class GroupSerializer(InvenTreeModelSerializer):
     """Serializer for a 'Group'."""
 
@@ -274,7 +260,7 @@ class GroupSerializer(InvenTreeModelSerializer):
                 if not user_detail:
                     self.fields.pop('users', None)
 
-        except AppRegistryNotReady:
+        except AppRegistryNotReady:  # pragma: no cover
             pass
 
     permissions = serializers.SerializerMethodField(allow_null=True, read_only=True)
@@ -418,13 +404,8 @@ class UserCreateSerializer(ExtendedUserSerializer):
         user = self.context['request'].user
 
         # Check that the user trying to create a new user is a superuser
-        if not user.is_staff:
-            raise serializers.ValidationError(
-                _('Only staff users can create new users')
-            )
-
-        if not check_user_role(user, RuleSetEnum.ADMIN, 'add'):
-            raise serializers.ValidationError(
+        if not user.is_staff or not check_user_role(user, RuleSetEnum.ADMIN, 'add'):
+            raise serializers.ValidationError(  # pragma: no cover # Handled by permissions already
                 _('You do not have permission to create users')
             )
 

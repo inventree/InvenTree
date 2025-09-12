@@ -295,7 +295,6 @@ class InfoView(APIView):
             'worker_pending_tasks': self.worker_pending_tasks(),
             'plugins_enabled': settings.PLUGINS_ENABLED,
             'plugins_install_disabled': settings.PLUGINS_INSTALL_DISABLED,
-            'active_plugins': plugins_info(),
             'email_configured': is_email_configured(),
             'debug_mode': settings.DEBUG,
             'docker_mode': settings.DOCKER,
@@ -306,6 +305,7 @@ class InfoView(APIView):
                 'login_message': helpers.getCustomOption('login_message'),
                 'navbar_message': helpers.getCustomOption('navbar_message'),
             },
+            'active_plugins': plugins_info(),
             # Following fields are only available to staff users
             'system_health': check_system_health() if is_staff else None,
             'database': InvenTree.version.inventreeDatabase() if is_staff else None,
@@ -472,6 +472,35 @@ class BulkOperationMixin:
             })
 
         return queryset
+
+
+class BulkCreateMixin:
+    """Mixin class for enabling 'bulk create' operations for various models.
+
+    Bulk create allows for multiple items to be created in a single API query,
+    rather than using multiple API calls to same endpoint.
+    """
+
+    def create(self, request, *args, **kwargs):
+        """Perform a POST operation against this list endpoint."""
+        data = request.data
+
+        if isinstance(data, list):
+            created_items = []
+
+            # If data is a list, we assume it is a bulk create request
+            if len(data) == 0:
+                raise ValidationError({'non_field_errors': _('No data provided')})
+
+            for item in data:
+                serializer = self.get_serializer(data=item)
+                serializer.is_valid(raise_exception=True)
+                self.perform_create(serializer)
+                created_items.append(serializer.data)
+
+            return Response(created_items, status=201)
+
+        return super().create(request, *args, **kwargs)
 
 
 class BulkUpdateMixin(BulkOperationMixin):

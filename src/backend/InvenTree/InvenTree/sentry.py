@@ -1,5 +1,7 @@
 """Configuration for Sentry.io error reporting."""
 
+from typing import Optional
+
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.http import Http404
@@ -64,17 +66,28 @@ def init_sentry(dsn, sample_rate, tags):
     sentry_sdk.set_tag('git_date', InvenTree.version.inventreeCommitDate())
 
 
-def report_exception(exc):
+def report_exception(exc, scope: Optional[dict] = None):
     """Report an exception to sentry.io."""
-    if settings.TESTING:
-        # Skip reporting exceptions in testing mode
+    assert settings.TESTING == False, (
+        'report_exception should not be called in testing mode'
+    )
+
+    # Skip if sentry not enabled, or not configured
+    if not settings.SENTRY_ENABLED or not settings.SENTRY_DSN:
         return
 
-    if settings.SENTRY_ENABLED and settings.SENTRY_DSN:
-        if not any(isinstance(exc, e) for e in sentry_ignore_errors()):
-            logger.info('Reporting exception to sentry.io: %s', exc)
+    # Skip if this error type is in the ignore list
+    if any(isinstance(exc, e) for e in sentry_ignore_errors()):
+        return
 
-            try:
-                sentry_sdk.capture_exception(exc)
-            except Exception:
-                logger.warning('Failed to report exception to sentry.io')
+    # Error may also be passed in from the loggingn context
+    if hasattr(exc, 'event'):
+        event = getattr(exc, 'event', None)
+
+        if any(isinstance(event, e) for e in sentry_ignore_errors()):
+            return
+
+    try:
+        sentry_sdk.capture_exception(exc, scope=scope)
+    except Exception:
+        logger.warning('Failed to report exception to sentry.io')

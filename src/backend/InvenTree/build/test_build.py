@@ -7,7 +7,6 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.db.models import Sum
-from django.test import TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
 
@@ -20,7 +19,11 @@ from build.models import Build, BuildItem, BuildLine, generate_next_build_refere
 from build.status_codes import BuildStatus
 from common.settings import set_global_setting
 from InvenTree import status_codes as status
-from InvenTree.unit_test import InvenTreeAPITestCase, findOffloadedEvent
+from InvenTree.unit_test import (
+    InvenTreeAPITestCase,
+    InvenTreeTestCase,
+    findOffloadedEvent,
+)
 from order.models import PurchaseOrder, PurchaseOrderLineItem
 from part.models import BomItem, BomItemSubstitute, Part, PartTestTemplate
 from stock.models import StockItem, StockItemTestResult, StockLocation
@@ -29,7 +32,7 @@ from users.models import Owner
 logger = structlog.get_logger('inventree')
 
 
-class BuildTestBase(TestCase):
+class BuildTestBase(InvenTreeTestCase):
     """Run some tests to ensure that the Build model is working properly."""
 
     fixtures = ['users']
@@ -495,9 +498,44 @@ class BuildTest(BuildTestBase):
         self.assertEqual(StockItem.objects.get(pk=self.stock_3_1.pk).quantity, 980)
 
         # Check that the "consumed_by" item count has increased
-        self.assertEqual(
-            StockItem.objects.filter(consumed_by=self.build).count(), n + 8
-        )
+        consumed_items = StockItem.objects.filter(consumed_by=self.build)
+        self.assertEqual(consumed_items.count(), n + 8)
+
+        # Finally, return the items into stock
+        location = StockLocation.objects.filter(structural=False).first()
+
+        for item in consumed_items:
+            item.return_to_stock(location)
+
+        # No consumed items should remain
+        self.assertEqual(StockItem.objects.filter(consumed_by=self.build).count(), 0)
+
+    def test_return_consumed(self):
+        """Test returning consumed stock items to stock."""
+        self.build.auto_allocate_stock(interchangeable=True)
+
+        self.build.incomplete_outputs.delete()
+
+        self.assertGreater(self.build.allocated_stock.count(), 0)
+
+        self.build.complete_build(self.user)
+        consumed_items = StockItem.objects.filter(consumed_by=self.build)
+        self.assertGreater(consumed_items.count(), 0)
+
+        location = StockLocation.objects.filter(structural=False).last()
+
+        # Return a partial quantity of each item to stock
+        for item in consumed_items:
+            self.assertEqual(item.get_descendant_count(), 0)
+            q = item.quantity
+            self.assertGreater(item.quantity, 1)
+            item.return_to_stock(location, merge=False, quantity=1)
+            item.refresh_from_db()
+            self.assertEqual(item.quantity, q - 1)
+            self.assertEqual(item.get_descendant_count(), 1)
+            self.assertFalse(item.is_in_stock())
+            child = item.get_descendants().first()
+            self.assertTrue(child.is_in_stock())
 
     def test_change_part(self):
         """Try to change target part after creating a build."""
@@ -619,6 +657,8 @@ class BuildTest(BuildTestBase):
 
     def test_overdue_notification(self):
         """Test sending of notifications when a build order is overdue."""
+        self.ensurePluginsLoaded()
+
         self.build.target_date = datetime.now().date() - timedelta(days=1)
         self.build.save()
 

@@ -223,7 +223,7 @@ def envcheck_invoke_cmd():
 
     correct_cmd: Optional[str] = None
     if is_rtd_environment() or is_docker_environment() or is_devcontainer_environment():
-        pass
+        return  # Skip invoke command check for Docker/RTD/DevContainer environments
     elif is_pkg_installer(load_content=True) and not is_pkg_installer_by_path():
         correct_cmd = 'inventree run invoke'
     else:
@@ -296,6 +296,7 @@ def content_excludes(
         'exchange.rate',
         'exchange.exchangebackend',
         'common.dataoutput',
+        'common.newsfeedentry',
         'common.notificationentry',
         'common.notificationmessage',
         'importer.dataimportsession',
@@ -1212,32 +1213,28 @@ def test_translations(c):
 
 @task(
     help={
+        'check': 'Run sanity check on the django install (default = False)',
         'disable_pty': 'Disable PTY',
         'runtest': 'Specify which tests to run, in format <module>.<file>.<class>.<method>',
         'migrations': 'Run migration unit tests',
         'report': 'Display a report of slow tests',
         'coverage': 'Run code coverage analysis (requires coverage package)',
+        'translations': 'Compile translations before running tests',
+        'keepdb': 'Keep the test database after running tests (default = False)',
     }
 )
 def test(
     c,
+    check=False,
     disable_pty=False,
     runtest='',
     migrations=False,
     report=False,
     coverage=False,
     translations=False,
+    keepdb=False,
 ):
     """Run unit-tests for InvenTree codebase.
-
-    Args:
-        c: Command line context.
-        disable_pty (bool): Disable PTY (default = False)
-        runtest (str): Specify which tests to run, in format <module>.<file>.<class>.<method> (default = '')
-        migrations (bool): Run migration unit tests (default = False)
-        report (bool): Display a report of slow tests (default = False)
-        coverage (bool): Run code coverage analysis (requires coverage package) (default = False)
-        translations (bool): Compile translations before running tests (default = False)
 
     To run only certain test, use the argument --runtest.
     This can filter all the way down to:
@@ -1248,7 +1245,8 @@ def test(
     will run tests in the company/test_api.py file.
     """
     # Run sanity check on the django install
-    manage(c, 'check')
+    if check:
+        manage(c, 'check')
 
     if translations:
         try:
@@ -1272,6 +1270,9 @@ def test(
     if report:
         cmd += ' --slowreport'
 
+    if keepdb:
+        cmd += ' --keepdb'
+
     if migrations:
         cmd += ' --tag migration_test'
     else:
@@ -1290,6 +1291,7 @@ def test(
     help={
         'dev': 'Set up development environment at the end',
         'validate_files': 'Validate media files are correctly copied',
+        'use_ssh': 'Use SSH protocol for cloning the demo dataset (requires SSH key)',
     }
 )
 def setup_test(
@@ -1297,6 +1299,7 @@ def setup_test(
     ignore_update=False,
     dev=False,
     validate_files=False,
+    use_ssh=False,
     path='inventree-demo-dataset',
 ):
     """Setup a testing environment."""
@@ -1312,12 +1315,15 @@ def setup_test(
         info('Removing old data ...')
         run(c, f'rm {template_dir} -r')
 
+    URL = 'https://github.com/inventree/demo-dataset'
+
+    if use_ssh:
+        # Use SSH protocol for cloning the demo dataset
+        URL = 'git@github.com:inventree/demo-dataset.git'
+
     # Get test data
     info('Cloning demo dataset ...')
-    run(
-        c,
-        f'git clone https://github.com/inventree/demo-dataset {template_dir} -v --depth=1',
-    )
+    run(c, f'git clone {URL} {template_dir} -v --depth=1')
 
     # Make sure migrations are done - might have just deleted sqlite database
     if not ignore_update:
@@ -1587,6 +1593,21 @@ def frontend_server(c):
     info('Starting frontend development server')
     yarn(c, 'yarn run compile')
     yarn(c, 'yarn run dev --host')
+
+
+@task
+def frontend_test(c, host: str = '0.0.0.0'):
+    """Start the playwright test runner for the frontend code."""
+    info('Starting frontend test runner')
+
+    frontend_path = local_dir().joinpath('src', 'frontend').resolve()
+
+    cmd = 'npx playwright test --ui'
+
+    if host:
+        cmd += f' --ui-host={host}'
+
+    run(c, cmd, path=frontend_path)
 
 
 @task(
@@ -1873,6 +1894,7 @@ development = Collection(
     delete_data,
     docs_server,
     frontend_server,
+    frontend_test,
     gunicorn,
     import_fixtures,
     schema,

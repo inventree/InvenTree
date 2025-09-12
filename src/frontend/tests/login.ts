@@ -114,7 +114,10 @@ export const doCachedLogin = async (
   await page.context().storageState({ path: fn });
 
   if (url) {
-    await navigate(page, url, { baseUrl: options?.baseUrl });
+    await navigate(page, url, {
+      baseUrl: options?.baseUrl,
+      waitUntil: 'networkidle'
+    });
   }
 
   return page;

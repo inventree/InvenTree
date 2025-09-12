@@ -2,16 +2,16 @@ import { t } from '@lingui/core/macro';
 import { Text } from '@mantine/core';
 import { useMemo } from 'react';
 
+import { ProgressBar } from '@lib/components/ProgressBar';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
-import { ProgressBar } from '../../components/items/ProgressBar';
+import type { TableColumn } from '@lib/types/Tables';
 import { formatCurrency } from '../../defaults/formatters';
 import { useTable } from '../../hooks/UseTable';
-import type { TableColumn } from '../Column';
 import { DateColumn, ReferenceColumn, StatusColumn } from '../ColumnRenderers';
-import { StatusFilterOptions } from '../Filter';
+import { IncludeVariantsFilter, StatusFilterOptions } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { TableHoverCard } from '../TableHoverCard';
 
@@ -133,12 +133,7 @@ export default function PartPurchaseOrdersTable({
         description: t`Filter by order status`,
         choiceFunction: StatusFilterOptions(ModelType.purchaseorder)
       },
-      {
-        name: 'include_variants',
-        type: 'boolean',
-        label: t`Include Variants`,
-        description: t`Include orders for part variants`
-      }
+      IncludeVariantsFilter()
     ];
   }, []);
 

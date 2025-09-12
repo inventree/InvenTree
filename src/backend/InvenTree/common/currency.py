@@ -15,12 +15,14 @@ import InvenTree.helpers
 logger = structlog.get_logger('inventree')
 
 
-def currency_code_default():
+def currency_code_default(create: bool = True):
     """Returns the default currency code (or USD if not specified)."""
     from common.settings import get_global_setting
 
     try:
-        code = get_global_setting('INVENTREE_DEFAULT_CURRENCY', create=True, cache=True)
+        code = get_global_setting(
+            'INVENTREE_DEFAULT_CURRENCY', create=create, cache=True
+        )
     except Exception:  # pragma: no cover
         # Database may not yet be ready, no need to throw an error here
         code = ''

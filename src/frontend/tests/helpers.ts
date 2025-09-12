@@ -33,7 +33,7 @@ export const clickButtonIfVisible = async (page, name, timeout = 500) => {
  */
 export const clearTableFilters = async (page) => {
   await openFilterDrawer(page);
-  await clickButtonIfVisible(page, 'Clear Filters');
+  await clickButtonIfVisible(page, 'Clear Filters', 250);
   await closeFilterDrawer(page);
   await page.waitForLoadState('networkidle');
 };
@@ -100,11 +100,13 @@ export const navigate = async (
 /**
  * CLick on the 'tab' element with the provided name
  */
-export const loadTab = async (page, tabName) => {
+export const loadTab = async (page, tabName, exact?) => {
   await page
     .getByLabel(/panel-tabs-/)
-    .getByRole('tab', { name: tabName })
+    .getByRole('tab', { name: tabName, exact: exact ?? false })
     .click();
+
+  await page.waitForLoadState('networkidle');
 };
 
 // Activate "table" view in certain contexts

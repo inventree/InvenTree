@@ -12,6 +12,11 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
 
     fixtures = ['category', 'part', 'location', 'stock', 'company', 'supplier_part']
 
+    def setUp(self):
+        """Set up the test case."""
+        super().setUp()
+        self.ensurePluginsLoaded()
+
     def test_assign_errors(self):
         """Test error cases for assignment action."""
 

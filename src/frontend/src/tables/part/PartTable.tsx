@@ -2,18 +2,21 @@ import { t } from '@lingui/core/macro';
 import { Group, Text } from '@mantine/core';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 
+import { ActionButton } from '@lib/components/ActionButton';
+import { AddItemButton } from '@lib/components/AddItemButton';
+import { type RowAction, RowEditAction } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
+import type { TableColumn } from '@lib/types/Tables';
+import type { InvenTreeTableProps } from '@lib/types/Tables';
 import { IconPackageImport, IconShoppingCart } from '@tabler/icons-react';
-import { ActionButton } from '../../components/buttons/ActionButton';
-import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
 import ImportPartWizard from '../../components/wizards/ImportPartWizard';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
-import { formatPriceRange } from '../../defaults/formatters';
+import { formatDecimal, formatPriceRange } from '../../defaults/formatters';
 import { usePartFields } from '../../forms/PartForms';
 import { InvenTreeIcon } from '../../functions/icons';
 import {
@@ -23,15 +26,14 @@ import {
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import {
   CategoryColumn,
+  DefaultLocationColumn,
   DescriptionColumn,
   LinkColumn,
   PartColumn
 } from '../ColumnRenderers';
-import { InvenTreeTable, type InvenTreeTableProps } from '../InvenTreeTable';
-import { type RowAction, RowEditAction } from '../RowActions';
+import { InvenTreeTable } from '../InvenTreeTable';
 import { TableHoverCard } from '../TableHoverCard';
 
 /**
@@ -39,14 +41,10 @@ import { TableHoverCard } from '../TableHoverCard';
  */
 function partTableColumns(): TableColumn[] {
   return [
-    {
-      accessor: 'name',
-      title: t`Part`,
-      sortable: true,
-      noWrap: true,
-      switchable: false,
-      render: (record: any) => PartColumn({ part: record })
-    },
+    PartColumn({
+      part: '',
+      accessor: 'name'
+    }),
     {
       accessor: 'IPN',
       sortable: true
@@ -63,12 +61,9 @@ function partTableColumns(): TableColumn[] {
     CategoryColumn({
       accessor: 'category_detail'
     }),
-    {
-      accessor: 'default_location',
-      sortable: true,
-      render: (record: any) => record.default_location_detail?.pathstring,
-      defaultVisible: false
-    },
+    DefaultLocationColumn({
+      accessor: 'default_location_detail'
+    }),
     {
       accessor: 'total_in_stock',
       sortable: true,
@@ -83,14 +78,14 @@ function partTableColumns(): TableColumn[] {
         const available = Math.max(0, stock - allocated);
         const min_stock = record?.minimum_stock ?? 0;
 
-        let text = String(stock);
+        let text = String(formatDecimal(stock));
 
         let color: string | undefined = undefined;
 
         if (min_stock > stock) {
           extra.push(
             <Text key='min-stock' c='orange'>
-              {`${t`Minimum stock`}: ${min_stock}`}
+              {`${t`Minimum stock`}: ${formatDecimal(min_stock)}`}
             </Text>
           );
 
@@ -99,20 +94,20 @@ function partTableColumns(): TableColumn[] {
 
         if (record.ordering > 0) {
           extra.push(
-            <Text key='on-order'>{`${t`On Order`}: ${record.ordering}`}</Text>
+            <Text key='on-order'>{`${t`On Order`}: ${formatDecimal(record.ordering)}`}</Text>
           );
         }
 
         if (record.building) {
           extra.push(
-            <Text key='building'>{`${t`Building`}: ${record.building}`}</Text>
+            <Text key='building'>{`${t`Building`}: ${formatDecimal(record.building)}`}</Text>
           );
         }
 
         if (record.allocated_to_build_orders > 0) {
           extra.push(
             <Text key='bo-allocations'>
-              {`${t`Build Order Allocations`}: ${record.allocated_to_build_orders}`}
+              {`${t`Build Order Allocations`}: ${formatDecimal(record.allocated_to_build_orders)}`}
             </Text>
           );
         }
@@ -120,7 +115,7 @@ function partTableColumns(): TableColumn[] {
         if (record.allocated_to_sales_orders > 0) {
           extra.push(
             <Text key='so-allocations'>
-              {`${t`Sales Order Allocations`}: ${record.allocated_to_sales_orders}`}
+              {`${t`Sales Order Allocations`}: ${formatDecimal(record.allocated_to_sales_orders)}`}
             </Text>
           );
         }
@@ -128,7 +123,7 @@ function partTableColumns(): TableColumn[] {
         if (available != stock) {
           extra.push(
             <Text key='available'>
-              {t`Available`}: {available}
+              {t`Available`}: {formatDecimal(available)}
             </Text>
           );
         }
@@ -136,7 +131,7 @@ function partTableColumns(): TableColumn[] {
         if (record.external_stock > 0) {
           extra.push(
             <Text key='external'>
-              {t`External stock`}: {record.external_stock}
+              {t`External stock`}: {formatDecimal(record.external_stock)}
             </Text>
           );
         }
@@ -202,6 +197,12 @@ function partTableFilters(): TableFilter[] {
       name: 'assembly',
       label: t`Assembly`,
       description: t`Filter by assembly attribute`,
+      type: 'boolean'
+    },
+    {
+      name: 'bom_valid',
+      label: t`BOM Valid`,
+      description: t`Filter by parts with a valid BOM`,
       type: 'boolean'
     },
     {
@@ -312,12 +313,6 @@ function partTableFilters(): TableFilter[] {
       name: 'starred',
       label: t`Subscribed`,
       description: t`Filter by parts to which the user is subscribed`,
-      type: 'boolean'
-    },
-    {
-      name: 'stocktake',
-      label: t`Has Stocktake`,
-      description: t`Filter by parts which have stocktake information`,
       type: 'boolean'
     }
   ];
