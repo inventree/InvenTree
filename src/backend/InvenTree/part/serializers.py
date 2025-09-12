@@ -457,31 +457,6 @@ class PartParameterSerializer(
     )
 
 
-class TemplateUniquenessListSerializer(serializers.ListSerializer):
-    """List serializer that validates unique fields for bulk create."""
-
-    validators = [
-        InvenTree.serializers.ListUniqueValidator(unique_field_names=['template'])
-    ]
-
-
-class PartParameterBulkSerializer(serializers.ModelSerializer):
-    """JSON serializers for the PartParameter model."""
-
-    validators = []
-
-    class Meta:
-        """Metaclass defining serializer fields."""
-
-        model = PartParameter
-        fields = ['pk', 'part', 'template', 'data', 'data_numeric']
-        list_serializer_class = TemplateUniquenessListSerializer
-
-    def __init__(self, *args, **kwargs):
-        """Custom initialization method for the serializer."""
-        super().__init__(*args, **kwargs)
-
-
 class DuplicatePartSerializer(serializers.Serializer):
     """Serializer for specifying options when duplicating a Part.
 

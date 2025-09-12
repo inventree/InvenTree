@@ -1,5 +1,6 @@
 """Main JSON interface views."""
 
+import collections
 import json
 from pathlib import Path
 
@@ -487,16 +488,46 @@ class BulkCreateMixin:
 
         if isinstance(data, list):
             created_items = []
+            errors = []
+            has_errors = False
 
             # If data is a list, we assume it is a bulk create request
             if len(data) == 0:
                 raise ValidationError({'non_field_errors': _('No data provided')})
 
-            for item in data:
-                serializer = self.get_serializer(data=item)
-                serializer.is_valid(raise_exception=True)
-                self.perform_create(serializer)
-                created_items.append(serializer.data)
+            # validate unique together fields
+            if unique_create_fields := getattr(self, 'unique_create_fields', None):
+                existing = collections.defaultdict(list)
+                for idx, item in enumerate(data):
+                    key = tuple(item[v] for v in unique_create_fields)
+                    existing[key].append(idx)
+
+                unique_errors = [[] for _ in range(len(data))]
+                has_unique_errors = False
+                for item in existing.values():
+                    if len(item) > 1:
+                        has_unique_errors = True
+                        error = {}
+                        for field_name in unique_create_fields:
+                            error[field_name] = [_('This field must be unique.')]
+                        for idx in item:
+                            unique_errors[idx] = error
+                if has_unique_errors:
+                    raise ValidationError(unique_errors)
+
+            with transaction.atomic():
+                for item in data:
+                    serializer = self.get_serializer(data=item)
+                    if serializer.is_valid():
+                        self.perform_create(serializer)
+                        created_items.append(serializer.data)
+                        errors.append([])
+                    else:
+                        errors.append(serializer.errors)
+                        has_errors = True
+
+                if has_errors:
+                    raise ValidationError(errors)
 
             return Response(created_items, status=201)
 

@@ -287,7 +287,7 @@ const ParametersStep = ({
   isImporting: boolean;
   skipStep: () => void;
   importParameters: (parameters: ParametersType) => Promise<void>;
-  parameterErrors: string[] | null;
+  parameterErrors: { template?: string; data?: string }[] | null;
 }) => {
   const [parameters, setParameters] = useState<ParametersType>(() =>
     importResult.parameters.map((p) => ({
@@ -367,8 +367,11 @@ const ParametersStep = ({
                     api_url: apiUrl(ApiEndpoints.part_parameter_template_list),
                     disabled: p.on_category,
                     value: p.parameter_template,
-                    onValueChange: (v) =>
-                      setParameter(i, 'parameter_template')(v)
+                    onValueChange: (v) => {
+                      if (!p.parameter_template) setParameter(i, 'use')(true);
+                      setParameter(i, 'parameter_template')(v);
+                    },
+                    error: parameterErrors?.[i]?.template
                   }}
                 />
               </Box>
@@ -378,7 +381,7 @@ const ParametersStep = ({
                 onChange={(e) =>
                   setParameter(i, 'value')(e.currentTarget.value)
                 }
-                error={parameterErrors ? parameterErrors[i] : undefined}
+                error={parameterErrors?.[i]?.data}
               />
             </Group>
           </Stack>
@@ -468,7 +471,9 @@ export default function ImportPartWizard({
   }>();
   const [importResult, setImportResult] = useState<ImportResult>();
   const [isImporting, setIsImporting] = useState(false);
-  const [parameterErrors, setParameterErrors] = useState<string[] | null>(null);
+  const [parameterErrors, setParameterErrors] = useState<
+    { template?: string; data?: string }[] | null
+  >(null);
 
   const partFields = usePartFields({ create: false });
   const editPart = useEditApiFormModal({
@@ -619,7 +624,7 @@ export default function ImportPartWizard({
                 }));
                 try {
                   await api.post(
-                    apiUrl(ApiEndpoints.part_parameter_bulk),
+                    apiUrl(ApiEndpoints.part_parameter_list),
                     createParameters
                   );
                   showNotification({
@@ -635,19 +640,18 @@ export default function ImportPartWizard({
                     Array.isArray(err.response.data)
                   ) {
                     const errors = err.response.data.map(
-                      (e: Record<string, string[]>) =>
-                        Object.entries(e)
-                          .map(
-                            ([k, v]) =>
-                              `${k === 'data' ? '' : `${k}: `}${v.join(',')}`
-                          )
-                          .join(', ')
+                      (e: Record<string, string[]>) => {
+                        const err: { data?: string; template?: string } = {};
+                        if (e.data) err.data = e.data.join(',');
+                        if (e.template) err.template = e.template.join(',');
+                        return err;
+                      }
                     );
                     setParameterErrors(
                       parameters.map((_, i) =>
                         map[i] !== undefined && errors[map[i]]
                           ? errors[map[i]]
-                          : ''
+                          : {}
                       )
                     );
                   }
