@@ -107,6 +107,7 @@ messages.ts
 
 # Generated API schema file
 api.yaml
+src/backend/InvenTree/schema.yml
 
 # web frontend (static files)
 # src/backend/InvenTree/web/static
