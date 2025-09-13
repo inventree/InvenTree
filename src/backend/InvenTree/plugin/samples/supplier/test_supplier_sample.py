@@ -80,10 +80,10 @@ class SampleSupplierTest(InvenTreeAPITestCase):
 
         # valid supplier, valid part import
         category = PartCategory.objects.get(pk=1)
-        p_len, p_test = PartParameterTemplate.objects.bulk_create([
-            PartParameterTemplate(name='Length', units='mm'),
-            PartParameterTemplate(name='Test Parameter'),
-        ])
+        p_len = PartParameterTemplate(name='Length', units='mm')
+        p_test = PartParameterTemplate(name='Test Parameter')
+        p_len.save()
+        p_test.save()
         PartCategoryParameterTemplate.objects.bulk_create([
             PartCategoryParameterTemplate(category=category, parameter_template=p_len),
             PartCategoryParameterTemplate(
