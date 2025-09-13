@@ -5,7 +5,6 @@ import {
   Divider,
   Drawer,
   Group,
-  Paper,
   Space,
   Stack,
   Stepper,
@@ -26,11 +25,13 @@ import { StylishText } from '../items/StylishText';
 function WizardProgressStepper({
   currentStep,
   steps,
-  onSelectStep
+  onSelectStep,
+  disableManualStepChange = false
 }: {
   currentStep: number;
   steps: string[];
   onSelectStep: (step: number) => void;
+  disableManualStepChange?: boolean;
 }) {
   if (!steps || steps.length == 0) {
     return null;
@@ -54,23 +55,32 @@ function WizardProgressStepper({
 
   return (
     <Card p='xs' withBorder>
-      <Group justify='space-between' gap='xs' wrap='nowrap'>
-        <Tooltip
-          label={steps[currentStep - 1]}
-          position='top'
-          disabled={!canStepBackward}
-        >
-          <ActionIcon
-            variant='transparent'
-            onClick={() => onSelectStep(currentStep - 1)}
+      <Group
+        justify={disableManualStepChange ? 'center' : 'space-between'}
+        gap='xs'
+        wrap='nowrap'
+      >
+        {!disableManualStepChange && (
+          <Tooltip
+            label={steps[currentStep - 1]}
+            position='top'
             disabled={!canStepBackward}
           >
-            <IconArrowLeft />
-          </ActionIcon>
-        </Tooltip>
+            <ActionIcon
+              variant='transparent'
+              onClick={() => onSelectStep(currentStep - 1)}
+              disabled={!canStepBackward}
+            >
+              <IconArrowLeft />
+            </ActionIcon>
+          </Tooltip>
+        )}
         <Stepper
           active={currentStep}
-          onStepClick={(stepIndex: number) => onSelectStep(stepIndex)}
+          onStepClick={(stepIndex: number) => {
+            if (disableManualStepChange) return;
+            onSelectStep(stepIndex);
+          }}
           iconSize={20}
           size='xs'
         >
@@ -84,19 +94,21 @@ function WizardProgressStepper({
           ))}
         </Stepper>
         {canStepForward ? (
-          <Tooltip
-            label={steps[currentStep + 1]}
-            position='top'
-            disabled={!canStepForward}
-          >
-            <ActionIcon
-              variant='transparent'
-              onClick={() => onSelectStep(currentStep + 1)}
+          !disableManualStepChange && (
+            <Tooltip
+              label={steps[currentStep + 1]}
+              position='top'
               disabled={!canStepForward}
             >
-              <IconArrowRight />
-            </ActionIcon>
-          </Tooltip>
+              <ActionIcon
+                variant='transparent'
+                onClick={() => onSelectStep(currentStep + 1)}
+                disabled={!canStepForward || disableManualStepChange}
+              >
+                <IconArrowRight />
+              </ActionIcon>
+            </Tooltip>
+          )
         ) : (
           <Tooltip label={t`Complete`} position='top'>
             <ActionIcon color='green' variant='transparent'>
@@ -120,7 +132,8 @@ export default function WizardDrawer({
   opened,
   onClose,
   onNextStep,
-  onPreviousStep
+  onPreviousStep,
+  disableManualStepChange
 }: {
   title: string;
   currentStep: number;
@@ -130,6 +143,7 @@ export default function WizardDrawer({
   onClose: () => void;
   onNextStep?: () => void;
   onPreviousStep?: () => void;
+  disableManualStepChange?: boolean;
 }) {
   const titleBlock: ReactNode = useMemo(() => {
     return (
@@ -145,7 +159,9 @@ export default function WizardDrawer({
           <WizardProgressStepper
             currentStep={currentStep}
             steps={steps}
+            disableManualStepChange={disableManualStepChange}
             onSelectStep={(step: number) => {
+              if (disableManualStepChange) return;
               if (step < currentStep) {
                 onPreviousStep?.();
               } else {
@@ -179,10 +195,7 @@ export default function WizardDrawer({
       opened={opened}
       onClose={onClose}
     >
-      <Boundary label='wizard-drawer'>
-        <Paper p='md'>{}</Paper>
-        {children}
-      </Boundary>
+      <Boundary label='wizard-drawer'>{children}</Boundary>
     </Drawer>
   );
 }

@@ -1,8 +1,8 @@
 import { t } from '@lingui/core/macro';
 import { Group, Text } from '@mantine/core';
-import { IconShoppingCart } from '@tabler/icons-react';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 
+import { ActionButton } from '@lib/components/ActionButton';
 import { AddItemButton } from '@lib/components/AddItemButton';
 import { type RowAction, RowEditAction } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
@@ -12,7 +12,9 @@ import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import type { InvenTreeTableProps } from '@lib/types/Tables';
+import { IconPackageImport, IconShoppingCart } from '@tabler/icons-react';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
+import ImportPartWizard from '../../components/wizards/ImportPartWizard';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { formatDecimal, formatPriceRange } from '../../defaults/formatters';
 import { usePartFields } from '../../forms/PartForms';
@@ -368,6 +370,9 @@ export function PartListTable({
   });
 
   const orderPartsWizard = OrderPartsWizard({ parts: table.selectedRecords });
+  const importPartWizard = ImportPartWizard({
+    categoryId: initialPartData.category
+  });
 
   const rowActions = useCallback(
     (record: any): RowAction[] => {
@@ -419,6 +424,14 @@ export function PartListTable({
         hidden={!user.hasAddRole(UserRoles.part)}
         tooltip={t`Add Part`}
         onClick={() => newPart.open()}
+      />,
+      <ActionButton
+        key='import-part'
+        hidden={!user.hasAddRole(UserRoles.part)}
+        tooltip={t`Import Part`}
+        color='green'
+        icon={<IconPackageImport />}
+        onClick={() => importPartWizard.openWizard()}
       />
     ];
   }, [user, table.hasSelectedRecords]);
@@ -429,6 +442,7 @@ export function PartListTable({
       {editPart.modal}
       {setCategory.modal}
       {orderPartsWizard.wizard}
+      {importPartWizard.wizard}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.part_list)}
         tableState={table}

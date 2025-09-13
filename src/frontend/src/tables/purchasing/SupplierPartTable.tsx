@@ -2,6 +2,7 @@ import { t } from '@lingui/core/macro';
 import { Text } from '@mantine/core';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 
+import { ActionButton } from '@lib/components/ActionButton';
 import { AddItemButton } from '@lib/components/AddItemButton';
 import {
   type RowAction,
@@ -14,6 +15,8 @@ import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
+import { IconPackageImport } from '@tabler/icons-react';
+import ImportPartWizard from '../../components/wizards/ImportPartWizard';
 import { useSupplierPartFields } from '../../forms/CompanyForms';
 import {
   useCreateApiFormModal,
@@ -161,6 +164,10 @@ export function SupplierPartTable({
     successMessage: t`Supplier part created`
   });
 
+  const importPartWizard = ImportPartWizard({
+    partId: params?.part
+  });
+
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
@@ -168,6 +175,14 @@ export function SupplierPartTable({
         tooltip={t`Add supplier part`}
         onClick={() => addSupplierPart.open()}
         hidden={!user.hasAddRole(UserRoles.purchase_order)}
+      />,
+      <ActionButton
+        key='import-part'
+        icon={<IconPackageImport />}
+        color='green'
+        tooltip={t`Import supplier part`}
+        onClick={() => importPartWizard.openWizard()}
+        hidden={!user.hasAddRole(UserRoles.part) || !params?.part}
       />
     ];
   }, [user]);
@@ -244,6 +259,7 @@ export function SupplierPartTable({
       {addSupplierPart.modal}
       {editSupplierPart.modal}
       {deleteSupplierPart.modal}
+      {importPartWizard.wizard}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.supplier_part_list)}
         tableState={table}
