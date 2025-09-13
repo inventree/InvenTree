@@ -128,6 +128,10 @@ class SampleSupplierPlugin(SupplierMixin, InvenTreePlugin):
                         **kwargs,
                     },
                 )
+
+                # after the template part was created, we need to refresh the part from the db because its tree id may have changed
+                # which results in an error if saved directly
+                part.refresh_from_db()
                 part.variant_of = parent_part
                 part.save()
 
