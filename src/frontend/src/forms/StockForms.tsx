@@ -207,7 +207,6 @@ export function useStockFields({
       quantity: {
         hidden: !create,
         description: t`Enter initial quantity for this stock item`,
-        value: quantity,
         onValueChange: (value) => {
           batchGenerator.update({ quantity: value });
           setQuantity(value);
