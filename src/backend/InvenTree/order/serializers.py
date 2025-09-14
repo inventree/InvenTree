@@ -61,6 +61,8 @@ from order.status_codes import (
 )
 from part.serializers import PartBriefSerializer
 from stock.status_codes import StockStatus
+from tax.models import TaxConfiguration
+from tax.serializers import TaxConfigurationSerializer
 from users.serializers import OwnerSerializer, UserSerializer
 
 
@@ -998,6 +1000,13 @@ class SalesOrderSerializer(
             'customer',
             'customer_detail',
             'customer_reference',
+            'tax_configuration_reference',
+            'tax_configuration_detail',
+            'tax_rate',
+            'tax_amount',
+            'tax_inclusive',
+            'total_with_tax',
+            'subtotal',
             'shipment_date',
             'total_price',
             'order_currency',
@@ -1058,6 +1067,59 @@ class SalesOrderSerializer(
 
         return queryset
 
+    tax_configuration_reference = serializers.PrimaryKeyRelatedField(
+        queryset=TaxConfiguration.objects.all(),
+        allow_null=True,
+        required=False,
+        label=_('Tax Configuration'),
+        help_text=_('Tax configuration for this order'),
+    )
+
+    tax_configuration_detail = TaxConfigurationSerializer(
+        source='tax_configuration_reference',
+        read_only=True,
+        label=_('Tax Configuration Details'),
+    )
+
+    tax_rate = serializers.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        allow_null=True,
+        required=False,
+        label=_('Tax Rate (%)'),
+        help_text=_('Tax rate applied to this order'),
+    )
+
+    tax_amount = serializers.DecimalField(
+        max_digits=19,
+        decimal_places=4,
+        read_only=True,
+        label=_('Tax Amount'),
+        help_text=_('Total tax amount for this order'),
+    )
+
+    tax_inclusive = serializers.BooleanField(
+        required=False,
+        label=_('Tax Inclusive'),
+        help_text=_('Whether prices in this order include tax'),
+    )
+
+    total_with_tax = serializers.DecimalField(
+        max_digits=19,
+        decimal_places=4,
+        read_only=True,
+        label=_('Total with Tax'),
+        help_text=_('Total order amount including tax'),
+    )
+
+    subtotal = serializers.DecimalField(
+        max_digits=19,
+        decimal_places=4,
+        read_only=True,
+        label=_('Subtotal'),
+        help_text=_('Order subtotal excluding tax'),
+    )
+
     customer_detail = CompanyBriefSerializer(
         source='customer', many=False, read_only=True, allow_null=True
     )
@@ -1109,6 +1171,11 @@ class SalesOrderLineItemSerializer(
             'shipped',
             'target_date',
             'link',
+            # Tax fields
+            'tax_rate',
+            'tax_amount',
+            'subtotal',
+            'price_with_tax',
             # Annotated fields for part stocking information
             'available_stock',
             'available_variant_stock',
@@ -1263,6 +1330,39 @@ class SalesOrderLineItemSerializer(
 
     sale_price_currency = InvenTreeCurrencySerializer(
         help_text=_('Sale price currency')
+    )
+
+    tax_rate = serializers.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        allow_null=True,
+        required=False,
+        label=_('Tax Rate (%)'),
+        help_text=_('Tax rate for this line item. Leave blank to use order default.'),
+    )
+
+    tax_amount = serializers.DecimalField(
+        max_digits=19,
+        decimal_places=4,
+        read_only=True,
+        label=_('Tax Amount'),
+        help_text=_('Tax amount for this line item'),
+    )
+
+    subtotal = serializers.DecimalField(
+        max_digits=19,
+        decimal_places=4,
+        read_only=True,
+        label=_('Subtotal'),
+        help_text=_('Line subtotal excluding tax'),
+    )
+
+    price_with_tax = serializers.DecimalField(
+        max_digits=19,
+        decimal_places=4,
+        read_only=True,
+        label=_('Price with Tax'),
+        help_text=_('Line price including tax'),
     )
 
 

@@ -71,7 +71,17 @@ class SalesOrderAdmin(admin.ModelAdmin):
 
     exclude = ['reference_int']
 
-    list_display = ('reference', 'customer', 'status', 'description', 'creation_date')
+    list_display = (
+        'reference',
+        'customer',
+        'status',
+        'description',
+        'creation_date',
+        'tax_configuration_reference',
+        'tax_rate',
+        'tax_amount',
+        'total_with_tax',
+    )
 
     search_fields = ['reference', 'customer__name', 'description']
 
@@ -85,7 +95,23 @@ class SalesOrderAdmin(admin.ModelAdmin):
         'project_code',
         'responsible',
         'shipped_by',
+        'tax_configuration_reference',
     ]
+
+    readonly_fields = ['creation_date', 'tax_amount', 'total_with_tax']
+
+    def get_readonly_fields(self, request, obj=None):
+        """Make tax fields readonly for completed orders."""
+        readonly_fields = list(super().get_readonly_fields(request, obj))
+
+        if obj and obj.status in [20, 30, 40]:  # PENDING, SHIPPED, CANCELLED
+            readonly_fields.extend([
+                'tax_configuration_reference',
+                'tax_rate',
+                'tax_inclusive',
+            ])
+
+        return readonly_fields
 
 
 @admin.register(models.PurchaseOrderLineItem)
@@ -108,7 +134,16 @@ class PurchaseOrderExtraLineAdmin(GeneralExtraLineAdmin, admin.ModelAdmin):
 class SalesOrderLineItemAdmin(admin.ModelAdmin):
     """Admin class for the SalesOrderLine model."""
 
-    list_display = ('order', 'part', 'quantity', 'reference')
+    list_display = (
+        'order',
+        'part',
+        'quantity',
+        'sale_price',
+        'tax_rate',
+        'tax_amount',
+        'price_with_tax',
+        'reference',
+    )
 
     search_fields = [
         'part__name',
@@ -118,6 +153,8 @@ class SalesOrderLineItemAdmin(admin.ModelAdmin):
     ]
 
     autocomplete_fields = ('order', 'part')
+
+    readonly_fields = ['tax_amount', 'price_with_tax']
 
 
 @admin.register(models.SalesOrderExtraLine)
