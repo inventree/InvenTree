@@ -8,13 +8,22 @@ import { apiUrl } from './defaults';
 export const setSettingState = async ({
   request,
   setting,
-  value
+  value,
+  type = 'global',
+  plugin
 }: {
   request: any;
   setting: string;
   value: any;
+  type: 'global' | 'plugin';
+  plugin?: string;
 }) => {
-  const url = new URL(`settings/global/${setting}/`, apiUrl).toString();
+  const url = new URL(
+    type === 'global'
+      ? `settings/global/${setting}/`
+      : `plugins/${plugin}/settings/${setting}/`,
+    apiUrl
+  ).toString();
 
   const response = await request.patch(url, {
     data: {

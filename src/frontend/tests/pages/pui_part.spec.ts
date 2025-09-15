@@ -8,6 +8,7 @@ import {
   setTableChoiceFilter
 } from '../helpers';
 import { doCachedLogin } from '../login';
+import { setPluginState, setSettingState } from '../settings';
 
 /**
  * CHeck each panel tab for the "Parts" page
@@ -644,4 +645,52 @@ test('Parts - Duplicate', async ({ browser }) => {
   await page.getByText('Copy Notes', { exact: true }).waitFor();
   await page.getByText('Copy Parameters', { exact: true }).waitFor();
   await page.getByText('Copy Tests', { exact: true }).waitFor();
+});
+
+test('Parts - Import supplier part', async ({ browser, request }) => {
+  const page = await doCachedLogin(browser, {
+    url: 'part/category/1/parts'
+  });
+
+  // Ensure that the sample supplier plugin is enabled
+  await setPluginState({
+    request,
+    plugin: 'samplesupplier',
+    state: true
+  });
+
+  await setSettingState({
+    request,
+    setting: 'SUPPLIER',
+    value: 3,
+    type: 'plugin',
+    plugin: 'samplesupplier'
+  });
+
+  await page.reload();
+  await page.waitForLoadState('networkidle');
+  await page.waitForTimeout(1000);
+
+  await page.getByRole('button', { name: 'action-button-import-part' }).click();
+  await page.getByRole('textbox', { name: 'Search...' }).fill('M5');
+  await page.getByRole('textbox', { name: 'Search...' }).press('Enter');
+
+  await page.getByText('Bolt M5x5mm Steel').waitFor();
+  await page
+    .getByRole('button', { name: 'action-button-import-part-BOLT-Steel-M5-5' })
+    .click();
+  await page.waitForTimeout(250);
+  await page
+    .getByRole('button', { name: 'action-button-import-part-now' })
+    .click();
+
+  await page
+    .getByRole('button', { name: 'action-button-import-create-parameters' })
+    .dispatchEvent('click');
+  await page
+    .getByRole('button', { name: 'action-button-import-stock-next' })
+    .dispatchEvent('click');
+  await page
+    .getByRole('button', { name: 'action-button-import-close' })
+    .dispatchEvent('click');
 });

@@ -252,6 +252,7 @@ const SearchStep = ({
                 !res.existing_part_id && (
                   <Tooltip label={t`Import this part`}>
                     <ActionIcon
+                      aria-label={`action-button-import-part-${res.id}`}
                       onClick={() => {
                         const [plugin_slug, supplier_slug] =
                           JSON.parse(supplier);
@@ -311,6 +312,7 @@ const CategoryStep = ({
 
       <Group justify='flex-end'>
         <Button
+          aria-label='action-button-import-part-now'
           disabled={!category || isImporting}
           onClick={() => importPart(category!)}
           loading={isImporting}
@@ -460,6 +462,7 @@ const ParametersStep = ({
           <Trans>Skip</Trans>
         </Button>
         <Button
+          aria-label='action-button-import-create-parameters'
           disabled={isImporting || parameters.filter((p) => p.use).length === 0}
           loading={isImporting}
           onClick={() => importParameters(parameters)}
@@ -498,7 +501,7 @@ const StockStep = ({
       />
 
       <Group justify='flex-end'>
-        <Button onClick={nextStep}>
+        <Button onClick={nextStep} aria-label='action-button-import-stock-next'>
           <Trans>Next</Trans>
         </Button>
       </Group>
@@ -755,7 +758,10 @@ export default function ImportPartWizard({
                 >
                   <Trans>Open Manufacturer Part</Trans>
                 </Button>
-                <Button onClick={() => wizard.closeWizard()}>
+                <Button
+                  onClick={() => wizard.closeWizard()}
+                  aria-label='action-button-import-close'
+                >
                   <Trans>Close</Trans>
                 </Button>
               </Group>
