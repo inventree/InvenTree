@@ -15,7 +15,7 @@ import { type ReactNode, useCallback } from 'react';
 import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
-import { navigateToLink } from '@lib/functions/Navigation';
+import { getBaseUrl, navigateToLink } from '@lib/functions/Navigation';
 import type {
   ModelRendererDict,
   RenderInstanceProps
@@ -214,12 +214,15 @@ export function RenderInlineModel({
   }
 
   return (
-    <Group gap='xs' justify='space-between' wrap='nowrap' title={tooltip}>
+    <Group gap='xs' justify='space-between' title={tooltip}>
       <Group gap='xs' justify='left' wrap='nowrap'>
         {prefix}
         {image && <Thumbnail src={image} size={18} />}
         {url ? (
-          <Anchor href='' onClick={(event: any) => onClick(event)}>
+          <Anchor
+            href={`/${getBaseUrl()}${url}`}
+            onClick={(event: any) => onClick(event)}
+          >
             {primary}
           </Anchor>
         ) : (
@@ -260,7 +263,7 @@ export function InlineSecondaryBadge({
 }): ReactNode {
   return (
     <Paper p={2} withBorder style={{ backgroundColor: 'transparent' }}>
-      <Group gap='xs'>
+      <Group gap='xs' wrap='nowrap'>
         {title && (
           <Text size={size} title={title}>
             {title}:

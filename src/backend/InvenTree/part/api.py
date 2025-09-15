@@ -1513,6 +1513,10 @@ class BomFilter(rest_filters.FilterSet):
         label='Component part is an assembly', field_name='sub_part__assembly'
     )
 
+    sub_part_virtual = rest_filters.BooleanFilter(
+        label='Component part is virtual', field_name='sub_part__virtual'
+    )
+
     available_stock = rest_filters.BooleanFilter(
         label='Has available stock', method='filter_available_stock'
     )

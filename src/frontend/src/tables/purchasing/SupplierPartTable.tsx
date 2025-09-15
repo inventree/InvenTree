@@ -48,13 +48,10 @@ export function SupplierPartTable({
   // Construct table columns for this table
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
-      {
-        accessor: 'part',
+      PartColumn({
         switchable: 'part' in params,
-        sortable: true,
-        render: (record: any) =>
-          PartColumn({ part: record?.part_detail, full_name: true })
-      },
+        part: 'part_detail'
+      }),
       {
         accessor: 'supplier',
         sortable: true,

@@ -22,10 +22,14 @@ export function RenderStockLocation(
 ): ReactNode {
   const { instance } = props;
 
+  if (!instance) {
+    return '';
+  }
+
   const suffix: ReactNode = (
     <Group gap='xs'>
       <TableHoverCard
-        value=''
+        value={<Text size='xs'>{instance.description}</Text>}
         position='bottom-end'
         zIndex={10000}
         icon='sitemap'
@@ -51,7 +55,6 @@ export function RenderStockLocation(
         </>
       }
       primary={location}
-      secondary={instance.description}
       suffix={suffix}
       url={
         props.link
@@ -72,7 +75,7 @@ export function RenderStockLocationType({
     <RenderInlineModel
       primary={instance.name}
       prefix={instance.icon && <ApiIcon name={instance.icon} />}
-      secondary={`${instance.description} (${instance.location_count})`}
+      suffix={`${instance.description} (${instance.location_count})`}
     />
   );
 }
@@ -111,7 +114,7 @@ export function RenderStockItem(
 
   // Form the "suffix" text to display
   const suffix: ReactNode = (
-    <Group gap='xs'>
+    <Group gap='xs' wrap='nowrap'>
       <Text size='xs'>{quantity_string}</Text>
       {location && (
         <TableHoverCard

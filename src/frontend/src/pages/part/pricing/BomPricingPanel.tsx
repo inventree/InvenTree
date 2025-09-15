@@ -136,13 +136,11 @@ export default function BomPricingPanel({
 
   const columns: TableColumn[] = useMemo(() => {
     return [
-      {
+      PartColumn({
         accessor: 'name',
         title: t`Component`,
-        sortable: true,
-        switchable: false,
-        render: (record: any) => PartColumn({ part: record.sub_part_detail })
-      },
+        part: 'sub_part_detail'
+      }),
       {
         accessor: 'quantity',
         title: t`Quantity`,

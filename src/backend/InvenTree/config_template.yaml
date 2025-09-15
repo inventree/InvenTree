@@ -217,6 +217,7 @@ ldap:
 # Customization options
 # Ref: https://docs.inventree.org/en/stable/start/config/#customization-options
 # customize:
+#   site_header: 'Custom Admin Panel'  # Django admin panel header text
 #   login_message: InvenTree demo instance - <a href='https://inventree.org/demo.html'> Click here for login details</a>
 #   navbar_message: <h6>InvenTree demo mode <a href='https://inventree.org/demo.html'><span class='fas fa-info-circle'></span></a></h6>
 #   hide_admin_link: true

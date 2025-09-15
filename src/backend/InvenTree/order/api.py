@@ -15,7 +15,7 @@ import rest_framework.serializers
 from django_filters import rest_framework as rest_filters
 from django_ical.views import ICalFeed
 from drf_spectacular.types import OpenApiTypes
-from drf_spectacular.utils import extend_schema_field
+from drf_spectacular.utils import extend_schema, extend_schema_field
 from rest_framework import status
 from rest_framework.response import Response
 
@@ -24,6 +24,7 @@ import common.models
 import common.settings
 import company.models
 import stock.models as stock_models
+import stock.serializers as stock_serializers
 from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import StatusView
 from InvenTree.api import BulkUpdateMixin, ListCreateDestroyAPIView, MetadataView
@@ -472,6 +473,7 @@ class PurchaseOrderIssue(PurchaseOrderContextMixin, CreateAPI):
     serializer_class = serializers.PurchaseOrderIssueSerializer
 
 
+@extend_schema(responses={201: stock_serializers.StockItemSerializer(many=True)})
 class PurchaseOrderReceive(PurchaseOrderContextMixin, CreateAPI):
     """API endpoint to receive stock items against a PurchaseOrder.
 
@@ -489,8 +491,18 @@ class PurchaseOrderReceive(PurchaseOrderContextMixin, CreateAPI):
     """
 
     queryset = models.PurchaseOrderLineItem.objects.none()
-
     serializer_class = serializers.PurchaseOrderReceiveSerializer
+    pagination_class = None
+
+    def create(self, request, *args, **kwargs):
+        """Override the create method to handle stock item creation."""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        items = serializer.save()
+        queryset = stock_serializers.StockItemSerializer.annotate_queryset(items)
+        response = stock_serializers.StockItemSerializer(queryset, many=True)
+
+        return Response(response.data, status=status.HTTP_201_CREATED)
 
 
 class PurchaseOrderLineItemFilter(LineItemFilter):

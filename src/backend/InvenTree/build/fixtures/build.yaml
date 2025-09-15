@@ -80,3 +80,16 @@
     level: 0
     lft: 1
     rght: 2
+
+- model: build.builditem
+  pk: 1
+  fields:
+    quantity: 3
+    stock_item: 1
+
+- model: build.builditem
+  pk: 2
+  fields:
+    quantity: 10
+    stock_item: 11
+    install_into: 100

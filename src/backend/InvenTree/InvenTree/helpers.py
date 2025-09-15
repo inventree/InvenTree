@@ -4,6 +4,7 @@ import datetime
 import hashlib
 import inspect
 import io
+import json
 import os
 import os.path
 import re
@@ -731,13 +732,14 @@ def extract_serial_numbers(
     return serials
 
 
-def validateFilterString(value, model=None):
+def validateFilterString(value: str, model=None) -> dict:
     """Validate that a provided filter string looks like a list of comma-separated key=value pairs.
 
     These should nominally match to a valid database filter based on the model being filtered.
 
     e.g. "category=6, IPN=12"
     e.g. "part__name=widget"
+    e.g. "item=[1,2,3], status=active"
 
     The ReportTemplate class uses the filter string to work out which items a given report applies to.
     For example, an acceptance test report template might only apply to stock items with a given IPN,
@@ -755,7 +757,8 @@ def validateFilterString(value, model=None):
     if not value or len(value) == 0:
         return results
 
-    groups = value.split(',')
+    # Split by comma, but ignore commas within square brackets
+    groups = re.split(r',(?![^\[]*\])', value)
 
     for group in groups:
         group = group.strip()
@@ -772,6 +775,16 @@ def validateFilterString(value, model=None):
 
         if not k or not v:
             raise ValidationError(f'Invalid group: {group}')
+
+        # Account for 'list' support
+        if v.startswith('[') and v.endswith(']'):
+            try:
+                v = json.loads(v)
+            except json.JSONDecodeError:
+                raise ValidationError(f'Invalid list value: {v}')
+
+            if not isinstance(v, list):
+                raise ValidationError(f'Expected a list for key "{k}", got {type(v)}')
 
         results[k] = v
 

@@ -159,6 +159,38 @@ class InvenTreeOrderingFilter(filters.OrderingFilter):
         return ordering
 
 
+class NumberOrNullFilter(rest_filters.NumberFilter):
+    """Custom NumberFilter that allows filtering by numeric values or the literal string "null".
+
+    This allows matching either numeric values or NULL values in the database.
+
+    Example Usage:
+        ?my_field=20     → filters rows where my_field=20
+        ?my_field=null   → filters rows where my_field IS NULL
+    """
+
+    def filter(self, qs, value):
+        """Return queryset filtered by value or NULL if 'null' is passed."""
+        if value == 'null':
+            return qs.filter(**{self.field_name: None})
+        return super().filter(qs, value)
+
+    @property
+    def field(self):
+        """Allow 'null' as valid input in filter parameters."""
+        field = super().field
+        original_clean = field.clean
+
+        def custom_clean(val):
+            """Custom clean function for filter input values."""
+            if InvenTree.helpers.isNull(val) and val is not None:
+                return 'null'
+            return original_clean(val)
+
+        field.clean = custom_clean
+        return field
+
+
 SEARCH_ORDER_FILTER = [
     rest_filters.DjangoFilterBackend,
     InvenTreeSearchFilter,

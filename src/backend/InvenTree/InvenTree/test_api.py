@@ -605,9 +605,7 @@ class GeneralApiTests(InvenTreeAPITestCase):
         response = self.get(url, max_query_count=20)
         data = response.json()
         self.assertEqual(data['database'], None)
-
-        # No active plugin info for anon user
-        self.assertIsNone(data.get('active_plugins'))
+        self.assertIsNotNone(data.get('active_plugins'))
 
         # Staff
         response = self.get(

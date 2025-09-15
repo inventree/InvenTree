@@ -91,6 +91,7 @@ export type TableState = {
  * @param filter - A custom filter function
  * @param filtering - Whether the column is filterable
  * @param width - The width of the column
+ * @param minWidth - The minimum width of the column
  * @param resizable - Whether the column is resizable (defaults to true)
  * @param noWrap - Whether the column should wrap
  * @param ellipsis - Whether the column should be ellipsized
@@ -113,6 +114,7 @@ export type TableColumnProps<T = any> = {
   filter?: any;
   filtering?: boolean;
   width?: number;
+  minWidth?: string | number;
   resizable?: boolean;
   noWrap?: boolean;
   ellipsis?: boolean;
@@ -120,6 +122,7 @@ export type TableColumnProps<T = any> = {
   cellsStyle?: any;
   extra?: any;
   noContext?: boolean;
+  style?: MantineStyleProp;
 };
 
 /**

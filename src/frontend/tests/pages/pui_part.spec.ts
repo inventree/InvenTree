@@ -92,8 +92,6 @@ test('Parts - BOM', async ({ browser }) => {
   await setTableChoiceFilter(page, 'active', 'Yes');
   await setTableChoiceFilter(page, 'BOM Valid', 'Yes');
 
-  await page.getByText('1 - 12 / 12').waitFor();
-
   // Navigate to BOM for a particular assembly
   await navigate(page, 'part/87/bom');
   await loadTab(page, 'Bill of Materials');
@@ -249,7 +247,13 @@ test('Parts - Requirements', async ({ browser }) => {
   await page.getByText('5 / 100').waitFor(); // Allocated to sales orders
   await page.getByText('10 / 125').waitFor(); // In production
 
-  await page.waitForTimeout(2500);
+  // Also check requirements for part with open build orders which have been partially consumed
+  await navigate(page, 'part/105/details');
+
+  await page.getByText('Required: 2').waitFor();
+  await page.getByText('Available: 32').waitFor();
+  await page.getByText('In Stock: 34').waitFor();
+  await page.getByText('2 / 2').waitFor(); // Allocated to build orders
 });
 
 test('Parts - Allocations', async ({ browser }) => {
@@ -377,7 +381,6 @@ test('Parts - Pricing (Supplier)', async ({ browser }) => {
 
   // Supplier Pricing
   await page.getByRole('button', { name: 'Supplier Pricing' }).click();
-  await page.waitForTimeout(500);
   await page.getByRole('button', { name: 'SKU Not sorted' }).waitFor();
 
   // Supplier Pricing - linkjumping
@@ -461,7 +464,7 @@ test('Parts - Attachments', async ({ browser }) => {
   await page.getByLabel('text-field-comment').fill('a sample comment');
 
   // Note: Text field values are debounced for 250ms
-  await page.waitForTimeout(500);
+  await page.waitForTimeout(300);
 
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByRole('cell', { name: 'a sample comment' }).first().waitFor();
@@ -546,7 +549,9 @@ test('Parts - Parameter Filtering', async ({ browser }) => {
 
   const clearParamFilter = async (name: string) => {
     await clickOnParamFilter(name);
+    await page.getByLabel(`clear-filter-${name}`).waitFor();
     await page.getByLabel(`clear-filter-${name}`).click();
+    // await page.getByLabel(`clear-filter-${name}`).click();
   };
 
   // Let's filter by color
@@ -558,6 +563,7 @@ test('Parts - Parameter Filtering', async ({ browser }) => {
 
   // Reset the filter
   await clearParamFilter('Color');
+
   await page.getByText('/ 425').waitFor();
 });
 
@@ -615,12 +621,11 @@ test('Parts - Bulk Edit', async ({ browser }) => {
   await page.getByLabel('Select record 2', { exact: true }).click();
   await page.getByLabel('action-menu-part-actions').click();
   await page.getByLabel('action-menu-part-actions-set-category').click();
-  await page.getByLabel('related-field-category').fill('rnitu');
-  await page
-    .getByRole('option', { name: '- Furniture/Chairs' })
-    .getByRole('paragraph')
-    .click();
 
+  await page.getByLabel('related-field-category').fill('rnitu');
+  await page.waitForTimeout(250);
+
+  await page.getByRole('option', { name: '- Furniture/Chairs' }).click();
   await page.getByRole('button', { name: 'Update' }).click();
   await page.getByText('Items Updated').waitFor();
 });

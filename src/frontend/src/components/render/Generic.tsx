@@ -9,7 +9,7 @@ export function RenderProjectCode({
     instance && (
       <RenderInlineModel
         primary={instance.code}
-        secondary={instance.description}
+        suffix={instance.description}
       />
     )
   );
