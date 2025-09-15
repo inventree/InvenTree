@@ -1,4 +1,6 @@
+import { expect } from '@playwright/test';
 import { test } from '../baseFixtures';
+import { apiUrl } from '../defaults';
 import {
   clearTableFilters,
   clickOnRowMenu,
@@ -690,6 +692,31 @@ test('Parts - Import supplier part', async ({ browser, request }) => {
   await page
     .getByRole('button', { name: 'action-button-import-stock-next' })
     .dispatchEvent('click');
+
+  // cleanup imported part
+  const link = await page.getByRole('link', {
+    name: 'action-button-import-open-part'
+  });
+  await link.waitFor();
+  const id = await link.getAttribute('href').then((x) => x?.split('/').at(-1));
+  const partApiUrl = new URL(`part/${id}/`, apiUrl).toString();
+  await request.patch(partApiUrl, {
+    data: {
+      active: false
+    },
+    headers: {
+      // Basic username: password authorization
+      Authorization: `Basic ${btoa('admin:inventree')}`
+    }
+  });
+  const res = await request.delete(partApiUrl, {
+    headers: {
+      // Basic username: password authorization
+      Authorization: `Basic ${btoa('admin:inventree')}`
+    }
+  });
+  expect(res.status()).toBe(204);
+
   await page
     .getByRole('button', { name: 'action-button-import-close' })
     .dispatchEvent('click');

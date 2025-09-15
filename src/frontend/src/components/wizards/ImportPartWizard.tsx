@@ -741,6 +741,7 @@ export default function ImportPartWizard({
                   component={Link}
                   to={`/part/${importResult?.part_id}`}
                   variant='light'
+                  aria-label='action-button-import-open-part'
                 >
                   <Trans>Open Part</Trans>
                 </Button>
