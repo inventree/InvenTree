@@ -20,6 +20,7 @@ from plugin.base.integration.ValidationMixin import ValidationMixin
 from plugin.base.label.mixins import LabelPrintingMixin
 from plugin.base.locate.mixins import LocateMixin
 from plugin.base.mail.mixins import MailMixin
+from plugin.base.supplier import helpers as supplier
 from plugin.base.supplier.mixins import SupplierMixin
 from plugin.base.ui.mixins import UserInterfaceMixin
 
@@ -47,4 +48,5 @@ __all__ = [
     'UrlsMixin',
     'UserInterfaceMixin',
     'ValidationMixin',
+    'supplier',
 ]

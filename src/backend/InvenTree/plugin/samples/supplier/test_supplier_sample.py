@@ -29,12 +29,25 @@ class SampleSupplierTest(InvenTreeAPITestCase):
         # Test APIs
         url = reverse('api-supplier-search')
 
+        # No plugin
+        self.get(
+            url,
+            {'plugin': 'non-existent-plugin', 'supplier': 'sample-fasteners'},
+            expected_code=404,
+        )
+
         # No supplier
-        self.get(url, {'supplier': 'non-existent-supplier'}, expected_code=404)
+        self.get(
+            url,
+            {'plugin': 'samplesupplier', 'supplier': 'non-existent-supplier'},
+            expected_code=404,
+        )
 
         # valid supplier
         res = self.get(
-            url, {'supplier': 'samplesupplier', 'term': 'M5'}, expected_code=200
+            url,
+            {'plugin': 'samplesupplier', 'supplier': 'sample-fasteners', 'term': 'M5'},
+            expected_code=200,
         )
         self.assertEqual(len(res.data), 15)
         self.assertEqual(res.data[0]['sku'], 'BOLT-Steel-M5-5')
@@ -50,17 +63,36 @@ class SampleSupplierTest(InvenTreeAPITestCase):
         # Test APIs
         url = reverse('api-supplier-import')
 
+        # No plugin
+        self.post(
+            url,
+            {
+                'plugin': 'non-existent-plugin',
+                'supplier': 'sample-fasteners',
+                'part_import_id': 'BOLT-Steel-M5-5',
+            },
+            expected_code=404,
+        )
+
         # No supplier
         self.post(
             url,
-            {'supplier': 'non-existent-supplier', 'part_import_id': 'BOLT-Steel-M5-5'},
+            {
+                'plugin': 'samplesupplier',
+                'supplier': 'non-existent-supplier',
+                'part_import_id': 'BOLT-Steel-M5-5',
+            },
             expected_code=404,
         )
 
         # valid supplier, no part or category provided
         self.post(
             url,
-            {'supplier': 'samplesupplier', 'part_import_id': 'BOLT-Steel-M5-5'},
+            {
+                'plugin': 'samplesupplier',
+                'supplier': 'sample-fasteners',
+                'part_import_id': 'BOLT-Steel-M5-5',
+            },
             expected_code=400,
         )
 
@@ -68,7 +100,8 @@ class SampleSupplierTest(InvenTreeAPITestCase):
         self.post(
             url,
             {
-                'supplier': 'samplesupplier',
+                'plugin': 'samplesupplier',
+                'supplier': 'sample-fasteners',
                 'part_import_id': 'BOLT-Steel-M5-5',
                 'category_id': 1,
             },
@@ -93,7 +126,8 @@ class SampleSupplierTest(InvenTreeAPITestCase):
         res = self.post(
             url,
             {
-                'supplier': 'samplesupplier',
+                'plugin': 'samplesupplier',
+                'supplier': 'sample-fasteners',
                 'part_import_id': 'BOLT-Steel-M5-5',
                 'category_id': 1,
             },
@@ -127,7 +161,8 @@ class SampleSupplierTest(InvenTreeAPITestCase):
         res = self.post(
             url,
             {
-                'supplier': 'samplesupplier',
+                'plugin': 'samplesupplier',
+                'supplier': 'sample-fasteners',
                 'part_import_id': 'BOLT-Steel-M5-10',
                 'part_id': part2.pk,
             },
@@ -146,7 +181,8 @@ class SampleSupplierTest(InvenTreeAPITestCase):
         self.post(
             url,
             {
-                'supplier': 'samplesupplier',
+                'plugin': 'samplesupplier',
+                'supplier': 'sample-fasteners',
                 'part_import_id': 'non-existent-part',
                 'category_id': 1,
             },

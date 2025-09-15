@@ -1,7 +1,6 @@
 """Plugin mixin class for Supplier Integration."""
 
 import io
-from dataclasses import dataclass
 from typing import Any, Generic, Optional, TypeVar
 
 import django.contrib.auth.models
@@ -12,6 +11,7 @@ import company.models
 import part.models as part_models
 from InvenTree.helpers_model import download_image_from_url
 from plugin import PluginMixinEnum
+from plugin.base.supplier import helpers as supplier
 from plugin.mixins import SettingsMixin
 
 PartData = TypeVar('PartData')
@@ -19,8 +19,6 @@ PartData = TypeVar('PartData')
 
 class SupplierMixin(SettingsMixin, Generic[PartData]):
     """Mixin which provides integration to specific suppliers."""
-
-    SUPPLIER_NAME: str
 
     class MixinMeta:
         """Meta options for this mixin."""
@@ -41,66 +39,26 @@ class SupplierMixin(SettingsMixin, Generic[PartData]):
         }
 
     @property
-    def supplier(self):
+    def supplier_company(self):
         """Return the supplier company object."""
         pk = self.get_setting('SUPPLIER', cache=True)
         if not pk:
-            raise SupplierMixin.PartImportError('Supplier setting is missing.')
+            raise supplier.PartImportError('Supplier setting is missing.')
 
         return company.models.Company.objects.get(pk=pk)
 
-    @dataclass
-    class SearchResult:
-        """Data class to represent a search result from a supplier."""
-
-        sku: str
-        name: str
-        exact: bool
-        description: Optional[str] = None
-        price: Optional[str] = None
-        link: Optional[str] = None
-        image_url: Optional[str] = None
-        id: Optional[str] = None
-        existing_part: Optional[part_models.Part] = None
-
-        def __post_init__(self):
-            """Post-initialization to set the ID if not provided."""
-            if not self.id:
-                self.id = self.sku
-
-    @dataclass
-    class ImportParameter:
-        """Data class to represent a parameter for a part during import."""
-
-        name: str
-        value: str
-        on_category: Optional[bool] = False
-        parameter_template: Optional[part_models.PartParameterTemplate] = None
-
-        def __post_init__(self):
-            """Post-initialization to fetch the parameter template if not provided."""
-            if not self.parameter_template:
-                try:
-                    self.parameter_template = (
-                        part_models.PartParameterTemplate.objects.get(
-                            name__iexact=self.name
-                        )
-                    )
-                except part_models.PartParameterTemplate.DoesNotExist:
-                    pass
-
-    class PartNotFoundError(Exception):
-        """Exception raised when a part is not found during import."""
-
-    class PartImportError(Exception):
-        """Exception raised when an error occurs during part import."""
-
     # --- Methods to be overridden by plugins ---
-    def get_search_results(self, term: str) -> list[SearchResult]:
+    def get_suppliers(self) -> list[supplier.Supplier]:
+        """Return a list of available suppliers."""
+        raise NotImplementedError('This method needs to be overridden.')
+
+    def get_search_results(
+        self, supplier_slug: str, term: str
+    ) -> list[supplier.SearchResult]:
         """Return a list of search results for the given search term."""
         raise NotImplementedError('This method needs to be overridden.')
 
-    def get_import_data(self, part_id: str) -> PartData:
+    def get_import_data(self, supplier_slug: str, part_id: str) -> PartData:
         """Return the import data for the given part ID."""
         raise NotImplementedError('This method needs to be overridden.')
 
@@ -108,7 +66,7 @@ class SupplierMixin(SettingsMixin, Generic[PartData]):
         """Return a dictionary of pricing data for the given part data."""
         raise NotImplementedError('This method needs to be overridden.')
 
-    def get_parameters(self, data: PartData) -> list[ImportParameter]:
+    def get_parameters(self, data: PartData) -> list[supplier.ImportParameter]:
         """Return a list of parameters for the given part data."""
         raise NotImplementedError('This method needs to be overridden.')
 
@@ -197,13 +155,13 @@ class SupplierMixin(SettingsMixin, Generic[PartData]):
             parent_part = part_models.Part.objects.create(**template_kwargs)
 
         if not parent_part:
-            raise SupplierMixin.PartImportError(
+            raise supplier.PartImportError(
                 f'A few variant parts from the supplier are already imported, but have different InvenTree variant root parts, try to merge them to the same root variant template part (parts: {", ".join(str(p.pk) for p in other_variants)}).'
             )
 
         # assign parent_part to root_part if root_part has no variant of already
         if root_part and not root_part.is_template and not root_part.variant_of:
-            root_part.variant_of = parent_part
+            root_part.variant_of = parent_part  # type: ignore
             root_part.save()
 
         return parent_part

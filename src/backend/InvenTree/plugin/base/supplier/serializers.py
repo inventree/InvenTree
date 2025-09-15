@@ -8,6 +8,14 @@ import part.models as part_models
 from part.serializers import PartSerializer
 
 
+class SupplierListSerializer(serializers.Serializer):
+    """Serializer for a supplier plugin."""
+
+    plugin_slug = serializers.CharField()
+    supplier_slug = serializers.CharField()
+    supplier_name = serializers.CharField()
+
+
 class SearchResultSerializer(serializers.Serializer):
     """Serializer for a search result."""
 
@@ -63,6 +71,7 @@ class ImportParameterSerializer(serializers.Serializer):
 class ImportRequestSerializer(serializers.Serializer):
     """Serializer for the import request."""
 
+    plugin = serializers.CharField(required=True)
     supplier = serializers.CharField(required=True)
     part_import_id = serializers.CharField(required=True)
     category_id = serializers.PrimaryKeyRelatedField(

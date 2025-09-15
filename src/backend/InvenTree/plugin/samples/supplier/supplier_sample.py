@@ -2,7 +2,7 @@
 
 from company.models import Company, ManufacturerPart, SupplierPart, SupplierPriceBreak
 from part.models import Part
-from plugin.base.supplier.mixins import SupplierMixin
+from plugin.mixins import SupplierMixin, supplier
 from plugin.plugin import InvenTreePlugin
 
 
@@ -14,8 +14,6 @@ class SampleSupplierPlugin(SupplierMixin, InvenTreePlugin):
     TITLE = 'My sample supplier plugin'
 
     VERSION = '0.0.1'
-
-    SUPPLIER_NAME = 'Sample Supplier'
 
     def __init__(self):
         """Initialize the sample supplier plugin."""
@@ -43,10 +41,16 @@ class SampleSupplierPlugin(SupplierMixin, InvenTreePlugin):
                         'brand': 'Bolt Manufacturer',
                     })
 
-    def get_search_results(self, term: str) -> list[SupplierMixin.SearchResult]:
+    def get_suppliers(self) -> list[supplier.Supplier]:
+        """Return a list of available suppliers."""
+        return [supplier.Supplier(slug='sample-fasteners', name='Sample Fasteners')]
+
+    def get_search_results(
+        self, supplier_slug: str, term: str
+    ) -> list[supplier.SearchResult]:
         """Return a list of search results based on the search term."""
         return [
-            SupplierMixin.SearchResult(
+            supplier.SearchResult(
                 sku=p['sku'],
                 name=p['name'],
                 description=p['description'],
@@ -62,7 +66,7 @@ class SampleSupplierPlugin(SupplierMixin, InvenTreePlugin):
             if all(t.lower() in p['name'].lower() for t in term.split())
         ]
 
-    def get_import_data(self, part_id: str):
+    def get_import_data(self, supplier_slug: str, part_id: str):
         """Return import data for a specific part ID."""
         for p in self.sample_data:
             if p['sku'] == part_id:
@@ -74,19 +78,19 @@ class SampleSupplierPlugin(SupplierMixin, InvenTreePlugin):
                 ]
                 return p
 
-        raise SupplierMixin.PartNotFoundError()
+        raise supplier.PartNotFoundError()
 
     def get_pricing_data(self, data) -> dict[int, tuple[float, str]]:
         """Return pricing data for the given part data."""
         return data['price']
 
-    def get_parameters(self, data) -> list[SupplierMixin.ImportParameter]:
+    def get_parameters(self, data) -> list[supplier.ImportParameter]:
         """Return a list of parameters for the given part data."""
         return [
-            SupplierMixin.ImportParameter(name='Thread', value=data['thread'][1:]),
-            SupplierMixin.ImportParameter(name='Length', value=f'{data["length"]}mm'),
-            SupplierMixin.ImportParameter(name='Material', value=data['material']),
-            SupplierMixin.ImportParameter(name='Head', value='Flat Head'),
+            supplier.ImportParameter(name='Thread', value=data['thread'][1:]),
+            supplier.ImportParameter(name='Length', value=f'{data["length"]}mm'),
+            supplier.ImportParameter(name='Material', value=data['material']),
+            supplier.ImportParameter(name='Head', value='Flat Head'),
         ]
 
     def import_part(self, data, **kwargs) -> Part:
@@ -132,7 +136,7 @@ class SampleSupplierPlugin(SupplierMixin, InvenTreePlugin):
                 # after the template part was created, we need to refresh the part from the db because its tree id may have changed
                 # which results in an error if saved directly
                 part.refresh_from_db()
-                part.variant_of = parent_part
+                part.variant_of = parent_part  # type: ignore
                 part.save()
 
         return part
@@ -162,7 +166,7 @@ class SampleSupplierPlugin(SupplierMixin, InvenTreePlugin):
         """Import a supplier part based on the provided data."""
         spp, _ = SupplierPart.objects.get_or_create(
             SKU=data['sku'],
-            supplier=self.supplier,
+            supplier=self.supplier_company,
             **kwargs,
             defaults={'link': data['link']},
         )

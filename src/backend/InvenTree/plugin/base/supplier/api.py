@@ -1,5 +1,7 @@
 """API views for supplier plugins in InvenTree."""
 
+from typing import TYPE_CHECKING
+
 from django.db import transaction
 from django.urls import path
 
@@ -18,7 +20,64 @@ from .serializers import (
     ImportRequestSerializer,
     ImportResultSerializer,
     SearchResultSerializer,
+    SupplierListSerializer,
 )
+
+if TYPE_CHECKING:
+    from plugin.base.supplier.mixins import SupplierMixin
+else:  # pragma: no cover
+
+    class SupplierMixin:
+        """Dummy class for type checking."""
+
+
+def get_supplier_plugin(plugin_slug: str, supplier_slug: str) -> SupplierMixin:
+    """Return the supplier plugin for the given plugin and supplier slugs."""
+    supplier_plugin = None
+    for plugin in registry.with_mixin(PluginMixinEnum.SUPPLIER):
+        if plugin.slug == plugin_slug:
+            supplier_plugin = plugin
+            break
+
+    if not supplier_plugin:
+        raise NotFound(detail=f"Plugin '{plugin_slug}' not found")
+
+    if not any(s.slug == supplier_slug for s in supplier_plugin.get_suppliers()):
+        raise NotFound(
+            detail=f"Supplier '{supplier_slug}' not found for plugin '{plugin_slug}'"
+        )
+
+    return supplier_plugin
+
+
+class ListSupplier(APIView):
+    """List all available supplier plugins.
+
+    - GET: List supplier plugins
+    """
+
+    role_required = 'part.add'
+    permission_classes = [
+        permissions.IsAuthenticatedOrReadScope,
+        permissions.RolePermission,
+    ]
+    serializer_class = SupplierListSerializer
+
+    @extend_schema(responses={200: SupplierListSerializer(many=True)})
+    def get(self, request):
+        """List all available supplier plugins."""
+        suppliers = []
+        for plugin in registry.with_mixin(PluginMixinEnum.SUPPLIER):
+            suppliers.extend([
+                {
+                    'plugin_slug': plugin.slug,
+                    'supplier_slug': supplier.slug,
+                    'supplier_name': supplier.name,
+                }
+                for supplier in plugin.get_suppliers()
+            ])
+
+        return Response(suppliers)
 
 
 class SearchPart(APIView):
@@ -36,6 +95,7 @@ class SearchPart(APIView):
 
     @extend_schema(
         parameters=[
+            OpenApiParameter(name='plugin', description='Plugin slug', required=True),
             OpenApiParameter(
                 name='supplier', description='Supplier slug', required=True
             ),
@@ -45,20 +105,13 @@ class SearchPart(APIView):
     )
     def get(self, request):
         """Search parts by supplier."""
+        plugin_slug = request.query_params.get('plugin', '')
         supplier_slug = request.query_params.get('supplier', '')
-
-        supplier = None
-        for plugin in registry.with_mixin(PluginMixinEnum.SUPPLIER):
-            if plugin.slug == supplier_slug:
-                supplier = plugin
-                break
-
-        if not supplier:
-            raise NotFound(detail=f"Supplier '{supplier_slug}' not found")
-
         term = request.query_params.get('term', '')
+
+        supplier_plugin = get_supplier_plugin(plugin_slug, supplier_slug)
         try:
-            results = supplier.get_search_results(term)
+            results = supplier_plugin.get_search_results(supplier_slug, term)
         except Exception as e:
             return Response(
                 {'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -91,21 +144,15 @@ class ImportPart(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         # Extract validated data
+        plugin_slug = serializer.validated_data.get('plugin', '')
         supplier_slug = serializer.validated_data.get('supplier', '')
-        part_import_id = serializer.validated_data.get('part_import_id', None)
+        part_import_id = serializer.validated_data.get('part_import_id', '')
         category = serializer.validated_data.get('category_id', None)
         part = serializer.validated_data.get('part_id', None)
 
-        # Find the supplier plugin
-        supplier = None
-        for plugin in registry.with_mixin(PluginMixinEnum.SUPPLIER):
-            if plugin.slug == supplier_slug:
-                supplier = plugin
-                break
+        supplier_plugin = get_supplier_plugin(plugin_slug, supplier_slug)
 
-        # Validate supplier and part/category
-        if not supplier:
-            raise NotFound(detail=f"Supplier '{supplier_slug}' not found")
+        # Validate part/category
         if not part and not category:
             return Response(
                 {
@@ -114,26 +161,26 @@ class ImportPart(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        from plugin.base.supplier.mixins import SupplierMixin
+        from plugin.base.supplier.mixins import supplier
 
         # Import part data
         try:
-            import_data = supplier.get_import_data(part_import_id)
+            import_data = supplier_plugin.get_import_data(supplier_slug, part_import_id)
 
             with transaction.atomic():
                 # create part if it does not exist
                 if not part:
-                    part = supplier.import_part(
+                    part = supplier_plugin.import_part(
                         import_data, category=category, creation_user=request.user
                     )
 
                 # create manufacturer part
-                manufacturer_part = supplier.import_manufacturer_part(
+                manufacturer_part = supplier_plugin.import_manufacturer_part(
                     import_data, part=part
                 )
 
                 # create supplier part
-                supplier_part = supplier.import_supplier_part(
+                supplier_part = supplier_plugin.import_supplier_part(
                     import_data, part=part, manufacturer_part=manufacturer_part
                 )
 
@@ -143,11 +190,11 @@ class ImportPart(APIView):
                     part.save()
 
                 # get pricing
-                pricing = supplier.get_pricing_data(import_data)
+                pricing = supplier_plugin.get_pricing_data(import_data)
 
                 # get parameters
-                parameters = supplier.get_parameters(import_data)
-        except SupplierMixin.PartNotFoundError:
+                parameters = supplier_plugin.get_parameters(import_data)
+        except supplier.PartNotFoundError:
             return Response(
                 {'detail': f"Part with id: '{part_import_id}' not found"},
                 status=status.HTTP_404_NOT_FOUND,
@@ -172,7 +219,7 @@ class ImportPart(APIView):
                         break
                 else:
                     parameters.append(
-                        SupplierMixin.ImportParameter(
+                        supplier.ImportParameter(
                             name=c.parameter_template.name,
                             value=c.default_value,
                             on_category=True,
@@ -193,6 +240,7 @@ class ImportPart(APIView):
 
 
 supplier_api_urls = [
+    path('list/', ListSupplier.as_view(), name='api-supplier-list'),
     path('search/', SearchPart.as_view(), name='api-supplier-search'),
     path('import/', ImportPart.as_view(), name='api-supplier-import'),
 ]

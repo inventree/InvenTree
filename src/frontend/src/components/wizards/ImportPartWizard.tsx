@@ -22,6 +22,7 @@ import {
 } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import { IconArrowDown, IconPlus } from '@tabler/icons-react';
+import { useQuery } from '@tanstack/react-query';
 import {
   type ReactNode,
   useCallback,
@@ -34,7 +35,6 @@ import { api } from '../../App';
 import { usePartFields } from '../../forms/PartForms';
 import { InvenTreeIcon } from '../../functions/icons';
 import { useEditApiFormModal } from '../../hooks/UseForm';
-import { usePluginsWithMixin } from '../../hooks/UsePlugins';
 import useWizard from '../../hooks/UseWizard';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 import { StandaloneField } from '../forms/StandaloneField';
@@ -131,6 +131,7 @@ const SearchStep = ({
   partId
 }: {
   selectSupplierPart: (props: {
+    plugin: string;
     supplier: string;
     searchResult: SearchResult;
   }) => void;
@@ -138,15 +139,27 @@ const SearchStep = ({
 }) => {
   const [searchValue, setSearchValue] = useState('');
   const [supplier, setSupplier] = useState('');
-  const supplierPlugins = usePluginsWithMixin('supplier');
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
+  const supplierQuery = useQuery<
+    { plugin_slug: string; supplier_slug: string; supplier_name: string }[]
+  >({
+    queryKey: ['supplier-import-list'],
+    queryFn: () =>
+      api
+        .get(apiUrl(ApiEndpoints.plugin_supplier_list))
+        .then((response) => response.data ?? []),
+    enabled: true
+  });
+
   const handleSearch = useCallback(async () => {
     setIsLoading(true);
+    const [plugin_slug, supplier_slug] = JSON.parse(supplier);
     const res = await api.get(apiUrl(ApiEndpoints.plugin_supplier_search), {
       params: {
-        supplier,
+        plugin: plugin_slug,
+        supplier: supplier_slug,
         term: searchValue
       }
     });
@@ -155,10 +168,19 @@ const SearchStep = ({
   }, [supplier, searchValue]);
 
   useEffect(() => {
-    if (supplier === '' && supplierPlugins.length > 0) {
-      setSupplier(supplierPlugins[0].meta.slug ?? '');
+    if (
+      supplier === '' &&
+      supplierQuery.data &&
+      supplierQuery.data.length > 0
+    ) {
+      setSupplier(
+        JSON.stringify([
+          supplierQuery.data[0].plugin_slug,
+          supplierQuery.data[0].supplier_slug
+        ])
+      );
     }
-  }, [supplierPlugins]);
+  }, [supplierQuery.data]);
 
   return (
     <Stack>
@@ -174,11 +196,24 @@ const SearchStep = ({
           label={t`Supplier`}
           value={supplier}
           onChange={(value) => setSupplier(value ?? '')}
-          data={supplierPlugins.map((plugin) => ({
-            value: plugin.meta.slug ?? plugin.name,
-            label: plugin.name
-          }))}
+          data={
+            supplierQuery.data?.map((supplier) => ({
+              value: JSON.stringify([
+                supplier.plugin_slug,
+                supplier.supplier_slug
+              ]),
+              label: supplier.supplier_name
+            })) || []
+          }
           searchable
+          disabled={supplierQuery.isLoading || supplierQuery.isError}
+          placeholder={
+            supplierQuery.isLoading
+              ? t`Loading...`
+              : supplierQuery.isError
+                ? t`Error fetching suppliers`
+                : t`Select supplier`
+          }
         />
         <Button disabled={!searchValue || !supplier} onClick={handleSearch}>
           <Trans>Search</Trans>
@@ -208,12 +243,16 @@ const SearchStep = ({
                 !res.existing_part_id && (
                   <Tooltip label={t`Import this part`}>
                     <ActionIcon
-                      onClick={() =>
+                      onClick={() => {
+                        const [plugin_slug, supplier_slug] =
+                          JSON.parse(supplier);
+
                         selectSupplierPart({
-                          supplier,
+                          plugin: plugin_slug,
+                          supplier: supplier_slug,
                           searchResult: res
-                        })
-                      }
+                        });
+                      }}
                     >
                       <IconArrowDown size={18} />
                     </ActionIcon>
@@ -466,6 +505,7 @@ export default function ImportPartWizard({
   partId?: number;
 }) {
   const [supplierPart, setSupplierPart] = useState<{
+    plugin: string;
     supplier: string;
     searchResult: SearchResult;
   }>();
@@ -495,6 +535,7 @@ export default function ImportPartWizard({
           {
             category_id: categoryId,
             part_import_id: supplierPart?.searchResult.id,
+            plugin: supplierPart?.plugin,
             supplier: supplierPart?.supplier,
             part_id: partId
           },
