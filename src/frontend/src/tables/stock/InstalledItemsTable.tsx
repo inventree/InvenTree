@@ -8,6 +8,7 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import { formatDecimal } from '@lib/functions/Formatting';
 import type { TableColumn } from '@lib/types/Tables';
 import {
   useStockItemInstallFields,
@@ -59,13 +60,13 @@ export default function InstalledItemsTable({
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
       PartColumn({
-        part: 'part'
+        part: 'part_detail'
       }),
       {
         accessor: 'quantity',
         switchable: false,
         render: (record: any) => {
-          let text = record.quantity;
+          let text = formatDecimal(record.quantity);
 
           if (record.serial && record.quantity == 1) {
             text = `# ${record.serial}`;

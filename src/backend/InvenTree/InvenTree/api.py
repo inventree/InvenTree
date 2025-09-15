@@ -305,8 +305,8 @@ class InfoView(APIView):
                 'login_message': helpers.getCustomOption('login_message'),
                 'navbar_message': helpers.getCustomOption('navbar_message'),
             },
+            'active_plugins': plugins_info(),
             # Following fields are only available to staff users
-            'active_plugins': plugins_info() if is_staff else None,
             'system_health': check_system_health() if is_staff else None,
             'database': InvenTree.version.inventreeDatabase() if is_staff else None,
             'platform': InvenTree.version.inventreePlatform() if is_staff else None,

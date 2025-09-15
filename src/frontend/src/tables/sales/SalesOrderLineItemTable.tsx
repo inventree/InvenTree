@@ -29,7 +29,7 @@ import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import { RenderPart } from '../../components/render/Part';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
-import { formatCurrency } from '../../defaults/formatters';
+import { formatCurrency, formatDecimal } from '../../defaults/formatters';
 import { useBuildOrderFields } from '../../forms/BuildForms';
 import {
   useAllocateToSalesOrderForm,
@@ -149,7 +149,7 @@ export default function SalesOrderLineItemTable({
           );
 
           let color: string | undefined = undefined;
-          let text = `${available}`;
+          let text = `${formatDecimal(available)}`;
 
           const extra: ReactNode[] = [];
 
@@ -167,7 +167,7 @@ export default function SalesOrderLineItemTable({
           if (record.building > 0) {
             extra.push(
               <Text size='sm'>
-                {t`In production`}: {record.building}
+                {t`In production`}: {formatDecimal(record.building)}
               </Text>
             );
           }
@@ -175,7 +175,7 @@ export default function SalesOrderLineItemTable({
           if (record.on_order > 0) {
             extra.push(
               <Text size='sm'>
-                {t`On order`}: {record.on_order}
+                {t`On order`}: {formatDecimal(record.on_order)}
               </Text>
             );
           }
