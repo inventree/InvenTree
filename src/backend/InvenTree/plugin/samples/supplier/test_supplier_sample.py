@@ -19,8 +19,29 @@ class SampleSupplierTest(InvenTreeAPITestCase):
     fixtures = ['location', 'category', 'part', 'stock', 'company']
     roles = ['part.add']
 
+    def test_list(self):
+        """Check the list api."""
+        # Test APIs
+        url = reverse('api-supplier-list')
+
+        # No plugin
+        res = self.get(url, expected_code=200)
+        self.assertEqual(len(res.data), 0)
+
+        # Activate plugin
+        config = registry.get_plugin('samplesupplier', active=None).plugin_config()
+        config.active = True
+        config.save()
+
+        # One active plugin
+        res = self.get(url, expected_code=200)
+        self.assertEqual(len(res.data), 1)
+        self.assertEqual(res.data[0]['plugin_slug'], 'samplesupplier')
+        self.assertEqual(res.data[0]['supplier_slug'], 'sample-fasteners')
+        self.assertEqual(res.data[0]['supplier_name'], 'Sample Fasteners')
+
     def test_search(self):
-        """Check if the event is issued."""
+        """Check the search api."""
         # Activate plugin
         config = registry.get_plugin('samplesupplier', active=None).plugin_config()
         config.active = True

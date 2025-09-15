@@ -127,14 +127,6 @@ export function useStockFields({
     if (supplierPartId && !supplierPart) setSupplierPart(supplierPartId);
   }, [partInstance, supplierPart, supplierPartId]);
 
-  useEffect(() => {
-    if (partInstance?.pk) {
-      // Update the generators whenever the part ID changes
-      batchGenerator.update({ part: partInstance.pk });
-      serialGenerator.update({ part: partInstance.pk });
-    }
-  }, [partInstance.pk]);
-
   return useMemo(() => {
     const fields: ApiFormFieldSet = {
       part: {

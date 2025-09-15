@@ -24,6 +24,7 @@ import {
   useCreateApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
+import { usePluginsWithMixin } from '../../hooks/UsePlugins';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import {
@@ -370,6 +371,8 @@ export function PartListTable({
   });
 
   const orderPartsWizard = OrderPartsWizard({ parts: table.selectedRecords });
+
+  const supplierPlugins = usePluginsWithMixin('supplier');
   const importPartWizard = ImportPartWizard({
     categoryId: initialPartData.category
   });
@@ -427,14 +430,16 @@ export function PartListTable({
       />,
       <ActionButton
         key='import-part'
-        hidden={!user.hasAddRole(UserRoles.part)}
+        hidden={
+          supplierPlugins.length === 0 || !user.hasAddRole(UserRoles.part)
+        }
         tooltip={t`Import Part`}
         color='green'
         icon={<IconPackageImport />}
         onClick={() => importPartWizard.openWizard()}
       />
     ];
-  }, [user, table.hasSelectedRecords]);
+  }, [user, table.hasSelectedRecords, supplierPlugins]);
 
   return (
     <>

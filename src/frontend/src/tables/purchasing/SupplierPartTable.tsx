@@ -23,6 +23,7 @@ import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
+import { usePluginsWithMixin } from '../../hooks/UsePlugins';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import {
@@ -164,6 +165,7 @@ export function SupplierPartTable({
     successMessage: t`Supplier part created`
   });
 
+  const supplierPlugins = usePluginsWithMixin('supplier');
   const importPartWizard = ImportPartWizard({
     partId: params?.part
   });
@@ -182,10 +184,14 @@ export function SupplierPartTable({
         color='green'
         tooltip={t`Import supplier part`}
         onClick={() => importPartWizard.openWizard()}
-        hidden={!user.hasAddRole(UserRoles.part) || !params?.part}
+        hidden={
+          supplierPlugins.length === 0 ||
+          !user.hasAddRole(UserRoles.part) ||
+          !params?.part
+        }
       />
     ];
-  }, [user]);
+  }, [user, supplierPlugins]);
 
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
