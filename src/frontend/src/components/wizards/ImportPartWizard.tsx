@@ -24,6 +24,7 @@ import { showNotification } from '@mantine/notifications';
 import { IconArrowDown, IconPlus } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import {
+  type FormEventHandler,
   type ReactNode,
   useCallback,
   useEffect,
@@ -153,19 +154,25 @@ const SearchStep = ({
     enabled: true
   });
 
-  const handleSearch = useCallback(async () => {
-    setIsLoading(true);
-    const [plugin_slug, supplier_slug] = JSON.parse(supplier);
-    const res = await api.get(apiUrl(ApiEndpoints.plugin_supplier_search), {
-      params: {
-        plugin: plugin_slug,
-        supplier: supplier_slug,
-        term: searchValue
-      }
-    });
-    setSearchResults(res.data ?? []);
-    setIsLoading(false);
-  }, [supplier, searchValue]);
+  const handleSearch = useCallback<FormEventHandler<HTMLFormElement>>(
+    async (e) => {
+      e.preventDefault();
+      if (!searchValue || !supplier) return;
+
+      setIsLoading(true);
+      const [plugin_slug, supplier_slug] = JSON.parse(supplier);
+      const res = await api.get(apiUrl(ApiEndpoints.plugin_supplier_search), {
+        params: {
+          plugin: plugin_slug,
+          supplier: supplier_slug,
+          term: searchValue
+        }
+      });
+      setSearchResults(res.data ?? []);
+      setIsLoading(false);
+    },
+    [supplier, searchValue]
+  );
 
   useEffect(() => {
     if (
@@ -184,41 +191,43 @@ const SearchStep = ({
 
   return (
     <Stack>
-      <Group align='flex-end'>
-        <TextInput
-          flex={1}
-          placeholder='Search for a part'
-          label={t`Search...`}
-          value={searchValue}
-          onChange={(event) => setSearchValue(event.currentTarget.value)}
-        />
-        <Select
-          label={t`Supplier`}
-          value={supplier}
-          onChange={(value) => setSupplier(value ?? '')}
-          data={
-            supplierQuery.data?.map((supplier) => ({
-              value: JSON.stringify([
-                supplier.plugin_slug,
-                supplier.supplier_slug
-              ]),
-              label: supplier.supplier_name
-            })) || []
-          }
-          searchable
-          disabled={supplierQuery.isLoading || supplierQuery.isError}
-          placeholder={
-            supplierQuery.isLoading
-              ? t`Loading...`
-              : supplierQuery.isError
-                ? t`Error fetching suppliers`
-                : t`Select supplier`
-          }
-        />
-        <Button disabled={!searchValue || !supplier} onClick={handleSearch}>
-          <Trans>Search</Trans>
-        </Button>
-      </Group>
+      <form onSubmit={handleSearch}>
+        <Group align='flex-end'>
+          <TextInput
+            flex={1}
+            placeholder='Search for a part'
+            label={t`Search...`}
+            value={searchValue}
+            onChange={(event) => setSearchValue(event.currentTarget.value)}
+          />
+          <Select
+            label={t`Supplier`}
+            value={supplier}
+            onChange={(value) => setSupplier(value ?? '')}
+            data={
+              supplierQuery.data?.map((supplier) => ({
+                value: JSON.stringify([
+                  supplier.plugin_slug,
+                  supplier.supplier_slug
+                ]),
+                label: supplier.supplier_name
+              })) || []
+            }
+            searchable
+            disabled={supplierQuery.isLoading || supplierQuery.isError}
+            placeholder={
+              supplierQuery.isLoading
+                ? t`Loading...`
+                : supplierQuery.isError
+                  ? t`Error fetching suppliers`
+                  : t`Select supplier`
+            }
+          />
+          <Button disabled={!searchValue || !supplier} type='submit'>
+            <Trans>Search</Trans>
+          </Button>
+        </Group>
+      </form>
 
       {isLoading && (
         <Center>
