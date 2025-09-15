@@ -77,17 +77,6 @@ def default_token_expiry():
     return InvenTree.helpers.current_date() + datetime.timedelta(days=365)
 
 
-def default_create_token(token_model, user, serializer):
-    """Generate a default value for the token."""
-    token = token_model.objects.filter(user=user, name='', revoked=False)
-
-    if token.exists():
-        return token.first()
-
-    else:
-        return token_model.objects.create(user=user, name='')
-
-
 class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
     """Extends the default token model provided by djangorestframework.authtoken.
 
@@ -374,7 +363,11 @@ class Owner(models.Model):
         if self.owner_type.name == 'user' and get_global_setting(
             'DISPLAY_FULL_NAMES', cache=True
         ):
-            return self.owner.get_full_name() or str(self.owner)
+            if self.owner and hasattr(self.owner, 'get_full_name'):
+                # Use the get_full_name method if available
+                return self.owner.get_full_name() or str(self.owner)
+            else:
+                return str(self.owner)
         return str(self.owner)
 
     def label(self):

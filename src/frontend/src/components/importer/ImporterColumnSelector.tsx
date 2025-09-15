@@ -61,6 +61,7 @@ function ImporterColumn({
 
   return (
     <Select
+      aria-label={`import-column-map-${column.field}`}
       error={errorMessage}
       clearable
       searchable

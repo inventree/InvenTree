@@ -52,8 +52,7 @@ export default function SalesOrderShipmentDetail() {
   const {
     instance: shipment,
     instanceQuery: shipmentQuery,
-    refreshInstance: refreshShipment,
-    requestStatus: shipmentStatus
+    refreshInstance: refreshShipment
   } = useInstance({
     endpoint: ApiEndpoints.sales_order_shipment_list,
     pk: id,
@@ -65,8 +64,7 @@ export default function SalesOrderShipmentDetail() {
   const {
     instance: customer,
     instanceQuery: customerQuery,
-    refreshInstance: refreshCustomer,
-    requestStatus: customerStatus
+    refreshInstance: refreshCustomer
   } = useInstance({
     endpoint: ApiEndpoints.company_list,
     pk: shipment.order_detail?.customer,
@@ -317,6 +315,7 @@ export default function SalesOrderShipmentDetail() {
         key='barcode'
         model={ModelType.salesordershipment}
         pk={shipment.pk}
+        hash={shipment?.barcode_hash}
       />,
       <PrintingActions
         key='print'
@@ -350,8 +349,7 @@ export default function SalesOrderShipmentDetail() {
       {editShipment.modal}
       {deleteShipment.modal}
       <InstanceDetail
-        status={shipmentStatus}
-        loading={shipmentQuery.isFetching || customerQuery.isFetching}
+        query={shipmentQuery}
         requiredRole={UserRoles.sales_order}
       >
         <Stack gap='xs'>

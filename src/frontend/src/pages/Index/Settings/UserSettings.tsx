@@ -5,10 +5,11 @@ import {
   IconDeviceDesktop,
   IconFileAnalytics,
   IconLock,
+  IconPlugConnected,
   IconSearch,
   IconUserCircle
 } from '@tabler/icons-react';
-import { useMemo } from 'react';
+import { lazy, useMemo } from 'react';
 
 import { useShallow } from 'zustand/react/shallow';
 import PageTitle from '../../../components/nav/PageTitle';
@@ -16,9 +17,14 @@ import { SettingsHeader } from '../../../components/nav/SettingsHeader';
 import type { PanelType } from '../../../components/panels/Panel';
 import { PanelGroup } from '../../../components/panels/PanelGroup';
 import { UserSettingList } from '../../../components/settings/SettingList';
+import { Loadable } from '../../../functions/loading';
 import { useUserState } from '../../../states/UserState';
 import { SecurityContent } from './AccountSettings/SecurityContent';
 import { AccountContent } from './AccountSettings/UserPanel';
+
+const PluginSettingsGroup = Loadable(
+  lazy(() => import('./PluginSettingsGroup'))
+);
 
 /**
  * User settings page
@@ -51,13 +57,14 @@ export default function UserSettings() {
             keys={[
               'ICONS_IN_NAVBAR',
               'STICKY_HEADER',
+              'STICKY_TABLE_HEADER',
+              'SHOW_SPOTLIGHT',
               'DATE_DISPLAY_FORMAT',
               'FORMS_CLOSE_USING_ESCAPE',
-              'PART_SHOW_QUANTITY_IN_FORMS',
-              'DISPLAY_SCHEDULE_TAB',
               'DISPLAY_STOCKTAKE_TAB',
-              'TABLE_STRING_MAX_LENGTH',
-              'ENABLE_LAST_BREADCRUMB'
+              'ENABLE_LAST_BREADCRUMB',
+              'SHOW_FULL_LOCATION_IN_TABLES',
+              'SHOW_FULL_CATEGORY_IN_TABLES'
             ]}
           />
         )
@@ -98,7 +105,13 @@ export default function UserSettings() {
         name: 'notifications',
         label: t`Notifications`,
         icon: <IconBellCog />,
-        content: <UserSettingList keys={['NOTIFICATION_ERROR_REPORT']} />
+        content: (
+          <PluginSettingsGroup
+            mixin='notification'
+            global={false}
+            message={t`The settings below are specific to each available notification method`}
+          />
+        )
       },
       {
         name: 'reporting',
@@ -109,6 +122,12 @@ export default function UserSettings() {
             keys={['REPORT_INLINE', 'LABEL_INLINE', 'LABEL_DEFAULT_PRINTER']}
           />
         )
+      },
+      {
+        name: 'plugins',
+        label: t`Plugin Settings`,
+        icon: <IconPlugConnected />,
+        content: <PluginSettingsGroup global={false} />
       }
     ];
   }, []);

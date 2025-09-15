@@ -13,6 +13,7 @@ import { ModelType } from '@lib/enums/ModelType';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
 
+import { ProgressBar } from '@lib/components/ProgressBar';
 import { apiUrl } from '@lib/functions/Api';
 import type {
   ApiFormAdjustFilterType,
@@ -20,10 +21,9 @@ import type {
   ApiFormFieldType
 } from '@lib/types/Forms';
 import type { TableFieldRowProps } from '../components/forms/fields/TableField';
-import { ProgressBar } from '../components/items/ProgressBar';
 import { useCreateApiFormModal } from '../hooks/UseForm';
-import { useGlobalSettingsState } from '../states/SettingsState';
-import { PartColumn } from '../tables/ColumnRenderers';
+import { useGlobalSettingsState } from '../states/SettingsStates';
+import { RenderPartColumn } from '../tables/ColumnRenderers';
 
 export function useSalesOrderFields({
   duplicateOrderId
@@ -197,7 +197,7 @@ function SalesOrderAllocateLineRow({
   return (
     <Table.Tr key={`table-row-${props.idx}-${record.pk}`}>
       <Table.Td>
-        <PartColumn part={record.part_detail} />
+        <RenderPartColumn part={record.part_detail} />
       </Table.Td>
       <Table.Td>
         <ProgressBar

@@ -13,14 +13,25 @@ import PermissionDenied from '../../components/errors/PermissionDenied';
 import { PageDetail } from '../../components/nav/PageDetail';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import { PartCategoryFilter } from '../../tables/Filter';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
 
 function BuildOrderCalendar() {
+  const globalSettings = useGlobalSettingsState();
+
   const calendarFilters: TableFilter[] = useMemo(() => {
-    return [PartCategoryFilter()];
-  }, []);
+    return [
+      {
+        name: 'external',
+        label: t`External`,
+        description: t`Show external build orders`,
+        active: globalSettings.isSet('BUILDORDER_EXTERNAL_BUILDS')
+      },
+      PartCategoryFilter()
+    ];
+  }, [globalSettings]);
 
   return (
     <OrderCalendar

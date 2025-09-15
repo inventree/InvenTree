@@ -11,7 +11,7 @@ from users.models import Owner
 
 
 class StockViewTestCase(InvenTreeTestCase):
-    """Mixin for Stockview tests."""
+    """Mixin for StockView tests."""
 
     fixtures = ['category', 'part', 'company', 'location', 'supplier_part', 'stock']
 
@@ -46,7 +46,7 @@ class StockOwnershipTest(StockViewTestCase):
         """Helper function to get response to API change."""
         return self.client.patch(
             reverse('api-stock-detail', args=(self.test_item_id,)),
-            {'status': StockStatus.DAMAGED.value},
+            {'status_custom_key': StockStatus.DAMAGED.value},
             content_type='application/json',
         )
 
@@ -96,7 +96,7 @@ class StockOwnershipTest(StockViewTestCase):
         self.assertTrue(location.check_ownership(self.user))  # Owner is group -> True
         self.assertContains(
             self.assert_api_change(),
-            f'"status":{StockStatus.DAMAGED.value}',
+            f'"status_custom_key":{StockStatus.DAMAGED.value}',
             status_code=200,
         )
 

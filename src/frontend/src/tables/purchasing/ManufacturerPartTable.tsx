@@ -1,12 +1,17 @@
 import { t } from '@lingui/core/macro';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 
+import { AddItemButton } from '@lib/components/AddItemButton';
+import {
+  type RowAction,
+  RowDeleteAction,
+  RowEditAction
+} from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
-import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { Thumbnail } from '../../components/images/Thumbnail';
+import type { TableColumn } from '@lib/types/Tables';
 import { useManufacturerPartFields } from '../../forms/CompanyForms';
 import {
   useCreateApiFormModal,
@@ -15,10 +20,13 @@ import {
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
-import { DescriptionColumn, LinkColumn, PartColumn } from '../ColumnRenderers';
+import {
+  CompanyColumn,
+  DescriptionColumn,
+  LinkColumn,
+  PartColumn
+} from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 /*
  * Construct a table listing manufacturer parts
@@ -33,29 +41,19 @@ export function ManufacturerPartTable({
   // Construct table columns for this table
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
-      {
-        accessor: 'part',
-        switchable: 'part' in params,
-        sortable: true,
-        render: (record: any) => PartColumn({ part: record?.part_detail })
-      },
+      PartColumn({
+        switchable: 'part' in params
+      }),
       {
         accessor: 'manufacturer',
         sortable: true,
-        render: (record: any) => {
-          const manufacturer = record?.manufacturer_detail ?? {};
-
-          return (
-            <Thumbnail
-              src={manufacturer?.thumbnail ?? manufacturer.image}
-              text={manufacturer.name}
-            />
-          );
-        }
+        render: (record: any) => (
+          <CompanyColumn company={record?.manufacturer_detail} />
+        )
       },
       {
         accessor: 'MPN',
-        title: t`Manufacturer Part Number`,
+        title: t`MPN`,
         sortable: true
       },
       DescriptionColumn({}),

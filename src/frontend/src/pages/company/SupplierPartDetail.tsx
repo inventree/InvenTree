@@ -13,6 +13,7 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import { formatDecimal } from '@lib/functions/Formatting';
 import { getDetailUrl } from '@lib/functions/Navigation';
 import AdminButton from '../../components/buttons/AdminButton';
 import {
@@ -56,8 +57,7 @@ export default function SupplierPartDetail() {
   const {
     instance: supplierPart,
     instanceQuery,
-    refreshInstance,
-    requestStatus
+    refreshInstance
   } = useInstance({
     endpoint: ApiEndpoints.supplier_part_list,
     pk: id,
@@ -157,9 +157,8 @@ export default function SupplierPartDetail() {
         type: 'link',
         name: 'manufacturer_part',
         model_field: 'MPN',
-        label: t`Manufacturer Part Number`,
+        label: t`Manufacturer Part`,
         model: ModelType.manufacturerpart,
-        copy: true,
         icon: 'reference',
         hidden: !data.manufacturer_part
       }
@@ -185,14 +184,14 @@ export default function SupplierPartDetail() {
 
     const tr: DetailsField[] = [
       {
-        type: 'string',
+        type: 'number',
         name: 'in_stock',
         label: t`In Stock`,
         copy: true,
         icon: 'stock'
       },
       {
-        type: 'string',
+        type: 'number',
         name: 'on_order',
         label: t`On Order`,
         copy: true,
@@ -266,7 +265,10 @@ export default function SupplierPartDetail() {
         label: t`Purchase Orders`,
         icon: <IconShoppingCart />,
         content: supplierPart?.pk ? (
-          <PurchaseOrderTable supplierPartId={supplierPart.pk} />
+          <PurchaseOrderTable
+            supplierId={supplierPart.supplier}
+            supplierPartId={supplierPart.pk}
+          />
         ) : (
           <Skeleton />
         )
@@ -368,7 +370,7 @@ export default function SupplierPartDetail() {
         visible={supplierPart.active == false}
       />,
       <DetailsBadge
-        label={`${t`In Stock`}: ${supplierPart.in_stock}`}
+        label={`${t`In Stock`}: ${formatDecimal(supplierPart.in_stock)}`}
         color={'green'}
         visible={
           supplierPart?.active &&
@@ -384,7 +386,7 @@ export default function SupplierPartDetail() {
         key='no_stock'
       />,
       <DetailsBadge
-        label={`${t`On Order`}: ${supplierPart.on_order}`}
+        label={`${t`On Order`}: ${formatDecimal(supplierPart.on_order)}`}
         color='blue'
         visible={supplierPart.on_order > 0}
         key='on_order'
@@ -398,8 +400,7 @@ export default function SupplierPartDetail() {
       {duplicateSupplierPart.modal}
       {editSupplierPart.modal}
       <InstanceDetail
-        status={requestStatus}
-        loading={instanceQuery.isFetching}
+        query={instanceQuery}
         requiredRole={UserRoles.purchase_order}
       >
         <Stack gap='xs'>

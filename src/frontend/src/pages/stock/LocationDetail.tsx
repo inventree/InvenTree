@@ -1,8 +1,8 @@
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
 import { getDetailUrl } from '@lib/functions/Navigation';
-import { apiUrl } from '@lib/index';
 import { t } from '@lingui/core/macro';
 import { Group, Skeleton, Stack, Text } from '@mantine/core';
 import { IconInfoCircle, IconPackages, IconSitemap } from '@tabler/icons-react';
@@ -18,7 +18,6 @@ import {
 } from '../../components/details/Details';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
-  ActionDropdown,
   BarcodeActionDropdown,
   DeleteItemAction,
   EditItemAction,
@@ -33,9 +32,7 @@ import { PanelGroup } from '../../components/panels/PanelGroup';
 import LocateItemButton from '../../components/plugins/LocateItemButton';
 import {
   type StockOperationProps,
-  stockLocationFields,
-  useCountStockItem,
-  useTransferStockItem
+  stockLocationFields
 } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
 import {
@@ -43,6 +40,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
 import { useUserState } from '../../states/UserState';
 import { PartListTable } from '../../tables/part/PartTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
@@ -64,8 +62,7 @@ export default function Stock() {
   const {
     instance: location,
     refreshInstance,
-    instanceQuery,
-    requestStatus
+    instanceQuery
   } = useInstance({
     endpoint: ApiEndpoints.stock_location_list,
     hasPrimaryKey: true,
@@ -260,7 +257,7 @@ export default function Stock() {
     }
   });
 
-  const stockItemActionProps: StockOperationProps = useMemo(() => {
+  const stockOperationProps: StockOperationProps = useMemo(() => {
     return {
       pk: location.pk,
       model: 'location',
@@ -271,8 +268,13 @@ export default function Stock() {
     };
   }, [location]);
 
-  const transferStockItems = useTransferStockItem(stockItemActionProps);
-  const countStockItems = useCountStockItem(stockItemActionProps);
+  const stockAdjustActions = useStockAdjustActions({
+    formProps: stockOperationProps,
+    enabled: true,
+    delete: false,
+    merge: false,
+    assign: false
+  });
 
   const scanInStockItem = useBarcodeScanDialog({
     title: t`Scan Stock Item`,
@@ -363,28 +365,7 @@ export default function Stock() {
         enableLabels
         enableReports
       />,
-      <ActionDropdown
-        tooltip={t`Stock Actions`}
-        icon={<InvenTreeIcon icon='stock' />}
-        actions={[
-          {
-            name: t`Count Stock`,
-            icon: (
-              <InvenTreeIcon icon='stocktake' iconProps={{ color: 'blue' }} />
-            ),
-            tooltip: t`Count Stock`,
-            onClick: () => countStockItems.open()
-          },
-          {
-            name: 'Transfer Stock',
-            icon: (
-              <InvenTreeIcon icon='transfer' iconProps={{ color: 'blue' }} />
-            ),
-            tooltip: 'Transfer Stock',
-            onClick: () => transferStockItems.open()
-          }
-        ]}
-      />,
+      stockAdjustActions.dropdown,
       <OptionsActionDropdown
         tooltip={t`Location Actions`}
         actions={[
@@ -401,7 +382,7 @@ export default function Stock() {
         ]}
       />
     ],
-    [location, id, user]
+    [location, id, user, stockAdjustActions.dropdown]
   );
 
   const breadcrumbs = useMemo(
@@ -423,8 +404,7 @@ export default function Stock() {
       {scanInStockItem.dialog}
       {scanInStockLocation.dialog}
       <InstanceDetail
-        status={requestStatus}
-        loading={id ? instanceQuery.isFetching : false}
+        query={instanceQuery}
         requiredRole={UserRoles.stock_location}
       >
         <Stack>
@@ -465,9 +445,8 @@ export default function Stock() {
             id={location?.pk}
             instance={location}
           />
-          {transferStockItems.modal}
-          {countStockItems.modal}
         </Stack>
+        {stockAdjustActions.modals.map((modal) => modal.modal)}
       </InstanceDetail>
     </>
   );

@@ -11,11 +11,11 @@ from typing import Optional
 from unittest import mock
 from unittest.mock import patch
 
-from django.conf import settings
 from django.test import TestCase, override_settings
 
 import plugin.templatetags.plugin_extras as plugin_tags
-from plugin import InvenTreePlugin
+from InvenTree.unit_test import PluginRegistryMixin, TestQueryMixin
+from plugin import InvenTreePlugin, PluginMixinEnum
 from plugin.registry import registry
 from plugin.samples.integration.another_sample import (
     NoIntegrationPlugin,
@@ -27,7 +27,7 @@ from plugin.samples.integration.sample import SampleIntegrationPlugin
 PLUGIN_TEST_DIR = '_testfolder/test_plugins'
 
 
-class PluginTagTests(TestCase):
+class PluginTagTests(PluginRegistryMixin, TestCase):
     """Tests for the plugin extras."""
 
     def setUp(self):
@@ -63,7 +63,9 @@ class PluginTagTests(TestCase):
 
     def test_mixin_available(self):
         """Check that mixin_available works."""
-        self.assertEqual(plugin_tags.mixin_available('barcode'), True)
+        from plugin import PluginMixinEnum
+
+        self.assertEqual(plugin_tags.mixin_available(PluginMixinEnum.BARCODE), True)
         self.assertEqual(plugin_tags.mixin_available('wrong'), False)
 
     def test_tag_safe_url(self):
@@ -208,7 +210,7 @@ class InvenTreePluginTests(TestCase):
             self.assertEqual(plug.is_active(), False)
 
 
-class RegistryTests(TestCase):
+class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
     """Tests for registry loading methods."""
 
     def mockDir(self) -> str:
@@ -222,6 +224,7 @@ class RegistryTests(TestCase):
         with mock.patch.dict(os.environ, envs):
             # Reload to rediscover plugins
             registry.reload_plugins(full_reload=True, collect=True)
+            registry.set_plugin_state('simple', True)
 
             # Depends on the meta set in InvenTree/plugin/mock/simple:SimplePlugin
             plg = registry.get_plugin('simple')
@@ -269,7 +272,7 @@ class RegistryTests(TestCase):
         registry.reload_plugins(full_reload=True, collect=True)
 
         # Test that plugin was installed
-        plg = registry.get_plugin('zapier')
+        plg = registry.get_plugin('zapier', active=None)
         self.assertEqual(plg.slug, 'zapier')
         self.assertEqual(plg.name, 'inventree_zapier')
 
@@ -284,20 +287,78 @@ class RegistryTests(TestCase):
             # Reload to rediscover plugins
             registry.reload_plugins(full_reload=True, collect=True)
 
-        self.assertEqual(len(registry.errors), 2)
+        self.assertEqual(len(registry.errors), 3)
 
-        # There should be at least one discovery error in the module `broken_file`
-        self.assertGreater(len(registry.errors.get('discovery')), 0)
-        self.assertEqual(
-            registry.errors.get('discovery')[0]['broken_file'],  # type: ignore[call-possibly-unbound-method]
-            "name 'bb' is not defined",
+        errors = registry.errors
+
+        def find_error(group: str, key: str) -> str:
+            """Find a matching error in the registry errors."""
+            for error in errors.get(group, []):
+                if key in error:
+                    return error[key]
+            return None
+
+        # Check for expected errors in the registry
+        self.assertIn(
+            "Plugin 'BadActorPlugin' cannot override final method 'plugin_slug'",
+            find_error('discovery', 'bad_actor'),
         )
 
-        # There should be at least one load error with an intentional KeyError
-        self.assertGreater(len(registry.errors.get('init')), 0)
-        self.assertEqual(
-            registry.errors.get('init')[0]['broken_sample'],  # type: ignore[call-possibly-unbound-method]
-            "'This is a dummy error'",
+        self.assertIn(
+            "name 'bb' is not defined", find_error('discovery', 'broken_file')
+        )
+
+        self.assertIn(
+            'This is a dummy error', find_error('Test:init_plugin', 'broken_sample')
+        )
+
+    def test_plugin_override_mandatory(self):
+        """Test that a plugin cannot override the is_mandatory method."""
+        with self.assertRaises(TypeError) as e:
+            # Attempt to create a class which overrides the 'is_mandatory' method
+            class MyDummyPlugin(InvenTreePlugin):
+                """A dummy plugin for testing."""
+
+                NAME = 'MyDummyPlugin'
+                SLUG = 'mydummyplugin'
+                TITLE = 'My Dummy Plugin'
+                VERSION = '1.0.0'
+
+                def is_mandatory(self):
+                    """Override is_mandatory to always return True."""
+                    return True
+
+        # Check that the error message is as expected
+        self.assertIn(
+            "Plugin 'MyDummyPlugin' cannot override final method 'is_mandatory' from InvenTreePlugin",
+            str(e.exception),
+        )
+
+    def test_plugin_override_active(self):
+        """Test that the plugin override works as expected."""
+        with self.assertRaises(TypeError) as e:
+            # Attempt to create a class which overrides the 'is_active' method
+            class MyDummyPlugin(InvenTreePlugin):
+                """A dummy plugin for testing."""
+
+                NAME = 'MyDummyPlugin'
+                SLUG = 'mydummyplugin'
+                TITLE = 'My Dummy Plugin'
+                VERSION = '1.0.0'
+
+                def is_active(self):
+                    """Override is_active to always return True."""
+                    return True
+
+                def __init_subclass__(cls):
+                    """Override __init_subclass__."""
+                    # Ensure that overriding the __init_subclass__ method
+                    # does not prevent the TypeError from being raised
+
+        # Check that the error message is as expected
+        self.assertIn(
+            "Plugin 'MyDummyPlugin' cannot override final method 'is_active' from InvenTreePlugin",
+            str(e.exception),
         )
 
     @override_settings(PLUGIN_TESTING=True, PLUGIN_TESTING_SETUP=True)
@@ -414,16 +475,166 @@ class RegistryTests(TestCase):
         # Check that the registry is not reloaded
         self.assertFalse(registry.check_reload())
 
-        settings.TESTING = False
-        settings.PLUGIN_TESTING_RELOAD = True
+        with self.settings(TESTING=False, PLUGIN_TESTING_RELOAD=True):
+            # Check that the registry is reloaded
+            registry.reload_plugins(full_reload=True, collect=True, force_reload=True)
+            self.assertFalse(registry.check_reload())
 
-        # Check that the registry is reloaded
-        registry.reload_plugins(full_reload=True, collect=True, force_reload=True)
-        self.assertFalse(registry.check_reload())
+            # Check that changed hashes run through
+            registry.registry_hash = 'abc'
+            self.assertTrue(registry.check_reload())
 
-        # Check that changed hashes run through
-        registry.registry_hash = 'abc'
-        self.assertTrue(registry.check_reload())
+    def test_builtin_mandatory_plugins(self):
+        """Test that mandatory builtin plugins are always loaded."""
+        from plugin.models import PluginConfig
+        from plugin.registry import registry
 
-        settings.TESTING = True
-        settings.PLUGIN_TESTING_RELOAD = False
+        # Start with a 'clean slate'
+        PluginConfig.objects.all().delete()
+
+        # Change this value whenever a new mandatory plugin is added
+        N_MANDATORY_PLUGINS = 10
+
+        registry.reload_plugins(full_reload=True, collect=True)
+        mandatory = registry.MANDATORY_PLUGINS
+        self.assertEqual(len(mandatory), N_MANDATORY_PLUGINS)
+
+        # Check that the mandatory plugins are loaded
+        self.assertEqual(
+            PluginConfig.objects.filter(active=True).count(), len(mandatory)
+        )
+
+        for key in mandatory:
+            cfg = registry.get_plugin_config(key)
+            self.assertIsNotNone(cfg, f"Mandatory plugin '{key}' not found in config")
+            self.assertTrue(cfg.is_mandatory())
+            self.assertTrue(cfg.active, f"Mandatory plugin '{key}' is not active")
+            self.assertTrue(cfg.is_active())
+            self.assertTrue(cfg.is_builtin())
+            plg = registry.get_plugin(key)
+            self.assertIsNotNone(plg, f"Mandatory plugin '{key}' not found")
+            self.assertTrue(
+                plg.is_mandatory, f"Plugin '{key}' is not marked as mandatory"
+            )
+
+        slug = 'bom-exporter'
+        self.assertIn(slug, mandatory)
+        cfg = registry.get_plugin_config(slug)
+
+        # Try to disable the mandatory plugin
+        cfg.active = False
+        cfg.save()
+        cfg.refresh_from_db()
+
+        # Mandatory plugin cannot be disabled!
+        self.assertTrue(cfg.active)
+        self.assertTrue(cfg.is_active())
+
+    def test_mandatory_plugins(self):
+        """Test that plugins marked as 'mandatory' are always active."""
+        from plugin.models import PluginConfig
+        from plugin.registry import registry
+
+        # Start with a 'clean slate'
+        PluginConfig.objects.all().delete()
+
+        self.assertEqual(PluginConfig.objects.count(), 0)
+
+        registry.reload_plugins(full_reload=True, collect=True)
+
+        N_CONFIG = PluginConfig.objects.count()
+        N_ACTIVE = PluginConfig.objects.filter(active=True).count()
+
+        # Run checks across the registered plugin configurations
+        self.assertGreater(N_CONFIG, 0, 'No plugin configs found after reload')
+        self.assertGreater(N_ACTIVE, 0, 'No active plugin configs found after reload')
+        self.assertLess(
+            N_ACTIVE, N_CONFIG, 'All plugins are installed, but only some are active'
+        )
+        self.assertEqual(
+            N_ACTIVE,
+            len(registry.MANDATORY_PLUGINS),
+            'Not all mandatory plugins are active',
+        )
+
+        # Next, mark some additional plugins as mandatory
+        # These are a mix of "builtin" and "sample" plugins
+        mandatory_slugs = ['sampleui', 'validator', 'digikeyplugin', 'autocreatebuilds']
+
+        with self.settings(PLUGINS_MANDATORY=mandatory_slugs):
+            # Reload the plugins to apply the mandatory settings
+            registry.reload_plugins(full_reload=True, collect=True)
+
+            self.assertEqual(N_CONFIG, PluginConfig.objects.count())
+            self.assertEqual(
+                N_ACTIVE + 4, PluginConfig.objects.filter(active=True).count()
+            )
+
+            # Check that the mandatory plugins are active
+            for slug in mandatory_slugs:
+                cfg = registry.get_plugin_config(slug)
+                self.assertIsNotNone(
+                    cfg, f"Mandatory plugin '{slug}' not found in config"
+                )
+                self.assertTrue(cfg.is_mandatory())
+                self.assertTrue(cfg.active, f"Mandatory plugin '{slug}' is not active")
+                self.assertTrue(cfg.is_active())
+                plg = registry.get_plugin(slug)
+                self.assertTrue(plg.is_active(), f"Plugin '{slug}' is not active")
+                self.assertIsNotNone(plg, f"Mandatory plugin '{slug}' not found")
+                self.assertTrue(
+                    plg.is_mandatory, f"Plugin '{slug}' is not marked as mandatory"
+                )
+
+    def test_with_mixin(self):
+        """Tests for the 'with_mixin' registry method."""
+        from plugin.models import PluginConfig
+        from plugin.registry import registry
+
+        self.ensurePluginsLoaded()
+
+        N_CONFIG = PluginConfig.objects.count()
+        self.assertGreater(N_CONFIG, 0, 'No plugin configs found')
+
+        # Test that the 'with_mixin' method is query efficient
+        for mixin in PluginMixinEnum:
+            with self.assertNumQueriesLessThan(3):
+                registry.with_mixin(mixin)
+
+        # Test for the 'base' mixin - we expect that this returns "all" plugins
+        base = registry.with_mixin(PluginMixinEnum.BASE, active=None, builtin=None)
+        self.assertEqual(len(base), N_CONFIG, 'Base mixin does not return all plugins')
+
+        # Next, fetch only "active" plugins
+        n_active = len(registry.with_mixin(PluginMixinEnum.BASE, active=True))
+        self.assertGreater(n_active, 0, 'No active plugins found with base mixin')
+        self.assertLess(n_active, N_CONFIG, 'All plugins are active with base mixin')
+
+        n_inactive = len(registry.with_mixin(PluginMixinEnum.BASE, active=False))
+
+        self.assertGreater(n_inactive, 0, 'No inactive plugins found with base mixin')
+        self.assertLess(n_inactive, N_CONFIG, 'All plugins are active with base mixin')
+        self.assertEqual(
+            n_active + n_inactive, N_CONFIG, 'Active and inactive plugins do not match'
+        )
+
+        # Filter by 'builtin' status
+        plugins = registry.with_mixin(PluginMixinEnum.LABELS, builtin=True, active=True)
+        self.assertEqual(len(plugins), 2)
+
+        keys = [p.slug for p in plugins]
+        self.assertIn('inventreelabel', keys)
+        self.assertIn('inventreelabelmachine', keys)
+
+    def test_config_attributes(self):
+        """Test attributes for PluginConfig objects."""
+        self.ensurePluginsLoaded()
+
+        cfg = registry.get_plugin_config('bom-exporter')
+        self.assertIsNotNone(cfg, 'PluginConfig for bom-exporter not found')
+
+        self.assertTrue(cfg.is_mandatory())
+        self.assertTrue(cfg.is_active())
+        self.assertTrue(cfg.is_builtin())
+        self.assertFalse(cfg.is_package())
+        self.assertFalse(cfg.is_sample())

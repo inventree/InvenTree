@@ -100,7 +100,7 @@ class BarcodeView(CreateAPIView):
                 BarcodeScanResult.objects.filter(pk__in=old_scan_ids).delete()
         except Exception:
             # Gracefully log error to database
-            log_error(f'{self.__class__.__name__}.log_scan')
+            log_error(f'{self.__class__.__name__}.log_scan', scope='barcode')
 
     def queryset(self):
         """This API view does not have a queryset."""
@@ -154,7 +154,7 @@ class BarcodeView(CreateAPIView):
             try:
                 result = current_plugin.scan(barcode)
             except Exception:
-                log_error('BarcodeView.scan_barcode')
+                log_error('BarcodeView.scan_barcode', plugin=current_plugin.slug)
                 continue
 
             if result is None:
@@ -546,7 +546,7 @@ class BarcodePOReceive(BarcodeView):
                     auto_allocate=auto_allocate,
                 )
             except Exception:
-                log_error('BarcodePOReceive.handle_barcode')
+                log_error('BarcodePOReceive.handle_barcode', plugin=current_plugin.slug)
                 continue
 
             if result is None:

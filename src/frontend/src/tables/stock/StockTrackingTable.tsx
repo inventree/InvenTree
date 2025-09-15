@@ -6,7 +6,9 @@ import { useNavigate } from 'react-router-dom';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
+import { formatDecimal } from '@lib/functions/Formatting';
 import type { TableFilter } from '@lib/types/Filters';
+import type { TableColumn } from '@lib/types/Tables';
 import { RenderBuildOrder } from '../../components/render/Build';
 import { RenderCompany } from '../../components/render/Company';
 import {
@@ -22,7 +24,6 @@ import {
 } from '../../components/render/Stock';
 import { RenderUser } from '../../components/render/User';
 import { useTable } from '../../hooks/UseTable';
-import type { TableColumn } from '../Column';
 import { DateColumn, DescriptionColumn } from '../ColumnRenderers';
 import { UserFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
@@ -70,7 +71,7 @@ export function StockTrackingTable({ itemId }: Readonly<{ itemId: number }>) {
         {
           label: t`Quantity`,
           key: 'quantity',
-          details: deltas.quantity
+          details: formatDecimal(deltas.quantity)
         },
         {
           label: t`Added`,

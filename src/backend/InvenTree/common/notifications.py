@@ -12,10 +12,9 @@ from django.utils.translation import gettext_lazy as _
 import structlog
 
 import common.models
-import InvenTree.helpers
+from InvenTree.exceptions import log_error
 from InvenTree.ready import isImportingData, isRebuildingData
-from plugin import registry
-from plugin.models import NotificationUserSetting, PluginConfig
+from plugin import PluginMixinEnum, registry
 from users.models import Owner
 from users.permissions import check_user_permission
 
@@ -23,282 +22,6 @@ logger = structlog.get_logger('inventree')
 
 
 # region methods
-class NotificationMethod:
-    """Base class for notification methods."""
-
-    METHOD_NAME = ''
-    METHOD_ICON = None
-    CONTEXT_BUILTIN = ['name', 'message']
-    CONTEXT_EXTRA = []
-    GLOBAL_SETTING = None
-    USER_SETTING = None
-
-    def __init__(
-        self, obj: Model, category: str, targets: Optional[list], context
-    ) -> None:
-        """Check that the method is read.
-
-        This checks that:
-        - All needed functions are implemented
-        - The method is not disabled via plugin
-        - All needed context values were provided
-        """
-        # Check if a sending fnc is defined
-        if (not hasattr(self, 'send')) and (not hasattr(self, 'send_bulk')):
-            raise NotImplementedError(
-                'A NotificationMethod must either define a `send` or a `send_bulk` method'
-            )
-
-        # No method name is no good
-        if self.METHOD_NAME in ('', None):
-            raise NotImplementedError(
-                f'The NotificationMethod {self.__class__} did not provide a METHOD_NAME'
-            )
-
-        # Check if plugin is disabled - if so do not gather targets etc.
-        if self.global_setting_disable():
-            self.targets = None
-            return
-
-        # Define arguments
-        self.obj = obj
-        self.category = category
-        self.targets = targets
-        self.context = self.check_context(context)
-
-        # Gather targets
-        self.targets = self.get_targets()
-
-    def check_context(self, context):
-        """Check that all values defined in the methods CONTEXT were provided in the current context."""
-
-        def check(ref, obj):
-            # the obj is not accessible so we are on the end
-            if not isinstance(obj, (list, dict, tuple)):
-                return ref
-
-            # check if the ref exists
-            if isinstance(ref, str):
-                if not obj.get(ref):
-                    return ref
-                return False
-
-            # nested
-            elif isinstance(ref, (tuple, list)):
-                if len(ref) == 1:
-                    return check(ref[0], obj)
-                ret = check(ref[0], obj)
-                if ret:
-                    return ret
-                return check(ref[1:], obj[ref[0]])
-
-            # other cases -> raise
-            raise NotImplementedError(
-                'This type can not be used as a context reference'
-            )
-
-        missing = []
-        for item in (*self.CONTEXT_BUILTIN, *self.CONTEXT_EXTRA):
-            ret = check(item, context)
-            if ret:
-                missing.append(ret)
-
-        if missing:
-            raise NotImplementedError(
-                f'The `context` is missing the following items:\n{missing}'
-            )
-
-        return context
-
-    def get_targets(self):
-        """Returns targets for notifications.
-
-        Processes `self.targets` to extract all users that should be notified.
-        """
-        raise NotImplementedError('The `get_targets` method must be implemented!')
-
-    def setup(self):
-        """Set up context before notifications are send.
-
-        This is intended to be overridden in method implementations.
-        """
-        return True
-
-    def cleanup(self):
-        """Clean up context after all notifications were send.
-
-        This is intended to be overridden in method implementations.
-        """
-        return True
-
-    # region plugins
-    def get_plugin(self):
-        """Returns plugin class."""
-        return False
-
-    def global_setting_disable(self):
-        """Check if the method is defined in a plugin and has a global setting."""
-        # Check if plugin has a setting
-        if not self.GLOBAL_SETTING:
-            return False
-
-        # Check if plugin is set
-        plg_cls = self.get_plugin()
-        if not plg_cls:
-            return False
-
-        # Check if method globally enabled
-        plg_instance = registry.get_plugin(plg_cls.NAME.lower())
-        return plg_instance and not plg_instance.get_setting(self.GLOBAL_SETTING)
-
-    def usersetting(self, target):
-        """Returns setting for this method for a given user."""
-        return NotificationUserSetting.get_setting(
-            f'NOTIFICATION_METHOD_{self.METHOD_NAME.upper()}',
-            user=target,
-            method=self.METHOD_NAME,
-        )
-
-    # endregion
-
-
-class SingleNotificationMethod(NotificationMethod):
-    """NotificationMethod that sends notifications one by one."""
-
-    def send(self, target):
-        """This function must be overridden."""
-        raise NotImplementedError('The `send` method must be overridden!')
-
-
-class BulkNotificationMethod(NotificationMethod):
-    """NotificationMethod that sends all notifications in bulk."""
-
-    def send_bulk(self):
-        """This function must be overridden."""
-        raise NotImplementedError('The `send` method must be overridden!')
-
-
-# endregion
-
-
-class MethodStorageClass:
-    """Class that works as registry for all available notification methods in InvenTree.
-
-    Is initialized on startup as one instance named `storage` in this file.
-    """
-
-    methods_list: list = []
-    user_settings = {}
-
-    @property
-    def methods(self):
-        """Return all available methods.
-
-        This is cached, and stored internally.
-        """
-        if self.methods_list is None:
-            self.collect()
-
-        return self.methods_list
-
-    def collect(self, selected_classes=None):
-        """Collect all classes in the environment that are notification methods.
-
-        Can be filtered to only include provided classes for testing.
-
-        Args:
-            selected_classes (class, optional): References to the classes that should be registered. Defaults to None.
-        """
-        logger.debug('Collecting notification methods...')
-
-        current_method = (
-            InvenTree.helpers.inheritors(NotificationMethod) - IGNORED_NOTIFICATION_CLS
-        )
-
-        # for testing selective loading is made available
-        if selected_classes:
-            current_method = [
-                item for item in current_method if item is selected_classes
-            ]
-
-        # make sure only one of each method is added
-        filtered_list = {}
-        for item in current_method:
-            plugin = item.get_plugin(item)
-            ref = (
-                f'{plugin.package_path}_{item.METHOD_NAME}'
-                if plugin
-                else item.METHOD_NAME
-            )
-            item.plugin = plugin() if plugin else None
-            filtered_list[ref] = item
-
-        storage.methods_list = list(filtered_list.values())
-
-        logger.info('Found %s notification methods', len(storage.methods_list))
-
-        for item in storage.methods_list:
-            logger.debug(' - %s', str(item))
-
-    def get_usersettings(self, user) -> list:
-        """Returns all user settings for a specific user.
-
-        This is needed to show them in the settings UI.
-
-        Args:
-            user (User): User that should be used as a filter.
-
-        Returns:
-            list: All applicablae notification settings.
-        """
-        methods = []
-
-        for item in storage.methods:
-            if item.USER_SETTING:
-                new_key = f'NOTIFICATION_METHOD_{item.METHOD_NAME.upper()}'
-
-                # make sure the setting exists
-                self.user_settings[new_key] = item.USER_SETTING
-                NotificationUserSetting.get_setting(
-                    key=new_key, user=user, method=item.METHOD_NAME
-                )
-
-                # save definition
-                methods.append({
-                    'key': new_key,
-                    'icon': getattr(item, 'METHOD_ICON', ''),
-                    'method': item.METHOD_NAME,
-                })
-
-        return methods
-
-
-IGNORED_NOTIFICATION_CLS = {SingleNotificationMethod, BulkNotificationMethod}
-storage = MethodStorageClass()
-
-
-class UIMessageNotification(SingleNotificationMethod):
-    """Delivery method for sending specific users notifications in the notification pain in the web UI."""
-
-    METHOD_NAME = 'ui_message'
-
-    def get_targets(self):
-        """Only send notifications for active users."""
-        return [target for target in self.targets if target.is_active]
-
-    def send(self, target):
-        """Send a UI notification to a user."""
-        common.models.NotificationMessage.objects.create(
-            target_object=self.obj,
-            source_object=target,
-            user=target,
-            category=self.category,
-            name=self.context['name'],
-            message=self.context['message'],
-        )
-        return True
-
-
 @dataclass()
 class NotificationBody:
     """Information needed to create a notification.
@@ -371,7 +94,7 @@ def trigger_notification(obj: Model, category: str = '', obj_ref: str = 'pk', **
         kwargs: Additional arguments to pass to the notification method
     """
     # Check if data is importing currently
-    if isImportingData() or isRebuildingData():
+    if isImportingData() or isRebuildingData():  # pragma: no cover
         return
 
     targets = kwargs.get('targets')
@@ -389,16 +112,16 @@ def trigger_notification(obj: Model, category: str = '', obj_ref: str = 'pk', **
     obj_ref_value = None
 
     # Find the first reference that is available
-    for ref in refs:
-        if hasattr(obj, ref):
-            obj_ref_value = getattr(obj, ref)
-            break
+    if obj:
+        for ref in refs:
+            if hasattr(obj, ref):
+                obj_ref_value = getattr(obj, ref)
+                break
 
-    # Try with some defaults
-    if not obj_ref_value:
-        raise KeyError(
-            f"Could not resolve an object reference for '{obj!s}' with {','.join(set(refs))}"
-        )
+        if not obj_ref_value:
+            raise KeyError(
+                f"Could not resolve an object reference for '{obj!s}' with {','.join(set(refs))}"
+            )
 
     # Check if we have notified recently...
     delta = timedelta(days=1)
@@ -451,122 +174,45 @@ def trigger_notification(obj: Model, category: str = '', obj_ref: str = 'pk', **
                     'Unknown target passed to trigger_notification method: %s', target
                 )
 
-    if target_users:
-        # Filter out any users who are inactive, or do not have the required model permissions
-        valid_users = list(
-            filter(
-                lambda u: u and u.is_active and check_user_permission(u, obj, 'view'),
-                list(target_users),
-            )
+    # Filter out any users who are inactive, or do not have the required model permissions
+    valid_users = list(
+        filter(
+            lambda u: u
+            and u.is_active
+            and (not obj or check_user_permission(u, obj, 'view')),
+            list(target_users),
         )
-
-        if len(valid_users) > 0:
-            logger.info(
-                "Sending notification '%s' for '%s' to %s users",
-                category,
-                str(obj),
-                len(valid_users),
-            )
-
-            # Collect possible methods
-            if delivery_methods is None:
-                delivery_methods = storage.methods or []
-            else:
-                delivery_methods = delivery_methods - IGNORED_NOTIFICATION_CLS
-
-            for method in delivery_methods:
-                logger.info("Triggering notification method '%s'", method.METHOD_NAME)
-                try:
-                    deliver_notification(method, obj, category, valid_users, context)
-                except NotImplementedError as error:
-                    # Allow any single notification method to fail, without failing the others
-                    logger.error(error)
-                except Exception as error:
-                    logger.error(error)
-
-            # Set delivery flag
-            common.models.NotificationEntry.notify(category, obj_ref_value)
-    else:
-        logger.info("No possible users for notification '%s'", category)
-
-
-def trigger_superuser_notification(plugin: PluginConfig, msg: str):
-    """Trigger a notification to all superusers.
-
-    Args:
-        plugin (PluginConfig): Plugin that is raising the notification
-        msg (str): Detailed message that should be attached
-    """
-    users = get_user_model().objects.filter(is_superuser=True)
-
-    trigger_notification(
-        plugin,
-        'inventree.plugin',
-        context={'error': plugin, 'name': _('Error raised by plugin'), 'message': msg},
-        targets=users,
-        delivery_methods={UIMessageNotification},
     )
 
+    # Track whether any notifications were sent
+    result = False
 
-def deliver_notification(
-    cls: NotificationMethod, obj: Model, category: str, targets: list, context: dict
-):
-    """Send notification with the provided class.
+    # Send out via all registered notification methods
+    for plugin in registry.with_mixin(PluginMixinEnum.NOTIFICATION):
+        # Skip if the plugin is *not* in the "delivery_methods" list?
+        match = not delivery_methods
 
-    Arguments:
-        cls: The class that should be used to send the notification
-        obj: The object (model instance) that triggered the notification
-        category: The category (label) for the notification
-        targets: List of users that should receive the notification
-        context: Context dictionary with additional information for the notification
+        for notification_class in delivery_methods or []:
+            if type(notification_class) is str:
+                if plugin.slug == notification_class:
+                    match = True
+                    break
 
-    - Initializes the method
-    - Checks that there are valid targets
-    - Runs the delivery setup
-    - Sends notifications either via `send_bulk` or send`
-    - Runs the delivery cleanup
-    """
-    # Init delivery method
-    method = cls(obj, category, targets, context)
+            elif getattr(notification_class, 'SLUG', None) == plugin.slug:
+                match = True
+                break
 
-    if method.targets and len(method.targets) > 0:
-        # Log start
-        logger.info(
-            "Notify users via '%s' for notification '%s' for '%s'",
-            method.METHOD_NAME,
-            category,
-            str(obj),
-        )
+        if not match:
+            continue
 
-        # Run setup for delivery method
-        method.setup()
+        try:
+            # Plugin may optionally filter target users
+            filtered_users = plugin.filter_targets(list(valid_users))
+            if plugin.send_notification(obj, category, filtered_users, context):
+                result = True
+        except Exception:
+            log_error('send_notification', plugin=plugin.slug)
 
-        # Counters for success logs
-        success = True
-        success_count = 0
-
-        # Select delivery method and execute it
-        if hasattr(method, 'send_bulk'):
-            success = method.send_bulk()
-            success_count = len(method.targets)
-
-        elif hasattr(method, 'send'):
-            for target in method.targets:
-                if method.send(target):
-                    success_count += 1
-                else:
-                    success = False
-
-        # Run cleanup for delivery method
-        method.cleanup()
-
-        # Log results
-        logger.info(
-            "Notified %s users via '%s' for notification '%s' for '%s' successfully",
-            success_count,
-            method.METHOD_NAME,
-            category,
-            str(obj),
-        )
-        if not success:
-            logger.info('There were some problems')
+    # Log the notification entry
+    if result:
+        common.models.NotificationEntry.notify(category, obj_ref_value)

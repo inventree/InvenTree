@@ -395,27 +395,27 @@ def internal_link(link, text) -> str:
 
 
 @register.simple_tag()
-def add(x, y, *args, **kwargs):
+def add(x: float, y: float, *args, **kwargs) -> float:
     """Add two numbers together."""
-    return x + y
+    return float(x) + float(y)
 
 
 @register.simple_tag()
-def subtract(x, y):
+def subtract(x: float, y: float) -> float:
     """Subtract one number from another."""
-    return x - y
+    return float(x) - float(y)
 
 
 @register.simple_tag()
-def multiply(x, y):
+def multiply(x: float, y: float) -> float:
     """Multiply two numbers together."""
-    return x * y
+    return float(x) * float(y)
 
 
 @register.simple_tag()
-def divide(x, y):
+def divide(x: float, y: float) -> float:
     """Divide one number by another."""
-    return x / y
+    return float(x) / float(y)
 
 
 @register.simple_tag

@@ -1,5 +1,16 @@
 export interface AuthContext {
   status: number;
+  user?: {
+    id: number;
+    display: string;
+    has_usable_password: boolean;
+    username: string;
+  };
+  methods?: {
+    method: string;
+    at: number;
+    username: string;
+  }[];
   data: { flows: Flow[] };
   meta: { is_authenticated: boolean };
 }
@@ -13,7 +24,8 @@ export enum FlowEnum {
   ProviderToken = 'provider_token',
   MfaAuthenticate = 'mfa_authenticate',
   Reauthenticate = 'reauthenticate',
-  MfaReauthenticate = 'mfa_reauthenticate'
+  MfaReauthenticate = 'mfa_reauthenticate',
+  MfaTrust = 'mfa_trust'
 }
 
 export interface Flow {

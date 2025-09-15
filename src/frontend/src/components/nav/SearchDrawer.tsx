@@ -38,10 +38,10 @@ import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { cancelEvent } from '@lib/functions/Events';
-import { navigateToLink } from '@lib/functions/Navigation';
+import { eventModified, navigateToLink } from '@lib/functions/Navigation';
 import { showNotification } from '@mantine/notifications';
 import { api } from '../../App';
-import { useUserSettingsState } from '../../states/SettingsState';
+import { useUserSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import { Boundary } from '../Boundary';
 import { RenderInstance } from '../render/Instance';
@@ -96,7 +96,7 @@ function QueryResultGroup({
         const url = `${overviewUrl}?search=${searchText}`;
 
         // Close drawer if opening in the same tab
-        if (!(event?.ctrlKey || event?.shiftKey)) {
+        if (!eventModified(event)) {
           onClose();
         }
 
@@ -397,11 +397,7 @@ export function SearchDrawer({
 
     return api
       .post(apiUrl(ApiEndpoints.api_search), params)
-      .then((response) => response.data)
-      .catch((error) => {
-        console.error(error);
-        return [];
-      });
+      .then((response) => response.data);
   };
 
   // Search query manager
@@ -456,7 +452,7 @@ export function SearchDrawer({
       return;
     }
 
-    if (event?.ctrlKey || event?.shiftKey) {
+    if (eventModified(event)) {
       // Keep the drawer open in this condition
     } else {
       closeDrawer();

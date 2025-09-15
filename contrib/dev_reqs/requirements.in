@@ -1,6 +1,4 @@
 # Packages needed for CI/packages
--c ../../src/backend/requirements.txt
--c ../../src/backend/requirements-dev.txt
-requests==2.32.3
+requests==2.32.5
 pyyaml==6.0.2
-jc==1.25.4
+jc==1.25.5

@@ -1,4 +1,4 @@
-"""The TMEPlugin is meant to integrate the TME API into InvenTree.
+"""The TMEBarcodePlugin is meant to integrate the TME API into InvenTree.
 
 This plugin can currently only match TME barcodes to supplier parts.
 """
@@ -14,10 +14,11 @@ from plugin.mixins import SettingsMixin, SupplierBarcodeMixin
 class TMEPlugin(SupplierBarcodeMixin, SettingsMixin, InvenTreePlugin):
     """Plugin to integrate the TME API into InvenTree."""
 
-    NAME = 'TMEPlugin'
+    NAME = 'TMEBarcodePlugin'
+    SLUG = 'tmeplugin'
     TITLE = _('Supplier Integration - TME')
     DESCRIPTION = _('Provides support for scanning TME barcodes')
-    VERSION = '1.0.0'
+    VERSION = '1.0.1'
     AUTHOR = _('InvenTree contributors')
 
     DEFAULT_SUPPLIER_NAME = 'TME'
@@ -26,6 +27,7 @@ class TMEPlugin(SupplierBarcodeMixin, SettingsMixin, InvenTreePlugin):
             'name': _('Supplier'),
             'description': _("The Supplier which acts as 'TME'"),
             'model': 'company.company',
+            'model_filters': {'is_supplier': True},
         }
     }
 

@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from 'react';
-import { useGlobalSettingsState } from '../../states/SettingsState';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
 
 /**
  * Component to set the page title

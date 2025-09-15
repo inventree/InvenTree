@@ -1,14 +1,17 @@
 """Unit testing for the various report models."""
 
+import os
 from io import StringIO
 
 from django.apps import apps
+from django.conf import settings
 from django.core.cache import cache
 from django.urls import reverse
 
 import report.models as report_models
 from build.models import Build
 from common.models import Attachment
+from common.settings import set_global_setting
 from InvenTree.unit_test import AdminTestCase, InvenTreeAPITestCase
 from order.models import ReturnOrder, SalesOrder
 from part.models import Part
@@ -348,6 +351,47 @@ class LabelTest(InvenTreeAPITestCase):
         self.assertEqual(output.plugin, 'inventreelabel')
         self.assertTrue(output.output.name.endswith('.pdf'))
 
+    def test_filters(self):
+        """Test that template filters are correctly validated."""
+        from django.core.exceptions import ValidationError
+
+        from InvenTree.helpers import validateFilterString
+
+        invalid = [
+            'name=widget, category=6, invalid_field=123',
+            'category__in=[1,',
+            'foo=bar',
+        ]
+
+        valid = [
+            'name=widget, category=6',
+            'category__in=[1,2,3]',
+            'name=widget  , id__in  =    [99, 199        ]   ',
+            'pk__in=[1,2,3], active=True',
+            'pk__in=[1, 99], category__in=[1,2,3]',
+        ]
+
+        template = LabelTemplate.objects.filter(enabled=True, model_type='part').first()
+
+        for f in invalid:
+            with self.assertRaises(ValidationError):
+                template.filters = f
+                template.clean()
+
+        for f in valid:
+            template.filters = f
+            template.clean()
+
+        # Test a specific example
+        example = '    location__in =[1,2 , 3 ] , status= 3  , id__in=[4,5,6]  , part__active=False'
+
+        result = validateFilterString(example, model=StockItem)
+
+        self.assertEqual(result['location__in'], [1, 2, 3])
+        self.assertEqual(result['status'], '3')
+        self.assertEqual(result['id__in'], [4, 5, 6])
+        self.assertEqual(result['part__active'], 'False')
+
 
 class PrintTestMixins:
     """Mixin that enables e2e printing tests."""
@@ -356,12 +400,9 @@ class PrintTestMixins:
 
     def do_activate_plugin(self):
         """Activate the 'samplelabel' plugin."""
+        registry.set_plugin_state(self.plugin_ref, True)
         plugin = registry.get_plugin(self.plugin_ref)
         self.assertIsNotNone(plugin)
-        config = plugin.plugin_config()
-        self.assertIsNotNone(config)
-        config.active = True
-        config.save()
 
     def run_print_test(self, qs, model_type, label: bool = True):
         """Run tests on single and multiple page printing.
@@ -396,7 +437,7 @@ class PrintTestMixins:
             },
             expected_code=201,
             max_query_time=15,
-            max_query_count=500 * len(qs),
+            max_query_count=150 * len(qs),
         )
 
         # Test with wrong dimensions
@@ -489,6 +530,36 @@ class TestReportTest(PrintTestMixins, ReportTest):
 
         # The attachment should be a PDF
         self.assertTrue(attachment.attachment.name.endswith('.pdf'))
+
+        # Set DEBUG_MODE to return the report as an HTML file
+        set_global_setting('REPORT_DEBUG_MODE', True)
+
+        # Grab the report template
+        template_merge = ReportTemplate.objects.filter(
+            enabled=True, model_type='stockitem', merge=True
+        ).first()
+
+        # Grab the first 3 stock items
+        items = StockItem.objects.all()[:3]
+        response = self.post(
+            url,
+            {'template': template_merge.pk, 'items': [item.pk for item in items]},
+            expected_code=201,
+        )
+
+        # Open and read the output HTML as a string
+        html_report = ''
+        report_path = os.path.join(
+            settings.MEDIA_ROOT, response.data['output'].replace('/media/', '', 1)
+        )
+        self.assertTrue(response.data['output'])
+        with open(report_path, encoding='utf-8') as f:
+            html_report = f.read()
+
+        # Assuming the number of <head> and <body> correlates to the number of pages
+        # in the generated PDF
+        self.assertEqual(html_report.count('<head>'), 1)
+        self.assertEqual(html_report.count('<body>'), 1)
 
     def test_mdl_build(self):
         """Test the Build model."""

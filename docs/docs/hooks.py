@@ -258,3 +258,52 @@ def on_config(config, *args, **kwargs):
     config['releases'] = sorted(releases, key=lambda it: it['date'], reverse=True)
 
     return config
+
+
+def on_post_build(*args, **kwargs):
+    """Run after the build is complete.
+
+    Here we check that all global settings and user settings are documented.
+    """
+    here = Path(__file__).parent
+    gen_base = here.parent.joinpath('generated')
+
+    expected_settings_file = gen_base.joinpath('inventree_settings.json')
+    observed_settings_file = gen_base.joinpath('observed_settings.json')
+
+    with open(observed_settings_file, encoding='utf-8') as f:
+        observed_settings = json.loads(f.read())
+
+    with open(expected_settings_file, encoding='utf-8') as f:
+        expected_settings = json.loads(f.read())
+
+    ignored_settings = {
+        'global': ['SERVER_RESTART_REQUIRED'],
+        'user': ['LAST_USED_PRINTING_MACHINES'],
+    }
+
+    for group in ['global', 'user']:
+        expected = expected_settings.get(group, {})
+        observed = observed_settings.get(group, {})
+        ignored = ignored_settings.get(group, [])
+
+        missing = []
+
+        for key in expected:
+            if key.startswith('_'):
+                # Ignore internal settings
+                continue
+
+            if key in ignored:
+                # Ignore settings that are not relevant
+                continue
+
+            if key not in observed:
+                missing.append(key)
+
+        if missing:
+            raise NotImplementedError(
+                'Missing Settings:\n'
+                + f"There are {len(missing)} missing settings in the '{group}' group:\n"
+                + '\n- '.join(missing)
+            )

@@ -113,9 +113,7 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, InvenTreePlugin):
 
         # Inform the user that the process has been offloaded to the printer
         if output:
-            output.output = None
-            output.complete = True
-            output.save()
+            output.mark_complete()
 
     class PrintingOptionsSerializer(serializers.Serializer):
         """Printing options serializer that adds a machine select and the machines options."""

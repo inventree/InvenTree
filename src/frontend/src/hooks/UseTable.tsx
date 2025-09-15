@@ -1,4 +1,4 @@
-import { randomId, useLocalStorage } from '@mantine/hooks';
+import { randomId } from '@mantine/hooks';
 import { useCallback, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
@@ -28,9 +28,15 @@ export function useTable(tableName: string, idAccessor = 'pk'): TableState {
   const [tableKey, setTableKey] = useState<string>(generateTableName());
 
   // Callback used to refresh (reload) the table
-  const refreshTable = useCallback(() => {
-    setTableKey(generateTableName());
-  }, [generateTableName]);
+  const refreshTable = useCallback(
+    (clearSelection?: boolean) => {
+      setTableKey(generateTableName());
+      if (clearSelection) {
+        clearSelectedRecords();
+      }
+    },
+    [generateTableName]
+  );
 
   const filterSet: FilterSetState = useFilterSet(`table-${tableName}`);
 
@@ -44,6 +50,9 @@ export function useTable(tableName: string, idAccessor = 'pk'): TableState {
     },
     [expandedRecords]
   );
+
+  // Array of columns which are hidden
+  const [hiddenColumns, setHiddenColumns] = useState<string[]>([]);
 
   // Array of selected records
   const [selectedRecords, setSelectedRecords] = useState<any[]>([]);
@@ -65,18 +74,7 @@ export function useTable(tableName: string, idAccessor = 'pk'): TableState {
   // Total record count
   const [recordCount, setRecordCount] = useState<number>(0);
 
-  // Pagination data
   const [page, setPage] = useState<number>(1);
-  const [pageSize, setPageSize] = useLocalStorage<number>({
-    key: 'inventree-table-page-size',
-    defaultValue: 25
-  });
-
-  // A list of hidden columns, saved to local storage
-  const [hiddenColumns, setHiddenColumns] = useLocalStorage<string[]>({
-    key: `inventree-hidden-table-columns-${tableName}`,
-    defaultValue: []
-  });
 
   // Search term
   const [searchTerm, setSearchTerm] = useState<string>('');
@@ -127,16 +125,14 @@ export function useTable(tableName: string, idAccessor = 'pk'): TableState {
     setSelectedRecords,
     clearSelectedRecords,
     hasSelectedRecords,
-    hiddenColumns,
-    setHiddenColumns,
     searchTerm,
     setSearchTerm,
     recordCount,
     setRecordCount,
+    hiddenColumns,
+    setHiddenColumns,
     page,
     setPage,
-    pageSize,
-    setPageSize,
     records,
     setRecords,
     updateRecord,

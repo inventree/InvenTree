@@ -1,4 +1,3 @@
-import { Text } from '@mantine/core';
 import type { ReactNode } from 'react';
 
 import { ModelType } from '@lib/enums/ModelType';
@@ -36,9 +35,9 @@ export function RenderCompany(
   return (
     <RenderInlineModel
       {...props}
-      image={instance.thumnbnail || instance.image}
+      image={instance.thumbnail || instance.image}
       primary={instance.name}
-      secondary={instance.description}
+      suffix={instance.description}
       url={
         props.link ? getDetailUrl(ModelType.company, instance.pk) : undefined
       }
@@ -73,9 +72,7 @@ export function RenderSupplierPart(
       image={
         part?.thumbnail ?? part?.image ?? supplier?.thumbnail ?? supplier?.image
       }
-      suffix={
-        part.full_name ? <Text size='sm'>{part.full_name}</Text> : undefined
-      }
+      suffix={part.full_name}
       url={
         props.link
           ? getDetailUrl(ModelType.supplierpart, instance.pk)
@@ -100,10 +97,8 @@ export function RenderManufacturerPart(
       {...props}
       primary={manufacturer.name}
       secondary={instance.MPN}
-      suffix={
-        part.full_name ? <Text size='sm'>{part.full_name}</Text> : undefined
-      }
-      image={manufacturer?.thumnbnail ?? manufacturer.image}
+      suffix={part.full_name}
+      image={manufacturer?.thumbnail ?? manufacturer.image}
       url={
         props.link
           ? getDetailUrl(ModelType.manufacturerpart, instance.pk)

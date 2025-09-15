@@ -8,7 +8,7 @@ States can be extended with custom options for each InvenTree instance - those o
 
 from . import fields
 from .states import ColorEnum, StatusCode, StatusCodeMixin
-from .transition import StateTransitionMixin, TransitionMethod, storage
+from .transition import StateTransitionMixin, TransitionMethod
 
 __all__ = [
     'ColorEnum',
@@ -17,5 +17,4 @@ __all__ = [
     'StatusCodeMixin',
     'TransitionMethod',
     'fields',
-    'storage',
 ]

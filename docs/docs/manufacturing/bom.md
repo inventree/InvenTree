@@ -8,9 +8,7 @@ A Bill of Materials (BOM) defines the list of component parts required to make a
 
 A part which can be built from other sub components is called an *Assembly*.
 
-{% with id="bom_flat", url="build/bom_flat.png", description="Flat BOM Table" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("build/bom_flat.png", "Flat BOM Table") }}
 
 ## BOM Line Items
 
@@ -19,9 +17,11 @@ A BOM for a particular assembly is comprised of a number (zero or more) of BOM "
 | Property | Description |
 | --- | --- |
 | Part | A reference to another *Part* object which is required to build this assembly |
-| Quantity | The quantity of *Part* required for the assembly |
 | Reference | Optional reference field to describe the BOM Line Item, e.g. part designator |
-| Overage | Estimated losses for a build. Can be expressed as absolute values (e.g. 1, 7, etc) or as a percentage (e.g. 2%) |
+| Quantity | The quantity of *Part* required for the assembly |
+| Attrition | Estimated attrition losses for a production run. Expressed as a percentage of the base quantity (e.g. 2%) |
+| Setup Quantity | An additional quantity of the part which is required to account for fixed setup losses during the production process. This is added to the base quantity of the BOM line item |
+| Rounding Multiple | A value which indicates that the required quantity should be rounded up to the nearest multiple of this value. |
 | Consumable | A boolean field which indicates whether this BOM Line Item is *consumable* |
 | Inherited | A boolean field which indicates whether this BOM Line Item will be "inherited" by BOMs for parts which are a variant (or sub-variant) of the part for which this BOM is defined. |
 | Optional | A boolean field which indicates if this BOM Line Item is "optional" |
@@ -33,9 +33,7 @@ If a BOM line item is marked as *consumable*, this means that while the part and
 
 In the example below, see that the *Wood Screw* line item is marked as consumable. It is clear that 12 screws are required for each assembled *Table*, but the screws will not be tracked through the build process, as this line item is marked as *consumable*
 
-{% with id="bom_item_consumable", url="build/bom_consumable_item.png", description="Consumable BOM Item" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("build/bom_consumable_item.png", "Consumable BOM Item") }}
 
 Further, in the [Build Order](./build.md) stock allocation table, we see that this line item cannot be allocated, as it is *consumable*.
 
@@ -56,9 +54,7 @@ This is particularly useful if a template part is defined with the "common" BOM 
 
 Consider the example diagram below:
 
-{% with id="inherited_bom", url="build/inherited_bom.png", description="Inherited BOM Line Items" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("build/inherited_bom.png", "Inherited BOM Line Items") }}
 
 **Template Part A** has two BOM line items defined: *A1* and *A2*.
 
@@ -99,23 +95,144 @@ BOMs can be created manually, by adjusting individual line items, or by upload a
 To manually add a BOM item, navigate to the part/assembly detail page then click on the "BOM" tab. On top of the tab view, click on the {{ icon("edit", color="blue", title="Edit") }} icon then, after the page reloads, click on the {{ icon("plus-circle") }} icon.
 
 The `Create BOM Item` form will be displayed:
-{% with id="bom_add_item", url="build/bom_add_item.png", description="Create BOM Item Form" %}
-{% include 'img.html' %}
-{% endwith %}
 
-Fill-out the `Quantity` (required), `Reference`, `Overage` and `Note` (optional) fields then click on <span class="badge inventree confirm">Submit</span> to add the BOM item to this part's BOM.
+{{ image("build/bom_add_item.png", "Create BOM Item Form") }}
+
+Fill-out the required fields then click on <span class="badge inventree confirm">Submit</span> to add the BOM item to this part's BOM.
 
 ### Add Substitute for BOM Item
 
 To manually add a substitute for a BOM item, click on the {{ icon("transfer") }} icon in the *Actions* columns.
 
 The `Edit BOM Item Substitutes` form will be displayed:
-{% with id="bom_substitute_item", url="build/bom_substitute_item.png", description="Edit BOM Item Substitutes" %}
-{% include 'img.html' %}
-{% endwith %}
+
+{{ image("build/bom_substitute_item.png", "Edit BOM Item Substitutes") }}
 
 Select a part in the list and click on "Add Substitute" button to confirm.
 
 ## Multi Level BOMs
 
 Multi-level (hierarchical) BOMs are natively supported by InvenTree. A Bill of Materials (BOM) can contain sub-assemblies which themselves have a defined BOM. This can continue for an unlimited number of levels.
+
+## BOM Validation
+
+InvenTree maintains a "validated" flag for each assembled part. When set, this flag indicates that the production requirements for this part have been validated, and that the BOM has not been changed since the last validation.
+
+A BOM "checksum" is stored against each part, which is a hash of the BOM line items associated with that part. This checksum is used to determine whether the BOM has changed since the last validation. Whenever a BOM line item is created, adjusted or deleted, any assemblies which are associated with that BOM must be validated to ensure that the BOM is still valid.
+
+### BOM Checksum
+
+The following BOM item fields are used when calculating the BOM checksum:
+
+- *Assembly ID* - The unique identifier of the assembly associated with the BOM line item.
+- *Component ID* - The unique identifier of the component part associated with the BOM line item.
+- *Reference* - The reference field of the BOM line item.
+- *Quantity* - The quantity of the component part required for the assembly.
+- *Attrition* - The attrition percentage of the BOM line item.
+- *Setup Quantity* - The setup quantity of the BOM line item.
+- *Rounding Multiple* - The rounding multiple of the BOM line item.
+- *Consumable* - Whether the BOM line item is consumable.
+- *Inherited* - Whether the BOM line item is inherited.
+- *Optional* - Whether the BOM line item is optional.
+- *Allow Variants* - Whether the BOM line item allows variants.
+
+If any of these fields are changed, the BOM checksum is recalculated, and any assemblies associated with the BOM are marked as "not validated".
+
+The user must then manually revalidate the BOM for the assembly/
+
+### BOM Validation Status
+
+To view the "validation" status of an assembled part, navigate to the "Bill of Materials" tab of the part detail page. The validation status is displayed at the top of the BOM table:
+
+{{ image("build/bom_validated.png", "BOM Validation Status") }}
+
+If the BOM requires revalidation, the status will be displayed as "Not Validated". Additionally the "Validate BOM' button will be displayed at the top of the BOM table, allowing the user to revalidate the BOM.
+
+{{ image("build/bom_invalid.png", "BOM Not Validated") }}
+
+## Required Quantity Calculation
+
+When a new [Build Order](./build.md) is created, the required production quantity of each component part is calculated based on the BOM line items defined for the assembly being built. To calculate the required production quantity of a component part, the following considerations are made:
+
+### Base Quantity
+
+The base quantity of a BOM line item is defined by the `Quantity` field of the BOM line item. This is the number of parts which are required to build one assembly. This value is multiplied by the number of assemblies which are being built to determine the total quantity of parts required.
+
+```
+Required Quantity = Base Quantity * Number of Assemblies
+```
+
+### Attrition
+
+The `Attrition` field of a BOM line item is used to account for expected losses during the production process. This is expressed as a percentage of the `Base Quantity` (e.g. 2%).
+
+If a non-zero attrition percentage is specified, it is applied to the calculated `Required Quantity` value.
+
+```
+Required Quantity = Required Quantity * (1 + Attrition Percentage)
+```
+
+!!! info "Optional"
+    The attrition percentage is optional. If not specified, it defaults to 0%.
+
+### Setup Quantity
+
+The `Setup Quantity` field of a BOM line item is used to account for fixed losses during the production process. This is an additional quantity of the part which is required to ensure that the production run can be completed successfully. This value is added to the calculated `Required Quantity`.
+
+```
+Required Quantity = Required Quantity + Setup Quantity
+```
+
+!!! info "Optional"
+    The setup quantity is optional. If not specified, it defaults to 0.
+
+### Rounding Multiple
+
+The `Rounding Multiple` field of a BOM line item is used to round the calculated `Required Quantity` value to the nearest multiple of the specified value. This is useful for ensuring that the required quantity is a whole number, or to meet specific packaging requirements.
+
+```
+Required Quantity = ceil(Required Quantity / Rounding Multiple) * Rounding Multiple
+```
+
+!!! info "Optional"
+    The rounding multiple is optional. If not specified, no rounding is applied to the calculated production quantity.
+
+### Example Calculation
+
+Consider a BOM line item with the following properties:
+
+- Base Quantity: 3
+- Attrition: 2% (0.02)
+- Setup Quantity: 10
+- Rounding Multiple: 25
+
+If we are building 100 assemblies, the required quantity would be calculated as follows:
+
+```
+Required Quantity = Base Quantity * Number of Assemblies
+                  = 3 * 100
+                  = 300
+
+Attrition Value = Required Quantity * Attrition Percentage
+                = 300 * 0.02
+                = 6
+
+Required Quantity = Required Quantity + Attrition Value
+                  = 300 + 6
+                  = 306
+
+Required Quantity = Required Quantity + Setup Quantity
+                  = 306 + 10
+                  = 316
+
+Required Quantity = ceil(Required Quantity / Rounding Multiple) * Rounding Multiple
+                  = ceil(316 / 25) * 25
+                  = 13 * 25
+                  = 325
+
+```
+
+So the final required production quantity of the component part would be `325`.
+
+!!! info "Calculation"
+    The required quantity calculation is performed automatically when a new [Build Order](./build.md) is created.

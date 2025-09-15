@@ -20,7 +20,7 @@ class CommonConfig(AppConfig):
 
     def ready(self):
         """Initialize restart flag clearance on startup."""
-        if InvenTree.ready.isRunningMigrations():
+        if InvenTree.ready.isRunningMigrations():  # pragma: no cover
             return
 
         self.clear_restart_flag()
@@ -35,5 +35,5 @@ class CommonConfig(AppConfig):
 
                 if not InvenTree.ready.isImportingData():
                     set_global_setting('SERVER_RESTART_REQUIRED', False, None)
-        except Exception:
+        except Exception:  # pragma: no cover
             pass

@@ -57,7 +57,7 @@ class DataExportOptionsSerializer(serializers.Serializer):
                     view_class=view_class,
                 )
             except Exception:
-                InvenTree.exceptions.log_error(f'plugin.{plugin.slug}.supports_export')
+                InvenTree.exceptions.log_error('supports_export', plugin=plugin.slug)
                 supports_export = False
 
             if supports_export:

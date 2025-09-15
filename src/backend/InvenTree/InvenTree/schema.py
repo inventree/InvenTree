@@ -3,6 +3,8 @@
 from itertools import chain
 from typing import Optional
 
+from django.conf import settings
+
 from drf_spectacular.contrib.django_oauth_toolkit import DjangoOAuthToolkitScheme
 from drf_spectacular.drainage import warn
 from drf_spectacular.openapi import AutoSchema
@@ -91,6 +93,40 @@ class ExtendedAutoSchema(AutoSchema):
                 if parameter['name'] == 'limit':
                     parameter['required'] = True
 
+        # Add valid order selections to the ordering field description.
+        ordering_fields = getattr(self.view, 'ordering_fields', None)
+        if ordering_fields is not None:
+            parameters = operation.get('parameters', [])
+            for parameter in parameters:
+                if parameter['name'] == 'ordering':
+                    parameter['description'] = (
+                        f'{parameter["description"]} Possible fields: {", ".join(ordering_fields)}.'
+                    )
+
+        # Add valid search fields to the search description.
+        search_fields = getattr(self.view, 'search_fields', None)
+
+        if search_fields is not None:
+            # Ensure consistent ordering of search fields
+            search_fields = sorted(search_fields)
+
+            parameters = operation.get('parameters', [])
+            for parameter in parameters:
+                if parameter['name'] == 'search':
+                    parameter['description'] = (
+                        f'{parameter["description"]} Searched fields: {", ".join(search_fields)}.'
+                    )
+
+        # Change return to array type, simply annotating this return type attempts to paginate, which doesn't work for
+        # a create method and removing the pagination also affects the list method
+        if self.method == 'POST' and type(self.view).__name__ == 'StockList':
+            schema = operation['responses']['201']['content']['application/json'][
+                'schema'
+            ]
+            schema['type'] = 'array'
+            schema['items'] = {'$ref': schema['$ref']}
+            del schema['$ref']
+
         return operation
 
 
@@ -163,5 +199,15 @@ def postprocess_print_stats(result, generator, request, public):
     for scope, paths in scopes.items():
         if scope not in oauth2_scopes:
             warn(f'unknown scope `{scope}` in {len(paths)} paths')
+
+    # Raise error if the paths missing scopes are not specifically excluded from oauth2
+    wrong_url = [
+        path for path in no_oauth2_wa if path not in settings.OAUTH2_CHECK_EXCLUDED
+    ]
+    if len(wrong_url) > 0:
+        warn(
+            f'Found {len(wrong_url)} paths without oauth2 that are not excluded:\n{", ".join(wrong_url)}. '
+            '\n\nPlease check the schema and add oauth2 scopes where necessary.'
+        )
 
     return result

@@ -262,22 +262,6 @@ def inventreeCommitDate():
     return str(commit_dt.date())
 
 
-def inventreeInstaller():
-    """Returns the installer for the running codebase - if set."""
-    # First look in the environment variables, e.g. if running in docker
-
-    installer = os.environ.get('INVENTREE_PKG_INSTALLER', '')
-
-    if installer:
-        return installer
-    elif settings.DOCKER:
-        return 'DOC'
-    elif main_commit is not None:
-        return 'GIT'
-
-    return None
-
-
 def inventreeBranch():
     """Returns the branch for the running codebase - if set."""
     # First look in the environment variables, e.g. if running in docker
@@ -306,8 +290,7 @@ def inventreePlatform():
 
 def inventreeDatabase():
     """Return the InvenTree database backend e.g. 'postgresql'."""
-    db = settings.DATABASES['default']
-    return db.get('ENGINE', None).replace('django.db.backends.', '')
+    return settings.DB_ENGINE
 
 
 def inventree_identifier(override_announce: bool = False):

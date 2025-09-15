@@ -4,6 +4,7 @@ import datetime
 import hashlib
 import inspect
 import io
+import json
 import os
 import os.path
 import re
@@ -156,7 +157,7 @@ def generateTestKey(test_name: Union[str, None]) -> str:
     return key
 
 
-def constructPathString(path, max_chars=250):
+def constructPathString(path: list[str], max_chars: int = 250) -> str:
     """Construct a 'path string' for the given path.
 
     Arguments:
@@ -281,12 +282,12 @@ def str2bool(text, test=True):
     return str(text).lower() in ['0', 'n', 'no', 'none', 'f', 'false', 'off']
 
 
-def is_bool(text):
+def is_bool(text: str) -> bool:
     """Determine if a string value 'looks' like a boolean."""
     return str2bool(text, True) or str2bool(text, False)
 
 
-def isNull(text):
+def isNull(text: str) -> bool:
     """Test if a string 'looks' like a null value. This is useful for querying the API against a null key.
 
     Args:
@@ -306,10 +307,13 @@ def isNull(text):
     ]
 
 
-def normalize(d):
+def normalize(d, rounding: Optional[int] = None) -> Decimal:
     """Normalize a decimal number, and remove exponential formatting."""
     if type(d) is not Decimal:
         d = Decimal(d)
+
+    if rounding is not None:
+        d = round(d, rounding)
 
     d = d.normalize()
 
@@ -510,7 +514,7 @@ def increment_serial_number(serial, part=None):
             if result is not None:
                 return str(result)
         except Exception:
-            log_error(f'{plugin.slug}.increment_serial_number')
+            log_error('increment_serial_number', plugin=plugin.slug)
 
     # If we get to here, no plugins were able to "increment" the provided serial value
     # Attempt to perform increment according to some basic rules
@@ -716,22 +720,24 @@ def extract_serial_numbers(
         raise ValidationError([_('No serial numbers found')])
 
     if len(errors) == 0 and len(serials) != expected_quantity:
+        n = len(serials)
+        q = expected_quantity
+
         raise ValidationError([
-            _(
-                f'Number of unique serial numbers ({len(serials)}) must match quantity ({expected_quantity})'
-            )
+            _(f'Number of unique serial numbers ({n}) must match quantity ({q})')
         ])
 
     return serials
 
 
-def validateFilterString(value, model=None):
+def validateFilterString(value: str, model=None) -> dict:
     """Validate that a provided filter string looks like a list of comma-separated key=value pairs.
 
     These should nominally match to a valid database filter based on the model being filtered.
 
     e.g. "category=6, IPN=12"
     e.g. "part__name=widget"
+    e.g. "item=[1,2,3], status=active"
 
     The ReportTemplate class uses the filter string to work out which items a given report applies to.
     For example, an acceptance test report template might only apply to stock items with a given IPN,
@@ -749,7 +755,8 @@ def validateFilterString(value, model=None):
     if not value or len(value) == 0:
         return results
 
-    groups = value.split(',')
+    # Split by comma, but ignore commas within square brackets
+    groups = re.split(r',(?![^\[]*\])', value)
 
     for group in groups:
         group = group.strip()
@@ -766,6 +773,16 @@ def validateFilterString(value, model=None):
 
         if not k or not v:
             raise ValidationError(f'Invalid group: {group}')
+
+        # Account for 'list' support
+        if v.startswith('[') and v.endswith(']'):
+            try:
+                v = json.loads(v)
+            except json.JSONDecodeError:
+                raise ValidationError(f'Invalid list value: {v}')
+
+            if not isinstance(v, list):
+                raise ValidationError(f'Expected a list for key "{k}", got {type(v)}')
 
         results[k] = v
 
@@ -1094,16 +1111,17 @@ def pui_url(subpath: str) -> str:
 
 def plugins_info(*args, **kwargs):
     """Return information about activated plugins."""
+    from plugin import PluginMixinEnum
     from plugin.registry import registry
 
     # Check if plugins are even enabled
     if not settings.PLUGINS_ENABLED:
         return False
 
-    # Fetch plugins
-    plug_list = [plg for plg in registry.plugins.values() if plg.plugin_config().active]
+    # Fetch active plugins
+    plugins = registry.with_mixin(PluginMixinEnum.BASE)
+
     # Format list
     return [
-        {'name': plg.name, 'slug': plg.slug, 'version': plg.version}
-        for plg in plug_list
+        {'name': plg.name, 'slug': plg.slug, 'version': plg.version} for plg in plugins
     ]

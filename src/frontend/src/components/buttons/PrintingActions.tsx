@@ -13,7 +13,7 @@ import { useCreateApiFormModal } from '../../hooks/UseForm';
 import {
   useGlobalSettingsState,
   useUserSettingsState
-} from '../../states/SettingsState';
+} from '../../states/SettingsStates';
 import { ActionDropdown } from '../items/ActionDropdown';
 
 export function PrintingActions({
@@ -34,7 +34,12 @@ export function PrintingActions({
 
   const enabled = useMemo(() => items.length > 0, [items]);
 
-  const [pluginKey, setPluginKey] = useState<string>('');
+  const defaultLabelPlugin = useMemo(
+    () => userSettings.getSetting('LABEL_DEFAULT_PRINTER'),
+    [userSettings]
+  );
+
+  const [pluginKey, setPluginKey] = useState<string | null>(null);
 
   const labelPrintingEnabled = useMemo(() => {
     return enableLabels && globalSettings.isSet('LABEL_ENABLE');
@@ -72,9 +77,6 @@ export function PrintingActions({
         .then((response: any) => {
           return extractAvailableFields(response, 'POST') || {};
         })
-        .catch(() => {
-          return {};
-        })
   });
 
   const labelFields: ApiFormFieldSet = useMemo(() => {
@@ -83,6 +85,7 @@ export function PrintingActions({
     // Override field values
     fields.template = {
       ...fields.template,
+      autoFill: true,
       filters: {
         enabled: true,
         model_type: modelType,
@@ -98,7 +101,8 @@ export function PrintingActions({
 
     fields['plugin'] = {
       ...fields['plugin'],
-      value: userSettings.getSetting('LABEL_DEFAULT_PRINTER'),
+      default: defaultLabelPlugin,
+      value: pluginKey,
       filters: {
         active: true,
         mixin: 'labels'
@@ -111,11 +115,12 @@ export function PrintingActions({
     };
 
     return fields;
-  }, [printingFields.data, items]);
+  }, [defaultLabelPlugin, pluginKey, printingFields.data, items]);
 
   const labelModal = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.label_print),
     title: t`Print Label`,
+    modalId: 'print-labels',
     fields: labelFields,
     timeout: 5000,
     onClose: () => {
@@ -130,11 +135,13 @@ export function PrintingActions({
   });
 
   const reportModal = useCreateApiFormModal({
-    title: t`Print Report`,
     url: apiUrl(ApiEndpoints.report_print),
+    title: t`Print Report`,
+    modalId: 'print-reports',
     timeout: 5000,
     fields: {
       template: {
+        autoFill: true,
         filters: {
           enabled: true,
           model_type: modelType,

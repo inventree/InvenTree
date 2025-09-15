@@ -1,7 +1,7 @@
+import { YesNoButton } from '@lib/components/YesNoButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { t } from '@lingui/core/macro';
-import { YesNoButton } from '../../../../components/buttons/YesNoButton';
 import { TemplateTable } from '../../../../tables/settings/TemplateTable';
 
 function ReportTemplateTable() {
@@ -19,6 +19,12 @@ function ReportTemplateTable() {
             label: t`Landscape`,
             modelRenderer: (instance: any) => (
               <YesNoButton value={instance.landscape} />
+            )
+          },
+          merge: {
+            label: t`Merge`,
+            modelRenderer: (instance: any) => (
+              <YesNoButton value={instance.merge} />
             )
           },
           attach_to_model: {

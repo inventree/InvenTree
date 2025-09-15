@@ -4,6 +4,8 @@ import datetime
 
 from django.contrib.auth import get_user, login
 from django.contrib.auth.models import Group, User
+from django.contrib.auth.password_validation import password_changed, validate_password
+from django.core.exceptions import ValidationError
 from django.urls import include, path
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.generic.base import RedirectView
@@ -23,6 +25,7 @@ from InvenTree.mixins import (
     RetrieveAPI,
     RetrieveUpdateAPI,
     RetrieveUpdateDestroyAPI,
+    UpdateAPI,
 )
 from InvenTree.settings import FRONTEND_URL_BASE
 from users.models import ApiToken, Owner, RuleSet, UserProfile
@@ -37,6 +40,7 @@ from users.serializers import (
     RuleSetSerializer,
     UserCreateSerializer,
     UserProfileSerializer,
+    UserSetPasswordSerializer,
 )
 
 logger = structlog.get_logger('inventree')
@@ -139,6 +143,36 @@ class UserDetail(RetrieveUpdateDestroyAPI):
     queryset = User.objects.all()
     serializer_class = ExtendedUserSerializer
     permission_classes = [InvenTree.permissions.StaffRolePermissionOrReadOnly]
+
+
+class UserDetailSetPassword(UpdateAPI):
+    """Allows superusers to set the password for a user."""
+
+    queryset = User.objects.all()
+    serializer_class = UserSetPasswordSerializer
+    permission_classes = [InvenTree.permissions.IsSuperuserOrSuperScope]
+
+    def get_object(self):
+        """Return the user object for this endpoint."""
+        return self.get_queryset().get(pk=self.kwargs['pk'])
+
+    def perform_update(self, serializer):
+        """Set the password for the user."""
+        user: User = serializer.instance
+
+        password: str = serializer.validated_data.get('password', None)
+        overwrite: bool = serializer.validated_data.get('override_warning', False)
+
+        if password:
+            if not overwrite:
+                try:
+                    validate_password(password=password, user=user)
+                except ValidationError as e:
+                    raise exceptions.ValidationError({'password': str(e)})
+
+            user.set_password(password)
+            password_changed(password=password, user=user)
+            user.save()
 
 
 class MeUserDetail(RetrieveUpdateAPI, UserDetail):
@@ -467,6 +501,16 @@ user_urls = [
             path('', RuleSetList.as_view(), name='api-ruleset-list'),
         ]),
     ),
-    path('<int:pk>/', UserDetail.as_view(), name='api-user-detail'),
+    path(
+        '<int:pk>/',
+        include([
+            path(
+                'set-password/',
+                UserDetailSetPassword.as_view(),
+                name='api-user-set-password',
+            ),
+            path('', UserDetail.as_view(), name='api-user-detail'),
+        ]),
+    ),
     path('', UserList.as_view(), name='api-user-list'),
 ]

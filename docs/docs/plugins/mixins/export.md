@@ -21,9 +21,10 @@ Each plugin can dictate which datasets are supported using the `supports_export`
       show_bases: False
       show_root_heading: False
       show_root_toc_entry: False
-      show_sources: True
       summary: False
       members: []
+      extra:
+        show_source: True
 
 The default implementation returns `True` for all data types.
 
@@ -36,9 +37,10 @@ The `generate_filename` method constructs a filename for the exported file.
       show_bases: False
       show_root_heading: False
       show_root_toc_entry: False
-      show_sources: True
       summary: False
       members: []
+      extra:
+        show_source: True
 
 ### Adjust Columns
 
@@ -49,9 +51,10 @@ The `update_headers` method allows the plugin to adjust the columns selected to 
       show_bases: False
       show_root_heading: False
       show_root_toc_entry: False
-      show_sources: True
       summary: False
       members: []
+      extra:
+        show_source: True
 
 ### Queryset Filtering
 
@@ -62,9 +65,10 @@ The `filter_queryset` method allows the plugin to provide custom filtering to th
       show_bases: False
       show_root_heading: False
       show_root_toc_entry: False
-      show_sources: True
       summary: False
       members: []
+      extra:
+        show_source: True
 
 ### Export Data
 
@@ -75,9 +79,10 @@ The `export_data` method performs the step of transforming a [Django QuerySet]({
       show_bases: False
       show_root_heading: False
       show_root_toc_entry: False
-      show_sources: True
       summary: False
       members: []
+      extra:
+        show_source: True
 
 Note that the default implementation simply uses the builtin tabulation functionality of the provided serializer class. In most cases, this will be sufficient.
 

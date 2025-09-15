@@ -16,9 +16,7 @@ To navigate to the Build Order display, select *Manufacturing* from the main nav
 
 The *Build Order Index Page* allows the user to view all build orders:
 
-{% with id="build_display", url="build/build_display.png", description="Display Builds" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("build/build_display.png", title="Build Orders") }}
 
 The following view modes are available:
 
@@ -26,21 +24,19 @@ The following view modes are available:
 
 *Table View* provides a table of Build Orders, which can be filtered to only show the orders you are interested in.
 
-{% with id="build_list", url="build/build_list.png", description="Build List" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("build/build_list.png", title="Build List") }}
 
 #### Calendar View
 
 *Calendar View* shows a calendar display with outstanding build orders, based on the various dates specified for each order.
 
-{% with id="build_calendar", url="build/build_calendar.png", description="Build Calendar" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("build/build_calendar.png", title="Build Calendar") }}
 
 The build calendar allows the user to navigate month-by-month and display the filtered build orders
 
 ## Build Order Details
+
+Select an individual build order from the build order table to navigate to the Build Order detail page. The build order detail page provides a comprehensive overview of the build order, including all relevant information and actions.
 
 ### Build Order Reference
 
@@ -121,27 +117,50 @@ The detail view for a single build order provides multiple display panels, as fo
 
 The *Build Details* panel provides an overview of the Build Order:
 
-{% with id="build_details", url="build/build_panel_details.png", description="Build details panel" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image ("build/build_panel_details.png", title="Build Details") }}
 
-### Line Items
+### Required Parts
 
-The *Line Items* panel displays all the line items (as defined by the [bill of materials](./bom.md)) required to complete the build order.
+The *Required Parts* panel displays all the line items (as defined by the [bill of materials](./bom.md)) required to complete the build order.
 
-{% with id="build_allocate", url="build/build_panel_line_items.png", description="Build line items panel" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("build/build_panel_line_items.png", title="Line Items") }}
 
 The allocation table (as shown above) provides an interface to allocate required stock, and also shows the stock allocation progress for each line item in the build.
+
+### Allocated Stock
+
+The *Allocated Stock* tab displays all stock items which have been *allocated* to this build order. These stock items are reserved for this build, and will be consumed when the build is completed:
+
+{{ image("build/allocated_stock_table.png", title="Allocated Stock Table") }}
+
+!!! info "No BOM"
+	If the part being built does not have a BOM, then the *Allocated Stock* tab will not be displayed.
+
+### Consumed Stock
+
+The *Consumed Stock* tab displays all stock items which have been *consumed* by this build order. These stock items remain in the database after the build order has been completed, but are no longer available for use.
+
+- [Tracked stock items](./allocate.md#tracked-stock) are consumed by specific build outputs
+- [Untracked stock items](./allocate.md#untracked-stock) are consumed by the build order
+
+!!! info "No BOM"
+	If the part being built does not have a BOM, then the *Consumed Stock* tab will not be displayed.
+
+#### Return to Stock
+
+After stock items have been *consumed* by a build order, it may be required to recover some of that stock back into the inventory. This can be done by selecting the desired items, and pressing the *Return to Stock* button:
+
+{{ image("build/build_return_stock.png", title="Return Stock") }}
+
+This will open the following dialog, which allows the user to specify the quantity of stock to return, and the location where the stock should be returned:
+
+{{ image("build/build_return_stock_dialog.png", title="Return Stock Dialog") }}
 
 ### Incomplete Outputs
 
 The *Incomplete Outputs* panel shows the list of in-progress [build outputs](./output.md) (created stock items) associated with this build.
 
-{% with id="build_outputs", url="build/build_outputs.png", description="Outputs tab" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("build/build_outputs.png", title="Build Outputs") }}
 
 !!! info "Example: Build Outputs"
 	In the example image above, a single output (serial number 2) has been completed, while serial numbers 1 and 4 are still in progress.
@@ -154,62 +173,51 @@ The *Incomplete Outputs* panel shows the list of in-progress [build outputs](./o
 
 This panel displays all the completed build outputs (stock items) which have been created by this build order:
 
-### Allocated Stock
-
-The *Allocated Stock* tab displays all stock items which have been *allocated* to this build order. These stock items are reserved for this build, and will be consumed when the build is completed:
-
-{% with id="allocated_stock_table", url="build/allocated_stock_table.png", description="Allocated Stock Table" %}
-{% include "img.html" %}
-{% endwith %}
-
-### Consumed Stock
-
-The *Consumed Stock* tab displays all stock items which have been *consumed* by this build order. These stock items remain in the database after the build order has been completed, but are no longer available for use.
-
-- [Tracked stock items](./allocate.md#tracked-stock) are consumed by specific build outputs
-- [Untracked stock items](./allocate.md#untracked-stock) are consumed by the build order
-
 ### Child Builds
 
 If there exist any build orders which are *children* of the selected build order, they are displayed in the *Child Builds* tab:
 
-{% with id="build_childs", url="build/build_childs.png", description="Child builds panel" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("build/build_childs.png", title="Child Builds") }}
 
 ### Test Results
 
 For *trackable* parts, test results can be recorded against each build output. These results are displayed in the *Test Results* panel:
 
-{% with id="build_test_results", url="build/build_panel_test_results.png", description="Test Results panel" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("build/build_panel_test_results.png", title="Test Results") }}
 
 This table provides a summary of the test results for each build output, and allows test results to be quickly added for each build output.
 
-### Test Statistics
+### Adding Test Results
 
-For *trackable* parts, this panel displays a summary of the test results for all build outputs:
+There are multiple ways to add test results against build outputs from this table view:
 
-{% with id="build_test_stats", url="build/build_panel_test_statistics.png", description="Test Statistics panel" %}
-{% include "img.html" %}
-{% endwith %}
+#### Row Actions
+
+Open the row actions menu for a specific build output, and select the *Add Test Result* option.
+
+#### Table Buttons
+
+Each available test is rendered in the table as a separate column. Any output which does not already have a result registered for that test will display a button in the table cell, labelled *Add Test Result*. Clicking on this button will open the *Add Test Result* dialog for that test.
+
+#### Bulk Add Test Results
+
+Select the build outputs for which you wish to add test results, then click on the *Add Test Results* button at the top of the table. This will open the *Add Test Result* dialog, allowing you to select the test and enter the result for all selected outputs.
 
 ### Attachments
 
 Files attachments can be uploaded against the build order, and displayed in the *Attachments* tab:
 
-{% with id="build_attachments", url="build/build_attachments.png", description="Attachments tab" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("build/build_attachments.png", title="Attachments") }}
 
 ### Notes
 
 Build order notes (which support markdown formatting) are displayed in the *Notes* tab:
 
-{% with id="build_notes", url="build/build_notes.png", description="Notes tab" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("build/build_notes.png", title="Notes") }}
+
+## External Build Orders
+
+InvenTree supports the creation of *external build orders*, which are used to manage the manufacturing of parts by an external supplier. Read more about [external build orders](./external.md).
 
 ## Create Build Order
 
@@ -221,9 +229,7 @@ To create a build order for your part, you have two options:
 - Select the *Build Orders* tab
 - Select *Start new Build*
 
-{% with id="build_create_from_part", url="build/build_create_from_part.png", description="Create build from Part view" %}
-{% include "img.html" %}
-{% endwith %}
+{{ image("build/build_create_from_part.png", title="Create Build Order from Part") }}
 
 ### Build Order Page
 
@@ -298,6 +304,7 @@ The following [global settings](../settings/global.md) are available for adjusti
 | Name | Description | Default | Units |
 | ---- | ----------- | ------- | ----- |
 {{ globalsetting("BUILDORDER_REFERENCE_PATTERN") }}
+{{ globalsetting("BUILDORDER_EXTERNAL_BUILDS") }}
 {{ globalsetting("BUILDORDER_REQUIRE_RESPONSIBLE") }}
 {{ globalsetting("BUILDORDER_REQUIRE_ACTIVE_PART") }}
 {{ globalsetting("BUILDORDER_REQUIRE_LOCKED_PART") }}

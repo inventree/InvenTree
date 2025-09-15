@@ -4,13 +4,13 @@ title: Plugins
 
 ## InvenTree Plugin Architecture
 
-The InvenTree server code supports an extensible plugin architecture, allowing custom plugins to be integrated directly into the database server. This allows development of complex behaviors which are decoupled from core InvenTree code.
+The InvenTree server code supports an extensible plugin architecture, allowing custom plugins to be integrated directly into the InvenTree installation. This allows development of complex behaviors which are decoupled from core InvenTree code.
 
 Plugins can be added from multiple sources:
 
 - Plugins can be installed using the PIP Python package manager
 - Plugins can be placed in the external [plugins directory](../start/config.md#plugin-options)
-- InvenTree built-in plugins are located within the InvenTree source code
+- InvenTree [built-in](./builtin/index.md) plugins are located within the InvenTree source code
 
 For further information, read more about [installing plugins](./install.md).
 
@@ -18,117 +18,45 @@ For further information, read more about [installing plugins](./install.md).
 
 Plugin behaviour can be controlled via the InvenTree configuration options. Refer to the [configuration guide](../start/config.md#plugin-options) for the available plugin configuration options.
 
-### Creating a Plugin
+## Developing a Plugin
 
-To assist in creating a new plugin, we provide a [plugin creator command line tool](https://github.com/inventree/plugin-creator). This allows developers to quickly scaffold a new InvenTree plugin, and provides a basic structure to build upon.
+If you are interested in developing a custom plugin for InvenTree, refer to the [plugin development guide](./develop.md). This guide provides an overview of the plugin architecture, and how to create a new plugin.
 
-To install and run the plugin creator:
+### Plugin Creator
 
-```bash
-pip install inventree-plugin-creator
-create-inventree-plugin
-```
+To assist in creating a new plugin, we provide a [plugin creator command line tool](./creator.md). This allows developers to quickly scaffold a new InvenTree plugin, and provides a basic structure to build upon.
 
-## Plugin Code Structure
+### Plugin Walkthrough
 
-### Plugin Base Class
+Check out our [plugin development walkthrough](./walkthrough.md) to learn how to create an example plugin. This guide will take you through the steps to add a new part panel that displays an image carousel from images attached to the selected part.
 
-Custom plugins must inherit from the [InvenTreePlugin class]({{ sourcefile("src/backend/InvenTree/plugin/plugin.py") }}). Any plugins installed via the methods outlined above will be "discovered" when the InvenTree server launches.
+## Available Plugins
 
-!!! warning "Name Change"
-    The name of the base class was changed with `0.7.0` from `IntegrationPluginBase` to `InvenTreePlugin`.
+InvenTree plugins can be provided from a variety of sources, including built-in plugins, sample plugins, mandatory plugins, and third-party plugins.
 
-### Imports
+### Built-in Plugins
 
-As the code base is evolving import paths might change. Therefore we provide stable import targets for important python APIs.
-Please read all release notes and watch out for warnings - we generally provide backports for depreciated interfaces for at least one minor release.
+InvenTree comes with a number of built-in plugins that provide additional functionality. These plugins are included in the InvenTree source code, and can be enabled or disabled via the configuration options.
 
-#### Plugins
+Refer to the [built-in plugins documentation](./builtin/index.md) for more information on the available built-in plugins.
 
-General classes and mechanisms are provided under the `plugin` [namespaces]({{ sourcefile("src/backend/InvenTree/plugin/__init__.py") }}). These include:
+### Sample Plugins
 
-```python
-# Management objects
-registry                    # Object that manages all plugin states and integrations
+If the InvenTree server is running in [debug mode](../start/config.md#debug-mode), an additional set of *sample* plugins are available. These plugins are intended to demonstrate some of the available capabilities provided by the InvenTree plugin architecture, and can be used as a starting point for developing your own plugins.
 
-# Base classes
-InvenTreePlugin             # Base class for all plugins
+!!! info "Debug Mode Only"
+    Sample plugins are only available when the InvenTree server is running in debug mode. This is typically used during development, and is not recommended for production environments.
 
-# Errors
-MixinImplementationError    # Is raised if a mixin is implemented wrong (default not overwritten for example)
-MixinNotImplementedError    # Is raised if a mixin was not implemented (core mechanisms are missing from the plugin)
-```
+### Third Party Plugins
 
-#### Mixins
+A list of known third-party InvenTree extensions is provided [on our website](https://inventree.org/extend/integrate/) If you have an extension that should be listed here, contact the InvenTree team on [GitHub](https://github.com/inventree/). Refer to the [InvenTree website](https://inventree.org/plugins.html) for a (non exhaustive) list of plugins that are available for InvenTree. This includes both official and third-party plugins.
 
-Mixins are split up internally to keep the source tree clean and enable better testing separation. All public APIs that should be used are exposed under `plugin.mixins`. These include all built-in mixins and notification methods. An up-to-date reference can be found in the source code [can be found here]({{ sourcefile("src/backend/InvenTree/plugin/mixins/__init__.py") }}).
+## Mandatory Plugins
 
-#### Models and other internal InvenTree APIs
+Some plugins are mandatory for InvenTree to function correctly. These plugins are included in the InvenTree source code, and cannot be disabled. They provide essential functionality that is required for the core InvenTree features to work.
 
-!!! warning "Danger Zone"
-    The APIs outside of the `plugin` namespace are not structured for public usage and require a more in-depth knowledge of the Django framework. Please ask in GitHub discussions of the `InvenTree` org if you are not sure you are using something the intended way.
+### Mandatory Third-Party Plugins
 
-We do not provide stable interfaces to models or any other internal python APIs. If you need to integrate into these parts please make yourself familiar with the codebase. We follow general Django patterns and only stray from them in limited, special cases.
-If you need to react to state changes please use the [EventMixin](./mixins/event.md).
+It may be desirable to mark a third-party plugin as mandatory, meaning that once installed, it is automatically enabled and cannot be disabled. This is useful in situations where a particular plugin is required for crucial functionality and it it imperative that it cannot be disabled by user interaction.
 
-### Plugin Options
-
-Some metadata options can be defined as constants in the plugins class.
-
-``` python
-NAME = '' # Used as a general reference to the plugin
-SLUG = None  # Used in URLs, setting-names etc. when a unique slug as a reference is needed -> the plugin name is used if not set
-TITLE = None  # A nice human friendly name for the plugin -> used in titles, as plugin name etc.
-
-AUTHOR = None  # Author of the plugin, git commit information is used if not present
-PUBLISH_DATE = None  # Publishing date of the plugin, git commit information is used if not present
-WEBSITE = None  # Website for the plugin, developer etc. -> is shown in plugin overview if set
-
-VERSION = None  # Version of the plugin
-MIN_VERSION = None  # Lowest InvenTree version number that is supported by the plugin
-MAX_VERSION = None  # Highest InvenTree version number that is supported by the plugin
-```
-
-Refer to the [sample plugins]({{ sourcedir("src/backend/InvenTree/plugin/samples") }}) for further examples.
-
-### Plugin Config
-
-A *PluginConfig* database entry will be created for each plugin "discovered" when the server launches. This configuration entry is used to determine if a particular plugin is enabled.
-
-The configuration entries must be enabled via the [InvenTree admin interface](../settings/admin.md).
-
-!!! warning "Disabled by Default"
-    Newly discovered plugins are disabled by default, and must be manually enabled (in the admin interface) by a user with staff privileges.
-
-## Plugin Mixins
-
-Common use cases are covered by pre-supplied modules in the form of *mixins* (similar to how [Django]({% include "django.html" %}/topics/class-based-views/mixins/) does it). Each mixin enables the integration into a specific area of InvenTree. Sometimes it also enhances the plugin with helper functions to supply often used functions out-of-the-box.
-
-Supported mixin classes are:
-
-| Mixin | Description |
-| --- | --- |
-| [ActionMixin](./mixins/action.md) | Run custom actions |
-| [APICallMixin](./mixins/api.md) | Perform calls to external APIs |
-| [AppMixin](./mixins/app.md) | Integrate additional database tables |
-| [BarcodeMixin](./mixins/barcode.md) | Support custom barcode actions |
-| [CurrencyExchangeMixin](./mixins/currency.md) | Custom interfaces for currency exchange rates |
-| [DataExport](./mixins/export.md) | Customize data export functionality |
-| [EventMixin](./mixins/event.md) | Respond to events |
-| [LabelPrintingMixin](./mixins/label.md) | Custom label printing support |
-| [LocateMixin](./mixins/locate.md) | Locate and identify stock items |
-| [NavigationMixin](./mixins/navigation.md) | Add custom pages to the web interface |
-| [ReportMixin](./mixins/report.md) | Add custom context data to reports |
-| [ScheduleMixin](./mixins/schedule.md) | Schedule periodic tasks |
-| [SettingsMixin](./mixins/settings.md) | Integrate user configurable settings |
-| [UserInterfaceMixin](./mixins/ui.md) | Add custom user interface features |
-| [UrlsMixin](./mixins/urls.md) | Respond to custom URL endpoints |
-| [ValidationMixin](./mixins/validation.md) | Provide custom validation of database models |
-
-## Static Files
-
-If your plugin requires static files (e.g. CSS, JavaScript, images), these should be placed in the top level `static` directory within the distributed plugin package. These files will be automatically collected by InvenTree when the plugin is installed, and copied to an appropriate location.
-
-These files will be available to the InvenTree web interface, and can be accessed via the URL `/static/plugins/<plugin_name>/<filename>`. Static files are served by the [proxy server](../start/processes.md#proxy-server).
-
-For example, if the plugin is named `my_plugin`, and contains a file `CustomPanel.js`, it can be accessed via the URL `/static/plugins/my_plugin/CustomPanel.js`.
+In such as case, the plugin(s) should be marked as "mandatory" at run-time in the [configuration file](../start/config.md#plugin-options). This will ensure that these plugins are always enabled, and cannot be disabled by the user.

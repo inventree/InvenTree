@@ -4,6 +4,8 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import FullCalendar from '@fullcalendar/react';
 
+import { ActionButton } from '@lib/components/ActionButton';
+import { SearchInput } from '@lib/components/SearchInput';
 import type { TableFilter } from '@lib/types/Filters';
 import { t } from '@lingui/core/macro';
 import {
@@ -25,14 +27,12 @@ import {
   IconDownload,
   IconFilter
 } from '@tabler/icons-react';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import type { CalendarState } from '../../hooks/UseCalendar';
 import { useLocalState } from '../../states/LocalState';
 import { FilterSelectDrawer } from '../../tables/FilterSelectDrawer';
-import { TableSearchInput } from '../../tables/Search';
 import { Boundary } from '../Boundary';
-import { ActionButton } from '../buttons/ActionButton';
 import { StylishText } from '../items/StylishText';
 
 export interface InvenTreeCalendarProps extends CalendarOptions {
@@ -66,6 +66,11 @@ export default function Calendar({
     },
     [state.selectMonth]
   );
+
+  useEffect(() => {
+    // Select initial month on first calendar render
+    state.ref?.current?.getApi()?.gotoDate(new Date());
+  }, []);
 
   // Callback when the calendar date range is adjusted
   const datesSet = useCallback(
@@ -142,7 +147,7 @@ export default function Calendar({
           </Group>
           <Group justify='right' gap='xs' wrap='nowrap'>
             {enableSearch && (
-              <TableSearchInput searchCallback={state.setSearchTerm} />
+              <SearchInput searchCallback={state.setSearchTerm} />
             )}
             {enableFilters && filters && filters.length > 0 && (
               <Indicator

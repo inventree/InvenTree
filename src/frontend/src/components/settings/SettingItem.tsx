@@ -9,7 +9,7 @@ import {
   useMantineColorScheme
 } from '@mantine/core';
 import { IconEdit } from '@tabler/icons-react';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import { ModelType } from '@lib/enums/ModelType';
@@ -51,6 +51,23 @@ function SettingValue({
 
   const [modelInstance, setModelInstance] = useState<any>(null);
 
+  // Launch the edit dialog for this setting
+  const editSetting = useCallback(() => {
+    if (!setting.read_only) {
+      onEdit(setting);
+    }
+  }, [setting, onEdit]);
+
+  // Toggle the setting value (if it is a boolean)
+  const toggleSetting = useCallback(
+    (event: any) => {
+      if (!setting.read_only) {
+        onToggle(setting, event.currentTarget.checked);
+      }
+    },
+    [setting, onToggle]
+  );
+
   // Does this setting map to an internal database model?
   const modelType: ModelType | null = useMemo(() => {
     if (setting.model_name) {
@@ -89,7 +106,8 @@ function SettingValue({
         <Button
           aria-label={`edit-setting-${setting.key}`}
           variant='subtle'
-          onClick={() => onEdit(setting)}
+          disabled={setting.read_only}
+          onClick={editSetting}
         >
           <IconEdit />
         </Button>
@@ -104,8 +122,12 @@ function SettingValue({
           size='sm'
           radius='lg'
           aria-label={`toggle-setting-${setting.key}`}
-          checked={setting.value.toLowerCase() == 'true'}
-          onChange={(event) => onToggle(setting, event.currentTarget.checked)}
+          disabled={setting.read_only}
+          checked={setting.value.toString().toLowerCase() == 'true'}
+          onChange={toggleSetting}
+          wrapperProps={{
+            'aria-label': `setting-${setting.key}-wrapper`
+          }}
           style={{
             paddingRight: '20px'
           }}
@@ -118,7 +140,8 @@ function SettingValue({
           <Button
             aria-label={`edit-setting-${setting.key}`}
             variant='subtle'
-            onClick={() => onEdit(setting)}
+            disabled={setting.read_only}
+            onClick={editSetting}
           >
             {valueText}
           </Button>
@@ -127,7 +150,8 @@ function SettingValue({
         <Button
           aria-label={`edit-setting-${setting.key}`}
           variant='subtle'
-          onClick={() => onEdit(setting)}
+          disabled={setting.read_only}
+          onClick={editSetting}
         >
           <IconEdit />
         </Button>

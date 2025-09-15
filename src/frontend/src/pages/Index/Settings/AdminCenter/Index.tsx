@@ -1,7 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { Stack } from '@mantine/core';
 import {
-  IconClipboardCheck,
   IconCoins,
   IconCpu,
   IconDevicesPc,
@@ -10,6 +9,7 @@ import {
   IconFileUpload,
   IconList,
   IconListDetails,
+  IconMail,
   IconPackages,
   IconPlugConnected,
   IconQrcode,
@@ -42,6 +42,10 @@ const LabelTemplatePanel = Loadable(lazy(() => import('./LabelTemplatePanel')));
 
 const UserManagementPanel = Loadable(
   lazy(() => import('./UserManagementPanel'))
+);
+
+const EmailManagementPanel = Loadable(
+  lazy(() => import('./EmailManagementPanel'))
 );
 
 const TaskManagementPanel = Loadable(
@@ -98,8 +102,6 @@ const LocationTypesTable = Loadable(
   lazy(() => import('../../../../tables/stock/LocationTypesTable'))
 );
 
-const StocktakePanel = Loadable(lazy(() => import('./StocktakePanel')));
-
 export default function AdminCenter() {
   const user = useUserState();
 
@@ -111,6 +113,13 @@ export default function AdminCenter() {
         icon: <IconUsersGroup />,
         content: <UserManagementPanel />,
         hidden: !user.hasViewRole(UserRoles.admin)
+      },
+      {
+        name: 'email',
+        label: t`Email Settings`,
+        icon: <IconMail />,
+        content: <EmailManagementPanel />,
+        hidden: !user.isSuperuser()
       },
       {
         name: 'import',
@@ -186,13 +195,6 @@ export default function AdminCenter() {
         hidden: !user.hasViewRole(UserRoles.part_category)
       },
       {
-        name: 'stocktake',
-        label: t`Stocktake`,
-        icon: <IconClipboardCheck />,
-        content: <StocktakePanel />,
-        hidden: !user.hasViewRole(UserRoles.stocktake)
-      },
-      {
         name: 'labels',
         label: t`Label Templates`,
         icon: <IconTags />,
@@ -237,7 +239,8 @@ export default function AdminCenter() {
           'barcode-history',
           'background',
           'errors',
-          'currencies'
+          'currencies',
+          'email'
         ]
       },
       {
@@ -257,11 +260,6 @@ export default function AdminCenter() {
         panelIDs: ['labels', 'reports']
       },
       {
-        id: 'extend',
-        label: t`Extend / Integrate`,
-        panelIDs: ['plugin', 'machine']
-      },
-      {
         id: 'plm',
         label: t`PLM`,
         panelIDs: [
@@ -270,6 +268,11 @@ export default function AdminCenter() {
           'location-types',
           'stocktake'
         ]
+      },
+      {
+        id: 'extend',
+        label: t`Extend / Integrate`,
+        panelIDs: ['plugin', 'machine']
       }
     ];
   }, []);
@@ -289,7 +292,6 @@ export default function AdminCenter() {
             panels={adminCenterPanels}
             groups={grouping}
             collapsible={true}
-            markCustomPanels={true}
             model='admincenter'
             id={null}
           />

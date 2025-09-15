@@ -29,7 +29,7 @@ from order.status_codes import (
     SalesOrderStatusGroups,
 )
 from part.models import Part
-from stock.models import StockItem
+from stock.models import StockItem, StockLocation
 from stock.status_codes import StockStatus
 from users.models import Owner
 
@@ -1185,8 +1185,7 @@ class PurchaseOrderReceiveTest(OrderTest):
 
         n = StockItem.objects.count()
 
-        # TODO: 2024-12-10 - This API query needs to be refactored!
-        self.post(self.url, data, expected_code=201, max_query_count=500)
+        self.post(self.url, data, expected_code=201, max_query_count=275)
 
         # Check that the expected number of stock items has been created
         self.assertEqual(n + 11, StockItem.objects.count())
@@ -1211,6 +1210,60 @@ class PurchaseOrderReceiveTest(OrderTest):
 
         self.assertEqual(item.quantity, 10)
         self.assertEqual(item.batch, 'B-xyz-789')
+
+    def test_receive_large_quantity(self):
+        """Test receipt of a large number of items."""
+        sp = SupplierPart.objects.first()
+
+        # Create a new order
+        po = models.PurchaseOrder.objects.create(
+            reference='PO-9999', supplier=sp.supplier
+        )
+
+        N_LINES = 250
+
+        # Create some line items
+        models.PurchaseOrderLineItem.objects.bulk_create([
+            models.PurchaseOrderLineItem(order=po, part=sp, quantity=1000 + i)
+            for i in range(N_LINES)
+        ])
+
+        # Place the order
+        po.place_order()
+
+        url = reverse('api-po-receive', kwargs={'pk': po.pk})
+
+        lines = po.lines.all()
+        location = StockLocation.objects.filter(structural=False).first()
+
+        N_ITEMS = StockItem.objects.count()
+
+        # Receive all items in a single request
+        response = self.post(
+            url,
+            {
+                'items': [
+                    {'line_item': line.pk, 'quantity': line.quantity} for line in lines
+                ],
+                'location': location.pk,
+            },
+            max_query_count=100 + 2 * N_LINES,
+        ).data
+
+        # Check for expected response
+        self.assertEqual(len(response), N_LINES)
+        self.assertEqual(N_ITEMS + N_LINES, StockItem.objects.count())
+
+        for item in response:
+            self.assertEqual(item['purchase_order'], po.pk)
+
+        # Check that the order has been completed
+        po.refresh_from_db()
+        self.assertEqual(po.status, PurchaseOrderStatus.COMPLETE)
+
+        for line in lines:
+            line.refresh_from_db()
+            self.assertEqual(line.received, line.quantity)
 
     def test_packaging(self):
         """Test that we can supply a 'packaging' value when receiving items."""
@@ -1593,6 +1646,8 @@ class SalesOrderTest(OrderTest):
 
     def test_export(self):
         """Test we can export the SalesOrder list."""
+        set_global_setting(models.SalesOrder.UNLOCK_SETTING, True)
+
         n = models.SalesOrder.objects.count()
 
         # Check there are some sales orders
@@ -1925,6 +1980,11 @@ class SalesOrderDownloadTest(OrderTest):
 class SalesOrderAllocateTest(OrderTest):
     """Unit tests for allocating stock items against a SalesOrder."""
 
+    @classmethod
+    def setUpTestData(cls):
+        """Init routine for this unit test class."""
+        super().setUpTestData()
+
     def setUp(self):
         """Init routines for this unit testing class."""
         super().setUp()
@@ -2014,7 +2074,10 @@ class SalesOrderAllocateTest(OrderTest):
         data = {'items': [], 'shipment': self.shipment.pk}
 
         for line in self.order.lines.all():
-            stock_item = line.part.stock_items.last()
+            for stock_item in line.part.stock_items.all():
+                # Find a non-serialized stock item to allocate
+                if not stock_item.serialized:
+                    break
 
             # Fully-allocate each line
             data['items'].append({
@@ -2046,13 +2109,24 @@ class SalesOrderAllocateTest(OrderTest):
         for line in filter(check_template, self.order.lines.all()):
             stock_item: Optional[StockItem] = None
 
+            stock_item = None
+
             # Allocate a matching variant
             parts: list[Part] = Part.objects.filter(salable=True).filter(
                 variant_of=line.part.pk
             )
             for part in parts:
-                stock_item: StockItem = part.stock_items.last()
-                break
+                stock_item = part.stock_items.last()
+
+                for item in part.stock_items.all():
+                    if item.serialized:
+                        continue
+
+                    stock_item = item
+                    break
+
+                if stock_item is not None:
+                    break
 
             if stock_item is None:
                 raise self.fail('No stock item found for part')  # pragma: no cover
@@ -2499,6 +2573,50 @@ class ReturnOrderTests(InvenTreeAPITestCase):
         response = self.get(url, expected_code=200, format=None)
         calendar = Calendar.from_ical(response.content)
         self.assertIsInstance(calendar, Calendar)
+
+    def test_export(self):
+        """Test data export for the ReturnOrder API endpoints."""
+        # Export return orders
+        data = self.export_data(
+            reverse('api-return-order-list'),
+            export_format='csv',
+            decode=True,
+            expected_code=200,
+        )
+
+        self.process_csv(
+            data,
+            required_cols=['Reference', 'Customer'],
+            required_rows=models.ReturnOrder.objects.count(),
+        )
+
+        N = models.ReturnOrderLineItem.objects.count()
+        self.assertGreater(N, 0, 'No ReturnOrderLineItems found!')
+
+        # Export return order lines
+        data = self.export_data(
+            reverse('api-return-order-line-list'),
+            export_format='csv',
+            decode=True,
+            expected_code=200,
+        )
+
+        self.process_csv(
+            data, required_rows=N, required_cols=['Order', 'Reference', 'Target Date']
+        )
+
+        # Export again, with a search term
+        data = self.export_data(
+            reverse('api-return-order-line-list'),
+            params={'search': 'xyz'},
+            export_format='csv',
+            decode=True,
+            expected_code=200,
+        )
+
+        self.process_csv(
+            data, required_rows=0, required_cols=['Order', 'Reference', 'Target Date']
+        )
 
 
 class OrderMetadataAPITest(InvenTreeAPITestCase):

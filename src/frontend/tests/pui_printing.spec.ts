@@ -8,7 +8,7 @@ import { setPluginState } from './settings.js';
  * Select a number of stock items from the table,
  * and print labels against them
  */
-test('Label Printing', async ({ browser }) => {
+test('Printing - Label Printing', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: 'stock/location/index/' });
 
   await page.waitForURL('**/web/stock/location/**');
@@ -28,16 +28,16 @@ test('Label Printing', async ({ browser }) => {
 
   // Select plugin
   await page.getByLabel('related-field-plugin').click();
-  await page.getByText('InvenTreeLabelSheet').last().click();
+  await page.getByText('InvenTreeLabelMachine').last().click();
 
   // Select label template
   await page.getByLabel('related-field-template').click();
-  await page.getByText('InvenTree Stock Item Label (').click();
-
-  await page.waitForTimeout(100);
+  await page
+    .getByRole('option', { name: 'InvenTree Stock Item Label' })
+    .click();
 
   await page.getByLabel('related-field-plugin').click();
-  await page.getByText('InvenTreeLabelSheet').last().click();
+  await page.getByRole('option', { name: 'InvenTreeLabel provides' }).click();
 
   // Submit the print form (second time should result in success)
   await page.getByRole('button', { name: 'Print', exact: true }).isEnabled();
@@ -52,7 +52,7 @@ test('Label Printing', async ({ browser }) => {
  * Navigate to a PurchaseOrder detail page,
  * and print a report against it.
  */
-test('Report Printing', async ({ browser }) => {
+test('Printing - Report Printing', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: 'stock/location/index/' });
 
   await page.waitForURL('**/web/stock/location/**');
@@ -68,21 +68,16 @@ test('Report Printing', async ({ browser }) => {
   await page.getByLabel('action-menu-printing-actions').click();
   await page.getByLabel('action-menu-printing-actions-print-reports').click();
 
-  // Select template
-  await page.getByLabel('related-field-template').click();
-  await page.getByText('InvenTree Purchase Order').click();
-
-  await page.waitForTimeout(100);
-
-  // Submit the print form (should result in success)
+  // Template should auto-fill (there is only one template available)
+  await page.getByText('Sample purchase order report').waitFor();
   await page.getByRole('button', { name: 'Print', exact: true }).isEnabled();
   await page.getByRole('button', { name: 'Print', exact: true }).click();
-
   await page.getByText('Process completed successfully').first().waitFor();
+
   await page.context().close();
 });
 
-test('Report Editing', async ({ browser, request }) => {
+test('Printing - Report Editing', async ({ browser, request }) => {
   const page = await doCachedLogin(browser, {
     username: 'admin',
     password: 'inventree'

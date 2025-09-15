@@ -427,7 +427,7 @@ class SupplierBarcodeMixin(BarcodeMixin):
                 response['error'] = e.message
             except Exception:
                 # Handle any other exceptions
-                log_error('scan_receive_item')
+                log_error('scan_receive_item', plugin=self.slug)
                 response['error'] = _('Failed to receive line item')
 
         return response

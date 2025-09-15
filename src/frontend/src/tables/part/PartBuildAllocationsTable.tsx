@@ -4,21 +4,25 @@ import type { DataTableRowExpansionProps } from 'mantine-datatable';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { ProgressBar } from '@lib/components/ProgressBar';
+import { RowViewAction } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
-import { ProgressBar } from '../../components/items/ProgressBar';
+import type { TableFilter } from '@lib/types/Filters';
+import type { TableColumn } from '@lib/types/Tables';
+import { IconCircleCheck } from '@tabler/icons-react';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import {
   DescriptionColumn,
+  PartColumn,
   ProjectCodeColumn,
   StatusColumn
 } from '../ColumnRenderers';
+import { IncludeVariantsFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowViewAction } from '../RowActions';
 import RowExpansionIcon from '../RowExpansionIcon';
 import { BuildLineSubTable } from '../build/BuildLineTable';
 
@@ -40,6 +44,7 @@ export default function PartBuildAllocationsTable({
         accessor: 'build',
         title: t`Build Order`,
         sortable: true,
+        switchable: false,
         render: (record: any) => (
           <Group wrap='nowrap' gap='xs'>
             <RowExpansionIcon
@@ -50,6 +55,23 @@ export default function PartBuildAllocationsTable({
           </Group>
         )
       },
+      PartColumn({
+        part: 'assembly_detail',
+        title: t`Assembly`
+      }),
+      {
+        accessor: 'assembly_detail.IPN',
+        title: t`Assembly IPN`
+      },
+      PartColumn({
+        part: 'part_detail',
+        defaultVisible: false
+      }),
+      {
+        accessor: 'part_detail.IPN',
+        defaultVisible: false,
+        title: t`Part IPN`
+      },
       DescriptionColumn({
         accessor: 'build_detail.title'
       }),
@@ -59,19 +81,38 @@ export default function PartBuildAllocationsTable({
       StatusColumn({
         accessor: 'build_detail.status',
         model: ModelType.build,
-        title: t`Order Status`
+        title: t`Order Status`,
+        switchable: false
       }),
       {
         accessor: 'allocated',
         sortable: true,
+        switchable: false,
         title: t`Required Stock`,
-        render: (record: any) => (
-          <ProgressBar
-            progressLabel
-            value={record.allocated}
-            maximum={record.quantity}
-          />
-        )
+        render: (record: any) => {
+          const required = Math.max(0, record.quantity - record.consumed);
+
+          if (required <= 0) {
+            return (
+              <Group gap='xs' wrap='nowrap'>
+                <IconCircleCheck size={14} color='green' />
+                <Text size='sm' style={{ fontStyle: 'italic' }}>
+                  {record.consumed >= record.quantity
+                    ? t`Fully consumed`
+                    : t`Fully allocated`}
+                </Text>
+              </Group>
+            );
+          }
+
+          return (
+            <ProgressBar
+              progressLabel
+              value={record.allocated}
+              maximum={required}
+            />
+          );
+        }
       }
     ];
   }, [table.isRowExpanded]);
@@ -105,23 +146,32 @@ export default function PartBuildAllocationsTable({
     };
   }, [table.isRowExpanded]);
 
+  const tableFilters: TableFilter[] = useMemo(() => {
+    return [IncludeVariantsFilter()];
+  }, []);
+
   return (
     <InvenTreeTable
       url={apiUrl(ApiEndpoints.build_line_list)}
       tableState={table}
       columns={tableColumns}
       props={{
-        minHeight: 200,
+        minHeight: 300,
         params: {
           part: partId,
           consumable: false,
+          part_detail: false,
+          bom_item_detail: false,
+          project_code_detail: true,
+          assembly_detail: true,
           build_detail: true,
           order_outstanding: true
         },
-        enableColumnSwitching: false,
+        enableColumnSwitching: true,
         enableSearch: false,
         rowActions: rowActions,
-        rowExpansion: rowExpansion
+        rowExpansion: rowExpansion,
+        tableFilters: tableFilters
       }}
     />
   );

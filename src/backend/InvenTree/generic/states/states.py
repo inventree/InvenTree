@@ -302,6 +302,13 @@ class StatusCodeMixin:
         """Return the custom status code for this object."""
         return getattr(self, f'{self.STATUS_FIELD}_custom_key', None)
 
+    def compare_status(self, status: int) -> bool:
+        """Determine if the current status matches the provided status code."""
+        if status == self.get_status():
+            return True
+
+        return status is not None and status == self.get_custom_status()
+
     def set_status(self, status: int) -> bool:
         """Set the status code for this object."""
         if not self.status_class:
