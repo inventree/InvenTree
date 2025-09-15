@@ -1481,7 +1481,7 @@ class PartStocktakeDetail(RetrieveUpdateDestroyAPI):
     serializer_class = part_serializers.PartStocktakeSerializer
 
 
-class BomFilter(rest_filters.FilterSet):
+class BomFilter(FilterSet):
     """Custom filters for the BOM list."""
 
     class Meta:
