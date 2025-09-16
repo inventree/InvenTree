@@ -8,7 +8,7 @@ msgstr ""
 "Language: de\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-09-08 01:37\n"
+"PO-Revision-Date: 2025-09-15 23:41\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -503,7 +503,7 @@ msgstr ""
 
 #: lib/enums/ModelInformation.tsx:274
 #: src/components/barcodes/BarcodeInput.tsx:114
-#: src/components/dashboard/DashboardLayout.tsx:224
+#: src/components/dashboard/DashboardLayout.tsx:281
 #: src/components/editors/NotesEditor.tsx:74
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:157
 #: src/components/forms/fields/ApiFormField.tsx:263
@@ -576,7 +576,7 @@ msgstr "Fehler beim Anhalten"
 
 #: src/components/barcodes/BarcodeCameraInput.tsx:159
 msgid "Start scanning by selecting a camera and pressing the play button."
-msgstr ""
+msgstr "Starte den Scan, indem du eine Kamera auswählst und die Wiedergabetaste drückst."
 
 #: src/components/barcodes/BarcodeCameraInput.tsx:180
 msgid "Stop scanning"
@@ -636,7 +636,7 @@ msgstr "Kein passender Eintrag gefunden"
 
 #: src/components/barcodes/BarcodeScanDialog.tsx:134
 msgid "Barcode does not match the expected model type"
-msgstr ""
+msgstr "Der Barcode stimmt nicht mit dem erwarteten Modelltyp überein"
 
 #: src/components/barcodes/BarcodeScanDialog.tsx:145
 #: src/components/editors/NotesEditor.tsx:84
@@ -650,7 +650,7 @@ msgstr "Abgeschlossen"
 
 #: src/components/barcodes/BarcodeScanDialog.tsx:151
 msgid "Failed to handle barcode"
-msgstr ""
+msgstr "Fehler beim Verarbeiten des Barcodes"
 
 #: src/components/barcodes/BarcodeScanDialog.tsx:167
 #: src/pages/Index/Scan.tsx:129
@@ -679,7 +679,7 @@ msgstr "Eigener Barcode"
 
 #: src/components/barcodes/QRCode.tsx:108
 msgid "A custom barcode is registered for this item. The shown code is not that custom barcode."
-msgstr ""
+msgstr "Für diesen Artikel ist ein benutzerdefinierter Barcode registriert. Der angezeigte Code ist nicht dieser benutzerdefinierte Barcode."
 
 #: src/components/barcodes/QRCode.tsx:127
 msgid "Barcode Data:"
@@ -795,7 +795,7 @@ msgstr "Diese Zeile entfernen"
 
 #: src/components/buttons/SSOButton.tsx:40
 msgid "You will be redirected to the provider for further actions."
-msgstr ""
+msgstr "Sie werden zum Anbieter weitergeleitet, um weitere Schritte durchzuführen."
 
 #: src/components/buttons/SSOButton.tsx:44
 #~ msgid "This provider is not full set up."
@@ -823,7 +823,7 @@ msgstr "Spotlight öffnen"
 
 #: src/components/buttons/StarredToggleButton.tsx:36
 msgid "Subscription Updated"
-msgstr ""
+msgstr "Abonnement aktualisiert"
 
 #: src/components/buttons/StarredToggleButton.tsx:57
 #~ msgid "Unsubscribe from part"
@@ -831,16 +831,16 @@ msgstr ""
 
 #: src/components/buttons/StarredToggleButton.tsx:66
 msgid "Unsubscribe from notifications"
-msgstr ""
+msgstr "Benachrichtigungen abbestellen"
 
 #: src/components/buttons/StarredToggleButton.tsx:67
 msgid "Subscribe to notifications"
-msgstr ""
+msgstr "Benachrichtigungen abonnieren"
 
 #: src/components/calendar/Calendar.tsx:99
 #: src/components/calendar/Calendar.tsx:162
 msgid "Calendar Filters"
-msgstr ""
+msgstr "Kalenderfilter"
 
 #: src/components/calendar/Calendar.tsx:114
 msgid "Previous month"
@@ -872,22 +872,22 @@ msgstr "Fehler beim Aktualisieren der Bestellung"
 msgid "Overdue"
 msgstr "Überfällig"
 
-#: src/components/dashboard/DashboardLayout.tsx:225
+#: src/components/dashboard/DashboardLayout.tsx:282
 msgid "Failed to load dashboard widgets."
-msgstr ""
+msgstr "Dashboard-Widgets konnten nicht geladen werden."
 
-#: src/components/dashboard/DashboardLayout.tsx:235
+#: src/components/dashboard/DashboardLayout.tsx:293
 msgid "No Widgets Selected"
 msgstr "Keine Widgets ausgewählt"
 
-#: src/components/dashboard/DashboardLayout.tsx:238
+#: src/components/dashboard/DashboardLayout.tsx:296
 msgid "Use the menu to add widgets to the dashboard"
 msgstr "Verwenden Sie das Menü, um Widgets zum Dashboard hinzuzufügen"
 
 #: src/components/dashboard/DashboardMenu.tsx:62
 #: src/components/dashboard/DashboardMenu.tsx:138
 msgid "Accept Layout"
-msgstr ""
+msgstr "Layout übernehmen"
 
 #: src/components/dashboard/DashboardMenu.tsx:94
 #: src/components/nav/NavigationDrawer.tsx:71
@@ -911,27 +911,27 @@ msgstr "Widgets entfernen"
 
 #: src/components/dashboard/DashboardMenu.tsx:129
 msgid "Clear Widgets"
-msgstr ""
+msgstr "Widgets löschen"
 
 #: src/components/dashboard/DashboardWidget.tsx:81
 msgid "Remove this widget from the dashboard"
-msgstr ""
+msgstr "Dieses Widget aus dem Dashboard entfernen"
 
 #: src/components/dashboard/DashboardWidgetDrawer.tsx:77
 msgid "Filter dashboard widgets"
-msgstr ""
+msgstr "Dashboard-Widgets filtern"
 
 #: src/components/dashboard/DashboardWidgetDrawer.tsx:98
 msgid "Add this widget to the dashboard"
-msgstr ""
+msgstr "Dieses Widget zum Dashboard hinzufügen"
 
 #: src/components/dashboard/DashboardWidgetDrawer.tsx:123
 msgid "No Widgets Available"
-msgstr ""
+msgstr "Kein Widget verfügbar"
 
 #: src/components/dashboard/DashboardWidgetDrawer.tsx:124
 msgid "There are no more widgets available for the dashboard"
-msgstr ""
+msgstr "Es sind keine weiteren Widgets für das Dashboard verfügbar"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:24
 msgid "Subscribed Parts"
@@ -964,7 +964,7 @@ msgstr "Geringer Bestand"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:52
 msgid "Show the number of parts which are low on stock"
-msgstr ""
+msgstr "Zeige die Anzahl der Teile mit niedrigem Bestand"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:57
 msgid "Required for Build Orders"
@@ -976,7 +976,7 @@ msgstr ""
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:64
 msgid "Expired Stock Items"
-msgstr ""
+msgstr "Abgelaufene Lagerartikel"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:66
 msgid "Show the number of stock items which have expired"
@@ -2842,7 +2842,7 @@ msgstr ""
 #~ msgid "Unknown model: {model}"
 #~ msgstr "Unknown model: {model}"
 
-#: src/components/render/Instance.tsx:246
+#: src/components/render/Instance.tsx:249
 msgid "Unknown model: {model_name}"
 msgstr ""
 
@@ -4351,7 +4351,7 @@ msgstr "Teil zur Installation auswählen"
 
 #: src/forms/StockForms.tsx:432
 msgid "Confirm Stock Transfer"
-msgstr ""
+msgstr "Bestand-Transfer bestätigen"
 
 #: src/forms/StockForms.tsx:559
 msgid "Loading..."
@@ -4367,7 +4367,7 @@ msgstr "Verschieben"
 
 #: src/forms/StockForms.tsx:783
 msgid "Return"
-msgstr ""
+msgstr "Zurück"
 
 #: src/forms/StockForms.tsx:828
 #: src/forms/StockForms.tsx:867
@@ -4397,7 +4397,7 @@ msgstr "Bestand hinzufügen"
 
 #: src/forms/StockForms.tsx:1189
 msgid "Stock added"
-msgstr ""
+msgstr "Bestand hinzugefügt"
 
 #: src/forms/StockForms.tsx:1192
 msgid "Increase the quantity of the selected stock items by a given amount."
@@ -4410,7 +4410,7 @@ msgstr "Bestand entfernen"
 
 #: src/forms/StockForms.tsx:1204
 msgid "Stock removed"
-msgstr ""
+msgstr "Bestand entfernt"
 
 #: src/forms/StockForms.tsx:1207
 msgid "Decrease the quantity of the selected stock items by a given amount."
@@ -4423,7 +4423,7 @@ msgstr "Bestand verschieben"
 
 #: src/forms/StockForms.tsx:1219
 msgid "Stock transferred"
-msgstr ""
+msgstr "Bestand übertragen"
 
 #: src/forms/StockForms.tsx:1222
 msgid "Transfer selected items to the specified location."
@@ -8486,7 +8486,7 @@ msgstr ""
 
 #: src/tables/InvenTreeTableHeader.tsx:177
 msgid "Custom table filters are active"
-msgstr ""
+msgstr "Benutzerdefinierte Tabellenfilter sind aktiv"
 
 #: src/tables/InvenTreeTableHeader.tsx:203
 #: src/tables/general/BarcodeScanTable.tsx:93

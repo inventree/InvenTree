@@ -8,7 +8,7 @@ msgstr ""
 "Language: hu\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-09-08 01:37\n"
+"PO-Revision-Date: 2025-09-14 10:52\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -253,19 +253,19 @@ msgstr "Gyártások"
 
 #: lib/enums/ModelInformation.tsx:118
 msgid "Build Line"
-msgstr ""
+msgstr "Gyártás sor"
 
 #: lib/enums/ModelInformation.tsx:119
 msgid "Build Lines"
-msgstr ""
+msgstr "Gyártási tételek"
 
 #: lib/enums/ModelInformation.tsx:126
 msgid "Build Item"
-msgstr ""
+msgstr "Gyártási tétel"
 
 #: lib/enums/ModelInformation.tsx:127
 msgid "Build Items"
-msgstr ""
+msgstr "Gyártási tételek"
 
 #: lib/enums/ModelInformation.tsx:132
 #: src/pages/company/CompanyDetail.tsx:342
@@ -503,7 +503,7 @@ msgstr ""
 
 #: lib/enums/ModelInformation.tsx:274
 #: src/components/barcodes/BarcodeInput.tsx:114
-#: src/components/dashboard/DashboardLayout.tsx:224
+#: src/components/dashboard/DashboardLayout.tsx:281
 #: src/components/editors/NotesEditor.tsx:74
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:157
 #: src/components/forms/fields/ApiFormField.tsx:263
@@ -861,7 +861,7 @@ msgstr "Adatok letöltése"
 
 #: src/components/calendar/OrderCalendar.tsx:132
 msgid "Order Updated"
-msgstr ""
+msgstr "Megrendelés frissítve"
 
 #: src/components/calendar/OrderCalendar.tsx:142
 msgid "Error updating order"
@@ -872,15 +872,15 @@ msgstr ""
 msgid "Overdue"
 msgstr "Késésben"
 
-#: src/components/dashboard/DashboardLayout.tsx:225
+#: src/components/dashboard/DashboardLayout.tsx:282
 msgid "Failed to load dashboard widgets."
 msgstr ""
 
-#: src/components/dashboard/DashboardLayout.tsx:235
+#: src/components/dashboard/DashboardLayout.tsx:293
 msgid "No Widgets Selected"
 msgstr ""
 
-#: src/components/dashboard/DashboardLayout.tsx:238
+#: src/components/dashboard/DashboardLayout.tsx:296
 msgid "Use the menu to add widgets to the dashboard"
 msgstr ""
 
@@ -951,7 +951,7 @@ msgstr ""
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:38
 msgid "Invalid BOMs"
-msgstr ""
+msgstr "Érvénytelen BOM-ok"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:39
 msgid "Assemblies requiring bill of materials validation"
@@ -2162,7 +2162,7 @@ msgstr ""
 
 #: src/components/items/TransferList.tsx:65
 msgid "No items"
-msgstr ""
+msgstr "Nincsenek tételek"
 
 #: src/components/items/TransferList.tsx:161
 #: src/components/render/Stock.tsx:95
@@ -2402,7 +2402,7 @@ msgstr "Szerver újraindítása"
 
 #: src/components/nav/Alerts.tsx:70
 msgid "The server requires a restart to apply changes."
-msgstr ""
+msgstr "A szervert újra kell indítani a módosítások végrehajtásához."
 
 #: src/components/nav/Alerts.tsx:80
 msgid "Database Migrations"
@@ -2842,7 +2842,7 @@ msgstr ""
 #~ msgid "Unknown model: {model}"
 #~ msgstr "Unknown model: {model}"
 
-#: src/components/render/Instance.tsx:246
+#: src/components/render/Instance.tsx:249
 msgid "Unknown model: {model_name}"
 msgstr ""
 
@@ -2980,7 +2980,7 @@ msgstr "Beállítás"
 
 #: src/components/settings/ConfigValueList.tsx:39
 msgid "Source"
-msgstr ""
+msgstr "Forrás"
 
 #: src/components/settings/SettingItem.tsx:47
 #: src/components/settings/SettingItem.tsx:100
@@ -3014,7 +3014,7 @@ msgstr ""
 
 #: src/components/settings/SettingList.tsx:151
 msgid "No Settings"
-msgstr ""
+msgstr "Nincsenek beállítások"
 
 #: src/components/settings/SettingList.tsx:152
 msgid "There are no configurable settings available"
@@ -5524,7 +5524,7 @@ msgstr "Időbélyeg"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:140
 msgid "Method"
-msgstr ""
+msgstr "Mód"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:183
 msgid "Error while updating email"
@@ -5635,7 +5635,7 @@ msgstr "Nem használt kódok"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:538
 msgid "Used Codes"
-msgstr ""
+msgstr "Felhasznált kódok"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:593
 msgid "Error while registering recovery codes"
@@ -6645,7 +6645,7 @@ msgstr "Cég műveletek"
 #: src/pages/company/ManufacturerPartDetail.tsx:76
 #: src/pages/company/SupplierPartDetail.tsx:88
 msgid "Internal Part"
-msgstr ""
+msgstr "Belső alkatrész"
 
 #: src/pages/company/ManufacturerPartDetail.tsx:110
 msgid "Manufacturer Part Number"
@@ -7741,7 +7741,7 @@ msgstr ""
 
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:135
 msgid "Tracking Number"
-msgstr ""
+msgstr "Nyomonkövetési azonosító"
 
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:143
 msgid "Invoice Number"
@@ -8800,7 +8800,7 @@ msgstr ""
 
 #: src/tables/build/BuildAllocatedStockTable.tsx:232
 msgid "Consume"
-msgstr ""
+msgstr "Felhasznál"
 
 #: src/tables/build/BuildLineTable.tsx:59
 #~ msgid "Show lines with available stock"
@@ -9424,7 +9424,7 @@ msgstr ""
 
 #: src/tables/machine/MachineListTable.tsx:597
 msgid "Edit Machine"
-msgstr ""
+msgstr "Berendezés módosítása"
 
 #: src/tables/machine/MachineListTable.tsx:611
 msgid "Restart Machine"
@@ -9444,7 +9444,7 @@ msgstr "Illesztőprogram"
 
 #: src/tables/machine/MachineTypeTable.tsx:72
 msgid "Driver Type"
-msgstr ""
+msgstr "Driver típusa"
 
 #: src/tables/machine/MachineTypeTable.tsx:76
 msgid "Builtin driver"
@@ -9473,7 +9473,7 @@ msgstr ""
 #: src/tables/machine/MachineTypeTable.tsx:156
 #: src/tables/machine/MachineTypeTable.tsx:255
 msgid "Slug"
-msgstr ""
+msgstr "Slug"
 
 #: src/tables/machine/MachineTypeTable.tsx:167
 #: src/tables/machine/MachineTypeTable.tsx:276
@@ -10472,7 +10472,7 @@ msgstr ""
 #: src/tables/sales/SalesOrderLineItemTable.tsx:197
 #: src/tables/sales/SalesOrderLineItemTable.tsx:214
 msgid "Virtual part"
-msgstr ""
+msgstr "Virtuális alkatrész"
 
 #: src/tables/sales/SalesOrderLineItemTable.tsx:280
 #~ msgid "Allocate stock"
@@ -10691,7 +10691,7 @@ msgstr "Megbukott"
 
 #: src/tables/settings/EmailTable.tsx:33
 msgid "Read"
-msgstr ""
+msgstr "Olvasott"
 
 #: src/tables/settings/EmailTable.tsx:35
 msgid "Confirmed"
@@ -10720,7 +10720,7 @@ msgstr "Tárgy"
 
 #: src/tables/settings/EmailTable.tsx:85
 msgid "To"
-msgstr ""
+msgstr "Címzett"
 
 #: src/tables/settings/EmailTable.tsx:90
 msgid "Sender"
@@ -10744,7 +10744,7 @@ msgstr "Kimenő"
 
 #: src/tables/settings/ErrorTable.tsx:67
 msgid "Traceback"
-msgstr ""
+msgstr "Visszakövetés"
 
 #: src/tables/settings/ErrorTable.tsx:103
 msgid "When"
@@ -10831,7 +10831,7 @@ msgstr ""
 #: src/tables/settings/GroupTable.tsx:170
 #: src/tables/settings/UserTable.tsx:315
 msgid "Open Profile"
-msgstr ""
+msgstr "Profil megnyitása"
 
 #: src/tables/settings/GroupTable.tsx:185
 msgid "Delete group"
@@ -10991,11 +10991,11 @@ msgstr "Sablon törlése"
 
 #: src/tables/settings/TemplateTable.tsx:327
 msgid "Add Template"
-msgstr ""
+msgstr "Sablon hozzáadása"
 
 #: src/tables/settings/TemplateTable.tsx:340
 msgid "Add template"
-msgstr ""
+msgstr "Sablon hozzáadása"
 
 #: src/tables/settings/TemplateTable.tsx:363
 msgid "Filter by enabled status"
@@ -11136,7 +11136,7 @@ msgstr ""
 #: src/tables/stock/InstalledItemsTable.tsx:38
 #: src/tables/stock/InstalledItemsTable.tsx:90
 msgid "Install Item"
-msgstr ""
+msgstr "Cikk beépítése"
 
 #: src/tables/stock/InstalledItemsTable.tsx:40
 msgid "Item installed"
@@ -11374,7 +11374,7 @@ msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:559
 msgid "Order items"
-msgstr ""
+msgstr "Megrendelés tételei"
 
 #: src/tables/stock/StockItemTable.tsx:595
 #~ msgid "Add a new stock item"
@@ -11570,7 +11570,7 @@ msgstr "Mobil kijelző érzékelve"
 
 #: src/views/MobileAppView.tsx:28
 msgid "InvenTree UI is optimized for Tablets and Desktops, you can use the official app for a mobile experience."
-msgstr ""
+msgstr "A platform felhasználói felülete táblagépekre és asztali számítógépekre van optimalizálva, a használd a hivatalos alkalmazást a mobilon."
 
 #: src/views/MobileAppView.tsx:34
 msgid "Read the docs"
