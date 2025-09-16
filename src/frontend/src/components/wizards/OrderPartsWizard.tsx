@@ -305,7 +305,7 @@ function SelectPartsStep({
 
                 <StockField
                   label='calculated quantity'
-                  value={record.quantity}
+                  value={record.requirements?.calculated_quantity}
                   part={record.part}
                 />
 
@@ -562,9 +562,10 @@ export default function OrderPartsWizard({
         part: part,
         supplier_part: undefined,
         purchase_order: undefined,
-        quantity: Math.max(default_quantity ? default_quantity : to_order, 0),
+        quantity: 0,
         requirements: {
           default_quantity: default_quantity ?? 0,
+          calculated_quantity: to_order,
           total_stock: data.total_stock ?? 0,
           unallocated_stock: data.unallocated_stock ?? 0,
           allocated_to_build_orders: data.allocated_to_build_orders ?? 0,
