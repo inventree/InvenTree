@@ -329,7 +329,7 @@ class StockItemSerializer(
         'supplier_part_detail.MPN',
     ]
 
-    import_exclude_fields = ['use_pack_size', 'location_path']
+    import_exclude_fields = ['location_path', 'serial_numbers', 'use_pack_size']
 
     class Meta:
         """Metaclass options."""
