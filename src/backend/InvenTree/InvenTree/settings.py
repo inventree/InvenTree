@@ -700,8 +700,8 @@ if db_options is None:
 
 # Specific options for postgres backend
 if 'postgres' in DB_ENGINE:  # pragma: no cover
-    from django.db.backends.postgresql.psycopg_any import (
-        IsolationLevel,  # type: ignore[unresolved-import]
+    from django.db.backends.postgresql.psycopg_any import (  # type: ignore[unresolved-import]
+        IsolationLevel,
     )
 
     # Connection timeout
