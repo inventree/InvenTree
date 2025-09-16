@@ -671,9 +671,9 @@ class GlobalSettingsApiTest(InvenTreeAPITestCase):
 
         # Find the associated setting
         setting = next((s for s in response.data if s['key'] == key), None)
+        assert setting is not None
 
         # Check default value (should be False, not 'False')
-        self.assertIsNotNone(setting)
         self.assertFalse(setting['value'])
 
         # Check that we can manually set the value
@@ -851,9 +851,9 @@ class UserSettingsApiTest(InvenTreeAPITestCase):
 
         # Find the associated setting
         setting = next((s for s in response.data if s['key'] == key), None)
+        assert setting is not None
 
         # Check default value (should be 10, not '10')
-        self.assertIsNotNone(setting)
         self.assertEqual(setting['value'], 10)
 
         # Check that writing an invalid value returns an error
