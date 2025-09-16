@@ -8,7 +8,7 @@ msgstr ""
 "Language: nl\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-09-08 01:37\n"
+"PO-Revision-Date: 2025-09-15 23:41\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -503,7 +503,7 @@ msgstr "Selectie lijsten"
 
 #: lib/enums/ModelInformation.tsx:274
 #: src/components/barcodes/BarcodeInput.tsx:114
-#: src/components/dashboard/DashboardLayout.tsx:224
+#: src/components/dashboard/DashboardLayout.tsx:281
 #: src/components/editors/NotesEditor.tsx:74
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:157
 #: src/components/forms/fields/ApiFormField.tsx:263
@@ -636,7 +636,7 @@ msgstr "Geen overeenkomend item gevonden"
 
 #: src/components/barcodes/BarcodeScanDialog.tsx:134
 msgid "Barcode does not match the expected model type"
-msgstr ""
+msgstr "Barcode komt niet overeen met het verwachte type model"
 
 #: src/components/barcodes/BarcodeScanDialog.tsx:145
 #: src/components/editors/NotesEditor.tsx:84
@@ -650,7 +650,7 @@ msgstr "Succes"
 
 #: src/components/barcodes/BarcodeScanDialog.tsx:151
 msgid "Failed to handle barcode"
-msgstr ""
+msgstr "Streepjescode verwerken mislukt"
 
 #: src/components/barcodes/BarcodeScanDialog.tsx:167
 #: src/pages/Index/Scan.tsx:129
@@ -823,7 +823,7 @@ msgstr "Open spotlight"
 
 #: src/components/buttons/StarredToggleButton.tsx:36
 msgid "Subscription Updated"
-msgstr ""
+msgstr "Abonnement bijgewerkt"
 
 #: src/components/buttons/StarredToggleButton.tsx:57
 #~ msgid "Unsubscribe from part"
@@ -872,15 +872,15 @@ msgstr "Fout bij bijwerken bestelling"
 msgid "Overdue"
 msgstr "Achterstallig"
 
-#: src/components/dashboard/DashboardLayout.tsx:225
+#: src/components/dashboard/DashboardLayout.tsx:282
 msgid "Failed to load dashboard widgets."
-msgstr ""
+msgstr "Dashboard widgets laden mislukt."
 
-#: src/components/dashboard/DashboardLayout.tsx:235
+#: src/components/dashboard/DashboardLayout.tsx:293
 msgid "No Widgets Selected"
 msgstr "Geen widgets geselecteerd"
 
-#: src/components/dashboard/DashboardLayout.tsx:238
+#: src/components/dashboard/DashboardLayout.tsx:296
 msgid "Use the menu to add widgets to the dashboard"
 msgstr "Gebruik het menu om widgets toe te voegen aan het dashboard"
 
@@ -911,7 +911,7 @@ msgstr "Widget verwijderen"
 
 #: src/components/dashboard/DashboardMenu.tsx:129
 msgid "Clear Widgets"
-msgstr ""
+msgstr "Wis widgets"
 
 #: src/components/dashboard/DashboardWidget.tsx:81
 msgid "Remove this widget from the dashboard"
@@ -951,7 +951,7 @@ msgstr "Toon het aantal onderdelen categorieën waarop u bent geabonneerd"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:38
 msgid "Invalid BOMs"
-msgstr ""
+msgstr "Invalid BOMs"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:39
 msgid "Assemblies requiring bill of materials validation"
@@ -1333,7 +1333,7 @@ msgstr "Code"
 
 #: src/components/editors/TemplateEditor/PdfPreview/PdfPreview.tsx:50
 msgid "Error rendering preview"
-msgstr ""
+msgstr "Fout bij weergeven voorbeeld"
 
 #: src/components/editors/TemplateEditor/PdfPreview/PdfPreview.tsx:120
 msgid "Preview not available, click \"Reload Preview\"."
@@ -1641,11 +1641,11 @@ msgstr "Of gebruik SSO"
 
 #: src/components/forms/AuthenticationForm.tsx:348
 msgid "Registration not active"
-msgstr ""
+msgstr "Registratie niet actief"
 
 #: src/components/forms/AuthenticationForm.tsx:349
 msgid "This might be related to missing mail settings or could be a deliberate decision."
-msgstr ""
+msgstr "Dit kan gerelateerd zijn aan ontbrekende e-mailinstellingen of kan een weloverwogen beslissing zijn."
 
 #: src/components/forms/HostOptionsForm.tsx:36
 #: src/components/forms/HostOptionsForm.tsx:67
@@ -1965,7 +1965,7 @@ msgstr "Voltooi importeren"
 
 #: src/components/importer/ImporterDrawer.tsx:89
 msgid "Failed to fetch import session data"
-msgstr ""
+msgstr "Ophalen van import sessie gegevens is mislukt"
 
 #: src/components/importer/ImporterDrawer.tsx:97
 #~ msgid "Cancel import session"
@@ -2364,7 +2364,7 @@ msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:107
 msgid "The background worker process is not running"
-msgstr ""
+msgstr "Het proces van de server loopt niet"
 
 #: src/components/modals/ServerInfoModal.tsx:107
 #~ msgid "The Background worker process is not running."
@@ -2558,7 +2558,7 @@ msgstr "Over"
 
 #: src/components/nav/NavigationTree.tsx:211
 msgid "Error loading navigation tree."
-msgstr ""
+msgstr "Fout bij het laden van de navigatie-structuur."
 
 #: src/components/nav/NotificationDrawer.tsx:183
 #: src/pages/Notifications.tsx:74
@@ -2575,7 +2575,7 @@ msgstr "Je hebt geen ongelezen berichten."
 
 #: src/components/nav/NotificationDrawer.tsx:238
 msgid "Error loading notifications."
-msgstr ""
+msgstr "Fout bij laden meldingen."
 
 #: src/components/nav/SearchDrawer.tsx:106
 msgid "No Overview Available"
@@ -2670,15 +2670,15 @@ msgstr "Opmerkingen"
 
 #: src/components/panels/PanelGroup.tsx:158
 msgid "Plugin Provided"
-msgstr ""
+msgstr "Plug-in geleverd"
 
 #: src/components/panels/PanelGroup.tsx:280
 msgid "Collapse panels"
-msgstr ""
+msgstr "Panelen samenvouwen"
 
 #: src/components/panels/PanelGroup.tsx:280
 msgid "Expand panels"
-msgstr ""
+msgstr "Panelen uitklappen"
 
 #: src/components/plugins/LocateItemButton.tsx:68
 #: src/components/plugins/LocateItemButton.tsx:88
@@ -2842,7 +2842,7 @@ msgstr "Fout opgetreden tijdens het laden van de plug-in inhoud"
 #~ msgid "Unknown model: {model}"
 #~ msgstr "Unknown model: {model}"
 
-#: src/components/render/Instance.tsx:246
+#: src/components/render/Instance.tsx:249
 msgid "Unknown model: {model_name}"
 msgstr "Onbekend model: {model_name}"
 
@@ -2976,11 +2976,11 @@ msgstr "Batch"
 
 #: src/components/settings/ConfigValueList.tsx:36
 msgid "Setting"
-msgstr ""
+msgstr "Instellingen"
 
 #: src/components/settings/ConfigValueList.tsx:39
 msgid "Source"
-msgstr ""
+msgstr "Bron"
 
 #: src/components/settings/SettingItem.tsx:47
 #: src/components/settings/SettingItem.tsx:100
@@ -3010,15 +3010,15 @@ msgstr "Fout bij bewerken instelling"
 
 #: src/components/settings/SettingList.tsx:140
 msgid "Error loading settings"
-msgstr ""
+msgstr "Fout bij laden instellingen"
 
 #: src/components/settings/SettingList.tsx:151
 msgid "No Settings"
-msgstr ""
+msgstr "Geen instellingen"
 
 #: src/components/settings/SettingList.tsx:152
 msgid "There are no configurable settings available"
-msgstr ""
+msgstr "Er zijn geen configureerbare instellingen beschikbaar"
 
 #: src/components/settings/SettingList.tsx:189
 msgid "No settings specified"
@@ -3930,19 +3930,19 @@ msgstr "Over het InvenTree project"
 
 #: src/forms/BomForms.tsx:109
 msgid "Substitute Part"
-msgstr ""
+msgstr "Vervanging onderdeel"
 
 #: src/forms/BomForms.tsx:126
 msgid "Edit BOM Substitutes"
-msgstr ""
+msgstr "Stuk lijst BOM Item vervangingen bewerken"
 
 #: src/forms/BomForms.tsx:133
 msgid "Add Substitute"
-msgstr ""
+msgstr "Vervanging toevoegen"
 
 #: src/forms/BomForms.tsx:134
 msgid "Substitute added"
-msgstr ""
+msgstr "Vervanging toegevoegd"
 
 #: src/forms/BuildForms.tsx:112
 #: src/forms/BuildForms.tsx:217
@@ -4018,11 +4018,11 @@ msgstr "Verwijder productieorder"
 
 #: src/forms/BuildForms.tsx:410
 msgid "Selected build outputs will be completed, but marked as scrapped"
-msgstr ""
+msgstr "Geselecteerde bouw outputs worden voltooid, maar gemarkeerd als schroot"
 
 #: src/forms/BuildForms.tsx:412
 msgid "Allocated stock items will be consumed"
-msgstr ""
+msgstr "Toegewezen voorraadproducten zullen worden verbruikt"
 
 #: src/forms/BuildForms.tsx:418
 msgid "Build outputs have been scrapped"
@@ -4035,11 +4035,11 @@ msgstr "Annuleer productieorder"
 
 #: src/forms/BuildForms.tsx:465
 msgid "Selected build outputs will be removed"
-msgstr ""
+msgstr "Geselecteerde build outputs worden verwijderd"
 
 #: src/forms/BuildForms.tsx:467
 msgid "Allocated stock items will be returned to stock"
-msgstr ""
+msgstr "Toegewezen voorraadartikelen worden teruggestuurd naar voorraad"
 
 #: src/forms/BuildForms.tsx:470
 #~ msgid "Remove line"
@@ -4094,18 +4094,18 @@ msgstr "Voorraad items toegewezen"
 #: src/tables/build/BuildLineTable.tsx:720
 #: src/tables/build/BuildLineTable.tsx:843
 msgid "Consume Stock"
-msgstr ""
+msgstr "Verbruikte voorraad"
 
 #: src/forms/BuildForms.tsx:788
 #: src/forms/BuildForms.tsx:889
 msgid "Stock items consumed"
-msgstr ""
+msgstr "Voorraad artikelen verbruikt"
 
 #: src/forms/BuildForms.tsx:824
 #: src/tables/build/BuildLineTable.tsx:495
 #: src/tables/part/PartBuildAllocationsTable.tsx:101
 msgid "Fully consumed"
-msgstr ""
+msgstr "Volledig verbruikt"
 
 #: src/forms/BuildForms.tsx:869
 #: src/tables/build/BuildLineTable.tsx:185
@@ -4401,7 +4401,7 @@ msgstr "Voorraad toegevoegd"
 
 #: src/forms/StockForms.tsx:1192
 msgid "Increase the quantity of the selected stock items by a given amount."
-msgstr ""
+msgstr "Verhoog de hoeveelheid van de geselecteerde voorraadartikelen met een bepaald bedrag."
 
 #: src/forms/StockForms.tsx:1203
 #: src/hooks/UseStockAdjustActions.tsx:118
@@ -4414,7 +4414,7 @@ msgstr "Voorraad verwijderd"
 
 #: src/forms/StockForms.tsx:1207
 msgid "Decrease the quantity of the selected stock items by a given amount."
-msgstr ""
+msgstr "Verlaag de hoeveelheid van de geselecteerde voorraadartikelen met een bepaald bedrag."
 
 #: src/forms/StockForms.tsx:1218
 #: src/hooks/UseStockAdjustActions.tsx:128
@@ -4427,20 +4427,20 @@ msgstr "Voorraadartikel verplaatst"
 
 #: src/forms/StockForms.tsx:1222
 msgid "Transfer selected items to the specified location."
-msgstr ""
+msgstr "Verplaats de geselecteerde items naar de opgegeven locatie."
 
 #: src/forms/StockForms.tsx:1233
 #: src/hooks/UseStockAdjustActions.tsx:168
 msgid "Return Stock"
-msgstr ""
+msgstr "Terug naar voorraad"
 
 #: src/forms/StockForms.tsx:1234
 msgid "Stock returned"
-msgstr ""
+msgstr "Voorraad teruggestuurd"
 
 #: src/forms/StockForms.tsx:1237
 msgid "Return selected items into stock, to the specified location."
-msgstr ""
+msgstr "Retourneer geselecteerde items naar voorraad, naar de opgegeven locatie."
 
 #: src/forms/StockForms.tsx:1248
 #: src/hooks/UseStockAdjustActions.tsx:98
@@ -4453,7 +4453,7 @@ msgstr "Voorraad geteld"
 
 #: src/forms/StockForms.tsx:1252
 msgid "Count the selected stock items, and adjust the quantity accordingly."
-msgstr ""
+msgstr "Tel de geselecteerde voorraaditems, en pas de hoeveelheid overeenkomstig aan."
 
 #: src/forms/StockForms.tsx:1263
 msgid "Change Stock Status"
@@ -4465,7 +4465,7 @@ msgstr "Voorraad status gewijzigd"
 
 #: src/forms/StockForms.tsx:1267
 msgid "Change the status of the selected stock items."
-msgstr ""
+msgstr "Verander de status van de geselecteerde voorraaditems."
 
 #: src/forms/StockForms.tsx:1278
 #: src/hooks/UseStockAdjustActions.tsx:138
