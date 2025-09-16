@@ -5,9 +5,19 @@ import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
-import { Alert, Center, Group, Loader, Paper, Tooltip } from '@mantine/core';
+import {
+  ActionIcon,
+  Alert,
+  Center,
+  Group,
+  Loader,
+  Paper,
+  Popover,
+  Text,
+  Tooltip
+} from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
-import { IconShoppingCart } from '@tabler/icons-react';
+import { IconInfoCircle, IconShoppingCart } from '@tabler/icons-react';
 import { DataTable } from 'mantine-datatable';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useApi } from '../../contexts/ApiContext';
@@ -34,6 +44,7 @@ interface PartOrderRecord {
   purchase_order: any;
   quantity: number;
   errors: any;
+  requirements: any;
 }
 
 function SelectPartsStep({
@@ -240,6 +251,87 @@ function SelectPartsStep({
           />
         )
       },
+      {
+        accessor: 'stock_info',
+        title: ' ',
+        width: '1%',
+        render: (record: PartOrderRecord) => {
+          const [opened, setOpened] = useState(false);
+
+          const StockField = ({
+            part,
+            label,
+            value
+          }: {
+            part: any;
+            label: string;
+            value: number;
+          }) => {
+            return (
+              <Text
+                onClick={() => {
+                  onSelectQuantity(part.pk, value);
+                  setOpened(false);
+                }}
+                style={{ cursor: 'pointer' }}
+              >
+                {label}: {value ?? 0}
+              </Text>
+            );
+          };
+
+          return (
+            <Popover
+              width={400}
+              position='bottom'
+              withArrow
+              shadow='md'
+              opened={opened}
+              onClose={() => setOpened(false)}
+              withinPortal
+            >
+              <Popover.Target>
+                <ActionIcon onClick={() => setOpened((o) => !o)}>
+                  <IconInfoCircle />
+                </ActionIcon>
+              </Popover.Target>
+
+              <Popover.Dropdown>
+                <StockField
+                  label='default_quantity'
+                  value={record.requirements?.default_quantity}
+                  part={record.part}
+                />
+
+                <StockField
+                  label='calculated quantity'
+                  value={record.quantity}
+                  part={record.part}
+                />
+
+                <StockField
+                  label={t`Required for Orders`}
+                  value={record.requirements?.required_for_build_orders}
+                  part={record.part}
+                />
+
+                <StockField
+                  label={t`In Stock`}
+                  value={record.requirements?.total_stock}
+                  part={record.part}
+                />
+
+                <StockField
+                  label={t`Available`}
+                  value={record.requirements?.unallocated_stock}
+                  part={record.part}
+                />
+              </Popover.Dropdown>
+            </Popover>
+          );
+        }
+      },
+
       {
         accessor: 'right_actions',
         title: ' ',
@@ -448,6 +540,40 @@ export default function OrderPartsWizard({
   useEffect(() => {
     const records: PartOrderRecord[] = [];
 
+    const getPartWithQantityParameters = (
+      part: any,
+      data: any,
+      default_quantity: number
+    ) => {
+      // TODO: Make this calculation generic and reusable
+      // Calculate the "to order" quantity
+      const required =
+        (data.minimum_stock ?? 0) +
+        (data.required_for_build_orders ?? 0) +
+        (data.required_for_sales_orders ?? 0);
+      const on_hand = data.total_stock ?? 0;
+      const on_order = data.ordering ?? 0;
+      const in_production = data.building ?? 0;
+      const to_order = Number(
+        (required - on_hand - on_order - in_production).toFixed(4)
+      );
+
+      return {
+        part: part,
+        supplier_part: undefined,
+        purchase_order: undefined,
+        quantity: Math.max(default_quantity ? default_quantity : to_order, 0),
+        requirements: {
+          default_quantity: default_quantity ?? 0,
+          total_stock: data.total_stock ?? 0,
+          unallocated_stock: data.unallocated_stock ?? 0,
+          allocated_to_build_orders: data.allocated_to_build_orders ?? 0,
+          required_for_build_orders: data.required_for_build_orders ?? 0
+        },
+        errors: {}
+      };
+    };
+
     if (wizard.opened) {
       setIsLoading(true);
       const promises = parts
@@ -461,32 +587,21 @@ export default function OrderPartsWizard({
             return Promise.resolve(null);
           }
 
+          if (Object.prototype.hasOwnProperty.call(part, 'total_stock')) {
+            return getPartWithQantityParameters(part, part, 0);
+          }
+
           return api
             .get(
               apiUrl(ApiEndpoints.part_requirements, undefined, { id: part.pk })
             )
             .then((response) => {
-              // TODO: Make this calculation generic and reusable
-              // Calculate the "to order" quantity
               const part_requirements = response.data;
-              const required =
-                (part_requirements.minimum_stock ?? 0) +
-                (part_requirements.required_for_build_orders ?? 0) +
-                (part_requirements.required_for_sales_orders ?? 0);
-              const on_hand = part_requirements.total_stock ?? 0;
-              const on_order = part_requirements.ordering ?? 0;
-              const in_production = part_requirements.building ?? 0;
-              const to_order = Number(
-                (required - on_hand - on_order - in_production).toFixed(4)
+              return getPartWithQantityParameters(
+                part,
+                part_requirements,
+                part.default_quantity ?? 0
               );
-
-              return {
-                part: part,
-                supplier_part: undefined,
-                purchase_order: undefined,
-                quantity: Math.max(to_order, 0),
-                errors: {}
-              };
             });
         });
 
