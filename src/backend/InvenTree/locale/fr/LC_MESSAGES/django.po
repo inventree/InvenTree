@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-09-05 00:02+0000\n"
-"PO-Revision-Date: 2025-09-05 00:05\n"
+"POT-Creation-Date: 2025-09-10 22:28+0000\n"
+"PO-Revision-Date: 2025-09-15 23:41\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -535,7 +535,7 @@ msgid "Parent Build"
 msgstr "Fabrication parente"
 
 #: build/api.py:75 build/api.py:796 order/api.py:542 order/api.py:762
-#: order/api.py:1166 order/api.py:1415 stock/api.py:550
+#: order/api.py:1166 order/api.py:1415 stock/api.py:551
 msgid "Include Variants"
 msgstr "Inclure les variantes"
 
@@ -557,7 +557,7 @@ msgstr "Inclure les variantes"
 #: report/templates/report/inventree_sales_order_report.html:27
 #: report/templates/report/inventree_sales_order_shipment_report.html:28
 #: report/templates/report/inventree_stock_location_report.html:102
-#: stock/api.py:563 stock/serializers.py:119 stock/serializers.py:171
+#: stock/api.py:564 stock/serializers.py:119 stock/serializers.py:171
 #: stock/serializers.py:445 stock/serializers.py:624 stock/serializers.py:949
 #: templates/email/build_order_completed.html:17
 #: templates/email/build_order_required_stock.html:17
@@ -569,7 +569,7 @@ msgid "Part"
 msgstr "Pièce"
 
 #: build/api.py:111 build/api.py:114 part/api.py:1292 part/api.py:1569
-#: part/models.py:1092 part/models.py:3589 part/models.py:4183 stock/api.py:846
+#: part/models.py:1092 part/models.py:3589 part/models.py:4183 stock/api.py:847
 msgid "Category"
 msgstr "Catégorie"
 
@@ -633,7 +633,7 @@ msgstr "Date min"
 msgid "Max Date"
 msgstr "Date maximale"
 
-#: build/api.py:288 build/api.py:291 part/api.py:220
+#: build/api.py:288 build/api.py:291 part/api.py:220 stock/api.py:939
 msgid "Exclude Tree"
 msgstr "Exclure l'arbre"
 
@@ -651,7 +651,7 @@ msgstr "Facultatif"
 
 #: build/api.py:451 build/serializers.py:1441 common/setting/system.py:457
 #: part/models.py:1223 part/serializers.py:1701 part/serializers.py:1710
-#: stock/api.py:616
+#: stock/api.py:617
 msgid "Assembly"
 msgstr "Assemblage"
 
@@ -693,10 +693,10 @@ msgstr "Ordre de Fabrication"
 #: build/serializers.py:495 build/serializers.py:565 build/serializers.py:1262
 #: build/serializers.py:1266 order/api.py:1226 order/api.py:1231
 #: order/serializers.py:768 order/serializers.py:908 order/serializers.py:2015
-#: stock/serializers.py:110 stock/serializers.py:628 stock/serializers.py:733
-#: stock/serializers.py:911 stock/serializers.py:1454 stock/serializers.py:1767
-#: stock/serializers.py:1816 templates/email/stale_stock_notification.html:18
-#: users/models.py:544
+#: stock/api.py:965 stock/serializers.py:110 stock/serializers.py:628
+#: stock/serializers.py:733 stock/serializers.py:911 stock/serializers.py:1454
+#: stock/serializers.py:1767 stock/serializers.py:1816
+#: templates/email/stale_stock_notification.html:18 users/models.py:544
 msgid "Location"
 msgstr "Emplacement"
 
@@ -1117,7 +1117,7 @@ msgstr "Allouer automatiquement les numéros de série"
 msgid "Automatically allocate required items with matching serial numbers"
 msgstr "Affecter automatiquement les éléments requis avec les numéros de série correspondants"
 
-#: build/serializers.py:421 order/serializers.py:886 stock/api.py:1114
+#: build/serializers.py:421 order/serializers.py:886 stock/api.py:1175
 #: stock/models.py:1903
 msgid "The following serial numbers already exist or are invalid"
 msgstr "Les numéros de série suivants existent déjà, ou sont invalides"
@@ -1358,7 +1358,7 @@ msgid "Allow Variants"
 msgstr "Autoriser les variantes"
 
 #: build/serializers.py:1425 build/serializers.py:1429 part/models.py:4229
-#: part/models.py:4795 stock/api.py:859
+#: part/models.py:4795 stock/api.py:860
 msgid "BOM Item"
 msgstr "Article du BOM"
 
@@ -1594,7 +1594,7 @@ msgstr "Nom de ce webhook"
 
 #: common/models.py:1420 common/models.py:2246 common/models.py:2353
 #: company/models.py:198 company/models.py:840 machine/models.py:39
-#: part/models.py:1258 plugin/models.py:68 stock/api.py:619 users/models.py:190
+#: part/models.py:1258 plugin/models.py:68 stock/api.py:620 users/models.py:190
 #: users/models.py:549 users/serializers.py:319
 msgid "Active"
 msgstr "Actif"
@@ -2677,7 +2677,7 @@ msgstr "Achetable"
 msgid "Parts are purchaseable by default"
 msgstr "Les pièces sont achetables par défaut"
 
-#: common/setting/system.py:475 part/models.py:1253 stock/api.py:620
+#: common/setting/system.py:475 part/models.py:1253 stock/api.py:621
 msgid "Salable"
 msgstr "Vendable"
 
@@ -3751,7 +3751,7 @@ msgid "Manufacturer"
 msgstr "Fabricant"
 
 #: company/api.py:306 company/models.py:119 company/models.py:411
-#: stock/api.py:877
+#: stock/api.py:878
 msgid "Company"
 msgstr "Société"
 
@@ -4007,7 +4007,7 @@ msgstr "La pièce du fabricant liée doit faire référence à la même pièce d
 #: order/models.py:632 part/serializers.py:559
 #: plugin/builtin/suppliers/digikey.py:26 plugin/builtin/suppliers/lcsc.py:27
 #: plugin/builtin/suppliers/mouser.py:25 plugin/builtin/suppliers/tme.py:27
-#: stock/api.py:544 templates/email/overdue_purchase_order.html:16
+#: stock/api.py:545 templates/email/overdue_purchase_order.html:16
 msgid "Supplier"
 msgstr "Fournisseur"
 
@@ -4271,13 +4271,13 @@ msgstr "Valide"
 msgid "ID is required for updating existing records."
 msgstr "L'ID est requis pour mettre à jour les enregistrements existants."
 
-#: importer/models.py:696
-msgid "No record found with the provided ID."
-msgstr "Aucun enregistrement trouvé avec l'ID fourni."
+#: importer/models.py:697
+msgid "No record found with the provided ID"
+msgstr "Aucun enregistrement trouvé avec l'ID fourni"
 
-#: importer/models.py:698
-msgid "Invalid ID format provided."
-msgstr "Format d'ID invalide fourni."
+#: importer/models.py:703
+msgid "Invalid ID format provided"
+msgstr "Format d'ID invalide"
 
 #: importer/operations.py:28 importer/operations.py:49
 msgid "Unsupported data file format"
@@ -5356,7 +5356,7 @@ msgstr "Étoilé"
 msgid "Filter by starred categories"
 msgstr "Filtrer par catégories étoilées"
 
-#: part/api.py:130 stock/api.py:283
+#: part/api.py:130 stock/api.py:284
 msgid "Depth"
 msgstr "Profondeur"
 
@@ -5364,7 +5364,7 @@ msgstr "Profondeur"
 msgid "Filter by category depth"
 msgstr "Filtrer par profondeur de catégorie"
 
-#: part/api.py:148 stock/api.py:301
+#: part/api.py:148 stock/api.py:302
 msgid "Top Level"
 msgstr "Premier niveau"
 
@@ -5372,7 +5372,7 @@ msgstr "Premier niveau"
 msgid "Filter by top-level categories"
 msgstr "Filtrer par catégories de premier niveau"
 
-#: part/api.py:163 stock/api.py:316
+#: part/api.py:163 stock/api.py:317
 msgid "Cascade"
 msgstr "Cascade"
 
@@ -6555,12 +6555,12 @@ msgstr ""
 
 #: part/tasks.py:97
 msgid "Expires today"
-msgstr ""
+msgstr "Expire aujourd’hui"
 
 #: part/tasks.py:100
 #, python-brace-format
 msgid "{days_until_expiry} days"
-msgstr ""
+msgstr "{days_until_expiry} jours"
 
 #: plugin/api.py:78
 msgid "Builtin"
@@ -6939,7 +6939,7 @@ msgstr ""
 #: plugin/builtin/exporter/bom_exporter.py:30
 #: plugin/builtin/exporter/bom_exporter.py:114
 msgid "Total Quantity"
-msgstr ""
+msgstr "Quantité totale"
 
 #: plugin/builtin/exporter/bom_exporter.py:31
 msgid "Include total quantity of each part in the BOM"
@@ -8000,123 +8000,139 @@ msgstr "la balise part_image nécessite une instance de Part"
 msgid "company_image tag requires a Company instance"
 msgstr "la balise company_image nécessite une instance d'entreprise"
 
-#: stock/api.py:283
+#: stock/api.py:284
 msgid "Filter by location depth"
 msgstr "Filtrer par profondeur de localisation"
 
-#: stock/api.py:303
+#: stock/api.py:304
 msgid "Filter by top-level locations"
 msgstr "Filtrer par lieux de premier niveau"
 
-#: stock/api.py:318
+#: stock/api.py:319
 msgid "Include sub-locations in filtered results"
 msgstr "Inclure les sous-emplacements dans les résultats filtrés"
 
-#: stock/api.py:339 stock/serializers.py:1209
+#: stock/api.py:340 stock/serializers.py:1209
 msgid "Parent Location"
 msgstr "Emplacement parent"
 
-#: stock/api.py:340
+#: stock/api.py:341
 msgid "Filter by parent location"
 msgstr "Filtrer par emplacement parent"
 
-#: stock/api.py:582
+#: stock/api.py:583
 msgid "Part name (case insensitive)"
 msgstr "Nom de la pièce (insensible à la casse)"
 
-#: stock/api.py:588
+#: stock/api.py:589
 msgid "Part name contains (case insensitive)"
 msgstr "Le nom de la pièce contient (insensible à la casse)"
 
-#: stock/api.py:594
+#: stock/api.py:595
 msgid "Part name (regex)"
 msgstr "Nom de la pièce (regex)"
 
-#: stock/api.py:599
+#: stock/api.py:600
 msgid "Part IPN (case insensitive)"
 msgstr "Partie IPN (insensible à la casse)"
 
-#: stock/api.py:605
+#: stock/api.py:606
 msgid "Part IPN contains (case insensitive)"
 msgstr "La partie IPN contient (insensible à la casse)"
 
-#: stock/api.py:611
+#: stock/api.py:612
 msgid "Part IPN (regex)"
 msgstr "Partie IPN (regex)"
 
-#: stock/api.py:623
+#: stock/api.py:624
 msgid "Minimum stock"
 msgstr "Stock minimum"
 
-#: stock/api.py:627
+#: stock/api.py:628
 msgid "Maximum stock"
 msgstr "Stock maximum"
 
-#: stock/api.py:630
+#: stock/api.py:631
 msgid "Status Code"
 msgstr "Code de statut"
 
-#: stock/api.py:670
+#: stock/api.py:671
 msgid "External Location"
 msgstr "Emplacement externe"
 
-#: stock/api.py:769
+#: stock/api.py:770
 msgid "Consumed by Build Order"
 msgstr "Consommé par l'ordre de construction"
 
-#: stock/api.py:779
+#: stock/api.py:780
 msgid "Installed in other stock item"
 msgstr "Installé dans un autre article en stock"
 
-#: stock/api.py:868
+#: stock/api.py:869
 msgid "Part Tree"
 msgstr "Arbre en pièces détachées"
 
-#: stock/api.py:890
+#: stock/api.py:891
 msgid "Updated before"
 msgstr "Mise à jour avant"
 
-#: stock/api.py:894
+#: stock/api.py:895
 msgid "Updated after"
 msgstr "Mise à jour après"
 
-#: stock/api.py:898
+#: stock/api.py:899
 msgid "Stocktake Before"
 msgstr "Inventaire avant"
 
-#: stock/api.py:902
+#: stock/api.py:903
 msgid "Stocktake After"
 msgstr "Inventaire après"
 
-#: stock/api.py:907
+#: stock/api.py:908
 msgid "Expiry date before"
 msgstr "Date d'expiration avant"
 
-#: stock/api.py:911
+#: stock/api.py:912
 msgid "Expiry date after"
 msgstr "Date d’expiration après"
 
-#: stock/api.py:914 stock/serializers.py:654
+#: stock/api.py:915 stock/serializers.py:654
 msgid "Stale"
 msgstr "Périmé"
 
-#: stock/api.py:1015
+#: stock/api.py:941
+msgid "Provide a StockItem PK to exclude that item and all its descendants"
+msgstr ""
+
+#: stock/api.py:959
+msgid "Cascade Locations"
+msgstr ""
+
+#: stock/api.py:960
+msgid "If true, include items in child locations of the given location"
+msgstr ""
+
+#: stock/api.py:966
+msgid "Filter by numeric Location ID or the literal 'null'"
+msgstr ""
+
+#: stock/api.py:1076
 msgid "Quantity is required"
 msgstr "La quantité est requise"
 
-#: stock/api.py:1020
+#: stock/api.py:1081
 msgid "Valid part must be supplied"
 msgstr "La partie valide doit être fournie"
 
-#: stock/api.py:1051
+#: stock/api.py:1112
 msgid "The given supplier part does not exist"
 msgstr "Le fournisseur donné n'existe pas"
 
-#: stock/api.py:1061
+#: stock/api.py:1122
 msgid "The supplier part has a pack size defined, but flag use_pack_size not set"
 msgstr "La pièce du fournisseur a une taille d'emballage définie, mais le drapeau use_pack_size n'est pas activé"
 
-#: stock/api.py:1093
+#: stock/api.py:1154
 msgid "Serial numbers cannot be supplied for a non-trackable part"
 msgstr "Les numéros de série ne peuvent pas être fournis pour une pièce non traçable"
 
