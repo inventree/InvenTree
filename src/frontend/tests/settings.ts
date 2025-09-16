@@ -1,7 +1,6 @@
 import { expect } from 'playwright/test';
 
 import { createApi } from './api';
-import { apiUrl } from './defaults';
 
 /*
  * Set the value of a global setting in the database
@@ -17,14 +16,11 @@ export const setSettingState = async ({
   type?: 'global' | 'plugin';
   plugin?: string;
 }) => {
-  const url = new URL(
+  const api = await createApi();
+  const url =
     type === 'global'
       ? `settings/global/${setting}/`
-      : `plugins/${plugin}/settings/${setting}/`,
-    apiUrl
-  ).toString();
-
-  const api = await createApi();
+      : `plugins/${plugin}/settings/${setting}/`;
   const response = await api.patch(url, {
     data: {
       value: value
@@ -41,10 +37,8 @@ export const setPluginState = async ({
   plugin: string;
   state: boolean;
 }) => {
-  const url = new URL(`plugins/${plugin}/activate/`, apiUrl).toString();
-
   const api = await createApi();
-  const response = await api.patch(url, {
+  const response = await api.patch(`plugins/${plugin}/activate/`, {
     data: {
       active: state
     }
