@@ -89,14 +89,18 @@ class MiddlewareTests(InvenTreeTestCase):
 
     def test_site_url_checks(self):
         """Test that the site URL check is correctly working."""
+
+        def positive_test(response):
+            self.assertEqual(response.status_code, 200)
+            self.assertNotContains(response, 'INVE-E7')
+            self.assertContains(response, 'window.INVENTREE_SETTINGS')
+
         # correctly set
         with self.settings(
             SITE_URL='http://testserver', CSRF_TRUSTED_ORIGINS=['http://testserver']
         ):
             response = self.client.get(reverse('web'))
-            self.assertEqual(response.status_code, 200)
-            self.assertNotContains(response, 'INVE-E7')
-            self.assertContains(response, 'window.INVENTREE_SETTINGS')
+            positive_test(response)
 
         # wrongly set site URL
         with self.settings(SITE_URL='https://example.com'):
@@ -114,9 +118,7 @@ class MiddlewareTests(InvenTreeTestCase):
         # wrongly set but in debug -> is ignored
         with self.settings(SITE_URL='https://example.com', DEBUG=True):
             response = self.client.get(reverse('web'))
-            self.assertEqual(response.status_code, 200)
-            self.assertNotContains(response, 'INVE-E7')
-            self.assertContains(response, 'window.INVENTREE_SETTINGS')
+            positive_test(response)
 
         # wrongly set cors
         with self.settings(
@@ -133,10 +135,9 @@ class MiddlewareTests(InvenTreeTestCase):
                 response, 'window.INVENTREE_SETTINGS', status_code=500
             )
 
+        # correctly set with wildcard
         with self.settings(
             SITE_URL='http://testserver', CSRF_TRUSTED_ORIGINS=['http://*.testserver']
         ):
             response = self.client.get(reverse('web'))
-            self.assertEqual(response.status_code, 200)
-            self.assertNotContains(response, 'INVE-E7')
-            self.assertContains(response, 'window.INVENTREE_SETTINGS')
+            positive_test(response)
