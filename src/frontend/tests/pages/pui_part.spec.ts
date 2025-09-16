@@ -1,9 +1,8 @@
-import { expect } from '@playwright/test';
-import { createApi } from '../api';
 import { test } from '../baseFixtures';
 import {
   clearTableFilters,
   clickOnRowMenu,
+  deletePart,
   getRowFromCell,
   loadTab,
   navigate,
@@ -668,20 +667,8 @@ test('Parts - Import supplier part', async ({ browser }) => {
   });
 
   // cleanup old imported part if it exists
-  const api = await createApi();
-  const parts = await api
-    .get('part/', {
-      params: { search: 'BOLT-Steel-M5-5' }
-    })
-    .then((res) => res.json());
-  const existingPart = parts.find((p: any) => p.name === 'BOLT-Steel-M5-5');
-  if (existingPart) {
-    await api.patch(`part/${existingPart.pk}/`, {
-      data: { active: false }
-    });
-    const res = await api.delete(`part/${existingPart.pk}/`);
-    expect(res.status()).toBe(204);
-  }
+  await deletePart('BOLT-Steel-M5-5');
+  await deletePart('BOLT-M5-5');
 
   await page.reload();
   await page.waitForLoadState('networkidle');
@@ -714,4 +701,8 @@ test('Parts - Import supplier part', async ({ browser }) => {
   await page
     .getByRole('button', { name: 'action-button-import-close' })
     .dispatchEvent('click');
+
+  // cleanup imported part if it exists
+  await deletePart('BOLT-Steel-M5-5');
+  await deletePart('BOLT-M5-5');
 });
