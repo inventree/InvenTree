@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-09-05 00:02+0000\n"
-"PO-Revision-Date: 2025-09-05 00:05\n"
+"POT-Creation-Date: 2025-09-10 22:28+0000\n"
+"PO-Revision-Date: 2025-09-15 23:41\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -535,7 +535,7 @@ msgid "Parent Build"
 msgstr "Bovenliggende Productie"
 
 #: build/api.py:75 build/api.py:796 order/api.py:542 order/api.py:762
-#: order/api.py:1166 order/api.py:1415 stock/api.py:550
+#: order/api.py:1166 order/api.py:1415 stock/api.py:551
 msgid "Include Variants"
 msgstr "Inclusief varianten"
 
@@ -557,7 +557,7 @@ msgstr "Inclusief varianten"
 #: report/templates/report/inventree_sales_order_report.html:27
 #: report/templates/report/inventree_sales_order_shipment_report.html:28
 #: report/templates/report/inventree_stock_location_report.html:102
-#: stock/api.py:563 stock/serializers.py:119 stock/serializers.py:171
+#: stock/api.py:564 stock/serializers.py:119 stock/serializers.py:171
 #: stock/serializers.py:445 stock/serializers.py:624 stock/serializers.py:949
 #: templates/email/build_order_completed.html:17
 #: templates/email/build_order_required_stock.html:17
@@ -569,7 +569,7 @@ msgid "Part"
 msgstr "Onderdeel"
 
 #: build/api.py:111 build/api.py:114 part/api.py:1292 part/api.py:1569
-#: part/models.py:1092 part/models.py:3589 part/models.py:4183 stock/api.py:846
+#: part/models.py:1092 part/models.py:3589 part/models.py:4183 stock/api.py:847
 msgid "Category"
 msgstr "Categorie"
 
@@ -633,7 +633,7 @@ msgstr "Min. datum"
 msgid "Max Date"
 msgstr "Max. datum"
 
-#: build/api.py:288 build/api.py:291 part/api.py:220
+#: build/api.py:288 build/api.py:291 part/api.py:220 stock/api.py:939
 msgid "Exclude Tree"
 msgstr "Boomstructuur uitsluiten"
 
@@ -651,7 +651,7 @@ msgstr "Optioneel"
 
 #: build/api.py:451 build/serializers.py:1441 common/setting/system.py:457
 #: part/models.py:1223 part/serializers.py:1701 part/serializers.py:1710
-#: stock/api.py:616
+#: stock/api.py:617
 msgid "Assembly"
 msgstr "Samenstelling"
 
@@ -693,20 +693,20 @@ msgstr "Productieorder"
 #: build/serializers.py:495 build/serializers.py:565 build/serializers.py:1262
 #: build/serializers.py:1266 order/api.py:1226 order/api.py:1231
 #: order/serializers.py:768 order/serializers.py:908 order/serializers.py:2015
-#: stock/serializers.py:110 stock/serializers.py:628 stock/serializers.py:733
-#: stock/serializers.py:911 stock/serializers.py:1454 stock/serializers.py:1767
-#: stock/serializers.py:1816 templates/email/stale_stock_notification.html:18
-#: users/models.py:544
+#: stock/api.py:965 stock/serializers.py:110 stock/serializers.py:628
+#: stock/serializers.py:733 stock/serializers.py:911 stock/serializers.py:1454
+#: stock/serializers.py:1767 stock/serializers.py:1816
+#: templates/email/stale_stock_notification.html:18 users/models.py:544
 msgid "Location"
 msgstr "Locatie"
 
 #: build/api.py:859
 msgid "Output"
-msgstr ""
+msgstr "Uitvoer"
 
 #: build/api.py:861
 msgid "Filter by output stock item ID. Use 'null' to find uninstalled build items."
-msgstr ""
+msgstr "Filter op uitvoer standaard item ID. Gebruik 'null' om niet geïnstalleerde build items te vinden."
 
 #: build/models.py:117 users/ruleset.py:31
 msgid "Build Orders"
@@ -1117,7 +1117,7 @@ msgstr "Serienummers automatisch toewijzen"
 msgid "Automatically allocate required items with matching serial numbers"
 msgstr "Vereiste artikelen automatisch toewijzen met overeenkomende serienummers"
 
-#: build/serializers.py:421 order/serializers.py:886 stock/api.py:1114
+#: build/serializers.py:421 order/serializers.py:886 stock/api.py:1175
 #: stock/models.py:1903
 msgid "The following serial numbers already exist or are invalid"
 msgstr "De volgende serienummers bestaan al of zijn ongeldig"
@@ -1358,7 +1358,7 @@ msgid "Allow Variants"
 msgstr "Varianten toestaan"
 
 #: build/serializers.py:1425 build/serializers.py:1429 part/models.py:4229
-#: part/models.py:4795 stock/api.py:859
+#: part/models.py:4795 stock/api.py:860
 msgid "BOM Item"
 msgstr "Stuklijstartikel"
 
@@ -1419,7 +1419,7 @@ msgstr "Dupliceer build line toewijzing"
 
 #: build/serializers.py:1852
 msgid "At least one item or line must be provided"
-msgstr ""
+msgstr "Ten minste één item of regel moet worden opgegeven"
 
 #: build/status_codes.py:11 generic/states/tests.py:21
 #: generic/states/tests.py:131 order/status_codes.py:12
@@ -1454,7 +1454,7 @@ msgstr "Voorraad vereist voor productieorder"
 #: build/tasks.py:196
 #, python-brace-format
 msgid "Build order {build} requires additional stock"
-msgstr ""
+msgstr "Bouw order {build} vereist extra voorraad"
 
 #: build/tasks.py:220
 msgid "Overdue Build Order"
@@ -1507,11 +1507,11 @@ msgstr "Tijdstempel van laatste update"
 
 #: common/models.py:138
 msgid "Update By"
-msgstr ""
+msgstr "Bijgewerkt door"
 
 #: common/models.py:139
 msgid "User who last updated this object"
-msgstr ""
+msgstr "Gebruiker die dit object voor het laatst heeft bijgewerkt"
 
 #: common/models.py:164
 msgid "Unique project code"
@@ -1594,7 +1594,7 @@ msgstr "Naam van deze webhook"
 
 #: common/models.py:1420 common/models.py:2246 common/models.py:2353
 #: company/models.py:198 company/models.py:840 machine/models.py:39
-#: part/models.py:1258 plugin/models.py:68 stock/api.py:619 users/models.py:190
+#: part/models.py:1258 plugin/models.py:68 stock/api.py:620 users/models.py:190
 #: users/models.py:549 users/serializers.py:319
 msgid "Active"
 msgstr "Actief"
@@ -2047,11 +2047,11 @@ msgstr "Was de barcode succesvol gescand?"
 
 #: common/models.py:2505
 msgid "An error occurred"
-msgstr ""
+msgstr "Er is een fout opgetreden"
 
 #: common/models.py:2526
 msgid "INVE-E8: Email log deletion is protected. Set INVENTREE_PROTECT_EMAIL_LOG to False to allow deletion."
-msgstr ""
+msgstr "INVE-E8: E-maillog verwijderen wordt beschermd. Zet INVENTREE_PROTECT_EMAIL_LOG naar False om verwijdering toe te staan."
 
 #: common/models.py:2573
 msgid "Email Message"
@@ -2311,11 +2311,11 @@ msgstr "Aantal nog openstaande database migraties"
 
 #: common/setting/system.py:186
 msgid "Active warning codes"
-msgstr ""
+msgstr "Actieve waarschuwingscodes"
 
 #: common/setting/system.py:187
 msgid "A dict of active warning codes"
-msgstr ""
+msgstr "Een reeks actieve waarschuwingscodes"
 
 #: common/setting/system.py:193
 msgid "Instance ID"
@@ -2496,19 +2496,19 @@ msgstr "Meldingen van gebruikers worden verwijderd na het opgegeven aantal dagen
 
 #: common/setting/system.py:335
 msgid "Email Deletion Interval"
-msgstr ""
+msgstr "E-mail verwijderen interval"
 
 #: common/setting/system.py:337
 msgid "Email messages will be deleted after specified number of days"
-msgstr ""
+msgstr "E-mailberichten zullen worden verwijderd na het opgegeven aantal dagen"
 
 #: common/setting/system.py:344
 msgid "Protect Email Log"
-msgstr ""
+msgstr "Bescherm e-maillogboeken"
 
 #: common/setting/system.py:345
 msgid "Prevent deletion of email log entries"
-msgstr ""
+msgstr "Voorkom het verwijderen van e-mail logs"
 
 #: common/setting/system.py:350
 msgid "Barcode Support"
@@ -2677,7 +2677,7 @@ msgstr "Koopbaar"
 msgid "Parts are purchaseable by default"
 msgstr "Onderdelen kunnen standaard gekocht worden"
 
-#: common/setting/system.py:475 part/models.py:1253 stock/api.py:620
+#: common/setting/system.py:475 part/models.py:1253 stock/api.py:621
 msgid "Salable"
 msgstr "Verkoopbaar"
 
@@ -2811,11 +2811,11 @@ msgstr "Gebruik alleen actieve variantonderdelen voor het berekenen van variantp
 
 #: common/setting/system.py:607
 msgid "Auto Update Pricing"
-msgstr ""
+msgstr "Prijzen automatisch bijwerken"
 
 #: common/setting/system.py:609
 msgid "Automatically update part pricing when internal data changes"
-msgstr ""
+msgstr "Automatisch prijzen van onderdelen bijwerken wanneer interne gegevens veranderen"
 
 #: common/setting/system.py:615
 msgid "Pricing Rebuild Interval"
@@ -3342,11 +3342,11 @@ msgstr "Schakel projectcodes in voor het bijhouden van projecten"
 
 #: common/setting/system.py:1076
 msgid "Enable Stock History"
-msgstr ""
+msgstr "Voorraad geschiedenis inschakelen"
 
 #: common/setting/system.py:1078
 msgid "Enable functionality for recording historical stock levels and value"
-msgstr ""
+msgstr "Functionaliteit voor het opnemen van historische voorraadniveaus en -waarde inschakelen"
 
 #: common/setting/system.py:1084
 msgid "Exclude External Locations"
@@ -3354,7 +3354,7 @@ msgstr "Externe locaties uitsluiten"
 
 #: common/setting/system.py:1086
 msgid "Exclude stock items in external locations from stock history calculations"
-msgstr ""
+msgstr "Voorraaditems op externe locaties uitsluiten van aandelen geschiedenis berekeningen"
 
 #: common/setting/system.py:1092
 msgid "Automatic Stocktake Period"
@@ -3362,23 +3362,23 @@ msgstr "Automatische Voorraadcontrole Periode"
 
 #: common/setting/system.py:1093
 msgid "Number of days between automatic stock history recording"
-msgstr ""
+msgstr "Aantal dagen tussen het opnemen van automatische voorraadgeschiedenis"
 
 #: common/setting/system.py:1099
 msgid "Delete Old Stock History Entries"
-msgstr ""
+msgstr "Verwijder oude items geschiedenis"
 
 #: common/setting/system.py:1101
 msgid "Delete stock history entries older than the specified number of days"
-msgstr ""
+msgstr "Verwijder voorraadgeschiedenis items ouder dan het opgegeven aantal dagen"
 
 #: common/setting/system.py:1107
 msgid "Stock History Deletion Interval"
-msgstr ""
+msgstr "Aandelengeschiedenis verwijderings interval"
 
 #: common/setting/system.py:1109
 msgid "Stock history entries will be deleted after specified number of days"
-msgstr ""
+msgstr "Voorraadrapportage zal worden verwijderd na het opgegeven aantal dagen"
 
 #: common/setting/system.py:1116
 msgid "Display Users full names"
@@ -3614,19 +3614,19 @@ msgstr "De navigatiebalk positie is gefixeerd aan de bovenkant van het scherm"
 
 #: common/setting/user.py:189
 msgid "Fixed Table Headers"
-msgstr ""
+msgstr "Vaste tabelkoppen"
 
 #: common/setting/user.py:190
 msgid "Table headers are fixed to the top of the table"
-msgstr ""
+msgstr "Tabelkoppen zijn vast aan de bovenkant van de tabel"
 
 #: common/setting/user.py:195
 msgid "Show Spotlight"
-msgstr ""
+msgstr "Spotlight tonen"
 
 #: common/setting/user.py:196
 msgid "Enable spotlight navigation functionality"
-msgstr ""
+msgstr "Spotlight navigatie functie inschakelen"
 
 #: common/setting/user.py:201
 msgid "Navigation Icons"
@@ -3646,11 +3646,11 @@ msgstr "Voorkeursindeling voor weergave van datums"
 
 #: common/setting/user.py:221
 msgid "Show Stock History"
-msgstr ""
+msgstr "Voorraadgeschiedenis weergeven"
 
 #: common/setting/user.py:222
 msgid "Display stock history information in the part detail page"
-msgstr ""
+msgstr "Toon informatie van de voorraadgeschiedenis op de detailpagina van het onderdeel"
 
 #: common/setting/user.py:227
 msgid "Show Last Breadcrumb"
@@ -3662,19 +3662,19 @@ msgstr "Toon de huidige pagina in het kruimelpad"
 
 #: common/setting/user.py:233
 msgid "Show full stock location in tables"
-msgstr ""
+msgstr "Toon de volledige voorraadlocatie in de tabellen"
 
 #: common/setting/user.py:235
 msgid "Disabled: The full location path is displayed as a hover tooltip. Enabled: The full location path is displayed as plain text."
-msgstr ""
+msgstr "Uitgeschakeld: Het volledige pad van de locatie wordt weergegeven als een zwevende tooltip. Ingeschakeld: Het volledige locatie pad wordt weergegeven als platte tekst."
 
 #: common/setting/user.py:241
 msgid "Show full part categories in tables"
-msgstr ""
+msgstr "Toon alle onderdeel categorieën in tabellen"
 
 #: common/setting/user.py:243
 msgid "Disabled: The full category path is displayed as a hover tooltip. Enabled: The full category path is displayed as plain text."
-msgstr ""
+msgstr "Uitgeschakeld: Het volledige categorie pad wordt weergegeven als hover tooltip. Ingeschakeld: Het pad van de volledige categorie wordt weergegeven als platte tekst."
 
 #: common/setting/user.py:249
 msgid "Receive error reports"
@@ -3751,7 +3751,7 @@ msgid "Manufacturer"
 msgstr "Fabrikant"
 
 #: company/api.py:306 company/models.py:119 company/models.py:411
-#: stock/api.py:877
+#: stock/api.py:878
 msgid "Company"
 msgstr "Bedrijf"
 
@@ -4007,7 +4007,7 @@ msgstr "Gekoppeld fabrikant onderdeel moet verwijzen naar hetzelfde basis onderd
 #: order/models.py:632 part/serializers.py:559
 #: plugin/builtin/suppliers/digikey.py:26 plugin/builtin/suppliers/lcsc.py:27
 #: plugin/builtin/suppliers/mouser.py:25 plugin/builtin/suppliers/tme.py:27
-#: stock/api.py:544 templates/email/overdue_purchase_order.html:16
+#: stock/api.py:545 templates/email/overdue_purchase_order.html:16
 msgid "Supplier"
 msgstr "Leverancier"
 
@@ -4271,13 +4271,13 @@ msgstr "Geldig"
 msgid "ID is required for updating existing records."
 msgstr "ID is vereist voor het bijwerken van bestaande records."
 
-#: importer/models.py:696
-msgid "No record found with the provided ID."
-msgstr ""
+#: importer/models.py:697
+msgid "No record found with the provided ID"
+msgstr "Geen record gevonden met het opgegeven ID"
 
-#: importer/models.py:698
-msgid "Invalid ID format provided."
-msgstr ""
+#: importer/models.py:703
+msgid "Invalid ID format provided"
+msgstr "Ongeldig ID formaat opgegeven"
 
 #: importer/operations.py:28 importer/operations.py:49
 msgid "Unsupported data file format"
@@ -4706,7 +4706,7 @@ msgstr "Artikelregel komt niet overeen met inkooporder"
 
 #: order/models.py:987
 msgid "Line item is missing a linked part"
-msgstr ""
+msgstr "Regelitem mist een gekoppeld deel"
 
 #: order/models.py:1001
 msgid "Quantity must be a positive number"
@@ -5357,7 +5357,7 @@ msgstr "Favoriet"
 msgid "Filter by starred categories"
 msgstr "Filter op categorieën met ster"
 
-#: part/api.py:130 stock/api.py:283
+#: part/api.py:130 stock/api.py:284
 msgid "Depth"
 msgstr "Diepte"
 
@@ -5365,7 +5365,7 @@ msgstr "Diepte"
 msgid "Filter by category depth"
 msgstr "Filteren op categorie diepte"
 
-#: part/api.py:148 stock/api.py:301
+#: part/api.py:148 stock/api.py:302
 msgid "Top Level"
 msgstr "Hoogste niveau"
 
@@ -5373,7 +5373,7 @@ msgstr "Hoogste niveau"
 msgid "Filter by top-level categories"
 msgstr "Filteren op topniveau categorieën"
 
-#: part/api.py:163 stock/api.py:316
+#: part/api.py:163 stock/api.py:317
 msgid "Cascade"
 msgstr "Stapelen"
 
@@ -5674,11 +5674,11 @@ msgstr "Is dit een virtueel onderdeel, zoals een softwareproduct of licentie?"
 
 #: part/models.py:1275
 msgid "BOM Validated"
-msgstr ""
+msgstr "Stuklijst BOM gecontroleerd"
 
 #: part/models.py:1276
 msgid "Is the BOM for this part valid?"
-msgstr ""
+msgstr "Is de BOM voor dit deel geldig?"
 
 #: part/models.py:1282
 msgid "BOM checksum"
@@ -6094,11 +6094,11 @@ msgstr "Dit BOM item is verbruikbaar (het wordt niet bijgehouden in build orders
 
 #: part/models.py:4427
 msgid "Setup Quantity"
-msgstr ""
+msgstr "Totale hoeveelheid"
 
 #: part/models.py:4428
 msgid "Extra required quantity for a build, to account for setup losses"
-msgstr ""
+msgstr "Extra benodigde hoeveelheid voor een build, rekening houdend met verliezen van de setup"
 
 #: part/models.py:4436
 msgid "Attrition"
@@ -6106,15 +6106,15 @@ msgstr ""
 
 #: part/models.py:4438
 msgid "Estimated attrition for a build, expressed as a percentage (0-100)"
-msgstr ""
+msgstr "Geschatte uitstraling voor een gebouw, uitgedrukt in percentage (0-100)"
 
 #: part/models.py:4449
 msgid "Rounding Multiple"
-msgstr ""
+msgstr "Afronden meerdere"
 
 #: part/models.py:4451
 msgid "Round up required production quantity to nearest multiple of this value"
-msgstr ""
+msgstr "Afronden met omhoog vereiste productiehoeveelheid naar dichtstbijzijnde meerdere van deze waarde"
 
 #: part/models.py:4459
 msgid "BOM item reference"
@@ -6535,24 +6535,24 @@ msgstr "De beschikbare voorraad voor {part.name} is onder het ingestelde minimum
 
 #: part/tasks.py:72
 msgid "Stale stock notification"
-msgstr ""
+msgstr "Lage voorraad melding"
 
 #: part/tasks.py:76
 msgid "You have 1 stock item approaching its expiry date"
-msgstr ""
+msgstr "U heeft 1 voorraad product dat de vervaldatum nadert"
 
 #: part/tasks.py:78
 #, python-brace-format
 msgid "You have {item_count} stock items approaching their expiry dates"
-msgstr ""
+msgstr "U hebt {item_count} voorraaditems die hun vervaldatum naderen"
 
 #: part/tasks.py:87
 msgid "No expiry date"
-msgstr ""
+msgstr "Geen vervaldatum"
 
 #: part/tasks.py:94
 msgid "Expired {abs(days_diff)} days ago"
-msgstr ""
+msgstr "{abs(days_diff)} dagen geleden"
 
 #: part/tasks.py:97
 msgid "Expires today"
@@ -6561,7 +6561,7 @@ msgstr ""
 #: part/tasks.py:100
 #, python-brace-format
 msgid "{days_until_expiry} days"
-msgstr ""
+msgstr "{days_until_expiry} dagen"
 
 #: plugin/api.py:78
 msgid "Builtin"
@@ -8001,123 +8001,139 @@ msgstr "part_image tag vereist een onderdeel instantie"
 msgid "company_image tag requires a Company instance"
 msgstr "bedrijf_imagetag vereist een bedrijfsinstantie"
 
-#: stock/api.py:283
+#: stock/api.py:284
 msgid "Filter by location depth"
 msgstr "Filter op locatie diepte"
 
-#: stock/api.py:303
+#: stock/api.py:304
 msgid "Filter by top-level locations"
 msgstr "Filter op topniveau locaties"
 
-#: stock/api.py:318
+#: stock/api.py:319
 msgid "Include sub-locations in filtered results"
 msgstr "Inclusief sublocaties in gefilterde resultaten"
 
-#: stock/api.py:339 stock/serializers.py:1209
+#: stock/api.py:340 stock/serializers.py:1209
 msgid "Parent Location"
 msgstr "Bovenliggende locatie"
 
-#: stock/api.py:340
+#: stock/api.py:341
 msgid "Filter by parent location"
 msgstr "Filter op bovenliggende locatie"
 
-#: stock/api.py:582
+#: stock/api.py:583
 msgid "Part name (case insensitive)"
 msgstr "Naam van onderdeel (hoofdletter ongevoelig)"
 
-#: stock/api.py:588
+#: stock/api.py:589
 msgid "Part name contains (case insensitive)"
 msgstr "Naam van onderdeel bevat (hoofdletter ongevoelig)"
 
-#: stock/api.py:594
+#: stock/api.py:595
 msgid "Part name (regex)"
 msgstr "Naam onderdeel (regex)"
 
-#: stock/api.py:599
+#: stock/api.py:600
 msgid "Part IPN (case insensitive)"
 msgstr "Deel IPN (hoofdletter ongevoelig)"
 
-#: stock/api.py:605
+#: stock/api.py:606
 msgid "Part IPN contains (case insensitive)"
 msgstr "Onderdeel IPN bevat (hoofdletter ongevoelig)"
 
-#: stock/api.py:611
+#: stock/api.py:612
 msgid "Part IPN (regex)"
 msgstr "Deel IPN (regex)"
 
-#: stock/api.py:623
+#: stock/api.py:624
 msgid "Minimum stock"
 msgstr "Minimale voorraad"
 
-#: stock/api.py:627
+#: stock/api.py:628
 msgid "Maximum stock"
 msgstr "Maximale voorraad"
 
-#: stock/api.py:630
+#: stock/api.py:631
 msgid "Status Code"
 msgstr "Status code"
 
-#: stock/api.py:670
+#: stock/api.py:671
 msgid "External Location"
 msgstr "Externe locatie"
 
-#: stock/api.py:769
+#: stock/api.py:770
 msgid "Consumed by Build Order"
 msgstr "Verbruikt door productieorder"
 
-#: stock/api.py:779
+#: stock/api.py:780
 msgid "Installed in other stock item"
 msgstr "Geïnstalleerd in een ander voorraadartikel"
 
-#: stock/api.py:868
+#: stock/api.py:869
 msgid "Part Tree"
 msgstr "Boomstructuur onderdeel"
 
-#: stock/api.py:890
+#: stock/api.py:891
 msgid "Updated before"
 msgstr "Eerder bijgewerkt"
 
-#: stock/api.py:894
+#: stock/api.py:895
 msgid "Updated after"
 msgstr "Bijgewerkt na"
 
-#: stock/api.py:898
+#: stock/api.py:899
 msgid "Stocktake Before"
 msgstr "Voorraadcontrole voor"
 
-#: stock/api.py:902
+#: stock/api.py:903
 msgid "Stocktake After"
 msgstr "Voorraadcontrole na"
 
-#: stock/api.py:907
+#: stock/api.py:908
 msgid "Expiry date before"
 msgstr "Vervaldatum voor"
 
-#: stock/api.py:911
+#: stock/api.py:912
 msgid "Expiry date after"
 msgstr "Vervaldatum na"
 
-#: stock/api.py:914 stock/serializers.py:654
+#: stock/api.py:915 stock/serializers.py:654
 msgid "Stale"
 msgstr "Verouderd"
 
-#: stock/api.py:1015
+#: stock/api.py:941
+msgid "Provide a StockItem PK to exclude that item and all its descendants"
+msgstr ""
+
+#: stock/api.py:959
+msgid "Cascade Locations"
+msgstr ""
+
+#: stock/api.py:960
+msgid "If true, include items in child locations of the given location"
+msgstr ""
+
+#: stock/api.py:966
+msgid "Filter by numeric Location ID or the literal 'null'"
+msgstr ""
+
+#: stock/api.py:1076
 msgid "Quantity is required"
 msgstr "Hoeveelheid is vereist"
 
-#: stock/api.py:1020
+#: stock/api.py:1081
 msgid "Valid part must be supplied"
 msgstr "Geldig onderdeel moet worden opgegeven"
 
-#: stock/api.py:1051
+#: stock/api.py:1112
 msgid "The given supplier part does not exist"
 msgstr "Het opgegeven leveranciers onderdeel bestaat niet"
 
-#: stock/api.py:1061
+#: stock/api.py:1122
 msgid "The supplier part has a pack size defined, but flag use_pack_size not set"
 msgstr "Het leveranciersdeel heeft een pakketgrootte gedefinieerd, maar vlag use_pack_size niet ingesteld"
 
-#: stock/api.py:1093
+#: stock/api.py:1154
 msgid "Serial numbers cannot be supplied for a non-trackable part"
 msgstr "Serienummers kunnen niet worden meegeleverd voor een niet traceerbaar onderdeel"
 
@@ -8697,7 +8713,7 @@ msgstr ""
 
 #: stock/serializers.py:1619
 msgid "Quantity must not be negative"
-msgstr ""
+msgstr "Hoeveelheid mag niet negatief zijn"
 
 #: stock/serializers.py:1661
 msgid "Stock transaction notes"
@@ -8705,11 +8721,11 @@ msgstr "Voorraad transactie notities"
 
 #: stock/serializers.py:1823
 msgid "Merge into existing stock"
-msgstr ""
+msgstr "Samenvoegen in bestaande voorraad"
 
 #: stock/serializers.py:1824
 msgid "Merge returned items into existing stock items if possible"
-msgstr ""
+msgstr "Voeg indien mogelijk geretourneerde items samen in bestaande voorraad"
 
 #: stock/serializers.py:1867
 msgid "Next Serial Number"
@@ -8773,7 +8789,7 @@ msgstr "Voorraad handmatig verwijderd"
 
 #: stock/status_codes.py:57
 msgid "Returned to stock"
-msgstr ""
+msgstr "Terug naar voorraad"
 
 #: stock/status_codes.py:60
 msgid "Location changed"
@@ -8918,12 +8934,12 @@ msgstr "Er zijn in afwachting van database migraties die aandacht vereisen"
 
 #: templates/config_error.html:6 templates/config_error.html:10
 msgid "Configuration Error"
-msgstr ""
+msgstr "Configuratiefout"
 
 #: templates/config_error.html:11
 #, python-format
 msgid "The %(inventree_title)s server raised a configuration error"
-msgstr ""
+msgstr "De %(inventree_title)s server heeft een configuratiefout veroorzaakt"
 
 #: templates/email/build_order_completed.html:9
 #: templates/email/canceled_order_assigned.html:9
@@ -8979,15 +8995,15 @@ msgstr "Je ontvangt deze e-mail omdat je bent geabonneerd op notificaties van di
 
 #: templates/email/stale_stock_notification.html:10
 msgid "The following stock items are approaching their expiry dates:"
-msgstr ""
+msgstr "De volgende voorraadartikelen naderen hun vervaldatum:"
 
 #: templates/email/stale_stock_notification.html:23
 msgid "Days Until Expiry"
-msgstr ""
+msgstr "Dagen tot vervaldatum"
 
 #: templates/email/stale_stock_notification.html:57
 msgid "You are receiving this email because you are subscribed to notifications for these parts"
-msgstr ""
+msgstr "U ontvangt deze e-mail omdat u bent geabonneerd op meldingen voor deze onderdelen"
 
 #: users/admin.py:101
 msgid "Users"

@@ -1,4 +1,4 @@
-import type { MantineSize } from '@mantine/core';
+import type { MantineRadius } from '@mantine/core';
 
 export const emptyServerAPI = {
   server: null,
@@ -26,7 +26,7 @@ export const emptyServerAPI = {
 
 export interface SiteMarkProps {
   value: number;
-  label: MantineSize;
+  label: MantineRadius;
 }
 
 export const SizeMarks: SiteMarkProps[] = [
