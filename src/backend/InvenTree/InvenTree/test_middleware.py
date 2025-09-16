@@ -102,6 +102,39 @@ class MiddlewareTests(InvenTreeTestCase):
             response = self.client.get(reverse('web'))
             positive_test(response)
 
+        # correctly set https with multiple trusted origins
+        with self.settings(
+            SITE_URL='https://testserver.example.com',
+            CSRF_TRUSTED_ORIGINS=[
+                'http://testserver',
+                'https://testserver.example.com',
+            ],
+        ):
+            # this will run with testserver as host by default
+            response = self.client.get(reverse('web'))
+            positive_test(response)
+
+            # Now test with the "outside" url name
+            response = self.client.get(
+                'https://testserver.example.com/web/',
+                SERVER_NAME='testserver.example.com',
+            )
+            positive_test(response)
+
+            # A non-trsuted origin must still fail in multi - origin setup
+            response = self.client.get(
+                'https://not-my-testserver.example.com/web/',
+                SERVER_NAME='not-my-testserver.example.com',
+            )
+            self.assertEqual(response.status_code, 500)
+
+            # Even if it is a subdomain
+            response = self.client.get(
+                'https://not-my.testserver.example.com/web/',
+                SERVER_NAME='not-my.testserver.example.com',
+            )
+            self.assertEqual(response.status_code, 500)
+
         # wrongly set site URL
         with self.settings(SITE_URL='https://example.com'):
             response = self.client.get(reverse('web'))
