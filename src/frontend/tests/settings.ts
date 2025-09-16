@@ -1,21 +1,20 @@
 import { expect } from 'playwright/test';
 
+import { createApi } from './api';
 import { apiUrl } from './defaults';
 
 /*
  * Set the value of a global setting in the database
  */
 export const setSettingState = async ({
-  request,
   setting,
   value,
   type = 'global',
   plugin
 }: {
-  request: any;
   setting: string;
   value: any;
-  type: 'global' | 'plugin';
+  type?: 'global' | 'plugin';
   plugin?: string;
 }) => {
   const url = new URL(
@@ -25,39 +24,31 @@ export const setSettingState = async ({
     apiUrl
   ).toString();
 
-  const response = await request.patch(url, {
+  const api = await createApi();
+  const response = await api.patch(url, {
     data: {
       value: value
-    },
-    headers: {
-      // Basic username: password authorization
-      Authorization: `Basic ${btoa('admin:inventree')}`
     }
   });
 
-  expect(await response.status()).toBe(200);
+  expect(response.status()).toBe(200);
 };
 
 export const setPluginState = async ({
-  request,
   plugin,
   state
 }: {
-  request: any;
   plugin: string;
   state: boolean;
 }) => {
   const url = new URL(`plugins/${plugin}/activate/`, apiUrl).toString();
 
-  const response = await request.patch(url, {
+  const api = await createApi();
+  const response = await api.patch(url, {
     data: {
       active: state
-    },
-    headers: {
-      // Basic username: password authorization
-      Authorization: `Basic ${btoa('admin:inventree')}`
     }
   });
 
-  expect(await response.status()).toBe(200);
+  expect(response.status()).toBe(200);
 };

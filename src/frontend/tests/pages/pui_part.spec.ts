@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test';
+import { createApi } from '../api';
 import { test } from '../baseFixtures';
-import { apiUrl } from '../defaults';
 import {
   clearTableFilters,
   clickOnRowMenu,
@@ -649,33 +649,52 @@ test('Parts - Duplicate', async ({ browser }) => {
   await page.getByText('Copy Tests', { exact: true }).waitFor();
 });
 
-test('Parts - Import supplier part', async ({ browser, request }) => {
+test('Parts - Import supplier part', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
     url: 'part/category/1/parts'
   });
 
   // Ensure that the sample supplier plugin is enabled
   await setPluginState({
-    request,
     plugin: 'samplesupplier',
     state: true
   });
 
   await setSettingState({
-    request,
     setting: 'SUPPLIER',
     value: 3,
     type: 'plugin',
     plugin: 'samplesupplier'
   });
 
+  // cleanup old imported part if it exists
+  const api = await createApi();
+  const parts = await api
+    .get('part/', {
+      params: { search: 'BOLT-Steel-M5-5' }
+    })
+    .then((res) => res.json());
+  const existingPart = parts.find((p: any) => p.name === 'BOLT-Steel-M5-5');
+  if (existingPart) {
+    await api.patch(`part/${existingPart.pk}/`, {
+      data: { active: false }
+    });
+    const res = await api.delete(`part/${existingPart.pk}/`);
+    expect(res.status()).toBe(204);
+  }
+
   await page.reload();
   await page.waitForLoadState('networkidle');
   await page.waitForTimeout(1000);
 
   await page.getByRole('button', { name: 'action-button-import-part' }).click();
-  await page.getByRole('textbox', { name: 'Search...' }).fill('M5');
-  await page.getByRole('textbox', { name: 'Search...' }).press('Enter');
+  await page
+    .getByRole('textbox', { name: 'textbox-search-for-part' })
+    .fill('M5');
+  await page.waitForTimeout(250);
+  await page
+    .getByRole('textbox', { name: 'textbox-search-for-part' })
+    .press('Enter');
 
   await page.getByText('Bolt M5x5mm Steel').waitFor();
   await page
@@ -692,31 +711,6 @@ test('Parts - Import supplier part', async ({ browser, request }) => {
   await page
     .getByRole('button', { name: 'action-button-import-stock-next' })
     .dispatchEvent('click');
-
-  // cleanup imported part
-  const link = await page.getByRole('link', {
-    name: 'action-button-import-open-part'
-  });
-  await link.waitFor();
-  const id = await link.getAttribute('href').then((x) => x?.split('/').at(-1));
-  const partApiUrl = new URL(`part/${id}/`, apiUrl).toString();
-  await request.patch(partApiUrl, {
-    data: {
-      active: false
-    },
-    headers: {
-      // Basic username: password authorization
-      Authorization: `Basic ${btoa('admin:inventree')}`
-    }
-  });
-  const res = await request.delete(partApiUrl, {
-    headers: {
-      // Basic username: password authorization
-      Authorization: `Basic ${btoa('admin:inventree')}`
-    }
-  });
-  expect(res.status()).toBe(204);
-
   await page
     .getByRole('button', { name: 'action-button-import-close' })
     .dispatchEvent('click');

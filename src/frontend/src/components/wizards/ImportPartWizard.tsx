@@ -194,6 +194,7 @@ const SearchStep = ({
       <form onSubmit={handleSearch}>
         <Group align='flex-end'>
           <TextInput
+            aria-label='textbox-search-for-part'
             flex={1}
             placeholder='Search for a part'
             label={t`Search...`}
