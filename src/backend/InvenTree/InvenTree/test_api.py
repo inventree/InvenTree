@@ -567,7 +567,7 @@ class GeneralApiTests(InvenTreeAPITestCase):
 
             self.assertIn('License file not found at', str(log.output))
 
-        with TemporaryDirectory() as tmp:
+        with TemporaryDirectory() as tmp:  # type: ignore[no-matching-overload]
             sample_file = Path(tmp, 'temp.txt')
             sample_file.write_text('abc')
 
