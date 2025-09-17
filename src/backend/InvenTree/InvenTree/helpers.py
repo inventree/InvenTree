@@ -9,7 +9,7 @@ import os
 import os.path
 import re
 from decimal import Decimal, InvalidOperation
-from typing import Optional, TypeVar, Union
+from typing import List, Optional, TypeVar, Union  # noqa: UP035
 from wsgiref.util import FileWrapper
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
@@ -26,6 +26,7 @@ import bleach.css_sanitizer
 import bleach.sanitizer
 import structlog
 from bleach import clean
+from django_stubs_ext import StrOrPromise
 from djmoney.money import Money
 from PIL import Image
 
@@ -157,7 +158,7 @@ def generateTestKey(test_name: Union[str, None]) -> str:
     return key
 
 
-def constructPathString(path: list[str], max_chars: int = 250) -> str:
+def constructPathString(path: List[str], max_chars: int = 250) -> str:  # noqa: UP006
     """Construct a 'path string' for the given path.
 
     Arguments:
@@ -574,7 +575,7 @@ def extract_serial_numbers(
     serials = []
     errors = []
 
-    def add_error(error: str):
+    def add_error(error: str | StrOrPromise):
         """Helper function for adding an error message."""
         if error not in errors:
             errors.append(error)

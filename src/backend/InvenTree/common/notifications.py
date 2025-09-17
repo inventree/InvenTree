@@ -10,6 +10,7 @@ from django.db.models import Model
 from django.utils.translation import gettext_lazy as _
 
 import structlog
+from django_stubs_ext import StrOrPromise
 
 import common.models
 from InvenTree.exceptions import log_error
@@ -41,9 +42,9 @@ class NotificationBody:
         model_name': Name (slugified) of the model
     """
 
-    name: str
+    name: str | StrOrPromise
     slug: str
-    message: str
+    message: str | StrOrPromise
     template: Optional[str] = None
 
 
@@ -109,7 +110,7 @@ def trigger_notification(obj: Model, category: str = '', obj_ref: str = 'pk', **
     # Resolve object reference
     refs = [obj_ref, 'pk', 'id', 'uid']
 
-    obj_ref_value = None
+    obj_ref_value: Optional[int] = None
 
     # Find the first reference that is available
     if obj:
@@ -126,8 +127,10 @@ def trigger_notification(obj: Model, category: str = '', obj_ref: str = 'pk', **
     # Check if we have notified recently...
     delta = timedelta(days=1)
 
-    if check_recent and common.models.NotificationEntry.check_recent(
-        category, obj_ref_value, delta
+    if (
+        check_recent
+        and obj_ref_value
+        and common.models.NotificationEntry.check_recent(category, obj_ref_value, delta)
     ):
         logger.info(
             "Notification '%s' has recently been sent for '%s' - SKIPPING",
@@ -214,5 +217,5 @@ def trigger_notification(obj: Model, category: str = '', obj_ref: str = 'pk', **
             log_error('send_notification', plugin=plugin.slug)
 
     # Log the notification entry
-    if result:
+    if result and obj_ref_value is not None:
         common.models.NotificationEntry.notify(category, obj_ref_value)
