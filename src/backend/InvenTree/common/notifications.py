@@ -2,7 +2,7 @@
 
 from dataclasses import dataclass
 from datetime import timedelta
-from typing import Optional
+from typing import Optional, Union
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
@@ -42,9 +42,9 @@ class NotificationBody:
         model_name': Name (slugified) of the model
     """
 
-    name: str | StrOrPromise
+    name: Union[str, StrOrPromise]
     slug: str
-    message: str | StrOrPromise
+    message: Union[str, StrOrPromise]
     template: Optional[str] = None
 
 

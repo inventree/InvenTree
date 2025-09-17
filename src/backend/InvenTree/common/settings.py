@@ -2,7 +2,7 @@
 
 import json
 from os import environ
-from typing import Optional
+from typing import Union
 
 from django.core.exceptions import AppRegistryNotReady
 
@@ -58,7 +58,7 @@ class GlobalWarningCode:
     TEST_KEY = '_TEST'
 
 
-def set_global_warning(key: str, options: Optional[dict | bool] = None) -> bool:
+def set_global_warning(key: str, options: Union[dict, bool, None] = None) -> bool:
     """Set a global warning for a code.
 
     Args:
