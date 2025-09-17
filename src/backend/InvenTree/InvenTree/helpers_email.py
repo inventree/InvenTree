@@ -67,7 +67,7 @@ def send_email(
     recipients: Union[str, list],
     from_email: Optional[str] = None,
     html_message=None,
-    prio: Priority = Priority.NORMAL,
+    prio: Union[Priority, int] = Priority.NORMAL,
     headers: Optional[dict] = None,
 ) -> tuple[bool, Optional[str]]:
     """Send an email with the specified subject and body, to the specified recipients list."""
