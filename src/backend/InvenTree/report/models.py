@@ -640,7 +640,7 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
                 raise ValidationError(msg)
 
         # Save the generated report to the database
-        generated_file = ContentFile(data, report_name)
+        generated_file = ContentFile(data, report_name)  # type: ignore
 
         output.mark_complete(output=generated_file)
 

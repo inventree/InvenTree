@@ -475,8 +475,8 @@ def get_oidc_private_key(return_path: bool = False) -> Union[str, Path]:
         with open(str(key_loc), 'wb') as f:
             f.write(
                 new_key.private_bytes(
-                    encoding=serialization.Encoding.PEM,
-                    format=serialization.PrivateFormat.TraditionalOpenSSL,
+                    encoding=serialization.Encoding.PEM,  # type: ignore
+                    format=serialization.PrivateFormat.TraditionalOpenSSL,  # type: ignore
                     encryption_algorithm=serialization.NoEncryption(),
                 )
             )

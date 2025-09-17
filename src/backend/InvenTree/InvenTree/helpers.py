@@ -462,7 +462,7 @@ def DownloadFile(
     length = len(data)
 
     if isinstance(data, str):
-        wrapper = FileWrapper(io.StringIO(data))
+        wrapper = FileWrapper(io.StringIO(data))  # type: ignore
     else:
         wrapper = FileWrapper(io.BytesIO(data))
 
