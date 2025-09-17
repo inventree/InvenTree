@@ -8,7 +8,7 @@ msgstr ""
 "Language: fr\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-09-08 01:37\n"
+"PO-Revision-Date: 2025-09-15 23:41\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -503,7 +503,7 @@ msgstr "Listes Sélectionnées"
 
 #: lib/enums/ModelInformation.tsx:274
 #: src/components/barcodes/BarcodeInput.tsx:114
-#: src/components/dashboard/DashboardLayout.tsx:224
+#: src/components/dashboard/DashboardLayout.tsx:281
 #: src/components/editors/NotesEditor.tsx:74
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:157
 #: src/components/forms/fields/ApiFormField.tsx:263
@@ -872,15 +872,15 @@ msgstr "Erreur lors de la mise à jour des commandes"
 msgid "Overdue"
 msgstr "En retard"
 
-#: src/components/dashboard/DashboardLayout.tsx:225
+#: src/components/dashboard/DashboardLayout.tsx:282
 msgid "Failed to load dashboard widgets."
 msgstr "Impossible de charger les widgets du tableau de bord."
 
-#: src/components/dashboard/DashboardLayout.tsx:235
+#: src/components/dashboard/DashboardLayout.tsx:293
 msgid "No Widgets Selected"
 msgstr "Aucun gadget sélectionné"
 
-#: src/components/dashboard/DashboardLayout.tsx:238
+#: src/components/dashboard/DashboardLayout.tsx:296
 msgid "Use the menu to add widgets to the dashboard"
 msgstr "Utilisez le menu pour ajouter des gadgets au tableau de bord"
 
@@ -2842,7 +2842,7 @@ msgstr "Une erreur a eu lieu pendant le chargement du contenu du plugin"
 #~ msgid "Unknown model: {model}"
 #~ msgstr "Unknown model: {model}"
 
-#: src/components/render/Instance.tsx:246
+#: src/components/render/Instance.tsx:249
 msgid "Unknown model: {model_name}"
 msgstr "Modèle inconnu: {model_name}"
 
@@ -3014,11 +3014,11 @@ msgstr "Impossible de charger les paramètres"
 
 #: src/components/settings/SettingList.tsx:151
 msgid "No Settings"
-msgstr ""
+msgstr "Aucun paramètre"
 
 #: src/components/settings/SettingList.tsx:152
 msgid "There are no configurable settings available"
-msgstr ""
+msgstr "Aucun paramètre configurable n'est disponible"
 
 #: src/components/settings/SettingList.tsx:189
 msgid "No settings specified"
@@ -5512,7 +5512,7 @@ msgstr "Jeton d'accès"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:101
 msgid "Session Information"
-msgstr ""
+msgstr "Informations sur la session"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:139
 #: src/tables/general/BarcodeScanTable.tsx:60
@@ -5524,7 +5524,7 @@ msgstr "Horodatage"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:140
 msgid "Method"
-msgstr ""
+msgstr "Méthode"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:183
 msgid "Error while updating email"
@@ -8612,7 +8612,7 @@ msgstr "Afficher les articles assemblés"
 
 #: src/tables/bom/BomTable.tsx:415
 msgid "Show virtual items"
-msgstr ""
+msgstr "Afficher les pièces virtuelles"
 
 #: src/tables/bom/BomTable.tsx:420
 #: src/tables/build/BuildLineTable.tsx:191
@@ -10472,7 +10472,7 @@ msgstr "Assigner à l'expédition"
 #: src/tables/sales/SalesOrderLineItemTable.tsx:197
 #: src/tables/sales/SalesOrderLineItemTable.tsx:214
 msgid "Virtual part"
-msgstr ""
+msgstr "Pièce virtuelle"
 
 #: src/tables/sales/SalesOrderLineItemTable.tsx:280
 #~ msgid "Allocate stock"
