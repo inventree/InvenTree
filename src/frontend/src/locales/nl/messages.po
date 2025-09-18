@@ -8,7 +8,7 @@ msgstr ""
 "Language: nl\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-09-15 23:41\n"
+"PO-Revision-Date: 2025-09-17 03:41\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -2165,7 +2165,7 @@ msgid "No items"
 msgstr "Geen artikelen"
 
 #: src/components/items/TransferList.tsx:161
-#: src/components/render/Stock.tsx:95
+#: src/components/render/Stock.tsx:102
 #: src/pages/part/PartDetail.tsx:984
 #: src/pages/stock/StockDetail.tsx:262
 #: src/pages/stock/StockDetail.tsx:913
@@ -2893,8 +2893,8 @@ msgid "Category"
 msgstr "Categorie"
 
 #: src/components/render/Stock.tsx:36
-#: src/components/render/Stock.tsx:107
-#: src/components/render/Stock.tsx:125
+#: src/components/render/Stock.tsx:114
+#: src/components/render/Stock.tsx:132
 #: src/forms/BuildForms.tsx:766
 #: src/forms/PurchaseOrderForms.tsx:592
 #: src/forms/StockForms.tsx:734
@@ -2916,7 +2916,7 @@ msgstr "Categorie"
 msgid "Location"
 msgstr "Locatie"
 
-#: src/components/render/Stock.tsx:92
+#: src/components/render/Stock.tsx:99
 #: src/pages/stock/StockDetail.tsx:195
 #: src/pages/stock/StockDetail.tsx:901
 #: src/tables/build/BuildAllocatedStockTable.tsx:121
@@ -2925,7 +2925,7 @@ msgstr "Locatie"
 msgid "Serial Number"
 msgstr "Serienummer"
 
-#: src/components/render/Stock.tsx:97
+#: src/components/render/Stock.tsx:104
 #: src/components/wizards/OrderPartsWizard.tsx:222
 #: src/forms/BuildForms.tsx:243
 #: src/forms/BuildForms.tsx:605
@@ -2953,7 +2953,7 @@ msgstr "Serienummer"
 msgid "Quantity"
 msgstr "Aantal"
 
-#: src/components/render/Stock.tsx:110
+#: src/components/render/Stock.tsx:117
 #: src/forms/BuildForms.tsx:312
 #: src/forms/BuildForms.tsx:386
 #: src/forms/BuildForms.tsx:450
@@ -7103,11 +7103,11 @@ msgstr "Standaard leverancier"
 
 #: src/pages/part/PartDetail.tsx:705
 msgid "Default Expiry"
-msgstr ""
+msgstr "Standaard vervaldatum"
 
 #: src/pages/part/PartDetail.tsx:710
 msgid "days"
-msgstr ""
+msgstr "Dagen"
 
 #: src/pages/part/PartDetail.tsx:720
 #: src/pages/part/pricing/BomPricingPanel.tsx:113
@@ -7199,7 +7199,7 @@ msgstr "Voorraad bestelling"
 
 #: src/pages/part/PartDetail.tsx:1174
 msgid "Search by serial number"
-msgstr ""
+msgstr "Zoek op serienummer"
 
 #: src/pages/part/PartDetail.tsx:1182
 #: src/tables/part/PartTable.tsx:392
@@ -7868,29 +7868,29 @@ msgstr "Actie voor onderliggende locaties in deze locatie"
 
 #: src/pages/stock/LocationDetail.tsx:280
 msgid "Scan Stock Item"
-msgstr ""
+msgstr "Scan voorraad item"
 
 #: src/pages/stock/LocationDetail.tsx:298
 #: src/pages/stock/StockDetail.tsx:783
 msgid "Scanned stock item into location"
-msgstr ""
+msgstr "Gescande voorraadartikel op locatie"
 
 #: src/pages/stock/LocationDetail.tsx:304
 #: src/pages/stock/StockDetail.tsx:789
 msgid "Error scanning stock item"
-msgstr ""
+msgstr "Fout bij scannen voorraad item"
 
 #: src/pages/stock/LocationDetail.tsx:311
 msgid "Scan Stock Location"
-msgstr ""
+msgstr "Scan voorraad locatie"
 
 #: src/pages/stock/LocationDetail.tsx:323
 msgid "Scanned stock location into location"
-msgstr ""
+msgstr "Gescande voorraadlocatie op locatie"
 
 #: src/pages/stock/LocationDetail.tsx:329
 msgid "Error scanning stock location"
-msgstr ""
+msgstr "Fout bij scannen stock locatie"
 
 #: src/pages/stock/LocationDetail.tsx:370
 #: src/tables/stock/StockLocationTable.tsx:142
@@ -7919,7 +7919,7 @@ msgstr "Laatste voorraadcontrole"
 
 #: src/pages/stock/StockDetail.tsx:203
 msgid "Previous serial number"
-msgstr ""
+msgstr "Vorig serienummer"
 
 #: src/pages/stock/StockDetail.tsx:205
 #~ msgid "Edit stock item"
@@ -7931,7 +7931,7 @@ msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:225
 msgid "Find serial number"
-msgstr ""
+msgstr "Zoek een serienummer"
 
 #: src/pages/stock/StockDetail.tsx:269
 msgid "Allocated to Orders"
@@ -7993,11 +7993,11 @@ msgstr "Bewerk voorraadartikel"
 
 #: src/pages/stock/StockDetail.tsx:687
 msgid "Items Created"
-msgstr ""
+msgstr "Items bijgewerkt"
 
 #: src/pages/stock/StockDetail.tsx:688
 msgid "Created {n} stock items"
-msgstr ""
+msgstr "Aangemaakt {n} voorraad items"
 
 #: src/pages/stock/StockDetail.tsx:698
 #: src/tables/stock/StockItemTable.tsx:481
@@ -8175,7 +8175,7 @@ msgstr "Toon items met een serienummer"
 
 #: src/tables/Filter.tsx:100
 msgid "Serial"
-msgstr ""
+msgstr "Serienummer"
 
 #: src/tables/Filter.tsx:101
 msgid "Filter items by serial number"
@@ -8187,7 +8187,7 @@ msgstr "Artikelen filteren op serienummer"
 
 #: src/tables/Filter.tsx:109
 msgid "Serial Below"
-msgstr ""
+msgstr "Serienummer onder"
 
 #: src/tables/Filter.tsx:110
 msgid "Show items with serial numbers less than or equal to a given value"
@@ -8195,7 +8195,7 @@ msgstr "Toon items met serienummers kleiner dan of gelijk aan een bepaalde waard
 
 #: src/tables/Filter.tsx:118
 msgid "Serial Above"
-msgstr ""
+msgstr "Serienummer boven"
 
 #: src/tables/Filter.tsx:119
 msgid "Show items with serial numbers greater than or equal to a given value"
@@ -8316,7 +8316,7 @@ msgstr "Inclusief varianten"
 
 #: src/tables/Filter.tsx:257
 msgid "Include results for part variants"
-msgstr ""
+msgstr "Resultaten voor deelvarianten toevoegen"
 
 #: src/tables/Filter.tsx:267
 #: src/tables/part/PartPurchaseOrdersTable.tsx:133
@@ -8339,11 +8339,11 @@ msgstr "Filter op gebruiker"
 
 #: src/tables/Filter.tsx:340
 msgid "Filter by manufacturer"
-msgstr ""
+msgstr "Op fabrikant filteren"
 
 #: src/tables/Filter.tsx:353
 msgid "Filter by supplier"
-msgstr ""
+msgstr "Filteren op leverancier"
 
 #: src/tables/Filter.tsx:366
 msgid "Filter by user who created the order"
@@ -8359,7 +8359,7 @@ msgstr "Filter op onderdeel categorie"
 
 #: src/tables/Filter.tsx:393
 msgid "Filter by stock location"
-msgstr ""
+msgstr "Filter op voorraad locatie"
 
 #: src/tables/FilterSelectDrawer.tsx:59
 msgid "Remove filter"
@@ -8407,7 +8407,7 @@ msgstr "Geen gegevens gevonden"
 
 #: src/tables/InvenTreeTable.tsx:151
 msgid "Error loading table options"
-msgstr ""
+msgstr "Fout bij laden tabel opties"
 
 #: src/tables/InvenTreeTable.tsx:250
 #~ msgid "Failed to load table options"
@@ -9420,15 +9420,15 @@ msgstr "Machine toevoegen"
 #: src/tables/machine/MachineListTable.tsx:584
 #: src/tables/machine/MachineListTable.tsx:629
 msgid "Delete Machine"
-msgstr ""
+msgstr "Machine verwijderen"
 
 #: src/tables/machine/MachineListTable.tsx:597
 msgid "Edit Machine"
-msgstr ""
+msgstr "Machine bewerken"
 
 #: src/tables/machine/MachineListTable.tsx:611
 msgid "Restart Machine"
-msgstr ""
+msgstr "Machine herstarten"
 
 #: src/tables/machine/MachineListTable.tsx:642
 msgid "Add machine"
@@ -9444,7 +9444,7 @@ msgstr "Stuurprogramma"
 
 #: src/tables/machine/MachineTypeTable.tsx:72
 msgid "Driver Type"
-msgstr ""
+msgstr "Driver type"
 
 #: src/tables/machine/MachineTypeTable.tsx:76
 msgid "Builtin driver"
@@ -9567,28 +9567,28 @@ msgstr "Toon assemblage onderdelen"
 
 #: src/tables/part/ParametricPartTableFilters.tsx:36
 msgid "True"
-msgstr ""
+msgstr "Waar"
 
 #: src/tables/part/ParametricPartTableFilters.tsx:37
 msgid "False"
-msgstr ""
+msgstr "Onjuist"
 
 #: src/tables/part/ParametricPartTableFilters.tsx:47
 #: src/tables/part/ParametricPartTableFilters.tsx:80
 msgid "Select a choice"
-msgstr ""
+msgstr "Selecteer een keuze"
 
 #: src/tables/part/ParametricPartTableFilters.tsx:100
 msgid "Enter a value"
-msgstr ""
+msgstr "Voer een waarde in."
 
 #: src/tables/part/PartBuildAllocationsTable.tsx:64
 msgid "Assembly IPN"
-msgstr ""
+msgstr "Assemblage IPN"
 
 #: src/tables/part/PartBuildAllocationsTable.tsx:73
 msgid "Part IPN"
-msgstr ""
+msgstr "IPN onderdeel"
 
 #: src/tables/part/PartBuildAllocationsTable.tsx:91
 msgid "Required Stock"
@@ -9669,11 +9669,11 @@ msgstr "Interne eenheden"
 #: src/tables/part/PartParameterTable.tsx:127
 #: src/tables/part/PartParameterTable.tsx:146
 msgid "Updated By"
-msgstr ""
+msgstr "Bijgewerkt Door"
 
 #: src/tables/part/PartParameterTable.tsx:147
 msgid "Filter by user who last updated the parameter"
-msgstr ""
+msgstr "Filter op gebruiker die de parameter voor het laatst heeft bijgewerkt"
 
 #: src/tables/part/PartParameterTable.tsx:156
 msgid "New Part Parameter"
@@ -9724,7 +9724,7 @@ msgstr "Parameter sjabloon toevoegen"
 
 #: src/tables/part/PartParameterTemplateTable.tsx:105
 msgid "Duplicate Parameter Template"
-msgstr ""
+msgstr "Dupliceer parameter sjabloon"
 
 #: src/tables/part/PartParameterTemplateTable.tsx:117
 msgid "Edit Parameter Template"
@@ -10720,23 +10720,23 @@ msgstr ""
 
 #: src/tables/settings/EmailTable.tsx:85
 msgid "To"
-msgstr ""
+msgstr "Naar"
 
 #: src/tables/settings/EmailTable.tsx:90
 msgid "Sender"
-msgstr ""
+msgstr "Afzender"
 
 #: src/tables/settings/EmailTable.tsx:122
 msgid "Direction"
-msgstr ""
+msgstr "Richting"
 
 #: src/tables/settings/EmailTable.tsx:125
 msgid "Incoming"
-msgstr ""
+msgstr "Inkomend"
 
 #: src/tables/settings/EmailTable.tsx:125
 msgid "Outgoing"
-msgstr ""
+msgstr "Uitgaand"
 
 #: src/tables/settings/ErrorTable.tsx:51
 #~ msgid "Delete error report"
@@ -10781,7 +10781,7 @@ msgstr "Geëxporteerd op"
 
 #: src/tables/settings/ExportSessionTable.tsx:59
 msgid "Delete Output"
-msgstr ""
+msgstr "Verwijder uitvoer"
 
 #: src/tables/settings/FailedTasksTable.tsx:32
 #: src/tables/settings/PendingTasksTable.tsx:28
@@ -10831,7 +10831,7 @@ msgstr "Naam van de gebruikersgroep"
 #: src/tables/settings/GroupTable.tsx:170
 #: src/tables/settings/UserTable.tsx:315
 msgid "Open Profile"
-msgstr ""
+msgstr "Profiel openen"
 
 #: src/tables/settings/GroupTable.tsx:185
 msgid "Delete group"
@@ -10898,15 +10898,15 @@ msgstr "Argumenten"
 
 #: src/tables/settings/PendingTasksTable.tsx:61
 msgid "Remove all pending tasks"
-msgstr ""
+msgstr "Verwijder alle openstaande taken"
 
 #: src/tables/settings/PendingTasksTable.tsx:69
 msgid "All pending tasks deleted"
-msgstr ""
+msgstr "Alle openstaande taken zijn verwijderd"
 
 #: src/tables/settings/PendingTasksTable.tsx:76
 msgid "Error while deleting all pending tasks"
-msgstr ""
+msgstr "Fout bij het verwijderen van alle lopende taken"
 
 #: src/tables/settings/ProjectCodeTable.tsx:46
 msgid "Add Project Code"
@@ -11067,11 +11067,11 @@ msgstr "Gebruikers groepen"
 
 #: src/tables/settings/UserTable.tsx:332
 msgid "Lock user"
-msgstr ""
+msgstr "Gebruiker vergrendelen"
 
 #: src/tables/settings/UserTable.tsx:342
 msgid "Unlock user"
-msgstr ""
+msgstr "Gebruiker ontgrendelen"
 
 #: src/tables/settings/UserTable.tsx:358
 msgid "Delete user"
@@ -11095,11 +11095,11 @@ msgstr "Gebruiker toegevoegd"
 
 #: src/tables/settings/UserTable.tsx:382
 msgid "Set Password"
-msgstr ""
+msgstr "Stel wachtwoord in"
 
 #: src/tables/settings/UserTable.tsx:387
 msgid "Password updated"
-msgstr ""
+msgstr "Wachtwoord bijgewerkt"
 
 #: src/tables/settings/UserTable.tsx:398
 msgid "Add user"
@@ -11123,15 +11123,15 @@ msgstr "Wijzig gebruiker"
 
 #: src/tables/settings/UserTable.tsx:476
 msgid "User updated"
-msgstr ""
+msgstr "Gebruiker bijgewerkt"
 
 #: src/tables/settings/UserTable.tsx:477
 msgid "User updated successfully"
-msgstr ""
+msgstr "Gebruiker met succes bijgewerkt"
 
 #: src/tables/settings/UserTable.tsx:483
 msgid "Error updating user"
-msgstr ""
+msgstr "Fout bij bijwerken gebruiker"
 
 #: src/tables/stock/InstalledItemsTable.tsx:38
 #: src/tables/stock/InstalledItemsTable.tsx:90
@@ -11374,7 +11374,7 @@ msgstr "Toon items op een externe locatie"
 
 #: src/tables/stock/StockItemTable.tsx:559
 msgid "Order items"
-msgstr ""
+msgstr "Bestelde items"
 
 #: src/tables/stock/StockItemTable.tsx:595
 #~ msgid "Add a new stock item"
