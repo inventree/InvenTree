@@ -63,7 +63,10 @@ if settings.LDAP_AUTH:
         user.save()
 
         # if they got an email address from LDAP, create it now and make it the primary
-        if user.email:
+        if (
+            user.email
+            and not EmailAddress.objects.filter(user=user, email=user.email).exists()
+        ):
             EmailAddress.objects.create(user=user, email=user.email, primary=True)
 
 
