@@ -2,17 +2,21 @@
 
 from __future__ import annotations
 
+from typing import Optional
+
 from django.contrib.auth.models import User
 from django.db.models import F, Q
 from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
 
 from django_filters import rest_framework as rest_filters
+from django_filters.rest_framework.filterset import FilterSet
 from drf_spectacular.utils import extend_schema, extend_schema_field
 from rest_framework import serializers, status
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
+import build.models as build_models
 import build.serializers
 import common.models
 import part.models as part_models
@@ -33,7 +37,7 @@ from InvenTree.mixins import CreateAPI, ListCreateAPI, RetrieveUpdateDestroyAPI
 from users.models import Owner
 
 
-class BuildFilter(rest_filters.FilterSet):
+class BuildFilter(FilterSet):
     """Custom filterset for BuildList API endpoint."""
 
     class Meta:
@@ -431,7 +435,7 @@ class BuildUnallocate(CreateAPI):
         return ctx
 
 
-class BuildLineFilter(rest_filters.FilterSet):
+class BuildLineFilter(FilterSet):
     """Custom filterset for the BuildLine API endpoint."""
 
     class Meta:
@@ -605,7 +609,7 @@ class BuildLineList(BuildLineMixin, DataExportViewMixin, ListCreateAPI):
         'bom_item__reference',
     ]
 
-    def get_source_build(self) -> Build | None:
+    def get_source_build(self) -> Optional[Build]:
         """Return the target build for the BuildLine queryset."""
         source_build = None
 
@@ -622,7 +626,7 @@ class BuildLineList(BuildLineMixin, DataExportViewMixin, ListCreateAPI):
 class BuildLineDetail(BuildLineMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a BuildLine object."""
 
-    def get_source_build(self) -> Build | None:
+    def get_source_build(self) -> Optional[Build]:
         """Return the target source location for the BuildLine queryset."""
         return None
 
@@ -783,7 +787,7 @@ class BuildItemDetail(RetrieveUpdateDestroyAPI):
     serializer_class = build.serializers.BuildItemSerializer
 
 
-class BuildItemFilter(rest_filters.FilterSet):
+class BuildItemFilter(FilterSet):
     """Custom filterset for the BuildItemList API endpoint."""
 
     class Meta:
@@ -829,7 +833,7 @@ class BuildItemFilter(rest_filters.FilterSet):
             return queryset.filter(stock_item__part=part)
 
     build = rest_filters.ModelChoiceFilter(
-        queryset=build.models.Build.objects.all(),
+        queryset=build_models.Build.objects.all(),
         label=_('Build Order'),
         field_name='build_line__build',
     )

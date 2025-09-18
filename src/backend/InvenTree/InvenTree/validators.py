@@ -6,6 +6,7 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
 import pint
+import pint.errors
 from moneyed import CURRENCIES
 
 import InvenTree.conversion

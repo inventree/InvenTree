@@ -31,8 +31,8 @@ def get_model_permission_string(model: models.Model, permission: str) -> str:
     Returns:
         str: The permission string (e.g. 'part.view_part')
     """
-    model, app = split_model(model)
-    return f'{app}.{permission}_{model}'
+    _model, _app = split_model(model)
+    return f'{_app}.{permission}_{_model}'
 
 
 def split_permission(app: str, perm: str) -> tuple[str, str]:

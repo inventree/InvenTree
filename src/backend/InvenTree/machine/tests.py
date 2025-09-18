@@ -220,6 +220,7 @@ class TestLabelPrinterMachineType(InvenTreeAPITestCase):
 
         parts = Part.objects.all()[:2]
         template = LabelTemplate.objects.filter(enabled=True, model_type='part').first()
+        assert template
 
         url = reverse('api-label-print')
 

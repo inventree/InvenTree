@@ -6,8 +6,9 @@ from django.core.exceptions import ValidationError
 from django.urls import include, path, re_path
 from django.utils.translation import gettext_lazy as _
 
-from django_filters import rest_framework as rest_filters
+import django_filters.rest_framework.filters as rest_filters
 from django_filters.rest_framework import DjangoFilterBackend
+from django_filters.rest_framework.filterset import FilterSet
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.exceptions import NotFound
@@ -36,7 +37,7 @@ from plugin.plugin import InvenTreePlugin
 from plugin.registry import registry
 
 
-class PluginFilter(rest_filters.FilterSet):
+class PluginFilter(FilterSet):
     """Filter for the PluginConfig model.
 
     Provides custom filtering options for the FilterList API endpoint.

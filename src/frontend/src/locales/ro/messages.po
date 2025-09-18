@@ -8,7 +8,7 @@ msgstr ""
 "Language: ro\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-09-14 10:52\n"
+"PO-Revision-Date: 2025-09-17 03:41\n"
 "Last-Translator: \n"
 "Language-Team: Romanian\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100>0 && n%100<20)) ? 1 : 2);\n"
@@ -2165,7 +2165,7 @@ msgid "No items"
 msgstr ""
 
 #: src/components/items/TransferList.tsx:161
-#: src/components/render/Stock.tsx:95
+#: src/components/render/Stock.tsx:102
 #: src/pages/part/PartDetail.tsx:984
 #: src/pages/stock/StockDetail.tsx:262
 #: src/pages/stock/StockDetail.tsx:913
@@ -2893,8 +2893,8 @@ msgid "Category"
 msgstr ""
 
 #: src/components/render/Stock.tsx:36
-#: src/components/render/Stock.tsx:107
-#: src/components/render/Stock.tsx:125
+#: src/components/render/Stock.tsx:114
+#: src/components/render/Stock.tsx:132
 #: src/forms/BuildForms.tsx:766
 #: src/forms/PurchaseOrderForms.tsx:592
 #: src/forms/StockForms.tsx:734
@@ -2916,7 +2916,7 @@ msgstr ""
 msgid "Location"
 msgstr ""
 
-#: src/components/render/Stock.tsx:92
+#: src/components/render/Stock.tsx:99
 #: src/pages/stock/StockDetail.tsx:195
 #: src/pages/stock/StockDetail.tsx:901
 #: src/tables/build/BuildAllocatedStockTable.tsx:121
@@ -2925,7 +2925,7 @@ msgstr ""
 msgid "Serial Number"
 msgstr ""
 
-#: src/components/render/Stock.tsx:97
+#: src/components/render/Stock.tsx:104
 #: src/components/wizards/OrderPartsWizard.tsx:222
 #: src/forms/BuildForms.tsx:243
 #: src/forms/BuildForms.tsx:605
@@ -2953,7 +2953,7 @@ msgstr ""
 msgid "Quantity"
 msgstr ""
 
-#: src/components/render/Stock.tsx:110
+#: src/components/render/Stock.tsx:117
 #: src/forms/BuildForms.tsx:312
 #: src/forms/BuildForms.tsx:386
 #: src/forms/BuildForms.tsx:450

@@ -1,5 +1,7 @@
 """Classes and functions for plugin controlled object state transitions."""
 
+from typing import Callable
+
 from django.db.models import Model
 
 import structlog
@@ -30,7 +32,7 @@ class TransitionMethod:
         current_state: int,
         target_state: int,
         instance: Model,
-        default_action: callable,
+        default_action: Callable,
         **kwargs,
     ) -> bool:
         """Perform a state transition.
