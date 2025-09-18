@@ -29,8 +29,9 @@ from InvenTree.filters import (
     SEARCH_ORDER_FILTER_ALIAS,
     InvenTreeDateFilter,
     InvenTreeSearchFilter,
+    NumberOrNullFilter,
 )
-from InvenTree.helpers import isNull, str2bool
+from InvenTree.helpers import str2bool
 from InvenTree.mixins import (
     CreateAPI,
     CustomRetrieveUpdateDestroyAPI,
@@ -909,6 +910,46 @@ class PartFilter(FilterSet):
         label='Updated after', field_name='creation_date', lookup_expr='gt'
     )
 
+    cascade = rest_filters.BooleanFilter(
+        method='filter_cascade',
+        label=_('Cascade Categories'),
+        help_text=_('If true, include items in child categories of the given category'),
+    )
+
+    category = NumberOrNullFilter(
+        method='filter_category',
+        label=_('Category'),
+        help_text=_("Filter by numeric category ID or the literal 'null'"),
+    )
+
+    def filter_cascade(self, queryset, name, value):
+        """Dummy filter method for 'cascade'.
+
+        - Ensures 'cascade' appears in API documentation
+        - Does NOT actually filter the queryset directly
+        """
+        return queryset
+
+    def filter_category(self, queryset, name, value):
+        """Filter for category that also applies cascade logic."""
+        cascade = str2bool(self.data.get('cascade', True))
+
+        if value == 'null':
+            if not cascade:
+                return queryset.filter(category=None)
+            return queryset
+
+        if not cascade:
+            return queryset.filter(category=value)
+
+        try:
+            category = PartCategory.objects.get(pk=value)
+        except PartCategory.DoesNotExist:
+            return queryset
+
+        children = category.getUniqueChildren()
+        return queryset.filter(category__in=children)
+
 
 class PartMixin:
     """Mixin class for Part API endpoints."""
@@ -1037,35 +1078,6 @@ class PartList(PartMixin, BulkUpdateMixin, DataExportViewMixin, ListCreateAPI):
 
             except (ValueError, Part.DoesNotExist):
                 pass
-
-        # Cascade? (Default = True)
-        cascade = str2bool(params.get('cascade', True))
-
-        # Does the user wish to filter by category?
-        cat_id = params.get('category', None)
-
-        if cat_id is not None:
-            # Category has been specified!
-            if isNull(cat_id):
-                # A 'null' category is the top-level category
-                if not cascade:
-                    # Do not cascade, only list parts in the top-level category
-                    queryset = queryset.filter(category=None)
-
-            else:
-                try:
-                    category = PartCategory.objects.get(pk=cat_id)
-
-                    # If '?cascade=true' then include parts which exist in sub-categories
-                    if cascade:
-                        queryset = queryset.filter(
-                            category__in=category.getUniqueChildren()
-                        )
-                    # Just return parts directly in the requested category
-                    else:
-                        queryset = queryset.filter(category=cat_id)
-                except (ValueError, PartCategory.DoesNotExist):
-                    pass
 
         queryset = self.filter_parametric_data(queryset)
         queryset = self.order_by_parameter(queryset)
