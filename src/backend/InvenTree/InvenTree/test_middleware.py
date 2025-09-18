@@ -1,5 +1,6 @@
 """Tests for middleware functions."""
 
+from django.conf import settings
 from django.http import Http404
 from django.urls import reverse
 
@@ -178,6 +179,15 @@ class MiddlewareTests(InvenTreeTestCase):
             )
             self.assertNotContains(
                 response, 'window.INVENTREE_SETTINGS', status_code=500
+            )
+
+            # Log stuff # TODO remove
+            print(
+                '###DBG-TST###',
+                'site',
+                settings.SITE_URL,
+                'trusted',
+                settings.CSRF_TRUSTED_ORIGINS,
             )
 
             # Check that the correct step triggers the error message
