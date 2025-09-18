@@ -87,22 +87,31 @@ class MiddlewareTests(InvenTreeTestCase):
                 log_error('testpath')
             check(1)
 
+    def do_positive_test(self, response):
+        """Helper function to check for positive test results."""
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, 'INVE-E7')
+        self.assertContains(response, 'window.INVENTREE_SETTINGS')
+
     def test_site_url_checks(self):
         """Test that the site URL check is correctly working."""
-
-        def positive_test(response):
-            self.assertEqual(response.status_code, 200)
-            self.assertNotContains(response, 'INVE-E7')
-            self.assertContains(response, 'window.INVENTREE_SETTINGS')
-
-        # correctly set
+        # simple setup
         with self.settings(
             SITE_URL='http://testserver', CSRF_TRUSTED_ORIGINS=['http://testserver']
         ):
             response = self.client.get(reverse('web'))
-            positive_test(response)
+            self.do_positive_test(response)
 
-        # correctly set https with multiple trusted origins
+        # simple setup with wildcard
+        with self.settings(
+            SITE_URL='http://testserver', CSRF_TRUSTED_ORIGINS=['http://*.testserver']
+        ):
+            response = self.client.get(reverse('web'))
+            self.do_positive_test(response)
+
+    def test_site_url_checks_multi(self):
+        """Test that the site URL check is correctly working in a multi-site setup."""
+        # multi-site setup with trusted origins
         with self.settings(
             SITE_URL='https://testserver.example.com',
             CSRF_TRUSTED_ORIGINS=[
@@ -112,14 +121,14 @@ class MiddlewareTests(InvenTreeTestCase):
         ):
             # this will run with testserver as host by default
             response = self.client.get(reverse('web'))
-            positive_test(response)
+            self.do_positive_test(response)
 
             # Now test with the "outside" url name
             response = self.client.get(
                 'https://testserver.example.com/web/',
                 SERVER_NAME='testserver.example.com',
             )
-            positive_test(response)
+            self.do_positive_test(response)
 
             # A non-trsuted origin must still fail in multi - origin setup
             response = self.client.get(
@@ -135,23 +144,15 @@ class MiddlewareTests(InvenTreeTestCase):
             )
             self.assertEqual(response.status_code, 500)
 
-        # wrongly set site URL
-        with self.settings(SITE_URL='https://example.com'):
-            response = self.client.get(reverse('web'))
-            self.assertEqual(response.status_code, 500)
-            self.assertContains(
-                response,
-                'INVE-E7: The used path `http://testserver` does not match',
-                status_code=500,
-            )
-            self.assertNotContains(
-                response, 'window.INVENTREE_SETTINGS', status_code=500
-            )
+    def test_site_url_checks_fails(self):
+        """Test that the site URL check is correctly failing.
 
+        Important for security.
+        """
         # wrongly set but in debug -> is ignored
         with self.settings(SITE_URL='https://example.com', DEBUG=True):
             response = self.client.get(reverse('web'))
-            positive_test(response)
+            self.do_positive_test(response)
 
         # wrongly set cors
         with self.settings(
@@ -168,9 +169,20 @@ class MiddlewareTests(InvenTreeTestCase):
                 response, 'window.INVENTREE_SETTINGS', status_code=500
             )
 
-        # correctly set with wildcard
-        with self.settings(
-            SITE_URL='http://testserver', CSRF_TRUSTED_ORIGINS=['http://*.testserver']
-        ):
+        # wrongly set site URL
+        with self.settings(SITE_URL='https://example.com'):
             response = self.client.get(reverse('web'))
-            positive_test(response)
+            self.assertEqual(response.status_code, 500)
+            self.assertContains(
+                response, 'INVE-E7: The used path `http://testserver` ', status_code=500
+            )
+            self.assertNotContains(
+                response, 'window.INVENTREE_SETTINGS', status_code=500
+            )
+
+            # Check that the correct step triggers the error message
+            self.assertContains(
+                response,
+                'INVE-E7: The used path `http://testserver` does not match',
+                status_code=500,
+            )
