@@ -126,14 +126,79 @@ function ImporterDefaultField({
   );
 }
 
+function ImporterPartImportAsSelect({
+  column,
+  session
+}: Readonly<{
+  column: any;
+  session: ImportSessionState;
+}>) {
+  const api = useApi();
+  const [importAsValue, setImportAsValue] = useState<string>('');
+  const importAsKey = `_import_as_${column.field}`;
+
+  useEffect(() => {
+    const defaultValue =
+      column.import_as && column.import_as.length > 0
+        ? column.import_as[0]
+        : '';
+    const value = session.fieldOverrides?.[importAsKey] ?? defaultValue;
+    setImportAsValue(value);
+  }, [session.fieldOverrides, column.field]);
+
+  const onChange = useCallback(
+    (value: any) => {
+      const importSettings = {
+        ...session.fieldOverrides,
+        [importAsKey]: value
+      };
+
+      api
+        .patch(apiUrl(ApiEndpoints.import_session_list, session.sessionId), {
+          field_overrides: importSettings
+        })
+        .then((response) => {
+          const value = response.data?.field_overrides?.[importAsKey] ?? '';
+          setImportAsValue(value);
+        })
+        .catch((error) => {
+          // TODO: Error message?
+        });
+    },
+    [column]
+  );
+
+  if (!column.import_as || !Array.isArray(column.import_as)) {
+    return null;
+  }
+
+  const options = column.import_as.map((option: any) => ({
+    value: option,
+    label: option
+  }));
+
+  return (
+    <Select
+      data={options}
+      placeholder={t`Import as`}
+      value={importAsValue}
+      onChange={onChange}
+      size='sm'
+      w={180}
+    />
+  );
+}
+
 function ImporterColumnTableRow({
   session,
   column,
-  options
+  options,
+  showImportAsColumn
 }: Readonly<{
   session: ImportSessionState;
   column: any;
   options: any;
+  showImportAsColumn: boolean;
 }>) {
   return (
     <Table.Tr key={column.label ?? column.field}>
@@ -155,6 +220,11 @@ function ImporterColumnTableRow({
       <Table.Td>
         <ImporterColumn column={column} options={options} />
       </Table.Td>
+      {showImportAsColumn && (
+        <Table.Td>
+          <ImporterPartImportAsSelect column={column} session={session} />
+        </Table.Td>
+      )}
       <Table.Td>
         <ImporterDefaultField fieldName={column.field} session={session} />
       </Table.Td>
@@ -199,6 +269,15 @@ export default function ImporterColumnSelector({
     ];
   }, [session.availableColumns]);
 
+  const showImportAsColumn = useMemo(() => {
+    return session.columnMappings.some(
+      (column: any) =>
+        column.import_as &&
+        Array.isArray(column.import_as) &&
+        column.import_as.length > 0
+    );
+  }, [session.columnMappings]);
+
   return (
     <Stack gap='xs'>
       <Paper shadow='xs' p='xs'>
@@ -224,6 +303,7 @@ export default function ImporterColumnSelector({
             <Table.Th>{t`Database Field`}</Table.Th>
             <Table.Th>{t`Field Description`}</Table.Th>
             <Table.Th>{t`Imported Column`}</Table.Th>
+            {showImportAsColumn && <Table.Th>{t`Import as`}</Table.Th>}
             <Table.Th>{t`Default Value`}</Table.Th>
           </Table.Tr>
         </Table.Thead>
@@ -235,6 +315,7 @@ export default function ImporterColumnSelector({
                 session={session}
                 column={column}
                 options={columnOptions}
+                showImportAsColumn={showImportAsColumn}
               />
             );
           })}
