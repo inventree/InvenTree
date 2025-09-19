@@ -6,8 +6,9 @@ from django.db.models import Count, F, Q
 from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
 
-from django_filters import rest_framework as rest_filters
+import django_filters.rest_framework.filters as rest_filters
 from django_filters.rest_framework import DjangoFilterBackend
+from django_filters.rest_framework.filterset import FilterSet
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
@@ -99,7 +100,7 @@ class CategoryMixin:
         return ctx
 
 
-class CategoryFilter(rest_filters.FilterSet):
+class CategoryFilter(FilterSet):
     """Custom filterset class for the PartCategoryList endpoint."""
 
     class Meta:
@@ -283,11 +284,11 @@ class CategoryDetail(CategoryMixin, CustomRetrieveUpdateDestroyAPI):
         return super().destroy(
             request,
             *args,
-            **dict(
-                kwargs,
-                delete_parts=delete_parts,
-                delete_child_categories=delete_child_categories,
-            ),
+            **{
+                **kwargs,
+                'delete_parts': delete_parts,
+                'delete_child_categories': delete_child_categories,
+            },
         )
 
 
@@ -400,7 +401,7 @@ class PartInternalPriceList(DataExportViewMixin, ListCreateAPI):
     ordering = 'quantity'
 
 
-class PartTestTemplateFilter(rest_filters.FilterSet):
+class PartTestTemplateFilter(FilterSet):
     """Custom filterset class for the PartTestTemplateList endpoint."""
 
     class Meta:
@@ -645,7 +646,7 @@ class PartValidateBOM(RetrieveUpdateAPI):
         return Response(serializer.data)
 
 
-class PartFilter(rest_filters.FilterSet):
+class PartFilter(FilterSet):
     """Custom filters for the PartList endpoint.
 
     Uses the django_filters extension framework
@@ -1197,7 +1198,7 @@ class PartDetail(PartMixin, RetrieveUpdateDestroyAPI):
         return response
 
 
-class PartRelatedFilter(rest_filters.FilterSet):
+class PartRelatedFilter(FilterSet):
     """FilterSet for PartRelated objects."""
 
     class Meta:
@@ -1244,7 +1245,7 @@ class PartRelatedDetail(PartRelatedMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for accessing detail view of a PartRelated object."""
 
 
-class PartParameterTemplateFilter(rest_filters.FilterSet):
+class PartParameterTemplateFilter(FilterSet):
     """FilterSet for PartParameterTemplate objects."""
 
     class Meta:
@@ -1378,7 +1379,7 @@ class PartParameterAPIMixin:
         return super().get_serializer(*args, **kwargs)
 
 
-class PartParameterFilter(rest_filters.FilterSet):
+class PartParameterFilter(FilterSet):
     """Custom filters for the PartParameterList API endpoint."""
 
     class Meta:
@@ -1443,7 +1444,7 @@ class PartParameterDetail(PartParameterAPIMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a single PartParameter object."""
 
 
-class PartStocktakeFilter(rest_filters.FilterSet):
+class PartStocktakeFilter(FilterSet):
     """Custom filter for the PartStocktakeList endpoint."""
 
     class Meta:
@@ -1485,7 +1486,7 @@ class PartStocktakeDetail(RetrieveUpdateDestroyAPI):
     serializer_class = part_serializers.PartStocktakeSerializer
 
 
-class BomFilter(rest_filters.FilterSet):
+class BomFilter(FilterSet):
     """Custom filters for the BOM list."""
 
     class Meta:

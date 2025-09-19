@@ -498,7 +498,7 @@ msgstr "Selection Lists"
 
 #: lib/enums/ModelInformation.tsx:274
 #: src/components/barcodes/BarcodeInput.tsx:114
-#: src/components/dashboard/DashboardLayout.tsx:224
+#: src/components/dashboard/DashboardLayout.tsx:281
 #: src/components/editors/NotesEditor.tsx:74
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:157
 #: src/components/forms/fields/ApiFormField.tsx:263
@@ -867,15 +867,15 @@ msgstr "Error updating order"
 msgid "Overdue"
 msgstr "Overdue"
 
-#: src/components/dashboard/DashboardLayout.tsx:225
+#: src/components/dashboard/DashboardLayout.tsx:282
 msgid "Failed to load dashboard widgets."
 msgstr "Failed to load dashboard widgets."
 
-#: src/components/dashboard/DashboardLayout.tsx:235
+#: src/components/dashboard/DashboardLayout.tsx:293
 msgid "No Widgets Selected"
 msgstr "No Widgets Selected"
 
-#: src/components/dashboard/DashboardLayout.tsx:238
+#: src/components/dashboard/DashboardLayout.tsx:296
 msgid "Use the menu to add widgets to the dashboard"
 msgstr "Use the menu to add widgets to the dashboard"
 
@@ -2160,7 +2160,7 @@ msgid "No items"
 msgstr "No items"
 
 #: src/components/items/TransferList.tsx:161
-#: src/components/render/Stock.tsx:95
+#: src/components/render/Stock.tsx:102
 #: src/pages/part/PartDetail.tsx:984
 #: src/pages/stock/StockDetail.tsx:262
 #: src/pages/stock/StockDetail.tsx:913
@@ -2837,7 +2837,7 @@ msgstr "Error occurred while loading plugin content"
 #~ msgid "Unknown model: {model}"
 #~ msgstr "Unknown model: {model}"
 
-#: src/components/render/Instance.tsx:246
+#: src/components/render/Instance.tsx:249
 msgid "Unknown model: {model_name}"
 msgstr "Unknown model: {model_name}"
 
@@ -2888,8 +2888,8 @@ msgid "Category"
 msgstr "Category"
 
 #: src/components/render/Stock.tsx:36
-#: src/components/render/Stock.tsx:107
-#: src/components/render/Stock.tsx:125
+#: src/components/render/Stock.tsx:114
+#: src/components/render/Stock.tsx:132
 #: src/forms/BuildForms.tsx:766
 #: src/forms/PurchaseOrderForms.tsx:592
 #: src/forms/StockForms.tsx:734
@@ -2911,7 +2911,7 @@ msgstr "Category"
 msgid "Location"
 msgstr "Location"
 
-#: src/components/render/Stock.tsx:92
+#: src/components/render/Stock.tsx:99
 #: src/pages/stock/StockDetail.tsx:195
 #: src/pages/stock/StockDetail.tsx:901
 #: src/tables/build/BuildAllocatedStockTable.tsx:121
@@ -2920,7 +2920,7 @@ msgstr "Location"
 msgid "Serial Number"
 msgstr "Serial Number"
 
-#: src/components/render/Stock.tsx:97
+#: src/components/render/Stock.tsx:104
 #: src/components/wizards/OrderPartsWizard.tsx:222
 #: src/forms/BuildForms.tsx:243
 #: src/forms/BuildForms.tsx:605
@@ -2948,7 +2948,7 @@ msgstr "Serial Number"
 msgid "Quantity"
 msgstr "Quantity"
 
-#: src/components/render/Stock.tsx:110
+#: src/components/render/Stock.tsx:117
 #: src/forms/BuildForms.tsx:312
 #: src/forms/BuildForms.tsx:386
 #: src/forms/BuildForms.tsx:450

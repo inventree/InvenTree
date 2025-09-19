@@ -1064,7 +1064,7 @@ class Build(
         lines = lines.exclude(bom_item__consumable=True)
         lines = annotate_allocated_quantity(lines)
 
-        for build_line in lines:
+        for build_line in lines:  # type: ignore[non-iterable]
             reduce_by = build_line.allocated - build_line.quantity
 
             if reduce_by <= 0:
@@ -1359,7 +1359,7 @@ class Build(
                         except (ValidationError, serializers.ValidationError) as exc:
                             # Catch model errors and re-throw as DRF errors
                             raise ValidationError(
-                                detail=serializers.as_serializer_error(exc)
+                                exc.message, detail=serializers.as_serializer_error(exc)
                             )
 
                     if unallocated_quantity <= 0:

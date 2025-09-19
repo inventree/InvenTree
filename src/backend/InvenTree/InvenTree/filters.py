@@ -6,7 +6,8 @@ from django.conf import settings
 from django.utils import timezone
 from django.utils.timezone import make_aware
 
-from django_filters import rest_framework as rest_filters
+import django_filters.rest_framework.backends as drf_backend
+import django_filters.rest_framework.filters as rest_filters
 from rest_framework import filters
 
 import InvenTree.helpers
@@ -20,7 +21,7 @@ class InvenTreeDateFilter(rest_filters.DateFilter):
         if settings.USE_TZ and value is not None:
             tz = timezone.get_current_timezone()
             value = datetime(value.year, value.month, value.day)
-            value = make_aware(value, tz, True)
+            value = make_aware(value, timezone=tz, is_dst=True)
 
         return super().filter(qs, value)
 
@@ -192,17 +193,17 @@ class NumberOrNullFilter(rest_filters.NumberFilter):
 
 
 SEARCH_ORDER_FILTER = [
-    rest_filters.DjangoFilterBackend,
+    drf_backend.DjangoFilterBackend,
     InvenTreeSearchFilter,
     filters.OrderingFilter,
 ]
 
 SEARCH_ORDER_FILTER_ALIAS = [
-    rest_filters.DjangoFilterBackend,
+    drf_backend.DjangoFilterBackend,
     InvenTreeSearchFilter,
     InvenTreeOrderingFilter,
 ]
 
-ORDER_FILTER = [rest_filters.DjangoFilterBackend, filters.OrderingFilter]
+ORDER_FILTER = [drf_backend.DjangoFilterBackend, filters.OrderingFilter]
 
-ORDER_FILTER_ALIAS = [rest_filters.DjangoFilterBackend, InvenTreeOrderingFilter]
+ORDER_FILTER_ALIAS = [drf_backend.DjangoFilterBackend, InvenTreeOrderingFilter]

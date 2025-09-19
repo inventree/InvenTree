@@ -55,12 +55,11 @@ jobs:
 
   # Build the docker image
   build:
+    name: Docker Build Test
     needs: paths-filter
     if: needs.paths-filter.outputs.docker == 'true' || github.event_name == 'release' || github.event_name == 'push' || contains(github.event.pull_request.labels.*.name, 'full-run')
     permissions:
       contents: read
-      packages: write
-      id-token: write
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       python_version: "3.11"
@@ -71,16 +70,6 @@ jobs:
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # pin@v5.0.0
         with:
           persist-credentials: false
-      - name: Set Up Python ${{ env.python_version }}
-        uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c # pin@v6.0.0
-        with:
-          python-version: ${{ env.python_version }}
-      - name: Version Check
-        run: |
-          pip install --require-hashes -r contrib/dev_reqs/requirements.txt
-          python3 .github/scripts/version_check.py
-          echo "git_commit_hash=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
-          echo "git_commit_date=$(git show -s --format=%ci)" >> $GITHUB_ENV
       - name: Test Docker Image
         id: test-docker
         run: |
@@ -124,13 +113,59 @@ jobs:
       - name: Run Unit Tests
         run: |
           echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> contrib/container/docker.dev.env
-          docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run --rm inventree-dev-server invoke dev.test --check --disable-pty --translations
+          docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run --rm inventree-dev-server invoke dev.test --disable-pty --translations
+
+  # Run migration test
+  migration_test:
+    name: Migration Test
+    needs: paths-filter
+    if: needs.paths-filter.outputs.docker == 'true' || github.event_name == 'release' || github.event_name == 'push'
+    permissions:
+      contents: read
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      python_version: "3.11"
+    runs-on: ubuntu-latest # in the future we can try to use alternative runners here
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
       - name: Run Migration Tests
         run: |
-          docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run --rm inventree-dev-server invoke dev.test --check --migrations --translations
-      - name: Clean up test folder
+          docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run --rm inventree-dev-server invoke update
+          docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run --rm inventree-dev-server invoke dev.setup-dev
+          docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run --rm inventree-dev-server invoke dev.test --migrations --translations
+
+  # Build and publish
+  publish:
+    name: Publish Docker Image
+    needs: [build, migration_test]
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      python_version: "3.11"
+    runs-on: ubuntu-latest # in the future we can try to use alternative runners here
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
+      - name: Set Up Python ${{ env.python_version }}
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # pin@v5.6.0
+        with:
+          python-version: ${{ env.python_version }}
+      - name: Version Check
         run: |
-          rm -rf InvenTree/_testfolder
+          pip install --require-hashes -r contrib/dev_reqs/requirements.txt
+          python3 .github/scripts/version_check.py
+          echo "git_commit_hash=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+          echo "git_commit_date=$(git show -s --format=%ci)" >> $GITHUB_ENV
       - name: Set up QEMU
         if: github.event_name != 'pull_request'
         uses: docker/setup-qemu-action@29109295f81e9208d7d86ff1c6c12d2833863392 # pin@v3.6.0
@@ -139,7 +174,7 @@ jobs:
         uses: docker/setup-buildx-action@e468171a9de216ec08956ac3ada2f0791b6bd435 # pin@v3.11.1
       - name: Set up cosign
         if: github.event_name != 'pull_request'
-        uses: sigstore/cosign-installer@d58896d6a1865668819e1d91763c7751a165e159 # pin@v3.9.2
+        uses: sigstore/cosign-installer@d7543c93d881b35a8faa02e8e3605f69b7a1ce62 # pin@v3.10.0
       - name: Check if Dockerhub login is required
         id: docker_login
         run: |
