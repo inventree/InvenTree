@@ -71,9 +71,7 @@ function PartThumbComponent({
     color = hoverColor;
   }
 
-  const src: string | undefined = element?.image
-    ? `/media/${element?.image}`
-    : undefined;
+  const src: string | undefined = element?.image ? element?.image : undefined;
 
   return (
     <Paper
