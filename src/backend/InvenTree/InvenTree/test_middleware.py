@@ -1,5 +1,6 @@
 """Tests for middleware functions."""
 
+from django.conf import settings
 from django.http import Http404
 from django.urls import reverse
 
@@ -87,36 +88,72 @@ class MiddlewareTests(InvenTreeTestCase):
                 log_error('testpath')
             check(1)
 
+    def do_positive_test(self, response):
+        """Helper function to check for positive test results."""
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, 'INVE-E7')
+        self.assertContains(response, 'window.INVENTREE_SETTINGS')
+
     def test_site_url_checks(self):
         """Test that the site URL check is correctly working."""
-        # correctly set
+        # simple setup
         with self.settings(
             SITE_URL='http://testserver', CSRF_TRUSTED_ORIGINS=['http://testserver']
         ):
             response = self.client.get(reverse('web'))
-            self.assertEqual(response.status_code, 200)
-            self.assertNotContains(response, 'INVE-E7')
-            self.assertContains(response, 'window.INVENTREE_SETTINGS')
+            self.do_positive_test(response)
 
-        # wrongly set site URL
-        with self.settings(SITE_URL='https://example.com'):
+        # simple setup with wildcard
+        with self.settings(
+            SITE_URL='http://testserver', CSRF_TRUSTED_ORIGINS=['http://*.testserver']
+        ):
             response = self.client.get(reverse('web'))
-            self.assertEqual(response.status_code, 500)
-            self.assertContains(
-                response,
-                'INVE-E7: The used path `http://testserver` does not match',
-                status_code=500,
-            )
-            self.assertNotContains(
-                response, 'window.INVENTREE_SETTINGS', status_code=500
-            )
+            self.do_positive_test(response)
 
+    def test_site_url_checks_multi(self):
+        """Test that the site URL check is correctly working in a multi-site setup."""
+        # multi-site setup with trusted origins
+        with self.settings(
+            SITE_URL='https://testserver.example.com',
+            CSRF_TRUSTED_ORIGINS=[
+                'http://testserver',
+                'https://testserver.example.com',
+            ],
+        ):
+            # this will run with testserver as host by default
+            response = self.client.get(reverse('web'))
+            self.do_positive_test(response)
+
+            # Now test with the "outside" url name
+            response = self.client.get(
+                'https://testserver.example.com/web/',
+                SERVER_NAME='testserver.example.com',
+            )
+            self.do_positive_test(response)
+
+            # A non-trsuted origin must still fail in multi - origin setup
+            response = self.client.get(
+                'https://not-my-testserver.example.com/web/',
+                SERVER_NAME='not-my-testserver.example.com',
+            )
+            self.assertEqual(response.status_code, 500)
+
+            # Even if it is a subdomain
+            response = self.client.get(
+                'https://not-my.testserver.example.com/web/',
+                SERVER_NAME='not-my.testserver.example.com',
+            )
+            self.assertEqual(response.status_code, 500)
+
+    def test_site_url_checks_fails(self):
+        """Test that the site URL check is correctly failing.
+
+        Important for security.
+        """
         # wrongly set but in debug -> is ignored
         with self.settings(SITE_URL='https://example.com', DEBUG=True):
             response = self.client.get(reverse('web'))
-            self.assertEqual(response.status_code, 200)
-            self.assertNotContains(response, 'INVE-E7')
-            self.assertContains(response, 'window.INVENTREE_SETTINGS')
+            self.do_positive_test(response)
 
         # wrongly set cors
         with self.settings(
@@ -133,10 +170,32 @@ class MiddlewareTests(InvenTreeTestCase):
                 response, 'window.INVENTREE_SETTINGS', status_code=500
             )
 
+        # wrongly set site URL
         with self.settings(
-            SITE_URL='http://testserver', CSRF_TRUSTED_ORIGINS=['http://*.testserver']
+            SITE_URL='https://example.com',
+            CSRF_TRUSTED_ORIGINS=['http://localhost:8000'],
         ):
             response = self.client.get(reverse('web'))
-            self.assertEqual(response.status_code, 200)
-            self.assertNotContains(response, 'INVE-E7')
-            self.assertContains(response, 'window.INVENTREE_SETTINGS')
+            self.assertEqual(response.status_code, 500)
+            self.assertContains(
+                response, 'INVE-E7: The used path `http://testserver` ', status_code=500
+            )
+            self.assertNotContains(
+                response, 'window.INVENTREE_SETTINGS', status_code=500
+            )
+
+            # Log stuff # TODO remove
+            print(
+                '###DBG-TST###',
+                'site',
+                settings.SITE_URL,
+                'trusted',
+                settings.CSRF_TRUSTED_ORIGINS,
+            )
+
+            # Check that the correct step triggers the error message
+            self.assertContains(
+                response,
+                'INVE-E7: The used path `http://testserver` does not match',
+                status_code=500,
+            )
