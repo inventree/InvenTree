@@ -2,6 +2,7 @@
 
 import socket
 import threading
+from typing import Any
 
 import structlog
 
@@ -35,6 +36,11 @@ def cache_host():
 def cache_port() -> int:
     """Return the cache port."""
     return cache_setting('port', '6379', typecast=int)
+
+
+def cache_password():
+    """Return the cache password."""
+    return cache_setting('password', None)
 
 
 def is_global_cache_enabled() -> bool:
@@ -77,9 +83,17 @@ def get_cache_config(global_cache: bool) -> dict:
         A dictionary containing the cache configuration options.
     """
     if global_cache:
+        # Build Redis URL with optional password
+        password = cache_password()
+
+        if password:
+            redis_url = f'redis://:{password}@{cache_host()}:{cache_port()}/0'
+        else:
+            redis_url = f'redis://{cache_host()}:{cache_port()}/0'
+
         return {
             'BACKEND': 'django_redis.cache.RedisCache',
-            'LOCATION': f'redis://{cache_host()}:{cache_port()}/0',
+            'LOCATION': redis_url,
             'OPTIONS': {
                 'CLIENT_CLASS': 'django_redis.client.DefaultClient',
                 'SOCKET_CONNECT_TIMEOUT': cache_setting(
@@ -127,7 +141,7 @@ def delete_session_cache() -> None:
         del thread_data.request_cache
 
 
-def get_session_cache(key: str) -> any:
+def get_session_cache(key: str) -> Any:
     """Return a cached value from the session cache."""
     # Only return a cached value if the request object is available too
     if not hasattr(thread_data, 'request'):
@@ -139,7 +153,7 @@ def get_session_cache(key: str) -> any:
         return val
 
 
-def set_session_cache(key: str, value: any) -> None:
+def set_session_cache(key: str, value: Any) -> None:
     """Set a cached value in the session cache."""
     # Only set a cached value if the request object is available too
     if not hasattr(thread_data, 'request'):

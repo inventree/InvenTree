@@ -84,6 +84,7 @@ class ReportTest(InvenTreeAPITestCase):
         # Filter by items
         part_pk = Part.objects.first().pk
         report = ReportTemplate.objects.filter(model_type='part').first()
+        assert report
 
         try:
             response = self.get(
@@ -236,6 +237,7 @@ class ReportTest(InvenTreeAPITestCase):
         url = reverse('api-report-template-list')
 
         template = ReportTemplate.objects.first()
+        assert template
 
         detail_url = reverse('api-report-template-detail', kwargs={'pk': template.pk})
 
@@ -349,6 +351,47 @@ class LabelTest(InvenTreeAPITestCase):
         self.assertEqual(output.plugin, 'inventreelabel')
         self.assertTrue(output.output.name.endswith('.pdf'))
 
+    def test_filters(self):
+        """Test that template filters are correctly validated."""
+        from django.core.exceptions import ValidationError
+
+        from InvenTree.helpers import validateFilterString
+
+        invalid = [
+            'name=widget, category=6, invalid_field=123',
+            'category__in=[1,',
+            'foo=bar',
+        ]
+
+        valid = [
+            'name=widget, category=6',
+            'category__in=[1,2,3]',
+            'name=widget  , id__in  =    [99, 199        ]   ',
+            'pk__in=[1,2,3], active=True',
+            'pk__in=[1, 99], category__in=[1,2,3]',
+        ]
+
+        template = LabelTemplate.objects.filter(enabled=True, model_type='part').first()
+
+        for f in invalid:
+            with self.assertRaises(ValidationError):
+                template.filters = f
+                template.clean()
+
+        for f in valid:
+            template.filters = f
+            template.clean()
+
+        # Test a specific example
+        example = '    location__in =[1,2 , 3 ] , status= 3  , id__in=[4,5,6]  , part__active=False'
+
+        result = validateFilterString(example, model=StockItem)
+
+        self.assertEqual(result['location__in'], [1, 2, 3])
+        self.assertEqual(result['status'], '3')
+        self.assertEqual(result['id__in'], [4, 5, 6])
+        self.assertEqual(result['part__active'], 'False')
+
 
 class PrintTestMixins:
     """Mixin that enables e2e printing tests."""
@@ -357,12 +400,9 @@ class PrintTestMixins:
 
     def do_activate_plugin(self):
         """Activate the 'samplelabel' plugin."""
+        registry.set_plugin_state(self.plugin_ref, True)
         plugin = registry.get_plugin(self.plugin_ref)
         self.assertIsNotNone(plugin)
-        config = plugin.plugin_config()
-        self.assertIsNotNone(config)
-        config.active = True
-        config.save()
 
     def run_print_test(self, qs, model_type, label: bool = True):
         """Run tests on single and multiple page printing.
@@ -377,6 +417,7 @@ class PrintTestMixins:
 
         qs = qs.objects.all()
         template = mdl.objects.filter(enabled=True, model_type=model_type).first()
+        assert template
         plugin = registry.get_plugin(self.plugin_ref)
 
         # Single page printing
@@ -396,7 +437,7 @@ class PrintTestMixins:
             },
             expected_code=201,
             max_query_time=15,
-            max_query_count=500 * len(qs),
+            max_query_count=150 * len(qs),
         )
 
         # Test with wrong dimensions
@@ -437,6 +478,7 @@ class TestReportTest(PrintTestMixins, ReportTest):
         template = ReportTemplate.objects.filter(
             enabled=True, model_type='stockitem'
         ).first()
+        assert template
 
         self.assertIsNotNone(template)
 

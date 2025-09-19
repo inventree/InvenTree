@@ -334,6 +334,8 @@ class PartPricingTests(InvenTreeTestCase):
         po.status = PurchaseOrderStatus.COMPLETE.value
         po.save()
 
+        set_global_setting(order.models.PurchaseOrder.UNLOCK_SETTING, True)
+
         pricing.update_purchase_cost()
 
         # Cost is still null, as the lines have not been received

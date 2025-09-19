@@ -6,7 +6,8 @@ from django.conf import settings
 from django.utils import timezone
 from django.utils.timezone import make_aware
 
-from django_filters import rest_framework as rest_filters
+import django_filters.rest_framework.backends as drf_backend
+import django_filters.rest_framework.filters as rest_filters
 from rest_framework import filters
 
 import InvenTree.helpers
@@ -20,7 +21,7 @@ class InvenTreeDateFilter(rest_filters.DateFilter):
         if settings.USE_TZ and value is not None:
             tz = timezone.get_current_timezone()
             value = datetime(value.year, value.month, value.day)
-            value = make_aware(value, tz, True)
+            value = make_aware(value, timezone=tz, is_dst=True)
 
         return super().filter(qs, value)
 
@@ -159,18 +160,50 @@ class InvenTreeOrderingFilter(filters.OrderingFilter):
         return ordering
 
 
+class NumberOrNullFilter(rest_filters.NumberFilter):
+    """Custom NumberFilter that allows filtering by numeric values or the literal string "null".
+
+    This allows matching either numeric values or NULL values in the database.
+
+    Example Usage:
+        ?my_field=20     → filters rows where my_field=20
+        ?my_field=null   → filters rows where my_field IS NULL
+    """
+
+    def filter(self, qs, value):
+        """Return queryset filtered by value or NULL if 'null' is passed."""
+        if value == 'null':
+            return qs.filter(**{self.field_name: None})
+        return super().filter(qs, value)
+
+    @property
+    def field(self):
+        """Allow 'null' as valid input in filter parameters."""
+        field = super().field
+        original_clean = field.clean
+
+        def custom_clean(val):
+            """Custom clean function for filter input values."""
+            if InvenTree.helpers.isNull(val) and val is not None:
+                return 'null'
+            return original_clean(val)
+
+        field.clean = custom_clean
+        return field
+
+
 SEARCH_ORDER_FILTER = [
-    rest_filters.DjangoFilterBackend,
+    drf_backend.DjangoFilterBackend,
     InvenTreeSearchFilter,
     filters.OrderingFilter,
 ]
 
 SEARCH_ORDER_FILTER_ALIAS = [
-    rest_filters.DjangoFilterBackend,
+    drf_backend.DjangoFilterBackend,
     InvenTreeSearchFilter,
     InvenTreeOrderingFilter,
 ]
 
-ORDER_FILTER = [rest_filters.DjangoFilterBackend, filters.OrderingFilter]
+ORDER_FILTER = [drf_backend.DjangoFilterBackend, filters.OrderingFilter]
 
-ORDER_FILTER_ALIAS = [rest_filters.DjangoFilterBackend, InvenTreeOrderingFilter]
+ORDER_FILTER_ALIAS = [drf_backend.DjangoFilterBackend, InvenTreeOrderingFilter]

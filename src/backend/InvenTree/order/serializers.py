@@ -14,7 +14,7 @@ from django.db.models import (
     Value,
     When,
 )
-from django.db.models.functions import Coalesce
+from django.db.models.functions import Coalesce, Greatest
 from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
@@ -755,18 +755,10 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
 
     line_item = serializers.PrimaryKeyRelatedField(
         queryset=order.models.PurchaseOrderLineItem.objects.all(),
-        many=False,
         allow_null=False,
         required=True,
         label=_('Line Item'),
     )
-
-    def validate_line_item(self, item):
-        """Validation for the 'line_item' field."""
-        if item.order != self.context['order']:
-            raise ValidationError(_('Line item does not match purchase order'))
-
-        return item
 
     location = serializers.PrimaryKeyRelatedField(
         queryset=stock.models.StockLocation.objects.all(),
@@ -864,19 +856,12 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
         quantity = data['quantity']
         serial_numbers = data.get('serial_numbers', '').strip()
 
-        base_part = line_item.part.part
-        base_quantity = line_item.part.base_quantity(quantity)
-
-        # Does the quantity need to be "integer" (for trackable parts?)
-        if base_part.trackable and Decimal(base_quantity) != int(base_quantity):
-            raise ValidationError({
-                'quantity': _(
-                    'An integer quantity must be provided for trackable parts'
-                )
-            })
-
         # If serial numbers are provided
         if serial_numbers:
+            supplier_part = line_item.part
+            base_part = supplier_part.part
+            base_quantity = supplier_part.base_quantity(quantity)
+
             try:
                 # Pass the serial numbers through to the parent serializer once validated
                 data['serials'] = extract_serial_numbers(
@@ -940,6 +925,9 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
         if len(items) == 0:
             raise ValidationError(_('Line items must be provided'))
 
+        # Ensure barcodes are unique
+        unique_barcodes = set()
+
         # Check if the location is not specified for any particular item
         for item in items:
             line = item['line_item']
@@ -957,10 +945,6 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
                     'location': _('Destination location must be specified')
                 })
 
-        # Ensure barcodes are unique
-        unique_barcodes = set()
-
-        for item in items:
             barcode = item.get('barcode', '')
 
             if barcode:
@@ -971,7 +955,7 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
 
         return data
 
-    def save(self):
+    def save(self) -> list[stock.models.StockItem]:
         """Perform the actual database transaction to receive purchase order items."""
         data = self.validated_data
 
@@ -983,33 +967,16 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
         # Location can be provided, or default to the order destination
         location = data.get('location', order.destination)
 
-        # Now we can actually receive the items into stock
-        with transaction.atomic():
-            for item in items:
-                # Select location (in descending order of priority)
-                loc = (
-                    item.get('location', None)
-                    or location
-                    or item['line_item'].get_destination()
-                )
+        try:
+            items = order.receive_line_items(
+                location, items, request.user if request else None
+            )
+        except (ValidationError, DjangoValidationError) as exc:
+            # Catch model errors and re-throw as DRF errors
+            raise ValidationError(detail=serializers.as_serializer_error(exc))
 
-                try:
-                    order.receive_line_item(
-                        item['line_item'],
-                        loc,
-                        item['quantity'],
-                        request.user if request else None,
-                        status=item['status'],
-                        barcode=item.get('barcode', ''),
-                        batch_code=item.get('batch_code', ''),
-                        expiry_date=item.get('expiry_date', None),
-                        packaging=item.get('packaging', ''),
-                        serials=item.get('serials', None),
-                        notes=item.get('note', None),
-                    )
-                except (ValidationError, DjangoValidationError) as exc:
-                    # Catch model errors and re-throw as DRF errors
-                    raise ValidationError(detail=serializers.as_serializer_error(exc))
+        # Returns a list of the created items
+        return items
 
 
 @register_importer()
@@ -1205,10 +1172,14 @@ class SalesOrderLineItemSerializer(
         )
 
         queryset = queryset.annotate(
-            available_stock=ExpressionWrapper(
-                F('total_stock')
-                - F('allocated_to_sales_orders')
-                - F('allocated_to_build_orders'),
+            available_stock=Greatest(
+                ExpressionWrapper(
+                    F('total_stock')
+                    - F('allocated_to_sales_orders')
+                    - F('allocated_to_build_orders'),
+                    output_field=models.DecimalField(),
+                ),
+                0,
                 output_field=models.DecimalField(),
             )
         )
@@ -1232,10 +1203,14 @@ class SalesOrderLineItemSerializer(
         )
 
         queryset = queryset.annotate(
-            available_variant_stock=ExpressionWrapper(
-                F('variant_stock_total')
-                - F('variant_bo_allocations')
-                - F('variant_so_allocations'),
+            available_variant_stock=Greatest(
+                ExpressionWrapper(
+                    F('variant_stock_total')
+                    - F('variant_bo_allocations')
+                    - F('variant_so_allocations'),
+                    output_field=models.DecimalField(),
+                ),
+                0,
                 output_field=models.DecimalField(),
             )
         )
@@ -1422,8 +1397,14 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
     part_detail = PartBriefSerializer(
         source='item.part', many=False, read_only=True, allow_null=True
     )
-    item_detail = stock.serializers.StockItemSerializerBrief(
-        source='item', many=False, read_only=True, allow_null=True
+    item_detail = stock.serializers.StockItemSerializer(
+        source='item',
+        many=False,
+        read_only=True,
+        allow_null=True,
+        part_detail=False,
+        location_detail=False,
+        supplier_part_detail=False,
     )
     location_detail = stock.serializers.LocationBriefSerializer(
         source='item.location', many=False, read_only=True, allow_null=True
@@ -1433,7 +1414,11 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
     )
 
     shipment_detail = SalesOrderShipmentSerializer(
-        source='shipment', order_detail=False, many=False, read_only=True
+        source='shipment',
+        order_detail=False,
+        many=False,
+        read_only=True,
+        allow_null=True,
     )
 
 

@@ -2,13 +2,14 @@ import { t } from '@lingui/core/macro';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { AddItemButton } from '@lib/components/AddItemButton';
+import { type RowAction, RowEditAction } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { navigateToLink } from '@lib/functions/Navigation';
 import type { TableFilter } from '@lib/types/Filters';
-import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { companyFields } from '../../forms/CompanyForms';
 import {
   useCreateApiFormModal,
@@ -22,7 +23,6 @@ import {
   DescriptionColumn
 } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { type RowAction, RowEditAction } from '../RowActions';
 
 /**
  * A table which displays a list of company records,
@@ -44,6 +44,7 @@ export function CompanyTable({
     return [
       {
         accessor: 'name',
+        title: t`Company`,
         sortable: true,
         switchable: false,
         render: (record: any) => {

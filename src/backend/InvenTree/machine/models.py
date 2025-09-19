@@ -1,7 +1,7 @@
 """Models for the machine app."""
 
 import uuid
-from typing import Literal
+from typing import Literal, Optional
 
 from django.contrib import admin
 from django.db import models
@@ -145,6 +145,12 @@ class MachineSetting(common.models.BaseInvenTreeSetting):
         MACHINE = 'M', _('Machine')
         DRIVER = 'D', _('Driver')
 
+    def to_native_value(self):
+        """Return the 'native' value of this setting."""
+        return self.__class__.get_setting(
+            self.key, machine_config=self.machine_config, config_type=self.config_type
+        )
+
     machine_config = models.ForeignKey(
         MachineConfig,
         related_name='settings',
@@ -186,7 +192,7 @@ class MachineSetting(common.models.BaseInvenTreeSetting):
         If not provided, we'll look at the machine registry to see what settings this machine driver requires
         """
         if 'settings' not in kwargs:
-            machine_config: MachineConfig = kwargs.pop('machine_config', None)
+            machine_config: Optional[MachineConfig] = kwargs.pop('machine_config', None)
             if machine_config and machine_config.machine:
                 config_type = kwargs.get('config_type')
                 if config_type == cls.ConfigType.DRIVER:

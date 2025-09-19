@@ -3,8 +3,10 @@
 import io
 
 from django.core.files.base import ContentFile
+from django.db.models import Prefetch
 from django.utils.translation import gettext_lazy as _
 
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 from sql_util.utils import SubqueryCount
 from taggit.serializers import TagListSerializerField
@@ -52,6 +54,7 @@ class CompanyBriefSerializer(InvenTreeModelSerializer):
             'image',
             'thumbnail',
             'currency',
+            'tax_id',
         ]
         read_only_fields = ['currency']
 
@@ -145,6 +148,7 @@ class CompanySerializer(
             'remote_image',
             'address_count',
             'primary_address',
+            'tax_id',
         ]
 
     @staticmethod
@@ -159,17 +163,37 @@ class CompanySerializer(
 
         queryset = queryset.annotate(address_count=SubqueryCount('addresses'))
 
+        queryset = queryset.prefetch_related(
+            Prefetch(
+                'addresses',
+                queryset=Address.objects.filter(primary=True),
+                to_attr='primary_address_list',
+            )
+        )
+
         return queryset
 
-    address = serializers.CharField(
+    address = serializers.SerializerMethodField(
         label=_(
             'Return the string representation for the primary address. This property exists for backwards compatibility.'
         ),
         allow_null=True,
-        read_only=True,
     )
+    primary_address = serializers.SerializerMethodField(allow_null=True)
 
-    primary_address = AddressSerializer(allow_null=True, read_only=True)
+    @extend_schema_field(serializers.CharField())
+    def get_address(self, obj):
+        """Return string version of primary address (for backwards compatibility)."""
+        if hasattr(obj, 'primary_address_list') and obj.primary_address_list:
+            return str(obj.primary_address_list[0])
+        return None
+
+    @extend_schema_field(AddressSerializer())
+    def get_primary_address(self, obj):
+        """Return full address object for primary address using prefetch data."""
+        if hasattr(obj, 'primary_address_list') and obj.primary_address_list:
+            return AddressSerializer(obj.primary_address_list[0]).data
+        return None
 
     image = InvenTreeImageSerializerField(required=False, allow_null=True)
 

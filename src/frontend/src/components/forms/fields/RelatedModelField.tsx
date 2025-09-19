@@ -46,6 +46,14 @@ export function RelatedModelField({
   // Keep track of the primary key value for this field
   const [pk, setPk] = useState<number | null>(null);
 
+  // Handle condition where the form is rebuilt dynamically
+  useEffect(() => {
+    const value = field.value || pk;
+    if (value && value != form.getValues()[fieldName]) {
+      form.setValue(fieldName, value);
+    }
+  }, [pk, field.value]);
+
   const [offset, setOffset] = useState<number>(0);
 
   const [initialData, setInitialData] = useState<{}>({});
@@ -54,17 +62,74 @@ export function RelatedModelField({
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
+  // Auto-fill the field with data from the API
+  useEffect(() => {
+    // If there is *no value defined*, and autoFill is enabled, then fetch data from the API
+    if (!definition.autoFill || !definition.api_url) {
+      return;
+    }
+
+    if (field.value != undefined) {
+      return;
+    }
+
+    // Construct parameters for auto-filling the field
+    const params = {
+      ...(definition?.filters ?? {}),
+      ...(definition?.autoFillFilters ?? {})
+    };
+
+    api
+      .get(definition.api_url, {
+        params: {
+          ...params,
+          limit: 1,
+          offset: 0
+        }
+      })
+      .then((response) => {
+        const data: any = response?.data ?? {};
+
+        if (data.count === 1 && data.results?.length === 1) {
+          // If there is only a single result, set the field value to that result
+          const pk_field = definition.pk_field ?? 'pk';
+          if (data.results[0][pk_field]) {
+            const value = {
+              value: data.results[0][pk_field],
+              data: data.results[0]
+            };
+
+            // Run custom callback for this field (if provided)
+            if (definition.onValueChange) {
+              definition.onValueChange(
+                data.results[0][pk_field],
+                data.results[0]
+              );
+            }
+
+            onChange(value);
+            setInitialData(value);
+            dataRef.current = [value];
+          }
+        }
+      });
+  }, [
+    definition.autoFill,
+    definition.api_url,
+    definition.filters,
+    definition.pk_field,
+    field.value
+  ]);
+
   // If an initial value is provided, load from the API
   useEffect(() => {
     // If the value is unchanged, do nothing
     if (field.value === pk) return;
 
-    if (
-      field?.value !== null &&
-      field?.value !== undefined &&
-      field?.value !== ''
-    ) {
-      const url = `${definition.api_url}${field.value}/`;
+    const id = pk || field.value;
+
+    if (id !== null && id !== undefined && id !== '') {
+      const url = `${definition.api_url}${id}/`;
 
       if (!url) {
         setPk(null);
@@ -98,7 +163,12 @@ export function RelatedModelField({
     } else {
       setPk(null);
     }
-  }, [definition.api_url, definition.pk_field, field.value]);
+  }, [
+    definition.api_url,
+    definition.filters,
+    definition.pk_field,
+    field.value
+  ]);
 
   // Search input query
   const [value, setValue] = useState<string>('');
@@ -221,6 +291,8 @@ export function RelatedModelField({
   const fieldDefinition = useMemo(() => {
     return {
       ...definition,
+      autoFill: undefined,
+      modelRenderer: undefined,
       onValueChange: undefined,
       adjustFilters: undefined,
       exclude: undefined,
@@ -299,7 +371,6 @@ export function RelatedModelField({
         filterOption={null}
         onInputChange={(value: any) => {
           setValue(value);
-          resetSearch();
         }}
         onChange={onChange}
         onMenuScrollToBottom={() => setOffset(offset + limit)}

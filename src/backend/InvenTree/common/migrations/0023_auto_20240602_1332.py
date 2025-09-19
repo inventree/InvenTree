@@ -49,18 +49,18 @@ def set_currencies(apps, schema_editor):
     
     value = ','.join(valid_codes)
 
-    if not settings.TESTING:
+    if not settings.TESTING:  # pragma: no cover
         print(f"Found existing currency codes:", value)
 
     setting = InvenTreeSetting.objects.filter(key=key).first()
 
     if setting:
-        if not settings.TESTING:
+        if not settings.TESTING:  # pragma: no cover
             print(f"- Updating existing setting for currency codes")
         setting.value = value
         setting.save()
     else:
-        if not settings.TESTING:
+        if not settings.TESTING:  # pragma: no cover
             print(f"- Creating new setting for currency codes")
         setting = InvenTreeSetting(key=key, value=value)
         setting.save()

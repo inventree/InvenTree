@@ -40,6 +40,8 @@ Configuration of basic server settings:
 {{ globalsetting("INVENTREE_DELETE_TASKS_DAYS") }}
 {{ globalsetting("INVENTREE_DELETE_ERRORS_DAYS") }}
 {{ globalsetting("INVENTREE_DELETE_NOTIFICATIONS_DAYS") }}
+{{ globalsetting("INVENTREE_DELETE_EMAIL_DAYS") }}
+{{ globalsetting("INVENTREE_PROTECT_EMAIL_LOG") }}
 
 
 ### Login Settings
@@ -108,6 +110,7 @@ Configuration of pricing data and currency support:
 {{ globalsetting("CURRENCY_UPDATE_INTERVAL") }}
 {{ globalsetting("PRICING_DECIMAL_PLACES_MIN") }}
 {{ globalsetting("PRICING_DECIMAL_PLACES") }}
+{{ globalsetting("PRICING_AUTO_UPDATE") }}
 {{ globalsetting("PRICING_UPDATE_DAYS") }}
 
 #### Part Pricing
@@ -209,7 +212,6 @@ Configuration of stock item options
 {{ globalsetting("STOCK_ENFORCE_BOM_INSTALLATION") }}
 {{ globalsetting("STOCK_ALLOW_OUT_OF_STOCK_TRANSFER") }}
 {{ globalsetting("TEST_STATION_DATA") }}
-{{ globalsetting("TEST_UPLOAD_CREATE_TEMPLATE") }}
 
 ### Build Orders
 

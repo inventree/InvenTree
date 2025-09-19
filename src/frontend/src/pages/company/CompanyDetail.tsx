@@ -73,8 +73,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
   const {
     instance: company,
     refreshInstance,
-    instanceQuery,
-    requestStatus
+    instanceQuery
   } = useInstance({
     endpoint: ApiEndpoints.company_list,
     pk: id,
@@ -115,6 +114,13 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
         label: t`Email Address`,
         copy: true,
         hidden: !company.email
+      },
+      {
+        type: 'text',
+        name: 'tax_id',
+        label: t`Tax ID`,
+        copy: true,
+        hidden: !company.tax_id
       }
     ];
 
@@ -242,6 +248,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
             allowAdd={false}
             tableName='assigned-stock'
             showLocation={false}
+            allowReturn
             params={{ customer: company.pk }}
           />
         ) : (
@@ -326,7 +333,10 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
     <>
       {editCompany.modal}
       {deleteCompany.modal}
-      <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
+      <InstanceDetail
+        query={instanceQuery}
+        requiredPermission={ModelType.company}
+      >
         <Stack gap='xs'>
           <PageDetail
             title={`${t`Company`}: ${company.name}`}

@@ -8,7 +8,7 @@ from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
 from common.serializers import GenericReferencedSettingSerializer
-from plugin.models import NotificationUserSetting, PluginConfig, PluginSetting
+from plugin.models import PluginConfig, PluginSetting, PluginUserSetting
 
 
 class MetadataSerializer(serializers.ModelSerializer):
@@ -234,9 +234,16 @@ class PluginActivateSerializer(serializers.Serializer):
         help_text=_('Activate this plugin'),
     )
 
-    def update(self, instance, validated_data):
+    def update(self, instance: PluginConfig, validated_data):
         """Apply the new 'active' value to the plugin instance."""
-        instance.activate(validated_data.get('active', True))
+        active = validated_data.get('active', True)
+
+        if not active and instance.is_mandatory():
+            raise ValidationError(
+                'INVE-E10: ' + _('Mandatory plugin cannot be deactivated')
+            )
+
+        instance.activate(active)
         return instance
 
 
@@ -275,14 +282,16 @@ class PluginSettingSerializer(GenericReferencedSettingSerializer):
     plugin = serializers.CharField(source='plugin.key', read_only=True)
 
 
-class NotificationUserSettingSerializer(GenericReferencedSettingSerializer):
-    """Serializer for the PluginSetting model."""
+class PluginUserSettingSerializer(GenericReferencedSettingSerializer):
+    """Serializer for the PluginUserSetting model."""
 
-    MODEL = NotificationUserSetting
-    EXTRA_FIELDS = ['method']
+    MODEL = PluginUserSetting
+    EXTRA_FIELDS = ['plugin', 'user']
 
-    method = serializers.CharField(read_only=True)
-    typ = serializers.CharField(read_only=True)
+    plugin = serializers.CharField(source='plugin.key', read_only=True)
+    user = serializers.PrimaryKeyRelatedField(
+        read_only=True, help_text=_('The user for which this setting applies')
+    )
 
 
 class PluginRegistryErrorSerializer(serializers.Serializer):

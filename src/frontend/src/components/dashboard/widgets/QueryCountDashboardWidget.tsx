@@ -9,6 +9,7 @@ import type { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import { navigateToLink } from '@lib/functions/Navigation';
 import type { InvenTreeIconType } from '@lib/types/Icons';
+import { useDocumentVisibility } from '@mantine/hooks';
 import { useApi } from '../../../contexts/ApiContext';
 import { InvenTreeIcon } from '../../../functions/icons';
 import { useUserState } from '../../../states/UserState';
@@ -32,14 +33,20 @@ function QueryCountWidget({
   const api = useApi();
   const user = useUserState();
   const navigate = useNavigate();
+  const visibility = useDocumentVisibility();
 
   const modelProperties = ModelInformationDict[modelType];
 
   const query = useQuery({
-    queryKey: ['dashboard-query-count', modelType, params],
-    enabled: user.hasViewPermission(modelType),
+    queryKey: ['dashboard-query-count', modelType, params, visibility],
+    enabled: user.hasViewPermission(modelType) && visibility === 'visible',
     refetchOnMount: true,
+    refetchInterval: 10 * 60 * 1000, // 10 minute refetch interval
     queryFn: () => {
+      if (visibility !== 'visible') {
+        return null;
+      }
+
       return api
         .get(apiUrl(modelProperties.api_endpoint), {
           params: {
@@ -88,7 +95,7 @@ function QueryCountWidget({
   }, [query.isFetching, query.isError, query.data]);
 
   return (
-    <Anchor href='#' onClick={onFollowLink}>
+    <Anchor href='#' onClick={onFollowLink} underline='never'>
       <Group
         gap='xs'
         wrap='nowrap'
@@ -133,6 +140,7 @@ export default function QueryCountDashboardWidget({
     title: title,
     description: description,
     enabled: enabled,
+    modelType: modelType,
     minWidth: 2,
     minHeight: 1,
     render: () => (

@@ -42,6 +42,24 @@ class UserAPITests(InvenTreeAPITestCase):
             fields['is_staff']['help_text'], 'Does this user have staff permissions'
         )
 
+    def test_api_url(self):
+        """Test the 'api_url attribute in related API endpoints.
+
+        Ref: https://github.com/inventree/InvenTree/pull/10182
+        """
+        self.user.is_superuser = True
+        self.user.save()
+
+        url = reverse('api-build-list')
+        response = self.options(url)
+        actions = response.data['actions']['POST']
+        issued_by = actions['issued_by']
+
+        self.assertEqual(issued_by['pk_field'], 'pk')
+        self.assertEqual(issued_by['model'], 'user')
+        self.assertEqual(issued_by['api_url'], reverse('api-user-list'))
+        self.assertEqual(issued_by['default'], self.user.pk)
+
     def test_user_api(self):
         """Tests for User API endpoints."""
         url = reverse('api-user-list')
@@ -113,6 +131,8 @@ class UserAPITests(InvenTreeAPITestCase):
     def test_user_detail(self):
         """Test the UserDetail API endpoint."""
         user = User.objects.first()
+        assert user
+
         url = reverse('api-user-detail', kwargs={'pk': user.pk})
 
         user.is_staff = False
@@ -256,6 +276,7 @@ class UserTokenTests(InvenTreeAPITestCase):
 
         # If we re-generate a token, the value changes
         token = ApiToken.objects.filter(name='cat').first()
+        assert token
 
         # Request the token with the same name
         data = self.get(url, data={'name': 'cat'}, expected_code=200).data
@@ -313,6 +334,7 @@ class UserTokenTests(InvenTreeAPITestCase):
 
         # Grab the token, and update
         token = ApiToken.objects.first()
+        assert token
         self.assertEqual(token.key, token_key)
         self.assertIsNotNone(token.last_seen)
 

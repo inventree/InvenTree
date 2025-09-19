@@ -9,7 +9,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import AppRegistryNotReady
 from django.db import transaction
-from django.db.utils import IntegrityError, OperationalError
+from django.db.utils import IntegrityError
 
 import structlog
 from allauth.socialaccount.signals import social_account_updated
@@ -36,7 +36,6 @@ class InvenTreeConfig(AppConfig):
         - Cleaning up tasks
         - Starting regular tasks
         - Updating exchange rates
-        - Collecting notification methods
         - Collecting state transition methods
         - Adding users set in the current environment
         """
@@ -65,13 +64,12 @@ class InvenTreeConfig(AppConfig):
             self.start_background_tasks()
 
             if not InvenTree.ready.isInTestMode():  # pragma: no cover
-                self.update_exchange_rates()
+                # Update exchange rates
+                InvenTree.tasks.offload_task(InvenTree.tasks.update_exchange_rates)
                 # Let the background worker check for migrations
                 InvenTree.tasks.offload_task(InvenTree.tasks.check_for_migrations)
 
         self.update_site_url()
-        self.collect_notification_methods()
-        self.collect_state_transition_methods()
 
         # Ensure the unit registry is loaded
         InvenTree.conversion.get_unit_registry()
@@ -133,6 +131,9 @@ class InvenTreeConfig(AppConfig):
         tasks = InvenTree.tasks.tasks.task_list
 
         for task in tasks:
+            if not task:
+                continue  # pragma: no cover
+
             ref_name = f'{task.func.__module__}.{task.func.__name__}'
 
             if ref_name in existing_tasks:
@@ -179,6 +180,8 @@ class InvenTreeConfig(AppConfig):
                 InvenTree.tasks.offload_task(
                     InvenTree.tasks.heartbeat, force_async=True, group='heartbeat'
                 )
+        except AppRegistryNotReady:  # pragma: no cover
+            pass
         except Exception:
             pass
 
@@ -193,63 +196,6 @@ class InvenTreeConfig(AppConfig):
                     import_module(f'{app.module.__package__}.tasks')
                 except Exception as e:  # pragma: no cover
                     logger.exception('Error loading tasks for %s: %s', app_name, e)
-
-    def update_exchange_rates(self):  # pragma: no cover
-        """Update exchange rates each time the server is started.
-
-        Only runs *if*:
-        a) Have not been updated recently (one day or less)
-        b) The base exchange rate has been altered
-        """
-        try:
-            from djmoney.contrib.exchange.models import ExchangeBackend
-
-            from common.currency import currency_code_default
-            from InvenTree.tasks import update_exchange_rates
-        except AppRegistryNotReady:  # pragma: no cover
-            pass
-
-        base_currency = currency_code_default()
-
-        update = False
-
-        try:
-            backend = ExchangeBackend.objects.filter(name='InvenTreeExchange')
-
-            if backend.exists():
-                backend = backend.first()
-
-                last_update = backend.last_update
-
-                if last_update is None:
-                    # Never been updated
-                    logger.info('Exchange backend has never been updated')
-                    update = True
-
-                # Backend currency has changed?
-                if base_currency != backend.base_currency:
-                    logger.info(
-                        'Base currency changed from %s to %s',
-                        backend.base_currency,
-                        base_currency,
-                    )
-                    update = True
-
-        except ExchangeBackend.DoesNotExist:
-            logger.info('Exchange backend not found - updating')
-            update = True
-
-        except Exception:
-            # Some other error - potentially the tables are not ready yet
-            return
-
-        if update:
-            try:
-                update_exchange_rates()
-            except OperationalError:
-                logger.warning('Could not update exchange rates - database not ready')
-            except Exception as e:
-                logger.exception('Error updating exchange rates: %s (%s)', e, type(e))
 
     def update_site_url(self):
         """Update the site URL setting.
@@ -367,18 +313,6 @@ class InvenTreeConfig(AppConfig):
 
         # do not try again
         settings.USER_ADDED_FILE = True
-
-    def collect_notification_methods(self):
-        """Collect all notification methods."""
-        from common.notifications import storage
-
-        storage.collect()
-
-    def collect_state_transition_methods(self):
-        """Collect all state transition methods."""
-        from generic.states import storage
-
-        storage.collect()
 
     def ensure_migrations_done(self=None):
         """Ensures there are no open migrations, stop if inconsistent state."""

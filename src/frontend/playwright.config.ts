@@ -3,9 +3,6 @@ import { defineConfig, devices } from '@playwright/test';
 // Detect if running in CI
 const IS_CI = !!process.env.CI;
 
-console.log('Running Playwright tests:');
-console.log(`  - CI Mode: ${IS_CI}`);
-
 const MAX_WORKERS: number = 3;
 const MAX_RETRIES: number = 3;
 
@@ -20,7 +17,6 @@ const MAX_RETRIES: number = 3;
  * - In CI (GitHub actions), we run "vite build" to generate a production build
  * - This build is then served by a local server for testing
  * - This allows the tests to run much faster and with parallel workers
- * - Run a Gunicorn multi-threaded web server to handle multiple requests
  * - WORKERS = MAX_WORKERS (to speed up the tests)
  *
  * CI Mode (Coverage):
@@ -30,11 +26,12 @@ const MAX_RETRIES: number = 3;
  * - WORKERS = 1 (to avoid conflicts with HMR)
  */
 
-// Command to spin-up the backend server
-// In production mode, we want a stronger webserver to handle multiple requests
-const WEB_SERVER_CMD: string = IS_CI
-  ? 'gunicorn --chdir ../backend/InvenTree --workers 8 --thread 8 --bind 127.0.0.1:8000 InvenTree.wsgi'
-  : 'invoke dev.server -a 127.0.0.1:8000';
+const BASE_URL: string = IS_CI
+  ? 'http://localhost:8000'
+  : 'http://localhost:5173';
+
+console.log('Running Playwright Tests:');
+console.log('- Base URL:', BASE_URL);
 
 export default defineConfig({
   testDir: './tests',
@@ -72,16 +69,18 @@ export default defineConfig({
       timeout: 120 * 1000
     },
     {
-      command: WEB_SERVER_CMD,
+      command: 'invoke dev.server',
       env: {
         INVENTREE_DEBUG: 'True',
+        INVENTREE_LOG_LEVEL: 'WARNING',
         INVENTREE_PLUGINS_ENABLED: 'True',
         INVENTREE_ADMIN_URL: 'test-admin',
         INVENTREE_SITE_URL: 'http://localhost:8000',
         INVENTREE_FRONTEND_API_HOST: 'http://localhost:8000',
         INVENTREE_CORS_ORIGIN_ALLOW_ALL: 'True',
-        INVENTREE_COOKIE_SAMESITE: 'Lax',
-        INVENTREE_LOGIN_ATTEMPTS: '100'
+        INVENTREE_COOKIE_SAMESITE: 'False',
+        INVENTREE_LOGIN_ATTEMPTS: '100',
+        INVENTREE_PLUGINS_MANDATORY: 'samplelocate'
       },
       url: 'http://localhost:8000/api/',
       reuseExistingServer: IS_CI,
@@ -92,7 +91,7 @@ export default defineConfig({
   ],
   globalSetup: './playwright/global-setup.ts',
   use: {
-    baseURL: 'http://localhost:5173',
+    baseURL: BASE_URL,
     headless: IS_CI ? true : undefined,
     trace: 'on-first-retry',
     contextOptions: {
