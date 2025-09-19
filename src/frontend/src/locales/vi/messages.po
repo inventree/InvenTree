@@ -8,7 +8,7 @@ msgstr ""
 "Language: vi\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-09-08 01:37\n"
+"PO-Revision-Date: 2025-09-17 03:42\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -494,16 +494,16 @@ msgstr "Loại Nội Dung"
 
 #: lib/enums/ModelInformation.tsx:267
 msgid "Selection List"
-msgstr ""
+msgstr "Danh sách chọn"
 
 #: lib/enums/ModelInformation.tsx:268
 #: src/pages/Index/Settings/AdminCenter/PartParameterPanel.tsx:21
 msgid "Selection Lists"
-msgstr ""
+msgstr "Danh sách chọn"
 
 #: lib/enums/ModelInformation.tsx:274
 #: src/components/barcodes/BarcodeInput.tsx:114
-#: src/components/dashboard/DashboardLayout.tsx:224
+#: src/components/dashboard/DashboardLayout.tsx:281
 #: src/components/editors/NotesEditor.tsx:74
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:157
 #: src/components/forms/fields/ApiFormField.tsx:263
@@ -535,11 +535,11 @@ msgstr "Lỗi"
 #: src/tables/machine/MachineListTable.tsx:374
 #: src/tables/machine/MachineTypeTable.tsx:299
 msgid "Errors"
-msgstr ""
+msgstr "Lỗi"
 
 #: lib/enums/Roles.tsx:31
 msgid "Admin"
-msgstr ""
+msgstr "Quản trị"
 
 #: lib/enums/Roles.tsx:33
 #: src/pages/Index/Settings/SystemSettings.tsx:264
@@ -576,7 +576,7 @@ msgstr "Lỗi trong khi dừng lại"
 
 #: src/components/barcodes/BarcodeCameraInput.tsx:159
 msgid "Start scanning by selecting a camera and pressing the play button."
-msgstr ""
+msgstr "Bắt đầu quét bằng cách chọn máy ảnh và nhấn chụp"
 
 #: src/components/barcodes/BarcodeCameraInput.tsx:180
 msgid "Stop scanning"
@@ -596,15 +596,15 @@ msgstr "Mã vạch"
 #: src/components/barcodes/BarcodeKeyboardInput.tsx:18
 #: src/defaults/actions.tsx:72
 msgid "Scan"
-msgstr ""
+msgstr "Quét"
 
 #: src/components/barcodes/BarcodeInput.tsx:53
 msgid "Camera Input"
-msgstr ""
+msgstr "Đầu vào máy ảnh"
 
 #: src/components/barcodes/BarcodeInput.tsx:63
 msgid "Scanner Input"
-msgstr ""
+msgstr "Đầu vào máy quét"
 
 #: src/components/barcodes/BarcodeInput.tsx:105
 msgid "Barcode Data"
@@ -620,7 +620,7 @@ msgstr ""
 
 #: src/components/barcodes/BarcodeKeyboardInput.tsx:64
 msgid "Enter barcode data"
-msgstr ""
+msgstr "Nhập dữ liệu mã vạch"
 
 #: src/components/barcodes/BarcodeScanDialog.tsx:49
 #: src/components/buttons/ScanButton.tsx:15
@@ -655,7 +655,7 @@ msgstr ""
 #: src/components/barcodes/BarcodeScanDialog.tsx:167
 #: src/pages/Index/Scan.tsx:129
 msgid "Failed to scan barcode"
-msgstr ""
+msgstr "Quét mã vạch thất bại"
 
 #: src/components/barcodes/QRCode.tsx:94
 msgid "Low (7%)"
@@ -691,7 +691,7 @@ msgstr "Chọn mức độ sửa lỗi"
 
 #: src/components/barcodes/QRCode.tsx:170
 msgid "Failed to link barcode"
-msgstr ""
+msgstr "Liên kết với mã vạch thất bại"
 
 #: src/components/barcodes/QRCode.tsx:179
 #: src/pages/part/PartDetail.tsx:522
@@ -730,11 +730,11 @@ msgstr "Sao chép"
 
 #: src/components/buttons/PrintingActions.tsx:56
 msgid "Printing Labels"
-msgstr ""
+msgstr "In nhãn"
 
 #: src/components/buttons/PrintingActions.tsx:61
 msgid "Printing Reports"
-msgstr ""
+msgstr "In báo cáo"
 
 #: src/components/buttons/PrintingActions.tsx:77
 #~ msgid "Printing"
@@ -791,7 +791,7 @@ msgstr "In báo cáo"
 
 #: src/components/buttons/RemoveRowButton.tsx:8
 msgid "Remove this row"
-msgstr ""
+msgstr "Xóa dòng này"
 
 #: src/components/buttons/SSOButton.tsx:40
 msgid "You will be redirected to the provider for further actions."
@@ -811,7 +811,7 @@ msgstr ""
 
 #: src/components/buttons/ScanButton.tsx:19
 msgid "Open Barcode Scanner"
-msgstr ""
+msgstr "Mở máy quét mã vạch"
 
 #: src/components/buttons/ScanButton.tsx:20
 #~ msgid "Open QR code scanner"
@@ -872,15 +872,15 @@ msgstr ""
 msgid "Overdue"
 msgstr "Quá hạn"
 
-#: src/components/dashboard/DashboardLayout.tsx:225
+#: src/components/dashboard/DashboardLayout.tsx:282
 msgid "Failed to load dashboard widgets."
 msgstr ""
 
-#: src/components/dashboard/DashboardLayout.tsx:235
+#: src/components/dashboard/DashboardLayout.tsx:293
 msgid "No Widgets Selected"
 msgstr ""
 
-#: src/components/dashboard/DashboardLayout.tsx:238
+#: src/components/dashboard/DashboardLayout.tsx:296
 msgid "Use the menu to add widgets to the dashboard"
 msgstr ""
 
@@ -2165,7 +2165,7 @@ msgid "No items"
 msgstr ""
 
 #: src/components/items/TransferList.tsx:161
-#: src/components/render/Stock.tsx:95
+#: src/components/render/Stock.tsx:102
 #: src/pages/part/PartDetail.tsx:984
 #: src/pages/stock/StockDetail.tsx:262
 #: src/pages/stock/StockDetail.tsx:913
@@ -2842,7 +2842,7 @@ msgstr ""
 #~ msgid "Unknown model: {model}"
 #~ msgstr "Unknown model: {model}"
 
-#: src/components/render/Instance.tsx:246
+#: src/components/render/Instance.tsx:249
 msgid "Unknown model: {model_name}"
 msgstr ""
 
@@ -2893,8 +2893,8 @@ msgid "Category"
 msgstr "Danh mục"
 
 #: src/components/render/Stock.tsx:36
-#: src/components/render/Stock.tsx:107
-#: src/components/render/Stock.tsx:125
+#: src/components/render/Stock.tsx:114
+#: src/components/render/Stock.tsx:132
 #: src/forms/BuildForms.tsx:766
 #: src/forms/PurchaseOrderForms.tsx:592
 #: src/forms/StockForms.tsx:734
@@ -2916,7 +2916,7 @@ msgstr "Danh mục"
 msgid "Location"
 msgstr "Vị trí"
 
-#: src/components/render/Stock.tsx:92
+#: src/components/render/Stock.tsx:99
 #: src/pages/stock/StockDetail.tsx:195
 #: src/pages/stock/StockDetail.tsx:901
 #: src/tables/build/BuildAllocatedStockTable.tsx:121
@@ -2925,7 +2925,7 @@ msgstr "Vị trí"
 msgid "Serial Number"
 msgstr "Số sê-ri"
 
-#: src/components/render/Stock.tsx:97
+#: src/components/render/Stock.tsx:104
 #: src/components/wizards/OrderPartsWizard.tsx:222
 #: src/forms/BuildForms.tsx:243
 #: src/forms/BuildForms.tsx:605
@@ -2953,7 +2953,7 @@ msgstr "Số sê-ri"
 msgid "Quantity"
 msgstr "Số lượng"
 
-#: src/components/render/Stock.tsx:110
+#: src/components/render/Stock.tsx:117
 #: src/forms/BuildForms.tsx:312
 #: src/forms/BuildForms.tsx:386
 #: src/forms/BuildForms.tsx:450

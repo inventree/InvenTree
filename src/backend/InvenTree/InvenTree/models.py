@@ -1172,7 +1172,7 @@ class InvenTreeBarcodeMixin(models.Model):
             raise ValueError("Provide either 'barcode_hash' or 'barcode_data'")
 
         # If barcode_hash is not provided, create from supplier barcode_data
-        if barcode_hash is None:
+        if barcode_hash is None and barcode_data is not None:
             barcode_hash = InvenTree.helpers.hash_barcode(barcode_data)
 
         # Check for existing item

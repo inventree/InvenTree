@@ -9,7 +9,7 @@ import os
 import os.path
 import re
 from decimal import Decimal, InvalidOperation
-from typing import Optional, TypeVar
+from typing import Optional, TypeVar, Union
 from wsgiref.util import FileWrapper
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
@@ -22,6 +22,8 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 import bleach
+import bleach.css_sanitizer
+import bleach.sanitizer
 import structlog
 from bleach import clean
 from djmoney.money import Money
@@ -124,7 +126,7 @@ def extract_int(
     return ref_int
 
 
-def generateTestKey(test_name: str) -> str:
+def generateTestKey(test_name: Union[str, None]) -> str:
     """Generate a test 'key' for a given test name. This must not have illegal chars as it will be used for dict lookup in a template.
 
     Tests must be named such that they will have unique keys.
@@ -368,9 +370,7 @@ def increment(value):
     except ValueError:
         pass
 
-    number = number.zfill(width)
-
-    return prefix + number
+    return prefix + str(number).zfill(width)
 
 
 def decimal2string(d):
@@ -968,7 +968,7 @@ def current_time(local=True):
     """
     if settings.USE_TZ:
         now = timezone.now()
-        now = to_local_time(now, target_tz=server_timezone() if local else 'UTC')
+        now = to_local_time(now, target_tz_str=server_timezone() if local else 'UTC')
         return now
     else:
         return datetime.datetime.now()
@@ -987,12 +987,12 @@ def server_timezone() -> str:
     return settings.TIME_ZONE
 
 
-def to_local_time(time, target_tz: Optional[str] = None):
+def to_local_time(time, target_tz_str: Optional[str] = None):
     """Convert the provided time object to the local timezone.
 
     Arguments:
         time: The time / date to convert
-        target_tz: The desired timezone (string) - defaults to server time
+        target_tz_str: The desired timezone (string) - defaults to server time
 
     Returns:
         A timezone aware datetime object, with the desired timezone
@@ -1016,11 +1016,11 @@ def to_local_time(time, target_tz: Optional[str] = None):
         # Default to UTC if not provided
         source_tz = ZoneInfo('UTC')
 
-    if not target_tz:
-        target_tz = server_timezone()
+    if not target_tz_str:
+        target_tz_str = server_timezone()
 
     try:
-        target_tz = ZoneInfo(str(target_tz))
+        target_tz = ZoneInfo(str(target_tz_str))
     except ZoneInfoNotFoundError:
         target_tz = ZoneInfo('UTC')
 

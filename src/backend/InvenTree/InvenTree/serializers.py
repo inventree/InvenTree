@@ -373,16 +373,15 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
             instance.full_clean()
         except (ValidationError, DjangoValidationError) as exc:
             if hasattr(exc, 'message_dict'):
-                data = exc.message_dict
+                data = {**exc.message_dict}
             elif hasattr(exc, 'message'):
                 data = {'non_field_errors': [str(exc.message)]}
             else:
                 data = {'non_field_errors': [str(exc)]}
 
             # Change '__all__' key (django style) to 'non_field_errors' (DRF style)
-            if '__all__' in data:
-                data['non_field_errors'] = data['__all__']
-                del data['__all__']
+            if hasattr(data, '__all__'):
+                data['non_field_errors'] = data.pop('__all__')
 
             raise ValidationError(data)
 

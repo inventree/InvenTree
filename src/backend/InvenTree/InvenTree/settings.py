@@ -43,6 +43,13 @@ from users.oauth2_scopes import oauth2_scopes
 
 from . import config, locales
 
+try:
+    import django_stubs_ext
+
+    django_stubs_ext.monkeypatch()  # pragma: no cover
+except ImportError:  # pragma: no cover
+    pass
+
 checkMinPythonVersion()
 
 INVENTREE_BASE_URL = 'https://inventree.org'
@@ -383,22 +390,25 @@ QUERYCOUNT = {
 }
 
 
-AUTHENTICATION_BACKENDS = CONFIG.get(
-    'authentication_backends',
-    [
-        'oauth2_provider.backends.OAuth2Backend',  # OAuth2 provider
-        'django.contrib.auth.backends.RemoteUserBackend',  # proxy login
-        'django.contrib.auth.backends.ModelBackend',
-        'allauth.account.auth_backends.AuthenticationBackend',  # SSO login via external providers
-        'sesame.backends.ModelBackend',  # Magic link login django-sesame
-    ],
+default_auth_backends = [
+    'oauth2_provider.backends.OAuth2Backend',  # OAuth2 provider
+    'django.contrib.auth.backends.RemoteUserBackend',  # proxy login
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',  # SSO login via external providers
+    'sesame.backends.ModelBackend',  # Magic link login django-sesame
+]
+
+AUTHENTICATION_BACKENDS = (
+    CONFIG.get('authentication_backends', default_auth_backends)
+    if CONFIG
+    else default_auth_backends
 )
 
 # LDAP support
 LDAP_AUTH = get_boolean_setting('INVENTREE_LDAP_ENABLED', 'ldap.enabled', False)
 if LDAP_AUTH:
-    import django_auth_ldap.config
-    import ldap
+    import django_auth_ldap.config  # type: ignore[unresolved-import]
+    import ldap  # type: ignore[unresolved-import]
 
     AUTHENTICATION_BACKENDS.append('django_auth_ldap.backend.LDAPBackend')
 
@@ -451,7 +461,7 @@ if LDAP_AUTH:
     )
     AUTH_LDAP_USER_SEARCH = django_auth_ldap.config.LDAPSearch(
         get_setting('INVENTREE_LDAP_SEARCH_BASE_DN', 'ldap.search_base_dn'),
-        ldap.SCOPE_SUBTREE,
+        ldap.SCOPE_SUBTREE,  # type: ignore[unresolved-attribute]
         str(
             get_setting(
                 'INVENTREE_LDAP_SEARCH_FILTER_STR',
@@ -487,7 +497,7 @@ if LDAP_AUTH:
     )
     AUTH_LDAP_GROUP_SEARCH = django_auth_ldap.config.LDAPSearch(
         get_setting('INVENTREE_LDAP_GROUP_SEARCH', 'ldap.group_search'),
-        ldap.SCOPE_SUBTREE,
+        ldap.SCOPE_SUBTREE,  # type: ignore[unresolved-attribute]
         f'(objectClass={AUTH_LDAP_GROUP_OBJECT_CLASS})',
     )
     AUTH_LDAP_GROUP_TYPE_CLASS = get_setting(
@@ -605,7 +615,7 @@ Configure the database backend based on the user-specified values.
 logger.debug('Configuring database backend:')
 
 # Extract database configuration from the config.yaml file
-db_config = CONFIG.get('database', None)
+db_config = CONFIG.get('database', None) if CONFIG else None
 
 if not db_config:
     db_config = {}
@@ -691,7 +701,9 @@ if db_options is None:
 
 # Specific options for postgres backend
 if 'postgres' in DB_ENGINE:  # pragma: no cover
-    from django.db.backends.postgresql.psycopg_any import IsolationLevel
+    from django.db.backends.postgresql.psycopg_any import (  # type: ignore[unresolved-import]
+        IsolationLevel,
+    )
 
     # Connection timeout
     if 'connect_timeout' not in db_options:

@@ -72,7 +72,7 @@ class ValidationMixin:
 
     def validate_model_instance(
         self, instance: Model, deltas: Optional[dict] = None
-    ) -> None:
+    ) -> Optional[bool]:
         """Run custom validation on a database model instance.
 
         This method is called when a model instance is being validated.
@@ -90,7 +90,7 @@ class ValidationMixin:
         """
         return None
 
-    def validate_part_name(self, name: str, part: part.models.Part) -> None:
+    def validate_part_name(self, name: str, part: part.models.Part) -> Optional[bool]:
         """Perform validation on a proposed Part name.
 
         Arguments:
@@ -105,7 +105,7 @@ class ValidationMixin:
         """
         return None
 
-    def validate_part_ipn(self, ipn: str, part: part.models.Part) -> None:
+    def validate_part_ipn(self, ipn: str, part: part.models.Part) -> Optional[bool]:
         """Perform validation on a proposed Part IPN (internal part number).
 
         Arguments:
@@ -122,7 +122,7 @@ class ValidationMixin:
 
     def validate_batch_code(
         self, batch_code: str, item: stock.models.StockItem
-    ) -> None:
+    ) -> Optional[bool]:
         """Validate the supplied batch code.
 
         Arguments:
@@ -137,7 +137,7 @@ class ValidationMixin:
         """
         return None
 
-    def generate_batch_code(self, **kwargs) -> str:
+    def generate_batch_code(self, **kwargs) -> Optional[str]:
         """Generate a new batch code.
 
         This method is called when a new batch code is required.
@@ -154,8 +154,8 @@ class ValidationMixin:
         self,
         serial: str,
         part: part.models.Part,
-        stock_item: stock.models.StockItem = None,
-    ) -> None:
+        stock_item: Optional[stock.models.StockItem] = None,
+    ) -> Optional[bool]:
         """Validate the supplied serial number.
 
         Arguments:
@@ -171,7 +171,7 @@ class ValidationMixin:
         """
         return None
 
-    def convert_serial_to_int(self, serial: str) -> int:
+    def convert_serial_to_int(self, serial: str) -> Optional[int]:
         """Convert a serial number (string) into an integer representation.
 
         This integer value is used for efficient sorting based on serial numbers.
@@ -192,7 +192,7 @@ class ValidationMixin:
         """
         return None
 
-    def get_latest_serial_number(self, part, **kwargs):
+    def get_latest_serial_number(self, part, **kwargs) -> Optional[str]:
         """Return the 'latest' serial number for a given Part instance.
 
         A plugin which implements this method can either return:
@@ -209,8 +209,8 @@ class ValidationMixin:
         return None
 
     def increment_serial_number(
-        self, serial: str, part: part.models.Part = None, **kwargs
-    ) -> str:
+        self, serial: str, part: Optional[part.models.Part] = None, **kwargs
+    ) -> Optional[str]:
         """Return the next sequential serial based on the provided value.
 
         A plugin which implements this method can either return:
@@ -229,7 +229,7 @@ class ValidationMixin:
 
     def validate_part_parameter(
         self, parameter: part.models.PartParameter, data: str
-    ) -> None:
+    ) -> Optional[bool]:
         """Validate a parameter value.
 
         Arguments:
