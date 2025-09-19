@@ -171,7 +171,10 @@ class MiddlewareTests(InvenTreeTestCase):
             )
 
         # wrongly set site URL
-        with self.settings(SITE_URL='https://example.com'):
+        with self.settings(
+            SITE_URL='https://example.com',
+            CSRF_TRUSTED_ORIGINS=['http://localhost:8000'],
+        ):
             response = self.client.get(reverse('web'))
             self.assertEqual(response.status_code, 500)
             self.assertContains(
