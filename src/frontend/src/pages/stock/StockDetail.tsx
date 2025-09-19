@@ -173,17 +173,12 @@ export default function StockDetail() {
           stockitem.status_custom_key == stockitem.status
       },
       {
-        type: 'text',
-        name: 'updated',
-        icon: 'calendar',
-        label: t`Last Updated`
-      },
-      {
-        type: 'text',
-        name: 'stocktake',
-        icon: 'calendar',
-        label: t`Last Stocktake`,
-        hidden: !stockitem.stocktake
+        type: 'link',
+        name: 'link',
+        label: t`Link`,
+        external: true,
+        copy: true,
+        hidden: !stockitem.link
       }
     ];
 
@@ -415,6 +410,19 @@ export default function StockDetail() {
         icon: 'part',
         label: t`Packaging`,
         hidden: !stockitem.packaging
+      },
+      {
+        type: 'text',
+        name: 'updated',
+        icon: 'calendar',
+        label: t`Last Updated`
+      },
+      {
+        type: 'text',
+        name: 'stocktake',
+        icon: 'calendar',
+        label: t`Last Stocktake`,
+        hidden: !stockitem.stocktake
       }
     ];
 
