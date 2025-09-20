@@ -40,7 +40,15 @@ export default function PartTestResultTable({
   buildId?: number;
   partId: number;
 }>) {
-  const table = useTable('build-tests');
+  const tableName = useMemo(() => {
+    if (buildId) {
+      return 'build-test-results';
+    } else {
+      return 'part-test-results';
+    }
+  }, [buildId]);
+
+  const table = useTable(tableName);
   const api = useApi();
 
   // Fetch the test templates required for this build order
