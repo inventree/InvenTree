@@ -939,7 +939,7 @@ export default function PartDetail() {
         name: 'test_results',
         label: t`Test Results`,
         icon: <IconChecklist />,
-        hidden: !part.testable,
+        hidden: !part.testable || !user.hasViewRole(UserRoles.stock),
         content: part?.pk ? (
           <PartTestResultTable partId={part.pk} />
         ) : (
