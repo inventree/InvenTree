@@ -364,6 +364,36 @@ class PartParameterTest(InvenTreeAPITestCase):
 
         self.assertEqual(len(response.data), 8)
 
+    def test_bulk_create_params(self):
+        """Test that we can bulk create parameters via the API."""
+        url = reverse('api-part-parameter-list')
+        part4 = Part.objects.get(pk=4)
+
+        data = [
+            {'part': 4, 'template': 1, 'data': 70},
+            {'part': 4, 'template': 2, 'data': 80},
+            {'part': 4, 'template': 1, 'data': 80},
+        ]
+
+        # test that having non unique part/template combinations fails
+        res = self.post(url, data, expected_code=400)
+        self.assertEqual(len(res.data), 3)
+        self.assertEqual(len(res.data[1]), 0)
+        for err in [res.data[0], res.data[2]]:
+            self.assertEqual(len(err), 2)
+            self.assertEqual(str(err['part'][0]), 'This field must be unique.')
+            self.assertEqual(str(err['template'][0]), 'This field must be unique.')
+        self.assertEqual(PartParameter.objects.filter(part=part4).count(), 0)
+
+        # Now, create a valid set of parameters
+        data = [
+            {'part': 4, 'template': 1, 'data': 70},
+            {'part': 4, 'template': 2, 'data': 80},
+        ]
+        res = self.post(url, data, expected_code=201)
+        self.assertEqual(len(res.data), 2)
+        self.assertEqual(PartParameter.objects.filter(part=part4).count(), 2)
+
     def test_param_detail(self):
         """Tests for the PartParameter detail endpoint."""
         url = reverse('api-part-parameter-detail', kwargs={'pk': 5})
