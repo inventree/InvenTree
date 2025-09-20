@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-09-17 11:32+0000\n"
-"PO-Revision-Date: 2025-09-17 11:36\n"
+"POT-Creation-Date: 2025-09-20 00:18+0000\n"
+"PO-Revision-Date: 2025-09-20 00:22\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Language: no_NO\n"
@@ -696,7 +696,7 @@ msgstr "Produksjonsordre"
 #: stock/api.py:966 stock/serializers.py:111 stock/serializers.py:629
 #: stock/serializers.py:734 stock/serializers.py:912 stock/serializers.py:1455
 #: stock/serializers.py:1768 stock/serializers.py:1817
-#: templates/email/stale_stock_notification.html:18 users/models.py:546
+#: templates/email/stale_stock_notification.html:18 users/models.py:549
 msgid "Location"
 msgstr "Plassering"
 
@@ -1562,8 +1562,8 @@ msgstr "Nøkkelstreng må være unik"
 #: common/models.py:2006 common/models.py:2007 common/models.py:2388
 #: importer/models.py:100 part/models.py:3568 part/models.py:3596
 #: plugin/models.py:355 plugin/models.py:356
-#: report/templates/report/inventree_test_report.html:105 users/models.py:121
-#: users/models.py:498
+#: report/templates/report/inventree_test_report.html:105 users/models.py:124
+#: users/models.py:501
 msgid "User"
 msgstr "Bruker"
 
@@ -1594,8 +1594,8 @@ msgstr "Navn for webhooken"
 
 #: common/models.py:1421 common/models.py:2247 common/models.py:2354
 #: company/models.py:198 company/models.py:840 machine/models.py:39
-#: part/models.py:1258 plugin/models.py:69 stock/api.py:621 users/models.py:192
-#: users/models.py:551 users/serializers.py:319
+#: part/models.py:1258 plugin/models.py:69 stock/api.py:621 users/models.py:195
+#: users/models.py:554 users/serializers.py:319
 msgid "Active"
 msgstr "Aktiv"
 
@@ -1603,7 +1603,7 @@ msgstr "Aktiv"
 msgid "Is this webhook active"
 msgstr "Er webhooken aktiv"
 
-#: common/models.py:1437 users/models.py:169
+#: common/models.py:1437 users/models.py:172
 msgid "Token"
 msgstr "Sjetong"
 
@@ -2142,7 +2142,7 @@ msgid "Email Threads"
 msgstr ""
 
 #: common/models.py:2711 generic/states/serializers.py:16 plugin/models.py:46
-#: users/models.py:110
+#: users/models.py:113
 msgid "Key"
 msgstr "Nøkkel"
 
@@ -3792,7 +3792,7 @@ msgid "Contact email address"
 msgstr "Kontakt e-post"
 
 #: company/models.py:176 company/models.py:315 order/models.py:506
-#: users/models.py:558
+#: users/models.py:561
 msgid "Contact"
 msgstr "Kontakt"
 
@@ -4267,15 +4267,15 @@ msgstr ""
 msgid "Valid"
 msgstr "Gyldig"
 
-#: importer/models.py:688
+#: importer/models.py:720
 msgid "ID is required for updating existing records."
 msgstr ""
 
-#: importer/models.py:695
+#: importer/models.py:727
 msgid "No record found with the provided ID"
 msgstr ""
 
-#: importer/models.py:701
+#: importer/models.py:733
 msgid "Invalid ID format provided"
 msgstr ""
 
@@ -4660,7 +4660,7 @@ msgid "Order reference"
 msgstr "Ordrereferanse"
 
 #: order/models.py:617 order/models.py:1317 order/models.py:2630
-#: stock/serializers.py:594 stock/serializers.py:1012 users/models.py:539
+#: stock/serializers.py:594 stock/serializers.py:1012 users/models.py:542
 msgid "Status"
 msgstr "Status"
 
@@ -5173,7 +5173,7 @@ msgid "Enter batch code for incoming stock items"
 msgstr "Angi batchkode for innkommende lagervarer"
 
 #: order/serializers.py:792 stock/models.py:1161
-#: templates/email/stale_stock_notification.html:22 users/models.py:134
+#: templates/email/stale_stock_notification.html:22 users/models.py:137
 msgid "Expiry Date"
 msgstr "Utløpsdato"
 
@@ -7540,35 +7540,35 @@ msgstr ""
 msgid "Enable dynamic panels for testing"
 msgstr ""
 
-#: plugin/samples/integration/user_interface_sample.py:98
+#: plugin/samples/integration/user_interface_sample.py:100
 msgid "Part Panel"
 msgstr ""
 
-#: plugin/samples/integration/user_interface_sample.py:131
+#: plugin/samples/integration/user_interface_sample.py:135
 msgid "Broken Dashboard Item"
 msgstr ""
 
-#: plugin/samples/integration/user_interface_sample.py:133
+#: plugin/samples/integration/user_interface_sample.py:137
 msgid "This is a broken dashboard item - it will not render!"
 msgstr ""
 
-#: plugin/samples/integration/user_interface_sample.py:139
+#: plugin/samples/integration/user_interface_sample.py:143
 msgid "Sample Dashboard Item"
 msgstr ""
 
-#: plugin/samples/integration/user_interface_sample.py:141
+#: plugin/samples/integration/user_interface_sample.py:145
 msgid "This is a sample dashboard item. It renders a simple string of HTML content."
 msgstr ""
 
-#: plugin/samples/integration/user_interface_sample.py:147
+#: plugin/samples/integration/user_interface_sample.py:151
 msgid "Context Dashboard Item"
 msgstr ""
 
-#: plugin/samples/integration/user_interface_sample.py:161
+#: plugin/samples/integration/user_interface_sample.py:165
 msgid "Admin Dashboard Item"
 msgstr ""
 
-#: plugin/samples/integration/user_interface_sample.py:162
+#: plugin/samples/integration/user_interface_sample.py:166
 msgid "This is an admin-only dashboard item."
 msgstr ""
 
@@ -8168,7 +8168,7 @@ msgstr "Velg eier"
 msgid "Stock items may not be directly located into a structural stock locations, but may be located to child locations."
 msgstr "Lagervarer kan ikke knyttes direkte mot en strukturell lagerplassering, men kan knyttes mot underplasseringer."
 
-#: stock/models.py:226 users/models.py:494
+#: stock/models.py:226 users/models.py:497
 msgid "External"
 msgstr "Ekstern"
 
@@ -8531,7 +8531,7 @@ msgstr "Angi serienummer for nye artikler"
 msgid "Supplier Part Number"
 msgstr "Leverandørens delnummer"
 
-#: stock/serializers.py:647 users/models.py:184
+#: stock/serializers.py:647 users/models.py:187
 msgid "Expired"
 msgstr "Utløpt"
 
@@ -9024,7 +9024,7 @@ msgstr "Tillatelser"
 msgid "Important dates"
 msgstr "Viktige datoer"
 
-#: users/authentication.py:30 users/models.py:148
+#: users/authentication.py:30 users/models.py:151
 msgid "Token has been revoked"
 msgstr "Token er tilbakekalt"
 
@@ -9032,167 +9032,167 @@ msgstr "Token er tilbakekalt"
 msgid "Token has expired"
 msgstr "Token har utløpt"
 
-#: users/models.py:91
+#: users/models.py:94
 msgid "API Token"
 msgstr "API-Token"
 
-#: users/models.py:92
+#: users/models.py:95
 msgid "API Tokens"
 msgstr "API-Tokener"
 
-#: users/models.py:128
+#: users/models.py:131
 msgid "Token Name"
 msgstr "Tokennavn"
 
-#: users/models.py:129
+#: users/models.py:132
 msgid "Custom token name"
 msgstr "Egendefinert tokennavn"
 
-#: users/models.py:135
+#: users/models.py:138
 msgid "Token expiry date"
 msgstr "Token utløpsdato"
 
-#: users/models.py:143
+#: users/models.py:146
 msgid "Last Seen"
 msgstr "Sist sett"
 
-#: users/models.py:144
+#: users/models.py:147
 msgid "Last time the token was used"
 msgstr "Sist gang tokenet ble brukt"
 
-#: users/models.py:148
+#: users/models.py:151
 msgid "Revoked"
 msgstr "Tilbakekalt"
 
-#: users/models.py:226
+#: users/models.py:229
 msgid "Permission set"
 msgstr "Tillatelse satt"
 
-#: users/models.py:235
+#: users/models.py:238
 msgid "Group"
 msgstr "Gruppe"
 
-#: users/models.py:239
+#: users/models.py:242
 msgid "View"
 msgstr "Visning"
 
-#: users/models.py:239
+#: users/models.py:242
 msgid "Permission to view items"
 msgstr "Tillatelse til å se elementer"
 
-#: users/models.py:243
+#: users/models.py:246
 msgid "Add"
 msgstr "Legg til"
 
-#: users/models.py:243
+#: users/models.py:246
 msgid "Permission to add items"
 msgstr "Tillatelse til å legge til elementer"
 
-#: users/models.py:247
+#: users/models.py:250
 msgid "Change"
 msgstr "Endre"
 
-#: users/models.py:249
+#: users/models.py:252
 msgid "Permissions to edit items"
 msgstr "Tillatelse til å endre elementer"
 
-#: users/models.py:253
+#: users/models.py:256
 msgid "Delete"
 msgstr "Slett"
 
-#: users/models.py:255
+#: users/models.py:258
 msgid "Permission to delete items"
 msgstr "Tillatelse til å slette elementer"
 
-#: users/models.py:492
+#: users/models.py:495
 msgid "Bot"
 msgstr ""
 
-#: users/models.py:493
+#: users/models.py:496
 msgid "Internal"
 msgstr ""
 
-#: users/models.py:495
+#: users/models.py:498
 msgid "Guest"
 msgstr ""
 
-#: users/models.py:504
+#: users/models.py:507
 msgid "Language"
 msgstr ""
 
-#: users/models.py:505
+#: users/models.py:508
 msgid "Preferred language for the user"
 msgstr ""
 
-#: users/models.py:510
+#: users/models.py:513
 msgid "Theme"
 msgstr ""
 
-#: users/models.py:511
+#: users/models.py:514
 msgid "Settings for the web UI as JSON - do not edit manually!"
 msgstr ""
 
-#: users/models.py:516
+#: users/models.py:519
 msgid "Widgets"
 msgstr ""
 
-#: users/models.py:518
+#: users/models.py:521
 msgid "Settings for the dashboard widgets as JSON - do not edit manually!"
 msgstr ""
 
-#: users/models.py:525
+#: users/models.py:528
 msgid "Display Name"
 msgstr ""
 
-#: users/models.py:526
+#: users/models.py:529
 msgid "Chosen display name for the user"
 msgstr ""
 
-#: users/models.py:532
+#: users/models.py:535
 msgid "Position"
 msgstr ""
 
-#: users/models.py:533
+#: users/models.py:536
 msgid "Main job title or position"
 msgstr ""
 
-#: users/models.py:540
+#: users/models.py:543
 msgid "User status message"
 msgstr ""
 
-#: users/models.py:547
+#: users/models.py:550
 msgid "User location information"
 msgstr ""
 
-#: users/models.py:552
+#: users/models.py:555
 msgid "User is actively using the system"
 msgstr ""
 
-#: users/models.py:559
+#: users/models.py:562
 msgid "Preferred contact information for the user"
 msgstr ""
 
-#: users/models.py:565
+#: users/models.py:568
 msgid "User Type"
 msgstr ""
 
-#: users/models.py:566
+#: users/models.py:569
 msgid "Which type of user is this?"
 msgstr ""
 
-#: users/models.py:572
+#: users/models.py:575
 msgid "Organisation"
 msgstr ""
 
-#: users/models.py:573
+#: users/models.py:576
 msgid "Users primary organisation/affiliation"
 msgstr ""
 
-#: users/models.py:581
+#: users/models.py:584
 msgid "Primary Group"
 msgstr ""
 
-#: users/models.py:582
+#: users/models.py:585
 msgid "Primary group for the user"
 msgstr ""
 

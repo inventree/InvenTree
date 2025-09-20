@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-09-17 11:32+0000\n"
-"PO-Revision-Date: 2025-09-17 11:35\n"
+"POT-Creation-Date: 2025-09-20 00:18+0000\n"
+"PO-Revision-Date: 2025-09-20 00:22\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -696,7 +696,7 @@ msgstr "組立注文"
 #: stock/api.py:966 stock/serializers.py:111 stock/serializers.py:629
 #: stock/serializers.py:734 stock/serializers.py:912 stock/serializers.py:1455
 #: stock/serializers.py:1768 stock/serializers.py:1817
-#: templates/email/stale_stock_notification.html:18 users/models.py:546
+#: templates/email/stale_stock_notification.html:18 users/models.py:549
 msgid "Location"
 msgstr "場所"
 
@@ -1562,8 +1562,8 @@ msgstr "キー文字列は一意でなければなりません。"
 #: common/models.py:2006 common/models.py:2007 common/models.py:2388
 #: importer/models.py:100 part/models.py:3568 part/models.py:3596
 #: plugin/models.py:355 plugin/models.py:356
-#: report/templates/report/inventree_test_report.html:105 users/models.py:121
-#: users/models.py:498
+#: report/templates/report/inventree_test_report.html:105 users/models.py:124
+#: users/models.py:501
 msgid "User"
 msgstr "ユーザー"
 
@@ -1594,8 +1594,8 @@ msgstr "このウェブフックの名前"
 
 #: common/models.py:1421 common/models.py:2247 common/models.py:2354
 #: company/models.py:198 company/models.py:840 machine/models.py:39
-#: part/models.py:1258 plugin/models.py:69 stock/api.py:621 users/models.py:192
-#: users/models.py:551 users/serializers.py:319
+#: part/models.py:1258 plugin/models.py:69 stock/api.py:621 users/models.py:195
+#: users/models.py:554 users/serializers.py:319
 msgid "Active"
 msgstr "有効"
 
@@ -1603,7 +1603,7 @@ msgstr "有効"
 msgid "Is this webhook active"
 msgstr "このウェブフックはアクティブですか"
 
-#: common/models.py:1437 users/models.py:169
+#: common/models.py:1437 users/models.py:172
 msgid "Token"
 msgstr "トークン"
 
@@ -2142,7 +2142,7 @@ msgid "Email Threads"
 msgstr ""
 
 #: common/models.py:2711 generic/states/serializers.py:16 plugin/models.py:46
-#: users/models.py:110
+#: users/models.py:113
 msgid "Key"
 msgstr "キー"
 
@@ -3792,7 +3792,7 @@ msgid "Contact email address"
 msgstr "連絡先メールアドレス"
 
 #: company/models.py:176 company/models.py:315 order/models.py:506
-#: users/models.py:558
+#: users/models.py:561
 msgid "Contact"
 msgstr "お問い合わせ"
 
@@ -4267,15 +4267,15 @@ msgstr "エラー"
 msgid "Valid"
 msgstr "有効"
 
-#: importer/models.py:688
+#: importer/models.py:720
 msgid "ID is required for updating existing records."
 msgstr ""
 
-#: importer/models.py:695
+#: importer/models.py:727
 msgid "No record found with the provided ID"
 msgstr ""
 
-#: importer/models.py:701
+#: importer/models.py:733
 msgid "Invalid ID format provided"
 msgstr ""
 
@@ -4660,7 +4660,7 @@ msgid "Order reference"
 msgstr "注文参照"
 
 #: order/models.py:617 order/models.py:1317 order/models.py:2630
-#: stock/serializers.py:594 stock/serializers.py:1012 users/models.py:539
+#: stock/serializers.py:594 stock/serializers.py:1012 users/models.py:542
 msgid "Status"
 msgstr "ステータス"
 
@@ -5173,7 +5173,7 @@ msgid "Enter batch code for incoming stock items"
 msgstr "入荷在庫品のバッチコード入力"
 
 #: order/serializers.py:792 stock/models.py:1161
-#: templates/email/stale_stock_notification.html:22 users/models.py:134
+#: templates/email/stale_stock_notification.html:22 users/models.py:137
 msgid "Expiry Date"
 msgstr "有効期限"
 
@@ -7540,35 +7540,35 @@ msgstr "ダイナミックパネルの有効化"
 msgid "Enable dynamic panels for testing"
 msgstr "テスト用ダイナミックパネルの有効化"
 
-#: plugin/samples/integration/user_interface_sample.py:98
+#: plugin/samples/integration/user_interface_sample.py:100
 msgid "Part Panel"
 msgstr "パートパネル"
 
-#: plugin/samples/integration/user_interface_sample.py:131
+#: plugin/samples/integration/user_interface_sample.py:135
 msgid "Broken Dashboard Item"
 msgstr "ダッシュボードの故障"
 
-#: plugin/samples/integration/user_interface_sample.py:133
+#: plugin/samples/integration/user_interface_sample.py:137
 msgid "This is a broken dashboard item - it will not render!"
 msgstr "これは壊れたダッシュボードアイテムです - レンダリングされません！"
 
-#: plugin/samples/integration/user_interface_sample.py:139
+#: plugin/samples/integration/user_interface_sample.py:143
 msgid "Sample Dashboard Item"
 msgstr "ダッシュボード項目例"
 
-#: plugin/samples/integration/user_interface_sample.py:141
+#: plugin/samples/integration/user_interface_sample.py:145
 msgid "This is a sample dashboard item. It renders a simple string of HTML content."
 msgstr "これはダッシュボードのサンプルです。シンプルなHTML文字列をレンダリングします。"
 
-#: plugin/samples/integration/user_interface_sample.py:147
+#: plugin/samples/integration/user_interface_sample.py:151
 msgid "Context Dashboard Item"
 msgstr "コンテキスト・ダッシュボード項目"
 
-#: plugin/samples/integration/user_interface_sample.py:161
+#: plugin/samples/integration/user_interface_sample.py:165
 msgid "Admin Dashboard Item"
 msgstr "管理者ダッシュボード項目"
 
-#: plugin/samples/integration/user_interface_sample.py:162
+#: plugin/samples/integration/user_interface_sample.py:166
 msgid "This is an admin-only dashboard item."
 msgstr "これは管理者専用のダッシュボード項目です。"
 
@@ -8168,7 +8168,7 @@ msgstr "所有者を選択"
 msgid "Stock items may not be directly located into a structural stock locations, but may be located to child locations."
 msgstr "ストックアイテムは、構造的なストックロケーションに直接配置されることはありませんが、子ロケーションに配置されることはあります。"
 
-#: stock/models.py:226 users/models.py:494
+#: stock/models.py:226 users/models.py:497
 msgid "External"
 msgstr "外部"
 
@@ -8531,7 +8531,7 @@ msgstr "新しい商品のシリアル番号の入力"
 msgid "Supplier Part Number"
 msgstr "サプライヤー品番"
 
-#: stock/serializers.py:647 users/models.py:184
+#: stock/serializers.py:647 users/models.py:187
 msgid "Expired"
 msgstr "期限切れ"
 
@@ -9024,7 +9024,7 @@ msgstr "許可"
 msgid "Important dates"
 msgstr "重要な日付"
 
-#: users/authentication.py:30 users/models.py:148
+#: users/authentication.py:30 users/models.py:151
 msgid "Token has been revoked"
 msgstr "トークンは失効しました"
 
@@ -9032,167 +9032,167 @@ msgstr "トークンは失効しました"
 msgid "Token has expired"
 msgstr "トークンの有効期限が切れました"
 
-#: users/models.py:91
+#: users/models.py:94
 msgid "API Token"
 msgstr "APIトークン"
 
-#: users/models.py:92
+#: users/models.py:95
 msgid "API Tokens"
 msgstr "APIトークン"
 
-#: users/models.py:128
+#: users/models.py:131
 msgid "Token Name"
 msgstr "トークン名"
 
-#: users/models.py:129
+#: users/models.py:132
 msgid "Custom token name"
 msgstr "カスタムトークン名"
 
-#: users/models.py:135
+#: users/models.py:138
 msgid "Token expiry date"
 msgstr "トークンの有効期限"
 
-#: users/models.py:143
+#: users/models.py:146
 msgid "Last Seen"
 msgstr "最終表示"
 
-#: users/models.py:144
+#: users/models.py:147
 msgid "Last time the token was used"
 msgstr "トークンが最後に使用された時間"
 
-#: users/models.py:148
+#: users/models.py:151
 msgid "Revoked"
 msgstr "失効"
 
-#: users/models.py:226
+#: users/models.py:229
 msgid "Permission set"
 msgstr "パーミッション設定"
 
-#: users/models.py:235
+#: users/models.py:238
 msgid "Group"
 msgstr "グループ"
 
-#: users/models.py:239
+#: users/models.py:242
 msgid "View"
 msgstr "表示"
 
-#: users/models.py:239
+#: users/models.py:242
 msgid "Permission to view items"
 msgstr "項目を表示する権限"
 
-#: users/models.py:243
+#: users/models.py:246
 msgid "Add"
 msgstr "追加"
 
-#: users/models.py:243
+#: users/models.py:246
 msgid "Permission to add items"
 msgstr "項目を追加する権限"
 
-#: users/models.py:247
+#: users/models.py:250
 msgid "Change"
 msgstr "変更"
 
-#: users/models.py:249
+#: users/models.py:252
 msgid "Permissions to edit items"
 msgstr "項目を編集する権限"
 
-#: users/models.py:253
+#: users/models.py:256
 msgid "Delete"
 msgstr "削除"
 
-#: users/models.py:255
+#: users/models.py:258
 msgid "Permission to delete items"
 msgstr "項目を削除する権限"
 
-#: users/models.py:492
+#: users/models.py:495
 msgid "Bot"
 msgstr "ボット"
 
-#: users/models.py:493
+#: users/models.py:496
 msgid "Internal"
 msgstr "内部"
 
-#: users/models.py:495
+#: users/models.py:498
 msgid "Guest"
 msgstr "ゲスト"
 
-#: users/models.py:504
+#: users/models.py:507
 msgid "Language"
 msgstr "言語"
 
-#: users/models.py:505
+#: users/models.py:508
 msgid "Preferred language for the user"
 msgstr "ユーザーの希望言語"
 
-#: users/models.py:510
+#: users/models.py:513
 msgid "Theme"
 msgstr "テーマ"
 
-#: users/models.py:511
+#: users/models.py:514
 msgid "Settings for the web UI as JSON - do not edit manually!"
 msgstr "JSONとしてのウェブUI用の設定 - 手動で編集しないでください！"
 
-#: users/models.py:516
+#: users/models.py:519
 msgid "Widgets"
 msgstr "ウィジェット"
 
-#: users/models.py:518
+#: users/models.py:521
 msgid "Settings for the dashboard widgets as JSON - do not edit manually!"
 msgstr "JSONとしてのダッシュボード・ウィジェットの設定 - 手動で編集しないでください！"
 
-#: users/models.py:525
+#: users/models.py:528
 msgid "Display Name"
 msgstr "表示名"
 
-#: users/models.py:526
+#: users/models.py:529
 msgid "Chosen display name for the user"
 msgstr "ユーザーの表示名選択"
 
-#: users/models.py:532
+#: users/models.py:535
 msgid "Position"
 msgstr "位置"
 
-#: users/models.py:533
+#: users/models.py:536
 msgid "Main job title or position"
 msgstr "主な役職名"
 
-#: users/models.py:540
+#: users/models.py:543
 msgid "User status message"
 msgstr "ユーザーのステータスメッセージ"
 
-#: users/models.py:547
+#: users/models.py:550
 msgid "User location information"
 msgstr "ユーザーの位置情報"
 
-#: users/models.py:552
+#: users/models.py:555
 msgid "User is actively using the system"
 msgstr "ユーザーが積極的にシステムを利用"
 
-#: users/models.py:559
+#: users/models.py:562
 msgid "Preferred contact information for the user"
 msgstr "希望の連絡先"
 
-#: users/models.py:565
+#: users/models.py:568
 msgid "User Type"
 msgstr "ユーザータイプ"
 
-#: users/models.py:566
+#: users/models.py:569
 msgid "Which type of user is this?"
 msgstr "どのようなユーザーですか？"
 
-#: users/models.py:572
+#: users/models.py:575
 msgid "Organisation"
 msgstr "組織"
 
-#: users/models.py:573
+#: users/models.py:576
 msgid "Users primary organisation/affiliation"
 msgstr "ユーザーの主な所属組織"
 
-#: users/models.py:581
+#: users/models.py:584
 msgid "Primary Group"
 msgstr "プライマリーグループ"
 
-#: users/models.py:582
+#: users/models.py:585
 msgid "Primary group for the user"
 msgstr "ユーザーのプライマリグループ"
 

@@ -8,7 +8,7 @@ msgstr ""
 "Language: nl\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-09-17 03:41\n"
+"PO-Revision-Date: 2025-09-19 00:28\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -152,7 +152,7 @@ msgstr "Templatesjablonen voor onderdeel"
 #: lib/enums/ModelInformation.tsx:52
 #: src/components/wizards/OrderPartsWizard.tsx:143
 #: src/pages/company/SupplierPartDetail.tsx:408
-#: src/pages/stock/StockDetail.tsx:286
+#: src/pages/stock/StockDetail.tsx:281
 #: src/tables/build/BuildAllocatedStockTable.tsx:155
 #: src/tables/part/PartPurchaseOrdersTable.tsx:50
 #: src/tables/purchasing/SupplierPartTable.tsx:64
@@ -196,7 +196,7 @@ msgstr "Onderdeel categorieën"
 #: src/forms/BuildForms.tsx:604
 #: src/forms/BuildForms.tsx:765
 #: src/forms/SalesOrderForms.tsx:269
-#: src/pages/stock/StockDetail.tsx:976
+#: src/pages/stock/StockDetail.tsx:984
 #: src/tables/stock/StockTrackingTable.tsx:48
 #: src/tables/stock/StockTrackingTable.tsx:55
 msgid "Stock Item"
@@ -221,7 +221,7 @@ msgstr "Voorraad locatie"
 #: lib/enums/ModelInformation.tsx:89
 #: src/pages/stock/LocationDetail.tsx:176
 #: src/pages/stock/LocationDetail.tsx:412
-#: src/pages/stock/StockDetail.tsx:967
+#: src/pages/stock/StockDetail.tsx:975
 msgid "Stock Locations"
 msgstr "Voorraad locatie"
 
@@ -299,7 +299,7 @@ msgstr "Project codes"
 #: src/pages/build/BuildDetail.tsx:244
 #: src/pages/part/pricing/PurchaseHistoryPanel.tsx:33
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:531
-#: src/pages/stock/StockDetail.tsx:349
+#: src/pages/stock/StockDetail.tsx:344
 #: src/tables/part/PartPurchaseOrdersTable.tsx:32
 #: src/tables/stock/StockItemTable.tsx:240
 #: src/tables/stock/StockTrackingTable.tsx:120
@@ -330,7 +330,7 @@ msgstr "Inkooporder regels"
 #: src/pages/sales/SalesOrderDetail.tsx:586
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:94
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:358
-#: src/pages/stock/StockDetail.tsx:358
+#: src/pages/stock/StockDetail.tsx:353
 #: src/tables/part/PartSalesAllocationsTable.tsx:41
 #: src/tables/sales/SalesOrderAllocationTable.tsx:107
 #: src/tables/stock/StockTrackingTable.tsx:131
@@ -699,6 +699,7 @@ msgstr "Streepjescode koppelen mislukt"
 #: src/pages/sales/ReturnOrderDetail.tsx:168
 #: src/pages/sales/SalesOrderDetail.tsx:180
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:168
+#: src/pages/stock/StockDetail.tsx:178
 msgid "Link"
 msgstr "Link"
 
@@ -955,7 +956,7 @@ msgstr "Invalid BOMs"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:39
 msgid "Assemblies requiring bill of materials validation"
-msgstr ""
+msgstr "Buurderijen waarvoor de materialen gevalideerd moeten worden"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:50
 #: src/tables/part/PartTable.tsx:250
@@ -2167,8 +2168,8 @@ msgstr "Geen artikelen"
 #: src/components/items/TransferList.tsx:161
 #: src/components/render/Stock.tsx:102
 #: src/pages/part/PartDetail.tsx:984
-#: src/pages/stock/StockDetail.tsx:262
-#: src/pages/stock/StockDetail.tsx:913
+#: src/pages/stock/StockDetail.tsx:257
+#: src/pages/stock/StockDetail.tsx:921
 #: src/tables/build/BuildAllocatedStockTable.tsx:135
 #: src/tables/build/BuildLineTable.tsx:190
 #: src/tables/part/PartTable.tsx:124
@@ -2509,7 +2510,7 @@ msgstr "Uitloggen"
 #: src/pages/Index/Settings/SystemSettings.tsx:224
 #: src/pages/part/PartDetail.tsx:805
 #: src/pages/stock/LocationDetail.tsx:390
-#: src/pages/stock/StockDetail.tsx:626
+#: src/pages/stock/StockDetail.tsx:634
 #: src/tables/stock/StockItemTable.tsx:86
 msgid "Stock"
 msgstr "Voorraad"
@@ -2908,7 +2909,7 @@ msgstr "Categorie"
 #: src/forms/StockForms.tsx:1073
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:88
 #: src/pages/core/UserDetail.tsx:158
-#: src/pages/stock/StockDetail.tsx:295
+#: src/pages/stock/StockDetail.tsx:290
 #: src/tables/ColumnRenderers.tsx:176
 #: src/tables/ColumnRenderers.tsx:185
 #: src/tables/Filter.tsx:392
@@ -2917,8 +2918,8 @@ msgid "Location"
 msgstr "Locatie"
 
 #: src/components/render/Stock.tsx:99
-#: src/pages/stock/StockDetail.tsx:195
-#: src/pages/stock/StockDetail.tsx:901
+#: src/pages/stock/StockDetail.tsx:190
+#: src/pages/stock/StockDetail.tsx:909
 #: src/tables/build/BuildAllocatedStockTable.tsx:121
 #: src/tables/build/BuildOutputTable.tsx:111
 #: src/tables/sales/SalesOrderAllocationTable.tsx:139
@@ -2940,8 +2941,8 @@ msgstr "Serienummer"
 #: src/pages/part/pricing/BomPricingPanel.tsx:146
 #: src/pages/part/pricing/PriceBreakPanel.tsx:89
 #: src/pages/part/pricing/PriceBreakPanel.tsx:172
-#: src/pages/stock/StockDetail.tsx:255
-#: src/pages/stock/StockDetail.tsx:907
+#: src/pages/stock/StockDetail.tsx:250
+#: src/pages/stock/StockDetail.tsx:915
 #: src/tables/build/BuildLineTable.tsx:84
 #: src/tables/build/BuildOrderTestTable.tsx:251
 #: src/tables/part/PartPurchaseOrdersTable.tsx:94
@@ -3954,7 +3955,7 @@ msgstr "Volgende batch code"
 #: src/forms/StockForms.tsx:184
 #: src/forms/StockForms.tsx:189
 #: src/forms/StockForms.tsx:360
-#: src/pages/stock/StockDetail.tsx:231
+#: src/pages/stock/StockDetail.tsx:226
 msgid "Next serial number"
 msgstr "Volgend serienummer"
 
@@ -4232,8 +4233,8 @@ msgstr "Winkel met reeds ontvangen voorraad"
 
 #: src/forms/PurchaseOrderForms.tsx:658
 #: src/pages/build/BuildDetail.tsx:351
-#: src/pages/stock/StockDetail.tsx:277
-#: src/pages/stock/StockDetail.tsx:923
+#: src/pages/stock/StockDetail.tsx:272
+#: src/pages/stock/StockDetail.tsx:931
 #: src/tables/Filter.tsx:83
 #: src/tables/build/BuildAllocatedStockTable.tsx:128
 #: src/tables/build/BuildOrderTestTable.tsx:242
@@ -4260,7 +4261,7 @@ msgid "Enter serial numbers for received items"
 msgstr "Voer serienummers in voor ontvangen items"
 
 #: src/forms/PurchaseOrderForms.tsx:687
-#: src/pages/stock/StockDetail.tsx:379
+#: src/pages/stock/StockDetail.tsx:374
 #: src/tables/stock/StockItemTable.tsx:295
 msgid "Expiry Date"
 msgstr "Vervaldatum"
@@ -4273,7 +4274,7 @@ msgstr "Voer een vervaldatum in voor ontvangen items"
 #: src/forms/StockForms.tsx:673
 #: src/pages/company/SupplierPartDetail.tsx:171
 #: src/pages/company/SupplierPartDetail.tsx:235
-#: src/pages/stock/StockDetail.tsx:416
+#: src/pages/stock/StockDetail.tsx:411
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:220
 msgid "Packaging"
 msgstr "Verpakking"
@@ -4339,7 +4340,7 @@ msgid "Stock Status"
 msgstr "Voorraad status"
 
 #: src/forms/StockForms.tsx:261
-#: src/pages/stock/StockDetail.tsx:670
+#: src/pages/stock/StockDetail.tsx:678
 #: src/tables/stock/StockItemTable.tsx:525
 #: src/tables/stock/StockItemTable.tsx:572
 msgid "Add Stock Item"
@@ -4478,19 +4479,19 @@ msgstr "Voorraad samengevoegd"
 
 #: src/forms/StockForms.tsx:1281
 msgid "Merge Stock Items"
-msgstr ""
+msgstr "Voorraad items samenvoegen"
 
 #: src/forms/StockForms.tsx:1283
 msgid "Merge operation cannot be reversed"
-msgstr ""
+msgstr "Samenvoeg bewerking kan niet worden teruggedraaid"
 
 #: src/forms/StockForms.tsx:1284
 msgid "Tracking information may be lost when merging items"
-msgstr ""
+msgstr "Tracking informatie kan verloren gaan tijdens het samenvoegen van items"
 
 #: src/forms/StockForms.tsx:1285
 msgid "Supplier information may be lost when merging items"
-msgstr ""
+msgstr "De informatie van de leverancier kan verloren gaan bij het samenvoegen van items"
 
 #: src/forms/StockForms.tsx:1303
 msgid "Assign Stock to Customer"
@@ -4510,7 +4511,7 @@ msgstr "Voorraad verwijderd"
 
 #: src/forms/StockForms.tsx:1318
 msgid "This operation will permanently delete the selected stock items."
-msgstr ""
+msgstr "Deze bewerking zal de geselecteerde voorraaditems permanent verwijderen."
 
 #: src/forms/StockForms.tsx:1327
 msgid "Parent stock location"
@@ -4518,19 +4519,19 @@ msgstr "Bovenliggende voorraad locatie"
 
 #: src/forms/StockForms.tsx:1454
 msgid "Find Serial Number"
-msgstr ""
+msgstr "Zoek serienummer"
 
 #: src/forms/StockForms.tsx:1465
 msgid "No matching items"
-msgstr ""
+msgstr "Geen overeenkomende items"
 
 #: src/forms/StockForms.tsx:1471
 msgid "Multiple matching items"
-msgstr ""
+msgstr "Meerdere overeenkomende items"
 
 #: src/forms/StockForms.tsx:1480
 msgid "Invalid response from server"
-msgstr ""
+msgstr "Ongeldige reactie van server"
 
 #: src/forms/selectionListFields.tsx:97
 msgid "Entries"
@@ -4619,11 +4620,11 @@ msgstr "Er is een tegenstrijdige sessie op de server voor deze browser. Meld u e
 
 #: src/functions/auth.tsx:150
 msgid "MFA Login successful"
-msgstr ""
+msgstr "MFA-login succesvol"
 
 #: src/functions/auth.tsx:151
 msgid "MFA details were automatically provided in the browser"
-msgstr ""
+msgstr "De MFA-gegevens werden automatisch verstrekt in de browser"
 
 #: src/functions/auth.tsx:180
 msgid "Logged Out"
@@ -4790,47 +4791,47 @@ msgstr "Weet u zeker dat u dit item wilt verwijderen?"
 
 #: src/hooks/UseStockAdjustActions.tsx:100
 msgid "Count selected stock items"
-msgstr ""
+msgstr "Gemarkeerde voorraaditems tellen"
 
 #: src/hooks/UseStockAdjustActions.tsx:110
 msgid "Add to selected stock items"
-msgstr ""
+msgstr "Toevoegen aan geselecteerde voorraaditems"
 
 #: src/hooks/UseStockAdjustActions.tsx:120
 msgid "Remove from selected stock items"
-msgstr ""
+msgstr "Verwijder van geselecteerde voorraaditems"
 
 #: src/hooks/UseStockAdjustActions.tsx:130
 msgid "Transfer selected stock items"
-msgstr ""
+msgstr "Verplaats geselecteerde voorraad items"
 
 #: src/hooks/UseStockAdjustActions.tsx:140
 msgid "Merge selected stock items"
-msgstr ""
+msgstr "Voeg geselecteerde voorraaditems samen"
 
 #: src/hooks/UseStockAdjustActions.tsx:150
 msgid "Change status of selected stock items"
-msgstr ""
+msgstr "Verander status van geselecteerde voorraad items"
 
 #: src/hooks/UseStockAdjustActions.tsx:158
 msgid "Assign Stock"
-msgstr ""
+msgstr "Voorraad toewijzen"
 
 #: src/hooks/UseStockAdjustActions.tsx:160
 msgid "Assign selected stock items to a customer"
-msgstr ""
+msgstr "Geselecteerde voorraadartikelen toewijzen aan een klant"
 
 #: src/hooks/UseStockAdjustActions.tsx:170
 msgid "Return selected items into stock"
-msgstr ""
+msgstr "Geselecteerde artikelen naar voorraad retourneren"
 
 #: src/hooks/UseStockAdjustActions.tsx:178
 msgid "Delete Stock"
-msgstr ""
+msgstr "Voorraad verwijderen"
 
 #: src/hooks/UseStockAdjustActions.tsx:180
 msgid "Delete selected stock items"
-msgstr ""
+msgstr "Geselecteerde voorraadartikelen verwijderen"
 
 #: src/hooks/UseStockAdjustActions.tsx:205
 #: src/pages/part/PartDetail.tsx:1155
@@ -4927,11 +4928,11 @@ msgstr "Voer uw TOTP of herstelcode in"
 
 #: src/pages/Auth/MFA.tsx:27
 msgid "Remember this device"
-msgstr ""
+msgstr "Onthoud dit apparaat"
 
 #: src/pages/Auth/MFA.tsx:29
 msgid "If enabled, you will not be asked for MFA on this device for 30 days."
-msgstr ""
+msgstr "Indien ingeschakeld, wordt u 30 dagen niet om MFA gevraagd op dit apparaat."
 
 #: src/pages/Auth/MFA.tsx:38
 msgid "Log in"
@@ -5512,7 +5513,7 @@ msgstr "Toegang tokens"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:101
 msgid "Session Information"
-msgstr ""
+msgstr "Sessie gegevens"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:139
 #: src/tables/general/BarcodeScanTable.tsx:60
@@ -5524,7 +5525,7 @@ msgstr "Tijdstip"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:140
 msgid "Method"
-msgstr ""
+msgstr "Methode"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:183
 msgid "Error while updating email"
@@ -5792,7 +5793,7 @@ msgstr "Basis valuta"
 
 #: src/pages/Index/Settings/AdminCenter/EmailManagementPanel.tsx:13
 msgid "Email Messages"
-msgstr ""
+msgstr "E-mail berichten"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:107
 #~ msgid "User Management"
@@ -5800,7 +5801,7 @@ msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:112
 msgid "Users / Access"
-msgstr ""
+msgstr "Gebruikers / Toegang"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:126
 msgid "Data Import"
@@ -5872,11 +5873,11 @@ msgstr "Machines"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:236
 msgid "Operations"
-msgstr ""
+msgstr "Activiteiten"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:248
 msgid "Data Management"
-msgstr ""
+msgstr "Gegevens beheer"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:259
 #: src/pages/Index/Settings/SystemSettings.tsx:175
@@ -5886,11 +5887,11 @@ msgstr "Rapporteren"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:264
 msgid "PLM"
-msgstr ""
+msgstr "PLM"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:274
 msgid "Extend / Integrate"
-msgstr ""
+msgstr "Breid uit / Integreren"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:288
 msgid "Advanced Options"
@@ -5910,7 +5911,7 @@ msgstr "Geavanceerde instellingen"
 
 #: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:59
 msgid "Machine Drivers"
-msgstr ""
+msgstr "Machine stuurprogramma's"
 
 #: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:62
 #~ msgid "There are no machine registry errors."
@@ -5975,7 +5976,7 @@ msgstr "Liggend"
 
 #: src/pages/Index/Settings/AdminCenter/ReportTemplatePanel.tsx:25
 msgid "Merge"
-msgstr ""
+msgstr "Samenvoegen"
 
 #: src/pages/Index/Settings/AdminCenter/ReportTemplatePanel.tsx:31
 msgid "Attach to Model"
@@ -6074,7 +6075,7 @@ msgstr "Tokens"
 
 #: src/pages/Index/Settings/PluginSettingsGroup.tsx:99
 msgid "The settings below are specific to each available plugin"
-msgstr ""
+msgstr "De instellingen hieronder zijn specifiek voor elke beschikbare plug-in"
 
 #: src/pages/Index/Settings/SystemSettings.tsx:77
 msgid "Authentication"
@@ -6095,7 +6096,7 @@ msgstr "Barcodes"
 #: src/pages/Index/Settings/SystemSettings.tsx:127
 #: src/pages/Index/Settings/UserSettings.tsx:112
 msgid "The settings below are specific to each available notification method"
-msgstr ""
+msgstr "De onderstaande instellingen zijn specifiek voor elke beschikbare notificatie methode"
 
 #: src/pages/Index/Settings/SystemSettings.tsx:133
 msgid "Pricing"
@@ -6159,15 +6160,15 @@ msgstr "Markeren als ongelezen"
 
 #: src/pages/build/BuildDetail.tsx:69
 msgid "No Required Items"
-msgstr ""
+msgstr "Geen vereiste items"
 
 #: src/pages/build/BuildDetail.tsx:71
 msgid "This build order does not have any required items."
-msgstr ""
+msgstr "Deze bouwopdracht heeft geen vereiste items."
 
 #: src/pages/build/BuildDetail.tsx:72
 msgid "The assembled part may not have a Bill of Materials (BOM) defined, or the BOM is empty."
-msgstr ""
+msgstr "Het geassembleerde onderdeel heeft mogelijk geen Materiaalbon (BOM) gedefinieerd, of de BOM is leeg."
 
 #: src/pages/build/BuildDetail.tsx:80
 #~ msgid "Build Status"
@@ -6351,7 +6352,7 @@ msgstr "Bouw details"
 
 #: src/pages/build/BuildDetail.tsx:427
 msgid "Required Parts"
-msgstr ""
+msgstr "Vereiste onderdelen"
 
 #: src/pages/build/BuildDetail.tsx:439
 #: src/pages/sales/SalesOrderDetail.tsx:380
@@ -6370,7 +6371,7 @@ msgstr "Onvolledige uitvoer"
 
 #: src/pages/build/BuildDetail.tsx:500
 msgid "External Orders"
-msgstr ""
+msgstr "Externe bestellingen"
 
 #: src/pages/build/BuildDetail.tsx:514
 msgid "Child Build Orders"
@@ -6511,7 +6512,7 @@ msgid "Cancel order"
 msgstr "Bestelling annuleren"
 
 #: src/pages/build/BuildDetail.tsx:752
-#: src/pages/stock/StockDetail.tsx:341
+#: src/pages/stock/StockDetail.tsx:336
 #: src/tables/build/BuildAllocatedStockTable.tsx:85
 #: src/tables/part/PartBuildAllocationsTable.tsx:45
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:150
@@ -6526,7 +6527,7 @@ msgstr "Productieorder"
 #: src/pages/build/BuildIndex.tsx:29
 #: src/tables/build/BuildOrderTable.tsx:186
 msgid "Show external build orders"
-msgstr ""
+msgstr "Toon externe build orders"
 
 #: src/pages/build/BuildIndex.tsx:39
 #~ msgid "New Build Order"
@@ -6560,7 +6561,7 @@ msgstr "E-mail adres"
 
 #: src/pages/company/CompanyDetail.tsx:121
 msgid "Tax ID"
-msgstr ""
+msgstr "BTW nr."
 
 #: src/pages/company/CompanyDetail.tsx:131
 msgid "Default Currency"
@@ -6597,7 +6598,7 @@ msgstr "Fabrikant"
 #: src/pages/sales/ReturnOrderDetail.tsx:103
 #: src/pages/sales/SalesOrderDetail.tsx:112
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:102
-#: src/pages/stock/StockDetail.tsx:367
+#: src/pages/stock/StockDetail.tsx:362
 #: src/tables/company/CompanyTable.tsx:106
 #: src/tables/sales/ReturnOrderTable.tsx:108
 #: src/tables/sales/SalesOrderTable.tsx:133
@@ -6894,13 +6895,13 @@ msgid "Category Details"
 msgstr "Categorie details"
 
 #: src/pages/part/PartAllocationPanel.tsx:21
-#: src/pages/stock/StockDetail.tsx:539
+#: src/pages/stock/StockDetail.tsx:547
 #: src/tables/part/PartTable.tsx:108
 msgid "Build Order Allocations"
 msgstr "Productie-opdracht toewijzingen"
 
 #: src/pages/part/PartAllocationPanel.tsx:31
-#: src/pages/stock/StockDetail.tsx:554
+#: src/pages/stock/StockDetail.tsx:562
 #: src/tables/part/PartTable.tsx:116
 msgid "Sales Order Allocations"
 msgstr "Verkoopordertoewijzingen"
@@ -6921,32 +6922,32 @@ msgstr "Stuklijst BOM gecontroleerd"
 
 #: src/pages/part/PartDetail.tsx:206
 msgid "BOM Validated"
-msgstr ""
+msgstr "BOM is gevalideerd"
 
 #: src/pages/part/PartDetail.tsx:207
 msgid "The Bill of Materials for this part has been validated"
-msgstr ""
+msgstr "Het materiaal voor dit onderdeel is gevalideerd."
 
 #: src/pages/part/PartDetail.tsx:211
 #: src/pages/part/PartDetail.tsx:216
 msgid "BOM Not Validated"
-msgstr ""
+msgstr "BOM niet gevalideerd"
 
 #: src/pages/part/PartDetail.tsx:212
 msgid "The Bill of Materials for this part has previously been checked, but requires revalidation"
-msgstr ""
+msgstr "De MaterialenBill voor dit onderdeel is eerder gecontroleerd, maar vereist opnieuw validatie"
 
 #: src/pages/part/PartDetail.tsx:217
 msgid "The Bill of Materials for this part has not yet been validated"
-msgstr ""
+msgstr "De Materialenfactuur voor dit onderdeel is nog niet gevalideerd"
 
 #: src/pages/part/PartDetail.tsx:248
 msgid "Validated On"
-msgstr ""
+msgstr "Gevalideerd op"
 
 #: src/pages/part/PartDetail.tsx:253
 msgid "Validated By"
-msgstr ""
+msgstr "Gevalideerd door"
 
 #: src/pages/part/PartDetail.tsx:286
 #~ msgid "Variant Stock"
@@ -7025,7 +7026,7 @@ msgstr "Toegewezen aan verkooporders"
 
 #: src/pages/part/PartDetail.tsx:588
 #: src/pages/part/PartDetail.tsx:1011
-#: src/pages/stock/StockDetail.tsx:896
+#: src/pages/stock/StockDetail.tsx:904
 #: src/tables/build/BuildOrderTestTable.tsx:273
 #: src/tables/stock/StockItemTable.tsx:364
 msgid "In Production"
@@ -7129,7 +7130,7 @@ msgid "Variants"
 msgstr "Varianten"
 
 #: src/pages/part/PartDetail.tsx:831
-#: src/pages/stock/StockDetail.tsx:526
+#: src/pages/stock/StockDetail.tsx:534
 msgid "Allocations"
 msgstr "Toewijzingen"
 
@@ -7187,12 +7188,12 @@ msgid "Deleting this part cannot be reversed"
 msgstr "Verwijderen van dit onderdeel kan niet ongedaan worden gemaakt"
 
 #: src/pages/part/PartDetail.tsx:1161
-#: src/pages/stock/StockDetail.tsx:854
+#: src/pages/stock/StockDetail.tsx:862
 msgid "Order"
 msgstr "Order"
 
 #: src/pages/part/PartDetail.tsx:1162
-#: src/pages/stock/StockDetail.tsx:855
+#: src/pages/stock/StockDetail.tsx:863
 #: src/tables/build/BuildLineTable.tsx:740
 msgid "Order Stock"
 msgstr "Voorraad bestelling"
@@ -7291,7 +7292,7 @@ msgstr "Voorraad invoer verwijderen"
 
 #: src/pages/part/PartStockHistoryDetail.tsx:107
 #: src/pages/part/PartStockHistoryDetail.tsx:211
-#: src/pages/stock/StockDetail.tsx:399
+#: src/pages/stock/StockDetail.tsx:394
 #: src/tables/stock/StockItemTable.tsx:272
 msgid "Stock Value"
 msgstr "Voorraad waarde"
@@ -7366,7 +7367,7 @@ msgstr "Maximale prijs"
 #: src/pages/part/pricing/PurchaseHistoryPanel.tsx:71
 #: src/pages/part/pricing/PurchaseHistoryPanel.tsx:126
 #: src/pages/part/pricing/SupplierPricingPanel.tsx:66
-#: src/pages/stock/StockDetail.tsx:387
+#: src/pages/stock/StockDetail.tsx:382
 #: src/tables/bom/BomTable.tsx:265
 #: src/tables/general/ExtraLineItemTable.tsx:61
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:250
@@ -7449,7 +7450,7 @@ msgid "Purchase Pricing"
 msgstr "Inkoopprijs"
 
 #: src/pages/part/pricing/PricingOverviewPanel.tsx:281
-#: src/pages/stock/StockDetail.tsx:179
+#: src/pages/stock/StockDetail.tsx:418
 #: src/tables/part/PartParameterTable.tsx:121
 #: src/tables/stock/StockItemTable.tsx:301
 msgid "Last Updated"
@@ -7871,12 +7872,12 @@ msgid "Scan Stock Item"
 msgstr "Scan voorraad item"
 
 #: src/pages/stock/LocationDetail.tsx:298
-#: src/pages/stock/StockDetail.tsx:783
+#: src/pages/stock/StockDetail.tsx:791
 msgid "Scanned stock item into location"
 msgstr "Gescande voorraadartikel op locatie"
 
 #: src/pages/stock/LocationDetail.tsx:304
-#: src/pages/stock/StockDetail.tsx:789
+#: src/pages/stock/StockDetail.tsx:797
 msgid "Error scanning stock item"
 msgstr "Fout bij scannen voorraad item"
 
@@ -7913,11 +7914,7 @@ msgstr "Basis onderdeel"
 #~ msgid "Unlink custom barcode from stock item"
 #~ msgstr "Unlink custom barcode from stock item"
 
-#: src/pages/stock/StockDetail.tsx:185
-msgid "Last Stocktake"
-msgstr "Laatste voorraadcontrole"
-
-#: src/pages/stock/StockDetail.tsx:203
+#: src/pages/stock/StockDetail.tsx:198
 msgid "Previous serial number"
 msgstr "Vorig serienummer"
 
@@ -7929,55 +7926,59 @@ msgstr "Vorig serienummer"
 #~ msgid "Delete stock item"
 #~ msgstr "Delete stock item"
 
-#: src/pages/stock/StockDetail.tsx:225
+#: src/pages/stock/StockDetail.tsx:220
 msgid "Find serial number"
 msgstr "Zoek een serienummer"
 
-#: src/pages/stock/StockDetail.tsx:269
+#: src/pages/stock/StockDetail.tsx:264
 msgid "Allocated to Orders"
 msgstr "Toegewezen aan orders"
 
-#: src/pages/stock/StockDetail.tsx:302
+#: src/pages/stock/StockDetail.tsx:297
 msgid "Installed In"
 msgstr "Geïnstalleerd in"
 
-#: src/pages/stock/StockDetail.tsx:322
+#: src/pages/stock/StockDetail.tsx:317
 msgid "Parent Item"
 msgstr "Bovenliggend Item"
 
-#: src/pages/stock/StockDetail.tsx:326
+#: src/pages/stock/StockDetail.tsx:321
 msgid "Parent stock item"
 msgstr "Bovenliggende voorraad item"
 
-#: src/pages/stock/StockDetail.tsx:332
+#: src/pages/stock/StockDetail.tsx:327
 msgid "Consumed By"
 msgstr "Verbruikt door"
+
+#: src/pages/stock/StockDetail.tsx:424
+msgid "Last Stocktake"
+msgstr "Laatste voorraadcontrole"
 
 #: src/pages/stock/StockDetail.tsx:433
 #~ msgid "Duplicate stock item"
 #~ msgstr "Duplicate stock item"
 
-#: src/pages/stock/StockDetail.tsx:510
+#: src/pages/stock/StockDetail.tsx:518
 msgid "Stock Details"
 msgstr "Voorraad details"
 
-#: src/pages/stock/StockDetail.tsx:516
+#: src/pages/stock/StockDetail.tsx:524
 msgid "Stock Tracking"
 msgstr "Voorraad bijhouden"
 
-#: src/pages/stock/StockDetail.tsx:571
+#: src/pages/stock/StockDetail.tsx:579
 msgid "Test Data"
 msgstr "Test gegevens"
 
-#: src/pages/stock/StockDetail.tsx:585
+#: src/pages/stock/StockDetail.tsx:593
 msgid "Installed Items"
 msgstr "Geïnstalleerde items"
 
-#: src/pages/stock/StockDetail.tsx:592
+#: src/pages/stock/StockDetail.tsx:600
 msgid "Child Items"
 msgstr "Onderliggende artikelen"
 
-#: src/pages/stock/StockDetail.tsx:645
+#: src/pages/stock/StockDetail.tsx:653
 msgid "Edit Stock Item"
 msgstr "Bewerk voorraadartikel"
 
@@ -7991,11 +7992,11 @@ msgstr "Bewerk voorraadartikel"
 #~ msgid "Remove stock"
 #~ msgstr "Remove stock"
 
-#: src/pages/stock/StockDetail.tsx:687
+#: src/pages/stock/StockDetail.tsx:695
 msgid "Items Created"
 msgstr "Items bijgewerkt"
 
-#: src/pages/stock/StockDetail.tsx:688
+#: src/pages/stock/StockDetail.tsx:696
 msgid "Created {n} stock items"
 msgstr "Aangemaakt {n} voorraad items"
 
@@ -8004,63 +8005,63 @@ msgstr "Aangemaakt {n} voorraad items"
 #~ msgid "Transfer stock"
 #~ msgstr "Transfer stock"
 
-#: src/pages/stock/StockDetail.tsx:705
+#: src/pages/stock/StockDetail.tsx:713
 msgid "Delete Stock Item"
 msgstr "Voorraad artikel verwijderen"
 
-#: src/pages/stock/StockDetail.tsx:741
+#: src/pages/stock/StockDetail.tsx:749
 msgid "Serialize Stock Item"
 msgstr "Voorraad item serie nummers geven"
-
-#: src/pages/stock/StockDetail.tsx:757
-#: src/tables/stock/StockItemTable.tsx:539
-msgid "Stock item serialized"
-msgstr "Voorraad item geserialiseerd"
 
 #: src/pages/stock/StockDetail.tsx:762
 #~ msgid "Return Stock Item"
 #~ msgstr "Return Stock Item"
 
 #: src/pages/stock/StockDetail.tsx:765
-msgid "Scan Into Location"
-msgstr ""
+#: src/tables/stock/StockItemTable.tsx:539
+msgid "Stock item serialized"
+msgstr "Voorraad item geserialiseerd"
 
 #: src/pages/stock/StockDetail.tsx:765
 #~ msgid "Return this item into stock. This will remove the customer assignment."
 #~ msgstr "Return this item into stock. This will remove the customer assignment."
 
+#: src/pages/stock/StockDetail.tsx:773
+msgid "Scan Into Location"
+msgstr "Scan naar locatie"
+
 #: src/pages/stock/StockDetail.tsx:777
 #~ msgid "Item returned to stock"
 #~ msgstr "Item returned to stock"
 
-#: src/pages/stock/StockDetail.tsx:823
+#: src/pages/stock/StockDetail.tsx:831
 msgid "Scan into location"
-msgstr ""
+msgstr "Scan naar locatie"
 
-#: src/pages/stock/StockDetail.tsx:825
+#: src/pages/stock/StockDetail.tsx:833
 msgid "Scan this item into a location"
-msgstr ""
+msgstr "Scan dit item naar een locatie"
 
-#: src/pages/stock/StockDetail.tsx:837
+#: src/pages/stock/StockDetail.tsx:845
 msgid "Stock Operations"
 msgstr "Voorraad activiteiten"
 
-#: src/pages/stock/StockDetail.tsx:842
+#: src/pages/stock/StockDetail.tsx:850
 #: src/tables/build/BuildOutputTable.tsx:532
 msgid "Serialize"
 msgstr "Serienummer geven"
 
-#: src/pages/stock/StockDetail.tsx:843
+#: src/pages/stock/StockDetail.tsx:851
 msgid "Serialize stock"
 msgstr "Voorraad serie nummer geven"
 
 #: src/pages/stock/StockDetail.tsx:868
-msgid "Stock Item Actions"
-msgstr "Voorraad artikel acties"
-
-#: src/pages/stock/StockDetail.tsx:868
 #~ msgid "Count stock"
 #~ msgstr "Count stock"
+
+#: src/pages/stock/StockDetail.tsx:876
+msgid "Stock Item Actions"
+msgstr "Voorraad artikel acties"
 
 #: src/pages/stock/StockDetail.tsx:890
 #~ msgid "Return from customer"
@@ -8070,27 +8071,27 @@ msgstr "Voorraad artikel acties"
 #~ msgid "Transfer"
 #~ msgstr "Transfer"
 
-#: src/pages/stock/StockDetail.tsx:937
+#: src/pages/stock/StockDetail.tsx:945
 #: src/tables/stock/StockItemTable.tsx:409
 msgid "Stale"
 msgstr "Verouderd"
-
-#: src/pages/stock/StockDetail.tsx:943
-#: src/tables/stock/StockItemTable.tsx:403
-msgid "Expired"
-msgstr "Verlopen"
-
-#: src/pages/stock/StockDetail.tsx:949
-msgid "Unavailable"
-msgstr "Niet beschikbaar"
 
 #: src/pages/stock/StockDetail.tsx:950
 #~ msgid "Assign to Customer"
 #~ msgstr "Assign to Customer"
 
 #: src/pages/stock/StockDetail.tsx:951
+#: src/tables/stock/StockItemTable.tsx:403
+msgid "Expired"
+msgstr "Verlopen"
+
+#: src/pages/stock/StockDetail.tsx:951
 #~ msgid "Assign to a customer"
 #~ msgstr "Assign to a customer"
+
+#: src/pages/stock/StockDetail.tsx:957
+msgid "Unavailable"
+msgstr "Niet beschikbaar"
 
 #: src/states/IconState.tsx:47
 #: src/states/IconState.tsx:77
@@ -8439,7 +8440,7 @@ msgstr "Server heeft onjuist gegevenstype teruggestuurd"
 
 #: src/tables/InvenTreeTable.tsx:560
 msgid "Error loading table data"
-msgstr ""
+msgstr "Fout bij laden van tabelgegevens"
 
 #: src/tables/InvenTreeTable.tsx:594
 #: src/tables/InvenTreeTable.tsx:595
@@ -8499,7 +8500,7 @@ msgstr "Gegevens vernieuwen"
 
 #: src/tables/InvenTreeTableHeader.tsx:269
 msgid "Active Filters"
-msgstr ""
+msgstr "Actieve filters"
 
 #: src/tables/TableHoverCard.tsx:35
 #~ msgid "item-{idx}"
@@ -8519,11 +8520,11 @@ msgstr "Informatie over onderdeel"
 
 #: src/tables/bom/BomTable.tsx:121
 msgid "This BOM item has not been validated"
-msgstr ""
+msgstr "Dit BOM item is niet gevalideerd"
 
 #: src/tables/bom/BomTable.tsx:233
 msgid "Substitutes"
-msgstr ""
+msgstr "Vervanging"
 
 #: src/tables/bom/BomTable.tsx:301
 #~ msgid "Create BOM Item"
@@ -8612,7 +8613,7 @@ msgstr "Gecreëerde items weergeven"
 
 #: src/tables/bom/BomTable.tsx:415
 msgid "Show virtual items"
-msgstr ""
+msgstr "Virtuele items tonen"
 
 #: src/tables/bom/BomTable.tsx:420
 #: src/tables/build/BuildLineTable.tsx:191
@@ -8800,7 +8801,7 @@ msgstr "Verwijder voorraadtoewijzing"
 
 #: src/tables/build/BuildAllocatedStockTable.tsx:232
 msgid "Consume"
-msgstr ""
+msgstr "Verbruik"
 
 #: src/tables/build/BuildLineTable.tsx:59
 #~ msgid "Show lines with available stock"
@@ -8812,11 +8813,11 @@ msgstr "Voorraad item weergeven"
 
 #: src/tables/build/BuildLineTable.tsx:181
 msgid "Show fully allocated lines"
-msgstr ""
+msgstr "Toon volledig toegewezen lijnen"
 
 #: src/tables/build/BuildLineTable.tsx:186
 msgid "Show fully consumed lines"
-msgstr ""
+msgstr "Toon volledig verbruikte lijnen"
 
 #: src/tables/build/BuildLineTable.tsx:189
 #~ msgid "Show allocated lines"
@@ -8873,24 +8874,24 @@ msgstr "Vereiste hoeveelheid"
 
 #: src/tables/build/BuildLineTable.tsx:400
 msgid "Setup Quantity"
-msgstr ""
+msgstr "Totale hoeveelheid"
 
 #: src/tables/build/BuildLineTable.tsx:409
 msgid "Attrition"
-msgstr ""
+msgstr "Attriatie"
 
 #: src/tables/build/BuildLineTable.tsx:417
 msgid "Rounding Multiple"
-msgstr ""
+msgstr "Afronding meerdere"
 
 #: src/tables/build/BuildLineTable.tsx:426
 msgid "BOM Information"
-msgstr ""
+msgstr "BOM Information"
 
 #: src/tables/build/BuildLineTable.tsx:496
 #: src/tables/part/PartBuildAllocationsTable.tsx:102
 msgid "Fully allocated"
-msgstr ""
+msgstr "Volledig toegewezen"
 
 #: src/tables/build/BuildLineTable.tsx:544
 #: src/tables/sales/SalesOrderLineItemTable.tsx:308
@@ -9016,11 +9017,11 @@ msgstr "Test resultaat toegevoegd"
 
 #: src/tables/build/BuildOrderTestTable.tsx:124
 msgid "Add Test Results"
-msgstr ""
+msgstr "Voeg testresultaten toe"
 
 #: src/tables/build/BuildOrderTestTable.tsx:134
 msgid "Test results added"
-msgstr ""
+msgstr "Test resultaten toegevoegd"
 
 #: src/tables/build/BuildOrderTestTable.tsx:162
 #: src/tables/stock/StockItemTestResultTable.tsx:191
@@ -9046,7 +9047,7 @@ msgstr "Voeg Build uitvoer toe"
 
 #: src/tables/build/BuildOutputTable.tsx:297
 msgid "Build output created"
-msgstr ""
+msgstr "Bouw uitvoer gemaakt"
 
 #: src/tables/build/BuildOutputTable.tsx:304
 #~ msgid "Edit build output"
@@ -9063,7 +9064,7 @@ msgstr "Deze actie zal alle voorraad van de geselecteerde bouw uitvoer activeren
 
 #: src/tables/build/BuildOutputTable.tsx:391
 msgid "Serialize Build Output"
-msgstr ""
+msgstr "Serialiseren Build uitvoer"
 
 #: src/tables/build/BuildOutputTable.tsx:409
 #: src/tables/stock/StockItemTable.tsx:329
@@ -9104,7 +9105,7 @@ msgstr "Voorraad van build output niet toewijzen"
 
 #: src/tables/build/BuildOutputTable.tsx:533
 msgid "Serialize build output"
-msgstr ""
+msgstr "Build uitvoer serialiseren"
 
 #: src/tables/build/BuildOutputTable.tsx:544
 msgid "Complete build output"
@@ -9132,11 +9133,11 @@ msgstr "Vereiste tests"
 
 #: src/tables/build/BuildOutputTable.tsx:710
 msgid "External Build"
-msgstr ""
+msgstr "Externe bouw"
 
 #: src/tables/build/BuildOutputTable.tsx:712
 msgid "This build order is fulfilled by an external purchase order"
-msgstr ""
+msgstr "Deze build-opdracht is vervuld door een externe inkooporder"
 
 #: src/tables/company/AddressTable.tsx:122
 #: src/tables/company/AddressTable.tsx:187
@@ -9344,7 +9345,7 @@ msgstr "Machine is succesvol verwijderd."
 #: src/tables/machine/MachineListTable.tsx:245
 #: src/tables/machine/MachineListTable.tsx:590
 msgid "Are you sure you want to remove this machine?"
-msgstr ""
+msgstr "Weet je zeker dat je deze machine wilt verwijderen?"
 
 #: src/tables/machine/MachineListTable.tsx:262
 msgid "Machine"
@@ -9773,11 +9774,11 @@ msgstr "Filteren op samenvoegen attribuut"
 
 #: src/tables/part/PartTable.tsx:202
 msgid "BOM Valid"
-msgstr ""
+msgstr "BOM Valid"
 
 #: src/tables/part/PartTable.tsx:203
 msgid "Filter by parts with a valid BOM"
-msgstr ""
+msgstr "Filter op onderdelen met een geldige BOM"
 
 #: src/tables/part/PartTable.tsx:209
 msgid "Include parts in subcategories"
@@ -10472,7 +10473,7 @@ msgstr "Toewijzen aan zending"
 #: src/tables/sales/SalesOrderLineItemTable.tsx:197
 #: src/tables/sales/SalesOrderLineItemTable.tsx:214
 msgid "Virtual part"
-msgstr ""
+msgstr "Virtueel deel"
 
 #: src/tables/sales/SalesOrderLineItemTable.tsx:280
 #~ msgid "Allocate stock"
@@ -10679,44 +10680,44 @@ msgstr "Aangepaste eenheid toevoegen"
 
 #: src/tables/settings/EmailTable.tsx:25
 msgid "Announced"
-msgstr ""
+msgstr "Aangekondigd"
 
 #: src/tables/settings/EmailTable.tsx:27
 msgid "Sent"
-msgstr ""
+msgstr "Verzonden"
 
 #: src/tables/settings/EmailTable.tsx:29
 msgid "Failed"
-msgstr ""
+msgstr "Mislukt"
 
 #: src/tables/settings/EmailTable.tsx:33
 msgid "Read"
-msgstr ""
+msgstr "Gelezen"
 
 #: src/tables/settings/EmailTable.tsx:35
 msgid "Confirmed"
-msgstr ""
+msgstr "Bevestigd"
 
 #: src/tables/settings/EmailTable.tsx:43
 #: src/tables/settings/EmailTable.tsx:58
 msgid "Send Test Email"
-msgstr ""
+msgstr "Stuur test e-mail"
 
 #: src/tables/settings/EmailTable.tsx:45
 msgid "Email sent successfully"
-msgstr ""
+msgstr "Email succesvol verzonden"
 
 #: src/tables/settings/EmailTable.tsx:71
 msgid "Delete Email"
-msgstr ""
+msgstr "Verwijder e-mail"
 
 #: src/tables/settings/EmailTable.tsx:72
 msgid "Email deleted successfully"
-msgstr ""
+msgstr "E-mail succesvol verwijderd"
 
 #: src/tables/settings/EmailTable.tsx:80
 msgid "Subject"
-msgstr ""
+msgstr "Onderwerp"
 
 #: src/tables/settings/EmailTable.tsx:85
 msgid "To"
