@@ -27,6 +27,16 @@ import { useTestResultFields } from '../../forms/StockForms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { LocationColumn } from '../ColumnRenderers';
+import {
+  BatchFilter,
+  HasBatchCodeFilter,
+  InStockFilter,
+  IsSerializedFilter,
+  SerialFilter,
+  SerialGTEFilter,
+  SerialLTEFilter,
+  StatusFilterOptions
+} from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { TableHoverCard } from '../TableHoverCard';
 
@@ -286,6 +296,19 @@ export default function PartTestResultTable({
         name: 'is_building',
         label: t`In Production`,
         description: t`Show build outputs currently in production`
+      },
+      InStockFilter(),
+      SerialFilter(),
+      SerialGTEFilter(),
+      SerialLTEFilter(),
+      HasBatchCodeFilter(),
+      BatchFilter(),
+      IsSerializedFilter(),
+      {
+        name: 'status',
+        label: t`Status`,
+        description: t`Filter by stock status`,
+        choiceFunction: StatusFilterOptions(ModelType.stockitem)
       }
     ];
   }, []);
