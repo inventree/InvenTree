@@ -741,7 +741,12 @@ export default function BuildLineTable({
           hidden: !canOrder,
           color: 'blue',
           onClick: () => {
-            setPartsToOrder([record.part_detail]);
+            setPartsToOrder([
+              {
+                ...record.part_detail,
+                default_quantity: record.quantity
+              }
+            ]);
             orderPartsWizard.openWizard();
           }
         },
@@ -798,7 +803,10 @@ export default function BuildLineTable({
               .filter(
                 (r) => r.part_detail?.purchaseable && r.part_detail?.active
               )
-              .map((r) => r.part_detail)
+              .map((r) => ({
+                ...r.part_detail,
+                default_quantity: r.quantity
+              }))
           );
           orderPartsWizard.openWizard();
         }}
