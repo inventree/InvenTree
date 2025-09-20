@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-09-17 11:32+0000\n"
-"PO-Revision-Date: 2025-09-17 11:36\n"
+"POT-Creation-Date: 2025-09-20 00:18+0000\n"
+"PO-Revision-Date: 2025-09-20 00:22\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -47,7 +47,7 @@ msgstr "Podano niepoprawne filtry"
 
 #: InvenTree/api.py:467
 msgid "All filter must only be used with true"
-msgstr ""
+msgstr "Wszystkie filtry muszą być używane tylko z true"
 
 #: InvenTree/api.py:472
 msgid "No items match the provided criteria"
@@ -55,7 +55,7 @@ msgstr "Żaden element nie spełnia podanych kryteriów"
 
 #: InvenTree/api.py:494
 msgid "No data provided"
-msgstr ""
+msgstr "Nie dostarczono danych"
 
 #: InvenTree/api.py:744
 msgid "User does not have permission to view this model"
@@ -516,7 +516,7 @@ msgstr "Dostępna aktualizacja"
 
 #: InvenTree/tasks.py:576
 msgid "An update for InvenTree is available"
-msgstr ""
+msgstr "Dostępna jest aktualizacja dla InvenTree"
 
 #: InvenTree/validators.py:29
 msgid "Invalid physical unit"
@@ -696,13 +696,13 @@ msgstr "Zlecenie Budowy"
 #: stock/api.py:966 stock/serializers.py:111 stock/serializers.py:629
 #: stock/serializers.py:734 stock/serializers.py:912 stock/serializers.py:1455
 #: stock/serializers.py:1768 stock/serializers.py:1817
-#: templates/email/stale_stock_notification.html:18 users/models.py:546
+#: templates/email/stale_stock_notification.html:18 users/models.py:549
 msgid "Location"
 msgstr "Lokalizacja"
 
 #: build/api.py:863
 msgid "Output"
-msgstr ""
+msgstr "Wyjście"
 
 #: build/api.py:865
 msgid "Filter by output stock item ID. Use 'null' to find uninstalled build items."
@@ -1026,7 +1026,7 @@ msgstr "Wybrana pozycja magazynowa nie pasuje do pozycji w zestawieniu BOM"
 
 #: build/models.py:1856
 msgid "Allocated quantity exceeds available stock quantity"
-msgstr ""
+msgstr "Przydzielona ilość przekracza dostępną ilość zapasów"
 
 #: build/models.py:1907 build/serializers.py:945 build/serializers.py:1255
 #: order/serializers.py:1500 order/serializers.py:1521
@@ -1054,7 +1054,7 @@ msgstr "Docelowa lokalizacja magazynowa przedmiotu"
 
 #: build/serializers.py:116
 msgid "Build Level"
-msgstr ""
+msgstr "Poziom budowania"
 
 #: build/serializers.py:125
 msgid "Part Name"
@@ -1257,7 +1257,7 @@ msgstr "Towar musi znajdować się w magazynie"
 #: build/serializers.py:994 order/serializers.py:1554
 #, python-brace-format
 msgid "Available quantity ({q}) exceeded"
-msgstr ""
+msgstr "Dostępna ilość ({q}) przekroczona"
 
 #: build/serializers.py:1000
 msgid "Build output must be specified for allocation of tracked parts"
@@ -1285,7 +1285,7 @@ msgstr "Wyklucz produkty magazynowe z wybranej lokalizacji"
 
 #: build/serializers.py:1111
 msgid "Interchangeable Stock"
-msgstr ""
+msgstr "Magazyn wymienny"
 
 #: build/serializers.py:1112
 msgid "Stock items in multiple locations can be used interchangeably"
@@ -1305,7 +1305,7 @@ msgstr "Przedmiot opcjonalny"
 
 #: build/serializers.py:1124
 msgid "Allocate optional BOM items to build order"
-msgstr ""
+msgstr "Przydziel opcjonalne elementy BOM do zbudowania zamówienia"
 
 #: build/serializers.py:1145
 msgid "Failed to start auto-allocation task"
@@ -1313,15 +1313,15 @@ msgstr ""
 
 #: build/serializers.py:1219
 msgid "BOM Reference"
-msgstr ""
+msgstr "Odniesienie BOM"
 
 #: build/serializers.py:1225
 msgid "BOM Part ID"
-msgstr ""
+msgstr "ID części BOM"
 
 #: build/serializers.py:1232
 msgid "BOM Part Name"
-msgstr ""
+msgstr "Nazwa części BOM"
 
 #: build/serializers.py:1274 build/serializers.py:1459
 msgid "Build"
@@ -1331,11 +1331,11 @@ msgstr "Wersja"
 #: order/api.py:313 order/api.py:539 order/serializers.py:596
 #: stock/models.py:1037 stock/serializers.py:613
 msgid "Supplier Part"
-msgstr ""
+msgstr "Część dostawcy"
 
 #: build/serializers.py:1290 stock/serializers.py:644
 msgid "Allocated Quantity"
-msgstr ""
+msgstr "Ilość zarezerwowana"
 
 #: build/serializers.py:1384
 msgid "Build Reference"
@@ -1379,7 +1379,7 @@ msgstr ""
 
 #: build/serializers.py:1480 part/serializers.py:980
 msgid "External Stock"
-msgstr ""
+msgstr "Zew. zasoby magazynowe"
 
 #: build/serializers.py:1481 part/serializers.py:1271 part/serializers.py:1761
 msgid "Available Stock"
@@ -1387,7 +1387,7 @@ msgstr "Dostępna ilość"
 
 #: build/serializers.py:1483
 msgid "Available Substitute Stock"
-msgstr ""
+msgstr "Dostępny magazyn zastępczy"
 
 #: build/serializers.py:1486
 msgid "Available Variant Stock"
@@ -1434,7 +1434,7 @@ msgstr "Produkcja"
 #: build/status_codes.py:13 order/status_codes.py:14 order/status_codes.py:51
 #: order/status_codes.py:81
 msgid "On Hold"
-msgstr ""
+msgstr "Wstrzymane"
 
 #: build/status_codes.py:14 order/status_codes.py:16 order/status_codes.py:53
 #: order/status_codes.py:84
@@ -1471,7 +1471,7 @@ msgstr ""
 
 #: common/api.py:698
 msgid "Is File"
-msgstr ""
+msgstr "Jest plikiem"
 
 #: common/api.py:741
 msgid "User does not have permission to delete these attachments"
@@ -1507,11 +1507,11 @@ msgstr "Data ostatniej aktualizacji"
 
 #: common/models.py:139
 msgid "Update By"
-msgstr ""
+msgstr "Zaktualizowano przez"
 
 #: common/models.py:140
 msgid "User who last updated this object"
-msgstr ""
+msgstr "Użytkownik, który ostatnio zaktualizował ten obiekt"
 
 #: common/models.py:165
 msgid "Unique project code"
@@ -1547,11 +1547,11 @@ msgstr "Wartość musi być liczbą całkowitą"
 
 #: common/models.py:868
 msgid "Value must be a valid number"
-msgstr ""
+msgstr "Wartość musi być poprawną liczbą"
 
 #: common/models.py:893
 msgid "Value does not pass validation checks"
-msgstr ""
+msgstr "Wartość nie zgadza się z kontrolą poprawności"
 
 #: common/models.py:915
 msgid "Key string must be unique"
@@ -1562,8 +1562,8 @@ msgstr "Ciąg musi być unikatowy"
 #: common/models.py:2006 common/models.py:2007 common/models.py:2388
 #: importer/models.py:100 part/models.py:3568 part/models.py:3596
 #: plugin/models.py:355 plugin/models.py:356
-#: report/templates/report/inventree_test_report.html:105 users/models.py:121
-#: users/models.py:498
+#: report/templates/report/inventree_test_report.html:105 users/models.py:124
+#: users/models.py:501
 msgid "User"
 msgstr "Użytkownik"
 
@@ -1578,7 +1578,7 @@ msgstr "Cena"
 
 #: common/models.py:1355
 msgid "Unit price at specified quantity"
-msgstr ""
+msgstr "Cena jednostkowa po określonej ilości"
 
 #: common/models.py:1406 common/models.py:1591
 msgid "Endpoint"
@@ -1594,8 +1594,8 @@ msgstr ""
 
 #: common/models.py:1421 common/models.py:2247 common/models.py:2354
 #: company/models.py:198 company/models.py:840 machine/models.py:39
-#: part/models.py:1258 plugin/models.py:69 stock/api.py:621 users/models.py:192
-#: users/models.py:551 users/serializers.py:319
+#: part/models.py:1258 plugin/models.py:69 stock/api.py:621 users/models.py:195
+#: users/models.py:554 users/serializers.py:319
 msgid "Active"
 msgstr "Aktywny"
 
@@ -1603,7 +1603,7 @@ msgstr "Aktywny"
 msgid "Is this webhook active"
 msgstr ""
 
-#: common/models.py:1437 users/models.py:169
+#: common/models.py:1437 users/models.py:172
 msgid "Token"
 msgstr "Token"
 
@@ -1649,7 +1649,7 @@ msgstr "Zawartość"
 
 #: common/models.py:1582
 msgid "Body of this message"
-msgstr ""
+msgstr "Treść tej wiadomości"
 
 #: common/models.py:1592
 msgid "Endpoint on which this message was received"
@@ -1657,11 +1657,11 @@ msgstr ""
 
 #: common/models.py:1597
 msgid "Worked on"
-msgstr ""
+msgstr "Opracowany na"
 
 #: common/models.py:1598
 msgid "Was the work on this message finished?"
-msgstr ""
+msgstr "Czy prace nad tą wiadomością zostały zakończone?"
 
 #: common/models.py:1724
 msgid "Id"
@@ -1689,15 +1689,15 @@ msgstr "Autor"
 
 #: common/models.py:1734
 msgid "Summary"
-msgstr ""
+msgstr "Podsumowanie"
 
 #: common/models.py:1737 common/models.py:2592
 msgid "Read"
-msgstr ""
+msgstr "Czytaj"
 
 #: common/models.py:1737
 msgid "Was this news item read?"
-msgstr ""
+msgstr "Czy ta wiadomość była przeczytana?"
 
 #: common/models.py:1754 company/models.py:194 part/models.py:1136
 #: report/templates/report/inventree_bill_of_materials_report.html:126
@@ -1720,19 +1720,19 @@ msgstr ""
 
 #: common/models.py:1792
 msgid "Custom Unit"
-msgstr ""
+msgstr "Jednostka Niestandardowa"
 
 #: common/models.py:1810
 msgid "Unit symbol must be unique"
-msgstr ""
+msgstr "Symbol jednostki musi być unikalny"
 
 #: common/models.py:1825
 msgid "Unit name must be a valid identifier"
-msgstr ""
+msgstr "Nazwa jednostki musi być prawidłowym identyfikatorem"
 
 #: common/models.py:1844
 msgid "Unit name"
-msgstr ""
+msgstr "Nazwa jednostki"
 
 #: common/models.py:1851
 msgid "Symbol"
@@ -1740,15 +1740,15 @@ msgstr "Symbol"
 
 #: common/models.py:1852
 msgid "Optional unit symbol"
-msgstr ""
+msgstr "Opcjonalny symbol jednostki"
 
 #: common/models.py:1858
 msgid "Definition"
-msgstr ""
+msgstr "Definicja"
 
 #: common/models.py:1859
 msgid "Unit definition"
-msgstr ""
+msgstr "Definicja jednostki"
 
 #: common/models.py:1917 common/models.py:1980 stock/models.py:2965
 #: stock/serializers.py:259
@@ -1765,11 +1765,11 @@ msgstr "Brak zewnętrznego odnośnika"
 
 #: common/models.py:1972
 msgid "Model type"
-msgstr ""
+msgstr "Typ modelu"
 
 #: common/models.py:1973
 msgid "Target model type for image"
-msgstr ""
+msgstr "Docelowy typ modelu dla obrazu"
 
 #: common/models.py:1981
 msgid "Select file to attach"
@@ -1781,7 +1781,7 @@ msgstr "Komentarz"
 
 #: common/models.py:1998
 msgid "Attachment comment"
-msgstr ""
+msgstr "Komentarz do załącznika"
 
 #: common/models.py:2014
 msgid "Upload date"
@@ -1789,7 +1789,7 @@ msgstr "Data dodania"
 
 #: common/models.py:2015
 msgid "Date the file was uploaded"
-msgstr ""
+msgstr "Data przesłania pliku"
 
 #: common/models.py:2019
 msgid "File size"
@@ -1866,11 +1866,11 @@ msgstr ""
 
 #: common/models.py:2145
 msgid "Model must be selected"
-msgstr ""
+msgstr "Model musi być wybrany"
 
 #: common/models.py:2148
 msgid "Key must be selected"
-msgstr ""
+msgstr "Klucz musi być wybrany"
 
 #: common/models.py:2151
 msgid "Logical key must be selected"
@@ -2131,7 +2131,7 @@ msgstr ""
 
 #: common/models.py:2662
 msgid "Prioriy"
-msgstr ""
+msgstr "Priorytet"
 
 #: common/models.py:2704
 msgid "Email Thread"
@@ -2142,7 +2142,7 @@ msgid "Email Threads"
 msgstr ""
 
 #: common/models.py:2711 generic/states/serializers.py:16 plugin/models.py:46
-#: users/models.py:110
+#: users/models.py:113
 msgid "Key"
 msgstr "Klucz"
 
@@ -2173,16 +2173,16 @@ msgstr ""
 #: common/notifications.py:57
 #, python-brace-format
 msgid "New {verbose_name}"
-msgstr ""
+msgstr "Nowy {verbose_name}"
 
 #: common/notifications.py:59
 msgid "A new order has been created and assigned to you"
-msgstr ""
+msgstr "Nowe zamówienie zostało utworzone i przypisane do Ciebie"
 
 #: common/notifications.py:65
 #, python-brace-format
 msgid "{verbose_name} canceled"
-msgstr ""
+msgstr "{verbose_name} anulowany"
 
 #: common/notifications.py:67
 msgid "A order that is assigned to you was canceled"
@@ -2206,7 +2206,7 @@ msgstr ""
 
 #: common/serializers.py:147
 msgid "Override"
-msgstr ""
+msgstr "Nadpisz"
 
 #: common/serializers.py:486
 msgid "Is Running"
@@ -2275,15 +2275,15 @@ msgstr "Nazwa pliku"
 #: common/serializers.py:647 importer/models.py:89 report/api.py:41
 #: report/models.py:293 report/serializers.py:53
 msgid "Model Type"
-msgstr ""
+msgstr "Typ modelu"
 
 #: common/serializers.py:675
 msgid "User does not have permission to create or edit attachments for this model"
-msgstr ""
+msgstr "Użytkownik nie ma uprawnień do tworzenia lub edytowania załączników dla tego modelu"
 
 #: common/serializers.py:719 common/serializers.py:822
 msgid "Selection list is locked"
-msgstr ""
+msgstr "Lista wyboru jest zablokowana"
 
 #: common/setting/system.py:97
 msgid "No group"
@@ -2291,7 +2291,7 @@ msgstr "Brak grupy"
 
 #: common/setting/system.py:156
 msgid "Site URL is locked by configuration"
-msgstr ""
+msgstr "Adres URL witryny jest zablokowany przez konfigurację"
 
 #: common/setting/system.py:173
 msgid "Restart required"
@@ -2311,7 +2311,7 @@ msgstr "Liczba oczekujących migracji bazy danych"
 
 #: common/setting/system.py:186
 msgid "Active warning codes"
-msgstr ""
+msgstr "Aktywne kody ostrzeżeń"
 
 #: common/setting/system.py:187
 msgid "A dict of active warning codes"
@@ -2319,11 +2319,11 @@ msgstr ""
 
 #: common/setting/system.py:193
 msgid "Instance ID"
-msgstr ""
+msgstr "ID instancji"
 
 #: common/setting/system.py:194
 msgid "Unique identifier for this InvenTree instance"
-msgstr ""
+msgstr "Unikalny identyfikator dla tej instancji InvenTree"
 
 #: common/setting/system.py:199
 msgid "Announce ID"
@@ -3126,11 +3126,11 @@ msgstr ""
 
 #: common/setting/system.py:888
 msgid "Convert Currency"
-msgstr ""
+msgstr "Przekonwertuj walutę"
 
 #: common/setting/system.py:889
 msgid "Convert item value to base currency when receiving stock"
-msgstr ""
+msgstr "Konwertuj wartość przedmiotu na walutę bazową podczas otrzymywania zapasów"
 
 #: common/setting/system.py:894
 msgid "Auto Complete Purchase Orders"
@@ -3166,19 +3166,19 @@ msgstr "Włącz SSO na stronach logowania"
 
 #: common/setting/system.py:921
 msgid "Enable SSO registration"
-msgstr ""
+msgstr "Włącz rejestrację SSO"
 
 #: common/setting/system.py:923
 msgid "Enable self-registration via SSO for users on the login pages"
-msgstr ""
+msgstr "Włącz samodzielną rejestrację przez SSO dla użytkowników na stronach logowania"
 
 #: common/setting/system.py:929
 msgid "Enable SSO group sync"
-msgstr ""
+msgstr "Włącz synchronizację grupy SSO"
 
 #: common/setting/system.py:931
 msgid "Enable synchronizing InvenTree groups with groups provided by the IdP"
-msgstr ""
+msgstr "Włącz synchronizację grup InvenTree z grupami dostarczonymi przez IdP"
 
 #: common/setting/system.py:937
 msgid "SSO group key"
@@ -3270,11 +3270,11 @@ msgstr ""
 
 #: common/setting/system.py:1014
 msgid "Check for plugin updates"
-msgstr ""
+msgstr "Sprawdź dostępność aktualizacji wtyczek"
 
 #: common/setting/system.py:1015
 msgid "Enable periodic checks for updates to installed plugins"
-msgstr ""
+msgstr "Włącz okresowe sprawdzanie aktualizacji zainstalowanych wtyczek"
 
 #: common/setting/system.py:1021
 msgid "Enable URL integration"
@@ -3334,19 +3334,19 @@ msgstr ""
 
 #: common/setting/system.py:1070
 msgid "Enable project codes"
-msgstr ""
+msgstr "Włącz kody projektów"
 
 #: common/setting/system.py:1071
 msgid "Enable project codes for tracking projects"
-msgstr ""
+msgstr "Włącz kody projektów do śledzenia projektów"
 
 #: common/setting/system.py:1076
 msgid "Enable Stock History"
-msgstr ""
+msgstr "Włącz historię zapasów"
 
 #: common/setting/system.py:1078
 msgid "Enable functionality for recording historical stock levels and value"
-msgstr ""
+msgstr "Włącz funkcjonalność dla zapisywania historycznych poziomów zapasów i wartości"
 
 #: common/setting/system.py:1084
 msgid "Exclude External Locations"
@@ -3792,7 +3792,7 @@ msgid "Contact email address"
 msgstr "Kontaktowy adres e-mail"
 
 #: company/models.py:176 company/models.py:315 order/models.py:506
-#: users/models.py:558
+#: users/models.py:561
 msgid "Contact"
 msgstr "Kontakt"
 
@@ -4267,15 +4267,15 @@ msgstr ""
 msgid "Valid"
 msgstr "Ważny"
 
-#: importer/models.py:688
+#: importer/models.py:720
 msgid "ID is required for updating existing records."
 msgstr ""
 
-#: importer/models.py:695
+#: importer/models.py:727
 msgid "No record found with the provided ID"
 msgstr ""
 
-#: importer/models.py:701
+#: importer/models.py:733
 msgid "Invalid ID format provided"
 msgstr ""
 
@@ -4660,7 +4660,7 @@ msgid "Order reference"
 msgstr "Odniesienie zamówienia"
 
 #: order/models.py:617 order/models.py:1317 order/models.py:2630
-#: stock/serializers.py:594 stock/serializers.py:1012 users/models.py:539
+#: stock/serializers.py:594 stock/serializers.py:1012 users/models.py:542
 msgid "Status"
 msgstr "Status"
 
@@ -5173,7 +5173,7 @@ msgid "Enter batch code for incoming stock items"
 msgstr ""
 
 #: order/serializers.py:792 stock/models.py:1161
-#: templates/email/stale_stock_notification.html:22 users/models.py:134
+#: templates/email/stale_stock_notification.html:22 users/models.py:137
 msgid "Expiry Date"
 msgstr "Data ważności"
 
@@ -7540,35 +7540,35 @@ msgstr ""
 msgid "Enable dynamic panels for testing"
 msgstr ""
 
-#: plugin/samples/integration/user_interface_sample.py:98
+#: plugin/samples/integration/user_interface_sample.py:100
 msgid "Part Panel"
 msgstr ""
 
-#: plugin/samples/integration/user_interface_sample.py:131
+#: plugin/samples/integration/user_interface_sample.py:135
 msgid "Broken Dashboard Item"
 msgstr ""
 
-#: plugin/samples/integration/user_interface_sample.py:133
+#: plugin/samples/integration/user_interface_sample.py:137
 msgid "This is a broken dashboard item - it will not render!"
 msgstr ""
 
-#: plugin/samples/integration/user_interface_sample.py:139
+#: plugin/samples/integration/user_interface_sample.py:143
 msgid "Sample Dashboard Item"
 msgstr ""
 
-#: plugin/samples/integration/user_interface_sample.py:141
+#: plugin/samples/integration/user_interface_sample.py:145
 msgid "This is a sample dashboard item. It renders a simple string of HTML content."
 msgstr ""
 
-#: plugin/samples/integration/user_interface_sample.py:147
+#: plugin/samples/integration/user_interface_sample.py:151
 msgid "Context Dashboard Item"
 msgstr ""
 
-#: plugin/samples/integration/user_interface_sample.py:161
+#: plugin/samples/integration/user_interface_sample.py:165
 msgid "Admin Dashboard Item"
 msgstr ""
 
-#: plugin/samples/integration/user_interface_sample.py:162
+#: plugin/samples/integration/user_interface_sample.py:166
 msgid "This is an admin-only dashboard item."
 msgstr ""
 
@@ -8168,7 +8168,7 @@ msgstr "Wybierz właściciela"
 msgid "Stock items may not be directly located into a structural stock locations, but may be located to child locations."
 msgstr ""
 
-#: stock/models.py:226 users/models.py:494
+#: stock/models.py:226 users/models.py:497
 msgid "External"
 msgstr ""
 
@@ -8531,7 +8531,7 @@ msgstr ""
 msgid "Supplier Part Number"
 msgstr ""
 
-#: stock/serializers.py:647 users/models.py:184
+#: stock/serializers.py:647 users/models.py:187
 msgid "Expired"
 msgstr "Termin minął"
 
@@ -9024,7 +9024,7 @@ msgstr "Uprawnienia"
 msgid "Important dates"
 msgstr "Ważne daty"
 
-#: users/authentication.py:30 users/models.py:148
+#: users/authentication.py:30 users/models.py:151
 msgid "Token has been revoked"
 msgstr ""
 
@@ -9032,167 +9032,167 @@ msgstr ""
 msgid "Token has expired"
 msgstr ""
 
-#: users/models.py:91
+#: users/models.py:94
 msgid "API Token"
 msgstr ""
 
-#: users/models.py:92
+#: users/models.py:95
 msgid "API Tokens"
 msgstr ""
 
-#: users/models.py:128
+#: users/models.py:131
 msgid "Token Name"
 msgstr ""
 
-#: users/models.py:129
+#: users/models.py:132
 msgid "Custom token name"
 msgstr ""
 
-#: users/models.py:135
+#: users/models.py:138
 msgid "Token expiry date"
 msgstr ""
 
-#: users/models.py:143
+#: users/models.py:146
 msgid "Last Seen"
 msgstr ""
 
-#: users/models.py:144
+#: users/models.py:147
 msgid "Last time the token was used"
 msgstr ""
 
-#: users/models.py:148
+#: users/models.py:151
 msgid "Revoked"
 msgstr ""
 
-#: users/models.py:226
+#: users/models.py:229
 msgid "Permission set"
 msgstr "Uprawnienia nadane"
 
-#: users/models.py:235
+#: users/models.py:238
 msgid "Group"
 msgstr "Grupa"
 
-#: users/models.py:239
+#: users/models.py:242
 msgid "View"
 msgstr "Widok"
 
-#: users/models.py:239
+#: users/models.py:242
 msgid "Permission to view items"
 msgstr "Uprawnienie do wyświetlania przedmiotów"
 
-#: users/models.py:243
+#: users/models.py:246
 msgid "Add"
 msgstr "Dodaj"
 
-#: users/models.py:243
+#: users/models.py:246
 msgid "Permission to add items"
 msgstr "Uprawnienie do dodawania przedmiotów"
 
-#: users/models.py:247
+#: users/models.py:250
 msgid "Change"
 msgstr "Zmień"
 
-#: users/models.py:249
+#: users/models.py:252
 msgid "Permissions to edit items"
 msgstr "Uprawnienie do edycji przedmiotów"
 
-#: users/models.py:253
+#: users/models.py:256
 msgid "Delete"
 msgstr "Usuń"
 
-#: users/models.py:255
+#: users/models.py:258
 msgid "Permission to delete items"
 msgstr "Uprawnienie do usuwania przedmiotów"
 
-#: users/models.py:492
+#: users/models.py:495
 msgid "Bot"
 msgstr ""
 
-#: users/models.py:493
+#: users/models.py:496
 msgid "Internal"
 msgstr ""
 
-#: users/models.py:495
+#: users/models.py:498
 msgid "Guest"
 msgstr ""
 
-#: users/models.py:504
+#: users/models.py:507
 msgid "Language"
 msgstr ""
 
-#: users/models.py:505
+#: users/models.py:508
 msgid "Preferred language for the user"
 msgstr ""
 
-#: users/models.py:510
+#: users/models.py:513
 msgid "Theme"
 msgstr ""
 
-#: users/models.py:511
+#: users/models.py:514
 msgid "Settings for the web UI as JSON - do not edit manually!"
 msgstr ""
 
-#: users/models.py:516
+#: users/models.py:519
 msgid "Widgets"
 msgstr ""
 
-#: users/models.py:518
+#: users/models.py:521
 msgid "Settings for the dashboard widgets as JSON - do not edit manually!"
 msgstr ""
 
-#: users/models.py:525
+#: users/models.py:528
 msgid "Display Name"
 msgstr ""
 
-#: users/models.py:526
+#: users/models.py:529
 msgid "Chosen display name for the user"
 msgstr ""
 
-#: users/models.py:532
+#: users/models.py:535
 msgid "Position"
 msgstr ""
 
-#: users/models.py:533
+#: users/models.py:536
 msgid "Main job title or position"
 msgstr ""
 
-#: users/models.py:540
+#: users/models.py:543
 msgid "User status message"
 msgstr ""
 
-#: users/models.py:547
+#: users/models.py:550
 msgid "User location information"
 msgstr ""
 
-#: users/models.py:552
+#: users/models.py:555
 msgid "User is actively using the system"
 msgstr ""
 
-#: users/models.py:559
+#: users/models.py:562
 msgid "Preferred contact information for the user"
 msgstr ""
 
-#: users/models.py:565
+#: users/models.py:568
 msgid "User Type"
 msgstr ""
 
-#: users/models.py:566
+#: users/models.py:569
 msgid "Which type of user is this?"
 msgstr ""
 
-#: users/models.py:572
+#: users/models.py:575
 msgid "Organisation"
 msgstr ""
 
-#: users/models.py:573
+#: users/models.py:576
 msgid "Users primary organisation/affiliation"
 msgstr ""
 
-#: users/models.py:581
+#: users/models.py:584
 msgid "Primary Group"
 msgstr ""
 
-#: users/models.py:582
+#: users/models.py:585
 msgid "Primary group for the user"
 msgstr ""
 
