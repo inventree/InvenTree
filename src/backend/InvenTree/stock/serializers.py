@@ -490,7 +490,7 @@ class StockItemSerializer(
 
     def update(self, instance, validated_data):
         """Custom update method to pass the user information through to the instance."""
-        instance._user = self.context['user']
+        instance._user = self.context.get('user', None)
 
         status_custom_key = validated_data.pop('status_custom_key', None)
         status = validated_data.pop('status', None)
