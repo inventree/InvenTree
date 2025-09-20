@@ -15,6 +15,7 @@ import {
 import {
   IconBookmarks,
   IconBuilding,
+  IconChecklist,
   IconCircleCheck,
   IconClipboardList,
   IconCurrencyDollar,
@@ -101,6 +102,7 @@ import { UsedInTable } from '../../tables/bom/UsedInTable';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
 import { PartParameterTable } from '../../tables/part/PartParameterTable';
 import PartPurchaseOrdersTable from '../../tables/part/PartPurchaseOrdersTable';
+import PartTestResultTable from '../../tables/part/PartTestResultTable';
 import PartTestTemplateTable from '../../tables/part/PartTestTemplateTable';
 import { PartVariantTable } from '../../tables/part/PartVariantTable';
 import { RelatedPartTable } from '../../tables/part/RelatedPartTable';
@@ -929,6 +931,17 @@ export default function PartDetail() {
         hidden: !part.testable,
         content: part?.pk ? (
           <PartTestTemplateTable partId={part?.pk} partLocked={part.locked} />
+        ) : (
+          <Skeleton />
+        )
+      },
+      {
+        name: 'test_results',
+        label: t`Test Results`,
+        icon: <IconChecklist />,
+        hidden: !part.testable,
+        content: part?.pk ? (
+          <PartTestResultTable partId={part.pk} />
         ) : (
           <Skeleton />
         )
