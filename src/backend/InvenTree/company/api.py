@@ -10,6 +10,7 @@ from django_filters.rest_framework.filterset import FilterSet
 import part.models
 from data_exporter.mixins import DataExportViewMixin
 from InvenTree.api import ListCreateDestroyAPIView, MetadataView
+from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import SEARCH_ORDER_FILTER, SEARCH_ORDER_FILTER_ALIAS
 from InvenTree.helpers import str2bool
 from InvenTree.mixins import ListCreateAPI, RetrieveUpdateDestroyAPI
@@ -325,11 +326,39 @@ class SupplierPartFilter(FilterSet):
             return queryset.exclude(in_stock__gt=0)
 
 
+class SupplierPartOutputOptions(OutputConfiguration):
+    """Available output options for the SupplierPart endpoints."""
+
+    OPTIONS = [
+        InvenTreeOutputOption(
+            description='Include detailed information about the linked Part in the response',
+            flag='part_detail',
+            default=False,
+        ),
+        InvenTreeOutputOption(
+            description='Include detailed information about the Supplier in the response',
+            flag='supplier_detail',
+            default=True,
+        ),
+        InvenTreeOutputOption(
+            description='Include detailed information about the Manufacturer in the response',
+            flag='manufacturer_detail',
+            default=False,
+        ),
+        InvenTreeOutputOption(
+            description='Format the output with a more readable (pretty) name',
+            flag='pretty',
+            default=False,
+        ),
+    ]
+
+
 class SupplierPartMixin:
     """Mixin class for SupplierPart API endpoints."""
 
     queryset = SupplierPart.objects.all().prefetch_related('tags')
     serializer_class = SupplierPartSerializer
+    output_options = SupplierPartOutputOptions
 
     def get_queryset(self, *args, **kwargs):
         """Return annotated queryest object for the SupplierPart list."""
@@ -345,16 +374,15 @@ class SupplierPartMixin:
     def get_serializer(self, *args, **kwargs):
         """Return serializer instance for this endpoint."""
         # Do we wish to include extra detail?
-        try:
-            params = self.request.query_params
-            kwargs['part_detail'] = str2bool(params.get('part_detail', None))
-            kwargs['supplier_detail'] = str2bool(params.get('supplier_detail', True))
-            kwargs['manufacturer_detail'] = str2bool(
-                params.get('manufacturer_detail', None)
-            )
-            kwargs['pretty'] = str2bool(params.get('pretty', None))
-        except AttributeError:
-            pass
+        params = self.request.query_params
+
+        kwargs.update(self.output_options.format_params(params))
+        # kwargs['part_detail'] = str2bool(params.get('part_detail', None))
+        # kwargs['supplier_detail'] = str2bool(params.get('supplier_detail', True))
+        # kwargs['manufacturer_detail'] = str2bool(
+        #     params.get('manufacturer_detail', None)
+        # )
+        # kwargs['pretty'] = str2bool(params.get('pretty', None))
 
         kwargs['context'] = self.get_serializer_context()
 

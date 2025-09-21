@@ -212,3 +212,28 @@ class InvenTreeNotesField(models.TextField):
         kwargs['null'] = True
 
         super().__init__(**kwargs)
+
+
+class InvenTreeOutputOption:
+    """Represents an available output option with description, flag name, and default value."""
+
+    def __init__(self, description: str, flag: str, default=None):
+        """Initialize the output option."""
+        self.description = description
+        self.flag = flag
+        self.default = default
+
+
+class OutputConfiguration:
+    """Contains all available output options for the SupplierPart endpoints."""
+
+    OPTIONS: list[InvenTreeOutputOption]
+
+    @classmethod
+    def format_params(cls, params: dict) -> dict[str, bool]:
+        """Convert query parameters into a dictionary of output flags with boolean values."""
+        result = {}
+        for option in cls.OPTIONS:
+            value = params.get(option.flag, option.default)
+            result[option.flag] = InvenTree.helpers.str2bool(value)
+        return result

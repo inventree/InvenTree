@@ -5,11 +5,12 @@ from typing import Optional
 
 from django.conf import settings
 
+from drf_spectacular.contrib.django_filters import DjangoFilterExtension
 from drf_spectacular.contrib.django_oauth_toolkit import DjangoOAuthToolkitScheme
 from drf_spectacular.drainage import warn
 from drf_spectacular.openapi import AutoSchema
-from drf_spectacular.plumbing import ComponentRegistry
-from drf_spectacular.utils import _SchemaType
+from drf_spectacular.plumbing import ComponentRegistry, build_parameter_type
+from drf_spectacular.utils import OpenApiParameter, _SchemaType
 from rest_framework.pagination import LimitOffsetPagination
 
 from InvenTree.permissions import OASTokenMixin
@@ -211,3 +212,47 @@ def postprocess_print_stats(result, generator, request, public):
         )
 
     return result
+
+
+class OutputOptionsExtension(DjangoFilterExtension):
+    """DRF Spectacular extension for views with 'output_options'."""
+
+    priority = 1  # Run after basic filter extensions
+
+    def get_schema_operation_parameters(self, auto_schema, *args, **kwargs):
+        """Add OpenAPI params from 'output_options' to existing filter params."""
+        # Get existing (django-filter) parameters
+        parameters = super().get_schema_operation_parameters(
+            auto_schema, *args, **kwargs
+        )
+
+        # Handle output_options
+        self._add_output_options_parameters(auto_schema, parameters)
+
+        return parameters
+
+    def _add_output_options_parameters(self, auto_schema, parameters):
+        """Add parameters from output_options.OPTIONS to the OpenAPI schema."""
+        # If view has output_options with OPTIONS, add them
+        if hasattr(auto_schema.view, 'output_options'):
+            output_options = auto_schema.view.output_options
+
+            if hasattr(output_options, 'OPTIONS'):
+                for option in output_options.OPTIONS:
+                    # Set default value if available
+                    default_value = option.default
+                    schema_type = 'boolean'
+                    schema = {'type': schema_type}
+
+                    if default_value is not None:
+                        schema['default'] = default_value
+
+                    # Build and add parameter
+                    param = build_parameter_type(
+                        name=option.flag,
+                        required=False,
+                        location=OpenApiParameter.QUERY,
+                        description=option.description,
+                        schema=schema,
+                    )
+                    parameters.append(param)
