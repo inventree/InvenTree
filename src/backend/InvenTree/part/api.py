@@ -909,6 +909,61 @@ class PartFilter(FilterSet):
         label='Updated after', field_name='creation_date', lookup_expr='gt'
     )
 
+    exclude_id = rest_filters.BaseInFilter(
+        field_name='id',
+        lookup_expr='in',
+        exclude=True,
+        help_text='Exclude parts with these IDs (comma-separated)',
+    )
+
+    related = rest_filters.NumberFilter(
+        method='filter_related_parts', help_text='Show parts related to this part ID'
+    )
+
+    exclude_related = rest_filters.NumberFilter(
+        method='filter_exclude_related_parts',
+        help_text='Exclude parts related to this part ID',
+    )
+
+    def filter_related_parts(self, queryset, name, value):
+        """Filter parts related to the specified part ID."""
+        if not value:
+            return queryset
+
+        try:
+            related_part = Part.objects.get(pk=value)
+            part_ids = self._get_related_part_ids(related_part)
+            return queryset.filter(pk__in=list(part_ids))
+        except (ValueError, Part.DoesNotExist):
+            return queryset.none()
+
+    def filter_exclude_related_parts(self, queryset, name, value):
+        """Exclude parts related to the specified part ID."""
+        if not value:
+            return queryset
+
+        try:
+            related_part = Part.objects.get(pk=value)
+            part_ids = self._get_related_part_ids(related_part)
+            return queryset.exclude(pk__in=list(part_ids))
+        except (ValueError, Part.DoesNotExist):
+            return queryset
+
+    def _get_related_part_ids(self, related_part):
+        """Return a set of part IDs which are related to the specified part."""
+        part_ids = set()
+        pk = related_part.pk
+
+        relation_filter = Q(part_1=related_part) | Q(part_2=related_part)
+
+        for relation in PartRelated.objects.filter(relation_filter).distinct():
+            if relation.part_1.pk != pk:
+                part_ids.add(relation.part_1.pk)
+            if relation.part_2.pk != pk:
+                part_ids.add(relation.part_2.pk)
+
+        return part_ids
+
 
 class PartMixin:
     """Mixin class for Part API endpoints."""
@@ -986,57 +1041,57 @@ class PartList(PartMixin, BulkUpdateMixin, DataExportViewMixin, ListCreateAPI):
         queryset = super().filter_queryset(queryset)
 
         # Exclude specific part ID values?
-        exclude_id = []
+        # exclude_id = []
 
-        for key in ['exclude_id', 'exclude_id[]']:
-            if key in params:
-                exclude_id += params.getlist(key, [])
+        # for key in ['exclude_id', 'exclude_id[]']:
+        #     if key in params:
+        #         exclude_id += params.getlist(key, [])
 
-        if exclude_id:
-            id_values = []
+        # if exclude_id:
+        #     id_values = []
 
-            for val in exclude_id:
-                try:
-                    # pk values must be integer castable
-                    val = int(val)
-                    id_values.append(val)
-                except ValueError:
-                    pass
+        #     for val in exclude_id:
+        #         try:
+        #             # pk values must be integer castable
+        #             val = int(val)
+        #             id_values.append(val)
+        #         except ValueError:
+        #             pass
 
-            queryset = queryset.exclude(pk__in=id_values)
+        #     queryset = queryset.exclude(pk__in=id_values)
 
         # Filter by 'related' parts?
-        related = params.get('related', None)
-        exclude_related = params.get('exclude_related', None)
+        # related = params.get('related', None)
+        # exclude_related = params.get('exclude_related', None)
 
-        if related is not None or exclude_related is not None:
-            try:
-                pk = related if related is not None else exclude_related
-                pk = int(pk)
+        # if related is not None or exclude_related is not None:
+        #     try:
+        #         pk = related if related is not None else exclude_related
+        #         pk = int(pk)
 
-                related_part = Part.objects.get(pk=pk)
+        #         related_part = Part.objects.get(pk=pk)
 
-                part_ids = set()
+        #         part_ids = set()
 
-                # Return any relationship which points to the part in question
-                relation_filter = Q(part_1=related_part) | Q(part_2=related_part)
+        #         # Return any relationship which points to the part in question
+        #         relation_filter = Q(part_1=related_part) | Q(part_2=related_part)
 
-                for relation in PartRelated.objects.filter(relation_filter).distinct():
-                    if relation.part_1.pk != pk:
-                        part_ids.add(relation.part_1.pk)
+        #         for relation in PartRelated.objects.filter(relation_filter).distinct():
+        #             if relation.part_1.pk != pk:
+        #                 part_ids.add(relation.part_1.pk)
 
-                    if relation.part_2.pk != pk:
-                        part_ids.add(relation.part_2.pk)
+        #             if relation.part_2.pk != pk:
+        #                 part_ids.add(relation.part_2.pk)
 
-                if related is not None:
-                    # Only return related results
-                    queryset = queryset.filter(pk__in=list(part_ids))
-                elif exclude_related is not None:
-                    # Exclude related results
-                    queryset = queryset.exclude(pk__in=list(part_ids))
+        #         if related is not None:
+        #             # Only return related results
+        #             queryset = queryset.filter(pk__in=list(part_ids))
+        #         elif exclude_related is not None:
+        #             # Exclude related results
+        #             queryset = queryset.exclude(pk__in=list(part_ids))
 
-            except (ValueError, Part.DoesNotExist):
-                pass
+        #     except (ValueError, Part.DoesNotExist):
+        #         pass
 
         # Cascade? (Default = True)
         cascade = str2bool(params.get('cascade', True))
