@@ -157,6 +157,14 @@ export default function StockDetail() {
         hidden: !part.IPN
       },
       {
+        name: 'part_detail.revision',
+        label: t`Revision`,
+        type: 'string',
+        copy: true,
+        icon: 'revision',
+        hidden: !part.revision
+      },
+      {
         name: 'status',
         type: 'status',
         label: t`Status`,
