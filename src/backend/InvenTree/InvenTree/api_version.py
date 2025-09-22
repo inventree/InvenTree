@@ -7,7 +7,7 @@ INVENTREE_API_VERSION = 392
 
 INVENTREE_API_TEXT = """
 
-v391 -> 2025-09-06 : https://github.com/inventree/InvenTree/pull/10374
+v392 -> 2025-09-22 : https://github.com/inventree/InvenTree/pull/10374
     - Refactors 'part_detail', 'supplier_detail', 'manufacturer_detail'and 'pretty' param in SupplierPartList API endpoint
 
 v391 -> 2025-09-06 : https://github.com/inventree/InvenTree/pull/10279
