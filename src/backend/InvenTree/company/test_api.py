@@ -565,6 +565,23 @@ class SupplierPartTest(InvenTreeAPITestCase):
             response = self.get(url, {'part': pk}, expected_code=200)
             self.assertEqual(len(response.data), n)
 
+    def test_output_options(self):
+        """Test the output options for SupplierPart detail."""
+        sp = SupplierPart.objects.all().first()
+        url = reverse('api-supplier-part-detail', kwargs={'pk': sp.pk})
+
+        response = self.get(url, {'part_detail': 'true'}, expected_code=200)
+        self.assertIn('part_detail', response.data)
+
+        response = self.get(url, {'supplier_detail': 'true'}, expected_code=200)
+        self.assertIn('supplier_detail', response.data)
+
+        response = self.get(url, {'manufacturer_detail': 'true'}, expected_code=200)
+        self.assertIn('manufacturer_detail', response.data)
+
+        response = self.get(url, {'pretty': 'true'}, expected_code=200)
+        self.assertIn('pretty_name', response.data)
+
     def test_available(self):
         """Tests for updating the 'available' field."""
         url = reverse('api-supplier-part-list')

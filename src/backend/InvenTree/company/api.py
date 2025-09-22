@@ -14,6 +14,7 @@ from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import SEARCH_ORDER_FILTER, SEARCH_ORDER_FILTER_ALIAS
 from InvenTree.helpers import str2bool
 from InvenTree.mixins import ListCreateAPI, RetrieveUpdateDestroyAPI
+from InvenTree.schema import schema_for_view_output_options
 
 from .models import (
     Address,
@@ -438,6 +439,7 @@ class SupplierPartList(
     ]
 
 
+@schema_for_view_output_options
 class SupplierPartDetail(SupplierPartMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of SupplierPart object.
 
