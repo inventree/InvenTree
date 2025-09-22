@@ -378,13 +378,6 @@ class SupplierPartMixin:
         params = self.request.query_params
 
         kwargs.update(self.output_options.format_params(params))
-        # kwargs['part_detail'] = str2bool(params.get('part_detail', None))
-        # kwargs['supplier_detail'] = str2bool(params.get('supplier_detail', True))
-        # kwargs['manufacturer_detail'] = str2bool(
-        #     params.get('manufacturer_detail', None)
-        # )
-        # kwargs['pretty'] = str2bool(params.get('pretty', None))
-
         kwargs['context'] = self.get_serializer_context()
 
         return super().get_serializer(*args, **kwargs)
