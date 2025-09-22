@@ -33,7 +33,7 @@ test('Stock - Basic Tests', async ({ browser }) => {
   await page.getByText('D.123 | Doohickey').waitFor();
   await page.getByText('Batch Code: BX-123-2024-2-7').waitFor();
   await loadTab(page, 'Stock Tracking');
-  await loadTab(page, 'Test Data');
+  await loadTab(page, 'Test Results');
   await page.getByText('395c6d5586e5fb656901d047be27e1f7').waitFor();
   await loadTab(page, 'Installed Items');
 });

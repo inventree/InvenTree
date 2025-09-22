@@ -86,6 +86,14 @@ export function BatchFilter(): TableFilter {
   };
 }
 
+export function InStockFilter(): TableFilter {
+  return {
+    name: 'in_stock',
+    label: t`In Stock`,
+    description: t`Show items which are in stock`
+  };
+}
+
 export function IsSerializedFilter(): TableFilter {
   return {
     name: 'serialized',
