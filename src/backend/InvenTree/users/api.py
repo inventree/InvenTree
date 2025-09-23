@@ -144,6 +144,14 @@ class UserDetail(RetrieveUpdateDestroyAPI):
     serializer_class = ExtendedUserSerializer
     permission_classes = [InvenTree.permissions.StaffRolePermissionOrReadOnly]
 
+    def perform_destroy(self, instance):
+        """Override destroy method to ensure sessions are deleted first."""
+        # Remove all sessions for this user
+        if sessions := instance.usersession_set.all():
+            sessions.delete()
+        # Normally delete the user
+        return super().perform_destroy(instance)
+
 
 class UserDetailSetPassword(UpdateAPI):
     """Allows superusers to set the password for a user."""
