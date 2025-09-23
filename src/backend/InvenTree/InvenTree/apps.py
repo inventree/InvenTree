@@ -82,11 +82,6 @@ class InvenTreeConfig(AppConfig):
         # used for account updates whereas the receiver is used for the initial account creation.
         from InvenTree import sso
 
-        try:
-            from . import schema  # noqa: F401
-        except ImportError:
-            pass
-
         social_account_updated.connect(sso.ensure_sso_groups)
 
     def remove_obsolete_tasks(self):

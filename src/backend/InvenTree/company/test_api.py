@@ -576,11 +576,17 @@ class SupplierPartTest(InvenTreeAPITestCase):
         response = self.get(url, {'supplier_detail': 'true'}, expected_code=200)
         self.assertIn('supplier_detail', response.data)
 
+        response = self.get(url, {'supplier_detail': 'false'}, expected_code=200)
+        self.assertNotIn('supplier_detail', response.data)
+
         response = self.get(url, {'manufacturer_detail': 'true'}, expected_code=200)
         self.assertIn('manufacturer_detail', response.data)
 
         response = self.get(url, {'pretty': 'true'}, expected_code=200)
         self.assertIn('pretty_name', response.data)
+
+        response = self.get(url, {'pretty': 'false'}, expected_code=200)
+        self.assertNotIn('pretty_name', response.data)
 
     def test_available(self):
         """Tests for updating the 'available' field."""

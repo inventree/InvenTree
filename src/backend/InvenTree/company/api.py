@@ -13,8 +13,7 @@ from InvenTree.api import ListCreateDestroyAPIView, MetadataView
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import SEARCH_ORDER_FILTER, SEARCH_ORDER_FILTER_ALIAS
 from InvenTree.helpers import str2bool
-from InvenTree.mixins import ListCreateAPI, RetrieveUpdateDestroyAPI
-from InvenTree.schema import schema_for_view_output_options
+from InvenTree.mixins import ListCreateAPI, OutputOptionsMixin, RetrieveUpdateDestroyAPI
 
 from .models import (
     Address,
@@ -359,7 +358,6 @@ class SupplierPartMixin:
 
     queryset = SupplierPart.objects.all().prefetch_related('tags')
     serializer_class = SupplierPartSerializer
-    output_options = SupplierPartOutputOptions
 
     def get_queryset(self, *args, **kwargs):
         """Return annotated queryest object for the SupplierPart list."""
@@ -372,19 +370,9 @@ class SupplierPartMixin:
 
         return queryset
 
-    def get_serializer(self, *args, **kwargs):
-        """Return serializer instance for this endpoint."""
-        # Do we wish to include extra detail?
-        params = self.request.query_params
-
-        kwargs.update(self.output_options.format_params(params))
-        kwargs['context'] = self.get_serializer_context()
-
-        return super().get_serializer(*args, **kwargs)
-
 
 class SupplierPartList(
-    DataExportViewMixin, SupplierPartMixin, ListCreateDestroyAPIView
+    DataExportViewMixin, SupplierPartMixin, OutputOptionsMixin, ListCreateDestroyAPIView
 ):
     """API endpoint for list view of SupplierPart object.
 
@@ -395,6 +383,7 @@ class SupplierPartList(
     filterset_class = SupplierPartFilter
 
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
+    output_options = SupplierPartOutputOptions
 
     ordering_fields = [
         'SKU',
@@ -432,14 +421,17 @@ class SupplierPartList(
     ]
 
 
-@schema_for_view_output_options
-class SupplierPartDetail(SupplierPartMixin, RetrieveUpdateDestroyAPI):
+class SupplierPartDetail(
+    SupplierPartMixin, OutputOptionsMixin, RetrieveUpdateDestroyAPI
+):
     """API endpoint for detail view of SupplierPart object.
 
     - GET: Retrieve detail view
     - PATCH: Update object
     - DELETE: Delete object
     """
+
+    output_options = SupplierPartOutputOptions
 
 
 class SupplierPriceBreakFilter(FilterSet):

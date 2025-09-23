@@ -225,7 +225,11 @@ class InvenTreeOutputOption:
 
 
 class OutputConfiguration:
-    """Contains all available output options for the SupplierPart endpoints."""
+    """Holds all available output options for a view.
+
+    This class is responsible for converting incoming query parameters from an API request
+    into a dictionary of boolean flags, which can then be applied to serializers.
+    """
 
     OPTIONS: list[InvenTreeOutputOption]
 
