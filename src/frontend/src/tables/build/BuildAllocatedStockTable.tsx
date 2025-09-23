@@ -231,7 +231,7 @@ export default function BuildAllocatedStockTable({
           icon: <IconCircleDashedCheck />,
           title: t`Consume`,
           tooltip: t`Consume Stock`,
-          hidden: !user.hasChangeRole(UserRoles.build),
+          hidden: !buildId || !user.hasChangeRole(UserRoles.build),
           onClick: () => {
             setSelectedItems([record]);
             consumeStock.open();
