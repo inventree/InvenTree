@@ -157,6 +157,14 @@ export default function StockDetail() {
         hidden: !part.IPN
       },
       {
+        name: 'part_detail.revision',
+        label: t`Revision`,
+        type: 'string',
+        copy: true,
+        icon: 'revision',
+        hidden: !part.revision
+      },
+      {
         name: 'status',
         type: 'status',
         label: t`Status`,
@@ -575,8 +583,8 @@ export default function StockDetail() {
         )
       },
       {
-        name: 'testdata',
-        label: t`Test Data`,
+        name: 'test-results',
+        label: t`Test Results`,
         icon: <IconChecklist />,
         hidden: !stockitem?.part_detail?.testable,
         content: stockitem?.pk ? (

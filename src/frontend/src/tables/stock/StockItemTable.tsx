@@ -38,6 +38,7 @@ import {
 import {
   BatchFilter,
   HasBatchCodeFilter,
+  InStockFilter,
   IncludeVariantsFilter,
   IsSerializedFilter,
   ManufacturerFilter,
@@ -354,11 +355,7 @@ function stockItemTableFilters({
       label: t`Depleted`,
       description: t`Show depleted stock items`
     },
-    {
-      name: 'in_stock',
-      label: t`In Stock`,
-      description: t`Show items which are in stock`
-    },
+    InStockFilter(),
     {
       name: 'is_building',
       label: t`In Production`,
