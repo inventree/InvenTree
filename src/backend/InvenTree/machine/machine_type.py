@@ -9,12 +9,6 @@ from InvenTree.helpers_mixin import (
     get_shared_class_instance_state_mixin,
 )
 
-# Polyfill required type for python < 3.11
-try:
-    from typing import Required
-except ImportError:  # pragma: no cover
-    from typing import _SpecialForm as Required
-
 # Import only for typechecking, otherwise this throws cyclic import errors
 if TYPE_CHECKING:
     from common.models import SettingsKeyType
@@ -65,8 +59,8 @@ class MachineProperty(TypedDict, total=False):
         max_progress: Maximum value for progress type (required if type is 'progress')
     """
 
-    key: Required[str]
-    value: Required[Union[str, bool, int]]
+    key: str
+    value: Union[str, bool, int]
     group: str
     type: Literal['str', 'bool', 'progress']
     max_progress: Union[int, None]
