@@ -4,14 +4,16 @@ import {
   Alert,
   Badge,
   Box,
-  Card,
   Code,
   Flex,
   Group,
   Indicator,
   List,
   LoadingOverlay,
+  Paper,
+  Progress,
   Stack,
+  Table,
   Text
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
@@ -70,6 +72,13 @@ interface MachineI {
   machine_errors: string[];
   is_driver_available: boolean;
   restart_required: boolean;
+  properties: {
+    key: string;
+    value: string;
+    group: string;
+    type: 'str' | 'progress' | 'bool';
+    max_progress: number;
+  }[];
 }
 
 function MachineStatusIndicator({ machine }: Readonly<{ machine: MachineI }>) {
@@ -183,10 +192,11 @@ function MachineDrawer({
   const {
     data: machine,
     refetch,
-    isFetching: isMachineFetching
+    isLoading: isMachineFetching
   } = useQuery<MachineI>({
     enabled: true,
     queryKey: ['machine-detail', machinePk],
+    refetchInterval: 5 * 1000,
     queryFn: () =>
       api
         .get(apiUrl(ApiEndpoints.machine_list, machinePk))
@@ -251,6 +261,19 @@ function MachineDrawer({
     }
   });
 
+  const groupedProperties = useMemo(() => {
+    if (!machine?.properties) return [];
+    const groups: string[] = []; // track ordered list of groups
+    const groupMap: { [key: string]: typeof machine.properties } = {};
+    for (const prop of machine.properties) {
+      if (!groups.includes(prop.group)) groups.push(prop.group);
+      if (!groupMap[prop.group]) groupMap[prop.group] = [];
+      groupMap[prop.group].push(prop);
+    }
+
+    return groups.map((g) => ({ group: g, properties: groupMap[g] }));
+  }, [machine?.properties]);
+
   return (
     <>
       <Stack gap='xs'>
@@ -305,17 +328,22 @@ function MachineDrawer({
 
         <Accordion
           multiple
-          defaultValue={['machine-info', 'machine-settings', 'driver-settings']}
+          defaultValue={[
+            'machine-info',
+            'machine-properties',
+            'machine-settings',
+            'driver-settings'
+          ]}
         >
           <Accordion.Item
             key={`machine-info-${machinePk}`}
             value='machine-info'
           >
             <Accordion.Control>
-              <StylishText size='lg'>{t`Machine Information`}</StylishText>
+              <StylishText size='lg'>{t`General`}</StylishText>
             </Accordion.Control>
             <Accordion.Panel>
-              <Card withBorder>
+              <Paper withBorder p='md'>
                 <Stack gap='md'>
                   <Stack pos='relative' gap='xs'>
                     <LoadingOverlay
@@ -363,7 +391,7 @@ function MachineDrawer({
                         ) : (
                           StatusRenderer({
                             status: `${machine?.status || -1}`,
-                            type: `MachineStatus__${machine?.status_model}` as any
+                            type: `${machine?.status_model}` as any
                           })
                         )}
                         <Text fz='sm'>{machine?.status_text}</Text>
@@ -392,7 +420,66 @@ function MachineDrawer({
                     </Group>
                   </Stack>
                 </Stack>
-              </Card>
+              </Paper>
+            </Accordion.Panel>
+          </Accordion.Item>
+          <Accordion.Item
+            key={`machine-properties-${machinePk}`}
+            value='machine-properties'
+          >
+            <Accordion.Control>
+              <StylishText size='lg'>{t`Properties`}</StylishText>
+            </Accordion.Control>
+            <Accordion.Panel>
+              <Paper withBorder p='md'>
+                <Stack gap='sm'>
+                  {groupedProperties.map(({ group, properties }) => (
+                    <Stack key={group} gap={0}>
+                      {group && (
+                        <Text fz='sm' fw={700} mb={2}>
+                          {group}
+                        </Text>
+                      )}
+                      <Table
+                        variant='vertical'
+                        withTableBorder
+                        verticalSpacing={4}
+                      >
+                        <Table.Tbody>
+                          {properties.map((prop) => (
+                            <Table.Tr>
+                              <Table.Th w={250}>{prop.key}</Table.Th>
+                              <Table.Td>
+                                {prop.type === 'bool' ? (
+                                  <YesNoButton
+                                    value={prop.value || prop.value === 'true'}
+                                  />
+                                ) : prop.type === 'progress' ? (
+                                  <Group>
+                                    <Progress
+                                      value={
+                                        (Number.parseInt(prop.value) /
+                                          prop.max_progress) *
+                                        100
+                                      }
+                                      flex={1}
+                                    />
+                                    <Text>
+                                      {prop.value} / {prop.max_progress}
+                                    </Text>
+                                  </Group>
+                                ) : (
+                                  <Text>{prop.value}</Text>
+                                )}
+                              </Table.Td>
+                            </Table.Tr>
+                          ))}
+                        </Table.Tbody>
+                      </Table>
+                    </Stack>
+                  ))}
+                </Stack>
+              </Paper>
             </Accordion.Panel>
           </Accordion.Item>
           {machine?.is_driver_available && (
@@ -404,13 +491,13 @@ function MachineDrawer({
                 <StylishText size='lg'>{t`Machine Settings`}</StylishText>
               </Accordion.Control>
               <Accordion.Panel>
-                <Card withBorder>
+                <Paper withBorder p='xs'>
                   <MachineSettingList
                     machinePk={machinePk}
                     configType='M'
                     onChange={refreshAll}
                   />
-                </Card>
+                </Paper>
               </Accordion.Panel>
             </Accordion.Item>
           )}
@@ -423,13 +510,13 @@ function MachineDrawer({
                 <StylishText size='lg'>{t`Driver Settings`}</StylishText>
               </Accordion.Control>
               <Accordion.Panel>
-                <Card withBorder>
+                <Paper withBorder p='xs'>
                   <MachineSettingList
                     machinePk={machinePk}
                     configType='D'
                     onChange={refreshAll}
                   />
-                </Card>
+                </Paper>
               </Accordion.Panel>
             </Accordion.Item>
           )}
@@ -518,6 +605,15 @@ export function MachineListTable({
             return renderer(record);
           }
         }
+      },
+      {
+        accessor: 'status_text',
+        sortable: false
+      },
+      {
+        accessor: 'machine_errors',
+        sortable: false,
+        render: (record) => record.machine_errors.join(', ')
       }
     ],
     [machineTypes]
