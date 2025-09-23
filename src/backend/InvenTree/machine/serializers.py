@@ -20,9 +20,9 @@ class MachinePropertySerializer(serializers.Serializer):
 
     key = serializers.CharField()
     value = serializers.CharField()
-    group = serializers.CharField(default='')
-    type = serializers.CharField(default='str')
-    max_progress = serializers.IntegerField(default=None)
+    group = serializers.CharField()
+    type = serializers.CharField()
+    max_progress = serializers.IntegerField()
 
 
 class MachineConfigSerializer(serializers.ModelSerializer):

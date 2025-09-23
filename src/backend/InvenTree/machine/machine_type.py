@@ -135,6 +135,12 @@ class BaseDriver(
             machine: Machine instance
         """
 
+    def ping_machines(self):
+        """Ping all machines using this driver to check if they are online.
+
+        This is called periodically by a background task if the setting 'MACHINE_PING_ENABLED' is active.
+        """
+
     def get_machines(self, **kwargs):
         """Return all machines using this driver (By default only initialized machines).
 
