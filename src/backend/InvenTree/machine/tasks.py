@@ -18,5 +18,6 @@ def ping_machines():
     if not get_global_setting('MACHINE_PING_ENABLED', True):
         return
 
-    for driver in registry.get_drivers('label-printer'):
+    for driver in registry.get_drivers():
+        logger.debug("Pinging machines for driver '%s'", driver.SLUG)
         driver.ping_machines()
