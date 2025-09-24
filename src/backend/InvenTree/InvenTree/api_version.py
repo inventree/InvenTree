@@ -1,14 +1,17 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 392
+INVENTREE_API_VERSION = 393
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v392 -> 2025-09-23 : https://github.com/inventree/InvenTree/pull/10381
+v393 -> 2025-09-23 : https://github.com/inventree/InvenTree/pull/10381
     - Adds machine properties to machine API endpoints
+
+v392 -> 2025-09-22 : https://github.com/inventree/InvenTree/pull/10374
+    - Refactors 'part_detail', 'supplier_detail', 'manufacturer_detail'and 'pretty' param in SupplierPartList API endpoint
 
 v391 -> 2025-09-06 : https://github.com/inventree/InvenTree/pull/10279
     - Refactors 'exclude_tree', 'cascade', and 'location' filters in StockList API endpoint
