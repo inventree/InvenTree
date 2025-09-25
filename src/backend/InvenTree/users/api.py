@@ -6,11 +6,14 @@ from django.contrib.auth import get_user, login
 from django.contrib.auth.models import Group, User
 from django.contrib.auth.password_validation import password_changed, validate_password
 from django.core.exceptions import ValidationError
+from django.db.models import Q
 from django.urls import include, path
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.generic.base import RedirectView
 
 import structlog
+from django_filters import rest_framework as rest_filters
+from django_filters.rest_framework.filterset import FilterSet
 from drf_spectacular.utils import OpenApiParameter, OpenApiResponse, extend_schema
 from rest_framework import exceptions
 from rest_framework.generics import DestroyAPIView, GenericAPIView
@@ -46,6 +49,65 @@ from users.serializers import (
 logger = structlog.get_logger('inventree')
 
 
+class OwnerFilter(FilterSet):
+    """Optimized filter set for Owner model."""
+
+    search = rest_filters.CharFilter(method='filter_search')
+    is_active = rest_filters.BooleanFilter(method='filter_is_active')
+
+    class Meta:
+        """Meta class for owner filter."""
+
+        model = Owner
+        fields = ['search', 'is_active']
+
+    def filter_search(self, queryset, name, value):
+        """More efficient search implementation."""
+        if not value:
+            return queryset
+
+        # If Owner model has a direct name field, you can use icontains
+        # Otherwise, you need to use the previous approach
+        search_terms = value.lower().strip().split()
+
+        for term in search_terms:
+            # Assuming that name is a property or method
+            # This part should be modified based on your actual model structure
+            print(term)
+
+        return self.filter_by_custom_search(queryset, search_terms)
+
+    def filter_by_custom_search(self, queryset, search_terms):
+        """Custom search logic - should be configured based on your model structure."""
+        # This part should be configured based on how data is stored in your Owner model
+        return queryset
+
+    def filter_is_active(self, queryset, name, value):
+        """Filter by active status."""
+        if value is None:
+            return queryset
+
+        active_user_ids = list(
+            User.objects.filter(is_active=value).values_list('pk', flat=True)
+        )
+
+        # Filter based on owner type
+        q_filter = Q()
+
+        # If owner_type is not 'user', include all
+        q_filter |= ~Q(owner_type__name='user')
+
+        # If owner_type is 'user', only include active/inactive users
+        if active_user_ids:
+            q_filter |= Q(owner_type__name='user', owner_id__in=active_user_ids)
+        elif value is False:
+            # If value is False and there are no inactive users
+            q_filter |= Q(owner_type__name='user', owner_id__isnull=True)
+
+        return queryset.filter(q_filter)
+
+
+# TODO: hacktoberfest
 class OwnerList(ListAPI):
     """List API endpoint for Owner model.
 
@@ -55,6 +117,8 @@ class OwnerList(ListAPI):
     queryset = Owner.objects.all()
     serializer_class = OwnerSerializer
     permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
+    # filterset_class = OwnerFilter
+    # filter_backends = [drf_backend.DjangoFilterBackend]
 
     def filter_queryset(self, queryset):
         """Implement text search for the "owner" model.
@@ -71,6 +135,7 @@ class OwnerList(ListAPI):
         search_term = str(self.request.query_params.get('search', '')).lower()
         is_active = self.request.query_params.get('is_active', None)
 
+        queryset = queryset.select_related('owner_type').prefetch_related('owner')
         queryset = super().filter_queryset(queryset)
 
         results = []
@@ -243,6 +308,7 @@ class GroupMixin:
     serializer_class = GroupSerializer
     permission_classes = [InvenTree.permissions.IsStaffOrReadOnlyScope]
 
+    # TODO: hacktoberfest
     def get_serializer(self, *args, **kwargs):
         """Return serializer instance for this endpoint."""
         # Do we wish to include extra detail?
