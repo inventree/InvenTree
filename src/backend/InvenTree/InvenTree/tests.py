@@ -40,7 +40,6 @@ from stock.models import StockItem, StockLocation
 
 from . import config, helpers, ready, schema, status, version
 from .tasks import offload_task
-from .validators import validate_overage
 
 
 class TreeFixtureTest(TestCase):
@@ -462,27 +461,6 @@ class ConversionTest(TestCase):
 
 class ValidatorTest(TestCase):
     """Simple tests for custom field validators."""
-
-    def test_overage(self):
-        """Test overage validator."""
-        validate_overage('100%')
-        validate_overage('10')
-        validate_overage('45.2 %')
-
-        with self.assertRaises(django_exceptions.ValidationError):
-            validate_overage('-1')
-
-        with self.assertRaises(django_exceptions.ValidationError):
-            validate_overage('-2.04 %')
-
-        with self.assertRaises(django_exceptions.ValidationError):
-            validate_overage('105%')
-
-        with self.assertRaises(django_exceptions.ValidationError):
-            validate_overage('xxx %')
-
-        with self.assertRaises(django_exceptions.ValidationError):
-            validate_overage('aaaa')
 
     def test_url_validation(self):
         """Test for AllowedURLValidator."""

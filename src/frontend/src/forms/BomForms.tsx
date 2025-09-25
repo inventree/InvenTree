@@ -23,18 +23,20 @@ export function bomItemFields(): ApiFormFieldSet {
     },
     sub_part: {
       filters: {
-        component: true,
-        virtual: false
+        active: true, // Only show active parts when creating a new BOM item
+        component: true
       }
     },
     quantity: {},
     reference: {},
-    overage: {},
-    note: {},
+    setup_quantity: {},
+    attrition: {},
+    rounding_multiple: {},
     allow_variants: {},
     inherited: {},
     consumable: {},
-    optional: {}
+    optional: {},
+    note: {}
   };
 }
 

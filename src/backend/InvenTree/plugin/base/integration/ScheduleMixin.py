@@ -68,8 +68,9 @@ class ScheduleMixin:
         if settings.PLUGIN_TESTING or get_global_setting('ENABLE_PLUGINS_SCHEDULE'):
             for _key, plugin in plugins:
                 if (
-                    plugin.mixin_enabled(PluginMixinEnum.SCHEDULE)
+                    plugin
                     and plugin.is_active()
+                    and plugin.mixin_enabled(PluginMixinEnum.SCHEDULE)
                 ):
                     # Only active tasks for plugins which are enabled
                     plugin.register_tasks()

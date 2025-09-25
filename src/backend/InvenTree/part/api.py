@@ -6,18 +6,22 @@ from django.db.models import Count, F, Q
 from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
 
-from django_filters import rest_framework as rest_filters
+import django_filters.rest_framework.filters as rest_filters
 from django_filters.rest_framework import DjangoFilterBackend
+from django_filters.rest_framework.filterset import FilterSet
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
-from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
-import InvenTree.permissions
 import part.filters
 from data_exporter.mixins import DataExportViewMixin
-from InvenTree.api import BulkUpdateMixin, ListCreateDestroyAPIView, MetadataView
+from InvenTree.api import (
+    BulkDeleteMixin,
+    BulkUpdateMixin,
+    ListCreateDestroyAPIView,
+    MetadataView,
+)
 from InvenTree.filters import (
     ORDER_FILTER,
     ORDER_FILTER_ALIAS,
@@ -53,7 +57,6 @@ from .models import (
     PartRelated,
     PartSellPriceBreak,
     PartStocktake,
-    PartStocktakeReport,
     PartTestTemplate,
 )
 
@@ -96,7 +99,7 @@ class CategoryMixin:
         return ctx
 
 
-class CategoryFilter(rest_filters.FilterSet):
+class CategoryFilter(FilterSet):
     """Custom filterset class for the PartCategoryList endpoint."""
 
     class Meta:
@@ -280,11 +283,11 @@ class CategoryDetail(CategoryMixin, CustomRetrieveUpdateDestroyAPI):
         return super().destroy(
             request,
             *args,
-            **dict(
-                kwargs,
-                delete_parts=delete_parts,
-                delete_child_categories=delete_child_categories,
-            ),
+            **{
+                **kwargs,
+                'delete_parts': delete_parts,
+                'delete_child_categories': delete_child_categories,
+            },
         )
 
 
@@ -397,7 +400,7 @@ class PartInternalPriceList(DataExportViewMixin, ListCreateAPI):
     ordering = 'quantity'
 
 
-class PartTestTemplateFilter(rest_filters.FilterSet):
+class PartTestTemplateFilter(FilterSet):
     """Custom filterset class for the PartTestTemplateList endpoint."""
 
     class Meta:
@@ -617,32 +620,8 @@ class PartCopyBOM(CreateAPI):
 class PartValidateBOM(RetrieveUpdateAPI):
     """API endpoint for 'validating' the BOM for a given Part."""
 
-    class BOMValidateSerializer(serializers.ModelSerializer):
-        """Simple serializer class for validating a single BomItem instance."""
-
-        class Meta:
-            """Metaclass defines serializer fields."""
-
-            model = Part
-            fields = ['checksum', 'valid']
-
-        checksum = serializers.CharField(read_only=True, source='bom_checksum')
-
-        valid = serializers.BooleanField(
-            write_only=True,
-            default=False,
-            label=_('Valid'),
-            help_text=_('Validate entire Bill of Materials'),
-        )
-
-        def validate_valid(self, valid):
-            """Check that the 'valid' input was flagged."""
-            if not valid:
-                raise ValidationError(_('This option must be selected'))
-
     queryset = Part.objects.all()
-
-    serializer_class = BOMValidateSerializer
+    serializer_class = part_serializers.PartBomValidateSerializer
 
     def update(self, request, *args, **kwargs):
         """Validate the referenced BomItem instance."""
@@ -656,12 +635,17 @@ class PartValidateBOM(RetrieveUpdateAPI):
         serializer = self.get_serializer(part, data=data, partial=partial)
         serializer.is_valid(raise_exception=True)
 
-        part.validate_bom(request.user)
+        valid = str2bool(serializer.validated_data.get('valid', False))
 
-        return Response({'checksum': part.bom_checksum})
+        part.validate_bom(request.user, valid=valid)
+
+        # Re-serialize the response
+        serializer = self.get_serializer(part, many=False)
+
+        return Response(serializer.data)
 
 
-class PartFilter(rest_filters.FilterSet):
+class PartFilter(FilterSet):
     """Custom filters for the PartList endpoint.
 
     Uses the django_filters extension framework
@@ -842,16 +826,6 @@ class PartFilter(rest_filters.FilterSet):
 
         return queryset.filter(q_a | q_b).distinct()
 
-    stocktake = rest_filters.BooleanFilter(
-        label='Has stocktake', method='filter_has_stocktake'
-    )
-
-    def filter_has_stocktake(self, queryset, name, value):
-        """Filter the queryset based on whether stocktake data is available."""
-        if str2bool(value):
-            return queryset.exclude(last_stocktake=None)
-        return queryset.filter(last_stocktake=None)
-
     stock_to_build = rest_filters.BooleanFilter(
         label='Required for Build Order', method='filter_stock_to_build'
     )
@@ -883,23 +857,8 @@ class PartFilter(rest_filters.FilterSet):
     )
 
     bom_valid = rest_filters.BooleanFilter(
-        label=_('BOM Valid'), method='filter_bom_valid'
+        label=_('BOM Valid'), field_name='bom_validated'
     )
-
-    def filter_bom_valid(self, queryset, name, value):
-        """Filter by whether the BOM for the part is valid or not."""
-        # Limit queryset to active assemblies
-        queryset = queryset.filter(active=True, assembly=True).distinct()
-
-        # Iterate through the queryset
-        # TODO: We should cache BOM checksums to make this process more efficient
-        pks = []
-
-        for item in queryset:
-            if item.is_bom_valid() == value:
-                pks.append(item.pk)
-
-        return queryset.filter(pk__in=pks)
 
     starred = rest_filters.BooleanFilter(label='Starred', method='filter_starred')
 
@@ -1184,7 +1143,6 @@ class PartList(PartMixin, BulkUpdateMixin, DataExportViewMixin, ListCreateAPI):
         'unallocated_stock',
         'category',
         'default_location',
-        'last_stocktake',
         'units',
         'pricing_min',
         'pricing_max',
@@ -1239,7 +1197,7 @@ class PartDetail(PartMixin, RetrieveUpdateDestroyAPI):
         return response
 
 
-class PartRelatedFilter(rest_filters.FilterSet):
+class PartRelatedFilter(FilterSet):
     """FilterSet for PartRelated objects."""
 
     class Meta:
@@ -1286,7 +1244,7 @@ class PartRelatedDetail(PartRelatedMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for accessing detail view of a PartRelated object."""
 
 
-class PartParameterTemplateFilter(rest_filters.FilterSet):
+class PartParameterTemplateFilter(FilterSet):
     """FilterSet for PartParameterTemplate objects."""
 
     class Meta:
@@ -1420,7 +1378,7 @@ class PartParameterAPIMixin:
         return super().get_serializer(*args, **kwargs)
 
 
-class PartParameterFilter(rest_filters.FilterSet):
+class PartParameterFilter(FilterSet):
     """Custom filters for the PartParameterList API endpoint."""
 
     class Meta:
@@ -1481,17 +1439,17 @@ class PartParameterDetail(PartParameterAPIMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a single PartParameter object."""
 
 
-class PartStocktakeFilter(rest_filters.FilterSet):
+class PartStocktakeFilter(FilterSet):
     """Custom filter for the PartStocktakeList endpoint."""
 
     class Meta:
         """Metaclass options."""
 
         model = PartStocktake
-        fields = ['part', 'user']
+        fields = ['part']
 
 
-class PartStocktakeList(ListCreateAPI):
+class PartStocktakeList(BulkDeleteMixin, ListCreateAPI):
     """API endpoint for listing part stocktake information."""
 
     queryset = PartStocktake.objects.all()
@@ -1523,48 +1481,7 @@ class PartStocktakeDetail(RetrieveUpdateDestroyAPI):
     serializer_class = part_serializers.PartStocktakeSerializer
 
 
-class PartStocktakeReportList(ListAPI):
-    """API endpoint for listing part stocktake report information."""
-
-    queryset = PartStocktakeReport.objects.all()
-    serializer_class = part_serializers.PartStocktakeReportSerializer
-
-    filter_backends = ORDER_FILTER
-
-    ordering_fields = ['date', 'pk']
-
-    # Newest first, by default
-    ordering = '-pk'
-
-
-class PartStocktakeReportDetail(RetrieveUpdateDestroyAPI):
-    """API endpoint for detail view of a single PartStocktakeReport object."""
-
-    queryset = PartStocktakeReport.objects.all()
-    serializer_class = part_serializers.PartStocktakeReportSerializer
-
-
-class PartStocktakeReportGenerate(CreateAPI):
-    """API endpoint for manually generating a new PartStocktakeReport."""
-
-    serializer_class = part_serializers.PartStocktakeReportGenerateSerializer
-
-    permission_classes = [
-        InvenTree.permissions.IsAuthenticatedOrReadScope,
-        InvenTree.permissions.RolePermission,
-    ]
-
-    role_required = 'stocktake'
-
-    def get_serializer_context(self):
-        """Extend serializer context data."""
-        context = super().get_serializer_context()
-        context['request'] = self.request
-
-        return context
-
-
-class BomFilter(rest_filters.FilterSet):
+class BomFilter(FilterSet):
     """Custom filters for the BOM list."""
 
     class Meta:
@@ -1597,6 +1514,10 @@ class BomFilter(rest_filters.FilterSet):
 
     sub_part_assembly = rest_filters.BooleanFilter(
         label='Component part is an assembly', field_name='sub_part__assembly'
+    )
+
+    sub_part_virtual = rest_filters.BooleanFilter(
+        label='Component part is virtual', field_name='sub_part__virtual'
     )
 
     available_stock = rest_filters.BooleanFilter(
@@ -1681,14 +1602,12 @@ class BomMixin:
         """
         # Do we wish to include extra detail?
         try:
-            kwargs['part_detail'] = str2bool(self.request.GET.get('part_detail', None))
-        except AttributeError:
-            pass
+            params = self.request.query_params
 
-        try:
-            kwargs['sub_part_detail'] = str2bool(
-                self.request.GET.get('sub_part_detail', None)
-            )
+            kwargs['can_build'] = str2bool(params.get('can_build', True))
+            kwargs['part_detail'] = str2bool(params.get('part_detail', False))
+            kwargs['sub_part_detail'] = str2bool(params.get('sub_part_detail', False))
+
         except AttributeError:
             pass
 
@@ -1729,6 +1648,9 @@ class BomList(BomMixin, DataExportViewMixin, ListCreateDestroyAPIView):
     ordering_fields = [
         'can_build',
         'quantity',
+        'setup_quantity',
+        'attrition',
+        'rounding_multiple',
         'sub_part',
         'available_stock',
         'allow_variants',
@@ -1980,26 +1902,6 @@ part_api_urls = [
     path(
         'stocktake/',
         include([
-            path(
-                r'report/',
-                include([
-                    path(
-                        'generate/',
-                        PartStocktakeReportGenerate.as_view(),
-                        name='api-part-stocktake-report-generate',
-                    ),
-                    path(
-                        '<int:pk>/',
-                        PartStocktakeReportDetail.as_view(),
-                        name='api-part-stocktake-report-detail',
-                    ),
-                    path(
-                        '',
-                        PartStocktakeReportList.as_view(),
-                        name='api-part-stocktake-report-list',
-                    ),
-                ]),
-            ),
             path(
                 '<int:pk>/',
                 PartStocktakeDetail.as_view(),

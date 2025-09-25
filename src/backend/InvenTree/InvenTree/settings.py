@@ -43,6 +43,13 @@ from users.oauth2_scopes import oauth2_scopes
 
 from . import config, locales
 
+try:
+    import django_stubs_ext
+
+    django_stubs_ext.monkeypatch()  # pragma: no cover
+except ImportError:  # pragma: no cover
+    pass
+
 checkMinPythonVersion()
 
 INVENTREE_BASE_URL = 'https://inventree.org'
@@ -192,6 +199,10 @@ PLUGINS_ENABLED = get_boolean_setting(
     'INVENTREE_PLUGINS_ENABLED', 'plugins_enabled', False
 )
 
+PLUGINS_MANDATORY = get_setting(
+    'INVENTREE_PLUGINS_MANDATORY', 'plugins_mandatory', typecast=list, default_value=[]
+)
+
 PLUGINS_INSTALL_DISABLED = get_boolean_setting(
     'INVENTREE_PLUGIN_NOINSTALL', 'plugin_noinstall', False
 )
@@ -211,6 +222,7 @@ PLUGIN_TESTING_EVENTS = False  # Flag if events are tested right now
 PLUGIN_TESTING_EVENTS_ASYNC = False  # Flag if events are tested asynchronously
 PLUGIN_TESTING_RELOAD = False  # Flag if plugin reloading is in testing (check_reload)
 
+# Plugin development settings
 PLUGIN_DEV_SLUG = (
     get_setting('INVENTREE_PLUGIN_DEV_SLUG', 'plugin_dev.slug') if DEBUG else None
 )
@@ -377,22 +389,25 @@ QUERYCOUNT = {
 }
 
 
-AUTHENTICATION_BACKENDS = CONFIG.get(
-    'authentication_backends',
-    [
-        'oauth2_provider.backends.OAuth2Backend',  # OAuth2 provider
-        'django.contrib.auth.backends.RemoteUserBackend',  # proxy login
-        'django.contrib.auth.backends.ModelBackend',
-        'allauth.account.auth_backends.AuthenticationBackend',  # SSO login via external providers
-        'sesame.backends.ModelBackend',  # Magic link login django-sesame
-    ],
+default_auth_backends = [
+    'oauth2_provider.backends.OAuth2Backend',  # OAuth2 provider
+    'django.contrib.auth.backends.RemoteUserBackend',  # proxy login
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',  # SSO login via external providers
+    'sesame.backends.ModelBackend',  # Magic link login django-sesame
+]
+
+AUTHENTICATION_BACKENDS = (
+    CONFIG.get('authentication_backends', default_auth_backends)
+    if CONFIG
+    else default_auth_backends
 )
 
 # LDAP support
 LDAP_AUTH = get_boolean_setting('INVENTREE_LDAP_ENABLED', 'ldap.enabled', False)
 if LDAP_AUTH:
-    import django_auth_ldap.config
-    import ldap
+    import django_auth_ldap.config  # type: ignore[unresolved-import]
+    import ldap  # type: ignore[unresolved-import]
 
     AUTHENTICATION_BACKENDS.append('django_auth_ldap.backend.LDAPBackend')
 
@@ -445,7 +460,7 @@ if LDAP_AUTH:
     )
     AUTH_LDAP_USER_SEARCH = django_auth_ldap.config.LDAPSearch(
         get_setting('INVENTREE_LDAP_SEARCH_BASE_DN', 'ldap.search_base_dn'),
-        ldap.SCOPE_SUBTREE,
+        ldap.SCOPE_SUBTREE,  # type: ignore[unresolved-attribute]
         str(
             get_setting(
                 'INVENTREE_LDAP_SEARCH_FILTER_STR',
@@ -481,7 +496,7 @@ if LDAP_AUTH:
     )
     AUTH_LDAP_GROUP_SEARCH = django_auth_ldap.config.LDAPSearch(
         get_setting('INVENTREE_LDAP_GROUP_SEARCH', 'ldap.group_search'),
-        ldap.SCOPE_SUBTREE,
+        ldap.SCOPE_SUBTREE,  # type: ignore[unresolved-attribute]
         f'(objectClass={AUTH_LDAP_GROUP_OBJECT_CLASS})',
     )
     AUTH_LDAP_GROUP_TYPE_CLASS = get_setting(
@@ -599,7 +614,7 @@ Configure the database backend based on the user-specified values.
 logger.debug('Configuring database backend:')
 
 # Extract database configuration from the config.yaml file
-db_config = CONFIG.get('database', None)
+db_config = CONFIG.get('database', None) if CONFIG else None
 
 if not db_config:
     db_config = {}
@@ -685,7 +700,9 @@ if db_options is None:
 
 # Specific options for postgres backend
 if 'postgres' in DB_ENGINE:  # pragma: no cover
-    from django.db.backends.postgresql.psycopg_any import IsolationLevel
+    from django.db.backends.postgresql.psycopg_any import (  # type: ignore[unresolved-import]
+        IsolationLevel,
+    )
 
     # Connection timeout
     if 'connect_timeout' not in db_options:
@@ -1351,7 +1368,6 @@ HEADLESS_ADAPTER = 'InvenTree.auth_overrides.CustomHeadlessAdapter'
 ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True
 
 HEADLESS_ONLY = True
-HEADLESS_TOKEN_STRATEGY = 'InvenTree.auth_overrides.DRFTokenStrategy'
 HEADLESS_CLIENTS = 'browser'
 MFA_ENABLED = get_boolean_setting(
     'INVENTREE_MFA_ENABLED', 'mfa_enabled', True
@@ -1433,7 +1449,9 @@ if SITE_URL:
     GLOBAL_SETTINGS_OVERRIDES['INVENTREE_BASE_URL'] = SITE_URL
 
 if len(GLOBAL_SETTINGS_OVERRIDES) > 0:
-    logger.info('Global settings overrides: %s', str(GLOBAL_SETTINGS_OVERRIDES))
+    logger.info(
+        'INVE-I1: Global settings overrides: %s', str(GLOBAL_SETTINGS_OVERRIDES)
+    )
     for key in GLOBAL_SETTINGS_OVERRIDES:
         # Set the global setting
         logger.debug('- Override value for %s = ********', key)

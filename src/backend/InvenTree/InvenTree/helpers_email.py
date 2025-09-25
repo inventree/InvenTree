@@ -92,7 +92,7 @@ def send_email(
         # If we still don't have a valid from_email, then we can't send emails
         if not from_email:
             if settings.TESTING:
-                from_email = 'from@test.com'
+                from_email = 'test@test.inventree.org'
             else:
                 logger.error(
                     'INVE-W7: send_email failed: DEFAULT_FROM_EMAIL not specified'
@@ -114,7 +114,7 @@ def send_email(
     return True, None
 
 
-def get_email_for_user(user) -> str:
+def get_email_for_user(user) -> Optional[str]:
     """Find an email address for the specified user."""
     # First check if the user has an associated email address
     if user.email:

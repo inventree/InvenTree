@@ -1,6 +1,7 @@
 """Mixin classes for the exporter app."""
 
 from collections import OrderedDict
+from typing import Any
 
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
@@ -127,7 +128,7 @@ class DataExportSerializerMixin:
         """
         return headers
 
-    def get_nested_value(self, row: dict, key: str) -> any:
+    def get_nested_value(self, row: dict, key: str) -> Any:
         """Get a nested value from a dictionary.
 
         This method allows for dot notation to access nested fields.
@@ -351,10 +352,13 @@ class DataExportViewMixin:
             filename = export_plugin.generate_filename(
                 serializer_class.Meta.model, export_format
             )
-        except Exception:
+        except Exception as e:
             InvenTree.exceptions.log_error(
                 'generate_filename', plugin=export_plugin.slug
             )
+
+            output.mark_failure(error=str(e))
+
             raise ValidationError(export_error)
 
         # The provided plugin is responsible for exporting the data
@@ -364,8 +368,12 @@ class DataExportViewMixin:
                 queryset, serializer_class, headers, export_context, output
             )
 
-        except Exception:
+        except Exception as e:
             InvenTree.exceptions.log_error('export_data', plugin=export_plugin.slug)
+
+            # Log the error against the output object
+            output.mark_failure(error=str(e))
+
             raise ValidationError(export_error)
 
         if not isinstance(data, list):
@@ -377,17 +385,21 @@ class DataExportViewMixin:
         if hasattr(export_plugin, 'update_headers'):
             try:
                 headers = export_plugin.update_headers(headers, export_context)
-            except Exception:
+            except Exception as e:
                 InvenTree.exceptions.log_error(
                     'update_headers', plugin=export_plugin.slug
                 )
+
+                output.mark_failure(error=str(e))
+
                 raise ValidationError(export_error)
 
         # Now, export the data to file
         try:
             datafile = serializer.export_to_file(data, headers, export_format)
-        except Exception:
+        except Exception as e:
             InvenTree.exceptions.log_error('export_to_file', plugin=export_plugin.slug)
+            output.mark_failure(error=str(e))
             raise ValidationError(_('Error occurred during data export'))
 
         # Update the output object with the exported data

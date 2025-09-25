@@ -50,7 +50,7 @@ def filter_queryset(queryset: QuerySet, **kwargs) -> QuerySet:
 
 
 @register.simple_tag()
-def filter_db_model(model_name: str, **kwargs) -> QuerySet:
+def filter_db_model(model_name: str, **kwargs) -> Optional[QuerySet]:
     """Filter a database model based on the provided keyword arguments.
 
     Arguments:
@@ -102,7 +102,7 @@ def getindex(container: list, index: int) -> Any:
 
 
 @register.simple_tag()
-def getkey(container: dict, key: str, backup_value: Optional[any] = None) -> Any:
+def getkey(container: dict, key: str, backup_value: Optional[Any] = None) -> Any:
     """Perform key lookup in the provided dict object.
 
     This function is provided to get around template rendering limitations.
@@ -301,14 +301,13 @@ def part_image(part: Part, preview: bool = False, thumbnail: bool = False, **kwa
     if type(part) is not Part:
         raise TypeError(_('part_image tag requires a Part instance'))
 
-    if not part.image:
+    part_img = part.image
+    if not part_img:
         img = None
     elif preview:
-        img = None if not hasattr(part.image, 'preview') else part.image.preview.name
+        img = None if not hasattr(part.image, 'preview') else part_img.preview.name
     elif thumbnail:
-        img = (
-            None if not hasattr(part.image, 'thumbnail') else part.image.thumbnail.name
-        )
+        img = None if not hasattr(part.image, 'thumbnail') else part_img.thumbnail.name
     else:
         img = part.image.name
 
@@ -316,7 +315,7 @@ def part_image(part: Part, preview: bool = False, thumbnail: bool = False, **kwa
 
 
 @register.simple_tag()
-def part_parameter(part: Part, parameter_name: str) -> str:
+def part_parameter(part: Part, parameter_name: str) -> Optional[str]:
     """Return a PartParameter object for the given part and parameter name.
 
     Arguments:
@@ -348,12 +347,15 @@ def company_image(
     if type(company) is not Company:
         raise TypeError(_('company_image tag requires a Company instance'))
 
-    if preview:
-        img = company.image.preview.name
+    cmp_img = company.image
+    if not cmp_img:
+        img = None
+    elif preview:
+        img = cmp_img.preview.name
     elif thumbnail:
-        img = company.image.thumbnail.name
+        img = cmp_img.thumbnail.name
     else:
-        img = company.image.name
+        img = cmp_img.name
 
     return uploaded_image(img, **kwargs)
 
@@ -393,27 +395,27 @@ def internal_link(link, text) -> str:
 
 
 @register.simple_tag()
-def add(x, y, *args, **kwargs):
+def add(x: float, y: float, *args, **kwargs) -> float:
     """Add two numbers together."""
-    return x + y
+    return float(x) + float(y)
 
 
 @register.simple_tag()
-def subtract(x, y):
+def subtract(x: float, y: float) -> float:
     """Subtract one number from another."""
-    return x - y
+    return float(x) - float(y)
 
 
 @register.simple_tag()
-def multiply(x, y):
+def multiply(x: float, y: float) -> float:
     """Multiply two numbers together."""
-    return x * y
+    return float(x) * float(y)
 
 
 @register.simple_tag()
-def divide(x, y):
+def divide(x: float, y: float) -> float:
     """Divide one number by another."""
-    return x / y
+    return float(x) / float(y)
 
 
 @register.simple_tag

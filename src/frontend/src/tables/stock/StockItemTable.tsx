@@ -1,17 +1,23 @@
 import { t } from '@lingui/core/macro';
 import { Group, Text } from '@mantine/core';
 import { type ReactNode, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { ActionButton } from '@lib/components/ActionButton';
+import { AddItemButton } from '@lib/components/AddItemButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import { getDetailUrl } from '@lib/functions/Navigation';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
-import { AddItemButton } from '../../components/buttons/AddItemButton';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
-import { formatCurrency, formatPriceRange } from '../../defaults/formatters';
+import {
+  formatCurrency,
+  formatDecimal,
+  formatPriceRange
+} from '../../defaults/formatters';
 import {
   type StockOperationProps,
   useStockFields
@@ -32,12 +38,15 @@ import {
 import {
   BatchFilter,
   HasBatchCodeFilter,
+  InStockFilter,
   IncludeVariantsFilter,
   IsSerializedFilter,
+  ManufacturerFilter,
   SerialFilter,
   SerialGTEFilter,
   SerialLTEFilter,
-  StatusFilterOptions
+  StatusFilterOptions,
+  SupplierFilter
 } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { TableHoverCard } from '../TableHoverCard';
@@ -53,11 +62,10 @@ function stockItemTableColumns({
   showPricing: boolean;
 }): TableColumn[] {
   return [
-    {
+    PartColumn({
       accessor: 'part',
-      sortable: true,
-      render: (record: any) => PartColumn({ part: record?.part_detail })
-    },
+      part: 'part_detail'
+    }),
     {
       accessor: 'part_detail.IPN',
       title: t`IPN`,
@@ -82,7 +90,7 @@ function stockItemTableColumns({
         const quantity = record?.quantity ?? 0;
         const allocated = record?.allocated ?? 0;
         const available = quantity - allocated;
-        let text = quantity;
+        let text = formatDecimal(quantity);
         const part = record?.part_detail ?? {};
         const extra: ReactNode[] = [];
         let color = undefined;
@@ -173,7 +181,7 @@ function stockItemTableColumns({
             if (available > 0) {
               extra.push(
                 <Text key='available' size='sm' c='orange'>
-                  {`${t`Available`}: ${available}`}
+                  {`${t`Available`}: ${formatDecimal(available)}`}
                 </Text>
               );
             } else {
@@ -347,17 +355,15 @@ function stockItemTableFilters({
       label: t`Depleted`,
       description: t`Show depleted stock items`
     },
-    {
-      name: 'in_stock',
-      label: t`In Stock`,
-      description: t`Show items which are in stock`
-    },
+    InStockFilter(),
     {
       name: 'is_building',
       label: t`In Production`,
       description: t`Show items which are in production`
     },
     IncludeVariantsFilter(),
+    SupplierFilter(),
+    ManufacturerFilter(),
     {
       name: 'consumed',
       label: t`Consumed`,
@@ -455,12 +461,14 @@ export function StockItemTable({
   allowAdd = false,
   showLocation = true,
   showPricing = true,
+  allowReturn = false,
   tableName = 'stockitems'
 }: Readonly<{
   params?: any;
   allowAdd?: boolean;
   showLocation?: boolean;
   showPricing?: boolean;
+  allowReturn?: boolean;
   tableName: string;
 }>) {
   const table = useTable(tableName);
@@ -472,6 +480,8 @@ export function StockItemTable({
     () => settings.isSet('STOCK_ENABLE_EXPIRY'),
     [settings]
   );
+
+  const navigate = useNavigate();
 
   const tableColumns = useMemo(
     () =>
@@ -518,7 +528,12 @@ export function StockItemTable({
     },
     follow: true,
     table: table,
-    modelType: ModelType.stockitem
+    onFormSuccess: (response: any) => {
+      // Returns a list that may contain multiple serialized stock items
+      // Navigate to the first result
+      navigate(getDetailUrl(ModelType.stockitem, response[0].pk));
+    },
+    successMessage: t`Stock item serialized`
   });
 
   const [partsToOrder, setPartsToOrder] = useState<any[]>([]);
@@ -528,7 +543,8 @@ export function StockItemTable({
   });
 
   const stockAdjustActions = useStockAdjustActions({
-    formProps: stockOperationProps
+    formProps: stockOperationProps,
+    return: allowReturn
   });
 
   const tableActions = useMemo(() => {

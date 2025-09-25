@@ -8,7 +8,7 @@ from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from django.core.validators import MinValueValidator
 from django.db import IntegrityError, models, transaction
-from django.db.models import ExpressionWrapper, F, FloatField, Q
+from django.db.models import ExpressionWrapper, F, Q
 from django.db.models.functions import Coalesce, Greatest
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
@@ -29,14 +29,11 @@ import InvenTree.serializers
 import InvenTree.status
 import part.filters as part_filters
 import part.helpers as part_helpers
-import part.stocktake
-import part.tasks
 import stock.models
 import users.models
 from importer.registry import register_importer
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.ready import isGeneratingSchema
-from InvenTree.tasks import offload_task
 from users.serializers import UserSerializer
 
 from .models import (
@@ -53,7 +50,6 @@ from .models import (
     PartSellPriceBreak,
     PartStar,
     PartStocktake,
-    PartStocktakeReport,
     PartTestTemplate,
 )
 
@@ -456,7 +452,9 @@ class PartParameterSerializer(
         source='template', many=False, read_only=True, allow_null=True
     )
 
-    updated_by_detail = UserSerializer(source='updated_by', many=False, read_only=True)
+    updated_by_detail = UserSerializer(
+        source='updated_by', many=False, read_only=True, allow_null=True
+    )
 
 
 class DuplicatePartSerializer(serializers.Serializer):
@@ -682,7 +680,6 @@ class PartSerializer(
             'IPN',
             'is_template',
             'keywords',
-            'last_stocktake',
             'link',
             'locked',
             'minimum_stock',
@@ -835,9 +832,6 @@ class PartSerializer(
                 output_field=models.DecimalField(),
             )
         )
-
-        # TODO: This could do with some refactoring
-        # TODO: Note that BomItemSerializer and BuildLineSerializer have very similar code
 
         queryset = queryset.annotate(
             ordering=part_filters.annotate_on_order_quantity(),
@@ -1213,6 +1207,44 @@ class PartSerializer(
         return self.instance
 
 
+class PartBomValidateSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+    """Serializer for Part BOM information."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = Part
+        fields = [
+            'pk',
+            'bom_validated',
+            'bom_checksum',
+            'bom_checked_by',
+            'bom_checked_by_detail',
+            'bom_checked_date',
+            'valid',
+        ]
+
+        read_only_fields = [
+            'bom_validated',
+            'bom_checksum',
+            'bom_checked_by',
+            'bom_checked_by_detail',
+            'bom_checked_date',
+        ]
+
+    valid = serializers.BooleanField(
+        write_only=True,
+        default=False,
+        required=False,
+        label=_('Valid'),
+        help_text=_('Validate entire Bill of Materials'),
+    )
+
+    bom_checked_by_detail = UserSerializer(
+        source='bom_checked_by', many=False, read_only=True, allow_null=True
+    )
+
+
 class PartRequirementsSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     """Serializer for Part requirements."""
 
@@ -1297,16 +1329,11 @@ class PartStocktakeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'cost_min_currency',
             'cost_max',
             'cost_max_currency',
-            'note',
-            'user',
-            'user_detail',
         ]
 
         read_only_fields = ['date', 'user']
 
     quantity = serializers.FloatField()
-
-    user_detail = UserSerializer(source='user', read_only=True, many=False)
 
     cost_min = InvenTree.serializers.InvenTreeMoneySerializer(allow_null=True)
     cost_min_currency = InvenTree.serializers.InvenTreeCurrencySerializer()
@@ -1322,106 +1349,6 @@ class PartStocktakeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         request = self.context.get('request')
         data['user'] = request.user if request else None
         return super().save()
-
-
-class PartStocktakeReportSerializer(InvenTree.serializers.InvenTreeModelSerializer):
-    """Serializer for stocktake report class."""
-
-    class Meta:
-        """Metaclass defines serializer fields."""
-
-        model = PartStocktakeReport
-        fields = ['pk', 'date', 'report', 'part_count', 'user', 'user_detail']
-        read_only_fields = ['date', 'report', 'part_count', 'user']
-
-    user_detail = UserSerializer(source='user', read_only=True, many=False)
-
-    report = InvenTree.serializers.InvenTreeAttachmentSerializerField(read_only=True)
-
-
-class PartStocktakeReportGenerateSerializer(serializers.Serializer):
-    """Serializer class for manually generating a new PartStocktakeReport via the API."""
-
-    part = serializers.PrimaryKeyRelatedField(
-        queryset=Part.objects.all(),
-        required=False,
-        allow_null=True,
-        label=_('Part'),
-        help_text=_(
-            'Limit stocktake report to a particular part, and any variant parts'
-        ),
-    )
-
-    category = serializers.PrimaryKeyRelatedField(
-        queryset=PartCategory.objects.all(),
-        required=False,
-        allow_null=True,
-        label=_('Category'),
-        help_text=_(
-            'Limit stocktake report to a particular part category, and any child categories'
-        ),
-    )
-
-    location = serializers.PrimaryKeyRelatedField(
-        queryset=stock.models.StockLocation.objects.all(),
-        required=False,
-        allow_null=True,
-        label=_('Location'),
-        help_text=_(
-            'Limit stocktake report to a particular stock location, and any child locations'
-        ),
-    )
-
-    exclude_external = serializers.BooleanField(
-        default=True,
-        label=_('Exclude External Stock'),
-        help_text=_('Exclude stock items in external locations'),
-    )
-
-    generate_report = serializers.BooleanField(
-        default=True,
-        label=_('Generate Report'),
-        help_text=_('Generate report file containing calculated stocktake data'),
-    )
-
-    update_parts = serializers.BooleanField(
-        default=True,
-        label=_('Update Parts'),
-        help_text=_('Update specified parts with calculated stocktake data'),
-    )
-
-    def validate(self, data):
-        """Custom validation for this serializer."""
-        # Stocktake functionality must be enabled
-        if not common.settings.get_global_setting('STOCKTAKE_ENABLE'):
-            raise serializers.ValidationError(
-                _('Stocktake functionality is not enabled')
-            )
-
-        # Check that background worker is running
-        if not InvenTree.status.is_worker_running():
-            raise serializers.ValidationError(_('Background worker check failed'))
-
-        return data
-
-    def save(self):
-        """Saving this serializer instance requests generation of a new stocktake report."""
-        data = self.validated_data
-        user = self.context['request'].user
-
-        # Generate a new report
-        offload_task(
-            part.stocktake.generate_stocktake_report,
-            force_async=True,
-            user=user,
-            part=data.get('part', None),
-            category=data.get('category', None),
-            location=data.get('location', None),
-            exclude_external=data.get('exclude_external', True),
-            generate_report=data.get('generate_report', True),
-            update_parts=data.get('update_parts', True),
-            group='report',
-        )
 
 
 @extend_schema_field(
@@ -1685,11 +1612,13 @@ class BomItemSerializer(
             'sub_part',
             'reference',
             'quantity',
-            'overage',
             'allow_variants',
             'inherited',
             'optional',
             'consumable',
+            'setup_quantity',
+            'attrition',
+            'rounding_multiple',
             'note',
             'pk',
             'part_detail',
@@ -1720,6 +1649,7 @@ class BomItemSerializer(
         - part_detail and sub_part_detail serializers are only included if requested.
         - This saves a bunch of database requests
         """
+        can_build = kwargs.pop('can_build', True)
         part_detail = kwargs.pop('part_detail', False)
         sub_part_detail = kwargs.pop('sub_part_detail', True)
         pricing = kwargs.pop('pricing', True)
@@ -1736,6 +1666,9 @@ class BomItemSerializer(
         if not sub_part_detail:
             self.fields.pop('sub_part_detail', None)
 
+        if not can_build:
+            self.fields.pop('can_build')
+
         if not substitutes:
             self.fields.pop('substitutes', None)
 
@@ -1747,6 +1680,14 @@ class BomItemSerializer(
             self.fields.pop('pricing_updated', None)
 
     quantity = InvenTree.serializers.InvenTreeDecimalField(required=True)
+
+    setup_quantity = InvenTree.serializers.InvenTreeDecimalField(required=False)
+
+    attrition = InvenTree.serializers.InvenTreeDecimalField(required=False)
+
+    rounding_multiple = InvenTree.serializers.InvenTreeDecimalField(
+        required=False, allow_null=True
+    )
 
     def validate_quantity(self, quantity):
         """Perform validation for the BomItem quantity field."""
@@ -1877,33 +1818,6 @@ class BomItemSerializer(
             building=part_filters.annotate_in_production_quantity(ref)
         )
 
-        # Calculate "total stock" for the referenced sub_part
-        # Calculate the "build_order_allocations" for the sub_part
-        # Note that these fields are only aliased, not annotated
-        queryset = queryset.alias(
-            total_stock=part_filters.annotate_total_stock(reference=ref),
-            allocated_to_sales_orders=part_filters.annotate_sales_order_allocations(
-                reference=ref
-            ),
-            allocated_to_build_orders=part_filters.annotate_build_order_allocations(
-                reference=ref
-            ),
-        )
-
-        # Calculate 'available_stock' based on previously annotated fields
-        queryset = queryset.annotate(
-            available_stock=Greatest(
-                ExpressionWrapper(
-                    F('total_stock')
-                    - F('allocated_to_sales_orders')
-                    - F('allocated_to_build_orders'),
-                    output_field=models.DecimalField(),
-                ),
-                Decimal(0),
-                output_field=models.DecimalField(),
-            )
-        )
-
         # Calculate 'external_stock'
         queryset = queryset.annotate(
             external_stock=part_filters.annotate_total_stock(
@@ -1911,74 +1825,8 @@ class BomItemSerializer(
             )
         )
 
-        ref = 'substitutes__part__'
-
-        # Extract similar information for any 'substitute' parts
-        queryset = queryset.alias(
-            substitute_stock=part_filters.annotate_total_stock(reference=ref),
-            substitute_build_allocations=part_filters.annotate_build_order_allocations(
-                reference=ref
-            ),
-            substitute_sales_allocations=part_filters.annotate_sales_order_allocations(
-                reference=ref
-            ),
-        )
-
-        # Calculate 'available_substitute_stock' field
-        queryset = queryset.annotate(
-            available_substitute_stock=Greatest(
-                ExpressionWrapper(
-                    F('substitute_stock')
-                    - F('substitute_build_allocations')
-                    - F('substitute_sales_allocations'),
-                    output_field=models.DecimalField(),
-                ),
-                Decimal(0),
-                output_field=models.DecimalField(),
-            )
-        )
-
-        # Annotate the queryset with 'available variant stock' information
-        variant_stock_query = part_filters.variant_stock_query(reference='sub_part__')
-
-        queryset = queryset.alias(
-            variant_stock_total=part_filters.annotate_variant_quantity(
-                variant_stock_query, reference='quantity'
-            ),
-            variant_bo_allocations=part_filters.annotate_variant_quantity(
-                variant_stock_query, reference='sales_order_allocations__quantity'
-            ),
-            variant_so_allocations=part_filters.annotate_variant_quantity(
-                variant_stock_query, reference='allocations__quantity'
-            ),
-        )
-
-        queryset = queryset.annotate(
-            available_variant_stock=Greatest(
-                ExpressionWrapper(
-                    F('variant_stock_total')
-                    - F('variant_bo_allocations')
-                    - F('variant_so_allocations'),
-                    output_field=FloatField(),
-                ),
-                0,
-                output_field=FloatField(),
-            )
-        )
-
-        # Annotate the "can_build" quantity
-        queryset = queryset.alias(
-            total_stock=ExpressionWrapper(
-                F('available_variant_stock')
-                + F('available_substitute_stock')
-                + F('available_stock'),
-                output_field=FloatField(),
-            )
-        ).annotate(
-            can_build=ExpressionWrapper(
-                F('total_stock') / F('quantity'), output_field=FloatField()
-            )
-        )
+        # Annotate available stock and "can_build" quantities
+        queryset = part_filters.annotate_bom_item_can_build(queryset)
 
         return queryset
 

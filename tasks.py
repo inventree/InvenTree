@@ -77,7 +77,7 @@ def is_pkg_installer_by_path():
 def get_installer(content: Optional[dict] = None):
     """Get the installer for the current environment or a content dict."""
     if content is None:
-        content = os.environ
+        content = dict(os.environ)
     return content.get('INVENTREE_PKG_INSTALLER', None)
 
 
@@ -223,7 +223,7 @@ def envcheck_invoke_cmd():
 
     correct_cmd: Optional[str] = None
     if is_rtd_environment() or is_docker_environment() or is_devcontainer_environment():
-        pass
+        return  # Skip invoke command check for Docker/RTD/DevContainer environments
     elif is_pkg_installer(load_content=True) and not is_pkg_installer_by_path():
         correct_cmd = 'inventree run invoke'
     else:
@@ -461,7 +461,9 @@ def check_file_existence(filename: Path, overwrite: bool = False):
 @state_logger('TASK01')
 def plugins(c, uv=False):
     """Installs all plugins as specified in 'plugins.txt'."""
-    from src.backend.InvenTree.InvenTree.config import get_plugin_file
+    from src.backend.InvenTree.InvenTree.config import (  # type: ignore[import]
+        get_plugin_file,
+    )
 
     plugin_file = get_plugin_file()
 
@@ -573,7 +575,9 @@ def rebuild_models(c):
 @task
 def rebuild_thumbnails(c):
     """Rebuild missing image thumbnails."""
-    from src.backend.InvenTree.InvenTree.config import get_media_dir
+    from src.backend.InvenTree.InvenTree.config import (  # type: ignore[import]
+        get_media_dir,
+    )
 
     info(f'Rebuilding image thumbnails in {get_media_dir()}')
     manage(c, 'rebuild_thumbnails', pty=True)
@@ -1165,7 +1169,7 @@ def test_translations(c):
     info('Fill in dummy translations...')
 
     file_path = pathlib.Path(settings.LOCALE_PATHS[0], 'xx', 'LC_MESSAGES', 'django.po')
-    new_file_path = str(file_path) + '_new'
+    new_file_path = Path(str(file_path) + '_new')
 
     # compile regex
     reg = re.compile(
@@ -1291,6 +1295,7 @@ def test(
     help={
         'dev': 'Set up development environment at the end',
         'validate_files': 'Validate media files are correctly copied',
+        'use_ssh': 'Use SSH protocol for cloning the demo dataset (requires SSH key)',
     }
 )
 def setup_test(
@@ -1298,10 +1303,13 @@ def setup_test(
     ignore_update=False,
     dev=False,
     validate_files=False,
+    use_ssh=False,
     path='inventree-demo-dataset',
 ):
     """Setup a testing environment."""
-    from src.backend.InvenTree.InvenTree.config import get_media_dir
+    from src.backend.InvenTree.InvenTree.config import (  # type: ignore[import]
+        get_media_dir,
+    )
 
     if not ignore_update:
         update(c)
@@ -1313,12 +1321,15 @@ def setup_test(
         info('Removing old data ...')
         run(c, f'rm {template_dir} -r')
 
+    URL = 'https://github.com/inventree/demo-dataset'
+
+    if use_ssh:
+        # Use SSH protocol for cloning the demo dataset
+        URL = 'git@github.com:inventree/demo-dataset.git'
+
     # Get test data
     info('Cloning demo dataset ...')
-    run(
-        c,
-        f'git clone https://github.com/inventree/demo-dataset {template_dir} -v --depth=1',
-    )
+    run(c, f'git clone {URL} {template_dir} -v --depth=1')
 
     # Make sure migrations are done - might have just deleted sqlite database
     if not ignore_update:
@@ -1448,8 +1459,8 @@ def export_definitions(c, basedir: str = ''):
 @task(default=True)
 def version(c):
     """Show the current version of InvenTree."""
-    import src.backend.InvenTree.InvenTree.version as InvenTreeVersion
-    from src.backend.InvenTree.InvenTree.config import (
+    import src.backend.InvenTree.InvenTree.version as InvenTreeVersion  # type: ignore[import]
+    from src.backend.InvenTree.InvenTree.config import (  # type: ignore[import]
         get_backup_dir,
         get_config_file,
         get_media_dir,
@@ -1588,6 +1599,21 @@ def frontend_server(c):
     info('Starting frontend development server')
     yarn(c, 'yarn run compile')
     yarn(c, 'yarn run dev --host')
+
+
+@task
+def frontend_test(c, host: str = '0.0.0.0'):
+    """Start the playwright test runner for the frontend code."""
+    info('Starting frontend test runner')
+
+    frontend_path = local_dir().joinpath('src', 'frontend').resolve()
+
+    cmd = 'npx playwright test --ui'
+
+    if host:
+        cmd += f' --ui-host={host}'
+
+    run(c, cmd, path=frontend_path)
 
 
 @task(
@@ -1874,6 +1900,7 @@ development = Collection(
     delete_data,
     docs_server,
     frontend_server,
+    frontend_test,
     gunicorn,
     import_fixtures,
     schema,

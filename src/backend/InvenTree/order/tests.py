@@ -14,7 +14,11 @@ import common.models
 import order.tasks
 from common.settings import get_global_setting, set_global_setting
 from company.models import Company, SupplierPart
-from InvenTree.unit_test import ExchangeRateMixin, addUserPermission
+from InvenTree.unit_test import (
+    ExchangeRateMixin,
+    PluginRegistryMixin,
+    addUserPermission,
+)
 from order.status_codes import PurchaseOrderStatus
 from part.models import Part
 from stock.models import StockItem, StockLocation
@@ -23,7 +27,7 @@ from users.models import Owner
 from .models import PurchaseOrder, PurchaseOrderExtraLine, PurchaseOrderLineItem
 
 
-class OrderTest(TestCase, ExchangeRateMixin):
+class OrderTest(ExchangeRateMixin, PluginRegistryMixin, TestCase):
     """Tests to ensure that the order models are functioning correctly."""
 
     fixtures = [
@@ -254,6 +258,7 @@ class OrderTest(TestCase, ExchangeRateMixin):
 
         order.receive_line_item(line, loc, 50, user=None)
 
+        line.refresh_from_db()
         self.assertEqual(line.remaining(), 50)
 
         self.assertEqual(part.on_order, 1350)
@@ -344,6 +349,9 @@ class OrderTest(TestCase, ExchangeRateMixin):
         # Receive 5x item against line_2
         po.receive_line_item(line_2, loc, 5, user=None)
 
+        line_1.refresh_from_db()
+        line_2.refresh_from_db()
+
         # Check that the line items have been updated correctly
         self.assertEqual(line_1.quantity, 3)
         self.assertEqual(line_1.received, 1)
@@ -421,6 +429,8 @@ class OrderTest(TestCase, ExchangeRateMixin):
 
         Ensure that a notification is sent when a PurchaseOrder becomes overdue
         """
+        self.ensurePluginsLoaded()
+
         po = PurchaseOrder.objects.get(pk=1)
 
         # Ensure that the right users have the right permissions

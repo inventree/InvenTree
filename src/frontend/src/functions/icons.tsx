@@ -1,5 +1,6 @@
 import type { InvenTreeIconType, TablerIconType } from '@lib/types/Icons';
 import {
+  IconArrowBack,
   IconArrowBigDownLineFilled,
   IconArrowMerge,
   IconBell,
@@ -165,6 +166,7 @@ const icons: InvenTreeIconType = {
   refresh: IconRefresh,
   select_image: IconGridDots,
   delete: IconTrash,
+  return: IconArrowBack,
   packaging: IconPackage,
   packages: IconPackages,
   install: IconTransitionRight,

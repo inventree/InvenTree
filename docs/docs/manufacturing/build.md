@@ -146,6 +146,16 @@ The *Consumed Stock* tab displays all stock items which have been *consumed* by 
 !!! info "No BOM"
 	If the part being built does not have a BOM, then the *Consumed Stock* tab will not be displayed.
 
+#### Return to Stock
+
+After stock items have been *consumed* by a build order, it may be required to recover some of that stock back into the inventory. This can be done by selecting the desired items, and pressing the *Return to Stock* button:
+
+{{ image("build/build_return_stock.png", title="Return Stock") }}
+
+This will open the following dialog, which allows the user to specify the quantity of stock to return, and the location where the stock should be returned:
+
+{{ image("build/build_return_stock_dialog.png", title="Return Stock Dialog") }}
+
 ### Incomplete Outputs
 
 The *Incomplete Outputs* panel shows the list of in-progress [build outputs](./output.md) (created stock items) associated with this build.
@@ -176,6 +186,22 @@ For *trackable* parts, test results can be recorded against each build output. T
 {{ image("build/build_panel_test_results.png", title="Test Results") }}
 
 This table provides a summary of the test results for each build output, and allows test results to be quickly added for each build output.
+
+### Adding Test Results
+
+There are multiple ways to add test results against build outputs from this table view:
+
+#### Row Actions
+
+Open the row actions menu for a specific build output, and select the *Add Test Result* option.
+
+#### Table Buttons
+
+Each available test is rendered in the table as a separate column. Any output which does not already have a result registered for that test will display a button in the table cell, labelled *Add Test Result*. Clicking on this button will open the *Add Test Result* dialog for that test.
+
+#### Bulk Add Test Results
+
+Select the build outputs for which you wish to add test results, then click on the *Add Test Results* button at the top of the table. This will open the *Add Test Result* dialog, allowing you to select the test and enter the result for all selected outputs.
 
 ### Attachments
 

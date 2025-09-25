@@ -86,6 +86,14 @@ export function BatchFilter(): TableFilter {
   };
 }
 
+export function InStockFilter(): TableFilter {
+  return {
+    name: 'in_stock',
+    label: t`In Stock`,
+    description: t`Show items which are in stock`
+  };
+}
+
 export function IsSerializedFilter(): TableFilter {
   return {
     name: 'serialized',
@@ -330,6 +338,32 @@ export function UserFilter({
     apiUrl: apiUrl(ApiEndpoints.user_list),
     model: ModelType.user,
     modelRenderer: (instance: any) => instance.username
+  };
+}
+
+export function ManufacturerFilter(): TableFilter {
+  return {
+    name: 'manufacturer',
+    label: t`Manufacturer`,
+    description: t`Filter by manufacturer`,
+    type: 'api',
+    apiUrl: apiUrl(ApiEndpoints.company_list),
+    model: ModelType.company,
+    modelRenderer: (instance: any) => instance.name,
+    apiFilter: { is_manufacturer: true }
+  };
+}
+
+export function SupplierFilter(): TableFilter {
+  return {
+    name: 'supplier',
+    label: t`Supplier`,
+    description: t`Filter by supplier`,
+    type: 'api',
+    apiUrl: apiUrl(ApiEndpoints.company_list),
+    model: ModelType.company,
+    modelRenderer: (instance: any) => instance.name,
+    apiFilter: { is_supplier: true }
   };
 }
 

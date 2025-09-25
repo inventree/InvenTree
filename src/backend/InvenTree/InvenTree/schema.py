@@ -9,7 +9,13 @@ from drf_spectacular.contrib.django_oauth_toolkit import DjangoOAuthToolkitSchem
 from drf_spectacular.drainage import warn
 from drf_spectacular.openapi import AutoSchema
 from drf_spectacular.plumbing import ComponentRegistry
-from drf_spectacular.utils import _SchemaType
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import (
+    OpenApiParameter,
+    _SchemaType,
+    extend_schema,
+    extend_schema_view,
+)
 from rest_framework.pagination import LimitOffsetPagination
 
 from InvenTree.permissions import OASTokenMixin
@@ -103,6 +109,30 @@ class ExtendedAutoSchema(AutoSchema):
                         f'{parameter["description"]} Possible fields: {", ".join(ordering_fields)}.'
                     )
 
+        # Add valid search fields to the search description.
+        search_fields = getattr(self.view, 'search_fields', None)
+
+        if search_fields is not None:
+            # Ensure consistent ordering of search fields
+            search_fields = sorted(search_fields)
+
+            parameters = operation.get('parameters', [])
+            for parameter in parameters:
+                if parameter['name'] == 'search':
+                    parameter['description'] = (
+                        f'{parameter["description"]} Searched fields: {", ".join(search_fields)}.'
+                    )
+
+        # Change return to array type, simply annotating this return type attempts to paginate, which doesn't work for
+        # a create method and removing the pagination also affects the list method
+        if self.method == 'POST' and type(self.view).__name__ == 'StockList':
+            schema = operation['responses']['201']['content']['application/json'][
+                'schema'
+            ]
+            schema['type'] = 'array'
+            schema['items'] = {'$ref': schema['$ref']}
+            del schema['$ref']
+
         return operation
 
 
@@ -187,3 +217,29 @@ def postprocess_print_stats(result, generator, request, public):
         )
 
     return result
+
+
+def schema_for_view_output_options(view_class):
+    """A class decorator that automatically generates schema parameters for a view.
+
+    It works by introspecting the `output_options` attribute on the view itself.
+    This decorator reads the `output_options` attribute from the view class,
+    extracts the `OPTIONS` list from it, and creates an OpenApiParameter for each option.
+    """
+    output_config_class = view_class.output_options
+
+    parameters = []
+    for option in output_config_class.OPTIONS:
+        param = OpenApiParameter(
+            name=option.flag,
+            type=OpenApiTypes.BOOL,
+            location=OpenApiParameter.QUERY,
+            description=option.description,
+            default=option.default,
+        )
+        parameters.append(param)
+
+    extended_view = extend_schema_view(get=extend_schema(parameters=parameters))(
+        view_class
+    )
+    return extended_view

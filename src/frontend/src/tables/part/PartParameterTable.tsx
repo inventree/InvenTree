@@ -3,6 +3,7 @@ import { Alert, Stack, Text } from '@mantine/core';
 import { IconLock } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
+import { AddItemButton } from '@lib/components/AddItemButton';
 import {
   type RowAction,
   RowDeleteAction,
@@ -15,7 +16,6 @@ import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
-import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { RenderUser } from '../../components/render/User';
 import { formatDecimal } from '../../defaults/formatters';
 import { usePartParameterFields } from '../../forms/PartForms';
@@ -52,11 +52,9 @@ export function PartParameterTable({
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
-      {
-        accessor: 'part',
-        sortable: true,
-        render: (record: any) => PartColumn({ part: record?.part_detail })
-      },
+      PartColumn({
+        part: 'part_detail'
+      }),
       {
         accessor: 'part_detail.IPN',
         sortable: false,

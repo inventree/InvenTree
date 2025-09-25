@@ -1,12 +1,12 @@
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 
+import { AddItemButton } from '@lib/components/AddItemButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
-import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { formatCurrency } from '../../defaults/formatters';
 import { useReturnOrderFields } from '../../forms/ReturnOrderForms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
@@ -115,7 +115,7 @@ export function ReturnOrderTable({
         accessor: 'customer_reference'
       },
       DescriptionColumn({}),
-      LineItemsProgressColumn(),
+      LineItemsProgressColumn({}),
       StatusColumn({ model: ModelType.returnorder }),
       ProjectCodeColumn({
         defaultVisible: false

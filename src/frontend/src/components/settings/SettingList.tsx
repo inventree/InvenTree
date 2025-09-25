@@ -2,13 +2,14 @@ import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { Alert, Skeleton, Stack, Text } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useStore } from 'zustand';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import type { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import type { Setting, SettingsStateProps } from '@lib/types/Settings';
-import { IconExclamationCircle } from '@tabler/icons-react';
+import { IconExclamationCircle, IconInfoCircle } from '@tabler/icons-react';
 import { useApi } from '../../contexts/ApiContext';
 import { useEditApiFormModal } from '../../hooks/UseForm';
 import {
@@ -25,12 +26,21 @@ import { SettingItem } from './SettingItem';
 export function SettingList({
   settingsState,
   keys,
-  onChange
+  onChange,
+  onLoaded
 }: Readonly<{
   settingsState: SettingsStateProps;
   keys?: string[];
   onChange?: () => void;
+  onLoaded?: (settings: SettingsStateProps) => void;
 }>) {
+  useEffect(() => {
+    if (settingsState.loaded) {
+      // Call the onLoaded callback if provided
+      onLoaded?.(settingsState);
+    }
+  }, [settingsState.loaded, settingsState.settings]);
+
   const api = useApi();
 
   const allKeys = useMemo(
@@ -136,6 +146,14 @@ export function SettingList({
     return <Skeleton animate />;
   }
 
+  if ((keys || allKeys).length === 0) {
+    return (
+      <Alert color='blue' icon={<IconInfoCircle />} title={t`No Settings`}>
+        <Text>{t`There are no configurable settings available`}</Text>
+      </Alert>
+    );
+  }
+
   return (
     <>
       {editSettingModal.modal}
@@ -189,14 +207,53 @@ export function GlobalSettingList({ keys }: Readonly<{ keys: string[] }>) {
 }
 
 export function PluginSettingList({
-  pluginKey
-}: Readonly<{ pluginKey: string }>) {
-  const pluginSettingsStore = useRef(
-    createPluginSettingsState({ plugin: pluginKey })
-  ).current;
-  const pluginSettings = useStore(pluginSettingsStore);
+  pluginKey,
+  onLoaded
+}: Readonly<{
+  pluginKey: string;
+  onLoaded?: (settings: SettingsStateProps) => void;
+}>) {
+  const store = useMemo(
+    () =>
+      createPluginSettingsState({
+        plugin: pluginKey,
+        endpoint: ApiEndpoints.plugin_setting_list
+      }),
+    [pluginKey]
+  );
 
-  return <SettingList settingsState={pluginSettings} />;
+  const pluginSettings = useStore(store);
+
+  useEffect(() => {
+    pluginSettings.fetchSettings();
+  }, [pluginSettings.fetchSettings]);
+
+  return <SettingList settingsState={pluginSettings} onLoaded={onLoaded} />;
+}
+
+export function PluginUserSettingList({
+  pluginKey,
+  onLoaded
+}: Readonly<{
+  pluginKey: string;
+  onLoaded?: (settings: SettingsStateProps) => void;
+}>) {
+  const store = useMemo(
+    () =>
+      createPluginSettingsState({
+        plugin: pluginKey,
+        endpoint: ApiEndpoints.plugin_user_setting_list
+      }),
+    [pluginKey]
+  );
+
+  const pluginUserSettings = useStore(store);
+
+  useEffect(() => {
+    pluginUserSettings.fetchSettings();
+  }, [pluginUserSettings.fetchSettings]);
+
+  return <SettingList settingsState={pluginUserSettings} onLoaded={onLoaded} />;
 }
 
 export function MachineSettingList({
@@ -208,13 +265,20 @@ export function MachineSettingList({
   configType: 'M' | 'D';
   onChange?: () => void;
 }>) {
-  const machineSettingsStore = useRef(
-    createMachineSettingsState({
-      machine: machinePk,
-      configType: configType
-    })
-  ).current;
-  const machineSettings = useStore(machineSettingsStore);
+  const store = useMemo(
+    () =>
+      createMachineSettingsState({
+        machine: machinePk,
+        configType: configType
+      }),
+    [machinePk, configType]
+  );
+
+  const machineSettings = useStore(store);
+
+  useEffect(() => {
+    machineSettings.fetchSettings();
+  }, [machineSettings.fetchSettings]);
 
   return <SettingList settingsState={machineSettings} onChange={onChange} />;
 }

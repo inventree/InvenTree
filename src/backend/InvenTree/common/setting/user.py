@@ -185,6 +185,18 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'STICKY_TABLE_HEADER': {
+        'name': _('Fixed Table Headers'),
+        'description': _('Table headers are fixed to the top of the table'),
+        'default': False,
+        'validator': bool,
+    },
+    'SHOW_SPOTLIGHT': {
+        'name': _('Show Spotlight'),
+        'description': _('Enable spotlight navigation functionality'),
+        'default': True,
+        'validator': bool,
+    },
     'ICONS_IN_NAVBAR': {
         'name': _('Navigation Icons'),
         'description': _('Display icons in the navigation bar'),
@@ -206,10 +218,8 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         ],
     },
     'DISPLAY_STOCKTAKE_TAB': {
-        'name': _('Part Stocktake'),
-        'description': _(
-            'Display part stocktake information (if stocktake functionality is enabled)'
-        ),
+        'name': _('Show Stock History'),
+        'description': _('Display stock history information in the part detail page'),
         'default': True,
         'validator': bool,
     },

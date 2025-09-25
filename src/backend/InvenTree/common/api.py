@@ -1,6 +1,7 @@
 """Provides a JSON API for common components."""
 
 import json
+import json.decoder
 
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
@@ -13,8 +14,9 @@ from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import cache_control
 from django.views.decorators.csrf import csrf_exempt
 
+import django_filters.rest_framework.filters as rest_filters
 import django_q.models
-from django_filters import rest_framework as rest_filters
+from django_filters.rest_framework.filterset import FilterSet
 from django_q.tasks import async_task
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
 from drf_spectacular.utils import OpenApiResponse, extend_schema
@@ -43,6 +45,7 @@ from InvenTree.mixins import (
     ListAPI,
     ListCreateAPI,
     RetrieveAPI,
+    RetrieveDestroyAPI,
     RetrieveUpdateAPI,
     RetrieveUpdateDestroyAPI,
 )
@@ -55,8 +58,6 @@ from InvenTree.permissions import (
     IsSuperuserOrSuperScope,
     UserSettingsPermissionsOrScope,
 )
-from plugin.models import NotificationUserSetting
-from plugin.serializers import NotificationUserSettingSerializer
 
 
 class CsrfExemptMixin:
@@ -277,6 +278,9 @@ class UserSettingsList(SettingsList):
 
         queryset = super().filter_queryset(queryset)
 
+        if not user.is_authenticated:  # pragma: no cover
+            raise PermissionDenied('User must be authenticated to access user settings')
+
         queryset = queryset.filter(user=user)
 
         return queryset
@@ -306,36 +310,6 @@ class UserSettingsDetail(RetrieveUpdateAPI):
         return common.models.InvenTreeUserSetting.get_setting_object(
             key, user=self.request.user, cache=False, create=True
         )
-
-
-class NotificationUserSettingsList(SettingsList):
-    """API endpoint for accessing a list of notification user settings objects."""
-
-    queryset = NotificationUserSetting.objects.all()
-    serializer_class = NotificationUserSettingSerializer
-    permission_classes = [UserSettingsPermissionsOrScope]
-
-    def filter_queryset(self, queryset):
-        """Only list settings which apply to the current user."""
-        try:
-            user = self.request.user
-        except AttributeError:
-            return NotificationUserSetting.objects.none()
-
-        queryset = super().filter_queryset(queryset)
-        queryset = queryset.filter(user=user)
-        return queryset
-
-
-class NotificationUserSettingsDetail(RetrieveUpdateAPI):
-    """Detail view for an individual "notification user setting" object.
-
-    - User can only view / edit settings their own settings objects
-    """
-
-    queryset = NotificationUserSetting.objects.all()
-    serializer_class = NotificationUserSettingSerializer
-    permission_classes = [UserSettingsPermissionsOrScope]
 
 
 class NotificationMessageMixin:
@@ -383,6 +357,10 @@ class NotificationList(NotificationMessageMixin, BulkDeleteMixin, ListAPI):
             return common.models.NotificationMessage.objects.none()
 
         queryset = super().filter_queryset(queryset)
+
+        if not user.is_authenticated:  # pragma: no cover
+            raise PermissionDenied('User must be authenticated to access notifications')
+
         queryset = queryset.filter(user=user)
         return queryset
 
@@ -700,7 +678,7 @@ class ContentTypeModelDetail(ContentTypeDetail):
         return super().get(request, *args, **kwargs)
 
 
-class AttachmentFilter(rest_filters.FilterSet):
+class AttachmentFilter(FilterSet):
     """Filterset for the AttachmentList API endpoint."""
 
     class Meta:
@@ -867,7 +845,7 @@ class EmailMessageMixin:
     permission_classes = [IsSuperuserOrSuperScope]
 
 
-class EmailMessageList(EmailMessageMixin, ListAPI):
+class EmailMessageList(EmailMessageMixin, BulkDeleteMixin, ListAPI):
     """List view for email objects."""
 
     filter_backends = SEARCH_ORDER_FILTER
@@ -890,7 +868,7 @@ class EmailMessageList(EmailMessageMixin, ListAPI):
     ]
 
 
-class EmailMessageDetail(EmailMessageMixin, RetrieveAPI):
+class EmailMessageDetail(EmailMessageMixin, RetrieveDestroyAPI):
     """Detail view for an email object."""
 
 
@@ -960,24 +938,6 @@ settings_api_urls = [
             ),
             # User Settings List
             path('', UserSettingsList.as_view(), name='api-user-setting-list'),
-        ]),
-    ),
-    # Notification settings
-    path(
-        'notification/',
-        include([
-            # Notification Settings Detail
-            path(
-                '<int:pk>/',
-                NotificationUserSettingsDetail.as_view(),
-                name='api-notification-setting-detail',
-            ),
-            # Notification Settings List
-            path(
-                '',
-                NotificationUserSettingsList.as_view(),
-                name='api-notification-setting-list',
-            ),
         ]),
     ),
     # Global settings

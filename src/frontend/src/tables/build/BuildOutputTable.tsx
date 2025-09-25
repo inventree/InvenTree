@@ -21,6 +21,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ActionButton } from '@lib/components/ActionButton';
+import { AddItemButton } from '@lib/components/AddItemButton';
 import { ProgressBar } from '@lib/components/ProgressBar';
 import {
   type RowAction,
@@ -33,7 +34,6 @@ import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
-import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { StylishText } from '../../components/items/StylishText';
 import { useApi } from '../../contexts/ApiContext';
 import {
@@ -56,7 +56,12 @@ import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import { LocationColumn, PartColumn, StatusColumn } from '../ColumnRenderers';
+import {
+  LocationColumn,
+  PartColumn,
+  RenderPartColumn,
+  StatusColumn
+} from '../ColumnRenderers';
 import {
   BatchFilter,
   HasBatchCodeFilter,
@@ -95,20 +100,24 @@ function OutputAllocationDrawer({
       position='bottom'
       size='lg'
       title={
-        <Group p='md' wrap='nowrap' justify='space-apart'>
+        <Group p='xs' wrap='nowrap' justify='space-apart'>
           <StylishText size='lg'>{t`Build Output Stock Allocation`}</StylishText>
           <Space h='lg' />
-          <PartColumn part={build.part_detail} />
-          {output?.serial && (
-            <Text size='sm'>
-              {t`Serial Number`}: {output.serial}
-            </Text>
-          )}
-          {output?.batch && (
-            <Text size='sm'>
-              {t`Batch Code`}: {output.batch}
-            </Text>
-          )}
+          <Paper withBorder p='sm'>
+            <Group gap='xs'>
+              <RenderPartColumn part={build.part_detail} />
+              {output?.serial && (
+                <Text size='sm'>
+                  {t`Serial Number`}: {output.serial}
+                </Text>
+              )}
+              {output?.batch && (
+                <Text size='sm'>
+                  {t`Batch Code`}: {output.batch}
+                </Text>
+              )}
+            </Group>
+          </Paper>
           <Space h='lg' />
         </Group>
       }
@@ -160,7 +169,7 @@ export default function BuildOutputTable({
   const buildStatus = useStatusCodes({ modelType: ModelType.build });
 
   // Fetch the test templates associated with the partId
-  const { data: testTemplates } = useQuery({
+  const { data: testTemplates, refetch: refetchTestTemplates } = useQuery({
     queryKey: ['buildoutputtests', partId, build],
     queryFn: async () => {
       if (!partId || partId < 0) {
@@ -291,7 +300,12 @@ export default function BuildOutputTable({
       batch_code: build.batch,
       location: build.destination ?? build.part_detail?.default_location
     },
-    table: table
+    onFormSuccess: () => {
+      // Refresh all associated table data
+      refetchTrackedItems();
+      refetchTestTemplates();
+      table.refreshTable(true);
+    }
   });
 
   const [selectedOutputs, setSelectedOutputs] = useState<any[]>([]);
@@ -569,11 +583,7 @@ export default function BuildOutputTable({
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
-      {
-        accessor: 'part',
-        sortable: true,
-        render: (record: any) => PartColumn({ part: record?.part_detail })
-      },
+      PartColumn({}),
       {
         accessor: 'quantity',
         ordering: 'stock',
@@ -716,6 +726,7 @@ export default function BuildOutputTable({
             },
             enableLabels: true,
             enableReports: true,
+            modelType: ModelType.stockitem,
             dataFormatter: formatRecords,
             tableFilters: tableFilters,
             tableActions: tableActions,

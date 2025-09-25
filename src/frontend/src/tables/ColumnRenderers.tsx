@@ -2,7 +2,7 @@
  * Common rendering functions for table column data.
  */
 import { t } from '@lingui/core/macro';
-import { Anchor, Group, Skeleton, Text, Tooltip } from '@mantine/core';
+import { Anchor, Center, Group, Skeleton, Text, Tooltip } from '@mantine/core';
 import {
   IconBell,
   IconExclamationCircle,
@@ -19,22 +19,35 @@ import type { TableColumn, TableColumnProps } from '@lib/types/Tables';
 import { Thumbnail } from '../components/images/Thumbnail';
 import { TableStatusRenderer } from '../components/render/StatusRenderer';
 import { RenderOwner, RenderUser } from '../components/render/User';
-import { formatCurrency, formatDate } from '../defaults/formatters';
+import {
+  formatCurrency,
+  formatDate,
+  formatDecimal
+} from '../defaults/formatters';
 import {
   useGlobalSettingsState,
   useUserSettingsState
 } from '../states/SettingsStates';
 import { ProjectCodeHoverCard, TableHoverCard } from './TableHoverCard';
 
-// Render a Part instance within a table
-export function PartColumn({
+export type PartColumnProps = TableColumnProps & {
+  part?: string;
+  full_name?: boolean;
+};
+
+// Extract rendering function for Part column
+export function RenderPartColumn({
   part,
   full_name
 }: {
   part: any;
   full_name?: boolean;
 }) {
-  return part ? (
+  if (!part) {
+    return <Skeleton />;
+  }
+
+  return (
     <Group justify='space-between' wrap='nowrap'>
       <Thumbnail
         src={part?.thumbnail ?? part?.image}
@@ -59,9 +72,30 @@ export function PartColumn({
         )}
       </Group>
     </Group>
-  ) : (
-    <Skeleton />
   );
+}
+
+// Render a Part instance within a table
+export function PartColumn(props: PartColumnProps): TableColumn {
+  return {
+    accessor: 'part',
+    title: t`Part`,
+    sortable: true,
+    switchable: false,
+    minWidth: '175px',
+    render: (record: any) => {
+      const part =
+        props.part === ''
+          ? record
+          : resolveItem(record, props.part ?? props.accessor ?? 'part_detail');
+
+      return RenderPartColumn({
+        part: part,
+        full_name: props.full_name ?? false
+      });
+    },
+    ...props
+  };
 }
 
 export function CompanyColumn({
@@ -142,6 +176,7 @@ export function LocationColumn(props: TableColumnProps): TableColumn {
       title: t`Location`,
       sortable: true,
       ordering: 'location',
+      minWidth: '150px',
       ...props
     });
   } else {
@@ -150,6 +185,7 @@ export function LocationColumn(props: TableColumnProps): TableColumn {
       title: t`Location`,
       sortable: true,
       ordering: 'location',
+      minWidth: '125px',
       ...props
     });
   }
@@ -188,6 +224,7 @@ export function CategoryColumn(props: TableColumnProps): TableColumn {
       title: t`Category`,
       sortable: true,
       ordering: 'category',
+      minWidth: '150px',
       ...props
     });
   } else {
@@ -196,6 +233,7 @@ export function CategoryColumn(props: TableColumnProps): TableColumn {
       title: t`Category`,
       sortable: true,
       ordering: 'category',
+      minWidth: '125px',
       ...props
     });
   }
@@ -205,9 +243,22 @@ export function BooleanColumn(props: TableColumn): TableColumn {
   return {
     sortable: true,
     switchable: true,
+    minWidth: '75px',
     render: (record: any) => (
-      <YesNoButton value={resolveItem(record, props.accessor ?? '')} />
+      <Center>
+        <YesNoButton value={resolveItem(record, props.accessor ?? '')} />
+      </Center>
     ),
+    ...props
+  };
+}
+
+export function DecimalColumn(props: TableColumn): TableColumn {
+  return {
+    render: (record: any) => {
+      const value = resolveItem(record, props.accessor ?? '');
+      return formatDecimal(value);
+    },
     ...props
   };
 }
@@ -218,7 +269,7 @@ export function DescriptionColumn(props: TableColumnProps): TableColumn {
     title: t`Description`,
     sortable: false,
     switchable: true,
-    width: 300,
+    minWidth: '200px',
     ...props
   };
 }
@@ -275,17 +326,19 @@ export function NoteColumn(props: TableColumnProps): TableColumn {
   };
 }
 
-export function LineItemsProgressColumn(): TableColumn {
+export function LineItemsProgressColumn(props: TableColumnProps): TableColumn {
   return {
     accessor: 'line_items',
     sortable: true,
+    minWidth: 125,
     render: (record: any) => (
       <ProgressBar
         progressLabel={true}
         value={record.completed_lines}
         maximum={record.line_items}
       />
-    )
+    ),
+    ...props
   };
 }
 
@@ -310,31 +363,20 @@ export function ProjectCodeColumn(props: TableColumnProps): TableColumn {
   };
 }
 
-export function StatusColumn({
-  model,
-  sortable,
-  switchable,
-  ordering,
-  accessor,
-  title,
-  hidden
-}: {
+export type StatusColumnProps = TableColumnProps & {
   model: ModelType;
-  sortable?: boolean;
-  switchable?: boolean;
-  accessor?: string;
-  ordering?: string;
-  hidden?: boolean;
-  title?: string;
-}) {
+};
+
+export function StatusColumn(props: StatusColumnProps): TableColumn {
+  const accessor: string = props.accessor ?? 'status';
+
   return {
-    accessor: accessor ?? 'status',
-    sortable: sortable ?? true,
-    switchable: switchable ?? true,
-    ordering: ordering,
-    title: title,
-    hidden: hidden,
-    render: TableStatusRenderer(model, accessor ?? 'status_custom_key')
+    accessor: 'status',
+    sortable: true,
+    switchable: true,
+    minWidth: '50px',
+    render: TableStatusRenderer(props.model, accessor ?? 'status_custom_key'),
+    ...props
   };
 }
 
@@ -369,7 +411,9 @@ export function DateColumn(props: TableColumnProps): TableColumn {
     title: t`Date`,
     switchable: true,
     render: (record: any) =>
-      formatDate(resolveItem(record, props.accessor ?? 'date')),
+      formatDate(resolveItem(record, props.accessor ?? 'date'), {
+        showTime: props.extra?.showTime
+      }),
     ...props
   };
 }

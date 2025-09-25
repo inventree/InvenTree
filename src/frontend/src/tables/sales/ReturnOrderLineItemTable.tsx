@@ -3,6 +3,7 @@ import { IconSquareArrowRight } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
 import { ActionButton } from '@lib/components/ActionButton';
+import { AddItemButton } from '@lib/components/AddItemButton';
 import {
   type RowAction,
   RowDeleteAction,
@@ -14,7 +15,6 @@ import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
-import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { formatCurrency } from '../../defaults/formatters';
 import {
   useReceiveReturnOrderLineItems,
@@ -106,12 +106,9 @@ export default function ReturnOrderLineItemTable({
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
-      {
-        accessor: 'part',
-        title: t`Part`,
-        switchable: false,
-        render: (record: any) => PartColumn({ part: record?.part_detail })
-      },
+      PartColumn({
+        part: 'part_detail'
+      }),
       {
         accessor: 'part_detail.IPN',
         sortable: false
