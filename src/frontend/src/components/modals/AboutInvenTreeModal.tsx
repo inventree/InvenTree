@@ -187,7 +187,13 @@ const AboutContent = ({
       </Table>
       <Divider />
       <Group justify='space-between'>
-        <CopyButton value={copyval} label={t`Copy version information`} />
+        <div style={{ border: '1px solid orange', borderRadius: '8px' }}>
+          <CopyButton
+            value={copyval}
+            label={t`Copy version information`}
+            color='orange'
+          />
+        </div>
         <Space />
         <Button
           onClick={() => {
