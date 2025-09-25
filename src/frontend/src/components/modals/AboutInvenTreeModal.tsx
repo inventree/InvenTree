@@ -156,7 +156,7 @@ const AboutContent = ({
   }
 
   return (
-    <Stack>
+    <Stack style={{ userSelect: 'none' }}>
       <Divider />
       <Group justify='space-between' wrap='nowrap'>
         <StylishText size='lg'>
