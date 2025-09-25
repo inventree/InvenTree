@@ -231,7 +231,26 @@ class OutputConfiguration:
     into a dictionary of boolean flags, which can then be applied to serializers.
     """
 
-    OPTIONS: list[InvenTreeOutputOption]
+    OPTIONS: list[InvenTreeOutputOption] = []
+
+    def __init_subclass__(cls, **kwargs):
+        """Validates that subclass defines OPTIONS attribute with correct type."""
+        super().__init_subclass__(**kwargs)
+
+        options = cls.OPTIONS
+        # Type validation - ensure it's a list
+        if not isinstance(options, list):
+            raise TypeError(
+                f"Class {cls.__name__} 'OPTIONS' must be a list, got {type(options).__name__}"
+            )
+
+        # Type validation - Ensure list contains InvenTreeOutputOption instances
+        for i, option in enumerate(options):
+            if not isinstance(option, InvenTreeOutputOption):
+                raise TypeError(
+                    f"Class {cls.__name__} 'OPTIONS[{i}]' must be an instance of InvenTreeOutputOption, "
+                    f'got {type(option).__name__}'
+                )
 
     @classmethod
     def format_params(cls, params: dict) -> dict[str, bool]:
