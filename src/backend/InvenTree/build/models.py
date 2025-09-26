@@ -1384,7 +1384,7 @@ class Build(
         lines = annotate_allocated_quantity(lines)
 
         # Filter out any lines which have been fully allocated
-        lines = lines.filter(allocated__lt=F('quantity'))
+        lines = lines.filter(allocated__lt=F('quantity') - F('consumed'))
 
         return lines
 
@@ -1439,7 +1439,8 @@ class Build(
         lines = annotate_allocated_quantity(lines)
 
         # Find any lines which have been over-allocated
-        lines = lines.filter(allocated__gt=F('quantity'))
+        # Note: We must account for the "consumed" quantity here too
+        lines = lines.filter(allocated__gt=F('quantity') - F('consumed'))
 
         return lines.count() > 0
 
@@ -1659,11 +1660,15 @@ class BuildLine(report.mixins.InvenTreeReportMixin, InvenTree.models.InvenTreeMo
         if self.bom_item.consumable:
             return True
 
-        return self.allocated_quantity() >= self.quantity
+        required = max(0, self.quantity - self.consumed)
+
+        return self.allocated_quantity() >= required
 
     def is_overallocated(self):
         """Return True if this BuildLine is over-allocated."""
-        return self.allocated_quantity() > self.quantity
+        required = max(0, self.quantity - self.consumed)
+
+        return self.allocated_quantity() > required
 
     def is_fully_consumed(self):
         """Return True if this BuildLine is fully consumed."""
