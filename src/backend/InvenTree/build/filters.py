@@ -6,6 +6,8 @@ from django.db.models.functions import Coalesce, Greatest
 
 def annotate_required_quantity():
     """Annotate the 'required' quantity for each build item in the queryset."""
+    # Note: The use of Max() here is intentional, to avoid aggregation issues in MySQL
+    # Ref: https://github.com/inventree/InvenTree/pull/10398
     return Greatest(
         ExpressionWrapper(
             Max(F('quantity')) - Max(F('consumed')), output_field=DecimalField()
