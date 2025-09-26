@@ -1383,8 +1383,10 @@ class Build(
 
         lines = annotate_allocated_quantity(lines)
 
+        lines = lines.annotate(required=F('quantity') - F('consumed'))
+
         # Filter out any lines which have been fully allocated
-        lines = lines.filter(allocated__lt=F('quantity') - F('consumed'))
+        lines = lines.filter(allocated__lt=F('required'))
 
         return lines
 
