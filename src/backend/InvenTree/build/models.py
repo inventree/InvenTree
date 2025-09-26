@@ -1440,9 +1440,11 @@ class Build(
         lines = self.build_lines.all().exclude(bom_item__consumable=True)
         lines = annotate_allocated_quantity(lines)
 
+        lines = lines.annotate(required=F('quantity') - F('consumed'))
+
         # Find any lines which have been over-allocated
         # Note: We must account for the "consumed" quantity here too
-        lines = lines.filter(allocated__gt=F('quantity') - F('consumed'))
+        lines = lines.filter(allocated__gt=F('required'))
 
         return lines.count() > 0
 
