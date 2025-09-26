@@ -1644,8 +1644,15 @@ class BuildLine(report.mixins.InvenTreeReportMixin, InvenTree.models.InvenTreeMo
         return allocated['q']
 
     def unallocated_quantity(self):
-        """Return the unallocated quantity for this BuildLine."""
-        return max(self.quantity - self.allocated_quantity(), 0)
+        """Return the unallocated quantity for this BuildLine.
+
+        - Start with the required quantity
+        - Subtract the consumed quantity
+        - Subtract the allocated quantity
+
+        Return the remaining quantity (or zero if negative)
+        """
+        return max(self.quantity - self.consumed - self.allocated_quantity(), 0)
 
     def is_fully_allocated(self):
         """Return True if this BuildLine is fully allocated."""
