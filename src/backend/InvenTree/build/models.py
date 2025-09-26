@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models, transaction
-from django.db.models import F, Q, QuerySet, Sum
+from django.db.models import ExpressionWrapper, F, Q, QuerySet, Sum
 from django.db.models.functions import Coalesce
 from django.db.models.signals import post_save
 from django.dispatch.dispatcher import receiver
@@ -1383,7 +1383,11 @@ class Build(
 
         lines = annotate_allocated_quantity(lines)
 
-        lines = lines.annotate(required=F('quantity') - F('consumed'))
+        lines = lines.annotate(
+            required=ExpressionWrapper(
+                F('quantity') - F('consumed'), output_field=models.DecimalField()
+            )
+        )
 
         # Filter out any lines which have been fully allocated
         lines = lines.filter(allocated__lt=F('required'))
@@ -1439,6 +1443,12 @@ class Build(
         """
         lines = self.build_lines.all().exclude(bom_item__consumable=True)
         lines = annotate_allocated_quantity(lines)
+
+        lines = lines.annotate(
+            required=ExpressionWrapper(
+                F('quantity') - F('consumed'), output_field=models.DecimalField()
+            )
+        )
 
         lines = lines.annotate(required=F('quantity') - F('consumed'))
 
