@@ -953,6 +953,8 @@ export default function BuildLineTable({
           dataFormatter: formatRecords,
           enableDownload: true,
           enableSelection: true,
+          enableLabels: true,
+          modelType: ModelType.buildline,
           rowExpansion: rowExpansion
         }}
       />
