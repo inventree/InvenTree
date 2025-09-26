@@ -1062,7 +1062,7 @@ class Build(
 
         lines = self.untracked_line_items.all()
         lines = lines.exclude(bom_item__consumable=True)
-        lines = annotate_allocated_quantity(lines)
+        lines = lines.annotate(allocated=annotate_allocated_quantity())
 
         for build_line in lines:  # type: ignore[non-iterable]
             reduce_by = build_line.allocated - build_line.quantity
@@ -1381,11 +1381,12 @@ class Build(
         elif tracked is False:
             lines = lines.filter(bom_item__sub_part__trackable=False)
 
-        lines = annotate_required_quantity(lines)
-        lines = annotate_allocated_quantity(lines)
+        lines = lines.prefetch_related('allocations')
 
-        # Filter out any lines which have been fully allocated
-        lines = lines.filter(allocated__lt=F('required'))
+        lines = lines.annotate(
+            required=annotate_required_quantity(),
+            allocated=annotate_allocated_quantity(),
+        ).filter(allocated__lt=F('required'))
 
         return lines
 
@@ -1438,12 +1439,13 @@ class Build(
         """
         lines = self.build_lines.all().exclude(bom_item__consumable=True)
 
-        lines = annotate_required_quantity(lines)
-        lines = annotate_allocated_quantity(lines)
+        lines = lines.prefetch_related('allocations')
 
         # Find any lines which have been over-allocated
-        # Note: We must account for the "consumed" quantity here too
-        lines = lines.filter(allocated__gt=F('required'))
+        lines = lines.annotate(
+            required=annotate_required_quantity(),
+            allocated=annotate_allocated_quantity(),
+        ).filter(allocated__gt=F('required'))
 
         return lines.count() > 0
 
