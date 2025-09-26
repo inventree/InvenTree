@@ -1381,13 +1381,13 @@ class Build(
         elif tracked is False:
             lines = lines.filter(bom_item__sub_part__trackable=False)
 
-        lines = annotate_allocated_quantity(lines)
-
         lines = lines.annotate(
             required=ExpressionWrapper(
                 F('quantity') - F('consumed'), output_field=models.DecimalField()
             )
         )
+
+        lines = annotate_allocated_quantity(lines)
 
         # Filter out any lines which have been fully allocated
         lines = lines.filter(allocated__lt=F('required'))
@@ -1442,7 +1442,6 @@ class Build(
             True if any BuildLine has been over-allocated.
         """
         lines = self.build_lines.all().exclude(bom_item__consumable=True)
-        lines = annotate_allocated_quantity(lines)
 
         lines = lines.annotate(
             required=ExpressionWrapper(
@@ -1450,7 +1449,7 @@ class Build(
             )
         )
 
-        lines = lines.annotate(required=F('quantity') - F('consumed'))
+        lines = annotate_allocated_quantity(lines)
 
         # Find any lines which have been over-allocated
         # Note: We must account for the "consumed" quantity here too
