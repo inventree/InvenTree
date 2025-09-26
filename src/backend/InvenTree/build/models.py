@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models, transaction
-from django.db.models import ExpressionWrapper, F, Q, QuerySet, Sum
+from django.db.models import F, Q, QuerySet, Sum
 from django.db.models.functions import Coalesce
 from django.db.models.signals import post_save
 from django.dispatch.dispatcher import receiver
@@ -29,7 +29,7 @@ import report.mixins
 import stock.models
 import users.models
 from build.events import BuildEvents
-from build.filters import annotate_allocated_quantity
+from build.filters import annotate_allocated_quantity, annotate_required_quantity
 from build.status_codes import BuildStatus, BuildStatusGroups
 from build.validators import (
     generate_next_build_reference,
@@ -1381,12 +1381,7 @@ class Build(
         elif tracked is False:
             lines = lines.filter(bom_item__sub_part__trackable=False)
 
-        lines = lines.annotate(
-            required=ExpressionWrapper(
-                F('quantity') - F('consumed'), output_field=models.DecimalField()
-            )
-        )
-
+        lines = annotate_required_quantity(lines)
         lines = annotate_allocated_quantity(lines)
 
         # Filter out any lines which have been fully allocated
@@ -1443,12 +1438,7 @@ class Build(
         """
         lines = self.build_lines.all().exclude(bom_item__consumable=True)
 
-        lines = lines.annotate(
-            required=ExpressionWrapper(
-                F('quantity') - F('consumed'), output_field=models.DecimalField()
-            )
-        )
-
+        lines = annotate_required_quantity(lines)
         lines = annotate_allocated_quantity(lines)
 
         # Find any lines which have been over-allocated
