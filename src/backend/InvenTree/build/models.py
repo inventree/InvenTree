@@ -1384,8 +1384,8 @@ class Build(
         lines = lines.prefetch_related('allocations')
 
         lines = lines.annotate(
-            required=annotate_required_quantity(),
             allocated=annotate_allocated_quantity(),
+            required=annotate_required_quantity(),
         ).filter(allocated__lt=F('required'))
 
         return lines
@@ -1443,8 +1443,8 @@ class Build(
 
         # Find any lines which have been over-allocated
         lines = lines.annotate(
-            required=annotate_required_quantity(),
             allocated=annotate_allocated_quantity(),
+            required=annotate_required_quantity(),
         ).filter(allocated__gt=F('required'))
 
         return lines.count() > 0
