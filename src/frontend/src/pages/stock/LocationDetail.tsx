@@ -168,6 +168,7 @@ export default function Stock() {
       {
         name: 'details',
         label: t`Location Details`,
+        hidden: !id,
         icon: <IconInfoCircle />,
         content: detailsPanel
       },
@@ -417,7 +418,7 @@ export default function Stock() {
             selectedId={location?.pk}
           />
           <PageDetail
-            title={location?.name ?? t`Stock Location`}
+            title={(location?.name ?? id) ? t`Stock Location` : t`Stock`}
             subtitle={location?.description}
             icon={location?.icon && <ApiIcon name={location?.icon} />}
             actions={locationActions}
