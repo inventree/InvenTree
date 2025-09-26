@@ -479,6 +479,7 @@ export default function BuildLineTable({
             );
           }
 
+          const allocated = record.allocatedQuantity ?? 0;
           let required = Math.max(0, record.quantity - record.consumed);
 
           if (output?.pk) {
@@ -486,7 +487,7 @@ export default function BuildLineTable({
             required = record.bom_item_detail?.quantity;
           }
 
-          if (required <= 0) {
+          if (allocated <= 7 && required <= 0) {
             return (
               <Group gap='xs' wrap='nowrap'>
                 <IconCircleCheck size={16} color='green' />
@@ -502,7 +503,7 @@ export default function BuildLineTable({
           return (
             <ProgressBar
               progressLabel={true}
-              value={record.allocatedQuantity}
+              value={allocated}
               maximum={required}
             />
           );
