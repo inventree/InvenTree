@@ -259,12 +259,13 @@ export default function CategoryDetail() {
       {
         name: 'details',
         label: t`Category Details`,
+        hidden: !id,
         icon: <IconInfoCircle />,
         content: detailsPanel
       },
       {
         name: 'subcategories',
-        label: t`Subcategories`,
+        label: id ? t`Subcategories` : t`Categories`,
         icon: <IconSitemap />,
         content: <PartCategoryTable parentId={id} />
       },
@@ -340,7 +341,7 @@ export default function CategoryDetail() {
             selectedId={category?.pk}
           />
           <PageDetail
-            title={category?.name ?? t`Part Category`}
+            title={(category?.name ?? id) ? t`Part Category` : t`Parts`}
             subtitle={category?.description}
             icon={category?.icon && <ApiIcon name={category?.icon} />}
             breadcrumbs={breadcrumbs}
