@@ -955,6 +955,7 @@ export default function BuildLineTable({
           enableSelection: true,
           enableLabels: true,
           modelType: ModelType.buildline,
+          onCellClick: () => {},
           rowExpansion: rowExpansion
         }}
       />
