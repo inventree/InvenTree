@@ -1,6 +1,7 @@
 """Build database model definitions."""
 
 import decimal
+from typing import Optional
 
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -422,14 +423,14 @@ class Build(
         help_text=_('Project code for this build order'),
     )
 
-    def sub_builds(self, cascade=True):
+    def sub_builds(self, cascade: bool = True) -> QuerySet:
         """Return all Build Order objects under this one."""
         if cascade:
             return self.get_descendants(include_self=False)
         else:
             return self.get_children()
 
-    def sub_build_count(self, cascade=True):
+    def sub_build_count(self, cascade: bool = True) -> int:
         """Return the number of sub builds under this one.
 
         Args:
@@ -438,14 +439,14 @@ class Build(
         return self.sub_builds(cascade=cascade).count()
 
     @property
-    def has_open_child_builds(self):
+    def has_open_child_builds(self) -> bool:
         """Return True if this build order has any open child builds."""
         return (
             self.sub_builds().filter(status__in=BuildStatusGroups.ACTIVE_CODES).exists()
         )
 
     @property
-    def is_overdue(self):
+    def is_overdue(self) -> bool:
         """Returns true if this build is "overdue".
 
         Makes use of the OVERDUE_FILTER to avoid code duplication
@@ -459,30 +460,30 @@ class Build(
         return query.exists()
 
     @property
-    def active(self):
+    def active(self) -> bool:
         """Return True if this build is active."""
         return self.status in BuildStatusGroups.ACTIVE_CODES
 
     @property
-    def tracked_line_items(self):
+    def tracked_line_items(self) -> QuerySet:
         """Returns the "trackable" BOM lines for this BuildOrder."""
         return self.build_lines.filter(bom_item__sub_part__trackable=True)
 
-    def has_tracked_line_items(self):
+    def has_tracked_line_items(self) -> bool:
         """Returns True if this BuildOrder has trackable BomItems."""
         return self.tracked_line_items.count() > 0
 
     @property
-    def untracked_line_items(self):
+    def untracked_line_items(self) -> bool:
         """Returns the "non trackable" BOM items for this BuildOrder."""
         return self.build_lines.filter(bom_item__sub_part__trackable=False)
 
     @property
-    def are_untracked_parts_allocated(self):
+    def are_untracked_parts_allocated(self) -> bool:
         """Returns True if all untracked parts are allocated for this BuildOrder."""
         return self.is_fully_allocated(tracked=False)
 
-    def has_untracked_line_items(self):
+    def has_untracked_line_items(self) -> bool:
         """Returns True if this BuildOrder has non trackable BomItems."""
         return self.has_untracked_line_items.count() > 0
 
@@ -492,15 +493,15 @@ class Build(
         return max(0, self.quantity - self.completed)
 
     @property
-    def output_count(self):
+    def output_count(self) -> int:
         """Return the number of build outputs (StockItem) associated with this build order."""
         return self.build_outputs.count()
 
-    def has_build_outputs(self):
+    def has_build_outputs(self) -> bool:
         """Returns True if this build has more than zero build outputs."""
         return self.output_count > 0
 
-    def get_build_outputs(self, **kwargs):
+    def get_build_outputs(self, **kwargs) -> QuerySet:
         """Return a list of build outputs.
 
         kwargs:
@@ -530,7 +531,7 @@ class Build(
         return outputs
 
     @property
-    def complete_outputs(self):
+    def complete_outputs(self) -> bool:
         """Return all the "completed" build outputs."""
         outputs = self.get_build_outputs(complete=True)
 
@@ -546,12 +547,12 @@ class Build(
 
         return quantity
 
-    def is_partially_allocated(self):
+    def is_partially_allocated(self) -> bool:
         """Test is this build order has any stock allocated against it."""
         return self.allocated_stock.count() > 0
 
     @property
-    def incomplete_outputs(self):
+    def incomplete_outputs(self) -> QuerySet:
         """Return all the "incomplete" build outputs."""
         outputs = self.get_build_outputs(complete=False)
 
@@ -605,7 +606,7 @@ class Build(
         return new_ref
 
     @property
-    def can_complete(self):
+    def can_complete(self) -> bool:
         """Returns True if this BuildOrder is ready to be completed.
 
         - Must not have any outstanding build outputs
@@ -630,7 +631,7 @@ class Build(
         return self.is_fully_allocated(tracked=False)
 
     @transaction.atomic
-    def complete_allocations(self, user):
+    def complete_allocations(self, user) -> None:
         """Complete all stock allocations for this build order.
 
         - This function is called when a build order is completed
@@ -752,7 +753,7 @@ class Build(
         )
 
     @property
-    def can_issue(self):
+    def can_issue(self) -> bool:
         """Returns True if this BuildOrder can be issued."""
         return self.status in [BuildStatus.PENDING.value, BuildStatus.ON_HOLD.value]
 
@@ -779,7 +780,7 @@ class Build(
         )
 
     @property
-    def can_hold(self):
+    def can_hold(self) -> bool:
         """Returns True if this BuildOrder can be placed on hold."""
         return self.status in [BuildStatus.PENDING.value, BuildStatus.PRODUCTION.value]
 
@@ -1094,13 +1095,13 @@ class Build(
         BuildItem.objects.filter(pk__in=[item.pk for item in items_to_delete]).delete()
 
     @property
-    def allocated_stock(self):
+    def allocated_stock(self) -> QuerySet:
         """Returns a QuerySet object of all BuildItem objects which point back to this Build."""
         return BuildItem.objects.filter(build_line__build=self)
 
     @transaction.atomic
-    def subtract_allocated_stock(self, user):
-        """Called when the Build is marked as "complete", this function removes the allocated untracked items from stock."""
+    def subtract_allocated_stock(self, user) -> None:
+        """Removes the allocated untracked items from stock."""
         # Find all BuildItem objects which point to this build
         items = self.allocated_stock.filter(
             build_line__bom_item__sub_part__trackable=False
@@ -1369,7 +1370,7 @@ class Build(
         # Bulk-create the new BuildItem objects
         BuildItem.objects.bulk_create(new_items)
 
-    def unallocated_lines(self, tracked=None):
+    def unallocated_lines(self, tracked: Optional[bool] = None) -> QuerySet:
         """Returns a list of BuildLine objects which have not been fully allocated."""
         lines = self.build_lines.all()
 
@@ -1388,10 +1389,8 @@ class Build(
 
         return lines
 
-    def is_fully_allocated(self, tracked=None):
+    def is_fully_allocated(self, tracked: Optional[bool] = None) -> bool:
         """Test if the BuildOrder has been fully allocated.
-
-        This is *true* if *all* associated BuildLine items have sufficient allocation
 
         Arguments:
             tracked: If True, only consider tracked BuildLine items. If False, only consider untracked BuildLine items.
@@ -1401,10 +1400,10 @@ class Build(
         """
         return self.unallocated_lines(tracked=tracked).count() == 0
 
-    def is_output_fully_allocated(self, output):
+    def is_output_fully_allocated(self, output) -> bool:
         """Determine if the specified output (StockItem) has been fully allocated for this build.
 
-        Args:
+        Arguments:
             output: StockItem object (the "in production" output to test against)
 
         To determine if the output has been fully allocated,
@@ -1429,7 +1428,7 @@ class Build(
         # At this stage, we can assume that the output is fully allocated
         return True
 
-    def is_overallocated(self):
+    def is_overallocated(self) -> bool:
         """Test if the BuildOrder has been over-allocated.
 
         Returns:
@@ -1444,7 +1443,7 @@ class Build(
         return lines.count() > 0
 
     @property
-    def is_active(self):
+    def is_active(self) -> bool:
         """Is this build active?
 
         An active build is either:
@@ -1454,12 +1453,12 @@ class Build(
         return self.status in BuildStatusGroups.ACTIVE_CODES
 
     @property
-    def is_complete(self):
+    def is_complete(self) -> bool:
         """Returns True if the build status is COMPLETE."""
         return self.status == BuildStatus.COMPLETE.value
 
     @transaction.atomic
-    def create_build_line_items(self, prevent_duplicates=True):
+    def create_build_line_items(self, prevent_duplicates=True) -> None:
         """Create BuildLine objects for each BOM line in this BuildOrder."""
         lines = []
 
@@ -1494,7 +1493,7 @@ class Build(
             logger.info('Created %s BuildLine objects for BuildOrder', len(lines))
 
     @transaction.atomic
-    def update_build_line_items(self):
+    def update_build_line_items(self) -> None:
         """Rebuild required quantity field for each BuildLine object."""
         lines_to_update = []
 
@@ -1647,7 +1646,7 @@ class BuildLine(report.mixins.InvenTreeReportMixin, InvenTree.models.InvenTreeMo
         """Return the unallocated quantity for this BuildLine."""
         return max(self.quantity - self.allocated_quantity(), 0)
 
-    def is_fully_allocated(self):
+    def is_fully_allocated(self) -> bool:
         """Return True if this BuildLine is fully allocated."""
         if self.bom_item.consumable:
             return True
@@ -1658,7 +1657,7 @@ class BuildLine(report.mixins.InvenTreeReportMixin, InvenTree.models.InvenTreeMo
         """Return True if this BuildLine is over-allocated."""
         return self.allocated_quantity() > self.quantity
 
-    def is_fully_consumed(self):
+    def is_fully_consumed(self) -> bool:
         """Return True if this BuildLine is fully consumed."""
         return self.consumed >= self.quantity
 
@@ -1829,7 +1828,7 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
         return self.build_line.bom_item if self.build_line else None
 
     @transaction.atomic
-    def complete_allocation(self, quantity=None, notes='', user=None):
+    def complete_allocation(self, quantity=None, notes='', user=None) -> None:
         """Complete the allocation of this BuildItem into the output stock item.
 
         Arguments:
