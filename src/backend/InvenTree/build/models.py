@@ -29,7 +29,7 @@ import report.mixins
 import stock.models
 import users.models
 from build.events import BuildEvents
-from build.filters import annotate_allocated_quantity
+from build.filters import annotate_allocated_quantity, annotate_required_quantity
 from build.status_codes import BuildStatus, BuildStatusGroups
 from build.validators import (
     generate_next_build_reference,
@@ -1062,7 +1062,7 @@ class Build(
 
         lines = self.untracked_line_items.all()
         lines = lines.exclude(bom_item__consumable=True)
-        lines = annotate_allocated_quantity(lines)
+        lines = lines.annotate(allocated=annotate_allocated_quantity())
 
         for build_line in lines:  # type: ignore[non-iterable]
             reduce_by = build_line.allocated - build_line.quantity
@@ -1381,10 +1381,12 @@ class Build(
         elif tracked is False:
             lines = lines.filter(bom_item__sub_part__trackable=False)
 
-        lines = annotate_allocated_quantity(lines)
+        lines = lines.prefetch_related('allocations')
 
-        # Filter out any lines which have been fully allocated
-        lines = lines.filter(allocated__lt=F('quantity'))
+        lines = lines.annotate(
+            allocated=annotate_allocated_quantity(),
+            required=annotate_required_quantity(),
+        ).filter(allocated__lt=F('required'))
 
         return lines
 
@@ -1436,10 +1438,14 @@ class Build(
             True if any BuildLine has been over-allocated.
         """
         lines = self.build_lines.all().exclude(bom_item__consumable=True)
-        lines = annotate_allocated_quantity(lines)
+
+        lines = lines.prefetch_related('allocations')
 
         # Find any lines which have been over-allocated
-        lines = lines.filter(allocated__gt=F('quantity'))
+        lines = lines.annotate(
+            allocated=annotate_allocated_quantity(),
+            required=annotate_required_quantity(),
+        ).filter(allocated__gt=F('required'))
 
         return lines.count() > 0
 
@@ -1644,19 +1650,30 @@ class BuildLine(report.mixins.InvenTreeReportMixin, InvenTree.models.InvenTreeMo
         return allocated['q']
 
     def unallocated_quantity(self):
-        """Return the unallocated quantity for this BuildLine."""
-        return max(self.quantity - self.allocated_quantity(), 0)
+        """Return the unallocated quantity for this BuildLine.
+
+        - Start with the required quantity
+        - Subtract the consumed quantity
+        - Subtract the allocated quantity
+
+        Return the remaining quantity (or zero if negative)
+        """
+        return max(self.quantity - self.consumed - self.allocated_quantity(), 0)
 
     def is_fully_allocated(self):
         """Return True if this BuildLine is fully allocated."""
         if self.bom_item.consumable:
             return True
 
-        return self.allocated_quantity() >= self.quantity
+        required = max(0, self.quantity - self.consumed)
+
+        return self.allocated_quantity() >= required
 
     def is_overallocated(self):
         """Return True if this BuildLine is over-allocated."""
-        return self.allocated_quantity() > self.quantity
+        required = max(0, self.quantity - self.consumed)
+
+        return self.allocated_quantity() > required
 
     def is_fully_consumed(self):
         """Return True if this BuildLine is fully consumed."""
