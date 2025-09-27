@@ -350,7 +350,7 @@ test('Stock - Location', async ({ browser }) => {
 
   await loadTab(page, 'Default Parts');
   await loadTab(page, 'Stock Items');
-  await loadTab(page, 'Stock Locations');
+  await loadTab(page, 'Sublocations');
   await loadTab(page, 'Location Details');
 
   await page.getByLabel('action-menu-barcode-actions').click();
