@@ -1458,7 +1458,7 @@ class Build(
         return self.status == BuildStatus.COMPLETE.value
 
     @transaction.atomic
-    def create_build_line_items(self, prevent_duplicates=True) -> None:
+    def create_build_line_items(self, prevent_duplicates: bool = True) -> None:
         """Create BuildLine objects for each BOM line in this BuildOrder."""
         lines = []
 
