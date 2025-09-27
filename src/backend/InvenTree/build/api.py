@@ -480,8 +480,8 @@ class BuildLineFilter(rest_filters.FilterSet):
     def filter_allocated(self, queryset, name, value):
         """Filter by whether each BuildLine is fully allocated."""
         if str2bool(value):
-            return queryset.filter(allocated__gte=F('quantity'))
-        return queryset.filter(allocated__lt=F('quantity'))
+            return queryset.filter(allocated__gte=F('quantity') - F('consumed'))
+        return queryset.filter(allocated__lt=F('quantity') - F('consumed'))
 
     consumed = rest_filters.BooleanFilter(label=_('Consumed'), method='filter_consumed')
 
