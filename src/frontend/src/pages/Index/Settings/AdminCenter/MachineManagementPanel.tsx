@@ -17,6 +17,7 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import { api } from '../../../../App';
 import { StylishText } from '../../../../components/items/StylishText';
+import { GlobalSettingList } from '../../../../components/settings/SettingList';
 import { MachineListTable } from '../../../../tables/machine/MachineListTable';
 import {
   MachineDriverTable,
@@ -114,6 +115,14 @@ export default function MachineManagementPanel() {
               </List>
             )}
           </Stack>
+        </Accordion.Panel>
+      </Accordion.Item>
+      <Accordion.Item value='settings'>
+        <Accordion.Control>
+          <StylishText size='lg'>{t`Machine Settings`}</StylishText>
+        </Accordion.Control>
+        <Accordion.Panel>
+          <GlobalSettingList keys={['MACHINE_PING_ENABLED']} />
         </Accordion.Panel>
       </Accordion.Item>
     </Accordion>
