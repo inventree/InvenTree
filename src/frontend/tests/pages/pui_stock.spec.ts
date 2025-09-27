@@ -25,7 +25,7 @@ test('Stock - Basic Tests', async ({ browser }) => {
   await loadTab(page, 'Stock Locations');
   await page.getByRole('cell', { name: 'Electronics Lab' }).first().click();
   await loadTab(page, 'Default Parts');
-  await loadTab(page, 'Stock Locations');
+  await loadTab(page, 'Sublocations');
   await loadTab(page, 'Stock Items');
   await loadTab(page, 'Location Details');
 

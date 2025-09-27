@@ -168,13 +168,12 @@ export default function Stock() {
       {
         name: 'details',
         label: t`Location Details`,
-        hidden: !id,
         icon: <IconInfoCircle />,
         content: detailsPanel
       },
       {
         name: 'sublocations',
-        label: t`Stock Locations`,
+        label: id ? t`Sublocations` : t`Stock Locations`,
         icon: <IconSitemap />,
         content: <StockLocationTable parentId={id} />
       },

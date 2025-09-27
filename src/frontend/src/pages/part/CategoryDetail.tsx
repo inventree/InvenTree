@@ -259,13 +259,12 @@ export default function CategoryDetail() {
       {
         name: 'details',
         label: t`Category Details`,
-        hidden: !id,
         icon: <IconInfoCircle />,
         content: detailsPanel
       },
       {
         name: 'subcategories',
-        label: id ? t`Subcategories` : t`Categories`,
+        label: id ? t`Subcategories` : t`Part Categories`,
         icon: <IconSitemap />,
         content: <PartCategoryTable parentId={id} />
       },
