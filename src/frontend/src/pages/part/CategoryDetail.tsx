@@ -264,7 +264,7 @@ export default function CategoryDetail() {
       },
       {
         name: 'subcategories',
-        label: t`Subcategories`,
+        label: id ? t`Subcategories` : t`Part Categories`,
         icon: <IconSitemap />,
         content: <PartCategoryTable parentId={id} />
       },
@@ -340,7 +340,7 @@ export default function CategoryDetail() {
             selectedId={category?.pk}
           />
           <PageDetail
-            title={category?.name ?? t`Part Category`}
+            title={(category?.name ?? id) ? t`Part Category` : t`Parts`}
             subtitle={category?.description}
             icon={category?.icon && <ApiIcon name={category?.icon} />}
             breadcrumbs={breadcrumbs}
