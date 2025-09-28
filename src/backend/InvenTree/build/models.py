@@ -474,7 +474,7 @@ class Build(
         return self.tracked_line_items.count() > 0
 
     @property
-    def untracked_line_items(self) -> bool:
+    def untracked_line_items(self) -> QuerySet:
         """Returns the "non trackable" BOM items for this BuildOrder."""
         return self.build_lines.filter(bom_item__sub_part__trackable=False)
 
@@ -531,7 +531,7 @@ class Build(
         return outputs
 
     @property
-    def complete_outputs(self) -> bool:
+    def complete_outputs(self) -> QuerySet:
         """Return all the "completed" build outputs."""
         outputs = self.get_build_outputs(complete=True)
 
