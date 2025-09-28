@@ -35,6 +35,7 @@ from InvenTree.api import (
     ListCreateDestroyAPIView,
     MetadataView,
 )
+from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import (
     ORDER_FILTER_ALIAS,
     SEARCH_ORDER_FILTER,
@@ -48,6 +49,7 @@ from InvenTree.mixins import (
     CustomRetrieveUpdateDestroyAPI,
     ListAPI,
     ListCreateAPI,
+    OutputOptionsMixin,
     RetrieveAPI,
     RetrieveUpdateDestroyAPI,
 )
@@ -379,11 +381,11 @@ class StockLocationMixin:
 
     def get_serializer(self, *args, **kwargs):
         """Set context before returning serializer."""
-        try:
-            params = self.request.query_params
-            kwargs['path_detail'] = str2bool(params.get('path_detail', False))
-        except AttributeError:  # pragma: no cover
-            pass
+        # try:
+        #     params = self.request.query_params
+        #     kwargs['path_detail'] = str2bool(params.get('path_detail', False))
+        # except AttributeError:  # pragma: no cover
+        #     pass
 
         kwargs['context'] = self.get_serializer_context()
 
@@ -396,8 +398,23 @@ class StockLocationMixin:
         return queryset
 
 
+class StockLocationOutputOptions(OutputConfiguration):
+    """Output options for StockLocation serializers."""
+
+    OPTIONS = [
+        InvenTreeOutputOption(
+            description='Include detailed information about the BOM item linked to this build line.',
+            flag='path_detail',
+        )
+    ]
+
+
 class StockLocationList(
-    DataExportViewMixin, BulkUpdateMixin, StockLocationMixin, ListCreateAPI
+    DataExportViewMixin,
+    BulkUpdateMixin,
+    StockLocationMixin,
+    OutputOptionsMixin,
+    ListCreateAPI,
 ):
     """API endpoint for list view of StockLocation objects.
 
@@ -407,6 +424,7 @@ class StockLocationList(
 
     filterset_class = StockLocationFilter
     filter_backends = SEARCH_ORDER_FILTER
+    output_options = StockLocationOutputOptions
 
     search_fields = ['name', 'description', 'pathstring', 'tags__name', 'tags__slug']
 
@@ -415,8 +433,12 @@ class StockLocationList(
     ordering = ['tree_id', 'lft', 'name']
 
 
-class StockLocationDetail(StockLocationMixin, CustomRetrieveUpdateDestroyAPI):
+class StockLocationDetail(
+    StockLocationMixin, OutputOptionsMixin, CustomRetrieveUpdateDestroyAPI
+):
     """API endpoint for detail view of StockLocation object."""
+
+    output_options = StockLocationOutputOptions
 
     def destroy(self, request, *args, **kwargs):
         """Delete a Stock location instance via the API."""
@@ -1026,20 +1048,20 @@ class StockApiMixin:
         - supplier_part_detail: Include detail about the StockItem's supplier_part
         - tests: Include detail about the StockItem's test results
         """
-        try:
-            params = self.request.query_params
+        # try:
+        #     params = self.request.query_params
 
-            kwargs['part_detail'] = str2bool(params.get('part_detail', True))
+        #     kwargs['part_detail'] = str2bool(params.get('part_detail', True))
 
-            for key in [
-                'path_detail',
-                'location_detail',
-                'supplier_part_detail',
-                'tests',
-            ]:
-                kwargs[key] = str2bool(params.get(key, False))
-        except AttributeError:  # pragma: no cover
-            pass
+        #     for key in [
+        #         'path_detail',
+        #         'location_detail',
+        #         'supplier_part_detail',
+        #         'tests',
+        #     ]:
+        #         kwargs[key] = str2bool(params.get(key, False))
+        # except AttributeError:  # pragma: no cover
+        #     pass
 
         kwargs['context'] = self.get_serializer_context()
 
@@ -1321,23 +1343,36 @@ class StockItemTestResultMixin:
 
     def get_serializer(self, *args, **kwargs):
         """Set context before returning serializer."""
-        try:
-            kwargs['user_detail'] = str2bool(
-                self.request.query_params.get('user_detail', False)
-            )
-            kwargs['template_detail'] = str2bool(
-                self.request.query_params.get('template_detail', False)
-            )
-        except Exception:  # pragma: no cover
-            pass
+        # try:
+        #     kwargs['user_detail'] = str2bool(
+        #         self.request.query_params.get('user_detail', False)
+        #     )
+        #     kwargs['template_detail'] = str2bool(
+        #         self.request.query_params.get('template_detail', False)
+        #     )
+        # except Exception:  # pragma: no cover
+        #     pass
 
         kwargs['context'] = self.get_serializer_context()
 
         return super().get_serializer(*args, **kwargs)
 
 
-class StockItemTestResultDetail(StockItemTestResultMixin, RetrieveUpdateDestroyAPI):
+class StockItemTestResultOutputOptions(OutputConfiguration):
+    """Output options for StockItemTestResult endpoint."""
+
+    OPTIONS = [
+        InvenTreeOutputOption(flag='user_detail'),
+        InvenTreeOutputOption(flag='template_detail'),
+    ]
+
+
+class StockItemTestResultDetail(
+    StockItemTestResultMixin, OutputOptionsMixin, RetrieveUpdateDestroyAPI
+):
     """Detail endpoint for StockItemTestResult."""
+
+    output_options = StockItemTestResultOutputOptions
 
 
 class StockItemTestResultFilter(FilterSet):
@@ -1383,12 +1418,16 @@ class StockItemTestResultFilter(FilterSet):
 
 
 class StockItemTestResultList(
-    BulkCreateMixin, StockItemTestResultMixin, ListCreateDestroyAPIView
+    BulkCreateMixin,
+    StockItemTestResultMixin,
+    OutputOptionsMixin,
+    ListCreateDestroyAPIView,
 ):
     """API endpoint for listing (and creating) a StockItemTestResult object."""
 
     filterset_class = StockItemTestResultFilter
     filter_backends = SEARCH_ORDER_FILTER
+    output_options = StockItemTestResultOutputOptions
 
     filterset_fields = ['user', 'template', 'result', 'value']
     ordering_fields = ['date', 'result']
@@ -1446,7 +1485,16 @@ class StockTrackingDetail(RetrieveAPI):
     serializer_class = StockSerializers.StockTrackingSerializer
 
 
-class StockTrackingList(DataExportViewMixin, ListAPI):
+class StockTrackingOutputOptions(OutputConfiguration):
+    """Output options for StockItemTracking endpoint."""
+
+    OPTIONS = [
+        InvenTreeOutputOption(flag='item_detail'),
+        InvenTreeOutputOption(flag='user_detail'),
+    ]
+
+
+class StockTrackingList(DataExportViewMixin, OutputOptionsMixin, ListAPI):
     """API endpoint for list view of StockItemTracking objects.
 
     StockItemTracking objects are read-only
@@ -1457,22 +1505,23 @@ class StockTrackingList(DataExportViewMixin, ListAPI):
 
     queryset = StockItemTracking.objects.all()
     serializer_class = StockSerializers.StockTrackingSerializer
+    output_options = StockTrackingOutputOptions
 
     def get_serializer(self, *args, **kwargs):
         """Set context before returning serializer."""
-        try:
-            kwargs['item_detail'] = str2bool(
-                self.request.query_params.get('item_detail', False)
-            )
-        except Exception:  # pragma: no cover
-            pass
+        # try:
+        #     kwargs['item_detail'] = str2bool(
+        #         self.request.query_params.get('item_detail', False)
+        #     )
+        # except Exception:  # pragma: no cover
+        #     pass
 
-        try:
-            kwargs['user_detail'] = str2bool(
-                self.request.query_params.get('user_detail', False)
-            )
-        except Exception:  # pragma: no cover
-            pass
+        # try:
+        #     kwargs['user_detail'] = str2bool(
+        #         self.request.query_params.get('user_detail', False)
+        #     )
+        # except Exception:  # pragma: no cover
+        #     pass
 
         kwargs['context'] = self.get_serializer_context()
 
