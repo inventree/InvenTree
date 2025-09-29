@@ -22,6 +22,7 @@ from InvenTree.api import (
     ListCreateDestroyAPIView,
     MetadataView,
 )
+from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import (
     ORDER_FILTER,
     ORDER_FILTER_ALIAS,
@@ -36,6 +37,7 @@ from InvenTree.mixins import (
     CustomRetrieveUpdateDestroyAPI,
     ListAPI,
     ListCreateAPI,
+    OutputOptionsMixin,
     RetrieveAPI,
     RetrieveUpdateAPI,
     RetrieveUpdateDestroyAPI,
@@ -67,16 +69,16 @@ class CategoryMixin:
     serializer_class = part_serializers.CategorySerializer
     queryset = PartCategory.objects.all()
 
-    def get_serializer(self, *args, **kwargs):
-        """Add additional context based on query parameters."""
-        try:
-            params = self.request.query_params
+    # def get_serializer(self, *args, **kwargs):
+    #     """Add additional context based on query parameters."""
+    #     try:
+    #         params = self.request.query_params
 
-            kwargs['path_detail'] = str2bool(params.get('path_detail', False))
-        except AttributeError:
-            pass
+    #         kwargs['path_detail'] = str2bool(params.get('path_detail', False))
+    #     except AttributeError:
+    #         pass
 
-        return super().get_serializer(*args, **kwargs)
+    #     return super().get_serializer(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
         """Return an annotated queryset for the CategoryDetail endpoint."""
@@ -235,7 +237,19 @@ class CategoryFilter(FilterSet):
         return queryset
 
 
-class CategoryList(CategoryMixin, BulkUpdateMixin, DataExportViewMixin, ListCreateAPI):
+class CategoryOutputOption(OutputConfiguration):
+    """Output option for PartCategory endpoints."""
+
+    OPTIONS = [InvenTreeOutputOption(flag='path_detail')]
+
+
+class CategoryList(
+    CategoryMixin,
+    BulkUpdateMixin,
+    DataExportViewMixin,
+    OutputOptionsMixin,
+    ListCreateAPI,
+):
     """API endpoint for accessing a list of PartCategory objects.
 
     - GET: Return a list of PartCategory objects
@@ -246,6 +260,8 @@ class CategoryList(CategoryMixin, BulkUpdateMixin, DataExportViewMixin, ListCrea
 
     filter_backends = SEARCH_ORDER_FILTER
 
+    output_options = CategoryOutputOption
+
     ordering_fields = ['name', 'pathstring', 'level', 'tree_id', 'lft', 'part_count']
 
     # Use hierarchical ordering by default
@@ -254,8 +270,10 @@ class CategoryList(CategoryMixin, BulkUpdateMixin, DataExportViewMixin, ListCrea
     search_fields = ['name', 'description', 'pathstring']
 
 
-class CategoryDetail(CategoryMixin, CustomRetrieveUpdateDestroyAPI):
+class CategoryDetail(CategoryMixin, OutputOptionsMixin, CustomRetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a single PartCategory object."""
+
+    output_options = CategoryOutputOption
 
     def update(self, request, *args, **kwargs):
         """Perform 'update' function and mark this part as 'starred' (or not)."""
@@ -952,16 +970,16 @@ class PartMixin:
 
         kwargs['starred_parts'] = self.starred_parts
 
-        try:
-            params = self.request.query_params
+        # try:
+        #     params = self.request.query_params
 
-            kwargs['parameters'] = str2bool(params.get('parameters', None))
-            kwargs['category_detail'] = str2bool(params.get('category_detail', False))
-            kwargs['location_detail'] = str2bool(params.get('location_detail', False))
-            kwargs['path_detail'] = str2bool(params.get('path_detail', False))
+        #     kwargs['parameters'] = str2bool(params.get('parameters', None))
+        #     kwargs['category_detail'] = str2bool(params.get('category_detail', False))
+        #     kwargs['location_detail'] = str2bool(params.get('location_detail', False))
+        #     kwargs['path_detail'] = str2bool(params.get('path_detail', False))
 
-        except AttributeError:
-            pass
+        # except AttributeError:
+        #     pass
 
         return super().get_serializer(*args, **kwargs)
 
@@ -973,9 +991,25 @@ class PartMixin:
         return context
 
 
-class PartList(PartMixin, BulkUpdateMixin, DataExportViewMixin, ListCreateAPI):
+class PartOutputOptions(OutputConfiguration):
+    """Output options for Part endpoints."""
+
+    OPTIONS = [
+        InvenTreeOutputOption(
+            flag='parameters', description='Include part parameters in response'
+        ),
+        InvenTreeOutputOption(flag='category_detail'),
+        InvenTreeOutputOption(flag='location_detail'),
+        InvenTreeOutputOption(flag='path_detail'),
+    ]
+
+
+class PartList(
+    PartMixin, BulkUpdateMixin, DataExportViewMixin, OutputOptionsMixin, ListCreateAPI
+):
     """API endpoint for accessing a list of Part objects, or creating a new Part instance."""
 
+    output_options = PartOutputOptions
     filterset_class = PartFilter
     is_create = True
 
@@ -1174,8 +1208,10 @@ class PartList(PartMixin, BulkUpdateMixin, DataExportViewMixin, ListCreateAPI):
     ]
 
 
-class PartDetail(PartMixin, RetrieveUpdateDestroyAPI):
+class PartDetail(PartMixin, OutputOptionsMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a single Part object."""
+
+    output_options = PartOutputOptions
 
     def update(self, request, *args, **kwargs):
         """Custom update functionality for Part instance.
@@ -1601,15 +1637,15 @@ class BomMixin:
         - sub_part_detail
         """
         # Do we wish to include extra detail?
-        try:
-            params = self.request.query_params
+        # try:
+        #     params = self.request.query_params
 
-            kwargs['can_build'] = str2bool(params.get('can_build', True))
-            kwargs['part_detail'] = str2bool(params.get('part_detail', False))
-            kwargs['sub_part_detail'] = str2bool(params.get('sub_part_detail', False))
+        #     kwargs['can_build'] = str2bool(params.get('can_build', True))
+        #     kwargs['part_detail'] = str2bool(params.get('part_detail', False))
+        #     kwargs['sub_part_detail'] = str2bool(params.get('sub_part_detail', False))
 
-        except AttributeError:
-            pass
+        # except AttributeError:
+        #     pass
 
         # Ensure the request context is passed through!
         kwargs['context'] = self.get_serializer_context()
@@ -1625,13 +1661,26 @@ class BomMixin:
         return queryset
 
 
-class BomList(BomMixin, DataExportViewMixin, ListCreateDestroyAPIView):
+class BomOutputOptions(OutputConfiguration):
+    """Output options for BOM endpoints."""
+
+    OPTIONS = [
+        InvenTreeOutputOption(flag='can_build', default=True),
+        InvenTreeOutputOption(flag='part_detail'),
+        InvenTreeOutputOption(flag='sub_part_detail'),
+    ]
+
+
+class BomList(
+    BomMixin, DataExportViewMixin, OutputOptionsMixin, ListCreateDestroyAPIView
+):
     """API endpoint for accessing a list of BomItem objects.
 
     - GET: Return list of BomItem objects
     - POST: Create a new BomItem object
     """
 
+    output_options = BomOutputOptions
     filterset_class = BomFilter
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
@@ -1680,8 +1729,10 @@ class BomList(BomMixin, DataExportViewMixin, ListCreateDestroyAPIView):
             bom_item.check_part_lock(bom_item.part)
 
 
-class BomDetail(BomMixin, RetrieveUpdateDestroyAPI):
+class BomDetail(BomMixin, OutputOptionsMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a single BomItem object."""
+
+    output_options = BomOutputOptions
 
 
 class BomItemValidate(UpdateAPI):
