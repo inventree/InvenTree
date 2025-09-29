@@ -665,9 +665,10 @@ export default function BuildLineTable({
     (record: any): RowAction[] => {
       const part = record.part_detail ?? {};
       const in_production = build.status == buildStatus.PRODUCTION;
-      const consumable = record.bom_item_detail?.consumable ?? false;
+      const consumable: boolean = record.bom_item_detail?.consumable ?? false;
+      const trackable: boolean = part?.trackable ?? false;
 
-      const hasOutput = !!output?.pk;
+      const hasOutput: boolean = !!output?.pk;
 
       const required = Math.max(
         0,
@@ -678,6 +679,7 @@ export default function BuildLineTable({
       const canConsume =
         in_production &&
         !consumable &&
+        !trackable &&
         record.allocated > 0 &&
         user.hasChangeRole(UserRoles.build);
 
