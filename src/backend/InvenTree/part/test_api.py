@@ -1958,6 +1958,16 @@ class PartDetailTests(PartImageTestMixin, PartAPITestBase):
         self.assertIn('category_path', response.data)
         self.assertEqual(len(response.data['category_path']), 2)
 
+    def test_location_detail(self):
+        """Check that location_detail can be requested against the serializer."""
+        response = self.get(
+            reverse('api-part-detail', kwargs={'pk': 1}),
+            {'location_detail': True},
+            expected_code=200,
+        )
+
+        self.assertIn('default_location_detail', response.data)
+
     def test_part_requirements(self):
         """Unit test for the "PartRequirements" API endpoint."""
         url = reverse('api-part-requirements', kwargs={'pk': Part.objects.first().pk})
@@ -2631,6 +2641,16 @@ class BomItemTest(InvenTreeAPITestCase):
 
         self.assertEqual(int(float(response.data['quantity'])), 57)
         self.assertEqual(response.data['note'], 'Added a note')
+
+    def test_output_options(self):
+        """Test that various output options work as expected."""
+        url = reverse('api-bom-item-detail', kwargs={'pk': 3})
+        options = ['can_build', 'part_detail', 'sub_part_detail']
+        for option in options:
+            response = self.get(url, {f'{option}': True}, expected_code=200)
+            self.assertIn(option, response.data)
+            response = self.get(url, {f'{option}': False}, expected_code=200)
+            self.assertNotIn(option, response.data)
 
     def test_add_bom_item(self):
         """Test that we can create a new BomItem via the API."""

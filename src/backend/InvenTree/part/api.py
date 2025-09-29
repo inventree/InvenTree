@@ -71,17 +71,6 @@ class CategoryMixin:
     serializer_class = part_serializers.CategorySerializer
     queryset = PartCategory.objects.all()
 
-    # def get_serializer(self, *args, **kwargs):
-    #     """Add additional context based on query parameters."""
-    #     try:
-    #         params = self.request.query_params
-
-    #         kwargs['path_detail'] = str2bool(params.get('path_detail', False))
-    #     except AttributeError:
-    #         pass
-
-    #     return super().get_serializer(*args, **kwargs)
-
     def get_queryset(self, *args, **kwargs):
         """Return an annotated queryset for the CategoryDetail endpoint."""
         queryset = super().get_queryset(*args, **kwargs)
@@ -1067,17 +1056,6 @@ class PartMixin:
 
         kwargs['starred_parts'] = self.starred_parts
 
-        # try:
-        #     params = self.request.query_params
-
-        #     kwargs['parameters'] = str2bool(params.get('parameters', None))
-        #     kwargs['category_detail'] = str2bool(params.get('category_detail', False))
-        #     kwargs['location_detail'] = str2bool(params.get('location_detail', False))
-        #     kwargs['path_detail'] = str2bool(params.get('path_detail', False))
-
-        # except AttributeError:
-        #     pass
-
         return super().get_serializer(*args, **kwargs)
 
     def get_serializer_context(self):
@@ -1093,11 +1071,11 @@ class PartOutputOptions(OutputConfiguration):
 
     OPTIONS = [
         InvenTreeOutputOption(
-            flag='parameters', description='Include part parameters in response'
+            'parameters', description='Include part parameters in response'
         ),
-        InvenTreeOutputOption(flag='category_detail'),
-        InvenTreeOutputOption(flag='location_detail'),
-        InvenTreeOutputOption(flag='path_detail'),
+        InvenTreeOutputOption('category_detail'),
+        InvenTreeOutputOption('location_detail'),
+        InvenTreeOutputOption('path_detail'),
     ]
 
 
@@ -1643,23 +1621,7 @@ class BomMixin:
     queryset = BomItem.objects.all()
 
     def get_serializer(self, *args, **kwargs):
-        """Return the serializer instance for this API endpoint.
-
-        If requested, extra detail fields are annotated to the queryset:
-        - part_detail
-        - sub_part_detail
-        """
-        # Do we wish to include extra detail?
-        # try:
-        #     params = self.request.query_params
-
-        #     kwargs['can_build'] = str2bool(params.get('can_build', True))
-        #     kwargs['part_detail'] = str2bool(params.get('part_detail', False))
-        #     kwargs['sub_part_detail'] = str2bool(params.get('sub_part_detail', False))
-
-        # except AttributeError:
-        #     pass
-
+        """Return the serializer instance for this API endpoint."""
         # Ensure the request context is passed through!
         kwargs['context'] = self.get_serializer_context()
 
@@ -1678,9 +1640,9 @@ class BomOutputOptions(OutputConfiguration):
     """Output options for BOM endpoints."""
 
     OPTIONS = [
-        InvenTreeOutputOption(flag='can_build', default=True),
-        InvenTreeOutputOption(flag='part_detail'),
-        InvenTreeOutputOption(flag='sub_part_detail'),
+        InvenTreeOutputOption('can_build', default=True),
+        InvenTreeOutputOption('part_detail'),
+        InvenTreeOutputOption('sub_part_detail'),
     ]
 
 
