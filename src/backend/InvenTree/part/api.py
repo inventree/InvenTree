@@ -29,6 +29,7 @@ from InvenTree.filters import (
     SEARCH_ORDER_FILTER_ALIAS,
     InvenTreeDateFilter,
     InvenTreeSearchFilter,
+    NumericInFilter,
 )
 from InvenTree.helpers import isNull, str2bool
 from InvenTree.mixins import (
@@ -909,7 +910,7 @@ class PartFilter(FilterSet):
         label='Updated after', field_name='creation_date', lookup_expr='gt'
     )
 
-    exclude_id = rest_filters.BaseInFilter(
+    exclude_id = NumericInFilter(
         field_name='id',
         lookup_expr='in',
         exclude=True,
@@ -1039,59 +1040,6 @@ class PartList(PartMixin, BulkUpdateMixin, DataExportViewMixin, ListCreateAPI):
         params = self.request.query_params
 
         queryset = super().filter_queryset(queryset)
-
-        # Exclude specific part ID values?
-        # exclude_id = []
-
-        # for key in ['exclude_id', 'exclude_id[]']:
-        #     if key in params:
-        #         exclude_id += params.getlist(key, [])
-
-        # if exclude_id:
-        #     id_values = []
-
-        #     for val in exclude_id:
-        #         try:
-        #             # pk values must be integer castable
-        #             val = int(val)
-        #             id_values.append(val)
-        #         except ValueError:
-        #             pass
-
-        #     queryset = queryset.exclude(pk__in=id_values)
-
-        # Filter by 'related' parts?
-        # related = params.get('related', None)
-        # exclude_related = params.get('exclude_related', None)
-
-        # if related is not None or exclude_related is not None:
-        #     try:
-        #         pk = related if related is not None else exclude_related
-        #         pk = int(pk)
-
-        #         related_part = Part.objects.get(pk=pk)
-
-        #         part_ids = set()
-
-        #         # Return any relationship which points to the part in question
-        #         relation_filter = Q(part_1=related_part) | Q(part_2=related_part)
-
-        #         for relation in PartRelated.objects.filter(relation_filter).distinct():
-        #             if relation.part_1.pk != pk:
-        #                 part_ids.add(relation.part_1.pk)
-
-        #             if relation.part_2.pk != pk:
-        #                 part_ids.add(relation.part_2.pk)
-
-        #         if related is not None:
-        #             # Only return related results
-        #             queryset = queryset.filter(pk__in=list(part_ids))
-        #         elif exclude_related is not None:
-        #             # Exclude related results
-        #             queryset = queryset.exclude(pk__in=list(part_ids))
-
-        #     except (ValueError, Part.DoesNotExist):
-        #         pass
 
         # Cascade? (Default = True)
         cascade = str2bool(params.get('cascade', True))

@@ -906,6 +906,60 @@ class PartAPITest(PartAPITestBase):
         response = self.get(url, {'related': 1}, expected_code=200)
         self.assertEqual(len(response.data), 2)
 
+    def test_exclude_related(self):
+        """Test that we can exclude parts related to a specific part ID."""
+        url = reverse('api-part-list')
+
+        # Get initial count of all parts
+        response = self.get(url, {}, expected_code=200)
+        initial_count = len(response.data)
+
+        # Add some relationships
+        PartRelated.objects.create(
+            part_1=Part.objects.get(pk=1), part_2=Part.objects.get(pk=2)
+        )
+
+        PartRelated.objects.create(
+            part_2=Part.objects.get(pk=1), part_1=Part.objects.get(pk=3)
+        )
+
+        # Test excluding parts related to part 1
+        # Parts 2 and 3 are related to part 1, so they should be excluded
+        response = self.get(url, {'exclude_related': 1}, expected_code=200)
+        self.assertEqual(len(response.data), initial_count - 2)
+
+        # Verify that parts 2 and 3 are not in the results
+        part_ids = [part['pk'] for part in response.data]
+        self.assertNotIn(2, part_ids)
+        self.assertNotIn(3, part_ids)
+
+        self.assertIn(1, part_ids)
+
+        # Test excluding with a part that has no relations
+        # This should return all parts
+        response = self.get(url, {'exclude_related': 99}, expected_code=200)
+        self.assertEqual(len(response.data), initial_count)
+
+    def test_exclude_id(self):
+        """Test that we can exclude parts by ID using the exclude_id parameter."""
+        url = reverse('api-part-list')
+
+        # Get initial count of all parts
+        response = self.get(url, {}, expected_code=200)
+        initial_count = len(response.data)
+
+        # Test excluding a single part ID
+        response = self.get(url, {'exclude_id': '1'}, expected_code=200)
+        self.assertEqual(len(response.data), initial_count - 1)
+
+        # Verify that part with ID 1 is not in the results
+        part_ids = [part['pk'] for part in response.data]
+        self.assertNotIn(1, part_ids)
+
+        # Test excluding multiple part IDs (comma-separated)
+        response = self.get(url, {'exclude_id': '1,2,3'}, expected_code=200)
+        self.assertEqual(len(response.data), initial_count - 3)
+
     def test_filter_by_bom_valid(self):
         """Test the 'bom_valid' Part API filter."""
         url = reverse('api-part-list')
