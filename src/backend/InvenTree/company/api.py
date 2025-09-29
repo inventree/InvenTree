@@ -10,9 +10,10 @@ from django_filters.rest_framework.filterset import FilterSet
 import part.models
 from data_exporter.mixins import DataExportViewMixin
 from InvenTree.api import ListCreateDestroyAPIView, MetadataView
+from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import SEARCH_ORDER_FILTER, SEARCH_ORDER_FILTER_ALIAS
 from InvenTree.helpers import str2bool
-from InvenTree.mixins import ListCreateAPI, RetrieveUpdateDestroyAPI
+from InvenTree.mixins import ListCreateAPI, OutputOptionsMixin, RetrieveUpdateDestroyAPI
 
 from .models import (
     Address,
@@ -325,6 +326,33 @@ class SupplierPartFilter(FilterSet):
             return queryset.exclude(in_stock__gt=0)
 
 
+class SupplierPartOutputOptions(OutputConfiguration):
+    """Available output options for the SupplierPart endpoints."""
+
+    OPTIONS = [
+        InvenTreeOutputOption(
+            description='Include detailed information about the linked Part in the response',
+            flag='part_detail',
+            default=False,
+        ),
+        InvenTreeOutputOption(
+            description='Include detailed information about the Supplier in the response',
+            flag='supplier_detail',
+            default=True,
+        ),
+        InvenTreeOutputOption(
+            description='Include detailed information about the Manufacturer in the response',
+            flag='manufacturer_detail',
+            default=False,
+        ),
+        InvenTreeOutputOption(
+            description='Format the output with a more readable (pretty) name',
+            flag='pretty',
+            default=False,
+        ),
+    ]
+
+
 class SupplierPartMixin:
     """Mixin class for SupplierPart API endpoints."""
 
@@ -342,27 +370,9 @@ class SupplierPartMixin:
 
         return queryset
 
-    def get_serializer(self, *args, **kwargs):
-        """Return serializer instance for this endpoint."""
-        # Do we wish to include extra detail?
-        try:
-            params = self.request.query_params
-            kwargs['part_detail'] = str2bool(params.get('part_detail', None))
-            kwargs['supplier_detail'] = str2bool(params.get('supplier_detail', True))
-            kwargs['manufacturer_detail'] = str2bool(
-                params.get('manufacturer_detail', None)
-            )
-            kwargs['pretty'] = str2bool(params.get('pretty', None))
-        except AttributeError:
-            pass
-
-        kwargs['context'] = self.get_serializer_context()
-
-        return super().get_serializer(*args, **kwargs)
-
 
 class SupplierPartList(
-    DataExportViewMixin, SupplierPartMixin, ListCreateDestroyAPIView
+    DataExportViewMixin, SupplierPartMixin, OutputOptionsMixin, ListCreateDestroyAPIView
 ):
     """API endpoint for list view of SupplierPart object.
 
@@ -373,6 +383,7 @@ class SupplierPartList(
     filterset_class = SupplierPartFilter
 
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
+    output_options = SupplierPartOutputOptions
 
     ordering_fields = [
         'SKU',
@@ -410,13 +421,17 @@ class SupplierPartList(
     ]
 
 
-class SupplierPartDetail(SupplierPartMixin, RetrieveUpdateDestroyAPI):
+class SupplierPartDetail(
+    SupplierPartMixin, OutputOptionsMixin, RetrieveUpdateDestroyAPI
+):
     """API endpoint for detail view of SupplierPart object.
 
     - GET: Retrieve detail view
     - PATCH: Update object
     - DELETE: Delete object
     """
+
+    output_options = SupplierPartOutputOptions
 
 
 class SupplierPriceBreakFilter(FilterSet):
