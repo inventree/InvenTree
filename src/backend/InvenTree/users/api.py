@@ -5,6 +5,7 @@ import datetime
 from django.contrib.auth import get_user, login
 from django.contrib.auth.models import Group, User
 from django.contrib.auth.password_validation import password_changed, validate_password
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.urls import include, path
@@ -19,12 +20,13 @@ from rest_framework import exceptions
 from rest_framework.generics import DestroyAPIView, GenericAPIView
 from rest_framework.response import Response
 
-import InvenTree.helpers
 import InvenTree.permissions
+from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import (
     ListAPI,
     ListCreateAPI,
+    OutputOptionsMixin,
     RetrieveAPI,
     RetrieveUpdateAPI,
     RetrieveUpdateDestroyAPI,
@@ -50,42 +52,23 @@ logger = structlog.get_logger('inventree')
 
 
 class OwnerFilter(FilterSet):
-    """Optimized filter set for Owner model."""
+    """filter set for OwnerList."""
 
-    search = rest_filters.CharFilter(method='filter_search')
     is_active = rest_filters.BooleanFilter(method='filter_is_active')
 
     class Meta:
         """Meta class for owner filter."""
 
         model = Owner
-        fields = ['search', 'is_active']
-
-    def filter_search(self, queryset, name, value):
-        """More efficient search implementation."""
-        if not value:
-            return queryset
-
-        # If Owner model has a direct name field, you can use icontains
-        # Otherwise, you need to use the previous approach
-        search_terms = value.lower().strip().split()
-
-        for term in search_terms:
-            # Assuming that name is a property or method
-            # This part should be modified based on your actual model structure
-            print(term)
-
-        return self.filter_by_custom_search(queryset, search_terms)
-
-    def filter_by_custom_search(self, queryset, search_terms):
-        """Custom search logic - should be configured based on your model structure."""
-        # This part should be configured based on how data is stored in your Owner model
-        return queryset
+        fields = ['is_active']
 
     def filter_is_active(self, queryset, name, value):
         """Filter by active status."""
         if value is None:
             return queryset
+
+        # Get ContentType for User model
+        user_content_type = ContentType.objects.get_for_model(User)
 
         active_user_ids = list(
             User.objects.filter(is_active=value).values_list('pk', flat=True)
@@ -95,19 +78,26 @@ class OwnerFilter(FilterSet):
         q_filter = Q()
 
         # If owner_type is not 'user', include all
-        q_filter |= ~Q(owner_type__name='user')
+        q_filter |= ~Q(owner_type=user_content_type)
 
         # If owner_type is 'user', only include active/inactive users
         if active_user_ids:
-            q_filter |= Q(owner_type__name='user', owner_id__in=active_user_ids)
+            q_filter |= Q(owner_type=user_content_type, owner_id__in=active_user_ids)
         elif value is False:
-            # If value is False and there are no inactive users
-            q_filter |= Q(owner_type__name='user', owner_id__isnull=True)
+            # If value is False and we want inactive users
+            # Get all user IDs that are NOT in active_user_ids
+            all_user_ids = list(User.objects.values_list('pk', flat=True))
+            inactive_user_ids = [
+                uid for uid in all_user_ids if uid not in active_user_ids
+            ]
+            if inactive_user_ids:
+                q_filter |= Q(
+                    owner_type=user_content_type, owner_id__in=inactive_user_ids
+                )
 
         return queryset.filter(q_filter)
 
 
-# TODO: hacktoberfest
 class OwnerList(ListAPI):
     """List API endpoint for Owner model.
 
@@ -117,8 +107,8 @@ class OwnerList(ListAPI):
     queryset = Owner.objects.all()
     serializer_class = OwnerSerializer
     permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
-    # filterset_class = OwnerFilter
-    # filter_backends = [drf_backend.DjangoFilterBackend]
+    filterset_class = OwnerFilter
+    filter_backends = SEARCH_ORDER_FILTER
 
     def filter_queryset(self, queryset):
         """Implement text search for the "owner" model.
@@ -133,19 +123,11 @@ class OwnerList(ListAPI):
         but until we determine a better way, this is what we have...
         """
         search_term = str(self.request.query_params.get('search', '')).lower()
-        is_active = self.request.query_params.get('is_active', None)
 
         queryset = queryset.select_related('owner_type').prefetch_related('owner')
         queryset = super().filter_queryset(queryset)
 
         results = []
-
-        # Get a list of all matching users, depending on the *is_active* flag
-        if is_active is not None:
-            is_active = InvenTree.helpers.str2bool(is_active)
-            matching_user_ids = User.objects.filter(is_active=is_active).values_list(
-                'pk', flat=True
-            )
 
         for result in queryset.all():
             name = str(result.name()).lower().strip()
@@ -160,14 +142,6 @@ class OwnerList(ListAPI):
 
             if not search_match:
                 continue
-
-            if is_active is not None:
-                # Skip any users which do not match the required *is_active* value
-                if (
-                    result.owner_type.name == 'user'
-                    and result.owner_id not in matching_user_ids
-                ):
-                    continue
 
             # If we get here, there is no reason *not* to include this result
             results.append(result)
@@ -316,24 +290,8 @@ class GroupMixin:
     serializer_class = GroupSerializer
     permission_classes = [InvenTree.permissions.IsStaffOrReadOnlyScope]
 
-    # TODO: hacktoberfest
     def get_serializer(self, *args, **kwargs):
         """Return serializer instance for this endpoint."""
-        # Do we wish to include extra detail?
-        params = self.request.query_params
-
-        kwargs['role_detail'] = InvenTree.helpers.str2bool(
-            params.get('role_detail', True)
-        )
-
-        kwargs['permission_detail'] = InvenTree.helpers.str2bool(
-            params.get('permission_detail', None)
-        )
-
-        kwargs['user_detail'] = InvenTree.helpers.str2bool(
-            params.get('user_detail', None)
-        )
-
         kwargs['context'] = self.get_serializer_context()
 
         return super().get_serializer(*args, **kwargs)
@@ -346,13 +304,30 @@ class GroupMixin:
         return super().get_queryset().prefetch_related('rule_sets', 'user_set')
 
 
-class GroupDetail(GroupMixin, RetrieveUpdateDestroyAPI):
+class GroupOutputOptions(OutputConfiguration):
+    """Holds all available output options for Group views."""
+
+    OPTIONS = [
+        InvenTreeOutputOption('user_detail', description='Include user details'),
+        InvenTreeOutputOption(
+            'permission_detail', description='Include permission details'
+        ),
+        InvenTreeOutputOption(
+            'role_detail', description='Include role details', default=True
+        ),
+    ]
+
+
+class GroupDetail(GroupMixin, OutputOptionsMixin, RetrieveUpdateDestroyAPI):
     """Detail endpoint for a particular auth group."""
 
+    output_options = GroupOutputOptions
 
-class GroupList(GroupMixin, ListCreateAPI):
+
+class GroupList(GroupMixin, OutputOptionsMixin, ListCreateAPI):
     """List endpoint for all auth groups."""
 
+    output_options = GroupOutputOptions
     filter_backends = SEARCH_ORDER_FILTER
     search_fields = ['name']
     ordering_fields = ['name']
