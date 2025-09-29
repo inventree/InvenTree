@@ -91,6 +91,14 @@ test('Settings - User', async ({ browser }) => {
   await page.getByText('Account Details').waitFor();
   await page.getByText('Profile Details').waitFor();
 
+  // Language selection
+  await page.getByRole('textbox', { name: 'Select language' }).click();
+  await page.getByRole('option', { name: 'العربية' }).waitFor();
+  await page.getByRole('option', { name: 'Deutsch' }).waitFor();
+  await page.getByRole('option', { name: 'English' }).waitFor();
+  await page.getByRole('option', { name: 'Español', exact: true }).waitFor();
+  await page.getByRole('option', { name: '日本語' }).waitFor();
+
   await loadTab(page, 'Security');
   await page.getByRole('button', { name: 'Single Sign On' }).waitFor();
   await page.getByRole('button', { name: 'Access Tokens' }).waitFor();
