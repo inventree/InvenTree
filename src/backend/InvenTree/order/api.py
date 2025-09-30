@@ -355,7 +355,7 @@ class PurchaseOrderFilter(OrderFilter):
 class PurchaseOrderOutputOptions(OutputConfiguration):
     """Output options for the PurchaseOrder endpoint."""
 
-    OPTIONS = [InvenTreeOutputOption(flag='supplier_detail')]
+    OPTIONS = [InvenTreeOutputOption('supplier_detail')]
 
 
 class PurchaseOrderMixin:
@@ -617,8 +617,8 @@ class PurchaseOrderLineItemOutputOptions(OutputConfiguration):
     """Output options for the PurchaseOrderLineItem endpoint."""
 
     OPTIONS = [
-        InvenTreeOutputOption(flag='part_detail'),
-        InvenTreeOutputOption(flag='order_detail'),
+        InvenTreeOutputOption('part_detail'),
+        InvenTreeOutputOption('order_detail'),
     ]
 
 
@@ -638,21 +638,11 @@ class PurchaseOrderLineItemMixin:
 
         return queryset
 
-    # def get_serializer(self, *args, **kwargs):
-    #     """Return serializer instance for this endpoint."""
-    #     try:
-    #         kwargs['part_detail'] = str2bool(
-    #             self.request.query_params.get('part_detail', False)
-    #         )
-    #         kwargs['order_detail'] = str2bool(
-    #             self.request.query_params.get('order_detail', False)
-    #         )
-    #     except AttributeError:
-    #         pass
+    def get_serializer(self, *args, **kwargs):
+        """Return serializer instance for this endpoint."""
+        kwargs['context'] = self.get_serializer_context()
 
-    #     kwargs['context'] = self.get_serializer_context()
-
-    #     return super().get_serializer(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
     def perform_update(self, serializer):
         """Override the perform_update method to auto-update pricing if required."""
@@ -843,13 +833,6 @@ class SalesOrderMixin:
 
     def get_serializer(self, *args, **kwargs):
         """Return serializer instance for this endpoint."""
-        # try:
-        #     kwargs['customer_detail'] = str2bool(
-        #         self.request.query_params.get('customer_detail', False)
-        #     )
-        # except AttributeError:
-        #     pass
-
         # Ensure the context is passed through to the serializer
         kwargs['context'] = self.get_serializer_context()
 
@@ -871,7 +854,7 @@ class SalesOrderMixin:
 class SalesOrderOutputOptions(OutputConfiguration):
     """Output options for the SalesOrder endpoint."""
 
-    OPTIONS = [InvenTreeOutputOption(flag='customer_detail')]
+    OPTIONS = [InvenTreeOutputOption('customer_detail')]
 
 
 class SalesOrderList(
@@ -1039,21 +1022,11 @@ class SalesOrderLineItemMixin:
     queryset = models.SalesOrderLineItem.objects.all()
     serializer_class = serializers.SalesOrderLineItemSerializer
 
-    # def get_serializer(self, *args, **kwargs):
-    #     """Return serializer for this endpoint with extra data as requested."""
-    #     try:
-    #         params = self.request.query_params
+    def get_serializer(self, *args, **kwargs):
+        """Return serializer for this endpoint with extra data as requested."""
+        kwargs['context'] = self.get_serializer_context()
 
-    #         kwargs['part_detail'] = str2bool(params.get('part_detail', False))
-    #         kwargs['order_detail'] = str2bool(params.get('order_detail', False))
-    #         kwargs['customer_detail'] = str2bool(params.get('customer_detail', False))
-
-    #     except AttributeError:
-    #         pass
-
-    #     kwargs['context'] = self.get_serializer_context()
-
-    #     return super().get_serializer(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
         """Return annotated queryset for this endpoint."""
@@ -1081,9 +1054,9 @@ class SalesOrderLineItemOutputOptions(OutputConfiguration):
     """Output options for the SalesOrderAllocation endpoint."""
 
     OPTIONS = [
-        InvenTreeOutputOption(flag='part_detail'),
-        InvenTreeOutputOption(flag='order_detail'),
-        InvenTreeOutputOption(flag='customer_detail'),
+        InvenTreeOutputOption('part_detail'),
+        InvenTreeOutputOption('order_detail'),
+        InvenTreeOutputOption('customer_detail'),
     ]
 
 
@@ -1324,11 +1297,11 @@ class SalesOrderAllocationOutputOptions(OutputConfiguration):
     """Output options for the SalesOrderAllocation endpoint."""
 
     OPTIONS = [
-        InvenTreeOutputOption(flag='part_detail'),
-        InvenTreeOutputOption(flag='item_detail'),
-        InvenTreeOutputOption(flag='order_detail'),
-        InvenTreeOutputOption(flag='location_detail'),
-        InvenTreeOutputOption(flag='customer_detail'),
+        InvenTreeOutputOption('part_detail'),
+        InvenTreeOutputOption('item_detail'),
+        InvenTreeOutputOption('order_detail'),
+        InvenTreeOutputOption('location_detail'),
+        InvenTreeOutputOption('customer_detail'),
     ]
 
 
@@ -1368,24 +1341,6 @@ class SalesOrderAllocationList(
         'item__serial',
         'item__batch',
     }
-
-    # def get_serializer(self, *args, **kwargs):
-    #     """Return the serializer instance for this endpoint.
-
-    #     Adds extra detail serializers if requested
-    #     """
-    #     try:
-    #         params = self.request.query_params
-
-    #         kwargs['part_detail'] = str2bool(params.get('part_detail', False))
-    #         kwargs['item_detail'] = str2bool(params.get('item_detail', False))
-    #         kwargs['order_detail'] = str2bool(params.get('order_detail', False))
-    #         kwargs['location_detail'] = str2bool(params.get('location_detail', False))
-    #         kwargs['customer_detail'] = str2bool(params.get('customer_detail', False))
-    #     except AttributeError:
-    #         pass
-
-    #     return super().get_serializer(*args, **kwargs)
 
 
 class SalesOrderAllocationDetail(SalesOrderAllocationMixin, RetrieveUpdateDestroyAPI):
@@ -1540,13 +1495,6 @@ class ReturnOrderMixin:
 
     def get_serializer(self, *args, **kwargs):
         """Return serializer instance for this endpoint."""
-        # try:
-        #     kwargs['customer_detail'] = str2bool(
-        #         self.request.query_params.get('customer_detail', False)
-        #     )
-        # except AttributeError:
-        #     pass
-
         # Ensure the context is passed through to the serializer
         kwargs['context'] = self.get_serializer_context()
 
@@ -1702,20 +1650,11 @@ class ReturnOrderLineItemMixin:
     queryset = models.ReturnOrderLineItem.objects.all()
     serializer_class = serializers.ReturnOrderLineItemSerializer
 
-    # def get_serializer(self, *args, **kwargs):
-    #     """Return serializer for this endpoint with extra data as requested."""
-    #     try:
-    #         params = self.request.query_params
+    def get_serializer(self, *args, **kwargs):
+        """Return serializer for this endpoint with extra data as requested."""
+        kwargs['context'] = self.get_serializer_context()
 
-    #         kwargs['order_detail'] = str2bool(params.get('order_detail', False))
-    #         kwargs['item_detail'] = str2bool(params.get('item_detail', True))
-    #         kwargs['part_detail'] = str2bool(params.get('part_detail', False))
-    #     except AttributeError:
-    #         pass
-
-    #     kwargs['context'] = self.get_serializer_context()
-
-    #     return super().get_serializer(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
         """Return annotated queryset for this endpoint."""
@@ -1730,9 +1669,9 @@ class ReturnOrderLineItemOutputOptions(OutputConfiguration):
     """Output options for the ReturnOrderLineItem endpoint."""
 
     OPTIONS = [
-        InvenTreeOutputOption(flag='part_detail'),
-        InvenTreeOutputOption(flag='item_detail', default=True),
-        InvenTreeOutputOption(flag='order_detail'),
+        InvenTreeOutputOption('part_detail'),
+        InvenTreeOutputOption('item_detail', default=True),
+        InvenTreeOutputOption('order_detail'),
     ]
 
 
