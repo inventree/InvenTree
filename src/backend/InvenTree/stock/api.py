@@ -381,12 +381,6 @@ class StockLocationMixin:
 
     def get_serializer(self, *args, **kwargs):
         """Set context before returning serializer."""
-        # try:
-        #     params = self.request.query_params
-        #     kwargs['path_detail'] = str2bool(params.get('path_detail', False))
-        # except AttributeError:  # pragma: no cover
-        #     pass
-
         kwargs['context'] = self.get_serializer_context()
 
         return super().get_serializer(*args, **kwargs)
@@ -1343,16 +1337,6 @@ class StockItemTestResultMixin:
 
     def get_serializer(self, *args, **kwargs):
         """Set context before returning serializer."""
-        # try:
-        #     kwargs['user_detail'] = str2bool(
-        #         self.request.query_params.get('user_detail', False)
-        #     )
-        #     kwargs['template_detail'] = str2bool(
-        #         self.request.query_params.get('template_detail', False)
-        #     )
-        # except Exception:  # pragma: no cover
-        #     pass
-
         kwargs['context'] = self.get_serializer_context()
 
         return super().get_serializer(*args, **kwargs)
@@ -1509,20 +1493,6 @@ class StockTrackingList(DataExportViewMixin, OutputOptionsMixin, ListAPI):
 
     def get_serializer(self, *args, **kwargs):
         """Set context before returning serializer."""
-        # try:
-        #     kwargs['item_detail'] = str2bool(
-        #         self.request.query_params.get('item_detail', False)
-        #     )
-        # except Exception:  # pragma: no cover
-        #     pass
-
-        # try:
-        #     kwargs['user_detail'] = str2bool(
-        #         self.request.query_params.get('user_detail', False)
-        #     )
-        # except Exception:  # pragma: no cover
-        #     pass
-
         kwargs['context'] = self.get_serializer_context()
 
         return super().get_serializer(*args, **kwargs)
