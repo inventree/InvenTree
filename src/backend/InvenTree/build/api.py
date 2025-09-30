@@ -533,22 +533,9 @@ class BuildLineMixin:
     queryset = BuildLine.objects.all()
     serializer_class = build.serializers.BuildLineSerializer
 
-    # def get_serializer(self, *args, **kwargs):
-    #     """Return the serializer instance for this endpoint."""
-    #     kwargs['context'] = self.get_serializer_context()
-
-    #     try:
-    #         params = self.request.query_params
-
-    #         kwargs['bom_item_detail'] = str2bool(params.get('bom_item_detail', True))
-    #         kwargs['assembly_detail'] = str2bool(params.get('assembly_detail', True))
-    #         kwargs['part_detail'] = str2bool(params.get('part_detail', True))
-    #         kwargs['build_detail'] = str2bool(params.get('build_detail', False))
-    #         kwargs['allocations'] = str2bool(params.get('allocations', True))
-    #     except AttributeError:
-    #         pass
-
-    #     return super().get_serializer(*args, **kwargs)
+    def get_serializer(self, *args, **kwargs):
+        """Return the serializer instance for this endpoint."""
+        return super().get_serializer(*args, **kwargs)
 
     def get_source_build(self) -> Build:
         """Return the source Build object for the BuildLine queryset.
@@ -581,29 +568,28 @@ class BuildLineOutputOptions(OutputConfiguration):
 
     OPTIONS = [
         InvenTreeOutputOption(
+            'bom_item_detail',
             description='Include detailed information about the BOM item linked to this build line.',
-            flag='bom_item_detail',
             default=True,
         ),
         InvenTreeOutputOption(
+            'assembly_detail',
             description='Include brief details of the assembly (parent part) related to the BOM item in this build line.',
-            flag='assembly_detail',
             default=True,
         ),
         InvenTreeOutputOption(
+            'part_detail',
             description='Include detailed information about the specific part being built or consumed in this build line.',
-            flag='part_detail',
             default=True,
         ),
         InvenTreeOutputOption(
+            'build_detail',
             description='Include detailed information about the associated build order.',
-            flag='build_detail',
-            default=False,
         ),
         InvenTreeOutputOption(
+            'allocations',
             description='Include allocation details showing which stock items are allocated to this build line.',
-            flag='allocations',
-            default=False,
+            default=True,
         ),
     ]
 
@@ -913,26 +899,10 @@ class BuildItemOutputOptions(OutputConfiguration):
     """Output options for BuildItem endpoint."""
 
     OPTIONS = [
-        InvenTreeOutputOption(
-            description='Include detailed information about the allocated part.',
-            flag='part_detail',
-            default=False,
-        ),
-        InvenTreeOutputOption(
-            description='Include detailed information about the location where the stock item is stored.',
-            flag='location_detail',
-            default=False,
-        ),
-        InvenTreeOutputOption(
-            description='Include detailed information about the allocated stock item.',
-            flag='stock_detail',
-            default=False,
-        ),
-        InvenTreeOutputOption(
-            description='Include detailed information about the related build order.',
-            flag='build_detail',
-            default=False,
-        ),
+        InvenTreeOutputOption('part_detail'),
+        InvenTreeOutputOption('location_detail'),
+        InvenTreeOutputOption('stock_detail'),
+        InvenTreeOutputOption('build_detail'),
     ]
 
 
@@ -950,24 +920,6 @@ class BuildItemList(
     serializer_class = build.serializers.BuildItemSerializer
     filterset_class = BuildItemFilter
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
-
-    def get_serializer(self, *args, **kwargs):
-        """Returns a BuildItemSerializer instance based on the request."""
-        try:
-            params = self.request.query_params
-
-            for key in [
-                'part_detail',
-                'location_detail',
-                'stock_detail',
-                'build_detail',
-            ]:
-                if key in params:
-                    kwargs[key] = str2bool(params.get(key, False))
-        except AttributeError:
-            pass
-
-        return super().get_serializer(*args, **kwargs)
 
     def get_queryset(self):
         """Override the queryset method, to perform custom prefetch."""

@@ -217,11 +217,24 @@ class InvenTreeNotesField(models.TextField):
 class InvenTreeOutputOption:
     """Represents an available output option with description, flag name, and default value."""
 
-    def __init__(self, description: str, flag: str, default=None):
+    DEFAULT_DESCRIPTIONS = {
+        'part_detail': 'Include detailed information about the related part  in the response',
+        'item_detail': 'Include detailed information about the item in the response',
+        'order_detail': 'Include detailed information about the sales order in the response',
+        'location_detail': 'Include detailed information about the stock location in the response',
+        'customer_detail': 'Include detailed information about the customer in the response',
+        'supplier_detail': 'Include detailed information about the supplier in the response',
+    }
+
+    def __init__(self, flag: str, default=False, description: str = ''):
         """Initialize the output option."""
-        self.description = description
         self.flag = flag
         self.default = default
+
+        if description is None:
+            self.description = self.DEFAULT_DESCRIPTIONS.get(flag, '')
+        else:
+            self.description = description
 
 
 class OutputConfiguration:
