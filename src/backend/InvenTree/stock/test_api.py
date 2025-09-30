@@ -787,18 +787,18 @@ class StockItemListTest(StockAPITestCase):
     def test_filter_installed(self):
         """Filter StockItem by installed."""
         response = self.get_stock(installed=True)
-        self.assertEqual(len(response), 0)
+        self.assertEqual(len(response), 1)
 
         response = self.get_stock(installed=False)
-        self.assertEqual(len(response), 29)  # TODO: adjust test dataset (belongs_to)
+        self.assertEqual(len(response), 28)
 
     def test_filter_has_installed(self):
         """Filter StockItem by has_installed."""
         response = self.get_stock(has_installed_items=True)
-        self.assertEqual(len(response), 0)
+        self.assertEqual(len(response), 1)
 
         response = self.get_stock(has_installed_items=False)
-        self.assertEqual(len(response), 29)  # TODO: adjust test dataset (belongs_to)
+        self.assertEqual(len(response), 28)
 
     def test_filter_has_child_items(self):
         """Filter StockItem by has_child_items."""
@@ -1890,6 +1890,14 @@ class StockTestResultTest(StockAPITestCase):
         response = self.client.get(url, data={'stock_item': 105})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertGreaterEqual(len(response.data), 4)
+
+    def test_include_installed_filter(self):
+        """Test the 'include_installed' filter option."""
+        url = self.get_url()
+        response = self.client.get(
+            url, data={'stock_item': 105, 'include_installed': True}
+        )
+        self.assertGreaterEqual(len(response.data), 8)
 
     def test_post_fail(self):
         """Test failing posts."""

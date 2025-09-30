@@ -1042,21 +1042,6 @@ class StockApiMixin:
         - supplier_part_detail: Include detail about the StockItem's supplier_part
         - tests: Include detail about the StockItem's test results
         """
-        # try:
-        #     params = self.request.query_params
-
-        #     kwargs['part_detail'] = str2bool(params.get('part_detail', True))
-
-        #     for key in [
-        #         'path_detail',
-        #         'location_detail',
-        #         'supplier_part_detail',
-        #         'tests',
-        #     ]:
-        #         kwargs[key] = str2bool(params.get(key, False))
-        # except AttributeError:  # pragma: no cover
-        #     pass
-
         kwargs['context'] = self.get_serializer_context()
 
         return super().get_serializer(*args, **kwargs)
@@ -1400,6 +1385,48 @@ class StockItemTestResultFilter(FilterSet):
         key = generateTestKey(value)
         return queryset.filter(template__key=key)
 
+    include_installed = rest_filters.BooleanFilter(
+        method='filter_include_installed',
+        label=_('Include Installed'),
+        help_text=_(
+            'If true, include test results for items installed underneath the given stock item'
+        ),
+    )
+
+    stock_item = rest_filters.NumberFilter(
+        method='filter_stock_item',
+        label=_('Stock Item'),
+        help_text=_('Filter by numeric Stock Item ID'),
+    )
+
+    def filter_include_installed(self, queryset, name, value):
+        """Dummy filter method for 'include_installed'.
+
+        - Ensures 'include_installed' appears in API documentation
+        - Does NOT actually filter the queryset directly
+        - The actual logic is handled in filter_stock_item method
+        """
+        return queryset
+
+    def filter_stock_item(self, queryset, name, value):
+        """Filter for stock_item that also applies include_installed logic."""
+        include_installed = str2bool(self.data.get('include_installed', False))
+
+        try:
+            item = StockItem.objects.get(pk=value)
+        except (ValueError, StockItem.DoesNotExist):
+            return queryset
+
+        items = [item]
+
+        if include_installed:
+            # Include items which are installed "underneath" this item
+            # Note that this function is recursive!
+            installed_items = item.get_installed_items(cascade=True)
+            items += list(installed_items)
+
+        return queryset.filter(stock_item__in=items)
+
 
 class StockItemTestResultList(
     BulkCreateMixin,
@@ -1417,38 +1444,6 @@ class StockItemTestResultList(
     ordering_fields = ['date', 'result']
 
     ordering = 'date'
-
-    def filter_queryset(self, queryset):
-        """Filter by build or stock_item."""
-        params = self.request.query_params
-
-        queryset = super().filter_queryset(queryset)
-
-        # Filter by stock item
-        item = params.get('stock_item', None)
-
-        if item is not None:
-            try:
-                item = StockItem.objects.get(pk=item)
-
-                items = [item]
-
-                # Do we wish to also include test results for 'installed' items?
-                include_installed = str2bool(params.get('include_installed', False))
-
-                if include_installed:
-                    # Include items which are installed "underneath" this item
-                    # Note that this function is recursive!
-                    installed_items = item.get_installed_items(cascade=True)
-
-                    items += list(installed_items)
-
-                queryset = queryset.filter(stock_item__in=items)
-
-            except (ValueError, StockItem.DoesNotExist):  # pragma: no cover
-                pass
-
-        return queryset
 
     def perform_create(self, serializer):
         """Create a new test result object.
