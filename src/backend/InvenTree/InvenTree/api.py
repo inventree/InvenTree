@@ -18,6 +18,7 @@ from rest_framework.serializers import ValidationError
 from rest_framework.views import APIView
 
 import InvenTree.config
+import InvenTree.permissions
 import InvenTree.version
 from common.settings import get_global_setting
 from InvenTree import helpers

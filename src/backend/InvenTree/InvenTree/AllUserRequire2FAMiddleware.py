@@ -48,10 +48,13 @@ class AllUserRequire2FAMiddleware(MiddlewareMixin):
 
     def is_allowed_page(self, request: HttpRequest) -> bool:
         """Check if the current page can be accessed without mfa."""
+        match = request.resolver_match
         return (
-            any(ref in self.app_names for ref in request.resolver_match.app_names)
-            or request.resolver_match.url_name in self.allowed_pages
-            or request.resolver_match.route == 'favicon.ico'
+            None
+            if match is None
+            else any(ref in self.app_names for ref in match.app_names)
+            or match.url_name in self.allowed_pages
+            or match.route == 'favicon.ico'
         )
 
     def enforce_2fa(self, request):

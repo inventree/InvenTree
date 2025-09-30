@@ -52,7 +52,7 @@ export function usePluginPanels({
   // API query to fetch initial information on available plugin panels
   const pluginQuery = useQuery({
     enabled: pluginPanelsEnabled && !!model && id !== undefined,
-    queryKey: ['custom-plugin-panels', model, id],
+    queryKey: ['custom-plugin-panels', model, id, instance],
     throwOnError: (error: any) => {
       console.error('ERR: Failed to fetch plugin panels');
       return false;

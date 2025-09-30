@@ -130,7 +130,7 @@ Refer to the [getting started guide](https://docs.inventree.org/en/latest/start/
 <!-- Mobile App -->
 ## 	:iphone: Mobile App
 
-InvenTree is supported by a [companion mobile app](https://docs.inventree.org/app/) which allows users access to stock control information and functionality.
+InvenTree is supported by a [companion mobile app](https://docs.inventree.org/en/latest/app/) which allows users access to stock control information and functionality.
 
 <div align="center"><h4>
     <a href="https://play.google.com/store/apps/details?id=inventree.inventree_app">Android Play Store</a>

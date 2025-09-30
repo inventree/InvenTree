@@ -6,6 +6,7 @@ asgiref==3.9.1 \
     # via
     #   -c src/backend/requirements.txt
     #   django
+    #   django-stubs
 build==1.3.0 \
     --hash=sha256:698edd0ea270bde950f53aed21f3a0135672206f3911e0176261a31e0e07b397 \
     --hash=sha256:7145f0b5061ba90a1500d60bd1b13ca0a8a4cebdd0cc16ed8adf1c0e739f43b4
@@ -326,15 +327,29 @@ django==4.2.24 \
     # via
     #   -c src/backend/requirements.txt
     #   django-slowtests
+    #   django-stubs
+    #   django-stubs-ext
 django-querycount==0.8.3 \
     --hash=sha256:0782484e8a1bd29498fa0195a67106e47cdcc98fafe80cebb1991964077cb694
     # via -r src/backend/requirements-dev.in
 django-slowtests==1.1.1 \
     --hash=sha256:3c6936d420c9df444ac03625b41d97de043c662bbde61fbcd33e4cd407d0c247
     # via -r src/backend/requirements-dev.in
+django-stubs==5.1.3 \
+    --hash=sha256:716758ced158b439213062e52de6df3cff7c586f9f9ad7ab59210efbea5dfe78 \
+    --hash=sha256:8c230bc5bebee6da282ba8a27ad1503c84a0c4cd2f46e63d149e76d2a63e639a
+    # via -r src/backend/requirements-dev.in
+django-stubs-ext==5.1.3 \
+    --hash=sha256:3e60f82337f0d40a362f349bf15539144b96e4ceb4dbd0239be1cd71f6a74ad0 \
+    --hash=sha256:64561fbc53e963cc1eed2c8eb27e18b8e48dcb90771205180fe29fc8a59e55fd
+    # via django-stubs
 django-test-migrations==1.4.0 \
     --hash=sha256:294dff98f6d43d020d4046b971bac5339e7c71458a35e9ad6450c388fe16ed6b \
     --hash=sha256:f0c9c92864ed27d0c9a582e92056637e91227f54bd868a50cb9a1726668c563e
+    # via -r src/backend/requirements-dev.in
+django-types==0.20.0 \
+    --hash=sha256:4e55d2c56155e3d69d75def9eb1d95a891303f2ac19fccf6fe8056da4293fae7 \
+    --hash=sha256:a0b5c2c9a1e591684bb21a93b64e50ca6cb2d3eab48f49faff1eac706bd3a9c7
     # via -r src/backend/requirements-dev.in
 filelock==3.18.0 \
     --hash=sha256:adbc88eabb99d2fec8c9c1b229b171f18afa655400173ddc653d5d01501fb9f2 \
@@ -505,13 +520,44 @@ tomli==2.2.1 \
     #   -c src/backend/requirements.txt
     #   build
     #   coverage
+    #   django-stubs
     #   pip-tools
+ty==0.0.1a21 \
+    --hash=sha256:0efba2e52b58f536f4198ba5c4a36cac2ba67d83ec6f429ebc7704233bcda4c3 \
+    --hash=sha256:1474d883129bb63da3b2380fc7ead824cd3baf6a9551e6aa476ffefc58057af3 \
+    --hash=sha256:1f276ceab23a1410aec09508248c76ae0989c67fb7a0c287e0d4564994295531 \
+    --hash=sha256:218d53e7919e885bd98e9196d9cb952d82178b299aa36da6f7f39333eb7400ed \
+    --hash=sha256:21f708d02b6588323ffdbfdba38830dd0ecfd626db50aa6006b296b5470e52f9 \
+    --hash=sha256:334d2a212ebf42a0e55d57561926af7679fe1e878175e11dcb81ad8df892844e \
+    --hash=sha256:3c3bc66fcae41eff133cfe326dd65d82567a2fb5d4efe2128773b10ec2766819 \
+    --hash=sha256:5dfc73299d441cc6454e36ed0a976877415024143dfca6592dc36f7701424383 \
+    --hash=sha256:7505aeb8bf2a62f00f12cfa496f6c965074d75c8126268776565284c8a12d5dd \
+    --hash=sha256:84243455f295ed850bd53f7089819321807d4e6ee3b1cbff6086137ae0259466 \
+    --hash=sha256:87a200c21e02962e8a27374d9d152582331d57d709672431be58f4f898bf6cad \
+    --hash=sha256:9463cac96b8f1bb5ba740fe1d42cd6bd152b43c5b159b2f07f8fd629bcdded34 \
+    --hash=sha256:a8c769987d00fbc33054ff7e342633f475ea10dc43bc60fb9fb056159d48cb90 \
+    --hash=sha256:ba13d03b9e095216ceb4e4d554a308517f28ab0a6e4dcd07cfe94563e4c2c489 \
+    --hash=sha256:be8f457d7841b7ead2a3f6b65ba668abc172a1150a0f1f6c0958af3725dbb61a \
+    --hash=sha256:cc0880ec344fbdf736b05d8d0da01f0caaaa02409bd9a24b68d18d0127a79b0e \
+    --hash=sha256:e941e9a9d1e54b03eeaf9c3197c26a19cf76009fd5e41e16e5657c1c827bd6d3 \
+    --hash=sha256:ecf41706b803827b0de8717f32a434dad1e67be9f4b8caf403e12013179ea06a
+    # via -r src/backend/requirements-dev.in
+types-psycopg2==2.9.21.20250915 \
+    --hash=sha256:bfeb8f54c32490e7b5edc46215ab4163693192bc90407b4a023822de9239f5c8 \
+    --hash=sha256:eefe5ccdc693fc086146e84c9ba437bb278efe1ef330b299a0cb71169dc6c55f
+    # via django-types
+types-pyyaml==6.0.12.20250915 \
+    --hash=sha256:0f8b54a528c303f0e6f7165687dd33fafa81c807fcac23f632b63aa624ced1d3 \
+    --hash=sha256:e7d4d9e064e89a3b3cae120b4990cd370874d2bf12fa5f46c97018dd5d3c9ab6
+    # via django-stubs
 typing-extensions==4.14.1 \
     --hash=sha256:38b39f4aeeab64884ce9f74c94263ef78f3c22467c8724005483154c26648d36 \
     --hash=sha256:d1e1e3b58374dc93031d6eda2420a48ea44a36c2b4766a4fdeb3710755731d76
     # via
     #   -c src/backend/requirements.txt
     #   asgiref
+    #   django-stubs
+    #   django-stubs-ext
     #   django-test-migrations
 virtualenv==20.33.1 \
     --hash=sha256:07c19bc66c11acab6a5958b815cbcee30891cd1c2ccf53785a28651a0d8d8a67 \
