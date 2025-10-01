@@ -1033,15 +1033,7 @@ class StockApiMixin:
         return ctx
 
     def get_serializer(self, *args, **kwargs):
-        """Set context before returning serializer.
-
-        Extra detail may be provided to the serializer via query parameters:
-
-        - part_detail: Include detail about the StockItem's part
-        - location_detail: Include detail about the StockItem's location
-        - supplier_part_detail: Include detail about the StockItem's supplier_part
-        - tests: Include detail about the StockItem's test results
-        """
+        """Set context before returning serializer."""
         kwargs['context'] = self.get_serializer_context()
 
         return super().get_serializer(*args, **kwargs)
