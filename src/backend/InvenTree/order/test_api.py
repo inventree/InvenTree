@@ -1842,8 +1842,8 @@ class SalesOrderLineItemTest(OrderTest):
         self.filter({'completed': 0}, n)
 
         # Filter by 'allocated' status
-        self.filter({'allocated': 'true'}, 0)
-        self.filter({'allocated': 'false'}, n)
+        self.filter({'allocated': 'true'}, 1)
+        self.filter({'allocated': 'false'}, n - 1)
 
     def test_so_line_allocated_filters(self):
         """Test filtering by allocation status for a SalesOrderLineItem."""

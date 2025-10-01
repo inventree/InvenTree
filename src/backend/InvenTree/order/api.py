@@ -364,6 +364,12 @@ class PurchaseOrderMixin:
     queryset = models.PurchaseOrder.objects.all()
     serializer_class = serializers.PurchaseOrderSerializer
 
+    def get_serializer(self, *args, **kwargs):
+        """Return the serializer instance for this endpoint."""
+        # Ensure the request context is passed through
+        kwargs['context'] = self.get_serializer_context()
+        return super().get_serializer(*args, **kwargs)
+
     def get_queryset(self, *args, **kwargs):
         """Return the annotated queryset for this endpoint."""
         queryset = super().get_queryset(*args, **kwargs)

@@ -46,6 +46,14 @@
     part: 5
     quantity: 1
 
+- model: order.salesorderlineitem
+  pk: 2
+  fields:
+    order: 4
+    part: 5
+    quantity: 1
+
+
 # An extra line item
 - model: order.salesorderextraline
   pk: 1
