@@ -68,17 +68,6 @@ class CategoryMixin:
     serializer_class = part_serializers.CategorySerializer
     queryset = PartCategory.objects.all()
 
-    def get_serializer(self, *args, **kwargs):
-        """Add additional context based on query parameters."""
-        try:
-            params = self.request.query_params
-
-            kwargs['path_detail'] = str2bool(params.get('path_detail', False))
-        except AttributeError:
-            pass
-
-        return super().get_serializer(*args, **kwargs)
-
     def get_queryset(self, *args, **kwargs):
         """Return an annotated queryset for the CategoryDetail endpoint."""
         queryset = super().get_queryset(*args, **kwargs)
@@ -947,19 +936,7 @@ class PartMixin(SerializerContextMixin):
             self.starred_parts = [
                 star.part for star in self.request.user.starred_parts.all()
             ]
-
         kwargs['starred_parts'] = self.starred_parts
-
-        try:
-            params = self.request.query_params
-
-            kwargs['parameters'] = str2bool(params.get('parameters', None))
-            kwargs['category_detail'] = str2bool(params.get('category_detail', False))
-            kwargs['location_detail'] = str2bool(params.get('location_detail', False))
-            kwargs['path_detail'] = str2bool(params.get('path_detail', False))
-
-        except AttributeError:
-            pass
 
         return super().get_serializer(*args, **kwargs)
 
@@ -1357,23 +1334,6 @@ class PartParameterAPIMixin:
         context['request'] = self.request
 
         return context
-
-    def get_serializer(self, *args, **kwargs):
-        """Return the serializer instance for this API endpoint.
-
-        If requested, extra detail fields are annotated to the queryset:
-        - part_detail
-        - template_detail
-        """
-        try:
-            kwargs['part_detail'] = str2bool(self.request.GET.get('part_detail', False))
-            kwargs['template_detail'] = str2bool(
-                self.request.GET.get('template_detail', True)
-            )
-        except AttributeError:
-            pass
-
-        return super().get_serializer(*args, **kwargs)
 
 
 class PartParameterFilter(FilterSet):

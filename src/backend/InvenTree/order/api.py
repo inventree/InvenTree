@@ -1232,24 +1232,6 @@ class SalesOrderAllocationList(SalesOrderAllocationMixin, BulkUpdateMixin, ListA
         'item__batch',
     }
 
-    def get_serializer(self, *args, **kwargs):
-        """Return the serializer instance for this endpoint.
-
-        Adds extra detail serializers if requested
-        """
-        try:
-            params = self.request.query_params
-
-            kwargs['part_detail'] = str2bool(params.get('part_detail', False))
-            kwargs['item_detail'] = str2bool(params.get('item_detail', False))
-            kwargs['order_detail'] = str2bool(params.get('order_detail', False))
-            kwargs['location_detail'] = str2bool(params.get('location_detail', False))
-            kwargs['customer_detail'] = str2bool(params.get('customer_detail', False))
-        except AttributeError:
-            pass
-
-        return super().get_serializer(*args, **kwargs)
-
 
 class SalesOrderAllocationDetail(SalesOrderAllocationMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detali view of a SalesOrderAllocation object."""
