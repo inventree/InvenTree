@@ -313,6 +313,15 @@ class PurchaseOrderTest(OrderTest):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    def test_output_options(self):
+        """Test the various output options for the PurchaseOrder detail endpoint."""
+        url = reverse('api-po-detail', kwargs={'pk': 1})
+        response = self.get(url, {'supplier_detail': 'true'}, expected_code=200)
+        self.assertIn('supplier_detail', response.data)
+
+        response = self.get(url, {'supplier_detail': 'false'}, expected_code=200)
+        self.assertNotIn('supplier_detail', response.data)
+
     def test_po_operations(self):
         """Test that we can create / edit and delete a PurchaseOrder via the API."""
         n = models.PurchaseOrder.objects.count()
@@ -372,13 +381,6 @@ class PurchaseOrderTest(OrderTest):
         response = self.get(url)
         self.assertEqual(response.data['pk'], pk)
         self.assertEqual(response.data['reference'], 'PO-123456789')
-
-        # Test output option
-        response = self.get(url, {'supplier_detail': 'true'}, expected_code=200)
-        self.assertIn('supplier_detail', response.data)
-
-        response = self.get(url, {'supplier_detail': 'false'}, expected_code=200)
-        self.assertNotIn('supplier_detail', response.data)
 
         # Try to alter (edit) the PurchaseOrder
         response = self.patch(url, {'reference': 'PO-12345'}, expected_code=200)
@@ -1941,13 +1943,6 @@ class SalesOrderLineItemTest(OrderTest):
             self.assertIn(option, response.data)
             response = self.get(url, {f'{option}': False}, expected_code=200)
             self.assertNotIn(option, response.data)
-
-        # # Test output option
-        # response = self.get(url, {'supplier_detail': 'true'}, expected_code=200)
-        # self.assertIn('supplier_detail', response.data)
-
-        # response = self.get(url, {'supplier_detail': 'false'}, expected_code=200)
-        # self.assertNotIn('supplier_detail', response.data)
 
 
 class SalesOrderDownloadTest(OrderTest):
