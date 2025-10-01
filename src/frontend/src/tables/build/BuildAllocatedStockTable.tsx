@@ -183,9 +183,13 @@ export default function BuildAllocatedStockTable({
 
   const [selectedItems, setSelectedItems] = useState<any[]>([]);
 
+  const itemsToConsume = useMemo(() => {
+    return selectedItems.filter((item) => !item.part_detail?.trackable);
+  }, [selectedItems]);
+
   const consumeStock = useConsumeBuildItemsForm({
     buildId: buildId ?? 0,
-    allocatedItems: selectedItems,
+    allocatedItems: itemsToConsume,
     onFormSuccess: () => {
       table.clearSelectedRecords();
       table.refreshTable();
@@ -225,13 +229,16 @@ export default function BuildAllocatedStockTable({
 
   const rowActions = useCallback(
     (record: any): RowAction[] => {
+      const part = record.part_detail ?? {};
+      const trackable: boolean = part?.trackable ?? false;
+
       return [
         {
           color: 'green',
           icon: <IconCircleDashedCheck />,
           title: t`Consume`,
           tooltip: t`Consume Stock`,
-          hidden: !buildId || !user.hasChangeRole(UserRoles.build),
+          hidden: !buildId || trackable || !user.hasChangeRole(UserRoles.build),
           onClick: () => {
             setSelectedItems([record]);
             consumeStock.open();

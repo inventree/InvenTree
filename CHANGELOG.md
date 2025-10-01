@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Added `order_queryset` report helper function in [#10439](https://github.com/inventree/InvenTree/pull/10439)
+
 ### Changed
 
 ### Removed
