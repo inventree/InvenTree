@@ -4,7 +4,7 @@ asgiref==3.9.1 \
     --hash=sha256:a5ab6582236218e5ef1648f242fd9f10626cfd4de8dc377db215d5d5098e3142 \
     --hash=sha256:f3bba7092a48005b5f5bacd747d36ee4a5a61f4a269a6df590b43144355ebd2c
     # via
-    #   -c requirements.txt
+    #   -c src/backend/requirements.txt
     #   django
     #   django-stubs
 build==1.3.0 \
@@ -80,7 +80,7 @@ cffi==1.17.1 \
     --hash=sha256:f7f5baafcc48261359e14bcd6d9bff6d4b28d9103847c9e136694cb0501aef87 \
     --hash=sha256:fc48c783f9c87e60831201f2cce7f3b2e4846bf4d8728eabe54d60700b318a0b
     # via
-    #   -c requirements.txt
+    #   -c src/backend/requirements.txt
     #   cryptography
 cfgv==3.4.0 \
     --hash=sha256:b7265b1f29fd3316bfcd2b330d63d024f2bfd8bcb8b0272f8e19a504856c48f9 \
@@ -180,7 +180,7 @@ charset-normalizer==3.4.2 \
     --hash=sha256:fcbe676a55d7445b22c10967bceaaf0ee69407fbe0ece4d032b6eb8d4565982a \
     --hash=sha256:fdb20a30fe1175ecabed17cbf7812f7b804b8a315a25f24678bcdf120a90077f
     # via
-    #   -c requirements.txt
+    #   -c src/backend/requirements.txt
     #   pdfminer-six
 click==8.1.8 \
     --hash=sha256:63c132bbbed01578a06712a2d1f497bb62d9c1c0d329b7903a866228027263b2 \
@@ -291,7 +291,7 @@ coverage[toml]==7.10.7 \
     --hash=sha256:f7941f6f2fe6dd6807a1208737b8a0cbcf1cc6d7b07d24998ad2d63590868260 \
     --hash=sha256:fc04cc7a3db33664e0c2d10eb8990ff6b3536f6842c9590ae8da4c614b9ed05a \
     --hash=sha256:fff7b9c3f19957020cac546c70025331113d2e61537f6e2441bc7657913de7d3
-    # via -r requirements-dev.in
+    # via -r src/backend/requirements-dev.in
 cryptography==44.0.3 \
     --hash=sha256:02f55fb4f8b79c1221b0961488eaae21015b69b210e18c386b69de182ebb1259 \
     --hash=sha256:157f1f3b8d941c2bd8f3ffee0af9b049c9665c39d3da9db2dc338feca5e98a43 \
@@ -331,7 +331,7 @@ cryptography==44.0.3 \
     --hash=sha256:fc3c9babc1e1faefd62704bb46a69f359a9819eb0292e40df3fb6e3574715cd4 \
     --hash=sha256:fe19d8bc5536a91a24a8133328880a41831b6c5df54599a8417b62fe015d3053
     # via
-    #   -c requirements.txt
+    #   -c src/backend/requirements.txt
     #   pdfminer-six
 distlib==0.4.0 \
     --hash=sha256:9659f7d87e46584a30b5780e43ac7a2143098441670ff0a49d5f9034c54a6c16 \
@@ -341,20 +341,20 @@ django==4.2.24 \
     --hash=sha256:40cd7d3f53bc6cd1902eadce23c337e97200888df41e4a73b42d682f23e71d80 \
     --hash=sha256:a6527112c58821a0dfc5ab73013f0bdd906539790a17196658e36e66af43c350
     # via
-    #   -c requirements.txt
+    #   -c src/backend/requirements.txt
     #   django-slowtests
     #   django-stubs
     #   django-stubs-ext
 django-querycount==0.8.3 \
     --hash=sha256:0782484e8a1bd29498fa0195a67106e47cdcc98fafe80cebb1991964077cb694
-    # via -r requirements-dev.in
+    # via -r src/backend/requirements-dev.in
 django-slowtests==1.1.1 \
     --hash=sha256:3c6936d420c9df444ac03625b41d97de043c662bbde61fbcd33e4cd407d0c247
-    # via -r requirements-dev.in
+    # via -r src/backend/requirements-dev.in
 django-stubs==5.1.3 \
     --hash=sha256:716758ced158b439213062e52de6df3cff7c586f9f9ad7ab59210efbea5dfe78 \
     --hash=sha256:8c230bc5bebee6da282ba8a27ad1503c84a0c4cd2f46e63d149e76d2a63e639a
-    # via -r requirements-dev.in
+    # via -r src/backend/requirements-dev.in
 django-stubs-ext==5.1.3 \
     --hash=sha256:3e60f82337f0d40a362f349bf15539144b96e4ceb4dbd0239be1cd71f6a74ad0 \
     --hash=sha256:64561fbc53e963cc1eed2c8eb27e18b8e48dcb90771205180fe29fc8a59e55fd
@@ -362,11 +362,11 @@ django-stubs-ext==5.1.3 \
 django-test-migrations==1.4.0 \
     --hash=sha256:294dff98f6d43d020d4046b971bac5339e7c71458a35e9ad6450c388fe16ed6b \
     --hash=sha256:f0c9c92864ed27d0c9a582e92056637e91227f54bd868a50cb9a1726668c563e
-    # via -r requirements-dev.in
+    # via -r src/backend/requirements-dev.in
 django-types==0.20.0 \
     --hash=sha256:4e55d2c56155e3d69d75def9eb1d95a891303f2ac19fccf6fe8056da4293fae7 \
     --hash=sha256:a0b5c2c9a1e591684bb21a93b64e50ca6cb2d3eab48f49faff1eac706bd3a9c7
-    # via -r requirements-dev.in
+    # via -r src/backend/requirements-dev.in
 filelock==3.18.0 \
     --hash=sha256:adbc88eabb99d2fec8c9c1b229b171f18afa655400173ddc653d5d01501fb9f2 \
     --hash=sha256:c401f4f8377c4464e6db25fff06205fd89bdd83b65eb0488ed1b160f780e21de
@@ -379,12 +379,12 @@ importlib-metadata==8.7.0 \
     --hash=sha256:d13b81ad223b890aa16c5471f2ac3056cf76c5f10f82d6f9292f0b415f389000 \
     --hash=sha256:e5dd1551894c77868a30651cef00984d50e1002d06942a7101d34870c5f02afd
     # via
-    #   -c requirements.txt
+    #   -c src/backend/requirements.txt
     #   build
 isort==6.0.1 \
     --hash=sha256:1cb5df28dfbc742e490c5e41bad6da41b805b0a8be7bc93cd0fb2a8a890ac450 \
     --hash=sha256:2dc5d7f65c9678d94c88dfc29161a320eec67328bc97aad576874cb4be1e9615
-    # via -r requirements-dev.in
+    # via -r src/backend/requirements-dev.in
 nodeenv==1.9.1 \
     --hash=sha256:6ec12890a2dab7946721edbfbcd91f3319c6ccc9aec47be7c7e6b7011ee6645f \
     --hash=sha256:ba11c9782d29c27c70ffbdda2d7415098754709be8a7056d79a737cd901155c9
@@ -393,31 +393,35 @@ packaging==25.0 \
     --hash=sha256:29572ef2b1f17581046b3a2227d5c611fb25ec70ca1ba8554b24b0e69331a484 \
     --hash=sha256:d443872c98d677bf60f6a1f2f8c1cb748e8fe762d2bf9d3148b5599295b0fc4f
     # via
-    #   -c requirements.txt
+    #   -c src/backend/requirements.txt
     #   build
 pdfminer-six==20250506 \
     --hash=sha256:b03cc8df09cf3c7aba8246deae52e0bca7ebb112a38895b5e1d4f5dd2b8ca2e7 \
     --hash=sha256:d81ad173f62e5f841b53a8ba63af1a4a355933cfc0ffabd608e568b9193909e3
-    # via -r requirements-dev.in
+    # via -r src/backend/requirements-dev.in
+pip==25.2 \
+    --hash=sha256:578283f006390f85bb6282dffb876454593d637f5d1be494b5202ce4877e71f2 \
+    --hash=sha256:6d67a2b4e7f14d8b31b8b52648866fa717f45a1eb70e83002f4331d07e953717
+    # via pip-tools
 pip-tools==7.5.0 \
     --hash=sha256:30639f50961bb09f49d22f4389e8d7d990709677c094ce1114186b1f2e9b5821 \
     --hash=sha256:69758e4e5a65f160e315d74db46246fdbb30d549f1ed0c4236d057122c9b0f18
-    # via -r requirements-dev.in
+    # via -r src/backend/requirements-dev.in
 platformdirs==4.3.8 \
     --hash=sha256:3d512d96e16bcb959a814c9f348431070822a6496326a4be0911c40b5a74c2bc \
     --hash=sha256:ff7059bb7eb1179e2685604f4aaf157cfd9535242bd23742eadc3c13542139b4
     # via
-    #   -c requirements.txt
+    #   -c src/backend/requirements.txt
     #   virtualenv
 pre-commit==4.3.0 \
     --hash=sha256:2b0747ad7e6e967169136edffee14c16e148a778a54e4f967921aa1ebf2308d8 \
     --hash=sha256:499fe450cc9d42e9d58e606262795ecb64dd05438943c62b66f6a8673da30b16
-    # via -r requirements-dev.in
+    # via -r src/backend/requirements-dev.in
 pycparser==2.22 \
     --hash=sha256:491c8be9c040f5390f5bf44a5b07752bd07f56edf992381b05c701439eec10f6 \
     --hash=sha256:c3702b6d3dd8c7abc1afa565d7e63d53a1d0bd86cdc24edd75470f4de499cfcc
     # via
-    #   -c requirements.txt
+    #   -c src/backend/requirements.txt
     #   cffi
 pyproject-hooks==1.2.0 \
     --hash=sha256:1e859bd5c40fae9448642dd871adf459e5e2084186e8d2c2a79a824c970da1f8 \
@@ -500,13 +504,20 @@ pyyaml==6.0.3 \
     --hash=sha256:fa160448684b4e94d80416c0fa4aac48967a969efe22931448d853ada8baf926 \
     --hash=sha256:fc09d0aa354569bc501d4e787133afc08552722d3ab34836a80547331bb5d4a0
     # via
-    #   -c requirements.txt
+    #   -c src/backend/requirements.txt
     #   pre-commit
+setuptools==80.9.0 \
+    --hash=sha256:062d34222ad13e0cc312a4c02d73f059e86a4acbfbdea8f8f76b28c99f306922 \
+    --hash=sha256:f36b47402ecde768dbfafc46e8e4207b4360c654f1f3bb84475f0a28628fb19c
+    # via
+    #   -c src/backend/requirements.txt
+    #   -r src/backend/requirements-dev.in
+    #   pip-tools
 sqlparse==0.5.3 \
     --hash=sha256:09f67787f56a0b16ecdbde1bfc7f5d9c3371ca683cfeaa8e6ff60b4807ec9272 \
     --hash=sha256:cf2196ed3418f3ba5de6af7e82c694a9fbdbfecccdfc72e281548517081f16ca
     # via
-    #   -c requirements.txt
+    #   -c src/backend/requirements.txt
     #   django
 tomli==2.2.1 \
     --hash=sha256:023aa114dd824ade0100497eb2318602af309e5a55595f76b626d6d9f3b7b0a6 \
@@ -542,7 +553,7 @@ tomli==2.2.1 \
     --hash=sha256:ece47d672db52ac607a3d9599a9d48dcb2f2f735c6c2d1f34130085bb12b112a \
     --hash=sha256:f4039b9cbc3048b2416cc57ab3bda989a6fcf9b36cf8937f01a6e731b64f80d7
     # via
-    #   -c requirements.txt
+    #   -c src/backend/requirements.txt
     #   build
     #   coverage
     #   django-stubs
@@ -566,7 +577,7 @@ ty==0.0.1a21 \
     --hash=sha256:cc0880ec344fbdf736b05d8d0da01f0caaaa02409bd9a24b68d18d0127a79b0e \
     --hash=sha256:e941e9a9d1e54b03eeaf9c3197c26a19cf76009fd5e41e16e5657c1c827bd6d3 \
     --hash=sha256:ecf41706b803827b0de8717f32a434dad1e67be9f4b8caf403e12013179ea06a
-    # via -r requirements-dev.in
+    # via -r src/backend/requirements-dev.in
 types-psycopg2==2.9.21.20250915 \
     --hash=sha256:bfeb8f54c32490e7b5edc46215ab4163693192bc90407b4a023822de9239f5c8 \
     --hash=sha256:eefe5ccdc693fc086146e84c9ba437bb278efe1ef330b299a0cb71169dc6c55f
@@ -579,7 +590,7 @@ typing-extensions==4.14.1 \
     --hash=sha256:38b39f4aeeab64884ce9f74c94263ef78f3c22467c8724005483154c26648d36 \
     --hash=sha256:d1e1e3b58374dc93031d6eda2420a48ea44a36c2b4766a4fdeb3710755731d76
     # via
-    #   -c requirements.txt
+    #   -c src/backend/requirements.txt
     #   asgiref
     #   django-stubs
     #   django-stubs-ext
@@ -596,5 +607,5 @@ zipp==3.23.0 \
     --hash=sha256:071652d6115ed432f5ce1d34c336c0adfd6a884660d1e9712a256d3d3bd4b14e \
     --hash=sha256:a07157588a12518c9d4034df3fbbee09c814741a33ff63c05fa29d26a2404166
     # via
-    #   -c requirements.txt
+    #   -c src/backend/requirements.txt
     #   importlib-metadata
