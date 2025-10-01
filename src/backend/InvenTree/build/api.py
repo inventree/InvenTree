@@ -535,6 +535,7 @@ class BuildLineMixin:
 
     def get_serializer(self, *args, **kwargs):
         """Return the serializer instance for this endpoint."""
+        kwargs['context'] = self.get_serializer_context()
         return super().get_serializer(*args, **kwargs)
 
     def get_source_build(self) -> Build:
