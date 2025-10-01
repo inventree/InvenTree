@@ -339,9 +339,9 @@ mkdocs-git-revision-date-localized-plugin==1.4.7 \
     --hash=sha256:056c0a90242409148f1dc94d5c9d2c25b5b8ddd8de45489fa38f7fa7ccad2bc4 \
     --hash=sha256:10a49eff1e1c3cb766e054b9d8360c904ce4fe8c33ac3f6cc083ac6459c91953
     # via -r docs/requirements.in
-mkdocs-include-markdown-plugin==7.1.7 \
-    --hash=sha256:677637e04c2d3497c50340be522e2a7f614124f592c7982d88b859f88d527a4c \
-    --hash=sha256:a0c13efe4f6b05a419c022e201055bf43145eed90de65f2353c33fb4005b6aa5
+mkdocs-include-markdown-plugin==7.1.8 \
+    --hash=sha256:9cc79f60c452e4db885c32b4cd63feea1f96012b6720be49a2ce6a1fbad77458 \
+    --hash=sha256:eed91cdb22c9035c8d8421523c97bee3796e2df626afefae11e97dd0c6854573
     # via -r docs/requirements.in
 mkdocs-macros-plugin==1.3.9 \
     --hash=sha256:01b6003fbe9b55fdc97c0abb66f811d65abfd291dcf70f277990165553faa99a \
