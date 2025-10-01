@@ -22,7 +22,7 @@ class TestBuildAPI(InvenTreeAPITestCase):
     - Tests for BuildItem API
     """
 
-    fixtures = ['category', 'part', 'location', 'build', 'stock']
+    fixtures = ['category', 'part', 'location', 'bom', 'build', 'stock']
 
     roles = ['build.change', 'build.add', 'build.delete']
 
