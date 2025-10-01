@@ -395,3 +395,25 @@ class UserTokenTests(InvenTreeAPITestCase):
         # Get token without auth (should fail)
         self.client.logout()
         self.get(reverse('api-token'), expected_code=401)
+
+
+class GroupDetialTests(InvenTreeAPITestCase):
+    """Tests for the GroupDetail API endpoint."""
+
+    fixtures = ['users']
+
+    def test_group_list(self):
+        """Test the GroupDetail API endpoint."""
+        url = reverse('api-group-detail', kwargs={'pk': 1})
+
+        response = self.get(url, {'user_detail': 'true'}, expected_code=200)
+        self.assertIn('users', response.data)
+
+        response = self.get(url, {'role_detail': 'true'}, expected_code=200)
+        self.assertIn('roles', response.data)
+
+        response = self.get(url, {'permission_detail': 'true'}, expected_code=200)
+        self.assertIn('permissions', response.data)
+
+        response = self.get(url, {'permission_detail': 'false'}, expected_code=200)
+        self.assertNotIn('permissions', response.data)
