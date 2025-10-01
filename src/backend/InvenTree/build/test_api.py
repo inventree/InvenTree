@@ -22,7 +22,7 @@ class TestBuildAPI(InvenTreeAPITestCase):
     - Tests for BuildItem API
     """
 
-    fixtures = ['category', 'part', 'location', 'bom', 'build', 'stock']
+    fixtures = ['category', 'part', 'location', 'bom', 'build', 'build_line', 'stock']
 
     roles = ['build.change', 'build.add', 'build.delete']
 
@@ -131,7 +131,7 @@ class TestBuildAPI(InvenTreeAPITestCase):
 class BuildAPITest(InvenTreeAPITestCase):
     """Series of tests for the Build DRF API."""
 
-    fixtures = ['category', 'part', 'location', 'bom', 'build', 'stock']
+    fixtures = ['category', 'part', 'location', 'bom', 'build', 'build_line', 'stock']
 
     # Required roles to access Build API endpoints
     roles = ['build.change', 'build.add']
