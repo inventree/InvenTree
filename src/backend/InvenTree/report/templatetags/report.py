@@ -32,6 +32,25 @@ logger = logging.getLogger('inventree')
 
 
 @register.simple_tag()
+def order_queryset(queryset: QuerySet, *args) -> QuerySet:
+    """Order a database queryset based on the provided arguments.
+
+    Arguments:
+        queryset: The queryset to order
+
+    Keyword Arguments:
+        field (str): Order the queryset based on the provided field
+
+    Example:
+        {% order_queryset companies 'name' as ordered_companies %}
+    """
+    if not isinstance(queryset, QuerySet):
+        return queryset
+
+    return queryset.order_by(*args)
+
+
+@register.simple_tag()
 def filter_queryset(queryset: QuerySet, **kwargs) -> QuerySet:
     """Filter a database queryset based on the provided keyword arguments.
 
