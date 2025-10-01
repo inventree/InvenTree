@@ -7,18 +7,17 @@ INVENTREE_API_VERSION = 395
 
 INVENTREE_API_TEXT = """
 
-v395 -> 2025-09-01 : https://github.com/inventree/InvenTree/pull/10441
+v395 -> 2025-10-01 : https://github.com/inventree/InvenTree/pull/10441
     - Refactors 'parameters', 'category_detail', 'location_detail' and 'path_detail' params in Part API endpoint
     - Refactors 'can_build', 'part_detail', 'sub_part_detail' and 'path_detail' params in BOM API endpoint
     - Refactors 'path_detail' params in user Category API endpoint
     - Refactors 'exclude_id', 'related' and 'exclude_related' params in Part API endpoint
 
-v394 -> 2025-09-01 : https://github.com/inventree/InvenTree/pull/10438
+v394 -> 2025-10-01 : https://github.com/inventree/InvenTree/pull/10438
     - Refactors 'bom_item_detail', 'assembly_detail', 'part_detail', 'build_detail' and 'allocations' params in BuildLine API endpoint
     - Refactors 'part_detail', 'location_detail', 'stock_detail' and 'build_detail' params in BuildItem API endpoint
 
-
-v393 -> 2025-09-01 : https://github.com/inventree/InvenTree/pull/10437
+v393 -> 2025-10-01 : https://github.com/inventree/InvenTree/pull/10437
     - Refactors 'user_detail', 'permission_detail', 'role_detail' params in user GroupList API endpoint
 
 v392 -> 2025-09-22 : https://github.com/inventree/InvenTree/pull/10374
