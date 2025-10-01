@@ -1490,7 +1490,7 @@ class TestResultTest(StockTestBase):
         )
 
         tests = item.testResultMap(include_installed=True)
-        self.assertEqual(len(tests), 4)
+        self.assertEqual(len(tests), 7)
 
         self.assertIn('somenewtest', tests)
         self.assertEqual(sub_item.test_results.count(), 2)
