@@ -93,3 +93,20 @@
     quantity: 10
     stock_item: 11
     install_into: 100
+
+
+- model: build.buildline
+  pk: 1
+  fields:
+    build: 1
+    bom_item: 4
+    quantity: 10
+    consumed: 5
+
+- model: build.buildline
+  pk: 2
+  fields:
+    build: 1
+    bom_item: 5
+    quantity: 20
+    consumed: 0

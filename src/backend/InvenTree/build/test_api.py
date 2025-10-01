@@ -1374,8 +1374,8 @@ class BuildLineTests(BuildAPITest):
 
         self.assertEqual(n_t + n_f, BuildLine.objects.count())
 
-    def test_out_options(self):
-        """Test OPTIONS request for the BuildLine endpoint."""
+    def test_output_options(self):
+        """Test output options  for the BuildLine endpoint."""
         url = reverse('api-build-line-detail', kwargs={'pk': 2})
 
         # Test cases: (parameter_name, response_field_name)
