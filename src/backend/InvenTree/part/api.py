@@ -39,6 +39,7 @@ from InvenTree.mixins import (
     RetrieveAPI,
     RetrieveUpdateAPI,
     RetrieveUpdateDestroyAPI,
+    SerializerContextMixin,
     UpdateAPI,
 )
 from InvenTree.serializers import EmptySerializer
@@ -910,7 +911,7 @@ class PartFilter(FilterSet):
     )
 
 
-class PartMixin:
+class PartMixin(SerializerContextMixin):
     """Mixin class for Part API endpoints."""
 
     serializer_class = part_serializers.PartSerializer
@@ -933,9 +934,6 @@ class PartMixin:
 
     def get_serializer(self, *args, **kwargs):
         """Return a serializer instance for this endpoint."""
-        # Ensure the request context is passed through
-        kwargs['context'] = self.get_serializer_context()
-
         # Indicate that we can create a new Part via this endpoint
         kwargs['create'] = self.is_create
 
@@ -1587,34 +1585,11 @@ class BomFilter(FilterSet):
         return queryset.filter(part.get_used_in_bom_item_filter())
 
 
-class BomMixin:
+class BomMixin(SerializerContextMixin):
     """Mixin class for BomItem API endpoints."""
 
     serializer_class = part_serializers.BomItemSerializer
     queryset = BomItem.objects.all()
-
-    def get_serializer(self, *args, **kwargs):
-        """Return the serializer instance for this API endpoint.
-
-        If requested, extra detail fields are annotated to the queryset:
-        - part_detail
-        - sub_part_detail
-        """
-        # Do we wish to include extra detail?
-        try:
-            params = self.request.query_params
-
-            kwargs['can_build'] = str2bool(params.get('can_build', True))
-            kwargs['part_detail'] = str2bool(params.get('part_detail', False))
-            kwargs['sub_part_detail'] = str2bool(params.get('sub_part_detail', False))
-
-        except AttributeError:
-            pass
-
-        # Ensure the request context is passed through!
-        kwargs['context'] = self.get_serializer_context()
-
-        return super().get_serializer(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
         """Return the queryset object for this endpoint."""

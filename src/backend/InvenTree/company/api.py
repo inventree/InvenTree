@@ -12,8 +12,12 @@ from data_exporter.mixins import DataExportViewMixin
 from InvenTree.api import ListCreateDestroyAPIView, MetadataView
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import SEARCH_ORDER_FILTER, SEARCH_ORDER_FILTER_ALIAS
-from InvenTree.helpers import str2bool
-from InvenTree.mixins import ListCreateAPI, OutputOptionsMixin, RetrieveUpdateDestroyAPI
+from InvenTree.mixins import (
+    ListCreateAPI,
+    OutputOptionsMixin,
+    RetrieveUpdateDestroyAPI,
+    SerializerContextMixin,
+)
 
 from .models import (
     Address,
@@ -148,7 +152,9 @@ class ManufacturerPartFilter(FilterSet):
     )
 
 
-class ManufacturerPartList(DataExportViewMixin, ListCreateDestroyAPIView):
+class ManufacturerPartList(
+    SerializerContextMixin, DataExportViewMixin, ListCreateDestroyAPIView
+):
     """API endpoint for list view of ManufacturerPart object.
 
     - GET: Return list of ManufacturerPart objects
@@ -161,24 +167,6 @@ class ManufacturerPartList(DataExportViewMixin, ListCreateDestroyAPIView):
 
     serializer_class = ManufacturerPartSerializer
     filterset_class = ManufacturerPartFilter
-
-    def get_serializer(self, *args, **kwargs):
-        """Return serializer instance for this endpoint."""
-        # Do we wish to include extra detail?
-        try:
-            params = self.request.query_params
-
-            kwargs['part_detail'] = str2bool(params.get('part_detail', None))
-            kwargs['manufacturer_detail'] = str2bool(
-                params.get('manufacturer_detail', None)
-            )
-            kwargs['pretty'] = str2bool(params.get('pretty', None))
-        except AttributeError:
-            pass
-
-        kwargs['context'] = self.get_serializer_context()
-
-        return super().get_serializer(*args, **kwargs)
 
     filter_backends = SEARCH_ORDER_FILTER
 
@@ -224,33 +212,13 @@ class ManufacturerPartParameterFilter(FilterSet):
     )
 
 
-class ManufacturerPartParameterList(ListCreateDestroyAPIView):
+class ManufacturerPartParameterList(SerializerContextMixin, ListCreateDestroyAPIView):
     """API endpoint for list view of ManufacturerPartParamater model."""
 
     queryset = ManufacturerPartParameter.objects.all()
     serializer_class = ManufacturerPartParameterSerializer
     filterset_class = ManufacturerPartParameterFilter
-
-    def get_serializer(self, *args, **kwargs):
-        """Return serializer instance for this endpoint."""
-        # Do we wish to include any extra detail?
-        try:
-            params = self.request.query_params
-
-            optional_fields = ['manufacturer_part_detail']
-
-            for key in optional_fields:
-                kwargs[key] = str2bool(params.get(key, None))
-
-        except AttributeError:
-            pass
-
-        kwargs['context'] = self.get_serializer_context()
-
-        return super().get_serializer(*args, **kwargs)
-
     filter_backends = SEARCH_ORDER_FILTER
-
     search_fields = ['name', 'value', 'units']
 
 
@@ -454,7 +422,7 @@ class SupplierPriceBreakFilter(FilterSet):
     )
 
 
-class SupplierPriceBreakList(ListCreateAPI):
+class SupplierPriceBreakList(SerializerContextMixin, ListCreateAPI):
     """API endpoint for list view of SupplierPriceBreak object.
 
     - GET: Retrieve list of SupplierPriceBreak objects
@@ -471,21 +439,6 @@ class SupplierPriceBreakList(ListCreateAPI):
         queryset = SupplierPriceBreakSerializer.annotate_queryset(queryset)
 
         return queryset
-
-    def get_serializer(self, *args, **kwargs):
-        """Return serializer instance for this endpoint."""
-        try:
-            params = self.request.query_params
-
-            kwargs['part_detail'] = str2bool(params.get('part_detail', False))
-            kwargs['supplier_detail'] = str2bool(params.get('supplier_detail', False))
-
-        except AttributeError:
-            pass
-
-        kwargs['context'] = self.get_serializer_context()
-
-        return super().get_serializer(*args, **kwargs)
 
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
 

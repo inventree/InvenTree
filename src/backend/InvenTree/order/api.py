@@ -36,7 +36,13 @@ from InvenTree.filters import (
 )
 from InvenTree.helpers import str2bool
 from InvenTree.helpers_model import construct_absolute_url, get_base_url
-from InvenTree.mixins import CreateAPI, ListAPI, ListCreateAPI, RetrieveUpdateDestroyAPI
+from InvenTree.mixins import (
+    CreateAPI,
+    ListAPI,
+    ListCreateAPI,
+    RetrieveUpdateDestroyAPI,
+    SerializerContextMixin,
+)
 from order import models, serializers
 from order.status_codes import (
     PurchaseOrderStatus,
@@ -50,21 +56,8 @@ from part.models import Part
 from users.models import Owner
 
 
-class GeneralExtraLineList(DataExportViewMixin):
+class GeneralExtraLineList(SerializerContextMixin, DataExportViewMixin):
     """General template for ExtraLine API classes."""
-
-    def get_serializer(self, *args, **kwargs):
-        """Return the serializer instance for this endpoint."""
-        try:
-            params = self.request.query_params3
-
-            kwargs['order_detail'] = str2bool(params.get('order_detail', False))
-        except AttributeError:
-            pass
-
-        kwargs['context'] = self.get_serializer_context()
-
-        return super().get_serializer(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
         """Return the annotated queryset for this endpoint."""
@@ -345,25 +338,11 @@ class PurchaseOrderFilter(OrderFilter):
         return queryset.filter(lines__build_order=build).distinct()
 
 
-class PurchaseOrderMixin:
+class PurchaseOrderMixin(SerializerContextMixin):
     """Mixin class for PurchaseOrder endpoints."""
 
     queryset = models.PurchaseOrder.objects.all()
     serializer_class = serializers.PurchaseOrderSerializer
-
-    def get_serializer(self, *args, **kwargs):
-        """Return the serializer instance for this endpoint."""
-        try:
-            kwargs['supplier_detail'] = str2bool(
-                self.request.query_params.get('supplier_detail', False)
-            )
-        except AttributeError:
-            pass
-
-        # Ensure the request context is passed through
-        kwargs['context'] = self.get_serializer_context()
-
-        return super().get_serializer(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
         """Return the annotated queryset for this endpoint."""
@@ -605,7 +584,7 @@ class PurchaseOrderLineItemFilter(LineItemFilter):
         )
 
 
-class PurchaseOrderLineItemMixin:
+class PurchaseOrderLineItemMixin(SerializerContextMixin):
     """Mixin class for PurchaseOrderLineItem endpoints."""
 
     queryset = models.PurchaseOrderLineItem.objects.all()
@@ -620,22 +599,6 @@ class PurchaseOrderLineItemMixin:
         )
 
         return queryset
-
-    def get_serializer(self, *args, **kwargs):
-        """Return serializer instance for this endpoint."""
-        try:
-            kwargs['part_detail'] = str2bool(
-                self.request.query_params.get('part_detail', False)
-            )
-            kwargs['order_detail'] = str2bool(
-                self.request.query_params.get('order_detail', False)
-            )
-        except AttributeError:
-            pass
-
-        kwargs['context'] = self.get_serializer_context()
-
-        return super().get_serializer(*args, **kwargs)
 
     def perform_update(self, serializer):
         """Override the perform_update method to auto-update pricing if required."""
@@ -810,25 +773,11 @@ class SalesOrderFilter(OrderFilter):
     )
 
 
-class SalesOrderMixin:
+class SalesOrderMixin(SerializerContextMixin):
     """Mixin class for SalesOrder endpoints."""
 
     queryset = models.SalesOrder.objects.all()
     serializer_class = serializers.SalesOrderSerializer
-
-    def get_serializer(self, *args, **kwargs):
-        """Return serializer instance for this endpoint."""
-        try:
-            kwargs['customer_detail'] = str2bool(
-                self.request.query_params.get('customer_detail', False)
-            )
-        except AttributeError:
-            pass
-
-        # Ensure the context is passed through to the serializer
-        kwargs['context'] = self.get_serializer_context()
-
-        return super().get_serializer(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
         """Return annotated queryset for this endpoint."""
@@ -994,27 +943,11 @@ class SalesOrderLineItemFilter(LineItemFilter):
         return queryset.exclude(order__status__in=SalesOrderStatusGroups.OPEN)
 
 
-class SalesOrderLineItemMixin:
+class SalesOrderLineItemMixin(SerializerContextMixin):
     """Mixin class for SalesOrderLineItem endpoints."""
 
     queryset = models.SalesOrderLineItem.objects.all()
     serializer_class = serializers.SalesOrderLineItemSerializer
-
-    def get_serializer(self, *args, **kwargs):
-        """Return serializer for this endpoint with extra data as requested."""
-        try:
-            params = self.request.query_params
-
-            kwargs['part_detail'] = str2bool(params.get('part_detail', False))
-            kwargs['order_detail'] = str2bool(params.get('order_detail', False))
-            kwargs['customer_detail'] = str2bool(params.get('customer_detail', False))
-
-        except AttributeError:
-            pass
-
-        kwargs['context'] = self.get_serializer_context()
-
-        return super().get_serializer(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
         """Return annotated queryset for this endpoint."""
@@ -1462,25 +1395,11 @@ class ReturnOrderFilter(OrderFilter):
     )
 
 
-class ReturnOrderMixin:
+class ReturnOrderMixin(SerializerContextMixin):
     """Mixin class for ReturnOrder endpoints."""
 
     queryset = models.ReturnOrder.objects.all()
     serializer_class = serializers.ReturnOrderSerializer
-
-    def get_serializer(self, *args, **kwargs):
-        """Return serializer instance for this endpoint."""
-        try:
-            kwargs['customer_detail'] = str2bool(
-                self.request.query_params.get('customer_detail', False)
-            )
-        except AttributeError:
-            pass
-
-        # Ensure the context is passed through to the serializer
-        kwargs['context'] = self.get_serializer_context()
-
-        return super().get_serializer(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
         """Return annotated queryset for this endpoint."""
@@ -1612,26 +1531,11 @@ class ReturnOrderLineItemFilter(LineItemFilter):
         return queryset.filter(received_date=None)
 
 
-class ReturnOrderLineItemMixin:
+class ReturnOrderLineItemMixin(SerializerContextMixin):
     """Mixin class for ReturnOrderLineItem endpoints."""
 
     queryset = models.ReturnOrderLineItem.objects.all()
     serializer_class = serializers.ReturnOrderLineItemSerializer
-
-    def get_serializer(self, *args, **kwargs):
-        """Return serializer for this endpoint with extra data as requested."""
-        try:
-            params = self.request.query_params
-
-            kwargs['order_detail'] = str2bool(params.get('order_detail', False))
-            kwargs['item_detail'] = str2bool(params.get('item_detail', True))
-            kwargs['part_detail'] = str2bool(params.get('part_detail', False))
-        except AttributeError:
-            pass
-
-        kwargs['context'] = self.get_serializer_context()
-
-        return super().get_serializer(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
         """Return annotated queryset for this endpoint."""

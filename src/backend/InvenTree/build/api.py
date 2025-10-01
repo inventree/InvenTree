@@ -33,7 +33,12 @@ from InvenTree.filters import (
     NumberOrNullFilter,
 )
 from InvenTree.helpers import str2bool
-from InvenTree.mixins import CreateAPI, ListCreateAPI, RetrieveUpdateDestroyAPI
+from InvenTree.mixins import (
+    CreateAPI,
+    ListCreateAPI,
+    RetrieveUpdateDestroyAPI,
+    SerializerContextMixin,
+)
 from users.models import Owner
 
 
@@ -521,28 +526,11 @@ class BuildLineFilter(FilterSet):
         return queryset.exclude(flt)
 
 
-class BuildLineMixin:
+class BuildLineMixin(SerializerContextMixin):
     """Mixin class for BuildLine API endpoints."""
 
     queryset = BuildLine.objects.all()
     serializer_class = build.serializers.BuildLineSerializer
-
-    def get_serializer(self, *args, **kwargs):
-        """Return the serializer instance for this endpoint."""
-        kwargs['context'] = self.get_serializer_context()
-
-        try:
-            params = self.request.query_params
-
-            kwargs['bom_item_detail'] = str2bool(params.get('bom_item_detail', True))
-            kwargs['assembly_detail'] = str2bool(params.get('assembly_detail', True))
-            kwargs['part_detail'] = str2bool(params.get('part_detail', True))
-            kwargs['build_detail'] = str2bool(params.get('build_detail', False))
-            kwargs['allocations'] = str2bool(params.get('allocations', True))
-        except AttributeError:
-            pass
-
-        return super().get_serializer(*args, **kwargs)
 
     def get_source_build(self) -> Build:
         """Return the source Build object for the BuildLine queryset.

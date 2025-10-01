@@ -50,6 +50,7 @@ from InvenTree.mixins import (
     ListCreateAPI,
     RetrieveAPI,
     RetrieveUpdateDestroyAPI,
+    SerializerContextMixin,
 )
 from order.models import PurchaseOrder, ReturnOrder, SalesOrder
 from order.serializers import (
@@ -371,23 +372,11 @@ class StockLocationFilter(FilterSet):
         return queryset
 
 
-class StockLocationMixin:
+class StockLocationMixin(SerializerContextMixin):
     """Mixin class for StockLocation API endpoints."""
 
     queryset = StockLocation.objects.all()
     serializer_class = StockSerializers.LocationSerializer
-
-    def get_serializer(self, *args, **kwargs):
-        """Set context before returning serializer."""
-        try:
-            params = self.request.query_params
-            kwargs['path_detail'] = str2bool(params.get('path_detail', False))
-        except AttributeError:  # pragma: no cover
-            pass
-
-        kwargs['context'] = self.get_serializer_context()
-
-        return super().get_serializer(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
         """Return annotated queryset for the StockLocationList endpoint."""
@@ -996,7 +985,7 @@ class StockFilter(FilterSet):
         return queryset.filter(location__in=children)
 
 
-class StockApiMixin:
+class StockApiMixin(SerializerContextMixin):
     """Mixin class for StockItem API endpoints."""
 
     serializer_class = StockSerializers.StockItemSerializer
@@ -1015,35 +1004,6 @@ class StockApiMixin:
         ctx['user'] = getattr(self.request, 'user', None)
 
         return ctx
-
-    def get_serializer(self, *args, **kwargs):
-        """Set context before returning serializer.
-
-        Extra detail may be provided to the serializer via query parameters:
-
-        - part_detail: Include detail about the StockItem's part
-        - location_detail: Include detail about the StockItem's location
-        - supplier_part_detail: Include detail about the StockItem's supplier_part
-        - tests: Include detail about the StockItem's test results
-        """
-        try:
-            params = self.request.query_params
-
-            kwargs['part_detail'] = str2bool(params.get('part_detail', True))
-
-            for key in [
-                'path_detail',
-                'location_detail',
-                'supplier_part_detail',
-                'tests',
-            ]:
-                kwargs[key] = str2bool(params.get(key, False))
-        except AttributeError:  # pragma: no cover
-            pass
-
-        kwargs['context'] = self.get_serializer_context()
-
-        return super().get_serializer(*args, **kwargs)
 
 
 class StockList(DataExportViewMixin, StockApiMixin, ListCreateDestroyAPIView):
@@ -1307,7 +1267,7 @@ class StockItemSerialNumbers(RetrieveAPI):
     serializer_class = StockSerializers.StockItemSerialNumbersSerializer
 
 
-class StockItemTestResultMixin:
+class StockItemTestResultMixin(SerializerContextMixin):
     """Mixin class for the StockItemTestResult API endpoints."""
 
     queryset = StockItemTestResult.objects.all()
@@ -1318,22 +1278,6 @@ class StockItemTestResultMixin:
         ctx = super().get_serializer_context()
         ctx['request'] = self.request
         return ctx
-
-    def get_serializer(self, *args, **kwargs):
-        """Set context before returning serializer."""
-        try:
-            kwargs['user_detail'] = str2bool(
-                self.request.query_params.get('user_detail', False)
-            )
-            kwargs['template_detail'] = str2bool(
-                self.request.query_params.get('template_detail', False)
-            )
-        except Exception:  # pragma: no cover
-            pass
-
-        kwargs['context'] = self.get_serializer_context()
-
-        return super().get_serializer(*args, **kwargs)
 
 
 class StockItemTestResultDetail(StockItemTestResultMixin, RetrieveUpdateDestroyAPI):
@@ -1446,7 +1390,7 @@ class StockTrackingDetail(RetrieveAPI):
     serializer_class = StockSerializers.StockTrackingSerializer
 
 
-class StockTrackingList(DataExportViewMixin, ListAPI):
+class StockTrackingList(SerializerContextMixin, DataExportViewMixin, ListAPI):
     """API endpoint for list view of StockItemTracking objects.
 
     StockItemTracking objects are read-only
@@ -1457,26 +1401,6 @@ class StockTrackingList(DataExportViewMixin, ListAPI):
 
     queryset = StockItemTracking.objects.all()
     serializer_class = StockSerializers.StockTrackingSerializer
-
-    def get_serializer(self, *args, **kwargs):
-        """Set context before returning serializer."""
-        try:
-            kwargs['item_detail'] = str2bool(
-                self.request.query_params.get('item_detail', False)
-            )
-        except Exception:  # pragma: no cover
-            pass
-
-        try:
-            kwargs['user_detail'] = str2bool(
-                self.request.query_params.get('user_detail', False)
-            )
-        except Exception:  # pragma: no cover
-            pass
-
-        kwargs['context'] = self.get_serializer_context()
-
-        return super().get_serializer(*args, **kwargs)
 
     def get_delta_model_map(self) -> dict:
         """Return a mapping of delta models to their respective models and serializers.
