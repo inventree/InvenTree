@@ -130,7 +130,7 @@ export function RenderStockItem(
           zIndex={10000}
           icon='sitemap'
           title={t`Location`}
-          extra={[<Text>{location.pathstring}</Text>]}
+          extra={[<Text size='xs'>{location.pathstring}</Text>]}
         />
       )}
     </Group>
