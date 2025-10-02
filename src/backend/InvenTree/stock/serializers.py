@@ -285,6 +285,10 @@ class StockItemTestResultSerializer(
                 part__tree_id=stock_item.part.tree_id, part__in=ancestors, key=test_key
             ).first():
                 data['template'] = template
+            else:
+                raise ValidationError({
+                    'test': _('No matching test found for this part')
+                })
 
         if not template:
             raise ValidationError(_('Template ID or test name must be provided'))
