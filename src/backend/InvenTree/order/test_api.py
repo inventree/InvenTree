@@ -1772,6 +1772,14 @@ class SalesOrderTest(OrderTest):
         self.assertIsNotNone(so.shipment_date)
         self.assertIsNotNone(so.shipped_by)
 
+    def test_output_options(self):
+        """Test the output options for the SalesOrder detail endpoint."""
+        url = reverse('api-so-detail', kwargs={'pk': 1})
+        response = self.get(url, {'customer_detail': True}, expected_code=200)
+        self.assertIn('customer_detail', response.data)
+        response = self.get(url, {'customer_detail': False}, expected_code=200)
+        self.assertNotIn('customer_detail', response.data)
+
 
 class SalesOrderLineItemTest(OrderTest):
     """Tests for the SalesOrderLineItem API."""
@@ -2668,6 +2676,17 @@ class ReturnOrderTests(InvenTreeAPITestCase):
         self.process_csv(
             data, required_rows=0, required_cols=['Order', 'Reference', 'Target Date']
         )
+
+    def test_output_options(self):
+        """Test the various output options for the ReturnOrder detail endpoint."""
+        url = reverse('api-return-order-detail', kwargs={'pk': 1})
+
+        options = ['customer_detail']
+        for option in options:
+            response = self.get(url, {f'{option}': True}, expected_code=200)
+            self.assertIn(option, response.data)
+            response = self.get(url, {f'{option}': False}, expected_code=200)
+            self.assertNotIn(option, response.data)
 
 
 class ReturnOrderLineItemTests(InvenTreeAPITestCase):
