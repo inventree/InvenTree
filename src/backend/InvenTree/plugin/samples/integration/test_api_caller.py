@@ -2,15 +2,19 @@
 
 from django.test import TestCase
 
+import requests_mock
+
 from plugin import registry
 
 
 class SampleApiCallerPluginTests(TestCase):
     """Tests for SampleApiCallerPluginTests."""
 
-    def test_return(self):
+    @requests_mock.Mocker()
+    def test_return(self, m):
         """Check if the external api call works."""
-        import time
+        # Set up mock responses
+        m.get('https://api.example.com/api/users/2', json={'data': 'sample'})
 
         # The plugin should be defined
         self.assertIn('sample-api-caller', registry.plugins)
@@ -18,15 +22,7 @@ class SampleApiCallerPluginTests(TestCase):
         self.assertTrue(plg)
 
         # do an api call
-        # Note: rate limits may apply in CI
-        result = False
-
-        for _i in range(5):
-            result = plg.get_external_url()
-            if result:
-                break
-            else:
-                time.sleep(1)
+        result = plg.get_external_url()
 
         self.assertTrue(result)
         self.assertIn('data', result)
