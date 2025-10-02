@@ -321,6 +321,13 @@ class InvenTreeConfig(AppConfig):
             return
 
         if not InvenTree.tasks.check_for_migrations():
-            logger.error('INVE-W8: Database Migrations required')
-            sys.exit(1)
+            # Detect if this an empty database - if so, start with a fresh migration
+            if settings.DOCKER and InvenTree.tasks.get_migriation_count() == 0:
+                logger.warning(
+                    'INVE-W8: Empty database detected - trying to run migrations'
+                )
+                InvenTree.tasks.check_for_migrations(force_run=True)
+            else:
+                logger.error('INVE-W8: Database Migrations required')
+                sys.exit(1)
         MIGRATIONS_CHECK_DONE = True

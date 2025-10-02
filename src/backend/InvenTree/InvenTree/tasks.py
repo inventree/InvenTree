@@ -661,6 +661,12 @@ def get_migration_plan():
     return plan
 
 
+def get_migriation_count():
+    """Returns the number of all detected migrations."""
+    executor = MigrationExecutor(connections[DEFAULT_DB_ALIAS])
+    return executor.loader.applied_migrations
+
+
 @tracer.start_as_current_span('check_for_migrations')
 @scheduled_task(ScheduledTask.DAILY)
 def check_for_migrations(force: bool = False, reload_registry: bool = True) -> bool:
