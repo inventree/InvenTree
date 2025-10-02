@@ -26,7 +26,7 @@ import { AddItemButton } from '@lib/components/AddItemButton';
 import { YesNoButton } from '@lib/components/YesNoButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
-import { RowDeleteAction, RowEditAction } from '@lib/index';
+import { RowDeleteAction, RowEditAction, formatDecimal } from '@lib/index';
 import type { RowAction, TableColumn } from '@lib/types/Tables';
 import type { InvenTreeTableProps } from '@lib/types/Tables';
 import { Trans } from '@lingui/react/macro';
@@ -76,7 +76,7 @@ interface MachineI {
     key: string;
     value: string;
     group: string;
-    type: 'str' | 'progress' | 'bool';
+    type: 'str' | 'progress' | 'bool' | 'int' | 'float';
     max_progress: number;
   }[];
 }
@@ -447,12 +447,14 @@ function MachineDrawer({
                       >
                         <Table.Tbody>
                           {properties.map((prop) => (
-                            <Table.Tr>
+                            <Table.Tr key={prop.key}>
                               <Table.Th w={250}>{prop.key}</Table.Th>
                               <Table.Td>
                                 {prop.type === 'bool' ? (
                                   <YesNoButton
-                                    value={prop.value || prop.value === 'true'}
+                                    value={
+                                      `${prop.value}`.toLowerCase() === 'true'
+                                    }
                                   />
                                 ) : prop.type === 'progress' ? (
                                   <Group>
@@ -468,8 +470,17 @@ function MachineDrawer({
                                       {prop.value} / {prop.max_progress}
                                     </Text>
                                   </Group>
+                                ) : prop.type === 'int' ? (
+                                  <Text size='sm'>{prop.value}</Text>
+                                ) : prop.type === 'float' ? (
+                                  <Text size='sm'>
+                                    {formatDecimal(
+                                      Number.parseFloat(prop.value),
+                                      { digits: 4 }
+                                    )}
+                                  </Text>
                                 ) : (
-                                  <Text>{prop.value}</Text>
+                                  <Text size='sm'>{prop.value}</Text>
                                 )}
                               </Table.Td>
                             </Table.Tr>

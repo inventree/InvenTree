@@ -17,6 +17,7 @@ class MachinePropertySerializer(serializers.Serializer):
         """Meta for serializer."""
 
         fields = ['key', 'value', 'group', 'type', 'max_progress']
+        read_only_fields = fields
 
     key = serializers.CharField()
     value = serializers.CharField()
@@ -57,8 +58,11 @@ class MachineConfigSerializer(serializers.ModelSerializer):
     machine_errors = serializers.SerializerMethodField('get_errors')
     is_driver_available = serializers.SerializerMethodField('get_is_driver_available')
     restart_required = serializers.SerializerMethodField('get_restart_required')
-    properties = MachinePropertySerializer(
-        many=True, source='machine.properties', read_only=True, default=[]
+    properties = serializers.ListField(
+        child=MachinePropertySerializer(),
+        source='machine.properties',
+        read_only=True,
+        default=[],
     )
 
     def get_initialized(self, obj: MachineConfig) -> bool:

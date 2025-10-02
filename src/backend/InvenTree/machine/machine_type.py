@@ -55,14 +55,14 @@ class MachineProperty(TypedDict, total=False):
         key: Key of the property (required)
         value: Value of the property (required)
         group: Grouping of the property
-        type: Type of the property (required, one of 'str', 'bool', 'progress')
+        type: Type of the property (one of 'str', 'bool', 'progress', 'int', 'float') default = 'str'
         max_progress: Maximum value for progress type (required if type is 'progress')
     """
 
     key: str
-    value: Union[str, bool, int]
+    value: Union[str, bool, int, float]
     group: str
-    type: Literal['str', 'bool', 'progress']
+    type: Literal['str', 'bool', 'progress', 'int', 'float']
     max_progress: Union[int, None]
 
 
