@@ -1393,7 +1393,7 @@ class BuildLineTests(BuildAPITest):
                 url,
                 {param: 'true'},
                 expected_code=200,
-                msg=f'Testing {param}=true returns 200',
+                msg=f'Testing {param}=true returns anything but 200',
             )
             self.assertIn(
                 field,
@@ -1406,7 +1406,7 @@ class BuildLineTests(BuildAPITest):
                 url,
                 {param: 'false'},
                 expected_code=200,
-                msg=f'Testing {param}=false returns 200',
+                msg=f'Testing {param}=false returns anything but 200',
             )
             self.assertNotIn(
                 field,
