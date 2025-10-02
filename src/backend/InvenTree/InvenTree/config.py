@@ -2,7 +2,6 @@
 
 import datetime
 import json
-import logging
 import os
 import random
 import shutil
@@ -10,7 +9,9 @@ import string
 from pathlib import Path
 from typing import Optional, Union
 
-logger = logging.getLogger('inventree')
+import structlog
+
+logger = structlog.getLogger('inventree')
 CONFIG_DATA = None
 CONFIG_LOOKUPS = {}
 
@@ -369,6 +370,7 @@ def get_plugin_file() -> Path:
         logger.warning(
             'Plugin configuration file does not exist - creating default file'
         )
+
         logger.info("Creating plugin file at '%s'", plugin_file)
         ensure_dir(plugin_file.parent)
 
