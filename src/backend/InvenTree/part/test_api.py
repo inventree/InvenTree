@@ -947,18 +947,40 @@ class PartAPITest(PartAPITestBase):
         # Get initial count of all parts
         response = self.get(url, {}, expected_code=200)
         initial_count = len(response.data)
+        all_part_ids = {part['pk'] for part in response.data}
 
-        # Test excluding a single part ID
+        #  Exclude a single valid part ID
         response = self.get(url, {'exclude_id': '1'}, expected_code=200)
         self.assertEqual(len(response.data), initial_count - 1)
-
-        # Verify that part with ID 1 is not in the results
-        part_ids = [part['pk'] for part in response.data]
+        part_ids = {part['pk'] for part in response.data}
         self.assertNotIn(1, part_ids)
 
-        # Test excluding multiple part IDs (comma-separated)
+        # Exclude multiple valid part IDs (comma-separated)
         response = self.get(url, {'exclude_id': '1,2,3'}, expected_code=200)
         self.assertEqual(len(response.data), initial_count - 3)
+        part_ids = {part['pk'] for part in response.data}
+        self.assertNotIn(1, part_ids)
+        self.assertNotIn(2, part_ids)
+        self.assertNotIn(3, part_ids)
+
+        #  Exclude non-existent part ID (should not affect results)
+        non_existent_id = max(all_part_ids) + 1000
+        response = self.get(
+            url, {'exclude_id': str(non_existent_id)}, expected_code=200
+        )
+        self.assertEqual(len(response.data), initial_count)
+
+        # Exclude with empty string (should return all parts)
+        response = self.get(url, {'exclude_id': ''}, expected_code=200)
+        self.assertEqual(len(response.data), initial_count)
+
+        # Invalid input - non-numeric value (should raise ValidationError)
+        response = self.get(url, {'exclude_id': 'abc'}, expected_code=400)
+
+        # Zero as ID
+        response = self.get(url, {'exclude_id': '0'}, expected_code=200)
+        # Assuming 0 is not a valid part ID in the system
+        self.assertEqual(len(response.data), initial_count)
 
     def test_filter_by_bom_valid(self):
         """Test the 'bom_valid' Part API filter."""
