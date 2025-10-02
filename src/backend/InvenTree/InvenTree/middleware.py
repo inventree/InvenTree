@@ -234,9 +234,17 @@ class InvenTreeHostSettingsMiddleware(MiddlewareMixin):
         if path in urls or any(path.startswith(p) for p in paths_ignore):
             return None
 
-        # Ensure that the settings are set correctly with the current request
+        # treat the accessed scheme and host
         accessed_scheme = request._current_scheme_host
-        if accessed_scheme and not accessed_scheme.startswith(settings.SITE_URL):
+        referer = urlsplit(accessed_scheme)
+
+        # Ensure that the settings are set correctly with the current request
+        matches = (
+            (accessed_scheme and not accessed_scheme.startswith(settings.SITE_URL))
+            if not settings.SITE_LAX_PROTOCOL_CHECK
+            else not is_same_domain(referer.netloc, urlsplit(settings.SITE_URL).netloc)
+        )
+        if matches:
             if (
                 isinstance(settings.CSRF_TRUSTED_ORIGINS, list)
                 and len(settings.CSRF_TRUSTED_ORIGINS) > 1
@@ -251,7 +259,6 @@ class InvenTreeHostSettingsMiddleware(MiddlewareMixin):
                 )
 
         # Check trusted origins
-        referer = urlsplit(accessed_scheme)
         if not any(
             is_same_domain(referer.netloc, host)
             for host in [
