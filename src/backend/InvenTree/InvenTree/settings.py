@@ -1064,6 +1064,9 @@ DATE_INPUT_FORMATS = ['%Y-%m-%d']
 
 # Site URL can be specified statically, or via a run-time setting
 SITE_URL = get_setting('INVENTREE_SITE_URL', 'site_url', None)
+SITE_LAX_PROTOCOL_CHECK = get_boolean_setting(
+    'INVENTREE_SITE_LAX_PROTOCOL', 'site_lax_protocol', True
+)
 
 if SITE_URL:
     SITE_URL = str(SITE_URL).strip().rstrip('/')

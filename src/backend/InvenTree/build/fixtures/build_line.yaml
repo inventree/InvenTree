@@ -1,0 +1,18 @@
+# Construct buildline objects
+
+- model: build.buildline
+  pk: 2
+  fields:
+    build: 4
+    bom_item: 5
+    quantity: 20
+    consumed: 0
+
+
+- model: build.buildline
+  pk: 3
+  fields:
+    build: 5
+    bom_item: 3
+    quantity: 10
+    consumed: 5
