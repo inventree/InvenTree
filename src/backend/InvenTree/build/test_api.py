@@ -131,7 +131,7 @@ class TestBuildAPI(InvenTreeAPITestCase):
 class BuildAPITest(InvenTreeAPITestCase):
     """Series of tests for the Build DRF API."""
 
-    fixtures = ['category', 'part', 'location', 'bom', 'build', 'build_line', 'stock']
+    fixtures = ['category', 'part', 'location', 'build', 'build_line', 'stock', 'bom']
 
     # Required roles to access Build API endpoints
     roles = ['build.change', 'build.add']
@@ -1474,7 +1474,7 @@ class BuildLineTests(BuildAPITest):
         response = self.get(
             url, {'build': build.pk, 'available': True}, max_query_time=30
         )
-
+        #
         # We expect 2 lines to have "available" stock
         self.assertEqual(len(response.data), 2)
 
