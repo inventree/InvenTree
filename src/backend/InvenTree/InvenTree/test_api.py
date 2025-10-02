@@ -567,7 +567,7 @@ class GeneralApiTests(InvenTreeAPITestCase):
 
             self.assertIn('License file not found at', str(log.output))
 
-        with TemporaryDirectory() as tmp:
+        with TemporaryDirectory() as tmp:  # type: ignore[no-matching-overload]
             sample_file = Path(tmp, 'temp.txt')
             sample_file.write_text('abc')
 
@@ -605,9 +605,7 @@ class GeneralApiTests(InvenTreeAPITestCase):
         response = self.get(url, max_query_count=20)
         data = response.json()
         self.assertEqual(data['database'], None)
-
-        # No active plugin info for anon user
-        self.assertIsNone(data.get('active_plugins'))
+        self.assertIsNotNone(data.get('active_plugins'))
 
         # Staff
         response = self.get(

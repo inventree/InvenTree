@@ -6,6 +6,7 @@ import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import {
   Accordion,
+  ActionIcon,
   Alert,
   Badge,
   Button,
@@ -28,15 +29,17 @@ import {
   IconAlertCircle,
   IconAt,
   IconExclamationCircle,
+  IconRefresh,
   IconX
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import { api } from '../../../../App';
 import { StylishText } from '../../../../components/items/StylishText';
 import { ProviderLogin, authApi } from '../../../../functions/auth';
 import { useServerApiState } from '../../../../states/ServerApiState';
+import { useUserState } from '../../../../states/UserState';
 import { ApiTokenTable } from '../../../../tables/settings/ApiTokenTable';
 import { QrRegistrationForm } from './QrRegistrationForm';
 import { useReauth } from './useConfirm';
@@ -46,9 +49,11 @@ export function SecurityContent() {
     useShallow((state) => [state.auth_config, state.sso_enabled])
   );
 
+  const user = useUserState();
+
   return (
     <Stack>
-      <Accordion multiple defaultValue={['email', 'sso', 'mfa', 'token']}>
+      <Accordion multiple defaultValue={['email']}>
         <Accordion.Item value='email'>
           <Accordion.Control>
             <StylishText size='lg'>{t`Email Addresses`}</StylishText>
@@ -91,7 +96,60 @@ export function SecurityContent() {
             <ApiTokenTable only_myself />
           </Accordion.Panel>
         </Accordion.Item>
+        {user.isSuperuser() && (
+          <Accordion.Item value='session'>
+            <Accordion.Control>
+              <StylishText size='lg'>{t`Session Information`}</StylishText>
+            </Accordion.Control>
+            <Accordion.Panel>
+              <AuthContextSection />
+            </Accordion.Panel>
+          </Accordion.Item>
+        )}
       </Accordion>
+    </Stack>
+  );
+}
+
+function AuthContextSection() {
+  const [auth_context, setAuthContext] = useServerApiState(
+    useShallow((state) => [state.auth_context, state.setAuthContext])
+  );
+
+  const fetchAuthContext = useCallback(() => {
+    authApi(apiUrl(ApiEndpoints.auth_session)).then((resp) => {
+      setAuthContext(resp.data.data);
+    });
+  }, [setAuthContext]);
+
+  return (
+    <Stack gap='xs'>
+      <Group>
+        <ActionIcon
+          onClick={fetchAuthContext}
+          variant='transparent'
+          aria-label='refresh-auth-context'
+        >
+          <IconRefresh />
+        </ActionIcon>
+      </Group>
+
+      <Table>
+        <Table.Thead>
+          <Table.Tr>
+            <Table.Th>{t`Timestamp`}</Table.Th>
+            <Table.Th>{t`Method`}</Table.Th>
+          </Table.Tr>
+        </Table.Thead>
+        <Table.Tbody>
+          {auth_context?.methods?.map((method: any, index: number) => (
+            <Table.Tr key={`auth-method-${index}`}>
+              <Table.Td>{parseDate(method.at)}</Table.Td>
+              <Table.Td>{method.method}</Table.Td>
+            </Table.Tr>
+          ))}
+        </Table.Tbody>
+      </Table>
     </Stack>
   );
 }
@@ -404,9 +462,6 @@ function MfaSection() {
       getReauthText
     );
   };
-
-  const parseDate = (date: number) =>
-    date == null ? 'Never' : new Date(date * 1000).toLocaleString();
 
   const rows = useMemo(() => {
     if (isLoading || !data) return null;
@@ -807,3 +862,6 @@ async function runActionWithFallback(
       });
   }
 }
+
+export const parseDate = (date: number) =>
+  date == null ? 'Never' : new Date(date * 1000).toLocaleString();

@@ -621,6 +621,13 @@ class StockItemListTest(StockAPITestCase):
         response = self.get_stock(location=7)
         self.assertEqual(len(response), 18)
 
+    def test_filter_by_exclude_tree(self):
+        """Filter StockItem by excluding a StockItem tree."""
+        response = self.get_stock(exclude_tree=1000)
+        for item in response:
+            self.assertNotEqual(item['pk'], 1000)
+            self.assertNotEqual(item['parent'], 1000)
+
     def test_filter_by_depleted(self):
         """Filter StockItem by depleted status."""
         response = self.get_stock(depleted=1)
@@ -786,10 +793,10 @@ class StockItemListTest(StockAPITestCase):
     def test_filter_has_child_items(self):
         """Filter StockItem by has_child_items."""
         response = self.get_stock(has_child_items=True)
-        self.assertEqual(len(response), 0)
+        self.assertEqual(len(response), 1)
 
         response = self.get_stock(has_child_items=False)
-        self.assertEqual(len(response), 29)  # TODO: adjust test dataset (belongs_to)
+        self.assertEqual(len(response), 28)  # TODO: adjust test dataset (belongs_to)
 
     def test_filter_sent_to_customer(self):
         """Filter StockItem by sent_to_customer."""
@@ -2072,6 +2079,7 @@ class StockTestResultTest(StockAPITestCase):
         url = reverse('api-stock-test-result-list')
 
         test_template = PartTestTemplate.objects.first()
+        assert test_template
 
         test_template.choices = 'AA, BB, CC'
         test_template.save()

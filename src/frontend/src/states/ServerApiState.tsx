@@ -14,7 +14,7 @@ interface ServerApiStateProps {
   fetchServerApiState: () => Promise<void>;
   auth_config?: AuthConfig;
   auth_context?: AuthContext;
-  setAuthContext: (auth_context: AuthContext) => void;
+  setAuthContext: (auth_context: AuthContext | undefined) => void;
   mfa_context?: any;
   setMfaContext: (mfa_context: any) => void;
   // Helper functions

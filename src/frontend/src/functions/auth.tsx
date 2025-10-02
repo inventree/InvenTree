@@ -170,6 +170,7 @@ export async function doBasicLogin(
  */
 export const doLogout = async (navigate: NavigateFunction) => {
   const { clearUserState, isLoggedIn } = useUserState.getState();
+  const { setAuthContext } = useServerApiState.getState();
 
   // Logout from the server session
   if (isLoggedIn() || !!getCsrfCookie()) {
@@ -184,6 +185,7 @@ export const doLogout = async (navigate: NavigateFunction) => {
 
   clearUserState();
   clearCsrfCookie();
+  setAuthContext(undefined);
   navigate('/login');
 };
 

@@ -114,7 +114,7 @@ def send_email(
     return True, None
 
 
-def get_email_for_user(user) -> str:
+def get_email_for_user(user) -> Optional[str]:
     """Find an email address for the specified user."""
     # First check if the user has an associated email address
     if user.email:

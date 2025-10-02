@@ -27,7 +27,7 @@ import {
   IconDownload,
   IconFilter
 } from '@tabler/icons-react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import type { CalendarState } from '../../hooks/UseCalendar';
 import { useLocalState } from '../../states/LocalState';
@@ -58,6 +58,9 @@ export default function Calendar({
   const [filtersVisible, setFiltersVisible] = useState<boolean>(false);
 
   const [locale] = useLocalState(useShallow((s) => [s.language]));
+
+  // Ensure underscore is replaced with dash
+  const calendarLocale = useMemo(() => locale.replace('_', '-'), [locale]);
 
   const selectMonth = useCallback(
     (date: DateValue) => {
@@ -186,7 +189,7 @@ export default function Calendar({
             plugins={[dayGridPlugin, interactionPlugin]}
             initialView='dayGridMonth'
             locales={allLocales}
-            locale={locale}
+            locale={calendarLocale}
             headerToolbar={false}
             footerToolbar={false}
             {...calendarProps}
