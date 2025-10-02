@@ -23,6 +23,7 @@ import type { TableColumn } from '@lib/types/Tables';
 import { useNavigate } from 'react-router-dom';
 import ImporterDrawer from '../../components/importer/ImporterDrawer';
 import { RenderInstance } from '../../components/render/Instance';
+import { formatCurrency } from '../../defaults/formatters';
 import { dataImporterSessionFields } from '../../forms/ImporterForms';
 import {
   usePurchaseOrderLineItemFields,
@@ -249,11 +250,15 @@ export function PurchaseOrderLineItemTable({
         accessor: 'purchase_price',
         title: t`Unit Price`
       }),
-      CurrencyColumn({
+      {
         accessor: 'total_price',
-        currency_accessor: 'purchase_price_currency',
-        title: t`Total Price`
-      }),
+        title: t`Total Price`,
+        render: (record: any) =>
+          formatCurrency(record.purchase_price, {
+            currency: record.purchase_price_currency,
+            multiplier: record.quantity
+          })
+      },
       TargetDateColumn({}),
       LocationColumn({
         accessor: 'destination_detail',
