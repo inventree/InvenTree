@@ -1421,17 +1421,19 @@ class BuildLineTests(BuildAPITest):
         for line in lines:
             StockItem.objects.create(part=line.bom_item.sub_part, quantity=60)
 
+        # TODO: 2025-10-02: Work out why this query takes so long with PostgreSQL (in CI)
         # Note: The max_query_time is bumped up here, as postgresql backend has some strange issues (only during testing)
         response = self.get(
-            url, {'build': build.pk, 'available': True}, max_query_time=15
+            url, {'build': build.pk, 'available': True}, max_query_time=30
         )
 
         # We expect 2 lines to have "available" stock
         self.assertEqual(len(response.data), 2)
 
+        # TODO: 2025-10-02: Work out why this query takes so long with PostgreSQL (in CI)
         # Note: The max_query_time is bumped up here, as postgresql backend has some strange issues (only during testing)
         response = self.get(
-            url, {'build': build.pk, 'available': False}, max_query_time=15
+            url, {'build': build.pk, 'available': False}, max_query_time=30
         )
 
         self.assertEqual(len(response.data), 1)
