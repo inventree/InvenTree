@@ -1406,8 +1406,13 @@ class StockItemTestResultFilter(FilterSet):
 
         try:
             item = StockItem.objects.get(pk=value)
-        except (ValueError, StockItem.DoesNotExist):
-            return queryset
+
+        except StockItem.DoesNotExist:
+            raise ValidationError({
+                'stock_item': _('Stock item with ID {id} does not exist').format(
+                    id=value
+                )
+            })
 
         items = [item]
 

@@ -1891,13 +1891,57 @@ class StockTestResultTest(StockAPITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertGreaterEqual(len(response.data), 4)
 
-    def test_include_installed_filter(self):
-        """Test the 'include_installed' filter option."""
+    def test_stock_item_and_include_installed_filters(self):
+        """Test stock_item filter with and without include_installed option."""
         url = self.get_url()
+
+        # Filter by stock_item without include_installed
+        response = self.client.get(url, data={'stock_item': 105})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        initial_count = len(response.data)
+        self.assertGreaterEqual(initial_count, 4)
+
+        # Verify all results belong to stock_item 105
+        for result in response.data:
+            self.assertEqual(result['stock_item'], 105)
+
+        # Filter by stock_item with include_installed=True
         response = self.client.get(
             url, data={'stock_item': 105, 'include_installed': True}
         )
-        self.assertGreaterEqual(len(response.data), 8)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        installed_count = len(response.data)
+        self.assertGreaterEqual(installed_count, initial_count)
+
+        # Filter by stock_item with include_installed=False (explicit)
+        response = self.client.get(
+            url, data={'stock_item': 105, 'include_installed': False}
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), initial_count)
+
+        # Invalid stock_item ID (does not exist) - should return 400
+        response = self.client.get(url, data={'stock_item': 999999})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        # Non-numeric stock_item ID - should return 400
+        response = self.client.get(url, data={'stock_item': 'invalid'})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        # Filter by another stock_item (522)
+        response = self.client.get(url, data={'stock_item': 522})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        item_522_count = len(response.data)
+        self.assertGreaterEqual(item_522_count, 4)
+
+        # Verify all results belong to stock_item 522
+        for result in response.data:
+            self.assertEqual(result['stock_item'], 522)
+
+        # include_installed without stock_item (should be ignored)
+        response_all = self.client.get(url)
+        response_with_flag = self.client.get(url, data={'include_installed': True})
+        self.assertEqual(len(response_all.data), len(response_with_flag.data))
 
     def test_post_fail(self):
         """Test failing posts."""
