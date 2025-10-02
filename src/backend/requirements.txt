@@ -391,9 +391,9 @@ defusedxml==0.7.1 \
     --hash=sha256:1bb3032db185915b62d7c6209c5a8792be6a32ab2fedacc84e01b52c51aa3e69 \
     --hash=sha256:a352e7e428770286cc899e2542b6cdaedb2b4953ff269a210103ec58f6198a61
     # via python3-openid
-django==4.2.24 \
-    --hash=sha256:40cd7d3f53bc6cd1902eadce23c337e97200888df41e4a73b42d682f23e71d80 \
-    --hash=sha256:a6527112c58821a0dfc5ab73013f0bdd906539790a17196658e36e66af43c350
+django==4.2.25 \
+    --hash=sha256:2391ab3d78191caaae2c963c19fd70b99e9751008da22a0adcc667c5a4f8d311 \
+    --hash=sha256:9584cf26b174b35620e53c2558b09d7eb180a655a3470474f513ff9acb494f8c
     # via
     #   -r src/backend/requirements.in
     #   django-allauth

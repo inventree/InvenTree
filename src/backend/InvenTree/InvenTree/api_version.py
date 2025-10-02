@@ -1,11 +1,15 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 393
+INVENTREE_API_VERSION = 394
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v394 -> 2025-09-01 : https://github.com/inventree/InvenTree/pull/10438
+    - Refactors 'bom_item_detail', 'assembly_detail', 'part_detail', 'build_detail' and 'allocations' param in user BuildLine API endpoint
+    - Refactors 'part_detail', 'location_detail', 'stock_detail' and 'build_detail' param in user BuildItem API endpoint
 
 v393 -> 2025-09-01 : https://github.com/inventree/InvenTree/pull/10437
     - Refactors 'user_detail', 'permission_detail', 'role_detail' param in user GroupList API endpoint
