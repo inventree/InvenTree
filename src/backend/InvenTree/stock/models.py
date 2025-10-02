@@ -667,7 +667,7 @@ class StockItem(
         return items
 
     @staticmethod
-    def convert_serial_to_int(serial: str) -> int:
+    def convert_serial_to_int(serial: str) -> Optional[int]:
         """Convert the provided serial number to an integer value.
 
         This function hooks into the plugin system to allow for custom serial number conversion.
@@ -1784,7 +1784,7 @@ class StockItem(
         self,
         entry_type: int,
         user: User,
-        deltas: dict | None = None,
+        deltas: Optional[dict] = None,
         notes: str = '',
         commit: bool = True,
         **kwargs,

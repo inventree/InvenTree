@@ -330,7 +330,7 @@ export function BomTable({
           if (on_order > 0) {
             extra.push(
               <Text key='on_order'>
-                {t`On order`}: {on_order}
+                {t`On order`}: {formatDecimal(on_order)}
               </Text>
             );
           }
@@ -338,7 +338,7 @@ export function BomTable({
           if (building > 0) {
             extra.push(
               <Text key='building'>
-                {t`Building`}: {building}
+                {t`Building`}: {formatDecimal(building)}
               </Text>
             );
           }

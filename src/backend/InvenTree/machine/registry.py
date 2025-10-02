@@ -423,7 +423,9 @@ class MachineRegistry(
 
         # If the plugin registry has changed, the machine registry hash will change
         plugin_registry.update_plugin_hash()
-        data.update(plugin_registry.registry_hash.encode())
+        current_hash = plugin_registry.registry_hash
+        if current_hash:
+            data.update(current_hash.encode())
 
         for pk, machine in self.machines.items():
             data.update(str(pk).encode())

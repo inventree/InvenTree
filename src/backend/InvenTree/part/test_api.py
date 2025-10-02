@@ -11,7 +11,7 @@ from django.db import connection
 from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 
-import PIL
+from PIL import Image
 from rest_framework.test import APIClient
 
 import build.models
@@ -65,7 +65,7 @@ class PartImageTestMixin:
 
         fn = get_testfolder_dir() / 'part_image_123abc.png'
 
-        img = PIL.Image.new('RGB', (128, 128), color='blue')
+        img = Image.new('RGB', (128, 128), color='blue')
         img.save(fn)
 
         with open(fn, 'rb') as img_file:
@@ -1770,7 +1770,7 @@ class PartDetailTests(PartImageTestMixin, PartAPITestBase):
         for fmt in ['jpg', 'j2k', 'png', 'bmp', 'webp']:
             fn = f'{test_path}.{fmt}'
 
-            img = PIL.Image.new('RGB', (128, 128), color='red')
+            img = Image.new('RGB', (128, 128), color='red')
             img.save(fn)
 
             with open(fn, 'rb') as dummy_image:
@@ -1820,7 +1820,7 @@ class PartDetailTests(PartImageTestMixin, PartAPITestBase):
 
         fn = get_testfolder_dir() / 'part_image_123abc.png'
 
-        img = PIL.Image.new('RGB', (128, 128), color='blue')
+        img = Image.new('RGB', (128, 128), color='blue')
         img.save(fn)
 
         # Upload the image to a part
@@ -2463,6 +2463,7 @@ class BomItemTest(InvenTreeAPITestCase):
 
         # Now, let's validate an item
         bom_item = BomItem.objects.first()
+        assert bom_item
 
         bom_item.validate_hash()
 
@@ -3109,6 +3110,7 @@ class PartTestTemplateTest(PartAPITestBase):
     def test_choices(self):
         """Test the 'choices' field for the PartTestTemplate model."""
         template = PartTestTemplate.objects.first()
+        assert template
 
         url = reverse('api-part-test-template-detail', kwargs={'pk': template.pk})
 

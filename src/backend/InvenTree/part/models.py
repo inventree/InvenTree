@@ -819,7 +819,7 @@ class Part(
         if not check_duplicates:
             return
 
-        from part.models import Part
+        # from part.models import Part
         from stock.models import StockItem
 
         if get_global_setting('SERIAL_NUMBER_GLOBALLY_UNIQUE', False):
@@ -850,7 +850,7 @@ class Part(
 
     def find_conflicting_serial_numbers(self, serials: list) -> list:
         """For a provided list of serials, return a list of those which are conflicting."""
-        from part.models import Part
+        # from part.models import Part
         from stock.models import StockItem
 
         conflicts = []

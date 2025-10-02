@@ -4,6 +4,7 @@ import base64
 import io
 import json
 from datetime import date, datetime, timedelta
+from typing import Optional
 
 from django.core.exceptions import ValidationError
 from django.db import connection
@@ -420,7 +421,9 @@ class PurchaseOrderTest(OrderTest):
 
         self.assertIn('Responsible user or group must be specified', str(response.data))
 
-        data['responsible'] = Owner.objects.first().pk
+        owner = Owner.objects.first()
+        assert owner
+        data['responsible'] = owner.pk
 
         response = self.post(url, data, expected_code=201)
 
@@ -1689,6 +1692,7 @@ class SalesOrderTest(OrderTest):
             shipment = models.SalesOrderShipment.objects.create(
                 order=so, reference='SHIP-12345'
             )
+        assert shipment
 
         # Allocate some stock
         item = StockItem.objects.create(part=part, quantity=100, location=None)
@@ -1825,10 +1829,13 @@ class SalesOrderLineItemTest(OrderTest):
         self.assignRole('sales_order.add')
 
         # Crete a new SalesOrder via the API
+        company = Company.objects.filter(is_customer=True).first()
+        assert company
+
         response = self.post(
             reverse('api-so-list'),
             {
-                'customer': Company.objects.filter(is_customer=True).first().pk,
+                'customer': company.pk,
                 'reference': 'SO-12345',
                 'description': 'Test Sales Order',
             },
@@ -1878,6 +1885,7 @@ class SalesOrderLineItemTest(OrderTest):
             p = Part.objects.get(pk=item)
             s = StockItem.objects.create(part=p, quantity=100)
             l = models.SalesOrderLineItem.objects.filter(order=order, part=p).first()
+            assert l
 
             # Allocate against the API
             self.post(
@@ -2099,12 +2107,14 @@ class SalesOrderAllocateTest(OrderTest):
             return line_item.part.is_template
 
         for line in filter(check_template, self.order.lines.all()):
-            stock_item = None
+            stock_item: Optional[StockItem] = None
 
             stock_item = None
 
             # Allocate a matching variant
-            parts = Part.objects.filter(salable=True).filter(variant_of=line.part.pk)
+            parts: list[Part] = Part.objects.filter(salable=True).filter(
+                variant_of=line.part.pk
+            )
             for part in parts:
                 stock_item = part.stock_items.last()
 
@@ -2117,6 +2127,9 @@ class SalesOrderAllocateTest(OrderTest):
 
                 if stock_item is not None:
                     break
+
+            if stock_item is None:
+                raise self.fail('No stock item found for part')  # pragma: no cover
 
             # Fully-allocate each line
             data['items'].append({
