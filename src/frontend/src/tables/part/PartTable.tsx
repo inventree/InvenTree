@@ -27,7 +27,6 @@ import {
   useCreateApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { useInstance } from '../../hooks/UseInstance';
 import { useTable } from '../../hooks/UseTable';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
@@ -355,24 +354,11 @@ export function PartListTable({
     modelType: ModelType.part
   });
 
-  const [selectedPart, setSelectedPart] = useState<number>(-1);
-
-  const {
-    instance: part,
-    refreshInstance,
-    instanceQuery
-  } = useInstance({
-    endpoint: ApiEndpoints.part_list,
-    pk: selectedPart,
-    params: {
-      path_detail: true
-    },
-    refetchOnMount: true
-  });
+  const [selectedPart, setSelectedPart] = useState<any>({});
 
   const editPart = useEditApiFormModal({
     url: ApiEndpoints.part_list,
-    pk: selectedPart,
+    pk: selectedPart.pk,
     title: t`Edit Part`,
     fields: usePartFields({ create: false }),
     onFormSuccess: table.refreshTable
@@ -386,15 +372,16 @@ export function PartListTable({
       duplicate: {
         children: {
           part: {
-            value: part.pk,
+            value: selectedPart.pk,
             hidden: true
           },
           copy_image: {
             value: true
           },
           copy_bom: {
-            value: part.assembly && globalSettings.isSet('PART_COPY_BOM'),
-            hidden: !part.assembly
+            value:
+              selectedPart.assembly && globalSettings.isSet('PART_COPY_BOM'),
+            hidden: !selectedPart.assembly
           },
           copy_notes: {
             value: true
@@ -403,20 +390,20 @@ export function PartListTable({
             value: globalSettings.isSet('PART_COPY_PARAMETERS')
           },
           copy_tests: {
-            value: part.testable,
-            hidden: !part.testable
+            value: selectedPart.testable,
+            hidden: !selectedPart.testable
           }
         }
       }
     };
-  }, [createPartFields, globalSettings, part]);
+  }, [createPartFields, globalSettings, selectedPart]);
 
   const duplicatePart = useCreateApiFormModal({
     url: ApiEndpoints.part_list,
     title: t`Add Part`,
     fields: duplicatePartFields,
     initialData: {
-      ...part,
+      ...selectedPart,
       active: true,
       locked: false
     },
@@ -446,14 +433,14 @@ export function PartListTable({
         RowEditAction({
           hidden: !can_edit,
           onClick: () => {
-            setSelectedPart(record.pk);
+            setSelectedPart(record);
             editPart.open();
           }
         }),
         RowDuplicateAction({
           hidden: !can_add,
           onClick: () => {
-            setSelectedPart(record.pk);
+            setSelectedPart(record);
             duplicatePart.open();
           }
         })
