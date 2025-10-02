@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Changed site URL check to allow protocol mismatches if `SITE_LAX_PROTOCOL_CHECK` is set to `True` (default) in [#10454](https://github.com/inventree/InvenTree/pull/10454)
+
 ### Removed
 
 
