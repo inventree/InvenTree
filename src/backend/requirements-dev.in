@@ -12,3 +12,4 @@ pdfminer.six                            # PDF validation
 ty                                      # type checking
 django-types                            # typing
 django-stubs                            # typing
+requests-mock                           # Mock requests for unit tests
