@@ -861,7 +861,7 @@ class PurchaseOrderLineItemTest(OrderTest):
         ).json()
         self.assertEqual(float(li5['purchase_price']), 1)
 
-    def test_output_optins(self):
+    def test_output_options(self):
         """Test PurchaseOrderLineItem output option endpoint."""
         url = reverse('api-po-line-detail', kwargs={'pk': 1})
 
