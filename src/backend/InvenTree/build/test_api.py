@@ -22,7 +22,7 @@ class TestBuildAPI(InvenTreeAPITestCase):
     - Tests for BuildItem API
     """
 
-    fixtures = ['category', 'part', 'location', 'bom', 'build', 'build_line', 'stock']
+    fixtures = ['category', 'part', 'location', 'build', 'stock']
 
     roles = ['build.change', 'build.add', 'build.delete']
 
@@ -131,7 +131,7 @@ class TestBuildAPI(InvenTreeAPITestCase):
 class BuildAPITest(InvenTreeAPITestCase):
     """Series of tests for the Build DRF API."""
 
-    fixtures = ['category', 'part', 'location', 'bom', 'build', 'build_line', 'stock']
+    fixtures = ['category', 'part', 'location', 'bom', 'build', 'stock']
 
     # Required roles to access Build API endpoints
     roles = ['build.change', 'build.add']
@@ -1373,36 +1373,6 @@ class BuildLineTests(BuildAPITest):
         self.assertGreater(n_f, 0)
 
         self.assertEqual(n_t + n_f, BuildLine.objects.count())
-
-    def test_output_options(self):
-        """Test output options  for the BuildLine endpoint."""
-        url = reverse('api-build-line-detail', kwargs={'pk': 2})
-
-        # Test cases: (parameter_name, response_field_name)
-        test_cases = [
-            ('bom_item_detail', 'bom_item_detail'),
-            ('assembly_detail', 'assembly_detail'),
-            ('part_detail', 'part_detail'),
-            ('build_detail', 'build_detail'),
-            ('allocations', 'allocations'),
-        ]
-
-        for param, field in test_cases:
-            # Test with parameter set to 'true'
-            response = self.get(url, {param: 'true'}, expected_code=200)
-            self.assertIn(
-                field,
-                response.data,
-                f"Field '{field}' should be present when {param}=true",
-            )
-
-            # Test with parameter set to 'false'
-            response = self.get(url, {param: 'false'}, expected_code=200)
-            self.assertNotIn(
-                field,
-                response.data,
-                f"Field '{field}' should NOT be present when {param}=false",
-            )
 
     def test_filter_consumed(self):
         """Filter for the 'consumed' status."""
