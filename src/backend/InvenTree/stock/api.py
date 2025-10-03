@@ -35,6 +35,7 @@ from InvenTree.api import (
     ListCreateDestroyAPIView,
     MetadataView,
 )
+from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import (
     ORDER_FILTER_ALIAS,
     SEARCH_ORDER_FILTER,
@@ -48,6 +49,7 @@ from InvenTree.mixins import (
     CustomRetrieveUpdateDestroyAPI,
     ListAPI,
     ListCreateAPI,
+    OutputOptionsMixin,
     RetrieveAPI,
     RetrieveUpdateDestroyAPI,
     SerializerContextMixin,
@@ -385,8 +387,23 @@ class StockLocationMixin(SerializerContextMixin):
         return queryset
 
 
+class StockLocationOutputOptions(OutputConfiguration):
+    """Output options for StockLocation serializers."""
+
+    OPTIONS = [
+        InvenTreeOutputOption(
+            description='Include detailed information about the BOM item linked to this build line.',
+            flag='path_detail',
+        )
+    ]
+
+
 class StockLocationList(
-    DataExportViewMixin, BulkUpdateMixin, StockLocationMixin, ListCreateAPI
+    DataExportViewMixin,
+    BulkUpdateMixin,
+    StockLocationMixin,
+    OutputOptionsMixin,
+    ListCreateAPI,
 ):
     """API endpoint for list view of StockLocation objects.
 
@@ -396,6 +413,7 @@ class StockLocationList(
 
     filterset_class = StockLocationFilter
     filter_backends = SEARCH_ORDER_FILTER
+    output_options = StockLocationOutputOptions
 
     search_fields = ['name', 'description', 'pathstring', 'tags__name', 'tags__slug']
 
@@ -404,8 +422,12 @@ class StockLocationList(
     ordering = ['tree_id', 'lft', 'name']
 
 
-class StockLocationDetail(StockLocationMixin, CustomRetrieveUpdateDestroyAPI):
+class StockLocationDetail(
+    StockLocationMixin, OutputOptionsMixin, CustomRetrieveUpdateDestroyAPI
+):
     """API endpoint for detail view of StockLocation object."""
+
+    output_options = StockLocationOutputOptions
 
     def destroy(self, request, *args, **kwargs):
         """Delete a Stock location instance via the API."""
@@ -1280,8 +1302,21 @@ class StockItemTestResultMixin(SerializerContextMixin):
         return ctx
 
 
-class StockItemTestResultDetail(StockItemTestResultMixin, RetrieveUpdateDestroyAPI):
+class StockItemTestResultOutputOptions(OutputConfiguration):
+    """Output options for StockItemTestResult endpoint."""
+
+    OPTIONS = [
+        InvenTreeOutputOption(flag='user_detail'),
+        InvenTreeOutputOption(flag='template_detail'),
+    ]
+
+
+class StockItemTestResultDetail(
+    StockItemTestResultMixin, OutputOptionsMixin, RetrieveUpdateDestroyAPI
+):
     """Detail endpoint for StockItemTestResult."""
+
+    output_options = StockItemTestResultOutputOptions
 
 
 class StockItemTestResultFilter(FilterSet):
@@ -1325,51 +1360,70 @@ class StockItemTestResultFilter(FilterSet):
         key = generateTestKey(value)
         return queryset.filter(template__key=key)
 
+    include_installed = rest_filters.BooleanFilter(
+        method='filter_include_installed',
+        label=_('Include Installed'),
+        help_text=_(
+            'If true, include test results for items installed underneath the given stock item'
+        ),
+    )
+
+    stock_item = rest_filters.NumberFilter(
+        method='filter_stock_item',
+        label=_('Stock Item'),
+        help_text=_('Filter by numeric Stock Item ID'),
+    )
+
+    def filter_include_installed(self, queryset, name, value):
+        """Dummy filter method for 'include_installed'.
+
+        - Ensures 'include_installed' appears in API documentation
+        - Does NOT actually filter the queryset directly
+        - The actual logic is handled in filter_stock_item method
+        """
+        return queryset
+
+    def filter_stock_item(self, queryset, name, value):
+        """Filter for stock_item that also applies include_installed logic."""
+        include_installed = str2bool(self.data.get('include_installed', False))
+
+        try:
+            item = StockItem.objects.get(pk=value)
+
+        except StockItem.DoesNotExist:
+            raise ValidationError({
+                'stock_item': _('Stock item with ID {id} does not exist').format(
+                    id=value
+                )
+            })
+
+        items = [item]
+
+        if include_installed:
+            # Include items which are installed "underneath" this item
+            # Note that this function is recursive!
+            installed_items = item.get_installed_items(cascade=True)
+            items += list(installed_items)
+
+        return queryset.filter(stock_item__in=items)
+
 
 class StockItemTestResultList(
-    BulkCreateMixin, StockItemTestResultMixin, ListCreateDestroyAPIView
+    BulkCreateMixin,
+    StockItemTestResultMixin,
+    OutputOptionsMixin,
+    ListCreateDestroyAPIView,
 ):
     """API endpoint for listing (and creating) a StockItemTestResult object."""
 
     filterset_class = StockItemTestResultFilter
     filter_backends = SEARCH_ORDER_FILTER
+    output_options = StockItemTestResultOutputOptions
 
     filterset_fields = ['user', 'template', 'result', 'value']
     ordering_fields = ['date', 'result']
 
     ordering = 'date'
-
-    def filter_queryset(self, queryset):
-        """Filter by build or stock_item."""
-        params = self.request.query_params
-
-        queryset = super().filter_queryset(queryset)
-
-        # Filter by stock item
-        item = params.get('stock_item', None)
-
-        if item is not None:
-            try:
-                item = StockItem.objects.get(pk=item)
-
-                items = [item]
-
-                # Do we wish to also include test results for 'installed' items?
-                include_installed = str2bool(params.get('include_installed', False))
-
-                if include_installed:
-                    # Include items which are installed "underneath" this item
-                    # Note that this function is recursive!
-                    installed_items = item.get_installed_items(cascade=True)
-
-                    items += list(installed_items)
-
-                queryset = queryset.filter(stock_item__in=items)
-
-            except (ValueError, StockItem.DoesNotExist):  # pragma: no cover
-                pass
-
-        return queryset
 
     def perform_create(self, serializer):
         """Create a new test result object.
@@ -1390,7 +1444,18 @@ class StockTrackingDetail(RetrieveAPI):
     serializer_class = StockSerializers.StockTrackingSerializer
 
 
-class StockTrackingList(SerializerContextMixin, DataExportViewMixin, ListAPI):
+class StockTrackingOutputOptions(OutputConfiguration):
+    """Output options for StockItemTracking endpoint."""
+
+    OPTIONS = [
+        InvenTreeOutputOption(flag='item_detail'),
+        InvenTreeOutputOption(flag='user_detail'),
+    ]
+
+
+class StockTrackingList(
+    SerializerContextMixin, DataExportViewMixin, OutputOptionsMixin, ListAPI
+):
     """API endpoint for list view of StockItemTracking objects.
 
     StockItemTracking objects are read-only
@@ -1401,6 +1466,7 @@ class StockTrackingList(SerializerContextMixin, DataExportViewMixin, ListAPI):
 
     queryset = StockItemTracking.objects.all()
     serializer_class = StockSerializers.StockTrackingSerializer
+    output_options = StockTrackingOutputOptions
 
     def get_delta_model_map(self) -> dict:
         """Return a mapping of delta models to their respective models and serializers.

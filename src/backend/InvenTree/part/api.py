@@ -22,6 +22,7 @@ from InvenTree.api import (
     ListCreateDestroyAPIView,
     MetadataView,
 )
+from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import (
     ORDER_FILTER,
     ORDER_FILTER_ALIAS,
@@ -29,13 +30,16 @@ from InvenTree.filters import (
     SEARCH_ORDER_FILTER_ALIAS,
     InvenTreeDateFilter,
     InvenTreeSearchFilter,
+    NumberOrNullFilter,
+    NumericInFilter,
 )
-from InvenTree.helpers import isNull, str2bool
+from InvenTree.helpers import str2bool
 from InvenTree.mixins import (
     CreateAPI,
     CustomRetrieveUpdateDestroyAPI,
     ListAPI,
     ListCreateAPI,
+    OutputOptionsMixin,
     RetrieveAPI,
     RetrieveUpdateAPI,
     RetrieveUpdateDestroyAPI,
@@ -225,7 +229,19 @@ class CategoryFilter(FilterSet):
         return queryset
 
 
-class CategoryList(CategoryMixin, BulkUpdateMixin, DataExportViewMixin, ListCreateAPI):
+class CategoryOutputOption(OutputConfiguration):
+    """Output option for PartCategory endpoints."""
+
+    OPTIONS = [InvenTreeOutputOption(flag='path_detail')]
+
+
+class CategoryList(
+    CategoryMixin,
+    BulkUpdateMixin,
+    DataExportViewMixin,
+    OutputOptionsMixin,
+    ListCreateAPI,
+):
     """API endpoint for accessing a list of PartCategory objects.
 
     - GET: Return a list of PartCategory objects
@@ -236,6 +252,8 @@ class CategoryList(CategoryMixin, BulkUpdateMixin, DataExportViewMixin, ListCrea
 
     filter_backends = SEARCH_ORDER_FILTER
 
+    output_options = CategoryOutputOption
+
     ordering_fields = ['name', 'pathstring', 'level', 'tree_id', 'lft', 'part_count']
 
     # Use hierarchical ordering by default
@@ -244,8 +262,10 @@ class CategoryList(CategoryMixin, BulkUpdateMixin, DataExportViewMixin, ListCrea
     search_fields = ['name', 'description', 'pathstring']
 
 
-class CategoryDetail(CategoryMixin, CustomRetrieveUpdateDestroyAPI):
+class CategoryDetail(CategoryMixin, OutputOptionsMixin, CustomRetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a single PartCategory object."""
+
+    output_options = CategoryOutputOption
 
     def update(self, request, *args, **kwargs):
         """Perform 'update' function and mark this part as 'starred' (or not)."""
@@ -899,6 +919,101 @@ class PartFilter(FilterSet):
         label='Updated after', field_name='creation_date', lookup_expr='gt'
     )
 
+    exclude_id = NumericInFilter(
+        field_name='id',
+        lookup_expr='in',
+        exclude=True,
+        help_text='Exclude parts with these IDs (comma-separated)',
+    )
+
+    related = rest_filters.NumberFilter(
+        method='filter_related_parts', help_text='Show parts related to this part ID'
+    )
+
+    exclude_related = rest_filters.NumberFilter(
+        method='filter_exclude_related_parts',
+        help_text='Exclude parts related to this part ID',
+    )
+
+    def filter_related_parts(self, queryset, name, value):
+        """Filter parts related to the specified part ID."""
+        if not value:
+            return queryset
+
+        try:
+            related_part = Part.objects.get(pk=value)
+            part_ids = self._get_related_part_ids(related_part)
+            return queryset.filter(pk__in=list(part_ids))
+        except (ValueError, Part.DoesNotExist):
+            return queryset.none()
+
+    def filter_exclude_related_parts(self, queryset, name, value):
+        """Exclude parts related to the specified part ID."""
+        if not value:
+            return queryset
+
+        try:
+            related_part = Part.objects.get(pk=value)
+            part_ids = self._get_related_part_ids(related_part)
+            return queryset.exclude(pk__in=list(part_ids))
+        except (ValueError, Part.DoesNotExist):
+            return queryset
+
+    def _get_related_part_ids(self, related_part):
+        """Return a set of part IDs which are related to the specified part."""
+        part_ids = set()
+        pk = related_part.pk
+
+        relation_filter = Q(part_1=related_part) | Q(part_2=related_part)
+
+        for relation in PartRelated.objects.filter(relation_filter).distinct():
+            if relation.part_1.pk != pk:
+                part_ids.add(relation.part_1.pk)
+            if relation.part_2.pk != pk:
+                part_ids.add(relation.part_2.pk)
+
+        return part_ids
+
+    cascade = rest_filters.BooleanFilter(
+        method='filter_cascade',
+        label=_('Cascade Categories'),
+        help_text=_('If true, include items in child categories of the given category'),
+    )
+
+    category = NumberOrNullFilter(
+        method='filter_category',
+        label=_('Category'),
+        help_text=_("Filter by numeric category ID or the literal 'null'"),
+    )
+
+    def filter_cascade(self, queryset, name, value):
+        """Dummy filter method for 'cascade'.
+
+        - Ensures 'cascade' appears in API documentation
+        - Does NOT actually filter the queryset directly
+        """
+        return queryset
+
+    def filter_category(self, queryset, name, value):
+        """Filter for category that also applies cascade logic."""
+        cascade = str2bool(self.data.get('cascade', True))
+
+        if value == 'null':
+            if not cascade:
+                return queryset.filter(category=None)
+            return queryset
+
+        if not cascade:
+            return queryset.filter(category=value)
+
+        try:
+            category = PartCategory.objects.get(pk=value)
+        except PartCategory.DoesNotExist:
+            return queryset
+
+        children = category.getUniqueChildren()
+        return queryset.filter(category__in=children)
+
 
 class PartMixin(SerializerContextMixin):
     """Mixin class for Part API endpoints."""
@@ -948,99 +1063,31 @@ class PartMixin(SerializerContextMixin):
         return context
 
 
-class PartList(PartMixin, BulkUpdateMixin, DataExportViewMixin, ListCreateAPI):
+class PartOutputOptions(OutputConfiguration):
+    """Output options for Part endpoints."""
+
+    OPTIONS = [
+        InvenTreeOutputOption(
+            'parameters', description='Include part parameters in response'
+        ),
+        InvenTreeOutputOption('category_detail'),
+        InvenTreeOutputOption('location_detail'),
+        InvenTreeOutputOption('path_detail'),
+    ]
+
+
+class PartList(
+    PartMixin, BulkUpdateMixin, DataExportViewMixin, OutputOptionsMixin, ListCreateAPI
+):
     """API endpoint for accessing a list of Part objects, or creating a new Part instance."""
 
+    output_options = PartOutputOptions
     filterset_class = PartFilter
     is_create = True
 
     def filter_queryset(self, queryset):
         """Perform custom filtering of the queryset."""
-        params = self.request.query_params
-
         queryset = super().filter_queryset(queryset)
-
-        # Exclude specific part ID values?
-        exclude_id = []
-
-        for key in ['exclude_id', 'exclude_id[]']:
-            if key in params:
-                exclude_id += params.getlist(key, [])
-
-        if exclude_id:
-            id_values = []
-
-            for val in exclude_id:
-                try:
-                    # pk values must be integer castable
-                    val = int(val)
-                    id_values.append(val)
-                except ValueError:
-                    pass
-
-            queryset = queryset.exclude(pk__in=id_values)
-
-        # Filter by 'related' parts?
-        related = params.get('related', None)
-        exclude_related = params.get('exclude_related', None)
-
-        if related is not None or exclude_related is not None:
-            try:
-                pk = related if related is not None else exclude_related
-                pk = int(pk)
-
-                related_part = Part.objects.get(pk=pk)
-
-                part_ids = set()
-
-                # Return any relationship which points to the part in question
-                relation_filter = Q(part_1=related_part) | Q(part_2=related_part)
-
-                for relation in PartRelated.objects.filter(relation_filter).distinct():
-                    if relation.part_1.pk != pk:
-                        part_ids.add(relation.part_1.pk)
-
-                    if relation.part_2.pk != pk:
-                        part_ids.add(relation.part_2.pk)
-
-                if related is not None:
-                    # Only return related results
-                    queryset = queryset.filter(pk__in=list(part_ids))
-                elif exclude_related is not None:
-                    # Exclude related results
-                    queryset = queryset.exclude(pk__in=list(part_ids))
-
-            except (ValueError, Part.DoesNotExist):
-                pass
-
-        # Cascade? (Default = True)
-        cascade = str2bool(params.get('cascade', True))
-
-        # Does the user wish to filter by category?
-        cat_id = params.get('category', None)
-
-        if cat_id is not None:
-            # Category has been specified!
-            if isNull(cat_id):
-                # A 'null' category is the top-level category
-                if not cascade:
-                    # Do not cascade, only list parts in the top-level category
-                    queryset = queryset.filter(category=None)
-
-            else:
-                try:
-                    category = PartCategory.objects.get(pk=cat_id)
-
-                    # If '?cascade=true' then include parts which exist in sub-categories
-                    if cascade:
-                        queryset = queryset.filter(
-                            category__in=category.getUniqueChildren()
-                        )
-                    # Just return parts directly in the requested category
-                    else:
-                        queryset = queryset.filter(category=cat_id)
-                except (ValueError, PartCategory.DoesNotExist):
-                    pass
 
         queryset = self.filter_parametric_data(queryset)
         queryset = self.order_by_parameter(queryset)
@@ -1149,8 +1196,10 @@ class PartList(PartMixin, BulkUpdateMixin, DataExportViewMixin, ListCreateAPI):
     ]
 
 
-class PartDetail(PartMixin, RetrieveUpdateDestroyAPI):
+class PartDetail(PartMixin, OutputOptionsMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a single Part object."""
+
+    output_options = PartOutputOptions
 
     def update(self, request, *args, **kwargs):
         """Custom update functionality for Part instance.
@@ -1560,13 +1609,26 @@ class BomMixin(SerializerContextMixin):
         return queryset
 
 
-class BomList(BomMixin, DataExportViewMixin, ListCreateDestroyAPIView):
+class BomOutputOptions(OutputConfiguration):
+    """Output options for BOM endpoints."""
+
+    OPTIONS = [
+        InvenTreeOutputOption('can_build', default=True),
+        InvenTreeOutputOption('part_detail'),
+        InvenTreeOutputOption('sub_part_detail'),
+    ]
+
+
+class BomList(
+    BomMixin, DataExportViewMixin, OutputOptionsMixin, ListCreateDestroyAPIView
+):
     """API endpoint for accessing a list of BomItem objects.
 
     - GET: Return list of BomItem objects
     - POST: Create a new BomItem object
     """
 
+    output_options = BomOutputOptions
     filterset_class = BomFilter
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
@@ -1615,8 +1677,10 @@ class BomList(BomMixin, DataExportViewMixin, ListCreateDestroyAPIView):
             bom_item.check_part_lock(bom_item.part)
 
 
-class BomDetail(BomMixin, RetrieveUpdateDestroyAPI):
+class BomDetail(BomMixin, OutputOptionsMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a single BomItem object."""
+
+    output_options = BomOutputOptions
 
 
 class BomItemValidate(UpdateAPI):

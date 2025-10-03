@@ -152,8 +152,33 @@ class ManufacturerPartFilter(FilterSet):
     )
 
 
+class ManufacturerOutputOptions(OutputConfiguration):
+    """Available output options for the ManufacturerPart endpoints."""
+
+    OPTIONS = [
+        InvenTreeOutputOption(
+            description='Include detailed information about the linked Part in the response',
+            flag='part_detail',
+            default=False,
+        ),
+        InvenTreeOutputOption(
+            description='Include detailed information about the Manufacturer in the response',
+            flag='manufacturer_detail',
+            default=False,
+        ),
+        InvenTreeOutputOption(
+            description='Format the output with a more readable (pretty) name',
+            flag='pretty',
+            default=False,
+        ),
+    ]
+
+
 class ManufacturerPartList(
-    SerializerContextMixin, DataExportViewMixin, ListCreateDestroyAPIView
+    SerializerContextMixin,
+    DataExportViewMixin,
+    OutputOptionsMixin,
+    ListCreateDestroyAPIView,
 ):
     """API endpoint for list view of ManufacturerPart object.
 
@@ -164,12 +189,10 @@ class ManufacturerPartList(
     queryset = ManufacturerPart.objects.all().prefetch_related(
         'part', 'manufacturer', 'supplier_parts', 'tags'
     )
-
     serializer_class = ManufacturerPartSerializer
     filterset_class = ManufacturerPartFilter
-
+    output_options = ManufacturerOutputOptions
     filter_backends = SEARCH_ORDER_FILTER
-
     search_fields = [
         'manufacturer__name',
         'description',
@@ -212,12 +235,27 @@ class ManufacturerPartParameterFilter(FilterSet):
     )
 
 
-class ManufacturerPartParameterList(SerializerContextMixin, ListCreateDestroyAPIView):
+class ManufacturerPartParameterOptions(OutputConfiguration):
+    """Available output options for the ManufacturerPartParameter endpoints."""
+
+    OPTIONS = [
+        InvenTreeOutputOption(
+            description='Include detailed information about the linked ManufacturerPart in the response',
+            flag='manufacturer_part_detail',
+            default=False,
+        )
+    ]
+
+
+class ManufacturerPartParameterList(
+    SerializerContextMixin, ListCreateDestroyAPIView, OutputOptionsMixin
+):
     """API endpoint for list view of ManufacturerPartParamater model."""
 
     queryset = ManufacturerPartParameter.objects.all()
     serializer_class = ManufacturerPartParameterSerializer
     filterset_class = ManufacturerPartParameterFilter
+    output_options = ManufacturerPartParameterOptions
     filter_backends = SEARCH_ORDER_FILTER
     search_fields = ['name', 'value', 'units']
 
@@ -422,7 +460,24 @@ class SupplierPriceBreakFilter(FilterSet):
     )
 
 
-class SupplierPriceBreakList(SerializerContextMixin, ListCreateAPI):
+class SupplierPriceBreakOutputOptions(OutputConfiguration):
+    """Available output options for the SupplierPriceBreak endpoints."""
+
+    OPTIONS = [
+        InvenTreeOutputOption(
+            description='Include detailed information about the linked Part in the response',
+            flag='part_detail',
+            default=False,
+        ),
+        InvenTreeOutputOption(
+            description='Include detailed information about the Supplier in the response',
+            flag='supplier_detail',
+            default=False,
+        ),
+    ]
+
+
+class SupplierPriceBreakList(SerializerContextMixin, OutputOptionsMixin, ListCreateAPI):
     """API endpoint for list view of SupplierPriceBreak object.
 
     - GET: Retrieve list of SupplierPriceBreak objects
@@ -432,6 +487,7 @@ class SupplierPriceBreakList(SerializerContextMixin, ListCreateAPI):
     queryset = SupplierPriceBreak.objects.all()
     serializer_class = SupplierPriceBreakSerializer
     filterset_class = SupplierPriceBreakFilter
+    output_options = SupplierPriceBreakOutputOptions
 
     def get_queryset(self):
         """Return annotated queryset for the SupplierPriceBreak list endpoint."""

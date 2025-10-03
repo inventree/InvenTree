@@ -405,7 +405,7 @@ jobs:
           - 5432:5432
 
       redis:
-        image: redis
+        image: redis:8
         ports:
           - 6379:6379
 
@@ -446,7 +446,7 @@ jobs:
 
     services:
       mysql:
-        image: mysql:latest
+        image: mysql:9
         env:
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
           MYSQL_DATABASE: ${{ env.INVENTREE_DB_NAME }}
