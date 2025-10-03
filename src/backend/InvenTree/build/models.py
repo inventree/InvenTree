@@ -1171,11 +1171,23 @@ class Build(
         )
 
     @transaction.atomic
-    def complete_build_output(self, output, user, **kwargs):
+    def complete_build_output(
+        self,
+        output: stock.models.StockItem,
+        user: User,
+        quantity: Optional[decimal.Decimal] = None,
+        **kwargs,
+    ):
         """Complete a particular build output.
 
-        - Remove allocated StockItems
-        - Mark the output as complete
+        Arguments:
+            output: The StockItem instance (build output) to complete
+            user: The user who is completing the build output
+            quantity: The quantity to complete (defaults to entire output quantity)
+
+        Notes:
+            - Remove allocated StockItems
+            - Mark the output as complete
         """
         # Select the location for the build output
         location = kwargs.get('location', self.destination)
@@ -1184,6 +1196,27 @@ class Build(
 
         # List the allocated BuildItem objects for the given output
         allocated_items = output.items_to_install.all()
+
+        # If a partial quantity is provided, split the stock output
+        if quantity is not None and quantity != output.quantity:
+            # Cannot split a build output with allocated items
+            if allocated_items.count() > 0:
+                raise ValidationError(
+                    _('Cannot partially complete a build output with allocated items')
+                )
+
+            if quantity <= 0:
+                raise ValidationError({
+                    'quantity': _('Quantity must be greater than zero')
+                })
+
+            if quantity > output.quantity:
+                raise ValidationError({
+                    'quantity': _('Quantity cannot be greater than the output quantity')
+                })
+
+            # Split the stock item
+            output = output.splitStock(quantity, user=user, allow_production=True)
 
         required_tests = kwargs.get('required_tests', output.part.getRequiredTests())
         prevent_on_incomplete = kwargs.get(
