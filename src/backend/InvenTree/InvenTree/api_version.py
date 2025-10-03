@@ -7,7 +7,7 @@ INVENTREE_API_VERSION = 398
 
 INVENTREE_API_TEXT = """
 
-v398 -> 2025-10-02 : https://github.com/inventree/InvenTree/pull/10445
+v398 -> 2025-10-04 : https://github.com/inventree/InvenTree/pull/10445
     - Refactors 'customer_detail' param in SalesOrder API endpoint
     - Refactors 'customer_detail' param in ReturnOrder API endpoint
     - Refactors 'supplier_detail' param in PurchaseOrder API endpoint
@@ -20,6 +20,7 @@ v397 -> 2025-10-01 : https://github.com/inventree/InvenTree/pull/10444
     - Refactors 'path_detail' param in StockLocation API endpoint
     - Refactors 'user_detail' and 'template_detail' params in StockItemTestResult API endpoint
     - Refactors 'item_detail' and 'user_detail' params in StockTracking API endpoint
+    - Refactors 'include_installed' and 'stock_item' params in StockItemTestResult API endpoint
 
 v396 -> 2025-10-01 : https://github.com/inventree/InvenTree/pull/10443
     - Refactors 'part_detail', 'manufacturer_detail' and 'pretty' params in Manufacturer API endpoint
