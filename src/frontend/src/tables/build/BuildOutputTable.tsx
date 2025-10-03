@@ -455,7 +455,7 @@ export default function BuildOutputTable({
       <ActionButton
         key='scrap-selected-outputs'
         tooltip={t`Scrap selected outputs`}
-        icon={<InvenTreeIcon icon='delete' />}
+        icon={<InvenTreeIcon icon='scrap' />}
         color='red'
         disabled={!table.hasSelectedRecords}
         onClick={() => {
@@ -559,7 +559,7 @@ export default function BuildOutputTable({
         {
           title: t`Scrap`,
           tooltip: t`Scrap build output`,
-          icon: <InvenTreeIcon icon='delete' />,
+          icon: <InvenTreeIcon icon='scrap' />,
           color: 'red',
           onClick: () => {
             setSelectedOutputs([record]);

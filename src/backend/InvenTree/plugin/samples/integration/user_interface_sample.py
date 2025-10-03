@@ -93,13 +93,17 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
             except (Part.DoesNotExist, ValueError):
                 part = None
 
-            panels.append({
-                'key': 'part-panel',
-                'title': _('Part Panel'),
-                'source': self.plugin_static_file('sample_panel.js:renderPartPanel'),
-                'icon': 'ti:package_outline',
-                'context': {'part_name': part.name if part else ''},
-            })
+            # Only display this panel for "active" parts
+            if part and part.active:
+                panels.append({
+                    'key': 'part-panel',
+                    'title': _('Part Panel'),
+                    'source': self.plugin_static_file(
+                        'sample_panel.js:renderPartPanel'
+                    ),
+                    'icon': 'ti:package:outline',
+                    'context': {'part_name': part.name if part else ''},
+                })
 
         # Next, add a custom panel which will appear on the 'purchaseorder' page
         if target_model == 'purchaseorder' and self.get_setting(
