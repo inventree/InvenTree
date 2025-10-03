@@ -269,7 +269,7 @@ class BuildOutputQuantitySerializer(BuildOutputSerializer):
         max_digits=15,
         decimal_places=5,
         min_value=Decimal(0),
-        required=True,
+        required=False,
         label=_('Quantity'),
         help_text=_('Enter quantity for build output'),
     )
@@ -557,7 +557,7 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
             'notes',
         ]
 
-    outputs = BuildOutputSerializer(many=True, required=True)
+    outputs = BuildOutputQuantitySerializer(many=True, required=True)
 
     location = serializers.PrimaryKeyRelatedField(
         queryset=StockLocation.objects.all(),

@@ -1115,7 +1115,9 @@ class Build(
         items.all().delete()
 
     @transaction.atomic
-    def scrap_build_output(self, output, quantity, location, **kwargs):
+    def scrap_build_output(
+        self, output: stock.models.StockItem, quantity, location, **kwargs
+    ):
         """Mark a particular build output as scrapped / rejected.
 
         - Mark the output as "complete"
@@ -1125,6 +1127,10 @@ class Build(
         """
         if not output:
             raise ValidationError(_('No build output specified'))
+
+        # If quantity is not specified, assume the entire output quantity
+        if quantity is None:
+            quantity = output.quantity
 
         if quantity <= 0:
             raise ValidationError({'quantity': _('Quantity must be greater than zero')})
