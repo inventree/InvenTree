@@ -7,7 +7,7 @@ INVENTREE_API_VERSION = 397
 
 INVENTREE_API_TEXT = """
 
-v396 -> 2025-10-04 : https://github.com/inventree/InvenTree/pull/10381
+v397 -> 2025-10-04 : https://github.com/inventree/InvenTree/pull/10381
     - Adds machine properties to machine API endpoints
 
 v396 -> 2025-10-01 : https://github.com/inventree/InvenTree/pull/10443
