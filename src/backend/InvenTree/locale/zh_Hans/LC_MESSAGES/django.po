@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-01 05:58+0000\n"
-"PO-Revision-Date: 2025-10-01 06:01\n"
+"POT-Creation-Date: 2025-10-03 23:21+0000\n"
+"PO-Revision-Date: 2025-10-03 23:23\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -526,26 +526,26 @@ msgstr "无效的物理单位"
 msgid "Not a valid currency code"
 msgstr "无效的货币代码"
 
-#: build/api.py:49 order/api.py:108 order/api.py:267 order/serializers.py:129
+#: build/api.py:55 order/api.py:108 order/api.py:267 order/serializers.py:129
 msgid "Order Status"
 msgstr "订单状态"
 
-#: build/api.py:75 build/models.py:264
+#: build/api.py:81 build/models.py:264
 msgid "Parent Build"
 msgstr "父级生产订单"
 
-#: build/api.py:79 build/api.py:800 order/api.py:543 order/api.py:763
-#: order/api.py:1167 order/api.py:1416 stock/api.py:552
+#: build/api.py:85 build/api.py:829 order/api.py:543 order/api.py:763
+#: order/api.py:1167 order/api.py:1416 stock/api.py:568
 msgid "Include Variants"
 msgstr "包含变体"
 
-#: build/api.py:95 build/api.py:466 build/api.py:814 build/models.py:270
+#: build/api.py:101 build/api.py:472 build/api.py:843 build/models.py:270
 #: build/serializers.py:1243 build/serializers.py:1389
 #: build/serializers.py:1451 company/models.py:1085 company/serializers.py:456
 #: order/api.py:295 order/api.py:299 order/api.py:922 order/api.py:1180
 #: order/api.py:1183 order/models.py:1886 order/models.py:2051
-#: order/models.py:2052 part/api.py:1210 part/api.py:1213 part/api.py:1279
-#: part/api.py:1559 part/models.py:472 part/models.py:3317 part/models.py:3460
+#: order/models.py:2052 part/api.py:1237 part/api.py:1240 part/api.py:1306
+#: part/api.py:1586 part/models.py:472 part/models.py:3317 part/models.py:3460
 #: part/models.py:3518 part/models.py:3539 part/models.py:3561
 #: part/models.py:3700 part/models.py:4067 part/models.py:4384
 #: part/models.py:4803 part/serializers.py:1881
@@ -557,7 +557,7 @@ msgstr "包含变体"
 #: report/templates/report/inventree_sales_order_report.html:27
 #: report/templates/report/inventree_sales_order_shipment_report.html:28
 #: report/templates/report/inventree_stock_location_report.html:102
-#: stock/api.py:565 stock/serializers.py:120 stock/serializers.py:172
+#: stock/api.py:581 stock/serializers.py:120 stock/serializers.py:172
 #: stock/serializers.py:450 stock/serializers.py:629 stock/serializers.py:954
 #: templates/email/build_order_completed.html:17
 #: templates/email/build_order_required_stock.html:17
@@ -568,143 +568,144 @@ msgstr "包含变体"
 msgid "Part"
 msgstr "零件"
 
-#: build/api.py:115 build/api.py:118 part/api.py:1293 part/api.py:1570
-#: part/models.py:1092 part/models.py:3589 part/models.py:4183 stock/api.py:848
+#: build/api.py:121 build/api.py:124 part/api.py:984 part/api.py:1320
+#: part/api.py:1597 part/models.py:1092 part/models.py:3589 part/models.py:4183
+#: stock/api.py:864
 msgid "Category"
 msgstr "类别"
 
-#: build/api.py:126 build/api.py:130
+#: build/api.py:132 build/api.py:136
 msgid "Ancestor Build"
 msgstr "可测试部分"
 
-#: build/api.py:147 order/api.py:126
+#: build/api.py:153 order/api.py:126
 msgid "Assigned to me"
 msgstr "分配给我"
 
-#: build/api.py:162
+#: build/api.py:168
 msgid "Assigned To"
 msgstr "负责人"
 
-#: build/api.py:197
+#: build/api.py:203
 msgid "Created before"
 msgstr "创建时间早于"
 
-#: build/api.py:201
+#: build/api.py:207
 msgid "Created after"
 msgstr "创建时间晚于"
 
-#: build/api.py:205
+#: build/api.py:211
 msgid "Has start date"
 msgstr "有开始日期"
 
-#: build/api.py:213
+#: build/api.py:219
 msgid "Start date before"
 msgstr "开始日期早于"
 
-#: build/api.py:217
+#: build/api.py:223
 msgid "Start date after"
 msgstr "开始日期晚于"
 
-#: build/api.py:221
+#: build/api.py:227
 msgid "Has target date"
 msgstr "有目标日期"
 
-#: build/api.py:229
+#: build/api.py:235
 msgid "Target date before"
 msgstr "目标日期早于"
 
-#: build/api.py:233
+#: build/api.py:239
 msgid "Target date after"
 msgstr "目标日期晚于"
 
-#: build/api.py:237
+#: build/api.py:243
 msgid "Completed before"
 msgstr "完成日期早于"
 
-#: build/api.py:241
+#: build/api.py:247
 msgid "Completed after"
 msgstr "完成日期晚于"
 
-#: build/api.py:244 order/api.py:223
+#: build/api.py:250 order/api.py:223
 msgid "Min Date"
 msgstr "最小日期"
 
-#: build/api.py:267 order/api.py:242
+#: build/api.py:273 order/api.py:242
 msgid "Max Date"
 msgstr "最大日期"
 
-#: build/api.py:292 build/api.py:295 part/api.py:221 stock/api.py:940
+#: build/api.py:298 build/api.py:301 part/api.py:214 stock/api.py:956
 msgid "Exclude Tree"
 msgstr "排除树"
 
-#: build/api.py:405
+#: build/api.py:411
 msgid "Build must be cancelled before it can be deleted"
 msgstr "生产订单必须取消后才能删除"
 
-#: build/api.py:449 build/serializers.py:1405 part/models.py:4418
+#: build/api.py:455 build/serializers.py:1405 part/models.py:4418
 msgid "Consumable"
 msgstr "耗材"
 
-#: build/api.py:452 build/serializers.py:1408 part/models.py:4412
+#: build/api.py:458 build/serializers.py:1408 part/models.py:4412
 msgid "Optional"
 msgstr "可选项"
 
-#: build/api.py:455 build/serializers.py:1442 common/setting/system.py:457
+#: build/api.py:461 build/serializers.py:1442 common/setting/system.py:457
 #: part/models.py:1223 part/serializers.py:1701 part/serializers.py:1710
-#: stock/api.py:618
+#: stock/api.py:634
 msgid "Assembly"
 msgstr "装配件"
 
-#: build/api.py:458
+#: build/api.py:464
 msgid "Tracked"
 msgstr "可追溯"
 
-#: build/api.py:461 build/serializers.py:1411 part/models.py:1241
+#: build/api.py:467 build/serializers.py:1411 part/models.py:1241
 msgid "Testable"
 msgstr "需检测"
 
-#: build/api.py:471 order/api.py:986
+#: build/api.py:477 order/api.py:986
 msgid "Order Outstanding"
 msgstr "未结算订单"
 
-#: build/api.py:481 build/serializers.py:1472 order/api.py:945
+#: build/api.py:487 build/serializers.py:1472 order/api.py:945
 msgid "Allocated"
 msgstr "已分配"
 
-#: build/api.py:490 build/models.py:1631 build/serializers.py:1424
+#: build/api.py:496 build/models.py:1631 build/serializers.py:1424
 msgid "Consumed"
 msgstr "已消耗"
 
-#: build/api.py:499 company/models.py:930 company/serializers.py:451
+#: build/api.py:505 company/models.py:930 company/serializers.py:451
 #: templates/email/build_order_required_stock.html:19
 #: templates/email/low_stock_notification.html:17
 #: templates/email/part_event_notification.html:18
 msgid "Available"
 msgstr "可用数量"
 
-#: build/api.py:837 build/models.py:117 order/models.py:1919
+#: build/api.py:866 build/models.py:117 order/models.py:1919
 #: report/templates/report/inventree_build_order_report.html:105
 #: stock/serializers.py:93 templates/email/build_order_completed.html:16
 #: templates/email/overdue_build_order.html:15
 msgid "Build Order"
 msgstr "生产订单"
 
-#: build/api.py:851 build/api.py:855 build/serializers.py:371
+#: build/api.py:880 build/api.py:884 build/serializers.py:371
 #: build/serializers.py:496 build/serializers.py:566 build/serializers.py:1263
 #: build/serializers.py:1267 order/api.py:1227 order/api.py:1232
 #: order/serializers.py:768 order/serializers.py:908 order/serializers.py:2015
-#: stock/api.py:966 stock/serializers.py:111 stock/serializers.py:633
+#: stock/api.py:982 stock/serializers.py:111 stock/serializers.py:633
 #: stock/serializers.py:738 stock/serializers.py:916 stock/serializers.py:1459
 #: stock/serializers.py:1772 stock/serializers.py:1821
 #: templates/email/stale_stock_notification.html:18 users/models.py:549
 msgid "Location"
 msgstr "库存位置"
 
-#: build/api.py:863
+#: build/api.py:892
 msgid "Output"
 msgstr "产出"
 
-#: build/api.py:865
+#: build/api.py:894
 msgid "Filter by output stock item ID. Use 'null' to find uninstalled build items."
 msgstr "按产出库存项ID筛选，使用“null”查找未安装的生产项。"
 
@@ -1031,8 +1032,8 @@ msgstr "已分配数量超过可用库存数量"
 #: build/models.py:1923 build/serializers.py:945 build/serializers.py:1255
 #: order/serializers.py:1500 order/serializers.py:1521
 #: report/templates/report/inventree_sales_order_shipment_report.html:29
-#: stock/models.py:457 stock/serializers.py:102 stock/serializers.py:828
-#: stock/serializers.py:1315 stock/serializers.py:1427
+#: stock/api.py:1390 stock/models.py:457 stock/serializers.py:102
+#: stock/serializers.py:828 stock/serializers.py:1315 stock/serializers.py:1427
 msgid "Stock Item"
 msgstr "库存项"
 
@@ -1117,7 +1118,7 @@ msgstr "自动分配序列号"
 msgid "Automatically allocate required items with matching serial numbers"
 msgstr "自动为所需项目分配对应的序列号"
 
-#: build/serializers.py:422 order/serializers.py:886 stock/api.py:1176
+#: build/serializers.py:422 order/serializers.py:886 stock/api.py:1169
 #: stock/models.py:1903
 msgid "The following serial numbers already exist or are invalid"
 msgstr "以下序列号已存在或无效"
@@ -1358,7 +1359,7 @@ msgid "Allow Variants"
 msgstr "允许变体"
 
 #: build/serializers.py:1426 build/serializers.py:1430 part/models.py:4229
-#: part/models.py:4795 stock/api.py:861
+#: part/models.py:4795 stock/api.py:877
 msgid "BOM Item"
 msgstr "物料清单项"
 
@@ -1594,7 +1595,7 @@ msgstr "此网络钩子的名称"
 
 #: common/models.py:1421 common/models.py:2247 common/models.py:2354
 #: company/models.py:198 company/models.py:840 machine/models.py:39
-#: part/models.py:1258 plugin/models.py:69 stock/api.py:621 users/models.py:195
+#: part/models.py:1258 plugin/models.py:69 stock/api.py:637 users/models.py:195
 #: users/models.py:554 users/serializers.py:319
 msgid "Active"
 msgstr "激活"
@@ -2677,7 +2678,7 @@ msgstr "可购买"
 msgid "Parts are purchaseable by default"
 msgstr "默认情况下可购买零件"
 
-#: common/setting/system.py:475 part/models.py:1253 stock/api.py:622
+#: common/setting/system.py:475 part/models.py:1253 stock/api.py:638
 msgid "Salable"
 msgstr "可销售"
 
@@ -3727,37 +3728,37 @@ msgstr "值必须大写"
 msgid "Value must be a valid variable identifier"
 msgstr "值必须是一个有效的变量标识符"
 
-#: company/api.py:143
+#: company/api.py:142
 msgid "Part is Active"
 msgstr "零件已激活"
 
-#: company/api.py:147
+#: company/api.py:146
 msgid "Manufacturer is Active"
 msgstr "制造商处于活动状态"
 
-#: company/api.py:280
+#: company/api.py:281
 msgid "Supplier Part is Active"
 msgstr "供应商零件处于激活状态"
 
-#: company/api.py:284
+#: company/api.py:285
 msgid "Internal Part is Active"
 msgstr "内部零件已激活"
 
-#: company/api.py:289
+#: company/api.py:290
 msgid "Supplier is Active"
 msgstr "供应商已激活"
 
-#: company/api.py:301 company/models.py:539 company/serializers.py:468
+#: company/api.py:302 company/models.py:539 company/serializers.py:468
 #: part/serializers.py:575
 msgid "Manufacturer"
 msgstr "制造商"
 
-#: company/api.py:308 company/models.py:119 company/models.py:411
-#: stock/api.py:879
+#: company/api.py:309 company/models.py:119 company/models.py:411
+#: stock/api.py:895
 msgid "Company"
 msgstr "公司"
 
-#: company/api.py:318
+#: company/api.py:319
 msgid "Has Stock"
 msgstr "有库存"
 
@@ -4009,7 +4010,7 @@ msgstr "链接的制造商零件必须引用相同的基础零件"
 #: order/models.py:632 part/serializers.py:559
 #: plugin/builtin/suppliers/digikey.py:26 plugin/builtin/suppliers/lcsc.py:27
 #: plugin/builtin/suppliers/mouser.py:25 plugin/builtin/suppliers/tme.py:27
-#: stock/api.py:546 templates/email/overdue_purchase_order.html:16
+#: stock/api.py:562 templates/email/overdue_purchase_order.html:16
 msgid "Supplier"
 msgstr "供应商"
 
@@ -5350,79 +5351,91 @@ msgstr "逾期退货订单"
 msgid "Return order {ro} is now overdue"
 msgstr "退货订单 {ro} 现已逾期"
 
-#: part/api.py:112
+#: part/api.py:105
 msgid "Starred"
 msgstr "已加星标"
 
-#: part/api.py:114
+#: part/api.py:107
 msgid "Filter by starred categories"
 msgstr "按星标类别筛选"
 
-#: part/api.py:131 stock/api.py:285
+#: part/api.py:124 stock/api.py:287
 msgid "Depth"
 msgstr "深度"
 
-#: part/api.py:131
+#: part/api.py:124
 msgid "Filter by category depth"
 msgstr "按类别深度筛选"
 
-#: part/api.py:149 stock/api.py:303
+#: part/api.py:142 stock/api.py:305
 msgid "Top Level"
 msgstr "顶级"
 
-#: part/api.py:151
+#: part/api.py:144
 msgid "Filter by top-level categories"
 msgstr "按顶级类别筛选"
 
-#: part/api.py:164 stock/api.py:318
+#: part/api.py:157 stock/api.py:320
 msgid "Cascade"
 msgstr "级联"
 
-#: part/api.py:166
+#: part/api.py:159
 msgid "Include sub-categories in filtered results"
 msgstr "在筛选结果中包含子类别"
 
-#: part/api.py:186
+#: part/api.py:179
 msgid "Parent"
 msgstr "父类"
 
-#: part/api.py:188
+#: part/api.py:181
 msgid "Filter by parent category"
 msgstr "按父类别筛选"
 
-#: part/api.py:223
+#: part/api.py:216
 msgid "Exclude sub-categories under the specified category"
 msgstr "排除指定类别下的子类别"
 
-#: part/api.py:435
+#: part/api.py:444
 msgid "Has Results"
 msgstr "有结果"
 
-#: part/api.py:661
+#: part/api.py:670
 msgid "Is Variant"
 msgstr "是变体"
 
-#: part/api.py:669
+#: part/api.py:678
 msgid "Is Revision"
 msgstr "是修订版本"
 
-#: part/api.py:679
+#: part/api.py:688
 msgid "Has Revisions"
 msgstr "有修订版本"
 
-#: part/api.py:860
+#: part/api.py:869
 msgid "BOM Valid"
 msgstr "物料清单合规"
 
-#: part/api.py:1503
+#: part/api.py:978
+msgid "Cascade Categories"
+msgstr ""
+
+#: part/api.py:979
+msgid "If true, include items in child categories of the given category"
+msgstr ""
+
+#: part/api.py:985
+msgid "Filter by numeric category ID or the literal 'null'"
+msgstr ""
+
+#: part/api.py:1530
 msgid "Assembly part is testable"
 msgstr "装配部份是可测试的"
 
-#: part/api.py:1512
+#: part/api.py:1539
 msgid "Component part is testable"
 msgstr "组件部份是可测试的"
 
-#: part/api.py:1581
+#: part/api.py:1608
 msgid "Uses"
 msgstr "使用"
 
@@ -8002,141 +8015,158 @@ msgstr "parpart_image 标签需要一个零件实例"
 msgid "company_image tag requires a Company instance"
 msgstr "公司_图片标签需要一个公司实例"
 
-#: stock/api.py:285
+#: stock/api.py:287
 msgid "Filter by location depth"
 msgstr "按位置深度筛选"
 
-#: stock/api.py:305
+#: stock/api.py:307
 msgid "Filter by top-level locations"
 msgstr "按顶级位置筛选"
 
-#: stock/api.py:320
+#: stock/api.py:322
 msgid "Include sub-locations in filtered results"
 msgstr "在筛选结果中包含子地点"
 
-#: stock/api.py:341 stock/serializers.py:1214
+#: stock/api.py:343 stock/serializers.py:1214
 msgid "Parent Location"
 msgstr "上级地点"
 
-#: stock/api.py:342
+#: stock/api.py:344
 msgid "Filter by parent location"
 msgstr "按上级位置筛选"
 
-#: stock/api.py:584
+#: stock/api.py:600
 msgid "Part name (case insensitive)"
 msgstr "零件名称 (不区分大小写)"
 
-#: stock/api.py:590
+#: stock/api.py:606
 msgid "Part name contains (case insensitive)"
 msgstr "零件名称包含 (不区分大小写)"
 
-#: stock/api.py:596
+#: stock/api.py:612
 msgid "Part name (regex)"
 msgstr "零件名称 (正则表达式)"
 
-#: stock/api.py:601
+#: stock/api.py:617
 msgid "Part IPN (case insensitive)"
 msgstr "内部零件号 (不区分大小写)"
 
-#: stock/api.py:607
+#: stock/api.py:623
 msgid "Part IPN contains (case insensitive)"
 msgstr "内部零件号 (不区分大小写)"
 
-#: stock/api.py:613
+#: stock/api.py:629
 msgid "Part IPN (regex)"
 msgstr "内部零件号 (正则表达式)"
 
-#: stock/api.py:625
+#: stock/api.py:641
 msgid "Minimum stock"
 msgstr "最低库存"
 
-#: stock/api.py:629
+#: stock/api.py:645
 msgid "Maximum stock"
 msgstr "最大库存"
 
-#: stock/api.py:632
+#: stock/api.py:648
 msgid "Status Code"
 msgstr "状态代码"
 
-#: stock/api.py:672
+#: stock/api.py:688
 msgid "External Location"
 msgstr "外部地点"
 
-#: stock/api.py:771
+#: stock/api.py:787
 msgid "Consumed by Build Order"
 msgstr "被生产订单消耗"
 
-#: stock/api.py:781
+#: stock/api.py:797
 msgid "Installed in other stock item"
 msgstr "安装于其他库存项中"
 
-#: stock/api.py:870
+#: stock/api.py:886
 msgid "Part Tree"
 msgstr "零件树"
 
-#: stock/api.py:892
+#: stock/api.py:908
 msgid "Updated before"
 msgstr "更新时间早于"
 
-#: stock/api.py:896
+#: stock/api.py:912
 msgid "Updated after"
 msgstr "更新时间晚于"
 
-#: stock/api.py:900
+#: stock/api.py:916
 msgid "Stocktake Before"
 msgstr "盘点时间早于"
 
-#: stock/api.py:904
+#: stock/api.py:920
 msgid "Stocktake After"
 msgstr "盘点时间晚于"
 
-#: stock/api.py:909
+#: stock/api.py:925
 msgid "Expiry date before"
 msgstr "过期日期前"
 
-#: stock/api.py:913
+#: stock/api.py:929
 msgid "Expiry date after"
 msgstr "过期日期后"
 
-#: stock/api.py:916 stock/serializers.py:659
+#: stock/api.py:932 stock/serializers.py:659
 msgid "Stale"
 msgstr "过期"
 
-#: stock/api.py:942
+#: stock/api.py:958
 msgid "Provide a StockItem PK to exclude that item and all its descendants"
 msgstr "提供库存项的主键(PK)以排除该项及其所有子项"
 
-#: stock/api.py:960
+#: stock/api.py:976
 msgid "Cascade Locations"
 msgstr "级联位置"
 
-#: stock/api.py:961
+#: stock/api.py:977
 msgid "If true, include items in child locations of the given location"
 msgstr "若为真，则包含给定位置的所有子位置中的项目"
 
-#: stock/api.py:967
+#: stock/api.py:983
 msgid "Filter by numeric Location ID or the literal 'null'"
 msgstr "按数字位置ID或字母“null”筛选"
 
-#: stock/api.py:1077
+#: stock/api.py:1070
 msgid "Quantity is required"
 msgstr "请先输入数量"
 
-#: stock/api.py:1082
+#: stock/api.py:1075
 msgid "Valid part must be supplied"
 msgstr "必须提供有效的零件"
 
-#: stock/api.py:1113
+#: stock/api.py:1106
 msgid "The given supplier part does not exist"
 msgstr "给定的供应商零件不存在"
 
-#: stock/api.py:1123
+#: stock/api.py:1116
 msgid "The supplier part has a pack size defined, but flag use_pack_size not set"
 msgstr "供应商零件有定义的包装大小，但 use_pack_size 标志未设置"
 
-#: stock/api.py:1155
+#: stock/api.py:1148
 msgid "Serial numbers cannot be supplied for a non-trackable part"
 msgstr "不能为不可跟踪的零件提供序列号"
+
+#: stock/api.py:1382
+msgid "Include Installed"
+msgstr ""
+
+#: stock/api.py:1384
+msgid "If true, include test results for items installed underneath the given stock item"
+msgstr ""
+
+#: stock/api.py:1391
+msgid "Filter by numeric Stock Item ID"
+msgstr ""
+
+#: stock/api.py:1412
+#, python-brace-format
+msgid "Stock item with ID {id} does not exist"
+msgstr ""
 
 #: stock/models.py:72
 msgid "Stock Location type"
