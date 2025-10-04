@@ -624,6 +624,9 @@ class FlagList(ListAPI):
     serializer_class = common.serializers.FlagSerializer
     permission_classes = [AllowAnyOrReadScope]
 
+    # Specifically disable pagination for this view
+    pagination_class = None
+
 
 class FlagDetail(RetrieveAPI):
     """Detail view for an individual feature flag."""
