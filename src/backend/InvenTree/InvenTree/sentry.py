@@ -23,7 +23,7 @@ def default_sentry_dsn():
     return 'https://3928ccdba1d34895abde28031fd00100@o378676.ingest.sentry.io/6494600'
 
 
-def sentry_ignore_errors():
+def sentry_ignore_errors():  # pragma: no cover
     """Return a list of error types to ignore.
 
     These error types will *not* be reported to sentry.io.
@@ -40,7 +40,7 @@ def sentry_ignore_errors():
     ]
 
 
-def init_sentry(dsn, sample_rate, tags):
+def init_sentry(dsn, sample_rate, tags):  # pragma: no cover
     """Initialize sentry.io error reporting."""
     logger.info('Initializing sentry.io integration')
 
@@ -66,7 +66,7 @@ def init_sentry(dsn, sample_rate, tags):
     sentry_sdk.set_tag('git_date', InvenTree.version.inventreeCommitDate())
 
 
-def report_exception(exc, scope: Optional[dict] = None):
+def report_exception(exc, scope: Optional[dict] = None):  # pragma: no cover
     """Report an exception to sentry.io."""
     assert settings.TESTING == False, (
         'report_exception should not be called in testing mode'
