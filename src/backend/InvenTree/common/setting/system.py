@@ -1130,4 +1130,12 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'MACHINE_PING_ENABLED': {
+        'name': _('Enable Machine Ping'),
+        'description': _(
+            'Enable periodic ping task of registered machines to check their status'
+        ),
+        'default': True,
+        'validator': bool,
+    },
 }

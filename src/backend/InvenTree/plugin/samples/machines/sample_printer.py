@@ -31,6 +31,10 @@ class SamplePrinterDriver(LabelPrinterBaseDriver):
 
     def init_machine(self, machine: BaseMachineType) -> None:
         """Machine initialization hook."""
+        machine.set_properties([
+            {'key': 'Model', 'value': 'Sample Printer 3000'},
+            {'key': 'Battery', 'value': 42, 'type': 'progress'},
+        ])
 
     def print_label(
         self,

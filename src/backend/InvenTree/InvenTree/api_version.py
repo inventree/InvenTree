@@ -1,11 +1,14 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 397
+INVENTREE_API_VERSION = 398
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v398 -> 2025-10-04 : https://github.com/inventree/InvenTree/pull/10381
+    - Adds machine properties to machine API endpoints
 
 v397 -> 2025-10-01 : https://github.com/inventree/InvenTree/pull/10444
     - Refactors 'path_detail' param in StockLocation API endpoint
