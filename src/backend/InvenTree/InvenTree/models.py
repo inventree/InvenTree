@@ -575,7 +575,8 @@ class InvenTreeTree(MPTTModel):
         except self.__class__.DoesNotExist:
             # If the object no longer exists, raise a ValidationError
             raise ValidationError(
-                'Object %s of type %s no longer exists', str(self), str(self.__class__)
+                'Object {o} of type {t} no longer exists',
+                params={'o': str(self), 't': str(self.__class__)},
             )
 
         tree_id = self.tree_id
@@ -908,7 +909,8 @@ class PathStringMixin(models.Model):
         except self.__class__.DoesNotExist:
             # If the object no longer exists, raise a ValidationError
             raise ValidationError(
-                'Object %s of type %s no longer exists', str(self), str(self.__class__)
+                'Object {o} of type {t} no longer exists',
+                params={'o': str(self), 't': str(self.__class__)},
             )
 
         # Store the node ID values for lower nodes, before we delete this one

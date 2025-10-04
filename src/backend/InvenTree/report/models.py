@@ -46,7 +46,7 @@ except OSError as err:  # pragma: no cover
 logger = structlog.getLogger('inventree')
 
 
-def log_report_error(*args, **kwargs):
+def log_report_error(path, *args, **kwargs):
     """Log an error message when a report fails to render."""
     try:
         do_log = get_global_setting('REPORT_LOG_ERRORS', backup_value=True)
@@ -54,7 +54,7 @@ def log_report_error(*args, **kwargs):
         do_log = True
 
     if do_log:
-        InvenTree.exceptions.log_error(*args, **kwargs)
+        InvenTree.exceptions.log_error(path, *args, **kwargs)
 
 
 def rename_template(instance, filename):
@@ -640,7 +640,7 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
                 raise ValidationError(msg)
 
         # Save the generated report to the database
-        generated_file = ContentFile(data, report_name)
+        generated_file = ContentFile(data, report_name)  # type: ignore
 
         output.mark_complete(output=generated_file)
 

@@ -1,7 +1,7 @@
 """Permission set for InvenTree."""
 
 from functools import wraps
-from typing import Optional
+from typing import Optional, Union
 
 from oauth2_provider.contrib.rest_framework import TokenMatchesOASRequirements
 from oauth2_provider.contrib.rest_framework.authentication import OAuth2Authentication
@@ -42,10 +42,10 @@ def get_model_for_view(view):
 
 
 def map_scope(
-    roles: Optional[list[str]] = None,
+    roles: Union[list[str], dict[str, str], None] = None,
     only_read=False,
     read_name=DEFAULT_READ,
-    map_read: Optional[list[str]] = None,
+    map_read: Union[list[str], tuple, None] = None,
     map_read_name=DEFAULT_READ,
     override_all_actions: Optional[str] = None,
 ) -> dict:

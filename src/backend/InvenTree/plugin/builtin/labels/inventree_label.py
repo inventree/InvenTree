@@ -82,4 +82,4 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlugin):
 
             filename = kwargs.get('filename', 'labels.pdf')
 
-        return ContentFile(data, name=filename)
+        return ContentFile(data, name=filename)  # type: ignore
