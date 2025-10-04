@@ -8,7 +8,7 @@ msgstr ""
 "Language: lt\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-09-29 23:54\n"
+"PO-Revision-Date: 2025-10-02 01:28\n"
 "Last-Translator: \n"
 "Language-Team: Lithuanian\n"
 "Plural-Forms: nplurals=4; plural=(n%10==1 && (n%100>19 || n%100<11) ? 0 : (n%10>=2 && n%10<=9) && (n%100>19 || n%100<11) ? 1 : n%1!=0 ? 2: 3);\n"
@@ -2980,8 +2980,8 @@ msgstr ""
 #: src/tables/build/BuildLineTable.tsx:84
 #: src/tables/part/PartPurchaseOrdersTable.tsx:94
 #: src/tables/part/PartTestResultTable.tsx:269
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:168
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:199
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:169
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:200
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:69
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:121
 #: src/tables/stock/StockTrackingTable.tsx:72
@@ -4304,7 +4304,7 @@ msgstr ""
 #: src/pages/company/SupplierPartDetail.tsx:171
 #: src/pages/company/SupplierPartDetail.tsx:235
 #: src/pages/stock/StockDetail.tsx:419
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:220
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:221
 msgid "Packaging"
 msgstr ""
 
@@ -4322,8 +4322,8 @@ msgstr ""
 
 #: src/forms/PurchaseOrderForms.tsx:793
 #: src/tables/part/PartPurchaseOrdersTable.tsx:127
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:206
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:272
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:207
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:277
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:167
 msgid "Received"
 msgstr ""
@@ -6547,7 +6547,7 @@ msgstr ""
 #: src/pages/stock/StockDetail.tsx:344
 #: src/tables/build/BuildAllocatedStockTable.tsx:85
 #: src/tables/part/PartBuildAllocationsTable.tsx:45
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:150
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:151
 #: src/tables/stock/StockTrackingTable.tsx:109
 msgid "Build Order"
 msgstr ""
@@ -6739,8 +6739,8 @@ msgstr ""
 
 #: src/pages/company/SupplierPartDetail.tsx:178
 #: src/tables/part/PartPurchaseOrdersTable.tsx:73
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:184
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:226
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:185
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:227
 #: src/tables/purchasing/SupplierPartTable.tsx:120
 msgid "Pack Quantity"
 msgstr ""
@@ -7386,7 +7386,7 @@ msgstr ""
 #: src/pages/stock/StockDetail.tsx:390
 #: src/tables/bom/BomTable.tsx:265
 #: src/tables/general/ExtraLineItemTable.tsx:61
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:250
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:251
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:84
 #: src/tables/stock/StockItemTable.tsx:261
 msgid "Unit Price"
@@ -7562,7 +7562,7 @@ msgid "Completed Line Items"
 msgstr ""
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:178
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:261
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:266
 msgid "Destination"
 msgstr ""
 
@@ -9281,8 +9281,8 @@ msgid "View Item"
 msgstr ""
 
 #: src/tables/general/ExtraLineItemTable.tsx:91
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:288
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:397
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:293
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:402
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:80
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:183
 #: src/tables/sales/SalesOrderLineItemTable.tsx:249
@@ -9291,14 +9291,14 @@ msgid "Add Line Item"
 msgstr ""
 
 #: src/tables/general/ExtraLineItemTable.tsx:104
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:309
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:314
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:93
 #: src/tables/sales/SalesOrderLineItemTable.tsx:268
 msgid "Edit Line Item"
 msgstr ""
 
 #: src/tables/general/ExtraLineItemTable.tsx:113
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:318
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:323
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:102
 #: src/tables/sales/SalesOrderLineItemTable.tsx:277
 msgid "Delete Line Item"
@@ -9586,7 +9586,7 @@ msgid "Required Stock"
 msgstr ""
 
 #: src/tables/part/PartBuildAllocationsTable.tsx:124
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:354
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:359
 msgid "View Build Order"
 msgstr ""
 
@@ -9730,7 +9730,7 @@ msgstr ""
 #~ msgstr "Add parameter template"
 
 #: src/tables/part/PartPurchaseOrdersTable.tsx:79
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:190
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:191
 msgid "Total Quantity"
 msgstr ""
 
@@ -10345,29 +10345,25 @@ msgstr ""
 #~ msgid "Are you sure you want to remove this manufacturer part?"
 #~ msgstr "Are you sure you want to remove this manufacturer part?"
 
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:109
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:391
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:110
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:396
 msgid "Import Line Items"
 msgstr ""
 
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:230
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:231
 msgid "Supplier Code"
 msgstr ""
 
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:237
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:238
 msgid "Supplier Link"
 msgstr ""
 
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:244
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:245
 msgid "Manufacturer Code"
 msgstr ""
 
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:273
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:278
 msgid "Show line items which have been received"
-msgstr ""
-
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:344
-msgid "Receive line item"
 msgstr ""
 
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:344
@@ -10376,7 +10372,11 @@ msgstr ""
 #~ msgid "Add line item"
 #~ msgstr "Add line item"
 
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:408
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:349
+msgid "Receive line item"
+msgstr ""
+
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:413
 msgid "Receive items"
 msgstr ""
 
