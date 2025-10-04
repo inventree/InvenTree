@@ -853,6 +853,78 @@ class AutoAllocationTests(BuildTestBase):
         self.assertEqual(self.line_1.unallocated_quantity(), 0)
         self.assertEqual(self.line_2.unallocated_quantity(), 0)
 
+    def test_allocate_consumed(self):
+        """Test for auto-allocation against a build which has been fully consumed.
+
+        Steps:
+            1. Fully allocate the build (using the auto-allocate function)
+            2. Consume allocated stock
+            3. Ensure that all allocations are removed
+            4. Re-run the auto-allocate function
+            5. Check that no new allocations have been made
+        """
+        self.assertEqual(self.build.allocated_stock.count(), 0)
+        self.assertFalse(self.build.is_fully_allocated(tracked=False))
+
+        # Auto allocate stock against the build order
+        self.build.auto_allocate_stock(
+            interchangeable=True, substitutes=True, optional_items=True
+        )
+
+        self.assertEqual(self.line_1.allocated_quantity(), 50)
+        self.assertEqual(self.line_2.allocated_quantity(), 30)
+
+        self.assertEqual(self.line_1.unallocated_quantity(), 0)
+        self.assertEqual(self.line_2.unallocated_quantity(), 0)
+
+        self.assertTrue(self.line_1.is_fully_allocated())
+        self.assertTrue(self.line_2.is_fully_allocated())
+
+        self.assertFalse(self.line_1.is_overallocated())
+        self.assertFalse(self.line_2.is_overallocated())
+
+        N = self.build.allocated_stock.count()
+
+        self.assertEqual(self.line_1.allocations.count(), 2)
+        self.assertEqual(self.line_2.allocations.count(), 6)
+
+        for item in self.line_1.allocations.all():
+            item.complete_allocation()
+
+        for item in self.line_2.allocations.all():
+            item.complete_allocation()
+
+        self.line_1.refresh_from_db()
+        self.line_2.refresh_from_db()
+
+        self.assertTrue(self.line_1.is_fully_allocated())
+        self.assertTrue(self.line_2.is_fully_allocated())
+        self.assertFalse(self.line_1.is_overallocated())
+        self.assertFalse(self.line_2.is_overallocated())
+
+        self.assertEqual(self.line_1.allocations.count(), 0)
+        self.assertEqual(self.line_2.allocations.count(), 0)
+
+        self.assertEqual(self.line_1.quantity, self.line_1.consumed)
+        self.assertEqual(self.line_2.quantity, self.line_2.consumed)
+
+        # Check that the "allocations" have been removed
+        self.assertEqual(self.build.allocated_stock.count(), N - 8)
+
+        # Now, try to auto-allocate again
+        self.build.auto_allocate_stock(
+            interchangeable=True, substitutes=True, optional_items=True
+        )
+
+        # Ensure that there are no "new" allocations (there should be none!)
+        self.assertEqual(self.line_1.allocated_quantity(), 0)
+        self.assertEqual(self.line_2.allocated_quantity(), 0)
+
+        self.assertEqual(self.line_1.unallocated_quantity(), 0)
+        self.assertEqual(self.line_2.unallocated_quantity(), 0)
+
+        self.assertEqual(self.build.allocated_stock.count(), N - 8)
+
 
 class ExternalBuildTest(InvenTreeAPITestCase):
     """Unit tests for external build order functionality."""

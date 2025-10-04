@@ -405,7 +405,7 @@ jobs:
           - 5432:5432
 
       redis:
-        image: redis
+        image: redis:8
         ports:
           - 6379:6379
 
@@ -446,7 +446,7 @@ jobs:
 
     services:
       mysql:
-        image: mysql:latest
+        image: mysql:9
         env:
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
           MYSQL_DATABASE: ${{ env.INVENTREE_DB_NAME }}
@@ -705,7 +705,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@192325c86100d080feab897ff886c34abd4c83a3 # pin@v3
+        uses: github/codeql-action/upload-sarif@3599b3baa15b485a2e49ef411a7a4bb2452e7f93 # pin@v3
         with:
           sarif_file: results.sarif
           category: zizmor
