@@ -170,7 +170,7 @@ structlog.configure(
     cache_logger_on_first_use=True,
 )
 # Optionally add database-level logging
-if get_setting('INVENTREE_DB_LOGGING', 'db_logging', False):
+if get_setting('INVENTREE_DB_LOGGING', 'db_logging', False):  # pragma: no cover
     LOGGING['loggers'] = {'django.db.backends': {'level': LOG_LEVEL or 'DEBUG'}}
 
 # Get a logger instance for this setup file
@@ -369,7 +369,7 @@ MIDDLEWARE = CONFIG.get(
 
 # In DEBUG mode, add support for django-querycount
 # Ref: https://github.com/bradmontgomery/django-querycount
-if DEBUG and get_boolean_setting(
+if DEBUG and get_boolean_setting(  # pragma: no cover
     'INVENTREE_DEBUG_QUERYCOUNT', 'debug_querycount', False
 ):
     MIDDLEWARE.append('querycount.middleware.QueryCountMiddleware')
@@ -405,7 +405,7 @@ AUTHENTICATION_BACKENDS = (
 
 # LDAP support
 LDAP_AUTH = get_boolean_setting('INVENTREE_LDAP_ENABLED', 'ldap.enabled', False)
-if LDAP_AUTH:
+if LDAP_AUTH:  # pragma: no cover
     import django_auth_ldap.config  # type: ignore[unresolved-import]
     import ldap  # type: ignore[unresolved-import]
 
@@ -943,7 +943,7 @@ Q_CLUSTER = {
 }
 
 # Configure django-q sentry integration
-if SENTRY_ENABLED and SENTRY_DSN:
+if SENTRY_ENABLED and SENTRY_DSN:  # pragma: no cover
     Q_CLUSTER['error_reporter'] = {'sentry': {'dsn': SENTRY_DSN}}
 
 if GLOBAL_CACHE_ENABLED:  # pragma: no cover
@@ -1296,14 +1296,14 @@ FRONTEND_SETTINGS = config.get_frontend_settings(debug=DEBUG)
 FRONTEND_URL_BASE = FRONTEND_SETTINGS['base_url']
 
 # region auth
-for app in SOCIAL_BACKENDS:
+for app in SOCIAL_BACKENDS:  # pragma: no cover
     # Ensure that the app starts with 'allauth.socialaccount.providers'
     social_prefix = 'allauth.socialaccount.providers.'
 
-    if not app.startswith(social_prefix):  # pragma: no cover
+    if not app.startswith(social_prefix):
         app = social_prefix + app
 
-    INSTALLED_APPS.append(app)  # pragma: no cover
+    INSTALLED_APPS.append(app)
 
 SOCIALACCOUNT_PROVIDERS = get_setting(
     'INVENTREE_SOCIAL_PROVIDERS', 'social_providers', None, typecast=dict
@@ -1331,7 +1331,7 @@ login_attempts = get_setting('INVENTREE_LOGIN_ATTEMPTS', 'login_attempts', 5)
 try:
     login_attempts = int(login_attempts)
     login_attempts = f'{login_attempts}/m,{login_attempts}/m'
-except ValueError:
+except ValueError:  # pragma: no cover
     pass
 
 ACCOUNT_RATE_LIMITS = {'login_failed': login_attempts}
@@ -1493,7 +1493,7 @@ FLAGS = {
 
 # Get custom flags from environment/yaml
 CUSTOM_FLAGS = get_setting('INVENTREE_FLAGS', 'flags', None, typecast=dict)
-if CUSTOM_FLAGS:
+if CUSTOM_FLAGS:  # pragma: no cover
     if not isinstance(CUSTOM_FLAGS, dict):
         logger.error('Invalid custom flags, must be valid dict: %s', str(CUSTOM_FLAGS))
     else:
@@ -1552,5 +1552,5 @@ OAUTH2_CHECK_EXCLUDED = [  # This setting mutes schema checks for these rule/met
     '/api/webhook/{endpoint}/:post',
 ]
 
-if SITE_URL and not TESTING:
+if SITE_URL and not TESTING:  # pragma: no cover
     SPECTACULAR_SETTINGS['SERVERS'] = [{'url': SITE_URL}]
