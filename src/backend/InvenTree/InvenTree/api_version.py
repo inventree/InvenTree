@@ -1,14 +1,20 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 397
+INVENTREE_API_VERSION = 398
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v397 -> 2025-10-04 : https://github.com/inventree/InvenTree/pull/10381
+v398 -> 2025-10-04 : https://github.com/inventree/InvenTree/pull/10381
     - Adds machine properties to machine API endpoints
+
+v397 -> 2025-10-01 : https://github.com/inventree/InvenTree/pull/10444
+    - Refactors 'path_detail' param in StockLocation API endpoint
+    - Refactors 'user_detail' and 'template_detail' params in StockItemTestResult API endpoint
+    - Refactors 'item_detail' and 'user_detail' params in StockTracking API endpoint
+    - Refactors 'include_installed' and 'stock_item' params in StockItemTestResult API endpoint
 
 v396 -> 2025-10-01 : https://github.com/inventree/InvenTree/pull/10443
     - Refactors 'part_detail', 'manufacturer_detail' and 'pretty' params in Manufacturer API endpoint

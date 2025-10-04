@@ -646,7 +646,9 @@ db_config = {key.upper(): value for key, value in db_config.items()}
 
 for key in required_keys:
     if key not in db_config:  # pragma: no cover
-        error_msg = f'Missing required database configuration value {key}'
+        error_msg = (
+            f'Missing required database configuration value `INVENTREE_DB_{key}`'
+        )
         logger.error(error_msg)
 
         print('Error: ' + error_msg)
