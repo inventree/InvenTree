@@ -313,6 +313,15 @@ class PurchaseOrderTest(OrderTest):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    def test_output_options(self):
+        """Test the various output options for the PurchaseOrder detail endpoint."""
+        url = reverse('api-po-detail', kwargs={'pk': 1})
+        response = self.get(url, {'supplier_detail': 'true'}, expected_code=200)
+        self.assertIn('supplier_detail', response.data)
+
+        response = self.get(url, {'supplier_detail': 'false'}, expected_code=200)
+        self.assertNotIn('supplier_detail', response.data)
+
     def test_po_operations(self):
         """Test that we can create / edit and delete a PurchaseOrder via the API."""
         n = models.PurchaseOrder.objects.count()
@@ -851,6 +860,20 @@ class PurchaseOrderLineItemTest(OrderTest):
             expected_code=200,
         ).json()
         self.assertEqual(float(li5['purchase_price']), 1)
+
+    def test_output_options(self):
+        """Test PurchaseOrderLineItem output option endpoint."""
+        url = reverse('api-po-line-detail', kwargs={'pk': 1})
+
+        response = self.get(url, {'part_detail': 'true'}, expected_code=200)
+        self.assertIn('part_detail', response.data)
+        response = self.get(url, {'part_detail': 'false'}, expected_code=200)
+        self.assertNotIn('part_detail', response.data)
+
+        response = self.get(url, {'order_detail': 'true'}, expected_code=200)
+        self.assertIn('order_detail', response.data)
+        response = self.get(url, {'order_detail': 'false'}, expected_code=200)
+        self.assertNotIn('order_detail', response.data)
 
 
 class PurchaseOrderDownloadTest(OrderTest):
@@ -1749,6 +1772,14 @@ class SalesOrderTest(OrderTest):
         self.assertIsNotNone(so.shipment_date)
         self.assertIsNotNone(so.shipped_by)
 
+    def test_output_options(self):
+        """Test the output options for the SalesOrder detail endpoint."""
+        url = reverse('api-so-detail', kwargs={'pk': 1})
+        response = self.get(url, {'customer_detail': True}, expected_code=200)
+        self.assertIn('customer_detail', response.data)
+        response = self.get(url, {'customer_detail': False}, expected_code=200)
+        self.assertNotIn('customer_detail', response.data)
+
 
 class SalesOrderLineItemTest(OrderTest):
     """Tests for the SalesOrderLineItem API."""
@@ -1821,8 +1852,8 @@ class SalesOrderLineItemTest(OrderTest):
         self.filter({'completed': 0}, n)
 
         # Filter by 'allocated' status
-        self.filter({'allocated': 'true'}, 0)
-        self.filter({'allocated': 'false'}, n)
+        self.filter({'allocated': 'true'}, 1)
+        self.filter({'allocated': 'false'}, n - 1)
 
     def test_so_line_allocated_filters(self):
         """Test filtering by allocation status for a SalesOrderLineItem."""
@@ -1909,6 +1940,17 @@ class SalesOrderLineItemTest(OrderTest):
         # Filter by 'completed' status
         self.filter({'order': order_id, 'completed': 1}, 2)
         self.filter({'order': order_id, 'completed': 0}, 1)
+
+    def test_output_options(self):
+        """Test the various output options for the SalesOrderLineItem detail endpoint."""
+        url = reverse('api-so-line-detail', kwargs={'pk': 1})
+
+        options = ['part_detail', 'order_detail', 'customer_detail']
+        for option in options:
+            response = self.get(url, {f'{option}': True}, expected_code=200)
+            self.assertIn(option, response.data)
+            response = self.get(url, {f'{option}': False}, expected_code=200)
+            self.assertNotIn(option, response.data)
 
 
 class SalesOrderDownloadTest(OrderTest):
@@ -2251,6 +2293,23 @@ class SalesOrderAllocateTest(OrderTest):
         self.assertEqual(
             len(response.data), count_before + 3 * models.SalesOrder.objects.count()
         )
+
+    def test_output_options(self):
+        """Test the various output options for the SalesOrderAllocation detail endpoint."""
+        url = reverse('api-so-allocation-list')
+
+        options = [
+            'part_detail',
+            'item_detail',
+            'order_detail',
+            'location_detail',
+            'customer_detail',
+        ]
+        for option in options:
+            response = self.get(url, {f'{option}': True}, expected_code=200)
+            self.assertIn(option, response.data[0])
+            response = self.get(url, {f'{option}': False}, expected_code=200)
+            self.assertNotIn(option, response.data[0])
 
 
 class ReturnOrderTests(InvenTreeAPITestCase):
@@ -2617,6 +2676,104 @@ class ReturnOrderTests(InvenTreeAPITestCase):
         self.process_csv(
             data, required_rows=0, required_cols=['Order', 'Reference', 'Target Date']
         )
+
+    def test_output_options(self):
+        """Test the various output options for the ReturnOrder detail endpoint."""
+        url = reverse('api-return-order-detail', kwargs={'pk': 1})
+
+        options = ['customer_detail']
+        for option in options:
+            response = self.get(url, {f'{option}': True}, expected_code=200)
+            self.assertIn(option, response.data)
+            response = self.get(url, {f'{option}': False}, expected_code=200)
+            self.assertNotIn(option, response.data)
+
+
+class ReturnOrderLineItemTests(InvenTreeAPITestCase):
+    """Unit tests for ReturnOrderLineItem API endpoints."""
+
+    fixtures = [
+        'category',
+        'company',
+        'return_order',
+        'part',
+        'location',
+        'supplier_part',
+        'stock',
+    ]
+    roles = ['return_order.view']
+
+    def test_options(self):
+        """Test the OPTIONS endpoint."""
+        self.assignRole('return_order.add')
+        data = self.options(
+            reverse('api-return-order-line-list'), expected_code=200
+        ).data
+
+        self.assertEqual(data['name'], 'Return Order Line Item List')
+
+        # Check POST fields
+        post = data['actions']['POST']
+        self.assertIn('order', post)
+        self.assertIn('item', post)
+        self.assertIn('quantity', post)
+        self.assertIn('outcome', post)
+
+    def test_list(self):
+        """Test list endpoint."""
+        url = reverse('api-return-order-line-list')
+
+        response = self.get(url, expected_code=200)
+        self.assertGreater(len(response.data), 0)
+
+        # Test with pagination
+        data = self.get(
+            url, {'limit': 1, 'ordering': 'reference'}, expected_code=200
+        ).data
+
+        self.assertIn('count', data)
+        self.assertIn('results', data)
+        self.assertEqual(len(data['results']), 1)
+
+    def test_detail(self):
+        """Test detail endpoint."""
+        url = reverse('api-return-order-line-detail', kwargs={'pk': 1})
+
+        response = self.get(url, expected_code=200)
+        data = response.data
+
+        self.assertIn('order', data)
+        self.assertIn('item', data)
+        self.assertIn('quantity', data)
+        self.assertIn('outcome', data)
+
+    def test_output_options(self):
+        """Test output options for detail endpoint."""
+        url = reverse('api-return-order-line-detail', kwargs={'pk': 1})
+        options = ['part_detail', 'item_detail', 'order_detail']
+
+        for option in options:
+            # Test with option enabled
+            response = self.get(url, {option: True}, expected_code=200)
+            self.assertIn(option, response.data)
+
+            # Test with option disabled
+            response = self.get(url, {option: False}, expected_code=200)
+            self.assertNotIn(option, response.data)
+
+    def test_update(self):
+        """Test updating ReturnOrderLineItem."""
+        url = reverse('api-return-order-line-detail', kwargs={'pk': 1})
+
+        # Without permissions
+        self.patch(url, {'price': '10.50'}, expected_code=403)
+
+        self.assignRole('return_order.change')
+
+        self.patch(url, {'price': '15.75'}, expected_code=200)
+
+        line = models.ReturnOrderLineItem.objects.get(pk=1)
+        self.assertEqual(float(line.price.amount), 15.75)
 
 
 class OrderMetadataAPITest(InvenTreeAPITestCase):
