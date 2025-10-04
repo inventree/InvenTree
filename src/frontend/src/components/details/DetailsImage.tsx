@@ -58,6 +58,7 @@ export type DetailImageProps = {
   pk: string;
   image_id?: string;
   content_type?: ModelType.part | ModelType.company;
+  useGridCol?: boolean;
 };
 
 /**
@@ -522,49 +523,55 @@ export function DetailsImage(props: Readonly<DetailImageProps>) {
     });
   };
 
+  const imageContent = (
+    <AspectRatio
+      ref={ref}
+      maw={IMAGE_DIMENSION}
+      ratio={1}
+      pos='relative'
+      visibleFrom='xs'
+    >
+      <>
+        <ApiImage
+          src={img}
+          mah={IMAGE_DIMENSION}
+          maw={IMAGE_DIMENSION}
+          onClick={expandImage}
+        />
+        {props.appRole &&
+          permissions.hasChangeRole(props.appRole) &&
+          hasOverlay && (
+            <Overlay
+              color='black'
+              opacity={hovered ? 0.8 : 0}
+              onClick={expandImage}
+            >
+              <ImageActionButtons
+                deleteUploadImage={deleteUploadImage}
+                addActions={props.AddImageActions}
+                editActions={props.EditImageActions}
+                pk={props.pk}
+                content_type={props.content_type}
+                downloadImage={downloadImage.open}
+                setAndRefresh={setAndRefresh}
+                setAsPrimary={setAsPrimary}
+              />
+            </Overlay>
+          )}
+      </>
+    </AspectRatio>
+  );
+
   return (
     <>
       {downloadImage.modal}
       {deleteUploadImage.modal}
 
-      <Grid.Col span={{ base: 12, sm: 4 }}>
-        <AspectRatio
-          ref={ref}
-          maw={IMAGE_DIMENSION}
-          ratio={1}
-          pos='relative'
-          visibleFrom='xs'
-        >
-          <>
-            <ApiImage
-              src={img}
-              mah={IMAGE_DIMENSION}
-              maw={IMAGE_DIMENSION}
-              onClick={expandImage}
-            />
-            {props.appRole &&
-              permissions.hasChangeRole(props.appRole) &&
-              hasOverlay && (
-                <Overlay
-                  color='black'
-                  opacity={hovered ? 0.8 : 0}
-                  onClick={expandImage}
-                >
-                  <ImageActionButtons
-                    deleteUploadImage={deleteUploadImage}
-                    addActions={props.AddImageActions}
-                    editActions={props.EditImageActions}
-                    pk={props.pk}
-                    content_type={props.content_type}
-                    downloadImage={downloadImage.open}
-                    setAndRefresh={setAndRefresh}
-                    setAsPrimary={setAsPrimary}
-                  />
-                </Overlay>
-              )}
-          </>
-        </AspectRatio>
-      </Grid.Col>
+      {props.useGridCol !== false ? (
+        <Grid.Col span={{ base: 12, sm: 4 }}>{imageContent}</Grid.Col>
+      ) : (
+        imageContent
+      )}
     </>
   );
 }
@@ -609,35 +616,52 @@ export function MultipleDetailsImage(
   const startSlide = primaryIndex >= 0 ? primaryIndex : 0;
 
   return (
-    <Carousel
-      slideSize='100%'
-      align='center'
-      loop={!onlyOne}
-      initialSlide={startSlide}
-      withControls={!onlyOne}
-      styles={{
-        control: {
-          color: 'white',
-          backgroundColor: 'rgba(0, 0, 0, 0.4)',
-          '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.6)' }
-        }
-      }}
-    >
-      {images.map((imgObj) => (
-        <Carousel.Slide key={imgObj.pk}>
-          <DetailsImage
-            appRole={props.appRole}
-            AddImageActions={props.addImageActions}
-            EditImageActions={props.editImageActions}
-            src={imgObj.image}
-            image_id={imgObj.pk}
-            pk={props.object_id}
-            primary={imgObj.primary}
-            content_type={ModelType.part}
-            refresh={props.refresh}
-          />
-        </Carousel.Slide>
-      ))}
-    </Carousel>
+    <Grid.Col span={{ base: 12, sm: 4 }}>
+      <Carousel
+        slideSize='100%'
+        emblaOptions={{
+          loop: !onlyOne,
+          align: 'center'
+        }}
+        initialSlide={startSlide}
+        withControls={!onlyOne}
+        previousControlProps={{
+          style: {
+            transform: 'translateX(-45%)',
+            color: 'white',
+            backgroundColor: 'rgba(0, 0, 0, 0.4)'
+          }
+        }}
+        nextControlProps={{
+          style: {
+            transform: 'translateX(45%)',
+            color: 'white',
+            backgroundColor: 'rgba(0, 0, 0, 0.4)'
+          }
+        }}
+        styles={{
+          control: {
+            '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.6)' }
+          }
+        }}
+      >
+        {images.map((imgObj) => (
+          <Carousel.Slide key={imgObj.pk}>
+            <DetailsImage
+              appRole={props.appRole}
+              AddImageActions={props.addImageActions}
+              EditImageActions={props.editImageActions}
+              src={imgObj.image}
+              image_id={imgObj.pk}
+              pk={props.object_id}
+              primary={imgObj.primary}
+              content_type={ModelType.part}
+              refresh={props.refresh}
+              useGridCol={false}
+            />
+          </Carousel.Slide>
+        ))}
+      </Carousel>
+    </Grid.Col>
   );
 }
