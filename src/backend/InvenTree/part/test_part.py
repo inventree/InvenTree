@@ -240,7 +240,7 @@ class PartTest(TestCase):
     def test_rename_img(self):
         """Test that an image can be renamed."""
         img = rename_part_image(self.r1, 'hello.png')
-        self.assertEqual(img, os.path.join('part_images', 'hello.png'))
+        self.assertEqual(img, os.path.join('images', 'hello.png'))
 
     def test_stock(self):
         """Test case where there is zero stock."""

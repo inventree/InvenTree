@@ -142,7 +142,9 @@ export function RenderStockItem(
       primary={instance.part_detail?.full_name}
       secondary={secondary}
       suffix={suffix}
-      image={instance.part_detail?.thumbnail || instance.part_detail?.image}
+      image={
+        instance.part_detail?.thumbnail_url || instance.part_detail?.image_url
+      }
       url={
         props.link ? getDetailUrl(ModelType.stockitem, instance.pk) : undefined
       }

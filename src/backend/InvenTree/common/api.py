@@ -6,7 +6,7 @@ import json.decoder
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
-from django.db.models import Q
+from django.db.models import Count, Q
 from django.http.response import HttpResponse
 from django.urls import include, path, re_path
 from django.utils.decorators import method_decorator
@@ -49,6 +49,7 @@ from InvenTree.mixins import (
     RetrieveUpdateAPI,
     RetrieveUpdateDestroyAPI,
 )
+from InvenTree.models import InvenTreeAttachmentMixin
 from InvenTree.permissions import (
     AllowAnyOrReadScope,
     GlobalSettingsPermissions,
@@ -729,13 +730,15 @@ class AttachmentList(BulkDeleteMixin, ListCreateAPI):
         - Extract all model types from the provided queryset
         - Ensure that the user has correct 'delete' permissions for each model
         """
-        from common.validators import attachment_model_class_from_label
+        from common.validators import get_model_class_from_label
         from users.permissions import check_user_permission
 
         model_types = queryset.values_list('model_type', flat=True).distinct()
 
         for model_type in model_types:
-            if model_class := attachment_model_class_from_label(model_type):
+            if model_class := get_model_class_from_label(
+                model_type, InvenTreeAttachmentMixin
+            ):
                 if not check_user_permission(request.user, model_class, 'delete'):
                     raise ValidationError(
                         _('User does not have permission to delete these attachments')
@@ -759,6 +762,93 @@ class AttachmentDetail(RetrieveUpdateDestroyAPI):
             )
 
         return super().destroy(request, *args, **kwargs)
+
+
+class InvenTreeImageFilter(FilterSet):
+    """Allows filtering for images.
+
+    - content_type__model   (the name of the model, e.g. 'part')
+    - object_id             (the PK of the related object)
+    """
+
+    content_model = rest_filters.CharFilter(
+        field_name='content_type__model',
+        lookup_expr='iexact',
+        label=_('Content model name'),
+        help_text=_('Exact match on the content type model name, e.g. "part"'),
+    )
+
+    object_id = rest_filters.NumberFilter(
+        field_name='object_id',
+        lookup_expr='exact',
+        label=_('Object ID'),
+        help_text=_('Primary key of the related object'),
+    )
+
+    primary = rest_filters.BooleanFilter(
+        field_name='primary',
+        lookup_expr='exact',
+        label=_('Primary'),
+        help_text=_('Filter for primary image'),
+    )
+
+    class Meta:
+        """Meta options for the InvenTreeImageFilter."""
+
+        model = common.models.InvenTreeImage
+        fields = ['content_model', 'object_id', 'primary']
+
+
+class InvenTreeImageImageList(ListCreateAPI):
+    """Detail API endpoint for InvenTreeImage objects."""
+
+    queryset = common.models.InvenTreeImage.objects.all()
+    serializer_class = common.serializers.InvenTreeImageSerializer
+    permission_classes = [IsAuthenticatedOrReadScope]
+
+    filter_backends = SEARCH_ORDER_FILTER
+
+    filterset_class = InvenTreeImageFilter
+
+
+class InvenTreeImageThumbs(ListAPI):
+    """List API endpoint for Image thumbnails."""
+
+    queryset = common.models.InvenTreeImage.objects.all()
+    serializer_class = common.serializers.InvenTreeImageThumbSerializer
+    permission_classes = [IsAuthenticatedOrReadScope]
+
+    filter_backends = SEARCH_ORDER_FILTER
+
+    filterset_class = InvenTreeImageFilter
+
+    search_fields = ['image']
+
+    def list(self, request, *args, **kwargs):
+        """List image thumbnails aggregated by file with usage counts.
+
+        **Returns:** Paginated thumbnails sorted by usage frequency (descending).
+        """
+        qs = self.filter_queryset(self.get_queryset())
+
+        # Aggregate by image file, counting how many parts use each image
+        agg = qs.values('image').annotate(count=Count('pk')).order_by('-count')
+
+        page = self.paginate_queryset(agg)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(agg, many=True)
+        return Response(serializer.data)
+
+
+class InvenTreeImageDetail(RetrieveUpdateDestroyAPI):
+    """Detail API endpoint for InvenTreeImage objects."""
+
+    queryset = common.models.InvenTreeImage.objects.all()
+    serializer_class = common.serializers.InvenTreeImageSerializer
+    permission_classes = [IsAuthenticatedOrReadScope]
 
 
 @method_decorator(cache_control(public=True, max_age=86400), name='dispatch')
@@ -991,6 +1081,28 @@ common_api_urls = [
                 ]),
             ),
             path('', AttachmentList.as_view(), name='api-attachment-list'),
+        ]),
+    ),
+    path(
+        'image/',
+        include([
+            path(
+                '<int:pk>/',
+                include([
+                    path(
+                        'metadata/',
+                        MetadataView.as_view(model=common.models.InvenTreeImage),
+                        name='api-image-metadata',
+                    ),
+                    path('', InvenTreeImageDetail.as_view(), name='api-image-detail'),
+                ]),
+            ),
+            path(
+                'thumbs/',
+                InvenTreeImageThumbs.as_view(),
+                name='api-uploadImageThumbs-list',
+            ),
+            path('', InvenTreeImageImageList.as_view(), name='api-image-list'),
         ]),
     ),
     path(

@@ -21,16 +21,18 @@ import { Suspense, useState } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
+import { ModelType } from '@lib/index';
 import { IconX } from '@tabler/icons-react';
 import { api } from '../../App';
 import { Thumbnail } from '../../components/images/Thumbnail';
+import { showApiErrorMessage } from '../../functions/notifications';
 
 /**
  * Input props to table
  */
 export type ThumbTableProps = {
   pk: string;
-  setImage: (image: string) => void;
+  onSuccess: (image: string) => void;
 };
 
 /**
@@ -65,7 +67,7 @@ function PartThumbComponent({
 
   let color = '';
 
-  if (selected === element?.image) {
+  if (selected === element.image) {
     color = selectedColor;
   } else if (hovered) {
     color = hoverColor;
@@ -99,30 +101,43 @@ function PartThumbComponent({
  * Changes a part's image to the supplied URL and updates the DOM accordingly
  */
 async function setNewImage(
-  image: string | null,
-  pk: string,
-  setImage: (image: string) => void
+  onSuccess: (image: string) => void,
+  image_url: string | null,
+  object_id: string
 ) {
   // No need to do anything if no image is selected
-  if (image === null) {
+  if (image_url === null) {
     return;
   }
 
-  const response = await api.patch(apiUrl(ApiEndpoints.part_list, pk), {
-    existing_image: image
-  });
-
-  // Update image component and close modal if update was successful
-  if (response.data.image.includes(image)) {
-    setImage(response.data.image);
-    modals.closeAll();
-  }
+  await api
+    .post(apiUrl(ApiEndpoints.upload_image_list), {
+      existing_image: image_url,
+      content_type: ModelType.part,
+      object_id: object_id
+    })
+    .then((response) => {
+      // Update the image in the parent component
+      modals.closeAll();
+      onSuccess(response.data.image);
+      return response;
+    })
+    .catch((error) => {
+      // Handle error
+      showApiErrorMessage({
+        error: error,
+        title: t`Set Image Error`,
+        field: 'image'
+      });
+      modals.closeAll();
+      return error.response;
+    });
 }
 
 /**
  * Renders a "table" of thumbnails
  */
-export function PartThumbTable({ pk, setImage }: Readonly<ThumbTableProps>) {
+export function PartThumbTable({ pk, onSuccess }: Readonly<ThumbTableProps>) {
   const limit = 24;
 
   const [thumbImage, setThumbImage] = useState<string | null>(null);
@@ -146,11 +161,12 @@ export function PartThumbTable({ pk, setImage }: Readonly<ThumbTableProps>) {
       const offset = Math.max(0, page - 1) * limit;
 
       return api
-        .get(apiUrl(ApiEndpoints.part_thumbs_list), {
+        .get(apiUrl(ApiEndpoints.upload_image_thumbs_list), {
           params: {
             offset: offset,
             limit: limit,
-            search: searchText
+            search: searchText,
+            content_model: ModelType.part
           }
         })
         .then((response) => {
@@ -219,7 +235,7 @@ export function PartThumbTable({ pk, setImage }: Readonly<ThumbTableProps>) {
           </Group>
           <Button
             disabled={!thumbImage}
-            onClick={() => setNewImage(thumbImage, pk, setImage)}
+            onClick={() => setNewImage(onSuccess, thumbImage, pk)}
           >
             <Trans>Select</Trans>
           </Button>

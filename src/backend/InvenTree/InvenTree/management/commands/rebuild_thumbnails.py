@@ -11,8 +11,7 @@ from django.db.utils import OperationalError, ProgrammingError
 import structlog
 from PIL import UnidentifiedImageError
 
-from company.models import Company
-from part.models import Part
+from common.models import InvenTreeImage
 
 logger = structlog.get_logger('inventree')
 
@@ -52,18 +51,11 @@ class Command(BaseCommand):
         """Rebuild all thumbnail images."""
         logger.info('Rebuilding Part thumbnails')
 
-        for part in Part.objects.exclude(image=None):
+        for image in InvenTreeImage.objects.exclude(image=None):
             try:
-                self.rebuild_thumbnail(part)
+                self.rebuild_thumbnail(image)
             except (OperationalError, ProgrammingError):
                 logger.exception('ERROR: Database read error.')
                 break
 
         logger.info('Rebuilding Company thumbnails')
-
-        for company in Company.objects.exclude(image=None):
-            try:
-                self.rebuild_thumbnail(company)
-            except (OperationalError, ProgrammingError):
-                logger.exception('ERROR: abase read error.')
-                break
