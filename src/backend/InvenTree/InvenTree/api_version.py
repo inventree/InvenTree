@@ -7,6 +7,9 @@ INVENTREE_API_VERSION = 397
 
 INVENTREE_API_TEXT = """
 
+v398 -> 2025-10-04 : https://github.com/inventree/InvenTree/pull/10486
+    - Adds return datatypes for admin/config and flags entpoints
+
 v397 -> 2025-10-01 : https://github.com/inventree/InvenTree/pull/10444
     - Refactors 'path_detail' param in StockLocation API endpoint
     - Refactors 'user_detail' and 'template_detail' params in StockItemTestResult API endpoint
