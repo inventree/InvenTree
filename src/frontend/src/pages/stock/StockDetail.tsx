@@ -42,7 +42,7 @@ import {
   DetailsTable
 } from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
-import { DetailsImage } from '../../components/details/DetailsImage';
+import { MultipleDetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
   ActionDropdown,
@@ -437,18 +437,17 @@ export default function StockDetail() {
     return (
       <ItemDetailsGrid>
         <Grid grow>
-          <DetailsImage
+          <MultipleDetailsImage
             appRole={UserRoles.part}
             apiPath={ApiEndpoints.part_list}
-            src={
-              stockitem.part_detail?.image ?? stockitem?.part_detail?.thumbnail
-            }
-            pk={stockitem.part}
+            images={stockitem?.part_detail?.images}
+            object_id={stockitem.part}
           />
-          <Grid.Col span={{ base: 12, sm: 8 }}>
+          <Grid.Col span={{ base: 12, sm: 6 }}>
             <DetailsTable fields={tl} item={data} />
           </Grid.Col>
         </Grid>
+
         <DetailsTable fields={tr} item={data} />
         <DetailsTable fields={bl} item={data} />
         <DetailsTable fields={br} item={data} />

@@ -80,8 +80,8 @@ export function RenderPart(
       {...props}
       primary={instance.full_name ?? instance.name}
       secondary={instance.description}
+      image={instance?.thumbnail_url || instance?.image_url}
       suffix={suffix}
-      image={instance.thumbnail || instance.image}
       url={props.link ? getDetailUrl(ModelType.part, instance.pk) : undefined}
     />
   );

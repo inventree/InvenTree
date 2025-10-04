@@ -12,7 +12,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
-import { apiUrl } from '@lib/functions/Api';
 import { formatDecimal } from '@lib/functions/Formatting';
 import { getDetailUrl } from '@lib/functions/Navigation';
 import AdminButton from '../../components/buttons/AdminButton';
@@ -21,7 +20,7 @@ import {
   DetailsTable
 } from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
-import { DetailsImage } from '../../components/details/DetailsImage';
+import { MultipleDetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
   BarcodeActionDropdown,
@@ -214,18 +213,14 @@ export default function SupplierPartDetail() {
         icon: 'calendar'
       }
     ];
-
     return (
       <ItemDetailsGrid>
         <Grid grow>
-          <DetailsImage
+          <MultipleDetailsImage
             appRole={UserRoles.part}
-            src={supplierPart?.part_detail?.image}
-            apiPath={apiUrl(
-              ApiEndpoints.part_list,
-              supplierPart?.part_detail?.pk
-            )}
-            pk={supplierPart?.part_detail?.pk}
+            apiPath={ApiEndpoints.part_list}
+            images={supplierPart?.part_detail?.images}
+            object_id={supplierPart?.part_detail?.pk}
           />
           <Grid.Col span={8}>
             <DetailsTable title={t`Part Details`} fields={tl} item={data} />
