@@ -1527,6 +1527,36 @@ class StockItemTest(StockAPITestCase):
         data = self.get(url).data
         self.assertEqual(data['purchase_price_currency'], 'NZD')
 
+    def test_output_options(self):
+        """Test the output options for StockItemt detail."""
+        url = reverse('api-stock-detail', kwargs={'pk': 1})
+
+        # Test cases: (parameter_name, response_field_name)
+        test_cases = [
+            ('part_detail', 'part_detail'),
+            ('path_detail', 'location_path'),
+            ('supplier_part_detail', 'supplier_part_detail'),
+            ('location_detail', 'location_detail'),
+            ('tests', 'tests'),
+        ]
+
+        for param, field in test_cases:
+            # Test with parameter set to 'true'
+            response = self.get(url, {param: 'true'}, expected_code=200)
+            self.assertIn(
+                field,
+                response.data,
+                f"Field '{field}' should be present when {param}='true'",
+            )
+
+            # Test with parameter set to 'false'
+            response = self.get(url, {param: 'false'}, expected_code=200)
+            self.assertNotIn(
+                field,
+                response.data,
+                f"Field '{field}' should not be present when {param}='false'",
+            )
+
     def test_install(self):
         """Test that stock item can be installed into another item, via the API."""
         # Select the "parent" stock item

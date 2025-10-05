@@ -1389,7 +1389,12 @@ class BuildLineTests(BuildAPITest):
 
         for param, field in test_cases:
             # Test with parameter set to 'true'
-            response = self.get(url, {param: 'true'}, expected_code=200)
+            response = self.get(
+                url,
+                {param: 'true'},
+                expected_code=200,
+                msg=f'Testing {param}=true returns anything but 200',
+            )
             self.assertIn(
                 field,
                 response.data,
@@ -1397,7 +1402,12 @@ class BuildLineTests(BuildAPITest):
             )
 
             # Test with parameter set to 'false'
-            response = self.get(url, {param: 'false'}, expected_code=200)
+            response = self.get(
+                url,
+                {param: 'false'},
+                expected_code=200,
+                msg=f'Testing {param}=false returns anything but 200',
+            )
             self.assertNotIn(
                 field,
                 response.data,
