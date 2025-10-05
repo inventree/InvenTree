@@ -228,3 +228,12 @@ class OutputOptionsMixin:
             kwargs.update(self.output_options.format_params(params))
 
         return super().get_serializer(*args, **kwargs)
+
+
+class SerializerContextMixin:
+    """Mixin to add context to serializer."""
+
+    def get_serializer(self, *args, **kwargs):
+        """Add context to serializer."""
+        kwargs['context'] = self.get_serializer_context()
+        return super().get_serializer(*args, **kwargs)

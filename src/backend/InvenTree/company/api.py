@@ -12,7 +12,12 @@ from data_exporter.mixins import DataExportViewMixin
 from InvenTree.api import ListCreateDestroyAPIView, MetadataView
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import SEARCH_ORDER_FILTER, SEARCH_ORDER_FILTER_ALIAS
-from InvenTree.mixins import ListCreateAPI, OutputOptionsMixin, RetrieveUpdateDestroyAPI
+from InvenTree.mixins import (
+    ListCreateAPI,
+    OutputOptionsMixin,
+    RetrieveUpdateDestroyAPI,
+    SerializerContextMixin,
+)
 
 from .models import (
     Address,
@@ -170,7 +175,10 @@ class ManufacturerOutputOptions(OutputConfiguration):
 
 
 class ManufacturerPartList(
-    DataExportViewMixin, OutputOptionsMixin, ListCreateDestroyAPIView
+    SerializerContextMixin,
+    DataExportViewMixin,
+    OutputOptionsMixin,
+    ListCreateDestroyAPIView,
 ):
     """API endpoint for list view of ManufacturerPart object.
 
@@ -181,13 +189,10 @@ class ManufacturerPartList(
     queryset = ManufacturerPart.objects.all().prefetch_related(
         'part', 'manufacturer', 'supplier_parts', 'tags'
     )
-
     serializer_class = ManufacturerPartSerializer
     filterset_class = ManufacturerPartFilter
     output_options = ManufacturerOutputOptions
-
     filter_backends = SEARCH_ORDER_FILTER
-
     search_fields = [
         'manufacturer__name',
         'description',
@@ -242,16 +247,16 @@ class ManufacturerPartParameterOptions(OutputConfiguration):
     ]
 
 
-class ManufacturerPartParameterList(ListCreateDestroyAPIView, OutputOptionsMixin):
+class ManufacturerPartParameterList(
+    SerializerContextMixin, ListCreateDestroyAPIView, OutputOptionsMixin
+):
     """API endpoint for list view of ManufacturerPartParamater model."""
 
     queryset = ManufacturerPartParameter.objects.all()
     serializer_class = ManufacturerPartParameterSerializer
     filterset_class = ManufacturerPartParameterFilter
     output_options = ManufacturerPartParameterOptions
-
     filter_backends = SEARCH_ORDER_FILTER
-
     search_fields = ['name', 'value', 'units']
 
 
@@ -472,7 +477,7 @@ class SupplierPriceBreakOutputOptions(OutputConfiguration):
     ]
 
 
-class SupplierPriceBreakList(OutputOptionsMixin, ListCreateAPI):
+class SupplierPriceBreakList(SerializerContextMixin, OutputOptionsMixin, ListCreateAPI):
     """API endpoint for list view of SupplierPriceBreak object.
 
     - GET: Retrieve list of SupplierPriceBreak objects
