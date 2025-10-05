@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Added `order_queryset` report helper function in [#10439](https://github.com/inventree/InvenTree/pull/10439)
+- Support for S3 and SFTP storage backends for media and static files ([#10140](https://github.com/inventree/InvenTree/pull/10140))
 
 ### Changed
 
