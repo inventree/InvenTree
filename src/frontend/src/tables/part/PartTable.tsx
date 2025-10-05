@@ -4,12 +4,17 @@ import { type ReactNode, useCallback, useMemo, useState } from 'react';
 
 import { ActionButton } from '@lib/components/ActionButton';
 import { AddItemButton } from '@lib/components/AddItemButton';
-import { type RowAction, RowEditAction } from '@lib/components/RowActions';
+import {
+  type RowAction,
+  RowDuplicateAction,
+  RowEditAction
+} from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
+import type { ApiFormFieldSet } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
 import type { InvenTreeTableProps } from '@lib/types/Tables';
 import { IconPackageImport, IconShoppingCart } from '@tabler/icons-react';
@@ -26,6 +31,7 @@ import {
 } from '../../hooks/UseForm';
 import { usePluginsWithMixin } from '../../hooks/UsePlugins';
 import { useTable } from '../../hooks/UseTable';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import {
   CategoryColumn,
@@ -336,6 +342,7 @@ export function PartListTable({
 
   const table = useTable('part-list');
   const user = useUserState();
+  const globalSettings = useGlobalSettingsState();
 
   const initialPartData = useMemo(() => {
     return defaultPartData ?? props.params ?? {};
@@ -350,13 +357,61 @@ export function PartListTable({
     modelType: ModelType.part
   });
 
-  const [selectedPart, setSelectedPart] = useState<number>(-1);
+  const [selectedPart, setSelectedPart] = useState<any>({});
 
   const editPart = useEditApiFormModal({
     url: ApiEndpoints.part_list,
-    pk: selectedPart,
+    pk: selectedPart.pk,
     title: t`Edit Part`,
     fields: usePartFields({ create: false }),
+    onFormSuccess: table.refreshTable
+  });
+
+  const createPartFields = usePartFields({ create: true });
+
+  const duplicatePartFields: ApiFormFieldSet = useMemo(() => {
+    return {
+      ...createPartFields,
+      duplicate: {
+        children: {
+          part: {
+            value: selectedPart.pk,
+            hidden: true
+          },
+          copy_image: {
+            value: true
+          },
+          copy_bom: {
+            value:
+              selectedPart.assembly && globalSettings.isSet('PART_COPY_BOM'),
+            hidden: !selectedPart.assembly
+          },
+          copy_notes: {
+            value: true
+          },
+          copy_parameters: {
+            value: globalSettings.isSet('PART_COPY_PARAMETERS')
+          },
+          copy_tests: {
+            value: selectedPart.testable,
+            hidden: !selectedPart.testable
+          }
+        }
+      }
+    };
+  }, [createPartFields, globalSettings, selectedPart]);
+
+  const duplicatePart = useCreateApiFormModal({
+    url: ApiEndpoints.part_list,
+    title: t`Add Part`,
+    fields: duplicatePartFields,
+    initialData: {
+      ...selectedPart,
+      active: true,
+      locked: false
+    },
+    follow: false,
+    modelType: ModelType.part,
     onFormSuccess: table.refreshTable
   });
 
@@ -380,18 +435,26 @@ export function PartListTable({
   const rowActions = useCallback(
     (record: any): RowAction[] => {
       const can_edit = user.hasChangePermission(ModelType.part);
+      const can_add = user.hasAddPermission(ModelType.part);
 
       return [
         RowEditAction({
           hidden: !can_edit,
           onClick: () => {
-            setSelectedPart(record.pk);
+            setSelectedPart(record);
             editPart.open();
+          }
+        }),
+        RowDuplicateAction({
+          hidden: !can_add,
+          onClick: () => {
+            setSelectedPart(record);
+            duplicatePart.open();
           }
         })
       ];
     },
-    [user, editPart]
+    [user, editPart, duplicatePart]
   );
 
   const tableActions = useMemo(() => {
@@ -444,6 +507,7 @@ export function PartListTable({
   return (
     <>
       {newPart.modal}
+      {duplicatePart.modal}
       {editPart.modal}
       {setCategory.modal}
       {orderPartsWizard.wizard}

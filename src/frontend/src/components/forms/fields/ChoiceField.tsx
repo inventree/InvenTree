@@ -1,7 +1,7 @@
 import type { ApiFormFieldType } from '@lib/types/Forms';
 import { Select } from '@mantine/core';
 import { useId } from '@mantine/hooks';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 import type { FieldValues, UseControllerReturn } from 'react-hook-form';
 
 /**
@@ -17,6 +17,7 @@ export function ChoiceField({
   fieldName: string;
 }>) {
   const fieldId = useId();
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const {
     field,
@@ -70,6 +71,8 @@ export function ChoiceField({
       error={definition.error ?? error?.message}
       radius='sm'
       {...field}
+      ref={inputRef}
+      onDropdownOpen={() => inputRef?.current?.select()}
       onChange={onChange}
       data={choices}
       value={choiceValue}
@@ -81,6 +84,7 @@ export function ChoiceField({
       leftSection={definition.icon}
       comboboxProps={{ withinPortal: true }}
       searchable
+      selectFirstOptionOnChange
     />
   );
 }
