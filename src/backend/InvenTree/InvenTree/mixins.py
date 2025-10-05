@@ -212,20 +212,17 @@ class DataImportExportSerializerMixin(
 class OutputOptionsMixin:
     """Mixin to handle output options for API endpoints."""
 
-    output_options: OutputConfiguration
+    output_options: OutputConfiguration = None
 
     def __init_subclass__(cls, **kwargs):
         """Automatically attaches OpenAPI schema parameters for its output options."""
         super().__init_subclass__(**kwargs)
-        schema_for_view_output_options(cls)
+
+        if getattr(cls, 'output_options', None) is not None:
+            schema_for_view_output_options(cls)
 
     def get_serializer(self, *args, **kwargs):
         """Return serializer instance with output options applied."""
-        if not hasattr(self, 'output_options'):
-            raise AttributeError(
-                f"Class {self.__class__.__name__} must define 'output_options' attribute"
-            )
-
         if self.output_options and hasattr(self, 'request'):
             params = self.request.query_params
             kwargs.update(self.output_options.format_params(params))

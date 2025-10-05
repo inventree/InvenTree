@@ -110,6 +110,24 @@ class MiddlewareTests(InvenTreeTestCase):
             response = self.client.get(reverse('web'))
             self.do_positive_test(response)
 
+    def test_site_lax_protocol(self):
+        """Test that the site URL check is correctly working with/without lax protocol check."""
+        # Simple setup with proxy
+        with self.settings(
+            SITE_URL='https://testserver', CSRF_TRUSTED_ORIGINS=['https://testserver']
+        ):
+            response = self.client.get(reverse('web'))
+            self.do_positive_test(response)
+
+        # No worky if strong security
+        with self.settings(
+            SITE_URL='https://testserver',
+            CSRF_TRUSTED_ORIGINS=['https://testserver'],
+            SITE_LAX_PROTOCOL_CHECK=False,
+        ):
+            response = self.client.get(reverse('web'))
+            self.assertContains(response, 'INVE-E7: The used path', status_code=500)
+
     def test_site_url_checks_multi(self):
         """Test that the site URL check is correctly working in a multi-site setup."""
         # multi-site setup with trusted origins
@@ -162,7 +180,6 @@ class MiddlewareTests(InvenTreeTestCase):
             CSRF_TRUSTED_ORIGINS=['https://example.com'],
         ):
             response = self.client.get(reverse('web'))
-            self.assertEqual(response.status_code, 500)
             self.assertContains(
                 response, 'is not in the TRUSTED_ORIGINS', status_code=500
             )
@@ -176,7 +193,6 @@ class MiddlewareTests(InvenTreeTestCase):
             CSRF_TRUSTED_ORIGINS=['http://localhost:8000'],
         ):
             response = self.client.get(reverse('web'))
-            self.assertEqual(response.status_code, 500)
             self.assertContains(
                 response, 'INVE-E7: The used path `http://testserver` ', status_code=500
             )

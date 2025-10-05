@@ -1,17 +1,53 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 393
+INVENTREE_API_VERSION = 400
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v393 -> 2025-09-01 : https://github.com/inventree/InvenTree/pull/10437
-    - Refactors 'user_detail', 'permission_detail', 'role_detail' param in user GroupList API endpoint
+v400 -> 2025-10-05 : https://github.com/inventree/InvenTree/pull/10486
+    - Adds return datatypes for admin/config and flags entpoints
+
+v399 -> 2025-10-05 : https://github.com/inventree/InvenTree/pull/10445
+    - Refactors 'customer_detail' param in SalesOrder API endpoint
+    - Refactors 'customer_detail' param in ReturnOrder API endpoint
+    - Refactors 'supplier_detail' param in PurchaseOrder API endpoint
+    - Refactors 'part_detail' and 'order_detail' params in PurchaseOrderLineItem API endpoint
+    - Refactors 'part_detail', 'item_detail' and 'order_detail' params in ReturnOrderLineItem API endpoint
+    - Refactors 'part_detail', 'order_detail' and 'customer_detail' params in SalesOrderLineItem API endpoint
+    - Refactors 'part_detail', 'item_detail', 'order_detail', 'location_detail' and 'customer_detail' params in SalesOrderAllocation API endpoint
+
+v398 -> 2025-10-05 : https://github.com/inventree/InvenTree/pull/10487
+    - Refactors 'part_detail', 'path_detail', 'supplier_part_detail', 'location_detail' and 'tests' params in Stock API endpoint
+
+v397 -> 2025-10-01 : https://github.com/inventree/InvenTree/pull/10444
+    - Refactors 'path_detail' param in StockLocation API endpoint
+    - Refactors 'user_detail' and 'template_detail' params in StockItemTestResult API endpoint
+    - Refactors 'item_detail' and 'user_detail' params in StockTracking API endpoint
+    - Refactors 'include_installed' and 'stock_item' params in StockItemTestResult API endpoint
+
+v396 -> 2025-10-01 : https://github.com/inventree/InvenTree/pull/10443
+    - Refactors 'part_detail', 'manufacturer_detail' and 'pretty' params in Manufacturer API endpoint
+    - Refactors 'manufacturer_part_detail' param in ManufacturerPartParameter API endpoint
+    - Refactors 'part_detail' and 'supplier_detail' param in SupplierPriceBreak API endpoint
+
+v395 -> 2025-10-01 : https://github.com/inventree/InvenTree/pull/10441
+    - Refactors 'parameters', 'category_detail', 'location_detail' and 'path_detail' params in Part API endpoint
+    - Refactors 'can_build', 'part_detail', 'sub_part_detail' and 'path_detail' params in BOM API endpoint
+    - Refactors 'path_detail' params in user Category API endpoint
+    - Refactors 'exclude_id', 'related' and 'exclude_related' params in Part API endpoint
+
+v394 -> 2025-10-01 : https://github.com/inventree/InvenTree/pull/10438
+    - Refactors 'bom_item_detail', 'assembly_detail', 'part_detail', 'build_detail' and 'allocations' params in BuildLine API endpoint
+    - Refactors 'part_detail', 'location_detail', 'stock_detail' and 'build_detail' params in BuildItem API endpoint
+
+v393 -> 2025-10-01 : https://github.com/inventree/InvenTree/pull/10437
+    - Refactors 'user_detail', 'permission_detail', 'role_detail' params in user GroupList API endpoint
 
 v392 -> 2025-09-22 : https://github.com/inventree/InvenTree/pull/10374
-    - Refactors 'part_detail', 'supplier_detail', 'manufacturer_detail'and 'pretty' param in SupplierPartList API endpoint
+    - Refactors 'part_detail', 'supplier_detail', 'manufacturer_detail'and 'pretty' params in SupplierPartList API endpoint
 
 v391 -> 2025-09-06 : https://github.com/inventree/InvenTree/pull/10279
     - Refactors 'exclude_tree', 'cascade', and 'location' filters in StockList API endpoint
