@@ -33,14 +33,14 @@ export function RenderUser({
         primary={instance.username}
         secondary={
           <Group gap='xs'>
-            {!instance.is_active && (
+            {instance.is_active === false && (
               <Badge autoContrast color='red'>{t`Inactive`}</Badge>
             )}
           </Group>
         }
         suffix={
           <Group gap='xs'>
-            <Text size='sm'>
+            <Text size='xs'>
               {instance.first_name} {instance.last_name}
             </Text>
             <IconUser size={16} />

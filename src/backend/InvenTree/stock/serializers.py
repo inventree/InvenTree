@@ -20,6 +20,7 @@ import build.models
 import company.models
 import company.serializers as company_serializers
 import InvenTree.helpers
+import InvenTree.ready
 import InvenTree.serializers
 import order.models
 import part.filters as part_filters
@@ -284,6 +285,10 @@ class StockItemTestResultSerializer(
                 part__tree_id=stock_item.part.tree_id, part__in=ancestors, key=test_key
             ).first():
                 data['template'] = template
+            else:
+                raise ValidationError({
+                    'test': _('No matching test found for this part')
+                })
 
         if not template:
             raise ValidationError(_('Template ID or test name must be provided'))
@@ -329,7 +334,7 @@ class StockItemSerializer(
         'supplier_part_detail.MPN',
     ]
 
-    import_exclude_fields = ['use_pack_size', 'location_path']
+    import_exclude_fields = ['location_path', 'serial_numbers', 'use_pack_size']
 
     class Meta:
         """Metaclass options."""
@@ -490,7 +495,7 @@ class StockItemSerializer(
 
     def update(self, instance, validated_data):
         """Custom update method to pass the user information through to the instance."""
-        instance._user = self.context['user']
+        instance._user = self.context.get('user', None)
 
         status_custom_key = validated_data.pop('status_custom_key', None)
         status = validated_data.pop('status', None)

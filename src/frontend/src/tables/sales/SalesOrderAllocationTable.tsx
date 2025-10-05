@@ -119,14 +119,10 @@ export default function SalesOrderAllocationTable({
         title: t`Order Status`,
         hidden: showOrderInfo != true
       }),
-      {
-        accessor: 'part',
+      PartColumn({
         hidden: showPartInfo != true,
-        title: t`Part`,
-        sortable: true,
-        switchable: false,
-        render: (record: any) => PartColumn({ part: record.part_detail })
-      },
+        part: 'part_detail'
+      }),
       DescriptionColumn({
         accessor: 'part_detail.description',
         hidden: showPartInfo != true

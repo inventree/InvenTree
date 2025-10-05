@@ -22,10 +22,14 @@ export function RenderStockLocation(
 ): ReactNode {
   const { instance } = props;
 
+  if (!instance) {
+    return '';
+  }
+
   const suffix: ReactNode = (
     <Group gap='xs'>
       <TableHoverCard
-        value={<Text size='sm'>{instance.description}</Text>}
+        value={<Text size='xs'>{instance.description}</Text>}
         position='bottom-end'
         zIndex={10000}
         icon='sitemap'
@@ -71,7 +75,7 @@ export function RenderStockLocationType({
     <RenderInlineModel
       primary={instance.name}
       prefix={instance.icon && <ApiIcon name={instance.icon} />}
-      secondary={`${instance.description} (${instance.location_count})`}
+      suffix={`${instance.description} (${instance.location_count})`}
     />
   );
 }
@@ -84,7 +88,14 @@ export function RenderStockItem(
 
   const allocated: number = Math.max(0, instance?.allocated ?? 0);
 
-  if (instance?.serial !== null && instance?.serial !== undefined) {
+  // Determine if this item is serialized
+  const serialized: boolean =
+    instance?.quantity == 1 &&
+    instance?.serial !== null &&
+    instance?.serial !== undefined &&
+    instance?.serial !== '';
+
+  if (serialized) {
     quantity_string += `${t`Serial Number`}: ${instance.serial}`;
   } else if (allocated > 0) {
     const available: number = Math.max(0, instance.quantity - allocated);
@@ -119,7 +130,7 @@ export function RenderStockItem(
           zIndex={10000}
           icon='sitemap'
           title={t`Location`}
-          extra={[<Text>{location.pathstring}</Text>]}
+          extra={[<Text size='xs'>{location.pathstring}</Text>]}
         />
       )}
     </Group>

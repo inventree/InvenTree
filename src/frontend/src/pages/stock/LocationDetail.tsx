@@ -173,7 +173,7 @@ export default function Stock() {
       },
       {
         name: 'sublocations',
-        label: t`Stock Locations`,
+        label: id ? t`Sublocations` : t`Stock Locations`,
         icon: <IconSitemap />,
         content: <StockLocationTable parentId={id} />
       },
@@ -417,7 +417,7 @@ export default function Stock() {
             selectedId={location?.pk}
           />
           <PageDetail
-            title={location?.name ?? t`Stock Location`}
+            title={(location?.name ?? id) ? t`Stock Location` : t`Stock`}
             subtitle={location?.description}
             icon={location?.icon && <ApiIcon name={location?.icon} />}
             actions={locationActions}

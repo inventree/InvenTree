@@ -142,10 +142,11 @@ export function SalesOrderTable({
         title: t`Customer Reference`
       },
       DescriptionColumn({}),
-      LineItemsProgressColumn(),
+      LineItemsProgressColumn({}),
       {
         accessor: 'shipments_count',
         title: t`Shipments`,
+        minWidth: 125,
         render: (record: any) => (
           <ProgressBar
             progressLabel

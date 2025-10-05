@@ -33,16 +33,16 @@ class UsersConfig(AppConfig):
                 from users.tasks import rebuild_all_permissions
 
                 rebuild_all_permissions()
-            except (OperationalError, ProgrammingError):
+            except (OperationalError, ProgrammingError):  # pragma: no cover
                 pass
-            except Exception as e:
+            except Exception as e:  # pragma: no cover
                 logger.exception('Failed to rebuild permissions: %s', e)
 
             try:
                 self.update_owners()
-            except (OperationalError, ProgrammingError):
+            except (OperationalError, ProgrammingError):  # pragma: no cover
                 pass
-            except Exception as e:
+            except Exception as e:  # pragma: no cover
                 logger.exception('Failed to update owners: %s', e)
 
     def update_owners(self):

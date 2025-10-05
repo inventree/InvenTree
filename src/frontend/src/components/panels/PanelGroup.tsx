@@ -253,14 +253,19 @@ function BasePanelGroup({
                             handlePanelChange(panel.name, event)
                           }
                         >
-                          <UnstyledButton
-                            component={'a'}
-                            href={generateUrl(
-                              `/${getBaseUrl()}${location.pathname}/${panel.name}`
-                            )}
-                          >
-                            {expanded && panel.label}
-                          </UnstyledButton>
+                          <Group justify='left' gap='xs' wrap='nowrap'>
+                            <UnstyledButton
+                              component={'a'}
+                              style={{
+                                textAlign: 'left'
+                              }}
+                              href={generateUrl(
+                                `/${getBaseUrl()}${location.pathname}/${panel.name}`
+                              )}
+                            >
+                              {expanded && panel.label}
+                            </UnstyledButton>
+                          </Group>
                         </Tabs.Tab>
                       </Tooltip>
                     )

@@ -18,6 +18,7 @@ from rest_framework.serializers import ValidationError
 from rest_framework.views import APIView
 
 import InvenTree.config
+import InvenTree.permissions
 import InvenTree.version
 from common.settings import get_global_setting
 from InvenTree import helpers
@@ -305,8 +306,8 @@ class InfoView(APIView):
                 'login_message': helpers.getCustomOption('login_message'),
                 'navbar_message': helpers.getCustomOption('navbar_message'),
             },
+            'active_plugins': plugins_info(),
             # Following fields are only available to staff users
-            'active_plugins': plugins_info() if is_staff else None,
             'system_health': check_system_health() if is_staff else None,
             'database': InvenTree.version.inventreeDatabase() if is_staff else None,
             'platform': InvenTree.version.inventreePlatform() if is_staff else None,

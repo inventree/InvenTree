@@ -15,6 +15,7 @@ import {
 import {
   IconBookmarks,
   IconBuilding,
+  IconChecklist,
   IconCircleCheck,
   IconClipboardList,
   IconCurrencyDollar,
@@ -101,6 +102,7 @@ import { UsedInTable } from '../../tables/bom/UsedInTable';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
 import { PartParameterTable } from '../../tables/part/PartParameterTable';
 import PartPurchaseOrdersTable from '../../tables/part/PartPurchaseOrdersTable';
+import PartTestResultTable from '../../tables/part/PartTestResultTable';
 import PartTestTemplateTable from '../../tables/part/PartTestTemplateTable';
 import { PartVariantTable } from '../../tables/part/PartVariantTable';
 import { RelatedPartTable } from '../../tables/part/RelatedPartTable';
@@ -532,7 +534,8 @@ export default function PartDetail() {
         type: 'number',
         name: 'total_in_stock',
         unit: part.units,
-        label: t`In Stock`
+        label: t`In Stock`,
+        hidden: part.virtual
       },
       {
         type: 'progressbar',
@@ -540,7 +543,7 @@ export default function PartDetail() {
         total: data.total_in_stock,
         progress: data.unallocated,
         label: t`Available Stock`,
-        hidden: data.total_in_stock == data.unallocated
+        hidden: part.virtual || data.total_in_stock == data.unallocated
       },
       {
         type: 'number',
@@ -803,6 +806,7 @@ export default function PartDetail() {
         name: 'stock',
         label: t`Stock`,
         icon: <IconPackages />,
+        hidden: part.virtual || !user.hasViewRole(UserRoles.stock),
         content: part.pk ? (
           <StockItemTable
             tableName='part-stock'
@@ -828,7 +832,7 @@ export default function PartDetail() {
         name: 'allocations',
         label: t`Allocations`,
         icon: <IconBookmarks />,
-        hidden: !part.component && !part.salable,
+        hidden: (!part.component && !part.salable) || part.virtual,
         content: part.pk ? <PartAllocationPanel part={part} /> : <Skeleton />
       },
       {
@@ -915,6 +919,8 @@ export default function PartDetail() {
           <Skeleton />
         ),
         hidden:
+          part.virtual ||
+          !user.hasViewRole(UserRoles.stock) ||
           !globalSettings.isSet('STOCKTAKE_ENABLE') ||
           !userSettings.isSet('DISPLAY_STOCKTAKE_TAB')
       },
@@ -925,6 +931,17 @@ export default function PartDetail() {
         hidden: !part.testable,
         content: part?.pk ? (
           <PartTestTemplateTable partId={part?.pk} partLocked={part.locked} />
+        ) : (
+          <Skeleton />
+        )
+      },
+      {
+        name: 'test_results',
+        label: t`Test Results`,
+        icon: <IconChecklist />,
+        hidden: !part.testable || !user.hasViewRole(UserRoles.stock),
+        content: part?.pk ? (
+          <PartTestResultTable partId={part.pk} />
         ) : (
           <Skeleton />
         )
@@ -973,7 +990,7 @@ export default function PartDetail() {
             ? 'green'
             : 'orange'
         }
-        visible={partRequirements.total_stock > 0}
+        visible={!part.virtual && partRequirements.total_stock > 0}
         key='in_stock'
       />,
       <DetailsBadge
@@ -981,13 +998,14 @@ export default function PartDetail() {
         color='yellow'
         key='available_stock'
         visible={
+          !part.virtual &&
           partRequirements.unallocated_stock != partRequirements.total_stock
         }
       />,
       <DetailsBadge
         label={t`No Stock`}
         color='orange'
-        visible={partRequirements.total_stock == 0}
+        visible={!part.virtual && partRequirements.total_stock == 0}
         key='no_stock'
       />,
       <DetailsBadge
@@ -1013,6 +1031,12 @@ export default function PartDetail() {
         color='red'
         visible={!part.active}
         key='inactive'
+      />,
+      <DetailsBadge
+        label={t`Virtual Part`}
+        color='cyan.4'
+        visible={part.virtual}
+        key='virtual'
       />
     ];
   }, [partRequirements, partRequirementsQuery.isFetching, part]);
@@ -1143,6 +1167,7 @@ export default function PartDetail() {
       <ActionDropdown
         tooltip={t`Stock Actions`}
         icon={<IconPackages />}
+        hidden={part.virtual || !user.hasViewRole(UserRoles.stock)}
         actions={[
           ...stockAdjustActions.menuActions,
           {

@@ -1,11 +1,60 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 385
+INVENTREE_API_VERSION = 397
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v397 -> 2025-10-01 : https://github.com/inventree/InvenTree/pull/10444
+    - Refactors 'path_detail' param in StockLocation API endpoint
+    - Refactors 'user_detail' and 'template_detail' params in StockItemTestResult API endpoint
+    - Refactors 'item_detail' and 'user_detail' params in StockTracking API endpoint
+    - Refactors 'include_installed' and 'stock_item' params in StockItemTestResult API endpoint
+
+v396 -> 2025-10-01 : https://github.com/inventree/InvenTree/pull/10443
+    - Refactors 'part_detail', 'manufacturer_detail' and 'pretty' params in Manufacturer API endpoint
+    - Refactors 'manufacturer_part_detail' param in ManufacturerPartParameter API endpoint
+    - Refactors 'part_detail' and 'supplier_detail' param in SupplierPriceBreak API endpoint
+
+v395 -> 2025-10-01 : https://github.com/inventree/InvenTree/pull/10441
+    - Refactors 'parameters', 'category_detail', 'location_detail' and 'path_detail' params in Part API endpoint
+    - Refactors 'can_build', 'part_detail', 'sub_part_detail' and 'path_detail' params in BOM API endpoint
+    - Refactors 'path_detail' params in user Category API endpoint
+    - Refactors 'exclude_id', 'related' and 'exclude_related' params in Part API endpoint
+
+v394 -> 2025-10-01 : https://github.com/inventree/InvenTree/pull/10438
+    - Refactors 'bom_item_detail', 'assembly_detail', 'part_detail', 'build_detail' and 'allocations' params in BuildLine API endpoint
+    - Refactors 'part_detail', 'location_detail', 'stock_detail' and 'build_detail' params in BuildItem API endpoint
+
+v393 -> 2025-10-01 : https://github.com/inventree/InvenTree/pull/10437
+    - Refactors 'user_detail', 'permission_detail', 'role_detail' params in user GroupList API endpoint
+
+v392 -> 2025-09-22 : https://github.com/inventree/InvenTree/pull/10374
+    - Refactors 'part_detail', 'supplier_detail', 'manufacturer_detail'and 'pretty' params in SupplierPartList API endpoint
+
+v391 -> 2025-09-06 : https://github.com/inventree/InvenTree/pull/10279
+    - Refactors 'exclude_tree', 'cascade', and 'location' filters in StockList API endpoint
+
+v390 -> 2025-09-03 : https://github.com/inventree/InvenTree/pull/10257
+    - Fixes limitation on adding virtual parts to a SalesOrder
+    - Additional query filter options for BomItem API endpoint
+
+v389 -> 2025-08-27 : https://github.com/inventree/InvenTree/pull/10214
+    - Adds "output" filter to the BuildItem API endpoint
+    - Removes undocumented 'output' query parameter handling
+
+v388 -> 2025-08-23 : https://github.com/inventree/InvenTree/pull/10213
+    - Disable paging on PurchaseOrderReceive call
+
+v387 -> 2025-08-19 : https://github.com/inventree/InvenTree/pull/10188
+    - Adds "update_records" field to the DataImportSession API
+
+v386 -> 2025-08-11 : https://github.com/inventree/InvenTree/pull/8191
+    - Adds "consumed" field to the BuildItem API
+    - Adds API endpoint to consume stock against a BuildOrder
+
 v385 -> 2025-08-15 : https://github.com/inventree/InvenTree/pull/10174
     - Adjust return type of PurchaseOrderReceive API serializer
     - Now returns list of of the created stock items when receiving

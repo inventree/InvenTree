@@ -95,13 +95,13 @@ The following options are available when scrapping a build order:
 | Notes | Any additional notes associated with the scrapping of these outputs |
 | Discard Allocations | If selected, any installed BOM items will be removed first, before marking the build output as scrapped. Use this option if the installed items are recoverable and can be used elsewhere |
 
-## Delete Build Output
+## Cancel Build Output
 
-*Deleting* a build output causes the build output to be cancelled, and removed from the database entirely. Use this option when the build output does not physically exist (or was never built) and should not be tracked in the database.
+*Cancelling* a build output causes the build output to be deleted, and removed from the database entirely. Use this option when the build output does not physically exist (or was never built) and should not be tracked in the database.
 
-{{ image("build/build_output_delete.png", "Delete build output") }}
+{{ image("build/build_output_delete.png", "Cancel build output") }}
 
-Marking the build output(s) as deleted performs the following actions:
+Marking the build output(s) as cancelled performs the following actions:
 
 - Any allocated stock items are returned to stock
 - The build output is removed from the database

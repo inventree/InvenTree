@@ -38,6 +38,7 @@ import {
 import {
   BatchFilter,
   HasBatchCodeFilter,
+  InStockFilter,
   IncludeVariantsFilter,
   IsSerializedFilter,
   ManufacturerFilter,
@@ -61,11 +62,10 @@ function stockItemTableColumns({
   showPricing: boolean;
 }): TableColumn[] {
   return [
-    {
+    PartColumn({
       accessor: 'part',
-      sortable: true,
-      render: (record: any) => PartColumn({ part: record?.part_detail })
-    },
+      part: 'part_detail'
+    }),
     {
       accessor: 'part_detail.IPN',
       title: t`IPN`,
@@ -355,11 +355,7 @@ function stockItemTableFilters({
       label: t`Depleted`,
       description: t`Show depleted stock items`
     },
-    {
-      name: 'in_stock',
-      label: t`In Stock`,
-      description: t`Show items which are in stock`
-    },
+    InStockFilter(),
     {
       name: 'is_building',
       label: t`In Production`,

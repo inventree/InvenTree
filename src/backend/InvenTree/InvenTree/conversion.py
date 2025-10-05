@@ -191,7 +191,7 @@ def convert_physical_value(value: str, unit: Optional[str] = None, strip_units=T
         attempts.append(f'{value}{unit}')
         attempts.append(f'{eng}{unit}')
 
-    value = None
+    value: Optional[str] = None
 
     # Run through the available "attempts", take the first successful result
     for attempt in attempts:
