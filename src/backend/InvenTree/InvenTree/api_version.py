@@ -7,7 +7,6 @@ INVENTREE_API_VERSION = 399
 
 INVENTREE_API_TEXT = """
 
-v398 -> 2025-10-04 : https://github.com/inventree/InvenTree/pull/10445
 v399 -> 2025-10-05 : https://github.com/inventree/InvenTree/pull/10445
     - Refactors 'customer_detail' param in SalesOrder API endpoint
     - Refactors 'customer_detail' param in ReturnOrder API endpoint
