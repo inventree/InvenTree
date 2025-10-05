@@ -406,11 +406,15 @@ class StockItemSerializer(
     def __init__(self, *args, **kwargs):
         """Add detail fields."""
         path_detail = kwargs.pop('path_detail', False)
+        tests = kwargs.pop('tests', False)
 
         super().__init__(*args, **kwargs)
 
         if isGeneratingSchema():
             return
+
+        if not tests:
+            self.fields.pop('tests', None)
 
         # TODO INVE-T1 support complex filters
         if not path_detail:
@@ -620,10 +624,8 @@ class StockItemSerializer(
         True,
     )
 
-    tests = can_filter(
-        StockItemTestResultSerializer(
-            source='test_results', many=True, read_only=True, allow_null=True
-        )
+    tests = StockItemTestResultSerializer(
+        source='test_results', many=True, read_only=True, allow_null=True
     )
 
     quantity = InvenTreeDecimalField()
