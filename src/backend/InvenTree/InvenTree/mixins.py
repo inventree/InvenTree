@@ -14,7 +14,6 @@ from InvenTree.helpers import (
     strip_html_tags,
 )
 from InvenTree.schema import schema_for_view_output_options
-from InvenTree.serializers import OptionalFilterabelSerializer
 
 
 class CleanMixin:
@@ -204,7 +203,6 @@ class UpdateAPI(CleanMixin, generics.UpdateAPIView):
 
 
 class DataImportExportSerializerMixin(
-    OptionalFilterabelSerializer,
     data_exporter.mixins.DataExportSerializerMixin,
     importer.mixins.DataImportSerializerMixin,
 ):

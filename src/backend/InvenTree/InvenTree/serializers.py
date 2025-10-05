@@ -93,12 +93,9 @@ def can_filter(func, default=False):
     """Decorator for marking serializer fields as filterable."""
     # Check if function is holding OptionalFilterabelSerializer somehow
     if not issubclass(func.__class__, OptionalFilterabelSerializer):
-        return
-    if not isinstance(func, OptionalFilterabelSerializer):
-        return
-        # raise TypeError('can_filter can only be applied to OptionalFilterabelSerializer Serializers!')
-    if isinstance(func, serializers.ListSerializer):
-        return func
+        raise TypeError(
+            'can_filter can only be applied to OptionalFilterabelSerializer Serializers!'
+        )
     func._kwargs['is_filterable'] = True
     func._kwargs['is_filterable_default'] = default
     return func
@@ -302,8 +299,8 @@ class DependentField(serializers.Field):
 
 
 class InvenTreeModelSerializer(
-    FractionalFilterabelSerializer,
     OptionalFilterabelSerializer,
+    FractionalFilterabelSerializer,
     serializers.ModelSerializer,
 ):
     """Inherits the standard Django ModelSerializer class, but also ensures that the underlying model class data are checked on validation."""
@@ -611,3 +608,9 @@ class RemoteImageMixin(metaclass=serializers.SerializerMetaclass):
             raise ValidationError(_('Failed to download image from remote URL'))
 
         return url
+
+
+class FilterableListSerializer(
+    OptionalFilterabelSerializer, serializers.ListSerializer
+):
+    """Custom ListSerializer which allows filtering of fields."""

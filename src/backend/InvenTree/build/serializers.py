@@ -35,6 +35,7 @@ from generic.states.fields import InvenTreeCustomStatusSerializerMixin
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.ready import isGeneratingSchema
 from InvenTree.serializers import (
+    FilterableListSerializer,
     InvenTreeDecimalField,
     InvenTreeModelSerializer,
     NotesFieldMixin,
@@ -1189,6 +1190,7 @@ class BuildItemSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
             'bom_part_id',
             'bom_part_name',
         ]
+        list_serializer_class = FilterableListSerializer
 
     def __init__(self, *args, **kwargs):
         """Determine which extra details fields should be included."""

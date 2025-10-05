@@ -34,7 +34,7 @@ import users.models
 from importer.registry import register_importer
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.ready import isGeneratingSchema
-from InvenTree.serializers import can_filter
+from InvenTree.serializers import FilterableListSerializer, can_filter
 from users.serializers import UserSerializer
 
 from .models import (
@@ -414,8 +414,8 @@ class PartParameterSerializer(
             'updated_by',
             'updated_by_detail',
         ]
-
         read_only_fields = ['updated', 'updated_by']
+        list_serializer_class = FilterableListSerializer
 
     def save(self):
         """Save the PartParameter instance."""
