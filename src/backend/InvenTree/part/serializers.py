@@ -34,6 +34,7 @@ import users.models
 from importer.registry import register_importer
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.ready import isGeneratingSchema
+from InvenTree.serializers import can_filter
 from users.serializers import UserSerializer
 
 from .models import (
@@ -91,6 +92,7 @@ class CategorySerializer(
 
         super().__init__(*args, **kwargs)
 
+        # TODO INVE-T1 support complex filters
         if not path_detail and not isGeneratingSchema():
             self.fields.pop('path', None)
 
@@ -355,6 +357,7 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
         super().__init__(*args, **kwargs)
 
+        # TODO INVE-T1 support complex filters
         if not pricing and not isGeneratingSchema():
             self.fields.pop('pricing_min', None)
             self.fields.pop('pricing_max', None)
@@ -414,25 +417,6 @@ class PartParameterSerializer(
 
         read_only_fields = ['updated', 'updated_by']
 
-    def __init__(self, *args, **kwargs):
-        """Custom initialization method for the serializer.
-
-        Allows us to optionally include or exclude particular information
-        """
-        template_detail = kwargs.pop('template_detail', True)
-        part_detail = kwargs.pop('part_detail', False)
-
-        super().__init__(*args, **kwargs)
-
-        if isGeneratingSchema():
-            return
-
-        if not part_detail:
-            self.fields.pop('part_detail', None)
-
-        if not template_detail:
-            self.fields.pop('template_detail', None)
-
     def save(self):
         """Save the PartParameter instance."""
         instance = super().save()
@@ -444,12 +428,15 @@ class PartParameterSerializer(
 
         return instance
 
-    part_detail = PartBriefSerializer(
-        source='part', many=False, read_only=True, allow_null=True
+    part_detail = can_filter(
+        PartBriefSerializer(source='part', many=False, read_only=True, allow_null=True)
     )
 
-    template_detail = PartParameterTemplateSerializer(
-        source='template', many=False, read_only=True, allow_null=True
+    template_detail = can_filter(
+        PartParameterTemplateSerializer(
+            source='template', many=False, read_only=True, allow_null=True
+        ),
+        True,
     )
 
     updated_by_detail = UserSerializer(
@@ -737,9 +724,7 @@ class PartSerializer(
         - Allows us to optionally pass extra fields based on the query.
         """
         self.starred_parts = kwargs.pop('starred_parts', [])
-        category_detail = kwargs.pop('category_detail', False)
         location_detail = kwargs.pop('location_detail', False)
-        parameters = kwargs.pop('parameters', False)
         create = kwargs.pop('create', False)
         pricing = kwargs.pop('pricing', True)
         path_detail = kwargs.pop('path_detail', False)
@@ -749,15 +734,11 @@ class PartSerializer(
         if isGeneratingSchema():
             return
 
-        if not category_detail:
-            self.fields.pop('category_detail', None)
-
+        # TODO INVE-T1 support complex filters
         if not location_detail:
             self.fields.pop('default_location_detail', None)
 
-        if not parameters:
-            self.fields.pop('parameters', None)
-
+        # TODO INVE-T1 support complex filters
         if not path_detail:
             self.fields.pop('category_path', None)
 
@@ -769,6 +750,7 @@ class PartSerializer(
                     continue
                 self.fields.pop(f, None)
 
+        # TODO INVE-T1 support complex filters
         if not pricing:
             self.fields.pop('pricing_min', None)
             self.fields.pop('pricing_max', None)
@@ -888,8 +870,10 @@ class PartSerializer(
         return part in self.starred_parts
 
     # Extra detail for the category
-    category_detail = CategorySerializer(
-        source='category', many=False, read_only=True, allow_null=True
+    category_detail = can_filter(
+        CategorySerializer(
+            source='category', many=False, read_only=True, allow_null=True
+        )
     )
 
     category_path = serializers.ListField(
@@ -1018,7 +1002,9 @@ class PartSerializer(
         source='pricing_data.updated', allow_null=True, read_only=True
     )
 
-    parameters = PartParameterSerializer(many=True, read_only=True, allow_null=True)
+    parameters = can_filter(
+        PartParameterSerializer(many=True, read_only=True, allow_null=True)
+    )
 
     # Extra fields used only for creation of a new Part instance
     duplicate = DuplicatePartSerializer(
@@ -1650,8 +1636,6 @@ class BomItemSerializer(
         - This saves a bunch of database requests
         """
         can_build = kwargs.pop('can_build', True)
-        part_detail = kwargs.pop('part_detail', False)
-        sub_part_detail = kwargs.pop('sub_part_detail', True)
         pricing = kwargs.pop('pricing', True)
         substitutes = kwargs.pop('substitutes', True)
 
@@ -1659,19 +1643,12 @@ class BomItemSerializer(
 
         if isGeneratingSchema():
             return
-
-        if not part_detail:
-            self.fields.pop('part_detail', None)
-
-        if not sub_part_detail:
-            self.fields.pop('sub_part_detail', None)
-
+        if not substitutes:
+            self.fields.pop('substitutes', None)
         if not can_build:
             self.fields.pop('can_build')
 
-        if not substitutes:
-            self.fields.pop('substitutes', None)
-
+        # TODO INVE-T1 support complex filters
         if not pricing:
             self.fields.pop('pricing_min', None)
             self.fields.pop('pricing_max', None)
@@ -1706,8 +1683,14 @@ class BomItemSerializer(
         many=True, read_only=True, allow_null=True
     )
 
-    part_detail = PartBriefSerializer(
-        source='part', label=_('Assembly'), many=False, read_only=True, allow_null=True
+    part_detail = can_filter(
+        PartBriefSerializer(
+            source='part',
+            label=_('Assembly'),
+            many=False,
+            read_only=True,
+            allow_null=True,
+        )
     )
 
     sub_part = serializers.PrimaryKeyRelatedField(
@@ -1716,12 +1699,15 @@ class BomItemSerializer(
         help_text=_('Select the component part'),
     )
 
-    sub_part_detail = PartBriefSerializer(
-        source='sub_part',
-        label=_('Component'),
-        many=False,
-        read_only=True,
-        allow_null=True,
+    sub_part_detail = can_filter(
+        PartBriefSerializer(
+            source='sub_part',
+            label=_('Component'),
+            many=False,
+            read_only=True,
+            allow_null=True,
+        ),
+        True,
     )
 
     on_order = serializers.FloatField(
