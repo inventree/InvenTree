@@ -87,3 +87,15 @@ export function extraLineItemFields(): ApiFormFieldSet {
     link: {}
   };
 }
+
+export function taxExtraLineItemFields({
+  create
+}: { create: boolean }): ApiFormFieldSet {
+  const fields = extraLineItemFields();
+  if (create) return fields;
+
+  return {
+    ...fields,
+    is_tax_inclusive: {}
+  };
+}

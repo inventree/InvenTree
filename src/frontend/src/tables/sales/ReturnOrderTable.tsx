@@ -7,7 +7,6 @@ import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
-import { formatCurrency } from '../../defaults/formatters';
 import { useReturnOrderFields } from '../../forms/ReturnOrderForms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
@@ -17,8 +16,10 @@ import {
   CompletionDateColumn,
   CreatedByColumn,
   CreationDateColumn,
+  CurrencyColumn,
   DescriptionColumn,
   LineItemsProgressColumn,
+  PercentageColumn,
   ProjectCodeColumn,
   ReferenceColumn,
   ResponsibleColumn,
@@ -134,16 +135,27 @@ export function ReturnOrderTable({
         accessor: 'complete_date'
       }),
       ResponsibleColumn({}),
-      {
+      CurrencyColumn({
         accessor: 'total_price',
-        title: t`Total Price`,
-        sortable: true,
-        render: (record: any) => {
-          return formatCurrency(record.total_price, {
-            currency: record.order_currency || record.customer_detail?.currency
-          });
-        }
-      }
+        title: t`Total Price`
+      }),
+      CurrencyColumn({
+        accessor: 'subtotal',
+        title: t`Subtotal`
+      }),
+      CurrencyColumn({
+        accessor: 'tax_amount',
+        title: t`Tax Amount`
+      }),
+      CurrencyColumn({
+        accessor: 'total_with_tax',
+        title: t`Total with Tax`
+      }),
+      PercentageColumn({
+        accessor: 'tax_rate',
+        title: t`Tax Rate`,
+        sortable: true
+      })
     ];
   }, []);
 

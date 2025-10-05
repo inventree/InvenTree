@@ -22,7 +22,8 @@ import { RenderOwner, RenderUser } from '../components/render/User';
 import {
   formatCurrency,
   formatDate,
-  formatDecimal
+  formatDecimal,
+  formatPercentage
 } from '../defaults/formatters';
 import {
   useGlobalSettingsState,
@@ -34,10 +35,7 @@ import { ProjectCodeHoverCard, TableHoverCard } from './TableHoverCard';
 export function PartColumn({
   part,
   full_name
-}: {
-  part: any;
-  full_name?: boolean;
-}) {
+}: { part: any; full_name?: boolean }) {
   return part ? (
     <Group justify='space-between' wrap='nowrap'>
       <Thumbnail
@@ -68,11 +66,7 @@ export function PartColumn({
   );
 }
 
-export function CompanyColumn({
-  company
-}: {
-  company: any;
-}) {
+export function CompanyColumn({ company }: { company: any }) {
   return company ? (
     <Group gap='xs' wrap='nowrap'>
       <Thumbnail
@@ -461,4 +455,20 @@ export function TotalPriceColumn(): TableColumn {
     accessor: 'total_price',
     title: t`Total Price`
   });
+}
+
+export function PercentageColumn({
+  accessor,
+  title,
+  sortable
+}: { accessor: string; title: string; sortable?: boolean }): TableColumn {
+  return {
+    accessor: accessor,
+    title: title,
+    sortable: true,
+    render: (record: any) => {
+      const value = resolveItem(record, accessor);
+      return formatPercentage(value);
+    }
+  };
 }

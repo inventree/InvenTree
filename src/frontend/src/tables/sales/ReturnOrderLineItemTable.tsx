@@ -29,11 +29,13 @@ import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import {
+  CurrencyColumn,
   DateColumn,
   DescriptionColumn,
   LinkColumn,
   NoteColumn,
   PartColumn,
+  PercentageColumn,
   ReferenceColumn,
   StatusColumn
 } from '../ColumnRenderers';
@@ -148,6 +150,32 @@ export default function ReturnOrderLineItemTable({
         render: (record: any) =>
           formatCurrency(record.price, { currency: record.price_currency })
       },
+      CurrencyColumn({
+        accessor: 'price_with_tax',
+        title: t`Price with Tax`
+      }),
+      CurrencyColumn({
+        accessor: 'subtotal',
+        title: t`Subtotal`
+      }),
+      CurrencyColumn({
+        accessor: 'tax_amount',
+        title: t`Total Tax`
+      }),
+      CurrencyColumn({
+        accessor: 'total_with_tax',
+        title: t`Total with Tax`
+      }),
+      PercentageColumn({
+        accessor: 'tax_rate',
+        title: t`Tax Rate`,
+        sortable: true
+      }),
+      DateColumn({
+        accessor: 'target_date',
+        sortable: true,
+        title: t`Target Date`
+      }),
       DateColumn({
         accessor: 'target_date',
         title: t`Target Date`

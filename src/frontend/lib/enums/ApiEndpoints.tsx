@@ -229,6 +229,10 @@ export enum ApiEndpoints {
   machine_setting_list = 'machine/:machine/settings/',
   machine_setting_detail = 'machine/:machine/settings/:config_type/',
 
+  // Tax API endpoints
+  tax_configuration_list = 'tax/configuration/',
+  tax_configuration_detail = 'tax/configuration/:id/',
+
   // Miscellaneous API endpoints
   attachment_list = 'attachment/',
   error_report_list = 'error-report/',

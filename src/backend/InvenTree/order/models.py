@@ -80,11 +80,6 @@ class TotalPriceMixin(models.Model):
             return super().save(*args, **kwargs)
         self._SAVING_TOTAL_PRICE = True
 
-        if hasattr(self, 'apply_tax_configuration') and (
-            not self.pk or not self.tax_configuration_reference
-        ):
-            self.apply_tax_configuration()
-
         # Save the object as we can not access foreign/m2m fields before saving
         self.update_total_price(commit=True)
 
@@ -192,10 +187,18 @@ class TaxMixin(models.Model):
 
         abstract = True
 
+    def save(self, *args, **kwargs):
+        """Update the total_price field when saved."""
+        self.apply_tax_configuration()
+        # super().save(*args, **kwargs)
+        self.recalculate_line_items()
+        self.calculate_taxes()
+        super().save(*args, **kwargs)
+
     # Tax fields
-    tax_configuration_reference = models.ForeignKey(
+    tax_configuration = models.ForeignKey(
         'tax.TaxConfiguration',
-        on_delete=models.SET_NULL,
+        on_delete=models.DO_NOTHING,
         null=True,
         blank=True,
         verbose_name=_('Tax Configuration'),
@@ -217,72 +220,91 @@ class TaxMixin(models.Model):
         help_text=_('Whether prices in this order include tax'),
     )
 
+    tax_amount = InvenTreeModelMoneyField(
+        null=True,
+        blank=True,
+        allow_negative=False,
+        verbose_name=_('Tax Amount'),
+        help_text=_('Tax amount for this order'),
+    )
+
+    subtotal = InvenTreeModelMoneyField(
+        null=True,
+        blank=True,
+        allow_negative=False,
+        verbose_name=_('Subtotal'),
+        help_text=_('Subtotal for this order'),
+    )
+
+    total_with_tax = InvenTreeModelMoneyField(
+        null=True,
+        blank=True,
+        allow_negative=False,
+        verbose_name=_('Total with Tax'),
+        help_text=_('Total with tax for this order'),
+    )
+
+    def sumItems(self, property):
+        """Sum the values of a property for all line items and extra line items."""
+        line_sum = sum(getattr(line, property, 0) for line in self.lines.all())
+        extra_sum = sum(getattr(line, property, 0) for line in self.extra_lines.all())
+
+        return line_sum + extra_sum
+
     def apply_tax_configuration(self, tax_config=None):
         """Apply tax configuration to this order.
 
         Args:
             tax_config: TaxConfiguration instance to apply. If None, uses current active config.
         """
-        if tax_config is None:
+        if self.tax_configuration is None:
             from tax.models import TaxConfiguration
 
-            tax_config = TaxConfiguration.get_current_tax_config()
+            self.tax_configuration = TaxConfiguration.get_current_tax_config()
 
-        if not tax_config or not tax_config.applies_to_sales:
+        if not self.tax_configuration or not self.tax_configuration.applies_to_sales:
             # Clear tax settings if no valid config
-            self.tax_rate = None
+            self.tax_rate = Decimal('0.00')
             self.tax_inclusive = False
-            self.tax_configuration_reference = None
             return
 
-        # Store key values for easy access
-        self.tax_rate = tax_config.rate
-        self.tax_inclusive = tax_config.is_inclusive
-        self.tax_configuration_reference = tax_config
+        self.tax_rate = self.tax_configuration.rate
+        self.tax_inclusive = self.tax_configuration.is_inclusive
 
-    @property
-    def tax_amount(self):
+    def recalculate_line_items(self):
+        """Recalculate the line items for this order."""
+        if not self.pk:
+            return
+        for line in self.lines.all():
+            line.save(update_order=False)
+        for line in self.extra_lines.all():
+            line.save(update_order=False)
+
+    def calculate_taxes(self):
+        """Calculate the taxes for this order."""
+        self.tax_amount = self.calculate_tax_amount()
+        self.subtotal = self.calculate_subtotal()
+        self.total_with_tax = self.calculate_total_with_tax()
+
+    def calculate_tax_amount(self):
         """Calculate total tax amount from all line items.
 
         Returns:
-            Decimal: Total tax amount for this order
+            Money: Total tax amount for this order
         """
-        if not self.tax_configuration_reference or not self.tax_rate:
-            return Decimal('0.00')
+        return self.sumItems('tax_amount')
 
-        # Calculate tax from line items
-        line_tax = sum(
-            getattr(line, 'tax_amount', 0) or Decimal('0.00')
-            for line in self.lines.all()
-        )
-        extra_tax = sum(
-            getattr(line, 'tax_amount', 0) or Decimal('0.00')
-            for line in self.extra_lines.all()
-        )
-
-        return line_tax + extra_tax
-
-    @property
-    def total_with_tax(self):
+    def calculate_total_with_tax(self):
         """Calculate total order amount including tax.
 
         Returns:
-            Decimal: Total amount including tax
+            Money: Total amount including tax
         """
-        base_total = self.total_price or Decimal('0.00')
-        return base_total if self.tax_inclusive else base_total + self.tax_amount
+        return self.sumItems('total_with_tax')
 
-    @property
-    def subtotal(self):
+    def calculate_subtotal(self):
         """Calculate subtotal excluding tax."""
-        base_total = self.total_price or Decimal('0.00')
-
-        if self.tax_inclusive and self.tax_rate:
-            if self.tax_rate == 0:
-                return base_total
-            rate_factor = Decimal('1.00') + (self.tax_rate / Decimal('100.00'))
-            return (base_total / rate_factor).quantize(Decimal('0.01'))
-        return base_total
+        return self.sumItems('subtotal')
 
 
 class TaxLineItemMixin(models.Model):
@@ -293,6 +315,16 @@ class TaxLineItemMixin(models.Model):
 
         abstract = True
 
+    def save(self, *args, **kwargs):
+        """Update the total_price field when saved."""
+        self.is_tax_inclusive = self.set_tax_inclusive()
+        self.tax_rate = self.get_effective_tax_rate()
+        self.tax_per_item = self.calculate_tax_per_item()
+        self.subtotal = self.calculate_subtotal()
+        self.tax_amount = self.calculate_tax_amount()
+        self.price_with_tax = self.calculate_price_with_tax()
+        super().save(*args, **kwargs)
+
     # Tax fields
     tax_rate = models.DecimalField(
         max_digits=5,
@@ -302,6 +334,54 @@ class TaxLineItemMixin(models.Model):
         verbose_name=_('Tax Rate (%)'),
         help_text=_('Tax rate for this line item. Leave blank to use order default.'),
     )
+
+    subtotal = InvenTreeModelMoneyField(
+        null=True,
+        blank=True,
+        allow_negative=False,
+        verbose_name=_('Subtotal'),
+        help_text=_('Subtotal for this line item'),
+    )
+
+    tax_per_item = InvenTreeModelMoneyField(
+        null=True,
+        blank=True,
+        allow_negative=False,
+        verbose_name=_('Tax per Item'),
+        help_text=_('Tax per item for this line item'),
+    )
+
+    tax_amount = InvenTreeModelMoneyField(
+        null=True,
+        blank=True,
+        allow_negative=False,
+        verbose_name=_('Tax Amount'),
+        help_text=_('Tax amount for this line item'),
+    )
+
+    price_with_tax = InvenTreeModelMoneyField(
+        null=True,
+        blank=True,
+        allow_negative=False,
+        verbose_name=_('Price with Tax'),
+        help_text=_('Price with tax for this line item'),
+    )
+
+    is_tax_inclusive = models.BooleanField(
+        null=True,
+        blank=True,
+        verbose_name=_('Tax Inclusive'),
+        help_text=_('Whether prices for this item include tax'),
+    )
+
+    @property
+    def total_with_tax(self):
+        """Calculate the total with tax for this line item."""
+        return (
+            self.price_with_tax * self.quantity
+            if self.price_with_tax is not None
+            else 0
+        )
 
     def get_effective_tax_rate(self):
         """Get the effective tax rate for this line item.
@@ -319,8 +399,10 @@ class TaxLineItemMixin(models.Model):
 
         return None  # No tax configured
 
-    def is_tax_inclusive(self):
+    def set_tax_inclusive(self):
         """Check if this line item uses inclusive tax."""
+        if self.is_tax_inclusive is not None:
+            return self.is_tax_inclusive
         if (
             hasattr(self.order, 'tax_inclusive')
             and self.order.tax_inclusive is not None
@@ -328,47 +410,46 @@ class TaxLineItemMixin(models.Model):
             return self.order.tax_inclusive
         return False
 
-    @property
-    def subtotal(self):
-        """Calculate subtotal line price excluding tax."""
-        sale_price = self.sale_price
-        effective_tax = self.get_effective_tax_rate()
+    def getPrice(self):
+        """Get the price for this line item."""
+        if hasattr(self, 'sale_price'):
+            return self.sale_price
+        return self.price
 
-        if not effective_tax or effective_tax == 0:
-            return sale_price
+    def calculate_tax_per_item(self):
+        """Calculate the tax per item for this line item."""
+        effective_tax = self.tax_rate
+        price = self.getPrice()
 
-        if self.is_tax_inclusive():
-            if effective_tax == 0:
-                return sale_price
-            rate_factor = Decimal('1.00') + (effective_tax / Decimal('100.00'))
-            return (sale_price / rate_factor).quantize(Decimal('0.01'))
-        return sale_price
-
-    @property
-    def tax_amount(self):
-        """Calculate tax amount for this line item."""
-        effective_tax = self.get_effective_tax_rate()
-        if not effective_tax or effective_tax == 0:
+        if effective_tax is None or effective_tax == 0:
             return Decimal('0.00')
 
-        if self.is_tax_inclusive():
-            rate_factor = Decimal('1.00') + (effective_tax / Decimal('100.00'))
-            subtotal = self.sale_price / rate_factor
-            return self.sale_price - subtotal
+        if self.is_tax_inclusive:
+            rate = Decimal('1.00') + (effective_tax / Decimal('100.00'))
+            base_price = price / rate
+            return price - base_price
         else:
-            return self.sale_price * effective_tax / 100
+            return price * effective_tax / Decimal('100.00')
 
-    @property
-    def price_with_tax(self):
-        """Calculate the total line price including tax."""
-        effective_tax = self.get_effective_tax_rate()
-        price = self.sale_price
-        isTaxInclusive = self.is_tax_inclusive()
+    def calculate_subtotal(self):
+        """Calculate the subtotal for this line item."""
+        priceWithoutTax = (
+            self.getPrice()
+            if not self.is_tax_inclusive
+            else self.getPrice() - self.tax_per_item
+        )
+        return priceWithoutTax * self.quantity
 
+    def calculate_tax_amount(self):
+        """Calculate the tax amount for this line item."""
+        return self.tax_per_item * self.quantity
+
+    def calculate_price_with_tax(self):
+        """Calculate the price with tax for this line item."""
         return (
-            price + (price * effective_tax / 100)
-            if effective_tax and not isTaxInclusive
-            else price
+            self.getPrice()
+            if self.is_tax_inclusive
+            else self.getPrice() + self.tax_per_item
         )
 
 
@@ -1437,27 +1518,6 @@ class SalesOrder(TotalPriceMixin, TaxMixin, Order):
         """Get the 'web' URL for this order."""
         return pui_url(f'/sales/sales-order/{self.pk}')
 
-    def apply_tax_configuration(self, tax_config=None):
-        """Apply tax configuration to this order.
-
-        Args:
-            tax_config: TaxConfiguration instance to apply. If None, uses current active config.
-        """
-        if tax_config is None:
-            from tax.models import TaxConfiguration
-
-            tax_config = TaxConfiguration.get_current_tax_config()
-
-        if not tax_config or not tax_config.applies_to_sales:
-            # Clear tax settings if no valid config
-            self.tax_rate = None
-            self.tax_configuration_reference = None
-            return
-
-        # Store key values for easy access
-        self.tax_rate = tax_config.rate
-        self.tax_configuration_reference = tax_config
-
     @staticmethod
     def get_api_url():
         """Return the API URL associated with the SalesOrder model."""
@@ -1584,6 +1644,7 @@ class SalesOrder(TotalPriceMixin, TaxMixin, Order):
 
     def is_completed(self):
         """Check if this order is "shipped" (all line items delivered)."""
+        print('is complete', all(line.is_completed() for line in self.lines.all()))
         return all(line.is_completed() for line in self.lines.all())
 
     def can_complete(self, raise_error=False, allow_incomplete_lines=False):
@@ -1966,7 +2027,7 @@ class OrderLineItem(InvenTree.models.InvenTreeMetadataModel):
     )
 
 
-class OrderExtraLine(OrderLineItem, TaxLineItemMixin):
+class OrderExtraLine(OrderLineItem):
     """Abstract Model for a single ExtraLine in a Order.
 
     Attributes:
@@ -2552,7 +2613,7 @@ class SalesOrderShipment(
         trigger_event(SalesOrderEvents.SHIPMENT_COMPLETE, id=self.pk)
 
 
-class SalesOrderExtraLine(OrderExtraLine):
+class SalesOrderExtraLine(OrderExtraLine, TaxLineItemMixin):
     """Model for a single ExtraLine in a SalesOrder.
 
     Attributes:

@@ -13,6 +13,7 @@ import {
   IconPackages,
   IconPlugConnected,
   IconQrcode,
+  IconReceipt, // Add this import
   IconReport,
   IconScale,
   IconSitemap,
@@ -102,6 +103,8 @@ const LocationTypesTable = Loadable(
   lazy(() => import('../../../../tables/stock/LocationTypesTable'))
 );
 
+const TaxManagementPanel = Loadable(lazy(() => import('./TaxManagementPanel')));
+
 export default function AdminCenter() {
   const user = useUserState();
 
@@ -156,6 +159,13 @@ export default function AdminCenter() {
         label: t`Currencies`,
         icon: <IconCoins />,
         content: <CurrencyManagementPanel />
+      },
+      {
+        name: 'tax',
+        label: t`Tax Configuration`,
+        icon: <IconReceipt />,
+        content: <TaxManagementPanel />,
+        hidden: !user.hasViewRole(UserRoles.admin)
       },
       {
         name: 'project-codes',
@@ -240,6 +250,7 @@ export default function AdminCenter() {
           'background',
           'errors',
           'currencies',
+          'tax', // Add tax to operations group
           'email'
         ]
       },

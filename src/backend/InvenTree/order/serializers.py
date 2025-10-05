@@ -62,7 +62,6 @@ from order.status_codes import (
 from part.serializers import PartBriefSerializer
 from stock.status_codes import StockStatus
 from tax.models import TaxConfiguration
-from tax.serializers import TaxConfigurationSerializer
 from users.serializers import OwnerSerializer, UserSerializer
 
 
@@ -77,6 +76,66 @@ class TotalPriceMixin(serializers.Serializer):
         required=False,
         label=_('Order Currency'),
         help_text=_('Currency for this order (leave blank to use company default)'),
+    )
+
+
+class TaxMixin(serializers.Serializer):
+    """Serializer mixin which provides tax fields."""
+
+    subtotal = InvenTreeMoneySerializer(allow_null=True, read_only=True)
+
+    tax_configuration = serializers.PrimaryKeyRelatedField(
+        queryset=TaxConfiguration.objects.all(),
+        allow_null=True,
+        required=False,
+        label=_('Tax Configuration'),
+        help_text=_('Tax configuration for this order'),
+    )
+
+    tax_rate = serializers.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        allow_null=True,
+        required=False,
+        label=_('Tax Rate (%)'),
+        help_text=_('Tax rate applied to this order'),
+    )
+
+    tax_amount = InvenTreeMoneySerializer(allow_null=True, read_only=True)
+
+    tax_inclusive = serializers.BooleanField(
+        required=False,
+        label=_('Tax Inclusive'),
+        help_text=_('Whether prices in this order include tax'),
+    )
+
+    total_with_tax = InvenTreeMoneySerializer(allow_null=True, read_only=True)
+
+
+class TaxLineItemMixin(serializers.Serializer):
+    """Serializer mixin which provides tax fields."""
+
+    subtotal = InvenTreeMoneySerializer(allow_null=True, read_only=True)
+
+    tax_rate = serializers.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        allow_null=True,
+        required=False,
+        label=_('Tax Rate (%)'),
+        help_text=_('Tax rate applied to this order'),
+    )
+
+    tax_amount = InvenTreeMoneySerializer(allow_null=True, read_only=True)
+
+    price_with_tax = InvenTreeMoneySerializer(allow_null=True, read_only=True)
+
+    total_with_tax = InvenTreeMoneySerializer(allow_null=True, read_only=True)
+
+    is_tax_inclusive = serializers.BooleanField(
+        required=False,
+        label=_('Tax Inclusive'),
+        help_text=_('Whether prices in this order include tax'),
     )
 
 
@@ -985,6 +1044,7 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
 class SalesOrderSerializer(
     NotesFieldMixin,
     TotalPriceMixin,
+    TaxMixin,
     InvenTreeCustomStatusSerializerMixin,
     AbstractOrderSerializer,
     InvenTreeModelSerializer,
@@ -1000,8 +1060,7 @@ class SalesOrderSerializer(
             'customer',
             'customer_detail',
             'customer_reference',
-            'tax_configuration_reference',
-            'tax_configuration_detail',
+            'tax_configuration',
             'tax_rate',
             'tax_amount',
             'tax_inclusive',
@@ -1067,59 +1126,6 @@ class SalesOrderSerializer(
 
         return queryset
 
-    tax_configuration_reference = serializers.PrimaryKeyRelatedField(
-        queryset=TaxConfiguration.objects.all(),
-        allow_null=True,
-        required=False,
-        label=_('Tax Configuration'),
-        help_text=_('Tax configuration for this order'),
-    )
-
-    tax_configuration_detail = TaxConfigurationSerializer(
-        source='tax_configuration_reference',
-        read_only=True,
-        label=_('Tax Configuration Details'),
-    )
-
-    tax_rate = serializers.DecimalField(
-        max_digits=5,
-        decimal_places=2,
-        allow_null=True,
-        required=False,
-        label=_('Tax Rate (%)'),
-        help_text=_('Tax rate applied to this order'),
-    )
-
-    tax_amount = serializers.DecimalField(
-        max_digits=19,
-        decimal_places=4,
-        read_only=True,
-        label=_('Tax Amount'),
-        help_text=_('Total tax amount for this order'),
-    )
-
-    tax_inclusive = serializers.BooleanField(
-        required=False,
-        label=_('Tax Inclusive'),
-        help_text=_('Whether prices in this order include tax'),
-    )
-
-    total_with_tax = serializers.DecimalField(
-        max_digits=19,
-        decimal_places=4,
-        read_only=True,
-        label=_('Total with Tax'),
-        help_text=_('Total order amount including tax'),
-    )
-
-    subtotal = serializers.DecimalField(
-        max_digits=19,
-        decimal_places=4,
-        read_only=True,
-        label=_('Subtotal'),
-        help_text=_('Order subtotal excluding tax'),
-    )
-
     customer_detail = CompanyBriefSerializer(
         source='customer', many=False, read_only=True, allow_null=True
     )
@@ -1145,6 +1151,7 @@ class SalesOrderIssueSerializer(OrderAdjustSerializer):
 class SalesOrderLineItemSerializer(
     DataImportExportSerializerMixin,
     AbstractLineItemSerializer,
+    TaxLineItemMixin,
     InvenTreeModelSerializer,
 ):
     """Serializer for a SalesOrderLineItem object."""
@@ -1176,6 +1183,8 @@ class SalesOrderLineItemSerializer(
             'tax_amount',
             'subtotal',
             'price_with_tax',
+            'total_with_tax',
+            'is_tax_inclusive',
             # Annotated fields for part stocking information
             'available_stock',
             'available_variant_stock',
@@ -1330,39 +1339,6 @@ class SalesOrderLineItemSerializer(
 
     sale_price_currency = InvenTreeCurrencySerializer(
         help_text=_('Sale price currency')
-    )
-
-    tax_rate = serializers.DecimalField(
-        max_digits=5,
-        decimal_places=2,
-        allow_null=True,
-        required=False,
-        label=_('Tax Rate (%)'),
-        help_text=_('Tax rate for this line item. Leave blank to use order default.'),
-    )
-
-    tax_amount = serializers.DecimalField(
-        max_digits=19,
-        decimal_places=4,
-        read_only=True,
-        label=_('Tax Amount'),
-        help_text=_('Tax amount for this line item'),
-    )
-
-    subtotal = serializers.DecimalField(
-        max_digits=19,
-        decimal_places=4,
-        read_only=True,
-        label=_('Subtotal'),
-        help_text=_('Line subtotal excluding tax'),
-    )
-
-    price_with_tax = serializers.DecimalField(
-        max_digits=19,
-        decimal_places=4,
-        read_only=True,
-        label=_('Price with Tax'),
-        help_text=_('Line price including tax'),
     )
 
 
@@ -1951,7 +1927,7 @@ class SalesOrderShipmentAllocationSerializer(serializers.Serializer):
 
 @register_importer()
 class SalesOrderExtraLineSerializer(
-    AbstractExtraLineSerializer, InvenTreeModelSerializer
+    AbstractExtraLineSerializer, TaxLineItemMixin, InvenTreeModelSerializer
 ):
     """Serializer for a SalesOrderExtraLine object."""
 
@@ -1959,6 +1935,17 @@ class SalesOrderExtraLineSerializer(
         """Metaclass options."""
 
         model = order.models.SalesOrderExtraLine
+
+        fields = [
+            *AbstractExtraLineMeta.fields,
+            # Tax fields
+            'tax_rate',
+            'tax_amount',
+            'is_tax_inclusive',
+            'subtotal',
+            'price_with_tax',
+            'total_with_tax',
+        ]
 
     order_detail = SalesOrderSerializer(
         source='order', many=False, read_only=True, allow_null=True
@@ -1968,6 +1955,7 @@ class SalesOrderExtraLineSerializer(
 @register_importer()
 class ReturnOrderSerializer(
     NotesFieldMixin,
+    TaxMixin,
     InvenTreeCustomStatusSerializerMixin,
     AbstractOrderSerializer,
     TotalPriceMixin,
@@ -1987,6 +1975,12 @@ class ReturnOrderSerializer(
             'customer_reference',
             'order_currency',
             'total_price',
+            'tax_configuration',
+            'tax_rate',
+            'tax_amount',
+            'tax_inclusive',
+            'total_with_tax',
+            'subtotal',
         ])
 
         read_only_fields = ['creation_date']

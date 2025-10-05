@@ -66,7 +66,7 @@ def money_kwargs(**kwargs):
         kwargs['max_digits'] = 19
 
     if 'decimal_places' not in kwargs:
-        kwargs['decimal_places'] = 6
+        kwargs['decimal_places'] = 2
 
     if 'currency_choices' not in kwargs:
         kwargs['currency_choices'] = currency_code_mappings()

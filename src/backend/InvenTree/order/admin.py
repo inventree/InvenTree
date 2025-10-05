@@ -77,7 +77,7 @@ class SalesOrderAdmin(admin.ModelAdmin):
         'status',
         'description',
         'creation_date',
-        'tax_configuration_reference',
+        'tax_configuration',
         'tax_rate',
         'tax_amount',
         'total_with_tax',
@@ -95,7 +95,7 @@ class SalesOrderAdmin(admin.ModelAdmin):
         'project_code',
         'responsible',
         'shipped_by',
-        'tax_configuration_reference',
+        'tax_configuration',
     ]
 
     readonly_fields = ['creation_date', 'tax_amount', 'total_with_tax']

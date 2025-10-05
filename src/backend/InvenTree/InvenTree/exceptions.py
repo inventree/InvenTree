@@ -73,6 +73,9 @@ def log_error(
     # Log error to stderr
     logger.error(info)
 
+    if settings.DEBUG:
+        print(f'Logging error: {data}')
+
     if plugin:
         # If a plugin is specified, prepend it to the path
         path = f'plugin.{plugin}.{path}'

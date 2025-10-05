@@ -27,9 +27,7 @@ import { PartColumn } from '../tables/ColumnRenderers';
 
 export function useSalesOrderFields({
   duplicateOrderId
-}: {
-  duplicateOrderId?: number;
-}): ApiFormFieldSet {
+}: { duplicateOrderId?: number }): ApiFormFieldSet {
   const globalSettings = useGlobalSettingsState();
 
   return useMemo(() => {
@@ -108,7 +106,7 @@ export function useSalesOrderLineItemFields({
   create?: boolean;
 }): ApiFormFieldSet {
   const fields = useMemo(() => {
-    return {
+    const fieldSet: ApiFormFieldSet = {
       order: {
         filters: {
           customer_detail: true
@@ -130,7 +128,14 @@ export function useSalesOrderLineItemFields({
       notes: {},
       link: {}
     };
-  }, []);
+
+    // Only show tax_inclusive when editing (not creating)
+    if (!create) {
+      fieldSet.is_tax_inclusive = {};
+    }
+
+    return fieldSet;
+  }, [create]);
 
   return fields;
 }
@@ -317,10 +322,7 @@ export function useAllocateToSalesOrderForm({
 export function useSalesOrderAllocateSerialsFields({
   itemId,
   orderId
-}: {
-  itemId: number;
-  orderId: number;
-}): ApiFormFieldSet {
+}: { itemId: number; orderId: number }): ApiFormFieldSet {
   return useMemo(() => {
     return {
       line_item: {
@@ -342,9 +344,7 @@ export function useSalesOrderAllocateSerialsFields({
 
 export function useSalesOrderShipmentFields({
   pending
-}: {
-  pending?: boolean;
-}): ApiFormFieldSet {
+}: { pending?: boolean }): ApiFormFieldSet {
   return useMemo(() => {
     return {
       order: {
@@ -366,9 +366,7 @@ export function useSalesOrderShipmentFields({
 
 export function useSalesOrderShipmentCompleteFields({
   shipmentId
-}: {
-  shipmentId?: number;
-}): ApiFormFieldSet {
+}: { shipmentId?: number }): ApiFormFieldSet {
   return useMemo(() => {
     return {
       shipment_date: {},
@@ -382,10 +380,7 @@ export function useSalesOrderShipmentCompleteFields({
 export function useSalesOrderAllocationFields({
   orderId,
   shipment
-}: {
-  orderId?: number;
-  shipment: any;
-}): ApiFormFieldSet {
+}: { orderId?: number; shipment: any }): ApiFormFieldSet {
   return useMemo(() => {
     return {
       item: {

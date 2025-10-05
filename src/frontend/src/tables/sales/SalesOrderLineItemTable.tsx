@@ -44,11 +44,13 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import {
+  CurrencyColumn,
   DateColumn,
   DecimalColumn,
   DescriptionColumn,
   LinkColumn,
-  PartColumn
+  PartColumn,
+  PercentageColumn
 } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import RowExpansionIcon from '../RowExpansionIcon';
@@ -123,6 +125,27 @@ export default function SalesOrderLineItemTable({
             multiplier: record.quantity
           })
       },
+      CurrencyColumn({
+        accessor: 'price_with_tax',
+        title: t`Price with Tax`
+      }),
+      CurrencyColumn({
+        accessor: 'subtotal',
+        title: t`Subtotal`
+      }),
+      CurrencyColumn({
+        accessor: 'tax_amount',
+        title: t`Total Tax`
+      }),
+      CurrencyColumn({
+        accessor: 'total_with_tax',
+        title: t`Total with Tax`
+      }),
+      PercentageColumn({
+        accessor: 'tax_rate',
+        title: t`Tax Rate`,
+        sortable: true
+      }),
       DateColumn({
         accessor: 'target_date',
         sortable: true,

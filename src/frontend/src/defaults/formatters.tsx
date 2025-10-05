@@ -2,7 +2,8 @@ import dayjs from 'dayjs';
 
 import {
   type FormatCurrencyOptionsInterface,
-  formatCurrencyValue
+  formatCurrencyValue,
+  formatDecimal
 } from '@lib/functions/Formatting';
 import {
   useGlobalSettingsState,
@@ -65,10 +66,7 @@ export function formatPriceRange(
   }
 
   // Otherwise, return a range
-  return `${formatCurrency(minValue, options)} - ${formatCurrency(
-    maxValue,
-    options
-  )}`;
+  return `${formatCurrency(minValue, options)} - ${formatCurrency(maxValue, options)}`;
 }
 
 interface FormatDateOptionsInterface {
@@ -108,4 +106,12 @@ export function formatDate(
     // Invalid input string, simply return provided value
     return date;
   }
+}
+
+export function formatPercentage(value: number | string | null | undefined) {
+  if (value == null || value == undefined) {
+    return '-';
+  }
+
+  return `${formatDecimal(Number(value), { digits: 2, minDigits: 2 })}%`;
 }

@@ -39,7 +39,7 @@ import NotesPanel from '../../components/panels/NotesPanel';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
-import { formatCurrency } from '../../defaults/formatters';
+import { formatCurrency, formatPercentage } from '../../defaults/formatters';
 import { useSalesOrderFields } from '../../forms/SalesOrderForms';
 import {
   useCreateApiFormModal,
@@ -50,10 +50,10 @@ import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
-import ExtraLineItemTable from '../../tables/general/ExtraLineItemTable';
 import SalesOrderAllocationTable from '../../tables/sales/SalesOrderAllocationTable';
 import SalesOrderLineItemTable from '../../tables/sales/SalesOrderLineItemTable';
 import SalesOrderShipmentTable from '../../tables/sales/SalesOrderShipmentTable';
+import TaxExtraLineItemTable from '../../tables/sales/TaxExtraLineItemTable';
 
 /**
  * Detail page for a single SalesOrder
@@ -166,6 +166,48 @@ export default function SalesOrderDetail() {
         label: t`Total Cost`,
         value_formatter: () => {
           return formatCurrency(order?.total_price, {
+            currency: orderCurrency
+          });
+        }
+      },
+      {
+        type: 'text',
+        icon: 'percent',
+        name: 'tax_rate',
+        label: t`Tax Rate`,
+        value_formatter: () => {
+          return formatPercentage(order?.tax_rate);
+        }
+      },
+      {
+        type: 'text',
+        icon: 'currency',
+        name: 'subtotal',
+        label: t`Subtotal`,
+        value_formatter: () => {
+          return formatCurrency(order?.subtotal, {
+            currency: orderCurrency
+          });
+        }
+      },
+      {
+        type: 'text',
+        icon: 'currency',
+        name: 'tax_amount',
+        label: t`Total Tax Amount`,
+        value_formatter: () => {
+          return formatCurrency(order?.tax_amount, {
+            currency: orderCurrency
+          });
+        }
+      },
+      {
+        type: 'text',
+        icon: 'currency',
+        name: 'total_with_tax',
+        label: t`Total with Tax`,
+        value_formatter: () => {
+          return formatCurrency(order?.total_with_tax, {
             currency: orderCurrency
           });
         }
@@ -357,7 +399,7 @@ export default function SalesOrderDetail() {
                 <StylishText size='lg'>{t`Extra Line Items`}</StylishText>
               </Accordion.Control>
               <Accordion.Panel>
-                <ExtraLineItemTable
+                <TaxExtraLineItemTable
                   endpoint={ApiEndpoints.sales_order_extra_line_list}
                   orderId={order.pk}
                   orderDetailRefresh={refreshInstance}
