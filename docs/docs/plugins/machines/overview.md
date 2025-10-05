@@ -107,6 +107,7 @@ The machine type class gets instantiated for each machine on server startup and 
           - check_setting
           - set_status
           - set_status_text
+          - set_properties
 
 ### Drivers
 
@@ -152,6 +153,7 @@ class MyXyzAbcDriverPlugin(MachineDriverMixin, InvenTreePlugin):
           - init_machine
           - update_machine
           - restart_machine
+          - ping_machines
           - get_machines
           - handle_error
 
@@ -223,4 +225,25 @@ class MyXYZDriver(ABCBaseDriver):
     def init_machine(self, machine):
         # ... do some init stuff here
         machine.set_status_text("Paper missing")
+```
+
+### Machine Properties
+
+Machine properties such as the device model, firmware version, and total pages printed can be displayed in the machine detail drawer to provide users with relevant device information.
+
+To achieve this, use the `machine.set_properties` function to set the desired properties. This can be combined with a periodic task, such as `ping_machines`, to keep the information up to date.
+
+```py
+from plugin.machine import MachineProperty
+
+class MyXYZDriver(ABCBaseDriver):
+    # ...
+    def ping_machines(self):
+        for machine in self.get_machines():
+            # ... fetch machine info
+            props: list[MachineProperty] = [
+                { 'key': 'Model', 'value': 'ABC' },
+            ]
+            machine.set_properties(props)
+
 ```
