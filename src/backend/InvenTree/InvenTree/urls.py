@@ -42,6 +42,7 @@ from .api import (
 from .config import get_setting
 from .magic_login import GetSimpleLoginView
 from .views import auth_request
+from .views.select_db import select_database
 
 # Set admin header from config or use default
 admin.site.site_header = get_setting(
@@ -132,6 +133,7 @@ backendpatterns = [
     ),  # Used for (DRF) browsable API auth
     path('auth/', auth_request),  # Used for proxies to check if user is authenticated
     path('accounts/', include('allauth.urls')),
+    path('select-db/', select_database, name='select-db'),
     # OAuth2
     flagged_path('OIDC', 'o/', include(oauth2_urls)),
     path(

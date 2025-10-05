@@ -346,6 +346,7 @@ MIDDLEWARE = CONFIG.get(
         'x_forwarded_for.middleware.XForwardedForMiddleware',
         'django.contrib.sessions.middleware.SessionMiddleware',
         'allauth.usersessions.middleware.UserSessionsMiddleware',  # DB user sessions
+        'InvenTree.InvenTree.middleware.tenant_middleware.TenantMiddleware',
         'django.middleware.locale.LocaleMiddleware',
         'django.middleware.csrf.CsrfViewMiddleware',
         'corsheaders.middleware.CorsMiddleware',
@@ -812,6 +813,10 @@ if 'mysql' in DB_ENGINE:
     db_config['TEST']['COLLATION'] = 'utf8_general_ci'  # pragma: no cover
 
 DATABASES = {'default': db_config}
+
+TENANT_DBFILTER = get_setting('INVENTREE_DBFILTER', 'database.dbfilter', '')
+
+DATABASE_ROUTERS = ['InvenTree.InvenTree.routers.tenant_router.TenantDatabaseRouter']
 
 # login settings
 REMOTE_LOGIN = get_boolean_setting(

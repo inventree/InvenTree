@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Select Database</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f4f6f8;
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .selector {
+        background: #ffffff;
+        border-radius: 8px;
+        padding: 32px;
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+        max-width: 420px;
+        width: 100%;
+      }
+      h1 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        text-align: center;
+        color: #223344;
+      }
+      p {
+        margin: 0 0 1rem;
+        color: #445566;
+        text-align: center;
+      }
+      ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      li {
+        margin-bottom: 0.75rem;
+      }
+      button {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        border: none;
+        border-radius: 6px;
+        background-color: #2f6fef;
+        color: #ffffff;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+      }
+      button:hover {
+        background-color: #244fc8;
+      }
+      .selected {
+        margin-top: 1rem;
+        font-size: 0.95rem;
+        color: #223344;
+        text-align: center;
+      }
+      .error {
+        color: #c0392b;
+        text-align: center;
+        margin-bottom: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="selector">
+      <h1>Select a database</h1>
+      <p>Please choose the database you would like to use for this session.</p>
+      {% if error %}
+      <div class="error">Please choose a valid database.</div>
+      {% endif %}
+      <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ next_url }}" />
+        <ul>
+          {% for database in databases %}
+          <li>
+            <button type="submit" name="database" value="{{ database }}">{{ database }}</button>
+          </li>
+          {% endfor %}
+        </ul>
+      </form>
+      {% if selected_database %}
+      <div class="selected">Current selection: <strong>{{ selected_database }}</strong></div>
+      {% endif %}
+    </div>
+  </body>
+</html>

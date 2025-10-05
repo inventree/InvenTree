@@ -27,6 +27,8 @@ database:
   # PASSWORD: Database password (if required)
   # HOST: Database host address (if required)
   # PORT: Database host port (if required)
+  # dbfilter: Regular expression used for mapping host subdomains to databases
+  #           (leave blank for self-hosted mode)
 
 # Base URL for the InvenTree server (or use the environment variable INVENTREE_SITE_URL)
 # site_url: 'http://localhost:8000'
