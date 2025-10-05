@@ -1,6 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { Stack } from '@mantine/core';
 import {
+  IconBuilding,
   IconCoins,
   IconCpu,
   IconDevicesPc,
@@ -105,6 +106,10 @@ const LocationTypesTable = Loadable(
 
 const TaxManagementPanel = Loadable(lazy(() => import('./TaxManagementPanel')));
 
+const TenantManagementPanel = Loadable(
+  lazy(() => import('./TenantManagementPanel'))
+);
+
 export default function AdminCenter() {
   const user = useUserState();
 
@@ -165,6 +170,13 @@ export default function AdminCenter() {
         label: t`Tax Configuration`,
         icon: <IconReceipt />,
         content: <TaxManagementPanel />,
+        hidden: !user.hasViewRole(UserRoles.admin)
+      },
+      {
+        name: 'tenant',
+        label: t`Tenants`,
+        icon: <IconBuilding />,
+        content: <TenantManagementPanel />,
         hidden: !user.hasViewRole(UserRoles.admin)
       },
       {
@@ -250,7 +262,8 @@ export default function AdminCenter() {
           'background',
           'errors',
           'currencies',
-          'tax', // Add tax to operations group
+          'tax',
+          'tenant',
           'email'
         ]
       },

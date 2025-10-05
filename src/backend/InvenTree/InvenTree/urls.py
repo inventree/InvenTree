@@ -27,6 +27,7 @@ import plugin.api
 import report.api
 import stock.api
 import tax.api
+import tenant.api
 import users.api
 from plugin.urls import get_plugin_urls
 from web.urls import cui_compatibility_urls
@@ -66,6 +67,7 @@ apipatterns = [
     path('settings/', include(common.api.settings_api_urls)),
     path('stock/', include(stock.api.stock_api_urls)),
     path('tax/', include(tax.api.tax_api_urls)),
+    path('tenant/', include(tenant.api.tenant_api_urls)),
     path(
         'generate/',
         include([
