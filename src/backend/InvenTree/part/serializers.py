@@ -336,6 +336,7 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'locked',
             'assembly',
             'component',
+            'minimum_stock',
             'is_template',
             'purchaseable',
             'salable',
@@ -362,6 +363,8 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     category_default_location = serializers.IntegerField(
         read_only=True, allow_null=True
     )
+
+    minimum_stock = serializers.FloatField(required=False, default=0)
 
     image = InvenTree.serializers.InvenTreeImageSerializerField(
         read_only=True, allow_null=True
