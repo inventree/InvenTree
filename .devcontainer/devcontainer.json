@@ -6,7 +6,6 @@
   "service": "inventree",
   "overrideCommand": true,
   "workspaceFolder": "/home/inventree/",
-
   // Configure tool-specific properties.
   "customizations": {
     // Configure properties specific to VS Code.
@@ -25,7 +24,6 @@
         "python.linting.pydocstylePath": "/usr/local/py-utils/bin/pydocstyle",
         "python.linting.pylintPath": "/usr/local/py-utils/bin/pylint"
       },
-
       // Add the IDs of extensions you want installed when the container is created.
       "extensions": [
         "ms-python.python",
@@ -36,9 +34,14 @@
       ]
     }
   },
-
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
-  "forwardPorts": [5173, 5432, 6379, 8000, 8080],
+  "forwardPorts": [
+    5173,
+    5432,
+    6379,
+    8000,
+    8080
+  ],
   "portsAttributes": {
     "5173": {
       "label": "Vite Server"
@@ -56,22 +59,20 @@
       "label": "mkdocs server"
     }
   },
-
   // Use 'postCreateCommand' to run commands after the container is created.
   "postCreateCommand": ".devcontainer/postCreateCommand.sh",
-
   // Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
   "remoteUser": "vscode",
   "containerUser": "vscode",
-
   "remoteEnv": {
-
     // Python config
     "PIP_USER": "no",
-
     // used to load the venv into the PATH and activate it
     // Ref: https://stackoverflow.com/a/56286534
     "VIRTUAL_ENV": "${containerWorkspaceFolder}/dev/venv",
     "PATH": "${containerWorkspaceFolder}/dev/venv/bin:${containerEnv:PATH}"
-  }
+  },
+  "mounts": [
+    "source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached"
+  ]
 }
