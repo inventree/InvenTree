@@ -331,6 +331,12 @@ class BuildMixin:
         return queryset
 
 
+class BuildListOutputOptions(OutputConfiguration):
+    """Output options for the BuildList endpoint."""
+
+    OPTIONS = [InvenTreeOutputOption('part_detail', default=True)]
+
+
 class BuildList(DataExportViewMixin, BuildMixin, ListCreateAPI):
     """API endpoint for accessing a list of Build objects.
 
@@ -338,10 +344,9 @@ class BuildList(DataExportViewMixin, BuildMixin, ListCreateAPI):
     - POST: Create a new Build object
     """
 
+    output_options = BuildListOutputOptions
     filterset_class = BuildFilter
-
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
-
     ordering_fields = [
         'reference',
         'part__name',
@@ -359,14 +364,11 @@ class BuildList(DataExportViewMixin, BuildMixin, ListCreateAPI):
         'level',
         'external',
     ]
-
     ordering_field_aliases = {
         'reference': ['reference_int', 'reference'],
         'project_code': ['project_code__code'],
     }
-
     ordering = '-reference'
-
     search_fields = [
         'reference',
         'title',
@@ -387,12 +389,6 @@ class BuildList(DataExportViewMixin, BuildMixin, ListCreateAPI):
 
     def get_serializer(self, *args, **kwargs):
         """Add extra context information to the endpoint serializer."""
-        try:
-            part_detail = str2bool(self.request.GET.get('part_detail', True))
-        except AttributeError:
-            part_detail = True
-
-        kwargs['part_detail'] = part_detail
         kwargs['create'] = True
 
         return super().get_serializer(*args, **kwargs)

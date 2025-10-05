@@ -57,20 +57,18 @@ from part.models import Part
 from users.models import Owner
 
 
+class GeneralExtraLineListOutputOptions(OutputConfiguration):
+    """Output options for the GeneralExtraLineList endpoint."""
+
+    OPTIONS = [InvenTreeOutputOption('order_detail')]
+
+
 class GeneralExtraLineList(DataExportViewMixin):
     """General template for ExtraLine API classes."""
 
     def get_serializer(self, *args, **kwargs):
         """Return the serializer instance for this endpoint."""
-        try:
-            params = self.request.query_params3
-
-            kwargs['order_detail'] = str2bool(params.get('order_detail', False))
-        except AttributeError:
-            pass
-
         kwargs['context'] = self.get_serializer_context()
-
         return super().get_serializer(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
@@ -80,6 +78,8 @@ class GeneralExtraLineList(DataExportViewMixin):
         queryset = queryset.prefetch_related('order')
 
         return queryset
+
+    output_options = GeneralExtraLineListOutputOptions
 
     filter_backends = SEARCH_ORDER_FILTER
 

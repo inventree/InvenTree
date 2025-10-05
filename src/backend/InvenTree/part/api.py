@@ -1368,11 +1368,21 @@ class PartParameterTemplateDetail(PartParameterTemplateMixin, RetrieveUpdateDest
     """API endpoint for accessing the detail view for a PartParameterTemplate object."""
 
 
+class PartParameterOutputOptions(OutputConfiguration):
+    """Output options for the PartParameter endpoints."""
+
+    OPTIONS = [
+        InvenTreeOutputOption('part_detail'),
+        InvenTreeOutputOption('template_detail', default=True),
+    ]
+
+
 class PartParameterAPIMixin:
     """Mixin class for PartParameter API endpoints."""
 
     queryset = PartParameter.objects.all()
     serializer_class = part_serializers.PartParameterSerializer
+    output_options = PartParameterOutputOptions
 
     def get_queryset(self, *args, **kwargs):
         """Override get_queryset method to prefetch related fields."""
@@ -1386,23 +1396,6 @@ class PartParameterAPIMixin:
         context['request'] = self.request
 
         return context
-
-    def get_serializer(self, *args, **kwargs):
-        """Return the serializer instance for this API endpoint.
-
-        If requested, extra detail fields are annotated to the queryset:
-        - part_detail
-        - template_detail
-        """
-        try:
-            kwargs['part_detail'] = str2bool(self.request.GET.get('part_detail', False))
-            kwargs['template_detail'] = str2bool(
-                self.request.GET.get('template_detail', True)
-            )
-        except AttributeError:
-            pass
-
-        return super().get_serializer(*args, **kwargs)
 
 
 class PartParameterFilter(FilterSet):
