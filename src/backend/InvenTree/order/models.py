@@ -189,10 +189,13 @@ class TaxMixin(models.Model):
 
     def save(self, *args, **kwargs):
         """Update the total_price field when saved."""
-        self.apply_tax_configuration()
-        # super().save(*args, **kwargs)
-        self.recalculate_line_items()
-        self.calculate_taxes()
+        # Check if the order is locked before attempting to modify line items
+        if not self.check_locked():
+            self.apply_tax_configuration()
+            # super().save(*args, **kwargs)
+            self.recalculate_line_items()
+            self.calculate_taxes()
+
         super().save(*args, **kwargs)
 
     # Tax fields
@@ -275,6 +278,7 @@ class TaxMixin(models.Model):
         """Recalculate the line items for this order."""
         if not self.pk:
             return
+
         for line in self.lines.all():
             line.save(update_order=False)
         for line in self.extra_lines.all():
@@ -1644,7 +1648,6 @@ class SalesOrder(TotalPriceMixin, TaxMixin, Order):
 
     def is_completed(self):
         """Check if this order is "shipped" (all line items delivered)."""
-        print('is complete', all(line.is_completed() for line in self.lines.all()))
         return all(line.is_completed() for line in self.lines.all())
 
     def can_complete(self, raise_error=False, allow_incomplete_lines=False):
@@ -1736,14 +1739,12 @@ class SalesOrder(TotalPriceMixin, TaxMixin, Order):
     def _action_complete(self, *args, **kwargs):
         """Mark this order as "complete."""
         user = kwargs.pop('user', None)
-
         if not self.can_complete(**kwargs):
             return False
 
         bypass_shipped = InvenTree.helpers.str2bool(
             get_global_setting('SALESORDER_SHIP_COMPLETE')
         )
-
         if bypass_shipped or self.status == SalesOrderStatus.SHIPPED:
             self.status = SalesOrderStatus.COMPLETE.value
         else:
