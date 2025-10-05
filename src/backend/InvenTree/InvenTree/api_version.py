@@ -1,13 +1,18 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 400
+INVENTREE_API_VERSION = 401
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v400 -> 2025-10-05 : https://github.com/inventree/InvenTree/pull/10486
+v401 -> 2025-10-05 : https://github.com/inventree/InvenTree/pull/10495
+    - Refactors 'part_detail' param in BuildList API endpoint
+    - Refactors 'order_detail' param in GeneralExtraLineList API endpoint
+    - Refactors 'part_detail', 'template_detail' param in PartParameterList / PartParameterDetail API endpoint
+
+    v400 -> 2025-10-05 : https://github.com/inventree/InvenTree/pull/10486
     - Adds return datatypes for admin/config and flags entpoints
 
 v399 -> 2025-10-05 : https://github.com/inventree/InvenTree/pull/10445
