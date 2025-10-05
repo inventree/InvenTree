@@ -26,6 +26,7 @@ from InvenTree.serializers import (
     InvenTreeTagModelSerializer,
     NotesFieldMixin,
     RemoteImageMixin,
+    can_filter,
 )
 
 from .models import (
@@ -275,8 +276,6 @@ class ManufacturerPartSerializer(
 
     def __init__(self, *args, **kwargs):
         """Initialize this serializer with extra detail fields as required."""
-        part_detail = kwargs.pop('part_detail', True)
-        manufacturer_detail = kwargs.pop('manufacturer_detail', True)
         prettify = kwargs.pop('pretty', False)
 
         super().__init__(*args, **kwargs)
@@ -284,21 +283,22 @@ class ManufacturerPartSerializer(
         if isGeneratingSchema():
             return
 
-        if part_detail is not True:
-            self.fields.pop('part_detail', None)
-
-        if manufacturer_detail is not True:
-            self.fields.pop('manufacturer_detail', None)
-
+        # TODO INVE-T1 support complex filters
         if prettify is not True:
             self.fields.pop('pretty_name', None)
 
-    part_detail = part_serializers.PartBriefSerializer(
-        source='part', many=False, read_only=True, allow_null=True
+    part_detail = can_filter(
+        part_serializers.PartBriefSerializer(
+            source='part', many=False, read_only=True, allow_null=True
+        ),
+        True,
     )
 
-    manufacturer_detail = CompanyBriefSerializer(
-        source='manufacturer', many=False, read_only=True, allow_null=True
+    manufacturer_detail = can_filter(
+        CompanyBriefSerializer(
+            source='manufacturer', many=False, read_only=True, allow_null=True
+        ),
+        True,
     )
 
     pretty_name = serializers.CharField(read_only=True, allow_null=True)
@@ -334,6 +334,7 @@ class ManufacturerPartParameterSerializer(
 
         super().__init__(*args, **kwargs)
 
+        # TODO INVE-T1 support complex filters
         if not man_detail and not isGeneratingSchema():
             self.fields.pop('manufacturer_part_detail', None)
 
@@ -402,13 +403,11 @@ class SupplierPartSerializer(
     def __init__(self, *args, **kwargs):
         """Initialize this serializer with extra detail fields as required."""
         # Check if 'available' quantity was supplied
-
         self.has_available_quantity = 'available' in kwargs.get('data', {})
 
+        # TODO INVE-T1 support complex filters
         brief = kwargs.pop('brief', False)
-
         detail_default = not brief
-
         part_detail = kwargs.pop('part_detail', detail_default)
         supplier_detail = kwargs.pop('supplier_detail', detail_default)
         manufacturer_detail = kwargs.pop('manufacturer_detail', detail_default)
@@ -563,22 +562,6 @@ class SupplierPriceBreakSerializer(
             'updated',
         ]
 
-    def __init__(self, *args, **kwargs):
-        """Initialize this serializer with extra fields as required."""
-        supplier_detail = kwargs.pop('supplier_detail', False)
-        part_detail = kwargs.pop('part_detail', False)
-
-        super().__init__(*args, **kwargs)
-
-        if isGeneratingSchema():
-            return
-
-        if not supplier_detail:
-            self.fields.pop('supplier_detail', None)
-
-        if not part_detail:
-            self.fields.pop('part_detail', None)
-
     @staticmethod
     def annotate_queryset(queryset):
         """Prefetch related fields for the queryset."""
@@ -596,11 +579,15 @@ class SupplierPriceBreakSerializer(
         source='part.supplier', many=False, read_only=True
     )
 
-    supplier_detail = CompanyBriefSerializer(
-        source='part.supplier', many=False, read_only=True, allow_null=True
+    supplier_detail = can_filter(
+        CompanyBriefSerializer(
+            source='part.supplier', many=False, read_only=True, allow_null=True
+        )
     )
 
     # Detail serializer for SupplierPart
-    part_detail = SupplierPartSerializer(
-        source='part', brief=True, many=False, read_only=True, allow_null=True
+    part_detail = can_filter(
+        SupplierPartSerializer(
+            source='part', brief=True, many=False, read_only=True, allow_null=True
+        )
     )
