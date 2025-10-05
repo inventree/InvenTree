@@ -321,7 +321,8 @@ export function useCompleteBuildOutputsForm({
         field_type: 'table',
         value: outputs.map((output: any) => {
           return {
-            output: output.pk
+            output: output.pk,
+            quantity: output.quantity
           };
         }),
         modelRenderer: (row: TableFieldRowProps) => {
@@ -333,6 +334,7 @@ export function useCompleteBuildOutputsForm({
         headers: [
           { title: t`Part` },
           { title: t`Build Output` },
+          { title: t`Quantity to Complete`, style: { width: '200px' } },
           { title: t`Batch` },
           { title: t`Status` },
           { title: '', style: { width: '50px' } }
@@ -406,7 +408,7 @@ export function useScrapBuildOutputsForm({
         },
         headers: [
           { title: t`Part` },
-          { title: t`Stock Item` },
+          { title: t`Build Output` },
           { title: t`Scrap Quantity`, style: { width: '200px' } },
           { title: t`Batch` },
           { title: t`Status` },
