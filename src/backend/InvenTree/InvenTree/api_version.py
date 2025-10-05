@@ -10,6 +10,7 @@ INVENTREE_API_TEXT = """
 v401 -> 2025-06-12 : https://github.com/inventree/InvenTree/pull/9761
     - Add supplier search and import API endpoints
     - Add part parameter bulk create API endpoint
+
 v400 -> 2025-10-05 : https://github.com/inventree/InvenTree/pull/10486
     - Adds return datatypes for admin/config and flags entpoints
 
