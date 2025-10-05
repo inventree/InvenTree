@@ -1373,7 +1373,11 @@ class PartParameterOutputOptions(OutputConfiguration):
 
     OPTIONS = [
         InvenTreeOutputOption('part_detail'),
-        InvenTreeOutputOption('template_detail', default=True),
+        InvenTreeOutputOption(
+            'template_detail',
+            default=True,
+            description='Include detailed information about the part parameter template.',
+        ),
     ]
 
 
