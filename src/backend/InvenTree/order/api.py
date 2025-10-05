@@ -757,7 +757,9 @@ class PurchaseOrderLineItemDetail(
     output_options = PurchaseOrderLineItemOutputOptions
 
 
-class PurchaseOrderExtraLineList(GeneralExtraLineList, ListCreateAPI):
+class PurchaseOrderExtraLineList(
+    GeneralExtraLineList, OutputOptionsMixin, ListCreateAPI
+):
     """API endpoint for accessing a list of PurchaseOrderExtraLine objects."""
 
     queryset = models.PurchaseOrderExtraLine.objects.all()
@@ -1107,7 +1109,7 @@ class SalesOrderLineItemDetail(
     output_options = SalesOrderLineItemOutputOptions
 
 
-class SalesOrderExtraLineList(GeneralExtraLineList, ListCreateAPI):
+class SalesOrderExtraLineList(GeneralExtraLineList, OutputOptionsMixin, ListCreateAPI):
     """API endpoint for accessing a list of SalesOrderExtraLine objects."""
 
     queryset = models.SalesOrderExtraLine.objects.all()
@@ -1710,7 +1712,7 @@ class ReturnOrderLineItemDetail(
     output_options = ReturnOrderLineItemOutputOptions
 
 
-class ReturnOrderExtraLineList(GeneralExtraLineList, ListCreateAPI):
+class ReturnOrderExtraLineList(GeneralExtraLineList, OutputOptionsMixin, ListCreateAPI):
     """API endpoint for accessing a list of ReturnOrderExtraLine objects."""
 
     queryset = models.ReturnOrderExtraLine.objects.all()

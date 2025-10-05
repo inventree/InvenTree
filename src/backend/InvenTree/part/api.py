@@ -1431,7 +1431,9 @@ class PartParameterFilter(FilterSet):
             return queryset.filter(part=part)
 
 
-class PartParameterList(PartParameterAPIMixin, DataExportViewMixin, ListCreateAPI):
+class PartParameterList(
+    PartParameterAPIMixin, OutputOptionsMixin, DataExportViewMixin, ListCreateAPI
+):
     """API endpoint for accessing a list of PartParameter objects.
 
     - GET: Return list of PartParameter objects
@@ -1459,7 +1461,9 @@ class PartParameterList(PartParameterAPIMixin, DataExportViewMixin, ListCreateAP
     ]
 
 
-class PartParameterDetail(PartParameterAPIMixin, RetrieveUpdateDestroyAPI):
+class PartParameterDetail(
+    PartParameterAPIMixin, OutputOptionsMixin, RetrieveUpdateDestroyAPI
+):
     """API endpoint for detail view of a single PartParameter object."""
 
 

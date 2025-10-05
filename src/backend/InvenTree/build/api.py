@@ -337,7 +337,7 @@ class BuildListOutputOptions(OutputConfiguration):
     OPTIONS = [InvenTreeOutputOption('part_detail', default=True)]
 
 
-class BuildList(DataExportViewMixin, BuildMixin, ListCreateAPI):
+class BuildList(DataExportViewMixin, BuildMixin, OutputOptionsMixin, ListCreateAPI):
     """API endpoint for accessing a list of Build objects.
 
     - GET: Return list of objects (with filters)
