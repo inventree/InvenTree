@@ -340,6 +340,12 @@ class ConfigSerializer(serializers.Serializer):
     This is a read-only serializer.
     """
 
+    key = serializers.CharField(read_only=True)
+    env_var = serializers.CharField(read_only=True, allow_null=True)
+    config_key = serializers.CharField(read_only=True, allow_null=True)
+    source = serializers.CharField(read_only=True)
+    accessed = serializers.DateTimeField(read_only=True)
+
     def to_representation(self, instance):
         """Return the configuration data as a dictionary."""
         if not isinstance(instance, str):
@@ -405,6 +411,12 @@ class CustomStateSerializer(DataImportExportSerializerMixin, InvenTreeModelSeria
 
 class FlagSerializer(serializers.Serializer):
     """Serializer for feature flags."""
+
+    key = serializers.CharField(read_only=True)
+    state = serializers.CharField(read_only=True)
+    conditions = serializers.ListField(
+        child=serializers.DictField(), read_only=True, allow_null=True
+    )
 
     def to_representation(self, instance):
         """Return the configuration data as a dictionary."""
