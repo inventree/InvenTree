@@ -43,6 +43,7 @@ from InvenTree.mixins import (
     RetrieveAPI,
     RetrieveUpdateAPI,
     RetrieveUpdateDestroyAPI,
+    SerializerContextMixin,
     UpdateAPI,
 )
 from InvenTree.serializers import EmptySerializer
@@ -1014,7 +1015,7 @@ class PartFilter(FilterSet):
         return queryset.filter(category__in=children)
 
 
-class PartMixin:
+class PartMixin(SerializerContextMixin):
     """Mixin class for Part API endpoints."""
 
     serializer_class = part_serializers.PartSerializer
@@ -1037,9 +1038,6 @@ class PartMixin:
 
     def get_serializer(self, *args, **kwargs):
         """Return a serializer instance for this endpoint."""
-        # Ensure the request context is passed through
-        kwargs['context'] = self.get_serializer_context()
-
         # Indicate that we can create a new Part via this endpoint
         kwargs['create'] = self.is_create
 
@@ -1053,7 +1051,6 @@ class PartMixin:
             self.starred_parts = [
                 star.part for star in self.request.user.starred_parts.all()
             ]
-
         kwargs['starred_parts'] = self.starred_parts
 
         return super().get_serializer(*args, **kwargs)
@@ -1615,18 +1612,11 @@ class BomFilter(FilterSet):
         return queryset.filter(part.get_used_in_bom_item_filter())
 
 
-class BomMixin:
+class BomMixin(SerializerContextMixin):
     """Mixin class for BomItem API endpoints."""
 
     serializer_class = part_serializers.BomItemSerializer
     queryset = BomItem.objects.all()
-
-    def get_serializer(self, *args, **kwargs):
-        """Return the serializer instance for this API endpoint."""
-        # Ensure the request context is passed through!
-        kwargs['context'] = self.get_serializer_context()
-
-        return super().get_serializer(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
         """Return the queryset object for this endpoint."""

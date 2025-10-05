@@ -39,6 +39,7 @@ from InvenTree.mixins import (
     ListCreateAPI,
     OutputOptionsMixin,
     RetrieveUpdateDestroyAPI,
+    SerializerContextMixin,
 )
 from users.models import Owner
 
@@ -390,7 +391,6 @@ class BuildList(DataExportViewMixin, BuildMixin, OutputOptionsMixin, ListCreateA
     def get_serializer(self, *args, **kwargs):
         """Add extra context information to the endpoint serializer."""
         kwargs['create'] = True
-
         return super().get_serializer(*args, **kwargs)
 
 
@@ -523,16 +523,11 @@ class BuildLineFilter(FilterSet):
         return queryset.exclude(flt)
 
 
-class BuildLineMixin:
+class BuildLineMixin(SerializerContextMixin):
     """Mixin class for BuildLine API endpoints."""
 
     queryset = BuildLine.objects.all()
     serializer_class = build.serializers.BuildLineSerializer
-
-    def get_serializer(self, *args, **kwargs):
-        """Return the serializer instance for this endpoint."""
-        kwargs['context'] = self.get_serializer_context()
-        return super().get_serializer(*args, **kwargs)
 
     def get_source_build(self) -> Build:
         """Return the source Build object for the BuildLine queryset.
