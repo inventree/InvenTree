@@ -29,7 +29,7 @@ from InvenTree.fields import InvenTreeRestURLField, InvenTreeURLField
 
 
 # region path filtering
-class OptionalFilterabelSerializer(serializers.Serializer):
+class OptionalFilterabelSerializer:
     """Mixin to add context to serializer."""
 
     is_filterable = None
@@ -37,28 +37,53 @@ class OptionalFilterabelSerializer(serializers.Serializer):
 
     def __init__(self, *args, **kwargs):
         """Initialize the serializer."""
-        self.is_filterable = kwargs.pop('is_filterable', None)
-        self.is_filterable_default = kwargs.pop('is_filterable_default', True)
+        if self.is_filterable is None:
+            self.is_filterable = kwargs.pop('is_filterable', None)
+            self.is_filterable_default = kwargs.pop('is_filterable_default', True)
         super().__init__(*args, **kwargs)
 
 
-class PathScopedMixin:
+class FractionalFilterabelSerializer:
+    """A."""
+
+    def __init__(self, *args, **kwargs):
+        """Add detail fields."""
+        kwargs = PathScopedMixin.gather_filters(self, kwargs)
+        super().__init__(*args, **kwargs)
+        PathScopedMixin.do_filtering(self, *args, **kwargs)
+
+
+class PathScopedMixin(serializers.Serializer):
     """Mixin to disable a serializer field based on kwargs passed to the view."""
+
+    no_filter = False
+    _was_filtered = False
 
     def __init__(self, *args, **kwargs):
         """Initialization routine for the serializer."""
-        flt_fld = {
-            k: a for k, a in self.fields.items() if getattr(a, 'is_filterable', None)
-        }
-        filter_targets = {k: kwargs.pop(k, False) for k in flt_fld}
-
+        self.gather_filters(kwargs)
         super().__init__(*args, **kwargs)
+        self.do_filtering(*args, **kwargs)
 
-        if InvenTree.ready.isGeneratingSchema():
+    def gather_filters(self, kwargs):
+        """Gather filterable fields."""
+        if getattr(self, '_was_filtered', False):
+            return kwargs
+        self._was_filtered = True
+
+        # Actually gather the filterable fields
+        fields = self.fields.items()
+        flt_fld = {k: a for k, a in fields if getattr(a, 'is_filterable', None)}
+        self.filter_targets = {k: kwargs.pop(k, False) for k in flt_fld}
+        return kwargs
+
+    def do_filtering(self, *args, **kwargs):
+        """Do the actual filtering."""
+        if InvenTree.ready.isGeneratingSchema() or not hasattr(self, 'filter_targets'):
             return
 
         # Throw out fields which are not requested
-        for k, v in filter_targets.items():
+        for k, v in self.filter_targets.items():
             if v is not True:
                 self.fields.pop(k, None)
 
@@ -66,6 +91,14 @@ class PathScopedMixin:
 # Decorator for marking serialzier fields that can be filtered out
 def can_filter(func, default=False):
     """Decorator for marking serializer fields as filterable."""
+    # Check if function is holding OptionalFilterabelSerializer somehow
+    if not issubclass(func.__class__, OptionalFilterabelSerializer):
+        return
+    if not isinstance(func, OptionalFilterabelSerializer):
+        return
+        # raise TypeError('can_filter can only be applied to OptionalFilterabelSerializer Serializers!')
+    if isinstance(func, serializers.ListSerializer):
+        return func
     func._kwargs['is_filterable'] = True
     func._kwargs['is_filterable_default'] = default
     return func
@@ -269,7 +302,9 @@ class DependentField(serializers.Field):
 
 
 class InvenTreeModelSerializer(
-    OptionalFilterabelSerializer, serializers.ModelSerializer
+    FractionalFilterabelSerializer,
+    OptionalFilterabelSerializer,
+    serializers.ModelSerializer,
 ):
     """Inherits the standard Django ModelSerializer class, but also ensures that the underlying model class data are checked on validation."""
 
