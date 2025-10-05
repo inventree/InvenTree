@@ -1,14 +1,17 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 400
+INVENTREE_API_VERSION = 401
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v400 -> 2025-10-04 : https://github.com/inventree/InvenTree/pull/10381
+v401 -> 2025-10-04 : https://github.com/inventree/InvenTree/pull/10381
     - Adds machine properties to machine API endpoints
+
+v400 -> 2025-10-05 : https://github.com/inventree/InvenTree/pull/10486
+    - Adds return datatypes for admin/config and flags entpoints
 
 v399 -> 2025-10-05 : https://github.com/inventree/InvenTree/pull/10445
     - Refactors 'customer_detail' param in SalesOrder API endpoint
