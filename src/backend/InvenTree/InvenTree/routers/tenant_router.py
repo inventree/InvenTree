@@ -8,7 +8,7 @@ from typing import Optional
 from django.conf import settings
 from django.db import DEFAULT_DB_ALIAS, connections
 
-from InvenTree.InvenTree.tenant import get_current_database
+from InvenTree.tenant import get_current_database
 
 
 class TenantDatabaseRouter:
@@ -23,7 +23,7 @@ class TenantDatabaseRouter:
         if database_name in settings.DATABASES:
             return database_name
 
-        alias = f"tenant_{database_name}"
+        alias = f'tenant_{database_name}'
 
         if alias in settings.DATABASES:
             return alias

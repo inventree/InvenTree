@@ -7,17 +7,16 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 
-from InvenTree.InvenTree.tenant import (
+from InvenTree.tenant import (
     get_available_databases,
     get_dbfilter_pattern,
     set_current_database,
 )
 
 
-@require_http_methods(["GET", "POST"])
+@require_http_methods(['GET', 'POST'])
 def select_database(request):
     """Allow the user to pick the active database for the session."""
-
     if get_dbfilter_pattern():
         return redirect(reverse('index'))
 

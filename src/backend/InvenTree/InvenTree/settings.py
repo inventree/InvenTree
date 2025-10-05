@@ -220,7 +220,8 @@ PLUGIN_TESTING_SETUP = get_setting(
 
 PLUGIN_TESTING_EVENTS = False  # Flag if events are tested right now
 PLUGIN_TESTING_EVENTS_ASYNC = False  # Flag if events are tested asynchronously
-PLUGIN_TESTING_RELOAD = False  # Flag if plugin reloading is in testing (check_reload)
+# Flag if plugin reloading is in testing (check_reload)
+PLUGIN_TESTING_RELOAD = False
 
 # Plugin development settings
 PLUGIN_DEV_SLUG = (
@@ -284,7 +285,8 @@ INSTALLED_APPS = [
     # InvenTree apps
     'build.apps.BuildConfig',
     'common.apps.CommonConfig',
-    'plugin.apps.PluginAppConfig',  # Plugin app runs before all apps that depend on the isPluginRegistryLoaded function
+    # Plugin app runs before all apps that depend on the isPluginRegistryLoaded function
+    'plugin.apps.PluginAppConfig',
     'company.apps.CompanyConfig',
     'order.apps.OrderConfig',
     'part.apps.PartConfig',
@@ -312,7 +314,8 @@ INSTALLED_APPS = [
     'django_filters',  # Extended filter functionality
     'rest_framework',  # DRF (Django Rest Framework)
     'corsheaders',  # Cross-origin Resource Sharing for DRF
-    'django_cleanup.apps.CleanupConfig',  # Automatically delete orphaned MEDIA files
+    # Automatically delete orphaned MEDIA files
+    'django_cleanup.apps.CleanupConfig',
     'mptt',  # Modified Preorder Tree Traversal
     'markdownify',  # Markdown template rendering
     'djmoney',  # django-money integration
@@ -346,24 +349,26 @@ MIDDLEWARE = CONFIG.get(
         'x_forwarded_for.middleware.XForwardedForMiddleware',
         'django.contrib.sessions.middleware.SessionMiddleware',
         'allauth.usersessions.middleware.UserSessionsMiddleware',  # DB user sessions
-        'InvenTree.InvenTree.middleware.tenant_middleware.TenantMiddleware',
+        'InvenTree.middleware.tenant_middleware.TenantMiddleware',
         'django.middleware.locale.LocaleMiddleware',
         'django.middleware.csrf.CsrfViewMiddleware',
         'corsheaders.middleware.CorsMiddleware',
         'whitenoise.middleware.WhiteNoiseMiddleware',
         'django.middleware.common.CommonMiddleware',
         'django.contrib.auth.middleware.AuthenticationMiddleware',
-        'InvenTree.middleware.InvenTreeRemoteUserMiddleware',  # Remote / proxy auth
+        'InvenTree.middleware.middleware.InvenTreeRemoteUserMiddleware',  # Remote / proxy auth
         'allauth.account.middleware.AccountMiddleware',
         'django.contrib.messages.middleware.MessageMiddleware',
         'django.middleware.clickjacking.XFrameOptionsMiddleware',
-        'InvenTree.middleware.AuthRequiredMiddleware',
-        'InvenTree.middleware.Check2FAMiddleware',  # Check if the user should be forced to use MFA
+        'InvenTree.middleware.middleware.AuthRequiredMiddleware',
+        # Check if the user should be forced to use MFA
+        'InvenTree.middleware.middleware.Check2FAMiddleware',
         'oauth2_provider.middleware.OAuth2TokenMiddleware',  # oauth2_provider
         'maintenance_mode.middleware.MaintenanceModeMiddleware',
-        'InvenTree.middleware.InvenTreeExceptionProcessor',  # Error reporting
-        'InvenTree.middleware.InvenTreeRequestCacheMiddleware',  # Request caching
-        'InvenTree.middleware.InvenTreeHostSettingsMiddleware',  # Ensuring correct hosting/security settings
+        'InvenTree.middleware.middleware.InvenTreeExceptionProcessor',  # Error reporting
+        'InvenTree.middleware.middleware.InvenTreeRequestCacheMiddleware',  # Request caching
+        # Ensuring correct hosting/security settings
+        'InvenTree.middleware.middleware.InvenTreeHostSettingsMiddleware',
         'django_structlog.middlewares.RequestMiddleware',  # Structured logging
     ],
 )
@@ -394,7 +399,8 @@ default_auth_backends = [
     'oauth2_provider.backends.OAuth2Backend',  # OAuth2 provider
     'django.contrib.auth.backends.RemoteUserBackend',  # proxy login
     'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend',  # SSO login via external providers
+    # SSO login via external providers
+    'allauth.account.auth_backends.AuthenticationBackend',
     'sesame.backends.ModelBackend',  # Magic link login django-sesame
 ]
 
@@ -816,7 +822,7 @@ DATABASES = {'default': db_config}
 
 TENANT_DBFILTER = get_setting('INVENTREE_DBFILTER', 'database.dbfilter', '')
 
-DATABASE_ROUTERS = ['InvenTree.InvenTree.routers.tenant_router.TenantDatabaseRouter']
+DATABASE_ROUTERS = ['InvenTree.routers.tenant_router.TenantDatabaseRouter']
 
 # login settings
 REMOTE_LOGIN = get_boolean_setting(

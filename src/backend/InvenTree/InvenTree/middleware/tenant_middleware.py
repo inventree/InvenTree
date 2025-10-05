@@ -8,7 +8,7 @@ from django.conf import settings
 from django.shortcuts import redirect
 from django.utils.deprecation import MiddlewareMixin
 
-from InvenTree.InvenTree.tenant import (
+from InvenTree.tenant import (
     clear_tenant_context,
     extract_subdomain,
     get_available_databases,
@@ -18,7 +18,7 @@ from InvenTree.InvenTree.tenant import (
     set_current_subdomain,
 )
 
-_SELECT_DB_PATH = "/select-db/"
+_SELECT_DB_PATH = '/select-db/'
 
 
 class TenantMiddleware(MiddlewareMixin):
@@ -26,9 +26,9 @@ class TenantMiddleware(MiddlewareMixin):
 
     def _should_skip_redirect(self, request) -> bool:
         path = request.path
-        if path.startswith(settings.STATIC_URL or "/static/"):
+        if path.startswith(settings.STATIC_URL or '/static/'):
             return True
-        if path.startswith(settings.MEDIA_URL or "/media/"):
+        if path.startswith(settings.MEDIA_URL or '/media/'):
             return True
         if path.startswith(_SELECT_DB_PATH):
             return True
@@ -84,7 +84,11 @@ class TenantMiddleware(MiddlewareMixin):
 
             if database is None:
                 databases = getattr(request, 'available_databases', None)
-                if databases and len(databases) > 1 and not self._should_skip_redirect(request):
+                if (
+                    databases
+                    and len(databases) > 1
+                    and not self._should_skip_redirect(request)
+                ):
                     return redirect(_SELECT_DB_PATH)
 
         if database:
