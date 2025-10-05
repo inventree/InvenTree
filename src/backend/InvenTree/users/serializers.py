@@ -245,6 +245,7 @@ class GroupSerializer(InvenTreeModelSerializer):
 
     def __init__(self, *args, **kwargs):
         """Initialize this serializer with extra fields as required."""
+        # TODO INVE-T1 support complex filters
         role_detail = kwargs.pop('role_detail', False)
         user_detail = kwargs.pop('user_detail', False)
         permission_detail = kwargs.pop('permission_detail', False)

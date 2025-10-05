@@ -37,6 +37,8 @@ from InvenTree.serializers import (
     InvenTreeCurrencySerializer,
     InvenTreeDecimalField,
     InvenTreeModelSerializer,
+    PathScopedMixin,
+    can_filter,
 )
 from users.serializers import UserSerializer
 
@@ -222,23 +224,9 @@ class StockItemTestResultSerializer(
 
         read_only_fields = ['pk', 'user', 'date']
 
-    def __init__(self, *args, **kwargs):
-        """Add detail fields."""
-        user_detail = kwargs.pop('user_detail', False)
-        template_detail = kwargs.pop('template_detail', False)
-
-        super().__init__(*args, **kwargs)
-
-        if isGeneratingSchema():
-            return
-
-        if user_detail is not True:
-            self.fields.pop('user_detail', None)
-
-        if template_detail is not True:
-            self.fields.pop('template_detail', None)
-
-    user_detail = UserSerializer(source='user', read_only=True, allow_null=True)
+    user_detail = can_filter(
+        UserSerializer(source='user', read_only=True, allow_null=True)
+    )
 
     template = serializers.PrimaryKeyRelatedField(
         queryset=part_models.PartTestTemplate.objects.all(),
@@ -249,8 +237,10 @@ class StockItemTestResultSerializer(
         label=_('Test template for this result'),
     )
 
-    template_detail = part_serializers.PartTestTemplateSerializer(
-        source='template', read_only=True, allow_null=True
+    template_detail = can_filter(
+        part_serializers.PartTestTemplateSerializer(
+            source='template', read_only=True, allow_null=True
+        )
     )
 
     attachment = InvenTree.serializers.InvenTreeAttachmentSerializerField(
@@ -415,30 +405,14 @@ class StockItemSerializer(
 
     def __init__(self, *args, **kwargs):
         """Add detail fields."""
-        part_detail = kwargs.pop('part_detail', True)
-        location_detail = kwargs.pop('location_detail', True)
-        supplier_part_detail = kwargs.pop('supplier_part_detail', True)
         path_detail = kwargs.pop('path_detail', False)
-
-        tests = kwargs.pop('tests', False)
 
         super().__init__(*args, **kwargs)
 
         if isGeneratingSchema():
             return
 
-        if not part_detail:
-            self.fields.pop('part_detail', None)
-
-        if not location_detail:
-            self.fields.pop('location_detail', None)
-
-        if not supplier_part_detail:
-            self.fields.pop('supplier_part_detail', None)
-
-        if not tests:
-            self.fields.pop('tests', None)
-
+        # TODO INVE-T1 support complex filters
         if not path_detail:
             self.fields.pop('location_path', None)
 
@@ -613,32 +587,43 @@ class StockItemSerializer(
     )
 
     # Optional detail fields, which can be appended via query parameters
-    supplier_part_detail = company_serializers.SupplierPartSerializer(
-        label=_('Supplier Part'),
-        source='supplier_part',
-        brief=True,
-        supplier_detail=False,
-        manufacturer_detail=False,
-        part_detail=False,
-        many=False,
-        read_only=True,
-        allow_null=True,
+    supplier_part_detail = can_filter(
+        company_serializers.SupplierPartSerializer(
+            label=_('Supplier Part'),
+            source='supplier_part',
+            brief=True,
+            supplier_detail=False,
+            manufacturer_detail=False,
+            part_detail=False,
+            many=False,
+            read_only=True,
+            allow_null=True,
+        ),
+        True,
     )
 
-    part_detail = part_serializers.PartBriefSerializer(
-        label=_('Part'), source='part', many=False, read_only=True, allow_null=True
+    part_detail = can_filter(
+        part_serializers.PartBriefSerializer(
+            label=_('Part'), source='part', many=False, read_only=True, allow_null=True
+        ),
+        True,
     )
 
-    location_detail = LocationBriefSerializer(
-        label=_('Location'),
-        source='location',
-        many=False,
-        read_only=True,
-        allow_null=True,
+    location_detail = can_filter(
+        LocationBriefSerializer(
+            label=_('Location'),
+            source='location',
+            many=False,
+            read_only=True,
+            allow_null=True,
+        ),
+        True,
     )
 
-    tests = StockItemTestResultSerializer(
-        source='test_results', many=True, read_only=True, allow_null=True
+    tests = can_filter(
+        StockItemTestResultSerializer(
+            source='test_results', many=True, read_only=True, allow_null=True
+        )
     )
 
     quantity = InvenTreeDecimalField()
@@ -1189,6 +1174,7 @@ class LocationSerializer(
 
         super().__init__(*args, **kwargs)
 
+        # TODO INVE-T1 support complex filters
         if not path_detail and not isGeneratingSchema():
             self.fields.pop('path', None)
 
@@ -1241,7 +1227,9 @@ class LocationSerializer(
 
 @register_importer()
 class StockTrackingSerializer(
-    DataImportExportSerializerMixin, InvenTree.serializers.InvenTreeModelSerializer
+    DataImportExportSerializerMixin,
+    PathScopedMixin,
+    InvenTree.serializers.InvenTreeModelSerializer,
 ):
     """Serializer for StockItemTracking model."""
 
@@ -1264,30 +1252,14 @@ class StockTrackingSerializer(
 
         read_only_fields = ['date', 'user', 'label', 'tracking_type']
 
-    def __init__(self, *args, **kwargs):
-        """Add detail fields."""
-        item_detail = kwargs.pop('item_detail', False)
-        user_detail = kwargs.pop('user_detail', False)
-
-        super().__init__(*args, **kwargs)
-
-        if isGeneratingSchema():
-            return
-
-        if item_detail is not True:
-            self.fields.pop('item_detail', None)
-
-        if user_detail is not True:
-            self.fields.pop('user_detail', None)
-
     label = serializers.CharField(read_only=True)
 
-    item_detail = StockItemSerializer(
-        source='item', many=False, read_only=True, allow_null=True
+    item_detail = can_filter(
+        StockItemSerializer(source='item', many=False, read_only=True, allow_null=True)
     )
 
-    user_detail = UserSerializer(
-        source='user', many=False, read_only=True, allow_null=True
+    user_detail = can_filter(
+        UserSerializer(source='user', many=False, read_only=True, allow_null=True)
     )
 
     deltas = serializers.JSONField(read_only=True)

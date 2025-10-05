@@ -28,6 +28,52 @@ from common.currency import currency_code_default, currency_code_mappings
 from InvenTree.fields import InvenTreeRestURLField, InvenTreeURLField
 
 
+# region path filtering
+class OptionalFilterabelSerializer(serializers.Serializer):
+    """Mixin to add context to serializer."""
+
+    is_filterable = None
+    is_filterable_default = None
+
+    def __init__(self, *args, **kwargs):
+        """Initialize the serializer."""
+        self.is_filterable = kwargs.pop('is_filterable', None)
+        self.is_filterable_default = kwargs.pop('is_filterable_default', True)
+        super().__init__(*args, **kwargs)
+
+
+class PathScopedMixin:
+    """Mixin to disable a serializer field based on kwargs passed to the view."""
+
+    def __init__(self, *args, **kwargs):
+        """Initialization routine for the serializer."""
+        flt_fld = {
+            k: a for k, a in self.fields.items() if getattr(a, 'is_filterable', None)
+        }
+        filter_targets = {k: kwargs.pop(k, False) for k in flt_fld}
+
+        super().__init__(*args, **kwargs)
+
+        if InvenTree.ready.isGeneratingSchema():
+            return
+
+        # Throw out fields which are not requested
+        for k, v in filter_targets.items():
+            if v is not True:
+                self.fields.pop(k, None)
+
+
+# Decorator for marking serialzier fields that can be filtered out
+def can_filter(func, default=False):
+    """Decorator for marking serializer fields as filterable."""
+    func._kwargs['is_filterable'] = True
+    func._kwargs['is_filterable_default'] = default
+    return func
+
+
+# endregion
+
+
 class EmptySerializer(serializers.Serializer):
     """Empty serializer for use in testing."""
 
@@ -222,7 +268,9 @@ class DependentField(serializers.Field):
         return None
 
 
-class InvenTreeModelSerializer(serializers.ModelSerializer):
+class InvenTreeModelSerializer(
+    OptionalFilterabelSerializer, serializers.ModelSerializer
+):
     """Inherits the standard Django ModelSerializer class, but also ensures that the underlying model class data are checked on validation."""
 
     # Switch out URLField mapping
