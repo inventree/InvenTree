@@ -135,6 +135,7 @@ Depending on how your InvenTree installation is configured, you will need to pay
 | INVENTREE_CORS_ORIGIN_WHITELIST | cors.whitelist | List of whitelisted CORS URLs. Refer to the [django-cors-headers documentation](https://github.com/adamchainz/django-cors-headers#cors_allowed_origins-sequencestr) | Uses the *INVENTREE_SITE_URL* parameter, if set. Otherwise, an empty list. |
 | INVENTREE_CORS_ORIGIN_REGEX | cors.regex | List of regular expressions for CORS whitelisted URL patterns | *Empty list* |
 | INVENTREE_CORS_ALLOW_CREDENTIALS | cors.allow_credentials | Allow cookies in cross-site requests | `True` |
+| INVENTREE_SITE_LAX_PROTOCOL | site_lax_protocol | Ignore protocol mismatches on INVE-E7 site checks | `True` |
 | INVENTREE_USE_X_FORWARDED_HOST | use_x_forwarded_host | Use forwarded host header | `False` |
 | INVENTREE_USE_X_FORWARDED_PORT | use_x_forwarded_port | Use forwarded port header | `False` |
 | INVENTREE_USE_X_FORWARDED_PROTO | use_x_forwarded_proto | Use forwarded protocol header | `False` |

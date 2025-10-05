@@ -358,6 +358,7 @@ export function UserTable({
     title: t`Delete user`,
     successMessage: t`User deleted`,
     table: table,
+    preFormContent: <></>,
     preFormWarning: t`Are you sure you want to delete this user?`
   });
 

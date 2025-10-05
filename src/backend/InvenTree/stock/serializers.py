@@ -285,6 +285,10 @@ class StockItemTestResultSerializer(
                 part__tree_id=stock_item.part.tree_id, part__in=ancestors, key=test_key
             ).first():
                 data['template'] = template
+            else:
+                raise ValidationError({
+                    'test': _('No matching test found for this part')
+                })
 
         if not template:
             raise ValidationError(_('Template ID or test name must be provided'))
@@ -491,7 +495,7 @@ class StockItemSerializer(
 
     def update(self, instance, validated_data):
         """Custom update method to pass the user information through to the instance."""
-        instance._user = self.context['user']
+        instance._user = self.context.get('user', None)
 
         status_custom_key = validated_data.pop('status_custom_key', None)
         status = validated_data.pop('status', None)
