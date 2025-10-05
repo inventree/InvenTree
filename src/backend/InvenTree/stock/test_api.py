@@ -263,6 +263,16 @@ class StockLocationTest(StockAPITestCase):
                     child.refresh_from_db()
                     self.assertEqual(child.parent, parent_stock_location)
 
+    def test_output_options(self):
+        """Test output options."""
+        url = reverse('api-location-detail', kwargs={'pk': 1})
+
+        response = self.get(url, {'path_detail': 'true'}, expected_code=200)
+        self.assertIn('path', response.data)
+
+        response = self.get(url, {'path_detail': 'false'}, expected_code=200)
+        self.assertNotIn('path', response.data)
+
     def test_stock_location_structural(self):
         """Test the effectiveness of structural stock locations.
 
@@ -621,6 +631,13 @@ class StockItemListTest(StockAPITestCase):
         response = self.get_stock(location=7)
         self.assertEqual(len(response), 18)
 
+    def test_filter_by_exclude_tree(self):
+        """Filter StockItem by excluding a StockItem tree."""
+        response = self.get_stock(exclude_tree=1000)
+        for item in response:
+            self.assertNotEqual(item['pk'], 1000)
+            self.assertNotEqual(item['parent'], 1000)
+
     def test_filter_by_depleted(self):
         """Filter StockItem by depleted status."""
         response = self.get_stock(depleted=1)
@@ -770,26 +787,26 @@ class StockItemListTest(StockAPITestCase):
     def test_filter_installed(self):
         """Filter StockItem by installed."""
         response = self.get_stock(installed=True)
-        self.assertEqual(len(response), 0)
+        self.assertEqual(len(response), 1)
 
         response = self.get_stock(installed=False)
-        self.assertEqual(len(response), 29)  # TODO: adjust test dataset (belongs_to)
+        self.assertEqual(len(response), 28)
 
     def test_filter_has_installed(self):
         """Filter StockItem by has_installed."""
         response = self.get_stock(has_installed_items=True)
-        self.assertEqual(len(response), 0)
+        self.assertEqual(len(response), 1)
 
         response = self.get_stock(has_installed_items=False)
-        self.assertEqual(len(response), 29)  # TODO: adjust test dataset (belongs_to)
+        self.assertEqual(len(response), 28)
 
     def test_filter_has_child_items(self):
         """Filter StockItem by has_child_items."""
         response = self.get_stock(has_child_items=True)
-        self.assertEqual(len(response), 0)
+        self.assertEqual(len(response), 1)
 
         response = self.get_stock(has_child_items=False)
-        self.assertEqual(len(response), 29)  # TODO: adjust test dataset (belongs_to)
+        self.assertEqual(len(response), 28)  # TODO: adjust test dataset (belongs_to)
 
     def test_filter_sent_to_customer(self):
         """Filter StockItem by sent_to_customer."""
@@ -1874,6 +1891,58 @@ class StockTestResultTest(StockAPITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertGreaterEqual(len(response.data), 4)
 
+    def test_stock_item_and_include_installed_filters(self):
+        """Test stock_item filter with and without include_installed option."""
+        url = self.get_url()
+
+        # Filter by stock_item without include_installed
+        response = self.client.get(url, data={'stock_item': 105})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        initial_count = len(response.data)
+        self.assertGreaterEqual(initial_count, 4)
+
+        # Verify all results belong to stock_item 105
+        for result in response.data:
+            self.assertEqual(result['stock_item'], 105)
+
+        # Filter by stock_item with include_installed=True
+        response = self.client.get(
+            url, data={'stock_item': 105, 'include_installed': True}
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        installed_count = len(response.data)
+        self.assertGreaterEqual(installed_count, initial_count)
+
+        # Filter by stock_item with include_installed=False (explicit)
+        response = self.client.get(
+            url, data={'stock_item': 105, 'include_installed': False}
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), initial_count)
+
+        # Invalid stock_item ID (does not exist) - should return 400
+        response = self.client.get(url, data={'stock_item': 999999})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        # Non-numeric stock_item ID - should return 400
+        response = self.client.get(url, data={'stock_item': 'invalid'})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        # Filter by another stock_item (522)
+        response = self.client.get(url, data={'stock_item': 522})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        item_522_count = len(response.data)
+        self.assertGreaterEqual(item_522_count, 4)
+
+        # Verify all results belong to stock_item 522
+        for result in response.data:
+            self.assertEqual(result['stock_item'], 522)
+
+        # include_installed without stock_item (should be ignored)
+        response_all = self.client.get(url)
+        response_with_flag = self.client.get(url, data={'include_installed': True})
+        self.assertEqual(len(response_all.data), len(response_with_flag.data))
+
     def test_post_fail(self):
         """Test failing posts."""
         # Attempt to post a new test result without specifying required data
@@ -2072,6 +2141,7 @@ class StockTestResultTest(StockAPITestCase):
         url = reverse('api-stock-test-result-list')
 
         test_template = PartTestTemplate.objects.first()
+        assert test_template
 
         test_template.choices = 'AA, BB, CC'
         test_template.save()
@@ -2120,6 +2190,22 @@ class StockTestResultTest(StockAPITestCase):
             },
             expected_code=201,
         )
+
+    def test_output_options(self):
+        """Test output options for single item retrieval."""
+        url = reverse('api-stock-test-result-detail', kwargs={'pk': 1})
+
+        response = self.get(url, {'user_detail': 'true'}, expected_code=200)
+        self.assertIn('user_detail', response.data)
+
+        response = self.get(url, {'user_detail': 'false'}, expected_code=200)
+        self.assertNotIn('user_detail', response.data)
+
+        response = self.get(url, {'template_detail': 'true'}, expected_code=200)
+        self.assertIn('template_detail', response.data)
+
+        response = self.get(url, {'template_detail': 'false'}, expected_code=200)
+        self.assertNotIn('template_detail', response.data)
 
 
 class StockTrackingTest(StockAPITestCase):
@@ -2215,6 +2301,25 @@ class StockTrackingTest(StockAPITestCase):
             for key in keys:
                 self.assertIn(key, deltas)
                 self.assertIsNotNone(deltas.get(key, None))
+
+    def test_output_options(self):
+        """Test output options."""
+        url = self.get_url()
+        response = self.client.get(
+            url, {'item_detail': True, 'user_detail': True, 'limit': 2}
+        )
+
+        for item in response.data['results']:
+            self.assertIn('item_detail', item)
+            self.assertIn('user_detail', item)
+
+        response = self.client.get(
+            url, {'item_detail': False, 'user_detail': False, 'limit': 2}
+        )
+
+        for item in response.data['results']:
+            self.assertNotIn('item_detail', item)
+            self.assertNotIn('user_detail', item)
 
 
 class StockAssignTest(StockAPITestCase):

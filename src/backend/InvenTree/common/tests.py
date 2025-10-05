@@ -19,7 +19,7 @@ from django.test import Client, TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
 
-import PIL
+from PIL import Image
 
 import common.validators
 from common.notifications import trigger_notification
@@ -200,7 +200,7 @@ class AttachmentTest(InvenTreeAPITestCase):
 
         # Assign 'delete' permission to 'part' model
         self.assignRole('part.delete')
-        response = self.delete(url, expected_code=204)
+        self.delete(url, expected_code=204)
 
 
 class SettingsTest(InvenTreeTestCase):
@@ -671,9 +671,9 @@ class GlobalSettingsApiTest(InvenTreeAPITestCase):
 
         # Find the associated setting
         setting = next((s for s in response.data if s['key'] == key), None)
+        assert setting is not None
 
         # Check default value (should be False, not 'False')
-        self.assertIsNotNone(setting)
         self.assertFalse(setting['value'])
 
         # Check that we can manually set the value
@@ -851,9 +851,9 @@ class UserSettingsApiTest(InvenTreeAPITestCase):
 
         # Find the associated setting
         setting = next((s for s in response.data if s['key'] == key), None)
+        assert setting is not None
 
         # Check default value (should be 10, not '10')
-        self.assertIsNotNone(setting)
         self.assertEqual(setting['value'], 10)
 
         # Check that writing an invalid value returns an error
@@ -1535,7 +1535,7 @@ class NotesImageTest(InvenTreeAPITestCase):
         n = NotesImage.objects.count()
 
         # Construct a simple image file
-        image = PIL.Image.new('RGB', (100, 100), color='red')
+        image = Image.new('RGB', (100, 100), color='red')
 
         with io.BytesIO() as output:
             image.save(output, format='PNG')
@@ -1589,6 +1589,7 @@ class ProjectCodesTest(InvenTreeAPITestCase):
 
         # Get the first project code
         code = ProjectCode.objects.first()
+        assert code is not None and code.pk
 
         # Delete it
         self.delete(
@@ -1686,6 +1687,7 @@ class CustomUnitAPITest(InvenTreeAPITestCase):
     def test_edit(self):
         """Test edit permissions for CustomUnit model."""
         unit = CustomUnit.objects.first()
+        assert unit is not None and unit.pk
 
         # Try to edit without permission
         self.user.is_staff = False
@@ -1713,6 +1715,7 @@ class CustomUnitAPITest(InvenTreeAPITestCase):
     def test_validation(self):
         """Test that validation works as expected."""
         unit = CustomUnit.objects.first()
+        assert unit is not None and unit.pk
 
         self.user.is_staff = True
         self.user.save()

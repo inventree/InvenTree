@@ -23,6 +23,7 @@ import type { TableColumn } from '@lib/types/Tables';
 import { useNavigate } from 'react-router-dom';
 import ImporterDrawer from '../../components/importer/ImporterDrawer';
 import { RenderInstance } from '../../components/render/Instance';
+import { formatCurrency } from '../../defaults/formatters';
 import { dataImporterSessionFields } from '../../forms/ImporterForms';
 import {
   usePurchaseOrderLineItemFields,
@@ -79,10 +80,9 @@ export function PurchaseOrderLineItemTable({
   );
 
   const importSessionFields = useMemo(() => {
-    const fields = dataImporterSessionFields();
-
-    fields.model_type.hidden = true;
-    fields.model_type.value = ModelType.purchaseorderlineitem;
+    const fields = dataImporterSessionFields({
+      modelType: ModelType.purchaseorderlineitem
+    });
 
     // Specify override values for import
     fields.field_overrides.value = {
@@ -133,14 +133,10 @@ export function PurchaseOrderLineItemTable({
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
-      {
-        accessor: 'part',
-        title: t`Part`,
-        sortable: true,
-        ordering: 'part_name',
-        switchable: false,
-        render: (record: any) => PartColumn({ part: record.part_detail })
-      },
+      PartColumn({
+        part: 'part_detail',
+        ordering: 'part_name'
+      }),
       {
         accessor: 'part_detail.IPN',
         sortable: true,
@@ -254,11 +250,15 @@ export function PurchaseOrderLineItemTable({
         accessor: 'purchase_price',
         title: t`Unit Price`
       }),
-      CurrencyColumn({
+      {
         accessor: 'total_price',
-        currency_accessor: 'purchase_price_currency',
-        title: t`Total Price`
-      }),
+        title: t`Total Price`,
+        render: (record: any) =>
+          formatCurrency(record.purchase_price, {
+            currency: record.purchase_price_currency,
+            multiplier: record.quantity
+          })
+      },
       TargetDateColumn({}),
       LocationColumn({
         accessor: 'destination_detail',

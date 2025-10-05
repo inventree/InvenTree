@@ -1581,8 +1581,11 @@ class SalesOrder(TotalPriceMixin, Order):
         return self.lines.filter(shipped__gte=F('quantity'))
 
     def pending_line_items(self):
-        """Return a queryset of the pending line items for this order."""
-        return self.lines.filter(shipped__lt=F('quantity'))
+        """Return a queryset of the pending line items for this order.
+
+        Note: We exclude "virtual" parts here, as they do not get allocated
+        """
+        return self.lines.filter(shipped__lt=F('quantity')).exclude(part__virtual=True)
 
     @property
     def completed_line_count(self):
@@ -2027,11 +2030,6 @@ class SalesOrderLineItem(OrderLineItem):
         super().clean()
 
         if self.part:
-            if self.part.virtual:
-                raise ValidationError({
-                    'part': _('Virtual part cannot be assigned to a sales order')
-                })
-
             if not self.part.salable:
                 raise ValidationError({
                     'part': _('Only salable parts can be assigned to a sales order')
@@ -2052,7 +2050,7 @@ class SalesOrderLineItem(OrderLineItem):
         null=True,
         verbose_name=_('Part'),
         help_text=_('Part'),
-        limit_choices_to={'salable': True, 'virtual': False},
+        limit_choices_to={'salable': True},
     )
 
     sale_price = InvenTreeModelMoneyField(
@@ -2105,6 +2103,10 @@ class SalesOrderLineItem(OrderLineItem):
 
     def is_fully_allocated(self):
         """Return True if this line item is fully allocated."""
+        # If the linked part is "virtual", then we cannot allocate stock against it
+        if self.part and self.part.virtual:
+            return True
+
         if self.order.status == SalesOrderStatus.SHIPPED:
             return self.fulfilled_quantity() >= self.quantity
 
@@ -2116,6 +2118,10 @@ class SalesOrderLineItem(OrderLineItem):
 
     def is_completed(self):
         """Return True if this line item is completed (has been fully shipped)."""
+        # A "virtual" part is always considered to be "completed"
+        if self.part and self.part.virtual:
+            return True
+
         return self.shipped >= self.quantity
 
 

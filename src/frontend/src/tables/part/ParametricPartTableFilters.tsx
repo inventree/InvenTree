@@ -1,13 +1,5 @@
 import { t } from '@lingui/core/macro';
-import {
-  ActionIcon,
-  Divider,
-  Group,
-  Select,
-  Stack,
-  TextInput
-} from '@mantine/core';
-import { IconCircleX } from '@tabler/icons-react';
+import { Divider, Group, Input, Select, Stack, TextInput } from '@mantine/core';
 import { useEffect, useMemo, useState } from 'react';
 
 // Define set of allowed operators for parameter filters
@@ -29,29 +21,6 @@ type ParameterFilterProps = {
   closeFilter: () => void;
 };
 
-function ClearFilterButton({
-  props,
-  operator
-}: {
-  props: ParameterFilterProps;
-  operator?: string;
-}) {
-  return (
-    <ActionIcon
-      aria-label={`clear-filter-${props.template.name}`}
-      variant='transparent'
-      color='red'
-      size='sm'
-      onClick={() => {
-        props.clearFilter(props.template.pk, operator ?? '');
-        props.closeFilter();
-      }}
-    >
-      <IconCircleX />
-    </ActionIcon>
-  );
-}
-
 /**
  * UI element for viewing and changing boolean filter associated with a given parameter template
  */
@@ -68,10 +37,17 @@ function BooleanParameterFilter(props: ParameterFilterProps) {
         { value: 'false', label: t`False` }
       ]}
       value={filterValue}
+      clearable={true}
       defaultValue={filterValue}
+      onClear={() => {
+        props.clearFilter(props.template.pk, '');
+        props.closeFilter();
+      }}
       onChange={(val) => props.setFilter(props.template.pk, val ?? '', '=')}
       placeholder={t`Select a choice`}
-      rightSection={<ClearFilterButton props={props} />}
+      clearButtonProps={{
+        'aria-label': `clear-filter-${props.template.name}`
+      }}
     />
   );
 }
@@ -94,9 +70,17 @@ function ChoiceParameterFilter(props: ParameterFilterProps) {
       value={filterValue}
       defaultValue={filterValue}
       onChange={(val) => props.setFilter(props.template.pk, val ?? '', '=')}
+      onClear={() => {
+        props.clearFilter(props.template.pk, '');
+        props.closeFilter();
+      }}
+      clearButtonProps={{
+        'aria-label': `clear-filter-${props.template.name}`
+      }}
       placeholder={t`Select a choice`}
       searchable
-      rightSection={<ClearFilterButton props={props} />}
+      clearable
+      // rightSection={<ClearFilterButton props={props} />}
     />
   );
 }
@@ -164,7 +148,16 @@ function GenericFilterRow({
           }
         }}
         rightSection={
-          readonly && <ClearFilterButton props={props} operator={op} />
+          readonly && (
+            <Input.ClearButton
+              onClick={(event) => {
+                event.stopPropagation();
+                props.clearFilter(props.template.pk, op);
+                props.closeFilter();
+              }}
+              aria-label={`clear-filter-${props.template.name}`}
+            />
+          )
         }
       />
     </Group>

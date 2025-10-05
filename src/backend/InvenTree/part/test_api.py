@@ -11,7 +11,7 @@ from django.db import connection
 from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 
-import PIL
+from PIL import Image
 from rest_framework.test import APIClient
 
 import build.models
@@ -65,7 +65,7 @@ class PartImageTestMixin:
 
         fn = get_testfolder_dir() / 'part_image_123abc.png'
 
-        img = PIL.Image.new('RGB', (128, 128), color='blue')
+        img = Image.new('RGB', (128, 128), color='blue')
         img.save(fn)
 
         with open(fn, 'rb') as img_file:
@@ -905,6 +905,82 @@ class PartAPITest(PartAPITestBase):
 
         response = self.get(url, {'related': 1}, expected_code=200)
         self.assertEqual(len(response.data), 2)
+
+    def test_exclude_related(self):
+        """Test that we can exclude parts related to a specific part ID."""
+        url = reverse('api-part-list')
+
+        # Get initial count of all parts
+        response = self.get(url, {}, expected_code=200)
+        initial_count = len(response.data)
+
+        # Add some relationships
+        PartRelated.objects.create(
+            part_1=Part.objects.get(pk=1), part_2=Part.objects.get(pk=2)
+        )
+
+        PartRelated.objects.create(
+            part_2=Part.objects.get(pk=1), part_1=Part.objects.get(pk=3)
+        )
+
+        # Test excluding parts related to part 1
+        # Parts 2 and 3 are related to part 1, so they should be excluded
+        response = self.get(url, {'exclude_related': 1}, expected_code=200)
+        self.assertEqual(len(response.data), initial_count - 2)
+
+        # Verify that parts 2 and 3 are not in the results
+        part_ids = [part['pk'] for part in response.data]
+        self.assertNotIn(2, part_ids)
+        self.assertNotIn(3, part_ids)
+
+        self.assertIn(1, part_ids)
+
+        # Test excluding with a part that has no relations
+        # This should return all parts
+        response = self.get(url, {'exclude_related': 99}, expected_code=200)
+        self.assertEqual(len(response.data), initial_count)
+
+    def test_exclude_id(self):
+        """Test that we can exclude parts by ID using the exclude_id parameter."""
+        url = reverse('api-part-list')
+
+        # Get initial count of all parts
+        response = self.get(url, {}, expected_code=200)
+        initial_count = len(response.data)
+        all_part_ids = {part['pk'] for part in response.data}
+
+        #  Exclude a single valid part ID
+        response = self.get(url, {'exclude_id': '1'}, expected_code=200)
+        self.assertEqual(len(response.data), initial_count - 1)
+        part_ids = {part['pk'] for part in response.data}
+        self.assertNotIn(1, part_ids)
+
+        # Exclude multiple valid part IDs (comma-separated)
+        response = self.get(url, {'exclude_id': '1,2,3'}, expected_code=200)
+        self.assertEqual(len(response.data), initial_count - 3)
+        part_ids = {part['pk'] for part in response.data}
+        self.assertNotIn(1, part_ids)
+        self.assertNotIn(2, part_ids)
+        self.assertNotIn(3, part_ids)
+
+        #  Exclude non-existent part ID (should not affect results)
+        non_existent_id = max(all_part_ids) + 1000
+        response = self.get(
+            url, {'exclude_id': str(non_existent_id)}, expected_code=200
+        )
+        self.assertEqual(len(response.data), initial_count)
+
+        # Exclude with empty string (should return all parts)
+        response = self.get(url, {'exclude_id': ''}, expected_code=200)
+        self.assertEqual(len(response.data), initial_count)
+
+        # Invalid input - non-numeric value (should raise ValidationError)
+        response = self.get(url, {'exclude_id': 'abc'}, expected_code=400)
+
+        # Zero as ID
+        response = self.get(url, {'exclude_id': '0'}, expected_code=200)
+        # Assuming 0 is not a valid part ID in the system
+        self.assertEqual(len(response.data), initial_count)
 
     def test_filter_by_bom_valid(self):
         """Test the 'bom_valid' Part API filter."""
@@ -1770,7 +1846,7 @@ class PartDetailTests(PartImageTestMixin, PartAPITestBase):
         for fmt in ['jpg', 'j2k', 'png', 'bmp', 'webp']:
             fn = f'{test_path}.{fmt}'
 
-            img = PIL.Image.new('RGB', (128, 128), color='red')
+            img = Image.new('RGB', (128, 128), color='red')
             img.save(fn)
 
             with open(fn, 'rb') as dummy_image:
@@ -1820,7 +1896,7 @@ class PartDetailTests(PartImageTestMixin, PartAPITestBase):
 
         fn = get_testfolder_dir() / 'part_image_123abc.png'
 
-        img = PIL.Image.new('RGB', (128, 128), color='blue')
+        img = Image.new('RGB', (128, 128), color='blue')
         img.save(fn)
 
         # Upload the image to a part
@@ -1903,6 +1979,16 @@ class PartDetailTests(PartImageTestMixin, PartAPITestBase):
 
         self.assertIn('category_path', response.data)
         self.assertEqual(len(response.data['category_path']), 2)
+
+    def test_location_detail(self):
+        """Check that location_detail can be requested against the serializer."""
+        response = self.get(
+            reverse('api-part-detail', kwargs={'pk': 1}),
+            {'location_detail': True},
+            expected_code=200,
+        )
+
+        self.assertIn('default_location_detail', response.data)
 
     def test_part_requirements(self):
         """Unit test for the "PartRequirements" API endpoint."""
@@ -2463,6 +2549,7 @@ class BomItemTest(InvenTreeAPITestCase):
 
         # Now, let's validate an item
         bom_item = BomItem.objects.first()
+        assert bom_item
 
         bom_item.validate_hash()
 
@@ -2576,6 +2663,16 @@ class BomItemTest(InvenTreeAPITestCase):
 
         self.assertEqual(int(float(response.data['quantity'])), 57)
         self.assertEqual(response.data['note'], 'Added a note')
+
+    def test_output_options(self):
+        """Test that various output options work as expected."""
+        url = reverse('api-bom-item-detail', kwargs={'pk': 3})
+        options = ['can_build', 'part_detail', 'sub_part_detail']
+        for option in options:
+            response = self.get(url, {f'{option}': True}, expected_code=200)
+            self.assertIn(option, response.data)
+            response = self.get(url, {f'{option}': False}, expected_code=200)
+            self.assertNotIn(option, response.data)
 
     def test_add_bom_item(self):
         """Test that we can create a new BomItem via the API."""
@@ -3109,6 +3206,7 @@ class PartTestTemplateTest(PartAPITestBase):
     def test_choices(self):
         """Test the 'choices' field for the PartTestTemplate model."""
         template = PartTestTemplate.objects.first()
+        assert template
 
         url = reverse('api-part-test-template-detail', kwargs={'pk': template.pk})
 

@@ -48,7 +48,7 @@ function ParameterCell({
   // Find matching template parameter
   const parameter = useMemo(() => {
     return record.parameters?.find((p: any) => p.template == template.pk);
-  }, [record.parameters, template]);
+  }, [record, template]);
 
   const extra: any[] = [];
 
@@ -166,7 +166,7 @@ export default function ParametricPartTable({
 
         const paramFilters = filters[filterName] || {};
 
-        if (paramFilters[operator]) {
+        if (paramFilters[operator] !== undefined) {
           // Remove the specific operator filter
           delete paramFilters[operator];
         }
@@ -192,19 +192,23 @@ export default function ParametricPartTable({
     (templateId: number, value: string, operator: string) => {
       const filterName = `parameter_${templateId}`;
 
-      setParameterFilters((prev: any) => {
-        const filters = { ...prev };
-        const paramFilters = filters[filterName] || {};
+      const filterValue = value?.toString().trim() ?? '';
 
-        paramFilters[operator] = value;
+      if (filterValue.length > 0) {
+        setParameterFilters((prev: any) => {
+          const filters = { ...prev };
+          const paramFilters = filters[filterName] || {};
 
-        return {
-          ...filters,
-          [filterName]: paramFilters
-        };
-      });
+          paramFilters[operator] = filterValue;
 
-      table.refreshTable();
+          return {
+            ...filters,
+            [filterName]: paramFilters
+          };
+        });
+
+        table.refreshTable();
+      }
     },
     [setParameterFilters, clearParameterFilter, table.refreshTable]
   );
@@ -285,7 +289,7 @@ export default function ParametricPartTable({
 
       table.updateRecord(records[partIndex]);
     },
-    [table.updateRecord]
+    [table.records, table.updateRecord]
   );
 
   const parameterColumns: TableColumn[] = useMemo(() => {
@@ -365,14 +369,10 @@ export default function ParametricPartTable({
 
   const tableColumns: TableColumn[] = useMemo(() => {
     const partColumns: TableColumn[] = [
-      {
-        accessor: 'name',
-        title: t`Part`,
-        sortable: true,
-        switchable: false,
-        noWrap: true,
-        render: (record: any) => PartColumn({ part: record })
-      },
+      PartColumn({
+        part: '',
+        switchable: false
+      }),
       DescriptionColumn({
         defaultVisible: false
       }),

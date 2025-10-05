@@ -25,7 +25,7 @@ test('Stock - Basic Tests', async ({ browser }) => {
   await loadTab(page, 'Stock Locations');
   await page.getByRole('cell', { name: 'Electronics Lab' }).first().click();
   await loadTab(page, 'Default Parts');
-  await loadTab(page, 'Stock Locations');
+  await loadTab(page, 'Sublocations');
   await loadTab(page, 'Stock Items');
   await loadTab(page, 'Location Details');
 
@@ -33,7 +33,7 @@ test('Stock - Basic Tests', async ({ browser }) => {
   await page.getByText('D.123 | Doohickey').waitFor();
   await page.getByText('Batch Code: BX-123-2024-2-7').waitFor();
   await loadTab(page, 'Stock Tracking');
-  await loadTab(page, 'Test Data');
+  await loadTab(page, 'Test Results');
   await page.getByText('395c6d5586e5fb656901d047be27e1f7').waitFor();
   await loadTab(page, 'Installed Items');
 });
@@ -323,6 +323,7 @@ test('Stock - Return Items', async ({ browser }) => {
       name: 'action-menu-stock-operations-return-stock'
     })
     .click();
+
   await page.getByText('#128').waitFor();
   await page.getByText('Merge into existing stock').waitFor();
   await page.getByRole('textbox', { name: 'number-field-quantity' }).fill('0');
@@ -349,7 +350,7 @@ test('Stock - Location', async ({ browser }) => {
 
   await loadTab(page, 'Default Parts');
   await loadTab(page, 'Stock Items');
-  await loadTab(page, 'Stock Locations');
+  await loadTab(page, 'Sublocations');
   await loadTab(page, 'Location Details');
 
   await page.getByLabel('action-menu-barcode-actions').click();

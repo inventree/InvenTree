@@ -131,6 +131,8 @@ class UserAPITests(InvenTreeAPITestCase):
     def test_user_detail(self):
         """Test the UserDetail API endpoint."""
         user = User.objects.first()
+        assert user
+
         url = reverse('api-user-detail', kwargs={'pk': user.pk})
 
         user.is_staff = False
@@ -274,6 +276,7 @@ class UserTokenTests(InvenTreeAPITestCase):
 
         # If we re-generate a token, the value changes
         token = ApiToken.objects.filter(name='cat').first()
+        assert token
 
         # Request the token with the same name
         data = self.get(url, data={'name': 'cat'}, expected_code=200).data
@@ -331,6 +334,7 @@ class UserTokenTests(InvenTreeAPITestCase):
 
         # Grab the token, and update
         token = ApiToken.objects.first()
+        assert token
         self.assertEqual(token.key, token_key)
         self.assertIsNotNone(token.last_seen)
 
@@ -391,3 +395,25 @@ class UserTokenTests(InvenTreeAPITestCase):
         # Get token without auth (should fail)
         self.client.logout()
         self.get(reverse('api-token'), expected_code=401)
+
+
+class GroupDetialTests(InvenTreeAPITestCase):
+    """Tests for the GroupDetail API endpoint."""
+
+    fixtures = ['users']
+
+    def test_group_list(self):
+        """Test the GroupDetail API endpoint."""
+        url = reverse('api-group-detail', kwargs={'pk': 1})
+
+        response = self.get(url, {'user_detail': 'true'}, expected_code=200)
+        self.assertIn('users', response.data)
+
+        response = self.get(url, {'role_detail': 'true'}, expected_code=200)
+        self.assertIn('roles', response.data)
+
+        response = self.get(url, {'permission_detail': 'true'}, expected_code=200)
+        self.assertIn('permissions', response.data)
+
+        response = self.get(url, {'permission_detail': 'false'}, expected_code=200)
+        self.assertNotIn('permissions', response.data)
