@@ -10,7 +10,7 @@ exclude: |
     )$
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
     -   id: trailing-whitespace
     -   id: end-of-file-fixer
@@ -18,7 +18,7 @@ repos:
         exclude: mkdocs.yml
     -   id: mixed-line-ending
 -   repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.11.13
+    rev: v0.13.3
     hooks:
     - id: ruff-format
       args: [--preview]
@@ -29,7 +29,7 @@ repos:
         --preview
       ]
 -   repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.7.12
+    rev: 0.8.23
     hooks:
       - id: pip-compile
         name: pip-compile requirements-dev.in
@@ -71,13 +71,13 @@ repos:
           src/frontend/vite.config.ts |
       )$
 -   repo: https://github.com/biomejs/pre-commit
-    rev: v2.0.0-beta.5
+    rev: v2.2.5
     hooks:
     -   id: biome-check
         additional_dependencies: ["@biomejs/biome@1.9.4"]
         files: ^src/frontend/.*\.(js|ts|tsx)$
 -   repo: https://github.com/gitleaks/gitleaks
-    rev: v8.27.2
+    rev: v8.28.0
     hooks:
     -   id: gitleaks
         language_version: 1.23.6

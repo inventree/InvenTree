@@ -26,6 +26,8 @@ class TenantMiddleware(MiddlewareMixin):
 
     def _should_skip_redirect(self, request) -> bool:
         path = request.path
+        print("🧩 TenantMiddleware path:", path)
+
         if path.startswith(settings.STATIC_URL or '/static/'):
             return True
         if path.startswith(settings.MEDIA_URL or '/media/'):
@@ -74,6 +76,9 @@ class TenantMiddleware(MiddlewareMixin):
         subdomain = extract_subdomain(request.get_host())
         request.tenant_subdomain = subdomain
         set_current_subdomain(subdomain)
+        print("📦 Available DBs:", get_available_databases())
+
+        print("📛 DBFilter pattern:", get_dbfilter_pattern())
 
         dbfilter_enabled = bool(get_dbfilter_pattern())
 
