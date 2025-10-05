@@ -193,8 +193,9 @@ class TaxMixin(models.Model):
         if not self.check_locked():
             self.apply_tax_configuration()
             # super().save(*args, **kwargs)
-            self.recalculate_line_items()
-            self.calculate_taxes()
+            if self.pk:
+                self.recalculate_line_items()
+                self.calculate_taxes()
 
         super().save(*args, **kwargs)
 
@@ -276,9 +277,6 @@ class TaxMixin(models.Model):
 
     def recalculate_line_items(self):
         """Recalculate the line items for this order."""
-        if not self.pk:
-            return
-
         for line in self.lines.all():
             line.save(update_order=False)
         for line in self.extra_lines.all():
