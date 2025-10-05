@@ -407,7 +407,7 @@ export function useScrapBuildOutputsForm({
         headers: [
           { title: t`Part` },
           { title: t`Stock Item` },
-          { title: t`Quantity`, style: { width: '200px' } },
+          { title: t`Scrap Quantity`, style: { width: '200px' } },
           { title: t`Batch` },
           { title: t`Status` },
           { title: '', style: { width: '50px' } }
