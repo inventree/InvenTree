@@ -532,7 +532,7 @@ class BuildOutputScrapSerializer(serializers.Serializer):
         with transaction.atomic():
             for item in outputs:
                 output = item['output']
-                quantity = item['quantity']
+                quantity = item.get('quantity', None)
                 build.scrap_build_output(
                     output,
                     quantity,

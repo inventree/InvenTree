@@ -1146,7 +1146,9 @@ class Build(
 
         if quantity < output.quantity:
             # Split output into two items
-            output = output.splitStock(quantity, location=location, user=user)
+            output = output.splitStock(
+                quantity, location=location, user=user, allow_production=True
+            )
             output.build = self
 
         # Update build output item
