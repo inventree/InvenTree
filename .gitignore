@@ -48,6 +48,7 @@ static_i18n
 
 # Local config files
 config.yaml
+test_config.yaml
 plugins.txt
 secret_key.txt
 oidc.pem
