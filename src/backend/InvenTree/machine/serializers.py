@@ -10,6 +10,22 @@ from machine import registry
 from machine.models import MachineConfig, MachineSetting
 
 
+class MachinePropertySerializer(serializers.Serializer):
+    """Serializer for a MachineProperty."""
+
+    class Meta:
+        """Meta for serializer."""
+
+        fields = ['key', 'value', 'group', 'type', 'max_progress']
+        read_only_fields = fields
+
+    key = serializers.CharField()
+    value = serializers.CharField()
+    group = serializers.CharField()
+    type = serializers.CharField()
+    max_progress = serializers.IntegerField()
+
+
 class MachineConfigSerializer(serializers.ModelSerializer):
     """Serializer for a MachineConfig."""
 
@@ -30,9 +46,10 @@ class MachineConfigSerializer(serializers.ModelSerializer):
             'machine_errors',
             'is_driver_available',
             'restart_required',
+            'properties',
         ]
 
-        read_only_fields = ['machine_type', 'driver']
+        read_only_fields = ['machine_type', 'driver', 'properties']
 
     initialized = serializers.SerializerMethodField('get_initialized')
     status = serializers.SerializerMethodField('get_status')
@@ -41,6 +58,12 @@ class MachineConfigSerializer(serializers.ModelSerializer):
     machine_errors = serializers.SerializerMethodField('get_errors')
     is_driver_available = serializers.SerializerMethodField('get_is_driver_available')
     restart_required = serializers.SerializerMethodField('get_restart_required')
+    properties = serializers.ListField(
+        child=MachinePropertySerializer(),
+        source='machine.properties',
+        read_only=True,
+        default=[],
+    )
 
     def get_initialized(self, obj: MachineConfig) -> bool:
         """Serializer method for the initialized field."""
