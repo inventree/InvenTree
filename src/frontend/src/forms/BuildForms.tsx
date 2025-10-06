@@ -409,7 +409,7 @@ export function useScrapBuildOutputsForm({
         headers: [
           { title: t`Part` },
           { title: t`Build Output` },
-          { title: t`Scrap Quantity`, style: { width: '200px' } },
+          { title: t`Quantity to Scrap`, style: { width: '200px' } },
           { title: t`Batch` },
           { title: t`Status` },
           { title: '', style: { width: '50px' } }
