@@ -364,8 +364,6 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         read_only=True, allow_null=True
     )
 
-    minimum_stock = serializers.FloatField(required=False, default=0)
-
     image = InvenTree.serializers.InvenTreeImageSerializerField(
         read_only=True, allow_null=True
     )
