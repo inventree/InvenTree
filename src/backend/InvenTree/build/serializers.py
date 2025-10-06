@@ -281,13 +281,16 @@ class BuildOutputQuantitySerializer(BuildOutputSerializer):
         output = data.get('output')
         quantity = data.get('quantity')
 
-        if quantity <= 0:
-            raise ValidationError({'quantity': _('Quantity must be greater than zero')})
+        if quantity is not None:
+            if quantity <= 0:
+                raise ValidationError({
+                    'quantity': _('Quantity must be greater than zero')
+                })
 
-        if quantity > output.quantity:
-            raise ValidationError({
-                'quantity': _('Quantity cannot be greater than the output quantity')
-            })
+            if quantity > output.quantity:
+                raise ValidationError({
+                    'quantity': _('Quantity cannot be greater than the output quantity')
+                })
 
         return data
 
