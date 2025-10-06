@@ -243,6 +243,12 @@ Refer to the [return order settings](../sales/return_order.md#return-order-setti
 {{ globalsetting("ENABLE_PLUGINS_INTERFACE") }}
 {{ globalsetting("ENABLE_PLUGINS_MAILS") }}
 
+### Machine Settings
+
+| Name | Description | Default | Units |
+| ---- | ----------- | ------- | ----- |
+{{ globalsetting("MACHINE_PING_ENABLED") }}
+
 ### Project Codes
 
 Refer to the [project code settings](../concepts/project_codes.md).

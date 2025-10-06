@@ -1115,7 +1115,9 @@ class Build(
         items.all().delete()
 
     @transaction.atomic
-    def scrap_build_output(self, output, quantity, location, **kwargs):
+    def scrap_build_output(
+        self, output: stock.models.StockItem, quantity, location, **kwargs
+    ):
         """Mark a particular build output as scrapped / rejected.
 
         - Mark the output as "complete"
@@ -1125,6 +1127,10 @@ class Build(
         """
         if not output:
             raise ValidationError(_('No build output specified'))
+
+        # If quantity is not specified, assume the entire output quantity
+        if quantity is None:
+            quantity = output.quantity
 
         if quantity <= 0:
             raise ValidationError({'quantity': _('Quantity must be greater than zero')})
@@ -1140,7 +1146,9 @@ class Build(
 
         if quantity < output.quantity:
             # Split output into two items
-            output = output.splitStock(quantity, location=location, user=user)
+            output = output.splitStock(
+                quantity, location=location, user=user, allow_production=True
+            )
             output.build = self
 
         # Update build output item
@@ -1171,19 +1179,28 @@ class Build(
         )
 
     @transaction.atomic
-    def complete_build_output(self, output, user, **kwargs):
+    def complete_build_output(
+        self,
+        output: stock.models.StockItem,
+        user: User,
+        quantity: Optional[decimal.Decimal] = None,
+        **kwargs,
+    ):
         """Complete a particular build output.
 
-        - Remove allocated StockItems
-        - Mark the output as complete
+        Arguments:
+            output: The StockItem instance (build output) to complete
+            user: The user who is completing the build output
+            quantity: The quantity to complete (defaults to entire output quantity)
+
+        Notes:
+            - Remove allocated StockItems
+            - Mark the output as complete
         """
         # Select the location for the build output
         location = kwargs.get('location', self.destination)
         status = kwargs.get('status', StockStatus.OK.value)
         notes = kwargs.get('notes', '')
-
-        # List the allocated BuildItem objects for the given output
-        allocated_items = output.items_to_install.all()
 
         required_tests = kwargs.get('required_tests', output.part.getRequiredTests())
         prevent_on_incomplete = kwargs.get(
@@ -1200,6 +1217,30 @@ class Build(
                 msg = _(f'Build output {serial} has not passed all required tests')
 
             raise ValidationError(msg)
+
+        # List the allocated BuildItem objects for the given output
+        allocated_items = output.items_to_install.all()
+
+        # If a partial quantity is provided, split the stock output
+        if quantity is not None and quantity != output.quantity:
+            # Cannot split a build output with allocated items
+            if allocated_items.count() > 0:
+                raise ValidationError(
+                    _('Cannot partially complete a build output with allocated items')
+                )
+
+            if quantity <= 0:
+                raise ValidationError({
+                    'quantity': _('Quantity must be greater than zero')
+                })
+
+            if quantity > output.quantity:
+                raise ValidationError({
+                    'quantity': _('Quantity cannot be greater than the output quantity')
+                })
+
+            # Split the stock item
+            output = output.splitStock(quantity, user=user, allow_production=True)
 
         for build_item in allocated_items:
             # Complete the allocation of stock for that item

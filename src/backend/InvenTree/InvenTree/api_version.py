@@ -1,11 +1,44 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 396
+INVENTREE_API_VERSION = 403
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v403 -> 2025-10-06: https://github.com/inventree/InvenTree/pull/10499
+    - Adds ability to partially scrap a build output
+    - Adds ability to partially complete a build output
+
+v402 -> 2025-10-05 : https://github.com/inventree/InvenTree/pull/10495
+    - Refactors 'part_detail' param in BuildList API endpoint
+    - Refactors 'order_detail' param in GeneralExtraLineList API endpoint
+    - Refactors 'part_detail', 'template_detail' param in PartParameterList / PartParameterDetail API endpoint
+
+v401 -> 2025-10-05 : https://github.com/inventree/InvenTree/pull/10381
+    - Adds machine properties to machine API endpoints
+
+v400 -> 2025-10-05 : https://github.com/inventree/InvenTree/pull/10486
+    - Adds return datatypes for admin/config and flags entpoints
+
+v399 -> 2025-10-05 : https://github.com/inventree/InvenTree/pull/10445
+    - Refactors 'customer_detail' param in SalesOrder API endpoint
+    - Refactors 'customer_detail' param in ReturnOrder API endpoint
+    - Refactors 'supplier_detail' param in PurchaseOrder API endpoint
+    - Refactors 'part_detail' and 'order_detail' params in PurchaseOrderLineItem API endpoint
+    - Refactors 'part_detail', 'item_detail' and 'order_detail' params in ReturnOrderLineItem API endpoint
+    - Refactors 'part_detail', 'order_detail' and 'customer_detail' params in SalesOrderLineItem API endpoint
+    - Refactors 'part_detail', 'item_detail', 'order_detail', 'location_detail' and 'customer_detail' params in SalesOrderAllocation API endpoint
+
+v398 -> 2025-10-05 : https://github.com/inventree/InvenTree/pull/10487
+    - Refactors 'part_detail', 'path_detail', 'supplier_part_detail', 'location_detail' and 'tests' params in Stock API endpoint
+
+v397 -> 2025-10-01 : https://github.com/inventree/InvenTree/pull/10444
+    - Refactors 'path_detail' param in StockLocation API endpoint
+    - Refactors 'user_detail' and 'template_detail' params in StockItemTestResult API endpoint
+    - Refactors 'item_detail' and 'user_detail' params in StockTracking API endpoint
+    - Refactors 'include_installed' and 'stock_item' params in StockItemTestResult API endpoint
 
 v396 -> 2025-10-01 : https://github.com/inventree/InvenTree/pull/10443
     - Refactors 'part_detail', 'manufacturer_detail' and 'pretty' params in Manufacturer API endpoint
