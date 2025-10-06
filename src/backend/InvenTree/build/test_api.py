@@ -1349,6 +1349,39 @@ class BuildOutputScrapTest(BuildAPITest):
             self.assertEqual(output.status, StockStatus.REJECTED)
             self.assertFalse(output.is_building)
 
+    def test_partial_scrap(self):
+        """Test partial scrapping of a build output."""
+        # Create a build output
+        build = Build.objects.get(pk=1)
+        output = build.create_build_output(10).first()
+
+        self.assertEqual(build.build_outputs.count(), 1)
+
+        data = {
+            'outputs': [{'output': output.pk, 'quantity': 3}],
+            'location': 1,
+            'notes': 'Invalid scrap',
+        }
+
+        # Ensure that an invalid quantity raises an error
+        for q in [-3, 0, 99]:
+            data['outputs'][0]['quantity'] = q
+            self.scrap(build.pk, data, expected_code=400)
+
+        # Partially scrap the output (with a valid quantity)
+        data['outputs'][0]['quantity'] = 3
+        self.scrap(build.pk, data)
+
+        self.assertEqual(build.build_outputs.count(), 2)
+        output.refresh_from_db()
+        self.assertEqual(output.quantity, 7)
+        self.assertTrue(output.is_building)
+
+        scrapped = output.children.first()
+        self.assertEqual(scrapped.quantity, 3)
+        self.assertEqual(scrapped.status, StockStatus.REJECTED)
+        self.assertFalse(scrapped.is_building)
+
 
 class BuildLineTests(BuildAPITest):
     """Unit tests for the BuildLine API endpoints."""
