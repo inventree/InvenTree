@@ -405,11 +405,16 @@ function final_message() {
   echo -e "####################################################################################"
   echo -e "This InvenTree install uses nginx, the settings for the webserver can be found in"
   echo -e "${SETUP_NGINX_FILE}"
-  echo -e "Try opening InvenTree with either\nhttp://localhost/ or http://${INVENTREE_IP}/\n"
-  echo -e "Admin user data:"
-  echo -e "   Email: ${INVENTREE_ADMIN_EMAIL}"
-  echo -e "   Username: ${INVENTREE_ADMIN_USER}"
-  echo -e "   Password: ${INVENTREE_ADMIN_PASSWORD}"
+  echo -e "Try opening InvenTree with any of \n${INVENTREE_SITE_URL} , http://localhost/ or http://${INVENTREE_IP}/ \n"
+  # Print admin user data only if set
+  if ["${INVENTREE_ADMIN_USER}" ]; then
+    echo -e "Admin user data:"
+    echo -e "   Email: ${INVENTREE_ADMIN_EMAIL}"
+    echo -e "   Username: ${INVENTREE_ADMIN_USER}"
+    echo -e "   Password: ${INVENTREE_ADMIN_PASSWORD}"
+  else
+    echo -e "No admin set during this operation - there might be already an admin user present with the password provided in ${SETUP_ADMIN_PASSWORD_FILE}"
+  fi
   echo -e "####################################################################################"
 }
 
