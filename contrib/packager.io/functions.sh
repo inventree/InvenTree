@@ -388,8 +388,13 @@ function set_site() {
 
   # Check if INVENTREE_SITE_URL in inventree config
   if [ -z "$(inventree config:get INVENTREE_SITE_URL)" ]; then
-    echo "# POI14| Setting up InvenTree site URL"
-    inventree config:set INVENTREE_SITE_URL=http://${INVENTREE_IP}
+    # Prefer current INVENTREE_SITE_URL if set
+    if [ -n "${INVENTREE_SITE_URL}" ]; then
+      inventree config:set INVENTREE_SITE_URL=${INVENTREE_SITE_URL}
+    else
+      echo "# POI14| Setting up InvenTree site URL"
+      inventree config:set INVENTREE_SITE_URL=http://${INVENTREE_IP}
+    fi
   else
     echo "# POI14| Site URL already set to '$INVENTREE_SITE_URL' - skipping"
   fi
