@@ -270,7 +270,7 @@ class BuildOutputQuantitySerializer(BuildOutputSerializer):
         max_digits=15,
         decimal_places=5,
         min_value=Decimal(0),
-        required=True,
+        required=False,
         label=_('Quantity'),
         help_text=_('Enter quantity for build output'),
     )
@@ -282,13 +282,16 @@ class BuildOutputQuantitySerializer(BuildOutputSerializer):
         output = data.get('output')
         quantity = data.get('quantity')
 
-        if quantity <= 0:
-            raise ValidationError({'quantity': _('Quantity must be greater than zero')})
+        if quantity is not None:
+            if quantity <= 0:
+                raise ValidationError({
+                    'quantity': _('Quantity must be greater than zero')
+                })
 
-        if quantity > output.quantity:
-            raise ValidationError({
-                'quantity': _('Quantity cannot be greater than the output quantity')
-            })
+            if quantity > output.quantity:
+                raise ValidationError({
+                    'quantity': _('Quantity cannot be greater than the output quantity')
+                })
 
         return data
 
@@ -533,7 +536,7 @@ class BuildOutputScrapSerializer(serializers.Serializer):
         with transaction.atomic():
             for item in outputs:
                 output = item['output']
-                quantity = item['quantity']
+                quantity = item.get('quantity', None)
                 build.scrap_build_output(
                     output,
                     quantity,
@@ -558,7 +561,7 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
             'notes',
         ]
 
-    outputs = BuildOutputSerializer(many=True, required=True)
+    outputs = BuildOutputQuantitySerializer(many=True, required=True)
 
     location = serializers.PrimaryKeyRelatedField(
         queryset=StockLocation.objects.all(),
@@ -637,10 +640,12 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
         with transaction.atomic():
             for item in outputs:
                 output = item['output']
+                quantity = item.get('quantity', None)
 
                 build.complete_build_output(
                     output,
                     request.user if request else None,
+                    quantity=quantity,
                     location=location,
                     status=status,
                     notes=notes,

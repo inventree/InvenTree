@@ -332,17 +332,22 @@ class BuildMixin:
         return queryset
 
 
-class BuildList(DataExportViewMixin, BuildMixin, ListCreateAPI):
+class BuildListOutputOptions(OutputConfiguration):
+    """Output options for the BuildList endpoint."""
+
+    OPTIONS = [InvenTreeOutputOption('part_detail', default=True)]
+
+
+class BuildList(DataExportViewMixin, BuildMixin, OutputOptionsMixin, ListCreateAPI):
     """API endpoint for accessing a list of Build objects.
 
     - GET: Return list of objects (with filters)
     - POST: Create a new Build object
     """
 
+    output_options = BuildListOutputOptions
     filterset_class = BuildFilter
-
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
-
     ordering_fields = [
         'reference',
         'part__name',
@@ -360,14 +365,11 @@ class BuildList(DataExportViewMixin, BuildMixin, ListCreateAPI):
         'level',
         'external',
     ]
-
     ordering_field_aliases = {
         'reference': ['reference_int', 'reference'],
         'project_code': ['project_code__code'],
     }
-
     ordering = '-reference'
-
     search_fields = [
         'reference',
         'title',
