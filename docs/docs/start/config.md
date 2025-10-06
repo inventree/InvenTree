@@ -83,7 +83,7 @@ Date and time values are stored in the database in UTC format, and are converted
 
 By default, the InvenTree server will not automatically apply database migrations. When the InvenTree installation is updated (*or a plugin is installed which requires database migrations*), database migrations must be applied manually by the system administrator.
 
-With "auto update" enabled, the InvenTree server will automatically apply database migrations as required. To enable automatic database updates, set `INVENTREE_AUTO_UPDATE` to `True`.
+With "auto update" enabled, the InvenTree server will automatically apply database migrations as required when plugins are changed. To enable automatic database updates, set `INVENTREE_AUTO_UPDATE` to `True`. However, this setting is not sufficient when updating your InvenTree installation - you must still ensure that you follow the required steps for updating InvenTree as per your installation method.
 
 ## Debugging and Logging Options
 
