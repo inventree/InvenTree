@@ -169,8 +169,14 @@ function detect_envs() {
 
     # Parse site URL if not already set
     if [ -z "${INVENTREE_SITE_URL}" ]; then
-      echo "# POI03| Getting site URL from config file"
-      export INVENTREE_SITE_URL=$(jq -r '.[].site_url' <<< ${INVENTREE_CONF_DATA})
+      # Try to read out the app config
+      if [ -n "$(inventree config:get INVENTREE_SITE_URL)" ]; then
+        echo "# POI03| Getting site URL from app config"
+        export INVENTREE_SITE_URL=$(inventree config:get INVENTREE_SITE_URL)
+      else
+        echo "# POI03| Getting site URL from config file"
+        export INVENTREE_SITE_URL=$(jq -r '.[].site_url' <<< ${INVENTREE_CONF_DATA})
+      fi
     fi
   else
     echo "# POI03| No config file found: ${INVENTREE_CONFIG_FILE}, using envs or defaults"
