@@ -636,10 +636,12 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
         with transaction.atomic():
             for item in outputs:
                 output = item['output']
+                quantity = item.get('quantity', None)
 
                 build.complete_build_output(
                     output,
                     request.user if request else None,
+                    quantity=quantity,
                     location=location,
                     status=status,
                     notes=notes,
