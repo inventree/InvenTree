@@ -51,7 +51,11 @@ export function BuiltinQueryCountWidgets(): DashboardWidgetProps[] {
       label: 'low-stk',
       description: t`Show the number of parts which are low on stock`,
       modelType: ModelType.part,
-      params: { low_stock: true, active: true }
+      params: {
+        active: true,
+        low_stock: true,
+        virtual: false
+      }
     }),
     QueryCountDashboardWidget({
       title: t`Required for Build Orders`,

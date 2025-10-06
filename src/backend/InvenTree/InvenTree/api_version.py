@@ -1,15 +1,27 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 401
+INVENTREE_API_VERSION = 404
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v401 -> 2025-06-12 : https://github.com/inventree/InvenTree/pull/9761
+v404 -> 2025-06-12 : https://github.com/inventree/InvenTree/pull/9761
     - Add supplier search and import API endpoints
     - Add part parameter bulk create API endpoint
+
+v403 -> 2025-10-06: https://github.com/inventree/InvenTree/pull/10499
+    - Adds ability to partially scrap a build output
+    - Adds ability to partially complete a build output
+
+v402 -> 2025-10-05 : https://github.com/inventree/InvenTree/pull/10495
+    - Refactors 'part_detail' param in BuildList API endpoint
+    - Refactors 'order_detail' param in GeneralExtraLineList API endpoint
+    - Refactors 'part_detail', 'template_detail' param in PartParameterList / PartParameterDetail API endpoint
+
+v401 -> 2025-10-05 : https://github.com/inventree/InvenTree/pull/10381
+    - Adds machine properties to machine API endpoints
 
 v400 -> 2025-10-05 : https://github.com/inventree/InvenTree/pull/10486
     - Adds return datatypes for admin/config and flags entpoints
