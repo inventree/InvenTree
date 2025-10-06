@@ -1365,11 +1365,25 @@ class PartParameterTemplateDetail(PartParameterTemplateMixin, RetrieveUpdateDest
     """API endpoint for accessing the detail view for a PartParameterTemplate object."""
 
 
+class PartParameterOutputOptions(OutputConfiguration):
+    """Output options for the PartParameter endpoints."""
+
+    OPTIONS = [
+        InvenTreeOutputOption('part_detail'),
+        InvenTreeOutputOption(
+            'template_detail',
+            default=True,
+            description='Include detailed information about the part parameter template.',
+        ),
+    ]
+
+
 class PartParameterAPIMixin:
     """Mixin class for PartParameter API endpoints."""
 
     queryset = PartParameter.objects.all()
     serializer_class = part_serializers.PartParameterSerializer
+    output_options = PartParameterOutputOptions
 
     def get_queryset(self, *args, **kwargs):
         """Override get_queryset method to prefetch related fields."""
@@ -1414,7 +1428,9 @@ class PartParameterFilter(FilterSet):
             return queryset.filter(part=part)
 
 
-class PartParameterList(PartParameterAPIMixin, DataExportViewMixin, ListCreateAPI):
+class PartParameterList(
+    PartParameterAPIMixin, OutputOptionsMixin, DataExportViewMixin, ListCreateAPI
+):
     """API endpoint for accessing a list of PartParameter objects.
 
     - GET: Return list of PartParameter objects
@@ -1442,7 +1458,9 @@ class PartParameterList(PartParameterAPIMixin, DataExportViewMixin, ListCreateAP
     ]
 
 
-class PartParameterDetail(PartParameterAPIMixin, RetrieveUpdateDestroyAPI):
+class PartParameterDetail(
+    PartParameterAPIMixin, OutputOptionsMixin, RetrieveUpdateDestroyAPI
+):
     """API endpoint for detail view of a single PartParameter object."""
 
 
