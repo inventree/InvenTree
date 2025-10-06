@@ -126,7 +126,7 @@ class MiddlewareTests(InvenTreeTestCase):
             SITE_LAX_PROTOCOL_CHECK=False,
         ):
             response = self.client.get(reverse('web'))
-            self.assertContains(response, 'INVE-E7: The used path', status_code=500)
+            self.assertContains(response, 'INVE-E7: The visited path', status_code=500)
 
     def test_site_url_checks_multi(self):
         """Test that the site URL check is correctly working in a multi-site setup."""
