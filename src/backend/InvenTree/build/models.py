@@ -1202,6 +1202,22 @@ class Build(
         status = kwargs.get('status', StockStatus.OK.value)
         notes = kwargs.get('notes', '')
 
+        required_tests = kwargs.get('required_tests', output.part.getRequiredTests())
+        prevent_on_incomplete = kwargs.get(
+            'prevent_on_incomplete',
+            prevent_build_output_complete_on_incompleted_tests(),
+        )
+
+        if prevent_on_incomplete and not output.passedAllRequiredTests(
+            required_tests=required_tests
+        ):
+            msg = _('Build output has not passed all required tests')
+
+            if serial := output.serial:
+                msg = _(f'Build output {serial} has not passed all required tests')
+
+            raise ValidationError(msg)
+
         # List the allocated BuildItem objects for the given output
         allocated_items = output.items_to_install.all()
 
@@ -1225,22 +1241,6 @@ class Build(
 
             # Split the stock item
             output = output.splitStock(quantity, user=user, allow_production=True)
-
-        required_tests = kwargs.get('required_tests', output.part.getRequiredTests())
-        prevent_on_incomplete = kwargs.get(
-            'prevent_on_incomplete',
-            prevent_build_output_complete_on_incompleted_tests(),
-        )
-
-        if prevent_on_incomplete and not output.passedAllRequiredTests(
-            required_tests=required_tests
-        ):
-            msg = _('Build output has not passed all required tests')
-
-            if serial := output.serial:
-                msg = _(f'Build output {serial} has not passed all required tests')
-
-            raise ValidationError(msg)
 
         for build_item in allocated_items:
             # Complete the allocation of stock for that item
