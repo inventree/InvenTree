@@ -1434,7 +1434,7 @@ class PartParameterList(
     PartParameterAPIMixin,
     OutputOptionsMixin,
     DataExportViewMixin,
-    ListCreateAPI
+    ListCreateAPI,
 ):
     """API endpoint for accessing a list of PartParameter objects.
 
