@@ -257,7 +257,7 @@ class InvenTreeHostSettingsMiddleware(MiddlewareMixin):
                     'source', 'unknown'
                 )
                 dpl_method = inventreeInstaller()
-                msg = f'INVE-E7: The used path `{accessed_scheme}` does not match the (INVENTREE_)SITE_URL `{settings.SITE_URL}` set via `{source}` - deployment method `{dpl_method}`'
+                msg = f'INVE-E7: The visited path `{accessed_scheme}` does not match the SITE_URL `{settings.SITE_URL}`. The INVENTREE_SITE_URL is set via `{source}` config method - deployment method `{dpl_method}`'
                 logger.error(msg)
                 return render(
                     request, 'config_error.html', {'error_message': msg}, status=500
