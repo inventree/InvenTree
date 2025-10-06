@@ -413,7 +413,7 @@ function final_message() {
     echo -e "   Username: ${INVENTREE_ADMIN_USER}"
     echo -e "   Password: ${INVENTREE_ADMIN_PASSWORD}"
   else
-    echo -e "No admin set during this operation - there might be already an admin user present with the password provided in ${SETUP_ADMIN_PASSWORD_FILE}"
+    echo -e "No admin set during this operation - depending on the deployment method a admin user might have been created with an initial password saved in `${SETUP_ADMIN_PASSWORD_FILE}`"
   fi
   echo -e "####################################################################################"
 }
