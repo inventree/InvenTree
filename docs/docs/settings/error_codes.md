@@ -9,9 +9,12 @@ Errors - These are critical errors which should be addressed as soon as possible
 #### INVE-E1
 **No frontend included - Backend/web**
 
-Only stable / production releases of InvenTree include the frontend panel. This is both a measure of resource-saving and attack surface reduction. If you want to use the frontend panel, you can either:″
+Only stable / production releases of InvenTree include the frontend panel. This is both a measure of resource-saving and attack surface reduction.
+
+If you want to use the frontend panel, you can either:
+
 - use a docker image that is version-tagged or the stable version
-- use a package version that is from the stable or version stream
+- use a package version that is from the stable or version stream - if you are and it is not working, run `sudo inventree run cli update` to re-run the upgrade
 - install node and yarn on the server to build the frontend with the [invoke](../start/invoke.md) task `int.frontend-build`
 
 Raise an issue if none of these options work.
