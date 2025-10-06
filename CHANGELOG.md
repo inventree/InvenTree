@@ -31,4 +31,3 @@ Our blog holds [a few articles](https://inventree.org/blog/2024/09/23/ui-roadmap
 
 
 Specific entries to the changelog will be kept for all stable channel minor releases, for changes in 1.0 please refer to the [blog posts](https://inventree.org/blog/2025/09/15/1.0.0) and the [milestone](https://github.com/inventree/InvenTree/milestone/17)
-p
