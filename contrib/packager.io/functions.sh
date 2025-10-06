@@ -166,6 +166,12 @@ function detect_envs() {
     export INVENTREE_DB_PASSWORD=$(jq -r '.[].database.PASSWORD' <<< ${INVENTREE_CONF_DATA})
     export INVENTREE_DB_HOST=$(jq -r '.[].database.HOST' <<< ${INVENTREE_CONF_DATA})
     export INVENTREE_DB_PORT=$(jq -r '.[].database.PORT' <<< ${INVENTREE_CONF_DATA})
+
+    # Parse site URL if not already set
+    if [ -z "${INVENTREE_SITE_URL}" ]; then
+      echo "# POI03| Getting site URL from config file"
+      export INVENTREE_SITE_URL=$(jq -r '.[].site_url' <<< ${INVENTREE_CONF_DATA})
+    fi
   else
     echo "# POI03| No config file found: ${INVENTREE_CONFIG_FILE}, using envs or defaults"
 
@@ -190,6 +196,8 @@ function detect_envs() {
     export INVENTREE_DB_HOST=${INVENTREE_DB_HOST:-samplehost}
     export INVENTREE_DB_PORT=${INVENTREE_DB_PORT:-123456}
 
+    export INVENTREE_SITE_URL=${INVENTREE_SITE_URL}
+
     export SETUP_CONF_LOADED=true
   fi
 
@@ -209,6 +217,7 @@ function detect_envs() {
   fi
   echo "# POI03|    INVENTREE_DB_HOST=${INVENTREE_DB_HOST}"
   echo "# POI03|    INVENTREE_DB_PORT=${INVENTREE_DB_PORT}"
+  echo "# POI03|    INVENTREE_SITE_URL=${INVENTREE_SITE_URL}"
 }
 
 function create_initscripts() {
@@ -376,7 +385,7 @@ function set_site() {
     echo "# POI14| Setting up InvenTree site URL"
     inventree config:set INVENTREE_SITE_URL=http://${INVENTREE_IP}
   else
-    echo "# POI14| Site URL already set - skipping"
+    echo "# POI14| Site URL already set to '$INVENTREE_SITE_URL' - skipping"
   fi
 }
 
