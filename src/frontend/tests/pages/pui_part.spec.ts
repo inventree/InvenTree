@@ -604,7 +604,7 @@ test('Parts - Revision', async ({ browser }) => {
     .getByText('Green Round Table (revision B) | B', { exact: true })
     .click();
   await page
-    .getByRole('option', { name: 'Thumbnail Green Round Table No stock' })
+    .getByRole('option', { name: 'Thumbnail Green Round Table Virtual' })
     .click();
 
   await page.waitForURL('**/web/part/101/**');

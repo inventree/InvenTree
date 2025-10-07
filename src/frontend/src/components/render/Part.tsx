@@ -26,6 +26,9 @@ export function RenderPart(
   if (instance.active == false) {
     badgeColor = 'red';
     badgeText = t`Inactive`;
+  } else if (instance.virtual) {
+    badgeColor = 'blue';
+    badgeText = t`Virtual`;
   } else if (stock != null && stock <= 0) {
     badgeColor = 'orange';
     badgeText = t`No stock`;
