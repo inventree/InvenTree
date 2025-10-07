@@ -46,6 +46,14 @@
     part: 5
     quantity: 1
 
+- model: order.salesorderlineitem
+  pk: 2
+  fields:
+    order: 4
+    part: 5
+    quantity: 1
+
+
 # An extra line item
 - model: order.salesorderextraline
   pk: 1
@@ -60,3 +68,37 @@
   fields:
     order: 1
     reference: "Test Shipment, must be present for metadata test"
+
+# Allocations for sales orders
+
+- model: order.salesorderallocation
+  pk: 1
+  fields:
+    line: 1
+    shipment: 1
+    item: 1
+    quantity: 100
+
+- model: order.salesorderallocation
+  pk: 2
+  fields:
+    line: 1
+    shipment: 1
+    item: 2
+    quantity: 50
+
+- model: order.salesorderallocation
+  pk: 3
+  fields:
+    line: 1
+    shipment: null
+    item: 11
+    quantity: 1
+
+- model: order.salesorderallocation
+  pk: 4
+  fields:
+    line: 1
+    shipment: 1
+    item: 501
+    quantity: 1
