@@ -1,11 +1,15 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 404
+INVENTREE_API_VERSION = 405
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v405 -> 2025-10-07: https://github.com/inventree/InvenTree/pull/10530
+    - Add response to generic/status endpoint
+    - Fix logic for generic status model lookup to allow searching by class name string
 
 v404 -> 2025-10-06: https://github.com/inventree/InvenTree/pull/10497
     - Add minimum_stock to PartBrief api response
