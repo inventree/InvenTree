@@ -84,12 +84,15 @@ class TenantTest(InvenTreeAPITestCase):
 
         self.assertEqual(response.data['description'], 'Updated description')
 
-    def test_tenant_api_delete(self):
-        """Test deleting a tenant via API."""
+    def test_tenant_api_delete_not_allowed(self):
+        """Test that deleting a tenant via API is not allowed."""
         url = reverse('api-tenant-detail', kwargs={'pk': self.tenant3.pk})
-        self.delete(url, expected_code=204)
+        # DELETE operation should return 405 Method Not Allowed
+        self.delete(url, expected_code=405)
 
-        self.assertEqual(Tenant.objects.count(), 2)
+        # Verify the tenant still exists
+        self.assertEqual(Tenant.objects.count(), 3)
+        self.assertTrue(Tenant.objects.filter(pk=self.tenant3.pk).exists())
 
     def test_tenant_list_permissions(self):
         """Test that the user permissions are correctly applied.
@@ -167,7 +170,7 @@ class TenantTest(InvenTreeAPITestCase):
         self.tenant1.refresh_from_db()
         self.assertNotEqual(self.tenant1.description, 'Updated description')
 
-        # Attempt to delete the tenant (should fail for non-staff)
+        # Attempt to delete the tenant (non-staff get 403 from permission check)
         self.delete(detail_url, expected_code=403)
 
         # Verify the tenant still exists
@@ -191,11 +194,11 @@ class TenantTest(InvenTreeAPITestCase):
         self.tenant1.refresh_from_db()
         self.assertEqual(self.tenant1.description, 'Staff updated description')
 
-        # Staff user should be able to delete the tenant
-        self.delete(detail_url, expected_code=204)
+        # Staff user should NOT be able to delete the tenant (DELETE method disabled - 405)
+        self.delete(detail_url, expected_code=405)
 
-        # Verify the tenant was deleted
-        self.assertFalse(Tenant.objects.filter(pk=self.tenant1.pk).exists())
+        # Verify the tenant still exists
+        self.assertTrue(Tenant.objects.filter(pk=self.tenant1.pk).exists())
 
     def test_non_staff_read_access(self):
         """Test that non-staff users can read tenants."""
@@ -254,11 +257,12 @@ class TenantTest(InvenTreeAPITestCase):
         self.user.save()
         self.login()
 
+        # Non-staff users get 403 (permission denied) before method check
         self.delete(detail_url, expected_code=403)
         self.assertTrue(Tenant.objects.filter(pk=self.tenant2.pk).exists())
 
     def test_staff_full_access(self):
-        """Test that staff users have full access to tenant operations."""
+        """Test that staff users have full access to tenant operations (except DELETE)."""
         url = reverse('api-tenant-list')
 
         self.user.is_staff = True
@@ -284,6 +288,6 @@ class TenantTest(InvenTreeAPITestCase):
         )
         self.assertEqual(response.data['description'], 'Updated by staff')
 
-        # Staff can delete
-        self.delete(detail_url, expected_code=204)
-        self.assertFalse(Tenant.objects.filter(pk=tenant_id).exists())
+        # Staff cannot delete (DELETE method is disabled - returns 405)
+        self.delete(detail_url, expected_code=405)
+        self.assertTrue(Tenant.objects.filter(pk=tenant_id).exists())

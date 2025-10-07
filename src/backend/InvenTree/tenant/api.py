@@ -8,7 +8,7 @@ import django_filters.rest_framework.filters as rest_filters
 from django_filters.rest_framework.filterset import FilterSet
 
 from InvenTree.filters import SEARCH_ORDER_FILTER
-from InvenTree.mixins import ListCreateAPI, RetrieveUpdateDestroyAPI
+from InvenTree.mixins import ListCreateAPI, RetrieveUpdateAPI
 from InvenTree.permissions import IsStaffOrReadOnlyScope
 
 from .models import Tenant
@@ -57,8 +57,12 @@ class TenantList(ListCreateAPI):
     ordering = 'name'
 
 
-class TenantDetail(RetrieveUpdateDestroyAPI):
-    """API endpoint for detail of a single Tenant object."""
+class TenantDetail(RetrieveUpdateAPI):
+    """API endpoint for detail of a single Tenant object.
+
+    Note: DELETE operation is intentionally disabled to prevent
+    accidental or malicious deletion of tenant data.
+    """
 
     permission_classes = [IsStaffOrReadOnlyScope]
     serializer_class = TenantSerializer

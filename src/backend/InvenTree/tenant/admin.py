@@ -13,3 +13,7 @@ class TenantAdmin(admin.ModelAdmin):
     list_filter = ('is_active',)
     search_fields = ('name', 'description', 'code', 'contact_name', 'contact_email')
     ordering = ('name',)
+
+    def has_delete_permission(self, request, obj=None):
+        """Prevent deletion of tenants to avoid accidental data loss."""
+        return False
