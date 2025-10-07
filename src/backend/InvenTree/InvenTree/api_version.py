@@ -1,11 +1,14 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 403
+INVENTREE_API_VERSION = 404
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v404 -> 2025-10-06: https://github.com/inventree/InvenTree/pull/10497
+    - Add minimum_stock to PartBrief api response
 
 v403 -> 2025-10-06: https://github.com/inventree/InvenTree/pull/10499
     - Adds ability to partially scrap a build output
