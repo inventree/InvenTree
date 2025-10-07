@@ -126,7 +126,7 @@ class MiddlewareTests(InvenTreeTestCase):
             SITE_LAX_PROTOCOL_CHECK=False,
         ):
             response = self.client.get(reverse('web'))
-            self.assertContains(response, 'INVE-E7: The used path', status_code=500)
+            self.assertContains(response, 'INVE-E7: The visited path', status_code=500)
 
     def test_site_url_checks_multi(self):
         """Test that the site URL check is correctly working in a multi-site setup."""
@@ -194,7 +194,9 @@ class MiddlewareTests(InvenTreeTestCase):
         ):
             response = self.client.get(reverse('web'))
             self.assertContains(
-                response, 'INVE-E7: The used path `http://testserver` ', status_code=500
+                response,
+                'INVE-E7: The visited path `http://testserver` ',
+                status_code=500,
             )
             self.assertNotContains(
                 response, 'window.INVENTREE_SETTINGS', status_code=500
@@ -212,6 +214,6 @@ class MiddlewareTests(InvenTreeTestCase):
             # Check that the correct step triggers the error message
             self.assertContains(
                 response,
-                'INVE-E7: The used path `http://testserver` does not match',
+                'INVE-E7: The visited path `http://testserver` does not match',
                 status_code=500,
             )
