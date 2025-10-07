@@ -7,7 +7,7 @@ title: Docker Deployment: Upgrade
 Upgrading a Docker deployment consists of three basic steps: stop, pull, update.
 
 !!! info "Working Directory"
-    Unless otherwise stated, all docker commands must be run from the directory containing the [docker-compose.yml file](./docker_deploy.md#required-files).
+    Unless otherwise stated, all docker commands must be run from the directory containing the [docker-compose.yml file](./docker_install.md#required-files).
 
 ### Stop Containers
 

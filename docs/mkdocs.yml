@@ -131,7 +131,7 @@ nav:
     - Configuration: start/config.md
     - Docker:
         - Overview: start/docker.md
-        - Deploy: start/docker_deploy.md
+        - Deploy: start/docker_install.md
         - Upgrade: start/docker_upgrade.md
     - Bare Metal:
         - Introduction: start/install.md
