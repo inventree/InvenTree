@@ -336,6 +336,7 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'locked',
             'assembly',
             'component',
+            'minimum_stock',
             'is_template',
             'purchaseable',
             'salable',

@@ -8,7 +8,7 @@ msgstr ""
 "Language: fr\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-09-29 23:53\n"
+"PO-Revision-Date: 2025-10-06 05:33\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -93,12 +93,12 @@ msgstr "Non"
 
 #: lib/enums/ModelInformation.tsx:28
 #: src/components/wizards/OrderPartsWizard.tsx:132
-#: src/forms/BuildForms.tsx:310
-#: src/forms/BuildForms.tsx:384
-#: src/forms/BuildForms.tsx:448
-#: src/forms/BuildForms.tsx:602
-#: src/forms/BuildForms.tsx:764
-#: src/forms/BuildForms.tsx:867
+#: src/forms/BuildForms.tsx:335
+#: src/forms/BuildForms.tsx:410
+#: src/forms/BuildForms.tsx:475
+#: src/forms/BuildForms.tsx:629
+#: src/forms/BuildForms.tsx:791
+#: src/forms/BuildForms.tsx:894
 #: src/forms/PurchaseOrderForms.tsx:791
 #: src/forms/ReturnOrderForms.tsx:239
 #: src/forms/SalesOrderForms.tsx:267
@@ -193,10 +193,9 @@ msgid "Part Categories"
 msgstr "Catégories de composants"
 
 #: lib/enums/ModelInformation.tsx:79
-#: src/forms/BuildForms.tsx:385
-#: src/forms/BuildForms.tsx:449
-#: src/forms/BuildForms.tsx:604
-#: src/forms/BuildForms.tsx:765
+#: src/forms/BuildForms.tsx:476
+#: src/forms/BuildForms.tsx:631
+#: src/forms/BuildForms.tsx:792
 #: src/forms/SalesOrderForms.tsx:269
 #: src/pages/stock/StockDetail.tsx:992
 #: src/tables/part/PartTestResultTable.tsx:248
@@ -535,7 +534,7 @@ msgid "Error"
 msgstr "Erreur"
 
 #: lib/enums/ModelInformation.tsx:275
-#: src/tables/machine/MachineListTable.tsx:374
+#: src/tables/machine/MachineListTable.tsx:402
 #: src/tables/machine/MachineTypeTable.tsx:299
 msgid "Errors"
 msgstr "Erreurs"
@@ -962,7 +961,7 @@ msgid "Assemblies requiring bill of materials validation"
 msgstr "Validation des listes de matériaux requises pour les assemblages"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:50
-#: src/tables/part/PartTable.tsx:250
+#: src/tables/part/PartTable.tsx:256
 msgid "Low Stock"
 msgstr "Stock faible"
 
@@ -970,143 +969,143 @@ msgstr "Stock faible"
 msgid "Show the number of parts which are low on stock"
 msgstr "Afficher le nombre de pièces dont le stock est faible"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:57
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:61
 msgid "Required for Build Orders"
 msgstr "Requis pour les commandes de construction"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:59
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:63
 msgid "Show parts which are required for active build orders"
 msgstr "Afficher les pièces requises pour les ordres de fabrication actifs"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:64
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:68
 msgid "Expired Stock Items"
 msgstr "Articles de stock expirés"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:66
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:70
 msgid "Show the number of stock items which have expired"
 msgstr "Afficher le nombre d'articles de stock qui ont expiré"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:72
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:76
 msgid "Stale Stock Items"
 msgstr "Articles de stock obsolètes"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:74
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:78
 msgid "Show the number of stock items which are stale"
 msgstr "Afficher le nombre d'articles de stock qui sont obsolètes"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:80
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:84
 msgid "Active Build Orders"
 msgstr "Ordres de fabrication actives"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:82
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:86
 msgid "Show the number of build orders which are currently active"
 msgstr "Afficher le nombre d'ordres de fabrication actuellement actives"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:87
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:91
 msgid "Overdue Build Orders"
 msgstr "Ordres de construction en retard"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:89
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:93
 msgid "Show the number of build orders which are overdue"
 msgstr "Afficher le nombre d'ordres de fabrication en retard"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:94
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:98
 msgid "Assigned Build Orders"
 msgstr "Ordres de fabrication assignées"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:96
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:100
 msgid "Show the number of build orders which are assigned to you"
 msgstr "Afficher le nombre d'ordres de fabrication qui vous sont assignées"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:101
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:105
 msgid "Active Sales Orders"
 msgstr "Commandes de vente actives"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:103
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:107
 msgid "Show the number of sales orders which are currently active"
 msgstr "Afficher le nombre d'ordres de vente actuellement actives"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:108
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:112
 msgid "Overdue Sales Orders"
 msgstr "Vente en retard"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:110
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:114
 msgid "Show the number of sales orders which are overdue"
 msgstr "Afficher le nombre de commandes de vente en retard"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:115
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:119
 msgid "Assigned Sales Orders"
 msgstr "Commandes de vente assignées"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:117
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:121
 msgid "Show the number of sales orders which are assigned to you"
 msgstr "Afficher le nombre de commandes de vente qui vous sont assignées"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:122
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:126
 msgid "Active Purchase Orders"
 msgstr "Commandes d'achat actives"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:124
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:128
 msgid "Show the number of purchase orders which are currently active"
 msgstr "Afficher le nombre de commandes d'achat actuellement actives"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:129
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:133
 msgid "Overdue Purchase Orders"
 msgstr "Commandes d'achat en retard"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:131
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:135
 msgid "Show the number of purchase orders which are overdue"
 msgstr "Afficher le nombre de commandes d'achat en retard"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:136
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:140
 msgid "Assigned Purchase Orders"
 msgstr "Commandes d'achat assignées"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:138
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:142
 msgid "Show the number of purchase orders which are assigned to you"
 msgstr "Afficher le nombre de commandes d'achat qui vous sont assignées"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:143
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:147
 msgid "Active Return Orders"
 msgstr "Commandes de retour actives"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:145
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:149
 msgid "Show the number of return orders which are currently active"
 msgstr "Afficher le nombre de commandes de retour actuellement actives"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:150
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:154
 msgid "Overdue Return Orders"
 msgstr "Ordres de retour en retard"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:152
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:156
 msgid "Show the number of return orders which are overdue"
 msgstr "Afficher le nombre d'ordres de retour en retard"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:157
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:161
 msgid "Assigned Return Orders"
 msgstr "Ordres de retour assignés"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:159
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:163
 msgid "Show the number of return orders which are assigned to you"
 msgstr "Afficher le nombre d'ordres de retour qui vous sont assignés"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:179
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:183
 #: src/components/dashboard/widgets/GetStartedWidget.tsx:15
 #: src/defaults/links.tsx:86
 msgid "Getting Started"
 msgstr "Premiers Pas"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:180
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:184
 #: src/defaults/links.tsx:89
 msgid "Getting started with InvenTree"
 msgstr "Démarrer avec InvenTree"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:187
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:191
 #: src/components/dashboard/widgets/NewsWidget.tsx:123
 msgid "News Updates"
 msgstr "Mises à jour des actualités"
 
-#: src/components/dashboard/DashboardWidgetLibrary.tsx:188
+#: src/components/dashboard/DashboardWidgetLibrary.tsx:192
 msgid "The latest news from InvenTree"
 msgstr "Les dernières actualités d'InvenTree"
 
@@ -2175,7 +2174,7 @@ msgstr "Aucun élément"
 #: src/pages/stock/StockDetail.tsx:929
 #: src/tables/build/BuildAllocatedStockTable.tsx:135
 #: src/tables/build/BuildLineTable.tsx:190
-#: src/tables/part/PartTable.tsx:124
+#: src/tables/part/PartTable.tsx:130
 #: src/tables/stock/StockItemTable.tsx:184
 #: src/tables/stock/StockItemTable.tsx:345
 msgid "Available"
@@ -2755,10 +2754,10 @@ msgstr "Date"
 #: src/tables/bom/UsedInTable.tsx:90
 #: src/tables/company/CompanyTable.tsx:57
 #: src/tables/company/CompanyTable.tsx:91
-#: src/tables/machine/MachineListTable.tsx:356
-#: src/tables/machine/MachineListTable.tsx:692
+#: src/tables/machine/MachineListTable.tsx:384
+#: src/tables/machine/MachineListTable.tsx:799
 #: src/tables/part/ParametricPartTable.tsx:354
-#: src/tables/part/PartTable.tsx:184
+#: src/tables/part/PartTable.tsx:190
 #: src/tables/part/PartVariantTable.tsx:15
 #: src/tables/plugin/PluginListTable.tsx:96
 #: src/tables/plugin/PluginListTable.tsx:412
@@ -2891,7 +2890,7 @@ msgstr "Inactif"
 
 #: src/components/render/Part.tsx:31
 #: src/tables/bom/BomTable.tsx:294
-#: src/tables/part/PartTable.tsx:139
+#: src/tables/part/PartTable.tsx:145
 msgid "No stock"
 msgstr "Aucun stock"
 
@@ -2900,7 +2899,7 @@ msgstr "Aucun stock"
 #: src/pages/company/SupplierPartDetail.tsx:389
 #: src/pages/part/PartDetail.tsx:1018
 #: src/tables/bom/BomTable.tsx:424
-#: src/tables/part/PartTable.tsx:95
+#: src/tables/part/PartTable.tsx:101
 msgid "On Order"
 msgstr "En Commande"
 
@@ -2930,7 +2929,7 @@ msgstr "Catégorie"
 #: src/components/render/Stock.tsx:36
 #: src/components/render/Stock.tsx:114
 #: src/components/render/Stock.tsx:132
-#: src/forms/BuildForms.tsx:766
+#: src/forms/BuildForms.tsx:793
 #: src/forms/PurchaseOrderForms.tsx:592
 #: src/forms/StockForms.tsx:734
 #: src/forms/StockForms.tsx:780
@@ -2963,8 +2962,8 @@ msgstr "Numéro de série"
 #: src/components/render/Stock.tsx:104
 #: src/components/wizards/OrderPartsWizard.tsx:222
 #: src/forms/BuildForms.tsx:243
-#: src/forms/BuildForms.tsx:605
-#: src/forms/BuildForms.tsx:768
+#: src/forms/BuildForms.tsx:632
+#: src/forms/BuildForms.tsx:795
 #: src/forms/PurchaseOrderForms.tsx:794
 #: src/forms/ReturnOrderForms.tsx:240
 #: src/forms/SalesOrderForms.tsx:270
@@ -2980,8 +2979,8 @@ msgstr "Numéro de série"
 #: src/tables/build/BuildLineTable.tsx:84
 #: src/tables/part/PartPurchaseOrdersTable.tsx:94
 #: src/tables/part/PartTestResultTable.tsx:269
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:168
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:199
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:169
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:200
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:69
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:121
 #: src/tables/stock/StockTrackingTable.tsx:72
@@ -2989,9 +2988,9 @@ msgid "Quantity"
 msgstr "Quantité"
 
 #: src/components/render/Stock.tsx:117
-#: src/forms/BuildForms.tsx:312
-#: src/forms/BuildForms.tsx:386
-#: src/forms/BuildForms.tsx:450
+#: src/forms/BuildForms.tsx:338
+#: src/forms/BuildForms.tsx:413
+#: src/forms/BuildForms.tsx:477
 #: src/forms/StockForms.tsx:735
 #: src/forms/StockForms.tsx:781
 #: src/forms/StockForms.tsx:827
@@ -3503,7 +3502,7 @@ msgstr "Veuillez corriger les erreurs dans la sélection des pièces"
 
 #: src/components/wizards/OrderPartsWizard.tsx:424
 #: src/tables/build/BuildLineTable.tsx:797
-#: src/tables/part/PartTable.tsx:407
+#: src/tables/part/PartTable.tsx:470
 #: src/tables/sales/SalesOrderLineItemTable.tsx:365
 msgid "Order Parts"
 msgstr "Commander des pièces"
@@ -3991,17 +3990,22 @@ msgstr "Numéro de série suivant"
 #~ msgid "Remove output"
 #~ msgstr "Remove output"
 
-#: src/forms/BuildForms.tsx:311
-#: src/forms/BuildForms.tsx:656
+#: src/forms/BuildForms.tsx:336
+#: src/forms/BuildForms.tsx:411
+#: src/forms/BuildForms.tsx:683
 #: src/tables/build/BuildAllocatedStockTable.tsx:150
 #: src/tables/build/BuildOutputTable.tsx:592
 #: src/tables/part/PartTestResultTable.tsx:272
 msgid "Build Output"
 msgstr "Sortie de la construction"
 
-#: src/forms/BuildForms.tsx:313
-#: src/forms/BuildForms.tsx:387
-#: src/forms/BuildForms.tsx:451
+#: src/forms/BuildForms.tsx:337
+msgid "Quantity to Complete"
+msgstr ""
+
+#: src/forms/BuildForms.tsx:339
+#: src/forms/BuildForms.tsx:414
+#: src/forms/BuildForms.tsx:478
 #: src/forms/PurchaseOrderForms.tsx:714
 #: src/forms/ReturnOrderForms.tsx:194
 #: src/forms/ReturnOrderForms.tsx:241
@@ -4015,7 +4019,7 @@ msgstr "Sortie de la construction"
 #: src/pages/stock/StockDetail.tsx:170
 #: src/tables/Filter.tsx:274
 #: src/tables/build/BuildOutputTable.tsx:408
-#: src/tables/machine/MachineListTable.tsx:359
+#: src/tables/machine/MachineListTable.tsx:387
 #: src/tables/part/PartPurchaseOrdersTable.tsx:38
 #: src/tables/part/PartTestResultTable.tsx:309
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:135
@@ -4028,59 +4032,63 @@ msgstr "Sortie de la construction"
 msgid "Status"
 msgstr "Status"
 
-#: src/forms/BuildForms.tsx:335
+#: src/forms/BuildForms.tsx:361
 msgid "Complete Build Outputs"
 msgstr "Sorties de Fabrication terminées"
 
-#: src/forms/BuildForms.tsx:338
+#: src/forms/BuildForms.tsx:364
 msgid "Build outputs have been completed"
 msgstr "Les fabrication  ont été achevé"
-
-#: src/forms/BuildForms.tsx:405
-#: src/forms/BuildForms.tsx:407
-msgid "Scrap Build Outputs"
-msgstr "Éliminer les résultats de construction"
 
 #: src/forms/BuildForms.tsx:408
 #~ msgid "Selected build outputs will be deleted"
 #~ msgstr "Selected build outputs will be deleted"
 
-#: src/forms/BuildForms.tsx:410
+#: src/forms/BuildForms.tsx:412
+msgid "Quantity to Scrap"
+msgstr ""
+
+#: src/forms/BuildForms.tsx:432
+#: src/forms/BuildForms.tsx:434
+msgid "Scrap Build Outputs"
+msgstr "Éliminer les résultats de construction"
+
+#: src/forms/BuildForms.tsx:437
 msgid "Selected build outputs will be completed, but marked as scrapped"
 msgstr "Les sorties de fabrication sélectionnées vont être terminées mais marquées comme rebus"
 
-#: src/forms/BuildForms.tsx:412
+#: src/forms/BuildForms.tsx:439
 msgid "Allocated stock items will be consumed"
 msgstr "Les articles en stock vont être consommés"
 
-#: src/forms/BuildForms.tsx:418
+#: src/forms/BuildForms.tsx:445
 msgid "Build outputs have been scrapped"
 msgstr "Les résultats de construction ont été supprimé"
-
-#: src/forms/BuildForms.tsx:461
-#: src/forms/BuildForms.tsx:463
-msgid "Cancel Build Outputs"
-msgstr "Annuler les résultats de construction"
-
-#: src/forms/BuildForms.tsx:465
-msgid "Selected build outputs will be removed"
-msgstr "Les sorties de fabrication sélectionnées vont être supprimées"
-
-#: src/forms/BuildForms.tsx:467
-msgid "Allocated stock items will be returned to stock"
-msgstr "Les articles en stock alloués vont être remis dans le stock"
 
 #: src/forms/BuildForms.tsx:470
 #~ msgid "Remove line"
 #~ msgstr "Remove line"
 
-#: src/forms/BuildForms.tsx:474
+#: src/forms/BuildForms.tsx:488
+#: src/forms/BuildForms.tsx:490
+msgid "Cancel Build Outputs"
+msgstr "Annuler les résultats de construction"
+
+#: src/forms/BuildForms.tsx:492
+msgid "Selected build outputs will be removed"
+msgstr "Les sorties de fabrication sélectionnées vont être supprimées"
+
+#: src/forms/BuildForms.tsx:494
+msgid "Allocated stock items will be returned to stock"
+msgstr "Les articles en stock alloués vont être remis dans le stock"
+
+#: src/forms/BuildForms.tsx:501
 msgid "Build outputs have been cancelled"
 msgstr "Les résultats de construction ont été annulés"
 
-#: src/forms/BuildForms.tsx:603
-#: src/forms/BuildForms.tsx:767
-#: src/forms/BuildForms.tsx:868
+#: src/forms/BuildForms.tsx:630
+#: src/forms/BuildForms.tsx:794
+#: src/forms/BuildForms.tsx:895
 #: src/forms/SalesOrderForms.tsx:268
 #: src/tables/build/BuildAllocatedStockTable.tsx:139
 #: src/tables/build/BuildLineTable.tsx:180
@@ -4089,19 +4097,19 @@ msgstr "Les résultats de construction ont été annulés"
 msgid "Allocated"
 msgstr "Allouée"
 
-#: src/forms/BuildForms.tsx:638
+#: src/forms/BuildForms.tsx:665
 #: src/forms/SalesOrderForms.tsx:257
 #: src/pages/build/BuildDetail.tsx:108
 #: src/pages/build/BuildDetail.tsx:337
 msgid "Source Location"
 msgstr "Emplacement d'origine"
 
-#: src/forms/BuildForms.tsx:639
+#: src/forms/BuildForms.tsx:666
 #: src/forms/SalesOrderForms.tsx:258
 msgid "Select the source location for the stock allocation"
 msgstr "Sélectionnez l'emplacement de la source pour l'allocation du stock"
 
-#: src/forms/BuildForms.tsx:671
+#: src/forms/BuildForms.tsx:698
 #: src/forms/SalesOrderForms.tsx:298
 #: src/tables/build/BuildLineTable.tsx:556
 #: src/tables/build/BuildLineTable.tsx:713
@@ -4111,13 +4119,13 @@ msgstr "Sélectionnez l'emplacement de la source pour l'allocation du stock"
 msgid "Allocate Stock"
 msgstr "Stock alloué"
 
-#: src/forms/BuildForms.tsx:674
+#: src/forms/BuildForms.tsx:701
 #: src/forms/SalesOrderForms.tsx:303
 msgid "Stock items allocated"
 msgstr "Éléments du stock alloués"
 
-#: src/forms/BuildForms.tsx:787
-#: src/forms/BuildForms.tsx:888
+#: src/forms/BuildForms.tsx:814
+#: src/forms/BuildForms.tsx:915
 #: src/tables/build/BuildAllocatedStockTable.tsx:240
 #: src/tables/build/BuildAllocatedStockTable.tsx:272
 #: src/tables/build/BuildLineTable.tsx:723
@@ -4125,18 +4133,18 @@ msgstr "Éléments du stock alloués"
 msgid "Consume Stock"
 msgstr "Consommer le stock"
 
-#: src/forms/BuildForms.tsx:788
-#: src/forms/BuildForms.tsx:889
+#: src/forms/BuildForms.tsx:815
+#: src/forms/BuildForms.tsx:916
 msgid "Stock items consumed"
 msgstr "Articles en stock consommés"
 
-#: src/forms/BuildForms.tsx:824
+#: src/forms/BuildForms.tsx:851
 #: src/tables/build/BuildLineTable.tsx:496
 #: src/tables/part/PartBuildAllocationsTable.tsx:101
 msgid "Fully consumed"
 msgstr "Complétement consommé"
 
-#: src/forms/BuildForms.tsx:869
+#: src/forms/BuildForms.tsx:896
 #: src/tables/build/BuildLineTable.tsx:185
 #: src/tables/stock/StockItemTable.tsx:369
 msgid "Consumed"
@@ -4151,7 +4159,7 @@ msgstr "Consommé"
 #: src/pages/part/CategoryDetail.tsx:122
 #: src/pages/part/PartDetail.tsx:671
 #: src/tables/part/PartCategoryTable.tsx:94
-#: src/tables/part/PartTable.tsx:312
+#: src/tables/part/PartTable.tsx:318
 msgid "Subscribed"
 msgstr "Abonné"
 
@@ -4304,7 +4312,7 @@ msgstr "Entrer une date d'expiration pour les articles reçus"
 #: src/pages/company/SupplierPartDetail.tsx:171
 #: src/pages/company/SupplierPartDetail.tsx:235
 #: src/pages/stock/StockDetail.tsx:419
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:220
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:221
 msgid "Packaging"
 msgstr "Conditionnement"
 
@@ -4322,8 +4330,8 @@ msgstr "SKU"
 
 #: src/forms/PurchaseOrderForms.tsx:793
 #: src/tables/part/PartPurchaseOrdersTable.tsx:127
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:206
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:272
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:207
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:277
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:167
 msgid "Received"
 msgstr "Réceptionnée"
@@ -5891,7 +5899,7 @@ msgstr "Types d'emplacement"
 #~ msgstr "Quick Actions"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:225
-#: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:51
+#: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:52
 #: src/tables/machine/MachineTypeTable.tsx:325
 msgid "Machines"
 msgstr "Équipements"
@@ -5938,7 +5946,7 @@ msgstr "Options avancées"
 #~ msgid "Machine Error Stack"
 #~ msgstr "Machine Error Stack"
 
-#: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:59
+#: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:60
 msgid "Machine Drivers"
 msgstr "Drivers d'équipement"
 
@@ -5946,29 +5954,34 @@ msgstr "Drivers d'équipement"
 #~ msgid "There are no machine registry errors."
 #~ msgstr "There are no machine registry errors."
 
-#: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:67
+#: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:68
 msgid "Machine Types"
 msgstr "Types de machine"
 
-#: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:75
+#: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:76
 msgid "Machine Errors"
 msgstr "Erreurs de la machine"
 
-#: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:88
+#: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:89
 msgid "Registry Registry Errors"
 msgstr "Erreurs de registre"
 
-#: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:91
+#: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:92
 msgid "There are machine registry errors"
 msgstr "Il y a des problèmes dans le registre de la machine"
 
-#: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:97
+#: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:98
 msgid "Machine Registry Errors"
 msgstr "Erreurs de registre de la machine"
 
-#: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:100
+#: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:101
 msgid "There are no machine registry errors"
 msgstr "Acune erreur de registre machine"
+
+#: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:122
+#: src/tables/machine/MachineListTable.tsx:502
+msgid "Machine Settings"
+msgstr "Paramètres de la machine"
 
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:33
 #: src/tables/settings/UserTable.tsx:195
@@ -6547,7 +6560,7 @@ msgstr "Annuler la commande"
 #: src/pages/stock/StockDetail.tsx:344
 #: src/tables/build/BuildAllocatedStockTable.tsx:85
 #: src/tables/part/PartBuildAllocationsTable.tsx:45
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:150
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:151
 #: src/tables/stock/StockTrackingTable.tsx:109
 msgid "Build Order"
 msgstr "Ordre de construction"
@@ -6739,8 +6752,8 @@ msgstr "Description de la pièce"
 
 #: src/pages/company/SupplierPartDetail.tsx:178
 #: src/tables/part/PartPurchaseOrdersTable.tsx:73
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:184
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:226
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:185
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:227
 #: src/tables/purchasing/SupplierPartTable.tsx:120
 msgid "Pack Quantity"
 msgstr "Quantité du paquet"
@@ -6920,13 +6933,13 @@ msgstr "Détails de la catégorie"
 
 #: src/pages/part/PartAllocationPanel.tsx:21
 #: src/pages/stock/StockDetail.tsx:555
-#: src/tables/part/PartTable.tsx:108
+#: src/tables/part/PartTable.tsx:114
 msgid "Build Order Allocations"
 msgstr "Allocation de l'ordre de construction"
 
 #: src/pages/part/PartAllocationPanel.tsx:31
 #: src/pages/stock/StockDetail.tsx:570
-#: src/tables/part/PartTable.tsx:116
+#: src/tables/part/PartTable.tsx:122
 msgid "Sales Order Allocations"
 msgstr "Allocations de l'ordre de ventes"
 
@@ -7024,7 +7037,7 @@ msgstr "Mots-clés"
 #: src/pages/part/PartDetail.tsx:545
 #: src/tables/bom/BomTable.tsx:419
 #: src/tables/build/BuildLineTable.tsx:297
-#: src/tables/part/PartTable.tsx:306
+#: src/tables/part/PartTable.tsx:312
 #: src/tables/sales/SalesOrderLineItemTable.tsx:136
 msgid "Available Stock"
 msgstr "Stock disponible"
@@ -7058,7 +7071,7 @@ msgstr "Stock Minimum"
 
 #: src/pages/part/PartDetail.tsx:623
 #: src/tables/part/ParametricPartTable.tsx:359
-#: src/tables/part/PartTable.tsx:190
+#: src/tables/part/PartTable.tsx:196
 msgid "Locked"
 msgstr "Verrouillé"
 
@@ -7129,7 +7142,7 @@ msgstr "jours"
 #: src/pages/part/PartDetail.tsx:722
 #: src/pages/part/pricing/BomPricingPanel.tsx:113
 #: src/pages/part/pricing/VariantPricingPanel.tsx:95
-#: src/tables/part/PartTable.tsx:166
+#: src/tables/part/PartTable.tsx:172
 msgid "Price Range"
 msgstr "Échelle des prix"
 
@@ -7185,13 +7198,14 @@ msgid "Required"
 msgstr "Requis"
 
 #: src/pages/part/PartDetail.tsx:1049
-#: src/tables/part/PartTable.tsx:355
+#: src/tables/part/PartTable.tsx:362
 msgid "Edit Part"
 msgstr "Modifier la pièce"
 
 #: src/pages/part/PartDetail.tsx:1089
-#: src/tables/part/PartTable.tsx:343
-#: src/tables/part/PartTable.tsx:420
+#: src/tables/part/PartTable.tsx:350
+#: src/tables/part/PartTable.tsx:403
+#: src/tables/part/PartTable.tsx:483
 msgid "Add Part"
 msgstr "Ajouter Pièce"
 
@@ -7219,7 +7233,7 @@ msgid "Search by serial number"
 msgstr "Rechercher par numéro de série"
 
 #: src/pages/part/PartDetail.tsx:1195
-#: src/tables/part/PartTable.tsx:392
+#: src/tables/part/PartTable.tsx:455
 msgid "Part Actions"
 msgstr "Actions sur les pièces"
 
@@ -7354,7 +7368,7 @@ msgstr "Prix total"
 #: src/pages/part/pricing/BomPricingPanel.tsx:112
 #: src/pages/part/pricing/BomPricingPanel.tsx:141
 #: src/tables/bom/UsedInTable.tsx:54
-#: src/tables/part/PartTable.tsx:214
+#: src/tables/part/PartTable.tsx:220
 msgid "Component"
 msgstr "Composant"
 
@@ -7386,7 +7400,7 @@ msgstr "Prix Maximum"
 #: src/pages/stock/StockDetail.tsx:390
 #: src/tables/bom/BomTable.tsx:265
 #: src/tables/general/ExtraLineItemTable.tsx:61
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:250
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:251
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:84
 #: src/tables/stock/StockItemTable.tsx:261
 msgid "Unit Price"
@@ -7562,7 +7576,7 @@ msgid "Completed Line Items"
 msgstr "Ligne d'articles complétées"
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:178
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:261
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:266
 msgid "Destination"
 msgstr "Destination"
 
@@ -8553,7 +8567,7 @@ msgstr "Alternatives"
 
 #: src/tables/bom/BomTable.tsx:302
 #: src/tables/build/BuildLineTable.tsx:268
-#: src/tables/part/PartTable.tsx:132
+#: src/tables/part/PartTable.tsx:138
 msgid "External stock"
 msgstr "Stockage externe"
 
@@ -8581,12 +8595,12 @@ msgstr "Inclut le stock de variantes"
 #~ msgstr "Bom item updated"
 
 #: src/tables/bom/BomTable.tsx:336
-#: src/tables/part/PartTable.tsx:101
+#: src/tables/part/PartTable.tsx:107
 msgid "Building"
 msgstr "Construire"
 
 #: src/tables/bom/BomTable.tsx:345
-#: src/tables/part/PartTable.tsx:158
+#: src/tables/part/PartTable.tsx:164
 #: src/tables/sales/SalesOrderLineItemTable.tsx:187
 #: src/tables/stock/StockItemTable.tsx:224
 msgid "Stock Information"
@@ -8692,7 +8706,7 @@ msgid "Show consumable items"
 msgstr "Afficher les articles consommables"
 
 #: src/tables/bom/BomTable.tsx:454
-#: src/tables/part/PartTable.tsx:300
+#: src/tables/part/PartTable.tsx:306
 msgid "Has Pricing"
 msgstr "Possède un Tarif"
 
@@ -8758,7 +8772,7 @@ msgstr "La liste des matériaux ne peut être modifiée, car la pièce est bloqu
 #: src/tables/build/BuildLineTable.tsx:205
 #: src/tables/part/ParametricPartTable.tsx:364
 #: src/tables/part/PartBuildAllocationsTable.tsx:60
-#: src/tables/part/PartTable.tsx:196
+#: src/tables/part/PartTable.tsx:202
 #: src/tables/stock/StockItemTable.tsx:335
 msgid "Assembly"
 msgstr "Assemblage"
@@ -8768,7 +8782,7 @@ msgid "Show active assemblies"
 msgstr "Afficher les assemblages actifs"
 
 #: src/tables/bom/UsedInTable.tsx:95
-#: src/tables/part/PartTable.tsx:226
+#: src/tables/part/PartTable.tsx:232
 #: src/tables/part/PartVariantTable.tsx:30
 msgid "Trackable"
 msgstr "Suivi de l'évolution"
@@ -8853,7 +8867,7 @@ msgid "Show optional lines"
 msgstr "Afficher les lignes optionnelles"
 
 #: src/tables/build/BuildLineTable.tsx:210
-#: src/tables/part/PartTable.tsx:220
+#: src/tables/part/PartTable.tsx:226
 msgid "Testable"
 msgstr "Testable"
 
@@ -9281,8 +9295,8 @@ msgid "View Item"
 msgstr "Voir l'article"
 
 #: src/tables/general/ExtraLineItemTable.tsx:91
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:288
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:397
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:293
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:402
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:80
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:183
 #: src/tables/sales/SalesOrderLineItemTable.tsx:249
@@ -9291,14 +9305,14 @@ msgid "Add Line Item"
 msgstr "Ajouter la ligne de l'article"
 
 #: src/tables/general/ExtraLineItemTable.tsx:104
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:309
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:314
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:93
 #: src/tables/sales/SalesOrderLineItemTable.tsx:268
 msgid "Edit Line Item"
 msgstr "Modifier la ligne de l'article"
 
 #: src/tables/general/ExtraLineItemTable.tsx:113
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:318
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:323
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:102
 #: src/tables/sales/SalesOrderLineItemTable.tsx:277
 msgid "Delete Line Item"
@@ -9308,13 +9322,13 @@ msgstr "Supprimer la ligne de l'article"
 msgid "Add Extra Line Item"
 msgstr "Ajouter une ligne de plus de l'article"
 
-#: src/tables/machine/MachineListTable.tsx:124
+#: src/tables/machine/MachineListTable.tsx:133
 msgid "Machine restarted"
 msgstr "Équipement redémarré"
 
-#: src/tables/machine/MachineListTable.tsx:225
-#: src/tables/machine/MachineListTable.tsx:274
-#: src/tables/machine/MachineListTable.tsx:622
+#: src/tables/machine/MachineListTable.tsx:235
+#: src/tables/machine/MachineListTable.tsx:297
+#: src/tables/machine/MachineListTable.tsx:729
 msgid "Edit machine"
 msgstr "Modifier l'équipement"
 
@@ -9322,114 +9336,118 @@ msgstr "Modifier l'équipement"
 #~ msgid "Are you sure you want to remove the machine \"{0}\"?"
 #~ msgstr "Are you sure you want to remove the machine \"{0}\"?"
 
-#: src/tables/machine/MachineListTable.tsx:239
-#: src/tables/machine/MachineListTable.tsx:278
+#: src/tables/machine/MachineListTable.tsx:249
+#: src/tables/machine/MachineListTable.tsx:301
 msgid "Delete machine"
 msgstr "Supprimer l'équipement"
 
-#: src/tables/machine/MachineListTable.tsx:240
-#: src/tables/machine/MachineListTable.tsx:585
+#: src/tables/machine/MachineListTable.tsx:250
+#: src/tables/machine/MachineListTable.tsx:692
 msgid "Machine successfully deleted."
 msgstr "L'équipement a bien été supprimée."
 
-#: src/tables/machine/MachineListTable.tsx:245
-#: src/tables/machine/MachineListTable.tsx:590
+#: src/tables/machine/MachineListTable.tsx:255
+#: src/tables/machine/MachineListTable.tsx:697
 msgid "Are you sure you want to remove this machine?"
 msgstr "Êtes-vous sûr de vouloir supprimer cet équipement ?"
 
-#: src/tables/machine/MachineListTable.tsx:262
+#: src/tables/machine/MachineListTable.tsx:285
 msgid "Machine"
 msgstr "Machine"
 
-#: src/tables/machine/MachineListTable.tsx:267
-#: src/tables/machine/MachineListTable.tsx:470
+#: src/tables/machine/MachineListTable.tsx:290
+#: src/tables/machine/MachineListTable.tsx:568
 msgid "Restart required"
 msgstr "Redémarrage nécessaire"
-
-#: src/tables/machine/MachineListTable.tsx:271
-msgid "Machine Actions"
-msgstr "Actions de la machine"
-
-#: src/tables/machine/MachineListTable.tsx:283
-msgid "Restart"
-msgstr "Redémarrer"
-
-#: src/tables/machine/MachineListTable.tsx:285
-msgid "Restart machine"
-msgstr "Redémarrer la machine"
-
-#: src/tables/machine/MachineListTable.tsx:287
-msgid "manual restart required"
-msgstr "redémarrage manuel nécessaire"
 
 #: src/tables/machine/MachineListTable.tsx:291
 #~ msgid "Machine information"
 #~ msgstr "Machine information"
 
-#: src/tables/machine/MachineListTable.tsx:315
-msgid "Machine Information"
-msgstr "Informations de la machine"
+#: src/tables/machine/MachineListTable.tsx:294
+msgid "Machine Actions"
+msgstr "Actions de la machine"
 
-#: src/tables/machine/MachineListTable.tsx:325
-#: src/tables/machine/MachineListTable.tsx:697
+#: src/tables/machine/MachineListTable.tsx:306
+msgid "Restart"
+msgstr "Redémarrer"
+
+#: src/tables/machine/MachineListTable.tsx:308
+msgid "Restart machine"
+msgstr "Redémarrer la machine"
+
+#: src/tables/machine/MachineListTable.tsx:310
+msgid "manual restart required"
+msgstr "redémarrage manuel nécessaire"
+
+#: src/tables/machine/MachineListTable.tsx:315
+#~ msgid "Machine Information"
+#~ msgstr "Machine Information"
+
+#: src/tables/machine/MachineListTable.tsx:343
+msgid "General"
+msgstr ""
+
+#: src/tables/machine/MachineListTable.tsx:353
+#: src/tables/machine/MachineListTable.tsx:804
 msgid "Machine Type"
 msgstr "Type de la machine"
 
-#: src/tables/machine/MachineListTable.tsx:338
+#: src/tables/machine/MachineListTable.tsx:366
 msgid "Machine Driver"
 msgstr "Conducteur de machine"
 
-#: src/tables/machine/MachineListTable.tsx:353
+#: src/tables/machine/MachineListTable.tsx:381
 msgid "Initialized"
 msgstr "Initialisé"
 
-#: src/tables/machine/MachineListTable.tsx:382
+#: src/tables/machine/MachineListTable.tsx:410
 #: src/tables/machine/MachineTypeTable.tsx:307
 msgid "No errors reported"
 msgstr "Aucune erreur reportée"
 
-#: src/tables/machine/MachineListTable.tsx:404
-msgid "Machine Settings"
-msgstr "Paramètres de la machine"
-
-#: src/tables/machine/MachineListTable.tsx:423
-msgid "Driver Settings"
-msgstr "Paramètres du driver"
+#: src/tables/machine/MachineListTable.tsx:431
+msgid "Properties"
+msgstr ""
 
 #: src/tables/machine/MachineListTable.tsx:494
 #~ msgid "Create machine"
 #~ msgstr "Create machine"
 
-#: src/tables/machine/MachineListTable.tsx:541
-msgid "Add Machine"
-msgstr "Ajouter une machine"
+#: src/tables/machine/MachineListTable.tsx:521
+msgid "Driver Settings"
+msgstr "Paramètres du driver"
 
 #: src/tables/machine/MachineListTable.tsx:561
 #~ msgid "Machine detail"
 #~ msgstr "Machine detail"
 
-#: src/tables/machine/MachineListTable.tsx:584
-#: src/tables/machine/MachineListTable.tsx:629
+#: src/tables/machine/MachineListTable.tsx:648
+msgid "Add Machine"
+msgstr "Ajouter une machine"
+
+#: src/tables/machine/MachineListTable.tsx:691
+#: src/tables/machine/MachineListTable.tsx:736
 msgid "Delete Machine"
 msgstr "Supprimer l'équipement"
 
-#: src/tables/machine/MachineListTable.tsx:597
+#: src/tables/machine/MachineListTable.tsx:704
 msgid "Edit Machine"
 msgstr "Modifier l'équipement"
 
-#: src/tables/machine/MachineListTable.tsx:611
+#: src/tables/machine/MachineListTable.tsx:718
 msgid "Restart Machine"
 msgstr "Redémarrer l'équipement"
 
-#: src/tables/machine/MachineListTable.tsx:642
+#: src/tables/machine/MachineListTable.tsx:749
 msgid "Add machine"
 msgstr "Ajouter une machine"
 
-#: src/tables/machine/MachineListTable.tsx:658
+#: src/tables/machine/MachineListTable.tsx:765
 msgid "Machine Detail"
 msgstr "Détail de la machine"
 
-#: src/tables/machine/MachineListTable.tsx:706
+#: src/tables/machine/MachineListTable.tsx:813
 msgid "Driver"
 msgstr "Pilote"
 
@@ -9586,7 +9604,7 @@ msgid "Required Stock"
 msgstr "Stock requis"
 
 #: src/tables/part/PartBuildAllocationsTable.tsx:124
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:354
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:359
 msgid "View Build Order"
 msgstr "Voir l'ordre de construction"
 
@@ -9595,7 +9613,7 @@ msgid "You are subscribed to notifications for this category"
 msgstr "Vous êtes abonné aux notifications pour cette catégorie"
 
 #: src/tables/part/PartCategoryTable.tsx:84
-#: src/tables/part/PartTable.tsx:208
+#: src/tables/part/PartTable.tsx:214
 msgid "Include Subcategories"
 msgstr "Inclure les sous-catégories"
 
@@ -9700,7 +9718,7 @@ msgid "Show templates with choices"
 msgstr "Afficher les modèles avec choix"
 
 #: src/tables/part/PartParameterTemplateTable.tsx:46
-#: src/tables/part/PartTable.tsx:232
+#: src/tables/part/PartTable.tsx:238
 msgid "Has Units"
 msgstr "A des unités"
 
@@ -9730,7 +9748,7 @@ msgstr "Supprimer un modèle de paramètre"
 #~ msgstr "Add parameter template"
 
 #: src/tables/part/PartPurchaseOrdersTable.tsx:79
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:190
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:191
 msgid "Total Quantity"
 msgstr "Quantité totale"
 
@@ -9746,141 +9764,141 @@ msgstr "Afficher les articles reçus"
 msgid "View Sales Order"
 msgstr "Voir la commande client"
 
-#: src/tables/part/PartTable.tsx:86
+#: src/tables/part/PartTable.tsx:92
 msgid "Minimum stock"
 msgstr "Stock minimum"
 
-#: src/tables/part/PartTable.tsx:185
+#: src/tables/part/PartTable.tsx:191
 msgid "Filter by part active status"
 msgstr "Filtrer par statut actif de la pièce"
 
-#: src/tables/part/PartTable.tsx:191
+#: src/tables/part/PartTable.tsx:197
 msgid "Filter by part locked status"
 msgstr "Filtrer par statut de pièce verrouillée"
 
-#: src/tables/part/PartTable.tsx:197
+#: src/tables/part/PartTable.tsx:203
 msgid "Filter by assembly attribute"
 msgstr "Filtrer par attribut d'assemblage"
 
-#: src/tables/part/PartTable.tsx:202
+#: src/tables/part/PartTable.tsx:208
 msgid "BOM Valid"
 msgstr "Nomenclature valide"
 
-#: src/tables/part/PartTable.tsx:203
+#: src/tables/part/PartTable.tsx:209
 msgid "Filter by parts with a valid BOM"
 msgstr "Filtrer avec les pièces qui ont une nomenclature valide"
 
-#: src/tables/part/PartTable.tsx:209
+#: src/tables/part/PartTable.tsx:215
 msgid "Include parts in subcategories"
 msgstr "Inclure les pièces dans les sous-catégories"
 
-#: src/tables/part/PartTable.tsx:215
+#: src/tables/part/PartTable.tsx:221
 msgid "Filter by component attribute"
 msgstr "Filtrer par attribut de composant"
 
-#: src/tables/part/PartTable.tsx:221
+#: src/tables/part/PartTable.tsx:227
 msgid "Filter by testable attribute"
 msgstr "Filtrer par attribut testable"
 
-#: src/tables/part/PartTable.tsx:227
+#: src/tables/part/PartTable.tsx:233
 msgid "Filter by trackable attribute"
 msgstr "Filtrer par attribut de suivi"
 
-#: src/tables/part/PartTable.tsx:233
+#: src/tables/part/PartTable.tsx:239
 msgid "Filter by parts which have units"
 msgstr "Filtre sur les pièces qui ont des unités"
 
-#: src/tables/part/PartTable.tsx:238
+#: src/tables/part/PartTable.tsx:244
 msgid "Has IPN"
 msgstr "A un IPN"
 
-#: src/tables/part/PartTable.tsx:239
+#: src/tables/part/PartTable.tsx:245
 msgid "Filter by parts which have an internal part number"
 msgstr "Filtre sur les pièces qui ont un numéro de pièce interne"
 
-#: src/tables/part/PartTable.tsx:244
+#: src/tables/part/PartTable.tsx:250
 msgid "Has Stock"
 msgstr "A un stock"
 
-#: src/tables/part/PartTable.tsx:245
+#: src/tables/part/PartTable.tsx:251
 msgid "Filter by parts which have stock"
 msgstr "Filtre sur les pièces en stock"
 
-#: src/tables/part/PartTable.tsx:251
+#: src/tables/part/PartTable.tsx:257
 msgid "Filter by parts which have low stock"
 msgstr "Filtrer les pièces dont le stock est faible"
 
-#: src/tables/part/PartTable.tsx:256
+#: src/tables/part/PartTable.tsx:262
 msgid "Purchaseable"
 msgstr "Achetable"
 
-#: src/tables/part/PartTable.tsx:257
+#: src/tables/part/PartTable.tsx:263
 msgid "Filter by parts which are purchaseable"
 msgstr "Filtre sur les pièces qui peuvent être achetées"
 
-#: src/tables/part/PartTable.tsx:262
+#: src/tables/part/PartTable.tsx:268
 msgid "Salable"
 msgstr "Vendable"
 
-#: src/tables/part/PartTable.tsx:263
+#: src/tables/part/PartTable.tsx:269
 msgid "Filter by parts which are salable"
 msgstr "Filtrer les pièces vendables"
 
-#: src/tables/part/PartTable.tsx:268
-#: src/tables/part/PartTable.tsx:272
+#: src/tables/part/PartTable.tsx:274
+#: src/tables/part/PartTable.tsx:278
 #: src/tables/part/PartVariantTable.tsx:25
 msgid "Virtual"
 msgstr "Virtuel"
 
-#: src/tables/part/PartTable.tsx:269
+#: src/tables/part/PartTable.tsx:275
 msgid "Filter by parts which are virtual"
 msgstr "Filtrer par pièces virtuelles"
 
-#: src/tables/part/PartTable.tsx:273
+#: src/tables/part/PartTable.tsx:279
 msgid "Not Virtual"
 msgstr "Non virtuel"
 
-#: src/tables/part/PartTable.tsx:278
+#: src/tables/part/PartTable.tsx:284
 msgid "Is Template"
 msgstr "Est un modèle"
 
-#: src/tables/part/PartTable.tsx:279
+#: src/tables/part/PartTable.tsx:285
 msgid "Filter by parts which are templates"
 msgstr "Filtrer par pièces qui sont des modèles"
 
-#: src/tables/part/PartTable.tsx:284
+#: src/tables/part/PartTable.tsx:290
 msgid "Is Variant"
 msgstr "Est une variante"
 
-#: src/tables/part/PartTable.tsx:285
+#: src/tables/part/PartTable.tsx:291
 msgid "Filter by parts which are variants"
 msgstr "Filtrer par pièces qui sont des variantes"
 
-#: src/tables/part/PartTable.tsx:290
+#: src/tables/part/PartTable.tsx:296
 msgid "Is Revision"
 msgstr "Est une révision"
 
-#: src/tables/part/PartTable.tsx:291
+#: src/tables/part/PartTable.tsx:297
 msgid "Filter by parts which are revisions"
 msgstr "Filtrer par pièces qui sont des révisions"
 
-#: src/tables/part/PartTable.tsx:295
+#: src/tables/part/PartTable.tsx:301
 msgid "Has Revisions"
 msgstr "Possède des révisions"
 
-#: src/tables/part/PartTable.tsx:296
+#: src/tables/part/PartTable.tsx:302
 msgid "Filter by parts which have revisions"
 msgstr "Filtrer par pièces qui ont des révisions"
 
-#: src/tables/part/PartTable.tsx:301
+#: src/tables/part/PartTable.tsx:307
 msgid "Filter by parts which have pricing information"
 msgstr "Filtrer par pièces qui ont des informations de prix"
 
-#: src/tables/part/PartTable.tsx:307
+#: src/tables/part/PartTable.tsx:313
 msgid "Filter by parts which have available stock"
 msgstr "Filtrer par pièces qui ont du stock disponible"
 
-#: src/tables/part/PartTable.tsx:313
+#: src/tables/part/PartTable.tsx:319
 msgid "Filter by parts to which the user is subscribed"
 msgstr "Filtrer par pièces auxquelles l'utilisateur est abonné"
 
@@ -9892,16 +9910,16 @@ msgstr "Filtrer par pièces auxquelles l'utilisateur est abonné"
 #~ msgid "Filter by parts which have stocktake information"
 #~ msgstr "Filter by parts which have stocktake information"
 
-#: src/tables/part/PartTable.tsx:363
-#: src/tables/part/PartTable.tsx:397
+#: src/tables/part/PartTable.tsx:418
+#: src/tables/part/PartTable.tsx:460
 msgid "Set Category"
 msgstr "Définir la catégorie"
 
-#: src/tables/part/PartTable.tsx:399
+#: src/tables/part/PartTable.tsx:462
 msgid "Set category for selected parts"
 msgstr "Définir la catégorie pour les pièces sélectionnées"
 
-#: src/tables/part/PartTable.tsx:409
+#: src/tables/part/PartTable.tsx:472
 msgid "Order selected parts"
 msgstr "Commander les pièces sélectionnées"
 
@@ -10345,30 +10363,26 @@ msgstr "Référence fabricant"
 #~ msgid "Are you sure you want to remove this manufacturer part?"
 #~ msgstr "Are you sure you want to remove this manufacturer part?"
 
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:109
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:391
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:110
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:396
 msgid "Import Line Items"
 msgstr "Importer des articles"
 
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:230
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:231
 msgid "Supplier Code"
 msgstr "Code fournisseur"
 
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:237
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:238
 msgid "Supplier Link"
 msgstr "Lien du fournisseur"
 
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:244
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:245
 msgid "Manufacturer Code"
 msgstr "Code du fabricant"
 
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:273
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:278
 msgid "Show line items which have been received"
 msgstr "Afficher les articles qui ont été reçus"
-
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:344
-msgid "Receive line item"
-msgstr "Recevoir l'article"
 
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:344
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:160
@@ -10376,7 +10390,11 @@ msgstr "Recevoir l'article"
 #~ msgid "Add line item"
 #~ msgstr "Add line item"
 
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:408
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:349
+msgid "Receive line item"
+msgstr "Recevoir l'article"
+
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:413
 msgid "Receive items"
 msgstr "Recevoir les articles"
 
