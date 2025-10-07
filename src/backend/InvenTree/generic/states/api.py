@@ -4,6 +4,7 @@ import inspect
 
 from django.urls import include, path
 
+from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import OpenApiResponse, extend_schema
 from rest_framework import serializers
 from rest_framework.generics import GenericAPIView
@@ -14,6 +15,7 @@ import common.serializers
 import InvenTree.permissions
 from data_exporter.mixins import DataExportViewMixin
 from InvenTree.filters import SEARCH_ORDER_FILTER
+from InvenTree.helpers import inheritors
 from InvenTree.mixins import ListCreateAPI, RetrieveUpdateDestroyAPI
 from InvenTree.serializers import EmptySerializer
 
@@ -51,6 +53,15 @@ class StatusView(GenericAPIView):
                 f"StatusView view called without '{self.MODEL_REF}' parameter"
             )
 
+        if isinstance(status_model, str):
+            # Attempt to convert string to class
+            status_classes = inheritors(StatusCode)
+
+            for cls in status_classes:
+                if cls.__name__ == status_model:
+                    status_model = cls
+                    break
+
         return status_model
 
     @extend_schema(
@@ -65,10 +76,10 @@ class StatusView(GenericAPIView):
         status_class = self.get_status_model()
 
         if not inspect.isclass(status_class):
-            raise NotImplementedError('`status_class` not a class')
+            raise NotImplementedError(f'`{status_class}` not a class')
 
         if not issubclass(status_class, StatusCode):
-            raise NotImplementedError('`status_class` not a valid StatusCode class')
+            raise NotImplementedError(f'`{status_class}` not a valid StatusCode class')
 
         data = {'status_class': status_class.__name__, 'values': status_class.dict()}
 
@@ -99,11 +110,20 @@ class AllStatusViews(StatusView):
     permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
     serializer_class = EmptySerializer
 
-    @extend_schema(operation_id='generic_status_retrieve_all')
+    # Specifically disable pagination for this view
+    pagination_class = None
+
+    @extend_schema(
+        operation_id='generic_status_retrieve_all',
+        responses={
+            200: OpenApiResponse(
+                description='Mapping from class name to GenericStateClass data',
+                response=OpenApiTypes.OBJECT,
+            )
+        },
+    )
     def get(self, request, *args, **kwargs):
         """Perform a GET request to learn information about status codes."""
-        from InvenTree.helpers import inheritors
-
         data = {}
 
         # Find all inherited status classes
