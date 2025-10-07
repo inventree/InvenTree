@@ -130,8 +130,9 @@ nav:
     - Processes: start/processes.md
     - Configuration: start/config.md
     - Docker:
-        - Introduction: start/docker.md
-        - Installation: start/docker_install.md
+        - Overview: start/docker.md
+        - Deploy: start/docker_deploy.md
+        - Upgrade: start/docker_upgrade.md
     - Bare Metal:
         - Introduction: start/install.md
         - Installer: start/installer.md
