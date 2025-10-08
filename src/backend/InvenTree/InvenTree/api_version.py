@@ -1,11 +1,15 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 405
+INVENTREE_API_VERSION = 406
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v406 -> 2025-10-08: https://github.com/inventree/InvenTree/pull/10532
+    - Set return type for background task overview
+    - Implement serializer for part serial number detail
 
 v405 -> 2025-10-07: https://github.com/inventree/InvenTree/pull/10530
     - Add response to generic/status endpoint
