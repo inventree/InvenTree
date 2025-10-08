@@ -53,15 +53,6 @@ class StatusView(GenericAPIView):
                 f"StatusView view called without '{self.MODEL_REF}' parameter"
             )
 
-        if isinstance(status_model, str):
-            # Attempt to convert string to class
-            status_classes = inheritors(StatusCode)
-
-            for cls in status_classes:
-                if cls.__name__ == status_model:
-                    status_model = cls
-                    break
-
         return status_model
 
     @extend_schema(
@@ -74,6 +65,15 @@ class StatusView(GenericAPIView):
     def get(self, request, *args, **kwargs):
         """Perform a GET request to learn information about status codes."""
         status_class = self.get_status_model()
+
+        if isinstance(status_class, str):
+            # Attempt to convert string to class
+            status_classes = inheritors(StatusCode)
+
+            for cls in status_classes:
+                if cls.__name__ == status_class:
+                    status_class = cls
+                    break
 
         if not inspect.isclass(status_class):
             raise NotImplementedError(f'`{status_class}` not a class')
