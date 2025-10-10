@@ -47,7 +47,6 @@ from InvenTree.mixins import (
     SerializerContextMixin,
     UpdateAPI,
 )
-from InvenTree.serializers import EmptySerializer
 from stock.models import StockLocation
 
 from . import serializers as part_serializers
@@ -595,19 +594,7 @@ class PartSerialNumberDetail(RetrieveAPI):
     """API endpoint for returning extra serial number information about a particular part."""
 
     queryset = Part.objects.all()
-    serializer_class = EmptySerializer
-
-    def retrieve(self, request, *args, **kwargs):
-        """Return serial number information for the referenced Part instance."""
-        part = self.get_object()
-
-        # Calculate the "latest" serial number
-        latest_serial = part.get_latest_serial_number()
-        next_serial = part.get_next_serial_number()
-
-        data = {'latest': latest_serial, 'next': next_serial}
-
-        return Response(data)
+    serializer_class = part_serializers.PartSerialNumberSerializer
 
 
 class PartCopyBOM(CreateAPI):

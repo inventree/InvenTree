@@ -285,9 +285,15 @@ export function BomTable({
         render: (record: any) => {
           const extra: ReactNode[] = [];
 
+          const part = record.sub_part_detail;
+
           const available_stock: number = availableStockQuantity(record);
           const on_order: number = record?.on_order ?? 0;
           const building: number = record?.building ?? 0;
+
+          if (part?.virtual) {
+            return <Text fs='italic'>{t`Virtual part`}</Text>;
+          }
 
           const text =
             available_stock <= 0 ? (
@@ -352,10 +358,17 @@ export function BomTable({
         title: t`Can Build`,
         sortable: true,
         render: (record: any) => {
+          // Virtual sub-part - the "can build" quantity does not make sense here
+          if (record.sub_part_detail?.virtual) {
+            return '-';
+          }
+
+          // No information available
           if (record.can_build === null || record.can_build === undefined) {
             return '-';
           }
 
+          // NaN or infinite values
           if (
             !Number.isFinite(record.can_build) ||
             Number.isNaN(record.can_build)

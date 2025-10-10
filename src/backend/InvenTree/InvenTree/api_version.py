@@ -1,15 +1,26 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 405
+INVENTREE_API_VERSION = 408
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v405 -> 2025-06-12 : https://github.com/inventree/InvenTree/pull/9761
+v408 -> 2025-06-12 : https://github.com/inventree/InvenTree/pull/9761
     - Add supplier search and import API endpoints
     - Add part parameter bulk create API endpoint
+
+v407 -> 2025-10-09: https://github.com/inventree/InvenTree/pull/10538
+    - Breaking: Set error status code for plugin action call instead of just returning error data
+
+v406 -> 2025-10-08: https://github.com/inventree/InvenTree/pull/10532
+    - Set return type for background task overview
+    - Implement serializer for part serial number detail
+
+v405 -> 2025-10-07: https://github.com/inventree/InvenTree/pull/10530
+    - Add response to generic/status endpoint
+    - Fix logic for generic status model lookup to allow searching by class name string
 
 v404 -> 2025-10-06: https://github.com/inventree/InvenTree/pull/10497
     - Add minimum_stock to PartBrief api response
