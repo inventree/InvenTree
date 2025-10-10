@@ -1628,6 +1628,7 @@ class BomItemSerializer(
             # Annotate the total potential quantity we can build
             'can_build',
         ]
+        list_serializer_class = FilterableListSerializer
 
     def __init__(self, *args, **kwargs):
         """Determine if extra detail fields are to be annotated on this serializer.
