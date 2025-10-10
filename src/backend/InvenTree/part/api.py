@@ -1033,6 +1033,9 @@ class PartMixin:
         if str2bool(self.request.query_params.get('parameters', False)):
             queryset = queryset.prefetch_related('parameters', 'parameters__template')
 
+        if str2bool(self.request.query_params.get('price_breaks', True)):
+            queryset = queryset.prefetch_related('salepricebreaks')
+
         return queryset
 
     def get_serializer(self, *args, **kwargs):
@@ -1076,6 +1079,7 @@ class PartOutputOptions(OutputConfiguration):
         InvenTreeOutputOption('category_detail'),
         InvenTreeOutputOption('location_detail'),
         InvenTreeOutputOption('path_detail'),
+        InvenTreeOutputOption('price_breaks'),
     ]
 
 
