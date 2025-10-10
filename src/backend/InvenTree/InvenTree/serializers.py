@@ -37,17 +37,12 @@ class OptionalFilterabelSerializer:
 
     def __init__(self, *args, **kwargs):
         """Initialize the serializer."""
+        # Set filterable options for future ref
         if self.is_filterable is None:
             self.is_filterable = kwargs.pop('is_filterable', None)
             self.is_filterable_default = kwargs.pop('is_filterable_default', True)
-        super().__init__(*args, **kwargs)
 
-
-class FractionalFilterabelSerializer:
-    """A."""
-
-    def __init__(self, *args, **kwargs):
-        """Add detail fields."""
+        # remove filter args from kwargs
         kwargs = PathScopedMixin.gather_filters(self, kwargs)
         super().__init__(*args, **kwargs)
         PathScopedMixin.do_filtering(self, *args, **kwargs)
@@ -67,7 +62,7 @@ class PathScopedMixin(serializers.Serializer):
 
     def gather_filters(self, kwargs):
         """Gather filterable fields."""
-        if getattr(self, '_was_filtered', False):
+        if getattr(self, '_was_filtered', False) or not hasattr(self, 'fields'):
             return kwargs
         self._was_filtered = True
 
@@ -299,9 +294,7 @@ class DependentField(serializers.Field):
 
 
 class InvenTreeModelSerializer(
-    OptionalFilterabelSerializer,
-    FractionalFilterabelSerializer,
-    serializers.ModelSerializer,
+    OptionalFilterabelSerializer, serializers.ModelSerializer
 ):
     """Inherits the standard Django ModelSerializer class, but also ensures that the underlying model class data are checked on validation."""
 
