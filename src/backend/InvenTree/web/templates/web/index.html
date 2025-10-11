@@ -13,7 +13,33 @@
 </head>
 
 <body>
-  <div id="root"></div>
+  <div id="root">
+    <div id="update-warning" style="display: none;">
+      If you see this text there might be an issue with your update.
+      <br>
+      See <a href="https://docs.inventree.org/en/stable/settings/error_codes/#inve-e1">INVE-E1</a> in the docs for help.
+    </div>
+    <div id="no-javascript-warning" style="display: none;">
+      <hr>
+      This application requires JavaScript to function correctly. Please enable JavaScript in your browser settings.
+    <noscript>
+      <!-- fallback if javascript is blocked -->
+      <style>
+        #update-warning { display: block !important; }
+        #no-javascript-warning { display: block !important; }
+      </style>
+    </noscript>
+    <script>
+      setTimeout(() => {
+        let warningElement = document.getElementById('update-warning');
+
+        if (warningElement) {
+          warningElement.style.display = 'block';
+        }
+      }, 1000);
+    </script>
+  </div>
+
   <div id="spa_settings">{% spa_settings %}</div>
   {% if bundle == "NOT_FOUND" %}
   <div id="spa_bundle_error">

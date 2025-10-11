@@ -206,7 +206,8 @@ test('Build Order - Build Outputs', async ({ browser }) => {
 
   await page.getByLabel('text-field-batch_code').fill('BATCH12345');
   await page.getByLabel('related-field-location').click();
-  await page.getByText('Reel Storage').click();
+  await page.getByLabel('related-field-location').fill('Reel');
+  await page.getByText('- Electronics Lab/Reel Storage').click();
   await page.getByRole('button', { name: 'Submit' }).click();
 
   // Should be an error as the number of serial numbers doesn't match the quantity
@@ -246,6 +247,20 @@ test('Build Order - Build Outputs', async ({ browser }) => {
   await page.waitForTimeout(250);
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByText('Build outputs have been completed').waitFor();
+
+  // Check for expected UI elements in the "scrap output" dialog
+  const cell3 = await page.getByRole('cell', { name: '16' });
+  const row3 = await getRowFromCell(cell3);
+  await row3.getByLabel(/row-action-menu-/i).click();
+  await page.getByRole('menuitem', { name: 'Scrap' }).click();
+
+  await page
+    .getByText(
+      'Selected build outputs will be completed, but marked as scrapped'
+    )
+    .waitFor();
+  await page.getByRole('cell', { name: 'Quantity: 16' }).waitFor();
+  await page.getByRole('button', { name: 'Cancel', exact: true }).click();
 });
 
 test('Build Order - Allocation', async ({ browser }) => {

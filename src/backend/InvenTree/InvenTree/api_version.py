@@ -1,11 +1,37 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 400
+INVENTREE_API_VERSION = 407
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v407 -> 2025-10-09: https://github.com/inventree/InvenTree/pull/10538
+    - Breaking: Set error status code for plugin action call instead of just returning error data
+
+v406 -> 2025-10-08: https://github.com/inventree/InvenTree/pull/10532
+    - Set return type for background task overview
+    - Implement serializer for part serial number detail
+
+v405 -> 2025-10-07: https://github.com/inventree/InvenTree/pull/10530
+    - Add response to generic/status endpoint
+    - Fix logic for generic status model lookup to allow searching by class name string
+
+v404 -> 2025-10-06: https://github.com/inventree/InvenTree/pull/10497
+    - Add minimum_stock to PartBrief api response
+
+v403 -> 2025-10-06: https://github.com/inventree/InvenTree/pull/10499
+    - Adds ability to partially scrap a build output
+    - Adds ability to partially complete a build output
+
+v402 -> 2025-10-05 : https://github.com/inventree/InvenTree/pull/10495
+    - Refactors 'part_detail' param in BuildList API endpoint
+    - Refactors 'order_detail' param in GeneralExtraLineList API endpoint
+    - Refactors 'part_detail', 'template_detail' param in PartParameterList / PartParameterDetail API endpoint
+
+v401 -> 2025-10-05 : https://github.com/inventree/InvenTree/pull/10381
+    - Adds machine properties to machine API endpoints
 
 v400 -> 2025-10-05 : https://github.com/inventree/InvenTree/pull/10486
     - Adds return datatypes for admin/config and flags entpoints

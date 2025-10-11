@@ -2209,6 +2209,7 @@ class StockItem(
             batch: If provided, override the batch (default = existing batch)
             status: If provided, override the status (default = existing status)
             packaging: If provided, override the packaging (default = existing packaging)
+            allow_production: If True, allow splitting of stock which is in production (default = False)
 
         Returns:
             The new StockItem object
@@ -2221,8 +2222,10 @@ class StockItem(
         """
         # Run initial checks to test if the stock item can actually be "split"
 
+        allow_production = kwargs.get('allow_production', False)
+
         # Cannot split a stock item which is in production
-        if self.is_building:
+        if self.is_building and not allow_production:
             raise ValidationError(_('Stock item is currently in production'))
 
         notes = kwargs.get('notes', '')
