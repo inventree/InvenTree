@@ -101,14 +101,36 @@ export function useSalesOrderFields({
 export function useSalesOrderLineItemFields({
   customerId,
   orderId,
-  create
+  create,
+  currency
 }: {
   customerId?: number;
   orderId?: number;
   create?: boolean;
+  currency?: string;
 }): ApiFormFieldSet {
-  const fields = useMemo(() => {
-    return {
+  const [salePrice, setSalePrice] = useState<string>('0');
+  const [partCurrency, setPartCurrency] = useState<string>(currency ?? '');
+  const [part, setPart] = useState<any>({});
+  const [quantity, setQuantity] = useState<string>('');
+
+  useEffect(() => {
+    if (!create || !part || !part.price_breaks) return;
+
+    const qty = quantity ? Number.parseInt(quantity, 10) : 0;
+
+    const applicablePriceBreaks = part.price_breaks
+      .filter(
+        (pb: any) => pb.price_currency == partCurrency && qty <= pb.quantity
+      )
+      .sort((a: any, b: any) => a.quantity - b.quantity);
+
+    if (applicablePriceBreaks.length)
+      setSalePrice(applicablePriceBreaks[0].price);
+  }, [part, quantity, partCurrency, create]);
+
+  return useMemo(() => {
+    const fields: ApiFormFieldSet = {
       order: {
         filters: {
           customer_detail: true
@@ -119,20 +141,29 @@ export function useSalesOrderLineItemFields({
       part: {
         filters: {
           active: true,
-          salable: true
-        }
+          salable: true,
+          price_breaks: true
+        },
+        onValueChange: (_: any, record?: any) => setPart(record)
       },
       reference: {},
-      quantity: {},
-      sale_price: {},
-      sale_price_currency: {},
-      target_date: {},
-      notes: {},
-      link: {}
+      quantity: {
+        onValueChange: setQuantity
+      },
+      sale_price: {
+        value: salePrice
+      },
+      sale_price_currency: {
+        value: partCurrency,
+        onValueChange: setPartCurrency
+      },
+      _target_date: {},
+      _notes: {},
+      _link: {}
     };
-  }, []);
 
-  return fields;
+    return fields;
+  }, [salePrice, partCurrency, orderId, create]);
 }
 
 function SalesOrderAllocateLineRow({
