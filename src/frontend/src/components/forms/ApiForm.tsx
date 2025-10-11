@@ -172,7 +172,7 @@ export function ApiForm({
   );
 
   const defaultValues: FieldValues = useMemo(() => {
-    const defaultValuesMap = mapFields(fields ?? {}, (_path, field) => {
+    const defaultValuesMap = mapFields(props.fields ?? {}, (_path, field) => {
       return field.value ?? field.default ?? undefined;
     });
 
