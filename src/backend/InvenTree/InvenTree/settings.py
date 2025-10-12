@@ -23,7 +23,6 @@ from django.http import Http404, HttpResponseGone
 
 import structlog
 from corsheaders.defaults import default_headers as default_cors_headers
-from dotenv import load_dotenv
 
 from InvenTree.cache import get_cache_config, is_global_cache_enabled
 from InvenTree.config import (
@@ -73,11 +72,7 @@ BASE_DIR = config.get_base_dir()
 
 # Load configuration data
 CONFIG = config.load_config_data(set_cache=True)
-
-# Load VERSION data if it exists
-version_file = config.get_root_dir().joinpath('VERSION')
-if version_file.exists():
-    load_dotenv(version_file)
+config.load_version_file()
 
 # Default action is to run the system in Debug mode
 # SECURITY WARNING: don't run with debug turned on in production!
