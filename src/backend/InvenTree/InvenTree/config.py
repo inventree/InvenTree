@@ -122,6 +122,11 @@ def get_testfolder_dir() -> Path:
     return get_base_dir().joinpath('_testfolder').resolve()
 
 
+def get_version_file() -> Path:
+    """Returns the path of the InvenTree VERSION file. This does not ensure that the file exists."""
+    return get_root_dir().joinpath('VERSION').resolve()
+
+
 def ensure_dir(path: Path, storage=None) -> None:
     """Ensure that a directory exists.
 
@@ -612,7 +617,7 @@ def load_version_file():
     # Load the VERSION file if it exists
     from dotenv import load_dotenv
 
-    version_file = get_root_dir().joinpath('VERSION')
+    version_file = get_version_file()
     if version_file.exists():
         load_dotenv(version_file)
         VERSION_LOADED = True
