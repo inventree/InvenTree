@@ -1,0 +1,77 @@
+# Example Caddyfile for InvenTree
+# The following environment variables may be used:
+# - INVENTREE_SITE_URL: The upstream URL of the InvenTree site (default: inventree.localhost)
+# - INVENTREE_SERVER: The internal URL of the InvenTree container (default: http://inventree-server:8000)
+#
+# Note that while this file is a good starting point, it may need to be modified to suit your specific requirements
+#
+# Ref to the Caddyfile documentation: https://caddyserver.com/docs/caddyfile
+
+
+# Logging configuration for Caddy
+(log_common) {
+	log {
+		output file /var/log/caddy/{args[0]}.access.log
+	}
+}
+
+# CORS headers control (used for static and media files)
+(cors-headers) {
+	header Allow GET,HEAD,OPTIONS
+	header Access-Control-Allow-Origin *
+	header Access-Control-Allow-Methods GET,HEAD,OPTIONS
+	header Access-Control-Allow-Headers Authorization,Content-Type,User-Agent
+
+	@cors_preflight{args[0]} method OPTIONS
+
+	handle @cors_preflight{args[0]} {
+		respond "" 204
+	}
+}
+
+# The default server address is configured in the .env file
+# If not specified, the default address is used - http://inventree.localhost
+# If you need to listen on multiple addresses, or use a different port, you can modify this section directly
+{$INVENTREE_SITE_URL:http://inventree.localhost} {
+	import log_common inventree
+
+	encode gzip
+
+	request_body {
+		max_size 100MB
+	}
+
+	# Handle static request files
+	handle_path /static/* {
+		import cors-headers static
+
+		root * /var/www/static
+		file_server
+	}
+
+	# Handle media request files
+	handle_path /media/* {
+		import cors-headers media
+
+		root * /var/www/media
+		file_server
+
+		# Force download of media files (for security)
+		# Comment out this line if you do not want to force download
+		header Content-Disposition attachment
+
+		# Authentication is handled by the forward_auth directive
+		# This is required to ensure that media files are only accessible to authenticated users
+		forward_auth {$INVENTREE_SERVER:"http://inventree-server:8000"} {
+			uri /auth/
+		}
+	}
+
+	# All other requests are proxied to the InvenTree server
+	reverse_proxy {$INVENTREE_SERVER:"http://inventree-server:8000"} {
+
+		# If you are running behind another proxy, you may need to specify 'trusted_proxies'
+		# Ref: https://caddyserver.com/docs/json/apps/http/servers/trusted_proxies/
+		# trusted_proxies ...
+	}
+}
