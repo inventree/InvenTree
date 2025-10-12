@@ -76,6 +76,12 @@ export function AuthenticationForm() {
             followRedirect(navigate, location?.state);
           } else if (success) {
             // MFA login
+          } else {
+            showLoginNotification({
+              title: t`Login failed`,
+              message: t`Check your input and try again.`,
+              success: false
+            });
           }
         })
         .catch(() => {
