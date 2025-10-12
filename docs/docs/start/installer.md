@@ -37,7 +37,7 @@ The installer creates the following directories:
 | `/opt/inventree/` | InvenTree application files |
 | `/opt/inventree/data/` | InvenTree data files |
 
-#### Performed steps
+#### Performed Steps
 
 The installer script performs the following functions:
 
@@ -111,7 +111,7 @@ To stop the automatic generation of an admin user, generate an empty file needs 
 By default, InvenTree is served internally on port 6000 and then proxied via Nginx. The config is placed in `/etc/nginx/sites-enabled/inventree.conf` and overwritten on each update. The location can be set with the environment variable `SETUP_NGINX_FILE`.
 This only serves an HTTP version of InvenTree, to use HTTPS (recommended for production) or customize any further an additional config file should be used.
 
-#### Extra python packages
+#### Extra Python Packages
 Extra python packages can be installed by setting the environment variable `SETUP_EXTRA_PIP`.
 
 #### Database Options
@@ -131,7 +131,13 @@ To change the data storage location, link the new location to `/opt/inventree/da
 
 ## Updating InvenTree
 
-To update InvenTree run `apt install --only-upgrade inventree` - this might need to be run as a sudo user.
+To update InvenTree run the following command:
+
+```bash
+apt install --only-upgrade inventree
+```
+
+Note that this command may need to be run as a sudo user.
 
 ## Controlling InvenTree
 
