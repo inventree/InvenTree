@@ -33,8 +33,12 @@ export default function MobileAppView() {
             <Anchor href={docLinks.app}>
               <Trans>Read the docs</Trans>
             </Anchor>
-            {IS_DEV && (
-              <Text onClick={ignore}>
+            {(IS_DEV ||
+              window.INVENTREE_SETTINGS.mobile_mode === 'allow-ignore') && (
+              <Text
+                onClick={ignore}
+                style={{ cursor: 'pointer', textDecoration: 'underline' }}
+              >
                 <Trans>Ignore and continue to Desktop view</Trans>
               </Text>
             )}
