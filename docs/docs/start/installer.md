@@ -149,14 +149,6 @@ InvenTree installs multiple services that can be controlled with your local syst
 - `inventree-web` - The InvenTree [web server](./processes.md#web-server) process(es)
 - `inventree-worker` - The InvenTree [background worker(s)](./processes.md#background-worker) process(es)
 
-#### Available Commands
-
-To view the available management commands for the InvenTree services, run:
-
-```bash
-inventree --help
-```
-
 #### Restarting Services
 
 To restart the InvenTree services, use the following commands as necessary:
