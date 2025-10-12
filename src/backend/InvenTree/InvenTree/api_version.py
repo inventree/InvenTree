@@ -1,11 +1,14 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 407
+INVENTREE_API_VERSION = 408
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v408 -> 2025-10-11: https://github.com/inventree/InvenTree/pull/10549
+    - added a new query parameter for the PartsList api: price_breaks (default: false)
 
 v407 -> 2025-10-09: https://github.com/inventree/InvenTree/pull/10538
     - Breaking: Set error status code for plugin action call instead of just returning error data
