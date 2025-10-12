@@ -68,18 +68,27 @@ class PathScopedMixin(serializers.Serializer):
 
         # Actually gather the filterable fields
         fields = self.fields.items()
-        flt_fld = {k: a for k, a in fields if getattr(a, 'is_filterable', None)}
-        self.filter_targets = {k: kwargs.pop(k, False) for k in flt_fld}
+        self.filter_targets = {
+            k: {'serializer': a, 'default': a.is_filterable_default}
+            for k, a in fields
+            if getattr(a, 'is_filterable', None)
+        }
+        self.filter_target_values = {
+            k: kwargs.pop(k, None) for k in self.filter_targets
+        }
         return kwargs
 
     def do_filtering(self, *args, **kwargs):
         """Do the actual filtering."""
-        if InvenTree.ready.isGeneratingSchema() or not hasattr(self, 'filter_targets'):
+        if InvenTree.ready.isGeneratingSchema() or not hasattr(
+            self, 'filter_target_values'
+        ):
             return
 
         # Throw out fields which are not requested
-        for k, v in self.filter_targets.items():
-            if v is not True:
+        for k, v in self.filter_target_values.items():
+            value = v if v is not None else self.filter_targets[k]['default']
+            if value is not True:
                 self.fields.pop(k, None)
 
 
