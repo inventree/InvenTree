@@ -575,7 +575,7 @@ def extract_serial_numbers(
     serials = []
     errors = []
 
-    def add_error(error: str | StrOrPromise):
+    def add_error(error: Union[str, StrOrPromise]):
         """Helper function for adding an error message."""
         if error not in errors:
             errors.append(error)
