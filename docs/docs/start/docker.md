@@ -1,13 +1,10 @@
 ---
-title: Docker Setup
+title: Docker Deployment: Overview
 ---
 
-## Docker Installation Guide
+## Docker Deployment Guide
 
-The information on this page serves as useful theory and background information for setting up InvenTree using docker.
-
-!!! tip "Docker Install"
-    To jump right into the installation process, refer to the [docker installation guide](./docker_install.md)
+The information on this page provides important theory and background information for deploying InvenTree using Docker. Skip directly to the [Docker deployment guide](./docker_deploy.md) for a new installation or the [Docker upgrade guide](./docker_upgrade.md) to update an existing installation.
 
 ## Docker Theory
 

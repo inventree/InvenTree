@@ -120,53 +120,6 @@ This command launches the following containers:
 !!! tip "External Access"
     Note that `http://inventree.localhost` will only be available from the machine you are running the code on. To make it accessible externally, change `INVENTREE_SITE_URL` to a host address which can be accessed by other computers on your network.
 
-## Updating InvenTree
-
-To update your InvenTree installation to the latest version, follow these steps:
-
-### Stop Containers
-
-Stop all running containers as below:
-
-```
-docker compose down
-```
-
-### Update Images
-
-Pull down the latest version of the InvenTree docker image
-
-```
-docker compose pull
-```
-
-This ensures that the InvenTree containers will be running the latest version of the InvenTree source code.
-
-!!! tip "Docker Directory"
-    All `docker compose` commands must be performed in the same directory as the [docker-compose.yml file](#required-files)
-
-!!! info "Tagged Version"
-    If you are targeting a particular "tagged" version of InvenTree, you may wish to edit the `INVENTREE_TAG` variable in the `.env` file before issuing the `docker compose pull` command
-
-### Update Database
-
-Run the following command to ensure that the InvenTree database is updated:
-
-```
-docker compose run --rm inventree-server invoke update
-```
-
-!!! info "Skip Backup"
-    By default, the `invoke update` command performs a database backup. To skip this step, add the `--skip-backup` flag
-
-### Start Containers
-
-Now restart the docker containers:
-
-```
-docker compose up -d
-```
-
 ## Data Backup
 
 Database and media files are stored external to the container, in the volume location specified in the `docker-compose.yml` file. It is strongly recommended that a backup of the files in this volume is performed on a regular basis.
