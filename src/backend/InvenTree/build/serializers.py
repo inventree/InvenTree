@@ -22,11 +22,9 @@ from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 
 import build.tasks
-import common.models
 import common.settings
 import company.serializers
 import InvenTree.helpers
-import InvenTree.tasks
 import part.filters
 import part.serializers as part_serializers
 from common.serializers import ProjectCodeSerializer
