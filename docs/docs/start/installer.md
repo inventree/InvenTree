@@ -146,7 +146,7 @@ Note that this command may need to be run as a sudo user.
 InvenTree installs multiple services that can be controlled with your local system runner (`service` or `systemctl`):
 
 - `inventree` - The main InvenTree service that controls the web server and background worker(s)
-- `inventree-web` - The InvenTree [web server](./processes.md#web-server) process
+- `inventree-web` - The InvenTree [web server](./processes.md#web-server) process(es)
 - `inventree-worker` - The InvenTree [background worker(s)](./processes.md#background-worker) process(es)
 
 #### Available Commands
