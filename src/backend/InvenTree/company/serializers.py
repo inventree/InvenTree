@@ -18,6 +18,7 @@ from importer.registry import register_importer
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.ready import isGeneratingSchema
 from InvenTree.serializers import (
+    CfCharField,
     InvenTreeCurrencySerializer,
     InvenTreeDecimalField,
     InvenTreeImageSerializerField,
@@ -274,19 +275,6 @@ class ManufacturerPartSerializer(
 
     tags = TagListSerializerField(required=False)
 
-    def __init__(self, *args, **kwargs):
-        """Initialize this serializer with extra detail fields as required."""
-        prettify = kwargs.pop('pretty', False)
-
-        super().__init__(*args, **kwargs)
-
-        if isGeneratingSchema():
-            return
-
-        # TODO INVE-T1 support complex filters
-        if prettify is not True:
-            self.fields.pop('pretty_name', None)
-
     part_detail = can_filter(
         part_serializers.PartBriefSerializer(
             source='part', many=False, read_only=True, allow_null=True
@@ -301,7 +289,9 @@ class ManufacturerPartSerializer(
         True,
     )
 
-    pretty_name = serializers.CharField(read_only=True, allow_null=True)
+    pretty_name = can_filter(
+        CfCharField(read_only=True, allow_null=True), name='prettify'
+    )
 
     manufacturer = serializers.PrimaryKeyRelatedField(
         queryset=Company.objects.filter(is_manufacturer=True)

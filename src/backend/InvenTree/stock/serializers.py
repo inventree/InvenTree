@@ -32,8 +32,9 @@ from common.settings import get_global_setting
 from generic.states.fields import InvenTreeCustomStatusSerializerMixin
 from importer.registry import register_importer
 from InvenTree.mixins import DataImportExportSerializerMixin
-from InvenTree.ready import isGeneratingSchema
 from InvenTree.serializers import (
+    CfListField,
+    FilterableListSerializer,
     InvenTreeCurrencySerializer,
     InvenTreeDecimalField,
     InvenTreeModelSerializer,
@@ -204,7 +205,6 @@ class StockItemTestResultSerializer(
         """Metaclass options."""
 
         model = StockItemTestResult
-
         fields = [
             'pk',
             'stock_item',
@@ -221,8 +221,8 @@ class StockItemTestResultSerializer(
             'template',
             'template_detail',
         ]
-
         read_only_fields = ['pk', 'user', 'date']
+        list_serializer_class = FilterableListSerializer
 
     user_detail = can_filter(
         UserSerializer(source='user', read_only=True, allow_null=True)
@@ -403,23 +403,6 @@ class StockItemSerializer(
             'serial_numbers': {'write_only': True},
         }
 
-    def __init__(self, *args, **kwargs):
-        """Add detail fields."""
-        path_detail = kwargs.pop('path_detail', False)
-        tests = kwargs.pop('tests', False)
-
-        super().__init__(*args, **kwargs)
-
-        if isGeneratingSchema():
-            return
-
-        if not tests:
-            self.fields.pop('tests', None)
-
-        # TODO INVE-T1 support complex filters
-        if not path_detail:
-            self.fields.pop('location_path', None)
-
     part = serializers.PrimaryKeyRelatedField(
         queryset=part_models.Part.objects.all(),
         many=False,
@@ -435,11 +418,14 @@ class StockItemSerializer(
         help_text=_('Parent stock item'),
     )
 
-    location_path = serializers.ListField(
-        child=serializers.DictField(),
-        source='location.get_path',
-        read_only=True,
-        allow_null=True,
+    location_path = can_filter(
+        CfListField(
+            child=serializers.DictField(),
+            source='location.get_path',
+            read_only=True,
+            allow_null=True,
+        ),
+        name='path_detail',
     )
 
     in_stock = serializers.BooleanField(read_only=True, label=_('In Stock'))
@@ -624,8 +610,10 @@ class StockItemSerializer(
         True,
     )
 
-    tests = StockItemTestResultSerializer(
-        source='test_results', many=True, read_only=True, allow_null=True
+    tests = can_filter(
+        StockItemTestResultSerializer(
+            source='test_results', many=True, read_only=True, allow_null=True
+        )
     )
 
     quantity = InvenTreeDecimalField()
@@ -1170,16 +1158,6 @@ class LocationSerializer(
 
         read_only_fields = ['barcode_hash', 'icon', 'level', 'pathstring']
 
-    def __init__(self, *args, **kwargs):
-        """Optionally add or remove extra fields."""
-        path_detail = kwargs.pop('path_detail', False)
-
-        super().__init__(*args, **kwargs)
-
-        # TODO INVE-T1 support complex filters
-        if not path_detail and not isGeneratingSchema():
-            self.fields.pop('path', None)
-
     @staticmethod
     def annotate_queryset(queryset):
         """Annotate extra information to the queryset."""
@@ -1211,11 +1189,14 @@ class LocationSerializer(
 
     tags = TagListSerializerField(required=False)
 
-    path = serializers.ListField(
-        child=serializers.DictField(),
-        source='get_path',
-        read_only=True,
-        allow_null=True,
+    path = can_filter(
+        CfListField(
+            child=serializers.DictField(),
+            source='get_path',
+            read_only=True,
+            allow_null=True,
+        ),
+        name='path_detail',
     )
 
     # explicitly set this field, so it gets included for AutoSchema

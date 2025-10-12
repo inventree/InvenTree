@@ -22,11 +22,9 @@ from sql_util.utils import SubqueryCount
 from taggit.serializers import TagListSerializerField
 
 import common.currency
-import common.settings
 import company.models
 import InvenTree.helpers
 import InvenTree.serializers
-import InvenTree.status
 import part.filters as part_filters
 import part.helpers as part_helpers
 import stock.models
@@ -34,7 +32,13 @@ import users.models
 from importer.registry import register_importer
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.ready import isGeneratingSchema
-from InvenTree.serializers import FilterableListSerializer, can_filter
+from InvenTree.serializers import (
+    CfDateTimeField,
+    CfFloatField,
+    CfListField,
+    FilterableListSerializer,
+    can_filter,
+)
 from users.serializers import UserSerializer
 
 from .models import (
@@ -86,16 +90,6 @@ class CategorySerializer(
         ]
         read_only_fields = ['level', 'pathstring']
 
-    def __init__(self, *args, **kwargs):
-        """Optionally add or remove extra fields."""
-        path_detail = kwargs.pop('path_detail', False)
-
-        super().__init__(*args, **kwargs)
-
-        # TODO INVE-T1 support complex filters
-        if not path_detail and not isGeneratingSchema():
-            self.fields.pop('path', None)
-
     @staticmethod
     def annotate_queryset(queryset):
         """Annotate extra information to the queryset."""
@@ -135,11 +129,14 @@ class CategorySerializer(
         """Return True if the category is directly "starred" by the current user."""
         return category in self.context.get('starred_categories', [])
 
-    path = serializers.ListField(
-        child=serializers.DictField(),
-        source='get_path',
-        read_only=True,
-        allow_null=True,
+    path = can_filter(
+        CfListField(
+            child=serializers.DictField(),
+            source='get_path',
+            read_only=True,
+            allow_null=True,
+        ),
+        name='path_detail',
     )
 
     icon = serializers.CharField(
@@ -352,17 +349,6 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
         read_only_fields = ['barcode_hash']
 
-    def __init__(self, *args, **kwargs):
-        """Custom initialization routine for the PartBrief serializer."""
-        pricing = kwargs.pop('pricing', True)
-
-        super().__init__(*args, **kwargs)
-
-        # TODO INVE-T1 support complex filters
-        if not pricing and not isGeneratingSchema():
-            self.fields.pop('pricing_min', None)
-            self.fields.pop('pricing_max', None)
-
     category_default_location = serializers.IntegerField(
         read_only=True, allow_null=True
     )
@@ -384,11 +370,19 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     )
 
     # Pricing fields
-    pricing_min = InvenTree.serializers.InvenTreeMoneySerializer(
-        source='pricing_data.overall_min', allow_null=True, read_only=True
+    pricing_min = can_filter(
+        InvenTree.serializers.InvenTreeMoneySerializer(
+            source='pricing_data.overall_min', allow_null=True, read_only=True
+        ),
+        True,
+        name='pricing',
     )
-    pricing_max = InvenTree.serializers.InvenTreeMoneySerializer(
-        source='pricing_data.overall_max', allow_null=True, read_only=True
+    pricing_max = can_filter(
+        InvenTree.serializers.InvenTreeMoneySerializer(
+            source='pricing_data.overall_max', allow_null=True, read_only=True
+        ),
+        True,
+        name='pricing',
     )
 
 
@@ -725,37 +719,17 @@ class PartSerializer(
         - Allows us to optionally pass extra fields based on the query.
         """
         self.starred_parts = kwargs.pop('starred_parts', [])
-        location_detail = kwargs.pop('location_detail', False)
         create = kwargs.pop('create', False)
-        pricing = kwargs.pop('pricing', True)
-        path_detail = kwargs.pop('path_detail', False)
 
         super().__init__(*args, **kwargs)
 
-        if isGeneratingSchema():
-            return
-
-        # TODO INVE-T1 support complex filters
-        if not location_detail:
-            self.fields.pop('default_location_detail', None)
-
-        # TODO INVE-T1 support complex filters
-        if not path_detail:
-            self.fields.pop('category_path', None)
-
-        if not create:
+        if not create and not isGeneratingSchema():
             # These fields are only used for the LIST API endpoint
             for f in self.skip_create_fields():
                 # Fields required for certain operations, but are not part of the model
                 if f in ['remote_image', 'existing_image']:
                     continue
                 self.fields.pop(f, None)
-
-        # TODO INVE-T1 support complex filters
-        if not pricing:
-            self.fields.pop('pricing_min', None)
-            self.fields.pop('pricing_max', None)
-            self.fields.pop('pricing_updated', None)
 
     def get_api_url(self):
         """Return the API url associated with this serializer."""
@@ -877,15 +851,21 @@ class PartSerializer(
         )
     )
 
-    category_path = serializers.ListField(
-        child=serializers.DictField(),
-        source='category.get_path',
-        read_only=True,
-        allow_null=True,
+    category_path = can_filter(
+        CfListField(
+            child=serializers.DictField(),
+            source='category.get_path',
+            read_only=True,
+            allow_null=True,
+        ),
+        name='path_detail',
     )
 
-    default_location_detail = DefaultLocationSerializer(
-        source='default_location', many=False, read_only=True, allow_null=True
+    default_location_detail = can_filter(
+        DefaultLocationSerializer(
+            source='default_location', many=False, read_only=True, allow_null=True
+        ),
+        name='location_detail',
     )
 
     category_name = serializers.CharField(
@@ -993,14 +973,24 @@ class PartSerializer(
     )
 
     # Pricing fields
-    pricing_min = InvenTree.serializers.InvenTreeMoneySerializer(
-        source='pricing_data.overall_min', allow_null=True, read_only=True
+    pricing_min = can_filter(
+        InvenTree.serializers.InvenTreeMoneySerializer(
+            source='pricing_data.overall_min', allow_null=True, read_only=True
+        ),
+        True,
+        name='pricing',
     )
-    pricing_max = InvenTree.serializers.InvenTreeMoneySerializer(
-        source='pricing_data.overall_max', allow_null=True, read_only=True
+    pricing_max = can_filter(
+        InvenTree.serializers.InvenTreeMoneySerializer(
+            source='pricing_data.overall_max', allow_null=True, read_only=True
+        ),
+        True,
+        name='pricing',
     )
-    pricing_updated = serializers.DateTimeField(
-        source='pricing_data.updated', allow_null=True, read_only=True
+    pricing_updated = can_filter(
+        CfDateTimeField(source='pricing_data.updated', allow_null=True, read_only=True),
+        True,
+        name='pricing',
     )
 
     parameters = can_filter(
@@ -1583,6 +1573,7 @@ class BomItemSubstituteSerializer(InvenTree.serializers.InvenTreeModelSerializer
 
         model = BomItemSubstitute
         fields = ['pk', 'bom_item', 'part', 'part_detail']
+        list_serializer_class = FilterableListSerializer
 
     part_detail = PartBriefSerializer(
         source='part', read_only=True, many=False, pricing=False
@@ -1646,33 +1637,6 @@ class BomItemSerializer(
         ]
         list_serializer_class = FilterableListSerializer
 
-    def __init__(self, *args, **kwargs):
-        """Determine if extra detail fields are to be annotated on this serializer.
-
-        - part_detail and sub_part_detail serializers are only included if requested.
-        - This saves a bunch of database requests
-        """
-        can_build = kwargs.pop('can_build', True)
-        pricing = kwargs.pop('pricing', True)
-        substitutes = kwargs.pop('substitutes', True)
-
-        super().__init__(*args, **kwargs)
-
-        if isGeneratingSchema():
-            return
-        if not substitutes:
-            self.fields.pop('substitutes', None)
-        if not can_build:
-            self.fields.pop('can_build')
-
-        # TODO INVE-T1 support complex filters
-        if not pricing:
-            self.fields.pop('pricing_min', None)
-            self.fields.pop('pricing_max', None)
-            self.fields.pop('pricing_min_total', None)
-            self.fields.pop('pricing_max_total', None)
-            self.fields.pop('pricing_updated', None)
-
     quantity = InvenTree.serializers.InvenTreeDecimalField(required=True)
 
     setup_quantity = InvenTree.serializers.InvenTreeDecimalField(required=False)
@@ -1696,8 +1660,8 @@ class BomItemSerializer(
         help_text=_('Select the parent assembly'),
     )
 
-    substitutes = BomItemSubstituteSerializer(
-        many=True, read_only=True, allow_null=True
+    substitutes = can_filter(
+        BomItemSubstituteSerializer(many=True, read_only=True, allow_null=True), True
     )
 
     part_detail = can_filter(
@@ -1735,28 +1699,41 @@ class BomItemSerializer(
         label=_('In Production'), read_only=True, allow_null=True
     )
 
-    can_build = serializers.FloatField(
-        label=_('Can Build'), read_only=True, allow_null=True
+    can_build = can_filter(
+        CfFloatField(label=_('Can Build'), read_only=True, allow_null=True), True
     )
 
     # Cached pricing fields
-    pricing_min = InvenTree.serializers.InvenTreeMoneySerializer(
-        source='sub_part.pricing_data.overall_min', allow_null=True, read_only=True
+    pricing_min = can_filter(
+        InvenTree.serializers.InvenTreeMoneySerializer(
+            source='sub_part.pricing_data.overall_min', allow_null=True, read_only=True
+        ),
+        True,
+        name='pricing',
     )
-
-    pricing_max = InvenTree.serializers.InvenTreeMoneySerializer(
-        source='sub_part.pricing_data.overall_max', allow_null=True, read_only=True
+    pricing_max = can_filter(
+        InvenTree.serializers.InvenTreeMoneySerializer(
+            source='sub_part.pricing_data.overall_max', allow_null=True, read_only=True
+        ),
+        True,
+        name='pricing',
     )
-
-    pricing_min_total = InvenTree.serializers.InvenTreeMoneySerializer(
-        allow_null=True, read_only=True
+    pricing_min_total = can_filter(
+        InvenTree.serializers.InvenTreeMoneySerializer(allow_null=True, read_only=True),
+        True,
+        name='pricing',
     )
-    pricing_max_total = InvenTree.serializers.InvenTreeMoneySerializer(
-        allow_null=True, read_only=True
+    pricing_max_total = can_filter(
+        InvenTree.serializers.InvenTreeMoneySerializer(allow_null=True, read_only=True),
+        True,
+        name='pricing',
     )
-
-    pricing_updated = serializers.DateTimeField(
-        source='sub_part.pricing_data.updated', allow_null=True, read_only=True
+    pricing_updated = can_filter(
+        CfDateTimeField(
+            source='sub_part.pricing_data.updated', allow_null=True, read_only=True
+        ),
+        True,
+        name='pricing',
     )
 
     # Annotated fields for available stock

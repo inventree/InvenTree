@@ -4,6 +4,7 @@ import os
 from collections import OrderedDict
 from copy import deepcopy
 from decimal import Decimal
+from typing import Optional
 
 from django.conf import settings
 from django.core.exceptions import ValidationError as DjangoValidationError
@@ -29,18 +30,18 @@ from InvenTree.fields import InvenTreeRestURLField, InvenTreeURLField
 
 
 # region path filtering
-class OptionalFilterabelSerializer:
-    """Mixin to add context to serializer."""
+class OptFilter:
+    """Filter for serializer or field."""
 
     is_filterable = None
-    is_filterable_default = None
+    is_filterable_vals = {}
 
     def __init__(self, *args, **kwargs):
         """Initialize the serializer."""
         # Set filterable options for future ref
         if self.is_filterable is None:
             self.is_filterable = kwargs.pop('is_filterable', None)
-            self.is_filterable_default = kwargs.pop('is_filterable_default', True)
+            self.is_filterable_vals = kwargs.pop('is_filterable_vals', {})
 
         # remove filter args from kwargs
         kwargs = PathScopedMixin.gather_filters(self, kwargs)
@@ -69,7 +70,7 @@ class PathScopedMixin(serializers.Serializer):
         # Actually gather the filterable fields
         fields = self.fields.items()
         self.filter_targets = {
-            k: {'serializer': a, 'default': a.is_filterable_default}
+            k: {'serializer': a, **getattr(a, 'is_filterable_vals', {})}
             for k, a in fields
             if getattr(a, 'is_filterable', None)
         }
@@ -93,16 +94,54 @@ class PathScopedMixin(serializers.Serializer):
 
 
 # Decorator for marking serialzier fields that can be filtered out
-def can_filter(func, default=False):
+def can_filter(func, default=False, name: Optional[str] = None):
     """Decorator for marking serializer fields as filterable."""
+    is_field = False
     # Check if function is holding OptionalFilterabelSerializer somehow
-    if not issubclass(func.__class__, OptionalFilterabelSerializer):
+    if not issubclass(func.__class__, OptFilter):
         raise TypeError(
             'can_filter can only be applied to OptionalFilterabelSerializer Serializers!'
         )
-    func._kwargs['is_filterable'] = True
-    func._kwargs['is_filterable_default'] = default
+
+    # Mark the function as filterable
+    values = {'default': default, 'name': name if name else func.field_name}
+
+    if is_field:
+        pass
+        # print(func)
+        # func.is_filterable = True
+        # func.is_filterable_vals = values
+    else:
+        func._kwargs['is_filterable'] = True
+        func._kwargs['is_filterable_vals'] = values
+    # Add details
+    # TODO write names
+    # TODO aggregate pop fields
     return func
+
+
+class FilterableListSerializer(OptFilter, serializers.ListSerializer):
+    """Custom ListSerializer which allows filtering of fields."""
+
+
+class CfListField(OptFilter, serializers.ListField):
+    """Custom ListField which allows filtering."""
+
+
+class CfSerializerMethodField(OptFilter, serializers.SerializerMethodField):
+    """Custom SerializerMethodField which allows filtering."""
+
+
+class CfDateTimeField(OptFilter, serializers.DateTimeField):
+    """Custom DateTimeField which allows filtering."""
+
+
+class CfFloatField(OptFilter, serializers.FloatField):
+    """Custom FloatField which allows filtering."""
+
+
+class CfCharField(OptFilter, serializers.CharField):
+    """Custom CharField which allows filtering."""
 
 
 # endregion
@@ -112,7 +151,7 @@ class EmptySerializer(serializers.Serializer):
     """Empty serializer for use in testing."""
 
 
-class InvenTreeMoneySerializer(MoneyField):
+class InvenTreeMoneySerializer(OptFilter, MoneyField):
     """Custom serializer for 'MoneyField', which ensures that passed values are numerically valid.
 
     Ref: https://github.com/django-money/django-money/blob/master/djmoney/contrib/django_rest_framework/fields.py
@@ -302,9 +341,7 @@ class DependentField(serializers.Field):
         return None
 
 
-class InvenTreeModelSerializer(
-    OptionalFilterabelSerializer, serializers.ModelSerializer
-):
+class InvenTreeModelSerializer(OptFilter, serializers.ModelSerializer):
     """Inherits the standard Django ModelSerializer class, but also ensures that the underlying model class data are checked on validation."""
 
     # Switch out URLField mapping
@@ -610,9 +647,3 @@ class RemoteImageMixin(metaclass=serializers.SerializerMetaclass):
             raise ValidationError(_('Failed to download image from remote URL'))
 
         return url
-
-
-class FilterableListSerializer(
-    OptionalFilterabelSerializer, serializers.ListSerializer
-):
-    """Custom ListSerializer which allows filtering of fields."""

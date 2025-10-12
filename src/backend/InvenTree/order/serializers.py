@@ -27,7 +27,6 @@ import part.filters as part_filters
 import part.models as part_models
 import stock.models
 import stock.serializers
-import stock.status_codes
 from common.serializers import ProjectCodeSerializer
 from company.serializers import (
     AddressBriefSerializer,
@@ -45,7 +44,6 @@ from InvenTree.helpers import (
     str2bool,
 )
 from InvenTree.mixins import DataImportExportSerializerMixin
-from InvenTree.ready import isGeneratingSchema
 from InvenTree.serializers import (
     InvenTreeCurrencySerializer,
     InvenTreeDecimalField,
@@ -505,20 +503,6 @@ class PurchaseOrderLineItemSerializer(
             'internal_part_name',
         ]
 
-    def __init__(self, *args, **kwargs):
-        """Initialization routine for the serializer."""
-        part_detail = kwargs.pop('part_detail', False)
-
-        super().__init__(*args, **kwargs)
-
-        if isGeneratingSchema():
-            return
-
-        # TODO INVE-T1 support complex filters
-        if part_detail is not True:
-            self.fields.pop('part_detail', None)
-            self.fields.pop('supplier_part_detail', None)
-
     def skip_create_fields(self):
         """Return a list of fields to skip when creating a new object."""
         return ['auto_pricing', 'merge_items', *super().skip_create_fields()]
@@ -601,12 +585,18 @@ class PurchaseOrderLineItemSerializer(
 
     total_price = serializers.FloatField(read_only=True)
 
-    part_detail = PartBriefSerializer(
-        source='get_base_part', many=False, read_only=True, allow_null=True
+    part_detail = can_filter(
+        PartBriefSerializer(
+            source='get_base_part', many=False, read_only=True, allow_null=True
+        ),
+        name='part_detail',
     )
 
-    supplier_part_detail = SupplierPartSerializer(
-        source='part', brief=True, many=False, read_only=True, allow_null=True
+    supplier_part_detail = can_filter(
+        SupplierPartSerializer(
+            source='part', brief=True, many=False, read_only=True, allow_null=True
+        ),
+        name='part_detail',
     )
 
     purchase_price = InvenTreeMoneySerializer(allow_null=True)

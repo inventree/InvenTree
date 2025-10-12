@@ -31,8 +31,8 @@ from common.serializers import ProjectCodeSerializer
 from common.settings import get_global_setting
 from generic.states.fields import InvenTreeCustomStatusSerializerMixin
 from InvenTree.mixins import DataImportExportSerializerMixin
-from InvenTree.ready import isGeneratingSchema
 from InvenTree.serializers import (
+    CfCharField,
     FilterableListSerializer,
     InvenTreeDecimalField,
     InvenTreeModelSerializer,
@@ -130,24 +130,38 @@ class BuildSerializer(
 
     overdue = serializers.BooleanField(read_only=True, default=False)
 
-    issued_by_detail = UserSerializer(source='issued_by', read_only=True)
+    issued_by_detail = can_filter(
+        UserSerializer(source='issued_by', read_only=True), True, name='user_detail'
+    )
 
-    responsible_detail = OwnerSerializer(
-        source='responsible', read_only=True, allow_null=True
+    responsible_detail = can_filter(
+        OwnerSerializer(source='responsible', read_only=True, allow_null=True),
+        True,
+        name='user_detail',
     )
 
     barcode_hash = serializers.CharField(read_only=True)
 
-    project_code_label = serializers.CharField(
-        source='project_code.code',
-        read_only=True,
-        label=_('Project Code Label'),
-        allow_null=True,
+    project_code_label = can_filter(
+        CfCharField(
+            source='project_code.code',
+            read_only=True,
+            label=_('Project Code Label'),
+            allow_null=True,
+        ),
+        True,
+        name='project_code_detail',
     )
 
-    project_code_detail = ProjectCodeSerializer(
-        source='project_code', many=False, read_only=True, allow_null=True
+    project_code_detail = can_filter(
+        ProjectCodeSerializer(
+            source='project_code', many=False, read_only=True, allow_null=True
+        ),
+        True,
+        name='project_code_detail',
     )
+
+    project_code = can_filter(CfCharField(), True, name='project_code_detail')
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -172,26 +186,9 @@ class BuildSerializer(
 
     def __init__(self, *args, **kwargs):
         """Determine if extra serializer fields are required."""
-        user_detail = kwargs.pop('user_detail', True)
-        project_code_detail = kwargs.pop('project_code_detail', True)
-
         kwargs.pop('create', False)
 
         super().__init__(*args, **kwargs)
-
-        if isGeneratingSchema():
-            return
-
-        # TODO INVE-T1 support complex filters
-        if not user_detail:
-            self.fields.pop('issued_by_detail', None)
-            self.fields.pop('responsible_detail', None)
-
-        # TODO INVE-T1 support complex filters
-        if not project_code_detail:
-            self.fields.pop('project_code', None)
-            self.fields.pop('project_code_label', None)
-            self.fields.pop('project_code_detail', None)
 
     def validate_reference(self, reference):
         """Custom validation for the Build reference field."""
@@ -1195,19 +1192,6 @@ class BuildItemSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
         ]
         list_serializer_class = FilterableListSerializer
 
-    def __init__(self, *args, **kwargs):
-        """Determine which extra details fields should be included."""
-        stock_detail = kwargs.pop('stock_detail', True)
-
-        super().__init__(*args, **kwargs)
-
-        if isGeneratingSchema():
-            return
-
-        # TODO INVE-T1 support complex filters
-        if not stock_detail:
-            self.fields.pop('stock_item_detail', None)
-
     # Export-only fields
     bom_reference = serializers.CharField(
         source='build_line.bom_item.reference', label=_('BOM Reference'), read_only=True
@@ -1245,15 +1229,19 @@ class BuildItemSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
         True,
     )
 
-    stock_item_detail = StockItemSerializer(
-        source='stock_item',
-        read_only=True,
-        allow_null=True,
-        label=_('Stock Item'),
-        part_detail=False,
-        location_detail=False,
-        supplier_part_detail=False,
-        path_detail=False,
+    stock_item_detail = can_filter(
+        StockItemSerializer(
+            source='stock_item',
+            read_only=True,
+            allow_null=True,
+            label=_('Stock Item'),
+            part_detail=False,
+            location_detail=False,
+            supplier_part_detail=False,
+            path_detail=False,
+        ),
+        True,
+        name='stock_detail',
     )
 
     location = serializers.PrimaryKeyRelatedField(
