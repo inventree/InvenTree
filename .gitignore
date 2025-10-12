@@ -111,3 +111,4 @@ api.yaml
 # web frontend (static files)
 src/backend/InvenTree/web/static
 InvenTree/web/static
+InvenTree/
