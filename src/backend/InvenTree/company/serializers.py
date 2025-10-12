@@ -328,18 +328,10 @@ class ManufacturerPartParameterSerializer(
             'units',
         ]
 
-    def __init__(self, *args, **kwargs):
-        """Initialize this serializer with extra detail fields as required."""
-        man_detail = kwargs.pop('manufacturer_part_detail', False)
-
-        super().__init__(*args, **kwargs)
-
-        # TODO INVE-T1 support complex filters
-        if not man_detail and not isGeneratingSchema():
-            self.fields.pop('manufacturer_part_detail', None)
-
-    manufacturer_part_detail = ManufacturerPartSerializer(
-        source='manufacturer_part', many=False, read_only=True, allow_null=True
+    manufacturer_part_detail = can_filter(
+        ManufacturerPartSerializer(
+            source='manufacturer_part', many=False, read_only=True, allow_null=True
+        )
     )
 
 
