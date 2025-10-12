@@ -32,6 +32,7 @@ from part.models import (
     PartParameter,
     PartParameterTemplate,
     PartRelated,
+    PartSellPriceBreak,
     PartTestTemplate,
 )
 from stock.models import StockItem, StockLocation
@@ -2061,6 +2062,80 @@ class PartListTests(PartAPITestBase):
 
             # No more than 20 DB queries
             self.assertLessEqual(len(ctx), 20)
+
+    def test_price_breaks(self):
+        """Test that price_breaks parameter works correctly and efficiently."""
+        url = reverse('api-part-list')
+
+        # Create some parts with sale price breaks
+        for i in range(5):
+            part = Part.objects.create(
+                name=f'Part with breaks {i}',
+                description='A part with sale price breaks',
+                category=PartCategory.objects.first(),
+                salable=True,
+            )
+
+            # Create multiple price breaks for each part
+            for qty, price in [(1, 10 + i), (10, 9 + i), (100, 8 + i)]:
+                PartSellPriceBreak.objects.create(
+                    part=part, quantity=qty, price=price, price_currency='USD'
+                )
+
+        # Test 1: Without price_breaks parameter (default is False, field should not be included)
+        response = self.get(
+            url, {'limit': 5, 'search': 'Part with breaks'}, expected_code=200
+        )
+
+        self.assertEqual(len(response.data['results']), 5)
+        first_result = response.data['results'][0]
+        self.assertNotIn('price_breaks', first_result)
+
+        # Test 2: Explicitly with price_breaks=false
+        with CaptureQueriesContext(connection) as ctx:
+            response = self.get(
+                url,
+                {'limit': 5, 'price_breaks': False, 'search': 'Part with breaks'},
+                expected_code=200,
+            )
+
+        first_result = response.data['results'][0]
+        self.assertNotIn('price_breaks', first_result)
+
+        query_count_without_price_breaks = len(ctx)
+
+        # Test 3: Explicitly with price_breaks=true
+        with CaptureQueriesContext(connection) as ctx:
+            response = self.get(
+                url,
+                {'limit': 5, 'price_breaks': True, 'search': 'Part with breaks'},
+                expected_code=200,
+            )
+
+        # Should have price_breaks field with data
+        for result in response.data['results']:
+            self.assertIn('price_breaks', result)
+            self.assertIsInstance(result['price_breaks'], list)
+            self.assertEqual(len(result['price_breaks']), 3)
+
+            for pb in result['price_breaks']:
+                self.assertIn('pk', pb)
+                self.assertIn('quantity', pb)
+                self.assertIn('price', pb)
+                self.assertIn('price_currency', pb)
+
+        # Make sure there's no n+1 query problem
+        query_count_with_price_breaks = len(ctx)
+        query_difference = (
+            query_count_with_price_breaks - query_count_without_price_breaks
+        )
+
+        # There are 2 additional queries, 1 for the salepricebreak subselect and 1 for Currency codes because of InvenTreeCurrencySerializer
+        self.assertLessEqual(
+            query_difference,
+            2,
+            f'Query count difference too high: {query_difference} (with: {query_count_with_price_breaks}, without: {query_count_without_price_breaks})',
+        )
 
 
 class PartNotesTests(InvenTreeAPITestCase):

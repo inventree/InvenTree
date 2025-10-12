@@ -362,14 +362,14 @@ export type StatusColumnProps = TableColumnProps & {
 };
 
 export function StatusColumn(props: StatusColumnProps): TableColumn {
-  const accessor: string = props.accessor ?? 'status';
+  const accessor: string = props.accessor ?? 'status_custom_key';
 
   return {
     accessor: 'status',
     sortable: true,
     switchable: true,
     minWidth: '50px',
-    render: TableStatusRenderer(props.model, accessor ?? 'status_custom_key'),
+    render: TableStatusRenderer(props.model, accessor),
     ...props
   };
 }

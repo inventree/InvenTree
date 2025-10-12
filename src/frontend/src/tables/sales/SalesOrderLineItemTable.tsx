@@ -171,7 +171,7 @@ export default function SalesOrderLineItemTable({
             0
           );
 
-          let color: string | undefined = undefined;
+          let color: string | undefined;
           let text = `${formatDecimal(available)}`;
 
           const extra: ReactNode[] = [];
@@ -264,7 +264,8 @@ export default function SalesOrderLineItemTable({
   const createLineFields = useSalesOrderLineItemFields({
     orderId: orderId,
     customerId: customerId,
-    create: true
+    create: true,
+    currency: currency
   });
 
   const newLine = useCreateApiFormModal({
