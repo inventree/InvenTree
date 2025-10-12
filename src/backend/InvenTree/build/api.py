@@ -41,6 +41,7 @@ from InvenTree.mixins import (
     ListCreateAPI,
     OutputOptionsMixin,
     RetrieveUpdateDestroyAPI,
+    SerializerContextMixin,
 )
 from users.models import Owner
 
@@ -333,17 +334,22 @@ class BuildMixin:
         return queryset
 
 
-class BuildList(DataExportViewMixin, BuildMixin, ListCreateAPI):
+class BuildListOutputOptions(OutputConfiguration):
+    """Output options for the BuildList endpoint."""
+
+    OPTIONS = [InvenTreeOutputOption('part_detail', default=True)]
+
+
+class BuildList(DataExportViewMixin, BuildMixin, OutputOptionsMixin, ListCreateAPI):
     """API endpoint for accessing a list of Build objects.
 
     - GET: Return list of objects (with filters)
     - POST: Create a new Build object
     """
 
+    output_options = BuildListOutputOptions
     filterset_class = BuildFilter
-
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
-
     ordering_fields = [
         'reference',
         'part__name',
@@ -361,14 +367,11 @@ class BuildList(DataExportViewMixin, BuildMixin, ListCreateAPI):
         'level',
         'external',
     ]
-
     ordering_field_aliases = {
         'reference': ['reference_int', 'reference'],
         'project_code': ['project_code__code'],
     }
-
     ordering = '-reference'
-
     search_fields = [
         'reference',
         'title',
@@ -389,14 +392,7 @@ class BuildList(DataExportViewMixin, BuildMixin, ListCreateAPI):
 
     def get_serializer(self, *args, **kwargs):
         """Add extra context information to the endpoint serializer."""
-        try:
-            part_detail = str2bool(self.request.GET.get('part_detail', True))
-        except AttributeError:
-            part_detail = True
-
-        kwargs['part_detail'] = part_detail
         kwargs['create'] = True
-
         return super().get_serializer(*args, **kwargs)
 
 
@@ -529,16 +525,11 @@ class BuildLineFilter(FilterSet):
         return queryset.exclude(flt)
 
 
-class BuildLineMixin:
+class BuildLineMixin(SerializerContextMixin):
     """Mixin class for BuildLine API endpoints."""
 
     queryset = BuildLine.objects.all()
     serializer_class = build.serializers.BuildLineSerializer
-
-    def get_serializer(self, *args, **kwargs):
-        """Return the serializer instance for this endpoint."""
-        kwargs['context'] = self.get_serializer_context()
-        return super().get_serializer(*args, **kwargs)
 
     def get_source_build(self) -> Build:
         """Return the source Build object for the BuildLine queryset.

@@ -1349,6 +1349,77 @@ class BuildOutputScrapTest(BuildAPITest):
             self.assertEqual(output.status, StockStatus.REJECTED)
             self.assertFalse(output.is_building)
 
+    def test_partial_scrap(self):
+        """Test partial scrapping of a build output."""
+        # Create a build output
+        build = Build.objects.get(pk=1)
+        output = build.create_build_output(10).first()
+
+        self.assertEqual(build.build_outputs.count(), 1)
+
+        data = {
+            'outputs': [{'output': output.pk, 'quantity': 3}],
+            'location': 1,
+            'notes': 'Invalid scrap',
+        }
+
+        # Ensure that an invalid quantity raises an error
+        for q in [-3, 0, 99]:
+            data['outputs'][0]['quantity'] = q
+            self.scrap(build.pk, data, expected_code=400)
+
+        # Partially scrap the output (with a valid quantity)
+        data['outputs'][0]['quantity'] = 3
+        self.scrap(build.pk, data)
+
+        self.assertEqual(build.build_outputs.count(), 2)
+        output.refresh_from_db()
+        self.assertEqual(output.quantity, 7)
+        self.assertTrue(output.is_building)
+
+        scrapped = output.children.first()
+        self.assertEqual(scrapped.quantity, 3)
+        self.assertEqual(scrapped.status, StockStatus.REJECTED)
+        self.assertFalse(scrapped.is_building)
+
+    def test_partial_complete(self):
+        """Test partial completion of a build output."""
+        build = Build.objects.get(pk=1)
+        output = build.create_build_output(10).first()
+        self.assertEqual(build.build_outputs.count(), 1)
+        self.assertEqual(output.quantity, 10)
+        self.assertTrue(output.is_building)
+        self.assertEqual(build.completed, 0)
+
+        url = reverse('api-build-output-complete', kwargs={'pk': build.pk})
+
+        data = {
+            'outputs': [{'output': output.pk, 'quantity': 4}],
+            'location': 1,
+            'notes': 'Partial complete',
+        }
+
+        # Ensure that an invalid quantity raises an error
+        for q in [-4, 0, 999]:
+            data['outputs'][0]['quantity'] = q
+            self.post(url, data, expected_code=400)
+
+        # Partially complete the output (with a valid quantity)
+        data['outputs'][0]['quantity'] = 4
+        self.post(url, data, expected_code=201)
+
+        build.refresh_from_db()
+        output.refresh_from_db()
+        self.assertEqual(build.completed, 4)
+        self.assertEqual(build.build_outputs.count(), 2)
+        self.assertEqual(output.quantity, 6)
+        self.assertTrue(output.is_building)
+
+        completed_output = output.children.first()
+        self.assertEqual(completed_output.quantity, 4)
+        self.assertEqual(completed_output.status, StockStatus.OK)
+        self.assertFalse(completed_output.is_building)
+
 
 class BuildLineTests(BuildAPITest):
     """Unit tests for the BuildLine API endpoints."""
@@ -1389,7 +1460,12 @@ class BuildLineTests(BuildAPITest):
 
         for param, field in test_cases:
             # Test with parameter set to 'true'
-            response = self.get(url, {param: 'true'}, expected_code=200)
+            response = self.get(
+                url,
+                {param: 'true'},
+                expected_code=200,
+                msg=f'Testing {param}=true returns anything but 200',
+            )
             self.assertIn(
                 field,
                 response.data,
@@ -1397,7 +1473,12 @@ class BuildLineTests(BuildAPITest):
             )
 
             # Test with parameter set to 'false'
-            response = self.get(url, {param: 'false'}, expected_code=200)
+            response = self.get(
+                url,
+                {param: 'false'},
+                expected_code=200,
+                msg=f'Testing {param}=false returns anything but 200',
+            )
             self.assertNotIn(
                 field,
                 response.data,
