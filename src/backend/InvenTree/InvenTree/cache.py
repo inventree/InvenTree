@@ -90,12 +90,10 @@ def get_cache_config(global_cache: bool) -> dict:
     if global_cache:
         # Build Redis URL with optional password
         password = cache_password()
-        user = cache_user()
+        user = cache_user() or ''
 
-        if user and password:
+        if password:
             redis_url = f'redis://{user}:{password}@{cache_host()}:{cache_port()}/0'
-        elif password:
-            redis_url = f'redis://:{password}@{cache_host()}:{cache_port()}/0'
         else:
             redis_url = f'redis://{cache_host()}:{cache_port()}/0'
 
