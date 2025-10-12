@@ -74,9 +74,13 @@ class PathScopedMixin(serializers.Serializer):
             for k, a in fields
             if getattr(a, 'is_filterable', None)
         }
-        self.filter_target_values = {
-            k: kwargs.pop(k, None) for k in self.filter_targets
-        }
+
+        # Remove filter args from kwargs to avoid issues with super().__init__
+        tgs_vals = {}
+        for k, v in self.filter_targets.items():
+            tgs_vals[k] = kwargs.pop(v['name'] or k, None)
+        self.filter_target_values = tgs_vals
+
         return kwargs
 
     def do_filtering(self, *args, **kwargs):
