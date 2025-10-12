@@ -269,7 +269,7 @@ def inventreeBranch():
     branch = os.environ.get('INVENTREE_PKG_BRANCH', '')
 
     if branch:
-        return branch
+        return ' '.join(branch.splitlines())
 
     if main_branch is None:
         return None
