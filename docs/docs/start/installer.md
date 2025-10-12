@@ -120,14 +120,14 @@ The used database backend can be configured with environment variables (before t
 
 ## Moving Data
 
-To change the data storage location, link the new location to `/opt/inventree/data`.
-A rough outline of steps to achieve this could be:
-- shut down the app service(s) `inventree` and webserver `nginx`
-- copy data to the new location
-- check everything was transferred successfully
-- delete the old location
-- create a symlink from the old location to the new one
-- start up the services again
+To change the data storage location, link the new location to `/opt/inventree/data`. A rough outline of steps to achieve this could be:
+
+- Shut down the app service(s) `inventree` and webserver `nginx`
+- Copy data to the new location
+- Check everything was transferred successfully
+- Delete the old location
+- Create a symlink from the old location to the new one
+- Start up the services again
 
 ## Updating InvenTree
 
