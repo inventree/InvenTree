@@ -131,7 +131,7 @@ To change the data storage location, link the new location to `/opt/inventree/da
 
 ## Updating InvenTree
 
-To update InvenTree run the following command:
+To update InvenTree run the following command, which updates the InvenTree package to the latest version:
 
 ```bash
 apt install --only-upgrade inventree
@@ -143,8 +143,36 @@ Note that this command may need to be run as a sudo user.
 
 ### Services
 
-InvenTree installs multiple services that can be controlled with your local system runner (`service` or `systemctl`).
-The service `inventree` controls everything, `inventree-web` (the [InvenTree web server](./processes.md#web-server)) and `inventree-worker` the [background worker(s)](./processes.md#background-worker).
+InvenTree installs multiple services that can be controlled with your local system runner (`service` or `systemctl`):
+
+- `inventree` - The main InvenTree service that controls the web server and background worker(s)
+- `inventree-web` - The InvenTree [web server](./processes.md#web-server) process
+- `inventree-worker` - The InvenTree [background worker](./processes.md#background-worker) process
+
+#### Available Commands
+
+To view the available management commands for the InvenTree services, run:
+
+```bash
+inventree --help
+```
+
+#### Restarting Services
+
+To restart the InvenTree services, use the following commands as necessary:
+
+```bash
+# Restart all InvenTree services
+inventree restart
+
+# Restart the web server only
+inventree restart web
+
+# Restart the worker only
+inventree stop worker
+```
+
+### Scaling Workers
 
 More instances of the worker can be instantiated from the command line. This is only meant for advanced users.
 
@@ -184,6 +212,26 @@ For example, to print InvenTree version information:
 
 ```bash
 inventree run invoke version
+```
+
+### Viewing Logs
+
+To view the logs of the InvenTree services, use the following commands:
+
+```bash
+inventree logs
+```
+
+To view just the tail of the logs, use:
+
+```bash
+inventree logs --tail
+```
+
+Or, to follow the logs in real-time:
+
+```bash
+inventree logs --follow
 ```
 
 ## Architecture
