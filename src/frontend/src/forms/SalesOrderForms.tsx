@@ -155,9 +155,9 @@ export function useSalesOrderLineItemFields({
         value: partCurrency,
         onValueChange: setPartCurrency
       },
-      _target_date: {},
-      _notes: {},
-      _link: {}
+      target_date: {},
+      notes: {},
+      link: {}
     };
 
     // Only show tax_inclusive when editing (not creating)
