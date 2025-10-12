@@ -169,7 +169,7 @@ inventree restart
 inventree restart web
 
 # Restart the worker only
-inventree stop worker
+inventree restart worker
 ```
 
 ### Scaling Workers
