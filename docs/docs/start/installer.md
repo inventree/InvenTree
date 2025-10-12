@@ -147,7 +147,7 @@ InvenTree installs multiple services that can be controlled with your local syst
 
 - `inventree` - The main InvenTree service that controls the web server and background worker(s)
 - `inventree-web` - The InvenTree [web server](./processes.md#web-server) process
-- `inventree-worker` - The InvenTree [background worker](./processes.md#background-worker) process
+- `inventree-worker` - The InvenTree [background worker(s)](./processes.md#background-worker) process(es)
 
 #### Available Commands
 
