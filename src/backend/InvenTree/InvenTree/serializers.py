@@ -123,9 +123,6 @@ def can_filter(func, default=False, name: Optional[str] = None):
     else:
         func._kwargs['is_filterable'] = True
         func._kwargs['is_filterable_vals'] = values
-    # Add details
-    # TODO write names
-    # TODO aggregate pop fields
     return func
 
 
