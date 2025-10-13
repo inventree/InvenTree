@@ -9,7 +9,7 @@ INVENTREE_API_TEXT = """
 
 v409 -> 2025-10-13: https://github.com/inventree/InvenTree/pull/10549
     - added a new query parameter for the PartsList api: price_breaks (default: false)
-    
+
 v408 -> 2025-10-13: https://github.com/inventree/InvenTree/pull/10561
     - Allow search of assembly fields in BOM API endpoint
 
