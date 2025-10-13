@@ -33,6 +33,7 @@ from generic.states.fields import InvenTreeCustomStatusSerializerMixin
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.serializers import (
     CfCharField,
+    CfIntegerField,
     FilterableListSerializer,
     InvenTreeDecimalField,
     InvenTreeModelSerializer,
@@ -161,7 +162,7 @@ class BuildSerializer(
         name='project_code_detail',
     )
 
-    project_code = can_filter(CfCharField(), True, name='project_code_detail')
+    project_code = can_filter(CfIntegerField(), True, name='project_code_detail')
 
     @staticmethod
     def annotate_queryset(queryset):
