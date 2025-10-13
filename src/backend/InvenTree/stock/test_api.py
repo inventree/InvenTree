@@ -2304,23 +2304,12 @@ class StockTrackingTest(StockAPITestCase):
 
     def test_output_options(self):
         """Test output options."""
-        # TODO use self.run_output_test
-        url = self.get_url()
-        response = self.client.get(
-            url, {'item_detail': True, 'user_detail': True, 'limit': 2}
+        self.run_output_test(
+            self.get_url(),
+            ['item_detail', 'user_detail'],
+            additional_params={'limit': 2},
+            assert_fnc=lambda x: x.data['results'][0],
         )
-
-        for item in response.data['results']:
-            self.assertIn('item_detail', item)
-            self.assertIn('user_detail', item)
-
-        response = self.client.get(
-            url, {'item_detail': False, 'user_detail': False, 'limit': 2}
-        )
-
-        for item in response.data['results']:
-            self.assertNotIn('item_detail', item)
-            self.assertNotIn('user_detail', item)
 
 
 class StockAssignTest(StockAPITestCase):
