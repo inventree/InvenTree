@@ -53,7 +53,6 @@ class OptFilter:
 class PathScopedMixin(serializers.Serializer):
     """Mixin to disable a serializer field based on kwargs passed to the view."""
 
-    no_filter = False
     _was_filtered = False
 
     def __init__(self, *args, **kwargs):
@@ -77,10 +76,13 @@ class PathScopedMixin(serializers.Serializer):
         }
 
         # Remove filter args from kwargs to avoid issues with super().__init__
+        poped_kwargs = {}  # store popped kwargs as a arg might be reused for multiple fields
         tgs_vals = {}
         for k, v in self.filter_targets.items():
             pop_ref = v['name'] or k
-            val = kwargs.pop(pop_ref, None)
+            val = kwargs.pop(pop_ref, poped_kwargs.get(pop_ref))
+            if val:
+                poped_kwargs[pop_ref] = val
             tgs_vals[k] = str2bool(val) if isinstance(val, str) else val
         self.filter_target_values = tgs_vals
 
