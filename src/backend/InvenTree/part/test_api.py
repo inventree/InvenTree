@@ -1406,7 +1406,7 @@ class PartAPITest(PartAPITestBase):
                 ('pricing', 'pricing_min'),
                 ('pricing', 'pricing_updated'),
             ],
-            assert_fnc=lambda x: x.data['results'][0],
+            assert_subset=True,
         )
 
 
