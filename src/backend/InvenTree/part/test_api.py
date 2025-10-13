@@ -1398,7 +1398,8 @@ class PartAPITest(PartAPITestBase):
     def test_output_options(self):
         """Test the output options for PartList list."""
         self.run_output_test(
-            reverse('api-part-list')[
+            reverse('api-part-list'),
+            [
                 ('location_detail', 'default_location_detail'),
                 'parameters',
                 ('path_detail', 'category_path'),
