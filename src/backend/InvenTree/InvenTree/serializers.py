@@ -27,6 +27,7 @@ import common.models as common_models
 import InvenTree.ready
 from common.currency import currency_code_default, currency_code_mappings
 from InvenTree.fields import InvenTreeRestURLField, InvenTreeURLField
+from InvenTree.helpers import str2bool
 
 
 # region path filtering
@@ -79,7 +80,8 @@ class PathScopedMixin(serializers.Serializer):
         tgs_vals = {}
         for k, v in self.filter_targets.items():
             pop_ref = v['name'] or k
-            tgs_vals[k] = kwargs.pop(pop_ref, None)
+            val = kwargs.pop(pop_ref, None)
+            tgs_vals[k] = str2bool(val) if isinstance(val, str) else val
         self.filter_target_values = tgs_vals
 
         return kwargs
