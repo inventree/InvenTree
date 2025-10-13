@@ -504,7 +504,10 @@ export function StockItemTable({
     return {
       items: table.selectedRecords,
       model: ModelType.stockitem,
-      refresh: table.refreshTable,
+      refresh: () => {
+        table.clearSelectedRecords();
+        table.refreshTable();
+      },
       filters: {
         in_stock: true
       }
