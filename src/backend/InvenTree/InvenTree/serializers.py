@@ -78,7 +78,8 @@ class PathScopedMixin(serializers.Serializer):
         # Remove filter args from kwargs to avoid issues with super().__init__
         tgs_vals = {}
         for k, v in self.filter_targets.items():
-            tgs_vals[k] = kwargs.pop(v['name'] or k, None)
+            pop_ref = v['name'] or k
+            tgs_vals[k] = kwargs.pop(pop_ref, None)
         self.filter_target_values = tgs_vals
 
         return kwargs

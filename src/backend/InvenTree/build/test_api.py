@@ -1192,6 +1192,7 @@ class BuildListTest(BuildAPITest):
     def test_output_options(self):
         """Test the output options for BuildOrderList list."""
         test_cases = [
+            ('user_detail', 'issued_by_detail'),
             ('user_detail', 'responsible_detail'),
             ('project_code_detail', 'project_code_detail'),
         ]
