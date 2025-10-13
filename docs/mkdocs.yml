@@ -132,9 +132,10 @@ nav:
     - Docker:
         - Introduction: start/docker.md
         - Installation: start/docker_install.md
+    - Installer:
+        - Installer: start/installer.md
     - Bare Metal:
         - Introduction: start/install.md
-        - Installer: start/installer.md
         - Production: start/bare_prod.md
         - Development: start/bare_dev.md
     - User Accounts: start/accounts.md

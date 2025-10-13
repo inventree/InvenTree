@@ -13,10 +13,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added `SupplierMixin` to import data from suppliers in [#9761](https://github.com/inventree/InvenTree/pull/9761)
 - Added much more detailed status information for machines to the API endpoint (including backend and frontend changes) in [#10381](https://github.com/inventree/InvenTree/pull/10381)
 - Added ability to partially complete and partially scrap build outputs in [#10499](https://github.com/inventree/InvenTree/pull/10499)
+- Added support for Redis ACL user-based authentication in [#10551](https://github.com/inventree/InvenTree/pull/10551)
 
 ### Changed
 
 - Changed site URL check to allow protocol mismatches if `INVENTREE_SITE_LAX_PROTOCOL` is set to `True` (default) in [#10454](https://github.com/inventree/InvenTree/pull/10454)
+- Changed call signature of `get_global_setting` to use `environment_key` instead of `enviroment_key` in [#10557](https://github.com/inventree/InvenTree/pull/10557)
 
 ### Removed
 

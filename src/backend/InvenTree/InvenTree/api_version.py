@@ -1,15 +1,18 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 408
+INVENTREE_API_VERSION = 409
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v408 -> 2025-06-12 : https://github.com/inventree/InvenTree/pull/9761
+v409 -> 2025-06-12 : https://github.com/inventree/InvenTree/pull/9761
     - Add supplier search and import API endpoints
     - Add part parameter bulk create API endpoint
+
+v408 -> 2025-10-13: https://github.com/inventree/InvenTree/pull/10561
+    - Allow search of assembly fields in BOM API endpoint
 
 v407 -> 2025-10-09: https://github.com/inventree/InvenTree/pull/10538
     - Breaking: Set error status code for plugin action call instead of just returning error data
