@@ -1195,6 +1195,7 @@ class BuildListTest(BuildAPITest):
             ('user_detail', 'issued_by_detail'),
             ('user_detail', 'responsible_detail'),
             ('project_code_detail', 'project_code_detail'),
+            ('project_code_detail', 'project_code'),
         ]
 
         for param, field in test_cases:
