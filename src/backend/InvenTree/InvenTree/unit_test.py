@@ -750,7 +750,7 @@ class InvenTreeAPITestCase(
             if assert_subset:
                 return response.data[0]
             if assert_fnc:
-                return assert_fnc(response.data)
+                return assert_fnc(response)
             return response.data
 
         for case in test_cases:
@@ -775,7 +775,7 @@ class InvenTreeAPITestCase(
             # Test with parameter set to 'false'
             response = self.get(
                 url,
-                {param: 'false'},
+                {param: 'false', **(additional_params or {})},
                 expected_code=200,
                 msg=f'Testing {param}=false returns anything but 200',
             )

@@ -756,7 +756,7 @@ class SupplierPriceBreakAPITest(InvenTreeAPITestCase):
             reverse('api-part-supplier-price-list'),
             ['part_detail', 'supplier_detail'],
             additional_params={'limit': 1},
-            assert_fnc=lambda x: x['results'][0],
+            assert_fnc=lambda x: x.data['results'][0],
         )
 
     def test_supplier_price_break_list(self):
