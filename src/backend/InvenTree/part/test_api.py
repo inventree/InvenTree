@@ -2695,13 +2695,10 @@ class BomItemTest(InvenTreeAPITestCase):
     # TODO add test for (pricing, pricing_min)
     def test_output_options(self):
         """Test that various output options work as expected."""
-        url = reverse('api-bom-item-detail', kwargs={'pk': 3})
-        options = ['can_build', 'part_detail', 'sub_part_detail', 'substitutes']
-        for option in options:
-            response = self.get(url, {f'{option}': True}, expected_code=200)
-            self.assertIn(option, response.data)
-            response = self.get(url, {f'{option}': False}, expected_code=200)
-            self.assertNotIn(option, response.data)
+        self.run_output_test(
+            reverse('api-bom-item-detail', kwargs={'pk': 3}),
+            ['can_build', 'part_detail', 'sub_part_detail', 'substitutes'],
+        )
 
     def test_add_bom_item(self):
         """Test that we can create a new BomItem via the API."""
