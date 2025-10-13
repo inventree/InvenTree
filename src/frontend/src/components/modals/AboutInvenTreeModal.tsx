@@ -68,27 +68,29 @@ const AboutContent = ({
   });
 
   function fillTable(lookup: AboutLookupRef[], data: any, alwaysLink = false) {
-    return lookup.map((map: AboutLookupRef, idx) => (
-      <Table.Tr key={idx}>
-        <Table.Td>{map.title}</Table.Td>
-        <Table.Td>
-          <Group justify='space-between' gap='xs'>
-            {alwaysLink ? (
-              <Anchor href={data[map.ref]} target='_blank'>
-                {data[map.ref]}
-              </Anchor>
-            ) : map.link ? (
-              <Anchor href={map.link} target='_blank'>
-                {data[map.ref]}
-              </Anchor>
-            ) : (
-              data[map.ref]
-            )}
-            {map.copy && <CopyButton value={data[map.ref]} />}
-          </Group>
-        </Table.Td>
-      </Table.Tr>
-    ));
+    return lookup
+      .filter((entry: AboutLookupRef) => !!data[entry.ref])
+      .map((entry: AboutLookupRef, idx) => (
+        <Table.Tr key={idx}>
+          <Table.Td>{entry.title}</Table.Td>
+          <Table.Td>
+            <Group justify='space-between' gap='xs'>
+              {alwaysLink ? (
+                <Anchor href={data[entry.ref]} target='_blank'>
+                  {data[entry.ref]}
+                </Anchor>
+              ) : entry.link ? (
+                <Anchor href={entry.link} target='_blank'>
+                  {data[entry.ref]}
+                </Anchor>
+              ) : (
+                data[entry.ref]
+              )}
+              {entry.copy && <CopyButton value={data[entry.ref]} />}
+            </Group>
+          </Table.Td>
+        </Table.Tr>
+      ));
   }
   /* renderer */
   if (isLoading) return <Trans>Loading</Trans>;
