@@ -1191,30 +1191,17 @@ class BuildListTest(BuildAPITest):
 
     def test_output_options(self):
         """Test the output options for BuildOrderList list."""
-        url = self.url
-        test_cases = [
-            ('project_code_detail', 'project_code'),
-            ('project_code_detail', 'project_code_detail'),
-            ('user_detail', 'responsible_detail'),
-            ('user_detail', 'issued_by_detail'),
-        ]
-
-        for param, field in test_cases:
-            # Test with parameter set to 'true'
-            response = self.get(url, {param: 'true', 'limit': 1}, expected_code=200)
-            self.assertIn(
-                field,
-                response.data['results'][0],
-                f"Field '{field}' should be present when {param}='true'",
-            )
-
-            # Test with parameter set to 'false'
-            response = self.get(url, {param: 'false', 'limit': 1}, expected_code=200)
-            self.assertNotIn(
-                field,
-                response.data['results'][0],
-                f"Field '{field}' should not be present when {param}='false'",
-            )
+        self.run_output_test(
+            self.url,
+            [
+                ('project_code_detail', 'project_code'),
+                'project_code_detail',
+                ('user_detail', 'responsible_detail'),
+                ('user_detail', 'issued_by_detail'),
+            ],
+            additional_params={'limit': 1},
+            assert_fnc=lambda x: x.data['results'][0],
+        )
 
 
 class BuildOutputCreateTest(BuildAPITest):

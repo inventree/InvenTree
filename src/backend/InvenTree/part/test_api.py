@@ -1397,31 +1397,16 @@ class PartAPITest(PartAPITestBase):
 
     def test_output_options(self):
         """Test the output options for PartList list."""
-        url = reverse('api-part-list')
-        test_cases = [
-            ('location_detail', 'default_location_detail'),
-            ('parameters', 'parameters'),
-            ('path_detail', 'category_path'),
-            ('pricing', 'pricing_min'),
-            ('pricing', 'pricing_updated'),
-        ]
-
-        for param, field in test_cases:
-            # Test with parameter set to 'true'
-            response = self.get(url, {param: 'true', 'limit': 1}, expected_code=200)
-            self.assertIn(
-                field,
-                response.data['results'][0],
-                f"Field '{field}' should be present when {param}='true'",
-            )
-
-            # Test with parameter set to 'false'
-            response = self.get(url, {param: 'false', 'limit': 1}, expected_code=200)
-            self.assertNotIn(
-                field,
-                response.data['results'][0],
-                f"Field '{field}' should not be present when {param}='false'",
-            )
+        self.run_output_test(
+            reverse('api-part-list')[
+                ('location_detail', 'default_location_detail'),
+                'parameters',
+                ('path_detail', 'category_path'),
+                ('pricing', 'pricing_min'),
+                ('pricing', 'pricing_updated'),
+            ],
+            assert_fnc=lambda x: x.data['results'][0],
+        )
 
 
 class PartCreationTests(PartAPITestBase):
@@ -2692,12 +2677,17 @@ class BomItemTest(InvenTreeAPITestCase):
         self.assertEqual(int(float(response.data['quantity'])), 57)
         self.assertEqual(response.data['note'], 'Added a note')
 
-    # TODO add test for (pricing, pricing_min)
     def test_output_options(self):
         """Test that various output options work as expected."""
         self.run_output_test(
             reverse('api-bom-item-detail', kwargs={'pk': 3}),
-            ['can_build', 'part_detail', 'sub_part_detail', 'substitutes'],
+            [
+                'can_build',
+                'part_detail',
+                'sub_part_detail',
+                'substitutes',
+                ('pricing', 'pricing_min'),
+            ],
         )
 
     def test_add_bom_item(self):
