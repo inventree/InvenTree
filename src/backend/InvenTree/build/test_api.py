@@ -1191,18 +1191,17 @@ class BuildListTest(BuildAPITest):
 
     def test_output_options(self):
         """Test the output options for BuildOrderList list."""
+        url = self.url
         test_cases = [
-            ('user_detail', 'issued_by_detail'),
-            ('user_detail', 'responsible_detail'),
-            ('project_code_detail', 'project_code_detail'),
             ('project_code_detail', 'project_code'),
+            ('project_code_detail', 'project_code_detail'),
+            ('user_detail', 'responsible_detail'),
+            ('user_detail', 'issued_by_detail'),
         ]
 
         for param, field in test_cases:
             # Test with parameter set to 'true'
-            response = self.get(
-                self.url, {param: 'true', 'limit': 1}, expected_code=200
-            )
+            response = self.get(url, {param: 'true', 'limit': 1}, expected_code=200)
             self.assertIn(
                 field,
                 response.data['results'][0],
@@ -1210,9 +1209,7 @@ class BuildListTest(BuildAPITest):
             )
 
             # Test with parameter set to 'false'
-            response = self.get(
-                self.url, {param: 'false', 'limit': 1}, expected_code=200
-            )
+            response = self.get(url, {param: 'false', 'limit': 1}, expected_code=200)
             self.assertNotIn(
                 field,
                 response.data['results'][0],
