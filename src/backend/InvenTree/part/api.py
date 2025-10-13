@@ -1643,6 +1643,11 @@ class BomList(
 
     search_fields = [
         'reference',
+        'part__name',
+        'part__description',
+        'part__IPN',
+        'part__revision',
+        'part__keywords',
         'sub_part__name',
         'sub_part__description',
         'sub_part__IPN',

@@ -43,6 +43,11 @@ def cache_password():
     return cache_setting('password', None)
 
 
+def cache_user():
+    """Return the cash username."""
+    return cache_setting('user', None)
+
+
 def is_global_cache_enabled() -> bool:
     """Check if the global cache is enabled.
 
@@ -85,9 +90,10 @@ def get_cache_config(global_cache: bool) -> dict:
     if global_cache:
         # Build Redis URL with optional password
         password = cache_password()
+        user = cache_user() or ''
 
         if password:
-            redis_url = f'redis://:{password}@{cache_host()}:{cache_port()}/0'
+            redis_url = f'redis://{user}:{password}@{cache_host()}:{cache_port()}/0'
         else:
             redis_url = f'redis://{cache_host()}:{cache_port()}/0'
 
