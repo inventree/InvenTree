@@ -148,6 +148,10 @@ class CfCharField(OptFilter, serializers.CharField):
     """Custom CharField which allows filtering."""
 
 
+class CfIntegerField(OptFilter, serializers.IntegerField):
+    """Custom IntegerField which allows filtering."""
+
+
 # endregion
 
 
