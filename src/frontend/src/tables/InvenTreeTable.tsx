@@ -352,6 +352,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
   // Reset the pagination state when the search term changes
   useEffect(() => {
     tableState.setPage(1);
+    tableState.clearSelectedRecords();
   }, [
     tableState.searchTerm,
     tableState.filterSet.activeFilters,

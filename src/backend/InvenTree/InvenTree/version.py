@@ -269,7 +269,7 @@ def inventreeBranch():
     branch = os.environ.get('INVENTREE_PKG_BRANCH', '')
 
     if branch:
-        return branch
+        return ' '.join(branch.splitlines())
 
     if main_branch is None:
         return None
@@ -298,7 +298,7 @@ def inventree_identifier(override_announce: bool = False):
     from common.settings import get_global_setting
 
     if override_announce or get_global_setting(
-        'INVENTREE_ANNOUNCE_ID', enviroment_key='INVENTREE_ANNOUNCE_ID'
+        'INVENTREE_ANNOUNCE_ID', environment_key='INVENTREE_ANNOUNCE_ID'
     ):
         return get_global_setting('INVENTREE_INSTANCE_ID', default='')
     return None
