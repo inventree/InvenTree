@@ -165,6 +165,7 @@ class BuildSerializer(
     project_code = can_filter(
         CfIntegerField(
             allow_null=True,
+            required=False,
             label=_('Project Code'),
             help_text=_('Project code for this build order'),
         ),
