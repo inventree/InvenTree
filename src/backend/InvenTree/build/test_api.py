@@ -1189,6 +1189,34 @@ class BuildListTest(BuildAPITest):
 
         self.assertEqual(len(builds), 20)
 
+    def test_output_options(self):
+        """Test the output options for BuildOrderList list."""
+        test_cases = [
+            ('user_detail', 'responsible_detail'),
+            ('project_code_detail', 'project_code_detail'),
+        ]
+
+        for param, field in test_cases:
+            # Test with parameter set to 'true'
+            response = self.get(
+                self.url, {param: 'true', 'limit': 1}, expected_code=200
+            )
+            self.assertIn(
+                field,
+                response.data['results'][0],
+                f"Field '{field}' should be present when {param}='true'",
+            )
+
+            # Test with parameter set to 'false'
+            response = self.get(
+                self.url, {param: 'false', 'limit': 1}, expected_code=200
+            )
+            self.assertNotIn(
+                field,
+                response.data['results'][0],
+                f"Field '{field}' should not be present when {param}='false'",
+            )
+
 
 class BuildOutputCreateTest(BuildAPITest):
     """Unit test for creating build output via API."""
