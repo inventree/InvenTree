@@ -315,12 +315,9 @@ class PurchaseOrderTest(OrderTest):
 
     def test_output_options(self):
         """Test the various output options for the PurchaseOrder detail endpoint."""
-        url = reverse('api-po-detail', kwargs={'pk': 1})
-        response = self.get(url, {'supplier_detail': 'true'}, expected_code=200)
-        self.assertIn('supplier_detail', response.data)
-
-        response = self.get(url, {'supplier_detail': 'false'}, expected_code=200)
-        self.assertNotIn('supplier_detail', response.data)
+        self.run_output_test(
+            reverse('api-po-detail', kwargs={'pk': 1}), ['supplier_detail']
+        )
 
     def test_po_operations(self):
         """Test that we can create / edit and delete a PurchaseOrder via the API."""
@@ -863,17 +860,10 @@ class PurchaseOrderLineItemTest(OrderTest):
 
     def test_output_options(self):
         """Test PurchaseOrderLineItem output option endpoint."""
-        url = reverse('api-po-line-detail', kwargs={'pk': 1})
-
-        response = self.get(url, {'part_detail': 'true'}, expected_code=200)
-        self.assertIn('part_detail', response.data)
-        response = self.get(url, {'part_detail': 'false'}, expected_code=200)
-        self.assertNotIn('part_detail', response.data)
-
-        response = self.get(url, {'order_detail': 'true'}, expected_code=200)
-        self.assertIn('order_detail', response.data)
-        response = self.get(url, {'order_detail': 'false'}, expected_code=200)
-        self.assertNotIn('order_detail', response.data)
+        self.run_output_test(
+            reverse('api-po-line-detail', kwargs={'pk': 1}),
+            ['part_detail', 'order_detail'],
+        )
 
 
 class PurchaseOrderDownloadTest(OrderTest):
@@ -1774,11 +1764,9 @@ class SalesOrderTest(OrderTest):
 
     def test_output_options(self):
         """Test the output options for the SalesOrder detail endpoint."""
-        url = reverse('api-so-detail', kwargs={'pk': 1})
-        response = self.get(url, {'customer_detail': True}, expected_code=200)
-        self.assertIn('customer_detail', response.data)
-        response = self.get(url, {'customer_detail': False}, expected_code=200)
-        self.assertNotIn('customer_detail', response.data)
+        self.run_output_test(
+            reverse('api-so-detail', kwargs={'pk': 1}), ['customer_detail']
+        )
 
 
 class SalesOrderLineItemTest(OrderTest):
@@ -1943,14 +1931,10 @@ class SalesOrderLineItemTest(OrderTest):
 
     def test_output_options(self):
         """Test the various output options for the SalesOrderLineItem detail endpoint."""
-        url = reverse('api-so-line-detail', kwargs={'pk': 1})
-
-        options = ['part_detail', 'order_detail', 'customer_detail']
-        for option in options:
-            response = self.get(url, {f'{option}': True}, expected_code=200)
-            self.assertIn(option, response.data)
-            response = self.get(url, {f'{option}': False}, expected_code=200)
-            self.assertNotIn(option, response.data)
+        self.run_output_test(
+            reverse('api-so-line-detail', kwargs={'pk': 1}),
+            ['part_detail', 'order_detail', 'customer_detail'],
+        )
 
 
 class SalesOrderDownloadTest(OrderTest):
@@ -2296,20 +2280,17 @@ class SalesOrderAllocateTest(OrderTest):
 
     def test_output_options(self):
         """Test the various output options for the SalesOrderAllocation detail endpoint."""
-        url = reverse('api-so-allocation-list')
-
-        options = [
-            'part_detail',
-            'item_detail',
-            'order_detail',
-            'location_detail',
-            'customer_detail',
-        ]
-        for option in options:
-            response = self.get(url, {f'{option}': True}, expected_code=200)
-            self.assertIn(option, response.data[0])
-            response = self.get(url, {f'{option}': False}, expected_code=200)
-            self.assertNotIn(option, response.data[0])
+        self.run_output_test(
+            reverse('api-so-allocation-list'),
+            [
+                'part_detail',
+                'item_detail',
+                'order_detail',
+                'location_detail',
+                'customer_detail',
+            ],
+            assert_subset=True,
+        )
 
 
 class ReturnOrderTests(InvenTreeAPITestCase):
@@ -2679,14 +2660,9 @@ class ReturnOrderTests(InvenTreeAPITestCase):
 
     def test_output_options(self):
         """Test the various output options for the ReturnOrder detail endpoint."""
-        url = reverse('api-return-order-detail', kwargs={'pk': 1})
-
-        options = ['customer_detail']
-        for option in options:
-            response = self.get(url, {f'{option}': True}, expected_code=200)
-            self.assertIn(option, response.data)
-            response = self.get(url, {f'{option}': False}, expected_code=200)
-            self.assertNotIn(option, response.data)
+        self.run_output_test(
+            reverse('api-return-order-detail', kwargs={'pk': 1}), ['customer_detail']
+        )
 
 
 class ReturnOrderLineItemTests(InvenTreeAPITestCase):
@@ -2749,17 +2725,10 @@ class ReturnOrderLineItemTests(InvenTreeAPITestCase):
 
     def test_output_options(self):
         """Test output options for detail endpoint."""
-        url = reverse('api-return-order-line-detail', kwargs={'pk': 1})
-        options = ['part_detail', 'item_detail', 'order_detail']
-
-        for option in options:
-            # Test with option enabled
-            response = self.get(url, {option: True}, expected_code=200)
-            self.assertIn(option, response.data)
-
-            # Test with option disabled
-            response = self.get(url, {option: False}, expected_code=200)
-            self.assertNotIn(option, response.data)
+        self.run_output_test(
+            reverse('api-return-order-line-detail', kwargs={'pk': 1}),
+            ['part_detail', 'item_detail', 'order_detail'],
+        )
 
     def test_update(self):
         """Test updating ReturnOrderLineItem."""

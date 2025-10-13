@@ -8,7 +8,7 @@ import re
 import time
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Union
 from unittest import mock
 
 from django.contrib.auth import get_user_model
@@ -727,6 +727,53 @@ class InvenTreeAPITestCase(
     def assertDictContainsSubset(self, a, b):
         """Assert that dictionary 'a' is a subset of dictionary 'b'."""
         self.assertEqual(b, b | a)
+
+    def run_output_test(
+        self,
+        url: str,
+        test_cases: list[Union[tuple[str, str], str]],
+        additional_params: Optional[dict] = None,
+        assert_subset: bool = False,
+    ):
+        """Run a series of tests against the provided URL.
+
+        Arguments:
+            url: The URL to test
+            test_cases: A list of tuples of the form (parameter_name, response_field_name)
+            additional_params: Additional request parameters to include in the request
+            assert_subset: If True, make the assertion against the first item in the response rather than the entire response
+        """
+        for case in test_cases:
+            if isinstance(case, str):
+                param = case
+                field = case
+            else:
+                param, field = case
+            # Test with parameter set to 'true'
+            response = self.get(
+                url,
+                {param: 'true', **(additional_params or {})},
+                expected_code=200,
+                msg=f'Testing {param}=true returns anything but 200',
+            )
+            self.assertIn(
+                field,
+                response.data if not assert_subset else response.data[0],
+                f"Field '{field}' should be present when {param}=true",
+            )
+
+            # Test with parameter set to 'false'
+            response = self.get(
+                url,
+                {param: 'false'},
+                expected_code=200,
+                msg=f'Testing {param}=false returns anything but 200',
+            )
+            self.assertNotIn(
+                field,
+                response.data if not assert_subset else response.data[0],
+                f"Field '{field}' should NOT be present when {param}=false",
+            )
 
 
 @override_settings(
