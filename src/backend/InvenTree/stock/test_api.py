@@ -266,7 +266,7 @@ class StockLocationTest(StockAPITestCase):
     def test_output_options(self):
         """Test output options."""
         self.run_output_test(
-            reverse('api-location-detail', kwargs={'pk': 1}), ['path_detail']
+            reverse('api-location-detail', kwargs={'pk': 1}), [('path_detail', 'path')]
         )
 
     def test_stock_location_structural(self):

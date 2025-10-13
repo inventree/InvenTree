@@ -8,7 +8,7 @@ import re
 import time
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Optional, Union
+from typing import Callable, Optional, Union
 from unittest import mock
 
 from django.contrib.auth import get_user_model
@@ -734,6 +734,7 @@ class InvenTreeAPITestCase(
         test_cases: list[Union[tuple[str, str], str]],
         additional_params: Optional[dict] = None,
         assert_subset: bool = False,
+        assert_fnc: Optional[Callable] = None,
     ):
         """Run a series of tests against the provided URL.
 
@@ -742,7 +743,16 @@ class InvenTreeAPITestCase(
             test_cases: A list of tuples of the form (parameter_name, response_field_name)
             additional_params: Additional request parameters to include in the request
             assert_subset: If True, make the assertion against the first item in the response rather than the entire response
+            assert_fnc: If provided, call this function with the response data and make the assertion against the return value
         """
+
+        def get_response(response):
+            if assert_subset:
+                return response.data[0]
+            if assert_fnc:
+                return assert_fnc(response.data)
+            return response.data
+
         for case in test_cases:
             if isinstance(case, str):
                 param = case
@@ -758,7 +768,7 @@ class InvenTreeAPITestCase(
             )
             self.assertIn(
                 field,
-                response.data if not assert_subset else response.data[0],
+                get_response(response),
                 f"Field '{field}' should be present when {param}=true",
             )
 
@@ -771,7 +781,7 @@ class InvenTreeAPITestCase(
             )
             self.assertNotIn(
                 field,
-                response.data if not assert_subset else response.data[0],
+                get_response(response),
                 f"Field '{field}' should NOT be present when {param}=false",
             )
 
