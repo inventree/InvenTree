@@ -102,7 +102,6 @@ class BuildSerializer(
             'priority',
             'level',
         ]
-
         read_only_fields = [
             'completed',
             'creation_date',
@@ -111,6 +110,7 @@ class BuildSerializer(
             'status_text',
             'level',
         ]
+        list_serializer_class = FilterableListSerializer
 
     reference = serializers.CharField(required=True)
 

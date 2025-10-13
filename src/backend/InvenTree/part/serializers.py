@@ -622,10 +622,12 @@ class DefaultLocationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
 @register_importer()
 class PartSerializer(
+    InvenTree.serializers.PathScopedMixin,
     DataImportExportSerializerMixin,
     InvenTree.serializers.NotesFieldMixin,
     InvenTree.serializers.RemoteImageMixin,
-    InvenTree.serializers.InvenTreeTagModelSerializer,
+    InvenTree.serializers.InvenTreeTaggitSerializer,
+    InvenTree.serializers.BareInvenTreeModelSerializer,
 ):
     """Serializer for complete detail information of a part.
 
@@ -708,8 +710,8 @@ class PartSerializer(
             'copy_category_parameters',
             'tags',
         ]
-
         read_only_fields = ['barcode_hash', 'creation_date', 'creation_user']
+        # list_serializer_class = FilterableListSerializer
 
     tags = TagListSerializerField(required=False)
 
@@ -719,11 +721,38 @@ class PartSerializer(
         - Allows us to optionally pass extra fields based on the query.
         """
         self.starred_parts = kwargs.pop('starred_parts', [])
+        # category_detail = kwargs.pop('category_detail', False)
+        # location_detail = kwargs.pop('location_detail', False)
+        # parameters = kwargs.pop('parameters', False)
         create = kwargs.pop('create', False)
+        # pricing = kwargs.pop('pricing', True)
+        # path_detail = kwargs.pop('path_detail', False)
 
         super().__init__(*args, **kwargs)
 
-        if not create and not isGeneratingSchema():
+        if isGeneratingSchema():
+            return
+
+        """
+        if not category_detail:
+            self.fields.pop('category_detail', None)
+
+        if not location_detail:
+            self.fields.pop('default_location_detail', None)
+
+        if not parameters:
+            self.fields.pop('parameters', None)
+
+        if not path_detail:
+            self.fields.pop('category_path', None)
+
+        if not pricing:
+            self.fields.pop('pricing_min', None)
+            self.fields.pop('pricing_max', None)
+            self.fields.pop('pricing_updated', None)
+        """
+
+        if not create:
             # These fields are only used for the LIST API endpoint
             for f in self.skip_create_fields():
                 # Fields required for certain operations, but are not part of the model
