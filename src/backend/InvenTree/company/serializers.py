@@ -290,7 +290,7 @@ class ManufacturerPartSerializer(
     )
 
     pretty_name = can_filter(
-        CfCharField(read_only=True, allow_null=True), name='prettify'
+        CfCharField(read_only=True, allow_null=True), name='pretty'
     )
 
     manufacturer = serializers.PrimaryKeyRelatedField(

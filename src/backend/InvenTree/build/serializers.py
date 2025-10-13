@@ -162,7 +162,15 @@ class BuildSerializer(
         name='project_code_detail',
     )
 
-    project_code = can_filter(CfIntegerField(), True, name='project_code_detail')
+    project_code = can_filter(
+        CfIntegerField(
+            allow_null=True,
+            label=_('Project Code'),
+            help_text=_('Project code for this build order'),
+        ),
+        True,
+        name='project_code_detail',
+    )
 
     @staticmethod
     def annotate_queryset(queryset):
