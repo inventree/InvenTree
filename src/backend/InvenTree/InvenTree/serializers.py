@@ -39,15 +39,10 @@ class OptFilter:
 
     def __init__(self, *args, **kwargs):
         """Initialize the serializer."""
-        # Set filterable options for future ref
-        if self.is_filterable is None:
+        if self.is_filterable is None:  # Materialize parameters for later usage
             self.is_filterable = kwargs.pop('is_filterable', None)
             self.is_filterable_vals = kwargs.pop('is_filterable_vals', {})
-
-        # remove filter args from kwargs
-        # TODO remove: kwargs = PathScopedMixin.gather_filters(self, kwargs)
         super().__init__(*args, **kwargs)
-        # TODO remove: PathScopedMixin.do_filtering(self, *args, **kwargs)
 
 
 class PathScopedMixin:
@@ -86,17 +81,16 @@ class PathScopedMixin:
             tgs_vals[k] = str2bool(val) if isinstance(val, str) else val
         self.filter_target_values = tgs_vals
 
-        # TODO remove
         if len(self.filter_targets) == 0:
-            raise ValueError('No filter targets found')
+            raise Exception(
+                'INVE-W999: No filter targets found in fields, remove `PathScopedMixin`'
+            )
 
         return kwargs
 
     def do_filtering(self, *args, **kwargs):
         """Do the actual filtering."""
-        if InvenTree.ready.isGeneratingSchema() or not hasattr(
-            self, 'filter_target_values'
-        ):
+        if not hasattr(self, 'filter_target_values'):
             return
 
         # Throw out fields which are not requested
@@ -109,28 +103,22 @@ class PathScopedMixin:
 # Decorator for marking serialzier fields that can be filtered out
 def can_filter(func, default=False, name: Optional[str] = None):
     """Decorator for marking serializer fields as filterable."""
-    is_field = False
-    # Check if function is holding OptionalFilterabelSerializer somehow
+    # Ensure this function can be actually filteres
     if not issubclass(func.__class__, OptFilter):
         raise TypeError(
-            'can_filter can only be applied to OptionalFilterabelSerializer Serializers!'
+            'INVE-W999: `can_filter` can only be applied to serializers that contain `OptFilter` mixin!'
         )
 
     # Mark the function as filterable
-    values = {'default': default, 'name': name if name else func.field_name}
-
-    if is_field:
-        pass
-        # print(func)
-        # func.is_filterable = True
-        # func.is_filterable_vals = values
-    else:
-        func._kwargs['is_filterable'] = True
-        func._kwargs['is_filterable_vals'] = values
+    func._kwargs['is_filterable'] = True
+    func._kwargs['is_filterable_vals'] = {
+        'default': default,
+        'name': name if name else func.field_name,
+    }
     return func
 
 
-class FilterableListSerializer(OptFilter, serializers.ListSerializer):
+class FilterableListSerializer(OptFilter, PathScopedMixin, serializers.ListSerializer):
     """Custom ListSerializer which allows filtering of fields."""
 
 
