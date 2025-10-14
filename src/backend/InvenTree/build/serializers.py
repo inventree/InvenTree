@@ -38,6 +38,7 @@ from InvenTree.serializers import (
     InvenTreeDecimalField,
     InvenTreeModelSerializer,
     NotesFieldMixin,
+    PathScopedMixin,
     can_filter,
 )
 from stock.generators import generate_batch_code
@@ -55,6 +56,7 @@ from .status_codes import BuildStatus
 
 
 class BuildSerializer(
+    PathScopedMixin,
     NotesFieldMixin,
     DataImportExportSerializerMixin,
     InvenTreeCustomStatusSerializerMixin,
@@ -1156,7 +1158,9 @@ class BuildAutoAllocationSerializer(serializers.Serializer):
             raise ValidationError(_('Failed to start auto-allocation task'))
 
 
-class BuildItemSerializer(DataImportExportSerializerMixin, InvenTreeModelSerializer):
+class BuildItemSerializer(
+    PathScopedMixin, DataImportExportSerializerMixin, InvenTreeModelSerializer
+):
     """Serializes a BuildItem object, which is an allocation of a stock item against a build order."""
 
     export_child_fields = [
@@ -1291,7 +1295,9 @@ class BuildItemSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
     quantity = InvenTreeDecimalField(label=_('Allocated Quantity'))
 
 
-class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSerializer):
+class BuildLineSerializer(
+    PathScopedMixin, DataImportExportSerializerMixin, InvenTreeModelSerializer
+):
     """Serializer for a BuildItem object."""
 
     export_exclude_fields = ['allocations']

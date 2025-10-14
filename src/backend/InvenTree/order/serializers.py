@@ -303,6 +303,7 @@ class AbstractExtraLineMeta:
 
 @register_importer()
 class PurchaseOrderSerializer(
+    PathScopedMixin,
     NotesFieldMixin,
     TotalPriceMixin,
     InvenTreeCustomStatusSerializerMixin,
@@ -462,6 +463,7 @@ class PurchaseOrderIssueSerializer(OrderAdjustSerializer):
 
 @register_importer()
 class PurchaseOrderLineItemSerializer(
+    PathScopedMixin,
     DataImportExportSerializerMixin,
     AbstractLineItemSerializer,
     InvenTreeModelSerializer,
@@ -695,7 +697,7 @@ class PurchaseOrderLineItemSerializer(
 
 @register_importer()
 class PurchaseOrderExtraLineSerializer(
-    AbstractExtraLineSerializer, InvenTreeModelSerializer
+    PathScopedMixin, AbstractExtraLineSerializer, InvenTreeModelSerializer
 ):
     """Serializer for a PurchaseOrderExtraLine object."""
 
@@ -958,6 +960,7 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
 
 @register_importer()
 class SalesOrderSerializer(
+    PathScopedMixin,
     NotesFieldMixin,
     TotalPriceMixin,
     InvenTreeCustomStatusSerializerMixin,
@@ -1051,9 +1054,9 @@ class SalesOrderIssueSerializer(OrderAdjustSerializer):
 
 @register_importer()
 class SalesOrderLineItemSerializer(
+    PathScopedMixin,
     DataImportExportSerializerMixin,
     AbstractLineItemSerializer,
-    PathScopedMixin,
     InvenTreeModelSerializer,
 ):
     """Serializer for a SalesOrderLineItem object."""
@@ -1219,7 +1222,9 @@ class SalesOrderLineItemSerializer(
 
 
 @register_importer()
-class SalesOrderShipmentSerializer(NotesFieldMixin, InvenTreeModelSerializer):
+class SalesOrderShipmentSerializer(
+    PathScopedMixin, NotesFieldMixin, InvenTreeModelSerializer
+):
     """Serializer for the SalesOrderShipment class."""
 
     class Meta:
@@ -1265,7 +1270,7 @@ class SalesOrderShipmentSerializer(NotesFieldMixin, InvenTreeModelSerializer):
     )
 
 
-class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
+class SalesOrderAllocationSerializer(PathScopedMixin, InvenTreeModelSerializer):
     """Serializer for the SalesOrderAllocation model.
 
     This includes some fields from the related model objects.
@@ -1781,7 +1786,7 @@ class SalesOrderShipmentAllocationSerializer(serializers.Serializer):
 
 @register_importer()
 class SalesOrderExtraLineSerializer(
-    AbstractExtraLineSerializer, InvenTreeModelSerializer
+    PathScopedMixin, AbstractExtraLineSerializer, InvenTreeModelSerializer
 ):
     """Serializer for a SalesOrderExtraLine object."""
 
@@ -1799,6 +1804,7 @@ class SalesOrderExtraLineSerializer(
 
 @register_importer()
 class ReturnOrderSerializer(
+    PathScopedMixin,
     NotesFieldMixin,
     InvenTreeCustomStatusSerializerMixin,
     AbstractOrderSerializer,
@@ -1991,6 +1997,7 @@ class ReturnOrderReceiveSerializer(serializers.Serializer):
 
 @register_importer()
 class ReturnOrderLineItemSerializer(
+    PathScopedMixin,
     DataImportExportSerializerMixin,
     AbstractLineItemSerializer,
     InvenTreeModelSerializer,
@@ -2049,7 +2056,7 @@ class ReturnOrderLineItemSerializer(
 
 @register_importer()
 class ReturnOrderExtraLineSerializer(
-    AbstractExtraLineSerializer, InvenTreeModelSerializer
+    PathScopedMixin, AbstractExtraLineSerializer, InvenTreeModelSerializer
 ):
     """Serializer for a ReturnOrderExtraLine object."""
 

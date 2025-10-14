@@ -45,12 +45,12 @@ class OptFilter:
             self.is_filterable_vals = kwargs.pop('is_filterable_vals', {})
 
         # remove filter args from kwargs
-        kwargs = PathScopedMixin.gather_filters(self, kwargs)
+        # TODO remove: kwargs = PathScopedMixin.gather_filters(self, kwargs)
         super().__init__(*args, **kwargs)
-        PathScopedMixin.do_filtering(self, *args, **kwargs)
+        # TODO remove: PathScopedMixin.do_filtering(self, *args, **kwargs)
 
 
-class PathScopedMixin(serializers.Serializer):
+class PathScopedMixin:
     """Mixin to disable a serializer field based on kwargs passed to the view."""
 
     _was_filtered = False
@@ -85,6 +85,10 @@ class PathScopedMixin(serializers.Serializer):
                 poped_kwargs[pop_ref] = val
             tgs_vals[k] = str2bool(val) if isinstance(val, str) else val
         self.filter_target_values = tgs_vals
+
+        # TODO remove
+        if len(self.filter_targets) == 0:
+            raise ValueError('No filter targets found')
 
         return kwargs
 

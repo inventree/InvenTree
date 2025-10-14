@@ -37,6 +37,7 @@ from InvenTree.serializers import (
     CfFloatField,
     CfListField,
     FilterableListSerializer,
+    PathScopedMixin,
     can_filter,
 )
 from users.serializers import UserSerializer
@@ -63,7 +64,9 @@ logger = structlog.get_logger('inventree')
 
 @register_importer()
 class CategorySerializer(
-    DataImportExportSerializerMixin, InvenTree.serializers.InvenTreeModelSerializer
+    PathScopedMixin,
+    DataImportExportSerializerMixin,
+    InvenTree.serializers.InvenTreeModelSerializer,
 ):
     """Serializer for PartCategory."""
 
@@ -311,7 +314,9 @@ class PartParameterTemplateSerializer(
         return queryset.annotate(parts=SubqueryCount('instances'))
 
 
-class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+class PartBriefSerializer(
+    PathScopedMixin, InvenTree.serializers.InvenTreeModelSerializer
+):
     """Serializer for Part (brief detail)."""
 
     class Meta:
@@ -388,7 +393,9 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
 @register_importer()
 class PartParameterSerializer(
-    DataImportExportSerializerMixin, InvenTree.serializers.InvenTreeModelSerializer
+    PathScopedMixin,
+    DataImportExportSerializerMixin,
+    InvenTree.serializers.InvenTreeModelSerializer,
 ):
     """JSON serializers for the PartParameter model."""
 
@@ -622,7 +629,7 @@ class DefaultLocationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
 @register_importer()
 class PartSerializer(
-    InvenTree.serializers.PathScopedMixin,
+    PathScopedMixin,
     DataImportExportSerializerMixin,
     InvenTree.serializers.NotesFieldMixin,
     InvenTree.serializers.RemoteImageMixin,
@@ -1611,7 +1618,9 @@ class BomItemSubstituteSerializer(InvenTree.serializers.InvenTreeModelSerializer
 
 @register_importer()
 class BomItemSerializer(
-    DataImportExportSerializerMixin, InvenTree.serializers.InvenTreeModelSerializer
+    PathScopedMixin,
+    DataImportExportSerializerMixin,
+    InvenTree.serializers.InvenTreeModelSerializer,
 ):
     """Serializer for BomItem object."""
 

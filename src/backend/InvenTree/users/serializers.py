@@ -11,6 +11,7 @@ from InvenTree.serializers import (
     CfSerializerMethodField,
     FilterableListSerializer,
     InvenTreeModelSerializer,
+    PathScopedMixin,
     can_filter,
 )
 
@@ -238,7 +239,7 @@ class ApiTokenSerializer(InvenTreeModelSerializer):
     user_detail = UserSerializer(source='user', read_only=True)
 
 
-class GroupSerializer(InvenTreeModelSerializer):
+class GroupSerializer(PathScopedMixin, InvenTreeModelSerializer):
     """Serializer for a 'Group'."""
 
     class Meta:

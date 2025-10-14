@@ -197,7 +197,9 @@ class LocationBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
 @register_importer()
 class StockItemTestResultSerializer(
-    DataImportExportSerializerMixin, InvenTree.serializers.InvenTreeModelSerializer
+    PathScopedMixin,
+    DataImportExportSerializerMixin,
+    InvenTree.serializers.InvenTreeModelSerializer,
 ):
     """Serializer for the StockItemTestResult model."""
 
@@ -299,6 +301,7 @@ class StockItemTestResultSerializer(
 
 @register_importer()
 class StockItemSerializer(
+    PathScopedMixin,
     DataImportExportSerializerMixin,
     InvenTreeCustomStatusSerializerMixin,
     InvenTree.serializers.InvenTreeTagModelSerializer,
@@ -1125,7 +1128,9 @@ class LocationTreeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
 @register_importer()
 class LocationSerializer(
-    DataImportExportSerializerMixin, InvenTree.serializers.InvenTreeTagModelSerializer
+    PathScopedMixin,
+    DataImportExportSerializerMixin,
+    InvenTree.serializers.InvenTreeTagModelSerializer,
 ):
     """Detailed information about a stock location."""
 
@@ -1210,8 +1215,8 @@ class LocationSerializer(
 
 @register_importer()
 class StockTrackingSerializer(
-    DataImportExportSerializerMixin,
     PathScopedMixin,
+    DataImportExportSerializerMixin,
     InvenTree.serializers.InvenTreeModelSerializer,
 ):
     """Serializer for StockItemTracking model."""

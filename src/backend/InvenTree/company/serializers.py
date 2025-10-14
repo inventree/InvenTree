@@ -26,6 +26,7 @@ from InvenTree.serializers import (
     InvenTreeMoneySerializer,
     InvenTreeTagModelSerializer,
     NotesFieldMixin,
+    PathScopedMixin,
     RemoteImageMixin,
     can_filter,
 )
@@ -250,7 +251,10 @@ class ContactSerializer(DataImportExportSerializerMixin, InvenTreeModelSerialize
 
 @register_importer()
 class ManufacturerPartSerializer(
-    DataImportExportSerializerMixin, InvenTreeTagModelSerializer, NotesFieldMixin
+    PathScopedMixin,
+    DataImportExportSerializerMixin,
+    InvenTreeTagModelSerializer,
+    NotesFieldMixin,
 ):
     """Serializer for ManufacturerPart object."""
 
@@ -300,7 +304,7 @@ class ManufacturerPartSerializer(
 
 @register_importer()
 class ManufacturerPartParameterSerializer(
-    DataImportExportSerializerMixin, InvenTreeModelSerializer
+    PathScopedMixin, DataImportExportSerializerMixin, InvenTreeModelSerializer
 ):
     """Serializer for the ManufacturerPartParameter model."""
 
@@ -524,7 +528,7 @@ class SupplierPartSerializer(
 
 @register_importer()
 class SupplierPriceBreakSerializer(
-    DataImportExportSerializerMixin, InvenTreeModelSerializer
+    PathScopedMixin, DataImportExportSerializerMixin, InvenTreeModelSerializer
 ):
     """Serializer for SupplierPriceBreak object."""
 
