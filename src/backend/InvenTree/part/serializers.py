@@ -92,6 +92,7 @@ class CategorySerializer(
             'parent_default_location',
         ]
         read_only_fields = ['level', 'pathstring']
+        list_serializer_class = FilterableListSerializer
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -351,8 +352,8 @@ class PartBriefSerializer(
             'pricing_min',
             'pricing_max',
         ]
-
         read_only_fields = ['barcode_hash']
+        list_serializer_class = FilterableListSerializer
 
     category_default_location = serializers.IntegerField(
         read_only=True, allow_null=True
@@ -718,7 +719,7 @@ class PartSerializer(
             'tags',
         ]
         read_only_fields = ['barcode_hash', 'creation_date', 'creation_user']
-        # list_serializer_class = FilterableListSerializer
+        list_serializer_class = FilterableListSerializer
 
     tags = TagListSerializerField(required=False)
 

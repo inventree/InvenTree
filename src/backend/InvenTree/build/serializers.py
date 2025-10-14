@@ -1354,8 +1354,8 @@ class BuildLineSerializer(
             'part_detail',
             'build_detail',
         ]
-
         read_only_fields = ['build', 'bom_item', 'allocations']
+        list_serializer_class = FilterableListSerializer
 
     # Build info fields
     build_reference = serializers.CharField(

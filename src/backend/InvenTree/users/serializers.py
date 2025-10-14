@@ -247,6 +247,7 @@ class GroupSerializer(PathScopedMixin, InvenTreeModelSerializer):
 
         model = Group
         fields = ['pk', 'name', 'permissions', 'roles', 'users']
+        list_serializer_class = FilterableListSerializer
 
     permissions = can_filter(
         CfSerializerMethodField(allow_null=True, read_only=True),

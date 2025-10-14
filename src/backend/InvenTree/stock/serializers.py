@@ -385,11 +385,6 @@ class StockItemSerializer(
             'part_detail',
             'location_detail',
         ]
-
-        """
-        These fields are read-only in this context.
-        They can be updated by accessing the appropriate API endpoints
-        """
         read_only_fields = [
             'allocated',
             'barcode_hash',
@@ -397,14 +392,18 @@ class StockItemSerializer(
             'stocktake_user',
             'updated',
         ]
-
         """
-        Fields used when creating a stock item
+        These fields are read-only in this context.
+        They can be updated by accessing the appropriate API endpoints
         """
         extra_kwargs = {
             'use_pack_size': {'write_only': True},
             'serial_numbers': {'write_only': True},
         }
+        """
+        Fields used when creating a stock item
+        """
+        list_serializer_class = FilterableListSerializer
 
     part = serializers.PrimaryKeyRelatedField(
         queryset=part_models.Part.objects.all(),
@@ -1160,8 +1159,8 @@ class LocationSerializer(
             'location_type_detail',
             'tags',
         ]
-
         read_only_fields = ['barcode_hash', 'icon', 'level', 'pathstring']
+        list_serializer_class = FilterableListSerializer
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -1237,8 +1236,8 @@ class StockTrackingSerializer(
             'user',
             'user_detail',
         ]
-
         read_only_fields = ['date', 'user', 'label', 'tracking_type']
+        list_serializer_class = FilterableListSerializer
 
     label = serializers.CharField(read_only=True)
 

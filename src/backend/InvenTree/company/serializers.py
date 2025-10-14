@@ -19,6 +19,7 @@ from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.ready import isGeneratingSchema
 from InvenTree.serializers import (
     CfCharField,
+    FilterableListSerializer,
     InvenTreeCurrencySerializer,
     InvenTreeDecimalField,
     InvenTreeImageSerializerField,
@@ -276,6 +277,7 @@ class ManufacturerPartSerializer(
             'notes',
             'tags',
         ]
+        list_serializer_class = FilterableListSerializer
 
     tags = TagListSerializerField(required=False)
 
@@ -331,7 +333,10 @@ class ManufacturerPartParameterSerializer(
 
 @register_importer()
 class SupplierPartSerializer(
-    DataImportExportSerializerMixin, InvenTreeTagModelSerializer, NotesFieldMixin
+    PathScopedMixin,
+    DataImportExportSerializerMixin,
+    InvenTreeTagModelSerializer,
+    NotesFieldMixin,
 ):
     """Serializer for SupplierPart object."""
 
@@ -377,12 +382,12 @@ class SupplierPartSerializer(
             'notes',
             'tags',
         ]
-
         read_only_fields = [
             'availability_updated',
             'barcode_hash',
             'pack_quantity_native',
         ]
+        list_serializer_class = FilterableListSerializer
 
     tags = TagListSerializerField(required=False)
 
@@ -547,6 +552,7 @@ class SupplierPriceBreakSerializer(
             'supplier_detail',
             'updated',
         ]
+        list_serializer_class = FilterableListSerializer
 
     @staticmethod
     def annotate_queryset(queryset):
