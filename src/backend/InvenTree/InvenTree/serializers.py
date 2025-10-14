@@ -122,7 +122,7 @@ class FilterableSerializerMixin:
             if val:  # Save popped value for reuse
                 poped_kwargs[pop_ref] = val
             tgs_vals[k] = (
-                str2bool(val) if isinstance(val, (str, int, float)) else bool(val)
+                str2bool(val) if isinstance(val, (str, int, float)) else val
             )  # Support for various filtering style for backwards compatibility
         self.filter_target_values = tgs_vals
 
