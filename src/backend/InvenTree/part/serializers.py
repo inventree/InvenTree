@@ -37,7 +37,6 @@ from InvenTree.serializers import (
     CfFloatField,
     CfListField,
     FilterableListSerializer,
-    PathScopedMixin,
     can_filter,
 )
 from users.serializers import UserSerializer
@@ -64,7 +63,7 @@ logger = structlog.get_logger('inventree')
 
 @register_importer()
 class CategorySerializer(
-    PathScopedMixin,
+    InvenTree.serializers.PathScopedMixin,
     DataImportExportSerializerMixin,
     InvenTree.serializers.InvenTreeModelSerializer,
 ):
@@ -315,7 +314,8 @@ class PartParameterTemplateSerializer(
 
 
 class PartBriefSerializer(
-    PathScopedMixin, InvenTree.serializers.InvenTreeModelSerializer
+    InvenTree.serializers.PathScopedMixin,
+    InvenTree.serializers.InvenTreeModelSerializer,
 ):
     """Serializer for Part (brief detail)."""
 
@@ -392,7 +392,7 @@ class PartBriefSerializer(
 
 @register_importer()
 class PartParameterSerializer(
-    PathScopedMixin,
+    InvenTree.serializers.PathScopedMixin,
     DataImportExportSerializerMixin,
     InvenTree.serializers.InvenTreeModelSerializer,
 ):
@@ -627,7 +627,7 @@ class DefaultLocationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
 @register_importer()
 class PartSerializer(
-    PathScopedMixin,
+    InvenTree.serializers.PathScopedMixin,
     DataImportExportSerializerMixin,
     InvenTree.serializers.NotesFieldMixin,
     InvenTree.serializers.RemoteImageMixin,
@@ -1615,7 +1615,7 @@ class BomItemSubstituteSerializer(InvenTree.serializers.InvenTreeModelSerializer
 
 @register_importer()
 class BomItemSerializer(
-    PathScopedMixin,
+    InvenTree.serializers.PathScopedMixin,
     DataImportExportSerializerMixin,
     InvenTree.serializers.InvenTreeModelSerializer,
 ):

@@ -36,8 +36,6 @@ from InvenTree.serializers import (
     CfListField,
     InvenTreeCurrencySerializer,
     InvenTreeDecimalField,
-    InvenTreeModelSerializer,
-    PathScopedMixin,
     can_filter,
 )
 from users.serializers import UserSerializer
@@ -196,7 +194,7 @@ class LocationBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
 @register_importer()
 class StockItemTestResultSerializer(
-    PathScopedMixin,
+    InvenTree.serializers.PathScopedMixin,
     DataImportExportSerializerMixin,
     InvenTree.serializers.InvenTreeModelSerializer,
 ):
@@ -299,7 +297,7 @@ class StockItemTestResultSerializer(
 
 @register_importer()
 class StockItemSerializer(
-    PathScopedMixin,
+    InvenTree.serializers.PathScopedMixin,
     DataImportExportSerializerMixin,
     InvenTreeCustomStatusSerializerMixin,
     InvenTree.serializers.InvenTreeTagModelSerializer,
@@ -1124,7 +1122,7 @@ class LocationTreeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
 @register_importer()
 class LocationSerializer(
-    PathScopedMixin,
+    InvenTree.serializers.PathScopedMixin,
     DataImportExportSerializerMixin,
     InvenTree.serializers.InvenTreeTagModelSerializer,
 ):
@@ -1210,7 +1208,7 @@ class LocationSerializer(
 
 @register_importer()
 class StockTrackingSerializer(
-    PathScopedMixin,
+    InvenTree.serializers.PathScopedMixin,
     DataImportExportSerializerMixin,
     InvenTree.serializers.InvenTreeModelSerializer,
 ):
@@ -1813,7 +1811,7 @@ class StockReturnSerializer(StockAdjustmentSerializer):
                 )
 
 
-class StockItemSerialNumbersSerializer(InvenTreeModelSerializer):
+class StockItemSerialNumbersSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     """Serializer for extra serial number information about a stock item."""
 
     class Meta:
