@@ -47,7 +47,7 @@ import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { getDetailUrl } from '@lib/functions/Navigation';
 import { ActionButton } from '@lib/index';
-import type { ApiFormFieldSet } from '@lib/types/Forms';
+import type { ApiFormFieldSet, StockOperationProps } from '@lib/types/Forms';
 import AdminButton from '../../components/buttons/AdminButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
 import StarredToggleButton from '../../components/buttons/StarredToggleButton';
@@ -80,10 +80,7 @@ import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { useApi } from '../../contexts/ApiContext';
 import { formatDecimal, formatPriceRange } from '../../defaults/formatters';
 import { usePartFields } from '../../forms/PartForms';
-import {
-  type StockOperationProps,
-  useFindSerialNumberForm
-} from '../../forms/StockForms';
+import { useFindSerialNumberForm } from '../../forms/StockForms';
 import {
   useApiFormModal,
   useCreateApiFormModal,
