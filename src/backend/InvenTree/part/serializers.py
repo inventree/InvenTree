@@ -33,11 +33,11 @@ from importer.registry import register_importer
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.ready import isGeneratingSchema
 from InvenTree.serializers import (
-    CfDateTimeField,
-    CfFloatField,
-    CfListField,
+    FilterableDateTimeField,
+    FilterableFloatField,
+    FilterableListField,
     FilterableListSerializer,
-    can_filter,
+    enable_filter,
 )
 from users.serializers import UserSerializer
 
@@ -63,7 +63,7 @@ logger = structlog.get_logger('inventree')
 
 @register_importer()
 class CategorySerializer(
-    InvenTree.serializers.PathScopedMixin,
+    InvenTree.serializers.FilterableSerializerMixin,
     DataImportExportSerializerMixin,
     InvenTree.serializers.InvenTreeModelSerializer,
 ):
@@ -131,14 +131,14 @@ class CategorySerializer(
         """Return True if the category is directly "starred" by the current user."""
         return category in self.context.get('starred_categories', [])
 
-    path = can_filter(
-        CfListField(
+    path = enable_filter(
+        FilterableListField(
             child=serializers.DictField(),
             source='get_path',
             read_only=True,
             allow_null=True,
         ),
-        name='path_detail',
+        filter_name='path_detail',
     )
 
     icon = serializers.CharField(
@@ -314,7 +314,7 @@ class PartParameterTemplateSerializer(
 
 
 class PartBriefSerializer(
-    InvenTree.serializers.PathScopedMixin,
+    InvenTree.serializers.FilterableSerializerMixin,
     InvenTree.serializers.InvenTreeModelSerializer,
 ):
     """Serializer for Part (brief detail)."""
@@ -374,25 +374,25 @@ class PartBriefSerializer(
     )
 
     # Pricing fields
-    pricing_min = can_filter(
+    pricing_min = enable_filter(
         InvenTree.serializers.InvenTreeMoneySerializer(
             source='pricing_data.overall_min', allow_null=True, read_only=True
         ),
         True,
-        name='pricing',
+        filter_name='pricing',
     )
-    pricing_max = can_filter(
+    pricing_max = enable_filter(
         InvenTree.serializers.InvenTreeMoneySerializer(
             source='pricing_data.overall_max', allow_null=True, read_only=True
         ),
         True,
-        name='pricing',
+        filter_name='pricing',
     )
 
 
 @register_importer()
 class PartParameterSerializer(
-    InvenTree.serializers.PathScopedMixin,
+    InvenTree.serializers.FilterableSerializerMixin,
     DataImportExportSerializerMixin,
     InvenTree.serializers.InvenTreeModelSerializer,
 ):
@@ -428,11 +428,11 @@ class PartParameterSerializer(
 
         return instance
 
-    part_detail = can_filter(
+    part_detail = enable_filter(
         PartBriefSerializer(source='part', many=False, read_only=True, allow_null=True)
     )
 
-    template_detail = can_filter(
+    template_detail = enable_filter(
         PartParameterTemplateSerializer(
             source='template', many=False, read_only=True, allow_null=True
         ),
@@ -627,7 +627,7 @@ class DefaultLocationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
 @register_importer()
 class PartSerializer(
-    InvenTree.serializers.PathScopedMixin,
+    InvenTree.serializers.FilterableSerializerMixin,
     DataImportExportSerializerMixin,
     InvenTree.serializers.NotesFieldMixin,
     InvenTree.serializers.RemoteImageMixin,
@@ -878,27 +878,27 @@ class PartSerializer(
         return part in self.starred_parts
 
     # Extra detail for the category
-    category_detail = can_filter(
+    category_detail = enable_filter(
         CategorySerializer(
             source='category', many=False, read_only=True, allow_null=True
         )
     )
 
-    category_path = can_filter(
-        CfListField(
+    category_path = enable_filter(
+        FilterableListField(
             child=serializers.DictField(),
             source='category.get_path',
             read_only=True,
             allow_null=True,
         ),
-        name='path_detail',
+        filter_name='path_detail',
     )
 
-    default_location_detail = can_filter(
+    default_location_detail = enable_filter(
         DefaultLocationSerializer(
             source='default_location', many=False, read_only=True, allow_null=True
         ),
-        name='location_detail',
+        filter_name='location_detail',
     )
 
     category_name = serializers.CharField(
@@ -1006,27 +1006,29 @@ class PartSerializer(
     )
 
     # Pricing fields
-    pricing_min = can_filter(
+    pricing_min = enable_filter(
         InvenTree.serializers.InvenTreeMoneySerializer(
             source='pricing_data.overall_min', allow_null=True, read_only=True
         ),
         True,
-        name='pricing',
+        filter_name='pricing',
     )
-    pricing_max = can_filter(
+    pricing_max = enable_filter(
         InvenTree.serializers.InvenTreeMoneySerializer(
             source='pricing_data.overall_max', allow_null=True, read_only=True
         ),
         True,
-        name='pricing',
+        filter_name='pricing',
     )
-    pricing_updated = can_filter(
-        CfDateTimeField(source='pricing_data.updated', allow_null=True, read_only=True),
+    pricing_updated = enable_filter(
+        FilterableDateTimeField(
+            source='pricing_data.updated', allow_null=True, read_only=True
+        ),
         True,
-        name='pricing',
+        filter_name='pricing',
     )
 
-    parameters = can_filter(
+    parameters = enable_filter(
         PartParameterSerializer(many=True, read_only=True, allow_null=True)
     )
 
@@ -1615,7 +1617,7 @@ class BomItemSubstituteSerializer(InvenTree.serializers.InvenTreeModelSerializer
 
 @register_importer()
 class BomItemSerializer(
-    InvenTree.serializers.PathScopedMixin,
+    InvenTree.serializers.FilterableSerializerMixin,
     DataImportExportSerializerMixin,
     InvenTree.serializers.InvenTreeModelSerializer,
 ):
@@ -1694,11 +1696,11 @@ class BomItemSerializer(
         help_text=_('Select the parent assembly'),
     )
 
-    substitutes = can_filter(
+    substitutes = enable_filter(
         BomItemSubstituteSerializer(many=True, read_only=True, allow_null=True), True
     )
 
-    part_detail = can_filter(
+    part_detail = enable_filter(
         PartBriefSerializer(
             source='part',
             label=_('Assembly'),
@@ -1714,7 +1716,7 @@ class BomItemSerializer(
         help_text=_('Select the component part'),
     )
 
-    sub_part_detail = can_filter(
+    sub_part_detail = enable_filter(
         PartBriefSerializer(
             source='sub_part',
             label=_('Component'),
@@ -1733,41 +1735,42 @@ class BomItemSerializer(
         label=_('In Production'), read_only=True, allow_null=True
     )
 
-    can_build = can_filter(
-        CfFloatField(label=_('Can Build'), read_only=True, allow_null=True), True
+    can_build = enable_filter(
+        FilterableFloatField(label=_('Can Build'), read_only=True, allow_null=True),
+        True,
     )
 
     # Cached pricing fields
-    pricing_min = can_filter(
+    pricing_min = enable_filter(
         InvenTree.serializers.InvenTreeMoneySerializer(
             source='sub_part.pricing_data.overall_min', allow_null=True, read_only=True
         ),
         True,
-        name='pricing',
+        filter_name='pricing',
     )
-    pricing_max = can_filter(
+    pricing_max = enable_filter(
         InvenTree.serializers.InvenTreeMoneySerializer(
             source='sub_part.pricing_data.overall_max', allow_null=True, read_only=True
         ),
         True,
-        name='pricing',
+        filter_name='pricing',
     )
-    pricing_min_total = can_filter(
+    pricing_min_total = enable_filter(
         InvenTree.serializers.InvenTreeMoneySerializer(allow_null=True, read_only=True),
         True,
-        name='pricing',
+        filter_name='pricing',
     )
-    pricing_max_total = can_filter(
+    pricing_max_total = enable_filter(
         InvenTree.serializers.InvenTreeMoneySerializer(allow_null=True, read_only=True),
         True,
-        name='pricing',
+        filter_name='pricing',
     )
-    pricing_updated = can_filter(
-        CfDateTimeField(
+    pricing_updated = enable_filter(
+        FilterableDateTimeField(
             source='sub_part.pricing_data.updated', allow_null=True, read_only=True
         ),
         True,
-        name='pricing',
+        filter_name='pricing',
     )
 
     # Annotated fields for available stock

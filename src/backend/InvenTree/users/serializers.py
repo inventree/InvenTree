@@ -8,11 +8,11 @@ from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied
 
 from InvenTree.serializers import (
-    CfSerializerMethodField,
     FilterableListSerializer,
+    FilterableSerializerMethodField,
+    FilterableSerializerMixin,
     InvenTreeModelSerializer,
-    PathScopedMixin,
-    can_filter,
+    enable_filter,
 )
 
 from .models import ApiToken, Owner, RuleSet, UserProfile
@@ -239,7 +239,7 @@ class ApiTokenSerializer(InvenTreeModelSerializer):
     user_detail = UserSerializer(source='user', read_only=True)
 
 
-class GroupSerializer(PathScopedMixin, InvenTreeModelSerializer):
+class GroupSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
     """Serializer for a 'Group'."""
 
     class Meta:
@@ -248,25 +248,25 @@ class GroupSerializer(PathScopedMixin, InvenTreeModelSerializer):
         model = Group
         fields = ['pk', 'name', 'permissions', 'roles', 'users']
 
-    permissions = can_filter(
-        CfSerializerMethodField(allow_null=True, read_only=True),
-        name='permission_detail',
+    permissions = enable_filter(
+        FilterableSerializerMethodField(allow_null=True, read_only=True),
+        filter_name='permission_detail',
     )
 
     def get_permissions(self, group: Group) -> dict:
         """Return a list of permissions associated with the group."""
         return generate_permission_dict(group.permissions.all())
 
-    roles = can_filter(
+    roles = enable_filter(
         RuleSetSerializer(
             source='rule_sets', many=True, read_only=True, allow_null=True
         ),
-        name='role_detail',
+        filter_name='role_detail',
     )
 
-    users = can_filter(
+    users = enable_filter(
         UserSerializer(source='user_set', many=True, read_only=True, allow_null=True),
-        name='user_detail',
+        filter_name='user_detail',
     )
 
 

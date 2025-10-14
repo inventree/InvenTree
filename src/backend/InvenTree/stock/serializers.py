@@ -33,10 +33,10 @@ from generic.states.fields import InvenTreeCustomStatusSerializerMixin
 from importer.registry import register_importer
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.serializers import (
-    CfListField,
+    FilterableListField,
     InvenTreeCurrencySerializer,
     InvenTreeDecimalField,
-    can_filter,
+    enable_filter,
 )
 from users.serializers import UserSerializer
 
@@ -194,7 +194,7 @@ class LocationBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
 @register_importer()
 class StockItemTestResultSerializer(
-    InvenTree.serializers.PathScopedMixin,
+    InvenTree.serializers.FilterableSerializerMixin,
     DataImportExportSerializerMixin,
     InvenTree.serializers.InvenTreeModelSerializer,
 ):
@@ -222,7 +222,7 @@ class StockItemTestResultSerializer(
         ]
         read_only_fields = ['pk', 'user', 'date']
 
-    user_detail = can_filter(
+    user_detail = enable_filter(
         UserSerializer(source='user', read_only=True, allow_null=True)
     )
 
@@ -235,7 +235,7 @@ class StockItemTestResultSerializer(
         label=_('Test template for this result'),
     )
 
-    template_detail = can_filter(
+    template_detail = enable_filter(
         part_serializers.PartTestTemplateSerializer(
             source='template', read_only=True, allow_null=True
         )
@@ -297,7 +297,7 @@ class StockItemTestResultSerializer(
 
 @register_importer()
 class StockItemSerializer(
-    InvenTree.serializers.PathScopedMixin,
+    InvenTree.serializers.FilterableSerializerMixin,
     DataImportExportSerializerMixin,
     InvenTreeCustomStatusSerializerMixin,
     InvenTree.serializers.InvenTreeTagModelSerializer,
@@ -415,14 +415,14 @@ class StockItemSerializer(
         help_text=_('Parent stock item'),
     )
 
-    location_path = can_filter(
-        CfListField(
+    location_path = enable_filter(
+        FilterableListField(
             child=serializers.DictField(),
             source='location.get_path',
             read_only=True,
             allow_null=True,
         ),
-        name='path_detail',
+        filter_name='path_detail',
     )
 
     in_stock = serializers.BooleanField(read_only=True, label=_('In Stock'))
@@ -574,7 +574,7 @@ class StockItemSerializer(
     )
 
     # Optional detail fields, which can be appended via query parameters
-    supplier_part_detail = can_filter(
+    supplier_part_detail = enable_filter(
         company_serializers.SupplierPartSerializer(
             label=_('Supplier Part'),
             source='supplier_part',
@@ -589,14 +589,14 @@ class StockItemSerializer(
         True,
     )
 
-    part_detail = can_filter(
+    part_detail = enable_filter(
         part_serializers.PartBriefSerializer(
             label=_('Part'), source='part', many=False, read_only=True, allow_null=True
         ),
         True,
     )
 
-    location_detail = can_filter(
+    location_detail = enable_filter(
         LocationBriefSerializer(
             label=_('Location'),
             source='location',
@@ -607,7 +607,7 @@ class StockItemSerializer(
         True,
     )
 
-    tests = can_filter(
+    tests = enable_filter(
         StockItemTestResultSerializer(
             source='test_results', many=True, read_only=True, allow_null=True
         )
@@ -1122,7 +1122,7 @@ class LocationTreeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
 @register_importer()
 class LocationSerializer(
-    InvenTree.serializers.PathScopedMixin,
+    InvenTree.serializers.FilterableSerializerMixin,
     DataImportExportSerializerMixin,
     InvenTree.serializers.InvenTreeTagModelSerializer,
 ):
@@ -1187,14 +1187,14 @@ class LocationSerializer(
 
     tags = TagListSerializerField(required=False)
 
-    path = can_filter(
-        CfListField(
+    path = enable_filter(
+        FilterableListField(
             child=serializers.DictField(),
             source='get_path',
             read_only=True,
             allow_null=True,
         ),
-        name='path_detail',
+        filter_name='path_detail',
     )
 
     # explicitly set this field, so it gets included for AutoSchema
@@ -1208,7 +1208,7 @@ class LocationSerializer(
 
 @register_importer()
 class StockTrackingSerializer(
-    InvenTree.serializers.PathScopedMixin,
+    InvenTree.serializers.FilterableSerializerMixin,
     DataImportExportSerializerMixin,
     InvenTree.serializers.InvenTreeModelSerializer,
 ):
@@ -1234,11 +1234,11 @@ class StockTrackingSerializer(
 
     label = serializers.CharField(read_only=True)
 
-    item_detail = can_filter(
+    item_detail = enable_filter(
         StockItemSerializer(source='item', many=False, read_only=True, allow_null=True)
     )
 
-    user_detail = can_filter(
+    user_detail = enable_filter(
         UserSerializer(source='user', many=False, read_only=True, allow_null=True)
     )
 

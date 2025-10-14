@@ -32,13 +32,13 @@ from common.settings import get_global_setting
 from generic.states.fields import InvenTreeCustomStatusSerializerMixin
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.serializers import (
-    CfCharField,
-    CfIntegerField,
+    FilterableCharField,
+    FilterableIntegerField,
+    FilterableSerializerMixin,
     InvenTreeDecimalField,
     InvenTreeModelSerializer,
     NotesFieldMixin,
-    PathScopedMixin,
-    can_filter,
+    enable_filter,
 )
 from stock.generators import generate_batch_code
 from stock.models import StockItem, StockLocation
@@ -55,7 +55,7 @@ from .status_codes import BuildStatus
 
 
 class BuildSerializer(
-    PathScopedMixin,
+    FilterableSerializerMixin,
     NotesFieldMixin,
     DataImportExportSerializerMixin,
     InvenTreeCustomStatusSerializerMixin,
@@ -118,7 +118,7 @@ class BuildSerializer(
 
     status_text = serializers.CharField(source='get_status_display', read_only=True)
 
-    part_detail = can_filter(
+    part_detail = enable_filter(
         part_serializers.PartBriefSerializer(source='part', many=False, read_only=True),
         True,
     )
@@ -131,46 +131,48 @@ class BuildSerializer(
 
     overdue = serializers.BooleanField(read_only=True, default=False)
 
-    issued_by_detail = can_filter(
-        UserSerializer(source='issued_by', read_only=True), True, name='user_detail'
+    issued_by_detail = enable_filter(
+        UserSerializer(source='issued_by', read_only=True),
+        True,
+        filter_name='user_detail',
     )
 
-    responsible_detail = can_filter(
+    responsible_detail = enable_filter(
         OwnerSerializer(source='responsible', read_only=True, allow_null=True),
         True,
-        name='user_detail',
+        filter_name='user_detail',
     )
 
     barcode_hash = serializers.CharField(read_only=True)
 
-    project_code_label = can_filter(
-        CfCharField(
+    project_code_label = enable_filter(
+        FilterableCharField(
             source='project_code.code',
             read_only=True,
             label=_('Project Code Label'),
             allow_null=True,
         ),
         True,
-        name='project_code_detail',
+        filter_name='project_code_detail',
     )
 
-    project_code_detail = can_filter(
+    project_code_detail = enable_filter(
         ProjectCodeSerializer(
             source='project_code', many=False, read_only=True, allow_null=True
         ),
         True,
-        name='project_code_detail',
+        filter_name='project_code_detail',
     )
 
-    project_code = can_filter(
-        CfIntegerField(
+    project_code = enable_filter(
+        FilterableIntegerField(
             allow_null=True,
             required=False,
             label=_('Project Code'),
             help_text=_('Project code for this build order'),
         ),
         True,
-        name='project_code_detail',
+        filter_name='project_code_detail',
     )
 
     @staticmethod
@@ -1157,7 +1159,7 @@ class BuildAutoAllocationSerializer(serializers.Serializer):
 
 
 class BuildItemSerializer(
-    PathScopedMixin, DataImportExportSerializerMixin, InvenTreeModelSerializer
+    FilterableSerializerMixin, DataImportExportSerializerMixin, InvenTreeModelSerializer
 ):
     """Serializes a BuildItem object, which is an allocation of a stock item against a build order."""
 
@@ -1228,7 +1230,7 @@ class BuildItemSerializer(
     )
 
     # Extra (optional) detail fields
-    part_detail = can_filter(
+    part_detail = enable_filter(
         part_serializers.PartBriefSerializer(
             label=_('Part'),
             source='stock_item.part',
@@ -1240,7 +1242,7 @@ class BuildItemSerializer(
         True,
     )
 
-    stock_item_detail = can_filter(
+    stock_item_detail = enable_filter(
         StockItemSerializer(
             source='stock_item',
             read_only=True,
@@ -1252,14 +1254,14 @@ class BuildItemSerializer(
             path_detail=False,
         ),
         True,
-        name='stock_detail',
+        filter_name='stock_detail',
     )
 
     location = serializers.PrimaryKeyRelatedField(
         label=_('Location'), source='stock_item.location', many=False, read_only=True
     )
 
-    location_detail = can_filter(
+    location_detail = enable_filter(
         LocationBriefSerializer(
             label=_('Location'),
             source='stock_item.location',
@@ -1269,7 +1271,7 @@ class BuildItemSerializer(
         True,
     )
 
-    build_detail = can_filter(
+    build_detail = enable_filter(
         BuildSerializer(
             label=_('Build'),
             source='build_line.build',
@@ -1293,7 +1295,7 @@ class BuildItemSerializer(
 
 
 class BuildLineSerializer(
-    PathScopedMixin, DataImportExportSerializerMixin, InvenTreeModelSerializer
+    FilterableSerializerMixin, DataImportExportSerializerMixin, InvenTreeModelSerializer
 ):
     """Serializer for a BuildItem object."""
 
@@ -1369,7 +1371,7 @@ class BuildLineSerializer(
         read_only=True,
     )
 
-    allocations = can_filter(
+    allocations = enable_filter(
         BuildItemSerializer(many=True, read_only=True, build_detail=False), True
     )
 
@@ -1402,7 +1404,7 @@ class BuildLineSerializer(
     bom_item = serializers.PrimaryKeyRelatedField(label=_('BOM Item'), read_only=True)
 
     # Foreign key fields
-    bom_item_detail = can_filter(
+    bom_item_detail = enable_filter(
         part_serializers.BomItemSerializer(
             label=_('BOM Item'),
             source='bom_item',
@@ -1417,7 +1419,7 @@ class BuildLineSerializer(
         True,
     )
 
-    assembly_detail = can_filter(
+    assembly_detail = enable_filter(
         part_serializers.PartBriefSerializer(
             label=_('Assembly'),
             source='bom_item.part',
@@ -1429,7 +1431,7 @@ class BuildLineSerializer(
         True,
     )
 
-    part_detail = can_filter(
+    part_detail = enable_filter(
         part_serializers.PartBriefSerializer(
             label=_('Part'),
             source='bom_item.sub_part',
@@ -1440,7 +1442,7 @@ class BuildLineSerializer(
         True,
     )
 
-    build_detail = can_filter(
+    build_detail = enable_filter(
         BuildSerializer(
             label=_('Build'),
             source='build',

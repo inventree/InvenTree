@@ -18,7 +18,8 @@ from importer.registry import register_importer
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.ready import isGeneratingSchema
 from InvenTree.serializers import (
-    CfCharField,
+    FilterableCharField,
+    FilterableSerializerMixin,
     InvenTreeCurrencySerializer,
     InvenTreeDecimalField,
     InvenTreeImageSerializerField,
@@ -26,9 +27,8 @@ from InvenTree.serializers import (
     InvenTreeMoneySerializer,
     InvenTreeTagModelSerializer,
     NotesFieldMixin,
-    PathScopedMixin,
     RemoteImageMixin,
-    can_filter,
+    enable_filter,
 )
 
 from .models import (
@@ -251,7 +251,7 @@ class ContactSerializer(DataImportExportSerializerMixin, InvenTreeModelSerialize
 
 @register_importer()
 class ManufacturerPartSerializer(
-    PathScopedMixin,
+    FilterableSerializerMixin,
     DataImportExportSerializerMixin,
     InvenTreeTagModelSerializer,
     NotesFieldMixin,
@@ -279,22 +279,22 @@ class ManufacturerPartSerializer(
 
     tags = TagListSerializerField(required=False)
 
-    part_detail = can_filter(
+    part_detail = enable_filter(
         part_serializers.PartBriefSerializer(
             source='part', many=False, read_only=True, allow_null=True
         ),
         True,
     )
 
-    manufacturer_detail = can_filter(
+    manufacturer_detail = enable_filter(
         CompanyBriefSerializer(
             source='manufacturer', many=False, read_only=True, allow_null=True
         ),
         True,
     )
 
-    pretty_name = can_filter(
-        CfCharField(read_only=True, allow_null=True), name='pretty'
+    pretty_name = enable_filter(
+        FilterableCharField(read_only=True, allow_null=True), filter_name='pretty'
     )
 
     manufacturer = serializers.PrimaryKeyRelatedField(
@@ -304,7 +304,7 @@ class ManufacturerPartSerializer(
 
 @register_importer()
 class ManufacturerPartParameterSerializer(
-    PathScopedMixin, DataImportExportSerializerMixin, InvenTreeModelSerializer
+    FilterableSerializerMixin, DataImportExportSerializerMixin, InvenTreeModelSerializer
 ):
     """Serializer for the ManufacturerPartParameter model."""
 
@@ -322,7 +322,7 @@ class ManufacturerPartParameterSerializer(
             'units',
         ]
 
-    manufacturer_part_detail = can_filter(
+    manufacturer_part_detail = enable_filter(
         ManufacturerPartSerializer(
             source='manufacturer_part', many=False, read_only=True, allow_null=True
         )
@@ -331,7 +331,7 @@ class ManufacturerPartParameterSerializer(
 
 @register_importer()
 class SupplierPartSerializer(
-    PathScopedMixin,
+    FilterableSerializerMixin,
     DataImportExportSerializerMixin,
     InvenTreeTagModelSerializer,
     NotesFieldMixin,
@@ -532,7 +532,7 @@ class SupplierPartSerializer(
 
 @register_importer()
 class SupplierPriceBreakSerializer(
-    PathScopedMixin, DataImportExportSerializerMixin, InvenTreeModelSerializer
+    FilterableSerializerMixin, DataImportExportSerializerMixin, InvenTreeModelSerializer
 ):
     """Serializer for SupplierPriceBreak object."""
 
@@ -569,14 +569,14 @@ class SupplierPriceBreakSerializer(
         source='part.supplier', many=False, read_only=True
     )
 
-    supplier_detail = can_filter(
+    supplier_detail = enable_filter(
         CompanyBriefSerializer(
             source='part.supplier', many=False, read_only=True, allow_null=True
         )
     )
 
     # Detail serializer for SupplierPart
-    part_detail = can_filter(
+    part_detail = enable_filter(
         SupplierPartSerializer(
             source='part', brief=True, many=False, read_only=True, allow_null=True
         )

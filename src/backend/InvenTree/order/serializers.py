@@ -45,13 +45,13 @@ from InvenTree.helpers import (
 )
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.serializers import (
+    FilterableSerializerMixin,
     InvenTreeCurrencySerializer,
     InvenTreeDecimalField,
     InvenTreeModelSerializer,
     InvenTreeMoneySerializer,
     NotesFieldMixin,
-    PathScopedMixin,
-    can_filter,
+    enable_filter,
 )
 from order.status_codes import (
     PurchaseOrderStatusGroups,
@@ -303,7 +303,7 @@ class AbstractExtraLineMeta:
 
 @register_importer()
 class PurchaseOrderSerializer(
-    PathScopedMixin,
+    FilterableSerializerMixin,
     NotesFieldMixin,
     TotalPriceMixin,
     InvenTreeCustomStatusSerializerMixin,
@@ -369,7 +369,7 @@ class PurchaseOrderSerializer(
         source='supplier.name', read_only=True, label=_('Supplier Name')
     )
 
-    supplier_detail = can_filter(
+    supplier_detail = enable_filter(
         CompanyBriefSerializer(
             source='supplier', many=False, read_only=True, allow_null=True
         )
@@ -460,7 +460,7 @@ class PurchaseOrderIssueSerializer(OrderAdjustSerializer):
 
 @register_importer()
 class PurchaseOrderLineItemSerializer(
-    PathScopedMixin,
+    FilterableSerializerMixin,
     DataImportExportSerializerMixin,
     AbstractLineItemSerializer,
     InvenTreeModelSerializer,
@@ -583,18 +583,18 @@ class PurchaseOrderLineItemSerializer(
 
     total_price = serializers.FloatField(read_only=True)
 
-    part_detail = can_filter(
+    part_detail = enable_filter(
         PartBriefSerializer(
             source='get_base_part', many=False, read_only=True, allow_null=True
         ),
-        name='part_detail',
+        filter_name='part_detail',
     )
 
-    supplier_part_detail = can_filter(
+    supplier_part_detail = enable_filter(
         SupplierPartSerializer(
             source='part', brief=True, many=False, read_only=True, allow_null=True
         ),
-        name='part_detail',
+        filter_name='part_detail',
     )
 
     purchase_price = InvenTreeMoneySerializer(allow_null=True)
@@ -615,7 +615,7 @@ class PurchaseOrderLineItemSerializer(
         help_text=_('Purchase price currency')
     )
 
-    order_detail = can_filter(
+    order_detail = enable_filter(
         PurchaseOrderSerializer(
             source='order', read_only=True, allow_null=True, many=False
         )
@@ -693,11 +693,11 @@ class PurchaseOrderLineItemSerializer(
 
 @register_importer()
 class PurchaseOrderExtraLineSerializer(
-    PathScopedMixin, AbstractExtraLineSerializer, InvenTreeModelSerializer
+    FilterableSerializerMixin, AbstractExtraLineSerializer, InvenTreeModelSerializer
 ):
     """Serializer for a PurchaseOrderExtraLine object."""
 
-    order_detail = can_filter(
+    order_detail = enable_filter(
         PurchaseOrderSerializer(
             source='order', many=False, read_only=True, allow_null=True
         )
@@ -956,7 +956,7 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
 
 @register_importer()
 class SalesOrderSerializer(
-    PathScopedMixin,
+    FilterableSerializerMixin,
     NotesFieldMixin,
     TotalPriceMixin,
     InvenTreeCustomStatusSerializerMixin,
@@ -1022,7 +1022,7 @@ class SalesOrderSerializer(
 
         return queryset
 
-    customer_detail = can_filter(
+    customer_detail = enable_filter(
         CompanyBriefSerializer(
             source='customer', many=False, read_only=True, allow_null=True
         )
@@ -1047,7 +1047,7 @@ class SalesOrderIssueSerializer(OrderAdjustSerializer):
 
 @register_importer()
 class SalesOrderLineItemSerializer(
-    PathScopedMixin,
+    FilterableSerializerMixin,
     DataImportExportSerializerMixin,
     AbstractLineItemSerializer,
     InvenTreeModelSerializer,
@@ -1179,15 +1179,15 @@ class SalesOrderLineItemSerializer(
 
         return queryset
 
-    order_detail = can_filter(
+    order_detail = enable_filter(
         SalesOrderSerializer(
             source='order', many=False, read_only=True, allow_null=True
         )
     )
-    part_detail = can_filter(
+    part_detail = enable_filter(
         PartBriefSerializer(source='part', many=False, read_only=True, allow_null=True)
     )
-    customer_detail = can_filter(
+    customer_detail = enable_filter(
         CompanyBriefSerializer(
             source='order.customer', many=False, read_only=True, allow_null=True
         )
@@ -1215,7 +1215,7 @@ class SalesOrderLineItemSerializer(
 
 @register_importer()
 class SalesOrderShipmentSerializer(
-    PathScopedMixin, NotesFieldMixin, InvenTreeModelSerializer
+    FilterableSerializerMixin, NotesFieldMixin, InvenTreeModelSerializer
 ):
     """Serializer for the SalesOrderShipment class."""
 
@@ -1253,7 +1253,7 @@ class SalesOrderShipmentSerializer(
         read_only=True, allow_null=True, label=_('Allocated Items')
     )
 
-    order_detail = can_filter(
+    order_detail = enable_filter(
         SalesOrderSerializer(
             source='order', read_only=True, allow_null=True, many=False
         ),
@@ -1261,7 +1261,9 @@ class SalesOrderShipmentSerializer(
     )
 
 
-class SalesOrderAllocationSerializer(PathScopedMixin, InvenTreeModelSerializer):
+class SalesOrderAllocationSerializer(
+    FilterableSerializerMixin, InvenTreeModelSerializer
+):
     """Serializer for the SalesOrderAllocation model.
 
     This includes some fields from the related model objects.
@@ -1303,18 +1305,18 @@ class SalesOrderAllocationSerializer(PathScopedMixin, InvenTreeModelSerializer):
     )
 
     # Extra detail fields
-    order_detail = can_filter(
+    order_detail = enable_filter(
         SalesOrderSerializer(
             source='line.order', many=False, read_only=True, allow_null=True
         )
     )
-    part_detail = can_filter(
+    part_detail = enable_filter(
         PartBriefSerializer(
             source='item.part', many=False, read_only=True, allow_null=True
         ),
         True,
     )
-    item_detail = can_filter(
+    item_detail = enable_filter(
         stock.serializers.StockItemSerializer(
             source='item',
             many=False,
@@ -1326,12 +1328,12 @@ class SalesOrderAllocationSerializer(PathScopedMixin, InvenTreeModelSerializer):
         ),
         True,
     )
-    location_detail = can_filter(
+    location_detail = enable_filter(
         stock.serializers.LocationBriefSerializer(
             source='item.location', many=False, read_only=True, allow_null=True
         )
     )
-    customer_detail = can_filter(
+    customer_detail = enable_filter(
         CompanyBriefSerializer(
             source='line.order.customer', many=False, read_only=True, allow_null=True
         )
@@ -1775,7 +1777,7 @@ class SalesOrderShipmentAllocationSerializer(serializers.Serializer):
 
 @register_importer()
 class SalesOrderExtraLineSerializer(
-    PathScopedMixin, AbstractExtraLineSerializer, InvenTreeModelSerializer
+    FilterableSerializerMixin, AbstractExtraLineSerializer, InvenTreeModelSerializer
 ):
     """Serializer for a SalesOrderExtraLine object."""
 
@@ -1784,7 +1786,7 @@ class SalesOrderExtraLineSerializer(
 
         model = order.models.SalesOrderExtraLine
 
-    order_detail = can_filter(
+    order_detail = enable_filter(
         SalesOrderSerializer(
             source='order', many=False, read_only=True, allow_null=True
         )
@@ -1793,7 +1795,7 @@ class SalesOrderExtraLineSerializer(
 
 @register_importer()
 class ReturnOrderSerializer(
-    PathScopedMixin,
+    FilterableSerializerMixin,
     NotesFieldMixin,
     InvenTreeCustomStatusSerializerMixin,
     AbstractOrderSerializer,
@@ -1845,7 +1847,7 @@ class ReturnOrderSerializer(
 
         return queryset
 
-    customer_detail = can_filter(
+    customer_detail = enable_filter(
         CompanyBriefSerializer(
             source='customer', many=False, read_only=True, allow_null=True
         )
@@ -1984,7 +1986,7 @@ class ReturnOrderReceiveSerializer(serializers.Serializer):
 
 @register_importer()
 class ReturnOrderLineItemSerializer(
-    PathScopedMixin,
+    FilterableSerializerMixin,
     DataImportExportSerializerMixin,
     AbstractLineItemSerializer,
     InvenTreeModelSerializer,
@@ -2014,7 +2016,7 @@ class ReturnOrderLineItemSerializer(
             'link',
         ]
 
-    order_detail = can_filter(
+    order_detail = enable_filter(
         ReturnOrderSerializer(
             source='order', many=False, read_only=True, allow_null=True
         )
@@ -2024,13 +2026,13 @@ class ReturnOrderLineItemSerializer(
         label=_('Quantity'), help_text=_('Quantity to return')
     )
 
-    item_detail = can_filter(
+    item_detail = enable_filter(
         stock.serializers.StockItemSerializer(
             source='item', many=False, read_only=True, allow_null=True
         )
     )
 
-    part_detail = can_filter(
+    part_detail = enable_filter(
         PartBriefSerializer(
             source='item.part', many=False, read_only=True, allow_null=True
         )
@@ -2042,7 +2044,7 @@ class ReturnOrderLineItemSerializer(
 
 @register_importer()
 class ReturnOrderExtraLineSerializer(
-    PathScopedMixin, AbstractExtraLineSerializer, InvenTreeModelSerializer
+    FilterableSerializerMixin, AbstractExtraLineSerializer, InvenTreeModelSerializer
 ):
     """Serializer for a ReturnOrderExtraLine object."""
 
@@ -2051,7 +2053,7 @@ class ReturnOrderExtraLineSerializer(
 
         model = order.models.ReturnOrderExtraLine
 
-    order_detail = can_filter(
+    order_detail = enable_filter(
         ReturnOrderSerializer(
             source='order', many=False, read_only=True, allow_null=True
         )
