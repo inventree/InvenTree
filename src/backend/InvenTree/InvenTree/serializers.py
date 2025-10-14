@@ -53,6 +53,12 @@ class PathScopedMixin:
 
     def __init__(self, *args, **kwargs):
         """Initialization routine for the serializer."""
+        # add list_serializer_class to meta if not present
+        if not isinstance(self, FilterableListSerializer) and (
+            not hasattr(self.Meta, 'list_serializer_class')
+        ):
+            self.Meta.list_serializer_class = FilterableListSerializer
+
         self.gather_filters(kwargs)
         super().__init__(*args, **kwargs)
         self.do_filtering(*args, **kwargs)

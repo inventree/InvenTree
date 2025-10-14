@@ -34,7 +34,6 @@ from importer.registry import register_importer
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.serializers import (
     CfListField,
-    FilterableListSerializer,
     InvenTreeCurrencySerializer,
     InvenTreeDecimalField,
     InvenTreeModelSerializer,
@@ -224,7 +223,6 @@ class StockItemTestResultSerializer(
             'template_detail',
         ]
         read_only_fields = ['pk', 'user', 'date']
-        list_serializer_class = FilterableListSerializer
 
     user_detail = can_filter(
         UserSerializer(source='user', read_only=True, allow_null=True)
@@ -403,7 +401,6 @@ class StockItemSerializer(
         """
         Fields used when creating a stock item
         """
-        list_serializer_class = FilterableListSerializer
 
     part = serializers.PrimaryKeyRelatedField(
         queryset=part_models.Part.objects.all(),
@@ -1160,7 +1157,6 @@ class LocationSerializer(
             'tags',
         ]
         read_only_fields = ['barcode_hash', 'icon', 'level', 'pathstring']
-        list_serializer_class = FilterableListSerializer
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -1237,7 +1233,6 @@ class StockTrackingSerializer(
             'user_detail',
         ]
         read_only_fields = ['date', 'user', 'label', 'tracking_type']
-        list_serializer_class = FilterableListSerializer
 
     label = serializers.CharField(read_only=True)
 

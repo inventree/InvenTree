@@ -45,7 +45,6 @@ from InvenTree.helpers import (
 )
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.serializers import (
-    FilterableListSerializer,
     InvenTreeCurrencySerializer,
     InvenTreeDecimalField,
     InvenTreeModelSerializer,
@@ -332,7 +331,6 @@ class PurchaseOrderSerializer(
             'supplier': {'required': True},
             'order_currency': {'required': False},
         }
-        list_serializer_class = FilterableListSerializer
 
     def skip_create_fields(self):
         """Skip these fields when instantiating a new object."""
@@ -502,7 +500,6 @@ class PurchaseOrderLineItemSerializer(
             'internal_part',
             'internal_part_name',
         ]
-        list_serializer_class = FilterableListSerializer
 
     def skip_create_fields(self):
         """Return a list of fields to skip when creating a new object."""
@@ -710,7 +707,6 @@ class PurchaseOrderExtraLineSerializer(
         """Metaclass options."""
 
         model = order.models.PurchaseOrderExtraLine
-        list_serializer_class = FilterableListSerializer
 
 
 class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
@@ -985,7 +981,6 @@ class SalesOrderSerializer(
         ])
         read_only_fields = ['status', 'creation_date', 'shipment_date']
         extra_kwargs = {'order_currency': {'required': False}}
-        list_serializer_class = FilterableListSerializer
 
     def skip_create_fields(self):
         """Skip these fields when instantiating a new object."""
@@ -1086,7 +1081,6 @@ class SalesOrderLineItemSerializer(
             'building',
             'on_order',
         ]
-        list_serializer_class = FilterableListSerializer
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -1244,7 +1238,6 @@ class SalesOrderShipmentSerializer(
             'link',
             'notes',
         ]
-        list_serializer_class = FilterableListSerializer
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -1298,7 +1291,6 @@ class SalesOrderAllocationSerializer(PathScopedMixin, InvenTreeModelSerializer):
             'shipment_detail',
         ]
         read_only_fields = ['line', '']
-        list_serializer_class = FilterableListSerializer
 
     part = serializers.PrimaryKeyRelatedField(source='item.part', read_only=True)
     order = serializers.PrimaryKeyRelatedField(
@@ -1823,7 +1815,6 @@ class ReturnOrderSerializer(
             'total_price',
         ])
         read_only_fields = ['creation_date']
-        list_serializer_class = FilterableListSerializer
 
     def skip_create_fields(self):
         """Skip these fields when instantiating a new object."""
@@ -2022,7 +2013,6 @@ class ReturnOrderLineItemSerializer(
             'target_date',
             'link',
         ]
-        list_serializer_class = FilterableListSerializer
 
     order_detail = can_filter(
         ReturnOrderSerializer(
@@ -2060,7 +2050,6 @@ class ReturnOrderExtraLineSerializer(
         """Metaclass options."""
 
         model = order.models.ReturnOrderExtraLine
-        list_serializer_class = FilterableListSerializer
 
     order_detail = can_filter(
         ReturnOrderSerializer(

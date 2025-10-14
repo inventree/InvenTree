@@ -92,7 +92,6 @@ class CategorySerializer(
             'parent_default_location',
         ]
         read_only_fields = ['level', 'pathstring']
-        list_serializer_class = FilterableListSerializer
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -353,7 +352,6 @@ class PartBriefSerializer(
             'pricing_max',
         ]
         read_only_fields = ['barcode_hash']
-        list_serializer_class = FilterableListSerializer
 
     category_default_location = serializers.IntegerField(
         read_only=True, allow_null=True
@@ -418,7 +416,6 @@ class PartParameterSerializer(
             'updated_by_detail',
         ]
         read_only_fields = ['updated', 'updated_by']
-        list_serializer_class = FilterableListSerializer
 
     def save(self):
         """Save the PartParameter instance."""
@@ -719,7 +716,6 @@ class PartSerializer(
             'tags',
         ]
         read_only_fields = ['barcode_hash', 'creation_date', 'creation_user']
-        list_serializer_class = FilterableListSerializer
 
     tags = TagListSerializerField(required=False)
 
@@ -1674,7 +1670,6 @@ class BomItemSerializer(
             # Annotate the total potential quantity we can build
             'can_build',
         ]
-        list_serializer_class = FilterableListSerializer
 
     quantity = InvenTree.serializers.InvenTreeDecimalField(required=True)
 

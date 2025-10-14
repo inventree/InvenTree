@@ -34,7 +34,6 @@ from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.serializers import (
     CfCharField,
     CfIntegerField,
-    FilterableListSerializer,
     InvenTreeDecimalField,
     InvenTreeModelSerializer,
     NotesFieldMixin,
@@ -112,7 +111,6 @@ class BuildSerializer(
             'status_text',
             'level',
         ]
-        list_serializer_class = FilterableListSerializer
 
     reference = serializers.CharField(required=True)
 
@@ -1204,7 +1202,6 @@ class BuildItemSerializer(
             'bom_part_id',
             'bom_part_name',
         ]
-        list_serializer_class = FilterableListSerializer
 
     # Export-only fields
     bom_reference = serializers.CharField(
@@ -1355,7 +1352,6 @@ class BuildLineSerializer(
             'build_detail',
         ]
         read_only_fields = ['build', 'bom_item', 'allocations']
-        list_serializer_class = FilterableListSerializer
 
     # Build info fields
     build_reference = serializers.CharField(
