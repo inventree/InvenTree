@@ -91,7 +91,10 @@ class PathScopedMixin:
 
     def do_filtering(self, *args, **kwargs):
         """Do the actual filtering."""
-        if not hasattr(self, 'filter_target_values'):
+        if (
+            not hasattr(self, 'filter_target_values')
+            or InvenTree.ready.isGeneratingSchema()
+        ):
             return
 
         # Throw out fields which are not requested
