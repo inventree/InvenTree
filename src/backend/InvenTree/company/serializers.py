@@ -340,6 +340,8 @@ class SupplierPartSerializer(
 ):
     """Serializer for SupplierPart object."""
 
+    no_filters = True
+
     export_exclude_fields = ['tags']
 
     export_child_fields = [

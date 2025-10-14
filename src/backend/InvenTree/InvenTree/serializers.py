@@ -49,6 +49,7 @@ class PathScopedMixin:
     """Mixin to disable a serializer field based on kwargs passed to the view."""
 
     _was_filtered = False
+    no_filters = False
 
     def __init__(self, *args, **kwargs):
         """Initialization routine for the serializer."""
@@ -81,7 +82,7 @@ class PathScopedMixin:
             tgs_vals[k] = str2bool(val) if isinstance(val, str) else val
         self.filter_target_values = tgs_vals
 
-        if len(self.filter_targets) == 0:
+        if len(self.filter_targets) == 0 and not self.no_filters:
             raise Exception(
                 'INVE-W999: No filter targets found in fields, remove `PathScopedMixin`'
             )
