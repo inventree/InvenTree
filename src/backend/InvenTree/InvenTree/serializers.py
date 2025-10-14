@@ -381,8 +381,8 @@ class DependentField(serializers.Field):
         return None
 
 
-class BareInvenTreeModelSerializer(serializers.ModelSerializer):
-    """Inherits the standard Django ModelSerializer class, but also ensures that the underlying model class data are checked on validation. Without Filtering support."""
+class InvenTreeModelSerializer(FilterableSerializerField, serializers.ModelSerializer):
+    """Inherits the standard Django ModelSerializer class, but also ensures that the underlying model class data are checked on validation."""
 
     # Switch out URLField mapping
     serializer_field_mapping = {
@@ -545,13 +545,6 @@ class BareInvenTreeModelSerializer(serializers.ModelSerializer):
             raise ValidationError(data)
 
         return data
-
-
-class InvenTreeModelSerializer(FilterableSerializerField, BareInvenTreeModelSerializer):
-    """Inherits the standard Django ModelSerializer class, but also ensures that the underlying model class data are checked on validation.
-
-    This field allows filtering.
-    """
 
 
 class InvenTreeTaggitSerializer(TaggitSerializer):

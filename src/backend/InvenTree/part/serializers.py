@@ -632,7 +632,7 @@ class PartSerializer(
     InvenTree.serializers.NotesFieldMixin,
     InvenTree.serializers.RemoteImageMixin,
     InvenTree.serializers.InvenTreeTaggitSerializer,
-    InvenTree.serializers.BareInvenTreeModelSerializer,
+    InvenTree.serializers.InvenTreeModelSerializer,
 ):
     """Serializer for complete detail information of a part.
 

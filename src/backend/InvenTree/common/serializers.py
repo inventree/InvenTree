@@ -22,7 +22,6 @@ from InvenTree.helpers import get_objectreference
 from InvenTree.helpers_model import construct_absolute_url
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.serializers import (
-    BareInvenTreeModelSerializer,
     InvenTreeAttachmentSerializerField,
     InvenTreeImageSerializerField,
     InvenTreeModelSerializer,
@@ -72,7 +71,7 @@ class SettingsValueField(serializers.Field):
             return str(data)
 
 
-class SettingsSerializer(BareInvenTreeModelSerializer):
+class SettingsSerializer(InvenTreeModelSerializer):
     """Base serializer for a settings object."""
 
     key = serializers.CharField(read_only=True)
