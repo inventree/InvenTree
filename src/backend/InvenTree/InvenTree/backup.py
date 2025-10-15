@@ -52,3 +52,53 @@ def get_backup_storage_options() -> dict:
         raise ValueError('Backup storage options must be a dictionary')
 
     return options
+
+
+def backup_email_on_error() -> bool:
+    """Return whether to send emails to admins on backup failure."""
+    return InvenTree.config.get_setting(
+        'INVENTREE_BACKUP_SEND_EMAIL',
+        'backup_send_email',
+        default_value=False,
+        typecast=bool,
+    )
+
+
+def backup_email_prefix() -> str:
+    """Return the email subject prefix for backup emails."""
+    return InvenTree.config.get_setting(
+        'INVENTREE_BACKUP_EMAIL_PREFIX',
+        'backup_email_prefix',
+        default_value='[InvenTree Backup]',
+        typecast=str,
+    )
+
+
+def backup_gpg_recipient() -> str:
+    """Return the GPG recipient for encrypted backups."""
+    return InvenTree.config.get_setting(
+        'INVENTREE_BACKUP_GPG_RECIPIENT',
+        'backup_gpg_recipient',
+        default_value='',
+        typecast=str,
+    )
+
+
+def backup_filename_template() -> str:
+    """Return the filename template for database backups."""
+    return InvenTree.config.get_setting(
+        'INVENTREE_BACKUP_DATABASE_FILENAME_TEMPLATE',
+        'backup_database_filename_template',
+        default_value='InvenTree-db-{datetime}.{extension}',
+        typecast=str,
+    )
+
+
+def backup_media_filename_template() -> str:
+    """Return the filename template for media backups."""
+    return InvenTree.config.get_setting(
+        'INVENTREE_BACKUP_MEDIA_FILENAME_TEMPLATE',
+        'backup_media_filename_template',
+        default_value='InvenTree-media-{datetime}.{extension}',
+        typecast=str,
+    )
