@@ -109,7 +109,6 @@ unresolved-reference="ignore"  # 21 # see https://github.com/astral-sh/ty/issues
 unresolved-attribute="ignore"  # 505 # need Plugin Mixin typing
 call-non-callable="ignore"  # 8 ##
 invalid-return-type="ignore"  # 22 ##
-invalid-argument-type="ignore"  # 49
 possibly-unbound-attribute="ignore"  # 25 # https://github.com/astral-sh/ty/issues/164
 unknown-argument="ignore"  # 3  # need to wait for betterdjango field stubs
 invalid-assignment="ignore"  # 17  # need to wait for betterdjango field stubs

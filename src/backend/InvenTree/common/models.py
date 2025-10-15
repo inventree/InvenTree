@@ -2744,7 +2744,7 @@ def issue_mail(
     recipients: Union[str, list],
     fail_silently: bool = False,
     html_message=None,
-    prio: Priority = Priority.NORMAL,
+    prio: Union[Priority, int] = Priority.NORMAL,
     headers: Optional[dict] = None,
 ):
     """Send an email with the specified subject and body, to the specified recipients list.

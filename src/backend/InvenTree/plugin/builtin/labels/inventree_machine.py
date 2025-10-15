@@ -122,10 +122,9 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, InvenTreePlugin):
             """Custom __init__ method to dynamically override the machine choices based on the request."""
             super().__init__(*args, **kwargs)
 
-            # TODO @matmair Re-enable this when the need is clear
-            # view = kwargs['context']['view']
-            template = None  # view.get_object()
-            items_to_print = None  # view.get_items()
+            view = kwargs['context']['view']
+            template = view.get_object()
+            items_to_print = view.get_items()
 
             # get all available printers for each driver
             machines: list[LabelPrinterMachine] = []

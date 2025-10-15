@@ -543,7 +543,7 @@ class SettingsTest(InvenTreeTestCase):
 
         # No key - warning
         with self.assertRaises(ValueError):
-            set_global_warning(None)
+            set_global_warning(None)  # type: ignore[invalid-argument-type] - this is intentional
 
         # Wrong structure
         self.assertTrue(set_global_warning(GlobalWarningCode.TEST_KEY, {'test': json}))

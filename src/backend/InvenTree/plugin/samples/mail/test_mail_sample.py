@@ -13,6 +13,8 @@ from plugin.registry import registry
 class MailPluginSampleTests(TestCase):
     """Tests for MailPluginSample."""
 
+    test_event = 'test.event'
+
     def activate_plugin(self):
         """Activate the sample mail plugin."""
         config = registry.get_plugin('samplemail', active=None).plugin_config()
@@ -24,13 +26,13 @@ class MailPluginSampleTests(TestCase):
         self.activate_plugin()
 
         # Disabled -> no processing
-        self.assertFalse(process_mail_out('test.event'))
+        self.assertFalse(process_mail_out(self.test_event))
 
         InvenTreeSetting.set_setting('ENABLE_PLUGINS_MAILS', True, change_user=None)
 
         # Check that an event is issued
         with self.assertLogs(logger='inventree', level='DEBUG') as cm:
-            process_mail_out('test.event')
+            process_mail_out(self.test_event)
         self.assertIn('Mail `test.event` triggered in sample plugin', str(cm[1]))
 
     def test_run_event_in(self):
@@ -38,13 +40,13 @@ class MailPluginSampleTests(TestCase):
         self.activate_plugin()
 
         # Disabled -> no processing
-        self.assertFalse(process_mail_in('test.event'))
+        self.assertFalse(process_mail_in(self.test_event))
 
         InvenTreeSetting.set_setting('ENABLE_PLUGINS_MAILS', True, change_user=None)
 
         # Check that an event is issued
         with self.assertLogs(logger='inventree', level='DEBUG') as cm:
-            process_mail_in('test.event')
+            process_mail_in(self.test_event)
         self.assertIn('Mail `test.event` triggered in sample plugin', str(cm[1]))
 
     def test_mixin(self):
