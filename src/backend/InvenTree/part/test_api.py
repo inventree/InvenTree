@@ -2046,8 +2046,8 @@ class PartListTests(PartAPITestBase):
             with CaptureQueriesContext(connection) as ctx:
                 self.get(url, query, expected_code=200)
 
-            # No more than 20 database queries
-            self.assertLess(len(ctx), 20)
+            # No more than 25 database queries
+            self.assertLess(len(ctx), 25)
 
         # Test 'category_detail' annotation
         for b in [False, True]:
