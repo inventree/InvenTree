@@ -700,11 +700,15 @@ def backup(
     if quiet:
         cmd += ' --quiet'
 
-    if not skip_db:
+    if skip_db:
+        info('Skipping database backup...')
+    else:
         info('Backing up InvenTree database...')
         manage(c, f'dbbackup {cmd}')
 
-    if not skip_media:
+    if skip_media:
+        info('Skipping media backup...')
+    else:
         info('Backing up InvenTree media files...')
         manage(c, f'mediabackup {cmd}')
 
@@ -716,9 +720,10 @@ def backup(
     help={
         'path': 'Specify path to locate backup files (leave blank for default path)',
         'db_file': 'Specify filename of compressed database archive (leave blank to use most recent backup)',
+        'decrypt': 'Decrypt the backup files (requires GPG recipient to be set)',
         'media_file': 'Specify filename of compressed media archive (leave blank to use most recent backup)',
-        'ignore_media': 'Do not import media archive (database restore only)',
-        'ignore_database': 'Do not import database archive (media restore only)',
+        'skip_db': 'Do not import database archive (media restore only)',
+        'skip_media': 'Do not import media archive (database restore only)',
     }
 )
 def restore(
@@ -726,11 +731,19 @@ def restore(
     path=None,
     db_file=None,
     media_file=None,
-    ignore_media=False,
-    ignore_database=False,
+    decrypt: bool = False,
+    skip_db: bool = False,
+    skip_media: bool = False,
+    uncompress: bool = True,
 ):
     """Restore the database and media files."""
-    base_cmd = '--noinput --uncompress -v 2'
+    base_cmd = '--noinput -v 2'
+
+    if uncompress:
+        base_cmd += ' --uncompress'
+
+    if decrypt:
+        base_cmd += ' --decrypt'
 
     if path:
         # Resolve the provided path
@@ -740,7 +753,7 @@ def restore(
 
         base_cmd += f' -I {path}'
 
-    if ignore_database:
+    if skip_db:
         info('Skipping database archive...')
     else:
         info('Restoring InvenTree database')
@@ -751,7 +764,7 @@ def restore(
 
         manage(c, cmd)
 
-    if ignore_media:
+    if skip_media:
         info('Skipping media restore...')
     else:
         info('Restoring InvenTree media files')
