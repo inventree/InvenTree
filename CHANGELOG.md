@@ -12,10 +12,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added `order_queryset` report helper function in [#10439](https://github.com/inventree/InvenTree/pull/10439)
 - Added much more detailed status information for machines to the API endpoint (including backend and frontend changes) in [#10381](https://github.com/inventree/InvenTree/pull/10381)
 - Added ability to partially complete and partially scrap build outputs in [#10499](https://github.com/inventree/InvenTree/pull/10499)
+- Added support for Redis ACL user-based authentication in [#10551](https://github.com/inventree/InvenTree/pull/10551)
+- Expose stock adjustment forms to the UI plugin context in [#10584](https://github.com/inventree/InvenTree/pull/10584)
 
 ### Changed
 
 - Changed site URL check to allow protocol mismatches if `INVENTREE_SITE_LAX_PROTOCOL` is set to `True` (default) in [#10454](https://github.com/inventree/InvenTree/pull/10454)
+- Changed call signature of `get_global_setting` to use `environment_key` instead of `enviroment_key` in [#10557](https://github.com/inventree/InvenTree/pull/10557)
 
 ### Removed
 

@@ -11,6 +11,7 @@ import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { getDetailUrl } from '@lib/functions/Navigation';
 import type { TableFilter } from '@lib/types/Filters';
+import type { StockOperationProps } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import {
@@ -18,10 +19,7 @@ import {
   formatDecimal,
   formatPriceRange
 } from '../../defaults/formatters';
-import {
-  type StockOperationProps,
-  useStockFields
-} from '../../forms/StockForms';
+import { useStockFields } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
@@ -504,7 +502,10 @@ export function StockItemTable({
     return {
       items: table.selectedRecords,
       model: ModelType.stockitem,
-      refresh: table.refreshTable,
+      refresh: () => {
+        table.clearSelectedRecords();
+        table.refreshTable();
+      },
       filters: {
         in_stock: true
       }

@@ -538,31 +538,11 @@ class ManufacturerTest(InvenTreeAPITestCase):
 
     def test_output_options(self):
         """Test the output options for SupplierPart detail."""
-        url = reverse('api-manufacturer-part-list')
-
-        # Test cases: (parameter_name, response_field_name)
-        test_cases = [
-            ('part_detail', 'part_detail'),
-            ('manufacturer_detail', 'manufacturer_detail'),
-            ('pretty', 'pretty_name'),
-        ]
-
-        for param, field in test_cases:
-            # Test with parameter set to 'true'
-            response = self.get(url, {param: 'true', 'limit': 1}, expected_code=200)
-            self.assertIn(
-                field,
-                response.data['results'][0],
-                f"Field '{field}' should be present when {param}='true'",
-            )
-
-            # Test with parameter set to 'false'
-            response = self.get(url, {param: 'false', 'limit': 1}, expected_code=200)
-            self.assertNotIn(
-                field,
-                response.data['results'][0],
-                f"Field '{field}' should not be present when {param}='false'",
-            )
+        self.run_output_test(
+            reverse('api-manufacturer-part-list'),
+            ['part_detail', 'manufacturer_detail', ('pretty', 'pretty_name')],
+            assert_subset=True,
+        )
 
 
 class SupplierPartTest(InvenTreeAPITestCase):
@@ -603,32 +583,15 @@ class SupplierPartTest(InvenTreeAPITestCase):
     def test_output_options(self):
         """Test the output options for SupplierPart detail."""
         sp = SupplierPart.objects.all().first()
-        url = reverse('api-supplier-part-detail', kwargs={'pk': sp.pk})
-
-        # Test cases: (parameter_name, response_field_name)
-        test_cases = [
-            ('part_detail', 'part_detail'),
-            ('supplier_detail', 'supplier_detail'),
-            ('manufacturer_detail', 'manufacturer_detail'),
-            ('pretty', 'pretty_name'),
-        ]
-
-        for param, field in test_cases:
-            # Test with parameter set to 'true'
-            response = self.get(url, {param: 'true'}, expected_code=200)
-            self.assertIn(
-                field,
-                response.data,
-                f"Field '{field}' should be present when {param}='true'",
-            )
-
-            # Test with parameter set to 'false'
-            response = self.get(url, {param: 'false'}, expected_code=200)
-            self.assertNotIn(
-                field,
-                response.data,
-                f"Field '{field}' should not be present when {param}='false'",
-            )
+        self.run_output_test(
+            reverse('api-supplier-part-detail', kwargs={'pk': sp.pk}),
+            [
+                'part_detail',
+                'supplier_detail',
+                'manufacturer_detail',
+                ('pretty', 'pretty_name'),
+            ],
+        )
 
     def test_available(self):
         """Tests for updating the 'available' field."""
@@ -789,28 +752,12 @@ class SupplierPriceBreakAPITest(InvenTreeAPITestCase):
 
     def test_output_options(self):
         """Test the output options for SupplierPart price break list."""
-        url = reverse('api-part-supplier-price-list')
-        test_cases = [
-            ('part_detail', 'part_detail'),
-            ('supplier_detail', 'supplier_detail'),
-        ]
-
-        for param, field in test_cases:
-            # Test with parameter set to 'true'
-            response = self.get(url, {param: 'true', 'limit': 1}, expected_code=200)
-            self.assertIn(
-                field,
-                response.data['results'][0],
-                f"Field '{field}' should be present when {param}='true'",
-            )
-
-            # Test with parameter set to 'false'
-            response = self.get(url, {param: 'false', 'limit': 1}, expected_code=200)
-            self.assertNotIn(
-                field,
-                response.data['results'][0],
-                f"Field '{field}' should not be present when {param}='false'",
-            )
+        self.run_output_test(
+            reverse('api-part-supplier-price-list'),
+            ['part_detail', 'supplier_detail'],
+            additional_params={'limit': 1},
+            assert_fnc=lambda x: x.data['results'][0],
+        )
 
     def test_supplier_price_break_list(self):
         """Test the SupplierPriceBreak API list functionality."""

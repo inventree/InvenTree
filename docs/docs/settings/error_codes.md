@@ -14,7 +14,7 @@ Only stable / production releases of InvenTree include the frontend panel. This 
 If you want to use the frontend panel, you can either:
 
 - use a docker image that is version-tagged or the stable version
-- use a package version that is from the stable or version stream - if you are and it is not working, run `sudo inventree run cli update` to re-run the upgrade
+- use a package version that is from the stable or version stream - if you are and it is not working, run `sudo inventree run invoke update` to re-run the upgrade
 - install node and yarn on the server to build the frontend with the [invoke](../start/invoke.md) task `int.frontend-build`
 
 Raise an issue if none of these options work.
