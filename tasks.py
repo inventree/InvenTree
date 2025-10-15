@@ -776,6 +776,14 @@ def restore(
         manage(c, cmd)
 
 
+@task()
+@state_logger()
+def listbackups(c):
+    """List available backup files."""
+    info('Finding available backup files...')
+    manage(c, 'listbackups')
+
+
 @task(post=[rebuild_models, rebuild_thumbnails])
 @state_logger('TASK05')
 def migrate(c):
@@ -1974,6 +1982,7 @@ ns = Collection(
     frontend_download,
     import_records,
     install,
+    listbackups,
     migrate,
     plugins,
     remove_mfa,
