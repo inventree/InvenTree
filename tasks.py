@@ -657,18 +657,37 @@ def translate(c, ignore_static=False, no_frontend=False):
 @task(
     help={
         'clean': 'Clean up old backup files',
+        'compress': 'Compress the backup files',
+        'encrypt': 'Encrypt the backup files (requires GPG recipient to be set)',
         'path': 'Specify path for generated backup files (leave blank for default path)',
+        'quiet': 'Suppress informational output (only show errors)',
+        'skip_db': 'Skip database backup step (only backup media files)',
+        'skip_media': 'Skip media backup step (only backup database files)',
     }
 )
 @state_logger('TASK04')
-def backup(c, clean=False, path=None):
+def backup(
+    c,
+    clean: bool = False,
+    compress: bool = True,
+    encrypt: bool = False,
+    path=None,
+    quiet: bool = False,
+    skip_db: bool = False,
+    skip_media: bool = False,
+):
     """Backup the database and media files."""
-    info('Backing up InvenTree database...')
+    cmd = '--noinput -v 2'
 
-    cmd = '--noinput --compress -v 2'
+    if compress:
+        cmd += ' --compress'
 
+    if encrypt:
+        cmd += ' --encrypt'
+
+    # A path to the backup dir can be specified here
+    # If not specified, the default backup dir is used
     if path:
-        # Resolve the provided path
         path = Path(path)
         if not os.path.isabs(path):
             path = local_dir().joinpath(path).resolve()
@@ -678,11 +697,19 @@ def backup(c, clean=False, path=None):
     if clean:
         cmd += ' --clean'
 
-    manage(c, f'dbbackup {cmd}')
-    info('Backing up InvenTree media files...')
-    manage(c, f'mediabackup {cmd}')
+    if quiet:
+        cmd += ' --quiet'
 
-    success('Backup completed successfully')
+    if not skip_db:
+        info('Backing up InvenTree database...')
+        manage(c, f'dbbackup {cmd}')
+
+    if not skip_media:
+        info('Backing up InvenTree media files...')
+        manage(c, f'mediabackup {cmd}')
+
+    if not skip_db or not skip_media:
+        success('Backup completed successfully')
 
 
 @task(
