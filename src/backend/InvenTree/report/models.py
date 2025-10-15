@@ -5,6 +5,7 @@ import os
 import sys
 from datetime import date, datetime
 from typing import Optional, TypedDict, cast
+from urllib.parse import unquote, urlparse
 
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
@@ -29,13 +30,14 @@ import report.helpers
 import report.validators
 from common.models import DataOutput, RenderChoices
 from common.settings import get_global_setting
+from InvenTree import config
 from InvenTree.helpers_model import get_base_url
 from InvenTree.models import MetadataMixin
 from plugin import InvenTreePlugin, PluginMixinEnum
 from plugin.registry import registry
 
 try:
-    from weasyprint import HTML
+    from weasyprint import HTML, default_url_fetcher
 except OSError as err:  # pragma: no cover
     print(f'OSError: {err}')
     print("Unable to import 'weasyprint' module.")
@@ -44,6 +46,32 @@ except OSError as err:  # pragma: no cover
 
 
 logger = structlog.getLogger('inventree')
+
+WE_BASE_URL = 'http://localhost'
+
+
+def url_fetcher(url: str, timeout=10, ssl_context=None):
+    """Function to fetch files for Weasyprint.
+
+    Will resolve `/media` and `/static` requests to `MEDIA_ROOT` and `STATIC_ROOT` respectively.
+
+    All other requests will fall back to `weasyprint.default_url_fetcher`.
+    """
+    media = config.get_media_dir().resolve()
+    static = config.get_static_dir().resolve()
+
+    if url.startswith(WE_BASE_URL):
+        # .path always starts with a '/' character, which must be trimmed off.
+        u = unquote(urlparse(url).path)[1:]
+        if u.startswith('media'):
+            pth = media.parent.joinpath(u).resolve()
+            if media in pth.parents:
+                return {'file_obj': open(pth, 'rb')}
+        elif u.startswith('static'):
+            pth = static.parent.joinpath(u).resolve()
+            if static in pth.parents:
+                return {'file_obj': open(pth, 'rb')}
+    return default_url_fetcher(url, timeout=timeout, ssl_context=ssl_context)
 
 
 def log_report_error(*args, **kwargs):
@@ -272,7 +300,9 @@ class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
             bytes: PDF data
         """
         html = self.render_as_string(instance, request, context, **kwargs)
-        pdf = HTML(string=html).write_pdf()
+        pdf = HTML(
+            string=html, url_fetcher=url_fetcher, base_url=WE_BASE_URL
+        ).write_pdf()
 
         return pdf
 
