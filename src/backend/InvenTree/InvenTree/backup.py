@@ -6,7 +6,26 @@ Ref: https://archmonger.github.io/django-dbbackup/latest/configuration/
 """
 
 import InvenTree.config
-import InvenTree.ready
+
+
+def get_backup_connector_options() -> dict:
+    """Options which are specific to the selected backup connector.
+
+    These options apply to the database connector, not to the backup storage.
+
+    Ref: https://archmonger.github.io/django-dbbackup/latest/databases/
+    """
+    default_options = {'EXCLUDE': ['django_session']}
+
+    # Allow user to specify custom options here if necessary
+    connector_options = InvenTree.config.get_setting(
+        'INVENTREE_BACKUP_CONNECTOR_OPTIONS',
+        'backup_connector_options',
+        default_value=default_options,
+        typecast=dict,
+    )
+
+    return connector_options
 
 
 def get_backup_storage_backend() -> str:

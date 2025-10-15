@@ -261,6 +261,8 @@ DBBACKUP_GPG_RECIPIENT = InvenTree.backup.backup_gpg_recipient()
 DBBACKUP_SEND_EMAIL = InvenTree.backup.backup_email_on_error()
 DBBACKUP_EMAIL_SUBJECT_PREFIX = InvenTree.backup.backup_email_prefix()
 
+DBBACKUP_CONNECTORS = {'default': InvenTree.backup.get_backup_connector_options()}
+
 # Data storage options
 STORAGES = {
     'default': {'BACKEND': 'django.core.files.storage.FileSystemStorage'},
