@@ -46,7 +46,7 @@ def get_backup_storage_backend() -> str:
         backend_class = import_string(backend)
 
         if not issubclass(backend_class, Storage):
-            raise ImportError(
+            raise TypeError(
                 f"Backup storage backend '{backend}' is not a valid Storage class"
             )
     except Exception as e:

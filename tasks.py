@@ -724,6 +724,7 @@ def backup(
         'media_file': 'Specify filename of compressed media archive (leave blank to use most recent backup)',
         'skip_db': 'Do not import database archive (media restore only)',
         'skip_media': 'Do not import media archive (database restore only)',
+        'uncompress': 'Uncompress the backup files before restoring (default behavior)',
     }
 )
 def restore(
