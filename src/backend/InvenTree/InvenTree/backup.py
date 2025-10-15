@@ -84,6 +84,16 @@ def backup_gpg_recipient() -> str:
     )
 
 
+def backup_date_format() -> str:
+    """Return the date format string for database backups."""
+    return InvenTree.config.get_setting(
+        'INVENTREE_BACKUP_DATE_FORMAT',
+        'backup_date_format',
+        default_value='%Y-%m-%d-%H%M%S',
+        typecast=str,
+    )
+
+
 def backup_filename_template() -> str:
     """Return the filename template for database backups."""
     return InvenTree.config.get_setting(

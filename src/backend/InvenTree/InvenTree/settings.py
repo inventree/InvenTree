@@ -252,6 +252,7 @@ if DEBUG and 'collectstatic' not in sys.argv:
 
 # For core backup functionality, refer to the STORAGES["dbbackup"] entry (below)
 
+DBBACKUP_DATE_FORMAT = InvenTree.backup.backup_date_format()
 DBBACKUP_FILENAME_TEMPLATE = InvenTree.backup.backup_filename_template()
 DBBACKUP_MEDIA_FILENAME_TEMPLATE = InvenTree.backup.backup_media_filename_template()
 
