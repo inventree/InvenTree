@@ -1743,7 +1743,6 @@ class StockItem(
             self.belongs_to is None,  # Not installed inside another StockItem
             self.customer is None,  # Not assigned to a customer
             self.consumed_by is None,  # Not consumed by a build
-            not self.is_building,  # Not part of an active build
         ])
 
     @property
