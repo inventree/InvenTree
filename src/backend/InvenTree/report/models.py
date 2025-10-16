@@ -5,7 +5,6 @@ import os
 import sys
 from datetime import date, datetime
 from typing import Optional, TypedDict, cast
-from urllib.parse import unquote, urlparse
 
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
@@ -14,6 +13,7 @@ from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.core.validators import FileExtensionValidator, MinValueValidator
 from django.db import models
+from django.http.request import HttpRequest
 from django.template import Context, Template
 from django.template.exceptions import TemplateDoesNotExist, TemplateSyntaxError
 from django.template.loader import render_to_string
@@ -30,7 +30,6 @@ import report.helpers
 import report.validators
 from common.models import DataOutput, RenderChoices
 from common.settings import get_global_setting
-from InvenTree import config
 from InvenTree.helpers_model import get_base_url
 from InvenTree.models import MetadataMixin
 from plugin import InvenTreePlugin, PluginMixinEnum
@@ -47,31 +46,23 @@ except OSError as err:  # pragma: no cover
 
 logger = structlog.getLogger('inventree')
 
-WE_BASE_URL = 'http://localhost'
 
+def build_fetcher(request: HttpRequest):
+    """Factory function that returns a function that handles Weasyprint url requests.
 
-def url_fetcher(url: str, timeout=10, ssl_context=None):
-    """Function to fetch files for Weasyprint.
-
-    Will resolve `/media` and `/static` requests to `MEDIA_ROOT` and `STATIC_ROOT` respectively.
-
-    All other requests will fall back to `weasyprint.default_url_fetcher`.
+    Takes in an HttpRequest and copies it's headers for future requests.
     """
-    media = config.get_media_dir().resolve()
-    static = config.get_static_dir().resolve()
+    http_headers = None
 
-    if url.startswith(WE_BASE_URL):
-        # .path always starts with a '/' character, which must be trimmed off.
-        u = unquote(urlparse(url).path)[1:]
-        if u.startswith('media'):
-            pth = media.parent.joinpath(u).resolve()
-            if media in pth.parents:
-                return {'file_obj': open(pth, 'rb')}
-        elif u.startswith('static'):
-            pth = static.parent.joinpath(u).resolve()
-            if static in pth.parents:
-                return {'file_obj': open(pth, 'rb')}
-    return default_url_fetcher(url, timeout=timeout, ssl_context=ssl_context)
+    if request is not None:
+        http_headers = request.headers
+
+    def url_fetcher(url: str, timeout=10, ssl_context=None):
+        return default_url_fetcher(
+            url, timeout=timeout, ssl_context=ssl_context, http_headers=http_headers
+        )
+
+    return url_fetcher
 
 
 def log_report_error(*args, **kwargs):
@@ -301,7 +292,9 @@ class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
         """
         html = self.render_as_string(instance, request, context, **kwargs)
         pdf = HTML(
-            string=html, url_fetcher=url_fetcher, base_url=WE_BASE_URL
+            string=html,
+            url_fetcher=build_fetcher(request),
+            base_url=get_base_url(request),
         ).write_pdf()
 
         return pdf

@@ -293,7 +293,13 @@ class ReportPrint(GenericAPIView):
         item_ids = [item.pk for item in items_to_print]
 
         # Offload the task to the background worker
-        offload_task(report.tasks.print_reports, template.pk, item_ids, output.pk)
+        offload_task(
+            report.tasks.print_reports,
+            template.pk,
+            item_ids,
+            output.pk,
+            request=request,
+        )
 
         output.refresh_from_db()
 
