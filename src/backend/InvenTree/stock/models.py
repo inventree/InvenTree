@@ -2345,7 +2345,9 @@ class StockItem(
             'STOCK_ALLOW_OUT_OF_STOCK_TRANSFER', backup_value=False, cache=False
         )
 
-        if not allow_out_of_stock_transfer and not self.is_in_stock(check_status=False):
+        if not allow_out_of_stock_transfer and not self.is_in_stock(
+            check_status=False, check_in_production=False
+        ):
             raise ValidationError(_('StockItem cannot be moved as it is not in stock'))
 
         if quantity <= 0:
