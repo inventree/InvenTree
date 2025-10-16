@@ -2220,7 +2220,6 @@ class StockItem(
         - The new item will have a different StockItem ID, while this will remain the same.
         """
         # Run initial checks to test if the stock item can actually be "split"
-
         allow_production = kwargs.get('allow_production', False)
 
         # Cannot split a stock item which is in production
@@ -2363,7 +2362,7 @@ class StockItem(
             kwargs['notes'] = notes
 
             # Split the existing StockItem in two
-            self.splitStock(quantity, location, user, **kwargs)
+            self.splitStock(quantity, location, user, allow_production=True, **kwargs)
 
             return True
 
