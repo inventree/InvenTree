@@ -31,7 +31,10 @@ export function BuiltinQueryCountWidgets(): DashboardWidgetProps[] {
       title: t`Subscribed Categories`,
       description: t`Show the number of part categories which you have subscribed to`,
       modelType: ModelType.partcategory,
-      params: { starred: true }
+      params: {
+        starred: true,
+        top_level: 'none'
+      }
     }),
     QueryCountDashboardWidget({
       label: 'invalid-bom',
