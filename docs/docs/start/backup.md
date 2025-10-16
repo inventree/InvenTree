@@ -46,7 +46,7 @@ These options can be passed through via the `INVENTREE_BACKUP_CONNECTOR_OPTIONS`
 
 Refer to the [database connector documentation](https://archmonger.github.io/django-dbbackup/5.0.0/databases/) for more information on the available options.
 
-## Performi Backup
+## Perform Backup
 
 #### Manual Backup
 
