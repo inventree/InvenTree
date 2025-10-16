@@ -57,7 +57,7 @@ from build.status_codes import BuildStatusGroups
 from common.currency import currency_code_default
 from common.icons import validate_icon
 from common.settings import get_global_setting
-from company.models import SupplierPart
+from company.models import Company, SupplierPart
 from InvenTree import helpers, validators
 from InvenTree.exceptions import log_error
 from InvenTree.fields import InvenTreeURLField
@@ -3516,6 +3516,16 @@ class PartSellPriceBreak(common.models.PriceBreak):
         related_name='salepricebreaks',
         limit_choices_to={'salable': True},
         verbose_name=_('Part'),
+    )
+
+    customer = models.ForeignKey(
+        Company,
+        on_delete=models.CASCADE,
+        null=True,
+        limit_choices_to={'is_customer': True},
+        related_name='salepricebreaks',
+        verbose_name=_('Customer'),
+        help_text=_('Company to which the price break applies'),
     )
 
 

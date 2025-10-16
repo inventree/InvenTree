@@ -220,7 +220,7 @@ class PartSalePriceSerializer(
         """Metaclass defining serializer fields."""
 
         model = PartSellPriceBreak
-        fields = ['pk', 'part', 'quantity', 'price', 'price_currency']
+        fields = ['pk', 'part', 'quantity', 'price', 'price_currency', 'customer']
 
     quantity = InvenTree.serializers.InvenTreeDecimalField()
 
@@ -228,6 +228,14 @@ class PartSalePriceSerializer(
 
     price_currency = InvenTree.serializers.InvenTreeCurrencySerializer(
         help_text=_('Purchase currency of this stock item')
+    )
+
+    customer = serializers.PrimaryKeyRelatedField(
+        queryset=company.models.Company.objects.all(),
+        required=False,
+        allow_null=True,
+        label=_('Customer'),
+        help_text=_('Customer'),
     )
 
 
