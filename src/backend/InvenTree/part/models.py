@@ -3503,7 +3503,6 @@ class PartSellPriceBreak(common.models.PriceBreak):
         """Metaclass providing extra model definition."""
 
         verbose_name = _('Part Sale Price Break')
-        unique_together = ('part', 'quantity')
 
     @staticmethod
     def get_api_url():
@@ -3522,6 +3521,7 @@ class PartSellPriceBreak(common.models.PriceBreak):
         Company,
         on_delete=models.CASCADE,
         null=True,
+        blank=True,
         limit_choices_to={'is_customer': True},
         related_name='salepricebreaks',
         verbose_name=_('Customer'),

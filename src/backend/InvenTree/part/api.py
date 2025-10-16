@@ -385,7 +385,8 @@ class PartSalePriceList(DataExportViewMixin, ListCreateAPI):
 
     filter_backends = SEARCH_ORDER_FILTER
     filterset_fields = ['part']
-    ordering_fields = ['quantity', 'price']
+    ordering_fields = ['quantity', 'price', 'customer__name']
+    ordering_field_aliases = {'customer': 'customer__name'}
     ordering = 'quantity'
 
 

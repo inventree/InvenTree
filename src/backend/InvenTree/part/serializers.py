@@ -220,7 +220,15 @@ class PartSalePriceSerializer(
         """Metaclass defining serializer fields."""
 
         model = PartSellPriceBreak
-        fields = ['pk', 'part', 'quantity', 'price', 'price_currency', 'customer']
+        fields = [
+            'pk',
+            'part',
+            'quantity',
+            'price',
+            'price_currency',
+            'customer',
+            'customer_detail',
+        ]
 
     quantity = InvenTree.serializers.InvenTreeDecimalField()
 
@@ -231,12 +239,22 @@ class PartSalePriceSerializer(
     )
 
     customer = serializers.PrimaryKeyRelatedField(
-        queryset=company.models.Company.objects.all(),
-        required=False,
-        allow_null=True,
+        queryset=company.models.Company.objects.filter(is_customer=True),
         label=_('Customer'),
-        help_text=_('Customer'),
+        help_text=_('Customer for this price break'),
+        allow_null=True,
+        required=False,
     )
+
+    customer_detail = serializers.SerializerMethodField()
+
+    def get_customer_detail(self, obj):
+        """Get the customer detail for the price break."""
+        from company.serializers import CompanyBriefSerializer
+
+        if not obj.customer:
+            return None
+        return CompanyBriefSerializer(obj.customer).data
 
 
 class PartInternalPriceSerializer(InvenTree.serializers.InvenTreeModelSerializer):
