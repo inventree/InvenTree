@@ -24,7 +24,7 @@ export function BuiltinQueryCountWidgets(): DashboardWidgetProps[] {
       title: t`Subscribed Parts`,
       description: t`Show the number of parts which you have subscribed to`,
       modelType: ModelType.part,
-      params: { starred: true }
+      params: { starred: true, active: true }
     }),
     QueryCountDashboardWidget({
       label: 'sub-cat',
