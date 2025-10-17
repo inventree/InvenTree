@@ -106,6 +106,12 @@ To view a list of available backups, run the following command from the shell:
 invoke listbackups
 ```
 
+## Backup Filename Formatting
+
+There are multiple configuration options available to control the formatting of backup filenames. These options are described in the [configuration section](#configuration) above.
+
+For more information about the available formatting options, refer to the [django-dbbackup documentation](https://archmonger.github.io/django-dbbackup/latest/configuration/#dbbackup_filename_template).
+
 ## Advanced Usage
 
 Not all functionality of the db-backup library is exposed by default. For advanced usage (not covered by the documentation above), refer to the [django-dbbackup commands documentation](https://archmonger.github.io/django-dbbackup/5.0.0/commands/).
