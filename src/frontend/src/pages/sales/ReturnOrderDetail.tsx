@@ -458,6 +458,7 @@ export default function ReturnOrderDetail() {
         modelType={ModelType.returnorder}
         items={[order.pk]}
         enableReports
+        enableLabels
       />,
       <OptionsActionDropdown
         tooltip={t`Order Actions`}
