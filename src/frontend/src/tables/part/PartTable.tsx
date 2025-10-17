@@ -1,8 +1,8 @@
 import { t } from '@lingui/core/macro';
 import { Group, Text } from '@mantine/core';
-import { IconShoppingCart } from '@tabler/icons-react';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 
+import { ActionButton } from '@lib/components/ActionButton';
 import { AddItemButton } from '@lib/components/AddItemButton';
 import {
   type RowAction,
@@ -17,7 +17,9 @@ import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
 import type { InvenTreeTableProps } from '@lib/types/Tables';
+import { IconPackageImport, IconShoppingCart } from '@tabler/icons-react';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
+import ImportPartWizard from '../../components/wizards/ImportPartWizard';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { formatDecimal, formatPriceRange } from '../../defaults/formatters';
 import { usePartFields } from '../../forms/PartForms';
@@ -27,6 +29,7 @@ import {
   useCreateApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
+import { usePluginsWithMixin } from '../../hooks/UsePlugins';
 import { useTable } from '../../hooks/UseTable';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
@@ -424,6 +427,11 @@ export function PartListTable({
 
   const orderPartsWizard = OrderPartsWizard({ parts: table.selectedRecords });
 
+  const supplierPlugins = usePluginsWithMixin('supplier');
+  const importPartWizard = ImportPartWizard({
+    categoryId: initialPartData.category
+  });
+
   const rowActions = useCallback(
     (record: any): RowAction[] => {
       const can_edit = user.hasChangePermission(ModelType.part);
@@ -482,9 +490,19 @@ export function PartListTable({
         hidden={!user.hasAddRole(UserRoles.part)}
         tooltip={t`Add Part`}
         onClick={() => newPart.open()}
+      />,
+      <ActionButton
+        key='import-part'
+        hidden={
+          supplierPlugins.length === 0 || !user.hasAddRole(UserRoles.part)
+        }
+        tooltip={t`Import Part`}
+        color='green'
+        icon={<IconPackageImport />}
+        onClick={() => importPartWizard.openWizard()}
       />
     ];
-  }, [user, table.hasSelectedRecords]);
+  }, [user, table.hasSelectedRecords, supplierPlugins]);
 
   return (
     <>
@@ -493,6 +511,7 @@ export function PartListTable({
       {editPart.modal}
       {setCategory.modal}
       {orderPartsWizard.wizard}
+      {importPartWizard.wizard}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.part_list)}
         tableState={table}
