@@ -183,5 +183,12 @@ Overriding a global setting with a different value than the current one.
 
 See [Override global settings](../settings/global.md#override-global-settings) for more information.
 
+#### INVE-I2
+**Issue with filtering serializer or decorator - Backend**
+
+An issue was detected with the application of a filtering serializer or decorator. This might lead to unexpected behaviour or performance issues. Therefore an issue is raised to make the developer aware of the possible issue. Look into the docstrings of enable_filter, FilterableSerializerField or FilterableSerializerMixin.
+
+This warning should only be raised during development and not in production, if you recently installed a plugin you might want to contact the plugin author.
+
 ### INVE-M (InvenTree Miscellaneous)
 Miscellaneous — These are information messages that might be used to mark debug information or other messages helpful for the InvenTree team to understand behaviour.
