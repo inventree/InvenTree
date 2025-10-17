@@ -1,7 +1,15 @@
-import { TextInput } from '@mantine/core';
+import { t } from '@lingui/core/macro';
+import { TextInput, Tooltip } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
-import { IconX } from '@tabler/icons-react';
-import { useCallback, useEffect, useId, useState } from 'react';
+import { IconCopyCheck, IconX } from '@tabler/icons-react';
+import {
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useId,
+  useMemo,
+  useState
+} from 'react';
 import type { FieldValues, UseControllerReturn } from 'react-hook-form';
 
 /*
@@ -13,12 +21,14 @@ export default function TextField({
   controller,
   fieldName,
   definition,
+  placeholderAutofill,
   onChange,
   onKeyDown
 }: Readonly<{
   controller: UseControllerReturn<FieldValues, any>;
   definition: any;
   fieldName: string;
+  placeholderAutofill?: boolean;
   onChange: (value: any) => void;
   onKeyDown: (value: any) => void;
 }>) {
@@ -28,7 +38,7 @@ export default function TextField({
     fieldState: { error }
   } = controller;
 
-  const { value } = field;
+  const { value } = useMemo(() => field, [field]);
 
   const [rawText, setRawText] = useState<string>(value || '');
 
@@ -47,6 +57,33 @@ export default function TextField({
       onChange(debouncedText);
     }
   }, [debouncedText]);
+
+  // Construct a "right section" for the text field
+  const textFieldRightSection: ReactNode = useMemo(() => {
+    if (definition.rightSection) {
+      // Use the specified override value
+      return definition.rightSection;
+    } else if (value) {
+      if (!definition.required) {
+        // Render a button to clear the text field
+        return (
+          <Tooltip label={t`Clear`} position='top-end'>
+            <IconX size='1rem' color='red' onClick={() => onTextChange('')} />
+          </Tooltip>
+        );
+      }
+    } else if (!value && definition.placeholder && placeholderAutofill) {
+      return (
+        <Tooltip label={t`Accept suggested value`} position='top-end'>
+          <IconCopyCheck
+            size='1rem'
+            color='green'
+            onClick={() => onTextChange(definition.placeholder)}
+          />
+        </Tooltip>
+      );
+    }
+  }, [placeholderAutofill, definition, value]);
 
   return (
     <TextInput
@@ -71,11 +108,7 @@ export default function TextField({
         }
         onKeyDown(event.code);
       }}
-      rightSection={
-        value && !definition.required ? (
-          <IconX size='1rem' color='red' onClick={() => onTextChange('')} />
-        ) : null
-      }
+      rightSection={textFieldRightSection}
     />
   );
 }
