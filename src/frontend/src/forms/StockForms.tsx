@@ -356,9 +356,8 @@ export function useStockItemSerializeFields({
     return {
       quantity: {},
       serial_numbers: {
-        placeholder:
-          serialGenerator.result &&
-          `${t`Next serial number`}: ${serialGenerator.result}`
+        placeholder: serialGenerator.result && `${serialGenerator.result}+`,
+        placeholderAutofill: true
       },
       destination: {}
     };
