@@ -34,7 +34,7 @@ test('Build Order - Basic Tests', async ({ browser }) => {
 
   // Edit the build order (via keyboard shortcut)
   await page.keyboard.press('Control+E');
-  await page.getByLabel('text-field-title').waitFor();
+  await page.getByLabel('text-field-title', { exact: true }).waitFor();
   await page.getByLabel('related-field-project_code').waitFor();
   await page.getByRole('button', { name: 'Cancel' }).click();
 
@@ -85,7 +85,9 @@ test('Build Order - Basic Tests', async ({ browser }) => {
     .getByLabel('add-test-result');
 
   await button.click();
-  await page.getByRole('textbox', { name: 'text-field-value' }).waitFor();
+  await page
+    .getByRole('textbox', { name: 'text-field-value', exact: true })
+    .waitFor();
   await page.getByRole('button', { name: 'Cancel' }).click();
 
   // Click through to the "parent" build
@@ -210,7 +212,6 @@ test('Build Order - Build Outputs', async ({ browser }) => {
     .getByRole('img', { name: 'text-field-batch_code-accept-placeholder' })
     .click();
 
-  // await page.getByLabel('text-field-batch_code', { exact: true }).fill('BATCH12345');
   await page.getByLabel('related-field-location').click();
   await page.getByLabel('related-field-location').fill('Reel');
   await page.getByText('- Electronics Lab/Reel Storage').click();
@@ -403,7 +404,7 @@ test('Build Order - Consume Stock', async ({ browser }) => {
   await page.getByLabel('Consume Stock').getByText('5 / 35').waitFor();
   await page.getByLabel('Consume Stock').getByText('5 / 40').waitFor();
   await page
-    .getByRole('textbox', { name: 'text-field-notes' })
+    .getByRole('textbox', { name: 'text-field-notes', exact: true })
     .fill('some notes here...');
   await page.getByRole('button', { name: 'Cancel' }).click();
 
@@ -432,7 +433,7 @@ test('Build Order - Tracked Outputs', async ({ browser }) => {
   const cancelBuildOutput = async (cell) => {
     await clickOnRowMenu(cell);
     await page.getByRole('menuitem', { name: 'Cancel' }).click();
-    await page.getByRole('button', { name: 'Submit' }).click();
+    await page.getByRole('button', { name: 'Submit', exact: true }).click();
     await page.getByText('Build outputs have been cancelled').waitFor();
   };
 
@@ -450,7 +451,9 @@ test('Build Order - Tracked Outputs', async ({ browser }) => {
     .getByRole('button', { name: 'action-button-add-build-output' })
     .click();
   await page.getByLabel('number-field-quantity').fill('1');
-  await page.getByLabel('text-field-serial_numbers').fill('15');
+  await page
+    .getByLabel('text-field-serial_numbers', { exact: true })
+    .fill('15');
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByText('Build output created').waitFor();
 
@@ -505,7 +508,9 @@ test('Build Order - Tracked Outputs', async ({ browser }) => {
     .getByRole('button', { name: 'action-button-add-build-output' })
     .click();
   await page.getByLabel('number-field-quantity').fill('1');
-  await page.getByLabel('text-field-serial_numbers').fill('16');
+  await page
+    .getByLabel('text-field-serial_numbers', { exact: true })
+    .fill('16');
   await page
     .locator('label')
     .filter({ hasText: 'Auto Allocate Serial' })
@@ -566,7 +571,9 @@ test('Build Order - Duplicate', async ({ browser }) => {
   await page.getByLabel('action-menu-build-order-actions-duplicate').click();
 
   // Ensure a new reference is suggested
-  await expect(page.getByLabel('text-field-reference')).not.toBeEmpty();
+  await expect(
+    page.getByLabel('text-field-reference', { exact: true })
+  ).not.toBeEmpty();
 
   // Submit the duplicate request and ensure it completes
   await page.getByRole('button', { name: 'Submit' }).isEnabled();

@@ -140,14 +140,16 @@ test('Part - Editing', async ({ browser }) => {
   // Open part edit dialog
   await page.keyboard.press('Control+E');
 
-  const keywords = await page.getByLabel('text-field-keywords').inputValue();
+  const keywords = await page
+    .getByLabel('text-field-keywords', { exact: true })
+    .inputValue();
   await page
-    .getByLabel('text-field-keywords')
+    .getByLabel('text-field-keywords', { exact: true })
     .fill(keywords ? '' : 'table furniture');
 
   // Test URL validation
   await page
-    .getByRole('textbox', { name: 'text-field-link' })
+    .getByRole('textbox', { name: 'text-field-link', exact: true })
     .fill('htxp-??QQQ++');
   await page.waitForTimeout(200);
   await page.getByRole('button', { name: 'Submit' }).click();
@@ -155,11 +157,15 @@ test('Part - Editing', async ({ browser }) => {
 
   // Fill with an empty URL
   const description = await page
-    .getByLabel('text-field-description')
+    .getByLabel('text-field-description', { exact: true })
     .inputValue();
 
-  await page.getByRole('textbox', { name: 'text-field-link' }).fill('');
-  await page.getByLabel('text-field-description').fill(`${description}+`);
+  await page
+    .getByRole('textbox', { name: 'text-field-link', exact: true })
+    .fill('');
+  await page
+    .getByLabel('text-field-description', { exact: true })
+    .fill(`${description}+`);
   await page.waitForTimeout(200);
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByText('Item Updated').waitFor();
@@ -460,8 +466,12 @@ test('Parts - Attachments', async ({ browser }) => {
 
   // Submit a new external link
   await page.getByLabel('action-button-add-external-').click();
-  await page.getByLabel('text-field-link').fill('https://www.google.com');
-  await page.getByLabel('text-field-comment').fill('a sample comment');
+  await page
+    .getByLabel('text-field-link', { exact: true })
+    .fill('https://www.google.com');
+  await page
+    .getByLabel('text-field-comment', { exact: true })
+    .fill('a sample comment');
 
   // Note: Text field values are debounced for 250ms
   await page.waitForTimeout(300);
@@ -471,7 +481,9 @@ test('Parts - Attachments', async ({ browser }) => {
 
   // Launch dialog to upload a file
   await page.getByLabel('action-button-add-attachment').click();
-  await page.getByLabel('text-field-comment').fill('some comment');
+  await page
+    .getByLabel('text-field-comment', { exact: true })
+    .fill('some comment');
   await page.getByRole('button', { name: 'Cancel' }).click();
 });
 
@@ -487,7 +499,9 @@ test('Parts - Parameters', async ({ browser }) => {
   await page.getByLabel('choice-field-data').click();
   await page.getByRole('option', { name: 'Green' }).click();
 
-  await page.getByLabel('text-field-note').fill('A custom note field');
+  await page
+    .getByLabel('text-field-note', { exact: true })
+    .fill('A custom note field');
 
   // Select the "polarized" parameter template (should create a "checkbox" field)
   await page.getByLabel('related-field-template').fill('Polarized');
@@ -575,8 +589,8 @@ test('Parts - Notes', async ({ browser }) => {
 
   // Use keyboard shortcut to "edit" the part
   await page.keyboard.press('Control+E');
-  await page.getByLabel('text-field-name').waitFor();
-  await page.getByLabel('text-field-description').waitFor();
+  await page.getByLabel('text-field-name', { exact: true }).waitFor();
+  await page.getByLabel('text-field-description', { exact: true }).waitFor();
   await page.getByLabel('related-field-category').waitFor();
   await page.getByRole('button', { name: 'Cancel' }).click();
 
