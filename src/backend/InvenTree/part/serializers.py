@@ -704,6 +704,7 @@ class PartSerializer(
             'pricing_max',
             'pricing_updated',
             'responsible',
+            'price_breaks',
             # Annotated fields
             'allocated_to_build_orders',
             'allocated_to_sales_orders',
@@ -744,6 +745,7 @@ class PartSerializer(
         create = kwargs.pop('create', False)
         pricing = kwargs.pop('pricing', True)
         path_detail = kwargs.pop('path_detail', False)
+        price_breaks = kwargs.pop('price_breaks', False)
 
         super().__init__(*args, **kwargs)
 
@@ -761,6 +763,9 @@ class PartSerializer(
 
         if not path_detail:
             self.fields.pop('category_path', None)
+
+        if not price_breaks:
+            self.fields.pop('price_breaks', None)
 
         if not create:
             # These fields are only used for the LIST API endpoint
@@ -1020,6 +1025,10 @@ class PartSerializer(
     )
 
     parameters = PartParameterSerializer(many=True, read_only=True, allow_null=True)
+
+    price_breaks = PartSalePriceSerializer(
+        source='salepricebreaks', many=True, read_only=True
+    )
 
     # Extra fields used only for creation of a new Part instance
     duplicate = DuplicatePartSerializer(
