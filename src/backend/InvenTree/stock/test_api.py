@@ -1873,6 +1873,65 @@ class StocktakeTest(StockAPITestCase):
             status_code=status.HTTP_400_BAD_REQUEST,
         )
 
+    def test_transfer_cross_tenant_validation(self):
+        """Test that stock transfers between different tenants are prevented."""
+        from tenant.models import Tenant
+
+        # Create two different tenants
+        tenant1 = Tenant.objects.create(name='Tenant 1', code='T1')
+        tenant2 = Tenant.objects.create(name='Tenant 2', code='T2')
+
+        # Create locations for each tenant
+        location1 = StockLocation.objects.create(
+            name='Location 1', tenant=tenant1, description='Location for tenant 1'
+        )
+        location2 = StockLocation.objects.create(
+            name='Location 2', tenant=tenant2, description='Location for tenant 2'
+        )
+
+        # Create a stock item in location1
+        stock_item = StockItem.objects.create(
+            part=Part.objects.first(), location=location1, quantity=10
+        )
+
+        # Try to transfer stock from tenant1 location to tenant2 location
+        data = {
+            'items': [{'pk': stock_item.pk, 'quantity': 5}],
+            'location': location2.pk,
+            'notes': 'Cross-tenant transfer attempt',
+        }
+
+        url = reverse('api-stock-transfer')
+
+        # This should fail with tenant validation error
+        response = self.post(url, data, expected_code=400)
+
+        self.assertIn(
+            'Cannot transfer stock between locations with different tenants',
+            str(response.data),
+        )
+
+        # Verify the stock item wasn't moved
+        stock_item.refresh_from_db()
+        self.assertEqual(stock_item.location, location1)
+        self.assertEqual(stock_item.quantity, 10)
+
+        # Test successful transfer within same tenant
+        location3 = StockLocation.objects.create(
+            name='Location 3',
+            tenant=tenant1,  # Same tenant as location1
+            description='Another location for tenant 1',
+        )
+
+        data['location'] = location3.pk
+
+        # This should succeed
+        response = self.post(url, data, expected_code=201)
+
+        # Verify the stock item was moved
+        stock_item.refresh_from_db()
+        self.assertEqual(stock_item.location, location3)
+
 
 class StockItemDeletionTest(StockAPITestCase):
     """Tests for stock item deletion via the API."""
