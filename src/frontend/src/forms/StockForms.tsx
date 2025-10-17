@@ -712,6 +712,9 @@ function stockTransferFields(items: any[]): ApiFormFieldSet {
 
   const records = Object.fromEntries(items.map((item) => [item.pk, item]));
 
+  // Extract all location values from the items
+  const locations = [...new Set(items.map((item) => item.location))];
+
   const fields: ApiFormFieldSet = {
     items: {
       field_type: 'table',
@@ -740,6 +743,7 @@ function stockTransferFields(items: any[]): ApiFormFieldSet {
       ]
     },
     location: {
+      value: locations.length === 1 ? locations[0] : undefined,
       filters: {
         structural: false
       }
