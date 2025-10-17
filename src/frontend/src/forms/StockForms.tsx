@@ -37,7 +37,8 @@ import type {
   ApiFormAdjustFilterType,
   ApiFormFieldChoice,
   ApiFormFieldSet,
-  ApiFormModalProps
+  ApiFormModalProps,
+  StockOperationProps
 } from '@lib/types/Forms';
 import {
   TableFieldExtraRow,
@@ -1171,14 +1172,6 @@ function useStockOperationModal({
     onOpen: () => setOpened(true)
   });
 }
-
-export type StockOperationProps = {
-  items?: any[];
-  pk?: number;
-  filters?: any;
-  model: ModelType.stockitem | 'location' | ModelType.part;
-  refresh: () => void;
-};
 
 export function useAddStockItem(props: StockOperationProps) {
   return useStockOperationModal({

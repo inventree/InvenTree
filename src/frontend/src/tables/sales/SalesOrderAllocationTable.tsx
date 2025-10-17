@@ -12,11 +12,11 @@ import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
+import type { StockOperationProps } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
 import { IconTruckDelivery } from '@tabler/icons-react';
 import { formatDate } from '../../defaults/formatters';
 import { useSalesOrderAllocationFields } from '../../forms/SalesOrderForms';
-import type { StockOperationProps } from '../../forms/StockForms';
 import {
   useBulkEditApiFormModal,
   useDeleteApiFormModal,
