@@ -125,7 +125,7 @@ nav:
       - Project Security: security.md
       - Resources: project/resources.md
       - Privacy: privacy.md
-  - Install:
+  - Setup:
     - Introduction: start/index.md
     - Processes: start/processes.md
     - Configuration: start/config.md
