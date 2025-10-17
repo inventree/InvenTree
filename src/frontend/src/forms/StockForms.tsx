@@ -174,29 +174,29 @@ export function useStockFields({
         }
       },
       serial_numbers: {
+        default: '',
         field_type: 'string',
         label: t`Serial Numbers`,
         disabled: partInstance?.trackable == false,
         description: t`Enter serial numbers for new stock (or leave blank)`,
         required: false,
         hidden: !create,
-        placeholder:
-          serialGenerator.result &&
-          `${t`Next serial number`}: ${serialGenerator.result}`
+        placeholderAutofill: true,
+        placeholder: serialGenerator.result
       },
       serial: {
-        placeholder:
-          serialGenerator.result &&
-          `${t`Next serial number`}: ${serialGenerator.result}`,
+        default: '',
+        placeholderAutofill: true,
+        placeholder: serialGenerator.result,
         hidden:
           create ||
           partInstance.trackable == false ||
           (stockItem?.quantity != undefined && stockItem?.quantity != 1)
       },
       batch: {
-        placeholder:
-          batchGenerator.result &&
-          `${t`Next batch code`}: ${batchGenerator.result}`
+        default: '',
+        placeholderAutofill: true,
+        placeholder: batchGenerator.result
       },
       status_custom_key: {
         label: t`Stock Status`
