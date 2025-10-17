@@ -11,6 +11,7 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import { useManufacturerPartFields } from '../../forms/CompanyForms';
 import {
@@ -93,6 +94,23 @@ export function ManufacturerPartTable({
     table: table
   });
 
+  const tableFilters: TableFilter[] = useMemo(() => {
+    return [
+      {
+        name: 'part_active',
+        label: t`Active Part`,
+        description: t`Show manufacturer parts for active internal parts.`,
+        type: 'boolean'
+      },
+      {
+        name: 'manufacturer_active',
+        label: t`Active Manufacturer`,
+        description: t`Show manufacturer parts for active manufacturers.`,
+        type: 'boolean'
+      }
+    ];
+  }, []);
+
   const tableActions = useMemo(() => {
     const can_add =
       user.hasAddRole(UserRoles.purchase_order) &&
@@ -148,6 +166,7 @@ export function ManufacturerPartTable({
           enableDownload: true,
           rowActions: rowActions,
           tableActions: tableActions,
+          tableFilters: tableFilters,
           modelType: ModelType.manufacturerpart
         }}
       />
