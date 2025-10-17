@@ -38,6 +38,7 @@ from InvenTree.serializers import (
     InvenTreeDecimalField,
     InvenTreeModelSerializer,
 )
+from tenant.serializers import TenantSerializerMixin
 from users.serializers import UserSerializer
 
 from .models import (
@@ -1150,7 +1151,9 @@ class LocationTreeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
 @register_importer()
 class LocationSerializer(
-    DataImportExportSerializerMixin, InvenTree.serializers.InvenTreeTagModelSerializer
+    TenantSerializerMixin,
+    DataImportExportSerializerMixin,
+    InvenTree.serializers.InvenTreeTagModelSerializer,
 ):
     """Detailed information about a stock location."""
 
@@ -1172,6 +1175,8 @@ class LocationSerializer(
             'items',
             'sublocations',
             'owner',
+            'tenant',
+            'tenant_detail',
             'icon',
             'custom_icon',
             'structural',

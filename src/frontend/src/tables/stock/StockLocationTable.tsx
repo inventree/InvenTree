@@ -21,7 +21,12 @@ import {
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
+import {
+  BooleanColumn,
+  DescriptionColumn,
+  TenantColumn
+} from '../ColumnRenderers';
+import { TenantFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 /**
@@ -59,7 +64,8 @@ export function StockLocationTable({ parentId }: Readonly<{ parentId?: any }>) {
         apiUrl: apiUrl(ApiEndpoints.stock_location_type_list),
         model: ModelType.stocklocationtype,
         modelRenderer: (instance: any) => instance.name
-      }
+      },
+      TenantFilter()
     ];
   }, []);
 
@@ -84,6 +90,7 @@ export function StockLocationTable({ parentId }: Readonly<{ parentId?: any }>) {
         accessor: 'items',
         sortable: true
       },
+      TenantColumn({}),
       BooleanColumn({
         accessor: 'structural',
         defaultVisible: false

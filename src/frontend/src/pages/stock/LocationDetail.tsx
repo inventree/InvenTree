@@ -50,7 +50,7 @@ export default function Stock() {
   const { id: _id } = useParams();
 
   const id = useMemo(
-    () => (!Number.isNaN(Number.parseInt(_id || '')) ? _id : undefined),
+    () => (!Number.isNaN(Number.parseInt(_id || '', 10)) ? _id : undefined),
     [_id]
   );
 
@@ -129,6 +129,14 @@ export default function Stock() {
         icon: 'location',
         label: t`Sublocations`,
         hidden: !location?.sublocations
+      },
+      {
+        type: 'text',
+        name: 'tenant_detail.name',
+        label: t`Tenant`,
+        icon: 'sitemap',
+        copy: true,
+        hidden: !location.tenant
       },
       {
         type: 'boolean',
@@ -279,7 +287,7 @@ export default function Stock() {
   const scanInStockItem = useBarcodeScanDialog({
     title: t`Scan Stock Item`,
     modelType: ModelType.stockitem,
-    callback: async (barcode, response) => {
+    callback: async (_barcode, response) => {
       const item = response.stockitem.instance;
 
       // Scan the stock item into the current location
@@ -310,7 +318,7 @@ export default function Stock() {
   const scanInStockLocation = useBarcodeScanDialog({
     title: t`Scan Stock Location`,
     modelType: ModelType.stocklocation,
-    callback: async (barcode, response) => {
+    callback: async (_barcode, response) => {
       const pk = response.stocklocation.pk;
 
       // Set the parent location

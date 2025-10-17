@@ -1334,7 +1334,13 @@ export function stockLocationFields(): ApiFormFieldSet {
     custom_icon: {
       field_type: 'icon'
     },
-    location_type: {}
+    location_type: {},
+    tenant: {
+      filters: {
+        is_active: true
+      },
+      required: true
+    }
   };
 
   return fields;
@@ -1379,7 +1385,7 @@ export function useTestResultFields({
           include_inherited: true,
           part: partId
         },
-        onValueChange: (value: any, record: any) => {
+        onValueChange: (_value: any, record: any) => {
           // Adjust the type of the "value" field based on the selected template
           if (record?.choices) {
             const _choices: string[] = record.choices.split(',');

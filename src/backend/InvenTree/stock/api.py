@@ -71,6 +71,7 @@ from stock.models import (
     StockLocationType,
 )
 from stock.status_codes import StockHistoryCode, StockStatus
+from tenant.api import TenantFilterMixin
 
 
 class GenerateBatchCode(GenericAPIView):
@@ -261,14 +262,14 @@ class StockMerge(CreateAPI):
         return ctx
 
 
-class StockLocationFilter(FilterSet):
+class StockLocationFilter(TenantFilterMixin, FilterSet):
     """Base class for custom API filters for the StockLocation endpoint."""
 
     class Meta:
         """Meta class options for this filterset."""
 
         model = StockLocation
-        fields = ['name', 'structural', 'external']
+        fields = ['name', 'structural', 'external', 'tenant']
 
     location_type = rest_filters.ModelChoiceFilter(
         queryset=StockLocationType.objects.all(), field_name='location_type'

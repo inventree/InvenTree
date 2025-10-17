@@ -52,6 +52,7 @@ from part import models as PartModels
 from plugin.events import trigger_event
 from stock.events import StockEvents
 from stock.generators import generate_batch_code
+from tenant.models import Tenant
 from users.models import Owner
 
 logger = structlog.get_logger('inventree')
@@ -212,6 +213,15 @@ class StockLocation(
         related_name='stock_locations',
     )
 
+    tenant = models.ForeignKey(
+        Tenant,
+        on_delete=models.CASCADE,
+        default=1,  # Temporary default for migration - remove after migrate
+        related_name='stock_locations',
+        verbose_name=_('Tenant'),
+        help_text=_('Tenant this stock location belongs to'),
+    )
+
     structural = models.BooleanField(
         default=False,
         verbose_name=_('Structural'),
@@ -301,7 +311,8 @@ class StockLocation(
     def clean(self):
         """Custom clean action for the StockLocation model.
 
-        Ensure stock location can't be made structural if stock items already located to them
+        Ensure stock location can't be made structural if stock items already located to them.
+        Ensure tenant matches parent location's tenant if parent exists.
         """
         if self.pk and self.structural and self.stock_item_count(False) > 0:
             raise ValidationError(
@@ -310,6 +321,13 @@ class StockLocation(
                     'are already located into it!'
                 )
             )
+
+        # Validate tenant matches parent's tenant
+        if self.parent and self.tenant_id != self.parent.tenant_id:
+            raise ValidationError({
+                'tenant': _('Stock location tenant must match parent location tenant')
+            })
+
         super().clean()
 
     def get_absolute_url(self):
