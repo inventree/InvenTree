@@ -4271,6 +4271,7 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
             for sub in self.substitutes.all():
                 parts.add(sub.part)
 
+                # Account for variants of the substitute part (if allowed)
                 if allow_variants and self.allow_variants:
                     for sub_variant in sub.part.get_descendants(include_self=False):
                         parts.add(sub_variant)
