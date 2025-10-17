@@ -278,7 +278,7 @@ export default function ManufacturerPartDetail() {
       >
         <Stack gap='xs'>
           <PageDetail
-            title={t`ManufacturerPart`}
+            title={t`Manufacturer Part`}
             subtitle={`${manufacturerPart.MPN} - ${manufacturerPart.part_detail?.name}`}
             breadcrumbs={breadcrumbs}
             lastCrumb={[
