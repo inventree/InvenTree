@@ -182,7 +182,7 @@ export function useStockFields({
         required: false,
         hidden: !create,
         placeholderAutofill: true,
-        placeholder: serialGenerator.result
+        placeholder: serialGenerator.result && `${serialGenerator.result}+`
       },
       serial: {
         default: '',
