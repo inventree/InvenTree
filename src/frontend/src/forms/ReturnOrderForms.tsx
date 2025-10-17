@@ -3,6 +3,7 @@ import { Flex, Table } from '@mantine/core';
 import {
   IconAddressBook,
   IconCalendar,
+  IconSitemap,
   IconUser,
   IconUsers
 } from '@tabler/icons-react';
@@ -44,6 +45,13 @@ export function useReturnOrderFields({
       },
       customer_reference: {},
       project_code: {},
+      tenant: {
+        icon: <IconSitemap />,
+        filters: {
+          is_active: true
+        },
+        required: true
+      },
       order_currency: {},
       start_date: {
         icon: <IconCalendar />
@@ -174,38 +182,36 @@ function ReturnOrderLineItemFormRow({
   }, [record.quantity, record.item_detail]);
 
   return (
-    <>
-      <Table.Tr>
-        <Table.Td>
-          <Flex gap='sm' align='center'>
-            <Thumbnail
-              size={40}
-              src={record.part_detail.thumbnail}
-              align='center'
-            />
-            <div>{record.part_detail.name}</div>
-          </Flex>
-        </Table.Td>
-        <Table.Td>{quantityDisplay}</Table.Td>
-        <Table.Td>
-          <StandaloneField
-            fieldDefinition={{
-              field_type: 'choice',
-              label: t`Status`,
-              choices: statusOptions,
-              onValueChange: (value) => {
-                props.changeFn(props.idx, 'status', value);
-              }
-            }}
-            defaultValue={record.item_detail?.status}
-            error={props.rowErrors?.status?.message}
+    <Table.Tr>
+      <Table.Td>
+        <Flex gap='sm' align='center'>
+          <Thumbnail
+            size={40}
+            src={record.part_detail.thumbnail}
+            align='center'
           />
-        </Table.Td>
-        <Table.Td>
-          <RemoveRowButton onClick={() => props.removeFn(props.idx)} />
-        </Table.Td>
-      </Table.Tr>
-    </>
+          <div>{record.part_detail.name}</div>
+        </Flex>
+      </Table.Td>
+      <Table.Td>{quantityDisplay}</Table.Td>
+      <Table.Td>
+        <StandaloneField
+          fieldDefinition={{
+            field_type: 'choice',
+            label: t`Status`,
+            choices: statusOptions,
+            onValueChange: (value) => {
+              props.changeFn(props.idx, 'status', value);
+            }
+          }}
+          defaultValue={record.item_detail?.status}
+          error={props.rowErrors?.status?.message}
+        />
+      </Table.Td>
+      <Table.Td>
+        <RemoveRowButton onClick={() => props.removeFn(props.idx)} />
+      </Table.Td>
+    </Table.Tr>
   );
 }
 

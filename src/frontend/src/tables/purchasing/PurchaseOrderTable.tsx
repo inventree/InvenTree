@@ -24,7 +24,8 @@ import {
   ResponsibleColumn,
   StartDateColumn,
   StatusColumn,
-  TargetDateColumn
+  TargetDateColumn,
+  TenantColumn
 } from '../ColumnRenderers';
 import {
   AssignedToMeFilter,
@@ -44,7 +45,8 @@ import {
   StartDateAfterFilter,
   StartDateBeforeFilter,
   TargetDateAfterFilter,
-  TargetDateBeforeFilter
+  TargetDateBeforeFilter,
+  TenantFilter
 } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
@@ -93,6 +95,7 @@ export function PurchaseOrderTable({
       CompletedAfterFilter(),
       ProjectCodeFilter(),
       HasProjectCodeFilter(),
+      TenantFilter(),
       ResponsibleFilter(),
       CreatedByFilter()
     ];
@@ -118,6 +121,9 @@ export function PurchaseOrderTable({
       LineItemsProgressColumn({}),
       StatusColumn({ model: ModelType.purchaseorder }),
       ProjectCodeColumn({
+        defaultVisible: false
+      }),
+      TenantColumn({
         defaultVisible: false
       }),
       CreationDateColumn({

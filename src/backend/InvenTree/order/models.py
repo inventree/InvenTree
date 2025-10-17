@@ -58,6 +58,7 @@ from order.status_codes import (
 from part import models as PartModels
 from plugin.events import trigger_event
 from stock.status_codes import StockHistoryCode, StockStatus
+from tenant.models import Tenant
 
 logger = structlog.get_logger('inventree')
 
@@ -719,6 +720,14 @@ class Order(
         null=True,
         verbose_name=_('Project Code'),
         help_text=_('Select project code for this order'),
+    )
+
+    tenant = models.ForeignKey(
+        Tenant,
+        on_delete=models.CASCADE,
+        related_name='%(class)s_orders',
+        verbose_name=_('Tenant'),
+        help_text=_('Tenant this order belongs to'),
     )
 
     link = InvenTreeURLField(

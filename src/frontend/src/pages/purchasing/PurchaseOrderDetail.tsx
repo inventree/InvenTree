@@ -239,6 +239,14 @@ export default function PurchaseOrderDetail() {
       },
       {
         type: 'text',
+        name: 'tenant_detail.name',
+        label: t`Tenant`,
+        icon: 'sitemap',
+        copy: true,
+        hidden: !order.tenant
+      },
+      {
+        type: 'text',
         name: 'responsible',
         label: t`Responsible`,
         badge: 'owner',

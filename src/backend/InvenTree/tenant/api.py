@@ -15,6 +15,18 @@ from .models import Tenant
 from .serializers import TenantSerializer
 
 
+class TenantFilterMixin(FilterSet):
+    """Mixin to add tenant filtering to any FilterSet.
+
+    This provides a modular way to add tenant filtering to any API endpoint.
+    Usage: Add this as a base class to any FilterSet that needs tenant filtering.
+    """
+
+    tenant = rest_filters.ModelChoiceFilter(
+        queryset=Tenant.objects.all(), field_name='tenant', label=_('Tenant')
+    )
+
+
 class TenantFilter(FilterSet):
     """API filters for the TenantList endpoint."""
 
@@ -71,6 +83,6 @@ class TenantDetail(RetrieveUpdateAPI):
 
 tenant_api_urls = [
     # Tenant URLs
-    path('tenant/', TenantList.as_view(), name='api-tenant-list'),
-    path('tenant/<int:pk>/', TenantDetail.as_view(), name='api-tenant-detail'),
+    path('list/', TenantList.as_view(), name='api-tenant-list'),
+    path('<int:pk>/', TenantDetail.as_view(), name='api-tenant-detail'),
 ]

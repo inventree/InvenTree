@@ -235,8 +235,8 @@ export enum ApiEndpoints {
   tax_configuration_detail = 'tax/configuration/:id/',
 
   // Tenant API endpoints
-  tenant_list = 'tenant/tenant/',
-  tenant_detail = 'tenant/tenant/:id/',
+  tenant_list = 'tenant/list/',
+  tenant_detail = 'tenant/:id/',
 
   // Miscellaneous API endpoints
   attachment_list = 'attachment/',

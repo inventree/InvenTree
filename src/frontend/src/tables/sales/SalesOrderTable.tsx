@@ -26,7 +26,8 @@ import {
   ShipmentDateColumn,
   StartDateColumn,
   StatusColumn,
-  TargetDateColumn
+  TargetDateColumn,
+  TenantColumn
 } from '../ColumnRenderers';
 import {
   AssignedToMeFilter,
@@ -47,7 +48,8 @@ import {
   StartDateAfterFilter,
   StartDateBeforeFilter,
   TargetDateAfterFilter,
-  TargetDateBeforeFilter
+  TargetDateBeforeFilter,
+  TenantFilter
 } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
@@ -91,6 +93,7 @@ export function SalesOrderTable({
       CompletedAfterFilter(),
       HasProjectCodeFilter(),
       ProjectCodeFilter(),
+      TenantFilter(),
       ResponsibleFilter(),
       CreatedByFilter()
     ];
@@ -157,6 +160,9 @@ export function SalesOrderTable({
       },
       StatusColumn({ model: ModelType.salesorder }),
       ProjectCodeColumn({
+        defaultVisible: false
+      }),
+      TenantColumn({
         defaultVisible: false
       }),
       CreationDateColumn({

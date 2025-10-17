@@ -97,7 +97,7 @@ export function usePurchaseOrderLineItemFields({
           active: true,
           part_active: true
         },
-        onValueChange: (value, record) => {
+        onValueChange: (_value, record) => {
           setPart(record?.part_detail ?? {});
         },
         adjustFilters: (adjust: ApiFormAdjustFilterType) => {
@@ -194,6 +194,13 @@ export function usePurchaseOrderFields({
       supplier_reference: {},
       project_code: {
         icon: <IconList />
+      },
+      tenant: {
+        icon: <IconSitemap />,
+        filters: {
+          is_active: true
+        },
+        required: true
       },
       order_currency: {
         icon: <IconCoins />
@@ -763,7 +770,7 @@ export function useReceiveLineItems(props: LineItemsForm) {
       },
       items: {
         field_type: 'table',
-        value: filteredItems.map((elem, idx) => {
+        value: filteredItems.map((elem, _idx) => {
           return {
             line_item: elem.pk,
             location: elem.destination ?? elem.destination_detail?.pk ?? null,

@@ -92,8 +92,11 @@ class Tenant(InvenTree.models.InvenTreeMetadataModel):
 class TenantMixin(models.Model):
     """Abstract mixin to add tenant filtering to models.
 
-    Any model that inherits from this mixin will have a tenant field
+    Any model that inherits from this mixin will have a required tenant field
     and can be filtered by tenant in the API.
+
+    The tenant field is required by default (not null, not blank).
+    To make it optional, override the field in your model with blank=True, null=True.
     """
 
     class Meta:

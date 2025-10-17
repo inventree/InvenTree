@@ -59,6 +59,7 @@ import {
   RenderStockLocation,
   RenderStockLocationType
 } from './Stock';
+import { RenderTenant } from './Tenant';
 import { RenderGroup, RenderOwner, RenderUser } from './User';
 
 /**
@@ -97,7 +98,8 @@ export const RendererLookup: ModelRendererDict = {
   [ModelType.pluginconfig]: RenderPlugin,
   [ModelType.contenttype]: RenderContentType,
   [ModelType.selectionlist]: RenderSelectionList,
-  [ModelType.error]: RenderError
+  [ModelType.error]: RenderError,
+  [ModelType.tenant]: RenderTenant
 };
 
 /**

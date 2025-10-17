@@ -293,6 +293,18 @@ export function ProjectCodeFilter(): TableFilter {
   };
 }
 
+export function TenantFilter(): TableFilter {
+  return {
+    name: 'tenant',
+    label: t`Tenant`,
+    description: t`Filter by tenant`,
+    type: 'api',
+    apiUrl: apiUrl(ApiEndpoints.tenant_list),
+    model: ModelType.tenant,
+    modelRenderer: (instance) => instance.name
+  };
+}
+
 export function OwnerFilter({
   name,
   label,

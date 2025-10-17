@@ -55,6 +55,7 @@ from order.status_codes import (
     SalesOrderStatusGroups,
 )
 from part.models import Part
+from tenant.api import TenantFilterMixin
 from users.models import Owner
 
 
@@ -283,14 +284,14 @@ class LineItemFilter(FilterSet):
         return queryset.filter(**filters)
 
 
-class PurchaseOrderFilter(OrderFilter):
+class PurchaseOrderFilter(TenantFilterMixin, OrderFilter):
     """Custom API filters for the PurchaseOrderList endpoint."""
 
     class Meta:
         """Metaclass options."""
 
         model = models.PurchaseOrder
-        fields = ['supplier']
+        fields = ['supplier', 'tenant']
 
     part = rest_filters.ModelChoiceFilter(
         queryset=Part.objects.all(),
@@ -757,14 +758,14 @@ class PurchaseOrderExtraLineDetail(RetrieveUpdateDestroyAPI):
     serializer_class = serializers.PurchaseOrderExtraLineSerializer
 
 
-class SalesOrderFilter(OrderFilter):
+class SalesOrderFilter(TenantFilterMixin, OrderFilter):
     """Custom API filters for the SalesOrderList endpoint."""
 
     class Meta:
         """Metaclass options."""
 
         model = models.SalesOrder
-        fields = ['customer']
+        fields = ['customer', 'tenant']
 
     include_variants = rest_filters.BooleanFilter(
         label=_('Include Variants'), method='filter_include_variants'
@@ -1407,14 +1408,14 @@ class SalesOrderShipmentComplete(CreateAPI):
         return ctx
 
 
-class ReturnOrderFilter(OrderFilter):
+class ReturnOrderFilter(TenantFilterMixin, OrderFilter):
     """Custom API filters for the ReturnOrderList endpoint."""
 
     class Meta:
         """Metaclass options."""
 
         model = models.ReturnOrder
-        fields = ['customer']
+        fields = ['customer', 'tenant']
 
     include_variants = rest_filters.BooleanFilter(
         label=_('Include Variants'), method='filter_include_variants'

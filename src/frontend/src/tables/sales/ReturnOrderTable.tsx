@@ -25,7 +25,8 @@ import {
   ResponsibleColumn,
   StartDateColumn,
   StatusColumn,
-  TargetDateColumn
+  TargetDateColumn,
+  TenantColumn
 } from '../ColumnRenderers';
 import {
   AssignedToMeFilter,
@@ -46,7 +47,8 @@ import {
   StartDateAfterFilter,
   StartDateBeforeFilter,
   TargetDateAfterFilter,
-  TargetDateBeforeFilter
+  TargetDateBeforeFilter,
+  TenantFilter
 } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
@@ -90,6 +92,7 @@ export function ReturnOrderTable({
       CompletedAfterFilter(),
       HasProjectCodeFilter(),
       ProjectCodeFilter(),
+      TenantFilter(),
       ResponsibleFilter(),
       CreatedByFilter()
     ];
@@ -119,6 +122,9 @@ export function ReturnOrderTable({
       LineItemsProgressColumn({}),
       StatusColumn({ model: ModelType.returnorder }),
       ProjectCodeColumn({
+        defaultVisible: false
+      }),
+      TenantColumn({
         defaultVisible: false
       }),
       CreationDateColumn({

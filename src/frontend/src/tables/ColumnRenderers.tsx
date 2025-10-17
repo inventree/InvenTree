@@ -357,6 +357,24 @@ export function ProjectCodeColumn(props: TableColumnProps): TableColumn {
   };
 }
 
+export function TenantColumn(props: TableColumnProps): TableColumn {
+  return {
+    accessor: 'tenant',
+    ordering: 'tenant',
+    sortable: true,
+    title: t`Tenant`,
+    render: (record: any) => {
+      const tenant = resolveItem(record, props.accessor ?? 'tenant_detail');
+      return tenant ? (
+        <Tooltip label={tenant.description || tenant.name}>
+          <Text size='sm'>{tenant.name}</Text>
+        </Tooltip>
+      ) : null;
+    },
+    ...props
+  };
+}
+
 export type StatusColumnProps = TableColumnProps & {
   model: ModelType;
 };

@@ -277,5 +277,12 @@ export const ModelInformationDict: ModelDict = {
     url_overview: '/settings/admin/errors',
     url_detail: '/settings/admin/errors/:pk/',
     icon: 'exclamation'
+  },
+  tenant: {
+    label: () => t`Tenant`,
+    label_multiple: () => t`Tenants`,
+    api_endpoint: ApiEndpoints.tenant_list,
+    url_detail: '/tenant/:pk/',
+    icon: 'building'
   }
 };

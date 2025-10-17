@@ -62,6 +62,7 @@ from order.status_codes import (
 from part.serializers import PartBriefSerializer
 from stock.status_codes import StockStatus
 from tax.models import TaxConfiguration
+from tenant.serializers import TenantSerializerMixin
 from users.serializers import OwnerSerializer, UserSerializer
 
 
@@ -267,6 +268,8 @@ class AbstractOrderSerializer(DataImportExportSerializerMixin, serializers.Seria
             'project_code',
             'project_code_label',
             'project_code_detail',
+            'tenant',
+            'tenant_detail',
             'reference',
             'responsible',
             'responsible_detail',
@@ -375,6 +378,7 @@ class AbstractExtraLineMeta:
 class PurchaseOrderSerializer(
     NotesFieldMixin,
     TotalPriceMixin,
+    TenantSerializerMixin,
     InvenTreeCustomStatusSerializerMixin,
     AbstractOrderSerializer,
     InvenTreeModelSerializer,
@@ -1045,6 +1049,7 @@ class SalesOrderSerializer(
     NotesFieldMixin,
     TotalPriceMixin,
     TaxMixin,
+    TenantSerializerMixin,
     InvenTreeCustomStatusSerializerMixin,
     AbstractOrderSerializer,
     InvenTreeModelSerializer,
@@ -1956,6 +1961,7 @@ class SalesOrderExtraLineSerializer(
 class ReturnOrderSerializer(
     NotesFieldMixin,
     TaxMixin,
+    TenantSerializerMixin,
     InvenTreeCustomStatusSerializerMixin,
     AbstractOrderSerializer,
     TotalPriceMixin,

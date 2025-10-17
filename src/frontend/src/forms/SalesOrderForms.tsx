@@ -3,6 +3,7 @@ import { Table } from '@mantine/core';
 import {
   IconAddressBook,
   IconCalendar,
+  IconSitemap,
   IconUser,
   IconUsers
 } from '@tabler/icons-react';
@@ -43,6 +44,13 @@ export function useSalesOrderFields({
       },
       customer_reference: {},
       project_code: {},
+      tenant: {
+        icon: <IconSitemap />,
+        filters: {
+          is_active: true
+        },
+        required: true
+      },
       order_currency: {},
       start_date: {
         icon: <IconCalendar />
