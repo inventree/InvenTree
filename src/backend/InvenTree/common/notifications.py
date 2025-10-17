@@ -84,9 +84,7 @@ class InvenTreeNotificationBodies:
     )
 
 
-def trigger_notification(
-    obj: Model, category: Optional[str] = None, obj_ref: str = 'pk', **kwargs
-):
+def trigger_notification(obj: Model, category: str = '', obj_ref: str = 'pk', **kwargs):
     """Send out a notification.
 
     Args:

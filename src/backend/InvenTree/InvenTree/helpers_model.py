@@ -11,6 +11,7 @@ from django.db.utils import OperationalError, ProgrammingError
 from django.utils.translation import gettext_lazy as _
 
 import requests
+import requests.exceptions
 import structlog
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
@@ -328,8 +329,9 @@ def notify_users(
         'template': {'subject': content.name.format(**content_context)},
     }
 
-    if content.template:
-        context['template']['html'] = content.template.format(**content_context)
+    tmp = content.template
+    if tmp:
+        context['template']['html'] = tmp.format(**content_context)
 
     # Create notification
     trigger_notification(

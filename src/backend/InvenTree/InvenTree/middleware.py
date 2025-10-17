@@ -17,6 +17,7 @@ from error_report.middleware import ExceptionProcessor
 from common.settings import get_global_setting
 from InvenTree.AllUserRequire2FAMiddleware import AllUserRequire2FAMiddleware
 from InvenTree.cache import create_session_cache, delete_session_cache
+from InvenTree.config import CONFIG_LOOKUPS, inventreeInstaller
 from users.models import ApiToken
 
 logger = structlog.get_logger('inventree')
@@ -234,17 +235,35 @@ class InvenTreeHostSettingsMiddleware(MiddlewareMixin):
         if path in urls or any(path.startswith(p) for p in paths_ignore):
             return None
 
-        # Ensure that the settings are set correctly with the current request
+        # treat the accessed scheme and host
         accessed_scheme = request._current_scheme_host
-        if accessed_scheme and not accessed_scheme.startswith(settings.SITE_URL):
-            msg = f'INVE-E7: The used path `{accessed_scheme}` does not match the SITE_URL `{settings.SITE_URL}`'
-            logger.error(msg)
-            return render(
-                request, 'config_error.html', {'error_message': msg}, status=500
-            )
+        referer = urlsplit(accessed_scheme)
+
+        # Ensure that the settings are set correctly with the current request
+        matches = (
+            (accessed_scheme and not accessed_scheme.startswith(settings.SITE_URL))
+            if not settings.SITE_LAX_PROTOCOL_CHECK
+            else not is_same_domain(referer.netloc, urlsplit(settings.SITE_URL).netloc)
+        )
+        if matches:
+            if (
+                isinstance(settings.CSRF_TRUSTED_ORIGINS, list)
+                and len(settings.CSRF_TRUSTED_ORIGINS) > 1
+            ):
+                # The used url might not be the primary url - next check determines if in a trusted origins
+                pass
+            else:
+                source = CONFIG_LOOKUPS.get('INVENTREE_SITE_URL', {}).get(
+                    'source', 'unknown'
+                )
+                dpl_method = inventreeInstaller()
+                msg = f'INVE-E7: The visited path `{accessed_scheme}` does not match the SITE_URL `{settings.SITE_URL}`. The INVENTREE_SITE_URL is set via `{source}` config method - deployment method `{dpl_method}`'
+                logger.error(msg)
+                return render(
+                    request, 'config_error.html', {'error_message': msg}, status=500
+                )
 
         # Check trusted origins
-        referer = urlsplit(accessed_scheme)
         if not any(
             is_same_domain(referer.netloc, host)
             for host in [

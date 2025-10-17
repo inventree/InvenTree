@@ -88,7 +88,14 @@ export function RenderStockItem(
 
   const allocated: number = Math.max(0, instance?.allocated ?? 0);
 
-  if (instance?.serial !== null && instance?.serial !== undefined) {
+  // Determine if this item is serialized
+  const serialized: boolean =
+    instance?.quantity == 1 &&
+    instance?.serial !== null &&
+    instance?.serial !== undefined &&
+    instance?.serial !== '';
+
+  if (serialized) {
     quantity_string += `${t`Serial Number`}: ${instance.serial}`;
   } else if (allocated > 0) {
     const available: number = Math.max(0, instance.quantity - allocated);
@@ -123,7 +130,7 @@ export function RenderStockItem(
           zIndex={10000}
           icon='sitemap'
           title={t`Location`}
-          extra={[<Text>{location.pathstring}</Text>]}
+          extra={[<Text size='xs'>{location.pathstring}</Text>]}
         />
       )}
     </Group>

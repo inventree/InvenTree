@@ -197,7 +197,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
         icon: <IconBuildingWarehouse />,
         hidden: !company?.is_manufacturer,
         content: company?.pk && (
-          <ManufacturerPartTable params={{ manufacturer: company.pk }} />
+          <ManufacturerPartTable manufacturerId={company.pk} />
         )
       },
       {

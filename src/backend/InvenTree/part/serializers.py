@@ -336,6 +336,7 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'locked',
             'assembly',
             'component',
+            'minimum_stock',
             'is_template',
             'purchaseable',
             'salable',
@@ -1550,6 +1551,21 @@ class PartPricingSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             # Update part pricing
             pricing = self.instance
             pricing.update_pricing()
+
+
+class PartSerialNumberSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+    """Serializer for Part serial number information."""
+
+    class Meta:
+        """Metaclass defining serializer fields."""
+
+        model = Part
+        fields = ['latest', 'next']
+
+    latest = serializers.CharField(
+        source='get_latest_serial_number', read_only=True, allow_null=True
+    )
+    next = serializers.CharField(source='get_next_serial_number', read_only=True)
 
 
 class PartRelationSerializer(InvenTree.serializers.InvenTreeModelSerializer):

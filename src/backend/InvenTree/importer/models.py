@@ -303,9 +303,7 @@ class DataImportSession(models.Model):
             if not any(row_data.values()):
                 continue
 
-            row = importer.models.DataImportRow(
-                session=self, row_data=row_data, row_index=idx
-            )
+            row = DataImportRow(session=self, row_data=row_data, row_index=idx)
 
             row.extract_data(
                 field_mapping=field_mapping,
@@ -317,7 +315,7 @@ class DataImportSession(models.Model):
             imported_rows.append(row)
 
         # Perform database writes as a single operation
-        importer.models.DataImportRow.objects.bulk_create(imported_rows)
+        DataImportRow.objects.bulk_create(imported_rows)
 
         # Mark the import task as "PROCESSING"
         self.status = DataImportStatusCode.PROCESSING.value
@@ -629,6 +627,38 @@ class DataImportRow(models.Model):
             # Use the default value, if provided
             if value is None and field in default_values:
                 value = default_values[field]
+
+            # If the field provides a set of valid 'choices', use that as a lookup
+            if field_type == 'choice' and 'choices' in field_def:
+                choices = field_def.get('choices', None)
+
+                if callable(choices):
+                    choices = choices()
+
+                # Try to match the provided value against the available choices
+                choice_value = None
+
+                for choice in choices:
+                    primary_value = choice['value']
+                    display_value = choice['display_name']
+
+                    if primary_value == value:
+                        choice_value = primary_value
+                        # Break on first match against a primary choice value
+                        break
+
+                    if display_value == value:
+                        choice_value = primary_value
+
+                    elif (
+                        str(display_value).lower().strip() == str(value).lower().strip()
+                        and choice_value is None
+                    ):
+                        # Case-insensitive match against display value
+                        choice_value = primary_value
+
+                if choice_value is not None:
+                    value = choice_value
 
             data[field] = value
 

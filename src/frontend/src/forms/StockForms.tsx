@@ -37,7 +37,8 @@ import type {
   ApiFormAdjustFilterType,
   ApiFormFieldChoice,
   ApiFormFieldSet,
-  ApiFormModalProps
+  ApiFormModalProps,
+  StockOperationProps
 } from '@lib/types/Forms';
 import {
   TableFieldExtraRow,
@@ -711,6 +712,9 @@ function stockTransferFields(items: any[]): ApiFormFieldSet {
 
   const records = Object.fromEntries(items.map((item) => [item.pk, item]));
 
+  // Extract all location values from the items
+  const locations = [...new Set(items.map((item) => item.location))];
+
   const fields: ApiFormFieldSet = {
     items: {
       field_type: 'table',
@@ -739,6 +743,7 @@ function stockTransferFields(items: any[]): ApiFormFieldSet {
       ]
     },
     location: {
+      value: locations.length === 1 ? locations[0] : undefined,
       filters: {
         structural: false
       }
@@ -1171,14 +1176,6 @@ function useStockOperationModal({
     onOpen: () => setOpened(true)
   });
 }
-
-export type StockOperationProps = {
-  items?: any[];
-  pk?: number;
-  filters?: any;
-  model: ModelType.stockitem | 'location' | ModelType.part;
-  refresh: () => void;
-};
 
 export function useAddStockItem(props: StockOperationProps) {
   return useStockOperationModal({

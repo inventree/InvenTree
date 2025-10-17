@@ -8,7 +8,7 @@ import re
 import time
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Optional
+from typing import Callable, Optional, Union
 from unittest import mock
 
 from django.contrib.auth import get_user_model
@@ -115,7 +115,7 @@ def getOldestMigrationFile(app, exclude_extension=True, ignore_initial=True):
             oldest_num = num
             oldest_file = f
 
-    if exclude_extension:
+    if exclude_extension and oldest_file:
         oldest_file = oldest_file.replace('.py', '')
 
     return oldest_file
@@ -452,7 +452,7 @@ class InvenTreeAPITestCase(
 ):
     """Base class for running InvenTree API tests."""
 
-    def check_response(self, url, response, expected_code=None):
+    def check_response(self, url, response, expected_code=None, msg=None):
         """Debug output for an unexpected response."""
         # Check that the response returned the expected status code
 
@@ -469,7 +469,7 @@ class InvenTreeAPITestCase(
                 if hasattr(response, 'content'):
                     print('content:', response.content)
 
-            self.assertEqual(response.status_code, expected_code)
+            self.assertEqual(response.status_code, expected_code, msg)
 
     def getActions(self, url):
         """Return a dict of the 'actions' available at a given endpoint.
@@ -490,6 +490,7 @@ class InvenTreeAPITestCase(
         kwargs['format'] = kwargs.get('format', 'json')
 
         expected_code = kwargs.pop('expected_code', None)
+        msg = kwargs.pop('msg', None)
         max_queries = kwargs.pop('max_query_count', self.MAX_QUERY_COUNT)
         max_query_time = kwargs.pop('max_query_time', self.MAX_QUERY_TIME)
 
@@ -501,7 +502,7 @@ class InvenTreeAPITestCase(
         t2 = time.time()
         dt = t2 - t1
 
-        self.check_response(url, response, expected_code=expected_code)
+        self.check_response(url, response, expected_code=expected_code, msg=msg)
 
         if dt > max_query_time:
             print(
@@ -583,6 +584,10 @@ class InvenTreeAPITestCase(
         result = re.search(
             r'(attachment|inline); filename=[\'"]([\w\d\-.]+)[\'"]', disposition
         )
+        if not result:
+            raise ValueError(
+                'No filename match found in disposition'
+            )  # pragma: no cover
 
         fn = result.groups()[1]
 
@@ -722,6 +727,63 @@ class InvenTreeAPITestCase(
     def assertDictContainsSubset(self, a, b):
         """Assert that dictionary 'a' is a subset of dictionary 'b'."""
         self.assertEqual(b, b | a)
+
+    def run_output_test(
+        self,
+        url: str,
+        test_cases: list[Union[tuple[str, str], str]],
+        additional_params: Optional[dict] = None,
+        assert_subset: bool = False,
+        assert_fnc: Optional[Callable] = None,
+    ):
+        """Run a series of tests against the provided URL.
+
+        Arguments:
+            url: The URL to test
+            test_cases: A list of tuples of the form (parameter_name, response_field_name)
+            additional_params: Additional request parameters to include in the request
+            assert_subset: If True, make the assertion against the first item in the response rather than the entire response
+            assert_fnc: If provided, call this function with the response data and make the assertion against the return value
+        """
+
+        def get_response(response):
+            if assert_subset:
+                return response.data[0]
+            if assert_fnc:
+                return assert_fnc(response)
+            return response.data
+
+        for case in test_cases:
+            if isinstance(case, str):
+                param = case
+                field = case
+            else:
+                param, field = case
+            # Test with parameter set to 'true'
+            response = self.get(
+                url,
+                {param: 'true', **(additional_params or {})},
+                expected_code=200,
+                msg=f'Testing {param}=true returns anything but 200',
+            )
+            self.assertIn(
+                field,
+                get_response(response),
+                f"Field '{field}' should be present when {param}=true",
+            )
+
+            # Test with parameter set to 'false'
+            response = self.get(
+                url,
+                {param: 'false', **(additional_params or {})},
+                expected_code=200,
+                msg=f'Testing {param}=false returns anything but 200',
+            )
+            self.assertNotIn(
+                field,
+                get_response(response),
+                f"Field '{field}' should NOT be present when {param}=false",
+            )
 
 
 @override_settings(

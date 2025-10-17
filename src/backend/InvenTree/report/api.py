@@ -6,8 +6,9 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import never_cache
 
-from django_filters import rest_framework as rest_filters
+import django_filters.rest_framework.filters as rest_filters
 from django_filters.rest_framework import DjangoFilterBackend
+from django_filters.rest_framework.filterset import FilterSet
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 
@@ -31,7 +32,7 @@ class TemplatePermissionMixin:
     permission_classes = [InvenTree.permissions.IsStaffOrReadOnlyScope]
 
 
-class ReportFilterBase(rest_filters.FilterSet):
+class ReportFilterBase(FilterSet):
     """Base filter class for label and report templates."""
 
     enabled = rest_filters.BooleanFilter()

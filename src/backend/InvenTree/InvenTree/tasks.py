@@ -285,7 +285,7 @@ class ScheduledTask:
     QUARTERLY: str = 'Q'
     YEARLY: str = 'Y'
 
-    TYPE: tuple[str] = (MINUTES, HOURLY, DAILY, WEEKLY, MONTHLY, QUARTERLY, YEARLY)
+    TYPE: tuple[str] = (MINUTES, HOURLY, DAILY, WEEKLY, MONTHLY, QUARTERLY, YEARLY)  # type: ignore[invalid-assignment]
 
 
 class TaskRegister:
@@ -302,7 +302,9 @@ tasks = TaskRegister()
 
 
 def scheduled_task(
-    interval: str, minutes: Optional[int] = None, tasklist: TaskRegister = None
+    interval: str,
+    minutes: Optional[int] = None,
+    tasklist: Optional[TaskRegister] = None,
 ):
     """Register the given task as a scheduled task.
 
@@ -544,7 +546,7 @@ def check_for_updates():
 
     match = re.match(r'^.*(\d+)\.(\d+)\.(\d+).*$', tag)
 
-    if len(match.groups()) != 3:  # pragma: no cover
+    if not match or len(match.groups()) != 3:  # pragma: no cover
         logger.warning("Version '%s' did not match expected pattern", tag)
         return
 
@@ -668,6 +670,11 @@ def check_for_migrations(force: bool = False, reload_registry: bool = True) -> b
 
     Returns bool indicating if migrations are up to date
     """
+    from . import ready
+
+    if ready.isRunningMigrations() or ready.isRunningBackup():
+        # Migrations are already running!
+        return False
 
     def set_pending_migrations(n: int):
         """Helper function to inform the user about pending migrations."""
@@ -717,6 +724,8 @@ def check_for_migrations(force: bool = False, reload_registry: bool = True) -> b
         except NotSupportedError as e:  # pragma: no cover
             if settings.DATABASES['default']['ENGINE'] != 'django.db.backends.sqlite3':
                 raise e
+            logger.exception('Error during migrations: %s', e)
+        except Exception as e:  # pragma: no cover
             logger.exception('Error during migrations: %s', e)
         else:
             set_pending_migrations(0)

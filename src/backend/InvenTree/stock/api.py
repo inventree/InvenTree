@@ -9,7 +9,8 @@ from django.db.models import F, Q
 from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
 
-from django_filters import rest_framework as rest_filters
+import django_filters.rest_framework.filters as rest_filters
+from django_filters.rest_framework.filterset import FilterSet
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema, extend_schema_field
 from rest_framework import status
@@ -24,7 +25,7 @@ import InvenTree.permissions
 import stock.serializers as StockSerializers
 from build.models import Build
 from build.serializers import BuildSerializer
-from company.models import Company, SupplierPart
+from company.models import Company, ManufacturerPart, SupplierPart
 from company.serializers import CompanySerializer
 from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import StatusView
@@ -34,6 +35,7 @@ from InvenTree.api import (
     ListCreateDestroyAPIView,
     MetadataView,
 )
+from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import (
     ORDER_FILTER_ALIAS,
     SEARCH_ORDER_FILTER,
@@ -47,8 +49,10 @@ from InvenTree.mixins import (
     CustomRetrieveUpdateDestroyAPI,
     ListAPI,
     ListCreateAPI,
+    OutputOptionsMixin,
     RetrieveAPI,
     RetrieveUpdateDestroyAPI,
+    SerializerContextMixin,
 )
 from order.models import PurchaseOrder, ReturnOrder, SalesOrder
 from order.serializers import (
@@ -257,7 +261,7 @@ class StockMerge(CreateAPI):
         return ctx
 
 
-class StockLocationFilter(rest_filters.FilterSet):
+class StockLocationFilter(FilterSet):
     """Base class for custom API filters for the StockLocation endpoint."""
 
     class Meta:
@@ -370,23 +374,11 @@ class StockLocationFilter(rest_filters.FilterSet):
         return queryset
 
 
-class StockLocationMixin:
+class StockLocationMixin(SerializerContextMixin):
     """Mixin class for StockLocation API endpoints."""
 
     queryset = StockLocation.objects.all()
     serializer_class = StockSerializers.LocationSerializer
-
-    def get_serializer(self, *args, **kwargs):
-        """Set context before returning serializer."""
-        try:
-            params = self.request.query_params
-            kwargs['path_detail'] = str2bool(params.get('path_detail', False))
-        except AttributeError:  # pragma: no cover
-            pass
-
-        kwargs['context'] = self.get_serializer_context()
-
-        return super().get_serializer(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
         """Return annotated queryset for the StockLocationList endpoint."""
@@ -395,8 +387,23 @@ class StockLocationMixin:
         return queryset
 
 
+class StockLocationOutputOptions(OutputConfiguration):
+    """Output options for StockLocation serializers."""
+
+    OPTIONS = [
+        InvenTreeOutputOption(
+            description='Include detailed information about the BOM item linked to this build line.',
+            flag='path_detail',
+        )
+    ]
+
+
 class StockLocationList(
-    DataExportViewMixin, BulkUpdateMixin, StockLocationMixin, ListCreateAPI
+    DataExportViewMixin,
+    BulkUpdateMixin,
+    StockLocationMixin,
+    OutputOptionsMixin,
+    ListCreateAPI,
 ):
     """API endpoint for list view of StockLocation objects.
 
@@ -406,6 +413,7 @@ class StockLocationList(
 
     filterset_class = StockLocationFilter
     filter_backends = SEARCH_ORDER_FILTER
+    output_options = StockLocationOutputOptions
 
     search_fields = ['name', 'description', 'pathstring', 'tags__name', 'tags__slug']
 
@@ -414,8 +422,12 @@ class StockLocationList(
     ordering = ['tree_id', 'lft', 'name']
 
 
-class StockLocationDetail(StockLocationMixin, CustomRetrieveUpdateDestroyAPI):
+class StockLocationDetail(
+    StockLocationMixin, OutputOptionsMixin, CustomRetrieveUpdateDestroyAPI
+):
     """API endpoint for detail view of StockLocation object."""
+
+    output_options = StockLocationOutputOptions
 
     def destroy(self, request, *args, **kwargs):
         """Delete a Stock location instance via the API."""
@@ -425,11 +437,11 @@ class StockLocationDetail(StockLocationMixin, CustomRetrieveUpdateDestroyAPI):
         return super().destroy(
             request,
             *args,
-            **dict(
-                kwargs,
-                delete_sub_locations=delete_sub_locations,
-                delete_stock_items=delete_stock_items,
-            ),
+            **{
+                **kwargs,
+                'delete_sub_locations': delete_sub_locations,
+                'delete_stock_items': delete_stock_items,
+            },
         )
 
 
@@ -505,7 +517,7 @@ class StockLocationTypeDetail(RetrieveUpdateDestroyAPI):
         return queryset
 
 
-class StockFilter(rest_filters.FilterSet):
+class StockFilter(FilterSet):
     """FilterSet for StockItem LIST API."""
 
     class Meta:
@@ -540,6 +552,12 @@ class StockFilter(rest_filters.FilterSet):
             Q(supplier_part__manufacturer_part__manufacturer__is_manufacturer=True)
             & Q(supplier_part__manufacturer_part__manufacturer=company)
         )
+
+    manufacturer_part = rest_filters.ModelChoiceFilter(
+        label=_('Manufacturer Part'),
+        queryset=ManufacturerPart.objects.all(),
+        field_name='supplier_part__manufacturer_part',
+    )
 
     supplier = rest_filters.ModelChoiceFilter(
         label=_('Supplier'),
@@ -995,7 +1013,7 @@ class StockFilter(rest_filters.FilterSet):
         return queryset.filter(location__in=children)
 
 
-class StockApiMixin:
+class StockApiMixin(SerializerContextMixin):
     """Mixin class for StockItem API endpoints."""
 
     serializer_class = StockSerializers.StockItemSerializer
@@ -1015,37 +1033,22 @@ class StockApiMixin:
 
         return ctx
 
-    def get_serializer(self, *args, **kwargs):
-        """Set context before returning serializer.
 
-        Extra detail may be provided to the serializer via query parameters:
+class StockOutputOptions(OutputConfiguration):
+    """Output options for StockItem serializers."""
 
-        - part_detail: Include detail about the StockItem's part
-        - location_detail: Include detail about the StockItem's location
-        - supplier_part_detail: Include detail about the StockItem's supplier_part
-        - tests: Include detail about the StockItem's test results
-        """
-        try:
-            params = self.request.query_params
-
-            kwargs['part_detail'] = str2bool(params.get('part_detail', True))
-
-            for key in [
-                'path_detail',
-                'location_detail',
-                'supplier_part_detail',
-                'tests',
-            ]:
-                kwargs[key] = str2bool(params.get(key, False))
-        except AttributeError:  # pragma: no cover
-            pass
-
-        kwargs['context'] = self.get_serializer_context()
-
-        return super().get_serializer(*args, **kwargs)
+    OPTIONS = [
+        InvenTreeOutputOption('part_detail', default=True),
+        InvenTreeOutputOption('path_detail'),
+        InvenTreeOutputOption('supplier_part_detail'),
+        InvenTreeOutputOption('location_detail'),
+        InvenTreeOutputOption('tests'),
+    ]
 
 
-class StockList(DataExportViewMixin, StockApiMixin, ListCreateDestroyAPIView):
+class StockList(
+    DataExportViewMixin, StockApiMixin, OutputOptionsMixin, ListCreateDestroyAPIView
+):
     """API endpoint for list view of Stock objects.
 
     - GET: Return a list of all StockItem objects (with optional query filters)
@@ -1054,6 +1057,7 @@ class StockList(DataExportViewMixin, StockApiMixin, ListCreateDestroyAPIView):
     """
 
     filterset_class = StockFilter
+    output_options = StockOutputOptions
 
     def create(self, request, *args, **kwargs):
         """Create a new StockItem object via the API.
@@ -1291,8 +1295,10 @@ class StockList(DataExportViewMixin, StockApiMixin, ListCreateDestroyAPIView):
     ]
 
 
-class StockDetail(StockApiMixin, RetrieveUpdateDestroyAPI):
+class StockDetail(StockApiMixin, OutputOptionsMixin, RetrieveUpdateDestroyAPI):
     """API detail endpoint for a single StockItem instance."""
+
+    output_options = StockOutputOptions
 
 
 class StockItemSerialNumbers(RetrieveAPI):
@@ -1306,7 +1312,7 @@ class StockItemSerialNumbers(RetrieveAPI):
     serializer_class = StockSerializers.StockItemSerialNumbersSerializer
 
 
-class StockItemTestResultMixin:
+class StockItemTestResultMixin(SerializerContextMixin):
     """Mixin class for the StockItemTestResult API endpoints."""
 
     queryset = StockItemTestResult.objects.all()
@@ -1318,28 +1324,25 @@ class StockItemTestResultMixin:
         ctx['request'] = self.request
         return ctx
 
-    def get_serializer(self, *args, **kwargs):
-        """Set context before returning serializer."""
-        try:
-            kwargs['user_detail'] = str2bool(
-                self.request.query_params.get('user_detail', False)
-            )
-            kwargs['template_detail'] = str2bool(
-                self.request.query_params.get('template_detail', False)
-            )
-        except Exception:  # pragma: no cover
-            pass
 
-        kwargs['context'] = self.get_serializer_context()
+class StockItemTestResultOutputOptions(OutputConfiguration):
+    """Output options for StockItemTestResult endpoint."""
 
-        return super().get_serializer(*args, **kwargs)
+    OPTIONS = [
+        InvenTreeOutputOption(flag='user_detail'),
+        InvenTreeOutputOption(flag='template_detail'),
+    ]
 
 
-class StockItemTestResultDetail(StockItemTestResultMixin, RetrieveUpdateDestroyAPI):
+class StockItemTestResultDetail(
+    StockItemTestResultMixin, OutputOptionsMixin, RetrieveUpdateDestroyAPI
+):
     """Detail endpoint for StockItemTestResult."""
 
+    output_options = StockItemTestResultOutputOptions
 
-class StockItemTestResultFilter(rest_filters.FilterSet):
+
+class StockItemTestResultFilter(FilterSet):
     """API filter for the StockItemTestResult list."""
 
     class Meta:
@@ -1380,51 +1383,70 @@ class StockItemTestResultFilter(rest_filters.FilterSet):
         key = generateTestKey(value)
         return queryset.filter(template__key=key)
 
+    include_installed = rest_filters.BooleanFilter(
+        method='filter_include_installed',
+        label=_('Include Installed'),
+        help_text=_(
+            'If true, include test results for items installed underneath the given stock item'
+        ),
+    )
+
+    stock_item = rest_filters.NumberFilter(
+        method='filter_stock_item',
+        label=_('Stock Item'),
+        help_text=_('Filter by numeric Stock Item ID'),
+    )
+
+    def filter_include_installed(self, queryset, name, value):
+        """Dummy filter method for 'include_installed'.
+
+        - Ensures 'include_installed' appears in API documentation
+        - Does NOT actually filter the queryset directly
+        - The actual logic is handled in filter_stock_item method
+        """
+        return queryset
+
+    def filter_stock_item(self, queryset, name, value):
+        """Filter for stock_item that also applies include_installed logic."""
+        include_installed = str2bool(self.data.get('include_installed', False))
+
+        try:
+            item = StockItem.objects.get(pk=value)
+
+        except StockItem.DoesNotExist:
+            raise ValidationError({
+                'stock_item': _('Stock item with ID {id} does not exist').format(
+                    id=value
+                )
+            })
+
+        items = [item]
+
+        if include_installed:
+            # Include items which are installed "underneath" this item
+            # Note that this function is recursive!
+            installed_items = item.get_installed_items(cascade=True)
+            items += list(installed_items)
+
+        return queryset.filter(stock_item__in=items)
+
 
 class StockItemTestResultList(
-    BulkCreateMixin, StockItemTestResultMixin, ListCreateDestroyAPIView
+    BulkCreateMixin,
+    StockItemTestResultMixin,
+    OutputOptionsMixin,
+    ListCreateDestroyAPIView,
 ):
     """API endpoint for listing (and creating) a StockItemTestResult object."""
 
     filterset_class = StockItemTestResultFilter
     filter_backends = SEARCH_ORDER_FILTER
+    output_options = StockItemTestResultOutputOptions
 
     filterset_fields = ['user', 'template', 'result', 'value']
     ordering_fields = ['date', 'result']
 
     ordering = 'date'
-
-    def filter_queryset(self, queryset):
-        """Filter by build or stock_item."""
-        params = self.request.query_params
-
-        queryset = super().filter_queryset(queryset)
-
-        # Filter by stock item
-        item = params.get('stock_item', None)
-
-        if item is not None:
-            try:
-                item = StockItem.objects.get(pk=item)
-
-                items = [item]
-
-                # Do we wish to also include test results for 'installed' items?
-                include_installed = str2bool(params.get('include_installed', False))
-
-                if include_installed:
-                    # Include items which are installed "underneath" this item
-                    # Note that this function is recursive!
-                    installed_items = item.get_installed_items(cascade=True)
-
-                    items += list(installed_items)
-
-                queryset = queryset.filter(stock_item__in=items)
-
-            except (ValueError, StockItem.DoesNotExist):  # pragma: no cover
-                pass
-
-        return queryset
 
     def perform_create(self, serializer):
         """Create a new test result object.
@@ -1445,7 +1467,18 @@ class StockTrackingDetail(RetrieveAPI):
     serializer_class = StockSerializers.StockTrackingSerializer
 
 
-class StockTrackingList(DataExportViewMixin, ListAPI):
+class StockTrackingOutputOptions(OutputConfiguration):
+    """Output options for StockItemTracking endpoint."""
+
+    OPTIONS = [
+        InvenTreeOutputOption(flag='item_detail'),
+        InvenTreeOutputOption(flag='user_detail'),
+    ]
+
+
+class StockTrackingList(
+    SerializerContextMixin, DataExportViewMixin, OutputOptionsMixin, ListAPI
+):
     """API endpoint for list view of StockItemTracking objects.
 
     StockItemTracking objects are read-only
@@ -1456,26 +1489,7 @@ class StockTrackingList(DataExportViewMixin, ListAPI):
 
     queryset = StockItemTracking.objects.all()
     serializer_class = StockSerializers.StockTrackingSerializer
-
-    def get_serializer(self, *args, **kwargs):
-        """Set context before returning serializer."""
-        try:
-            kwargs['item_detail'] = str2bool(
-                self.request.query_params.get('item_detail', False)
-            )
-        except Exception:  # pragma: no cover
-            pass
-
-        try:
-            kwargs['user_detail'] = str2bool(
-                self.request.query_params.get('user_detail', False)
-            )
-        except Exception:  # pragma: no cover
-            pass
-
-        kwargs['context'] = self.get_serializer_context()
-
-        return super().get_serializer(*args, **kwargs)
+    output_options = StockTrackingOutputOptions
 
     def get_delta_model_map(self) -> dict:
         """Return a mapping of delta models to their respective models and serializers.

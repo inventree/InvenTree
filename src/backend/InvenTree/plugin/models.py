@@ -2,6 +2,7 @@
 
 import inspect
 import warnings
+from typing import Optional
 
 from django.conf import settings
 from django.contrib import admin
@@ -219,7 +220,7 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
         return pkg_name is not None
 
     @property
-    def admin_source(self) -> str:
+    def admin_source(self) -> Optional[str]:
         """Return the path to the javascript file which renders custom admin content for this plugin.
 
         - It is required that the file provides a 'renderPluginSettings' function!
@@ -239,7 +240,7 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
         return None
 
     @property
-    def admin_context(self) -> dict:
+    def admin_context(self) -> Optional[dict]:
         """Return the context data for the admin integration."""
         if not self.plugin:
             return None

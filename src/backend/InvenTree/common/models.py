@@ -30,6 +30,7 @@ from django.core.mail import EmailMultiAlternatives, get_connection
 from django.core.mail.utils import DNS_NAME
 from django.core.validators import MinValueValidator
 from django.db import models, transaction
+from django.db.models import enums
 from django.db.models.signals import post_delete, post_save
 from django.db.utils import IntegrityError, OperationalError, ProgrammingError
 from django.dispatch import receiver
@@ -66,7 +67,7 @@ from InvenTree.version import inventree_identifier
 logger = structlog.get_logger('inventree')
 
 
-class RenderMeta(models.enums.ChoicesMeta):
+class RenderMeta(enums.ChoicesMeta):
     """Metaclass for rendering choices."""
 
     choice_fnc = None
@@ -80,7 +81,7 @@ class RenderMeta(models.enums.ChoicesMeta):
         return []
 
 
-class RenderChoices(models.TextChoices, metaclass=RenderMeta):
+class RenderChoices(models.TextChoices, metaclass=RenderMeta):  # type: ignore
     """Class for creating enumerated string choices for schema rendering."""
 
 
@@ -971,7 +972,7 @@ class BaseInvenTreeSetting(models.Model):
 
         return setting.get('model', None)
 
-    def model_filters(self) -> dict:
+    def model_filters(self) -> Optional[dict]:
         """Return the model filters associated with this setting."""
         setting = self.get_setting_definition(
             self.key, **self.get_filters_for_instance()
@@ -1505,8 +1506,8 @@ class WebhookEndpoint(models.Model):
             request (optional): Original request object. Defaults to None.
         """
         return WebhookMessage.objects.create(
-            host=request.get_host(),
-            header=json.dumps(dict(headers.items())),
+            host=request.get_host() if request else '',
+            header=json.dumps(dict(headers.items())) if headers else None,
             body=payload,
             endpoint=self,
         )
