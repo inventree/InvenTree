@@ -103,7 +103,7 @@ def filter_db_model(model_name: str, **kwargs) -> Optional[QuerySet]:
 def getindex(container: list, index: int) -> Any:
     """Return the value contained at the specified index of the list.
 
-    This function is provideed to get around template rendering limitations.
+    This function is provided to get around template rendering limitations.
 
     Arguments:
         container: A python list object
@@ -413,28 +413,48 @@ def internal_link(link, text) -> str:
     return mark_safe(f'<a href="{url}">{text}</a>')
 
 
-@register.simple_tag()
-def add(x: float, y: float, *args, **kwargs) -> float:
-    """Add two numbers together."""
-    return float(x) + float(y)
+def destringify(value: Any) -> Any:
+    """Convert a string value into a float.
+
+    - If the value is a string, attempt to convert it to a float.
+    - If conversion fails, return the original string.
+    - If the value is not a string, return it unchanged.
+
+    The purpose of this function is to provide "seamless" math operations in templates,
+    where numeric values may be provided as strings, or converted to strings during template rendering.
+    """
+    if isinstance(value, str):
+        value = value.strip()
+        try:
+            return float(value)
+        except ValueError:
+            return value
+
+    return value
 
 
 @register.simple_tag()
-def subtract(x: float, y: float) -> float:
-    """Subtract one number from another."""
-    return float(x) - float(y)
+def add(x: Any, y: Any) -> Any:
+    """Add two numbers (or number like values) together."""
+    return destringify(x) + destringify(y)
 
 
 @register.simple_tag()
-def multiply(x: float, y: float) -> float:
-    """Multiply two numbers together."""
-    return float(x) * float(y)
+def subtract(x: Any, y: Any) -> Any:
+    """Subtract one number (or number-like value) from another."""
+    return destringify(x) - destringify(y)
 
 
 @register.simple_tag()
-def divide(x: float, y: float) -> float:
-    """Divide one number by another."""
-    return float(x) / float(y)
+def multiply(x: Any, y: Any) -> Any:
+    """Multiply two numbers (or number-like values) together."""
+    return destringify(x) * destringify(y)
+
+
+@register.simple_tag()
+def divide(x: Any, y: Any) -> Any:
+    """Divide one number (or number-like value) by another."""
+    return destringify(x) / destringify(y)
 
 
 @register.simple_tag
