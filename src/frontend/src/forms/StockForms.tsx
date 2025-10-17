@@ -174,7 +174,6 @@ export function useStockFields({
         }
       },
       serial_numbers: {
-        default: '',
         field_type: 'string',
         label: t`Serial Numbers`,
         disabled: partInstance?.trackable == false,
@@ -185,7 +184,6 @@ export function useStockFields({
         placeholder: serialGenerator.result && `${serialGenerator.result}+`
       },
       serial: {
-        default: '',
         placeholderAutofill: true,
         placeholder: serialGenerator.result,
         hidden:
@@ -230,6 +228,10 @@ export function useStockFields({
     // Remove the expiry date field if it is not enabled
     if (!globalSettings.isSet('STOCK_ENABLE_EXPIRY')) {
       delete fields.expiry_date;
+    }
+
+    if (!create) {
+      delete fields.serial_numbers;
     }
 
     return fields;
