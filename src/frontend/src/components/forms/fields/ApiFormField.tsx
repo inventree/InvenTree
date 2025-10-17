@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { type Control, type FieldValues, useController } from 'react-hook-form';
 
 import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
+import { IconFileUpload } from '@tabler/icons-react';
 import { BooleanField } from './BooleanField';
 import { ChoiceField } from './ChoiceField';
 import DateField from './DateField';
@@ -221,7 +222,10 @@ export function ApiFormField({
         return (
           <FileInput
             {...reducedDefinition}
+            clearable={!definition.required}
             aria-label={`file-field-${fieldName}`}
+            placeholder={definition.placeholder ?? t`Select file to upload`}
+            leftSection={<IconFileUpload />}
             id={fieldId}
             ref={field.ref}
             radius='sm'

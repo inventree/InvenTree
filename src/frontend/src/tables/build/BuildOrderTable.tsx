@@ -248,6 +248,7 @@ export function BuildOrderTable({
           modelType: ModelType.build,
           enableSelection: true,
           enableReports: true,
+          enableLabels: true,
           enableDownload: true
         }}
       />
