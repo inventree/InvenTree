@@ -1,2 +1,0 @@
-import{j as n,bJ as a,H as m}from"./vendor-c9tu_e1b.js";import{I as u}from"./ThemeContext-CVPHi9Q7.js";function p({title:r,tooltip:o,icon:t,color:s,hidden:e,onClick:i}){return e?null:n.jsx(a,{label:o??r,position:"bottom",hidden:!o,children:n.jsx(m,{leftSection:t&&n.jsx(u,{icon:t}),color:s,radius:"sm",p:"xs",onClick:i,children:r})})}export{p as P};
-//# sourceMappingURL=PrimaryActionButton-DeoSYpU2.js.map

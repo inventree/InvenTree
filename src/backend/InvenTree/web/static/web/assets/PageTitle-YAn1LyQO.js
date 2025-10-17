@@ -1,0 +1,2 @@
+import{r,j as E}from"./vendor-C9xuDR-n.js";import{f as c}from"./index-CjCZvRJF.js";function m({title:t,subtitle:n}){const s=c(),a=r.useMemo(()=>{const o=s.getSetting("INVENTREE_INSTANCE","InvenTree"),i=s.isSet("INVENTREE_INSTANCE_TITLE",!1);let e="";return t&&(e+=t),n&&(e+=` - ${n}`),i&&(e=`${o} | ${e}`),e||(e=o),e},[t,n,s]);return r.useEffect(()=>{document.title=a},[a]),E.jsx("title",{children:a})}export{m as P};
+//# sourceMappingURL=PageTitle-YAn1LyQO.js.map

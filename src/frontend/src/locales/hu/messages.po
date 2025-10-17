@@ -54,7 +54,7 @@ msgstr "Mégsem"
 
 #: lib/components/RowActions.tsx:136
 #: src/components/nav/NavigationDrawer.tsx:198
-#: src/forms/PurchaseOrderForms.tsx:795
+#: src/forms/PurchaseOrderForms.tsx:802
 #: src/forms/StockForms.tsx:738
 #: src/forms/StockForms.tsx:784
 #: src/forms/StockForms.tsx:830
@@ -99,9 +99,9 @@ msgstr "Nem"
 #: src/forms/BuildForms.tsx:629
 #: src/forms/BuildForms.tsx:791
 #: src/forms/BuildForms.tsx:894
-#: src/forms/PurchaseOrderForms.tsx:791
-#: src/forms/ReturnOrderForms.tsx:239
-#: src/forms/SalesOrderForms.tsx:267
+#: src/forms/PurchaseOrderForms.tsx:798
+#: src/forms/ReturnOrderForms.tsx:245
+#: src/forms/SalesOrderForms.tsx:309
 #: src/forms/StockForms.tsx:304
 #: src/forms/StockForms.tsx:733
 #: src/forms/StockForms.tsx:779
@@ -114,7 +114,7 @@ msgstr "Nem"
 #: src/forms/StockForms.tsx:1072
 #: src/pages/build/BuildDetail.tsx:200
 #: src/pages/part/PartDetail.tsx:1238
-#: src/tables/ColumnRenderers.tsx:82
+#: src/tables/ColumnRenderers.tsx:80
 #: src/tables/part/RelatedPartTable.tsx:53
 #: src/tables/stock/StockTrackingTable.tsx:87
 msgid "Part"
@@ -180,7 +180,7 @@ msgstr "Gyártói alkatrészek"
 
 #: lib/enums/ModelInformation.tsx:70
 #: src/pages/part/CategoryDetail.tsx:343
-#: src/tables/Filter.tsx:389
+#: src/tables/Filter.tsx:401
 msgid "Part Category"
 msgstr "Alkatrész kategória"
 
@@ -196,7 +196,7 @@ msgstr "Alkatrész kategóriák"
 #: src/forms/BuildForms.tsx:476
 #: src/forms/BuildForms.tsx:631
 #: src/forms/BuildForms.tsx:792
-#: src/forms/SalesOrderForms.tsx:269
+#: src/forms/SalesOrderForms.tsx:311
 #: src/pages/stock/StockDetail.tsx:992
 #: src/tables/part/PartTestResultTable.tsx:248
 #: src/tables/stock/StockTrackingTable.tsx:48
@@ -210,19 +210,19 @@ msgstr "Készlet tétel"
 #: src/pages/part/CategoryDetail.tsx:287
 #: src/pages/part/PartStockHistoryDetail.tsx:101
 #: src/pages/stock/LocationDetail.tsx:123
-#: src/pages/stock/LocationDetail.tsx:182
+#: src/pages/stock/LocationDetail.tsx:190
 msgid "Stock Items"
 msgstr "Készlet tételek"
 
 #: lib/enums/ModelInformation.tsx:88
 #: lib/enums/Roles.tsx:47
-#: src/pages/stock/LocationDetail.tsx:420
+#: src/pages/stock/LocationDetail.tsx:428
 msgid "Stock Location"
 msgstr "Készlet hely"
 
 #: lib/enums/ModelInformation.tsx:89
-#: src/pages/stock/LocationDetail.tsx:176
-#: src/pages/stock/LocationDetail.tsx:412
+#: src/pages/stock/LocationDetail.tsx:184
+#: src/pages/stock/LocationDetail.tsx:420
 #: src/pages/stock/StockDetail.tsx:983
 msgid "Stock Locations"
 msgstr "Készlethelyek"
@@ -284,15 +284,15 @@ msgstr "Cégek"
 #: src/pages/build/BuildDetail.tsx:327
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:235
 #: src/pages/sales/ReturnOrderDetail.tsx:199
-#: src/pages/sales/SalesOrderDetail.tsx:211
-#: src/tables/ColumnRenderers.tsx:353
+#: src/pages/sales/SalesOrderDetail.tsx:253
+#: src/tables/ColumnRenderers.tsx:347
 #: src/tables/Filter.tsx:286
 #: src/tables/TableHoverCard.tsx:101
 msgid "Project Code"
 msgstr "Projektszám"
 
 #: lib/enums/ModelInformation.tsx:141
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:162
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:184
 msgid "Project Codes"
 msgstr "Projektszámok"
 
@@ -300,7 +300,7 @@ msgstr "Projektszámok"
 #: src/components/wizards/OrderPartsWizard.tsx:183
 #: src/pages/build/BuildDetail.tsx:244
 #: src/pages/part/pricing/PurchaseHistoryPanel.tsx:33
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:531
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:539
 #: src/pages/stock/StockDetail.tsx:352
 #: src/tables/part/PartPurchaseOrdersTable.tsx:32
 #: src/tables/stock/StockItemTable.tsx:241
@@ -329,7 +329,7 @@ msgstr "Beszerzési rendelés tételei"
 #: lib/enums/ModelInformation.tsx:162
 #: src/pages/build/BuildDetail.tsx:300
 #: src/pages/part/pricing/SaleHistoryPanel.tsx:24
-#: src/pages/sales/SalesOrderDetail.tsx:586
+#: src/pages/sales/SalesOrderDetail.tsx:636
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:94
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:358
 #: src/pages/stock/StockDetail.tsx:361
@@ -358,7 +358,7 @@ msgid "Sales Order Shipments"
 msgstr "Vevői rendelés szállítmányok"
 
 #: lib/enums/ModelInformation.tsx:178
-#: src/pages/sales/ReturnOrderDetail.tsx:516
+#: src/pages/sales/ReturnOrderDetail.tsx:524
 #: src/tables/stock/StockTrackingTable.tsx:142
 msgid "Return Order"
 msgstr "Visszavétel"
@@ -395,7 +395,7 @@ msgstr "Címek"
 #: src/pages/core/UserDetail.tsx:135
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:211
 #: src/pages/sales/ReturnOrderDetail.tsx:175
-#: src/pages/sales/SalesOrderDetail.tsx:187
+#: src/pages/sales/SalesOrderDetail.tsx:229
 msgid "Contact"
 msgstr "Kapcsolat"
 
@@ -416,7 +416,7 @@ msgstr "Tulajdonosok"
 #: lib/enums/ModelInformation.tsx:214
 #: src/pages/Auth/ChangePassword.tsx:36
 #: src/pages/core/UserDetail.tsx:220
-#: src/tables/Filter.tsx:335
+#: src/tables/Filter.tsx:347
 #: src/tables/settings/ApiTokenTable.tsx:105
 #: src/tables/settings/ApiTokenTable.tsx:132
 #: src/tables/settings/BarcodeScanHistoryTable.tsx:79
@@ -464,7 +464,7 @@ msgid "Label Template"
 msgstr "Címke sablon"
 
 #: lib/enums/ModelInformation.tsx:238
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:199
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:221
 msgid "Label Templates"
 msgstr "Címke sablonok"
 
@@ -473,7 +473,7 @@ msgid "Report Template"
 msgstr "Jelentéssablon"
 
 #: lib/enums/ModelInformation.tsx:246
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:205
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:227
 msgid "Report Templates"
 msgstr "Jelentéssablonok"
 
@@ -527,7 +527,7 @@ msgstr "Választéklisták"
 #: src/states/IconState.tsx:46
 #: src/states/IconState.tsx:76
 #: src/tables/InvenTreeTableHeader.tsx:125
-#: src/tables/bom/BomTable.tsx:537
+#: src/tables/bom/BomTable.tsx:550
 #: src/tables/settings/EmailTable.tsx:109
 #: src/tables/stock/StockItemTestResultTable.tsx:335
 msgid "Error"
@@ -539,6 +539,22 @@ msgstr "Hiba"
 msgid "Errors"
 msgstr "Hibák"
 
+#: lib/enums/ModelInformation.tsx:282
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:243
+#: src/pages/sales/ReturnOrderDetail.tsx:207
+#: src/pages/sales/SalesOrderDetail.tsx:261
+#: src/pages/stock/LocationDetail.tsx:136
+#: src/tables/ColumnRenderers.tsx:365
+#: src/tables/Filter.tsx:299
+msgid "Tenant"
+msgstr ""
+
+#: lib/enums/ModelInformation.tsx:283
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:177
+#: src/pages/Index/Settings/AdminCenter/TenantManagementPanel.tsx:10
+msgid "Tenants"
+msgstr ""
+
 #: lib/enums/Roles.tsx:31
 msgid "Admin"
 msgstr "Adminisztrátor"
@@ -547,7 +563,7 @@ msgstr "Adminisztrátor"
 #: src/pages/Index/Settings/SystemSettings.tsx:264
 #: src/pages/build/BuildIndex.tsx:75
 #: src/pages/part/PartDetail.tsx:907
-#: src/pages/sales/SalesOrderDetail.tsx:394
+#: src/pages/sales/SalesOrderDetail.tsx:444
 msgid "Build Orders"
 msgstr "Gyártási utasítások"
 
@@ -627,8 +643,8 @@ msgstr "Add meg a vonalkódot"
 #: src/components/barcodes/BarcodeScanDialog.tsx:49
 #: src/components/buttons/ScanButton.tsx:15
 #: src/components/nav/NavigationDrawer.tsx:129
-#: src/forms/PurchaseOrderForms.tsx:454
-#: src/forms/PurchaseOrderForms.tsx:560
+#: src/forms/PurchaseOrderForms.tsx:461
+#: src/forms/PurchaseOrderForms.tsx:567
 msgid "Scan Barcode"
 msgstr "Vonalkód beolvasás"
 
@@ -645,7 +661,7 @@ msgstr "A vonalkód nem egyezik a várt model típussal"
 #: src/components/editors/NotesEditor.tsx:118
 #: src/components/forms/ApiForm.tsx:451
 #: src/pages/Index/Settings/AdminCenter/CurrencyManagementPanel.tsx:45
-#: src/tables/bom/BomTable.tsx:528
+#: src/tables/bom/BomTable.tsx:541
 #: src/tables/settings/PendingTasksTable.tsx:68
 msgid "Success"
 msgstr "Siker"
@@ -699,7 +715,7 @@ msgstr "Vonalkód párosítás sikertelen"
 #: src/pages/part/PartDetail.tsx:524
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:204
 #: src/pages/sales/ReturnOrderDetail.tsx:168
-#: src/pages/sales/SalesOrderDetail.tsx:180
+#: src/pages/sales/SalesOrderDetail.tsx:222
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:168
 #: src/pages/stock/StockDetail.tsx:186
 msgid "Link"
@@ -711,7 +727,7 @@ msgstr "A hozzárendelt vonalkód kapcsolat megszüntetése"
 
 #: src/components/barcodes/QRCode.tsx:205
 #: src/components/items/ActionDropdown.tsx:190
-#: src/forms/PurchaseOrderForms.tsx:551
+#: src/forms/PurchaseOrderForms.tsx:558
 msgid "Unlink Barcode"
 msgstr "Vonalkód leválasztása"
 
@@ -1327,6 +1343,7 @@ msgstr "Szerkesztés engedélyezése"
 #~ msgstr "Edit Notes"
 
 #: src/components/editors/TemplateEditor/CodeEditor/index.tsx:9
+#: src/tables/settings/TenantTable.tsx:39
 msgid "Code"
 msgstr "Kód"
 
@@ -1674,6 +1691,8 @@ msgstr "Kiszolgáló"
 #: src/tables/settings/GroupTable.tsx:148
 #: src/tables/settings/GroupTable.tsx:196
 #: src/tables/settings/PendingTasksTable.tsx:37
+#: src/tables/settings/TaxConfigurationTable.tsx:34
+#: src/tables/settings/TenantTable.tsx:34
 #: src/tables/stock/LocationTypesTable.tsx:74
 msgid "Name"
 msgstr "Név"
@@ -1749,7 +1768,7 @@ msgstr "API verzió"
 
 #: src/components/forms/InstanceOptions.tsx:142
 #: src/components/nav/NavigationDrawer.tsx:205
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:218
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:240
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:46
 msgid "Plugins"
 msgstr "Pluginok"
@@ -2374,7 +2393,7 @@ msgstr "A háttér munkavégző folyamat nem fut"
 #~ msgstr "The Background worker process is not running."
 
 #: src/components/modals/ServerInfoModal.tsx:115
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:119
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:127
 msgid "Email Settings"
 msgstr "Email beállítások"
 
@@ -2479,8 +2498,8 @@ msgstr "Rendszerbeállítások"
 #: src/components/nav/NavigationDrawer.tsx:160
 #: src/components/nav/SettingsHeader.tsx:42
 #: src/defaults/actions.tsx:83
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:282
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:287
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:306
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:311
 msgid "Admin Center"
 msgstr "Admin központ"
 
@@ -2513,13 +2532,13 @@ msgstr "Kijelentkezés"
 #~ msgstr "Pages"
 
 #: src/components/nav/NavigationDrawer.tsx:84
-#: src/components/render/Part.tsx:33
+#: src/components/render/Part.tsx:36
 #: src/defaults/links.tsx:42
 #: src/forms/StockForms.tsx:736
 #: src/pages/Index/Settings/SystemSettings.tsx:224
 #: src/pages/part/PartDetail.tsx:807
-#: src/pages/stock/LocationDetail.tsx:390
-#: src/pages/stock/LocationDetail.tsx:420
+#: src/pages/stock/LocationDetail.tsx:398
+#: src/pages/stock/LocationDetail.tsx:428
 #: src/pages/stock/StockDetail.tsx:642
 #: src/tables/stock/StockItemTable.tsx:87
 msgid "Stock"
@@ -2538,7 +2557,7 @@ msgstr "Gyártás"
 #: src/pages/company/ManufacturerPartDetail.tsx:260
 #: src/pages/company/SupplierDetail.tsx:9
 #: src/pages/company/SupplierPartDetail.tsx:355
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:534
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:542
 #: src/pages/purchasing/PurchasingIndex.tsx:122
 msgid "Purchasing"
 msgstr "Beszerzés"
@@ -2546,10 +2565,11 @@ msgstr "Beszerzés"
 #: src/components/nav/NavigationDrawer.tsx:105
 #: src/defaults/links.tsx:60
 #: src/pages/company/CustomerDetail.tsx:9
-#: src/pages/sales/ReturnOrderDetail.tsx:521
+#: src/pages/sales/ReturnOrderDetail.tsx:529
 #: src/pages/sales/SalesIndex.tsx:139
-#: src/pages/sales/SalesOrderDetail.tsx:591
+#: src/pages/sales/SalesOrderDetail.tsx:641
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:360
+#: src/tables/settings/TaxConfigurationTable.tsx:62
 msgid "Sales"
 msgstr "Eladás"
 
@@ -2725,11 +2745,12 @@ msgstr "Plugin információ"
 #: src/pages/sales/ReturnOrderDetail.tsx:109
 #: src/pages/sales/SalesOrderDetail.tsx:118
 #: src/pages/stock/LocationDetail.tsx:104
-#: src/tables/ColumnRenderers.tsx:269
+#: src/tables/ColumnRenderers.tsx:263
 #: src/tables/build/BuildAllocatedStockTable.tsx:91
 #: src/tables/machine/MachineTypeTable.tsx:161
 #: src/tables/machine/MachineTypeTable.tsx:257
 #: src/tables/plugin/PluginListTable.tsx:110
+#: src/tables/settings/TenantTable.tsx:44
 msgid "Description"
 msgstr "Leírás"
 
@@ -2740,7 +2761,7 @@ msgstr "Szerző"
 #: src/components/plugins/PluginDrawer.tsx:83
 #: src/pages/part/pricing/PurchaseHistoryPanel.tsx:41
 #: src/pages/part/pricing/SaleHistoryPanel.tsx:38
-#: src/tables/ColumnRenderers.tsx:411
+#: src/tables/ColumnRenderers.tsx:423
 #: src/tables/part/PartTestResultTable.tsx:222
 msgid "Date"
 msgstr "Dátum"
@@ -2764,6 +2785,8 @@ msgstr "Dátum"
 #: src/tables/purchasing/SupplierPartTable.tsx:85
 #: src/tables/purchasing/SupplierPartTable.tsx:179
 #: src/tables/settings/ApiTokenTable.tsx:63
+#: src/tables/settings/TaxConfigurationTable.tsx:54
+#: src/tables/settings/TenantTable.tsx:48
 #: src/tables/settings/UserTable.tsx:411
 #: src/tables/stock/StockItemTable.tsx:324
 msgid "Active"
@@ -2853,7 +2876,7 @@ msgstr "Plugin tartalom betöltési hiba"
 #~ msgid "Unknown model: {model}"
 #~ msgstr "Unknown model: {model}"
 
-#: src/components/render/Instance.tsx:249
+#: src/components/render/Instance.tsx:251
 msgid "Unknown model: {model_name}"
 msgstr "Ismeretlen model: {model_name}"
 
@@ -2889,21 +2912,28 @@ msgid "Inactive"
 msgstr "Inaktív"
 
 #: src/components/render/Part.tsx:31
-#: src/tables/bom/BomTable.tsx:294
+#: src/tables/part/PartTable.tsx:274
+#: src/tables/part/PartTable.tsx:278
+#: src/tables/part/PartVariantTable.tsx:25
+msgid "Virtual"
+msgstr "Virtuális"
+
+#: src/components/render/Part.tsx:34
+#: src/tables/bom/BomTable.tsx:300
 #: src/tables/part/PartTable.tsx:145
 msgid "No stock"
 msgstr "Nincs készlet"
 
-#: src/components/render/Part.tsx:44
+#: src/components/render/Part.tsx:47
 #: src/pages/company/SupplierPartDetail.tsx:196
 #: src/pages/company/SupplierPartDetail.tsx:389
 #: src/pages/part/PartDetail.tsx:1018
-#: src/tables/bom/BomTable.tsx:424
+#: src/tables/bom/BomTable.tsx:437
 #: src/tables/part/PartTable.tsx:101
 msgid "On Order"
 msgstr "Rendelve"
 
-#: src/components/render/Part.tsx:52
+#: src/components/render/Part.tsx:55
 #: src/pages/part/PartDetail.tsx:590
 #: src/pages/part/PartDetail.tsx:1024
 #: src/pages/stock/StockDetail.tsx:912
@@ -2912,15 +2942,15 @@ msgstr "Rendelve"
 msgid "In Production"
 msgstr "Gyártásban"
 
-#: src/components/render/Part.tsx:71
+#: src/components/render/Part.tsx:74
 #: src/tables/stock/StockTrackingTable.tsx:206
 msgid "Details"
 msgstr "Részletek"
 
-#: src/components/render/Part.tsx:109
+#: src/components/render/Part.tsx:112
 #: src/pages/part/PartDetail.tsx:490
-#: src/tables/ColumnRenderers.tsx:224
-#: src/tables/ColumnRenderers.tsx:233
+#: src/tables/ColumnRenderers.tsx:218
+#: src/tables/ColumnRenderers.tsx:227
 #: src/tables/notifications/NotificationTable.tsx:32
 #: src/tables/part/PartCategoryTemplateTable.tsx:71
 msgid "Category"
@@ -2930,7 +2960,7 @@ msgstr "Kategória"
 #: src/components/render/Stock.tsx:114
 #: src/components/render/Stock.tsx:132
 #: src/forms/BuildForms.tsx:793
-#: src/forms/PurchaseOrderForms.tsx:592
+#: src/forms/PurchaseOrderForms.tsx:599
 #: src/forms/StockForms.tsx:734
 #: src/forms/StockForms.tsx:780
 #: src/forms/StockForms.tsx:826
@@ -2943,9 +2973,9 @@ msgstr "Kategória"
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:88
 #: src/pages/core/UserDetail.tsx:158
 #: src/pages/stock/StockDetail.tsx:298
-#: src/tables/ColumnRenderers.tsx:176
-#: src/tables/ColumnRenderers.tsx:185
-#: src/tables/Filter.tsx:400
+#: src/tables/ColumnRenderers.tsx:170
+#: src/tables/ColumnRenderers.tsx:179
+#: src/tables/Filter.tsx:412
 #: src/tables/stock/StockTrackingTable.tsx:98
 msgid "Location"
 msgstr "Hely"
@@ -2964,9 +2994,9 @@ msgstr "Sorozatszám"
 #: src/forms/BuildForms.tsx:243
 #: src/forms/BuildForms.tsx:632
 #: src/forms/BuildForms.tsx:795
-#: src/forms/PurchaseOrderForms.tsx:794
-#: src/forms/ReturnOrderForms.tsx:240
-#: src/forms/SalesOrderForms.tsx:270
+#: src/forms/PurchaseOrderForms.tsx:801
+#: src/forms/ReturnOrderForms.tsx:246
+#: src/forms/SalesOrderForms.tsx:312
 #: src/forms/StockForms.tsx:782
 #: src/pages/part/PartStockHistoryDetail.tsx:56
 #: src/pages/part/PartStockHistoryDetail.tsx:210
@@ -2982,7 +3012,7 @@ msgstr "Sorozatszám"
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:169
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:200
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:69
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:121
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:123
 #: src/tables/stock/StockTrackingTable.tsx:72
 msgid "Quantity"
 msgstr "Mennyiség"
@@ -3503,7 +3533,7 @@ msgstr ""
 #: src/components/wizards/OrderPartsWizard.tsx:424
 #: src/tables/build/BuildLineTable.tsx:797
 #: src/tables/part/PartTable.tsx:470
-#: src/tables/sales/SalesOrderLineItemTable.tsx:365
+#: src/tables/sales/SalesOrderLineItemTable.tsx:389
 msgid "Order Parts"
 msgstr "Alkatrészek megrendelése"
 
@@ -4006,9 +4036,9 @@ msgstr ""
 #: src/forms/BuildForms.tsx:339
 #: src/forms/BuildForms.tsx:414
 #: src/forms/BuildForms.tsx:478
-#: src/forms/PurchaseOrderForms.tsx:714
-#: src/forms/ReturnOrderForms.tsx:194
-#: src/forms/ReturnOrderForms.tsx:241
+#: src/forms/PurchaseOrderForms.tsx:721
+#: src/forms/ReturnOrderForms.tsx:201
+#: src/forms/ReturnOrderForms.tsx:247
 #: src/forms/StockForms.tsx:657
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:87
 #: src/pages/build/BuildDetail.tsx:222
@@ -4022,8 +4052,8 @@ msgstr ""
 #: src/tables/machine/MachineListTable.tsx:387
 #: src/tables/part/PartPurchaseOrdersTable.tsx:38
 #: src/tables/part/PartTestResultTable.tsx:309
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:135
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:172
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:137
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:200
 #: src/tables/settings/CustomStateTable.tsx:79
 #: src/tables/settings/EmailTable.tsx:95
 #: src/tables/settings/ImportSessionTable.tsx:117
@@ -4089,38 +4119,38 @@ msgstr ""
 #: src/forms/BuildForms.tsx:630
 #: src/forms/BuildForms.tsx:794
 #: src/forms/BuildForms.tsx:895
-#: src/forms/SalesOrderForms.tsx:268
+#: src/forms/SalesOrderForms.tsx:310
 #: src/tables/build/BuildAllocatedStockTable.tsx:139
 #: src/tables/build/BuildLineTable.tsx:180
-#: src/tables/sales/SalesOrderLineItemTable.tsx:337
+#: src/tables/sales/SalesOrderLineItemTable.tsx:361
 #: src/tables/stock/StockItemTable.tsx:340
 msgid "Allocated"
 msgstr "Lefoglalva"
 
 #: src/forms/BuildForms.tsx:665
-#: src/forms/SalesOrderForms.tsx:257
+#: src/forms/SalesOrderForms.tsx:299
 #: src/pages/build/BuildDetail.tsx:108
 #: src/pages/build/BuildDetail.tsx:337
 msgid "Source Location"
 msgstr "Készlet helye"
 
 #: src/forms/BuildForms.tsx:666
-#: src/forms/SalesOrderForms.tsx:258
+#: src/forms/SalesOrderForms.tsx:300
 msgid "Select the source location for the stock allocation"
 msgstr "A készlet hozzárendelés forrás készlethelyének kiválasztása"
 
 #: src/forms/BuildForms.tsx:698
-#: src/forms/SalesOrderForms.tsx:298
+#: src/forms/SalesOrderForms.tsx:340
 #: src/tables/build/BuildLineTable.tsx:556
 #: src/tables/build/BuildLineTable.tsx:713
 #: src/tables/build/BuildLineTable.tsx:812
-#: src/tables/sales/SalesOrderLineItemTable.tsx:375
-#: src/tables/sales/SalesOrderLineItemTable.tsx:408
+#: src/tables/sales/SalesOrderLineItemTable.tsx:399
+#: src/tables/sales/SalesOrderLineItemTable.tsx:432
 msgid "Allocate Stock"
 msgstr "Készlet foglalása"
 
 #: src/forms/BuildForms.tsx:701
-#: src/forms/SalesOrderForms.tsx:303
+#: src/forms/SalesOrderForms.tsx:345
 msgid "Stock items allocated"
 msgstr "Készlet lefoglalva"
 
@@ -4187,36 +4217,32 @@ msgstr "Felsőbb szintű alkatrész kategória"
 msgid "Subscribe to notifications for this category"
 msgstr ""
 
-#: src/forms/PurchaseOrderForms.tsx:385
+#: src/forms/PurchaseOrderForms.tsx:392
 msgid "Assign Batch Code and Serial Numbers"
 msgstr ""
 
-#: src/forms/PurchaseOrderForms.tsx:387
+#: src/forms/PurchaseOrderForms.tsx:394
 msgid "Assign Batch Code"
 msgstr ""
 
-#: src/forms/PurchaseOrderForms.tsx:407
+#: src/forms/PurchaseOrderForms.tsx:414
 msgid "Choose Location"
 msgstr "Hely kiválasztása"
-
-#: src/forms/PurchaseOrderForms.tsx:415
-msgid "Item Destination selected"
-msgstr ""
 
 #: src/forms/PurchaseOrderForms.tsx:421
 #~ msgid "Assign Batch Code{0}"
 #~ msgstr "Assign Batch Code{0}"
 
-#: src/forms/PurchaseOrderForms.tsx:425
+#: src/forms/PurchaseOrderForms.tsx:422
+msgid "Item Destination selected"
+msgstr ""
+
+#: src/forms/PurchaseOrderForms.tsx:432
 msgid "Part category default location selected"
 msgstr ""
 
-#: src/forms/PurchaseOrderForms.tsx:435
+#: src/forms/PurchaseOrderForms.tsx:442
 msgid "Received stock location selected"
-msgstr ""
-
-#: src/forms/PurchaseOrderForms.tsx:443
-msgid "Default location selected"
 msgstr ""
 
 #: src/forms/PurchaseOrderForms.tsx:444
@@ -4224,26 +4250,30 @@ msgstr ""
 #~ msgid "Remove item from list"
 #~ msgstr "Remove item from list"
 
-#: src/forms/PurchaseOrderForms.tsx:504
+#: src/forms/PurchaseOrderForms.tsx:450
+msgid "Default location selected"
+msgstr ""
+
+#: src/forms/PurchaseOrderForms.tsx:511
 msgid "Set Location"
 msgstr "Helyszín beállítása"
 
-#: src/forms/PurchaseOrderForms.tsx:521
+#: src/forms/PurchaseOrderForms.tsx:528
 msgid "Set Expiry Date"
 msgstr ""
 
-#: src/forms/PurchaseOrderForms.tsx:529
+#: src/forms/PurchaseOrderForms.tsx:536
 #: src/forms/StockForms.tsx:638
 msgid "Adjust Packaging"
 msgstr ""
 
-#: src/forms/PurchaseOrderForms.tsx:537
+#: src/forms/PurchaseOrderForms.tsx:544
 #: src/forms/StockForms.tsx:629
 #: src/hooks/UseStockAdjustActions.tsx:148
 msgid "Change Status"
 msgstr "Állapot megváltoztatása"
 
-#: src/forms/PurchaseOrderForms.tsx:543
+#: src/forms/PurchaseOrderForms.tsx:550
 msgid "Add Note"
 msgstr "Megjegyzés hozzáadása"
 
@@ -4255,19 +4285,23 @@ msgstr "Megjegyzés hozzáadása"
 #~ msgid "Store at line item destination"
 #~ msgstr "Store at line item destination"
 
-#: src/forms/PurchaseOrderForms.tsx:607
+#: src/forms/PurchaseOrderForms.tsx:614
 msgid "Store at default location"
 msgstr "Alapértelmezett helyre tárolás"
 
-#: src/forms/PurchaseOrderForms.tsx:622
+#: src/forms/PurchaseOrderForms.tsx:629
 msgid "Store at line item destination "
 msgstr ""
 
-#: src/forms/PurchaseOrderForms.tsx:634
+#: src/forms/PurchaseOrderForms.tsx:641
 msgid "Store with already received stock"
 msgstr "Tárolás a már megérkezett készlettel"
 
 #: src/forms/PurchaseOrderForms.tsx:658
+#~ msgid "Receive line items"
+#~ msgstr "Receive line items"
+
+#: src/forms/PurchaseOrderForms.tsx:665
 #: src/pages/build/BuildDetail.tsx:351
 #: src/pages/stock/StockDetail.tsx:280
 #: src/pages/stock/StockDetail.tsx:939
@@ -4280,34 +4314,30 @@ msgstr "Tárolás a már megérkezett készlettel"
 msgid "Batch Code"
 msgstr "Batch kód"
 
-#: src/forms/PurchaseOrderForms.tsx:658
-#~ msgid "Receive line items"
-#~ msgstr "Receive line items"
-
-#: src/forms/PurchaseOrderForms.tsx:659
+#: src/forms/PurchaseOrderForms.tsx:666
 msgid "Enter batch code for received items"
 msgstr ""
 
-#: src/forms/PurchaseOrderForms.tsx:672
+#: src/forms/PurchaseOrderForms.tsx:679
 #: src/forms/StockForms.tsx:177
 msgid "Serial Numbers"
 msgstr "Sorozatszámok"
 
-#: src/forms/PurchaseOrderForms.tsx:673
+#: src/forms/PurchaseOrderForms.tsx:680
 msgid "Enter serial numbers for received items"
 msgstr ""
 
-#: src/forms/PurchaseOrderForms.tsx:687
+#: src/forms/PurchaseOrderForms.tsx:694
 #: src/pages/stock/StockDetail.tsx:382
 #: src/tables/stock/StockItemTable.tsx:296
 msgid "Expiry Date"
 msgstr "Lejárati dátum"
 
-#: src/forms/PurchaseOrderForms.tsx:688
+#: src/forms/PurchaseOrderForms.tsx:695
 msgid "Enter an expiry date for received items"
 msgstr ""
 
-#: src/forms/PurchaseOrderForms.tsx:700
+#: src/forms/PurchaseOrderForms.tsx:707
 #: src/forms/StockForms.tsx:673
 #: src/pages/company/SupplierPartDetail.tsx:171
 #: src/pages/company/SupplierPartDetail.tsx:235
@@ -4316,39 +4346,39 @@ msgstr ""
 msgid "Packaging"
 msgstr "Csomagolás"
 
-#: src/forms/PurchaseOrderForms.tsx:724
+#: src/forms/PurchaseOrderForms.tsx:731
 #: src/pages/company/SupplierPartDetail.tsx:119
-#: src/tables/ColumnRenderers.tsx:323
+#: src/tables/ColumnRenderers.tsx:317
 msgid "Note"
 msgstr "Megjegyzés"
 
-#: src/forms/PurchaseOrderForms.tsx:792
+#: src/forms/PurchaseOrderForms.tsx:799
 #: src/pages/company/SupplierPartDetail.tsx:137
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:49
 msgid "SKU"
 msgstr "SKU (leltári azonosító)"
 
-#: src/forms/PurchaseOrderForms.tsx:793
+#: src/forms/PurchaseOrderForms.tsx:800
 #: src/tables/part/PartPurchaseOrdersTable.tsx:127
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:207
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:277
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:167
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:195
 msgid "Received"
 msgstr "Fogadott"
 
-#: src/forms/PurchaseOrderForms.tsx:810
+#: src/forms/PurchaseOrderForms.tsx:817
 msgid "Receive Line Items"
 msgstr ""
 
-#: src/forms/PurchaseOrderForms.tsx:816
+#: src/forms/PurchaseOrderForms.tsx:823
 msgid "Items received"
 msgstr "Tételek beérkeztek"
 
-#: src/forms/ReturnOrderForms.tsx:254
+#: src/forms/ReturnOrderForms.tsx:260
 msgid "Receive Items"
 msgstr ""
 
-#: src/forms/ReturnOrderForms.tsx:261
+#: src/forms/ReturnOrderForms.tsx:267
 msgid "Item received into stock"
 msgstr ""
 
@@ -4554,20 +4584,84 @@ msgstr ""
 msgid "Parent stock location"
 msgstr "Szülő készlet hely"
 
-#: src/forms/StockForms.tsx:1454
+#: src/forms/StockForms.tsx:1460
 msgid "Find Serial Number"
 msgstr ""
 
-#: src/forms/StockForms.tsx:1465
+#: src/forms/StockForms.tsx:1471
 msgid "No matching items"
 msgstr ""
 
-#: src/forms/StockForms.tsx:1471
+#: src/forms/StockForms.tsx:1477
 msgid "Multiple matching items"
 msgstr ""
 
-#: src/forms/StockForms.tsx:1480
+#: src/forms/StockForms.tsx:1486
 msgid "Invalid response from server"
+msgstr ""
+
+#: src/forms/TaxForms.tsx:17
+msgid "Human-readable name for this tax configuration"
+msgstr ""
+
+#: src/forms/TaxForms.tsx:21
+msgid "Optional description of the tax configuration"
+msgstr ""
+
+#: src/forms/TaxForms.tsx:26
+msgid "The year this tax configuration applies to"
+msgstr ""
+
+#: src/forms/TaxForms.tsx:31
+msgid "Tax rate as a percentage (e.g., 10.00 for 10%)"
+msgstr ""
+
+#: src/forms/TaxForms.tsx:36
+msgid "Currency for this tax configuration"
+msgstr ""
+
+#: src/forms/TaxForms.tsx:43
+msgid "Whether this configuration is currently active"
+msgstr ""
+
+#: src/forms/TaxForms.tsx:47
+msgid "Whether prices include tax (True) or exclude tax (False)"
+msgstr ""
+
+#: src/forms/TaxForms.tsx:51
+msgid "Whether this tax applies to sales orders"
+msgstr ""
+
+#: src/forms/TaxForms.tsx:55
+msgid "Whether this tax applies to purchase orders"
+msgstr ""
+
+#: src/forms/TenantForms.tsx:15
+msgid "Unique name for the tenant"
+msgstr ""
+
+#: src/forms/TenantForms.tsx:19
+msgid "Optional description of the tenant"
+msgstr ""
+
+#: src/forms/TenantForms.tsx:23
+msgid "Optional unique code/identifier for the tenant"
+msgstr ""
+
+#: src/forms/TenantForms.tsx:27
+msgid "Whether this tenant is currently active"
+msgstr ""
+
+#: src/forms/TenantForms.tsx:31
+msgid "Optional contact person name"
+msgstr ""
+
+#: src/forms/TenantForms.tsx:35
+msgid "Optional contact email"
+msgstr ""
+
+#: src/forms/TenantForms.tsx:39
+msgid "Optional contact phone number"
 msgstr ""
 
 #: src/forms/selectionListFields.tsx:97
@@ -5800,7 +5894,8 @@ msgstr "OK"
 #~ msgstr "Advanced Amininistrative Options for InvenTree"
 
 #: src/pages/Index/Settings/AdminCenter/CurrencyManagementPanel.tsx:28
-#: src/tables/ColumnRenderers.tsx:476
+#: src/tables/ColumnRenderers.tsx:488
+#: src/tables/settings/TaxConfigurationTable.tsx:50
 msgid "Currency"
 msgstr "Pénznem"
 
@@ -5836,101 +5931,105 @@ msgstr "E-mail üzenetek"
 #~ msgid "User Management"
 #~ msgstr "User Management"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:112
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:120
 msgid "Users / Access"
 msgstr "Felhasználók / Hozzáférés"
-
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:126
-msgid "Data Import"
-msgstr "Adatok importálása"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:127
 #~ msgid "Templates"
 #~ msgstr "Templates"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:132
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:134
+msgid "Data Import"
+msgstr "Adatok importálása"
+
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:140
 msgid "Data Export"
 msgstr "Adatok exportálása"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:138
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:146
 msgid "Barcode Scans"
 msgstr "Vonalkód beolvasások"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:144
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:152
 msgid "Background Tasks"
 msgstr "Háttér műveletek"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:150
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:158
 msgid "Error Reports"
 msgstr "Hibajelentések"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:156
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:164
 msgid "Currencies"
 msgstr "Pénznemek"
+
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:170
+msgid "Tax Configuration"
+msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:170
 #~ msgid "Location types"
 #~ msgstr "Location types"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:173
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:195
 msgid "Custom States"
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:179
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:201
 #: src/pages/Index/Settings/AdminCenter/UnitManagementPanel.tsx:57
 msgid "Custom Units"
 msgstr "Egyedi mértékegységek"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:185
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:207
 #: src/pages/part/CategoryDetail.tsx:302
 msgid "Part Parameters"
 msgstr "Alkatrész paraméterek"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:192
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:214
 msgid "Category Parameters"
 msgstr "Kategória paraméterek"
-
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:211
-msgid "Location Types"
-msgstr "Helyszín típusok"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:221
 #~ msgid "Quick Actions"
 #~ msgstr "Quick Actions"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:225
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:226
+#~ msgid "Add a new user"
+#~ msgstr "Add a new user"
+
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:233
+msgid "Location Types"
+msgstr "Helyszín típusok"
+
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:247
 #: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:52
 #: src/tables/machine/MachineTypeTable.tsx:325
 msgid "Machines"
 msgstr "Berendezések"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:226
-#~ msgid "Add a new user"
-#~ msgstr "Add a new user"
-
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:236
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:258
 msgid "Operations"
 msgstr "Műveletek"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:248
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:272
 msgid "Data Management"
 msgstr "Adatkezelés"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:259
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:283
 #: src/pages/Index/Settings/SystemSettings.tsx:175
 #: src/pages/Index/Settings/UserSettings.tsx:118
 msgid "Reporting"
 msgstr "Riportolás"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:264
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:288
 msgid "PLM"
 msgstr "PLM"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:274
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:298
 msgid "Extend / Integrate"
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:288
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:312
 msgid "Advanced Options"
 msgstr "További beállítások"
 
@@ -6058,6 +6157,10 @@ msgstr "Ütemezett Feladatok"
 #: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:63
 msgid "Failed Tasks"
 msgstr "Hibás feladatok"
+
+#: src/pages/Index/Settings/AdminCenter/TaxManagementPanel.tsx:10
+msgid "Tax Configurations"
+msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/TemplateManagementPanel.tsx:67
 #~ msgid "Stock item"
@@ -6249,7 +6352,7 @@ msgstr ""
 #: src/tables/part/PartSalesAllocationsTable.tsx:61
 #: src/tables/part/RelatedPartTable.tsx:73
 #: src/tables/sales/SalesOrderAllocationTable.tsx:132
-#: src/tables/sales/SalesOrderLineItemTable.tsx:98
+#: src/tables/sales/SalesOrderLineItemTable.tsx:100
 #: src/tables/stock/StockItemTable.tsx:71
 msgid "IPN"
 msgstr "IPN"
@@ -6286,10 +6389,10 @@ msgstr "Egyedi státusz"
 #: src/pages/build/BuildDetail.tsx:237
 #: src/pages/build/BuildDetail.tsx:733
 #: src/pages/build/BuildIndex.tsx:28
-#: src/pages/stock/LocationDetail.tsx:142
+#: src/pages/stock/LocationDetail.tsx:150
 #: src/tables/build/BuildOrderTable.tsx:123
 #: src/tables/build/BuildOrderTable.tsx:185
-#: src/tables/stock/StockLocationTable.tsx:48
+#: src/tables/stock/StockLocationTable.tsx:53
 msgid "External"
 msgstr "Külső"
 
@@ -6297,7 +6400,7 @@ msgstr "Külső"
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:123
 #: src/pages/sales/ReturnOrderDetail.tsx:88
 #: src/pages/sales/SalesOrderDetail.tsx:97
-#: src/tables/ColumnRenderers.tsx:312
+#: src/tables/ColumnRenderers.tsx:306
 #: src/tables/build/BuildAllocatedStockTable.tsx:115
 #: src/tables/build/BuildLineTable.tsx:337
 msgid "Reference"
@@ -6313,8 +6416,8 @@ msgstr "Gyártási mennyiség"
 
 #: src/pages/build/BuildDetail.tsx:286
 #: src/pages/part/PartDetail.tsx:601
-#: src/tables/bom/BomTable.tsx:352
-#: src/tables/bom/BomTable.tsx:387
+#: src/tables/bom/BomTable.tsx:358
+#: src/tables/bom/BomTable.tsx:400
 msgid "Can Build"
 msgstr "Gyártható"
 
@@ -6324,16 +6427,16 @@ msgid "Completed Outputs"
 msgstr "Befejezett kimenetek"
 
 #: src/pages/build/BuildDetail.tsx:312
-#: src/tables/Filter.tsx:381
+#: src/tables/Filter.tsx:393
 msgid "Issued By"
 msgstr "Kiállította"
 
 #: src/pages/build/BuildDetail.tsx:320
 #: src/pages/part/PartDetail.tsx:694
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:243
-#: src/pages/sales/ReturnOrderDetail.tsx:207
-#: src/pages/sales/SalesOrderDetail.tsx:219
-#: src/tables/Filter.tsx:319
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:251
+#: src/pages/sales/ReturnOrderDetail.tsx:215
+#: src/pages/sales/SalesOrderDetail.tsx:269
+#: src/tables/Filter.tsx:331
 msgid "Responsible"
 msgstr "Felelős"
 
@@ -6361,10 +6464,10 @@ msgstr "Létrehozva"
 #~ msgstr "Reporting Actions"
 
 #: src/pages/build/BuildDetail.tsx:369
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:268
-#: src/pages/sales/ReturnOrderDetail.tsx:233
-#: src/pages/sales/SalesOrderDetail.tsx:244
-#: src/tables/ColumnRenderers.tsx:424
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:276
+#: src/pages/sales/ReturnOrderDetail.tsx:241
+#: src/pages/sales/SalesOrderDetail.tsx:294
+#: src/tables/ColumnRenderers.tsx:436
 msgid "Start Date"
 msgstr "Kezdő dátum"
 
@@ -6373,19 +6476,20 @@ msgstr "Kezdő dátum"
 #~ msgstr "Print build report"
 
 #: src/pages/build/BuildDetail.tsx:377
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:276
-#: src/pages/sales/ReturnOrderDetail.tsx:241
-#: src/pages/sales/SalesOrderDetail.tsx:252
-#: src/tables/ColumnRenderers.tsx:432
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:284
+#: src/pages/sales/ReturnOrderDetail.tsx:249
+#: src/pages/sales/SalesOrderDetail.tsx:302
+#: src/tables/ColumnRenderers.tsx:444
 #: src/tables/part/PartPurchaseOrdersTable.tsx:101
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:150
-#: src/tables/sales/SalesOrderLineItemTable.tsx:132
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:174
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:178
+#: src/tables/sales/SalesOrderLineItemTable.tsx:155
 msgid "Target Date"
 msgstr "Cél dátum"
 
 #: src/pages/build/BuildDetail.tsx:385
 #: src/tables/build/BuildOrderTable.tsx:93
-#: src/tables/sales/SalesOrderLineItemTable.tsx:342
+#: src/tables/sales/SalesOrderLineItemTable.tsx:366
 msgid "Completed"
 msgstr "Kész"
 
@@ -6398,7 +6502,7 @@ msgid "Required Parts"
 msgstr "Szükséges alkatrészek"
 
 #: src/pages/build/BuildDetail.tsx:439
-#: src/pages/sales/SalesOrderDetail.tsx:380
+#: src/pages/sales/SalesOrderDetail.tsx:430
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:210
 #: src/tables/part/PartSalesAllocationsTable.tsx:73
 msgid "Allocated Stock"
@@ -6443,16 +6547,16 @@ msgid "Cancel Build Order"
 msgstr "Gyártási utasítás visszavonása"
 
 #: src/pages/build/BuildDetail.tsx:595
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:398
-#: src/pages/sales/ReturnOrderDetail.tsx:393
-#: src/pages/sales/SalesOrderDetail.tsx:427
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:406
+#: src/pages/sales/ReturnOrderDetail.tsx:401
+#: src/pages/sales/SalesOrderDetail.tsx:477
 msgid "Order cancelled"
 msgstr "Rendelés visszavonva"
 
 #: src/pages/build/BuildDetail.tsx:596
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:397
-#: src/pages/sales/ReturnOrderDetail.tsx:392
-#: src/pages/sales/SalesOrderDetail.tsx:426
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:405
+#: src/pages/sales/ReturnOrderDetail.tsx:400
+#: src/pages/sales/SalesOrderDetail.tsx:476
 msgid "Cancel this order"
 msgstr "Rendelés visszavonása"
 
@@ -6461,16 +6565,16 @@ msgid "Hold Build Order"
 msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:607
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:405
-#: src/pages/sales/ReturnOrderDetail.tsx:400
-#: src/pages/sales/SalesOrderDetail.tsx:434
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:413
+#: src/pages/sales/ReturnOrderDetail.tsx:408
+#: src/pages/sales/SalesOrderDetail.tsx:484
 msgid "Place this order on hold"
 msgstr "Rendelés felfüggesztése"
 
 #: src/pages/build/BuildDetail.tsx:608
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:406
-#: src/pages/sales/ReturnOrderDetail.tsx:401
-#: src/pages/sales/SalesOrderDetail.tsx:435
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:414
+#: src/pages/sales/ReturnOrderDetail.tsx:409
+#: src/pages/sales/SalesOrderDetail.tsx:485
 msgid "Order placed on hold"
 msgstr "Felfüggesztett rendelés"
 
@@ -6479,16 +6583,16 @@ msgid "Issue Build Order"
 msgstr "Gyártási Rendelés Kiadása"
 
 #: src/pages/build/BuildDetail.tsx:615
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:389
-#: src/pages/sales/ReturnOrderDetail.tsx:384
-#: src/pages/sales/SalesOrderDetail.tsx:418
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:397
+#: src/pages/sales/ReturnOrderDetail.tsx:392
+#: src/pages/sales/SalesOrderDetail.tsx:468
 msgid "Issue this order"
 msgstr "Rendelés kiállítása"
 
 #: src/pages/build/BuildDetail.tsx:616
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:390
-#: src/pages/sales/ReturnOrderDetail.tsx:385
-#: src/pages/sales/SalesOrderDetail.tsx:419
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:398
+#: src/pages/sales/ReturnOrderDetail.tsx:393
+#: src/pages/sales/SalesOrderDetail.tsx:469
 msgid "Order issued"
 msgstr "Megrendelés leadva"
 
@@ -6497,30 +6601,30 @@ msgid "Complete Build Order"
 msgstr "Gyártási utasítás befejezése"
 
 #: src/pages/build/BuildDetail.tsx:641
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:418
-#: src/pages/sales/ReturnOrderDetail.tsx:408
-#: src/pages/sales/SalesOrderDetail.tsx:453
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:426
+#: src/pages/sales/ReturnOrderDetail.tsx:416
+#: src/pages/sales/SalesOrderDetail.tsx:503
 msgid "Mark this order as complete"
 msgstr "Rendelés teljesítettnek jelölése"
 
 #: src/pages/build/BuildDetail.tsx:644
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:412
-#: src/pages/sales/ReturnOrderDetail.tsx:409
-#: src/pages/sales/SalesOrderDetail.tsx:454
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:420
+#: src/pages/sales/ReturnOrderDetail.tsx:417
+#: src/pages/sales/SalesOrderDetail.tsx:504
 msgid "Order completed"
 msgstr "Megrendelés teljesítve"
 
 #: src/pages/build/BuildDetail.tsx:671
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:441
-#: src/pages/sales/ReturnOrderDetail.tsx:438
-#: src/pages/sales/SalesOrderDetail.tsx:489
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:449
+#: src/pages/sales/ReturnOrderDetail.tsx:446
+#: src/pages/sales/SalesOrderDetail.tsx:539
 msgid "Issue Order"
 msgstr "Rendelés kiküldése"
 
 #: src/pages/build/BuildDetail.tsx:678
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:448
-#: src/pages/sales/ReturnOrderDetail.tsx:445
-#: src/pages/sales/SalesOrderDetail.tsx:503
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:456
+#: src/pages/sales/ReturnOrderDetail.tsx:453
+#: src/pages/sales/SalesOrderDetail.tsx:553
 msgid "Complete Order"
 msgstr "Rendelés teljesítése"
 
@@ -6529,30 +6633,30 @@ msgid "Build Order Actions"
 msgstr "Gyártáshoz foglalások"
 
 #: src/pages/build/BuildDetail.tsx:701
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:470
-#: src/pages/sales/ReturnOrderDetail.tsx:467
-#: src/pages/sales/SalesOrderDetail.tsx:526
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:478
+#: src/pages/sales/ReturnOrderDetail.tsx:475
+#: src/pages/sales/SalesOrderDetail.tsx:576
 msgid "Edit order"
 msgstr "Rendelés szerkesztése"
 
 #: src/pages/build/BuildDetail.tsx:705
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:478
-#: src/pages/sales/ReturnOrderDetail.tsx:473
-#: src/pages/sales/SalesOrderDetail.tsx:531
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:486
+#: src/pages/sales/ReturnOrderDetail.tsx:481
+#: src/pages/sales/SalesOrderDetail.tsx:581
 msgid "Duplicate order"
 msgstr "Rendelés duplikálása"
 
 #: src/pages/build/BuildDetail.tsx:709
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:481
-#: src/pages/sales/ReturnOrderDetail.tsx:478
-#: src/pages/sales/SalesOrderDetail.tsx:534
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:489
+#: src/pages/sales/ReturnOrderDetail.tsx:486
+#: src/pages/sales/SalesOrderDetail.tsx:584
 msgid "Hold order"
 msgstr "Rendelés felfüggesztése"
 
 #: src/pages/build/BuildDetail.tsx:714
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:486
-#: src/pages/sales/ReturnOrderDetail.tsx:483
-#: src/pages/sales/SalesOrderDetail.tsx:539
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:494
+#: src/pages/sales/ReturnOrderDetail.tsx:491
+#: src/pages/sales/SalesOrderDetail.tsx:589
 msgid "Cancel order"
 msgstr "Rendelés törlése"
 
@@ -6618,10 +6722,10 @@ msgstr "Alapértelmezett pénznem"
 #: src/pages/company/SupplierPartDetail.tsx:234
 #: src/pages/company/SupplierPartDetail.tsx:359
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:138
-#: src/tables/Filter.tsx:360
+#: src/tables/Filter.tsx:372
 #: src/tables/company/CompanyTable.tsx:96
 #: src/tables/part/PartPurchaseOrdersTable.tsx:43
-#: src/tables/purchasing/PurchaseOrderTable.tsx:109
+#: src/tables/purchasing/PurchaseOrderTable.tsx:112
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:40
 msgid "Supplier"
 msgstr "Beszállító"
@@ -6631,7 +6735,7 @@ msgstr "Beszállító"
 #: src/pages/company/ManufacturerPartDetail.tsx:102
 #: src/pages/company/ManufacturerPartDetail.tsx:264
 #: src/pages/company/SupplierPartDetail.tsx:151
-#: src/tables/Filter.tsx:347
+#: src/tables/Filter.tsx:359
 #: src/tables/company/CompanyTable.tsx:101
 #: src/tables/purchasing/SupplierPartTable.tsx:70
 msgid "Manufacturer"
@@ -6645,8 +6749,8 @@ msgstr "Gyártó"
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:102
 #: src/pages/stock/StockDetail.tsx:370
 #: src/tables/company/CompanyTable.tsx:106
-#: src/tables/sales/ReturnOrderTable.tsx:108
-#: src/tables/sales/SalesOrderTable.tsx:133
+#: src/tables/sales/ReturnOrderTable.tsx:112
+#: src/tables/sales/SalesOrderTable.tsx:137
 #: src/tables/stock/StockTrackingTable.tsx:153
 msgid "Customer"
 msgstr "Vevő"
@@ -6775,13 +6879,13 @@ msgid "Supplier Part Details"
 msgstr ""
 
 #: src/pages/company/SupplierPartDetail.tsx:251
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:361
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:369
 msgid "Received Stock"
 msgstr "Beérkezett készlet"
 
 #: src/pages/company/SupplierPartDetail.tsx:278
 #: src/pages/part/PartPricingPanel.tsx:113
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:232
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:239
 msgid "Supplier Pricing"
 msgstr "Beszállító árazás"
 
@@ -6868,9 +6972,9 @@ msgid "Subcategories"
 msgstr "Alkategóriák"
 
 #: src/pages/part/CategoryDetail.tsx:144
-#: src/pages/stock/LocationDetail.tsx:136
+#: src/pages/stock/LocationDetail.tsx:144
 #: src/tables/part/PartCategoryTable.tsx:89
-#: src/tables/stock/StockLocationTable.tsx:43
+#: src/tables/stock/StockLocationTable.tsx:48
 msgid "Structural"
 msgstr "Szerkezeti"
 
@@ -6897,7 +7001,7 @@ msgid "Move items to parent category"
 msgstr ""
 
 #: src/pages/part/CategoryDetail.tsx:191
-#: src/pages/stock/LocationDetail.tsx:228
+#: src/pages/stock/LocationDetail.tsx:236
 msgid "Delete items"
 msgstr "Tételek törlése"
 
@@ -7011,8 +7115,8 @@ msgid "Revision of"
 msgstr "Ennek a verziója"
 
 #: src/pages/part/PartDetail.tsx:496
-#: src/tables/ColumnRenderers.tsx:200
-#: src/tables/ColumnRenderers.tsx:209
+#: src/tables/ColumnRenderers.tsx:194
+#: src/tables/ColumnRenderers.tsx:203
 msgid "Default Location"
 msgstr "Alapértelmezett hely"
 
@@ -7035,17 +7139,17 @@ msgid "Keywords"
 msgstr "Kulcsszavak"
 
 #: src/pages/part/PartDetail.tsx:545
-#: src/tables/bom/BomTable.tsx:419
+#: src/tables/bom/BomTable.tsx:432
 #: src/tables/build/BuildLineTable.tsx:297
 #: src/tables/part/PartTable.tsx:312
-#: src/tables/sales/SalesOrderLineItemTable.tsx:136
+#: src/tables/sales/SalesOrderLineItemTable.tsx:159
 msgid "Available Stock"
 msgstr "Elérhető készlet"
 
 #: src/pages/part/PartDetail.tsx:551
-#: src/tables/bom/BomTable.tsx:328
+#: src/tables/bom/BomTable.tsx:334
 #: src/tables/build/BuildLineTable.tsx:259
-#: src/tables/sales/SalesOrderLineItemTable.tsx:178
+#: src/tables/sales/SalesOrderLineItemTable.tsx:201
 msgid "On order"
 msgstr "Rendelve"
 
@@ -7080,7 +7184,7 @@ msgid "Template Part"
 msgstr "Sablon alkatrész"
 
 #: src/pages/part/PartDetail.tsx:634
-#: src/tables/bom/BomTable.tsx:409
+#: src/tables/bom/BomTable.tsx:422
 msgid "Assembled Part"
 msgstr "Gyártmány alkatrész"
 
@@ -7089,12 +7193,12 @@ msgid "Component Part"
 msgstr ""
 
 #: src/pages/part/PartDetail.tsx:644
-#: src/tables/bom/BomTable.tsx:399
+#: src/tables/bom/BomTable.tsx:412
 msgid "Testable Part"
 msgstr "Tesztelhető alkatrész"
 
 #: src/pages/part/PartDetail.tsx:650
-#: src/tables/bom/BomTable.tsx:404
+#: src/tables/bom/BomTable.tsx:417
 msgid "Trackable Part"
 msgstr "Nyomkövethető alkatrész"
 
@@ -7109,21 +7213,21 @@ msgstr "Értékesíthető alkatrész"
 #: src/pages/part/PartDetail.tsx:666
 #: src/pages/part/PartDetail.tsx:1036
 #: src/tables/bom/BomTable.tsx:143
-#: src/tables/bom/BomTable.tsx:414
+#: src/tables/bom/BomTable.tsx:427
 msgid "Virtual Part"
 msgstr "Virtuális alkatrész"
 
 #: src/pages/part/PartDetail.tsx:681
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:253
-#: src/pages/sales/ReturnOrderDetail.tsx:217
-#: src/pages/sales/SalesOrderDetail.tsx:229
-#: src/tables/ColumnRenderers.tsx:440
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:261
+#: src/pages/sales/ReturnOrderDetail.tsx:225
+#: src/pages/sales/SalesOrderDetail.tsx:279
+#: src/tables/ColumnRenderers.tsx:452
 msgid "Creation Date"
 msgstr "Létrehozás dátuma"
 
 #: src/pages/part/PartDetail.tsx:686
-#: src/tables/ColumnRenderers.tsx:386
-#: src/tables/Filter.tsx:373
+#: src/tables/ColumnRenderers.tsx:398
+#: src/tables/Filter.tsx:385
 msgid "Created By"
 msgstr "Készítette"
 
@@ -7246,7 +7350,7 @@ msgid "No pricing data found for this part."
 msgstr "Nincs árazási információ ehhez az alkatrészhez."
 
 #: src/pages/part/PartPricingPanel.tsx:87
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:325
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:332
 msgid "Pricing Overview"
 msgstr "Árazás áttekintés"
 
@@ -7255,27 +7359,27 @@ msgid "Purchase History"
 msgstr "Beszerzési előzmények"
 
 #: src/pages/part/PartPricingPanel.tsx:107
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:204
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:211
 msgid "Internal Pricing"
 msgstr "Belső árazás"
 
 #: src/pages/part/PartPricingPanel.tsx:122
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:214
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:221
 msgid "BOM Pricing"
 msgstr "Alkatrészjegyzék árazás"
 
 #: src/pages/part/PartPricingPanel.tsx:129
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:242
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:249
 msgid "Variant Pricing"
 msgstr "Alkatrészváltozat árazás"
 
 #: src/pages/part/PartPricingPanel.tsx:141
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:251
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:258
 msgid "Sale Pricing"
 msgstr "Eladási ár"
 
 #: src/pages/part/PartPricingPanel.tsx:147
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:260
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:267
 msgid "Sale History"
 msgstr "Eladási előzmények"
 
@@ -7328,12 +7432,12 @@ msgid "Stock Value"
 msgstr "Készletérték"
 
 #: src/pages/part/PartStockHistoryDetail.tsx:240
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:327
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:334
 msgid "Minimum Value"
 msgstr "Minimum érték"
 
 #: src/pages/part/PartStockHistoryDetail.tsx:246
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:328
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:335
 msgid "Maximum Value"
 msgstr "Maximum érték"
 
@@ -7354,14 +7458,15 @@ msgstr "Maximum érték"
 
 #: src/pages/part/pricing/BomPricingPanel.tsx:87
 #: src/pages/part/pricing/BomPricingPanel.tsx:175
-#: src/tables/ColumnRenderers.tsx:490
+#: src/tables/ColumnRenderers.tsx:502
 #: src/tables/bom/BomTable.tsx:275
 #: src/tables/general/ExtraLineItemTable.tsx:69
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:255
-#: src/tables/purchasing/PurchaseOrderTable.tsx:138
-#: src/tables/sales/ReturnOrderTable.tsx:139
-#: src/tables/sales/SalesOrderLineItemTable.tsx:122
-#: src/tables/sales/SalesOrderTable.tsx:175
+#: src/tables/purchasing/PurchaseOrderTable.tsx:144
+#: src/tables/sales/ReturnOrderTable.tsx:146
+#: src/tables/sales/SalesOrderLineItemTable.tsx:124
+#: src/tables/sales/SalesOrderTable.tsx:182
+#: src/tables/sales/TaxExtraLineItemTable.tsx:71
 msgid "Total Price"
 msgstr "Teljes ár"
 
@@ -7402,6 +7507,7 @@ msgstr "Maximum ár"
 #: src/tables/general/ExtraLineItemTable.tsx:61
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:251
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:84
+#: src/tables/sales/TaxExtraLineItemTable.tsx:63
 #: src/tables/stock/StockItemTable.tsx:261
 msgid "Unit Price"
 msgstr "Egységár"
@@ -7439,74 +7545,74 @@ msgstr "Árlépcső"
 msgid "Price"
 msgstr "Ár"
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:72
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:74
 msgid "Refreshing pricing data"
 msgstr "Árazási adatok frissítése"
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:92
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:94
 msgid "Pricing data updated"
 msgstr ""
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:99
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:101
 msgid "Failed to update pricing data"
 msgstr ""
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:127
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:129
 msgid "Edit Pricing"
 msgstr "Árazás szerkesztése"
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:139
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:141
 msgid "Pricing Category"
 msgstr "Árkategória"
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:158
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:160
 msgid "Minimum"
 msgstr "Minimum"
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:170
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:173
 msgid "Maximum"
 msgstr "Maximum"
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:188
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:192
 msgid "Override Pricing"
 msgstr "Alkatrész árazás felülbírálása"
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:196
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:203
 msgid "Overall Pricing"
 msgstr "Általános árazás"
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:222
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:229
 msgid "Purchase Pricing"
 msgstr "Beszerzési ár"
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:281
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:288
 #: src/pages/stock/StockDetail.tsx:426
 #: src/tables/part/PartParameterTable.tsx:121
 #: src/tables/stock/StockItemTable.tsx:302
 msgid "Last Updated"
 msgstr "Legutóbb frissítve"
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:285
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:292
 msgid "Pricing Not Set"
 msgstr ""
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:286
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:293
 msgid "Pricing data has not been calculated for this part"
 msgstr ""
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:290
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:297
 msgid "Pricing Actions"
 msgstr "Árazási műveletek"
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:293
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:300
 msgid "Refresh"
 msgstr "Frissítés"
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:294
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:301
 msgid "Refresh pricing data"
 msgstr ""
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:309
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:316
 msgid "Edit pricing data"
 msgstr ""
 
@@ -7554,8 +7660,8 @@ msgid "Edit Purchase Order"
 msgstr "Beszerzési rendelés szerkesztése"
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:107
-#: src/tables/purchasing/PurchaseOrderTable.tsx:154
-#: src/tables/purchasing/PurchaseOrderTable.tsx:167
+#: src/tables/purchasing/PurchaseOrderTable.tsx:160
+#: src/tables/purchasing/PurchaseOrderTable.tsx:173
 msgid "Add Purchase Order"
 msgstr "Beszerzés hozzáadása"
 
@@ -7600,79 +7706,81 @@ msgstr "Teljes költség"
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:219
 #: src/pages/sales/ReturnOrderDetail.tsx:183
-#: src/pages/sales/SalesOrderDetail.tsx:195
+#: src/pages/sales/SalesOrderDetail.tsx:237
+#: src/tables/settings/TenantTable.tsx:58
 msgid "Contact Email"
 msgstr "Kapcsolatfelvételi e-mail"
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:227
 #: src/pages/sales/ReturnOrderDetail.tsx:191
-#: src/pages/sales/SalesOrderDetail.tsx:203
+#: src/pages/sales/SalesOrderDetail.tsx:245
+#: src/tables/settings/TenantTable.tsx:63
 msgid "Contact Phone"
 msgstr "Kapcsolattartási telefonszám"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:260
-#: src/pages/sales/ReturnOrderDetail.tsx:225
-#: src/pages/sales/SalesOrderDetail.tsx:236
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:268
+#: src/pages/sales/ReturnOrderDetail.tsx:233
+#: src/pages/sales/SalesOrderDetail.tsx:286
 msgid "Issue Date"
 msgstr "Kiállítás dátuma"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:285
-#: src/pages/sales/ReturnOrderDetail.tsx:249
-#: src/pages/sales/SalesOrderDetail.tsx:259
-#: src/tables/ColumnRenderers.tsx:448
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:293
+#: src/pages/sales/ReturnOrderDetail.tsx:257
+#: src/pages/sales/SalesOrderDetail.tsx:309
+#: src/tables/ColumnRenderers.tsx:460
 #: src/tables/build/BuildOrderTable.tsx:137
 #: src/tables/part/PartPurchaseOrdersTable.tsx:106
 msgid "Completion Date"
 msgstr "Teljesítés dátuma"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:315
-#: src/pages/sales/ReturnOrderDetail.tsx:279
-#: src/pages/sales/SalesOrderDetail.tsx:325
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:323
+#: src/pages/sales/ReturnOrderDetail.tsx:287
+#: src/pages/sales/SalesOrderDetail.tsx:375
 msgid "Order Details"
 msgstr "Rendelés részletei"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:321
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:330
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:329
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:338
 #: src/pages/sales/ReturnOrderDetail.tsx:133
-#: src/pages/sales/ReturnOrderDetail.tsx:285
-#: src/pages/sales/ReturnOrderDetail.tsx:294
-#: src/pages/sales/SalesOrderDetail.tsx:331
-#: src/pages/sales/SalesOrderDetail.tsx:340
+#: src/pages/sales/ReturnOrderDetail.tsx:293
+#: src/pages/sales/ReturnOrderDetail.tsx:302
+#: src/pages/sales/SalesOrderDetail.tsx:381
+#: src/pages/sales/SalesOrderDetail.tsx:390
 msgid "Line Items"
 msgstr "Sortételek"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:344
-#: src/pages/sales/ReturnOrderDetail.tsx:308
-#: src/pages/sales/SalesOrderDetail.tsx:357
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:352
+#: src/pages/sales/ReturnOrderDetail.tsx:316
+#: src/pages/sales/SalesOrderDetail.tsx:407
 msgid "Extra Line Items"
 msgstr "Egyéb tételek"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:387
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:395
 msgid "Issue Purchase Order"
 msgstr ""
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:395
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:403
 msgid "Cancel Purchase Order"
 msgstr ""
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:403
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:411
 msgid "Hold Purchase Order"
 msgstr ""
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:411
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:419
 msgid "Complete Purchase Order"
 msgstr ""
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:466
-#: src/pages/sales/ReturnOrderDetail.tsx:463
-#: src/pages/sales/SalesOrderDetail.tsx:521
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:474
+#: src/pages/sales/ReturnOrderDetail.tsx:471
+#: src/pages/sales/SalesOrderDetail.tsx:571
 msgid "Order Actions"
 msgstr "Rendelés műveletek"
 
 #: src/pages/sales/ReturnOrderDetail.tsx:94
 #: src/pages/sales/SalesOrderDetail.tsx:103
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:111
-#: src/tables/sales/SalesOrderTable.tsx:141
+#: src/tables/sales/SalesOrderTable.tsx:145
 msgid "Customer Reference"
 msgstr "Vevői azonosító"
 
@@ -7680,29 +7788,29 @@ msgstr "Vevői azonosító"
 #~ msgid "Order canceled"
 #~ msgstr "Order canceled"
 
-#: src/pages/sales/ReturnOrderDetail.tsx:355
+#: src/pages/sales/ReturnOrderDetail.tsx:363
 msgid "Edit Return Order"
 msgstr "Visszavételi utasítás szerkesztése"
 
-#: src/pages/sales/ReturnOrderDetail.tsx:373
-#: src/tables/sales/ReturnOrderTable.tsx:154
-#: src/tables/sales/ReturnOrderTable.tsx:167
+#: src/pages/sales/ReturnOrderDetail.tsx:381
+#: src/tables/sales/ReturnOrderTable.tsx:172
+#: src/tables/sales/ReturnOrderTable.tsx:185
 msgid "Add Return Order"
 msgstr "Visszavételi utasítás hozzáadása"
 
-#: src/pages/sales/ReturnOrderDetail.tsx:382
+#: src/pages/sales/ReturnOrderDetail.tsx:390
 msgid "Issue Return Order"
 msgstr "Visszavételi utasítás kiállítása"
 
-#: src/pages/sales/ReturnOrderDetail.tsx:390
+#: src/pages/sales/ReturnOrderDetail.tsx:398
 msgid "Cancel Return Order"
 msgstr "Visszavételi utasítás törlése"
 
-#: src/pages/sales/ReturnOrderDetail.tsx:398
+#: src/pages/sales/ReturnOrderDetail.tsx:406
 msgid "Hold Return Order"
 msgstr "Visszavételi utasítás felfüggesztése"
 
-#: src/pages/sales/ReturnOrderDetail.tsx:406
+#: src/pages/sales/ReturnOrderDetail.tsx:414
 msgid "Complete Return Order"
 msgstr "Visszavételi utasítás teljesítése"
 
@@ -7710,54 +7818,85 @@ msgstr "Visszavételi utasítás teljesítése"
 msgid "Completed Shipments"
 msgstr "Kész szállítmányok"
 
+#: src/pages/sales/SalesOrderDetail.tsx:177
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:168
+#: src/tables/sales/ReturnOrderTable.tsx:162
+#: src/tables/sales/SalesOrderLineItemTable.tsx:149
+#: src/tables/sales/SalesOrderTable.tsx:198
+#: src/tables/sales/TaxExtraLineItemTable.tsx:96
+msgid "Tax Rate"
+msgstr ""
+
+#: src/pages/sales/SalesOrderDetail.tsx:186
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:156
+#: src/tables/sales/ReturnOrderTable.tsx:150
+#: src/tables/sales/SalesOrderLineItemTable.tsx:137
+#: src/tables/sales/SalesOrderTable.tsx:186
+#: src/tables/sales/TaxExtraLineItemTable.tsx:84
+msgid "Subtotal"
+msgstr ""
+
+#: src/pages/sales/SalesOrderDetail.tsx:197
+msgid "Total Tax Amount"
+msgstr ""
+
+#: src/pages/sales/SalesOrderDetail.tsx:208
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:164
+#: src/tables/sales/ReturnOrderTable.tsx:158
+#: src/tables/sales/SalesOrderLineItemTable.tsx:145
+#: src/tables/sales/SalesOrderTable.tsx:194
+#: src/tables/sales/TaxExtraLineItemTable.tsx:92
+msgid "Total with Tax"
+msgstr ""
+
 #: src/pages/sales/SalesOrderDetail.tsx:256
 #~ msgid "Pending Shipments"
 #~ msgstr "Pending Shipments"
 
-#: src/pages/sales/SalesOrderDetail.tsx:292
+#: src/pages/sales/SalesOrderDetail.tsx:342
 msgid "Edit Sales Order"
 msgstr "Értékesítési rendelés szerkesztése"
 
-#: src/pages/sales/SalesOrderDetail.tsx:314
-#: src/tables/sales/SalesOrderTable.tsx:108
-#: src/tables/sales/SalesOrderTable.tsx:121
+#: src/pages/sales/SalesOrderDetail.tsx:364
+#: src/tables/sales/SalesOrderTable.tsx:112
+#: src/tables/sales/SalesOrderTable.tsx:125
 msgid "Add Sales Order"
 msgstr "Értékesítési rendelés hozzáadása"
 
-#: src/pages/sales/SalesOrderDetail.tsx:374
-#: src/tables/sales/SalesOrderTable.tsx:147
+#: src/pages/sales/SalesOrderDetail.tsx:424
+#: src/tables/sales/SalesOrderTable.tsx:151
 msgid "Shipments"
 msgstr "Szállítások"
 
-#: src/pages/sales/SalesOrderDetail.tsx:416
+#: src/pages/sales/SalesOrderDetail.tsx:466
 msgid "Issue Sales Order"
 msgstr ""
 
-#: src/pages/sales/SalesOrderDetail.tsx:424
+#: src/pages/sales/SalesOrderDetail.tsx:474
 msgid "Cancel Sales Order"
 msgstr ""
 
-#: src/pages/sales/SalesOrderDetail.tsx:432
+#: src/pages/sales/SalesOrderDetail.tsx:482
 msgid "Hold Sales Order"
 msgstr ""
 
-#: src/pages/sales/SalesOrderDetail.tsx:440
+#: src/pages/sales/SalesOrderDetail.tsx:490
 msgid "Ship Sales Order"
 msgstr ""
 
-#: src/pages/sales/SalesOrderDetail.tsx:442
+#: src/pages/sales/SalesOrderDetail.tsx:492
 msgid "Ship this order?"
 msgstr ""
 
-#: src/pages/sales/SalesOrderDetail.tsx:443
+#: src/pages/sales/SalesOrderDetail.tsx:493
 msgid "Order shipped"
 msgstr "Megrendelés szállítva"
 
-#: src/pages/sales/SalesOrderDetail.tsx:451
+#: src/pages/sales/SalesOrderDetail.tsx:501
 msgid "Complete Sales Order"
 msgstr ""
 
-#: src/pages/sales/SalesOrderDetail.tsx:496
+#: src/pages/sales/SalesOrderDetail.tsx:546
 msgid "Ship Order"
 msgstr "Megrendelés kiszállítása"
 
@@ -7779,7 +7918,7 @@ msgid "Invoice Number"
 msgstr "Számla sorszám"
 
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:151
-#: src/tables/ColumnRenderers.tsx:456
+#: src/tables/ColumnRenderers.tsx:468
 #: src/tables/sales/SalesOrderAllocationTable.tsx:179
 #: src/tables/sales/SalesOrderShipmentTable.tsx:113
 msgid "Shipment Date"
@@ -7846,86 +7985,86 @@ msgid "Parent Location"
 msgstr "Szülő hely"
 
 #: src/pages/stock/LocationDetail.tsx:130
-#: src/pages/stock/LocationDetail.tsx:176
+#: src/pages/stock/LocationDetail.tsx:184
 msgid "Sublocations"
 msgstr "Alhelyek"
 
-#: src/pages/stock/LocationDetail.tsx:148
-#: src/tables/stock/StockLocationTable.tsx:57
+#: src/pages/stock/LocationDetail.tsx:156
+#: src/tables/stock/StockLocationTable.tsx:62
 msgid "Location Type"
 msgstr "Helyszín típusa"
 
-#: src/pages/stock/LocationDetail.tsx:159
+#: src/pages/stock/LocationDetail.tsx:167
 msgid "Top level stock location"
 msgstr ""
 
-#: src/pages/stock/LocationDetail.tsx:170
+#: src/pages/stock/LocationDetail.tsx:178
 msgid "Location Details"
 msgstr ""
 
-#: src/pages/stock/LocationDetail.tsx:196
+#: src/pages/stock/LocationDetail.tsx:204
 msgid "Default Parts"
 msgstr ""
 
-#: src/pages/stock/LocationDetail.tsx:215
-#: src/pages/stock/LocationDetail.tsx:374
-#: src/tables/stock/StockLocationTable.tsx:121
+#: src/pages/stock/LocationDetail.tsx:223
+#: src/pages/stock/LocationDetail.tsx:382
+#: src/tables/stock/StockLocationTable.tsx:128
 msgid "Edit Stock Location"
 msgstr ""
 
-#: src/pages/stock/LocationDetail.tsx:224
+#: src/pages/stock/LocationDetail.tsx:232
 msgid "Move items to parent location"
 msgstr ""
 
-#: src/pages/stock/LocationDetail.tsx:236
-#: src/pages/stock/LocationDetail.tsx:379
+#: src/pages/stock/LocationDetail.tsx:244
+#: src/pages/stock/LocationDetail.tsx:387
 msgid "Delete Stock Location"
 msgstr ""
 
-#: src/pages/stock/LocationDetail.tsx:239
+#: src/pages/stock/LocationDetail.tsx:247
 msgid "Items Action"
 msgstr "Tétel műveletek"
 
-#: src/pages/stock/LocationDetail.tsx:240
+#: src/pages/stock/LocationDetail.tsx:248
 msgid "Action for stock items in this location"
 msgstr ""
 
-#: src/pages/stock/LocationDetail.tsx:245
+#: src/pages/stock/LocationDetail.tsx:253
 msgid "Child Locations Action"
 msgstr ""
 
-#: src/pages/stock/LocationDetail.tsx:246
+#: src/pages/stock/LocationDetail.tsx:254
 msgid "Action for child locations in this location"
 msgstr ""
 
-#: src/pages/stock/LocationDetail.tsx:280
+#: src/pages/stock/LocationDetail.tsx:288
 msgid "Scan Stock Item"
 msgstr ""
 
-#: src/pages/stock/LocationDetail.tsx:298
+#: src/pages/stock/LocationDetail.tsx:306
 #: src/pages/stock/StockDetail.tsx:799
 msgid "Scanned stock item into location"
 msgstr ""
 
-#: src/pages/stock/LocationDetail.tsx:304
+#: src/pages/stock/LocationDetail.tsx:312
 #: src/pages/stock/StockDetail.tsx:805
 msgid "Error scanning stock item"
 msgstr ""
 
-#: src/pages/stock/LocationDetail.tsx:311
+#: src/pages/stock/LocationDetail.tsx:319
 msgid "Scan Stock Location"
 msgstr ""
 
-#: src/pages/stock/LocationDetail.tsx:323
+#: src/pages/stock/LocationDetail.tsx:331
 msgid "Scanned stock location into location"
 msgstr ""
 
-#: src/pages/stock/LocationDetail.tsx:329
+#: src/pages/stock/LocationDetail.tsx:337
 msgid "Error scanning stock location"
 msgstr ""
 
-#: src/pages/stock/LocationDetail.tsx:370
-#: src/tables/stock/StockLocationTable.tsx:142
+#: src/pages/stock/LocationDetail.tsx:378
+#: src/tables/stock/StockLocationTable.tsx:149
 msgid "Location Actions"
 msgstr ""
 
@@ -8133,18 +8272,18 @@ msgstr ""
 #~ msgid "Part is locked"
 #~ msgstr "Part is locked"
 
-#: src/tables/ColumnRenderers.tsx:59
+#: src/tables/ColumnRenderers.tsx:57
 msgid "Part is not active"
 msgstr "Az alkatrész nem aktív"
 
-#: src/tables/ColumnRenderers.tsx:64
-#: src/tables/bom/BomTable.tsx:629
+#: src/tables/ColumnRenderers.tsx:62
+#: src/tables/bom/BomTable.tsx:642
 #: src/tables/part/PartParameterTable.tsx:235
 #: src/tables/part/PartTestTemplateTable.tsx:258
 msgid "Part is Locked"
 msgstr "Zárolt alkatrész"
 
-#: src/tables/ColumnRenderers.tsx:69
+#: src/tables/ColumnRenderers.tsx:67
 msgid "You are subscribed to notifications for this part"
 msgstr ""
 
@@ -8363,37 +8502,41 @@ msgstr "Rendelési állapot szűrés"
 msgid "Filter by project code"
 msgstr "Projekt kódra szűrés"
 
-#: src/tables/Filter.tsx:320
+#: src/tables/Filter.tsx:300
+msgid "Filter by tenant"
+msgstr ""
+
+#: src/tables/Filter.tsx:332
 msgid "Filter by responsible owner"
 msgstr "Szűrés a felelős tulajdonosra"
 
-#: src/tables/Filter.tsx:336
+#: src/tables/Filter.tsx:348
 #: src/tables/settings/ApiTokenTable.tsx:133
 #: src/tables/stock/StockTrackingTable.tsx:191
 msgid "Filter by user"
 msgstr "Szűrés felhasználó szerint"
 
-#: src/tables/Filter.tsx:348
+#: src/tables/Filter.tsx:360
 msgid "Filter by manufacturer"
 msgstr ""
 
-#: src/tables/Filter.tsx:361
+#: src/tables/Filter.tsx:373
 msgid "Filter by supplier"
 msgstr ""
 
-#: src/tables/Filter.tsx:374
+#: src/tables/Filter.tsx:386
 msgid "Filter by user who created the order"
 msgstr ""
 
-#: src/tables/Filter.tsx:382
+#: src/tables/Filter.tsx:394
 msgid "Filter by user who issued the order"
 msgstr ""
 
-#: src/tables/Filter.tsx:390
+#: src/tables/Filter.tsx:402
 msgid "Filter by part category"
 msgstr ""
 
-#: src/tables/Filter.tsx:401
+#: src/tables/Filter.tsx:413
 msgid "Filter by stock location"
 msgstr ""
 
@@ -8561,28 +8704,35 @@ msgstr ""
 msgid "Substitutes"
 msgstr "Helyettesítõk"
 
+#: src/tables/bom/BomTable.tsx:295
+#: src/tables/sales/SalesOrderLineItemTable.tsx:162
+#: src/tables/sales/SalesOrderLineItemTable.tsx:220
+#: src/tables/sales/SalesOrderLineItemTable.tsx:237
+msgid "Virtual part"
+msgstr "Virtuális alkatrész"
+
 #: src/tables/bom/BomTable.tsx:301
 #~ msgid "Create BOM Item"
 #~ msgstr "Create BOM Item"
 
-#: src/tables/bom/BomTable.tsx:302
+#: src/tables/bom/BomTable.tsx:308
 #: src/tables/build/BuildLineTable.tsx:268
 #: src/tables/part/PartTable.tsx:138
 msgid "External stock"
 msgstr ""
 
 #: src/tables/bom/BomTable.tsx:310
+#~ msgid "Show asssmbled items"
+#~ msgstr "Show asssmbled items"
+
+#: src/tables/bom/BomTable.tsx:316
 #: src/tables/build/BuildLineTable.tsx:231
 msgid "Includes substitute stock"
 msgstr "Helyettesítőkkel együtt"
 
-#: src/tables/bom/BomTable.tsx:310
-#~ msgid "Show asssmbled items"
-#~ msgstr "Show asssmbled items"
-
-#: src/tables/bom/BomTable.tsx:319
+#: src/tables/bom/BomTable.tsx:325
 #: src/tables/build/BuildLineTable.tsx:241
-#: src/tables/sales/SalesOrderLineItemTable.tsx:164
+#: src/tables/sales/SalesOrderLineItemTable.tsx:187
 msgid "Includes variant stock"
 msgstr "Változatokkal együtt"
 
@@ -8594,17 +8744,10 @@ msgstr "Változatokkal együtt"
 #~ msgid "Bom item updated"
 #~ msgstr "Bom item updated"
 
-#: src/tables/bom/BomTable.tsx:336
+#: src/tables/bom/BomTable.tsx:342
 #: src/tables/part/PartTable.tsx:107
 msgid "Building"
 msgstr "Gyártásban"
-
-#: src/tables/bom/BomTable.tsx:345
-#: src/tables/part/PartTable.tsx:164
-#: src/tables/sales/SalesOrderLineItemTable.tsx:187
-#: src/tables/stock/StockItemTable.tsx:224
-msgid "Stock Information"
-msgstr "Készlet adatok"
 
 #: src/tables/bom/BomTable.tsx:348
 #~ msgid "Delete Bom Item"
@@ -8615,6 +8758,13 @@ msgstr "Készlet adatok"
 #~ msgstr "Bom item deleted"
 
 #: src/tables/bom/BomTable.tsx:351
+#: src/tables/part/PartTable.tsx:164
+#: src/tables/sales/SalesOrderLineItemTable.tsx:210
+#: src/tables/stock/StockItemTable.tsx:224
+msgid "Stock Information"
+msgstr "Készlet adatok"
+
+#: src/tables/bom/BomTable.tsx:351
 #~ msgid "Are you sure you want to remove this BOM item?"
 #~ msgstr "Are you sure you want to remove this BOM item?"
 
@@ -8622,149 +8772,149 @@ msgstr "Készlet adatok"
 #~ msgid "Validate BOM line"
 #~ msgstr "Validate BOM line"
 
-#: src/tables/bom/BomTable.tsx:379
+#: src/tables/bom/BomTable.tsx:392
 #: src/tables/build/BuildLineTable.tsx:478
 #: src/tables/build/BuildLineTable.tsx:519
 msgid "Consumable item"
 msgstr "Fogyóeszköz tétel"
 
-#: src/tables/bom/BomTable.tsx:382
+#: src/tables/bom/BomTable.tsx:395
 msgid "No available stock"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:400
+#: src/tables/bom/BomTable.tsx:413
 #: src/tables/build/BuildLineTable.tsx:211
 msgid "Show testable items"
 msgstr "Tesztelhető elemek mutatása"
 
-#: src/tables/bom/BomTable.tsx:405
+#: src/tables/bom/BomTable.tsx:418
 msgid "Show trackable items"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:410
+#: src/tables/bom/BomTable.tsx:423
 #: src/tables/build/BuildLineTable.tsx:206
 msgid "Show assembled items"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:415
+#: src/tables/bom/BomTable.tsx:428
 msgid "Show virtual items"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:420
+#: src/tables/bom/BomTable.tsx:433
 #: src/tables/build/BuildLineTable.tsx:191
 msgid "Show items with available stock"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:425
+#: src/tables/bom/BomTable.tsx:438
 msgid "Show items on order"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:429
+#: src/tables/bom/BomTable.tsx:442
 msgid "Validated"
 msgstr "Jóváhagyva"
 
-#: src/tables/bom/BomTable.tsx:430
+#: src/tables/bom/BomTable.tsx:443
 msgid "Show validated items"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:434
+#: src/tables/bom/BomTable.tsx:447
 #: src/tables/bom/UsedInTable.tsx:80
 msgid "Inherited"
 msgstr "Örökölt"
 
-#: src/tables/bom/BomTable.tsx:435
+#: src/tables/bom/BomTable.tsx:448
 #: src/tables/bom/UsedInTable.tsx:81
 msgid "Show inherited items"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:439
+#: src/tables/bom/BomTable.tsx:452
 msgid "Allow Variants"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:440
+#: src/tables/bom/BomTable.tsx:453
 msgid "Show items which allow variant substitution"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:444
+#: src/tables/bom/BomTable.tsx:457
 #: src/tables/bom/UsedInTable.tsx:85
 #: src/tables/build/BuildLineTable.tsx:200
 msgid "Optional"
 msgstr "Opcionális"
 
-#: src/tables/bom/BomTable.tsx:445
+#: src/tables/bom/BomTable.tsx:458
 #: src/tables/bom/UsedInTable.tsx:86
 msgid "Show optional items"
 msgstr "Opcionális elemek mutatása"
 
-#: src/tables/bom/BomTable.tsx:449
+#: src/tables/bom/BomTable.tsx:462
 #: src/tables/build/BuildLineTable.tsx:195
 msgid "Consumable"
 msgstr "Fogyóeszköz"
 
-#: src/tables/bom/BomTable.tsx:450
+#: src/tables/bom/BomTable.tsx:463
 msgid "Show consumable items"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:454
+#: src/tables/bom/BomTable.tsx:467
 #: src/tables/part/PartTable.tsx:306
 msgid "Has Pricing"
 msgstr "Van árazás"
 
-#: src/tables/bom/BomTable.tsx:455
+#: src/tables/bom/BomTable.tsx:468
 msgid "Show items with pricing"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:477
-#: src/tables/bom/BomTable.tsx:606
+#: src/tables/bom/BomTable.tsx:490
+#: src/tables/bom/BomTable.tsx:619
 msgid "Import BOM Data"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:487
-#: src/tables/bom/BomTable.tsx:613
+#: src/tables/bom/BomTable.tsx:500
+#: src/tables/bom/BomTable.tsx:626
 msgid "Add BOM Item"
 msgstr "Alkatrészjegyzék tétel hozzáadása"
 
-#: src/tables/bom/BomTable.tsx:492
+#: src/tables/bom/BomTable.tsx:505
 msgid "BOM item created"
 msgstr "BOM sor létrehozva"
 
-#: src/tables/bom/BomTable.tsx:499
+#: src/tables/bom/BomTable.tsx:512
 msgid "Edit BOM Item"
 msgstr "Alkatrészjegyzék tétel szerkesztése"
 
-#: src/tables/bom/BomTable.tsx:501
+#: src/tables/bom/BomTable.tsx:514
 msgid "BOM item updated"
 msgstr "BOM sor módosítva"
 
-#: src/tables/bom/BomTable.tsx:508
+#: src/tables/bom/BomTable.tsx:521
 msgid "Delete BOM Item"
 msgstr "Beépülő tétel törlése"
 
-#: src/tables/bom/BomTable.tsx:509
+#: src/tables/bom/BomTable.tsx:522
 msgid "BOM item deleted"
 msgstr "BOM sor törölve"
 
-#: src/tables/bom/BomTable.tsx:529
+#: src/tables/bom/BomTable.tsx:542
 msgid "BOM item validated"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:538
+#: src/tables/bom/BomTable.tsx:551
 msgid "Failed to validate BOM item"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:550
+#: src/tables/bom/BomTable.tsx:563
 msgid "View BOM"
 msgstr "Alkatrészjegyzék megtekintése"
 
-#: src/tables/bom/BomTable.tsx:561
+#: src/tables/bom/BomTable.tsx:574
 msgid "Validate BOM Line"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:580
+#: src/tables/bom/BomTable.tsx:593
 msgid "Edit Substitutes"
 msgstr "Helyettesítő alkatrészek szerkesztése"
 
-#: src/tables/bom/BomTable.tsx:634
+#: src/tables/bom/BomTable.tsx:647
 msgid "Bill of materials cannot be edited, as the part is locked"
 msgstr ""
 
@@ -8881,7 +9031,7 @@ msgid "Show tracked lines"
 msgstr "Követett tételek mutatása"
 
 #: src/tables/build/BuildLineTable.tsx:250
-#: src/tables/sales/SalesOrderLineItemTable.tsx:170
+#: src/tables/sales/SalesOrderLineItemTable.tsx:193
 msgid "In production"
 msgstr "Gyártásban"
 
@@ -8890,7 +9040,7 @@ msgid "Insufficient stock"
 msgstr ""
 
 #: src/tables/build/BuildLineTable.tsx:294
-#: src/tables/sales/SalesOrderLineItemTable.tsx:158
+#: src/tables/sales/SalesOrderLineItemTable.tsx:181
 #: src/tables/stock/StockItemTable.tsx:193
 msgid "No stock available"
 msgstr "Nincs elérhető készlet"
@@ -8929,7 +9079,7 @@ msgid "Fully allocated"
 msgstr ""
 
 #: src/tables/build/BuildLineTable.tsx:545
-#: src/tables/sales/SalesOrderLineItemTable.tsx:308
+#: src/tables/sales/SalesOrderLineItemTable.tsx:332
 msgid "Create Build Order"
 msgstr ""
 
@@ -8972,7 +9122,7 @@ msgid "Build Stock"
 msgstr "Gyártási készlet"
 
 #: src/tables/build/BuildLineTable.tsx:766
-#: src/tables/sales/SalesOrderLineItemTable.tsx:396
+#: src/tables/sales/SalesOrderLineItemTable.tsx:420
 msgid "View Part"
 msgstr "Alkatrész megtekintése"
 
@@ -9004,30 +9154,30 @@ msgstr "Alkatrész megtekintése"
 #~ msgstr "Filter by whether the purchase order has a project code"
 
 #: src/tables/build/BuildOrderTable.tsx:168
-#: src/tables/purchasing/PurchaseOrderTable.tsx:83
-#: src/tables/sales/ReturnOrderTable.tsx:79
-#: src/tables/sales/SalesOrderTable.tsx:80
+#: src/tables/purchasing/PurchaseOrderTable.tsx:85
+#: src/tables/sales/ReturnOrderTable.tsx:82
+#: src/tables/sales/SalesOrderTable.tsx:83
 msgid "Has Target Date"
 msgstr ""
 
 #: src/tables/build/BuildOrderTable.tsx:169
-#: src/tables/purchasing/PurchaseOrderTable.tsx:84
-#: src/tables/sales/ReturnOrderTable.tsx:80
-#: src/tables/sales/SalesOrderTable.tsx:81
+#: src/tables/purchasing/PurchaseOrderTable.tsx:86
+#: src/tables/sales/ReturnOrderTable.tsx:83
+#: src/tables/sales/SalesOrderTable.tsx:84
 msgid "Show orders with a target date"
 msgstr ""
 
 #: src/tables/build/BuildOrderTable.tsx:174
-#: src/tables/purchasing/PurchaseOrderTable.tsx:89
-#: src/tables/sales/ReturnOrderTable.tsx:85
-#: src/tables/sales/SalesOrderTable.tsx:86
+#: src/tables/purchasing/PurchaseOrderTable.tsx:91
+#: src/tables/sales/ReturnOrderTable.tsx:88
+#: src/tables/sales/SalesOrderTable.tsx:89
 msgid "Has Start Date"
 msgstr ""
 
 #: src/tables/build/BuildOrderTable.tsx:175
-#: src/tables/purchasing/PurchaseOrderTable.tsx:90
-#: src/tables/sales/ReturnOrderTable.tsx:86
-#: src/tables/sales/SalesOrderTable.tsx:87
+#: src/tables/purchasing/PurchaseOrderTable.tsx:92
+#: src/tables/sales/ReturnOrderTable.tsx:89
+#: src/tables/sales/SalesOrderTable.tsx:90
 msgid "Show orders with a start date"
 msgstr ""
 
@@ -9297,28 +9447,32 @@ msgstr "Tétel megtekintése"
 #: src/tables/general/ExtraLineItemTable.tsx:91
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:293
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:402
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:80
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:183
-#: src/tables/sales/SalesOrderLineItemTable.tsx:249
-#: src/tables/sales/SalesOrderLineItemTable.tsx:352
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:82
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:211
+#: src/tables/sales/SalesOrderLineItemTable.tsx:273
+#: src/tables/sales/SalesOrderLineItemTable.tsx:376
+#: src/tables/sales/TaxExtraLineItemTable.tsx:114
 msgid "Add Line Item"
 msgstr "Sortétel hozzáadása"
 
 #: src/tables/general/ExtraLineItemTable.tsx:104
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:314
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:93
-#: src/tables/sales/SalesOrderLineItemTable.tsx:268
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:95
+#: src/tables/sales/SalesOrderLineItemTable.tsx:292
+#: src/tables/sales/TaxExtraLineItemTable.tsx:127
 msgid "Edit Line Item"
 msgstr "Sortétel szerkesztése"
 
 #: src/tables/general/ExtraLineItemTable.tsx:113
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:323
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:102
-#: src/tables/sales/SalesOrderLineItemTable.tsx:277
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:104
+#: src/tables/sales/SalesOrderLineItemTable.tsx:301
+#: src/tables/sales/TaxExtraLineItemTable.tsx:136
 msgid "Delete Line Item"
 msgstr "Tétel törlése"
 
 #: src/tables/general/ExtraLineItemTable.tsx:151
+#: src/tables/sales/TaxExtraLineItemTable.tsx:174
 msgid "Add Extra Line Item"
 msgstr ""
 
@@ -9638,7 +9792,7 @@ msgid "Set Parent Category"
 msgstr ""
 
 #: src/tables/part/PartCategoryTable.tsx:148
-#: src/tables/stock/StockLocationTable.tsx:147
+#: src/tables/stock/StockLocationTable.tsx:154
 msgid "Set Parent"
 msgstr "Szülő kapcsolat beállítása"
 
@@ -9843,12 +9997,6 @@ msgstr "Értékesíthető"
 #: src/tables/part/PartTable.tsx:269
 msgid "Filter by parts which are salable"
 msgstr "Szűrés értékesíthetőség szerint"
-
-#: src/tables/part/PartTable.tsx:274
-#: src/tables/part/PartTable.tsx:278
-#: src/tables/part/PartVariantTable.tsx:25
-msgid "Virtual"
-msgstr "Virtuális"
 
 #: src/tables/part/PartTable.tsx:275
 msgid "Filter by parts which are virtual"
@@ -10442,25 +10590,42 @@ msgstr ""
 #~ msgid "Are you sure you want to remove this supplier part?"
 #~ msgstr "Are you sure you want to remove this supplier part?"
 
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:154
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:152
+#: src/tables/sales/SalesOrderLineItemTable.tsx:133
+#: src/tables/sales/TaxExtraLineItemTable.tsx:80
+msgid "Price with Tax"
+msgstr ""
+
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:160
+#: src/tables/sales/SalesOrderLineItemTable.tsx:141
+#: src/tables/sales/TaxExtraLineItemTable.tsx:88
+msgid "Total Tax"
+msgstr ""
+
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:182
 msgid "Received Date"
 msgstr "Beérkezés dátuma"
 
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:168
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:196
 msgid "Show items which have been received"
 msgstr ""
 
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:173
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:201
 msgid "Filter by line item status"
 msgstr ""
 
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:191
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:219
 msgid "Receive selected items"
 msgstr ""
 
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:223
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:251
 msgid "Receive Item"
 msgstr "Tétel bevételezése"
+
+#: src/tables/sales/ReturnOrderTable.tsx:154
+#: src/tables/sales/SalesOrderTable.tsx:190
+msgid "Tax Amount"
+msgstr ""
 
 #: src/tables/sales/SalesOrderAllocationTable.tsx:86
 msgid "Show outstanding allocations"
@@ -10509,41 +10674,35 @@ msgstr ""
 msgid "Assign to shipment"
 msgstr ""
 
-#: src/tables/sales/SalesOrderLineItemTable.tsx:139
-#: src/tables/sales/SalesOrderLineItemTable.tsx:197
-#: src/tables/sales/SalesOrderLineItemTable.tsx:214
-msgid "Virtual part"
-msgstr "Virtuális alkatrész"
-
 #: src/tables/sales/SalesOrderLineItemTable.tsx:280
 #~ msgid "Allocate stock"
 #~ msgstr "Allocate stock"
-
-#: src/tables/sales/SalesOrderLineItemTable.tsx:290
-msgid "Allocate Serial Numbers"
-msgstr ""
 
 #: src/tables/sales/SalesOrderLineItemTable.tsx:291
 #~ msgid "Allocate Serials"
 #~ msgstr "Allocate Serials"
 
-#: src/tables/sales/SalesOrderLineItemTable.tsx:338
+#: src/tables/sales/SalesOrderLineItemTable.tsx:314
+msgid "Allocate Serial Numbers"
+msgstr ""
+
+#: src/tables/sales/SalesOrderLineItemTable.tsx:362
 msgid "Show lines which are fully allocated"
 msgstr ""
 
-#: src/tables/sales/SalesOrderLineItemTable.tsx:343
+#: src/tables/sales/SalesOrderLineItemTable.tsx:367
 msgid "Show lines which are completed"
 msgstr ""
 
-#: src/tables/sales/SalesOrderLineItemTable.tsx:423
+#: src/tables/sales/SalesOrderLineItemTable.tsx:447
 msgid "Allocate serials"
 msgstr "Sorozatszámok lefoglalása"
 
-#: src/tables/sales/SalesOrderLineItemTable.tsx:441
+#: src/tables/sales/SalesOrderLineItemTable.tsx:465
 msgid "Build stock"
 msgstr "Gyártási készlet"
 
-#: src/tables/sales/SalesOrderLineItemTable.tsx:459
+#: src/tables/sales/SalesOrderLineItemTable.tsx:483
 msgid "Order stock"
 msgstr "Készlet rendelés"
 
@@ -10985,6 +11144,38 @@ msgstr "Következő futtatás"
 #~ msgid "Delete Report"
 #~ msgstr "Delete Report"
 
+#: src/tables/settings/TaxConfigurationTable.tsx:39
+msgid "Year"
+msgstr ""
+
+#: src/tables/settings/TaxConfigurationTable.tsx:44
+msgid "Rate (%)"
+msgstr ""
+
+#: src/tables/settings/TaxConfigurationTable.tsx:58
+msgid "Inclusive"
+msgstr ""
+
+#: src/tables/settings/TaxConfigurationTable.tsx:66
+msgid "Purchases"
+msgstr ""
+
+#: src/tables/settings/TaxConfigurationTable.tsx:73
+msgid "Add Tax Configuration"
+msgstr ""
+
+#: src/tables/settings/TaxConfigurationTable.tsx:85
+msgid "Edit Tax Configuration"
+msgstr ""
+
+#: src/tables/settings/TaxConfigurationTable.tsx:93
+msgid "Delete Tax Configuration"
+msgstr ""
+
+#: src/tables/settings/TaxConfigurationTable.tsx:124
+msgid "Add tax configuration"
+msgstr ""
+
 #: src/tables/settings/TemplateTable.tsx:120
 #~ msgid "{templateTypeTranslation} with id {id} not found"
 #~ msgstr "{templateTypeTranslation} with id {id} not found"
@@ -11045,6 +11236,26 @@ msgstr ""
 #: src/tables/settings/TemplateTable.tsx:420
 #~ msgid "Report Output"
 #~ msgstr "Report Output"
+
+#: src/tables/settings/TenantTable.tsx:53
+msgid "Contact Name"
+msgstr ""
+
+#: src/tables/settings/TenantTable.tsx:70
+msgid "Add Tenant"
+msgstr ""
+
+#: src/tables/settings/TenantTable.tsx:82
+msgid "Edit Tenant"
+msgstr ""
+
+#: src/tables/settings/TenantTable.tsx:90
+msgid "Delete Tenant"
+msgstr ""
+
+#: src/tables/settings/TenantTable.tsx:121
+msgid "Add tenant"
+msgstr ""
 
 #: src/tables/settings/UserTable.tsx:123
 msgid "Groups updated"
@@ -11281,7 +11492,7 @@ msgid "Show items which are available"
 msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:350
-#: src/tables/stock/StockLocationTable.tsx:38
+#: src/tables/stock/StockLocationTable.tsx:43
 msgid "Include Sublocations"
 msgstr ""
 
@@ -11539,40 +11750,40 @@ msgstr ""
 #~ msgid "structural"
 #~ msgstr "structural"
 
-#: src/tables/stock/StockLocationTable.tsx:39
-msgid "Include sublocations in results"
-msgstr ""
-
 #: src/tables/stock/StockLocationTable.tsx:43
 #~ msgid "external"
 #~ msgstr "external"
 
 #: src/tables/stock/StockLocationTable.tsx:44
-msgid "Show structural locations"
+msgid "Include sublocations in results"
 msgstr ""
 
 #: src/tables/stock/StockLocationTable.tsx:49
+msgid "Show structural locations"
+msgstr ""
+
+#: src/tables/stock/StockLocationTable.tsx:54
 msgid "Show external locations"
 msgstr ""
 
-#: src/tables/stock/StockLocationTable.tsx:53
+#: src/tables/stock/StockLocationTable.tsx:58
 msgid "Has location type"
 msgstr ""
 
-#: src/tables/stock/StockLocationTable.tsx:58
+#: src/tables/stock/StockLocationTable.tsx:63
 msgid "Filter by location type"
 msgstr "Hely típusra szűrés"
 
-#: src/tables/stock/StockLocationTable.tsx:105
-#: src/tables/stock/StockLocationTable.tsx:160
+#: src/tables/stock/StockLocationTable.tsx:112
+#: src/tables/stock/StockLocationTable.tsx:167
 msgid "Add Stock Location"
 msgstr "Új készlet hely"
 
-#: src/tables/stock/StockLocationTable.tsx:129
+#: src/tables/stock/StockLocationTable.tsx:136
 msgid "Set Parent Location"
 msgstr ""
 
-#: src/tables/stock/StockLocationTable.tsx:149
+#: src/tables/stock/StockLocationTable.tsx:156
 msgid "Set parent location for the selected items"
 msgstr ""
 
@@ -11609,7 +11820,6 @@ msgstr "A platform felhasználói felülete táblagépekre és asztali számít�
 msgid "Read the docs"
 msgstr "Olvasd el a dokumentációt"
 
-#: src/views/MobileAppView.tsx:38
+#: src/views/MobileAppView.tsx:42
 msgid "Ignore and continue to Desktop view"
 msgstr ""
-

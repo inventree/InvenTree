@@ -1,2 +1,0 @@
-import{d$ as o,r as s,j as r,i}from"./vendor-c9tu_e1b.js";import{N as n}from"./index-C-YqHYR0.js";import{Wrapper as c}from"./Layout-C8WfwJnj.js";import{a as u,u as p}from"./ThemeContext-CVPHi9Q7.js";function x(){const e=u(),t=p(),a=o(n,300);return s.useEffect(()=>{a(e,t==null?void 0:t.state)},[e]),r.jsx(c,{titleText:i._({id:"ps9k8Y"}),loader:!0})}export{x as default};
-//# sourceMappingURL=LoggedIn-AES5-NuC.js.map
