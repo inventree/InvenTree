@@ -1189,6 +1189,21 @@ class BuildListTest(BuildAPITest):
 
         self.assertEqual(len(builds), 20)
 
+    def test_output_options(self):
+        """Test the output options for BuildOrderList list."""
+        self.run_output_test(
+            self.url,
+            [
+                'part_detail'
+                # TODO re-enable ('project_code_detail', 'project_code'),
+                # TODO re-enable 'project_code_detail',
+                # TODO re-enable ('user_detail', 'responsible_detail'),
+                # TODO re-enable ('user_detail', 'issued_by_detail'),
+            ],
+            additional_params={'limit': 1},
+            assert_fnc=lambda x: x.data['results'][0],
+        )
+
 
 class BuildOutputCreateTest(BuildAPITest):
     """Unit test for creating build output via API."""
