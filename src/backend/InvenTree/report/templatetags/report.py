@@ -457,6 +457,12 @@ def divide(x: Any, y: Any) -> Any:
     return destringify(x) / destringify(y)
 
 
+@register.simple_tag()
+def modulo(x: Any, y: Any) -> Any:
+    """Calculate the modulo of one number (or number-like value) by another."""
+    return destringify(x) % destringify(y)
+
+
 @register.simple_tag
 def render_currency(money, **kwargs):
     """Render a currency / Money object."""

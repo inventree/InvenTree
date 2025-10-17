@@ -203,6 +203,9 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
         self.assertEqual(report_tags.multiply('-2', 4), -8.0)
         self.assertEqual(report_tags.divide(100, 5), 20)
 
+        self.assertEqual(report_tags.modulo(10, 3), 1)
+        self.assertEqual(report_tags.modulo('10', '4'), 2)
+
         with self.assertRaises(ZeroDivisionError):
             report_tags.divide(100, 0)
 
