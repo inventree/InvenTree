@@ -20,6 +20,7 @@ from order.models import (
 )
 from part.models import Part
 from stock.models import StockItem
+from tenant.models import Tenant
 from users.models import Owner
 
 
@@ -168,6 +169,51 @@ class SalesOrderTest(InvenTreeTestCase):
             )
 
             allocation.clean()
+
+    def test_tenant_mismatch(self):
+        """Test that allocating stock with mismatched tenant fails."""
+        from stock.models import StockLocation
+
+        # Create two different tenants
+        tenant1 = Tenant.objects.create(
+            name='Tenant 1', description='First tenant', code='T1', is_active=True
+        )
+        tenant2 = Tenant.objects.create(
+            name='Tenant 2', description='Second tenant', code='T2', is_active=True
+        )
+
+        # Create a location with tenant1
+        location1 = StockLocation.objects.create(name='Location 1', tenant=tenant1)
+
+        # Create stock item in location1 (which has tenant1)
+        stock_item = StockItem.objects.create(
+            part=self.part, quantity=100, location=location1
+        )
+
+        # Update the order to use tenant2
+        self.order.tenant = tenant2
+        self.order.save()
+
+        # Try to allocate stock from tenant1's location to tenant2's order
+        # This should fail validation
+        allocation = SalesOrderAllocation(
+            line=self.line, item=stock_item, quantity=10, shipment=self.shipment
+        )
+
+        with self.assertRaises(ValidationError) as cm:
+            allocation.clean()
+
+        # Check that the error is about tenant mismatch
+        self.assertIn('item', cm.exception.message_dict)
+        self.assertIn('tenant', str(cm.exception.message_dict['item'][0]))
+
+        # Now test that allocation works when tenants match
+        self.order.tenant = tenant1
+        self.order.save()
+
+        # This should succeed
+        allocation.clean()
+        allocation.save()
 
     def test_allocate_partial(self):
         """Partially allocate stock."""

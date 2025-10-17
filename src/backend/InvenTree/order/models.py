@@ -2684,6 +2684,7 @@ class SalesOrderAllocation(models.Model):
         - Allocated quantity cannot exceed the quantity of the stock item
         - Allocation quantity must be "1" if the StockItem is serialized
         - Allocation quantity cannot be zero
+        - Stock location tenant must match order tenant
         """
         super().clean()
 
@@ -2704,6 +2705,10 @@ class SalesOrderAllocation(models.Model):
                     )
         except PartModels.Part.DoesNotExist:
             errors['line'] = _('Cannot allocate stock to a line without a part')
+
+        # Check that stock location tenant matches order tenant
+        if self.item.location and self.item.location.tenant != self.line.order.tenant:
+            errors['item'] = _('Stock location tenant does not match order tenant')
 
         if self.quantity > self.item.quantity:
             errors['quantity'] = _('Allocation quantity cannot exceed stock quantity')
