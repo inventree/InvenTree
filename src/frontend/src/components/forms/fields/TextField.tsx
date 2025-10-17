@@ -64,18 +64,29 @@ export default function TextField({
       // Use the specified override value
       return definition.rightSection;
     } else if (value) {
-      if (!definition.required) {
+      if (!definition.required && !definition.disabled) {
         // Render a button to clear the text field
         return (
           <Tooltip label={t`Clear`} position='top-end'>
-            <IconX size='1rem' color='red' onClick={() => onTextChange('')} />
+            <IconX
+              aria-label={`text-field-${fieldName}-clear`}
+              size='1rem'
+              color='red'
+              onClick={() => onTextChange('')}
+            />
           </Tooltip>
         );
       }
-    } else if (!value && definition.placeholder && placeholderAutofill) {
+    } else if (
+      !value &&
+      definition.placeholder &&
+      placeholderAutofill &&
+      !definition.disabled
+    ) {
       return (
         <Tooltip label={t`Accept suggested value`} position='top-end'>
           <IconCopyCheck
+            aria-label={`text-field-${fieldName}-accept-placeholder`}
             size='1rem'
             color='green'
             onClick={() => onTextChange(definition.placeholder)}
