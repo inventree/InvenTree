@@ -201,10 +201,15 @@ test('Stock - Serialize', async ({ browser }) => {
 
   // Check for expected placeholder value
   await expect(
-    page.getByRole('textbox', { name: 'text-field-serial_numbers' })
-  ).toHaveAttribute('placeholder', 'Next serial number: 365');
+    page.getByRole('textbox', {
+      name: 'text-field-serial_numbers',
+      exact: true
+    })
+  ).toHaveAttribute('placeholder', '365+');
 
-  await page.getByLabel('text-field-serial_numbers').fill('200-250');
+  await page
+    .getByLabel('text-field-serial_numbers', { exact: true })
+    .fill('200-250');
 
   await page.getByRole('button', { name: 'Submit' }).click();
 
@@ -212,7 +217,9 @@ test('Stock - Serialize', async ({ browser }) => {
     .getByText('Number of unique serial numbers (51) must match quantity (100)')
     .waitFor();
 
-  await page.getByLabel('text-field-serial_numbers').fill('1, 2, 3');
+  await page
+    .getByLabel('text-field-serial_numbers', { exact: true })
+    .fill('1, 2, 3');
   await page.waitForTimeout(250);
   await page.getByRole('button', { name: 'Submit' }).click();
 

@@ -22,7 +22,7 @@ test('Forms - Stock Item Validation', async ({ browser }) => {
   await page.getByText('Valid part must be supplied').waitFor();
 
   // Adjust other field - the errors should persist
-  await page.getByLabel('text-field-batch').fill('BATCH-123');
+  await page.getByLabel('text-field-batch', { exact: true }).fill('BATCH-123');
   await page.waitForTimeout(250);
 
   await page.getByText('Valid part must be supplied').waitFor();
@@ -53,7 +53,9 @@ test('Forms - Stock Item Validation', async ({ browser }) => {
   await page.getByLabel('action-menu-stock-item-actions-edit').click();
 
   await page.getByLabel('number-field-purchase_price').fill('-1');
+
   await page.getByRole('button', { name: 'Submit' }).click();
+
   await page.getByText('Errors exist for one or more form fields').waitFor();
   await page
     .getByText('Ensure this value is greater than or equal to 0')

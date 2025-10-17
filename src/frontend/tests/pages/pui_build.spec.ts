@@ -189,22 +189,28 @@ test('Build Order - Build Outputs', async ({ browser }) => {
   await page.getByLabel('action-button-add-build-output').click();
   await page.getByLabel('number-field-quantity').fill('5');
 
-  const placeholder = await page
-    .getByLabel('text-field-serial_numbers')
-    .getAttribute('placeholder');
+  const placeholder: string =
+    (await page
+      .getByLabel('text-field-serial_numbers', { exact: true })
+      .getAttribute('placeholder')) || '';
 
-  expect(placeholder).toContain('Next serial number');
+  expect(placeholder).toContain('+');
 
   let sn = 1;
 
-  if (!!placeholder && placeholder.includes('Next serial number')) {
-    sn = Number.parseInt(placeholder.split(':')[1].trim());
-  }
+  sn = Number.parseInt(placeholder.split('+')[0].trim());
 
   // Generate some new serial numbers
-  await page.getByLabel('text-field-serial_numbers').fill(`${sn}, ${sn + 1}`);
+  await page
+    .getByLabel('text-field-serial_numbers', { exact: true })
+    .fill(`${sn}, ${sn + 1}`);
 
-  await page.getByLabel('text-field-batch_code').fill('BATCH12345');
+  // Accept the suggested batch code
+  await page
+    .getByRole('img', { name: 'text-field-batch_code-accept-placeholder' })
+    .click();
+
+  // await page.getByLabel('text-field-batch_code', { exact: true }).fill('BATCH12345');
   await page.getByLabel('related-field-location').click();
   await page.getByLabel('related-field-location').fill('Reel');
   await page.getByText('- Electronics Lab/Reel Storage').click();
