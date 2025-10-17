@@ -112,3 +112,48 @@ Not all functionality of the db-backup library is exposed by default. For advanc
 
 !!! warning "Advanced Users Only"
     Any advanced usage assumes some underlying knowledge of django, and is not documented here.
+
+## Example: Google Cloud Storage
+
+By default, InvenTree backups are stored on the local filesystem. However, it is possible to configure remote storage backends, such as Google Cloud Storage (GCS). Below is a *brief* example of how you might configure GCS for backup storage. However, please note that this is for informational purposes only - the InvenTree project does not provide direct support for third-party storage backends.
+
+### External Documentation
+
+As a starting point, refer to the external documentation for django-dbbackup: https://archmonger.github.io/django-dbbackup/latest/storage/#google-cloud-storage
+
+### Install Dependencies
+
+You will need to install an additional package to enable GCS support:
+
+```bash
+pip install django-storages[google]
+```
+
+!!! tip "Python Environment"
+    Ensure you install the package into the same Python environment that InvenTree is installed in (e.g. virtual environment).
+
+### Select Storage Backend
+
+You will need to change the storage backend, which is set via the `INVENTREE_BACKUP_STORAGE` environment variable, or via `backup_storage` in the configuration file:
+
+```yaml
+backup_stoage: storages.backends.gcloud.GoogleCloudStorage
+```
+
+### Configure Backend Options
+
+You will need to also specify the required options for the GCS backend. This is done via the `INVENTREE_BACKUP_OPTIONS` environment variable, or via `backup_options` in the configuration file. An example configuration might look like:
+
+```yaml
+backup_options:
+  bucket_name: 'your_bucket_name'
+  project_id: 'your_project_id'
+```
+
+### Advanced Configuration
+
+There are other options available for the GCS storage backend - refer to the [GCS documentation](https://django-storages.readthedocs.io/en/latest/backends/gcloud.html) for more information.
+
+### Other Backends
+
+Other storage backends are also supported via the django-storages library, such as Amazon S3, Dropbox, and more. This is outside the scope of this documentation - refer to the external documentation links on this page for more information.
