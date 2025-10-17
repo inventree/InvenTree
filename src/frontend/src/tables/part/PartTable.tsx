@@ -362,10 +362,13 @@ export function PartListTable({
     });
 
     // Override default field values with provided fields
-    fields.field_defaults.value = props?.params ?? {};
+    fields.field_defaults.value = {
+      ...props?.params,
+      ...defaultPartData
+    };
 
     return fields;
-  }, [props?.params]);
+  }, [defaultPartData, props?.params]);
 
   const importParts = useCreateApiFormModal({
     url: ApiEndpoints.import_session_list,
