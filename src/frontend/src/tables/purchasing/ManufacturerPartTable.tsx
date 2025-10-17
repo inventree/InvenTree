@@ -33,9 +33,27 @@ import { InvenTreeTable } from '../InvenTreeTable';
  * Construct a table listing manufacturer parts
  */
 export function ManufacturerPartTable({
-  params
-}: Readonly<{ params: any }>): ReactNode {
-  const table = useTable('manufacturerparts');
+  manufacturerId,
+  partId
+}: Readonly<{
+  manufacturerId?: number;
+  partId?: number;
+}>): ReactNode {
+  const tableId: string = useMemo(() => {
+    let tId = 'manufacturer-part';
+
+    if (manufacturerId) {
+      tId += '-manufacturer';
+    }
+
+    if (partId) {
+      tId += '-part';
+    }
+
+    return tId;
+  }, [manufacturerId, partId]);
+
+  const table = useTable(tableId);
 
   const user = useUserState();
 
@@ -43,7 +61,7 @@ export function ManufacturerPartTable({
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
       PartColumn({
-        switchable: 'part' in params
+        switchable: !!partId
       }),
       {
         accessor: 'manufacturer',
@@ -60,7 +78,7 @@ export function ManufacturerPartTable({
       DescriptionColumn({}),
       LinkColumn({})
     ];
-  }, [params]);
+  }, [partId]);
 
   const manufacturerPartFields = useManufacturerPartFields();
 
@@ -74,8 +92,8 @@ export function ManufacturerPartTable({
     fields: manufacturerPartFields,
     table: table,
     initialData: {
-      manufacturer: params?.manufacturer,
-      part: params?.part
+      manufacturer: manufacturerId,
+      part: partId
     }
   });
 
@@ -105,11 +123,12 @@ export function ManufacturerPartTable({
       {
         name: 'manufacturer_active',
         label: t`Active Manufacturer`,
+        active: !manufacturerId,
         description: t`Show manufacturer parts for active manufacturers.`,
         type: 'boolean'
       }
     ];
-  }, []);
+  }, [manufacturerId]);
 
   const tableActions = useMemo(() => {
     const can_add =
@@ -159,7 +178,8 @@ export function ManufacturerPartTable({
         columns={tableColumns}
         props={{
           params: {
-            ...params,
+            part: partId,
+            manufacturer: manufacturerId,
             part_detail: true,
             manufacturer_detail: true
           },
