@@ -56,6 +56,8 @@ export type ApiFormFieldHeader = {
  * @param description : The description to display for the field
  * @param preFieldContent : Content to render before the field
  * @param postFieldContent : Content to render after the field
+ * @param leftSection : Content to render in the left section of the field
+ * @param rightSection : Content to render in the right section of the field
  * @param autoFill: Whether to automatically fill the field with data from the API
  * @param autoFillFilters: Optional filters to apply when auto-filling the field
  * @param onValueChange : Callback function to call when the field value changes
@@ -106,6 +108,8 @@ export type ApiFormFieldType = {
   description?: string;
   preFieldContent?: JSX.Element;
   postFieldContent?: JSX.Element;
+  leftSection?: JSX.Element;
+  rightSection?: JSX.Element;
   autoFill?: boolean;
   autoFillFilters?: any;
   adjustValue?: (value: any) => any;
