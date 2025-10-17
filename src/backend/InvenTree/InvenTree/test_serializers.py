@@ -77,3 +77,17 @@ class FilteredSerializers(InvenTreeAPITestCase):
             self.assertNotContains(response, 'field_b')
             self.assertContains(response, 'field_c')
             self.assertContains(response, 'field_d')
+
+            # Request with filter for field_b
+            response = self.client.get(url, {'field_b': True})
+            self.assertContains(response, 'field_a')
+            self.assertContains(response, 'field_b')
+            self.assertContains(response, 'field_c')
+            self.assertContains(response, 'field_d')
+
+            # Disable field_c using custom filter name
+            response = self.client.get(url, {'crazy_name': 'false'})
+            self.assertContains(response, 'field_a')
+            self.assertNotContains(response, 'field_b')
+            self.assertNotContains(response, 'field_c')
+            self.assertNotContains(response, 'field_d')
