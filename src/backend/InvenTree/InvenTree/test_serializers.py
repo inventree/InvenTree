@@ -22,7 +22,7 @@ class SampleSerializer(
         """Meta options."""
 
         model = User
-        fields = ['field_a', 'field_b', 'field_c', 'field_d', 'id']
+        fields = ['field_a', 'field_b', 'field_c', 'field_d', 'field_e', 'id']
 
     field_a = SerializerMethodField(method_name='sample')
     field_b = InvenTree.serializers.enable_filter(
@@ -37,6 +37,11 @@ class SampleSerializer(
         InvenTree.serializers.FilterableSerializerMethodField(method_name='sample'),
         True,
         filter_name='crazy_name',
+    )
+    field_e = InvenTree.serializers.enable_filter(
+        InvenTree.serializers.FilterableSerializerMethodField(method_name='sample'),
+        filter_name='field_e',
+        filter_by_query=False,
     )
 
     def sample(self, obj):
@@ -93,6 +98,14 @@ class FilteredSerializers(InvenTreeAPITestCase):
             self.assertNotContains(response, 'field_b')
             self.assertNotContains(response, 'field_c')
             self.assertNotContains(response, 'field_d')
+
+            # Query parameters being turned off means it should not be enable-able
+            response = self.client.get(url, {'field_e': True})
+            self.assertContains(response, 'field_a')
+            self.assertNotContains(response, 'field_b')
+            self.assertContains(response, 'field_c')
+            self.assertContains(response, 'field_d')
+            self.assertNotContains(response, 'field_e')
 
     def test_failiure_enable_filter(self):
         """Test sanity check for enable_filter."""
