@@ -227,8 +227,10 @@ class OutputOptionsMixin:
         super().__init__()
 
         # Check that the serializer was defined
-        if hasattr(self, 'serializer_class') and (
-            not issubclass(self.serializer_class, FilterableSerializerMixin)
+        if (
+            hasattr(self, 'serializer_class')
+            and isinstance(self.serializer_class, type)
+            and (not issubclass(self.serializer_class, FilterableSerializerMixin))
         ):
             raise Exception(
                 'INVE-I2: `OutputOptionsMixin` can only be used with serializers that contain the `FilterableSerializerMixin` mixin'

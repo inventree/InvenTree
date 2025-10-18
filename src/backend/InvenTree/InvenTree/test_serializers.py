@@ -191,6 +191,9 @@ class FilteredSerializers(InvenTreeAPITestCase):
 
             view = BadList()
             self.assertTrue(True)
+            # mock some stuff to allow get_serializer to run
+            view.request = self.client.request()
+            view.format_kwarg = {}
             view.get_serializer()  # this should raise an exception
 
         self.assertEqual(
