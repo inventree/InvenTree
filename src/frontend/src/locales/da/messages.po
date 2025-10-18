@@ -8,7 +8,7 @@ msgstr ""
 "Language: da\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-10-17 20:19\n"
+"PO-Revision-Date: 2025-10-17 22:24\n"
 "Last-Translator: \n"
 "Language-Team: Danish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -3588,13 +3588,13 @@ msgid "Search Supplier Part"
 msgstr ""
 
 #: src/components/wizards/ImportPartWizard.tsx:801
-msgid "Confirm import"
-msgstr ""
-
-#: src/components/wizards/ImportPartWizard.tsx:801
 #: src/pages/company/ManufacturerPartDetail.tsx:166
 #: src/pages/part/PartDetail.tsx:793
 msgid "Parameters"
+msgstr ""
+
+#: src/components/wizards/ImportPartWizard.tsx:801
+msgid "Confirm import"
 msgstr ""
 
 #: src/components/wizards/ImportPartWizard.tsx:803
