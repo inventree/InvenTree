@@ -515,6 +515,8 @@ export function StockItemTable({
   const newStockItemFields = useStockFields({
     create: true,
     partId: params.part,
+    supplierPartId: params.supplier_part,
+    pricing: params.pricing,
     modalId: 'add-stock-item'
   });
 
@@ -527,7 +529,7 @@ export function StockItemTable({
       part: params.part,
       location: params.location
     },
-    follow: true,
+    follow: params.openNewStockItem ?? true,
     table: table,
     onFormSuccess: (response: any) => {
       // Returns a list that may contain multiple serialized stock items
