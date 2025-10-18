@@ -233,12 +233,12 @@ def define_env(env):
         return url
 
     @env.macro
-    def invoke_commands():
+    def invoke_commands(command: str = '--list'):
         """Provides an output of the available commands."""
         tasks = here.parent.joinpath('tasks.py')
         output = gen_base.joinpath('invoke-commands.txt')
 
-        command = f'invoke -f {tasks} --list > {output}'
+        command = f'invoke -f {tasks} {command} > {output}'
 
         assert subprocess.call(command, shell=True) == 0
 

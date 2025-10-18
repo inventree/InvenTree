@@ -1,5 +1,5 @@
+import { createApi } from './api.js';
 import { expect, test } from './baseFixtures.js';
-import { apiUrl } from './defaults.js';
 import { getRowFromCell, loadTab, navigate } from './helpers.js';
 import { doCachedLogin } from './login.js';
 import { setPluginState, setSettingState } from './settings.js';
@@ -134,7 +134,7 @@ test('Settings - User', async ({ browser }) => {
     .waitFor();
 });
 
-test('Settings - Global', async ({ browser, request }) => {
+test('Settings - Global', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
     username: 'steven',
     password: 'wizardstaff',
@@ -144,7 +144,6 @@ test('Settings - Global', async ({ browser, request }) => {
   // Ensure the "slack" notification plugin is enabled
   // This is to ensure it is visible in the "notification" settings tab
   await setPluginState({
-    request,
     plugin: 'inventree-slack-notification',
     state: true
   });
@@ -318,7 +317,7 @@ test('Settings - Admin', async ({ browser }) => {
   await page.getByRole('button', { name: 'Submit' }).click();
 });
 
-test('Settings - Admin - Barcode History', async ({ browser, request }) => {
+test('Settings - Admin - Barcode History', async ({ browser }) => {
   // Login with admin credentials
   const page = await doCachedLogin(browser, {
     username: 'admin',
@@ -327,25 +326,21 @@ test('Settings - Admin - Barcode History', async ({ browser, request }) => {
 
   // Ensure that the "save scans" setting is enabled
   await setSettingState({
-    request: request,
     setting: 'BARCODE_STORE_RESULTS',
     value: true
   });
 
   // Scan some barcodes (via API calls)
   const barcodes = ['ABC1234', 'XYZ5678', 'QRS9012'];
+  const api = await createApi();
 
   for (let i = 0; i < barcodes.length; i++) {
     const barcode = barcodes[i];
-    const url = new URL('barcode/', apiUrl).toString();
-    await request.post(url, {
+    await api.post('barcode/', {
       data: {
         barcode: barcode
       },
-      timeout: 5000,
-      headers: {
-        Authorization: `Basic ${btoa('admin:inventree')}`
-      }
+      timeout: 5000
     });
   }
 

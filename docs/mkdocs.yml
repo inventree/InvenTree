@@ -125,7 +125,7 @@ nav:
       - Project Security: security.md
       - Resources: project/resources.md
       - Privacy: privacy.md
-  - Install:
+  - Setup:
     - Introduction: start/index.md
     - Processes: start/processes.md
     - Configuration: start/config.md
@@ -146,6 +146,7 @@ nav:
   - Parts:
     - Parts: part/index.md
     - Creating Parts: part/create.md
+    - Importing Parts: part/import.md
     - Virtual Parts: part/virtual.md
     - Part Views: part/views.md
     - Tracking: part/trackable.md
@@ -237,6 +238,7 @@ nav:
       - Report Mixin: plugins/mixins/report.md
       - Schedule Mixin: plugins/mixins/schedule.md
       - Settings Mixin: plugins/mixins/settings.md
+      - Supplier Mixin: plugins/mixins/supplier.md
       - Transition Mixin: plugins/mixins/transition.md
       - URL Mixin: plugins/mixins/urls.md
       - User Interface Mixin: plugins/mixins/ui.md
