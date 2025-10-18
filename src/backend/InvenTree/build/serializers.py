@@ -33,6 +33,7 @@ from generic.states.fields import InvenTreeCustomStatusSerializerMixin
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.serializers import (
     FilterableCharField,
+    FilterableIntegerField,
     FilterableSerializerMixin,
     InvenTreeDecimalField,
     InvenTreeModelSerializer,
@@ -158,6 +159,17 @@ class BuildSerializer(
     project_code_detail = enable_filter(
         ProjectCodeSerializer(
             source='project_code', many=False, read_only=True, allow_null=True
+        ),
+        True,
+        filter_name='project_code_detail',
+    )
+
+    project_code = enable_filter(
+        FilterableIntegerField(
+            allow_null=True,
+            required=False,
+            label=_('Project Code'),
+            help_text=_('Project code for this build order'),
         ),
         True,
         filter_name='project_code_detail',
