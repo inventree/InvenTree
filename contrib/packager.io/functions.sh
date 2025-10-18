@@ -5,7 +5,7 @@
 Color_Off='\033[0m'
 On_Red='\033[41m'
 PYTHON_FROM=9
-PYTHON_TO=12
+PYTHON_TO=14
 
 function detect_docker() {
   if [ -n "$(grep docker </proc/1/cgroup)" ]; then
