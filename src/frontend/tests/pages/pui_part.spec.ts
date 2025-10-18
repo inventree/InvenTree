@@ -653,6 +653,7 @@ test('Parts - Duplicate', async ({ browser }) => {
 
   // Open "duplicate part" dialog
   await page.getByLabel('action-menu-part-actions').click();
+
   await page.getByLabel('action-menu-part-actions-duplicate').click();
 
   // Check for expected fields
@@ -686,9 +687,22 @@ test('Parts - Import supplier part', async ({ browser }) => {
 
   await page.reload();
   await page.waitForLoadState('networkidle');
-  await page.waitForTimeout(1000);
 
-  await page.getByRole('button', { name: 'action-button-import-part' }).click();
+  // Open "Add parts" menu
+  await page.getByRole('button', { name: 'action-menu-add-parts' }).click();
+
+  await page
+    .getByRole('menuitem', { name: 'action-menu-add-parts-create-part' })
+    .waitFor();
+  await page
+    .getByRole('menuitem', { name: 'action-menu-add-parts-import-from-file' })
+    .waitFor();
+  await page
+    .getByRole('menuitem', {
+      name: 'action-menu-add-parts-import-from-supplier'
+    })
+    .click();
+
   await page
     .getByRole('textbox', { name: 'textbox-search-for-part' })
     .fill('M5');

@@ -21,7 +21,7 @@ import {
   Tooltip
 } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
-import { IconArrowDown, IconPlus } from '@tabler/icons-react';
+import { IconArrowDown, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import {
   type FormEventHandler,
@@ -197,7 +197,7 @@ const SearchStep = ({
             aria-label='textbox-search-for-part'
             flex={1}
             placeholder='Search for a part'
-            label={t`Search...`}
+            label={t`Search`}
             value={searchValue}
             onChange={(event) => setSearchValue(event.currentTarget.value)}
           />
@@ -224,7 +224,12 @@ const SearchStep = ({
                   : t`Select supplier`
             }
           />
-          <Button disabled={!searchValue || !supplier} type='submit'>
+          <Button
+            color='blue'
+            disabled={!searchValue || !supplier}
+            type='submit'
+            leftSection={<IconSearch />}
+          >
             <Trans>Search</Trans>
           </Button>
         </Group>
@@ -794,7 +799,7 @@ export default function ImportPartWizard({
 
   // Create the wizard manager
   const wizard = useWizard({
-    title: t`Import Part`,
+    title: t`Import Supplier Part`,
     steps: [
       t`Search Supplier Part`,
       // if partId is provided, a inventree part already exists, just import the mp/sp
