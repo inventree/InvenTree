@@ -36,6 +36,7 @@ import {
 } from '../../hooks/UseForm';
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useTable } from '../../hooks/UseTable';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import {
   CurrencyColumn,
@@ -70,6 +71,7 @@ export function PurchaseOrderLineItemTable({
 }>) {
   const table = useTable('purchase-order-line-item');
 
+  const globalSettings = useGlobalSettingsState();
   const navigate = useNavigate();
   const user = useUserState();
 
@@ -343,6 +345,13 @@ export function PurchaseOrderLineItemTable({
     (record: any): RowAction[] => {
       const received = (record?.received ?? 0) >= (record?.quantity ?? 0);
 
+      let canEdit: boolean = user.hasChangeRole(UserRoles.purchase_order);
+
+      if (!orderOpen) {
+        // If order is closed, check the global setting
+        canEdit &&= globalSettings.isSet('PURCHASEORDER_EDIT_COMPLETED_ORDERS');
+      }
+
       return [
         {
           hidden: received || !orderPlaced,
@@ -362,21 +371,21 @@ export function PurchaseOrderLineItemTable({
           navigate: navigate
         }),
         RowEditAction({
-          hidden: !user.hasChangeRole(UserRoles.purchase_order),
+          hidden: !canEdit,
           onClick: () => {
             setSelectedLine(record.pk);
             editLine.open();
           }
         }),
         RowDuplicateAction({
-          hidden: !orderOpen || !user.hasAddRole(UserRoles.purchase_order),
+          hidden: !canEdit || !user.hasAddRole(UserRoles.purchase_order),
           onClick: () => {
             setInitialData({ ...record });
             newLine.open();
           }
         }),
         RowDeleteAction({
-          hidden: !user.hasDeleteRole(UserRoles.purchase_order),
+          hidden: !canEdit || !user.hasDeleteRole(UserRoles.purchase_order),
           onClick: () => {
             setSelectedLine(record.pk);
             deleteLine.open();
@@ -384,7 +393,7 @@ export function PurchaseOrderLineItemTable({
         })
       ];
     },
-    [orderId, user, orderOpen, orderPlaced]
+    [orderId, user, orderOpen, orderPlaced, globalSettings]
   );
 
   // Custom table actions
