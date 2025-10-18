@@ -1,14 +1,15 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Stack } from '@mantine/core';
 import {
-  IconClipboardCheck,
   IconCoins,
   IconCpu,
   IconDevicesPc,
   IconExclamationCircle,
+  IconFileDownload,
   IconFileUpload,
   IconList,
   IconListDetails,
+  IconMail,
   IconPackages,
   IconPlugConnected,
   IconQrcode,
@@ -20,10 +21,14 @@ import {
 } from '@tabler/icons-react';
 import { lazy, useMemo } from 'react';
 
+import { UserRoles } from '@lib/enums/Roles';
 import PermissionDenied from '../../../../components/errors/PermissionDenied';
 import PageTitle from '../../../../components/nav/PageTitle';
 import { SettingsHeader } from '../../../../components/nav/SettingsHeader';
-import type { PanelType } from '../../../../components/panels/Panel';
+import type {
+  PanelGroupType,
+  PanelType
+} from '../../../../components/panels/Panel';
 import { PanelGroup } from '../../../../components/panels/PanelGroup';
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
 import { Loadable } from '../../../../functions/loading';
@@ -37,6 +42,10 @@ const LabelTemplatePanel = Loadable(lazy(() => import('./LabelTemplatePanel')));
 
 const UserManagementPanel = Loadable(
   lazy(() => import('./UserManagementPanel'))
+);
+
+const EmailManagementPanel = Loadable(
+  lazy(() => import('./EmailManagementPanel'))
 );
 
 const TaskManagementPanel = Loadable(
@@ -69,7 +78,11 @@ const BarcodeScanHistoryTable = Loadable(
   lazy(() => import('../../../../tables/settings/BarcodeScanHistoryTable'))
 );
 
-const ImportSesssionTable = Loadable(
+const ExportSessionTable = Loadable(
+  lazy(() => import('../../../../tables/settings/ExportSessionTable'))
+);
+
+const ImportSessionTable = Loadable(
   lazy(() => import('../../../../tables/settings/ImportSessionTable'))
 );
 
@@ -81,14 +94,6 @@ const CustomStateTable = Loadable(
   lazy(() => import('../../../../tables/settings/CustomStateTable'))
 );
 
-const CustomUnitsTable = Loadable(
-  lazy(() => import('../../../../tables/settings/CustomUnitsTable'))
-);
-
-const PartParameterTemplateTable = Loadable(
-  lazy(() => import('../../../../tables/part/PartParameterTemplateTable'))
-);
-
 const PartCategoryTemplateTable = Loadable(
   lazy(() => import('../../../../tables/part/PartCategoryTemplateTable'))
 );
@@ -97,8 +102,6 @@ const LocationTypesTable = Loadable(
   lazy(() => import('../../../../tables/stock/LocationTypesTable'))
 );
 
-const StocktakePanel = Loadable(lazy(() => import('./StocktakePanel')));
-
 export default function AdminCenter() {
   const user = useUserState();
 
@@ -106,15 +109,29 @@ export default function AdminCenter() {
     return [
       {
         name: 'user',
-        label: t`User Management`,
+        label: t`Users / Access`,
         icon: <IconUsersGroup />,
-        content: <UserManagementPanel />
+        content: <UserManagementPanel />,
+        hidden: !user.hasViewRole(UserRoles.admin)
+      },
+      {
+        name: 'email',
+        label: t`Email Settings`,
+        icon: <IconMail />,
+        content: <EmailManagementPanel />,
+        hidden: !user.isSuperuser()
       },
       {
         name: 'import',
         label: t`Data Import`,
         icon: <IconFileUpload />,
-        content: <ImportSesssionTable />
+        content: <ImportSessionTable />
+      },
+      {
+        name: 'export',
+        label: t`Data Export`,
+        icon: <IconFileDownload />,
+        content: <ExportSessionTable />
       },
       {
         name: 'barcode-history',
@@ -167,19 +184,15 @@ export default function AdminCenter() {
         name: 'part-parameters',
         label: t`Part Parameters`,
         icon: <IconList />,
-        content: <PartParameterPanel />
+        content: <PartParameterPanel />,
+        hidden: !user.hasViewRole(UserRoles.part)
       },
       {
         name: 'category-parameters',
         label: t`Category Parameters`,
         icon: <IconSitemap />,
-        content: <PartCategoryTemplateTable />
-      },
-      {
-        name: 'stocktake',
-        label: t`Stocktake`,
-        icon: <IconClipboardCheck />,
-        content: <StocktakePanel />
+        content: <PartCategoryTemplateTable />,
+        hidden: !user.hasViewRole(UserRoles.part_category)
       },
       {
         name: 'labels',
@@ -197,19 +210,69 @@ export default function AdminCenter() {
         name: 'location-types',
         label: t`Location Types`,
         icon: <IconPackages />,
-        content: <LocationTypesTable />
+        content: <LocationTypesTable />,
+        hidden: !user.hasViewRole(UserRoles.stock_location)
       },
       {
         name: 'plugin',
         label: t`Plugins`,
         icon: <IconPlugConnected />,
-        content: <PluginManagementPanel />
+        content: <PluginManagementPanel />,
+        hidden: !user.hasViewRole(UserRoles.admin)
       },
       {
         name: 'machine',
         label: t`Machines`,
         icon: <IconDevicesPc />,
-        content: <MachineManagementPanel />
+        content: <MachineManagementPanel />,
+        hidden: !user.hasViewRole(UserRoles.admin)
+      }
+    ];
+  }, [user]);
+  const grouping: PanelGroupType[] = useMemo(() => {
+    return [
+      {
+        id: 'ops',
+        label: t`Operations`,
+        panelIDs: [
+          'user',
+          'barcode-history',
+          'background',
+          'errors',
+          'currencies',
+          'email'
+        ]
+      },
+      {
+        id: 'data',
+        label: t`Data Management`,
+        panelIDs: [
+          'import',
+          'export',
+          'project-codes',
+          'custom-states',
+          'custom-units'
+        ]
+      },
+      {
+        id: 'reporting',
+        label: t`Reporting`,
+        panelIDs: ['labels', 'reports']
+      },
+      {
+        id: 'plm',
+        label: t`PLM`,
+        panelIDs: [
+          'part-parameters',
+          'category-parameters',
+          'location-types',
+          'stocktake'
+        ]
+      },
+      {
+        id: 'extend',
+        label: t`Extend / Integrate`,
+        panelIDs: ['plugin', 'machine']
       }
     ];
   }, []);
@@ -227,6 +290,7 @@ export default function AdminCenter() {
           <PanelGroup
             pageKey='admin-center'
             panels={adminCenterPanels}
+            groups={grouping}
             collapsible={true}
             model='admincenter'
             id={null}

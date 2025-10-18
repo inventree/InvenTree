@@ -1,19 +1,12 @@
-import { t } from '@lingui/macro';
-import {
-  Alert,
-  FileInput,
-  type MantineStyleProp,
-  NumberInput,
-  Stack,
-  Switch
-} from '@mantine/core';
-import type { UseFormReturnType } from '@mantine/form';
+import { t } from '@lingui/core/macro';
+import { Alert, FileInput, NumberInput, Stack } from '@mantine/core';
 import { useId } from '@mantine/hooks';
-import { type ReactNode, useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { type Control, type FieldValues, useController } from 'react-hook-form';
 
-import type { ModelType } from '../../../enums/ModelType';
-import { isTrue } from '../../../functions/conversion';
+import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
+import { IconFileUpload } from '@tabler/icons-react';
+import { BooleanField } from './BooleanField';
 import { ChoiceField } from './ChoiceField';
 import DateField from './DateField';
 import { DependentField } from './DependentField';
@@ -22,103 +15,6 @@ import { NestedObjectField } from './NestedObjectField';
 import { RelatedModelField } from './RelatedModelField';
 import { TableField } from './TableField';
 import TextField from './TextField';
-
-export type ApiFormData = UseFormReturnType<Record<string, unknown>>;
-
-export type ApiFormAdjustFilterType = {
-  filters: any;
-  data: FieldValues;
-};
-
-export type ApiFormFieldChoice = {
-  value: any;
-  display_name: string;
-};
-
-// Define individual headers in a table field
-export type ApiFormFieldHeader = {
-  title: string;
-  style?: MantineStyleProp;
-};
-
-/** Definition of the ApiForm field component.
- * - The 'name' attribute *must* be provided
- * - All other attributes are optional, and may be provided by the API
- * - However, they can be overridden by the user
- *
- * @param name : The name of the field
- * @param label : The label to display for the field
- * @param value : The value of the field
- * @param default : The default value of the field
- * @param icon : An icon to display next to the field
- * @param field_type : The type of field to render
- * @param api_url : The API endpoint to fetch data from (for related fields)
- * @param pk_field : The primary key field for the related field (default = "pk")
- * @param model : The model to use for related fields
- * @param filters : Optional API filters to apply to related fields
- * @param required : Whether the field is required
- * @param hidden : Whether the field is hidden
- * @param disabled : Whether the field is disabled
- * @param error : Optional error message to display
- * @param exclude : Whether to exclude the field from the submitted data
- * @param placeholder : The placeholder text to display
- * @param description : The description to display for the field
- * @param preFieldContent : Content to render before the field
- * @param postFieldContent : Content to render after the field
- * @param onValueChange : Callback function to call when the field value changes
- * @param adjustFilters : Callback function to adjust the filters for a related field before a query is made
- * @param adjustValue : Callback function to adjust the value of the field before it is sent to the API
- * @param addRow : Callback function to add a new row to a table field
- * @param onKeyDown : Callback function to get which key was pressed in the form to handle submission on enter
- */
-export type ApiFormFieldType = {
-  label?: string;
-  value?: any;
-  default?: any;
-  icon?: ReactNode;
-  field_type?:
-    | 'related field'
-    | 'email'
-    | 'url'
-    | 'string'
-    | 'icon'
-    | 'boolean'
-    | 'date'
-    | 'datetime'
-    | 'integer'
-    | 'decimal'
-    | 'float'
-    | 'number'
-    | 'choice'
-    | 'file upload'
-    | 'nested object'
-    | 'dependent field'
-    | 'table';
-  api_url?: string;
-  pk_field?: string;
-  model?: ModelType;
-  modelRenderer?: (instance: any) => ReactNode;
-  filters?: any;
-  child?: ApiFormFieldType;
-  children?: { [key: string]: ApiFormFieldType };
-  required?: boolean;
-  error?: string;
-  choices?: ApiFormFieldChoice[];
-  hidden?: boolean;
-  disabled?: boolean;
-  exclude?: boolean;
-  read_only?: boolean;
-  placeholder?: string;
-  description?: string;
-  preFieldContent?: JSX.Element;
-  postFieldContent?: JSX.Element;
-  adjustValue?: (value: any) => any;
-  onValueChange?: (value: any, record?: any) => void;
-  adjustFilters?: (value: ApiFormAdjustFilterType) => any;
-  addRow?: () => any;
-  headers?: ApiFormFieldHeader[];
-  depends_on?: string[];
-};
 
 /**
  * Render an individual form field
@@ -177,6 +73,9 @@ export function ApiFormField({
   const reducedDefinition = useMemo(() => {
     return {
       ...fieldDefinition,
+      autoFill: undefined,
+      placeholderAutofill: undefined,
+      autoFillFilters: undefined,
       onValueChange: undefined,
       adjustFilters: undefined,
       adjustValue: undefined,
@@ -204,8 +103,12 @@ export function ApiFormField({
   );
 
   // Coerce the value to a numerical value
-  const numericalValue: number | '' = useMemo(() => {
-    let val: number | '' = 0;
+  const numericalValue: number | null = useMemo(() => {
+    let val: number | null = 0;
+
+    if (value == null) {
+      return null;
+    }
 
     switch (definition.field_type) {
       case 'integer':
@@ -221,16 +124,11 @@ export function ApiFormField({
     }
 
     if (Number.isNaN(val) || !Number.isFinite(val)) {
-      val = '';
+      val = null;
     }
 
     return val;
   }, [definition.field_type, value]);
-
-  // Coerce the value to a (stringified) boolean value
-  const booleanValue: boolean = useMemo(() => {
-    return isTrue(value);
-  }, [value]);
 
   // Construct the individual field
   const fieldInstance = useMemo(() => {
@@ -249,6 +147,19 @@ export function ApiFormField({
         return (
           <TextField
             definition={reducedDefinition}
+            placeholderAutofill={fieldDefinition.placeholderAutofill ?? false}
+            controller={controller}
+            fieldName={fieldName}
+            onChange={onChange}
+            onKeyDown={(value) => {
+              onKeyDown?.(value);
+            }}
+          />
+        );
+      case 'password':
+        return (
+          <TextField
+            definition={{ ...reducedDefinition, type: 'password' }}
             controller={controller}
             fieldName={fieldName}
             onChange={onChange}
@@ -263,16 +174,13 @@ export function ApiFormField({
         );
       case 'boolean':
         return (
-          <Switch
-            {...reducedDefinition}
-            checked={booleanValue}
-            ref={ref}
-            id={fieldId}
-            aria-label={`boolean-field-${fieldName}`}
-            radius='lg'
-            size='sm'
-            error={definition.error ?? error?.message}
-            onChange={(event) => onChange(event.currentTarget.checked)}
+          <BooleanField
+            controller={controller}
+            definition={reducedDefinition}
+            fieldName={fieldName}
+            onChange={(value: boolean) => {
+              onChange(value);
+            }}
           />
         );
       case 'date':
@@ -291,10 +199,16 @@ export function ApiFormField({
             ref={field.ref}
             id={fieldId}
             aria-label={`number-field-${field.name}`}
-            value={numericalValue}
+            value={numericalValue === null ? '' : numericalValue}
             error={definition.error ?? error?.message}
             decimalScale={definition.field_type == 'integer' ? 0 : 10}
-            onChange={(value: number | string | null) => onChange(value)}
+            onChange={(value: number | string | null) => {
+              if (value != null && value.toString().trim() === '') {
+                onChange(null);
+              } else {
+                onChange(value);
+              }
+            }}
             step={1}
           />
         );
@@ -310,6 +224,10 @@ export function ApiFormField({
         return (
           <FileInput
             {...reducedDefinition}
+            clearable={!definition.required}
+            aria-label={`file-field-${fieldName}`}
+            placeholder={definition.placeholder ?? t`Select file to upload`}
+            leftSection={<IconFileUpload />}
             id={fieldId}
             ref={field.ref}
             radius='sm'
@@ -355,7 +273,6 @@ export function ApiFormField({
         );
     }
   }, [
-    booleanValue,
     control,
     controller,
     definition,
@@ -384,5 +301,3 @@ export function ApiFormField({
     </Stack>
   );
 }
-
-export type ApiFormFieldSet = Record<string, ApiFormFieldType>;

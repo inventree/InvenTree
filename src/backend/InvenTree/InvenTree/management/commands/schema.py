@@ -1,7 +1,7 @@
-"""Check if there are any pending database migrations, and run them."""
+"""Extended schema generator."""
 
 from pathlib import Path
-from typing import TypeVar
+from typing import TypeVar, Union
 
 from django.conf import settings
 
@@ -26,7 +26,7 @@ def prep_name(ref):
     return f'{dja_ref_prefix}.{ref}'
 
 
-def sub_component_name(name: T) -> T:
+def sub_component_name(name: T) -> Union[T, str]:
     """Clean up component references."""
     if not isinstance(name, str):
         return name
@@ -108,3 +108,5 @@ class Command(spectacular.Command):
         settings.SPECTACULAR_SETTINGS['APPEND_COMPONENTS'] = components
 
         super().handle(*args, **kwargs)
+
+        return 'done'

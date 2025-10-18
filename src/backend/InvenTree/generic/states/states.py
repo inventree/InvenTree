@@ -4,6 +4,7 @@ import enum
 import logging
 import re
 from enum import Enum
+from typing import Optional
 
 logger = logging.getLogger('inventree')
 
@@ -297,9 +298,16 @@ class StatusCodeMixin:
         """Return the status code for this object."""
         return getattr(self, self.STATUS_FIELD)
 
-    def get_custom_status(self) -> int:
+    def get_custom_status(self) -> Optional[int]:
         """Return the custom status code for this object."""
         return getattr(self, f'{self.STATUS_FIELD}_custom_key', None)
+
+    def compare_status(self, status: int) -> bool:
+        """Determine if the current status matches the provided status code."""
+        if status == self.get_status():
+            return True
+
+        return status is not None and status == self.get_custom_status()
 
     def set_status(self, status: int) -> bool:
         """Set the status code for this object."""

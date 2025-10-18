@@ -1,4 +1,5 @@
-import { Trans, t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import {
   Box,
   CloseButton,
@@ -20,9 +21,10 @@ import { startTransition, useEffect, useMemo, useRef, useState } from 'react';
 import type { FieldValues, UseControllerReturn } from 'react-hook-form';
 import { FixedSizeGrid as Grid } from 'react-window';
 
+import type { ApiFormFieldType } from '@lib/types/Forms';
+import { useShallow } from 'zustand/react/shallow';
 import { useIconState } from '../../../states/IconState';
 import { ApiIcon } from '../../items/ApiIcon';
-import type { ApiFormFieldType } from './ApiFormField';
 
 export default function IconField({
   controller,
@@ -118,7 +120,7 @@ function ComboboxDropdown({
   onChange: (newVal: string | null) => void;
   open: boolean;
 }>) {
-  const iconPacks = useIconState((s) => s.packages);
+  const iconPacks = useIconState(useShallow((s) => s.packages));
   const icons = useMemo<RenderIconType[]>(() => {
     return iconPacks.flatMap((pack) =>
       Object.entries(pack.icons).flatMap(([name, icon]) =>

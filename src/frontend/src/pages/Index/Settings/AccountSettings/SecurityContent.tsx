@@ -1,6 +1,11 @@
-import { Trans, t } from '@lingui/macro';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
+import { type AuthConfig, type AuthProvider, FlowEnum } from '@lib/types/Auth';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import {
   Accordion,
+  ActionIcon,
   Alert,
   Badge,
   Button,
@@ -15,7 +20,6 @@ import {
   Table,
   Text,
   TextInput,
-  Title,
   Tooltip
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
@@ -23,35 +27,32 @@ import { hideNotification, showNotification } from '@mantine/notifications';
 import {
   IconAlertCircle,
   IconAt,
-  IconCircleX,
   IconExclamationCircle,
+  IconRefresh,
   IconX
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 import { api } from '../../../../App';
 import { StylishText } from '../../../../components/items/StylishText';
-import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
 import { ProviderLogin, authApi } from '../../../../functions/auth';
-import { showApiErrorMessage } from '../../../../functions/notifications';
-import { useTable } from '../../../../hooks/UseTable';
-import { apiUrl, useServerApiState } from '../../../../states/ApiState';
-import type { AuthConfig, Provider } from '../../../../states/states';
-import { BooleanColumn } from '../../../../tables/ColumnRenderers';
-import { InvenTreeTable } from '../../../../tables/InvenTreeTable';
-import type { RowAction } from '../../../../tables/RowActions';
+import { useServerApiState } from '../../../../states/ServerApiState';
+import { useUserState } from '../../../../states/UserState';
+import { ApiTokenTable } from '../../../../tables/settings/ApiTokenTable';
 import { QrRegistrationForm } from './QrRegistrationForm';
 import { useReauth } from './useConfirm';
 
 export function SecurityContent() {
-  const [auth_config, sso_enabled] = useServerApiState((state) => [
-    state.auth_config,
-    state.sso_enabled
-  ]);
+  const [auth_config, sso_enabled] = useServerApiState(
+    useShallow((state) => [state.auth_config, state.sso_enabled])
+  );
+
+  const user = useUserState();
 
   return (
     <Stack>
-      <Accordion multiple defaultValue={['email', 'sso', 'mfa', 'token']}>
+      <Accordion multiple defaultValue={['email']}>
         <Accordion.Item value='email'>
           <Accordion.Control>
             <StylishText size='lg'>{t`Email Addresses`}</StylishText>
@@ -91,10 +92,63 @@ export function SecurityContent() {
             <StylishText size='lg'>{t`Access Tokens`}</StylishText>
           </Accordion.Control>
           <Accordion.Panel>
-            <TokenSection />
+            <ApiTokenTable only_myself />
           </Accordion.Panel>
         </Accordion.Item>
+        {user.isSuperuser() && (
+          <Accordion.Item value='session'>
+            <Accordion.Control>
+              <StylishText size='lg'>{t`Session Information`}</StylishText>
+            </Accordion.Control>
+            <Accordion.Panel>
+              <AuthContextSection />
+            </Accordion.Panel>
+          </Accordion.Item>
+        )}
       </Accordion>
+    </Stack>
+  );
+}
+
+function AuthContextSection() {
+  const [auth_context, setAuthContext] = useServerApiState(
+    useShallow((state) => [state.auth_context, state.setAuthContext])
+  );
+
+  const fetchAuthContext = useCallback(() => {
+    authApi(apiUrl(ApiEndpoints.auth_session)).then((resp) => {
+      setAuthContext(resp.data.data);
+    });
+  }, [setAuthContext]);
+
+  return (
+    <Stack gap='xs'>
+      <Group>
+        <ActionIcon
+          onClick={fetchAuthContext}
+          variant='transparent'
+          aria-label='refresh-auth-context'
+        >
+          <IconRefresh />
+        </ActionIcon>
+      </Group>
+
+      <Table>
+        <Table.Thead>
+          <Table.Tr>
+            <Table.Th>{t`Timestamp`}</Table.Th>
+            <Table.Th>{t`Method`}</Table.Th>
+          </Table.Tr>
+        </Table.Thead>
+        <Table.Tbody>
+          {auth_context?.methods?.map((method: any, index: number) => (
+            <Table.Tr key={`auth-method-${index}`}>
+              <Table.Td>{parseDate(method.at)}</Table.Td>
+              <Table.Td>{method.method}</Table.Td>
+            </Table.Tr>
+          ))}
+        </Table.Tbody>
+      </Table>
     </Stack>
   );
 }
@@ -137,13 +191,15 @@ function EmailSection() {
   return (
     <SimpleGrid cols={{ xs: 1, md: 2 }} spacing='sm'>
       {emailAvailable ? (
-        <Alert
-          icon={<IconAlertCircle size='1rem' />}
-          title={t`Not Configured`}
-          color='yellow'
-        >
-          <Trans>Currently no email addresses are registered.</Trans>
-        </Alert>
+        <Stack gap='xs'>
+          <Alert
+            icon={<IconAlertCircle size='1rem' />}
+            title={t`Not Configured`}
+            color='yellow'
+          >
+            <Trans>Currently no email addresses are registered.</Trans>
+          </Alert>
+        </Stack>
       ) : (
         <Radio.Group
           value={selectedEmail}
@@ -242,7 +298,7 @@ function EmailSection() {
   );
 }
 
-function ProviderButton({ provider }: Readonly<{ provider: Provider }>) {
+function ProviderButton({ provider }: Readonly<{ provider: AuthProvider }>) {
   return (
     <Button
       key={provider.id}
@@ -293,13 +349,15 @@ function ProviderSection({
     <Grid>
       <Grid.Col span={6}>
         {data.length == 0 ? (
-          <Alert
-            icon={<IconAlertCircle size='1rem' />}
-            title={t`Not Configured`}
-            color='yellow'
-          >
-            <Trans>There are no providers connected to this account.</Trans>
-          </Alert>
+          <Stack gap='xs'>
+            <Alert
+              icon={<IconAlertCircle size='1rem' />}
+              title={t`Not Configured`}
+              color='yellow'
+            >
+              <Trans>There are no providers connected to this account.</Trans>
+            </Alert>
+          </Stack>
         ) : (
           <Stack>
             <Radio.Group
@@ -392,9 +450,6 @@ function MfaSection() {
     );
   };
 
-  const parseDate = (date: number) =>
-    date == null ? 'Never' : new Date(date * 1000).toLocaleString();
-
   const rows = useMemo(() => {
     if (isLoading || !data) return null;
     return data.map((token: any) => (
@@ -430,13 +485,15 @@ function MfaSection() {
       <ReauthModal />
       <SimpleGrid cols={{ xs: 1, md: 2 }} spacing='sm'>
         {data.length == 0 ? (
-          <Alert
-            title={t`Not Configured`}
-            icon={<IconAlertCircle size='1rem' />}
-            color='yellow'
-          >
-            <Trans>No multi-factor tokens configured for this account</Trans>
-          </Alert>
+          <Stack gap='xs'>
+            <Alert
+              title={t`Not Configured`}
+              icon={<IconAlertCircle size='1rem' />}
+              color='yellow'
+            >
+              <Trans>No multi-factor tokens configured for this account</Trans>
+            </Alert>
+          </Stack>
         ) : (
           <Table stickyHeader striped highlightOnHover withTableBorder>
             <Table.Thead>
@@ -472,14 +529,14 @@ function MfaSection() {
           title={t`Recovery Codes`}
           centered
         >
-          <Title order={3}>
+          <StylishText size='lg'>
             <Trans>Unused Codes</Trans>
-          </Title>
+          </StylishText>
           <Code>{recoveryCodes?.unused_codes?.join('\n')}</Code>
 
-          <Title order={3}>
+          <StylishText size='lg'>
             <Trans>Used Codes</Trans>
-          </Title>
+          </StylishText>
           <Code>{recoveryCodes?.used_codes?.join('\n')}</Code>
         </Modal>
       </SimpleGrid>
@@ -514,7 +571,9 @@ function MfaAddSection({
   refetch: () => void;
   showRecoveryCodes: (codes: Recoverycodes) => void;
 }>) {
-  const [auth_config] = useServerApiState((state) => [state.auth_config]);
+  const [auth_config] = useServerApiState(
+    useShallow((state) => [state.auth_config])
+  );
   const [totpQrOpen, { open: openTotpQr, close: closeTotpQr }] =
     useDisclosure(false);
   const [totpQr, setTotpQr] = useState<{ totp_url: string; secret: string }>();
@@ -660,19 +719,19 @@ async function runActionWithFallback(
   getReauthText: (props: any) => any
 ) {
   const { setAuthContext } = useServerApiState.getState();
-  const rslt = await action().catch((err) => {
+  const result = await action().catch((err) => {
     setAuthContext(err.response.data?.data);
     // check if we need to re-authenticate
     if (err.status == 401) {
       if (
         err.response.data.data.flows.find(
-          (flow: any) => flow.id == 'mfa_reauthenticate'
+          (flow: any) => flow.id == FlowEnum.MfaReauthenticate
         )
       ) {
         return ResultType.mfareauth;
       } else if (
         err.response.data.data.flows.find(
-          (flow: any) => flow.id == 'reauthenticate'
+          (flow: any) => flow.id == FlowEnum.Reauthenticate
         )
       ) {
         return ResultType.reauth;
@@ -683,7 +742,7 @@ async function runActionWithFallback(
       return ResultType.error;
     }
   });
-  if (rslt == ResultType.mfareauth) {
+  if (result == ResultType.mfareauth) {
     authApi(apiUrl(ApiEndpoints.auth_mfa_reauthenticate), undefined, 'post', {
       code: await getReauthText({
         label: t`TOTP Code`,
@@ -698,7 +757,7 @@ async function runActionWithFallback(
       .catch((err) => {
         setAuthContext(err.response.data?.data);
       });
-  } else if (rslt == ResultType.reauth) {
+  } else if (result == ResultType.reauth) {
     authApi(apiUrl(ApiEndpoints.auth_reauthenticate), undefined, 'post', {
       password: await getReauthText({
         label: t`Password`,
@@ -716,67 +775,5 @@ async function runActionWithFallback(
   }
 }
 
-function TokenSection() {
-  const table = useTable('api-tokens', 'id');
-
-  const tableColumns = useMemo(() => {
-    return [
-      {
-        accessor: 'name'
-      },
-      BooleanColumn({
-        accessor: 'active'
-      }),
-      {
-        accessor: 'token'
-      },
-      {
-        accessor: 'last_seen'
-      },
-      {
-        accessor: 'expiry'
-      }
-    ];
-  }, []);
-
-  const rowActions = useCallback((record: any): RowAction[] => {
-    return [
-      {
-        title: t`Revoke`,
-        color: 'red',
-        hidden: !record.active || record.in_use,
-        icon: <IconCircleX />,
-        onClick: () => {
-          revokeToken(record.id);
-        }
-      }
-    ];
-  }, []);
-
-  const revokeToken = async (id: string) => {
-    api
-      .delete(apiUrl(ApiEndpoints.user_tokens, id))
-      .then(() => {
-        table.refreshTable();
-      })
-      .catch((error) => {
-        showApiErrorMessage({
-          error: error,
-          title: t`Error revoking token`
-        });
-      });
-  };
-
-  return (
-    <InvenTreeTable
-      tableState={table}
-      url={apiUrl(ApiEndpoints.user_tokens)}
-      columns={tableColumns}
-      props={{
-        rowActions: rowActions,
-        enableSearch: false,
-        enableColumnSwitching: false
-      }}
-    />
-  );
-}
+export const parseDate = (date: number) =>
+  date == null ? 'Never' : new Date(date * 1000).toLocaleString();

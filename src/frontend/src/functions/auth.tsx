@@ -1,14 +1,16 @@
-import { t } from '@lingui/macro';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
+import { type AuthProvider, FlowEnum } from '@lib/types/Auth';
+import { t } from '@lingui/core/macro';
 import { notifications, showNotification } from '@mantine/notifications';
 import axios from 'axios';
 import type { AxiosRequestConfig } from 'axios';
 import type { Location, NavigateFunction } from 'react-router-dom';
 import { api, setApiDefaults } from '../App';
-import { ApiEndpoints } from '../enums/ApiEndpoints';
-import { apiUrl, useServerApiState } from '../states/ApiState';
 import { useLocalState } from '../states/LocalState';
+import { useServerApiState } from '../states/ServerApiState';
 import { useUserState } from '../states/UserState';
-import { type Provider, fetchGlobalStates } from '../states/states';
+import { fetchGlobalStates } from '../states/states';
 import { showLoginNotification } from './notifications';
 import { generateUrl } from './urls';
 
@@ -60,13 +62,15 @@ function post(path: string, params: any, method = 'post') {
  * If login is successful, an API token will be returned.
  * This API token is used for any future API requests.
  */
-export const doBasicLogin = async (
+export async function doBasicLogin(
   username: string,
   password: string,
-  navigate: NavigateFunction
-) => {
-  const { host } = useLocalState.getState();
-  const { clearUserState, setToken, fetchUserState } = useUserState.getState();
+  navigate: NavigateFunction,
+  code?: string
+) {
+  const { getHost } = useLocalState.getState();
+  const { clearUserState, setAuthenticated, fetchUserState } =
+    useUserState.getState();
   const { setAuthContext } = useServerApiState.getState();
 
   if (username.length == 0 || password.length == 0) {
@@ -78,6 +82,8 @@ export const doBasicLogin = async (
 
   let loginDone = false;
   let success = false;
+
+  const host: string = getHost();
 
   // Attempt login with
   await api
@@ -94,27 +100,43 @@ export const doBasicLogin = async (
     .then((response) => {
       setAuthContext(response.data?.data);
       if (response.status == 200 && response.data?.meta?.is_authenticated) {
-        setToken(response.data.meta.access_token);
+        setAuthenticated(true);
         loginDone = true;
         success = true;
       }
     })
-    .catch((err) => {
-      if (err?.response?.status == 401) {
-        setAuthContext(err.response.data?.data);
-        const mfa_flow = err.response.data.data.flows.find(
-          (flow: any) => flow.id == 'mfa_authenticate'
-        );
-        if (mfa_flow && mfa_flow.is_pending == true) {
-          success = true;
-          navigate('/mfa');
+    .catch(async (err) => {
+      notifications.hide('auth-login-error');
+
+      if (err?.response?.status) {
+        switch (err.response.status) {
+          case 401:
+            await handlePossibleMFAError(err);
+            break;
+          case 409:
+            notifications.show({
+              title: t`Already logged in`,
+              message: t`There is a conflicting session on the server for this browser. Please logout of that first.`,
+              color: 'red',
+              id: 'auth-login-error',
+              autoClose: false
+            });
+            break;
+          default:
+            notifications.show({
+              title: `${t`Login failed`} (${err.response.status})`,
+              message: t`Check your input and try again.`,
+              id: 'auth-login-error',
+              color: 'red'
+            });
+            break;
         }
-      } else if (err?.response?.status == 409) {
+      } else {
         notifications.show({
-          title: t`Already logged in`,
-          message: t`There is a conflicting session on the server for this browser. Please logout of that first.`,
+          title: t`Login failed`,
+          message: t`No response from server.`,
           color: 'red',
-          autoClose: false
+          id: 'login-error'
         });
       }
     });
@@ -128,7 +150,40 @@ export const doBasicLogin = async (
     clearUserState();
   }
   return success;
-};
+
+  async function handlePossibleMFAError(err: any) {
+    setAuthContext(err.response.data?.data);
+    const mfa_flow = err.response.data.data.flows.find(
+      (flow: any) => flow.id == FlowEnum.MfaAuthenticate
+    );
+    if (mfa_flow?.is_pending) {
+      // MFA is required - we might already have a code
+      if (code && code.length > 0) {
+        const rslt = await handleMfaLogin(
+          navigate,
+          undefined,
+          { code: code },
+          () => {}
+        );
+        if (rslt) {
+          setAuthenticated(true);
+          loginDone = true;
+          success = true;
+          notifications.show({
+            title: t`MFA Login successful`,
+            message: t`MFA details were automatically provided in the browser`,
+            color: 'green'
+          });
+        }
+      }
+      // No code or success - off to the mfa page
+      if (!loginDone) {
+        success = true;
+        navigate('/mfa');
+      }
+    }
+  }
+}
 
 /**
  * Logout the user from the current session
@@ -137,6 +192,7 @@ export const doBasicLogin = async (
  */
 export const doLogout = async (navigate: NavigateFunction) => {
   const { clearUserState, isLoggedIn } = useUserState.getState();
+  const { setAuthContext } = useServerApiState.getState();
 
   // Logout from the server session
   if (isLoggedIn() || !!getCsrfCookie()) {
@@ -151,11 +207,12 @@ export const doLogout = async (navigate: NavigateFunction) => {
 
   clearUserState();
   clearCsrfCookie();
+  setAuthContext(undefined);
   navigate('/login');
 };
 
 export const doSimpleLogin = async (email: string) => {
-  const { host } = useLocalState.getState();
+  const { getHost } = useLocalState.getState();
   const mail = await axios
     .post(
       apiUrl(ApiEndpoints.user_simple_login),
@@ -163,7 +220,7 @@ export const doSimpleLogin = async (email: string) => {
         email: email
       },
       {
-        baseURL: host,
+        baseURL: getHost(),
         timeout: 2000
       }
     )
@@ -178,7 +235,7 @@ function observeProfile() {
   // overwrite language and theme info in session with profile info
 
   const user = useUserState.getState().getUser();
-  const { language, setLanguage, usertheme, setTheme } =
+  const { language, setLanguage, userTheme, setTheme, setWidgets, setLayouts } =
     useLocalState.getState();
   if (user) {
     if (user.profile?.language && language != user.profile.language) {
@@ -193,14 +250,14 @@ function observeProfile() {
 
     if (user.profile?.theme) {
       // extract keys of usertheme and set them to the values of user.profile.theme
-      const newTheme = Object.keys(usertheme).map((key) => {
+      const newTheme = Object.keys(userTheme).map((key) => {
         return {
-          key: key as keyof typeof usertheme,
+          key: key as keyof typeof userTheme,
           value: user.profile.theme[key] as string
         };
       });
       const diff = newTheme.filter(
-        (item) => usertheme[item.key] !== item.value
+        (item) => userTheme[item.key] !== item.value
       );
       if (diff.length > 0) {
         showNotification({
@@ -211,13 +268,22 @@ function observeProfile() {
         setTheme(newTheme);
       }
     }
+
+    if (user.profile?.widgets) {
+      const data = user.profile.widgets;
+      // split data into widgets and layouts (either might be undefined)
+      const widgets = data.widgets ?? [];
+      const layouts = data.layouts ?? {};
+      setWidgets(widgets, true);
+      setLayouts(layouts, true);
+    }
   }
 }
 
 export async function ensureCsrf() {
   const cookie = getCsrfCookie();
   if (cookie == undefined) {
-    await api.get(apiUrl(ApiEndpoints.user_token)).catch(() => {});
+    await api.get(apiUrl(ApiEndpoints.auth_session)).catch(() => {});
   }
 }
 
@@ -245,29 +311,28 @@ export function handleReset(
   });
 }
 
-export function handleMfaLogin(
+export async function handleMfaLogin(
   navigate: NavigateFunction,
-  location: Location<any>,
-  values: { code: string },
+  location: Location<any> | undefined,
+  values: { code: string; remember?: boolean },
   setError: (message: string | undefined) => void
 ) {
-  const { setToken, fetchUserState } = useUserState.getState();
   const { setAuthContext } = useServerApiState.getState();
 
-  authApi(apiUrl(ApiEndpoints.auth_login_2fa), undefined, 'post', {
-    code: values.code
-  })
+  const result = await authApi(
+    apiUrl(ApiEndpoints.auth_login_2fa),
+    undefined,
+    'post',
+    {
+      code: values.code
+    }
+  )
     .then((response) => {
-      setError(undefined);
-      setAuthContext(response.data?.data);
-      setToken(response.data.meta.access_token);
-
-      fetchUserState().finally(() => {
-        observeProfile();
-        followRedirect(navigate, location?.state);
-      });
+      handleSuccessFullAuth(response, navigate, location, setError);
+      return true;
     })
     .catch((err) => {
+      // Already logged in, but with a different session
       if (err?.response?.status == 409) {
         notifications.show({
           title: t`Already logged in`,
@@ -275,6 +340,19 @@ export function handleMfaLogin(
           color: 'red',
           autoClose: false
         });
+        // MFA trust flow pending
+      } else if (err?.response?.status == 401) {
+        const mfa_trust = err.response.data.data.flows.find(
+          (flow: any) => flow.id == FlowEnum.MfaTrust
+        );
+        if (mfa_trust?.is_pending) {
+          setAuthContext(err.response.data.data);
+          authApi(apiUrl(ApiEndpoints.auth_trust), undefined, 'post', {
+            trust: values.remember ?? false
+          }).then((response) => {
+            handleSuccessFullAuth(response, navigate, location, setError);
+          });
+        }
       } else {
         const errors = err.response?.data?.errors;
         let msg = t`An error occurred`;
@@ -284,7 +362,9 @@ export function handleMfaLogin(
         }
         setError(msg);
       }
+      return false;
     });
+  return result;
 }
 
 /**
@@ -299,6 +379,7 @@ export const checkLoginState = async (
   redirect?: any,
   no_redirect?: boolean
 ) => {
+  const { setLoginChecked } = useUserState.getState();
   setApiDefaults();
 
   if (redirect == '/') {
@@ -309,6 +390,7 @@ export const checkLoginState = async (
 
   // Callback function when login is successful
   const loginSuccess = () => {
+    setLoginChecked(true);
     showLoginNotification({
       title: t`Logged In`,
       message: t`Successfully logged in`
@@ -333,9 +415,40 @@ export const checkLoginState = async (
   if (isLoggedIn()) {
     loginSuccess();
   } else if (!no_redirect) {
+    setLoginChecked(true);
     navigate('/login', { state: redirect });
   }
+  setLoginChecked(true);
 };
+
+function handleSuccessFullAuth(
+  response?: any,
+  navigate?: NavigateFunction,
+  location?: Location<any>,
+  setError?: (message: string | undefined) => void
+) {
+  const { setAuthenticated, fetchUserState } = useUserState.getState();
+  const { setAuthContext } = useServerApiState.getState();
+
+  if (setError) {
+    // If an error function is provided, clear any previous errors
+    setError(undefined);
+  }
+
+  if (response.data?.data) {
+    setAuthContext(response.data?.data);
+  }
+  setAuthenticated();
+
+  fetchUserState().finally(() => {
+    observeProfile();
+    fetchGlobalStates(navigate);
+
+    if (navigate && location) {
+      followRedirect(navigate, location?.state);
+    }
+  });
+}
 
 /*
  * Return the value of the CSRF cookie, if available
@@ -358,7 +471,7 @@ export function clearCsrfCookie() {
 }
 
 export async function ProviderLogin(
-  provider: Provider,
+  provider: AuthProvider,
   process: 'login' | 'connect' = 'login'
 ) {
   await ensureCsrf();

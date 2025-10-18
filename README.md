@@ -53,10 +53,10 @@ Want to see what we are working on? Check out the [roadmap tag](https://github.c
 
 InvenTree is designed to be **extensible**, and provides multiple options for **integration** with external applications or addition of custom plugins:
 
-* [InvenTree API](https://docs.inventree.org/en/latest/api/api/)
-* [Python module](https://docs.inventree.org/en/latest/api/python/python/)
-* [Plugin interface](https://docs.inventree.org/en/latest/extend/plugins)
-* [Third party tools](https://docs.inventree.org/en/latest/extend/integrate)
+* [InvenTree API](https://docs.inventree.org/en/latest/api/)
+* [Python module](https://docs.inventree.org/en/latest/api/python/)
+* [Plugin interface](https://docs.inventree.org/en/latest/plugins/)
+* [Third party tools](https://docs.inventree.org/en/latest/plugins/integrate/)
 
 <!-- TechStack -->
 ### :space_invader: Tech Stack
@@ -130,7 +130,7 @@ Refer to the [getting started guide](https://docs.inventree.org/en/latest/start/
 <!-- Mobile App -->
 ## 	:iphone: Mobile App
 
-InvenTree is supported by a [companion mobile app](https://docs.inventree.org/app/) which allows users access to stock control information and functionality.
+InvenTree is supported by a [companion mobile app](https://docs.inventree.org/en/latest/app/) which allows users access to stock control information and functionality.
 
 <div align="center"><h4>
     <a href="https://play.google.com/store/apps/details?id=inventree.inventree_app">Android Play Store</a>
@@ -138,10 +138,17 @@ InvenTree is supported by a [companion mobile app](https://docs.inventree.org/ap
     <a href="https://apps.apple.com/au/app/inventree/id1581731101#?platform=iphone">Apple App Store</a>
 </h4></div>
 
+<!-- Security -->
+## :lock: Code of Conduct & Security Policy
+
+The InvenTree project team is committed to providing a safe and welcoming environment for all users. Please read our [Code of Conduct](CODE_OF_CONDUCT.md) for more information.
+
+InvenTree is following industry best practices for security. Our security policy is included [in this repo](SECURITY.md). We provide dedicated security pages on [our documentation site](https://docs.inventree.org/en/latest/security/).
+
 <!-- Contributing -->
 ## :wave: Contributing
 
-Contributions are welcomed and encouraged. Please help to make this project even better! Refer to the [contribution page](CONTRIBUTING.md).
+Contributions are welcomed and encouraged. Please help to make this project even better! Refer to the [contribution page](https://docs.inventree.org/en/latest/develop/contributing/).
 
 <!-- Translation -->
 ## :scroll: Translation
@@ -173,7 +180,15 @@ Find a full list of used third-party libraries in the license information dialog
 <a href="https://github.com/PricelessToolkit"><img src="https://github.com/PricelessToolkit.png" width="60px" alt="" /></a>
 <a href="https://github.com/cabottech"><img src="https://github.com/cabottech.png" width="60px" alt="Cabot Technologies" /></a>
 <a href="https://github.com/markus-k"><img src="https://github.com/markus-k.png" width="60px" alt="Markus Kasten" /></a>
-<a href="https://github.com/jefffhaynes"><img src="https://github.com/jefffhaynes.png" width="60px" alt="Jess Haynes" /></a>
+<a href="https://github.com/jefffhaynes"><img src="https://github.com/jefffhaynes.png" width="60px" alt="Jeff Haynes" /></a>
+<a href="https://github.com/dnviti"><img src="https://github.com/dnviti.png" width="60px" alt="Daniele Viti" /></a>
+<a href="https://github.com/Islendur"><img src="https://github.com/Islendur.png" width="60px" alt="Islendur" /></a>
+<a href="https://github.com/Gibeon-NL"><img src="https://github.com/Gibeon-NL.png" width="60px" alt="Gibeon-NL" /></a>
+<a href="https://github.com/Motrac-Research-Engineering"><img src="https://github.com/Motrac-Research-Engineering.png" width="60px" alt="Motrac Research" /></a>
+<a href="https://github.com/trytuna"><img src="https://github.com/trytuna.png" width="60px" alt="Timo Scrappe" /></a>
+<a href="https://github.com/ATLAS2246"><img src="https://github.com/ATLAS2246.png" width="60px" alt="ATLAS2246" /></a>
+<a href="https://github.com/Kedarius"><img src="https://github.com/Kedarius.png" width="60px" alt="Radek Hladik" /></a>
+
 </p>
 
 <p>With ongoing resources provided by:</p>
@@ -184,7 +199,7 @@ Find a full list of used third-party libraries in the license information dialog
     <img src="https://opensource.nyc3.cdn.digitaloceanspaces.com/attribution/assets/SVG/DO_Logo_horizontal_blue.svg" width="201px" alt="Servers by Digital Ocean">
   </a>
   <a href="https://www.netlify.com"> <img src="https://www.netlify.com/v3/img/components/netlify-color-bg.svg" alt="Deploys by Netlify" /> </a>
-  <a href="https://crowdin.com"> <img src="https://crowdin.com/images/crowdin-logo.svg" alt="Translation by Crowdin" /> </a>
+  <a href="https://crowdin.com"> <img src="https://crowdin.com/images/crowdin-logo.svg" alt="Translation by Crowdin" /> </a> <br>
 </p>
 
 

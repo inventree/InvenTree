@@ -1,13 +1,19 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Grid, Skeleton, Stack } from '@mantine/core';
 import {
   IconBuildingWarehouse,
   IconInfoCircle,
-  IconList
+  IconList,
+  IconPackages
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import { getDetailUrl } from '@lib/functions/Navigation';
 import AdminButton from '../../components/buttons/AdminButton';
 import {
   type DetailsField,
@@ -27,21 +33,17 @@ import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import { useManufacturerPartFields } from '../../forms/CompanyForms';
-import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import ManufacturerPartParameterTable from '../../tables/purchasing/ManufacturerPartParameterTable';
 import { SupplierPartTable } from '../../tables/purchasing/SupplierPartTable';
+import { StockItemTable } from '../../tables/stock/StockItemTable';
 
 export default function ManufacturerPartDetail() {
   const { id } = useParams();
@@ -51,8 +53,7 @@ export default function ManufacturerPartDetail() {
   const {
     instance: manufacturerPart,
     instanceQuery,
-    refreshInstance,
-    requestStatus
+    refreshInstance
   } = useInstance({
     endpoint: ApiEndpoints.manufacturer_part_list,
     pk: id,
@@ -173,6 +174,20 @@ export default function ManufacturerPartDetail() {
         )
       },
       {
+        name: 'stock',
+        label: t`Received Stock`,
+        hidden: !user.hasViewRole(UserRoles.stock),
+        icon: <IconPackages />,
+        content: (
+          <StockItemTable
+            tableName='manufacturer-part-stock'
+            params={{
+              manufacturer_part: id
+            }}
+          />
+        )
+      },
+      {
         name: 'suppliers',
         label: t`Suppliers`,
         icon: <IconBuildingWarehouse />,
@@ -195,7 +210,7 @@ export default function ManufacturerPartDetail() {
         model_id: manufacturerPart?.pk
       })
     ];
-  }, [manufacturerPart]);
+  }, [user, manufacturerPart]);
 
   const editManufacturerPartFields = useManufacturerPartFields();
 
@@ -273,10 +288,13 @@ export default function ManufacturerPartDetail() {
       {deleteManufacturerPart.modal}
       {duplicateManufacturerPart.modal}
       {editManufacturerPart.modal}
-      <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
+      <InstanceDetail
+        query={instanceQuery}
+        requiredPermission={ModelType.manufacturerpart}
+      >
         <Stack gap='xs'>
           <PageDetail
-            title={t`ManufacturerPart`}
+            title={t`Manufacturer Part`}
             subtitle={`${manufacturerPart.MPN} - ${manufacturerPart.part_detail?.name}`}
             breadcrumbs={breadcrumbs}
             lastCrumb={[
@@ -297,6 +315,7 @@ export default function ManufacturerPartDetail() {
             pageKey='manufacturerpart'
             panels={panels}
             instance={manufacturerPart}
+            reloadInstance={refreshInstance}
             model={ModelType.manufacturerpart}
             id={manufacturerPart.pk}
           />

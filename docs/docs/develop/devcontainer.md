@@ -52,7 +52,7 @@ Tasks can help you executing scripts. You can run them by open the command panel
 
 #### Setup demo dataset
 
-If you need some demo test-data, run the `setup-test` task. This will import an `admin` user with the password `inventree`. For more info on what this dataset contains see [inventree/demo-dataset](../demo.md).
+If you need some demo test-data, run the `dev.setup-test` task. This will import an `admin` user with the password `inventree`. For more info on what this dataset contains see [inventree/demo-dataset](../demo.md).
 
 #### Setup a superuser
 
@@ -73,7 +73,7 @@ You can now set breakpoints and vscode will automatically pause execution if tha
 
 !!! info "React Frontend development"
 
-The React frontend requires additional steps to run. Refer to [Platform UI / React](./react-frontend.md)
+The React frontend requires additional steps to run. Refer to [Web UI / React](./react-frontend.md)
 
 ### Plugin development
 

@@ -24,8 +24,8 @@ class CategoryTest(TestCase):
         super().setUpTestData()
 
         cls.electronics = PartCategory.objects.get(name='Electronics')
-        cls.mechanical = PartCategory.objects.get(name='Mechanical')
         cls.resistors = PartCategory.objects.get(name='Resistors')
+        cls.mechanical = PartCategory.objects.get(name='Mechanical')
         cls.capacitors = PartCategory.objects.get(name='Capacitors')
         cls.fasteners = PartCategory.objects.get(name='Fasteners')
         cls.ic = PartCategory.objects.get(name='IC')
@@ -67,6 +67,7 @@ class CategoryTest(TestCase):
     def test_path_string(self):
         """Test that the category path string works correctly."""
         # Note that due to data migrations, these fields need to be saved first
+
         self.resistors.save()
         self.transceivers.save()
 
@@ -89,6 +90,9 @@ class CategoryTest(TestCase):
         # Move to a new parent location
         subcat.parent = self.resistors
         subcat.save()
+
+        # subcat.refresh_from_db()
+
         self.assertEqual(subcat.pathstring, 'Electronics/Resistors/Subcategory')
         self.assertEqual(len(subcat.path), 3)
 
@@ -128,9 +132,7 @@ class CategoryTest(TestCase):
 
     def test_url(self):
         """Test that the PartCategory URL works."""
-        self.assertEqual(
-            self.capacitors.get_absolute_url(), '/platform/part/category/3'
-        )
+        self.assertEqual(self.capacitors.get_absolute_url(), '/web/part/category/3')
 
     def test_part_count(self):
         """Test that the Category part count works."""
@@ -220,6 +222,45 @@ class CategoryTest(TestCase):
         w = Part.objects.get(name='Widget')
         self.assertIsNone(w.get_default_location())
 
+    def test_root_delete(self):
+        """Test that deleting a root category works correctly."""
+        # Clear out the existing categories
+        # Note: Cannot call bulk delete here, as it will not trigger MPTT updates
+        for p in PartCategory.objects.all():
+            p.delete()
+
+        # Create a new root category
+        root = PartCategory.objects.create(name='Root Category', description='Root')
+
+        # Create a child category
+        for i in range(10):
+            PartCategory.objects.create(
+                name=f'Child Category {i}', description='Child', parent=root
+            )
+
+        root.refresh_from_db()
+
+        self.assertEqual(root.get_descendants(include_self=False).count(), 10)
+        self.assertEqual(PartCategory.objects.count(), 11)
+
+        # There is only a single tree_id value
+        tree_ids = PartCategory.objects.values_list('tree_id', flat=True).distinct()
+        tree_ids = set(tree_ids)
+        self.assertEqual(len(tree_ids), 1)
+
+        # Delete the root category
+        root.delete()
+
+        # All child categories are now "root" categories
+        for cat in PartCategory.objects.all():
+            self.assertIsNone(cat.parent)
+            self.assertEqual(cat.level, 0)
+
+        # 10 unique tree_id values should now exist
+        tree_ids = PartCategory.objects.values_list('tree_id', flat=True).distinct()
+        tree_ids = set(tree_ids)
+        self.assertEqual(len(tree_ids), 10)
+
     def test_category_tree(self):
         """Unit tests for the part category tree structure (MPTT).
 
@@ -227,9 +268,13 @@ class CategoryTest(TestCase):
         and the correct ancestor tree is observed.
         """
         # Clear out any existing parts
-        Part.objects.all().delete()
+        for p in Part.objects.all():
+            if p.active:
+                p.refresh_from_db()
+                p.active = False
+                p.save()
 
-        PartCategory.objects.rebuild()
+            p.delete()
 
         # First, create a structured tree of part categories
         A = PartCategory.objects.create(name='A', description='Top level category')
@@ -312,9 +357,8 @@ class CategoryTest(TestCase):
         for loc in [B1, B2, C31, C32, C33]:
             # These should now all be "top level" categories
             loc.refresh_from_db()
-
-            self.assertEqual(loc.level, 0)
             self.assertEqual(loc.parent, None)
+            self.assertEqual(loc.level, 0)
 
             # Pathstring should be the same as the name
             self.assertEqual(loc.pathstring, loc.name)
@@ -322,6 +366,7 @@ class CategoryTest(TestCase):
             # Test pathstring for direct children
             for child in loc.get_children():
                 self.assertEqual(child.pathstring, f'{loc.name}/{child.name}')
+                self.assertEqual(child.level, 1)
 
         # Check descendants for B1
         descendants = B1.get_descendants()

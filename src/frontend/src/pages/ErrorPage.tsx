@@ -1,10 +1,10 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { useDocumentTitle } from '@mantine/hooks';
 import { useEffect, useState } from 'react';
 import { useRouteError } from 'react-router-dom';
 
+import type { ErrorResponse } from '@lib/types/Auth';
 import GenericErrorPage from '../components/errors/GenericErrorPage';
-import type { ErrorResponse } from '../states/states';
 
 export default function ErrorPage() {
   const error = useRouteError() as ErrorResponse;

@@ -10,8 +10,8 @@ import { IconMenu2 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { identifierString } from '../../functions/conversion';
-import { navigateToLink } from '../../functions/navigation';
+import { identifierString } from '@lib/functions/Conversion';
+import { getBaseUrl, navigateToLink } from '@lib/functions/Navigation';
 
 export type Breadcrumb = {
   icon?: React.ReactNode;
@@ -30,6 +30,8 @@ export function BreadcrumbList({
   navCallback?: () => void;
 }>) {
   const navigate = useNavigate();
+
+  const baseUrl = useMemo(() => getBaseUrl(), []);
 
   const elements = useMemo(() => {
     // Limit to 7 active elements
@@ -62,6 +64,7 @@ export function BreadcrumbList({
             return (
               <Anchor
                 key={`${index}-${breadcrumb.name}`}
+                href={`/${baseUrl}${breadcrumb.url}`}
                 aria-label={`breadcrumb-${index}-${identifierString(
                   breadcrumb.name
                 )}`}

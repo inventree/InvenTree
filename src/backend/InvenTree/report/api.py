@@ -6,21 +6,22 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import never_cache
 
-from django_filters import rest_framework as rest_filters
+import django_filters.rest_framework.filters as rest_filters
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import permissions
+from django_filters.rest_framework.filterset import FilterSet
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 
-import InvenTree.exceptions
-import InvenTree.helpers
 import InvenTree.permissions
 import report.helpers
 import report.models
 import report.serializers
-from InvenTree.api import BulkDeleteMixin, MetadataView
-from InvenTree.filters import InvenTreeOrderingFilter, InvenTreeSearchFilter
-from InvenTree.mixins import ListAPI, ListCreateAPI, RetrieveUpdateDestroyAPI
+from common.models import DataOutput
+from common.serializers import DataOutputSerializer
+from InvenTree.api import MetadataView
+from InvenTree.filters import InvenTreeSearchFilter
+from InvenTree.mixins import ListCreateAPI, RetrieveUpdateDestroyAPI
+from plugin import PluginMixinEnum
 from plugin.builtin.labels.inventree_label import InvenTreeLabelPlugin
 
 
@@ -28,13 +29,10 @@ class TemplatePermissionMixin:
     """Permission mixin for report and label templates."""
 
     # Read only for non-staff users
-    permission_classes = [
-        permissions.IsAuthenticated,
-        InvenTree.permissions.IsStaffOrReadOnly,
-    ]
+    permission_classes = [InvenTree.permissions.IsStaffOrReadOnlyScope]
 
 
-class ReportFilterBase(rest_filters.FilterSet):
+class ReportFilterBase(FilterSet):
     """Base filter class for label and report templates."""
 
     enabled = rest_filters.BooleanFilter()
@@ -98,32 +96,24 @@ class LabelPrint(GenericAPIView):
     """API endpoint for printing labels."""
 
     # Any authenticated user can print labels
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
     serializer_class = report.serializers.LabelPrintSerializer
 
     def get_plugin_class(self, plugin_slug: str, raise_error=False):
         """Return the plugin class for the given plugin key."""
-        from plugin.models import PluginConfig
+        from plugin import registry
 
         if not plugin_slug:
             # Use the default label printing plugin
             plugin_slug = InvenTreeLabelPlugin.NAME.lower()
 
-        plugin = None
-
-        try:
-            plugin_config = PluginConfig.objects.get(key=plugin_slug)
-            plugin = plugin_config.plugin
-        except (ValueError, PluginConfig.DoesNotExist):
-            pass
+        plugin = registry.get_plugin(plugin_slug, active=True)
 
         error = None
 
         if not plugin:
             error = _('Plugin not found')
-        elif not plugin.is_active():
-            error = _('Plugin is not active')
-        elif not plugin.mixin_enabled('labels'):
+        elif not plugin.mixin_enabled(PluginMixinEnum.LABELS):
             error = _('Plugin does not support label printing')
 
         if error:
@@ -161,8 +151,7 @@ class LabelPrint(GenericAPIView):
             if plugin_serializer:
                 kwargs['plugin_serializer'] = plugin_serializer
 
-        serializer = super().get_serializer(*args, **kwargs)
-        return serializer
+        return super().get_serializer(*args, **kwargs)
 
     @method_decorator(never_cache)
     def post(self, request, *args, **kwargs):
@@ -187,7 +176,10 @@ class LabelPrint(GenericAPIView):
 
         instances = template.get_model().objects.filter(pk__in=items)
 
-        if instances.count() == 0:
+        # Sort the instances by the order of the provided items
+        instances = sorted(instances, key=lambda item: items.index(item.pk))
+
+        if len(instances) == 0:
             raise ValidationError(_('No valid items provided to template'))
 
         return self.print(template, instances, plugin, request)
@@ -202,16 +194,21 @@ class LabelPrint(GenericAPIView):
         ):
             plugin_serializer.is_valid(raise_exception=True)
 
-        # Generate a new LabelOutput object to print against
-        output = report.models.LabelOutput.objects.create(
-            template=template,
-            plugin=plugin.slug,
-            user=request.user,
+        user = getattr(request, 'user', None)
+
+        # Generate a new DataOutput object to print against
+        output = DataOutput.objects.create(
+            user=user if user and user.is_authenticated else None,
+            total=len(items_to_print),
             progress=0,
-            items=len(items_to_print),
             complete=False,
+            output_type=DataOutput.DataOutputTypes.LABEL,
+            plugin=plugin.slug,
+            template_name=template.name,
             output=None,
         )
+
+        output.refresh_from_db()
 
         offload_task(
             report.tasks.print_labels,
@@ -224,9 +221,7 @@ class LabelPrint(GenericAPIView):
 
         output.refresh_from_db()
 
-        return Response(
-            report.serializers.LabelOutputSerializer(output).data, status=201
-        )
+        return Response(DataOutputSerializer(output).data, status=201)
 
 
 class LabelTemplateList(TemplatePermissionMixin, ListCreateAPI):
@@ -251,7 +246,7 @@ class ReportPrint(GenericAPIView):
     """API endpoint for printing reports."""
 
     # Any authenticated user can print reports
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
     serializer_class = report.serializers.ReportPrintSerializer
 
     @method_decorator(never_cache)
@@ -265,7 +260,10 @@ class ReportPrint(GenericAPIView):
 
         instances = template.get_model().objects.filter(pk__in=items)
 
-        if instances.count() == 0:
+        # Sort the instances by the order of the provided items
+        instances = sorted(instances, key=lambda item: items.index(item.pk))
+
+        if len(instances) == 0:
             raise ValidationError(_('No valid items provided to template'))
 
         return self.print(template, instances, request)
@@ -274,18 +272,21 @@ class ReportPrint(GenericAPIView):
         """Print this report template against a number of provided items.
 
         This functionality is offloaded to the background worker process,
-        which will update the status of the ReportOutput object as it progresses.
+        which will update the status of the DataOutput object as it progresses.
         """
         import report.tasks
         from InvenTree.tasks import offload_task
 
-        # Generate a new ReportOutput object
-        output = report.models.ReportOutput.objects.create(
-            template=template,
-            user=request.user,
+        user = getattr(request, 'user', None)
+
+        # Generate a new DataOutput object
+        output = DataOutput.objects.create(
+            user=user if user and user.is_authenticated else None,
+            total=len(items_to_print),
             progress=0,
-            items=len(items_to_print),
             complete=False,
+            output_type=DataOutput.DataOutputTypes.REPORT,
+            template_name=template.name,
             output=None,
         )
 
@@ -296,9 +297,7 @@ class ReportPrint(GenericAPIView):
 
         output.refresh_from_db()
 
-        return Response(
-            report.serializers.ReportOutputSerializer(output).data, status=201
-        )
+        return Response(DataOutputSerializer(output).data, status=201)
 
 
 class ReportTemplateList(TemplatePermissionMixin, ListCreateAPI):
@@ -347,44 +346,6 @@ class ReportAssetDetail(TemplatePermissionMixin, RetrieveUpdateDestroyAPI):
     serializer_class = report.serializers.ReportAssetSerializer
 
 
-class TemplateOutputMixin:
-    """Mixin class for template output API endpoints."""
-
-    filter_backends = [InvenTreeOrderingFilter]
-    ordering_fields = ['created', 'model_type', 'user']
-    ordering_field_aliases = {'model_type': 'template__model_type'}
-
-
-class LabelOutputMixin(TemplatePermissionMixin, TemplateOutputMixin):
-    """Mixin class for a label output API endpoint."""
-
-    queryset = report.models.LabelOutput.objects.all()
-    serializer_class = report.serializers.LabelOutputSerializer
-
-
-class LabelOutputList(LabelOutputMixin, BulkDeleteMixin, ListAPI):
-    """List endpoint for LabelOutput objects."""
-
-
-class LabelOutputDetail(LabelOutputMixin, RetrieveUpdateDestroyAPI):
-    """Detail endpoint for LabelOutput objects."""
-
-
-class ReportOutputMixin(TemplatePermissionMixin, TemplateOutputMixin):
-    """Mixin class for a report output API endpoint."""
-
-    queryset = report.models.ReportOutput.objects.all()
-    serializer_class = report.serializers.ReportOutputSerializer
-
-
-class ReportOutputList(ReportOutputMixin, BulkDeleteMixin, ListAPI):
-    """List endpoint for ReportOutput objects."""
-
-
-class ReportOutputDetail(ReportOutputMixin, RetrieveUpdateDestroyAPI):
-    """Detail endpoint for ReportOutput objects."""
-
-
 label_api_urls = [
     # Printing endpoint
     path('print/', LabelPrint.as_view(), name='api-label-print'),
@@ -397,8 +358,7 @@ label_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': report.models.LabelTemplate},
+                        MetadataView.as_view(model=report.models.LabelTemplate),
                         name='api-label-template-metadata',
                     ),
                     path(
@@ -409,16 +369,6 @@ label_api_urls = [
                 ]),
             ),
             path('', LabelTemplateList.as_view(), name='api-label-template-list'),
-        ]),
-    ),
-    # Label outputs
-    path(
-        'output/',
-        include([
-            path(
-                '<int:pk>/', LabelOutputDetail.as_view(), name='api-label-output-detail'
-            ),
-            path('', LabelOutputList.as_view(), name='api-label-output-list'),
         ]),
     ),
 ]
@@ -435,8 +385,7 @@ report_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': report.models.ReportTemplate},
+                        MetadataView.as_view(model=report.models.ReportTemplate),
                         name='api-report-template-metadata',
                     ),
                     path(
@@ -447,18 +396,6 @@ report_api_urls = [
                 ]),
             ),
             path('', ReportTemplateList.as_view(), name='api-report-template-list'),
-        ]),
-    ),
-    # Generated report outputs
-    path(
-        'output/',
-        include([
-            path(
-                '<int:pk>/',
-                ReportOutputDetail.as_view(),
-                name='api-report-output-detail',
-            ),
-            path('', ReportOutputList.as_view(), name='api-report-output-list'),
         ]),
     ),
     # Report assets

@@ -4,7 +4,7 @@ from django.urls import reverse
 
 from common.models import InvenTreeSetting
 from InvenTree.unit_test import InvenTreeAPITestCase
-from plugin.registry import registry
+from plugin import PluginMixinEnum, registry
 
 
 class UserInterfaceMixinTests(InvenTreeAPITestCase):
@@ -30,7 +30,7 @@ class UserInterfaceMixinTests(InvenTreeAPITestCase):
         plugin = registry.get_plugin('sampleui')
         self.assertTrue(plugin.is_active())
 
-        plugins = registry.with_mixin('ui')
+        plugins = registry.with_mixin(PluginMixinEnum.USER_INTERFACE)
         self.assertGreater(len(plugins), 0)
 
     def test_ui_dashboard_items(self):
@@ -111,7 +111,7 @@ class UserInterfaceMixinTests(InvenTreeAPITestCase):
         # Request custom panel information for a part instance
         response = self.get(url, data=query_data)
 
-        # There should be 4 active panels for the part by default
+        # There should be 3 active panels for the part by default
         self.assertEqual(3, len(response.data))
 
         _part.active = False
@@ -119,8 +119,8 @@ class UserInterfaceMixinTests(InvenTreeAPITestCase):
 
         response = self.get(url, data=query_data)
 
-        # As the part is not active, only 3 panels left
-        self.assertEqual(3, len(response.data))
+        # As the part is not active, only 2 panels left
+        self.assertEqual(2, len(response.data))
 
         # Disable the "ENABLE_PART_PANELS" setting, and try again
         plugin.set_setting('ENABLE_PART_PANELS', False)
@@ -223,3 +223,13 @@ class UserInterfaceMixinTests(InvenTreeAPITestCase):
 
         # Set the setting back to True for subsequent tests
         InvenTreeSetting.set_setting('ENABLE_PLUGINS_INTERFACE', True, change_user=None)
+
+    def test_ui_navigation_items(self):
+        """Test that the sample UI plugin provides custom navigation items."""
+        response = self.get(
+            reverse('api-plugin-ui-feature-list', kwargs={'feature': 'navigation'})
+        )
+        self.assertEqual(1, len(response.data))
+        self.assertEqual(response.data[0]['plugin_name'], 'sampleui')
+        self.assertEqual(response.data[0]['key'], 'sample-nav-item')
+        self.assertEqual(response.data[0]['title'], 'Sample Nav Item')

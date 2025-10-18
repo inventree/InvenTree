@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { notifications } from '@mantine/notifications';
 import { useQuery } from '@tanstack/react-query';
 import DOMPurify from 'dompurify';
@@ -7,11 +7,11 @@ import 'easymde/dist/easymde.min.css';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import SimpleMDE from 'react-simplemde-editor';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelInformationDict } from '@lib/enums/ModelInformation';
+import type { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
 import { useApi } from '../../contexts/ApiContext';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import type { ModelType } from '../../enums/ModelType';
-import { apiUrl } from '../../states/ApiState';
-import { ModelInformationDict } from '../render/ModelType';
 
 /*
  * A text editor component for editing notes against a model type and instance.
@@ -92,11 +92,9 @@ export default function NotesEditor({
 
   const dataQuery = useQuery({
     queryKey: ['notes-editor', noteUrl, modelType, modelId],
+    retry: 5,
     queryFn: () =>
-      api
-        .get(noteUrl)
-        .then((response) => response.data?.notes ?? '')
-        .catch(() => ''),
+      api.get(noteUrl).then((response) => response.data?.notes ?? ''),
     enabled: true
   });
 

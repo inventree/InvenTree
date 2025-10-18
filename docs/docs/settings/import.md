@@ -27,7 +27,7 @@ Importing data is a multi-step process, which is managed via an *import session*
 
 The import session is managed by the InvenTree server, and all import session data is stored on the server. As the import process can be time-consuming, the user can navigate away from the import page and return later to check on the progress of the import.
 
-Import sessions can be managed from the *Admin Center* page, which lists all available import sessions
+Import sessions can be managed from the [Admin Center](./admin.md#admin-center) page, which lists all available import sessions
 
 ### Context Sensitive Importing
 
@@ -41,17 +41,13 @@ The following steps outline the process of importing data into InvenTree:
 
 An import session can be created via the methods outlined above. The first step is to create an import session, and upload the data file to import. Note that depending on the context of the data import, the user may have to select the database model to import data into.
 
-{% with id="import-create", url="admin/import_session_create.png", description="Create import session" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("admin/import_session_create.png", "Create import session") }}
 
 ### Map Data Fields
 
 Next, the user must map the data fields in the uploaded file to the fields in the database model. This is a critical step, as the data fields must be correctly matched to the database fields.
 
-{% with id="import-map", url="admin/import_session_map.png", description="Map data fields" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("admin/import_session_map.png", "Map data fields") }}
 
 The InvenTree server will attempt to automatically associate the data fields in the uploaded file with the database fields. However, the user may need to manually adjust the field mappings to ensure that the data is imported correctly.
 
@@ -65,9 +61,7 @@ Note that this process may take some time if the data file is large. The import 
 
 Once the data has been loaded into the import session, the user can process the data. This step will attempt to validate the data, and check for any errors or issues that may prevent the data from being imported.
 
-{% with id="import-process", url="admin/import_session_process.png", description="Process data" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("admin/import_session_process.png", "Process data") }}
 
 Note that each row must be selected and confirmed by the user before it is actually imported into the database. Any errors which are detected will be displayed to the user, and the user can choose to correct the data and re-process it.
 
@@ -82,3 +76,37 @@ Each individual row can be imported, or removed (deleted) by the user. Once all 
 ### Import Completed
 
 Once all records have been processed, the import session is considered complete. The import session can be closed, and the imported records are now stored in the database.
+
+## Updating Existing Records
+
+The data import process can also be used to update existing records in the database. This requires that the imported data file contains a unique identifier for each record, which can be used to match the records in the database.
+
+The basic outline of this process is:
+
+1. Export the existing records to a CSV file.
+2. Modify the CSV file to update the records as required.
+3. Upload the modified CSV file to the import session.
+
+!!! note "Mixing Creation and Update"
+    It is not possible to mix the creation of new records with the updating of existing records in a single import session. If you wish to create new records, you must create a separate import session for that purpose.
+
+### Create Import Session
+
+!!! note "Admin Center"
+    Updating existing records can only be performed when creating a new import session from the [Admin Center](./admin.md#admin-center).
+
+Create a new import session, and ensure that the *Update Existing Records* option is selected. This will allow the import session to update existing records in the database.
+
+{{ image("admin/import_session_create_update.png", "Update existing records") }}
+
+### Map Data Fields
+
+When mapping the data fields, ensure that the `ID` field is correctly mapped to the corresponding column in the file:
+
+{{ image("admin/import_select_id.png", "Update existing records") }}
+
+### Process Data
+
+When processing the data, each row will be matched against an existing record in the database. If a match is found, the existing record will be updated with the new data from the imported file.
+
+{{ image("admin/import_update_process.png", "Update existing records") }}

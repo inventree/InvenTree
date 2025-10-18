@@ -12,7 +12,6 @@ from InvenTree.serializers import (
     InvenTreeAttachmentSerializerField,
     InvenTreeModelSerializer,
 )
-from users.serializers import UserSerializer
 
 
 class ReportSerializerBase(InvenTreeModelSerializer):
@@ -66,7 +65,12 @@ class ReportTemplateSerializer(ReportSerializerBase):
         """Metaclass options."""
 
         model = report.models.ReportTemplate
-        fields = [*ReportSerializerBase.base_fields(), 'page_size', 'landscape']
+        fields = [
+            *ReportSerializerBase.base_fields(),
+            'page_size',
+            'landscape',
+            'merge',
+        ]
 
     page_size = serializers.ChoiceField(
         required=False,
@@ -159,59 +163,6 @@ class LabelTemplateSerializer(ReportSerializerBase):
 
         model = report.models.LabelTemplate
         fields = [*ReportSerializerBase.base_fields(), 'width', 'height']
-
-
-class BaseOutputSerializer(InvenTreeModelSerializer):
-    """Base serializer class for template output."""
-
-    @staticmethod
-    def base_fields():
-        """Basic field set."""
-        return [
-            'pk',
-            'created',
-            'user',
-            'user_detail',
-            'model_type',
-            'items',
-            'complete',
-            'progress',
-            'output',
-            'template',
-        ]
-
-    output = InvenTreeAttachmentSerializerField()
-    model_type = serializers.CharField(source='template.model_type', read_only=True)
-
-    user_detail = UserSerializer(source='user', read_only=True, many=False)
-
-
-class LabelOutputSerializer(BaseOutputSerializer):
-    """Serializer class for the LabelOutput model."""
-
-    class Meta:
-        """Metaclass options."""
-
-        model = report.models.LabelOutput
-        fields = [*BaseOutputSerializer.base_fields(), 'plugin', 'template_detail']
-
-    template_detail = LabelTemplateSerializer(
-        source='template', many=False, read_only=True
-    )
-
-
-class ReportOutputSerializer(BaseOutputSerializer):
-    """Serializer class for the ReportOutput model."""
-
-    class Meta:
-        """Metaclass options."""
-
-        model = report.models.ReportOutput
-        fields = [*BaseOutputSerializer.base_fields(), 'template_detail']
-
-    template_detail = ReportTemplateSerializer(
-        source='template', many=False, read_only=True
-    )
 
 
 class ReportSnippetSerializer(InvenTreeModelSerializer):

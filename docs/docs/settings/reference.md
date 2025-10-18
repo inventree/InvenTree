@@ -4,7 +4,7 @@ title: Reference Patterns
 
 ## Reference Patterns
 
-InvenTree contains a number of data models which require a *unique* reference field (such as [Purchase Orders](../order/purchase_order.md)). In addition to being *unique* these reference values must conform to a specific *pattern* (which can be defined by the user). Defined reference patterns also make it simple for the user to control how references are generated.
+InvenTree contains a number of data models which require a *unique* reference field (such as [Purchase Orders](../purchasing/purchase_order.md)). In addition to being *unique* these reference values must conform to a specific *pattern* (which can be defined by the user). Defined reference patterns also make it simple for the user to control how references are generated.
 
 ### Default Patterns
 

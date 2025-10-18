@@ -1,9 +1,8 @@
+import type { ApiFormFieldType } from '@lib/types/Forms';
 import { Select } from '@mantine/core';
 import { useId } from '@mantine/hooks';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 import type { FieldValues, UseControllerReturn } from 'react-hook-form';
-
-import type { ApiFormFieldType } from './ApiFormField';
 
 /**
  * Render a 'select' field for selecting from a list of choices
@@ -18,6 +17,7 @@ export function ChoiceField({
   fieldName: string;
 }>) {
   const fieldId = useId();
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const {
     field,
@@ -43,6 +43,11 @@ export function ChoiceField({
   // Update form values when the selected value changes
   const onChange = useCallback(
     (value: any) => {
+      // Prevent blank values if the field is required
+      if (definition.required && !value) {
+        return;
+      }
+
       field.onChange(value);
 
       // Run custom callback for this field (if provided)
@@ -66,6 +71,8 @@ export function ChoiceField({
       error={definition.error ?? error?.message}
       radius='sm'
       {...field}
+      ref={inputRef}
+      onDropdownOpen={() => inputRef?.current?.select()}
       onChange={onChange}
       data={choices}
       value={choiceValue}
@@ -77,6 +84,7 @@ export function ChoiceField({
       leftSection={definition.icon}
       comboboxProps={{ withinPortal: true }}
       searchable
+      selectFirstOptionOnChange
     />
   );
 }

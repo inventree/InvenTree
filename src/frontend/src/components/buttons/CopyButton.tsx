@@ -1,7 +1,8 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import {
   ActionIcon,
   Button,
+  type DefaultMantineColor,
   CopyButton as MantineCopyButton,
   type MantineSize,
   Text,
@@ -10,16 +11,20 @@ import {
 
 import { InvenTreeIcon } from '../../functions/icons';
 
+import type { JSX } from 'react';
+
 export function CopyButton({
   value,
   label,
   content,
-  size
+  size,
+  color = 'gray'
 }: Readonly<{
   value: any;
   label?: string;
   content?: JSX.Element;
   size?: MantineSize;
+  color?: DefaultMantineColor;
 }>) {
   const ButtonComponent = label ? Button : ActionIcon;
 
@@ -28,7 +33,7 @@ export function CopyButton({
       {({ copied, copy }) => (
         <Tooltip label={copied ? t`Copied` : t`Copy`} withArrow>
           <ButtonComponent
-            color={copied ? 'teal' : 'gray'}
+            color={copied ? 'teal' : color}
             onClick={copy}
             variant='transparent'
             size={size ?? 'sm'}

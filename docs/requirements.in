@@ -2,7 +2,9 @@ mkdocs==1.6.1
 mkdocs-macros-plugin>=0.7,<2.0
 mkdocs-material>=9.0,<10.0
 mkdocs-git-revision-date-localized-plugin>=1.1,<2.0
+mkdocs-redirects
 mkdocs-simple-hooks>=0.1,<1.0
 mkdocs-include-markdown-plugin
 neoteroi-mkdocs
-mkdocstrings[python]>=0.25.0
+mkdocstrings[python]>=0.25.0,<=0.30.1
+mkdocs-mermaid2-plugin

@@ -1,25 +1,50 @@
-import { t } from '@lingui/macro';
+import {
+  type RowAction,
+  RowDuplicateAction,
+  RowEditAction
+} from '@lib/components/RowActions';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import type { TableFilter } from '@lib/types/Filters';
+import type { ApiFormFieldSet } from '@lib/types/Forms';
+import type { TableColumn } from '@lib/types/Tables';
+import type { InvenTreeTableProps } from '@lib/types/Tables';
+import { t } from '@lingui/core/macro';
 import { Group, Text } from '@mantine/core';
-import { type ReactNode, useMemo } from 'react';
-
-import { IconShoppingCart } from '@tabler/icons-react';
-import { AddItemButton } from '../../components/buttons/AddItemButton';
+import {
+  IconFileUpload,
+  IconPackageImport,
+  IconPlus,
+  IconShoppingCart
+} from '@tabler/icons-react';
+import { type ReactNode, useCallback, useMemo, useState } from 'react';
+import ImporterDrawer from '../../components/importer/ImporterDrawer';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
+import ImportPartWizard from '../../components/wizards/ImportPartWizard';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
-import { formatPriceRange } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
+import { formatDecimal, formatPriceRange } from '../../defaults/formatters';
+import { dataImporterSessionFields } from '../../forms/ImporterForms';
 import { usePartFields } from '../../forms/PartForms';
 import { InvenTreeIcon } from '../../functions/icons';
-import { useCreateApiFormModal } from '../../hooks/UseForm';
+import {
+  useBulkEditApiFormModal,
+  useCreateApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
+import { usePluginsWithMixin } from '../../hooks/UsePlugins';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
-import { DescriptionColumn, LinkColumn, PartColumn } from '../ColumnRenderers';
-import type { TableFilter } from '../Filter';
-import { InvenTreeTable, type InvenTreeTableProps } from '../InvenTreeTable';
+import {
+  CategoryColumn,
+  DefaultLocationColumn,
+  DescriptionColumn,
+  LinkColumn,
+  PartColumn
+} from '../ColumnRenderers';
+import { InvenTreeTable } from '../InvenTreeTable';
 import { TableHoverCard } from '../TableHoverCard';
 
 /**
@@ -27,13 +52,10 @@ import { TableHoverCard } from '../TableHoverCard';
  */
 function partTableColumns(): TableColumn[] {
   return [
-    {
-      accessor: 'name',
-      title: t`Part`,
-      sortable: true,
-      noWrap: true,
-      render: (record: any) => PartColumn({ part: record })
-    },
+    PartColumn({
+      part: '',
+      accessor: 'name'
+    }),
     {
       accessor: 'IPN',
       sortable: true
@@ -47,16 +69,12 @@ function partTableColumns(): TableColumn[] {
       sortable: true
     },
     DescriptionColumn({}),
-    {
-      accessor: 'category',
-      sortable: true,
-      render: (record: any) => record.category_detail?.pathstring
-    },
-    {
-      accessor: 'default_location',
-      sortable: true,
-      render: (record: any) => record.default_location_detail?.pathstring
-    },
+    CategoryColumn({
+      accessor: 'category_detail'
+    }),
+    DefaultLocationColumn({
+      accessor: 'default_location_detail'
+    }),
     {
       accessor: 'total_in_stock',
       sortable: true,
@@ -71,14 +89,14 @@ function partTableColumns(): TableColumn[] {
         const available = Math.max(0, stock - allocated);
         const min_stock = record?.minimum_stock ?? 0;
 
-        let text = String(stock);
+        let text = String(formatDecimal(stock));
 
         let color: string | undefined = undefined;
 
         if (min_stock > stock) {
           extra.push(
             <Text key='min-stock' c='orange'>
-              {`${t`Minimum stock`}: ${min_stock}`}
+              {`${t`Minimum stock`}: ${formatDecimal(min_stock)}`}
             </Text>
           );
 
@@ -87,20 +105,20 @@ function partTableColumns(): TableColumn[] {
 
         if (record.ordering > 0) {
           extra.push(
-            <Text key='on-order'>{`${t`On Order`}: ${record.ordering}`}</Text>
+            <Text key='on-order'>{`${t`On Order`}: ${formatDecimal(record.ordering)}`}</Text>
           );
         }
 
         if (record.building) {
           extra.push(
-            <Text key='building'>{`${t`Building`}: ${record.building}`}</Text>
+            <Text key='building'>{`${t`Building`}: ${formatDecimal(record.building)}`}</Text>
           );
         }
 
         if (record.allocated_to_build_orders > 0) {
           extra.push(
             <Text key='bo-allocations'>
-              {`${t`Build Order Allocations`}: ${record.allocated_to_build_orders}`}
+              {`${t`Build Order Allocations`}: ${formatDecimal(record.allocated_to_build_orders)}`}
             </Text>
           );
         }
@@ -108,7 +126,7 @@ function partTableColumns(): TableColumn[] {
         if (record.allocated_to_sales_orders > 0) {
           extra.push(
             <Text key='so-allocations'>
-              {`${t`Sales Order Allocations`}: ${record.allocated_to_sales_orders}`}
+              {`${t`Sales Order Allocations`}: ${formatDecimal(record.allocated_to_sales_orders)}`}
             </Text>
           );
         }
@@ -116,7 +134,7 @@ function partTableColumns(): TableColumn[] {
         if (available != stock) {
           extra.push(
             <Text key='available'>
-              {t`Available`}: {available}
+              {t`Available`}: {formatDecimal(available)}
             </Text>
           );
         }
@@ -124,7 +142,7 @@ function partTableColumns(): TableColumn[] {
         if (record.external_stock > 0) {
           extra.push(
             <Text key='external'>
-              {t`External stock`}: {record.external_stock}
+              {t`External stock`}: {formatDecimal(record.external_stock)}
             </Text>
           );
         }
@@ -161,6 +179,7 @@ function partTableColumns(): TableColumn[] {
       title: t`Price Range`,
       sortable: true,
       ordering: 'pricing_max',
+      defaultVisible: false,
       render: (record: any) =>
         formatPriceRange(record.pricing_min, record.pricing_max)
     },
@@ -189,6 +208,12 @@ function partTableFilters(): TableFilter[] {
       name: 'assembly',
       label: t`Assembly`,
       description: t`Filter by assembly attribute`,
+      type: 'boolean'
+    },
+    {
+      name: 'bom_valid',
+      label: t`BOM Valid`,
+      description: t`Filter by parts with a valid BOM`,
       type: 'boolean'
     },
     {
@@ -300,12 +325,6 @@ function partTableFilters(): TableFilter[] {
       label: t`Subscribed`,
       description: t`Filter by parts to which the user is subscribed`,
       type: 'boolean'
-    },
-    {
-      name: 'stocktake',
-      label: t`Has Stocktake`,
-      description: t`Filter by parts which have stocktake information`,
-      type: 'boolean'
     }
   ];
 }
@@ -316,10 +335,12 @@ function partTableFilters(): TableFilter[] {
  * @returns
  */
 export function PartListTable({
+  enableImport = true,
   props,
   defaultPartData
 }: Readonly<{
-  props: InvenTreeTableProps;
+  enableImport?: boolean;
+  props?: InvenTreeTableProps;
   defaultPartData?: any;
 }>) {
   const tableColumns = useMemo(() => partTableColumns(), []);
@@ -327,10 +348,41 @@ export function PartListTable({
 
   const table = useTable('part-list');
   const user = useUserState();
+  const globalSettings = useGlobalSettingsState();
+
+  const [importOpened, setImportOpened] = useState<boolean>(false);
+
+  const [selectedSession, setSelectedSession] = useState<number | undefined>(
+    undefined
+  );
+
+  const importSessionFields = useMemo(() => {
+    const fields = dataImporterSessionFields({
+      modelType: ModelType.part
+    });
+
+    // Override default field values with provided fields
+    fields.field_defaults.value = {
+      ...props?.params,
+      ...defaultPartData
+    };
+
+    return fields;
+  }, [defaultPartData, props?.params]);
+
+  const importParts = useCreateApiFormModal({
+    url: ApiEndpoints.import_session_list,
+    title: t`Import Parts`,
+    fields: importSessionFields,
+    onFormSuccess: (response: any) => {
+      setSelectedSession(response.pk);
+      setImportOpened(true);
+    }
+  });
 
   const initialPartData = useMemo(() => {
-    return defaultPartData ?? props.params ?? {};
-  }, [defaultPartData, props.params]);
+    return defaultPartData ?? props?.params ?? {};
+  }, [defaultPartData, props?.params]);
 
   const newPart = useCreateApiFormModal({
     url: ApiEndpoints.part_list,
@@ -341,7 +393,105 @@ export function PartListTable({
     modelType: ModelType.part
   });
 
+  const [selectedPart, setSelectedPart] = useState<any>({});
+
+  const editPart = useEditApiFormModal({
+    url: ApiEndpoints.part_list,
+    pk: selectedPart.pk,
+    title: t`Edit Part`,
+    fields: usePartFields({ create: false }),
+    onFormSuccess: table.refreshTable
+  });
+
+  const createPartFields = usePartFields({ create: true });
+
+  const duplicatePartFields: ApiFormFieldSet = useMemo(() => {
+    return {
+      ...createPartFields,
+      duplicate: {
+        children: {
+          part: {
+            value: selectedPart.pk,
+            hidden: true
+          },
+          copy_image: {
+            value: true
+          },
+          copy_bom: {
+            value:
+              selectedPart.assembly && globalSettings.isSet('PART_COPY_BOM'),
+            hidden: !selectedPart.assembly
+          },
+          copy_notes: {
+            value: true
+          },
+          copy_parameters: {
+            value: globalSettings.isSet('PART_COPY_PARAMETERS')
+          },
+          copy_tests: {
+            value: selectedPart.testable,
+            hidden: !selectedPart.testable
+          }
+        }
+      }
+    };
+  }, [createPartFields, globalSettings, selectedPart]);
+
+  const duplicatePart = useCreateApiFormModal({
+    url: ApiEndpoints.part_list,
+    title: t`Add Part`,
+    fields: duplicatePartFields,
+    initialData: {
+      ...selectedPart,
+      active: true,
+      locked: false
+    },
+    follow: false,
+    modelType: ModelType.part,
+    onFormSuccess: table.refreshTable
+  });
+
+  const setCategory = useBulkEditApiFormModal({
+    url: ApiEndpoints.part_list,
+    items: table.selectedIds,
+    title: t`Set Category`,
+    fields: {
+      category: {}
+    },
+    onFormSuccess: table.refreshTable
+  });
+
   const orderPartsWizard = OrderPartsWizard({ parts: table.selectedRecords });
+
+  const supplierPlugins = usePluginsWithMixin('supplier');
+  const importPartWizard = ImportPartWizard({
+    categoryId: initialPartData.category
+  });
+
+  const rowActions = useCallback(
+    (record: any): RowAction[] => {
+      const can_edit = user.hasChangePermission(ModelType.part);
+      const can_add = user.hasAddPermission(ModelType.part);
+
+      return [
+        RowEditAction({
+          hidden: !can_edit,
+          onClick: () => {
+            setSelectedPart(record);
+            editPart.open();
+          }
+        }),
+        RowDuplicateAction({
+          hidden: !can_add,
+          onClick: () => {
+            setSelectedPart(record);
+            duplicatePart.open();
+          }
+        })
+      ];
+    },
+    [user, editPart, duplicatePart]
+  );
 
   const tableActions = useMemo(() => {
     return [
@@ -349,30 +499,70 @@ export function PartListTable({
         tooltip={t`Part Actions`}
         icon={<InvenTreeIcon icon='part' />}
         disabled={!table.hasSelectedRecords}
+        position='bottom-start'
         actions={[
+          {
+            name: t`Set Category`,
+            icon: <InvenTreeIcon icon='category' />,
+            tooltip: t`Set category for selected parts`,
+            hidden: !user.hasChangeRole(UserRoles.part),
+            disabled: !table.hasSelectedRecords,
+            onClick: () => {
+              setCategory.open();
+            }
+          },
           {
             name: t`Order Parts`,
             icon: <IconShoppingCart color='blue' />,
             tooltip: t`Order selected parts`,
+            hidden: !user.hasAddRole(UserRoles.purchase_order),
             onClick: () => {
               orderPartsWizard.openWizard();
             }
           }
         ]}
       />,
-      <AddItemButton
-        key='add-part'
+      <ActionDropdown
+        key='add-parts-actions'
+        tooltip={t`Add Parts`}
+        position='bottom-start'
+        icon={<IconPlus />}
         hidden={!user.hasAddRole(UserRoles.part)}
-        tooltip={t`Add Part`}
-        onClick={() => newPart.open()}
+        actions={[
+          {
+            name: t`Create Part`,
+            icon: <IconPlus />,
+            tooltip: t`Create a new part`,
+            onClick: () => newPart.open()
+          },
+          {
+            name: t`Import from File`,
+            icon: <IconFileUpload />,
+            tooltip: t`Import parts from a file`,
+            onClick: () => importParts.open(),
+            hidden: !enableImport
+          },
+          {
+            name: t`Import from Supplier`,
+            icon: <IconPackageImport />,
+            tooltip: t`Import parts from a supplier plugin`,
+            hidden: !enableImport || supplierPlugins.length === 0,
+            onClick: () => importPartWizard.openWizard()
+          }
+        ]}
       />
     ];
-  }, [user, table.hasSelectedRecords]);
+  }, [user, enableImport, table.hasSelectedRecords, supplierPlugins]);
 
   return (
     <>
       {newPart.modal}
+      {duplicatePart.modal}
+      {editPart.modal}
+      {setCategory.modal}
+      {importParts.modal}
       {orderPartsWizard.wizard}
+      {importPartWizard.wizard}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.part_list)}
         tableState={table}
@@ -383,14 +573,24 @@ export function PartListTable({
           modelType: ModelType.part,
           tableFilters: tableFilters,
           tableActions: tableActions,
+          rowActions: rowActions,
           enableSelection: true,
           enableReports: true,
           enableLabels: true,
           params: {
-            ...props.params,
+            ...props?.params,
             category_detail: true,
             location_detail: true
           }
+        }}
+      />
+      <ImporterDrawer
+        sessionId={selectedSession ?? -1}
+        opened={selectedSession != undefined && importOpened}
+        onClose={() => {
+          setSelectedSession(undefined);
+          setImportOpened(false);
+          table.refreshTable();
         }}
       />
     </>

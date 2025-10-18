@@ -2,10 +2,9 @@
 
 import logging
 import os
-from pathlib import Path
 
 from django.apps import AppConfig
-from django.core.exceptions import AppRegistryNotReady
+from django.core.exceptions import AppRegistryNotReady, ValidationError
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.db.utils import IntegrityError, OperationalError, ProgrammingError
@@ -15,6 +14,7 @@ from maintenance_mode.core import maintenance_mode_on, set_maintenance_mode
 
 import InvenTree.exceptions
 import InvenTree.ready
+from InvenTree.config import get_base_dir
 
 logger = structlog.getLogger('inventree')
 
@@ -32,9 +32,11 @@ class ReportConfig(AppConfig):
         for name, log_manager in logging.root.manager.loggerDict.items():
             if name.lower().startswith(('fonttools', 'weasyprint')):
                 if hasattr(log_manager, 'setLevel'):
-                    log_manager.setLevel(logging.WARNING)
+                    log_manager.setLevel(logging.ERROR)
 
         super().ready()
+
+        self.cleanup()
 
         # skip loading if plugin registry is not loaded or we run in a background thread
         if (
@@ -50,6 +52,8 @@ class ReportConfig(AppConfig):
             try:
                 self.create_default_labels()
                 self.create_default_reports()
+            except ValidationError:
+                logger.warning('Validation error when creating default templates')
             except (
                 AppRegistryNotReady,
                 IntegrityError,
@@ -62,17 +66,31 @@ class ReportConfig(AppConfig):
 
         set_maintenance_mode(False)
 
-    def file_from_template(self, dir_name: str, file_name: str) -> ContentFile:
-        """Construct a new ContentFile from a template file."""
-        logger.info('Creating %s template file: %s', dir_name, file_name)
+    def cleanup(self):
+        """Cleanup old label and report outputs."""
+        try:
+            from report.tasks import cleanup_old_report_outputs  # type: ignore[import]
 
-        return ContentFile(
-            Path(__file__)
-            .parent.joinpath('templates', dir_name, file_name)
-            .open('r')
-            .read(),
-            os.path.basename(file_name),
-        )
+            cleanup_old_report_outputs()
+        except Exception:
+            pass
+
+    def file_from_template(self, dir_name: str, file_name: str) -> ContentFile:
+        """Construct a new ContentFile from a template file.
+
+        Args:
+            dir_name (str): The name of the directory containing the template
+            file_name (str): The name of the template file
+        Returns:
+            ContentFile: The ContentFile object containing the template
+        """
+        logger.info('Creating %s template file: %s', dir_name, file_name)
+        file = get_base_dir().joinpath('report', 'templates', dir_name, file_name)
+        if not file.exists():
+            raise FileNotFoundError(
+                'Template file %s does not exist in %s', file_name, file
+            )
+        return ContentFile(file.open('r').read(), os.path.basename(file_name))
 
     def create_default_labels(self):
         """Create default label templates."""
@@ -146,8 +164,12 @@ class ReportConfig(AppConfig):
                     **template, template=self.file_from_template('label', filename)
                 )
                 logger.info("Creating new label template: '%s'", template['name'])
+            except ValidationError:
+                logger.warning(
+                    "Could not create label template: '%s'", template['name']
+                )
             except Exception:
-                InvenTree.exceptions.log_error('create_default_labels')
+                InvenTree.exceptions.log_error('create_default_labels', scope='init')
 
     def create_default_reports(self):
         """Create default report templates."""
@@ -209,6 +231,13 @@ class ReportConfig(AppConfig):
                 'model_type': 'stockitem',
             },
             {
+                'file': 'inventree_stock_report_merge.html',
+                'name': 'InvenTree Default Stock Report Merge',
+                'description': 'Sample stock item report merge',
+                'model_type': 'stockitem',
+                'merge': True,
+            },
+            {
                 'file': 'inventree_stock_location_report.html',
                 'name': 'InvenTree Stock Location Report',
                 'description': 'Sample stock location report',
@@ -228,6 +257,7 @@ class ReportConfig(AppConfig):
                     existing_template.template = self.file_from_template(
                         'report', filename
                     )
+
                     existing_template.save()
                 continue
 
@@ -237,5 +267,9 @@ class ReportConfig(AppConfig):
                     **template, template=self.file_from_template('report', filename)
                 )
                 logger.info("Created new report template: '%s'", template['name'])
+            except ValidationError:
+                logger.warning(
+                    "Could not create report template: '%s'", template['name']
+                )
             except Exception:
-                InvenTree.exceptions.log_error('create_default_reports')
+                InvenTree.exceptions.log_error('create_default_reports', scope='init')

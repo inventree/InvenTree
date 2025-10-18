@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Optional
+
 from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
@@ -13,6 +15,7 @@ from InvenTree.exceptions import log_error
 from InvenTree.models import InvenTreeBarcodeMixin
 from order.models import PurchaseOrder
 from part.models import Part
+from plugin import PluginMixinEnum
 from plugin.base.integration.SettingsMixin import SettingsMixin
 
 logger = structlog.get_logger('inventree')
@@ -34,7 +37,7 @@ class BarcodeMixin:
     def __init__(self):
         """Register mixin."""
         super().__init__()
-        self.add_mixin('barcode', 'has_barcode', __class__)
+        self.add_mixin(PluginMixinEnum.BARCODE, 'has_barcode', __class__)
 
     @property
     def has_barcode(self):
@@ -68,7 +71,7 @@ class BarcodeMixin:
 
         return True
 
-    def generate(self, model_instance: InvenTreeBarcodeMixin):
+    def generate(self, model_instance: InvenTreeBarcodeMixin) -> str:
         """Generate barcode data for the given model instance.
 
         Arguments:
@@ -104,7 +107,7 @@ class SupplierBarcodeMixin(BarcodeMixin):
     def __init__(self):
         """Register mixin."""
         super().__init__()
-        self.add_mixin('supplier-barcode', True, __class__)
+        self.add_mixin(PluginMixinEnum.SUPPLIER_BARCODE, True, __class__)
 
     def get_field_value(self, key, backup_value=None):
         """Return the value of a barcode field."""
@@ -112,7 +115,7 @@ class SupplierBarcodeMixin(BarcodeMixin):
 
         return fields.get(key, backup_value)
 
-    def get_part(self) -> Part | None:
+    def get_part(self) -> Optional[Part]:
         """Extract the Part object from the barcode fields."""
         # TODO: Implement this
         return None
@@ -127,7 +130,7 @@ class SupplierBarcodeMixin(BarcodeMixin):
         """Return the supplier part number from the barcode fields."""
         return self.get_field_value(self.SUPPLIER_PART_NUMBER)
 
-    def get_supplier_part(self) -> SupplierPart | None:
+    def get_supplier_part(self) -> Optional[SupplierPart]:
         """Return the SupplierPart object for the scanned barcode.
 
         Returns:
@@ -171,7 +174,7 @@ class SupplierBarcodeMixin(BarcodeMixin):
         """Return the manufacturer part number from the barcode fields."""
         return self.get_field_value(self.MANUFACTURER_PART_NUMBER)
 
-    def get_manufacturer_part(self) -> ManufacturerPart | None:
+    def get_manufacturer_part(self) -> Optional[ManufacturerPart]:
         """Return the ManufacturerPart object for the scanned barcode.
 
         Returns:
@@ -212,7 +215,7 @@ class SupplierBarcodeMixin(BarcodeMixin):
         """Return the supplier order number from the barcode fields."""
         return self.get_field_value(self.SUPPLIER_ORDER_NUMBER)
 
-    def get_purchase_order(self) -> PurchaseOrder | None:
+    def get_purchase_order(self) -> Optional[PurchaseOrder]:
         """Extract the PurchaseOrder object from the barcode fields.
 
         Inspect the customer_order_number and supplier_order_number fields,
@@ -259,7 +262,7 @@ class SupplierBarcodeMixin(BarcodeMixin):
             'extract_barcode_fields must be implemented by each plugin'
         )
 
-    def scan(self, barcode_data: str) -> dict:
+    def scan(self, barcode_data: str) -> Optional[dict]:
         """Perform a generic 'scan' operation on a supplier barcode.
 
         The supplier barcode may provide sufficient information to match against
@@ -318,7 +321,7 @@ class SupplierBarcodeMixin(BarcodeMixin):
         location=None,
         auto_allocate: bool = True,
         **kwargs,
-    ) -> dict | None:
+    ) -> Optional[dict]:
         """Attempt to receive an item against a PurchaseOrder via barcode scanning.
 
         Arguments:
@@ -424,12 +427,12 @@ class SupplierBarcodeMixin(BarcodeMixin):
                 response['error'] = e.message
             except Exception:
                 # Handle any other exceptions
-                log_error('scan_receive_item')
+                log_error('scan_receive_item', plugin=self.slug)
                 response['error'] = _('Failed to receive line item')
 
         return response
 
-    def get_supplier(self, cache: bool = False) -> Company | None:
+    def get_supplier(self, cache: bool = False) -> Optional[Company]:
         """Get the supplier for the SUPPLIER_ID set in the plugin settings.
 
         If it's not defined, try to guess it and set it if possible.
@@ -460,9 +463,12 @@ class SupplierBarcodeMixin(BarcodeMixin):
         if len(suppliers) != 1:
             return _cache_supplier(None)
 
-        self.set_setting('SUPPLIER_ID', suppliers.first().pk)
+        supplier = suppliers.first()
+        assert supplier
 
-        return _cache_supplier(suppliers.first())
+        self.set_setting('SUPPLIER_ID', supplier.pk)
+
+        return _cache_supplier(supplier)
 
     @classmethod
     def ecia_field_map(cls):

@@ -1,13 +1,13 @@
 """Build database model definitions."""
 
 import decimal
-from datetime import datetime
+from typing import Optional
 
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models, transaction
-from django.db.models import F, Q, Sum
+from django.db.models import F, Q, QuerySet, Sum
 from django.db.models.functions import Coalesce
 from django.db.models.signals import post_save
 from django.dispatch.dispatcher import receiver
@@ -15,8 +15,7 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 import structlog
-from mptt.exceptions import InvalidMove
-from mptt.models import MPTTModel, TreeForeignKey
+from mptt.models import TreeForeignKey
 from rest_framework import serializers
 
 import generic.states
@@ -31,7 +30,7 @@ import report.mixins
 import stock.models
 import users.models
 from build.events import BuildEvents
-from build.filters import annotate_allocated_quantity
+from build.filters import annotate_allocated_quantity, annotate_required_quantity
 from build.status_codes import BuildStatus, BuildStatusGroups
 from build.validators import (
     generate_next_build_reference,
@@ -50,17 +49,41 @@ from stock.status_codes import StockHistoryCode, StockStatus
 logger = structlog.get_logger('inventree')
 
 
+class BuildReportContext(report.mixins.BaseReportContext):
+    """Context for the Build model.
+
+    Attributes:
+        bom_items: Query set of all BuildItem objects associated with the BuildOrder
+        build: The BuildOrder instance itself
+        build_outputs: Query set of all BuildItem objects associated with the BuildOrder
+        line_items: Query set of all build line items associated with the BuildOrder
+        part: The Part object which is being assembled in the build order
+        quantity: The total quantity of the part being assembled
+        reference: The reference field of the BuildOrder
+        title: The title field of the BuildOrder
+    """
+
+    bom_items: report.mixins.QuerySet[part.models.BomItem]
+    build: 'Build'
+    build_outputs: report.mixins.QuerySet[stock.models.StockItem]
+    line_items: report.mixins.QuerySet['BuildLine']
+    part: part.models.Part
+    quantity: int
+    reference: str
+    title: str
+
+
 class Build(
+    InvenTree.models.PluginValidationMixin,
     report.mixins.InvenTreeReportMixin,
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,
-    InvenTree.models.MetadataMixin,
-    InvenTree.models.PluginValidationMixin,
     InvenTree.models.ReferenceIndexingMixin,
     StateTransitionMixin,
     StatusCodeMixin,
-    MPTTModel,
+    InvenTree.models.MetadataMixin,
+    InvenTree.models.InvenTreeTree,
 ):
     """A Build object organises the creation of new StockItem objects from other existing StockItem objects.
 
@@ -73,6 +96,7 @@ class Build(
         sales_order: References to a SalesOrder object for which this Build is required (e.g. the output of this build will be used to fulfil a sales order)
         take_from: Location to take stock from to make this build (if blank, can take from anywhere)
         status: Build status code
+        external: Set to indicate that this build order is fulfilled externally
         batch: Batch code transferred to build parts (optional)
         creation_date: Date the build was created (auto)
         target_date: Date the build will be overdue
@@ -92,6 +116,11 @@ class Build(
 
         verbose_name = _('Build Order')
         verbose_name_plural = _('Build Orders')
+
+    class MPTTMeta:
+        """MPTT options for the BuildOrder model."""
+
+        order_insertion_by = ['reference']
 
     OVERDUE_FILTER = (
         Q(status__in=BuildStatusGroups.ACTIVE_CODES)
@@ -159,14 +188,18 @@ class Build(
             if not self.destination:
                 self.destination = self.part.get_default_location()
 
-        try:
-            super().save(*args, **kwargs)
-        except InvalidMove:
-            raise ValidationError({'parent': _('Invalid choice for parent build')})
+        super().save(*args, **kwargs)
 
     def clean(self):
         """Validate the BuildOrder model."""
         super().clean()
+
+        if self.external and not self.part.purchaseable:
+            raise ValidationError({
+                'external': _(
+                    'Build orders can only be externally fulfilled for purchaseable parts'
+                )
+            })
 
         if get_global_setting('BUILDORDER_REQUIRE_RESPONSIBLE'):
             if not self.responsible:
@@ -184,7 +217,7 @@ class Build(
                 'target_date': _('Target date must be after start date')
             })
 
-    def report_context(self) -> dict:
+    def report_context(self) -> BuildReportContext:
         """Generate custom report context data."""
         return {
             'bom_items': self.part.get_bom_items(),
@@ -196,44 +229,6 @@ class Build(
             'reference': self.reference,
             'title': str(self),
         }
-
-    @staticmethod
-    def filterByDate(queryset, min_date, max_date):
-        """Filter by 'minimum and maximum date range'.
-
-        - Specified as min_date, max_date
-        - Both must be specified for filter to be applied
-        """
-        date_fmt = '%Y-%m-%d'  # ISO format date string
-
-        # Ensure that both dates are valid
-        try:
-            min_date = datetime.strptime(str(min_date), date_fmt).date()
-            max_date = datetime.strptime(str(max_date), date_fmt).date()
-        except (ValueError, TypeError):
-            # Date processing error, return queryset unchanged
-            return queryset
-
-        # Order was completed within the specified range
-        completed = (
-            Q(status=BuildStatus.COMPLETE.value)
-            & Q(completion_date__gte=min_date)
-            & Q(completion_date__lte=max_date)
-        )
-
-        # Order target date falls within specified range
-        pending = (
-            Q(status__in=BuildStatusGroups.ACTIVE_CODES)
-            & ~Q(target_date=None)
-            & Q(target_date__gte=min_date)
-            & Q(target_date__lte=max_date)
-        )
-
-        # TODO - Construct a queryset for "overdue" orders
-
-        queryset = queryset.filter(completed | pending)
-
-        return queryset
 
     def __str__(self):
         """String representation of a BuildOrder."""
@@ -299,6 +294,12 @@ class Build(
         help_text=_(
             'Select location to take stock from for this build (leave blank to take from any stock location)'
         ),
+    )
+
+    external = models.BooleanField(
+        default=False,
+        verbose_name=_('External Build'),
+        help_text=_('This build order is fulfilled externally'),
     )
 
     destination = models.ForeignKey(
@@ -422,14 +423,14 @@ class Build(
         help_text=_('Project code for this build order'),
     )
 
-    def sub_builds(self, cascade=True):
+    def sub_builds(self, cascade: bool = True) -> QuerySet:
         """Return all Build Order objects under this one."""
         if cascade:
             return self.get_descendants(include_self=False)
         else:
             return self.get_children()
 
-    def sub_build_count(self, cascade=True):
+    def sub_build_count(self, cascade: bool = True) -> int:
         """Return the number of sub builds under this one.
 
         Args:
@@ -438,14 +439,14 @@ class Build(
         return self.sub_builds(cascade=cascade).count()
 
     @property
-    def has_open_child_builds(self):
+    def has_open_child_builds(self) -> bool:
         """Return True if this build order has any open child builds."""
         return (
             self.sub_builds().filter(status__in=BuildStatusGroups.ACTIVE_CODES).exists()
         )
 
     @property
-    def is_overdue(self):
+    def is_overdue(self) -> bool:
         """Returns true if this build is "overdue".
 
         Makes use of the OVERDUE_FILTER to avoid code duplication
@@ -459,30 +460,30 @@ class Build(
         return query.exists()
 
     @property
-    def active(self):
+    def active(self) -> bool:
         """Return True if this build is active."""
         return self.status in BuildStatusGroups.ACTIVE_CODES
 
     @property
-    def tracked_line_items(self):
+    def tracked_line_items(self) -> QuerySet:
         """Returns the "trackable" BOM lines for this BuildOrder."""
         return self.build_lines.filter(bom_item__sub_part__trackable=True)
 
-    def has_tracked_line_items(self):
+    def has_tracked_line_items(self) -> bool:
         """Returns True if this BuildOrder has trackable BomItems."""
         return self.tracked_line_items.count() > 0
 
     @property
-    def untracked_line_items(self):
+    def untracked_line_items(self) -> QuerySet:
         """Returns the "non trackable" BOM items for this BuildOrder."""
         return self.build_lines.filter(bom_item__sub_part__trackable=False)
 
     @property
-    def are_untracked_parts_allocated(self):
+    def are_untracked_parts_allocated(self) -> bool:
         """Returns True if all untracked parts are allocated for this BuildOrder."""
         return self.is_fully_allocated(tracked=False)
 
-    def has_untracked_line_items(self):
+    def has_untracked_line_items(self) -> bool:
         """Returns True if this BuildOrder has non trackable BomItems."""
         return self.has_untracked_line_items.count() > 0
 
@@ -492,15 +493,15 @@ class Build(
         return max(0, self.quantity - self.completed)
 
     @property
-    def output_count(self):
+    def output_count(self) -> int:
         """Return the number of build outputs (StockItem) associated with this build order."""
         return self.build_outputs.count()
 
-    def has_build_outputs(self):
+    def has_build_outputs(self) -> bool:
         """Returns True if this build has more than zero build outputs."""
         return self.output_count > 0
 
-    def get_build_outputs(self, **kwargs):
+    def get_build_outputs(self, **kwargs) -> QuerySet:
         """Return a list of build outputs.
 
         kwargs:
@@ -530,7 +531,7 @@ class Build(
         return outputs
 
     @property
-    def complete_outputs(self):
+    def complete_outputs(self) -> QuerySet:
         """Return all the "completed" build outputs."""
         outputs = self.get_build_outputs(complete=True)
 
@@ -546,12 +547,12 @@ class Build(
 
         return quantity
 
-    def is_partially_allocated(self):
+    def is_partially_allocated(self) -> bool:
         """Test is this build order has any stock allocated against it."""
         return self.allocated_stock.count() > 0
 
     @property
-    def incomplete_outputs(self):
+    def incomplete_outputs(self) -> QuerySet:
         """Return all the "incomplete" build outputs."""
         outputs = self.get_build_outputs(complete=False)
 
@@ -605,7 +606,7 @@ class Build(
         return new_ref
 
     @property
-    def can_complete(self):
+    def can_complete(self) -> bool:
         """Returns True if this BuildOrder is ready to be completed.
 
         - Must not have any outstanding build outputs
@@ -630,7 +631,7 @@ class Build(
         return self.is_fully_allocated(tracked=False)
 
     @transaction.atomic
-    def complete_allocations(self, user):
+    def complete_allocations(self, user) -> None:
         """Complete all stock allocations for this build order.
 
         - This function is called when a build order is completed
@@ -643,8 +644,13 @@ class Build(
         self.allocated_stock.delete()
 
     @transaction.atomic
-    def complete_build(self, user, trim_allocated_stock=False):
-        """Mark this build as complete."""
+    def complete_build(self, user: User, trim_allocated_stock: bool = False):
+        """Mark this build as complete.
+
+        Arguments:
+            user: The user who is completing the build
+            trim_allocated_stock: If True, trim any allocated stock
+        """
         return self.handle_transition(
             self.status,
             BuildStatus.COMPLETE.value,
@@ -666,10 +672,14 @@ class Build(
             get_global_setting('BUILDORDER_REQUIRE_CLOSED_CHILDS')
             and self.has_open_child_builds
         ):
-            return
+            raise ValidationError(
+                _('Cannot complete build order with open child builds')
+            )
 
         if self.incomplete_count > 0:
-            return
+            raise ValidationError(
+                _('Cannot complete build order with incomplete outputs')
+            )
 
         if trim_allocated_stock:
             self.trim_allocated_stock()
@@ -695,6 +705,9 @@ class Build(
 
         # Notify users that this build has been completed
         targets = [self.issued_by, self.responsible]
+
+        # Also inform anyone subscribed to the assembly part
+        targets.extend(self.part.get_subscribers())
 
         # Notify those users interested in the parent build
         if self.parent:
@@ -740,7 +753,7 @@ class Build(
         )
 
     @property
-    def can_issue(self):
+    def can_issue(self) -> bool:
         """Returns True if this BuildOrder can be issued."""
         return self.status in [BuildStatus.PENDING.value, BuildStatus.ON_HOLD.value]
 
@@ -752,6 +765,13 @@ class Build(
 
             trigger_event(BuildEvents.ISSUED, id=self.pk)
 
+            from build.tasks import check_build_stock
+
+            # Run checks on required parts
+            InvenTree.tasks.offload_task(
+                check_build_stock, self, group='build', force_async=True
+            )
+
     @transaction.atomic
     def hold_build(self):
         """Mark the Build as ON HOLD."""
@@ -760,7 +780,7 @@ class Build(
         )
 
     @property
-    def can_hold(self):
+    def can_hold(self) -> bool:
         """Returns True if this BuildOrder can be placed on hold."""
         return self.status in [BuildStatus.PENDING.value, BuildStatus.PRODUCTION.value]
 
@@ -832,6 +852,7 @@ class Build(
             Build,
             exclude=self.issued_by,
             content=InvenTreeNotificationBodies.OrderCanceled,
+            extra_users=self.part.get_subscribers(),
         )
 
         trigger_event(BuildEvents.CANCELLED, id=self.pk)
@@ -852,10 +873,10 @@ class Build(
         allocations.delete()
 
     @transaction.atomic
-    def create_build_output(self, quantity, **kwargs):
+    def create_build_output(self, quantity, **kwargs) -> QuerySet:
         """Create a new build output against this BuildOrder.
 
-        Args:
+        Arguments:
             quantity: The quantity of the item to produce
 
         Kwargs:
@@ -863,6 +884,9 @@ class Build(
             serials: Serial numbers
             location: Override location
             auto_allocate: Automatically allocate stock with matching serial numbers
+
+        Returns:
+            A QuerySet of the created output (StockItem) objects.
         """
         trackable_parts = self.part.get_trackable_parts()
 
@@ -886,6 +910,8 @@ class Build(
             raise ValidationError({
                 'serials': _('Serial numbers must be provided for trackable parts')
             })
+
+        outputs = []
 
         # We are generating multiple serialized outputs
         if serials:
@@ -925,14 +951,28 @@ class Build(
                     for bom_item in trackable_parts:
                         valid_part_ids = valid_parts.get(bom_item.pk, [])
 
-                        items = stock.models.StockItem.objects.filter(
-                            part__pk__in=valid_part_ids,
-                            serial=output.serial,
-                            quantity=1,
-                        ).filter(stock.models.StockItem.IN_STOCK_FILTER)
+                        # Find all matching stock items, based on serial number
+                        stock_items = list(
+                            stock.models.StockItem.objects.filter(
+                                part__pk__in=valid_part_ids,
+                                serial=output.serial,
+                                quantity=1,
+                            )
+                        )
 
-                        if items.exists() and items.count() == 1:
-                            stock_item = items[0]
+                        # Filter stock items to only those which are in stock
+                        # Note that we can accept "in production" items here
+                        available_items = list(
+                            filter(
+                                lambda item: item.is_in_stock(
+                                    check_in_production=False
+                                ),
+                                stock_items,
+                            )
+                        )
+
+                        if len(available_items) == 1:
+                            stock_item = available_items[0]
 
                             # Find the 'BuildLine' object which points to this BomItem
                             try:
@@ -981,9 +1021,14 @@ class Build(
                 },
             )
 
+            # Ensure we return a QuerySet object here, too
+            outputs = stock.models.StockItem.objects.filter(pk=output.pk)
+
         if self.status == BuildStatus.PENDING:
             self.status = BuildStatus.PRODUCTION.value
             self.save()
+
+        return outputs
 
     @transaction.atomic
     def delete_output(self, output):
@@ -1018,9 +1063,9 @@ class Build(
 
         lines = self.untracked_line_items.all()
         lines = lines.exclude(bom_item__consumable=True)
-        lines = annotate_allocated_quantity(lines)
+        lines = lines.annotate(allocated=annotate_allocated_quantity())
 
-        for build_line in lines:
+        for build_line in lines:  # type: ignore[non-iterable]
             reduce_by = build_line.allocated - build_line.quantity
 
             if reduce_by <= 0:
@@ -1050,13 +1095,13 @@ class Build(
         BuildItem.objects.filter(pk__in=[item.pk for item in items_to_delete]).delete()
 
     @property
-    def allocated_stock(self):
+    def allocated_stock(self) -> QuerySet:
         """Returns a QuerySet object of all BuildItem objects which point back to this Build."""
         return BuildItem.objects.filter(build_line__build=self)
 
     @transaction.atomic
-    def subtract_allocated_stock(self, user):
-        """Called when the Build is marked as "complete", this function removes the allocated untracked items from stock."""
+    def subtract_allocated_stock(self, user) -> None:
+        """Removes the allocated untracked items from stock."""
         # Find all BuildItem objects which point to this build
         items = self.allocated_stock.filter(
             build_line__bom_item__sub_part__trackable=False
@@ -1064,13 +1109,15 @@ class Build(
 
         # Remove stock
         for item in items:
-            item.complete_allocation(user)
+            item.complete_allocation(user=user)
 
         # Delete allocation
         items.all().delete()
 
     @transaction.atomic
-    def scrap_build_output(self, output, quantity, location, **kwargs):
+    def scrap_build_output(
+        self, output: stock.models.StockItem, quantity, location, **kwargs
+    ):
         """Mark a particular build output as scrapped / rejected.
 
         - Mark the output as "complete"
@@ -1080,6 +1127,10 @@ class Build(
         """
         if not output:
             raise ValidationError(_('No build output specified'))
+
+        # If quantity is not specified, assume the entire output quantity
+        if quantity is None:
+            quantity = output.quantity
 
         if quantity <= 0:
             raise ValidationError({'quantity': _('Quantity must be greater than zero')})
@@ -1095,7 +1146,9 @@ class Build(
 
         if quantity < output.quantity:
             # Split output into two items
-            output = output.splitStock(quantity, location=location, user=user)
+            output = output.splitStock(
+                quantity, location=location, user=user, allow_production=True
+            )
             output.build = self
 
         # Update build output item
@@ -1109,7 +1162,7 @@ class Build(
         # Complete or discard allocations
         for build_item in allocated_items:
             if not discard_allocations:
-                build_item.complete_allocation(user)
+                build_item.complete_allocation(user=user)
 
         # Delete allocations
         allocated_items.delete()
@@ -1126,19 +1179,28 @@ class Build(
         )
 
     @transaction.atomic
-    def complete_build_output(self, output, user, **kwargs):
+    def complete_build_output(
+        self,
+        output: stock.models.StockItem,
+        user: User,
+        quantity: Optional[decimal.Decimal] = None,
+        **kwargs,
+    ):
         """Complete a particular build output.
 
-        - Remove allocated StockItems
-        - Mark the output as complete
+        Arguments:
+            output: The StockItem instance (build output) to complete
+            user: The user who is completing the build output
+            quantity: The quantity to complete (defaults to entire output quantity)
+
+        Notes:
+            - Remove allocated StockItems
+            - Mark the output as complete
         """
         # Select the location for the build output
         location = kwargs.get('location', self.destination)
         status = kwargs.get('status', StockStatus.OK.value)
         notes = kwargs.get('notes', '')
-
-        # List the allocated BuildItem objects for the given output
-        allocated_items = output.items_to_install.all()
 
         required_tests = kwargs.get('required_tests', output.part.getRequiredTests())
         prevent_on_incomplete = kwargs.get(
@@ -1149,14 +1211,40 @@ class Build(
         if prevent_on_incomplete and not output.passedAllRequiredTests(
             required_tests=required_tests
         ):
-            serial = output.serial
-            raise ValidationError(
-                _(f'Build output {serial} has not passed all required tests')
-            )
+            msg = _('Build output has not passed all required tests')
+
+            if serial := output.serial:
+                msg = _(f'Build output {serial} has not passed all required tests')
+
+            raise ValidationError(msg)
+
+        # List the allocated BuildItem objects for the given output
+        allocated_items = output.items_to_install.all()
+
+        # If a partial quantity is provided, split the stock output
+        if quantity is not None and quantity != output.quantity:
+            # Cannot split a build output with allocated items
+            if allocated_items.count() > 0:
+                raise ValidationError(
+                    _('Cannot partially complete a build output with allocated items')
+                )
+
+            if quantity <= 0:
+                raise ValidationError({
+                    'quantity': _('Quantity must be greater than zero')
+                })
+
+            if quantity > output.quantity:
+                raise ValidationError({
+                    'quantity': _('Quantity cannot be greater than the output quantity')
+                })
+
+            # Split the stock item
+            output = output.splitStock(quantity, user=user, allow_production=True)
 
         for build_item in allocated_items:
             # Complete the allocation of stock for that item
-            build_item.complete_allocation(user)
+            build_item.complete_allocation(user=user)
 
         # Delete the BuildItem objects from the database
         allocated_items.all().delete()
@@ -1313,7 +1401,7 @@ class Build(
                         except (ValidationError, serializers.ValidationError) as exc:
                             # Catch model errors and re-throw as DRF errors
                             raise ValidationError(
-                                detail=serializers.as_serializer_error(exc)
+                                exc.message, detail=serializers.as_serializer_error(exc)
                             )
 
                     if unallocated_quantity <= 0:
@@ -1323,7 +1411,7 @@ class Build(
         # Bulk-create the new BuildItem objects
         BuildItem.objects.bulk_create(new_items)
 
-    def unallocated_lines(self, tracked=None):
+    def unallocated_lines(self, tracked: Optional[bool] = None) -> QuerySet:
         """Returns a list of BuildLine objects which have not been fully allocated."""
         lines = self.build_lines.all()
 
@@ -1335,17 +1423,17 @@ class Build(
         elif tracked is False:
             lines = lines.filter(bom_item__sub_part__trackable=False)
 
-        lines = annotate_allocated_quantity(lines)
+        lines = lines.prefetch_related('allocations')
 
-        # Filter out any lines which have been fully allocated
-        lines = lines.filter(allocated__lt=F('quantity'))
+        lines = lines.annotate(
+            allocated=annotate_allocated_quantity(),
+            required=annotate_required_quantity(),
+        ).filter(allocated__lt=F('required'))
 
         return lines
 
-    def is_fully_allocated(self, tracked=None):
+    def is_fully_allocated(self, tracked: Optional[bool] = None) -> bool:
         """Test if the BuildOrder has been fully allocated.
-
-        This is *true* if *all* associated BuildLine items have sufficient allocation
 
         Arguments:
             tracked: If True, only consider tracked BuildLine items. If False, only consider untracked BuildLine items.
@@ -1355,10 +1443,10 @@ class Build(
         """
         return self.unallocated_lines(tracked=tracked).count() == 0
 
-    def is_output_fully_allocated(self, output):
+    def is_output_fully_allocated(self, output) -> bool:
         """Determine if the specified output (StockItem) has been fully allocated for this build.
 
-        Args:
+        Arguments:
             output: StockItem object (the "in production" output to test against)
 
         To determine if the output has been fully allocated,
@@ -1383,22 +1471,26 @@ class Build(
         # At this stage, we can assume that the output is fully allocated
         return True
 
-    def is_overallocated(self):
+    def is_overallocated(self) -> bool:
         """Test if the BuildOrder has been over-allocated.
 
         Returns:
             True if any BuildLine has been over-allocated.
         """
         lines = self.build_lines.all().exclude(bom_item__consumable=True)
-        lines = annotate_allocated_quantity(lines)
+
+        lines = lines.prefetch_related('allocations')
 
         # Find any lines which have been over-allocated
-        lines = lines.filter(allocated__gt=F('quantity'))
+        lines = lines.annotate(
+            allocated=annotate_allocated_quantity(),
+            required=annotate_required_quantity(),
+        ).filter(allocated__gt=F('required'))
 
         return lines.count() > 0
 
     @property
-    def is_active(self):
+    def is_active(self) -> bool:
         """Is this build active?
 
         An active build is either:
@@ -1408,16 +1500,17 @@ class Build(
         return self.status in BuildStatusGroups.ACTIVE_CODES
 
     @property
-    def is_complete(self):
+    def is_complete(self) -> bool:
         """Returns True if the build status is COMPLETE."""
         return self.status == BuildStatus.COMPLETE.value
 
     @transaction.atomic
-    def create_build_line_items(self, prevent_duplicates=True):
+    def create_build_line_items(self, prevent_duplicates: bool = True) -> None:
         """Create BuildLine objects for each BOM line in this BuildOrder."""
         lines = []
 
-        bom_items = self.part.get_bom_items()
+        # Find all non-virtual BOM items for the parent part
+        bom_items = self.part.get_bom_items(include_virtual=False)
 
         logger.info(
             'Creating BuildLine objects for BuildOrder %s (%s items)',
@@ -1447,7 +1540,7 @@ class Build(
             logger.info('Created %s BuildLine objects for BuildOrder', len(lines))
 
     @transaction.atomic
-    def update_build_line_items(self):
+    def update_build_line_items(self) -> None:
         """Rebuild required quantity field for each BuildLine object."""
         lines_to_update = []
 
@@ -1469,8 +1562,6 @@ def after_save_build(sender, instance: Build, created: bool, **kwargs):
     ):
         return
 
-    from . import tasks as build_tasks
-
     if instance:
         if created:
             # A new Build has just been created
@@ -1478,14 +1569,12 @@ def after_save_build(sender, instance: Build, created: bool, **kwargs):
             # Generate initial BuildLine objects for the Build
             instance.create_build_line_items()
 
-            # Run checks on required parts
-            InvenTree.tasks.offload_task(
-                build_tasks.check_build_stock, instance, group='build'
-            )
-
             # Notify the responsible users that the build order has been created
             InvenTree.helpers_model.notify_responsible(
-                instance, sender, exclude=instance.issued_by
+                instance,
+                sender,
+                exclude=instance.issued_by,
+                extra_users=instance.part.get_subscribers(),
             )
 
         else:
@@ -1493,12 +1582,34 @@ def after_save_build(sender, instance: Build, created: bool, **kwargs):
             instance.update_build_line_items()
 
 
+class BuildLineReportContext(report.mixins.BaseReportContext):
+    """Context for the BuildLine model.
+
+    Attributes:
+        allocated_quantity: The quantity of the part which has been allocated to this build
+        allocations: A query set of all StockItem objects which have been allocated to this build line
+        bom_item: The BomItem associated with this line item
+        build: The BuildOrder instance associated with this line item
+        build_line: The build line instance itself
+        part: The sub-part (component) associated with the linked BomItem instance
+        quantity: The quantity required for this line item
+    """
+
+    allocated_quantity: decimal.Decimal
+    allocations: report.mixins.QuerySet['BuildItem']
+    bom_item: part.models.BomItem
+    build: Build
+    build_line: 'BuildLine'
+    part: part.models.Part
+    quantity: decimal.Decimal
+
+
 class BuildLine(report.mixins.InvenTreeReportMixin, InvenTree.models.InvenTreeModel):
     """A BuildLine object links a BOMItem to a Build.
 
     When a new Build is created, the BuildLine objects are created automatically.
     - A BuildLine entry is created for each BOM item associated with the part
-    - The quantity is set to the quantity required to build the part (including overage)
+    - The quantity is set to the quantity required to build the part
     - BuildItem objects are associated with a particular BuildLine
 
     Once a build has been created, BuildLines can (optionally) be removed from the Build
@@ -1507,6 +1618,7 @@ class BuildLine(report.mixins.InvenTreeReportMixin, InvenTree.models.InvenTreeMo
         build: Link to a Build object
         bom_item: Link to a BomItem object
         quantity: Number of units required for the Build
+        consumed: Number of units which have been consumed against this line item
     """
 
     class Meta:
@@ -1520,7 +1632,7 @@ class BuildLine(report.mixins.InvenTreeReportMixin, InvenTree.models.InvenTreeMo
         """Return the API URL used to access this model."""
         return reverse('api-build-line-list')
 
-    def report_context(self):
+    def report_context(self) -> BuildLineReportContext:
         """Generate custom report context for this BuildLine object."""
         return {
             'allocated_quantity': self.allocated_quantity,
@@ -1552,6 +1664,15 @@ class BuildLine(report.mixins.InvenTreeReportMixin, InvenTree.models.InvenTreeMo
         help_text=_('Required quantity for build order'),
     )
 
+    consumed = models.DecimalField(
+        decimal_places=5,
+        max_digits=15,
+        default=0,
+        validators=[MinValueValidator(0)],
+        verbose_name=_('Consumed'),
+        help_text=_('Quantity of consumed stock'),
+    )
+
     @property
     def part(self):
         """Return the sub_part reference from the link bom_item."""
@@ -1569,19 +1690,34 @@ class BuildLine(report.mixins.InvenTreeReportMixin, InvenTree.models.InvenTreeMo
         return allocated['q']
 
     def unallocated_quantity(self):
-        """Return the unallocated quantity for this BuildLine."""
-        return max(self.quantity - self.allocated_quantity(), 0)
+        """Return the unallocated quantity for this BuildLine.
 
-    def is_fully_allocated(self):
+        - Start with the required quantity
+        - Subtract the consumed quantity
+        - Subtract the allocated quantity
+
+        Return the remaining quantity (or zero if negative)
+        """
+        return max(self.quantity - self.consumed - self.allocated_quantity(), 0)
+
+    def is_fully_allocated(self) -> bool:
         """Return True if this BuildLine is fully allocated."""
         if self.bom_item.consumable:
             return True
 
-        return self.allocated_quantity() >= self.quantity
+        required = max(0, self.quantity - self.consumed)
+
+        return self.allocated_quantity() >= required
 
     def is_overallocated(self):
         """Return True if this BuildLine is over-allocated."""
-        return self.allocated_quantity() > self.quantity
+        required = max(0, self.quantity - self.consumed)
+
+        return self.allocated_quantity() > required
+
+    def is_fully_consumed(self) -> bool:
+        """Return True if this BuildLine is fully consumed."""
+        return self.consumed >= self.quantity
 
 
 class BuildItem(InvenTree.models.InvenTreeMetadataModel):
@@ -1750,20 +1886,36 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
         return self.build_line.bom_item if self.build_line else None
 
     @transaction.atomic
-    def complete_allocation(self, user, notes=''):
+    def complete_allocation(self, quantity=None, notes='', user=None) -> None:
         """Complete the allocation of this BuildItem into the output stock item.
+
+        Arguments:
+            quantity: The quantity to allocate (default is the full quantity)
+            notes: Additional notes to add to the transaction
+            user: The user completing the allocation
 
         - If the referenced part is trackable, the stock item will be *installed* into the build output
         - If the referenced part is *not* trackable, the stock item will be *consumed* by the build order
 
         TODO: This is quite expensive (in terms of number of database hits) - and requires some thought
+        TODO: Revisit, and refactor!
 
         """
+        # If the quantity is not provided, use the quantity of this BuildItem
+        if quantity is None:
+            quantity = self.quantity
+
         item = self.stock_item
 
+        # Ensure we are not allocating more than available
+        if quantity > item.quantity:
+            raise ValidationError({
+                'quantity': _('Allocated quantity exceeds available stock quantity')
+            })
+
         # Split the allocated stock if there are more available than allocated
-        if item.quantity > self.quantity:
-            item = item.splitStock(self.quantity, None, user, notes=notes)
+        if item.quantity > quantity:
+            item = item.splitStock(quantity, None, user, notes=notes)
 
         # For a trackable part, special consideration needed!
         if item.part.trackable:
@@ -1773,7 +1925,7 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
 
             # Install the stock item into the output
             self.install_into.installStockItem(
-                item, self.quantity, user, notes, build=self.build
+                item, quantity, user, notes, build=self.build
             )
 
         else:
@@ -1788,6 +1940,18 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
                 notes=notes,
                 deltas={'buildorder': self.build.pk, 'quantity': float(item.quantity)},
             )
+
+        # Increase the "consumed" count for the associated BuildLine
+        self.build_line.consumed += quantity
+        self.build_line.save()
+
+        # Decrease the allocated quantity
+        self.quantity = max(0, self.quantity - quantity)
+
+        if self.quantity <= 0:
+            self.delete()
+        else:
+            self.save()
 
     build_line = models.ForeignKey(
         BuildLine, on_delete=models.CASCADE, null=True, related_name='allocations'

@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Grid, Skeleton, Stack } from '@mantine/core';
 import {
   IconCurrencyDollar,
@@ -9,6 +9,12 @@ import {
 import { type ReactNode, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import { formatDecimal } from '@lib/functions/Formatting';
+import { getDetailUrl } from '@lib/functions/Navigation';
 import AdminButton from '../../components/buttons/AdminButton';
 import {
   type DetailsField,
@@ -29,18 +35,13 @@ import { PageDetail } from '../../components/nav/PageDetail';
 import NotesPanel from '../../components/panels/NotesPanel';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import { useSupplierPartFields } from '../../forms/CompanyForms';
-import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { PurchaseOrderTable } from '../../tables/purchasing/PurchaseOrderTable';
 import SupplierPriceBreakTable from '../../tables/purchasing/SupplierPriceBreakTable';
@@ -56,8 +57,7 @@ export default function SupplierPartDetail() {
   const {
     instance: supplierPart,
     instanceQuery,
-    refreshInstance,
-    requestStatus
+    refreshInstance
   } = useInstance({
     endpoint: ApiEndpoints.supplier_part_list,
     pk: id,
@@ -157,9 +157,8 @@ export default function SupplierPartDetail() {
         type: 'link',
         name: 'manufacturer_part',
         model_field: 'MPN',
-        label: t`Manufacturer Part Number`,
+        label: t`Manufacturer Part`,
         model: ModelType.manufacturerpart,
-        copy: true,
         icon: 'reference',
         hidden: !data.manufacturer_part
       }
@@ -185,14 +184,14 @@ export default function SupplierPartDetail() {
 
     const tr: DetailsField[] = [
       {
-        type: 'string',
+        type: 'number',
         name: 'in_stock',
         label: t`In Stock`,
         copy: true,
         icon: 'stock'
       },
       {
-        type: 'string',
+        type: 'number',
         name: 'on_order',
         label: t`On Order`,
         copy: true,
@@ -266,7 +265,10 @@ export default function SupplierPartDetail() {
         label: t`Purchase Orders`,
         icon: <IconShoppingCart />,
         content: supplierPart?.pk ? (
-          <PurchaseOrderTable supplierPartId={supplierPart.pk} />
+          <PurchaseOrderTable
+            supplierId={supplierPart.supplier}
+            supplierPartId={supplierPart.pk}
+          />
         ) : (
           <Skeleton />
         )
@@ -276,7 +278,7 @@ export default function SupplierPartDetail() {
         label: t`Supplier Pricing`,
         icon: <IconCurrencyDollar />,
         content: supplierPart?.pk ? (
-          <SupplierPriceBreakTable supplierPartId={supplierPart.pk} />
+          <SupplierPriceBreakTable supplierPart={supplierPart} />
         ) : (
           <Skeleton />
         )
@@ -368,7 +370,7 @@ export default function SupplierPartDetail() {
         visible={supplierPart.active == false}
       />,
       <DetailsBadge
-        label={`${t`In Stock`}: ${supplierPart.in_stock}`}
+        label={`${t`In Stock`}: ${formatDecimal(supplierPart.in_stock)}`}
         color={'green'}
         visible={
           supplierPart?.active &&
@@ -384,7 +386,7 @@ export default function SupplierPartDetail() {
         key='no_stock'
       />,
       <DetailsBadge
-        label={`${t`On Order`}: ${supplierPart.on_order}`}
+        label={`${t`On Order`}: ${formatDecimal(supplierPart.on_order)}`}
         color='blue'
         visible={supplierPart.on_order > 0}
         key='on_order'
@@ -398,8 +400,7 @@ export default function SupplierPartDetail() {
       {duplicateSupplierPart.modal}
       {editSupplierPart.modal}
       <InstanceDetail
-        status={requestStatus}
-        loading={instanceQuery.isFetching}
+        query={instanceQuery}
         requiredRole={UserRoles.purchase_order}
       >
         <Stack gap='xs'>
@@ -423,6 +424,7 @@ export default function SupplierPartDetail() {
             pageKey='supplierpart'
             panels={panels}
             instance={supplierPart}
+            reloadInstance={refreshInstance}
             model={ModelType.supplierpart}
             id={supplierPart.pk}
           />

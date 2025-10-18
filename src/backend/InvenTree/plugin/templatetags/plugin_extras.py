@@ -33,7 +33,7 @@ def mixin_enabled(plugin, key, *args, **kwargs):
 
 
 @register.simple_tag()
-def mixin_available(mixin, *args, **kwargs):
+def mixin_available(mixin: str, *args, **kwargs) -> bool:
     """Returns True if there is at least one active plugin which supports the provided mixin."""
     return len(registry.with_mixin(mixin)) > 0
 

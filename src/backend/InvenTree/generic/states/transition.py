@@ -1,6 +1,12 @@
 """Classes and functions for plugin controlled object state transitions."""
 
-import InvenTree.helpers
+from typing import Callable
+
+from django.db.models import Model
+
+import structlog
+
+logger = structlog.get_logger('inventree')
 
 
 class TransitionMethod:
@@ -16,39 +22,52 @@ class TransitionMethod:
         - The needed functions are implemented
         """
         # Check if a sending fnc is defined
-        if not hasattr(self, 'transition'):
+        if not hasattr(self, 'transition'):  # pragma: no cover
             raise NotImplementedError(
                 'A TransitionMethod must define a `transition` method'
             )
 
+    def transition(
+        self,
+        current_state: int,
+        target_state: int,
+        instance: Model,
+        default_action: Callable,
+        **kwargs,
+    ) -> bool:
+        """Perform a state transition.
 
-class TransitionMethodStorageClass:
-    """Class that works as registry for all available transition methods in InvenTree.
+        Success:
+            - The custom transition logic succeeded
+            - Return True result
+            - No further transitions are attempted
+        Ignore:
+            - The custom transition logic did not apply
+            - Return False result
+            - Further transitions are attempted (if available)
+            - Default action is called if no transition was successful
+        Failure:
+            - The custom transition logic failed
+            - Raise a ValidationError
+            - No further transitions are attempted
+            - Default action is not called
 
-    Is initialized on startup as one instance named `storage` in this file.
-    """
+        Arguments:
+            current_state: int - Current state of the instance.
+            target_state: int - Target state to transition to.
+            instance: Model - The object instance to transition.
+            default_action: callable - Default action to be taken if no transition is successful.
+            **kwargs: Additional keyword arguments for custom logic.
 
-    list = None
+        Returns:
+            result: bool - True if the transition method was successful, False otherwise.
 
-    def collect(self):
-        """Collect all classes in the environment that are transition methods."""
-        filtered_list = {}
-        for item in InvenTree.helpers.inheritors(TransitionMethod):
-            # Try if valid
-            try:
-                item()
-            except NotImplementedError:
-                continue
-            filtered_list[f'{item.__module__}.{item.__qualname__}'] = item
-
-        self.list = list(filtered_list.values())
-
-        # Ensure the list has items
-        if not self.list:
-            self.list = []
-
-
-storage = TransitionMethodStorageClass()
+        Raises:
+            ValidationError: Alert the user that the transition failued
+        """
+        raise NotImplementedError(
+            'TransitionMethod.transition must be implemented'
+        )  # pragma: no cover
 
 
 class StateTransitionMixin:
@@ -76,13 +95,39 @@ class StateTransitionMixin:
             instance: Object instance
             default_action: Default action to be taken if none of the transitions returns a boolean true value
         """
-        # Check if there is a custom override function for this transition
-        for override in storage.list:
-            rslt = override.transition(
-                current_state, target_state, instance, default_action, **kwargs
-            )
-            if rslt:
-                return rslt
+        from InvenTree.exceptions import log_error
+        from plugin import PluginMixinEnum, registry
+
+        transition_plugins = registry.with_mixin(PluginMixinEnum.STATE_TRANSITION)
+
+        for plugin in transition_plugins:
+            try:
+                handlers = plugin.get_transition_handlers()
+            except Exception:
+                log_error('get_transition_handlers', plugin=plugin)
+                continue
+
+            if type(handlers) is not list:
+                logger.error(
+                    'INVE-E9: Plugin %s returned invalid type for transition handlers',
+                    plugin.slug,
+                )
+                continue
+
+            for handler in handlers:
+                if not isinstance(handler, TransitionMethod):
+                    logger.error(
+                        'INVE-E9: Invalid transition handler type: %s', handler
+                    )
+                    continue
+
+                # Call the transition method
+                result = handler.transition(
+                    current_state, target_state, instance, default_action, **kwargs
+                )
+
+                if result:
+                    return result
 
         # Default action
         return default_action(current_state, target_state, instance, **kwargs)

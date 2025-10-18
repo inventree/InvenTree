@@ -1,4 +1,5 @@
-import { Trans, t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import {
   Accordion,
   Alert,
@@ -13,9 +14,9 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
 import { api } from '../../App';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { apiUrl } from '../../states/ApiState';
 
 export function LicenceView(entries: Readonly<any[]>) {
   return (
@@ -56,10 +57,7 @@ export function LicenseModal() {
     queryKey: ['license'],
     refetchOnMount: true,
     queryFn: () =>
-      api
-        .get(apiUrl(ApiEndpoints.license))
-        .then((res) => res.data ?? {})
-        .catch(() => {})
+      api.get(apiUrl(ApiEndpoints.license)).then((res) => res.data ?? {})
   });
 
   const packageKeys = useMemo(() => {

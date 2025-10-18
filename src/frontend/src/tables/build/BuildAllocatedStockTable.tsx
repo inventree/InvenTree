@@ -1,26 +1,37 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { useCallback, useMemo, useState } from 'react';
 
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
+import {
+  type RowAction,
+  RowDeleteAction,
+  RowEditAction
+} from '@lib/components/RowActions';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import { ActionButton } from '@lib/index';
+import type { TableFilter } from '@lib/types/Filters';
+import type { StockOperationProps } from '@lib/types/Forms';
+import type { TableColumn } from '@lib/types/Tables';
+import { IconCircleDashedCheck } from '@tabler/icons-react';
+import { useConsumeBuildItemsForm } from '../../forms/BuildForms';
 import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
+import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import {
+  DecimalColumn,
   LocationColumn,
   PartColumn,
   ReferenceColumn,
   StatusColumn
 } from '../ColumnRenderers';
-import type { TableFilter } from '../Filter';
+import { IncludeVariantsFilter, StockLocationFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 /**
  * Render a table of allocated stock for a build.
@@ -59,13 +70,10 @@ export default function BuildAllocatedStockTable({
     ];
 
     if (!!partId) {
-      filters.push({
-        name: 'include_variants',
-        type: 'boolean',
-        label: t`Include Variants`,
-        description: t`Include orders for part variants`
-      });
+      filters.push(IncludeVariantsFilter());
     }
+
+    filters.push(StockLocationFilter());
 
     return filters;
   }, [partId]);
@@ -89,14 +97,10 @@ export default function BuildAllocatedStockTable({
         title: t`Order Status`,
         hidden: showBuildInfo != true
       }),
-      {
-        accessor: 'part',
+      PartColumn({
         hidden: !showPartInfo,
-        title: t`Part`,
-        sortable: true,
-        switchable: false,
-        render: (record: any) => PartColumn({ part: record.part_detail })
-      },
+        switchable: false
+      }),
       {
         accessor: 'part_detail.IPN',
         ordering: 'IPN',
@@ -113,12 +117,6 @@ export default function BuildAllocatedStockTable({
         switchable: true
       },
       {
-        accessor: 'quantity',
-        title: t`Allocated Quantity`,
-        sortable: true,
-        switchable: false
-      },
-      {
         accessor: 'serial',
         title: t`Serial Number`,
         sortable: false,
@@ -132,11 +130,16 @@ export default function BuildAllocatedStockTable({
         switchable: true,
         render: (record: any) => record?.stock_item_detail?.batch
       },
-      {
+      DecimalColumn({
         accessor: 'available',
-        title: t`Available Quantity`,
-        render: (record: any) => record?.stock_item_detail?.quantity
-      },
+        title: t`Available`
+      }),
+      DecimalColumn({
+        accessor: 'quantity',
+        title: t`Allocated`,
+        sortable: true,
+        switchable: false
+      }),
       LocationColumn({
         accessor: 'location_detail',
         switchable: true,
@@ -156,10 +159,10 @@ export default function BuildAllocatedStockTable({
     ];
   }, []);
 
-  const [selectedItem, setSelectedItem] = useState<number>(0);
+  const [selectedItemId, setSelectedItemId] = useState<number>(0);
 
   const editItem = useEditApiFormModal({
-    pk: selectedItem,
+    pk: selectedItemId,
     url: ApiEndpoints.build_item_list,
     title: t`Edit Stock Allocation`,
     fields: {
@@ -172,26 +175,86 @@ export default function BuildAllocatedStockTable({
   });
 
   const deleteItem = useDeleteApiFormModal({
-    pk: selectedItem,
+    pk: selectedItemId,
     url: ApiEndpoints.build_item_list,
     title: t`Delete Stock Allocation`,
     table: table
   });
 
+  const [selectedItems, setSelectedItems] = useState<any[]>([]);
+
+  const itemsToConsume = useMemo(() => {
+    return selectedItems.filter((item) => !item.part_detail?.trackable);
+  }, [selectedItems]);
+
+  const consumeStock = useConsumeBuildItemsForm({
+    buildId: buildId ?? 0,
+    allocatedItems: itemsToConsume,
+    onFormSuccess: () => {
+      table.clearSelectedRecords();
+      table.refreshTable();
+    }
+  });
+
+  const stockOperationProps: StockOperationProps = useMemo(() => {
+    // Extract stock items from the selected records
+    // Note that the table is actually a list of BuildItem instances,
+    // so we need to reconstruct the stock item details
+    const stockItems: any[] = table.selectedRecords
+      .filter((item: any) => !!item.stock_item_detail)
+      .map((item: any) => {
+        return {
+          ...item.stock_item_detail,
+          part_detail: item.part_detail,
+          location_detail: item.location_detail
+        };
+      });
+
+    return {
+      items: stockItems,
+      model: ModelType.stockitem,
+      refresh: table.refreshTable
+    };
+  }, [table.selectedRecords, table.refreshTable]);
+
+  const stockAdjustActions = useStockAdjustActions({
+    formProps: stockOperationProps,
+    merge: false,
+    assign: false,
+    delete: false,
+    add: false,
+    count: false,
+    remove: false
+  });
+
   const rowActions = useCallback(
     (record: any): RowAction[] => {
+      const part = record.part_detail ?? {};
+      const trackable: boolean = part?.trackable ?? false;
+
       return [
+        {
+          color: 'green',
+          icon: <IconCircleDashedCheck />,
+          title: t`Consume`,
+          tooltip: t`Consume Stock`,
+          hidden: !buildId || trackable || !user.hasChangeRole(UserRoles.build),
+          onClick: () => {
+            setSelectedItems([record]);
+            consumeStock.open();
+          }
+        },
         RowEditAction({
           hidden: !user.hasChangeRole(UserRoles.build),
           onClick: () => {
-            setSelectedItem(record.pk);
+            setSelectedItemId(record.pk);
             editItem.open();
           }
         }),
         RowDeleteAction({
           hidden: !user.hasDeleteRole(UserRoles.build),
           onClick: () => {
-            setSelectedItem(record.pk);
+            setSelectedItemId(record.pk);
             deleteItem.open();
           }
         })
@@ -200,10 +263,30 @@ export default function BuildAllocatedStockTable({
     [user]
   );
 
+  const tableActions = useMemo(() => {
+    return [
+      stockAdjustActions.dropdown,
+      <ActionButton
+        key='consume-stock'
+        icon={<IconCircleDashedCheck />}
+        tooltip={t`Consume Stock`}
+        hidden={!user.hasChangeRole(UserRoles.build)}
+        disabled={table.selectedRecords.length == 0}
+        color='green'
+        onClick={() => {
+          setSelectedItems(table.selectedRecords);
+          consumeStock.open();
+        }}
+      />
+    ];
+  }, [user, table.selectedRecords, stockAdjustActions.dropdown]);
+
   return (
     <>
       {editItem.modal}
       {deleteItem.modal}
+      {consumeStock.modal}
+      {stockAdjustActions.modals.map((modal) => modal.modal)}
       <InvenTreeTable
         tableState={table}
         url={apiUrl(ApiEndpoints.build_item_list)}
@@ -223,7 +306,11 @@ export default function BuildAllocatedStockTable({
           enableDownload: true,
           enableSelection: allowEdit && user.hasDeleteRole(UserRoles.build),
           rowActions: rowActions,
+          tableActions: tableActions,
           tableFilters: tableFilters,
+          enableLabels: true,
+          enableReports: true,
+          printingAccessor: 'stock_item',
           modelField: modelField ?? 'stock_item',
           modelType: modelTarget ?? ModelType.stockitem
         }}

@@ -32,7 +32,7 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # pin@v5.0.0
         with:
           persist-credentials: true
       - name: Environment Setup
@@ -49,11 +49,14 @@ jobs:
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add src/backend/InvenTree/locale/en/LC_MESSAGES/django.po src/frontend/src/locales/en/messages.po
+          echo "Adding commit (or ignoring if no changes)"
           git commit -m "add translations" || true
+          echo "Removing all other changes"
           git reset --hard
-          git reset HEAD~
+          echo "Resetting to HEAD~"
+          git reset HEAD~ || true
       - name: crowdin action
-        uses: crowdin/github-action@2cc7959c565767d6bc118118d6df3b63bf361370 # pin@v2
+        uses: crowdin/github-action@0749939f635900a2521aa6aac7a3766642b2dc71 # pin@v2
         with:
           upload_sources: true
           upload_translations: false

@@ -67,13 +67,15 @@ sudo apt-get install supervisor
 
 !!! warning "Configuration Override"
     If you already have supervisor installed on your system, you will not want to override your existing configuration file.
-    In this case, edit the existing configuration file at `/etc/supervisord.conf` to integrate the InvenTree processes
+    In this case, edit the existing configuration file at `/etc/supervisor/supervisord.conf` to integrate the InvenTree processes
 
 Copy the supervisor configuration file:
 
 ```
-sudo cp /home/inventree/src/contrib/deploy/supervisord.conf /etc/supervisord.conf
+sudo cp /home/inventree/src/contrib/deploy/supervisord.conf /etc/supervisor/supervisord.conf
 ```
+
+Depending on your setup the IP and port under the `[inet_http_server]` section might need to be changed.
 
 ### Start Supervisor Daemon
 
@@ -99,6 +101,11 @@ In addition to the InvenTree server, you will need a method of delivering static
 
 !!! info "Read More"
     Refer to the [proxy server documentation](./processes.md#proxy-server) for more details
+
+### Check your security posture
+
+It is recommended to check the [threat modelling inputs](../concepts/threat_model.md) to ensure that your InvenTree installation is set up in the way that it is assumed in the software design.
+
 
 ### Next Steps
 

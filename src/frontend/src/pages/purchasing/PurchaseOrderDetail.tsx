@@ -1,9 +1,13 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Accordion, Grid, Skeleton, Stack } from '@mantine/core';
 import { IconInfoCircle, IconList, IconPackages } from '@tabler/icons-react';
 import { type ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
 import AdminButton from '../../components/buttons/AdminButton';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
@@ -30,9 +34,6 @@ import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { formatCurrency } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import { usePurchaseOrderFields } from '../../forms/PurchaseOrderForms';
 import {
   useCreateApiFormModal,
@@ -40,8 +41,7 @@ import {
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import useStatusCodes from '../../hooks/UseStatusCodes';
-import { apiUrl } from '../../states/ApiState';
-import { useGlobalSettingsState } from '../../states/SettingsState';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import ExtraLineItemTable from '../../tables/general/ExtraLineItemTable';
 import { PurchaseOrderLineItemTable } from '../../tables/purchasing/PurchaseOrderLineItemTable';
@@ -59,8 +59,7 @@ export default function PurchaseOrderDetail() {
   const {
     instance: order,
     instanceQuery,
-    refreshInstance,
-    requestStatus
+    refreshInstance
   } = useInstance({
     endpoint: ApiEndpoints.purchase_order_list,
     pk: id,
@@ -191,7 +190,7 @@ export default function PurchaseOrderDetail() {
         label: t`Total Cost`,
         value_formatter: () => {
           return formatCurrency(order?.total_price, {
-            currency: order?.order_currency ?? order?.supplier_detail?.currency
+            currency: order?.order_currency || order?.supplier_detail?.currency
           });
         }
       }
@@ -207,14 +206,28 @@ export default function PurchaseOrderDetail() {
         hidden: !order.link
       },
       {
-        type: 'link',
-        model: ModelType.contact,
-        link: false,
-        name: 'contact',
+        type: 'text',
+        name: 'contact_detail.name',
         label: t`Contact`,
         icon: 'user',
         copy: true,
         hidden: !order.contact
+      },
+      {
+        type: 'text',
+        name: 'contact_detail.email',
+        label: t`Contact Email`,
+        icon: 'email',
+        copy: true,
+        hidden: !order.contact_detail?.email
+      },
+      {
+        type: 'text',
+        name: 'contact_detail.phone',
+        label: t`Contact Phone`,
+        icon: 'phone',
+        copy: true,
+        hidden: !order.contact_detail?.phone
       },
       {
         type: 'text',
@@ -319,6 +332,7 @@ export default function PurchaseOrderDetail() {
               <Accordion.Panel>
                 <PurchaseOrderLineItemTable
                   order={order}
+                  orderDetailRefresh={refreshInstance}
                   currency={orderCurrency}
                   orderId={Number(id)}
                   supplierId={Number(order.supplier)}
@@ -333,6 +347,7 @@ export default function PurchaseOrderDetail() {
                 <ExtraLineItemTable
                   endpoint={ApiEndpoints.purchase_order_extra_line_list}
                   orderId={order.pk}
+                  orderDetailRefresh={refreshInstance}
                   currency={orderCurrency}
                   role={UserRoles.purchase_order}
                 />
@@ -445,6 +460,7 @@ export default function PurchaseOrderDetail() {
       <PrintingActions
         modelType={ModelType.purchaseorder}
         items={[order.pk]}
+        enableLabels
         enableReports
       />,
       <OptionsActionDropdown
@@ -489,6 +505,16 @@ export default function PurchaseOrderDetail() {
         ];
   }, [order, instanceQuery]);
 
+  const subtitle: string = useMemo(() => {
+    let t = order.supplier_detail?.name || '';
+
+    if (order.supplier_reference) {
+      t += ` (${order.supplier_reference})`;
+    }
+
+    return t;
+  }, [order]);
+
   return (
     <>
       {issueOrder.modal}
@@ -498,14 +524,13 @@ export default function PurchaseOrderDetail() {
       {editPurchaseOrder.modal}
       {duplicatePurchaseOrder.modal}
       <InstanceDetail
-        status={requestStatus}
-        loading={instanceQuery.isFetching}
+        query={instanceQuery}
         requiredRole={UserRoles.purchase_order}
       >
         <Stack gap='xs'>
           <PageDetail
             title={`${t`Purchase Order`}: ${order.reference}`}
-            subtitle={order.description}
+            subtitle={subtitle}
             imageUrl={order.supplier_detail?.image}
             breadcrumbs={[{ name: t`Purchasing`, url: '/purchasing/' }]}
             lastCrumb={[
@@ -524,6 +549,7 @@ export default function PurchaseOrderDetail() {
             panels={orderPanels}
             model={ModelType.purchaseorder}
             instance={order}
+            reloadInstance={refreshInstance}
             id={order.pk}
           />
         </Stack>

@@ -1,4 +1,5 @@
-import { Trans, t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import {
   AspectRatio,
   Button,
@@ -20,18 +21,18 @@ import { useHover } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
 import { useMemo, useState } from 'react';
 
+import { ActionButton } from '@lib/components/ActionButton';
+import type { UserRoles } from '@lib/enums/Roles';
+import { cancelEvent } from '@lib/functions/Events';
 import { showNotification } from '@mantine/notifications';
 import { api } from '../../App';
-import type { UserRoles } from '../../enums/Roles';
-import { cancelEvent } from '../../functions/events';
 import { InvenTreeIcon } from '../../functions/icons';
 import { showApiErrorMessage } from '../../functions/notifications';
 import { useEditApiFormModal } from '../../hooks/UseForm';
-import { useGlobalSettingsState } from '../../states/SettingsState';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import { PartThumbTable } from '../../tables/part/PartThumbTable';
 import { vars } from '../../theme';
-import { ActionButton } from '../buttons/ActionButton';
 import { ApiImage } from '../images/ApiImage';
 import { StylishText } from '../items/StylishText';
 

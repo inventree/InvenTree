@@ -11,17 +11,25 @@ from django.http.response import JsonResponse
 from django.urls import include, path, re_path
 from django.utils.translation import gettext_lazy as _
 
-from django_filters import rest_framework as rest_filters
+import django_filters.rest_framework.filters as rest_filters
+import rest_framework.serializers
+from django_filters.rest_framework.filterset import FilterSet
 from django_ical.views import ICalFeed
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema, extend_schema_field
 from rest_framework import status
 from rest_framework.response import Response
 
+import build.models
 import common.models
 import common.settings
 import company.models
+import stock.models as stock_models
+import stock.serializers as stock_serializers
+from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import StatusView
-from importer.mixins import DataExportViewMixin
-from InvenTree.api import ListCreateDestroyAPIView, MetadataView
+from InvenTree.api import BulkUpdateMixin, ListCreateDestroyAPIView, MetadataView
+from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import (
     SEARCH_ORDER_FILTER,
     SEARCH_ORDER_FILTER_ALIAS,
@@ -29,7 +37,14 @@ from InvenTree.filters import (
 )
 from InvenTree.helpers import str2bool
 from InvenTree.helpers_model import construct_absolute_url, get_base_url
-from InvenTree.mixins import CreateAPI, ListAPI, ListCreateAPI, RetrieveUpdateDestroyAPI
+from InvenTree.mixins import (
+    CreateAPI,
+    ListAPI,
+    ListCreateAPI,
+    OutputOptionsMixin,
+    RetrieveUpdateDestroyAPI,
+    SerializerContextMixin,
+)
 from order import models, serializers
 from order.status_codes import (
     PurchaseOrderStatus,
@@ -43,21 +58,14 @@ from part.models import Part
 from users.models import Owner
 
 
-class GeneralExtraLineList(DataExportViewMixin):
+class GeneralExtraLineListOutputOptions(OutputConfiguration):
+    """Output options for the GeneralExtraLineList endpoint."""
+
+    OPTIONS = [InvenTreeOutputOption('order_detail')]
+
+
+class GeneralExtraLineList(SerializerContextMixin, DataExportViewMixin):
     """General template for ExtraLine API classes."""
-
-    def get_serializer(self, *args, **kwargs):
-        """Return the serializer instance for this endpoint."""
-        try:
-            params = self.request.query_params3
-
-            kwargs['order_detail'] = str2bool(params.get('order_detail', False))
-        except AttributeError:
-            pass
-
-        kwargs['context'] = self.get_serializer_context()
-
-        return self.serializer_class(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
         """Return the annotated queryset for this endpoint."""
@@ -66,6 +74,8 @@ class GeneralExtraLineList(DataExportViewMixin):
         queryset = queryset.prefetch_related('order')
 
         return queryset
+
+    output_options = GeneralExtraLineListOutputOptions
 
     filter_backends = SEARCH_ORDER_FILTER
 
@@ -94,7 +104,7 @@ class OrderCreateMixin:
         )
 
 
-class OrderFilter(rest_filters.FilterSet):
+class OrderFilter(FilterSet):
     """Base class for custom API filters for the OrderList endpoint."""
 
     # Filter against order status
@@ -213,8 +223,46 @@ class OrderFilter(rest_filters.FilterSet):
         label=_('Target Date After'), field_name='target_date', lookup_expr='gt'
     )
 
+    min_date = InvenTreeDateFilter(label=_('Min Date'), method='filter_min_date')
 
-class LineItemFilter(rest_filters.FilterSet):
+    def filter_min_date(self, queryset, name, value):
+        """Filter the queryset to include orders *after* a specified date.
+
+        This is used in combination with filter_max_date,
+        to provide a queryset which matches a particular range of dates.
+
+        In particular, this is used in the UI for the calendar view.
+        """
+        q1 = Q(
+            creation_date__gte=value, issue_date__isnull=True, start_date__isnull=True
+        )
+        q2 = Q(issue_date__gte=value, start_date__isnull=True)
+        q3 = Q(start_date__gte=value)
+        q4 = Q(target_date__gte=value)
+
+        return queryset.filter(q1 | q2 | q3 | q4).distinct()
+
+    max_date = InvenTreeDateFilter(label=_('Max Date'), method='filter_max_date')
+
+    def filter_max_date(self, queryset, name, value):
+        """Filter the queryset to include orders *before* a specified date.
+
+        This is used in combination with filter_min_date,
+        to provide a queryset which matches a particular range of dates.
+
+        In particular, this is used in the UI for the calendar view.
+        """
+        q1 = Q(
+            creation_date__lte=value, issue_date__isnull=True, start_date__isnull=True
+        )
+        q2 = Q(issue_date__lte=value, start_date__isnull=True)
+        q3 = Q(start_date__lte=value)
+        q4 = Q(target_date__lte=value)
+
+        return queryset.filter(q1 | q2 | q3 | q4).distinct()
+
+
+class LineItemFilter(FilterSet):
     """Base class for custom API filters for order line item list(s)."""
 
     # Filter by order status
@@ -251,6 +299,7 @@ class PurchaseOrderFilter(OrderFilter):
         method='filter_part',
     )
 
+    @extend_schema_field(rest_framework.serializers.IntegerField(help_text=_('Part')))
     def filter_part(self, queryset, name, part: Part):
         """Filter by provided Part instance."""
         orders = part.purchase_orders()
@@ -263,6 +312,9 @@ class PurchaseOrderFilter(OrderFilter):
         method='filter_supplier_part',
     )
 
+    @extend_schema_field(
+        rest_framework.serializers.IntegerField(help_text=_('Supplier Part'))
+    )
     def filter_supplier_part(
         self, queryset, name, supplier_part: company.models.SupplierPart
     ):
@@ -279,26 +331,34 @@ class PurchaseOrderFilter(OrderFilter):
         label=_('Completed After'), field_name='complete_date', lookup_expr='gt'
     )
 
+    external_build = rest_filters.ModelChoiceFilter(
+        queryset=build.models.Build.objects.filter(external=True),
+        method='filter_external_build',
+        label=_('External Build Order'),
+    )
 
-class PurchaseOrderMixin:
+    @extend_schema_field(
+        rest_framework.serializers.IntegerField(help_text=_('External Build Order'))
+    )
+    def filter_external_build(self, queryset, name, build):
+        """Filter to only include orders which fill fulfil the provided Build Order.
+
+        To achieve this, we return any order which has a line item which is allocated to the build order.
+        """
+        return queryset.filter(lines__build_order=build).distinct()
+
+
+class PurchaseOrderOutputOptions(OutputConfiguration):
+    """Output options for the PurchaseOrder endpoint."""
+
+    OPTIONS = [InvenTreeOutputOption('supplier_detail')]
+
+
+class PurchaseOrderMixin(SerializerContextMixin):
     """Mixin class for PurchaseOrder endpoints."""
 
     queryset = models.PurchaseOrder.objects.all()
     serializer_class = serializers.PurchaseOrderSerializer
-
-    def get_serializer(self, *args, **kwargs):
-        """Return the serializer instance for this endpoint."""
-        try:
-            kwargs['supplier_detail'] = str2bool(
-                self.request.query_params.get('supplier_detail', False)
-            )
-        except AttributeError:
-            pass
-
-        # Ensure the request context is passed through
-        kwargs['context'] = self.get_serializer_context()
-
-        return self.serializer_class(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
         """Return the annotated queryset for this endpoint."""
@@ -314,7 +374,11 @@ class PurchaseOrderMixin:
 
 
 class PurchaseOrderList(
-    PurchaseOrderMixin, OrderCreateMixin, DataExportViewMixin, ListCreateAPI
+    PurchaseOrderMixin,
+    OrderCreateMixin,
+    DataExportViewMixin,
+    OutputOptionsMixin,
+    ListCreateAPI,
 ):
     """API endpoint for accessing a list of PurchaseOrder objects.
 
@@ -323,24 +387,8 @@ class PurchaseOrderList(
     """
 
     filterset_class = PurchaseOrderFilter
-
-    def filter_queryset(self, queryset):
-        """Custom queryset filtering."""
-        # Perform basic filtering
-        queryset = super().filter_queryset(queryset)
-
-        params = self.request.query_params
-
-        # Filter by 'date range'
-        min_date = params.get('min_date', None)
-        max_date = params.get('max_date', None)
-
-        if min_date is not None and max_date is not None:
-            queryset = models.PurchaseOrder.filterByDate(queryset, min_date, max_date)
-
-        return queryset
-
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
+    output_options = PurchaseOrderOutputOptions
 
     ordering_field_aliases = {
         'reference': ['reference_int', 'reference'],
@@ -373,8 +421,12 @@ class PurchaseOrderList(
     ordering = '-reference'
 
 
-class PurchaseOrderDetail(PurchaseOrderMixin, RetrieveUpdateDestroyAPI):
+class PurchaseOrderDetail(
+    PurchaseOrderMixin, OutputOptionsMixin, RetrieveUpdateDestroyAPI
+):
     """API endpoint for detail view of a PurchaseOrder object."""
+
+    output_options = PurchaseOrderOutputOptions
 
 
 class PurchaseOrderContextMixin:
@@ -426,6 +478,7 @@ class PurchaseOrderIssue(PurchaseOrderContextMixin, CreateAPI):
     serializer_class = serializers.PurchaseOrderIssueSerializer
 
 
+@extend_schema(responses={201: stock_serializers.StockItemSerializer(many=True)})
 class PurchaseOrderReceive(PurchaseOrderContextMixin, CreateAPI):
     """API endpoint to receive stock items against a PurchaseOrder.
 
@@ -443,8 +496,18 @@ class PurchaseOrderReceive(PurchaseOrderContextMixin, CreateAPI):
     """
 
     queryset = models.PurchaseOrderLineItem.objects.none()
-
     serializer_class = serializers.PurchaseOrderReceiveSerializer
+    pagination_class = None
+
+    def create(self, request, *args, **kwargs):
+        """Override the create method to handle stock item creation."""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        items = serializer.save()
+        queryset = stock_serializers.StockItemSerializer.annotate_queryset(items)
+        response = stock_serializers.StockItemSerializer(queryset, many=True)
+
+        return Response(response.data, status=status.HTTP_201_CREATED)
 
 
 class PurchaseOrderLineItemFilter(LineItemFilter):
@@ -499,6 +562,9 @@ class PurchaseOrderLineItemFilter(LineItemFilter):
         label=_('Internal Part'),
     )
 
+    @extend_schema_field(
+        rest_framework.serializers.IntegerField(help_text=_('Internal Part'))
+    )
     def filter_base_part(self, queryset, name, base_part):
         """Filter by the 'base_part' attribute.
 
@@ -543,7 +609,16 @@ class PurchaseOrderLineItemFilter(LineItemFilter):
         )
 
 
-class PurchaseOrderLineItemMixin:
+class PurchaseOrderLineItemOutputOptions(OutputConfiguration):
+    """Output options for the PurchaseOrderLineItem endpoint."""
+
+    OPTIONS = [
+        InvenTreeOutputOption('part_detail'),
+        InvenTreeOutputOption('order_detail'),
+    ]
+
+
+class PurchaseOrderLineItemMixin(SerializerContextMixin):
     """Mixin class for PurchaseOrderLineItem endpoints."""
 
     queryset = models.PurchaseOrderLineItem.objects.all()
@@ -559,22 +634,6 @@ class PurchaseOrderLineItemMixin:
 
         return queryset
 
-    def get_serializer(self, *args, **kwargs):
-        """Return serializer instance for this endpoint."""
-        try:
-            kwargs['part_detail'] = str2bool(
-                self.request.query_params.get('part_detail', False)
-            )
-            kwargs['order_detail'] = str2bool(
-                self.request.query_params.get('order_detail', False)
-            )
-        except AttributeError:
-            pass
-
-        kwargs['context'] = self.get_serializer_context()
-
-        return self.serializer_class(*args, **kwargs)
-
     def perform_update(self, serializer):
         """Override the perform_update method to auto-update pricing if required."""
         super().perform_update(serializer)
@@ -585,7 +644,10 @@ class PurchaseOrderLineItemMixin:
 
 
 class PurchaseOrderLineItemList(
-    PurchaseOrderLineItemMixin, DataExportViewMixin, ListCreateDestroyAPIView
+    PurchaseOrderLineItemMixin,
+    DataExportViewMixin,
+    OutputOptionsMixin,
+    ListCreateDestroyAPIView,
 ):
     """API endpoint for accessing a list of PurchaseOrderLineItem objects.
 
@@ -594,6 +656,7 @@ class PurchaseOrderLineItemList(
     """
 
     filterset_class = PurchaseOrderLineItemFilter
+    output_options = PurchaseOrderLineItemOutputOptions
 
     def create(self, request, *args, **kwargs):
         """Create or update a new PurchaseOrderLineItem object."""
@@ -670,11 +733,17 @@ class PurchaseOrderLineItemList(
     ]
 
 
-class PurchaseOrderLineItemDetail(PurchaseOrderLineItemMixin, RetrieveUpdateDestroyAPI):
+class PurchaseOrderLineItemDetail(
+    PurchaseOrderLineItemMixin, OutputOptionsMixin, RetrieveUpdateDestroyAPI
+):
     """Detail API endpoint for PurchaseOrderLineItem object."""
 
+    output_options = PurchaseOrderLineItemOutputOptions
 
-class PurchaseOrderExtraLineList(GeneralExtraLineList, ListCreateAPI):
+
+class PurchaseOrderExtraLineList(
+    GeneralExtraLineList, OutputOptionsMixin, ListCreateAPI
+):
     """API endpoint for accessing a list of PurchaseOrderExtraLine objects."""
 
     queryset = models.PurchaseOrderExtraLine.objects.all()
@@ -714,6 +783,7 @@ class SalesOrderFilter(OrderFilter):
         queryset=Part.objects.all(), field_name='part', method='filter_part'
     )
 
+    @extend_schema_field(OpenApiTypes.INT)
     def filter_part(self, queryset, name, part):
         """Filter SalesOrder by selected 'part'.
 
@@ -747,25 +817,11 @@ class SalesOrderFilter(OrderFilter):
     )
 
 
-class SalesOrderMixin:
+class SalesOrderMixin(SerializerContextMixin):
     """Mixin class for SalesOrder endpoints."""
 
     queryset = models.SalesOrder.objects.all()
     serializer_class = serializers.SalesOrderSerializer
-
-    def get_serializer(self, *args, **kwargs):
-        """Return serializer instance for this endpoint."""
-        try:
-            kwargs['customer_detail'] = str2bool(
-                self.request.query_params.get('customer_detail', False)
-            )
-        except AttributeError:
-            pass
-
-        # Ensure the context is passed through to the serializer
-        kwargs['context'] = self.get_serializer_context()
-
-        return self.serializer_class(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
         """Return annotated queryset for this endpoint."""
@@ -780,8 +836,18 @@ class SalesOrderMixin:
         return queryset
 
 
+class SalesOrderOutputOptions(OutputConfiguration):
+    """Output options for the SalesOrder endpoint."""
+
+    OPTIONS = [InvenTreeOutputOption('customer_detail')]
+
+
 class SalesOrderList(
-    SalesOrderMixin, OrderCreateMixin, DataExportViewMixin, ListCreateAPI
+    SalesOrderMixin,
+    OrderCreateMixin,
+    DataExportViewMixin,
+    OutputOptionsMixin,
+    ListCreateAPI,
 ):
     """API endpoint for accessing a list of SalesOrder objects.
 
@@ -791,22 +857,9 @@ class SalesOrderList(
 
     filterset_class = SalesOrderFilter
 
-    def filter_queryset(self, queryset):
-        """Perform custom filtering operations on the SalesOrder queryset."""
-        queryset = super().filter_queryset(queryset)
-
-        params = self.request.query_params
-
-        # Filter by 'date range'
-        min_date = params.get('min_date', None)
-        max_date = params.get('max_date', None)
-
-        if min_date is not None and max_date is not None:
-            queryset = models.SalesOrder.filterByDate(queryset, min_date, max_date)
-
-        return queryset
-
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
+
+    output_options = SalesOrderOutputOptions
 
     ordering_field_aliases = {
         'reference': ['reference_int', 'reference'],
@@ -841,8 +894,10 @@ class SalesOrderList(
     ordering = '-reference'
 
 
-class SalesOrderDetail(SalesOrderMixin, RetrieveUpdateDestroyAPI):
+class SalesOrderDetail(SalesOrderMixin, OutputOptionsMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a SalesOrder object."""
+
+    output_options = SalesOrderOutputOptions
 
 
 class SalesOrderLineItemFilter(LineItemFilter):
@@ -859,9 +914,39 @@ class SalesOrderLineItemFilter(LineItemFilter):
         queryset=models.SalesOrder.objects.all(), field_name='order', label=_('Order')
     )
 
+    def filter_include_variants(self, queryset, name, value):
+        """Filter by whether or not to include variants of the selected part.
+
+        Note:
+        - This filter does nothing by itself, and requires the 'part' filter to be set.
+        - Refer to the 'filter_part' method for more information.
+        """
+        return queryset
+
     part = rest_filters.ModelChoiceFilter(
-        queryset=Part.objects.all(), field_name='part', label=_('Part')
+        queryset=Part.objects.all(),
+        field_name='part',
+        label=_('Part'),
+        method='filter_part',
     )
+
+    @extend_schema_field(OpenApiTypes.INT)
+    def filter_part(self, queryset, name, part):
+        """Filter SalesOrderLineItem by selected 'part'.
+
+        Note:
+        - If 'include_variants' is set to True, then all variants of the selected part will be included.
+        - Otherwise, just filter by the selected part.
+        """
+        include_variants = str2bool(self.data.get('include_variants', False))
+
+        # Construct a queryset of parts to filter by
+        if include_variants:
+            parts = part.get_descendants(include_self=True)
+        else:
+            parts = Part.objects.filter(pk=part.pk)
+
+        return queryset.filter(part__in=parts)
 
     allocated = rest_filters.BooleanFilter(
         label=_('Allocated'), method='filter_allocated'
@@ -916,27 +1001,11 @@ class SalesOrderLineItemFilter(LineItemFilter):
         return queryset.exclude(order__status__in=SalesOrderStatusGroups.OPEN)
 
 
-class SalesOrderLineItemMixin:
+class SalesOrderLineItemMixin(SerializerContextMixin):
     """Mixin class for SalesOrderLineItem endpoints."""
 
     queryset = models.SalesOrderLineItem.objects.all()
     serializer_class = serializers.SalesOrderLineItemSerializer
-
-    def get_serializer(self, *args, **kwargs):
-        """Return serializer for this endpoint with extra data as requested."""
-        try:
-            params = self.request.query_params
-
-            kwargs['part_detail'] = str2bool(params.get('part_detail', False))
-            kwargs['order_detail'] = str2bool(params.get('order_detail', False))
-            kwargs['customer_detail'] = str2bool(params.get('customer_detail', False))
-
-        except AttributeError:
-            pass
-
-        kwargs['context'] = self.get_serializer_context()
-
-        return self.serializer_class(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
         """Return annotated queryset for this endpoint."""
@@ -960,14 +1029,26 @@ class SalesOrderLineItemMixin:
         return queryset
 
 
+class SalesOrderLineItemOutputOptions(OutputConfiguration):
+    """Output options for the SalesOrderAllocation endpoint."""
+
+    OPTIONS = [
+        InvenTreeOutputOption('part_detail'),
+        InvenTreeOutputOption('order_detail'),
+        InvenTreeOutputOption('customer_detail'),
+    ]
+
+
 class SalesOrderLineItemList(
-    SalesOrderLineItemMixin, DataExportViewMixin, ListCreateAPI
+    SalesOrderLineItemMixin, DataExportViewMixin, OutputOptionsMixin, ListCreateAPI
 ):
     """API endpoint for accessing a list of SalesOrderLineItem objects."""
 
     filterset_class = SalesOrderLineItemFilter
 
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
+
+    output_options = SalesOrderLineItemOutputOptions
 
     ordering_fields = [
         'customer',
@@ -991,11 +1072,15 @@ class SalesOrderLineItemList(
     search_fields = ['part__name', 'quantity', 'reference']
 
 
-class SalesOrderLineItemDetail(SalesOrderLineItemMixin, RetrieveUpdateDestroyAPI):
+class SalesOrderLineItemDetail(
+    SalesOrderLineItemMixin, OutputOptionsMixin, RetrieveUpdateDestroyAPI
+):
     """API endpoint for detail view of a SalesOrderLineItem object."""
 
+    output_options = SalesOrderLineItemOutputOptions
 
-class SalesOrderExtraLineList(GeneralExtraLineList, ListCreateAPI):
+
+class SalesOrderExtraLineList(GeneralExtraLineList, OutputOptionsMixin, ListCreateAPI):
     """API endpoint for accessing a list of SalesOrderExtraLine objects."""
 
     queryset = models.SalesOrderExtraLine.objects.all()
@@ -1070,7 +1155,7 @@ class SalesOrderAllocate(SalesOrderContextMixin, CreateAPI):
     serializer_class = serializers.SalesOrderShipmentAllocationSerializer
 
 
-class SalesOrderAllocationFilter(rest_filters.FilterSet):
+class SalesOrderAllocationFilter(FilterSet):
     """Custom filterset for the SalesOrderAllocationList endpoint."""
 
     class Meta:
@@ -1102,6 +1187,7 @@ class SalesOrderAllocationFilter(rest_filters.FilterSet):
         queryset=Part.objects.all(), method='filter_part', label=_('Part')
     )
 
+    @extend_schema_field(rest_framework.serializers.IntegerField(help_text=_('Part')))
     def filter_part(self, queryset, name, part):
         """Filter by the 'part' attribute.
 
@@ -1143,6 +1229,20 @@ class SalesOrderAllocationFilter(rest_filters.FilterSet):
             return queryset.exclude(shipment=None)
         return queryset.filter(shipment=None)
 
+    location = rest_filters.ModelChoiceFilter(
+        queryset=stock_models.StockLocation.objects.all(),
+        label=_('Location'),
+        method='filter_location',
+    )
+
+    @extend_schema_field(
+        rest_framework.serializers.IntegerField(help_text=_('Location'))
+    )
+    def filter_location(self, queryset, name, location):
+        """Filter by the location of the allocated StockItem."""
+        locations = location.get_descendants(include_self=True)
+        return queryset.filter(item__location__in=locations)
+
 
 class SalesOrderAllocationMixin:
     """Mixin class for SalesOrderAllocation endpoints."""
@@ -1172,16 +1272,32 @@ class SalesOrderAllocationMixin:
         return queryset
 
 
-class SalesOrderAllocationList(SalesOrderAllocationMixin, ListAPI):
+class SalesOrderAllocationOutputOptions(OutputConfiguration):
+    """Output options for the SalesOrderAllocation endpoint."""
+
+    OPTIONS = [
+        InvenTreeOutputOption('part_detail'),
+        InvenTreeOutputOption('item_detail'),
+        InvenTreeOutputOption('order_detail'),
+        InvenTreeOutputOption('location_detail'),
+        InvenTreeOutputOption('customer_detail'),
+    ]
+
+
+class SalesOrderAllocationList(
+    SalesOrderAllocationMixin, BulkUpdateMixin, OutputOptionsMixin, ListAPI
+):
     """API endpoint for listing SalesOrderAllocation objects."""
 
     filterset_class = SalesOrderAllocationFilter
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
+    output_options = SalesOrderAllocationOutputOptions
 
     ordering_fields = [
         'quantity',
         'part',
         'serial',
+        'IPN',
         'batch',
         'location',
         'order',
@@ -1189,6 +1305,7 @@ class SalesOrderAllocationList(SalesOrderAllocationMixin, ListAPI):
     ]
 
     ordering_field_aliases = {
+        'IPN': 'item__part__IPN',
         'part': 'item__part__name',
         'serial': ['item__serial_int', 'item__serial'],
         'batch': 'item__batch',
@@ -1197,32 +1314,19 @@ class SalesOrderAllocationList(SalesOrderAllocationMixin, ListAPI):
         'shipment_date': 'shipment__shipment_date',
     }
 
-    search_fields = {'item__part__name', 'item__serial', 'item__batch'}
-
-    def get_serializer(self, *args, **kwargs):
-        """Return the serializer instance for this endpoint.
-
-        Adds extra detail serializers if requested
-        """
-        try:
-            params = self.request.query_params
-
-            kwargs['part_detail'] = str2bool(params.get('part_detail', False))
-            kwargs['item_detail'] = str2bool(params.get('item_detail', False))
-            kwargs['order_detail'] = str2bool(params.get('order_detail', False))
-            kwargs['location_detail'] = str2bool(params.get('location_detail', False))
-            kwargs['customer_detail'] = str2bool(params.get('customer_detail', False))
-        except AttributeError:
-            pass
-
-        return self.serializer_class(*args, **kwargs)
+    search_fields = {
+        'item__part__name',
+        'item__part__IPN',
+        'item__serial',
+        'item__batch',
+    }
 
 
 class SalesOrderAllocationDetail(SalesOrderAllocationMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detali view of a SalesOrderAllocation object."""
 
 
-class SalesOrderShipmentFilter(rest_filters.FilterSet):
+class SalesOrderShipmentFilter(FilterSet):
     """Custom filterset for the SalesOrderShipmentList endpoint."""
 
     class Meta:
@@ -1329,6 +1433,7 @@ class ReturnOrderFilter(OrderFilter):
         queryset=Part.objects.all(), field_name='part', method='filter_part'
     )
 
+    @extend_schema_field(OpenApiTypes.INT)
     def filter_part(self, queryset, name, part):
         """Filter by selected 'part'.
 
@@ -1361,25 +1466,11 @@ class ReturnOrderFilter(OrderFilter):
     )
 
 
-class ReturnOrderMixin:
+class ReturnOrderMixin(SerializerContextMixin):
     """Mixin class for ReturnOrder endpoints."""
 
     queryset = models.ReturnOrder.objects.all()
     serializer_class = serializers.ReturnOrderSerializer
-
-    def get_serializer(self, *args, **kwargs):
-        """Return serializer instance for this endpoint."""
-        try:
-            kwargs['customer_detail'] = str2bool(
-                self.request.query_params.get('customer_detail', False)
-            )
-        except AttributeError:
-            pass
-
-        # Ensure the context is passed through to the serializer
-        kwargs['context'] = self.get_serializer_context()
-
-        return self.serializer_class(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
         """Return annotated queryset for this endpoint."""
@@ -1394,14 +1485,26 @@ class ReturnOrderMixin:
         return queryset
 
 
+class ReturnOrderOutputOptions(OutputConfiguration):
+    """Output options for the ReturnOrder endpoint."""
+
+    OPTIONS = [InvenTreeOutputOption(flag='customer_detail')]
+
+
 class ReturnOrderList(
-    ReturnOrderMixin, OrderCreateMixin, DataExportViewMixin, ListCreateAPI
+    ReturnOrderMixin,
+    OrderCreateMixin,
+    DataExportViewMixin,
+    OutputOptionsMixin,
+    ListCreateAPI,
 ):
     """API endpoint for accessing a list of ReturnOrder objects."""
 
     filterset_class = ReturnOrderFilter
 
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
+
+    output_options = ReturnOrderOutputOptions
 
     ordering_field_aliases = {
         'reference': ['reference_int', 'reference'],
@@ -1433,8 +1536,10 @@ class ReturnOrderList(
     ordering = '-reference'
 
 
-class ReturnOrderDetail(ReturnOrderMixin, RetrieveUpdateDestroyAPI):
+class ReturnOrderDetail(ReturnOrderMixin, OutputOptionsMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a single ReturnOrder object."""
+
+    output_options = ReturnOrderOutputOptions
 
 
 class ReturnOrderContextMixin:
@@ -1511,26 +1616,11 @@ class ReturnOrderLineItemFilter(LineItemFilter):
         return queryset.filter(received_date=None)
 
 
-class ReturnOrderLineItemMixin:
+class ReturnOrderLineItemMixin(SerializerContextMixin):
     """Mixin class for ReturnOrderLineItem endpoints."""
 
     queryset = models.ReturnOrderLineItem.objects.all()
     serializer_class = serializers.ReturnOrderLineItemSerializer
-
-    def get_serializer(self, *args, **kwargs):
-        """Return serializer for this endpoint with extra data as requested."""
-        try:
-            params = self.request.query_params
-
-            kwargs['order_detail'] = str2bool(params.get('order_detail', False))
-            kwargs['item_detail'] = str2bool(params.get('item_detail', True))
-            kwargs['part_detail'] = str2bool(params.get('part_detail', False))
-        except AttributeError:
-            pass
-
-        kwargs['context'] = self.get_serializer_context()
-
-        return self.serializer_class(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
         """Return annotated queryset for this endpoint."""
@@ -1541,8 +1631,18 @@ class ReturnOrderLineItemMixin:
         return queryset
 
 
+class ReturnOrderLineItemOutputOptions(OutputConfiguration):
+    """Output options for the ReturnOrderLineItem endpoint."""
+
+    OPTIONS = [
+        InvenTreeOutputOption('part_detail'),
+        InvenTreeOutputOption('item_detail', default=True),
+        InvenTreeOutputOption('order_detail'),
+    ]
+
+
 class ReturnOrderLineItemList(
-    ReturnOrderLineItemMixin, DataExportViewMixin, ListCreateAPI
+    ReturnOrderLineItemMixin, DataExportViewMixin, OutputOptionsMixin, ListCreateAPI
 ):
     """API endpoint for accessing a list of ReturnOrderLineItemList objects."""
 
@@ -1550,21 +1650,27 @@ class ReturnOrderLineItemList(
 
     filter_backends = SEARCH_ORDER_FILTER
 
+    output_options = ReturnOrderLineItemOutputOptions
+
     ordering_fields = ['reference', 'target_date', 'received_date']
 
     search_fields = [
-        'item_serial',
+        'item__serial',
         'item__part__name',
         'item__part__description',
         'reference',
     ]
 
 
-class ReturnOrderLineItemDetail(ReturnOrderLineItemMixin, RetrieveUpdateDestroyAPI):
+class ReturnOrderLineItemDetail(
+    ReturnOrderLineItemMixin, OutputOptionsMixin, RetrieveUpdateDestroyAPI
+):
     """API endpoint for detail view of a ReturnOrderLineItem object."""
 
+    output_options = ReturnOrderLineItemOutputOptions
 
-class ReturnOrderExtraLineList(GeneralExtraLineList, ListCreateAPI):
+
+class ReturnOrderExtraLineList(GeneralExtraLineList, OutputOptionsMixin, ListCreateAPI):
     """API endpoint for accessing a list of ReturnOrderExtraLine objects."""
 
     queryset = models.ReturnOrderExtraLine.objects.all()
@@ -1760,8 +1866,7 @@ order_api_urls = [
                     path('issue/', PurchaseOrderIssue.as_view(), name='api-po-issue'),
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': models.PurchaseOrder},
+                        MetadataView.as_view(model=models.PurchaseOrder),
                         name='api-po-metadata',
                     ),
                     path(
@@ -1793,8 +1898,7 @@ order_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': models.PurchaseOrderLineItem},
+                        MetadataView.as_view(model=models.PurchaseOrderLineItem),
                         name='api-po-line-metadata',
                     ),
                     path(
@@ -1816,8 +1920,7 @@ order_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': models.PurchaseOrderExtraLine},
+                        MetadataView.as_view(model=models.PurchaseOrderExtraLine),
                         name='api-po-extra-line-metadata',
                     ),
                     path(
@@ -1849,8 +1952,7 @@ order_api_urls = [
                             ),
                             path(
                                 'metadata/',
-                                MetadataView.as_view(),
-                                {'model': models.SalesOrderShipment},
+                                MetadataView.as_view(model=models.SalesOrderShipment),
                                 name='api-so-shipment-metadata',
                             ),
                             path(
@@ -1891,8 +1993,7 @@ order_api_urls = [
                     ),
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': models.SalesOrder},
+                        MetadataView.as_view(model=models.SalesOrder),
                         name='api-so-metadata',
                     ),
                     # SalesOrder detail endpoint
@@ -1919,8 +2020,7 @@ order_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': models.SalesOrderLineItem},
+                        MetadataView.as_view(model=models.SalesOrderLineItem),
                         name='api-so-line-metadata',
                     ),
                     path(
@@ -1942,8 +2042,7 @@ order_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': models.SalesOrderExtraLine},
+                        MetadataView.as_view(model=models.SalesOrderExtraLine),
                         name='api-so-extra-line-metadata',
                     ),
                     path(
@@ -1999,8 +2098,7 @@ order_api_urls = [
                     ),
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': models.ReturnOrder},
+                        MetadataView.as_view(model=models.ReturnOrder),
                         name='api-return-order-metadata',
                     ),
                     path(
@@ -2028,8 +2126,7 @@ order_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': models.ReturnOrderLineItem},
+                        MetadataView.as_view(model=models.ReturnOrderLineItem),
                         name='api-return-order-line-metadata',
                     ),
                     path(
@@ -2060,8 +2157,7 @@ order_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
-                        {'model': models.ReturnOrderExtraLine},
+                        MetadataView.as_view(model=models.ReturnOrderExtraLine),
                         name='api-return-order-extra-line-metadata',
                     ),
                     path(

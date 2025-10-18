@@ -13,6 +13,7 @@ from PIL import Image
 
 from common.models import InvenTreeSetting
 from generic.parameters.models import PartParameter, PartParameterTemplate
+from InvenTree.config import get_testfolder_dir
 from InvenTree.unit_test import InvenTreeTestCase
 from part.models import Part
 from part.test_api import PartImageTestMixin
@@ -176,8 +177,8 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
         # Test might return one of two results, depending on test env
         # If INVENTREE_SITE_URL is not set in the CI environment, the link will be relative
         options = [
-            f'<a href="http://localhost:8000/platform/part/{obj.pk}">test</a>',
-            f'<a href="/platform/part/{obj.pk}">test</a>',
+            f'<a href="http://localhost:8000/web/part/{obj.pk}">test</a>',
+            f'<a href="/web/part/{obj.pk}">test</a>',
         ]
 
         self.assertIn(link, options)
@@ -197,9 +198,63 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
     def test_maths_tags(self):
         """Simple tests for mathematical operator tags."""
         self.assertEqual(report_tags.add(1, 2), 3)
+        self.assertEqual(report_tags.add('-33', '33'), 0)
         self.assertEqual(report_tags.subtract(10, 4.2), 5.8)
         self.assertEqual(report_tags.multiply(2.3, 4), 9.2)
+        self.assertEqual(report_tags.multiply('-2', 4), -8.0)
         self.assertEqual(report_tags.divide(100, 5), 20)
+
+        self.assertEqual(report_tags.modulo(10, 3), 1)
+        self.assertEqual(report_tags.modulo('10', '4'), 2)
+
+        with self.assertRaises(ZeroDivisionError):
+            report_tags.divide(100, 0)
+
+    def test_maths_tags_with_strings(self):
+        """Tests for mathematical operator tags with string inputs."""
+        self.assertEqual(report_tags.add('10', '20'), 30)
+        self.assertEqual(report_tags.subtract('50.5', '20.2'), 30.3)
+        self.assertEqual(report_tags.multiply(3.0000000000000, '7'), 21)
+        self.assertEqual(report_tags.divide('100.0', '4'), 25.0)
+
+    def test_maths_tags_with_decimal(self):
+        """Tests for mathematical operator tags with Decimal inputs."""
+        from decimal import Decimal
+
+        self.assertEqual(
+            report_tags.add(Decimal('1.1'), Decimal('2.2')), Decimal('3.3')
+        )
+        self.assertEqual(
+            report_tags.subtract(Decimal('5.5'), Decimal('2.2')), Decimal('3.3')
+        )
+        self.assertEqual(report_tags.multiply(Decimal('3.0'), 4), Decimal('12.0'))
+        self.assertEqual(
+            report_tags.divide(Decimal('10.0'), Decimal('2.000')), Decimal('5.0')
+        )
+
+    def test_maths_tags_with_money(self):
+        """Tests for mathematical operator tags with Money inputs."""
+        m1 = Money(100, 'USD')
+        m2 = Money(50, 'USD')
+
+        self.assertEqual(report_tags.add(m1, m2), Money(150, 'USD'))
+        self.assertEqual(report_tags.subtract(m1, m2), Money(50, 'USD'))
+        self.assertEqual(report_tags.multiply(m2, 3), Money(150, 'USD'))
+        self.assertEqual(report_tags.divide(m1, '4'), Money(25, 'USD'))
+
+    def test_maths_tags_invalid(self):
+        """Tests for mathematical operator tags with invalid inputs."""
+        with self.assertRaises(TypeError):
+            report_tags.add('abc', 10)
+
+        with self.assertRaises(TypeError):
+            report_tags.subtract(50, 'xyz')
+
+        with self.assertRaises(TypeError):
+            report_tags.multiply('foo', 'bar')
+
+        with self.assertRaises(TypeError):
+            report_tags.divide('100', 'baz')
 
     def test_number_tags(self):
         """Simple tests for number formatting tags."""
@@ -310,7 +365,7 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
     def test_encode_svg_image(self):
         """Test the encode_svg_image template tag."""
         # Generate smallest possible SVG for testing
-        svg_path = settings.BASE_DIR / '_testfolder' / 'part_image_123abc.png'
+        svg_path = get_testfolder_dir() / 'part_image_123abc.png'
         with open(svg_path, 'w', encoding='utf8') as f:
             f.write('<svg xmlns="http://www.w3.org/2000/svg>')
 

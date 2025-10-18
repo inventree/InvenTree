@@ -1,9 +1,9 @@
 import { test } from '../baseFixtures.js';
 import { loadTab, navigate } from '../helpers.js';
-import { doQuickLogin } from '../login.js';
+import { doCachedLogin } from '../login.js';
 
-test('Company', async ({ page }) => {
-  await doQuickLogin(page);
+test('Company', async ({ browser }) => {
+  const page = await doCachedLogin(browser);
 
   await navigate(page, 'company/1/details');
   await page.getByLabel('Details').getByText('DigiKey Electronics').waitFor();
@@ -30,8 +30,10 @@ test('Company', async ({ page }) => {
   await page.getByLabel('action-menu-company-actions').click();
   await page.getByLabel('action-menu-company-actions-edit').click();
 
-  await page.getByLabel('text-field-name').fill('');
-  await page.getByLabel('text-field-website').fill('invalid-website');
+  await page.getByLabel('text-field-name', { exact: true }).fill('');
+  await page
+    .getByLabel('text-field-website', { exact: true })
+    .fill('invalid-website');
   await page.getByRole('button', { name: 'Submit' }).click();
 
   await page.getByText('This field may not be blank.').waitFor();

@@ -1,6 +1,7 @@
-import { Trans, t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import { Button, Group, Modal, Stack, TextInput } from '@mantine/core';
-import { useState } from 'react';
+import { type JSX, useState } from 'react';
 
 /* Adapted from https://daveteu.medium.com/react-custom-confirmation-box-458cceba3f7b */
 const createPromise = () => {

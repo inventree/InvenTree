@@ -7,6 +7,7 @@ from typing import Optional
 import requests
 import structlog
 
+from plugin import PluginMixinEnum
 from plugin.helpers import MixinNotImplementedError
 
 logger = structlog.get_logger('inventree')
@@ -72,7 +73,7 @@ class APICallMixin:
     def __init__(self):
         """Register mixin."""
         super().__init__()
-        self.add_mixin('api_call', 'has_api_call', __class__)
+        self.add_mixin(PluginMixinEnum.API_CALL, 'has_api_call', __class__)
 
     @property
     def has_api_call(self):
@@ -162,7 +163,8 @@ class APICallMixin:
             url = f'{self.api_url}/{endpoint}'
 
         # build kwargs for call
-        kwargs.update({'url': url, 'headers': headers})
+        kwargs.update({'headers': headers})
+        kwargs.pop('url', None)
 
         if data and json:
             raise ValueError('You can either pass `data` or `json` to this function.')
@@ -174,7 +176,7 @@ class APICallMixin:
             kwargs['data'] = data
 
         # run command
-        response = requests.request(method, **kwargs)
+        response = requests.request(method, url=url, **kwargs)
 
         # return
         if simple_response:

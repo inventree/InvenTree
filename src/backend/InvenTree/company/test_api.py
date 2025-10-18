@@ -2,10 +2,17 @@
 
 from django.urls import reverse
 
+from company.models import (
+    Address,
+    Company,
+    Contact,
+    ManufacturerPart,
+    SupplierPart,
+    SupplierPriceBreak,
+)
 from InvenTree.unit_test import InvenTreeAPITestCase
 from part.models import Part
-
-from .models import Address, Company, Contact, ManufacturerPart, SupplierPart
+from users.permissions import check_user_permission
 
 
 class CompanyTest(InvenTreeAPITestCase):
@@ -156,7 +163,10 @@ class CompanyTest(InvenTreeAPITestCase):
 
     def test_company_notes(self):
         """Test the markdown 'notes' field for the Company model."""
-        pk = Company.objects.first().pk
+        company = Company.objects.first()
+        assert company
+        pk = company.pk
+
         url = reverse('api-company-detail', kwargs={'pk': pk})
 
         # Attempt to inject malicious markdown into the "notes" field
@@ -253,6 +263,7 @@ class ContactTest(InvenTreeAPITestCase):
         n = Contact.objects.count()
 
         company = Company.objects.first()
+        assert company
 
         # Without required permissions, creation should fail
         self.post(
@@ -271,6 +282,8 @@ class ContactTest(InvenTreeAPITestCase):
         """Test that we can edit a Contact via the API."""
         # Get the first contact
         contact = Contact.objects.first()
+        assert contact
+
         # Use this contact in the tests
         url = reverse('api-contact-detail', kwargs={'pk': contact.pk})
 
@@ -294,6 +307,8 @@ class ContactTest(InvenTreeAPITestCase):
         """Tests that we can delete a Contact via the API."""
         # Get the last contact
         contact = Contact.objects.first()
+        assert contact
+
         url = reverse('api-contact-detail', kwargs={'pk': contact.pk})
 
         # Delete (without required permissions)
@@ -348,6 +363,7 @@ class AddressTest(InvenTreeAPITestCase):
     def test_filter_list(self):
         """Test listing addresses filtered on company."""
         company = Company.objects.first()
+        assert company
 
         response = self.get(self.url, {'company': company.pk}, expected_code=200)
 
@@ -356,6 +372,7 @@ class AddressTest(InvenTreeAPITestCase):
     def test_create(self):
         """Test creating a new address."""
         company = Company.objects.first()
+        assert company
 
         self.post(self.url, {'company': company.pk, 'title': 'HQ'}, expected_code=403)
 
@@ -366,6 +383,7 @@ class AddressTest(InvenTreeAPITestCase):
     def test_get(self):
         """Test that objects are properly returned from a get."""
         addr = Address.objects.first()
+        assert addr
 
         url = reverse('api-address-detail', kwargs={'pk': addr.pk})
         response = self.get(url, expected_code=200)
@@ -384,14 +402,16 @@ class AddressTest(InvenTreeAPITestCase):
             self.assertIn(key, response.data)
 
     def test_edit(self):
-        """Test editing an object."""
+        """Test editing an Address object."""
         addr = Address.objects.first()
+        assert addr
 
         url = reverse('api-address-detail', kwargs={'pk': addr.pk})
 
         self.patch(url, {'title': 'Hello'}, expected_code=403)
 
         self.assignRole('purchase_order.change')
+        self.assertTrue(check_user_permission(self.user, Address, 'change'))
 
         self.patch(url, {'title': 'World'}, expected_code=200)
 
@@ -402,12 +422,16 @@ class AddressTest(InvenTreeAPITestCase):
     def test_delete(self):
         """Test deleting an object."""
         addr = Address.objects.first()
+        assert addr
 
         url = reverse('api-address-detail', kwargs={'pk': addr.pk})
 
         self.delete(url, expected_code=403)
 
+        # Assign role, check permission
+        self.assertFalse(check_user_permission(self.user, Address, 'delete'))
         self.assignRole('purchase_order.delete')
+        self.assertTrue(check_user_permission(self.user, Address, 'delete'))
 
         self.delete(url, expected_code=204)
 
@@ -512,6 +536,14 @@ class ManufacturerTest(InvenTreeAPITestCase):
             'https://www.axel-larsson.se/Exego.aspx?p_id=341&ArtNr=0804020E',
         )
 
+    def test_output_options(self):
+        """Test the output options for SupplierPart detail."""
+        self.run_output_test(
+            reverse('api-manufacturer-part-list'),
+            ['part_detail', 'manufacturer_detail', ('pretty', 'pretty_name')],
+            assert_subset=True,
+        )
+
 
 class SupplierPartTest(InvenTreeAPITestCase):
     """Unit tests for the SupplierPart API endpoints."""
@@ -547,6 +579,19 @@ class SupplierPartTest(InvenTreeAPITestCase):
         for pk, n in expected.items():
             response = self.get(url, {'part': pk}, expected_code=200)
             self.assertEqual(len(response.data), n)
+
+    def test_output_options(self):
+        """Test the output options for SupplierPart detail."""
+        sp = SupplierPart.objects.all().first()
+        self.run_output_test(
+            reverse('api-supplier-part-detail', kwargs={'pk': sp.pk}),
+            [
+                'part_detail',
+                'supplier_detail',
+                'manufacturer_detail',
+                ('pretty', 'pretty_name'),
+            ],
+        )
 
     def test_available(self):
         """Tests for updating the 'available' field."""
@@ -688,3 +733,57 @@ class CompanyMetadataAPITest(InvenTreeAPITestCase):
             'api-contact-metadata': Contact,
         }.items():
             self.metatester(apikey, model)
+
+
+class SupplierPriceBreakAPITest(InvenTreeAPITestCase):
+    """Unit tests for the SupplierPart price break API."""
+
+    fixtures = [
+        'category',
+        'part',
+        'location',
+        'company',
+        'manufacturer_part',
+        'supplier_part',
+        'price_breaks',
+    ]
+
+    roles = ['company.change', 'purchase_order.change', 'part.change']
+
+    def test_output_options(self):
+        """Test the output options for SupplierPart price break list."""
+        self.run_output_test(
+            reverse('api-part-supplier-price-list'),
+            ['part_detail', 'supplier_detail'],
+            additional_params={'limit': 1},
+            assert_fnc=lambda x: x.data['results'][0],
+        )
+
+    def test_supplier_price_break_list(self):
+        """Test the SupplierPriceBreak API list functionality."""
+        url = reverse('api-part-supplier-price-list')
+
+        # Return *all* SupplierPriceBreaks
+        response = self.get(url, {}, expected_code=200)
+        self.assertEqual(len(response.data), SupplierPriceBreak.objects.count())
+
+        # Filter by supplier part
+        expected = {1: 3, 2: 2, 4: 2}  # Based on fixture data
+
+        for part_pk, count in expected.items():
+            response = self.get(url, {'part': part_pk}, expected_code=200)
+            self.assertEqual(len(response.data), count)
+
+        # Test ordering by quantity
+        response = self.get(url, {'ordering': 'quantity'}, expected_code=200)
+        quantities = [item['quantity'] for item in response.data]
+        self.assertEqual(quantities, sorted(quantities))
+
+        # Test ordering by price
+        response = self.get(url, {'ordering': 'price'}, expected_code=200)
+        prices = [float(item['price']) for item in response.data]
+        self.assertEqual(prices, sorted(prices))
+
+        # Test search by supplier name
+        response = self.get(url, {'search': 'ACME'}, expected_code=200)
+        self.assertGreater(len(response.data), 0)

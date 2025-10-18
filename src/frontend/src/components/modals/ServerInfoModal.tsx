@@ -1,23 +1,20 @@
-import { Trans } from '@lingui/macro';
+import { Trans } from '@lingui/react/macro';
 import { Badge, Button, Divider, Group, Stack, Table } from '@mantine/core';
 import type { ContextModalProps } from '@mantine/modals';
 
-import { useServerApiState } from '../../states/ApiState';
+import { useShallow } from 'zustand/react/shallow';
+import { useServerApiState } from '../../states/ServerApiState';
 import { OnlyStaff } from '../items/OnlyStaff';
-import { StylishText } from '../items/StylishText';
 
 export function ServerInfoModal({
   context,
   id
 }: ContextModalProps<{ modalBody: string }>) {
-  const [server] = useServerApiState((state) => [state.server]);
+  const [server] = useServerApiState(useShallow((state) => [state.server]));
 
   return (
     <Stack>
       <Divider />
-      <StylishText size='lg'>
-        <Trans>Server</Trans>
-      </StylishText>
       <Table striped>
         <Table.Tbody>
           <Table.Tr>
@@ -52,7 +49,10 @@ export function ServerInfoModal({
                 <Trans>Debug Mode</Trans>
               </Table.Td>
               <Table.Td>
-                <Trans>Server is running in debug mode</Trans>
+                <Group justify='space-between'>
+                  <Badge color='red'>INVE-W4</Badge>
+                  <Trans>Server is running in debug mode</Trans>
+                </Group>
               </Table.Td>
             </Table.Tr>
           )}
@@ -102,21 +102,23 @@ export function ServerInfoModal({
                 <Trans>Background Worker</Trans>
               </Table.Td>
               <Table.Td>
-                <Badge color='red'>
-                  <Trans>Background worker not running</Trans>
-                </Badge>
+                <Group justify='space-between'>
+                  <Badge color='red'>INVE-W5</Badge>
+                  <Trans>The background worker process is not running</Trans>
+                </Group>
               </Table.Td>
             </Table.Tr>
           )}
-          {server?.email_configured == false && (
+          {!server?.email_configured && (
             <Table.Tr>
               <Table.Td>
                 <Trans>Email Settings</Trans>
               </Table.Td>
               <Table.Td>
-                <Badge color='red'>
-                  <Trans>Email settings not configured</Trans>
-                </Badge>
+                <Group justify='space-between'>
+                  <Badge color='red'>INVE-W7</Badge>
+                  <Trans>Email settings not configured.</Trans>
+                </Group>
               </Table.Td>
             </Table.Tr>
           )}

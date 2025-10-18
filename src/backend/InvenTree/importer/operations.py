@@ -1,9 +1,12 @@
 """Data import operational functions."""
 
+from typing import Optional
+
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
 import tablib
+import tablib.core
 
 import InvenTree.helpers
 
@@ -72,9 +75,8 @@ def extract_column_names(data_file) -> list:
     headers = []
 
     for idx, header in enumerate(data.headers):
-        header = header.strip()
-
         if header:
+            header = str(header).strip()
             headers.append(header)
         else:
             # If the header is empty, generate a default header
@@ -83,7 +85,7 @@ def extract_column_names(data_file) -> list:
     return headers
 
 
-def get_field_label(field) -> str:
+def get_field_label(field) -> Optional[str]:
     """Return the label for a field in a serializer class.
 
     Check for labels in the following order of descending priority:

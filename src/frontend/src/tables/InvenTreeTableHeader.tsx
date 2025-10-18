@@ -1,14 +1,21 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import {
   ActionIcon,
   Alert,
+  Divider,
   Group,
+  HoverCard,
   Indicator,
+  Paper,
   Space,
+  Stack,
+  Text,
   Tooltip
 } from '@mantine/core';
 import {
   IconBarcode,
+  IconDownload,
+  IconExclamationCircle,
   IconFilter,
   IconRefresh,
   IconTrash
@@ -16,19 +23,21 @@ import {
 import { useMemo, useState } from 'react';
 import { Fragment } from 'react/jsx-runtime';
 
+import { ActionButton } from '@lib/components/ActionButton';
+import { ButtonMenu } from '@lib/components/ButtonMenu';
+import { SearchInput } from '@lib/components/SearchInput';
+import { resolveItem } from '@lib/functions/Conversion';
+import type { TableFilter } from '@lib/types/Filters';
+import type { TableState } from '@lib/types/Tables';
+import type { InvenTreeTableProps } from '@lib/types/Tables';
+import { showNotification } from '@mantine/notifications';
 import { Boundary } from '../components/Boundary';
-import { ActionButton } from '../components/buttons/ActionButton';
-import { ButtonMenu } from '../components/buttons/ButtonMenu';
 import { PrintingActions } from '../components/buttons/PrintingActions';
-import { useApi } from '../contexts/ApiContext';
+import { StylishText } from '../components/items/StylishText';
+import useDataExport from '../hooks/UseDataExport';
 import { useDeleteApiFormModal } from '../hooks/UseForm';
-import type { TableState } from '../hooks/UseTable';
 import { TableColumnSelect } from './ColumnSelect';
-import { DownloadAction } from './DownloadAction';
-import type { TableFilter } from './Filter';
 import { FilterSelectDrawer } from './FilterSelectDrawer';
-import type { InvenTreeTableProps } from './InvenTreeTable';
-import { TableSearchInput } from './Search';
 
 /**
  * Render a composite header for an InvenTree table
@@ -50,48 +59,45 @@ export default function InvenTreeTableHeader({
   filters: TableFilter[];
   toggleColumn: (column: string) => void;
 }>) {
-  const api = useApi();
-
   // Filter list visibility
   const [filtersVisible, setFiltersVisible] = useState<boolean>(false);
 
-  const downloadData = (fileFormat: string) => {
-    // Download entire dataset (no pagination)
+  // Construct export filters
+  const exportFilters = useMemo(() => {
+    const filters: Record<string, any> = {};
 
-    const queryParams = {
-      ...tableProps.params
-    };
+    // Add in any additional parameters which have a defined value
+    for (const [key, value] of Object.entries(tableProps.params ?? {})) {
+      if (value != undefined) {
+        filters[key] = value;
+      }
+    }
 
     // Add in active filters
-    if (tableState.activeFilters) {
-      tableState.activeFilters.forEach((filter) => {
-        queryParams[filter.name] = filter.value;
+    if (tableState.filterSet.activeFilters) {
+      tableState.filterSet.activeFilters.forEach((filter) => {
+        filters[filter.name] = filter.value;
       });
     }
 
     // Allow overriding of query parameters
     if (tableState.queryFilters) {
       for (const [key, value] of tableState.queryFilters) {
-        queryParams[key] = value;
+        if (value != undefined) {
+          filters[key] = value;
+        }
       }
     }
 
-    // Add custom search term
-    if (tableState.searchTerm) {
-      queryParams.search = tableState.searchTerm;
-    }
+    return filters;
+  }, [tableProps.params, tableState.filterSet, tableState.queryFilters]);
 
-    // Specify file format
-    queryParams.export = fileFormat;
-
-    const downloadUrl = api.getUri({
-      url: tableUrl,
-      params: queryParams
-    });
-
-    // Download file in a new window (to force download)
-    window.open(downloadUrl, '_blank');
-  };
+  const exportModal = useDataExport({
+    url: tableUrl ?? '',
+    enabled: !!tableUrl && tableProps?.enableDownload != false,
+    filters: exportFilters,
+    searchTerm: tableState.searchTerm
+  });
 
   const deleteRecords = useDeleteApiFormModal({
     url: tableUrl ?? '',
@@ -112,6 +118,17 @@ export default function InvenTreeTableHeader({
         hidden: true
       }
     },
+    successMessage: t`Items deleted`,
+    onFormError: (response) => {
+      showNotification({
+        id: 'bulk-delete-error',
+        title: t`Error`,
+        message: t`Failed to delete items`,
+        color: 'red',
+        icon: <IconExclamationCircle />,
+        autoClose: 5000
+      });
+    },
     onFormSuccess: () => {
       tableState.clearSelectedRecords();
       tableState.refreshTable();
@@ -127,21 +144,27 @@ export default function InvenTreeTableHeader({
   }, [tableState.queryFilters]);
 
   const hasCustomFilters = useMemo(() => {
-    if (hasCustomSearch) {
-      return tableState.queryFilters.size > 1;
-    } else {
-      return tableState.queryFilters.size > 0;
-    }
-  }, [hasCustomSearch, tableState.queryFilters]);
+    return (tableState?.queryFilters?.size ?? 0) > 0;
+  }, [tableState.queryFilters]);
+
+  // Extract ID values for label and report printing
+  const printingIdValues = useMemo(() => {
+    return (
+      tableState.selectedRecords?.map((record) => {
+        return resolveItem(record, tableProps.printingAccessor ?? 'pk');
+      }) ?? []
+    );
+  }, [tableProps.printingAccessor, tableState.selectedRecords]);
 
   return (
     <>
+      {exportModal.modal}
       {deleteRecords.modal}
       {tableProps.enableFilters && (filters.length ?? 0) > 0 && (
         <Boundary label={`InvenTreeTableFilterDrawer-${tableState.tableKey}`}>
           <FilterSelectDrawer
             availableFilters={filters}
-            tableState={tableState}
+            filterSet={tableState.filterSet}
             opened={filtersVisible}
             onClose={() => setFiltersVisible(false)}
           />
@@ -158,7 +181,7 @@ export default function InvenTreeTableHeader({
       <Group justify='apart' grow wrap='nowrap'>
         <Group justify='left' key='custom-actions' gap={5} wrap='nowrap'>
           <PrintingActions
-            items={tableState.selectedIds}
+            items={printingIdValues}
             modelType={tableProps.modelType}
             enableLabels={tableProps.enableLabels}
             enableReports={tableProps.enableReports}
@@ -190,14 +213,14 @@ export default function InvenTreeTableHeader({
         <Space />
         <Group justify='right' gap={5} wrap='nowrap'>
           {tableProps.enableSearch && (
-            <TableSearchInput
+            <SearchInput
               disabled={hasCustomSearch}
               searchCallback={(term: string) => tableState.setSearchTerm(term)}
             />
           )}
           {tableProps.enableRefresh && (
             <ActionIcon variant='transparent' aria-label='table-refresh'>
-              <Tooltip label={t`Refresh data`}>
+              <Tooltip label={t`Refresh data`} position='top-end'>
                 <IconRefresh
                   onClick={() => {
                     tableState.refreshTable();
@@ -216,27 +239,62 @@ export default function InvenTreeTableHeader({
           {tableProps.enableFilters && filters.length > 0 && (
             <Indicator
               size='xs'
-              label={tableState.activeFilters?.length ?? 0}
-              disabled={tableState.activeFilters?.length == 0}
+              label={tableState.filterSet.activeFilters?.length ?? 0}
+              disabled={tableState.filterSet.activeFilters?.length == 0}
             >
               <ActionIcon
                 disabled={hasCustomFilters}
                 variant='transparent'
                 aria-label='table-select-filters'
               >
-                <Tooltip label={t`Table Filters`}>
-                  <IconFilter
-                    onClick={() => setFiltersVisible(!filtersVisible)}
-                  />
-                </Tooltip>
+                <HoverCard
+                  position='bottom-end'
+                  withinPortal={true}
+                  disabled={
+                    hasCustomFilters ||
+                    !tableState.filterSet.activeFilters?.length
+                  }
+                >
+                  <HoverCard.Target>
+                    <Tooltip
+                      label={t`Table Filters`}
+                      position='top-end'
+                      disabled={!!tableState.filterSet.activeFilters?.length}
+                    >
+                      <IconFilter
+                        onClick={() => setFiltersVisible(!filtersVisible)}
+                      />
+                    </Tooltip>
+                  </HoverCard.Target>
+                  <HoverCard.Dropdown>
+                    <Paper p='sm' withBorder>
+                      <Stack gap='xs'>
+                        <StylishText size='md'>{t`Active Filters`}</StylishText>
+                        <Divider />
+                        {tableState.filterSet.activeFilters?.map((filter) => (
+                          <Group
+                            key={filter.name}
+                            justify='space-between'
+                            gap='xl'
+                            wrap='nowrap'
+                          >
+                            <Text size='sm'>{filter.label}</Text>
+                            <Text size='xs'>{filter.displayValue}</Text>
+                          </Group>
+                        ))}
+                      </Stack>
+                    </Paper>
+                  </HoverCard.Dropdown>
+                </HoverCard>
               </ActionIcon>
             </Indicator>
           )}
-          {tableProps.enableDownload && (
-            <DownloadAction
-              key='download-action'
-              downloadCallback={downloadData}
-            />
+          {tableUrl && tableProps.enableDownload && (
+            <ActionIcon variant='transparent' aria-label='table-export-data'>
+              <Tooltip label={t`Download data`} position='top-end'>
+                <IconDownload onClick={exportModal.open} />
+              </Tooltip>
+            </ActionIcon>
           )}
         </Group>
       </Group>

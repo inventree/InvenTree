@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Table } from '@mantine/core';
 import {
   IconAddressBook,
@@ -8,21 +8,22 @@ import {
 } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
+
+import { ProgressBar } from '@lib/components/ProgressBar';
+import { apiUrl } from '@lib/functions/Api';
 import type {
   ApiFormAdjustFilterType,
   ApiFormFieldSet,
   ApiFormFieldType
-} from '../components/forms/fields/ApiFormField';
+} from '@lib/types/Forms';
 import type { TableFieldRowProps } from '../components/forms/fields/TableField';
-import { ProgressBar } from '../components/items/ProgressBar';
-import { ApiEndpoints } from '../enums/ApiEndpoints';
-import { ModelType } from '../enums/ModelType';
 import { useCreateApiFormModal } from '../hooks/UseForm';
-import { apiUrl } from '../states/ApiState';
-import { useGlobalSettingsState } from '../states/SettingsState';
-import { PartColumn } from '../tables/ColumnRenderers';
+import { useGlobalSettingsState } from '../states/SettingsStates';
+import { RenderPartColumn } from '../tables/ColumnRenderers';
 
 export function useSalesOrderFields({
   duplicateOrderId
@@ -196,7 +197,7 @@ function SalesOrderAllocateLineRow({
   return (
     <Table.Tr key={`table-row-${props.idx}-${record.pk}`}>
       <Table.Td>
-        <PartColumn part={record.part_detail} />
+        <RenderPartColumn part={record.part_detail} />
       </Table.Td>
       <Table.Td>
         <ProgressBar

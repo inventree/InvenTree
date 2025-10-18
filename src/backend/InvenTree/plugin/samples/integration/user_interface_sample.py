@@ -93,13 +93,17 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
             except (Part.DoesNotExist, ValueError):
                 part = None
 
-            panels.append({
-                'key': 'part-panel',
-                'title': _('Part Panel'),
-                'source': self.plugin_static_file('sample_panel.js:renderPartPanel'),
-                'icon': 'ti:package_outline',
-                'context': {'part_name': part.name if part else ''},
-            })
+            # Only display this panel for "active" parts
+            if part and part.active:
+                panels.append({
+                    'key': 'part-panel',
+                    'title': _('Part Panel'),
+                    'source': self.plugin_static_file(
+                        'sample_panel.js:renderPartPanel'
+                    ),
+                    'icon': 'ti:package:outline',
+                    'context': {'part_name': part.name if part else ''},
+                })
 
         # Next, add a custom panel which will appear on the 'purchaseorder' page
         if target_model == 'purchaseorder' and self.get_setting(
@@ -175,7 +179,7 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
                 {
                     'key': 'sample-template-editor',
                     'title': 'Sample Template Editor',
-                    'icon': 'keywords',
+                    'icon': 'ti:tags:outline',
                     'source': self.plugin_static_file(
                         'sample_template.js:getTemplateEditor'
                     ),
@@ -190,10 +194,21 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
             {
                 'key': 'sample-template-preview',
                 'title': 'Sample Template Preview',
-                'icon': 'category',
+                'icon': 'ti:category:outline',
                 'source': self.plugin_static_file(
                     'sample_preview.js:getTemplatePreview'
                 ),
+            }
+        ]
+
+    def get_ui_navigation_items(self, request, context, **kwargs):
+        """Return a list of custom navigation items."""
+        return [
+            {
+                'key': 'sample-nav-item',
+                'title': 'Sample Nav Item',
+                'icon': 'ti:menu',
+                'options': {'url': '/sample/page/'},
             }
         ]
 

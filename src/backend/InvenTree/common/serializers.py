@@ -6,6 +6,8 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 import django_q.models
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema_field
 from error_report.models import Error
 from flags.state import flag_state
 from rest_framework import serializers
@@ -15,10 +17,10 @@ from taggit.serializers import TagListSerializerField
 import common.models as common_models
 import common.validators
 import generic.states.custom
-from importer.mixins import DataImportExportSerializerMixin
 from importer.registry import register_importer
 from InvenTree.helpers import get_objectreference
 from InvenTree.helpers_model import construct_absolute_url
+from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.serializers import (
     InvenTreeAttachmentSerializerField,
     InvenTreeImageSerializerField,
@@ -28,6 +30,7 @@ from plugin import registry as plugin_registry
 from users.serializers import OwnerSerializer, UserSerializer
 
 
+@extend_schema_field(OpenApiTypes.STR)
 class SettingsValueField(serializers.Field):
     """Custom serializer field for a settings value."""
 
@@ -35,19 +38,32 @@ class SettingsValueField(serializers.Field):
         """Return the object instance, not the attribute value."""
         return instance
 
-    def to_representation(self, instance):
+    def to_representation(self, instance: common_models.InvenTreeSetting) -> str:
         """Return the value of the setting.
 
         Protected settings are returned as '***'
         """
         if instance.protected:
             return '***'
-        elif instance.value is None:
-            return ''
         else:
-            return str(instance.value)
+            value = instance.value
 
-    def to_internal_value(self, data):
+            if value is None:
+                value = ''
+
+            # Attempt to coerce the value to a native type
+            if instance.is_int():
+                value = instance.as_int()
+
+            elif instance.is_float():
+                value = instance.as_float()
+
+            elif instance.is_bool():
+                value = instance.as_bool()
+
+            return value
+
+    def to_internal_value(self, data) -> str:
         """Return the internal value of the setting."""
         if data is None:
             return ''
@@ -120,7 +136,28 @@ class GlobalSettingsSerializer(SettingsSerializer):
             'model_name',
             'api_url',
             'typ',
+            'read_only',
         ]
+
+    read_only = serializers.SerializerMethodField(
+        read_only=True,
+        help_text=_(
+            'Indicates if the setting is overridden by an environment variable'
+        ),
+        label=_('Override'),
+    )
+
+    def get_read_only(self, obj) -> bool:
+        """Return True if the setting 'read_only' (cannot be edited).
+
+        A setting may be "read-only" if:
+
+        - It is overridden by an environment variable.
+        """
+        from common.settings import global_setting_overrides
+
+        overrides = global_setting_overrides()
+        return obj.key in overrides
 
 
 class UserSettingsSerializer(SettingsSerializer):
@@ -189,6 +226,7 @@ class GenericReferencedSettingSerializer(SettingsSerializer):
                 'model_filters',
                 'api_url',
                 'typ',
+                'units',
                 'required',
             ]
 
@@ -302,6 +340,12 @@ class ConfigSerializer(serializers.Serializer):
     This is a read-only serializer.
     """
 
+    key = serializers.CharField(read_only=True)
+    env_var = serializers.CharField(read_only=True, allow_null=True)
+    config_key = serializers.CharField(read_only=True, allow_null=True)
+    source = serializers.CharField(read_only=True)
+    accessed = serializers.DateTimeField(read_only=True)
+
     def to_representation(self, instance):
         """Return the configuration data as a dictionary."""
         if not isinstance(instance, str):
@@ -333,7 +377,9 @@ class ProjectCodeSerializer(DataImportExportSerializerMixin, InvenTreeModelSeria
         model = common_models.ProjectCode
         fields = ['pk', 'code', 'description', 'responsible', 'responsible_detail']
 
-    responsible_detail = OwnerSerializer(source='responsible', read_only=True)
+    responsible_detail = OwnerSerializer(
+        source='responsible', read_only=True, allow_null=True
+    )
 
 
 @register_importer()
@@ -365,6 +411,12 @@ class CustomStateSerializer(DataImportExportSerializerMixin, InvenTreeModelSeria
 
 class FlagSerializer(serializers.Serializer):
     """Serializer for feature flags."""
+
+    key = serializers.CharField(read_only=True)
+    state = serializers.CharField(read_only=True)
+    conditions = serializers.ListField(
+        child=serializers.DictField(), read_only=True, allow_null=True
+    )
 
     def to_representation(self, instance):
         """Return the configuration data as a dictionary."""
@@ -423,7 +475,7 @@ class AllUnitListResponseSerializer(serializers.Serializer):
 
     default_system = serializers.CharField()
     available_systems = serializers.ListField(child=serializers.CharField())
-    available_units = Unit(many=True)
+    available_units = serializers.DictField(child=Unit())
 
 
 class ErrorMessageSerializer(InvenTreeModelSerializer):
@@ -614,7 +666,7 @@ class AttachmentSerializer(InvenTreeModelSerializer):
     def save(self, **kwargs):
         """Override the save method to handle the model_type field."""
         from InvenTree.models import InvenTreeAttachmentMixin
-        from users.models import check_user_permission
+        from users.permissions import check_user_permission
 
         model_type = self.validated_data.get('model_type', None)
 
@@ -755,7 +807,7 @@ class SelectionListSerializer(InvenTreeModelSerializer):
     def update(self, instance, validated_data):
         """Update an existing selection list. Save the choices separately."""
         inst_mapping = {inst.id: inst for inst in instance.entries.all()}
-        exsising_ids = {a.get('id') for a in self._choices_validated}
+        existing_ids = {a.get('id') for a in self._choices_validated}
 
         # Perform creations and updates.
         ret = []
@@ -770,7 +822,7 @@ class SelectionListSerializer(InvenTreeModelSerializer):
                 ret.append(SelectionEntrySerializer().update(inst, data))
 
         # Perform deletions.
-        for entry_id in inst_mapping.keys() - exsising_ids:
+        for entry_id in inst_mapping.keys() - existing_ids:
             inst_mapping[entry_id].delete()
 
         return super().update(instance, validated_data)
@@ -781,3 +833,71 @@ class SelectionListSerializer(InvenTreeModelSerializer):
         if self.instance and self.instance.locked:
             raise serializers.ValidationError({'locked': _('Selection list is locked')})
         return ret
+
+
+class DataOutputSerializer(InvenTreeModelSerializer):
+    """Serializer for the DataOutput model."""
+
+    class Meta:
+        """Meta options for DataOutputSerializer."""
+
+        model = common_models.DataOutput
+        fields = [
+            'pk',
+            'created',
+            'user',
+            'user_detail',
+            'total',
+            'progress',
+            'complete',
+            'output_type',
+            'template_name',
+            'plugin',
+            'output',
+            'errors',
+        ]
+
+    user_detail = UserSerializer(source='user', read_only=True, many=False)
+
+    output = InvenTreeAttachmentSerializerField(allow_null=True, read_only=True)
+
+
+class EmailMessageSerializer(InvenTreeModelSerializer):
+    """Serializer for the EmailMessage model."""
+
+    class Meta:
+        """Meta options for EmailMessageSerializer."""
+
+        model = common_models.EmailMessage
+        fields = [
+            'pk',
+            'global_id',
+            'message_id_key',
+            'thread_id_key',
+            'thread',
+            'subject',
+            'body',
+            'to',
+            'sender',
+            'status',
+            'timestamp',
+            'headers',
+            'full_message',
+            'direction',
+            'priority',
+            'error_code',
+            'error_message',
+            'error_timestamp',
+            'delivery_options',
+        ]
+
+
+class TestEmailSerializer(serializers.Serializer):
+    """Serializer to send a test email."""
+
+    class Meta:
+        """Meta options for TestEmailSerializer."""
+
+        fields = ['email']
+
+    email = serializers.EmailField(required=True)

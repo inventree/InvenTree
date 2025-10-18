@@ -1,23 +1,28 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { useCallback, useMemo, useState } from 'react';
 
-import { AddItemButton } from '../../components/buttons/AddItemButton';
-import type { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { UserRoles } from '../../enums/Roles';
+import { AddItemButton } from '@lib/components/AddItemButton';
+import {
+  type RowAction,
+  RowDeleteAction,
+  RowDuplicateAction,
+  RowEditAction
+} from '@lib/components/RowActions';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import type { TableFilter } from '@lib/types/Filters';
+import type { ApiFormFieldSet } from '@lib/types/Forms';
+import type { TableColumn } from '@lib/types/Tables';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
-import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 export default function PartParameterTemplateTable() {
   const table = useTable('part-parameter-templates');
@@ -91,13 +96,24 @@ export default function PartParameterTemplateTable() {
     )
   });
 
-  const [selectedTemplate, setSelectedTemplate] = useState<number | undefined>(
+  const [selectedTemplate, setSelectedTemplate] = useState<any | undefined>(
     undefined
   );
 
+  const duplicateTemplate = useCreateApiFormModal({
+    url: ApiEndpoints.part_parameter_template_list,
+    title: t`Duplicate Parameter Template`,
+    table: table,
+    fields: useMemo(
+      () => ({ ...partParameterTemplateFields }),
+      [partParameterTemplateFields]
+    ),
+    initialData: selectedTemplate
+  });
+
   const editTemplate = useEditApiFormModal({
     url: ApiEndpoints.part_parameter_template_list,
-    pk: selectedTemplate,
+    pk: selectedTemplate?.pk,
     title: t`Edit Parameter Template`,
     table: table,
     fields: useMemo(
@@ -108,7 +124,7 @@ export default function PartParameterTemplateTable() {
 
   const deleteTemplate = useDeleteApiFormModal({
     url: ApiEndpoints.part_parameter_template_list,
-    pk: selectedTemplate,
+    pk: selectedTemplate?.pk,
     title: t`Delete Parameter Template`,
     table: table
   });
@@ -120,14 +136,21 @@ export default function PartParameterTemplateTable() {
         RowEditAction({
           hidden: !user.hasChangeRole(UserRoles.part),
           onClick: () => {
-            setSelectedTemplate(record.pk);
+            setSelectedTemplate(record);
             editTemplate.open();
+          }
+        }),
+        RowDuplicateAction({
+          hidden: !user.hasAddRole(UserRoles.part),
+          onClick: () => {
+            setSelectedTemplate(record);
+            duplicateTemplate.open();
           }
         }),
         RowDeleteAction({
           hidden: !user.hasDeleteRole(UserRoles.part),
           onClick: () => {
-            setSelectedTemplate(record.pk);
+            setSelectedTemplate(record);
             deleteTemplate.open();
           }
         })
@@ -151,6 +174,7 @@ export default function PartParameterTemplateTable() {
     <>
       {newTemplate.modal}
       {editTemplate.modal}
+      {duplicateTemplate.modal}
       {deleteTemplate.modal}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.part_parameter_template_list)}

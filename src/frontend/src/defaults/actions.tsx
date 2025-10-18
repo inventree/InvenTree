@@ -1,9 +1,10 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import type { SpotlightActionData } from '@mantine/spotlight';
 import { IconBarcode, IconLink, IconPointer } from '@tabler/icons-react';
 import type { NavigateFunction } from 'react-router-dom';
 
 import { openContextModal } from '@mantine/modals';
+import { useShallow } from 'zustand/react/shallow';
 import { useLocalState } from '../states/LocalState';
 import { useUserState } from '../states/UserState';
 import { aboutInvenTree, docLinks, licenseInfo, serverInfo } from './links';
@@ -16,7 +17,9 @@ export function openQrModal(navigate: NavigateFunction) {
 }
 
 export function getActions(navigate: NavigateFunction) {
-  const setNavigationOpen = useLocalState((state) => state.setNavigationOpen);
+  const setNavigationOpen = useLocalState(
+    useShallow((state) => state.setNavigationOpen)
+  );
   const { user } = useUserState();
 
   const actions: SpotlightActionData[] = [
@@ -24,7 +27,7 @@ export function getActions(navigate: NavigateFunction) {
       id: 'dashboard',
       label: t`Dashboard`,
       description: t`Go to the InvenTree dashboard`,
-      onClick: () => {}, // navigate(menuItems.dashboard.link),
+      onClick: () => navigate('/'),
       leftSection: <IconLink size='1.2rem' />
     },
     {

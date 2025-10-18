@@ -13,9 +13,9 @@ from rest_framework.utils import model_meta
 
 import common.models
 import InvenTree.permissions
-import users.models
 from InvenTree.helpers import str2bool
 from InvenTree.serializers import DependentField
+from users.permissions import check_user_permission
 
 logger = structlog.get_logger('inventree')
 
@@ -44,6 +44,8 @@ class InvenTreeMetadata(SimpleMetadata):
 
         See SimpleMetadata.determine_actions for more information.
         """
+        from InvenTree.api import BulkUpdateMixin
+
         actions = {}
 
         for method in {'PUT', 'POST', 'GET'} & set(view.allowed_methods):
@@ -54,7 +56,9 @@ class InvenTreeMetadata(SimpleMetadata):
                     view.check_permissions(view.request)
                 # Test object permissions
                 if method == 'PUT' and hasattr(view, 'get_object'):
-                    view.get_object()
+                    if not issubclass(view.__class__, BulkUpdateMixin):
+                        # Bypass the get_object method for the BulkUpdateMixin
+                        view.get_object()
             except (exceptions.APIException, PermissionDenied, Http404):
                 pass
             else:
@@ -103,28 +107,16 @@ class InvenTreeMetadata(SimpleMetadata):
             self.model = InvenTree.permissions.get_model_for_view(view)
 
             # Construct the 'table name' from the model
-            app_label = self.model._meta.app_label
             tbl_label = self.model._meta.model_name
-
             metadata['model'] = tbl_label
-
-            table = f'{app_label}_{tbl_label}'
 
             actions = metadata.get('actions', None)
 
             if actions is None:
                 actions = {}
 
-            check = users.models.RuleSet.check_table_permission
-
             # Map the request method to a permission type
-            rolemap = {
-                'GET': 'view',
-                'POST': 'add',
-                'PUT': 'change',
-                'PATCH': 'change',
-                'DELETE': 'delete',
-            }
+            rolemap = {**InvenTree.permissions.ACTION_MAP, 'OPTIONS': 'view'}
 
             # let the view define a custom rolemap
             if hasattr(view, 'rolemap'):
@@ -132,13 +124,15 @@ class InvenTreeMetadata(SimpleMetadata):
 
             # Remove any HTTP methods that the user does not have permission for
             for method, permission in rolemap.items():
-                result = check(user, table, permission)
+                result = check_user_permission(user, self.model, permission)
 
                 if method in actions and not result:
                     del actions[method]
 
             # Add a 'DELETE' action if we are allowed to delete
-            if 'DELETE' in view.allowed_methods and check(user, table, 'delete'):
+            if 'DELETE' in view.allowed_methods and check_user_permission(
+                user, self.model, 'delete'
+            ):
                 actions['DELETE'] = {}
 
             metadata['actions'] = actions
@@ -166,11 +160,11 @@ class InvenTreeMetadata(SimpleMetadata):
         - model_value is callable, and field_value is not (this indicates that the model value is translated)
         - model_value is not a string, and field_value is a string (this indicates that the model value is translated)
 
-        Arguments:
-            - field_name: The name of the field
-            - field_key: The property key to override
-            - field_value: The value of the field (if available)
-            - model_value: The equivalent value of the model (if available)
+        Args:
+            field_name (str): The name of the field.
+            field_key (str): The property key to override.
+            field_value: The value of the field (if available).
+            model_value: The equivalent value of the model (if available).
         """
         if field_value is None and model_value is not None:
             return model_value
@@ -402,7 +396,7 @@ class InvenTreeMetadata(SimpleMetadata):
 
                 # Special case for special models
                 if field_info['model'] == 'user':
-                    field_info['api_url'] = (reverse('api-user-list'),)
+                    field_info['api_url'] = reverse('api-user-list')
                 elif field_info['model'] == 'group':
                     field_info['api_url'] = reverse('api-group-list')
                 elif field_info['model'] == 'contenttype':

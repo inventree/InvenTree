@@ -5,6 +5,9 @@
 # Secret key for backend
 # Use the environment variable INVENTREE_SECRET_KEY_FILE
 #secret_key_file: '/etc/inventree/secret_key.txt'
+# Use the environment variable INVENTREE_OIDC_PRIVATE_KEY or INVENTREE_OIDC_PRIVATE_KEY_FILE
+#oidc_private_key: '-----BEGIN PRIVATE KEY-----aaa'
+#oidc_private_key_file: '/etc/inventree/oidc.key'
 
 # Database backend selection - Configure backend database settings
 # Documentation: https://docs.inventree.org/en/latest/start/config/
@@ -72,21 +75,33 @@ timezone: UTC
 #admin_password_file: '/etc/inventree/admin_password.txt'
 
 # Email backend configuration
-# Ref: https://docs.djangoproject.com/en/dev/topics/email/
+# See https://docs.inventree.org/en/stable/settings/email for more information on email configuration
+# You can either use (1) SMTP, (2) console or (3) anymail backends
+# 1 (SMTP) : Ref: https://docs.djangoproject.com/en/dev/topics/email/
+# 2 (Console): Ref: https://docs.djangoproject.com/en/dev/topics/email/#console-backend
+# 3 (Anymail): Ref: https://anymail.dev/en/stable/esps/
 # Alternatively, these options can all be set using environment variables,
 # with the INVENTREE_EMAIL_ prefix:
 # e.g. INVENTREE_EMAIL_HOST / INVENTREE_EMAIL_PORT / INVENTREE_EMAIL_USERNAME
-# Refer to the InvenTree documentation for more information
 
 email:
+  sender: '' #  'inventree@example.org'
+  # For 1
   # backend: 'django.core.mail.backends.smtp.EmailBackend'
   host: ''
   port: 25
   username: ''
   password: ''
-  sender: ''
   tls: False
   ssl: False
+  # For 2
+  # backend: 'django.core.mail.backends.console.EmailBackend'
+  # For 3
+  # backend: 'anymail.backends.mailjet.EmailBackend'
+  # anymail:
+  #   MAILJET_API_KEY: abc456
+  #   MAILJET_SECRET_KEY: def123
+  #   WEBHOOK_SECRET: random:random  # generate a random string for webhook secret
 
 # Set sentry_enabled to True to report errors back to the maintainers
 # Set sentry,dsn to your custom DSN if you want to use your own instance for error reporting
@@ -95,7 +110,7 @@ sentry_enabled: False
 #sentry_dsn: https://custom@custom.ingest.sentry.io/custom
 
 # OpenTelemetry tracing/metrics - disabled by default - refer to the documentation for full list of options
-# This can be used to send tracing data, logs and metrics to OpenTelemtry compatible backends
+# This can be used to send tracing data, logs and metrics to OpenTelemetry compatible backends
 tracing:
   enabled: false
 
@@ -127,9 +142,9 @@ allowed_hosts:
 # use_x_forwarded_proto: true
 
 # Cookie settings (nominally the default settings should be fine)
-cookie:
-  secure: false
-  samesite: false
+# cookie:
+#  secure: false
+#  samesite: false
 
 # Cross Origin Resource Sharing (CORS) settings (see https://github.com/adamchainz/django-cors-headers)
 cors:
@@ -188,7 +203,7 @@ remote_login_header: HTTP_REMOTE_USER
 #  - 'allauth.socialaccount.providers.github'
 
 # Add specific settings for social account providers (if required)
-# Refer to the djngo-allauth documentation for more details:
+# Refer to the django-allauth documentation for more details:
 # https://docs.allauth.org/en/latest/socialaccount/provider_configuration.html
 # social_providers:
 #   github:
@@ -202,9 +217,15 @@ ldap:
 # Customization options
 # Ref: https://docs.inventree.org/en/stable/start/config/#customization-options
 # customize:
+#   site_header: 'Custom Admin Panel'  # Django admin panel header text
 #   login_message: InvenTree demo instance - <a href='https://inventree.org/demo.html'> Click here for login details</a>
 #   navbar_message: <h6>InvenTree demo mode <a href='https://inventree.org/demo.html'><span class='fas fa-info-circle'></span></a></h6>
 #   hide_admin_link: true
 #   hide_password_reset: true
 #   logo: img/custom_logo.png
 #   splash: img/custom_splash.jpg
+
+# Override global settings
+#global_settings:
+#  INVENTREE_DEFAULT_CURRENCY: 'CNY'
+#  INVENTREE_RESTRICT_ABOUT: true

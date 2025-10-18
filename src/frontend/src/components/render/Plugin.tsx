@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Badge } from '@mantine/core';
 import type { ReactNode } from 'react';
 
@@ -12,8 +12,8 @@ export function RenderPlugin({
   return (
     <RenderInlineModel
       primary={instance.name}
-      secondary={instance.meta?.description}
-      suffix={
+      suffix={instance.meta?.description}
+      secondary={
         !instance.active && <Badge size='sm' color='red'>{t`Inactive`}</Badge>
       }
     />

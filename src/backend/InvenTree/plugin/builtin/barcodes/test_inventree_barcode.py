@@ -12,6 +12,11 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
 
     fixtures = ['category', 'part', 'location', 'stock', 'company', 'supplier_part']
 
+    def setUp(self):
+        """Set up the test case."""
+        super().setUp()
+        self.ensurePluginsLoaded()
+
     def test_assign_errors(self):
         """Test error cases for assignment action."""
 
@@ -285,7 +290,7 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
             response.data['stocklocation']['api_url'], '/api/stock/location/5/'
         )
         self.assertEqual(
-            response.data['stocklocation']['web_url'], '/platform/stock/location/5'
+            response.data['stocklocation']['web_url'], '/web/stock/location/5'
         )
         self.assertEqual(response.data['plugin'], 'InvenTreeBarcode')
 
@@ -327,7 +332,7 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
             response.data['stocklocation']['api_url'], '/api/stock/location/5/'
         )
         self.assertEqual(
-            response.data['stocklocation']['web_url'], '/platform/stock/location/5'
+            response.data['stocklocation']['web_url'], '/web/stock/location/5'
         )
         self.assertEqual(response.data['plugin'], 'InvenTreeBarcode')
 

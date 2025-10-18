@@ -1,10 +1,11 @@
-export const classicUrl = 'http://127.0.0.1:8000';
+export const webUrl = '/web';
 
-export const apiUrl = `${classicUrl}/api`;
-export const baseUrl = './platform';
-export const loginUrl = `${baseUrl}/login`;
-export const logoutUrl = `${baseUrl}/logout`;
-export const homeUrl = `${baseUrl}/home`;
+// Note: API requests are handled by the backend server
+export const apiUrl = 'http://localhost:8000/api/';
+
+export const homeUrl = `${webUrl}/home`;
+export const loginUrl = `${webUrl}/login`;
+export const logoutUrl = `${webUrl}/logout`;
 
 export const user = {
   name: 'Ally Access',

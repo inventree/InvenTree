@@ -183,7 +183,37 @@ docker compose run --rm inventree-server invoke export-records -f /home/inventre
 
 This will export database records to the file `data.json` in your mounted volume directory.
 
+## Viewing Logs
+
+To view the logs for the InvenTree container(s), use the following command:
+
+```bash
+docker compose logs
+```
+
+To view the logs for a specific container, use the following command:
+
+```bash
+docker compose logs <container-name>
+```
+
+e.g.
+
+```bash
+docker compose logs inventree-server
+```
+
+You can also "follow" the logs in real time, using the `-f` flag:
+
+```bash
+docker compose logs -f
+```
+
 ## Further Configuration
+
+### Check your security posture
+
+It is recommended to check the [threat modelling inputs](../concepts/threat_model.md) to ensure that your InvenTree installation is set up in the way that it is assumed in the software design.
 
 ### Custom Domain
 

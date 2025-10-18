@@ -132,6 +132,7 @@ def get_shared_class_instance_state_mixin(get_state_key: Callable[[type], str]):
 
             Arguments:
                 key: The key for the shared state
+                default: The default value to return if the key does not exist
             """
             return cache.get(self._get_key(key)) or default
 

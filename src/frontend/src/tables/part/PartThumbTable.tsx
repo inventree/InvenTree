@@ -1,4 +1,5 @@
-import { Trans, t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import {
   AspectRatio,
   Button,
@@ -18,11 +19,11 @@ import { useQuery } from '@tanstack/react-query';
 import type React from 'react';
 import { Suspense, useState } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
 import { IconX } from '@tabler/icons-react';
 import { api } from '../../App';
 import { Thumbnail } from '../../components/images/Thumbnail';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { apiUrl } from '../../states/ApiState';
 
 /**
  * Input props to table
@@ -136,6 +137,11 @@ export function PartThumbTable({ pk, setImage }: Readonly<ThumbTableProps>) {
   // Fetch thumbnails from API
   const thumbQuery = useQuery({
     queryKey: [ApiEndpoints.part_thumbs_list, page, searchText],
+    throwOnError: (error: any) => {
+      setTotalPages(1);
+      setPage(1);
+      return true;
+    },
     queryFn: async () => {
       const offset = Math.max(0, page - 1) * limit;
 
@@ -151,11 +157,6 @@ export function PartThumbTable({ pk, setImage }: Readonly<ThumbTableProps>) {
           const records = response?.data?.count ?? 1;
           setTotalPages(Math.ceil(records / limit));
           return response.data?.results ?? response.data;
-        })
-        .catch((error) => {
-          setTotalPages(1);
-          setPage(1);
-          return [];
         });
     }
   });
@@ -171,7 +172,7 @@ export function PartThumbTable({ pk, setImage }: Readonly<ThumbTableProps>) {
             spacing='xs'
           >
             {!thumbQuery.isFetching
-              ? thumbQuery?.data.map((data: ImageElement, index: number) => (
+              ? thumbQuery?.data?.map((data: ImageElement, index: number) => (
                   <PartThumbComponent
                     element={data}
                     key={index}

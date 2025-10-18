@@ -1,22 +1,22 @@
-import { t } from '@lingui/macro';
+import { ActionButton } from '@lib/components/ActionButton';
+import { AddItemButton } from '@lib/components/AddItemButton';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
+import type { ApiFormFieldSet } from '@lib/types/Forms';
+import { t } from '@lingui/core/macro';
 import { Alert, Group, Paper, Tooltip } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import { IconShoppingCart } from '@tabler/icons-react';
 import { DataTable } from 'mantine-datatable';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
 import { useSupplierPartFields } from '../../forms/CompanyForms';
 import { usePurchaseOrderFields } from '../../forms/PurchaseOrderForms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import useWizard from '../../hooks/UseWizard';
-import { apiUrl } from '../../states/ApiState';
-import { PartColumn } from '../../tables/ColumnRenderers';
-import { ActionButton } from '../buttons/ActionButton';
-import { AddItemButton } from '../buttons/AddItemButton';
+import { RenderPartColumn } from '../../tables/ColumnRenderers';
 import RemoveRowButton from '../buttons/RemoveRowButton';
 import { StandaloneField } from '../forms/StandaloneField';
-import type { ApiFormFieldSet } from '../forms/fields/ApiFormField';
 import Expand from '../items/Expand';
 
 /**
@@ -38,11 +38,13 @@ interface PartOrderRecord {
 function SelectPartsStep({
   records,
   onRemovePart,
+  onSelectQuantity,
   onSelectSupplierPart,
   onSelectPurchaseOrder
 }: {
   records: PartOrderRecord[];
   onRemovePart: (part: any) => void;
+  onSelectQuantity: (partId: number, quantity: number) => void;
   onSelectSupplierPart: (partId: number, supplierPart: any) => void;
   onSelectPurchaseOrder: (partId: number, purchaseOrder: any) => void;
 }) {
@@ -131,7 +133,7 @@ function SelectPartsStep({
         render: (record: PartOrderRecord) => (
           <Tooltip label={record.part?.description}>
             <Paper p='xs'>
-              <PartColumn part={record.part} />
+              <RenderPartColumn part={record.part} />
             </Paper>
           </Tooltip>
         )
@@ -151,6 +153,7 @@ function SelectPartsStep({
                   field_type: 'related field',
                   api_url: apiUrl(ApiEndpoints.supplier_part_list),
                   model: ModelType.supplierpart,
+                  placeholder: t`Select supplier part`,
                   required: true,
                   value: record.supplier_part?.pk,
                   onValueChange: (value, instance) => {
@@ -189,6 +192,7 @@ function SelectPartsStep({
                   field_type: 'related field',
                   api_url: apiUrl(ApiEndpoints.purchase_order_list),
                   model: ModelType.purchaseorder,
+                  placeholder: t`Select purchase order`,
                   disabled: !record.supplier_part?.supplier,
                   value: record.purchase_order?.pk,
                   filters: {
@@ -211,6 +215,26 @@ function SelectPartsStep({
               }}
             />
           </Group>
+        )
+      },
+      {
+        accessor: 'quantity',
+        title: t`Quantity`,
+        width: 125,
+        render: (record: PartOrderRecord) => (
+          <StandaloneField
+            fieldName='quantity'
+            hideLabels={true}
+            error={record.errors?.quantity}
+            fieldDefinition={{
+              field_type: 'number',
+              required: true,
+              value: record.quantity,
+              onValueChange: (value) => {
+                onSelectQuantity(record.part.pk, value);
+              }
+            }}
+          />
         )
       },
       {
@@ -288,6 +312,22 @@ export default function OrderPartsWizard({
     [selectedParts]
   );
 
+  // Select a quantity to order
+  const selectQuantity = useCallback(
+    (partId: number, quantity: number) => {
+      const records = [...selectedParts];
+
+      records.forEach((record: PartOrderRecord, index: number) => {
+        if (record.part.pk === partId) {
+          records[index].quantity = quantity;
+        }
+      });
+
+      setSelectedParts(records);
+    },
+    [selectedParts]
+  );
+
   // Select a supplier part for a part
   const selectSupplierPart = useCallback(
     (partId: number, supplierPart: any) => {
@@ -327,6 +367,7 @@ export default function OrderPartsWizard({
         <SelectPartsStep
           records={selectedParts}
           onRemovePart={removePart}
+          onSelectQuantity={selectQuantity}
           onSelectSupplierPart={selectSupplierPart}
           onSelectPurchaseOrder={selectPurchaseOrder}
         />
@@ -400,11 +441,23 @@ export default function OrderPartsWizard({
               (record: PartOrderRecord) => record.part?.pk === part.pk
             )
           ) {
+            // TODO: Make this calculation generic and reusable
+            // Calculate the "to order" quantity
+            const required =
+              (part.minimum_stock ?? 0) +
+              (part.required_for_build_orders ?? 0) +
+              (part.required_for_sales_orders ?? 0);
+            const on_hand = part.total_in_stock ?? 0;
+            const on_order = part.ordering ?? 0;
+            const in_production = part.building ?? 0;
+
+            const to_order = required - on_hand - on_order - in_production;
+
             records.push({
               part: part,
               supplier_part: undefined,
               purchase_order: undefined,
-              quantity: 1,
+              quantity: Math.max(to_order, 0),
               errors: {}
             });
           }

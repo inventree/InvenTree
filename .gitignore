@@ -7,6 +7,7 @@ __pycache__/
 .Python
 env/
 inventree-env/
+.venv/
 ./build/
 .cache/
 develop-eggs/
@@ -18,7 +19,6 @@ share/
 downloads/
 eggs/
 .eggs/
-lib/
 lib64/
 parts/
 sdist/
@@ -46,17 +46,16 @@ inventree_media
 inventree_static
 static_i18n
 
-# Local config file
+# Local config files
 config.yaml
 plugins.txt
+secret_key.txt
+oidc.pem
 
 # Default data file
 data.json
 *.json.tmp
 *.tmp.json
-
-# Key file
-secret_key.txt
 
 # IDE / development files
 .idea/
@@ -112,8 +111,3 @@ api.yaml
 # web frontend (static files)
 src/backend/InvenTree/web/static
 InvenTree/web/static
-
-# Exported interim files
-docs/schema.yml
-docs/docs/api/*.yml
-docs/docs/api/schema/*.yml

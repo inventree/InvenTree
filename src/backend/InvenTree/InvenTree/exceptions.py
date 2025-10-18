@@ -4,6 +4,7 @@
 
 import sys
 import traceback
+from typing import Optional
 
 from django.conf import settings
 from django.core.exceptions import ValidationError as DjangoValidationError
@@ -17,20 +18,35 @@ from rest_framework.response import Response
 logger = structlog.get_logger('inventree')
 
 
-def log_error(path, error_name=None, error_info=None, error_data=None):
+def log_error(
+    path,
+    error_name=None,
+    error_info=None,
+    error_data=None,
+    scope: Optional[str] = None,
+    plugin: Optional[str] = None,
+):
     """Log an error to the database.
 
     - Uses python exception handling to extract error details
 
     Arguments:
         path: The 'path' (most likely a URL) associated with this error (optional)
-
-    kwargs:
         error_name: The name of the error (optional, overrides 'kind')
         error_info: The error information (optional, overrides 'info')
         error_data: The error data (optional, overrides 'data')
+        scope: The scope of the error (optional)
+        plugin: The plugin name associated with this error (optional)
     """
-    from error_report.models import Error
+    import InvenTree.ready
+
+    if any([
+        InvenTree.ready.isImportingData(),
+        InvenTree.ready.isRunningMigrations(),
+        InvenTree.ready.isRunningBackup(),
+    ]):
+        logger.exception('Exception occurred during import, migration, or backup')
+        return
 
     if not path:
         path = ''
@@ -50,18 +66,29 @@ def log_error(path, error_name=None, error_info=None, error_data=None):
         data = error_data
     else:
         try:
-            data = '\n'.join(traceback.format_exception(kind, info, data))
+            formatted_exception = traceback.format_exception(kind, info, data)  # type: ignore[no-matching-overload]
+            data = '\n'.join(formatted_exception)
         except AttributeError:
             data = 'No traceback information available'
 
     # Log error to stderr
     logger.error(info)
 
+    if plugin:
+        # If a plugin is specified, prepend it to the path
+        path = f'plugin.{plugin}.{path}'
+
+    if scope:
+        # If a scope is specified, prepend it to the path
+        path = f'{scope}:{path}'
+
     # Ensure the error information does not exceed field size limits
     path = path[:200]
     kind = kind[:128]
 
     try:
+        from error_report.models import Error
+
         Error.objects.create(kind=kind, info=info or '', data=data or '', path=path)
     except Exception:
         # Not much we can do if logging the error throws a db exception
@@ -124,8 +151,10 @@ def exception_handler(exc, context):
 
     if response is not None:
         # Convert errors returned under the label '__all__' to 'non_field_errors'
-        if '__all__' in response.data:
-            response.data['non_field_errors'] = response.data['__all__']
-            del response.data['__all__']
+        data = response.data
+
+        if data and '__all__' in data:
+            data['non_field_errors'] = data['__all__']
+            del data['__all__']
 
     return response

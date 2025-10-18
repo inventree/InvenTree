@@ -4,13 +4,13 @@ from django.core.validators import MinValueValidator
 from django.utils.translation import gettext_lazy as _
 
 from common.setting.type import InvenTreeSettingsKeyType
-from plugin import registry
+from plugin import PluginMixinEnum, registry
 
 
 def label_printer_options():
     """Build a list of available label printer options."""
     printers = []
-    label_printer_plugins = registry.with_mixin('labels')
+    label_printer_plugins = registry.with_mixin(PluginMixinEnum.LABELS)
     if label_printer_plugins:
         printers.extend([
             (p.slug, p.name + ' - ' + p.human_name) for p in label_printer_plugins
@@ -165,10 +165,12 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
-    'PART_SHOW_QUANTITY_IN_FORMS': {
-        'name': _('Show Quantity in Forms'),
-        'description': _('Display available part quantity in some forms'),
-        'default': True,
+    'SEARCH_NOTES': {
+        'name': _('Search Notes'),
+        'description': _(
+            "Search queries return results for matches from the item's notes"
+        ),
+        'default': False,
         'validator': bool,
     },
     'FORMS_CLOSE_USING_ESCAPE': {
@@ -180,6 +182,24 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
     'STICKY_HEADER': {
         'name': _('Fixed Navbar'),
         'description': _('The navbar position is fixed to the top of the screen'),
+        'default': False,
+        'validator': bool,
+    },
+    'STICKY_TABLE_HEADER': {
+        'name': _('Fixed Table Headers'),
+        'description': _('Table headers are fixed to the top of the table'),
+        'default': False,
+        'validator': bool,
+    },
+    'SHOW_SPOTLIGHT': {
+        'name': _('Show Spotlight'),
+        'description': _('Enable spotlight navigation functionality'),
+        'default': True,
+        'validator': bool,
+    },
+    'ICONS_IN_NAVBAR': {
+        'name': _('Navigation Icons'),
+        'description': _('Display icons in the navigation bar'),
         'default': False,
         'validator': bool,
     },
@@ -197,29 +217,31 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
             ('MMM DD YYYY', 'Feb 22 2022'),
         ],
     },
-    'DISPLAY_SCHEDULE_TAB': {
-        'name': _('Part Scheduling'),
-        'description': _('Display part scheduling information'),
-        'default': True,
-        'validator': bool,
-    },
     'DISPLAY_STOCKTAKE_TAB': {
-        'name': _('Part Stocktake'),
-        'description': _(
-            'Display part stocktake information (if stocktake functionality is enabled)'
-        ),
+        'name': _('Show Stock History'),
+        'description': _('Display stock history information in the part detail page'),
         'default': True,
         'validator': bool,
-    },
-    'TABLE_STRING_MAX_LENGTH': {
-        'name': _('Table String Length'),
-        'description': _('Maximum length limit for strings displayed in table views'),
-        'validator': [int, MinValueValidator(0)],
-        'default': 100,
     },
     'ENABLE_LAST_BREADCRUMB': {
         'name': _('Show Last Breadcrumb'),
         'description': _('Show the current page in breadcrumbs'),
+        'default': False,
+        'validator': bool,
+    },
+    'SHOW_FULL_LOCATION_IN_TABLES': {
+        'name': _('Show full stock location in tables'),
+        'description': _(
+            'Disabled: The full location path is displayed as a hover tooltip. Enabled: The full location path is displayed as plain text.'
+        ),
+        'default': False,
+        'validator': bool,
+    },
+    'SHOW_FULL_CATEGORY_IN_TABLES': {
+        'name': _('Show full part categories in tables'),
+        'description': _(
+            'Disabled: The full category path is displayed as a hover tooltip. Enabled: The full category path is displayed as plain text.'
+        ),
         'default': False,
         'validator': bool,
     },

@@ -12,14 +12,13 @@ import structlog
 from allauth.account.adapter import DefaultAccountAdapter
 from allauth.account.forms import LoginForm, SignupForm, set_form_field_order
 from allauth.headless.adapter import DefaultHeadlessAdapter
-from allauth.headless.tokens.sessions import SessionTokenStrategy
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 
-import InvenTree.helpers_model
 import InvenTree.sso
 from common.settings import get_global_setting
 from InvenTree.exceptions import log_error
-from users.models import ApiToken
+
+from .helpers_email import is_email_configured
 
 logger = structlog.get_logger('inventree')
 
@@ -92,11 +91,11 @@ def registration_enabled():
         get_global_setting('LOGIN_ENABLE_REG')
         or InvenTree.sso.sso_registration_enabled()
     ):
-        if settings.EMAIL_HOST:
+        if is_email_configured():
             return True
         else:
             logger.warning(
-                'Registration cannot be enabled, because EMAIL_HOST is not configured.'
+                'INVE-W11: Registration cannot be enabled, because EMAIL_HOST is not configured.'
             )
     return False
 
@@ -129,7 +128,6 @@ class RegistrationMixin:
         mailoptions = mail_restriction.split(',')
         for option in mailoptions:
             if not option.startswith('@'):
-                log_error('LOGIN_SIGNUP_MAIL_RESTRICTION is not configured correctly')
                 raise forms.ValidationError(
                     _('The provided primary email address is not valid.')
                 )
@@ -172,7 +170,7 @@ class CustomAccountAdapter(RegistrationMixin, DefaultAccountAdapter):
             except Exception:
                 # An exception occurred while attempting to send email
                 # Log it (for admin users) and return silently
-                log_error('account email')
+                log_error('send_mail', scope='auth')
                 result = False
 
             return result
@@ -208,7 +206,7 @@ class CustomSocialAccountAdapter(RegistrationMixin, DefaultSocialAccountAdapter)
         path = request.path or 'sso'
 
         # Log the error to the database
-        log_error(path, error_name=error, error_data=exception)
+        log_error(path, error_name=error, error_data=exception, scope='auth')
         logger.error("SSO error for provider '%s' - check admin error log", provider_id)
 
     def get_connect_redirect_url(self, request, socialaccount):
@@ -231,17 +229,8 @@ class CustomHeadlessAdapter(DefaultHeadlessAdapter):
         if urlname not in HEADLESS_FRONTEND_URLS:
             raise ValueError(
                 f'URL name "{urlname}" not found in HEADLESS_FRONTEND_URLS'
-            )
+            )  # pragma: no cover
 
         return self.request.build_absolute_uri(
             f'/{settings.FRONTEND_URL_BASE}/{HEADLESS_FRONTEND_URLS[urlname].format(**kwargs)}'
         )
-
-
-class DRFTokenStrategy(SessionTokenStrategy):
-    """Strategy that InvenTrees own included Token model."""
-
-    def create_access_token(self, request):
-        """Create a new access token for the user."""
-        token, _ = ApiToken.objects.get_or_create(user=request.user)
-        return token.key

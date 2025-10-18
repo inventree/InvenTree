@@ -4,8 +4,10 @@ import { useCallback, useMemo } from 'react';
 import { Link, Route, Routes, useNavigate, useParams } from 'react-router-dom';
 import type { To } from 'react-router-dom';
 
-import type { UiSizeType } from '../../defaults/formatters';
+import type { UiSizeType } from '@lib/types/Core';
+import { useShallow } from 'zustand/react/shallow';
 import { useLocalState } from '../../states/LocalState';
+import { StylishText } from '../items/StylishText';
 import * as classes from './DetailDrawer.css';
 
 /**
@@ -36,10 +38,9 @@ function DetailDrawerComponent({
   const content = renderContent(id);
   const opened = useMemo(() => !!id && !!content, [id, content]);
 
-  const [detailDrawerStack, addDetailDrawer] = useLocalState((state) => [
-    state.detailDrawerStack,
-    state.addDetailDrawer
-  ]);
+  const [detailDrawerStack, addDetailDrawer] = useLocalState(
+    useShallow((state) => [state.detailDrawerStack, state.addDetailDrawer])
+  );
 
   return (
     <Drawer
@@ -66,9 +67,7 @@ function DetailDrawerComponent({
               <IconChevronLeft />
             </ActionIcon>
           )}
-          <Text size='xl' fw={600} variant='gradient'>
-            {title}
-          </Text>
+          <StylishText size='xl'>{title}</StylishText>
         </Group>
       }
     >
@@ -92,7 +91,9 @@ export function DetailDrawerLink({
   to,
   text
 }: Readonly<{ to: To; text: string }>) {
-  const addDetailDrawer = useLocalState((state) => state.addDetailDrawer);
+  const addDetailDrawer = useLocalState(
+    useShallow((state) => state.addDetailDrawer)
+  );
 
   const onNavigate = useCallback(() => {
     addDetailDrawer(1);
