@@ -212,23 +212,21 @@ export function useStockFields({
         description: t`Enter serial numbers for new stock (or leave blank)`,
         required: false,
         hidden: !create,
-        placeholder:
-          serialGenerator.result &&
-          `${t`Next serial number`}: ${serialGenerator.result}`
+        placeholderAutofill: true,
+        placeholder: serialGenerator.result && `${serialGenerator.result}+`
       },
       serial: {
-        placeholder:
-          serialGenerator.result &&
-          `${t`Next serial number`}: ${serialGenerator.result}`,
+        placeholderAutofill: true,
+        placeholder: serialGenerator.result,
         hidden:
           create ||
           partInstance.trackable == false ||
           (stockItem?.quantity != undefined && stockItem?.quantity != 1)
       },
       batch: {
-        placeholder:
-          batchGenerator.result &&
-          `${t`Next batch code`}: ${batchGenerator.result}`
+        default: '',
+        placeholderAutofill: true,
+        placeholder: batchGenerator.result
       },
       status_custom_key: {
         label: t`Stock Status`
@@ -270,6 +268,10 @@ export function useStockFields({
     // Remove the expiry date field if it is not enabled
     if (!globalSettings.isSet('STOCK_ENABLE_EXPIRY')) {
       delete fields.expiry_date;
+    }
+
+    if (!create) {
+      delete fields.serial_numbers;
     }
 
     return fields;
@@ -400,9 +402,8 @@ export function useStockItemSerializeFields({
     return {
       quantity: {},
       serial_numbers: {
-        placeholder:
-          serialGenerator.result &&
-          `${t`Next serial number`}: ${serialGenerator.result}`
+        placeholder: serialGenerator.result && `${serialGenerator.result}+`,
+        placeholderAutofill: true
       },
       destination: {}
     };

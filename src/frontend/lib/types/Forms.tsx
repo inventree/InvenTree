@@ -53,9 +53,12 @@ export type ApiFormFieldHeader = {
  * @param error : Optional error message to display
  * @param exclude : Whether to exclude the field from the submitted data
  * @param placeholder : The placeholder text to display
+ * @param placeholderAutofill: Whether to allow auto-filling of the placeholder value
  * @param description : The description to display for the field
  * @param preFieldContent : Content to render before the field
  * @param postFieldContent : Content to render after the field
+ * @param leftSection : Content to render in the left section of the field
+ * @param rightSection : Content to render in the right section of the field
  * @param autoFill: Whether to automatically fill the field with data from the API
  * @param autoFillFilters: Optional filters to apply when auto-filling the field
  * @param onValueChange : Callback function to call when the field value changes
@@ -103,9 +106,12 @@ export type ApiFormFieldType = {
   exclude?: boolean;
   read_only?: boolean;
   placeholder?: string;
+  placeholderAutofill?: boolean;
   description?: string;
   preFieldContent?: JSX.Element;
   postFieldContent?: JSX.Element;
+  leftSection?: JSX.Element;
+  rightSection?: JSX.Element;
   autoFill?: boolean;
   autoFillFilters?: any;
   adjustValue?: (value: any) => any;
