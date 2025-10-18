@@ -13,6 +13,7 @@ from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.core.validators import FileExtensionValidator, MinValueValidator
 from django.db import models
+from django.http.request import HttpRequest
 from django.template import Context, Template
 from django.template.exceptions import TemplateDoesNotExist, TemplateSyntaxError
 from django.template.loader import render_to_string
@@ -35,7 +36,7 @@ from plugin import InvenTreePlugin, PluginMixinEnum
 from plugin.registry import registry
 
 try:
-    from weasyprint import HTML
+    from weasyprint import HTML, default_url_fetcher
 except OSError as err:  # pragma: no cover
     print(f'OSError: {err}')
     print("Unable to import 'weasyprint' module.")
@@ -44,6 +45,24 @@ except OSError as err:  # pragma: no cover
 
 
 logger = structlog.getLogger('inventree')
+
+
+def build_fetcher(request: HttpRequest):
+    """Factory function that returns a function that handles Weasyprint url requests.
+
+    Takes in an HttpRequest and copies it's headers for future requests.
+    """
+    http_headers = None
+
+    if request is not None:
+        http_headers = request.headers
+
+    def url_fetcher(url: str, timeout=10, ssl_context=None):
+        return default_url_fetcher(
+            url, timeout=timeout, ssl_context=ssl_context, http_headers=http_headers
+        )
+
+    return url_fetcher
 
 
 def log_report_error(*args, **kwargs):
@@ -272,7 +291,11 @@ class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
             bytes: PDF data
         """
         html = self.render_as_string(instance, request, context, **kwargs)
-        pdf = HTML(string=html).write_pdf()
+        pdf = HTML(
+            string=html,
+            url_fetcher=build_fetcher(request),
+            base_url=get_base_url(request),
+        ).write_pdf()
 
         return pdf
 
