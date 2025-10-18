@@ -4,7 +4,7 @@ import hashlib
 import logging
 
 from django.db import migrations
-from jinja2 import Template
+from django.template import Template
 
 from InvenTree.helpers import normalize
 
