@@ -1656,9 +1656,9 @@ s3transfer==0.13.1 \
     --hash=sha256:a981aa7429be23fe6dfc13e80e4020057cbab622b08c0315288758d67cabc724 \
     --hash=sha256:c3fdba22ba1bd367922f27ec8032d6a1cf5f10c934fb5d68cf60fd5a23d936cf
     # via boto3
-sentry-sdk==2.39.0 \
-    --hash=sha256:8c185854d111f47f329ab6bc35993f28f7a6b7114db64aa426b326998cfa14e9 \
-    --hash=sha256:ba655ca5e57b41569b18e2a5552cb3375209760a5d332cdd87c6c3f28f729602
+sentry-sdk==2.42.0 \
+    --hash=sha256:1a7986e638306ff158f52dd47d9480a4055e6c289388caa90628acb2563fe7bd \
+    --hash=sha256:91c69c9372fb5fb4df0ac39456ccf7286f0428b3ee1cdd389f9dd36c04e0f5c9
     # via
     #   -r src/backend/requirements.in
     #   django-q-sentry
@@ -1685,9 +1685,9 @@ structlog==25.4.0 \
     --hash=sha256:186cd1b0a8ae762e29417095664adf1d6a31702160a46dacb7796ea82f7409e4 \
     --hash=sha256:fe809ff5c27e557d14e613f45ca441aabda051d119ee5a0102aaba6ce40eed2c
     # via django-structlog
-tablib[xls, xlsx, yaml]==3.8.0 \
-    --hash=sha256:35bdb9d4ec7052232f8803908f9c7a9c3c65807188b70618fa7a7d8ccd560b4d \
-    --hash=sha256:94d8bcdc65a715a0024a6d5b701a5f31e45bd159269e62c73731de79f048db2b
+tablib[xls, xlsx, yaml]==3.9.0 \
+    --hash=sha256:1b6abd8edb0f35601e04c6161d79660fdcde4abb4a54f66cc9f9054bd55d5fe2 \
+    --hash=sha256:eda17cd0d4dda614efc0e710227654c60ddbeb1ca92cdcfc5c3bd1fc5f5a6e4a
     # via -r src/backend/requirements.in
 tinycss2==1.4.0 \
     --hash=sha256:10c0972f6fc0fbee87c3edb76549357415e94548c1ae10ebccdea16fb404a9b7 \
