@@ -126,7 +126,7 @@ apipatterns = [
 ]
 
 
-third_backendpatterns = [
+backendpatterns = [
     path(
         'auth/', include('rest_framework.urls', namespace='rest_framework')
     ),  # Used for (DRF) browsable API auth
@@ -153,7 +153,7 @@ if settings.INVENTREE_ADMIN_ENABLED:
         path(f'{admin_url}/', admin.site.urls, name='inventree-admin'),
     ]
 
-urlpatterns += third_backendpatterns
+urlpatterns += backendpatterns
 urlpatterns += [  # API URLs
     path('api/', include(apipatterns)),
     path('api-doc/', SpectacularRedocView.as_view(url_name='schema'), name='api-doc'),

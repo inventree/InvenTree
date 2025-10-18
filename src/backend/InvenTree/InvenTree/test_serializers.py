@@ -9,7 +9,7 @@ from rest_framework.serializers import SerializerMethodField
 import InvenTree.serializers
 from InvenTree.mixins import ListCreateAPI, OutputOptionsMixin
 from InvenTree.unit_test import InvenTreeAPITestCase
-from InvenTree.urls import third_backendpatterns
+from InvenTree.urls import backendpatterns
 
 
 class SampleSerializer(
@@ -56,7 +56,7 @@ urlpatterns = [
     path('', SampleList.as_view(), name='sample-list'),
     path('admin/', admin.site.urls, name='inventree-admin'),
 ]
-urlpatterns += third_backendpatterns
+urlpatterns += backendpatterns
 
 
 class FilteredSerializers(InvenTreeAPITestCase):
