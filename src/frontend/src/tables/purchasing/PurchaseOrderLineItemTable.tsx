@@ -60,6 +60,7 @@ export function PurchaseOrderLineItemTable({
   orderId,
   currency,
   supplierId,
+  editable,
   params
 }: Readonly<{
   order: any;
@@ -67,6 +68,7 @@ export function PurchaseOrderLineItemTable({
   orderId: number;
   currency: string;
   supplierId?: number;
+  editable: boolean;
   params?: any;
 }>) {
   const table = useTable('purchase-order-line-item');
@@ -329,14 +331,6 @@ export function PurchaseOrderLineItemTable({
 
   const poStatus = useStatusCodes({ modelType: ModelType.purchaseorder });
 
-  const orderOpen: boolean = useMemo(() => {
-    return (
-      order.status == poStatus.PENDING ||
-      order.status == poStatus.PLACED ||
-      order.status == poStatus.ON_HOLD
-    );
-  }, [order, poStatus]);
-
   const orderPlaced: boolean = useMemo(() => {
     return order.status == poStatus.PLACED;
   }, [order, poStatus]);
@@ -345,12 +339,8 @@ export function PurchaseOrderLineItemTable({
     (record: any): RowAction[] => {
       const received = (record?.received ?? 0) >= (record?.quantity ?? 0);
 
-      let canEdit: boolean = user.hasChangeRole(UserRoles.purchase_order);
-
-      if (!orderOpen) {
-        // If order is closed, check the global setting
-        canEdit &&= globalSettings.isSet('PURCHASEORDER_EDIT_COMPLETED_ORDERS');
-      }
+      const canEdit: boolean =
+        editable && user.hasChangeRole(UserRoles.purchase_order);
 
       return [
         {
@@ -393,7 +383,7 @@ export function PurchaseOrderLineItemTable({
         })
       ];
     },
-    [orderId, user, orderOpen, orderPlaced, globalSettings]
+    [orderId, user, editable, orderPlaced]
   );
 
   // Custom table actions
@@ -401,7 +391,7 @@ export function PurchaseOrderLineItemTable({
     return [
       <ActionButton
         key='import-line-items'
-        hidden={!orderOpen || !user.hasAddRole(UserRoles.purchase_order)}
+        hidden={!editable || !user.hasAddRole(UserRoles.purchase_order)}
         tooltip={t`Import Line Items`}
         icon={<IconFileArrowLeft />}
         onClick={() => importLineItems.open()}
@@ -415,7 +405,7 @@ export function PurchaseOrderLineItemTable({
           });
           newLine.open();
         }}
-        hidden={!orderOpen || !user?.hasAddRole(UserRoles.purchase_order)}
+        hidden={!editable || !user?.hasAddRole(UserRoles.purchase_order)}
       />,
       <ActionButton
         key='receive-items'
@@ -426,7 +416,7 @@ export function PurchaseOrderLineItemTable({
         hidden={!orderPlaced || !user.hasChangeRole(UserRoles.purchase_order)}
       />
     ];
-  }, [orderId, user, table, orderOpen, orderPlaced]);
+  }, [orderId, user, table, editable, orderPlaced]);
 
   return (
     <>
