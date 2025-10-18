@@ -41,7 +41,7 @@ class SampleSerializer(
 
     def sample(self, obj):
         """Sample method field."""
-        return 'sample'
+        return 'sample123'
 
 
 class SampleList(OutputOptionsMixin, ListCreateAPI):
@@ -84,6 +84,8 @@ class FilteredSerializers(InvenTreeAPITestCase):
             self.assertContains(response, 'field_b')
             self.assertContains(response, 'field_c')
             self.assertContains(response, 'field_d')
+
+            self.assertEqual(response.data[0]['field_b'], 'sample123')
 
             # Disable field_c using custom filter name
             response = self.client.get(url, {'crazy_name': 'false'})
