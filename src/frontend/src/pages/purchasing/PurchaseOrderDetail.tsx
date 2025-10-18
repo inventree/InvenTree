@@ -460,6 +460,7 @@ export default function PurchaseOrderDetail() {
       <PrintingActions
         modelType={ModelType.purchaseorder}
         items={[order.pk]}
+        enableLabels
         enableReports
       />,
       <OptionsActionDropdown

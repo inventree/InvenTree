@@ -516,6 +516,7 @@ export default function SalesOrderDetail() {
         modelType={ModelType.salesorder}
         items={[order.pk]}
         enableReports
+        enableLabels
       />,
       <OptionsActionDropdown
         tooltip={t`Order Actions`}

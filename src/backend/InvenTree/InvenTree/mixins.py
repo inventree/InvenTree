@@ -14,6 +14,7 @@ from InvenTree.helpers import (
     strip_html_tags,
 )
 from InvenTree.schema import schema_for_view_output_options
+from InvenTree.serializers import FilterableSerializerMixin
 
 
 class CleanMixin:
@@ -227,7 +228,15 @@ class OutputOptionsMixin:
             params = self.request.query_params
             kwargs.update(self.output_options.format_params(params))
 
-        return super().get_serializer(*args, **kwargs)
+        serializer = super().get_serializer(*args, **kwargs)
+
+        # Check if the serializer actually can be filtered - makes not much sense to use this mixin without that prerequisite
+        if not isinstance(serializer, FilterableSerializerMixin):
+            raise Exception(
+                'INVE-I2: `OutputOptionsMixin` can only be used with serializers that contain the `FilterableSerializerMixin` mixin'
+            )
+
+        return serializer
 
 
 class SerializerContextMixin:

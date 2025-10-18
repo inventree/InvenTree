@@ -12,10 +12,10 @@ import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { ActionButton } from '@lib/index';
 import type { TableFilter } from '@lib/types/Filters';
+import type { StockOperationProps } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
 import { IconCircleDashedCheck } from '@tabler/icons-react';
 import { useConsumeBuildItemsForm } from '../../forms/BuildForms';
-import type { StockOperationProps } from '../../forms/StockForms';
 import {
   useDeleteApiFormModal,
   useEditApiFormModal

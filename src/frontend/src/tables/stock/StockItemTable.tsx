@@ -11,6 +11,7 @@ import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { getDetailUrl } from '@lib/functions/Navigation';
 import type { TableFilter } from '@lib/types/Filters';
+import type { StockOperationProps } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import {
@@ -18,10 +19,7 @@ import {
   formatDecimal,
   formatPriceRange
 } from '../../defaults/formatters';
-import {
-  type StockOperationProps,
-  useStockFields
-} from '../../forms/StockForms';
+import { useStockFields } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
@@ -517,6 +515,8 @@ export function StockItemTable({
   const newStockItemFields = useStockFields({
     create: true,
     partId: params.part,
+    supplierPartId: params.supplier_part,
+    pricing: params.pricing,
     modalId: 'add-stock-item'
   });
 
@@ -529,7 +529,7 @@ export function StockItemTable({
       part: params.part,
       location: params.location
     },
-    follow: true,
+    follow: params.openNewStockItem ?? true,
     table: table,
     onFormSuccess: (response: any) => {
       // Returns a list that may contain multiple serialized stock items

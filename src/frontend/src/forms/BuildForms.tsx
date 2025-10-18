@@ -107,9 +107,8 @@ export function useBuildOrderFields({
         icon: <IconTruckDelivery />
       },
       batch: {
-        placeholder:
-          batchGenerator.result &&
-          `${t`Next batch code`}: ${batchGenerator.result}`,
+        placeholder: batchGenerator.result,
+        placeholderAutofill: true,
         value: batchCode,
         onValueChange: (value: any) => setBatchCode(value)
       },
@@ -207,14 +206,12 @@ export function useBuildOrderOutputFields({
       },
       serial_numbers: {
         hidden: !trackable,
-        placeholder:
-          serialGenerator.result &&
-          `${t`Next serial number`}: ${serialGenerator.result}`
+        placeholder: serialGenerator.result && `${serialGenerator.result}+`,
+        placeholderAutofill: true
       },
       batch_code: {
-        placeholder:
-          batchGenerator.result &&
-          `${t`Next batch code`}: ${batchGenerator.result}`
+        placeholder: batchGenerator.result,
+        placeholderAutofill: true
       },
       location: {
         value: location,
