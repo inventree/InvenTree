@@ -288,10 +288,10 @@ export default function SalesOrderDetail() {
     const orderOpen: boolean =
       order.status != soStatus.COMPLETE && order.status != soStatus.CANCELLED;
 
-    if (!orderOpen) {
-      return globalSettings.isSet('SALESORDER_EDIT_COMPLETED_ORDERS');
-    } else {
+    if (orderOpen) {
       return true;
+    } else {
+      return globalSettings.isSet('SALESORDER_EDIT_COMPLETED_ORDERS');
     }
   }, [globalSettings, order.status, soStatus]);
 
