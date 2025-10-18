@@ -11,6 +11,8 @@ from opentelemetry import trace
 
 import common.currency
 import common.notifications
+import generic.parameters.models
+import InvenTree.helpers
 import InvenTree.helpers_model
 from common.settings import get_global_setting
 from InvenTree.tasks import (
@@ -361,14 +363,16 @@ def rebuild_parameters(template_id):
     This function is called when a base template is changed,
     which may cause the base unit to be adjusted.
     """
-    from part.models import PartParameter, PartParameterTemplate
-
     try:
-        template = PartParameterTemplate.objects.get(pk=template_id)
-    except PartParameterTemplate.DoesNotExist:
+        template = generic.parameters.models.PartParameterTemplate.objects.get(
+            pk=template_id
+        )
+    except generic.parameters.models.PartParameterTemplate.DoesNotExist:
         return
 
-    parameters = PartParameter.objects.filter(template=template)
+    parameters = generic.parameters.models.PartParameter.objects.filter(
+        template=template
+    )
 
     n = 0
 

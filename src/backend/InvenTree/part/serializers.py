@@ -29,6 +29,11 @@ import part.filters as part_filters
 import part.helpers as part_helpers
 import stock.models
 import users.models
+from generic.parameters.models import (
+    PartCategoryParameterTemplate,
+    PartParameter,
+    PartParameterTemplate,
+)
 from importer.registry import register_importer
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.ready import isGeneratingSchema
@@ -46,10 +51,7 @@ from .models import (
     BomItemSubstitute,
     Part,
     PartCategory,
-    PartCategoryParameterTemplate,
     PartInternalPriceBreak,
-    PartParameter,
-    PartParameterTemplate,
     PartPricing,
     PartRelated,
     PartSellPriceBreak,

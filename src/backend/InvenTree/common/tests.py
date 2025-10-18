@@ -24,6 +24,7 @@ from PIL import Image
 import common.validators
 from common.notifications import trigger_notification
 from common.settings import get_global_setting, set_global_setting
+from generic.parameters.models import PartParameterTemplate
 from InvenTree.helpers import str2bool
 from InvenTree.unit_test import (
     AdminTestCase,
@@ -32,7 +33,7 @@ from InvenTree.unit_test import (
     PluginMixin,
     addUserPermission,
 )
-from part.models import Part, PartParameterTemplate
+from part.models import Part
 from plugin import registry
 
 from .api import WebhookView

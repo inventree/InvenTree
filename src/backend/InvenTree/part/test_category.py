@@ -5,7 +5,8 @@ from django.test import TestCase
 
 from common.models import InvenTreeSetting
 
-from .models import Part, PartCategory, PartParameter, PartParameterTemplate
+from ..generic.parameters.models import PartParameter, PartParameterTemplate
+from .models import Part, PartCategory
 
 
 class CategoryTest(TestCase):
