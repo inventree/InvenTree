@@ -143,7 +143,7 @@ class FilteredSerializers(InvenTreeAPITestCase):
 
             def sample(self, obj):
                 """Sample method field."""
-                return 'sample'
+                return 'sample'  # pragma: no cover
 
         with self.assertRaises(Exception) as cm:
             _ = BadSerializer()
