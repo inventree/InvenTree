@@ -74,6 +74,7 @@ export function ApiFormField({
     return {
       ...fieldDefinition,
       autoFill: undefined,
+      placeholderAutofill: undefined,
       autoFillFilters: undefined,
       onValueChange: undefined,
       adjustFilters: undefined,
@@ -146,6 +147,7 @@ export function ApiFormField({
         return (
           <TextField
             definition={reducedDefinition}
+            placeholderAutofill={fieldDefinition.placeholderAutofill ?? false}
             controller={controller}
             fieldName={fieldName}
             onChange={onChange}

@@ -22,7 +22,7 @@ test('Forms - Stock Item Validation', async ({ browser }) => {
   await page.getByText('Valid part must be supplied').waitFor();
 
   // Adjust other field - the errors should persist
-  await page.getByLabel('text-field-batch').fill('BATCH-123');
+  await page.getByLabel('text-field-batch', { exact: true }).fill('BATCH-123');
   await page.waitForTimeout(250);
 
   await page.getByText('Valid part must be supplied').waitFor();
@@ -53,14 +53,16 @@ test('Forms - Stock Item Validation', async ({ browser }) => {
   await page.getByLabel('action-menu-stock-item-actions-edit').click();
 
   await page.getByLabel('number-field-purchase_price').fill('-1');
+
   await page.getByRole('button', { name: 'Submit' }).click();
+
   await page.getByText('Errors exist for one or more form fields').waitFor();
   await page
     .getByText('Ensure this value is greater than or equal to 0')
     .waitFor();
 
   // Check the error message still persists after editing a different field
-  await page.getByLabel('text-field-packaging').fill('a box');
+  await page.getByLabel('text-field-packaging', { exact: true }).fill('a box');
   await page.waitForTimeout(250);
   await page
     .getByText('Ensure this value is greater than or equal to 0')
@@ -87,7 +89,9 @@ test('Forms - Supplier Validation', async ({ browser }) => {
   await page.waitForURL('**/purchasing/index/**');
 
   await page.getByLabel('action-button-add-company').click();
-  await page.getByLabel('text-field-website').fill('not-a-website');
+  await page
+    .getByLabel('text-field-website', { exact: true })
+    .fill('not-a-website');
 
   await page.getByRole('button', { name: 'Submit' }).click();
 
@@ -98,7 +102,9 @@ test('Forms - Supplier Validation', async ({ browser }) => {
   await page.getByText('Enter a valid URL.').waitFor();
 
   // Fill out another field, expect that the errors persist
-  await page.getByLabel('text-field-description').fill('A description');
+  await page
+    .getByLabel('text-field-description', { exact: true })
+    .fill('A description');
   await page.waitForTimeout(250);
   await page.getByText('This field may not be blank.').waitFor();
   await page.getByText('Enter a valid URL.').waitFor();
@@ -108,9 +114,9 @@ test('Forms - Supplier Validation', async ({ browser }) => {
 
   // Fill with good data
   await page
-    .getByLabel('text-field-website')
+    .getByLabel('text-field-website', { exact: true })
     .fill('https://www.test-website.co.uk');
-  await page.getByLabel('text-field-name').fill(supplierName);
+  await page.getByLabel('text-field-name', { exact: true }).fill(supplierName);
   await page.getByRole('button', { name: 'Submit' }).click();
 
   await page.getByText('A description').first().waitFor();
@@ -122,7 +128,7 @@ test('Forms - Supplier Validation', async ({ browser }) => {
   await navigate(page, 'purchasing/index/suppliers');
   await page.waitForURL('**/purchasing/index/**');
   await page.getByLabel('action-button-add-company').click();
-  await page.getByLabel('text-field-name').fill(supplierName);
+  await page.getByLabel('text-field-name', { exact: true }).fill(supplierName);
   await page.getByRole('button', { name: 'Submit' }).click();
 
   // Is prevented, due to uniqueness requirements
