@@ -141,3 +141,57 @@ class FilteredSerializers(InvenTreeAPITestCase):
         BadSerializer.no_filters = True
         _ = BadSerializer()
         self.assertTrue(True)  # Dummy assertion to ensure we reach here
+
+    def test_failiure_OutputOptionsMixin(self):
+        """Test failure case for OutputOptionsMixin."""
+
+        class BadSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+            """Sample serializer."""
+
+            class Meta:
+                """Meta options."""
+
+                model = User
+                fields = ['id']
+
+            field_a = SerializerMethodField(method_name='sample')
+
+        # Bad implementation of OutputOptionsMixin
+        with self.assertRaises(Exception) as cm:
+
+            class BadList(OutputOptionsMixin, ListCreateAPI):
+                """Bad list endpoint for testing OutputOptionsMixin."""
+
+                serializer_class = BadSerializer
+                queryset = User.objects.all()
+                permission_classes = []
+
+            self.assertTrue(True)
+            _ = BadList()  # this should raise an exception
+        self.assertEqual(
+            str(cm.exception),
+            'INVE-I2: `OutputOptionsMixin` can only be used with serializers that contain the `FilterableSerializerMixin` mixin',
+        )
+
+        # More creative bad implementation
+        with self.assertRaises(Exception) as cm:
+
+            class BadList(OutputOptionsMixin, ListCreateAPI):
+                """Bad list endpoint for testing OutputOptionsMixin."""
+
+                queryset = User.objects.all()
+                permission_classes = []
+
+                def get_serializer(self, *args, **kwargs):
+                    """Get serializer override."""
+                    self.serializer_class = BadSerializer
+                    return super().get_serializer(*args, **kwargs)
+
+            view = BadList()
+            self.assertTrue(True)
+            view.get_serializer()  # this should raise an exception
+
+        self.assertEqual(
+            str(cm.exception),
+            'INVE-I2: `OutputOptionsMixin` can only be used with serializers that contain the `FilterableSerializerMixin` mixin',
+        )
