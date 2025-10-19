@@ -41,7 +41,7 @@ test('Settings - User theme', async ({ browser }) => {
   await page.waitForLoadState('networkidle');
 
   await page.getByRole('button', { name: 'Ally Access' }).click();
-  await page.getByRole('menuitem', { name: 'Account settings' }).click();
+  await page.getByRole('menuitem', { name: 'User settings' }).click();
 
   // loader
   await page.getByRole('textbox', { name: 'Loader Type Selector' }).click();
@@ -220,7 +220,7 @@ test('Settings - Admin', async ({ browser }) => {
 
   // User settings
   await page.getByRole('button', { name: 'admin' }).click();
-  await page.getByRole('menuitem', { name: 'Account settings' }).click();
+  await page.getByRole('menuitem', { name: 'User settings' }).click();
   await loadTab(page, 'Security');
 
   await loadTab(page, 'Display Options');
