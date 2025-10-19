@@ -103,7 +103,7 @@ test('Permissions - Reader', async ({ browser }) => {
 
   // Go to the user profile page
   await page.getByRole('button', { name: 'Ronald Reader' }).click();
-  await page.getByRole('menuitem', { name: 'Account Settings' }).click();
+  await page.getByRole('menuitem', { name: 'User Settings' }).click();
 
   await loadTab(page, 'Notifications');
   await loadTab(page, 'Display Options');
