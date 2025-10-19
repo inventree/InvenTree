@@ -48,6 +48,9 @@ class MachineStatus(StatusCode):
     """
 
 
+MachinePropertyType = Literal['str', 'bool', 'progress', 'int', 'float']
+
+
 class MachineProperty(TypedDict, total=False):
     """Type definition for machine properties.
 
@@ -62,7 +65,7 @@ class MachineProperty(TypedDict, total=False):
     key: str
     value: Union[str, bool, int, float]
     group: str
-    type: Literal['str', 'bool', 'progress', 'int', 'float']
+    type: MachinePropertyType
     max_progress: Union[int, None]
 
 
