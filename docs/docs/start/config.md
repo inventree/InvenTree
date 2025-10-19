@@ -98,6 +98,7 @@ The following debugging / logging options are available:
 | INVENTREE_JSON_LOG | json_log | log as json | False |
 | INVENTREE_WRITE_LOG | write_log | Enable writing of log messages to file at config base | False |
 | INVENTREE_CONSOLE_LOG | console_log | Enable logging to console | True |
+| INVENTREE_SCHEMA_LEVEL | schema.level | Set level of added schema extensions detail (0-3) 0 = including no additional detail | 0 |
 
 ### Debug Mode
 

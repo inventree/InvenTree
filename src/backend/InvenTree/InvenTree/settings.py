@@ -1545,6 +1545,9 @@ SPECTACULAR_SETTINGS = {
     'OAUTH2_TOKEN_URL': '/o/token/',
     'OAUTH2_REFRESH_URL': '/o/revoke_token/',
 }
+SCHEMA_VENDOREXTENSION_LEVEL = get_setting(
+    'INVENTREE_SCHEMA_LEVEL', 'schema.level', default_value=0, typecast=int
+)
 OAUTH2_PROVIDER = {
     # default scopes
     'SCOPES': oauth2_scopes,

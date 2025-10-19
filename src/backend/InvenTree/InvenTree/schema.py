@@ -150,7 +150,7 @@ class ExtendedAutoSchema(AutoSchema):
         from InvenTree.api import BulkOperationMixin
         from InvenTree.mixins import CleanMixin
 
-        lvl = 3
+        lvl = settings.SCHEMA_VENDOREXTENSION_LEVEL
         """Level of detail for InvenTree extensions."""
 
         if lvl == 0:
