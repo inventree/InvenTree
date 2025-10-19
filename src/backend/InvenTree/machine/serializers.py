@@ -14,7 +14,7 @@ from machine.models import MachineConfig, MachineSetting
 
 
 class MachinePropertySerializer(serializers.Serializer):
-    """Machine Properties can be set by the driver/machine."""
+    """Machine Properties are set by the driver/machine to represent specific state."""
 
     class Meta:
         """Meta for serializer."""
@@ -168,11 +168,11 @@ class BaseMachineClassSerializer(serializers.Serializer):
     is_builtin = serializers.SerializerMethodField('get_is_builtin')
 
     def get_provider_file(self, obj: ClassProviderMixin) -> str:
-        """Serializer method for the provider_file field."""
+        """File that contains the class definition."""
         return obj.get_provider_file()
 
     def get_provider_plugin(self, obj: ClassProviderMixin) -> Union[dict, None]:
-        """Serializer method for the provider_plugin field."""
+        """Plugin(s) that contain(s) the class definition."""
         plugin = obj.get_provider_plugin()
         if plugin:
             return {
@@ -183,12 +183,12 @@ class BaseMachineClassSerializer(serializers.Serializer):
         return None
 
     def get_is_builtin(self, obj: ClassProviderMixin) -> bool:
-        """Serializer method for the is_builtin field."""
+        """Indicates if the machine type is build into the InvenTree source code."""
         return obj.get_is_builtin()
 
 
 class MachineTypeSerializer(BaseMachineClassSerializer):
-    """Serializer for a BaseMachineType class."""
+    """Available machine types."""
 
     class Meta(BaseMachineClassSerializer.Meta):
         """Meta for a serializer."""
@@ -197,7 +197,7 @@ class MachineTypeSerializer(BaseMachineClassSerializer):
 
 
 class MachineDriverSerializer(BaseMachineClassSerializer):
-    """Serializer for a BaseMachineDriver class."""
+    """Machine drivers."""
 
     class Meta(BaseMachineClassSerializer.Meta):
         """Meta for a serializer."""
@@ -209,7 +209,7 @@ class MachineDriverSerializer(BaseMachineClassSerializer):
     driver_errors = serializers.SerializerMethodField('get_errors')
 
     def get_errors(self, obj) -> list[str]:
-        """Serializer method for the errors field."""
+        """Errors registered against driver."""
         driver_instance = registry.get_driver_instance(obj.SLUG)
 
         if driver_instance is None:
@@ -218,7 +218,7 @@ class MachineDriverSerializer(BaseMachineClassSerializer):
 
 
 class MachineRegistryErrorSerializer(serializers.Serializer):
-    """Serializer for a machine registry error."""
+    """Machine registry error."""
 
     class Meta:
         """Meta for a serializer."""
@@ -229,7 +229,7 @@ class MachineRegistryErrorSerializer(serializers.Serializer):
 
 
 class MachineRegistryStatusSerializer(serializers.Serializer):
-    """Serializer for machine registry status."""
+    """Machine registry status, showing all errors that were registered."""
 
     class Meta:
         """Meta for a serializer."""
