@@ -1,11 +1,14 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 410
+INVENTREE_API_VERSION = 411
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v411 -> 2025-06-19 : https://github.com/inventree/InvenTree/pull/10628
+    - Extend schema generation to include inventree vendor fields
 
 v410 -> 2025-06-12 : https://github.com/inventree/InvenTree/pull/9761
     - Add supplier search and import API endpoints
