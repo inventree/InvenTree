@@ -384,7 +384,7 @@ class MachineRegistry(
         return list(self.machine_types.values())
 
     @machine_registry_entrypoint()
-    def get_machine(self, pk: Union[str, UUID]):
+    def get_machine(self, pk: Union[str, UUID]) -> Optional[BaseMachineType]:
         """Get machine from registry by pk."""
         return self.machines.get(str(pk), None)
 
