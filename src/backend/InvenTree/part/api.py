@@ -17,6 +17,7 @@ from rest_framework.response import Response
 import part.filters
 from data_exporter.mixins import DataExportViewMixin
 from InvenTree.api import (
+    BulkCreateMixin,
     BulkDeleteMixin,
     BulkUpdateMixin,
     ListCreateDestroyAPIView,
@@ -1420,7 +1421,11 @@ class PartParameterFilter(FilterSet):
 
 
 class PartParameterList(
-    PartParameterAPIMixin, OutputOptionsMixin, DataExportViewMixin, ListCreateAPI
+    BulkCreateMixin,
+    PartParameterAPIMixin,
+    OutputOptionsMixin,
+    DataExportViewMixin,
+    ListCreateAPI,
 ):
     """API endpoint for accessing a list of PartParameter objects.
 
@@ -1447,6 +1452,8 @@ class PartParameterList(
         'template__description',
         'template__units',
     ]
+
+    unique_create_fields = ['part', 'template']
 
 
 class PartParameterDetail(

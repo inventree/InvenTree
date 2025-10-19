@@ -93,6 +93,24 @@ export default function PurchaseOrderDetail() {
     }
   });
 
+  const poStatus = useStatusCodes({ modelType: ModelType.purchaseorder });
+
+  const orderOpen: boolean = useMemo(() => {
+    return (
+      order.status == poStatus.PENDING ||
+      order.status == poStatus.PLACED ||
+      order.status == poStatus.ON_HOLD
+    );
+  }, [order, poStatus]);
+
+  const lineItemsEditable: boolean = useMemo(() => {
+    if (orderOpen) {
+      return true;
+    } else {
+      return globalSettings.isSet('PURCHASEORDER_EDIT_COMPLETED_ORDERS');
+    }
+  }, [orderOpen, globalSettings]);
+
   const duplicatePurchaseOrderInitialData = useMemo(() => {
     const data = { ...order };
     // if we set the reference to null/undefined, it will be left blank in the form
@@ -335,6 +353,7 @@ export default function PurchaseOrderDetail() {
                   orderDetailRefresh={refreshInstance}
                   currency={orderCurrency}
                   orderId={Number(id)}
+                  editable={lineItemsEditable}
                   supplierId={Number(order.supplier)}
                 />
               </Accordion.Panel>
@@ -349,6 +368,7 @@ export default function PurchaseOrderDetail() {
                   orderId={order.pk}
                   orderDetailRefresh={refreshInstance}
                   currency={orderCurrency}
+                  editable={lineItemsEditable}
                   role={UserRoles.purchase_order}
                 />
               </Accordion.Panel>
@@ -379,8 +399,6 @@ export default function PurchaseOrderDetail() {
       })
     ];
   }, [order, id, user]);
-
-  const poStatus = useStatusCodes({ modelType: ModelType.purchaseorder });
 
   const issueOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.purchase_order_issue, order.pk),

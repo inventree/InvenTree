@@ -1396,6 +1396,20 @@ class PartAPITest(PartAPITestBase):
 
         self.assertIn('notes', response.data)
 
+    def test_output_options(self):
+        """Test the output options for PartList list."""
+        self.run_output_test(
+            reverse('api-part-list'),
+            [
+                ('location_detail', 'default_location_detail'),
+                'parameters',
+                ('path_detail', 'category_path'),
+                # TODO re-enable ('pricing', 'pricing_min'),
+                # TODO re-enable ('pricing', 'pricing_updated'),
+            ],
+            assert_subset=True,
+        )
+
 
 class PartCreationTests(PartAPITestBase):
     """Tests for creating new Part instances via the API."""
@@ -2743,7 +2757,13 @@ class BomItemTest(InvenTreeAPITestCase):
         """Test that various output options work as expected."""
         self.run_output_test(
             reverse('api-bom-item-detail', kwargs={'pk': 3}),
-            ['can_build', 'part_detail', 'sub_part_detail'],
+            [
+                'can_build',
+                'part_detail',
+                'sub_part_detail',
+                # TODO re-enable 'substitutes',
+                # TODO re-enable ('pricing', 'pricing_min'),
+            ],
         )
 
     def test_add_bom_item(self):

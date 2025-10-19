@@ -250,7 +250,10 @@ export default function InvenTreeTableHeader({
                 <HoverCard
                   position='bottom-end'
                   withinPortal={true}
-                  disabled={!tableState.filterSet.activeFilters?.length}
+                  disabled={
+                    hasCustomFilters ||
+                    !tableState.filterSet.activeFilters?.length
+                  }
                 >
                   <HoverCard.Target>
                     <Tooltip

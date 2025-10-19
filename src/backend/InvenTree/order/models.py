@@ -1687,7 +1687,7 @@ class OrderLineItem(InvenTree.models.InvenTreeMetadataModel):
         """
         if self.order and self.order.check_locked():
             raise ValidationError({
-                'reference': _('The order is locked and cannot be modified')
+                'non_field_errors': _('The order is locked and cannot be modified')
             })
 
         update_order = kwargs.pop('update_order', True)
@@ -1703,7 +1703,7 @@ class OrderLineItem(InvenTree.models.InvenTreeMetadataModel):
         """
         if self.order and self.order.check_locked():
             raise ValidationError({
-                'reference': _('The order is locked and cannot be modified')
+                'non_field_errors': _('The order is locked and cannot be modified')
             })
 
         super().delete(*args, **kwargs)

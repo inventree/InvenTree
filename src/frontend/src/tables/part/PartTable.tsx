@@ -1,9 +1,3 @@
-import { t } from '@lingui/core/macro';
-import { Group, Text } from '@mantine/core';
-import { IconShoppingCart } from '@tabler/icons-react';
-import { type ReactNode, useCallback, useMemo, useState } from 'react';
-
-import { AddItemButton } from '@lib/components/AddItemButton';
 import {
   type RowAction,
   RowDuplicateAction,
@@ -17,9 +11,21 @@ import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
 import type { InvenTreeTableProps } from '@lib/types/Tables';
+import { t } from '@lingui/core/macro';
+import { Group, Text } from '@mantine/core';
+import {
+  IconFileUpload,
+  IconPackageImport,
+  IconPlus,
+  IconShoppingCart
+} from '@tabler/icons-react';
+import { type ReactNode, useCallback, useMemo, useState } from 'react';
+import ImporterDrawer from '../../components/importer/ImporterDrawer';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
+import ImportPartWizard from '../../components/wizards/ImportPartWizard';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { formatDecimal, formatPriceRange } from '../../defaults/formatters';
+import { dataImporterSessionFields } from '../../forms/ImporterForms';
 import { usePartFields } from '../../forms/PartForms';
 import { InvenTreeIcon } from '../../functions/icons';
 import {
@@ -27,6 +33,7 @@ import {
   useCreateApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
+import { usePluginsWithMixin } from '../../hooks/UsePlugins';
 import { useTable } from '../../hooks/UseTable';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
@@ -328,10 +335,12 @@ function partTableFilters(): TableFilter[] {
  * @returns
  */
 export function PartListTable({
+  enableImport = true,
   props,
   defaultPartData
 }: Readonly<{
-  props: InvenTreeTableProps;
+  enableImport?: boolean;
+  props?: InvenTreeTableProps;
   defaultPartData?: any;
 }>) {
   const tableColumns = useMemo(() => partTableColumns(), []);
@@ -341,9 +350,39 @@ export function PartListTable({
   const user = useUserState();
   const globalSettings = useGlobalSettingsState();
 
+  const [importOpened, setImportOpened] = useState<boolean>(false);
+
+  const [selectedSession, setSelectedSession] = useState<number | undefined>(
+    undefined
+  );
+
+  const importSessionFields = useMemo(() => {
+    const fields = dataImporterSessionFields({
+      modelType: ModelType.part
+    });
+
+    // Override default field values with provided fields
+    fields.field_defaults.value = {
+      ...props?.params,
+      ...defaultPartData
+    };
+
+    return fields;
+  }, [defaultPartData, props?.params]);
+
+  const importParts = useCreateApiFormModal({
+    url: ApiEndpoints.import_session_list,
+    title: t`Import Parts`,
+    fields: importSessionFields,
+    onFormSuccess: (response: any) => {
+      setSelectedSession(response.pk);
+      setImportOpened(true);
+    }
+  });
+
   const initialPartData = useMemo(() => {
-    return defaultPartData ?? props.params ?? {};
-  }, [defaultPartData, props.params]);
+    return defaultPartData ?? props?.params ?? {};
+  }, [defaultPartData, props?.params]);
 
   const newPart = useCreateApiFormModal({
     url: ApiEndpoints.part_list,
@@ -424,6 +463,11 @@ export function PartListTable({
 
   const orderPartsWizard = OrderPartsWizard({ parts: table.selectedRecords });
 
+  const supplierPlugins = usePluginsWithMixin('supplier');
+  const importPartWizard = ImportPartWizard({
+    categoryId: initialPartData.category
+  });
+
   const rowActions = useCallback(
     (record: any): RowAction[] => {
       const can_edit = user.hasChangePermission(ModelType.part);
@@ -455,6 +499,7 @@ export function PartListTable({
         tooltip={t`Part Actions`}
         icon={<InvenTreeIcon icon='part' />}
         disabled={!table.hasSelectedRecords}
+        position='bottom-start'
         actions={[
           {
             name: t`Set Category`,
@@ -477,14 +522,37 @@ export function PartListTable({
           }
         ]}
       />,
-      <AddItemButton
-        key='add-part'
+      <ActionDropdown
+        key='add-parts-actions'
+        tooltip={t`Add Parts`}
+        position='bottom-start'
+        icon={<IconPlus />}
         hidden={!user.hasAddRole(UserRoles.part)}
-        tooltip={t`Add Part`}
-        onClick={() => newPart.open()}
+        actions={[
+          {
+            name: t`Create Part`,
+            icon: <IconPlus />,
+            tooltip: t`Create a new part`,
+            onClick: () => newPart.open()
+          },
+          {
+            name: t`Import from File`,
+            icon: <IconFileUpload />,
+            tooltip: t`Import parts from a file`,
+            onClick: () => importParts.open(),
+            hidden: !enableImport
+          },
+          {
+            name: t`Import from Supplier`,
+            icon: <IconPackageImport />,
+            tooltip: t`Import parts from a supplier plugin`,
+            hidden: !enableImport || supplierPlugins.length === 0,
+            onClick: () => importPartWizard.openWizard()
+          }
+        ]}
       />
     ];
-  }, [user, table.hasSelectedRecords]);
+  }, [user, enableImport, table.hasSelectedRecords, supplierPlugins]);
 
   return (
     <>
@@ -492,7 +560,9 @@ export function PartListTable({
       {duplicatePart.modal}
       {editPart.modal}
       {setCategory.modal}
+      {importParts.modal}
       {orderPartsWizard.wizard}
+      {importPartWizard.wizard}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.part_list)}
         tableState={table}
@@ -508,10 +578,19 @@ export function PartListTable({
           enableReports: true,
           enableLabels: true,
           params: {
-            ...props.params,
+            ...props?.params,
             category_detail: true,
             location_detail: true
           }
+        }}
+      />
+      <ImporterDrawer
+        sessionId={selectedSession ?? -1}
+        opened={selectedSession != undefined && importOpened}
+        onClose={() => {
+          setSelectedSession(undefined);
+          setImportOpened(false);
+          table.refreshTable();
         }}
       />
     </>
