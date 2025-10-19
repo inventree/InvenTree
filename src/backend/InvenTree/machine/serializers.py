@@ -66,35 +66,35 @@ class MachineConfigSerializer(serializers.ModelSerializer):
     )
 
     def get_initialized(self, obj: MachineConfig) -> bool:
-        """Serializer method for the initialized field."""
+        """Indicator if machine is initialized."""
         return getattr(obj.machine, 'initialized', False)
 
     def get_status(self, obj: MachineConfig) -> int:
-        """Serializer method for the status field."""
+        """Numerical machine status if available, else -1."""
         status = getattr(obj.machine, 'status', None)
         if status is not None:
             return status.value
         return -1
 
     def get_status_model(self, obj: MachineConfig) -> Union[str, None]:
-        """Serializer method for the status model field."""
+        """Textual machine status name if available, else None."""
         if obj.machine and obj.machine.MACHINE_STATUS:
             return obj.machine.MACHINE_STATUS.__name__
 
     def get_status_text(self, obj: MachineConfig) -> str:
-        """Serializer method for the status text field."""
+        """Current status text for machine."""
         return getattr(obj.machine, 'status_text', '')
 
     def get_errors(self, obj: MachineConfig) -> list[str]:
-        """Serializer method for the errors field."""
+        """List of machine errors."""
         return [str(err) for err in obj.errors]
 
     def get_is_driver_available(self, obj: MachineConfig) -> bool:
-        """Serializer method for the is_driver_available field."""
+        """Indicator if driver for machine is available."""
         return obj.is_driver_available()
 
     def get_restart_required(self, obj: MachineConfig) -> bool:
-        """Serializer method for the restart_required field."""
+        """Indicator if machine restart is required."""
         return getattr(obj.machine, 'restart_required', False)
 
 
