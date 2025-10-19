@@ -1,12 +1,5 @@
 import { t } from '@lingui/core/macro';
-import {
-  Container,
-  Drawer,
-  Flex,
-  Group,
-  ScrollArea,
-  Space
-} from '@mantine/core';
+import { Container, Drawer, Flex, Group, Space } from '@mantine/core';
 import { useViewportSize } from '@mantine/hooks';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
@@ -183,33 +176,31 @@ function DrawerContent({ closeFunc }: Readonly<{ closeFunc?: () => void }>) {
       </Group>
       <Space h='xs' />
       <Container className={classes.layoutContent} p={0}>
-        <ScrollArea h={scrollHeight} type='always' offsetScrollbars>
+        <MenuLinks
+          title={t`Navigation`}
+          links={menuItemsNavigate}
+          beforeClick={closeFunc}
+        />
+        <MenuLinks
+          title={t`Settings`}
+          links={menuItemsSettings}
+          beforeClick={closeFunc}
+        />
+        <MenuLinks
+          title={t`Actions`}
+          links={menuItemsAction}
+          beforeClick={closeFunc}
+        />
+        <Space h='md' />
+        {plugins.length > 0 ? (
           <MenuLinks
-            title={t`Navigation`}
-            links={menuItemsNavigate}
+            title={t`Plugins`}
+            links={plugins}
             beforeClick={closeFunc}
           />
-          <MenuLinks
-            title={t`Settings`}
-            links={menuItemsSettings}
-            beforeClick={closeFunc}
-          />
-          <MenuLinks
-            title={t`Actions`}
-            links={menuItemsAction}
-            beforeClick={closeFunc}
-          />
-          <Space h='md' />
-          {plugins.length > 0 ? (
-            <MenuLinks
-              title={t`Plugins`}
-              links={plugins}
-              beforeClick={closeFunc}
-            />
-          ) : (
-            <></>
-          )}
-        </ScrollArea>
+        ) : (
+          <></>
+        )}
       </Container>
       <div ref={ref}>
         <Space h='md' />
