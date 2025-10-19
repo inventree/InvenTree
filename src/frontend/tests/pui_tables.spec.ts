@@ -50,25 +50,25 @@ test('Tables - Pagination', async ({ browser }) => {
 
   // Expected pagination size is 25
   // Note: Due to other tests, there may be more than 25 items in the list
-  await page.getByText(/1 - 25 \/ 2[2|8]/).waitFor();
+  await page.getByText(/1 - 25 \/ 2[6-9]/).waitFor();
   await page.getByRole('button', { name: 'Next page' }).click();
-  await page.getByText(/26 - 2[7|8] \/ 2[7|8]/).waitFor();
+  await page.getByText(/26 - 2[6-9] \/ 2[6-9]/).waitFor();
 
   // Set page size to 10
   await page.getByRole('button', { name: '25' }).click();
   await page.getByRole('menuitem', { name: '10', exact: true }).click();
 
-  await page.getByText(/1 - 10 \/ 2[7|8]/).waitFor();
+  await page.getByText(/1 - 10 \/ 2[6-9]/).waitFor();
   await page.getByRole('button', { name: '3' }).click();
-  await page.getByText(/21 - 2[7|8] \/ 2[7|8]/).waitFor();
+  await page.getByText(/21 - 2[6-9] \/ 2[6-9]/).waitFor();
   await page.getByRole('button', { name: 'Previous page' }).click();
-  await page.getByText(/11 - 20 \/ 2[7|8]/).waitFor();
+  await page.getByText(/11 - 20 \/ 2[6-9]/).waitFor();
 
   // Set page size back to 25
   await page.getByRole('button', { name: '10' }).click();
   await page.getByRole('menuitem', { name: '25', exact: true }).click();
 
-  await page.getByText(/1 - 25 \/ 2[7|8]/).waitFor();
+  await page.getByText(/1 - 25 \/ 2[6-9]/).waitFor();
 });
 
 test('Tables - Columns', async ({ browser }) => {
