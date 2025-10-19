@@ -246,6 +246,7 @@ class InvenTreeHostSettingsMiddleware(MiddlewareMixin):
             (
                 # Exact match on domain
                 is_same_domain(referer.netloc, urlsplit(settings.SITE_URL).netloc)
+                and referer.scheme == site_url.scheme
             )
             or (
                 # Lax protocol match, accessed URL starts with SITE_URL
@@ -259,7 +260,9 @@ class InvenTreeHostSettingsMiddleware(MiddlewareMixin):
             )
         )
 
-        if not site_url_match:
+        if site_url_match:
+            return None
+        else:
             # The accessed URL does not match the SITE_URL setting
             if (
                 isinstance(settings.CSRF_TRUSTED_ORIGINS, list)
