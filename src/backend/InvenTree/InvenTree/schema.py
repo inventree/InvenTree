@@ -89,12 +89,13 @@ class ExtendedAutoSchema(AutoSchema):
             operation['requestBody'] = request_body
             self.method = original_method
 
+        parameters = operation.get('parameters', [])
+
         # If pagination limit is not set (default state) then all results will return unpaginated. This doesn't match
         # what the schema defines to be the expected result. This forces limit to be present, producing the expected
         # type.
         pagination_class = getattr(self.view, 'pagination_class', None)
         if pagination_class and pagination_class == LimitOffsetPagination:
-            parameters = operation.get('parameters', [])
             for parameter in parameters:
                 if parameter['name'] == 'limit':
                     parameter['required'] = True
@@ -102,12 +103,12 @@ class ExtendedAutoSchema(AutoSchema):
         # Add valid order selections to the ordering field description.
         ordering_fields = getattr(self.view, 'ordering_fields', None)
         if ordering_fields is not None:
-            parameters = operation.get('parameters', [])
             for parameter in parameters:
                 if parameter['name'] == 'ordering':
                     parameter['description'] = (
                         f'{parameter["description"]} Possible fields: {", ".join(ordering_fields)}.'
                     )
+                    # TODO - this should be a enum
 
         # Add valid search fields to the search description.
         search_fields = getattr(self.view, 'search_fields', None)
@@ -115,8 +116,6 @@ class ExtendedAutoSchema(AutoSchema):
         if search_fields is not None:
             # Ensure consistent ordering of search fields
             search_fields = sorted(search_fields)
-
-            parameters = operation.get('parameters', [])
             for parameter in parameters:
                 if parameter['name'] == 'search':
                     parameter['description'] = (
