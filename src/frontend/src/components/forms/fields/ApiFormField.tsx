@@ -56,7 +56,11 @@ export function ApiFormField({
 
     // hook up the value state to the input field
     if (definition.value !== undefined) {
-      field.onChange(definition.value);
+      field.onChange(
+        definition.adjustValue
+          ? definition.adjustValue(definition.value)
+          : definition.value
+      );
     }
   }, [definition.value]);
 
@@ -111,7 +115,7 @@ export function ApiFormField({
 
     switch (definition.field_type) {
       case 'integer':
-        val = Number.parseInt(value) ?? '';
+        val = Number.parseInt(value, 10) ?? '';
         break;
       case 'decimal':
       case 'float':

@@ -173,7 +173,13 @@ export function ApiForm({
 
   const defaultValues: FieldValues = useMemo(() => {
     const defaultValuesMap = mapFields(props.fields ?? {}, (_path, field) => {
-      return field.value ?? field.default ?? undefined;
+      if (field.value !== undefined && field.value !== null) {
+        return field.value;
+      }
+      if (field.default !== undefined && field.default !== null) {
+        return field.default;
+      }
+      return undefined;
     });
 
     // If the user has specified initial data, that overrides default values
@@ -186,7 +192,6 @@ export function ApiForm({
         }
       });
     }
-
     return defaultValuesMap;
   }, [props.fields, props.initialData]);
 
