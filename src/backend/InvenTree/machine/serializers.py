@@ -2,16 +2,19 @@
 
 from typing import Union
 
+from django.utils.translation import gettext_lazy as _
+
 from rest_framework import serializers
 
 from common.serializers import GenericReferencedSettingSerializer
 from InvenTree.helpers_mixin import ClassProviderMixin
 from machine import registry
+from machine.machine_type import MachinePropertyType
 from machine.models import MachineConfig, MachineSetting
 
 
 class MachinePropertySerializer(serializers.Serializer):
-    """Serializer for a MachineProperty."""
+    """Machine Properties can be set by the driver/machine."""
 
     class Meta:
         """Meta for serializer."""
@@ -19,11 +22,28 @@ class MachinePropertySerializer(serializers.Serializer):
         fields = ['key', 'value', 'group', 'type', 'max_progress']
         read_only_fields = fields
 
-    key = serializers.CharField()
-    value = serializers.CharField()
-    group = serializers.CharField()
-    type = serializers.CharField()
-    max_progress = serializers.IntegerField()
+    key = serializers.CharField(
+        label=_('Key'), help_text=_('Key of the property'), required=True
+    )
+    value = serializers.CharField(
+        label=_('Value'), help_text=_('Value of the property'), required=True
+    )
+    group = serializers.CharField(
+        label=_('Group'), help_text=_('Grouping of the property'), required=False
+    )
+    type = serializers.ChoiceField(
+        label=_('Type'),
+        choices=MachinePropertyType.__args__,
+        help_text=_('Type of the property'),
+        default='str',
+        required=False,
+    )
+    max_progress = serializers.IntegerField(
+        label=_('Max Progress'),
+        help_text=_('Maximum value for progress type, required if type=progress'),
+        required=False,
+        allow_null=True,
+    )
 
 
 class MachineConfigSerializer(serializers.ModelSerializer):
