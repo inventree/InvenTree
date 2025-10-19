@@ -11,6 +11,7 @@ from django.utils.translation import gettext_lazy as _
 
 import common.models
 from machine import registry
+from machine.machine_type import BaseMachineType
 
 
 class MachineConfig(models.Model):
@@ -83,7 +84,7 @@ class MachineConfig(models.Model):
         return machine
 
     @property
-    def machine(self):
+    def machine(self) -> Optional[BaseMachineType]:
         """Machine instance getter."""
         return registry.get_machine(self.pk)
 
