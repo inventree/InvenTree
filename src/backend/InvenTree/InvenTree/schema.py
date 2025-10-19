@@ -132,7 +132,53 @@ class ExtendedAutoSchema(AutoSchema):
             schema['items'] = {'$ref': schema['$ref']}
             del schema['$ref']
 
+        # Add vendor extensions for custom behavior
+        operation.update(self.get_inventree_extensions())
+
         return operation
+
+    def get_inventree_extensions(self):
+        """Add InvenTree specific extensions to the schema."""
+        # from rest_framework.generics import ListAPIView, RetrieveAPIView
+        # from rest_framework.mixins import (
+        #     CreateModelMixin,
+        #     ListModelMixin,
+        #     RetrieveModelMixin,
+        #     UpdateModelMixin,
+        # )
+        from data_exporter.mixins import DataExportViewMixin
+        from InvenTree.api import BulkOperationMixin
+        from InvenTree.mixins import CleanMixin
+
+        lvl = 3
+        """Level of detail for InvenTree extensions."""
+
+        if lvl == 0:
+            return {}
+
+        mro = self.view.__class__.__mro__
+
+        data = {}
+        if lvl >= 1:
+            data['x-inventree-meta'] = {
+                'version': '1.0',
+                # 'is_list': any(
+                #     a in mro for a in [ListModelMixin, ListAPIView]
+                # ),
+                # 'is_detail': any(
+                #     a in mro
+                #     for a in [RetrieveModelMixin, UpdateModelMixin, RetrieveAPIView]
+                # ),
+                # 'is_create': CreateModelMixin in mro,
+                'is_bulk': BulkOperationMixin in mro,
+                'is_cleaned': CleanMixin in mro,
+                'is_filtered': hasattr(self.view, 'output_options'),
+                'is_exported': DataExportViewMixin in mro,
+            }
+        if lvl >= 2:
+            data['x-inventree-components'] = [str(a) for a in mro]
+
+        return data
 
 
 def postprocess_required_nullable(result, generator, request, public):
