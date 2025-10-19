@@ -239,13 +239,28 @@ class InvenTreeHostSettingsMiddleware(MiddlewareMixin):
         accessed_scheme = request._current_scheme_host
         referer = urlsplit(accessed_scheme)
 
-        # Ensure that the settings are set correctly with the current request
-        matches = (
-            (accessed_scheme and not accessed_scheme.startswith(settings.SITE_URL))
-            if not settings.SITE_LAX_PROTOCOL_CHECK
-            else not is_same_domain(referer.netloc, urlsplit(settings.SITE_URL).netloc)
+        site_url = urlsplit(settings.SITE_URL)
+
+        # Check if the accessed URL matches the SITE_URL setting
+        site_url_match = (
+            (
+                # Exact match on domain
+                is_same_domain(referer.netloc, urlsplit(settings.SITE_URL).netloc)
+            )
+            or (
+                # Lax protocol match, accessed URL starts with SITE_URL
+                settings.SITE_LAX_PROTOCOL_CHECK
+                and accessed_scheme.startswith(settings.SITE_URL)
+            )
+            or (
+                # Lax protocol match, same domain
+                settings.SITE_LAX_PROTOCOL_CHECK
+                and referer.hostname == site_url.hostname
+            )
         )
-        if matches:
+
+        if not site_url_match:
+            # The accessed URL does not match the SITE_URL setting
             if (
                 isinstance(settings.CSRF_TRUSTED_ORIGINS, list)
                 and len(settings.CSRF_TRUSTED_ORIGINS) > 1
