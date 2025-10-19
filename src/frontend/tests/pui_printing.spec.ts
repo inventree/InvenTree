@@ -77,7 +77,7 @@ test('Printing - Report Printing', async ({ browser }) => {
   await page.context().close();
 });
 
-test('Printing - Report Editing', async ({ browser, request }) => {
+test('Printing - Report Editing', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
     username: 'admin',
     password: 'inventree'
@@ -85,7 +85,6 @@ test('Printing - Report Editing', async ({ browser, request }) => {
 
   // activate the sample plugin for this test
   await setPluginState({
-    request,
     plugin: 'sampleui',
     state: true
   });
@@ -140,7 +139,6 @@ test('Printing - Report Editing', async ({ browser, request }) => {
 
   // deactivate the sample plugin again after the test
   await setPluginState({
-    request,
     plugin: 'sampleui',
     state: false
   });

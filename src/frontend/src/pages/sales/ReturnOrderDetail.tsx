@@ -68,6 +68,25 @@ export default function ReturnOrderDetail() {
     }
   });
 
+  const roStatus = useStatusCodes({ modelType: ModelType.returnorder });
+
+  const orderOpen = useMemo(() => {
+    return (
+      order.status == roStatus.PENDING ||
+      order.status == roStatus.PLACED ||
+      order.status == roStatus.IN_PROGRESS ||
+      order.status == roStatus.ON_HOLD
+    );
+  }, [order, roStatus]);
+
+  const lineItemsEditable: boolean = useMemo(() => {
+    if (orderOpen) {
+      return true;
+    } else {
+      return globalSettings.isSet('RETURNORDER_EDIT_COMPLETED_ORDERS');
+    }
+  }, [orderOpen, globalSettings]);
+
   const orderCurrency = useMemo(() => {
     return (
       order.order_currency ||
@@ -299,6 +318,7 @@ export default function ReturnOrderDetail() {
                   order={order}
                   orderDetailRefresh={refreshInstance}
                   customerId={order.customer}
+                  editable={lineItemsEditable}
                   currency={orderCurrency}
                 />
               </Accordion.Panel>
@@ -313,6 +333,7 @@ export default function ReturnOrderDetail() {
                   orderId={order.pk}
                   orderDetailRefresh={refreshInstance}
                   currency={orderCurrency}
+                  editable={lineItemsEditable}
                   role={UserRoles.return_order}
                 />
               </Accordion.Panel>
@@ -409,8 +430,6 @@ export default function ReturnOrderDetail() {
     successMessage: t`Order completed`
   });
 
-  const roStatus = useStatusCodes({ modelType: ModelType.returnorder });
-
   const orderActions = useMemo(() => {
     const canEdit: boolean = user.hasChangeRole(UserRoles.return_order);
 
@@ -488,7 +507,7 @@ export default function ReturnOrderDetail() {
         ]}
       />
     ];
-  }, [user, order, roStatus]);
+  }, [user, order, orderOpen, roStatus]);
 
   const subtitle: string = useMemo(() => {
     let t = order.customer_detail?.name || '';

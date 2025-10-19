@@ -1,11 +1,21 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 408
+INVENTREE_API_VERSION = 411
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v411 -> 2025-06-19 : https://github.com/inventree/InvenTree/pull/10630
+    - Editorialy changes to machine api - no functional changes
+
+v410 -> 2025-06-12 : https://github.com/inventree/InvenTree/pull/9761
+    - Add supplier search and import API endpoints
+    - Add part parameter bulk create API endpoint
+
+v409 -> 2025-10-17 : https://github.com/inventree/InvenTree/pull/10601
+    - Adds ability to filter StockList API by manufacturer part ID
 
 v408 -> 2025-10-13: https://github.com/inventree/InvenTree/pull/10561
     - Allow search of assembly fields in BOM API endpoint

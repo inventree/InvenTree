@@ -34,10 +34,12 @@ export default function ExtraLineItemTable({
   orderId,
   orderDetailRefresh,
   currency,
+  editable,
   role
 }: Readonly<{
   endpoint: ApiEndpoints;
   orderId: number;
+  editable: boolean;
   orderDetailRefresh: () => void;
   currency: string;
   role: UserRoles;
@@ -119,21 +121,21 @@ export default function ExtraLineItemTable({
     (record: any): RowAction[] => {
       return [
         RowEditAction({
-          hidden: !user.hasChangeRole(role),
+          hidden: !editable || !user.hasChangeRole(role),
           onClick: () => {
             setSelectedLine(record.pk);
             editLineItem.open();
           }
         }),
         RowDuplicateAction({
-          hidden: !user.hasAddRole(role),
+          hidden: !editable || !user.hasAddRole(role),
           onClick: () => {
             setInitialData({ ...record });
             newLineItem.open();
           }
         }),
         RowDeleteAction({
-          hidden: !user.hasDeleteRole(role),
+          hidden: !editable || !user.hasDeleteRole(role),
           onClick: () => {
             setSelectedLine(record.pk);
             deleteLineItem.open();
@@ -141,7 +143,7 @@ export default function ExtraLineItemTable({
         })
       ];
     },
-    [user, role]
+    [editable, user, role]
   );
 
   const tableActions = useMemo(() => {
@@ -149,7 +151,7 @@ export default function ExtraLineItemTable({
       <AddItemButton
         key='add-line-item'
         tooltip={t`Add Extra Line Item`}
-        hidden={!user.hasAddRole(role)}
+        hidden={!editable || !user.hasAddRole(role)}
         onClick={() => {
           setInitialData({
             order: orderId
@@ -158,7 +160,7 @@ export default function ExtraLineItemTable({
         }}
       />
     ];
-  }, [user, role]);
+  }, [editable, user, role]);
 
   return (
     <>
