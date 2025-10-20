@@ -223,6 +223,20 @@ class OutputOptionsMixin:
         if getattr(cls, 'output_options', None) is not None:
             schema_for_view_output_options(cls)
 
+    def __init__(self) -> None:
+        """Initialize the mixin. Check that the serializer is compatible."""
+        super().__init__()
+
+        # Check that the serializer was defined
+        if (
+            hasattr(self, 'serializer_class')
+            and isinstance(self.serializer_class, type)
+            and (not issubclass(self.serializer_class, FilterableSerializerMixin))
+        ):
+            raise Exception(
+                'INVE-I2: `OutputOptionsMixin` can only be used with serializers that contain the `FilterableSerializerMixin` mixin'
+            )
+
     def get_serializer(self, *args, **kwargs):
         """Return serializer instance with output options applied."""
         if self.output_options and hasattr(self, 'request'):
