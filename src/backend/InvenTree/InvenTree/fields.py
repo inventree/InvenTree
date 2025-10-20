@@ -15,6 +15,7 @@ from rest_framework.fields import URLField as RestURLField
 from rest_framework.fields import empty
 
 import InvenTree.helpers
+from common.currency import currency_code_default
 from common.settings import get_global_setting
 
 from .validators import AllowedURLValidator, allowable_url_schemes
@@ -100,6 +101,9 @@ class InvenTreeModelMoneyField(ModelMoneyField):
             validators.append(MinMoneyValidator(0))
 
         kwargs['validators'] = validators
+
+        # Override the default currency value
+        kwargs['default_currency'] = currency_code_default()
 
         super().__init__(**kwargs)
 
