@@ -33,7 +33,6 @@ from generic.states.fields import InvenTreeCustomStatusSerializerMixin
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.serializers import (
     FilterableCharField,
-    FilterableIntegerField,
     FilterableSerializerMixin,
     InvenTreeDecimalField,
     InvenTreeModelSerializer,
