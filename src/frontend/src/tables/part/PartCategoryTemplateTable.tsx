@@ -23,17 +23,24 @@ import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import { InvenTreeTable } from '../InvenTreeTable';
 
-export default function PartCategoryTemplateTable() {
+export default function PartCategoryTemplateTable({
+  categoryId
+}: {
+  categoryId?: number;
+}) {
   const table = useTable('part-category-parameter-templates');
   const user = useUserState();
 
   const formFields: ApiFormFieldSet = useMemo(() => {
     return {
-      category: {},
+      category: {
+        value: categoryId,
+        disabled: categoryId !== undefined
+      },
       parameter_template: {},
       default_value: {}
     };
-  }, []);
+  }, [categoryId]);
 
   const [selectedTemplate, setSelectedTemplate] = useState<number>(0);
 
@@ -153,7 +160,10 @@ export default function PartCategoryTemplateTable() {
           rowActions: rowActions,
           tableFilters: tableFilters,
           tableActions: tableActions,
-          enableDownload: true
+          enableDownload: true,
+          params: {
+            category: categoryId
+          }
         }}
       />
     </>
