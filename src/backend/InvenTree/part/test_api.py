@@ -3339,3 +3339,27 @@ class PartTestTemplateTest(PartAPITestBase):
         response = self.patch(url, {'choices': 'a,b,c,d,e,f,f'}, expected_code=400)
 
         self.assertIn('Choices must be unique', str(response.data['choices']))
+
+
+class PartParameterTests(PartAPITestBase):
+    """Unit test for PartParameter API endpoints."""
+
+    def test_export_data(self):
+        """Test data export functionality for PartParameter objects."""
+        url = reverse('api-part-parameter-list')
+
+        response = self.options(
+            url,
+            data={
+                'export': True,
+                'export_plugin': 'inventree-exporter',
+                'part_detail': True,
+                'template_detail': True,
+            },
+            expected_code=200,
+        )
+
+        fields = response.data['actions']['GET'].keys()
+
+        self.assertIn('export_format', fields)
+        self.assertIn('export_plugin', fields)
