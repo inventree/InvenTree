@@ -1501,10 +1501,10 @@ Static      {get_static_dir(error=False) or NOT_SPECIFIED}
 Backup      {get_backup_dir(error=False) or NOT_SPECIFIED}
 
 Versions:
-Python      {python_version()}
-Django      {InvenTreeVersion.inventreeDjangoVersion()}
 InvenTree   {InvenTreeVersion.inventreeVersion()}
 API         {InvenTreeVersion.inventreeApiVersion()}
+Python      {python_version()}
+Django      {InvenTreeVersion.inventreeDjangoVersion()}
 Node        {node if node else NA}
 Yarn        {yarn if yarn else NA}
 
