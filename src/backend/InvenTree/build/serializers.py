@@ -163,6 +163,17 @@ class BuildSerializer(
         filter_name='project_code_detail',
     )
 
+    project_code = enable_filter(
+        FilterableIntegerField(
+            allow_null=True,
+            required=False,
+            label=_('Project Code'),
+            help_text=_('Project code for this build order'),
+        ),
+        True,
+        filter_name='project_code_detail',
+    )
+
     @staticmethod
     def annotate_queryset(queryset):
         """Add custom annotations to the BuildSerializer queryset, performing database queries as efficiently as possible.
