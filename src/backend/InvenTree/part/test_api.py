@@ -1404,8 +1404,8 @@ class PartAPITest(PartAPITestBase):
                 ('location_detail', 'default_location_detail'),
                 'parameters',
                 ('path_detail', 'category_path'),
-                # TODO re-enable ('pricing', 'pricing_min'),
-                # TODO re-enable ('pricing', 'pricing_updated'),
+                ('pricing', 'pricing_min'),
+                ('pricing', 'pricing_updated'),
             ],
             assert_subset=True,
         )
@@ -2761,8 +2761,8 @@ class BomItemTest(InvenTreeAPITestCase):
                 'can_build',
                 'part_detail',
                 'sub_part_detail',
-                # TODO re-enable 'substitutes',
-                # TODO re-enable ('pricing', 'pricing_min'),
+                'substitutes',
+                ('pricing', 'pricing_min'),
             ],
         )
 
