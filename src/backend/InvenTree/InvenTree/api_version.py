@@ -1,11 +1,14 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 412
+INVENTREE_API_VERSION = 413
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v413 -> 2025-10-20 : https://github.com/inventree/InvenTree/pull/10624
+    - Upstream fixes to django-allauth schema - no functional changes
 
 v412 -> 2025-10-19 : https://github.com/inventree/InvenTree/pull/10549
     - added a new query parameter for the PartsList api: price_breaks (default: false)
