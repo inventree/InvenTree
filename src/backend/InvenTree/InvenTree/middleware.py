@@ -245,7 +245,7 @@ class InvenTreeHostSettingsMiddleware(MiddlewareMixin):
         site_url_match = (
             (
                 # Exact match on domain
-                is_same_domain(referer.netloc, urlsplit(settings.SITE_URL).netloc)
+                is_same_domain(referer.netloc, site_url.netloc)
                 and referer.scheme == site_url.scheme
             )
             or (
