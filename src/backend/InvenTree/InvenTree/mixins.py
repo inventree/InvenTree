@@ -6,6 +6,7 @@ from rest_framework import generics, mixins, status
 from rest_framework.response import Response
 
 import data_exporter.mixins
+import data_exporter.serializers
 import importer.mixins
 from InvenTree.fields import InvenTreeNotesField, OutputConfiguration
 from InvenTree.helpers import (
@@ -245,7 +246,12 @@ class OutputOptionsMixin:
         serializer = super().get_serializer(*args, **kwargs)
 
         # Check if the serializer actually can be filtered - makes not much sense to use this mixin without that prerequisite
-        if not isinstance(serializer, FilterableSerializerMixin):
+        if isinstance(
+            serializer, data_exporter.serializers.DataExportOptionsSerializer
+        ):
+            # Skip in this instance, special case for determining export options
+            pass
+        elif not isinstance(serializer, FilterableSerializerMixin):
             raise Exception(
                 'INVE-I2: `OutputOptionsMixin` can only be used with serializers that contain the `FilterableSerializerMixin` mixin'
             )
