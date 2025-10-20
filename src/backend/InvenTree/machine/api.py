@@ -166,7 +166,7 @@ class MachineTypesList(APIView):
 
     @extend_schema(responses={200: MachineSerializers.MachineTypeSerializer(many=True)})
     def get(self, request):
-        """List all machine types."""
+        """List of all machine types."""
         machine_types = list(registry.get_machine_types())
         results = MachineSerializers.MachineTypeSerializer(
             machine_types, many=True

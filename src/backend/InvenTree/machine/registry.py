@@ -125,7 +125,8 @@ class MachineRegistry(
 
     def handle_error(self, error: Union[Exception, str]):
         """Helper function for capturing errors with the machine registry."""
-        self.set_shared_state('errors', [*self.errors, error])
+        if error not in self.errors:
+            self.set_shared_state('errors', [*self.errors, error])
 
     @machine_registry_entrypoint(check_reload=False, check_ready=False)
     def initialize(self, main: bool = False):
@@ -383,7 +384,7 @@ class MachineRegistry(
         return list(self.machine_types.values())
 
     @machine_registry_entrypoint()
-    def get_machine(self, pk: Union[str, UUID]):
+    def get_machine(self, pk: Union[str, UUID]) -> Optional[BaseMachineType]:
         """Get machine from registry by pk."""
         return self.machines.get(str(pk), None)
 

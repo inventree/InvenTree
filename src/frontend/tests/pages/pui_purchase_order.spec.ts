@@ -169,13 +169,15 @@ test('Purchase Orders - General', async ({ browser }) => {
     .click();
   await page.getByRole('menuitem', { name: 'Edit' }).click();
 
-  await page.getByLabel('text-field-title').waitFor();
-  await page.getByLabel('text-field-line2').waitFor();
+  await page.getByLabel('text-field-title', { exact: true }).waitFor();
+  await page.getByLabel('text-field-line2', { exact: true }).waitFor();
 
   // Read the current value of the cell, to ensure we always *change* it!
-  const value = await page.getByLabel('text-field-line2').inputValue();
+  const value = await page
+    .getByLabel('text-field-line2', { exact: true })
+    .inputValue();
   await page
-    .getByLabel('text-field-line2')
+    .getByLabel('text-field-line2', { exact: true })
     .fill(value == 'old' ? 'new' : 'old');
 
   await page.getByRole('button', { name: 'Submit' }).isEnabled();
@@ -344,9 +346,13 @@ test('Purchase Orders - Receive Items', async ({ browser }) => {
   await page.getByLabel('action-button-change-status').click();
   await page.getByLabel('action-button-add-note').click();
 
-  await page.getByLabel('text-field-batch_code').fill('my-batch-code');
-  await page.getByLabel('text-field-packaging').fill('bucket');
-  await page.getByLabel('text-field-note').fill('The quick brown fox');
+  await page
+    .getByLabel('text-field-batch_code', { exact: true })
+    .fill('my-batch-code');
+  await page.getByLabel('text-field-packaging', { exact: true }).fill('bucket');
+  await page
+    .getByLabel('text-field-note', { exact: true })
+    .fill('The quick brown fox');
   await page.getByLabel('choice-field-status').click();
   await page.getByRole('option', { name: 'Destroyed' }).click();
 
@@ -371,7 +377,9 @@ test('Purchase Orders - Duplicate', async ({ browser }) => {
   await page.getByLabel('action-menu-order-actions-duplicate').click();
 
   // Ensure a new reference is suggested
-  await expect(page.getByLabel('text-field-reference')).not.toBeEmpty();
+  await expect(
+    page.getByLabel('text-field-reference', { exact: true })
+  ).not.toBeEmpty();
 
   // Submit the duplicate request and ensure it completes
   await page.getByRole('button', { name: 'Submit' }).isEnabled();

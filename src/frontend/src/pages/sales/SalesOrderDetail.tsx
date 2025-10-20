@@ -284,6 +284,17 @@ export default function SalesOrderDetail() {
 
   const soStatus = useStatusCodes({ modelType: ModelType.salesorder });
 
+  const lineItemsEditable: boolean = useMemo(() => {
+    const orderOpen: boolean =
+      order.status != soStatus.COMPLETE && order.status != soStatus.CANCELLED;
+
+    if (orderOpen) {
+      return true;
+    } else {
+      return globalSettings.isSet('SALESORDER_EDIT_COMPLETED_ORDERS');
+    }
+  }, [globalSettings, order.status, soStatus]);
+
   const salesOrderFields = useSalesOrderFields({});
 
   const editSalesOrder = useEditApiFormModal({
@@ -345,10 +356,7 @@ export default function SalesOrderDetail() {
                   orderDetailRefresh={refreshInstance}
                   currency={orderCurrency}
                   customerId={order.customer}
-                  editable={
-                    order.status != soStatus.COMPLETE &&
-                    order.status != soStatus.CANCELLED
-                  }
+                  editable={lineItemsEditable}
                 />
               </Accordion.Panel>
             </Accordion.Item>
@@ -360,6 +368,7 @@ export default function SalesOrderDetail() {
                 <ExtraLineItemTable
                   endpoint={ApiEndpoints.sales_order_extra_line_list}
                   orderId={order.pk}
+                  editable={lineItemsEditable}
                   orderDetailRefresh={refreshInstance}
                   currency={orderCurrency}
                   role={UserRoles.sales_order}
@@ -516,6 +525,7 @@ export default function SalesOrderDetail() {
         modelType={ModelType.salesorder}
         items={[order.pk]}
         enableReports
+        enableLabels
       />,
       <OptionsActionDropdown
         tooltip={t`Order Actions`}

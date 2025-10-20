@@ -657,18 +657,37 @@ def translate(c, ignore_static=False, no_frontend=False):
 @task(
     help={
         'clean': 'Clean up old backup files',
+        'compress': 'Compress the backup files',
+        'encrypt': 'Encrypt the backup files (requires GPG recipient to be set)',
         'path': 'Specify path for generated backup files (leave blank for default path)',
+        'quiet': 'Suppress informational output (only show errors)',
+        'skip_db': 'Skip database backup step (only backup media files)',
+        'skip_media': 'Skip media backup step (only backup database files)',
     }
 )
 @state_logger('TASK04')
-def backup(c, clean=False, path=None):
+def backup(
+    c,
+    clean: bool = False,
+    compress: bool = True,
+    encrypt: bool = False,
+    path=None,
+    quiet: bool = False,
+    skip_db: bool = False,
+    skip_media: bool = False,
+):
     """Backup the database and media files."""
-    info('Backing up InvenTree database...')
+    cmd = '--noinput -v 2'
 
-    cmd = '--noinput --compress -v 2'
+    if compress:
+        cmd += ' --compress'
 
+    if encrypt:
+        cmd += ' --encrypt'
+
+    # A path to the backup dir can be specified here
+    # If not specified, the default backup dir is used
     if path:
-        # Resolve the provided path
         path = Path(path)
         if not os.path.isabs(path):
             path = local_dir().joinpath(path).resolve()
@@ -678,20 +697,34 @@ def backup(c, clean=False, path=None):
     if clean:
         cmd += ' --clean'
 
-    manage(c, f'dbbackup {cmd}')
-    info('Backing up InvenTree media files...')
-    manage(c, f'mediabackup {cmd}')
+    if quiet:
+        cmd += ' --quiet'
 
-    success('Backup completed successfully')
+    if skip_db:
+        info('Skipping database backup...')
+    else:
+        info('Backing up InvenTree database...')
+        manage(c, f'dbbackup {cmd}')
+
+    if skip_media:
+        info('Skipping media backup...')
+    else:
+        info('Backing up InvenTree media files...')
+        manage(c, f'mediabackup {cmd}')
+
+    if not skip_db or not skip_media:
+        success('Backup completed successfully')
 
 
 @task(
     help={
         'path': 'Specify path to locate backup files (leave blank for default path)',
         'db_file': 'Specify filename of compressed database archive (leave blank to use most recent backup)',
+        'decrypt': 'Decrypt the backup files (requires GPG recipient to be set)',
         'media_file': 'Specify filename of compressed media archive (leave blank to use most recent backup)',
-        'ignore_media': 'Do not import media archive (database restore only)',
-        'ignore_database': 'Do not import database archive (media restore only)',
+        'skip_db': 'Do not import database archive (media restore only)',
+        'skip_media': 'Do not import media archive (database restore only)',
+        'uncompress': 'Uncompress the backup files before restoring (default behavior)',
     }
 )
 def restore(
@@ -699,11 +732,19 @@ def restore(
     path=None,
     db_file=None,
     media_file=None,
-    ignore_media=False,
-    ignore_database=False,
+    decrypt: bool = False,
+    skip_db: bool = False,
+    skip_media: bool = False,
+    uncompress: bool = True,
 ):
     """Restore the database and media files."""
-    base_cmd = '--noinput --uncompress -v 2'
+    base_cmd = '--noinput -v 2'
+
+    if uncompress:
+        base_cmd += ' --uncompress'
+
+    if decrypt:
+        base_cmd += ' --decrypt'
 
     if path:
         # Resolve the provided path
@@ -713,7 +754,7 @@ def restore(
 
         base_cmd += f' -I {path}'
 
-    if ignore_database:
+    if skip_db:
         info('Skipping database archive...')
     else:
         info('Restoring InvenTree database')
@@ -724,7 +765,7 @@ def restore(
 
         manage(c, cmd)
 
-    if ignore_media:
+    if skip_media:
         info('Skipping media restore...')
     else:
         info('Restoring InvenTree media files')
@@ -734,6 +775,14 @@ def restore(
             cmd += f' -i {media_file}'
 
         manage(c, cmd)
+
+
+@task()
+@state_logger()
+def listbackups(c):
+    """List available backup files."""
+    info('Finding available backup files...')
+    manage(c, 'listbackups')
 
 
 @task(post=[rebuild_models, rebuild_thumbnails])
@@ -1507,10 +1556,10 @@ Static      {get_static_dir(error=False) or NOT_SPECIFIED}
 Backup      {get_backup_dir(error=False) or NOT_SPECIFIED}
 
 Versions:
-Python      {python_version()}
-Django      {InvenTreeVersion.inventreeDjangoVersion()}
 InvenTree   {InvenTreeVersion.inventreeVersion()}
 API         {InvenTreeVersion.inventreeApiVersion()}
+Python      {python_version()}
+Django      {InvenTreeVersion.inventreeDjangoVersion()}
 Node        {node if node else NA}
 Yarn        {yarn if yarn else NA}
 
@@ -1934,6 +1983,7 @@ ns = Collection(
     frontend_download,
     import_records,
     install,
+    listbackups,
     migrate,
     plugins,
     remove_mfa,

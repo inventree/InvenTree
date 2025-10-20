@@ -30,8 +30,10 @@ test('Company', async ({ browser }) => {
   await page.getByLabel('action-menu-company-actions').click();
   await page.getByLabel('action-menu-company-actions-edit').click();
 
-  await page.getByLabel('text-field-name').fill('');
-  await page.getByLabel('text-field-website').fill('invalid-website');
+  await page.getByLabel('text-field-name', { exact: true }).fill('');
+  await page
+    .getByLabel('text-field-website', { exact: true })
+    .fill('invalid-website');
   await page.getByRole('button', { name: 'Submit' }).click();
 
   await page.getByText('This field may not be blank.').waitFor();

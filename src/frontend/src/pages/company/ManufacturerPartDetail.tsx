@@ -3,7 +3,8 @@ import { Grid, Skeleton, Stack } from '@mantine/core';
 import {
   IconBuildingWarehouse,
   IconInfoCircle,
-  IconList
+  IconList,
+  IconPackages
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -42,6 +43,7 @@ import { useInstance } from '../../hooks/UseInstance';
 import { useUserState } from '../../states/UserState';
 import ManufacturerPartParameterTable from '../../tables/purchasing/ManufacturerPartParameterTable';
 import { SupplierPartTable } from '../../tables/purchasing/SupplierPartTable';
+import { StockItemTable } from '../../tables/stock/StockItemTable';
 
 export default function ManufacturerPartDetail() {
   const { id } = useParams();
@@ -172,6 +174,20 @@ export default function ManufacturerPartDetail() {
         )
       },
       {
+        name: 'stock',
+        label: t`Received Stock`,
+        hidden: !user.hasViewRole(UserRoles.stock),
+        icon: <IconPackages />,
+        content: (
+          <StockItemTable
+            tableName='manufacturer-part-stock'
+            params={{
+              manufacturer_part: id
+            }}
+          />
+        )
+      },
+      {
         name: 'suppliers',
         label: t`Suppliers`,
         icon: <IconBuildingWarehouse />,
@@ -194,7 +210,7 @@ export default function ManufacturerPartDetail() {
         model_id: manufacturerPart?.pk
       })
     ];
-  }, [manufacturerPart]);
+  }, [user, manufacturerPart]);
 
   const editManufacturerPartFields = useManufacturerPartFields();
 
@@ -278,7 +294,7 @@ export default function ManufacturerPartDetail() {
       >
         <Stack gap='xs'>
           <PageDetail
-            title={t`ManufacturerPart`}
+            title={t`Manufacturer Part`}
             subtitle={`${manufacturerPart.MPN} - ${manufacturerPart.part_detail?.name}`}
             breadcrumbs={breadcrumbs}
             lastCrumb={[
