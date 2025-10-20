@@ -219,7 +219,7 @@ export function useBuildOrderOutputFields({
       location: {
         value: location,
         onValueChange: (value: any) => {
-          setQuantity(value);
+          setLocation(value);
         }
       },
       auto_allocate: {
