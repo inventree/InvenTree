@@ -260,9 +260,7 @@ class InvenTreeHostSettingsMiddleware(MiddlewareMixin):
             )
         )
 
-        if site_url_match:
-            return None
-        else:
+        if not site_url_match:
             # The accessed URL does not match the SITE_URL setting
             if (
                 isinstance(settings.CSRF_TRUSTED_ORIGINS, list)
@@ -281,17 +279,31 @@ class InvenTreeHostSettingsMiddleware(MiddlewareMixin):
                     request, 'config_error.html', {'error_message': msg}, status=500
                 )
 
-        # Check trusted origins
-        if not any(
-            is_same_domain(referer.netloc, host)
-            for host in [
-                urlsplit(origin).netloc.lstrip('*')
+        trusted_origins_match = (
+            # Matching domain found in allowed origins
+            any(
+                is_same_domain(referer.netloc, host)
+                for host in [
+                    urlsplit(origin).netloc.lstrip('*')
+                    for origin in settings.CSRF_TRUSTED_ORIGINS
+                ]
+            )
+        ) or (
+            # Lax protocol match allowed
+            settings.SITE_LAX_PROTOCOL_CHECK
+            and any(
+                referer.hostname == urlsplit(origin).hostname
                 for origin in settings.CSRF_TRUSTED_ORIGINS
-            ]
-        ):
+            )
+        )
+
+        # Check trusted origins
+        if not trusted_origins_match:
             msg = f'INVE-E7: The used path `{accessed_scheme}` is not in the TRUSTED_ORIGINS'
             logger.error(msg)
             return render(
                 request, 'config_error.html', {'error_message': msg}, status=500
             )
+
+        # All checks passed
         return None
