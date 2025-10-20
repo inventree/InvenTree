@@ -3,6 +3,8 @@
 from django.db import migrations
 import djmoney.models.fields
 
+import common.currency
+
 
 class Migration(migrations.Migration):
 
@@ -14,46 +16,46 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='purchaseorder',
             name='total_price_currency',
-            field=djmoney.models.fields.CurrencyField(choices=[], default='', editable=False, max_length=3, null=True),
+            field=djmoney.models.fields.CurrencyField(choices=[], default=common.currency.currency_code_default, editable=False, max_length=3, null=True),
         ),
         migrations.AlterField(
             model_name='purchaseorderextraline',
             name='price_currency',
-            field=djmoney.models.fields.CurrencyField(choices=[], default='', editable=False, max_length=3, null=True),
+            field=djmoney.models.fields.CurrencyField(choices=[], default=common.currency.currency_code_default, editable=False, max_length=3, null=True),
         ),
         migrations.AlterField(
             model_name='purchaseorderlineitem',
             name='purchase_price_currency',
-            field=djmoney.models.fields.CurrencyField(choices=[], default='', editable=False, max_length=3, null=True),
+            field=djmoney.models.fields.CurrencyField(choices=[], default=common.currency.currency_code_default, editable=False, max_length=3, null=True),
         ),
         migrations.AlterField(
             model_name='returnorder',
             name='total_price_currency',
-            field=djmoney.models.fields.CurrencyField(choices=[], default='', editable=False, max_length=3, null=True),
+            field=djmoney.models.fields.CurrencyField(choices=[], default=common.currency.currency_code_default, editable=False, max_length=3, null=True),
         ),
         migrations.AlterField(
             model_name='returnorderextraline',
             name='price_currency',
-            field=djmoney.models.fields.CurrencyField(choices=[], default='', editable=False, max_length=3, null=True),
+            field=djmoney.models.fields.CurrencyField(choices=[], default=common.currency.currency_code_default, editable=False, max_length=3, null=True),
         ),
         migrations.AlterField(
             model_name='returnorderlineitem',
             name='price_currency',
-            field=djmoney.models.fields.CurrencyField(choices=[], default='', editable=False, max_length=3, null=True),
+            field=djmoney.models.fields.CurrencyField(choices=[], default=common.currency.currency_code_default, editable=False, max_length=3, null=True),
         ),
         migrations.AlterField(
             model_name='salesorder',
             name='total_price_currency',
-            field=djmoney.models.fields.CurrencyField(choices=[], default='', editable=False, max_length=3, null=True),
+            field=djmoney.models.fields.CurrencyField(choices=[], default=common.currency.currency_code_default, editable=False, max_length=3, null=True),
         ),
         migrations.AlterField(
             model_name='salesorderextraline',
             name='price_currency',
-            field=djmoney.models.fields.CurrencyField(choices=[], default='', editable=False, max_length=3, null=True),
+            field=djmoney.models.fields.CurrencyField(choices=[], default=common.currency.currency_code_default, editable=False, max_length=3, null=True),
         ),
         migrations.AlterField(
             model_name='salesorderlineitem',
             name='sale_price_currency',
-            field=djmoney.models.fields.CurrencyField(choices=[], default='', editable=False, max_length=3, null=True),
+            field=djmoney.models.fields.CurrencyField(choices=[], default=common.currency.currency_code_default, editable=False, max_length=3, null=True),
         ),
     ]

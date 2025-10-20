@@ -4,6 +4,8 @@ import InvenTree.fields
 from django.db import migrations
 import djmoney.models.fields
 
+import common.currency
+
 
 class Migration(migrations.Migration):
 
@@ -16,11 +18,11 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='supplierpricebreak',
             name='price',
-            field=InvenTree.fields.InvenTreeModelMoneyField(currency_choices=[], decimal_places=4, default_currency='', help_text='Unit price at specified quantity', max_digits=19, null=True, verbose_name='Price'),
+            field=InvenTree.fields.InvenTreeModelMoneyField(currency_choices=[], decimal_places=4, default_currency=common.currency.currency_code_default, help_text='Unit price at specified quantity', max_digits=19, null=True, verbose_name='Price'),
         ),
         migrations.AlterField(
             model_name='supplierpricebreak',
             name='price_currency',
-            field=djmoney.models.fields.CurrencyField(choices=[], default='', editable=False, max_length=3),
+            field=djmoney.models.fields.CurrencyField(choices=[], default=common.currency.currency_code_default, editable=False, max_length=3),
         ),
     ]

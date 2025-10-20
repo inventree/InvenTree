@@ -103,7 +103,7 @@ class InvenTreeModelMoneyField(ModelMoneyField):
         kwargs['validators'] = validators
 
         # Override the default currency value
-        kwargs['default_currency'] = currency_code_default()
+        kwargs['default_currency'] = currency_code_default
 
         super().__init__(**kwargs)
 

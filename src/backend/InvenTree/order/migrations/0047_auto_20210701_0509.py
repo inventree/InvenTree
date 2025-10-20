@@ -4,6 +4,8 @@ import InvenTree.fields
 from django.db import migrations
 import djmoney.models.fields
 
+import common.currency
+
 
 class Migration(migrations.Migration):
 
@@ -15,21 +17,21 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='purchaseorderlineitem',
             name='purchase_price',
-            field=InvenTree.fields.InvenTreeModelMoneyField(blank=True, currency_choices=[], decimal_places=4, default_currency='', help_text='Unit purchase price', max_digits=19, null=True, verbose_name='Purchase Price'),
+            field=InvenTree.fields.InvenTreeModelMoneyField(blank=True, currency_choices=[], decimal_places=4, default_currency=common.currency.currency_code_default, help_text='Unit purchase price', max_digits=19, null=True, verbose_name='Purchase Price'),
         ),
         migrations.AlterField(
             model_name='purchaseorderlineitem',
             name='purchase_price_currency',
-            field=djmoney.models.fields.CurrencyField(choices=[], default='', editable=False, max_length=3),
+            field=djmoney.models.fields.CurrencyField(choices=[], default=common.currency.currency_code_default, editable=False, max_length=3),
         ),
         migrations.AlterField(
             model_name='salesorderlineitem',
             name='sale_price',
-            field=InvenTree.fields.InvenTreeModelMoneyField(blank=True, currency_choices=[], decimal_places=4, default_currency='', help_text='Unit sale price', max_digits=19, null=True, verbose_name='Sale Price'),
+            field=InvenTree.fields.InvenTreeModelMoneyField(blank=True, currency_choices=[], decimal_places=4, default_currency=common.currency.currency_code_default, help_text='Unit sale price', max_digits=19, null=True, verbose_name='Sale Price'),
         ),
         migrations.AlterField(
             model_name='salesorderlineitem',
             name='sale_price_currency',
-            field=djmoney.models.fields.CurrencyField(choices=[], default='', editable=False, max_length=3),
+            field=djmoney.models.fields.CurrencyField(choices=[], default=common.currency.currency_code_default, editable=False, max_length=3),
         ),
     ]

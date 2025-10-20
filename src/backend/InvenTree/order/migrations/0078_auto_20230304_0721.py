@@ -5,6 +5,8 @@ from django.db import migrations
 import djmoney.models.fields
 import djmoney.models.validators
 
+import common.currency
+
 
 class Migration(migrations.Migration):
 
@@ -16,21 +18,21 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='purchaseorder',
             name='total_price',
-            field=InvenTree.fields.InvenTreeModelMoneyField(blank=True, currency_choices=[], decimal_places=6, default_currency='', help_text='Total price for this order', max_digits=19, null=True, validators=[djmoney.models.validators.MinMoneyValidator(0)], verbose_name='Total Price'),
+            field=InvenTree.fields.InvenTreeModelMoneyField(blank=True, currency_choices=[], decimal_places=6, default_currency=common.currency.currency_code_default, help_text='Total price for this order', max_digits=19, null=True, validators=[djmoney.models.validators.MinMoneyValidator(0)], verbose_name='Total Price'),
         ),
         migrations.AddField(
             model_name='purchaseorder',
             name='total_price_currency',
-            field=djmoney.models.fields.CurrencyField(choices=[], default='', editable=False, max_length=3),
+            field=djmoney.models.fields.CurrencyField(choices=[], default=common.currency.currency_code_default, editable=False, max_length=3),
         ),
         migrations.AddField(
             model_name='salesorder',
             name='total_price',
-            field=InvenTree.fields.InvenTreeModelMoneyField(blank=True, currency_choices=[], decimal_places=6, default_currency='', help_text='Total price for this order', max_digits=19, null=True, validators=[djmoney.models.validators.MinMoneyValidator(0)], verbose_name='Total Price'),
+            field=InvenTree.fields.InvenTreeModelMoneyField(blank=True, currency_choices=[], decimal_places=6, default_currency=common.currency.currency_code_default, help_text='Total price for this order', max_digits=19, null=True, validators=[djmoney.models.validators.MinMoneyValidator(0)], verbose_name='Total Price'),
         ),
         migrations.AddField(
             model_name='salesorder',
             name='total_price_currency',
-            field=djmoney.models.fields.CurrencyField(choices=[], default='', editable=False, max_length=3),
+            field=djmoney.models.fields.CurrencyField(choices=[], default=common.currency.currency_code_default, editable=False, max_length=3),
         ),
     ]
