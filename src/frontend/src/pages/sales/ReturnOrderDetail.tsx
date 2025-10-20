@@ -59,8 +59,7 @@ export default function ReturnOrderDetail() {
   const {
     instance: order,
     instanceQuery,
-    refreshInstance,
-    requestStatus
+    refreshInstance
   } = useInstance({
     endpoint: ApiEndpoints.return_order_list,
     pk: id,
@@ -68,6 +67,25 @@ export default function ReturnOrderDetail() {
       customer_detail: true
     }
   });
+
+  const roStatus = useStatusCodes({ modelType: ModelType.returnorder });
+
+  const orderOpen = useMemo(() => {
+    return (
+      order.status == roStatus.PENDING ||
+      order.status == roStatus.PLACED ||
+      order.status == roStatus.IN_PROGRESS ||
+      order.status == roStatus.ON_HOLD
+    );
+  }, [order, roStatus]);
+
+  const lineItemsEditable: boolean = useMemo(() => {
+    if (orderOpen) {
+      return true;
+    } else {
+      return globalSettings.isSet('RETURNORDER_EDIT_COMPLETED_ORDERS');
+    }
+  }, [orderOpen, globalSettings]);
 
   const orderCurrency = useMemo(() => {
     return (
@@ -300,6 +318,7 @@ export default function ReturnOrderDetail() {
                   order={order}
                   orderDetailRefresh={refreshInstance}
                   customerId={order.customer}
+                  editable={lineItemsEditable}
                   currency={orderCurrency}
                 />
               </Accordion.Panel>
@@ -314,6 +333,7 @@ export default function ReturnOrderDetail() {
                   orderId={order.pk}
                   orderDetailRefresh={refreshInstance}
                   currency={orderCurrency}
+                  editable={lineItemsEditable}
                   role={UserRoles.return_order}
                 />
               </Accordion.Panel>
@@ -410,8 +430,6 @@ export default function ReturnOrderDetail() {
     successMessage: t`Order completed`
   });
 
-  const roStatus = useStatusCodes({ modelType: ModelType.returnorder });
-
   const orderActions = useMemo(() => {
     const canEdit: boolean = user.hasChangeRole(UserRoles.return_order);
 
@@ -459,6 +477,7 @@ export default function ReturnOrderDetail() {
         modelType={ModelType.returnorder}
         items={[order.pk]}
         enableReports
+        enableLabels
       />,
       <OptionsActionDropdown
         tooltip={t`Order Actions`}
@@ -488,7 +507,17 @@ export default function ReturnOrderDetail() {
         ]}
       />
     ];
-  }, [user, order, roStatus]);
+  }, [user, order, orderOpen, roStatus]);
+
+  const subtitle: string = useMemo(() => {
+    let t = order.customer_detail?.name || '';
+
+    if (order.customer_reference) {
+      t += ` (${order.customer_reference})`;
+    }
+
+    return t;
+  }, [order]);
 
   return (
     <>
@@ -499,14 +528,13 @@ export default function ReturnOrderDetail() {
       {completeOrder.modal}
       {duplicateReturnOrder.modal}
       <InstanceDetail
-        status={requestStatus}
-        loading={instanceQuery.isFetching}
+        query={instanceQuery}
         requiredRole={UserRoles.return_order}
       >
         <Stack gap='xs'>
           <PageDetail
             title={`${t`Return Order`}: ${order.reference}`}
-            subtitle={order.description}
+            subtitle={subtitle}
             imageUrl={order.customer_detail?.image}
             badges={orderBadges}
             actions={orderActions}

@@ -2,6 +2,7 @@ import { t } from '@lingui/core/macro';
 
 import { ModelType } from '@lib/enums/ModelType';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
+import { useUserState } from '../../states/UserState';
 import type { DashboardWidgetProps } from './DashboardWidget';
 import ColorToggleDashboardWidget from './widgets/ColorToggleWidget';
 import GetStartedWidget from './widgets/GetStartedWidget';
@@ -14,32 +15,50 @@ import QueryCountDashboardWidget from './widgets/QueryCountDashboardWidget';
  * @returns A list of built-in dashboard widgets which display the number of results for a particular query
  */
 export function BuiltinQueryCountWidgets(): DashboardWidgetProps[] {
+  const user = useUserState.getState();
   const globalSettings = useGlobalSettingsState.getState();
 
-  return [
+  const widgets: DashboardWidgetProps[] = [
     QueryCountDashboardWidget({
       label: 'sub-prt',
       title: t`Subscribed Parts`,
       description: t`Show the number of parts which you have subscribed to`,
       modelType: ModelType.part,
-      params: { starred: true }
+      params: { starred: true, active: true }
     }),
     QueryCountDashboardWidget({
       label: 'sub-cat',
       title: t`Subscribed Categories`,
       description: t`Show the number of part categories which you have subscribed to`,
       modelType: ModelType.partcategory,
-      params: { starred: true }
+      params: {
+        starred: true,
+        top_level: 'none'
+      }
+    }),
+    QueryCountDashboardWidget({
+      label: 'invalid-bom',
+      title: t`Invalid BOMs`,
+      description: t`Assemblies requiring bill of materials validation`,
+      modelType: ModelType.part,
+      params: {
+        active: true, // Only show active parts
+        assembly: true, // Only show parts which are assemblies
+        bom_valid: false // Only show parts with invalid BOMs
+      }
     }),
     // TODO: 'latest parts'
-    // TODO: 'BOM waiting validation'
     // TODO: 'recently updated stock'
     QueryCountDashboardWidget({
       title: t`Low Stock`,
       label: 'low-stk',
       description: t`Show the number of parts which are low on stock`,
       modelType: ModelType.part,
-      params: { low_stock: true, active: true }
+      params: {
+        active: true,
+        low_stock: true,
+        virtual: false
+      }
     }),
     QueryCountDashboardWidget({
       title: t`Required for Build Orders`,
@@ -149,6 +168,15 @@ export function BuiltinQueryCountWidgets(): DashboardWidgetProps[] {
       params: { assigned_to_me: true, outstanding: true }
     })
   ];
+
+  // Filter widgets based on user permissions (if a modelType is defined)
+  return widgets.filter((widget: DashboardWidgetProps) => {
+    if (widget.modelType) {
+      return user.hasViewPermission(widget.modelType);
+    } else {
+      return true;
+    }
+  });
 }
 
 export function BuiltinGettingStartedWidgets(): DashboardWidgetProps[] {

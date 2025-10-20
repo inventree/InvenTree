@@ -8,6 +8,7 @@ import re
 import time
 from contextlib import contextmanager
 from pathlib import Path
+from typing import Callable, Optional, Union
 from unittest import mock
 
 from django.contrib.auth import get_user_model
@@ -15,7 +16,7 @@ from django.contrib.auth.models import Group, Permission, User
 from django.db import connections, models
 from django.http.response import StreamingHttpResponse
 from django.test import TestCase
-from django.test.utils import CaptureQueriesContext
+from django.test.utils import CaptureQueriesContext, override_settings
 from django.urls import reverse
 
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
@@ -23,6 +24,44 @@ from rest_framework.test import APITestCase
 
 from plugin import registry
 from plugin.models import PluginConfig
+
+
+@contextmanager
+def count_queries(
+    msg: Optional[str] = None,
+    log_to_file: bool = False,
+    using: str = 'default',
+    threshold: int = 10,
+):  # pragma: no cover
+    """Helper function to count the number of queries executed.
+
+    Arguments:
+        msg: Optional message to print after counting queries
+        log_to_file: If True, log the queries to a file (default = False)
+        using: The database connection to use (default = 'default')
+        threshold: Minimum number of queries to log (default = 10)
+    """
+    t1 = time.time()
+
+    with CaptureQueriesContext(connections[using]) as context:
+        yield
+
+    dt = time.time() - t1
+
+    n = len(context.captured_queries)
+
+    if log_to_file:
+        with open('queries.txt', 'w', encoding='utf-8') as f:
+            for q in context.captured_queries:
+                f.write(str(q['sql']) + '\n\n')
+
+    output = f'Executed {n} queries in {dt:.4f}s'
+
+    if threshold and n >= threshold:
+        if msg:
+            print(f'{msg}: {output}')
+        else:
+            print(output)
 
 
 def addUserPermission(user: User, app_name: str, model_name: str, perm: str) -> None:
@@ -76,7 +115,7 @@ def getOldestMigrationFile(app, exclude_extension=True, ignore_initial=True):
             oldest_num = num
             oldest_file = f
 
-    if exclude_extension:
+    if exclude_extension and oldest_file:
         oldest_file = oldest_file.replace('.py', '')
 
     return oldest_file
@@ -320,12 +359,8 @@ class ExchangeRateMixin:
         Rate.objects.bulk_create(items)
 
 
-class InvenTreeTestCase(ExchangeRateMixin, UserMixin, TestCase):
-    """Testcase with user setup build in."""
-
-
-class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
-    """Base class for running InvenTree API tests."""
+class TestQueryMixin:
+    """Mixin class for testing query counts."""
 
     # Default query count threshold value
     # TODO: This value should be reduced
@@ -375,19 +410,49 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
 
         self.assertLess(n, value, msg=msg)
 
+
+class PluginRegistryMixin:
+    """Mixin to ensure that the plugin registry is ready for tests."""
+
     @classmethod
     def setUpTestData(cls):
-        """Setup for API tests.
+        """Ensure that the plugin registry is ready for tests."""
+        from time import sleep
 
-        - Ensure that all global settings are assigned default values.
-        """
         from common.models import InvenTreeSetting
+        from plugin.registry import registry
+
+        while not registry.is_ready:
+            print('Waiting for plugin registry to be ready...')
+            sleep(0.1)
+
+        assert registry.is_ready, 'Plugin registry is not ready'
 
         InvenTreeSetting.build_default_values()
-
         super().setUpTestData()
 
-    def check_response(self, url, response, expected_code=None):
+    def ensurePluginsLoaded(self, force: bool = False):
+        """Helper function to ensure that plugins are loaded."""
+        from plugin.models import PluginConfig
+
+        if force or PluginConfig.objects.count() == 0:
+            # Reload the plugin registry at this point to ensure all PluginConfig objects are created
+            # This is because the django test system may have re-initialized the database (to an empty state)
+            registry.reload_plugins(full_reload=True, force_reload=True, collect=True)
+
+        assert PluginConfig.objects.count() > 0, 'No plugins are installed'
+
+
+class InvenTreeTestCase(ExchangeRateMixin, PluginRegistryMixin, UserMixin, TestCase):
+    """Testcase with user setup build in."""
+
+
+class InvenTreeAPITestCase(
+    ExchangeRateMixin, PluginRegistryMixin, TestQueryMixin, UserMixin, APITestCase
+):
+    """Base class for running InvenTree API tests."""
+
+    def check_response(self, url, response, expected_code=None, msg=None):
         """Debug output for an unexpected response."""
         # Check that the response returned the expected status code
 
@@ -404,7 +469,7 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
                 if hasattr(response, 'content'):
                     print('content:', response.content)
 
-            self.assertEqual(response.status_code, expected_code)
+            self.assertEqual(response.status_code, expected_code, msg)
 
     def getActions(self, url):
         """Return a dict of the 'actions' available at a given endpoint.
@@ -425,6 +490,7 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
         kwargs['format'] = kwargs.get('format', 'json')
 
         expected_code = kwargs.pop('expected_code', None)
+        msg = kwargs.pop('msg', None)
         max_queries = kwargs.pop('max_query_count', self.MAX_QUERY_COUNT)
         max_query_time = kwargs.pop('max_query_time', self.MAX_QUERY_TIME)
 
@@ -436,7 +502,7 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
         t2 = time.time()
         dt = t2 - t1
 
-        self.check_response(url, response, expected_code=expected_code)
+        self.check_response(url, response, expected_code=expected_code, msg=msg)
 
         if dt > max_query_time:
             print(
@@ -472,15 +538,15 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
             url, self.client.delete, expected_code=expected_code, **kwargs
         )
 
-    def patch(self, url, data, expected_code=200, **kwargs):
+    def patch(self, url, data=None, expected_code=200, **kwargs):
         """Issue a PATCH request."""
-        kwargs['data'] = data
+        kwargs['data'] = data or {}
 
         return self.query(url, self.client.patch, expected_code=expected_code, **kwargs)
 
-    def put(self, url, data, expected_code=200, **kwargs):
+    def put(self, url, data=None, expected_code=200, **kwargs):
         """Issue a PUT request."""
-        kwargs['data'] = data
+        kwargs['data'] = data or {}
 
         return self.query(url, self.client.put, expected_code=expected_code, **kwargs)
 
@@ -518,6 +584,10 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
         result = re.search(
             r'(attachment|inline); filename=[\'"]([\w\d\-.]+)[\'"]', disposition
         )
+        if not result:
+            raise ValueError(
+                'No filename match found in disposition'
+            )  # pragma: no cover
 
         fn = result.groups()[1]
 
@@ -658,7 +728,67 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
         """Assert that dictionary 'a' is a subset of dictionary 'b'."""
         self.assertEqual(b, b | a)
 
+    def run_output_test(
+        self,
+        url: str,
+        test_cases: list[Union[tuple[str, str], str]],
+        additional_params: Optional[dict] = None,
+        assert_subset: bool = False,
+        assert_fnc: Optional[Callable] = None,
+    ):
+        """Run a series of tests against the provided URL.
 
+        Arguments:
+            url: The URL to test
+            test_cases: A list of tuples of the form (parameter_name, response_field_name)
+            additional_params: Additional request parameters to include in the request
+            assert_subset: If True, make the assertion against the first item in the response rather than the entire response
+            assert_fnc: If provided, call this function with the response data and make the assertion against the return value
+        """
+
+        def get_response(response):
+            if assert_subset:
+                return response.data[0]
+            if assert_fnc:
+                return assert_fnc(response)
+            return response.data
+
+        for case in test_cases:
+            if isinstance(case, str):
+                param = case
+                field = case
+            else:
+                param, field = case
+            # Test with parameter set to 'true'
+            response = self.get(
+                url,
+                {param: 'true', **(additional_params or {})},
+                expected_code=200,
+                msg=f'Testing {param}=true returns anything but 200',
+            )
+            self.assertIn(
+                field,
+                get_response(response),
+                f"Field '{field}' should be present when {param}=true",
+            )
+
+            # Test with parameter set to 'false'
+            response = self.get(
+                url,
+                {param: 'false', **(additional_params or {})},
+                expected_code=200,
+                msg=f'Testing {param}=false returns anything but 200',
+            )
+            self.assertNotIn(
+                field,
+                get_response(response),
+                f"Field '{field}' should NOT be present when {param}=false",
+            )
+
+
+@override_settings(
+    SITE_URL='http://testserver', CSRF_TRUSTED_ORIGINS=['http://testserver']
+)
 class AdminTestCase(InvenTreeAPITestCase):
     """Tests for the admin interface integration."""
 
@@ -674,14 +804,18 @@ class AdminTestCase(InvenTreeAPITestCase):
         app_app, app_mdl = model._meta.app_label, model._meta.model_name
 
         # 'Test listing
-        response = self.get(reverse(f'admin:{app_app}_{app_mdl}_changelist'))
+        response = self.get(
+            reverse(f'admin:{app_app}_{app_mdl}_changelist'), max_query_count=300
+        )
         self.assertEqual(response.status_code, 200)
 
         # Test change view
         response = self.get(
-            reverse(f'admin:{app_app}_{app_mdl}_change', kwargs={'object_id': obj.pk})
+            reverse(f'admin:{app_app}_{app_mdl}_change', kwargs={'object_id': obj.pk}),
+            max_query_count=300,
         )
         self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Django site admin')
 
         return obj
 

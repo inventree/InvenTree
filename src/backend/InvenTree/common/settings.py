@@ -26,12 +26,12 @@ def global_setting_overrides() -> dict:
     return {}
 
 
-def get_global_setting(key, backup_value=None, enviroment_key=None, **kwargs):
+def get_global_setting(key, backup_value=None, environment_key=None, **kwargs):
     """Return the value of a global setting using the provided key."""
     from common.models import InvenTreeSetting
 
-    if enviroment_key:
-        value = environ.get(enviroment_key)
+    if environment_key:
+        value = environ.get(environment_key)
         if value:
             return value
 

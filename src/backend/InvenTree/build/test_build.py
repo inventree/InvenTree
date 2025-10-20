@@ -7,7 +7,6 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.db.models import Sum
-from django.test import TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
 
@@ -20,7 +19,11 @@ from build.models import Build, BuildItem, BuildLine, generate_next_build_refere
 from build.status_codes import BuildStatus
 from common.settings import set_global_setting
 from InvenTree import status_codes as status
-from InvenTree.unit_test import InvenTreeAPITestCase, findOffloadedEvent
+from InvenTree.unit_test import (
+    InvenTreeAPITestCase,
+    InvenTreeTestCase,
+    findOffloadedEvent,
+)
 from order.models import PurchaseOrder, PurchaseOrderLineItem
 from part.models import BomItem, BomItemSubstitute, Part, PartTestTemplate
 from stock.models import StockItem, StockItemTestResult, StockLocation
@@ -29,7 +32,7 @@ from users.models import Owner
 logger = structlog.get_logger('inventree')
 
 
-class BuildTestBase(TestCase):
+class BuildTestBase(InvenTreeTestCase):
     """Run some tests to ensure that the Build model is working properly."""
 
     fixtures = ['users']
@@ -495,9 +498,44 @@ class BuildTest(BuildTestBase):
         self.assertEqual(StockItem.objects.get(pk=self.stock_3_1.pk).quantity, 980)
 
         # Check that the "consumed_by" item count has increased
-        self.assertEqual(
-            StockItem.objects.filter(consumed_by=self.build).count(), n + 8
-        )
+        consumed_items = StockItem.objects.filter(consumed_by=self.build)
+        self.assertEqual(consumed_items.count(), n + 8)
+
+        # Finally, return the items into stock
+        location = StockLocation.objects.filter(structural=False).first()
+
+        for item in consumed_items:
+            item.return_to_stock(location)
+
+        # No consumed items should remain
+        self.assertEqual(StockItem.objects.filter(consumed_by=self.build).count(), 0)
+
+    def test_return_consumed(self):
+        """Test returning consumed stock items to stock."""
+        self.build.auto_allocate_stock(interchangeable=True)
+
+        self.build.incomplete_outputs.delete()
+
+        self.assertGreater(self.build.allocated_stock.count(), 0)
+
+        self.build.complete_build(self.user)
+        consumed_items = StockItem.objects.filter(consumed_by=self.build)
+        self.assertGreater(consumed_items.count(), 0)
+
+        location = StockLocation.objects.filter(structural=False).last()
+
+        # Return a partial quantity of each item to stock
+        for item in consumed_items:
+            self.assertEqual(item.get_descendant_count(), 0)
+            q = item.quantity
+            self.assertGreater(item.quantity, 1)
+            item.return_to_stock(location, merge=False, quantity=1)
+            item.refresh_from_db()
+            self.assertEqual(item.quantity, q - 1)
+            self.assertEqual(item.get_descendant_count(), 1)
+            self.assertFalse(item.is_in_stock())
+            child = item.get_descendants().first()
+            self.assertTrue(child.is_in_stock())
 
     def test_change_part(self):
         """Try to change target part after creating a build."""
@@ -619,6 +657,8 @@ class BuildTest(BuildTestBase):
 
     def test_overdue_notification(self):
         """Test sending of notifications when a build order is overdue."""
+        self.ensurePluginsLoaded()
+
         self.build.target_date = datetime.now().date() - timedelta(days=1)
         self.build.save()
 
@@ -812,6 +852,78 @@ class AutoAllocationTests(BuildTestBase):
 
         self.assertEqual(self.line_1.unallocated_quantity(), 0)
         self.assertEqual(self.line_2.unallocated_quantity(), 0)
+
+    def test_allocate_consumed(self):
+        """Test for auto-allocation against a build which has been fully consumed.
+
+        Steps:
+            1. Fully allocate the build (using the auto-allocate function)
+            2. Consume allocated stock
+            3. Ensure that all allocations are removed
+            4. Re-run the auto-allocate function
+            5. Check that no new allocations have been made
+        """
+        self.assertEqual(self.build.allocated_stock.count(), 0)
+        self.assertFalse(self.build.is_fully_allocated(tracked=False))
+
+        # Auto allocate stock against the build order
+        self.build.auto_allocate_stock(
+            interchangeable=True, substitutes=True, optional_items=True
+        )
+
+        self.assertEqual(self.line_1.allocated_quantity(), 50)
+        self.assertEqual(self.line_2.allocated_quantity(), 30)
+
+        self.assertEqual(self.line_1.unallocated_quantity(), 0)
+        self.assertEqual(self.line_2.unallocated_quantity(), 0)
+
+        self.assertTrue(self.line_1.is_fully_allocated())
+        self.assertTrue(self.line_2.is_fully_allocated())
+
+        self.assertFalse(self.line_1.is_overallocated())
+        self.assertFalse(self.line_2.is_overallocated())
+
+        N = self.build.allocated_stock.count()
+
+        self.assertEqual(self.line_1.allocations.count(), 2)
+        self.assertEqual(self.line_2.allocations.count(), 6)
+
+        for item in self.line_1.allocations.all():
+            item.complete_allocation()
+
+        for item in self.line_2.allocations.all():
+            item.complete_allocation()
+
+        self.line_1.refresh_from_db()
+        self.line_2.refresh_from_db()
+
+        self.assertTrue(self.line_1.is_fully_allocated())
+        self.assertTrue(self.line_2.is_fully_allocated())
+        self.assertFalse(self.line_1.is_overallocated())
+        self.assertFalse(self.line_2.is_overallocated())
+
+        self.assertEqual(self.line_1.allocations.count(), 0)
+        self.assertEqual(self.line_2.allocations.count(), 0)
+
+        self.assertEqual(self.line_1.quantity, self.line_1.consumed)
+        self.assertEqual(self.line_2.quantity, self.line_2.consumed)
+
+        # Check that the "allocations" have been removed
+        self.assertEqual(self.build.allocated_stock.count(), N - 8)
+
+        # Now, try to auto-allocate again
+        self.build.auto_allocate_stock(
+            interchangeable=True, substitutes=True, optional_items=True
+        )
+
+        # Ensure that there are no "new" allocations (there should be none!)
+        self.assertEqual(self.line_1.allocated_quantity(), 0)
+        self.assertEqual(self.line_2.allocated_quantity(), 0)
+
+        self.assertEqual(self.line_1.unallocated_quantity(), 0)
+        self.assertEqual(self.line_2.unallocated_quantity(), 0)
+
+        self.assertEqual(self.build.allocated_stock.count(), N - 8)
 
 
 class ExternalBuildTest(InvenTreeAPITestCase):

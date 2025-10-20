@@ -106,14 +106,37 @@ export async function doBasicLogin(
       }
     })
     .catch(async (err) => {
-      if (err?.response?.status == 401) {
-        await handlePossibleMFAError(err);
-      } else if (err?.response?.status == 409) {
+      notifications.hide('auth-login-error');
+
+      if (err?.response?.status) {
+        switch (err.response.status) {
+          case 401:
+            await handlePossibleMFAError(err);
+            break;
+          case 409:
+            notifications.show({
+              title: t`Already logged in`,
+              message: t`There is a conflicting session on the server for this browser. Please logout of that first.`,
+              color: 'red',
+              id: 'auth-login-error',
+              autoClose: false
+            });
+            break;
+          default:
+            notifications.show({
+              title: `${t`Login failed`} (${err.response.status})`,
+              message: t`Check your input and try again.`,
+              id: 'auth-login-error',
+              color: 'red'
+            });
+            break;
+        }
+      } else {
         notifications.show({
-          title: t`Already logged in`,
-          message: t`There is a conflicting session on the server for this browser. Please logout of that first.`,
+          title: t`Login failed`,
+          message: t`No response from server.`,
           color: 'red',
-          autoClose: false
+          id: 'login-error'
         });
       }
     });
@@ -169,6 +192,7 @@ export async function doBasicLogin(
  */
 export const doLogout = async (navigate: NavigateFunction) => {
   const { clearUserState, isLoggedIn } = useUserState.getState();
+  const { setAuthContext } = useServerApiState.getState();
 
   // Logout from the server session
   if (isLoggedIn() || !!getCsrfCookie()) {
@@ -183,6 +207,7 @@ export const doLogout = async (navigate: NavigateFunction) => {
 
   clearUserState();
   clearCsrfCookie();
+  setAuthContext(undefined);
   navigate('/login');
 };
 

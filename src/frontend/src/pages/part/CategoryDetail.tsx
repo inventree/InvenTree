@@ -3,6 +3,7 @@ import { Group, LoadingOverlay, Skeleton, Stack, Text } from '@mantine/core';
 import {
   IconCategory,
   IconInfoCircle,
+  IconListCheck,
   IconListDetails,
   IconPackages,
   IconSitemap
@@ -41,6 +42,7 @@ import { useInstance } from '../../hooks/UseInstance';
 import { useUserState } from '../../states/UserState';
 import ParametricPartTable from '../../tables/part/ParametricPartTable';
 import { PartCategoryTable } from '../../tables/part/PartCategoryTable';
+import PartCategoryTemplateTable from '../../tables/part/PartCategoryTemplateTable';
 import { PartListTable } from '../../tables/part/PartTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 
@@ -64,8 +66,7 @@ export default function CategoryDetail() {
   const {
     instance: category,
     refreshInstance,
-    instanceQuery,
-    requestStatus
+    instanceQuery
   } = useInstance({
     endpoint: ApiEndpoints.category_list,
     hasPrimaryKey: true,
@@ -265,7 +266,7 @@ export default function CategoryDetail() {
       },
       {
         name: 'subcategories',
-        label: t`Subcategories`,
+        label: id ? t`Subcategories` : t`Part Categories`,
         icon: <IconSitemap />,
         content: <PartCategoryTable parentId={id} />
       },
@@ -299,6 +300,13 @@ export default function CategoryDetail() {
         )
       },
       {
+        name: 'category_parameters',
+        label: t`Category Parameters`,
+        icon: <IconListCheck />,
+        hidden: !id || !category.pk,
+        content: <PartCategoryTemplateTable categoryId={category?.pk} />
+      },
+      {
         name: 'parameters',
         label: t`Part Parameters`,
         icon: <IconListDetails />,
@@ -325,8 +333,7 @@ export default function CategoryDetail() {
       {editCategory.modal}
       {deleteCategory.modal}
       <InstanceDetail
-        status={requestStatus}
-        loading={id ? instanceQuery.isFetching : false}
+        query={instanceQuery}
         requiredRole={UserRoles.part_category}
       >
         <Stack gap='xs'>
@@ -342,7 +349,7 @@ export default function CategoryDetail() {
             selectedId={category?.pk}
           />
           <PageDetail
-            title={category?.name ?? t`Part Category`}
+            title={(category?.name ?? id) ? t`Part Category` : t`Parts`}
             subtitle={category?.description}
             icon={category?.icon && <ApiIcon name={category?.icon} />}
             breadcrumbs={breadcrumbs}

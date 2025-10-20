@@ -1,8 +1,8 @@
+import { createApi } from './api.js';
 import { expect, test } from './baseFixtures.js';
-import { apiUrl } from './defaults.js';
 import { getRowFromCell, loadTab, navigate } from './helpers.js';
 import { doCachedLogin } from './login.js';
-import { setSettingState } from './settings.js';
+import { setPluginState, setSettingState } from './settings.js';
 
 /**
  * Adjust language and color settings
@@ -41,7 +41,7 @@ test('Settings - User theme', async ({ browser }) => {
   await page.waitForLoadState('networkidle');
 
   await page.getByRole('button', { name: 'Ally Access' }).click();
-  await page.getByRole('menuitem', { name: 'Account settings' }).click();
+  await page.getByRole('menuitem', { name: 'User settings' }).click();
 
   // loader
   await page.getByRole('textbox', { name: 'Loader Type Selector' }).click();
@@ -80,6 +80,137 @@ test('Settings - User theme', async ({ browser }) => {
   await page.getByLabel('#228be6').click();
 });
 
+test('Settings - User', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    username: 'allaccess',
+    password: 'nolimits',
+    url: 'settings/user/'
+  });
+
+  await loadTab(page, 'Account');
+  await page.getByText('Account Details').waitFor();
+  await page.getByText('Profile Details').waitFor();
+
+  // Language selection
+  await page.getByRole('textbox', { name: 'Select language' }).click();
+  await page.getByRole('option', { name: 'العربية' }).waitFor();
+  await page.getByRole('option', { name: 'Deutsch' }).waitFor();
+  await page.getByRole('option', { name: 'English' }).waitFor();
+  await page.getByRole('option', { name: 'Español', exact: true }).waitFor();
+  await page.getByRole('option', { name: '日本語' }).waitFor();
+
+  await loadTab(page, 'Security');
+  await page.getByRole('button', { name: 'Single Sign On' }).waitFor();
+  await page.getByRole('button', { name: 'Access Tokens' }).waitFor();
+
+  await loadTab(page, 'Display Options');
+  await page
+    .getByText('The navbar position is fixed to the top of the screen')
+    .waitFor();
+  await page.getByText('Escape Key Closes Forms').waitFor();
+
+  await loadTab(page, 'Search');
+  await page.getByText('Whole Word Search').waitFor();
+  await page.getByText('Hide Unavailable Stock Items').waitFor();
+
+  await loadTab(page, 'Notifications');
+  await page
+    .getByRole('button', { name: 'InvenTree Email Notifications' })
+    .waitFor();
+
+  await loadTab(page, 'Reporting');
+  await page.getByText('Inline report display').waitFor();
+
+  // Toggle boolean setting
+  await page
+    .getByLabel('setting-LABEL_INLINE-wrapper')
+    .locator('span')
+    .nth(1)
+    .click();
+
+  await loadTab(page, 'Plugin Settings');
+  await page
+    .getByRole('button', { name: 'InvenTree Email Notifications' })
+    .waitFor();
+});
+
+test('Settings - Global', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    username: 'steven',
+    password: 'wizardstaff',
+    url: 'settings/system/'
+  });
+
+  // Ensure the "slack" notification plugin is enabled
+  // This is to ensure it is visible in the "notification" settings tab
+  await setPluginState({
+    plugin: 'inventree-slack-notification',
+    state: true
+  });
+
+  await loadTab(page, 'Server');
+
+  // edit some settings here
+  await page
+    .getByRole('button', { name: 'edit-setting-INVENTREE_COMPANY_NAME' })
+    .click();
+  await page
+    .getByRole('textbox', { name: 'text-field-value' })
+    .fill('some data');
+  await page.getByRole('button', { name: 'Cancel' }).click();
+
+  // Toggle a boolean setting
+  await page
+    .getByLabel('setting-INVENTREE_ANNOUNCE_ID-wrapper')
+    .locator('span')
+    .nth(1)
+    .click();
+  await page
+    .getByText('Setting INVENTREE_ANNOUNCE_ID updated successfully')
+    .waitFor();
+  await page
+    .getByLabel('setting-INVENTREE_ANNOUNCE_ID-wrapper')
+    .locator('span')
+    .nth(1)
+    .click();
+
+  await loadTab(page, 'Authentication');
+  await loadTab(page, 'Barcodes');
+  await loadTab(page, 'Pricing');
+  await loadTab(page, 'Parts');
+  await loadTab(page, 'Stock', true);
+  await loadTab(page, 'Stock History');
+
+  await loadTab(page, 'Notifications');
+  await page
+    .getByText(
+      'The settings below are specific to each available notification method'
+    )
+    .waitFor();
+
+  await page
+    .getByRole('button', { name: 'InvenTree Slack Notifications' })
+    .click();
+  await page.getByText('Slack incoming webhook url').waitFor();
+  await page
+    .getByText('URL that is used to send messages to a slack channel')
+    .waitFor();
+
+  await loadTab(page, 'Plugin Settings');
+  await page
+    .getByText('The settings below are specific to each available plugin')
+    .waitFor();
+  await page
+    .getByRole('button', { name: 'InvenTree Barcodes Provides' })
+    .waitFor();
+  await page
+    .getByRole('button', { name: 'InvenTree PDF label printer' })
+    .waitFor();
+  await page
+    .getByRole('button', { name: 'InvenTree Slack Notifications' })
+    .waitFor();
+});
+
 test('Settings - Admin', async ({ browser }) => {
   // Note here we login with admin access
   const page = await doCachedLogin(browser, {
@@ -89,7 +220,7 @@ test('Settings - Admin', async ({ browser }) => {
 
   // User settings
   await page.getByRole('button', { name: 'admin' }).click();
-  await page.getByRole('menuitem', { name: 'Account settings' }).click();
+  await page.getByRole('menuitem', { name: 'User settings' }).click();
   await loadTab(page, 'Security');
 
   await loadTab(page, 'Display Options');
@@ -139,16 +270,20 @@ test('Settings - Admin', async ({ browser }) => {
   await roomRow.getByLabel(/row-action-menu-/i).click();
 
   await page.getByRole('menuitem', { name: 'Edit' }).click();
-  await expect(page.getByLabel('text-field-name')).toHaveValue('Room');
+  await expect(page.getByLabel('text-field-name', { exact: true })).toHaveValue(
+    'Room'
+  );
 
   // Toggle the "description" field
   const oldDescription = await page
-    .getByLabel('text-field-description')
+    .getByLabel('text-field-description', { exact: true })
     .inputValue();
 
   const newDescription = `${oldDescription} (edited)`;
 
-  await page.getByLabel('text-field-description').fill(newDescription);
+  await page
+    .getByLabel('text-field-description', { exact: true })
+    .fill(newDescription);
   await page.waitForTimeout(500);
   await page.getByRole('button', { name: 'Submit' }).click();
 
@@ -162,25 +297,27 @@ test('Settings - Admin', async ({ browser }) => {
   await boxRow.getByLabel(/row-action-menu-/i).click();
 
   await page.getByRole('menuitem', { name: 'Edit' }).click();
-  await expect(page.getByLabel('text-field-name')).toHaveValue('Box (Large)');
-  await expect(page.getByLabel('text-field-description')).toHaveValue(
-    'Large cardboard box'
+  await expect(page.getByLabel('text-field-name', { exact: true })).toHaveValue(
+    'Box (Large)'
   );
+  await expect(
+    page.getByLabel('text-field-description', { exact: true })
+  ).toHaveValue('Large cardboard box');
   await page.getByRole('button', { name: 'Cancel' }).click();
 
   // Edit first item again (revert values)
   await roomRow.getByLabel(/row-action-menu-/i).click();
   await page.getByRole('menuitem', { name: 'Edit' }).click();
-  await page.getByLabel('text-field-name').fill('Room');
+  await page.getByLabel('text-field-name', { exact: true }).fill('Room');
   await page.waitForTimeout(500);
   await page
-    .getByLabel('text-field-description')
+    .getByLabel('text-field-description', { exact: true })
     .fill(newDescription.replaceAll(' (edited)', ''));
   await page.waitForTimeout(500);
   await page.getByRole('button', { name: 'Submit' }).click();
 });
 
-test('Settings - Admin - Barcode History', async ({ browser, request }) => {
+test('Settings - Admin - Barcode History', async ({ browser }) => {
   // Login with admin credentials
   const page = await doCachedLogin(browser, {
     username: 'admin',
@@ -189,24 +326,23 @@ test('Settings - Admin - Barcode History', async ({ browser, request }) => {
 
   // Ensure that the "save scans" setting is enabled
   await setSettingState({
-    request: request,
     setting: 'BARCODE_STORE_RESULTS',
     value: true
   });
 
   // Scan some barcodes (via API calls)
   const barcodes = ['ABC1234', 'XYZ5678', 'QRS9012'];
+  const api = await createApi();
 
-  barcodes.forEach(async (barcode) => {
-    await request.post(`${apiUrl}/barcode/`, {
+  for (let i = 0; i < barcodes.length; i++) {
+    const barcode = barcodes[i];
+    await api.post('barcode/', {
       data: {
         barcode: barcode
       },
-      headers: {
-        Authorization: `Basic ${btoa('admin:inventree')}`
-      }
+      timeout: 5000
     });
-  });
+  }
 
   await page.getByRole('button', { name: 'admin' }).click();
   await page.getByRole('menuitem', { name: 'Admin Center' }).click();

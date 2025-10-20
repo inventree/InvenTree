@@ -13,7 +13,12 @@ import {
   Text,
   Tooltip
 } from '@mantine/core';
-import { IconArrowRight, IconBellCheck } from '@tabler/icons-react';
+import {
+  IconArrowRight,
+  IconBellCheck,
+  IconCircleCheck,
+  IconExclamationCircle
+} from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -122,10 +127,7 @@ export function NotificationDrawer({
             ordering: '-creation'
           }
         })
-        .then((response) => response.data)
-        .catch((error) => {
-          return error;
-        }),
+        .then((response) => response.data),
     refetchOnMount: false
   });
 
@@ -206,11 +208,14 @@ export function NotificationDrawer({
       <Boundary label='NotificationDrawer'>
         <Stack gap='xs'>
           <Divider />
-          {!hasNotifications && (
-            <Alert color='green'>
-              <Text size='sm'>{t`You have no unread notifications.`}</Text>
-            </Alert>
-          )}
+          {!notificationQuery.isFetching &&
+            !notificationQuery.isLoading &&
+            !notificationQuery.isError &&
+            !hasNotifications && (
+              <Alert color='green' icon={<IconCircleCheck />}>
+                <Text size='sm'>{t`You have no unread notifications.`}</Text>
+              </Alert>
+            )}
           {hasNotifications &&
             notificationQuery.data?.results?.map((notification: any) => (
               <NotificationEntry
@@ -223,6 +228,15 @@ export function NotificationDrawer({
             <Center>
               <Loader size='sm' />
             </Center>
+          )}
+          {notificationQuery.isError && (
+            <Alert
+              color='red'
+              title={t`Error`}
+              icon={<IconExclamationCircle />}
+            >
+              <Text size='sm'>{t`Error loading notifications.`}</Text>
+            </Alert>
           )}
         </Stack>
       </Boundary>

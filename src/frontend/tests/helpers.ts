@@ -1,4 +1,5 @@
-import { baseUrl } from './defaults';
+import { expect } from '@playwright/test';
+import { createApi } from './api';
 
 /**
  * Open the filter drawer for the currently visible table
@@ -35,7 +36,7 @@ export const clickButtonIfVisible = async (page, name, timeout = 500) => {
  */
 export const clearTableFilters = async (page) => {
   await openFilterDrawer(page);
-  await clickButtonIfVisible(page, 'Clear Filters');
+  await clickButtonIfVisible(page, 'Clear Filters', 250);
   await closeFilterDrawer(page);
   await page.waitForLoadState('networkidle');
 };
@@ -73,31 +74,42 @@ export const clickOnRowMenu = async (cell) => {
   await row.getByLabel(/row-action-menu-/i).click();
 };
 
+interface NavigateOptions {
+  waitUntil?: 'load' | 'domcontentloaded' | 'networkidle';
+  baseUrl?: string;
+}
+
 /**
  * Navigate to the provided page, and wait for loading to complete
  * @param page
  * @param url
  */
-export const navigate = async (page, url: string) => {
-  if (!url.startsWith(baseUrl)) {
-    if (url.startsWith('/')) {
-      url = url.slice(1);
-    }
-
-    url = `${baseUrl}/${url}`;
+export const navigate = async (
+  page,
+  url: string,
+  options?: NavigateOptions
+) => {
+  if (!url.startsWith('http') && !url.includes('web')) {
+    url = `/web/${url}`.replaceAll('//', '/');
   }
 
-  await page.goto(url);
+  const path: string = options?.baseUrl
+    ? new URL(url, options.baseUrl).toString()
+    : url;
+
+  await page.goto(path, { waitUntil: options?.waitUntil ?? 'load' });
 };
 
 /**
  * CLick on the 'tab' element with the provided name
  */
-export const loadTab = async (page, tabName) => {
+export const loadTab = async (page, tabName, exact?) => {
   await page
     .getByLabel(/panel-tabs-/)
-    .getByRole('tab', { name: tabName })
+    .getByRole('tab', { name: tabName, exact: exact ?? false })
     .click();
+
+  await page.waitForLoadState('networkidle');
 };
 
 // Activate "table" view in certain contexts
@@ -120,4 +132,21 @@ export const globalSearch = async (page, query) => {
   await page.getByLabel('global-search-input').clear();
   await page.getByPlaceholder('Enter search text').fill(query);
   await page.waitForTimeout(300);
+};
+
+export const deletePart = async (name: string) => {
+  const api = await createApi();
+  const parts = await api
+    .get('part/', {
+      params: { search: name }
+    })
+    .then((res) => res.json());
+  const existingPart = parts.find((p: any) => p.name === name);
+  if (existingPart) {
+    await api.patch(`part/${existingPart.pk}/`, {
+      data: { active: false }
+    });
+    const res = await api.delete(`part/${existingPart.pk}/`);
+    expect(res.status()).toBe(204);
+  }
 };

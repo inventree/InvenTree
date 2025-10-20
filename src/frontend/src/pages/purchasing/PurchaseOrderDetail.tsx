@@ -59,8 +59,7 @@ export default function PurchaseOrderDetail() {
   const {
     instance: order,
     instanceQuery,
-    refreshInstance,
-    requestStatus
+    refreshInstance
   } = useInstance({
     endpoint: ApiEndpoints.purchase_order_list,
     pk: id,
@@ -93,6 +92,24 @@ export default function PurchaseOrderDetail() {
       refreshInstance();
     }
   });
+
+  const poStatus = useStatusCodes({ modelType: ModelType.purchaseorder });
+
+  const orderOpen: boolean = useMemo(() => {
+    return (
+      order.status == poStatus.PENDING ||
+      order.status == poStatus.PLACED ||
+      order.status == poStatus.ON_HOLD
+    );
+  }, [order, poStatus]);
+
+  const lineItemsEditable: boolean = useMemo(() => {
+    if (orderOpen) {
+      return true;
+    } else {
+      return globalSettings.isSet('PURCHASEORDER_EDIT_COMPLETED_ORDERS');
+    }
+  }, [orderOpen, globalSettings]);
 
   const duplicatePurchaseOrderInitialData = useMemo(() => {
     const data = { ...order };
@@ -336,6 +353,7 @@ export default function PurchaseOrderDetail() {
                   orderDetailRefresh={refreshInstance}
                   currency={orderCurrency}
                   orderId={Number(id)}
+                  editable={lineItemsEditable}
                   supplierId={Number(order.supplier)}
                 />
               </Accordion.Panel>
@@ -350,6 +368,7 @@ export default function PurchaseOrderDetail() {
                   orderId={order.pk}
                   orderDetailRefresh={refreshInstance}
                   currency={orderCurrency}
+                  editable={lineItemsEditable}
                   role={UserRoles.purchase_order}
                 />
               </Accordion.Panel>
@@ -380,8 +399,6 @@ export default function PurchaseOrderDetail() {
       })
     ];
   }, [order, id, user]);
-
-  const poStatus = useStatusCodes({ modelType: ModelType.purchaseorder });
 
   const issueOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.purchase_order_issue, order.pk),
@@ -461,6 +478,7 @@ export default function PurchaseOrderDetail() {
       <PrintingActions
         modelType={ModelType.purchaseorder}
         items={[order.pk]}
+        enableLabels
         enableReports
       />,
       <OptionsActionDropdown
@@ -505,6 +523,16 @@ export default function PurchaseOrderDetail() {
         ];
   }, [order, instanceQuery]);
 
+  const subtitle: string = useMemo(() => {
+    let t = order.supplier_detail?.name || '';
+
+    if (order.supplier_reference) {
+      t += ` (${order.supplier_reference})`;
+    }
+
+    return t;
+  }, [order]);
+
   return (
     <>
       {issueOrder.modal}
@@ -514,14 +542,13 @@ export default function PurchaseOrderDetail() {
       {editPurchaseOrder.modal}
       {duplicatePurchaseOrder.modal}
       <InstanceDetail
-        status={requestStatus}
-        loading={instanceQuery.isFetching}
+        query={instanceQuery}
         requiredRole={UserRoles.purchase_order}
       >
         <Stack gap='xs'>
           <PageDetail
             title={`${t`Purchase Order`}: ${order.reference}`}
-            subtitle={order.description}
+            subtitle={subtitle}
             imageUrl={order.supplier_detail?.image}
             breadcrumbs={[{ name: t`Purchasing`, url: '/purchasing/' }]}
             lastCrumb={[

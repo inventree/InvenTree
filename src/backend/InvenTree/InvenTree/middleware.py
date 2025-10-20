@@ -1,13 +1,15 @@
 """Middleware for InvenTree."""
 
 import sys
+from urllib.parse import urlsplit
 
 from django.conf import settings
 from django.contrib.auth.middleware import PersistentRemoteUserMiddleware
 from django.http import HttpResponse
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.urls import resolve, reverse_lazy
 from django.utils.deprecation import MiddlewareMixin
+from django.utils.http import is_same_domain
 
 import structlog
 from error_report.middleware import ExceptionProcessor
@@ -15,6 +17,7 @@ from error_report.middleware import ExceptionProcessor
 from common.settings import get_global_setting
 from InvenTree.AllUserRequire2FAMiddleware import AllUserRequire2FAMiddleware
 from InvenTree.cache import create_session_cache, delete_session_cache
+from InvenTree.config import CONFIG_LOOKUPS, inventreeInstaller
 from users.models import ApiToken
 
 logger = structlog.get_logger('inventree')
@@ -213,3 +216,94 @@ class InvenTreeRequestCacheMiddleware(MiddlewareMixin):
         """Clear the cache object."""
         delete_session_cache()
         return response
+
+
+class InvenTreeHostSettingsMiddleware(MiddlewareMixin):
+    """Middleware to check the host settings.
+
+    Especially SITE_URL, trusted_origins.
+    """
+
+    def process_request(self, request):
+        """Check the host settings."""
+        # Debug setups do not enforce these checks so we ignore that case
+        if settings.DEBUG:
+            return None
+
+        # Handle commonly ignored paths that might also work without a correct setup (api, auth)
+        path = request.path_info
+        if path in urls or any(path.startswith(p) for p in paths_ignore):
+            return None
+
+        # treat the accessed scheme and host
+        accessed_scheme = request._current_scheme_host
+        referer = urlsplit(accessed_scheme)
+
+        site_url = urlsplit(settings.SITE_URL)
+
+        # Check if the accessed URL matches the SITE_URL setting
+        site_url_match = (
+            (
+                # Exact match on domain
+                is_same_domain(referer.netloc, site_url.netloc)
+                and referer.scheme == site_url.scheme
+            )
+            or (
+                # Lax protocol match, accessed URL starts with SITE_URL
+                settings.SITE_LAX_PROTOCOL_CHECK
+                and accessed_scheme.startswith(settings.SITE_URL)
+            )
+            or (
+                # Lax protocol match, same domain
+                settings.SITE_LAX_PROTOCOL_CHECK
+                and referer.hostname == site_url.hostname
+            )
+        )
+
+        if not site_url_match:
+            # The accessed URL does not match the SITE_URL setting
+            if (
+                isinstance(settings.CSRF_TRUSTED_ORIGINS, list)
+                and len(settings.CSRF_TRUSTED_ORIGINS) > 1
+            ):
+                # The used url might not be the primary url - next check determines if in a trusted origins
+                pass
+            else:
+                source = CONFIG_LOOKUPS.get('INVENTREE_SITE_URL', {}).get(
+                    'source', 'unknown'
+                )
+                dpl_method = inventreeInstaller()
+                msg = f'INVE-E7: The visited path `{accessed_scheme}` does not match the SITE_URL `{settings.SITE_URL}`. The INVENTREE_SITE_URL is set via `{source}` config method - deployment method `{dpl_method}`'
+                logger.error(msg)
+                return render(
+                    request, 'config_error.html', {'error_message': msg}, status=500
+                )
+
+        trusted_origins_match = (
+            # Matching domain found in allowed origins
+            any(
+                is_same_domain(referer.netloc, host)
+                for host in [
+                    urlsplit(origin).netloc.lstrip('*')
+                    for origin in settings.CSRF_TRUSTED_ORIGINS
+                ]
+            )
+        ) or (
+            # Lax protocol match allowed
+            settings.SITE_LAX_PROTOCOL_CHECK
+            and any(
+                referer.hostname == urlsplit(origin).hostname
+                for origin in settings.CSRF_TRUSTED_ORIGINS
+            )
+        )
+
+        # Check trusted origins
+        if not trusted_origins_match:
+            msg = f'INVE-E7: The used path `{accessed_scheme}` is not in the TRUSTED_ORIGINS'
+            logger.error(msg)
+            return render(
+                request, 'config_error.html', {'error_message': msg}, status=500
+            )
+
+        # All checks passed
+        return None

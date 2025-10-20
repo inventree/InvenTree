@@ -2,6 +2,7 @@
 
 import socket
 import threading
+from typing import Any
 
 import structlog
 
@@ -35,6 +36,16 @@ def cache_host():
 def cache_port() -> int:
     """Return the cache port."""
     return cache_setting('port', '6379', typecast=int)
+
+
+def cache_password():
+    """Return the cache password."""
+    return cache_setting('password', None)
+
+
+def cache_user():
+    """Return the cash username."""
+    return cache_setting('user', None)
 
 
 def is_global_cache_enabled() -> bool:
@@ -77,9 +88,25 @@ def get_cache_config(global_cache: bool) -> dict:
         A dictionary containing the cache configuration options.
     """
     if global_cache:
+        # Build Redis URL with optional password
+        password = cache_password()
+        user = cache_user() or ''
+
+        if password:
+            redis_url = f'redis://{user}:{password}@{cache_host()}:{cache_port()}/0'
+        else:
+            redis_url = f'redis://{cache_host()}:{cache_port()}/0'
+
+        keepalive_options = {
+            'TCP_KEEPCNT': cache_setting('keepalive_count', 5, typecast=int),
+            'TCP_KEEPIDLE': cache_setting('keepalive_idle', 1, typecast=int),
+            'TCP_KEEPINTVL': cache_setting('keepalive_interval', 1, typecast=int),
+            'TCP_USER_TIMEOUT': cache_setting('user_timeout', 1000, typecast=int),
+        }
+
         return {
             'BACKEND': 'django_redis.cache.RedisCache',
-            'LOCATION': f'redis://{cache_host()}:{cache_port()}/0',
+            'LOCATION': redis_url,
             'OPTIONS': {
                 'CLIENT_CLASS': 'django_redis.client.DefaultClient',
                 'SOCKET_CONNECT_TIMEOUT': cache_setting(
@@ -91,18 +118,11 @@ def get_cache_config(global_cache: bool) -> dict:
                         'tcp_keepalive', True, typecast=bool
                     ),
                     'socket_keepalive_options': {
-                        socket.TCP_KEEPCNT: cache_setting(
-                            'keepalive_count', 5, typecast=int
-                        ),
-                        socket.TCP_KEEPIDLE: cache_setting(
-                            'keepalive_idle', 1, typecast=int
-                        ),
-                        socket.TCP_KEEPINTVL: cache_setting(
-                            'keepalive_interval', 1, typecast=int
-                        ),
-                        socket.TCP_USER_TIMEOUT: cache_setting(
-                            'user_timeout', 1000, typecast=int
-                        ),
+                        # Only include options which are available on this platform
+                        # e.g. MacOS does not have TCP_KEEPIDLE and TCP_USER_TIMEOUT
+                        getattr(socket, key): value
+                        for key, value in keepalive_options.items()
+                        if hasattr(socket, key)
                     },
                 },
             },
@@ -127,7 +147,7 @@ def delete_session_cache() -> None:
         del thread_data.request_cache
 
 
-def get_session_cache(key: str) -> any:
+def get_session_cache(key: str) -> Any:
     """Return a cached value from the session cache."""
     # Only return a cached value if the request object is available too
     if not hasattr(thread_data, 'request'):
@@ -139,7 +159,7 @@ def get_session_cache(key: str) -> any:
         return val
 
 
-def set_session_cache(key: str, value: any) -> None:
+def set_session_cache(key: str, value: Any) -> None:
     """Set a cached value in the session cache."""
     # Only set a cached value if the request object is available too
     if not hasattr(thread_data, 'request'):

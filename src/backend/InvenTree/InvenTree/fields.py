@@ -212,3 +212,64 @@ class InvenTreeNotesField(models.TextField):
         kwargs['null'] = True
 
         super().__init__(**kwargs)
+
+
+class InvenTreeOutputOption:
+    """Represents an available output option with description, flag name, and default value."""
+
+    DEFAULT_DESCRIPTIONS = {
+        'part_detail': 'Include detailed information about the related part in the response',
+        'item_detail': 'Include detailed information about the item in the response',
+        'order_detail': 'Include detailed information about the sales order in the response',
+        'location_detail': 'Include detailed information about the stock location in the response',
+        'customer_detail': 'Include detailed information about the customer in the response',
+        'supplier_detail': 'Include detailed information about the supplier in the response',
+    }
+
+    def __init__(self, flag: str, default=False, description: str = ''):
+        """Initialize the output option."""
+        self.flag = flag
+        self.default = default
+
+        if description is None or description == '':
+            self.description = self.DEFAULT_DESCRIPTIONS.get(flag, '')
+        else:
+            self.description = description
+
+
+class OutputConfiguration:
+    """Holds all available output options for a view.
+
+    This class is responsible for converting incoming query parameters from an API request
+    into a dictionary of boolean flags, which can then be applied to serializers.
+    """
+
+    OPTIONS: list[InvenTreeOutputOption] = []
+
+    def __init_subclass__(cls, **kwargs):
+        """Validates that subclass defines OPTIONS attribute with correct type."""
+        super().__init_subclass__(**kwargs)
+
+        options = cls.OPTIONS
+        # Type validation - ensure it's a list
+        if not isinstance(options, list):
+            raise TypeError(
+                f"Class {cls.__name__} 'OPTIONS' must be a list, got {type(options).__name__}"
+            )
+
+        # Type validation - Ensure list contains InvenTreeOutputOption instances
+        for i, option in enumerate(options):
+            if not isinstance(option, InvenTreeOutputOption):
+                raise TypeError(
+                    f"Class {cls.__name__} 'OPTIONS[{i}]' must be an instance of InvenTreeOutputOption, "
+                    f'got {type(option).__name__}'
+                )
+
+    @classmethod
+    def format_params(cls, params: dict) -> dict[str, bool]:
+        """Convert query parameters into a dictionary of output flags with boolean values."""
+        result = {}
+        for option in cls.OPTIONS:
+            value = params.get(option.flag, option.default)
+            result[option.flag] = InvenTree.helpers.str2bool(value)
+        return result

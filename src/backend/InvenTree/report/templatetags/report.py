@@ -32,6 +32,25 @@ logger = logging.getLogger('inventree')
 
 
 @register.simple_tag()
+def order_queryset(queryset: QuerySet, *args) -> QuerySet:
+    """Order a database queryset based on the provided arguments.
+
+    Arguments:
+        queryset: The queryset to order
+
+    Keyword Arguments:
+        field (str): Order the queryset based on the provided field
+
+    Example:
+        {% order_queryset companies 'name' as ordered_companies %}
+    """
+    if not isinstance(queryset, QuerySet):
+        return queryset
+
+    return queryset.order_by(*args)
+
+
+@register.simple_tag()
 def filter_queryset(queryset: QuerySet, **kwargs) -> QuerySet:
     """Filter a database queryset based on the provided keyword arguments.
 
@@ -50,7 +69,7 @@ def filter_queryset(queryset: QuerySet, **kwargs) -> QuerySet:
 
 
 @register.simple_tag()
-def filter_db_model(model_name: str, **kwargs) -> QuerySet:
+def filter_db_model(model_name: str, **kwargs) -> Optional[QuerySet]:
     """Filter a database model based on the provided keyword arguments.
 
     Arguments:
@@ -84,7 +103,7 @@ def filter_db_model(model_name: str, **kwargs) -> QuerySet:
 def getindex(container: list, index: int) -> Any:
     """Return the value contained at the specified index of the list.
 
-    This function is provideed to get around template rendering limitations.
+    This function is provided to get around template rendering limitations.
 
     Arguments:
         container: A python list object
@@ -102,7 +121,7 @@ def getindex(container: list, index: int) -> Any:
 
 
 @register.simple_tag()
-def getkey(container: dict, key: str, backup_value: Optional[any] = None) -> Any:
+def getkey(container: dict, key: str, backup_value: Optional[Any] = None) -> Any:
     """Perform key lookup in the provided dict object.
 
     This function is provided to get around template rendering limitations.
@@ -301,14 +320,13 @@ def part_image(part: Part, preview: bool = False, thumbnail: bool = False, **kwa
     if type(part) is not Part:
         raise TypeError(_('part_image tag requires a Part instance'))
 
-    if not part.image:
+    part_img = part.image
+    if not part_img:
         img = None
     elif preview:
-        img = None if not hasattr(part.image, 'preview') else part.image.preview.name
+        img = None if not hasattr(part.image, 'preview') else part_img.preview.name
     elif thumbnail:
-        img = (
-            None if not hasattr(part.image, 'thumbnail') else part.image.thumbnail.name
-        )
+        img = None if not hasattr(part.image, 'thumbnail') else part_img.thumbnail.name
     else:
         img = part.image.name
 
@@ -316,7 +334,7 @@ def part_image(part: Part, preview: bool = False, thumbnail: bool = False, **kwa
 
 
 @register.simple_tag()
-def part_parameter(part: Part, parameter_name: str) -> str:
+def part_parameter(part: Part, parameter_name: str) -> Optional[str]:
     """Return a PartParameter object for the given part and parameter name.
 
     Arguments:
@@ -348,12 +366,15 @@ def company_image(
     if type(company) is not Company:
         raise TypeError(_('company_image tag requires a Company instance'))
 
-    if preview:
-        img = company.image.preview.name
+    cmp_img = company.image
+    if not cmp_img:
+        img = None
+    elif preview:
+        img = cmp_img.preview.name
     elif thumbnail:
-        img = company.image.thumbnail.name
+        img = cmp_img.thumbnail.name
     else:
-        img = company.image.name
+        img = cmp_img.name
 
     return uploaded_image(img, **kwargs)
 
@@ -392,28 +413,54 @@ def internal_link(link, text) -> str:
     return mark_safe(f'<a href="{url}">{text}</a>')
 
 
-@register.simple_tag()
-def add(x, y, *args, **kwargs):
-    """Add two numbers together."""
-    return x + y
+def destringify(value: Any) -> Any:
+    """Convert a string value into a float.
+
+    - If the value is a string, attempt to convert it to a float.
+    - If conversion fails, return the original string.
+    - If the value is not a string, return it unchanged.
+
+    The purpose of this function is to provide "seamless" math operations in templates,
+    where numeric values may be provided as strings, or converted to strings during template rendering.
+    """
+    if isinstance(value, str):
+        value = value.strip()
+        try:
+            return float(value)
+        except ValueError:
+            return value
+
+    return value
 
 
 @register.simple_tag()
-def subtract(x, y):
-    """Subtract one number from another."""
-    return x - y
+def add(x: Any, y: Any) -> Any:
+    """Add two numbers (or number like values) together."""
+    return destringify(x) + destringify(y)
 
 
 @register.simple_tag()
-def multiply(x, y):
-    """Multiply two numbers together."""
-    return x * y
+def subtract(x: Any, y: Any) -> Any:
+    """Subtract one number (or number-like value) from another."""
+    return destringify(x) - destringify(y)
 
 
 @register.simple_tag()
-def divide(x, y):
-    """Divide one number by another."""
-    return x / y
+def multiply(x: Any, y: Any) -> Any:
+    """Multiply two numbers (or number-like values) together."""
+    return destringify(x) * destringify(y)
+
+
+@register.simple_tag()
+def divide(x: Any, y: Any) -> Any:
+    """Divide one number (or number-like value) by another."""
+    return destringify(x) / destringify(y)
+
+
+@register.simple_tag()
+def modulo(x: Any, y: Any) -> Any:
+    """Calculate the modulo of one number (or number-like value) by another."""
+    return destringify(x) % destringify(y)
 
 
 @register.simple_tag

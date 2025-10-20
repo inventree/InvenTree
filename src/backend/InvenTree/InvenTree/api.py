@@ -1,5 +1,6 @@
 """Main JSON interface views."""
 
+import collections
 import json
 from pathlib import Path
 
@@ -18,6 +19,7 @@ from rest_framework.serializers import ValidationError
 from rest_framework.views import APIView
 
 import InvenTree.config
+import InvenTree.permissions
 import InvenTree.version
 from common.settings import get_global_setting
 from InvenTree import helpers
@@ -295,7 +297,6 @@ class InfoView(APIView):
             'worker_pending_tasks': self.worker_pending_tasks(),
             'plugins_enabled': settings.PLUGINS_ENABLED,
             'plugins_install_disabled': settings.PLUGINS_INSTALL_DISABLED,
-            'active_plugins': plugins_info(),
             'email_configured': is_email_configured(),
             'debug_mode': settings.DEBUG,
             'docker_mode': settings.DOCKER,
@@ -306,6 +307,7 @@ class InfoView(APIView):
                 'login_message': helpers.getCustomOption('login_message'),
                 'navbar_message': helpers.getCustomOption('navbar_message'),
             },
+            'active_plugins': plugins_info(),
             # Following fields are only available to staff users
             'system_health': check_system_health() if is_staff else None,
             'database': InvenTree.version.inventreeDatabase() if is_staff else None,
@@ -472,6 +474,65 @@ class BulkOperationMixin:
             })
 
         return queryset
+
+
+class BulkCreateMixin:
+    """Mixin class for enabling 'bulk create' operations for various models.
+
+    Bulk create allows for multiple items to be created in a single API query,
+    rather than using multiple API calls to same endpoint.
+    """
+
+    def create(self, request, *args, **kwargs):
+        """Perform a POST operation against this list endpoint."""
+        data = request.data
+
+        if isinstance(data, list):
+            created_items = []
+            errors = []
+            has_errors = False
+
+            # If data is a list, we assume it is a bulk create request
+            if len(data) == 0:
+                raise ValidationError({'non_field_errors': _('No data provided')})
+
+            # validate unique together fields
+            if unique_create_fields := getattr(self, 'unique_create_fields', None):
+                existing = collections.defaultdict(list)
+                for idx, item in enumerate(data):
+                    key = tuple(item[v] for v in unique_create_fields)
+                    existing[key].append(idx)
+
+                unique_errors = [[] for _ in range(len(data))]
+                has_unique_errors = False
+                for item in existing.values():
+                    if len(item) > 1:
+                        has_unique_errors = True
+                        error = {}
+                        for field_name in unique_create_fields:
+                            error[field_name] = [_('This field must be unique.')]
+                        for idx in item:
+                            unique_errors[idx] = error
+                if has_unique_errors:
+                    raise ValidationError(unique_errors)
+
+            with transaction.atomic():
+                for item in data:
+                    serializer = self.get_serializer(data=item)
+                    if serializer.is_valid():
+                        self.perform_create(serializer)
+                        created_items.append(serializer.data)
+                        errors.append([])
+                    else:
+                        errors.append(serializer.errors)
+                        has_errors = True
+
+                if has_errors:
+                    raise ValidationError(errors)
+
+            return Response(created_items, status=201)
+
+        return super().create(request, *args, **kwargs)
 
 
 class BulkUpdateMixin(BulkOperationMixin):

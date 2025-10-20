@@ -22,6 +22,7 @@ import {
 } from 'react-hook-form';
 import { type NavigateFunction, useNavigate } from 'react-router-dom';
 
+import { isTrue } from '@lib/functions/Conversion';
 import { getDetailUrl } from '@lib/functions/Navigation';
 import type {
   ApiFormFieldSet,
@@ -114,6 +115,8 @@ export function OptionsApiForm({
 
     if (!_props.fields) return _props;
 
+    _props.fields = { ..._props.fields };
+
     for (const [k, v] of Object.entries(_props.fields)) {
       _props.fields[k] = constructField({
         field: v,
@@ -171,8 +174,14 @@ export function ApiForm({
   );
 
   const defaultValues: FieldValues = useMemo(() => {
-    const defaultValuesMap = mapFields(fields ?? {}, (_path, field) => {
-      return field.value ?? field.default ?? undefined;
+    const defaultValuesMap = mapFields(props.fields ?? {}, (_path, field) => {
+      if (field.value !== undefined && field.value !== null) {
+        return field.value;
+      }
+      if (field.default !== undefined && field.default !== null) {
+        return field.default;
+      }
+      return undefined;
     });
 
     // If the user has specified initial data, that overrides default values
@@ -185,7 +194,6 @@ export function ApiForm({
         }
       });
     }
-
     return defaultValuesMap;
   }, [props.fields, props.initialData]);
 
@@ -254,19 +262,14 @@ export function ApiForm({
       props.pathParams
     ],
     queryFn: async () => {
-      return await api
-        .get(url)
-        .then((response: any) => {
-          // Process API response
-          const fetchedData: any = processFields(fields, response.data);
+      return await api.get(url).then((response: any) => {
+        // Process API response
+        const fetchedData: any = processFields(fields, response.data);
 
-          // Update form values, but only for the fields specified for this form
-          form.reset(fetchedData);
-          return fetchedData;
-        })
-        .catch(() => {
-          return {};
-        });
+        // Update form values, but only for the fields specified for this form
+        form.reset(fetchedData);
+        return fetchedData;
+      });
     }
   });
 
@@ -360,12 +363,7 @@ export function ApiForm({
 
     let hasFiles = false;
 
-    // Optionally pre-process the data before submitting it
-    if (props.processFormData) {
-      data = props.processFormData(data, form);
-    }
-
-    const jsonData = { ...data };
+    let jsonData = { ...data };
     const formData = new FormData();
 
     Object.keys(data).forEach((key: string) => {
@@ -375,6 +373,11 @@ export function ApiForm({
 
       if (field_type == 'file upload' && !!value) {
         hasFiles = true;
+      }
+
+      // Ensure any boolean values are actually boolean
+      if (field_type === 'boolean') {
+        value = isTrue(value) || false;
       }
 
       // Stringify any JSON objects
@@ -395,6 +398,11 @@ export function ApiForm({
         formData.append(key, value);
       }
     });
+
+    // Optionally pre-process the data before submitting it
+    if (props.processFormData) {
+      jsonData = props.processFormData(jsonData, form);
+    }
 
     /* Set the timeout for the request:
      * - If a timeout is provided in the props, use that
@@ -563,7 +571,15 @@ export function ApiForm({
         <LoadingOverlay visible={isLoading} zIndex={1010} />
 
         {/* Attempt at making fixed footer with scroll area */}
-        <Paper mah={'65vh'} style={{ overflowY: 'auto' }}>
+        <Paper
+          mah={'65vh'}
+          style={{
+            overflowY: 'auto',
+            paddingRight: '15px',
+            paddingBottom: '10px',
+            paddingLeft: '5px'
+          }}
+        >
           <div>
             {/* Form Fields */}
             <Stack gap='sm'>

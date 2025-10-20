@@ -108,7 +108,7 @@ export default function PurchasingIndex() {
         name: 'manufacturer-parts',
         label: t`Manufacturer Parts`,
         icon: <IconBuildingWarehouse />,
-        content: <ManufacturerPartTable params={{}} />
+        content: <ManufacturerPartTable />
       }
     ];
   }, [user, purchaseOrderView]);

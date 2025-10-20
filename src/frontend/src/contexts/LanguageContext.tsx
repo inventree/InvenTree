@@ -1,5 +1,4 @@
 import { i18n } from '@lingui/core';
-import { t } from '@lingui/core/macro';
 import { I18nProvider } from '@lingui/react';
 import { LoadingOverlay, Text } from '@mantine/core';
 import { type JSX, useEffect, useRef, useState } from 'react';
@@ -8,6 +7,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { api } from '../App';
 import { useLocalState } from '../states/LocalState';
 import { useServerApiState } from '../states/ServerApiState';
+import { useStoredTableState } from '../states/StoredTableState';
 import { fetchGlobalStates } from '../states/states';
 
 export const defaultLocale = 'en';
@@ -18,44 +18,44 @@ export const defaultLocale = 'en';
  */
 export const getSupportedLanguages = (): Record<string, string> => {
   return {
-    ar: t`Arabic`,
-    bg: t`Bulgarian`,
-    cs: t`Czech`,
-    da: t`Danish`,
-    de: t`German`,
-    el: t`Greek`,
-    en: t`English`,
-    es: t`Spanish`,
-    es_MX: t`Spanish (Mexican)`,
-    et: t`Estonian`,
-    fa: t`Farsi / Persian`,
-    fi: t`Finnish`,
-    fr: t`French`,
-    he: t`Hebrew`,
-    hi: t`Hindi`,
-    hu: t`Hungarian`,
-    it: t`Italian`,
-    ja: t`Japanese`,
-    ko: t`Korean`,
-    lt: t`Lithuanian`,
-    lv: t`Latvian`,
-    nl: t`Dutch`,
-    no: t`Norwegian`,
-    pl: t`Polish`,
-    pt: t`Portuguese`,
-    pt_BR: t`Portuguese (Brazilian)`,
-    ro: t`Romanian`,
-    ru: t`Russian`,
-    sk: t`Slovak`,
-    sl: t`Slovenian`,
-    sr: t`Serbian`,
-    sv: t`Swedish`,
-    th: t`Thai`,
-    tr: t`Turkish`,
-    uk: t`Ukrainian`,
-    vi: t`Vietnamese`,
-    zh_Hans: t`Chinese (Simplified)`,
-    zh_Hant: t`Chinese (Traditional)`
+    ar: 'العربية',
+    bg: 'Български',
+    cs: 'Čeština',
+    da: 'Dansk',
+    de: 'Deutsch',
+    el: 'Ελληνικά',
+    en: 'English',
+    es: 'Español',
+    es_MX: 'Español (México)',
+    et: 'Eesti',
+    fa: 'فارسی',
+    fi: 'Suomi',
+    fr: 'Français',
+    he: 'עברית',
+    hi: 'हिन्दी',
+    hu: 'Magyar',
+    it: 'Italiano',
+    ja: '日本語',
+    ko: '한국어',
+    lt: 'Lietuvių',
+    lv: 'Latviešu',
+    nl: 'Nederlands',
+    no: 'Norsk',
+    pl: 'Polski',
+    pt: 'Português',
+    pt_BR: 'Português (Brasil)',
+    ro: 'Română',
+    ru: 'Русский',
+    sk: 'Slovenčina',
+    sl: 'Slovenščina',
+    sr: 'Српски',
+    sv: 'Svenska',
+    th: 'ไทย',
+    tr: 'Türkçe',
+    uk: 'Українська',
+    vi: 'Tiếng Việt',
+    zh_Hans: '中文（简体）',
+    zh_Hant: '中文（繁體）'
   };
 };
 
@@ -77,7 +77,14 @@ export function LanguageContext({
   useEffect(() => {
     isMounted.current = true;
 
-    activateLocale(language)
+    let lang = language;
+
+    // Ensure that the selected language is supported
+    if (!Object.keys(getSupportedLanguages()).includes(lang)) {
+      lang = defaultLocale;
+    }
+
+    activateLocale(lang)
       .then(() => {
         if (isMounted.current) setLoadedState('loaded');
 
@@ -89,8 +96,8 @@ export function LanguageContext({
          */
         const locales: (string | undefined)[] = [];
 
-        if (language != 'pseudo-LOCALE') {
-          locales.push(language);
+        if (lang != 'pseudo-LOCALE') {
+          locales.push(lang);
         }
 
         if (!!server.default_locale) {
@@ -117,7 +124,7 @@ export function LanguageContext({
         fetchGlobalStates();
 
         // Clear out cached table column names
-        useLocalState.getState().clearTableColumnNames();
+        useStoredTableState.getState().clearTableColumnNames();
       })
       /* istanbul ignore next */
       .catch((err) => {

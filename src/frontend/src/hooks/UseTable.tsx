@@ -1,4 +1,4 @@
-import { randomId, useLocalStorage } from '@mantine/hooks';
+import { randomId } from '@mantine/hooks';
 import { useCallback, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
@@ -28,9 +28,15 @@ export function useTable(tableName: string, idAccessor = 'pk'): TableState {
   const [tableKey, setTableKey] = useState<string>(generateTableName());
 
   // Callback used to refresh (reload) the table
-  const refreshTable = useCallback(() => {
-    setTableKey(generateTableName());
-  }, [generateTableName]);
+  const refreshTable = useCallback(
+    (clearSelection?: boolean) => {
+      setTableKey(generateTableName());
+      if (clearSelection) {
+        clearSelectedRecords();
+      }
+    },
+    [generateTableName]
+  );
 
   const filterSet: FilterSetState = useFilterSet(`table-${tableName}`);
 
@@ -44,6 +50,9 @@ export function useTable(tableName: string, idAccessor = 'pk'): TableState {
     },
     [expandedRecords]
   );
+
+  // Array of columns which are hidden
+  const [hiddenColumns, setHiddenColumns] = useState<string[]>([]);
 
   // Array of selected records
   const [selectedRecords, setSelectedRecords] = useState<any[]>([]);
@@ -65,37 +74,7 @@ export function useTable(tableName: string, idAccessor = 'pk'): TableState {
   // Total record count
   const [recordCount, setRecordCount] = useState<number>(0);
 
-  const [pageSizeLoaded, setPageSizeLoaded] = useState<boolean>(false);
-
-  // Pagination data
   const [page, setPage] = useState<number>(1);
-  const [pageSize, setPageSize] = useLocalStorage<number>({
-    key: 'inventree-table-page-size',
-    defaultValue: 25,
-    sync: false,
-    deserialize: (value: string | undefined) => {
-      setPageSizeLoaded(true);
-      return value === undefined ? 25 : JSON.parse(value);
-    }
-  });
-
-  const [hiddenColumnsLoaded, setHiddenColumnsLoaded] =
-    useState<boolean>(false);
-
-  // A list of hidden columns, saved to local storage
-  const [hiddenColumns, setHiddenColumns] = useLocalStorage<string[] | null>({
-    key: `inventree-hidden-table-columns-${tableName}`,
-    defaultValue: null,
-    sync: false,
-    deserialize: (value) => {
-      setHiddenColumnsLoaded(true);
-      return value === undefined ? null : JSON.parse(value);
-    }
-  });
-
-  const storedDataLoaded = useMemo(() => {
-    return pageSizeLoaded && hiddenColumnsLoaded;
-  }, [pageSizeLoaded, hiddenColumnsLoaded]);
 
   // Search term
   const [searchTerm, setSearchTerm] = useState<string>('');
@@ -146,17 +125,14 @@ export function useTable(tableName: string, idAccessor = 'pk'): TableState {
     setSelectedRecords,
     clearSelectedRecords,
     hasSelectedRecords,
-    hiddenColumns,
-    setHiddenColumns,
     searchTerm,
     setSearchTerm,
     recordCount,
     setRecordCount,
+    hiddenColumns,
+    setHiddenColumns,
     page,
     setPage,
-    pageSize,
-    setPageSize,
-    storedDataLoaded,
     records,
     setRecords,
     updateRecord,

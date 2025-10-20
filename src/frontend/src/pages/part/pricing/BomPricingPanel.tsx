@@ -14,6 +14,7 @@ import { type ReactNode, useMemo, useState } from 'react';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
+import type { TableColumn } from '@lib/types/Tables';
 import { CHART_COLORS } from '../../../components/charts/colors';
 import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
 import {
@@ -22,7 +23,6 @@ import {
   formatPriceRange
 } from '../../../defaults/formatters';
 import { useTable } from '../../../hooks/UseTable';
-import type { TableColumn } from '../../../tables/Column';
 import { DateColumn, PartColumn } from '../../../tables/ColumnRenderers';
 import { InvenTreeTable } from '../../../tables/InvenTreeTable';
 import { LoadingPricingData, NoPricingData } from './PricingPanel';
@@ -136,13 +136,11 @@ export default function BomPricingPanel({
 
   const columns: TableColumn[] = useMemo(() => {
     return [
-      {
+      PartColumn({
         accessor: 'name',
         title: t`Component`,
-        sortable: true,
-        switchable: false,
-        render: (record: any) => PartColumn({ part: record.sub_part_detail })
-      },
+        part: 'sub_part_detail'
+      }),
       {
         accessor: 'quantity',
         title: t`Quantity`,

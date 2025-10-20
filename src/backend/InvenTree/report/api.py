@@ -6,8 +6,9 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import never_cache
 
-from django_filters import rest_framework as rest_filters
+import django_filters.rest_framework.filters as rest_filters
 from django_filters.rest_framework import DjangoFilterBackend
+from django_filters.rest_framework.filterset import FilterSet
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 
@@ -31,7 +32,7 @@ class TemplatePermissionMixin:
     permission_classes = [InvenTree.permissions.IsStaffOrReadOnlyScope]
 
 
-class ReportFilterBase(rest_filters.FilterSet):
+class ReportFilterBase(FilterSet):
     """Base filter class for label and report templates."""
 
     enabled = rest_filters.BooleanFilter()
@@ -100,26 +101,18 @@ class LabelPrint(GenericAPIView):
 
     def get_plugin_class(self, plugin_slug: str, raise_error=False):
         """Return the plugin class for the given plugin key."""
-        from plugin.models import PluginConfig
+        from plugin import registry
 
         if not plugin_slug:
             # Use the default label printing plugin
             plugin_slug = InvenTreeLabelPlugin.NAME.lower()
 
-        plugin = None
-
-        try:
-            plugin_config = PluginConfig.objects.get(key=plugin_slug)
-            plugin = plugin_config.plugin
-        except (ValueError, PluginConfig.DoesNotExist):
-            pass
+        plugin = registry.get_plugin(plugin_slug, active=True)
 
         error = None
 
         if not plugin:
             error = _('Plugin not found')
-        elif not plugin.is_active():
-            error = _('Plugin is not active')
         elif not plugin.mixin_enabled(PluginMixinEnum.LABELS):
             error = _('Plugin does not support label printing')
 
@@ -183,7 +176,10 @@ class LabelPrint(GenericAPIView):
 
         instances = template.get_model().objects.filter(pk__in=items)
 
-        if instances.count() == 0:
+        # Sort the instances by the order of the provided items
+        instances = sorted(instances, key=lambda item: items.index(item.pk))
+
+        if len(instances) == 0:
             raise ValidationError(_('No valid items provided to template'))
 
         return self.print(template, instances, plugin, request)
@@ -211,6 +207,8 @@ class LabelPrint(GenericAPIView):
             template_name=template.name,
             output=None,
         )
+
+        output.refresh_from_db()
 
         offload_task(
             report.tasks.print_labels,
@@ -262,7 +260,10 @@ class ReportPrint(GenericAPIView):
 
         instances = template.get_model().objects.filter(pk__in=items)
 
-        if instances.count() == 0:
+        # Sort the instances by the order of the provided items
+        instances = sorted(instances, key=lambda item: items.index(item.pk))
+
+        if len(instances) == 0:
             raise ValidationError(_('No valid items provided to template'))
 
         return self.print(template, instances, request)

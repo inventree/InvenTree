@@ -73,19 +73,12 @@ def register_event(event, *args, **kwargs):
         registry.check_reload()
 
         with transaction.atomic():
-            for slug, plugin in registry.plugins.items():
-                if not plugin.mixin_enabled(PluginMixinEnum.EVENTS):
-                    continue
-
-                # Only allow event registering for 'active' plugins
-                if not plugin.is_active():
-                    continue
-
+            for plugin in registry.with_mixin(PluginMixinEnum.EVENTS, active=True):
                 # Let the plugin decide if it wants to process this event
                 if not plugin.wants_process_event(event):
                     continue
 
-                logger.debug("Registering callback for plugin '%s'", slug)
+                logger.debug("Registering callback for plugin '%s'", plugin.slug)
 
                 # This task *must* be processed by the background worker,
                 # unless we are running CI tests
@@ -94,7 +87,7 @@ def register_event(event, *args, **kwargs):
 
                 # Offload a separate task for each plugin
                 offload_task(
-                    process_event, slug, event, *args, group='plugin', **kwargs
+                    process_event, plugin.slug, event, *args, group='plugin', **kwargs
                 )
 
 
@@ -105,10 +98,10 @@ def process_event(plugin_slug, event, *args, **kwargs):
     This function is run by the background worker process.
     This function may queue multiple functions to be handled by the background worker.
     """
-    plugin = registry.get_plugin(plugin_slug)
+    plugin = registry.get_plugin(plugin_slug, active=True)
 
     if plugin is None:  # pragma: no cover
-        logger.error("Could not find matching plugin for '%s'", plugin_slug)
+        logger.error("Could not find matching active plugin for '%s'", plugin_slug)
         return
 
     logger.debug("Plugin '%s' is processing triggered event '%s'", plugin_slug, event)
@@ -163,7 +156,6 @@ def allow_table_event(table_name):
         'common_webhookmessage',
         'part_partpricing',
         'part_partstocktake',
-        'part_partstocktakereport',
     ]
 
     return table_name not in ignore_tables

@@ -2,12 +2,48 @@
 
 from typing import Union
 
+from django.utils.translation import gettext_lazy as _
+
 from rest_framework import serializers
 
 from common.serializers import GenericReferencedSettingSerializer
 from InvenTree.helpers_mixin import ClassProviderMixin
 from machine import registry
+from machine.machine_type import MachinePropertyType
 from machine.models import MachineConfig, MachineSetting
+
+
+class MachinePropertySerializer(serializers.Serializer):
+    """Machine Properties are set by the driver/machine to represent specific state."""
+
+    class Meta:
+        """Meta for serializer."""
+
+        fields = ['key', 'value', 'group', 'type', 'max_progress']
+        read_only_fields = fields
+
+    key = serializers.CharField(
+        label=_('Key'), help_text=_('Key of the property'), required=True
+    )
+    value = serializers.CharField(
+        label=_('Value'), help_text=_('Value of the property'), required=True
+    )
+    group = serializers.CharField(
+        label=_('Group'), help_text=_('Grouping of the property'), required=False
+    )
+    type = serializers.ChoiceField(
+        label=_('Type'),
+        choices=MachinePropertyType.__args__,
+        help_text=_('Type of the property'),
+        default='str',
+        required=False,
+    )
+    max_progress = serializers.IntegerField(
+        label=_('Max Progress'),
+        help_text=_('Maximum value for progress type, required if type=progress'),
+        required=False,
+        allow_null=True,
+    )
 
 
 class MachineConfigSerializer(serializers.ModelSerializer):
@@ -30,9 +66,10 @@ class MachineConfigSerializer(serializers.ModelSerializer):
             'machine_errors',
             'is_driver_available',
             'restart_required',
+            'properties',
         ]
 
-        read_only_fields = ['machine_type', 'driver']
+        read_only_fields = ['machine_type', 'driver', 'properties']
 
     initialized = serializers.SerializerMethodField('get_initialized')
     status = serializers.SerializerMethodField('get_status')
@@ -41,37 +78,43 @@ class MachineConfigSerializer(serializers.ModelSerializer):
     machine_errors = serializers.SerializerMethodField('get_errors')
     is_driver_available = serializers.SerializerMethodField('get_is_driver_available')
     restart_required = serializers.SerializerMethodField('get_restart_required')
+    properties = serializers.ListField(
+        child=MachinePropertySerializer(),
+        source='machine.properties',
+        read_only=True,
+        default=[],
+    )
 
     def get_initialized(self, obj: MachineConfig) -> bool:
-        """Serializer method for the initialized field."""
+        """Indicator if machine is initialized."""
         return getattr(obj.machine, 'initialized', False)
 
     def get_status(self, obj: MachineConfig) -> int:
-        """Serializer method for the status field."""
+        """Numerical machine status if available, else -1."""
         status = getattr(obj.machine, 'status', None)
         if status is not None:
             return status.value
         return -1
 
     def get_status_model(self, obj: MachineConfig) -> Union[str, None]:
-        """Serializer method for the status model field."""
+        """Textual machine status name if available, else None."""
         if obj.machine and obj.machine.MACHINE_STATUS:
             return obj.machine.MACHINE_STATUS.__name__
 
     def get_status_text(self, obj: MachineConfig) -> str:
-        """Serializer method for the status text field."""
+        """Current status text for machine."""
         return getattr(obj.machine, 'status_text', '')
 
     def get_errors(self, obj: MachineConfig) -> list[str]:
-        """Serializer method for the errors field."""
+        """List of machine errors."""
         return [str(err) for err in obj.errors]
 
     def get_is_driver_available(self, obj: MachineConfig) -> bool:
-        """Serializer method for the is_driver_available field."""
+        """Indicator if driver for machine is available."""
         return obj.is_driver_available()
 
     def get_restart_required(self, obj: MachineConfig) -> bool:
-        """Serializer method for the restart_required field."""
+        """Indicator if machine restart is required."""
         return getattr(obj.machine, 'restart_required', False)
 
 
@@ -125,11 +168,11 @@ class BaseMachineClassSerializer(serializers.Serializer):
     is_builtin = serializers.SerializerMethodField('get_is_builtin')
 
     def get_provider_file(self, obj: ClassProviderMixin) -> str:
-        """Serializer method for the provider_file field."""
+        """File that contains the class definition."""
         return obj.get_provider_file()
 
     def get_provider_plugin(self, obj: ClassProviderMixin) -> Union[dict, None]:
-        """Serializer method for the provider_plugin field."""
+        """Plugin(s) that contain(s) the class definition."""
         plugin = obj.get_provider_plugin()
         if plugin:
             return {
@@ -140,12 +183,12 @@ class BaseMachineClassSerializer(serializers.Serializer):
         return None
 
     def get_is_builtin(self, obj: ClassProviderMixin) -> bool:
-        """Serializer method for the is_builtin field."""
+        """Indicates if the machine type is build into the InvenTree source code."""
         return obj.get_is_builtin()
 
 
 class MachineTypeSerializer(BaseMachineClassSerializer):
-    """Serializer for a BaseMachineType class."""
+    """Available machine types."""
 
     class Meta(BaseMachineClassSerializer.Meta):
         """Meta for a serializer."""
@@ -154,7 +197,7 @@ class MachineTypeSerializer(BaseMachineClassSerializer):
 
 
 class MachineDriverSerializer(BaseMachineClassSerializer):
-    """Serializer for a BaseMachineDriver class."""
+    """Machine drivers."""
 
     class Meta(BaseMachineClassSerializer.Meta):
         """Meta for a serializer."""
@@ -166,15 +209,16 @@ class MachineDriverSerializer(BaseMachineClassSerializer):
     driver_errors = serializers.SerializerMethodField('get_errors')
 
     def get_errors(self, obj) -> list[str]:
-        """Serializer method for the errors field."""
-        driver_instance = registry.driver_instances.get(obj.SLUG, None)
+        """Errors registered against driver."""
+        driver_instance = registry.get_driver_instance(obj.SLUG)
+
         if driver_instance is None:
             return []
         return [str(err) for err in driver_instance.errors]
 
 
 class MachineRegistryErrorSerializer(serializers.Serializer):
-    """Serializer for a machine registry error."""
+    """Machine registry error."""
 
     class Meta:
         """Meta for a serializer."""
@@ -185,7 +229,7 @@ class MachineRegistryErrorSerializer(serializers.Serializer):
 
 
 class MachineRegistryStatusSerializer(serializers.Serializer):
-    """Serializer for machine registry status."""
+    """Machine registry status, showing all errors that were registered."""
 
     class Meta:
         """Meta for a serializer."""

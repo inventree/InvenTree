@@ -4,16 +4,13 @@ from datetime import timedelta
 from decimal import Decimal
 
 from django.contrib.auth.models import User
-from django.template.loader import render_to_string
 from django.utils.translation import gettext_lazy as _
 
 import structlog
-from allauth.account.models import EmailAddress
 from opentelemetry import trace
 
 import common.notifications
 import InvenTree.helpers
-import InvenTree.helpers_email
 import InvenTree.helpers_model
 import InvenTree.tasks
 from build.events import BuildEvents
@@ -53,11 +50,11 @@ def complete_build_allocations(build_id: int, user_id: int):
         try:
             user = User.objects.get(pk=user_id)
         except User.DoesNotExist:
+            user = None
             logger.warning(
                 'Could not complete build allocations for BuildOrder <%s> - User does not exist',
                 build_id,
             )
-            return
     else:
         user = None
 
@@ -103,12 +100,17 @@ def update_build_order_lines(bom_item_pk: int):
         q = bom_item.get_required_quantity(bo.quantity)
 
         if line:
+            # If the BOM item points to a "virtual" part, delete the BuildLine instance
+            if bom_item.sub_part.virtual:
+                line.delete()
+                continue
+
             # Ensure quantity is correct
             if line.quantity != q:
                 line.quantity = q
                 line.save()
-        else:
-            # Create a new line item
+        elif not bom_item.sub_part.virtual:
+            # Create a new line item (for non-virtual parts)
             BuildLine.objects.create(build=bo, bom_item=bom_item, quantity=q)
 
     if builds.count() > 0:
@@ -144,7 +146,8 @@ def check_build_stock(build):
         logger.exception("Invalid build.part passed to 'build.tasks.check_build_stock'")
         return
 
-    for bom_item in part.get_bom_items():
+    # Iterate through each non-virtual BOM item for this part
+    for bom_item in part.get_bom_items(include_virtual=False):
         sub_part = bom_item.sub_part
 
         # The 'in stock' quantity depends on whether the bom_item allows variants
@@ -175,34 +178,30 @@ def check_build_stock(build):
         return
 
     # Are there any users subscribed to these parts?
-    subscribers = build.part.get_subscribers()
+    targets = build.part.get_subscribers()
 
-    emails = EmailAddress.objects.filter(user__in=subscribers)
+    if build.responsible:
+        targets.append(build.responsible)
 
-    if len(emails) > 0:
-        logger.info('Notifying users of stock required for build %s', build.pk)
+    name = _('Stock required for build order')
 
-        context = {
-            'link': InvenTree.helpers_model.construct_absolute_url(
-                build.get_absolute_url()
-            ),
-            'build': build,
-            'part': build.part,
-            'lines': lines,
-        }
+    context = {
+        'build': build,
+        'name': name,
+        'part': build.part,
+        'lines': lines,
+        'link': InvenTree.helpers_model.construct_absolute_url(
+            build.get_absolute_url()
+        ),
+        'message': _('Build order {build} requires additional stock').format(
+            build=build
+        ),
+        'template': {'html': 'email/build_order_required_stock.html', 'subject': name},
+    }
 
-        # Render the HTML message
-        html_message = render_to_string(
-            'email/build_order_required_stock.html', context
-        )
-
-        subject = _('Stock required for build order')
-
-        recipients = emails.values_list('email', flat=True)
-
-        InvenTree.helpers_email.send_email(
-            subject, '', recipients, html_message=html_message
-        )
+    common.notifications.trigger_notification(
+        build, BuildEvents.STOCK_REQUIRED, targets=targets, context=context
+    )
 
 
 @tracer.start_as_current_span('notify_overdue_build_order')

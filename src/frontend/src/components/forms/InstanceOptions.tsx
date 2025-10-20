@@ -20,12 +20,12 @@ import {
   IconServerSpark
 } from '@tabler/icons-react';
 
+import { ActionButton } from '@lib/components/ActionButton';
 import type { HostList } from '@lib/types/Server';
 import { useShallow } from 'zustand/react/shallow';
 import { Wrapper } from '../../pages/Auth/Layout';
 import { useLocalState } from '../../states/LocalState';
 import { useServerApiState } from '../../states/ServerApiState';
-import { ActionButton } from '../buttons/ActionButton';
 import { HostOptionsForm } from './HostOptionsForm';
 
 export function InstanceOptions({

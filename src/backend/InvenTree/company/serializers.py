@@ -3,8 +3,10 @@
 import io
 
 from django.core.files.base import ContentFile
+from django.db.models import Prefetch
 from django.utils.translation import gettext_lazy as _
 
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 from sql_util.utils import SubqueryCount
 from taggit.serializers import TagListSerializerField
@@ -16,6 +18,8 @@ from importer.registry import register_importer
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.ready import isGeneratingSchema
 from InvenTree.serializers import (
+    FilterableCharField,
+    FilterableSerializerMixin,
     InvenTreeCurrencySerializer,
     InvenTreeDecimalField,
     InvenTreeImageSerializerField,
@@ -24,6 +28,7 @@ from InvenTree.serializers import (
     InvenTreeTagModelSerializer,
     NotesFieldMixin,
     RemoteImageMixin,
+    enable_filter,
 )
 
 from .models import (
@@ -52,6 +57,7 @@ class CompanyBriefSerializer(InvenTreeModelSerializer):
             'image',
             'thumbnail',
             'currency',
+            'tax_id',
         ]
         read_only_fields = ['currency']
 
@@ -145,6 +151,7 @@ class CompanySerializer(
             'remote_image',
             'address_count',
             'primary_address',
+            'tax_id',
         ]
 
     @staticmethod
@@ -159,17 +166,37 @@ class CompanySerializer(
 
         queryset = queryset.annotate(address_count=SubqueryCount('addresses'))
 
+        queryset = queryset.prefetch_related(
+            Prefetch(
+                'addresses',
+                queryset=Address.objects.filter(primary=True),
+                to_attr='primary_address_list',
+            )
+        )
+
         return queryset
 
-    address = serializers.CharField(
+    address = serializers.SerializerMethodField(
         label=_(
             'Return the string representation for the primary address. This property exists for backwards compatibility.'
         ),
         allow_null=True,
-        read_only=True,
     )
+    primary_address = serializers.SerializerMethodField(allow_null=True)
 
-    primary_address = AddressSerializer(allow_null=True, read_only=True)
+    @extend_schema_field(serializers.CharField())
+    def get_address(self, obj):
+        """Return string version of primary address (for backwards compatibility)."""
+        if hasattr(obj, 'primary_address_list') and obj.primary_address_list:
+            return str(obj.primary_address_list[0])
+        return None
+
+    @extend_schema_field(AddressSerializer())
+    def get_primary_address(self, obj):
+        """Return full address object for primary address using prefetch data."""
+        if hasattr(obj, 'primary_address_list') and obj.primary_address_list:
+            return AddressSerializer(obj.primary_address_list[0]).data
+        return None
 
     image = InvenTreeImageSerializerField(required=False, allow_null=True)
 
@@ -224,7 +251,10 @@ class ContactSerializer(DataImportExportSerializerMixin, InvenTreeModelSerialize
 
 @register_importer()
 class ManufacturerPartSerializer(
-    DataImportExportSerializerMixin, InvenTreeTagModelSerializer, NotesFieldMixin
+    FilterableSerializerMixin,
+    DataImportExportSerializerMixin,
+    InvenTreeTagModelSerializer,
+    NotesFieldMixin,
 ):
     """Serializer for ManufacturerPart object."""
 
@@ -249,35 +279,23 @@ class ManufacturerPartSerializer(
 
     tags = TagListSerializerField(required=False)
 
-    def __init__(self, *args, **kwargs):
-        """Initialize this serializer with extra detail fields as required."""
-        part_detail = kwargs.pop('part_detail', True)
-        manufacturer_detail = kwargs.pop('manufacturer_detail', True)
-        prettify = kwargs.pop('pretty', False)
-
-        super().__init__(*args, **kwargs)
-
-        if isGeneratingSchema():
-            return
-
-        if part_detail is not True:
-            self.fields.pop('part_detail', None)
-
-        if manufacturer_detail is not True:
-            self.fields.pop('manufacturer_detail', None)
-
-        if prettify is not True:
-            self.fields.pop('pretty_name', None)
-
-    part_detail = part_serializers.PartBriefSerializer(
-        source='part', many=False, read_only=True, allow_null=True
+    part_detail = enable_filter(
+        part_serializers.PartBriefSerializer(
+            source='part', many=False, read_only=True, allow_null=True
+        ),
+        True,
     )
 
-    manufacturer_detail = CompanyBriefSerializer(
-        source='manufacturer', many=False, read_only=True, allow_null=True
+    manufacturer_detail = enable_filter(
+        CompanyBriefSerializer(
+            source='manufacturer', many=False, read_only=True, allow_null=True
+        ),
+        True,
     )
 
-    pretty_name = serializers.CharField(read_only=True, allow_null=True)
+    pretty_name = enable_filter(
+        FilterableCharField(read_only=True, allow_null=True), filter_name='pretty'
+    )
 
     manufacturer = serializers.PrimaryKeyRelatedField(
         queryset=Company.objects.filter(is_manufacturer=True)
@@ -286,7 +304,7 @@ class ManufacturerPartSerializer(
 
 @register_importer()
 class ManufacturerPartParameterSerializer(
-    DataImportExportSerializerMixin, InvenTreeModelSerializer
+    FilterableSerializerMixin, DataImportExportSerializerMixin, InvenTreeModelSerializer
 ):
     """Serializer for the ManufacturerPartParameter model."""
 
@@ -304,25 +322,23 @@ class ManufacturerPartParameterSerializer(
             'units',
         ]
 
-    def __init__(self, *args, **kwargs):
-        """Initialize this serializer with extra detail fields as required."""
-        man_detail = kwargs.pop('manufacturer_part_detail', False)
-
-        super().__init__(*args, **kwargs)
-
-        if not man_detail and not isGeneratingSchema():
-            self.fields.pop('manufacturer_part_detail', None)
-
-    manufacturer_part_detail = ManufacturerPartSerializer(
-        source='manufacturer_part', many=False, read_only=True, allow_null=True
+    manufacturer_part_detail = enable_filter(
+        ManufacturerPartSerializer(
+            source='manufacturer_part', many=False, read_only=True, allow_null=True
+        )
     )
 
 
 @register_importer()
 class SupplierPartSerializer(
-    DataImportExportSerializerMixin, InvenTreeTagModelSerializer, NotesFieldMixin
+    FilterableSerializerMixin,
+    DataImportExportSerializerMixin,
+    InvenTreeTagModelSerializer,
+    NotesFieldMixin,
 ):
     """Serializer for SupplierPart object."""
+
+    no_filters = True
 
     export_exclude_fields = ['tags']
 
@@ -366,7 +382,6 @@ class SupplierPartSerializer(
             'notes',
             'tags',
         ]
-
         read_only_fields = [
             'availability_updated',
             'barcode_hash',
@@ -378,13 +393,11 @@ class SupplierPartSerializer(
     def __init__(self, *args, **kwargs):
         """Initialize this serializer with extra detail fields as required."""
         # Check if 'available' quantity was supplied
-
         self.has_available_quantity = 'available' in kwargs.get('data', {})
 
+        # TODO INVE-T1 support complex filters
         brief = kwargs.pop('brief', False)
-
         detail_default = not brief
-
         part_detail = kwargs.pop('part_detail', detail_default)
         supplier_detail = kwargs.pop('supplier_detail', detail_default)
         manufacturer_detail = kwargs.pop('manufacturer_detail', detail_default)
@@ -519,7 +532,7 @@ class SupplierPartSerializer(
 
 @register_importer()
 class SupplierPriceBreakSerializer(
-    DataImportExportSerializerMixin, InvenTreeModelSerializer
+    FilterableSerializerMixin, DataImportExportSerializerMixin, InvenTreeModelSerializer
 ):
     """Serializer for SupplierPriceBreak object."""
 
@@ -539,22 +552,6 @@ class SupplierPriceBreakSerializer(
             'updated',
         ]
 
-    def __init__(self, *args, **kwargs):
-        """Initialize this serializer with extra fields as required."""
-        supplier_detail = kwargs.pop('supplier_detail', False)
-        part_detail = kwargs.pop('part_detail', False)
-
-        super().__init__(*args, **kwargs)
-
-        if isGeneratingSchema():
-            return
-
-        if not supplier_detail:
-            self.fields.pop('supplier_detail', None)
-
-        if not part_detail:
-            self.fields.pop('part_detail', None)
-
     @staticmethod
     def annotate_queryset(queryset):
         """Prefetch related fields for the queryset."""
@@ -572,11 +569,15 @@ class SupplierPriceBreakSerializer(
         source='part.supplier', many=False, read_only=True
     )
 
-    supplier_detail = CompanyBriefSerializer(
-        source='part.supplier', many=False, read_only=True, allow_null=True
+    supplier_detail = enable_filter(
+        CompanyBriefSerializer(
+            source='part.supplier', many=False, read_only=True, allow_null=True
+        )
     )
 
     # Detail serializer for SupplierPart
-    part_detail = SupplierPartSerializer(
-        source='part', brief=True, many=False, read_only=True, allow_null=True
+    part_detail = enable_filter(
+        SupplierPartSerializer(
+            source='part', brief=True, many=False, read_only=True, allow_null=True
+        )
     )

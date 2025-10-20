@@ -15,12 +15,14 @@ import InvenTree.helpers
 logger = structlog.get_logger('inventree')
 
 
-def currency_code_default():
+def currency_code_default(create: bool = True):
     """Returns the default currency code (or USD if not specified)."""
     from common.settings import get_global_setting
 
     try:
-        code = get_global_setting('INVENTREE_DEFAULT_CURRENCY', create=True, cache=True)
+        code = get_global_setting(
+            'INVENTREE_DEFAULT_CURRENCY', create=create, cache=True
+        )
     except Exception:  # pragma: no cover
         # Database may not yet be ready, no need to throw an error here
         code = ''
@@ -46,7 +48,7 @@ def currency_codes() -> list:
     from common.settings import get_global_setting
 
     codes = get_global_setting(
-        'CURRENCY_CODES', create=False, enviroment_key='INVENTREE_CURRENCY_CODES'
+        'CURRENCY_CODES', create=False, environment_key='INVENTREE_CURRENCY_CODES'
     ).strip()
 
     if not codes:
@@ -158,7 +160,7 @@ def get_price(
     - If MOQ (minimum order quantity) is required, bump quantity
     - If order multiples are to be observed, then we need to calculate based on that, too
     """
-    from common.currency import currency_code_default
+    # from common.currency import currency_code_default
 
     if hasattr(instance, break_name):
         price_breaks = getattr(instance, break_name).all()

@@ -14,7 +14,7 @@ from django.db.models import (
     Value,
     When,
 )
-from django.db.models.functions import Coalesce
+from django.db.models.functions import Coalesce, Greatest
 from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
@@ -27,7 +27,6 @@ import part.filters as part_filters
 import part.models as part_models
 import stock.models
 import stock.serializers
-import stock.status_codes
 from common.serializers import ProjectCodeSerializer
 from company.serializers import (
     AddressBriefSerializer,
@@ -45,13 +44,14 @@ from InvenTree.helpers import (
     str2bool,
 )
 from InvenTree.mixins import DataImportExportSerializerMixin
-from InvenTree.ready import isGeneratingSchema
 from InvenTree.serializers import (
+    FilterableSerializerMixin,
     InvenTreeCurrencySerializer,
     InvenTreeDecimalField,
     InvenTreeModelSerializer,
     InvenTreeMoneySerializer,
     NotesFieldMixin,
+    enable_filter,
 )
 from order.status_codes import (
     PurchaseOrderStatusGroups,
@@ -276,15 +276,6 @@ class AbstractExtraLineSerializer(
 ):
     """Abstract Serializer for a ExtraLine object."""
 
-    def __init__(self, *args, **kwargs):
-        """Initialization routine for the serializer."""
-        order_detail = kwargs.pop('order_detail', False)
-
-        super().__init__(*args, **kwargs)
-
-        if order_detail is not True and not isGeneratingSchema():
-            self.fields.pop('order_detail', None)
-
     quantity = serializers.FloatField()
 
     price = InvenTreeMoneySerializer(allow_null=True)
@@ -312,6 +303,7 @@ class AbstractExtraLineMeta:
 
 @register_importer()
 class PurchaseOrderSerializer(
+    FilterableSerializerMixin,
     NotesFieldMixin,
     TotalPriceMixin,
     InvenTreeCustomStatusSerializerMixin,
@@ -324,7 +316,6 @@ class PurchaseOrderSerializer(
         """Metaclass options."""
 
         model = order.models.PurchaseOrder
-
         fields = AbstractOrderSerializer.order_fields([
             'complete_date',
             'supplier',
@@ -335,22 +326,11 @@ class PurchaseOrderSerializer(
             'order_currency',
             'destination',
         ])
-
         read_only_fields = ['issue_date', 'complete_date', 'creation_date']
-
         extra_kwargs = {
             'supplier': {'required': True},
             'order_currency': {'required': False},
         }
-
-    def __init__(self, *args, **kwargs):
-        """Initialization routine for the serializer."""
-        supplier_detail = kwargs.pop('supplier_detail', False)
-
-        super().__init__(*args, **kwargs)
-
-        if supplier_detail is not True and not isGeneratingSchema():
-            self.fields.pop('supplier_detail', None)
 
     def skip_create_fields(self):
         """Skip these fields when instantiating a new object."""
@@ -389,8 +369,10 @@ class PurchaseOrderSerializer(
         source='supplier.name', read_only=True, label=_('Supplier Name')
     )
 
-    supplier_detail = CompanyBriefSerializer(
-        source='supplier', many=False, read_only=True, allow_null=True
+    supplier_detail = enable_filter(
+        CompanyBriefSerializer(
+            source='supplier', many=False, read_only=True, allow_null=True
+        )
     )
 
 
@@ -478,6 +460,7 @@ class PurchaseOrderIssueSerializer(OrderAdjustSerializer):
 
 @register_importer()
 class PurchaseOrderLineItemSerializer(
+    FilterableSerializerMixin,
     DataImportExportSerializerMixin,
     AbstractLineItemSerializer,
     InvenTreeModelSerializer,
@@ -488,7 +471,6 @@ class PurchaseOrderLineItemSerializer(
         """Metaclass options."""
 
         model = order.models.PurchaseOrderLineItem
-
         fields = [
             'pk',
             'part',
@@ -518,23 +500,6 @@ class PurchaseOrderLineItemSerializer(
             'internal_part',
             'internal_part_name',
         ]
-
-    def __init__(self, *args, **kwargs):
-        """Initialization routine for the serializer."""
-        part_detail = kwargs.pop('part_detail', False)
-        order_detail = kwargs.pop('order_detail', False)
-
-        super().__init__(*args, **kwargs)
-
-        if isGeneratingSchema():
-            return
-
-        if part_detail is not True:
-            self.fields.pop('part_detail', None)
-            self.fields.pop('supplier_part_detail', None)
-
-        if order_detail is not True:
-            self.fields.pop('order_detail', None)
 
     def skip_create_fields(self):
         """Return a list of fields to skip when creating a new object."""
@@ -618,12 +583,18 @@ class PurchaseOrderLineItemSerializer(
 
     total_price = serializers.FloatField(read_only=True)
 
-    part_detail = PartBriefSerializer(
-        source='get_base_part', many=False, read_only=True, allow_null=True
+    part_detail = enable_filter(
+        PartBriefSerializer(
+            source='get_base_part', many=False, read_only=True, allow_null=True
+        ),
+        filter_name='part_detail',
     )
 
-    supplier_part_detail = SupplierPartSerializer(
-        source='part', brief=True, many=False, read_only=True, allow_null=True
+    supplier_part_detail = enable_filter(
+        SupplierPartSerializer(
+            source='part', brief=True, many=False, read_only=True, allow_null=True
+        ),
+        filter_name='part_detail',
     )
 
     purchase_price = InvenTreeMoneySerializer(allow_null=True)
@@ -644,8 +615,10 @@ class PurchaseOrderLineItemSerializer(
         help_text=_('Purchase price currency')
     )
 
-    order_detail = PurchaseOrderSerializer(
-        source='order', read_only=True, allow_null=True, many=False
+    order_detail = enable_filter(
+        PurchaseOrderSerializer(
+            source='order', read_only=True, allow_null=True, many=False
+        )
     )
 
     build_order_detail = build.serializers.BuildSerializer(
@@ -720,12 +693,14 @@ class PurchaseOrderLineItemSerializer(
 
 @register_importer()
 class PurchaseOrderExtraLineSerializer(
-    AbstractExtraLineSerializer, InvenTreeModelSerializer
+    FilterableSerializerMixin, AbstractExtraLineSerializer, InvenTreeModelSerializer
 ):
     """Serializer for a PurchaseOrderExtraLine object."""
 
-    order_detail = PurchaseOrderSerializer(
-        source='order', many=False, read_only=True, allow_null=True
+    order_detail = enable_filter(
+        PurchaseOrderSerializer(
+            source='order', many=False, read_only=True, allow_null=True
+        )
     )
 
     class Meta(AbstractExtraLineMeta):
@@ -755,18 +730,10 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
 
     line_item = serializers.PrimaryKeyRelatedField(
         queryset=order.models.PurchaseOrderLineItem.objects.all(),
-        many=False,
         allow_null=False,
         required=True,
         label=_('Line Item'),
     )
-
-    def validate_line_item(self, item):
-        """Validation for the 'line_item' field."""
-        if item.order != self.context['order']:
-            raise ValidationError(_('Line item does not match purchase order'))
-
-        return item
 
     location = serializers.PrimaryKeyRelatedField(
         queryset=stock.models.StockLocation.objects.all(),
@@ -864,19 +831,12 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
         quantity = data['quantity']
         serial_numbers = data.get('serial_numbers', '').strip()
 
-        base_part = line_item.part.part
-        base_quantity = line_item.part.base_quantity(quantity)
-
-        # Does the quantity need to be "integer" (for trackable parts?)
-        if base_part.trackable and Decimal(base_quantity) != int(base_quantity):
-            raise ValidationError({
-                'quantity': _(
-                    'An integer quantity must be provided for trackable parts'
-                )
-            })
-
         # If serial numbers are provided
         if serial_numbers:
+            supplier_part = line_item.part
+            base_part = supplier_part.part
+            base_quantity = supplier_part.base_quantity(quantity)
+
             try:
                 # Pass the serial numbers through to the parent serializer once validated
                 data['serials'] = extract_serial_numbers(
@@ -940,6 +900,9 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
         if len(items) == 0:
             raise ValidationError(_('Line items must be provided'))
 
+        # Ensure barcodes are unique
+        unique_barcodes = set()
+
         # Check if the location is not specified for any particular item
         for item in items:
             line = item['line_item']
@@ -957,10 +920,6 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
                     'location': _('Destination location must be specified')
                 })
 
-        # Ensure barcodes are unique
-        unique_barcodes = set()
-
-        for item in items:
             barcode = item.get('barcode', '')
 
             if barcode:
@@ -971,7 +930,7 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
 
         return data
 
-    def save(self):
+    def save(self) -> list[stock.models.StockItem]:
         """Perform the actual database transaction to receive purchase order items."""
         data = self.validated_data
 
@@ -983,37 +942,21 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
         # Location can be provided, or default to the order destination
         location = data.get('location', order.destination)
 
-        # Now we can actually receive the items into stock
-        with transaction.atomic():
-            for item in items:
-                # Select location (in descending order of priority)
-                loc = (
-                    item.get('location', None)
-                    or location
-                    or item['line_item'].get_destination()
-                )
+        try:
+            items = order.receive_line_items(
+                location, items, request.user if request else None
+            )
+        except (ValidationError, DjangoValidationError) as exc:
+            # Catch model errors and re-throw as DRF errors
+            raise ValidationError(detail=serializers.as_serializer_error(exc))
 
-                try:
-                    order.receive_line_item(
-                        item['line_item'],
-                        loc,
-                        item['quantity'],
-                        request.user if request else None,
-                        status=item['status'],
-                        barcode=item.get('barcode', ''),
-                        batch_code=item.get('batch_code', ''),
-                        expiry_date=item.get('expiry_date', None),
-                        packaging=item.get('packaging', ''),
-                        serials=item.get('serials', None),
-                        notes=item.get('note', None),
-                    )
-                except (ValidationError, DjangoValidationError) as exc:
-                    # Catch model errors and re-throw as DRF errors
-                    raise ValidationError(detail=serializers.as_serializer_error(exc))
+        # Returns a list of the created items
+        return items
 
 
 @register_importer()
 class SalesOrderSerializer(
+    FilterableSerializerMixin,
     NotesFieldMixin,
     TotalPriceMixin,
     InvenTreeCustomStatusSerializerMixin,
@@ -1026,7 +969,6 @@ class SalesOrderSerializer(
         """Metaclass options."""
 
         model = order.models.SalesOrder
-
         fields = AbstractOrderSerializer.order_fields([
             'customer',
             'customer_detail',
@@ -1037,19 +979,8 @@ class SalesOrderSerializer(
             'shipments_count',
             'completed_shipments_count',
         ])
-
         read_only_fields = ['status', 'creation_date', 'shipment_date']
-
         extra_kwargs = {'order_currency': {'required': False}}
-
-    def __init__(self, *args, **kwargs):
-        """Initialization routine for the serializer."""
-        customer_detail = kwargs.pop('customer_detail', False)
-
-        super().__init__(*args, **kwargs)
-
-        if customer_detail is not True and not isGeneratingSchema():
-            self.fields.pop('customer_detail', None)
 
     def skip_create_fields(self):
         """Skip these fields when instantiating a new object."""
@@ -1091,8 +1022,10 @@ class SalesOrderSerializer(
 
         return queryset
 
-    customer_detail = CompanyBriefSerializer(
-        source='customer', many=False, read_only=True, allow_null=True
+    customer_detail = enable_filter(
+        CompanyBriefSerializer(
+            source='customer', many=False, read_only=True, allow_null=True
+        )
     )
 
     shipments_count = serializers.IntegerField(
@@ -1114,6 +1047,7 @@ class SalesOrderIssueSerializer(OrderAdjustSerializer):
 
 @register_importer()
 class SalesOrderLineItemSerializer(
+    FilterableSerializerMixin,
     DataImportExportSerializerMixin,
     AbstractLineItemSerializer,
     InvenTreeModelSerializer,
@@ -1124,7 +1058,6 @@ class SalesOrderLineItemSerializer(
         """Metaclass options."""
 
         model = order.models.SalesOrderLineItem
-
         fields = [
             'pk',
             'allocated',
@@ -1148,29 +1081,6 @@ class SalesOrderLineItemSerializer(
             'building',
             'on_order',
         ]
-
-    def __init__(self, *args, **kwargs):
-        """Initialization routine for the serializer.
-
-        - Add extra related serializer information if required
-        """
-        part_detail = kwargs.pop('part_detail', False)
-        order_detail = kwargs.pop('order_detail', False)
-        customer_detail = kwargs.pop('customer_detail', False)
-
-        super().__init__(*args, **kwargs)
-
-        if isGeneratingSchema():
-            return
-
-        if part_detail is not True:
-            self.fields.pop('part_detail', None)
-
-        if order_detail is not True:
-            self.fields.pop('order_detail', None)
-
-        if customer_detail is not True:
-            self.fields.pop('customer_detail', None)
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -1205,10 +1115,14 @@ class SalesOrderLineItemSerializer(
         )
 
         queryset = queryset.annotate(
-            available_stock=ExpressionWrapper(
-                F('total_stock')
-                - F('allocated_to_sales_orders')
-                - F('allocated_to_build_orders'),
+            available_stock=Greatest(
+                ExpressionWrapper(
+                    F('total_stock')
+                    - F('allocated_to_sales_orders')
+                    - F('allocated_to_build_orders'),
+                    output_field=models.DecimalField(),
+                ),
+                0,
                 output_field=models.DecimalField(),
             )
         )
@@ -1232,10 +1146,14 @@ class SalesOrderLineItemSerializer(
         )
 
         queryset = queryset.annotate(
-            available_variant_stock=ExpressionWrapper(
-                F('variant_stock_total')
-                - F('variant_bo_allocations')
-                - F('variant_so_allocations'),
+            available_variant_stock=Greatest(
+                ExpressionWrapper(
+                    F('variant_stock_total')
+                    - F('variant_bo_allocations')
+                    - F('variant_so_allocations'),
+                    output_field=models.DecimalField(),
+                ),
+                0,
                 output_field=models.DecimalField(),
             )
         )
@@ -1261,14 +1179,18 @@ class SalesOrderLineItemSerializer(
 
         return queryset
 
-    order_detail = SalesOrderSerializer(
-        source='order', many=False, read_only=True, allow_null=True
+    order_detail = enable_filter(
+        SalesOrderSerializer(
+            source='order', many=False, read_only=True, allow_null=True
+        )
     )
-    part_detail = PartBriefSerializer(
-        source='part', many=False, read_only=True, allow_null=True
+    part_detail = enable_filter(
+        PartBriefSerializer(source='part', many=False, read_only=True, allow_null=True)
     )
-    customer_detail = CompanyBriefSerializer(
-        source='order.customer', many=False, read_only=True, allow_null=True
+    customer_detail = enable_filter(
+        CompanyBriefSerializer(
+            source='order.customer', many=False, read_only=True, allow_null=True
+        )
     )
 
     # Annotated fields
@@ -1292,14 +1214,15 @@ class SalesOrderLineItemSerializer(
 
 
 @register_importer()
-class SalesOrderShipmentSerializer(NotesFieldMixin, InvenTreeModelSerializer):
+class SalesOrderShipmentSerializer(
+    FilterableSerializerMixin, NotesFieldMixin, InvenTreeModelSerializer
+):
     """Serializer for the SalesOrderShipment class."""
 
     class Meta:
         """Metaclass options."""
 
         model = order.models.SalesOrderShipment
-
         fields = [
             'pk',
             'order',
@@ -1316,15 +1239,6 @@ class SalesOrderShipmentSerializer(NotesFieldMixin, InvenTreeModelSerializer):
             'notes',
         ]
 
-    def __init__(self, *args, **kwargs):
-        """Initialization routine for the serializer."""
-        order_detail = kwargs.pop('order_detail', True)
-
-        super().__init__(*args, **kwargs)
-
-        if not order_detail and not isGeneratingSchema():
-            self.fields.pop('order_detail', None)
-
     @staticmethod
     def annotate_queryset(queryset):
         """Annotate the queryset with extra information."""
@@ -1339,12 +1253,17 @@ class SalesOrderShipmentSerializer(NotesFieldMixin, InvenTreeModelSerializer):
         read_only=True, allow_null=True, label=_('Allocated Items')
     )
 
-    order_detail = SalesOrderSerializer(
-        source='order', read_only=True, allow_null=True, many=False
+    order_detail = enable_filter(
+        SalesOrderSerializer(
+            source='order', read_only=True, allow_null=True, many=False
+        ),
+        True,
     )
 
 
-class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
+class SalesOrderAllocationSerializer(
+    FilterableSerializerMixin, InvenTreeModelSerializer
+):
     """Serializer for the SalesOrderAllocation model.
 
     This includes some fields from the related model objects.
@@ -1354,7 +1273,6 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
         """Metaclass options."""
 
         model = order.models.SalesOrderAllocation
-
         fields = [
             'pk',
             'item',
@@ -1374,36 +1292,7 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
             'location_detail',
             'shipment_detail',
         ]
-
         read_only_fields = ['line', '']
-
-    def __init__(self, *args, **kwargs):
-        """Initialization routine for the serializer."""
-        order_detail = kwargs.pop('order_detail', False)
-        part_detail = kwargs.pop('part_detail', True)
-        item_detail = kwargs.pop('item_detail', True)
-        location_detail = kwargs.pop('location_detail', False)
-        customer_detail = kwargs.pop('customer_detail', False)
-
-        super().__init__(*args, **kwargs)
-
-        if isGeneratingSchema():
-            return
-
-        if not order_detail:
-            self.fields.pop('order_detail', None)
-
-        if not part_detail:
-            self.fields.pop('part_detail', None)
-
-        if not item_detail:
-            self.fields.pop('item_detail', None)
-
-        if not location_detail:
-            self.fields.pop('location_detail', None)
-
-        if not customer_detail:
-            self.fields.pop('customer_detail', None)
 
     part = serializers.PrimaryKeyRelatedField(source='item.part', read_only=True)
     order = serializers.PrimaryKeyRelatedField(
@@ -1416,24 +1305,46 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
     )
 
     # Extra detail fields
-    order_detail = SalesOrderSerializer(
-        source='line.order', many=False, read_only=True, allow_null=True
+    order_detail = enable_filter(
+        SalesOrderSerializer(
+            source='line.order', many=False, read_only=True, allow_null=True
+        )
     )
-    part_detail = PartBriefSerializer(
-        source='item.part', many=False, read_only=True, allow_null=True
+    part_detail = enable_filter(
+        PartBriefSerializer(
+            source='item.part', many=False, read_only=True, allow_null=True
+        ),
+        True,
     )
-    item_detail = stock.serializers.StockItemSerializerBrief(
-        source='item', many=False, read_only=True, allow_null=True
+    item_detail = enable_filter(
+        stock.serializers.StockItemSerializer(
+            source='item',
+            many=False,
+            read_only=True,
+            allow_null=True,
+            part_detail=False,
+            location_detail=False,
+            supplier_part_detail=False,
+        ),
+        True,
     )
-    location_detail = stock.serializers.LocationBriefSerializer(
-        source='item.location', many=False, read_only=True, allow_null=True
+    location_detail = enable_filter(
+        stock.serializers.LocationBriefSerializer(
+            source='item.location', many=False, read_only=True, allow_null=True
+        )
     )
-    customer_detail = CompanyBriefSerializer(
-        source='line.order.customer', many=False, read_only=True, allow_null=True
+    customer_detail = enable_filter(
+        CompanyBriefSerializer(
+            source='line.order.customer', many=False, read_only=True, allow_null=True
+        )
     )
 
     shipment_detail = SalesOrderShipmentSerializer(
-        source='shipment', order_detail=False, many=False, read_only=True
+        source='shipment',
+        order_detail=False,
+        many=False,
+        read_only=True,
+        allow_null=True,
     )
 
 
@@ -1866,7 +1777,7 @@ class SalesOrderShipmentAllocationSerializer(serializers.Serializer):
 
 @register_importer()
 class SalesOrderExtraLineSerializer(
-    AbstractExtraLineSerializer, InvenTreeModelSerializer
+    FilterableSerializerMixin, AbstractExtraLineSerializer, InvenTreeModelSerializer
 ):
     """Serializer for a SalesOrderExtraLine object."""
 
@@ -1875,13 +1786,16 @@ class SalesOrderExtraLineSerializer(
 
         model = order.models.SalesOrderExtraLine
 
-    order_detail = SalesOrderSerializer(
-        source='order', many=False, read_only=True, allow_null=True
+    order_detail = enable_filter(
+        SalesOrderSerializer(
+            source='order', many=False, read_only=True, allow_null=True
+        )
     )
 
 
 @register_importer()
 class ReturnOrderSerializer(
+    FilterableSerializerMixin,
     NotesFieldMixin,
     InvenTreeCustomStatusSerializerMixin,
     AbstractOrderSerializer,
@@ -1894,7 +1808,6 @@ class ReturnOrderSerializer(
         """Metaclass options."""
 
         model = order.models.ReturnOrder
-
         fields = AbstractOrderSerializer.order_fields([
             'complete_date',
             'customer',
@@ -1903,17 +1816,7 @@ class ReturnOrderSerializer(
             'order_currency',
             'total_price',
         ])
-
         read_only_fields = ['creation_date']
-
-    def __init__(self, *args, **kwargs):
-        """Initialization routine for the serializer."""
-        customer_detail = kwargs.pop('customer_detail', False)
-
-        super().__init__(*args, **kwargs)
-
-        if customer_detail is not True and not isGeneratingSchema():
-            self.fields.pop('customer_detail', None)
 
     def skip_create_fields(self):
         """Skip these fields when instantiating a new object."""
@@ -1944,8 +1847,10 @@ class ReturnOrderSerializer(
 
         return queryset
 
-    customer_detail = CompanyBriefSerializer(
-        source='customer', many=False, read_only=True, allow_null=True
+    customer_detail = enable_filter(
+        CompanyBriefSerializer(
+            source='customer', many=False, read_only=True, allow_null=True
+        )
     )
 
 
@@ -2081,6 +1986,7 @@ class ReturnOrderReceiveSerializer(serializers.Serializer):
 
 @register_importer()
 class ReturnOrderLineItemSerializer(
+    FilterableSerializerMixin,
     DataImportExportSerializerMixin,
     AbstractLineItemSerializer,
     InvenTreeModelSerializer,
@@ -2091,7 +1997,6 @@ class ReturnOrderLineItemSerializer(
         """Metaclass options."""
 
         model = order.models.ReturnOrderLineItem
-
         fields = [
             'pk',
             'order',
@@ -2111,40 +2016,26 @@ class ReturnOrderLineItemSerializer(
             'link',
         ]
 
-    def __init__(self, *args, **kwargs):
-        """Initialization routine for the serializer."""
-        order_detail = kwargs.pop('order_detail', False)
-        item_detail = kwargs.pop('item_detail', False)
-        part_detail = kwargs.pop('part_detail', False)
-
-        super().__init__(*args, **kwargs)
-
-        if isGeneratingSchema():
-            return
-
-        if not order_detail:
-            self.fields.pop('order_detail', None)
-
-        if not item_detail:
-            self.fields.pop('item_detail', None)
-
-        if not part_detail:
-            self.fields.pop('part_detail', None)
-
-    order_detail = ReturnOrderSerializer(
-        source='order', many=False, read_only=True, allow_null=True
+    order_detail = enable_filter(
+        ReturnOrderSerializer(
+            source='order', many=False, read_only=True, allow_null=True
+        )
     )
 
     quantity = serializers.FloatField(
         label=_('Quantity'), help_text=_('Quantity to return')
     )
 
-    item_detail = stock.serializers.StockItemSerializer(
-        source='item', many=False, read_only=True, allow_null=True
+    item_detail = enable_filter(
+        stock.serializers.StockItemSerializer(
+            source='item', many=False, read_only=True, allow_null=True
+        )
     )
 
-    part_detail = PartBriefSerializer(
-        source='item.part', many=False, read_only=True, allow_null=True
+    part_detail = enable_filter(
+        PartBriefSerializer(
+            source='item.part', many=False, read_only=True, allow_null=True
+        )
     )
 
     price = InvenTreeMoneySerializer(allow_null=True)
@@ -2153,7 +2044,7 @@ class ReturnOrderLineItemSerializer(
 
 @register_importer()
 class ReturnOrderExtraLineSerializer(
-    AbstractExtraLineSerializer, InvenTreeModelSerializer
+    FilterableSerializerMixin, AbstractExtraLineSerializer, InvenTreeModelSerializer
 ):
     """Serializer for a ReturnOrderExtraLine object."""
 
@@ -2162,6 +2053,8 @@ class ReturnOrderExtraLineSerializer(
 
         model = order.models.ReturnOrderExtraLine
 
-    order_detail = ReturnOrderSerializer(
-        source='order', many=False, read_only=True, allow_null=True
+    order_detail = enable_filter(
+        ReturnOrderSerializer(
+            source='order', many=False, read_only=True, allow_null=True
+        )
     )

@@ -1,7 +1,15 @@
 import { t } from '@lingui/core/macro';
-import { Alert, Card, Center, Divider, Loader, Text } from '@mantine/core';
+import {
+  Alert,
+  Card,
+  Center,
+  Divider,
+  Loader,
+  Space,
+  Text
+} from '@mantine/core';
 import { useDisclosure, useHotkeys } from '@mantine/hooks';
-import { IconInfoCircle } from '@tabler/icons-react';
+import { IconExclamationCircle, IconInfoCircle } from '@tabler/icons-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { type Layout, Responsive, WidthProvider } from 'react-grid-layout';
 
@@ -21,15 +29,23 @@ export default function DashboardLayout() {
   const [widgets, setWidgets] = useState<DashboardWidgetProps[]>([]);
 
   // local/remote storage values for widget / layout
-  const [remoteWidgets, setRemoteWidgets, remoteLayouts, setRemoteLayouts] =
-    useLocalState(
-      useShallow((state) => [
-        state.widgets,
-        state.setWidgets,
-        state.layouts,
-        state.setLayouts
-      ])
-    );
+  const [
+    remoteWidgets,
+    setRemoteWidgets,
+    remoteLayouts,
+    setRemoteLayouts,
+    showSampleDashboard,
+    setShowSampleDashboard
+  ] = useLocalState(
+    useShallow((state) => [
+      state.widgets,
+      state.setWidgets,
+      state.layouts,
+      state.setLayouts,
+      state.showSampleDashboard,
+      state.setShowSampleDashboard
+    ])
+  );
 
   const [editing, setEditing] = useDisclosure(false);
   const [removing, setRemoving] = useDisclosure(false);
@@ -75,6 +91,9 @@ export default function DashboardLayout() {
       );
 
       if (newWidget) {
+        if (showSampleDashboard) {
+          setShowSampleDashboard(false);
+        }
         setWidgets([...widgets, newWidget]);
       }
 
@@ -195,9 +214,47 @@ export default function DashboardLayout() {
 
   // Clear all widgets from the dashboard
   const clearWidgets = useCallback(() => {
+    if (showSampleDashboard) {
+      setShowSampleDashboard(false);
+    }
     setWidgets([]);
     setLayouts({});
   }, []);
+
+  const defaultLayouts = {
+    lg: [
+      {
+        w: 6,
+        h: 4,
+        x: 0,
+        y: 0,
+        i: 'gstart',
+        minW: 5,
+        minH: 4,
+        moved: false,
+        static: false
+      },
+      {
+        w: 6,
+        h: 4,
+        x: 6,
+        y: 0,
+        i: 'news',
+        minW: 5,
+        minH: 4,
+        moved: false,
+        static: false
+      }
+    ]
+  };
+  const loadWigs = ['news', 'gstart'];
+  const defaultWidgets = useMemo(() => {
+    return loadWigs
+      .map((lwid: string) =>
+        availableWidgets.items.find((wid) => wid.label === lwid)
+      )
+      .filter((widget): widget is DashboardWidgetProps => widget !== undefined);
+  }, [availableWidgets.items, defaultLayouts]);
 
   return (
     <>
@@ -220,46 +277,49 @@ export default function DashboardLayout() {
         removing={removing}
       />
       <Divider p='xs' />
+      {availableWidgets.error && (
+        <Alert color='red' title={t`Error`} icon={<IconExclamationCircle />}>
+          {t`Failed to load dashboard widgets.`}
+        </Alert>
+      )}
       {layouts && loaded && availableWidgets.loaded ? (
         <>
           {widgetLabels.length == 0 ? (
-            <Center>
-              <Card shadow='xs' padding='xl' style={{ width: '100%' }}>
-                <Alert
-                  color='blue'
-                  title={t`No Widgets Selected`}
-                  icon={<IconInfoCircle />}
-                >
-                  <Text>{t`Use the menu to add widgets to the dashboard`}</Text>
-                </Alert>
-              </Card>
-            </Center>
+            <>
+              <Center>
+                <Card shadow='xs' padding='xl' style={{ width: '100%' }}>
+                  <Alert
+                    color='blue'
+                    title={t`No Widgets Selected`}
+                    icon={<IconInfoCircle />}
+                  >
+                    <Text>{t`Use the menu to add widgets to the dashboard`}</Text>
+                  </Alert>
+                </Card>
+              </Center>
+              {showSampleDashboard && (
+                <>
+                  <Space h='lg' />
+                  {WidgetGrid(
+                    defaultLayouts,
+                    () => {},
+                    editing,
+                    defaultWidgets,
+                    removing,
+                    () => {}
+                  )}
+                </>
+              )}
+            </>
           ) : (
-            <ReactGridLayout
-              className='dashboard-layout'
-              breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
-              cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
-              rowHeight={64}
-              layouts={layouts}
-              onLayoutChange={onLayoutChange}
-              compactType={'vertical'}
-              isDraggable={editing}
-              isResizable={editing}
-              margin={[10, 10]}
-              containerPadding={[0, 0]}
-              resizeHandles={['ne', 'se', 'sw', 'nw']}
-            >
-              {widgets.map((item: DashboardWidgetProps) => {
-                return DashboardWidget({
-                  item: item,
-                  editing: editing,
-                  removing: removing,
-                  onRemove: () => {
-                    removeWidget(item.label);
-                  }
-                });
-              })}
-            </ReactGridLayout>
+            WidgetGrid(
+              layouts,
+              onLayoutChange,
+              editing,
+              widgets,
+              removing,
+              removeWidget
+            )
           )}
         </>
       ) : (
@@ -268,5 +328,42 @@ export default function DashboardLayout() {
         </Center>
       )}
     </>
+  );
+}
+
+function WidgetGrid(
+  layouts: {},
+  onLayoutChange: (layout: any, newLayouts: any) => void,
+  editing: boolean,
+  widgets: DashboardWidgetProps[],
+  removing: boolean,
+  removeWidget: (widget: string) => void
+) {
+  return (
+    <ReactGridLayout
+      className='dashboard-layout'
+      breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
+      cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
+      rowHeight={64}
+      layouts={layouts}
+      onLayoutChange={onLayoutChange}
+      compactType={'vertical'}
+      isDraggable={editing}
+      isResizable={editing}
+      margin={[10, 10]}
+      containerPadding={[0, 0]}
+      resizeHandles={['ne', 'se', 'sw', 'nw']}
+    >
+      {widgets.map((item: DashboardWidgetProps) => {
+        return DashboardWidget({
+          item: item,
+          editing: editing,
+          removing: removing,
+          onRemove: () => {
+            removeWidget(item.label);
+          }
+        });
+      })}
+    </ReactGridLayout>
   );
 }

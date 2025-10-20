@@ -1,13 +1,12 @@
 # Please keep this list sorted - if you pin a version provide a reason
 Django<5.0                              # Django package
 blessed                                 # CLI for Q Monitor
-coreapi                                 # API documentation for djangorestframework
 cryptography>=44.0.0                    # Core cryptographic functionality
 django-anymail[amazon_ses,postal]       # Email backend for various providers
 django-allauth[mfa,socialaccount,saml,openid]   # SSO for external providers via OpenID
 django-cleanup                          # Automated deletion of old / unused uploaded files
 django-cors-headers                     # CORS headers extension for DRF
-django-dbbackup                         # Backup / restore of database and media files
+django-dbbackup>=5.0.0                  # Backup / restore of database and media files
 django-error-report-2                   # Error report viewer for the admin interface
 django-filter                           # Extended filtering options
 django-flags                            # Feature flags
@@ -38,6 +37,7 @@ docutils                                # Documentation utilities for auto admin
 drf-spectacular                         # DRF API documentation
 feedparser                              # RSS newsfeed parser
 gunicorn                                # Gunicorn web server
+jinja2                                  # Jinja2 templating engine
 pdf2image                               # PDF to image conversion
 pillow                                  # Image manipulation
 pint                                    # Unit conversion

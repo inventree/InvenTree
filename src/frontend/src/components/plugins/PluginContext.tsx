@@ -17,12 +17,25 @@ import {
   INVENTREE_REACT_VERSION,
   type InvenTreePluginContext
 } from '@lib/types/Plugins';
+import { i18n } from '@lingui/core';
+import {
+  useAddStockItem,
+  useAssignStockItem,
+  useChangeStockStatus,
+  useCountStockItem,
+  useDeleteStockItem,
+  useMergeStockItem,
+  useRemoveStockItem,
+  useReturnStockItem,
+  useTransferStockItem
+} from '../../forms/StockForms';
 import {
   useBulkEditApiFormModal,
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
+import { RenderInstance } from '../render/Instance';
 
 export const useInvenTreeContext = () => {
   const [locale, host] = useLocalState(useShallow((s) => [s.language, s.host]));
@@ -43,6 +56,7 @@ export const useInvenTreeContext = () => {
       },
       user: user,
       host: host,
+      i18n: i18n,
       locale: locale,
       api: api,
       queryClient: queryClient,
@@ -50,13 +64,25 @@ export const useInvenTreeContext = () => {
       globalSettings: globalSettings,
       userSettings: userSettings,
       modelInformation: ModelInformationDict,
+      renderInstance: RenderInstance,
       theme: theme,
       colorScheme: colorScheme,
       forms: {
         bulkEdit: useBulkEditApiFormModal,
         create: useCreateApiFormModal,
         delete: useDeleteApiFormModal,
-        edit: useEditApiFormModal
+        edit: useEditApiFormModal,
+        stockActions: {
+          addStock: useAddStockItem,
+          assignStock: useAssignStockItem,
+          changeStatus: useChangeStockStatus,
+          countStock: useCountStockItem,
+          deleteStock: useDeleteStockItem,
+          mergeStock: useMergeStockItem,
+          removeStock: useRemoveStockItem,
+          transferStock: useTransferStockItem,
+          returnStock: useReturnStockItem
+        }
       }
     };
   }, [

@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { YesNoButton } from '@lib/components/YesNoButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
@@ -14,7 +15,7 @@ import { getDetailUrl } from '@lib/functions/Navigation';
 import { navigateToLink } from '@lib/functions/Navigation';
 import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
-import { YesNoButton } from '../../components/buttons/YesNoButton';
+import type { TableColumn } from '@lib/types/Tables';
 import { useApi } from '../../contexts/ApiContext';
 import { formatDecimal } from '../../defaults/formatters';
 import { usePartParameterFields } from '../../forms/PartForms';
@@ -24,7 +25,6 @@ import {
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import { DescriptionColumn, PartColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { TableHoverCard } from '../TableHoverCard';
@@ -48,7 +48,7 @@ function ParameterCell({
   // Find matching template parameter
   const parameter = useMemo(() => {
     return record.parameters?.find((p: any) => p.template == template.pk);
-  }, [record.parameters, template]);
+  }, [record, template]);
 
   const extra: any[] = [];
 
@@ -113,8 +113,7 @@ export default function ParametricPartTable({
             category: categoryId
           }
         })
-        .then((response) => response.data)
-        .catch((_error) => []);
+        .then((response) => response.data);
     },
     refetchOnMount: true
   });
@@ -167,7 +166,7 @@ export default function ParametricPartTable({
 
         const paramFilters = filters[filterName] || {};
 
-        if (paramFilters[operator]) {
+        if (paramFilters[operator] !== undefined) {
           // Remove the specific operator filter
           delete paramFilters[operator];
         }
@@ -193,19 +192,23 @@ export default function ParametricPartTable({
     (templateId: number, value: string, operator: string) => {
       const filterName = `parameter_${templateId}`;
 
-      setParameterFilters((prev: any) => {
-        const filters = { ...prev };
-        const paramFilters = filters[filterName] || {};
+      const filterValue = value?.toString().trim() ?? '';
 
-        paramFilters[operator] = value;
+      if (filterValue.length > 0) {
+        setParameterFilters((prev: any) => {
+          const filters = { ...prev };
+          const paramFilters = filters[filterName] || {};
 
-        return {
-          ...filters,
-          [filterName]: paramFilters
-        };
-      });
+          paramFilters[operator] = filterValue;
 
-      table.refreshTable();
+          return {
+            ...filters,
+            [filterName]: paramFilters
+          };
+        });
+
+        table.refreshTable();
+      }
     },
     [setParameterFilters, clearParameterFilter, table.refreshTable]
   );
@@ -286,11 +289,11 @@ export default function ParametricPartTable({
 
       table.updateRecord(records[partIndex]);
     },
-    [table.updateRecord]
+    [table.records, table.updateRecord]
   );
 
   const parameterColumns: TableColumn[] = useMemo(() => {
-    const data = categoryParameters.data ?? [];
+    const data = categoryParameters?.data || [];
 
     return data.map((template: any) => {
       let title = template.name;
@@ -366,14 +369,10 @@ export default function ParametricPartTable({
 
   const tableColumns: TableColumn[] = useMemo(() => {
     const partColumns: TableColumn[] = [
-      {
-        accessor: 'name',
-        title: t`Part`,
-        sortable: true,
-        switchable: false,
-        noWrap: true,
-        render: (record: any) => PartColumn({ part: record })
-      },
+      PartColumn({
+        part: '',
+        switchable: false
+      }),
       DescriptionColumn({
         defaultVisible: false
       }),

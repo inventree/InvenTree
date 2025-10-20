@@ -1,10 +1,10 @@
 """Unit tests for base mixins for plugins."""
 
-import os
-
 from django.conf import settings
 from django.test import TestCase
 from django.urls import include, path, re_path
+
+import requests_mock
 
 from InvenTree.unit_test import InvenTreeTestCase
 from plugin import InvenTreePlugin
@@ -205,12 +205,12 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
                 'API_TOKEN': {
                     'name': 'API Token',
                     'protected': True,
-                    'default': 'reqres-free-v1',
+                    'default': 'sample-free-v1',
                 },
                 'API_URL': {
                     'name': 'External URL',
                     'description': 'Where is your API located?',
-                    'default': 'https://api.github.com',
+                    'default': 'https://api.example.com',
                 },
             }
 
@@ -221,20 +221,13 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
             @property
             def api_url(self):
                 """Override API URL for this test."""
-                return 'https://api.github.com'
+                return 'https://api.example.com'
 
             def get_external_url(self, simple: bool = True):
                 """Returns data from the sample endpoint."""
                 return self.api_call('orgs/inventree', simple_response=simple)
 
         self.mixin = MixinCls()
-
-        # If running in github workflow, make use of GITHUB_TOKEN
-        if settings.TESTING:
-            token = os.getenv('GITHUB_TOKEN', None)
-
-            if token:
-                self.mixin.set_setting('API_TOKEN', token)
 
         class WrongCLS(APICallMixin, InvenTreePlugin):
             pass
@@ -251,7 +244,7 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         # check init
         self.assertTrue(self.mixin.has_api_call)
         # api_url
-        self.assertEqual('https://api.github.com', self.mixin.api_url)
+        self.assertEqual('https://api.example.com', self.mixin.api_url)
 
         # api_headers
         headers = self.mixin.api_headers
@@ -273,8 +266,35 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         result = self.mixin.api_build_url_args({'a': 'b', 'c': ['d', 'efgh', 1337]})
         self.assertEqual(result, '?a=b&c=d,efgh,1337')
 
-    def test_api_call(self):
+    @requests_mock.Mocker()
+    def test_api_call(self, m: requests_mock.Mocker):
         """Test that api calls work."""
+        # Set up mock responses
+        m.get(
+            'https://api.example.com/orgs/inventree',
+            json={
+                'login': 'inventree',
+                'email': 'inventree',
+                'name': 'InvenTree',
+                'twitter_username': 'inventree',
+            },
+            status_code=200,
+        )
+        m.post(
+            'https://api.example.com/users/',
+            json={'name': 'morpheus', 'job': 'leader'},
+            status_code=201,
+            headers={
+                'Authorization': 'x-api-key sample-free-v1',
+                'Content-Type': 'application/json',
+            },
+        )
+        m.get(
+            'https://api.example.com/repos/inventree/InvenTree/stargazers?page=2',
+            json={'sample': True},
+            status_code=200,
+        )
+
         # api_call
         result = self.mixin.get_external_url()
         self.assertTrue(result)
@@ -285,36 +305,41 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         # api_call without json conversion
         result = self.mixin.get_external_url(False)
         self.assertTrue(result)
-        self.assertEqual(result.reason, 'OK')
+        self.assertTrue(result.ok)
 
         # Set API TOKEN
-        self.mixin.set_setting('API_TOKEN', 'reqres-free-v1')
+        self.mixin.set_setting('API_TOKEN', 'sample-free-v1')
         # api_call with post and data
         result = self.mixin.api_call(
-            'https://reqres.in/api/users/',
+            'https://api.example.com/users/',
             json={'name': 'morpheus', 'job': 'leader'},
             method='POST',
             endpoint_is_url=True,
-            timeout=5000,
         )
 
         self.assertTrue(result)
         self.assertNotIn('error', result)
+        assert result is not None
         self.assertEqual(result['name'], 'morpheus')
 
         # api_call with endpoint with leading slash
         result = self.mixin.api_call('/orgs/inventree', simple_response=False)
         self.assertTrue(result)
-        self.assertEqual(result.reason, 'OK')
+        self.assertTrue(result.ok)
 
-        # api_call with filter
+        # api_call with filter - this errors out the mocker if not created correctly
         result = self.mixin.api_call(
             'repos/inventree/InvenTree/stargazers', url_args={'page': '2'}
         )
         self.assertTrue(result)
 
-    def test_function_errors(self):
+    @requests_mock.Mocker()
+    def test_function_errors(self, m: requests_mock.Mocker):
         """Test function errors."""
+        # Set up mock responses
+        m.get('https://api.example.com/orgs/inventree', status_code=404)
+        m.post('https://api.example.com/api/users/', status_code=400)
+
         # wrongly defined plugins should not load
         with self.assertRaises(MixinNotImplementedError):
             self.mixin_wrong.has_api_call()
@@ -326,12 +351,12 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         # Too many data arguments
         with self.assertRaises(ValueError):
             self.mixin.api_call(
-                'https://reqres.in/api/users/', json={'a': 1}, data={'a': 1}
+                'https://api.example.com/api/users/', json={'a': 1}, data={'a': 1}
             )
 
-        # Sending a request with a wrong data format should result in 40
+        # Sending a request with a wrong data format should result in 400
         result = self.mixin.api_call(
-            'https://reqres.in/api/users/',
+            'https://api.example.com/api/users/',
             data={'name': 'morpheus', 'job': 'leader'},
             method='POST',
             endpoint_is_url=True,
@@ -339,4 +364,3 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         )
 
         self.assertEqual(result.status_code, 400)
-        self.assertIn('Bad Request', str(result.content))
