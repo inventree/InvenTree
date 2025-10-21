@@ -1,5 +1,7 @@
 """Helper functions for user permission checks."""
 
+from typing import Union
+
 from django.contrib.auth.models import User
 from django.db import models
 
@@ -21,7 +23,9 @@ def split_model(model_label: str) -> tuple[str, str]:
     return model, app
 
 
-def get_model_permission_string(model: models.Model, permission: str) -> str:
+def get_model_permission_string(
+    model: Union[models.Model, str], permission: str
+) -> str:
     """Generate a permission string for a given model and permission type.
 
     Arguments:

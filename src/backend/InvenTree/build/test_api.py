@@ -1377,6 +1377,7 @@ class BuildOutputScrapTest(BuildAPITest):
             'location': 1,
             'notes': 'Invalid scrap',
         }
+        assert data
 
         # Ensure that an invalid quantity raises an error
         for q in [-3, 0, 99]:
@@ -1413,6 +1414,7 @@ class BuildOutputScrapTest(BuildAPITest):
             'location': 1,
             'notes': 'Partial complete',
         }
+        assert data
 
         # Ensure that an invalid quantity raises an error
         for q in [-4, 0, 999]:

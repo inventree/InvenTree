@@ -328,6 +328,7 @@ def notify_users(
         'link': construct_absolute_url(instance.get_absolute_url()),
         'template': {'subject': content.name.format(**content_context)},
     }
+    assert context
 
     tmp = content.template
     if tmp:

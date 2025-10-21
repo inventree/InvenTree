@@ -131,6 +131,7 @@ LOGGING = {
         'inventree': {'handlers': DEFAULT_LOG_HANDLER, 'level': LOG_LEVEL},
     },
 }
+assert LOGGING
 
 
 # Add handlers

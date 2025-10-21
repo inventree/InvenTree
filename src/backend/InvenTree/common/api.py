@@ -176,6 +176,7 @@ class CurrencyExchangeView(APIView):
             'exchange_rates': {},
             'updated': updated,
         }
+        assert response
 
         for rate in rates:
             response['exchange_rates'][rate.currency] = rate.value
