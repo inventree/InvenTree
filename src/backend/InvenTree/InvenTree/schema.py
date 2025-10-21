@@ -105,10 +105,11 @@ class ExtendedAutoSchema(AutoSchema):
         if ordering_fields is not None:
             for parameter in parameters:
                 if parameter['name'] == 'ordering':
-                    parameter['description'] = (
-                        f'{parameter["description"]} Possible fields: {", ".join(ordering_fields)}.'
-                    )
-                    # TODO - this should be a enum
+                    schema_order = []
+                    for field in ordering_fields:
+                        schema_order.append(field)
+                        schema_order.append('-' + field)
+                    parameter['schema']['enum'] = schema_order
 
         # Add valid search fields to the search description.
         search_fields = getattr(self.view, 'search_fields', None)

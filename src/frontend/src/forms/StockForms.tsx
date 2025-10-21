@@ -124,9 +124,17 @@ export function useStockFields({
     }
   }, [pricing, quantity]);
 
+  // Set the supplier part if provided
   useEffect(() => {
     if (supplierPartId && !supplierPart) setSupplierPart(supplierPartId);
   }, [partInstance, supplierPart, supplierPartId]);
+
+  // Set default currency from global settings
+  useEffect(() => {
+    setPurchasePriceCurrency(
+      globalSettings.getSetting('INVENTREE_DEFAULT_CURRENCY')
+    );
+  }, [globalSettings]);
 
   return useMemo(() => {
     const fields: ApiFormFieldSet = {
@@ -248,6 +256,7 @@ export function useStockFields({
       },
       purchase_price_currency: {
         icon: <IconCoins />,
+        default: globalSettings.getSetting('INVENTREE_DEFAULT_CURRENCY'),
         value: purchasePriceCurrency,
         onValueChange: (value) => {
           setPurchasePriceCurrency(value);

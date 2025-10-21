@@ -49,7 +49,10 @@ class FilterableSerializerField:
 
 
 def enable_filter(
-    func: Any, default_include: bool = False, filter_name: Optional[str] = None
+    func: Any,
+    default_include: bool = False,
+    filter_name: Optional[str] = None,
+    filter_by_query: bool = True,
 ):
     """Decorator for marking a serializer field as filterable.
 
@@ -59,6 +62,10 @@ def enable_filter(
         func: The serializer field to mark as filterable. Will automatically be passed when used as a decorator.
         default_include (bool): If True, the field will be included by default unless explicitly excluded. If False, the field will be excluded by default unless explicitly included.
         filter_name (str, optional): The name of the filter parameter to use in the URL. If None, the function name of the (decorated) function will be used.
+        filter_by_query (bool): If True, also look for filter parameters in the request query parameters.
+
+    Returns:
+        The decorated serializer field, marked as filterable.
     """
     # Ensure this function can be actually filteres
     if not issubclass(func.__class__, FilterableSerializerField):
@@ -71,6 +78,7 @@ def enable_filter(
     func._kwargs['is_filterable_vals'] = {
         'default': default_include,
         'filter_name': filter_name if filter_name else func.field_name,
+        'filter_by_query': filter_by_query,
     }
     return func
 
@@ -85,6 +93,9 @@ class FilterableSerializerMixin:
 
     _was_filtered = False
     no_filters = False
+    """If True, do not raise an exception if no filterable fields are found."""
+    filter_on_query = True
+    """If True, also look for filter parameters in the request query parameters."""
 
     def __init__(self, *args, **kwargs):
         """Initialization routine for the serializer. This gathers and applies filters through kwargs."""
@@ -113,12 +124,24 @@ class FilterableSerializerMixin:
             if getattr(a, 'is_filterable', None)
         }
 
+        # Gather query parameters from the request context
+        query_params = {}
+        if context := kwargs.get('context', {}):
+            query_params = dict(getattr(context.get('request', {}), 'query_params', {}))
+
         # Remove filter args from kwargs to avoid issues with super().__init__
         poped_kwargs = {}  # store popped kwargs as a arg might be reused for multiple fields
         tgs_vals: dict[str, bool] = {}
         for k, v in self.filter_targets.items():
             pop_ref = v['filter_name'] or k
             val = kwargs.pop(pop_ref, poped_kwargs.get(pop_ref))
+
+            # Optionally also look in query parameters
+            if val is None and self.filter_on_query and v.get('filter_by_query', True):
+                val = query_params.pop(pop_ref, None)
+                if isinstance(val, list) and len(val) == 1:
+                    val = val[0]
+
             if val:  # Save popped value for reuse
                 poped_kwargs[pop_ref] = val
             tgs_vals[k] = (
