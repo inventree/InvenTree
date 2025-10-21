@@ -11,6 +11,7 @@ import structlog
 from moneyed import CURRENCIES
 
 import InvenTree.helpers
+import InvenTree.ready
 
 logger = structlog.get_logger('inventree')
 
@@ -18,6 +19,9 @@ logger = structlog.get_logger('inventree')
 def currency_code_default(create: bool = True):
     """Returns the default currency code (or USD if not specified)."""
     from common.settings import get_global_setting
+
+    if InvenTree.ready.isRunningMigrations():
+        return ''  # pragma: no cover
 
     try:
         code = get_global_setting(
