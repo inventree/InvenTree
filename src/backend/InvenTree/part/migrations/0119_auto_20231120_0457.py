@@ -5,7 +5,6 @@ from django.db import migrations
 import djmoney.models.fields
 import djmoney.models.validators
 
-import common.currency
 
 class Migration(migrations.Migration):
 

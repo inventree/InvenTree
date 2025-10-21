@@ -3,7 +3,6 @@
 import InvenTree.fields
 import django.core.validators
 import common.currency
-import common.settings
 from django.db import migrations, models
 import django.db.models.deletion
 import djmoney.models.fields

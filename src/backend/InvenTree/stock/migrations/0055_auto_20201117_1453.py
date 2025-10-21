@@ -2,7 +2,6 @@
 
 from django.db import migrations
 import djmoney.models.fields
-import common.currency
 
 
 class Migration(migrations.Migration):
