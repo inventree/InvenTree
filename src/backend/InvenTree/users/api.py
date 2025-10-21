@@ -12,10 +12,8 @@ from django.urls import include, path
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.generic.base import RedirectView
 
+import django_filters.rest_framework.filters as rest_filters
 import structlog
-from django_filters import (
-    rest_framework as rest_filters,  # type: ignore[possibly-missing-import]
-)
 from django_filters.rest_framework.filterset import FilterSet
 from drf_spectacular.utils import OpenApiParameter, OpenApiResponse, extend_schema
 from rest_framework import exceptions
