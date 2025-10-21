@@ -1,13 +1,24 @@
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
-import { Alert, Button, Stack, Title } from '@mantine/core';
+import { Alert, Button, SimpleGrid, Stack, Title } from '@mantine/core';
 import { IconBrandGithub } from '@tabler/icons-react';
-import { type JSX, useState } from 'react';
+import { type JSX, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useShallow } from 'zustand/react/shallow';
+import { ServerAlert, getAlerts } from '../../../../components/nav/Alerts';
 import { QuickAction } from '../../../../components/settings/QuickAction';
+import { useServerApiState } from '../../../../states/ServerApiState';
+import { useGlobalSettingsState } from '../../../../states/SettingsStates';
 
 export default function HomePanel(): JSX.Element {
   const [dismissed, setDismissed] = useState<boolean>(false);
+  const [server] = useServerApiState(useShallow((state) => [state.server]));
+  const globalSettings = useGlobalSettingsState();
+
+  const alerts = useMemo(
+    () => getAlerts(server, globalSettings),
+    [server, globalSettings]
+  );
 
   return (
     <Stack gap='xs'>
@@ -46,7 +57,15 @@ export default function HomePanel(): JSX.Element {
       <Title order={5}>
         <Trans>System status</Trans>
       </Title>
-      TBD
+      {alerts.length > 0 ? (
+        <SimpleGrid cols={2} spacing='sm'>
+          {alerts.map((alert) => (
+            <ServerAlert alert={alert} />
+          ))}
+        </SimpleGrid>
+      ) : (
+        <Alert color='green'>{t`No system alerts`}</Alert>
+      )}
       <Title order={5}>
         <Trans>Security recommodations</Trans>
       </Title>
