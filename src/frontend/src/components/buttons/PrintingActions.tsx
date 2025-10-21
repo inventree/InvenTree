@@ -1,17 +1,19 @@
-import { t } from '@lingui/macro';
-import { notifications } from '@mantine/notifications';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import type { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
+import type { ApiFormFieldSet } from '@lib/types/Forms';
+import { t } from '@lingui/core/macro';
 import { IconPrinter, IconReport, IconTags } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
-
 import { api } from '../../App';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
 import { extractAvailableFields } from '../../functions/forms';
+import useDataOutput from '../../hooks/UseDataOutput';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
-import { apiUrl } from '../../states/ApiState';
-import { useLocalState } from '../../states/LocalState';
-import { ApiFormFieldSet } from '../forms/fields/ApiFormField';
+import {
+  useGlobalSettingsState,
+  useUserSettingsState
+} from '../../states/SettingsStates';
 import { ActionDropdown } from '../items/ActionDropdown';
 
 export function PrintingActions({
@@ -27,15 +29,44 @@ export function PrintingActions({
   enableReports?: boolean;
   modelType?: ModelType;
 }) {
-  const { host } = useLocalState.getState();
+  const userSettings = useUserSettingsState();
+  const globalSettings = useGlobalSettingsState();
 
   const enabled = useMemo(() => items.length > 0, [items]);
 
-  const [pluginKey, setPluginKey] = useState<string>('');
+  const defaultLabelPlugin = useMemo(
+    () => userSettings.getSetting('LABEL_DEFAULT_PRINTER'),
+    [userSettings]
+  );
+
+  const [pluginKey, setPluginKey] = useState<string | null>(null);
+
+  const labelPrintingEnabled = useMemo(() => {
+    return enableLabels && globalSettings.isSet('LABEL_ENABLE');
+  }, [enableLabels, globalSettings]);
+
+  const reportPrintingEnabled = useMemo(() => {
+    return enableReports && globalSettings.isSet('REPORT_ENABLE');
+  }, [enableReports, globalSettings]);
+
+  const [labelId, setLabelId] = useState<number | undefined>(undefined);
+  const [reportId, setReportId] = useState<number | undefined>(undefined);
+
+  const labelProgress = useDataOutput({
+    title: t`Printing Labels`,
+    id: labelId
+  });
+
+  const reportProgress = useDataOutput({
+    title: t`Printing Reports`,
+    id: reportId
+  });
+
+  const [itemIdList, setItemIdList] = useState<number[]>([]);
 
   // Fetch available printing fields via OPTIONS request
   const printingFields = useQuery({
-    enabled: enableLabels,
+    enabled: labelPrintingEnabled,
     queryKey: ['printingFields', modelType, pluginKey],
     gcTime: 500,
     queryFn: () =>
@@ -48,32 +79,32 @@ export function PrintingActions({
         .then((response: any) => {
           return extractAvailableFields(response, 'POST') || {};
         })
-        .catch(() => {
-          return {};
-        })
   });
 
   const labelFields: ApiFormFieldSet = useMemo(() => {
-    let fields: ApiFormFieldSet = printingFields.data || {};
+    const fields: ApiFormFieldSet = printingFields.data || {};
 
     // Override field values
-    fields['template'] = {
-      ...fields['template'],
+    fields.template = {
+      ...fields.template,
+      autoFill: true,
       filters: {
         enabled: true,
         model_type: modelType,
-        items: items.join(',')
+        items: itemIdList.join(',')
       }
     };
 
-    fields['items'] = {
-      ...fields['items'],
-      value: items,
+    fields.items = {
+      ...fields.items,
+      value: itemIdList,
       hidden: true
     };
 
     fields['plugin'] = {
       ...fields['plugin'],
+      default: defaultLabelPlugin,
+      value: pluginKey,
       filters: {
         active: true,
         mixin: 'labels'
@@ -86,73 +117,58 @@ export function PrintingActions({
     };
 
     return fields;
-  }, [printingFields.data, items]);
+  }, [defaultLabelPlugin, pluginKey, printingFields.data, itemIdList]);
 
   const labelModal = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.label_print),
     title: t`Print Label`,
+    modalId: 'print-labels',
     fields: labelFields,
-    timeout: (items.length + 1) * 5000,
+    timeout: 5000,
+    onOpen: () => {
+      setItemIdList(items);
+    },
     onClose: () => {
       setPluginKey('');
     },
     submitText: t`Print`,
-    successMessage: t`Label printing completed successfully`,
+    successMessage: null,
     onFormSuccess: (response: any) => {
       setPluginKey('');
-      if (!response.complete) {
-        // TODO: Periodically check for completion (requires server-side changes)
-        notifications.show({
-          title: t`Error`,
-          message: t`The label could not be generated`,
-          color: 'red'
-        });
-        return;
-      }
-
-      if (response.output) {
-        // An output file was generated
-        const url = `${host}${response.output}`;
-        window.open(url, '_blank');
-      }
+      setLabelId(response.pk);
     }
   });
 
-  const reportModal = useCreateApiFormModal({
-    title: t`Print Report`,
-    url: apiUrl(ApiEndpoints.report_print),
-    timeout: (items.length + 1) * 5000,
-    fields: {
+  const reportFields: ApiFormFieldSet = useMemo(() => {
+    return {
       template: {
+        autoFill: true,
         filters: {
           enabled: true,
           model_type: modelType,
-          items: items.join(',')
+          items: itemIdList.join(',')
         }
       },
       items: {
         hidden: true,
-        value: items
+        value: itemIdList
       }
-    },
-    submitText: t`Generate`,
-    successMessage: t`Report printing completed successfully`,
-    onFormSuccess: (response: any) => {
-      if (!response.complete) {
-        // TODO: Periodically check for completion (requires server-side changes)
-        notifications.show({
-          title: t`Error`,
-          message: t`The report could not be generated`,
-          color: 'red'
-        });
-        return;
-      }
+    };
+  }, [itemIdList, modelType]);
 
-      if (response.output) {
-        // An output file was generated
-        const url = `${host}${response.output}`;
-        window.open(url, '_blank');
-      }
+  const reportModal = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.report_print),
+    title: t`Print Report`,
+    modalId: 'print-reports',
+    timeout: 5000,
+    fields: reportFields,
+    onOpen: () => {
+      setItemIdList(items);
+    },
+    submitText: t`Print`,
+    successMessage: null,
+    onFormSuccess: (response: any) => {
+      setReportId(response.pk);
     }
   });
 
@@ -160,7 +176,7 @@ export function PrintingActions({
     return null;
   }
 
-  if (!enableLabels && !enableReports) {
+  if (!labelPrintingEnabled && !reportPrintingEnabled) {
     return null;
   }
 
@@ -172,19 +188,20 @@ export function PrintingActions({
         <ActionDropdown
           tooltip={t`Printing Actions`}
           icon={<IconPrinter />}
+          position='bottom-start'
           disabled={!enabled}
           actions={[
             {
               name: t`Print Labels`,
               icon: <IconTags />,
               onClick: () => labelModal.open(),
-              hidden: !enableLabels
+              hidden: !labelPrintingEnabled
             },
             {
               name: t`Print Reports`,
               icon: <IconReport />,
               onClick: () => reportModal.open(),
-              hidden: !enableReports
+              hidden: !reportPrintingEnabled
             }
           ]}
         />

@@ -1,5 +1,7 @@
 """Plugin mixin class for ReportContextMixin."""
 
+from plugin import PluginMixinEnum
+
 
 class ReportMixin:
     """Mixin which provides additional context to generated reports.
@@ -20,7 +22,7 @@ class ReportMixin:
     def __init__(self):
         """Register mixin."""
         super().__init__()
-        self.add_mixin('report', True, __class__)
+        self.add_mixin(PluginMixinEnum.REPORT, True, __class__)
 
     def add_report_context(self, report_instance, model_instance, request, context):
         """Add extra context to the provided report instance.
@@ -33,7 +35,6 @@ class ReportMixin:
             request: The request object which initiated the report generation
             context: The context dictionary to add to
         """
-        pass
 
     def add_label_context(self, label_instance, model_instance, request, context):
         """Add extra context to the provided label instance.
@@ -46,9 +47,8 @@ class ReportMixin:
             request: The request object which initiated the label generation
             context: The context dictionary to add to
         """
-        pass
 
-    def report_callback(self, template, instance, report, request):
+    def report_callback(self, template, instance, report, request, **kwargs):
         """Callback function called after a report is generated.
 
         Arguments:
@@ -59,4 +59,3 @@ class ReportMixin:
 
         The default implementation does nothing.
         """
-        pass

@@ -13,7 +13,7 @@ export default function DetailsBadge(props: Readonly<DetailsBadgeProps>) {
   }
 
   return (
-    <Badge color={props.color} variant="filled" size={props.size ?? 'lg'}>
+    <Badge color={props.color} variant='filled' size={props.size ?? 'lg'}>
       {props.label}
     </Badge>
   );

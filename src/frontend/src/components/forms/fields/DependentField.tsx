@@ -1,16 +1,17 @@
 import { useEffect, useMemo } from 'react';
-import { Control, FieldValues, useFormContext } from 'react-hook-form';
+import {
+  type Control,
+  type FieldValues,
+  useFormContext
+} from 'react-hook-form';
 
-import { api } from '../../../App';
+import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
+import { useApi } from '../../../contexts/ApiContext';
 import {
   constructField,
   extractAvailableFields
 } from '../../../functions/forms';
-import {
-  ApiFormField,
-  ApiFormFieldSet,
-  ApiFormFieldType
-} from './ApiFormField';
+import { ApiFormField } from './ApiFormField';
 
 export function DependentField({
   control,
@@ -18,13 +19,14 @@ export function DependentField({
   definition,
   url,
   setFields
-}: {
+}: Readonly<{
   control: Control<FieldValues, any>;
   definition: ApiFormFieldType;
   fieldName: string;
   url?: string;
   setFields?: React.Dispatch<React.SetStateAction<ApiFormFieldSet>>;
-}) {
+}>) {
+  const api = useApi();
   const { watch, resetField } = useFormContext();
 
   const mappedFieldNames = useMemo(

@@ -1,10 +1,11 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Accordion, Alert, LoadingOverlay, Stack, Text } from '@mantine/core';
 import { useMemo, useState } from 'react';
 
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { UserRoles } from '../../enums/Roles';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { UserRoles } from '@lib/enums/Roles';
 import { useInstance } from '../../hooks/UseInstance';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import BomPricingPanel from './pricing/BomPricingPanel';
 import PriceBreakPanel from './pricing/PriceBreakPanel';
@@ -28,18 +29,21 @@ export enum panelOptions {
   overall = 'overall'
 }
 
-export default function PartPricingPanel({ part }: { part: any }) {
+export default function PartPricingPanel({ part }: Readonly<{ part: any }>) {
   const user = useUserState();
+
+  const globalSettings = useGlobalSettingsState();
 
   const { instance: pricing, instanceQuery } = useInstance({
     pk: part?.pk,
     hasPrimaryKey: true,
-    endpoint: ApiEndpoints.part_pricing_get,
+    endpoint: ApiEndpoints.part_pricing,
     defaultValue: {}
   });
 
-  // TODO: Do we display internal price? This is a global setting
-  const internalPricing = true;
+  const internalPricing: boolean = useMemo(() => {
+    return globalSettings.isSet('PART_INTERNAL_PRICE');
+  }, [globalSettings]);
 
   const purchaseOrderPricing = useMemo(() => {
     return user.hasViewRole(UserRoles.purchase_order) && part?.purchaseable;
@@ -61,10 +65,10 @@ export default function PartPricingPanel({ part }: { part: any }) {
   }
 
   return (
-    <Stack gap="xs">
+    <Stack gap='xs'>
       <LoadingOverlay visible={instanceQuery.isLoading} />
       {!pricing && !instanceQuery.isLoading && (
-        <Alert color="ref" title={t`Error`}>
+        <Alert color='ref' title={t`Error`}>
           <Text>{t`No pricing data found for this part.`}</Text>
         </Alert>
       )}
@@ -75,6 +79,7 @@ export default function PartPricingPanel({ part }: { part: any }) {
               <PricingOverviewPanel
                 part={part}
                 pricing={pricing}
+                pricingQuery={instanceQuery}
                 doNavigation={doNavigation}
               />
             }
@@ -101,9 +106,6 @@ export default function PartPricingPanel({ part }: { part: any }) {
             label={panelOptions.internal}
             title={t`Internal Pricing`}
             visible={internalPricing}
-            disabled={
-              !pricing?.internal_cost_min || !pricing?.internal_cost_max
-            }
           />
           <PricingPanel
             content={<SupplierPricingPanel part={part} />}
@@ -138,7 +140,6 @@ export default function PartPricingPanel({ part }: { part: any }) {
             label={panelOptions.sale_pricing}
             title={t`Sale Pricing`}
             visible={salesOrderPricing}
-            disabled={!pricing?.sale_price_min || !pricing?.sale_price_max}
           />
           <PricingPanel
             content={<SaleHistoryPanel part={part} />}

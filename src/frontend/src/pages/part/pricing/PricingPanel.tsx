@@ -1,7 +1,7 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import {
   Accordion,
-  AccordionControlProps,
+  type AccordionControlProps,
   Alert,
   Box,
   Center,
@@ -12,17 +12,17 @@ import {
   Tooltip
 } from '@mantine/core';
 import { IconAlertCircle, IconExclamationCircle } from '@tabler/icons-react';
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 import { StylishText } from '../../../components/items/StylishText';
-import { panelOptions } from '../PartPricingPanel';
+import type { panelOptions } from '../PartPricingPanel';
 
 function AccordionControl(props: AccordionControlProps) {
   return (
     <Box style={{ display: 'flex', alignItems: 'center' }}>
       {props.disabled && (
         <Tooltip label={t`No data available`}>
-          <IconAlertCircle size="1rem" color="gray" />
+          <IconAlertCircle size='1rem' color='gray' />
         </Tooltip>
       )}
       <Accordion.Control
@@ -51,7 +51,7 @@ export default function PricingPanel({
     visible && (
       <Accordion.Item value={label} id={label}>
         <AccordionControl disabled={is_disabled}>
-          <StylishText size="lg">{title}</StylishText>
+          <StylishText size='lg'>{title}</StylishText>
         </AccordionControl>
         <Accordion.Panel>{!is_disabled && content}</Accordion.Panel>
       </Accordion.Item>
@@ -61,8 +61,8 @@ export default function PricingPanel({
 
 export function NoPricingData() {
   return (
-    <Stack gap="xs">
-      <Alert icon={<IconExclamationCircle />} color="blue" title={t`No Data`}>
+    <Stack gap='xs'>
+      <Alert icon={<IconExclamationCircle />} color='blue' title={t`No Data`}>
         <Text>{t`No pricing data available`}</Text>
       </Alert>
       <Space />
@@ -73,7 +73,7 @@ export function NoPricingData() {
 export function LoadingPricingData() {
   return (
     <Center>
-      <Stack gap="xs">
+      <Stack gap='xs'>
         <Text>{t`Loading pricing data`}</Text>
         <Loader />
       </Stack>

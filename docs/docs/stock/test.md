@@ -4,13 +4,11 @@ title: Stock Test Result
 
 ## Stock Test Result
 
-Stock items which are associated with a [testable part](../part/part.md#testable) can have associated test data - this is particularly useful for tracking unit testing / commissioning / acceptance data against a serialized stock item.
+Stock items which are associated with a [testable part](../part/index.md#testable) can have associated test data - this is particularly useful for tracking unit testing / commissioning / acceptance data against a serialized stock item.
 
 The master "Part" record for the stock item can define multiple [test templates](../part/test.md), against which test data can be uploaded. Additionally, arbitrary test information can be assigned to the stock item.
 
-{% with id="stock_test_results", url="stock/test_results.png", description="Stock Item Test Results" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("stock/test_results.png", title="Stock Item Test Results") }}
 
 ### Test Result Fields
 
@@ -44,7 +42,7 @@ For any information regarding the reporting architecture, please refer to the [R
 
 ### Automated Test Integration
 
-The stock item testing framework is especially useful when integrating with an automated acceptance testing framework. Test results can be uploaded using the [InvenTree API](../api/api.md) or the [InvenTree Python Interface](../api/python/python.md).
+The stock item testing framework is especially useful when integrating with an automated acceptance testing framework. Test results can be uploaded using the [InvenTree API](../api/index.md) or the [InvenTree Python Interface](../api/python/index.md).
 
 !!! info "Example"
 	You design and sell a temperature sensor which needs to be calibrated before it can be sold. An automated calibration tool sets the offset in the device, and uploads a test result to the InvenTree database.

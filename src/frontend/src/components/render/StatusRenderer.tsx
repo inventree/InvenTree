@@ -1,23 +1,27 @@
-import { Badge, Center, MantineSize } from '@mantine/core';
+import { Badge, Center, type MantineSize } from '@mantine/core';
 
-import { colorMap } from '../../defaults/backendMappings';
-import { ModelType } from '../../enums/ModelType';
-import { resolveItem } from '../../functions/conversion';
-import { useGlobalStatusState } from '../../states/StatusState';
+import type { ModelType } from '@lib/enums/ModelType';
+import { resolveItem } from '@lib/functions/Conversion';
+import { statusColorMap } from '../../defaults/backendMappings';
+import { useGlobalStatusState } from '../../states/GlobalStatusState';
 
-interface StatusCodeInterface {
-  key: string;
+export interface StatusCodeInterface {
+  key: number;
   label: string;
   name: string;
   color: string;
 }
 
 export interface StatusCodeListInterface {
-  [key: string]: StatusCodeInterface;
+  status_class: string;
+  values: {
+    [key: string]: StatusCodeInterface;
+  };
 }
 
 interface RenderStatusLabelOptionsInterface {
   size?: MantineSize;
+  hidden?: boolean;
 }
 
 /*
@@ -32,10 +36,10 @@ function renderStatusLabel(
   let color = null;
 
   // Find the entry which matches the provided key
-  for (let name in codes) {
-    let entry = codes[name];
+  for (const name in codes.values) {
+    const entry: StatusCodeInterface = codes.values[name];
 
-    if (entry.key == key) {
+    if (entry?.key == key) {
       text = entry.label;
       color = entry.color;
       break;
@@ -50,7 +54,7 @@ function renderStatusLabel(
 
   // Fallbacks
   if (color == null) color = 'default';
-  color = colorMap[color] || colorMap['default'];
+  color = statusColorMap[color] || statusColorMap['default'];
   const size = options.size || 'xs';
 
   if (!text) {
@@ -58,28 +62,52 @@ function renderStatusLabel(
   }
 
   return (
-    <Badge color={color} variant="filled" size={size}>
+    <Badge color={color} variant='filled' size={size}>
       {text}
     </Badge>
   );
 }
 
-export function getStatusCodes(type: ModelType | string) {
+export function getStatusCodes(
+  type: ModelType | string
+): StatusCodeListInterface | null {
   const statusCodeList = useGlobalStatusState.getState().status;
 
   if (statusCodeList === undefined) {
-    console.log('StatusRenderer: statusCodeList is undefined');
+    console.warn('StatusRenderer: statusCodeList is undefined');
     return null;
   }
 
   const statusCodes = statusCodeList[type];
 
   if (statusCodes === undefined) {
-    console.log('StatusRenderer: statusCodes is undefined');
+    console.warn(
+      `StatusRenderer: statusCodes is undefined for model '${type}'`
+    );
     return null;
   }
 
   return statusCodes;
+}
+
+/**
+ * Return a list of status codes select options for a given model type
+ * returns an array of objects with keys "value" and "display_name"
+ *
+ */
+export function getStatusCodeOptions(type: ModelType | string): any[] {
+  const statusCodes = getStatusCodes(type);
+
+  if (!statusCodes) {
+    return [];
+  }
+
+  return Object.values(statusCodes?.values ?? []).map((entry) => {
+    return {
+      value: entry.key,
+      display_name: entry.label
+    };
+  });
 }
 
 /*
@@ -95,14 +123,37 @@ export function getStatusCodeName(
     return null;
   }
 
-  for (let name in statusCodes) {
-    let entry = statusCodes[name];
+  for (const name in statusCodes) {
+    const entry: StatusCodeInterface = statusCodes.values[name];
 
     if (entry.key == key) {
       return entry.name;
     }
   }
 
+  return null;
+}
+
+/*
+ * Return the human-readable label for a status code
+ */
+export function getStatusCodeLabel(
+  type: ModelType | string,
+  key: string | number
+): string | null {
+  const statusCodes = getStatusCodes(type);
+
+  if (!statusCodes) {
+    return null;
+  }
+
+  for (const name in statusCodes.values) {
+    const entry: StatusCodeInterface = statusCodes.values[name];
+
+    if (entry.key == key) {
+      return entry.label;
+    }
+  }
   return null;
 }
 
@@ -121,8 +172,14 @@ export const StatusRenderer = ({
 }) => {
   const statusCodes = getStatusCodes(type);
 
+  if (options?.hidden) {
+    return null;
+  }
+
   if (statusCodes === undefined || statusCodes === null) {
-    console.warn('StatusRenderer: statusCodes is undefined');
+    console.warn(
+      `StatusRenderer: statusCodes is undefined for model '${type}'`
+    );
     return null;
   }
 
@@ -137,7 +194,10 @@ export function TableStatusRenderer(
   accessor?: string
 ): ((record: any) => any) | undefined {
   return (record: any) => {
-    const status = resolveItem(record, accessor ?? 'status');
+    const status =
+      resolveItem(record, accessor ?? 'status') ??
+      resolveItem(record, 'status_custom_key') ??
+      resolveItem(record, 'status');
 
     return (
       status && (

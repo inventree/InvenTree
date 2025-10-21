@@ -1,50 +1,54 @@
-import { t } from '@lingui/macro';
-import {
-  Container,
-  Drawer,
-  Flex,
-  ScrollArea,
-  Space,
-  Title
-} from '@mantine/core';
+import { t } from '@lingui/core/macro';
+import { Container, Drawer, Flex, Group, Space } from '@mantine/core';
 import { useViewportSize } from '@mantine/hooks';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { aboutLinks, navDocLinks } from '../../defaults/links';
-import { menuItems } from '../../defaults/menuItems';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { AboutLinks, DocumentationLinks } from '../../defaults/links';
+import useInstanceName from '../../hooks/UseInstanceName';
 import * as classes from '../../main.css';
-import { DocumentationLinks } from '../items/DocumentationLinks';
-import { MenuLinkItem, MenuLinks } from '../items/MenuLinks';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
+import { useUserState } from '../../states/UserState';
+import { InvenTreeLogo } from '../items/InvenTreeLogo';
+import { type MenuLinkItem, MenuLinks } from '../items/MenuLinks';
+import { StylishText } from '../items/StylishText';
 
 // TODO @matmair #1: implement plugin loading and menu item generation see #5269
 const plugins: MenuLinkItem[] = [];
-const onlyItems = Object.values(menuItems);
 
 export function NavigationDrawer({
   opened,
   close
-}: {
+}: Readonly<{
   opened: boolean;
   close: () => void;
-}) {
+}>) {
   return (
     <Drawer
       opened={opened}
       onClose={close}
-      overlayProps={{ opacity: 0.5, blur: 4 }}
+      size='lg'
       withCloseButton={false}
       classNames={{
         body: classes.navigationDrawer
       }}
     >
-      <DrawerContent />
+      <DrawerContent closeFunc={close} />
     </Drawer>
   );
 }
-function DrawerContent() {
+
+function DrawerContent({ closeFunc }: Readonly<{ closeFunc?: () => void }>) {
+  const user = useUserState();
+
+  const globalSettings = useGlobalSettingsState();
+
   const [scrollHeight, setScrollHeight] = useState(0);
   const ref = useRef(null);
   const { height } = useViewportSize();
+
+  const title = useInstanceName();
 
   // update scroll height when viewport size changes
   useEffect(() => {
@@ -52,31 +56,165 @@ function DrawerContent() {
     setScrollHeight(height - ref.current['clientHeight'] - 65);
   });
 
+  // Construct menu items
+  const menuItemsNavigate: MenuLinkItem[] = useMemo(() => {
+    return [
+      {
+        id: 'home',
+        title: t`Dashboard`,
+        link: '/',
+        icon: 'dashboard'
+      },
+      {
+        id: 'parts',
+        title: t`Parts`,
+        hidden: !user.hasViewPermission(ModelType.part),
+        link: '/part',
+        icon: 'part'
+      },
+      {
+        id: 'stock',
+        title: t`Stock`,
+        link: '/stock',
+        hidden: !user.hasViewPermission(ModelType.stockitem),
+        icon: 'stock'
+      },
+      {
+        id: 'build',
+        title: t`Manufacturing`,
+        link: '/manufacturing/',
+        hidden: !user.hasViewRole(UserRoles.build),
+        icon: 'build'
+      },
+      {
+        id: 'purchasing',
+        title: t`Purchasing`,
+        link: '/purchasing/',
+        hidden: !user.hasViewRole(UserRoles.purchase_order),
+        icon: 'purchase_orders'
+      },
+      {
+        id: 'sales',
+        title: t`Sales`,
+        link: '/sales/',
+        hidden: !user.hasViewRole(UserRoles.sales_order),
+        icon: 'sales_orders'
+      },
+      {
+        id: 'users',
+        title: t`Users`,
+        link: '/core/index/users',
+        icon: 'user'
+      },
+      {
+        id: 'groups',
+        title: t`Groups`,
+        link: '/core/index/groups',
+        icon: 'group'
+      }
+    ];
+  }, [user]);
+
+  const menuItemsAction: MenuLinkItem[] = useMemo(() => {
+    return [
+      {
+        id: 'barcode',
+        title: t`Scan Barcode`,
+        link: '/scan',
+        icon: 'barcode',
+        hidden: !globalSettings.isSet('BARCODE_ENABLE')
+      }
+    ];
+  }, [user, globalSettings]);
+
+  const menuItemsSettings: MenuLinkItem[] = useMemo(() => {
+    return [
+      {
+        id: 'notifications',
+        title: t`Notifications`,
+        link: '/notifications',
+        icon: 'notification'
+      },
+      {
+        id: 'user-settings',
+        title: t`User Settings`,
+        link: '/settings/user',
+        icon: 'user'
+      },
+      {
+        id: 'system-settings',
+        title: t`System Settings`,
+        link: '/settings/system',
+        icon: 'system',
+        hidden: !user.isStaff()
+      },
+      {
+        id: 'admin-center',
+        title: t`Admin Center`,
+        link: '/settings/admin',
+        icon: 'admin',
+        hidden: !user.isStaff()
+      }
+    ];
+  }, [user]);
+
+  const menuItemsDocumentation: MenuLinkItem[] = useMemo(
+    () => DocumentationLinks(),
+    []
+  );
+
+  const menuItemsAbout: MenuLinkItem[] = useMemo(
+    () => AboutLinks(globalSettings, user),
+    []
+  );
+
   return (
-    <Flex direction="column" mih="100vh" p={16}>
-      <Title order={3}>{t`Navigation`}</Title>
+    <Flex direction='column' mih='100vh' p={16}>
+      <Group wrap='nowrap'>
+        <InvenTreeLogo />
+        <StylishText size='xl'>{title}</StylishText>
+      </Group>
+      <Space h='xs' />
       <Container className={classes.layoutContent} p={0}>
-        <ScrollArea h={scrollHeight} type="always" offsetScrollbars>
-          <Title order={5}>{t`Pages`}</Title>
-          <MenuLinks links={onlyItems} />
-          <Space h="md" />
-          {plugins.length > 0 ? (
-            <>
-              <Title order={5}>{t`Plugins`}</Title>
-              <MenuLinks links={plugins} />
-            </>
-          ) : (
-            <></>
-          )}
-        </ScrollArea>
+        <MenuLinks
+          title={t`Navigation`}
+          links={menuItemsNavigate}
+          beforeClick={closeFunc}
+        />
+        <MenuLinks
+          title={t`Settings`}
+          links={menuItemsSettings}
+          beforeClick={closeFunc}
+        />
+        <MenuLinks
+          title={t`Actions`}
+          links={menuItemsAction}
+          beforeClick={closeFunc}
+        />
+        <Space h='md' />
+        {plugins.length > 0 ? (
+          <MenuLinks
+            title={t`Plugins`}
+            links={plugins}
+            beforeClick={closeFunc}
+          />
+        ) : (
+          <></>
+        )}
       </Container>
       <div ref={ref}>
-        <Space h="md" />
-        <Title order={5}>{t`Documentation`}</Title>
-        <DocumentationLinks links={navDocLinks} />
-        <Space h="md" />
-        <Title order={5}>{t`About`}</Title>
-        <DocumentationLinks links={aboutLinks} />
+        <Space h='md' />
+        <MenuLinks
+          title={t`Documentation`}
+          links={menuItemsDocumentation}
+          beforeClick={closeFunc}
+        />
+        <Space h='md' />
+        <MenuLinks
+          title={t`About`}
+          links={menuItemsAbout}
+          beforeClick={closeFunc}
+        />
       </div>
     </Flex>
   );

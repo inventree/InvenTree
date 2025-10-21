@@ -1,0 +1,4 @@
+Assembly,Component,Reference,Quantity,Allow Variants,Gets inherited,Optional,Consumable,Setup quantity,Attrition,Rounding multiple,Note,ID,Pricing min,Pricing max,Pricing min total,Pricing max total,Pricing updated,Component.Ipn,Component.Name,Component.Description,Validated,Available Stock,Available substitute stock,Available variant stock,External stock,On Order,In Production,Can Build
+106,98,screws,5,FALSE,TRUE,FALSE,TRUE,0,0,0,,39,0.075,0.1,0.375,0.5,23/07/2025 9:12,,Wood Screw,Screw for fixing wood to other wood,TRUE,1604,0,0,0,0,0,320.8
+106,95,legs,4,FALSE,TRUE,FALSE,FALSE,0,0,0,,40,10.6,12.75,42.4,51,23/07/2025 9:12,,Leg,Leg for a chair or a table,TRUE,317,0,0,0,0,0,79.25
+109,92,paint,0.125,FALSE,FALSE,FALSE,FALSE,0,0,0,,43,1.403886,14.389836,0.175486,1.79873,23/07/2025 9:12,,Green Paint,Green Paint,TRUE,110.125,0,0,0,0,0,881

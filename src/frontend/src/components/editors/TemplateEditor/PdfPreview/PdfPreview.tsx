@@ -1,8 +1,11 @@
-import { Trans } from '@lingui/macro';
+import { Trans } from '@lingui/react/macro';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
+import { t } from '@lingui/core/macro';
 import { api } from '../../../../App';
-import { PreviewAreaComponent } from '../TemplateEditor';
+import type { PreviewAreaComponent } from '../TemplateEditor';
 
 export const PdfPreviewComponent: PreviewAreaComponent = forwardRef(
   (props, ref) => {
@@ -43,26 +46,62 @@ export const PdfPreviewComponent: PreviewAreaComponent = forwardRef(
         );
 
         if (preview.status !== 200 && preview.status !== 201) {
-          if (preview.data?.non_field_errors) {
-            throw new Error(preview.data?.non_field_errors.join(', '));
+          let message: string =
+            preview.data?.toString() ?? t`Error rendering preview`;
+
+          for (const field of ['non_field_errors', 'detail', 'error']) {
+            if (preview.data?.[field]) {
+              message = preview.data[field].join(', ');
+              break;
+            }
           }
 
-          throw new Error(preview.data);
+          throw new Error(message);
         }
 
-        if (preview?.data?.output) {
-          preview = await api.get(preview.data.output, {
+        let outputUrl = preview?.data?.output;
+
+        if (preview.data && !preview.data.complete) {
+          outputUrl = await new Promise((res, rej) => {
+            let cnt = 0;
+            const interval = setInterval(() => {
+              api
+                .get(apiUrl(ApiEndpoints.data_output, preview.data.pk))
+                .then((response) => {
+                  if (response.data.error) {
+                    clearInterval(interval);
+                    rej(response.data.error);
+                  }
+
+                  if (response.data.complete) {
+                    clearInterval(interval);
+                    res(response.data.output);
+                  }
+
+                  // timeout after 1 minute
+                  if (cnt > 2 * 60) {
+                    clearInterval(interval);
+                    rej('Timeout');
+                  }
+                  cnt++;
+                });
+            }, 500);
+          });
+        }
+
+        if (outputUrl) {
+          preview = await api.get(outputUrl, {
             responseType: 'blob'
           });
         }
 
-        let pdf = new Blob([preview.data], {
+        const pdf = new Blob([preview.data], {
           type: preview.headers['content-type']
         });
 
-        let srcUrl = URL.createObjectURL(pdf);
+        const srcUrl = URL.createObjectURL(pdf);
 
-        setPdfUrl(srcUrl + '#view=fitH');
+        setPdfUrl(`${srcUrl}#view=fitH`);
       }
     }));
 
@@ -82,7 +121,7 @@ export const PdfPreviewComponent: PreviewAreaComponent = forwardRef(
           </div>
         )}
         {pdfUrl && (
-          <iframe src={pdfUrl} width="100%" height="100%" title="PDF Preview" />
+          <iframe src={pdfUrl} width='100%' height='100%' title='PDF Preview' />
         )}
       </>
     );

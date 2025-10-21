@@ -1,11 +1,11 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 
 import GenericErrorPage from './GenericErrorPage';
 import NotAuthenticated from './NotAuthenticated';
 import NotFound from './NotFound';
 import PermissionDenied from './PermissionDenied';
 
-export default function ClientError({ status }: { status?: number }) {
+export default function ClientError({ status }: Readonly<{ status?: number }>) {
   switch (status) {
     case 401:
       return <NotAuthenticated />;

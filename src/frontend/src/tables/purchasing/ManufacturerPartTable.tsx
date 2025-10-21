@@ -1,11 +1,18 @@
-import { t } from '@lingui/macro';
-import { ReactNode, useCallback, useMemo, useState } from 'react';
+import { t } from '@lingui/core/macro';
+import { type ReactNode, useCallback, useMemo, useState } from 'react';
 
-import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { Thumbnail } from '../../components/images/Thumbnail';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
+import { AddItemButton } from '@lib/components/AddItemButton';
+import {
+  type RowAction,
+  RowDeleteAction,
+  RowEditAction
+} from '@lib/components/RowActions';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import type { TableFilter } from '@lib/types/Filters';
+import type { TableColumn } from '@lib/types/Tables';
 import { useManufacturerPartFields } from '../../forms/CompanyForms';
 import {
   useCreateApiFormModal,
@@ -13,53 +20,65 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
-import { DescriptionColumn, LinkColumn, PartColumn } from '../ColumnRenderers';
+import {
+  CompanyColumn,
+  DescriptionColumn,
+  LinkColumn,
+  PartColumn
+} from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 /*
  * Construct a table listing manufacturer parts
  */
-export function ManufacturerPartTable({ params }: { params: any }): ReactNode {
-  const table = useTable('manufacturerparts');
+export function ManufacturerPartTable({
+  manufacturerId,
+  partId
+}: Readonly<{
+  manufacturerId?: number;
+  partId?: number;
+}>): ReactNode {
+  const tableId: string = useMemo(() => {
+    let tId = 'manufacturer-part';
+
+    if (manufacturerId) {
+      tId += '-manufacturer';
+    }
+
+    if (partId) {
+      tId += '-part';
+    }
+
+    return tId;
+  }, [manufacturerId, partId]);
+
+  const table = useTable(tableId);
 
   const user = useUserState();
 
   // Construct table columns for this table
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
-      {
-        accessor: 'part',
-        switchable: 'part' in params,
-        sortable: true,
-        render: (record: any) => PartColumn(record?.part_detail)
-      },
+      PartColumn({
+        switchable: !!partId
+      }),
       {
         accessor: 'manufacturer',
         sortable: true,
-        render: (record: any) => {
-          let manufacturer = record?.manufacturer_detail ?? {};
-
-          return (
-            <Thumbnail
-              src={manufacturer?.thumbnail ?? manufacturer.image}
-              text={manufacturer.name}
-            />
-          );
-        }
+        render: (record: any) => (
+          <CompanyColumn company={record?.manufacturer_detail} />
+        )
       },
       {
         accessor: 'MPN',
-        title: t`Manufacturer Part Number`,
+        title: t`MPN`,
         sortable: true
       },
       DescriptionColumn({}),
       LinkColumn({})
     ];
-  }, [params]);
+  }, [partId]);
 
   const manufacturerPartFields = useManufacturerPartFields();
 
@@ -73,8 +92,8 @@ export function ManufacturerPartTable({ params }: { params: any }): ReactNode {
     fields: manufacturerPartFields,
     table: table,
     initialData: {
-      manufacturer: params?.manufacturer,
-      part: params?.part
+      manufacturer: manufacturerId,
+      part: partId
     }
   });
 
@@ -93,13 +112,32 @@ export function ManufacturerPartTable({ params }: { params: any }): ReactNode {
     table: table
   });
 
+  const tableFilters: TableFilter[] = useMemo(() => {
+    return [
+      {
+        name: 'part_active',
+        label: t`Active Part`,
+        description: t`Show manufacturer parts for active internal parts.`,
+        type: 'boolean'
+      },
+      {
+        name: 'manufacturer_active',
+        label: t`Active Manufacturer`,
+        active: !manufacturerId,
+        description: t`Show manufacturer parts for active manufacturers.`,
+        type: 'boolean'
+      }
+    ];
+  }, [manufacturerId]);
+
   const tableActions = useMemo(() => {
-    let can_add =
+    const can_add =
       user.hasAddRole(UserRoles.purchase_order) &&
       user.hasAddRole(UserRoles.part);
 
     return [
       <AddItemButton
+        key='add-manufacturer-part'
         tooltip={t`Add Manufacturer Part`}
         onClick={() => createManufacturerPart.open()}
         hidden={!can_add}
@@ -140,13 +178,15 @@ export function ManufacturerPartTable({ params }: { params: any }): ReactNode {
         columns={tableColumns}
         props={{
           params: {
-            ...params,
+            part: partId,
+            manufacturer: manufacturerId,
             part_detail: true,
             manufacturer_detail: true
           },
           enableDownload: true,
           rowActions: rowActions,
           tableActions: tableActions,
+          tableFilters: tableFilters,
           modelType: ModelType.manufacturerpart
         }}
       />

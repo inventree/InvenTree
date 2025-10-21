@@ -1,34 +1,41 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Badge, Group, Paper, Stack, Text } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
 import { notifications } from '@mantine/notifications';
 import {
+  IconCircleCheck,
+  IconExclamationCircle,
   IconExternalLink,
   IconFileUpload,
   IconUpload,
   IconX
 } from '@tabler/icons-react';
-import { ReactNode, useCallback, useMemo, useState } from 'react';
+import { type ReactNode, useCallback, useMemo, useState } from 'react';
 
-import { api } from '../../App';
-import { ActionButton } from '../../components/buttons/ActionButton';
-import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
+import { ActionButton } from '@lib/components/ActionButton';
+import { ProgressBar } from '@lib/components/ProgressBar';
+import {
+  type RowAction,
+  RowDeleteAction,
+  RowEditAction
+} from '@lib/components/RowActions';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import type { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
+import type { TableFilter } from '@lib/types/Filters';
+import type { ApiFormFieldSet } from '@lib/types/Forms';
+import type { TableColumn } from '@lib/types/Tables';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
+import { useApi } from '../../contexts/ApiContext';
 import { formatFileSize } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
-import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 /**
  * Define set of columns to display for the attachment table
@@ -48,7 +55,8 @@ function attachmentTableColumns(): TableColumn[] {
         } else {
           return '-';
         }
-      }
+      },
+      noContext: true
     },
     {
       accessor: 'comment',
@@ -64,10 +72,10 @@ function attachmentTableColumns(): TableColumn[] {
 
       render: (record: any) => {
         return (
-          <Group justify="space-between">
+          <Group justify='space-between'>
             <Text>{record.upload_date}</Text>
             {record.user_detail && (
-              <Badge size="xs">{record.user_detail.username}</Badge>
+              <Badge size='xs'>{record.user_detail.username}</Badge>
             )}
           </Group>
         );
@@ -88,16 +96,32 @@ function attachmentTableColumns(): TableColumn[] {
   ];
 }
 
+function UploadProgress({
+  filename,
+  progress
+}: {
+  filename: string;
+  progress: number;
+}) {
+  return (
+    <Stack gap='xs'>
+      <Text size='sm'>{t`Uploading file ${filename}`}</Text>
+      <ProgressBar value={progress} progressLabel={false} />
+    </Stack>
+  );
+}
+
 /**
  * Construct a table for displaying uploaded attachments
  */
 export function AttachmentTable({
   model_type,
   model_id
-}: {
+}: Readonly<{
   model_type: ModelType;
   model_id: number;
-}): ReactNode {
+}>): ReactNode {
+  const api = useApi();
   const user = useUserState();
   const table = useTable(`${model_type}-attachments`);
 
@@ -106,6 +130,11 @@ export function AttachmentTable({
   const url = apiUrl(ApiEndpoints.attachment_list);
 
   const validPk = useMemo(() => model_id > 0, [model_id]);
+
+  const canDelete = useMemo(
+    () => user.hasDeletePermission(model_type),
+    [user, model_type]
+  );
 
   const [isUploading, setIsUploading] = useState<boolean>(false);
 
@@ -116,20 +145,49 @@ export function AttachmentTable({
   // Callback to upload file attachment(s)
   function uploadFiles(files: File[]) {
     files.forEach((file) => {
-      let formData = new FormData();
+      const formData = new FormData();
       formData.append('attachment', file);
       formData.append('model_type', model_type);
       formData.append('model_id', model_id.toString());
 
       setIsUploading(true);
 
+      const name: string = file.name;
+      const id: string = `attachment-upload-${model_type}-${model_id}-${file.name}`;
+
+      notifications.show({
+        id: id,
+        title: t`Uploading File`,
+        message: <UploadProgress filename={name} progress={0} />,
+        color: 'blue',
+        loading: true,
+        autoClose: false
+      });
+
       api
-        .post(url, formData)
+        .post(url, formData, {
+          timeout: 30 * 1000,
+          onUploadProgress: (progressEvent) => {
+            const progress = 100 * (progressEvent?.progress ?? 0);
+            notifications.update({
+              id: id,
+              title: t`Uploading File`,
+              color: 'blue',
+              loading: true,
+              autoClose: false,
+              message: <UploadProgress filename={name} progress={progress} />
+            });
+          }
+        })
         .then((response) => {
-          notifications.show({
-            title: t`File uploaded`,
-            message: t`File ${file.name} uploaded successfully`,
-            color: 'green'
+          notifications.update({
+            id: id,
+            title: t`File Uploaded`,
+            message: t`File ${name} uploaded successfully`,
+            color: 'green',
+            autoClose: 3500,
+            icon: <IconCircleCheck />,
+            loading: false
           });
 
           table.refreshTable();
@@ -137,11 +195,15 @@ export function AttachmentTable({
           return response;
         })
         .catch((error) => {
-          console.error('error uploading attachment:', file, '->', error);
-          notifications.show({
+          console.error('Error uploading attachment:', file, '->', error);
+          notifications.update({
+            id: id,
             title: t`Upload Error`,
             message: t`File could not be uploaded`,
-            color: 'red'
+            color: 'red',
+            autoClose: 5000,
+            icon: <IconExclamationCircle />,
+            loading: false
           });
           return error;
         })
@@ -160,7 +222,7 @@ export function AttachmentTable({
   >(undefined);
 
   const uploadFields: ApiFormFieldSet = useMemo(() => {
-    let fields: ApiFormFieldSet = {
+    const fields: ApiFormFieldSet = {
       model_type: {
         value: model_type,
         hidden: true
@@ -236,7 +298,7 @@ export function AttachmentTable({
   const tableActions: ReactNode[] = useMemo(() => {
     return [
       <ActionButton
-        key="add-attachment"
+        key='add-attachment'
         tooltip={t`Add attachment`}
         hidden={!user.hasAddPermission(model_type)}
         icon={<IconFileUpload />}
@@ -247,7 +309,7 @@ export function AttachmentTable({
         }}
       />,
       <ActionButton
-        key="add-external-link"
+        key='add-external-link'
         tooltip={t`Add external link`}
         hidden={!user.hasAddPermission(model_type)}
         icon={<IconExternalLink />}
@@ -272,7 +334,7 @@ export function AttachmentTable({
           }
         }),
         RowDeleteAction({
-          hidden: !user.hasDeletePermission(model_type),
+          hidden: !canDelete,
           onClick: () => {
             setSelectedAttachment(record.pk);
             deleteAttachment.open();
@@ -288,16 +350,17 @@ export function AttachmentTable({
       {uploadAttachment.modal}
       {editAttachment.modal}
       {deleteAttachment.modal}
-      <Stack gap="xs">
+      <Stack gap='xs'>
         {validPk && (
           <InvenTreeTable
-            key="attachment-table"
+            key='attachment-table'
             url={url}
             tableState={table}
             columns={tableColumns}
             props={{
               noRecordsText: t`No attachments found`,
-              enableSelection: true,
+              enableSelection: canDelete,
+              enableBulkDelete: canDelete,
               tableActions: tableActions,
               tableFilters: tableFilters,
               rowActions: rowActions,
@@ -309,13 +372,13 @@ export function AttachmentTable({
           />
         )}
         {allowDragAndDrop && validPk && (
-          <Paper p="md" shadow="xs" radius="md">
+          <Paper p='md' shadow='xs' radius='md'>
             <Dropzone
               onDrop={uploadFiles}
               loading={isUploading}
-              key="attachment-dropzone"
+              key='attachment-dropzone'
             >
-              <Group justify="center" gap="lg" mih={100}>
+              <Group justify='center' gap='lg' mih={100}>
                 <Dropzone.Accept>
                   <IconUpload
                     style={{ color: 'var(--mantine-color-blue-6)' }}
@@ -334,7 +397,7 @@ export function AttachmentTable({
                     stroke={1.5}
                   />
                 </Dropzone.Idle>
-                <Text size="sm">{t`Drag attachment file here to upload`}</Text>
+                <Text size='sm'>{t`Drag attachment file here to upload`}</Text>
               </Group>
             </Dropzone>
           </Paper>

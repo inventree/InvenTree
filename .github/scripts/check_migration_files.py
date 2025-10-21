@@ -20,9 +20,9 @@ for line in str(out.decode()).split('\n'):
 if len(migrations) == 0:
     sys.exit(0)
 
-print('There are {n} unstaged migration files:'.format(n=len(migrations)))
+print(f'There are {len(migrations)} unstaged migration files:')
 
 for m in migrations:
-    print(' - {m}'.format(m=m))
+    print(f' - {m}')
 
 sys.exit(len(migrations))

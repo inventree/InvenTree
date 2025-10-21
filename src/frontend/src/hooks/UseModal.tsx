@@ -1,23 +1,17 @@
 import { Modal } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 
+import type { UseModalProps, UseModalReturn } from '@lib/types/Modals';
 import { StylishText } from '../components/items/StylishText';
-import { UiSizeType } from '../defaults/formatters';
+import { useUserSettingsState } from '../states/SettingsStates';
 
-export interface UseModalProps {
-  title: string;
-  children: React.ReactElement;
-  size?: UiSizeType;
-  onOpen?: () => void;
-  onClose?: () => void;
-  closeOnClickOutside?: boolean;
-}
-
-export function useModal(props: UseModalProps) {
+export function useModal(props: UseModalProps): UseModalReturn {
   const onOpen = useCallback(() => {
     props.onOpen?.();
   }, [props.onOpen]);
+
+  const userSettings = useUserSettingsState();
 
   const onClose = useCallback(() => {
     props.onClose?.();
@@ -34,11 +28,13 @@ export function useModal(props: UseModalProps) {
     toggle,
     modal: (
       <Modal
+        key={props.id}
         opened={opened}
+        closeOnEscape={userSettings.isSet('FORMS_CLOSE_USING_ESCAPE')}
         onClose={close}
         closeOnClickOutside={props.closeOnClickOutside}
         size={props.size ?? 'xl'}
-        title={<StylishText size="xl">{props.title}</StylishText>}
+        title={<StylishText size='xl'>{props.title}</StylishText>}
       >
         {props.children}
       </Modal>

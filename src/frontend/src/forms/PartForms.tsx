@@ -1,9 +1,12 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { IconPackages } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 
-import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
-import { useGlobalSettingsState } from '../states/SettingsState';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
+import type { ApiFormFieldSet } from '@lib/types/Forms';
+import { useApi } from '../contexts/ApiContext';
+import { useGlobalSettingsState } from '../states/SettingsStates';
 
 /**
  * Construct a set of fields for creating / editing a Part instance
@@ -61,7 +64,14 @@ export function usePartFields({
       salable: {},
       virtual: {},
       locked: {},
-      active: {}
+      active: {},
+      starred: {
+        field_type: 'boolean',
+        label: t`Subscribed`,
+        description: t`Subscribe to notifications for this part`,
+        disabled: false,
+        required: false
+      }
     };
 
     // Additional fields for creation
@@ -111,6 +121,10 @@ export function usePartFields({
       delete fields['default_expiry'];
     }
 
+    if (create) {
+      delete fields['starred'];
+    }
+
     return fields;
   }, [create, settings]);
 }
@@ -118,25 +132,44 @@ export function usePartFields({
 /**
  * Construct a set of fields for creating / editing a PartCategory instance
  */
-export function partCategoryFields(): ApiFormFieldSet {
-  let fields: ApiFormFieldSet = {
-    parent: {
-      description: t`Parent part category`,
-      required: false
-    },
-    name: {},
-    description: {},
-    default_location: {
-      filters: {
-        structural: false
+export function partCategoryFields({
+  create
+}: {
+  create?: boolean;
+}): ApiFormFieldSet {
+  const fields: ApiFormFieldSet = useMemo(() => {
+    const fields: ApiFormFieldSet = {
+      parent: {
+        description: t`Parent part category`,
+        required: false
+      },
+      name: {},
+      description: {},
+      default_location: {
+        filters: {
+          structural: false
+        }
+      },
+      default_keywords: {},
+      structural: {},
+      starred: {
+        field_type: 'boolean',
+        label: t`Subscribed`,
+        description: t`Subscribe to notifications for this category`,
+        disabled: false,
+        required: false
+      },
+      icon: {
+        field_type: 'icon'
       }
-    },
-    default_keywords: {},
-    structural: {},
-    icon: {
-      field_type: 'icon'
+    };
+
+    if (create) {
+      delete fields['starred'];
     }
-  };
+
+    return fields;
+  }, [create]);
 
   return fields;
 }
@@ -146,6 +179,8 @@ export function usePartParameterFields({
 }: {
   editTemplate?: boolean;
 }): ApiFormFieldSet {
+  const api = useApi();
+
   // Valid field choices
   const [choices, setChoices] = useState<any[]>([]);
 
@@ -168,13 +203,13 @@ export function usePartParameterFields({
             setChoices([]);
             setFieldType('boolean');
           } else if (record?.choices) {
-            let _choices: string[] = record.choices.split(',');
+            const _choices: string[] = record.choices.split(',');
 
             if (_choices.length > 0) {
               setChoices(
                 _choices.map((choice) => {
                   return {
-                    label: choice.trim(),
+                    display_name: choice.trim(),
                     value: choice.trim()
                   };
                 })
@@ -184,6 +219,22 @@ export function usePartParameterFields({
               setChoices([]);
               setFieldType('string');
             }
+          } else if (record?.selectionlist) {
+            api
+              .get(
+                apiUrl(ApiEndpoints.selectionlist_detail, record.selectionlist)
+              )
+              .then((res) => {
+                setChoices(
+                  res.data.choices.map((item: any) => {
+                    return {
+                      value: item.value,
+                      display_name: item.label
+                    };
+                  })
+                );
+                setFieldType('choice');
+              });
           } else {
             setChoices([]);
             setFieldType('string');
@@ -194,11 +245,37 @@ export function usePartParameterFields({
         type: fieldType,
         field_type: fieldType,
         choices: fieldType === 'choice' ? choices : undefined,
+        default: fieldType === 'boolean' ? false : undefined,
         adjustValue: (value: any) => {
           // Coerce boolean value into a string (required by backend)
-          return value.toString();
+
+          let v: string = value.toString().trim();
+
+          if (fieldType === 'boolean') {
+            if (v.toLowerCase() !== 'true') {
+              v = 'false';
+            }
+          }
+
+          return v;
         }
-      }
+      },
+      note: {}
     };
   }, [editTemplate, fieldType, choices]);
+}
+
+export function partStocktakeFields(): ApiFormFieldSet {
+  return {
+    part: {
+      hidden: true
+    },
+    quantity: {},
+    item_count: {},
+    cost_min: {},
+    cost_min_currency: {},
+    cost_max: {},
+    cost_max_currency: {},
+    note: {}
+  };
 }

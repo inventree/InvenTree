@@ -96,7 +96,7 @@ class TestShipmentMigration(MigratorTestCase):
 
         customer = Company.objects.create(
             name='My customer',
-            description='A customer we sell stuff too',
+            description='A customer we sell stuff to',
             is_customer=True,
         )
 
@@ -198,3 +198,52 @@ class TestAdditionalLineMigration(MigratorTestCase):
         # so = SalesOrder.objects.get(reference=f"{ii}-xyz")
         # self.assertEqual(so.extra_lines, 1)
         # self.assertEqual(so.lines.count(), 1)
+
+
+class TestShipmentDateMigration(MigratorTestCase):
+    """Test data migration which fixes empty 'shipment date' on SalesOrder model.
+
+    Ref: 0105_auto_20241128_0431.py
+    """
+
+    migrate_from = ('order', '0100_remove_returnorderattachment_order_and_more')
+    migrate_to = ('order', '0105_auto_20241128_0431')
+
+    def prepare(self):
+        """Create initial SalesOrder dataset."""
+        Company = self.old_state.apps.get_model('company', 'company')
+        SalesOrder = self.old_state.apps.get_model('order', 'salesorder')
+        SalesOrderShipment = self.old_state.apps.get_model(
+            'order', 'salesordershipment'
+        )
+
+        # Create a customer
+        customer = Company.objects.create(
+            name='Customer A',
+            description='A great customer!',
+            is_customer=True,
+            is_supplier=False,
+        )
+
+        # Create a SalesOrder (Completed, but missing shipment date)
+        order = SalesOrder.objects.create(
+            customer=customer,
+            reference='SO-999',
+            description='A test sales order',
+            shipment_date=None,
+            status=SalesOrderStatus.COMPLETE,
+        )
+
+        # Add a shipment
+        SalesOrderShipment.objects.create(order=order, shipment_date='2024-11-28')
+
+        self.assertEqual(order.shipments.count(), 1)
+        self.assertIsNone(order.shipment_date)
+
+    def test_migration(self):
+        """Test that the migration has correctly updated the SalesOrder objects."""
+        SalesOrder = self.new_state.apps.get_model('order', 'salesorder')
+
+        order = SalesOrder.objects.get(reference='SO-999')
+        self.assertIsNotNone(order.shipment_date)
+        self.assertEqual(order.shipment_date.isoformat(), '2024-11-28')

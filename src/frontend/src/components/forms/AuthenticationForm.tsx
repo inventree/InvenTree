@@ -1,5 +1,9 @@
-import { Trans, t } from '@lingui/macro';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import {
+  Alert,
   Anchor,
   Button,
   Divider,
@@ -8,28 +12,42 @@ import {
   PasswordInput,
   Stack,
   Text,
-  TextInput
+  TextInput,
+  VisuallyHidden
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useDisclosure } from '@mantine/hooks';
+import { showNotification } from '@mantine/notifications';
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-
+import { useShallow } from 'zustand/react/shallow';
 import { api } from '../../App';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { doBasicLogin, doSimpleLogin } from '../../functions/auth';
+import {
+  doBasicLogin,
+  doSimpleLogin,
+  ensureCsrf,
+  followRedirect
+} from '../../functions/auth';
 import { showLoginNotification } from '../../functions/notifications';
-import { apiUrl, useServerApiState } from '../../states/ApiState';
+import { useServerApiState } from '../../states/ServerApiState';
 import { useUserState } from '../../states/UserState';
 import { SsoButton } from '../buttons/SSOButton';
+import { errorCodeLink } from '../nav/Alerts';
 
 export function AuthenticationForm() {
   const classicForm = useForm({
-    initialValues: { username: '', password: '' }
+    initialValues: { username: '', password: '', code: '' }
   });
   const simpleForm = useForm({ initialValues: { email: '' } });
   const [classicLoginMode, setMode] = useDisclosure(true);
-  const [auth_settings] = useServerApiState((state) => [state.auth_settings]);
+  const [auth_config, sso_enabled, password_forgotten_enabled] =
+    useServerApiState(
+      useShallow((state) => [
+        state.auth_config,
+        state.sso_enabled,
+        state.password_forgotten_enabled
+      ])
+    );
   const navigate = useNavigate();
   const location = useLocation();
   const { isLoggedIn } = useUserState();
@@ -42,25 +60,37 @@ export function AuthenticationForm() {
     if (classicLoginMode === true) {
       doBasicLogin(
         classicForm.values.username,
-        classicForm.values.password
-      ).then(() => {
-        setIsLoggingIn(false);
+        classicForm.values.password,
 
-        if (isLoggedIn()) {
-          showLoginNotification({
-            title: t`Login successful`,
-            message: t`Logged in successfully`
-          });
+        navigate,
+        classicForm.values.code
+      )
+        .then((success) => {
+          setIsLoggingIn(false);
 
-          navigate(location?.state?.redirectFrom ?? '/home');
-        } else {
-          showLoginNotification({
+          if (isLoggedIn()) {
+            showLoginNotification({
+              title: t`Login successful`,
+              message: t`Logged in successfully`
+            });
+            followRedirect(navigate, location?.state);
+          } else if (success) {
+            // MFA login
+          } else {
+            showLoginNotification({
+              title: t`Login failed`,
+              message: t`Check your input and try again.`,
+              success: false
+            });
+          }
+        })
+        .catch(() => {
+          showNotification({
             title: t`Login failed`,
             message: t`Check your input and try again.`,
-            success: false
+            color: 'red'
           });
-        }
-      });
+        });
     } else {
       doSimpleLogin(simpleForm.values.email).then((ret) => {
         setIsLoggingIn(false);
@@ -83,18 +113,18 @@ export function AuthenticationForm() {
 
   return (
     <>
-      {auth_settings?.sso_enabled === true ? (
+      {sso_enabled() ? (
         <>
-          <Group grow mb="md" mt="md">
-            {auth_settings.providers.map((provider) => (
+          <Group grow mb='md' mt='md'>
+            {auth_config?.socialaccount.providers.map((provider) => (
               <SsoButton provider={provider} key={provider.id} />
             ))}
           </Group>
 
           <Divider
             label={t`Or continue with other methods`}
-            labelPosition="center"
-            my="lg"
+            labelPosition='center'
+            my='lg'
           />
         </>
       ) : null}
@@ -104,22 +134,31 @@ export function AuthenticationForm() {
             <TextInput
               required
               label={t`Username`}
+              aria-label='login-username'
               placeholder={t`Your username`}
               {...classicForm.getInputProps('username')}
             />
             <PasswordInput
               required
               label={t`Password`}
+              aria-label='login-password'
               placeholder={t`Your password`}
               {...classicForm.getInputProps('password')}
             />
-            {auth_settings?.password_forgotten_enabled === true && (
-              <Group justify="space-between" mt="0">
+            <VisuallyHidden>
+              <TextInput
+                name='TOTP'
+                {...classicForm.getInputProps('code')}
+                hidden={true}
+              />
+            </VisuallyHidden>
+            {password_forgotten_enabled() === true && (
+              <Group justify='space-between' mt='0'>
                 <Anchor
-                  component="button"
-                  type="button"
-                  color="dimmed"
-                  size="xs"
+                  component='button'
+                  type='button'
+                  c='dimmed'
+                  size='xs'
                   onClick={() => navigate('/reset-password')}
                 >
                   <Trans>Reset password</Trans>
@@ -133,18 +172,18 @@ export function AuthenticationForm() {
               required
               label={t`Email`}
               description={t`We will send you a link to login - if you are registered`}
-              placeholder="email@example.org"
+              placeholder='email@example.org'
               {...simpleForm.getInputProps('email')}
             />
           </Stack>
         )}
 
-        <Group justify="space-between" mt="xl">
+        <Group justify='space-between' mt='xl'>
           <Anchor
-            component="button"
-            type="button"
-            color="dimmed"
-            size="xs"
+            component='button'
+            type='button'
+            c='dimmed'
+            size='xs'
             onClick={() => setMode.toggle()}
           >
             {classicLoginMode ? (
@@ -153,9 +192,9 @@ export function AuthenticationForm() {
               <Trans>Use username and password</Trans>
             )}
           </Anchor>
-          <Button type="submit" disabled={isLoggingIn} onClick={handleLogin}>
+          <Button type='submit' disabled={isLoggingIn} onClick={handleLogin}>
             {isLoggingIn ? (
-              <Loader size="sm" />
+              <Loader size='sm' />
             ) : (
               <>
                 {classicLoginMode ? (
@@ -174,20 +213,44 @@ export function AuthenticationForm() {
 
 export function RegistrationForm() {
   const registrationForm = useForm({
-    initialValues: { username: '', email: '', password1: '', password2: '' }
+    initialValues: {
+      username: '',
+      email: '',
+      password: '',
+      password2: '' as string | undefined
+    }
   });
   const navigate = useNavigate();
-  const [auth_settings] = useServerApiState((state) => [state.auth_settings]);
+  const [auth_config, registration_enabled, sso_registration] =
+    useServerApiState(
+      useShallow((state) => [
+        state.auth_config,
+        state.registration_enabled,
+        state.sso_registration_enabled
+      ])
+    );
   const [isRegistering, setIsRegistering] = useState<boolean>(false);
 
-  function handleRegistration() {
+  async function handleRegistration() {
+    // check if passwords match
+    if (
+      registrationForm.values.password !== registrationForm.values.password2
+    ) {
+      registrationForm.setFieldError('password2', t`Passwords do not match`);
+      return;
+    }
     setIsRegistering(true);
+
+    // remove password2 from the request
+    const { password2, ...vals } = registrationForm.values;
+    await ensureCsrf();
+
     api
-      .post(apiUrl(ApiEndpoints.user_register), registrationForm.values, {
+      .post(apiUrl(ApiEndpoints.auth_signup), vals, {
         headers: { Authorization: '' }
       })
       .then((ret) => {
-        if (ret?.status === 204) {
+        if (ret?.status === 200) {
           setIsRegistering(false);
           showLoginNotification({
             title: t`Registration successful`,
@@ -197,61 +260,71 @@ export function RegistrationForm() {
         }
       })
       .catch((err) => {
-        if (err.response.status === 400) {
+        if (err.response?.status === 400) {
           setIsRegistering(false);
-          for (const [key, value] of Object.entries(err.response.data)) {
-            registrationForm.setFieldError(key, value as string);
+
+          // collect all errors per field
+          const errors: { [key: string]: string[] } = {};
+          for (const val of err.response.data.errors) {
+            if (!errors[val.param]) {
+              errors[val.param] = [];
+            }
+            errors[val.param].push(val.message);
           }
-          let err_msg = '';
-          if (err.response?.data?.non_field_errors) {
-            err_msg = err.response.data.non_field_errors;
+
+          for (const key in errors) {
+            registrationForm.setFieldError(key, errors[key]);
           }
+
           showLoginNotification({
             title: t`Input error`,
-            message: t`Check your input and try again. ` + err_msg,
+            message: t`Check your input and try again. `,
             success: false
           });
         }
       });
   }
 
-  const both_reg_enabled =
-    auth_settings?.registration_enabled && auth_settings?.sso_registration;
+  const both_reg_enabled = registration_enabled() && sso_registration();
   return (
     <>
-      {auth_settings?.registration_enabled && (
+      {registration_enabled() && (
         <form onSubmit={registrationForm.onSubmit(() => {})}>
           <Stack gap={0}>
             <TextInput
               required
               label={t`Username`}
+              aria-label='register-username'
               placeholder={t`Your username`}
               {...registrationForm.getInputProps('username')}
             />
             <TextInput
               required
               label={t`Email`}
+              aria-label='register-email'
               description={t`This will be used for a confirmation`}
-              placeholder="email@example.org"
+              placeholder='email@example.org'
               {...registrationForm.getInputProps('email')}
             />
             <PasswordInput
               required
               label={t`Password`}
+              aria-label='register-password'
               placeholder={t`Your password`}
-              {...registrationForm.getInputProps('password1')}
+              {...registrationForm.getInputProps('password')}
             />
             <PasswordInput
               required
               label={t`Password repeat`}
+              aria-label='register-password-repeat'
               placeholder={t`Repeat password`}
               {...registrationForm.getInputProps('password2')}
             />
           </Stack>
 
-          <Group justify="space-between" mt="xl">
+          <Group justify='space-between' mt='xl'>
             <Button
-              type="submit"
+              type='submit'
               disabled={isRegistering}
               onClick={handleRegistration}
               fullWidth
@@ -262,59 +335,21 @@ export function RegistrationForm() {
         </form>
       )}
       {both_reg_enabled && (
-        <Divider label={t`Or use SSO`} labelPosition="center" my="lg" />
+        <Divider label={t`Or use SSO`} labelPosition='center' my='lg' />
       )}
-      {auth_settings?.sso_registration === true && (
-        <Group grow mb="md" mt="md">
-          {auth_settings.providers.map((provider) => (
+      {sso_registration() && (
+        <Group grow mb='md' mt='md'>
+          {auth_config?.socialaccount.providers.map((provider) => (
             <SsoButton provider={provider} key={provider.id} />
           ))}
         </Group>
       )}
-    </>
-  );
-}
-
-export function ModeSelector({
-  loginMode,
-  setMode
-}: {
-  loginMode: boolean;
-  setMode: any;
-}) {
-  const [auth_settings] = useServerApiState((state) => [state.auth_settings]);
-  const registration_enabled =
-    auth_settings?.registration_enabled ||
-    auth_settings?.sso_registration ||
-    false;
-
-  if (registration_enabled === false) return null;
-  return (
-    <Text ta="center" size={'xs'} mt={'md'}>
-      {loginMode ? (
-        <>
-          <Trans>Don&apos;t have an account?</Trans>{' '}
-          <Anchor
-            component="button"
-            type="button"
-            color="dimmed"
-            size="xs"
-            onClick={() => setMode.close()}
-          >
-            <Trans>Register</Trans>
-          </Anchor>
-        </>
-      ) : (
-        <Anchor
-          component="button"
-          type="button"
-          color="dimmed"
-          size="xs"
-          onClick={() => setMode.open()}
-        >
-          <Trans>Go back to login</Trans>
-        </Anchor>
+      {!registration_enabled() && !sso_registration() && (
+        <Alert title={t`Registration not active`} color='orange'>
+          <Text>{t`This might be related to missing mail settings or could be a deliberate decision.`}</Text>
+          {errorCodeLink('INVE-W11')}
+        </Alert>
       )}
-    </Text>
+    </>
   );
 }

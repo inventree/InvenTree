@@ -3,6 +3,6 @@
         "@babel/preset-react"
     ],
     "plugins": [
-        "macros"
+        "@lingui/babel-plugin-lingui-macro"
     ]
 }

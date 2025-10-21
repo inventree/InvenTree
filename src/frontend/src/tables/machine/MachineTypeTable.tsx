@@ -1,6 +1,9 @@
-import { Trans, t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import {
+  Accordion,
   ActionIcon,
+  Alert,
   Badge,
   Card,
   Code,
@@ -11,18 +14,20 @@ import {
   Text,
   Title
 } from '@mantine/core';
-import { IconRefresh } from '@tabler/icons-react';
+import { IconExclamationCircle, IconRefresh } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
+import type { TableColumn } from '@lib/types/Tables';
+import type { InvenTreeTableProps } from '@lib/types/Tables';
 import { InfoItem } from '../../components/items/InfoItem';
+import { StylishText } from '../../components/items/StylishText';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
-import { TableColumn } from '../Column';
-import { BooleanColumn } from '../ColumnRenderers';
-import { InvenTreeTable, InvenTreeTableProps } from '../InvenTreeTable';
+import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
+import { InvenTreeTable } from '../InvenTreeTable';
 import { MachineListTable, useMachineTypeDriver } from './MachineListTable';
 
 export interface MachineTypeI {
@@ -45,7 +50,59 @@ export interface MachineDriverI {
   driver_errors: string[];
 }
 
-function MachineTypeDrawer({ machineTypeSlug }: { machineTypeSlug: string }) {
+export function MachineDriverTable({
+  machineType,
+  prefix
+}: {
+  machineType?: string;
+  prefix?: string;
+}) {
+  const navigate = useNavigate();
+  const table = useTable('machine-drivers');
+
+  const tableColumns: TableColumn[] = useMemo(() => {
+    return [
+      {
+        accessor: 'name',
+        title: t`Name`
+      },
+      DescriptionColumn({}),
+      {
+        accessor: 'machine_type',
+        title: t`Driver Type`
+      },
+      BooleanColumn({
+        accessor: 'is_builtin',
+        title: t`Builtin driver`
+      })
+    ];
+  }, []);
+
+  return (
+    <InvenTreeTable
+      url={apiUrl(ApiEndpoints.machine_driver_list)}
+      tableState={table}
+      columns={tableColumns}
+      props={{
+        enableDownload: false,
+        enableSearch: false,
+        onRowClick: (machine) => {
+          navigate(`${prefix ?? '.'}/driver-${machine.slug}/`);
+        },
+        dataFormatter: (data: any) => {
+          if (machineType) {
+            return data.filter((d: any) => d.machine_type === machineType);
+          }
+          return data;
+        }
+      }}
+    />
+  );
+}
+
+function MachineTypeDrawer({
+  machineTypeSlug
+}: Readonly<{ machineTypeSlug: string }>) {
   const navigate = useNavigate();
 
   const { machineTypes, refresh, isFetching } = useMachineTypeDriver({
@@ -56,122 +113,103 @@ function MachineTypeDrawer({ machineTypeSlug }: { machineTypeSlug: string }) {
     [machineTypes, machineTypeSlug]
   );
 
-  const table = useTable('machineDrivers');
-
-  const machineDriverTableColumns = useMemo<TableColumn<MachineDriverI>[]>(
-    () => [
-      {
-        accessor: 'name',
-        title: t`Name`
-      },
-      {
-        accessor: 'description',
-        title: t`Description`
-      },
-      BooleanColumn({
-        accessor: 'is_builtin',
-        title: t`Builtin driver`
-      })
-    ],
-    []
-  );
-
   return (
-    <Stack>
-      <Group justify="center">
-        <Title order={4}>
-          {machineType ? machineType.name : machineTypeSlug}
-        </Title>
-      </Group>
+    <>
+      <Stack>
+        <Group wrap='nowrap'>
+          <StylishText size='md'>
+            {machineType ? machineType.name : machineTypeSlug}
+          </StylishText>
+        </Group>
 
-      {!machineType && (
-        <Text style={{ fontStyle: 'italic' }}>
-          <Trans>Machine type not found.</Trans>
-        </Text>
-      )}
+        {!machineType && (
+          <Alert
+            color='red'
+            title={t`Not Found`}
+            icon={<IconExclamationCircle />}
+          >
+            <Text>{t`Machine type not found.`}</Text>
+          </Alert>
+        )}
 
-      <Card withBorder>
-        <Stack gap="md">
-          <Group justify="space-between">
-            <Title order={4}>
-              <Trans>Machine type information</Trans>
-            </Title>
-            <ActionIcon variant="outline" onClick={() => refresh()}>
-              <IconRefresh />
-            </ActionIcon>
-          </Group>
-
-          <Stack pos="relative" gap="xs">
-            <LoadingOverlay
-              visible={isFetching}
-              overlayProps={{ opacity: 0 }}
-            />
-            <InfoItem name={t`Name`} value={machineType?.name} type="text" />
-            <InfoItem name={t`Slug`} value={machineType?.slug} type="text" />
-            <InfoItem
-              name={t`Description`}
-              value={machineType?.description}
-              type="text"
-            />
-            {!machineType?.is_builtin && (
-              <InfoItem
-                name={t`Provider plugin`}
-                value={machineType?.provider_plugin?.name}
-                type="text"
-                link={
-                  machineType?.provider_plugin?.pk !== null
-                    ? `../../plugin/${machineType?.provider_plugin?.pk}/`
-                    : undefined
-                }
-                detailDrawerLink
-              />
-            )}
-            <InfoItem
-              name={t`Provider file`}
-              value={machineType?.provider_file}
-              type="code"
-            />
-            <InfoItem
-              name={t`Builtin`}
-              value={machineType?.is_builtin}
-              type="boolean"
-            />
-          </Stack>
-        </Stack>
-      </Card>
-
-      <Card withBorder>
-        <Stack gap="md">
-          <Title order={4}>
-            <Trans>Available drivers</Trans>
-          </Title>
-
-          <InvenTreeTable
-            url={apiUrl(ApiEndpoints.machine_driver_list)}
-            tableState={table}
-            columns={machineDriverTableColumns}
-            props={{
-              dataFormatter: (data: any) => {
-                return data.filter(
-                  (d: any) => d.machine_type === machineTypeSlug
-                );
-              },
-              enableDownload: false,
-              enableSearch: false,
-              onRowClick: (machine) => navigate(`../driver-${machine.slug}/`)
-            }}
-          />
-        </Stack>
-      </Card>
-    </Stack>
+        <Accordion
+          multiple
+          defaultValue={['machine-type-info', 'machine-drivers']}
+        >
+          <Accordion.Item value='machine-type-info'>
+            <Accordion.Control>
+              <StylishText size='lg'>{t`Machine Type Information`}</StylishText>
+            </Accordion.Control>
+            <Accordion.Panel>
+              <Card withBorder>
+                <Stack pos='relative' gap='xs'>
+                  <LoadingOverlay
+                    visible={isFetching}
+                    overlayProps={{ opacity: 0 }}
+                  />
+                  <InfoItem
+                    name={t`Name`}
+                    value={machineType?.name}
+                    type='text'
+                  />
+                  <InfoItem
+                    name={t`Slug`}
+                    value={machineType?.slug}
+                    type='text'
+                  />
+                  <InfoItem
+                    name={t`Description`}
+                    value={machineType?.description}
+                    type='text'
+                  />
+                  {!machineType?.is_builtin && (
+                    <InfoItem
+                      name={t`Provider plugin`}
+                      value={machineType?.provider_plugin?.name}
+                      type='text'
+                      link={
+                        machineType?.provider_plugin?.pk !== null
+                          ? `../../plugin/${machineType?.provider_plugin?.pk}/`
+                          : undefined
+                      }
+                      detailDrawerLink
+                    />
+                  )}
+                  <InfoItem
+                    name={t`Provider file`}
+                    value={machineType?.provider_file}
+                    type='code'
+                  />
+                  <InfoItem
+                    name={t`Builtin`}
+                    value={machineType?.is_builtin}
+                    type='boolean'
+                  />
+                </Stack>
+              </Card>
+            </Accordion.Panel>
+          </Accordion.Item>
+          <Accordion.Item value='machine-drivers'>
+            <Accordion.Control>
+              <StylishText size='lg'>{t`Available Drivers`}</StylishText>
+            </Accordion.Control>
+            <Accordion.Panel>
+              <Card withBorder>
+                <MachineDriverTable machineType={machineTypeSlug} prefix='..' />
+              </Card>
+            </Accordion.Panel>
+          </Accordion.Item>
+        </Accordion>
+      </Stack>
+    </>
   );
 }
 
 function MachineDriverDrawer({
   machineDriverSlug
-}: {
+}: Readonly<{
   machineDriverSlug: string;
-}) {
+}>) {
   const { machineDrivers, machineTypes, refresh, isFetching } =
     useMachineTypeDriver();
   const machineDriver = useMemo(
@@ -185,7 +223,7 @@ function MachineDriverDrawer({
 
   return (
     <Stack>
-      <Group justify="center">
+      <Group justify='center'>
         <Title order={4}>
           {machineDriver ? machineDriver.name : machineDriverSlug}
         </Title>
@@ -198,34 +236,34 @@ function MachineDriverDrawer({
       )}
 
       <Card withBorder>
-        <Stack gap="md">
-          <Group justify="space-between">
+        <Stack gap='md'>
+          <Group justify='space-between'>
             <Title order={4}>
               <Trans>Machine driver information</Trans>
             </Title>
-            <ActionIcon variant="outline" onClick={() => refresh()}>
+            <ActionIcon variant='outline' onClick={() => refresh()}>
               <IconRefresh />
             </ActionIcon>
           </Group>
 
-          <Stack pos="relative" gap="xs">
+          <Stack pos='relative' gap='xs'>
             <LoadingOverlay
               visible={isFetching}
               overlayProps={{ opacity: 0 }}
             />
-            <InfoItem name={t`Name`} value={machineDriver?.name} type="text" />
-            <InfoItem name={t`Slug`} value={machineDriver?.slug} type="text" />
+            <InfoItem name={t`Name`} value={machineDriver?.name} type='text' />
+            <InfoItem name={t`Slug`} value={machineDriver?.slug} type='text' />
             <InfoItem
               name={t`Description`}
               value={machineDriver?.description}
-              type="text"
+              type='text'
             />
             <InfoItem
               name={t`Machine type`}
               value={
                 machineType ? machineType.name : machineDriver?.machine_type
               }
-              type="text"
+              type='text'
               link={
                 machineType
                   ? `../type-${machineDriver?.machine_type}`
@@ -237,7 +275,7 @@ function MachineDriverDrawer({
               <InfoItem
                 name={t`Provider plugin`}
                 value={machineDriver?.provider_plugin?.name}
-                type="text"
+                type='text'
                 link={
                   machineDriver?.provider_plugin?.pk !== null
                     ? `../../plugin/${machineDriver?.provider_plugin?.pk}/`
@@ -249,29 +287,29 @@ function MachineDriverDrawer({
             <InfoItem
               name={t`Provider file`}
               value={machineDriver?.provider_file}
-              type="code"
+              type='code'
             />
             <InfoItem
               name={t`Builtin`}
               value={machineDriver?.is_builtin}
-              type="boolean"
+              type='boolean'
             />
-            <Group justify="space-between" gap="xs">
-              <Text fz="sm" fw={700}>
+            <Group justify='space-between' gap='xs'>
+              <Text fz='sm' fw={700}>
                 <Trans>Errors</Trans>:
               </Text>
               {machineDriver && machineDriver?.driver_errors.length > 0 ? (
-                <Badge color="red" style={{ marginLeft: '10px' }}>
+                <Badge color='red' style={{ marginLeft: '10px' }}>
                   {machineDriver.driver_errors.length}
                 </Badge>
               ) : (
-                <Text fz="xs">
+                <Text fz='xs'>
                   <Trans>No errors reported</Trans>
                 </Text>
               )}
-              <List w="100%">
+              <List w='100%'>
                 {machineDriver?.driver_errors.map((error, i) => (
-                  <List.Item key={i}>
+                  <List.Item key={`${i}-${error}`}>
                     <Code>{error}</Code>
                   </List.Item>
                 ))}
@@ -282,7 +320,7 @@ function MachineDriverDrawer({
       </Card>
 
       <Card withBorder>
-        <Stack gap="md">
+        <Stack gap='md'>
           <Title order={4}>
             <Trans>Machines</Trans>
           </Title>
@@ -306,9 +344,9 @@ function MachineDriverDrawer({
  */
 export function MachineTypeListTable({
   props
-}: {
+}: Readonly<{
   props: InvenTreeTableProps;
-}) {
+}>) {
   const table = useTable('machineTypes');
   const navigate = useNavigate();
 
@@ -318,10 +356,7 @@ export function MachineTypeListTable({
         accessor: 'name',
         title: t`Name`
       },
-      {
-        accessor: 'description',
-        title: t`Description`
-      },
+      DescriptionColumn({}),
       BooleanColumn({
         accessor: 'is_builtin',
         title: t`Builtin type`
@@ -333,8 +368,8 @@ export function MachineTypeListTable({
   return (
     <>
       <DetailDrawer
-        title={t`Machine type detail`}
-        size={'lg'}
+        title={t`Machine Type Detail`}
+        size={'xl'}
         renderContent={(id) => {
           if (!id || !id.startsWith('type-')) return false;
           return (
@@ -343,8 +378,8 @@ export function MachineTypeListTable({
         }}
       />
       <DetailDrawer
-        title={t`Machine driver detail`}
-        size={'lg'}
+        title={t`Machine Driver Detail`}
+        size={'xl'}
         renderContent={(id) => {
           if (!id || !id.startsWith('driver-')) return false;
           return (
@@ -362,7 +397,7 @@ export function MachineTypeListTable({
           ...props,
           enableDownload: false,
           enableSearch: false,
-          onRowClick: (machine) => navigate(`type-${machine.slug}/`),
+          onRowClick: (machine) => navigate(`./type-${machine.slug}/`),
           params: {
             ...props.params
           }

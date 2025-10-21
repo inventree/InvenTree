@@ -1,37 +1,43 @@
-import { Trans, t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import { Alert, Badge, Stack, Text } from '@mantine/core';
-import { IconArrowRight, IconLock } from '@tabler/icons-react';
-import { ReactNode, useCallback, useMemo, useState } from 'react';
+import { IconLock } from '@tabler/icons-react';
+import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
-import { getDetailUrl } from '../../functions/urls';
+import { AddItemButton } from '@lib/components/AddItemButton';
+import {
+  type RowAction,
+  RowDeleteAction,
+  RowEditAction,
+  RowViewAction
+} from '@lib/components/RowActions';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import { getDetailUrl } from '@lib/functions/Navigation';
+import type { TableFilter } from '@lib/types/Filters';
+import type { ApiFormFieldSet } from '@lib/types/Forms';
+import type { TableColumn } from '@lib/types/Tables';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
 import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
-import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
 
 export default function PartTestTemplateTable({
   partId,
   partLocked
-}: {
+}: Readonly<{
   partId: number;
   partLocked?: boolean;
-}) {
+}>) {
   const table = useTable('part-test-template');
   const user = useUserState();
   const navigate = useNavigate();
@@ -43,11 +49,11 @@ export default function PartTestTemplateTable({
         switchable: false,
         sortable: true,
         render: (record: any) => {
-          let extra: ReactNode[] = [];
+          const extra: ReactNode[] = [];
 
           if (record.part != partId) {
             extra.push(
-              <Text size="sm">{t`Test is defined for a parent template part`}</Text>
+              <Text size='sm'>{t`Test is defined for a parent template part`}</Text>
             );
           }
 
@@ -73,7 +79,7 @@ export default function PartTestTemplateTable({
         sortable: true,
         title: t`Results`,
         render: (record: any) => {
-          return record.results || <Badge color="blue">{t`No Results`}</Badge>;
+          return record.results || <Badge color='blue'>{t`No Results`}</Badge>;
         }
       },
       DescriptionColumn({
@@ -180,7 +186,7 @@ export default function PartTestTemplateTable({
     pk: selectedTest,
     title: t`Delete Test Template`,
     preFormContent: (
-      <Alert color="red" title={t`This action cannot be reversed`}>
+      <Alert color='red' title={t`This action cannot be reversed`}>
         <Text>
           <Trans>
             Any tests results associated with this template will be deleted
@@ -199,13 +205,12 @@ export default function PartTestTemplateTable({
       if (record.part != partId) {
         // This test is defined for a parent part
         return [
-          {
-            icon: <IconArrowRight />,
+          RowViewAction({
             title: t`View Parent Part`,
-            onClick: () => {
-              navigate(getDetailUrl(ModelType.part, record.part));
-            }
-          }
+            modelType: ModelType.part,
+            modelId: record.part,
+            navigate: navigate
+          })
         ];
       }
 
@@ -230,10 +235,11 @@ export default function PartTestTemplateTable({
   );
 
   const tableActions = useMemo(() => {
-    let can_add = user.hasAddRole(UserRoles.part);
+    const can_add = user.hasAddRole(UserRoles.part);
 
     return [
       <AddItemButton
+        key='add-test-template'
         tooltip={t`Add Test Template`}
         onClick={() => newTestTemplate.open()}
         hidden={partLocked || !can_add}
@@ -246,13 +252,13 @@ export default function PartTestTemplateTable({
       {newTestTemplate.modal}
       {editTestTemplate.modal}
       {deleteTestTemplate.modal}
-      <Stack gap="xs">
+      <Stack gap='xs'>
         {partLocked && (
           <Alert
             title={t`Part is Locked`}
-            color="orange"
+            color='orange'
             icon={<IconLock />}
-            p="xs"
+            p='xs'
           >
             <Text>{t`Part templates cannot be edited, as the part is locked`}</Text>
           </Alert>

@@ -1,15 +1,15 @@
 """Functions to print a label to a mixin printer."""
 
-import logging
-
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
+
+import structlog
 
 import common.notifications
 from InvenTree.exceptions import log_error
 from plugin.registry import registry
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 def print_label(plugin_slug: str, **kwargs):
@@ -24,12 +24,14 @@ def print_label(plugin_slug: str, **kwargs):
     kwargs:
         passed through to the plugin.print_label() method
     """
+    from plugin.builtin.integration.core_notifications import InvenTreeUINotifications
+
     logger.info("Plugin '%s' is printing a label", plugin_slug)
 
-    plugin = registry.get_plugin(plugin_slug)
+    plugin = registry.get_plugin(plugin_slug, active=True)
 
     if plugin is None:  # pragma: no cover
-        logger.error("Could not find matching plugin for '%s'", plugin_slug)
+        logger.error("Could not find matching active plugin for '%s'", plugin_slug)
         return
 
     try:
@@ -38,11 +40,11 @@ def print_label(plugin_slug: str, **kwargs):
         # Plugin threw an error - notify the user who attempted to print
         ctx = {'name': _('Label printing failed'), 'message': str(e)}
 
-        user = kwargs.get('user', None)
+        user = kwargs.get('user')
 
         if user:
             # Log an error message to the database
-            log_error('plugin.print_label')
+            log_error('print_label', plugin=plugin.slug)
             logger.exception(
                 "Label printing failed: Sending notification to user '%s'", user
             )  # pragma: no cover
@@ -53,7 +55,7 @@ def print_label(plugin_slug: str, **kwargs):
                 'label.printing_failed',
                 targets=[user],
                 context=ctx,
-                delivery_methods={common.notifications.UIMessageNotification},
+                delivery_methods={InvenTreeUINotifications},
             )
 
         if settings.TESTING:

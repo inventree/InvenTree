@@ -1,11 +1,11 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Code } from '@mantine/core';
 import { useMemo } from 'react';
 
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
+import type { TableColumn } from '@lib/types/Tables';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
-import { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 export interface PluginRegistryErrorI {
@@ -19,7 +19,7 @@ export interface PluginRegistryErrorI {
  * Table displaying list of plugin registry errors
  */
 export default function PluginErrorTable() {
-  const table = useTable('registryErrors');
+  const table = useTable('registryErrors', 'id');
 
   const registryErrorTableColumns: TableColumn<PluginRegistryErrorI>[] =
     useMemo(
@@ -49,7 +49,6 @@ export default function PluginErrorTable() {
       props={{
         dataFormatter: (data: any) =>
           data.registry_errors.map((e: any, i: number) => ({ id: i, ...e })),
-        idAccessor: 'id',
         enableDownload: false,
         enableFilters: false,
         enableSearch: false

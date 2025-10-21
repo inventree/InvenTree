@@ -4,19 +4,20 @@ import os
 import time
 from datetime import datetime, timedelta
 from decimal import Decimal
+from pathlib import Path
 from unittest import mock
+from zoneinfo import ZoneInfo
 
 import django.core.exceptions as django_exceptions
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core import mail
 from django.core.exceptions import ValidationError
-from django.test import TestCase, override_settings, tag
+from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
 
 import pint.errors
-import pytz
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import Rate, convert_money
 from djmoney.money import Money
@@ -30,15 +31,82 @@ import InvenTree.helpers_model
 import InvenTree.tasks
 from common.currency import currency_codes
 from common.models import CustomUnit, InvenTreeSetting
+from common.settings import get_global_setting
 from InvenTree.helpers_mixin import ClassProviderMixin, ClassValidationMixin
 from InvenTree.sanitizer import sanitize_svg
-from InvenTree.unit_test import InvenTreeTestCase
+from InvenTree.unit_test import InvenTreeTestCase, in_env_context
 from part.models import Part, PartCategory
 from stock.models import StockItem, StockLocation
 
-from . import config, helpers, ready, status, version
+from . import config, helpers, ready, schema, status, version
 from .tasks import offload_task
-from .validators import validate_overage
+
+
+class TreeFixtureTest(TestCase):
+    """Unit testing for our MPTT fixture data."""
+
+    fixtures = ['location', 'category', 'part', 'stock', 'build']
+
+    def node_string(self, node):
+        """Construct a string representation of a tree node."""
+        return ':'.join([
+            str(getattr(node, attr, None))
+            for attr in ['parent', 'level', 'lft', 'rght']
+        ])
+
+    def run_tree_test(self, model):
+        """Run MPTT test for a given model type.
+
+        The intent here is to check that the MPTT tree structure
+        does not change after rebuilding the tree.
+
+        This ensures that the fixutre data is consistent.
+        """
+        nodes = {}
+
+        for instance in model.objects.all():
+            nodes[instance.pk] = self.node_string(instance)
+
+        # Rebuild the tree structure
+        model.objects.rebuild()
+
+        faults = []
+
+        # Check that no nodes have changed
+        for instance in model.objects.all().order_by('pk'):
+            ns = self.node_string(instance)
+            if ns != nodes[instance.pk]:
+                faults.append(
+                    f'Node {instance.pk} changed: {nodes[instance.pk]} -> {ns}'
+                )
+
+        if len(faults) > 0:
+            print(f'!!! Fixture data changed for: {model.__name__} !!!')
+
+            for f in faults:
+                print('-', f)
+
+        assert len(faults) == 0
+
+    def test_part(self):
+        """Test MPTT tree structure for Part model."""
+        from part.models import Part, PartCategory
+
+        self.run_tree_test(Part)
+        self.run_tree_test(PartCategory)
+
+    def test_build(self):
+        """Test MPTT tree structure for Build model."""
+        from build.models import Build
+
+        self.run_tree_test(Build)
+
+    def test_stock(self):
+        """Test MPTT tree structure for Stock model."""
+        from stock.models import StockItem, StockLocation
+
+        self.run_tree_test(StockItem)
+        self.run_tree_test(StockLocation)
 
 
 class HostTest(InvenTreeTestCase):
@@ -394,27 +462,6 @@ class ConversionTest(TestCase):
 class ValidatorTest(TestCase):
     """Simple tests for custom field validators."""
 
-    def test_overage(self):
-        """Test overage validator."""
-        validate_overage('100%')
-        validate_overage('10')
-        validate_overage('45.2 %')
-
-        with self.assertRaises(django_exceptions.ValidationError):
-            validate_overage('-1')
-
-        with self.assertRaises(django_exceptions.ValidationError):
-            validate_overage('-2.04 %')
-
-        with self.assertRaises(django_exceptions.ValidationError):
-            validate_overage('105%')
-
-        with self.assertRaises(django_exceptions.ValidationError):
-            validate_overage('xxx %')
-
-        with self.assertRaises(django_exceptions.ValidationError):
-            validate_overage('aaaa')
-
     def test_url_validation(self):
         """Test for AllowedURLValidator."""
         from common.models import InvenTreeSetting
@@ -434,16 +481,26 @@ class ValidatorTest(TestCase):
             link='www.google.com',
         )
 
+        # Check that a blank URL is acceptable
+        Part.objects.create(
+            name=f'Part {n + 1}', description='Missing link', category=cat, link=''
+        )
+
         # With strict URL validation
         InvenTreeSetting.set_setting('INVENTREE_STRICT_URLS', True, None)
 
         with self.assertRaises(ValidationError):
             Part.objects.create(
-                name=f'Part {n + 1}',
+                name=f'Part {n + 2}',
                 description='Link without schema',
                 category=cat,
                 link='www.google.com',
             )
+
+        # Check that a blank URL is acceptable
+        Part.objects.create(
+            name=f'Part {n + 3}', description='Missing link', category=cat, link=''
+        )
 
 
 class FormatTest(TestCase):
@@ -543,22 +600,22 @@ class FormatTest(TestCase):
     def test_currency_formatting(self):
         """Test that currency formatting works correctly for multiple currencies."""
         test_data = (
-            (Money(3651.285718, 'USD'), 4, True, '$3,651.2857'),  # noqa: E201,E202
-            (Money(487587.849178, 'CAD'), 5, True, 'CA$487,587.84918'),  # noqa: E201,E202
-            (Money(0.348102, 'EUR'), 1, False, '0.3'),  # noqa: E201,E202
-            (Money(0.916530, 'GBP'), 1, True, '£0.9'),  # noqa: E201,E202
-            (Money(61.031024, 'JPY'), 3, False, '61.031'),  # noqa: E201,E202
-            (Money(49609.694602, 'JPY'), 1, True, '¥49,609.7'),  # noqa: E201,E202
-            (Money(155565.264777, 'AUD'), 2, False, '155,565.26'),  # noqa: E201,E202
-            (Money(0.820437, 'CNY'), 4, True, 'CN¥0.8204'),  # noqa: E201,E202
-            (Money(7587.849178, 'EUR'), 0, True, '€7,588'),  # noqa: E201,E202
-            (Money(0.348102, 'GBP'), 3, False, '0.348'),  # noqa: E201,E202
-            (Money(0.652923, 'CHF'), 0, True, 'CHF1'),  # noqa: E201,E202
-            (Money(0.820437, 'CNY'), 1, True, 'CN¥0.8'),  # noqa: E201,E202
-            (Money(98789.5295680, 'CHF'), 0, False, '98,790'),  # noqa: E201,E202
-            (Money(0.585787, 'USD'), 1, True, '$0.6'),  # noqa: E201,E202
-            (Money(0.690541, 'CAD'), 3, True, 'CA$0.691'),  # noqa: E201,E202
-            (Money(427.814104, 'AUD'), 5, True, 'A$427.81410'),  # noqa: E201,E202
+            (Money(3651.285718, 'USD'), 4, True, '$3,651.2857'),
+            (Money(487587.849178, 'CAD'), 5, True, 'CA$487,587.84918'),
+            (Money(0.348102, 'EUR'), 1, False, '0.3'),
+            (Money(0.916530, 'GBP'), 1, True, '£0.9'),
+            (Money(61.031024, 'JPY'), 3, False, '61.031'),
+            (Money(49609.694602, 'JPY'), 1, True, '¥49,609.7'),
+            (Money(155565.264777, 'AUD'), 2, False, '155,565.26'),
+            (Money(0.820437, 'CNY'), 4, True, 'CN¥0.8204'),
+            (Money(7587.849178, 'EUR'), 0, True, '€7,588'),
+            (Money(0.348102, 'GBP'), 3, False, '0.348'),
+            (Money(0.652923, 'CHF'), 0, True, 'CHF1'),
+            (Money(0.820437, 'CNY'), 1, True, 'CN¥0.8'),
+            (Money(98789.5295680, 'CHF'), 0, False, '98,790'),
+            (Money(0.585787, 'USD'), 1, True, '$0.6'),
+            (Money(0.690541, 'CAD'), 3, True, 'CA$0.691'),
+            (Money(427.814104, 'AUD'), 5, True, 'A$427.81410'),
         )
 
         with self.settings(LANGUAGE_CODE='en-us'):
@@ -573,12 +630,9 @@ class FormatTest(TestCase):
 class TestHelpers(TestCase):
     """Tests for InvenTree helper functions."""
 
-    @override_settings(SITE_URL=None)
     def test_absolute_url(self):
         """Test helper function for generating an absolute URL."""
-        base = 'https://demo.inventree.org:12345'
-
-        InvenTreeSetting.set_setting('INVENTREE_BASE_URL', base, change_user=None)
+        base = InvenTreeSetting.get_setting('INVENTREE_BASE_URL')
 
         tests = {
             '': base,
@@ -736,14 +790,14 @@ class TestTimeFormat(TestCase):
             month=1,
             day=1,
             hour=0,
-            minute=0,
+            minute=1,
             second=0,
-            tzinfo=pytz.timezone('Europe/London'),
+            tzinfo=ZoneInfo('Europe/London'),
         )
 
         tests = [
             ('UTC', '2000-01-01 00:01:00+00:00'),
-            ('Europe/London', '2000-01-01 00:00:00-00:01'),
+            ('Europe/London', '2000-01-01 00:01:00+00:00'),
             ('America/New_York', '1999-12-31 19:01:00-05:00'),
             # All following tests should result in the same value
             ('Australia/Sydney', '2000-01-01 11:01:00+11:00'),
@@ -794,19 +848,13 @@ class TestDownloadFile(TestCase):
     def test_download(self):
         """Tests for DownloadFile."""
         helpers.DownloadFile('hello world', 'out.txt')
-        helpers.DownloadFile(bytes(b'hello world'), 'out.bin')
+        helpers.DownloadFile(b'hello world', 'out.bin')
 
 
 class TestMPTT(TestCase):
     """Tests for the MPTT tree models."""
 
     fixtures = ['location']
-
-    @classmethod
-    def setUpTestData(cls):
-        """Setup for all tests."""
-        super().setUpTestData()
-        StockLocation.objects.rebuild()
 
     def test_self_as_parent(self):
         """Test that we cannot set self as parent."""
@@ -1033,15 +1081,15 @@ class TestVersionNumber(TestCase):
 
         # Check that the current .git values work too
 
-        hash = str(
-            subprocess.check_output('git rev-parse --short HEAD'.split()), 'utf-8'
+        git_hash = str(
+            subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']), 'utf-8'
         ).strip()
 
         # On some systems the hash is a different length, so just check the first 6 characters
-        self.assertEqual(hash[:6], version.inventreeCommitHash()[:6])
+        self.assertEqual(git_hash[:6], version.inventreeCommitHash()[:6])
 
         d = (
-            str(subprocess.check_output('git show -s --format=%ci'.split()), 'utf-8')
+            str(subprocess.check_output(['git', 'show', '-s', '--format=%ci']), 'utf-8')
             .strip()
             .split(' ')[0]
         )
@@ -1115,15 +1163,15 @@ class TestStatus(TestCase):
         """Test isImportingData check."""
         self.assertEqual(ready.isImportingData(), False)
 
+    def test_GeneratingSchema(self):
+        """Test isGeneratingSchema check."""
+        self.assertEqual(ready.isGeneratingSchema(), False)
+
 
 class TestSettings(InvenTreeTestCase):
     """Unit tests for settings."""
 
     superuser = True
-
-    def in_env_context(self, envs):
-        """Patch the env to include the given dict."""
-        return mock.patch.dict(os.environ, envs)
 
     def run_reload(self, envs=None):
         """Helper function to reload InvenTree."""
@@ -1133,7 +1181,7 @@ class TestSettings(InvenTreeTestCase):
 
         from plugin import registry
 
-        with self.in_env_context(envs):
+        with in_env_context(envs):
             settings.USER_ADDED = False
             registry.reload_plugins()
 
@@ -1144,95 +1192,175 @@ class TestSettings(InvenTreeTestCase):
         # add shortcut
         user_count = user_model.objects.count
         # enable testing mode
-        settings.TESTING_ENV = True
+        with self.settings(TESTING_ENV=True):
+            # nothing set
+            self.run_reload()
+            self.assertEqual(user_count(), 1)
 
-        # nothing set
-        self.run_reload()
-        self.assertEqual(user_count(), 1)
+            # not enough set
+            self.run_reload({'INVENTREE_ADMIN_USER': 'admin'})
+            self.assertEqual(user_count(), 1)
 
-        # not enough set
-        self.run_reload({'INVENTREE_ADMIN_USER': 'admin'})
-        self.assertEqual(user_count(), 1)
+            # enough set
+            self.run_reload({
+                'INVENTREE_ADMIN_USER': 'admin',  # set username
+                'INVENTREE_ADMIN_EMAIL': 'info@example.com',  # set email
+                'INVENTREE_ADMIN_PASSWORD': 'password123',  # set password
+            })
+            self.assertEqual(user_count(), 2)
 
-        # enough set
-        self.run_reload({
-            'INVENTREE_ADMIN_USER': 'admin',  # set username
-            'INVENTREE_ADMIN_EMAIL': 'info@example.com',  # set email
-            'INVENTREE_ADMIN_PASSWORD': 'password123',  # set password
-        })
-        self.assertEqual(user_count(), 2)
+            username2 = 'testuser1'
+            email2 = 'test1@testing.com'
+            password2 = 'password1'
 
-        username2 = 'testuser1'
-        email2 = 'test1@testing.com'
-        password2 = 'password1'
-
-        # create user manually
-        user_model.objects.create_user(username2, email2, password2)
-        self.assertEqual(user_count(), 3)
-        # check it will not be created again
-        self.run_reload({
-            'INVENTREE_ADMIN_USER': username2,
-            'INVENTREE_ADMIN_EMAIL': email2,
-            'INVENTREE_ADMIN_PASSWORD': password2,
-        })
-        self.assertEqual(user_count(), 3)
-
-        # make sure to clean up
-        settings.TESTING_ENV = False
+            # create user manually
+            user_model.objects.create_user(username2, email2, password2)
+            self.assertEqual(user_count(), 3)
+            # check it will not be created again
+            self.run_reload({
+                'INVENTREE_ADMIN_USER': username2,
+                'INVENTREE_ADMIN_EMAIL': email2,
+                'INVENTREE_ADMIN_PASSWORD': password2,
+            })
+            self.assertEqual(user_count(), 3)
 
     def test_initial_install(self):
         """Test if install of plugins on startup works."""
+        from common.settings import set_global_setting
         from plugin import registry
 
-        if not settings.DOCKER:
-            # Check an install run
-            response = registry.install_plugin_file()
-            self.assertEqual(response, 'first_run')
+        set_global_setting('PLUGIN_ON_STARTUP', True)
 
-            # Set dynamic setting to True and rerun to launch install
-            InvenTreeSetting.set_setting('PLUGIN_ON_STARTUP', True, self.user)
-            registry.reload_plugins(full_reload=True)
+        registry.reload_plugins(full_reload=True, collect=True)
+        self.assertGreater(len(settings.PLUGIN_FILE_HASH), 0)
 
-        # Check that there was another run
-        response = registry.install_plugin_file()
-        self.assertEqual(response, True)
+        set_global_setting('PLUGIN_ON_STARTUP', False)
 
     def test_helpers_cfg_file(self):
         """Test get_config_file."""
         # normal run - not configured
 
-        valid = ['inventree/config.yaml', 'inventree/data/config.yaml']
+        valid = ['config/config.yaml', 'inventree/data/config.yaml']
 
+        trgt_path = str(config.get_config_file()).lower()
         self.assertTrue(
-            any(opt in str(config.get_config_file()).lower() for opt in valid)
+            any(opt in trgt_path for opt in valid), f'Path {trgt_path} not in {valid}'
         )
 
         # with env set
-        with self.in_env_context({
-            'INVENTREE_CONFIG_FILE': '_testfolder/my_special_conf.yaml'
-        }):
-            self.assertIn(
-                'inventree/_testfolder/my_special_conf.yaml',
-                str(config.get_config_file()).lower(),
+        test_file = config.get_testfolder_dir() / 'my_special_conf.yaml'
+        with in_env_context({'INVENTREE_CONFIG_FILE': str(test_file)}):
+            self.assertEqual(
+                str(test_file).lower(), str(config.get_config_file()).lower()
             )
+
+        # LEGACY - old path
+        if settings.DOCKER:  # pragma: no cover
+            # In Docker, the legacy path is not used
+            return
+        legacy_path = config.get_base_dir().joinpath('config.yaml')
+        assert not legacy_path.exists(), (
+            'Legacy config file does exist, stopping as a percaution!'
+        )
+        self.assertTrue(test_file.exists(), f'Test file {test_file} does not exist!')
+        test_file.rename(legacy_path)
+        self.assertIn(
+            'src/backend/inventree/config.yaml', str(config.get_config_file()).lower()
+        )
+        # Clean up again
+        legacy_path.unlink(missing_ok=True)
 
     def test_helpers_plugin_file(self):
         """Test get_plugin_file."""
         # normal run - not configured
 
-        valid = ['inventree/plugins.txt', 'inventree/data/plugins.txt']
+        valid = ['config/plugins.txt', 'inventree/data/plugins.txt']
 
+        trgt_path = str(config.get_plugin_file()).lower()
         self.assertTrue(
-            any(opt in str(config.get_plugin_file()).lower() for opt in valid)
+            any(opt in trgt_path for opt in valid), f'Path {trgt_path} not in {valid}'
         )
 
         # with env set
-        with self.in_env_context({
-            'INVENTREE_PLUGIN_FILE': '_testfolder/my_special_plugins.txt'
-        }):
+        test_file = config.get_testfolder_dir() / 'my_special_plugins.txt'
+        with in_env_context({'INVENTREE_PLUGIN_FILE': str(test_file)}):
+            self.assertIn(str(test_file), str(config.get_plugin_file()))
+
+    def test_helpers_secret_key(self):
+        """Test get_secret_key."""
+        # Normal file behavior - not configured
+        valid = ['config/secret_key.txt', 'inventree/data/secret_key.txt']
+        trgt_path = str(config.get_secret_key(return_path=True)).lower()
+        self.assertTrue(
+            any(opt in trgt_path for opt in valid), f'Path {trgt_path} not in {valid}'
+        )
+
+        # with env set
+        test_file = config.get_testfolder_dir() / 'my_secret_test.txt'
+        with in_env_context({'INVENTREE_SECRET_KEY_FILE': str(test_file)}):
+            self.assertIn(str(test_file), str(config.get_secret_key(return_path=True)))
+
+        # LEGACY - old path
+        if settings.DOCKER:  # pragma: no cover
+            # In Docker, the legacy path is not used
+            return
+        legacy_path = config.get_base_dir().joinpath('secret_key.txt')
+        assert not legacy_path.exists(), (
+            'Legacy secret key file does exist, stopping as a percaution!'
+        )
+        test_file.rename(legacy_path)
+        self.assertIn(
+            'src/backend/inventree/secret_key.txt',
+            str(config.get_secret_key(return_path=True)).lower(),
+        )
+        # Clean up again
+        legacy_path.unlink(missing_ok=True)
+
+        # Test with content set per environment
+        with in_env_context({'INVENTREE_SECRET_KEY': '123abc123'}):
+            self.assertEqual(config.get_secret_key(), '123abc123')
+
+    def test_helpers_get_oidc_private_key(self):
+        """Test get_oidc_private_key."""
+        # Normal file behavior - not configured
+        valid = ['config/oidc.pem', 'inventree/data/oidc.pem']
+        trgt_path = config.get_oidc_private_key(return_path=True)
+        self.assertTrue(
+            any(opt in str(trgt_path) for opt in valid),
+            f'Path {trgt_path} not in {valid}',
+        )
+
+        # with env set
+        test_file = config.get_testfolder_dir() / 'my_oidc_private_key.pem'
+        with in_env_context({'INVENTREE_OIDC_PRIVATE_KEY_FILE': str(test_file)}):
             self.assertIn(
-                '_testfolder/my_special_plugins.txt', str(config.get_plugin_file())
+                str(test_file), str(config.get_oidc_private_key(return_path=True))
             )
+
+        # Override with environment variable
+        with in_env_context({'INVENTREE_OIDC_PRIVATE_KEY': '123abc123'}):
+            self.assertEqual(config.get_oidc_private_key(), '123abc123')
+
+        # LEGACY - old path
+        if settings.DOCKER:  # pragma: no cover
+            # In Docker, the legacy path is not used
+            return
+        legacy_path = config.get_base_dir().joinpath('oidc.pem')
+        assert not legacy_path.exists(), (
+            'Legacy OIDC private key file does exist, stopping as a precaution!'
+        )
+        test_file.rename(legacy_path)
+        assert isinstance(trgt_path, Path)
+        new_path = trgt_path.rename(
+            trgt_path.parent / '_oidc.pem'
+        )  # move out current config
+        self.assertIn(
+            'src/backend/inventree/oidc.pem',
+            str(config.get_oidc_private_key(return_path=True)).lower(),
+        )
+        # Clean up again
+        legacy_path.unlink(missing_ok=True)
+        new_path.rename(trgt_path)  # restore original path for current config
 
     def test_helpers_setting(self):
         """Test get_setting."""
@@ -1241,7 +1369,7 @@ class TestSettings(InvenTreeTestCase):
         self.assertEqual(config.get_setting(TEST_ENV_NAME, None, '123!'), '123!')
 
         # with env set
-        with self.in_env_context({TEST_ENV_NAME: '321'}):
+        with in_env_context({TEST_ENV_NAME: '321'}):
             self.assertEqual(config.get_setting(TEST_ENV_NAME, None), '321')
 
         # test typecasting to dict - None should be mapped to empty dict
@@ -1250,14 +1378,26 @@ class TestSettings(InvenTreeTestCase):
         )
 
         # test typecasting to dict - valid JSON string should be mapped to corresponding dict
-        with self.in_env_context({TEST_ENV_NAME: '{"a": 1}'}):
+        with in_env_context({TEST_ENV_NAME: '{"a": 1}'}):
             self.assertEqual(
                 config.get_setting(TEST_ENV_NAME, None, typecast=dict), {'a': 1}
             )
 
         # test typecasting to dict - invalid JSON string should be mapped to empty dict
-        with self.in_env_context({TEST_ENV_NAME: "{'a': 1}"}):
+        with in_env_context({TEST_ENV_NAME: "{'a': 1}"}):
             self.assertEqual(config.get_setting(TEST_ENV_NAME, None, typecast=dict), {})
+
+    def test_instance_id(self):
+        """Test get_instance_id."""
+        val = get_global_setting('INVENTREE_INSTANCE_ID')
+        self.assertGreater(len(val), 10)
+
+        # version helper
+        self.assertIsNone(version.inventree_identifier())
+
+        # with env set
+        with in_env_context({'INVENTREE_ANNOUNCE_ID': 'True'}):
+            self.assertEqual(val, version.inventree_identifier())
 
 
 class TestInstanceName(InvenTreeTestCase):
@@ -1371,14 +1511,17 @@ class TestOffloadTask(InvenTreeTestCase):
             # First call should run without issue
             result = InvenTree.tasks.check_daily_holdoff('dummy_task')
             self.assertTrue(result)
-            self.assertIn("Logging task attempt for 'dummy_task'", str(cm.output))
+            self.assertIn(
+                'Logging task attempt for dummy_task', str(cm.output).replace("\\'", '')
+            )
 
         with self.assertLogs(logger='inventree', level='INFO') as cm:
             # An attempt has been logged, but it is too recent
             result = InvenTree.tasks.check_daily_holdoff('dummy_task')
             self.assertFalse(result)
             self.assertIn(
-                "Last attempt for 'dummy_task' was too recent", str(cm.output)
+                'Last attempt for dummy_task was too recent',
+                str(cm.output).replace("\\'", ''),
             )
 
         # Mark last attempt a few days ago - should now return True
@@ -1399,7 +1542,8 @@ class TestOffloadTask(InvenTreeTestCase):
             result = InvenTree.tasks.check_daily_holdoff('dummy_task')
             self.assertFalse(result)
             self.assertIn(
-                "Last attempt for 'dummy_task' was too recent", str(cm.output)
+                'Last attempt for dummy_task was too recent',
+                str(cm.output).replace("\\'", ''),
             )
 
         # Configure so a task was successful too recently
@@ -1438,8 +1582,8 @@ class BarcodeMixinTest(InvenTreeTestCase):
             '{"part": 17, "stockitem": 12}': 'c88c11ed0628eb7fef0d59b098b96975',
         }
 
-        for barcode, hash in hashing_tests.items():
-            self.assertEqual(InvenTree.helpers.hash_barcode(barcode), hash)
+        for barcode, expected in hashing_tests.items():
+            self.assertEqual(InvenTree.helpers.hash_barcode(barcode), expected)
 
 
 class SanitizerTest(TestCase):
@@ -1493,8 +1637,6 @@ class MagicLoginTest(InvenTreeTestCase):
         self.assertEqual(resp.wsgi_request.user, self.user)
 
 
-# TODO - refactor to not use CUI
-@tag('cui')
 class MaintenanceModeTest(InvenTreeTestCase):
     """Unit tests for maintenance mode."""
 
@@ -1557,23 +1699,18 @@ class ClassValidationMixinTest(TestCase):
 
         def test(self):
             """Test function."""
-            ...
 
         def test1(self):
             """Test function."""
-            ...
 
         def test2(self):
             """Test function."""
-            ...
 
         required_attributes = ['NAME']
         required_overrides = [test, [test1, test2]]
 
     class InvalidClass:
         """An invalid class that does not inherit from ClassValidationMixin."""
-
-        pass
 
     def test_valid_class(self):
         """Test that a valid class passes the validation."""
@@ -1585,11 +1722,9 @@ class ClassValidationMixinTest(TestCase):
 
             def test(self):
                 """Test function."""
-                ...
 
             def test2(self):
                 """Test function."""
-                ...
 
         TestClass.validate()
 
@@ -1612,7 +1747,6 @@ class ClassValidationMixinTest(TestCase):
 
             def test2(self):
                 """Test function."""
-                ...
 
         with self.assertRaisesRegex(
             NotImplementedError,
@@ -1627,8 +1761,6 @@ class ClassProviderMixinTest(TestCase):
     class TestClass(ClassProviderMixin):
         """This class is a dummy class to test the ClassProviderMixin."""
 
-        pass
-
     def test_get_provider_file(self):
         """Test the get_provider_file function."""
         self.assertEqual(self.TestClass.get_provider_file(), __file__)
@@ -1640,3 +1772,84 @@ class ClassProviderMixinTest(TestCase):
     def test_get_is_builtin(self):
         """Test the get_is_builtin function."""
         self.assertTrue(self.TestClass.get_is_builtin())
+
+
+class SchemaPostprocessingTest(TestCase):
+    """Tests for schema postprocessing functions."""
+
+    def create_result_structure(self):
+        """Create a schema dict structure representative of the spectacular-generated on."""
+        return {
+            'openapi': {},
+            'info': {},
+            'paths': {},
+            'components': {
+                'examples': {},
+                'parameters': {},
+                'requestBodies': {},
+                'responses': {},
+                'schemas': {},
+                'securitySchemes': {},
+            },
+            'servers': {},
+            'externalDocs': {},
+        }
+
+    def test_postprocess_required_nullable(self):
+        """Verify that only selected elements are removed from required list."""
+        result_in = self.create_result_structure()
+        schemas_in = result_in.get('components').get('schemas')
+
+        schemas_in['SalesOrder'] = {
+            'properties': {
+                'pk': {'type': 'integer', 'readOnly': True, 'title': 'ID'},
+                'customer_detail': {
+                    'allOf': [{'$ref': '#/components/schemas/CompanyBrief'}],
+                    'readOnly': True,
+                    'nullable': True,
+                },
+            },
+            'required': ['customer_detail', 'pk'],
+        }
+
+        schemas_in['SalesOrderShipment'] = {
+            'properties': {
+                'order_detail': {
+                    'allOf': [{'$ref': '#/components/schemas/SalesOrder'}],
+                    'readOnly': True,
+                    'nullable': True,
+                }
+            },
+            'required': ['order_detail'],
+        }
+
+        result_out = schema.postprocess_required_nullable(result_in, {}, {}, {})
+        schemas_out = result_out.get('components').get('schemas')
+
+        # only intended elements removed (read-only, required, and object type)
+        self.assertIn('pk', schemas_out.get('SalesOrder')['required'])
+        self.assertNotIn('customer_detail', schemas_out.get('SalesOrder')['required'])
+        # required key removed when empty
+        self.assertNotIn('required', schemas_out.get('SalesOrderShipment'))
+
+
+class URLCompatibilityTest(InvenTreeTestCase):
+    """Unit test for legacy URL compatibility."""
+
+    URL_MAPPINGS = [
+        ('/index/', '/web'),
+        ('/part/1/', '/web/part/1/'),
+        ('/company/customers/', '/web/sales/index/customers'),
+        ('/build/3/', '/web/manufacturing/build-order/3'),
+        ('/stock/item/1/', '/web/stock/item/1/'),
+    ]
+
+    @override_settings(
+        SITE_URL='http://testserver', CSRF_TRUSTED_ORIGINS=['http://testserver']
+    )
+    def test_legacy_urls(self):
+        """Test legacy URLs."""
+        for old_url, new_url in self.URL_MAPPINGS:
+            response = self.client.get(old_url)
+            self.assertEqual(response.status_code, 302)
+            self.assertEqual(response['Location'], new_url)

@@ -1,13 +1,13 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { BarChart } from '@mantine/charts';
 import { SimpleGrid } from '@mantine/core';
 import { useMemo } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
+import type { TableColumn } from '@lib/types/Tables';
 import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
-import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { useTable } from '../../../hooks/UseTable';
-import { apiUrl } from '../../../states/ApiState';
-import { TableColumn } from '../../../tables/Column';
 import { InvenTreeTable } from '../../../tables/InvenTreeTable';
 import {
   SupplierPriceBreakColumns,
@@ -15,8 +15,10 @@ import {
 } from '../../../tables/purchasing/SupplierPriceBreakTable';
 import { NoPricingData } from './PricingPanel';
 
-export default function SupplierPricingPanel({ part }: { part: any }) {
-  const table = useTable('pricing-supplier');
+export default function SupplierPricingPanel({
+  part
+}: Readonly<{ part: any }>) {
+  const table = useTable('pricingsupplier');
 
   const columns: TableColumn[] = useMemo(() => {
     return SupplierPriceBreakColumns();
@@ -30,18 +32,20 @@ export default function SupplierPricingPanel({ part }: { part: any }) {
   }, [table.records]);
 
   const supplierPricingData = useMemo(() => {
-    return table.records.map((record: any) => {
-      return {
-        quantity: record.quantity,
-        supplier_price: record.price,
-        unit_price: calculateSupplierPartUnitPrice(record),
-        name: record.part_detail?.SKU
-      };
-    });
+    return (
+      table.records?.map((record: any) => {
+        return {
+          quantity: record.quantity,
+          supplier_price: Number.parseFloat(record.price),
+          unit_price: calculateSupplierPartUnitPrice(record),
+          name: record.part_detail?.SKU
+        };
+      }) ?? []
+    );
   }, [table.records]);
 
   return (
-    <SimpleGrid cols={2}>
+    <SimpleGrid cols={{ base: 1, md: 2 }}>
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.supplier_part_pricing_list)}
         columns={columns}
@@ -57,7 +61,7 @@ export default function SupplierPricingPanel({ part }: { part: any }) {
       {supplierPricingData.length > 0 ? (
         <BarChart
           data={supplierPricingData}
-          dataKey="name"
+          dataKey='name'
           series={[
             { name: 'unit_price', label: t`Unit Price`, color: 'blue.6' },
             {

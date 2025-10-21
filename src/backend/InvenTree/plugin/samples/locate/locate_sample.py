@@ -3,12 +3,12 @@
 Note: This plugin does not *actually* locate anything!
 """
 
-import logging
+import structlog
 
 from plugin import InvenTreePlugin
 from plugin.mixins import LocateMixin
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class SampleLocatePlugin(LocateMixin, InvenTreePlugin):

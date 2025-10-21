@@ -1,50 +1,63 @@
 """Custom exception handling for the DRF API."""
 
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 
-import logging
 import sys
 import traceback
+from typing import Optional
 
 from django.conf import settings
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.utils.translation import gettext_lazy as _
 
-import rest_framework.views as drfviews
-from error_report.models import Error
+import structlog
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError as DRFValidationError
 from rest_framework.response import Response
 
-import InvenTree.sentry
-
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
-def log_error(path, error_name=None, error_info=None, error_data=None):
+def log_error(
+    path,
+    error_name=None,
+    error_info=None,
+    error_data=None,
+    scope: Optional[str] = None,
+    plugin: Optional[str] = None,
+):
     """Log an error to the database.
 
     - Uses python exception handling to extract error details
 
     Arguments:
         path: The 'path' (most likely a URL) associated with this error (optional)
-
-    kwargs:
         error_name: The name of the error (optional, overrides 'kind')
         error_info: The error information (optional, overrides 'info')
         error_data: The error data (optional, overrides 'data')
+        scope: The scope of the error (optional)
+        plugin: The plugin name associated with this error (optional)
     """
+    import InvenTree.ready
+
+    if any([
+        InvenTree.ready.isImportingData(),
+        InvenTree.ready.isRunningMigrations(),
+        InvenTree.ready.isRunningBackup(),
+    ]):
+        logger.exception('Exception occurred during import, migration, or backup')
+        return
+
+    if not path:
+        path = ''
+
     kind, info, data = sys.exc_info()
 
     # Check if the error is on the ignore list
     if kind in settings.IGNORED_ERRORS:
         return
 
-    if error_name:
-        kind = error_name
-    else:
-        kind = getattr(kind, '__name__', 'Unknown Error')
+    kind = error_name or getattr(kind, '__name__', 'Unknown Error')
 
     if error_info:
         info = error_info
@@ -53,18 +66,29 @@ def log_error(path, error_name=None, error_info=None, error_data=None):
         data = error_data
     else:
         try:
-            data = '\n'.join(traceback.format_exception(kind, info, data))
+            formatted_exception = traceback.format_exception(kind, info, data)  # type: ignore[no-matching-overload]
+            data = '\n'.join(formatted_exception)
         except AttributeError:
             data = 'No traceback information available'
 
     # Log error to stderr
     logger.error(info)
 
+    if plugin:
+        # If a plugin is specified, prepend it to the path
+        path = f'plugin.{plugin}.{path}'
+
+    if scope:
+        # If a scope is specified, prepend it to the path
+        path = f'{scope}:{path}'
+
     # Ensure the error information does not exceed field size limits
     path = path[:200]
     kind = kind[:128]
 
     try:
+        from error_report.models import Error
+
         Error.objects.create(kind=kind, info=info or '', data=data or '', path=path)
     except Exception:
         # Not much we can do if logging the error throws a db exception
@@ -79,6 +103,10 @@ def exception_handler(exc, context):
 
     If sentry error reporting is enabled, we will also provide the original exception to sentry.io
     """
+    import rest_framework.views as drfviews
+
+    import InvenTree.sentry
+
     response = None
 
     # Pass exception to sentry.io handler
@@ -107,22 +135,26 @@ def exception_handler(exc, context):
         else:
             error_detail = _('Error details can be found in the admin panel')
 
+        request = context.get('request')
+        path = request.path if request else ''
+
         response_data = {
             'error': type(exc).__name__,
             'error_class': str(type(exc)),
             'detail': error_detail,
-            'path': context['request'].path,
+            'path': path,
             'status_code': 500,
         }
 
         response = Response(response_data, status=500)
-
-        log_error(context['request'].path)
+        log_error(path)
 
     if response is not None:
         # Convert errors returned under the label '__all__' to 'non_field_errors'
-        if '__all__' in response.data:
-            response.data['non_field_errors'] = response.data['__all__']
-            del response.data['__all__']
+        data = response.data
+
+        if data and '__all__' in data:
+            data['non_field_errors'] = data['__all__']
+            del data['__all__']
 
     return response

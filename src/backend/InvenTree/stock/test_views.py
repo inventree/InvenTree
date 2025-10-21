@@ -1,7 +1,6 @@
 """Unit tests for Stock views (see views.py)."""
 
 from django.contrib.auth.models import Group
-from django.test import tag
 from django.urls import reverse
 
 from common.models import InvenTreeSetting
@@ -12,72 +11,11 @@ from users.models import Owner
 
 
 class StockViewTestCase(InvenTreeTestCase):
-    """Mixin for Stockview tests."""
+    """Mixin for StockView tests."""
 
     fixtures = ['category', 'part', 'company', 'location', 'supplier_part', 'stock']
 
     roles = 'all'
-
-
-@tag('cui')
-class StockListTest(StockViewTestCase):
-    """Tests for Stock list views."""
-
-    def test_stock_index(self):
-        """Test stock index page."""
-        response = self.client.get(reverse('stock-index'))
-        self.assertEqual(response.status_code, 200)
-
-
-class StockDetailTest(StockViewTestCase):
-    """Unit test for the 'stock detail' page."""
-
-    @tag('cui')
-    def test_basic_info(self):
-        """Test that basic stock item info is rendered."""
-        url = reverse('stock-item-detail', kwargs={'pk': 1})
-
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-
-        html = str(response.content)
-
-        # Part name
-        self.assertIn('Stock Item: M2x4 LPHS', html)
-
-        # Quantity
-        self.assertIn('<h5>Available Quantity</h5>', html)
-        self.assertIn('<h5>4000', html)
-
-        # Batch code
-        self.assertIn('Batch', html)
-        self.assertIn('<td>B123</td>', html)
-
-        # Actions to check
-        actions = [
-            "id=\\'stock-count\\' title=\\'Count stock\\'",
-            "id=\\'stock-add\\' title=\\'Add stock\\'",
-            "id=\\'stock-remove\\' title=\\'Remove stock\\'",
-            "id=\\'stock-move\\' title=\\'Transfer stock\\'",
-            "id=\\'stock-duplicate\\'",
-            "id=\\'stock-edit\\'",
-            "id=\\'stock-delete\\'",
-        ]
-
-        # Initially we should not have any of the required permissions
-        for act in actions:
-            self.assertNotIn(act, html)
-
-        # Give the user all the permissions
-        self.assignRole('stock.add')
-        self.assignRole('stock.change')
-        self.assignRole('stock.delete')
-
-        response = self.client.get(url)
-        html = str(response.content)
-
-        for act in actions:
-            self.assertIn(act, html)
 
 
 class StockOwnershipTest(StockViewTestCase):
@@ -108,7 +46,7 @@ class StockOwnershipTest(StockViewTestCase):
         """Helper function to get response to API change."""
         return self.client.patch(
             reverse('api-stock-detail', args=(self.test_item_id,)),
-            {'status': StockStatus.DAMAGED.value},
+            {'status_custom_key': StockStatus.DAMAGED.value},
             content_type='application/json',
         )
 
@@ -158,7 +96,7 @@ class StockOwnershipTest(StockViewTestCase):
         self.assertTrue(location.check_ownership(self.user))  # Owner is group -> True
         self.assertContains(
             self.assert_api_change(),
-            f'"status":{StockStatus.DAMAGED.value}',
+            f'"status_custom_key":{StockStatus.DAMAGED.value}',
             status_code=200,
         )
 

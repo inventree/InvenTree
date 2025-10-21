@@ -1,12 +1,12 @@
+import * as crypto from 'node:crypto';
+import * as fs from 'node:fs';
+import os from 'node:os';
+import * as path from 'node:path';
 import { test as baseTest } from '@playwright/test';
-import * as crypto from 'crypto';
-import * as fs from 'fs';
-import os from 'os';
-import * as path from 'path';
 
 const istanbulCLIOutput = path.join(process.cwd(), '.nyc_output');
-let platform = os.platform();
-let systemKeyVar;
+const platform = os.platform();
+let systemKeyVar: string;
 if (platform === 'darwin') {
   systemKeyVar = 'Meta';
 } else {
@@ -52,7 +52,7 @@ export const test = baseTest.extend({
     }
   },
   // Ensure no errors are thrown in the console
-  page: async ({ baseURL, page }, use) => {
+  page: async ({ page }, use) => {
     const messages = [];
     page.on('console', (msg) => {
       const url = msg.location().url;
@@ -67,13 +67,20 @@ export const test = baseTest.extend({
           ) < 0 &&
         msg.text() !=
           'Failed to load resource: the server responded with a status of 400 (Bad Request)' &&
-        url != 'http://localhost:8000/api/user/me/' &&
-        url != 'http://localhost:8000/api/user/token/' &&
-        url != 'http://localhost:8000/api/barcode/' &&
-        url != 'https://docs.inventree.org/en/versions.json' &&
-        !url.startsWith('http://localhost:8000/api/news/') &&
-        !url.startsWith('http://localhost:8000/api/notifications/') &&
+        !msg.text().includes('/this/does/not/exist.js') &&
+        !url.includes('/this/does/not/exist.js') &&
+        !url.includes('/api/user/me/') &&
+        !url.includes('/api/user/token/') &&
+        !url.includes('/api/auth/v1/auth/login') &&
+        !url.includes('/api/auth/v1/auth/session') &&
+        !url.includes('/api/auth/v1/account/password/change') &&
+        !url.includes('/api/barcode/') &&
+        !url.includes('/favicon.ico') &&
+        !url.startsWith('https://api.github.com/repos/inventree') &&
+        !url.includes('/api/news/') &&
+        !url.includes('/api/notifications/') &&
         !url.startsWith('chrome://') &&
+        url != 'https://docs.inventree.org/en/versions.json' &&
         url.indexOf('99999') < 0
       )
         messages.push(msg);

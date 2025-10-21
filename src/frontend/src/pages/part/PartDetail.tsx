@@ -1,103 +1,268 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import {
-  Accordion,
+  ActionIcon,
   Alert,
+  Center,
   Grid,
+  Group,
+  HoverCard,
+  Loader,
+  type MantineColor,
   Skeleton,
-  Space,
   Stack,
   Text
 } from '@mantine/core';
 import {
   IconBookmarks,
   IconBuilding,
-  IconBuildingFactory2,
-  IconCalendarStats,
+  IconChecklist,
+  IconCircleCheck,
   IconClipboardList,
   IconCurrencyDollar,
-  IconDots,
+  IconExclamationCircle,
   IconInfoCircle,
   IconLayersLinked,
   IconList,
+  IconListCheck,
   IconListTree,
-  IconNotes,
+  IconLock,
   IconPackages,
-  IconPaperclip,
-  IconReportAnalytics,
+  IconSearch,
   IconShoppingCart,
   IconStack2,
   IconTestPipe,
   IconTools,
   IconTruckDelivery,
+  IconTruckReturn,
   IconVersions
 } from '@tabler/icons-react';
-import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { ReactNode, useMemo, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { type ReactNode, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Select from 'react-select';
 
-import { api } from '../../App';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import { getDetailUrl } from '@lib/functions/Navigation';
+import { ActionButton } from '@lib/index';
+import type { ApiFormFieldSet, StockOperationProps } from '@lib/types/Forms';
 import AdminButton from '../../components/buttons/AdminButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
-import { DetailsField, DetailsTable } from '../../components/details/Details';
+import StarredToggleButton from '../../components/buttons/StarredToggleButton';
+import {
+  type DetailsField,
+  DetailsTable
+} from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
-import NotesEditor from '../../components/editors/NotesEditor';
-import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { Thumbnail } from '../../components/images/Thumbnail';
 import {
   ActionDropdown,
   BarcodeActionDropdown,
   DeleteItemAction,
   DuplicateItemAction,
-  EditItemAction
+  EditItemAction,
+  OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
-import { PlaceholderPanel } from '../../components/items/Placeholder';
-import { StylishText } from '../../components/items/StylishText';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
-import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
+import AttachmentPanel from '../../components/panels/AttachmentPanel';
+import NotesPanel from '../../components/panels/NotesPanel';
+import type { PanelType } from '../../components/panels/Panel';
+import { PanelGroup } from '../../components/panels/PanelGroup';
 import { RenderPart } from '../../components/render/Part';
-import { formatPriceRange } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
+import { RenderUser } from '../../components/render/User';
+import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
+import { useApi } from '../../contexts/ApiContext';
+import { formatDecimal, formatPriceRange } from '../../defaults/formatters';
 import { usePartFields } from '../../forms/PartForms';
+import { useFindSerialNumberForm } from '../../forms/StockForms';
 import {
-  StockOperationProps,
-  useCountStockItem,
-  useTransferStockItem
-} from '../../forms/StockForms';
-import { InvenTreeIcon } from '../../functions/icons';
-import { getDetailUrl } from '../../functions/urls';
-import {
+  useApiFormModal,
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
-import { apiUrl } from '../../states/ApiState';
-import { useGlobalSettingsState } from '../../states/SettingsState';
+import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
+import {
+  useGlobalSettingsState,
+  useUserSettingsState
+} from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import { BomTable } from '../../tables/bom/BomTable';
 import { UsedInTable } from '../../tables/bom/UsedInTable';
-import BuildAllocatedStockTable from '../../tables/build/BuildAllocatedStockTable';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
-import { AttachmentTable } from '../../tables/general/AttachmentTable';
 import { PartParameterTable } from '../../tables/part/PartParameterTable';
 import PartPurchaseOrdersTable from '../../tables/part/PartPurchaseOrdersTable';
+import PartTestResultTable from '../../tables/part/PartTestResultTable';
 import PartTestTemplateTable from '../../tables/part/PartTestTemplateTable';
 import { PartVariantTable } from '../../tables/part/PartVariantTable';
 import { RelatedPartTable } from '../../tables/part/RelatedPartTable';
-import { ManufacturerPartTable } from '../../tables/purchasing/ManufacturerPartTable';
-import { SupplierPartTable } from '../../tables/purchasing/SupplierPartTable';
-import SalesOrderAllocationTable from '../../tables/sales/SalesOrderAllocationTable';
+import { ReturnOrderTable } from '../../tables/sales/ReturnOrderTable';
 import { SalesOrderTable } from '../../tables/sales/SalesOrderTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
-import { TestStatisticsTable } from '../../tables/stock/TestStatisticsTable';
+import PartAllocationPanel from './PartAllocationPanel';
 import PartPricingPanel from './PartPricingPanel';
+import PartStockHistoryDetail from './PartStockHistoryDetail';
+import PartSupplierDetail from './PartSupplierDetail';
+
+/**
+ * Render a part revision selector component
+ */
+function RevisionSelector({
+  part,
+  options
+}: {
+  part: any;
+  options: any[];
+}) {
+  const navigate = useNavigate();
+
+  return (
+    <Select
+      id='part-revision-select'
+      aria-label='part-revision-select'
+      options={options}
+      value={{
+        value: part.pk,
+        label: part.full_name,
+        part: part
+      }}
+      isSearchable={false}
+      formatOptionLabel={(option: any) =>
+        RenderPart({
+          instance: option.part,
+          showSecondary: false
+        })
+      }
+      onChange={(value: any) => {
+        navigate(getDetailUrl(ModelType.part, value.value));
+      }}
+      styles={{
+        menuPortal: (base: any) => ({ ...base, zIndex: 9999 }),
+        menu: (base: any) => ({ ...base, zIndex: 9999 }),
+        menuList: (base: any) => ({ ...base, zIndex: 9999 })
+      }}
+    />
+  );
+}
+
+/**
+ * A hover-over component which displays information about the BOM validation for a given part
+ */
+function BomValidationInformation({
+  partId
+}: {
+  partId: number;
+}) {
+  const { instance: bomInformation, instanceQuery: bomInformationQuery } =
+    useInstance({
+      endpoint: ApiEndpoints.bom_validate,
+      pk: partId,
+      hasPrimaryKey: true,
+      refetchOnMount: true
+    });
+
+  const validateBom = useApiFormModal({
+    url: ApiEndpoints.bom_validate,
+    method: 'PUT',
+    fields: {
+      valid: {
+        hidden: true,
+        value: true
+      }
+    },
+    title: t`Validate BOM`,
+    pk: partId,
+    preFormContent: (
+      <Alert color='green' icon={<IconCircleCheck />} title={t`Validate BOM`}>
+        <Text>{t`Do you want to validate the bill of materials for this assembly?`}</Text>
+      </Alert>
+    ),
+    successMessage: t`BOM validated`,
+    onFormSuccess: () => {
+      bomInformationQuery.refetch();
+    }
+  });
+
+  if (bomInformationQuery.isFetching) {
+    return <Loader size='sm' />;
+  }
+
+  let icon: ReactNode;
+  let color: MantineColor;
+  let title = '';
+  let description = '';
+
+  if (bomInformation?.bom_validated) {
+    color = 'green';
+    icon = <IconListCheck />;
+    title = t`BOM Validated`;
+    description = t`The Bill of Materials for this part has been validated`;
+  } else if (bomInformation?.bom_checked_date) {
+    color = 'yellow';
+    icon = <IconExclamationCircle />;
+    title = t`BOM Not Validated`;
+    description = t`The Bill of Materials for this part has previously been checked, but requires revalidation`;
+  } else {
+    color = 'red';
+    icon = <IconExclamationCircle />;
+    title = t`BOM Not Validated`;
+    description = t`The Bill of Materials for this part has not yet been validated`;
+  }
+
+  return (
+    <>
+      {validateBom.modal}
+      <Group gap='xs' justify='flex-end'>
+        {!bomInformation.bom_validated && (
+          <ActionButton
+            icon={<IconCircleCheck />}
+            color='green'
+            tooltip={t`Validate BOM`}
+            onClick={validateBom.open}
+          />
+        )}
+        <HoverCard position='bottom-end'>
+          <HoverCard.Target>
+            <ActionIcon
+              color={color}
+              variant='transparent'
+              aria-label='bom-validation-info'
+            >
+              {icon}
+            </ActionIcon>
+          </HoverCard.Target>
+          <HoverCard.Dropdown>
+            <Alert color={color} icon={icon} title={title}>
+              <Stack gap='xs'>
+                <Text size='sm'>{description}</Text>
+                {bomInformation?.bom_checked_date && (
+                  <Text size='sm'>
+                    {t`Validated On`}: {bomInformation.bom_checked_date}
+                  </Text>
+                )}
+                {bomInformation?.bom_checked_by_detail && (
+                  <Group gap='xs'>
+                    <Text size='sm'>{t`Validated By`}: </Text>
+                    <RenderUser
+                      instance={bomInformation.bom_checked_by_detail}
+                    />
+                  </Group>
+                )}
+              </Stack>
+            </Alert>
+          </HoverCard.Dropdown>
+        </HoverCard>
+      </Group>
+    </>
+  );
+}
 
 /**
  * Detail view for a single Part instance
@@ -105,18 +270,27 @@ import PartPricingPanel from './PartPricingPanel';
 export default function PartDetail() {
   const { id } = useParams();
 
+  const api = useApi();
   const navigate = useNavigate();
   const user = useUserState();
 
   const [treeOpen, setTreeOpen] = useState(false);
 
   const globalSettings = useGlobalSettingsState();
+  const userSettings = useUserSettingsState();
+
+  const { instance: serials } = useInstance({
+    endpoint: ApiEndpoints.part_serial_numbers,
+    pk: id,
+    hasPrimaryKey: true,
+    refetchOnMount: false,
+    defaultValue: {}
+  });
 
   const {
     instance: part,
     refreshInstance,
-    instanceQuery,
-    requestStatus
+    instanceQuery
   } = useInstance({
     endpoint: ApiEndpoints.part_list,
     pk: id,
@@ -126,17 +300,146 @@ export default function PartDetail() {
     refetchOnMount: true
   });
 
-  part.required =
-    (part?.required_for_build_orders ?? 0) +
-    (part?.required_for_sales_orders ?? 0);
+  const { instance: partRequirements, instanceQuery: partRequirementsQuery } =
+    useInstance({
+      endpoint: ApiEndpoints.part_requirements,
+      pk: id,
+      hasPrimaryKey: true,
+      refetchOnMount: true
+    });
+
+  // Fetch information on part revision
+  const partRevisionQuery = useQuery({
+    refetchOnMount: true,
+    queryKey: [
+      'part_revisions',
+      part.pk,
+      part.revision_of,
+      part.revision_count
+    ],
+    queryFn: async () => {
+      if (!part.revision_of && !part.revision_count) {
+        return [];
+      }
+
+      const revisions = [];
+
+      // First, fetch information for the top-level part
+      if (part.revision_of) {
+        await api
+          .get(apiUrl(ApiEndpoints.part_list, part.revision_of))
+          .then((response) => {
+            revisions.push(response.data);
+          });
+      } else {
+        revisions.push(part);
+      }
+
+      const url = apiUrl(ApiEndpoints.part_list);
+
+      await api
+        .get(url, {
+          params: {
+            revision_of: part.revision_of || part.pk
+          }
+        })
+        .then((response) => {
+          switch (response.status) {
+            case 200:
+              response.data.forEach((r: any) => {
+                revisions.push(r);
+              });
+              break;
+            default:
+              break;
+          }
+        });
+
+      return revisions;
+    }
+  });
+
+  const partRevisionOptions: any[] = useMemo(() => {
+    if (partRevisionQuery.isFetching || !partRevisionQuery.data) {
+      return [];
+    }
+
+    if (!part.revision_of && !part.revision_count) {
+      return [];
+    }
+
+    const options: any[] = partRevisionQuery.data.map((revision: any) => {
+      return {
+        value: revision.pk,
+        label: revision.full_name,
+        part: revision
+      };
+    });
+
+    // Add this part if not already available
+    if (!options.find((o) => o.value == part.pk)) {
+      options.push({
+        value: part.pk,
+        label: part.full_name,
+        part: part
+      });
+    }
+
+    return options.sort((a, b) => {
+      return `${a.part.revision}`.localeCompare(b.part.revision);
+    });
+  }, [part, partRevisionQuery.isFetching, partRevisionQuery.data]);
+
+  const enableRevisionSelection: boolean = useMemo(() => {
+    return (
+      partRevisionOptions.length > 0 &&
+      globalSettings.isSet('PART_ENABLE_REVISION')
+    );
+  }, [partRevisionOptions, globalSettings]);
 
   const detailsPanel = useMemo(() => {
     if (instanceQuery.isFetching) {
       return <Skeleton />;
     }
 
-    // Construct the details tables
-    let tl: DetailsField[] = [
+    const data = { ...part };
+
+    const fetching =
+      partRequirementsQuery.isFetching || instanceQuery.isFetching;
+
+    // Copy part requirements data into the main part data
+    data.total_in_stock =
+      partRequirements?.total_stock ?? part?.total_in_stock ?? 0;
+    data.unallocated =
+      partRequirements?.unallocated_stock ?? part?.unallocated_stock ?? 0;
+    data.ordering = partRequirements?.ordering ?? part?.ordering ?? 0;
+
+    data.required =
+      (partRequirements?.required_for_build_orders ??
+        part?.required_for_build_orders ??
+        0) +
+      (partRequirements?.required_for_sales_orders ??
+        part?.required_for_sales_orders ??
+        0);
+
+    data.allocated =
+      (partRequirements?.allocated_to_build_orders ??
+        part?.allocated_to_build_orders ??
+        0) +
+      (partRequirements?.allocated_to_sales_orders ??
+        part?.allocated_to_sales_orders ??
+        0);
+
+    // Extract requirements data
+    data.can_build = partRequirements?.can_build ?? 0;
+
+    // Provide latest serial number info
+    if (!!serials.latest) {
+      data.latest_serial_number = serials.latest;
+    }
+
+    // Top left - core part information
+    const tl: DetailsField[] = [
       {
         type: 'string',
         name: 'name',
@@ -222,82 +525,90 @@ export default function PartDetail() {
       }
     ];
 
-    let tr: DetailsField[] = [
+    // Top right - stock availability information
+    const tr: DetailsField[] = [
       {
-        type: 'string',
+        type: 'number',
         name: 'total_in_stock',
-        unit: true,
-        label: t`In Stock`
+        unit: part.units,
+        label: t`In Stock`,
+        hidden: part.virtual
       },
       {
-        type: 'string',
+        type: 'progressbar',
         name: 'unallocated_stock',
-        unit: true,
+        total: data.total_in_stock,
+        progress: data.unallocated,
         label: t`Available Stock`,
-        hidden: part.total_in_stock == part.unallocated_stock
+        hidden: part.virtual || data.total_in_stock == data.unallocated
       },
       {
-        type: 'string',
-        name: 'variant_stock',
-        unit: true,
-        label: t`Variant Stock`,
-        hidden: !part.variant_stock,
-        icon: 'stock'
-      },
-      {
-        type: 'string',
-        name: 'minimum_stock',
-        unit: true,
-        label: t`Minimum Stock`,
-        hidden: part.minimum_stock <= 0
-      },
-      {
-        type: 'string',
+        type: 'number',
         name: 'ordering',
         label: t`On order`,
-        unit: true,
+        unit: part.units,
         hidden: !part.purchaseable || part.ordering <= 0
       },
       {
-        type: 'string',
+        type: 'number',
         name: 'required',
         label: t`Required for Orders`,
-        hidden: part.required <= 0,
-        icon: 'tick_off'
+        unit: part.units,
+        hidden: data.required <= 0,
+        icon: 'stocktake'
       },
       {
         type: 'progressbar',
         name: 'allocated_to_build_orders',
-        total: part.required_for_build_orders,
-        progress: part.allocated_to_build_orders,
+        icon: 'manufacturers',
+        total: partRequirements.required_for_build_orders,
+        progress: partRequirements.allocated_to_build_orders,
         label: t`Allocated to Build Orders`,
-        hidden: !part.component || part.required_for_build_orders <= 0
+        hidden:
+          fetching ||
+          (partRequirements.required_for_build_orders <= 0 &&
+            partRequirements.allocated_to_build_orders <= 0)
       },
       {
         type: 'progressbar',
+        icon: 'sales_orders',
         name: 'allocated_to_sales_orders',
-        total: part.required_for_sales_orders,
-        progress: part.allocated_to_sales_orders,
+        total: partRequirements.required_for_sales_orders,
+        progress: partRequirements.allocated_to_sales_orders,
         label: t`Allocated to Sales Orders`,
-        hidden: !part.salable || part.required_for_sales_orders <= 0
+        hidden:
+          fetching ||
+          (partRequirements.required_for_sales_orders <= 0 &&
+            partRequirements.allocated_to_sales_orders <= 0)
       },
       {
-        type: 'string',
-        name: 'can_build',
-        unit: true,
-        label: t`Can Build`,
-        hidden: true // TODO: Expose "can_build" to the API
-      },
-      {
-        type: 'string',
+        type: 'progressbar',
         name: 'building',
-        unit: true,
         label: t`In Production`,
-        hidden: !part.assembly || !part.building
+        progress: partRequirements.building,
+        total: partRequirements.scheduled_to_build,
+        hidden:
+          fetching ||
+          (!partRequirements.building && !partRequirements.scheduled_to_build)
+      },
+      {
+        type: 'number',
+        name: 'can_build',
+        unit: part.units,
+        label: t`Can Build`,
+        hidden: !part.assembly || fetching
+      },
+      {
+        type: 'number',
+        name: 'minimum_stock',
+        unit: part.units,
+        label: t`Minimum Stock`,
+        hidden: part.minimum_stock <= 0
       }
     ];
 
-    let bl: DetailsField[] = [
+    // Bottom left - part attributes
+    const bl: DetailsField[] = [
       {
         type: 'boolean',
         name: 'active',
@@ -342,17 +653,25 @@ export default function PartDetail() {
       },
       {
         type: 'boolean',
-        name: 'saleable',
+        name: 'salable',
+        icon: 'saleable',
         label: t`Saleable Part`
       },
       {
         type: 'boolean',
         name: 'virtual',
         label: t`Virtual Part`
+      },
+      {
+        type: 'boolean',
+        name: 'starred',
+        label: t`Subscribed`,
+        icon: 'bell'
       }
     ];
 
-    let br: DetailsField[] = [
+    // Bottom right - other part information
+    const br: DetailsField[] = [
       {
         type: 'string',
         name: 'creation_date',
@@ -379,130 +698,48 @@ export default function PartDetail() {
         label: t`Default Supplier`,
         model: ModelType.supplierpart,
         hidden: !part.default_supplier
+      },
+      {
+        name: 'default_expiry',
+        label: t`Default Expiry`,
+        hidden: !part.default_expiry,
+        icon: 'calendar',
+        type: 'string',
+        value_formatter: () => {
+          return `${part.default_expiry} ${t`days`}`;
+        }
       }
     ];
 
     // Add in price range data
-    if (id) {
+    if (part.pricing_min || part.pricing_max) {
       br.push({
         type: 'string',
         name: 'pricing',
         label: t`Price Range`,
         value_formatter: () => {
-          const { data } = useSuspenseQuery({
-            queryKey: ['pricing', id],
-            queryFn: async () => {
-              const url = apiUrl(ApiEndpoints.part_pricing_get, null, {
-                id: id
-              });
-
-              return api
-                .get(url)
-                .then((response) => {
-                  switch (response.status) {
-                    case 200:
-                      return response.data;
-                    default:
-                      return null;
-                  }
-                })
-                .catch(() => {
-                  return null;
-                });
-            }
-          });
-
-          return (
-            data &&
-            `${formatPriceRange(data.overall_min, data.overall_max)}${
-              part.units && ' / ' + part.units
-            }`
-          );
+          return formatPriceRange(part.pricing_min, part.pricing_max);
         }
       });
     }
 
-    // Add in stocktake information
-    if (id && part.last_stocktake) {
-      br.push({
-        type: 'string',
-        name: 'stocktake',
-        label: t`Last Stocktake`,
-        unit: true,
-        value_formatter: () => {
-          const { data } = useSuspenseQuery({
-            queryKey: ['stocktake', id],
-            queryFn: async () => {
-              const url = apiUrl(ApiEndpoints.part_stocktake_list);
-
-              return api
-                .get(url, { params: { part: id, ordering: 'date' } })
-                .then((response) => {
-                  switch (response.status) {
-                    case 200:
-                      if (response.data.length > 0) {
-                        return response.data[response.data.length - 1];
-                      } else {
-                        return null;
-                      }
-                    default:
-                      return null;
-                  }
-                })
-                .catch(() => {
-                  return null;
-                });
-            }
-          });
-
-          if (data.quantity) {
-            return `${data.quantity} (${data.date})`;
-          } else {
-            return '-';
-          }
-        }
-      });
-
-      br.push({
-        type: 'string',
-        name: 'stocktake_user',
-        label: t`Stocktake By`,
-        badge: 'user',
-        icon: 'user',
-        value_formatter: () => {
-          const { data } = useSuspenseQuery({
-            queryKey: ['stocktake', id],
-            queryFn: async () => {
-              const url = apiUrl(ApiEndpoints.part_stocktake_list);
-
-              return api
-                .get(url, { params: { part: id, ordering: 'date' } })
-                .then((response) => {
-                  switch (response.status) {
-                    case 200:
-                      return response.data[response.data.length - 1];
-                    default:
-                      return null;
-                  }
-                })
-                .catch(() => {
-                  return null;
-                });
-            }
-          });
-          return data?.user;
-        }
-      });
-    }
+    br.push({
+      type: 'string',
+      name: 'latest_serial_number',
+      label: t`Latest Serial Number`,
+      hidden: !part.trackable || !data.latest_serial_number,
+      icon: 'serial'
+    });
 
     return part ? (
       <ItemDetailsGrid>
-        <Grid>
-          <Grid.Col span={4}>
+        <Stack gap='xs'>
+          <Grid grow>
             <DetailsImage
               appRole={UserRoles.part}
               imageActions={{
                 selectExisting: true,
+                downloadImage: true,
                 uploadFile: true,
                 deleteFile: true
               }}
@@ -511,19 +748,36 @@ export default function PartDetail() {
               refresh={refreshInstance}
               pk={part.pk}
             />
-          </Grid.Col>
-          <Grid.Col span={8}>
-            <DetailsTable fields={tl} item={part} />
-          </Grid.Col>
-        </Grid>
-        <DetailsTable fields={tr} item={part} />
-        <DetailsTable fields={bl} item={part} />
-        <DetailsTable fields={br} item={part} />
+            <Grid.Col span={{ base: 12, sm: 8 }}>
+              <DetailsTable fields={tl} item={data} />
+            </Grid.Col>
+          </Grid>
+          {enableRevisionSelection && (
+            <Stack gap='xs'>
+              <Text>{t`Select Part Revision`}</Text>
+              <RevisionSelector part={part} options={partRevisionOptions} />
+            </Stack>
+          )}
+        </Stack>
+        <DetailsTable fields={tr} item={data} />
+        <DetailsTable fields={bl} item={data} />
+        <DetailsTable fields={br} item={data} />
       </ItemDetailsGrid>
     ) : (
       <Skeleton />
     );
-  }, [part, instanceQuery]);
+  }, [
+    globalSettings,
+    part,
+    id,
+    serials,
+    instanceQuery.isFetching,
+    instanceQuery.data,
+    enableRevisionSelection,
+    partRevisionOptions,
+    partRequirementsQuery.isFetching,
+    partRequirements
+  ]);
 
   // Part data panels (recalculate when part data changes)
   const partPanels: PanelType[] = useMemo(() => {
@@ -549,14 +803,19 @@ export default function PartDetail() {
         name: 'stock',
         label: t`Stock`,
         icon: <IconPackages />,
-        content: part.pk && (
+        hidden: part.virtual || !user.hasViewRole(UserRoles.stock),
+        content: part.pk ? (
           <StockItemTable
-            tableName="part-stock"
+            tableName='part-stock'
             allowAdd
             params={{
               part: part.pk
             }}
           />
+        ) : (
+          <Center>
+            <Loader />
+          </Center>
         )
       },
       {
@@ -570,60 +829,20 @@ export default function PartDetail() {
         name: 'allocations',
         label: t`Allocations`,
         icon: <IconBookmarks />,
-        hidden: !part.component && !part.salable,
-        content: (
-          <Accordion
-            multiple={true}
-            defaultValue={['buildallocations', 'salesallocations']}
-          >
-            {part.component && (
-              <Accordion.Item value="buildallocations" key="buildallocations">
-                <Accordion.Control>
-                  <StylishText size="lg">{t`Build Order Allocations`}</StylishText>
-                </Accordion.Control>
-                <Accordion.Panel>
-                  <BuildAllocatedStockTable
-                    partId={part.pk}
-                    modelField="build"
-                    modelTarget={ModelType.build}
-                    showBuildInfo
-                  />
-                </Accordion.Panel>
-              </Accordion.Item>
-            )}
-            {part.salable && (
-              <Accordion.Item value="salesallocations" key="salesallocations">
-                <Accordion.Control>
-                  <StylishText size="lg">{t`Sales Order Allocations`}</StylishText>
-                </Accordion.Control>
-                <Accordion.Panel>
-                  <SalesOrderAllocationTable
-                    partId={part.pk}
-                    modelField="order"
-                    modelTarget={ModelType.salesorder}
-                    showOrderInfo
-                  />
-                </Accordion.Panel>
-              </Accordion.Item>
-            )}
-          </Accordion>
-        )
+        hidden: (!part.component && !part.salable) || part.virtual,
+        content: part.pk ? <PartAllocationPanel part={part} /> : <Skeleton />
       },
       {
         name: 'bom',
         label: t`Bill of Materials`,
+        controls: <BomValidationInformation partId={part.pk ?? -1} />,
         icon: <IconListTree />,
         hidden: !part.assembly,
-        content: (
+        content: part?.pk ? (
           <BomTable partId={part.pk ?? -1} partLocked={part?.locked == true} />
+        ) : (
+          <Skeleton />
         )
-      },
-      {
-        name: 'builds',
-        label: t`Build Orders`,
-        icon: <IconTools />,
-        hidden: !part.assembly || !part.active,
-        content: part?.pk ? <BuildOrderTable partId={part.pk} /> : <Skeleton />
       },
       {
         name: 'used_in',
@@ -639,56 +858,68 @@ export default function PartDetail() {
         content: part ? <PartPricingPanel part={part} /> : <Skeleton />
       },
       {
-        name: 'manufacturers',
-        label: t`Manufacturers`,
-        icon: <IconBuildingFactory2 />,
-        hidden: !part.purchaseable,
-        content: part.pk && (
-          <ManufacturerPartTable
-            params={{
-              part: part.pk
-            }}
-          />
-        )
-      },
-      {
         name: 'suppliers',
         label: t`Suppliers`,
         icon: <IconBuilding />,
-        hidden: !part.purchaseable,
-        content: part.pk && (
-          <SupplierPartTable
-            params={{
-              part: part.pk
-            }}
-          />
+        hidden:
+          !part.purchaseable || !user.hasViewRole(UserRoles.purchase_order),
+
+        content: part.pk ? (
+          <PartSupplierDetail partId={part.pk} />
+        ) : (
+          <Skeleton />
         )
       },
       {
         name: 'purchase_orders',
         label: t`Purchase Orders`,
         icon: <IconShoppingCart />,
-        hidden: !part.purchaseable,
-        content: <PartPurchaseOrdersTable partId={part.pk} />
+        hidden:
+          !part.purchaseable || !user.hasViewRole(UserRoles.purchase_order),
+        content: part.pk ? (
+          <PartPurchaseOrdersTable partId={part.pk} />
+        ) : (
+          <Skeleton />
+        )
       },
       {
         name: 'sales_orders',
         label: t`Sales Orders`,
         icon: <IconTruckDelivery />,
-        hidden: !part.salable,
+        hidden: !part.salable || !user.hasViewRole(UserRoles.sales_order),
         content: part.pk ? <SalesOrderTable partId={part.pk} /> : <Skeleton />
       },
       {
-        name: 'scheduling',
-        label: t`Scheduling`,
-        icon: <IconCalendarStats />,
-        content: <PlaceholderPanel />
+        name: 'return_orders',
+        label: t`Return Orders`,
+        icon: <IconTruckReturn />,
+        hidden:
+          !part.salable ||
+          !user.hasViewRole(UserRoles.return_order) ||
+          !globalSettings.isSet('RETURNORDER_ENABLED'),
+        content: part.pk ? <ReturnOrderTable partId={part.pk} /> : <Skeleton />
+      },
+      {
+        name: 'builds',
+        label: t`Build Orders`,
+        icon: <IconTools />,
+        hidden: !part.assembly || !user.hasViewRole(UserRoles.build),
+        content: part.pk ? <BuildOrderTable partId={part.pk} /> : <Skeleton />
       },
       {
         name: 'stocktake',
-        label: t`Stocktake`,
+        label: t`Stock History`,
         icon: <IconClipboardList />,
-        content: <PlaceholderPanel />
+        content: part ? (
+          <PartStockHistoryDetail partId={part.pk} />
+        ) : (
+          <Skeleton />
+        ),
+        hidden:
+          part.virtual ||
+          !user.hasViewRole(UserRoles.stock) ||
+          !globalSettings.isSet('STOCKTAKE_ENABLE') ||
+          !userSettings.isSet('DISPLAY_STOCKTAKE_TAB')
       },
       {
         name: 'test_templates',
@@ -702,17 +933,12 @@ export default function PartDetail() {
         )
       },
       {
-        name: 'test_statistics',
-        label: t`Test Statistics`,
-        icon: <IconReportAnalytics />,
-        hidden: !part.testable,
+        name: 'test_results',
+        label: t`Test Results`,
+        icon: <IconChecklist />,
+        hidden: !part.testable || !user.hasViewRole(UserRoles.stock),
         content: part?.pk ? (
-          <TestStatisticsTable
-            params={{
-              pk: part.pk,
-              apiEndpoint: ApiEndpoints.part_test_statistics
-            }}
-          />
+          <PartTestResultTable partId={part.pk} />
         ) : (
           <Skeleton />
         )
@@ -721,184 +947,96 @@ export default function PartDetail() {
         name: 'related_parts',
         label: t`Related Parts`,
         icon: <IconLayersLinked />,
-        content: <RelatedPartTable partId={part.pk ?? -1} />
+        content: <RelatedPartTable partId={part.pk} />
       },
-      {
-        name: 'attachments',
-        label: t`Attachments`,
-        icon: <IconPaperclip />,
-        content: (
-          <AttachmentTable model_type={ModelType.part} model_id={part?.pk} />
-        )
-      },
-      {
-        name: 'notes',
-        label: t`Notes`,
-        icon: <IconNotes />,
-        content: (
-          <NotesEditor
-            modelType={ModelType.part}
-            modelId={part.pk}
-            editable={user.hasChangeRole(UserRoles.part)}
-          />
-        )
-      }
+      AttachmentPanel({
+        model_type: ModelType.part,
+        model_id: part?.pk
+      }),
+      NotesPanel({
+        model_type: ModelType.part,
+        model_id: part?.pk
+      })
     ];
-  }, [id, part, user]);
+  }, [id, part, user, globalSettings, userSettings, detailsPanel]);
 
-  // Fetch information on part revision
-  const partRevisionQuery = useQuery({
-    refetchOnMount: true,
-    queryKey: [
-      'part_revisions',
-      part.pk,
-      part.revision_of,
-      part.revision_count
-    ],
-    queryFn: async () => {
-      if (!part.revision_of && !part.revision_count) {
-        return [];
-      }
-
-      let revisions = [];
-
-      // First, fetch information for the top-level part
-      if (part.revision_of) {
-        await api
-          .get(apiUrl(ApiEndpoints.part_list, part.revision_of))
-          .then((response) => {
-            revisions.push(response.data);
-          });
-      } else {
-        revisions.push(part);
-      }
-
-      const url = apiUrl(ApiEndpoints.part_list);
-
-      await api
-        .get(url, {
-          params: {
-            revision_of: part.revision_of || part.pk
-          }
-        })
-        .then((response) => {
-          switch (response.status) {
-            case 200:
-              response.data.forEach((r: any) => {
-                revisions.push(r);
-              });
-              break;
-            default:
-              break;
-          }
-        })
-        .catch(() => {});
-
-      return revisions;
-    }
-  });
-
-  const partRevisionOptions: any[] = useMemo(() => {
-    if (partRevisionQuery.isFetching || !partRevisionQuery.data) {
-      return [];
-    }
-
-    if (!part.revision_of && !part.revision_count) {
-      return [];
-    }
-
-    let options: any[] = partRevisionQuery.data.map((revision: any) => {
-      return {
-        value: revision.pk,
-        label: revision.full_name,
-        part: revision
-      };
-    });
-
-    // Add this part if not already available
-    if (!options.find((o) => o.value == part.pk)) {
-      options.push({
-        value: part.pk,
-        label: part.full_name,
-        part: part
-      });
-    }
-
-    return options.sort((a, b) => {
-      return ('' + a.part.revision).localeCompare(b.part.revision);
-    });
-  }, [part, partRevisionQuery.isFetching, partRevisionQuery.data]);
-
-  const breadcrumbs = useMemo(
-    () => [
+  const breadcrumbs = useMemo(() => {
+    return [
       { name: t`Parts`, url: '/part' },
       ...(part.category_path ?? []).map((c: any) => ({
         name: c.name,
         url: getDetailUrl(ModelType.partcategory, c.pk)
       }))
-    ],
-    [part]
-  );
+    ];
+  }, [part]);
 
   const badges: ReactNode[] = useMemo(() => {
-    if (instanceQuery.isLoading || instanceQuery.isFetching) {
+    if (partRequirementsQuery.isFetching) {
       return [];
     }
 
     const required =
-      part.required_for_build_orders + part.required_for_sales_orders;
+      partRequirements.required_for_build_orders +
+      partRequirements.required_for_sales_orders;
 
     return [
       <DetailsBadge
-        label={t`In Stock` + `: ${part.total_in_stock}`}
-        color={part.total_in_stock >= part.minimum_stock ? 'green' : 'orange'}
-        visible={part.total_in_stock > 0}
-        key="in_stock"
+        label={`${t`In Stock`}: ${formatDecimal(partRequirements.total_stock)}`}
+        color={
+          partRequirements.total_stock >= part.minimum_stock
+            ? 'green'
+            : 'orange'
+        }
+        visible={!part.virtual && partRequirements.total_stock > 0}
+        key='in_stock'
       />,
       <DetailsBadge
-        label={t`Available` + `: ${part.unallocated_stock}`}
-        color="yellow"
-        key="available_stock"
-        visible={part.unallocated_stock != part.total_in_stock}
+        label={`${t`Available`}: ${formatDecimal(partRequirements.unallocated_stock)}`}
+        color='yellow'
+        key='available_stock'
+        visible={
+          !part.virtual &&
+          partRequirements.unallocated_stock != partRequirements.total_stock
+        }
       />,
       <DetailsBadge
         label={t`No Stock`}
-        color="orange"
-        visible={part.total_in_stock == 0}
-        key="no_stock"
+        color='orange'
+        visible={!part.virtual && partRequirements.total_stock == 0}
+        key='no_stock'
       />,
       <DetailsBadge
-        label={t`Required` + `: ${required}`}
-        color="grape"
+        label={`${t`Required`}: ${formatDecimal(required)}`}
+        color='grape'
         visible={required > 0}
-        key="required"
+        key='required'
       />,
       <DetailsBadge
-        label={t`On Order` + `: ${part.ordering}`}
-        color="blue"
-        visible={part.ordering > 0}
-        key="on_order"
+        label={`${t`On Order`}: ${formatDecimal(partRequirements.ordering)}`}
+        color='blue'
+        visible={partRequirements.ordering > 0}
+        key='on_order'
       />,
       <DetailsBadge
-        label={t`In Production` + `: ${part.building}`}
-        color="blue"
-        visible={part.building > 0}
-        key="in_production"
-      />,
-      <DetailsBadge
-        label={t`Locked`}
-        color="black"
-        visible={part.locked == true}
-        key="locked"
+        label={`${t`In Production`}: ${formatDecimal(partRequirements.building)}`}
+        color='blue'
+        visible={partRequirements.building > 0}
+        key='in_production'
       />,
       <DetailsBadge
         label={t`Inactive`}
-        color="red"
-        visible={part.active == false}
-        key="inactive"
+        color='red'
+        visible={!part.active}
+        key='inactive'
+      />,
+      <DetailsBadge
+        label={t`Virtual Part`}
+        color='cyan.4'
+        visible={part.virtual}
+        key='virtual'
       />
     ];
-  }, [part, instanceQuery]);
+  }, [partRequirements, partRequirementsQuery.isFetching, part]);
 
   const partFields = usePartFields({ create: false });
 
@@ -925,13 +1063,18 @@ export default function PartDetail() {
             value: true
           },
           copy_bom: {
-            value: globalSettings.isSet('PART_COPY_BOM')
+            value: part.assembly && globalSettings.isSet('PART_COPY_BOM'),
+            hidden: !part.assembly
           },
           copy_notes: {
             value: true
           },
           copy_parameters: {
             value: globalSettings.isSet('PART_COPY_PARAMETERS')
+          },
+          copy_tests: {
+            value: part.testable,
+            hidden: !part.testable
           }
         }
       }
@@ -963,15 +1106,15 @@ export default function PartDetail() {
       }
     },
     preFormContent: (
-      <Alert color="red" title={t`Deleting this part cannot be reversed`}>
-        <Stack gap="xs">
+      <Alert color='red' title={t`Deleting this part cannot be reversed`}>
+        <Stack gap='xs'>
           <Thumbnail src={part.thumbnail ?? part.image} text={part.full_name} />
         </Stack>
       </Alert>
     )
   });
 
-  const stockActionProps: StockOperationProps = useMemo(() => {
+  const stockOperationProps: StockOperationProps = useMemo(() => {
     return {
       pk: part.pk,
       model: ModelType.part,
@@ -982,18 +1125,35 @@ export default function PartDetail() {
     };
   }, [part]);
 
-  const countStockItems = useCountStockItem(stockActionProps);
-  const transferStockItems = useTransferStockItem(stockActionProps);
+  const stockAdjustActions = useStockAdjustActions({
+    formProps: stockOperationProps,
+    merge: false,
+    enabled: true
+  });
+
+  const orderPartsWizard = OrderPartsWizard({
+    parts: [part]
+  });
+
+  const findBySerialNumber = useFindSerialNumberForm({ partId: part.pk });
 
   const partActions = useMemo(() => {
     return [
-      <AdminButton model={ModelType.part} pk={part.pk} />,
+      <AdminButton model={ModelType.part} id={part.pk} />,
+      <StarredToggleButton
+        key='starred_change'
+        instance={part}
+        model={ModelType.part}
+        successFunction={() => {
+          refreshInstance();
+        }}
+      />,
       <BarcodeActionDropdown
         model={ModelType.part}
         pk={part.pk}
         hash={part?.barcode_hash}
         perm={user.hasChangeRole(UserRoles.part)}
-        key="action_dropdown"
+        key='action_dropdown'
       />,
       <PrintingActions
         modelType={ModelType.part}
@@ -1004,34 +1164,32 @@ export default function PartDetail() {
       <ActionDropdown
         tooltip={t`Stock Actions`}
         icon={<IconPackages />}
+        hidden={part.virtual || !user.hasViewRole(UserRoles.stock)}
         actions={[
+          ...stockAdjustActions.menuActions,
           {
-            icon: (
-              <InvenTreeIcon icon="stocktake" iconProps={{ color: 'blue' }} />
-            ),
-            name: t`Count Stock`,
-            tooltip: t`Count part stock`,
-            hidden: !user.hasChangeRole(UserRoles.stock),
+            name: t`Order`,
+            tooltip: t`Order Stock`,
+            hidden:
+              !user.hasAddRole(UserRoles.purchase_order) ||
+              !part?.active ||
+              !part?.purchaseable,
+            icon: <IconShoppingCart color='blue' />,
             onClick: () => {
-              part.pk && countStockItems.open();
+              orderPartsWizard.openWizard();
             }
           },
           {
-            icon: (
-              <InvenTreeIcon icon="transfer" iconProps={{ color: 'blue' }} />
-            ),
-            name: t`Transfer Stock`,
-            tooltip: t`Transfer part stock`,
-            hidden: !user.hasChangeRole(UserRoles.stock),
-            onClick: () => {
-              part.pk && transferStockItems.open();
-            }
+            name: t`Search`,
+            tooltip: t`Search by serial number`,
+            hidden: !part.trackable,
+            icon: <IconSearch />,
+            onClick: findBySerialNumber.open
           }
         ]}
       />,
-      <ActionDropdown
+      <OptionsActionDropdown
         tooltip={t`Part Actions`}
-        icon={<IconDots />}
         actions={[
           DuplicateItemAction({
             hidden: !user.hasAddRole(UserRoles.part),
@@ -1049,82 +1207,66 @@ export default function PartDetail() {
         ]}
       />
     ];
-  }, [id, part, user]);
-
-  const enableRevisionSelection: boolean = useMemo(() => {
-    return (
-      partRevisionOptions.length > 0 &&
-      globalSettings.isSet('PART_ENABLE_REVISION')
-    );
-  }, [partRevisionOptions, globalSettings]);
+  }, [id, part, user, stockAdjustActions.menuActions]);
 
   return (
     <>
-      {duplicatePart.modal}
       {editPart.modal}
       {deletePart.modal}
-      <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
-        <Stack gap="xs">
-          <NavigationTree
-            title={t`Part Categories`}
-            modelType={ModelType.partcategory}
-            endpoint={ApiEndpoints.category_tree}
-            opened={treeOpen}
-            onClose={() => {
-              setTreeOpen(false);
-            }}
-            selectedId={part?.category}
-          />
+      {duplicatePart.modal}
+      {orderPartsWizard.wizard}
+      {findBySerialNumber.modal}
+      {stockAdjustActions.modals.map((modal) => modal.modal)}
+      <InstanceDetail query={instanceQuery} requiredRole={UserRoles.part}>
+        <Stack gap='xs'>
+          {user.hasViewRole(UserRoles.part_category) && (
+            <NavigationTree
+              title={t`Part Categories`}
+              modelType={ModelType.partcategory}
+              endpoint={ApiEndpoints.category_tree}
+              opened={treeOpen}
+              onClose={() => {
+                setTreeOpen(false);
+              }}
+              selectedId={part?.category}
+            />
+          )}
           <PageDetail
-            title={t`Part` + ': ' + part.full_name}
+            title={`${t`Part`}: ${part.full_name}`}
+            icon={
+              part?.locked ? (
+                <IconLock aria-label='part-lock-icon' />
+              ) : undefined
+            }
             subtitle={part.description}
             imageUrl={part.image}
             badges={badges}
-            breadcrumbs={breadcrumbs}
+            breadcrumbs={
+              user.hasViewRole(UserRoles.part_category)
+                ? breadcrumbs
+                : undefined
+            }
+            lastCrumb={[
+              {
+                name: part.name,
+                url: `/part/${part.pk}/`
+              }
+            ]}
             breadcrumbAction={() => {
               setTreeOpen(true);
             }}
             editAction={editPart.open}
             editEnabled={user.hasChangeRole(UserRoles.part)}
             actions={partActions}
-            detail={
-              enableRevisionSelection ? (
-                <Stack gap="xs">
-                  <Text>{t`Select Part Revision`}</Text>
-                  <Select
-                    id="part-revision-select"
-                    aria-label="part-revision-select"
-                    options={partRevisionOptions}
-                    value={{
-                      value: part.pk,
-                      label: part.full_name,
-                      part: part
-                    }}
-                    isSearchable={false}
-                    formatOptionLabel={(option: any) =>
-                      RenderPart({
-                        instance: option.part,
-                        showSecondary: false
-                      })
-                    }
-                    onChange={(value: any) => {
-                      navigate(getDetailUrl(ModelType.part, value.value));
-                    }}
-                    styles={{
-                      menuPortal: (base: any) => ({ ...base, zIndex: 9999 }),
-                      menu: (base: any) => ({ ...base, zIndex: 9999 }),
-                      menuList: (base: any) => ({ ...base, zIndex: 9999 })
-                    }}
-                  />
-                </Stack>
-              ) : (
-                <Space />
-              )
-            }
           />
-          <PanelGroup pageKey="part" panels={partPanels} />
-          {transferStockItems.modal}
-          {countStockItems.modal}
+          <PanelGroup
+            pageKey='part'
+            panels={partPanels}
+            instance={part}
+            reloadInstance={refreshInstance}
+            model={ModelType.part}
+            id={part.pk}
+          />
         </Stack>
       </InstanceDetail>
     </>

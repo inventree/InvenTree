@@ -27,7 +27,6 @@ class GeneralStatus(StatusCode):
 
     def GHI(self):  # This should be ignored
         """A invalid function."""
-        ...
 
 
 class GeneralStateTest(InvenTreeTestCase):
@@ -173,34 +172,37 @@ class GeneralStateTest(InvenTreeTestCase):
         rqst = RequestFactory().get('status/')
         force_authenticate(rqst, user=self.user)
 
-        # Correct call
-        resp = view(rqst, **{StatusView.MODEL_REF: GeneralStatus})
-        self.assertEqual(
-            resp.data,
-            {
-                'class': 'GeneralStatus',
-                'values': {
-                    'COMPLETE': {
-                        'key': 30,
-                        'name': 'COMPLETE',
-                        'label': 'Complete',
-                        'color': 'success',
-                    },
-                    'PENDING': {
-                        'key': 10,
-                        'name': 'PENDING',
-                        'label': 'Pending',
-                        'color': 'secondary',
-                    },
-                    'PLACED': {
-                        'key': 20,
-                        'name': 'PLACED',
-                        'label': 'Placed',
-                        'color': 'primary',
-                    },
+        expected = {
+            'status_class': 'GeneralStatus',
+            'values': {
+                'COMPLETE': {
+                    'key': 30,
+                    'name': 'COMPLETE',
+                    'label': 'Complete',
+                    'color': 'success',
+                },
+                'PENDING': {
+                    'key': 10,
+                    'name': 'PENDING',
+                    'label': 'Pending',
+                    'color': 'secondary',
+                },
+                'PLACED': {
+                    'key': 20,
+                    'name': 'PLACED',
+                    'label': 'Placed',
+                    'color': 'primary',
                 },
             },
-        )
+        }
+
+        # Correct call (class)
+        resp = view(rqst, **{StatusView.MODEL_REF: GeneralStatus})
+        self.assertDictEqual(resp.data, expected)
+
+        # Correct call (name)
+        resp = view(rqst, **{StatusView.MODEL_REF: 'GeneralStatus'})
+        self.assertDictEqual(resp.data, expected)
 
         # No status defined
         resp = view(rqst, **{StatusView.MODEL_REF: None})
@@ -213,13 +215,13 @@ class GeneralStateTest(InvenTreeTestCase):
         # Invalid call - not a class
         with self.assertRaises(NotImplementedError) as e:
             resp = view(rqst, **{StatusView.MODEL_REF: 'invalid'})
-        self.assertEqual(str(e.exception), '`status_class` not a class')
+        self.assertEqual(str(e.exception), '`invalid` not a class')
 
         # Invalid call - not the right class
         with self.assertRaises(NotImplementedError) as e:
             resp = view(rqst, **{StatusView.MODEL_REF: object})
         self.assertEqual(
-            str(e.exception), '`status_class` not a valid StatusCode class'
+            str(e.exception), "`<class 'object'>` not a valid StatusCode class"
         )
 
 
@@ -229,11 +231,13 @@ class ApiTests(InvenTreeAPITestCase):
     def test_all_states(self):
         """Test the API endpoint for listing all status models."""
         response = self.get(reverse('api-status-all'))
-        self.assertEqual(len(response.data), 12)
+
+        # 10 built-in state classes, plus the added GeneralState class
+        self.assertEqual(len(response.data), 11)
 
         # Test the BuildStatus model
         build_status = response.data['BuildStatus']
-        self.assertEqual(build_status['class'], 'BuildStatus')
+        self.assertEqual(build_status['status_class'], 'BuildStatus')
         self.assertEqual(len(build_status['values']), 5)
         pending = build_status['values']['PENDING']
         self.assertEqual(pending['key'], 10)
@@ -242,7 +246,7 @@ class ApiTests(InvenTreeAPITestCase):
 
         # Test the StockStatus model (static)
         stock_status = response.data['StockStatus']
-        self.assertEqual(stock_status['class'], 'StockStatus')
+        self.assertEqual(stock_status['status_class'], 'StockStatus')
         self.assertEqual(len(stock_status['values']), 8)
         in_stock = stock_status['values']['OK']
         self.assertEqual(in_stock['key'], 10)
@@ -250,9 +254,9 @@ class ApiTests(InvenTreeAPITestCase):
         self.assertEqual(in_stock['label'], 'OK')
 
         # MachineStatus model
-        machine_status = response.data['MachineStatus__LabelPrinterStatus']
-        self.assertEqual(machine_status['class'], 'LabelPrinterStatus')
-        self.assertEqual(len(machine_status['values']), 6)
+        machine_status = response.data['LabelPrinterStatus']
+        self.assertEqual(machine_status['status_class'], 'LabelPrinterStatus')
+        self.assertEqual(len(machine_status['values']), 8)
         connected = machine_status['values']['CONNECTED']
         self.assertEqual(connected['key'], 100)
         self.assertEqual(connected['name'], 'CONNECTED')
@@ -268,10 +272,11 @@ class ApiTests(InvenTreeAPITestCase):
             reference_status='StockStatus',
         )
         response = self.get(reverse('api-status-all'))
-        self.assertEqual(len(response.data), 12)
+
+        self.assertEqual(len(response.data), 11)
 
         stock_status_cstm = response.data['StockStatus']
-        self.assertEqual(stock_status_cstm['class'], 'StockStatus')
+        self.assertEqual(stock_status_cstm['status_class'], 'StockStatus')
         self.assertEqual(len(stock_status_cstm['values']), 9)
         ok_advanced = stock_status_cstm['values']['OK']
         self.assertEqual(ok_advanced['key'], 10)

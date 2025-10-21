@@ -2,6 +2,7 @@
 
 import inspect
 import warnings
+from typing import Optional
 
 from django.conf import settings
 from django.contrib import admin
@@ -13,7 +14,9 @@ from django.utils.translation import gettext_lazy as _
 import common.models
 import InvenTree.models
 import plugin.staticfiles
-from plugin import InvenTreePlugin, registry
+from plugin import InvenTreePlugin
+from plugin.events import PluginEvents, trigger_event
+from plugin.registry import registry
 
 
 class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
@@ -70,7 +73,7 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
         """Nice name for printing."""
         name = f'{self.name} - {self.key}'
         if not self.active:
-            name += '(not active)'
+            name += ' (not active)'
         return name
 
     # extra attributes from the registry
@@ -141,18 +144,25 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
 
     def save(self, force_insert=False, force_update=False, *args, **kwargs):
         """Extend save method to reload plugins if the 'active' status changes."""
-        reload = kwargs.pop('no_reload', False)  # check if no_reload flag is set
+        no_reload = kwargs.pop('no_reload', False)  # check if no_reload flag is set
+
+        mandatory = self.is_mandatory()
+
+        if mandatory:
+            # Force active if mandatory plugin
+            self.active = True
 
         super().save(force_insert, force_update, *args, **kwargs)
 
-        if self.is_builtin():
-            # Force active if builtin
-            self.active = True
-
-        if not reload and self.active != self.__org_active:
+        if not no_reload and self.active != self.__org_active and not mandatory:
             if settings.PLUGIN_TESTING:
-                warnings.warn('A reload was triggered', stacklevel=2)
-            registry.reload_plugins()
+                warnings.warn(
+                    f'A plugin registry reload was triggered for plugin {self.key}',
+                    stacklevel=2,
+                )
+            registry.reload_plugins(full_reload=True, force_reload=True, collect=True)
+
+        self.__org_active = self.active
 
     @admin.display(boolean=True, description=_('Installed'))
     def is_installed(self) -> bool:
@@ -179,13 +189,72 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
 
         return self.plugin.check_is_builtin()
 
+    @admin.display(boolean=True, description=_('Mandatory Plugin'))
+    def is_mandatory(self) -> bool:
+        """Return True if this plugin is mandatory."""
+        # List of run-time configured mandatory plugins
+        if settings.PLUGINS_MANDATORY:
+            if self.key in settings.PLUGINS_MANDATORY:
+                return True
+
+        # Hard-coded list of mandatory "builtin" plugins
+        return self.key in registry.MANDATORY_PLUGINS
+
+    def is_active(self) -> bool:
+        """Return True if this plugin is active.
+
+        Note that 'mandatory' plugins are always considered 'active',
+        """
+        return self.is_mandatory() or self.active
+
     @admin.display(boolean=True, description=_('Package Plugin'))
     def is_package(self) -> bool:
         """Return True if this is a 'package' plugin."""
+        if self.package_name:
+            return True
+
         if not self.plugin:
             return False
 
-        return getattr(self.plugin, 'is_package', False)
+        pkg_name = getattr(self.plugin, 'package_name', None)
+        return pkg_name is not None
+
+    @property
+    def admin_source(self) -> Optional[str]:
+        """Return the path to the javascript file which renders custom admin content for this plugin.
+
+        - It is required that the file provides a 'renderPluginSettings' function!
+        """
+        if not self.plugin:
+            return None
+
+        if not self.is_installed() or not self.active:
+            return None
+
+        if hasattr(self.plugin, 'get_admin_source'):
+            try:
+                return self.plugin.get_admin_source()
+            except Exception:
+                pass
+
+        return None
+
+    @property
+    def admin_context(self) -> Optional[dict]:
+        """Return the context data for the admin integration."""
+        if not self.plugin:
+            return None
+
+        if not self.is_installed() or not self.active:
+            return None
+
+        if hasattr(self.plugin, 'get_admin_context'):
+            try:
+                return self.plugin.get_admin_context()
+            except Exception:
+                pass
+
+        return {}
 
     def activate(self, active: bool) -> None:
         """Set the 'active' status of this plugin instance."""
@@ -197,9 +266,17 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
         self.active = active
         self.save()
 
+        trigger_event(PluginEvents.PLUGIN_ACTIVATED, slug=self.key, active=active)
+
         if active:
             offload_task(check_for_migrations)
-            offload_task(plugin.staticfiles.copy_plugin_static_files, self.key)
+            offload_task(
+                plugin.staticfiles.copy_plugin_static_files, self.key, group='plugin'
+            )
+        else:
+            offload_task(
+                plugin.staticfiles.clear_plugin_static_files, self.key, group='plugin'
+            )
 
 
 class PluginSetting(common.models.BaseInvenTreeSetting):
@@ -212,6 +289,10 @@ class PluginSetting(common.models.BaseInvenTreeSetting):
         """Meta for PluginSetting."""
 
         unique_together = [('plugin', 'key')]
+
+    def to_native_value(self):
+        """Return the 'native' value of this setting."""
+        return self.__class__.get_setting(self.key, plugin=self.plugin)
 
     plugin = models.ForeignKey(
         PluginConfig,
@@ -244,37 +325,60 @@ class PluginSetting(common.models.BaseInvenTreeSetting):
         return super().get_setting_definition(key, **kwargs)
 
 
-class NotificationUserSetting(common.models.BaseInvenTreeSetting):
-    """This model represents notification settings for a user."""
+class PluginUserSetting(common.models.BaseInvenTreeSetting):
+    """This model represents user-specific settings for individual plugins.
 
-    typ = 'notification'
-    extra_unique_fields = ['method', 'user']
+    In contrast with the PluginSetting model, which holds global settings for plugins,
+    this model allows for user-specific settings that can be defined by each user.
+    """
+
+    typ = 'plugin_user'
+    extra_unique_fields = ['plugin', 'user']
 
     class Meta:
-        """Meta for NotificationUserSetting."""
+        """Meta for PluginUserSetting."""
 
-        unique_together = [('method', 'user', 'key')]
+        unique_together = [('plugin', 'user', 'key')]
 
-    @classmethod
-    def get_setting_definition(cls, key, **kwargs):
-        """Override setting_definition to use notification settings."""
-        from common.notifications import storage
-
-        kwargs['settings'] = storage.user_settings
-
-        return super().get_setting_definition(key, **kwargs)
-
-    method = models.CharField(max_length=255, verbose_name=_('Method'))
+    plugin = models.ForeignKey(
+        PluginConfig,
+        related_name='user_settings',
+        null=False,
+        verbose_name=_('Plugin'),
+        on_delete=models.CASCADE,
+    )
 
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        blank=True,
-        null=True,
+        null=False,
         verbose_name=_('User'),
         help_text=_('User'),
+        related_name='plugin_settings',
     )
 
     def __str__(self) -> str:
         """Nice name of printing."""
         return f'{self.key} (for {self.user}): {self.value}'
+
+    @classmethod
+    def get_setting_definition(cls, key, **kwargs):
+        """In the BaseInvenTreeSetting class, we have a class attribute named 'SETTINGS', which is a dict object that fully defines all the setting parameters.
+
+        Here, unlike the BaseInvenTreeSetting, we do not know the definitions of all settings
+        'ahead of time' (as they are defined externally in the plugins).
+
+        Settings can be provided by the caller, as kwargs['settings'].
+
+        If not provided, we'll look at the plugin registry to see what settings are available,
+        (if the plugin is specified!)
+        """
+        if 'settings' not in kwargs:
+            plugin = kwargs.pop('plugin', None)
+
+            if plugin:
+                mixin_user_settings = getattr(registry, 'mixins_user_settings', None)
+                if mixin_user_settings:
+                    kwargs['settings'] = mixin_user_settings.get(plugin.key, {})
+
+        return super().get_setting_definition(key, **kwargs)

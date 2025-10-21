@@ -1,16 +1,19 @@
 """Plugin mixin class for AppMixin."""
 
-import logging
 from importlib import reload
 from pathlib import Path
+from typing import Optional
 
 from django.apps import apps
 from django.conf import settings
 from django.contrib import admin
 
-from InvenTree.config import get_plugin_dir
+import structlog
 
-logger = logging.getLogger('inventree')
+from InvenTree.config import get_plugin_dir
+from plugin import PluginMixinEnum
+
+logger = structlog.get_logger('inventree')
 
 
 class AppMixin:
@@ -24,11 +27,18 @@ class AppMixin:
     def __init__(self):
         """Register mixin."""
         super().__init__()
-        self.add_mixin('app', 'has_app', __class__)
+        self.add_mixin(PluginMixinEnum.APP, 'has_app', __class__)
 
     @classmethod
     def _activate_mixin(
-        cls, registry, plugins, force_reload=False, full_reload: bool = False
+        cls,
+        registry,
+        plugins,
+        force_reload=False,
+        full_reload: bool = False,
+        _internal: Optional[list] = None,
+        *args,
+        **kwargs,
     ):
         """Activate AppMixin plugins - add custom apps and reload.
 
@@ -37,6 +47,7 @@ class AppMixin:
             plugins (dict): List of IntegrationPlugins that should be installed
             force_reload (bool, optional): Only reload base apps. Defaults to False.
             full_reload (bool, optional): Reload everything - including plugin mechanism. Defaults to False.
+            _internal (dict, optional): Internal use only (for testing). Defaults to None.
         """
         from common.settings import get_global_setting
 
@@ -46,7 +57,7 @@ class AppMixin:
 
             # add them to the INSTALLED_APPS
             for _key, plugin in plugins:
-                if plugin.mixin_enabled('app'):
+                if plugin.mixin_enabled(PluginMixinEnum.APP):
                     plugin_path = cls._get_plugin_path(plugin)
                     if plugin_path not in settings.INSTALLED_APPS:
                         settings.INSTALLED_APPS += [plugin_path]
@@ -61,9 +72,11 @@ class AppMixin:
                 # first startup or force loading of base apps -> registry is prob false
                 if registry.apps_loading or force_reload:
                     registry.apps_loading = False
-                    registry._reload_apps(force_reload=True, full_reload=full_reload)
+                    registry._reload_apps(
+                        force_reload=True, full_reload=full_reload, _internal=_internal
+                    )
                 else:
-                    registry._reload_apps(full_reload=full_reload)
+                    registry._reload_apps(full_reload=full_reload, _internal=_internal)
 
                 # rediscover models/ admin sites
                 cls._reregister_contrib_apps(cls, registry)

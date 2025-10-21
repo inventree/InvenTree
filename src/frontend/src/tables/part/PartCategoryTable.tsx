@@ -1,31 +1,35 @@
-import { t } from '@lingui/macro';
-import { Group } from '@mantine/core';
+import { t } from '@lingui/core/macro';
+import { Group, Tooltip } from '@mantine/core';
+import { IconBell } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
-import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { YesNoButton } from '../../components/buttons/YesNoButton';
+import { AddItemButton } from '@lib/components/AddItemButton';
+import { type RowAction, RowEditAction } from '@lib/components/RowActions';
+import { YesNoButton } from '@lib/components/YesNoButton';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import type { TableFilter } from '@lib/types/Filters';
+import type { TableColumn } from '@lib/types/Tables';
+import { ActionDropdown } from '../../components/items/ActionDropdown';
 import { ApiIcon } from '../../components/items/ApiIcon';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import { partCategoryFields } from '../../forms/PartForms';
+import { InvenTreeIcon } from '../../functions/icons';
 import {
+  useBulkEditApiFormModal,
   useCreateApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
 import { DescriptionColumn } from '../ColumnRenderers';
-import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction, RowEditAction } from '../RowActions';
 
 /**
  * PartCategoryTable - Displays a table of part categories
  */
-export function PartCategoryTable({ parentId }: { parentId?: any }) {
+export function PartCategoryTable({ parentId }: Readonly<{ parentId?: any }>) {
   const table = useTable('partcategory');
   const user = useUserState();
 
@@ -36,9 +40,20 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
         sortable: true,
         switchable: false,
         render: (record: any) => (
-          <Group gap="xs">
-            {record.icon && <ApiIcon name={record.icon} />}
-            {record.name}
+          <Group gap='xs' wrap='nowrap' justify='space-between'>
+            <Group gap='xs' wrap='nowrap'>
+              {record.icon && <ApiIcon name={record.icon} />}
+              {record.name}
+            </Group>
+            <Group gap='xs' justify='flex-end' wrap='nowrap'>
+              {record.starred && (
+                <Tooltip
+                  label={t`You are subscribed to notifications for this category`}
+                >
+                  <IconBell color='green' size={16} />
+                </Tooltip>
+              )}
+            </Group>
           </Group>
         )
       },
@@ -50,6 +65,7 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
       {
         accessor: 'structural',
         sortable: true,
+        defaultVisible: false,
         render: (record: any) => {
           return <YesNoButton value={record.structural} />;
         }
@@ -81,10 +97,12 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
     ];
   }, []);
 
+  const newCategoryFields = partCategoryFields({ create: true });
+
   const newCategory = useCreateApiFormModal({
     url: ApiEndpoints.category_list,
     title: t`New Part Category`,
-    fields: partCategoryFields(),
+    fields: newCategoryFields,
     focus: 'name',
     initialData: {
       parent: parentId
@@ -96,29 +114,60 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
 
   const [selectedCategory, setSelectedCategory] = useState<number>(-1);
 
+  const editCategoryFields = partCategoryFields({ create: false });
+
   const editCategory = useEditApiFormModal({
     url: ApiEndpoints.category_list,
     pk: selectedCategory,
     title: t`Edit Part Category`,
-    fields: partCategoryFields(),
+    fields: editCategoryFields,
     onFormSuccess: (record: any) => table.updateRecord(record)
   });
 
+  const setParent = useBulkEditApiFormModal({
+    url: ApiEndpoints.category_list,
+    items: table.selectedIds,
+    title: t`Set Parent Category`,
+    fields: {
+      parent: {}
+    },
+    onFormSuccess: table.refreshTable
+  });
+
   const tableActions = useMemo(() => {
-    let can_add = user.hasAddRole(UserRoles.part_category);
+    const can_add = user.hasAddRole(UserRoles.part_category);
+    const can_edit = user.hasChangeRole(UserRoles.part_category);
 
     return [
+      <ActionDropdown
+        tooltip={t`Category Actions`}
+        icon={<InvenTreeIcon icon='category' />}
+        disabled={!table.hasSelectedRecords}
+        actions={[
+          {
+            name: t`Set Parent`,
+            icon: <InvenTreeIcon icon='category' />,
+            tooltip: t`Set parent category for the selected items`,
+            hidden: !can_edit,
+            disabled: !table.hasSelectedRecords,
+            onClick: () => {
+              setParent.open();
+            }
+          }
+        ]}
+      />,
       <AddItemButton
+        key='add-part-category'
         tooltip={t`Add Part Category`}
         onClick={() => newCategory.open()}
         hidden={!can_add}
       />
     ];
-  }, [user]);
+  }, [user, table.hasSelectedRecords]);
 
   const rowActions = useCallback(
     (record: any): RowAction[] => {
-      let can_edit = user.hasChangeRole(UserRoles.part_category);
+      const can_edit = user.hasChangeRole(UserRoles.part_category);
 
       return [
         RowEditAction({
@@ -137,12 +186,14 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
     <>
       {newCategory.modal}
       {editCategory.modal}
+      {setParent.modal}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.category_list)}
         tableState={table}
         columns={tableColumns}
         props={{
           enableDownload: true,
+          enableSelection: true,
           params: {
             parent: parentId,
             top_level: parentId === undefined ? true : undefined

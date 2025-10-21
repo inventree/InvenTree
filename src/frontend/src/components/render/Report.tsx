@@ -1,29 +1,23 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 import { RenderInlineModel } from './Instance';
 
 export function RenderReportTemplate({
   instance
-}: {
+}: Readonly<{
   instance: any;
-}): ReactNode {
+}>): ReactNode {
   return (
-    <RenderInlineModel
-      primary={instance.name}
-      secondary={instance.description}
-    />
+    <RenderInlineModel primary={instance.name} suffix={instance.description} />
   );
 }
 
 export function RenderLabelTemplate({
   instance
-}: {
+}: Readonly<{
   instance: any;
-}): ReactNode {
+}>): ReactNode {
   return (
-    <RenderInlineModel
-      primary={instance.name}
-      secondary={instance.description}
-    />
+    <RenderInlineModel primary={instance.name} suffix={instance.description} />
   );
 }

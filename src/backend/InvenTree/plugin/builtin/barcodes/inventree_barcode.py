@@ -98,6 +98,8 @@ class InvenTreeInternalBarcodePlugin(SettingsMixin, BarcodeMixin, InvenTreePlugi
 
         supported_models = plugin.base.barcodes.helper.get_supported_barcode_models()
 
+        succcess_message = _('Found matching item')
+
         if barcode_dict is not None and type(barcode_dict) is dict:
             # Look for various matches. First good match will be returned
             for model in supported_models:
@@ -107,7 +109,11 @@ class InvenTreeInternalBarcodePlugin(SettingsMixin, BarcodeMixin, InvenTreePlugi
                     try:
                         pk = int(barcode_dict[label])
                         instance = model.objects.get(pk=pk)
-                        return self.format_matched_response(label, model, instance)
+
+                        return {
+                            **self.format_matched_response(label, model, instance),
+                            'success': succcess_message,
+                        }
                     except (ValueError, model.DoesNotExist):
                         pass
 
@@ -122,19 +128,22 @@ class InvenTreeInternalBarcodePlugin(SettingsMixin, BarcodeMixin, InvenTreePlugi
             instance = model.lookup_barcode(barcode_hash)
 
             if instance is not None:
-                return self.format_matched_response(label, model, instance)
+                return {
+                    **self.format_matched_response(label, model, instance),
+                    'success': succcess_message,
+                }
 
     def generate(self, model_instance: InvenTreeBarcodeMixin):
         """Generate a barcode for a given model instance."""
-        barcode_format = self.get_setting('INTERNAL_BARCODE_FORMAT')
-
-        if barcode_format == 'json':
-            return json.dumps({model_instance.barcode_model_type(): model_instance.pk})
+        barcode_format = self.get_setting(
+            'INTERNAL_BARCODE_FORMAT', backup_value='json'
+        )
 
         if barcode_format == 'short':
             prefix = self.get_setting('SHORT_BARCODE_PREFIX')
             model_type_code = model_instance.barcode_model_type_code()
 
             return f'{prefix}{model_type_code}{model_instance.pk}'
-
-        return None
+        else:
+            # Default = JSON format
+            return json.dumps({model_instance.barcode_model_type(): model_instance.pk})

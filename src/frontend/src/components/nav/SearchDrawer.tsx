@@ -1,49 +1,58 @@
-import { Trans, t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import {
+  Accordion,
   ActionIcon,
   Alert,
   Anchor,
   Center,
   Checkbox,
-  Divider,
   Drawer,
   Group,
   Loader,
   Menu,
-  Paper,
   Space,
   Stack,
   Text,
-  TextInput
+  TextInput,
+  Tooltip
 } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
 import {
   IconAlertCircle,
   IconBackspace,
+  IconExclamationCircle,
   IconRefresh,
   IconSearch,
   IconSettings,
+  IconTableExport,
   IconX
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { type NavigateFunction, useNavigate } from 'react-router-dom';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelInformationDict } from '@lib/enums/ModelInformation';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import { cancelEvent } from '@lib/functions/Events';
+import { eventModified, navigateToLink } from '@lib/functions/Navigation';
+import { showNotification } from '@mantine/notifications';
 import { api } from '../../App';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
-import { navigateToLink } from '../../functions/navigation';
-import { apiUrl } from '../../states/ApiState';
-import { useUserSettingsState } from '../../states/SettingsState';
+import { useUserSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import { Boundary } from '../Boundary';
 import { RenderInstance } from '../render/Instance';
-import { ModelInformationDict } from '../render/ModelType';
+import { getModelInfo } from '../render/ModelType';
 
 // Define type for handling individual search queries
 type SearchQuery = {
   model: ModelType;
+  searchKey?: string;
+  title?: string;
+  overviewUrl?: string;
   enabled: boolean;
   parameters: any;
   results?: any;
@@ -53,58 +62,117 @@ type SearchQuery = {
  * Render the results for a single search query
  */
 function QueryResultGroup({
+  searchText,
   query,
+  navigate,
+  onClose,
   onRemove,
   onResultClick
-}: {
+}: Readonly<{
+  searchText: string;
   query: SearchQuery;
+  navigate: NavigateFunction;
+  onClose: () => void;
   onRemove: (query: ModelType) => void;
   onResultClick: (query: ModelType, pk: number, event: any) => void;
-}) {
+}>) {
+  const modelInfo = useMemo(() => getModelInfo(query.model), [query.model]);
+
+  const overviewUrl: string | undefined = useMemo(() => {
+    // Query has a custom overview URL
+    if (query.overviewUrl) {
+      return query.overviewUrl;
+    }
+
+    return modelInfo.url_overview;
+  }, [query, modelInfo]);
+
+  // Callback function to view all results for a given query
+  const viewResults = useCallback(
+    (event: any) => {
+      cancelEvent(event);
+
+      if (overviewUrl) {
+        const url = `${overviewUrl}?search=${searchText}`;
+
+        // Close drawer if opening in the same tab
+        if (!eventModified(event)) {
+          onClose();
+        }
+
+        navigateToLink(url, navigate, event);
+      } else {
+        showNotification({
+          title: t`No Overview Available`,
+          message: t`No overview available for this model type`,
+          color: 'red',
+          icon: <IconExclamationCircle />
+        });
+      }
+    },
+    [overviewUrl, searchText]
+  );
+
   if (query.results.count == 0) {
     return null;
   }
 
-  const model = ModelInformationDict[query.model];
-
   return (
-    <Paper shadow="sm" radius="xs" p="md" key={`paper-${query.model}`}>
-      <Stack key={`stack-${query.model}`}>
-        <Group justify="space-between" wrap="nowrap">
-          <Group justify="left" gap={5} wrap="nowrap">
-            <Text size="lg">{model.label_multiple}</Text>
-            <Text size="sm" style={{ fontStyle: 'italic' }}>
+    <Accordion.Item key={query.model} value={query.model}>
+      <Accordion.Control component='div'>
+        <Group justify='space-between'>
+          <Group justify='left' gap={5} wrap='nowrap'>
+            <Tooltip label={t`View all results`} position='top-start'>
+              <ActionIcon
+                size='sm'
+                variant='transparent'
+                radius='xs'
+                aria-label={`view-all-results-${query.searchKey ?? query.model}`}
+                disabled={!overviewUrl}
+                onClick={viewResults}
+              >
+                <IconTableExport />
+              </ActionIcon>
+            </Tooltip>
+            <Text size='lg'>{query.title ?? modelInfo.label_multiple}</Text>
+            <Text size='sm' style={{ fontStyle: 'italic' }}>
               {' '}
               - {query.results.count} <Trans>results</Trans>
             </Text>
           </Group>
-          <Space />
-          <ActionIcon
-            size="sm"
-            color="red"
-            variant="transparent"
-            radius="xs"
-            onClick={() => onRemove(query.model)}
-          >
-            <IconX />
-          </ActionIcon>
+          <Group justify='right' wrap='nowrap'>
+            <Tooltip label={t`Remove search group`} position='top-end'>
+              <ActionIcon
+                size='sm'
+                color='red'
+                variant='transparent'
+                radius='xs'
+                aria-label={`remove-search-group-${query.model}`}
+                onClick={() => onRemove(query.model)}
+              >
+                <IconX />
+              </ActionIcon>
+            </Tooltip>
+            <Space />
+          </Group>
         </Group>
-        <Divider />
-        <Stack>
+      </Accordion.Control>
+      <Accordion.Panel>
+        <Stack aria-label={`search-group-results-${query.model}`}>
           {query.results.results.map((result: any) => (
             <Anchor
+              underline='never'
               onClick={(event: any) =>
                 onResultClick(query.model, result.pk, event)
               }
-              key={result.pk}
+              key={`result-${query.model}-${result.pk}`}
             >
               <RenderInstance instance={result} model={query.model} />
             </Anchor>
           ))}
         </Stack>
-        <Space />
-      </Stack>
-    </Paper>
+      </Accordion.Panel>
+    </Accordion.Item>
   );
 }
 
@@ -115,18 +183,29 @@ function QueryResultGroup({
 export function SearchDrawer({
   opened,
   onClose
-}: {
+}: Readonly<{
   opened: boolean;
   onClose: () => void;
-}) {
+}>) {
   const [value, setValue] = useState<string>('');
   const [searchText] = useDebouncedValue(value, 500);
 
-  const [searchRegex, setSearchRegex] = useState<boolean>(false);
-  const [searchWhole, setSearchWhole] = useState<boolean>(false);
-
   const user = useUserState();
   const userSettings = useUserSettingsState();
+
+  const [searchRegex, setSearchRegex] = useState<boolean>(false);
+  const [searchWhole, setSearchWhole] = useState<boolean>(false);
+  const [searchNotes, setSearchNotes] = useState<boolean>(false);
+
+  useEffect(() => {
+    setSearchRegex(userSettings.isSet('SEARCH_REGEX', false));
+    setSearchWhole(userSettings.isSet('SEARCH_WHOLE', false));
+    setSearchNotes(userSettings.isSet('SEARCH_NOTES', false));
+  }, [
+    userSettings.isSet('SEARCH_REGEX', false),
+    userSettings.isSet('SEARCH_WHOLE', false),
+    userSettings.isSet('SEARCH_NOTES', false)
+  ]);
 
   // Build out search queries based on user permissions and preferences
   const searchQueryList: SearchQuery[] = useMemo(() => {
@@ -204,10 +283,32 @@ export function SearchDrawer({
       },
       {
         model: ModelType.company,
+        overviewUrl: '/purchasing/index/suppliers',
+        searchKey: 'supplier',
+        title: t`Suppliers`,
         parameters: {},
         enabled:
-          (user.hasViewRole(UserRoles.sales_order) ||
-            user.hasViewRole(UserRoles.purchase_order)) &&
+          user.hasViewRole(UserRoles.purchase_order) &&
+          userSettings.isSet('SEARCH_PREVIEW_SHOW_COMPANIES')
+      },
+      {
+        model: ModelType.company,
+        overviewUrl: '/purchasing/index/manufacturers',
+        searchKey: 'manufacturer',
+        title: t`Manufacturers`,
+        parameters: {},
+        enabled:
+          user.hasViewRole(UserRoles.purchase_order) &&
+          userSettings.isSet('SEARCH_PREVIEW_SHOW_COMPANIES')
+      },
+      {
+        model: ModelType.company,
+        overviewUrl: '/sales/index/customers',
+        searchKey: 'customer',
+        title: t`Customers`,
+        parameters: {},
+        enabled:
+          user.hasViewRole(UserRoles.sales_order) &&
           userSettings.isSet('SEARCH_PREVIEW_SHOW_COMPANIES')
       },
       {
@@ -222,7 +323,7 @@ export function SearchDrawer({
         },
         enabled:
           user.hasViewRole(UserRoles.purchase_order) &&
-          userSettings.isSet(`SEARCH_PREVIEW_SHOW_PURCHASE_ORDERS`)
+          userSettings.isSet('SEARCH_PREVIEW_SHOW_PURCHASE_ORDERS')
       },
       {
         model: ModelType.salesorder,
@@ -236,7 +337,14 @@ export function SearchDrawer({
         },
         enabled:
           user.hasViewRole(UserRoles.sales_order) &&
-          userSettings.isSet(`SEARCH_PREVIEW_SHOW_SALES_ORDERS`)
+          userSettings.isSet('SEARCH_PREVIEW_SHOW_SALES_ORDERS')
+      },
+      {
+        model: ModelType.salesordershipment,
+        parameters: {},
+        enabled:
+          user.hasViewRole(UserRoles.sales_order) &&
+          userSettings.isSet('SEARCH_PREVIEW_SHOW_SALES_ORDER_SHIPMENTS')
       },
       {
         model: ModelType.returnorder,
@@ -250,13 +358,15 @@ export function SearchDrawer({
         },
         enabled:
           user.hasViewRole(UserRoles.return_order) &&
-          userSettings.isSet(`SEARCH_PREVIEW_SHOW_RETURN_ORDERS`)
+          userSettings.isSet('SEARCH_PREVIEW_SHOW_RETURN_ORDERS')
       }
     ];
   }, [user, userSettings]);
 
   // Construct a list of search queries based on user permissions
-  const searchQueries: SearchQuery[] = searchQueryList.filter((q) => q.enabled);
+  const searchQueries: SearchQuery[] = useMemo(() => {
+    return searchQueryList.filter((q) => q.enabled);
+  }, [searchQueryList]);
 
   // Re-fetch data whenever the search term is updated
   useEffect(() => {
@@ -270,33 +380,29 @@ export function SearchDrawer({
       return [];
     }
 
-    let params: any = {
+    const params: any = {
       offset: 0,
       limit: userSettings.getSetting('SEARCH_PREVIEW_RESULTS', '10'),
       search: searchText,
       search_regex: searchRegex,
-      search_whole: searchWhole
+      search_whole: searchWhole,
+      search_notes: searchNotes
     };
 
     // Add in custom query parameters
     searchQueries.forEach((query) => {
-      params[query.model] = query.parameters;
+      const key = query.searchKey || query.model;
+      params[key] = query.parameters;
     });
 
     return api
       .post(apiUrl(ApiEndpoints.api_search), params)
-      .then(function (response) {
-        return response.data;
-      })
-      .catch(function (error) {
-        console.error(error);
-        return [];
-      });
+      .then((response) => response.data);
   };
 
   // Search query manager
   const searchQuery = useQuery({
-    queryKey: ['search', searchText, searchRegex, searchWhole],
+    queryKey: ['search', searchText, searchRegex, searchWhole, searchNotes],
     queryFn: performSearch
   });
 
@@ -307,11 +413,11 @@ export function SearchDrawer({
   useEffect(() => {
     if (searchQuery.data) {
       let queries = searchQueries.filter(
-        (query) => query.model in searchQuery.data
+        (query) => (query.searchKey ?? query.model) in searchQuery.data
       );
 
-      for (let key in searchQuery.data) {
-        let query = queries.find((q) => q.model == key);
+      for (const key in searchQuery.data) {
+        const query = queries.find((q) => (q.searchKey ?? q.model) == key);
         if (query) {
           query.results = searchQuery.data[key];
         }
@@ -346,65 +452,58 @@ export function SearchDrawer({
       return;
     }
 
-    if (event?.ctrlKey || event?.shiftKey) {
+    if (eventModified(event)) {
       // Keep the drawer open in this condition
     } else {
       closeDrawer();
     }
 
-    let url = targetModel.url_detail.replace(':pk', pk.toString());
+    const url = targetModel.url_detail.replace(':pk', pk.toString());
     navigateToLink(url, navigate, event);
   }
 
   return (
     <Drawer
       opened={opened}
-      size="xl"
+      size='xl'
       onClose={closeDrawer}
-      position="right"
+      position='right'
       withCloseButton={false}
       styles={{ header: { width: '100%' }, title: { width: '100%' } }}
       title={
-        <Group justify="space-between" gap={1} wrap="nowrap">
+        <Group justify='space-between' gap={1} wrap='nowrap'>
           <TextInput
+            aria-label='global-search-input'
             placeholder={t`Enter search text`}
-            radius="xs"
             value={value}
             onChange={(event) => setValue(event.currentTarget.value)}
-            leftSection={<IconSearch size="0.8rem" />}
+            leftSection={<IconSearch size='0.8rem' />}
             rightSection={
               value && (
-                <IconBackspace color="red" onClick={() => setValue('')} />
+                <IconBackspace color='red' onClick={() => setValue('')} />
               )
             }
             styles={{ root: { width: '100%' } }}
           />
-          <ActionIcon
-            size="lg"
-            variant="outline"
-            radius="xs"
-            onClick={() => searchQuery.refetch()}
-          >
-            <IconRefresh />
-          </ActionIcon>
-          <Menu>
+          <Tooltip label={t`Refresh search results`} position='bottom-end'>
+            <ActionIcon
+              size='lg'
+              variant='transparent'
+              onClick={() => searchQuery.refetch()}
+            >
+              <IconRefresh />
+            </ActionIcon>
+          </Tooltip>
+          <Menu position='bottom-end'>
             <Menu.Target>
-              <ActionIcon size="lg" variant="outline" radius="xs">
-                <IconSettings />
-              </ActionIcon>
+              <Tooltip label={t`Search Options`} position='bottom-end'>
+                <ActionIcon size='lg' variant='transparent'>
+                  <IconSettings />
+                </ActionIcon>
+              </Tooltip>
             </Menu.Target>
             <Menu.Dropdown>
               <Menu.Label>{t`Search Options`}</Menu.Label>
-              <Menu.Item>
-                <Checkbox
-                  label={t`Regex search`}
-                  checked={searchRegex}
-                  onChange={(event) =>
-                    setSearchRegex(event.currentTarget.checked)
-                  }
-                  radius="sm"
-                />
-              </Menu.Item>
               <Menu.Item>
                 <Checkbox
                   label={t`Whole word search`}
@@ -412,7 +511,24 @@ export function SearchDrawer({
                   onChange={(event) =>
                     setSearchWhole(event.currentTarget.checked)
                   }
-                  radius="sm"
+                />
+              </Menu.Item>
+              <Menu.Item>
+                <Checkbox
+                  label={t`Regex search`}
+                  checked={searchRegex}
+                  onChange={(event) =>
+                    setSearchRegex(event.currentTarget.checked)
+                  }
+                />
+              </Menu.Item>
+              <Menu.Item>
+                <Checkbox
+                  label={t`Notes search`}
+                  checked={searchNotes}
+                  onChange={(event) =>
+                    setSearchNotes(event.currentTarget.checked)
+                  }
                 />
               </Menu.Item>
             </Menu.Dropdown>
@@ -420,33 +536,41 @@ export function SearchDrawer({
         </Group>
       }
     >
-      <Boundary label="SearchDrawer">
+      <Boundary label='SearchDrawer'>
         {searchQuery.isFetching && (
           <Center>
             <Loader />
           </Center>
         )}
         {!searchQuery.isFetching && !searchQuery.isError && (
-          <Stack gap="md">
-            {queryResults.map((query, idx) => (
-              <QueryResultGroup
-                key={idx}
-                query={query}
-                onRemove={(query) => removeResults(query)}
-                onResultClick={(query, pk, event) =>
-                  onResultClick(query, pk, event)
-                }
-              />
-            ))}
+          <Stack gap='md'>
+            <Accordion
+              multiple
+              defaultValue={searchQueries.map((q) => q.model)}
+            >
+              {queryResults.map((query, idx) => (
+                <QueryResultGroup
+                  key={idx}
+                  searchText={searchText}
+                  query={query}
+                  navigate={navigate}
+                  onClose={closeDrawer}
+                  onRemove={(query) => removeResults(query)}
+                  onResultClick={(query, pk, event) =>
+                    onResultClick(query, pk, event)
+                  }
+                />
+              ))}
+            </Accordion>
           </Stack>
         )}
         {searchQuery.isError && (
           <Alert
-            color="red"
-            radius="sm"
-            variant="light"
+            color='red'
+            radius='sm'
+            variant='light'
             title={t`Error`}
-            icon={<IconAlertCircle size="1rem" />}
+            icon={<IconAlertCircle size='1rem' />}
           >
             <Trans>An error occurred during search query</Trans>
           </Alert>
@@ -456,11 +580,11 @@ export function SearchDrawer({
           !searchQuery.isError &&
           queryResults.length == 0 && (
             <Alert
-              color="blue"
-              radius="sm"
-              variant="light"
-              title={t`No results`}
-              icon={<IconSearch size="1rem" />}
+              color='blue'
+              radius='sm'
+              variant='light'
+              title={t`No Results`}
+              icon={<IconSearch size='1rem' />}
             >
               <Trans>No results available for search query</Trans>
             </Alert>

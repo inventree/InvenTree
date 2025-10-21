@@ -1,30 +1,35 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { useCallback, useMemo, useState } from 'react';
 
-import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { YesNoButton } from '../../components/buttons/YesNoButton';
-import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { UserRoles } from '../../enums/Roles';
+import { AddItemButton } from '@lib/components/AddItemButton';
+import {
+  type RowAction,
+  RowDeleteAction,
+  RowEditAction
+} from '@lib/components/RowActions';
+import { YesNoButton } from '@lib/components/YesNoButton';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import type { ApiFormFieldSet } from '@lib/types/Forms';
+import type { TableColumn } from '@lib/types/Tables';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
+import { LinkColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 export function AddressTable({
   companyId,
   params
-}: {
+}: Readonly<{
   companyId: number;
   params?: any;
-}) {
+}>) {
   const user = useUserState();
 
   const table = useTable('address');
@@ -55,7 +60,7 @@ export function AddressTable({
           }
 
           if (record?.line2) {
-            address += ' ' + record.line2;
+            address += ` ${record.line2}`;
           }
 
           return address.trim();
@@ -91,11 +96,7 @@ export function AddressTable({
         sortable: false,
         switchable: true
       },
-      {
-        accessor: 'link',
-        sortable: false,
-        switchable: true
-      }
+      LinkColumn({})
     ];
   }, []);
 
@@ -147,11 +148,11 @@ export function AddressTable({
 
   const rowActions = useCallback(
     (record: any): RowAction[] => {
-      let can_edit =
+      const can_edit =
         user.hasChangeRole(UserRoles.purchase_order) ||
         user.hasChangeRole(UserRoles.sales_order);
 
-      let can_delete =
+      const can_delete =
         user.hasDeleteRole(UserRoles.purchase_order) ||
         user.hasDeleteRole(UserRoles.sales_order);
 
@@ -176,12 +177,13 @@ export function AddressTable({
   );
 
   const tableActions = useMemo(() => {
-    let can_add =
+    const can_add =
       user.hasChangeRole(UserRoles.purchase_order) ||
       user.hasChangeRole(UserRoles.sales_order);
 
     return [
       <AddItemButton
+        key='add-address'
         tooltip={t`Add Address`}
         onClick={() => newAddress.open()}
         hidden={!can_add}

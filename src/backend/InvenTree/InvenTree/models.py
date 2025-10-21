@@ -1,28 +1,34 @@
 """Generic models which provide extra functionality over base Django model types."""
 
-import logging
 from datetime import datetime
+from string import Formatter
+from typing import Optional
 
 from django.contrib.auth import get_user_model
-from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models import QuerySet
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.urls import reverse
+from django.urls import resolve, reverse
+from django.urls.exceptions import NoReverseMatch
 from django.utils.translation import gettext_lazy as _
 
+import structlog
+from django_q.models import Task
 from error_report.models import Error
 from mptt.exceptions import InvalidMove
 from mptt.models import MPTTModel, TreeForeignKey
 
 import common.settings
+import InvenTree.exceptions
 import InvenTree.fields
 import InvenTree.format
 import InvenTree.helpers
 import InvenTree.helpers_model
+import InvenTree.sentry
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class DiffMixin:
@@ -83,11 +89,11 @@ class PluginValidationMixin(DiffMixin):
 
     def run_plugin_validation(self):
         """Throw this model against the plugin validation interface."""
-        from plugin.registry import registry
+        from plugin import PluginMixinEnum, registry
 
         deltas = self.get_field_deltas()
 
-        for plugin in registry.with_mixin('validation'):
+        for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
             try:
                 if plugin.validate_model_instance(self, deltas=deltas) is True:
                     return
@@ -98,7 +104,7 @@ class PluginValidationMixin(DiffMixin):
                 import InvenTree.exceptions
 
                 InvenTree.exceptions.log_error(
-                    f'plugins.{plugin.slug}.validate_model_instance'
+                    'validate_model_instance', plugin=plugin.slug
                 )
                 raise ValidationError(_('Error running plugin validation'))
 
@@ -118,19 +124,27 @@ class PluginValidationMixin(DiffMixin):
         self.run_plugin_validation()
         super().save(*args, **kwargs)
 
-    def delete(self):
+    def delete(self, *args, **kwargs):
         """Run plugin validation on model delete.
 
         Allows plugins to prevent model instances from being deleted.
 
         Note: Each plugin may raise a ValidationError to prevent deletion.
         """
-        from plugin.registry import registry
+        from InvenTree.exceptions import log_error
+        from plugin import PluginMixinEnum, registry
 
-        for plugin in registry.with_mixin('validation'):
-            plugin.validate_model_deletion(self)
+        for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
+            try:
+                plugin.validate_model_deletion(self)
+            except ValidationError as e:
+                # Plugin might raise a ValidationError to prevent deletion
+                raise e
+            except Exception:
+                log_error('validate_model_deletion', plugin=plugin.slug)
+                continue
 
-        super().delete()
+        super().delete(*args, **kwargs)
 
 
 class MetadataMixin(models.Model):
@@ -214,61 +228,6 @@ class MetadataMixin(models.Model):
             self.save()
 
 
-class DataImportMixin:
-    """Model mixin class which provides support for 'data import' functionality.
-
-    Models which implement this mixin should provide information on the fields available for import
-    """
-
-    # TODO: This mixin should be removed after https://github.com/inventree/InvenTree/pull/6911 is implemented
-    # TODO: This approach to data import functionality is *outdated*
-
-    # Define a map of fields available for import
-    IMPORT_FIELDS = {}
-
-    @classmethod
-    def get_import_fields(cls):
-        """Return all available import fields.
-
-        Where information on a particular field is not explicitly provided,
-        introspect the base model to (attempt to) find that information.
-        """
-        fields = cls.IMPORT_FIELDS
-
-        for name, field in fields.items():
-            # Attempt to extract base field information from the model
-            base_field = None
-
-            for f in cls._meta.fields:
-                if f.name == name:
-                    base_field = f
-                    break
-
-            if base_field:
-                if 'label' not in field:
-                    field['label'] = base_field.verbose_name
-
-                if 'help_text' not in field:
-                    field['help_text'] = base_field.help_text
-
-            fields[name] = field
-
-        return fields
-
-    @classmethod
-    def get_required_import_fields(cls):
-        """Return all *required* import fields."""
-        fields = {}
-
-        for name, field in cls.get_import_fields().items():
-            required = field.get('required', False)
-
-            if required:
-                fields[name] = field
-
-        return fields
-
-
 class ReferenceIndexingMixin(models.Model):
     """A mixin for keeping track of numerical copies of the "reference" field.
 
@@ -313,8 +272,9 @@ class ReferenceIndexingMixin(models.Model):
 
         - Returns a python dict object which contains the context data for formatting the reference string.
         - The default implementation provides some default context information
+        - The '?' key is required to accept our wildcard-with-default syntax {?:default}
         """
-        return {'ref': cls.get_next_reference(), 'date': datetime.now()}
+        return {'ref': cls.get_next_reference(), 'date': datetime.now(), '?': '?'}
 
     @classmethod
     def get_most_recent_item(cls):
@@ -361,8 +321,18 @@ class ReferenceIndexingMixin(models.Model):
     @classmethod
     def generate_reference(cls):
         """Generate the next 'reference' field based on specified pattern."""
-        fmt = cls.get_reference_pattern()
+
+        # Based on https://stackoverflow.com/a/57570269/14488558
+        class ReferenceFormatter(Formatter):
+            def format_field(self, value, format_spec):
+                if isinstance(value, str) and value == '?':
+                    value = format_spec
+                    format_spec = ''
+                return super().format_field(value, format_spec)
+
+        ref_ptn = cls.get_reference_pattern()
         ctx = cls.get_reference_context()
+        fmt = ReferenceFormatter()
 
         reference = None
 
@@ -370,7 +340,7 @@ class ReferenceIndexingMixin(models.Model):
 
         while reference is None:
             try:
-                ref = fmt.format(**ctx)
+                ref = fmt.format(ref_ptn, **ctx)
 
                 if ref in attempts:
                     # We are stuck in a loop!
@@ -390,10 +360,7 @@ class ReferenceIndexingMixin(models.Model):
             except Exception:
                 # If anything goes wrong, return the most recent reference
                 recent = cls.get_most_recent_item()
-                if recent:
-                    reference = recent.reference
-                else:
-                    reference = ''
+                reference = recent.reference if recent else ''
 
         return reference
 
@@ -410,14 +377,14 @@ class ReferenceIndexingMixin(models.Model):
             })
 
         # Check that only 'allowed' keys are provided
-        for key in info.keys():
-            if key not in ctx.keys():
+        for key in info:
+            if key not in ctx:
                 raise ValidationError({
                     'value': _('Unknown format key specified') + f": '{key}'"
                 })
 
         # Check that the 'ref' variable is specified
-        if 'ref' not in info.keys():
+        if 'ref' not in info:
             raise ValidationError({
                 'value': _('Missing required format key') + ": 'ref'"
             })
@@ -442,7 +409,7 @@ class ReferenceIndexingMixin(models.Model):
             )
 
         # Check that the reference field can be rebuild
-        cls.rebuild_reference_field(value, validate=True)
+        return cls.rebuild_reference_field(value, validate=True)
 
     @classmethod
     def rebuild_reference_field(cls, reference, validate=False):
@@ -508,13 +475,13 @@ class InvenTreeAttachmentMixin:
     - attachments: Return a queryset containing all attachments for this model
     """
 
-    def delete(self):
+    def delete(self, *args, **kwargs):
         """Handle the deletion of a model instance.
 
         Before deleting the model instance, delete any associated attachments.
         """
         self.attachments.all().delete()
-        super().delete()
+        super().delete(*args, **kwargs)
 
     @property
     def attachments(self):
@@ -559,24 +526,23 @@ class InvenTreeAttachmentMixin:
         Attachment.objects.create(**kwargs)
 
 
-class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
-    """Provides an abstracted self-referencing tree model for data categories.
+class InvenTreeTree(MPTTModel):
+    """Provides an abstracted self-referencing tree model, based on the MPTTModel class.
 
-    - Each Category has one parent Category, which can be blank (for a top-level Category).
-    - Each Category can have zero-or-more child Category(y/ies)
+    Our implementation provides the following key improvements:
 
-    Attributes:
-        name: brief name
-        description: longer form description
-        parent: The item immediately above this one. An item with a null parent is a top-level item
+    - Allow tracking of separate concepts of "nodes" and "items"
+    - Better handling of deletion of nodes and items
+    - Ensure tree is correctly rebuilt after deletion and other operations
+    - Improved protection against recursive tree structures
     """
+
+    # How each node reference its parent object
+    NODE_PARENT_KEY = 'parent'
 
     # How items (not nodes) are hooked into the tree
     # e.g. for StockLocation, this value is 'location'
     ITEM_PARENT_KEY = None
-
-    # Extra fields to include in the get_path result. E.g. icon
-    EXTRA_PATH_FIELDS = []
 
     class Meta:
         """Metaclass defines extra model properties."""
@@ -584,19 +550,24 @@ class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
         abstract = True
 
     class MPTTMeta:
-        """Set insert order."""
+        """MPTT metaclass options."""
 
         order_insertion_by = ['name']
 
-    def delete(self, delete_children=False, delete_items=False):
+    def delete(self, *args, **kwargs):
         """Handle the deletion of a tree node.
 
-        1. Update nodes and items under the current node
-        2. Delete this node
-        3. Rebuild the model tree
-        4. Rebuild the path for any remaining lower nodes
+        kwargs:
+            delete_children: If True, delete all child nodes (otherwise, point to the parent of this node)
+            delete_items: If True, delete all items associated with this node (otherwise, point to the parent of this node)
+
+        Order of operations:
+            1. Update nodes and items under the current node
+            2. Delete this node
+            3. Rebuild the model tree
         """
-        tree_id = self.tree_id if self.parent else None
+        delete_children = kwargs.pop('delete_children', False)
+        delete_items = kwargs.pop('delete_items', False)
 
         # Ensure that we have the latest version of the database object
         try:
@@ -607,10 +578,23 @@ class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
                 'Object %s of type %s no longer exists', str(self), str(self.__class__)
             )
 
-        # Cache node ID values for lower nodes, before we delete this one
-        lower_nodes = list(
-            self.get_descendants(include_self=False).values_list('pk', flat=True)
-        )
+        tree_id = self.tree_id
+        parent = getattr(self, self.NODE_PARENT_KEY, None)
+
+        # When deleting a top level node with multiple children,
+        # we need to assign a new tree_id to each child node
+        # otherwise they will all have the same tree_id (which is not allowed)
+        lower_trees = []
+
+        if not parent:  # No parent, which means this is a top-level node
+            for child in self.get_children():
+                # Store a flattened list of node IDs for each of the lower trees
+                nodes = list(
+                    child.get_descendants(include_self=True)
+                    .values_list('pk', flat=True)
+                    .distinct()
+                )
+                lower_trees.append(nodes)
 
         # 1. Update nodes and items under the current node
         self.handle_tree_delete(
@@ -618,28 +602,39 @@ class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
         )
 
         # 2. Delete *this* node
-        super().delete()
+        super().delete(*args, **kwargs)
 
-        # 3. Update the tree structure
+        # A set of tree_id values which need to be rebuilt
+        trees = set()
+
         if tree_id:
-            self.__class__.objects.partial_rebuild(tree_id)
-        else:
+            # If this node had a tree_id, we need to rebuild that tree
+            trees.add(tree_id)
+
+        # Did we delete a top-level node?
+        next_tree_id = self.getNextTreeID()
+
+        # If there is only one sub-tree, it can retain the same tree_id value
+        for tree in lower_trees[1:]:
+            # Bulk update the tree_id for all lower nodes
+            lower_nodes = self.__class__.objects.filter(pk__in=tree)
+            lower_nodes.update(tree_id=next_tree_id)
+            trees.add(next_tree_id)
+            next_tree_id += 1
+
+        # 3. Rebuild the model tree(s) as required
+        #  - If any partial rebuilds fail, we will rebuild the entire tree
+
+        result = True
+
+        for tree_id in trees:
+            if tree_id:
+                if not self.partial_rebuild(tree_id):
+                    result = False
+
+        if not result:
+            # Rebuild the entire tree (expensive!!!)
             self.__class__.objects.rebuild()
-
-        # 4. Rebuild the path for any remaining lower nodes
-        nodes = self.__class__.objects.filter(pk__in=lower_nodes)
-
-        nodes_to_update = []
-
-        for node in nodes:
-            new_path = node.construct_pathstring()
-
-            if new_path != node.pathstring:
-                node.pathstring = new_path
-                nodes_to_update.append(node)
-
-        if len(nodes_to_update) > 0:
-            self.__class__.objects.bulk_update(nodes_to_update, ['pathstring'])
 
     def handle_tree_delete(self, delete_children=False, delete_items=False):
         """Delete a single instance of the tree, based on provided kwargs.
@@ -647,8 +642,8 @@ class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
         Removing a tree "node" from the database must be considered carefully,
         based on what the user intends for any items which exist *under* that node.
 
-        - "children" are any nodes which exist *under* this node (e.g. PartCategory)
-        - "items" are any items which exist *under* this node (e.g. Part)
+        - "children" are any nodes (of the same type) which exist *under* this node (e.g. PartCategory)
+        - "items" are any items (of a different type) which exist *under* this node (e.g. Part)
 
         Arguments:
             delete_children: If True, delete all child items
@@ -667,30 +662,34 @@ class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
         # - Delete all items at any lower level
         # - Delete all descendant nodes
         if delete_children and delete_items:
-            self.get_items(cascade=True).delete()
+            self.delete_items(cascade=True)
             self.delete_nodes(child_nodes)
 
         # Case B: Delete all child nodes, but move all child items up to the parent
         # - Move all items at any lower level to the parent of this item
         # - Delete all descendant nodes
         elif delete_children and not delete_items:
-            self.get_items(cascade=True).update(**{self.ITEM_PARENT_KEY: self.parent})
-
+            if items := self.get_items(cascade=True):
+                parent = getattr(self, self.NODE_PARENT_KEY, None)
+                items.update(**{self.ITEM_PARENT_KEY: parent})
             self.delete_nodes(child_nodes)
 
         # Case C: Delete all child items, but keep all child nodes
         # - Remove all items directly associated with this node
         # - Move any direct child nodes up one level
         elif not delete_children and delete_items:
-            self.get_items(cascade=False).delete()
-            self.get_children().update(parent=self.parent)
+            self.delete_items(cascade=False)
+            parent = getattr(self, self.NODE_PARENT_KEY, None)
+            self.get_children().update(**{self.NODE_PARENT_KEY: parent})
 
         # Case D: Keep all child items, and keep all child nodes
         # - Move all items directly associated with this node up one level
         # - Move any direct child nodes up one level
         elif not delete_children and not delete_items:
-            self.get_items(cascade=False).update(**{self.ITEM_PARENT_KEY: self.parent})
-            self.get_children().update(parent=self.parent)
+            parent = getattr(self, self.NODE_PARENT_KEY, None)
+            if items := self.get_items(cascade=False):
+                items.update(**{self.ITEM_PARENT_KEY: parent})
+            self.get_children().update(**{self.NODE_PARENT_KEY: parent})
 
     def delete_nodes(self, nodes):
         """Delete  a set of nodes from the tree.
@@ -703,68 +702,149 @@ class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
         Arguments:
             nodes: A queryset of nodes to delete
         """
-        nodes.update(parent=None)
+        nodes.update(**{self.NODE_PARENT_KEY: None})
         nodes.delete()
-
-    def validate_unique(self, exclude=None):
-        """Validate that this tree instance satisfies our uniqueness requirements.
-
-        Note that a 'unique_together' requirement for ('name', 'parent') is insufficient,
-        as it ignores cases where parent=None (i.e. top-level items)
-        """
-        super().validate_unique(exclude)
-
-        results = self.__class__.objects.filter(
-            name=self.name, parent=self.parent
-        ).exclude(pk=self.pk)
-
-        if results.exists():
-            raise ValidationError({
-                'name': _('Duplicate names cannot exist under the same parent')
-            })
 
     def api_instance_filters(self):
         """Instance filters for InvenTreeTree models."""
-        return {'parent': {'exclude_tree': self.pk}}
-
-    def construct_pathstring(self):
-        """Construct the pathstring for this tree node."""
-        return InvenTree.helpers.constructPathString([item.name for item in self.path])
+        return {self.NODE_PARENT_KEY: {'exclude_tree': self.pk}}
 
     def save(self, *args, **kwargs):
         """Custom save method for InvenTreeTree abstract model."""
+        db_instance = None
+
+        parent = getattr(self, self.NODE_PARENT_KEY, None)
+
+        if not self.tree_id:
+            if parent:
+                # If we have a parent, use the parent's tree_id
+                self.tree_id = parent.tree_id
+                self.level = parent.level + 1
+            else:
+                # Otherwise, we need to generate a new tree_id
+                self.tree_id = self.getNextTreeID()
+
+        if self.pk:
+            try:
+                db_instance = self.get_db_instance()
+            except self.__class__.DoesNotExist:
+                # If the instance does not exist, we cannot get the db instance
+                db_instance = None
         try:
             super().save(*args, **kwargs)
         except InvalidMove:
             # Provide better error for parent selection
-            raise ValidationError({'parent': _('Invalid choice')})
+            raise ValidationError({self.NODE_PARENT_KEY: _('Invalid choice')})
 
-        # Re-calculate the 'pathstring' field
-        pathstring = self.construct_pathstring()
+        trees = set()
 
-        if pathstring != self.pathstring:
-            if 'force_insert' in kwargs:
-                del kwargs['force_insert']
+        parent = getattr(self, self.NODE_PARENT_KEY, None)
 
-            kwargs['force_update'] = True
+        if db_instance:
+            # If the tree_id or parent has changed, we need to rebuild the tree
+            if getattr(db_instance, self.NODE_PARENT_KEY) != parent:
+                trees.add(db_instance.tree_id)
+            if db_instance.tree_id != self.tree_id:
+                trees.add(self.tree_id)
+                trees.add(db_instance.tree_id)
+        elif parent:
+            # New instance, so we need to rebuild the tree (if it has a parent)
+            trees.add(self.tree_id)
 
-            self.pathstring = pathstring
-            super().save(*args, **kwargs)
+        for tree_id in trees:
+            if tree_id:
+                self.partial_rebuild(tree_id)
 
-            # Update the pathstring for any child nodes
-            lower_nodes = self.get_descendants(include_self=False)
+        if len(trees) > 0:
+            # A tree update was performed, so we need to refresh the instance
+            self.refresh_from_db()
 
-            nodes_to_update = []
+    def partial_rebuild(self, tree_id: int) -> bool:
+        """Perform a partial rebuild of the tree structure.
 
-            for node in lower_nodes:
-                new_path = node.construct_pathstring()
+        If a failure occurs, log the error and return False.
+        """
+        try:
+            self.__class__.objects.partial_rebuild(tree_id)
+            return True
+        except Exception as e:
+            # This is a critical error, explicitly report to sentry
+            InvenTree.sentry.report_exception(e)
 
-                if new_path != node.pathstring:
-                    node.pathstring = new_path
-                    nodes_to_update.append(node)
+            InvenTree.exceptions.log_error(f'{self.__class__.__name__}.partial_rebuild')
+            logger.exception(
+                'Failed to rebuild tree for %s <%s>: %s',
+                self.__class__.__name__,
+                self.pk,
+                e,
+            )
+            return False
 
-            if len(nodes_to_update) > 0:
-                self.__class__.objects.bulk_update(nodes_to_update, ['pathstring'])
+    def delete_items(self, cascade: bool = False):
+        """Delete any 'items' which exist under this node in the tree.
+
+        - Note that an 'item' is an instance of a different model class.
+        - Not all tree structures will have items associated with them.
+        """
+        if items := self.get_items(cascade=cascade):
+            items.delete()
+
+    def get_items(self, cascade: bool = False):
+        """Return a queryset of items which exist *under* this node in the tree.
+
+        - For a StockLocation instance, this would be a queryset of StockItem objects
+        - For a PartCategory instance, this would be a queryset of Part objects
+
+        The default implementation returns None, indicating that no items exist under this node.
+        """
+        return None
+
+    def getUniqueParents(self) -> QuerySet:
+        """Return a flat set of all parent items that exist above this node."""
+        return self.get_ancestors()
+
+    def getUniqueChildren(self, include_self=True) -> QuerySet:
+        """Return a flat set of all child items that exist under this node."""
+        return self.get_descendants(include_self=include_self)
+
+    @property
+    def has_children(self) -> bool:
+        """True if there are any children under this item."""
+        return self.getUniqueChildren(include_self=False).count() > 0
+
+    @classmethod
+    def getNextTreeID(cls) -> int:
+        """Return the next available tree_id for this model class."""
+        instance = cls.objects.order_by('-tree_id').first()
+
+        if instance:
+            return instance.tree_id + 1
+        else:
+            return 1
+
+
+class PathStringMixin(models.Model):
+    """Mixin class for adding a 'pathstring' field to a model class.
+
+    The pathstring is a string representation of the path to this model instance,
+    which can be used for display purposes.
+
+    The pathstring is automatically generated when the model instance is saved.
+    """
+
+    # Field to use for constructing a "pathstring" for the tree
+    PATH_FIELD = 'name'
+
+    # Extra fields to include in the get_path result. E.g. icon
+    EXTRA_PATH_FIELDS = []
+
+    class Meta:
+        """Metaclass options for this mixin.
+
+        Note: abstract must be true, as this is only a mixin, not a separate table
+        """
+
+        abstract = True
 
     name = models.CharField(
         blank=False, max_length=100, verbose_name=_('Name'), help_text=_('Name')
@@ -792,57 +872,113 @@ class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
         blank=True, max_length=250, verbose_name=_('Path'), help_text=_('Path')
     )
 
-    def get_items(self, cascade=False):
-        """Return a queryset of items which exist *under* this node in the tree.
+    def save(self, *args, **kwargs):
+        """Update the pathstring field when saving the model instance."""
+        old_pathstring = self.pathstring
 
-        - For a StockLocation instance, this would be a queryset of StockItem objects
-        - For a PartCategory instance, this would be a queryset of Part objects
+        # Rebuild upper first, to ensure the lower nodes are updated correctly
+        super().save(*args, **kwargs)
 
-        The default implementation returns an empty list
+        # Ensure that the pathstring is correctly constructed
+        pathstring = self.construct_pathstring(refresh=True)
+
+        if pathstring != old_pathstring:
+            kwargs.pop('force_insert', None)
+            kwargs['force_update'] = True
+
+            self.pathstring = pathstring
+            super().save(*args, **kwargs)
+
+            # Bulk-update any child nodes, if applicable
+            lower_nodes = list(
+                self.get_descendants(include_self=False).values_list('pk', flat=True)
+            )
+
+            self.rebuild_lower_nodes(lower_nodes)
+
+    def delete(self, *args, **kwargs):
+        """Custom delete method for PathStringMixin.
+
+        - Before deleting the object, update the pathstring for any child nodes.
+        - Then, delete the object.
         """
-        raise NotImplementedError(f'items() method not implemented for {type(self)}')
+        # Ensure that we have the latest version of the database object
+        try:
+            self.refresh_from_db()
+        except self.__class__.DoesNotExist:
+            # If the object no longer exists, raise a ValidationError
+            raise ValidationError(
+                'Object %s of type %s no longer exists', str(self), str(self.__class__)
+            )
 
-    def getUniqueParents(self):
-        """Return a flat set of all parent items that exist above this node.
+        # Store the node ID values for lower nodes, before we delete this one
+        lower_nodes = list(
+            self.get_descendants(include_self=False).values_list('pk', flat=True)
+        )
 
-        If any parents are repeated (which would be very bad!), the process is halted
+        # Delete this node - after which we expect the tree structure will be updated
+        super().delete(*args, **kwargs)
+
+        # Rebuild the pathstring for lower nodes
+        self.rebuild_lower_nodes(lower_nodes)
+
+    def __str__(self):
+        """String representation of a category is the full path to that category."""
+        return f'{self.pathstring} - {self.description}'
+
+    def rebuild_lower_nodes(self, lower_nodes: list[int]):
+        """Rebuild the pathstring for lower nodes in the tree.
+
+        - This is used when the pathstring for this node is updated, and we need to update all lower nodes.
+        - We use a bulk-update to update the pathstring for all lower nodes in the tree.
         """
-        return self.get_ancestors()
+        nodes = self.__class__.objects.filter(pk__in=lower_nodes)
 
-    def getUniqueChildren(self, include_self=True):
-        """Return a flat set of all child items that exist under this node.
+        nodes_to_update = []
 
-        If any child items are repeated, the repetitions are omitted.
+        for node in nodes:
+            new_path = node.construct_pathstring()
+
+            if new_path != node.pathstring:
+                node.pathstring = new_path
+                nodes_to_update.append(node)
+
+        if len(nodes_to_update) > 0:
+            self.__class__.objects.bulk_update(nodes_to_update, ['pathstring'])
+
+    def construct_pathstring(self, refresh: bool = False) -> str:
+        """Construct the pathstring for this tree node.
+
+        Arguments:
+            refresh: If True, force a refresh of the model instance
         """
-        return self.get_descendants(include_self=include_self)
+        if refresh:
+            # Refresh the model instance from the database
+            self.refresh_from_db()
+
+        return InvenTree.helpers.constructPathString([
+            getattr(item, self.PATH_FIELD, item.pk) for item in self.path
+        ])
+
+    def validate_unique(self, exclude=None):
+        """Validate that this tree instance satisfies our uniqueness requirements.
+
+        Note that a 'unique_together' requirement for ('name', 'parent') is insufficient,
+        as it ignores cases where parent=None (i.e. top-level items)
+        """
+        super().validate_unique(exclude)
+
+        results = self.__class__.objects.filter(
+            name=self.name, parent=self.parent
+        ).exclude(pk=self.pk)
+
+        if results.exists():
+            raise ValidationError(
+                _('Duplicate names cannot exist under the same parent')
+            )
 
     @property
-    def has_children(self):
-        """True if there are any children under this item."""
-        return self.getUniqueChildren(include_self=False).count() > 0
-
-    def getAcceptableParents(self):
-        """Returns a list of acceptable parent items within this model Acceptable parents are ones which are not underneath this item.
-
-        Setting the parent of an item to its own child results in recursion.
-        """
-        contents = ContentType.objects.get_for_model(type(self))
-
-        available = contents.get_all_objects_for_this_type()
-
-        # List of child IDs
-        children = self.getUniqueChildren()
-
-        acceptable = [None]
-
-        for a in available:
-            if a.id not in children:
-                acceptable.append(a)
-
-        return acceptable
-
-    @property
-    def parentpath(self):
+    def parentpath(self) -> list:
         """Get the parent path of this category.
 
         Returns:
@@ -851,7 +987,7 @@ class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
         return list(self.get_ancestors())
 
     @property
-    def path(self):
+    def path(self) -> list:
         """Get the complete part of this category.
 
         e.g. ["Top", "Second", "Third", "This"]
@@ -859,9 +995,9 @@ class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
         Returns:
             List of category names from the top level to this category
         """
-        return self.parentpath + [self]
+        return [*self.parentpath, self]
 
-    def get_path(self):
+    def get_path(self) -> list:
         """Return a list of element in the item tree.
 
         Contains the full path to this item, with each entry containing the following data:
@@ -874,15 +1010,11 @@ class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
         return [
             {
                 'pk': item.pk,
-                'name': item.name,
+                'name': getattr(item, self.PATH_FIELD, item.pk),
                 **{k: getattr(item, k, None) for k in self.EXTRA_PATH_FIELDS},
             }
             for item in self.path
         ]
-
-    def __str__(self):
-        """String representation of a category is the full path to that category."""
-        return f'{self.pathstring} - {self.description}'
 
 
 class InvenTreeNotesMixin(models.Model):
@@ -901,7 +1033,7 @@ class InvenTreeNotesMixin(models.Model):
 
         abstract = True
 
-    def delete(self):
+    def delete(self, *args, **kwargs):
         """Custom delete method for InvenTreeNotesMixin.
 
         - Before deleting the object, check if there are any uploaded images associated with it.
@@ -923,7 +1055,7 @@ class InvenTreeNotesMixin(models.Model):
 
             images.delete()
 
-        super().delete()
+        super().delete(*args, **kwargs)
 
     notes = InvenTree.fields.InvenTreeNotesField(
         verbose_name=_('Notes'), help_text=_('Markdown notes (optional)')
@@ -981,7 +1113,7 @@ class InvenTreeBarcodeMixin(models.Model):
         This is used to generate a efficient QR code for the model type.
         It is expected to match this pattern: [0-9A-Z $%*+-.\/:]{2}
 
-        Note: Due to the shape constrains (45**2=2025 different allowed codes)
+        Note: Due to the shape constraints (45**2=2025 different allowed codes)
         this needs to be explicitly implemented in the model class to avoid collisions.
         """
         raise NotImplementedError(
@@ -989,7 +1121,7 @@ class InvenTreeBarcodeMixin(models.Model):
         )
 
     def format_barcode(self, **kwargs):
-        """Return a JSON string for formatting a QR code for this model instance."""
+        """Return a string for formatting a QR code for this model instance."""
         from plugin.base.barcodes.helper import generate_barcode
 
         return generate_barcode(self)
@@ -1000,7 +1132,17 @@ class InvenTreeBarcodeMixin(models.Model):
 
         if hasattr(self, 'get_api_url'):
             api_url = self.get_api_url()
-            data['api_url'] = f'{api_url}{self.pk}/'
+            data['api_url'] = api_url = f'{api_url}{self.pk}/'
+
+            # Attempt to serialize the object too
+            try:
+                match = resolve(api_url)
+                view_class = match.func.view_class
+                serializer_class = view_class.serializer_class
+                serializer = serializer_class(self)
+                data['instance'] = serializer.data
+            except Exception:
+                pass
 
         if hasattr(self, 'get_absolute_url'):
             data['web_url'] = self.get_absolute_url()
@@ -1008,17 +1150,21 @@ class InvenTreeBarcodeMixin(models.Model):
         return data
 
     @property
-    def barcode(self):
+    def barcode(self) -> str:
         """Format a minimal barcode string (e.g. for label printing)."""
         return self.format_barcode()
 
     @classmethod
-    def lookup_barcode(cls, barcode_hash):
+    def lookup_barcode(cls, barcode_hash: str) -> models.Model:
         """Check if a model instance exists with the specified third-party barcode hash."""
         return cls.objects.filter(barcode_hash=barcode_hash).first()
 
     def assign_barcode(
-        self, barcode_hash=None, barcode_data=None, raise_error=True, save=True
+        self,
+        barcode_hash: Optional[str] = None,
+        barcode_data: Optional[str] = None,
+        raise_error: bool = True,
+        save: bool = True,
     ):
         """Assign an external (third-party) barcode to this object."""
         # Must provide either barcode_hash or barcode_data
@@ -1026,7 +1172,7 @@ class InvenTreeBarcodeMixin(models.Model):
             raise ValueError("Provide either 'barcode_hash' or 'barcode_data'")
 
         # If barcode_hash is not provided, create from supplier barcode_data
-        if barcode_hash is None:
+        if barcode_hash is None and barcode_data is not None:
             barcode_hash = InvenTree.helpers.hash_barcode(barcode_data)
 
         # Check for existing item
@@ -1054,6 +1200,73 @@ class InvenTreeBarcodeMixin(models.Model):
         self.save()
 
 
+def notify_staff_users_of_error(instance, label: str, context: dict):
+    """Helper function to notify staff users of an error."""
+    import common.models
+    import common.notifications
+    from plugin.builtin.integration.core_notifications import InvenTreeUINotifications
+
+    try:
+        # Get all staff users
+        staff_users = get_user_model().objects.filter(is_active=True, is_staff=True)
+
+        target_users = []
+
+        # Send a notification to each staff user (unless they have disabled error notifications)
+        for user in staff_users:
+            if common.models.InvenTreeUserSetting.get_setting(
+                'NOTIFICATION_ERROR_REPORT', True, user=user
+            ):
+                target_users.append(user)
+
+        if len(target_users) > 0:
+            common.notifications.trigger_notification(
+                instance,
+                label,
+                context=context,
+                targets=target_users,
+                delivery_methods={InvenTreeUINotifications},
+            )
+
+    except Exception as exc:
+        # We do not want to throw an exception while reporting an exception!
+        logger.error(exc)
+
+
+@receiver(post_save, sender=Task, dispatch_uid='failure_post_save_notification')
+def after_failed_task(sender, instance: Task, created: bool, **kwargs):
+    """Callback when a new task failure log is generated."""
+    from django.conf import settings
+
+    max_attempts = int(settings.Q_CLUSTER.get('max_attempts', 5))
+    n = instance.attempt_count
+
+    # Only notify once the maximum number of attempts has been reached
+    if not instance.success and n >= max_attempts:
+        try:
+            url = InvenTree.helpers_model.construct_absolute_url(
+                reverse(
+                    'admin:django_q_failure_change', kwargs={'object_id': instance.pk}
+                )
+            )
+        except (ValueError, NoReverseMatch):
+            url = ''
+
+        # Function name
+        f = instance.func
+
+        notify_staff_users_of_error(
+            instance,
+            'inventree.task_failure',
+            {
+                'failure': instance,
+                'name': _('Task Failure'),
+                'message': _(f"Background worker task '{f}' failed after {n} attempts"),
+                'link': url,
+            },
+        )
+
+
 @receiver(post_save, sender=Error, dispatch_uid='error_post_save_notification')
 def after_error_logged(sender, instance: Error, created: bool, **kwargs):
     """Callback when a server error is logged.
@@ -1062,41 +1275,21 @@ def after_error_logged(sender, instance: Error, created: bool, **kwargs):
     """
     if created:
         try:
-            import common.models
-            import common.notifications
-
-            users = get_user_model().objects.filter(is_staff=True)
-
-            link = InvenTree.helpers_model.construct_absolute_url(
+            url = InvenTree.helpers_model.construct_absolute_url(
                 reverse(
                     'admin:error_report_error_change', kwargs={'object_id': instance.pk}
                 )
             )
+        except NoReverseMatch:
+            url = ''
 
-            context = {
+        notify_staff_users_of_error(
+            instance,
+            'inventree.error_log',
+            {
                 'error': instance,
                 'name': _('Server Error'),
                 'message': _('An error has been logged by the server.'),
-                'link': link,
-            }
-
-            target_users = []
-
-            for user in users:
-                if common.models.InvenTreeUserSetting.get_setting(
-                    'NOTIFICATION_ERROR_REPORT', True, user=user
-                ):
-                    target_users.append(user)
-
-            if len(target_users) > 0:
-                common.notifications.trigger_notification(
-                    instance,
-                    'inventree.error_log',
-                    context=context,
-                    targets=target_users,
-                    delivery_methods={common.notifications.UIMessageNotification},
-                )
-
-        except Exception as exc:
-            """We do not want to throw an exception while reporting an exception"""
-            logger.error(exc)  # noqa: LOG005
+                'link': url,
+            },
+        )

@@ -1,27 +1,23 @@
-import { Trans, t } from '@lingui/macro';
-import { Stack, Text } from '@mantine/core';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
+import { Alert, Skeleton, Stack, Text } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState
-} from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useStore } from 'zustand';
 
-import { api } from '../../App';
-import { ModelType } from '../../enums/ModelType';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import type { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
+import type { Setting, SettingsStateProps } from '@lib/types/Settings';
+import { IconExclamationCircle, IconInfoCircle } from '@tabler/icons-react';
+import { useApi } from '../../contexts/ApiContext';
 import { useEditApiFormModal } from '../../hooks/UseForm';
-import { apiUrl } from '../../states/ApiState';
 import {
-  SettingsStateProps,
   createMachineSettingsState,
   createPluginSettingsState,
   useGlobalSettingsState,
   useUserSettingsState
-} from '../../states/SettingsState';
-import { Setting } from '../../states/states';
+} from '../../states/SettingsStates';
 import { SettingItem } from './SettingItem';
 
 /**
@@ -30,18 +26,25 @@ import { SettingItem } from './SettingItem';
 export function SettingList({
   settingsState,
   keys,
-  onChange
-}: {
+  onChange,
+  onLoaded
+}: Readonly<{
   settingsState: SettingsStateProps;
   keys?: string[];
   onChange?: () => void;
-}) {
+  onLoaded?: (settings: SettingsStateProps) => void;
+}>) {
   useEffect(() => {
-    settingsState.fetchSettings();
-  }, []);
+    if (settingsState.loaded) {
+      // Call the onLoaded callback if provided
+      onLoaded?.(settingsState);
+    }
+  }, [settingsState.loaded, settingsState.settings]);
+
+  const api = useApi();
 
   const allKeys = useMemo(
-    () => settingsState?.settings?.map((s) => s.key),
+    () => settingsState?.settings?.map((s) => s.key) ?? [],
     [settingsState?.settings]
   );
 
@@ -60,22 +63,26 @@ export function SettingList({
     return 'string';
   }, [setting]);
 
+  const key: string = useMemo(() => setting?.key ?? '', [setting]);
+
   const editSettingModal = useEditApiFormModal({
     url: settingsState.endpoint,
-    pk: setting?.key,
+    pk: key,
     pathParams: settingsState.pathParams,
     title: t`Edit Setting`,
     fields: {
       value: {
         field_type: fieldType,
+        required: setting?.required ?? false,
         label: setting?.name,
         description: setting?.description,
         api_url: setting?.api_url ?? '',
         model: (setting?.model_name?.split('.')[1] as ModelType) ?? null,
+        filters: setting?.model_filters || undefined,
         choices: setting?.choices ?? undefined
       }
     },
-    successMessage: t`Setting ${setting?.key} updated successfully`,
+    successMessage: t`Setting ${key} updated successfully`,
     onFormSuccess: () => {
       settingsState.fetchSettings();
       onChange?.();
@@ -127,11 +134,31 @@ export function SettingList({
     [settingsState]
   );
 
+  if (settingsState.isError) {
+    return (
+      <Alert color='red' icon={<IconExclamationCircle />} title={t`Error`}>
+        <Text>{t`Error loading settings`}</Text>
+      </Alert>
+    );
+  }
+
+  if (!settingsState?.loaded) {
+    return <Skeleton animate />;
+  }
+
+  if ((keys || allKeys).length === 0) {
+    return (
+      <Alert color='blue' icon={<IconInfoCircle />} title={t`No Settings`}>
+        <Text>{t`There are no configurable settings available`}</Text>
+      </Alert>
+    );
+  }
+
   return (
     <>
       {editSettingModal.modal}
-      <Stack gap="xs">
-        {(keys || allKeys).map((key, i) => {
+      <Stack gap='xs'>
+        {(keys || allKeys)?.map((key, i) => {
           const setting = settingsState?.settings?.find(
             (s: any) => s.key === key
           );
@@ -150,14 +177,14 @@ export function SettingList({
                   onToggle={onValueToggle}
                 />
               ) : (
-                <Text size="sm" style={{ fontStyle: 'italic' }} color="red">
+                <Text size='sm' style={{ fontStyle: 'italic' }} c='red'>
                   Setting {key} not found
                 </Text>
               )}
             </React.Fragment>
           );
         })}
-        {(keys || allKeys).length === 0 && (
+        {(keys || allKeys)?.length === 0 && (
           <Text style={{ fontStyle: 'italic' }}>
             <Trans>No settings specified</Trans>
           </Text>
@@ -167,43 +194,91 @@ export function SettingList({
   );
 }
 
-export function UserSettingList({ keys }: { keys: string[] }) {
+export function UserSettingList({ keys }: Readonly<{ keys: string[] }>) {
   const userSettings = useUserSettingsState();
 
   return <SettingList settingsState={userSettings} keys={keys} />;
 }
 
-export function GlobalSettingList({ keys }: { keys: string[] }) {
+export function GlobalSettingList({ keys }: Readonly<{ keys: string[] }>) {
   const globalSettings = useGlobalSettingsState();
 
   return <SettingList settingsState={globalSettings} keys={keys} />;
 }
 
-export function PluginSettingList({ pluginKey }: { pluginKey: string }) {
-  const pluginSettingsStore = useRef(
-    createPluginSettingsState({ plugin: pluginKey })
-  ).current;
-  const pluginSettings = useStore(pluginSettingsStore);
+export function PluginSettingList({
+  pluginKey,
+  onLoaded
+}: Readonly<{
+  pluginKey: string;
+  onLoaded?: (settings: SettingsStateProps) => void;
+}>) {
+  const store = useMemo(
+    () =>
+      createPluginSettingsState({
+        plugin: pluginKey,
+        endpoint: ApiEndpoints.plugin_setting_list
+      }),
+    [pluginKey]
+  );
 
-  return <SettingList settingsState={pluginSettings} />;
+  const pluginSettings = useStore(store);
+
+  useEffect(() => {
+    pluginSettings.fetchSettings();
+  }, [pluginSettings.fetchSettings]);
+
+  return <SettingList settingsState={pluginSettings} onLoaded={onLoaded} />;
+}
+
+export function PluginUserSettingList({
+  pluginKey,
+  onLoaded
+}: Readonly<{
+  pluginKey: string;
+  onLoaded?: (settings: SettingsStateProps) => void;
+}>) {
+  const store = useMemo(
+    () =>
+      createPluginSettingsState({
+        plugin: pluginKey,
+        endpoint: ApiEndpoints.plugin_user_setting_list
+      }),
+    [pluginKey]
+  );
+
+  const pluginUserSettings = useStore(store);
+
+  useEffect(() => {
+    pluginUserSettings.fetchSettings();
+  }, [pluginUserSettings.fetchSettings]);
+
+  return <SettingList settingsState={pluginUserSettings} onLoaded={onLoaded} />;
 }
 
 export function MachineSettingList({
   machinePk,
   configType,
   onChange
-}: {
+}: Readonly<{
   machinePk: string;
   configType: 'M' | 'D';
   onChange?: () => void;
-}) {
-  const machineSettingsStore = useRef(
-    createMachineSettingsState({
-      machine: machinePk,
-      configType: configType
-    })
-  ).current;
-  const machineSettings = useStore(machineSettingsStore);
+}>) {
+  const store = useMemo(
+    () =>
+      createMachineSettingsState({
+        machine: machinePk,
+        configType: configType
+      }),
+    [machinePk, configType]
+  );
+
+  const machineSettings = useStore(store);
+
+  useEffect(() => {
+    machineSettings.fetchSettings();
+  }, [machineSettings.fetchSettings]);
 
   return <SettingList settingsState={machineSettings} onChange={onChange} />;
 }

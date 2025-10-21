@@ -6,10 +6,12 @@ on:
     types: [published]
 permissions:
   contents: read
+env:
+  python_version: 3.9
 
 jobs:
   stable:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     name: Write release to stable branch
     permissions:
       contents: write
@@ -18,13 +20,15 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout Code
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v4.1.7
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # pin@v5.0.0
+        with:
+          persist-credentials: false
       - name: Version Check
         run: |
           pip install --require-hashes -r contrib/dev_reqs/requirements.txt
           python3 .github/scripts/version_check.py
       - name: Push to Stable Branch
-        uses: ad-m/github-push-action@d91a481090679876dfc4178fef17f286781251df # pin@v0.8.0
+        uses: ad-m/github-push-action@77c5b412c50b723d2a4fbc6d71fb5723bcd439aa # pin@v1.0.0
         if: env.stable_release == 'true'
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -32,14 +36,16 @@ jobs:
           force: true
 
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     name: Build and attest frontend
     permissions:
       id-token: write
       contents: write
       attestations: write
     steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v4.1.7
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # pin@v5.0.0
+        with:
+          persist-credentials: false
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -49,26 +55,28 @@ jobs:
       - name: Build frontend
         run: cd src/frontend && npm run compile && npm run build
       - name: Create SBOM for frontend
-        uses: anchore/sbom-action@v0
+        uses: anchore/sbom-action@aa0e114b2e19480f157109b9922bda359bd98b90 # pin@v0
         with:
           artifact-name: frontend-build.spdx
           path: src/frontend
       - name: Write version file - SHA
         run: cd src/backend/InvenTree/web/static/web/.vite && echo "$GITHUB_SHA" > sha.txt
       - name: Write version file - TAG
-        run: cd src/backend/InvenTree/web/static/web/.vite && echo "${{ github.ref_name }}" > tag.txt
+        run: cd src/backend/InvenTree/web/static/web/.vite && echo "${REF_NAME}" > tag.txt
+        env:
+          REF_NAME: ${{ github.ref_name }}
       - name: Zip frontend
         run: |
           cd src/backend/InvenTree/web/static/web
           zip -r ../frontend-build.zip * .vite
       - name: Attest Build Provenance
         id: attest
-        uses: actions/attest-build-provenance@v1
+        uses: actions/attest-build-provenance@977bb373ede98d70efdf65b84cb5f73e068dcc2a # pin@v1
         with:
           subject-path: "${{ github.workspace }}/src/backend/InvenTree/web/static/frontend-build.zip"
 
       - name: Upload frontend
-        uses: svenstaro/upload-release-action@04733e069f2d7f7f0b4aebc4fbdbce8613b03ccd # pin@2.9.0
+        uses: svenstaro/upload-release-action@81c65b7cd4de9b2570615ce3aad67a41de5b1a13 # pin@2.11.2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: src/backend/InvenTree/web/static/frontend-build.zip
@@ -76,10 +84,53 @@ jobs:
           tag: ${{ github.ref }}
           overwrite: true
       - name: Upload Attestation
-        uses: svenstaro/upload-release-action@04733e069f2d7f7f0b4aebc4fbdbce8613b03ccd # pin@2.9.0
+        uses: svenstaro/upload-release-action@81c65b7cd4de9b2570615ce3aad67a41de5b1a13 # pin@2.11.2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           asset_name: frontend-build.intoto.jsonl
           file: ${{ steps.attest.outputs.bundle-path}}
+          tag: ${{ github.ref }}
+          overwrite: true
+
+  docs:
+    runs-on: ubuntu-24.04
+    name: Build and publish documentation
+    permissions:
+      contents: write
+    env:
+      INVENTREE_DB_ENGINE: sqlite3
+      INVENTREE_DB_NAME: inventree
+      INVENTREE_MEDIA_ROOT: /home/runner/work/InvenTree/test_inventree_media
+      INVENTREE_STATIC_ROOT: /home/runner/work/InvenTree/test_inventree_static
+      INVENTREE_BACKUP_DIR: /home/runner/work/InvenTree/test_inventree_backup
+      INVENTREE_SITE_URL: http://localhost:8000
+      INVENTREE_DEBUG: true
+
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # pin@v5.0.0
+        with:
+          persist-credentials: false
+      - name: Environment Setup
+        uses: ./.github/actions/setup
+        with:
+          install: true
+          npm: true
+      - name: Install dependencies
+        run: |
+          pip install --require-hashes -r contrib/dev_reqs/requirements.txt
+          pip install --require-hashes -r docs/requirements.txt
+      - name: Build documentation
+        run: |
+          invoke build-docs --mkdocs
+      - name: Zip build docs
+        run: |
+          cd docs/site
+          zip -r docs-html.zip *
+      - name: Publish documentation
+        uses: svenstaro/upload-release-action@81c65b7cd4de9b2570615ce3aad67a41de5b1a13 # pin@2.11.2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: docs/site/docs-html.zip
+          asset_name: docs-html.zip
           tag: ${{ github.ref }}
           overwrite: true

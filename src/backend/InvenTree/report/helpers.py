@@ -78,7 +78,7 @@ def report_page_size_default():
     return page_size
 
 
-def encode_image_base64(image, img_format: str = 'PNG'):
+def encode_image_base64(image, img_format: str = 'PNG') -> str:
     """Return a base-64 encoded image which can be rendered in an <img> tag.
 
     Arguments:

@@ -1,11 +1,7 @@
+import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
 import { Accordion, Divider, Stack, Text } from '@mantine/core';
-import { Control, FieldValues } from 'react-hook-form';
-
-import {
-  ApiFormField,
-  ApiFormFieldSet,
-  ApiFormFieldType
-} from './ApiFormField';
+import type { Control, FieldValues } from 'react-hook-form';
+import { ApiFormField } from './ApiFormField';
 
 export function NestedObjectField({
   control,
@@ -13,22 +9,22 @@ export function NestedObjectField({
   definition,
   url,
   setFields
-}: {
+}: Readonly<{
   control: Control<FieldValues, any>;
   definition: ApiFormFieldType;
   fieldName: string;
   url?: string;
   setFields?: React.Dispatch<React.SetStateAction<ApiFormFieldSet>>;
-}) {
+}>) {
   return (
-    <Accordion defaultValue={'OpenByDefault'} variant="contained">
+    <Accordion defaultValue={'OpenByDefault'} variant='contained'>
       <Accordion.Item value={'OpenByDefault'}>
         <Accordion.Control icon={definition.icon}>
           <Text>{definition.label}</Text>
         </Accordion.Control>
         <Accordion.Panel>
           <Divider style={{ marginTop: '-10px', marginBottom: '10px' }} />
-          <Stack gap="xs">
+          <Stack gap='xs'>
             {Object.entries(definition.children ?? {}).map(
               ([childFieldName, field]) => (
                 <ApiFormField

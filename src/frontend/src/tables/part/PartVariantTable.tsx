@@ -1,13 +1,13 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 
-import { TableFilter } from '../Filter';
+import type { TableFilter } from '@lib/types/Filters';
 import { PartListTable } from './PartTable';
 
 /**
  * Display variant parts for the specified parent part
  */
-export function PartVariantTable({ part }: { part: any }) {
+export function PartVariantTable({ part }: Readonly<{ part: any }>) {
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
       {
@@ -35,6 +35,7 @@ export function PartVariantTable({ part }: { part: any }) {
 
   return (
     <PartListTable
+      enableImport={false}
       props={{
         enableDownload: false,
         tableFilters: tableFilters,

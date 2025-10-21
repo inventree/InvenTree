@@ -1,18 +1,21 @@
 """Configuration for Sentry.io error reporting."""
 
-import logging
+from typing import Optional
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.http import Http404
+from django.template.exceptions import TemplateSyntaxError
 
 import rest_framework.exceptions
 import sentry_sdk
+import structlog
+from djmoney.contrib.exchange.exceptions import MissingRate
 from sentry_sdk.integrations.django import DjangoIntegration
 
 import InvenTree.version
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 def default_sentry_dsn():
@@ -20,13 +23,15 @@ def default_sentry_dsn():
     return 'https://3928ccdba1d34895abde28031fd00100@o378676.ingest.sentry.io/6494600'
 
 
-def sentry_ignore_errors():
+def sentry_ignore_errors():  # pragma: no cover
     """Return a list of error types to ignore.
 
     These error types will *not* be reported to sentry.io.
     """
     return [
         Http404,
+        MissingRate,
+        TemplateSyntaxError,
         ValidationError,
         rest_framework.exceptions.AuthenticationFailed,
         rest_framework.exceptions.NotAuthenticated,
@@ -35,7 +40,7 @@ def sentry_ignore_errors():
     ]
 
 
-def init_sentry(dsn, sample_rate, tags):
+def init_sentry(dsn, sample_rate, tags):  # pragma: no cover
     """Initialize sentry.io error reporting."""
     logger.info('Initializing sentry.io integration')
 
@@ -61,13 +66,28 @@ def init_sentry(dsn, sample_rate, tags):
     sentry_sdk.set_tag('git_date', InvenTree.version.inventreeCommitDate())
 
 
-def report_exception(exc):
+def report_exception(exc, scope: Optional[dict] = None):  # pragma: no cover
     """Report an exception to sentry.io."""
-    if settings.SENTRY_ENABLED and settings.SENTRY_DSN:
-        if not any(isinstance(exc, e) for e in sentry_ignore_errors()):
-            logger.info('Reporting exception to sentry.io: %s', exc)
+    assert settings.TESTING == False, (
+        'report_exception should not be called in testing mode'
+    )
 
-            try:
-                sentry_sdk.capture_exception(exc)
-            except Exception:
-                logger.warning('Failed to report exception to sentry.io')
+    # Skip if sentry not enabled, or not configured
+    if not settings.SENTRY_ENABLED or not settings.SENTRY_DSN:
+        return
+
+    # Skip if this error type is in the ignore list
+    if any(isinstance(exc, e) for e in sentry_ignore_errors()):
+        return
+
+    # Error may also be passed in from the loggingn context
+    if hasattr(exc, 'event'):
+        event = getattr(exc, 'event', None)
+
+        if any(isinstance(event, e) for e in sentry_ignore_errors()):
+            return
+
+    try:
+        sentry_sdk.capture_exception(exc, scope=scope)
+    except Exception:
+        logger.warning('Failed to report exception to sentry.io')

@@ -3,8 +3,6 @@
 exclude = [
     ".git",
     "__pycache__",
-    "dist",
-    "build",
     "test.py",
     "tests",
     "venv",
@@ -20,13 +18,37 @@ src = ["src/backend/InvenTree"]
 "__init__.py" = ["D104"]
 
 [tool.ruff.lint]
-select = ["A", "B", "C4", "D", "I", "N", "F"]
+select = ["A", "B", "C", "C4", "D", "F", "I", "N", "SIM", "PIE", "PLE", "PLW", "RUF", "UP", "W",
+#"DOC201", "DOC202", # enforce return docs
+"DOC402","DOC403", # enforce yield docs
+#"DOC501","DOC502", # enforce raise
+]
 # Things that should be enabled in the future:
 # - LOG
 # - DJ # for Django stuff
 # - S # for security stuff (bandit)
+# - D401 - Imperative docstrings
 
 ignore = [
+    "PLE1205",
+    # - PLE1205 - Too many arguments for logging format string
+    "PLW2901",
+    # - PLW2901 - Outer {outer_kind} variable {name} overwritten by inner {inner_kind} target
+    "PLW0602","PLW0603","PLW0604",  # global variable things
+    "RUF015",
+    # - RUF015 - Prefer next({iterable}) over single element slice
+    "RUF012",
+    # - RUF012 - Mutable class attributes should be annotated with typing.ClassVar
+    "RUF052",
+    # - RUF052 - Local dummy variable is accessed
+    "SIM117",
+    # - SIM117 - Use a single with statement with multiple contexts instead of nested with statements
+    "SIM102",
+    # - SIM102 - Use a single if statement instead of nested if statements
+    "SIM105",
+    # - SIM105 - Use contextlib.suppress({exception}) instead of try-except-pass
+    "C901",
+    # - C901 - function is too complex
     "N999",
     # - N802 - function name should be lowercase
 	"N802",
@@ -34,19 +56,24 @@ ignore = [
 	"N806",
 	# - N812 - lowercase imported as non-lowercase
 	"N812",
-    # - D417 Missing argument descriptions in the docstring
-    "D417",
+    # - RUF032 - decimal-from-float-literal
+    "RUF032",
+    # - RUF045 - implicit-class-var-in-dataclass
+    "RUF045",
+    # - UP045 - Use `X | None` instead of `Optional[X]`
+    "UP045",
 
     # TODO These should be followed up and fixed
     # - B904 Within an `except` clause, raise exceptions
     "B904",
 
     # Remove fast
-    "A001", "A002","A003","B018"
+    "A002", "B018"
 ]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
+ignore-var-parameters = true
 
 [tool.ruff.lint.isort]
 split-on-trailing-comma = false
@@ -70,12 +97,30 @@ skip-magic-trailing-comma = true
 line-ending = "auto"
 
 [tool.uv.pip]
-python-version = "3.9"
+python-version = "3.9.2"
 no-strip-extras=true
 generate-hashes=true
 
+[tool.ty.src]
+root = "src/backend/InvenTree"
+
+[tool.ty.rules]
+unresolved-reference="ignore"  # 21 # see https://github.com/astral-sh/ty/issues/220
+unresolved-attribute="ignore"  # 505 # need Plugin Mixin typing
+call-non-callable="ignore"  # 8 ##
+invalid-return-type="ignore"  # 22 ##
+invalid-argument-type="ignore"  # 49
+possibly-unbound-attribute="ignore"  # 25 # https://github.com/astral-sh/ty/issues/164
+unknown-argument="ignore"  # 3  # need to wait for betterdjango field stubs
+invalid-assignment="ignore"  # 17  # need to wait for betterdjango field stubs
+no-matching-overload="ignore"  # 3  # need to wait for betterdjango field stubs
+
 [tool.coverage.run]
 source = ["src/backend/InvenTree", "InvenTree"]
+dynamic_context = "test_function"
+
+[tool.coverage.html]
+show_contexts = true
 
 [tool.djlint]
 ignore = "D018,H006,H008,H020,H021,H023,H025,H030,H031,T002"
@@ -87,4 +132,4 @@ known_django="django"
 sections=["FUTURE","STDLIB","DJANGO","THIRDPARTY","FIRSTPARTY","LOCALFOLDER"]
 
 [tool.codespell]
-ignore-words-list = ["assertIn","SME","intoto"]
+ignore-words-list = ["assertIn","SME","intoto","fitH"]

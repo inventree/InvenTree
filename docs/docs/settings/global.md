@@ -25,25 +25,28 @@ Configuration of basic server settings:
 {{ globalsetting("INVENTREE_COMPANY_NAME") }}
 {{ globalsetting("INVENTREE_INSTANCE") }}
 {{ globalsetting("INVENTREE_INSTANCE_TITLE") }}
+{{ globalsetting("INVENTREE_INSTANCE_ID") }}
+{{ globalsetting("INVENTREE_ANNOUNCE_ID") }}
 {{ globalsetting("INVENTREE_RESTRICT_ABOUT") }}
 {{ globalsetting("DISPLAY_FULL_NAMES") }}
+{{ globalsetting("DISPLAY_PROFILE_INFO") }}
 {{ globalsetting("INVENTREE_UPDATE_CHECK_INTERVAL") }}
 {{ globalsetting("INVENTREE_DOWNLOAD_FROM_URL") }}
 {{ globalsetting("INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE") }}
 {{ globalsetting("INVENTREE_DOWNLOAD_FROM_URL_USER_AGENT") }}
-{{ globalsetting("INVENTREE_REQUIRE_CONFIRM") }}
 {{ globalsetting("INVENTREE_STRICT_URLS") }}
-{{ globalsetting("INVENTREE_TREE_DEPTH") }}
 {{ globalsetting("INVENTREE_BACKUP_ENABLE") }}
 {{ globalsetting("INVENTREE_BACKUP_DAYS") }}
 {{ globalsetting("INVENTREE_DELETE_TASKS_DAYS") }}
 {{ globalsetting("INVENTREE_DELETE_ERRORS_DAYS") }}
 {{ globalsetting("INVENTREE_DELETE_NOTIFICATIONS_DAYS") }}
+{{ globalsetting("INVENTREE_DELETE_EMAIL_DAYS") }}
+{{ globalsetting("INVENTREE_PROTECT_EMAIL_LOG") }}
 
 
 ### Login Settings
 
-Change how logins, password-forgot, signups are handled:
+Change how logins, password-forgot, user registrations are handled:
 
 | Name | Description | Default | Units |
 | ---- | ----------- | ------- | ----- |
@@ -90,6 +93,10 @@ Configuration of barcode functionality:
 {{ globalsetting("BARCODE_WEBCAM_SUPPORT") }}
 {{ globalsetting("BARCODE_SHOW_TEXT") }}
 {{ globalsetting("BARCODE_GENERATION_PLUGIN") }}
+{{ globalsetting("BARCODE_STORE_RESULTS") }}
+{{ globalsetting("BARCODE_RESULTS_MAX_NUM") }}
+
+Read more about [barcode scanning](../barcodes/index.md).
 
 ### Pricing and Currency
 
@@ -99,11 +106,21 @@ Configuration of pricing data and currency support:
 | ---- | ----------- | ------- | ----- |
 {{ globalsetting("INVENTREE_DEFAULT_CURRENCY") }}
 {{ globalsetting("CURRENCY_CODES") }}
-{{ globalsetting("PART_INTERNAL_PRICE") }}
-{{ globalsetting("PART_BOM_USE_INTERNAL_PRICE") }}
+{{ globalsetting("CURRENCY_UPDATE_PLUGIN") }}
+{{ globalsetting("CURRENCY_UPDATE_INTERVAL") }}
 {{ globalsetting("PRICING_DECIMAL_PLACES_MIN") }}
 {{ globalsetting("PRICING_DECIMAL_PLACES") }}
+{{ globalsetting("PRICING_AUTO_UPDATE") }}
 {{ globalsetting("PRICING_UPDATE_DAYS") }}
+
+#### Part Pricing
+
+Configuration of part pricing:
+
+| Name | Description | Default | Units |
+| ---- | ----------- | ------- | ----- |
+{{ globalsetting("PART_INTERNAL_PRICE") }}
+{{ globalsetting("PART_BOM_USE_INTERNAL_PRICE") }}
 {{ globalsetting("PRICING_USE_SUPPLIER_PRICING") }}
 {{ globalsetting("PRICING_PURCHASE_HISTORY_OVERRIDES_SUPPLIER") }}
 {{ globalsetting("PRICING_USE_STOCK_PRICING") }}
@@ -121,8 +138,15 @@ Configuration of report generation:
 {{ globalsetting("REPORT_DEFAULT_PAGE_SIZE") }}
 {{ globalsetting("REPORT_DEBUG_MODE") }}
 {{ globalsetting("REPORT_LOG_ERRORS") }}
-{{ globalsetting("REPORT_ENABLE_TEST_REPORT") }}
-{{ globalsetting("REPORT_ATTACH_TEST_REPORT") }}
+
+### Label Printing
+
+Configuration of label printing:
+
+| Name | Description | Default | Units |
+| ---- | ----------- | ------- | ----- |
+{{ globalsetting("LABEL_ENABLE") }}
+{{ globalsetting("LABEL_DPI") }}
 
 ### Parts
 
@@ -150,6 +174,7 @@ Configuration of report generation:
 {{ globalsetting("PART_COPY_TESTS") }}
 {{ globalsetting("PART_CATEGORY_PARAMETERS") }}
 {{ globalsetting("PART_CATEGORY_DEFAULT_ICON") }}
+{{ globalsetting("PART_PARAMETER_ENFORCE_UNITS") }}
 
 #### Part Parameter Templates
 
@@ -162,7 +187,7 @@ In this section of the settings, staff users can set a list of parameters associ
 To add a parameter to a part category:
 
 1. select the category in the dropdown list
-2. click the <span class="badge inventree add"><span class='fas fa-plus-circle'></span> New Parameter</span> button on the top right
+2. click the <span class="badge inventree add">{{ icon("plus-circle") }} New Parameter</span> button on the top right
 3. fill out the "Create Category Parameter Template" form
 4. click the <span class="badge inventree confirm">Submit</span> button.
 
@@ -175,7 +200,6 @@ Configuration of stock item options
 | Name | Description | Default | Units |
 | ---- | ----------- | ------- | ----- |
 {{ globalsetting("SERIAL_NUMBER_GLOBALLY_UNIQUE") }}
-{{ globalsetting("SERIAL_NUMBER_AUTOFILL") }}
 {{ globalsetting("STOCK_DELETE_DEPLETED_DEFAULT") }}
 {{ globalsetting("STOCK_BATCH_CODE_TEMPLATE") }}
 {{ globalsetting("STOCK_ENABLE_EXPIRY") }}
@@ -191,22 +215,21 @@ Configuration of stock item options
 
 ### Build Orders
 
-Refer to the [build order settings](../build/build.md#build-order-settings).
+Refer to the [build order settings](../manufacturing/build.md#build-order-settings).
 
 ### Purchase Orders
 
-Refer to the [purchase order settings](../order/purchase_order.md#purchase-order-settings).
+Refer to the [purchase order settings](../purchasing/purchase_order.md#purchase-order-settings).
 
 ### Sales Orders
 
-Refer to the [sales order settings](../order/sales_order.md#sales-order-settings).
+Refer to the [sales order settings](../sales/sales_order.md#sales-order-settings).
 
 ### Return Orders
 
-Refer to the [return order settings](../order/return_order.md#return-order-settings).
+Refer to the [return order settings](../sales/return_order.md#return-order-settings).
 
 ### Plugin Settings
-
 
 | Name | Description | Default | Units |
 | ---- | ----------- | ------- | ----- |
@@ -217,3 +240,23 @@ Refer to the [return order settings](../order/return_order.md#return-order-setti
 {{ globalsetting("ENABLE_PLUGINS_APP") }}
 {{ globalsetting("ENABLE_PLUGINS_SCHEDULE") }}
 {{ globalsetting("ENABLE_PLUGINS_EVENTS") }}
+{{ globalsetting("ENABLE_PLUGINS_INTERFACE") }}
+{{ globalsetting("ENABLE_PLUGINS_MAILS") }}
+
+### Machine Settings
+
+| Name | Description | Default | Units |
+| ---- | ----------- | ------- | ----- |
+{{ globalsetting("MACHINE_PING_ENABLED") }}
+
+### Project Codes
+
+Refer to the [project code settings](../concepts/project_codes.md).
+
+## Override Global Settings
+
+If desired, specific *global settings* can be overridden via environment variables or the configuration file.
+
+Overriding a global setting will mark the setting as "read-only" in the user interface, and prevent it from being changed by user action. Additionally, the associated value stored in the database will be set to the value specified in the override.
+
+Refer to the [configuration guide](../start/config.md#override-global-settings) for more information on how to override global settings.

@@ -1,27 +1,22 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Accordion, Alert, Divider, Stack, Text } from '@mantine/core';
 import { lazy } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { StylishText } from '../../../../components/items/StylishText';
+import { errorCodeLink } from '../../../../components/nav/Alerts';
 import { FactCollection } from '../../../../components/settings/FactCollection';
-import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
 import { Loadable } from '../../../../functions/loading';
 import { useInstance } from '../../../../hooks/UseInstance';
-
-const PendingTasksTable = Loadable(
-  lazy(() => import('../../../../tables/settings/PendingTasksTable'))
-);
+import FailedTasksTable from '../../../../tables/settings/FailedTasksTable';
+import PendingTasksTable from '../../../../tables/settings/PendingTasksTable';
 
 const ScheduledTasksTable = Loadable(
   lazy(() => import('../../../../tables/settings/ScheduledTasksTable'))
 );
 
-const FailedTasksTable = Loadable(
-  lazy(() => import('../../../../tables/settings/FailedTasksTable'))
-);
-
 export default function TaskManagementPanel() {
-  const { instance: taskInfo } = useInstance({
+  const { instance: taskInfo, refreshInstance: refreshTaskInfo } = useInstance({
     endpoint: ApiEndpoints.task_overview,
     hasPrimaryKey: false,
     refetchOnMount: true,
@@ -32,11 +27,12 @@ export default function TaskManagementPanel() {
   return (
     <>
       {taskInfo?.is_running == false && (
-        <Alert title={t`Background Worker Not Running`} color="red">
+        <Alert title={t`Background worker not running`} color='red'>
           <Text>{t`The background task manager service is not running. Contact your system administrator.`}</Text>
+          {errorCodeLink('INVE-W5')}
         </Alert>
       )}
-      <Stack gap="xs">
+      <Stack gap='xs'>
         <FactCollection
           items={[
             { title: t`Pending Tasks`, value: taskInfo?.pending_tasks },
@@ -45,29 +41,29 @@ export default function TaskManagementPanel() {
           ]}
         />
         <Divider />
-        <Accordion defaultValue="pending">
-          <Accordion.Item value="pending" key="pending-tasks">
+        <Accordion defaultValue='pending'>
+          <Accordion.Item value='pending' key='pending-tasks'>
             <Accordion.Control>
-              <StylishText size="lg">{t`Pending Tasks`}</StylishText>
+              <StylishText size='lg'>{t`Pending Tasks`}</StylishText>
             </Accordion.Control>
             <Accordion.Panel>
-              <PendingTasksTable />
+              <PendingTasksTable onRecordsUpdated={refreshTaskInfo} />
             </Accordion.Panel>
           </Accordion.Item>
-          <Accordion.Item value="scheduled" key="scheduled-tasks">
+          <Accordion.Item value='scheduled' key='scheduled-tasks'>
             <Accordion.Control>
-              <StylishText size="lg">{t`Scheduled Tasks`}</StylishText>
+              <StylishText size='lg'>{t`Scheduled Tasks`}</StylishText>
             </Accordion.Control>
             <Accordion.Panel>
               <ScheduledTasksTable />
             </Accordion.Panel>
           </Accordion.Item>
-          <Accordion.Item value="failed" key="failed-tasks">
+          <Accordion.Item value='failed' key='failed-tasks'>
             <Accordion.Control>
-              <StylishText size="lg">{t`Failed Tasks`}</StylishText>
+              <StylishText size='lg'>{t`Failed Tasks`}</StylishText>
             </Accordion.Control>
             <Accordion.Panel>
-              <FailedTasksTable />
+              <FailedTasksTable onRecordsUpdated={refreshTaskInfo} />
             </Accordion.Panel>
           </Accordion.Item>
         </Accordion>

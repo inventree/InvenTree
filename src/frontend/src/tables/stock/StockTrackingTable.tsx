@@ -1,8 +1,14 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Table, Text } from '@mantine/core';
-import { ReactNode, useCallback, useMemo } from 'react';
+import { type ReactNode, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
+import { formatDecimal } from '@lib/functions/Formatting';
+import type { TableFilter } from '@lib/types/Filters';
+import type { TableColumn } from '@lib/types/Tables';
 import { RenderBuildOrder } from '../../components/render/Build';
 import { RenderCompany } from '../../components/render/Company';
 import {
@@ -17,12 +23,9 @@ import {
   RenderStockLocation
 } from '../../components/render/Stock';
 import { RenderUser } from '../../components/render/User';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
-import { TableColumn } from '../Column';
 import { DateColumn, DescriptionColumn } from '../ColumnRenderers';
+import { UserFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 type StockTrackingEntry = {
@@ -31,7 +34,7 @@ type StockTrackingEntry = {
   details: ReactNode;
 };
 
-export function StockTrackingTable({ itemId }: { itemId: number }) {
+export function StockTrackingTable({ itemId }: Readonly<{ itemId: number }>) {
   const navigate = useNavigate();
   const table = useTable('stock_tracking');
 
@@ -40,13 +43,23 @@ export function StockTrackingTable({ itemId }: { itemId: number }) {
     (record: any) => {
       const deltas: any = record?.deltas ?? {};
 
-      let entries: StockTrackingEntry[] = [
+      const entries: StockTrackingEntry[] = [
         {
           label: t`Stock Item`,
           key: 'stockitem',
           details:
             deltas.stockitem_detail &&
-            RenderStockItem({ instance: deltas.stockitem_detail })
+            RenderStockItem({ instance: deltas.stockitem_detail, link: true })
+        },
+        {
+          label: t`Stock Item`,
+          key: 'item',
+          details:
+            deltas.item_detail &&
+            RenderStockItem({
+              instance: deltas.item_detail,
+              link: true
+            })
         },
         {
           label: t`Status`,
@@ -58,7 +71,7 @@ export function StockTrackingTable({ itemId }: { itemId: number }) {
         {
           label: t`Quantity`,
           key: 'quantity',
-          details: deltas.quantity
+          details: formatDecimal(deltas.quantity)
         },
         {
           label: t`Added`,
@@ -170,6 +183,16 @@ export function StockTrackingTable({ itemId }: { itemId: number }) {
     [navigate]
   );
 
+  const filters: TableFilter[] = useMemo(() => {
+    return [
+      UserFilter({
+        name: 'user',
+        label: t`User`,
+        description: t`Filter by user`
+      })
+    ];
+  }, []);
+
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
       DateColumn({
@@ -195,7 +218,7 @@ export function StockTrackingTable({ itemId }: { itemId: number }) {
         title: t`User`,
         render: (record: any) => {
           if (!record.user_detail) {
-            return <Text size="sm" fs="italic">{t`No user information`}</Text>;
+            return <Text size='sm' fs='italic'>{t`No user information`}</Text>;
           }
 
           return RenderUser({ instance: record.user_detail });
@@ -214,7 +237,8 @@ export function StockTrackingTable({ itemId }: { itemId: number }) {
           item: itemId,
           user_detail: true
         },
-        enableDownload: true
+        enableDownload: true,
+        tableFilters: filters
       }}
     />
   );

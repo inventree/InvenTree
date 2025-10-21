@@ -33,6 +33,8 @@ Result: {{ myvar }}
 {% endraw %}
 ```
 
+Note the use of the `as` keyword to assign the output of the function to a variable. This can be used to assign the result of a function to a named variable, which can then be used later in the template.
+
 ## Data Structure Access
 
 A number of helper functions are available for accessing data contained in a particular structure format:
@@ -40,6 +42,13 @@ A number of helper functions are available for accessing data contained in a par
 ### Index Access
 
 To return the element at a given index in a container which supports indexed access (such as a [list](https://www.w3schools.com/python/python_lists.asp)), use the `getindex` function:
+
+::: report.templatetags.report.getindex
+    options:
+        show_docstring_description: false
+        show_source: False
+
+#### Example
 
 ```html
 {% raw %}
@@ -53,6 +62,13 @@ Item: {{ value }}
 To return an element corresponding to a certain key in a container which supports key access (such as a [dictionary](https://www.w3schools.com/python/python_dictionaries.asp)), use the `getkey` function:
 
 
+::: report.templatetags.report.getkey
+    options:
+        show_docstring_description: false
+        show_source: False
+
+#### Example
+
 ```html
 {% raw %}
 <ul>
@@ -64,9 +80,111 @@ To return an element corresponding to a certain key in a container which support
 {% endraw %}
 ```
 
+## Database Helpers
+
+A number of helper functions are available for accessing database objects:
+
+### order_queryset
+
+The `order_queryset` function allows for ordering of a provided queryset. It takes a queryset and a list of ordering arguments, and returns an ordered queryset.
+
+::: report.templatetags.report.order_queryset
+    options:
+        show_docstring_description: false
+        show_source: False
+
+!!! info "Provided QuerySet"
+    The provided queryset must be a valid Django queryset object, which is already available in the template context.
+
+#### Example
+
+In a report template which has a `PurchaseOrder` object available in its context as the variable `order`, return the matching line items ordered by part name:
+
+```html
+{% raw %}
+{% load report %}
+
+{% order_queryset order.lines.all 'part__name' as ordered_lines %}
+```
+
+### filter_queryset
+
+The `filter_queryset` function allows for arbitrary filtering of the provided queryset. It takes a queryset and a list of filter arguments, and returns a filtered queryset.
+
+::: report.templatetags.report.filter_queryset
+    options:
+        show_docstring_description: false
+        show_source: False
+
+!!! info "Provided QuerySet"
+    The provided queryset must be a valid Django queryset object, which is already available in the template context.
+
+!!! warning "Advanced Users"
+    The `filter_queryset` function is a powerful tool, but it is also easy to misuse. It assumes that the user has a good understanding of Django querysets and the underlying database structure.
+
+#### Example
+
+In a report template which has a `PurchaseOrder` object available in its context, fetch any line items which have a received quantity greater than zero:
+
+```html
+{% raw %}
+{% load report %}
+
+{% filter_queryset order.lines.all received__gt=0 as received_lines %}
+
+<ul>
+  {% for line in received_lines %}
+  <li>{{ line.part.part.full_name }} - {{ line.received }} / {{ line.quantity }}</li>
+    {% endfor %}
+</ul>
+
+{% endraw %}
+```
+
+### filter_db_model
+
+The `filter_db_model` function allows for filtering of a database model based on a set of filter arguments. It takes a model class and a list of filter arguments, and returns a filtered queryset.
+
+::: report.templatetags.report.filter_db_model
+    options:
+        show_docstring_description: false
+        show_source: False
+
+#### Example
+
+Generate a list of all active customers:
+
+```html
+{% raw %}
+{% load report %}
+
+{% filter_db_model 'company.company' is_customer=True active=True as active_customers %}
+
+<ul>
+    {% for customer in active_customers %}
+    <li>{{ customer.name }}</li>
+    {% endfor %}
+</ul>
+
+{% endraw %}
+```
+
+### Advanced Database Queries
+
+More advanced database filtering should be achieved using a [report plugin](../plugins/mixins/report.md), and adding custom context data to the report template.
+
 ## Number Formatting
 
+### format_number
+
 The helper function `format_number` allows for some common number formatting options. It takes a number (or a number-like string) as an input, as well as some formatting arguments. It returns a *string* containing the formatted number:
+
+::: report.templatetags.report.format_number
+    options:
+        show_docstring_description: false
+        show_source: False
+
+#### Example
 
 ```html
 {% raw %}
@@ -82,15 +200,24 @@ The helper function `format_number` allows for some common number formatting opt
 
 For rendering date and datetime information, the following helper functions are available:
 
-- `format_date`: Format a date object
-- `format_datetime`: Format a datetime object
+### format_date
 
-Each of these helper functions takes a date or datetime object as an input, and returns a *string* containing the formatted date or datetime. The following additional arguments are available:
+::: report.templatetags.report.format_date
+    options:
+        show_docstring_description: false
+        show_source: False
 
-| Argument | Description |
-| --- | --- |
-| timezone | Specify the timezone to render the date in. If not specified, uses the InvenTree server timezone |
-| format | Specify the format string to use for rendering the date. If not specified, uses ISO formatting. Refer to the [datetime format codes](https://docs.python.org/3/library/datetime.html#format-codes) for more information! |
+### format_datetime
+
+::: report.templatetags.report.format_datetime
+    options:
+        show_docstring_description: false
+        show_source: False
+
+### Date Formatting
+
+If not specified, these methods return a result which uses ISO formatting. Refer to the [datetime format codes](https://docs.python.org/3/library/datetime.html#format-codes) for more information! |
+
 
 ### Example
 
@@ -106,7 +233,17 @@ Datetime: {% format_datetime my_datetime format="%d-%m-%Y %H:%M%S" %}
 
 ## Currency Formatting
 
+### render_currency
+
 The helper function `render_currency` allows for simple rendering of currency data. This function can also convert the specified amount of currency into a different target currency:
+
+::: InvenTree.helpers_model.render_currency
+    options:
+        show_docstring_description: false
+        show_source: False
+
+
+#### Example
 
 ```html
 {% raw %}
@@ -124,19 +261,50 @@ Total Price: {% render_currency order.total_price currency='NZD' decimal_places=
 {% endraw %}
 ```
 
-The following keyword arguments are available to the `render_currency` function:
-
-| Argument | Description |
-| --- | --- |
-| currency | Specify the currency code to render in (will attempt conversion if different to provided currency) |
-| decimal_places | Specify the number of decimal places to render |
-| min_decimal_places | Specify the minimum number of decimal places to render (ignored if *decimal_places* is specified) |
-| max_decimal_places | Specify the maximum number of decimal places to render (ignored if *decimal_places* is specified) |
-| include_symbol | Include currency symbol in rendered value (default = True) |
-
 ## Maths Operations
 
-Simple mathematical operators are available, as demonstrated in the example template below:
+Simple mathematical operators are available, as demonstrated in the example template below. These operators can be used to perform basic arithmetic operations within the report template.
+
+### Input Types
+
+These mathematical functions accept inputs of various input types, and attempt to perform the operation accordingly. Note that any inputs which are provided as strings will be converted to floating point numbers before the operation is performed.
+
+### add
+
+::: report.templatetags.report.add
+    options:
+        show_docstring_description: false
+        show_source: False
+
+### subtract
+
+::: report.templatetags.report.subtract
+    options:
+        show_docstring_description: false
+        show_source: False
+
+### multiply
+
+::: report.templatetags.report.multiply
+    options:
+        show_docstring_description: false
+        show_source: False
+
+### divide
+
+::: report.templatetags.report.divide
+    options:
+        show_docstring_description: false
+        show_source: False
+
+### modulo
+
+::: report.templatetags.report.modulo
+    options:
+        show_docstring_description: false
+        show_source: False
+
+### Example
 
 ```html
 {% raw %}
@@ -146,9 +314,12 @@ Simple mathematical operators are available, as demonstrated in the example temp
 {% add 1 3 %} <!-- Add two numbers together -->
 {% subtract 4 3 %} <!-- Subtract 3 from 4 -->
 {% multiply 1.2 3.4 %} <!-- Multiply two numbers -->
-{% divide 10 2  as division_result %} <!-- Divide 10 by 2 -->
+
+<!-- Perform a calculation and store the result -->
+{% divide 10 2 as division_result %} <!-- Divide 10 by 2 -->
 
 Division Result: {{ division_result }}
+
 
 {% endraw %}
 ```
@@ -170,9 +341,14 @@ Total: {% multiply line.purchase_price line.quantity %}<br>
 
 *Media files* are any files uploaded to the InvenTree server by the user. These are stored under the `/media/` directory and can be accessed for use in custom reports or labels.
 
-### Uploaded Images
+### uploaded_image
 
 You can access an uploaded image file if you know the *path* of the image, relative to the top-level `/media/` directory. To load the image into a report, use the `{% raw %}{% uploaded_image ... %}{% endraw %}` tag:
+
+::: report.templatetags.report.uploaded_image
+    options:
+        show_docstring_description: false
+        show_source: False
 
 ```html
 {% raw %}
@@ -199,7 +375,12 @@ The `{% raw %}{% uploaded_image %}{% endraw %}` tag supports some optional param
 {% endraw %}```
 
 
-### SVG Images
+### encode_svg_image
+
+::: report.templatetags.report.encode_svg_image
+    options:
+        show_docstring_description: false
+        show_source: False
 
 SVG images need to be handled in a slightly different manner. When embedding an uploaded SVG image, use the `{% raw %}{% encode_svg_image ... %}{% endraw %}` tag:
 
@@ -211,9 +392,14 @@ SVG images need to be handled in a slightly different manner. When embedding an 
 {% endraw %}
 ```
 
-### Part images
+### part_image
 
 A shortcut function is provided for rendering an image associated with a Part instance. You can render the image of the part using the `{% raw %}{% part_image ... %}{% endraw %}` template tag:
+
+::: report.templatetags.report.part_image
+    options:
+        show_docstring_description: false
+        show_source: False
 
 ```html
 {% raw %}
@@ -225,7 +411,7 @@ A shortcut function is provided for rendering an image associated with a Part in
 
 #### Image Arguments
 
-Any optional arguments which can be used in the [uploaded_image tag](#uploaded-images) can be used here too.
+Any optional arguments which can be used in the [uploaded_image tag](#uploaded_image) can be used here too.
 
 #### Image Variations
 
@@ -243,9 +429,14 @@ The *Part* model supports *preview* (256 x 256) and *thumbnail* (128 x 128) vers
 ```
 
 
-### Company Images
+### company_image
 
 A shortcut function is provided for rendering an image associated with a Company instance. You can render the image of the company using the `{% raw %}{% company_image ... %}{% endraw %}` template tag:
+
+::: report.templatetags.report.company_image
+    options:
+        show_docstring_description: false
+        show_source: False
 
 ```html
 {% raw %}
@@ -312,7 +503,7 @@ If you have a custom logo, but explicitly wish to load the InvenTree logo itself
 
 ## Report Assets
 
-[Report Assets](./templates.md#report-assets) are files specifically uploaded by the user for inclusion in generated reports and labels.
+[Report Assets](./index.md#report-assets) are files specifically uploaded by the user for inclusion in generated reports and labels.
 
 You can add asset images to the reports and labels by using the `{% raw %}{% asset ... %}{% endraw %}` template tag:
 
@@ -326,9 +517,16 @@ You can add asset images to the reports and labels by using the `{% raw %}{% ass
 
 ## Part Parameters
 
-If you need to load a part parameter for a particular Part, within the context of your template, you can use the `part_parameter` template tag.
+If you need to load a part parameter for a particular Part, within the context of your template, you can use the `part_parameter` template tag:
 
-The following example assumes that you have a report or label which contains a valid [Part](../part/part.md) instance:
+::: report.templatetags.report.part_parameter
+    options:
+        show_docstring_description: false
+        show_source: False
+
+### Example
+
+The following example assumes that you have a report or label which contains a valid [Part](../part/index.md) instance:
 
 ```
 {% raw %}
@@ -351,3 +549,29 @@ A [Part Parameter](../part/parameter.md) has the following available attributes:
 | Data | The *value* of the parameter (e.g. "123.4") |
 | Units | The *units* of the parameter (e.g. "km") |
 | Template | A reference to a [PartParameterTemplate](../part/parameter.md#parameter-templates) |
+
+## Rendering Markdown
+
+Some data fields (such as the *Notes* field available on many internal database models) support [markdown formatting](https://en.wikipedia.org/wiki/Markdown). To render markdown content in a custom report, there are template filters made available through the [django-markdownify](https://github.com/erwinmatijsen/django-markdownify) library. This library provides functionality for converting markdown content to HTML representation, allowing it to be then rendered to PDF by the InvenTree report generation pipeline.
+
+To render markdown content in a report, consider the following simplified example:
+
+```html
+{% raw %}
+
+{% load markdownify %}
+
+<h3>Part Notes</h3>
+<p>
+    {{ part.notes | markdownify }}
+</p>
+{% endraw %}
+```
+
+You can read further details in the [django-markdownify documentation](https://django-markdownify.readthedocs.io/en/latest/).
+
+## List of tags and filters
+
+The following tags and filters are available.
+
+{{ tags_and_filters() }}

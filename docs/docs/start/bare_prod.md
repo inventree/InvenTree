@@ -19,7 +19,7 @@ The InvenTree web server is hosted using [Gunicorn](https://gunicorn.org/). Guni
 
 ### Supervisor
 
-[Supervisor](http://supervisord.org/) is a process control system which monitors and controls multiple background processes. It is used in the InvenTree production setup to ensure that the server and background worker processes are always running.
+[Supervisor](http://supervisord.org/) is a process control system which monitors and controls multiple background processes. It is used in the InvenTree production setup to ensure that the [web server](./processes.md#web-server) and [background worker](./processes.md#background-worker) processes are always running.
 
 ## Gunicorn
 
@@ -67,13 +67,15 @@ sudo apt-get install supervisor
 
 !!! warning "Configuration Override"
     If you already have supervisor installed on your system, you will not want to override your existing configuration file.
-    In this case, edit the existing configuration file at `/etc/supervisord.conf` to integrate the InvenTree processes
+    In this case, edit the existing configuration file at `/etc/supervisor/supervisord.conf` to integrate the InvenTree processes
 
 Copy the supervisor configuration file:
 
 ```
-sudo cp /home/inventree/src/contrib/deploy/supervisord.conf /etc/supervisord.conf
+sudo cp /home/inventree/src/contrib/deploy/supervisord.conf /etc/supervisor/supervisord.conf
 ```
+
+Depending on your setup the IP and port under the `[inet_http_server]` section might need to be changed.
 
 ### Start Supervisor Daemon
 
@@ -98,11 +100,17 @@ The InvenTree server (and background task manager) should now be running!
 In addition to the InvenTree server, you will need a method of delivering static and media files (this is *not* handled by the InvenTree server in a production environment).
 
 !!! info "Read More"
-    Refer to the [Serving Files](./serving_files.md) section for more details
+    Refer to the [proxy server documentation](./processes.md#proxy-server) for more details
+
+### Check your security posture
+
+It is recommended to check the [threat modelling inputs](../concepts/threat_model.md) to ensure that your InvenTree installation is set up in the way that it is assumed in the software design.
+
 
 ### Next Steps
 
-You (or your system administrator) may wish to perform further steps such as placing the InvenTree server behind a reverse-proxy such as [caddy](https://caddyserver.com/), or [nginx](https://www.nginx.com/).
+You (or your system administrator) may wish to perform further steps such as placing the InvenTree server behind a [reverse proxy](./processes.md#proxy-server) such as [caddy](https://caddyserver.com/), or [nginx](https://www.nginx.com/).
+
 As production environment options are many and varied, such tasks are outside the scope of this documentation.
 
 There are many great online tutorials about running django applications in production!

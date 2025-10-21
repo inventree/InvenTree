@@ -1,11 +1,9 @@
-import { AxiosResponse } from 'axios';
+import type { AxiosResponse } from 'axios';
 
-import {
-  ApiFormFieldSet,
-  ApiFormFieldType
-} from '../components/forms/fields/ApiFormField';
-import { ApiEndpoints } from '../enums/ApiEndpoints';
-import { PathParams, apiUrl } from '../states/ApiState';
+import type { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
+import type { PathParams } from '@lib/types/Core';
+import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
 import { invalidResponse, permissionDenied } from './notifications';
 
 /**
@@ -14,9 +12,16 @@ import { invalidResponse, permissionDenied } from './notifications';
 export function constructFormUrl(
   url: ApiEndpoints | string,
   pk?: string | number,
-  pathParams?: PathParams
+  pathParams?: PathParams,
+  queryParams?: URLSearchParams
 ): string {
-  return apiUrl(url, pk, pathParams);
+  let formUrl = apiUrl(url, pk, pathParams);
+
+  if (queryParams) {
+    formUrl += `?${queryParams.toString()}`;
+  }
+
+  return formUrl;
 }
 
 /**
@@ -35,7 +40,7 @@ export function extractAvailableFields(
     return null;
   }
 
-  let actions: any = response.data?.actions ?? null;
+  const actions: any = response.data?.actions ?? null;
 
   if (!method || !actions) {
     return null;
@@ -109,7 +114,7 @@ export function mapFields(
 
   for (const [k, v] of Object.entries(fields)) {
     const path = _path ? `${_path}.${k}` : k;
-    let value;
+    let value: any;
 
     if (v.field_type === 'nested object' && v.children) {
       value = mapFields(v.children, fieldFunction, path);
@@ -139,12 +144,6 @@ export function constructField({
   };
 
   switch (def.field_type) {
-    case 'date':
-      // Change value to a date object if required
-      if (def.value) {
-        def.value = new Date(def.value);
-      }
-      break;
     case 'nested object':
       def.children = {};
       for (const k of Object.keys(field.children ?? {})) {

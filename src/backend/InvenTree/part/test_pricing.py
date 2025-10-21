@@ -1,6 +1,7 @@
 """Unit tests for Part pricing calculations."""
 
 from django.core.exceptions import ObjectDoesNotExist
+from django.test.utils import override_settings
 
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
@@ -88,6 +89,7 @@ class PartPricingTests(InvenTreeTestCase):
             part=self.sp_2, quantity=10, price=4.55, price_currency='GBP'
         )
 
+    @override_settings(TESTING_PRICING=True)
     def test_pricing_data(self):
         """Test link between Part and PartPricing model."""
         # Initially there is no associated Pricing data
@@ -111,8 +113,8 @@ class PartPricingTests(InvenTreeTestCase):
 
     def test_invalid_rate(self):
         """Ensure that conversion behaves properly with missing rates."""
-        ...
 
+    @override_settings(TESTING_PRICING=True)
     def test_simple(self):
         """Tests for hard-coded values."""
         pricing = self.part.pricing
@@ -144,6 +146,7 @@ class PartPricingTests(InvenTreeTestCase):
         self.assertEqual(pricing.overall_min, Money('0.111111', 'USD'))
         self.assertEqual(pricing.overall_max, Money('25', 'USD'))
 
+    @override_settings(TESTING_PRICING=True)
     def test_supplier_part_pricing(self):
         """Test for supplier part pricing."""
         pricing = self.part.pricing
@@ -157,19 +160,22 @@ class PartPricingTests(InvenTreeTestCase):
         # Creating price breaks will cause the pricing to be updated
         self.create_price_breaks()
 
-        pricing.update_pricing()
+        pricing = self.part.pricing
+        pricing.refresh_from_db()
 
         self.assertAlmostEqual(float(pricing.overall_min.amount), 2.015, places=2)
         self.assertAlmostEqual(float(pricing.overall_max.amount), 3.06, places=2)
 
         # Delete all supplier parts and re-calculate
         self.part.supplier_parts.all().delete()
-        pricing.update_pricing()
+
+        pricing = self.part.pricing
         pricing.refresh_from_db()
 
         self.assertIsNone(pricing.supplier_price_min)
         self.assertIsNone(pricing.supplier_price_max)
 
+    @override_settings(TESTING_PRICING=True)
     def test_internal_pricing(self):
         """Tests for internal price breaks."""
         # Ensure internal pricing is enabled
@@ -189,7 +195,8 @@ class PartPricingTests(InvenTreeTestCase):
                 part=self.part, quantity=ii + 1, price=10 - ii, price_currency=currency
             )
 
-            pricing.update_internal_cost()
+            pricing = self.part.pricing
+            pricing.refresh_from_db()
 
             # Expected money value
             m_expected = Money(10 - ii, currency)
@@ -202,6 +209,7 @@ class PartPricingTests(InvenTreeTestCase):
             self.assertEqual(pricing.internal_cost_max, Money(10, currency))
             self.assertEqual(pricing.overall_max, Money(10, currency))
 
+    @override_settings(TESTING_PRICING=True)
     def test_stock_item_pricing(self):
         """Test for stock item pricing data."""
         # Create a part
@@ -244,6 +252,7 @@ class PartPricingTests(InvenTreeTestCase):
         self.assertEqual(pricing.overall_min, Money(1.176471, 'USD'))
         self.assertEqual(pricing.overall_max, Money(6.666667, 'USD'))
 
+    @override_settings(TESTING_PRICING=True)
     def test_bom_pricing(self):
         """Unit test for BOM pricing calculations."""
         pricing = self.part.pricing
@@ -253,7 +262,8 @@ class PartPricingTests(InvenTreeTestCase):
 
         currency = 'AUD'
 
-        for ii in range(10):
+        # Create pricing out of order, to ensure min/max values are calculated correctly
+        for ii in range(5):
             # Create a new part for the BOM
             sub_part = part.models.Part.objects.create(
                 name=f'Sub Part {ii}',
@@ -274,15 +284,21 @@ class PartPricingTests(InvenTreeTestCase):
                 part=self.part, sub_part=sub_part, quantity=5
             )
 
-            pricing.update_bom_cost()
-
             # Check that the values have been updated correctly
             self.assertEqual(pricing.currency, 'USD')
 
-        # Final overall pricing checks
-        self.assertEqual(pricing.overall_min, Money('366.666665', 'USD'))
-        self.assertEqual(pricing.overall_max, Money('550', 'USD'))
+        # Price range should have been automatically updated
+        self.part.refresh_from_db()
+        pricing = self.part.pricing
 
+        expected_min = 100
+        expected_max = 150
+
+        # Final overall pricing checks
+        self.assertEqual(pricing.overall_min, Money(expected_min, 'USD'))
+        self.assertEqual(pricing.overall_max, Money(expected_max, 'USD'))
+
+    @override_settings(TESTING_PRICING=True)
     def test_purchase_pricing(self):
         """Unit tests for historical purchase pricing."""
         self.create_price_breaks()
@@ -318,6 +334,8 @@ class PartPricingTests(InvenTreeTestCase):
         po.status = PurchaseOrderStatus.COMPLETE.value
         po.save()
 
+        set_global_setting(order.models.PurchaseOrder.UNLOCK_SETTING, True)
+
         pricing.update_purchase_cost()
 
         # Cost is still null, as the lines have not been received
@@ -350,6 +368,7 @@ class PartPricingTests(InvenTreeTestCase):
         # Max cost in USD
         self.assertAlmostEqual(float(pricing.purchase_cost_max.amount), 6.95, places=2)
 
+    @override_settings(TESTING_PRICING=True)
     def test_delete_with_pricing(self):
         """Test for deleting a part which has pricing information."""
         # Create some pricing data
@@ -374,6 +393,7 @@ class PartPricingTests(InvenTreeTestCase):
         with self.assertRaises(part.models.PartPricing.DoesNotExist):
             pricing.refresh_from_db()
 
+    @override_settings(TESTING_PRICING=True)
     def test_delete_without_pricing(self):
         """Test that we can delete a part which does not have pricing information."""
         pricing = self.part.pricing
@@ -389,6 +409,7 @@ class PartPricingTests(InvenTreeTestCase):
         with self.assertRaises(part.models.Part.DoesNotExist):
             self.part.refresh_from_db()
 
+    @override_settings(TESTING_PRICING=True)
     def test_check_missing_pricing(self):
         """Tests for check_missing_pricing background task.
 
@@ -412,6 +433,7 @@ class PartPricingTests(InvenTreeTestCase):
         # Check that PartPricing objects have been created
         self.assertEqual(part.models.PartPricing.objects.count(), 101)
 
+    @override_settings(TESTING_PRICING=True)
     def test_delete_part_with_stock_items(self):
         """Test deleting a part instance with stock items.
 
@@ -432,7 +454,7 @@ class PartPricingTests(InvenTreeTestCase):
             )
 
         # Manually schedule a pricing update (does not happen automatically in testing)
-        p.schedule_pricing_update(create=True, test=True)
+        p.schedule_pricing_update(create=True)
 
         # Check that a PartPricing object exists
         self.assertTrue(part.models.PartPricing.objects.filter(part=p).exists())
@@ -444,5 +466,84 @@ class PartPricingTests(InvenTreeTestCase):
         self.assertFalse(part.models.PartPricing.objects.filter(part=p).exists())
 
         # Try to update pricing (should fail gracefully as the Part has been deleted)
-        p.schedule_pricing_update(create=False, test=True)
+        p.schedule_pricing_update(create=False)
         self.assertFalse(part.models.PartPricing.objects.filter(part=p).exists())
+
+    @override_settings(TESTING_PRICING=True)
+    def test_multi_level_bom(self):
+        """Test that pricing for multi-level BOMs is calculated correctly."""
+        # Create some parts
+        A1 = part.models.Part.objects.create(
+            name='A1', description='A1', assembly=True, component=True
+        )
+        B1 = part.models.Part.objects.create(
+            name='B1', description='B1', assembly=True, component=True
+        )
+        C1 = part.models.Part.objects.create(
+            name='C1', description='C1', assembly=True, component=True
+        )
+        D1 = part.models.Part.objects.create(
+            name='D1', description='D1', assembly=True, component=True
+        )
+        D2 = part.models.Part.objects.create(
+            name='D2', description='D2', assembly=True, component=True
+        )
+        D3 = part.models.Part.objects.create(
+            name='D3', description='D3', assembly=True, component=True
+        )
+
+        # BOM Items
+        part.models.BomItem.objects.create(part=A1, sub_part=B1, quantity=10)
+        part.models.BomItem.objects.create(part=B1, sub_part=C1, quantity=2)
+        part.models.BomItem.objects.create(part=C1, sub_part=D1, quantity=3)
+        part.models.BomItem.objects.create(part=C1, sub_part=D2, quantity=4)
+        part.models.BomItem.objects.create(part=C1, sub_part=D3, quantity=5)
+
+        # Pricing data (only for low-level D parts)
+        P1 = D1.pricing
+        P1.override_min = 4.50
+        P1.override_max = 5.50
+        P1.save()
+        P1.update_pricing()
+
+        P2 = D2.pricing
+        P2.override_min = 6.50
+        P2.override_max = 7.50
+        P2.save()
+        P2.update_pricing()
+
+        P3 = D3.pricing
+        P3.override_min = 8.50
+        P3.override_max = 9.50
+        P3.save()
+        P3.update_pricing()
+
+        # Simple checks for low-level BOM items
+        self.assertEqual(D1.pricing.overall_min, Money(4.50, 'USD'))
+        self.assertEqual(D1.pricing.overall_max, Money(5.50, 'USD'))
+
+        self.assertEqual(D2.pricing.overall_min, Money(6.50, 'USD'))
+        self.assertEqual(D2.pricing.overall_max, Money(7.50, 'USD'))
+
+        self.assertEqual(D3.pricing.overall_min, Money(8.50, 'USD'))
+        self.assertEqual(D3.pricing.overall_max, Money(9.50, 'USD'))
+
+        # Calculate pricing for "C" level part
+        c_min = 3 * 4.50 + 4 * 6.50 + 5 * 8.50
+        c_max = 3 * 5.50 + 4 * 7.50 + 5 * 9.50
+
+        self.assertEqual(C1.pricing.overall_min, Money(c_min, 'USD'))
+        self.assertEqual(C1.pricing.overall_max, Money(c_max, 'USD'))
+
+        # Calculate pricing for "A" and "B" level parts
+        b_min = 2 * c_min
+        b_max = 2 * c_max
+
+        a_min = 10 * b_min
+        a_max = 10 * b_max
+
+        self.assertEqual(B1.pricing.overall_min, Money(b_min, 'USD'))
+        self.assertEqual(B1.pricing.overall_max, Money(b_max, 'USD'))
+
+        self.assertEqual(A1.pricing.overall_min, Money(a_min, 'USD'))
+        self.assertEqual(A1.pricing.overall_max, Money(a_max, 'USD'))

@@ -1,21 +1,34 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
+import { Badge } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 
-import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { UserRoles } from '../../enums/Roles';
-import { customStateFields } from '../../forms/CommonForms';
+import { AddItemButton } from '@lib/components/AddItemButton';
+import {
+  type RowAction,
+  RowDeleteAction,
+  RowDuplicateAction,
+  RowEditAction
+} from '@lib/components/RowActions';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import type { TableFilter } from '@lib/types/Filters';
+import type { TableColumn } from '@lib/types/Tables';
+import type {
+  StatusCodeInterface,
+  StatusCodeListInterface
+} from '../../components/render/StatusRenderer';
+import { statusColorMap } from '../../defaults/backendMappings';
+import { useCustomStateFields } from '../../forms/CommonForms';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
+import { useGlobalStatusState } from '../../states/GlobalStatusState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 /**
  * Table for displaying list of custom states
@@ -23,12 +36,64 @@ import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 export default function CustomStateTable() {
   const table = useTable('customstates');
 
+  const statusCodes = useGlobalStatusState();
+
+  // Find the associated logical state key
+  const getLogicalState = useCallback(
+    (group: string, key: number) => {
+      const valuesList = Object.values(statusCodes.status ?? {}).find(
+        (value: StatusCodeListInterface) => value.status_class === group
+      );
+
+      const value = Object.values(valuesList?.values ?? {}).find(
+        (value: StatusCodeInterface) => value.key === key
+      );
+
+      return value?.label ?? value?.name ?? '';
+    },
+    [statusCodes]
+  );
+
   const user = useUserState();
+
+  const tableFilters: TableFilter[] = useMemo(() => {
+    return [
+      {
+        name: 'reference_status',
+        label: t`Status Group`,
+        field_type: 'choice',
+        choices: Object.values(statusCodes.status ?? {}).map(
+          (value: StatusCodeListInterface) => ({
+            label: value.status_class,
+            value: value.status_class
+          })
+        )
+      }
+    ];
+  }, [statusCodes]);
 
   const columns: TableColumn[] = useMemo(() => {
     return [
       {
+        accessor: 'reference_status',
+        title: t`Status`,
+        sortable: true
+      },
+      {
+        accessor: 'logical_key',
+        title: t`Logical State`,
+        sortable: true,
+        render: (record: any) => {
+          const stateText = getLogicalState(
+            record.reference_status,
+            record.logical_key
+          );
+          return stateText ? stateText : record.logical_key;
+        }
+      },
+      {
         accessor: 'name',
+        title: t`Identifier`,
         sortable: true
       },
       {
@@ -37,33 +102,44 @@ export default function CustomStateTable() {
         sortable: true
       },
       {
-        accessor: 'color'
-      },
-      {
         accessor: 'key',
         sortable: true
       },
       {
-        accessor: 'logical_key',
-        sortable: true
-      },
-      {
-        accessor: 'model_name',
-        title: t`Model`,
-        sortable: true
-      },
-      {
-        accessor: 'reference_status',
-        title: t`Status`,
-        sortable: true
+        accessor: 'color',
+        render: (record: any) => {
+          return (
+            <Badge
+              color={statusColorMap[record.color] || statusColorMap['default']}
+              variant='filled'
+              size='xs'
+            >
+              {record.color}
+            </Badge>
+          );
+        }
       }
     ];
-  }, []);
+  }, [getLogicalState]);
+
+  const newCustomStateFields = useCustomStateFields();
+  const duplicateCustomStateFields = useCustomStateFields();
+  const editCustomStateFields = useCustomStateFields();
+
+  const [initialStateData, setInitialStateData] = useState<any>({});
 
   const newCustomState = useCreateApiFormModal({
     url: ApiEndpoints.custom_state_list,
     title: t`Add State`,
-    fields: customStateFields(),
+    fields: newCustomStateFields,
+    table: table
+  });
+
+  const duplicateCustomState = useCreateApiFormModal({
+    url: ApiEndpoints.custom_state_list,
+    title: t`Add State`,
+    fields: duplicateCustomStateFields,
+    initialData: initialStateData,
     table: table
   });
 
@@ -75,7 +151,7 @@ export default function CustomStateTable() {
     url: ApiEndpoints.custom_state_list,
     pk: selectedCustomState,
     title: t`Edit State`,
-    fields: customStateFields(),
+    fields: editCustomStateFields,
     table: table
   });
 
@@ -96,6 +172,13 @@ export default function CustomStateTable() {
             editCustomState.open();
           }
         }),
+        RowDuplicateAction({
+          hidden: !user.hasAddRole(UserRoles.admin),
+          onClick: () => {
+            setInitialStateData(record);
+            duplicateCustomState.open();
+          }
+        }),
         RowDeleteAction({
           hidden: !user.hasDeleteRole(UserRoles.admin),
           onClick: () => {
@@ -111,8 +194,12 @@ export default function CustomStateTable() {
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
-        onClick={() => newCustomState.open()}
-        tooltip={t`Add state`}
+        key={'add'}
+        onClick={() => {
+          setInitialStateData({});
+          newCustomState.open();
+        }}
+        tooltip={t`Add State`}
       />
     ];
   }, []);
@@ -121,6 +208,7 @@ export default function CustomStateTable() {
     <>
       {newCustomState.modal}
       {editCustomState.modal}
+      {duplicateCustomState.modal}
       {deleteCustomState.modal}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.custom_state_list)}
@@ -129,6 +217,7 @@ export default function CustomStateTable() {
         props={{
           rowActions: rowActions,
           tableActions: tableActions,
+          tableFilters: tableFilters,
           enableDownload: true
         }}
       />

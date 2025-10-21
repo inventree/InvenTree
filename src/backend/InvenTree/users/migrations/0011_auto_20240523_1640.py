@@ -16,7 +16,7 @@ def clear_sessions(apps, schema_editor):  # pragma: no cover
     try:
         engine = import_module(settings.SESSION_ENGINE)
         engine.SessionStore.clear_expired()
-        print('Cleared all user sessions to deal with GHSA-2crp-q9pc-457j')
+        print('\nCleared all user sessions to deal with GHSA-2crp-q9pc-457j')
     except Exception:
         # Database may not be ready yet, so this does not matter anyhow
         pass

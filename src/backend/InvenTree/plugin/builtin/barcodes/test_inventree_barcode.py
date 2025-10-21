@@ -1,6 +1,5 @@
 """Unit tests for InvenTreeBarcodePlugin."""
 
-from django.conf import settings
 from django.urls import reverse
 
 import part.models
@@ -12,6 +11,11 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
     """Tests for the integrated InvenTreeBarcode barcode plugin."""
 
     fixtures = ['category', 'part', 'location', 'stock', 'company', 'supplier_part']
+
+    def setUp(self):
+        """Set up the test case."""
+        super().setUp()
+        self.ensurePluginsLoaded()
 
     def test_assign_errors(self):
         """Test error cases for assignment action."""
@@ -285,10 +289,9 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
         self.assertEqual(
             response.data['stocklocation']['api_url'], '/api/stock/location/5/'
         )
-        if settings.ENABLE_CLASSIC_FRONTEND:
-            self.assertEqual(
-                response.data['stocklocation']['web_url'], '/stock/location/5/'
-            )
+        self.assertEqual(
+            response.data['stocklocation']['web_url'], '/web/stock/location/5'
+        )
         self.assertEqual(response.data['plugin'], 'InvenTreeBarcode')
 
         # Scan a Part object
@@ -328,10 +331,9 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
         self.assertEqual(
             response.data['stocklocation']['api_url'], '/api/stock/location/5/'
         )
-        if settings.ENABLE_CLASSIC_FRONTEND:
-            self.assertEqual(
-                response.data['stocklocation']['web_url'], '/stock/location/5/'
-            )
+        self.assertEqual(
+            response.data['stocklocation']['web_url'], '/web/stock/location/5'
+        )
         self.assertEqual(response.data['plugin'], 'InvenTreeBarcode')
 
         # Scan a Part object

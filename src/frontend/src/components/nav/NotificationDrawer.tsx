@@ -1,27 +1,105 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import {
   ActionIcon,
   Alert,
+  Anchor,
   Center,
   Divider,
   Drawer,
   Group,
   Loader,
-  Space,
+  Paper,
   Stack,
   Text,
   Tooltip
 } from '@mantine/core';
-import { IconArrowRight, IconBellCheck } from '@tabler/icons-react';
+import {
+  IconArrowRight,
+  IconBellCheck,
+  IconCircleCheck,
+  IconExclamationCircle
+} from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelInformationDict } from '@lib/enums/ModelInformation';
+import type { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
+import { getDetailUrl } from '@lib/functions/Navigation';
+import { getBaseUrl } from '@lib/functions/Navigation';
+import { navigateToLink } from '@lib/functions/Navigation';
 import { api } from '../../App';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
+import { Boundary } from '../Boundary';
 import { StylishText } from '../items/StylishText';
+
+/**
+ * Render a single notification entry in the drawer
+ */
+function NotificationEntry({
+  notification,
+  onRead
+}: Readonly<{
+  notification: any;
+  onRead: () => void;
+}>) {
+  const navigate = useNavigate();
+
+  let link = notification.target?.link;
+
+  const model_type = notification.target?.model_type;
+  const model_id = notification.target?.model_id;
+
+  // If a valid model type is provided, that overrides the specified link
+  if (model_type as ModelType) {
+    const model_info = ModelInformationDict[model_type as ModelType];
+    if (model_info?.url_detail && model_id) {
+      link = getDetailUrl(model_type as ModelType, model_id);
+    } else if (model_info?.url_overview) {
+      link = model_info.url_overview;
+    }
+  }
+
+  return (
+    <Paper p='xs' shadow='xs'>
+      <Group justify='space-between' wrap='nowrap'>
+        <Tooltip
+          label={notification.message}
+          position='bottom-end'
+          hidden={!notification.message}
+        >
+          <Stack gap={2}>
+            <Anchor
+              href={link ? `/${getBaseUrl()}${link}` : '#'}
+              underline='hover'
+              target='_blank'
+              onClick={(event: any) => {
+                if (link) {
+                  // Mark the notification as read
+                  onRead();
+                }
+
+                if (link.startsWith('/')) {
+                  navigateToLink(link, navigate, event);
+                }
+              }}
+            >
+              <Text size='sm'>{notification.name}</Text>
+            </Anchor>
+            <Text size='xs'>{notification.age_human}</Text>
+          </Stack>
+        </Tooltip>
+        <Tooltip label={t`Mark as read`} position='bottom-end'>
+          <ActionIcon variant='transparent' onClick={onRead}>
+            <IconBellCheck />
+          </ActionIcon>
+        </Tooltip>
+      </Group>
+    </Paper>
+  );
+}
 
 /**
  * Construct a notification drawer.
@@ -29,10 +107,10 @@ import { StylishText } from '../items/StylishText';
 export function NotificationDrawer({
   opened,
   onClose
-}: {
+}: Readonly<{
   opened: boolean;
   onClose: () => void;
-}) {
+}>) {
   const { isLoggedIn } = useUserState();
 
   const navigate = useNavigate();
@@ -45,13 +123,11 @@ export function NotificationDrawer({
         .get(apiUrl(ApiEndpoints.notifications_list), {
           params: {
             read: false,
-            limit: 10
+            limit: 10,
+            ordering: '-creation'
           }
         })
-        .then((response) => response.data)
-        .catch((error) => {
-          return error;
-        }),
+        .then((response) => response.data),
     refetchOnMount: false
   });
 
@@ -72,11 +148,24 @@ export function NotificationDrawer({
       });
   }, []);
 
+  const markAsRead = useCallback((notification: any) => {
+    api
+      .patch(apiUrl(ApiEndpoints.notifications_list, notification.pk), {
+        read: true
+      })
+      .then(() => {
+        notificationQuery.refetch();
+      })
+      .catch(() => {
+        notificationQuery.refetch();
+      });
+  }, []);
+
   return (
     <Drawer
       opened={opened}
-      size="md"
-      position="right"
+      size='md'
+      position='right'
       onClose={onClose}
       withCloseButton={false}
       styles={{
@@ -88,12 +177,12 @@ export function NotificationDrawer({
         }
       }}
       title={
-        <Group justify="space-between" wrap="nowrap">
-          <StylishText size="lg">{t`Notifications`}</StylishText>
-          <Group justify="end" wrap="nowrap">
+        <Group justify='space-between' wrap='nowrap'>
+          <StylishText size='lg'>{t`Notifications`}</StylishText>
+          <Group justify='end' wrap='nowrap'>
             <Tooltip label={t`Mark all as read`}>
               <ActionIcon
-                variant="transparent"
+                variant='transparent'
                 onClick={() => {
                   markAllAsRead();
                 }}
@@ -103,11 +192,11 @@ export function NotificationDrawer({
             </Tooltip>
             <Tooltip label={t`View all notifications`}>
               <ActionIcon
-                onClick={() => {
+                onClick={(event: any) => {
                   onClose();
-                  navigate('/notifications/unread');
+                  navigateToLink('/notifications/unread', navigate, event);
                 }}
-                variant="transparent"
+                variant='transparent'
               >
                 <IconArrowRight />
               </ActionIcon>
@@ -116,67 +205,41 @@ export function NotificationDrawer({
         </Group>
       }
     >
-      <Stack gap="xs">
-        <Divider />
-        {!hasNotifications && (
-          <Alert color="green">
-            <Text size="sm">{t`You have no unread notifications.`}</Text>
-          </Alert>
-        )}
-        {hasNotifications &&
-          notificationQuery.data?.results?.map((notification: any) => (
-            <Group justify="space-between" key={notification.pk}>
-              <Stack gap="3">
-                {notification?.target?.link ? (
-                  <Text
-                    size="sm"
-                    component={Link}
-                    to={notification?.target?.link}
-                    target="_blank"
-                  >
-                    {notification.target?.name ??
-                      notification.name ??
-                      t`Notification`}
-                  </Text>
-                ) : (
-                  <Text size="sm">
-                    {notification.target?.name ??
-                      notification.name ??
-                      t`Notification`}
-                  </Text>
-                )}
-                <Text size="xs">{notification.age_human ?? ''}</Text>
-              </Stack>
-              <Space />
-              <ActionIcon
-                color="gray"
-                variant="hover"
-                onClick={() => {
-                  let url = apiUrl(
-                    ApiEndpoints.notifications_list,
-                    notification.pk
-                  );
-                  api
-                    .patch(url, {
-                      read: true
-                    })
-                    .then((response) => {
-                      notificationQuery.refetch();
-                    });
-                }}
-              >
-                <Tooltip label={t`Mark as read`}>
-                  <IconBellCheck />
-                </Tooltip>
-              </ActionIcon>
-            </Group>
-          ))}
-        {notificationQuery.isFetching && (
-          <Center>
-            <Loader size="sm" />
-          </Center>
-        )}
-      </Stack>
+      <Boundary label='NotificationDrawer'>
+        <Stack gap='xs'>
+          <Divider />
+          {!notificationQuery.isFetching &&
+            !notificationQuery.isLoading &&
+            !notificationQuery.isError &&
+            !hasNotifications && (
+              <Alert color='green' icon={<IconCircleCheck />}>
+                <Text size='sm'>{t`You have no unread notifications.`}</Text>
+              </Alert>
+            )}
+          {hasNotifications &&
+            notificationQuery.data?.results?.map((notification: any) => (
+              <NotificationEntry
+                key={`notification-${notification.pk}`}
+                notification={notification}
+                onRead={() => markAsRead(notification)}
+              />
+            ))}
+          {notificationQuery.isFetching && (
+            <Center>
+              <Loader size='sm' />
+            </Center>
+          )}
+          {notificationQuery.isError && (
+            <Alert
+              color='red'
+              title={t`Error`}
+              icon={<IconExclamationCircle />}
+            >
+              <Text size='sm'>{t`Error loading notifications.`}</Text>
+            </Alert>
+          )}
+        </Stack>
+      </Boundary>
     </Drawer>
   );
 }

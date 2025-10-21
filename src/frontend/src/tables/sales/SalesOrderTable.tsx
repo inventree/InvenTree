@@ -1,19 +1,21 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 
-import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { Thumbnail } from '../../components/images/Thumbnail';
+import { AddItemButton } from '@lib/components/AddItemButton';
+import { ProgressBar } from '@lib/components/ProgressBar';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import type { TableFilter } from '@lib/types/Filters';
 import { formatCurrency } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import { useSalesOrderFields } from '../../forms/SalesOrderForms';
-import { useOwnerFilters, useProjectCodeFilters } from '../../hooks/UseFilter';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import {
+  CompanyColumn,
+  CreatedByColumn,
   CreationDateColumn,
   DescriptionColumn,
   LineItemsProgressColumn,
@@ -21,63 +23,85 @@ import {
   ReferenceColumn,
   ResponsibleColumn,
   ShipmentDateColumn,
+  StartDateColumn,
   StatusColumn,
   TargetDateColumn
 } from '../ColumnRenderers';
 import {
   AssignedToMeFilter,
+  CompletedAfterFilter,
+  CompletedBeforeFilter,
+  CreatedAfterFilter,
+  CreatedBeforeFilter,
+  CreatedByFilter,
+  HasProjectCodeFilter,
+  IncludeVariantsFilter,
+  MaxDateFilter,
+  MinDateFilter,
+  OrderStatusFilter,
   OutstandingFilter,
   OverdueFilter,
-  StatusFilterOptions,
-  TableFilter
+  ProjectCodeFilter,
+  ResponsibleFilter,
+  StartDateAfterFilter,
+  StartDateBeforeFilter,
+  TargetDateAfterFilter,
+  TargetDateBeforeFilter
 } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 export function SalesOrderTable({
   partId,
   customerId
-}: {
+}: Readonly<{
   partId?: number;
   customerId?: number;
-}) {
-  const table = useTable('sales-order');
+}>) {
+  const table = useTable(!!partId ? 'salesorder-part' : 'salesorder-index');
   const user = useUserState();
 
-  const projectCodeFilters = useProjectCodeFilters();
-  const responsibleFilters = useOwnerFilters();
-
   const tableFilters: TableFilter[] = useMemo(() => {
-    return [
-      {
-        name: 'status',
-        label: t`Status`,
-        description: t`Filter by order status`,
-        choiceFunction: StatusFilterOptions(ModelType.salesorder)
-      },
+    const filters: TableFilter[] = [
+      OrderStatusFilter({ model: ModelType.salesorder }),
       OutstandingFilter(),
       OverdueFilter(),
       AssignedToMeFilter(),
+      MinDateFilter(),
+      MaxDateFilter(),
+      CreatedBeforeFilter(),
+      CreatedAfterFilter(),
+      TargetDateBeforeFilter(),
+      TargetDateAfterFilter(),
+      StartDateBeforeFilter(),
+      StartDateAfterFilter(),
       {
-        name: 'project_code',
-        label: t`Project Code`,
-        description: t`Filter by project code`,
-        choices: projectCodeFilters.choices
+        name: 'has_target_date',
+        type: 'boolean',
+        label: t`Has Target Date`,
+        description: t`Show orders with a target date`
       },
       {
-        name: 'has_project_code',
-        label: t`Has Project Code`,
-        description: t`Filter by whether the purchase order has a project code`
+        name: 'has_start_date',
+        type: 'boolean',
+        label: t`Has Start Date`,
+        description: t`Show orders with a start date`
       },
-      {
-        name: 'assigned_to',
-        label: t`Responsible`,
-        description: t`Filter by responsible owner`,
-        choices: responsibleFilters.choices
-      }
+      CompletedBeforeFilter(),
+      CompletedAfterFilter(),
+      HasProjectCodeFilter(),
+      ProjectCodeFilter(),
+      ResponsibleFilter(),
+      CreatedByFilter()
     ];
-  }, [projectCodeFilters.choices, responsibleFilters.choices]);
 
-  const salesOrderFields = useSalesOrderFields();
+    if (!!partId) {
+      filters.push(IncludeVariantsFilter());
+    }
+
+    return filters;
+  }, [partId]);
+
+  const salesOrderFields = useSalesOrderFields({});
 
   const newSalesOrder = useCreateApiFormModal({
     url: ApiEndpoints.sales_order_list,
@@ -93,6 +117,7 @@ export function SalesOrderTable({
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
+        key='add-sales-order'
         tooltip={t`Add Sales Order`}
         onClick={() => newSalesOrder.open()}
         hidden={!user.hasAddRole(UserRoles.sales_order)}
@@ -107,27 +132,41 @@ export function SalesOrderTable({
         accessor: 'customer__name',
         title: t`Customer`,
         sortable: true,
-        render: function (record: any) {
-          let customer = record.customer_detail ?? {};
-
-          return (
-            <Thumbnail
-              src={customer?.image}
-              alt={customer.name}
-              text={customer.name}
-            />
-          );
-        }
+        render: (record: any) => (
+          <CompanyColumn company={record.customer_detail} />
+        )
       },
       {
         accessor: 'customer_reference',
         title: t`Customer Reference`
       },
       DescriptionColumn({}),
-      LineItemsProgressColumn(),
+      LineItemsProgressColumn({}),
+      {
+        accessor: 'shipments_count',
+        title: t`Shipments`,
+        minWidth: 125,
+        render: (record: any) => (
+          <ProgressBar
+            progressLabel
+            value={record.completed_shipments_count}
+            maximum={record.shipments_count}
+          />
+        )
+      },
       StatusColumn({ model: ModelType.salesorder }),
-      ProjectCodeColumn({}),
-      CreationDateColumn({}),
+      ProjectCodeColumn({
+        defaultVisible: false
+      }),
+      CreationDateColumn({
+        defaultVisible: false
+      }),
+      CreatedByColumn({
+        defaultVisible: false
+      }),
+      StartDateColumn({
+        defaultVisible: false
+      }),
       TargetDateColumn({}),
       ShipmentDateColumn({}),
       ResponsibleColumn({}),
@@ -137,7 +176,7 @@ export function SalesOrderTable({
         sortable: true,
         render: (record: any) => {
           return formatCurrency(record.total_price, {
-            currency: record.order_currency ?? record.customer_detail?.currency
+            currency: record.order_currency || record.customer_detail?.currency
           });
         }
       }
@@ -162,7 +201,8 @@ export function SalesOrderTable({
           modelType: ModelType.salesorder,
           enableSelection: true,
           enableDownload: true,
-          enableReports: true
+          enableReports: true,
+          enableLabels: true
         }}
       />
     </>

@@ -7,6 +7,7 @@ __pycache__/
 .Python
 env/
 inventree-env/
+.venv/
 ./build/
 .cache/
 develop-eggs/
@@ -18,7 +19,6 @@ share/
 downloads/
 eggs/
 .eggs/
-lib/
 lib64/
 parts/
 sdist/
@@ -31,6 +31,7 @@ var/
 # Django stuff:
 *.log
 local_settings.py
+*.sqlite
 *.sqlite3
 *.sqlite3-journal
 *.backup
@@ -45,17 +46,16 @@ inventree_media
 inventree_static
 static_i18n
 
-# Local config file
+# Local config files
 config.yaml
 plugins.txt
+secret_key.txt
+oidc.pem
 
 # Default data file
 data.json
 *.json.tmp
 *.tmp.json
-
-# Key file
-secret_key.txt
 
 # IDE / development files
 .idea/
@@ -80,12 +80,17 @@ js_tmp/
 
 # Development files
 dev/
+dev-db/
 data/
 env/
 
 # Locale stats file
 src/backend/InvenTree/InvenTree/locale_stats.json
 src/backend/InvenTree/InvenTree/licenses.txt
+
+# Logs
+src/backend/InvenTree/logs.json
+src/backend/InvenTree/logs.log
 
 # node.js
 node_modules/
@@ -106,9 +111,3 @@ api.yaml
 # web frontend (static files)
 src/backend/InvenTree/web/static
 InvenTree/web/static
-
-# Generated docs files
-docs/schema.yml
-docs/docs/api/*.yml
-docs/docs/api/schema/*.yml
-inventree_settings.json

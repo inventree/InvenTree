@@ -1,10 +1,24 @@
 {
+    "aliveStatusCodes": [
+        200,
+        201,
+        202,
+        204,
+        301,
+        302,
+        401,
+        403,
+        429
+    ],
     "ignorePatterns": [
         {
             "pattern": "http://inventree.localhost"
         },
         {
             "pattern": "http://localhost"
+        },
+        {
+            "pattern": "https://localhost:5173/"
         },
         {
             "pattern": "http://127.0.0.1"
@@ -14,6 +28,12 @@
         },
         {
             "pattern": "https://www.reddit.com/r/InvenTree/"
+        },
+        {
+            "pattern": "https://opensource.org/license/MIT"
+        },
+        {
+            "pattern": "^https://dev.azure.com"
         }
     ]
 }

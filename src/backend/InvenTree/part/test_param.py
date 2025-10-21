@@ -1,6 +1,7 @@
 """Various unit tests for Part Parameters."""
 
 import django.core.exceptions as django_exceptions
+from django.contrib.auth.models import User
 from django.test import TestCase, TransactionTestCase
 from django.urls import reverse
 
@@ -19,7 +20,7 @@ from .models import (
 class TestParams(TestCase):
     """Unit test class for testing the PartParameter model."""
 
-    fixtures = ['location', 'category', 'part', 'params']
+    fixtures = ['location', 'category', 'part', 'params', 'users']
 
     def test_str(self):
         """Test the str representation of the PartParameterTemplate model."""
@@ -31,6 +32,18 @@ class TestParams(TestCase):
 
         c1 = PartCategoryParameterTemplate.objects.get(pk=1)
         self.assertEqual(str(c1), 'Mechanical | Length | 2.8')
+
+    def test_updated(self):
+        """Test that the 'updated' field is correctly set."""
+        p1 = PartParameter.objects.get(pk=1)
+        self.assertIsNone(p1.updated)
+        self.assertIsNone(p1.updated_by)
+
+        user = User.objects.get(username='sam')
+        p1.save(updated_by=user)
+
+        self.assertIsNotNone(p1.updated)
+        self.assertEqual(p1.updated_by, user)
 
     def test_validate(self):
         """Test validation for part templates."""
@@ -351,6 +364,36 @@ class PartParameterTest(InvenTreeAPITestCase):
 
         self.assertEqual(len(response.data), 8)
 
+    def test_bulk_create_params(self):
+        """Test that we can bulk create parameters via the API."""
+        url = reverse('api-part-parameter-list')
+        part4 = Part.objects.get(pk=4)
+
+        data = [
+            {'part': 4, 'template': 1, 'data': 70},
+            {'part': 4, 'template': 2, 'data': 80},
+            {'part': 4, 'template': 1, 'data': 80},
+        ]
+
+        # test that having non unique part/template combinations fails
+        res = self.post(url, data, expected_code=400)
+        self.assertEqual(len(res.data), 3)
+        self.assertEqual(len(res.data[1]), 0)
+        for err in [res.data[0], res.data[2]]:
+            self.assertEqual(len(err), 2)
+            self.assertEqual(str(err['part'][0]), 'This field must be unique.')
+            self.assertEqual(str(err['template'][0]), 'This field must be unique.')
+        self.assertEqual(PartParameter.objects.filter(part=part4).count(), 0)
+
+        # Now, create a valid set of parameters
+        data = [
+            {'part': 4, 'template': 1, 'data': 70},
+            {'part': 4, 'template': 2, 'data': 80},
+        ]
+        res = self.post(url, data, expected_code=201)
+        self.assertEqual(len(res.data), 2)
+        self.assertEqual(PartParameter.objects.filter(part=part4).count(), 2)
+
     def test_param_detail(self):
         """Tests for the PartParameter detail endpoint."""
         url = reverse('api-part-parameter-detail', kwargs={'pk': 5})
@@ -419,7 +462,7 @@ class PartParameterTest(InvenTreeAPITestCase):
 
         response = self.get(
             url,
-            {'ordering': 'parameter_{pk}'.format(pk=template.pk), 'parameters': 'true'},
+            {'ordering': f'parameter_{template.pk}', 'parameters': 'true'},
             expected_code=200,
         )
 
@@ -436,10 +479,7 @@ class PartParameterTest(InvenTreeAPITestCase):
         # Next, check reverse ordering
         response = self.get(
             url,
-            {
-                'ordering': '-parameter_{pk}'.format(pk=template.pk),
-                'parameters': 'true',
-            },
+            {'ordering': f'-parameter_{template.pk}', 'parameters': 'true'},
             expected_code=200,
         )
 
@@ -448,3 +488,177 @@ class PartParameterTest(InvenTreeAPITestCase):
         for idx, expected in expectation.items():
             actual = get_param_value(response, template.pk, idx)
             self.assertEqual(actual, expected)
+
+
+class PartParameterFilterTest(InvenTreeAPITestCase):
+    """Unit tests for filtering parts by parameter values."""
+
+    superuser = True
+
+    @classmethod
+    def setUpTestData(cls):
+        """Setup test data for the filtering tests."""
+        super().setUpTestData()
+
+        cls.url = reverse('api-part-list')
+
+        # Create a number of part parameter templates
+        cls.template_length = PartParameterTemplate.objects.create(
+            name='Length', description='Length of the part', units='mm'
+        )
+
+        cls.template_width = PartParameterTemplate.objects.create(
+            name='Width', description='Width of the part', units='mm'
+        )
+
+        cls.template_ionized = PartParameterTemplate.objects.create(
+            name='Ionized', description='Is the part ionized?', checkbox=True
+        )
+
+        cls.template_color = PartParameterTemplate.objects.create(
+            name='Color', description='Color of the part', choices='red,green,blue'
+        )
+
+        cls.category = PartCategory.objects.create(
+            name='Test Category', description='A category for testing part parameters'
+        )
+
+        # Create a number of parts
+        parts = [
+            Part(
+                name=f'Part {i}',
+                description=f'Description for part {i}',
+                category=cls.category,
+                IPN=f'PART-{i:03d}',
+                level=0,
+                tree_id=0,
+                lft=0,
+                rght=0,
+            )
+            for i in range(1, 51)
+        ]
+
+        Part.objects.bulk_create(parts)
+
+        # Create parameters for each part
+        parameters = []
+
+        for ii, part in enumerate(Part.objects.all()):
+            parameters.append(
+                PartParameter(
+                    part=part,
+                    template=cls.template_length,
+                    data=(ii * 10) + 5,  # Length in mm
+                    data_numeric=(ii * 10) + 5,  # Numeric value for length
+                )
+            )
+
+            parameters.append(
+                PartParameter(
+                    part=part,
+                    template=cls.template_width,
+                    data=(50 - ii) * 5 + 2,  # Width in mm
+                    data_numeric=(50 - ii) * 5 + 2,  # Width in mm
+                )
+            )
+
+            if ii < 25:
+                parameters.append(
+                    PartParameter(
+                        part=part,
+                        template=cls.template_ionized,
+                        data='true'
+                        if ii % 5 == 0
+                        else 'false',  # Ionized every second part
+                        data_numeric=1
+                        if ii % 5 == 0
+                        else 0,  # Ionized every second part
+                    )
+                )
+
+            if ii < 15:
+                parameters.append(
+                    PartParameter(
+                        part=part,
+                        template=cls.template_color,
+                        data=['red', 'green', 'blue'][ii % 3],  # Cycle through colors
+                        data_numeric=None,  # No numeric value for color
+                    )
+                )
+
+        # Bulk create all parameters
+        PartParameter.objects.bulk_create(parameters)
+
+    def test_filter_by_length(self):
+        """Test basic filtering by length parameter."""
+        length_filters = [
+            ('_lt', '25', 2),
+            ('_lt', '25 mm', 2),
+            ('_gt', '1 inch', 47),
+            ('', '105', 1),
+            ('_lt', '2 mile', 50),
+        ]
+
+        for operator, value, expected_count in length_filters:
+            filter_name = f'parameter_{self.template_length.pk}' + operator
+            response = self.get(self.url, {filter_name: value}, expected_code=200).data
+
+            self.assertEqual(len(response), expected_count)
+
+    def test_filter_by_width(self):
+        """Test basic filtering by width parameter."""
+        width_filters = [
+            ('_lt', '102', 19),
+            ('_lte', '102 mm', 20),
+            ('_gte', '0.1 yards', 33),
+            ('', '52mm', 1),
+        ]
+
+        for operator, value, expected_count in width_filters:
+            filter_name = f'parameter_{self.template_width.pk}' + operator
+            response = self.get(self.url, {filter_name: value}, expected_code=200).data
+
+            self.assertEqual(len(response), expected_count)
+
+    def test_filter_by_ionized(self):
+        """Test filtering by ionized parameter."""
+        ionized_filters = [
+            ('', 'true', 5),  # Ionized parts
+            ('', 'false', 20),  # Non-ionized parts
+        ]
+
+        for operator, value, expected_count in ionized_filters:
+            filter_name = f'parameter_{self.template_ionized.pk}' + operator
+            response = self.get(self.url, {filter_name: value}, expected_code=200).data
+
+            self.assertEqual(len(response), expected_count)
+
+    def test_filter_by_color(self):
+        """Test filtering by color parameter."""
+        for color in ['red', 'green', 'blue']:
+            response = self.get(
+                self.url,
+                {f'parameter_{self.template_color.pk}': color},
+                expected_code=200,
+            ).data
+
+            self.assertEqual(len(response), 5)
+
+    def test_filter_multiple(self):
+        """Test filtering by multiple parameters."""
+        data = {f'parameter_{self.template_length.pk}_lt': '225'}
+        response = self.get(self.url, data)
+        self.assertEqual(len(response.data), 22)
+
+        data[f'parameter_{self.template_width.pk}_gt'] = '150'
+        response = self.get(self.url, data)
+        self.assertEqual(len(response.data), 21)
+
+        data[f'parameter_{self.template_ionized.pk}'] = 'true'
+        response = self.get(self.url, data)
+        self.assertEqual(len(response.data), 5)
+
+        for color in ['red', 'green', 'blue']:
+            data[f'parameter_{self.template_color.pk}'] = color
+            response = self.get(self.url, data)
+            self.assertEqual(len(response.data), 1)

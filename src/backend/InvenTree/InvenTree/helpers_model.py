@@ -1,8 +1,8 @@
 """Provides helper functions used throughout the InvenTree project that access the database."""
 
 import io
-import logging
 from decimal import Decimal
+from typing import Optional, cast
 from urllib.parse import urljoin
 
 from django.conf import settings
@@ -11,6 +11,8 @@ from django.db.utils import OperationalError, ProgrammingError
 from django.utils.translation import gettext_lazy as _
 
 import requests
+import requests.exceptions
+import structlog
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
 from PIL import Image
@@ -23,10 +25,10 @@ from common.notifications import (
 from common.settings import get_global_setting
 from InvenTree.format import format_money
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
-def get_base_url(request=None):
+def get_base_url(request=None) -> str:
     """Return the base URL for the InvenTree server.
 
     The base URL is determined in the following order of decreasing priority:
@@ -55,7 +57,7 @@ def get_base_url(request=None):
     # Check if a global InvenTree setting is provided
     try:
         if site_url := get_global_setting('INVENTREE_BASE_URL', create=False):
-            return site_url
+            return cast(str, site_url)
     except (ProgrammingError, OperationalError):
         pass
 
@@ -114,10 +116,7 @@ def download_image_from_url(remote_url, timeout=2.5):
     # Add user specified user-agent to request (if specified)
     user_agent = get_global_setting('INVENTREE_DOWNLOAD_FROM_URL_USER_AGENT')
 
-    if user_agent:
-        headers = {'User-Agent': user_agent}
-    else:
-        headers = None
+    headers = {'User-Agent': user_agent} if user_agent else None
 
     try:
         response = requests.get(
@@ -130,7 +129,7 @@ def download_image_from_url(remote_url, timeout=2.5):
         # Throw an error if anything goes wrong
         response.raise_for_status()
     except requests.exceptions.ConnectionError as exc:
-        raise Exception(_('Connection error') + f': {str(exc)}')
+        raise Exception(_('Connection error') + f': {exc!s}')
     except requests.exceptions.Timeout as exc:
         raise exc
     except requests.exceptions.HTTPError:
@@ -138,7 +137,7 @@ def download_image_from_url(remote_url, timeout=2.5):
             _('Server responded with invalid status code') + f': {response.status_code}'
         )
     except Exception as exc:
-        raise Exception(_('Exception occurred') + f': {str(exc)}')
+        raise Exception(_('Exception occurred') + f': {exc!s}')
 
     if response.status_code != 200:
         raise Exception(
@@ -182,12 +181,12 @@ def download_image_from_url(remote_url, timeout=2.5):
 
 
 def render_currency(
-    money,
-    decimal_places=None,
-    currency=None,
-    min_decimal_places=None,
-    max_decimal_places=None,
-    include_symbol=True,
+    money: Money,
+    decimal_places: Optional[int] = None,
+    currency: Optional[str] = None,
+    min_decimal_places: Optional[int] = None,
+    max_decimal_places: Optional[int] = None,
+    include_symbol: bool = True,
 ):
     """Render a currency / Money object to a formatted string (e.g. for reports).
 
@@ -213,29 +212,28 @@ def render_currency(
         except Exception:
             pass
 
-    if decimal_places is None:
-        decimal_places = get_global_setting('PRICING_DECIMAL_PLACES', 6)
-
-    if min_decimal_places is None:
+    if min_decimal_places is None or not isinstance(min_decimal_places, (int, float)):
         min_decimal_places = get_global_setting('PRICING_DECIMAL_PLACES_MIN', 0)
 
-    if max_decimal_places is None:
+    if max_decimal_places is None or not isinstance(max_decimal_places, (int, float)):
         max_decimal_places = get_global_setting('PRICING_DECIMAL_PLACES', 6)
 
     value = Decimal(str(money.amount)).normalize()
     value = str(value)
 
-    if '.' in value:
-        decimals = len(value.split('.')[-1])
-
-        decimals = max(decimals, min_decimal_places)
-        decimals = min(decimals, decimal_places)
-
-        decimal_places = decimals
+    if decimal_places is not None and isinstance(decimal_places, (int, float)):
+        # Decimal place count is provided, use it
+        pass
+    elif '.' in value:
+        # If the value has a decimal point, use the number of decimal places in the value
+        decimal_places = len(value.split('.')[-1])
     else:
-        decimal_places = max(decimal_places, 2)
+        # No decimal point, use 2 as a default
+        decimal_places = 2
 
-    decimal_places = max(decimal_places, max_decimal_places)
+    # Clip the decimal places to the specified range
+    decimal_places = max(decimal_places, min_decimal_places)
+    decimal_places = min(decimal_places, max_decimal_places)
 
     return format_money(
         money, decimal_places=decimal_places, include_symbol=include_symbol
@@ -268,6 +266,7 @@ def notify_responsible(
     sender,
     content: NotificationBody = InvenTreeNotificationBodies.NewOrder,
     exclude=None,
+    extra_users: Optional[list] = None,
 ):
     """Notify all responsible parties of a change in an instance.
 
@@ -279,15 +278,19 @@ def notify_responsible(
         sender: Sender model reference
         content (NotificationBody, optional): _description_. Defaults to InvenTreeNotificationBodies.NewOrder.
         exclude (User, optional): User instance that should be excluded. Defaults to None.
+        extra_users (list, optional): List of extra users to notify. Defaults to None.
     """
     import InvenTree.ready
 
     if InvenTree.ready.isImportingData() or InvenTree.ready.isRunningMigrations():
         return
 
-    notify_users(
-        [instance.responsible], instance, sender, content=content, exclude=exclude
-    )
+    users = [instance.responsible]
+
+    if extra_users:
+        users.extend(extra_users)
+
+    notify_users(users, instance, sender, content=content, exclude=exclude)
 
 
 def notify_users(
@@ -326,8 +329,9 @@ def notify_users(
         'template': {'subject': content.name.format(**content_context)},
     }
 
-    if content.template:
-        context['template']['html'] = content.template.format(**content_context)
+    tmp = content.template
+    if tmp:
+        context['template']['html'] = tmp.format(**content_context)
 
     # Create notification
     trigger_notification(

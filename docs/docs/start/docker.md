@@ -46,7 +46,7 @@ InvenTree run-time configuration options described in the [configuration documen
 
 As docker containers are ephemeral, any *persistent* data must be stored in an external [volume](https://docs.docker.com/storage/volumes/). To simplify installation / implementation, all external data are stored in a single volume, arranged as follows:
 
-#### Media FIles
+#### Media Files
 
 Uploaded media files are stored in the `media/` subdirectory of the external data volume.
 
@@ -64,7 +64,7 @@ By default, this file will be created as `config.yaml` in the external data volu
 
 InvenTree uses a secret key to provide cryptographic signing for the application.
 
-As specified in the [configuration documentation](./config.md#secret-key) this can be passed to the InvenTree application directly as an environment variable, or provided via a file.
+As specified in the [configuration documentation](./config.md#secret-key-material) this can be passed to the InvenTree application directly as an environment variable, or provided via a file.
 
 By default, the InvenTree container expects the secret key file to exist as `secret_key.txt` (within the external data volume). If this file does not exist, it will be created and a new key will be randomly generated.
 
@@ -73,7 +73,7 @@ By default, the InvenTree container expects the secret key file to exist as `sec
 
 #### Plugins
 
-Plugins are supported natively when running under docker. There are two ways to [install plugins](../extend/plugins/install.md) when using docker:
+Plugins are supported natively when running under docker. There are two ways to [install plugins](../plugins/install.md) when using docker:
 
 - Install via the `plugins.txt` file provided in the external data directory
 - Install into the `plugins/` subdirectory in the external data directory
@@ -87,7 +87,7 @@ Plugins are supported natively when running under docker. There are two ways to 
 The production docker compose configuration outlined on this page uses [Caddy](https://caddyserver.com/) to serve static files and media files. If you change this configuration, you will need to ensure that static and media files are served correctly.
 
 !!! info "Read More"
-    Refer to the [Serving Files](./serving_files.md) section for more details
+    Refer to the [proxy server documentation](./processes.md#proxy-server) for more details
 
 ### SSL Certificates
 
@@ -99,45 +99,11 @@ The example docker compose file launches the following containers:
 
 | Container | Description |
 | --- | --- |
-| inventree-db | PostgreSQL database |
-| inventree-server | Gunicorn web server |
-| inventree-worker | django-q background worker |
-| inventree-proxy | Caddy file server and reverse proxy |
-| *inventree-cache* | *redis cache (optional)* |
-
-#### PostgreSQL Database
-
-A PostgreSQL database container which requires a username:password combination (which can be changed). This uses the official [PostgreSQL image](https://hub.docker.com/_/postgres).
-
-#### Web Server
-
-Runs an InvenTree web server instance, powered by a Gunicorn web server.
-
-#### Background Worker
-
-Runs the InvenTree background worker process. This spins up a second instance of the *inventree* container, with a different entrypoint command.
-
-#### Proxy Server
-
-Caddy working as a reverse proxy, separating requests for static and media files, and directing everything else to Gunicorn.
-
-This container uses the official [caddy image](https://hub.docker.com/_/caddy).
-
-!!! info "Nginx Proxy"
-    An alternative is to run nginx as the reverse proxy. A sample configuration file is provided in the `./contrib/container/` source directory.
-
-#### Redis Cache
-
-Redis is used as cache storage for the InvenTree server. This provides a more performant caching system which can useful in larger installations.
-
-This container uses the official [redis image](https://hub.docker.com/_/redis).
-
-!!! info "Redis on Docker"
-    Docker adds an additional network layer - that might lead to lower performance than bare metal.
-    To optimize and configure your redis deployment follow the [official docker guide](https://redis.io/docs/getting-started/install-stack/docker/#configuration).
-
-!!! tip "Enable Cache"
-    While a redis container is provided in the default configuration, by default it is not enabled in the Inventree server. You can enable redis cache support by following the [caching configuration guide](./config.md#caching)
+| inventree-db | [PostgreSQL database](./processes.md#database) |
+| inventree-server | [InvenTree web server](./processes.md#web-server) |
+| inventree-worker | [django-q background worker](./processes.md#background-worker) |
+| inventree-proxy | [Caddy file server and reverse proxy](./processes.md#proxy-server) |
+| *inventree-cache* | [*redis cache (optional)*](./processes.md#cache-server) |
 
 ### Data Volume
 
@@ -145,6 +111,23 @@ InvenTree stores any persistent data (e.g. uploaded media files, database data, 
 
 !!! info "Data Directory"
     Make sure you change the path to the local directory where you want persistent data to be stored.
+
+### Database Connection
+
+The `inventree-db` container is configured to use the `postgres:{{ config.extra.docker_postgres_version }}` docker image.
+
+Connecting to a different database container is entirely possible, but requires modification of the `docker-compose.yml` file. This is outside the scope of this documentation.
+
+#### Postgres Version
+
+The `inventree-server` and `inventree-worker` containers support connection to a postgres database up to (and including) version {{ config.extra.docker_postgres_version }}.
+
+!!! warning "Newer Postgres Versions"
+    The InvenTree docker image supports connection to a postgres database up to version {{ config.extra.docker_postgres_version }}. Connecting to a database using a newer version of postgres is not guaranteed.
+
+#### Bypassing Backup Procedure
+
+If you are connecting the docker container to a postgresql database newer than version `{{ config.extra.docker_postgres_version }}`, the [backup and restore commands](../start/backup.md) will fail due to a version mismatch. To bypass this issue when performing the `invoke update` command, add the `--skip-backup` flag.
 
 ## Common Issues
 
@@ -158,3 +141,9 @@ When configuring a docker install, sometimes a misconfiguration can cause peculi
 If you have previously setup InvenTree, remove existing volume bindings using the following command:
 
 ```docker volume rm -f inventree-production_inventree_data```
+
+## Docker Compose Customization
+
+We provide a default `docker-compose.yml` file, which can be used to run InvenTree in production mode. This should be sufficient for most users.
+
+If you wish to customize the docker compose setup, you can do so by modifying the `docker-compose.yml` file. However, please note that we cannot provide support for custom docker compose configurations. If you choose to customize the setup, you are responsible for ensuring that it works correctly!

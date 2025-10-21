@@ -2,7 +2,6 @@ import { QueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 
 import { useLocalState } from './states/LocalState';
-import { useUserState } from './states/UserState';
 
 // Global API instance
 export const api = axios.create({});
@@ -11,22 +10,20 @@ export const api = axios.create({});
  * Setup default settings for the Axios API instance.
  */
 export function setApiDefaults() {
-  const host = useLocalState.getState().host;
-  const token = useUserState.getState().token;
+  const { getHost } = useLocalState.getState();
 
-  api.defaults.baseURL = host;
-  api.defaults.timeout = 2500;
+  api.defaults.baseURL = getHost();
+  api.defaults.timeout = 5000;
 
   api.defaults.withCredentials = true;
   api.defaults.withXSRFToken = true;
   api.defaults.xsrfCookieName = 'csrftoken';
   api.defaults.xsrfHeaderName = 'X-CSRFToken';
 
-  if (token) {
-    api.defaults.headers['Authorization'] = `Token ${token}`;
-  } else {
-    delete api.defaults.headers['Authorization'];
-  }
+  axios.defaults.withCredentials = true;
+  axios.defaults.withXSRFToken = true;
+  axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+  axios.defaults.xsrfCookieName = 'csrftoken';
 }
 
 export const queryClient = new QueryClient({

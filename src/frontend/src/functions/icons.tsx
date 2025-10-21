@@ -1,8 +1,9 @@
+import type { InvenTreeIconType, TablerIconType } from '@lib/types/Icons';
 import {
-  Icon,
-  Icon123,
+  IconArrowBack,
   IconArrowBigDownLineFilled,
   IconArrowMerge,
+  IconBell,
   IconBinaryTree2,
   IconBookmarks,
   IconBox,
@@ -12,8 +13,12 @@ import {
   IconBuildingStore,
   IconBusinessplan,
   IconCalendar,
+  IconCalendarCheck,
+  IconCalendarDot,
   IconCalendarStats,
   IconCalendarTime,
+  IconCalendarX,
+  IconCancel,
   IconCheck,
   IconCircleCheck,
   IconCircleMinus,
@@ -31,6 +36,8 @@ import {
   IconEdit,
   IconExclamationCircle,
   IconExternalLink,
+  IconFileArrowLeft,
+  IconFileDownload,
   IconFileUpload,
   IconFlag,
   IconFlagShare,
@@ -39,17 +46,23 @@ import {
   IconHandStop,
   IconHash,
   IconHierarchy,
+  IconHistory,
   IconInfoCircle,
   IconLayersLinked,
+  IconLayoutDashboard,
+  IconLicense,
   IconLink,
   IconList,
+  IconListDetails,
   IconListTree,
   IconLock,
   IconMail,
+  IconMap2,
   IconMapPin,
   IconMapPinHeart,
   IconMinusVertical,
   IconNotes,
+  IconNumber123,
   IconNumbers,
   IconPackage,
   IconPackageImport,
@@ -57,13 +70,17 @@ import {
   IconPaperclip,
   IconPhone,
   IconPhoto,
+  IconPlug,
   IconPoint,
   IconPrinter,
   IconProgressCheck,
-  IconProps,
+  type IconProps,
   IconQrcode,
   IconQuestionMark,
+  IconRefresh,
   IconRulerMeasure,
+  IconSearch,
+  IconSettings,
   IconShoppingCart,
   IconShoppingCartHeart,
   IconShoppingCartPlus,
@@ -72,6 +89,7 @@ import {
   IconStack2,
   IconStatusChange,
   IconTag,
+  IconTax,
   IconTestPipe,
   IconTool,
   IconTools,
@@ -83,6 +101,7 @@ import {
   IconTruckReturn,
   IconUnlink,
   IconUser,
+  IconUserBolt,
   IconUserStar,
   IconUsersGroup,
   IconVersions,
@@ -90,9 +109,9 @@ import {
   IconWorldCode,
   IconX
 } from '@tabler/icons-react';
-import React from 'react';
+import type React from 'react';
 
-const icons = {
+const icons: InvenTreeIconType = {
   name: IconPoint,
   description: IconInfoCircle,
   variant_of: IconHierarchy,
@@ -106,17 +125,19 @@ const icons = {
   ordering: IconShoppingCart,
   building: IconTool,
   category: IconBinaryTree2,
-  IPN: Icon123,
+  IPN: IconNumber123,
   revision: IconGitBranch,
   units: IconRulerMeasure,
   keywords: IconTag,
   status: IconInfoCircle,
+  status_custom_key: IconInfoCircle,
   edit: IconEdit,
   info: IconInfoCircle,
   exclamation: IconExclamationCircle,
   details: IconInfoCircle,
   parameters: IconList,
   list: IconList,
+  list_details: IconListDetails,
   stock: IconPackages,
   variants: IconVersions,
   allocations: IconBookmarks,
@@ -129,10 +150,11 @@ const icons = {
   suppliers: IconBuilding,
   customers: IconBuildingStore,
   purchase_orders: IconShoppingCart,
-  sales_orders: IconTruckDelivery,
   return_orders: IconTruckReturn,
-  shipment: IconTruckDelivery,
+  sales_orders: IconTruckDelivery,
   scheduling: IconCalendarStats,
+  scrap: IconCircleX,
+  shipment: IconTruckDelivery,
   test_templates: IconTestPipe,
   test: IconTestPipe,
   related_parts: IconLayersLinked,
@@ -141,19 +163,30 @@ const icons = {
   notes: IconNotes,
   photo: IconPhoto,
   upload: IconFileUpload,
+  download: IconFileDownload,
   reject: IconX,
+  refresh: IconRefresh,
   select_image: IconGridDots,
   delete: IconTrash,
+  return: IconArrowBack,
   packaging: IconPackage,
   packages: IconPackages,
   install: IconTransitionRight,
   plus: IconCirclePlus,
   minus: IconCircleMinus,
-  cancel: IconCircleX,
+  cancel: IconCancel,
   hold: IconHandStop,
   issue: IconBrandTelegram,
   complete: IconCircleCheck,
   deliver: IconTruckDelivery,
+  address: IconMap2,
+  import: IconFileArrowLeft,
+  bell: IconBell,
+  notification: IconBell,
+  admin: IconUserBolt,
+  system: IconSettings,
+  license: IconLicense,
+  tax_id: IconTax,
 
   // Part Icons
   active: IconCheck,
@@ -171,8 +204,15 @@ const icons = {
   locked: IconLock,
 
   calendar: IconCalendar,
+  calendar_target: IconCalendarDot,
+  calendar_cross: IconCalendarX,
+  calendar_check: IconCalendarCheck,
   external: IconExternalLink,
   creation_date: IconCalendarTime,
+  target_date: IconCalendarDot,
+  date: IconCalendar,
+  shipment_date: IconCalendarCheck,
+  complete_date: IconCalendarCheck,
   location: IconMapPin,
   default_location: IconMapPinHeart,
   category_default_location: IconMapPinHeart,
@@ -192,6 +232,7 @@ const icons = {
   arrow_down: IconArrowBigDownLineFilled,
   transfer: IconTransfer,
   actions: IconDots,
+  labels: IconTag,
   reports: IconPrinter,
   buy: IconShoppingCartPlus,
   add: IconCirclePlus,
@@ -217,19 +258,18 @@ const icons = {
   destination: IconFlag,
   repeat_destination: IconFlagShare,
   unlink: IconUnlink,
-  success: IconCircleCheck
+  success: IconCircleCheck,
+  plugin: IconPlug,
+  history: IconHistory,
+  dashboard: IconLayoutDashboard,
+  search: IconSearch
 };
-
-export type InvenTreeIconType = keyof typeof icons;
-export type TablerIconType = React.ForwardRefExoticComponent<
-  Omit<IconProps, 'ref'> & React.RefAttributes<Icon>
->;
 
 /**
  * Returns a Tabler Icon for the model field name supplied
  * @param field string defining field name
  */
-export function GetIcon(field: InvenTreeIconType) {
+export function GetIcon(field: string | number): TablerIconType {
   return icons[field];
 }
 
@@ -237,7 +277,7 @@ export function GetIcon(field: InvenTreeIconType) {
 type TablerIconProps = IconProps;
 
 type InvenTreeIconProps = {
-  icon: InvenTreeIconType;
+  icon: string | keyof InvenTreeIconType;
   iconProps?: TablerIconProps;
 };
 
@@ -254,7 +294,4 @@ export function InvenTreeIcon(props: Readonly<InvenTreeIconProps>) {
   }
 
   return <Icon {...props.iconProps} />;
-}
-function IconShapes(props: TablerIconProps): Element {
-  throw new Error('Function not implemented.');
 }

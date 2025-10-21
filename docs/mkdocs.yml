@@ -58,6 +58,7 @@ extra_css:
   - stylesheets/splide.min.css
   - stylesheets/extra.css
   - stylesheets/neoteroi-mkdocs.css
+  - https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css
 extra_javascript:
   - javascripts/extra.js
   - javascripts/fontawesome.js
@@ -72,38 +73,80 @@ extra_javascript:
 nav:
   - InvenTree:
     - InvenTree: index.md
-    - Features: features.md
     - FAQ: faq.md
+    - Demo: demo.md
+    - Release Notes: releases/release_notes.md
     - Core Concepts:
       - Terminology: concepts/terminology.md
+      - Threat Model: concepts/threat_model.md
       - Physical Units: concepts/units.md
+      - Companies: concepts/company.md
       - Custom States: concepts/custom_states.md
+      - Pricing: concepts/pricing.md
+      - Project Codes: concepts/project_codes.md
+      - Barcodes:
+        - Barcode Support: barcodes/index.md
+        - Internal Barcodes: barcodes/internal.md
+        - External Barcodes: barcodes/external.md
+        - Custom Barcodes: barcodes/custom.md
     - Development:
       - Contributing: develop/contributing.md
+      - Architecture: develop/architecture.md
+      - Roadmap: develop/roadmap.md
       - Devcontainer: develop/devcontainer.md
       - React Frontend: develop/react-frontend.md
-    - Credits: credits.md
-    - Privacy: privacy.md
-    - Release Notes: releases/release_notes.md
-    - Security: security.md
-  - Install:
-    - Introduction: start/intro.md
+    - Mobile App:
+      - Mobile App: app/index.md
+      - Connect: app/connect.md
+      - Navigation: app/navigation.md
+      - Search: app/search.md
+      - Barcodes: app/barcode.md
+      - Parts: app/part.md
+      - Stock: app/stock.md
+      - Purchase Orders: app/po.md
+      - Sales Orders: app/so.md
+      - Settings: app/settings.md
+      - Privacy: app/privacy.md
+      - Translation: app/translation.md
+      - Suggestions: app/issues.md
+    - InvenTree API:
+      - Overview: api/index.md
+      - API Schema: api/schema.md
+      - Model Metadata: api/metadata.md
+      - Download Data: api/download.md
+      - Bulk Delete: api/bulk_delete.md
+      - Interactive API: api/browse.md
+    - Python Interface:
+      - Overview: api/python/index.md
+      - Currency Support: api/python/currency.md
+      - Examples: api/python/examples.md
+    - Project Details:
+      - Governance: project/governance.md
+      - Project Security: security.md
+      - Resources: project/resources.md
+      - Privacy: privacy.md
+  - Setup:
+    - Introduction: start/index.md
+    - Processes: start/processes.md
     - Configuration: start/config.md
     - Docker:
         - Introduction: start/docker.md
         - Installation: start/docker_install.md
+    - Installer:
+        - Installer: start/installer.md
     - Bare Metal:
         - Introduction: start/install.md
-        - Installer: start/installer.md
         - Production: start/bare_prod.md
         - Development: start/bare_dev.md
-    - Serving Files: start/serving_files.md
+    - User Accounts: start/accounts.md
     - Data Backup: start/backup.md
+    - Invoke: start/invoke.md
     - Migrating Data: start/migrate.md
     - Advanced Topics: start/advanced.md
   - Parts:
-    - Parts: part/part.md
+    - Parts: part/index.md
     - Creating Parts: part/create.md
+    - Virtual Parts: part/virtual.md
     - Part Views: part/views.md
     - Tracking: part/trackable.md
     - Parameters: part/parameter.md
@@ -111,33 +154,36 @@ nav:
     - Templates: part/template.md
     - Tests: part/test.md
     - Pricing: part/pricing.md
-    - Scheduling: part/scheduling.md
     - Stocktake: part/stocktake.md
     - Notifications: part/notification.md
   - Stock:
-    - Stock Items: stock/stock.md
+    - Stock Items: stock/index.md
     - Stock Status: stock/status.md
     - Stock Tracking: stock/tracking.md
     - Adjusting Stock: stock/adjust.md
     - Stock Expiry: stock/expiry.md
     - Stock Ownership: stock/owner.md
     - Test Results: stock/test.md
-  - Build:
-    - Build Orders: build/build.md
-    - Build Outputs: build/output.md
-    - Allocating Stock: build/allocate.md
-    - Example Build Order: build/example.md
-    - Bill of Materials: build/bom.md
-    - Importing BOM Data: build/bom_import.md
-    - Exporting BOM Data: build/bom_export.md
-  - Orders:
-    - Companies: order/company.md
-    - Purchase Orders: order/purchase_order.md
-    - Sales Orders: order/sales_order.md
-    - Return Orders: order/return_order.md
-    - Project Codes: order/project_codes.md
+  - Manufacturing:
+    - Manufacturing: manufacturing/index.md
+    - Bill of Materials: manufacturing/bom.md
+    - Build Orders: manufacturing/build.md
+    - Build Outputs: manufacturing/output.md
+    - Allocating Stock: manufacturing/allocate.md
+    - External Manufacturing: manufacturing/external.md
+    - Example Build Order: manufacturing/example.md
+  - Purchasing:
+    - Purchasing: purchasing/index.md
+    - Suppliers: purchasing/supplier.md
+    - Manufacturers: purchasing/manufacturer.md
+    - Purchase Orders: purchasing/purchase_order.md
+  - Sales:
+    - Sales: sales/index.md
+    - Customers: sales/customer.md
+    - Sales Orders: sales/sales_order.md
+    - Return Orders: sales/return_order.md
   - Report:
-    - Templates: report/templates.md
+    - Templates: report/index.md
     - Template Rendering: report/weasyprint.md
     - Template Editor: report/template_editor.md
     - Reports: report/report.md
@@ -146,79 +192,86 @@ nav:
     - Helper Functions: report/helpers.md
     - Barcodes: report/barcodes.md
     - Sample Templates: report/samples.md
-  - Admin:
+  - Administration:
     - Global Settings: settings/global.md
     - User Settings: settings/user.md
     - Reference Patterns: settings/reference.md
     - Admin Interface: settings/admin.md
-    - User Permissions: settings/permissions.md
-    - Single Sign on: settings/SSO.md
-    - Multi Factor Authentication: settings/MFA.md
+    - Setup:
+      - User Permissions: settings/permissions.md
+      - Single Sign on: settings/SSO.md
+      - Multi Factor Authentication: settings/MFA.md
+      - Email: settings/email.md
+      - Experimental Features: settings/experimental.md
     - Export Data: settings/export.md
     - Import Data: settings/import.md
-    - Error Logs: settings/logs.md
-    - Email: settings/email.md
-    - Background Tasks: settings/tasks.md
-    - Currency Support: settings/currency.md
-  - App:
-    - InvenTree App: app/app.md
-    - Connect: app/connect.md
-    - Navigation: app/navigation.md
-    - Search: app/search.md
-    - Barcodes: app/barcode.md
-    - Parts: app/part.md
-    - Stock: app/stock.md
-    - Purchase Orders: app/po.md
-    - Sales Orders: app/so.md
-    - Settings: app/settings.md
-    - Privacy: app/privacy.md
-    - Translation: app/translation.md
-    - Suggestions: app/issues.md
-  - Extend:
-    - InvenTree API:
-      - Overview: api/api.md
-      - API Schema: api/schema.md
-      - Model Metadata: api/metadata.md
-      - Download Data: api/download.md
-      - Bulk Delete: api/bulk_delete.md
-      - Interactive API: api/browse.md
-    - Python Interface:
-      - Overview: api/python/python.md
-      - Currency Support: api/python/currency.md
-      - Examples: api/python/examples.md
-    - Barcodes:
-      - Overview: barcodes/barcodes.md
-      - Internal Barcodes: barcodes/internal.md
-      - External Barcodes: barcodes/external.md
-      - Custom Barcodes: barcodes/custom.md
-    - Plugins:
-      - Overview: extend/plugins.md
-      - Installation: extend/plugins/install.md
-      - Developing a Plugin: extend/how_to_plugin.md
-      - Model Metadata: extend/plugins/metadata.md
-      - Tags: extend/plugins/tags.md
+    - Operations:
+      - Background Tasks: settings/tasks.md
+      - Error Logs: settings/logs.md
+      - Error Codes: settings/error_codes.md
+  - Plugins:
+    - Overview: plugins/index.md
+    - Installation: plugins/install.md
+    - Developing a Plugin: plugins/develop.md
+    - Frontend Integration: plugins/frontend.md
+    - Plugin Creator: plugins/creator.md
+    - Plugin Walkthrough: plugins/walkthrough.md
+    - Model Metadata: plugins/metadata.md
+    - Tags: plugins/tags.md
+    - Unit Test: plugins/test.md
     - Plugin Mixins:
-      - Action Mixin: extend/plugins/action.md
-      - API Mixin: extend/plugins/api.md
-      - App Mixin: extend/plugins/app.md
-      - Barcode Mixin: extend/plugins/barcode.md
-      - Currency Mixin: extend/plugins/currency.md
-      - Event Mixin: extend/plugins/event.md
-      - Icon Pack Mixin: extend/plugins/icon.md
-      - Label Printing Mixin: extend/plugins/label.md
-      - Locate Mixin: extend/plugins/locate.md
-      - Navigation Mixin: extend/plugins/navigation.md
-      - Panel Mixin: extend/plugins/panel.md
-      - Report Mixin: extend/plugins/report.md
-      - Schedule Mixin: extend/plugins/schedule.md
-      - Settings Mixin: extend/plugins/settings.md
-      - URL Mixin: extend/plugins/urls.md
-      - Validation Mixin: extend/plugins/validation.md
+      - Action Mixin: plugins/mixins/action.md
+      - API Mixin: plugins/mixins/api.md
+      - App Mixin: plugins/mixins/app.md
+      - Barcode Mixin: plugins/mixins/barcode.md
+      - Currency Mixin: plugins/mixins/currency.md
+      - Event Mixin: plugins/mixins/event.md
+      - Data Export Mixin: plugins/mixins/export.md
+      - Icon Pack Mixin: plugins/mixins/icon.md
+      - Label Printing Mixin: plugins/mixins/label.md
+      - Locate Mixin: plugins/mixins/locate.md
+      - Machine Mixin: plugins/mixins/machine.md
+      - Mail Mixin: plugins/mixins/mail.md
+      - Navigation Mixin: plugins/mixins/navigation.md
+      - Notification Mixin: plugins/mixins/notification.md
+      - Report Mixin: plugins/mixins/report.md
+      - Schedule Mixin: plugins/mixins/schedule.md
+      - Settings Mixin: plugins/mixins/settings.md
+      - Supplier Mixin: plugins/mixins/supplier.md
+      - Transition Mixin: plugins/mixins/transition.md
+      - URL Mixin: plugins/mixins/urls.md
+      - User Interface Mixin: plugins/mixins/ui.md
+      - Validation Mixin: plugins/mixins/validation.md
     - Machines:
-      - Overview: extend/machines/overview.md
-      - Label Printer: extend/machines/label_printer.md
-    - Themes: extend/themes.md
-    - Third-Party: extend/integrate.md
+      - Overview: plugins/machines/overview.md
+      - Label Printer: plugins/machines/label_printer.md
+    - Builtin Plugins:
+      - Builtin Plugins: plugins/builtin/index.md
+      - Barcode Plugins:
+        - Barcode Plugins: plugins/builtin/barcode_index.md
+        - InvenTree Barcode: plugins/builtin/inventree_barcode.md
+        - DigiKey Barcode Plugin: plugins/builtin/barcode_digikey.md
+        - LCSC Barcode Plugin: plugins/builtin/barcode_lcsc.md
+        - Mouser Barcode Plugin: plugins/builtin/barcode_mouser.md
+        - TME Barcode Plugin: plugins/builtin/barcode_tme.md
+      - Event Plugins:
+        - Auto Create Builds: plugins/builtin/auto_create_builds.md
+        - Auto Issue: plugins/builtin/auto_issue.md
+        - Part Update Notification: plugins/builtin/part_notifications.md
+      - Export Plugins:
+        - BOM Exporter: plugins/builtin/bom_exporter.md
+        - InvenTree Exporter: plugins/builtin/inventree_exporter.md
+        - Parameter Exporter: plugins/builtin/part_parameter_exporter.md
+        - Stocktake Exporter: plugins/builtin/stocktake_exporter.md
+      - Label Printing:
+        - Label Printer: plugins/builtin/inventree_label.md
+        - Label Machine: plugins/builtin/inventree_label_machine.md
+        - Label Sheet: plugins/builtin/inventree_label_sheet.md
+      - Notification Plugins:
+        - Email Notifications: plugins/builtin/email_notification.md
+        - Slack Notifications: plugins/builtin/slack_notification.md
+        - UI Notifications: plugins/builtin/ui_notification.md
+      - Currency Exchange: plugins/builtin/currency_exchange.md
 
 # Plugins
 plugins:
@@ -228,10 +281,14 @@ plugins:
       opening_tag: "{!"
       closing_tag: "!}"
   - search
+  - mermaid2:
+      # version: 11.6.0
+      javascript: javascripts/mermaid.min.js
   - git-revision-date-localized
   - mkdocs-simple-hooks:
       hooks:
         on_config: "docs.docs.hooks:on_config"
+        on_post_build: "docs.docs.hooks:on_post_build"
   - macros:
       include_dir: docs/_includes
       module_name: main
@@ -246,6 +303,26 @@ plugins:
             show_symbol_type_toc: true
             show_root_heading: false
             show_root_toc_entry: false
+  - redirects:
+      redirect_maps:
+        'sref/faq.md': 'faq.md' #  https://docs.inventree.org/en/latest/faq/
+        'sref/contrib.md': 'develop/contributing.md'  #  https://github.com/inventree/InvenTree/blob/master/CONTRIBUTING.md.
+        'sref/docs.md': 'index.md' #   https://docs.inventree.org/en/latest/
+        'sref/api.md': 'api/index.md' #  https://demo.inventree.org/api-doc/
+        'sref/architecture.md': 'develop/architecture.md'
+        'sref/roadmap.md': 'develop/roadmap.md'
+        'sref/code.md': 'https://github.com/inventree/InvenTree/tree/master' #  https://github.com/inventree/InvenTree/tree/master
+        'sref/oci-image.md': 'https://hub.docker.com/r/inventree/inventree/tags' #  https://hub.docker.com/r/inventree/inventree/tags
+        'sref/releases.md': 'https://github.com/inventree/InvenTree/releases' # https://github.com/inventree/InvenTree/releases
+        'sref/issues.md': 'https://github.com/inventree/InvenTree/issues' # https://github.com/inventree/InvenTree/issues
+        'sref/security-policy.md': 'https://github.com/inventree/InvenTree/security/policy' # https://github.com/inventree/InvenTree/security/policy
+        'sref/security-history.md': 'https://huntr.dev/repos/inventree/inventree/' # https://huntr.dev/repos/inventree/inventree/
+        'sref/ci.md': 'https://github.com/inventree/InvenTree/actions' # https://github.com/inventree/InvenTree/actions
+        'sref/ci-sample.md': 'https://github.com/inventree/InvenTree/blob/master/.github/workflows/qc_checks.yaml' # https://github.com/inventree/InvenTree/blob/master/.github/workflows/qc_checks.yaml
+        'sref/ci-pre.md': 'https://github.com/inventree/InvenTree/blob/master/.pre-commit-config.yaml' # https://github.com/inventree/InvenTree/blob/master/.pre-commit-config.yaml
+        'sref/test-sample.md': 'https://github.com/inventree/InvenTree/blob/master/src/backend/InvenTree/InvenTree/tests.py' # https://github.com/inventree/InvenTree/blob/master/src/backend/InvenTree/InvenTree/tests.py
+        'sref/coverage.md': 'https://coveralls.io/github/inventree/InvenTree' # https://coveralls.io/github/inventree/InvenTree
+        'sref/error-codes.md': 'settings/error_codes.md'
 
 # Extensions
 markdown_extensions:
@@ -260,7 +337,7 @@ markdown_extensions:
       custom_fences:
         - name: mermaid
           class: mermaid
-          # format: !!python/name:pymdownx.superfences.fence_code_format
+          format: !!python/name:mermaid2.fence_mermaid_custom
   # - pymdownx.emoji:
   #     emoji_index: !!python/name:materialx.emoji.twemoji
   #     emoji_generator: !!python/name:materialx.emoji.to_svg
@@ -281,6 +358,7 @@ extra:
   min_python_version: 3.9
   min_invoke_version: 2.0.0
   django_version: 4.2
+  docker_postgres_version: 16
 
   version:
     default: stable

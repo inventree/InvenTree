@@ -10,8 +10,8 @@ import { IconMenu2 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { identifierString } from '../../functions/conversion';
-import { navigateToLink } from '../../functions/navigation';
+import { identifierString } from '@lib/functions/Conversion';
+import { getBaseUrl, navigateToLink } from '@lib/functions/Navigation';
 
 export type Breadcrumb = {
   icon?: React.ReactNode;
@@ -25,11 +25,13 @@ export type Breadcrumb = {
 export function BreadcrumbList({
   breadcrumbs,
   navCallback
-}: {
+}: Readonly<{
   breadcrumbs: Breadcrumb[];
   navCallback?: () => void;
-}) {
+}>) {
   const navigate = useNavigate();
+
+  const baseUrl = useMemo(() => getBaseUrl(), []);
 
   const elements = useMemo(() => {
     // Limit to 7 active elements
@@ -45,23 +47,24 @@ export function BreadcrumbList({
   }, [breadcrumbs]);
 
   return (
-    <Paper p="7" radius="xs" shadow="xs">
-      <Group gap="xs">
+    <Paper p='7' radius='xs' shadow='xs'>
+      <Group gap='xs'>
         {navCallback && (
           <ActionIcon
-            key="nav-breadcrumb-action"
-            aria-label="nav-breadcrumb-action"
+            key='nav-breadcrumb-action'
+            aria-label='nav-breadcrumb-action'
             onClick={navCallback}
-            variant="transparent"
+            variant='transparent'
           >
             <IconMenu2 />
           </ActionIcon>
         )}
-        <Breadcrumbs key="breadcrumbs" separator=">">
+        <Breadcrumbs key='breadcrumbs' separator='>'>
           {elements.map((breadcrumb, index) => {
             return (
               <Anchor
-                key={index}
+                key={`${index}-${breadcrumb.name}`}
+                href={`/${baseUrl}${breadcrumb.url}`}
                 aria-label={`breadcrumb-${index}-${identifierString(
                   breadcrumb.name
                 )}`}
@@ -72,7 +75,7 @@ export function BreadcrumbList({
               >
                 <Group gap={4}>
                   {breadcrumb.icon}
-                  <Text size="sm">{breadcrumb.name}</Text>
+                  <Text size='sm'>{breadcrumb.name}</Text>
                 </Group>
               </Anchor>
             );

@@ -1,13 +1,14 @@
 """part app specification."""
 
-import logging
-
 from django.apps import AppConfig
 from django.db.utils import OperationalError, ProgrammingError
 
-import InvenTree.ready
+import structlog
 
-logger = logging.getLogger('inventree')
+import InvenTree.ready
+from InvenTree.apps import InvenTreeConfig
+
+logger = structlog.get_logger('inventree')
 
 
 class PartConfig(AppConfig):
@@ -28,6 +29,9 @@ class PartConfig(AppConfig):
             return
 
         if InvenTree.ready.canAppAccessDatabase():
+            # Ensure there are no open migrations
+            InvenTreeConfig.ensure_migrations_done()
+
             self.update_trackable_status()
             self.reset_part_pricing_flags()
 

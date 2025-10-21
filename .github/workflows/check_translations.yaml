@@ -22,7 +22,8 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       INVENTREE_DB_NAME: "./test_db.sqlite"
       INVENTREE_DB_ENGINE: django.db.backends.sqlite3
-      INVENTREE_DEBUG: info
+      INVENTREE_DEBUG: true
+      INVENTREE_LOG_LEVEL: INFO
       INVENTREE_MEDIA_ROOT: ./media
       INVENTREE_STATIC_ROOT: ./static
       INVENTREE_BACKUP_DIR: ./backup
@@ -30,13 +31,19 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v4.1.7
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # pin@v5.0.0
+        with:
+          persist-credentials: false
+
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
           install: true
           apt-dependency: gettext
       - name: Test Translations
-        run: invoke translate
+        run: invoke dev.translate
+      - name: Check for Duplicates
+        run: |
+          python ./.github/scripts/check_source_strings.py --frontend --backend
       - name: Check Migration Files
         run: python3 .github/scripts/check_migration_files.py

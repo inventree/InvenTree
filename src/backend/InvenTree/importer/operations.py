@@ -1,9 +1,12 @@
 """Data import operational functions."""
 
+from typing import Optional
+
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
 import tablib
+import tablib.core
 
 import InvenTree.helpers
 
@@ -36,7 +39,7 @@ def load_data_file(data_file, file_format=None):
 
     try:
         data = file_object.read()
-    except (IOError, FileNotFoundError):
+    except OSError:
         raise ValidationError(_('Failed to open data file'))
 
     # Excel formats expect binary data
@@ -73,6 +76,7 @@ def extract_column_names(data_file) -> list:
 
     for idx, header in enumerate(data.headers):
         if header:
+            header = str(header).strip()
             headers.append(header)
         else:
             # If the header is empty, generate a default header
@@ -81,24 +85,7 @@ def extract_column_names(data_file) -> list:
     return headers
 
 
-def extract_rows(data_file) -> list:
-    """Extract rows from the data file.
-
-    Each returned row is a dictionary of column_name: value pairs.
-    """
-    data = load_data_file(data_file)
-
-    headers = data.headers
-
-    rows = []
-
-    for row in data:
-        rows.append(dict(zip(headers, row)))
-
-    return rows
-
-
-def get_field_label(field) -> str:
+def get_field_label(field) -> Optional[str]:
     """Return the label for a field in a serializer class.
 
     Check for labels in the following order of descending priority:
@@ -113,9 +100,8 @@ def get_field_label(field) -> str:
     Returns:
         str: Field label
     """
-    if field:
-        if label := getattr(field, 'label', None):
-            return label
+    if field and (label := getattr(field, 'label', None)):
+        return label
 
     # TODO: Check if the field is a model field
 

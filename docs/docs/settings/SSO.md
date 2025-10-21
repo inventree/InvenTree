@@ -36,9 +36,7 @@ There are two variables in the configuration file which define the operation of 
 
 In the example below, SSO provider modules are activated for *google*, *github* and *microsoft*. Specific configuration options are specified for the *microsoft* provider module:
 
-{% with id="SSO", url="settings/sso_config.png", description="SSO Config" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("settings/sso_config.png", "SSO Config") }}
 
 !!! info "Provider Module Format"
     Note that the provider modules specified in `social_backends` must be prefixed with `allauth.socialaccounts.providers`
@@ -69,17 +67,13 @@ Once your external SSO app has been created, you need to create a new *SocialAcc
 
 In the admin interface, select *Add Social Application*
 
-{% with id="social-add", url="settings/social_account_add.png", description="Add Social Application" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("settings/social_account_add.png", "Add Social Application") }}
 
 #### Configure Social Application
 
 Configure the social application entry with the app details:
 
-{% with id="social-configure", url="settings/social_application_configure.png", description="Configure Social Application" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("settings/social_application_configure.png", "Configure Social Application") }}
 
 - Select the *provider* type as required
 - Provide a *name* for the application (note that this should match the *name* used for any custom settings provided in the configuration file)
@@ -117,16 +111,12 @@ Now that the social application is created, you need to enable SSO authenticatio
 
 In the [settings screen](./global.md), navigate to the *Login Settings* panel. Here you will see the required configuration options to enable SSO:
 
-{% with id="sso-settings", url="settings/sso_settings.png", description="SSO Settings" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("settings/sso_settings.png", "SSO Settings") }}
 
-| Setting | Description |
-| --- | --- |
-| Enable SSO | Enable this option to allow single sign on for user login |
-| Enable SSO registration | Allow users to self-register with SSO |
-| Auto-fill SSO users | Automatically fill out user account data with information provided by external SSO app |
-| Allowed domains | Optionally restrict signup to certain domains |
+| Name | Description | Default | Units |
+| ---- | ----------- | ------- | ----- |
+{{ globalsetting("LOGIN_ENABLE_SSO") }}
+{{ globalsetting("LOGIN_SIGNUP_SSO_AUTO") }}
 
 ### Configure Email
 
@@ -136,12 +126,12 @@ Note that [email settings](./email.md) must be correctly configured before SSO w
 
 InvenTree has the ability to synchronize groups assigned to each user directly from the IdP. To enable this feature, navigate to the *Login Settings* panel in the [settings screen](./global.md) first. Here, the following options are available:
 
-| Setting | Description |
-| --- | --- |
-| Enable SSO group sync | Enable synchronizing InvenTree groups with groups provided by the IdP |
-| SSO group key | The name of the claim containing all groups, e.g. `groups` or `roles` |
-| SSO group map | A mapping from SSO groups to InvenTree groups as JSON, e.g. `{"/inventree/admins": "admin"}`. If the mapped group does not exist once a user signs up, a new group without assigned permissions will be created. |
-| Remove groups outside of SSO | Whether groups should be removed from the user if they are not present in the IdP data |
+| Name | Description | Default | Units |
+| ---- | ----------- | ------- | ----- |
+{{ globalsetting("LOGIN_ENABLE_SSO_GROUP_SYNC") }}
+{{ globalsetting("SSO_GROUP_KEY") }}
+{{ globalsetting("SSO_GROUP_MAP") }}
+{{ globalsetting("SSO_REMOVE_GROUPS") }}
 
 !!! warning "Remove groups outside of SSO"
     Disabling this feature might cause security issues as groups that are removed in the IdP will stay assigned in InvenTree

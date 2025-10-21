@@ -1,19 +1,23 @@
 """Custom metadata for DRF."""
 
-import logging
+from django.core.exceptions import PermissionDenied
+from django.http import Http404
+from django.urls import reverse
 
-from rest_framework import serializers
+import structlog
+from rest_framework import exceptions, serializers
 from rest_framework.fields import empty
 from rest_framework.metadata import SimpleMetadata
+from rest_framework.request import clone_request
 from rest_framework.utils import model_meta
 
 import common.models
 import InvenTree.permissions
-import users.models
 from InvenTree.helpers import str2bool
 from InvenTree.serializers import DependentField
+from users.permissions import check_user_permission
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class InvenTreeMetadata(SimpleMetadata):
@@ -28,6 +32,44 @@ class InvenTreeMetadata(SimpleMetadata):
     Additionally, we include some extra information about database models,
     so we can perform lookup for ForeignKey related fields.
     """
+
+    def determine_actions(self, request, view):
+        """Determine the 'actions' available to the user for the given view.
+
+        Note that this differs from the standard DRF implementation,
+        in that we also allow annotation for the 'GET' method.
+
+        This allows the client to determine what fields are available,
+        even if they are only for a read (GET) operation.
+
+        See SimpleMetadata.determine_actions for more information.
+        """
+        from InvenTree.api import BulkUpdateMixin
+
+        actions = {}
+
+        for method in {'PUT', 'POST', 'GET'} & set(view.allowed_methods):
+            view.request = clone_request(request, method)
+            try:
+                # Test global permissions
+                if hasattr(view, 'check_permissions'):
+                    view.check_permissions(view.request)
+                # Test object permissions
+                if method == 'PUT' and hasattr(view, 'get_object'):
+                    if not issubclass(view.__class__, BulkUpdateMixin):
+                        # Bypass the get_object method for the BulkUpdateMixin
+                        view.get_object()
+            except (exceptions.APIException, PermissionDenied, Http404):
+                pass
+            else:
+                # If user has appropriate permissions for the view, include
+                # appropriate metadata about the fields that should be supplied.
+                serializer = view.get_serializer()
+                actions[method] = self.get_serializer_info(serializer)
+            finally:
+                view.request = request
+
+        return actions
 
     def determine_metadata(self, request, view):
         """Overwrite the metadata to adapt to the request user."""
@@ -65,27 +107,16 @@ class InvenTreeMetadata(SimpleMetadata):
             self.model = InvenTree.permissions.get_model_for_view(view)
 
             # Construct the 'table name' from the model
-            app_label = self.model._meta.app_label
             tbl_label = self.model._meta.model_name
-
             metadata['model'] = tbl_label
-
-            table = f'{app_label}_{tbl_label}'
 
             actions = metadata.get('actions', None)
 
             if actions is None:
                 actions = {}
 
-            check = users.models.RuleSet.check_table_permission
-
             # Map the request method to a permission type
-            rolemap = {
-                'POST': 'add',
-                'PUT': 'change',
-                'PATCH': 'change',
-                'DELETE': 'delete',
-            }
+            rolemap = {**InvenTree.permissions.ACTION_MAP, 'OPTIONS': 'view'}
 
             # let the view define a custom rolemap
             if hasattr(view, 'rolemap'):
@@ -93,18 +124,16 @@ class InvenTreeMetadata(SimpleMetadata):
 
             # Remove any HTTP methods that the user does not have permission for
             for method, permission in rolemap.items():
-                result = check(user, table, permission)
+                result = check_user_permission(user, self.model, permission)
 
                 if method in actions and not result:
                     del actions[method]
 
             # Add a 'DELETE' action if we are allowed to delete
-            if 'DELETE' in view.allowed_methods and check(user, table, 'delete'):
+            if 'DELETE' in view.allowed_methods and check_user_permission(
+                user, self.model, 'delete'
+            ):
                 actions['DELETE'] = {}
-
-            # Add a 'VIEW' action if we are allowed to view
-            if 'GET' in view.allowed_methods and check(user, table, 'view'):
-                actions['GET'] = {}
 
             metadata['actions'] = actions
 
@@ -131,11 +160,11 @@ class InvenTreeMetadata(SimpleMetadata):
         - model_value is callable, and field_value is not (this indicates that the model value is translated)
         - model_value is not a string, and field_value is a string (this indicates that the model value is translated)
 
-        Arguments:
-            - field_name: The name of the field
-            - field_key: The property key to override
-            - field_value: The value of the field (if available)
-            - model_value: The equivalent value of the model (if available)
+        Args:
+            field_name (str): The name of the field.
+            field_key (str): The property key to override.
+            field_value: The value of the field (if available).
+            model_value: The equivalent value of the model (if available).
         """
         if field_value is None and model_value is not None:
             return model_value
@@ -204,7 +233,7 @@ class InvenTreeMetadata(SimpleMetadata):
 
             # Iterate through simple fields
             for name, field in model_fields.fields.items():
-                if name in serializer_info.keys():
+                if name in serializer_info:
                     if name in read_only_fields:
                         serializer_info[name]['read_only'] = True
 
@@ -236,7 +265,7 @@ class InvenTreeMetadata(SimpleMetadata):
 
             # Iterate through relations
             for name, relation in model_fields.relations.items():
-                if name not in serializer_info.keys():
+                if name not in serializer_info:
                     # Skip relation not defined in serializer
                     continue
 
@@ -307,12 +336,12 @@ class InvenTreeMetadata(SimpleMetadata):
                 instance_filters = instance.api_instance_filters()
 
                 for field_name, field_filters in instance_filters.items():
-                    if field_name not in serializer_info.keys():
+                    if field_name not in serializer_info:
                         # The field might be missing, but is added later on
                         # This function seems to get called multiple times?
                         continue
 
-                    if 'instance_filters' not in serializer_info[field_name].keys():
+                    if 'instance_filters' not in serializer_info[field_name]:
                         serializer_info[field_name]['instance_filters'] = {}
 
                     for key, value in field_filters.items():
@@ -354,7 +383,9 @@ class InvenTreeMetadata(SimpleMetadata):
                 model = field.queryset.model
             else:
                 logger.debug(
-                    'Could not extract model for:', field_info.get('label'), '->', field
+                    'Could not extract model for: %s -> %s',
+                    field_info.get('label'),
+                    field,
                 )
                 model = None
 
@@ -365,9 +396,11 @@ class InvenTreeMetadata(SimpleMetadata):
 
                 # Special case for special models
                 if field_info['model'] == 'user':
-                    field_info['api_url'] = '/api/user/'
+                    field_info['api_url'] = reverse('api-user-list')
+                elif field_info['model'] == 'group':
+                    field_info['api_url'] = reverse('api-group-list')
                 elif field_info['model'] == 'contenttype':
-                    field_info['api_url'] = '/api/contenttype/'
+                    field_info['api_url'] = reverse('api-contenttype-list')
                 elif hasattr(model, 'get_api_url'):
                     field_info['api_url'] = model.get_api_url()
                 else:

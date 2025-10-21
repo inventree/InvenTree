@@ -1,49 +1,10 @@
-import { randomId, useLocalStorage } from '@mantine/hooks';
+import { randomId } from '@mantine/hooks';
 import { useCallback, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
-import { TableFilter } from '../tables/Filter';
-
-/*
- * Type definition for representing the state of a table:
- *
- * tableKey: A unique key for the table. When this key changes, the table will be refreshed.
- * refreshTable: A callback function to externally refresh the table.
- * activeFilters: An array of active filters (saved to local storage)
- * selectedRecords: An array of selected records (rows) in the table
- * hiddenColumns: An array of hidden column names
- * searchTerm: The current search term for the table
- */
-export type TableState = {
-  tableKey: string;
-  refreshTable: () => void;
-  activeFilters: TableFilter[];
-  isLoading: boolean;
-  setIsLoading: (value: boolean) => void;
-  setActiveFilters: (filters: TableFilter[]) => void;
-  clearActiveFilters: () => void;
-  expandedRecords: any[];
-  setExpandedRecords: (records: any[]) => void;
-  selectedRecords: any[];
-  selectedIds: number[];
-  hasSelectedRecords: boolean;
-  setSelectedRecords: (records: any[]) => void;
-  clearSelectedRecords: () => void;
-  hiddenColumns: string[];
-  setHiddenColumns: (columns: string[]) => void;
-  searchTerm: string;
-  setSearchTerm: (term: string) => void;
-  recordCount: number;
-  setRecordCount: (count: number) => void;
-  page: number;
-  setPage: (page: number) => void;
-  pageSize: number;
-  setPageSize: (pageSize: number) => void;
-  records: any[];
-  setRecords: (records: any[]) => void;
-  updateRecord: (record: any) => void;
-  editable: boolean;
-  setEditable: (value: boolean) => void;
-};
+import type { FilterSetState } from '@lib/types/Filters';
+import type { TableState } from '@lib/types/Tables';
+import { useFilterSet } from './UseFilterSet';
 
 /**
  * A custom hook for managing the state of an <InvenTreeTable> component.
@@ -51,40 +12,54 @@ export type TableState = {
  * Refer to the TableState type definition for more information.
  */
 
-export function useTable(tableName: string): TableState {
+export function useTable(tableName: string, idAccessor = 'pk'): TableState {
   // Function to generate a new ID (to refresh the table)
   function generateTableName() {
-    return `${tableName}-${randomId()}`;
+    return `${tableName.replaceAll('-', '')}-${randomId()}`;
   }
+
+  // Extract URL query parameters (e.g. ?active=true&overdue=false)
+  const [queryFilters, setQueryFilters] = useSearchParams();
+
+  const clearQueryFilters = useCallback(() => {
+    setQueryFilters({});
+  }, []);
 
   const [tableKey, setTableKey] = useState<string>(generateTableName());
 
   // Callback used to refresh (reload) the table
-  const refreshTable = useCallback(() => {
-    setTableKey(generateTableName());
-  }, [generateTableName]);
+  const refreshTable = useCallback(
+    (clearSelection?: boolean) => {
+      setTableKey(generateTableName());
+      if (clearSelection) {
+        clearSelectedRecords();
+      }
+    },
+    [generateTableName]
+  );
 
-  // Array of active filters (saved to local storage)
-  const [activeFilters, setActiveFilters] = useLocalStorage<TableFilter[]>({
-    key: `inventree-table-filters-${tableName}`,
-    defaultValue: [],
-    getInitialValueInEffect: false
-  });
-
-  // Callback to clear all active filters from the table
-  const clearActiveFilters = useCallback(() => {
-    setActiveFilters([]);
-  }, []);
+  const filterSet: FilterSetState = useFilterSet(`table-${tableName}`);
 
   // Array of expanded records
   const [expandedRecords, setExpandedRecords] = useState<any[]>([]);
+
+  // Function to determine if a record is expanded
+  const isRowExpanded = useCallback(
+    (pk: number) => {
+      return expandedRecords.includes(pk);
+    },
+    [expandedRecords]
+  );
+
+  // Array of columns which are hidden
+  const [hiddenColumns, setHiddenColumns] = useState<string[]>([]);
 
   // Array of selected records
   const [selectedRecords, setSelectedRecords] = useState<any[]>([]);
 
   // Array of selected primary key values
   const selectedIds = useMemo(
-    () => selectedRecords.map((r) => r.pk ?? r.id),
+    () => selectedRecords.map((r) => r[idAccessor || 'pk']),
     [selectedRecords]
   );
 
@@ -99,15 +74,7 @@ export function useTable(tableName: string): TableState {
   // Total record count
   const [recordCount, setRecordCount] = useState<number>(0);
 
-  // Pagination data
   const [page, setPage] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(25);
-
-  // A list of hidden columns, saved to local storage
-  const [hiddenColumns, setHiddenColumns] = useLocalStorage<string[]>({
-    key: `inventree-hidden-table-columns-${tableName}`,
-    defaultValue: []
-  });
 
   // Search term
   const [searchTerm, setSearchTerm] = useState<string>('');
@@ -118,13 +85,18 @@ export function useTable(tableName: string): TableState {
   // Update a single record in the table, by primary key value
   const updateRecord = useCallback(
     (record: any) => {
-      let _records = [...records];
+      const _records = [...records];
 
       // Find the matching record in the table
-      const index = _records.findIndex((r) => r.pk === record.pk);
+      const index = _records.findIndex(
+        (r) => r[idAccessor || 'pk'] === record.pk
+      );
 
       if (index >= 0) {
-        _records[index] = record;
+        _records[index] = {
+          ..._records[index],
+          ...record
+        };
       } else {
         _records.push(record);
       }
@@ -136,37 +108,34 @@ export function useTable(tableName: string): TableState {
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const [editable, setEditable] = useState<boolean>(false);
-
   return {
     tableKey,
     refreshTable,
     isLoading,
     setIsLoading,
-    activeFilters,
-    setActiveFilters,
-    clearActiveFilters,
+    filterSet,
+    queryFilters,
+    setQueryFilters,
+    clearQueryFilters,
     expandedRecords,
     setExpandedRecords,
+    isRowExpanded,
     selectedRecords,
     selectedIds,
     setSelectedRecords,
     clearSelectedRecords,
     hasSelectedRecords,
-    hiddenColumns,
-    setHiddenColumns,
     searchTerm,
     setSearchTerm,
     recordCount,
     setRecordCount,
+    hiddenColumns,
+    setHiddenColumns,
     page,
     setPage,
-    pageSize,
-    setPageSize,
     records,
     setRecords,
     updateRecord,
-    editable,
-    setEditable
+    idAccessor
   };
 }

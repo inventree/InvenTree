@@ -35,6 +35,8 @@ class PurchaseOrderStatusGroups:
         PurchaseOrderStatus.RETURNED.value,
     ]
 
+    COMPLETE = [PurchaseOrderStatus.COMPLETE.value]
+
 
 class SalesOrderStatus(StatusCode):
     """Defines a set of status codes for a SalesOrder."""
@@ -45,7 +47,7 @@ class SalesOrderStatus(StatusCode):
         _('In Progress'),
         ColorEnum.primary,
     )  # Order has been issued, and is in progress
-    SHIPPED = 20, _('Shipped'), ColorEnum.success  # Order has been shipped to customer
+    SHIPPED = 20, _('Shipped'), ColorEnum.primary  # Order has been shipped to customer
     ON_HOLD = 25, _('On Hold'), ColorEnum.warning  # Order is on hold
     COMPLETE = 30, _('Complete'), ColorEnum.success  # Order is complete
     CANCELLED = 40, _('Cancelled'), ColorEnum.danger  # Order has been cancelled
@@ -90,6 +92,8 @@ class ReturnOrderStatusGroups:
         ReturnOrderStatus.ON_HOLD.value,
         ReturnOrderStatus.IN_PROGRESS.value,
     ]
+
+    COMPLETE = [ReturnOrderStatus.COMPLETE.value]
 
 
 class ReturnOrderLineStatus(StatusCode):

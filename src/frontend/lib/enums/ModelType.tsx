@@ -1,0 +1,38 @@
+/*
+ * Enumeration of available API model types
+ */
+export enum ModelType {
+  part = 'part',
+  supplierpart = 'supplierpart',
+  manufacturerpart = 'manufacturerpart',
+  partcategory = 'partcategory',
+  partparametertemplate = 'partparametertemplate',
+  parttesttemplate = 'parttesttemplate',
+  projectcode = 'projectcode',
+  stockitem = 'stockitem',
+  stocklocation = 'stocklocation',
+  stocklocationtype = 'stocklocationtype',
+  stockhistory = 'stockhistory',
+  build = 'build',
+  buildline = 'buildline',
+  builditem = 'builditem',
+  company = 'company',
+  purchaseorder = 'purchaseorder',
+  purchaseorderlineitem = 'purchaseorderlineitem',
+  salesorder = 'salesorder',
+  salesordershipment = 'salesordershipment',
+  returnorder = 'returnorder',
+  returnorderlineitem = 'returnorderlineitem',
+  importsession = 'importsession',
+  address = 'address',
+  contact = 'contact',
+  owner = 'owner',
+  user = 'user',
+  group = 'group',
+  reporttemplate = 'reporttemplate',
+  labeltemplate = 'labeltemplate',
+  pluginconfig = 'pluginconfig',
+  contenttype = 'contenttype',
+  selectionlist = 'selectionlist',
+  error = 'error'
+}

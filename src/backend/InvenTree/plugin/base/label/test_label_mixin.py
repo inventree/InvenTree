@@ -10,13 +10,12 @@ from django.urls import reverse
 from pdfminer.high_level import extract_text
 from PIL import Image
 
-from InvenTree.settings import BASE_DIR
+from InvenTree.config import get_testfolder_dir
 from InvenTree.unit_test import InvenTreeAPITestCase
 from part.models import Part
+from plugin import InvenTreePlugin, PluginMixinEnum, registry
 from plugin.base.label.mixins import LabelPrintingMixin
 from plugin.helpers import MixinNotImplementedError
-from plugin.plugin import InvenTreePlugin
-from plugin.registry import registry
 from report.models import LabelTemplate
 from report.tests import PrintTestMixins
 from stock.models import StockItem, StockLocation
@@ -48,41 +47,60 @@ class LabelMixinTests(PrintTestMixins, InvenTreeAPITestCase):
     def test_installed(self):
         """Test that the sample printing plugin is installed."""
         # Get all label plugins
-        plugins = registry.with_mixin('labels', active=None)
+        plugins = registry.with_mixin(PluginMixinEnum.LABELS, active=None)
         self.assertEqual(len(plugins), 4)
 
         # But, it is not 'active'
-        plugins = registry.with_mixin('labels', active=True)
-        self.assertEqual(len(plugins), 3)
+        plugins = registry.with_mixin(PluginMixinEnum.LABELS, active=True)
+
+        self.assertEqual(len(plugins), 2)
+        slugs = [p.slug for p in plugins]
+        self.assertIn('inventreelabel', slugs)
+        self.assertIn('inventreelabelmachine', slugs)
 
     def test_api(self):
         """Test that we can filter the API endpoint by mixin."""
+        self.ensurePluginsLoaded(force=True)
+
         url = reverse('api-plugin-list')
 
         # Try POST (disallowed)
         response = self.client.post(url, {})
         self.assertEqual(response.status_code, 405)
 
-        response = self.client.get(url, {'mixin': 'labels', 'active': True})
+        response = self.client.get(
+            url, {'mixin': PluginMixinEnum.LABELS, 'active': True}
+        )
 
-        # No results matching this query!
-        self.assertEqual(len(response.data), 0)
+        # Two mandatory label printing plugins
+        self.assertEqual(len(response.data), 2)
 
         # What about inactive?
         response = self.client.get(url, {'mixin': 'labels', 'active': False})
 
-        self.assertEqual(len(response.data), 0)
+        # One builtin, non-mandatory label printing plugin "inventreelabelsheet"
+        # One sample plugin, "samplelabelprinter"
+        self.assertEqual(len(response.data), 2)
+        self.assertEqual(response.data[0]['key'], 'inventreelabelsheet')
+        self.assertEqual(response.data[1]['key'], 'samplelabelprinter')
 
-        self.do_activate_plugin()
+        with self.assertWarnsMessage(
+            UserWarning,
+            'A plugin registry reload was triggered for plugin samplelabelprinter',
+        ):
+            # Activate the sample label printing plugin
+            self.do_activate_plugin()
+
         # Should be available via the API now
         response = self.client.get(url, {'mixin': 'labels', 'active': True})
 
-        self.assertEqual(len(response.data), 4)
+        self.assertEqual(len(response.data), 3)
 
         labels = [item['key'] for item in response.data]
 
+        self.assertIn('inventreelabel', labels)
+        self.assertIn('inventreelabelmachine', labels)
         self.assertIn('samplelabelprinter', labels)
-        self.assertIn('inventreelabelsheet', labels)
 
     def test_printing_process(self):
         """Test that a label can be printed."""
@@ -90,11 +108,12 @@ class LabelMixinTests(PrintTestMixins, InvenTreeAPITestCase):
         apps.get_app_config('report').create_default_labels()
         apps.get_app_config('report').create_default_reports()
 
-        test_path = BASE_DIR / '_testfolder' / 'label'
+        test_path = get_testfolder_dir() / 'label'
 
         parts = Part.objects.all()[:2]
 
         template = LabelTemplate.objects.filter(enabled=True, model_type='part').first()
+        assert template
 
         self.assertIsNotNone(template)
         self.assertTrue(template.enabled)
@@ -110,21 +129,21 @@ class LabelMixinTests(PrintTestMixins, InvenTreeAPITestCase):
         self.assertIn('list may not be empty', str(response.data['items']))
 
         # Plugin is not a label plugin
-        no_valid_plg = registry.get_plugin('digikeyplugin').plugin_config()
+        registry.set_plugin_state('digikeyplugin', True)
 
         response = self.post(
             url,
-            {'template': template.pk, 'plugin': no_valid_plg.key, 'items': [1, 2, 3]},
+            {'template': template.pk, 'plugin': 'digikeyplugin', 'items': [1, 2, 3]},
             expected_code=400,
         )
 
         self.assertIn('Plugin does not support label printing', str(response.data))
 
         # Find available plugins
-        plugins = registry.with_mixin('labels')
+        plugins = registry.with_mixin(PluginMixinEnum.LABELS)
         self.assertGreater(len(plugins), 0)
 
-        plugin = registry.get_plugin('samplelabelprinter')
+        plugin = registry.get_plugin('samplelabelprinter', active=None)
         self.assertIsNotNone(plugin)
         config = plugin.plugin_config()
 
@@ -137,7 +156,7 @@ class LabelMixinTests(PrintTestMixins, InvenTreeAPITestCase):
             {'template': template.pk, 'plugin': config.key, 'items': [1, 2, 3]},
             expected_code=400,
         )
-        self.assertIn('Plugin is not active', str(response.data['plugin']))
+        self.assertIn('Plugin not found', str(response.data['plugin']))
 
         # Active plugin
         self.do_activate_plugin()
@@ -209,6 +228,8 @@ class LabelMixinTests(PrintTestMixins, InvenTreeAPITestCase):
         # Lookup references
         parts = Part.objects.all()[:2]
         template = LabelTemplate.objects.filter(enabled=True, model_type='part').first()
+        assert template
+
         self.do_activate_plugin()
         plugin = registry.get_plugin(self.plugin_ref)
 

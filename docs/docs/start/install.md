@@ -66,14 +66,14 @@ In addition to the location where the InvenTree source code is located, you will
 InvenTree requires a directory for storage of [static files](./config.md#static-file-storage).
 
 !!! info "Read More"
-    Refer to the [Serving Files](./serving_files.md) section for more details
+    Refer to the [proxy server documentation](./processes.md#proxy-server) for more details
 
 #### Media Files
 
 InvenTree requires a directory for storage of [user uploaded files](./config.md#uploaded-file-storage)
 
 !!! info "Read More"
-    Refer to the [Serving Files](./serving_files.md) section for more details
+    Refer to the [proxy server documentation](./processes.md#proxy-server) for more details
 
 #### Backup Directory
 
@@ -107,7 +107,8 @@ source ./env/bin/activate
 The Python packages required by the InvenTree server must be installed into the virtual environment.
 
 ```
-pip install --require-hashes -U -r src/backend/requirements.txt
+pip install --upgrade --ignore-installed invoke
+invoke install
 ```
 
 This installs all required Python packages using pip package manager. It also creates a (default) database configuration file which needs to be edited to meet user needs before proceeding (see next step below).
@@ -160,6 +161,14 @@ The PostgreSQL python binding must also be installed (into your virtual environm
 
 ```
 pip3 install psycopg pgcli
+```
+
+#### Install Postgresql client
+
+If PostgreSQL and InvenTree are installed on separate servers / containers the PostgreSQL client has to be installed also where InvenTree is running.
+
+```
+sudo apt-get install postgresql-client
 ```
 
 ### MySQL / MariaDB

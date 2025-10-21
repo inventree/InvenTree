@@ -1,8 +1,8 @@
 import { Loader } from '@mantine/core';
 import { useMemo, useState } from 'react';
 
+import type { ModelType } from '@lib/enums/ModelType';
 import { api } from '../../App';
-import { ModelType } from '../../enums/ModelType';
 import { RenderInstance } from './Instance';
 
 /**
@@ -14,10 +14,10 @@ import { RenderInstance } from './Instance';
 export function InstanceFromUrl({
   model,
   url
-}: {
+}: Readonly<{
   model: ModelType;
   url: string;
-}) {
+}>) {
   const [data, setData] = useState<any>(null);
   useMemo(
     () =>

@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Badge, Group, Text, Tooltip } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import {
@@ -7,18 +7,27 @@ import {
   IconInfoCircle
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { DataTable } from 'mantine-datatable';
+import { DataTable, type DataTableRowExpansionProps } from 'mantine-datatable';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { api } from '../../App';
-import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { PassFailButton } from '../../components/buttons/YesNoButton';
-import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
+import { AddItemButton } from '@lib/components/AddItemButton';
+import {
+  type RowAction,
+  RowActions,
+  RowDeleteAction,
+  RowEditAction
+} from '@lib/components/RowActions';
+import { PassFailButton } from '@lib/components/YesNoButton';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import type { TableFilter } from '@lib/types/Filters';
+import type { ApiFormFieldSet } from '@lib/types/Forms';
+import type { TableColumn } from '@lib/types/Tables';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
 import { RenderUser } from '../../components/render/User';
+import { useApi } from '../../contexts/ApiContext';
 import { formatDate } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { UserRoles } from '../../enums/Roles';
 import { useTestResultFields } from '../../forms/StockForms';
 import {
   useCreateApiFormModal,
@@ -26,29 +35,28 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
 import { DateColumn, DescriptionColumn, NoteColumn } from '../ColumnRenderers';
-import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import {
-  RowAction,
-  RowActions,
-  RowDeleteAction,
-  RowEditAction
-} from '../RowActions';
+import RowExpansionIcon from '../RowExpansionIcon';
 
 export default function StockItemTestResultTable({
   partId,
   itemId
-}: {
+}: Readonly<{
   partId: number;
   itemId: number;
-}) {
+}>) {
+  const api = useApi();
   const user = useUserState();
   const table = useTable('stocktests');
 
+  const globalSettings = useGlobalSettingsState();
+  const includeTestStation = useMemo(
+    () => globalSettings.isSet('TEST_STATION_DATA'),
+    [globalSettings]
+  );
   // Fetch the test templates required for this stock item
   const { data: testTemplates } = useQuery({
     queryKey: ['stocktesttemplates', partId, itemId],
@@ -65,8 +73,7 @@ export default function StockItemTestResultTable({
             enabled: true
           }
         })
-        .then((response) => response.data)
-        .catch((_error) => []);
+        .then((response) => response.data);
     }
   });
 
@@ -78,13 +85,14 @@ export default function StockItemTestResultTable({
   const formatRecords = useCallback(
     (records: any[]): any[] => {
       // Construct a list of test templates
-      let results = testTemplates.map((template: any) => {
-        return {
-          ...template,
-          templateId: template.pk,
-          results: []
-        };
-      });
+      const results =
+        testTemplates?.map((template: any) => {
+          return {
+            ...template,
+            templateId: template.pk,
+            results: []
+          };
+        }) ?? [];
 
       // If any of the tests results point to templates which we do not have, add them in
       records.forEach((record) => {
@@ -106,7 +114,7 @@ export default function StockItemTestResultTable({
         })
         .forEach((record) => {
           // Find matching template
-          let idx = results.findIndex(
+          const idx = results.findIndex(
             (r: any) => r.templateId == record.template
           );
           if (idx >= 0) {
@@ -124,133 +132,160 @@ export default function StockItemTestResultTable({
     [partId, itemId, testTemplates]
   );
 
-  const tableColumns: TableColumn[] = useMemo(() => {
-    return [
-      {
-        accessor: 'test',
-        title: t`Test`,
-        switchable: false,
-        sortable: true,
-        render: (record: any) => {
-          const enabled = record.enabled ?? record.template_detail?.enabled;
-          const installed =
-            record.stock_item != undefined && record.stock_item != itemId;
+  const constructTableColumns = useCallback(
+    (child: boolean) => {
+      return [
+        {
+          accessor: 'test',
+          title: t`Test`,
+          switchable: false,
+          sortable: true,
+          render: (record: any) => {
+            const enabled = record.enabled ?? record.template_detail?.enabled;
+            const installed =
+              record.stock_item != undefined && record.stock_item != itemId;
 
-          return (
-            <Group justify="space-between" wrap="nowrap">
-              <Text
-                style={{ fontStyle: installed ? 'italic' : undefined }}
-                c={enabled ? undefined : 'red'}
-              >
-                {!record.templateId && '- '}
-                {record.test_name ?? record.template_detail?.test_name}
-              </Text>
-              <Group justify="right">
-                {record.results && record.results.length > 1 && (
-                  <Tooltip label={t`Test Results`}>
-                    <Badge color="lightblue" variant="filled">
-                      {record.results.length}
-                    </Badge>
-                  </Tooltip>
-                )}
-                {installed && (
-                  <Tooltip label={t`Test result for installed stock item`}>
-                    <IconInfoCircle size={16} color="blue" />
-                  </Tooltip>
-                )}
-              </Group>
-            </Group>
-          );
-        }
-      },
-      {
-        accessor: 'result',
-        title: t`Result`,
-        switchable: false,
-        sortable: true,
-        render: (record: any) => {
-          if (record.result === undefined) {
+            const multipleResults = record.results && record.results.length > 1;
+
             return (
-              <Badge color="lightblue" variant="filled">{t`No Result`}</Badge>
+              <Group justify='space-between' wrap='nowrap'>
+                {!child && (
+                  <RowExpansionIcon
+                    enabled={multipleResults}
+                    expanded={table.isRowExpanded(record.pk)}
+                  />
+                )}
+                <Text
+                  style={{ fontStyle: installed ? 'italic' : undefined }}
+                  c={enabled ? undefined : 'red'}
+                >
+                  {!record.templateId && '- '}
+                  {record.test_name ?? record.template_detail?.test_name}
+                </Text>
+                <Group justify='right'>
+                  {record.results && record.results.length > 1 && (
+                    <Tooltip label={t`Test Results`}>
+                      <Badge color='lightblue' variant='filled'>
+                        {record.results.length}
+                      </Badge>
+                    </Tooltip>
+                  )}
+                  {installed && (
+                    <Tooltip label={t`Test result for installed stock item`}>
+                      <IconInfoCircle size={16} color='blue' />
+                    </Tooltip>
+                  )}
+                </Group>
+              </Group>
             );
-          } else {
-            return <PassFailButton value={record.result} />;
+          }
+        },
+        {
+          accessor: 'result',
+          title: t`Result`,
+          switchable: false,
+          sortable: true,
+          render: (record: any) => {
+            if (record.result === undefined) {
+              return (
+                <Badge color='lightblue' variant='filled'>{t`No Result`}</Badge>
+              );
+            } else {
+              return <PassFailButton value={record.result} />;
+            }
+          }
+        },
+        DescriptionColumn({}),
+        {
+          accessor: 'value',
+          title: t`Value`
+        },
+        {
+          accessor: 'attachment',
+          title: t`Attachment`,
+          render: (record: any) =>
+            record.attachment && (
+              <AttachmentLink attachment={record.attachment} />
+            ),
+          noContext: true
+        },
+        NoteColumn({}),
+        DateColumn({}),
+        {
+          accessor: 'user',
+          title: t`User`,
+          sortable: false,
+          render: (record: any) =>
+            record.user_detail && <RenderUser instance={record.user_detail} />
+        },
+        {
+          accessor: 'test_station',
+          sortable: true,
+          title: t`Test station`,
+          hidden: !includeTestStation
+        },
+        {
+          accessor: 'started_datetime',
+          sortable: true,
+          title: t`Started`,
+          hidden: !includeTestStation,
+          render: (record: any) => {
+            return (
+              <Group justify='space-between'>
+                {formatDate(record.started_datetime, {
+                  showTime: true,
+                  showSeconds: true
+                })}
+              </Group>
+            );
+          }
+        },
+        {
+          accessor: 'finished_datetime',
+          sortable: true,
+          title: t`Finished`,
+          hidden: !includeTestStation,
+          render: (record: any) => {
+            return (
+              <Group justify='space-between'>
+                {formatDate(record.finished_datetime, {
+                  showTime: true,
+                  showSeconds: true
+                })}
+              </Group>
+            );
           }
         }
-      },
-      DescriptionColumn({
-        accessor: 'description'
-      }),
-      {
-        accessor: 'value',
-        title: t`Value`
-      },
-      {
-        accessor: 'attachment',
-        title: t`Attachment`,
-        render: (record: any) =>
-          record.attachment && <AttachmentLink attachment={record.attachment} />
-      },
-      NoteColumn({}),
-      DateColumn({}),
-      {
-        accessor: 'user',
-        title: t`User`,
-        sortable: false,
-        render: (record: any) =>
-          record.user_detail && <RenderUser instance={record.user_detail} />
-      },
-      {
-        accessor: 'test_station',
-        sortable: true,
-        title: t`Test station`
-      },
-      {
-        accessor: 'started_datetime',
-        sortable: true,
-        title: t`Started`,
-        render: (record: any) => {
-          return (
-            <Group justify="space-between">
-              {formatDate(record.started_datetime, {
-                showTime: true,
-                showSeconds: true
-              })}
-            </Group>
-          );
-        }
-      },
-      {
-        accessor: 'finished_datetime',
-        sortable: true,
-        title: t`Finished`,
-        render: (record: any) => {
-          return (
-            <Group justify="space-between">
-              {formatDate(record.finished_datetime, {
-                showTime: true,
-                showSeconds: true
-              })}
-            </Group>
-          );
-        }
-      }
-    ];
-  }, [itemId]);
+      ];
+    },
+    [itemId, includeTestStation, table.expandedRecords]
+  );
+
+  const tableColumns: TableColumn[] = useMemo(() => {
+    return constructTableColumns(false);
+  }, [itemId, includeTestStation, table.expandedRecords]);
 
   const [selectedTemplate, setSelectedTemplate] = useState<number | undefined>(
     undefined
   );
 
-  const resultFields: ApiFormFieldSet = useTestResultFields({
+  const newResultFields: ApiFormFieldSet = useTestResultFields({
     partId: partId,
     itemId: itemId,
-    templateId: selectedTemplate
+    templateId: selectedTemplate,
+    editing: false
+  });
+
+  const editResultFields: ApiFormFieldSet = useTestResultFields({
+    partId: partId,
+    itemId: itemId,
+    templateId: selectedTemplate,
+    editing: true
   });
 
   const newTestModal = useCreateApiFormModal({
     url: ApiEndpoints.stock_test_result_list,
-    fields: useMemo(() => ({ ...resultFields }), [resultFields]),
+    fields: useMemo(() => ({ ...newResultFields }), [newResultFields]),
     initialData: {
       template: selectedTemplate,
       result: true
@@ -265,9 +300,9 @@ export default function StockItemTestResultTable({
   const editTestModal = useEditApiFormModal({
     url: ApiEndpoints.stock_test_result_list,
     pk: selectedTest,
-    fields: useMemo(() => ({ ...resultFields }), [resultFields]),
+    fields: useMemo(() => ({ ...editResultFields }), [editResultFields]),
     title: t`Edit Test Result`,
-    table: table,
+    onFormSuccess: () => table.refreshTable,
     successMessage: t`Test result updated`
   });
 
@@ -375,6 +410,11 @@ export default function StockItemTestResultTable({
         name: 'result',
         label: t`Passed`,
         description: t`Show only passed tests`
+      },
+      {
+        name: 'enabled',
+        label: t`Enabled`,
+        description: t`Show results for enabled tests`
       }
     ];
   }, []);
@@ -382,6 +422,7 @@ export default function StockItemTestResultTable({
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
+        key='add-test-result'
         tooltip={t`Add Test Result`}
         onClick={() => {
           setSelectedTemplate(undefined);
@@ -393,9 +434,9 @@ export default function StockItemTestResultTable({
   }, [user]);
 
   // Row expansion controller
-  const rowExpansion: any = useMemo(() => {
+  const rowExpansion: DataTableRowExpansionProps<any> = useMemo(() => {
     const cols: any = [
-      ...tableColumns,
+      ...constructTableColumns(true),
       {
         accessor: 'actions',
         title: '  ',
@@ -410,6 +451,12 @@ export default function StockItemTestResultTable({
 
     return {
       allowMultiple: true,
+      expandable: ({ record }: { record: any }) => {
+        return (
+          table.isRowExpanded(record.pk) ||
+          (record.results && record.results.length > 1)
+        );
+      },
       content: ({ record }: { record: any }) => {
         if (!record || !record.results || record.results.length < 2) {
           return null;
@@ -420,6 +467,7 @@ export default function StockItemTestResultTable({
         return (
           <DataTable
             key={record.pk}
+            idAccessor={'test'}
             noHeader
             columns={cols}
             records={results.slice(0, -1)}
@@ -427,7 +475,7 @@ export default function StockItemTestResultTable({
         );
       }
     };
-  }, []);
+  }, [constructTableColumns, table.isRowExpanded]);
 
   return (
     <>
@@ -449,8 +497,7 @@ export default function StockItemTestResultTable({
             stock_item: itemId,
             user_detail: true,
             attachment_detail: true,
-            template_detail: true,
-            enabled: true
+            template_detail: true
           }
         }}
       />

@@ -19,6 +19,7 @@
         "it",
         "ja",
         "ko",
+        "lt",
         "lv",
         "nl",
         "no",
@@ -40,8 +41,8 @@
         "pseudo-LOCALE"],
     "catalogs": [{
         "path": "src/locales/{locale}/messages",
-        "include": ["src"],
-        "exclude": ["**/node_modules/**"]
+        "include": ["src", "lib"],
+        "exclude": ["**/node_modules/**", "./dist/**"]
     }],
     "format": "po",
     "orderBy": "origin",

@@ -1,31 +1,38 @@
-import { Trans, t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Skeleton, Stack } from '@mantine/core';
 import {
   IconBellCog,
   IconCategory,
-  IconClipboardCheck,
+  IconClipboardList,
   IconCurrencyDollar,
   IconFileAnalytics,
   IconFingerprint,
   IconPackages,
+  IconPlugConnected,
   IconQrcode,
   IconServerCog,
   IconShoppingCart,
-  IconSitemap,
   IconTag,
   IconTools,
   IconTruckDelivery,
   IconTruckReturn
 } from '@tabler/icons-react';
-import { useMemo } from 'react';
+import { lazy, useMemo } from 'react';
 
+import { useShallow } from 'zustand/react/shallow';
 import PermissionDenied from '../../../components/errors/PermissionDenied';
-import { PlaceholderPanel } from '../../../components/items/Placeholder';
-import { PanelGroup, PanelType } from '../../../components/nav/PanelGroup';
+import PageTitle from '../../../components/nav/PageTitle';
 import { SettingsHeader } from '../../../components/nav/SettingsHeader';
+import type { PanelType } from '../../../components/panels/Panel';
+import { PanelGroup } from '../../../components/panels/PanelGroup';
 import { GlobalSettingList } from '../../../components/settings/SettingList';
-import { useServerApiState } from '../../../states/ApiState';
+import { Loadable } from '../../../functions/loading';
+import { useServerApiState } from '../../../states/ServerApiState';
 import { useUserState } from '../../../states/UserState';
+
+const PluginSettingsGroup = Loadable(
+  lazy(() => import('./PluginSettingsGroup'))
+);
 
 /**
  * System settings page
@@ -42,29 +49,32 @@ export default function SystemSettings() {
             keys={[
               'INVENTREE_BASE_URL',
               'INVENTREE_COMPANY_NAME',
+              'INVENTREE_INSTANCE_ID',
+              'INVENTREE_ANNOUNCE_ID',
               'INVENTREE_INSTANCE',
               'INVENTREE_INSTANCE_TITLE',
               'INVENTREE_RESTRICT_ABOUT',
               'DISPLAY_FULL_NAMES',
+              'DISPLAY_PROFILE_INFO',
               'INVENTREE_UPDATE_CHECK_INTERVAL',
               'INVENTREE_DOWNLOAD_FROM_URL',
               'INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE',
               'INVENTREE_DOWNLOAD_FROM_URL_USER_AGENT',
-              'INVENTREE_REQUIRE_CONFIRM',
               'INVENTREE_STRICT_URLS',
-              'INVENTREE_TREE_DEPTH',
               'INVENTREE_BACKUP_ENABLE',
               'INVENTREE_BACKUP_DAYS',
               'INVENTREE_DELETE_TASKS_DAYS',
               'INVENTREE_DELETE_ERRORS_DAYS',
-              'INVENTREE_DELETE_NOTIFICATIONS_DAYS'
+              'INVENTREE_DELETE_NOTIFICATIONS_DAYS',
+              'INVENTREE_DELETE_EMAIL_DAYS',
+              'INVENTREE_PROTECT_EMAIL_LOG'
             ]}
           />
         )
       },
       {
-        name: 'login',
-        label: t`Login`,
+        name: 'authentication',
+        label: t`Authentication`,
         icon: <IconFingerprint />,
         content: (
           <GlobalSettingList
@@ -99,7 +109,9 @@ export default function SystemSettings() {
               'BARCODE_INPUT_DELAY',
               'BARCODE_WEBCAM_SUPPORT',
               'BARCODE_SHOW_TEXT',
-              'BARCODE_GENERATION_PLUGIN'
+              'BARCODE_GENERATION_PLUGIN',
+              'BARCODE_STORE_RESULTS',
+              'BARCODE_RESULTS_MAX_NUM'
             ]}
           />
         )
@@ -108,7 +120,13 @@ export default function SystemSettings() {
         name: 'notifications',
         label: t`Notifications`,
         icon: <IconBellCog />,
-        content: <PlaceholderPanel />
+        content: (
+          <PluginSettingsGroup
+            mixin='notification'
+            global={true}
+            message={t`The settings below are specific to each available notification method`}
+          />
+        )
       },
       {
         name: 'pricing',
@@ -124,6 +142,7 @@ export default function SystemSettings() {
                 'PART_BOM_USE_INTERNAL_PRICE',
                 'PRICING_DECIMAL_PLACES_MIN',
                 'PRICING_DECIMAL_PLACES',
+                'PRICING_AUTO_UPDATE',
                 'PRICING_UPDATE_DAYS'
               ]}
             />
@@ -161,9 +180,7 @@ export default function SystemSettings() {
               'REPORT_ENABLE',
               'REPORT_DEFAULT_PAGE_SIZE',
               'REPORT_DEBUG_MODE',
-              'REPORT_LOG_ERRORS',
-              'REPORT_ENABLE_TEST_REPORT',
-              'REPORT_ATTACH_TEST_REPORT'
+              'REPORT_LOG_ERRORS'
             ]}
           />
         )
@@ -184,19 +201,20 @@ export default function SystemSettings() {
               'PART_NAME_FORMAT',
               'PART_SHOW_RELATED',
               'PART_CREATE_INITIAL',
-              'PART_CREATE_SUPPLIER', // TODO: Break here
+              'PART_CREATE_SUPPLIER',
               'PART_TEMPLATE',
               'PART_ASSEMBLY',
               'PART_COMPONENT',
               'PART_TRACKABLE',
               'PART_PURCHASEABLE',
               'PART_SALABLE',
-              'PART_VIRTUAL', // TODO: Break here
+              'PART_VIRTUAL',
               'PART_COPY_BOM',
               'PART_COPY_PARAMETERS',
               'PART_COPY_TESTS',
               'PART_CATEGORY_PARAMETERS',
-              'PART_CATEGORY_DEFAULT_ICON' // TODO: Move to part category settings page
+              'PART_CATEGORY_DEFAULT_ICON',
+              'PART_PARAMETER_ENFORCE_UNITS'
             ]}
           />
         )
@@ -209,7 +227,6 @@ export default function SystemSettings() {
           <GlobalSettingList
             keys={[
               'SERIAL_NUMBER_GLOBALLY_UNIQUE',
-              'SERIAL_NUMBER_AUTOFILL',
               'STOCK_DELETE_DEPLETED_DEFAULT',
               'STOCK_BATCH_CODE_TEMPLATE',
               'STOCK_ENABLE_EXPIRY',
@@ -227,10 +244,20 @@ export default function SystemSettings() {
         )
       },
       {
-        name: 'stocktake',
-        label: t`Stocktake`,
-        icon: <IconClipboardCheck />,
-        content: <PlaceholderPanel />
+        name: 'stock-history',
+        label: t`Stock History`,
+        icon: <IconClipboardList />,
+        content: (
+          <GlobalSettingList
+            keys={[
+              'STOCKTAKE_ENABLE',
+              'STOCKTAKE_EXCLUDE_EXTERNAL',
+              'STOCKTAKE_AUTO_DAYS',
+              'STOCKTAKE_DELETE_OLD_ENTRIES',
+              'STOCKTAKE_DELETE_DAYS'
+            ]}
+          />
+        )
       },
       {
         name: 'buildorders',
@@ -240,6 +267,7 @@ export default function SystemSettings() {
           <GlobalSettingList
             keys={[
               'BUILDORDER_REFERENCE_PATTERN',
+              'BUILDORDER_EXTERNAL_BUILDS',
               'BUILDORDER_REQUIRE_RESPONSIBLE',
               'BUILDORDER_REQUIRE_ACTIVE_PART',
               'BUILDORDER_REQUIRE_LOCKED_PART',
@@ -259,6 +287,7 @@ export default function SystemSettings() {
             keys={[
               'PURCHASEORDER_REFERENCE_PATTERN',
               'PURCHASEORDER_REQUIRE_RESPONSIBLE',
+              'PURCHASEORDER_CONVERT_CURRENCY',
               'PURCHASEORDER_EDIT_COMPLETED_ORDERS',
               'PURCHASEORDER_AUTO_COMPLETE'
             ]}
@@ -295,13 +324,19 @@ export default function SystemSettings() {
             ]}
           />
         )
+      },
+      {
+        name: 'plugins',
+        label: t`Plugin Settings`,
+        icon: <IconPlugConnected />,
+        content: <PluginSettingsGroup global={true} />
       }
     ];
   }, []);
 
   const user = useUserState();
 
-  const [server] = useServerApiState((state) => [state.server]);
+  const [server] = useServerApiState(useShallow((state) => [state.server]));
 
   if (!user.isLoggedIn()) {
     return <Skeleton />;
@@ -309,15 +344,20 @@ export default function SystemSettings() {
 
   return (
     <>
+      <PageTitle title={t`System Settings`} />
       {user.isStaff() ? (
-        <Stack gap="xs">
+        <Stack gap='xs'>
           <SettingsHeader
+            label='system'
             title={t`System Settings`}
             subtitle={server.instance || ''}
-            switch_link="/settings/user"
-            switch_text={<Trans>Switch to User Setting</Trans>}
           />
-          <PanelGroup pageKey="system-settings" panels={systemSettingsPanels} />
+          <PanelGroup
+            pageKey='system-settings'
+            panels={systemSettingsPanels}
+            model='systemsettings'
+            id={null}
+          />
         </Stack>
       ) : (
         <PermissionDenied />

@@ -1,19 +1,18 @@
 """Provides system status functionality checks."""
-# -*- coding: utf-8 -*-
 
-import logging
 from datetime import timedelta
 
+from django.conf import settings
 from django.utils import timezone
-from django.utils.translation import gettext_lazy as _
 
+import structlog
 from django_q.models import Success
 from django_q.status import Stat
 
-import InvenTree.email
+import InvenTree.helpers_email
 import InvenTree.ready
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 def is_worker_running(**kwargs):
@@ -21,7 +20,6 @@ def is_worker_running(**kwargs):
     clusters = Stat.get_all()
 
     if len(clusters) > 0:
-        # TODO - Introspect on any cluster information
         return True
 
     """
@@ -63,13 +61,16 @@ def check_system_health(**kwargs):
 
     if not is_worker_running(**kwargs):  # pragma: no cover
         result = False
-        logger.warning(_('Background worker check failed'))
+        if not settings.DEBUG:
+            logger.warning('Background worker check failed')
 
-    if not InvenTree.email.is_email_configured():  # pragma: no cover
+    if not InvenTree.helpers_email.is_email_configured():  # pragma: no cover
         result = False
-        logger.warning(_('Email backend not configured'))
+        if not settings.DEBUG:
+            logger.warning('INVE-W7: Email backend not configured')
 
     if not result:  # pragma: no cover
-        logger.warning(_('InvenTree system health checks failed'))
+        if not settings.DEBUG:
+            logger.warning('InvenTree system health checks failed')
 
     return result

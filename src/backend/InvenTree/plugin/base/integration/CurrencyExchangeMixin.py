@@ -1,5 +1,6 @@
 """Plugin mixin class for supporting currency exchange data."""
 
+from plugin import PluginMixinEnum
 from plugin.helpers import MixinNotImplementedError
 
 
@@ -21,7 +22,7 @@ class CurrencyExchangeMixin:
     def __init__(self):
         """Register the mixin."""
         super().__init__()
-        self.add_mixin('currencyexchange', True, __class__)
+        self.add_mixin(PluginMixinEnum.CURRENCY_EXCHANGE, True, __class__)
 
     def update_exchange_rates(self, base_currency: str, symbols: list[str]) -> dict:
         """Update currency exchange rates.

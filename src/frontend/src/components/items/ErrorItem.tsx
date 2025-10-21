@@ -1,15 +1,17 @@
-import { Trans } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
+import { Alert, Text } from '@mantine/core';
 
-export function ErrorItem({ id, error }: { id: string; error?: any }) {
-  const error_message = error?.message || error?.toString() || (
-    <Trans>Unknown error</Trans>
-  );
+export function ErrorItem({
+  id,
+  error
+}: Readonly<{ id: string; error?: any }>) {
+  const error_message = error?.message || error?.toString() || t`Unknown error`;
+
   return (
     <>
-      <p>
-        <Trans>An error occurred:</Trans>
-      </p>
-      {error_message}
+      <Alert color='red' title={t`An error occurred`}>
+        <Text>{error_message}</Text>
+      </Alert>
     </>
   );
 }

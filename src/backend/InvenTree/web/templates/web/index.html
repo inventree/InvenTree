@@ -1,5 +1,6 @@
 {% load spa_helper %}
 {% load inventree_extras %}
+{% spa_bundle as bundle %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -8,12 +9,49 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{% inventree_instance_name %}</title>
+  {% include "favicon.html" %}
 </head>
 
 <body>
-  <div id="root"></div>
-  {% spa_settings %}
-  {% spa_bundle %}
+  <div id="root">
+    <div id="update-warning" style="display: none;">
+      If you see this text there might be an issue with your update.
+      <br>
+      See <a href="https://docs.inventree.org/en/stable/settings/error_codes/#inve-e1">INVE-E1</a> in the docs for help.
+    </div>
+    <div id="no-javascript-warning" style="display: none;">
+      <hr>
+      This application requires JavaScript to function correctly. Please enable JavaScript in your browser settings.
+    </div>
+    <noscript>
+      <!-- fallback if javascript is blocked -->
+      <style>
+        #update-warning { display: block !important; }
+        #no-javascript-warning { display: block !important; }
+      </style>
+    </noscript>
+    <script>
+      setTimeout(() => {
+        let warningElement = document.getElementById('update-warning');
+
+        if (warningElement) {
+          warningElement.style.display = 'block';
+        }
+      }, 1000);
+    </script>
+  </div>
+
+  <div id="spa_settings">{% spa_settings %}</div>
+  {% if bundle == "NOT_FOUND" %}
+  <div id="spa_bundle_error">
+    <div>
+      <h1>INVE-E1 - No frontend included</h1>
+      <p>The frontend bundle could not be found. Please check that your deployment method includes the bundle or check the <a href="https://docs.inventree.org/en/stable/faq/">FAQ</a>.<br/>
+        <span>Install method: <code>{% inventree_installer %}</code></span></p>
+  </div>
+  {% else %}
+  <div id="spa_bundle">{{ bundle }}</div>
+  {% endif %}
 </body>
 
 </html>

@@ -3,6 +3,7 @@
 from django.db import migrations
 
 import generic.states.fields
+import generic.states.validators
 import InvenTree.status_codes
 
 
@@ -22,6 +23,11 @@ class Migration(migrations.Migration):
                 help_text="Additional status information for this item",
                 null=True,
                 verbose_name="Custom status key",
+                validators=[
+                    generic.states.validators.CustomStatusCodeValidator(
+                        status_class=InvenTree.status_codes.PurchaseOrderStatus
+                    ),
+                ]
             ),
         ),
         migrations.AddField(
@@ -33,6 +39,11 @@ class Migration(migrations.Migration):
                 help_text="Additional status information for this item",
                 null=True,
                 verbose_name="Custom status key",
+                validators=[
+                    generic.states.validators.CustomStatusCodeValidator(
+                        status_class=InvenTree.status_codes.ReturnOrderStatus
+                    ),
+                ]
             ),
         ),
         migrations.AddField(
@@ -44,6 +55,11 @@ class Migration(migrations.Migration):
                 help_text="Additional status information for this item",
                 null=True,
                 verbose_name="Custom status key",
+                validators=[
+                    generic.states.validators.CustomStatusCodeValidator(
+                        status_class=InvenTree.status_codes.ReturnOrderLineStatus
+                    ),
+                ]
             ),
         ),
         migrations.AddField(
@@ -55,6 +71,11 @@ class Migration(migrations.Migration):
                 help_text="Additional status information for this item",
                 null=True,
                 verbose_name="Custom status key",
+                validators=[
+                    generic.states.validators.CustomStatusCodeValidator(
+                        status_class=InvenTree.status_codes.SalesOrderStatus
+                    ),
+                ]
             ),
         ),
         migrations.AlterField(
@@ -65,6 +86,11 @@ class Migration(migrations.Migration):
                 default=10,
                 help_text="Purchase order status",
                 verbose_name="Status",
+                validators=[
+                    generic.states.validators.CustomStatusCodeValidator(
+                        status_class=InvenTree.status_codes.PurchaseOrderStatus
+                    ),
+                ]
             ),
         ),
         migrations.AlterField(
@@ -75,6 +101,11 @@ class Migration(migrations.Migration):
                 default=10,
                 help_text="Return order status",
                 verbose_name="Status",
+                validators=[
+                    generic.states.validators.CustomStatusCodeValidator(
+                        status_class=InvenTree.status_codes.ReturnOrderStatus
+                    ),
+                ]
             ),
         ),
         migrations.AlterField(
@@ -85,6 +116,11 @@ class Migration(migrations.Migration):
                 default=10,
                 help_text="Outcome for this line item",
                 verbose_name="Outcome",
+                validators=[
+                    generic.states.validators.CustomStatusCodeValidator(
+                        status_class=InvenTree.status_codes.ReturnOrderLineStatus
+                    ),
+                ]
             ),
         ),
         migrations.AlterField(
@@ -95,6 +131,11 @@ class Migration(migrations.Migration):
                 default=10,
                 help_text="Sales order status",
                 verbose_name="Status",
+                validators=[
+                    generic.states.validators.CustomStatusCodeValidator(
+                        status_class=InvenTree.status_codes.SalesOrderStatus
+                    ),
+                ]
             ),
         ),
     ]

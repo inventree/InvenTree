@@ -1,247 +1,23 @@
 """Unit testing for the various report models."""
 
+import os
 from io import StringIO
 
 from django.apps import apps
 from django.conf import settings
 from django.core.cache import cache
-from django.test import TestCase, override_settings
 from django.urls import reverse
-from django.utils import timezone
-from django.utils.safestring import SafeString
-
-import pytz
-from PIL import Image
 
 import report.models as report_models
 from build.models import Build
-from common.models import Attachment, InvenTreeSetting
-from InvenTree.unit_test import InvenTreeAPITestCase
+from common.models import Attachment
+from common.settings import set_global_setting
+from InvenTree.unit_test import AdminTestCase, InvenTreeAPITestCase
 from order.models import ReturnOrder, SalesOrder
+from part.models import Part
 from plugin.registry import registry
 from report.models import LabelTemplate, ReportTemplate
-from report.templatetags import barcode as barcode_tags
-from report.templatetags import report as report_tags
 from stock.models import StockItem
-
-
-class ReportTagTest(TestCase):
-    """Unit tests for the report template tags."""
-
-    def debug_mode(self, value: bool):
-        """Enable or disable debug mode for reports."""
-        InvenTreeSetting.set_setting('REPORT_DEBUG_MODE', value, change_user=None)
-
-    def test_getindex(self):
-        """Tests for the 'getindex' template tag."""
-        fn = report_tags.getindex
-        data = [1, 2, 3, 4, 5, 6]
-
-        # Out of bounds or invalid
-        self.assertEqual(fn(data, -1), None)
-        self.assertEqual(fn(data, 99), None)
-        self.assertEqual(fn(data, 'xx'), None)
-
-        for idx in range(len(data)):
-            self.assertEqual(fn(data, idx), data[idx])
-
-    def test_getkey(self):
-        """Tests for the 'getkey' template tag."""
-        data = {'hello': 'world', 'foo': 'bar', 'with spaces': 'withoutspaces', 1: 2}
-
-        for k, v in data.items():
-            self.assertEqual(report_tags.getkey(data, k), v)
-
-    def test_asset(self):
-        """Tests for asset files."""
-        # Test that an error is raised if the file does not exist
-        for b in [True, False]:
-            self.debug_mode(b)
-
-            with self.assertRaises(FileNotFoundError):
-                report_tags.asset('bad_file.txt')
-
-        # Create an asset file
-        asset_dir = settings.MEDIA_ROOT.joinpath('report', 'assets')
-        asset_dir.mkdir(parents=True, exist_ok=True)
-        asset_path = asset_dir.joinpath('test.txt')
-
-        asset_path.write_text('dummy data')
-
-        self.debug_mode(True)
-        asset = report_tags.asset('test.txt')
-        self.assertEqual(asset, '/media/report/assets/test.txt')
-
-        # Ensure that a 'safe string' also works
-        asset = report_tags.asset(SafeString('test.txt'))
-        self.assertEqual(asset, '/media/report/assets/test.txt')
-
-        self.debug_mode(False)
-        asset = report_tags.asset('test.txt')
-        self.assertEqual(asset, f'file://{asset_dir}/test.txt')
-
-    def test_uploaded_image(self):
-        """Tests for retrieving uploaded images."""
-        # Test for a missing image
-        for b in [True, False]:
-            self.debug_mode(b)
-
-            with self.assertRaises(FileNotFoundError):
-                report_tags.uploaded_image(
-                    '/part/something/test.png', replace_missing=False
-                )
-
-            img = str(report_tags.uploaded_image('/part/something/other.png'))
-
-            if b:
-                self.assertIn('blank_image.png', img)
-            else:
-                self.assertIn('data:image/png;charset=utf-8;base64,', img)
-
-        # Create a dummy image
-        img_path = 'part/images/'
-        img_path = settings.MEDIA_ROOT.joinpath(img_path)
-        img_file = img_path.joinpath('test.jpg')
-
-        img_path.mkdir(parents=True, exist_ok=True)
-        img_file.write_text('dummy data')
-
-        # Test in debug mode. Returns blank image as dummy file is not a valid image
-        self.debug_mode(True)
-        img = report_tags.uploaded_image('part/images/test.jpg')
-        self.assertEqual(img, '/static/img/blank_image.png')
-
-        # Now, let's create a proper image
-        img = Image.new('RGB', (128, 128), color='RED')
-        img.save(img_file)
-
-        # Try again
-        img = report_tags.uploaded_image('part/images/test.jpg')
-        self.assertEqual(img, '/media/part/images/test.jpg')
-
-        # Ensure that a 'safe string' also works
-        img = report_tags.uploaded_image(SafeString('part/images/test.jpg'))
-        self.assertEqual(img, '/media/part/images/test.jpg')
-
-        self.debug_mode(False)
-        img = report_tags.uploaded_image('part/images/test.jpg')
-        self.assertTrue(img.startswith('data:image/png;charset=utf-8;base64,'))
-
-        img = report_tags.uploaded_image(SafeString('part/images/test.jpg'))
-        self.assertTrue(img.startswith('data:image/png;charset=utf-8;base64,'))
-
-    def test_part_image(self):
-        """Unit tests for the 'part_image' tag."""
-        with self.assertRaises(TypeError):
-            report_tags.part_image(None)
-
-    def test_company_image(self):
-        """Unit tests for the 'company_image' tag."""
-        with self.assertRaises(TypeError):
-            report_tags.company_image(None)
-
-    def test_logo_image(self):
-        """Unit tests for the 'logo_image' tag."""
-        # By default, should return the core InvenTree logo
-        for b in [True, False]:
-            self.debug_mode(b)
-            logo = report_tags.logo_image()
-            self.assertIn('inventree.png', logo)
-
-    def test_maths_tags(self):
-        """Simple tests for mathematical operator tags."""
-        self.assertEqual(report_tags.add(1, 2), 3)
-        self.assertEqual(report_tags.subtract(10, 4.2), 5.8)
-        self.assertEqual(report_tags.multiply(2.3, 4), 9.2)
-        self.assertEqual(report_tags.divide(100, 5), 20)
-
-    @override_settings(TIME_ZONE='America/New_York')
-    def test_date_tags(self):
-        """Test for date formatting tags.
-
-        - Source timezone is Australia/Sydney
-        - Server timezone is America/New York
-        """
-        time = timezone.datetime(
-            year=2024,
-            month=3,
-            day=13,
-            hour=12,
-            minute=30,
-            second=0,
-            tzinfo=pytz.timezone('Australia/Sydney'),
-        )
-
-        # Format a set of tests: timezone, format, expected
-        tests = [
-            (None, None, '2024-03-12T22:25:00-04:00'),
-            (None, '%d-%m-%y', '12-03-24'),
-            ('UTC', None, '2024-03-13T02:25:00+00:00'),
-            ('UTC', '%d-%B-%Y', '13-March-2024'),
-            ('Europe/Amsterdam', None, '2024-03-13T03:25:00+01:00'),
-            ('Europe/Amsterdam', '%y-%m-%d %H:%M', '24-03-13 03:25'),
-        ]
-
-        for tz, fmt, expected in tests:
-            result = report_tags.format_datetime(time, tz, fmt)
-            self.assertEqual(result, expected)
-
-    def test_icon(self):
-        """Test the icon template tag."""
-        for icon in [None, '', 'not:the-correct-format', 'any-non-existent-icon']:
-            self.assertEqual(report_tags.icon(icon), '')
-
-        self.assertEqual(
-            report_tags.icon('ti:package:outline'),
-            f'<i class="icon " style="font-family: inventree-icon-font-ti">{chr(int("eaff", 16))}</i>',
-        )
-        self.assertEqual(
-            report_tags.icon(
-                'ti:package:outline', **{'class': 'my-custom-class my-seconds-class'}
-            ),
-            f'<i class="icon my-custom-class my-seconds-class" style="font-family: inventree-icon-font-ti">{chr(int("eaff", 16))}</i>',
-        )
-
-    def test_include_icon_fonts(self):
-        """Test the include_icon_fonts template tag."""
-        style = report_tags.include_icon_fonts()
-
-        self.assertIn('@font-face {', style)
-        self.assertIn("font-family: 'inventree-icon-font-ti';", style)
-        self.assertIn('tabler-icons/tabler-icons.ttf', style)
-        self.assertIn('.icon {', style)
-
-
-class BarcodeTagTest(TestCase):
-    """Unit tests for the barcode template tags."""
-
-    def test_barcode(self):
-        """Test the barcode generation tag."""
-        barcode = barcode_tags.barcode('12345')
-
-        self.assertIsInstance(barcode, str)
-        self.assertTrue(barcode.startswith('data:image/png;'))
-
-        # Try with a different format
-        barcode = barcode_tags.barcode('99999', format='BMP')
-        self.assertIsInstance(barcode, str)
-        self.assertTrue(barcode.startswith('data:image/bmp;'))
-
-    def test_qrcode(self):
-        """Test the qrcode generation tag."""
-        # Test with default settings
-        qrcode = barcode_tags.qrcode('hello world')
-        self.assertIsInstance(qrcode, str)
-        self.assertTrue(qrcode.startswith('data:image/png;'))
-        self.assertEqual(len(qrcode), 700)
-
-        # Generate a much larger qrcode
-        qrcode = barcode_tags.qrcode(
-            'hello_world', version=2, box_size=50, format='BMP'
-        )
-        self.assertIsInstance(qrcode, str)
-        self.assertTrue(qrcode.startswith('data:image/bmp;'))
-        self.assertEqual(len(qrcode), 309720)
 
 
 class ReportTest(InvenTreeAPITestCase):
@@ -304,6 +80,28 @@ class ReportTest(InvenTreeAPITestCase):
 
         response = self.get(url, {'enabled': False})
         self.assertEqual(len(response.data), n)
+
+        # Filter by items
+        part_pk = Part.objects.first().pk
+        report = ReportTemplate.objects.filter(model_type='part').first()
+        assert report
+
+        try:
+            response = self.get(
+                url, {'model_type': 'part', 'items': part_pk}, expected_code=400
+            )
+            self.assertIn('model_type', response.data)
+            self.assertIn(
+                'Select a valid choice. part is not one of the available choices.',
+                str(response.data),
+            )
+            return  # pragma: no cover
+        except AssertionError:
+            response = self.get(url, {'model_type': 'part', 'items': part_pk})
+
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['pk'], report.pk)
+        self.assertEqual(response.data[0]['name'], report.name)
 
     def test_create_endpoint(self):
         """Test that creating a new report works for each report."""
@@ -439,6 +237,7 @@ class ReportTest(InvenTreeAPITestCase):
         url = reverse('api-report-template-list')
 
         template = ReportTemplate.objects.first()
+        assert template
 
         detail_url = reverse('api-report-template-detail', kwargs={'pk': template.pk})
 
@@ -483,6 +282,116 @@ class ReportTest(InvenTreeAPITestCase):
         template.refresh_from_db()
         self.assertEqual(template.description, 'An updated description')
 
+    def test_print(self):
+        """Test that we can print a report manually."""
+        # Find a suitable report template
+        template = ReportTemplate.objects.filter(
+            enabled=True, model_type='stockitem'
+        ).first()
+
+        # Gather some items
+        items = StockItem.objects.all()[0:5]
+
+        output = template.print(items)
+
+        self.assertTrue(output.complete)
+        self.assertEqual(output.total, 5)
+        self.assertIsNotNone(output.output)
+        self.assertTrue(output.output.name.endswith('.pdf'))
+
+
+class LabelTest(InvenTreeAPITestCase):
+    """Unit tests for label templates."""
+
+    fixtures = [
+        'category',
+        'part',
+        'company',
+        'location',
+        'test_templates',
+        'supplier_part',
+        'stock',
+        'stock_tests',
+        'bom',
+        'build',
+        'order',
+        'return_order',
+        'sales_order',
+    ]
+
+    superuser = True
+
+    def setUp(self):
+        """Ensure cache is cleared as part of test setup."""
+        cache.clear()
+
+        apps.get_app_config('report').create_default_labels()
+
+        return super().setUp()
+
+    def test_print(self):
+        """Test manual printing of label templates."""
+        # Find a suitable label template
+        template = LabelTemplate.objects.filter(enabled=True, model_type='part').first()
+
+        # Gather some items
+        parts = Part.objects.all()[0:10]
+
+        # Find the label plugin (render to pdf)
+        plugin = registry.get_plugin('inventreelabel')
+
+        self.assertIsNotNone(template)
+        self.assertIsNotNone(plugin)
+
+        output = template.print(items=parts, plugin=plugin)
+
+        self.assertTrue(output.complete)
+        self.assertEqual(output.total, 10)
+        self.assertIsNotNone(output.output)
+        self.assertEqual(output.plugin, 'inventreelabel')
+        self.assertTrue(output.output.name.endswith('.pdf'))
+
+    def test_filters(self):
+        """Test that template filters are correctly validated."""
+        from django.core.exceptions import ValidationError
+
+        from InvenTree.helpers import validateFilterString
+
+        invalid = [
+            'name=widget, category=6, invalid_field=123',
+            'category__in=[1,',
+            'foo=bar',
+        ]
+
+        valid = [
+            'name=widget, category=6',
+            'category__in=[1,2,3]',
+            'name=widget  , id__in  =    [99, 199        ]   ',
+            'pk__in=[1,2,3], active=True',
+            'pk__in=[1, 99], category__in=[1,2,3]',
+        ]
+
+        template = LabelTemplate.objects.filter(enabled=True, model_type='part').first()
+
+        for f in invalid:
+            with self.assertRaises(ValidationError):
+                template.filters = f
+                template.clean()
+
+        for f in valid:
+            template.filters = f
+            template.clean()
+
+        # Test a specific example
+        example = '    location__in =[1,2 , 3 ] , status= 3  , id__in=[4,5,6]  , part__active=False'
+
+        result = validateFilterString(example, model=StockItem)
+
+        self.assertEqual(result['location__in'], [1, 2, 3])
+        self.assertEqual(result['status'], '3')
+        self.assertEqual(result['id__in'], [4, 5, 6])
+        self.assertEqual(result['part__active'], 'False')
+
 
 class PrintTestMixins:
     """Mixin that enables e2e printing tests."""
@@ -491,12 +400,9 @@ class PrintTestMixins:
 
     def do_activate_plugin(self):
         """Activate the 'samplelabel' plugin."""
+        registry.set_plugin_state(self.plugin_ref, True)
         plugin = registry.get_plugin(self.plugin_ref)
         self.assertIsNotNone(plugin)
-        config = plugin.plugin_config()
-        self.assertIsNotNone(config)
-        config.active = True
-        config.save()
 
     def run_print_test(self, qs, model_type, label: bool = True):
         """Run tests on single and multiple page printing.
@@ -511,6 +417,7 @@ class PrintTestMixins:
 
         qs = qs.objects.all()
         template = mdl.objects.filter(enabled=True, model_type=model_type).first()
+        assert template
         plugin = registry.get_plugin(self.plugin_ref)
 
         # Single page printing
@@ -530,8 +437,24 @@ class PrintTestMixins:
             },
             expected_code=201,
             max_query_time=15,
-            max_query_count=500 * len(qs),
+            max_query_count=150 * len(qs),
         )
+
+        # Test with wrong dimensions
+        if not hasattr(template, 'width'):
+            return
+
+        org_width = template.width
+        template.width = 0
+        template.save()
+        response = self.post(
+            url,
+            {'template': template.pk, 'plugin': plugin.pk, 'items': [qs[0].pk]},
+            expected_code=400,
+        )
+        self.assertEqual(str(response.data['template'][0]), 'Invalid label dimensions')
+        template.width = org_width
+        template.save()
 
 
 class TestReportTest(PrintTestMixins, ReportTest):
@@ -555,7 +478,16 @@ class TestReportTest(PrintTestMixins, ReportTest):
         template = ReportTemplate.objects.filter(
             enabled=True, model_type='stockitem'
         ).first()
+        assert template
+
         self.assertIsNotNone(template)
+
+        # Ensure that the 'attach_to_model' attribute is initially False
+        template.attach_to_model = False
+        template.save()
+        template.refresh_from_db()
+
+        self.assertFalse(template.attach_to_model)
 
         url = reverse(self.print_url)
 
@@ -568,35 +500,66 @@ class TestReportTest(PrintTestMixins, ReportTest):
         # Now print with a valid StockItem
         item = StockItem.objects.first()
 
+        n = item.attachments.count()
+
         response = self.post(
             url, {'template': template.pk, 'items': [item.pk]}, expected_code=201
         )
 
         # There should be a link to the generated PDF
-        self.assertEqual(response.data['output'].startswith('/media/report/'), True)
+        self.assertTrue(response.data['output'].startswith('/media/data_output/'))
+        self.assertTrue(response.data['output'].endswith('.pdf'))
 
         # By default, this should *not* have created an attachment against this stockitem
+        self.assertEqual(n, item.attachments.count())
         self.assertFalse(
             Attachment.objects.filter(model_id=item.pk, model_type='stockitem').exists()
         )
 
-        return
-        # TODO @matmair - Re-add this test after https://github.com/inventree/InvenTree/pull/7074/files#r1600694356 is resolved
-        # Change the setting, now the test report should be attached automatically
-        InvenTreeSetting.set_setting('REPORT_ATTACH_TEST_REPORT', True, None)
+        # Now try again, but attach the generated PDF to the StockItem
+        template.attach_to_model = True
+        template.save()
 
         response = self.post(
             url, {'template': template.pk, 'items': [item.pk]}, expected_code=201
         )
 
-        # There should be a link to the generated PDF
-        self.assertEqual(response.data['output'].startswith('/media/report/'), True)
+        # A new attachment should have been created
+        self.assertEqual(n + 1, item.attachments.count())
+        attachment = item.attachments.order_by('-pk').first()
 
-        # Check that a report has been uploaded
-        attachment = Attachment.objects.filter(
-            model_id=item.pk, model_type='stockitem'
+        # The attachment should be a PDF
+        self.assertTrue(attachment.attachment.name.endswith('.pdf'))
+
+        # Set DEBUG_MODE to return the report as an HTML file
+        set_global_setting('REPORT_DEBUG_MODE', True)
+
+        # Grab the report template
+        template_merge = ReportTemplate.objects.filter(
+            enabled=True, model_type='stockitem', merge=True
         ).first()
-        self.assertIsNotNone(attachment)
+
+        # Grab the first 3 stock items
+        items = StockItem.objects.all()[:3]
+        response = self.post(
+            url,
+            {'template': template_merge.pk, 'items': [item.pk for item in items]},
+            expected_code=201,
+        )
+
+        # Open and read the output HTML as a string
+        html_report = ''
+        report_path = os.path.join(
+            settings.MEDIA_ROOT, response.data['output'].replace('/media/', '', 1)
+        )
+        self.assertTrue(response.data['output'])
+        with open(report_path, encoding='utf-8') as f:
+            html_report = f.read()
+
+        # Assuming the number of <head> and <body> correlates to the number of pages
+        # in the generated PDF
+        self.assertEqual(html_report.count('<head>'), 1)
+        self.assertEqual(html_report.count('<body>'), 1)
 
     def test_mdl_build(self):
         """Test the Build model."""
@@ -609,3 +572,11 @@ class TestReportTest(PrintTestMixins, ReportTest):
     def test_mdl_salesorder(self):
         """Test the SalesOrder model."""
         self.run_print_test(SalesOrder, 'salesorder', label=False)
+
+
+class AdminTest(AdminTestCase):
+    """Tests for the admin interface integration."""
+
+    def test_admin(self):
+        """Test the admin URL."""
+        self.helper(model=ReportTemplate)

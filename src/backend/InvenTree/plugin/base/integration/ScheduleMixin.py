@@ -1,14 +1,15 @@
 """Plugin mixin class for ScheduleMixin."""
 
-import logging
-
 from django.conf import settings
 from django.db.utils import OperationalError, ProgrammingError
 
+import structlog
+
 from common.settings import get_global_setting
+from plugin import PluginMixinEnum
 from plugin.helpers import MixinImplementationError
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class ScheduleMixin:
@@ -54,7 +55,7 @@ class ScheduleMixin:
 
         self.scheduled_tasks = []
 
-        self.add_mixin('schedule', 'has_scheduled_tasks', __class__)
+        self.add_mixin(PluginMixinEnum.SCHEDULE, 'has_scheduled_tasks', __class__)
 
     @classmethod
     def _activate_mixin(cls, registry, plugins, *args, **kwargs):
@@ -66,7 +67,11 @@ class ScheduleMixin:
 
         if settings.PLUGIN_TESTING or get_global_setting('ENABLE_PLUGINS_SCHEDULE'):
             for _key, plugin in plugins:
-                if plugin.mixin_enabled('schedule') and plugin.is_active():
+                if (
+                    plugin
+                    and plugin.is_active()
+                    and plugin.mixin_enabled(PluginMixinEnum.SCHEDULE)
+                ):
                     # Only active tasks for plugins which are enabled
                     plugin.register_tasks()
                     task_keys += plugin.get_task_names()
@@ -148,7 +153,7 @@ class ScheduleMixin:
     def get_task_names(self):
         """All defined task names."""
         # Returns a list of all task names associated with this plugin instance
-        return [self.get_task_name(key) for key in self.scheduled_tasks.keys()]
+        return [self.get_task_name(key) for key in self.scheduled_tasks]
 
     def register_tasks(self):
         """Register the tasks with the database."""
@@ -179,13 +184,23 @@ class ScheduleMixin:
                     obj['func'] = 'plugin.registry.call_plugin_function'
                     obj['args'] = f"'{slug}', '{func_name}'"
 
-                if Schedule.objects.filter(name=task_name).exists():
+                tasks = Schedule.objects.filter(name=task_name)
+
+                if len(tasks) > 1:
+                    logger.info(
+                        "Found multiple tasks; Adding a new scheduled task '%s'",
+                        task_name,
+                    )
+                    tasks.delete()
+                    Schedule.objects.create(**obj)
+                elif len(tasks) == 1:
                     # Scheduled task already exists - update it!
                     logger.info("Updating scheduled task '%s'", task_name)
-                    instance = Schedule.objects.get(name=task_name)
-                    for item in obj:
-                        setattr(instance, item, obj[item])
-                    instance.save()
+
+                    if instance := tasks.first():
+                        for item in obj:
+                            setattr(instance, item, obj[item])
+                        instance.save()
                 else:
                     logger.info("Adding scheduled task '%s'", task_name)
                     # Create a new scheduled task
@@ -200,7 +215,7 @@ class ScheduleMixin:
         try:
             from django_q.models import Schedule
 
-            for key, _ in self.scheduled_tasks.items():
+            for key in self.scheduled_tasks:
                 task_name = self.get_task_name(key)
 
                 try:

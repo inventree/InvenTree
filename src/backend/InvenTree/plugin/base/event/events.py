@@ -1,30 +1,41 @@
 """Functions for triggering and responding to server side events."""
 
-import logging
-
 from django.conf import settings
 from django.db import transaction
 from django.db.models.signals import post_delete, post_save
 from django.dispatch.dispatcher import receiver
 
+import structlog
+from opentelemetry import trace
+
 import InvenTree.exceptions
 from common.settings import get_global_setting
 from InvenTree.ready import canAppAccessDatabase, isImportingData
 from InvenTree.tasks import offload_task
+from plugin import PluginMixinEnum
 from plugin.registry import registry
 
-logger = logging.getLogger('inventree')
+tracer = trace.get_tracer(__name__)
+logger = structlog.get_logger('inventree')
 
 
-def trigger_event(event, *args, **kwargs):
+@tracer.start_as_current_span('trigger_event')
+def trigger_event(event: str, *args, **kwargs) -> None:
     """Trigger an event with optional arguments.
 
-    This event will be stored in the database,
-    and the worker will respond to it later on.
+    Arguments:
+        event: The event to trigger
+        *args: Additional arguments to pass to the event handler
+        **kwargs: Additional keyword arguments to pass to the event handler
+
+    This event will be stored in the database, and the worker will respond to it later on.
     """
     if not get_global_setting('ENABLE_PLUGINS_EVENTS', False):
         # Do nothing if plugin events are not enabled
         return
+
+    # Ensure event name is stringified
+    event = str(event).strip()
 
     # Make sure the database can be accessed and is not being tested rn
     if (
@@ -36,13 +47,18 @@ def trigger_event(event, *args, **kwargs):
 
     logger.debug("Event triggered: '%s'", event)
 
-    # By default, force the event to be processed asynchronously
-    if 'force_async' not in kwargs and not settings.PLUGIN_TESTING_EVENTS:
-        kwargs['force_async'] = True
+    force_async = kwargs.pop('force_async', True)
 
-    offload_task(register_event, event, *args, **kwargs)
+    # If we are running in testing mode, we can enable or disable async processing
+    if settings.PLUGIN_TESTING_EVENTS:
+        force_async = settings.PLUGIN_TESTING_EVENTS_ASYNC
+
+    kwargs['force_async'] = force_async
+
+    offload_task(register_event, event, *args, group='plugin', **kwargs)
 
 
+@tracer.start_as_current_span('register_event')
 def register_event(event, *args, **kwargs):
     """Register the event with any interested plugins.
 
@@ -57,19 +73,12 @@ def register_event(event, *args, **kwargs):
         registry.check_reload()
 
         with transaction.atomic():
-            for slug, plugin in registry.plugins.items():
-                if not plugin.mixin_enabled('events'):
-                    continue
-
-                # Only allow event registering for 'active' plugins
-                if not plugin.is_active():
-                    continue
-
+            for plugin in registry.with_mixin(PluginMixinEnum.EVENTS, active=True):
                 # Let the plugin decide if it wants to process this event
                 if not plugin.wants_process_event(event):
                     continue
 
-                logger.debug("Registering callback for plugin '%s'", slug)
+                logger.debug("Registering callback for plugin '%s'", plugin.slug)
 
                 # This task *must* be processed by the background worker,
                 # unless we are running CI tests
@@ -77,19 +86,22 @@ def register_event(event, *args, **kwargs):
                     kwargs['force_async'] = True
 
                 # Offload a separate task for each plugin
-                offload_task(process_event, slug, event, *args, **kwargs)
+                offload_task(
+                    process_event, plugin.slug, event, *args, group='plugin', **kwargs
+                )
 
 
+@tracer.start_as_current_span('process_event')
 def process_event(plugin_slug, event, *args, **kwargs):
     """Respond to a triggered event.
 
     This function is run by the background worker process.
     This function may queue multiple functions to be handled by the background worker.
     """
-    plugin = registry.get_plugin(plugin_slug)
+    plugin = registry.get_plugin(plugin_slug, active=True)
 
     if plugin is None:  # pragma: no cover
-        logger.error("Could not find matching plugin for '%s'", plugin_slug)
+        logger.error("Could not find matching active plugin for '%s'", plugin_slug)
         return
 
     logger.debug("Plugin '%s' is processing triggered event '%s'", plugin_slug, event)
@@ -98,7 +110,7 @@ def process_event(plugin_slug, event, *args, **kwargs):
         plugin.process_event(event, *args, **kwargs)
     except Exception as e:
         # Log the exception to the database
-        InvenTree.exceptions.log_error(f'plugins.{plugin_slug}.process_event')
+        InvenTree.exceptions.log_error('process_event', plugin=plugin_slug)
         # Re-throw the exception so that the background worker tries again
         raise e
 
@@ -144,13 +156,9 @@ def allow_table_event(table_name):
         'common_webhookmessage',
         'part_partpricing',
         'part_partstocktake',
-        'part_partstocktakereport',
     ]
 
-    if table_name in ignore_tables:
-        return False
-
-    return True
+    return table_name not in ignore_tables
 
 
 @receiver(post_save)
@@ -180,4 +188,9 @@ def after_delete(sender, instance, **kwargs):
     if not allow_table_event(table):
         return
 
-    trigger_event(f'{table}.deleted', model=sender.__name__)
+    instance_id = None
+
+    if instance:
+        instance_id = getattr(instance, 'id', None)
+
+    trigger_event(f'{table}.deleted', model=sender.__name__, id=instance_id)

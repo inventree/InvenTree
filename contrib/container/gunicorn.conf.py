@@ -19,7 +19,7 @@ threads = 4
 
 
 # Worker timeout (default = 90 seconds)
-timeout = os.environ.get('INVENTREE_GUNICORN_TIMEOUT', 90)
+timeout = os.environ.get('INVENTREE_GUNICORN_TIMEOUT', '90')
 
 # Number of worker processes
 workers = os.environ.get('INVENTREE_GUNICORN_WORKERS', None)
@@ -40,3 +40,18 @@ max_requests_jitter = 50
 
 # preload app so that the ready functions are only executed once
 preload_app = True
+
+
+def post_fork(server, worker):
+    """Post-fork hook to set up logging for each worker."""
+    from django.conf import settings
+
+    if not settings.TRACING_ENABLED:
+        return
+
+    # Instrument gunicorm
+    from InvenTree.tracing import setup_instruments, setup_tracing
+
+    # Run tracing/logging instrumentation
+    setup_tracing(**settings.TRACING_DETAILS)
+    setup_instruments(settings.DB_ENGINE)

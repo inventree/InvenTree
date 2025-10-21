@@ -3,7 +3,6 @@
 import os
 from decimal import Decimal
 
-from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
@@ -60,8 +59,7 @@ class CompanySimpleTest(TestCase):
     def test_company_url(self):
         """Test the detail URL for a company."""
         c = Company.objects.get(pk=1)
-        if settings.ENABLE_CLASSIC_FRONTEND:
-            self.assertEqual(c.get_absolute_url(), '/company/1/')
+        self.assertEqual(c.get_absolute_url(), '/web/purchasing/manufacturer/1')
 
     def test_image_renamer(self):
         """Test the company image upload functionality."""

@@ -31,16 +31,23 @@
         "ms-python.python",
         "ms-python.vscode-pylance",
         "batisteo.vscode-django",
-        "eamodio.gitlens"
+        "eamodio.gitlens",
+        "biomejs.biome"
       ]
     }
   },
 
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
-  "forwardPorts": [5173, 8000, 8080],
+  "forwardPorts": [5173, 5432, 6379, 8000, 8080],
   "portsAttributes": {
     "5173": {
       "label": "Vite Server"
+    },
+    "5432": {
+      "label": "PostgreSQL Database"
+    },
+    "6379": {
+      "label": "Redis Server"
     },
     "8000": {
       "label": "InvenTree Server"

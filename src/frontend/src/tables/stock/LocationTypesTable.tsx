@@ -1,22 +1,27 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { useCallback, useMemo, useState } from 'react';
 
-import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
+import { AddItemButton } from '@lib/components/AddItemButton';
+import {
+  type RowAction,
+  RowDeleteAction,
+  RowEditAction
+} from '@lib/components/RowActions';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import type { ApiFormFieldSet } from '@lib/types/Forms';
+import type { TableColumn } from '@lib/types/Tables';
 import { ApiIcon } from '../../components/items/ApiIcon';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { UserRoles } from '../../enums/Roles';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
+import { DescriptionColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 export default function LocationTypesTable() {
   const table = useTable('location-types');
@@ -69,10 +74,7 @@ export default function LocationTypesTable() {
         title: t`Name`,
         sortable: true
       },
-      {
-        accessor: 'description',
-        title: t`Description`
-      },
+      DescriptionColumn({}),
       {
         accessor: 'location_count',
         sortable: true
@@ -105,7 +107,7 @@ export default function LocationTypesTable() {
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
-        key="add-location-type"
+        key='add-location-type'
         tooltip={t`Add Location Type`}
         onClick={() => newLocationType.open()}
         hidden={!user.hasAddRole(UserRoles.stock_location)}

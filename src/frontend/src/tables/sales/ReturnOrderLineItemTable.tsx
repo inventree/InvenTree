@@ -1,48 +1,70 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { IconSquareArrowRight } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
-import { AddItemButton } from '../../components/buttons/AddItemButton';
+import { ActionButton } from '@lib/components/ActionButton';
+import { AddItemButton } from '@lib/components/AddItemButton';
+import {
+  type RowAction,
+  RowDeleteAction,
+  RowEditAction
+} from '@lib/components/RowActions';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import type { TableFilter } from '@lib/types/Filters';
+import type { TableColumn } from '@lib/types/Tables';
 import { formatCurrency } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
-import { useReturnOrderLineItemFields } from '../../forms/ReturnOrderForms';
-import { notYetImplemented } from '../../functions/notifications';
+import {
+  useReceiveReturnOrderLineItems,
+  useReturnOrderLineItemFields
+} from '../../forms/ReturnOrderForms';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
+import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
 import {
   DateColumn,
+  DescriptionColumn,
   LinkColumn,
   NoteColumn,
   PartColumn,
   ReferenceColumn,
   StatusColumn
 } from '../ColumnRenderers';
-import { StatusFilterOptions, TableFilter } from '../Filter';
+import { StatusFilterOptions } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 export default function ReturnOrderLineItemTable({
   orderId,
+  order,
+  orderDetailRefresh,
   customerId,
+  editable,
   currency
-}: {
+}: Readonly<{
   orderId: number;
+  order: any;
+  orderDetailRefresh: () => void;
   customerId: number;
+  editable: boolean;
   currency: string;
-}) {
+}>) {
   const table = useTable('return-order-line-item');
   const user = useUserState();
 
+  const roStatus = useStatusCodes({ modelType: ModelType.returnorder });
+
   const [selectedLine, setSelectedLine] = useState<number>(0);
+
+  const inProgress: boolean = useMemo(() => {
+    return order.status == roStatus.IN_PROGRESS;
+  }, [order, roStatus]);
 
   const newLineFields = useReturnOrderLineItemFields({
     orderId: orderId,
@@ -63,6 +85,7 @@ export default function ReturnOrderLineItemTable({
       order: orderId,
       price_currency: currency
     },
+    onFormSuccess: orderDetailRefresh,
     table: table
   });
 
@@ -71,6 +94,7 @@ export default function ReturnOrderLineItemTable({
     pk: selectedLine,
     title: t`Edit Line Item`,
     fields: editLineFields,
+    onFormSuccess: orderDetailRefresh,
     table: table
   });
 
@@ -78,22 +102,40 @@ export default function ReturnOrderLineItemTable({
     url: ApiEndpoints.return_order_line_list,
     pk: selectedLine,
     title: t`Delete Line Item`,
+    onFormSuccess: orderDetailRefresh,
     table: table
   });
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
+      PartColumn({
+        part: 'part_detail'
+      }),
       {
-        accessor: 'part',
-        title: t`Part`,
+        accessor: 'part_detail.IPN',
+        sortable: false
+      },
+      DescriptionColumn({
+        accessor: 'part_detail.description'
+      }),
+      {
+        accessor: 'item_detail.serial',
+        title: t`Quantity`,
         switchable: false,
-        render: (record: any) => PartColumn(record?.part_detail)
+        render: (record: any) => {
+          if (record.item_detail.serial && record.quantity == 1) {
+            return `# ${record.item_detail.serial}`;
+          } else {
+            return record.quantity;
+          }
+        }
       },
-      {
-        accessor: 'item',
-        title: t`Stock Item`,
-        switchable: false
-      },
+      StatusColumn({
+        model: ModelType.stockitem,
+        sortable: false,
+        accessor: 'item_detail.status',
+        title: t`Status`
+      }),
       ReferenceColumn({}),
       StatusColumn({
         model: ModelType.returnorderlineitem,
@@ -139,14 +181,38 @@ export default function ReturnOrderLineItemTable({
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
-        tooltip={t`Add line item`}
-        hidden={!user.hasAddRole(UserRoles.return_order)}
+        key='add-line-item'
+        tooltip={t`Add Line Item`}
+        hidden={!editable || !user.hasAddRole(UserRoles.return_order)}
         onClick={() => {
           newLine.open();
         }}
+      />,
+      <ActionButton
+        key='receive-items'
+        tooltip={t`Receive selected items`}
+        icon={<IconSquareArrowRight />}
+        hidden={
+          !editable || inProgress || !user.hasChangeRole(UserRoles.return_order)
+        }
+        onClick={() => {
+          setSelectedItems(
+            table.selectedRecords.filter((record: any) => !record.received_date)
+          );
+          receiveLineItems.open();
+        }}
+        disabled={table.selectedRecords.length == 0}
       />
     ];
-  }, [user, orderId]);
+  }, [user, editable, inProgress, orderId, table.selectedRecords]);
+
+  const [selectedItems, setSelectedItems] = useState<any[]>([]);
+
+  const receiveLineItems = useReceiveReturnOrderLineItems({
+    orderId: orderId,
+    items: selectedItems,
+    onFormSuccess: (data: any) => table.refreshTable()
+  });
 
   const rowActions = useCallback(
     (record: any): RowAction[] => {
@@ -154,20 +220,27 @@ export default function ReturnOrderLineItemTable({
 
       return [
         {
-          hidden: received || !user.hasChangeRole(UserRoles.return_order),
+          hidden:
+            received ||
+            !editable ||
+            !inProgress ||
+            !user.hasChangeRole(UserRoles.return_order),
           title: t`Receive Item`,
           icon: <IconSquareArrowRight />,
-          onClick: notYetImplemented
+          onClick: () => {
+            setSelectedItems([record]);
+            receiveLineItems.open();
+          }
         },
         RowEditAction({
-          hidden: !user.hasChangeRole(UserRoles.return_order),
+          hidden: !editable || !user.hasChangeRole(UserRoles.return_order),
           onClick: () => {
             setSelectedLine(record.pk);
             editLine.open();
           }
         }),
         RowDeleteAction({
-          hidden: !user.hasDeleteRole(UserRoles.return_order),
+          hidden: !editable || !user.hasDeleteRole(UserRoles.return_order),
           onClick: () => {
             setSelectedLine(record.pk);
             deleteLine.open();
@@ -175,7 +248,7 @@ export default function ReturnOrderLineItemTable({
         })
       ];
     },
-    [user]
+    [user, editable, inProgress]
   );
 
   return (
@@ -183,6 +256,7 @@ export default function ReturnOrderLineItemTable({
       {newLine.modal}
       {editLine.modal}
       {deleteLine.modal}
+      {receiveLineItems.modal}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.return_order_line_list)}
         tableState={table}
@@ -194,9 +268,13 @@ export default function ReturnOrderLineItemTable({
             item_detail: true,
             order_detail: true
           },
+          enableSelection:
+            inProgress && user.hasChangeRole(UserRoles.return_order),
           tableActions: tableActions,
           tableFilters: tableFilters,
-          rowActions: rowActions
+          rowActions: rowActions,
+          modelField: 'item',
+          modelType: ModelType.stockitem
         }}
       />
     </>

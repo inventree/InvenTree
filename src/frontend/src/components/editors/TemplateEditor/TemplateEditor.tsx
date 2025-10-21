@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import {
   Alert,
   CloseButton,
@@ -9,7 +9,11 @@ import {
   Tabs
 } from '@mantine/core';
 import { openConfirmModal } from '@mantine/modals';
-import { notifications, showNotification } from '@mantine/notifications';
+import {
+  hideNotification,
+  notifications,
+  showNotification
+} from '@mantine/notifications';
 import {
   IconAlertTriangle,
   IconDeviceFloppy,
@@ -17,42 +21,41 @@ import {
   IconRefresh
 } from '@tabler/icons-react';
 import Split from '@uiw/react-split';
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState
-} from 'react';
+import type React from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import { ModelInformationDict } from '@lib/enums/ModelInformation';
+import { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
 import { api } from '../../../App';
-import { ModelType } from '../../../enums/ModelType';
-import { TablerIconType } from '../../../functions/icons';
-import { apiUrl } from '../../../states/ApiState';
-import { TemplateI } from '../../../tables/settings/TemplateTable';
+import type { TemplateI } from '../../../tables/settings/TemplateTable';
+import { Boundary } from '../../Boundary';
 import { SplitButton } from '../../buttons/SplitButton';
 import { StandaloneField } from '../../forms/StandaloneField';
-import { ModelInformationDict } from '../../render/ModelType';
 
 type EditorProps = {
   template: TemplateI;
 };
+
 type EditorRef = {
   setCode: (code: string) => void | Promise<void>;
   getCode: () => (string | undefined) | Promise<string | undefined>;
 };
+
 export type EditorComponent = React.ForwardRefExoticComponent<
   EditorProps & React.RefAttributes<EditorRef>
 >;
+
 export type Editor = {
   key: string;
   name: string;
-  icon: TablerIconType;
+  icon?: React.ReactNode;
   component: EditorComponent;
 };
 
 type PreviewAreaProps = {};
-type PreviewAreaRef = {
+
+export type PreviewAreaRef = {
   updatePreview: (
     code: string,
     previewItem: string,
@@ -60,13 +63,15 @@ type PreviewAreaRef = {
     templateEditorProps: TemplateEditorProps
   ) => void | Promise<void>;
 };
+
 export type PreviewAreaComponent = React.ForwardRefExoticComponent<
   PreviewAreaProps & React.RefAttributes<PreviewAreaRef>
 >;
+
 export type PreviewArea = {
   key: string;
   name: string;
-  icon: TablerIconType;
+  icon: React.ReactNode;
   component: PreviewAreaComponent;
 };
 
@@ -80,8 +85,8 @@ export type TemplateEditorProps = {
 
 export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
   const { templateUrl, editors, previewAreas, template } = props;
-  const editorRef = useRef<EditorRef>();
-  const previewRef = useRef<PreviewAreaRef>();
+  const editorRef = useRef<EditorRef | null>(null);
+  const previewRef = useRef<PreviewAreaRef | null>(null);
 
   const [hasSaveConfirmed, setHasSaveConfirmed] = useState(false);
 
@@ -94,7 +99,7 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
     previewAreas[0].key
   );
 
-  const codeRef = useRef<string | undefined>();
+  const codeRef = useRef<string | undefined>(undefined);
 
   const loadCodeToEditor = useCallback(async (code: string) => {
     try {
@@ -126,10 +131,34 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
 
     api.get(templateUrl).then((response: any) => {
       if (response.data?.template) {
-        api.get(response.data.template).then((res) => {
-          codeRef.current = res.data;
-          loadCodeToEditor(res.data);
-        });
+        // Fetch the raw template file from the server
+        // Request that it is provided without any caching,
+        // to ensure that we always get the latest version
+        api
+          .get(response.data.template, {
+            headers: {
+              'Cache-Control': 'no-cache',
+              Pragma: 'no-cache',
+              Expires: '0'
+            }
+          })
+          .then((res) => {
+            codeRef.current = res.data;
+            loadCodeToEditor(res.data);
+          })
+          .catch(() => {
+            console.error(
+              `ERR: Could not load template from ${response.data.template}`
+            );
+            codeRef.current = undefined;
+            hideNotification('template-load-error');
+            showNotification({
+              id: 'template-load-error',
+              title: t`Error`,
+              message: t`Could not load the template from the server.`,
+              color: 'red'
+            });
+          });
       }
     });
   }, [templateUrl]);
@@ -140,13 +169,13 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
   }, [editorValue]);
 
   const updatePreview = useCallback(
-    async (confirmed: boolean, saveTemplate: boolean = true) => {
+    async (confirmed: boolean, saveTemplate = true) => {
       if (!confirmed) {
         openConfirmModal({
           title: t`Save & Reload Preview`,
           children: (
             <Alert
-              color="yellow"
+              color='yellow'
               icon={<IconAlertTriangle />}
               title={t`Are you sure you want to Save & Reload the preview?`}
             >
@@ -228,164 +257,169 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
   }, [previewApiUrl, templateFilters]);
 
   return (
-    <Stack style={{ height: '100%', flex: '1' }}>
-      <Split style={{ gap: '10px' }}>
-        <Tabs
-          value={editorValue}
-          onChange={async (v) => {
-            codeRef.current = await getCodeFromEditor();
-            setEditorValue(v);
-          }}
-          keepMounted={false}
-          style={{
-            minWidth: '300px',
-            flex: '1',
-            display: 'flex',
-            flexDirection: 'column'
-          }}
-        >
-          <Tabs.List>
-            {editors.map((Editor) => (
-              <Tabs.Tab
-                key={Editor.key}
-                value={Editor.key}
-                leftSection={<Editor.icon size="0.8rem" />}
-              >
-                {Editor.name}
-              </Tabs.Tab>
-            ))}
-
-            <Group justify="right" style={{ flex: '1' }} wrap="nowrap">
-              <SplitButton
-                loading={isPreviewLoading}
-                defaultSelected="preview_save"
-                name="preview-options"
-                options={[
-                  {
-                    key: 'preview',
-                    name: t`Reload preview`,
-                    tooltip: t`Use the currently stored template from the server`,
-                    icon: IconRefresh,
-                    onClick: () => updatePreview(true, false),
-                    disabled: !previewItem || isPreviewLoading
-                  },
-                  {
-                    key: 'preview_save',
-                    name: t`Save & Reload Preview`,
-                    tooltip: t`Save the current template and reload the preview`,
-                    icon: IconDeviceFloppy,
-                    onClick: () => updatePreview(hasSaveConfirmed),
-                    disabled: !previewItem || isPreviewLoading
-                  }
-                ]}
-              />
-            </Group>
-          </Tabs.List>
-
-          {editors.map((Editor) => (
-            <Tabs.Panel
-              key={Editor.key}
-              value={Editor.key}
-              style={{
-                display: 'flex',
-                flex: editorValue === Editor.key ? 1 : 0
-              }}
-            >
-              {/* @ts-ignore-next-line */}
-              <Editor.component ref={editorRef} template={props.template} />
-            </Tabs.Panel>
-          ))}
-        </Tabs>
-
-        <Tabs
-          value={previewValue}
-          onChange={setPreviewValue}
-          style={{
-            minWidth: '200px',
-            display: 'flex',
-            flexDirection: 'column'
-          }}
-        >
-          <Tabs.List>
-            {previewAreas.map((PreviewArea) => (
-              <Tabs.Tab
-                key={PreviewArea.key}
-                value={PreviewArea.key}
-                leftSection={<PreviewArea.icon size="0.8rem" />}
-              >
-                {PreviewArea.name}
-              </Tabs.Tab>
-            ))}
-          </Tabs.List>
-
-          <div
+    <Boundary label='TemplateEditor'>
+      <Stack style={{ height: '100%', flex: '1' }}>
+        <Split style={{ gap: '10px' }}>
+          <Tabs
+            value={editorValue}
+            onChange={async (v) => {
+              codeRef.current = await getCodeFromEditor();
+              setEditorValue(v);
+            }}
+            keepMounted={false}
             style={{
-              minWidth: '100%',
-              paddingBottom: '10px',
-              paddingTop: '10px'
+              minWidth: '300px',
+              flex: '1',
+              display: 'flex',
+              flexDirection: 'column'
             }}
           >
-            <StandaloneField
-              fieldDefinition={{
-                field_type: 'related field',
-                api_url: apiUrl(previewApiUrl),
-                description: '',
-                label: t`Select instance to preview`,
-                model: template.model_type,
-                value: previewItem,
-                filters: templateFilters,
-                onValueChange: (value) => setPreviewItem(value)
-              }}
-            />
-          </div>
+            <Tabs.List>
+              {editors.map((Editor, index) => {
+                return (
+                  <Tabs.Tab
+                    key={Editor.key}
+                    value={Editor.key}
+                    leftSection={Editor.icon}
+                  >
+                    {Editor.name}
+                  </Tabs.Tab>
+                );
+              })}
 
-          {previewAreas.map((PreviewArea) => (
-            <Tabs.Panel
-              key={PreviewArea.key}
-              value={PreviewArea.key}
-              style={{
-                display: 'flex',
-                flex: previewValue === PreviewArea.key ? 1 : 0
-              }}
-            >
-              <div
+              <Group justify='right' style={{ flex: '1' }} wrap='nowrap'>
+                <SplitButton
+                  loading={isPreviewLoading}
+                  defaultSelected='preview_save'
+                  name='preview-options'
+                  options={[
+                    {
+                      key: 'preview',
+                      name: t`Reload preview`,
+                      tooltip: t`Use the currently stored template from the server`,
+                      icon: IconRefresh,
+                      onClick: () => updatePreview(true, false),
+                      disabled: !previewItem || isPreviewLoading
+                    },
+                    {
+                      key: 'preview_save',
+                      name: t`Save & Reload Preview`,
+                      tooltip: t`Save the current template and reload the preview`,
+                      icon: IconDeviceFloppy,
+                      onClick: () => updatePreview(hasSaveConfirmed),
+                      disabled: !previewItem || isPreviewLoading
+                    }
+                  ]}
+                />
+              </Group>
+            </Tabs.List>
+
+            {editors.map((Editor) => (
+              <Tabs.Panel
+                key={Editor.key}
+                value={Editor.key}
                 style={{
-                  height: '100%',
-                  position: 'relative',
                   display: 'flex',
-                  flex: '1'
+                  flex: editorValue === Editor.key ? 1 : 0
                 }}
               >
                 {/* @ts-ignore-next-line */}
-                <PreviewArea.component ref={previewRef} />
+                <Editor.component ref={editorRef} template={props.template} />
+              </Tabs.Panel>
+            ))}
+          </Tabs>
 
-                {errorOverlay && (
-                  <Overlay color="red" center blur={0.2}>
-                    <CloseButton
-                      onClick={() => setErrorOverlay(null)}
-                      style={{
-                        position: 'absolute',
-                        top: '10px',
-                        right: '10px',
-                        color: '#fff'
-                      }}
-                      variant="filled"
-                    />
-                    <Alert
-                      color="red"
-                      icon={<IconExclamationCircle />}
-                      title={t`Error rendering template`}
-                      mx="10px"
-                    >
-                      <Code>{errorOverlay}</Code>
-                    </Alert>
-                  </Overlay>
-                )}
-              </div>
-            </Tabs.Panel>
-          ))}
-        </Tabs>
-      </Split>
-    </Stack>
+          <Tabs
+            value={previewValue}
+            onChange={setPreviewValue}
+            keepMounted={false}
+            style={{
+              minWidth: '200px',
+              display: 'flex',
+              flexDirection: 'column'
+            }}
+          >
+            <Tabs.List>
+              {previewAreas.map((PreviewArea) => (
+                <Tabs.Tab
+                  key={PreviewArea.key}
+                  value={PreviewArea.key}
+                  leftSection={PreviewArea.icon}
+                >
+                  {PreviewArea.name}
+                </Tabs.Tab>
+              ))}
+            </Tabs.List>
+
+            <div
+              style={{
+                minWidth: '100%',
+                paddingBottom: '10px',
+                paddingTop: '10px'
+              }}
+            >
+              <StandaloneField
+                fieldDefinition={{
+                  field_type: 'related field',
+                  api_url: apiUrl(previewApiUrl),
+                  description: '',
+                  label: t`Select instance to preview`,
+                  model: template.model_type,
+                  value: previewItem,
+                  filters: templateFilters,
+                  onValueChange: (value) => setPreviewItem(value)
+                }}
+              />
+            </div>
+
+            {previewAreas.map((PreviewArea) => (
+              <Tabs.Panel
+                key={PreviewArea.key}
+                value={PreviewArea.key}
+                style={{
+                  display: 'flex',
+                  flex: previewValue === PreviewArea.key ? 1 : 0
+                }}
+              >
+                <div
+                  style={{
+                    height: '100%',
+                    position: 'relative',
+                    display: 'flex',
+                    flex: '1'
+                  }}
+                >
+                  {/* @ts-ignore-next-line */}
+                  <PreviewArea.component ref={previewRef} />
+
+                  {errorOverlay && (
+                    <Overlay color='red' center blur={0.2}>
+                      <CloseButton
+                        onClick={() => setErrorOverlay(null)}
+                        style={{
+                          position: 'absolute',
+                          top: '10px',
+                          right: '10px',
+                          color: '#fff'
+                        }}
+                        variant='filled'
+                      />
+                      <Alert
+                        color='red'
+                        icon={<IconExclamationCircle />}
+                        title={t`Error rendering template`}
+                        mx='10px'
+                      >
+                        <Code>{errorOverlay}</Code>
+                      </Alert>
+                    </Overlay>
+                  )}
+                </div>
+              </Tabs.Panel>
+            ))}
+          </Tabs>
+        </Split>
+      </Stack>
+    </Boundary>
   );
 }

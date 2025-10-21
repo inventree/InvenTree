@@ -35,7 +35,9 @@ runs:
     using: 'composite'
     steps:
       - name: Checkout Code
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
 
       # Python installs
       - name: Set up Python ${{ env.python_version }}
@@ -55,14 +57,16 @@ runs:
         run: |
           python3 -m pip install -U pip
           pip3 install -U invoke wheel
-          pip3 install 'uv<0.3.0'
+          pip3 install uv>=0.9.4
       - name: Allow uv to use the system Python by default
         run: echo "UV_SYSTEM_PYTHON=1" >> $GITHUB_ENV
         shell: bash
       - name: Install Specific Python Dependencies
         if: ${{ inputs.pip-dependency }}
         shell: bash
-        run: uv pip install ${{ inputs.pip-dependency }}
+        run: uv pip install ${PIP_DEPS}
+        env:
+          PIP_DEPS: ${{ inputs.pip-dependency }}
 
       # NPM installs
       - name: Install node.js ${{ env.node_version }}
@@ -70,21 +74,16 @@ runs:
         uses: actions/setup-node@1a4442cacd436585916779262731d5b162bc6ec7  # pin to v3.8.2
         with:
           node-version: ${{ env.node_version }}
-          cache: 'npm'
-          cache-dependency-path: src/backend/package-lock.json
-      - name: Install npm packages
-        if: ${{ inputs.npm == 'true' }}
-        shell: bash
-        run: cd src/backend && npm install
-
       # OS installs
       - name: Install OS Dependencies
         if: ${{ inputs.apt-dependency }}
         shell: bash
         run: |
           sudo apt-get update
-          sudo apt-get install ${{ inputs.apt-dependency }}
-          sudo apt-get install ${{ inputs.apt-dependency }}
+          sudo apt-get install ${APT_DEPS}
+          sudo apt-get install ${APT_DEPS}
+        env:
+          APT_DEPS: ${{ inputs.apt-dependency }}
 
       # Invoke commands
       - name: Install dev requirements

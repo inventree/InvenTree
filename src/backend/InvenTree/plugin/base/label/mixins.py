@@ -9,12 +9,13 @@ import pdf2image
 from rest_framework import serializers
 from rest_framework.request import Request
 
-from common.models import InvenTreeSetting
+from common.models import DataOutput, InvenTreeSetting
 from InvenTree.exceptions import log_error
 from InvenTree.tasks import offload_task
+from plugin import PluginMixinEnum
 from plugin.base.label import label as plugin_label
 from plugin.helpers import MixinNotImplementedError
-from report.models import LabelTemplate, TemplateOutput
+from report.models import LabelTemplate
 
 
 class LabelPrintingMixin:
@@ -35,7 +36,7 @@ class LabelPrintingMixin:
     def __init__(self):  # pragma: no cover
         """Register mixin."""
         super().__init__()
-        self.add_mixin('labels', True, __class__)
+        self.add_mixin(PluginMixinEnum.LABELS, True, __class__)
 
     BLOCKING_PRINT = True
 
@@ -50,7 +51,7 @@ class LabelPrintingMixin:
         try:
             return label.render(instance, request)
         except Exception:
-            log_error('label.render_to_pdf')
+            log_error('render_to_pdf', plugin=self.slug)
             raise ValidationError(_('Error rendering label to PDF'))
 
     def render_to_html(self, label: LabelTemplate, instance, request, **kwargs):
@@ -64,7 +65,7 @@ class LabelPrintingMixin:
         try:
             return label.render_as_string(instance, request)
         except Exception:
-            log_error('label.render_to_html')
+            log_error('render_to_html', plugin=self.slug)
             raise ValidationError(_('Error rendering label to HTML'))
 
     def render_to_png(self, label: LabelTemplate, instance, request=None, **kwargs):
@@ -72,7 +73,7 @@ class LabelPrintingMixin:
 
         Arguments:
             label: The LabelTemplate object to render against
-            item: The model instance to render
+            instance: The model instance to render
             request: The HTTP request object which triggered this print job
         Keyword Arguments:
             pdf_data: The raw PDF data of the rendered label (if already rendered)
@@ -83,14 +84,10 @@ class LabelPrintingMixin:
                 [`pdf2image.convert_from_bytes`](https://pdf2image.readthedocs.io/en/latest/reference.html#pdf2image.pdf2image.convert_from_bytes) method (optional)
         """
         # Check if pdf data is provided
-        pdf_data = kwargs.get('pdf_data', None)
+        pdf_data = kwargs.get('pdf_data')
 
         if not pdf_data:
-            pdf_data = (
-                self.render_to_pdf(label, instance, request, **kwargs)
-                .get_document()
-                .write_pdf()
-            )
+            pdf_data = self.render_to_pdf(label, instance, request, **kwargs)
 
         pdf2image_kwargs = {
             'dpi': kwargs.get('dpi', InvenTreeSetting.get_setting('LABEL_DPI', 300)),
@@ -102,13 +99,13 @@ class LabelPrintingMixin:
         try:
             return pdf2image.convert_from_bytes(pdf_data, **pdf2image_kwargs)[0]
         except Exception:
-            log_error('label.render_to_png')
+            log_error('render_to_png', plugin=self.slug)
             return None
 
     def print_labels(
         self,
         label: LabelTemplate,
-        output: TemplateOutput,
+        output: DataOutput,
         items: list,
         request: Request,
         **kwargs,
@@ -117,7 +114,7 @@ class LabelPrintingMixin:
 
         Arguments:
             label: The LabelTemplate object to use for printing
-            output: The TemplateOutput object used to store the results
+            output: The DataOutput object used to store the results
             items: The list of database items to print (e.g. StockItem instances)
             request: The HTTP request object which triggered this print job
 
@@ -125,7 +122,7 @@ class LabelPrintingMixin:
             printing_options: The printing options set for this print job defined in the PrintingOptionsSerializer
 
         Returns:
-            None. Output data should be stored in the provided TemplateOutput object
+            None. Output data should be stored in the provided DataOutput object
 
         Raises:
             ValidationError if there is an error during the print process
@@ -152,14 +149,12 @@ class LabelPrintingMixin:
         for item in items:
             context = label.get_context(item, request)
             filename = label.generate_filename(context)
-            pdf_file = self.render_to_pdf(label, item, request, **kwargs)
-            pdf_data = pdf_file.get_document().write_pdf()
+            pdf_data = self.render_to_pdf(label, item, request, **kwargs)
             png_file = self.render_to_png(
                 label, item, request, pdf_data=pdf_data, **kwargs
             )
 
             print_args = {
-                'pdf_file': pdf_file,
                 'pdf_data': pdf_data,
                 'png_file': png_file,
                 'filename': filename,
@@ -179,26 +174,24 @@ class LabelPrintingMixin:
             else:
                 # Offload the print task to the background worker
 
-                # Exclude the 'pdf_file' object - cannot be pickled
-                print_args.pop('pdf_file', None)
-
                 # Exclude the 'context' object - cannot be pickled
                 print_args.pop('context', None)
 
-                offload_task(plugin_label.print_label, self.plugin_slug(), **print_args)
+                offload_task(
+                    plugin_label.print_label,
+                    self.plugin_slug(),
+                    group='plugin',
+                    **print_args,
+                )
 
             # Update the progress of the print job
-            output.progress += int(100 / N)
+            output.progress += 1
             output.save()
 
+        generated_file = self.get_generated_file(**print_args)
+
         # Mark the output as complete
-        output.complete = True
-        output.progress = 100
-
-        # Add in the generated file (if applicable)
-        output.output = self.get_generated_file(**print_args)
-
-        output.save()
+        output.mark_complete(progress=N, output=generated_file)
 
     def get_generated_file(self, **kwargs):
         """Return the generated file for download (or None, if this plugin does not generate a file output).
@@ -211,12 +204,11 @@ class LabelPrintingMixin:
         """Print a single label (blocking).
 
         kwargs:
-            pdf_file: The PDF file object of the rendered label (WeasyTemplateResponse object)
             pdf_data: Raw PDF data of the rendered label
             filename: The filename of this PDF label
             label_instance: The instance of the label model which triggered the print_label() method
             item_instance: The instance of the database model against which the label is printed
-            output: The TemplateOutput object used to store the results of the print job
+            output: The DataOutput object used to store the results of the print job
             user: The user who triggered this print job
             width: The expected width of the label (in mm)
             height: The expected height of the label (in mm)
@@ -251,8 +243,6 @@ class LabelPrintingMixin:
 
     def before_printing(self):
         """Hook method called before printing labels."""
-        pass
 
     def after_printing(self):
         """Hook method called after printing labels."""
-        pass

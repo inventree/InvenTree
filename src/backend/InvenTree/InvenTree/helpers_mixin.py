@@ -62,7 +62,7 @@ class ClassValidationMixin:
 
         if len(missing_attributes) > 0:
             errors.append(
-                f"did not provide the following attributes: {', '.join(missing_attributes)}"
+                f'did not provide the following attributes: {", ".join(missing_attributes)}'
             )
         if len(missing_overrides) > 0:
             missing_overrides_list = []
@@ -75,7 +75,7 @@ class ClassValidationMixin:
                 else:
                     missing_overrides_list.append(base_implementation.__name__)
             errors.append(
-                f"did not override the required attributes: {', '.join(missing_overrides_list)}"
+                f'did not override the required attributes: {", ".join(missing_overrides_list)}'
             )
 
         if len(errors) > 0:
@@ -99,7 +99,7 @@ class ClassProviderMixin:
 
     @classmethod
     def get_is_builtin(cls):
-        """Is this Class build in the Inventree source code?"""
+        """Is this Class build in the InvenTree source code?"""
         try:
             Path(cls.get_provider_file()).relative_to(settings.BASE_DIR)
             return True
@@ -132,6 +132,7 @@ def get_shared_class_instance_state_mixin(get_state_key: Callable[[type], str]):
 
             Arguments:
                 key: The key for the shared state
+                default: The default value to return if the key does not exist
             """
             return cache.get(self._get_key(key)) or default
 

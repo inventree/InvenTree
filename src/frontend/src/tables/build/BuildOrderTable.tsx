@@ -1,29 +1,54 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 
-import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { ProgressBar } from '../../components/items/ProgressBar';
+import { AddItemButton } from '@lib/components/AddItemButton';
+import { ProgressBar } from '@lib/components/ProgressBar';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import type { TableFilter } from '@lib/types/Filters';
 import { RenderUser } from '../../components/render/User';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import { useBuildOrderFields } from '../../forms/BuildForms';
-import { useOwnerFilters, useProjectCodeFilters } from '../../hooks/UseFilter';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import {
+  BooleanColumn,
   CreationDateColumn,
   DateColumn,
+  DescriptionColumn,
   PartColumn,
   ProjectCodeColumn,
   ReferenceColumn,
   ResponsibleColumn,
+  StartDateColumn,
   StatusColumn,
   TargetDateColumn
 } from '../ColumnRenderers';
-import { StatusFilterOptions, TableFilter } from '../Filter';
+import {
+  AssignedToMeFilter,
+  CompletedAfterFilter,
+  CompletedBeforeFilter,
+  CreatedAfterFilter,
+  CreatedBeforeFilter,
+  HasProjectCodeFilter,
+  IncludeVariantsFilter,
+  IssuedByFilter,
+  MaxDateFilter,
+  MinDateFilter,
+  OrderStatusFilter,
+  OutstandingFilter,
+  OverdueFilter,
+  PartCategoryFilter,
+  ProjectCodeFilter,
+  ResponsibleFilter,
+  StartDateAfterFilter,
+  StartDateBeforeFilter,
+  TargetDateAfterFilter,
+  TargetDateBeforeFilter
+} from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 /*
@@ -33,20 +58,20 @@ export function BuildOrderTable({
   partId,
   parentBuildId,
   salesOrderId
-}: {
+}: Readonly<{
   partId?: number;
   parentBuildId?: number;
   salesOrderId?: number;
-}) {
+}>) {
+  const globalSettings = useGlobalSettingsState();
+  const table = useTable(!!partId ? 'buildorder-part' : 'buildorder-index');
+
   const tableColumns = useMemo(() => {
     return [
       ReferenceColumn({}),
-      {
-        accessor: 'part',
-        sortable: true,
-        switchable: false,
-        render: (record: any) => PartColumn(record.part_detail)
-      },
+      PartColumn({
+        switchable: false
+      }),
       {
         accessor: 'part_detail.IPN',
         sortable: true,
@@ -54,11 +79,19 @@ export function BuildOrderTable({
         title: t`IPN`
       },
       {
+        accessor: 'part_detail.revision',
+        title: t`Revision`,
+        sortable: true,
+        defaultVisible: false
+      },
+      DescriptionColumn({
         accessor: 'title',
         sortable: false
-      },
+      }),
       {
         accessor: 'completed',
+        title: t`Completed`,
+        minWidth: 125,
         sortable: true,
         switchable: false,
         render: (record: any) => (
@@ -70,21 +103,38 @@ export function BuildOrderTable({
         )
       },
       StatusColumn({ model: ModelType.build }),
-      ProjectCodeColumn({}),
+      ProjectCodeColumn({
+        defaultVisible: false
+      }),
       {
         accessor: 'level',
         sortable: true,
         switchable: true,
-        hidden: !parentBuildId
+        hidden: !parentBuildId,
+        defaultVisible: false
       },
       {
         accessor: 'priority',
-        sortable: true
+        sortable: true,
+        defaultVisible: false
       },
-      CreationDateColumn({}),
+      BooleanColumn({
+        accessor: 'external',
+        title: t`External`,
+        sortable: true,
+        switchable: true,
+        hidden: !globalSettings.isSet('BUILDORDER_EXTERNAL_BUILDS')
+      }),
+      CreationDateColumn({
+        defaultVisible: false
+      }),
+      StartDateColumn({
+        defaultVisible: false
+      }),
       TargetDateColumn({}),
       DateColumn({
         accessor: 'completion_date',
+        title: t`Completion Date`,
         sortable: true
       }),
       {
@@ -96,72 +146,68 @@ export function BuildOrderTable({
       },
       ResponsibleColumn({})
     ];
-  }, [parentBuildId]);
-
-  const projectCodeFilters = useProjectCodeFilters();
-  const ownerFilters = useOwnerFilters();
+  }, [parentBuildId, globalSettings]);
 
   const tableFilters: TableFilter[] = useMemo(() => {
-    return [
+    const filters: TableFilter[] = [
+      OutstandingFilter(),
+      OrderStatusFilter({ model: ModelType.build }),
+      OverdueFilter(),
+      AssignedToMeFilter(),
+      MinDateFilter(),
+      MaxDateFilter(),
+      CreatedBeforeFilter(),
+      CreatedAfterFilter(),
+      TargetDateBeforeFilter(),
+      TargetDateAfterFilter(),
+      StartDateBeforeFilter(),
+      StartDateAfterFilter(),
       {
-        name: 'active',
+        name: 'has_target_date',
         type: 'boolean',
-        label: t`Active`,
-        description: t`Show active orders`
+        label: t`Has Target Date`,
+        description: t`Show orders with a target date`
       },
       {
-        name: 'status',
-        label: t`Status`,
-        description: t`Filter by order status`,
-        choiceFunction: StatusFilterOptions(ModelType.build)
-      },
-      {
-        name: 'overdue',
-        label: t`Overdue`,
+        name: 'has_start_date',
         type: 'boolean',
-        description: t`Show overdue status`
+        label: t`Has Start Date`,
+        description: t`Show orders with a start date`
       },
+      CompletedBeforeFilter(),
+      CompletedAfterFilter(),
+      ProjectCodeFilter(),
+      HasProjectCodeFilter(),
+      IssuedByFilter(),
+      ResponsibleFilter(),
       {
-        name: 'assigned_to_me',
-        type: 'boolean',
-        label: t`Assigned to me`,
-        description: t`Show orders assigned to me`
+        name: 'external',
+        label: t`External`,
+        description: t`Show external build orders`,
+        active: globalSettings.isSet('BUILDORDER_EXTERNAL_BUILDS')
       },
-      {
-        name: 'project_code',
-        label: t`Project Code`,
-        description: t`Filter by project code`,
-        choices: projectCodeFilters.choices
-      },
-      {
-        name: 'has_project_code',
-        label: t`Has Project Code`,
-        description: t`Filter by whether the purchase order has a project code`
-      },
-      {
-        name: 'issued_by',
-        label: t`Issued By`,
-        description: t`Filter by user who issued this order`,
-        choices: ownerFilters.choices
-      },
-      {
-        name: 'assigned_to',
-        label: t`Responsible`,
-        description: t`Filter by responsible owner`,
-        choices: ownerFilters.choices
-      }
+      PartCategoryFilter()
     ];
-  }, [parentBuildId, projectCodeFilters.choices, ownerFilters.choices]);
+
+    // If we are filtering on a specific part, we can include the "include variants" filter
+    if (!!partId) {
+      filters.push(IncludeVariantsFilter());
+    }
+
+    return filters;
+  }, [partId, globalSettings]);
 
   const user = useUserState();
 
-  const table = useTable('buildorder');
-
-  const buildOrderFields = useBuildOrderFields({ create: true });
+  const buildOrderFields = useBuildOrderFields({
+    create: true,
+    modalId: 'create-build-order'
+  });
 
   const newBuild = useCreateApiFormModal({
     url: ApiEndpoints.build_order_list,
     title: t`Add Build Order`,
+    modalId: 'create-build-order',
     fields: buildOrderFields,
     initialData: {
       part: partId,
@@ -178,7 +224,7 @@ export function BuildOrderTable({
         hidden={!user.hasAddRole(UserRoles.build)}
         tooltip={t`Add Build Order`}
         onClick={() => newBuild.open()}
-        key="add-build-order"
+        key='add-build-order'
       />
     ];
   }, [user]);
@@ -194,6 +240,7 @@ export function BuildOrderTable({
           params: {
             part: partId,
             ancestor: parentBuildId,
+            sales_order: salesOrderId,
             part_detail: true
           },
           tableActions: tableActions,
@@ -201,6 +248,7 @@ export function BuildOrderTable({
           modelType: ModelType.build,
           enableSelection: true,
           enableReports: true,
+          enableLabels: true,
           enableDownload: true
         }}
       />

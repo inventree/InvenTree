@@ -4,13 +4,15 @@
   <p>Open Source Inventory Management System </p>
 
 <!-- Badges -->
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/inventree/inventree)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/license/MIT)![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/inventree/inventree)
 ![CI](https://github.com/inventree/inventree/actions/workflows/qc_checks.yaml/badge.svg)
 [![Documentation Status](https://readthedocs.org/projects/inventree/badge/?version=latest)](https://inventree.readthedocs.io/en/latest/?badge=latest)
 ![Docker Build](https://github.com/inventree/inventree/actions/workflows/docker.yaml/badge.svg)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/9bbb2101-0a4d-41e7-ad56-b63fb6053094/deploy-status)](https://app.netlify.com/sites/inventree/deploys)
+[![Performance Testing](https://dev.azure.com/InvenTree/InvenTree%20test%20statistics/_apis/build/status%2Fmatmair.InvenTree?branchName=testing)](https://dev.azure.com/InvenTree/InvenTree%20test%20statistics/_build/latest?definitionId=3&branchName=testing)
+
 [![OpenSSF Best Practices](https://bestpractices.coreinfrastructure.org/projects/7179/badge)](https://bestpractices.coreinfrastructure.org/projects/7179)
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/inventree/InvenTree/badge)](https://securityscorecards.dev/viewer/?uri=github.com/inventree/InvenTree)
-[![Netlify Status](https://api.netlify.com/api/v1/badges/9bbb2101-0a4d-41e7-ad56-b63fb6053094/deploy-status)](https://app.netlify.com/sites/inventree/deploys)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=inventree_InvenTree&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=inventree_InvenTree)
 
 [![codecov](https://codecov.io/gh/inventree/InvenTree/graph/badge.svg?token=9DZRGUUV7B)](https://codecov.io/gh/inventree/InvenTree)
@@ -18,10 +20,10 @@
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/inventree/inventree)
 [![Docker Pulls](https://img.shields.io/docker/pulls/inventree/inventree)](https://hub.docker.com/r/inventree/inventree)
 
-![GitHub Org's stars](https://img.shields.io/github/stars/inventree?style=social)
+[![GitHub Org's stars](https://img.shields.io/github/stars/inventree?style=social)](https://github.com/inventree/InvenTree/)
 [![Twitter Follow](https://img.shields.io/twitter/follow/inventreedb?style=social)](https://twitter.com/inventreedb)
 [![Subreddit subscribers](https://img.shields.io/reddit/subreddit-subscribers/inventree?style=social)](https://www.reddit.com/r/InvenTree/)
-
+[![Mastdon](https://img.shields.io/badge/dynamic/json?label=Mastodon&query=followers_count&url=https%3A%2F%2Fchaos.social%2Fapi%2Fv1%2Faccounts%2Flookup%3Facct=InvenTree&logo=mastodon&style=social)](https://chaos.social/@InvenTree)
 
 <h4>
     <a href="https://demo.inventree.org/">View Demo</a>
@@ -51,10 +53,10 @@ Want to see what we are working on? Check out the [roadmap tag](https://github.c
 
 InvenTree is designed to be **extensible**, and provides multiple options for **integration** with external applications or addition of custom plugins:
 
-* [InvenTree API](https://docs.inventree.org/en/latest/api/api/)
-* [Python module](https://docs.inventree.org/en/latest/api/python/python/)
-* [Plugin interface](https://docs.inventree.org/en/latest/extend/plugins)
-* [Third party tools](https://docs.inventree.org/en/latest/extend/integrate)
+* [InvenTree API](https://docs.inventree.org/en/latest/api/)
+* [Python module](https://docs.inventree.org/en/latest/api/python/)
+* [Plugin interface](https://docs.inventree.org/en/latest/plugins/)
+* [Third party tools](https://docs.inventree.org/en/latest/plugins/integrate/)
 
 <!-- TechStack -->
 ### :space_invader: Tech Stack
@@ -83,9 +85,14 @@ InvenTree is designed to be **extensible**, and provides multiple options for **
 <details>
   <summary>Client</summary>
   <ul>
-    <li><a href="https://getbootstrap.com/">Bootstrap</a></li>
-    <li><a href="https://jquery.com/">jQuery</a></li>
-    <li><a href="https://bootstrap-table.com/">Bootstrap-Table</a></li>
+    <li><a href="https://react.dev/">React</a></li>
+    <li><a href="https://lingui.dev/">Lingui</a></li>
+    <li><a href="https://reactrouter.com/">React Router</a></li>
+    <li><a href="https://tanstack.com/query/">TanStack Query</a></li>
+    <li><a href="https://github.com/pmndrs/zustand">Zustand</a></li>
+    <li><a href="https://mantine.dev/">Mantine</a></li>
+    <li><a href="https://icflorescu.github.io/mantine-datatable/">Mantine Data Table</a></li>
+    <li><a href="https://codemirror.net/">CodeMirror</a></li>
   </ul>
 </details>
 
@@ -95,7 +102,7 @@ InvenTree is designed to be **extensible**, and provides multiple options for **
     <li><a href="https://hub.docker.com/r/inventree/inventree">Docker</a></li>
     <li><a href="https://crowdin.com/project/inventree">Crowdin</a></li>
     <li><a href="https://app.codecov.io/gh/inventree/InvenTree">Codecov</a></li>
-    <li><a href="https://app.deepsource.com/gh/inventree/InvenTree">DeepSource</a></li>
+    <li><a href="https://sonarcloud.io/project/overview?id=inventree_InvenTree">SonarCloud</a></li>
     <li><a href="https://packager.io/gh/inventree/InvenTree">Packager.io</a></li>
   </ul>
 </details>
@@ -123,7 +130,7 @@ Refer to the [getting started guide](https://docs.inventree.org/en/latest/start/
 <!-- Mobile App -->
 ## 	:iphone: Mobile App
 
-InvenTree is supported by a [companion mobile app](https://docs.inventree.org/app/) which allows users access to stock control information and functionality.
+InvenTree is supported by a [companion mobile app](https://docs.inventree.org/en/latest/app/) which allows users access to stock control information and functionality.
 
 <div align="center"><h4>
     <a href="https://play.google.com/store/apps/details?id=inventree.inventree_app">Android Play Store</a>
@@ -131,10 +138,17 @@ InvenTree is supported by a [companion mobile app](https://docs.inventree.org/ap
     <a href="https://apps.apple.com/au/app/inventree/id1581731101#?platform=iphone">Apple App Store</a>
 </h4></div>
 
+<!-- Security -->
+## :lock: Code of Conduct & Security Policy
+
+The InvenTree project team is committed to providing a safe and welcoming environment for all users. Please read our [Code of Conduct](CODE_OF_CONDUCT.md) for more information.
+
+InvenTree is following industry best practices for security. Our security policy is included [in this repo](SECURITY.md). We provide dedicated security pages on [our documentation site](https://docs.inventree.org/en/latest/security/).
+
 <!-- Contributing -->
 ## :wave: Contributing
 
-Contributions are welcomed and encouraged. Please help to make this project even better! Refer to the [contribution page](CONTRIBUTING.md).
+Contributions are welcomed and encouraged. Please help to make this project even better! Refer to the [contribution page](https://docs.inventree.org/en/latest/develop/contributing/).
 
 <!-- Translation -->
 ## :scroll: Translation
@@ -149,11 +163,8 @@ If you use InvenTree and find it to be useful, please consider [sponsoring the p
 <!-- Acknowledgments -->
 ## :gem: Acknowledgements
 
-We would like to acknowledge a few special projects:
- - [PartKeepr](https://github.com/partkeepr/PartKeepr) as a valuable predecessor and inspiration
- - [Readme Template](https://github.com/Louis3797/awesome-readme-template) for the template of this page
-
-Find a full list of used third-party libraries in [our documentation](https://docs.inventree.org/en/latest/credits/).
+We want to acknowledge [PartKeepr](https://github.com/partkeepr/PartKeepr) as a valuable predecessor and inspiration.
+Find a full list of used third-party libraries in the license information dialog of your instance.
 
 ## :heart: Support
 
@@ -169,17 +180,26 @@ Find a full list of used third-party libraries in [our documentation](https://do
 <a href="https://github.com/PricelessToolkit"><img src="https://github.com/PricelessToolkit.png" width="60px" alt="" /></a>
 <a href="https://github.com/cabottech"><img src="https://github.com/cabottech.png" width="60px" alt="Cabot Technologies" /></a>
 <a href="https://github.com/markus-k"><img src="https://github.com/markus-k.png" width="60px" alt="Markus Kasten" /></a>
-<a href="https://github.com/jefffhaynes"><img src="https://github.com/jefffhaynes.png" width="60px" alt="Jess Haynes" /></a>
+<a href="https://github.com/jefffhaynes"><img src="https://github.com/jefffhaynes.png" width="60px" alt="Jeff Haynes" /></a>
+<a href="https://github.com/dnviti"><img src="https://github.com/dnviti.png" width="60px" alt="Daniele Viti" /></a>
+<a href="https://github.com/Islendur"><img src="https://github.com/Islendur.png" width="60px" alt="Islendur" /></a>
+<a href="https://github.com/Gibeon-NL"><img src="https://github.com/Gibeon-NL.png" width="60px" alt="Gibeon-NL" /></a>
+<a href="https://github.com/Motrac-Research-Engineering"><img src="https://github.com/Motrac-Research-Engineering.png" width="60px" alt="Motrac Research" /></a>
+<a href="https://github.com/trytuna"><img src="https://github.com/trytuna.png" width="60px" alt="Timo Scrappe" /></a>
+<a href="https://github.com/ATLAS2246"><img src="https://github.com/ATLAS2246.png" width="60px" alt="ATLAS2246" /></a>
+<a href="https://github.com/Kedarius"><img src="https://github.com/Kedarius.png" width="60px" alt="Radek Hladik" /></a>
+
 </p>
 
 <p>With ongoing resources provided by:</p>
 
 <p align="center">
+  <a href="https://depot.dev?utm_source=inventree"><img src="https://depot.dev/badges/built-with-depot.svg" alt="Built with Depot" /></a>
   <a href="https://inventree.org/digitalocean">
     <img src="https://opensource.nyc3.cdn.digitaloceanspaces.com/attribution/assets/SVG/DO_Logo_horizontal_blue.svg" width="201px" alt="Servers by Digital Ocean">
   </a>
   <a href="https://www.netlify.com"> <img src="https://www.netlify.com/v3/img/components/netlify-color-bg.svg" alt="Deploys by Netlify" /> </a>
-  <a href="https://crowdin.com"> <img src="https://crowdin.com/images/crowdin-logo.svg" alt="Translation by Crowdin" /> </a>
+  <a href="https://crowdin.com"> <img src="https://crowdin.com/images/crowdin-logo.svg" alt="Translation by Crowdin" /> </a> <br>
 </p>
 
 

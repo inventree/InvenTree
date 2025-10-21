@@ -1,9 +1,12 @@
 """Template tags for rendering various barcodes."""
 
 from django import template
+from django.utils.safestring import mark_safe
 
 import barcode as python_barcode
+import barcode.writer as python_barcode_writer
 import qrcode.constants as ECL
+from PIL import Image, ImageColor
 from qrcode.main import QRCode
 
 import report.helpers
@@ -18,7 +21,7 @@ QR_ECL_LEVEL_MAP = {
 }
 
 
-def image_data(img, fmt='PNG'):
+def image_data(img, fmt='PNG') -> str:
     """Convert an image into HTML renderable data.
 
     Returns a string ``data:image/FMT;base64,xxxxxxxxx`` which can be rendered to an <img> tag
@@ -27,26 +30,48 @@ def image_data(img, fmt='PNG'):
 
 
 @register.simple_tag()
-def qrcode(data, **kwargs):
+def clean_barcode(data):
+    """Return a 'cleaned' string for encoding into a barcode / qrcode.
+
+    - This function runs the data through bleach, and removes any malicious HTML content.
+    - Used to render raw barcode data into the rendered HTML templates
+    """
+    from InvenTree.helpers import strip_html_tags
+
+    cleaned_date = strip_html_tags(data)
+
+    # Remove back-tick character (prevent injection)
+    cleaned_date = cleaned_date.replace('`', '')
+
+    return mark_safe(cleaned_date)
+
+
+@register.simple_tag()
+def qrcode(data: str, **kwargs) -> str:
     """Return a byte-encoded QR code image.
 
     Arguments:
         data: Data to encode
 
     Keyword Arguments:
-        version: QR code version, (None to auto detect) (default = None)
-        error_correction: Error correction level (L: 7%, M: 15%, Q: 25%, H: 30%) (default = 'M')
-        box_size: pixel dimensions for one black square pixel in the QR code (default = 20)
-        border: count white QR square pixels around the qr code, needed as padding (default = 1)
-        optimize: data will be split into multiple chunks of at least this length using different modes (text, alphanumeric, binary) to optimize the QR code size. Set to `0` to disable. (default = 1)
-        format: Image format (default = 'PNG')
-        fill_color: Fill color (default = "black")
-        back_color: Background color (default = "white")
+        version (int): QR code version, (None to auto detect) (default = None)
+        error_correction (str): Error correction level (L: 7%, M: 15%, Q: 25%, H: 30%) (default = 'M')
+        box_size (int): pixel dimensions for one black square pixel in the QR code (default = 20)
+        border (int): count white QR square pixels around the qr code, needed as padding (default = 1)
+        optimize (int): data will be split into multiple chunks of at least this length using different modes (text, alphanumeric, binary) to optimize the QR code size. Set to `0` to disable. (default = 1)
+        format (str): Image format (default = 'PNG')
+        fill_color (str): Fill color (default = "black")
+        back_color (str): Background color (default = "white")
 
     Returns:
-        base64 encoded image data
+        image (str): base64 encoded image data
 
     """
+    data = str(data).strip()
+
+    if not data:
+        raise ValueError("No data provided to 'qrcode' template tag")
+
     # Extract other arguments from kwargs
     fill_color = kwargs.pop('fill_color', 'black')
     back_color = kwargs.pop('back_color', 'white')
@@ -71,15 +96,34 @@ def qrcode(data, **kwargs):
 
 
 @register.simple_tag()
-def barcode(data, barcode_class='code128', **kwargs):
-    """Render a barcode."""
+def barcode(data: str, barcode_class='code128', **kwargs) -> str:
+    """Render a 1D barcode.
+
+    Arguments:
+        data: Data to encode
+        barcode_class (str): The type of barcode to generate (default = 'code128')
+
+    Keyword Arguments:
+        format (str): Image format (default = 'PNG')
+        fill_color (str): Foreground color (default = 'black')
+        back_color (str): Background color (default = 'white')
+        scale (float): Scaling factor (default = 1)
+
+    Returns:
+        image (str): base64 encoded image data
+    """
+    data = str(data).strip()
+
+    if not data:
+        raise ValueError("No data provided to 'barcode' template tag")
+
     constructor = python_barcode.get_barcode_class(barcode_class)
 
     img_format = kwargs.pop('format', 'PNG')
 
     data = str(data).zfill(constructor.digits)
 
-    writer = python_barcode.writer.ImageWriter
+    writer = python_barcode_writer.ImageWriter
 
     barcode_image = constructor(data, writer=writer())
 
@@ -87,3 +131,69 @@ def barcode(data, barcode_class='code128', **kwargs):
 
     # Render to byte-encoded image
     return image_data(image, fmt=img_format)
+
+
+@register.simple_tag()
+def datamatrix(data: str, **kwargs) -> str:
+    """Render a DataMatrix barcode.
+
+    Arguments:
+        data: Data to encode
+
+    Keyword Arguments:
+        fill_color (str): Foreground color (default = 'black')
+        back_color (str): Background color (default = 'white')
+        scale (float): Matrix scaling factor (default = 1)
+        border (int): Border width (default = 1)
+
+    Returns:
+        image (str): base64 encoded image data
+    """
+    from ppf.datamatrix.datamatrix import DataMatrix
+
+    data = str(data).strip()
+
+    if not data:
+        raise ValueError("No data provided to 'datamatrix' template tag")
+
+    dm = DataMatrix(data)
+
+    fill_color = kwargs.pop('fill_color', 'black')
+    back_color = kwargs.pop('back_color', 'white')
+
+    border = kwargs.pop('border', 1)
+
+    try:
+        border = int(border)
+    except Exception:
+        border = 1
+
+    border = max(0, border)
+
+    try:
+        fg = ImageColor.getcolor(fill_color, 'RGB')
+    except Exception:
+        fg = ImageColor.getcolor('black', 'RGB')
+
+    try:
+        bg = ImageColor.getcolor(back_color, 'RGB')
+    except Exception:
+        bg = ImageColor.getcolor('white', 'RGB')
+
+    scale = kwargs.pop('scale', 1)
+
+    height = len(dm.matrix) + 2 * border
+    width = len(dm.matrix[0]) + 2 * border
+
+    # Generate raw image from the matrix
+    img = Image.new('RGB', (width, height), color=bg)
+
+    for y, row in enumerate(dm.matrix):
+        for x, value in enumerate(row):
+            if value:
+                img.putpixel((x + border, y + border), fg)
+
+    if scale != 1:
+        img = img.resize((int(width * scale), int(height * scale)))
+
+    return image_data(img, fmt='PNG')

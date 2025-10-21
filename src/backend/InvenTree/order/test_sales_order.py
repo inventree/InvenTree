@@ -5,12 +5,12 @@ from datetime import datetime, timedelta
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
-from django.test import TestCase
 
 import order.tasks
 from common.models import InvenTreeSetting, NotificationMessage
 from company.models import Company
 from InvenTree import status_codes as status
+from InvenTree.unit_test import InvenTreeTestCase, addUserPermission
 from order.models import (
     SalesOrder,
     SalesOrderAllocation,
@@ -23,7 +23,7 @@ from stock.models import StockItem
 from users.models import Owner
 
 
-class SalesOrderTest(TestCase):
+class SalesOrderTest(InvenTreeTestCase):
     """Run tests to ensure that the SalesOrder model is working correctly."""
 
     fixtures = ['users']
@@ -318,7 +318,15 @@ class SalesOrderTest(TestCase):
 
     def test_overdue_notification(self):
         """Test overdue sales order notification."""
-        self.order.created_by = get_user_model().objects.get(pk=3)
+        self.ensurePluginsLoaded()
+
+        user = get_user_model().objects.get(pk=3)
+
+        addUserPermission(user, 'order', 'salesorder', 'view')
+        user.is_active = True
+        user.save()
+
+        self.order.created_by = user
         self.order.responsible = Owner.create(obj=Group.objects.get(pk=2))
         self.order.target_date = datetime.now().date() - timedelta(days=1)
         self.order.save()
@@ -333,17 +341,19 @@ class SalesOrderTest(TestCase):
         self.assertEqual(len(messages), 1)
 
     def test_new_so_notification(self):
-        """Test that a notification is sent when a new SalesOrder is created.
+        """Test that a notification is sent when a new SalesOrder is issued.
 
         - The responsible user should receive a notification
         - The creating user should *not* receive a notification
         """
-        SalesOrder.objects.create(
+        so = SalesOrder.objects.create(
             customer=self.customer,
             reference='1234567',
             created_by=get_user_model().objects.get(pk=3),
             responsible=Owner.create(obj=Group.objects.get(pk=3)),
         )
+
+        so.issue_order()
 
         messages = NotificationMessage.objects.filter(category='order.new_salesorder')
 

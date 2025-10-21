@@ -1,7 +1,8 @@
 import { useEffect, useMemo } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 
-import { ApiFormField, ApiFormFieldType } from './fields/ApiFormField';
+import type { ApiFormFieldType } from '@lib/types/Forms';
+import { ApiFormField } from './fields/ApiFormField';
 
 export function StandaloneField({
   fieldDefinition,
@@ -9,13 +10,13 @@ export function StandaloneField({
   defaultValue,
   hideLabels,
   error
-}: {
+}: Readonly<{
   fieldDefinition: ApiFormFieldType;
   fieldName?: string;
   defaultValue?: any;
   hideLabels?: boolean;
   error?: string;
-}) {
+}>) {
   // Field must have a defined name
   const name = useMemo(() => fieldName ?? 'field', [fieldName]);
 

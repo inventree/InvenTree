@@ -45,7 +45,8 @@ if __name__ == '__main__':
 
     print('Generating icon list...')
     with open(
-        os.path.join(TMP_FOLDER, 'node_modules', '@tabler', 'icons', 'icons.json'), 'r'
+        os.path.join(TMP_FOLDER, 'node_modules', '@tabler', 'icons', 'icons.json'),
+        encoding='utf-8',
     ) as f:
         icons = json.load(f)
 
@@ -60,7 +61,7 @@ if __name__ == '__main__':
             },
         }
 
-    with open(os.path.join(STATIC_FOLDER, 'icons.json'), 'w') as f:
+    with open(os.path.join(STATIC_FOLDER, 'icons.json'), 'w', encoding='utf-8') as f:
         json.dump(res, f, separators=(',', ':'))
 
     print('Cleaning up...')

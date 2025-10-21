@@ -1,22 +1,26 @@
 """Middleware for InvenTree."""
 
-import logging
 import sys
+from urllib.parse import urlsplit
 
 from django.conf import settings
 from django.contrib.auth.middleware import PersistentRemoteUserMiddleware
 from django.http import HttpResponse
-from django.shortcuts import redirect
-from django.urls import Resolver404, include, path, resolve, reverse_lazy
+from django.shortcuts import redirect, render
+from django.urls import resolve, reverse_lazy
+from django.utils.deprecation import MiddlewareMixin
+from django.utils.http import is_same_domain
 
-from allauth_2fa.middleware import AllauthTwoFactorMiddleware, BaseRequire2FAMiddleware
+import structlog
 from error_report.middleware import ExceptionProcessor
 
 from common.settings import get_global_setting
-from InvenTree.urls import frontendpatterns
+from InvenTree.AllUserRequire2FAMiddleware import AllUserRequire2FAMiddleware
+from InvenTree.cache import create_session_cache, delete_session_cache
+from InvenTree.config import CONFIG_LOOKUPS, inventreeInstaller
 from users.models import ApiToken
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 def get_token_from_request(request):
@@ -36,7 +40,18 @@ def get_token_from_request(request):
     return None
 
 
-class AuthRequiredMiddleware(object):
+# List of target URL endpoints where *do not* want to redirect to
+urls = [
+    reverse_lazy('account_login'),
+    reverse_lazy('admin:login'),
+    reverse_lazy('admin:logout'),
+]
+
+# Do not redirect requests to any of these paths
+paths_ignore = ['/api/', '/auth/', settings.MEDIA_URL, settings.STATIC_URL]
+
+
+class AuthRequiredMiddleware:
     """Check for user to be authenticated."""
 
     def __init__(self, get_response):
@@ -71,8 +86,15 @@ class AuthRequiredMiddleware(object):
 
         # API requests are handled by the DRF library
         if request.path_info.startswith('/api/'):
-            response = self.get_response(request)
-            return response
+            return self.get_response(request)
+
+        # oAuth2 requests are handled by the oAuth2 library
+        if request.path_info.startswith('/o/'):
+            return self.get_response(request)
+
+        # anymail requests are handled by the anymail library
+        if request.path_info.startswith('/anymail/'):
+            return self.get_response(request)
 
         # Is the function exempt from auth requirements?
         path_func = resolve(request.path).func
@@ -92,43 +114,21 @@ class AuthRequiredMiddleware(object):
 
             # Allow static files to be accessed without auth
             # Important for e.g. login page
-            if request.path_info.startswith('/static/'):
-                authorized = True
-
-            # Unauthorized users can access the login page
-            elif request.path_info.startswith('/accounts/'):
-                authorized = True
-
-            elif (
-                request.path_info.startswith(f'/{settings.FRONTEND_URL_BASE}/')
-                or request.path_info.startswith('/assets/')
-                or request.path_info == f'/{settings.FRONTEND_URL_BASE}'
+            if (
+                request.path_info.startswith('/static/')
+                or request.path_info.startswith('/accounts/')
+                or (
+                    request.path_info.startswith(f'/{settings.FRONTEND_URL_BASE}/')
+                    or request.path_info.startswith('/assets/')
+                    or request.path_info == f'/{settings.FRONTEND_URL_BASE}'
+                )
+                or self.check_token(request)
             ):
-                authorized = True
-
-            elif self.check_token(request):
                 authorized = True
 
             # No authorization was found for the request
             if not authorized:
                 path = request.path_info
-
-                # List of URL endpoints we *do not* want to redirect to
-                urls = [
-                    reverse_lazy('account_login'),
-                    reverse_lazy('account_logout'),
-                    reverse_lazy('admin:login'),
-                    reverse_lazy('admin:logout'),
-                ]
-
-                # Do not redirect requests to any of these paths
-                paths_ignore = [
-                    '/api/',
-                    '/auth/',
-                    '/js/',
-                    settings.MEDIA_URL,
-                    settings.STATIC_URL,
-                ]
 
                 if path not in urls and not any(
                     path.startswith(p) for p in paths_ignore
@@ -146,32 +146,12 @@ class AuthRequiredMiddleware(object):
         return response
 
 
-url_matcher = path('', include(frontendpatterns))
+class Check2FAMiddleware(AllUserRequire2FAMiddleware):
+    """Ensure that mfa is enforced if set so."""
 
-
-class Check2FAMiddleware(BaseRequire2FAMiddleware):
-    """Check if user is required to have MFA enabled."""
-
-    def require_2fa(self, request):
-        """Use setting to check if MFA should be enforced for frontend page."""
-        try:
-            if url_matcher.resolve(request.path[1:]):
-                return get_global_setting('LOGIN_ENFORCE_MFA')
-        except Resolver404:
-            pass
-        return False
-
-
-class CustomAllauthTwoFactorMiddleware(AllauthTwoFactorMiddleware):
-    """This function ensures only frontend code triggers the MFA auth cycle."""
-
-    def process_request(self, request):
-        """Check if requested url is forntend and enforce MFA check."""
-        try:
-            if not url_matcher.resolve(request.path[1:]):
-                super().process_request(request)
-        except Resolver404:
-            pass
+    def enforce_2fa(self, request):
+        """Use setting to check if MFA should be enforced."""
+        return get_global_setting('LOGIN_ENFORCE_MFA')
 
 
 class InvenTreeRemoteUserMiddleware(PersistentRemoteUserMiddleware):
@@ -192,17 +172,12 @@ class InvenTreeExceptionProcessor(ExceptionProcessor):
 
     def process_exception(self, request, exception):
         """Check if kind is ignored before processing."""
-        kind, info, data = sys.exc_info()
+        kind, _info, _data = sys.exc_info()
 
         # Check if the error is on the ignore list
         if kind in settings.IGNORED_ERRORS:
             return
 
-        import traceback
-
-        from django.views.debug import ExceptionReporter
-
-        from error_report.models import Error
         from error_report.settings import ERROR_DETAIL_SETTINGS
 
         # Error reporting is disabled
@@ -217,12 +192,118 @@ class InvenTreeExceptionProcessor(ExceptionProcessor):
         if len(path) > 200:
             path = path[:195] + '...'
 
-        error = Error.objects.create(
-            kind=kind.__name__,
-            html=ExceptionReporter(request, kind, info, data).get_traceback_html(),
-            path=path,
-            info=info,
-            data='\n'.join(traceback.format_exception(kind, info, data)),
+        # Pass off to the exception reporter
+        from InvenTree.exceptions import log_error
+
+        log_error(path)
+
+
+class InvenTreeRequestCacheMiddleware(MiddlewareMixin):
+    """Middleware to perform caching against the request object.
+
+    This middleware is used to cache data against the request object,
+    which can be used to store data for the duration of the request.
+
+    In this fashion, we can avoid hitting the external cache multiple times,
+    much less the database!
+    """
+
+    def process_request(self, request):
+        """Create a request-specific cache object."""
+        create_session_cache(request)
+
+    def process_response(self, request, response):
+        """Clear the cache object."""
+        delete_session_cache()
+        return response
+
+
+class InvenTreeHostSettingsMiddleware(MiddlewareMixin):
+    """Middleware to check the host settings.
+
+    Especially SITE_URL, trusted_origins.
+    """
+
+    def process_request(self, request):
+        """Check the host settings."""
+        # Debug setups do not enforce these checks so we ignore that case
+        if settings.DEBUG:
+            return None
+
+        # Handle commonly ignored paths that might also work without a correct setup (api, auth)
+        path = request.path_info
+        if path in urls or any(path.startswith(p) for p in paths_ignore):
+            return None
+
+        # treat the accessed scheme and host
+        accessed_scheme = request._current_scheme_host
+        referer = urlsplit(accessed_scheme)
+
+        site_url = urlsplit(settings.SITE_URL)
+
+        # Check if the accessed URL matches the SITE_URL setting
+        site_url_match = (
+            (
+                # Exact match on domain
+                is_same_domain(referer.netloc, site_url.netloc)
+                and referer.scheme == site_url.scheme
+            )
+            or (
+                # Lax protocol match, accessed URL starts with SITE_URL
+                settings.SITE_LAX_PROTOCOL_CHECK
+                and accessed_scheme.startswith(settings.SITE_URL)
+            )
+            or (
+                # Lax protocol match, same domain
+                settings.SITE_LAX_PROTOCOL_CHECK
+                and referer.hostname == site_url.hostname
+            )
         )
 
-        error.save()
+        if not site_url_match:
+            # The accessed URL does not match the SITE_URL setting
+            if (
+                isinstance(settings.CSRF_TRUSTED_ORIGINS, list)
+                and len(settings.CSRF_TRUSTED_ORIGINS) > 1
+            ):
+                # The used url might not be the primary url - next check determines if in a trusted origins
+                pass
+            else:
+                source = CONFIG_LOOKUPS.get('INVENTREE_SITE_URL', {}).get(
+                    'source', 'unknown'
+                )
+                dpl_method = inventreeInstaller()
+                msg = f'INVE-E7: The visited path `{accessed_scheme}` does not match the SITE_URL `{settings.SITE_URL}`. The INVENTREE_SITE_URL is set via `{source}` config method - deployment method `{dpl_method}`'
+                logger.error(msg)
+                return render(
+                    request, 'config_error.html', {'error_message': msg}, status=500
+                )
+
+        trusted_origins_match = (
+            # Matching domain found in allowed origins
+            any(
+                is_same_domain(referer.netloc, host)
+                for host in [
+                    urlsplit(origin).netloc.lstrip('*')
+                    for origin in settings.CSRF_TRUSTED_ORIGINS
+                ]
+            )
+        ) or (
+            # Lax protocol match allowed
+            settings.SITE_LAX_PROTOCOL_CHECK
+            and any(
+                referer.hostname == urlsplit(origin).hostname
+                for origin in settings.CSRF_TRUSTED_ORIGINS
+            )
+        )
+
+        # Check trusted origins
+        if not trusted_origins_match:
+            msg = f'INVE-E7: The used path `{accessed_scheme}` is not in the TRUSTED_ORIGINS'
+            logger.error(msg)
+            return render(
+                request, 'config_error.html', {'error_message': msg}, status=500
+            )
+
+        # All checks passed
+        return None

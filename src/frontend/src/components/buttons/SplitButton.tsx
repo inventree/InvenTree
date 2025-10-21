@@ -10,8 +10,8 @@ import {
 import { IconChevronDown } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
 
-import { identifierString } from '../../functions/conversion';
-import { TablerIconType } from '../../functions/icons';
+import { identifierString } from '@lib/functions/Conversion';
+import type { TablerIconType } from '@lib/types/Icons';
 import * as classes from './SplitButton.css';
 
 interface SplitButtonOption {
@@ -58,7 +58,7 @@ export function SplitButton({
   const theme = useMantineTheme();
 
   return (
-    <Group wrap="nowrap" style={{ gap: 0 }}>
+    <Group wrap='nowrap' style={{ gap: 0 }}>
       <Button
         onClick={currentOption?.onClick}
         disabled={loading ? false : currentOption?.disabled}
@@ -70,12 +70,12 @@ export function SplitButton({
       </Button>
       <Menu
         transitionProps={{ transition: 'pop' }}
-        position="bottom-end"
+        position='bottom-end'
         withinPortal
       >
         <Menu.Target>
           <ActionIcon
-            variant="filled"
+            variant='filled'
             color={theme.primaryColor}
             size={36}
             className={classes.icon}
@@ -99,7 +99,7 @@ export function SplitButton({
               disabled={option.disabled}
               leftSection={<option.icon />}
             >
-              <Tooltip label={option.tooltip} position="right">
+              <Tooltip label={option.tooltip} position='right'>
                 <Text>{option.name}</Text>
               </Tooltip>
             </Menu.Item>

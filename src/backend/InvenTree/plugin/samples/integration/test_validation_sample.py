@@ -1,32 +1,34 @@
 """Unit tests for the SampleValidatorPlugin class."""
 
 from django.core.exceptions import ValidationError
+from django.urls import reverse
 
+import build.models
 import part.models
-from InvenTree.unit_test import InvenTreeTestCase
+from InvenTree.unit_test import InvenTreeAPITestCase, InvenTreeTestCase
 from plugin.registry import registry
 
 
-class SampleValidatorPluginTest(InvenTreeTestCase):
+class SampleValidatorPluginTest(InvenTreeAPITestCase, InvenTreeTestCase):
     """Tests for the SampleValidatonPlugin class."""
 
-    fixtures = ['category', 'location']
+    fixtures = ['part', 'category', 'location', 'build', 'stock']
 
     def setUp(self):
         """Set up the test environment."""
+        super().setUp()
+
         cat = part.models.PartCategory.objects.first()
         self.part = part.models.Part.objects.create(
             name='TestPart', category=cat, description='A test part', component=True
         )
+
         self.assembly = part.models.Part.objects.create(
             name='TestAssembly',
             category=cat,
             description='A test assembly',
             component=False,
             assembly=True,
-        )
-        self.bom_item = part.models.BomItem.objects.create(
-            part=self.assembly, sub_part=self.part, quantity=1
         )
 
     def get_plugin(self):
@@ -40,6 +42,16 @@ class SampleValidatorPluginTest(InvenTreeTestCase):
     def test_validate_model_instance(self):
         """Test the validate_model_instance function."""
         # First, ensure that the plugin is disabled
+
+        # Create a BomItem to run tests on
+        # We need to refresh the part
+        self.part.refresh_from_db()
+        self.assembly.refresh_from_db()
+
+        self.bom_item = part.models.BomItem.objects.create(
+            part=self.assembly, sub_part=self.part, quantity=1
+        )
+
         self.enable_plugin(False)
 
         plg = self.get_plugin()
@@ -113,3 +125,40 @@ class SampleValidatorPluginTest(InvenTreeTestCase):
         self.part.IPN = 'LMNOPQ'
 
         self.part.save()
+
+    def test_validate_generate_batch_code(self):
+        """Test the generate_batch_code function."""
+        self.enable_plugin(True)
+        plg = self.get_plugin()
+        self.assertIsNotNone(plg)
+
+        code = plg.generate_batch_code()
+        self.assertIsInstance(code, str)
+        self.assertTrue(code.startswith('SAMPLE-BATCH'))
+
+    def test_api_batch(self):
+        """Test the batch code validation API."""
+        self.enable_plugin(True)
+        url = reverse('api-generate-batch-code')
+
+        response = self.post(url)
+        self.assertIn('batch_code', response.data)
+        self.assertTrue(response.data['batch_code'].startswith('SAMPLE-BATCH'))
+
+        # Use part code
+        part_itm = part.models.Part.objects.first()
+        response = self.post(url, {'part': part_itm.pk})
+        self.assertIn('batch_code', response.data)
+        self.assertTrue(
+            response.data['batch_code'].startswith(part_itm.name + '-SAMPLE-BATCH')
+        )
+
+        # Use build_order
+        build_itm = build.models.Build.objects.first()
+        response = self.post(url, {'build_order': build_itm.pk})
+        self.assertIn('batch_code', response.data)
+        self.assertTrue(
+            response.data['batch_code'].startswith(
+                build_itm.reference + '-SAMPLE-BATCH'
+            )
+        )

@@ -1,46 +1,34 @@
 """Helper functions for currency support."""
 
 import decimal
-import logging
 import math
+from typing import Optional
 
-from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
+import structlog
 from moneyed import CURRENCIES
 
 import InvenTree.helpers
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
-def currency_code_default():
+def currency_code_default(create: bool = True):
     """Returns the default currency code (or USD if not specified)."""
     from common.settings import get_global_setting
 
     try:
-        cached_value = cache.get('currency_code_default', '')
-    except Exception:
-        cached_value = None
-
-    if cached_value:
-        return cached_value
-
-    try:
-        code = get_global_setting('INVENTREE_DEFAULT_CURRENCY', create=True, cache=True)
+        code = get_global_setting(
+            'INVENTREE_DEFAULT_CURRENCY', create=create, cache=True
+        )
     except Exception:  # pragma: no cover
         # Database may not yet be ready, no need to throw an error here
         code = ''
 
     if code not in CURRENCIES:
         code = 'USD'  # pragma: no cover
-
-    # Cache the value for a short amount of time
-    try:
-        cache.set('currency_code_default', code, 30)
-    except Exception:
-        pass
 
     return code
 
@@ -60,7 +48,7 @@ def currency_codes() -> list:
     from common.settings import get_global_setting
 
     codes = get_global_setting(
-        'CURRENCY_CODES', create=False, enviroment_key='INVENTREE_CURRENCY_CODES'
+        'CURRENCY_CODES', create=False, environment_key='INVENTREE_CURRENCY_CODES'
     ).strip()
 
     if not codes:
@@ -89,7 +77,7 @@ def currency_codes() -> list:
 
 def currency_code_mappings() -> list:
     """Returns the current currency choices."""
-    return [(a, CURRENCIES[a].name) for a in currency_codes()]
+    return [(a, f'{a} - {CURRENCIES[a].name}') for a in currency_codes()]
 
 
 def after_change_currency(setting) -> None:
@@ -113,7 +101,9 @@ def after_change_currency(setting) -> None:
     InvenTree.tasks.update_exchange_rates(force=True)
 
     # Offload update of part prices to a background task
-    InvenTree.tasks.offload_task(part_tasks.check_missing_pricing, force_async=True)
+    InvenTree.tasks.offload_task(
+        part_tasks.check_missing_pricing, force_async=True, group='pricing'
+    )
 
 
 def validate_currency_codes(value):
@@ -141,12 +131,12 @@ def validate_currency_codes(value):
     return list(valid_currencies)
 
 
-def currency_exchange_plugins() -> list:
+def currency_exchange_plugins() -> Optional[list]:
     """Return a list of plugin choices which can be used for currency exchange."""
     try:
-        from plugin import registry
+        from plugin import PluginMixinEnum, registry
 
-        plugs = registry.with_mixin('currencyexchange', active=True)
+        plugs = registry.with_mixin(PluginMixinEnum.CURRENCY_EXCHANGE, active=True)
     except Exception:
         plugs = []
 
@@ -170,7 +160,7 @@ def get_price(
     - If MOQ (minimum order quantity) is required, bump quantity
     - If order multiples are to be observed, then we need to calculate based on that, too
     """
-    from common.currency import currency_code_default
+    # from common.currency import currency_code_default
 
     if hasattr(instance, break_name):
         price_breaks = getattr(instance, break_name).all()

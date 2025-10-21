@@ -1,46 +1,49 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Grid, Skeleton, Stack } from '@mantine/core';
 import {
   IconBuildingWarehouse,
-  IconDots,
   IconInfoCircle,
   IconList,
-  IconNotes,
-  IconPaperclip
+  IconPackages
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import { getDetailUrl } from '@lib/functions/Navigation';
 import AdminButton from '../../components/buttons/AdminButton';
-import { DetailsField, DetailsTable } from '../../components/details/Details';
+import {
+  type DetailsField,
+  DetailsTable
+} from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
-import NotesEditor from '../../components/editors/NotesEditor';
 import {
-  ActionDropdown,
   DeleteItemAction,
   DuplicateItemAction,
-  EditItemAction
+  EditItemAction,
+  OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
-import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
+import AttachmentPanel from '../../components/panels/AttachmentPanel';
+import NotesPanel from '../../components/panels/NotesPanel';
+import type { PanelType } from '../../components/panels/Panel';
+import { PanelGroup } from '../../components/panels/PanelGroup';
 import { useManufacturerPartFields } from '../../forms/CompanyForms';
-import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { AttachmentTable } from '../../tables/general/AttachmentTable';
 import ManufacturerPartParameterTable from '../../tables/purchasing/ManufacturerPartParameterTable';
 import { SupplierPartTable } from '../../tables/purchasing/SupplierPartTable';
+import { StockItemTable } from '../../tables/stock/StockItemTable';
 
 export default function ManufacturerPartDetail() {
   const { id } = useParams();
@@ -50,8 +53,7 @@ export default function ManufacturerPartDetail() {
   const {
     instance: manufacturerPart,
     instanceQuery,
-    refreshInstance,
-    requestStatus
+    refreshInstance
   } = useInstance({
     endpoint: ApiEndpoints.manufacturer_part_list,
     pk: id,
@@ -67,9 +69,9 @@ export default function ManufacturerPartDetail() {
       return <Skeleton />;
     }
 
-    let data = manufacturerPart ?? {};
+    const data = manufacturerPart ?? {};
 
-    let tl: DetailsField[] = [
+    const tl: DetailsField[] = [
       {
         type: 'link',
         name: 'part',
@@ -79,22 +81,23 @@ export default function ManufacturerPartDetail() {
       },
       {
         type: 'string',
-        name: 'description',
-        label: t`Description`,
+        name: 'part_detail.IPN',
+        label: t`IPN`,
         copy: true,
-        hidden: !manufacturerPart.description
+        icon: 'serial',
+        hidden: !data.part_detail?.IPN
       },
       {
-        type: 'link',
-        external: true,
-        name: 'link',
-        label: t`External Link`,
+        type: 'string',
+        name: 'part_detail.description',
+        label: t`Description`,
         copy: true,
-        hidden: !manufacturerPart.link
+        icon: 'info',
+        hidden: !manufacturerPart.description
       }
     ];
 
-    let tr: DetailsField[] = [
+    const tr: DetailsField[] = [
       {
         type: 'link',
         name: 'manufacturer',
@@ -110,29 +113,39 @@ export default function ManufacturerPartDetail() {
         copy: true,
         hidden: !manufacturerPart.MPN,
         icon: 'reference'
+      },
+      {
+        type: 'string',
+        name: 'description',
+        label: t`Description`,
+        copy: true,
+        hidden: !manufacturerPart.description,
+        icon: 'info'
+      },
+      {
+        type: 'link',
+        external: true,
+        name: 'link',
+        label: t`External Link`,
+        copy: true,
+        hidden: !manufacturerPart.link
       }
     ];
 
     return (
       <ItemDetailsGrid>
-        <Grid>
-          <Grid.Col span={4}>
-            <DetailsImage
-              appRole={UserRoles.part}
-              src={manufacturerPart?.part_detail?.image}
-              apiPath={apiUrl(
-                ApiEndpoints.part_list,
-                manufacturerPart?.part_detail?.pk
-              )}
-              pk={manufacturerPart?.part_detail?.pk}
-            />
-          </Grid.Col>
-          <Grid.Col span={8}>
-            <DetailsTable
-              title={t`Manufacturer Part`}
-              fields={tl}
-              item={data}
-            />
+        <Grid grow>
+          <DetailsImage
+            appRole={UserRoles.part}
+            src={manufacturerPart?.part_detail?.image}
+            apiPath={apiUrl(
+              ApiEndpoints.part_list,
+              manufacturerPart?.part_detail?.pk
+            )}
+            pk={manufacturerPart?.part_detail?.pk}
+          />
+          <Grid.Col span={{ base: 12, sm: 8 }}>
+            <DetailsTable title={t`Part Details`} fields={tl} item={data} />
           </Grid.Col>
         </Grid>
         <DetailsTable title={t`Manufacturer Details`} fields={tr} item={data} />
@@ -161,6 +174,20 @@ export default function ManufacturerPartDetail() {
         )
       },
       {
+        name: 'stock',
+        label: t`Received Stock`,
+        hidden: !user.hasViewRole(UserRoles.stock),
+        icon: <IconPackages />,
+        content: (
+          <StockItemTable
+            tableName='manufacturer-part-stock'
+            params={{
+              manufacturer_part: id
+            }}
+          />
+        )
+      },
+      {
         name: 'suppliers',
         label: t`Suppliers`,
         icon: <IconBuildingWarehouse />,
@@ -174,31 +201,16 @@ export default function ManufacturerPartDetail() {
           <Skeleton />
         )
       },
-      {
-        name: 'attachments',
-        label: t`Attachments`,
-        icon: <IconPaperclip />,
-        content: (
-          <AttachmentTable
-            model_type={ModelType.manufacturerpart}
-            model_id={manufacturerPart?.pk}
-          />
-        )
-      },
-      {
-        name: 'notes',
-        label: t`Notes`,
-        icon: <IconNotes />,
-        content: (
-          <NotesEditor
-            modelType={ModelType.manufacturerpart}
-            modelId={manufacturerPart.pk}
-            editable={user.hasChangeRole(UserRoles.purchase_order)}
-          />
-        )
-      }
+      AttachmentPanel({
+        model_type: ModelType.manufacturerpart,
+        model_id: manufacturerPart?.pk
+      }),
+      NotesPanel({
+        model_type: ModelType.manufacturerpart,
+        model_id: manufacturerPart?.pk
+      })
     ];
-  }, [manufacturerPart]);
+  }, [user, manufacturerPart]);
 
   const editManufacturerPartFields = useManufacturerPartFields();
 
@@ -233,12 +245,13 @@ export default function ManufacturerPartDetail() {
   const manufacturerPartActions = useMemo(() => {
     return [
       <AdminButton
+        key='admin'
         model={ModelType.manufacturerpart}
-        pk={manufacturerPart.pk}
+        id={manufacturerPart.pk}
       />,
-      <ActionDropdown
+      <OptionsActionDropdown
+        key='options'
         tooltip={t`Manufacturer Part Actions`}
-        icon={<IconDots />}
         actions={[
           DuplicateItemAction({
             hidden: !user.hasAddRole(UserRoles.purchase_order),
@@ -275,18 +288,37 @@ export default function ManufacturerPartDetail() {
       {deleteManufacturerPart.modal}
       {duplicateManufacturerPart.modal}
       {editManufacturerPart.modal}
-      <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
-        <Stack gap="xs">
+      <InstanceDetail
+        query={instanceQuery}
+        requiredPermission={ModelType.manufacturerpart}
+      >
+        <Stack gap='xs'>
           <PageDetail
-            title={t`ManufacturerPart`}
+            title={t`Manufacturer Part`}
             subtitle={`${manufacturerPart.MPN} - ${manufacturerPart.part_detail?.name}`}
             breadcrumbs={breadcrumbs}
+            lastCrumb={[
+              {
+                name: manufacturerPart.MPN,
+                url: getDetailUrl(
+                  ModelType.manufacturerpart,
+                  manufacturerPart.pk
+                )
+              }
+            ]}
             actions={manufacturerPartActions}
             imageUrl={manufacturerPart?.part_detail?.thumbnail}
             editAction={editManufacturerPart.open}
             editEnabled={user.hasChangePermission(ModelType.manufacturerpart)}
           />
-          <PanelGroup pageKey="manufacturerpart" panels={panels} />
+          <PanelGroup
+            pageKey='manufacturerpart'
+            panels={panels}
+            instance={manufacturerPart}
+            reloadInstance={refreshInstance}
+            model={ModelType.manufacturerpart}
+            id={manufacturerPart.pk}
+          />
         </Stack>
       </InstanceDetail>
     </>

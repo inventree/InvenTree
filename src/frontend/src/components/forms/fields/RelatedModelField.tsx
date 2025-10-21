@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import {
   Input,
   darken,
@@ -9,16 +9,16 @@ import { useDebouncedValue, useId } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  FieldValues,
-  UseControllerReturn,
+  type FieldValues,
+  type UseControllerReturn,
   useFormContext
 } from 'react-hook-form';
 import Select from 'react-select';
 
-import { api } from '../../../App';
+import type { ApiFormFieldType } from '@lib/types/Forms';
+import { useApi } from '../../../contexts/ApiContext';
 import { vars } from '../../../theme';
 import { RenderInstance } from '../../render/Instance';
-import { ApiFormFieldType } from './ApiFormField';
 
 /**
  * Render a 'select' field for searching the database against a particular model type
@@ -28,12 +28,13 @@ export function RelatedModelField({
   fieldName,
   definition,
   limit = 10
-}: {
+}: Readonly<{
   controller: UseControllerReturn<FieldValues, any>;
   definition: ApiFormFieldType;
   fieldName: string;
   limit?: number;
-}) {
+}>) {
+  const api = useApi();
   const fieldId = useId();
   const {
     field,
@@ -45,6 +46,14 @@ export function RelatedModelField({
   // Keep track of the primary key value for this field
   const [pk, setPk] = useState<number | null>(null);
 
+  // Handle condition where the form is rebuilt dynamically
+  useEffect(() => {
+    const value = field.value || pk;
+    if (value && value != form.getValues()[fieldName]) {
+      form.setValue(fieldName, value);
+    }
+  }, [pk, field.value]);
+
   const [offset, setOffset] = useState<number>(0);
 
   const [initialData, setInitialData] = useState<{}>({});
@@ -53,45 +62,113 @@ export function RelatedModelField({
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
+  // Auto-fill the field with data from the API
+  useEffect(() => {
+    // If there is *no value defined*, and autoFill is enabled, then fetch data from the API
+    if (!definition.autoFill || !definition.api_url) {
+      return;
+    }
+
+    if (field.value != undefined) {
+      return;
+    }
+
+    // Construct parameters for auto-filling the field
+    const params = {
+      ...(definition?.filters ?? {}),
+      ...(definition?.autoFillFilters ?? {})
+    };
+
+    api
+      .get(definition.api_url, {
+        params: {
+          ...params,
+          limit: 1,
+          offset: 0
+        }
+      })
+      .then((response) => {
+        const data: any = response?.data ?? {};
+
+        if (data.count === 1 && data.results?.length === 1) {
+          // If there is only a single result, set the field value to that result
+          const pk_field = definition.pk_field ?? 'pk';
+          if (data.results[0][pk_field]) {
+            const value = {
+              value: data.results[0][pk_field],
+              data: data.results[0]
+            };
+
+            // Run custom callback for this field (if provided)
+            if (definition.onValueChange) {
+              definition.onValueChange(
+                data.results[0][pk_field],
+                data.results[0]
+              );
+            }
+
+            onChange(value);
+            setInitialData(value);
+            dataRef.current = [value];
+          }
+        }
+      });
+  }, [
+    definition.autoFill,
+    definition.api_url,
+    definition.filters,
+    definition.pk_field,
+    field.value
+  ]);
+
   // If an initial value is provided, load from the API
   useEffect(() => {
     // If the value is unchanged, do nothing
     if (field.value === pk) return;
 
-    if (
-      field?.value !== null &&
-      field?.value !== undefined &&
-      field?.value !== ''
-    ) {
-      const url = `${definition.api_url}${field.value}/`;
+    const id = pk || field.value;
+
+    if (id !== null && id !== undefined && id !== '') {
+      const url = `${definition.api_url}${id}/`;
 
       if (!url) {
         setPk(null);
         return;
       }
 
-      api.get(url).then((response) => {
-        let pk_field = definition.pk_field ?? 'pk';
-        if (response.data && response.data[pk_field]) {
-          const value = {
-            value: response.data[pk_field],
-            data: response.data
-          };
+      const params = definition?.filters ?? {};
 
-          // Run custom callback for this field (if provided)
-          if (definition.onValueChange) {
-            definition.onValueChange(response.data[pk_field], response.data);
+      api
+        .get(url, {
+          params: params
+        })
+        .then((response) => {
+          const pk_field = definition.pk_field ?? 'pk';
+          if (response.data?.[pk_field]) {
+            const value = {
+              value: response.data[pk_field],
+              data: response.data
+            };
+
+            // Run custom callback for this field (if provided)
+            if (definition.onValueChange) {
+              definition.onValueChange(response.data[pk_field], response.data);
+            }
+
+            setInitialData(value);
+            dataRef.current = [value];
+            setPk(response.data[pk_field]);
           }
-
-          setInitialData(value);
-          dataRef.current = [value];
-          setPk(response.data[pk_field]);
-        }
-      });
+        });
     } else {
       setPk(null);
     }
-  }, [definition.api_url, definition.pk_field, field.value]);
+  }, [
+    definition.api_url,
+    definition.filters,
+    definition.pk_field,
+    field.value
+  ]);
 
   // Search input query
   const [value, setValue] = useState<string>('');
@@ -138,7 +215,7 @@ export function RelatedModelField({
         setFilters(_filters);
       }
 
-      let params = {
+      const params = {
         ..._filters,
         search: searchText,
         offset: offset,
@@ -158,8 +235,8 @@ export function RelatedModelField({
           const results = response.data?.results ?? response.data ?? [];
 
           results.forEach((item: any) => {
-            let pk_field = definition.pk_field ?? 'pk';
-            let pk = item[pk_field];
+            const pk_field = definition.pk_field ?? 'pk';
+            const pk = item[pk_field];
 
             if (pk && !alreadyPresentPks.includes(pk)) {
               values.push({
@@ -172,10 +249,6 @@ export function RelatedModelField({
           setData(values);
           dataRef.current = values;
           return response;
-        })
-        .catch((error) => {
-          setData([]);
-          return error;
         });
     }
   });
@@ -201,7 +274,7 @@ export function RelatedModelField({
   // Update form values when the selected value changes
   const onChange = useCallback(
     (value: any) => {
-      let _pk = value?.value ?? null;
+      const _pk = value?.value ?? null;
       field.onChange(_pk);
 
       setPk(_pk);
@@ -218,8 +291,11 @@ export function RelatedModelField({
   const fieldDefinition = useMemo(() => {
     return {
       ...definition,
+      autoFill: undefined,
+      modelRenderer: undefined,
       onValueChange: undefined,
       adjustFilters: undefined,
+      exclude: undefined,
       read_only: undefined
     };
   }, [definition]);
@@ -229,7 +305,7 @@ export function RelatedModelField({
       return null;
     }
 
-    let _data = [...data, initialData];
+    const _data = [...data, initialData];
     return _data.find((item) => item.value === pk);
   }, [pk, data]);
 
@@ -283,7 +359,7 @@ export function RelatedModelField({
   return (
     <Input.Wrapper
       {...fieldDefinition}
-      error={error?.message}
+      error={definition.error ?? error?.message}
       styles={{ description: { paddingBottom: '5px' } }}
     >
       <Select
@@ -295,7 +371,6 @@ export function RelatedModelField({
         filterOption={null}
         onInputChange={(value: any) => {
           setValue(value);
-          resetSearch();
         }}
         onChange={onChange}
         onMenuScrollToBottom={() => setOffset(offset + limit)}
@@ -315,11 +390,11 @@ export function RelatedModelField({
         isClearable={!definition.required}
         isDisabled={definition.disabled}
         isSearchable={true}
-        placeholder={definition.placeholder || t`Search` + `...`}
-        loadingMessage={() => t`Loading` + `...`}
+        placeholder={definition.placeholder || `${t`Search`}...`}
+        loadingMessage={() => `${t`Loading`}...`}
         menuPortalTarget={document.body}
         noOptionsMessage={() => t`No results found`}
-        menuPosition="fixed"
+        menuPosition='fixed'
         styles={{ menuPortal: (base: any) => ({ ...base, zIndex: 9999 }) }}
         formatOptionLabel={(option: any) => formatOption(option)}
         theme={(theme) => {

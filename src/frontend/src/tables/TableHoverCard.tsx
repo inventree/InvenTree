@@ -1,9 +1,16 @@
-import { t } from '@lingui/macro';
-import { Divider, Group, HoverCard, Stack, Text } from '@mantine/core';
-import { IconInfoCircle } from '@tabler/icons-react';
-import { ReactNode, useMemo } from 'react';
+import { t } from '@lingui/core/macro';
+import {
+  Divider,
+  type FloatingPosition,
+  Group,
+  HoverCard,
+  Stack,
+  Text
+} from '@mantine/core';
+import { type ReactNode, useMemo } from 'react';
 
-import { InvenTreeIcon, InvenTreeIconType } from '../functions/icons';
+import type { InvenTreeIconType } from '@lib/types/Icons';
+import { InvenTreeIcon } from '../functions/icons';
 
 /*
  * A custom hovercard element for displaying extra information in a table cell.
@@ -15,14 +22,18 @@ export function TableHoverCard({
   extra, // The extra information to display
   title, // The title of the hovercard
   icon, // The icon to display
-  iconColor // The icon color
-}: {
+  iconColor, // The icon color
+  position, // The position of the hovercard
+  zIndex // Optional z-index for the hovercard
+}: Readonly<{
   value: any;
   extra?: ReactNode;
   title?: string;
-  icon?: InvenTreeIconType;
+  icon?: keyof InvenTreeIconType;
   iconColor?: string;
-}) {
+  position?: FloatingPosition;
+  zIndex?: string | number;
+}>) {
   const extraItems: ReactNode = useMemo(() => {
     if (Array.isArray(extra)) {
       if (extra.length == 0) {
@@ -30,9 +41,9 @@ export function TableHoverCard({
       }
 
       return (
-        <Stack gap="xs">
+        <Stack gap='xs'>
           {extra.map((item, idx) => (
-            <div key={t`item-${idx}`}>{item}</div>
+            <div key={`item-${idx}-${item}`}>{item}</div>
           ))}
         </Stack>
       );
@@ -47,9 +58,15 @@ export function TableHoverCard({
   }
 
   return (
-    <HoverCard withinPortal={true} closeDelay={20} openDelay={250}>
+    <HoverCard
+      withinPortal={true}
+      closeDelay={20}
+      openDelay={250}
+      position={position}
+      zIndex={zIndex}
+    >
       <HoverCard.Target>
-        <Group gap="xs" justify="space-between" wrap="nowrap">
+        <Group gap='xs' justify='space-between' wrap='nowrap'>
           {value}
           <InvenTreeIcon
             icon={icon ?? 'info'}
@@ -58,10 +75,13 @@ export function TableHoverCard({
         </Group>
       </HoverCard.Target>
       <HoverCard.Dropdown>
-        <Stack gap="xs">
-          <Group gap="xs" justify="left">
-            <IconInfoCircle size="16" color="blue" />
-            <Text fw="bold">{title}</Text>
+        <Stack gap='xs'>
+          <Group gap='xs' justify='left'>
+            <InvenTreeIcon
+              icon={icon ?? 'info'}
+              iconProps={{ size: 16, color: iconColor ?? 'blue' }}
+            />
+            <Text fw='bold'>{title}</Text>
           </Group>
           <Divider />
           {extraItems}
@@ -81,7 +101,7 @@ export function ProjectCodeHoverCard({ projectCode }: { projectCode: any }) {
       title={t`Project Code`}
       extra={
         projectCode && (
-          <Text key="project-code">{projectCode?.description}</Text>
+          <Text key='project-code'>{projectCode?.description}</Text>
         )
       }
     />

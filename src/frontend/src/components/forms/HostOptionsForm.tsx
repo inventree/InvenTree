@@ -1,4 +1,6 @@
-import { Trans, t } from '@lingui/macro';
+import type { HostList } from '@lib/types/Server';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import {
   ActionIcon,
   Box,
@@ -12,15 +14,13 @@ import { useForm } from '@mantine/form';
 import { randomId } from '@mantine/hooks';
 import { IconSquarePlus, IconTrash } from '@tabler/icons-react';
 
-import { HostList } from '../../states/states';
-
 export function HostOptionsForm({
   data,
   saveOptions
-}: {
+}: Readonly<{
   data: HostList;
   saveOptions: (newData: HostList) => void;
-}) {
+}>) {
   const form = useForm({ initialValues: data });
   function deleteItem(key: string) {
     const newData = form.values;
@@ -29,7 +29,7 @@ export function HostOptionsForm({
   }
 
   const fields = Object.entries(form.values).map(([key]) => (
-    <Group key={key} mt="xs">
+    <Group key={key} mt='xs'>
       {form.values[key] !== undefined && (
         <>
           <TextInput
@@ -45,11 +45,11 @@ export function HostOptionsForm({
             {...form.getInputProps(`${key}.name`)}
           />
           <ActionIcon
-            color="red"
+            color='red'
             onClick={() => {
               deleteItem(key);
             }}
-            variant="default"
+            variant='default'
           >
             <IconTrash />
           </ActionIcon>
@@ -60,23 +60,23 @@ export function HostOptionsForm({
 
   return (
     <form onSubmit={form.onSubmit(saveOptions)}>
-      <Box style={{ maxWidth: 500 }} mx="auto">
+      <Box style={{ maxWidth: 500 }} mx='auto'>
         {fields.length > 0 ? (
-          <Group mb="xs">
-            <Text fw={500} size="sm" style={{ flex: 1 }}>
+          <Group mb='xs'>
+            <Text fw={500} size='sm' style={{ flex: 1 }}>
               <Trans>Host</Trans>
             </Text>
-            <Text fw={500} size="sm" style={{ flex: 1 }}>
+            <Text fw={500} size='sm' style={{ flex: 1 }}>
               <Trans>Name</Trans>
             </Text>
           </Group>
         ) : (
-          <Text c="dimmed" ta="center">
+          <Text c='dimmed' ta='center'>
             <Trans>No one here...</Trans>
           </Text>
         )}
         {fields}
-        <Group mt="md">
+        <Group mt='md'>
           <Button
             onClick={() =>
               form.setFieldValue(`${randomId()}`, { name: '', host: '' })
@@ -86,7 +86,7 @@ export function HostOptionsForm({
             <Trans>Add Host</Trans>
           </Button>
           <Space style={{ flex: 1 }} />
-          <Button type="submit">
+          <Button type='submit'>
             <Trans>Save</Trans>
           </Button>
         </Group>

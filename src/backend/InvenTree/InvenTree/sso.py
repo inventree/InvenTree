@@ -1,18 +1,18 @@
 """Helper functions for Single Sign On functionality."""
 
 import json
-import logging
 
 from django.contrib.auth.models import Group
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
+import structlog
 from allauth.socialaccount.models import SocialAccount, SocialLogin
 
 from common.settings import get_global_setting
 from InvenTree.helpers import str2bool
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 def get_provider_app(provider):
@@ -50,7 +50,7 @@ def check_provider(provider):
     if not app:
         return False
 
-    if allauth.app_settings.SITES_ENABLED:
+    if allauth.app_settings.SITES_ENABLED:  # type: ignore[unresolved-attribute]
         # At least one matching site must be specified
         if not app.sites.exists():
             logger.error('SocialApp %s has no sites configured', app)
@@ -69,12 +69,12 @@ def provider_display_name(provider):
     return provider.name
 
 
-def login_enabled() -> bool:
+def sso_login_enabled() -> bool:
     """Return True if SSO login is enabled."""
     return str2bool(get_global_setting('LOGIN_ENABLE_SSO'))
 
 
-def registration_enabled() -> bool:
+def sso_registration_enabled() -> bool:
     """Return True if SSO registration is enabled."""
     return str2bool(get_global_setting('LOGIN_ENABLE_SSO_REG'))
 
@@ -102,6 +102,7 @@ def ensure_sso_groups(sender, sociallogin: SocialLogin, **kwargs):
 
     # ensure user has groups
     user = sociallogin.account.user
+
     for group_name in group_names:
         try:
             user.groups.get(name=group_name)
@@ -119,7 +120,7 @@ def ensure_sso_groups(sender, sociallogin: SocialLogin, **kwargs):
     # remove groups not listed by SSO if not disabled
     if get_global_setting('SSO_REMOVE_GROUPS'):
         for group in user.groups.all():
-            if not group.name in group_names:
+            if group.name not in group_names:
                 logger.info(f'Removing group {group.name} from {user}')
                 user.groups.remove(group)
 

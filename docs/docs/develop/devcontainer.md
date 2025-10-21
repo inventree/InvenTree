@@ -52,7 +52,7 @@ Tasks can help you executing scripts. You can run them by open the command panel
 
 #### Setup demo dataset
 
-If you need some demo test-data, run the `setup-test` task. This will import an `admin` user with the password `inventree`. For more info on what this dataset contains see [inventree/demo-dataset](https://github.com/inventree/demo-dataset).
+If you need some demo test-data, run the `dev.setup-test` task. This will import an `admin` user with the password `inventree`. For more info on what this dataset contains see [inventree/demo-dataset](../demo.md).
 
 #### Setup a superuser
 
@@ -73,7 +73,7 @@ You can now set breakpoints and vscode will automatically pause execution if tha
 
 !!! info "React Frontend development"
 
-The React frontend requires additional steps to run. Refer to [Platform UI / React](./react-frontend.md)
+The React frontend requires additional steps to run. Refer to [Web UI / React](./react-frontend.md)
 
 ### Plugin development
 
@@ -97,7 +97,7 @@ The easiest way for plugin developing is by using the InvenTree devcontainer. Ju
    }
    ```
 
-Your plugin should now be activateable from the InvenTree settings. You can also use breakpoints for debugging.
+Your plugin should now be able to be activated from the InvenTree settings. You can also use breakpoints for debugging.
 
 ### Troubleshooting
 
@@ -111,7 +111,9 @@ Make sure you have `gnupg` and `pinentry-mac` installed and set up correctly. Re
 
 #### Where are the database, media files, ... stored?
 
-Backups, Commandhistory, media/static files, venv, plugin.txt, secret_key.txt, ... are stored in the `dev` folder. If you want to start with a clean setup, you can remove that folder, but be aware that this will delete everything you already setup in InvenTree.
+Backups, media/static files, venv, plugin.txt, secret_key.txt, ... are stored in the `dev` folder. If you want to start with a clean setup, you can remove that folder, but be aware that this will delete everything you already setup in InvenTree.
+
+Database data are stored in the `dev-db` directory. This is managed by the `postgres` docker container.
 
 ### Performance Improvements
 
@@ -123,6 +125,8 @@ You can also refer to the [Improve disk performance guide](https://code.visualst
 
 ### Redis Caching
 
-The devcontainer setup provides a [redis](https://redis.io/) container which can be used for managing global cache. By default this is disabled, but it can be easily enabled for testing or developing with the [redis cache](../start/config.md#caching) enabled.
+The devcontainer setup provides a [redis](https://redis.io/) container which can be used for managing global cache. By default this is enabled, but it can be easily disabled by adjusting the environment variables in the [docker compose file]({{ sourcefile('.devcontainer/docker-compose.yml') }}).
 
-To enable the cache, locate the InvenTree configuration file (`./dev/config.yaml`) and set the `cache.enabled` setting to `True`.
+### Frontend Testing
+
+By default, the required packages for running frontend tests (via playwright) are not installed. Refer to the [installation instructions](./react-frontend.md#install-playwright) for instructions on installing these packages within the devcontainer environment.

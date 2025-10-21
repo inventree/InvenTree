@@ -1,60 +1,83 @@
 import { test } from './baseFixtures.js';
-import { baseUrl } from './defaults.js';
-import { doQuickLogin } from './login.js';
+import {
+  clearTableFilters,
+  navigate,
+  setTableChoiceFilter
+} from './helpers.js';
+import { doCachedLogin } from './login.js';
 
-// Helper function to set the value of a specific table filter
-const setFilter = async (page, name: string, value: string) => {
-  await page.getByLabel('table-select-filters').click();
-  await page.getByRole('button', { name: 'Add Filter' }).click();
-  await page.getByPlaceholder('Select filter').click();
-  await page.getByRole('option', { name: name, exact: true }).click();
-  await page.getByPlaceholder('Select filter value').click();
-  await page.getByRole('option', { name: value, exact: true }).click();
-  await page.getByLabel('filter-drawer-close').click();
-};
-
-// Helper function to clear table filters
-const clearFilters = async (page) => {
-  await page.getByLabel('table-select-filters').click();
-  await page.getByRole('button', { name: 'Clear Filters' }).click();
-  await page.getByLabel('filter-drawer-close').click();
-};
-
-test('PUI - Tables - Filters', async ({ page }) => {
-  await doQuickLogin(page);
-
+test('Tables - Filters', async ({ browser }) => {
   // Head to the "build order list" page
-  await page.goto(`${baseUrl}/build/`);
+  const page = await doCachedLogin(browser, { url: 'manufacturing/index/' });
 
-  await setFilter(page, 'Status', 'Complete');
-  await setFilter(page, 'Responsible', 'allaccess');
-  await setFilter(page, 'Project Code', 'PRJ-NIM');
+  await clearTableFilters(page);
 
-  await clearFilters(page);
+  await setTableChoiceFilter(page, 'Status', 'Complete');
+  await setTableChoiceFilter(page, 'Responsible', 'allaccess');
+  await setTableChoiceFilter(page, 'Project Code', 'PRJ-NIM');
+
+  await clearTableFilters(page);
 
   // Head to the "part list" page
-  await page.goto(`${baseUrl}/part/category/index/parts/`);
+  await navigate(page, 'part/category/index/parts/');
 
-  await setFilter(page, 'Assembly', 'Yes');
+  await setTableChoiceFilter(page, 'Assembly', 'Yes');
 
-  await clearFilters(page);
+  await clearTableFilters(page);
 
   // Head to the "purchase order list" page
-  await page.goto(`${baseUrl}/purchasing/index/purchaseorders/`);
+  await navigate(page, 'purchasing/index/purchaseorders/');
 
-  await setFilter(page, 'Status', 'Complete');
-  await setFilter(page, 'Responsible', 'readers');
-  await setFilter(page, 'Assigned to me', 'No');
-  await setFilter(page, 'Project Code', 'PRO-ZEN');
+  await clearTableFilters(page);
 
-  await clearFilters(page);
+  await setTableChoiceFilter(page, 'Status', 'Complete');
+  await setTableChoiceFilter(page, 'Responsible', 'readers');
+  await setTableChoiceFilter(page, 'Assigned to me', 'No');
+  await setTableChoiceFilter(page, 'Project Code', 'PRO-ZEN');
+  await setTableChoiceFilter(page, 'Has Start Date', 'Yes');
+
+  await clearTableFilters(page);
 });
 
-test('PUI - Tables - Columns', async ({ page }) => {
-  await doQuickLogin(page);
+test('Tables - Pagination', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    url: 'manufacturing/index/buildorders',
+    username: 'steven',
+    password: 'wizardstaff'
+  });
 
+  await clearTableFilters(page);
+
+  // Expected pagination size is 25
+  // Note: Due to other tests, there may be more than 25 items in the list
+  await page.getByText(/1 - 25 \/ \d+/).waitFor();
+  await page.getByRole('button', { name: 'Next page' }).click();
+  await page.getByText(/26 - \d+ \/ \d+/).waitFor();
+
+  // Set page size to 10
+  await page.getByRole('button', { name: '25' }).click();
+  await page.getByRole('menuitem', { name: '10', exact: true }).click();
+
+  await page.getByText(/1 - 10 \/ \d+/).waitFor();
+  await page.getByRole('button', { name: '3' }).click();
+  await page.getByText(/21 - \d+ \/ \d+/).waitFor();
+  await page.getByRole('button', { name: 'Previous page' }).click();
+  await page.getByText(/11 - 20 \/ \d+/).waitFor();
+
+  // Set page size back to 25
+  await page.getByRole('button', { name: '10' }).click();
+  await page.getByRole('menuitem', { name: '25', exact: true }).click();
+
+  await page.getByText(/1 - 25 \/ \d+/).waitFor();
+});
+
+test('Tables - Columns', async ({ browser }) => {
   // Go to the "stock list" page
-  await page.goto(`${baseUrl}/stock/location/index/stock-items`);
+  const page = await doCachedLogin(browser, {
+    url: 'stock/location/index/stock-items',
+    username: 'steven',
+    password: 'wizardstaff'
+  });
 
   // Open column selector
   await page.getByLabel('table-select-columns').click();
@@ -62,4 +85,15 @@ test('PUI - Tables - Columns', async ({ page }) => {
   // De-select some items
   await page.getByRole('menuitem', { name: 'Description' }).click();
   await page.getByRole('menuitem', { name: 'Stocktake' }).click();
+  await page.keyboard.press('Escape');
+
+  await navigate(page, '/sales/index/salesorders');
+
+  // Open column selector
+  await page.getByLabel('table-select-columns').click();
+
+  await page.getByRole('menuitem', { name: 'Start Date' }).click();
+  await page.getByRole('menuitem', { name: 'Target Date' }).click();
+  await page.getByRole('menuitem', { name: 'Reference', exact: true }).click();
+  await page.getByRole('menuitem', { name: 'Project Code' }).click();
 });

@@ -1,4 +1,5 @@
-import { Trans, t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import {
   Accordion,
   Alert,
@@ -11,24 +12,25 @@ import {
   Text
 } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
+import { useEffect, useMemo, useState } from 'react';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
 import { api } from '../../App';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { apiUrl } from '../../states/ApiState';
 
 export function LicenceView(entries: Readonly<any[]>) {
   return (
-    <Stack gap="xs">
+    <Stack gap='xs'>
       <Divider />
       {entries?.length > 0 ? (
-        <Accordion variant="contained" defaultValue="-">
+        <Accordion variant='contained' defaultValue='-'>
           {entries?.map((entry: any, index: number) => (
             <Accordion.Item
               key={entry.name + entry.license + entry.version}
               value={`entry-${index}`}
             >
               <Accordion.Control>
-                <Group justify="space-between" grow>
+                <Group justify='space-between' grow>
                   <Text>{entry.name}</Text>
                   <Text>{entry.license}</Text>
                   <Space />
@@ -53,17 +55,25 @@ export function LicenceView(entries: Readonly<any[]>) {
 export function LicenseModal() {
   const { data, isFetching, isError } = useQuery({
     queryKey: ['license'],
+    refetchOnMount: true,
     queryFn: () =>
-      api
-        .get(apiUrl(ApiEndpoints.license))
-        .then((res) => res.data ?? {})
-        .catch(() => {})
+      api.get(apiUrl(ApiEndpoints.license)).then((res) => res.data ?? {})
   });
 
-  const rspdata = !data ? [] : Object.keys(data ?? {});
+  const packageKeys = useMemo(() => {
+    return !!data ? Object.keys(data ?? {}) : [];
+  }, [data]);
+
+  const [selectedKey, setSelectedKey] = useState<string | null>('');
+
+  useEffect(() => {
+    if (packageKeys.length > 0) {
+      setSelectedKey(packageKeys[0]);
+    }
+  }, [packageKeys]);
 
   return (
-    <Stack gap="xs">
+    <Stack gap='xs'>
       <Divider />
       <LoadingOverlay visible={isFetching} />
       {isFetching && (
@@ -72,22 +82,26 @@ export function LicenseModal() {
         </Text>
       )}
       {isError ? (
-        <Alert color="red" title={t`Error`}>
+        <Alert color='red' title={t`Error`}>
           <Text>
             <Trans>Failed to fetch license information</Trans>
           </Text>
         </Alert>
       ) : (
-        <Tabs defaultValue={rspdata[0] ?? ''}>
+        <Tabs
+          defaultValue={packageKeys[0] ?? ''}
+          value={selectedKey}
+          onChange={setSelectedKey}
+        >
           <Tabs.List>
-            {rspdata.map((key) => (
+            {packageKeys.map((key) => (
               <Tabs.Tab key={key} value={key}>
                 <Trans>{key} Packages</Trans>
               </Tabs.Tab>
             ))}
           </Tabs.List>
 
-          {rspdata.map((key) => (
+          {packageKeys.map((key) => (
             <Tabs.Panel key={key} value={key}>
               {LicenceView(data[key] ?? [])}
             </Tabs.Panel>

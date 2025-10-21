@@ -1,7 +1,9 @@
-import { Trans, t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import {
   AspectRatio,
   Button,
+  Grid,
   Group,
   Image,
   Overlay,
@@ -10,19 +12,27 @@ import {
   rem,
   useMantineColorScheme
 } from '@mantine/core';
-import { Dropzone, FileWithPath, IMAGE_MIME_TYPE } from '@mantine/dropzone';
+import {
+  Dropzone,
+  type FileWithPath,
+  IMAGE_MIME_TYPE
+} from '@mantine/dropzone';
 import { useHover } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
 import { useMemo, useState } from 'react';
 
+import { ActionButton } from '@lib/components/ActionButton';
+import type { UserRoles } from '@lib/enums/Roles';
+import { cancelEvent } from '@lib/functions/Events';
+import { showNotification } from '@mantine/notifications';
 import { api } from '../../App';
-import { UserRoles } from '../../enums/Roles';
-import { cancelEvent } from '../../functions/events';
 import { InvenTreeIcon } from '../../functions/icons';
+import { showApiErrorMessage } from '../../functions/notifications';
+import { useEditApiFormModal } from '../../hooks/UseForm';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import { PartThumbTable } from '../../tables/part/PartThumbTable';
 import { vars } from '../../theme';
-import { ActionButton } from '../buttons/ActionButton';
 import { ApiImage } from '../images/ApiImage';
 import { StylishText } from '../items/StylishText';
 
@@ -30,7 +40,7 @@ import { StylishText } from '../items/StylishText';
  * Props for detail image
  */
 export type DetailImageProps = {
-  appRole: UserRoles;
+  appRole?: UserRoles;
   src: string;
   apiPath: string;
   refresh?: () => void;
@@ -42,11 +52,13 @@ export type DetailImageProps = {
  * Actions for Detail Images.
  * If true, the button type will be visible
  * @param {boolean} selectExisting - PART ONLY. Allows selecting existing images as part image
+ * @param {boolean} downloadImage - Allows downloading image from a remote URL
  * @param {boolean} uploadFile - Allows uploading a new image
  * @param {boolean} deleteFile - Allows deleting the current image
  */
 export type DetailImageButtonProps = {
   selectExisting?: boolean;
+  downloadImage?: boolean;
   uploadFile?: boolean;
   deleteFile?: boolean;
 };
@@ -62,7 +74,7 @@ const backup_image = '/static/img/blank_image.png';
  */
 const removeModal = (apiPath: string, setImage: (image: string) => void) =>
   modals.openConfirmModal({
-    title: <StylishText size="xl">{t`Remove Image`}</StylishText>,
+    title: <StylishText size='xl'>{t`Remove Image`}</StylishText>,
     children: (
       <Text>
         <Trans>Remove the associated image from this item?</Trans>
@@ -81,22 +93,22 @@ const removeModal = (apiPath: string, setImage: (image: string) => void) =>
 function UploadModal({
   apiPath,
   setImage
-}: {
+}: Readonly<{
   apiPath: string;
   setImage: (image: string) => void;
-}) {
+}>) {
   const [currentFile, setCurrentFile] = useState<FileWithPath | null>(null);
   let uploading = false;
 
   // Components to show in the Dropzone when no file is selected
   const noFileIdle = (
     <Group>
-      <InvenTreeIcon icon="photo" iconProps={{ size: '3.2rem', stroke: 1.5 }} />
+      <InvenTreeIcon icon='photo' iconProps={{ size: '3.2rem', stroke: 1.5 }} />
       <div>
-        <Text size="xl" inline>
+        <Text size='xl' inline>
           <Trans>Drag and drop to upload</Trans>
         </Text>
-        <Text size="sm" color="dimmed" inline mt={7}>
+        <Text size='sm' c='dimmed' inline mt={7}>
           <Trans>Click to select file(s)</Trans>
         </Text>
       </div>
@@ -122,16 +134,16 @@ function UploadModal({
         <Image
           src={imageUrl}
           onLoad={() => URL.revokeObjectURL(imageUrl)}
-          radius="sm"
+          radius='sm'
           height={75}
-          fit="contain"
+          fit='contain'
           style={{ flexBasis: '40%' }}
         />
         <div style={{ flexBasis: '60%' }}>
-          <Text size="xl" inline style={{ wordBreak: 'break-all' }}>
+          <Text size='xl' inline style={{ wordBreak: 'break-all' }}>
             {file.name}
           </Text>
-          <Text size="sm" color="dimmed" inline mt={7}>
+          <Text size='sm' c='dimmed' inline mt={7}>
             {size.toFixed(2)} MB
           </Text>
         </div>
@@ -151,12 +163,24 @@ function UploadModal({
     const formData = new FormData();
     formData.append('image', file, file.name);
 
-    const response = await api.patch(apiPath, formData);
-
-    if (response.data.image.includes(file.name)) {
-      setImage(response.data.image);
-      modals.closeAll();
-    }
+    api
+      .patch(apiPath, formData)
+      .then((response) => {
+        setImage(response.data.image);
+        modals.closeAll();
+        showNotification({
+          title: t`Image uploaded`,
+          message: t`Image has been uploaded successfully`,
+          color: 'green'
+        });
+      })
+      .catch((error) => {
+        showApiErrorMessage({
+          error: error,
+          title: t`Upload Error`,
+          field: 'image'
+        });
+      });
   };
 
   const { colorScheme } = useMantineColorScheme();
@@ -174,13 +198,13 @@ function UploadModal({
         loading={uploading}
       >
         <Group
-          justify="center"
-          gap="xl"
+          justify='center'
+          gap='xl'
           style={{ minHeight: rem(140), pointerEvents: 'none' }}
         >
           <Dropzone.Accept>
             <InvenTreeIcon
-              icon="upload"
+              icon='upload'
               iconProps={{
                 size: '3.2rem',
                 stroke: 1.5,
@@ -190,7 +214,7 @@ function UploadModal({
           </Dropzone.Accept>
           <Dropzone.Reject>
             <InvenTreeIcon
-              icon="reject"
+              icon='reject'
               iconProps={{
                 size: '3.2rem',
                 stroke: 1.5,
@@ -219,7 +243,7 @@ function UploadModal({
         }}
       >
         <Button
-          variant="outline"
+          variant='outline'
           disabled={!currentFile}
           onClick={() => setCurrentFile(null)}
         >
@@ -245,58 +269,81 @@ function ImageActionButtons({
   apiPath,
   hasImage,
   pk,
-  setImage
-}: {
+  setImage,
+  downloadImage
+}: Readonly<{
   actions?: DetailImageButtonProps;
   visible: boolean;
   apiPath: string;
   hasImage: boolean;
   pk: string;
   setImage: (image: string) => void;
-}) {
+  downloadImage: () => void;
+}>) {
+  const globalSettings = useGlobalSettingsState();
+
   return (
     <>
       {visible && (
         <Group
-          gap="xs"
+          gap='xs'
           style={{ zIndex: 2, position: 'absolute', top: '10px', left: '10px' }}
         >
           {actions.selectExisting && (
             <ActionButton
               icon={
                 <InvenTreeIcon
-                  icon="select_image"
+                  icon='select_image'
                   iconProps={{ color: 'white' }}
                 />
               }
               tooltip={t`Select from existing images`}
-              variant="outline"
-              size="lg"
-              tooltipAlignment="top"
+              variant='outline'
+              size='lg'
+              tooltipAlignment='top'
               onClick={(event: any) => {
                 cancelEvent(event);
 
                 modals.open({
-                  title: <StylishText size="xl">{t`Select Image`}</StylishText>,
-                  size: 'xxl',
+                  title: <StylishText size='xl'>{t`Select Image`}</StylishText>,
+                  size: '80%',
                   children: <PartThumbTable pk={pk} setImage={setImage} />
                 });
               }}
             />
           )}
+          {actions.downloadImage &&
+            globalSettings.isSet('INVENTREE_DOWNLOAD_FROM_URL') && (
+              <ActionButton
+                icon={
+                  <InvenTreeIcon
+                    icon='download'
+                    iconProps={{ color: 'white' }}
+                  />
+                }
+                tooltip={t`Download remote image`}
+                variant='outline'
+                size='lg'
+                tooltipAlignment='top'
+                onClick={(event: any) => {
+                  cancelEvent(event);
+                  downloadImage();
+                }}
+              />
+            )}
           {actions.uploadFile && (
             <ActionButton
               icon={
-                <InvenTreeIcon icon="upload" iconProps={{ color: 'white' }} />
+                <InvenTreeIcon icon='upload' iconProps={{ color: 'white' }} />
               }
               tooltip={t`Upload new image`}
-              variant="outline"
-              size="lg"
-              tooltipAlignment="top"
+              variant='outline'
+              size='lg'
+              tooltipAlignment='top'
               onClick={(event: any) => {
                 cancelEvent(event);
                 modals.open({
-                  title: <StylishText size="xl">{t`Upload Image`}</StylishText>,
+                  title: <StylishText size='xl'>{t`Upload Image`}</StylishText>,
                   children: (
                     <UploadModal apiPath={apiPath} setImage={setImage} />
                   )
@@ -307,12 +354,12 @@ function ImageActionButtons({
           {actions.deleteFile && hasImage && (
             <ActionButton
               icon={
-                <InvenTreeIcon icon="delete" iconProps={{ color: 'red' }} />
+                <InvenTreeIcon icon='delete' iconProps={{ color: 'red' }} />
               }
               tooltip={t`Delete image`}
-              variant="outline"
-              size="lg"
-              tooltipAlignment="top"
+              variant='outline'
+              size='lg'
+              tooltipAlignment='top'
               onClick={(event: any) => {
                 cancelEvent(event);
                 removeModal(apiPath, setImage);
@@ -336,10 +383,25 @@ export function DetailsImage(props: Readonly<DetailImageProps>) {
   // Sets a new image, and triggers upstream instance refresh
   const setAndRefresh = (image: string) => {
     setImg(image);
-    props.refresh && props.refresh();
+    props.refresh?.();
   };
 
   const permissions = useUserState();
+
+  const downloadImage = useEditApiFormModal({
+    url: props.apiPath,
+    title: t`Download Image`,
+    fields: {
+      remote_image: {}
+    },
+    timeout: 10000,
+    successMessage: t`Image downloaded successfully`,
+    onFormSuccess: (response: any) => {
+      if (response.image) {
+        setAndRefresh(response.image);
+      }
+    }
+  });
 
   const hasOverlay: boolean = useMemo(() => {
     return (
@@ -359,27 +421,42 @@ export function DetailsImage(props: Readonly<DetailImageProps>) {
   };
 
   return (
-    <AspectRatio ref={ref} maw={IMAGE_DIMENSION} ratio={1} pos="relative">
-      <>
-        <ApiImage
-          src={img}
-          mah={IMAGE_DIMENSION}
+    <>
+      {downloadImage.modal}
+      <Grid.Col span={{ base: 12, sm: 4 }}>
+        <AspectRatio
+          ref={ref}
           maw={IMAGE_DIMENSION}
-          onClick={expandImage}
-        />
-        {permissions.hasChangeRole(props.appRole) && hasOverlay && hovered && (
-          <Overlay color="black" opacity={0.8} onClick={expandImage}>
-            <ImageActionButtons
-              visible={hovered}
-              actions={props.imageActions}
-              apiPath={props.apiPath}
-              hasImage={props.src ? true : false}
-              pk={props.pk}
-              setImage={setAndRefresh}
+          ratio={1}
+          pos='relative'
+          visibleFrom='xs'
+        >
+          <>
+            <ApiImage
+              src={img}
+              mah={IMAGE_DIMENSION}
+              maw={IMAGE_DIMENSION}
+              onClick={expandImage}
             />
-          </Overlay>
-        )}
-      </>
-    </AspectRatio>
+            {props.appRole &&
+              permissions.hasChangeRole(props.appRole) &&
+              hasOverlay &&
+              hovered && (
+                <Overlay color='black' opacity={0.8} onClick={expandImage}>
+                  <ImageActionButtons
+                    visible={hovered}
+                    actions={props.imageActions}
+                    apiPath={props.apiPath}
+                    hasImage={!!props.src}
+                    pk={props.pk}
+                    setImage={setAndRefresh}
+                    downloadImage={downloadImage.open}
+                  />
+                </Overlay>
+              )}
+          </>
+        </AspectRatio>
+      </Grid.Col>
+    </>
   );
 }

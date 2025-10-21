@@ -1,26 +1,30 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import {
-  ActionIcon,
+  Button,
+  type FloatingPosition,
   Indicator,
-  IndicatorProps,
+  type IndicatorProps,
   Menu,
   Tooltip
 } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import {
+  IconChevronDown,
   IconCopy,
+  IconDotsVertical,
   IconEdit,
   IconLink,
   IconQrcode,
   IconTrash,
   IconUnlink
 } from '@tabler/icons-react';
-import { ReactNode, useMemo } from 'react';
+import { type ReactNode, useMemo } from 'react';
 
-import { ModelType } from '../../enums/ModelType';
-import { identifierString } from '../../functions/conversion';
+import type { ModelType } from '@lib/enums/ModelType';
+import { identifierString } from '@lib/functions/Conversion';
 import { InvenTreeIcon } from '../../functions/icons';
-import { InvenTreeQRCode, QRCodeLink, QRCodeUnlink } from './QRCode';
+import { InvenTreeQRCode, QRCodeLink, QRCodeUnlink } from '../barcodes/QRCode';
+import { StylishText } from './StylishText';
 
 export type ActionDropdownItem = {
   icon?: ReactNode;
@@ -40,16 +44,22 @@ export type ActionDropdownItem = {
 export function ActionDropdown({
   icon,
   tooltip,
+  tooltipPosition,
   actions,
   disabled = false,
-  hidden = false
+  hidden = false,
+  noindicator = false,
+  position
 }: {
   icon: ReactNode;
   tooltip: string;
+  tooltipPosition?: FloatingPosition;
   actions: ActionDropdownItem[];
   disabled?: boolean;
   hidden?: boolean;
-}) {
+  noindicator?: boolean;
+  position?: FloatingPosition;
+}): ReactNode {
   const hasActions = useMemo(() => {
     return actions.some((action) => !action.hidden);
   }, [actions]);
@@ -63,19 +73,29 @@ export function ActionDropdown({
   }, [tooltip]);
 
   return !hidden && hasActions ? (
-    <Menu position="bottom-end" key={menuName}>
+    <Menu position={position ?? 'bottom-end'} key={menuName}>
       <Indicator disabled={!indicatorProps} {...indicatorProps?.indicator}>
         <Menu.Target>
-          <Tooltip label={tooltip} hidden={!tooltip}>
-            <ActionIcon
-              size="lg"
-              radius="sm"
-              variant="transparent"
+          <Tooltip
+            label={tooltip}
+            hidden={!tooltip}
+            position={tooltipPosition ?? 'bottom'}
+          >
+            <Button
+              variant={noindicator ? 'transparent' : 'light'}
               disabled={disabled}
               aria-label={menuName}
+              p='0'
+              size='sm'
+              rightSection={
+                noindicator ? null : <IconChevronDown stroke={1.5} />
+              }
+              styles={{
+                section: { margin: 0 }
+              }}
             >
               {icon}
-            </ActionIcon>
+            </Button>
           </Tooltip>
         </Menu.Target>
       </Indicator>
@@ -91,7 +111,7 @@ export function ActionDropdown({
               <Tooltip
                 label={action.tooltip}
                 hidden={!action.tooltip}
-                position="left"
+                position='left'
               >
                 <Menu.Item
                   aria-label={id}
@@ -108,6 +128,26 @@ export function ActionDropdown({
       </Menu.Dropdown>
     </Menu>
   ) : null;
+}
+
+export function OptionsActionDropdown({
+  actions = [],
+  tooltip = t`Options`,
+  hidden = false
+}: Readonly<{
+  actions: ActionDropdownItem[];
+  tooltip?: string;
+  hidden?: boolean;
+}>) {
+  return (
+    <ActionDropdown
+      icon={<IconDotsVertical />}
+      tooltip={tooltip}
+      actions={actions}
+      hidden={hidden}
+      noindicator
+    />
+  );
 }
 
 // Dropdown menu for barcode actions
@@ -133,7 +173,7 @@ export function BarcodeActionDropdown({
       actions={[
         GeneralBarcodeAction({
           mdl_prop: prop,
-          title: t`View`,
+          title: t`View Barcode`,
           icon: <IconQrcode />,
           tooltip: t`View barcode`,
           ChildItem: InvenTreeQRCode
@@ -183,7 +223,7 @@ function GeneralBarcodeAction({
 }): ActionDropdownItem {
   const onClick = () => {
     modals.open({
-      title: title,
+      title: <StylishText size='xl'>{title}</StylishText>,
       children: <ChildItem mdl_prop={mdl_prop} />
     });
   };
@@ -201,7 +241,7 @@ function GeneralBarcodeAction({
 export function EditItemAction(props: ActionDropdownItem): ActionDropdownItem {
   return {
     ...props,
-    icon: <IconEdit color="blue" />,
+    icon: <IconEdit color='blue' />,
     name: t`Edit`,
     tooltip: props.tooltip ?? t`Edit item`
   };
@@ -213,7 +253,7 @@ export function DeleteItemAction(
 ): ActionDropdownItem {
   return {
     ...props,
-    icon: <IconTrash color="red" />,
+    icon: <IconTrash color='red' />,
     name: t`Delete`,
     tooltip: props.tooltip ?? t`Delete item`
   };
@@ -222,7 +262,7 @@ export function DeleteItemAction(
 export function HoldItemAction(props: ActionDropdownItem): ActionDropdownItem {
   return {
     ...props,
-    icon: <InvenTreeIcon icon="hold" iconProps={{ color: 'orange' }} />,
+    icon: <InvenTreeIcon icon='hold' iconProps={{ color: 'orange' }} />,
     name: t`Hold`,
     tooltip: props.tooltip ?? t`Hold`
   };
@@ -233,7 +273,7 @@ export function CancelItemAction(
 ): ActionDropdownItem {
   return {
     ...props,
-    icon: <InvenTreeIcon icon="cancel" iconProps={{ color: 'red' }} />,
+    icon: <InvenTreeIcon icon='cancel' iconProps={{ color: 'red' }} />,
     name: t`Cancel`,
     tooltip: props.tooltip ?? t`Cancel`
   };
@@ -245,7 +285,7 @@ export function DuplicateItemAction(
 ): ActionDropdownItem {
   return {
     ...props,
-    icon: <IconCopy color="green" />,
+    icon: <IconCopy color='green' />,
     name: t`Duplicate`,
     tooltip: props.tooltip ?? t`Duplicate item`
   };

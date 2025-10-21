@@ -4,10 +4,11 @@ import datetime
 
 from django.utils.translation import gettext_lazy as _
 
+from oauth2_provider.contrib.rest_framework import OAuth2Authentication
 from rest_framework import exceptions
 from rest_framework.authentication import TokenAuthentication
 
-from users.models import ApiToken
+import users.models
 
 
 class ApiTokenAuthentication(TokenAuthentication):
@@ -18,7 +19,7 @@ class ApiTokenAuthentication(TokenAuthentication):
     - Tokens can expire
     """
 
-    model = ApiToken
+    model = users.models.ApiToken
 
     def authenticate_credentials(self, key):
         """Adds additional checks to the default token authentication method."""
@@ -37,3 +38,7 @@ class ApiTokenAuthentication(TokenAuthentication):
             token.save()
 
         return (user, token)
+
+
+class ExtendedOAuth2Authentication(OAuth2Authentication):
+    """Custom implementation of OAuth2Authentication class to support custom scope rendering."""

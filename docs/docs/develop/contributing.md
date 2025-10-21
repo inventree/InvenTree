@@ -23,7 +23,7 @@ To setup a development environment using [docker](../start/docker.md), run the f
 ```bash
 git clone https://github.com/inventree/InvenTree.git && cd InvenTree
 docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run --rm inventree-dev-server invoke install
-docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run --rm inventree-dev-server invoke setup-test --dev
+docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run --rm inventree-dev-server invoke dev.setup-test --dev
 docker compose --project-directory . -f contrib/container/dev-docker-compose.yml up -d
 ```
 
@@ -34,25 +34,30 @@ A "bare metal" development setup can be installed as follows:
 ```bash
 git clone https://github.com/inventree/InvenTree.git && cd InvenTree
 python3 -m venv env && source env/bin/activate
-pip install invoke && invoke
-pip install invoke && invoke setup-dev --tests
+pip install --upgrade --ignore-installed invoke
+invoke install
+invoke update
+invoke dev.setup-dev --tests
 ```
 
-Read the [InvenTree setup documentation](../start/intro.md) for a complete installation reference guide.
+Read the [InvenTree setup documentation](../start/index.md) for a complete installation reference guide.
+
+!!! note "Required Packages"
+    Depending on your system, you may need to install additional software packages as required.
 
 ### Setup Devtools
 
-Run the following command to set up all toolsets for development.
+Run the following command to set up the tools required for development.
 
 ```bash
-invoke setup-dev
+invoke dev.setup-dev
 ```
 
 *We recommend you run this command before starting to contribute. This will install and set up `pre-commit` to run some checks before each commit and help reduce errors.*
 
 ## Branches and Versioning
 
-InvenTree roughly follow the [GitLab flow](https://docs.gitlab.com/ee/topics/gitlab_flow.html) branching style, to allow simple management of multiple tagged releases, short-lived branches, and development on the main branch.
+InvenTree roughly follow the [GitLab flow](https://about.gitlab.com/topics/version-control/what-are-gitlab-flow-best-practices/) branching style, to allow simple management of multiple tagged releases, short-lived branches, and development on the main branch.
 
 There are nominally 5 active branches:
 - `master` - The main development branch
@@ -143,10 +148,6 @@ pyupgrade `find . -name "*.py"`
 django-upgrade --target-version {{ config.extra.django_version }} `find . -name "*.py"`
 ```
 
-## Credits
-
-If you add any new dependencies / libraries, they should be added to [the credits page](../credits.md).
-
 ## Migration Files
 
 Any required migration files **must** be included in the commit, or the pull-request will be rejected. If you change the underlying database schema, make sure you run `invoke migrate` and commit the migration files before submitting the PR.
@@ -169,20 +170,62 @@ The various github actions can be found in the `./github/workflows` directory
 ### Run tests locally
 
 To run test locally, use:
+
 ```
-invoke test
+invoke dev.test
 ```
 
 To run only partial tests, for example for a module use:
 ```
-invoke test --runtest order
+invoke dev.test --runtest order
 ```
 
 To see all the available options:
 
 ```
-invoke test --help
+invoke dev.test --help
 ```
+
+```
+{{ invoke_commands('dev.test --help') }}
+```
+
+#### Database Permission Issues
+
+For local testing django creates a test database and removes it after testing. If you encounter permission issues while running unit test, ensure that your database user has permission to create new databases.
+
+For example, in PostgreSQL, run:
+
+```
+alter user myuser createdb;
+```
+
+!!! info "Devcontainer"
+    The default database container which is provided in the devcontainer is already setup with the required permissions
+
+### Trace coverage to specific tests
+
+Sometimes it is valuable to get insights how many tests cover a specific statement and which ones do. coverage.py calls this information contexts. Contexts are automatically captured by the invoke task test (with coverage enabled) and can be rendered with below command into a HTML report.
+```bash
+coverage html -i
+```
+
+The coverage database is also generated in the CI-pipeline and exposd for 14 days as a artifact named `coverage`.
+
+### Database Query Profiling
+
+It may be useful during development to profile parts of the backend code to see how many database queries are executed. To that end, the `count_queries` context manager can be used to count the number of queries executed in a specific code block.
+
+```python
+from InvenTree.helpers import count_queries
+
+with count_queries("My code block"):
+    # Code block to profile
+    ...
+```
+
+A developer can use this to profile a specific code block, and the number of queries executed will be printed to the console.
+
 
 ## Code Style
 
@@ -221,6 +264,12 @@ T002: Double quotes should be used in tags
 ## Documentation
 
 New features or updates to existing features should be accompanied by user documentation.
+
+### Stable link references
+
+The documentation framework enables addition of redirections. This is used to build stable references for linking in external resources.
+
+New references can be added in `docs/mkdocs.yml` in the `redirect_maps` section. Both external targets and documentation pages are possible targets. All references are linted in the docs CI pipeline.
 
 ## Translations
 

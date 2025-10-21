@@ -1,7 +1,7 @@
 """Helper functions for converting between units."""
 
-import logging
 import re
+from typing import Optional
 
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
@@ -10,7 +10,9 @@ import pint
 
 _unit_registry = None
 
-logger = logging.getLogger('inventree')
+import structlog
+
+logger = structlog.get_logger('inventree')
 
 
 def get_unit_registry():
@@ -95,7 +97,7 @@ def from_engineering_notation(value):
     """
     value = str(value).strip()
 
-    pattern = '(\d+)([a-zA-Z]+)(\d+)(.*)'
+    pattern = r'(\d+)([a-zA-Z]+)(\d+)(.*)'
 
     if match := re.match(pattern, value):
         left, prefix, right, suffix = match.groups()
@@ -133,7 +135,7 @@ def convert_value(value, unit):
     return value
 
 
-def convert_physical_value(value: str, unit: str = None, strip_units=True):
+def convert_physical_value(value: str, unit: Optional[str] = None, strip_units=True):
     """Validate that the provided value is a valid physical quantity.
 
     Arguments:
@@ -189,7 +191,7 @@ def convert_physical_value(value: str, unit: str = None, strip_units=True):
         attempts.append(f'{value}{unit}')
         attempts.append(f'{eng}{unit}')
 
-    value = None
+    value: Optional[str] = None
 
     # Run through the available "attempts", take the first successful result
     for attempt in attempts:
@@ -203,7 +205,7 @@ def convert_physical_value(value: str, unit: str = None, strip_units=True):
         if unit:
             raise ValidationError(_(f'Could not convert {original} to {unit}'))
         else:
-            raise ValidationError(_('Invalid quantity supplied'))
+            raise ValidationError(_('Invalid quantity provided'))
 
     # Calculate the "magnitude" of the value, as a float
     # If the value is specified strangely (e.g. as a fraction or a dozen), this can cause issues
@@ -217,7 +219,7 @@ def convert_physical_value(value: str, unit: str = None, strip_units=True):
 
         magnitude = float(ureg.Quantity(magnitude).to_base_units().magnitude)
     except Exception as exc:
-        raise ValidationError(_(f'Invalid quantity supplied ({exc})'))
+        raise ValidationError(_('Invalid quantity provided') + f': ({exc})')
 
     if strip_units:
         return magnitude
@@ -245,8 +247,4 @@ def is_dimensionless(value):
     if value.units == ureg.dimensionless:
         return True
 
-    if value.to_base_units().units == ureg.dimensionless:
-        return True
-
-    # At this point, the value is not dimensionless
-    return False
+    return value.to_base_units().units == ureg.dimensionless

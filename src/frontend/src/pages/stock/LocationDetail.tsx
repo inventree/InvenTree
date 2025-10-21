@@ -1,47 +1,44 @@
-import { t } from '@lingui/macro';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import { getDetailUrl } from '@lib/functions/Navigation';
+import type { StockOperationProps } from '@lib/types/Forms';
+import { t } from '@lingui/core/macro';
 import { Group, Skeleton, Stack, Text } from '@mantine/core';
-import {
-  IconDots,
-  IconInfoCircle,
-  IconPackages,
-  IconSitemap
-} from '@tabler/icons-react';
+import { IconInfoCircle, IconPackages, IconSitemap } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-
-import { ActionButton } from '../../components/buttons/ActionButton';
+import { api } from '../../App';
+import { useBarcodeScanDialog } from '../../components/barcodes/BarcodeScanDialog';
 import AdminButton from '../../components/buttons/AdminButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
-import { DetailsField, DetailsTable } from '../../components/details/Details';
+import {
+  type DetailsField,
+  DetailsTable
+} from '../../components/details/Details';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
-  ActionDropdown,
   BarcodeActionDropdown,
   DeleteItemAction,
-  EditItemAction
+  EditItemAction,
+  OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
 import { ApiIcon } from '../../components/items/ApiIcon';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
-import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
-import {
-  StockOperationProps,
-  stockLocationFields,
-  useCountStockItem,
-  useTransferStockItem
-} from '../../forms/StockForms';
+import type { PanelType } from '../../components/panels/Panel';
+import { PanelGroup } from '../../components/panels/PanelGroup';
+import LocateItemButton from '../../components/plugins/LocateItemButton';
+import { stockLocationFields } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
-import { notYetImplemented } from '../../functions/notifications';
-import { getDetailUrl } from '../../functions/urls';
 import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
 import { useUserState } from '../../states/UserState';
 import { PartListTable } from '../../tables/part/PartTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
@@ -51,7 +48,7 @@ export default function Stock() {
   const { id: _id } = useParams();
 
   const id = useMemo(
-    () => (!isNaN(parseInt(_id || '')) ? _id : undefined),
+    () => (!Number.isNaN(Number.parseInt(_id || '')) ? _id : undefined),
     [_id]
   );
 
@@ -63,8 +60,7 @@ export default function Stock() {
   const {
     instance: location,
     refreshInstance,
-    instanceQuery,
-    requestStatus
+    instanceQuery
   } = useInstance({
     endpoint: ApiEndpoints.stock_location_list,
     hasPrimaryKey: true,
@@ -79,14 +75,14 @@ export default function Stock() {
       return <Skeleton />;
     }
 
-    let left: DetailsField[] = [
+    const left: DetailsField[] = [
       {
         type: 'text',
         name: 'name',
         label: t`Name`,
         copy: true,
         value_formatter: () => (
-          <Group gap="xs">
+          <Group gap='xs'>
             {location.icon && <ApiIcon name={location.icon} />}
             {location.name}
           </Group>
@@ -117,7 +113,7 @@ export default function Stock() {
       }
     ];
 
-    let right: DetailsField[] = [
+    const right: DetailsField[] = [
       {
         type: 'text',
         name: 'items',
@@ -174,24 +170,24 @@ export default function Stock() {
         content: detailsPanel
       },
       {
+        name: 'sublocations',
+        label: id ? t`Sublocations` : t`Stock Locations`,
+        icon: <IconSitemap />,
+        content: <StockLocationTable parentId={id} />
+      },
+      {
         name: 'stock-items',
         label: t`Stock Items`,
         icon: <IconPackages />,
         content: (
           <StockItemTable
-            tableName="location-stock"
+            tableName='location-stock'
             allowAdd
             params={{
               location: id
             }}
           />
         )
-      },
-      {
-        name: 'sublocations',
-        label: t`Stock Locations`,
-        icon: <IconSitemap />,
-        content: <StockLocationTable parentId={id} />
       },
       {
         name: 'default_parts',
@@ -223,7 +219,7 @@ export default function Stock() {
     return [
       {
         value: 0,
-        display_name: `Move items to parent location`
+        display_name: t`Move items to parent location`
       },
       {
         value: 1,
@@ -259,7 +255,7 @@ export default function Stock() {
     }
   });
 
-  const stockItemActionProps: StockOperationProps = useMemo(() => {
+  const stockOperationProps: StockOperationProps = useMemo(() => {
     return {
       pk: location.pk,
       model: 'location',
@@ -270,34 +266,92 @@ export default function Stock() {
     };
   }, [location]);
 
-  const transferStockItems = useTransferStockItem(stockItemActionProps);
-  const countStockItems = useCountStockItem(stockItemActionProps);
+  const stockAdjustActions = useStockAdjustActions({
+    formProps: stockOperationProps,
+    enabled: true,
+    delete: false,
+    merge: false,
+    assign: false
+  });
+
+  const scanInStockItem = useBarcodeScanDialog({
+    title: t`Scan Stock Item`,
+    modelType: ModelType.stockitem,
+    callback: async (barcode, response) => {
+      const item = response.stockitem.instance;
+
+      // Scan the stock item into the current location
+      return api
+        .post(apiUrl(ApiEndpoints.stock_transfer), {
+          location: location.pk,
+          items: [
+            {
+              pk: item.pk,
+              quantity: item.quantity
+            }
+          ]
+        })
+        .then(() => {
+          return {
+            success: t`Scanned stock item into location`
+          };
+        })
+        .catch((error) => {
+          console.error('Error scanning stock item:', error);
+          return {
+            error: t`Error scanning stock item`
+          };
+        });
+    }
+  });
+
+  const scanInStockLocation = useBarcodeScanDialog({
+    title: t`Scan Stock Location`,
+    modelType: ModelType.stocklocation,
+    callback: async (barcode, response) => {
+      const pk = response.stocklocation.pk;
+
+      // Set the parent location
+      return api
+        .patch(apiUrl(ApiEndpoints.stock_location_list, pk), {
+          parent: location.pk
+        })
+        .then(() => {
+          return {
+            success: t`Scanned stock location into location`
+          };
+        })
+        .catch((error) => {
+          console.error('Error scanning stock location:', error);
+          return {
+            error: t`Error scanning stock location`
+          };
+        });
+    }
+  });
 
   const locationActions = useMemo(
     () => [
-      <AdminButton model={ModelType.stocklocation} pk={location.pk} />,
-      <ActionButton
-        icon={<InvenTreeIcon icon="stocktake" />}
-        onClick={notYetImplemented}
-        variant="outline"
-        size="lg"
-      />,
+      <AdminButton model={ModelType.stocklocation} id={location.pk} />,
+      <LocateItemButton locationId={location.pk} />,
       location.pk ? (
         <BarcodeActionDropdown
           model={ModelType.stocklocation}
           pk={location.pk}
+          hash={location?.barcode_hash}
+          perm={user.hasChangeRole(UserRoles.stock_location)}
           actions={[
             {
               name: 'Scan in stock items',
-              icon: <InvenTreeIcon icon="stock" />,
-              tooltip: 'Scan items',
-              onClick: notYetImplemented
+              icon: <InvenTreeIcon icon='stock' />,
+              tooltip: 'Scan item into this location',
+              onClick: scanInStockItem.open
             },
             {
               name: 'Scan in container',
-              icon: <InvenTreeIcon icon="unallocated_stock" />,
-              tooltip: 'Scan container',
-              onClick: notYetImplemented
+              icon: <InvenTreeIcon icon='unallocated_stock' />,
+              tooltip: 'Scan container into this location',
+              onClick: scanInStockLocation.open
             }
           ]}
         />
@@ -309,31 +363,9 @@ export default function Stock() {
         enableLabels
         enableReports
       />,
-      <ActionDropdown
-        tooltip={t`Stock Actions`}
-        icon={<InvenTreeIcon icon="stock" />}
-        actions={[
-          {
-            name: 'Count Stock',
-            icon: (
-              <InvenTreeIcon icon="stocktake" iconProps={{ color: 'blue' }} />
-            ),
-            tooltip: 'Count Stock',
-            onClick: () => countStockItems.open()
-          },
-          {
-            name: 'Transfer Stock',
-            icon: (
-              <InvenTreeIcon icon="transfer" iconProps={{ color: 'blue' }} />
-            ),
-            tooltip: 'Transfer Stock',
-            onClick: () => transferStockItems.open()
-          }
-        ]}
-      />,
-      <ActionDropdown
+      stockAdjustActions.dropdown,
+      <OptionsActionDropdown
         tooltip={t`Location Actions`}
-        icon={<IconDots />}
         actions={[
           EditItemAction({
             hidden: !id || !user.hasChangeRole(UserRoles.stock_location),
@@ -348,7 +380,7 @@ export default function Stock() {
         ]}
       />
     ],
-    [location, id, user]
+    [location, id, user, stockAdjustActions.dropdown]
   );
 
   const breadcrumbs = useMemo(
@@ -367,9 +399,11 @@ export default function Stock() {
     <>
       {editLocation.modal}
       {deleteLocation.modal}
+      {scanInStockItem.dialog}
+      {scanInStockLocation.dialog}
       <InstanceDetail
-        status={requestStatus}
-        loading={id ? instanceQuery.isFetching : false}
+        query={instanceQuery}
+        requiredRole={UserRoles.stock_location}
       >
         <Stack>
           <NavigationTree
@@ -381,21 +415,36 @@ export default function Stock() {
             selectedId={location?.pk}
           />
           <PageDetail
-            title={t`Stock Items`}
-            subtitle={location?.name}
+            title={(location?.name ?? id) ? t`Stock Location` : t`Stock`}
+            subtitle={location?.description}
             icon={location?.icon && <ApiIcon name={location?.icon} />}
             actions={locationActions}
             editAction={editLocation.open}
-            editEnabled={user.hasChangePermission(ModelType.stocklocation)}
+            editEnabled={
+              !!location?.pk &&
+              user.hasChangePermission(ModelType.stocklocation)
+            }
             breadcrumbs={breadcrumbs}
+            lastCrumb={[
+              {
+                name: location.name,
+                url: `/stock/location/${location.pk}/`
+              }
+            ]}
             breadcrumbAction={() => {
               setTreeOpen(true);
             }}
           />
-          <PanelGroup pageKey="stocklocation" panels={locationPanels} />
-          {transferStockItems.modal}
-          {countStockItems.modal}
+          <PanelGroup
+            pageKey='stocklocation'
+            panels={locationPanels}
+            model={ModelType.stocklocation}
+            reloadInstance={refreshInstance}
+            id={location?.pk}
+            instance={location}
+          />
         </Stack>
+        {stockAdjustActions.modals.map((modal) => modal.modal)}
       </InstanceDetail>
     </>
   );

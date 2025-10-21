@@ -1,35 +1,46 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Group, Text } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 
-import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { UserRoles } from '../../enums/Roles';
+import { AddItemButton } from '@lib/components/AddItemButton';
+import {
+  type RowAction,
+  RowDeleteAction,
+  RowEditAction
+} from '@lib/components/RowActions';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import type { TableFilter } from '@lib/types/Filters';
+import type { ApiFormFieldSet } from '@lib/types/Forms';
+import type { TableColumn } from '@lib/types/Tables';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
-import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
-export default function PartCategoryTemplateTable() {
+export default function PartCategoryTemplateTable({
+  categoryId
+}: {
+  categoryId?: number;
+}) {
   const table = useTable('part-category-parameter-templates');
   const user = useUserState();
 
   const formFields: ApiFormFieldSet = useMemo(() => {
     return {
-      category: {},
+      category: {
+        value: categoryId,
+        disabled: categoryId !== undefined
+      },
       parameter_template: {},
       default_value: {}
     };
-  }, []);
+  }, [categoryId]);
 
   const [selectedTemplate, setSelectedTemplate] = useState<number>(0);
 
@@ -93,9 +104,9 @@ export default function PartCategoryTemplateTable() {
           }
 
           return (
-            <Group justify="space-between" grow>
+            <Group justify='space-between' grow>
               <Text>{record.default_value}</Text>
-              {units && <Text size="xs">{units}</Text>}
+              {units && <Text size='xs'>{units}</Text>}
             </Group>
           );
         }
@@ -128,6 +139,7 @@ export default function PartCategoryTemplateTable() {
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
+        key='add'
         tooltip={t`Add Category Parameter`}
         onClick={() => newTemplate.open()}
         hidden={!user.hasAddRole(UserRoles.part)}
@@ -148,7 +160,10 @@ export default function PartCategoryTemplateTable() {
           rowActions: rowActions,
           tableFilters: tableFilters,
           tableActions: tableActions,
-          enableDownload: true
+          enableDownload: true,
+          params: {
+            category: categoryId
+          }
         }}
       />
     </>

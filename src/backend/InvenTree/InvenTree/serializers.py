@@ -4,19 +4,19 @@ import os
 from collections import OrderedDict
 from copy import deepcopy
 from decimal import Decimal
+from typing import Any, Optional
 
 from django.conf import settings
-from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-import tablib
 from djmoney.contrib.django_rest_framework.fields import MoneyField
 from djmoney.money import Money
 from djmoney.utils import MONEY_CLASSES, get_currency_field_name
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
-from rest_framework.exceptions import PermissionDenied, ValidationError
+from rest_framework.exceptions import ValidationError
 from rest_framework.fields import empty
 from rest_framework.mixins import ListModelMixin
 from rest_framework.serializers import DecimalField
@@ -24,18 +24,200 @@ from rest_framework.utils import model_meta
 from taggit.serializers import TaggitSerializer
 
 import common.models as common_models
+import InvenTree.ready
 from common.currency import currency_code_default, currency_code_mappings
 from InvenTree.fields import InvenTreeRestURLField, InvenTreeURLField
+from InvenTree.helpers import str2bool
+
+
+# region path filtering
+class FilterableSerializerField:
+    """Mixin to mark serializer as filterable.
+
+    This needs to be used in conjunction with `enable_filter` on the serializer field!
+    """
+
+    is_filterable = None
+    is_filterable_vals = {}
+
+    def __init__(self, *args, **kwargs):
+        """Initialize the serializer."""
+        if self.is_filterable is None:  # Materialize parameters for later usage
+            self.is_filterable = kwargs.pop('is_filterable', None)
+            self.is_filterable_vals = kwargs.pop('is_filterable_vals', {})
+        super().__init__(*args, **kwargs)
+
+
+def enable_filter(
+    func: Any,
+    default_include: bool = False,
+    filter_name: Optional[str] = None,
+    filter_by_query: bool = True,
+):
+    """Decorator for marking a serializer field as filterable.
+
+    This can be customized by passing in arguments. This only works in conjunction with serializer fields or serializers that contain the `FilterableSerializerField` mixin.
+
+    Args:
+        func: The serializer field to mark as filterable. Will automatically be passed when used as a decorator.
+        default_include (bool): If True, the field will be included by default unless explicitly excluded. If False, the field will be excluded by default unless explicitly included.
+        filter_name (str, optional): The name of the filter parameter to use in the URL. If None, the function name of the (decorated) function will be used.
+        filter_by_query (bool): If True, also look for filter parameters in the request query parameters.
+
+    Returns:
+        The decorated serializer field, marked as filterable.
+    """
+    # Ensure this function can be actually filteres
+    if not issubclass(func.__class__, FilterableSerializerField):
+        raise TypeError(
+            'INVE-I2: `enable_filter` can only be applied to serializer fields / serializers that contain the `FilterableSerializerField` mixin!'
+        )
+
+    # Mark the function as filterable
+    func._kwargs['is_filterable'] = True
+    func._kwargs['is_filterable_vals'] = {
+        'default': default_include,
+        'filter_name': filter_name if filter_name else func.field_name,
+        'filter_by_query': filter_by_query,
+    }
+    return func
+
+
+class FilterableSerializerMixin:
+    """Mixin that enables filtering of marked fields on a serializer.
+
+    Use the `enable_filter` decorator to mark serializer fields as filterable.
+    This introduces overhead during initialization, so only use this mixin when necessary.
+    If you need to mark a serializer as filterable but it does not contain any filterable fields, set `no_filters = True` to avoid getting an exception that protects against over-application of this mixin.
+    """
+
+    _was_filtered = False
+    no_filters = False
+    """If True, do not raise an exception if no filterable fields are found."""
+    filter_on_query = True
+    """If True, also look for filter parameters in the request query parameters."""
+
+    def __init__(self, *args, **kwargs):
+        """Initialization routine for the serializer. This gathers and applies filters through kwargs."""
+        # add list_serializer_class to meta if not present - reduces duplication
+        if not isinstance(self, FilterableListSerializer) and (
+            not hasattr(self.Meta, 'list_serializer_class')
+        ):
+            self.Meta.list_serializer_class = FilterableListSerializer
+
+        self.gather_filters(kwargs)
+        super().__init__(*args, **kwargs)
+        self.do_filtering()
+
+    def gather_filters(self, kwargs) -> None:
+        """Gather filterable fields through introspection."""
+        # Fast exit if this has already been done or would not have any effect
+        if getattr(self, '_was_filtered', False) or not hasattr(self, 'fields'):
+            return
+        self._was_filtered = True
+
+        # Actually gather the filterable fields
+        # Also see `enable_filter` where` is_filterable and is_filterable_vals are set
+        self.filter_targets: dict[str, dict] = {
+            str(k): {'serializer': a, **getattr(a, 'is_filterable_vals', {})}
+            for k, a in self.fields.items()
+            if getattr(a, 'is_filterable', None)
+        }
+
+        # Gather query parameters from the request context
+        query_params = {}
+        if context := kwargs.get('context', {}):
+            query_params = dict(getattr(context.get('request', {}), 'query_params', {}))
+
+        # Remove filter args from kwargs to avoid issues with super().__init__
+        poped_kwargs = {}  # store popped kwargs as a arg might be reused for multiple fields
+        tgs_vals: dict[str, bool] = {}
+        for k, v in self.filter_targets.items():
+            pop_ref = v['filter_name'] or k
+            val = kwargs.pop(pop_ref, poped_kwargs.get(pop_ref))
+
+            # Optionally also look in query parameters
+            if val is None and self.filter_on_query and v.get('filter_by_query', True):
+                val = query_params.pop(pop_ref, None)
+                if isinstance(val, list) and len(val) == 1:
+                    val = val[0]
+
+            if val:  # Save popped value for reuse
+                poped_kwargs[pop_ref] = val
+            tgs_vals[k] = (
+                str2bool(val) if isinstance(val, (str, int, float)) else val
+            )  # Support for various filtering style for backwards compatibility
+        self.filter_target_values = tgs_vals
+
+        # Ensure this mixin is not proadly applied as it is expensive on scale (total CI time increased by 21% when running all coverage tests)
+        if len(self.filter_targets) == 0 and not self.no_filters:
+            raise Exception(
+                'INVE-I2: No filter targets found in fields, remove `PathScopedMixin`'
+            )
+
+    def do_filtering(self) -> None:
+        """Do the actual filtering."""
+        # This serializer might not contain filters or we do not want to pop fields while generating the schema
+        if (
+            not hasattr(self, 'filter_target_values')
+            or InvenTree.ready.isGeneratingSchema()
+        ):
+            return
+
+        # Throw out fields which are not requested (either by default or explicitly)
+        for k, v in self.filter_target_values.items():
+            # See `enable_filter` where` is_filterable and is_filterable_vals are set
+            value = v if v is not None else bool(self.filter_targets[k]['default'])
+            if value is not True:
+                self.fields.pop(k, None)
+
+
+# special serializers which allow filtering
+class FilterableListSerializer(
+    FilterableSerializerField, FilterableSerializerMixin, serializers.ListSerializer
+):
+    """Custom ListSerializer which allows filtering of fields."""
+
+
+# special serializer fields which allow filtering
+class FilterableListField(FilterableSerializerField, serializers.ListField):
+    """Custom ListField which allows filtering."""
+
+
+class FilterableSerializerMethodField(
+    FilterableSerializerField, serializers.SerializerMethodField
+):
+    """Custom SerializerMethodField which allows filtering."""
+
+
+class FilterableDateTimeField(FilterableSerializerField, serializers.DateTimeField):
+    """Custom DateTimeField which allows filtering."""
+
+
+class FilterableFloatField(FilterableSerializerField, serializers.FloatField):
+    """Custom FloatField which allows filtering."""
+
+
+class FilterableCharField(FilterableSerializerField, serializers.CharField):
+    """Custom CharField which allows filtering."""
+
+
+class FilterableIntegerField(FilterableSerializerField, serializers.IntegerField):
+    """Custom IntegerField which allows filtering."""
+
+
+# endregion
 
 
 class EmptySerializer(serializers.Serializer):
     """Empty serializer for use in testing."""
 
 
-class InvenTreeMoneySerializer(MoneyField):
+class InvenTreeMoneySerializer(FilterableSerializerField, MoneyField):
     """Custom serializer for 'MoneyField', which ensures that passed values are numerically valid.
 
     Ref: https://github.com/django-money/django-money/blob/master/djmoney/contrib/django_rest_framework/fields.py
+    This field allows filtering.
     """
 
     def __init__(self, *args, **kwargs):
@@ -45,6 +227,12 @@ class InvenTreeMoneySerializer(MoneyField):
         kwargs['required'] = kwargs.get('required', False)
 
         super().__init__(*args, **kwargs)
+
+    def to_representation(self, obj):
+        """Convert the Money object to a decimal value for representation."""
+        val = super().to_representation(obj)
+
+        return float(val)
 
     def get_value(self, data):
         """Test that the returned amount is a valid Decimal."""
@@ -74,9 +262,14 @@ class InvenTreeMoneySerializer(MoneyField):
         ):
             return Money(amount, currency)
 
-        return amount
+        try:
+            fp_amount = float(amount)
+            return fp_amount
+        except Exception:
+            return amount
 
 
+@extend_schema_field(serializers.CharField())
 class InvenTreeCurrencySerializer(serializers.ChoiceField):
     """Custom serializers for selecting currency option."""
 
@@ -89,7 +282,7 @@ class InvenTreeCurrencySerializer(serializers.ChoiceField):
         )
 
         if allow_blank:
-            choices = [('', '---------')] + choices
+            choices = [('', '---------'), *choices]
 
         kwargs['choices'] = choices
 
@@ -101,6 +294,14 @@ class InvenTreeCurrencySerializer(serializers.ChoiceField):
 
         if 'help_text' not in kwargs:
             kwargs['help_text'] = _('Select currency from available options')
+
+        if InvenTree.ready.isGeneratingSchema():
+            kwargs['help_text'] = (
+                kwargs['help_text']
+                + '\n\n'
+                + '\n'.join(f'* `{value}` - {label}' for value, label in choices)
+                + "\n\nOther valid currencies may be found in the 'CURRENCY_CODES' global setting."
+            )
 
         super().__init__(*args, **kwargs)
 
@@ -203,7 +404,7 @@ class DependentField(serializers.Field):
         return None
 
 
-class InvenTreeModelSerializer(serializers.ModelSerializer):
+class InvenTreeModelSerializer(FilterableSerializerField, serializers.ModelSerializer):
     """Inherits the standard Django ModelSerializer class, but also ensures that the underlying model class data are checked on validation."""
 
     # Switch out URLField mapping
@@ -354,16 +555,15 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
             instance.full_clean()
         except (ValidationError, DjangoValidationError) as exc:
             if hasattr(exc, 'message_dict'):
-                data = exc.message_dict
+                data = {**exc.message_dict}
             elif hasattr(exc, 'message'):
                 data = {'non_field_errors': [str(exc.message)]}
             else:
                 data = {'non_field_errors': [str(exc)]}
 
             # Change '__all__' key (django style) to 'non_field_errors' (DRF style)
-            if '__all__' in data:
-                data['non_field_errors'] = data['__all__']
-                del data['__all__']
+            if hasattr(data, '__all__'):
+                data['non_field_errors'] = data.pop('__all__')
 
             raise ValidationError(data)
 
@@ -379,7 +579,7 @@ class InvenTreeTaggitSerializer(TaggitSerializer):
 
         tag_object = super().update(instance, validated_data)
 
-        for key in to_be_tagged.keys():
+        for key in to_be_tagged:
             # re-add the tagmanager
             new_tagobject = tag_object.__class__.objects.get(id=tag_object.id)
             setattr(tag_object, key, getattr(new_tagobject, key))
@@ -389,120 +589,6 @@ class InvenTreeTaggitSerializer(TaggitSerializer):
 
 class InvenTreeTagModelSerializer(InvenTreeTaggitSerializer, InvenTreeModelSerializer):
     """Combination of InvenTreeTaggitSerializer and InvenTreeModelSerializer."""
-
-    pass
-
-
-class UserSerializer(InvenTreeModelSerializer):
-    """Serializer for a User."""
-
-    class Meta:
-        """Metaclass defines serializer fields."""
-
-        model = User
-        fields = ['pk', 'username', 'first_name', 'last_name', 'email']
-
-        read_only_fields = ['username', 'email']
-
-    username = serializers.CharField(label=_('Username'), help_text=_('Username'))
-    first_name = serializers.CharField(
-        label=_('First Name'), help_text=_('First name of the user'), allow_blank=True
-    )
-    last_name = serializers.CharField(
-        label=_('Last Name'), help_text=_('Last name of the user'), allow_blank=True
-    )
-    email = serializers.EmailField(
-        label=_('Email'), help_text=_('Email address of the user'), allow_blank=True
-    )
-
-
-class ExendedUserSerializer(UserSerializer):
-    """Serializer for a User with a bit more info."""
-
-    from users.serializers import GroupSerializer
-
-    groups = GroupSerializer(read_only=True, many=True)
-
-    class Meta(UserSerializer.Meta):
-        """Metaclass defines serializer fields."""
-
-        fields = UserSerializer.Meta.fields + [
-            'groups',
-            'is_staff',
-            'is_superuser',
-            'is_active',
-        ]
-
-        read_only_fields = UserSerializer.Meta.read_only_fields + ['groups']
-
-    is_staff = serializers.BooleanField(
-        label=_('Staff'), help_text=_('Does this user have staff permissions')
-    )
-    is_superuser = serializers.BooleanField(
-        label=_('Superuser'), help_text=_('Is this user a superuser')
-    )
-    is_active = serializers.BooleanField(
-        label=_('Active'), help_text=_('Is this user account active')
-    )
-
-    def validate(self, attrs):
-        """Expanded validation for changing user role."""
-        # Check if is_staff or is_superuser is in attrs
-        role_change = 'is_staff' in attrs or 'is_superuser' in attrs
-        request_user = self.context['request'].user
-
-        if role_change:
-            if request_user.is_superuser:
-                # Superusers can change any role
-                pass
-            elif request_user.is_staff and 'is_superuser' not in attrs:
-                # Staff can change any role except is_superuser
-                pass
-            else:
-                raise PermissionDenied(
-                    _('You do not have permission to change this user role.')
-                )
-        return super().validate(attrs)
-
-
-class UserCreateSerializer(ExendedUserSerializer):
-    """Serializer for creating a new User."""
-
-    def validate(self, attrs):
-        """Expanded valiadation for auth."""
-        # Check that the user trying to create a new user is a superuser
-        if not self.context['request'].user.is_superuser:
-            raise serializers.ValidationError(_('Only superusers can create new users'))
-
-        # Generate a random password
-        password = User.objects.make_random_password(length=14)
-        attrs.update({'password': password})
-        return super().validate(attrs)
-
-    def create(self, validated_data):
-        """Send an e email to the user after creation."""
-        from InvenTree.helpers_model import get_base_url
-
-        base_url = get_base_url()
-
-        instance = super().create(validated_data)
-
-        # Make sure the user cannot login until they have set a password
-        instance.set_unusable_password()
-
-        message = (
-            _('Your account has been created.')
-            + '\n\n'
-            + _('Please use the password reset function to login')
-        )
-
-        if base_url:
-            message += f'\n\nURL: {base_url}'
-
-        # Send the user an onboarding email (from current site)
-        instance.email_user(subject=_('Welcome to InvenTree'), message=message)
-
-        return instance
 
 
 class InvenTreeAttachmentSerializerField(serializers.FileField):
@@ -561,272 +647,6 @@ class InvenTreeDecimalField(serializers.FloatField):
             raise serializers.ValidationError(_('Invalid value'))
 
 
-class DataFileUploadSerializer(serializers.Serializer):
-    """Generic serializer for uploading a data file, and extracting a dataset.
-
-    - Validates uploaded file
-    - Extracts column names
-    - Extracts data rows
-    """
-
-    # Implementing class should register a target model (database model) to be used for import
-    TARGET_MODEL = None
-
-    class Meta:
-        """Metaclass options."""
-
-        fields = ['data_file']
-
-    data_file = serializers.FileField(
-        label=_('Data File'),
-        help_text=_('Select data file for upload'),
-        required=True,
-        allow_empty_file=False,
-    )
-
-    def validate_data_file(self, data_file):
-        """Perform validation checks on the uploaded data file."""
-        self.filename = data_file.name
-
-        _name, ext = os.path.splitext(data_file.name)
-
-        # Remove the leading . from the extension
-        ext = ext[1:]
-
-        accepted_file_types = ['xls', 'xlsx', 'csv', 'tsv', 'xml']
-
-        if ext not in accepted_file_types:
-            raise serializers.ValidationError(_('Unsupported file type'))
-
-        # Impose a 50MB limit on uploaded BOM files
-        max_upload_file_size = 50 * 1024 * 1024
-
-        if data_file.size > max_upload_file_size:
-            raise serializers.ValidationError(_('File is too large'))
-
-        # Read file data into memory (bytes object)
-        try:
-            data = data_file.read()
-        except Exception as e:
-            raise serializers.ValidationError(str(e))
-
-        if ext in ['csv', 'tsv', 'xml']:
-            try:
-                data = data.decode()
-            except Exception as e:
-                raise serializers.ValidationError(str(e))
-
-        # Convert to a tablib dataset (we expect headers)
-        try:
-            self.dataset = tablib.Dataset().load(data, ext, headers=True)
-        except Exception as e:
-            raise serializers.ValidationError(str(e))
-
-        if len(self.dataset.headers) == 0:
-            raise serializers.ValidationError(_('No columns found in file'))
-
-        if len(self.dataset) == 0:
-            raise serializers.ValidationError(_('No data rows found in file'))
-
-        return data_file
-
-    def match_column(self, column_name, field_names, exact=False):
-        """Attempt to match a column name (from the file) to a field (defined in the model).
-
-        Order of matching is:
-        - Direct match
-        - Case insensitive match
-        - Fuzzy match
-        """
-        if not column_name:
-            return None
-
-        column_name = str(column_name).strip()
-
-        column_name_lower = column_name.lower()
-
-        if column_name in field_names:
-            return column_name
-
-        for field_name in field_names:
-            if field_name.lower() == column_name_lower:
-                return field_name
-
-        if exact:
-            # Finished available 'exact' matches
-            return None
-
-        # TODO: Fuzzy pattern matching for column names
-
-        # No matches found
-        return None
-
-    def extract_data(self):
-        """Returns dataset extracted from the file."""
-        # Provide a dict of available import fields for the model
-        model_fields = {}
-
-        # Keep track of columns we have already extracted
-        matched_columns = set()
-
-        if self.TARGET_MODEL:
-            try:
-                model_fields = self.TARGET_MODEL.get_import_fields()
-            except Exception:
-                pass
-
-        # Extract a list of valid model field names
-        model_field_names = list(model_fields.keys())
-
-        # Provide a dict of available columns from the dataset
-        file_columns = {}
-
-        for header in self.dataset.headers:
-            column = {}
-
-            # Attempt to "match" file columns to model fields
-            match = self.match_column(header, model_field_names, exact=True)
-
-            if match is not None and match not in matched_columns:
-                matched_columns.add(match)
-                column['value'] = match
-            else:
-                column['value'] = None
-
-            file_columns[header] = column
-
-        return {
-            'file_fields': file_columns,
-            'model_fields': model_fields,
-            'rows': [row.values() for row in self.dataset.dict],
-            'filename': self.filename,
-        }
-
-    def save(self):
-        """Empty overwrite for save."""
-        ...
-
-
-class DataFileExtractSerializer(serializers.Serializer):
-    """Generic serializer for extracting data from an imported dataset.
-
-    - User provides an array of matched headers
-    - User provides an array of raw data rows
-    """
-
-    # Implementing class should register a target model (database model) to be used for import
-    TARGET_MODEL = None
-
-    class Meta:
-        """Metaclass options."""
-
-        fields = ['columns', 'rows']
-
-    # Mapping of columns
-    columns = serializers.ListField(child=serializers.CharField(allow_blank=True))
-
-    rows = serializers.ListField(
-        child=serializers.ListField(
-            child=serializers.CharField(allow_blank=True, allow_null=True)
-        )
-    )
-
-    def validate(self, data):
-        """Clean data."""
-        data = super().validate(data)
-
-        self.columns = data.get('columns', [])
-        self.rows = data.get('rows', [])
-
-        if len(self.rows) == 0:
-            raise serializers.ValidationError(_('No data rows provided'))
-
-        if len(self.columns) == 0:
-            raise serializers.ValidationError(_('No data columns supplied'))
-
-        self.validate_extracted_columns()
-
-        return data
-
-    @property
-    def data(self):
-        """Returns current data."""
-        if self.TARGET_MODEL:
-            try:
-                model_fields = self.TARGET_MODEL.get_import_fields()
-            except Exception:
-                model_fields = {}
-
-        rows = []
-
-        for row in self.rows:
-            """Optionally pre-process each row, before sending back to the client."""
-
-            processed_row = self.process_row(self.row_to_dict(row))
-
-            if processed_row:
-                rows.append({'original': row, 'data': processed_row})
-
-        return {'fields': model_fields, 'columns': self.columns, 'rows': rows}
-
-    def process_row(self, row):
-        """Process a 'row' of data, which is a mapped column:value dict.
-
-        Returns either a mapped column:value dict, or None.
-
-        If the function returns None, the column is ignored!
-        """
-        # Default implementation simply returns the original row data
-        return row
-
-    def row_to_dict(self, row):
-        """Convert a "row" to a named data dict."""
-        row_dict = {'errors': {}}
-
-        for idx, value in enumerate(row):
-            if idx < len(self.columns):
-                col = self.columns[idx]
-
-                if col:
-                    row_dict[col] = value
-
-        return row_dict
-
-    def validate_extracted_columns(self):
-        """Perform custom validation of header mapping."""
-        if self.TARGET_MODEL:
-            try:
-                model_fields = self.TARGET_MODEL.get_import_fields()
-            except Exception:
-                model_fields = {}
-
-        cols_seen = set()
-
-        for name, field in model_fields.items():
-            required = field.get('required', False)
-
-            # Check for missing required columns
-            if required:
-                if name not in self.columns:
-                    raise serializers.ValidationError(
-                        _(f"Missing required column: '{name}'")
-                    )
-
-        for col in self.columns:
-            if not col:
-                continue
-
-            # Check for duplicated columns
-            if col in cols_seen:
-                raise serializers.ValidationError(_(f"Duplicate column: '{col}'"))
-
-            cols_seen.add(col)
-
-    def save(self):
-        """No "save" action for this serializer."""
-        pass
-
-
 class NotesFieldMixin:
     """Serializer mixin for handling 'notes' fields.
 
@@ -840,7 +660,10 @@ class NotesFieldMixin:
 
         if hasattr(self, 'context'):
             if view := self.context.get('view', None):
-                if issubclass(view.__class__, ListModelMixin):
+                if (
+                    issubclass(view.__class__, ListModelMixin)
+                    and not InvenTree.ready.isGeneratingSchema()
+                ):
                     self.fields.pop('notes', None)
 
 
@@ -882,8 +705,8 @@ class RemoteImageMixin(metaclass=serializers.SerializerMetaclass):
 
         try:
             self.remote_image_file = download_image_from_url(url)
-        except Exception as exc:
+        except Exception:
             self.remote_image_file = None
-            raise ValidationError(str(exc))
+            raise ValidationError(_('Failed to download image from remote URL'))
 
         return url

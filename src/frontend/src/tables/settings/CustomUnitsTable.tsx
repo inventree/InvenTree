@@ -1,9 +1,16 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { useCallback, useMemo, useState } from 'react';
 
-import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { UserRoles } from '../../enums/Roles';
+import { AddItemButton } from '@lib/components/AddItemButton';
+import {
+  type RowAction,
+  RowDeleteAction,
+  RowEditAction
+} from '@lib/components/RowActions';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import type { TableColumn } from '@lib/types/Tables';
 import { customUnitsFields } from '../../forms/CommonForms';
 import {
   useCreateApiFormModal,
@@ -11,11 +18,8 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 /**
  * Table for displaying list of custom physical units
@@ -92,18 +96,18 @@ export default function CustomUnitsTable() {
   );
 
   const tableActions = useMemo(() => {
-    let actions = [];
+    const actions = [];
 
     actions.push(
-      // TODO: Adjust actions based on user permissions
       <AddItemButton
         tooltip={t`Add custom unit`}
         onClick={() => newUnit.open()}
+        hidden={!user.isStaff() || !user.hasChangeRole(UserRoles.admin)}
       />
     );
 
     return actions;
-  }, []);
+  }, [user]);
 
   return (
     <>

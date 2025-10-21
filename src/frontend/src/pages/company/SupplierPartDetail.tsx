@@ -1,44 +1,47 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { Grid, Skeleton, Stack } from '@mantine/core';
 import {
   IconCurrencyDollar,
-  IconDots,
   IconInfoCircle,
-  IconNotes,
   IconPackages,
   IconShoppingCart
 } from '@tabler/icons-react';
-import { ReactNode, useMemo } from 'react';
+import { type ReactNode, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import { formatDecimal } from '@lib/functions/Formatting';
+import { getDetailUrl } from '@lib/functions/Navigation';
 import AdminButton from '../../components/buttons/AdminButton';
-import { DetailsField, DetailsTable } from '../../components/details/Details';
+import {
+  type DetailsField,
+  DetailsTable
+} from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
-import NotesEditor from '../../components/editors/NotesEditor';
 import {
-  ActionDropdown,
   BarcodeActionDropdown,
   DeleteItemAction,
   DuplicateItemAction,
-  EditItemAction
+  EditItemAction,
+  OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
-import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
+import NotesPanel from '../../components/panels/NotesPanel';
+import type { PanelType } from '../../components/panels/Panel';
+import { PanelGroup } from '../../components/panels/PanelGroup';
 import { useSupplierPartFields } from '../../forms/CompanyForms';
-import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { PurchaseOrderTable } from '../../tables/purchasing/PurchaseOrderTable';
 import SupplierPriceBreakTable from '../../tables/purchasing/SupplierPriceBreakTable';
@@ -54,15 +57,15 @@ export default function SupplierPartDetail() {
   const {
     instance: supplierPart,
     instanceQuery,
-    refreshInstance,
-    requestStatus
+    refreshInstance
   } = useInstance({
     endpoint: ApiEndpoints.supplier_part_list,
     pk: id,
     hasPrimaryKey: true,
     params: {
       part_detail: true,
-      supplier_detail: true
+      supplier_detail: true,
+      manufacturer_detail: true
     }
   });
 
@@ -71,14 +74,14 @@ export default function SupplierPartDetail() {
       return <Skeleton />;
     }
 
-    let data = supplierPart ?? {};
+    const data = supplierPart ?? {};
 
     // Access nested data
     data.manufacturer = data.manufacturer_detail?.pk;
     data.MPN = data.manufacturer_part_detail?.MPN;
     data.manufacturer_part = data.manufacturer_part_detail?.pk;
 
-    let tl: DetailsField[] = [
+    const tl: DetailsField[] = [
       {
         type: 'link',
         name: 'part',
@@ -88,9 +91,19 @@ export default function SupplierPartDetail() {
       },
       {
         type: 'string',
-        name: 'description',
-        label: t`Description`,
-        copy: true
+        name: 'part_detail.IPN',
+        label: t`IPN`,
+        copy: true,
+        hidden: !data.part_detail?.IPN,
+        icon: 'serial'
+      },
+      {
+        type: 'string',
+        name: 'part_detail.description',
+        label: t`Part Description`,
+        copy: true,
+        icon: 'info',
+        hidden: !data.part_detail?.description
       },
       {
         type: 'link',
@@ -109,7 +122,7 @@ export default function SupplierPartDetail() {
       }
     ];
 
-    let tr: DetailsField[] = [
+    const bl: DetailsField[] = [
       {
         type: 'link',
         name: 'supplier',
@@ -126,6 +139,13 @@ export default function SupplierPartDetail() {
         icon: 'reference'
       },
       {
+        type: 'string',
+        name: 'description',
+        label: t`Description`,
+        copy: true,
+        hidden: !data.description
+      },
+      {
         type: 'link',
         name: 'manufacturer',
         label: t`Manufacturer`,
@@ -137,15 +157,14 @@ export default function SupplierPartDetail() {
         type: 'link',
         name: 'manufacturer_part',
         model_field: 'MPN',
-        label: t`Manufacturer Part Number`,
+        label: t`Manufacturer Part`,
         model: ModelType.manufacturerpart,
-        copy: true,
         icon: 'reference',
         hidden: !data.manufacturer_part
       }
     ];
 
-    let bl: DetailsField[] = [
+    const br: DetailsField[] = [
       {
         type: 'string',
         name: 'packaging',
@@ -163,11 +182,26 @@ export default function SupplierPartDetail() {
       }
     ];
 
-    let br: DetailsField[] = [
+    const tr: DetailsField[] = [
+      {
+        type: 'number',
+        name: 'in_stock',
+        label: t`In Stock`,
+        copy: true,
+        icon: 'stock'
+      },
+      {
+        type: 'number',
+        name: 'on_order',
+        label: t`On Order`,
+        copy: true,
+        icon: 'purchase_orders'
+      },
       {
         type: 'string',
         name: 'available',
         label: t`Supplier Availability`,
+        hidden: !data.availability_updated,
         copy: true,
         icon: 'packages'
       },
@@ -183,25 +217,23 @@ export default function SupplierPartDetail() {
 
     return (
       <ItemDetailsGrid>
-        <Grid>
-          <Grid.Col span={4}>
-            <DetailsImage
-              appRole={UserRoles.part}
-              src={supplierPart?.part_detail?.image}
-              apiPath={apiUrl(
-                ApiEndpoints.part_list,
-                supplierPart?.part_detail?.pk
-              )}
-              pk={supplierPart?.part_detail?.pk}
-            />
-          </Grid.Col>
+        <Grid grow>
+          <DetailsImage
+            appRole={UserRoles.part}
+            src={supplierPart?.part_detail?.image}
+            apiPath={apiUrl(
+              ApiEndpoints.part_list,
+              supplierPart?.part_detail?.pk
+            )}
+            pk={supplierPart?.part_detail?.pk}
+          />
           <Grid.Col span={8}>
-            <DetailsTable title={t`Supplier Part`} fields={tl} item={data} />
+            <DetailsTable title={t`Part Details`} fields={tl} item={data} />
           </Grid.Col>
         </Grid>
-        <DetailsTable title={t`Supplier`} fields={tr} item={data} />
-        <DetailsTable title={t`Packaging`} fields={bl} item={data} />
-        <DetailsTable title={t`Availability`} fields={br} item={data} />
+        <DetailsTable title={t`Supplier`} fields={bl} item={data} />
+        <DetailsTable title={t`Packaging`} fields={br} item={data} />
+        <DetailsTable title={t`Availability`} fields={tr} item={data} />
       </ItemDetailsGrid>
     );
   }, [supplierPart, instanceQuery.isFetching]);
@@ -220,7 +252,7 @@ export default function SupplierPartDetail() {
         icon: <IconPackages />,
         content: supplierPart?.pk ? (
           <StockItemTable
-            tableName="supplier-stock"
+            tableName='supplier-stock'
             allowAdd={false}
             params={{ supplier_part: supplierPart.pk }}
           />
@@ -233,7 +265,10 @@ export default function SupplierPartDetail() {
         label: t`Purchase Orders`,
         icon: <IconShoppingCart />,
         content: supplierPart?.pk ? (
-          <PurchaseOrderTable supplierPartId={supplierPart.pk} />
+          <PurchaseOrderTable
+            supplierId={supplierPart.supplier}
+            supplierPartId={supplierPart.pk}
+          />
         ) : (
           <Skeleton />
         )
@@ -243,38 +278,29 @@ export default function SupplierPartDetail() {
         label: t`Supplier Pricing`,
         icon: <IconCurrencyDollar />,
         content: supplierPart?.pk ? (
-          <SupplierPriceBreakTable supplierPartId={supplierPart.pk} />
+          <SupplierPriceBreakTable supplierPart={supplierPart} />
         ) : (
           <Skeleton />
         )
       },
-      {
-        name: 'notes',
-        label: t`Notes`,
-        icon: <IconNotes />,
-        content: (
-          <NotesEditor
-            modelType={ModelType.supplierpart}
-            modelId={supplierPart.pk}
-            editable={user.hasChangeRole(UserRoles.purchase_order)}
-          />
-        )
-      }
+      NotesPanel({
+        model_type: ModelType.supplierpart,
+        model_id: supplierPart?.pk
+      })
     ];
   }, [supplierPart]);
 
   const supplierPartActions = useMemo(() => {
     return [
-      <AdminButton model={ModelType.supplierpart} pk={supplierPart.pk} />,
+      <AdminButton model={ModelType.supplierpart} id={supplierPart.pk} />,
       <BarcodeActionDropdown
         model={ModelType.supplierpart}
         pk={supplierPart.pk}
         hash={supplierPart.barcode_hash}
         perm={user.hasChangeRole(UserRoles.purchase_order)}
       />,
-      <ActionDropdown
+      <OptionsActionDropdown
         tooltip={t`Supplier Part Actions`}
-        icon={<IconDots />}
         actions={[
           DuplicateItemAction({
             hidden: !user.hasAddRole(UserRoles.purchase_order),
@@ -293,7 +319,7 @@ export default function SupplierPartDetail() {
     ];
   }, [user, supplierPart]);
 
-  const supplierPartFields = useSupplierPartFields();
+  const supplierPartFields = useSupplierPartFields({});
 
   const editSupplierPart = useEditApiFormModal({
     url: ApiEndpoints.supplier_part_list,
@@ -340,8 +366,30 @@ export default function SupplierPartDetail() {
     return [
       <DetailsBadge
         label={t`Inactive`}
-        color="red"
+        color='red'
         visible={supplierPart.active == false}
+      />,
+      <DetailsBadge
+        label={`${t`In Stock`}: ${formatDecimal(supplierPart.in_stock)}`}
+        color={'green'}
+        visible={
+          supplierPart?.active &&
+          supplierPart?.in_stock &&
+          supplierPart?.in_stock > 0
+        }
+        key='in_stock'
+      />,
+      <DetailsBadge
+        label={t`No Stock`}
+        color={'red'}
+        visible={supplierPart.active && supplierPart.in_stock == 0}
+        key='no_stock'
+      />,
+      <DetailsBadge
+        label={`${t`On Order`}: ${formatDecimal(supplierPart.on_order)}`}
+        color='blue'
+        visible={supplierPart.on_order > 0}
+        key='on_order'
       />
     ];
   }, [supplierPart]);
@@ -351,19 +399,35 @@ export default function SupplierPartDetail() {
       {deleteSupplierPart.modal}
       {duplicateSupplierPart.modal}
       {editSupplierPart.modal}
-      <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
-        <Stack gap="xs">
+      <InstanceDetail
+        query={instanceQuery}
+        requiredRole={UserRoles.purchase_order}
+      >
+        <Stack gap='xs'>
           <PageDetail
             title={t`Supplier Part`}
             subtitle={`${supplierPart.SKU} - ${supplierPart?.part_detail?.name}`}
             breadcrumbs={breadcrumbs}
+            lastCrumb={[
+              {
+                name: supplierPart.SKU,
+                url: `/purchasing/supplier-part/${supplierPart.pk}/`
+              }
+            ]}
             badges={badges}
             actions={supplierPartActions}
             imageUrl={supplierPart?.part_detail?.thumbnail}
             editAction={editSupplierPart.open}
             editEnabled={user.hasChangePermission(ModelType.supplierpart)}
           />
-          <PanelGroup pageKey="supplierpart" panels={panels} />
+          <PanelGroup
+            pageKey='supplierpart'
+            panels={panels}
+            instance={supplierPart}
+            reloadInstance={refreshInstance}
+            model={ModelType.supplierpart}
+            id={supplierPart.pk}
+          />
         </Stack>
       </InstanceDetail>
     </>

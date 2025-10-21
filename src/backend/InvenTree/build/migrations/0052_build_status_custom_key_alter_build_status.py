@@ -4,6 +4,7 @@ import django.core.validators
 from django.db import migrations
 
 import generic.states.fields
+import generic.states.validators
 import InvenTree.status_codes
 
 
@@ -23,6 +24,11 @@ class Migration(migrations.Migration):
                 help_text="Additional status information for this item",
                 null=True,
                 verbose_name="Custom status key",
+                validators=[
+                    generic.states.validators.CustomStatusCodeValidator(
+                        status_class=InvenTree.status_codes.BuildStatus
+                    ),
+                ]
             ),
         ),
         migrations.AlterField(
@@ -32,7 +38,12 @@ class Migration(migrations.Migration):
                 choices=InvenTree.status_codes.BuildStatus.items(),
                 default=10,
                 help_text="Build status code",
-                validators=[django.core.validators.MinValueValidator(0)],
+                validators=[
+                    django.core.validators.MinValueValidator(0),
+                    generic.states.validators.CustomStatusCodeValidator(
+                        status_class=InvenTree.status_codes.BuildStatus
+                    ),
+                ],
                 verbose_name="Build Status",
             ),
         ),

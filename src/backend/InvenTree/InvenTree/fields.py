@@ -4,6 +4,7 @@ import sys
 from decimal import Decimal
 
 from django import forms
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -14,6 +15,8 @@ from rest_framework.fields import URLField as RestURLField
 from rest_framework.fields import empty
 
 import InvenTree.helpers
+import InvenTree.ready
+from common.currency import currency_code_default
 from common.settings import get_global_setting
 
 from .validators import AllowedURLValidator, allowable_url_schemes
@@ -32,12 +35,14 @@ class InvenTreeRestURLField(RestURLField):
         self.validators[-1].schemes = allowable_url_schemes()
 
     def run_validation(self, data=empty):
-        """Override default validation behaviour for this field type."""
+        """Override default validation behavior for this field type."""
         strict_urls = get_global_setting('INVENTREE_STRICT_URLS', cache=False)
 
-        if not strict_urls and data is not empty and '://' not in data:
-            # Validate as if there were a schema provided
-            data = 'http://' + data
+        if not strict_urls and data is not empty and data is not None:
+            data = str(data).strip()
+            if data and '://' not in data:
+                # Validate as if there were a schema provided
+                data = 'http://' + data
 
         return super().run_validation(data=data)
 
@@ -49,14 +54,14 @@ class InvenTreeURLField(models.URLField):
 
     def __init__(self, **kwargs):
         """Initialization method for InvenTreeURLField."""
-        # Max length for InvenTreeURLField is set to 200
-        kwargs['max_length'] = 200
+        # Max length for InvenTreeURLField is set to 2000
+        kwargs['max_length'] = 2000
         super().__init__(**kwargs)
 
 
 def money_kwargs(**kwargs):
     """Returns the database settings for MoneyFields."""
-    from common.currency import currency_code_default, currency_code_mappings
+    from common.currency import currency_code_mappings
 
     # Default values (if not specified)
     if 'max_digits' not in kwargs:
@@ -68,8 +73,14 @@ def money_kwargs(**kwargs):
     if 'currency_choices' not in kwargs:
         kwargs['currency_choices'] = currency_code_mappings()
 
-    if 'default_currency' not in kwargs:
-        kwargs['default_currency'] = currency_code_default()
+    if InvenTree.ready.isRunningMigrations():
+        # During migrations, avoid setting a default currency
+        # This prevents issues related to early evaluation of the default currency value
+        kwargs['default_currency'] = ''
+    else:
+        # Override default currency with a callable function
+        # This ensures that the default currency is always up-to-date
+        kwargs['default_currency'] = currency_code_default
 
     return kwargs
 
@@ -93,9 +104,8 @@ class InvenTreeModelMoneyField(ModelMoneyField):
         allow_negative = kwargs.pop('allow_negative', False)
 
         # If no validators are provided, add some "standard" ones
-        if len(validators) == 0:
-            if not allow_negative:
-                validators.append(MinMoneyValidator(0))
+        if len(validators) == 0 and not allow_negative:
+            validators.append(MinMoneyValidator(0))
 
         kwargs['validators'] = validators
 
@@ -134,9 +144,9 @@ class DatePickerFormField(forms.DateField):
     def __init__(self, **kwargs):
         """Set up custom values."""
         help_text = kwargs.get('help_text', _('Enter date'))
-        label = kwargs.get('label', None)
+        label = kwargs.get('label')
         required = kwargs.get('required', False)
-        initial = kwargs.get('initial', None)
+        initial = kwargs.get('initial')
 
         widget = forms.DateInput(attrs={'type': 'date'})
 
@@ -153,7 +163,10 @@ class DatePickerFormField(forms.DateField):
 def round_decimal(value, places, normalize=False):
     """Round value to the specified number of places."""
     if type(value) in [Decimal, float]:
-        value = round(value, places)
+        try:
+            value = round(value, places)
+        except Exception:
+            raise ValidationError(_('Invalid decimal value') + f' ({value})')
 
         if normalize:
             # Remove any trailing zeroes
@@ -207,3 +220,64 @@ class InvenTreeNotesField(models.TextField):
         kwargs['null'] = True
 
         super().__init__(**kwargs)
+
+
+class InvenTreeOutputOption:
+    """Represents an available output option with description, flag name, and default value."""
+
+    DEFAULT_DESCRIPTIONS = {
+        'part_detail': 'Include detailed information about the related part in the response',
+        'item_detail': 'Include detailed information about the item in the response',
+        'order_detail': 'Include detailed information about the sales order in the response',
+        'location_detail': 'Include detailed information about the stock location in the response',
+        'customer_detail': 'Include detailed information about the customer in the response',
+        'supplier_detail': 'Include detailed information about the supplier in the response',
+    }
+
+    def __init__(self, flag: str, default=False, description: str = ''):
+        """Initialize the output option."""
+        self.flag = flag
+        self.default = default
+
+        if description is None or description == '':
+            self.description = self.DEFAULT_DESCRIPTIONS.get(flag, '')
+        else:
+            self.description = description
+
+
+class OutputConfiguration:
+    """Holds all available output options for a view.
+
+    This class is responsible for converting incoming query parameters from an API request
+    into a dictionary of boolean flags, which can then be applied to serializers.
+    """
+
+    OPTIONS: list[InvenTreeOutputOption] = []
+
+    def __init_subclass__(cls, **kwargs):
+        """Validates that subclass defines OPTIONS attribute with correct type."""
+        super().__init_subclass__(**kwargs)
+
+        options = cls.OPTIONS
+        # Type validation - ensure it's a list
+        if not isinstance(options, list):
+            raise TypeError(
+                f"Class {cls.__name__} 'OPTIONS' must be a list, got {type(options).__name__}"
+            )
+
+        # Type validation - Ensure list contains InvenTreeOutputOption instances
+        for i, option in enumerate(options):
+            if not isinstance(option, InvenTreeOutputOption):
+                raise TypeError(
+                    f"Class {cls.__name__} 'OPTIONS[{i}]' must be an instance of InvenTreeOutputOption, "
+                    f'got {type(option).__name__}'
+                )
+
+    @classmethod
+    def format_params(cls, params: dict) -> dict[str, bool]:
+        """Convert query parameters into a dictionary of output flags with boolean values."""
+        result = {}
+        for option in cls.OPTIONS:
+            value = params.get(option.flag, option.default)
+            result[option.flag] = InvenTree.helpers.str2bool(value)
+        return result

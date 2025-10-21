@@ -31,6 +31,10 @@ This will create JSON file at the specified location which contains all database
 !!! info "Specifying filename"
     The filename of the exported file can be specified using the `-f` option. To see all available options, run `invoke export-records --help`
 
+```
+{{ invoke_commands('export-records --help') }}
+```
+
 ### Initialize New Database
 
 Configure the new database using the normal processes (see [Configuration](./config.md))
@@ -46,10 +50,9 @@ invoke update
 
 This step ensures that the required database tables exist, and are at the correct schema version, which must be the case before data can be imported.
 
-
 ### Import Data
 
-The new database should now be correctly initialized with the correct table structures required to import the data. Run the following command to load the databased dump file into the new database.
+The new database should now be correctly initialized with the correct table structures required to import the data. Run the following command to load the database dump file into the new database.
 
 !!! warning "Empty Database"
     If the database is not *empty* (i.e. it contains data records) then the data import process will fail. If errors occur during the import process, run `invoke import-records` with the `-c` option to clear all existing data from the database.
@@ -63,6 +66,18 @@ invoke import-records -c -f data.json
 
 !!! warning "Character Encoding"
 	If the character encoding of the data file does not exactly match the target database, the import operation may not succeed. In this case, some manual editing of the database JSON file may be required.
+
+### Copy Media Files
+
+Any media files (images, documents, etc) that were stored in the original database must be copied to the new database. In a typical InvenTree installation, these files are stored in the `media` subdirectory of the InvenTree data location.
+
+Copy the entire directory tree from the original InvenTree installation to the new InvenTree installation.
+
+!!! warning "File Ownership"
+    Ensure that the file ownership and permissions are correctly set on the copied files. The InvenTree server process **must** have read / write access to these files. If not, the server will not be able to serve the media files correctly, and the user interface may not function as expected.
+
+!!! warning "Directory Structure"
+    The expected locations of each file is stored in the database, and if the file paths are not correct, the media files will not be displayed correctly in the user interface. Thus, it is important that the files are transferred across to the new installation in the same directory structure.
 
 ## Migrating Data to Newer Version
 

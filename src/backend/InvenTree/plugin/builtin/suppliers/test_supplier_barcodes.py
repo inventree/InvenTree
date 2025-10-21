@@ -6,6 +6,7 @@ from company.models import Company, ManufacturerPart, SupplierPart
 from InvenTree.unit_test import InvenTreeAPITestCase
 from order.models import PurchaseOrder, PurchaseOrderLineItem
 from part.models import Part
+from plugin.registry import registry
 from stock.models import StockItem, StockLocation
 
 
@@ -18,6 +19,12 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
     def setUpTestData(cls):
         """Create supplier parts for barcodes."""
         super().setUpTestData()
+
+        # Enable the plugins
+        registry.set_plugin_state('digikeyplugin', True)
+        registry.set_plugin_state('mouserplugin', True)
+        registry.set_plugin_state('lcscplugin', True)
+        registry.set_plugin_state('tmeplugin', True)
 
         part = Part.objects.create(name='Test Part', description='Test Part')
 
@@ -32,25 +39,41 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
             part=part, manufacturer=manufacturer, MPN='LDK320ADU33R'
         )
 
-        supplier = Company.objects.create(name='Supplier', is_supplier=True)
-        mouser = Company.objects.create(name='Mouser Test', is_supplier=True)
+        digikey_supplier = Company.objects.create(name='Supplier', is_supplier=True)
+        mouser_supplier = Company.objects.create(name='Mouser Test', is_supplier=True)
 
         supplier_parts = [
-            SupplierPart(SKU='296-LM358BIDDFRCT-ND', part=part, supplier=supplier),
-            SupplierPart(SKU='1', part=part, manufacturer_part=mpart1, supplier=mouser),
-            SupplierPart(SKU='2', part=part, manufacturer_part=mpart2, supplier=mouser),
-            SupplierPart(SKU='C312270', part=part, supplier=supplier),
-            SupplierPart(SKU='WBP-302', part=part, supplier=supplier),
+            SupplierPart(
+                SKU='296-LM358BIDDFRCT-ND', part=part, supplier=digikey_supplier
+            ),
+            SupplierPart(SKU='C312270', part=part, supplier=digikey_supplier),
+            SupplierPart(SKU='WBP-302', part=part, supplier=digikey_supplier),
+            SupplierPart(
+                SKU='1', part=part, manufacturer_part=mpart1, supplier=mouser_supplier
+            ),
+            SupplierPart(
+                SKU='2', part=part, manufacturer_part=mpart2, supplier=mouser_supplier
+            ),
         ]
 
         SupplierPart.objects.bulk_create(supplier_parts)
+
+        # Assign supplier information to the plugins
+        # Add supplier information to each custom plugin
+        registry.set_plugin_state('digikeyplugin', True)
+        digikey_plugin = registry.get_plugin('digikeyplugin')
+        digikey_plugin.set_setting('SUPPLIER_ID', digikey_supplier.pk)
+
+        registry.set_plugin_state('mouserplugin', True)
+        mouser_plugin = registry.get_plugin('mouserplugin')
+        mouser_plugin.set_setting('SUPPLIER_ID', mouser_supplier.pk)
 
     def test_digikey_barcode(self):
         """Test digikey barcode."""
         result = self.post(
             self.SCAN_URL, data={'barcode': DIGIKEY_BARCODE}, expected_code=200
         )
-        self.assertEqual(result.data['plugin'], 'DigiKeyPlugin')
+        self.assertEqual(result.data['plugin'], 'DigiKeyBarcodePlugin')
 
         supplier_part_data = result.data.get('supplierpart')
         self.assertIn('pk', supplier_part_data)
@@ -63,7 +86,8 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
         result = self.post(
             self.SCAN_URL, data={'barcode': DIGIKEY_BARCODE_2}, expected_code=200
         )
-        self.assertEqual(result.data['plugin'], 'DigiKeyPlugin')
+
+        self.assertEqual(result.data['plugin'], 'DigiKeyBarcodePlugin')
 
         supplier_part_data = result.data.get('supplierpart')
         self.assertIn('pk', supplier_part_data)
@@ -89,6 +113,15 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
 
     def test_old_mouser_barcode(self):
         """Test old mouser barcode with messed up header."""
+        registry.set_plugin_state('mouserplugin', False)
+
+        # Initial scan should fail - plugin not enabled
+        self.post(
+            self.SCAN_URL, data={'barcode': MOUSER_BARCODE_OLD}, expected_code=400
+        )
+
+        registry.set_plugin_state('mouserplugin', True)
+
         result = self.post(
             self.SCAN_URL, data={'barcode': MOUSER_BARCODE_OLD}, expected_code=200
         )
@@ -104,7 +137,7 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
             self.SCAN_URL, data={'barcode': LCSC_BARCODE}, expected_code=200
         )
 
-        self.assertEqual(result.data['plugin'], 'LCSCPlugin')
+        self.assertEqual(result.data['plugin'], 'LCSCBarcodePlugin')
 
         supplier_part_data = result.data.get('supplierpart')
         self.assertIn('pk', supplier_part_data)
@@ -118,7 +151,7 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
             self.SCAN_URL, data={'barcode': TME_QRCODE}, expected_code=200
         )
 
-        self.assertEqual(result.data['plugin'], 'TMEPlugin')
+        self.assertEqual(result.data['plugin'], 'TMEBarcodePlugin')
 
         supplier_part_data = result.data.get('supplierpart')
         self.assertIn('pk', supplier_part_data)
@@ -131,7 +164,7 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
             self.SCAN_URL, data={'barcode': TME_DATAMATRIX_CODE}, expected_code=200
         )
 
-        self.assertEqual(result.data['plugin'], 'TMEPlugin')
+        self.assertEqual(result.data['plugin'], 'TMEBarcodePlugin')
 
         supplier_part_data = result.data.get('supplierpart')
         self.assertIn('pk', supplier_part_data)
@@ -147,8 +180,16 @@ class SupplierBarcodePOReceiveTests(InvenTreeAPITestCase):
         """Create supplier part and purchase_order."""
         super().setUp()
 
+        registry.set_plugin_state('digikeyplugin', True)
+        registry.set_plugin_state('mouserplugin', True)
+        registry.set_plugin_state('lcscplugin', True)
+        registry.set_plugin_state('tmeplugin', True)
+
+        self.loc_1 = StockLocation.objects.create(name='Location 1')
+        self.loc_2 = StockLocation.objects.create(name='Location 2')
+
         part = Part.objects.create(name='Test Part', description='Test Part')
-        supplier = Company.objects.create(name='Supplier', is_supplier=True)
+        digikey_supplier = Company.objects.create(name='Supplier', is_supplier=True)
         manufacturer = Company.objects.create(
             name='Test Manufacturer', is_manufacturer=True
         )
@@ -159,23 +200,29 @@ class SupplierBarcodePOReceiveTests(InvenTreeAPITestCase):
         )
 
         self.purchase_order1 = PurchaseOrder.objects.create(
-            supplier_reference='72991337', supplier=supplier
+            supplier_reference='72991337',
+            supplier=digikey_supplier,
+            destination=self.loc_1,
         )
 
         supplier_parts1 = [
-            SupplierPart(SKU=f'1_{i}', part=part, supplier=supplier) for i in range(6)
+            SupplierPart(SKU=f'1_{i}', part=part, supplier=digikey_supplier)
+            for i in range(6)
         ]
 
         supplier_parts1.insert(
-            2, SupplierPart(SKU='296-LM358BIDDFRCT-ND', part=part, supplier=supplier)
+            2,
+            SupplierPart(
+                SKU='296-LM358BIDDFRCT-ND', part=part, supplier=digikey_supplier
+            ),
         )
 
         for supplier_part in supplier_parts1:
             supplier_part.save()
-            self.purchase_order1.add_line_item(supplier_part, 8)
+            self.purchase_order1.add_line_item(supplier_part, 8, destination=self.loc_2)
 
         self.purchase_order2 = PurchaseOrder.objects.create(
-            reference='P0-1337', supplier=mouser
+            reference='P0-1337', supplier=mouser, destination=self.loc_1
         )
 
         self.purchase_order2.place_order()
@@ -190,42 +237,65 @@ class SupplierBarcodePOReceiveTests(InvenTreeAPITestCase):
 
         for supplier_part in supplier_parts2:
             supplier_part.save()
-            self.purchase_order2.add_line_item(supplier_part, 5)
+            self.purchase_order2.add_line_item(supplier_part, 5, destination=self.loc_2)
+
+        # Add supplier information to each custom plugin
+        registry.set_plugin_state('digikeyplugin', True)
+        digikey_plugin = registry.get_plugin('digikeyplugin')
+        digikey_plugin.set_setting('SUPPLIER_ID', digikey_supplier.pk)
+
+        registry.set_plugin_state('mouserplugin', True)
+        mouser_plugin = registry.get_plugin('mouserplugin')
+        mouser_plugin.set_setting('SUPPLIER_ID', mouser.pk)
 
     def test_receive(self):
         """Test receiving an item from a barcode."""
         url = reverse('api-barcode-po-receive')
 
+        # First attempt - PO is not yet "placed"
         result1 = self.post(url, data={'barcode': DIGIKEY_BARCODE}, expected_code=400)
 
-        self.assertTrue(result1.data['error'].startswith('No matching purchase order'))
+        self.assertIn('received against an order marked as', result1.data['error'])
 
+        # Next, place the order - receipt should then work
         self.purchase_order1.place_order()
 
         result2 = self.post(url, data={'barcode': DIGIKEY_BARCODE}, expected_code=200)
         self.assertIn('success', result2.data)
 
+        # Attempt to receive the same item again
+        # Already received - failure expected
         result3 = self.post(url, data={'barcode': DIGIKEY_BARCODE}, expected_code=400)
         self.assertEqual(result3.data['error'], 'Item has already been received')
-
-        result4 = self.post(
-            url, data={'barcode': DIGIKEY_BARCODE[:-1]}, expected_code=400
-        )
-        self.assertTrue(
-            result4.data['error'].startswith(
-                'Failed to find pending line item for supplier part'
-            )
-        )
 
         result5 = self.post(
             reverse('api-barcode-scan'),
             data={'barcode': DIGIKEY_BARCODE},
             expected_code=200,
         )
+
         stock_item = StockItem.objects.get(pk=result5.data['stockitem']['pk'])
         self.assertEqual(stock_item.supplier_part.SKU, '296-LM358BIDDFRCT-ND')
         self.assertEqual(stock_item.quantity, 10)
-        self.assertEqual(stock_item.location, None)
+        self.assertEqual(stock_item.location, self.loc_2)
+
+    def test_no_auto_allocate(self):
+        """Test with auto_allocate explicitly disabled."""
+        url = reverse('api-barcode-po-receive')
+        self.purchase_order1.place_order()
+
+        response = self.post(
+            url,
+            data={'barcode': DIGIKEY_BARCODE, 'auto_allocate': False},
+            expected_code=200,
+        )
+
+        self.assertEqual(response.data['plugin'], 'DigiKeyBarcodePlugin')
+        self.assertIn('action_required', response.data)
+        item = response.data['lineitem']
+        self.assertEqual(item['quantity'], 10.0)
+        self.assertEqual(item['purchase_order'], self.purchase_order1.pk)
+        self.assertEqual(item['location'], self.loc_2.pk)
 
     def test_receive_custom_order_number(self):
         """Test receiving an item from a barcode with a custom order number."""
@@ -233,23 +303,32 @@ class SupplierBarcodePOReceiveTests(InvenTreeAPITestCase):
         result1 = self.post(url, data={'barcode': MOUSER_BARCODE}, expected_code=200)
         self.assertIn('success', result1.data)
 
+        # Scan the same barcode again - should be resolved to the created item
         result2 = self.post(
             reverse('api-barcode-scan'),
             data={'barcode': MOUSER_BARCODE},
             expected_code=200,
         )
         stock_item = StockItem.objects.get(pk=result2.data['stockitem']['pk'])
+
         self.assertEqual(stock_item.supplier_part.SKU, '42')
         self.assertEqual(stock_item.supplier_part.manufacturer_part.MPN, 'MC34063ADR')
         self.assertEqual(stock_item.quantity, 3)
-        self.assertEqual(stock_item.location, None)
+        self.assertEqual(stock_item.location, self.loc_2)
+        self.assertEqual(stock_item.barcode_data, MOUSER_BARCODE)
 
-    def test_receive_one_stock_location(self):
-        """Test receiving an item when only one stock location exists."""
+    def test_receive_stock_location(self):
+        """Test receiving an item when the location is provided."""
         stock_location = StockLocation.objects.create(name='Test Location')
 
         url = reverse('api-barcode-po-receive')
-        result1 = self.post(url, data={'barcode': MOUSER_BARCODE}, expected_code=200)
+
+        result1 = self.post(
+            url,
+            data={'barcode': MOUSER_BARCODE, 'location': stock_location.pk},
+            expected_code=200,
+        )
+
         self.assertIn('success', result1.data)
 
         result2 = self.post(
@@ -257,6 +336,7 @@ class SupplierBarcodePOReceiveTests(InvenTreeAPITestCase):
             data={'barcode': MOUSER_BARCODE},
             expected_code=200,
         )
+
         stock_item = StockItem.objects.get(pk=result2.data['stockitem']['pk'])
         self.assertEqual(stock_item.location, stock_location)
 
@@ -285,6 +365,15 @@ class SupplierBarcodePOReceiveTests(InvenTreeAPITestCase):
         """Test receiving an item into the default part location."""
         StockLocation.objects.create(name='Test Location 1')
         stock_location2 = StockLocation.objects.create(name='Test Location 2')
+
+        # Ensure no other fallback locations are set
+        # This is to ensure that the part location is used instead
+        self.purchase_order2.destination = None
+        self.purchase_order2.save()
+
+        for line in self.purchase_order2.lines.all():
+            line.destination = None
+            line.save()
 
         part = Part.objects.all()[0]
         part.default_location = stock_location2
@@ -332,8 +421,12 @@ class SupplierBarcodePOReceiveTests(InvenTreeAPITestCase):
         barcode = MOUSER_BARCODE.replace('\x1dQ3', '')
         response = self.post(url, data={'barcode': barcode}, expected_code=200)
 
+        self.assertIn('action_required', response.data)
+
         self.assertIn('lineitem', response.data)
-        self.assertNotIn('quantity', response.data['lineitem'])
+
+        # Quantity should be pre-filled with the remaining quantity
+        self.assertEqual(5, response.data['lineitem']['quantity'])
 
 
 DIGIKEY_BARCODE = (

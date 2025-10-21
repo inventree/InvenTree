@@ -1,8 +1,8 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
-import { ModelType } from '../../enums/ModelType';
-import { getDetailUrl } from '../../functions/urls';
-import { InstanceRenderInterface, RenderInlineModel } from './Instance';
+import { ModelType } from '@lib/enums/ModelType';
+import { getDetailUrl } from '@lib/functions/Navigation';
+import { type InstanceRenderInterface, RenderInlineModel } from './Instance';
 
 /**
  * Inline rendering of a single Address instance
@@ -10,7 +10,7 @@ import { InstanceRenderInterface, RenderInlineModel } from './Instance';
 export function RenderAddress({
   instance
 }: Readonly<InstanceRenderInterface>): ReactNode {
-  let text = [
+  const text = [
     instance.country,
     instance.postal_code,
     instance.postal_city,
@@ -35,9 +35,9 @@ export function RenderCompany(
   return (
     <RenderInlineModel
       {...props}
-      image={instance.thumnbnail || instance.image}
+      image={instance.thumbnail || instance.image}
       primary={instance.name}
-      secondary={instance.description}
+      suffix={instance.description}
       url={
         props.link ? getDetailUrl(ModelType.company, instance.pk) : undefined
       }
@@ -69,7 +69,9 @@ export function RenderSupplierPart(
       {...props}
       primary={supplier?.name}
       secondary={instance.SKU}
-      image={part?.thumbnail ?? part?.image}
+      image={
+        part?.thumbnail ?? part?.image ?? supplier?.thumbnail ?? supplier?.image
+      }
       suffix={part.full_name}
       url={
         props.link
@@ -96,7 +98,7 @@ export function RenderManufacturerPart(
       primary={manufacturer.name}
       secondary={instance.MPN}
       suffix={part.full_name}
-      image={manufacturer?.thumnbnail ?? manufacturer.image}
+      image={manufacturer?.thumbnail ?? manufacturer.image}
       url={
         props.link
           ? getDetailUrl(ModelType.manufacturerpart, instance.pk)

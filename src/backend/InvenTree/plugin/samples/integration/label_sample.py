@@ -5,7 +5,7 @@ This does not function in real usage and is more to show the required components
 
 from rest_framework import serializers
 
-from InvenTree.settings import BASE_DIR
+from InvenTree.config import get_testfolder_dir
 from plugin import InvenTreePlugin
 from plugin.mixins import LabelPrintingMixin
 
@@ -31,14 +31,14 @@ class SampleLabelPrinter(LabelPrintingMixin, InvenTreePlugin):
         Normally here the connection to the printer and transfer of the label would take place.
         """
         # Test that the expected kwargs are present
-        print(f"Printing Label: {kwargs['filename']} (User: {kwargs['user']})")
+        print(f'Printing Label: {kwargs["filename"]} (User: {kwargs["user"]})')
 
         pdf_data = kwargs['pdf_data']
         png_file = self.render_to_png(
             kwargs['label_instance'], kwargs['item_instance'], **kwargs
         )
 
-        filename = str(BASE_DIR / '_testfolder' / 'label.pdf')
+        filename = str(get_testfolder_dir() / 'label.pdf')
 
         # Dump the PDF to a local file
         with open(filename, 'wb') as pdf_out:

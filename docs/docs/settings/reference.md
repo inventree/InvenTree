@@ -4,7 +4,7 @@ title: Reference Patterns
 
 ## Reference Patterns
 
-InvenTree contains a number of data models which require a *unique* reference field (such as [Purchase Orders](../order/purchase_order.md)). In addition to being *unique* these reference values must conform to a specific *pattern* (which can be defined by the user). Defined reference patterns also make it simple for the user to control how references are generated.
+InvenTree contains a number of data models which require a *unique* reference field (such as [Purchase Orders](../purchasing/purchase_order.md)). In addition to being *unique* these reference values must conform to a specific *pattern* (which can be defined by the user). Defined reference patterns also make it simple for the user to control how references are generated.
 
 ### Default Patterns
 
@@ -32,8 +32,9 @@ When building a reference, the following variables are available for use:
 
 | Variable | Description |
 | --- | --- |
-| `{% raw %}{ref}{% endraw %}` | Incrementing portion of the reference (**required*)). Determines which part of the reference field auto-increments |
+| `{% raw %}{ref}{% endraw %}` | Incrementing portion of the reference (**required*). Determines which part of the reference field auto-increments |
 | `{% raw %}{date}{% endraw %}` | The current date / time. This is a [Python datetime object](https://docs.python.org/3/library/datetime.html#datetime.datetime.now) |
+| `{% raw %}{?:default}{% endraw %}` | A wildcard *with default*. Any character(s) will be accepted in this position, but the reference pattern suggests the character(s) specified. |
 
 The reference field pattern uses <a href="https://www.w3schools.com/python/ref_string_format.asp">Python string formatting</a> for value substitution.
 
@@ -44,8 +45,9 @@ The reference field pattern uses <a href="https://www.w3schools.com/python/ref_s
 
 Some examples below demonstrate how the variable substitution can be implemented:
 
-| Pattern | Description | Example Output |
+| Pattern | Description | Example Output(s) |
 | --- | --- | --- |
 | `{% raw %}PO-{ref}{% endraw %}` | Render the *reference* variable without any custom formatting | PO-123 |
 | `{% raw %}PO-{ref:05d}{% endraw %}` | Render the *reference* variable as a 5-digit decimal number | PO-00123 |
-| `{% raw %}PO-{ref:05d}-{date:%Y-%m-%d}{% endraw %}` | Render the *date* variable in isoformat | PO-00123-2023-01-17 |
+| `{% raw %}PO-{ref:05d}-{?:A}{% endraw %}` | *Require* a wildcard suffix with default suggested suffix `"A"`. | PO-00123-A <br> PO-00123-B |
+| `{% raw %}PO-{ref:05d}-{date:%Y-%m-%d}{% endraw %}` | Render the *date* variable in ISO format | PO-00123-2023-01-17 |

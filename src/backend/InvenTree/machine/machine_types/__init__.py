@@ -4,8 +4,8 @@ from machine.machine_types.label_printer import (
 )
 
 __all__ = [
-    # machine types
-    'LabelPrinterMachine',
     # base drivers
     'LabelPrinterBaseDriver',
+    # machine types
+    'LabelPrinterMachine',
 ]

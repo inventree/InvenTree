@@ -1,35 +1,44 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { useCallback, useMemo, useState } from 'react';
 
-import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { UserRoles } from '../../enums/Roles';
+import { AddItemButton } from '@lib/components/AddItemButton';
+import {
+  type RowAction,
+  RowDeleteAction,
+  RowEditAction
+} from '@lib/components/RowActions';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import { getDetailUrl } from '@lib/functions/Navigation';
+import type { ApiFormFieldSet } from '@lib/types/Forms';
+import type { TableColumn } from '@lib/types/Tables';
+import { useNavigate } from 'react-router-dom';
+import { RenderInlineModel } from '../../components/render/Instance';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 export function ContactTable({
   companyId,
   params
-}: {
-  companyId: number;
+}: Readonly<{
+  companyId?: number;
   params?: any;
-}) {
+}>) {
   const user = useUserState();
+  const navigate = useNavigate();
 
   const table = useTable('contact');
 
   const columns: TableColumn[] = useMemo(() => {
-    return [
+    const corecols: TableColumn[] = [
       {
         accessor: 'name',
         sortable: true,
@@ -51,6 +60,25 @@ export function ContactTable({
         sortable: false
       }
     ];
+    if (companyId === undefined) {
+      // Add company column if not in company detail view
+      corecols.unshift({
+        accessor: 'company_name',
+        title: t`Company`,
+        sortable: false,
+        switchable: true,
+        render: (record: any) => {
+          return (
+            <RenderInlineModel
+              primary={record.company_name}
+              url={getDetailUrl(ModelType.company, record.company)}
+              navigate={navigate}
+            />
+          );
+        }
+      });
+    }
+    return corecols;
   }, []);
 
   const contactFields: ApiFormFieldSet = useMemo(() => {
@@ -92,10 +120,10 @@ export function ContactTable({
 
   const rowActions = useCallback(
     (record: any): RowAction[] => {
-      let can_edit =
+      const can_edit =
         user.hasChangeRole(UserRoles.purchase_order) ||
         user.hasChangeRole(UserRoles.sales_order);
-      let can_delete =
+      const can_delete =
         user.hasDeleteRole(UserRoles.purchase_order) ||
         user.hasDeleteRole(UserRoles.sales_order);
 
@@ -120,12 +148,13 @@ export function ContactTable({
   );
 
   const tableActions = useMemo(() => {
-    let can_add =
+    const can_add =
       user.hasAddRole(UserRoles.purchase_order) ||
       user.hasAddRole(UserRoles.sales_order);
 
     return [
       <AddItemButton
+        key='add-contact'
         tooltip={t`Add contact`}
         onClick={() => newContact.open()}
         hidden={!can_add}

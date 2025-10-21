@@ -1,14 +1,12 @@
-"""Tests for PUI backend stuff."""
+"""Tests for web backend functionality."""
 
 import json
 import os
 from pathlib import Path
 from unittest import mock
 
-from django.urls import reverse
-
 from InvenTree.config import get_frontend_settings
-from InvenTree.unit_test import InvenTreeAPITestCase, InvenTreeTestCase
+from InvenTree.unit_test import InvenTreeTestCase
 
 from .templatetags import spa_helper
 
@@ -26,9 +24,8 @@ class TemplateTagTest(InvenTreeTestCase):
     def test_spa_bundle(self):
         """Test the 'spa_bundle' template tag."""
         resp = spa_helper.spa_bundle()
-        if not resp:
+        if resp == 'NOT_FOUND':
             # No Vite, no test
-            # TODO: Add a test for the non-Vite case (docker)
             return  # pragma: no cover
 
         shipped_js = resp.split('<script type="module" src="')[1:]
@@ -37,12 +34,22 @@ class TemplateTagTest(InvenTreeTestCase):
 
         manifest_file = Path(__file__).parent.joinpath('static/web/.vite/manifest.json')
         # Try with removed manifest file
-        manifest_file.rename(manifest_file.with_suffix('.json.bak'))  # Rename
-        resp = resp = spa_helper.spa_bundle()
-        self.assertIsNone(resp)
-        manifest_file.with_suffix('.json.bak').rename(
-            manifest_file.with_suffix('.json')
-        )  # Name back
+        new_name = manifest_file.rename(
+            manifest_file.with_suffix('.json.bak')
+        )  # Rename
+        resp = spa_helper.spa_bundle()
+        self.assertEqual(resp, 'NOT_FOUND')
+
+        # Try with differing name
+        resp = spa_helper.spa_bundle(new_name)
+        self.assertIsNotNone(resp)
+
+        # Broken manifest file
+        manifest_file.write_text('broken')
+        resp = spa_helper.spa_bundle(manifest_file)
+        self.assertEqual(resp, '')
+
+        new_name.rename(manifest_file.with_suffix('.json'))  # Name back
 
     def test_spa_settings(self):
         """Test the 'spa_settings' template tag."""
@@ -61,7 +68,7 @@ class TemplateTagTest(InvenTreeTestCase):
         self.assertSettings(rsp)
 
         # No base_url
-        envs = {'INVENTREE_PUI_URL_BASE': ''}
+        envs = {'INVENTREE_FRONTEND_URL_BASE': ''}
         with mock.patch.dict(os.environ, envs):
             rsp = get_frontend_settings()
             self.assertSettings(rsp)
@@ -72,31 +79,10 @@ class TemplateTagTest(InvenTreeTestCase):
         self.assertTrue(rsp['show_server_selector'])
 
         # No debug, serverlist -> no selector
-        envs = {'INVENTREE_PUI_SETTINGS': json.dumps({'server_list': ['aa', 'bb']})}
+        envs = {
+            'INVENTREE_FRONTEND_SETTINGS': json.dumps({'server_list': ['aa', 'bb']})
+        }
         with mock.patch.dict(os.environ, envs):
             rsp = get_frontend_settings(False)
             self.assertNotIn('show_server_selector', rsp)
             self.assertEqual(rsp['server_list'], ['aa', 'bb'])
-
-
-class TestWebHelpers(InvenTreeAPITestCase):
-    """Tests for the web helpers."""
-
-    def test_ui_preference(self):
-        """Test the UI preference API."""
-        url = reverse('api-ui-preference')
-
-        # Test default
-        resp = self.get(url)
-        data = json.loads(resp.content)
-        self.assertTrue(data['cui'])
-        self.assertFalse(data['pui'])
-        self.assertEqual(data['preferred_method'], 'cui')
-
-        # Set to PUI
-        resp = self.put(url, {'preferred_method': 'pui'})
-        data = json.loads(resp.content)
-        self.assertEqual(resp.status_code, 200)
-        self.assertFalse(data['cui'])
-        self.assertTrue(data['pui'])
-        self.assertEqual(data['preferred_method'], 'pui')

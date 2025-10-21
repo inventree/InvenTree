@@ -2,17 +2,20 @@
 
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 import sesame.utils
+import structlog
 from rest_framework import serializers
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 
 import InvenTree.version
+from InvenTree.helpers_email import send_email
+
+logger = structlog.get_logger('inventree')
 
 
 def send_simple_login_email(user, link):
@@ -24,11 +27,11 @@ def send_simple_login_email(user, link):
         'InvenTree/user_simple_login.txt', context
     )
 
-    send_mail(
-        _(f'[{site_name}] Log in to the app'),
+    send_email(
+        f'[{site_name}] ' + _('Log in to the app'),
         email_plaintext_message,
-        settings.DEFAULT_FROM_EMAIL,
         [user.email],
+        settings.DEFAULT_FROM_EMAIL,
     )
 
 
@@ -55,7 +58,7 @@ class GetSimpleLoginView(GenericAPIView):
         """Notify user about link."""
         user = self.get_user(email)
         if user is None:
-            print('user not found:', email)
+            logger.warning('User email not found: %s', email)
             return
         link = self.create_link(user)
         send_simple_login_email(user, link)

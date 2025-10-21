@@ -1,54 +1,26 @@
 import { create } from 'zustand';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import type { ModelType } from '@lib/enums/ModelType';
+import { UserPermissions, type UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import type { UserProps, UserStateProps } from '@lib/types/User';
 import { api, setApiDefaults } from '../App';
-import { ApiEndpoints } from '../enums/ApiEndpoints';
-import { ModelType } from '../enums/ModelType';
-import { UserPermissions, UserRoles } from '../enums/Roles';
 import { clearCsrfCookie } from '../functions/auth';
-import { apiUrl } from './ApiState';
-import { UserProps } from './states';
-
-interface UserStateProps {
-  user: UserProps | undefined;
-  token: string | undefined;
-  username: () => string;
-  setUser: (newUser: UserProps) => void;
-  setToken: (newToken: string) => void;
-  clearToken: () => void;
-  fetchUserToken: () => void;
-  fetchUserState: () => void;
-  clearUserState: () => void;
-  checkUserRole: (role: UserRoles, permission: UserPermissions) => boolean;
-  hasDeleteRole: (role: UserRoles) => boolean;
-  hasChangeRole: (role: UserRoles) => boolean;
-  hasAddRole: (role: UserRoles) => boolean;
-  hasViewRole: (role: UserRoles) => boolean;
-  checkUserPermission: (
-    model: ModelType,
-    permission: UserPermissions
-  ) => boolean;
-  hasDeletePermission: (model: ModelType) => boolean;
-  hasChangePermission: (model: ModelType) => boolean;
-  hasAddPermission: (model: ModelType) => boolean;
-  hasViewPermission: (model: ModelType) => boolean;
-  isLoggedIn: () => boolean;
-  isStaff: () => boolean;
-  isSuperuser: () => boolean;
-}
 
 /**
  * Global user information state, using Zustand manager
  */
 export const useUserState = create<UserStateProps>((set, get) => ({
   user: undefined,
-  token: undefined,
-  setToken: (newToken: string) => {
-    set({ token: newToken });
+  is_authed: false,
+  setAuthenticated: (authed = true) => {
+    set({ is_authed: authed });
     setApiDefaults();
   },
-  clearToken: () => {
-    set({ token: undefined });
-    setApiDefaults();
+  userId: () => {
+    const user: UserProps = get().user as UserProps;
+    return user?.pk;
   },
   username: () => {
     const user: UserProps = get().user as UserProps;
@@ -59,30 +31,45 @@ export const useUserState = create<UserStateProps>((set, get) => ({
       return user?.username ?? '';
     }
   },
-  setUser: (newUser: UserProps) => set({ user: newUser }),
+  setUser: (newUser: UserProps | undefined) => set({ user: newUser }),
+  getUser: () => get().user,
   clearUserState: () => {
-    set({ user: undefined });
-    set({ token: undefined });
+    set({ user: undefined, is_authed: false });
     clearCsrfCookie();
     setApiDefaults();
   },
   fetchUserToken: async () => {
+    // If neither the csrf or session cookies are available, we cannot fetch a token
+    if (
+      !document.cookie.includes('csrftoken') &&
+      !document.cookie.includes('sessionid')
+    ) {
+      get().setAuthenticated(false);
+      return;
+    }
+
     await api
-      .get(apiUrl(ApiEndpoints.user_token))
+      .get(apiUrl(ApiEndpoints.auth_session))
       .then((response) => {
-        if (response.status == 200 && response.data.token) {
-          get().setToken(response.data.token);
+        if (response.status == 200 && response.data.meta.is_authenticated) {
+          get().setAuthenticated(true);
         } else {
-          get().clearToken();
+          get().setAuthenticated(false);
         }
       })
       .catch(() => {
-        get().clearToken();
+        get().setAuthenticated(false);
       });
   },
   fetchUserState: async () => {
-    if (!get().token) {
+    if (!get().isAuthed()) {
       await get().fetchUserToken();
+    }
+
+    // If we still don't have a token, clear the user state and return
+    if (!get().isAuthed()) {
+      get().clearUserState();
+      return;
     }
 
     // Fetch user data
@@ -97,9 +84,12 @@ export const useUserState = create<UserStateProps>((set, get) => ({
             first_name: response.data?.first_name ?? '',
             last_name: response.data?.last_name ?? '',
             email: response.data.email,
-            username: response.data.username
+            username: response.data.username,
+            groups: response.data.groups,
+            profile: response.data.profile
           };
-          set({ user: user });
+          get().setUser(user);
+          // profile info
         } else {
           get().clearUserState();
         }
@@ -125,7 +115,7 @@ export const useUserState = create<UserStateProps>((set, get) => ({
             user.permissions = response.data?.permissions ?? {};
             user.is_staff = response.data?.is_staff ?? false;
             user.is_superuser = response.data?.is_superuser ?? false;
-            set({ user: user });
+            get().setUser(user);
           }
         } else {
           get().clearUserState();
@@ -136,8 +126,11 @@ export const useUserState = create<UserStateProps>((set, get) => ({
         get().clearUserState();
       });
   },
+  isAuthed: () => {
+    return get().is_authed;
+  },
   isLoggedIn: () => {
-    if (!get().token) {
+    if (!get().isAuthed()) {
       return false;
     }
     const user: UserProps = get().user as UserProps;
@@ -205,5 +198,10 @@ export const useUserState = create<UserStateProps>((set, get) => ({
   },
   hasViewPermission: (model: ModelType) => {
     return get().checkUserPermission(model, UserPermissions.view);
+  },
+  // login state
+  login_checked: false,
+  setLoginChecked: (value) => {
+    set({ login_checked: value });
   }
 }));

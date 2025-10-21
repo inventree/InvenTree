@@ -1,8 +1,8 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
-import { ModelType } from '../../enums/ModelType';
-import { getDetailUrl } from '../../functions/urls';
-import { InstanceRenderInterface, RenderInlineModel } from './Instance';
+import { ModelType } from '@lib/enums/ModelType';
+import { getDetailUrl } from '@lib/functions/Navigation';
+import { type InstanceRenderInterface, RenderInlineModel } from './Instance';
 import { StatusRenderer } from './StatusRenderer';
 
 /**

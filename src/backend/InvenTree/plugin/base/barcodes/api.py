@@ -1,27 +1,34 @@
 """API endpoints for barcode plugins."""
 
-import logging
-
 from django.db.models import F
-from django.urls import path
+from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
 
+import structlog
+from django_filters.rest_framework.filterset import FilterSet
 from drf_spectacular.utils import extend_schema, extend_schema_view
-from rest_framework import permissions, status
+from rest_framework import status
 from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.generics import CreateAPIView
 from rest_framework.response import Response
 
+import common.models
+import InvenTree.permissions
 import order.models
 import plugin.base.barcodes.helper
 import stock.models
+from common.settings import get_global_setting
+from InvenTree.api import BulkDeleteMixin
+from InvenTree.exceptions import log_error
+from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.helpers import hash_barcode
-from plugin import registry
-from users.models import RuleSet
+from InvenTree.mixins import ListAPI, RetrieveDestroyAPI
+from plugin import PluginMixinEnum, registry
+from users.permissions import check_user_permission
 
 from . import serializers as barcode_serializers
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class BarcodeView(CreateAPIView):
@@ -30,17 +37,88 @@ class BarcodeView(CreateAPIView):
     # Default serializer class (can be overridden)
     serializer_class = barcode_serializers.BarcodeSerializer
 
+    def log_scan(self, request, response=None, result: bool = False):
+        """Log a barcode scan to the database.
+
+        Arguments:
+            request: HTTP request object
+            response: Optional response data
+            result: Boolean indicating success or failure of the scan
+        """
+        from common.models import BarcodeScanResult
+
+        # Extract context data from the request
+        context = {**request.GET.dict(), **request.POST.dict(), **request.data}
+
+        barcode = context.pop('barcode', '')
+
+        # Exit if storing barcode scans is disabled
+        if not get_global_setting('BARCODE_STORE_RESULTS', backup=False, create=False):
+            return
+
+        # Ensure that the response data is stringified first, otherwise cannot be JSON encoded
+        if isinstance(response, dict):
+            response = {key: str(value) for key, value in response.items()}
+        elif response is None:
+            pass
+        else:
+            response = str(response)
+
+        # Ensure that the context data is stringified first, otherwise cannot be JSON encoded
+        if isinstance(context, dict):
+            context = {key: str(value) for key, value in context.items()}
+        elif context is None:
+            pass
+        else:
+            context = str(context)
+
+        # Ensure data is not too long
+        if len(barcode) > BarcodeScanResult.BARCODE_SCAN_MAX_LEN:
+            barcode = barcode[: BarcodeScanResult.BARCODE_SCAN_MAX_LEN]
+
+        try:
+            BarcodeScanResult.objects.create(
+                data=barcode,
+                user=request.user,
+                endpoint=request.path,
+                response=response,
+                result=result,
+                context=context,
+            )
+
+            # Ensure that we do not store too many scans
+            max_scans = int(get_global_setting('BARCODE_RESULTS_MAX_NUM', create=False))
+            num_scans = BarcodeScanResult.objects.count()
+
+            if num_scans > max_scans:
+                n = num_scans - max_scans
+                old_scan_ids = list(
+                    BarcodeScanResult.objects.all()
+                    .order_by('timestamp')
+                    .values_list('pk', flat=True)[:n]
+                )
+                BarcodeScanResult.objects.filter(pk__in=old_scan_ids).delete()
+        except Exception:
+            # Gracefully log error to database
+            log_error(f'{self.__class__.__name__}.log_scan', scope='barcode')
+
     def queryset(self):
         """This API view does not have a queryset."""
         return None
 
     # Default permission classes (can be overridden)
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
 
     def create(self, request, *args, **kwargs):
         """Handle create method - override default create."""
         serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
+
+        try:
+            serializer.is_valid(raise_exception=True)
+        except Exception as exc:
+            self.log_scan(request, response={'error': str(exc)}, result=False)
+            raise exc
+
         data = serializer.validated_data
 
         barcode = str(data.pop('barcode')).strip()
@@ -66,16 +144,23 @@ class BarcodeView(CreateAPIView):
 
         Check each loaded plugin, and return the first valid match
         """
-        plugins = registry.with_mixin('barcode')
+        plugins = registry.with_mixin(PluginMixinEnum.BARCODE)
 
         # Look for a barcode plugin which knows how to deal with this barcode
         plugin = None
         response = {}
 
         for current_plugin in plugins:
-            result = current_plugin.scan(barcode)
+            try:
+                result = current_plugin.scan(barcode)
+            except Exception:
+                log_error('BarcodeView.scan_barcode', plugin=current_plugin.slug)
+                continue
 
             if result is None:
+                continue
+
+            if len(result) == 0:
                 continue
 
             if 'error' in result:
@@ -88,6 +173,7 @@ class BarcodeView(CreateAPIView):
                     plugin = current_plugin
                     response = result
             else:
+                # Return the first successful match
                 plugin = current_plugin
                 response = result
                 break
@@ -119,15 +205,19 @@ class BarcodeScan(BarcodeView):
         kwargs:
             Any custom fields passed by the specific serializer
         """
-        result = self.scan_barcode(barcode, request, **kwargs)
+        response = self.scan_barcode(barcode, request, **kwargs)
 
-        if result['plugin'] is None:
-            result['error'] = _('No match found for barcode data')
+        if response['plugin'] is None:
+            response['error'] = _('No match found for barcode data')
+            self.log_scan(request, response, False)
+            raise ValidationError(response)
 
-            raise ValidationError(result)
+        response['success'] = _('Match found for barcode data')
 
-        result['success'] = _('Match found for barcode data')
-        return Response(result)
+        # Log the scan result
+        self.log_scan(request, response, True)
+
+        return Response(response)
 
 
 @extend_schema_view(
@@ -146,7 +236,7 @@ class BarcodeGenerate(CreateAPIView):
         return None
 
     # Default permission classes (can be overridden)
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
 
     def create(self, request, *args, **kwargs):
         """Perform the barcode generation action."""
@@ -198,6 +288,8 @@ class BarcodeAssign(BarcodeView):
                 result['plugin'] = inventree_barcode_plugin.name
                 result['barcode_data'] = barcode
 
+                result.pop('success', None)
+
                 raise ValidationError(result)
 
         barcode_hash = hash_barcode(barcode)
@@ -208,16 +300,11 @@ class BarcodeAssign(BarcodeView):
             label = model.barcode_model_type()
             valid_labels.append(label)
 
-            if instance := kwargs.get(label, None):
+            if instance := kwargs.get(label):
                 # Check that the user has the required permission
-                app_label = model._meta.app_label
-                model_name = model._meta.model_name
-
-                table = f'{app_label}_{model_name}'
-
-                if not RuleSet.check_table_permission(request.user, table, 'change'):
+                if not check_user_permission(request.user, model, 'change'):
                     raise PermissionDenied({
-                        'error': f'You do not have the required permissions for {table}'
+                        'error': f'You do not have the required permissions for {model}'
                     })
 
                 instance.assign_barcode(barcode_data=barcode, barcode_hash=barcode_hash)
@@ -273,14 +360,9 @@ class BarcodeUnassign(BarcodeView):
 
             if instance := data.get(label, None):
                 # Check that the user has the required permission
-                app_label = model._meta.app_label
-                model_name = model._meta.model_name
-
-                table = f'{app_label}_{model_name}'
-
-                if not RuleSet.check_table_permission(request.user, table, 'change'):
+                if not check_user_permission(request.user, model, 'change'):
                     raise PermissionDenied({
-                        'error': f'You do not have the required permissions for {table}'
+                        'error': f'You do not have the required permissions for {model}'
                     })
 
                 # Unassign the barcode data from the model instance
@@ -333,11 +415,10 @@ class BarcodePOAllocate(BarcodeView):
         supplier_parts = company.models.SupplierPart.objects.filter(supplier=supplier)
 
         if not part and not supplier_part and not manufacturer_part:
-            raise ValidationError({'error': _('No matching part data found')})
+            raise ValidationError(_('No matching part data found'))
 
-        if part:
-            if part_id := part.get('pk', None):
-                supplier_parts = supplier_parts.filter(part__pk=part_id)
+        if part and (part_id := part.get('pk', None)):
+            supplier_parts = supplier_parts.filter(part__pk=part_id)
 
         if supplier_part:
             if supplier_part_id := supplier_part.get('pk', None):
@@ -350,12 +431,10 @@ class BarcodePOAllocate(BarcodeView):
                 )
 
         if supplier_parts.count() == 0:
-            raise ValidationError({'error': _('No matching supplier parts found')})
+            raise ValidationError(_('No matching supplier parts found'))
 
         if supplier_parts.count() > 1:
-            raise ValidationError({
-                'error': _('Multiple matching supplier parts found')
-            })
+            raise ValidationError(_('Multiple matching supplier parts found'))
 
         # At this stage, we have a single matching supplier part
         return supplier_parts.first()
@@ -365,25 +444,32 @@ class BarcodePOAllocate(BarcodeView):
         # The purchase order is provided as part of the request
         purchase_order = kwargs.get('purchase_order')
 
-        result = self.scan_barcode(barcode, request, **kwargs)
+        response = self.scan_barcode(barcode, request, **kwargs)
 
-        if result['plugin'] is None:
-            result['error'] = _('No match found for barcode data')
-            raise ValidationError(result)
+        if response['plugin'] is None:
+            response['error'] = _('No matching plugin found for barcode data')
 
-        supplier_part = self.get_supplier_part(
-            purchase_order,
-            part=result.get('part', None),
-            supplier_part=result.get('supplierpart', None),
-            manufacturer_part=result.get('manufacturerpart', None),
-        )
-
-        result['success'] = _('Matched supplier part')
-        result['supplierpart'] = supplier_part.format_matched_response()
+        else:
+            try:
+                supplier_part = self.get_supplier_part(
+                    purchase_order,
+                    part=response.get('part', None),
+                    supplier_part=response.get('supplierpart', None),
+                    manufacturer_part=response.get('manufacturerpart', None),
+                )
+                response['success'] = _('Matched supplier part')
+                response['supplierpart'] = supplier_part.format_matched_response()
+            except ValidationError as e:
+                response['error'] = str(e)
 
         # TODO: Determine the 'quantity to order' for the supplier part
 
-        return Response(result)
+        self.log_scan(request, response, 'success' in response)
+
+        if 'error' in response:
+            raise ValidationError
+
+        return Response(response)
 
 
 class BarcodePOReceive(BarcodeView):
@@ -411,10 +497,22 @@ class BarcodePOReceive(BarcodeView):
         logger.debug("BarcodePOReceive: scanned barcode - '%s'", barcode)
 
         # Extract optional fields from the dataset
-        purchase_order = kwargs.get('purchase_order', None)
-        location = kwargs.get('location', None)
+        supplier = kwargs.get('supplier')
+        purchase_order = kwargs.get('purchase_order')
+        location = kwargs.get('location')
+        line_item = kwargs.get('line_item')
+        auto_allocate = kwargs.get('auto_allocate', True)
 
-        plugins = registry.with_mixin('barcode')
+        # Extract location from PurchaseOrder, if available
+        if not location and purchase_order:
+            try:
+                po = order.models.PurchaseOrder.objects.get(pk=purchase_order)
+                if po.destination:
+                    location = po.destination.pk
+            except Exception:
+                pass
+
+        plugins = registry.with_mixin(PluginMixinEnum.BARCODE)
 
         # Look for a barcode plugin which knows how to deal with this barcode
         plugin = None
@@ -428,17 +526,28 @@ class BarcodePOReceive(BarcodeView):
         if result := internal_barcode_plugin.scan(barcode):
             if 'stockitem' in result:
                 response['error'] = _('Item has already been received')
+                self.log_scan(request, response, False)
                 raise ValidationError(response)
 
         # Now, look just for "supplier-barcode" plugins
-        plugins = registry.with_mixin('supplier-barcode')
+        plugins = registry.with_mixin(PluginMixinEnum.SUPPLIER_BARCODE)
 
         plugin_response = None
 
         for current_plugin in plugins:
-            result = current_plugin.scan_receive_item(
-                barcode, request.user, purchase_order=purchase_order, location=location
-            )
+            try:
+                result = current_plugin.scan_receive_item(
+                    barcode,
+                    request.user,
+                    supplier=supplier,
+                    purchase_order=purchase_order,
+                    location=location,
+                    line_item=line_item,
+                    auto_allocate=auto_allocate,
+                )
+            except Exception:
+                log_error('BarcodePOReceive.handle_barcode', plugin=current_plugin.slug)
+                continue
 
             if result is None:
                 continue
@@ -464,12 +573,14 @@ class BarcodePOReceive(BarcodeView):
 
         # A plugin has not been found!
         if plugin is None:
-            response['error'] = _('No match for supplier barcode')
+            response['error'] = _('No plugin match for supplier barcode')
+
+        self.log_scan(request, response, 'success' in response)
+
+        if 'error' in response:
             raise ValidationError(response)
-        elif 'error' in response:
-            raise ValidationError(response)
-        else:
-            return Response(response)
+
+        return Response(response)
 
 
 class BarcodeSOAllocate(BarcodeView):
@@ -490,12 +601,16 @@ class BarcodeSOAllocate(BarcodeView):
     serializer_class = barcode_serializers.BarcodeSOAllocateSerializer
 
     def get_line_item(self, stock_item, **kwargs):
-        """Return the matching line item for the provided stock item."""
+        """Return the matching line item for the provided stock item.
+
+        Raises:
+            ValidationError: If no single matching line item is found
+        """
         # Extract sales order object (required field)
         sales_order = kwargs['sales_order']
 
         # Next, check if a line-item is provided (optional field)
-        if line_item := kwargs.get('line', None):
+        if line_item := kwargs.get('line'):
             return line_item
 
         # If not provided, we need to find the correct line item
@@ -507,22 +622,24 @@ class BarcodeSOAllocate(BarcodeView):
         )
 
         if lines.count() > 1:
-            raise ValidationError({'error': _('Multiple matching line items found')})
+            raise ValidationError(_('Multiple matching line items found'))
 
         if lines.count() == 0:
-            raise ValidationError({'error': _('No matching line item found')})
+            raise ValidationError(_('No matching line item found'))
 
         return lines.first()
 
     def get_shipment(self, **kwargs):
-        """Extract the shipment from the provided kwargs, or guess."""
+        """Extract the shipment from the provided kwargs, or guess.
+
+        Raises:
+            ValidationError: If the shipment does not match the sales order
+        """
         sales_order = kwargs['sales_order']
 
-        if shipment := kwargs.get('shipment', None):
+        if shipment := kwargs.get('shipment'):
             if shipment.order != sales_order:
-                raise ValidationError({
-                    'error': _('Shipment does not match sales order')
-                })
+                raise ValidationError(_('Shipment does not match sales order'))
 
             return shipment
 
@@ -537,49 +654,68 @@ class BarcodeSOAllocate(BarcodeView):
         return None
 
     def handle_barcode(self, barcode: str, request, **kwargs):
-        """Handle barcode scan for sales order allocation."""
+        """Handle barcode scan for sales order allocation.
+
+        Arguments:
+            barcode: Raw barcode data
+            request: HTTP request object
+
+        kwargs:
+            sales_order: SalesOrder ID value (required)
+            line: SalesOrderLineItem ID value (optional)
+            shipment: SalesOrderShipment ID value (optional)
+        """
         logger.debug("BarcodeSOAllocate: scanned barcode - '%s'", barcode)
 
-        result = self.scan_barcode(barcode, request, **kwargs)
+        response = self.scan_barcode(barcode, request, **kwargs)
 
-        if result['plugin'] is None:
-            result['error'] = _('No match found for barcode data')
-            raise ValidationError(result)
+        if 'sales_order' not in kwargs:
+            # SalesOrder ID *must* be provided
+            response['error'] = _('No sales order provided')
+        elif response['plugin'] is None:
+            # Check that the barcode at least matches a plugin
+            response['error'] = _('No matching plugin found for barcode data')
+        else:
+            try:
+                stock_item_id = response['stockitem'].get('pk', None)
+                stock_item = stock.models.StockItem.objects.get(pk=stock_item_id)
+            except Exception:
+                response['error'] = _('Barcode does not match an existing stock item')
 
-        # Check that the scanned barcode was a StockItem
-        if 'stockitem' not in result:
-            result['error'] = _('Barcode does not match an existing stock item')
-            raise ValidationError(result)
-
-        try:
-            stock_item_id = result['stockitem'].get('pk', None)
-            stock_item = stock.models.StockItem.objects.get(pk=stock_item_id)
-        except (ValueError, stock.models.StockItem.DoesNotExist):
-            result['error'] = _('Barcode does not match an existing stock item')
-            raise ValidationError(result)
+        if 'error' in response:
+            self.log_scan(request, response, False)
+            raise ValidationError(response)
 
         # At this stage, we have a valid StockItem object
-        # Extract any other data from the kwargs
-        line_item = self.get_line_item(stock_item, **kwargs)
-        sales_order = kwargs['sales_order']
-        shipment = self.get_shipment(**kwargs)
 
-        if stock_item is not None and line_item is not None:
-            if stock_item.part != line_item.part:
-                result['error'] = _('Stock item does not match line item')
-                raise ValidationError(result)
+        try:
+            # Extract any other data from the kwargs
+            # Note: This may raise a ValidationError at some point - we break on the first error
+            sales_order = kwargs['sales_order']
+            line_item = self.get_line_item(stock_item, **kwargs)
+            shipment = self.get_shipment(**kwargs)
+            if stock_item is not None and line_item is not None:
+                if stock_item.part != line_item.part:
+                    response['error'] = _('Stock item does not match line item')
+        except ValidationError as e:
+            response['error'] = str(e)
 
-        quantity = kwargs.get('quantity', None)
+        if 'error' in response:
+            self.log_scan(request, response, False)
+            raise ValidationError(response)
+
+        quantity = kwargs.get('quantity')
 
         # Override quantity for serialized items
         if stock_item.serialized:
             quantity = 1
 
-        if quantity is None:
+        elif quantity is None:
             quantity = line_item.quantity - line_item.shipped
             quantity = min(quantity, stock_item.unallocated_quantity())
 
         response = {
+            **response,
             'stock_item': stock_item.pk if stock_item else None,
             'part': stock_item.part.pk if stock_item else None,
             'sales_order': sales_order.pk if sales_order else None,
@@ -591,25 +727,91 @@ class BarcodeSOAllocate(BarcodeView):
         if stock_item is not None and quantity is not None:
             if stock_item.unallocated_quantity() < quantity:
                 response['error'] = _('Insufficient stock available')
-                raise ValidationError(response)
 
-        # If we have sufficient information, we can allocate the stock item
-        if all((x is not None for x in [line_item, sales_order, shipment, quantity])):
-            order.models.SalesOrderAllocation.objects.create(
-                line=line_item, shipment=shipment, item=stock_item, quantity=quantity
-            )
+            # If we have sufficient information, we can allocate the stock item
+            elif all(
+                x is not None for x in [line_item, sales_order, shipment, quantity]
+            ):
+                order.models.SalesOrderAllocation.objects.create(
+                    line=line_item,
+                    shipment=shipment,
+                    item=stock_item,
+                    quantity=quantity,
+                )
 
-            response['success'] = _('Stock item allocated to sales order')
+                response['success'] = _('Stock item allocated to sales order')
 
+        else:
+            response['error'] = _('Not enough information')
+            response['action_required'] = True
+
+        self.log_scan(request, response, 'success' in response)
+
+        if 'error' in response:
+            raise ValidationError(response)
+        else:
             return Response(response)
 
-        response['error'] = _('Not enough information')
-        response['action_required'] = True
 
-        raise ValidationError(response)
+class BarcodeScanResultMixin:
+    """Mixin class for BarcodeScan API endpoints."""
+
+    queryset = common.models.BarcodeScanResult.objects.all()
+    serializer_class = barcode_serializers.BarcodeScanResultSerializer
+    permission_classes = [InvenTree.permissions.IsStaffOrReadOnlyScope]
+
+    def get_queryset(self):
+        """Return the queryset for the BarcodeScan API."""
+        queryset = super().get_queryset()
+
+        # Pre-fetch user data
+        queryset = queryset.prefetch_related('user')
+
+        return queryset
+
+
+class BarcodeScanResultFilter(FilterSet):
+    """Custom filterset for the BarcodeScanResult API."""
+
+    class Meta:
+        """Meta class for the BarcodeScanResultFilter."""
+
+        model = common.models.BarcodeScanResult
+        fields = ['user', 'result']
+
+
+class BarcodeScanResultList(BarcodeScanResultMixin, BulkDeleteMixin, ListAPI):
+    """List API endpoint for BarcodeScan objects."""
+
+    filterset_class = BarcodeScanResultFilter
+    filter_backends = SEARCH_ORDER_FILTER
+
+    ordering_fields = ['user', 'plugin', 'timestamp', 'endpoint', 'result']
+
+    ordering = '-timestamp'
+
+    search_fields = ['plugin']
+
+
+class BarcodeScanResultDetail(BarcodeScanResultMixin, RetrieveDestroyAPI):
+    """Detail endpoint for a BarcodeScan object."""
 
 
 barcode_api_urls = [
+    # Barcode scan history
+    path(
+        'history/',
+        include([
+            path(
+                '<int:pk>/',
+                BarcodeScanResultDetail.as_view(),
+                name='api-barcode-scan-result-detail',
+            ),
+            path(
+                '', BarcodeScanResultList.as_view(), name='api-barcode-scan-result-list'
+            ),
+        ]),
+    ),
     # Generate a barcode for a database object
     path('generate/', BarcodeGenerate.as_view(), name='api-barcode-generate'),
     # Link a third-party barcode to an item (e.g. Part / StockItem / etc)

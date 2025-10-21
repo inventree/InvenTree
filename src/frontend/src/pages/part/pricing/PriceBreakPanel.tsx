@@ -1,40 +1,40 @@
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 import { BarChart } from '@mantine/charts';
 import { SimpleGrid } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 
-import { AddItemButton } from '../../../components/buttons/AddItemButton';
+import { AddItemButton } from '@lib/components/AddItemButton';
+import {
+  type RowAction,
+  RowDeleteAction,
+  RowEditAction
+} from '@lib/components/RowActions';
+import type { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import type { ApiFormFieldSet } from '@lib/types/Forms';
+import type { TableColumn } from '@lib/types/Tables';
 import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
-import { ApiFormFieldSet } from '../../../components/forms/fields/ApiFormField';
 import { formatCurrency } from '../../../defaults/formatters';
-import { ApiEndpoints } from '../../../enums/ApiEndpoints';
-import { UserRoles } from '../../../enums/Roles';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../../hooks/UseForm';
 import { useTable } from '../../../hooks/UseTable';
-import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
-import { TableColumn } from '../../../tables/Column';
 import { InvenTreeTable } from '../../../tables/InvenTreeTable';
-import {
-  RowAction,
-  RowDeleteAction,
-  RowEditAction
-} from '../../../tables/RowActions';
 import { NoPricingData } from './PricingPanel';
 
 export default function PriceBreakPanel({
   part,
   endpoint
-}: {
+}: Readonly<{
   part: any;
   endpoint: ApiEndpoints;
-}) {
+}>) {
   const user = useUserState();
-  const table = useTable('pricing-internal');
+  const table = useTable('pricinginternal');
 
   const priceBreakFields: ApiFormFieldSet = useMemo(() => {
     return {
@@ -107,6 +107,7 @@ export default function PriceBreakPanel({
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
+        key='add-price-break'
         tooltip={t`Add Price Break`}
         onClick={() => {
           newPriceBreak.open();
@@ -150,7 +151,7 @@ export default function PriceBreakPanel({
       {newPriceBreak.modal}
       {editPriceBreak.modal}
       {deletePriceBreak.modal}
-      <SimpleGrid cols={2}>
+      <SimpleGrid cols={{ base: 1, md: 2 }}>
         <InvenTreeTable
           tableState={table}
           url={tableUrl}
@@ -165,7 +166,7 @@ export default function PriceBreakPanel({
         />
         {table.records.length > 0 ? (
           <BarChart
-            dataKey="quantity"
+            dataKey='quantity'
             data={table.records}
             series={[{ name: 'price', label: t`Price`, color: 'blue.6' }]}
             xAxisLabel={t`Quantity`}

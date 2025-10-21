@@ -1,6 +1,6 @@
-import { Trans } from '@lingui/macro';
+import { Trans } from '@lingui/react/macro';
 import { Anchor, Container, HoverCard, ScrollArea, Text } from '@mantine/core';
-import { useEffect, useRef, useState } from 'react';
+import { type JSX, useEffect, useRef, useState } from 'react';
 
 import * as classes from '../../main.css';
 
@@ -24,7 +24,7 @@ export function DocTooltip({
 }: Readonly<DocTooltipProps>) {
   return (
     <HoverCard
-      shadow="md"
+      shadow='md'
       openDelay={200}
       closeDelay={200}
       withinPortal={true}
@@ -50,12 +50,12 @@ function ConstBody({
   detail,
   docchildren,
   link
-}: {
+}: Readonly<{
   text: string | JSX.Element;
   detail?: string | JSX.Element;
   docchildren?: React.ReactNode;
   link?: string;
-}) {
+}>) {
   const [height, setHeight] = useState(0);
   const ref = useRef(null);
 
@@ -63,7 +63,7 @@ function ConstBody({
   useEffect(() => {
     if (ref.current == null) return;
 
-    let height = ref.current['clientHeight'];
+    const height = ref.current['clientHeight'];
     if (height > 250) {
       setHeight(250);
     } else {
@@ -78,7 +78,7 @@ function ConstBody({
         <ScrollArea h={height} mah={250}>
           <div ref={ref}>
             {detail && (
-              <Text size="xs" color="dimmed">
+              <Text size='xs' c='dimmed'>
                 {detail}
               </Text>
             )}
@@ -87,7 +87,7 @@ function ConstBody({
         </ScrollArea>
       )}
       {link && (
-        <Anchor href={link} target="_blank">
+        <Anchor href={link} target='_blank'>
           <Text size={'sm'}>
             <Trans>Read More</Trans>
           </Text>
