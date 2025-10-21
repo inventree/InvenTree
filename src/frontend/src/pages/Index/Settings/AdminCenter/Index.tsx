@@ -21,7 +21,6 @@ import {
   IconUsersGroup
 } from '@tabler/icons-react';
 import { lazy, useMemo } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
 
 import { UserRoles } from '@lib/enums/Roles';
 import PermissionDenied from '../../../../components/errors/PermissionDenied';
@@ -32,7 +31,6 @@ import type {
   PanelType
 } from '../../../../components/panels/Panel';
 import { PanelGroup } from '../../../../components/panels/PanelGroup';
-import { QuickAction } from '../../../../components/settings/QuickAction';
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
 import { Loadable } from '../../../../functions/loading';
 import { useUserState } from '../../../../states/UserState';
@@ -109,15 +107,6 @@ const LocationTypesTable = Loadable(
 
 export default function AdminCenter() {
   const user = useUserState();
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  const panel = useMemo(() => {
-    return location.pathname.replace('/settings/admin/', '');
-  }, [location.pathname]);
-  const showQuickAction: boolean = useMemo(() => {
-    return panel !== 'home';
-  }, [panel]);
 
   const adminCenterPanels: PanelType[] = useMemo(() => {
     return [
@@ -252,6 +241,7 @@ export default function AdminCenter() {
   }, [user]);
   const grouping: PanelGroupType[] = useMemo(() => {
     return [
+      { id: 'home', label: '', panelIDs: ['home'] },
       {
         id: 'ops',
         label: t`Operations`,
@@ -308,7 +298,6 @@ export default function AdminCenter() {
             title={t`Admin Center`}
             subtitle={t`Advanced Options`}
           />
-          {showQuickAction ? <QuickAction navigate={navigate} /> : null}
           <PanelGroup
             pageKey='admin-center'
             panels={adminCenterPanels}
