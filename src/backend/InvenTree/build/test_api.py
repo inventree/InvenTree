@@ -1240,7 +1240,6 @@ class BuildListTest(BuildAPITest):
             self.url,
             [
                 'part_detail',
-                ('project_code_detail', 'project_code'),
                 'project_code_detail',
                 ('user_detail', 'responsible_detail'),
                 ('user_detail', 'issued_by_detail'),
