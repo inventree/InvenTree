@@ -11,7 +11,6 @@ import structlog
 from moneyed import CURRENCIES
 
 import InvenTree.helpers
-import InvenTree.ready
 
 logger = structlog.get_logger('inventree')
 
