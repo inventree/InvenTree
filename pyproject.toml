@@ -112,6 +112,10 @@ invalid-return-type="ignore"  # 22 ##
 unknown-argument="ignore"  # 3  # need to wait for betterdjango field stubs
 invalid-assignment="ignore"  # 17  # need to wait for betterdjango field stubs
 
+missing-typed-dict-key="ignore"  # 195  # see https://github.com/astral-sh/ty/issues/154
+invalid-argument-type="ignore"  # 169  # too noisy for now
+no-matching-overload="ignore"  # 57  # too noisy for now
+possibly-missing-attribute="ignore"  # 10  # too noisy for now
 
 [tool.coverage.run]
 source = ["src/backend/InvenTree", "InvenTree"]
