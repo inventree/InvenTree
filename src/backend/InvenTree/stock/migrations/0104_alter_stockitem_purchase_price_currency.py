@@ -16,6 +16,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='stockitem',
             name='purchase_price_currency',
-            field=djmoney.models.fields.CurrencyField(choices=[], default=common.currency.currency_code_default, editable=False, max_length=3, null=True),
+            field=djmoney.models.fields.CurrencyField(choices=[], default='', editable=False, max_length=3, null=True),
         ),
     ]

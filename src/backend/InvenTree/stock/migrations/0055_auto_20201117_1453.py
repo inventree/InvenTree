@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='stockitem',
             name='purchase_price',
-            field=djmoney.models.fields.MoneyField(blank=True, decimal_places=4, default_currency=common.currency.currency_code_default(), help_text='Single unit purchase price at time of purchase', max_digits=19, null=True, verbose_name='Purchase Price'),
+            field=djmoney.models.fields.MoneyField(blank=True, decimal_places=4, default_currency='', help_text='Single unit purchase price at time of purchase', max_digits=19, null=True, verbose_name='Purchase Price'),
         ),
     ]
