@@ -2,8 +2,6 @@
 
 from django.db import migrations
 import djmoney.models.fields
-import common.currency
-import common.settings
 
 
 class Migration(migrations.Migration):
@@ -16,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='purchaseorderlineitem',
             name='purchase_price',
-            field=djmoney.models.fields.MoneyField(blank=True, decimal_places=4, default_currency=common.currency.currency_code_default(), help_text='Unit purchase price', max_digits=19, null=True, verbose_name='Purchase Price'),
+            field=djmoney.models.fields.MoneyField(blank=True, decimal_places=4, default_currency='', help_text='Unit purchase price', max_digits=19, null=True, verbose_name='Purchase Price'),
         ),
     ]

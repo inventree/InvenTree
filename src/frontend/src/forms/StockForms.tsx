@@ -212,7 +212,8 @@ export function useStockFields({
         icon: <IconCurrencyDollar />
       },
       purchase_price_currency: {
-        icon: <IconCoins />
+        icon: <IconCoins />,
+        default: globalSettings.getSetting('INVENTREE_DEFAULT_CURRENCY')
       },
       packaging: {
         icon: <IconPackage />
