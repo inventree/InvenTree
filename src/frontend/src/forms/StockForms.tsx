@@ -97,25 +97,6 @@ export function useStockFields({
     }
   });
 
-  // Update pricing when quantity changes
-  useEffect(() => {
-    if (quantity === null || quantity === undefined || !pricing) return;
-
-    // Find the highest price break that is less than or equal to the quantity
-    const priceBreak = Object.entries(pricing)
-      .sort(([a], [b]) => Number.parseInt(b) - Number.parseInt(a))
-      .find(([br]) => quantity >= Number.parseInt(br));
-
-    if (priceBreak) {
-      setPurchasePrice(priceBreak[1][0]);
-      setPurchasePriceCurrency(priceBreak[1][1]);
-    }
-  }, [pricing, quantity]);
-
-  useEffect(() => {
-    if (supplierPartId && !supplierPart) setSupplierPart(supplierPartId);
-  }, [partInstance, supplierPart, supplierPartId]);
-
   return useMemo(() => {
     const fields: ApiFormFieldSet = {
       part: {
