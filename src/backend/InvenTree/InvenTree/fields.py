@@ -78,8 +78,9 @@ def money_kwargs(**kwargs):
         # This prevents issues related to early evaluation of the default currency value
         kwargs['default_currency'] = ''
     else:
-        # Override default currency
-        kwargs['default_currency'] = currency_code_default()
+        # Override default currency with a callable function
+        # This ensures that the default currency is always up-to-date
+        kwargs['default_currency'] = currency_code_default
 
     return kwargs
 
