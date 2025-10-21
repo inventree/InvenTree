@@ -140,13 +140,11 @@ class ExtendedAutoSchema(AutoSchema):
 
     def get_inventree_extensions(self):
         """Add InvenTree specific extensions to the schema."""
-        # from rest_framework.generics import ListAPIView, RetrieveAPIView
-        # from rest_framework.mixins import (
-        #     CreateModelMixin,
-        #     ListModelMixin,
-        #     RetrieveModelMixin,
-        #     UpdateModelMixin,
-        # )
+        from rest_framework.generics import RetrieveAPIView
+        from rest_framework.mixins import RetrieveModelMixin, UpdateModelMixin
+
+        # from rest_framework.generics import ListAPIView
+        # from rest_framework.mixins import CreateModelMixin,ListModelMixin,
         from data_exporter.mixins import DataExportViewMixin
         from InvenTree.api import BulkOperationMixin
         from InvenTree.mixins import CleanMixin
@@ -163,14 +161,10 @@ class ExtendedAutoSchema(AutoSchema):
         if lvl >= 1:
             data['x-inventree-meta'] = {
                 'version': '1.0',
-                # 'is_list': any(
-                #     a in mro for a in [ListModelMixin, ListAPIView]
-                # ),
-                # 'is_detail': any(
-                #     a in mro
-                #     for a in [RetrieveModelMixin, UpdateModelMixin, RetrieveAPIView]
-                # ),
-                # 'is_create': CreateModelMixin in mro,
+                'is_detail': any(
+                    a in mro
+                    for a in [RetrieveModelMixin, UpdateModelMixin, RetrieveAPIView]
+                ),
                 'is_bulk': BulkOperationMixin in mro,
                 'is_cleaned': CleanMixin in mro,
                 'is_filtered': hasattr(self.view, 'output_options'),
@@ -178,6 +172,17 @@ class ExtendedAutoSchema(AutoSchema):
             }
         if lvl >= 2:
             data['x-inventree-components'] = [str(a) for a in mro]
+            try:
+                qs = self.view.get_queryset()
+                qs = qs.model if qs is not None and hasattr(qs, 'model') else None
+            except Exception:
+                qs = None
+
+            data['x-inventree-model'] = {
+                'scope': 'core',
+                'model': str(qs.__name__) if qs else None,
+                'app': str(qs._meta.app_label) if qs else None,
+            }
 
         return data
 
