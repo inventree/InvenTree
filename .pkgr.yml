@@ -36,6 +36,10 @@ dependencies:
   - nginx
   - jq
   - "libffi7 | libffi8"
+build_dependencies: 
+  - libbz2-dev
+  - libffi-dev
+  - libssl-dev
 targets:
   ubuntu-20.04: true
   ubuntu-24.04: true
