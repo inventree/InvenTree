@@ -33,8 +33,10 @@ import { DateColumn, LinkColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 export default function SalesOrderShipmentTable({
+  customerId,
   orderId
 }: Readonly<{
+  customerId: number;
   orderId: number;
 }>) {
   const user = useUserState();
@@ -43,9 +45,13 @@ export default function SalesOrderShipmentTable({
 
   const [selectedShipment, setSelectedShipment] = useState<any>({});
 
-  const newShipmentFields = useSalesOrderShipmentFields({});
+  const newShipmentFields = useSalesOrderShipmentFields({
+    customerId: customerId
+  });
 
-  const editShipmentFields = useSalesOrderShipmentFields({});
+  const editShipmentFields = useSalesOrderShipmentFields({
+    customerId: customerId
+  });
 
   const completeShipmentFields = useSalesOrderShipmentCompleteFields({});
 

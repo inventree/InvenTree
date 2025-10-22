@@ -391,7 +391,12 @@ export default function SalesOrderDetail() {
         name: 'shipments',
         label: t`Shipments`,
         icon: <IconTruckDelivery />,
-        content: <SalesOrderShipmentTable orderId={order.pk} />
+        content: (
+          <SalesOrderShipmentTable
+            orderId={order.pk}
+            customerId={order.customer}
+          />
+        )
       },
       {
         name: 'allocations',

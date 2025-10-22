@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react';
 
+import { Text } from '@mantine/core';
+
 import { ModelType } from '@lib/enums/ModelType';
 import { getDetailUrl } from '@lib/functions/Navigation';
 import { type InstanceRenderInterface, RenderInlineModel } from './Instance';
@@ -24,7 +26,17 @@ export function RenderAddress({
   const primary: string = instance.title || text;
   const secondary: string = instance.title ? text : '';
 
-  return <RenderInlineModel primary={primary} secondary={secondary} />;
+  const suffix: ReactNode = instance.primary ? (
+    <Text size='xs'>Primary Address</Text>
+  ) : null;
+
+  return (
+    <RenderInlineModel
+      primary={primary}
+      secondary={secondary}
+      suffix={suffix}
+    />
+  );
 }
 
 /**

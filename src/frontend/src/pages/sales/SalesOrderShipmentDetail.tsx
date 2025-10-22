@@ -232,7 +232,8 @@ export default function SalesOrderShipmentDetail() {
   }, [isPending, shipment, detailsPanel]);
 
   const editShipmentFields = useSalesOrderShipmentFields({
-    pending: isPending
+    pending: isPending,
+    customerId: shipment.order_detail?.customer
   });
 
   const editShipment = useEditApiFormModal({
