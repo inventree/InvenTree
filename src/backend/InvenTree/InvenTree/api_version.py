@@ -6,6 +6,9 @@ INVENTREE_API_VERSION = 414
 
 INVENTREE_API_TEXT = """
 
+v415 -> 2025-10-22 : https://github.com/inventree/InvenTree/pull/10650
+    - Adds "shipment_address" fields to the SalesOrderShipment API endpoints
+
 v414 -> 2025-06-20 : https://github.com/inventree/InvenTree/pull/10629
     - Add enums for all ordering fields in schema - no functional changes
 
