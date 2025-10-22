@@ -30,6 +30,7 @@ import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
+import { RenderAddress } from '../../components/render/Company';
 import { formatDate } from '../../defaults/formatters';
 import {
   useSalesOrderShipmentCompleteFields,
@@ -105,6 +106,18 @@ export default function SalesOrderShipmentDetail() {
         hidden: !data.customer
       },
       {
+        type: 'link',
+        external: true,
+        name: 'link',
+        label: t`Link`,
+        copy: true,
+        hidden: !shipment.link
+      }
+    ];
+
+    // Top right: Shipment information
+    const tr: DetailsField[] = [
+      {
         type: 'text',
         name: 'customer_reference',
         icon: 'serial',
@@ -121,16 +134,6 @@ export default function SalesOrderShipmentDetail() {
       },
       {
         type: 'text',
-        name: 'allocated_items',
-        icon: 'packages',
-        label: t`Allocated Items`
-      }
-    ];
-
-    // Top right: Shipment information
-    const tr: DetailsField[] = [
-      {
-        type: 'text',
         name: 'tracking_number',
         label: t`Tracking Number`,
         icon: 'trackable',
@@ -144,6 +147,28 @@ export default function SalesOrderShipmentDetail() {
         icon: 'serial',
         value_formatter: () => shipment.invoice_number || '---',
         copy: !!shipment.invoice_number
+      }
+    ];
+
+    const bl: DetailsField[] = [
+      {
+        type: 'text',
+        name: 'address',
+        label: t`Shipping Address`,
+        icon: 'address',
+        hidden: !shipment.shipment_address_detail,
+        value_formatter: () => (
+          <RenderAddress instance={shipment.shipment_address_detail} />
+        )
+      }
+    ];
+
+    const br: DetailsField[] = [
+      {
+        type: 'text',
+        name: 'allocated_items',
+        icon: 'packages',
+        label: t`Allocated Items`
       },
       {
         type: 'text',
@@ -160,14 +185,6 @@ export default function SalesOrderShipmentDetail() {
         icon: 'calendar',
         value_formatter: () => formatDate(shipment.delivery_date),
         hidden: !shipment.delivery_date
-      },
-      {
-        type: 'link',
-        external: true,
-        name: 'link',
-        label: t`Link`,
-        copy: true,
-        hidden: !shipment.link
       }
     ];
 
@@ -192,6 +209,8 @@ export default function SalesOrderShipmentDetail() {
             </Grid.Col>
           </Grid>
           <DetailsTable fields={tr} item={data} />
+          <DetailsTable fields={bl} item={data} />
+          <DetailsTable fields={br} item={data} />
         </ItemDetailsGrid>
       </>
     );

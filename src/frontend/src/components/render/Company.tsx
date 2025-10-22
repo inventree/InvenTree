@@ -24,7 +24,7 @@ export function RenderAddress({
     .join(', ');
 
   const primary: string = instance.title || text;
-  const secondary: string = instance.title ? text : '';
+  const secondary: string = !!instance.title ? text : '';
 
   const suffix: ReactNode = instance.primary ? (
     <Text size='xs'>Primary Address</Text>
