@@ -35,6 +35,7 @@ export function PartVariantTable({ part }: Readonly<{ part: any }>) {
 
   return (
     <PartListTable
+      enableImport={false}
       props={{
         enableDownload: false,
         tableFilters: tableFilters,

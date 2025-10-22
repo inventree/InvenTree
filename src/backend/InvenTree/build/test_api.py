@@ -1189,6 +1189,21 @@ class BuildListTest(BuildAPITest):
 
         self.assertEqual(len(builds), 20)
 
+    def test_output_options(self):
+        """Test the output options for BuildOrderList list."""
+        self.run_output_test(
+            self.url,
+            [
+                'part_detail'
+                # TODO re-enable ('project_code_detail', 'project_code'),
+                # TODO re-enable 'project_code_detail',
+                # TODO re-enable ('user_detail', 'responsible_detail'),
+                # TODO re-enable ('user_detail', 'issued_by_detail'),
+            ],
+            additional_params={'limit': 1},
+            assert_fnc=lambda x: x.data['results'][0],
+        )
+
 
 class BuildOutputCreateTest(BuildAPITest):
     """Unit test for creating build output via API."""
@@ -1447,43 +1462,16 @@ class BuildLineTests(BuildAPITest):
 
     def test_output_options(self):
         """Test output options  for the BuildLine endpoint."""
-        url = reverse('api-build-line-detail', kwargs={'pk': 2})
-
-        # Test cases: (parameter_name, response_field_name)
-        test_cases = [
-            ('bom_item_detail', 'bom_item_detail'),
-            ('assembly_detail', 'assembly_detail'),
-            ('part_detail', 'part_detail'),
-            ('build_detail', 'build_detail'),
-            ('allocations', 'allocations'),
-        ]
-
-        for param, field in test_cases:
-            # Test with parameter set to 'true'
-            response = self.get(
-                url,
-                {param: 'true'},
-                expected_code=200,
-                msg=f'Testing {param}=true returns anything but 200',
-            )
-            self.assertIn(
-                field,
-                response.data,
-                f"Field '{field}' should be present when {param}=true",
-            )
-
-            # Test with parameter set to 'false'
-            response = self.get(
-                url,
-                {param: 'false'},
-                expected_code=200,
-                msg=f'Testing {param}=false returns anything but 200',
-            )
-            self.assertNotIn(
-                field,
-                response.data,
-                f"Field '{field}' should NOT be present when {param}=false",
-            )
+        self.run_output_test(
+            reverse('api-build-line-detail', kwargs={'pk': 2}),
+            [
+                'bom_item_detail',
+                'assembly_detail',
+                'part_detail',
+                'build_detail',
+                'allocations',
+            ],
+        )
 
     def test_filter_consumed(self):
         """Filter for the 'consumed' status."""

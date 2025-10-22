@@ -263,7 +263,11 @@ Total Price: {% render_currency order.total_price currency='NZD' decimal_places=
 
 ## Maths Operations
 
-Simple mathematical operators are available, as demonstrated in the example template below:
+Simple mathematical operators are available, as demonstrated in the example template below. These operators can be used to perform basic arithmetic operations within the report template.
+
+### Input Types
+
+These mathematical functions accept inputs of various input types, and attempt to perform the operation accordingly. Note that any inputs which are provided as strings will be converted to floating point numbers before the operation is performed.
 
 ### add
 
@@ -289,6 +293,13 @@ Simple mathematical operators are available, as demonstrated in the example temp
 ### divide
 
 ::: report.templatetags.report.divide
+    options:
+        show_docstring_description: false
+        show_source: False
+
+### modulo
+
+::: report.templatetags.report.modulo
     options:
         show_docstring_description: false
         show_source: False

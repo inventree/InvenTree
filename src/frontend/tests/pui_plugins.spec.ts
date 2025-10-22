@@ -11,7 +11,7 @@ import { doCachedLogin } from './login.js';
 import { setPluginState, setSettingState } from './settings.js';
 
 // Unit test for plugin settings
-test('Plugins - Settings', async ({ browser, request }) => {
+test('Plugins - Settings', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
     username: 'admin',
     password: 'inventree'
@@ -19,7 +19,6 @@ test('Plugins - Settings', async ({ browser, request }) => {
 
   // Ensure that the SampleIntegration plugin is enabled
   await setPluginState({
-    request,
     plugin: 'sample',
     state: true
   });
@@ -63,12 +62,11 @@ test('Plugins - Settings', async ({ browser, request }) => {
   await page.getByText('Mouser Electronics').click();
 });
 
-test('Plugins - User Settings', async ({ browser, request }) => {
+test('Plugins - User Settings', async ({ browser }) => {
   const page = await doCachedLogin(browser);
 
   // Ensure that the SampleIntegration plugin is enabled
   await setPluginState({
-    request,
     plugin: 'sample',
     state: true
   });
@@ -149,7 +147,7 @@ test('Plugins - Functionality', async ({ browser }) => {
     .waitFor();
 });
 
-test('Plugins - Panels', async ({ browser, request }) => {
+test('Plugins - Panels', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
     username: 'admin',
     password: 'inventree'
@@ -157,14 +155,12 @@ test('Plugins - Panels', async ({ browser, request }) => {
 
   // Ensure that UI plugins are enabled
   await setSettingState({
-    request,
     setting: 'ENABLE_PLUGINS_INTERFACE',
     value: true
   });
 
   // Ensure that the SampleUI plugin is enabled
   await setPluginState({
-    request,
     plugin: 'sampleui',
     state: true
   });
@@ -192,7 +188,6 @@ test('Plugins - Panels', async ({ browser, request }) => {
 
   // Disable the plugin, and ensure it is no longer visible
   await setPluginState({
-    request,
     plugin: 'sampleui',
     state: false
   });
@@ -201,7 +196,7 @@ test('Plugins - Panels', async ({ browser, request }) => {
 /**
  * Unit test for custom admin integration for plugins
  */
-test('Plugins - Custom Admin', async ({ browser, request }) => {
+test('Plugins - Custom Admin', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
     username: 'admin',
     password: 'inventree'
@@ -209,7 +204,6 @@ test('Plugins - Custom Admin', async ({ browser, request }) => {
 
   // Ensure that the SampleUI plugin is enabled
   await setPluginState({
-    request,
     plugin: 'sampleui',
     state: true
   });
@@ -235,7 +229,7 @@ test('Plugins - Custom Admin', async ({ browser, request }) => {
   await page.getByText('hello: world').waitFor();
 });
 
-test('Plugins - Locate Item', async ({ browser, request }) => {
+test('Plugins - Locate Item', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
     username: 'admin',
     password: 'inventree'
@@ -243,7 +237,6 @@ test('Plugins - Locate Item', async ({ browser, request }) => {
 
   // Ensure that the sample location plugin is enabled
   await setPluginState({
-    request,
     plugin: 'samplelocate',
     state: true
   });

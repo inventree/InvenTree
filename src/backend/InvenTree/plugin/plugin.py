@@ -75,6 +75,7 @@ class PluginMixinEnum(StringEnum):
     SCHEDULE = 'schedule'
     SETTINGS = 'settings'
     SETTINGS_CONTENT = 'settingscontent'
+    SUPPLIER = 'supplier'
     STATE_TRANSITION = 'statetransition'
     SUPPLIER_BARCODE = 'supplier-barcode'
     URLS = 'urls'

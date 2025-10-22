@@ -17,6 +17,7 @@ from rest_framework.response import Response
 import part.filters
 from data_exporter.mixins import DataExportViewMixin
 from InvenTree.api import (
+    BulkCreateMixin,
     BulkDeleteMixin,
     BulkUpdateMixin,
     ListCreateDestroyAPIView,
@@ -385,7 +386,8 @@ class PartSalePriceList(DataExportViewMixin, ListCreateAPI):
 
     filter_backends = SEARCH_ORDER_FILTER
     filterset_fields = ['part']
-    ordering_fields = ['quantity', 'price']
+    ordering_fields = ['quantity', 'price', 'customer__name']
+    ordering_field_aliases = {'customer': 'customer__name'}
     ordering = 'quantity'
 
 
@@ -1420,7 +1422,11 @@ class PartParameterFilter(FilterSet):
 
 
 class PartParameterList(
-    PartParameterAPIMixin, OutputOptionsMixin, DataExportViewMixin, ListCreateAPI
+    BulkCreateMixin,
+    PartParameterAPIMixin,
+    OutputOptionsMixin,
+    DataExportViewMixin,
+    ListCreateAPI,
 ):
     """API endpoint for accessing a list of PartParameter objects.
 
@@ -1447,6 +1453,8 @@ class PartParameterList(
         'template__description',
         'template__units',
     ]
+
+    unique_create_fields = ['part', 'template']
 
 
 class PartParameterDetail(
@@ -1643,6 +1651,11 @@ class BomList(
 
     search_fields = [
         'reference',
+        'part__name',
+        'part__description',
+        'part__IPN',
+        'part__revision',
+        'part__keywords',
         'sub_part__name',
         'sub_part__description',
         'sub_part__IPN',

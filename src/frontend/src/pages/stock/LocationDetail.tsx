@@ -3,6 +3,7 @@ import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { getDetailUrl } from '@lib/functions/Navigation';
+import type { StockOperationProps } from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
 import { Group, Skeleton, Stack, Text } from '@mantine/core';
 import { IconInfoCircle, IconPackages, IconSitemap } from '@tabler/icons-react';
@@ -30,10 +31,7 @@ import { PageDetail } from '../../components/nav/PageDetail';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import LocateItemButton from '../../components/plugins/LocateItemButton';
-import {
-  type StockOperationProps,
-  stockLocationFields
-} from '../../forms/StockForms';
+import { stockLocationFields } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
 import {
   useDeleteApiFormModal,

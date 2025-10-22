@@ -57,7 +57,7 @@ from build.status_codes import BuildStatusGroups
 from common.currency import currency_code_default
 from common.icons import validate_icon
 from common.settings import get_global_setting
-from company.models import SupplierPart
+from company.models import Company, SupplierPart
 from InvenTree import helpers, validators
 from InvenTree.exceptions import log_error
 from InvenTree.fields import InvenTreeURLField
@@ -3503,7 +3503,6 @@ class PartSellPriceBreak(common.models.PriceBreak):
         """Metaclass providing extra model definition."""
 
         verbose_name = _('Part Sale Price Break')
-        unique_together = ('part', 'quantity')
 
     @staticmethod
     def get_api_url():
@@ -3516,6 +3515,17 @@ class PartSellPriceBreak(common.models.PriceBreak):
         related_name='salepricebreaks',
         limit_choices_to={'salable': True},
         verbose_name=_('Part'),
+    )
+
+    customer = models.ForeignKey(
+        Company,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        limit_choices_to={'is_customer': True},
+        related_name='salepricebreaks',
+        verbose_name=_('Customer'),
+        help_text=_('Company to which the price break applies'),
     )
 
 
@@ -4270,6 +4280,11 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         if allow_substitutes:
             for sub in self.substitutes.all():
                 parts.add(sub.part)
+
+                # Account for variants of the substitute part (if allowed)
+                if allow_variants and self.allow_variants:
+                    for sub_variant in sub.part.get_descendants(include_self=False):
+                        parts.add(sub_variant)
 
         valid_parts = []
 

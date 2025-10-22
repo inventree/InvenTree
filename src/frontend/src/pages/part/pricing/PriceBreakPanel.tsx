@@ -28,16 +28,20 @@ import { NoPricingData } from './PricingPanel';
 
 export default function PriceBreakPanel({
   part,
-  endpoint
+  endpoint,
+  tableKey,
+  includeCustomer = false
 }: Readonly<{
   part: any;
   endpoint: ApiEndpoints;
+  tableKey: string;
+  includeCustomer?: boolean;
 }>) {
   const user = useUserState();
-  const table = useTable('pricinginternal');
+  const table = useTable(tableKey);
 
   const priceBreakFields: ApiFormFieldSet = useMemo(() => {
-    return {
+    const fields: ApiFormFieldSet = {
       part: {
         disabled: true
       },
@@ -45,7 +49,17 @@ export default function PriceBreakPanel({
       price: {},
       price_currency: {}
     };
-  }, []);
+    if (includeCustomer) {
+      fields.customer = {
+        required: false,
+        filters: {
+          is_customer: true,
+          active: true
+        }
+      };
+    }
+    return fields;
+  }, [includeCustomer]);
 
   const tableUrl = useMemo(() => {
     return apiUrl(endpoint);
@@ -83,7 +97,7 @@ export default function PriceBreakPanel({
   });
 
   const columns: TableColumn[] = useMemo(() => {
-    return [
+    const cols: TableColumn[] = [
       {
         accessor: 'quantity',
         title: t`Quantity`,
@@ -102,6 +116,17 @@ export default function PriceBreakPanel({
         }
       }
     ];
+
+    if (includeCustomer) {
+      cols.push({
+        accessor: 'customer_detail.name',
+        title: t`Customer`,
+        sortable: true,
+        switchable: true,
+        ordering: 'customer__name'
+      });
+    }
+    return cols;
   }, []);
 
   const tableActions = useMemo(() => {

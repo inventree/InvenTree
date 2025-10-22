@@ -125,16 +125,17 @@ nav:
       - Project Security: security.md
       - Resources: project/resources.md
       - Privacy: privacy.md
-  - Install:
+  - Setup:
     - Introduction: start/index.md
     - Processes: start/processes.md
     - Configuration: start/config.md
     - Docker:
         - Introduction: start/docker.md
         - Installation: start/docker_install.md
+    - Installer:
+        - Installer: start/installer.md
     - Bare Metal:
         - Introduction: start/install.md
-        - Installer: start/installer.md
         - Production: start/bare_prod.md
         - Development: start/bare_dev.md
     - User Accounts: start/accounts.md
@@ -236,6 +237,7 @@ nav:
       - Report Mixin: plugins/mixins/report.md
       - Schedule Mixin: plugins/mixins/schedule.md
       - Settings Mixin: plugins/mixins/settings.md
+      - Supplier Mixin: plugins/mixins/supplier.md
       - Transition Mixin: plugins/mixins/transition.md
       - URL Mixin: plugins/mixins/urls.md
       - User Interface Mixin: plugins/mixins/ui.md

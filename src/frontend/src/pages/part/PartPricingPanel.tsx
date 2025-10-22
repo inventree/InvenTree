@@ -101,6 +101,7 @@ export default function PartPricingPanel({ part }: Readonly<{ part: any }>) {
               <PriceBreakPanel
                 part={part}
                 endpoint={ApiEndpoints.part_pricing_internal}
+                tableKey={'pricinginternal'}
               />
             }
             label={panelOptions.internal}
@@ -135,6 +136,8 @@ export default function PartPricingPanel({ part }: Readonly<{ part: any }>) {
               <PriceBreakPanel
                 part={part}
                 endpoint={ApiEndpoints.part_pricing_sale}
+                tableKey={'pricingsale'}
+                includeCustomer={true}
               />
             }
             label={panelOptions.sale_pricing}
