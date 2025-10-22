@@ -124,9 +124,17 @@ export function useStockFields({
     }
   }, [pricing, quantity]);
 
+  // Set the supplier part if provided
   useEffect(() => {
     if (supplierPartId && !supplierPart) setSupplierPart(supplierPartId);
   }, [partInstance, supplierPart, supplierPartId]);
+
+  // Set default currency from global settings
+  useEffect(() => {
+    setPurchasePriceCurrency(
+      globalSettings.getSetting('INVENTREE_DEFAULT_CURRENCY')
+    );
+  }, [globalSettings]);
 
   return useMemo(() => {
     const fields: ApiFormFieldSet = {
@@ -212,23 +220,21 @@ export function useStockFields({
         description: t`Enter serial numbers for new stock (or leave blank)`,
         required: false,
         hidden: !create,
-        placeholder:
-          serialGenerator.result &&
-          `${t`Next serial number`}: ${serialGenerator.result}`
+        placeholderAutofill: true,
+        placeholder: serialGenerator.result && `${serialGenerator.result}+`
       },
       serial: {
-        placeholder:
-          serialGenerator.result &&
-          `${t`Next serial number`}: ${serialGenerator.result}`,
+        placeholderAutofill: true,
+        placeholder: serialGenerator.result,
         hidden:
           create ||
           partInstance.trackable == false ||
           (stockItem?.quantity != undefined && stockItem?.quantity != 1)
       },
       batch: {
-        placeholder:
-          batchGenerator.result &&
-          `${t`Next batch code`}: ${batchGenerator.result}`
+        default: '',
+        placeholderAutofill: true,
+        placeholder: batchGenerator.result
       },
       status_custom_key: {
         label: t`Stock Status`
@@ -250,6 +256,7 @@ export function useStockFields({
       },
       purchase_price_currency: {
         icon: <IconCoins />,
+        default: globalSettings.getSetting('INVENTREE_DEFAULT_CURRENCY'),
         value: purchasePriceCurrency,
         onValueChange: (value) => {
           setPurchasePriceCurrency(value);
@@ -270,6 +277,10 @@ export function useStockFields({
     // Remove the expiry date field if it is not enabled
     if (!globalSettings.isSet('STOCK_ENABLE_EXPIRY')) {
       delete fields.expiry_date;
+    }
+
+    if (!create) {
+      delete fields.serial_numbers;
     }
 
     return fields;
@@ -400,9 +411,8 @@ export function useStockItemSerializeFields({
     return {
       quantity: {},
       serial_numbers: {
-        placeholder:
-          serialGenerator.result &&
-          `${t`Next serial number`}: ${serialGenerator.result}`
+        placeholder: serialGenerator.result && `${serialGenerator.result}+`,
+        placeholderAutofill: true
       },
       destination: {}
     };
@@ -967,6 +977,11 @@ function stockChangeStatusFields(items: any[]): ApiFormFieldSet {
 
   const records = Object.fromEntries(items.map((item) => [item.pk, item]));
 
+  // Extract all status values from the items
+  const statusValues = [
+    ...new Set(items.map((item) => item.status_custom_key ?? item.status))
+  ];
+
   const fields: ApiFormFieldSet = {
     items: {
       field_type: 'table',
@@ -991,7 +1006,9 @@ function stockChangeStatusFields(items: any[]): ApiFormFieldSet {
         { title: '', style: { width: '50px' } }
       ]
     },
-    status: {},
+    status: {
+      value: statusValues.length === 1 ? statusValues[0] : undefined
+    },
     note: {}
   };
 

@@ -239,13 +239,29 @@ class InvenTreeHostSettingsMiddleware(MiddlewareMixin):
         accessed_scheme = request._current_scheme_host
         referer = urlsplit(accessed_scheme)
 
-        # Ensure that the settings are set correctly with the current request
-        matches = (
-            (accessed_scheme and not accessed_scheme.startswith(settings.SITE_URL))
-            if not settings.SITE_LAX_PROTOCOL_CHECK
-            else not is_same_domain(referer.netloc, urlsplit(settings.SITE_URL).netloc)
+        site_url = urlsplit(settings.SITE_URL)
+
+        # Check if the accessed URL matches the SITE_URL setting
+        site_url_match = (
+            (
+                # Exact match on domain
+                is_same_domain(referer.netloc, site_url.netloc)
+                and referer.scheme == site_url.scheme
+            )
+            or (
+                # Lax protocol match, accessed URL starts with SITE_URL
+                settings.SITE_LAX_PROTOCOL_CHECK
+                and accessed_scheme.startswith(settings.SITE_URL)
+            )
+            or (
+                # Lax protocol match, same domain
+                settings.SITE_LAX_PROTOCOL_CHECK
+                and referer.hostname == site_url.hostname
+            )
         )
-        if matches:
+
+        if not site_url_match:
+            # The accessed URL does not match the SITE_URL setting
             if (
                 isinstance(settings.CSRF_TRUSTED_ORIGINS, list)
                 and len(settings.CSRF_TRUSTED_ORIGINS) > 1
@@ -263,17 +279,31 @@ class InvenTreeHostSettingsMiddleware(MiddlewareMixin):
                     request, 'config_error.html', {'error_message': msg}, status=500
                 )
 
-        # Check trusted origins
-        if not any(
-            is_same_domain(referer.netloc, host)
-            for host in [
-                urlsplit(origin).netloc.lstrip('*')
+        trusted_origins_match = (
+            # Matching domain found in allowed origins
+            any(
+                is_same_domain(referer.netloc, host)
+                for host in [
+                    urlsplit(origin).netloc.lstrip('*')
+                    for origin in settings.CSRF_TRUSTED_ORIGINS
+                ]
+            )
+        ) or (
+            # Lax protocol match allowed
+            settings.SITE_LAX_PROTOCOL_CHECK
+            and any(
+                referer.hostname == urlsplit(origin).hostname
                 for origin in settings.CSRF_TRUSTED_ORIGINS
-            ]
-        ):
+            )
+        )
+
+        # Check trusted origins
+        if not trusted_origins_match:
             msg = f'INVE-E7: The used path `{accessed_scheme}` is not in the TRUSTED_ORIGINS'
             logger.error(msg)
             return render(
                 request, 'config_error.html', {'error_message': msg}, status=500
             )
+
+        # All checks passed
         return None

@@ -146,7 +146,6 @@ nav:
   - Parts:
     - Parts: part/index.md
     - Creating Parts: part/create.md
-    - Importing Parts: part/import.md
     - Virtual Parts: part/virtual.md
     - Part Views: part/views.md
     - Tracking: part/trackable.md

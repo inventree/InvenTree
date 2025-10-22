@@ -41,7 +41,7 @@ test('Settings - User theme', async ({ browser }) => {
   await page.waitForLoadState('networkidle');
 
   await page.getByRole('button', { name: 'Ally Access' }).click();
-  await page.getByRole('menuitem', { name: 'Account settings' }).click();
+  await page.getByRole('menuitem', { name: 'User settings' }).click();
 
   // loader
   await page.getByRole('textbox', { name: 'Loader Type Selector' }).click();
@@ -220,7 +220,7 @@ test('Settings - Admin', async ({ browser }) => {
 
   // User settings
   await page.getByRole('button', { name: 'admin' }).click();
-  await page.getByRole('menuitem', { name: 'Account settings' }).click();
+  await page.getByRole('menuitem', { name: 'User settings' }).click();
   await loadTab(page, 'Security');
 
   await loadTab(page, 'Display Options');
@@ -270,16 +270,20 @@ test('Settings - Admin', async ({ browser }) => {
   await roomRow.getByLabel(/row-action-menu-/i).click();
 
   await page.getByRole('menuitem', { name: 'Edit' }).click();
-  await expect(page.getByLabel('text-field-name')).toHaveValue('Room');
+  await expect(page.getByLabel('text-field-name', { exact: true })).toHaveValue(
+    'Room'
+  );
 
   // Toggle the "description" field
   const oldDescription = await page
-    .getByLabel('text-field-description')
+    .getByLabel('text-field-description', { exact: true })
     .inputValue();
 
   const newDescription = `${oldDescription} (edited)`;
 
-  await page.getByLabel('text-field-description').fill(newDescription);
+  await page
+    .getByLabel('text-field-description', { exact: true })
+    .fill(newDescription);
   await page.waitForTimeout(500);
   await page.getByRole('button', { name: 'Submit' }).click();
 
@@ -293,19 +297,21 @@ test('Settings - Admin', async ({ browser }) => {
   await boxRow.getByLabel(/row-action-menu-/i).click();
 
   await page.getByRole('menuitem', { name: 'Edit' }).click();
-  await expect(page.getByLabel('text-field-name')).toHaveValue('Box (Large)');
-  await expect(page.getByLabel('text-field-description')).toHaveValue(
-    'Large cardboard box'
+  await expect(page.getByLabel('text-field-name', { exact: true })).toHaveValue(
+    'Box (Large)'
   );
+  await expect(
+    page.getByLabel('text-field-description', { exact: true })
+  ).toHaveValue('Large cardboard box');
   await page.getByRole('button', { name: 'Cancel' }).click();
 
   // Edit first item again (revert values)
   await roomRow.getByLabel(/row-action-menu-/i).click();
   await page.getByRole('menuitem', { name: 'Edit' }).click();
-  await page.getByLabel('text-field-name').fill('Room');
+  await page.getByLabel('text-field-name', { exact: true }).fill('Room');
   await page.waitForTimeout(500);
   await page
-    .getByLabel('text-field-description')
+    .getByLabel('text-field-description', { exact: true })
     .fill(newDescription.replaceAll(' (edited)', ''));
   await page.waitForTimeout(500);
   await page.getByRole('button', { name: 'Submit' }).click();

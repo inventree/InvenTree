@@ -56,7 +56,11 @@ export function ApiFormField({
 
     // hook up the value state to the input field
     if (definition.value !== undefined) {
-      field.onChange(definition.value);
+      field.onChange(
+        definition.adjustValue
+          ? definition.adjustValue(definition.value)
+          : definition.value
+      );
     }
   }, [definition.value]);
 
@@ -74,6 +78,7 @@ export function ApiFormField({
     return {
       ...fieldDefinition,
       autoFill: undefined,
+      placeholderAutofill: undefined,
       autoFillFilters: undefined,
       onValueChange: undefined,
       adjustFilters: undefined,
@@ -111,7 +116,7 @@ export function ApiFormField({
 
     switch (definition.field_type) {
       case 'integer':
-        val = Number.parseInt(value) ?? '';
+        val = Number.parseInt(value, 10) ?? '';
         break;
       case 'decimal':
       case 'float':
@@ -146,6 +151,7 @@ export function ApiFormField({
         return (
           <TextField
             definition={reducedDefinition}
+            placeholderAutofill={fieldDefinition.placeholderAutofill ?? false}
             controller={controller}
             fieldName={fieldName}
             onChange={onChange}

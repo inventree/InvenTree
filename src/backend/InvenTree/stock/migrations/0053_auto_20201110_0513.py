@@ -16,11 +16,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='stockitem',
             name='purchase_price',
-            field=djmoney.models.fields.MoneyField(decimal_places=4, default_currency=common.currency.currency_code_default(), help_text='Single unit purchase price at time of purchase', max_digits=19, null=True, verbose_name='Purchase Price'),
+            field=djmoney.models.fields.MoneyField(decimal_places=4, default_currency='', help_text='Single unit purchase price at time of purchase', max_digits=19, null=True, verbose_name='Purchase Price'),
         ),
         migrations.AddField(
             model_name='stockitem',
             name='purchase_price_currency',
-            field=djmoney.models.fields.CurrencyField(choices=common.currency.all_currency_codes(), default=common.currency.currency_code_default(), editable=False, max_length=3),
+            field=djmoney.models.fields.CurrencyField(choices=common.currency.all_currency_codes(), default='', editable=False, max_length=3),
         ),
     ]

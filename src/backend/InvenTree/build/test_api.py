@@ -1086,6 +1086,51 @@ class BuildListTest(BuildAPITest):
 
     url = reverse('api-build-list')
 
+    def test_api_options(self):
+        """Test OPTIONS endpoint for the Build list API."""
+        data = self.options(self.url, expected_code=200).data
+
+        self.assertEqual(data['name'], 'Build List')
+        actions = data['actions']['POST']
+
+        for field_name in [
+            'pk',
+            'title',
+            'part',
+            'part_detail',
+            'project_code',
+            'project_code_detail',
+            'quantity',
+        ]:
+            self.assertIn(field_name, actions)
+
+        # Specific checks for certain fields
+        for field_name in ['part', 'project_code', 'take_from']:
+            field = actions[field_name]
+            self.assertEqual(field['type'], 'related field')
+
+            for key in ['model', 'api_url', 'pk_field']:
+                self.assertIn(key, field)
+
+    def test_detail_fields(self):
+        """Test inclusion of detail fields."""
+        # Test without extra detail fields
+        for val in [True, False]:
+            response = self.get(
+                self.url,
+                data={'part_detail': val, 'project_code_detail': val, 'limit': 1},
+                expected_code=200,
+            )
+
+            data = response.data['results'][0]
+
+            if val:
+                self.assertIn('part_detail', data)
+                self.assertIn('project_code_detail', data)
+            else:
+                self.assertNotIn('part_detail', data)
+                self.assertNotIn('project_code_detail', data)
+
     def test_get_all_builds(self):
         """Retrieve *all* builds via the API."""
         builds = self.get(self.url)
@@ -1188,6 +1233,20 @@ class BuildListTest(BuildAPITest):
         builds = response.data
 
         self.assertEqual(len(builds), 20)
+
+    def test_output_options(self):
+        """Test the output options for BuildOrderList list."""
+        self.run_output_test(
+            self.url,
+            [
+                'part_detail',
+                'project_code_detail',
+                ('user_detail', 'responsible_detail'),
+                ('user_detail', 'issued_by_detail'),
+            ],
+            additional_params={'limit': 1},
+            assert_fnc=lambda x: x.data['results'][0],
+        )
 
 
 class BuildOutputCreateTest(BuildAPITest):

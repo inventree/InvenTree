@@ -6,6 +6,8 @@ from django.core.exceptions import ValidationError
 from django.db.models import Sum
 from django.test import override_settings
 
+from djmoney.money import Money
+
 from build.models import Build
 from common.models import InvenTreeSetting
 from company.models import Company
@@ -802,6 +804,27 @@ class StockTest(StockTestBase):
         item.stocktake(99, None)
 
         self.assertTrue(check_func())
+
+    def test_purchase_price(self):
+        """Test purchase price field."""
+        from common.currency import currency_code_default
+        from common.settings import set_global_setting
+
+        part = Part.objects.filter(virtual=False).first()
+
+        for currency in ['AUD', 'USD', 'JPY']:
+            set_global_setting('INVENTREE_DEFAULT_CURRENCY', currency)
+            self.assertEqual(currency_code_default(), currency)
+
+            # Create stock item, do not specify currency - should get default
+            item = StockItem.objects.create(part=part, quantity=10)
+            self.assertEqual(item.purchase_price_currency, currency)
+
+            # Create stock item, specify currency
+            item = StockItem.objects.create(
+                part=part, quantity=10, purchase_price=Money(5, 'GBP')
+            )
+            self.assertEqual(item.purchase_price_currency, 'GBP')
 
 
 class StockBarcodeTest(StockTestBase):
