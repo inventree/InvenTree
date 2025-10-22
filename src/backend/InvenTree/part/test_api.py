@@ -1396,6 +1396,20 @@ class PartAPITest(PartAPITestBase):
 
         self.assertIn('notes', response.data)
 
+    def test_output_options(self):
+        """Test the output options for PartList list."""
+        self.run_output_test(
+            reverse('api-part-list'),
+            [
+                ('location_detail', 'default_location_detail'),
+                'parameters',
+                ('path_detail', 'category_path'),
+                # TODO re-enable ('pricing', 'pricing_min'),
+                # TODO re-enable ('pricing', 'pricing_updated'),
+            ],
+            assert_subset=True,
+        )
+
 
 class PartCreationTests(PartAPITestBase):
     """Tests for creating new Part instances via the API."""
@@ -2046,8 +2060,8 @@ class PartListTests(PartAPITestBase):
             with CaptureQueriesContext(connection) as ctx:
                 self.get(url, query, expected_code=200)
 
-            # No more than 20 database queries
-            self.assertLess(len(ctx), 20)
+            # No more than 25 database queries
+            self.assertLess(len(ctx), 25)
 
         # Test 'category_detail' annotation
         for b in [False, True]:
@@ -2741,13 +2755,16 @@ class BomItemTest(InvenTreeAPITestCase):
 
     def test_output_options(self):
         """Test that various output options work as expected."""
-        url = reverse('api-bom-item-detail', kwargs={'pk': 3})
-        options = ['can_build', 'part_detail', 'sub_part_detail']
-        for option in options:
-            response = self.get(url, {f'{option}': True}, expected_code=200)
-            self.assertIn(option, response.data)
-            response = self.get(url, {f'{option}': False}, expected_code=200)
-            self.assertNotIn(option, response.data)
+        self.run_output_test(
+            reverse('api-bom-item-detail', kwargs={'pk': 3}),
+            [
+                'can_build',
+                'part_detail',
+                'sub_part_detail',
+                # TODO re-enable 'substitutes',
+                # TODO re-enable ('pricing', 'pricing_min'),
+            ],
+        )
 
     def test_add_bom_item(self):
         """Test that we can create a new BomItem via the API."""

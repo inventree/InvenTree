@@ -1743,7 +1743,6 @@ class StockItem(
             self.belongs_to is None,  # Not installed inside another StockItem
             self.customer is None,  # Not assigned to a customer
             self.consumed_by is None,  # Not consumed by a build
-            not self.is_building,  # Not part of an active build
         ])
 
     @property
@@ -2221,7 +2220,6 @@ class StockItem(
         - The new item will have a different StockItem ID, while this will remain the same.
         """
         # Run initial checks to test if the stock item can actually be "split"
-
         allow_production = kwargs.get('allow_production', False)
 
         # Cannot split a stock item which is in production
@@ -2346,7 +2344,9 @@ class StockItem(
             'STOCK_ALLOW_OUT_OF_STOCK_TRANSFER', backup_value=False, cache=False
         )
 
-        if not allow_out_of_stock_transfer and not self.is_in_stock(check_status=False):
+        if not allow_out_of_stock_transfer and not self.is_in_stock(
+            check_status=False, check_in_production=False
+        ):
             raise ValidationError(_('StockItem cannot be moved as it is not in stock'))
 
         if quantity <= 0:
@@ -2362,7 +2362,7 @@ class StockItem(
             kwargs['notes'] = notes
 
             # Split the existing StockItem in two
-            self.splitStock(quantity, location, user, **kwargs)
+            self.splitStock(quantity, location, user, allow_production=True, **kwargs)
 
             return True
 

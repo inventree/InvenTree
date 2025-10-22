@@ -27,7 +27,7 @@ export function getActions(navigate: NavigateFunction) {
       id: 'dashboard',
       label: t`Dashboard`,
       description: t`Go to the InvenTree dashboard`,
-      onClick: () => {}, // navigate(menuItems.dashboard.link),
+      onClick: () => navigate('/'),
       leftSection: <IconLink size='1.2rem' />
     },
     {

@@ -19,6 +19,17 @@ import {
 } from '@lib/types/Plugins';
 import { i18n } from '@lingui/core';
 import {
+  useAddStockItem,
+  useAssignStockItem,
+  useChangeStockStatus,
+  useCountStockItem,
+  useDeleteStockItem,
+  useMergeStockItem,
+  useRemoveStockItem,
+  useReturnStockItem,
+  useTransferStockItem
+} from '../../forms/StockForms';
+import {
   useBulkEditApiFormModal,
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -60,7 +71,18 @@ export const useInvenTreeContext = () => {
         bulkEdit: useBulkEditApiFormModal,
         create: useCreateApiFormModal,
         delete: useDeleteApiFormModal,
-        edit: useEditApiFormModal
+        edit: useEditApiFormModal,
+        stockActions: {
+          addStock: useAddStockItem,
+          assignStock: useAssignStockItem,
+          changeStatus: useChangeStockStatus,
+          countStock: useCountStockItem,
+          deleteStock: useDeleteStockItem,
+          mergeStock: useMergeStockItem,
+          removeStock: useRemoveStockItem,
+          transferStock: useTransferStockItem,
+          returnStock: useReturnStockItem
+        }
       }
     };
   }, [

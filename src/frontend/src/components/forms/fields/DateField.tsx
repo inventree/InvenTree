@@ -1,4 +1,5 @@
 import type { ApiFormFieldType } from '@lib/types/Forms';
+import { t } from '@lingui/core/macro';
 import { DateInput } from '@mantine/dates';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
@@ -72,7 +73,7 @@ export default function DateField({
       valueFormat={valueFormat}
       label={definition.label}
       description={definition.description}
-      placeholder={definition.placeholder}
+      placeholder={definition.placeholder ?? t`Select date`}
       leftSection={definition.icon}
       highlightToday
     />

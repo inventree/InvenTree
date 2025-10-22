@@ -190,7 +190,8 @@ export function PurchaseOrderTable({
           modelType: ModelType.purchaseorder,
           enableSelection: true,
           enableDownload: true,
-          enableReports: true
+          enableReports: true,
+          enableLabels: true
         }}
       />
     </>

@@ -189,7 +189,8 @@ export function ReturnOrderTable({
           modelType: ModelType.returnorder,
           enableSelection: true,
           enableDownload: true,
-          enableReports: true
+          enableReports: true,
+          enableLabels: true
         }}
       />
     </>
