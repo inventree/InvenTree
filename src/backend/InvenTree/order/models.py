@@ -2182,6 +2182,16 @@ class SalesOrderShipment(
         unique_together = ['order', 'reference']
         verbose_name = _('Sales Order Shipment')
 
+    def clean(self):
+        """Custom clean method for the SalesOrderShipment class."""
+        super().clean()
+
+        if self.order and self.shipment_address:
+            if self.shipment_address.company != self.order.customer:
+                raise ValidationError({
+                    'shipment_address': _('Shipment address must match the customer')
+                })
+
     @staticmethod
     def get_api_url():
         """Return the API URL associated with the SalesOrderShipment model."""
