@@ -100,61 +100,57 @@ export function ServerAlert({
   );
 }
 
+type ExtendedAlertInfo = AlertInfo & {
+  condition: boolean;
+};
+
 export function getAlerts(
   server: ServerAPIProps,
-  globalSettings: SettingsStateProps
-): AlertInfo[] {
-  const _alerts: AlertInfo[] = [];
-
-  if (server?.debug_mode) {
-    _alerts.push({
-      key: 'debug',
-      title: t`Debug Mode`,
-      code: 'INVE-W4',
-      message: t`The server is running in debug mode.`
-    });
-  }
-
-  if (!server?.worker_running) {
-    _alerts.push({
-      key: 'worker',
-      title: t`Background Worker`,
-      code: 'INVE-W5',
-      message: t`The background worker process is not running.`
-    });
-  }
-
-  if (!server?.email_configured) {
-    _alerts.push({
-      key: 'email',
-      title: t`Email settings`,
-      code: 'INVE-W7',
-      message: t`Email settings not configured.`
-    });
-  }
-
-  if (globalSettings.isSet('SERVER_RESTART_REQUIRED')) {
-    _alerts.push({
-      key: 'restart',
-      title: t`Server Restart`,
-      code: 'INVE-W6',
-      message: t`The server requires a restart to apply changes.`
-    });
-  }
-
+  globalSettings: SettingsStateProps,
+  inactive = false
+): ExtendedAlertInfo[] {
   const n_migrations =
     Number.parseInt(globalSettings.getSetting('_PENDING_MIGRATIONS')) ?? 0;
 
-  if (n_migrations > 0) {
-    _alerts.push({
+  const allalerts: ExtendedAlertInfo[] = [
+    {
+      key: 'debug',
+      title: t`Debug Mode`,
+      code: 'INVE-W4',
+      message: t`The server is running in debug mode.`,
+      condition: server?.debug_mode || false
+    },
+    {
+      key: 'worker',
+      title: t`Background Worker`,
+      code: 'INVE-W5',
+      message: t`The background worker process is not running.`,
+      condition: !server?.worker_running
+    },
+    {
+      key: 'email',
+      title: t`Email settings`,
+      code: 'INVE-W7',
+      message: t`Email settings not configured.`,
+      condition: !server?.email_configured
+    },
+    {
+      key: 'restart',
+      title: t`Server Restart`,
+      code: 'INVE-W6',
+      message: t`The server requires a restart to apply changes.`,
+      condition: globalSettings.isSet('SERVER_RESTART_REQUIRED')
+    },
+    {
       key: 'migrations',
       title: t`Database Migrations`,
       code: 'INVE-W8',
-      message: t`There are pending database migrations.`
-    });
-  }
+      message: t`There are pending database migrations.`,
+      condition: n_migrations > 0
+    }
+  ];
 
-  return _alerts;
+  return allalerts.filter((alert) => inactive || alert.condition);
 }
 
 export function errorCodeLink(code: string) {

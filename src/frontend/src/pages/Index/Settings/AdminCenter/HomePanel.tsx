@@ -1,6 +1,13 @@
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
-import { Alert, Button, SimpleGrid, Stack, Title } from '@mantine/core';
+import {
+  Accordion,
+  Alert,
+  Button,
+  SimpleGrid,
+  Stack,
+  Title
+} from '@mantine/core';
 import { IconBrandGithub } from '@tabler/icons-react';
 import { type JSX, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -16,8 +23,23 @@ export default function HomePanel(): JSX.Element {
   const globalSettings = useGlobalSettingsState();
 
   const alerts = useMemo(
-    () => getAlerts(server, globalSettings),
+    () => getAlerts(server, globalSettings, true),
     [server, globalSettings]
+  );
+  const accElements = useMemo(
+    () => [
+      {
+        key: 'active',
+        text: t`Active Alerts`,
+        elements: alerts.filter((alert) => alert.condition)
+      },
+      {
+        key: 'inactive',
+        text: t`Inactive Alerts`,
+        elements: alerts.filter((alert) => !alert.condition)
+      }
+    ],
+    [alerts]
   );
 
   return (
@@ -57,15 +79,23 @@ export default function HomePanel(): JSX.Element {
       <Title order={5}>
         <Trans>System status</Trans>
       </Title>
-      {alerts.length > 0 ? (
-        <SimpleGrid cols={2} spacing='sm'>
-          {alerts.map((alert) => (
-            <ServerAlert alert={alert} />
-          ))}
-        </SimpleGrid>
-      ) : (
-        <Alert color='green'>{t`No system alerts`}</Alert>
-      )}
+      <Accordion defaultValue={'active'} variant='contained'>
+        {accElements.map(
+          (item) =>
+            item.elements.length > 0 && (
+              <Accordion.Item key={item.key} value={item.key}>
+                <Accordion.Control>{item.text}</Accordion.Control>
+                <Accordion.Panel>
+                  <SimpleGrid cols={2} spacing='sm'>
+                    {item.elements.map((alert) => (
+                      <ServerAlert alert={alert} />
+                    ))}
+                  </SimpleGrid>
+                </Accordion.Panel>
+              </Accordion.Item>
+            )
+        )}
+      </Accordion>
       <Title order={5}>
         <Trans>Security recommodations</Trans>
       </Title>
