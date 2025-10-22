@@ -383,6 +383,13 @@ class Order(
                 'start_date': _('Start date must be before target date'),
             })
 
+        # Check that the referenced 'address' matches the correct 'company'
+        if self.company and self.address:
+            if self.address.company != self.company:
+                raise ValidationError({
+                    'address': _('Address does not match selected company')
+                })
+
     def clean_line_item(self, line):
         """Clean a line item for this order.
 
