@@ -22,25 +22,21 @@ export default function HomePanel(): JSX.Element {
   const [server] = useServerApiState(useShallow((state) => [state.server]));
   const globalSettings = useGlobalSettingsState();
 
-  const alerts = useMemo(
-    () => getAlerts(server, globalSettings, true),
-    [server, globalSettings]
-  );
-  const accElements = useMemo(
-    () => [
+  const accElements = useMemo(() => {
+    const _alerts = getAlerts(server, globalSettings, true);
+    return [
       {
         key: 'active',
         text: t`Active Alerts`,
-        elements: alerts.filter((alert) => alert.condition)
+        elements: _alerts.filter((alert) => alert.condition)
       },
       {
         key: 'inactive',
         text: t`Inactive Alerts`,
-        elements: alerts.filter((alert) => !alert.condition)
+        elements: _alerts.filter((alert) => !alert.condition)
       }
-    ],
-    [alerts]
-  );
+    ];
+  }, [server, globalSettings]);
 
   return (
     <Stack gap='xs'>
