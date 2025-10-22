@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { Grid, Skeleton, Stack } from '@mantine/core';
+import { Grid, Skeleton, Stack, Text } from '@mantine/core';
 import { IconBookmark, IconInfoCircle } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -150,16 +150,26 @@ export default function SalesOrderShipmentDetail() {
       }
     ];
 
+    const address: any =
+      shipment.shipment_address_detail || shipment.order_detail?.address_detail;
+
     const bl: DetailsField[] = [
       {
         type: 'text',
         name: 'address',
         label: t`Shipping Address`,
         icon: 'address',
-        hidden: !shipment.shipment_address_detail,
-        value_formatter: () => (
-          <RenderAddress instance={shipment.shipment_address_detail} />
-        )
+        value_formatter: () =>
+          address ? (
+            <RenderAddress
+              instance={
+                shipment.shipment_address_detail ||
+                shipment.order_detail?.address_detail
+              }
+            />
+          ) : (
+            <Text size='sm' c='red'>{t`Not specified`}</Text>
+          )
       }
     ];
 
