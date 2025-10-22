@@ -21,7 +21,10 @@ export function RenderAddress({
     .filter(Boolean)
     .join(', ');
 
-  return <RenderInlineModel primary={instance.title} secondary={text} />;
+  const primary: string = instance.title || text;
+  const secondary: string = instance.title ? text : '';
+
+  return <RenderInlineModel primary={primary} secondary={secondary} />;
 }
 
 /**

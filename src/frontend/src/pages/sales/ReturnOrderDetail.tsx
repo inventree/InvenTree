@@ -32,6 +32,7 @@ import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
+import { RenderAddress } from '../../components/render/Company';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { formatCurrency } from '../../defaults/formatters';
 import { useReturnOrderFields } from '../../forms/ReturnOrderForms';
@@ -203,6 +204,14 @@ export default function ReturnOrderDetail() {
         icon: 'email',
         copy: true,
         hidden: !order.contact_detail?.email
+      },
+      {
+        type: 'text',
+        name: 'address',
+        label: t`Return Address`,
+        icon: 'address',
+        hidden: !order.address_detail,
+        value_formatter: () => <RenderAddress instance={order.address_detail} />
       },
       {
         type: 'text',
