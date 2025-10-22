@@ -128,18 +128,18 @@ export function getAlerts(
       condition: !server?.worker_running
     },
     {
-      key: 'email',
-      title: t`Email settings`,
-      code: 'INVE-W7',
-      message: t`Email settings not configured.`,
-      condition: !server?.email_configured
-    },
-    {
       key: 'restart',
       title: t`Server Restart`,
       code: 'INVE-W6',
       message: t`The server requires a restart to apply changes.`,
       condition: globalSettings.isSet('SERVER_RESTART_REQUIRED')
+    },
+    {
+      key: 'email',
+      title: t`Email settings`,
+      code: 'INVE-W7',
+      message: t`Email settings not configured.`,
+      condition: !server?.email_configured
     },
     {
       key: 'migrations',
