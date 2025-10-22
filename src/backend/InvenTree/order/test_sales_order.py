@@ -75,6 +75,38 @@ class SalesOrderTest(InvenTreeTestCase):
             quantity=1, order=cls.order, reference='Extra line'
         )
 
+    def test_validate_address(self):
+        """Test validation of the linked Address."""
+        order = SalesOrder.objects.first()
+
+        # Create an address for a different company
+        company = Company.objects.exclude(pk=order.customer.pk).first()
+        self.assertIsNotNone(company)
+        address = Address.objects.create(
+            company=company,
+            primary=False,
+            line1='123 Different St',
+            line2='Elsewhere',
+            postal_code='99999',
+            country='US',
+        )
+
+        order.address = address
+
+        with self.assertRaises(ValidationError) as err:
+            order.clean()
+
+        self.assertIn('Address does not match selected company', str(err.exception))
+
+        # Update the address to match the correct company
+        address.company = order.customer
+        address.save()
+
+        # Now validation should pass
+        order.address = address
+        order.clean()
+        order.save()
+
     def test_so_reference(self):
         """Unit tests for sales order generation."""
         # Test that a good reference is created when we have no existing orders
