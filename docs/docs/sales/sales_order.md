@@ -1,3 +1,4 @@
+
 ---
 title: Sales Orders
 ---
@@ -58,6 +59,10 @@ Sales Order Status supports [custom states](../concepts/custom_states.md).
 ### Sales Order Currency
 
 The currency code can be specified for an individual sales order. If not specified, the default currency specified against the [customer](./customer.md) will be used.
+
+### Sales Order Address
+
+A sales order can have a specific shipping address assigned to it. The shipping address can be selected from the list of addresses assigned to the [customer](./customer.md) which is linked to the sales order.
 
 ## Create a Sales Order
 
@@ -148,7 +153,6 @@ By default, completed orders are not exported. These can be included by appendin
 
 ## Sales Order Shipments
 
-
 Shipments are used to track sales items when they are shipped to customers. Multiple shipments can be created against a [Sales Order](./sales_order.md), allowing line items to be sent to customers in multiple deliveries.
 
 On the main Sales Order detail page, the order shipments are split into two categories, *Pending Shipments* and *Completed Shipments*:
@@ -185,6 +189,10 @@ Each shipment provides the following data fields:
 
 A unique number for the shipment, used to identify each shipment within a sales order. By default, this value starts at `1` for the first shipment (for each order) and automatically increments for each new shipment.
 
+#### Shipment Address
+
+A shipping address can be optionally specified for an individual shipment. If not specified, the [shipping address assigned to the sales order](#sales-order-address) will be used.
+
 #### Tracking Number
 
 An optional field used to store tracking number information for the shipment.
@@ -196,6 +204,7 @@ An optional field used to store an invoice reference for the shipment.
 #### Link
 
 An optional URL field which can be used to provide a link to an external URL.
+
 
 All these fields can be edited by the user:
 
