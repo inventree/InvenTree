@@ -2130,6 +2130,7 @@ class SalesOrderShipmentReportContext(report.mixins.BaseReportContext):
 
     Attributes:
         allocations: QuerySet of SalesOrderAllocation objects
+        address: The shipping address for this shipment (or order)
         order: The associated SalesOrder object
         reference: Shipment reference string
         shipment: The SalesOrderShipment object itself
@@ -2140,6 +2141,7 @@ class SalesOrderShipmentReportContext(report.mixins.BaseReportContext):
     allocations: report.mixins.QuerySet['SalesOrderAllocation']
     order: 'SalesOrder'
     reference: str
+    address: 'Address'
     shipment: 'SalesOrderShipment'
     tracking_number: str
     title: str
@@ -2161,6 +2163,7 @@ class SalesOrderShipment(
 
     Attributes:
         order: SalesOrder reference
+        shipment_address: Shipping address for this shipment (optional)
         shipment_date: Date this shipment was "shipped" (or null)
         checked_by: User reference field indicating who checked this order
         reference: Custom reference text for this shipment (e.g. consignment number?)
@@ -2189,6 +2192,7 @@ class SalesOrderShipment(
         return {
             'allocations': self.allocations,
             'order': self.order,
+            'address': self.address,
             'reference': self.reference,
             'shipment': self,
             'tracking_number': self.tracking_number,
@@ -2203,6 +2207,16 @@ class SalesOrderShipment(
         related_name='shipments',
         verbose_name=_('Order'),
         help_text=_('Sales Order'),
+    )
+
+    shipment_address = models.ForeignKey(
+        Address,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name=_('Address'),
+        help_text=_('Shipping address for this shipment'),
+        related_name='+',
     )
 
     shipment_date = models.DateField(
@@ -2259,6 +2273,14 @@ class SalesOrderShipment(
         help_text=_('Link to external page'),
         max_length=2000,
     )
+
+    @property
+    def address(self) -> Address:
+        """Return the shipping address for this shipment.
+
+        If no specific shipment address is assigned, return the address from the order.
+        """
+        return self.shipment_address or self.order.address
 
     def is_complete(self):
         """Return True if this shipment has already been completed."""
