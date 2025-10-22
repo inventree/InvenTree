@@ -92,10 +92,6 @@ export default function HomePanel(): JSX.Element {
             )
         )}
       </Accordion>
-      <Title order={5}>
-        <Trans>Security recommodations</Trans>
-      </Title>
-      TBD
     </Stack>
   );
 }
