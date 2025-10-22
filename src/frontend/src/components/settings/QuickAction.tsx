@@ -13,7 +13,14 @@ import {
 } from '@mantine/core';
 import { IconHome } from '@tabler/icons-react';
 
-import { ActionButton } from '@lib/index';
+import { ActionButton, ApiEndpoints } from '@lib/index';
+import {
+  projectCodeFields,
+  useCustomStateFields
+} from '../../forms/CommonForms';
+import { useCreateApiFormModal } from '../../hooks/UseForm';
+import { groupFields } from '../../tables/settings/GroupTable';
+import { userFields } from '../../tables/settings/UserTable';
 
 interface ActionItem {
   id: string;
@@ -46,9 +53,8 @@ function ActionCarousel({ items }: { items: ActionItem[] }) {
     <Carousel
       height={80}
       slideSize='40%'
+      withIndicators
       slideGap='md'
-      controlsOffset='xs'
-      controlSize={28}
       emblaOptions={{ align: 'start', dragFree: true }}
     >
       {slides}
@@ -63,24 +69,43 @@ export const QuickAction = ({
   navigate?: any;
   ml?: string;
 }) => {
+  const newUser = useCreateApiFormModal(userFields());
+  const newGroup = useCreateApiFormModal(groupFields());
+  const newProjectCode = useCreateApiFormModal({
+    url: ApiEndpoints.project_code_list,
+    title: t`Add Project Code`,
+    fields: projectCodeFields()
+  });
+  const newCustomState = useCreateApiFormModal({
+    url: ApiEndpoints.custom_state_list,
+    title: t`Add State`,
+    fields: useCustomStateFields()
+  });
+
   const items = [
     {
       id: '1',
       title: 'Add a new group',
       description: 'Create a new group to manage your users',
-      action: () => console.log('Add a new group')
+      action: () => newGroup.open()
     },
     {
       id: '2',
       title: 'Add a new user',
       description: 'Create a new user to manage your groups',
-      action: () => console.log('Add a new user')
+      action: () => newUser.open()
     },
     {
       id: '3',
-      title: 'Add a new role',
-      description: 'Create a new role to manage your permissions',
-      action: () => console.log('Add a new role')
+      title: 'Add a new project code',
+      description: 'Create a new project code to organize your items',
+      action: () => newProjectCode.open()
+    },
+    {
+      id: '4',
+      title: 'Add a new custom state',
+      description: 'Create a new custom state for your workflow',
+      action: () => newCustomState.open()
     }
   ];
   return (
@@ -105,6 +130,10 @@ export const QuickAction = ({
         ) : null}
         <ActionCarousel items={items} />
       </Flex>
+      {newUser.modal}
+      {newGroup.modal}
+      {newProjectCode.modal}
+      {newCustomState.modal}
     </Stack>
   );
 };
