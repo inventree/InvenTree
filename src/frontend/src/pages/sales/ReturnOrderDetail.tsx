@@ -191,6 +191,14 @@ export default function ReturnOrderDetail() {
       },
       {
         type: 'text',
+        name: 'address',
+        label: t`Return Address`,
+        icon: 'address',
+        hidden: !order.address_detail,
+        value_formatter: () => <RenderAddress instance={order.address_detail} />
+      },
+      {
+        type: 'text',
         name: 'contact_detail.name',
         label: t`Contact`,
         icon: 'user',
@@ -204,14 +212,6 @@ export default function ReturnOrderDetail() {
         icon: 'email',
         copy: true,
         hidden: !order.contact_detail?.email
-      },
-      {
-        type: 'text',
-        name: 'address',
-        label: t`Return Address`,
-        icon: 'address',
-        hidden: !order.address_detail,
-        value_formatter: () => <RenderAddress instance={order.address_detail} />
       },
       {
         type: 'text',
