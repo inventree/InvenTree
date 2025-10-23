@@ -346,7 +346,7 @@ export default function SalesOrderShipmentDetail() {
     title: t`Uncheck Shipment`,
     preFormContent: (
       <Alert color='red' icon={<IconCircleX />} title={t`Uncheck Shipment`}>
-        <Text>{t`Marking the shipment as not checked indicates that the shipment requires further verification`}</Text>
+        <Text>{t`Marking the shipment as unchecked indicates that the shipment requires further verification`}</Text>
       </Alert>
     ),
     fetchInitialData: false,
@@ -356,7 +356,7 @@ export default function SalesOrderShipmentDetail() {
         value: null
       }
     },
-    successMessage: t`Shipment marked as not checked`,
+    successMessage: t`Shipment marked as unchecked`,
     onFormSuccess: refreshShipment
   });
 
@@ -447,7 +447,7 @@ export default function SalesOrderShipmentDetail() {
           {
             hidden: !isPending || !isChecked,
             name: t`Uncheck`,
-            tooltip: t`Mark shipment as not checked`,
+            tooltip: t`Mark shipment as unchecked`,
             icon: <IconCircleX color='red' />,
             onClick: uncheckShipment.open
           },
