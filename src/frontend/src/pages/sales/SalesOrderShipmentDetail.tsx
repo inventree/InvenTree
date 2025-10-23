@@ -1,6 +1,11 @@
 import { t } from '@lingui/core/macro';
 import { Grid, Skeleton, Stack } from '@mantine/core';
-import { IconBookmark, IconInfoCircle } from '@tabler/icons-react';
+import {
+  IconBookmark,
+  IconCircleCheck,
+  IconCircleX,
+  IconInfoCircle
+} from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -72,6 +77,8 @@ export default function SalesOrderShipmentDetail() {
   });
 
   const isPending = useMemo(() => !shipment.shipment_date, [shipment]);
+
+  const isChecked = useMemo(() => !!shipment.checked_by, [shipment]);
 
   const detailsPanel = useMemo(() => {
     if (shipmentQuery.isFetching || customerQuery.isFetching) {
@@ -284,13 +291,13 @@ export default function SalesOrderShipmentDetail() {
         key='checked'
         label={t`Checked`}
         color='green'
-        visible={isPending && !!shipment.checked_by}
+        visible={isPending && isChecked}
       />,
       <DetailsBadge
         key='not-checked'
         label={t`Not Checked`}
         color='red'
-        visible={isPending && !shipment.checked_by}
+        visible={isPending && !isChecked}
       />,
       <DetailsBadge
         key='shipped'
@@ -305,12 +312,7 @@ export default function SalesOrderShipmentDetail() {
         visible={!!shipment.delivery_date}
       />
     ];
-  }, [
-    isPending,
-    shipment.checked_by,
-    shipment.deliveryDate,
-    shipmentQuery.isFetching
-  ]);
+  }, [isPending, isChecked, shipment.deliveryDate, shipmentQuery.isFetching]);
 
   const shipmentActions = useMemo(() => {
     const canEdit: boolean = user.hasChangePermission(
@@ -350,6 +352,24 @@ export default function SalesOrderShipmentDetail() {
             onClick: editShipment.open,
             tooltip: t`Edit Shipment`
           }),
+          {
+            hidden: !isPending || isChecked,
+            name: t`Check`,
+            tooltip: t`Mark shipment as checked`,
+            icon: <IconCircleCheck color='green' />,
+            onClick: () => {
+              // TODO
+            }
+          },
+          {
+            hidden: !isPending || !isChecked,
+            name: t`Uncheck`,
+            tooltip: t`Mark shipment as not checked`,
+            icon: <IconCircleX color='red' />,
+            onClick: () => {
+              // TODO
+            }
+          },
           CancelItemAction({
             hidden: !isPending,
             onClick: deleteShipment.open,
@@ -358,7 +378,7 @@ export default function SalesOrderShipmentDetail() {
         ]}
       />
     ];
-  }, [isPending, user, shipment]);
+  }, [isChecked, isPending, user, shipment]);
 
   return (
     <>
