@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { Accordion, Grid, Skeleton, Stack } from '@mantine/core';
+import { Accordion, Grid, Skeleton, Stack, Text } from '@mantine/core';
 import { IconInfoCircle, IconList } from '@tabler/icons-react';
 import { type ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
@@ -194,8 +194,12 @@ export default function ReturnOrderDetail() {
         name: 'address',
         label: t`Return Address`,
         icon: 'address',
-        hidden: !order.address_detail,
-        value_formatter: () => <RenderAddress instance={order.address_detail} />
+        value_formatter: () =>
+          order.address_detail ? (
+            <RenderAddress instance={order.address_detail} />
+          ) : (
+            <Text size='sm' c='red'>{t`Not specified`}</Text>
+          )
       },
       {
         type: 'text',

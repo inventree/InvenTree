@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { Accordion, Grid, Skeleton, Stack } from '@mantine/core';
+import { Accordion, Grid, Skeleton, Stack, Text } from '@mantine/core';
 import {
   IconBookmark,
   IconInfoCircle,
@@ -187,8 +187,12 @@ export default function SalesOrderDetail() {
         name: 'address',
         label: t`Shipping Address`,
         icon: 'address',
-        hidden: !order.address_detail,
-        value_formatter: () => <RenderAddress instance={order.address_detail} />
+        value_formatter: () =>
+          order.address_detail ? (
+            <RenderAddress instance={order.address_detail} />
+          ) : (
+            <Text size='sm' c='red'>{t`Not specified`}</Text>
+          )
       },
       {
         type: 'text',
@@ -391,7 +395,12 @@ export default function SalesOrderDetail() {
         name: 'shipments',
         label: t`Shipments`,
         icon: <IconTruckDelivery />,
-        content: <SalesOrderShipmentTable orderId={order.pk} />
+        content: (
+          <SalesOrderShipmentTable
+            orderId={order.pk}
+            customerId={order.customer}
+          />
+        )
       },
       {
         name: 'allocations',
