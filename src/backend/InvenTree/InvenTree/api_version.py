@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 415
+INVENTREE_API_VERSION = 416
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v416 -> 2025-10-22 : https://github.com/inventree/InvenTree/pull/10651
+    - Add missing nullable to make price_breaks (from v412) optional
 
 v415 -> 2025-10-22 : https://github.com/inventree/InvenTree/pull/10650
     - Adds "shipment_address" fields to the SalesOrderShipment API endpoints
