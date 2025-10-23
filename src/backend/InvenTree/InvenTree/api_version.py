@@ -1,7 +1,7 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 414
+INVENTREE_API_VERSION = 415
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
@@ -9,7 +9,7 @@ INVENTREE_API_TEXT = """
 v415 -> 2025-10-22 : https://github.com/inventree/InvenTree/pull/10650
     - Adds "shipment_address" fields to the SalesOrderShipment API endpoints
 
-v414 -> 2025-06-20 : https://github.com/inventree/InvenTree/pull/10629
+v414 -> 2025-10-20 : https://github.com/inventree/InvenTree/pull/10629
     - Add enums for all ordering fields in schema - no functional changes
 
 v413 -> 2025-10-20 : https://github.com/inventree/InvenTree/pull/10624
@@ -18,10 +18,10 @@ v413 -> 2025-10-20 : https://github.com/inventree/InvenTree/pull/10624
 v412 -> 2025-10-19 : https://github.com/inventree/InvenTree/pull/10549
     - added a new query parameter for the PartsList api: price_breaks (default: false)
 
-v411 -> 2025-06-19 : https://github.com/inventree/InvenTree/pull/10630
-    - Editorialy changes to machine api - no functional changes
+v411 -> 2025-10-19 : https://github.com/inventree/InvenTree/pull/10630
+    - Editorial changes to machine api - no functional changes
 
-v410 -> 2025-06-12 : https://github.com/inventree/InvenTree/pull/9761
+v410 -> 2025-10-12 : https://github.com/inventree/InvenTree/pull/9761
     - Add supplier search and import API endpoints
     - Add part parameter bulk create API endpoint
 
