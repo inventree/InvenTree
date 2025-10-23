@@ -2299,6 +2299,10 @@ class SalesOrderShipment(
         """
         return self.shipment_address or self.order.address
 
+    def is_checked(self):
+        """Return True if this shipment has been checked."""
+        return self.checked_by is not None
+
     def is_complete(self):
         """Return True if this shipment has already been completed."""
         return self.shipment_date is not None
@@ -2307,8 +2311,12 @@ class SalesOrderShipment(
         """Return True if this shipment has already been delivered."""
         return self.delivery_date is not None
 
-    def check_can_complete(self, raise_error=True):
-        """Check if this shipment is able to be completed."""
+    def check_can_complete(self, raise_error: bool = True) -> bool:
+        """Check if this shipment is able to be completed.
+
+        Arguments:
+            raise_error: If True, raise ValidationError if cannot complete
+        """
         try:
             if self.shipment_date:
                 # Shipment has already been sent!
@@ -2316,6 +2324,14 @@ class SalesOrderShipment(
 
             if self.allocations.count() == 0:
                 raise ValidationError(_('Shipment has no allocated stock items'))
+
+            if (
+                get_global_setting('SALESORDER_SHIPMENT_REQUIRES_CHECK')
+                and not self.is_checked()
+            ):
+                raise ValidationError(
+                    _('Shipment must be checked before it can be completed')
+                )
 
         except ValidationError as e:
             if raise_error:
