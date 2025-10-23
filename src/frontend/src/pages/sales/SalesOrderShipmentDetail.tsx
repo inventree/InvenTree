@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { Grid, Skeleton, Stack } from '@mantine/core';
+import { Alert, Grid, Skeleton, Stack, Text } from '@mantine/core';
 import {
   IconBookmark,
   IconCircleCheck,
@@ -53,6 +53,8 @@ export default function SalesOrderShipmentDetail() {
   const { id } = useParams();
   const user = useUserState();
   const navigate = useNavigate();
+
+  const userId = useMemo(() => user.userId(), [user]);
 
   const {
     instance: shipment,
@@ -275,6 +277,46 @@ export default function SalesOrderShipmentDetail() {
     onFormSuccess: refreshShipment
   });
 
+  const checkShipment = useEditApiFormModal({
+    url: ApiEndpoints.sales_order_shipment_list,
+    pk: shipment.pk,
+    title: t`Check Shipment`,
+    preFormContent: (
+      <Alert color='green' icon={<IconCircleCheck />} title={t`Check Shipment`}>
+        <Text>{t`Marking the shipment as checked indicates that you have verified that all items included in this shipment are correct`}</Text>
+      </Alert>
+    ),
+    fetchInitialData: false,
+    fields: {
+      checked_by: {
+        hidden: true,
+        value: userId
+      }
+    },
+    successMessage: t`Shipment marked as checked`,
+    onFormSuccess: refreshShipment
+  });
+
+  const uncheckShipment = useEditApiFormModal({
+    url: ApiEndpoints.sales_order_shipment_list,
+    pk: shipment.pk,
+    title: t`Uncheck Shipment`,
+    preFormContent: (
+      <Alert color='red' icon={<IconCircleX />} title={t`Uncheck Shipment`}>
+        <Text>{t`Marking the shipment as not checked indicates that the shipment requires further verification`}</Text>
+      </Alert>
+    ),
+    fetchInitialData: false,
+    fields: {
+      checked_by: {
+        hidden: true,
+        value: null
+      }
+    },
+    successMessage: t`Shipment marked as not checked`,
+    onFormSuccess: refreshShipment
+  });
+
   const shipmentBadges = useMemo(() => {
     if (shipmentQuery.isFetching) {
       return [];
@@ -357,18 +399,14 @@ export default function SalesOrderShipmentDetail() {
             name: t`Check`,
             tooltip: t`Mark shipment as checked`,
             icon: <IconCircleCheck color='green' />,
-            onClick: () => {
-              // TODO
-            }
+            onClick: checkShipment.open
           },
           {
             hidden: !isPending || !isChecked,
             name: t`Uncheck`,
             tooltip: t`Mark shipment as not checked`,
             icon: <IconCircleX color='red' />,
-            onClick: () => {
-              // TODO
-            }
+            onClick: uncheckShipment.open
           },
           CancelItemAction({
             hidden: !isPending,
@@ -385,6 +423,8 @@ export default function SalesOrderShipmentDetail() {
       {completeShipment.modal}
       {editShipment.modal}
       {deleteShipment.modal}
+      {checkShipment.modal}
+      {uncheckShipment.modal}
       <InstanceDetail
         query={shipmentQuery}
         requiredRole={UserRoles.sales_order}
