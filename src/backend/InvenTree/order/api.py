@@ -1335,6 +1335,14 @@ class SalesOrderShipmentFilter(FilterSet):
         model = models.SalesOrderShipment
         fields = ['order']
 
+    checked = rest_filters.BooleanFilter(label='checked', method='filter_checked')
+
+    def filter_checked(self, queryset, name, value):
+        """Filter SalesOrderShipment list by 'checked' status (boolean)."""
+        if str2bool(value):
+            return queryset.exclude(checked_by=None)
+        return queryset.filter(checked_by=None)
+
     shipped = rest_filters.BooleanFilter(label='shipped', method='filter_shipped')
 
     def filter_shipped(self, queryset, name, value):
