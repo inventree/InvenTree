@@ -348,6 +348,58 @@ class SalesOrderTest(InvenTreeTestCase):
         self.assertIsNone(self.shipment.delivery_date)
         self.assertFalse(self.shipment.is_delivered())
 
+    def test_shipment_address(self):
+        """Unit tests for SalesOrderShipment address field."""
+        shipment = SalesOrderShipment.objects.first()
+        self.assertIsNotNone(shipment)
+
+        # Set an address for the order
+        address_1 = Address.objects.create(
+            company=shipment.order.customer, title='Order Address', line1='123 Test St'
+        )
+
+        # Save the address against the order
+        shipment.order.address = address_1
+        shipment.order.clean()
+        shipment.order.save()
+
+        # By default, no address set
+        self.assertIsNone(shipment.shipment_address)
+
+        # But, the 'address' accessor defaults to the order address
+        self.assertIsNotNone(shipment.address)
+        self.assertEqual(shipment.address, shipment.order.address)
+
+        # Set a custom address for the shipment
+        address_2 = Address.objects.create(
+            company=shipment.order.customer,
+            title='Shipment Address',
+            line1='456 Another St',
+        )
+
+        shipment.shipment_address = address_2
+        shipment.clean()
+        shipment.save()
+
+        self.assertEqual(shipment.address, shipment.shipment_address)
+        self.assertNotEqual(shipment.address, shipment.order.address)
+
+        # Check that the shipment_address validation works
+        other_company = Company.objects.exclude(pk=shipment.order.customer.pk).first()
+        self.assertIsNotNone(other_company)
+
+        address_2.company = other_company
+        address_2.save()
+        shipment.refresh_from_db()
+
+        # This should error out (address company does not match customer)
+        with self.assertRaises(ValidationError) as err:
+            shipment.clean()
+
+        self.assertIn(
+            'Shipment address must match the customer', err.exception.messages
+        )
+
     def test_overdue_notification(self):
         """Test overdue sales order notification."""
         self.ensurePluginsLoaded()

@@ -1226,9 +1226,9 @@ class SalesOrderShipmentSerializer(
         fields = [
             'pk',
             'order',
-            'order_detail',
             'allocated_items',
             'shipment_date',
+            'shipment_address',
             'delivery_date',
             'checked_by',
             'reference',
@@ -1237,6 +1237,10 @@ class SalesOrderShipmentSerializer(
             'barcode_hash',
             'link',
             'notes',
+            # Extra detail fields
+            'checked_by_detail',
+            'order_detail',
+            'shipment_address_detail',
         ]
 
     @staticmethod
@@ -1253,9 +1257,23 @@ class SalesOrderShipmentSerializer(
         read_only=True, allow_null=True, label=_('Allocated Items')
     )
 
+    checked_by_detail = enable_filter(
+        UserSerializer(
+            source='checked_by', many=False, read_only=True, allow_null=True
+        ),
+        True,
+    )
+
     order_detail = enable_filter(
         SalesOrderSerializer(
             source='order', read_only=True, allow_null=True, many=False
+        ),
+        True,
+    )
+
+    shipment_address_detail = enable_filter(
+        AddressBriefSerializer(
+            source='shipment_address', many=False, read_only=True, allow_null=True
         ),
         True,
     )
