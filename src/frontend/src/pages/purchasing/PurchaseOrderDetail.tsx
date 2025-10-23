@@ -293,7 +293,7 @@ export default function PurchaseOrderDetail() {
         <Grid grow>
           <DetailsImage
             appRole={UserRoles.purchase_order}
-            src={order.supplier_detail?.image_url}
+            src={order.supplier_detail?.image}
             pk={order.supplier}
           />
           <Grid.Col span={{ base: 12, sm: 8 }}>
@@ -529,7 +529,7 @@ export default function PurchaseOrderDetail() {
           <PageDetail
             title={`${t`Purchase Order`}: ${order.reference}`}
             subtitle={subtitle}
-            imageUrl={order.supplier_detail?.image_url}
+            imageUrl={order.supplier_detail?.image}
             breadcrumbs={[{ name: t`Purchasing`, url: '/purchasing/' }]}
             lastCrumb={[
               {

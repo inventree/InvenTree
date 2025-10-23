@@ -1,5 +1,6 @@
 """JSON serializers for Company app."""
 
+from django.contrib.contenttypes.models import ContentType
 from django.db.models import Prefetch
 from django.utils.translation import gettext_lazy as _
 
@@ -52,8 +53,7 @@ class CompanyBriefSerializer(
             'name',
             'description',
             'image',
-            'image_url',
-            'thumbnail_url',
+            'thumbnail',
             'currency',
             'tax_id',
         ]
@@ -105,9 +105,6 @@ class AddressBriefSerializer(InvenTreeModelSerializer):
         ]
 
 
-from django.contrib.contenttypes.models import ContentType
-
-
 @register_importer()
 class CompanySerializer(
     common_serializers.InvenTreeImageSerializerMixin,
@@ -138,8 +135,8 @@ class CompanySerializer(
             'contact',
             'link',
             'image',
-            'image_url',
-            'thumbnail_url',
+            # 'image_url',
+            'thumbnail',
             'active',
             'is_customer',
             'is_manufacturer',
@@ -484,8 +481,8 @@ class SupplierPartSerializer(
             on_order=company.filters.annotate_on_order_quantity()
         )
 
-        queryset = prefetch_related_images(queryset, reference='part')
-        queryset = prefetch_related_images(queryset, reference='supplier')
+        queryset = prefetch_related_images(queryset, reference='part__')
+        queryset = prefetch_related_images(queryset, reference='supplier__')
 
         return queryset
 

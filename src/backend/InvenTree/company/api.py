@@ -186,8 +186,8 @@ class ManufacturerPartList(
     def get_queryset(self, *args, **kwargs):
         """Return annotated queryset for the ManufacturerPart list endpoint."""
         queryset = super().get_queryset(*args, **kwargs)
-        queryset = prefetch_related_images(queryset, reference='part')
-        queryset = prefetch_related_images(queryset, reference='manufacturer')
+        queryset = prefetch_related_images(queryset, reference='part__')
+        queryset = prefetch_related_images(queryset, reference='manufacturer__')
 
         return queryset
 
@@ -225,8 +225,8 @@ class ManufacturerPartDetail(RetrieveUpdateDestroyAPI):
         queryset = super().get_queryset(*args, **kwargs)
 
         queryset = queryset.prefetch_related('part', 'manufacturer')
-        queryset = prefetch_related_images(queryset, reference='part')
-        queryset = prefetch_related_images(queryset, reference='manufacturer')
+        queryset = prefetch_related_images(queryset, reference='part__')
+        queryset = prefetch_related_images(queryset, reference='manufacturer__')
 
         return queryset
 

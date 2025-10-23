@@ -1325,7 +1325,7 @@ class PartParameterAPIMixin:
         """Override get_queryset method to prefetch related fields."""
         queryset = super().get_queryset(*args, **kwargs)
         queryset = queryset.prefetch_related('part', 'template', 'updated_by')
-        queryset = prefetch_related_images(queryset, reference='part')
+        queryset = prefetch_related_images(queryset, reference='part__')
 
         return queryset
 

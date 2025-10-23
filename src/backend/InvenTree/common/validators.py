@@ -18,11 +18,18 @@ def get_model_types(mixin_class):
 
 
 def get_model_options(mixin_class):
-    """Return a list of options for models which support attachments."""
+    """Return a list of options for models."""
     return [
         (model.__name__.lower(), model._meta.verbose_name)
         for model in get_model_types(mixin_class)
     ]
+
+
+def attachment_model_options():
+    """Return a list of valid attachment model choices."""
+    import InvenTree.models
+
+    return get_model_options(InvenTree.models.InvenTreeAttachmentMixin)
 
 
 def get_model_class_from_label(label: str, mixin_class):

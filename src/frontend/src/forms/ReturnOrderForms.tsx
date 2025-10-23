@@ -180,7 +180,7 @@ function ReturnOrderLineItemFormRow({
           <Flex gap='sm' align='center'>
             <Thumbnail
               size={40}
-              src={record.part_detail?.thumbnail_url}
+              src={record.part_detail?.thumbnail}
               align='center'
             />
             <div>{record.part_detail.name}</div>

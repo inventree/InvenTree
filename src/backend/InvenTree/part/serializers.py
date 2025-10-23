@@ -5,7 +5,7 @@ from decimal import Decimal
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import IntegrityError, models, transaction
-from django.db.models import ExpressionWrapper, F, Prefetch, Q
+from django.db.models import ExpressionWrapper, F, Q
 from django.db.models.functions import Coalesce, Greatest
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
@@ -19,7 +19,6 @@ from sql_util.utils import SubqueryCount
 from taggit.serializers import TagListSerializerField
 
 import common.currency
-import common.models as common_models
 import common.serializers as common_serializers
 import common.settings
 import company.models
@@ -333,9 +332,8 @@ class PartBriefSerializer(
             'revision',
             'full_name',
             'description',
-            'images',
-            'image_url',
-            'thumbnail_url',
+            'image',
+            'thumbnail',
             'active',
             'locked',
             'assembly',
@@ -674,9 +672,8 @@ class PartSerializer(
             'default_supplier',
             'description',
             'full_name',
-            'images',
-            'image_url',
-            'thumbnail_url',
+            'image',
+            'thumbnail',
             'IPN',
             'is_template',
             'keywords',
@@ -876,11 +873,7 @@ class PartSerializer(
             )
         )
 
-        # Prefetch ALL images
-        image_qs = common_models.InvenTreeImage.objects.all()
-        queryset = queryset.prefetch_related(
-            Prefetch('images', queryset=image_qs, to_attr='all_images')
-        )
+        queryset = prefetch_related_images(queryset)
 
         return queryset
 
@@ -1770,8 +1763,8 @@ class BomItemSerializer(
         # Annotate available stock and "can_build" quantities
         queryset = part_filters.annotate_bom_item_can_build(queryset)
 
-        queryset = prefetch_related_images(queryset, reference='part')
-        queryset = prefetch_related_images(queryset, reference='sub_part')
+        queryset = prefetch_related_images(queryset, reference='part__')
+        queryset = prefetch_related_images(queryset, reference='sub_part__')
 
         return queryset
 

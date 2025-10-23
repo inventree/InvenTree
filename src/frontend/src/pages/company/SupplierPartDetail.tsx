@@ -219,8 +219,8 @@ export default function SupplierPartDetail() {
           <MultipleDetailsImage
             appRole={UserRoles.part}
             apiPath={ApiEndpoints.part_list}
-            images={supplierPart?.part_detail?.images}
             object_id={supplierPart?.part_detail?.pk}
+            content_model={ModelType.part}
           />
           <Grid.Col span={8}>
             <DetailsTable title={t`Part Details`} fields={tl} item={data} />

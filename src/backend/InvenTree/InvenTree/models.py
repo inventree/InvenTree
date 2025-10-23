@@ -5,6 +5,7 @@ from string import Formatter
 from typing import Optional
 
 from django.contrib.auth import get_user_model
+from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -1061,9 +1062,6 @@ class InvenTreeNotesMixin(models.Model):
     notes = InvenTree.fields.InvenTreeNotesField(
         verbose_name=_('Notes'), help_text=_('Markdown notes (optional)')
     )
-
-
-from django.contrib.contenttypes.fields import GenericRelation
 
 
 class InvenTreeImageMixin(models.Model):

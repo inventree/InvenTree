@@ -2062,9 +2062,7 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
     class ModelChoices(RenderChoices):
         """Model choices for attachments."""
 
-        choice_fnc = lambda: common.validators.get_model_options(
-            InvenTree.models.InvenTreeAttachmentMixin
-        )
+        choice_fnc = common.validators.attachment_model_options
 
     def save(self, *args, **kwargs):
         """Custom 'save' method for the Attachment model.

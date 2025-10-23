@@ -375,7 +375,7 @@ class PurchaseOrderMixin:
         )
 
         queryset = serializers.PurchaseOrderSerializer.annotate_queryset(queryset)
-        queryset = prefetch_related_images(queryset, reference='supplier')
+        queryset = prefetch_related_images(queryset, reference='supplier__')
 
         return queryset
 
@@ -841,7 +841,7 @@ class SalesOrderMixin:
         )
 
         queryset = serializers.SalesOrderSerializer.annotate_queryset(queryset)
-        queryset = prefetch_related_images(queryset, reference='customer')
+        queryset = prefetch_related_images(queryset, reference='customer__')
 
         return queryset
 
@@ -1264,7 +1264,7 @@ class SalesOrderAllocationMixin:
             'shipment__order',
             'shipment__checked_by',
         ).select_related('line__part__pricing_data', 'item__part__pricing_data')
-        queryset = prefetch_related_images(queryset, reference='item__part')
+        queryset = prefetch_related_images(queryset, reference='item__part__')
 
         return queryset
 
@@ -1495,7 +1495,7 @@ class ReturnOrderMixin:
         )
 
         queryset = serializers.ReturnOrderSerializer.annotate_queryset(queryset)
-        queryset = prefetch_related_images(queryset, reference='customer')
+        queryset = prefetch_related_images(queryset, reference='customer__')
 
         return queryset
 

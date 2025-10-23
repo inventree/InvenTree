@@ -1725,9 +1725,9 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
         queryset = prefetch_related_images(
             queryset, reference='allocations__stock_item__part'
         )
-        queryset = prefetch_related_images(queryset, reference='build__part')
-        queryset = prefetch_related_images(queryset, reference='bom_item__part')
-        queryset = prefetch_related_images(queryset, reference='bom_item__sub_part')
+        queryset = prefetch_related_images(queryset, reference='build__part__')
+        queryset = prefetch_related_images(queryset, reference='bom_item__part__')
+        queryset = prefetch_related_images(queryset, reference='bom_item__sub_part__')
 
         return queryset
 

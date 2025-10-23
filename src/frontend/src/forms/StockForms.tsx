@@ -407,7 +407,7 @@ function StockItemDefaultMove({
           {value} x {stockItem.part_detail.name}
         </Text>
         <Thumbnail
-          src={stockItem.part_detail?.thumbnail_url}
+          src={stockItem.part_detail?.thumbnail}
           size={80}
           align='center'
         />
@@ -565,7 +565,7 @@ function StockOperationsRow({
             <Flex gap='sm' align='center'>
               <Thumbnail
                 size={40}
-                src={record.part_detail?.thumbnail_url}
+                src={record.part_detail?.thumbnail}
                 align='center'
               />
               <div>{record.part_detail?.name}</div>

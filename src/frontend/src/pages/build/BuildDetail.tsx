@@ -395,8 +395,8 @@ export default function BuildDetail() {
           <MultipleDetailsImage
             appRole={UserRoles.part}
             apiPath={ApiEndpoints.part_list}
-            images={build?.part_detail?.images}
             object_id={build.part}
+            content_model={ModelType.part}
           />
           <Grid.Col span={{ base: 12, sm: 6 }}>
             <DetailsTable fields={tl} item={data} />
@@ -754,9 +754,7 @@ export default function BuildDetail() {
             badges={buildBadges}
             editAction={editBuild.open}
             editEnabled={user.hasChangePermission(ModelType.part)}
-            imageUrl={
-              build.part_detail?.image_url ?? build.part_detail?.thumbnail_url
-            }
+            imageUrl={build.part_detail?.image ?? build.part_detail?.thumbnail}
             breadcrumbs={[{ name: t`Manufacturing`, url: '/manufacturing' }]}
             lastCrumb={[
               {

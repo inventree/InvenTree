@@ -406,7 +406,6 @@ export default function PartDetail() {
     }
 
     const data = { ...part };
-    const hasImage: boolean = part.images.length !== 0;
 
     const fetching =
       partRequirementsQuery.isFetching || instanceQuery.isFetching;
@@ -740,18 +739,18 @@ export default function PartDetail() {
         <Grid grow>
           <Grid.Col pos='relative' span={{ base: 12, sm: 3 }}>
             <MultipleDetailsImage
-              images={part.images}
               appRole={UserRoles.part}
-              addImageActions={{
-                selectExisting: true,
-                uploadNewFile: true
-              }}
-              editImageActions={{
-                deleteFile: hasImage,
-                setAsPrimary: hasImage
-              }}
+              // addImageActions={{
+              //   selectExisting: true,
+              //   uploadNewImage: true
+              // }}
+              // editImageActions={{
+              //   deleteImage: hasImage,
+              //   setAsPrimary: hasImage
+              // }}
               apiPath={apiUrl(ApiEndpoints.part_list, part.pk)}
               object_id={part.pk}
+              content_model={ModelType.part}
               refresh={refreshInstance}
             />
           </Grid.Col>
@@ -1116,7 +1115,7 @@ export default function PartDetail() {
       <Alert color='red' title={t`Deleting this part cannot be reversed`}>
         <Stack gap='xs'>
           <Thumbnail
-            src={part?.thumbnail_url ?? part?.image_url}
+            src={part?.thumbnail ?? part?.image}
             text={part.full_name}
           />
         </Stack>
@@ -1249,7 +1248,7 @@ export default function PartDetail() {
               ) : undefined
             }
             subtitle={part.description}
-            imageUrl={part?.image_url}
+            imageUrl={part?.image}
             badges={badges}
             breadcrumbs={
               user.hasViewRole(UserRoles.part_category)

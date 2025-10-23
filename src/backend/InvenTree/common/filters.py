@@ -6,7 +6,7 @@ from django.db.models.query import QuerySet
 from common.models import InvenTreeImage
 
 
-def prefetch_related_images(queryset: QuerySet, reference: str) -> QuerySet:
+def prefetch_related_images(queryset: QuerySet, reference: str = '') -> QuerySet:
     """Prefetch all InvenTreeImage instances related via the provided reference.
 
     Args:
@@ -16,7 +16,7 @@ def prefetch_related_images(queryset: QuerySet, reference: str) -> QuerySet:
     """
     return queryset.prefetch_related(
         Prefetch(
-            f'{reference}__images',
+            f'{reference}images',
             queryset=InvenTreeImage.objects.all(),
             to_attr='all_images',
         )

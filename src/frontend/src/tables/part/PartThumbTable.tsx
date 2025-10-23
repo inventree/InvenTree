@@ -102,17 +102,17 @@ function PartThumbComponent({
  */
 async function setNewImage(
   onSuccess: (image: string) => void,
-  image_url: string | null,
+  image: string | null,
   object_id: string
 ) {
   // No need to do anything if no image is selected
-  if (image_url === null) {
+  if (image === null) {
     return;
   }
 
   await api
     .post(apiUrl(ApiEndpoints.upload_image_list), {
-      existing_image: image_url,
+      existing_image: image,
       content_type: ModelType.part,
       object_id: object_id
     })

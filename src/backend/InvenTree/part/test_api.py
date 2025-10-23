@@ -74,7 +74,6 @@ class PartImageTestMixin:
                 {'object_id': p.pk, 'content_type': 'part', 'image': img_file},
                 expected_code=200,
             )
-            print(response.data)
             image_name = response.data['image']
             self.assertTrue(image_name.startswith('/media/images'))
         return image_name
@@ -1868,7 +1867,6 @@ class PartDetailTests(PartAPITestBase):
                 {'object_id': p.pk, 'content_type': 'part', 'image': img_file},
                 expected_code=200,
             )
-            print(response.data)
             image_name = response.data['image']
 
         # Create a new part without an image

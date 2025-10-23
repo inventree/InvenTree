@@ -3,9 +3,9 @@
 import io
 from pathlib import Path
 
-from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
 from django.db.models import Count, OuterRef, Subquery
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -663,16 +663,16 @@ class InvenTreeImageSerializer(
             raise ValidationError(f"Invalid content type '{ct_value}'")
 
     def validate_existing_image(self, img):
-        """Check the file really exists in your parts-image directory."""
+        """Check the file really exists in storage backend."""
         if not img:
             return img
 
-        img_name = Path(img).name
-        image_dir = Path(common_helper.get_part_image_directory())
-        img_path = image_dir / img_name
+        image_name = Path(img).name
+        prefix = common_helper.UPLOADED_IMAGE_DIR
+        path = f'{prefix}/{image_name}'
 
-        if not img_path.exists() or not img_path.is_file():
-            raise ValidationError(_('Image file does not exist'))
+        if not default_storage.exists(path):
+            raise ValidationError(_('Image file does not exist in storage backend'))
 
         return img
 
@@ -740,34 +740,12 @@ class InvenTreeImageSerializer(
 class InvenTreeImageSerializerMixin(metaclass=serializers.SerializerMetaclass):
     """Mixin to add image fields to a serializer."""
 
-    image_url = serializers.SerializerMethodField(
+    image = serializers.SerializerMethodField(
         help_text=_('The URL of the primary image for this instance (if any)')
     )
-    thumbnail_url = serializers.SerializerMethodField(
+    thumbnail = serializers.SerializerMethodField(
         help_text=_('The URL of the thumbnail for the primary image (if any)')
     )
-
-    images = InvenTreeImageSerializer(
-        many=True,
-        read_only=True,
-        source='all_images',
-        help_text=_('All images for the instance'),
-    )
-
-    image = serializers.SerializerMethodField(
-        help_text=_('The primary image for this instance (if any)')
-    )
-
-    def get_image(self, part):
-        """Return the primary image associated with this instance."""
-        images = getattr(part, 'all_images', None)
-
-        if images and len(images) > 0:
-            for img in images:
-                if img.primary:
-                    return InvenTreeImageSerializer(img, context=self.context).data
-
-        return None
 
     def _get_primary(self, instance):
         """Return the primary image for the instance, if it exists."""
@@ -776,21 +754,36 @@ class InvenTreeImageSerializerMixin(metaclass=serializers.SerializerMetaclass):
             return None
         return next((img for img in images if img.primary), images[0])
 
-    def get_image_url(self, instance):
-        """Return the URL of the primary image for this instance."""
+    def get_image(self, instance):
+        """Return the URL of the primary image."""
         primary = self._get_primary(instance)
-        if not primary or not primary.image:
+        if not primary or not getattr(primary, 'image', None):
             return getBlankImage()
 
-        return str(Path(settings.MEDIA_URL) / str(primary.image))
+        image_file = primary.image
+        try:
+            url = image_file.url
+        except ValueError:
+            storage = getattr(image_file, 'storage', default_storage)
+            url = storage.url(image_file.name)
 
-    def get_thumbnail_url(self, instance):
-        """Return the URL of the thumbnail for the primary image."""
+        return url
+
+    def get_thumbnail(self, instance):
+        """Return the URL of the thumbnail."""
         primary = self._get_primary(instance)
-        if not primary or not getattr(primary.image, 'thumbnail', None):
+        thumb_field = getattr(primary, 'image', None)
+        thumb_file = getattr(thumb_field, 'thumbnail', None)
+        if not primary or not thumb_file:
             return getBlankImage()
 
-        return str(Path(settings.MEDIA_URL) / str(primary.image.thumbnail))
+        try:
+            url = thumb_file.url
+        except (ValueError, AttributeError):
+            storage = getattr(thumb_file, 'storage', default_storage)
+            url = storage.url(thumb_file.name)
+
+        return url
 
 
 class InvenTreeImageThumbSerializer(serializers.Serializer):

@@ -593,7 +593,7 @@ class StockItemSerializer(
         # Annotate with the total number of "child items" (split stock items)
         queryset = queryset.annotate(child_items=SubqueryCount('children'))
 
-        queryset = prefetch_related_images(queryset, reference='part')
+        queryset = prefetch_related_images(queryset, reference='part__')
 
         return queryset
 

@@ -134,7 +134,7 @@ export default function ManufacturerPartDetail() {
         <Grid grow>
           <DetailsImage
             appRole={UserRoles.part}
-            src={manufacturerPart?.part_detail?.image_url}
+            src={manufacturerPart?.part_detail?.image}
             pk={manufacturerPart?.part_detail?.pk}
           />
           <Grid.Col span={{ base: 12, sm: 8 }}>
@@ -286,7 +286,7 @@ export default function ManufacturerPartDetail() {
               }
             ]}
             actions={manufacturerPartActions}
-            imageUrl={manufacturerPart?.image_url}
+            imageUrl={manufacturerPart?.image}
             editAction={editManufacturerPart.open}
             editEnabled={user.hasChangePermission(ModelType.manufacturerpart)}
           />
