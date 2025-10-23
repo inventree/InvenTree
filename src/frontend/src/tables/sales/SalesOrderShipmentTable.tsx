@@ -102,6 +102,13 @@ export default function SalesOrderShipmentTable({
         title: t`Items`
       },
       {
+        accessor: 'checked',
+        title: t`Checked`,
+        switchable: true,
+        sortable: true,
+        render: (record: any) => <YesNoButton value={!!record.checked_by} />
+      },
+      {
         accessor: 'shipped',
         title: t`Shipped`,
         switchable: true,
