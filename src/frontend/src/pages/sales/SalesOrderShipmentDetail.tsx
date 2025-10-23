@@ -281,6 +281,18 @@ export default function SalesOrderShipmentDetail() {
         visible={isPending}
       />,
       <DetailsBadge
+        key='checked'
+        label={t`Checked`}
+        color='green'
+        visible={isPending && !!shipment.checked_by}
+      />,
+      <DetailsBadge
+        key='not-checked'
+        label={t`Not Checked`}
+        color='red'
+        visible={isPending && !shipment.checked_by}
+      />,
+      <DetailsBadge
         key='shipped'
         label={t`Shipped`}
         color='green'
@@ -293,7 +305,12 @@ export default function SalesOrderShipmentDetail() {
         visible={!!shipment.delivery_date}
       />
     ];
-  }, [isPending, shipment.deliveryDate, shipmentQuery.isFetching]);
+  }, [
+    isPending,
+    shipment.checked_by,
+    shipment.deliveryDate,
+    shipmentQuery.isFetching
+  ]);
 
   const shipmentActions = useMemo(() => {
     const canEdit: boolean = user.hasChangePermission(
