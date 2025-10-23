@@ -8,6 +8,7 @@ import django_filters.rest_framework.filters as rest_filters
 from django_filters.rest_framework.filterset import FilterSet
 
 import part.models
+from common.filters import prefetch_related_images
 from data_exporter.mixins import DataExportViewMixin
 from InvenTree.api import ListCreateDestroyAPIView, MetadataView
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
@@ -189,6 +190,15 @@ class ManufacturerPartList(
     queryset = ManufacturerPart.objects.all().prefetch_related(
         'part', 'manufacturer', 'supplier_parts', 'tags'
     )
+
+    def get_queryset(self, *args, **kwargs):
+        """Return annotated queryset for the ManufacturerPart list endpoint."""
+        queryset = super().get_queryset(*args, **kwargs)
+        queryset = prefetch_related_images(queryset, reference='part__')
+        queryset = prefetch_related_images(queryset, reference='manufacturer__')
+
+        return queryset
+
     serializer_class = ManufacturerPartSerializer
     filterset_class = ManufacturerPartFilter
     output_options = ManufacturerOutputOptions
@@ -215,6 +225,16 @@ class ManufacturerPartDetail(RetrieveUpdateDestroyAPI):
 
     queryset = ManufacturerPart.objects.all()
     serializer_class = ManufacturerPartSerializer
+
+    def get_queryset(self, *args, **kwargs):
+        """Annotate the queryset for this endpoint."""
+        queryset = super().get_queryset(*args, **kwargs)
+
+        queryset = queryset.prefetch_related('part', 'manufacturer')
+        queryset = prefetch_related_images(queryset, reference='part__')
+        queryset = prefetch_related_images(queryset, reference='manufacturer__')
+
+        return queryset
 
 
 class ManufacturerPartParameterFilter(FilterSet):

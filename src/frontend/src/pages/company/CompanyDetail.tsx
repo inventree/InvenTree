@@ -17,7 +17,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
-import { apiUrl } from '@lib/functions/Api';
 import AdminButton from '../../components/buttons/AdminButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
 import {
@@ -149,20 +148,20 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
         icon: 'customers'
       }
     ];
-
     return (
       <ItemDetailsGrid>
         <Grid grow>
           <DetailsImage
             appRole={UserRoles.purchase_order}
-            apiPath={apiUrl(ApiEndpoints.company_list, company.pk)}
-            src={company.image}
+            src={company?.image}
             pk={company.pk}
+            image_id={company?.image?.pk}
+            content_type={ModelType.company}
             refresh={refreshInstance}
-            imageActions={{
-              uploadFile: true,
+            EditImageActions={{
+              replaceImage: true,
               downloadImage: true,
-              deleteFile: true
+              deleteImage: company?.image
             }}
           />
           <Grid.Col span={{ base: 12, sm: 8 }}>
@@ -342,7 +341,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
             title={`${t`Company`}: ${company.name}`}
             subtitle={company.description}
             actions={companyActions}
-            imageUrl={company.image}
+            imageUrl={company?.thumbnail}
             breadcrumbs={props.breadcrumbs}
             lastCrumb={[
               {

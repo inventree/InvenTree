@@ -44,6 +44,7 @@ export type ActionDropdownItem = {
 export function ActionDropdown({
   icon,
   tooltip,
+  menuPosition = 'bottom-end',
   tooltipPosition,
   actions,
   disabled = false,
@@ -53,6 +54,7 @@ export function ActionDropdown({
 }: {
   icon: ReactNode;
   tooltip: string;
+  menuPosition?: FloatingPosition;
   tooltipPosition?: FloatingPosition;
   actions: ActionDropdownItem[];
   disabled?: boolean;

@@ -42,7 +42,7 @@ export function RenderBuildLine({
         status: instance.status_custom_key,
         type: ModelType.build
       })}
-      image={instance.part_detail.thumbnail || instance.part_detail.image}
+      image={instance.part_detail?.thumbnail || instance.part_detail?.image}
     />
   );
 }

@@ -26,6 +26,7 @@ import common.settings
 import company.models
 import stock.models as stock_models
 import stock.serializers as stock_serializers
+from common.filters import prefetch_related_images
 from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import StatusView
 from InvenTree.api import BulkUpdateMixin, ListCreateDestroyAPIView, MetadataView
@@ -369,6 +370,7 @@ class PurchaseOrderMixin(SerializerContextMixin):
         )
 
         queryset = serializers.PurchaseOrderSerializer.annotate_queryset(queryset)
+        queryset = prefetch_related_images(queryset, reference='supplier__')
 
         return queryset
 
@@ -832,6 +834,7 @@ class SalesOrderMixin(SerializerContextMixin):
         )
 
         queryset = serializers.SalesOrderSerializer.annotate_queryset(queryset)
+        queryset = prefetch_related_images(queryset, reference='customer__')
 
         return queryset
 
@@ -1268,6 +1271,7 @@ class SalesOrderAllocationMixin:
             'shipment__order',
             'shipment__checked_by',
         ).select_related('line__part__pricing_data', 'item__part__pricing_data')
+        queryset = prefetch_related_images(queryset, reference='item__part__')
 
         return queryset
 
@@ -1481,6 +1485,7 @@ class ReturnOrderMixin(SerializerContextMixin):
         )
 
         queryset = serializers.ReturnOrderSerializer.annotate_queryset(queryset)
+        queryset = prefetch_related_images(queryset, reference='customer__')
 
         return queryset
 

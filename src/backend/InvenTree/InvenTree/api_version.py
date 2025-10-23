@@ -6,6 +6,11 @@ INVENTREE_API_VERSION = 415
 
 INVENTREE_API_TEXT = """
 
+v416 -> 2025-10-04 : https://github.com/inventree/InvenTree/pull/...
+    - Expose InvenTreeImage model to api/image API endpoints
+    - Adds 'image_url' and 'thumbnail_url' fields to relevant API serializers
+    - Updates Part and Company API endpoints to use new image architecture
+
 v415 -> 2025-10-22 : https://github.com/inventree/InvenTree/pull/10650
     - Adds "shipment_address" fields to the SalesOrderShipment API endpoints
 

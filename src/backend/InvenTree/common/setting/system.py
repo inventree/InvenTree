@@ -264,7 +264,7 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'name': _('Download from URL'),
         'description': _('Allow download of remote images and files from external URL'),
         'validator': bool,
-        'default': False,
+        'default': True,
     },
     'INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE': {
         'name': _('Download Size Limit'),

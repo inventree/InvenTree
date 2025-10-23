@@ -27,6 +27,7 @@ import part.filters as part_filters
 import part.models as part_models
 import stock.models
 import stock.serializers
+from common.filters import prefetch_related_images
 from common.serializers import ProjectCodeSerializer
 from company.serializers import (
     AddressBriefSerializer,
@@ -550,6 +551,9 @@ class PurchaseOrderLineItemSerializer(
                 default=Value(False, output_field=BooleanField()),
             )
         )
+
+        queryset = prefetch_related_images(queryset, reference='part__part__')
+        queryset = prefetch_related_images(queryset, reference='part__supplier__')
 
         return queryset
 
@@ -1176,6 +1180,8 @@ class SalesOrderLineItemSerializer(
                 output_field=models.DecimalField(),
             )
         )
+
+        queryset = prefetch_related_images(queryset, reference='part__')
 
         return queryset
 

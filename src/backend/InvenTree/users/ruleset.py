@@ -179,6 +179,7 @@ def get_ruleset_ignore() -> list[str]:
         'contenttypes_contenttype',
         # Models which currently do not require permissions
         'common_attachment',
+        'common_inventreeimage',
         'common_customunit',
         'common_dataoutput',
         'common_inventreesetting',

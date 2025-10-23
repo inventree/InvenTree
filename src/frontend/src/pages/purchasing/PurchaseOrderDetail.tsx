@@ -311,7 +311,6 @@ export default function PurchaseOrderDetail() {
         <Grid grow>
           <DetailsImage
             appRole={UserRoles.purchase_order}
-            apiPath={ApiEndpoints.company_list}
             src={order.supplier_detail?.image}
             pk={order.supplier}
           />

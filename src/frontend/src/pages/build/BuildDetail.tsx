@@ -29,7 +29,7 @@ import {
   DetailsTable
 } from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
-import { DetailsImage } from '../../components/details/DetailsImage';
+import { MultipleDetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
   BarcodeActionDropdown,
@@ -381,13 +381,13 @@ export default function BuildDetail() {
     return (
       <ItemDetailsGrid>
         <Grid grow>
-          <DetailsImage
+          <MultipleDetailsImage
             appRole={UserRoles.part}
             apiPath={ApiEndpoints.part_list}
-            src={build.part_detail?.image ?? build.part_detail?.thumbnail}
-            pk={build.part}
+            object_id={build.part}
+            content_model={ModelType.part}
           />
-          <Grid.Col span={{ base: 12, sm: 8 }}>
+          <Grid.Col span={{ base: 12, sm: 6 }}>
             <DetailsTable fields={tl} item={data} />
           </Grid.Col>
         </Grid>

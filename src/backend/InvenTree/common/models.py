@@ -40,11 +40,13 @@ from django.utils.translation import gettext_lazy as _
 
 import structlog
 from anymail.signals import inbound, tracking
+from django_cleanup import cleanup
 from django_q.signals import post_spawn
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
 from opentelemetry import trace
 from rest_framework.exceptions import PermissionDenied
+from stdimage.models import StdImageField
 from taggit.managers import TaggableManager
 
 import common.validators
@@ -54,11 +56,13 @@ import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
 import users.models
+from common.helpers import UPLOADED_IMAGE_DIR
 from common.setting.type import InvenTreeSettingsKeyType, SettingsKeyType
 from common.settings import get_global_setting, global_setting_overrides
 from generic.enums import StringEnum
 from generic.states import ColorEnum
 from generic.states.custom import state_color_mappings
+from InvenTree import helpers
 from InvenTree.cache import get_session_cache, set_session_cache
 from InvenTree.sanitizer import sanitize_svg
 from InvenTree.tracing import TRACE_PROC, TRACE_PROV
@@ -1895,6 +1899,145 @@ def rename_attachment(instance, filename: str):
     )
 
 
+class CustomStdImage(StdImageField):
+    """Overrides the post_delete behavior to prevent deleting an image file that is still in use by other objects."""
+
+    def post_delete_callback(self, sender, instance, **kwargs):
+        """Delete associated image file if no other instances reference it.
+
+        This method checks if any other objects reference the image file before deleting.
+        """
+        n_refs = (
+            sender.objects.filter(image=instance.image).exclude(pk=instance.pk).count()
+        )
+
+        try:
+            if n_refs == 0:
+                getattr(instance, self.name).delete(False)
+        except:
+            pass
+
+
+@cleanup.ignore
+class InvenTreeImage(models.Model):
+    """Class which represents an uploaded image linked to another model instance.
+
+    Attributes:
+        content_type: The ContentType of the target model
+        object_id: The primary key of the target object
+        content_object: The GenericForeignKey to the target object
+        primary: Flag to mark this image as the “primary” image
+        image: The actual uploaded file
+    """
+
+    content_type = models.ForeignKey(
+        ContentType,
+        on_delete=models.CASCADE,
+        related_name='inventree_images',
+        limit_choices_to=common.validators.limit_image_content_types,
+        verbose_name=_('Content type'),
+        help_text=_('The type of object this image is attached to'),
+    )
+    object_id = models.PositiveIntegerField(
+        verbose_name=_('Object ID'),
+        help_text=_('The ID of the object this image is attached to'),
+    )
+    content_object = GenericForeignKey('content_type', 'object_id')
+
+    primary = models.BooleanField(default=False)
+    image = CustomStdImage(
+        upload_to=UPLOADED_IMAGE_DIR,
+        null=True,
+        blank=True,
+        variations={'thumbnail': (128, 128), 'preview': (256, 256)},
+        delete_orphans=True,
+        verbose_name=_('Image'),
+    )
+
+    class Meta:
+        """Class meta options."""
+
+        verbose_name = _('InvenTree Image')
+        verbose_name_plural = _('InvenTree Images')
+
+    def save(self, *args, **kwargs):
+        """Override save.
+
+        - Enforce single_image on the parent if requested
+        - if this image is marked primary, all other images for the same object are un-marked.
+        - if not single_image and this is the first image for this object, mark it as primary.
+        """
+        # Determine if the parent wants only one image
+        single = getattr(self.content_object, 'single_image', False)
+
+        with transaction.atomic():
+            # If single_image is True, delete any siblings first
+            if single:
+                (
+                    InvenTreeImage.objects.filter(
+                        content_type=self.content_type, object_id=self.object_id
+                    )
+                    # Exclude ourselves if we are updating an existing record
+                    .exclude(pk=self.pk)
+                    .delete()
+                )
+                # Ensure this new/updated image is primary
+                self.primary = True
+            else:
+                # If not single_image, check if this is the first image for this object
+                existing_images = InvenTreeImage.objects.filter(
+                    content_type=self.content_type, object_id=self.object_id
+                ).exclude(pk=self.pk)
+
+                if not existing_images.exists():
+                    # This is the first image, make it primary
+                    self.primary = True
+
+            super().save(*args, **kwargs)
+
+            if self.primary:
+                # Turn off primary flag on any siblings
+                (
+                    InvenTreeImage.objects.filter(
+                        content_type=self.content_type,
+                        object_id=self.object_id,
+                        primary=True,
+                    )
+                    .exclude(pk=self.pk)
+                    .update(primary=False)
+                )
+
+    def delete(self, *args, **kwargs):
+        """Override delete so that if this image was primary, the remaining image with the highest id becomes primary."""
+        super().delete(*args, **kwargs)
+        was_primary = self.primary
+
+        with transaction.atomic():
+            if was_primary:
+                successor = (
+                    InvenTreeImage.objects.filter(
+                        content_type=self.content_type, object_id=self.object_id
+                    )
+                    .order_by('-id')
+                    .first()
+                )
+                if successor:
+                    successor.primary = True
+                    successor.save()
+
+    def get_image_url(self):
+        """Return the URL of the image for this part."""
+        if self.image:
+            return helpers.getMediaUrl(self.image.url)
+        return helpers.getBlankImage()
+
+    def get_thumbnail_url(self) -> str:
+        """Return the URL of the image thumbnail for this part."""
+        if self.image:
+            return helpers.getMediaUrl(self.image.thumbnail.url)
+        return helpers.getBlankThumbnail()
+
+
 class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
     """Class which represents an uploaded file attachment.
 
@@ -2049,8 +2192,8 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
         """Check if the user has the required permission for this attachment."""
         from InvenTree.models import InvenTreeAttachmentMixin
 
-        model_class = common.validators.attachment_model_class_from_label(
-            self.model_type
+        model_class = common.validators.get_model_class_from_label(
+            self.model_type, InvenTreeAttachmentMixin
         )
 
         if not issubclass(model_class, InvenTreeAttachmentMixin):

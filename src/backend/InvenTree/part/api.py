@@ -2,7 +2,7 @@
 
 import re
 
-from django.db.models import Count, F, Q
+from django.db.models import F, Q
 from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
 
@@ -15,6 +15,7 @@ from rest_framework import serializers
 from rest_framework.response import Response
 
 import part.filters
+from common.filters import prefetch_related_images
 from data_exporter.mixins import DataExportViewMixin
 from InvenTree.api import (
     BulkCreateMixin,
@@ -30,7 +31,6 @@ from InvenTree.filters import (
     SEARCH_ORDER_FILTER,
     SEARCH_ORDER_FILTER_ALIAS,
     InvenTreeDateFilter,
-    InvenTreeSearchFilter,
     NumberOrNullFilter,
     NumericInFilter,
 )
@@ -490,59 +490,6 @@ class PartTestTemplateList(PartTestTemplateMixin, DataExportViewMixin, ListCreat
     ]
 
     ordering = 'test_name'
-
-
-class PartThumbs(ListAPI):
-    """API endpoint for retrieving information on available Part thumbnails."""
-
-    queryset = Part.objects.all()
-    serializer_class = part_serializers.PartThumbSerializer
-
-    def get_queryset(self):
-        """Return a queryset which excludes any parts without images."""
-        queryset = super().get_queryset()
-
-        # Get all Parts which have an associated image
-        queryset = queryset.exclude(image='')
-
-        return queryset
-
-    def list(self, request, *args, **kwargs):
-        """Serialize the available Part images.
-
-        - Images may be used for multiple parts!
-        """
-        queryset = self.filter_queryset(self.get_queryset())
-
-        # Return the most popular parts first
-        data = (
-            queryset.values('image').annotate(count=Count('image')).order_by('-count')
-        )
-
-        page = self.paginate_queryset(data)
-
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-        else:
-            serializer = self.get_serializer(data, many=True)
-
-        data = serializer.data
-
-        if page is not None:
-            return self.get_paginated_response(data)
-        else:
-            return Response(data)
-
-    filter_backends = [InvenTreeSearchFilter]
-
-    search_fields = [
-        'name',
-        'description',
-        'IPN',
-        'revision',
-        'keywords',
-        'category__name',
-    ]
 
 
 class PartThumbsUpdate(RetrieveUpdateAPI):
@@ -1381,6 +1328,8 @@ class PartParameterAPIMixin:
         """Override get_queryset method to prefetch related fields."""
         queryset = super().get_queryset(*args, **kwargs)
         queryset = queryset.prefetch_related('part', 'template', 'updated_by')
+        queryset = prefetch_related_images(queryset, reference='part__')
+
         return queryset
 
     def get_serializer_context(self):
@@ -1933,10 +1882,7 @@ part_api_urls = [
     path(
         'thumbs/',
         include([
-            path('', PartThumbs.as_view(), name='api-part-thumbs'),
-            path(
-                '<int:pk>/', PartThumbsUpdate.as_view(), name='api-part-thumbs-update'
-            ),
+            path('<int:pk>/', PartThumbsUpdate.as_view(), name='api-part-thumbs-update')
         ]),
     ),
     path(

@@ -1370,6 +1370,7 @@ def setup_test(
         info('Removing old data ...')
         run(c, f'rm {template_dir} -r')
 
+    # TODO: The test dataset loader needs to be updated to handle the `UploadImage` model and include sample images.
     URL = 'https://github.com/inventree/demo-dataset'
 
     if use_ssh:

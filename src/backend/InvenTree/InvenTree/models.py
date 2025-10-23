@@ -5,6 +5,8 @@ from string import Formatter
 from typing import Optional
 
 from django.contrib.auth import get_user_model
+from django.contrib.contenttypes.fields import GenericRelation
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import QuerySet
@@ -1060,6 +1062,60 @@ class InvenTreeNotesMixin(models.Model):
     notes = InvenTree.fields.InvenTreeNotesField(
         verbose_name=_('Notes'), help_text=_('Markdown notes (optional)')
     )
+
+
+class InvenTreeImageMixin(models.Model):
+    """A mixin to add image  capability to any model.
+
+    Provides a GenericRelation back to InvenTreeImage, plus helpers for primary image logic.
+    """
+
+    # if True, only one image may ever be attached
+    single_image = False
+
+    images = GenericRelation(
+        'common.InvenTreeImage',
+        content_type_field='content_type',
+        object_id_field='object_id',
+        related_query_name='%(app_label)s_%(class)ss',
+    )
+
+    class Meta:
+        """Metaclass options for this mixin."""
+
+        abstract = True
+
+    def delete(self, *args, **kwargs):
+        """Ensure related images are deleted first."""
+        # delete all related images
+        self.images.all().delete()
+        return super().delete(*args, **kwargs)
+
+    def get_images(self):
+        """Return a queryset of all images."""
+        return self.images.all()
+
+    @property
+    def image(self):
+        """Return the primary image, or None."""
+        return self.images.filter(primary=True).first()
+
+    def copy_images_to(self, target_pk):
+        """Copy all images from this instance to another instance of the same model with pk."""
+        from common.models import InvenTreeImage
+
+        ct = ContentType.objects.get_for_model(self, for_concrete_model=False)
+        new_images = []
+        for img in self.images.all():
+            new_img = InvenTreeImage(
+                content_type=ct,
+                object_id=target_pk,
+                primary=img.primary,
+                image=img.image.name,
+            )
+            new_images.append(new_img)
+
+        InvenTreeImage.objects.bulk_create(new_images)
 
 
 class InvenTreeBarcodeMixin(models.Model):

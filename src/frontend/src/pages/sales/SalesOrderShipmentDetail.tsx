@@ -204,14 +204,11 @@ export default function SalesOrderShipmentDetail() {
           <Grid grow>
             <DetailsImage
               appRole={UserRoles.sales_order}
-              apiPath={ApiEndpoints.company_list}
               src={customer?.image}
               pk={customer?.pk}
-              imageActions={{
-                selectExisting: false,
+              EditImageActions={{
                 downloadImage: false,
-                uploadFile: false,
-                deleteFile: false
+                deleteImage: false
               }}
             />
             <Grid.Col span={{ base: 12, sm: 8 }}>
