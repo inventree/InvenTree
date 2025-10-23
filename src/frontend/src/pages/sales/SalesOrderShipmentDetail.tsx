@@ -36,6 +36,7 @@ import NotesPanel from '../../components/panels/NotesPanel';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { RenderAddress } from '../../components/render/Company';
+import { RenderUser } from '../../components/render/User';
 import { formatDate } from '../../defaults/formatters';
 import {
   useSalesOrderShipmentCompleteFields,
@@ -188,6 +189,18 @@ export default function SalesOrderShipmentDetail() {
         name: 'allocated_items',
         icon: 'packages',
         label: t`Allocated Items`
+      },
+      {
+        type: 'text',
+        name: 'checked_by',
+        label: t`Checked By`,
+        icon: 'check',
+        value_formatter: () =>
+          shipment.checked_by_detail ? (
+            <RenderUser instance={shipment.checked_by_detail} />
+          ) : (
+            <Text size='sm' c='red'>{t`Not checked`}</Text>
+          )
       },
       {
         type: 'text',
