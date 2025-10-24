@@ -4,7 +4,7 @@ import base64
 import logging
 import os
 from datetime import date, datetime
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 from typing import Any, Optional, Union
 
 from django import template
@@ -413,54 +413,105 @@ def internal_link(link, text) -> str:
     return mark_safe(f'<a href="{url}">{text}</a>')
 
 
-def destringify(value: Any) -> Any:
-    """Convert a string value into a float.
+def make_decimal(value: Any) -> Any:
+    """Convert an input value into a Decimal.
 
-    - If the value is a string, attempt to convert it to a float.
-    - If conversion fails, return the original string.
-    - If the value is not a string, return it unchanged.
+    - Converts [string, int, float] types into Decimal
+    - If conversion fails, returns the original value
 
     The purpose of this function is to provide "seamless" math operations in templates,
     where numeric values may be provided as strings, or converted to strings during template rendering.
     """
-    if isinstance(value, str):
-        value = value.strip()
+    if any(isinstance(value, t) for t in [int, float, str]):
         try:
-            return float(value)
-        except ValueError:
-            return value
+            value = Decimal(str(value).strip())
+        except (InvalidOperation, TypeError, ValueError):
+            logger.warning(
+                'make_decimal: Failed to convert value to Decimal: %s (%s)',
+                value,
+                type(value),
+            )
+
+    return value
+
+
+def cast_to_type(value: Any, cast: type) -> Any:
+    """Attempt to cast a value to the provided type.
+
+    If casting fails, the original value is returned.
+    """
+    if cast is not None:
+        try:
+            value = cast(value)
+        except (ValueError, TypeError):
+            pass
 
     return value
 
 
 @register.simple_tag()
-def add(x: Any, y: Any) -> Any:
-    """Add two numbers (or number like values) together."""
-    return destringify(x) + destringify(y)
+def add(x: Any, y: Any, cast: Optional[type] = None) -> Any:
+    """Add two numbers (or number like values) together.
+
+    Arguments:
+        x: The first value to add
+        y: The second value to add
+        cast: Optional type to cast the result to (e.g. int, float, str
+    """
+    result = make_decimal(x) + make_decimal(y)
+    return cast_to_type(result, cast)
 
 
 @register.simple_tag()
-def subtract(x: Any, y: Any) -> Any:
-    """Subtract one number (or number-like value) from another."""
-    return destringify(x) - destringify(y)
+def subtract(x: Any, y: Any, cast: Optional[type] = None) -> Any:
+    """Subtract one number (or number-like value) from another.
+
+    Arguments:
+        x: The value to be subtracted from
+        y: The value to be subtracted
+        cast: Optional type to cast the result to (e.g. int, float, str
+    """
+    result = make_decimal(x) - make_decimal(y)
+    return cast_to_type(result, cast)
 
 
 @register.simple_tag()
-def multiply(x: Any, y: Any) -> Any:
-    """Multiply two numbers (or number-like values) together."""
-    return destringify(x) * destringify(y)
+def multiply(x: Any, y: Any, cast: Optional[type] = None) -> Any:
+    """Multiply two numbers (or number-like values) together.
+
+    Arguments:
+        x: The first value to multiply
+        y: The second value to multiply
+        cast: Optional type to cast the result to (e.g. int, float, str
+    """
+    result = make_decimal(x) * make_decimal(y)
+    return cast_to_type(result, cast)
 
 
 @register.simple_tag()
-def divide(x: Any, y: Any) -> Any:
-    """Divide one number (or number-like value) by another."""
-    return destringify(x) / destringify(y)
+def divide(x: Any, y: Any, cast: Optional[type] = None) -> Any:
+    """Divide one number (or number-like value) by another.
+
+    Arguments:
+        x: The value to be divided
+        y: The value to divide by
+        cast: Optional type to cast the result to (e.g. int, float, str
+    """
+    result = make_decimal(x) / make_decimal(y)
+    return cast_to_type(result, cast)
 
 
 @register.simple_tag()
-def modulo(x: Any, y: Any) -> Any:
-    """Calculate the modulo of one number (or number-like value) by another."""
-    return destringify(x) % destringify(y)
+def modulo(x: Any, y: Any, cast: Optional[type] = None) -> Any:
+    """Calculate the modulo of one number (or number-like value) by another.
+
+    Arguments:
+        x: The first value to be used in the modulo operation
+        y: The second value to be used in the modulo operation
+        cast: Optional type to cast the result to (e.g. int, float, str
+    """
+    result = make_decimal(x) % make_decimal(y)
+    return cast_to_type(result, cast)
 
 
 @register.simple_tag
