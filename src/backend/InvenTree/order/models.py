@@ -1678,6 +1678,7 @@ class OrderLineItem(InvenTree.models.InvenTreeMetadataModel):
     Attributes:
         quantity: Number of items
         reference: Reference text (e.g. customer reference) for this line item
+        project_code: Project code associated with this line item (optional)
         note: Annotation for the item
         target_date: An (optional) date for expected shipment of this line item.
     """
@@ -1759,6 +1760,15 @@ class OrderLineItem(InvenTree.models.InvenTreeMetadataModel):
         help_text=_(
             'Target date for this line item (leave blank to use the target date from the order)'
         ),
+    )
+
+    project_code = models.ForeignKey(
+        common_models.ProjectCode,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name=_('Project Code'),
+        help_text=_('Select project code for this order'),
     )
 
 
