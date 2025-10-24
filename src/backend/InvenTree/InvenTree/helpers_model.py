@@ -184,6 +184,7 @@ def render_currency(
     money: Money,
     decimal_places: Optional[int] = None,
     currency: Optional[str] = None,
+    multiplier: Optional[Decimal] = None,
     min_decimal_places: Optional[int] = None,
     max_decimal_places: Optional[int] = None,
     include_symbol: bool = True,
@@ -194,6 +195,7 @@ def render_currency(
         money: The Money instance to be rendered
         decimal_places: The number of decimal places to render to. If unspecified, uses the PRICING_DECIMAL_PLACES setting.
         currency: Optionally convert to the specified currency
+        multiplier: An optional multiplier to apply to the money amount before rendering
         min_decimal_places: The minimum number of decimal places to render to. If unspecified, uses the PRICING_DECIMAL_PLACES_MIN setting.
         max_decimal_places: The maximum number of decimal places to render to. If unspecified, uses the PRICING_DECIMAL_PLACES setting.
         include_symbol: If True, include the currency symbol in the output
@@ -211,6 +213,9 @@ def render_currency(
             money = convert_money(money, currency)
         except Exception:
             pass
+
+    if multiplier is not None:
+        money *= multiplier
 
     if min_decimal_places is None or not isinstance(min_decimal_places, (int, float)):
         min_decimal_places = get_global_setting('PRICING_DECIMAL_PLACES_MIN', 0)
