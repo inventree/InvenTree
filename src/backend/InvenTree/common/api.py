@@ -803,7 +803,7 @@ class InvenTreeImageFilter(FilterSet):
         fields = ['content_model', 'object_id', 'primary']
 
 
-class InvenTreeImageImageList(ListCreateAPI):
+class InvenTreeImageList(ListCreateAPI):
     """Detail API endpoint for InvenTreeImage objects."""
 
     queryset = common.models.InvenTreeImage.objects.all()
@@ -1106,7 +1106,7 @@ common_api_urls = [
                 InvenTreeImageThumbs.as_view(),
                 name='api-uploadImageThumbs-list',
             ),
-            path('', InvenTreeImageImageList.as_view(), name='api-image-list'),
+            path('', InvenTreeImageList.as_view(), name='api-image-list'),
         ]),
     ),
     path(

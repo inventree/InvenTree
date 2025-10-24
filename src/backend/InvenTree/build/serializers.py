@@ -1701,7 +1701,7 @@ class BuildLineSerializer(
         )
 
         queryset = prefetch_related_images(
-            queryset, reference='allocations__stock_item__part'
+            queryset, reference='allocations__stock_item__part__'
         )
         queryset = prefetch_related_images(queryset, reference='build__part__')
         queryset = prefetch_related_images(queryset, reference='bom_item__part__')
