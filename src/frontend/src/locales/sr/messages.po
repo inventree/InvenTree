@@ -8,7 +8,7 @@ msgstr ""
 "Language: sr\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-10-18 07:18\n"
+"PO-Revision-Date: 2025-10-24 02:46\n"
 "Last-Translator: \n"
 "Language-Team: Serbian (Latin)\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
@@ -30,7 +30,7 @@ msgid "Edit"
 msgstr "Izmeni"
 
 #: lib/components/RowActions.tsx:56
-#: src/components/forms/ApiForm.tsx:721
+#: src/components/forms/ApiForm.tsx:726
 #: src/components/items/ActionDropdown.tsx:257
 #: src/components/items/RoleTable.tsx:155
 #: src/hooks/UseForm.tsx:160
@@ -53,14 +53,14 @@ msgid "Cancel"
 msgstr "Poništi"
 
 #: lib/components/RowActions.tsx:136
-#: src/components/nav/NavigationDrawer.tsx:198
+#: src/components/nav/NavigationDrawer.tsx:190
 #: src/forms/PurchaseOrderForms.tsx:795
-#: src/forms/StockForms.tsx:787
-#: src/forms/StockForms.tsx:834
-#: src/forms/StockForms.tsx:880
-#: src/forms/StockForms.tsx:919
-#: src/forms/StockForms.tsx:955
-#: src/forms/StockForms.tsx:1034
+#: src/forms/StockForms.tsx:796
+#: src/forms/StockForms.tsx:843
+#: src/forms/StockForms.tsx:889
+#: src/forms/StockForms.tsx:928
+#: src/forms/StockForms.tsx:964
+#: src/forms/StockForms.tsx:1050
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:511
 msgid "Actions"
 msgstr "Akcije"
@@ -98,22 +98,22 @@ msgstr "Ne"
 #: src/forms/BuildForms.tsx:332
 #: src/forms/BuildForms.tsx:407
 #: src/forms/BuildForms.tsx:472
-#: src/forms/BuildForms.tsx:626
-#: src/forms/BuildForms.tsx:788
-#: src/forms/BuildForms.tsx:891
+#: src/forms/BuildForms.tsx:630
+#: src/forms/BuildForms.tsx:793
+#: src/forms/BuildForms.tsx:896
 #: src/forms/PurchaseOrderForms.tsx:791
 #: src/forms/ReturnOrderForms.tsx:239
-#: src/forms/SalesOrderForms.tsx:267
-#: src/forms/StockForms.tsx:351
-#: src/forms/StockForms.tsx:782
-#: src/forms/StockForms.tsx:829
-#: src/forms/StockForms.tsx:875
-#: src/forms/StockForms.tsx:914
-#: src/forms/StockForms.tsx:950
-#: src/forms/StockForms.tsx:988
-#: src/forms/StockForms.tsx:1030
-#: src/forms/StockForms.tsx:1078
-#: src/forms/StockForms.tsx:1122
+#: src/forms/SalesOrderForms.tsx:298
+#: src/forms/StockForms.tsx:360
+#: src/forms/StockForms.tsx:791
+#: src/forms/StockForms.tsx:838
+#: src/forms/StockForms.tsx:884
+#: src/forms/StockForms.tsx:923
+#: src/forms/StockForms.tsx:959
+#: src/forms/StockForms.tsx:1002
+#: src/forms/StockForms.tsx:1046
+#: src/forms/StockForms.tsx:1094
+#: src/forms/StockForms.tsx:1138
 #: src/pages/build/BuildDetail.tsx:200
 #: src/pages/part/PartDetail.tsx:1235
 #: src/tables/ColumnRenderers.tsx:82
@@ -124,13 +124,13 @@ msgstr "Deo"
 
 #: lib/enums/ModelInformation.tsx:29
 #: lib/enums/Roles.tsx:35
-#: src/components/nav/NavigationDrawer.tsx:77
+#: src/components/nav/NavigationDrawer.tsx:70
 #: src/defaults/links.tsx:36
 #: src/pages/Index/Settings/SystemSettings.tsx:190
-#: src/pages/part/CategoryDetail.tsx:130
-#: src/pages/part/CategoryDetail.tsx:273
-#: src/pages/part/CategoryDetail.tsx:312
-#: src/pages/part/CategoryDetail.tsx:343
+#: src/pages/part/CategoryDetail.tsx:132
+#: src/pages/part/CategoryDetail.tsx:275
+#: src/pages/part/CategoryDetail.tsx:321
+#: src/pages/part/CategoryDetail.tsx:352
 #: src/pages/part/PartDetail.tsx:965
 msgid "Parts"
 msgstr "Delovi"
@@ -182,24 +182,24 @@ msgid "Manufacturer Parts"
 msgstr "Delovi proizvođača"
 
 #: lib/enums/ModelInformation.tsx:70
-#: src/pages/part/CategoryDetail.tsx:343
+#: src/pages/part/CategoryDetail.tsx:352
 #: src/tables/Filter.tsx:389
 msgid "Part Category"
 msgstr "Kategorija delova"
 
 #: lib/enums/ModelInformation.tsx:71
 #: lib/enums/Roles.tsx:37
-#: src/pages/part/CategoryDetail.tsx:267
-#: src/pages/part/CategoryDetail.tsx:334
+#: src/pages/part/CategoryDetail.tsx:269
+#: src/pages/part/CategoryDetail.tsx:343
 #: src/pages/part/PartDetail.tsx:1224
 msgid "Part Categories"
 msgstr "Kategorije delova"
 
 #: lib/enums/ModelInformation.tsx:79
 #: src/forms/BuildForms.tsx:473
-#: src/forms/BuildForms.tsx:628
-#: src/forms/BuildForms.tsx:789
-#: src/forms/SalesOrderForms.tsx:269
+#: src/forms/BuildForms.tsx:633
+#: src/forms/BuildForms.tsx:794
+#: src/forms/SalesOrderForms.tsx:300
 #: src/pages/stock/StockDetail.tsx:992
 #: src/tables/part/PartTestResultTable.tsx:248
 #: src/tables/stock/StockTrackingTable.tsx:48
@@ -210,7 +210,7 @@ msgstr "Stavka zalihe"
 #: lib/enums/ModelInformation.tsx:80
 #: lib/enums/Roles.tsx:45
 #: src/pages/company/CompanyDetail.tsx:212
-#: src/pages/part/CategoryDetail.tsx:287
+#: src/pages/part/CategoryDetail.tsx:289
 #: src/pages/part/PartStockHistoryDetail.tsx:101
 #: src/pages/stock/LocationDetail.tsx:121
 #: src/pages/stock/LocationDetail.tsx:180
@@ -285,9 +285,9 @@ msgstr "Kompanije"
 
 #: lib/enums/ModelInformation.tsx:140
 #: src/pages/build/BuildDetail.tsx:316
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:235
-#: src/pages/sales/ReturnOrderDetail.tsx:199
-#: src/pages/sales/SalesOrderDetail.tsx:211
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:253
+#: src/pages/sales/ReturnOrderDetail.tsx:231
+#: src/pages/sales/SalesOrderDetail.tsx:224
 #: src/tables/ColumnRenderers.tsx:353
 #: src/tables/Filter.tsx:286
 #: src/tables/TableHoverCard.tsx:101
@@ -302,7 +302,7 @@ msgstr "Kodovi projekta"
 #: lib/enums/ModelInformation.tsx:147
 #: src/components/wizards/OrderPartsWizard.tsx:183
 #: src/pages/part/pricing/PurchaseHistoryPanel.tsx:33
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:532
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:550
 #: src/pages/stock/StockDetail.tsx:352
 #: src/tables/part/PartPurchaseOrdersTable.tsx:32
 #: src/tables/stock/StockItemTable.tsx:239
@@ -331,9 +331,9 @@ msgstr "Linije narudžbenica"
 #: lib/enums/ModelInformation.tsx:162
 #: src/pages/build/BuildDetail.tsx:289
 #: src/pages/part/pricing/SaleHistoryPanel.tsx:24
-#: src/pages/sales/SalesOrderDetail.tsx:587
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:94
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:358
+#: src/pages/sales/SalesOrderDetail.tsx:614
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:105
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:478
 #: src/pages/stock/StockDetail.tsx:361
 #: src/tables/part/PartSalesAllocationsTable.tsx:41
 #: src/tables/sales/SalesOrderAllocationTable.tsx:107
@@ -351,7 +351,7 @@ msgid "Sales Orders"
 msgstr "Naloti za prodaju"
 
 #: lib/enums/ModelInformation.tsx:171
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:357
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:477
 msgid "Sales Order Shipment"
 msgstr "Pošiljka"
 
@@ -360,14 +360,14 @@ msgid "Sales Order Shipments"
 msgstr "Pošiljke"
 
 #: lib/enums/ModelInformation.tsx:178
-#: src/pages/sales/ReturnOrderDetail.tsx:517
+#: src/pages/sales/ReturnOrderDetail.tsx:549
 #: src/tables/stock/StockTrackingTable.tsx:142
 msgid "Return Order"
 msgstr "Nalog za povrat"
 
 #: lib/enums/ModelInformation.tsx:179
 #: lib/enums/Roles.tsx:41
-#: src/pages/Index/Settings/SystemSettings.tsx:315
+#: src/pages/Index/Settings/SystemSettings.tsx:316
 #: src/pages/company/CompanyDetail.tsx:232
 #: src/pages/part/PartDetail.tsx:894
 #: src/pages/sales/SalesIndex.tsx:103
@@ -395,9 +395,9 @@ msgstr "Adrese"
 #: lib/enums/ModelInformation.tsx:200
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:89
 #: src/pages/core/UserDetail.tsx:135
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:211
-#: src/pages/sales/ReturnOrderDetail.tsx:175
-#: src/pages/sales/SalesOrderDetail.tsx:187
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:229
+#: src/pages/sales/ReturnOrderDetail.tsx:207
+#: src/pages/sales/SalesOrderDetail.tsx:200
 msgid "Contact"
 msgstr "Kontakt"
 
@@ -431,7 +431,7 @@ msgid "User"
 msgstr "Korisnik"
 
 #: lib/enums/ModelInformation.tsx:215
-#: src/components/nav/NavigationDrawer.tsx:112
+#: src/components/nav/NavigationDrawer.tsx:105
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:15
 #: src/pages/core/CoreIndex.tsx:21
 #: src/pages/core/UserDetail.tsx:226
@@ -444,7 +444,7 @@ msgid "Group"
 msgstr "Grupa"
 
 #: lib/enums/ModelInformation.tsx:222
-#: src/components/nav/NavigationDrawer.tsx:118
+#: src/components/nav/NavigationDrawer.tsx:111
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:23
 #: src/pages/core/CoreIndex.tsx:27
 #: src/pages/core/GroupDetail.tsx:82
@@ -510,13 +510,13 @@ msgstr "Liste selekcija"
 #: src/components/dashboard/DashboardLayout.tsx:281
 #: src/components/editors/NotesEditor.tsx:74
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:157
-#: src/components/forms/fields/ApiFormField.tsx:269
+#: src/components/forms/fields/ApiFormField.tsx:273
 #: src/components/forms/fields/TableField.tsx:45
 #: src/components/importer/ImportDataSelector.tsx:192
 #: src/components/importer/ImporterColumnSelector.tsx:217
 #: src/components/importer/ImporterDrawer.tsx:88
 #: src/components/modals/LicenseModal.tsx:85
-#: src/components/nav/NavigationTree.tsx:210
+#: src/components/nav/NavigationTree.tsx:211
 #: src/components/nav/NotificationDrawer.tsx:235
 #: src/components/nav/SearchDrawer.tsx:572
 #: src/components/settings/SettingList.tsx:139
@@ -551,7 +551,7 @@ msgstr ""
 #: src/pages/Index/Settings/SystemSettings.tsx:264
 #: src/pages/build/BuildIndex.tsx:75
 #: src/pages/part/PartDetail.tsx:904
-#: src/pages/sales/SalesOrderDetail.tsx:394
+#: src/pages/sales/SalesOrderDetail.tsx:421
 msgid "Build Orders"
 msgstr "Nalozi za izradu"
 
@@ -630,7 +630,7 @@ msgstr "Unesi podatke bar koda"
 
 #: src/components/barcodes/BarcodeScanDialog.tsx:49
 #: src/components/buttons/ScanButton.tsx:15
-#: src/components/nav/NavigationDrawer.tsx:129
+#: src/components/nav/NavigationDrawer.tsx:122
 #: src/forms/PurchaseOrderForms.tsx:454
 #: src/forms/PurchaseOrderForms.tsx:560
 msgid "Scan Barcode"
@@ -647,7 +647,7 @@ msgstr ""
 #: src/components/barcodes/BarcodeScanDialog.tsx:145
 #: src/components/editors/NotesEditor.tsx:84
 #: src/components/editors/NotesEditor.tsx:118
-#: src/components/forms/ApiForm.tsx:453
+#: src/components/forms/ApiForm.tsx:458
 #: src/components/wizards/ImportPartWizard.tsx:566
 #: src/components/wizards/ImportPartWizard.tsx:690
 #: src/pages/Index/Settings/AdminCenter/CurrencyManagementPanel.tsx:45
@@ -703,10 +703,10 @@ msgstr "Greška pri povezivanju bar koda"
 
 #: src/components/barcodes/QRCode.tsx:179
 #: src/pages/part/PartDetail.tsx:521
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:204
-#: src/pages/sales/ReturnOrderDetail.tsx:168
-#: src/pages/sales/SalesOrderDetail.tsx:180
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:168
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:222
+#: src/pages/sales/ReturnOrderDetail.tsx:188
+#: src/pages/sales/SalesOrderDetail.tsx:181
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:122
 #: src/pages/stock/StockDetail.tsx:186
 msgid "Link"
 msgstr "Linkuj"
@@ -899,7 +899,7 @@ msgid "Accept Layout"
 msgstr "Prihvati izgled plana"
 
 #: src/components/dashboard/DashboardMenu.tsx:94
-#: src/components/nav/NavigationDrawer.tsx:71
+#: src/components/nav/NavigationDrawer.tsx:64
 #: src/defaults/actions.tsx:28
 #: src/defaults/links.tsx:31
 #: src/pages/Index/Home.tsx:8
@@ -1190,7 +1190,7 @@ msgid "Remove the associated image from this item?"
 msgstr "Ukloniti sliku sa ovog predmeta?"
 
 #: src/components/details/DetailsImage.tsx:83
-#: src/forms/StockForms.tsx:879
+#: src/forms/StockForms.tsx:888
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:261
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:463
 msgid "Remove"
@@ -1223,7 +1223,7 @@ msgid "Clear"
 msgstr "Obriši"
 
 #: src/components/details/DetailsImage.tsx:256
-#: src/components/forms/ApiForm.tsx:663
+#: src/components/forms/ApiForm.tsx:668
 #: src/contexts/ThemeContext.tsx:44
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:709
 msgid "Submit"
@@ -1472,7 +1472,7 @@ msgid "A server error occurred"
 msgstr "Desila se greška na serverskoj strani"
 
 #: src/components/forms/ApiForm.tsx:103
-#: src/components/forms/ApiForm.tsx:582
+#: src/components/forms/ApiForm.tsx:587
 msgid "Form Error"
 msgstr "Greška Obrasca"
 
@@ -1480,11 +1480,11 @@ msgstr "Greška Obrasca"
 #~ msgid "Form Errors Exist"
 #~ msgstr "Form Errors Exist"
 
-#: src/components/forms/ApiForm.tsx:590
+#: src/components/forms/ApiForm.tsx:595
 msgid "Errors exist for one or more form fields"
 msgstr "Postoje greške na jednom ili više polja na obrascu"
 
-#: src/components/forms/ApiForm.tsx:701
+#: src/components/forms/ApiForm.tsx:706
 #: src/hooks/UseForm.tsx:129
 #: src/tables/plugin/PluginListTable.tsx:204
 msgid "Update"
@@ -1670,7 +1670,7 @@ msgstr "Host"
 #: src/components/forms/InstanceOptions.tsx:124
 #: src/components/plugins/PluginDrawer.tsx:68
 #: src/pages/Index/Settings/AdminCenter/UnitManagementPanel.tsx:19
-#: src/pages/part/CategoryDetail.tsx:86
+#: src/pages/part/CategoryDetail.tsx:88
 #: src/pages/part/PartDetail.tsx:446
 #: src/pages/stock/LocationDetail.tsx:82
 #: src/tables/machine/MachineTypeTable.tsx:67
@@ -1758,7 +1758,7 @@ msgid "API Version"
 msgstr "API Verzija"
 
 #: src/components/forms/InstanceOptions.tsx:142
-#: src/components/nav/NavigationDrawer.tsx:205
+#: src/components/nav/NavigationDrawer.tsx:197
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:218
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:46
 msgid "Plugins"
@@ -1789,7 +1789,7 @@ msgstr "Zaustavljeno"
 msgid "Running"
 msgstr ""
 
-#: src/components/forms/fields/ApiFormField.tsx:229
+#: src/components/forms/fields/ApiFormField.tsx:233
 msgid "Select file to upload"
 msgstr ""
 
@@ -2170,7 +2170,7 @@ msgid "Change"
 msgstr ""
 
 #: src/components/items/RoleTable.tsx:150
-#: src/forms/StockForms.tsx:918
+#: src/forms/StockForms.tsx:927
 #: src/tables/stock/StockItemTestResultTable.tsx:364
 msgid "Add"
 msgstr "Dodaj"
@@ -2257,7 +2257,7 @@ msgid "Links"
 msgstr "Linkovi"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:180
-#: src/components/nav/NavigationDrawer.tsx:217
+#: src/components/nav/NavigationDrawer.tsx:208
 #: src/defaults/actions.tsx:35
 msgid "Documentation"
 msgstr "Dokumentacija"
@@ -2448,7 +2448,7 @@ msgid "Learn more about {code}"
 msgstr ""
 
 #: src/components/nav/Header.tsx:188
-#: src/components/nav/NavigationDrawer.tsx:141
+#: src/components/nav/NavigationDrawer.tsx:134
 #: src/components/nav/NotificationDrawer.tsx:181
 #: src/pages/Index/Settings/SystemSettings.tsx:121
 #: src/pages/Index/Settings/UserSettings.tsx:106
@@ -2467,7 +2467,7 @@ msgstr "Ništa nije pronađeno….."
 #~ msgstr "Profile"
 
 #: src/components/nav/MainMenu.tsx:54
-#: src/components/nav/NavigationDrawer.tsx:193
+#: src/components/nav/NavigationDrawer.tsx:185
 #: src/pages/Index/Settings/AdminCenter/EmailManagementPanel.tsx:21
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:39
 msgid "Settings"
@@ -2479,19 +2479,27 @@ msgstr "Podešavanje"
 #~ msgstr "Account settings"
 
 #: src/components/nav/MainMenu.tsx:61
+#: src/components/nav/NavigationDrawer.tsx:140
+#: src/components/nav/SettingsHeader.tsx:40
+#: src/pages/Index/Settings/UserSettings.tsx:141
 #: src/pages/Index/Settings/UserSettings.tsx:145
-msgid "Account Settings"
-msgstr "Podešavanje naloga"
+msgid "User Settings"
+msgstr "Korisnička podešavanja"
+
+#: src/components/nav/MainMenu.tsx:61
+#: src/pages/Index/Settings/UserSettings.tsx:145
+#~ msgid "Account Settings"
+#~ msgstr "Account Settings"
 
 #: src/components/nav/MainMenu.tsx:68
 #~ msgid "Current language {locale}"
 #~ msgstr "Current language {locale}"
 
 #: src/components/nav/MainMenu.tsx:69
-#: src/components/nav/NavigationDrawer.tsx:153
+#: src/components/nav/NavigationDrawer.tsx:146
 #: src/components/nav/SettingsHeader.tsx:41
-#: src/pages/Index/Settings/SystemSettings.tsx:347
-#: src/pages/Index/Settings/SystemSettings.tsx:352
+#: src/pages/Index/Settings/SystemSettings.tsx:348
+#: src/pages/Index/Settings/SystemSettings.tsx:353
 msgid "System Settings"
 msgstr "Sistemska podešavanja"
 
@@ -2500,7 +2508,7 @@ msgstr "Sistemska podešavanja"
 #~ msgstr "Switch to pseudo language"
 
 #: src/components/nav/MainMenu.tsx:78
-#: src/components/nav/NavigationDrawer.tsx:160
+#: src/components/nav/NavigationDrawer.tsx:153
 #: src/components/nav/SettingsHeader.tsx:42
 #: src/defaults/actions.tsx:83
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:282
@@ -2536,11 +2544,11 @@ msgstr "Odjavljivanje"
 #~ msgid "Pages"
 #~ msgstr "Pages"
 
-#: src/components/nav/NavigationDrawer.tsx:84
+#: src/components/nav/NavigationDrawer.tsx:77
 #: src/components/render/Part.tsx:36
 #: src/components/wizards/ImportPartWizard.tsx:807
 #: src/defaults/links.tsx:42
-#: src/forms/StockForms.tsx:785
+#: src/forms/StockForms.tsx:794
 #: src/pages/Index/Settings/SystemSettings.tsx:224
 #: src/pages/part/PartDetail.tsx:804
 #: src/pages/stock/LocationDetail.tsx:388
@@ -2550,49 +2558,43 @@ msgstr "Odjavljivanje"
 msgid "Stock"
 msgstr "Zalihe"
 
-#: src/components/nav/NavigationDrawer.tsx:91
+#: src/components/nav/NavigationDrawer.tsx:84
 #: src/defaults/links.tsx:48
 #: src/pages/build/BuildDetail.tsx:748
 #: src/pages/build/BuildIndex.tsx:102
 msgid "Manufacturing"
 msgstr "Proizvodnja"
 
-#: src/components/nav/NavigationDrawer.tsx:98
+#: src/components/nav/NavigationDrawer.tsx:91
 #: src/defaults/links.tsx:54
 #: src/pages/company/ManufacturerDetail.tsx:9
 #: src/pages/company/ManufacturerPartDetail.tsx:276
 #: src/pages/company/SupplierDetail.tsx:9
 #: src/pages/company/SupplierPartDetail.tsx:355
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:535
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:553
 #: src/pages/purchasing/PurchasingIndex.tsx:122
 msgid "Purchasing"
 msgstr "Kupovina"
 
-#: src/components/nav/NavigationDrawer.tsx:105
+#: src/components/nav/NavigationDrawer.tsx:98
 #: src/defaults/links.tsx:60
 #: src/pages/company/CustomerDetail.tsx:9
-#: src/pages/sales/ReturnOrderDetail.tsx:522
+#: src/pages/sales/ReturnOrderDetail.tsx:554
 #: src/pages/sales/SalesIndex.tsx:139
-#: src/pages/sales/SalesOrderDetail.tsx:592
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:360
+#: src/pages/sales/SalesOrderDetail.tsx:619
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:480
 msgid "Sales"
 msgstr "Prodaja"
 
-#: src/components/nav/NavigationDrawer.tsx:147
-#: src/components/nav/SettingsHeader.tsx:40
-#: src/pages/Index/Settings/UserSettings.tsx:141
-msgid "User Settings"
-msgstr "Korisnička podešavanja"
-
-#: src/components/nav/NavigationDrawer.tsx:188
+#: src/components/nav/NavigationDrawer.tsx:180
 msgid "Navigation"
 msgstr "Navigacija"
 
-#: src/components/nav/NavigationDrawer.tsx:223
+#: src/components/nav/NavigationDrawer.tsx:214
 msgid "About"
 msgstr "O nama"
 
-#: src/components/nav/NavigationTree.tsx:211
+#: src/components/nav/NavigationTree.tsx:212
 msgid "Error loading navigation tree."
 msgstr ""
 
@@ -2744,11 +2746,11 @@ msgstr "Informacije o ekstenziji"
 #: src/pages/company/ManufacturerPartDetail.tsx:93
 #: src/pages/company/ManufacturerPartDetail.tsx:120
 #: src/pages/company/SupplierPartDetail.tsx:144
-#: src/pages/part/CategoryDetail.tsx:106
+#: src/pages/part/CategoryDetail.tsx:108
 #: src/pages/part/PartDetail.tsx:460
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:144
-#: src/pages/sales/ReturnOrderDetail.tsx:109
-#: src/pages/sales/SalesOrderDetail.tsx:118
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:162
+#: src/pages/sales/ReturnOrderDetail.tsx:129
+#: src/pages/sales/SalesOrderDetail.tsx:119
 #: src/pages/stock/LocationDetail.tsx:102
 #: src/tables/ColumnRenderers.tsx:269
 #: src/tables/build/BuildAllocatedStockTable.tsx:91
@@ -2816,7 +2818,7 @@ msgstr "Paket"
 
 #: src/components/plugins/PluginDrawer.tsx:133
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:55
-#: src/pages/Index/Settings/SystemSettings.tsx:330
+#: src/pages/Index/Settings/SystemSettings.tsx:331
 #: src/pages/Index/Settings/UserSettings.tsx:128
 msgid "Plugin Settings"
 msgstr "Podešavanje ekstenzija"
@@ -2955,24 +2957,24 @@ msgstr "Detalji"
 #: src/tables/ColumnRenderers.tsx:224
 #: src/tables/ColumnRenderers.tsx:233
 #: src/tables/notifications/NotificationTable.tsx:32
-#: src/tables/part/PartCategoryTemplateTable.tsx:71
+#: src/tables/part/PartCategoryTemplateTable.tsx:78
 msgid "Category"
 msgstr "Kategorija"
 
 #: src/components/render/Stock.tsx:36
 #: src/components/render/Stock.tsx:114
 #: src/components/render/Stock.tsx:132
-#: src/forms/BuildForms.tsx:790
+#: src/forms/BuildForms.tsx:795
 #: src/forms/PurchaseOrderForms.tsx:592
-#: src/forms/StockForms.tsx:783
-#: src/forms/StockForms.tsx:830
-#: src/forms/StockForms.tsx:876
-#: src/forms/StockForms.tsx:915
-#: src/forms/StockForms.tsx:951
-#: src/forms/StockForms.tsx:989
-#: src/forms/StockForms.tsx:1031
-#: src/forms/StockForms.tsx:1079
-#: src/forms/StockForms.tsx:1123
+#: src/forms/StockForms.tsx:792
+#: src/forms/StockForms.tsx:839
+#: src/forms/StockForms.tsx:885
+#: src/forms/StockForms.tsx:924
+#: src/forms/StockForms.tsx:960
+#: src/forms/StockForms.tsx:1003
+#: src/forms/StockForms.tsx:1047
+#: src/forms/StockForms.tsx:1095
+#: src/forms/StockForms.tsx:1139
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:88
 #: src/pages/core/UserDetail.tsx:158
 #: src/pages/stock/StockDetail.tsx:298
@@ -2995,12 +2997,12 @@ msgstr "Serijski broj"
 #: src/components/render/Stock.tsx:104
 #: src/components/wizards/OrderPartsWizard.tsx:222
 #: src/forms/BuildForms.tsx:240
-#: src/forms/BuildForms.tsx:629
-#: src/forms/BuildForms.tsx:792
+#: src/forms/BuildForms.tsx:634
+#: src/forms/BuildForms.tsx:797
 #: src/forms/PurchaseOrderForms.tsx:794
 #: src/forms/ReturnOrderForms.tsx:240
-#: src/forms/SalesOrderForms.tsx:270
-#: src/forms/StockForms.tsx:832
+#: src/forms/SalesOrderForms.tsx:301
+#: src/forms/StockForms.tsx:841
 #: src/pages/part/PartStockHistoryDetail.tsx:56
 #: src/pages/part/PartStockHistoryDetail.tsx:210
 #: src/pages/part/PartStockHistoryDetail.tsx:234
@@ -3012,10 +3014,10 @@ msgstr "Serijski broj"
 #: src/tables/build/BuildLineTable.tsx:84
 #: src/tables/part/PartPurchaseOrdersTable.tsx:94
 #: src/tables/part/PartTestResultTable.tsx:269
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:169
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:200
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:173
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:204
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:69
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:121
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:123
 #: src/tables/stock/StockTrackingTable.tsx:72
 msgid "Quantity"
 msgstr "Količina"
@@ -3024,15 +3026,15 @@ msgstr "Količina"
 #: src/forms/BuildForms.tsx:335
 #: src/forms/BuildForms.tsx:410
 #: src/forms/BuildForms.tsx:474
-#: src/forms/StockForms.tsx:784
-#: src/forms/StockForms.tsx:831
-#: src/forms/StockForms.tsx:877
-#: src/forms/StockForms.tsx:916
-#: src/forms/StockForms.tsx:952
-#: src/forms/StockForms.tsx:990
-#: src/forms/StockForms.tsx:1032
-#: src/forms/StockForms.tsx:1080
-#: src/forms/StockForms.tsx:1124
+#: src/forms/StockForms.tsx:793
+#: src/forms/StockForms.tsx:840
+#: src/forms/StockForms.tsx:886
+#: src/forms/StockForms.tsx:925
+#: src/forms/StockForms.tsx:961
+#: src/forms/StockForms.tsx:1004
+#: src/forms/StockForms.tsx:1048
+#: src/forms/StockForms.tsx:1096
+#: src/forms/StockForms.tsx:1140
 #: src/tables/build/BuildLineTable.tsx:94
 msgid "Batch"
 msgstr "Serija"
@@ -3469,7 +3471,7 @@ msgstr ""
 #: src/pages/company/SupplierPartDetail.tsx:129
 #: src/pages/company/SupplierPartDetail.tsx:234
 #: src/pages/company/SupplierPartDetail.tsx:359
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:138
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:156
 #: src/tables/Filter.tsx:360
 #: src/tables/company/CompanyTable.tsx:96
 #: src/tables/part/PartPurchaseOrdersTable.tsx:43
@@ -3479,7 +3481,7 @@ msgid "Supplier"
 msgstr "Dobavljač"
 
 #: src/components/wizards/ImportPartWizard.tsx:221
-#: src/forms/StockForms.tsx:605
+#: src/forms/StockForms.tsx:614
 msgid "Loading..."
 msgstr "Učitavanje"
 
@@ -3699,7 +3701,7 @@ msgstr "Molimo ispravite greške u izabranim delovima"
 #: src/components/wizards/OrderPartsWizard.tsx:424
 #: src/tables/build/BuildLineTable.tsx:797
 #: src/tables/part/PartTable.tsx:515
-#: src/tables/sales/SalesOrderLineItemTable.tsx:365
+#: src/tables/sales/SalesOrderLineItemTable.tsx:366
 msgid "Order Parts"
 msgstr "Naruči delove"
 
@@ -4180,7 +4182,7 @@ msgstr ""
 
 #: src/forms/BuildForms.tsx:333
 #: src/forms/BuildForms.tsx:408
-#: src/forms/BuildForms.tsx:680
+#: src/forms/BuildForms.tsx:685
 #: src/tables/build/BuildAllocatedStockTable.tsx:150
 #: src/tables/build/BuildOutputTable.tsx:592
 #: src/tables/part/PartTestResultTable.tsx:272
@@ -4197,21 +4199,21 @@ msgstr ""
 #: src/forms/PurchaseOrderForms.tsx:714
 #: src/forms/ReturnOrderForms.tsx:194
 #: src/forms/ReturnOrderForms.tsx:241
-#: src/forms/StockForms.tsx:703
+#: src/forms/StockForms.tsx:712
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:87
 #: src/pages/build/BuildDetail.tsx:222
 #: src/pages/core/UserDetail.tsx:151
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:150
-#: src/pages/sales/ReturnOrderDetail.tsx:115
-#: src/pages/sales/SalesOrderDetail.tsx:124
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:168
+#: src/pages/sales/ReturnOrderDetail.tsx:135
+#: src/pages/sales/SalesOrderDetail.tsx:125
 #: src/pages/stock/StockDetail.tsx:170
 #: src/tables/Filter.tsx:274
 #: src/tables/build/BuildOutputTable.tsx:408
 #: src/tables/machine/MachineListTable.tsx:387
 #: src/tables/part/PartPurchaseOrdersTable.tsx:38
 #: src/tables/part/PartTestResultTable.tsx:309
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:135
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:172
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:137
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:174
 #: src/tables/settings/CustomStateTable.tsx:79
 #: src/tables/settings/EmailTable.tsx:95
 #: src/tables/settings/ImportSessionTable.tsx:117
@@ -4274,46 +4276,65 @@ msgstr ""
 msgid "Build outputs have been cancelled"
 msgstr "Izlazne kompilacije poništene"
 
-#: src/forms/BuildForms.tsx:627
-#: src/forms/BuildForms.tsx:791
-#: src/forms/BuildForms.tsx:892
-#: src/forms/SalesOrderForms.tsx:268
+#: src/forms/BuildForms.tsx:631
+#: src/pages/build/BuildDetail.tsx:207
+#: src/pages/company/ManufacturerPartDetail.tsx:85
+#: src/pages/company/SupplierPartDetail.tsx:95
+#: src/pages/part/PartDetail.tsx:453
+#: src/pages/stock/StockDetail.tsx:153
+#: src/tables/bom/BomTable.tsx:134
+#: src/tables/bom/UsedInTable.tsx:40
+#: src/tables/build/BuildAllocatedStockTable.tsx:108
+#: src/tables/build/BuildLineTable.tsx:328
+#: src/tables/build/BuildOrderTable.tsx:79
+#: src/tables/part/PartSalesAllocationsTable.tsx:61
+#: src/tables/part/RelatedPartTable.tsx:73
+#: src/tables/sales/SalesOrderAllocationTable.tsx:132
+#: src/tables/sales/SalesOrderLineItemTable.tsx:98
+#: src/tables/stock/StockItemTable.tsx:69
+msgid "IPN"
+msgstr "Identifikacioni broj dela"
+
+#: src/forms/BuildForms.tsx:632
+#: src/forms/BuildForms.tsx:796
+#: src/forms/BuildForms.tsx:897
+#: src/forms/SalesOrderForms.tsx:299
 #: src/tables/build/BuildAllocatedStockTable.tsx:139
 #: src/tables/build/BuildLineTable.tsx:180
-#: src/tables/sales/SalesOrderLineItemTable.tsx:337
+#: src/tables/sales/SalesOrderLineItemTable.tsx:338
 #: src/tables/stock/StockItemTable.tsx:338
 msgid "Allocated"
 msgstr "Alocirano"
 
-#: src/forms/BuildForms.tsx:662
-#: src/forms/SalesOrderForms.tsx:257
+#: src/forms/BuildForms.tsx:667
+#: src/forms/SalesOrderForms.tsx:288
 #: src/pages/build/BuildDetail.tsx:108
 #: src/pages/build/BuildDetail.tsx:326
 msgid "Source Location"
 msgstr "Lokacija izvora"
 
-#: src/forms/BuildForms.tsx:663
-#: src/forms/SalesOrderForms.tsx:258
+#: src/forms/BuildForms.tsx:668
+#: src/forms/SalesOrderForms.tsx:289
 msgid "Select the source location for the stock allocation"
 msgstr "Izaberi lokaciju izvora radi alokacije zaliha"
 
-#: src/forms/BuildForms.tsx:695
-#: src/forms/SalesOrderForms.tsx:298
+#: src/forms/BuildForms.tsx:700
+#: src/forms/SalesOrderForms.tsx:329
 #: src/tables/build/BuildLineTable.tsx:556
 #: src/tables/build/BuildLineTable.tsx:713
 #: src/tables/build/BuildLineTable.tsx:812
-#: src/tables/sales/SalesOrderLineItemTable.tsx:375
-#: src/tables/sales/SalesOrderLineItemTable.tsx:408
+#: src/tables/sales/SalesOrderLineItemTable.tsx:376
+#: src/tables/sales/SalesOrderLineItemTable.tsx:409
 msgid "Allocate Stock"
 msgstr "Alociraj zalihe"
 
-#: src/forms/BuildForms.tsx:698
-#: src/forms/SalesOrderForms.tsx:303
+#: src/forms/BuildForms.tsx:703
+#: src/forms/SalesOrderForms.tsx:334
 msgid "Stock items allocated"
 msgstr "Stavke zaliha alocirane"
 
-#: src/forms/BuildForms.tsx:811
-#: src/forms/BuildForms.tsx:912
+#: src/forms/BuildForms.tsx:816
+#: src/forms/BuildForms.tsx:917
 #: src/tables/build/BuildAllocatedStockTable.tsx:240
 #: src/tables/build/BuildAllocatedStockTable.tsx:272
 #: src/tables/build/BuildLineTable.tsx:723
@@ -4321,18 +4342,18 @@ msgstr "Stavke zaliha alocirane"
 msgid "Consume Stock"
 msgstr ""
 
-#: src/forms/BuildForms.tsx:812
-#: src/forms/BuildForms.tsx:913
+#: src/forms/BuildForms.tsx:817
+#: src/forms/BuildForms.tsx:918
 msgid "Stock items consumed"
 msgstr ""
 
-#: src/forms/BuildForms.tsx:848
+#: src/forms/BuildForms.tsx:853
 #: src/tables/build/BuildLineTable.tsx:496
 #: src/tables/part/PartBuildAllocationsTable.tsx:101
 msgid "Fully consumed"
 msgstr ""
 
-#: src/forms/BuildForms.tsx:893
+#: src/forms/BuildForms.tsx:898
 #: src/tables/build/BuildLineTable.tsx:185
 #: src/tables/stock/StockItemTable.tsx:367
 msgid "Consumed"
@@ -4344,7 +4365,7 @@ msgstr "Iskorišćeno"
 
 #: src/forms/PartForms.tsx:70
 #: src/forms/PartForms.tsx:157
-#: src/pages/part/CategoryDetail.tsx:122
+#: src/pages/part/CategoryDetail.tsx:124
 #: src/pages/part/PartDetail.tsx:668
 #: src/tables/part/PartCategoryTable.tsx:94
 #: src/tables/part/PartTable.tsx:325
@@ -4417,12 +4438,12 @@ msgid "Set Expiry Date"
 msgstr ""
 
 #: src/forms/PurchaseOrderForms.tsx:529
-#: src/forms/StockForms.tsx:684
+#: src/forms/StockForms.tsx:693
 msgid "Adjust Packaging"
 msgstr "Doradi pakovanje"
 
 #: src/forms/PurchaseOrderForms.tsx:537
-#: src/forms/StockForms.tsx:675
+#: src/forms/StockForms.tsx:684
 #: src/hooks/UseStockAdjustActions.tsx:148
 msgid "Change Status"
 msgstr "Promeni status"
@@ -4473,7 +4494,7 @@ msgid "Enter batch code for received items"
 msgstr "Unesi kod serije za primljene stavke"
 
 #: src/forms/PurchaseOrderForms.tsx:672
-#: src/forms/StockForms.tsx:210
+#: src/forms/StockForms.tsx:218
 msgid "Serial Numbers"
 msgstr "Serijski brojevi"
 
@@ -4492,11 +4513,11 @@ msgid "Enter an expiry date for received items"
 msgstr ""
 
 #: src/forms/PurchaseOrderForms.tsx:700
-#: src/forms/StockForms.tsx:719
+#: src/forms/StockForms.tsx:728
 #: src/pages/company/SupplierPartDetail.tsx:171
 #: src/pages/company/SupplierPartDetail.tsx:235
 #: src/pages/stock/StockDetail.tsx:419
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:221
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:225
 msgid "Packaging"
 msgstr "Pakovanje"
 
@@ -4514,9 +4535,9 @@ msgstr "Jedinica za praćenje zaliha"
 
 #: src/forms/PurchaseOrderForms.tsx:793
 #: src/tables/part/PartPurchaseOrdersTable.tsx:127
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:207
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:277
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:167
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:211
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:281
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:169
 msgid "Received"
 msgstr "Primljeno"
 
@@ -4536,6 +4557,10 @@ msgstr "Primi stavke"
 msgid "Item received into stock"
 msgstr "Stavka primljena u zalihe"
 
+#: src/forms/SalesOrderForms.tsx:394
+msgid "Leave blank to use the order address"
+msgstr ""
+
 #: src/forms/StockForms.tsx:110
 #~ msgid "Create Stock Item"
 #~ msgstr "Create Stock Item"
@@ -4544,56 +4569,56 @@ msgstr "Stavka primljena u zalihe"
 #~ msgid "Stock item updated"
 #~ msgstr "Stock item updated"
 
-#: src/forms/StockForms.tsx:188
+#: src/forms/StockForms.tsx:196
 msgid "Add given quantity as packs instead of individual items"
 msgstr "Dodaj primljenu količinu kao pakovanje umesto kao individualnu stavku"
 
-#: src/forms/StockForms.tsx:202
+#: src/forms/StockForms.tsx:210
 msgid "Enter initial quantity for this stock item"
 msgstr "Unesi početnu količinu za ovu stavku zalihe"
 
-#: src/forms/StockForms.tsx:212
+#: src/forms/StockForms.tsx:220
 msgid "Enter serial numbers for new stock (or leave blank)"
 msgstr "Unesi serijske brojeve za novu zalihu (ili ostavi nepopunjeno)"
 
-#: src/forms/StockForms.tsx:232
+#: src/forms/StockForms.tsx:240
 msgid "Stock Status"
 msgstr "Status zalihe"
 
-#: src/forms/StockForms.tsx:308
+#: src/forms/StockForms.tsx:317
 #: src/pages/stock/StockDetail.tsx:686
 #: src/tables/stock/StockItemTable.tsx:525
 #: src/tables/stock/StockItemTable.tsx:572
 msgid "Add Stock Item"
 msgstr "Dodaj stavku zalihe"
 
-#: src/forms/StockForms.tsx:352
+#: src/forms/StockForms.tsx:361
 msgid "Select the part to install"
 msgstr "Izaberi deo za instalaciju"
 
-#: src/forms/StockForms.tsx:478
+#: src/forms/StockForms.tsx:487
 msgid "Confirm Stock Transfer"
 msgstr "Potvrdi transfer zalihe"
 
-#: src/forms/StockForms.tsx:663
+#: src/forms/StockForms.tsx:672
 msgid "Move to default location"
 msgstr "Premesti na podrazumevanu lokaciju"
 
-#: src/forms/StockForms.tsx:786
+#: src/forms/StockForms.tsx:795
 msgid "Move"
 msgstr "Premesti"
 
-#: src/forms/StockForms.tsx:833
+#: src/forms/StockForms.tsx:842
 msgid "Return"
 msgstr "Vrati"
 
-#: src/forms/StockForms.tsx:878
-#: src/forms/StockForms.tsx:917
-#: src/forms/StockForms.tsx:953
-#: src/forms/StockForms.tsx:991
-#: src/forms/StockForms.tsx:1033
-#: src/forms/StockForms.tsx:1081
-#: src/forms/StockForms.tsx:1125
+#: src/forms/StockForms.tsx:887
+#: src/forms/StockForms.tsx:926
+#: src/forms/StockForms.tsx:962
+#: src/forms/StockForms.tsx:1005
+#: src/forms/StockForms.tsx:1049
+#: src/forms/StockForms.tsx:1097
+#: src/forms/StockForms.tsx:1141
 #: src/pages/company/SupplierPartDetail.tsx:189
 #: src/pages/company/SupplierPartDetail.tsx:373
 #: src/pages/part/PartDetail.tsx:534
@@ -4603,150 +4628,150 @@ msgstr "Vrati"
 msgid "In Stock"
 msgstr "U zalihama"
 
-#: src/forms/StockForms.tsx:954
+#: src/forms/StockForms.tsx:963
 #: src/pages/Index/Scan.tsx:182
 msgid "Count"
 msgstr "Računaj"
 
-#: src/forms/StockForms.tsx:1230
+#: src/forms/StockForms.tsx:1246
 #: src/hooks/UseStockAdjustActions.tsx:108
 msgid "Add Stock"
 msgstr "Dodaj zalihu"
 
-#: src/forms/StockForms.tsx:1231
+#: src/forms/StockForms.tsx:1247
 msgid "Stock added"
 msgstr "Zaliha dodata"
 
-#: src/forms/StockForms.tsx:1234
+#: src/forms/StockForms.tsx:1250
 msgid "Increase the quantity of the selected stock items by a given amount."
 msgstr ""
 
-#: src/forms/StockForms.tsx:1245
+#: src/forms/StockForms.tsx:1261
 #: src/hooks/UseStockAdjustActions.tsx:118
 msgid "Remove Stock"
 msgstr "Ukloni zalihu"
 
-#: src/forms/StockForms.tsx:1246
+#: src/forms/StockForms.tsx:1262
 msgid "Stock removed"
 msgstr "Zaliha uklonjena"
 
-#: src/forms/StockForms.tsx:1249
+#: src/forms/StockForms.tsx:1265
 msgid "Decrease the quantity of the selected stock items by a given amount."
 msgstr ""
 
-#: src/forms/StockForms.tsx:1260
+#: src/forms/StockForms.tsx:1276
 #: src/hooks/UseStockAdjustActions.tsx:128
 msgid "Transfer Stock"
 msgstr "Prebaci zalihu"
 
-#: src/forms/StockForms.tsx:1261
+#: src/forms/StockForms.tsx:1277
 msgid "Stock transferred"
 msgstr "Zaliha prebačena"
 
-#: src/forms/StockForms.tsx:1264
+#: src/forms/StockForms.tsx:1280
 msgid "Transfer selected items to the specified location."
 msgstr ""
 
-#: src/forms/StockForms.tsx:1275
+#: src/forms/StockForms.tsx:1291
 #: src/hooks/UseStockAdjustActions.tsx:168
 msgid "Return Stock"
 msgstr ""
 
-#: src/forms/StockForms.tsx:1276
+#: src/forms/StockForms.tsx:1292
 msgid "Stock returned"
 msgstr ""
 
-#: src/forms/StockForms.tsx:1279
+#: src/forms/StockForms.tsx:1295
 msgid "Return selected items into stock, to the specified location."
 msgstr ""
 
-#: src/forms/StockForms.tsx:1290
+#: src/forms/StockForms.tsx:1306
 #: src/hooks/UseStockAdjustActions.tsx:98
 msgid "Count Stock"
 msgstr "Prebroj zalihe"
 
-#: src/forms/StockForms.tsx:1291
+#: src/forms/StockForms.tsx:1307
 msgid "Stock counted"
 msgstr "Zaliha prebrojena"
 
-#: src/forms/StockForms.tsx:1294
+#: src/forms/StockForms.tsx:1310
 msgid "Count the selected stock items, and adjust the quantity accordingly."
 msgstr ""
 
-#: src/forms/StockForms.tsx:1305
+#: src/forms/StockForms.tsx:1321
 msgid "Change Stock Status"
 msgstr "Promeni status zalihe"
 
-#: src/forms/StockForms.tsx:1306
+#: src/forms/StockForms.tsx:1322
 msgid "Stock status changed"
 msgstr "Status zalihe izmenjen"
 
-#: src/forms/StockForms.tsx:1309
+#: src/forms/StockForms.tsx:1325
 msgid "Change the status of the selected stock items."
 msgstr ""
 
-#: src/forms/StockForms.tsx:1320
+#: src/forms/StockForms.tsx:1336
 #: src/hooks/UseStockAdjustActions.tsx:138
 msgid "Merge Stock"
 msgstr "Spoji zalihe"
 
-#: src/forms/StockForms.tsx:1321
+#: src/forms/StockForms.tsx:1337
 msgid "Stock merged"
 msgstr "Zalihe spojene"
 
-#: src/forms/StockForms.tsx:1323
+#: src/forms/StockForms.tsx:1339
 msgid "Merge Stock Items"
 msgstr ""
 
-#: src/forms/StockForms.tsx:1325
+#: src/forms/StockForms.tsx:1341
 msgid "Merge operation cannot be reversed"
 msgstr ""
 
-#: src/forms/StockForms.tsx:1326
+#: src/forms/StockForms.tsx:1342
 msgid "Tracking information may be lost when merging items"
 msgstr ""
 
-#: src/forms/StockForms.tsx:1327
+#: src/forms/StockForms.tsx:1343
 msgid "Supplier information may be lost when merging items"
 msgstr ""
 
-#: src/forms/StockForms.tsx:1345
+#: src/forms/StockForms.tsx:1361
 msgid "Assign Stock to Customer"
 msgstr "Dodeli zalihu mušteriji"
 
-#: src/forms/StockForms.tsx:1346
+#: src/forms/StockForms.tsx:1362
 msgid "Stock assigned to customer"
 msgstr "Zaliha dodeljena mušteriji"
 
-#: src/forms/StockForms.tsx:1356
+#: src/forms/StockForms.tsx:1372
 msgid "Delete Stock Items"
 msgstr "Izbriši stavku zalihe"
 
-#: src/forms/StockForms.tsx:1357
+#: src/forms/StockForms.tsx:1373
 msgid "Stock deleted"
 msgstr "Zaliha izbrisana"
 
-#: src/forms/StockForms.tsx:1360
+#: src/forms/StockForms.tsx:1376
 msgid "This operation will permanently delete the selected stock items."
 msgstr ""
 
-#: src/forms/StockForms.tsx:1369
+#: src/forms/StockForms.tsx:1385
 msgid "Parent stock location"
 msgstr "Lokacija roditeljske zalihe"
 
-#: src/forms/StockForms.tsx:1496
+#: src/forms/StockForms.tsx:1512
 msgid "Find Serial Number"
 msgstr ""
 
-#: src/forms/StockForms.tsx:1507
+#: src/forms/StockForms.tsx:1523
 msgid "No matching items"
 msgstr ""
 
-#: src/forms/StockForms.tsx:1513
+#: src/forms/StockForms.tsx:1529
 msgid "Multiple matching items"
 msgstr ""
 
-#: src/forms/StockForms.tsx:1522
+#: src/forms/StockForms.tsx:1538
 msgid "Invalid response from server"
 msgstr ""
 
@@ -6066,11 +6091,12 @@ msgid "Custom Units"
 msgstr "Posebne jedinice"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:185
-#: src/pages/part/CategoryDetail.tsx:302
+#: src/pages/part/CategoryDetail.tsx:311
 msgid "Part Parameters"
 msgstr "Parametri dela"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:192
+#: src/pages/part/CategoryDetail.tsx:304
 msgid "Category Parameters"
 msgstr "Kategorije parametara"
 
@@ -6420,24 +6446,6 @@ msgstr ""
 #~ msgid "Build Order updated"
 #~ msgstr "Build Order updated"
 
-#: src/pages/build/BuildDetail.tsx:207
-#: src/pages/company/ManufacturerPartDetail.tsx:85
-#: src/pages/company/SupplierPartDetail.tsx:95
-#: src/pages/part/PartDetail.tsx:453
-#: src/pages/stock/StockDetail.tsx:153
-#: src/tables/bom/BomTable.tsx:134
-#: src/tables/bom/UsedInTable.tsx:40
-#: src/tables/build/BuildAllocatedStockTable.tsx:108
-#: src/tables/build/BuildLineTable.tsx:328
-#: src/tables/build/BuildOrderTable.tsx:79
-#: src/tables/part/PartSalesAllocationsTable.tsx:61
-#: src/tables/part/RelatedPartTable.tsx:73
-#: src/tables/sales/SalesOrderAllocationTable.tsx:132
-#: src/tables/sales/SalesOrderLineItemTable.tsx:98
-#: src/tables/stock/StockItemTable.tsx:69
-msgid "IPN"
-msgstr "Identifikacioni broj dela"
-
 #: src/pages/build/BuildDetail.tsx:215
 #: src/pages/part/PartDetail.tsx:480
 #: src/pages/stock/StockDetail.tsx:161
@@ -6456,9 +6464,9 @@ msgstr "Revizija"
 #~ msgstr "Duplicate build order"
 
 #: src/pages/build/BuildDetail.tsx:228
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:156
-#: src/pages/sales/ReturnOrderDetail.tsx:121
-#: src/pages/sales/SalesOrderDetail.tsx:130
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:174
+#: src/pages/sales/ReturnOrderDetail.tsx:141
+#: src/pages/sales/SalesOrderDetail.tsx:131
 #: src/pages/stock/StockDetail.tsx:176
 msgid "Custom Status"
 msgstr "Prilagođeni status"
@@ -6478,9 +6486,9 @@ msgid "External"
 msgstr "Spoljno"
 
 #: src/pages/build/BuildDetail.tsx:244
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:123
-#: src/pages/sales/ReturnOrderDetail.tsx:88
-#: src/pages/sales/SalesOrderDetail.tsx:97
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:141
+#: src/pages/sales/ReturnOrderDetail.tsx:108
+#: src/pages/sales/SalesOrderDetail.tsx:98
 #: src/tables/ColumnRenderers.tsx:312
 #: src/tables/build/BuildAllocatedStockTable.tsx:115
 #: src/tables/build/BuildLineTable.tsx:337
@@ -6514,9 +6522,9 @@ msgstr "Izdat od strane"
 
 #: src/pages/build/BuildDetail.tsx:309
 #: src/pages/part/PartDetail.tsx:691
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:243
-#: src/pages/sales/ReturnOrderDetail.tsx:207
-#: src/pages/sales/SalesOrderDetail.tsx:219
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:261
+#: src/pages/sales/ReturnOrderDetail.tsx:239
+#: src/pages/sales/SalesOrderDetail.tsx:232
 #: src/tables/Filter.tsx:319
 msgid "Responsible"
 msgstr "Odgovoran"
@@ -6541,20 +6549,20 @@ msgid "Created"
 msgstr "Kreirano"
 
 #: src/pages/build/BuildDetail.tsx:358
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:268
-#: src/pages/sales/ReturnOrderDetail.tsx:233
-#: src/pages/sales/SalesOrderDetail.tsx:244
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:286
+#: src/pages/sales/ReturnOrderDetail.tsx:265
+#: src/pages/sales/SalesOrderDetail.tsx:257
 #: src/tables/ColumnRenderers.tsx:424
 msgid "Start Date"
 msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:366
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:276
-#: src/pages/sales/ReturnOrderDetail.tsx:241
-#: src/pages/sales/SalesOrderDetail.tsx:252
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:294
+#: src/pages/sales/ReturnOrderDetail.tsx:273
+#: src/pages/sales/SalesOrderDetail.tsx:265
 #: src/tables/ColumnRenderers.tsx:432
 #: src/tables/part/PartPurchaseOrdersTable.tsx:101
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:150
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:152
 #: src/tables/sales/SalesOrderLineItemTable.tsx:132
 msgid "Target Date"
 msgstr "Ciljani datum"
@@ -6565,7 +6573,7 @@ msgstr "Ciljani datum"
 
 #: src/pages/build/BuildDetail.tsx:374
 #: src/tables/build/BuildOrderTable.tsx:93
-#: src/tables/sales/SalesOrderLineItemTable.tsx:342
+#: src/tables/sales/SalesOrderLineItemTable.tsx:343
 msgid "Completed"
 msgstr "Završeno"
 
@@ -6582,8 +6590,8 @@ msgid "Required Parts"
 msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:428
-#: src/pages/sales/SalesOrderDetail.tsx:380
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:210
+#: src/pages/sales/SalesOrderDetail.tsx:407
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:261
 #: src/tables/part/PartSalesAllocationsTable.tsx:73
 msgid "Allocated Stock"
 msgstr "Alocirano zaliha"
@@ -6627,16 +6635,16 @@ msgid "Cancel Build Order"
 msgstr "Otkaži nalog za izradu"
 
 #: src/pages/build/BuildDetail.tsx:584
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:398
-#: src/pages/sales/ReturnOrderDetail.tsx:393
-#: src/pages/sales/SalesOrderDetail.tsx:427
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:416
+#: src/pages/sales/ReturnOrderDetail.tsx:427
+#: src/pages/sales/SalesOrderDetail.tsx:454
 msgid "Order cancelled"
 msgstr "Nalog otkazan"
 
 #: src/pages/build/BuildDetail.tsx:585
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:397
-#: src/pages/sales/ReturnOrderDetail.tsx:392
-#: src/pages/sales/SalesOrderDetail.tsx:426
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:415
+#: src/pages/sales/ReturnOrderDetail.tsx:426
+#: src/pages/sales/SalesOrderDetail.tsx:453
 msgid "Cancel this order"
 msgstr "Otkaži ovaj nalog"
 
@@ -6645,16 +6653,16 @@ msgid "Hold Build Order"
 msgstr "Zadrži nalog za izradu"
 
 #: src/pages/build/BuildDetail.tsx:596
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:405
-#: src/pages/sales/ReturnOrderDetail.tsx:400
-#: src/pages/sales/SalesOrderDetail.tsx:434
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:423
+#: src/pages/sales/ReturnOrderDetail.tsx:434
+#: src/pages/sales/SalesOrderDetail.tsx:461
 msgid "Place this order on hold"
 msgstr "Stavi ovaj nalog na čekanje"
 
 #: src/pages/build/BuildDetail.tsx:597
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:406
-#: src/pages/sales/ReturnOrderDetail.tsx:401
-#: src/pages/sales/SalesOrderDetail.tsx:435
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:424
+#: src/pages/sales/ReturnOrderDetail.tsx:435
+#: src/pages/sales/SalesOrderDetail.tsx:462
 msgid "Order placed on hold"
 msgstr "Nalog stavljen na čekanje"
 
@@ -6663,16 +6671,16 @@ msgid "Issue Build Order"
 msgstr "Izdaj nalog za izradu"
 
 #: src/pages/build/BuildDetail.tsx:604
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:389
-#: src/pages/sales/ReturnOrderDetail.tsx:384
-#: src/pages/sales/SalesOrderDetail.tsx:418
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:407
+#: src/pages/sales/ReturnOrderDetail.tsx:418
+#: src/pages/sales/SalesOrderDetail.tsx:445
 msgid "Issue this order"
 msgstr "Izdaj ovaj nalog"
 
 #: src/pages/build/BuildDetail.tsx:605
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:390
-#: src/pages/sales/ReturnOrderDetail.tsx:385
-#: src/pages/sales/SalesOrderDetail.tsx:419
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:408
+#: src/pages/sales/ReturnOrderDetail.tsx:419
+#: src/pages/sales/SalesOrderDetail.tsx:446
 msgid "Order issued"
 msgstr "Nalog izdat"
 
@@ -6681,30 +6689,30 @@ msgid "Complete Build Order"
 msgstr "Završi nalog za izradu"
 
 #: src/pages/build/BuildDetail.tsx:630
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:418
-#: src/pages/sales/ReturnOrderDetail.tsx:408
-#: src/pages/sales/SalesOrderDetail.tsx:453
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:436
+#: src/pages/sales/ReturnOrderDetail.tsx:442
+#: src/pages/sales/SalesOrderDetail.tsx:480
 msgid "Mark this order as complete"
 msgstr "Označi ovaj nalog kao završen"
 
 #: src/pages/build/BuildDetail.tsx:633
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:412
-#: src/pages/sales/ReturnOrderDetail.tsx:409
-#: src/pages/sales/SalesOrderDetail.tsx:454
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:430
+#: src/pages/sales/ReturnOrderDetail.tsx:443
+#: src/pages/sales/SalesOrderDetail.tsx:481
 msgid "Order completed"
 msgstr "Nalog završen"
 
 #: src/pages/build/BuildDetail.tsx:660
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:441
-#: src/pages/sales/ReturnOrderDetail.tsx:438
-#: src/pages/sales/SalesOrderDetail.tsx:489
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:459
+#: src/pages/sales/ReturnOrderDetail.tsx:470
+#: src/pages/sales/SalesOrderDetail.tsx:516
 msgid "Issue Order"
 msgstr "Izdaj nalog"
 
 #: src/pages/build/BuildDetail.tsx:667
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:448
-#: src/pages/sales/ReturnOrderDetail.tsx:445
-#: src/pages/sales/SalesOrderDetail.tsx:503
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:466
+#: src/pages/sales/ReturnOrderDetail.tsx:477
+#: src/pages/sales/SalesOrderDetail.tsx:530
 msgid "Complete Order"
 msgstr "Završi nalog"
 
@@ -6713,30 +6721,30 @@ msgid "Build Order Actions"
 msgstr "Akcije naloga za izradu"
 
 #: src/pages/build/BuildDetail.tsx:691
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:471
-#: src/pages/sales/ReturnOrderDetail.tsx:468
-#: src/pages/sales/SalesOrderDetail.tsx:527
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:489
+#: src/pages/sales/ReturnOrderDetail.tsx:500
+#: src/pages/sales/SalesOrderDetail.tsx:554
 msgid "Edit order"
 msgstr "Izmeni nalog"
 
 #: src/pages/build/BuildDetail.tsx:695
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:479
-#: src/pages/sales/ReturnOrderDetail.tsx:474
-#: src/pages/sales/SalesOrderDetail.tsx:532
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:497
+#: src/pages/sales/ReturnOrderDetail.tsx:506
+#: src/pages/sales/SalesOrderDetail.tsx:559
 msgid "Duplicate order"
 msgstr "Dupliraj nalog"
 
 #: src/pages/build/BuildDetail.tsx:699
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:482
-#: src/pages/sales/ReturnOrderDetail.tsx:479
-#: src/pages/sales/SalesOrderDetail.tsx:535
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:500
+#: src/pages/sales/ReturnOrderDetail.tsx:511
+#: src/pages/sales/SalesOrderDetail.tsx:562
 msgid "Hold order"
 msgstr "Zadrži nalog"
 
 #: src/pages/build/BuildDetail.tsx:704
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:487
-#: src/pages/sales/ReturnOrderDetail.tsx:484
-#: src/pages/sales/SalesOrderDetail.tsx:540
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:505
+#: src/pages/sales/ReturnOrderDetail.tsx:516
+#: src/pages/sales/SalesOrderDetail.tsx:567
 msgid "Cancel order"
 msgstr "Otkaži nalog"
 
@@ -6744,7 +6752,7 @@ msgstr "Otkaži nalog"
 #: src/pages/stock/StockDetail.tsx:344
 #: src/tables/build/BuildAllocatedStockTable.tsx:85
 #: src/tables/part/PartBuildAllocationsTable.tsx:45
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:151
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:155
 #: src/tables/stock/StockTrackingTable.tsx:109
 msgid "Build Order"
 msgstr "Nalog za izradu"
@@ -6810,9 +6818,9 @@ msgstr "Proizvođač"
 #: src/pages/company/CompanyDetail.tsx:148
 #: src/pages/company/CustomerDetail.tsx:8
 #: src/pages/part/pricing/SaleHistoryPanel.tsx:31
-#: src/pages/sales/ReturnOrderDetail.tsx:103
-#: src/pages/sales/SalesOrderDetail.tsx:112
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:102
+#: src/pages/sales/ReturnOrderDetail.tsx:123
+#: src/pages/sales/SalesOrderDetail.tsx:113
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:113
 #: src/pages/stock/StockDetail.tsx:370
 #: src/tables/company/CompanyTable.tsx:106
 #: src/tables/sales/ReturnOrderTable.tsx:108
@@ -6888,7 +6896,7 @@ msgstr "Detalji dela proizvođača"
 
 #: src/pages/company/ManufacturerPartDetail.tsx:178
 #: src/pages/company/SupplierPartDetail.tsx:251
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:361
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:381
 msgid "Received Stock"
 msgstr "Primljene zalihe"
 
@@ -6923,8 +6931,8 @@ msgstr "Opis dela"
 
 #: src/pages/company/SupplierPartDetail.tsx:178
 #: src/tables/part/PartPurchaseOrdersTable.tsx:73
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:185
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:227
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:189
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:231
 #: src/tables/purchasing/SupplierPartTable.tsx:124
 msgid "Pack Quantity"
 msgstr "Količina pakovanja"
@@ -7017,83 +7025,83 @@ msgstr "Detalji korisnika"
 msgid "Basic user"
 msgstr ""
 
-#: src/pages/part/CategoryDetail.tsx:98
+#: src/pages/part/CategoryDetail.tsx:100
 #: src/pages/stock/LocationDetail.tsx:94
 #: src/tables/settings/ErrorTable.tsx:63
 #: src/tables/settings/ErrorTable.tsx:108
 msgid "Path"
 msgstr "Putanja"
 
-#: src/pages/part/CategoryDetail.tsx:114
+#: src/pages/part/CategoryDetail.tsx:116
 msgid "Parent Category"
 msgstr "Nadređena kategorija"
 
-#: src/pages/part/CategoryDetail.tsx:137
-#: src/pages/part/CategoryDetail.tsx:267
+#: src/pages/part/CategoryDetail.tsx:139
+#: src/pages/part/CategoryDetail.tsx:269
 msgid "Subcategories"
 msgstr "Podkategorije"
 
-#: src/pages/part/CategoryDetail.tsx:144
+#: src/pages/part/CategoryDetail.tsx:146
 #: src/pages/stock/LocationDetail.tsx:134
 #: src/tables/part/PartCategoryTable.tsx:89
 #: src/tables/stock/StockLocationTable.tsx:43
 msgid "Structural"
 msgstr "Strukturalno"
 
-#: src/pages/part/CategoryDetail.tsx:150
+#: src/pages/part/CategoryDetail.tsx:152
 msgid "Parent default location"
 msgstr "Podrazumevana lokacija nadređene kategorije"
 
-#: src/pages/part/CategoryDetail.tsx:157
+#: src/pages/part/CategoryDetail.tsx:159
 msgid "Default location"
 msgstr "Podrazumevana lokacija"
 
-#: src/pages/part/CategoryDetail.tsx:168
+#: src/pages/part/CategoryDetail.tsx:170
 msgid "Top level part category"
 msgstr "Vrhovna kategorija dela"
 
-#: src/pages/part/CategoryDetail.tsx:178
-#: src/pages/part/CategoryDetail.tsx:244
+#: src/pages/part/CategoryDetail.tsx:180
+#: src/pages/part/CategoryDetail.tsx:246
 #: src/tables/part/PartCategoryTable.tsx:122
 msgid "Edit Part Category"
 msgstr "Izmeni kategoriju dela"
 
-#: src/pages/part/CategoryDetail.tsx:187
+#: src/pages/part/CategoryDetail.tsx:189
 msgid "Move items to parent category"
 msgstr "Premesti stavke u nadređenu kategoriju"
 
-#: src/pages/part/CategoryDetail.tsx:191
+#: src/pages/part/CategoryDetail.tsx:193
 #: src/pages/stock/LocationDetail.tsx:226
 msgid "Delete items"
 msgstr "Obriši stavke"
 
-#: src/pages/part/CategoryDetail.tsx:199
-#: src/pages/part/CategoryDetail.tsx:249
+#: src/pages/part/CategoryDetail.tsx:201
+#: src/pages/part/CategoryDetail.tsx:251
 msgid "Delete Part Category"
 msgstr "Obriši kategoriju dela"
 
-#: src/pages/part/CategoryDetail.tsx:202
+#: src/pages/part/CategoryDetail.tsx:204
 msgid "Parts Action"
 msgstr "Akcije delova"
 
-#: src/pages/part/CategoryDetail.tsx:203
+#: src/pages/part/CategoryDetail.tsx:205
 msgid "Action for parts in this category"
 msgstr "Akcije za delove unutar ove kategorije"
 
-#: src/pages/part/CategoryDetail.tsx:208
+#: src/pages/part/CategoryDetail.tsx:210
 msgid "Child Categories Action"
 msgstr "Akcije podkategorije"
 
-#: src/pages/part/CategoryDetail.tsx:209
+#: src/pages/part/CategoryDetail.tsx:211
 msgid "Action for child categories in this category"
 msgstr "Akcije za podkategorije ove kategorije"
 
-#: src/pages/part/CategoryDetail.tsx:240
+#: src/pages/part/CategoryDetail.tsx:242
 #: src/tables/part/PartCategoryTable.tsx:143
 msgid "Category Actions"
 msgstr "Akcije kategorije"
 
-#: src/pages/part/CategoryDetail.tsx:261
+#: src/pages/part/CategoryDetail.tsx:263
 msgid "Category Details"
 msgstr "Detalji kategorije"
 
@@ -7280,9 +7288,9 @@ msgid "Virtual Part"
 msgstr "Virtualni deo"
 
 #: src/pages/part/PartDetail.tsx:678
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:253
-#: src/pages/sales/ReturnOrderDetail.tsx:217
-#: src/pages/sales/SalesOrderDetail.tsx:229
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:271
+#: src/pages/sales/ReturnOrderDetail.tsx:249
+#: src/pages/sales/SalesOrderDetail.tsx:242
 #: src/tables/ColumnRenderers.tsx:440
 msgid "Creation Date"
 msgstr "Datum kreiranja"
@@ -7516,8 +7524,8 @@ msgstr "Maksimalna vrednost"
 #: src/pages/part/pricing/BomPricingPanel.tsx:175
 #: src/tables/ColumnRenderers.tsx:490
 #: src/tables/bom/BomTable.tsx:275
-#: src/tables/general/ExtraLineItemTable.tsx:69
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:255
+#: src/tables/general/ExtraLineItemTable.tsx:71
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:259
 #: src/tables/purchasing/PurchaseOrderTable.tsx:138
 #: src/tables/sales/ReturnOrderTable.tsx:139
 #: src/tables/sales/SalesOrderLineItemTable.tsx:122
@@ -7559,8 +7567,8 @@ msgstr "Maksimalna cena"
 #: src/pages/part/pricing/SupplierPricingPanel.tsx:66
 #: src/pages/stock/StockDetail.tsx:390
 #: src/tables/bom/BomTable.tsx:265
-#: src/tables/general/ExtraLineItemTable.tsx:61
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:251
+#: src/tables/general/ExtraLineItemTable.tsx:63
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:255
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:84
 #: src/tables/stock/StockItemTable.tsx:259
 msgid "Unit Price"
@@ -7713,13 +7721,13 @@ msgstr "Varijanta dela"
 msgid "Edit Purchase Order"
 msgstr "Izmeni nalog za kupovinu"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:107
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:125
 #: src/tables/purchasing/PurchaseOrderTable.tsx:154
 #: src/tables/purchasing/PurchaseOrderTable.tsx:167
 msgid "Add Purchase Order"
 msgstr "Dodaj nalog za kupovinu"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:129
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:147
 msgid "Supplier Reference"
 msgstr "Referenca dobavljača"
 
@@ -7729,28 +7737,22 @@ msgstr "Referenca dobavljača"
 #~ msgid "Order Currency,"
 #~ msgstr "Order Currency,"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:169
-#: src/pages/sales/ReturnOrderDetail.tsx:140
-#: src/pages/sales/SalesOrderDetail.tsx:143
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:187
+#: src/pages/sales/ReturnOrderDetail.tsx:160
+#: src/pages/sales/SalesOrderDetail.tsx:144
 msgid "Completed Line Items"
 msgstr "Završene stavke narudžbine"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:178
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:266
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:196
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:270
 msgid "Destination"
 msgstr "Odredište"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:184
-#: src/pages/sales/ReturnOrderDetail.tsx:147
-#: src/pages/sales/SalesOrderDetail.tsx:160
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:202
+#: src/pages/sales/ReturnOrderDetail.tsx:167
+#: src/pages/sales/SalesOrderDetail.tsx:161
 msgid "Order Currency"
 msgstr "Valuta narudžbine"
-
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:190
-#: src/pages/sales/ReturnOrderDetail.tsx:154
-#: src/pages/sales/SalesOrderDetail.tsx:166
-msgid "Total Cost"
-msgstr "Ukupna cena"
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:207
 #: src/pages/sales/ReturnOrderDetail.tsx:183
@@ -7758,248 +7760,330 @@ msgstr "Ukupna cena"
 #~ msgid "Created On"
 #~ msgstr "Created On"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:219
-#: src/pages/sales/ReturnOrderDetail.tsx:183
-#: src/pages/sales/SalesOrderDetail.tsx:195
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:208
+#: src/pages/sales/ReturnOrderDetail.tsx:174
+#: src/pages/sales/SalesOrderDetail.tsx:167
+msgid "Total Cost"
+msgstr "Ukupna cena"
+
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:237
+#: src/pages/sales/ReturnOrderDetail.tsx:215
+#: src/pages/sales/SalesOrderDetail.tsx:208
 msgid "Contact Email"
 msgstr ""
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:227
-#: src/pages/sales/ReturnOrderDetail.tsx:191
-#: src/pages/sales/SalesOrderDetail.tsx:203
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:245
+#: src/pages/sales/ReturnOrderDetail.tsx:223
+#: src/pages/sales/SalesOrderDetail.tsx:216
 msgid "Contact Phone"
 msgstr ""
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:260
-#: src/pages/sales/ReturnOrderDetail.tsx:225
-#: src/pages/sales/SalesOrderDetail.tsx:236
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:278
+#: src/pages/sales/ReturnOrderDetail.tsx:257
+#: src/pages/sales/SalesOrderDetail.tsx:249
 msgid "Issue Date"
 msgstr "Datum izdavanja"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:285
-#: src/pages/sales/ReturnOrderDetail.tsx:249
-#: src/pages/sales/SalesOrderDetail.tsx:259
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:303
+#: src/pages/sales/ReturnOrderDetail.tsx:281
+#: src/pages/sales/SalesOrderDetail.tsx:272
 #: src/tables/ColumnRenderers.tsx:448
 #: src/tables/build/BuildOrderTable.tsx:137
 #: src/tables/part/PartPurchaseOrdersTable.tsx:106
 msgid "Completion Date"
 msgstr "Datum završetka"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:315
-#: src/pages/sales/ReturnOrderDetail.tsx:279
-#: src/pages/sales/SalesOrderDetail.tsx:325
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:333
+#: src/pages/sales/ReturnOrderDetail.tsx:311
+#: src/pages/sales/SalesOrderDetail.tsx:349
 msgid "Order Details"
 msgstr "Detalji narudžbine"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:321
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:330
-#: src/pages/sales/ReturnOrderDetail.tsx:133
-#: src/pages/sales/ReturnOrderDetail.tsx:285
-#: src/pages/sales/ReturnOrderDetail.tsx:294
-#: src/pages/sales/SalesOrderDetail.tsx:331
-#: src/pages/sales/SalesOrderDetail.tsx:340
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:339
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:348
+#: src/pages/sales/ReturnOrderDetail.tsx:153
+#: src/pages/sales/ReturnOrderDetail.tsx:317
+#: src/pages/sales/ReturnOrderDetail.tsx:326
+#: src/pages/sales/SalesOrderDetail.tsx:355
+#: src/pages/sales/SalesOrderDetail.tsx:364
 msgid "Line Items"
 msgstr "Stavke"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:344
-#: src/pages/sales/ReturnOrderDetail.tsx:308
-#: src/pages/sales/SalesOrderDetail.tsx:357
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:363
+#: src/pages/sales/ReturnOrderDetail.tsx:341
+#: src/pages/sales/SalesOrderDetail.tsx:378
 msgid "Extra Line Items"
 msgstr "Dodatne stavke"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:387
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:405
 msgid "Issue Purchase Order"
 msgstr "Izdaj nalog za kupovinu"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:395
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:413
 msgid "Cancel Purchase Order"
 msgstr "Otkaži nalog za kupovinu"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:403
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:421
 msgid "Hold Purchase Order"
 msgstr "Zadrži nalog za kupovinu"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:411
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:429
 msgid "Complete Purchase Order"
 msgstr "Završi nalog za kupovinu"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:467
-#: src/pages/sales/ReturnOrderDetail.tsx:464
-#: src/pages/sales/SalesOrderDetail.tsx:522
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:485
+#: src/pages/sales/ReturnOrderDetail.tsx:496
+#: src/pages/sales/SalesOrderDetail.tsx:549
 msgid "Order Actions"
 msgstr "Akcije narudžbine"
 
-#: src/pages/sales/ReturnOrderDetail.tsx:94
-#: src/pages/sales/SalesOrderDetail.tsx:103
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:111
+#: src/pages/sales/ReturnOrderDetail.tsx:114
+#: src/pages/sales/SalesOrderDetail.tsx:104
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:134
 #: src/tables/sales/SalesOrderTable.tsx:141
 msgid "Customer Reference"
 msgstr "Referenca mušterije"
+
+#: src/pages/sales/ReturnOrderDetail.tsx:195
+msgid "Return Address"
+msgstr ""
+
+#: src/pages/sales/ReturnOrderDetail.tsx:201
+#: src/pages/sales/SalesOrderDetail.tsx:194
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:181
+msgid "Not specified"
+msgstr ""
 
 #: src/pages/sales/ReturnOrderDetail.tsx:349
 #~ msgid "Order canceled"
 #~ msgstr "Order canceled"
 
-#: src/pages/sales/ReturnOrderDetail.tsx:355
+#: src/pages/sales/ReturnOrderDetail.tsx:389
 msgid "Edit Return Order"
 msgstr "Izmeni reklamaciju"
 
-#: src/pages/sales/ReturnOrderDetail.tsx:373
+#: src/pages/sales/ReturnOrderDetail.tsx:407
 #: src/tables/sales/ReturnOrderTable.tsx:154
 #: src/tables/sales/ReturnOrderTable.tsx:167
 msgid "Add Return Order"
 msgstr "Dodaj reklamaciju"
 
-#: src/pages/sales/ReturnOrderDetail.tsx:382
+#: src/pages/sales/ReturnOrderDetail.tsx:416
 msgid "Issue Return Order"
 msgstr "Izdaj reklamaciju"
 
-#: src/pages/sales/ReturnOrderDetail.tsx:390
+#: src/pages/sales/ReturnOrderDetail.tsx:424
 msgid "Cancel Return Order"
 msgstr "Otkaži reklamaciju"
 
-#: src/pages/sales/ReturnOrderDetail.tsx:398
+#: src/pages/sales/ReturnOrderDetail.tsx:432
 msgid "Hold Return Order"
 msgstr "Zadrži reklamaciju"
 
-#: src/pages/sales/ReturnOrderDetail.tsx:406
+#: src/pages/sales/ReturnOrderDetail.tsx:440
 msgid "Complete Return Order"
 msgstr "Završi reklamaciju"
 
-#: src/pages/sales/SalesOrderDetail.tsx:152
+#: src/pages/sales/SalesOrderDetail.tsx:153
 msgid "Completed Shipments"
 msgstr "Završene isporuke"
+
+#: src/pages/sales/SalesOrderDetail.tsx:188
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:170
+msgid "Shipping Address"
+msgstr ""
 
 #: src/pages/sales/SalesOrderDetail.tsx:256
 #~ msgid "Pending Shipments"
 #~ msgstr "Pending Shipments"
 
-#: src/pages/sales/SalesOrderDetail.tsx:292
+#: src/pages/sales/SalesOrderDetail.tsx:316
 msgid "Edit Sales Order"
 msgstr "Izmeni prodajnu narudžbinu"
 
-#: src/pages/sales/SalesOrderDetail.tsx:314
+#: src/pages/sales/SalesOrderDetail.tsx:338
 #: src/tables/sales/SalesOrderTable.tsx:108
 #: src/tables/sales/SalesOrderTable.tsx:121
 msgid "Add Sales Order"
 msgstr "Dodaj prodajnu narudžbinu"
 
-#: src/pages/sales/SalesOrderDetail.tsx:374
+#: src/pages/sales/SalesOrderDetail.tsx:396
 #: src/tables/sales/SalesOrderTable.tsx:147
 msgid "Shipments"
 msgstr "Isporuke"
 
-#: src/pages/sales/SalesOrderDetail.tsx:416
+#: src/pages/sales/SalesOrderDetail.tsx:443
 msgid "Issue Sales Order"
 msgstr "Izdaj prodajnu narudžbinu"
 
-#: src/pages/sales/SalesOrderDetail.tsx:424
+#: src/pages/sales/SalesOrderDetail.tsx:451
 msgid "Cancel Sales Order"
 msgstr "Otkaži prodajnu narudžbinu"
 
-#: src/pages/sales/SalesOrderDetail.tsx:432
+#: src/pages/sales/SalesOrderDetail.tsx:459
 msgid "Hold Sales Order"
 msgstr "Zadrži prodajnu narudžbinu"
 
-#: src/pages/sales/SalesOrderDetail.tsx:440
+#: src/pages/sales/SalesOrderDetail.tsx:467
 msgid "Ship Sales Order"
 msgstr "Isporuči nalog za prodaju"
 
-#: src/pages/sales/SalesOrderDetail.tsx:442
+#: src/pages/sales/SalesOrderDetail.tsx:469
 msgid "Ship this order?"
 msgstr "Isporuči ovaj nalog?"
 
-#: src/pages/sales/SalesOrderDetail.tsx:443
+#: src/pages/sales/SalesOrderDetail.tsx:470
 msgid "Order shipped"
 msgstr "Nalog isporučen"
 
-#: src/pages/sales/SalesOrderDetail.tsx:451
+#: src/pages/sales/SalesOrderDetail.tsx:478
 msgid "Complete Sales Order"
 msgstr "Završi prodajnu narudžbinu"
 
-#: src/pages/sales/SalesOrderDetail.tsx:496
+#: src/pages/sales/SalesOrderDetail.tsx:523
 msgid "Ship Order"
 msgstr "Naruči pošiljku"
 
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:119
-#: src/tables/sales/SalesOrderShipmentTable.tsx:94
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:142
+#: src/tables/sales/SalesOrderShipmentTable.tsx:100
 msgid "Shipment Reference"
 msgstr "Referenca pošiljke"
 
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:126
-msgid "Allocated Items"
-msgstr "Alocirane stavke"
-
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:135
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:148
 msgid "Tracking Number"
 msgstr "Broj za praćenje"
 
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:143
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:156
 msgid "Invoice Number"
 msgstr "Broj narudžbenice"
 
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:151
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:191
+msgid "Allocated Items"
+msgstr "Alocirane stavke"
+
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:196
+msgid "Checked By"
+msgstr ""
+
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:202
+msgid "Not checked"
+msgstr ""
+
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:208
 #: src/tables/ColumnRenderers.tsx:456
 #: src/tables/sales/SalesOrderAllocationTable.tsx:179
-#: src/tables/sales/SalesOrderShipmentTable.tsx:113
+#: src/tables/sales/SalesOrderShipmentTable.tsx:133
 msgid "Shipment Date"
 msgstr "Datum isporuke"
-
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:159
-#: src/tables/sales/SalesOrderShipmentTable.tsx:117
-msgid "Delivery Date"
-msgstr "Datum dostave"
-
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:204
-msgid "Shipment Details"
-msgstr "Detalji isporukue"
 
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:211
 #~ msgid "Assigned Items"
 #~ msgstr "Assigned Items"
 
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:242
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:334
-#: src/tables/sales/SalesOrderShipmentTable.tsx:73
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:216
+#: src/tables/sales/SalesOrderShipmentTable.tsx:137
+msgid "Delivery Date"
+msgstr "Datum dostave"
+
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:255
+msgid "Shipment Details"
+msgstr "Detalji isporukue"
+
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:294
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:438
+#: src/tables/sales/SalesOrderShipmentTable.tsx:79
 msgid "Edit Shipment"
 msgstr "Izmeni isporuku"
 
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:249
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:339
-#: src/tables/sales/SalesOrderShipmentTable.tsx:65
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:301
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:457
+#: src/tables/sales/SalesOrderShipmentTable.tsx:71
 msgid "Cancel Shipment"
 msgstr "Otkaži isporuku"
 
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:262
-#: src/tables/sales/SalesOrderShipmentTable.tsx:81
-#: src/tables/sales/SalesOrderShipmentTable.tsx:144
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:314
+#: src/tables/sales/SalesOrderShipmentTable.tsx:87
+#: src/tables/sales/SalesOrderShipmentTable.tsx:164
 msgid "Complete Shipment"
 msgstr "Završi isporuku"
 
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:279
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:326
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:328
+msgid "Check Shipment"
+msgstr ""
+
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:329
+msgid "Marking the shipment as checked indicates that you have verified that all items included in this shipment are correct"
+msgstr ""
+
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:339
+msgid "Shipment marked as checked"
+msgstr ""
+
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:346
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:348
+msgid "Uncheck Shipment"
+msgstr ""
+
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:349
+msgid "Marking the shipment as unchecked indicates that the shipment requires further verification"
+msgstr ""
+
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:359
+msgid "Shipment marked as unchecked"
+msgstr ""
+
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:371
 #: src/tables/part/PartPurchaseOrdersTable.tsx:122
 msgid "Pending"
 msgstr "Na čekanju"
 
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:285
-#: src/tables/sales/SalesOrderShipmentTable.tsx:106
-#: src/tables/sales/SalesOrderShipmentTable.tsx:190
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:377
+#: src/tables/sales/SalesOrderShipmentTable.tsx:112
+#: src/tables/sales/SalesOrderShipmentTable.tsx:210
+msgid "Checked"
+msgstr ""
+
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:383
+msgid "Not Checked"
+msgstr ""
+
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:389
+#: src/tables/sales/SalesOrderShipmentTable.tsx:119
+#: src/tables/sales/SalesOrderShipmentTable.tsx:215
 msgid "Shipped"
 msgstr "Poslato"
 
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:291
-#: src/tables/sales/SalesOrderShipmentTable.tsx:195
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:395
+#: src/tables/sales/SalesOrderShipmentTable.tsx:126
+#: src/tables/sales/SalesOrderShipmentTable.tsx:220
 #: src/tables/settings/EmailTable.tsx:31
 msgid "Delivered"
 msgstr "Isporučeno"
 
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:306
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:410
 msgid "Send Shipment"
 msgstr "Pošalji isporuku"
 
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:329
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:433
 msgid "Shipment Actions"
 msgstr "Akcije isporuke"
+
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:442
+msgid "Check"
+msgstr ""
+
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:443
+msgid "Mark shipment as checked"
+msgstr ""
+
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:449
+msgid "Uncheck"
+msgstr ""
+
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:450
+msgid "Mark shipment as unchecked"
+msgstr ""
 
 #: src/pages/stock/LocationDetail.tsx:110
 msgid "Parent Location"
@@ -9100,7 +9184,7 @@ msgid "Fully allocated"
 msgstr ""
 
 #: src/tables/build/BuildLineTable.tsx:545
-#: src/tables/sales/SalesOrderLineItemTable.tsx:308
+#: src/tables/sales/SalesOrderLineItemTable.tsx:309
 msgid "Create Build Order"
 msgstr "Kreiraj nalog za izradu"
 
@@ -9143,7 +9227,7 @@ msgid "Build Stock"
 msgstr "Kreiraj zalihe"
 
 #: src/tables/build/BuildLineTable.tsx:766
-#: src/tables/sales/SalesOrderLineItemTable.tsx:396
+#: src/tables/sales/SalesOrderLineItemTable.tsx:397
 msgid "View Part"
 msgstr "Pogledaj deo"
 
@@ -9465,31 +9549,31 @@ msgstr "Model"
 msgid "View Item"
 msgstr "Pogledaj stavku"
 
-#: src/tables/general/ExtraLineItemTable.tsx:91
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:293
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:402
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:80
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:183
-#: src/tables/sales/SalesOrderLineItemTable.tsx:249
-#: src/tables/sales/SalesOrderLineItemTable.tsx:352
+#: src/tables/general/ExtraLineItemTable.tsx:93
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:297
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:401
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:82
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:185
+#: src/tables/sales/SalesOrderLineItemTable.tsx:250
+#: src/tables/sales/SalesOrderLineItemTable.tsx:353
 msgid "Add Line Item"
 msgstr "Dodaj stavku"
 
-#: src/tables/general/ExtraLineItemTable.tsx:104
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:314
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:93
-#: src/tables/sales/SalesOrderLineItemTable.tsx:268
+#: src/tables/general/ExtraLineItemTable.tsx:106
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:318
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:95
+#: src/tables/sales/SalesOrderLineItemTable.tsx:269
 msgid "Edit Line Item"
 msgstr "Izmeni stavku"
 
-#: src/tables/general/ExtraLineItemTable.tsx:113
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:323
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:102
-#: src/tables/sales/SalesOrderLineItemTable.tsx:277
+#: src/tables/general/ExtraLineItemTable.tsx:115
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:327
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:104
+#: src/tables/sales/SalesOrderLineItemTable.tsx:278
 msgid "Delete Line Item"
 msgstr "Obriši stavku"
 
-#: src/tables/general/ExtraLineItemTable.tsx:151
+#: src/tables/general/ExtraLineItemTable.tsx:153
 msgid "Add Extra Line Item"
 msgstr "Dodaj dodatnu stavku"
 
@@ -9775,7 +9859,7 @@ msgid "Required Stock"
 msgstr "Potrebne zalihe"
 
 #: src/tables/part/PartBuildAllocationsTable.tsx:124
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:359
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:358
 msgid "View Build Order"
 msgstr "Prikaži nalog za izradu"
 
@@ -9821,20 +9905,20 @@ msgstr ""
 msgid "Add Part Category"
 msgstr "Dodaj kategoriju dela"
 
-#: src/tables/part/PartCategoryTemplateTable.tsx:42
-#: src/tables/part/PartCategoryTemplateTable.tsx:136
+#: src/tables/part/PartCategoryTemplateTable.tsx:49
+#: src/tables/part/PartCategoryTemplateTable.tsx:143
 msgid "Add Category Parameter"
 msgstr "Dodaj parametar kategorije"
 
-#: src/tables/part/PartCategoryTemplateTable.tsx:50
+#: src/tables/part/PartCategoryTemplateTable.tsx:57
 msgid "Edit Category Parameter"
 msgstr "Izmeni parametar kategorije"
 
-#: src/tables/part/PartCategoryTemplateTable.tsx:58
+#: src/tables/part/PartCategoryTemplateTable.tsx:65
 msgid "Delete Category Parameter"
 msgstr "Obriši parametar kategorije"
 
-#: src/tables/part/PartCategoryTemplateTable.tsx:80
+#: src/tables/part/PartCategoryTemplateTable.tsx:87
 msgid "Parameter Template"
 msgstr "Šablon parametara"
 
@@ -9919,7 +10003,7 @@ msgstr "Obriši šablon parametara"
 #~ msgstr "Add parameter template"
 
 #: src/tables/part/PartPurchaseOrdersTable.tsx:79
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:191
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:195
 msgid "Total Quantity"
 msgstr "Ukupna količina"
 
@@ -10577,24 +10661,24 @@ msgstr ""
 msgid "Show manufacturer parts for active manufacturers."
 msgstr ""
 
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:110
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:396
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:114
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:395
 msgid "Import Line Items"
 msgstr "Uvezi stavke"
 
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:231
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:235
 msgid "Supplier Code"
 msgstr "Kod dobavljača"
 
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:238
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:242
 msgid "Supplier Link"
 msgstr "Link dobavljača"
 
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:245
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:249
 msgid "Manufacturer Code"
 msgstr "Kod proizvođača"
 
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:278
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:282
 msgid "Show line items which have been received"
 msgstr "Prikaži stavke koje su primljene"
 
@@ -10604,11 +10688,11 @@ msgstr "Prikaži stavke koje su primljene"
 #~ msgid "Add line item"
 #~ msgstr "Add line item"
 
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:349
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:348
 msgid "Receive line item"
 msgstr "Primi stavku"
 
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:413
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:412
 msgid "Receive items"
 msgstr "Primi stavke"
 
@@ -10656,23 +10740,23 @@ msgstr "Prikaži aktivne dobavljače"
 msgid "Show supplier parts with stock"
 msgstr "Prikaži delove dobavljača sa zalihama"
 
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:154
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:156
 msgid "Received Date"
 msgstr "Datum prijema"
 
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:168
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:170
 msgid "Show items which have been received"
 msgstr "Prikaži stavke koje su primljene"
 
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:173
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:175
 msgid "Filter by line item status"
 msgstr "Filtriraj po statusu stavke"
 
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:191
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:193
 msgid "Receive selected items"
 msgstr "Primi izabrane stavke"
 
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:223
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:228
 msgid "Receive Item"
 msgstr "Primi stavku"
 
@@ -10727,7 +10811,7 @@ msgstr ""
 #~ msgid "Allocate stock"
 #~ msgstr "Allocate stock"
 
-#: src/tables/sales/SalesOrderLineItemTable.tsx:290
+#: src/tables/sales/SalesOrderLineItemTable.tsx:291
 msgid "Allocate Serial Numbers"
 msgstr "Alociraj serijske brojeve"
 
@@ -10735,23 +10819,23 @@ msgstr "Alociraj serijske brojeve"
 #~ msgid "Allocate Serials"
 #~ msgstr "Allocate Serials"
 
-#: src/tables/sales/SalesOrderLineItemTable.tsx:338
+#: src/tables/sales/SalesOrderLineItemTable.tsx:339
 msgid "Show lines which are fully allocated"
 msgstr "Prikaži linije koje su potpuno alocirane"
 
-#: src/tables/sales/SalesOrderLineItemTable.tsx:343
+#: src/tables/sales/SalesOrderLineItemTable.tsx:344
 msgid "Show lines which are completed"
 msgstr "Prikaži linije koje su završene"
 
-#: src/tables/sales/SalesOrderLineItemTable.tsx:423
+#: src/tables/sales/SalesOrderLineItemTable.tsx:424
 msgid "Allocate serials"
 msgstr "Dodeli serijske brojeve"
 
-#: src/tables/sales/SalesOrderLineItemTable.tsx:441
+#: src/tables/sales/SalesOrderLineItemTable.tsx:442
 msgid "Build stock"
 msgstr "Izgradi zalihe"
 
-#: src/tables/sales/SalesOrderLineItemTable.tsx:459
+#: src/tables/sales/SalesOrderLineItemTable.tsx:460
 msgid "Order stock"
 msgstr "Naruči zalihe"
 
@@ -10759,35 +10843,39 @@ msgstr "Naruči zalihe"
 #~ msgid "Delete Shipment"
 #~ msgstr "Delete Shipment"
 
-#: src/tables/sales/SalesOrderShipmentTable.tsx:55
+#: src/tables/sales/SalesOrderShipmentTable.tsx:61
 msgid "Create Shipment"
 msgstr "Kreiraj isporuku"
 
-#: src/tables/sales/SalesOrderShipmentTable.tsx:102
+#: src/tables/sales/SalesOrderShipmentTable.tsx:108
 msgid "Items"
 msgstr "Stavke"
 
-#: src/tables/sales/SalesOrderShipmentTable.tsx:137
+#: src/tables/sales/SalesOrderShipmentTable.tsx:157
 msgid "View Shipment"
 msgstr "Pogledaj isporuku"
 
-#: src/tables/sales/SalesOrderShipmentTable.tsx:154
+#: src/tables/sales/SalesOrderShipmentTable.tsx:174
 msgid "Edit shipment"
 msgstr "Izmeni isporuku"
 
-#: src/tables/sales/SalesOrderShipmentTable.tsx:162
+#: src/tables/sales/SalesOrderShipmentTable.tsx:182
 msgid "Cancel shipment"
 msgstr "Otkaži isporuku"
 
-#: src/tables/sales/SalesOrderShipmentTable.tsx:177
+#: src/tables/sales/SalesOrderShipmentTable.tsx:197
 msgid "Add shipment"
 msgstr "Dodaj isporuku"
 
-#: src/tables/sales/SalesOrderShipmentTable.tsx:191
+#: src/tables/sales/SalesOrderShipmentTable.tsx:211
+msgid "Show shipments which have been checked"
+msgstr ""
+
+#: src/tables/sales/SalesOrderShipmentTable.tsx:216
 msgid "Show shipments which have been shipped"
 msgstr "Pokaži isporuke koje su isporučene"
 
-#: src/tables/sales/SalesOrderShipmentTable.tsx:196
+#: src/tables/sales/SalesOrderShipmentTable.tsx:221
 msgid "Show shipments which have been delivered"
 msgstr "Pokaži isporuke koje su dostavljene"
 
