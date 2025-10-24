@@ -1,5 +1,6 @@
 """Test for custom report tags."""
 
+from decimal import Decimal
 from zoneinfo import ZoneInfo
 
 from django.conf import settings
@@ -198,23 +199,27 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
         """Simple tests for mathematical operator tags."""
         self.assertEqual(report_tags.add(1, 2), 3)
         self.assertEqual(report_tags.add('-33', '33'), 0)
-        self.assertEqual(report_tags.subtract(10, 4.2), 5.8)
-        self.assertEqual(report_tags.multiply(2.3, 4), 9.2)
-        self.assertEqual(report_tags.multiply('-2', 4), -8.0)
+        self.assertEqual(report_tags.add(4.5, Decimal(4.5), cast=float), 9.0)
+        self.assertEqual(report_tags.subtract(10, 4.2, cast=float), 5.8)
+        self.assertEqual(report_tags.multiply(2.3, 4, cast=str), '9.2')
+        self.assertEqual(report_tags.multiply('-2', 4), -8)
         self.assertEqual(report_tags.divide(100, 5), 20)
 
         self.assertEqual(report_tags.modulo(10, 3), 1)
         self.assertEqual(report_tags.modulo('10', '4'), 2)
 
-        with self.assertRaises(ZeroDivisionError):
+        with self.assertRaises(ValidationError):
             report_tags.divide(100, 0)
 
     def test_maths_tags_with_strings(self):
         """Tests for mathematical operator tags with string inputs."""
-        self.assertEqual(report_tags.add('10', '20'), 30)
-        self.assertEqual(report_tags.subtract('50.5', '20.2'), 30.3)
+        self.assertEqual(report_tags.add(Decimal('10'), '20'), 30)
+        self.assertEqual(report_tags.subtract('50.5', '20.2'), Decimal('30.3'))
         self.assertEqual(report_tags.multiply(3.0000000000000, '7'), 21)
-        self.assertEqual(report_tags.divide('100.0', '4'), 25.0)
+
+        result = report_tags.divide(100, Decimal('4'), cast=int)
+        self.assertEqual(result, 25)
+        self.assertIsInstance(result, int)
 
     def test_maths_tags_with_decimal(self):
         """Tests for mathematical operator tags with Decimal inputs."""
@@ -231,6 +236,8 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
             report_tags.divide(Decimal('10.0'), Decimal('2.000')), Decimal('5.0')
         )
 
+        self.assertEqual(report_tags.multiply(3.3, Decimal('2.0')), Decimal('6.6'))
+
     def test_maths_tags_with_money(self):
         """Tests for mathematical operator tags with Money inputs."""
         m1 = Money(100, 'USD')
@@ -239,20 +246,24 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
         self.assertEqual(report_tags.add(m1, m2), Money(150, 'USD'))
         self.assertEqual(report_tags.subtract(m1, m2), Money(50, 'USD'))
         self.assertEqual(report_tags.multiply(m2, 3), Money(150, 'USD'))
+        self.assertEqual(report_tags.multiply(-3, m2), Money(-150, 'USD'))
         self.assertEqual(report_tags.divide(m1, '4'), Money(25, 'USD'))
+
+        result = report_tags.divide(Money(1000, 'GBP'), 4)
+        self.assertIsInstance(result, Money)
 
     def test_maths_tags_invalid(self):
         """Tests for mathematical operator tags with invalid inputs."""
-        with self.assertRaises(TypeError):
+        with self.assertRaises(ValidationError):
             report_tags.add('abc', 10)
 
-        with self.assertRaises(TypeError):
+        with self.assertRaises(ValidationError):
             report_tags.subtract(50, 'xyz')
 
-        with self.assertRaises(TypeError):
+        with self.assertRaises(ValidationError):
             report_tags.multiply('foo', 'bar')
 
-        with self.assertRaises(TypeError):
+        with self.assertRaises(ValidationError):
             report_tags.divide('100', 'baz')
 
     def test_number_tags(self):
