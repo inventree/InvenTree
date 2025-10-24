@@ -1369,6 +1369,17 @@ class SalesOrderShipmentFilter(FilterSet):
             return queryset.filter(order__status__in=SalesOrderStatusGroups.OPEN)
         return queryset.exclude(order__status__in=SalesOrderStatusGroups.OPEN)
 
+    order_status = rest_filters.NumberFilter(
+        label=_('Order Status'), method='filter_order_status'
+    )
+
+    def filter_order_status(self, queryset, name, value):
+        """Filter by linked SalesOrderrder status."""
+        q1 = Q(order__status=value, order__status_custom_key__isnull=True)
+        q2 = Q(order__status_custom_key=value)
+
+        return queryset.filter(q1 | q2).distinct()
+
 
 class SalesOrderShipmentMixin:
     """Mixin class for SalesOrderShipment endpoints."""
