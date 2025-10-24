@@ -222,7 +222,7 @@ def render_currency(
             pass
 
     if multiplier is not None:
-        money *= multiplier
+        money *= Decimal(str(multiplier).strip())
 
     if min_decimal_places is None or not isinstance(min_decimal_places, (int, float)):
         min_decimal_places = get_global_setting('PRICING_DECIMAL_PLACES_MIN', 0)
