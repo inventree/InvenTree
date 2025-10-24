@@ -45,6 +45,7 @@ from InvenTree.helpers import (
 )
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.serializers import (
+    FilterableCharField,
     FilterableSerializerMixin,
     InvenTreeCurrencySerializer,
     InvenTreeDecimalField,
@@ -105,7 +106,9 @@ class DuplicateOrderSerializer(serializers.Serializer):
     )
 
 
-class AbstractOrderSerializer(DataImportExportSerializerMixin, serializers.Serializer):
+class AbstractOrderSerializer(
+    DataImportExportSerializerMixin, FilterableSerializerMixin, serializers.Serializer
+):
     """Abstract serializer class which provides fields common to all order types."""
 
     export_exclude_fields = ['notes', 'duplicate']
@@ -132,30 +135,46 @@ class AbstractOrderSerializer(DataImportExportSerializerMixin, serializers.Seria
     reference = serializers.CharField(required=True)
 
     # Detail for point-of-contact field
-    contact_detail = ContactSerializer(
-        source='contact', many=False, read_only=True, allow_null=True
+    contact_detail = enable_filter(
+        ContactSerializer(
+            source='contact', many=False, read_only=True, allow_null=True
+        ),
+        True,
     )
 
     # Detail for responsible field
-    responsible_detail = OwnerSerializer(
-        source='responsible', read_only=True, allow_null=True, many=False
+    responsible_detail = enable_filter(
+        OwnerSerializer(
+            source='responsible', read_only=True, allow_null=True, many=False
+        ),
+        True,
     )
 
-    project_code_label = serializers.CharField(
-        source='project_code.code',
-        read_only=True,
-        label='Project Code Label',
-        allow_null=True,
+    project_code_label = enable_filter(
+        FilterableCharField(
+            source='project_code.code',
+            read_only=True,
+            label='Project Code Label',
+            allow_null=True,
+        ),
+        True,
+        filter_name='project_code_detail',
     )
 
     # Detail for project code field
-    project_code_detail = ProjectCodeSerializer(
-        source='project_code', read_only=True, many=False, allow_null=True
+    project_code_detail = enable_filter(
+        ProjectCodeSerializer(
+            source='project_code', read_only=True, many=False, allow_null=True
+        ),
+        True,
     )
 
     # Detail for address field
-    address_detail = AddressBriefSerializer(
-        source='address', many=False, read_only=True, allow_null=True
+    address_detail = enable_filter(
+        AddressBriefSerializer(
+            source='address', many=False, read_only=True, allow_null=True
+        ),
+        True,
     )
 
     # Boolean field indicating if this order is overdue (Note: must be annotated)
@@ -204,15 +223,10 @@ class AbstractOrderSerializer(DataImportExportSerializerMixin, serializers.Seria
             'completed_lines',
             'link',
             'project_code',
-            'project_code_label',
-            'project_code_detail',
             'reference',
             'responsible',
-            'responsible_detail',
             'contact',
-            'contact_detail',
             'address',
-            'address_detail',
             'status',
             'status_text',
             'status_custom_key',
@@ -220,6 +234,12 @@ class AbstractOrderSerializer(DataImportExportSerializerMixin, serializers.Seria
             'barcode_hash',
             'overdue',
             'duplicate',
+            # Extra detail fields
+            'address_detail',
+            'contact_detail',
+            'project_code_detail',
+            'project_code_label',
+            'responsible_detail',
             *extra_fields,
         ]
 
@@ -303,7 +323,6 @@ class AbstractExtraLineMeta:
 
 @register_importer()
 class PurchaseOrderSerializer(
-    FilterableSerializerMixin,
     NotesFieldMixin,
     TotalPriceMixin,
     InvenTreeCustomStatusSerializerMixin,
@@ -956,7 +975,6 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
 
 @register_importer()
 class SalesOrderSerializer(
-    FilterableSerializerMixin,
     NotesFieldMixin,
     TotalPriceMixin,
     InvenTreeCustomStatusSerializerMixin,
@@ -1813,7 +1831,6 @@ class SalesOrderExtraLineSerializer(
 
 @register_importer()
 class ReturnOrderSerializer(
-    FilterableSerializerMixin,
     NotesFieldMixin,
     InvenTreeCustomStatusSerializerMixin,
     AbstractOrderSerializer,
