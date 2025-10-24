@@ -1169,15 +1169,16 @@ def gunicorn(c, address='0.0.0.0:8000', workers=None):
 @task(
     pre=[wait],
     help={
-        'address': 'Server address:port (default=127.0.0.1:8000)',
+        'address': 'Server address:port (default=0.0.0.0:8000)',
         'no_reload': 'Do not automatically reload the server in response to code changes',
         'no_threading': 'Disable multi-threading for the development server',
     },
 )
-def server(c, address='127.0.0.1:8000', no_reload=False, no_threading=False):
+def server(c, address='0.0.0.0:8000', no_reload=False, no_threading=False):
     """Launch a (development) server using Django's in-built webserver.
 
-    Note: This is *not* sufficient for a production installation.
+    - This is *not* sufficient for a production installation.
+    - The default address exposes the server on all network interfaces.
     """
     cmd = f'runserver {address}'
 

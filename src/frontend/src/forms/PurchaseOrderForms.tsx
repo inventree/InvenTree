@@ -121,6 +121,9 @@ export function usePurchaseOrderLineItemFields({
         value: autoPricing,
         onValueChange: setAutoPricing
       },
+      project_code: {
+        description: t`Select project code for this line item`
+      },
       target_date: {
         icon: <IconCalendar />
       },
