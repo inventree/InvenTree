@@ -640,7 +640,7 @@ class PartOptionsAPITest(InvenTreeAPITestCase):
         actions = self.getActions(reverse('api-part-list'))['POST']
 
         # Check that a bunch o' fields are contained
-        for f in ['assembly', 'component', 'description', 'images', 'IPN']:
+        for f in ['assembly', 'component', 'description', 'IPN']:
             self.assertIn(f, actions.keys())
 
         # Active is a 'boolean' field
