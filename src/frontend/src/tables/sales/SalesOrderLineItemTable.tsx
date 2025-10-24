@@ -48,6 +48,7 @@ import {
   DecimalColumn,
   DescriptionColumn,
   LinkColumn,
+  ProjectCodeColumn,
   RenderPartColumn
 } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
@@ -106,6 +107,7 @@ export default function SalesOrderLineItemTable({
         sortable: false,
         switchable: true
       },
+      ProjectCodeColumn({}),
       DecimalColumn({
         accessor: 'quantity',
         sortable: true

@@ -1,13 +1,17 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 418
+INVENTREE_API_VERSION = 419
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v418 -> 2025-10-22 : https://github.com/inventree/InvenTree/pull/10659
-    - Fixes regression introduced in v418 which reverted the changes from v417
+v419 -> 2025-10-24 : https://github.com/inventree/InvenTree/pull/10659
+    - Fixes regression introduced in v417 which reverted the changes from v416
+
+v418 -> 2025-10-24 : https://github.com/inventree/InvenTree/pull/10657
+    - Add "project_code" field(s) to OrderLineItem API endpoint(s)
+    - Add "project_code" field(s) to ExtraOrderLineItem API endpoint(s)
 
 v417 -> 2025-10-22 : https://github.com/inventree/InvenTree/pull/10654
     - Adds "checked" filter to SalesOrderShipment API endpoint
