@@ -2,10 +2,10 @@ import { t } from '@lingui/core/macro';
 import { Accordion, Grid, Skeleton, Stack, Text } from '@mantine/core';
 import {
   IconBookmark,
+  IconCubeSend,
   IconInfoCircle,
   IconList,
-  IconTools,
-  IconTruckDelivery
+  IconTools
 } from '@tabler/icons-react';
 import { type ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
@@ -394,7 +394,7 @@ export default function SalesOrderDetail() {
       {
         name: 'shipments',
         label: t`Shipments`,
-        icon: <IconTruckDelivery />,
+        icon: <IconCubeSend />,
         content: (
           <SalesOrderShipmentTable
             orderId={order.pk}
