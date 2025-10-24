@@ -430,23 +430,40 @@ export function UserColumn(props: TableColumnProps): TableColumn {
 
 export function CreatedByColumn(props: TableColumnProps): TableColumn {
   return UserColumn({
-    accessor: 'created_by_detail',
+    accessor: 'created_by',
     ordering: 'created_by',
     title: t`Created By`,
     ...props
   });
 }
 
-export function ResponsibleColumn(props: TableColumnProps): TableColumn {
+export function OwnerColumn(props: TableColumnProps): TableColumn {
   return {
-    accessor: 'responsible',
+    accessor: 'owner_detail',
+    ordering: 'owner',
+    title: t`Owner`,
     sortable: true,
     switchable: true,
-    render: (record: any) =>
-      record.responsible &&
-      RenderOwner({ instance: record.responsible_detail }),
+    render: (record: any) => {
+      const instance = resolveItem(record, props.accessor ?? 'owner_detail');
+
+      if (instance) {
+        return <RenderOwner instance={instance} />;
+      } else {
+        return '-';
+      }
+    },
     ...props
   };
+}
+
+export function ResponsibleColumn(props: TableColumnProps): TableColumn {
+  return OwnerColumn({
+    accessor: 'responsible_detail',
+    ordering: 'responsible',
+    title: t`Responsible`,
+    ...props
+  });
 }
 
 export function DateColumn(props: TableColumnProps): TableColumn {
