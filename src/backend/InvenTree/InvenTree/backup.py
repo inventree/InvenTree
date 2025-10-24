@@ -25,7 +25,7 @@ def get_backup_connector_options() -> dict:
         typecast=dict,
     )
 
-    return connector_options
+    return {**default_options, **connector_options}
 
 
 def get_backup_storage_backend() -> str:
