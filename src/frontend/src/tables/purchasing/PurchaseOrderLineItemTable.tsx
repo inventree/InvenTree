@@ -45,6 +45,7 @@ import {
   LocationColumn,
   NoteColumn,
   PartColumn,
+  ProjectCodeColumn,
   ReferenceColumn,
   TargetDateColumn
 } from '../ColumnRenderers';
@@ -150,6 +151,7 @@ export function PurchaseOrderLineItemTable({
         accessor: 'part_detail.description'
       }),
       ReferenceColumn({}),
+      ProjectCodeColumn({}),
       {
         accessor: 'build_order',
         title: t`Build Order`,

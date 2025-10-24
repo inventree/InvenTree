@@ -6,7 +6,18 @@ title: Project Codes
 
 A project code is a unique identifier assigned to a specific  project, which helps in tracking and organizing project-related activities and resources. It enables easy retrieval of project-related data and facilitates project management and reporting.
 
-Individual orders (such as [Purchase Orders](../purchasing/purchase_order.md) or [Sales Orders](../sales/sales_order.md)) can be assigned a *Project Code* to allocate the order against a particular internal project.
+### Assigning to Orders
+
+Project codes can be assigned to various orders within the system:
+
+- [Build Orders](../manufacturing/build.md)
+- [Purchase Orders](../purchasing/purchase_order.md)
+- [Sales Orders](../sales/sales_order.md)
+- [Return Orders](../sales/return_order.md)
+
+By assigning a project code to an order, users can easily track and manage orders associated with specific projects, enhancing project oversight and resource allocation.
+
+For orders with external companies, which support individual line items, project codes can be assigned at the line item level, allowing for granular tracking of project-related activities. In such cases, the project code assigned to the order itself serves as a default for all line items, unless explicitly overridden at the line item level.
 
 ### Managing Project Codes
 
