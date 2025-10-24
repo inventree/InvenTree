@@ -1,10 +1,14 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 416
+INVENTREE_API_VERSION = 417
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v417 -> 2025-10-24 : https://github.com/inventree/InvenTree/pull/10657
+    - Add "project_code" field(s) to OrderLineItem API endpoint(s)
+    - Add "project_code" field(s) to ExtraOrderLineItem API endpoint(s)
 
 v416 -> 2025-10-22 : https://github.com/inventree/InvenTree/pull/10651
     - Add missing nullable to make price_breaks (from v412) optional
