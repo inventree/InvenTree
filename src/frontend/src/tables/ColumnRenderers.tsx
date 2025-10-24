@@ -2,7 +2,15 @@
  * Common rendering functions for table column data.
  */
 import { t } from '@lingui/core/macro';
-import { Anchor, Center, Group, Skeleton, Text, Tooltip } from '@mantine/core';
+import {
+  Anchor,
+  Badge,
+  Center,
+  Group,
+  Skeleton,
+  Text,
+  Tooltip
+} from '@mantine/core';
 import {
   IconBell,
   IconExclamationCircle,
@@ -16,9 +24,10 @@ import type { ModelType } from '@lib/enums/ModelType';
 import { resolveItem } from '@lib/functions/Conversion';
 import { cancelEvent } from '@lib/functions/Events';
 import type { TableColumn, TableColumnProps } from '@lib/types/Tables';
+import type { ReactNode } from 'react';
 import { Thumbnail } from '../components/images/Thumbnail';
 import { TableStatusRenderer } from '../components/render/StatusRenderer';
-import { RenderOwner, RenderUser } from '../components/render/User';
+import { RenderOwner } from '../components/render/User';
 import {
   formatCurrency,
   formatDate,
@@ -380,16 +389,52 @@ export function StatusColumn(props: StatusColumnProps): TableColumn {
   };
 }
 
-export function CreatedByColumn(props: TableColumnProps): TableColumn {
+export function UserColumn(props: TableColumnProps): TableColumn {
   return {
-    accessor: 'created_by',
-    title: t`Created By`,
+    accessor: 'user',
+    title: t`User`,
     sortable: true,
     switchable: true,
-    render: (record: any) =>
-      record.created_by && RenderUser({ instance: record.created_by }),
+    render: (record: any) => {
+      const instance = resolveItem(record, props.accessor ?? 'user_detail');
+      if (instance) {
+        const extra: ReactNode[] = [
+          <Text size='sm'>
+            {instance.first_name} {instance.last_name}
+          </Text>
+        ];
+
+        if (instance.is_active === false) {
+          extra.push(
+            <Badge autoContrast color='red' size='xs'>
+              {t`Inactive`}
+            </Badge>
+          );
+        }
+
+        return (
+          <TableHoverCard
+            value={instance.username}
+            title={t`User Information`}
+            icon='user'
+            extra={extra}
+          />
+        );
+      } else {
+        return '-';
+      }
+    },
     ...props
   };
+}
+
+export function CreatedByColumn(props: TableColumnProps): TableColumn {
+  return UserColumn({
+    accessor: 'created_by_detail',
+    ordering: 'created_by',
+    title: t`Created By`,
+    ...props
+  });
 }
 
 export function ResponsibleColumn(props: TableColumnProps): TableColumn {
