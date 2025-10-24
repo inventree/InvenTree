@@ -1091,10 +1091,6 @@ class InvenTreeImageMixin(models.Model):
         self.images.all().delete()
         return super().delete(*args, **kwargs)
 
-    def get_images(self):
-        """Return a queryset of all images."""
-        return self.images.all()
-
     @property
     def image(self):
         """Return the primary image, or None."""

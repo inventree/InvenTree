@@ -218,7 +218,7 @@ class TestLegacyAttachmentMigration(MigratorTestCase):
 class TestLegacyImageMigration(MigratorTestCase):
     """Test that any Company.image and Part.image values are correctly migrated."""
 
-    migrate_from = [('common', '0039_emailthread_emailmessage')]
+    migrate_from = [('common', '0040_inventreeimage')]
     migrate_to = [('common', unit_test.getNewestMigrationFile('common'))]
 
     @classmethod
@@ -240,12 +240,12 @@ class TestLegacyImageMigration(MigratorTestCase):
         """Populate the 'old' database state (before the migration)."""
         # --- COMPANY SETUP ---
         Company = self.old_state.apps.get_model('company', 'company')
-        self.initial_data = [
+        self.company_initial_data = [
             {'name': 'CoOne', 'file_name': 'test01.png'},
             {'name': 'CoTwo', 'file_name': 'test02.png'},
         ]
         self.co_pks = []
-        for entry in self.initial_data:
+        for entry in self.company_initial_data:
             co = Company.objects.create(
                 name=entry['name'], image=generate_image(filename=entry['file_name'])
             )
@@ -300,10 +300,10 @@ class TestLegacyImageMigration(MigratorTestCase):
 
         # Exactly two images should have been created
         all_imgs = InvenTreeImage.objects.filter(content_type_id=ct.pk)
-        self.assertEqual(all_imgs.count(), len(self.initial_data))
+        self.assertEqual(all_imgs.count(), len(self.company_initial_data))
 
         # Check each migrated image
-        for idx, _ in enumerate(self.initial_data):
+        for idx, _ in enumerate(self.company_initial_data):
             pk = self.co_pks[idx]
             inv_img = InvenTreeImage.objects.get(content_type_id=ct.pk, object_id=pk)
             self.assertTrue(
@@ -336,7 +336,6 @@ class TestLegacyImageMigration(MigratorTestCase):
         for pk in self.part_pks:
             img = InvenTreeImage.objects.get(content_type_id=ct_part.pk, object_id=pk)
             self.assertTrue(img.primary, f'Image for part {pk} not marked primary')
-            # NEW: Additional validations
             self.assertTrue(img.image, f'Image field is empty for part {pk}')
             self.assertIsNotNone(img.image.name, f'Image name is None for part {pk}')
 
@@ -396,7 +395,7 @@ class TestLegacyImageMigration(MigratorTestCase):
 
         ct = ContentType.objects.get(app_label='company', model='company')
 
-        for idx, _data in enumerate(self.initial_data):
+        for idx, _data in enumerate(self.company_initial_data):
             pk = self.co_pks[idx]
             inv_img = InvenTreeImage.objects.get(content_type_id=ct.pk, object_id=pk)
 

@@ -5,6 +5,7 @@ from decimal import Decimal
 from enum import IntEnum
 from random import randint
 
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db import connection
 from django.test.utils import CaptureQueriesContext
@@ -17,7 +18,8 @@ import build.models
 import company.models
 import order.models
 from build.status_codes import BuildStatus
-from common.models import InvenTreeSetting
+from common.helpers import generate_image
+from common.models import InvenTreeImage, InvenTreeSetting
 from company.models import Company, SupplierPart
 from InvenTree.config import get_testfolder_dir
 from InvenTree.unit_test import InvenTreeAPITestCase
@@ -38,7 +40,6 @@ from stock.models import StockItem, StockLocation
 from stock.status_codes import StockStatus
 
 
-# TODO: Update test after add InvenTreeImage model
 class PartImageTestMixin:
     """Mixin for testing part images."""
 
@@ -1591,6 +1592,19 @@ class PartCreationTests(PartAPITestBase):
     def test_duplication(self):
         """Test part duplication options."""
         base_part = Part.objects.get(pk=100)
+
+        part_ct = ContentType.objects.get_for_model(Part)
+
+        # Prepare two in memory images for test duplicate
+        img1 = generate_image('test2.png')
+        InvenTreeImage.objects.create(
+            content_type=part_ct, object_id=base_part.pk, image=img1
+        )
+        img2 = generate_image('test1.png')
+        InvenTreeImage.objects.create(
+            content_type=part_ct, object_id=base_part.pk, image=img2
+        )
+
         base_part.testable = True
         base_part.save()
 
@@ -1615,7 +1629,7 @@ class PartCreationTests(PartAPITestBase):
                         'part': 100,
                         'copy_bom': do_copy,
                         'copy_notes': do_copy,
-                        'copy_image': do_copy,
+                        'copy_images': do_copy,
                         'copy_parameters': do_copy,
                         'copy_tests': do_copy,
                     },
@@ -1630,6 +1644,7 @@ class PartCreationTests(PartAPITestBase):
             self.assertEqual(part.notes, base_part.notes if do_copy else None)
             self.assertEqual(part.parameters.count(), 2 if do_copy else 0)
             self.assertEqual(part.test_templates.count(), 3 if do_copy else 0)
+            self.assertEqual(part.images.count(), 2 if do_copy else 0)
 
     def test_category_parameters(self):
         """Test that category parameters are correctly applied."""

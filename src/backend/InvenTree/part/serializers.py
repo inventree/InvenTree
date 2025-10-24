@@ -455,7 +455,7 @@ class DuplicatePartSerializer(serializers.Serializer):
 
         fields = [
             'part',
-            'copy_image',
+            'copy_images',
             'copy_bom',
             'copy_parameters',
             'copy_notes',
@@ -469,7 +469,7 @@ class DuplicatePartSerializer(serializers.Serializer):
         required=True,
     )
 
-    copy_image = serializers.BooleanField(
+    copy_images = serializers.BooleanField(
         label=_('Copy Image'),
         help_text=_('Copy image from original part'),
         required=False,
@@ -631,7 +631,6 @@ class PartSerializer(
     InvenTreeImageSerializerMixin,
     DataImportExportSerializerMixin,
     InvenTree.serializers.NotesFieldMixin,
-    InvenTree.serializers.RemoteImageMixin,
     InvenTree.serializers.InvenTreeTaggitSerializer,
     InvenTree.serializers.InvenTreeModelSerializer,
 ):
@@ -1092,7 +1091,7 @@ class PartSerializer(
                 instance.notes = original.notes
                 instance.save()
 
-            if duplicate.get('copy_image', False):
+            if duplicate.get('copy_images', False):
                 original.copy_images_to(target_pk=instance.pk)
 
             if duplicate.get('copy_parameters', False):
