@@ -165,12 +165,17 @@ class CompanySerializer(
         queryset = queryset.annotate(address_count=SubqueryCount('addresses'))
 
         ct = ContentType.objects.get_for_model(Company)
-        primary_qs = common_models.InvenTreeImage.objects.filter(
+        queryset = common_models.InvenTreeImage.objects.filter(
             content_type=ct, primary=True
         )
 
+        queryset = prefetch_related_images(queryset)
         queryset = queryset.prefetch_related(
-            Prefetch('images', queryset=primary_qs, to_attr='all_images')
+            Prefetch(
+                'addresses',
+                queryset=Address.objects.filter(primary=True),
+                to_attr='primary_address_list',
+            )
         )
         return queryset
 
