@@ -110,6 +110,18 @@ After shipments were created, user can either:
 
 During the allocation process, user is required to select the desired shipment that will contain the stock items.
 
+### Check Shipment
+
+Shipments can be marked as "checked" to indicate that the items in the shipment has been verified. To mark a shipment as "checked", open the shipment actions menu, and select the "Check" action:
+
+{{ image("order/so_shipment_check.png", "Check shipment") }}
+
+The shipment will be marked as checked by the current user.
+
+### Uncheck Shipment
+
+If the shipment requires further verification after being marked as "checked", it can be marked as "unchecked" in a similar manner.
+
 ### Complete Shipment
 
 To complete a shipment, click on the <span class="badge inventree nav side">{{ icon("truck-loading") }} Pending Shipments</span> tab then click on {{ icon("truck-delivery") }} button shown in the shipment table.
@@ -221,3 +233,4 @@ The following [global settings](../settings/global.md) are available for sales o
 {{ globalsetting("SALESORDER_DEFAULT_SHIPMENT") }}
 {{ globalsetting("SALESORDER_EDIT_COMPLETED_ORDERS") }}
 {{ globalsetting("SALESORDER_SHIP_COMPLETE") }}
+{{ globalsetting("SALESORDER_SHIPMENT_REQUIRES_CHECK") }}

@@ -108,11 +108,25 @@ export default function SalesOrderShipmentTable({
         title: t`Items`
       },
       {
+        accessor: 'checked',
+        title: t`Checked`,
+        switchable: true,
+        sortable: false,
+        render: (record: any) => <YesNoButton value={!!record.checked_by} />
+      },
+      {
         accessor: 'shipped',
         title: t`Shipped`,
         switchable: true,
         sortable: false,
         render: (record: any) => <YesNoButton value={!!record.shipment_date} />
+      },
+      {
+        accessor: 'delivered',
+        title: t`Delivered`,
+        switchable: true,
+        sortable: false,
+        render: (record: any) => <YesNoButton value={!!record.delivery_date} />
       },
       DateColumn({
         accessor: 'shipment_date',
@@ -191,6 +205,11 @@ export default function SalesOrderShipmentTable({
 
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
+      {
+        name: 'checked',
+        label: t`Checked`,
+        description: t`Show shipments which have been checked`
+      },
       {
         name: 'shipped',
         label: t`Shipped`,

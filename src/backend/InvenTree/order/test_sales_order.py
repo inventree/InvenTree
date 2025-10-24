@@ -8,6 +8,7 @@ from django.core.exceptions import ValidationError
 
 import order.tasks
 from common.models import InvenTreeSetting, NotificationMessage
+from common.settings import set_global_setting
 from company.models import Address, Company
 from InvenTree import status_codes as status
 from InvenTree.unit_test import InvenTreeTestCase, addUserPermission
@@ -264,6 +265,25 @@ class SalesOrderTest(InvenTreeTestCase):
 
         self.assertIsNone(self.shipment.shipment_date)
         self.assertFalse(self.shipment.is_complete())
+
+        # Require that the shipment is checked before completion
+        set_global_setting('SALESORDER_SHIPMENT_REQUIRES_CHECK', True)
+
+        self.assertFalse(self.shipment.is_checked())
+        self.assertFalse(self.shipment.check_can_complete(raise_error=False))
+
+        with self.assertRaises(ValidationError) as err:
+            self.shipment.complete_shipment(None)
+
+        self.assertIn(
+            'Shipment must be checked before it can be completed',
+            err.exception.messages,
+        )
+
+        # Mark the shipment as checked
+        self.shipment.checked_by = get_user_model().objects.first()
+        self.shipment.save()
+        self.assertTrue(self.shipment.is_checked())
 
         # Mark the shipments as complete
         self.shipment.complete_shipment(None)
