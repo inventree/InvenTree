@@ -414,7 +414,7 @@ export function PartListTable({
             value: selectedPart.pk,
             hidden: true
           },
-          copy_image: {
+          copy_images: {
             value: true
           },
           copy_bom: {

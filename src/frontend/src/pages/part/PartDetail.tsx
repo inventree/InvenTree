@@ -1062,7 +1062,7 @@ export default function PartDetail() {
             value: part.pk,
             hidden: true
           },
-          copy_image: {
+          copy_images: {
             value: true
           },
           copy_bom: {

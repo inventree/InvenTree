@@ -333,8 +333,9 @@ function ImageActionButtons({
         downloadImage();
       },
       icon: <InvenTreeIcon icon='download' />,
-      hidden: !editActions?.downloadImage
-      // || !globalSettings.isSet('INVENTREE_DOWNLOAD_FROM_URL')
+      hidden:
+        !editActions?.downloadImage ||
+        !globalSettings.isSet('INVENTREE_DOWNLOAD_FROM_URL')
     },
 
     {
