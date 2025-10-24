@@ -204,7 +204,14 @@ def render_currency(
         return '-'
 
     if type(money) is not Money:
-        return '-'
+        # Try to convert to a Money object
+        try:
+            money = Money(
+                Decimal(str(money)),
+                currency or get_global_setting('INVENTREE_DEFAULT_CURRENCY'),
+            )
+        except Exception:
+            return '-'
 
     if currency is not None:
         # Attempt to convert to the provided currency
