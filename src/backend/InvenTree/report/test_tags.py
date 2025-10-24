@@ -421,6 +421,12 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
             '$1,234.0',
         )
 
+        # Test with non-currency values
+        self.assertEqual(
+            report_tags.render_currency(1234.45, currency='USD', decimal_places=2),
+            '$1,234.45',
+        )
+
         # Test with an invalid amount
         self.assertEqual(report_tags.render_currency('abc'), '-')
         self.assertEqual(report_tags.render_currency(m, decimal_places='a'), exp_m)
