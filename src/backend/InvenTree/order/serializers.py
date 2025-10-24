@@ -329,15 +329,56 @@ class AbstractLineItemSerializer(FilterableSerializerMixin, serializers.Serializ
 
 
 class AbstractExtraLineSerializer(
-    DataImportExportSerializerMixin, serializers.Serializer
+    DataImportExportSerializerMixin, FilterableSerializerMixin, serializers.Serializer
 ):
     """Abstract Serializer for a ExtraLine object."""
+
+    @staticmethod
+    def extra_line_fields(extra_fields):
+        """Construct a set of fields for this serializer."""
+        return [
+            'pk',
+            'description',
+            'link',
+            'notes',
+            'order',
+            'price',
+            'price_currency',
+            'project_code',
+            'quantity',
+            'reference',
+            'target_date',
+            # Filterable detail fields
+            'order_detail',
+            'project_code_label',
+            'project_code_detail',
+            *extra_fields,
+        ]
 
     quantity = serializers.FloatField()
 
     price = InvenTreeMoneySerializer(allow_null=True)
 
     price_currency = InvenTreeCurrencySerializer()
+
+    project_code_label = enable_filter(
+        FilterableCharField(
+            source='project_code.code',
+            read_only=True,
+            label='Project Code Label',
+            allow_null=True,
+        ),
+        True,
+        filter_name='project_code_detail',
+    )
+
+    # Detail for project code field
+    project_code_detail = enable_filter(
+        ProjectCodeSerializer(
+            source='project_code', read_only=True, many=False, allow_null=True
+        ),
+        True,
+    )
 
 
 class AbstractExtraLineMeta:
@@ -741,20 +782,21 @@ class PurchaseOrderLineItemSerializer(
 
 @register_importer()
 class PurchaseOrderExtraLineSerializer(
-    FilterableSerializerMixin, AbstractExtraLineSerializer, InvenTreeModelSerializer
+    AbstractExtraLineSerializer, InvenTreeModelSerializer
 ):
     """Serializer for a PurchaseOrderExtraLine object."""
+
+    class Meta(AbstractExtraLineMeta):
+        """Metaclass options."""
+
+        model = order.models.PurchaseOrderExtraLine
+        fields = AbstractExtraLineSerializer.extra_line_fields([])
 
     order_detail = enable_filter(
         PurchaseOrderSerializer(
             source='order', many=False, read_only=True, allow_null=True
         )
     )
-
-    class Meta(AbstractExtraLineMeta):
-        """Metaclass options."""
-
-        model = order.models.PurchaseOrderExtraLine
 
 
 class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
@@ -1834,7 +1876,7 @@ class SalesOrderShipmentAllocationSerializer(serializers.Serializer):
 
 @register_importer()
 class SalesOrderExtraLineSerializer(
-    FilterableSerializerMixin, AbstractExtraLineSerializer, InvenTreeModelSerializer
+    AbstractExtraLineSerializer, InvenTreeModelSerializer
 ):
     """Serializer for a SalesOrderExtraLine object."""
 
@@ -1842,6 +1884,7 @@ class SalesOrderExtraLineSerializer(
         """Metaclass options."""
 
         model = order.models.SalesOrderExtraLine
+        fields = AbstractExtraLineSerializer.extra_line_fields([])
 
     order_detail = enable_filter(
         SalesOrderSerializer(
@@ -2091,7 +2134,7 @@ class ReturnOrderLineItemSerializer(
 
 @register_importer()
 class ReturnOrderExtraLineSerializer(
-    FilterableSerializerMixin, AbstractExtraLineSerializer, InvenTreeModelSerializer
+    AbstractExtraLineSerializer, InvenTreeModelSerializer
 ):
     """Serializer for a ReturnOrderExtraLine object."""
 
@@ -2099,6 +2142,7 @@ class ReturnOrderExtraLineSerializer(
         """Metaclass options."""
 
         model = order.models.ReturnOrderExtraLine
+        fields = AbstractExtraLineSerializer.extra_line_fields([])
 
     order_detail = enable_filter(
         ReturnOrderSerializer(

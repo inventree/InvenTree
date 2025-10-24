@@ -1992,8 +1992,6 @@ class PurchaseOrderExtraLine(OrderExtraLine):
 
     Attributes:
         order: Link to the PurchaseOrder that this line belongs to
-        title: title of line
-        price: The unit price for this OrderLine
     """
 
     class Meta:
@@ -2398,8 +2396,6 @@ class SalesOrderExtraLine(OrderExtraLine):
 
     Attributes:
         order: Link to the SalesOrder that this line belongs to
-        title: title of line
-        price: The unit price for this OrderLine
     """
 
     class Meta:
