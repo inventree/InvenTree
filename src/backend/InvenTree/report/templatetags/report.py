@@ -449,6 +449,11 @@ def cast_to_type(value: Any, cast: type) -> Any:
     return value
 
 
+def debug_vars(x: Any, y: Any) -> str:
+    """Return a debug string showing the types and values of two variables."""
+    return f": x='{x}' ({type(x).__name__}), y='{y}' ({type(y).__name__})"
+
+
 @register.simple_tag()
 def add(x: Any, y: Any, cast: Optional[type] = None) -> Any:
     """Add two numbers (or number like values) together.
@@ -457,8 +462,16 @@ def add(x: Any, y: Any, cast: Optional[type] = None) -> Any:
         x: The first value to add
         y: The second value to add
         cast: Optional type to cast the result to (e.g. int, float, str
+
+    Raises:
+        ValidationError: If the values cannot be added together
     """
-    result = make_decimal(x) + make_decimal(y)
+    try:
+        result = make_decimal(x) + make_decimal(y)
+    except (InvalidOperation, TypeError, ValueError):
+        raise ValidationError(
+            _('Cannot add values of incompatible types') + debug_vars(x, y)
+        )
     return cast_to_type(result, cast)
 
 
@@ -470,8 +483,17 @@ def subtract(x: Any, y: Any, cast: Optional[type] = None) -> Any:
         x: The value to be subtracted from
         y: The value to be subtracted
         cast: Optional type to cast the result to (e.g. int, float, str
+
+    Raises:
+        ValidationError: If the values cannot be subtracted
     """
-    result = make_decimal(x) - make_decimal(y)
+    try:
+        result = make_decimal(x) - make_decimal(y)
+    except (InvalidOperation, TypeError, ValueError):
+        raise ValidationError(
+            _('Cannot subtract values of incompatible types') + debug_vars(x, y)
+        )
+
     return cast_to_type(result, cast)
 
 
@@ -483,8 +505,17 @@ def multiply(x: Any, y: Any, cast: Optional[type] = None) -> Any:
         x: The first value to multiply
         y: The second value to multiply
         cast: Optional type to cast the result to (e.g. int, float, str
+
+    Raises:
+        ValidationError: If the values cannot be multiplied together
     """
-    result = make_decimal(x) * make_decimal(y)
+    try:
+        result = make_decimal(x) * make_decimal(y)
+    except (InvalidOperation, TypeError, ValueError):
+        raise ValidationError(
+            _('Cannot multiply values of incompatible types') + debug_vars(x, y)
+        )
+
     return cast_to_type(result, cast)
 
 
@@ -496,8 +527,19 @@ def divide(x: Any, y: Any, cast: Optional[type] = None) -> Any:
         x: The value to be divided
         y: The value to divide by
         cast: Optional type to cast the result to (e.g. int, float, str
+
+    Raises:
+        ValidationError: If the values cannot be divided
     """
-    result = make_decimal(x) / make_decimal(y)
+    try:
+        result = make_decimal(x) / make_decimal(y)
+    except (InvalidOperation, TypeError, ValueError):
+        raise ValidationError(
+            _('Cannot divide values of incompatible types') + debug_vars(x, y)
+        )
+    except ZeroDivisionError:
+        raise ValidationError(_('Cannot divide by zero') + debug_vars(x, y))
+
     return cast_to_type(result, cast)
 
 
@@ -509,8 +551,22 @@ def modulo(x: Any, y: Any, cast: Optional[type] = None) -> Any:
         x: The first value to be used in the modulo operation
         y: The second value to be used in the modulo operation
         cast: Optional type to cast the result to (e.g. int, float, str
+
+    Raises:
+        ValidationError: If the values cannot be used in a modulo operation
     """
-    result = make_decimal(x) % make_decimal(y)
+    try:
+        result = make_decimal(x) % make_decimal(y)
+    except (InvalidOperation, TypeError, ValueError):
+        raise ValidationError(
+            _('Cannot perform modulo operation with values of incompatible types')
+            + debug_vars(x, y)
+        )
+    except ZeroDivisionError:
+        raise ValidationError(
+            _('Cannot perform modulo operation with divisor of zero') + debug_vars(x, y)
+        )
+
     return cast_to_type(result, cast)
 
 
