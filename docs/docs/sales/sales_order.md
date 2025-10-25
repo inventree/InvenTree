@@ -1,3 +1,4 @@
+
 ---
 title: Sales Orders
 ---
@@ -59,6 +60,10 @@ Sales Order Status supports [custom states](../concepts/custom_states.md).
 
 The currency code can be specified for an individual sales order. If not specified, the default currency specified against the [customer](./customer.md) will be used.
 
+### Sales Order Address
+
+A sales order can have a specific shipping address assigned to it. The shipping address can be selected from the list of addresses assigned to the [customer](./customer.md) which is linked to the sales order.
+
 ## Create a Sales Order
 
 Once the sales order page is loaded, click on <span class="badge inventree add">{{ icon("plus-circle") }} New Sales Order</span> which opens the "Create Sales Order" form.
@@ -105,6 +110,18 @@ After shipments were created, user can either:
 
 During the allocation process, user is required to select the desired shipment that will contain the stock items.
 
+### Check Shipment
+
+Shipments can be marked as "checked" to indicate that the items in the shipment has been verified. To mark a shipment as "checked", open the shipment actions menu, and select the "Check" action:
+
+{{ image("order/so_shipment_check.png", "Check shipment") }}
+
+The shipment will be marked as checked by the current user.
+
+### Uncheck Shipment
+
+If the shipment requires further verification after being marked as "checked", it can be marked as "unchecked" in a similar manner.
+
 ### Complete Shipment
 
 To complete a shipment, click on the <span class="badge inventree nav side">{{ icon("truck-loading") }} Pending Shipments</span> tab then click on {{ icon("truck-delivery") }} button shown in the shipment table.
@@ -148,7 +165,6 @@ By default, completed orders are not exported. These can be included by appendin
 
 ## Sales Order Shipments
 
-
 Shipments are used to track sales items when they are shipped to customers. Multiple shipments can be created against a [Sales Order](./sales_order.md), allowing line items to be sent to customers in multiple deliveries.
 
 On the main Sales Order detail page, the order shipments are split into two categories, *Pending Shipments* and *Completed Shipments*:
@@ -185,6 +201,10 @@ Each shipment provides the following data fields:
 
 A unique number for the shipment, used to identify each shipment within a sales order. By default, this value starts at `1` for the first shipment (for each order) and automatically increments for each new shipment.
 
+#### Shipment Address
+
+A shipping address can be optionally specified for an individual shipment. If not specified, the [shipping address assigned to the sales order](#sales-order-address) will be used.
+
 #### Tracking Number
 
 An optional field used to store tracking number information for the shipment.
@@ -196,6 +216,7 @@ An optional field used to store an invoice reference for the shipment.
 #### Link
 
 An optional URL field which can be used to provide a link to an external URL.
+
 
 All these fields can be edited by the user:
 
@@ -212,3 +233,4 @@ The following [global settings](../settings/global.md) are available for sales o
 {{ globalsetting("SALESORDER_DEFAULT_SHIPMENT") }}
 {{ globalsetting("SALESORDER_EDIT_COMPLETED_ORDERS") }}
 {{ globalsetting("SALESORDER_SHIP_COMPLETE") }}
+{{ globalsetting("SALESORDER_SHIPMENT_REQUIRES_CHECK") }}

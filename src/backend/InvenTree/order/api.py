@@ -1335,6 +1335,14 @@ class SalesOrderShipmentFilter(FilterSet):
         model = models.SalesOrderShipment
         fields = ['order']
 
+    checked = rest_filters.BooleanFilter(label='checked', method='filter_checked')
+
+    def filter_checked(self, queryset, name, value):
+        """Filter SalesOrderShipment list by 'checked' status (boolean)."""
+        if str2bool(value):
+            return queryset.exclude(checked_by=None)
+        return queryset.filter(checked_by=None)
+
     shipped = rest_filters.BooleanFilter(label='shipped', method='filter_shipped')
 
     def filter_shipped(self, queryset, name, value):
@@ -1350,6 +1358,27 @@ class SalesOrderShipmentFilter(FilterSet):
         if str2bool(value):
             return queryset.exclude(delivery_date=None)
         return queryset.filter(delivery_date=None)
+
+    order_outstanding = rest_filters.BooleanFilter(
+        label=_('Order Outstanding'), method='filter_order_outstanding'
+    )
+
+    def filter_order_outstanding(self, queryset, name, value):
+        """Filter by whether the order is 'outstanding' or not."""
+        if str2bool(value):
+            return queryset.filter(order__status__in=SalesOrderStatusGroups.OPEN)
+        return queryset.exclude(order__status__in=SalesOrderStatusGroups.OPEN)
+
+    order_status = rest_filters.NumberFilter(
+        label=_('Order Status'), method='filter_order_status'
+    )
+
+    def filter_order_status(self, queryset, name, value):
+        """Filter by linked SalesOrderrder status."""
+        q1 = Q(order__status=value, order__status_custom_key__isnull=True)
+        q2 = Q(order__status_custom_key=value)
+
+        return queryset.filter(q1 | q2).distinct()
 
 
 class SalesOrderShipmentMixin:

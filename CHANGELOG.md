@@ -16,6 +16,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added support for Redis ACL user-based authentication in [#10551](https://github.com/inventree/InvenTree/pull/10551)
 - Expose stock adjustment forms to the UI plugin context in [#10584](https://github.com/inventree/InvenTree/pull/10584)
 - Allow stock adjustments for "in production" items in [#10600](https://github.com/inventree/InvenTree/pull/10600)
+- Adds optional shipping address against individual sales order shipments in [#10650](https://github.com/inventree/InvenTree/pull/10650)
+- Adds UI elements to "check" and "uncheck" sales order shipments in [#10654](https://github.com/inventree/InvenTree/pull/10654)
+- Allow assigning project codes to order line items in [#10657](https://github.com/inventree/InvenTree/pull/10657)
 
 ### Changed
 

@@ -8,6 +8,7 @@ from django.core.exceptions import ValidationError
 
 import order.tasks
 from common.models import InvenTreeSetting, NotificationMessage
+from common.settings import set_global_setting
 from company.models import Address, Company
 from InvenTree import status_codes as status
 from InvenTree.unit_test import InvenTreeTestCase, addUserPermission
@@ -265,6 +266,25 @@ class SalesOrderTest(InvenTreeTestCase):
         self.assertIsNone(self.shipment.shipment_date)
         self.assertFalse(self.shipment.is_complete())
 
+        # Require that the shipment is checked before completion
+        set_global_setting('SALESORDER_SHIPMENT_REQUIRES_CHECK', True)
+
+        self.assertFalse(self.shipment.is_checked())
+        self.assertFalse(self.shipment.check_can_complete(raise_error=False))
+
+        with self.assertRaises(ValidationError) as err:
+            self.shipment.complete_shipment(None)
+
+        self.assertIn(
+            'Shipment must be checked before it can be completed',
+            err.exception.messages,
+        )
+
+        # Mark the shipment as checked
+        self.shipment.checked_by = get_user_model().objects.first()
+        self.shipment.save()
+        self.assertTrue(self.shipment.is_checked())
+
         # Mark the shipments as complete
         self.shipment.complete_shipment(None)
         self.assertTrue(self.shipment.is_complete())
@@ -347,6 +367,58 @@ class SalesOrderTest(InvenTreeTestCase):
         # Shipment delivery date should be empty before setting date
         self.assertIsNone(self.shipment.delivery_date)
         self.assertFalse(self.shipment.is_delivered())
+
+    def test_shipment_address(self):
+        """Unit tests for SalesOrderShipment address field."""
+        shipment = SalesOrderShipment.objects.first()
+        self.assertIsNotNone(shipment)
+
+        # Set an address for the order
+        address_1 = Address.objects.create(
+            company=shipment.order.customer, title='Order Address', line1='123 Test St'
+        )
+
+        # Save the address against the order
+        shipment.order.address = address_1
+        shipment.order.clean()
+        shipment.order.save()
+
+        # By default, no address set
+        self.assertIsNone(shipment.shipment_address)
+
+        # But, the 'address' accessor defaults to the order address
+        self.assertIsNotNone(shipment.address)
+        self.assertEqual(shipment.address, shipment.order.address)
+
+        # Set a custom address for the shipment
+        address_2 = Address.objects.create(
+            company=shipment.order.customer,
+            title='Shipment Address',
+            line1='456 Another St',
+        )
+
+        shipment.shipment_address = address_2
+        shipment.clean()
+        shipment.save()
+
+        self.assertEqual(shipment.address, shipment.shipment_address)
+        self.assertNotEqual(shipment.address, shipment.order.address)
+
+        # Check that the shipment_address validation works
+        other_company = Company.objects.exclude(pk=shipment.order.customer.pk).first()
+        self.assertIsNotNone(other_company)
+
+        address_2.company = other_company
+        address_2.save()
+        shipment.refresh_from_db()
+
+        # This should error out (address company does not match customer)
+        with self.assertRaises(ValidationError) as err:
+            shipment.clean()
+
+        self.assertIn(
+            'Shipment address must match the customer', err.exception.messages
+        )
 
     def test_overdue_notification(self):
         """Test overdue sales order notification."""

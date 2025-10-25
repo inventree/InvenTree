@@ -1,4 +1,5 @@
 import { RowActions } from '@lib/components/RowActions';
+import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import { resolveItem } from '@lib/functions/Conversion';
 import { cancelEvent } from '@lib/functions/Events';
 import { getDetailUrl } from '@lib/functions/Navigation';
@@ -678,14 +679,24 @@ export function InvenTreeTable<T extends Record<string, any>>({
       }));
     }
 
-    if (props.modelType) {
+    if (props.modelType && props.detailAction !== false) {
       // Add action to navigate to the detail view
       const accessor = props.modelField ?? 'pk';
       const pk = resolveItem(record, accessor);
       const url = getDetailUrl(props.modelType, pk);
+
+      const model: string | undefined =
+        ModelInformationDict[props.modelType]?.label?.();
+
+      let detailsText: string = t`View details`;
+
+      if (!!model) {
+        detailsText = t`View ${model}`;
+      }
+
       items.push({
         key: 'detail',
-        title: t`View details`,
+        title: detailsText,
         icon: <IconArrowRight />,
         onClick: (event: any) => {
           cancelEvent(event);
