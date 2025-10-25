@@ -204,7 +204,6 @@ export default function CategoryDetail() {
         label: t`Parts Action`,
         description: t`Action for parts in this category`,
         choices: deleteOptions,
-        default: 'false',
         required: true,
         field_type: 'choice'
       },
@@ -212,7 +211,6 @@ export default function CategoryDetail() {
         label: t`Child Categories Action`,
         description: t`Action for child categories in this category`,
         choices: deleteOptions,
-        default: 'false',
         required: true,
         field_type: 'choice'
       }
