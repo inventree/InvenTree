@@ -5,13 +5,8 @@ import { apiUrl } from '@lib/functions/Api';
 import { getDetailUrl } from '@lib/functions/Navigation';
 import type { StockOperationProps } from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
-import { Alert, Group, Skeleton, Stack, Text } from '@mantine/core';
-import {
-  IconExclamationCircle,
-  IconInfoCircle,
-  IconPackages,
-  IconSitemap
-} from '@tabler/icons-react';
+import { Group, Skeleton, Stack, Text } from '@mantine/core';
+import { IconInfoCircle, IconPackages, IconSitemap } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { api } from '../../App';
@@ -255,15 +250,6 @@ export default function Stock() {
         choices: deleteOptions
       }
     },
-    preFormContent: (
-      <Alert
-        color='yellow'
-        icon={<IconExclamationCircle />}
-        title={t`Delete Stock Location`}
-      >
-        {t`Select the actions to perform on any stock items or sub-locations contained within this location.`}
-      </Alert>
-    ),
     onFormSuccess: () => {
       if (location.parent) {
         navigate(getDetailUrl(ModelType.stocklocation, location.parent));

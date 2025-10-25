@@ -185,11 +185,11 @@ export default function CategoryDetail() {
   const deleteOptions = useMemo(() => {
     return [
       {
-        value: 0,
+        value: 'false',
         display_name: t`Move items to parent category`
       },
       {
-        value: 1,
+        value: 'true',
         display_name: t`Delete items`
       }
     ];
@@ -204,12 +204,16 @@ export default function CategoryDetail() {
         label: t`Parts Action`,
         description: t`Action for parts in this category`,
         choices: deleteOptions,
+        default: 'false',
+        required: true,
         field_type: 'choice'
       },
       delete_child_categories: {
         label: t`Child Categories Action`,
         description: t`Action for child categories in this category`,
         choices: deleteOptions,
+        default: 'false',
+        required: true,
         field_type: 'choice'
       }
     },
