@@ -29,8 +29,6 @@ from bleach import clean
 from djmoney.money import Money
 from PIL import Image
 
-from common.currency import currency_code_default
-
 from .settings import MEDIA_URL, STATIC_URL
 
 logger = structlog.get_logger('inventree')
@@ -399,7 +397,7 @@ def decimal2string(d):
     return s.rstrip('0').rstrip('.')
 
 
-def decimal2money(d, currency=None):
+def decimal2money(d, currency: Optional[str] = None) -> Money:
     """Format a Decimal number as Money.
 
     Args:
@@ -409,12 +407,12 @@ def decimal2money(d, currency=None):
     Returns:
         A Money object from the input(s)
     """
-    if not currency:
-        currency = currency_code_default()
-    return Money(d, currency)
+    from common.currency import currency_code_default
+
+    return Money(d, currency or currency_code_default())
 
 
-def WrapWithQuotes(text, quote='"'):
+def WrapWithQuotes(text: str, quote: str = '"') -> str:
     """Wrap the supplied text with quotes.
 
     Args:
@@ -424,6 +422,8 @@ def WrapWithQuotes(text, quote='"'):
     Returns:
         Supplied text wrapped in quote char
     """
+    text = str(text)
+
     if not text.startswith(quote):
         text = quote + text
 

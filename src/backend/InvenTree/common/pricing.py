@@ -1,11 +1,23 @@
 """Helper functions for pricing support."""
 
+from dataclasses import dataclass
+
+from djmoney.money import Money
+
 from common.settings import get_global_setting
 from plugin import PluginMixinEnum, registry
-from plugin.mixins import PricingMixin
+from plugin.models import InvenTreePlugin
 
 
-def get_pricing_plugin() -> PricingMixin:
+@dataclass
+class PriceRangeTuple:
+    """Dataclass representing a price range."""
+
+    min: Money
+    max: Money
+
+
+def get_pricing_plugin() -> InvenTreePlugin:
     """Return the selected pricing plugin.
 
     Attempts to retrieve the currently selected pricing plugin from the plugin registry.

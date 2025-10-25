@@ -1,5 +1,6 @@
 """Pricing mixin class for supporting pricing data."""
 
+from common.pricing import PriceRangeTuple
 from plugin import PluginMixinEnum
 
 
@@ -20,7 +21,9 @@ class PricingMixin:
         super().__init__()
         self.add_mixin(PluginMixinEnum.PRICING, True, __class__)
 
-    def calculate_part_overall_price_range(self, part, *args, **kwargs):
+    def calculate_part_overall_price_range(
+        self, part, *args, **kwargs
+    ) -> PriceRangeTuple:
         """Calculate the overall price for a given part.
 
         Arguments:
@@ -35,7 +38,7 @@ class PricingMixin:
         as controlled by the configurable plugin settings.
         """
 
-    def calculate_part_bom_price_range(self, part, *args, **kwargs):
+    def calculate_part_bom_price_range(self, part, *args, **kwargs) -> PriceRangeTuple:
         """Calculate the assembly price range for a given part.
 
         Arguments:
@@ -51,7 +54,9 @@ class PricingMixin:
         The BOM (bill of materials) is used to determine the overall BOM price range.
         """
 
-    def calculate_part_purchase_price_range(self, part, *args, **kwargs):
+    def calculate_part_purchase_price_range(
+        self, part, *args, **kwargs
+    ) -> PriceRangeTuple:
         """Calculate the purchase price range for a given part.
 
         Arguments:
@@ -64,7 +69,9 @@ class PricingMixin:
         The "purchase price range" is the cost to purchase the part from suppliers,
         """
 
-    def calculate_part_supplier_price_range(self, part, *args, **kwargs):
+    def calculate_part_supplier_price_range(
+        self, part, *args, **kwargs
+    ) -> PriceRangeTuple:
         """Calculate the supplier price range for a given part.
 
         Arguments:
@@ -76,7 +83,9 @@ class PricingMixin:
 
         """
 
-    def calculate_part_internal_price_range(self, part, *args, **kwargs):
+    def calculate_part_internal_price_range(
+        self, part, *args, **kwargs
+    ) -> PriceRangeTuple:
         """Calculate the internal price range for a given part.
 
         Arguments:
@@ -88,7 +97,9 @@ class PricingMixin:
 
         """
 
-    def calculate_part_variant_price_range(self, part, *args, **kwargs):
+    def calculate_part_variant_price_range(
+        self, part, *args, **kwargs
+    ) -> PriceRangeTuple:
         """Calculate the variant price range for a given part.
 
         Arguments:
@@ -101,7 +112,7 @@ class PricingMixin:
         The "variant price range" is the price range for all variants of a template part
         """
 
-    def calculate_part_sale_price_range(self, part, *args, **kwargs):
+    def calculate_part_sale_price_range(self, part, *args, **kwargs) -> PriceRangeTuple:
         """Calculate the sale price range for a given part.
 
         Arguments:
