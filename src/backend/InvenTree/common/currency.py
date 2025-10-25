@@ -2,7 +2,6 @@
 
 import decimal
 import math
-from typing import Optional
 
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
@@ -129,21 +128,6 @@ def validate_currency_codes(value):
         raise ValidationError(_('No valid currency codes provided'))
 
     return list(valid_currencies)
-
-
-def currency_exchange_plugins() -> Optional[list]:
-    """Return a list of plugin choices which can be used for currency exchange."""
-    try:
-        from plugin import PluginMixinEnum, registry
-
-        plugs = registry.with_mixin(PluginMixinEnum.CURRENCY_EXCHANGE, active=True)
-    except Exception:
-        plugs = []
-
-    if len(plugs) == 0:
-        return None
-
-    return [('', _('No plugin'))] + [(plug.slug, plug.human_name) for plug in plugs]
 
 
 def get_price(

@@ -136,14 +136,17 @@ export default function SystemSettings() {
           <>
             <GlobalSettingList
               keys={[
+                'PRICING_PLUGIN',
+                'PRICING_AUTO_UPDATE',
+                'PRICING_UPDATE_DAYS',
                 'INVENTREE_DEFAULT_CURRENCY',
                 'CURRENCY_CODES',
-                'PART_INTERNAL_PRICE',
-                'PART_BOM_USE_INTERNAL_PRICE',
+                'CURRENCY_UPDATE_PLUGIN',
+                'CURRENCY_UPDATE_INTERVAL',
                 'PRICING_DECIMAL_PLACES_MIN',
                 'PRICING_DECIMAL_PLACES',
-                'PRICING_AUTO_UPDATE',
-                'PRICING_UPDATE_DAYS'
+                'PART_INTERNAL_PRICE',
+                'PART_BOM_USE_INTERNAL_PRICE'
               ]}
             />
             <br />
@@ -156,10 +159,6 @@ export default function SystemSettings() {
                 'PRICING_USE_VARIANT_PRICING',
                 'PRICING_ACTIVE_VARIANTS'
               ]}
-            />
-            <br />
-            <GlobalSettingList
-              keys={['CURRENCY_UPDATE_PLUGIN', 'CURRENCY_UPDATE_INTERVAL']}
             />
           </>
         )

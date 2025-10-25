@@ -40,7 +40,7 @@ from .helpers import (
     handle_error,
     log_registry_error,
 )
-from .plugin import InvenTreePlugin
+from .plugin import InvenTreePlugin, PluginMixinEnum
 
 logger = structlog.get_logger('inventree')
 
@@ -92,13 +92,14 @@ class PluginsRegistry:
     MANDATORY_PLUGINS = [
         'inventreebarcode',
         'bom-exporter',
-        'inventree-exporter',
-        'inventree-ui-notification',
-        'inventree-machines',
-        'inventree-email-notification',
         'inventreecurrencyexchange',
         'inventreelabel',
         'inventreelabelmachine',
+        'inventree-email-notification',
+        'inventree-exporter',
+        'inventree-machines',
+        'inventree-pricing',
+        'inventree-ui-notification',
         'parameter-exporter',
     ]
 
@@ -1105,3 +1106,32 @@ def _load_source(modname, filename):
         loader.exec_module(module)
 
     return module
+
+
+def get_plugin_options(
+    mixin: PluginMixinEnum, active: bool = True, allow_null: bool = True
+) -> Optional[list]:
+    """Return a selection list of available plugins.
+
+    Arguments:
+        mixin: The mixin type to filter plugins by
+        active: If True, only include active plugins
+        allow_null: If True, include a 'None' option at the start of the list
+
+    Returns:
+        A list of tuples in the form (plugin_slug, plugin_name) for use in a ChoiceField
+    """
+    try:
+        plugs = registry.with_mixin(mixin, active=active)
+    except Exception:
+        plugs = []
+
+    choices = []
+
+    if allow_null:
+        choices.append(('', _('No plugin')))
+
+    for plug in plugs:
+        choices.append((plug.slug, plug.human_name))
+
+    return choices

@@ -4,6 +4,7 @@ import json
 import os
 import re
 import uuid
+from typing import Optional
 
 from django.conf import settings as django_settings
 from django.contrib.auth.models import Group
@@ -107,18 +108,28 @@ def reload_plugin_registry(setting):
     registry.reload_plugins(full_reload=True, force_reload=True, collect=True)
 
 
-def barcode_plugins() -> list:
+def currency_exchange_plugins() -> Optional[list]:
+    """Return a list of plugin choices which can be used for currency exchange."""
+    from plugin import PluginMixinEnum
+    from plugin.registry import get_plugin_options
+
+    return get_plugin_options(PluginMixinEnum.CURRENCY_EXCHANGE, allow_null=True)
+
+
+def barcode_plugins() -> Optional[list]:
     """Return a list of plugin choices which can be used for barcode generation."""
-    try:
-        from plugin import PluginMixinEnum, registry
+    from plugin import PluginMixinEnum
+    from plugin.registry import get_plugin_options
 
-        plugins = registry.with_mixin(PluginMixinEnum.BARCODE, active=True)
-    except Exception:  # pragma: no cover
-        plugins = []
+    return get_plugin_options(PluginMixinEnum.BARCODE, allow_null=False)
 
-    return [
-        (plug.slug, plug.human_name) for plug in plugins if plug.has_barcode_generation
-    ]
+
+def pricing_plugins() -> Optional[list]:
+    """Return a list of plugin choices which can be used for pricing calculations."""
+    from plugin import PluginMixinEnum
+    from plugin.registry import get_plugin_options
+
+    return get_plugin_options(PluginMixinEnum.PRICING, allow_null=False)
 
 
 def default_uuid4() -> str:
@@ -257,7 +268,7 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
     'CURRENCY_UPDATE_PLUGIN': {
         'name': _('Currency Update Plugin'),
         'description': _('Currency update plugin to use'),
-        'choices': common.currency.currency_exchange_plugins,
+        'choices': currency_exchange_plugins,
         'default': 'inventreecurrencyexchange',
     },
     'INVENTREE_DOWNLOAD_FROM_URL': {
@@ -529,6 +540,12 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         ),
         'default': True,
         'validator': bool,
+    },
+    'PRICING_PLUGIN': {
+        'name': _('Pricing Plugin'),
+        'description': _('Plugin to use for pricing calculations'),
+        'choices': pricing_plugins,
+        'default': 'inventree-pricing',
     },
     'PRICING_DECIMAL_PLACES_MIN': {
         'name': _('Minimum Pricing Decimal Places'),
