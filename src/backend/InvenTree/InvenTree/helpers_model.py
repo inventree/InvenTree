@@ -6,6 +6,7 @@ from typing import Optional, cast
 from urllib.parse import urljoin
 
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 from django.db.utils import OperationalError, ProgrammingError
 from django.utils.translation import gettext_lazy as _
@@ -211,7 +212,9 @@ def render_currency(
                 currency or get_global_setting('INVENTREE_DEFAULT_CURRENCY'),
             )
         except Exception:
-            return '-'
+            raise ValidationError(
+                f"render_currency: {_('Invalid money value')}: '{money}' ({type(money).__name__})"
+            )
 
     if currency is not None:
         # Attempt to convert to the provided currency
@@ -222,7 +225,12 @@ def render_currency(
             pass
 
     if multiplier is not None:
-        money *= Decimal(str(multiplier).strip())
+        try:
+            money *= Decimal(str(multiplier).strip())
+        except Exception:
+            raise ValidationError(
+                f"render_currency: {_('Invalid multiplier value')}: '{multiplier}' ({type(multiplier).__name__})"
+            )
 
     if min_decimal_places is None or not isinstance(min_decimal_places, (int, float)):
         min_decimal_places = get_global_setting('PRICING_DECIMAL_PLACES_MIN', 0)
