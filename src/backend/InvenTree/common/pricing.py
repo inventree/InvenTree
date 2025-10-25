@@ -2,10 +2,10 @@
 
 from common.settings import get_global_setting
 from plugin import PluginMixinEnum, registry
-from plugin.models import InvenTreePlugin
+from plugin.mixins import PricingMixin
 
 
-def get_pricing_plugin() -> InvenTreePlugin:
+def get_pricing_plugin() -> PricingMixin:
     """Return the selected pricing plugin.
 
     Attempts to retrieve the currently selected pricing plugin from the plugin registry.
