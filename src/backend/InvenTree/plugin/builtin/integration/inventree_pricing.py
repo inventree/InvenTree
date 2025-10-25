@@ -1,5 +1,6 @@
 """Builtin plugin for providing pricing functionality."""
 
+from django.core.validators import MinValueValidator
 from django.utils.translation import gettext_lazy as _
 
 import structlog
@@ -20,6 +21,65 @@ class InvenTreePricingPlugin(PricingMixin, SettingsMixin, InvenTreePlugin):
     TITLE = _('InvenTree Pricing Plugin')
     DESCRIPTION = _('Provides default pricing integration functionality for InvenTree')
     VERSION = '1.0.0'
+
+    # Plugin settings which can be configured to adjust pricing behavior
+    SETTINGS = {
+        'PRICING_USE_SUPPLIER_PRICING': {
+            'name': _('Use Supplier Pricing'),
+            'description': _(
+                'Include supplier price breaks in overall pricing calculations'
+            ),
+            'default': True,
+            'validator': bool,
+        },
+        'PRICING_PURCHASE_HISTORY_OVERRIDES_SUPPLIER': {
+            'name': _('Purchase History Override'),
+            'description': _(
+                'Historical purchase order pricing overrides supplier price breaks'
+            ),
+            'default': False,
+            'validator': bool,
+        },
+        'PRICING_USE_STOCK_PRICING': {
+            'name': _('Use Stock Item Pricing'),
+            'description': _(
+                'Use pricing from manually entered stock data for pricing calculations'
+            ),
+            'default': True,
+            'validator': bool,
+        },
+        'PRICING_STOCK_ITEM_AGE_DAYS': {
+            'name': _('Stock Item Pricing Age'),
+            'description': _(
+                'Exclude stock items older than this number of days from pricing calculations'
+            ),
+            'default': 0,
+            'units': _('days'),
+            'validator': [int, MinValueValidator(0)],
+        },
+        'PRICING_USE_VARIANT_PRICING': {
+            'name': _('Use Variant Pricing'),
+            'description': _('Include variant pricing in overall pricing calculations'),
+            'default': True,
+            'validator': bool,
+        },
+        'PRICING_ACTIVE_VARIANTS': {
+            'name': _('Active Variants Only'),
+            'description': _(
+                'Only use active variant parts for calculating variant pricing'
+            ),
+            'default': False,
+            'validator': bool,
+        },
+        'PRICING_USE_INTERNAL_PRICE': {
+            'name': _('Internal Price Override'),
+            'description': _(
+                'If available, internal prices override price range calculations'
+            ),
+            'default': False,
+            'validator': bool,
+        },
+    }
 
     def calculate_part_overall_price_range(
         self, part, *args, **kwargs
