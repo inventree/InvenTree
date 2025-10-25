@@ -2736,28 +2736,6 @@ class PartPricing(common.models.MetaMixin):
         """Return True if the cached pricing is valid."""
         return self.updated is not None
 
-    def convert(self, money):
-        """Attempt to convert money value to default currency.
-
-        If a MissingRate error is raised, ignore it and return None
-        """
-        if money is None:
-            return None
-
-        target_currency = currency_code_default()
-
-        try:
-            result = convert_money(money, target_currency)
-        except MissingRate:
-            logger.warning(
-                'No currency conversion rate available for %s -> %s',
-                money.currency,
-                target_currency,
-            )
-            result = None
-
-        return result
-
     def schedule_for_update(self, counter: int = 0, refresh: bool = True):
         """Schedule this pricing to be updated.
 
@@ -2978,8 +2956,12 @@ class PartPricing(common.models.MetaMixin):
 
                 sub_part_pricing = sub_part.pricing
 
-                sub_part_min = self.convert(sub_part_pricing.overall_min)
-                sub_part_max = self.convert(sub_part_pricing.overall_max)
+                sub_part_min = common.currency.convert_currency(
+                    sub_part_pricing.overall_min
+                )
+                sub_part_max = common.currency.convert_currency(
+                    sub_part_pricing.overall_max
+                )
 
                 if sub_part_min is not None:
                     if bom_item_min is None or sub_part_min < bom_item_min:
@@ -2992,13 +2974,13 @@ class PartPricing(common.models.MetaMixin):
             # Update cumulative totals
             if bom_item_min is not None:
                 bom_item_min *= bom_item.quantity
-                cumulative_min += self.convert(bom_item_min)
+                cumulative_min += common.currency.convert_currency(bom_item_min)
 
                 any_min_elements = True
 
             if bom_item_max is not None:
                 bom_item_max *= bom_item.quantity
-                cumulative_max += self.convert(bom_item_max)
+                cumulative_max += common.currency.convert_currency(bom_item_max)
 
                 any_max_elements = True
 
@@ -3038,7 +3020,7 @@ class PartPricing(common.models.MetaMixin):
                 continue
 
             # Take supplier part pack size into account
-            purchase_cost = self.convert(
+            purchase_cost = common.currency.convert_currency(
                 line.purchase_price / line.part.pack_quantity_native
             )
 
@@ -3063,7 +3045,7 @@ class PartPricing(common.models.MetaMixin):
                 items = items.filter(updated__gte=date_threshold)
 
             for item in items:
-                cost = self.convert(item.purchase_price)
+                cost = common.currency.convert_currency(item.purchase_price)
 
                 # Skip if the cost could not be converted (for some reason)
                 if cost is None:
@@ -3089,7 +3071,7 @@ class PartPricing(common.models.MetaMixin):
         if get_global_setting('PART_INTERNAL_PRICE', False):
             # Only calculate internal pricing if internal pricing is enabled
             for pb in self.part.internalpricebreaks.all():
-                cost = self.convert(pb.price)
+                cost = common.currency.convert_currency(pb.price)
 
                 if cost is None:
                     # Ignore if cost could not be converted for some reason
@@ -3125,7 +3107,9 @@ class PartPricing(common.models.MetaMixin):
                         continue
 
                     # Ensure we take supplier part pack size into account
-                    cost = self.convert(pb.price / sp.pack_quantity_native)
+                    cost = common.currency.convert_currency(
+                        pb.price / sp.pack_quantity_native
+                    )
 
                     if cost is None:
                         continue
@@ -3160,8 +3144,8 @@ class PartPricing(common.models.MetaMixin):
                     # Ignore inactive variant parts
                     continue
 
-                v_min = self.convert(v.pricing.overall_min)
-                v_max = self.convert(v.pricing.overall_max)
+                v_min = common.currency.convert_currency(v.pricing.overall_min)
+                v_max = common.currency.convert_currency(v.pricing.overall_max)
 
                 if v_min is not None:
                     if variant_min is None or v_min < variant_min:
@@ -3212,7 +3196,7 @@ class PartPricing(common.models.MetaMixin):
                 continue
 
             # Ensure we are working in a common currency
-            cost = self.convert(cost)
+            cost = common.currency.convert_currency(cost)
 
             if overall_min is None or cost < overall_min:
                 overall_min = cost
@@ -3223,7 +3207,7 @@ class PartPricing(common.models.MetaMixin):
                 continue
 
             # Ensure we are working in a common currency
-            cost = self.convert(cost)
+            cost = common.currency.convert_currency(cost)
 
             if overall_max is None or cost > overall_max:
                 overall_max = cost
@@ -3237,12 +3221,12 @@ class PartPricing(common.models.MetaMixin):
                 overall_max = self.internal_cost_max
 
         if self.override_min is not None:
-            overall_min = self.convert(self.override_min)
+            overall_min = common.currency.convert_currency(self.override_min)
 
         self.overall_min = overall_min
 
         if self.override_max is not None:
-            overall_max = self.convert(self.override_max)
+            overall_max = common.currency.convert_currency(self.override_max)
 
         self.overall_max = overall_max
 
@@ -3253,7 +3237,7 @@ class PartPricing(common.models.MetaMixin):
         max_sell_price = None
 
         for pb in self.part.salepricebreaks.all():
-            cost = self.convert(pb.price)
+            cost = common.currency.convert_currency(pb.price)
 
             if cost is None:
                 continue
@@ -3283,7 +3267,7 @@ class PartPricing(common.models.MetaMixin):
         line_items = line_items.exclude(sale_price=None)
 
         for line in line_items:
-            cost = self.convert(line.sale_price)
+            cost = common.currency.convert_currency(line.sale_price)
 
             if cost is None:
                 continue
