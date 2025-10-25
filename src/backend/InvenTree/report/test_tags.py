@@ -428,7 +428,12 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
         )
 
         # Test with an invalid amount
-        self.assertEqual(report_tags.render_currency('abc'), '-')
+        with self.assertRaises(ValidationError):
+            report_tags.render_currency('abc', currency='-')
+
+        with self.assertRaises(ValidationError):
+            report_tags.render_currency(m, multiplier='quork')
+
         self.assertEqual(report_tags.render_currency(m, decimal_places='a'), exp_m)
         self.assertEqual(report_tags.render_currency(m, min_decimal_places='a'), exp_m)
         self.assertEqual(report_tags.render_currency(m, max_decimal_places='a'), exp_m)
