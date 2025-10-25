@@ -72,7 +72,7 @@ class InvenTreePricingPlugin(PricingMixin, SettingsMixin, InvenTreePlugin):
             'description': _(
                 'Only use active variant parts for calculating variant pricing'
             ),
-            'default': False,
+            'default': True,
             'validator': bool,
         },
         'PRICING_USE_INTERNAL_PRICE': {
@@ -239,22 +239,34 @@ class InvenTreePricingPlugin(PricingMixin, SettingsMixin, InvenTreePlugin):
 
         The "variant price range" is the price range for all variants of a template part
         """
-        price_min: Money = None
-        price_max: Money = None
+        variant_min: Money = None
+        variant_max: Money = None
 
-        for price_break in part.internalpricebreaks.all():
-            price = convert_currency(price_break.price)
+        # If the part is not a template, return immediately
+        if not self.part.is_template:
+            return PriceRangeTuple(min=variant_min, max=variant_max)
 
-            if price is None:
-                continue
+        active_only = self.get_setting('PRICING_ACTIVE_VARIANTS', backup_value=True)
+        variants = part.get_descendants(include_self=False)
 
-            if price_min is None or price < price_min:
-                price_min = price
+        variants = variants.prefetch_related('pricing')
 
-            if price_max is None or price > price_max:
-                price_max = price
+        if active_only:
+            variants = variants.filter(active=True)
 
-        return PriceRangeTuple(min=price_min, max=price_max)
+        for variant in variants:
+            v_min = convert_currency(variant.pricing.overall_min)
+            v_max = convert_currency(variant.pricing.overall_max)
+
+            if v_min is not None:
+                if variant_min is None or v_min < variant_min:
+                    variant_min = v_min
+
+            if v_max is not None:
+                if variant_max is None or v_max > variant_max:
+                    variant_max = v_max
+
+        return PriceRangeTuple(min=variant_min, max=variant_max)
 
     def calculate_part_sale_price_range(self, part, *args, **kwargs) -> PriceRangeTuple:
         """Calculate the sale price range for a given part.

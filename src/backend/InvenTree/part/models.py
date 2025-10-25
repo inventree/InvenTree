@@ -3043,7 +3043,7 @@ class PartPricing(common.models.MetaMixin):
         if save:
             self.save()
 
-    def update_supplier_cost(self, save=True):
+    def update_supplier_cost(self, save: bool = True):
         """Recalculate supplier cost for the referenced Part instance.
 
         - The limits are simply the lower and upper bounds of available SupplierPriceBreaks
@@ -3058,37 +3058,16 @@ class PartPricing(common.models.MetaMixin):
         if save:
             self.save()
 
-    def update_variant_cost(self, save=True):
+    def update_variant_cost(self, save: bool = True):
         """Update variant cost values.
 
         Here we track the min/max costs of any variant parts.
         """
-        variant_min = None
-        variant_max = None
+        plugin: PricingMixin = get_pricing_plugin()
+        price_range = plugin.calculate_part_variant_price_range(self.part)
 
-        active_only = get_global_setting('PRICING_ACTIVE_VARIANTS', False)
-
-        if self.part.is_template:
-            variants = self.part.get_descendants(include_self=False)
-
-            for v in variants:
-                if active_only and not v.active:
-                    # Ignore inactive variant parts
-                    continue
-
-                v_min = common.currency.convert_currency(v.pricing.overall_min)
-                v_max = common.currency.convert_currency(v.pricing.overall_max)
-
-                if v_min is not None:
-                    if variant_min is None or v_min < variant_min:
-                        variant_min = v_min
-
-                if v_max is not None:
-                    if variant_max is None or v_max > variant_max:
-                        variant_max = v_max
-
-        self.variant_cost_min = variant_min
-        self.variant_cost_max = variant_max
+        self.variant_cost_min = price_range.min
+        self.variant_cost_max = price_range.max
 
         if save:
             self.save()
