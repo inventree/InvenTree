@@ -546,6 +546,9 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
                     msg = _('Template syntax error')
                     output.mark_failure(msg)
                     raise ValidationError(f'{msg}: {e!s}')
+                except ValidationError as e:
+                    output.mark_failure(str(e))
+                    raise e
                 except Exception as e:
                     msg = _('Error rendering report')
                     output.mark_failure(msg)
@@ -582,6 +585,9 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
                         msg = _('Template syntax error')
                         output.mark_failure(error=_('Template syntax error'))
                         raise ValidationError(f'{msg}: {e!s}')
+                    except ValidationError as e:
+                        output.mark_failure(str(e))
+                        raise e
                     except Exception as e:
                         msg = _('Error rendering report')
                         output.mark_failure(error=msg)
