@@ -11,6 +11,7 @@ from plugin.base.integration.DataExport import DataExportMixin
 from plugin.base.integration.MachineMixin import MachineDriverMixin
 from plugin.base.integration.NavigationMixin import NavigationMixin
 from plugin.base.integration.NotificationMixin import NotificationMixin
+from plugin.base.integration.PricingMixin import PricingMixin
 from plugin.base.integration.ReportMixin import ReportMixin
 from plugin.base.integration.ScheduleMixin import ScheduleMixin
 from plugin.base.integration.SettingsMixin import SettingsMixin
@@ -39,6 +40,7 @@ __all__ = [
     'MailMixin',
     'NavigationMixin',
     'NotificationMixin',
+    'PricingMixin',
     'ReportMixin',
     'ScheduleMixin',
     'SettingsMixin',
