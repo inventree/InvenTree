@@ -4,7 +4,11 @@ from django.core.validators import MinValueValidator
 from django.utils.translation import gettext_lazy as _
 
 import structlog
+from djmoney.money import Money
 
+import order.models as order_models
+import order.status_codes as order_status_codes
+from common.currency import convert_currency
 from common.pricing import PriceRangeTuple
 from plugin import InvenTreePlugin
 from plugin.mixins import PricingMixin, SettingsMixin
@@ -125,6 +129,41 @@ class InvenTreePricingPlugin(PricingMixin, SettingsMixin, InvenTreePlugin):
 
         The "purchase price range" is the cost to purchase the part from suppliers,
         """
+        # Find all line items for completed PurchaseOrders which reference this part
+        line_items = order_models.PurchaseOrderLineItem.objects.filter(
+            order__status__in=order_status_codes.PurchaseOrderStatusGroups.COMPLETE,
+            received__gt=0,
+            part__part=part,
+        )
+
+        # Exclude line items which do not have an associated price
+        line_items = line_items.exclude(purchase_price=None)
+
+        line_items = line_items.prefetch_related('part', 'part__part')
+
+        purchase_min: Money = None
+        purchase_max: Money = None
+
+        # Iterate through all line items to determine min/max purchase price
+        for line in line_items:
+            if line.purchase_price is None:
+                continue
+
+            # Account for supplier part pack size
+            purchase_cost = convert_currency(
+                line.purchase_price / line.part.pack_quantity_native
+            )
+
+            if purchase_cost is None:
+                continue
+
+            if purchase_min is None or purchase_cost < purchase_min:
+                purchase_min = purchase_cost
+
+            if purchase_max is None or purchase_cost > purchase_max:
+                purchase_max = purchase_cost
+
+        return PriceRangeTuple(min=purchase_min, max=purchase_max)
 
     def calculate_part_supplier_price_range(
         self, part, *args, **kwargs
@@ -138,6 +177,40 @@ class InvenTreePricingPlugin(PricingMixin, SettingsMixin, InvenTreePlugin):
         Returns:
             A tuple representing the min, max supplier price range for the part
         """
+        price_min: Money = None
+        price_max: Money = None
+
+        # Ignore if the part is not marked as purchaseable
+        if not part.purchaseable:
+            return PriceRangeTuple(min=price_min, max=price_max)
+
+        # Fetch supplier parts for this part
+        supplier_parts = part.supplier_parts.filter(active=True).prefetch_related(
+            'pricebreaks'
+        )
+
+        # Iterate through each active supplier part
+        for supplier_part in supplier_parts.all():
+            # Iterate through each price break for this supplier part
+            for price_break in supplier_part.pricebreaks.all():
+                if price_break.price is None:
+                    continue
+
+                # Ensure that the supplier part pack size is taken into account
+                price = convert_currency(
+                    price_break.price / supplier_part.pack_quantity_native
+                )
+
+                if price is None:
+                    continue
+
+                if price_min is None or price < price_min:
+                    price_min = price
+
+                if price_max is None or price > price_max:
+                    price_max = price
+
+        return PriceRangeTuple(min=price_min, max=price_max)
 
     def calculate_part_internal_price_range(
         self, part, *args, **kwargs
@@ -166,6 +239,22 @@ class InvenTreePricingPlugin(PricingMixin, SettingsMixin, InvenTreePlugin):
 
         The "variant price range" is the price range for all variants of a template part
         """
+        price_min: Money = None
+        price_max: Money = None
+
+        for price_break in part.internalpricebreaks.all():
+            price = convert_currency(price_break.price)
+
+            if price is None:
+                continue
+
+            if price_min is None or price < price_min:
+                price_min = price
+
+            if price_max is None or price > price_max:
+                price_max = price
+
+        return PriceRangeTuple(min=price_min, max=price_max)
 
     def calculate_part_sale_price_range(self, part, *args, **kwargs) -> PriceRangeTuple:
         """Calculate the sale price range for a given part.

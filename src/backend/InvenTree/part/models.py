@@ -8,7 +8,6 @@ import inspect
 import math
 import os
 import re
-from datetime import timedelta
 from decimal import Decimal, InvalidOperation
 from typing import Optional, cast
 
@@ -41,7 +40,6 @@ from taggit.managers import TaggableManager
 
 import common.currency
 import common.models
-import common.settings
 import InvenTree.conversion
 import InvenTree.fields
 import InvenTree.helpers
@@ -56,6 +54,7 @@ from build import models as BuildModels
 from build.status_codes import BuildStatusGroups
 from common.currency import currency_code_default
 from common.icons import validate_icon
+from common.pricing import get_pricing_plugin
 from common.settings import get_global_setting
 from company.models import SupplierPart
 from InvenTree import helpers, validators
@@ -63,11 +62,8 @@ from InvenTree.exceptions import log_error
 from InvenTree.fields import InvenTreeURLField
 from InvenTree.helpers import decimal2money, decimal2string, normalize, str2bool
 from order import models as OrderModels
-from order.status_codes import (
-    PurchaseOrderStatus,
-    PurchaseOrderStatusGroups,
-    SalesOrderStatusGroups,
-)
+from order.status_codes import PurchaseOrderStatusGroups, SalesOrderStatusGroups
+from plugin.mixins import PricingMixin
 from stock import models as StockModels
 
 logger = structlog.get_logger('inventree')
@@ -2997,94 +2993,52 @@ class PartPricing(common.models.MetaMixin):
         if save:
             self.save()
 
-    def update_purchase_cost(self, save=True):
+    def update_purchase_cost(self, save: bool = True):
         """Recalculate historical purchase cost for the referenced Part instance.
 
         Purchase history only takes into account "completed" purchase orders.
         """
-        # Find all line items for completed orders which reference this part
-        line_items = OrderModels.PurchaseOrderLineItem.objects.filter(
-            order__status=PurchaseOrderStatus.COMPLETE.value,
-            received__gt=0,
-            part__part=self.part,
-        )
+        plugin: PricingMixin = get_pricing_plugin()
+        price_range = plugin.calculate_part_purchase_price_range(self.part)
 
-        # Exclude line items which do not have an associated price
-        line_items = line_items.exclude(purchase_price=None)
-
-        purchase_min = None
-        purchase_max = None
-
-        for line in line_items:
-            if line.purchase_price is None:
-                continue
-
-            # Take supplier part pack size into account
-            purchase_cost = common.currency.convert_currency(
-                line.purchase_price / line.part.pack_quantity_native
-            )
-
-            if purchase_cost is None:
-                continue
-
-            if purchase_min is None or purchase_cost < purchase_min:
-                purchase_min = purchase_cost
-
-            if purchase_max is None or purchase_cost > purchase_max:
-                purchase_max = purchase_cost
-
-        # Also check if manual stock item pricing is included
-        if get_global_setting('PRICING_USE_STOCK_PRICING', True):
-            items = self.part.stock_items.all()
-
-            # Limit to stock items updated within a certain window
-            days = int(get_global_setting('PRICING_STOCK_ITEM_AGE_DAYS', 0))
-
-            if days > 0:
-                date_threshold = InvenTree.helpers.current_date() - timedelta(days=days)
-                items = items.filter(updated__gte=date_threshold)
-
-            for item in items:
-                cost = common.currency.convert_currency(item.purchase_price)
-
-                # Skip if the cost could not be converted (for some reason)
-                if cost is None:
-                    continue
-
-                if purchase_min is None or cost < purchase_min:
-                    purchase_min = cost
-
-                if purchase_max is None or cost > purchase_max:
-                    purchase_max = cost
-
-        self.purchase_cost_min = purchase_min
-        self.purchase_cost_max = purchase_max
+        self.purchase_cost_min = price_range.min
+        self.purchase_cost_max = price_range.max
 
         if save:
             self.save()
 
-    def update_internal_cost(self, save=True):
+        # TODO: Account for 'stock on hand' price range
+        # Also check if manual stock item pricing is included
+        # if get_global_setting('PRICING_USE_STOCK_PRICING', True):
+        #     items = self.part.stock_items.all()
+
+        #     # Limit to stock items updated within a certain window
+        #     days = int(get_global_setting('PRICING_STOCK_ITEM_AGE_DAYS', 0))
+
+        #     if days > 0:
+        #         date_threshold = InvenTree.helpers.current_date() - timedelta(days=days)
+        #         items = items.filter(updated__gte=date_threshold)
+
+        #     for item in items:
+        #         cost = common.currency.convert_currency(item.purchase_price)
+
+        #         # Skip if the cost could not be converted (for some reason)
+        #         if cost is None:
+        #             continue
+
+        #         if purchase_min is None or cost < purchase_min:
+        #             purchase_min = cost
+
+        #         if purchase_max is None or cost > purchase_max:
+        #             purchase_max = cost
+
+    def update_internal_cost(self, save: bool = True):
         """Recalculate internal cost for the referenced Part instance."""
-        min_int_cost = None
-        max_int_cost = None
+        plugin: PricingMixin = get_pricing_plugin()
+        price_range = plugin.calculate_part_internal_price_range(self.part)
 
-        if get_global_setting('PART_INTERNAL_PRICE', False):
-            # Only calculate internal pricing if internal pricing is enabled
-            for pb in self.part.internalpricebreaks.all():
-                cost = common.currency.convert_currency(pb.price)
-
-                if cost is None:
-                    # Ignore if cost could not be converted for some reason
-                    continue
-
-                if min_int_cost is None or cost < min_int_cost:
-                    min_int_cost = cost
-
-                if max_int_cost is None or cost > max_int_cost:
-                    max_int_cost = cost
-
-        self.internal_cost_min = min_int_cost
-        self.internal_cost_max = max_int_cost
+        self.internal_cost_min = price_range.min
+        self.internal_cost_max = price_range.max
 
         if save:
             self.save()
@@ -3095,33 +3049,11 @@ class PartPricing(common.models.MetaMixin):
         - The limits are simply the lower and upper bounds of available SupplierPriceBreaks
         - We do not take "quantity" into account here
         """
-        min_sup_cost = None
-        max_sup_cost = None
+        plugin: PricingMixin = get_pricing_plugin()
+        price_range = plugin.calculate_part_supplier_price_range(self.part)
 
-        if self.part.purchaseable:
-            # Iterate through each available SupplierPart instance
-            for sp in self.part.supplier_parts.all():
-                # Iterate through each available SupplierPriceBreak instance
-                for pb in sp.pricebreaks.all():
-                    if pb.price is None:
-                        continue
-
-                    # Ensure we take supplier part pack size into account
-                    cost = common.currency.convert_currency(
-                        pb.price / sp.pack_quantity_native
-                    )
-
-                    if cost is None:
-                        continue
-
-                    if min_sup_cost is None or cost < min_sup_cost:
-                        min_sup_cost = cost
-
-                    if max_sup_cost is None or cost > max_sup_cost:
-                        max_sup_cost = cost
-
-        self.supplier_price_min = min_sup_cost
-        self.supplier_price_max = max_sup_cost
+        self.supplier_price_min = price_range.min
+        self.supplier_price_max = price_range.max
 
         if save:
             self.save()
