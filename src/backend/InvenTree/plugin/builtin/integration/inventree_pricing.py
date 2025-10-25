@@ -224,6 +224,26 @@ class InvenTreePricingPlugin(PricingMixin, SettingsMixin, InvenTreePlugin):
         Returns:
             A tuple representing the min, max internal price range for the part
         """
+        min_price: Money = None
+        max_price: Money = None
+
+        for pb in self.part.internalpricebreaks.all():
+            if pb.price is None:
+                continue
+
+            cost = convert_currency(pb.price)
+
+            if cost is None:
+                # Ignore if cost could not be converted for some reason
+                continue
+
+            if min_price is None or cost < min_price:
+                min_price = cost
+
+            if max_price is None or cost > max_price:
+                max_price = cost
+
+        return PriceRangeTuple(min=min_price, max=max_price)
 
     def calculate_part_variant_price_range(
         self, part, *args, **kwargs
