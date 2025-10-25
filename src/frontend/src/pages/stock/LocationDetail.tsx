@@ -5,8 +5,13 @@ import { apiUrl } from '@lib/functions/Api';
 import { getDetailUrl } from '@lib/functions/Navigation';
 import type { StockOperationProps } from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
-import { Group, Skeleton, Stack, Text } from '@mantine/core';
-import { IconInfoCircle, IconPackages, IconSitemap } from '@tabler/icons-react';
+import { Alert, Group, Skeleton, Stack, Text } from '@mantine/core';
+import {
+  IconExclamationCircle,
+  IconInfoCircle,
+  IconPackages,
+  IconSitemap
+} from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { api } from '../../App';
@@ -218,11 +223,11 @@ export default function Stock() {
   const deleteOptions = useMemo(() => {
     return [
       {
-        value: 0,
+        value: 'false',
         display_name: t`Move items to parent location`
       },
       {
-        value: 1,
+        value: 'true',
         display_name: t`Delete items`
       }
     ];
@@ -235,17 +240,30 @@ export default function Stock() {
     fields: {
       delete_stock_items: {
         label: t`Items Action`,
+        required: true,
         description: t`Action for stock items in this location`,
         field_type: 'choice',
+        default: 'false',
         choices: deleteOptions
       },
-      delete_sub_location: {
-        label: t`Child Locations Action`,
+      delete_sub_locations: {
+        label: t`Locations Action`,
+        required: true,
         description: t`Action for child locations in this location`,
         field_type: 'choice',
+        default: 'false',
         choices: deleteOptions
       }
     },
+    preFormContent: (
+      <Alert
+        color='yellow'
+        icon={<IconExclamationCircle />}
+        title={t`Delete Stock Location`}
+      >
+        {t`Select the actions to perform on any stock items or sub-locations contained within this location.`}
+      </Alert>
+    ),
     onFormSuccess: () => {
       if (location.parent) {
         navigate(getDetailUrl(ModelType.stocklocation, location.parent));
