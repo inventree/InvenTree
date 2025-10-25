@@ -3,6 +3,7 @@ import { Stack } from '@mantine/core';
 import {
   IconBuildingStore,
   IconCalendar,
+  IconCubeSend,
   IconTable,
   IconTruckDelivery,
   IconTruckReturn
@@ -20,6 +21,7 @@ import { PanelGroup } from '../../components/panels/PanelGroup';
 import { useUserState } from '../../states/UserState';
 import { CompanyTable } from '../../tables/company/CompanyTable';
 import { ReturnOrderTable } from '../../tables/sales/ReturnOrderTable';
+import SalesOrderShipmentTable from '../../tables/sales/SalesOrderShipmentTable';
 import { SalesOrderTable } from '../../tables/sales/SalesOrderTable';
 
 function SalesOrderOverview({
@@ -97,6 +99,18 @@ export default function SalesIndex() {
           />
         ),
         hidden: !user.hasViewRole(UserRoles.sales_order)
+      },
+      {
+        name: 'shipments',
+        label: t`Pending Shipments`,
+        icon: <IconCubeSend />,
+        content: (
+          <SalesOrderShipmentTable
+            tableName={'sales-order-pending-shipment'}
+            showOrderInfo
+            filters={{ shipped: false, order_outstanding: true }}
+          />
+        )
       },
       {
         name: 'returnorders',
