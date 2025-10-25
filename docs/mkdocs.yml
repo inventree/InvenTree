@@ -74,6 +74,7 @@ nav:
   - InvenTree:
     - InvenTree: index.md
     - FAQ: faq.md
+    - Troubleshooting: troubleshooting.md
     - Demo: demo.md
     - Release Notes: releases/release_notes.md
     - Core Concepts:
