@@ -461,7 +461,7 @@ def add(x: Any, y: Any, cast: Optional[type] = None) -> Any:
     Arguments:
         x: The first value to add
         y: The second value to add
-        cast: Optional type to cast the result to (e.g. int, float, str
+        cast: Optional type to cast the result to (e.g. int, float, str)
 
     Raises:
         ValidationError: If the values cannot be added together
@@ -482,7 +482,7 @@ def subtract(x: Any, y: Any, cast: Optional[type] = None) -> Any:
     Arguments:
         x: The value to be subtracted from
         y: The value to be subtracted
-        cast: Optional type to cast the result to (e.g. int, float, str
+        cast: Optional type to cast the result to (e.g. int, float, str)
 
     Raises:
         ValidationError: If the values cannot be subtracted
@@ -504,7 +504,7 @@ def multiply(x: Any, y: Any, cast: Optional[type] = None) -> Any:
     Arguments:
         x: The first value to multiply
         y: The second value to multiply
-        cast: Optional type to cast the result to (e.g. int, float, str
+        cast: Optional type to cast the result to (e.g. int, float, str)
 
     Raises:
         ValidationError: If the values cannot be multiplied together
@@ -526,7 +526,7 @@ def divide(x: Any, y: Any, cast: Optional[type] = None) -> Any:
     Arguments:
         x: The value to be divided
         y: The value to divide by
-        cast: Optional type to cast the result to (e.g. int, float, str
+        cast: Optional type to cast the result to (e.g. int, float, str)
 
     Raises:
         ValidationError: If the values cannot be divided
@@ -550,7 +550,7 @@ def modulo(x: Any, y: Any, cast: Optional[type] = None) -> Any:
     Arguments:
         x: The first value to be used in the modulo operation
         y: The second value to be used in the modulo operation
-        cast: Optional type to cast the result to (e.g. int, float, str
+        cast: Optional type to cast the result to (e.g. int, float, str)
 
     Raises:
         ValidationError: If the values cannot be used in a modulo operation
