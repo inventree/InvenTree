@@ -64,15 +64,22 @@ export function RenderSupplierPart(
   const supplier = instance.supplier_detail ?? {};
   const part = instance.part_detail ?? {};
 
+  const secondary: string = instance.SKU;
+  let suffix: string = part.full_name;
+
+  if (instance.pack_quantity) {
+    suffix += ` (${instance.pack_quantity})`;
+  }
+
   return (
     <RenderInlineModel
       {...props}
       primary={supplier?.name}
-      secondary={instance.SKU}
+      secondary={secondary}
       image={
         part?.thumbnail ?? part?.image ?? supplier?.thumbnail ?? supplier?.image
       }
-      suffix={part.full_name}
+      suffix={suffix}
       url={
         props.link
           ? getDetailUrl(ModelType.supplierpart, instance.pk)
