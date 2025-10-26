@@ -221,7 +221,7 @@ nav:
     - Machines:
       - Overview: plugins/machines/overview.md
       - Label Printer: plugins/machines/label_printer.md
-    - Builtin Plugins:
+    - Builtin:
       - Builtin Plugins: plugins/builtin/index.md
       - Barcode Plugins:
         - Barcode Plugins: plugins/builtin/barcode_index.md
@@ -248,8 +248,8 @@ nav:
         - Slack Notifications: plugins/builtin/slack_notification.md
         - UI Notifications: plugins/builtin/ui_notification.md
       - Currency Exchange: plugins/builtin/currency_exchange.md
-  - Mobile App:
-    - Mobile App: app/index.md
+  - "Mobile App":
+    - Overview: app/index.md
     - Connect: app/connect.md
     - Navigation: app/navigation.md
     - Search: app/search.md
@@ -263,7 +263,7 @@ nav:
     - Translation: app/translation.md
     - Suggestions: app/issues.md
   - API:
-    - API Overview: api/index.md
+    - Overview: api/index.md
     - API Schema: api/schema.md
     - Model Metadata: api/metadata.md
     - Download Data: api/download.md
