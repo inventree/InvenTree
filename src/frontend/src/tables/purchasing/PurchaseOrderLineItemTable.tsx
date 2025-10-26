@@ -194,7 +194,7 @@ export function PurchaseOrderLineItemTable({
 
             extra.push(
               <Text key='total-quantity'>
-                {t`Total Quantity`}: {total} {part?.units}
+                {t`Total Quantity`}: {formatDecimal(total)} {part?.units}
               </Text>
             );
           }
