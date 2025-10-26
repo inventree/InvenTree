@@ -4,14 +4,14 @@ title: Manufacturers
 
 ## Manufacturers
 
-A manufacturer is an external **producer** of parts and raw materials.
+A manufacturer is a [company](../concepts/company.md) which acts as an external producer of parts and raw materials. A manufacturer may or may not also be a [supplier](./supplier.md) of those parts.
 
 !!! info
 	**Viewing**, **adding**, **editing** and **deleting** manufacturers require the corresponding [Purchase Orders user permissions](../settings/permissions.md)
 
 To access the list of manufacturers , click on the <span class="badge inventree nav main">{{ icon("shopping-cart") }} Buy</span> navigation tab and click on <span class="badge inventree nav main">{{ icon("building-factory-2") }} Manufacturers</span> option in the dropdown list.
 
-{{ image("order/manufacturer_list.png", "Manufacturer List") }}
+{{ image("purchasing/manufacturer_list.png", "Manufacturer List") }}
 
 ### Add Manufacturer
 
