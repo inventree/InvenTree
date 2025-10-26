@@ -220,11 +220,11 @@ export default function Stock() {
   const deleteOptions = useMemo(() => {
     return [
       {
-        value: 0,
+        value: 'false',
         display_name: t`Move items to parent location`
       },
       {
-        value: 1,
+        value: 'true',
         display_name: t`Delete items`
       }
     ];
@@ -237,12 +237,14 @@ export default function Stock() {
     fields: {
       delete_stock_items: {
         label: t`Items Action`,
+        required: true,
         description: t`Action for stock items in this location`,
         field_type: 'choice',
         choices: deleteOptions
       },
-      delete_sub_location: {
-        label: t`Child Locations Action`,
+      delete_sub_locations: {
+        label: t`Locations Action`,
+        required: true,
         description: t`Action for child locations in this location`,
         field_type: 'choice',
         choices: deleteOptions
