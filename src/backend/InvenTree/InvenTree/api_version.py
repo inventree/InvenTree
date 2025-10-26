@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 419
+INVENTREE_API_VERSION = 420
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v420 -> 2025-10-26 : https://github.com/inventree/InvenTree/pull/10675
+    - Adds optional "customer_detail" filter to SalesOrderShipment API endpoint
 
 v419 -> 2025-10-24 : https://github.com/inventree/InvenTree/pull/10659
     - Fixes regression introduced in v417 which reverted the changes from v416
