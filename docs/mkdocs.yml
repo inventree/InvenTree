@@ -77,19 +77,6 @@ nav:
     - Troubleshooting: troubleshooting.md
     - Demo: demo.md
     - Release Notes: releases/release_notes.md
-    - Core Concepts:
-      - Terminology: concepts/terminology.md
-      - Threat Model: concepts/threat_model.md
-      - Physical Units: concepts/units.md
-      - Companies: concepts/company.md
-      - Custom States: concepts/custom_states.md
-      - Pricing: concepts/pricing.md
-      - Project Codes: concepts/project_codes.md
-      - Barcodes:
-        - Barcode Support: barcodes/index.md
-        - Internal Barcodes: barcodes/internal.md
-        - External Barcodes: barcodes/external.md
-        - Custom Barcodes: barcodes/custom.md
     - Development:
       - Contributing: develop/contributing.md
       - Architecture: develop/architecture.md
@@ -101,6 +88,19 @@ nav:
       - Project Security: security.md
       - Resources: project/resources.md
       - Privacy: privacy.md
+  - Concepts:
+    - Terminology: concepts/terminology.md
+    - Threat Model: concepts/threat_model.md
+    - Physical Units: concepts/units.md
+    - Companies: concepts/company.md
+    - Custom States: concepts/custom_states.md
+    - Pricing: concepts/pricing.md
+    - Project Codes: concepts/project_codes.md
+    - Barcodes:
+      - Barcode Support: barcodes/index.md
+      - Internal Barcodes: barcodes/internal.md
+      - External Barcodes: barcodes/external.md
+      - Custom Barcodes: barcodes/custom.md
   - Setup:
     - Introduction: start/index.md
     - Processes: start/processes.md
