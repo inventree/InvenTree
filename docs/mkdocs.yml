@@ -96,31 +96,6 @@ nav:
       - Roadmap: develop/roadmap.md
       - Devcontainer: develop/devcontainer.md
       - React Frontend: develop/react-frontend.md
-    - Mobile App:
-      - Mobile App: app/index.md
-      - Connect: app/connect.md
-      - Navigation: app/navigation.md
-      - Search: app/search.md
-      - Barcodes: app/barcode.md
-      - Parts: app/part.md
-      - Stock: app/stock.md
-      - Purchase Orders: app/po.md
-      - Sales Orders: app/so.md
-      - Settings: app/settings.md
-      - Privacy: app/privacy.md
-      - Translation: app/translation.md
-      - Suggestions: app/issues.md
-    - InvenTree API:
-      - Overview: api/index.md
-      - API Schema: api/schema.md
-      - Model Metadata: api/metadata.md
-      - Download Data: api/download.md
-      - Bulk Delete: api/bulk_delete.md
-      - Interactive API: api/browse.md
-    - Python Interface:
-      - Overview: api/python/index.md
-      - Currency Support: api/python/currency.md
-      - Examples: api/python/examples.md
     - Project Details:
       - Governance: project/governance.md
       - Project Security: security.md
@@ -273,6 +248,32 @@ nav:
         - Slack Notifications: plugins/builtin/slack_notification.md
         - UI Notifications: plugins/builtin/ui_notification.md
       - Currency Exchange: plugins/builtin/currency_exchange.md
+  - Mobile App:
+    - Mobile App: app/index.md
+    - Connect: app/connect.md
+    - Navigation: app/navigation.md
+    - Search: app/search.md
+    - Barcodes: app/barcode.md
+    - Parts: app/part.md
+    - Stock: app/stock.md
+    - Purchase Orders: app/po.md
+    - Sales Orders: app/so.md
+    - Settings: app/settings.md
+    - Privacy: app/privacy.md
+    - Translation: app/translation.md
+    - Suggestions: app/issues.md
+  - API:
+    - API Overview: api/index.md
+    - API Schema: api/schema.md
+    - Model Metadata: api/metadata.md
+    - Download Data: api/download.md
+    - Bulk Delete: api/bulk_delete.md
+    - Interactive API: api/browse.md
+    - Python Interface:
+      - Overview: api/python/index.md
+      - Currency Support: api/python/currency.md
+      - Examples: api/python/examples.md
+
 
 # Plugins
 plugins:
