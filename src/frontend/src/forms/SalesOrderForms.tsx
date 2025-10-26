@@ -157,6 +157,9 @@ export function useSalesOrderLineItemFields({
         value: partCurrency,
         onValueChange: setPartCurrency
       },
+      project_code: {
+        description: t`Select project code for this line item`
+      },
       target_date: {},
       notes: {},
       link: {}
@@ -372,8 +375,10 @@ export function useSalesOrderAllocateSerialsFields({
 }
 
 export function useSalesOrderShipmentFields({
+  customerId,
   pending
 }: {
+  customerId: number;
   pending?: boolean;
 }): ApiFormFieldSet {
   return useMemo(() => {
@@ -388,11 +393,18 @@ export function useSalesOrderShipmentFields({
       delivery_date: {
         hidden: pending ?? true
       },
+      shipment_address: {
+        placeholder: t`Leave blank to use the order address`,
+        filters: {
+          company: customerId,
+          ordering: '-primary'
+        }
+      },
       tracking_number: {},
       invoice_number: {},
       link: {}
     };
-  }, [pending]);
+  }, [customerId, pending]);
 }
 
 export function useSalesOrderShipmentCompleteFields({

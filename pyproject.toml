@@ -113,7 +113,7 @@ invalid-argument-type="ignore"  # 49
 possibly-unbound-attribute="ignore"  # 25 # https://github.com/astral-sh/ty/issues/164
 unknown-argument="ignore"  # 3  # need to wait for betterdjango field stubs
 invalid-assignment="ignore"  # 17  # need to wait for betterdjango field stubs
-
+no-matching-overload="ignore"  # 3  # need to wait for betterdjango field stubs
 
 [tool.coverage.run]
 source = ["src/backend/InvenTree", "InvenTree"]

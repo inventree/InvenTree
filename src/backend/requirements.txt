@@ -1383,9 +1383,9 @@ pyjwt[crypto]==2.10.1 \
     # via
     #   django-allauth
     #   djangorestframework-simplejwt
-pypdf==6.1.1 \
-    --hash=sha256:10f44d49bf2a82e54c3c5ba3cdcbb118f2a44fc57df8ce51d6fb9b1ed9bfbe8b \
-    --hash=sha256:7781f99493208a37a7d4275601d883e19af24e62a525c25844d22157c2e4cde7
+pypdf==6.1.3 \
+    --hash=sha256:8d420d1e79dc1743f31a57707cabb6dcd5b17e8b9a302af64b30202c5700ab9d \
+    --hash=sha256:eb049195e46f014fc155f566fa20e09d70d4646a9891164ac25fa0cbcfcdbcb5
     # via -r src/backend/requirements.in
 pyphen==0.17.2 \
     --hash=sha256:3a07fb017cb2341e1d9ff31b8634efb1ae4dc4b130468c7c39dd3d32e7c3affd \

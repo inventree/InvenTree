@@ -1042,7 +1042,9 @@ class PartSerializer(
     )
 
     price_breaks = enable_filter(
-        PartSalePriceSerializer(source='salepricebreaks', many=True, read_only=True),
+        PartSalePriceSerializer(
+            source='salepricebreaks', many=True, read_only=True, allow_null=True
+        ),
         False,
         filter_name='price_breaks',
     )
