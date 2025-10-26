@@ -378,7 +378,7 @@ export function useSalesOrderShipmentFields({
   customerId,
   pending
 }: {
-  customerId: number;
+  customerId?: number;
   pending?: boolean;
 }): ApiFormFieldSet {
   return useMemo(() => {
