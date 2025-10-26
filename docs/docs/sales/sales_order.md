@@ -5,13 +5,13 @@ title: Sales Orders
 
 ## Sales Orders
 
-Sales orders allow tracking of which stock items are sold to customers, therefore converting stock items / inventory into externally sold items.
+Sales orders allow tracking of which stock items are sold to [customers](./customer.md), therefore converting stock items / inventory into externally sold items.
 
 ### View Sales Orders
 
 To navigate to the Sales Order display, select *Sales* from the main navigation menu, and *Sales Orders* from the sidebar:
 
-{{ image("order/so_display.png", "Sales Order display") }}
+{{ image("sales/so_display.png", "Sales Order display") }}
 
 The following view modes are available:
 
@@ -19,13 +19,13 @@ The following view modes are available:
 
 *Table View* provides a list of Sales Orders, which can be filtered to display a subset of orders according to user supplied parameters.
 
-{{ image("order/so_list.png", "Sales Order list") }}
+{{ image("sales/so_list.png", "Sales Order list") }}
 
 #### Calendar View
 
 *Calendar View* shows a calendar display with outstanding sales orders.
 
-{{ image("order/so_calendar.png", "Sales Order calendar") }}
+{{ image("sales/so_calendar.png", "Sales Order calendar") }}
 
 ### Sales Order Status Codes
 
@@ -114,7 +114,7 @@ During the allocation process, user is required to select the desired shipment t
 
 Shipments can be marked as "checked" to indicate that the items in the shipment has been verified. To mark a shipment as "checked", open the shipment actions menu, and select the "Check" action:
 
-{{ image("order/so_shipment_check.png", "Check shipment") }}
+{{ image("sales/so_shipment_check.png", "Check shipment") }}
 
 The shipment will be marked as checked by the current user.
 
@@ -177,7 +177,7 @@ The *Pending Shipments* panel displays the shipments which have not yet been sen
 - Pending sales order items can be allocated to these shipments
 - New shipments can be created if the order is still open
 
-{{ image("order/pending_shipments.png", "Pending shipments") }}
+{{ image("sales/pending_shipments.png", "Pending shipments") }}
 
 #### Creating a new Shipment
 
@@ -187,11 +187,11 @@ To create a new shipment for a sales order, press the *New Shipment* button abov
 
 To complete a shipment, press the *Complete Shipment* button associated with the particular shipment:
 
-{{ image("order/complete_shipment.png", "Complete shipment") }}
+{{ image("sales/complete_shipment.png", "Complete shipment") }}
 
 ### Completed Shipments
 
-{{ image("order/completed_shipments.png", "Completed shipments") }}
+{{ image("sales/completed_shipments.png", "Completed shipments") }}
 
 ### Shipment Data
 
@@ -220,7 +220,7 @@ An optional URL field which can be used to provide a link to an external URL.
 
 All these fields can be edited by the user:
 
-{{ image("order/edit_shipment.png", "Edit shipment") }}
+{{ image("sales/edit_shipment.png", "Edit shipment") }}
 
 ## Sales Order Settings
 
