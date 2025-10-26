@@ -62,7 +62,7 @@ runs:
         run: echo "UV_SYSTEM_PYTHON=1" >> $GITHUB_ENV
         shell: bash
       - name: Install Specific Python Dependencies
-        if: ${{ inputs.pip-dependency }}p
+        if: ${{ inputs.pip-dependency }}
         shell: bash
         run: uv pip install ${PIP_DEPS}
         env:
