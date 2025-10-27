@@ -1326,6 +1326,7 @@ class SalesOrderShipmentSerializer(
             'notes',
             # Extra detail fields
             'checked_by_detail',
+            'customer_detail',
             'order_detail',
             'shipment_address_detail',
         ]
@@ -1356,6 +1357,13 @@ class SalesOrderShipmentSerializer(
             source='order', read_only=True, allow_null=True, many=False
         ),
         True,
+    )
+
+    customer_detail = enable_filter(
+        CompanyBriefSerializer(
+            source='order.customer', many=False, read_only=True, allow_null=True
+        ),
+        False,
     )
 
     shipment_address_detail = enable_filter(

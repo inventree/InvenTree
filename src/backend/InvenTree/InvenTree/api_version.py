@@ -1,15 +1,18 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 420
+INVENTREE_API_VERSION = 421
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v420 -> 2025-10-24 : https://github.com/inventree/InvenTree/pull/...
+v421 -> 2025-10-27 : https://github.com/inventree/InvenTree/pull/...
     - Expose InvenTreeImage model to api/image API endpoints
     - Adds 'image_url' and 'thumbnail_url' fields to relevant API serializers
     - Updates Part and Company API endpoints to use new image architecture
+
+v420 -> 2025-10-26 : https://github.com/inventree/InvenTree/pull/10675
+    - Adds optional "customer_detail" filter to SalesOrderShipment API endpoint
 
 v419 -> 2025-10-24 : https://github.com/inventree/InvenTree/pull/10659
     - Fixes regression introduced in v417 which reverted the changes from v416

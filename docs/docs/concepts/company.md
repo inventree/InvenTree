@@ -29,7 +29,7 @@ It is recommended to disable a company rather than deleting it, as this will pre
 
 To disable a company, simply edit the company details and set the `active` attribute to `False`:
 
-{{ image("order/company_disable.png", "Disable Company") }}
+{{ image("purchasing/company_disable.png", "Disable Company") }}
 
 To re-enable a company, simply follow the same process and set the `active` attribute to `True`.
 
@@ -49,7 +49,7 @@ Each company can have multiple assigned *Contacts*. A contact identifies an indi
 
 The list of contacts associated with a particular company is available in the <span class='badge inventree nav main'>{{ icon("users") }} Contacts</span> navigation tab:
 
-{{ image("order/contact_list.png", "Company Contacts") }}
+{{ image("purchasing/contact_list.png", "Company Contacts") }}
 
 A *contact* can be assigned to orders, (such as [purchase orders](../purchasing/purchase_order.md) or [sales orders](../sales/sales_order.md)).
 

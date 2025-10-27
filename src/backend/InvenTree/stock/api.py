@@ -431,8 +431,12 @@ class StockLocationDetail(
 
     def destroy(self, request, *args, **kwargs):
         """Delete a Stock location instance via the API."""
-        delete_stock_items = str(request.data.get('delete_stock_items', 0)) == '1'
-        delete_sub_locations = str(request.data.get('delete_sub_locations', 0)) == '1'
+        delete_stock_items = InvenTree.helpers.str2bool(
+            request.data.get('delete_stock_items', False)
+        )
+        delete_sub_locations = InvenTree.helpers.str2bool(
+            request.data.get('delete_sub_locations', False)
+        )
 
         return super().destroy(
             request,

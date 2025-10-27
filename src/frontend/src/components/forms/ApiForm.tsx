@@ -587,9 +587,11 @@ export function ApiForm({
                 <Alert radius='sm' color='red' title={t`Form Error`}>
                   {nonFieldErrors.length > 0 ? (
                     <Stack gap='xs'>
-                      {nonFieldErrors.map((message) => (
-                        <Text key={message}>{message}</Text>
-                      ))}
+                      {nonFieldErrors
+                        .filter((message) => !!message && message !== 'None')
+                        .map((message) => (
+                          <Text key={message}>{message}</Text>
+                        ))}
                     </Stack>
                   ) : (
                     <Text>{t`Errors exist for one or more form fields`}</Text>

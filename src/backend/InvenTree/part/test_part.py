@@ -39,10 +39,6 @@ class TemplateTagTest(InvenTreeTestCase):
         self.assertEqual(int(inventree_extras.str2bool('none')), False)
         self.assertEqual(int(inventree_extras.str2bool('off')), False)
 
-    def test_add(self):
-        """Test that the 'add."""
-        self.assertEqual(int(inventree_extras.add(3, 5)), 8)
-
     def test_inventree_instance_name(self):
         """Test the 'instance name' setting."""
         self.assertEqual(inventree_extras.inventree_instance_name(), 'InvenTree')
