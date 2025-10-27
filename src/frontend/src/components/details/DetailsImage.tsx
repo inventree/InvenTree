@@ -49,7 +49,7 @@ import { StylishText } from '../items/StylishText';
 /**
  * Props for detail image
  */
-export type DetailImageProps = {
+export type ImageItemProps = {
   appRole?: UserRoles;
   primary?: boolean;
   src: string;
@@ -59,7 +59,7 @@ export type DetailImageProps = {
   pk: string;
   image_id?: string;
   content_type?: ModelType.part | ModelType.company;
-  useGridCol?: boolean;
+  hasAction?: boolean;
 };
 
 /**
@@ -436,7 +436,7 @@ function ImageActionButtons({
 /**
  * Renders an image with action buttons for display on Details panels
  */
-function ImageItem(props: Readonly<DetailImageProps>) {
+function ImageItem(props: Readonly<ImageItemProps>) {
   // Displays a group of ActionButtons on hover
   const { hovered, ref } = useHover();
   const [img, setImg] = useState<string>(props.src ?? backup_image);
@@ -502,14 +502,6 @@ function ImageItem(props: Readonly<DetailImageProps>) {
     props.refresh?.();
   };
 
-  const hasOverlay: boolean = useMemo(() => {
-    return (
-      Object.values(props.EditImageActions || {}).some(
-        (value) => value === true
-      ) || false
-    );
-  }, [props.EditImageActions]);
-
   const expandImage = (event: any) => {
     cancelEvent(event);
     modals.open({
@@ -535,7 +527,7 @@ function ImageItem(props: Readonly<DetailImageProps>) {
         />
         {props.appRole &&
           permissions.hasChangeRole(props.appRole) &&
-          hasOverlay && (
+          props.hasAction && (
             <Overlay
               color='black'
               opacity={hovered ? 0.8 : 0}
@@ -562,15 +554,10 @@ function ImageItem(props: Readonly<DetailImageProps>) {
       {downloadImage.modal}
       {deleteUploadImage.modal}
 
-      {props.useGridCol !== false ? (
-        <Grid.Col span={{ base: 12, sm: 4 }}>{imageContent}</Grid.Col>
-      ) : (
-        imageContent
-      )}
+      {imageContent}
     </>
   );
 }
-
 interface UploadImage {
   pk: string;
   image: string;
@@ -588,78 +575,97 @@ interface DetailsImageProps {
 }
 
 /**
- * Carousel component to display images for a model instance
+ * Fallback image used whenever the API returns no images for the given object.
  */
-export function DetailsImage(props: Readonly<DetailsImageProps>) {
-  const {
-    content_model,
-    multiple,
-    object_id,
-    AddImageActions,
-    EditImageActions
-  } = props;
-  const img_url = ApiEndpoints.upload_image_list;
+const FALLBACK_IMAGE: UploadImage = {
+  pk: 'fallback',
+  image: backup_image,
+  primary: true
+};
 
-  const imageQuery = useQuery<UploadImage[]>({
-    queryKey: [img_url, object_id],
+/**
+ * Carousel component that displays uploaded images for a given model instance.
+ * Handles empty states by showing a fallback image and configures navigation /
+ * action controls based on the available data and provided props.
+ */
+export function DetailsImage({
+  appRole,
+  content_model,
+  multiple,
+  object_id,
+  refresh,
+  AddImageActions,
+  EditImageActions
+}: Readonly<DetailsImageProps>) {
+  const imgUrl = ApiEndpoints.upload_image_list;
+
+  /**
+   * Fetch the list of images associated with the current object.
+   * If the API returns an empty array, we substitute a fallback image.
+   */
+  const { data: images = [], isFetching: isImagesFetching } = useQuery<
+    UploadImage[]
+  >({
+    queryKey: [imgUrl, object_id],
     queryFn: async () => {
-      return api
-        .get(apiUrl(img_url), {
-          params: {
-            content_model: content_model,
-            object_id: object_id
-          }
-        })
-        .then((response) => {
-          // Return the data directly, or fallback to backup image
-          if (!response.data || response.data.length === 0) {
-            return [
-              {
-                pk: 'backup',
-                image: backup_image,
-                primary: true
-              }
-            ];
-          }
-          return response.data;
-        });
+      const response = await api.get(apiUrl(imgUrl), {
+        params: {
+          content_model,
+          object_id
+        }
+      });
+
+      if (!response.data || response.data.length === 0) {
+        return [FALLBACK_IMAGE];
+      }
+
+      return response.data;
     }
   });
 
-  const config = useMemo(() => {
-    const images = imageQuery.data || [];
-    const backup_image = images[0]?.pk === 'backup';
-    const hasMultipleImags = multiple && images.length > 1;
+  /**
+   * Pre-compute values needed by the carousel and its children.
+   */
+  const carouselConfig = useMemo(() => {
+    const isFallbackImage = images[0]?.pk === FALLBACK_IMAGE.pk;
+    const hasMultipleImages = Boolean(multiple && images.length > 1);
+
+    const hasAction =
+      Object.values(EditImageActions ?? {}).some(Boolean) ||
+      Object.values(EditImageActions ?? {}).some(Boolean) ||
+      false;
+
     return {
+      hasAction,
+      hasMultipleImages,
       startSlide: Math.max(
         0,
         images.findIndex((img) => img.primary)
       ),
-      hasMultipleImags,
       addImageActions: {
         selectExisting: AddImageActions?.selectExisting,
         uploadNewImage: AddImageActions?.uploadNewImage
       },
       editImageActions: {
-        deleteImage: EditImageActions?.deleteImage && !backup_image,
+        deleteImage: EditImageActions?.deleteImage && !isFallbackImage,
         setAsPrimary: images.length > 1 && EditImageActions?.setAsPrimary,
         replaceImage: EditImageActions?.replaceImage,
         downloadImage: EditImageActions?.downloadImage
       }
     };
-  }, [imageQuery.data]);
+  }, [images]);
 
   return (
     <Grid.Col span={{ base: 12, sm: 4 }}>
-      {!imageQuery.isFetching && imageQuery.data && (
+      {!isImagesFetching && images.length > 0 && (
         <Carousel
           slideSize='100%'
           emblaOptions={{
-            loop: config.hasMultipleImags,
+            loop: carouselConfig.hasMultipleImages,
             align: 'center'
           }}
-          initialSlide={config.startSlide}
-          withControls={config.hasMultipleImags}
+          initialSlide={carouselConfig.startSlide}
+          withControls={carouselConfig.hasMultipleImages}
           previousControlProps={{
             style: {
               transform: 'translateX(-45%)',
@@ -680,19 +686,19 @@ export function DetailsImage(props: Readonly<DetailsImageProps>) {
             }
           }}
         >
-          {imageQuery.data.map((imgObj: UploadImage, index: number) => (
-            <Carousel.Slide key={index}>
+          {images.map((imgObj: UploadImage) => (
+            <Carousel.Slide key={imgObj.pk}>
               <ImageItem
-                appRole={props.appRole}
-                AddImageActions={config.addImageActions}
-                EditImageActions={config.editImageActions}
+                appRole={appRole}
+                AddImageActions={carouselConfig.addImageActions}
+                EditImageActions={carouselConfig.editImageActions}
                 src={imgObj.image}
                 image_id={imgObj.pk}
                 pk={object_id}
                 primary={imgObj.primary}
                 content_type={content_model}
-                refresh={props.refresh}
-                useGridCol={false}
+                refresh={refresh}
+                hasAction={carouselConfig.hasAction}
               />
             </Carousel.Slide>
           ))}
