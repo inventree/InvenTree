@@ -64,23 +64,7 @@ export default function Mfa() {
           error={loginError}
         />
       )}
-      {(mfa_types.includes('webauthn') ||
-        mfa_types.includes('webauthn_2fa')) && (
-        <Code>
-          {t`Please use your WebAuthn device to authenticate. If you have multiple devices, select the one you want to use.`}
-        </Code>
-      )}
-      {(mfa_types.includes('webauthn') ||
-        mfa_types.includes('webauthn_2fa')) && (
-        <TextInput
-          required
-          label={t`WebAuthn Device`}
-          name='webauthn'
-          description={t`Select your WebAuthn device from the list.`}
-          {...simpleForm.getInputProps('webauthn')}
-          error={loginError}
-        />
-      )}
+
       <Checkbox
         label={t`Remember this device`}
         name='remember'
