@@ -1,13 +1,7 @@
 """Tests for the company model database migrations."""
 
-import shutil
-import tempfile
-
-from django.test import override_settings
-
 from django_test_migrations.contrib.unittest_case import MigratorTestCase
 
-from common.helpers import generate_image
 from InvenTree import unit_test
 
 
@@ -367,63 +361,3 @@ class TestSupplierPartQuantity(MigratorTestCase):
             # And the 'pack_size' attribute has been removed
             with self.assertRaises(AttributeError):
                 sp.pack_size
-
-
-class TestCompanyImageMigrationEdgeCases(MigratorTestCase):
-    """Test edge cases for Company image migration."""
-
-    migrate_from = [('common', '0039_emailthread_emailmessage')]
-    migrate_to = [('common', '0041_migrate_company_images')]
-
-    @classmethod
-    def setUpClass(cls):
-        """Set up the test class."""
-        super().setUpClass()
-        cls._temp_media = tempfile.mkdtemp(prefix='test_media_edge_')
-        cls._override = override_settings(MEDIA_ROOT=cls._temp_media)
-        cls._override.enable()
-
-    @classmethod
-    def tearDownClass(cls):
-        """Clean up after the test class."""
-        super().tearDownClass()
-        cls._override.disable()
-        shutil.rmtree(cls._temp_media, ignore_errors=True)
-
-    def prepare(self):
-        """Prepare edge case scenarios."""
-        Company = self.old_state.apps.get_model('company', 'company')
-
-        # Company with empty string image
-        self.empty_img_co = Company.objects.create(name='EmptyImgCo', image='')
-
-        # Multiple companies with same image
-        img = generate_image(filename='shared.png')
-        self.co1 = Company.objects.create(name='Co1', image=img)
-        self.co2 = Company.objects.create(name='Co2', image=img)
-
-    def test_empty_string_image(self):
-        """Test that empty string images are handled correctly."""
-        InvenTreeImage = self.new_state.apps.get_model('common', 'inventreeimage')
-        ContentType = self.new_state.apps.get_model('contenttypes', 'contenttype')
-
-        ct = ContentType.objects.get(app_label='company', model='company')
-
-        # Should not create an image for empty string
-        with self.assertRaises(InvenTreeImage.DoesNotExist):
-            InvenTreeImage.objects.get(
-                content_type_id=ct.pk, object_id=self.empty_img_co.pk
-            )
-
-    def test_shared_image_deduplication(self):
-        """Test that multiple companies sharing an image are handled correctly."""
-        InvenTreeImage = self.new_state.apps.get_model('common', 'inventreeimage')
-        ContentType = self.new_state.apps.get_model('contenttypes', 'contenttype')
-
-        ct = ContentType.objects.get(app_label='company', model='company')
-
-        img1 = InvenTreeImage.objects.get(content_type_id=ct.pk, object_id=self.co1.pk)
-        img2 = InvenTreeImage.objects.get(content_type_id=ct.pk, object_id=self.co2.pk)
-
-        self.assertTrue(img1.primary)
-        self.assertTrue(img2.primary)

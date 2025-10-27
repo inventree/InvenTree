@@ -20,5 +20,5 @@ def generate_image(filename: str = 'test.png', fmt: str = 'PNG') -> ContentFile:
     return ContentFile(buffer.read(), name=filename)
 
 
-# Subdirectory for storing part images
+# Subdirectory for storing images
 UPLOADED_IMAGE_DIR = 'images'

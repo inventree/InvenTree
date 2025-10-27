@@ -553,7 +553,6 @@ export default function BuildDetail() {
     onFormSuccess: refreshInstance
   });
 
-  console.log(build);
   const duplicateBuildOrderInitialData = useMemo(() => {
     const data = { ...build };
     // if we set the reference to null/undefined, it will be left blank in the form

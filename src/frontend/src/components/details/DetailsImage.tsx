@@ -467,7 +467,6 @@ function ImageItem(props: Readonly<DetailImageProps>) {
     }
   });
 
-  console.log(props);
   // Modal used for removing/deleting the current image
   const deleteUploadImage = useDeleteApiFormModal({
     url: ApiEndpoints.upload_image_list,
