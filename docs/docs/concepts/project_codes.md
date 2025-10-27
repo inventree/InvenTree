@@ -37,10 +37,10 @@ By default, project code support is disabled. Select the *Enable Project Codes* 
 
 Project codes can be assigned to an order when the order is created, or at any later stage by simply editing the order. If project code support is enabled, a *Project Code* field is available in the order details form:
 
-{{ image("order/assign_project_code.png", "Assign Project Code") }}
+{{ image("purchasing/assign_project_code.png", "Assign Project Code") }}
 
 ## Filtering by Project Codes
 
 The order tables can be easily filtered or sorted by project code:
 
-{{ image("order/filter_by_project.png", "Filter by Project Code") }}
+{{ image("purchasing/filter_by_project.png", "Filter by Project Code") }}

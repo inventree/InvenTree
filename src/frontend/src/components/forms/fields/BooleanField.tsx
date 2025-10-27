@@ -2,7 +2,7 @@ import { isTrue } from '@lib/functions/Conversion';
 import type { ApiFormFieldType } from '@lib/types/Forms';
 import { Switch } from '@mantine/core';
 import { useId } from '@mantine/hooks';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import type { FieldValues, UseControllerReturn } from 'react-hook-form';
 
 export function BooleanField({
@@ -25,6 +25,13 @@ export function BooleanField({
 
   const { value } = field;
 
+  // Set default value if value is undefined
+  useEffect(() => {
+    if (value === undefined) {
+      onChange(definition.default ?? false);
+    }
+  }, [value, definition]);
+
   // Coerce the value to a (stringified) boolean value
   const booleanValue: boolean = useMemo(() => {
     return isTrue(value);
@@ -33,6 +40,7 @@ export function BooleanField({
   return (
     <Switch
       {...definition}
+      defaultValue={definition.default ?? false}
       checked={booleanValue}
       id={fieldId}
       aria-label={`boolean-field-${fieldName}`}
