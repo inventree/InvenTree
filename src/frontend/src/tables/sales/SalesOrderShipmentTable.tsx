@@ -29,19 +29,30 @@ import {
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import { DateColumn, LinkColumn } from '../ColumnRenderers';
+import {
+  CompanyColumn,
+  DateColumn,
+  LinkColumn,
+  StatusColumn
+} from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 export default function SalesOrderShipmentTable({
+  showOrderInfo = false,
+  tableName,
   customerId,
-  orderId
+  orderId,
+  filters
 }: Readonly<{
-  customerId: number;
-  orderId: number;
+  showOrderInfo?: boolean;
+  tableName?: string;
+  customerId?: number;
+  orderId?: number;
+  filters?: any;
 }>) {
   const user = useUserState();
   const navigate = useNavigate();
-  const table = useTable('sales-order-shipment');
+  const table = useTable(tableName ?? 'sales-order-shipment');
 
   const [selectedShipment, setSelectedShipment] = useState<any>({});
 
@@ -96,6 +107,30 @@ export default function SalesOrderShipmentTable({
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
       {
+        accessor: 'customer',
+        title: t`Customer`,
+        switchable: true,
+        sortable: true,
+        hidden: !showOrderInfo,
+        render: (record: any) => (
+          <CompanyColumn company={record.customer_detail} />
+        )
+      },
+      {
+        switchable: false,
+        accessor: 'order_detail.reference',
+        title: t`Sales Order`,
+        hidden: !showOrderInfo,
+        sortable: false
+      },
+      StatusColumn({
+        switchable: true,
+        model: ModelType.salesorder,
+        accessor: 'order_detail.status',
+        title: t`Order Status`,
+        hidden: !showOrderInfo
+      }),
+      {
         accessor: 'reference',
         title: t`Shipment Reference`,
         switchable: false,
@@ -146,19 +181,13 @@ export default function SalesOrderShipmentTable({
         accessor: 'link'
       })
     ];
-  }, []);
+  }, [showOrderInfo]);
 
   const rowActions = useCallback(
     (record: any): RowAction[] => {
       const shipped: boolean = !!record.shipment_date;
 
       return [
-        RowViewAction({
-          title: t`View Shipment`,
-          modelType: ModelType.salesordershipment,
-          modelId: record.pk,
-          navigate: navigate
-        }),
         {
           hidden: shipped || !user.hasChangeRole(UserRoles.sales_order),
           title: t`Complete Shipment`,
@@ -184,13 +213,28 @@ export default function SalesOrderShipmentTable({
             setSelectedShipment(record);
             deleteShipment.open();
           }
+        }),
+        RowViewAction({
+          title: t`View Sales Order`,
+          modelType: ModelType.salesorder,
+          modelId: record.order,
+          hidden:
+            !record.order ||
+            !showOrderInfo ||
+            !user.hasViewRole(UserRoles.sales_order),
+          navigate: navigate
         })
       ];
     },
-    [user]
+    [showOrderInfo, user]
   );
 
   const tableActions = useMemo(() => {
+    // No actions possible if no order is specified
+    if (!orderId) {
+      return [];
+    }
+
     return [
       <AddItemButton
         key='add-shipment'
@@ -201,7 +245,7 @@ export default function SalesOrderShipmentTable({
         }}
       />
     ];
-  }, [user]);
+  }, [orderId, user]);
 
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
@@ -241,7 +285,10 @@ export default function SalesOrderShipmentTable({
           enableReports: true,
           rowActions: rowActions,
           params: {
-            order: orderId
+            order: orderId,
+            order_detail: true,
+            customer_detail: showOrderInfo,
+            ...filters
           }
         }}
       />

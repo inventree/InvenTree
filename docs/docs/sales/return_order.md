@@ -4,7 +4,7 @@ title: Return Order
 
 ## Return Orders
 
-Return Orders allow stock items (which have been sold or allocated to a customer) to be to be returned into stock, typically for the purpose of repair or refund.
+Return Orders allow stock items (which have been sold or allocated to a [customer](./customer.md)) to be to be returned into stock, typically for the purpose of repair or refund.
 
 !!! tip "An Order By Any Other Name"
     A Return Order may also be known as an [RMA](https://en.wikipedia.org/wiki/Return_merchandise_authorization)
@@ -13,7 +13,7 @@ Return Orders allow stock items (which have been sold or allocated to a customer
 
 To navigate to the Return Order display, select *Sales* from the main navigation menu, and *Return Orders* from the sidebar:
 
-{{ image("order/ro_display.png", "Return Order Display") }}
+{{ image("sales/ro_display.png", "Return Order Display") }}
 
 The following view modes are available:
 
@@ -21,23 +21,23 @@ The following view modes are available:
 
 *Table View* provides a list of Return Orders, which can be filtered to display a subset of orders according to user supplied parameters.
 
-{{ image("order/ro_list.png", "Return Order List") }}
+{{ image("sales/ro_list.png", "Return Order List") }}
 
 #### Calendar View
 
 *Calendar View* shows a calendar display with outstanding return orders, based on the various dates specified for each order.
 
-{{ image("order/ro_calendar.png", "Return Order Calendar") }}
+{{ image("sales/ro_calendar.png", "Return Order Calendar") }}
 
 ### Enable Return Order Functionality
 
 By default, Return Order functionality is not enabled - it must be enabled by a *staff* user from the settings page:
 
-{{ image("order/return_order_enable.png", "Enable Return Orders") }}
+{{ image("sales/return_order_enable.png", "Enable Return Orders") }}
 
 Once this setting is enabled, you can access the "Return Orders" page from the main navigation bar:
 
-{{ image("order/return_order_navbar.png", "Access return orders") }}
+{{ image("sales/return_order_navbar.png", "Access return orders") }}
 
 ### Return Order Permissions
 
@@ -47,7 +47,7 @@ Once this setting is enabled, you can access the "Return Orders" page from the m
 
 A list of Return Orders is displayed on the *Return Order* index page:
 
-{{ image("order/return_order_index.png", "Return Order Index") }}
+{{ image("sales/return_order_index.png", "Return Order Index") }}
 
 Various filters are available to configure which orders are displayed, and how they are arranged.
 
@@ -86,7 +86,7 @@ A Return Order is linked to a specific customer, which can be selected from the 
 !!! warning "Customers Only"
 	Only companies with the "Customer" attribute enabled will be shown and can be selected
 
-{{ image("order/return_order_create.png", "Create Return Order") }}
+{{ image("sales/return_order_create.png", "Create Return Order") }}
 
 Fill in the rest of the form with the return order information, and then click on <span class='badge inventree confirm'>Submit</span> to create the order.
 
@@ -102,7 +102,7 @@ The order can be assigned to a responsible *owner*, which is either a user or gr
 
 Individual Return Orders can be viewed via the Return Order detail page:
 
-{{ image("order/return_order_detail.png", "Return Order Detail") }}
+{{ image("sales/return_order_detail.png", "Return Order Detail") }}
 
 Here the details of the return order are available, and specific actions can be performed:
 

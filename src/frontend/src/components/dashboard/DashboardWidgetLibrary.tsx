@@ -126,6 +126,13 @@ export function BuiltinQueryCountWidgets(): DashboardWidgetProps[] {
       params: { assigned_to_me: true, outstanding: true }
     }),
     QueryCountDashboardWidget({
+      title: t`Pending Shipments`,
+      label: 'pnd-shp',
+      description: t`Show the number of pending sales order shipments`,
+      modelType: ModelType.salesordershipment,
+      params: { order_outstanding: true, shipped: false }
+    }),
+    QueryCountDashboardWidget({
       title: t`Active Purchase Orders`,
       label: 'act-po',
       description: t`Show the number of purchase orders which are currently active`,
