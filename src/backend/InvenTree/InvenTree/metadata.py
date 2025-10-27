@@ -127,11 +127,9 @@ class InvenTreeMetadata(SimpleMetadata):
 
             # Remove any HTTP methods that the user does not have permission for
             for method, permission in rolemap.items():
-                result = check_user_permission(user, self.model, permission)
-
-                if role_required and not result:
-                    # Check for specific role requirement
-                    result = check_user_role(user, role_required, permission)
+                result = check_user_permission(user, self.model, permission) or (
+                    role_required and check_user_role(user, role_required, permission)
+                )
 
                 if method in actions and not result:
                     del actions[method]
