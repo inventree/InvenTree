@@ -58,35 +58,49 @@ A *contact* can be assigned to orders, (such as [purchase orders](../purchasing/
 A company can have multiple registered addresses for use with all types of orders.
 An address is broken down to internationally recognised elements that are designed to allow for formatting an address according to user needs.
 Addresses are composed differently across the world, and InvenTree reflects this by splitting addresses into components:
-- Line 1: Main street address
-- Line 2: Extra street address line
-- Postal Code: Also known as ZIP code, this is normally a number 3-5 digits in length
-- City: The city/region tied to the postal code
-- Province: The larger region the address is located in. Also known as State in the US
-- Country: Country the address is located in, written in CAPS
+
+| Field | Description |
+| ----- | ----------- |
+| Title: A descriptive name for the address (e.g. "Head Office", "Warehouse", etc)
+| Line 1 | Main street address |
+| Line 2 | Extra street address line |
+| Postal Code: Also known as ZIP code, this is normally a number 3-5 digits in length |
+| City | The city/region tied to the postal code |
+| Province | The larger region the address is located in. Also known as State in some countries |
+| Country | Country the address is located in |
 
 Here are a couple of examples of how the address structure differs by country, but these components can construct a correctly formatted address for any given country.
 
-UK address format:
+**UK Address Format:**
+
+```
 Recipient
 Line 1
 Line 2
 City
 Postal Code
 Country
+```
 
-US Address Format:
+**US Address Format:**
+```
 Recipient
 Line 1
 Line 2
 City State Postal Code
 Country
-
-
-Addresses can be accessed by the <span class='badge inventree nav main'>{{ icon("map-2") }} Addresses</span> navigation tab.
+```
 
 #### Primary Address
 
 Each company can have exactly one (1) primary address.
 This address is the default shown on the company profile, and the one that is automatically suggested when creating an order.
 Marking a new address as primary will remove the mark from the old primary address.
+
+#### Managing Addresses
+
+Addresses can be accessed by the <span class='badge inventree nav main'>{{ icon("map-2") }} Addresses</span> navigation tab, from the company detail page.
+
+Here, the addresses associated with the company are listed, and can be added, edited, or deleted.
+
+{{ image("concepts/edit_address.png", "Edit Address") }}
