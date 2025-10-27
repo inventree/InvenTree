@@ -15,7 +15,7 @@ import common.models
 import InvenTree.permissions
 from InvenTree.helpers import str2bool
 from InvenTree.serializers import DependentField
-from users.permissions import check_user_permission
+from users.permissions import check_user_permission, check_user_role
 
 logger = structlog.get_logger('inventree')
 
@@ -122,18 +122,26 @@ class InvenTreeMetadata(SimpleMetadata):
             if hasattr(view, 'rolemap'):
                 rolemap.update(view.rolemap)
 
+            # The view may define a custom role requirement
+            role_required = getattr(view, 'role_required', None)
+
             # Remove any HTTP methods that the user does not have permission for
             for method, permission in rolemap.items():
                 result = check_user_permission(user, self.model, permission)
+
+                if role_required and not result:
+                    # Check for specific role requirement
+                    result = check_user_role(user, role_required, permission)
 
                 if method in actions and not result:
                     del actions[method]
 
             # Add a 'DELETE' action if we are allowed to delete
-            if 'DELETE' in view.allowed_methods and check_user_permission(
-                user, self.model, 'delete'
-            ):
-                actions['DELETE'] = {}
+            if 'DELETE' in view.allowed_methods:
+                if check_user_permission(user, self.model, 'delete') or (
+                    role_required and check_user_role(user, role_required, 'delete')
+                ):
+                    actions['DELETE'] = {}
 
             metadata['actions'] = actions
 
