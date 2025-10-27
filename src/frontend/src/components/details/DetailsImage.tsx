@@ -632,7 +632,7 @@ export function DetailsImage({
 
     const hasAction =
       Object.values(EditImageActions ?? {}).some(Boolean) ||
-      Object.values(EditImageActions ?? {}).some(Boolean) ||
+      Object.values(AddImageActions ?? {}).some(Boolean) ||
       false;
 
     return {
