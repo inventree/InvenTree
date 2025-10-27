@@ -2,6 +2,7 @@ import { expect } from '@playwright/test';
 import { test } from '../baseFixtures.ts';
 import {
   clearTableFilters,
+  clickOnRowMenu,
   globalSearch,
   loadTab,
   setTableChoiceFilter
@@ -111,14 +112,20 @@ test('Sales Orders - Shipments', async ({ browser }) => {
   await loadTab(page, 'Sales Orders');
 
   await clearTableFilters(page);
+
   // Click through to a particular sales order
   await page.getByRole('cell', { name: 'SO0006' }).first().click();
   await loadTab(page, 'Shipments');
+  await clearTableFilters(page);
 
   // Create a new shipment
   await page.getByLabel('action-button-add-shipment').click();
-  await page.getByLabel('text-field-tracking_number').fill('1234567890');
-  await page.getByLabel('text-field-invoice_number').fill('9876543210');
+  await page
+    .getByLabel('text-field-tracking_number', { exact: true })
+    .fill('1234567890');
+  await page
+    .getByLabel('text-field-invoice_number', { exact: true })
+    .fill('9876543210');
   await page.getByRole('button', { name: 'Submit' }).click();
 
   // Expected field error
@@ -129,14 +136,15 @@ test('Sales Orders - Shipments', async ({ browser }) => {
   await page.getByRole('button', { name: 'Cancel' }).click();
 
   // Edit one of the existing shipments
-  await page.getByLabel('row-action-menu-0').click();
+  const cell = page.getByRole('cell', { name: /SHIP-XYZ/ });
+  await clickOnRowMenu(cell);
   await page.getByRole('menuitem', { name: 'Edit' }).click();
 
   // Ensure the form has loaded
   await page.waitForLoadState('networkidle');
 
   let tracking_number = await page
-    .getByLabel('text-field-tracking_number')
+    .getByLabel('text-field-tracking_number', { exact: true })
     .inputValue();
 
   if (!tracking_number) {
@@ -150,13 +158,14 @@ test('Sales Orders - Shipments', async ({ browser }) => {
   }
 
   // Change the tracking number
-  await page.getByLabel('text-field-tracking_number').fill(tracking_number);
+  await page
+    .getByLabel('text-field-tracking_number', { exact: true })
+    .fill(tracking_number);
   await page.waitForTimeout(250);
   await page.getByRole('button', { name: 'Submit' }).click();
 
   // Click through to a particular shipment
-  await page.getByLabel('row-action-menu-0').click();
-  await page.getByRole('menuitem', { name: 'View Shipment' }).click();
+  await page.getByRole('cell', { name: tracking_number }).click();
 
   // Click through the various tabs
   await loadTab(page, 'Attachments');
@@ -172,18 +181,20 @@ test('Sales Orders - Shipments', async ({ browser }) => {
   await page.getByText(tracking_number).waitFor();
 
   // Link back to sales order
-  await page.getByRole('link', { name: 'SO0006' }).click();
+  await page.getByRole('link', { name: 'breadcrumb-1-so0006' }).click();
 
   // Let's try to allocate some stock
   await loadTab(page, 'Line Items');
-  await page.getByLabel('row-action-menu-1').click();
+
+  await clickOnRowMenu(page.getByRole('cell', { name: 'WID-REV-A' }));
   await page.getByRole('menuitem', { name: 'Allocate stock' }).click();
   await page
     .getByText('Select the source location for the stock allocation')
     .waitFor();
   await page.getByLabel('number-field-quantity').fill('123');
-  await page.getByLabel('related-field-stock_item').click();
-  await page.getByText('Quantity: 42').click();
+  await page.getByLabel('related-field-stock_item').fill('42');
+
+  await page.getByText('Serial Number: 42').click();
   await page.getByRole('button', { name: 'Cancel' }).click();
 
   // Search for shipment by tracking number
@@ -212,7 +223,9 @@ test('Sales Orders - Duplicate', async ({ browser }) => {
   await page.getByLabel('action-menu-order-actions-duplicate').click();
 
   // Ensure a new reference is suggested
-  await expect(page.getByLabel('text-field-reference')).not.toBeEmpty();
+  await expect(
+    page.getByLabel('text-field-reference', { exact: true })
+  ).not.toBeEmpty();
 
   // Submit the duplicate request and ensure it completes
   await page.getByRole('button', { name: 'Submit' }).isEnabled();

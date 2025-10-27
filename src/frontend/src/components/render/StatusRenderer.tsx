@@ -74,14 +74,16 @@ export function getStatusCodes(
   const statusCodeList = useGlobalStatusState.getState().status;
 
   if (statusCodeList === undefined) {
-    console.log('StatusRenderer: statusCodeList is undefined');
+    console.warn('StatusRenderer: statusCodeList is undefined');
     return null;
   }
 
   const statusCodes = statusCodeList[type];
 
   if (statusCodes === undefined) {
-    console.log('StatusRenderer: statusCodes is undefined');
+    console.warn(
+      `StatusRenderer: statusCodes is undefined for model '${type}'`
+    );
     return null;
   }
 
@@ -175,7 +177,9 @@ export const StatusRenderer = ({
   }
 
   if (statusCodes === undefined || statusCodes === null) {
-    console.warn('StatusRenderer: statusCodes is undefined');
+    console.warn(
+      `StatusRenderer: statusCodes is undefined for model '${type}'`
+    );
     return null;
   }
 
@@ -190,7 +194,10 @@ export function TableStatusRenderer(
   accessor?: string
 ): ((record: any) => any) | undefined {
   return (record: any) => {
-    const status = resolveItem(record, accessor ?? 'status');
+    const status =
+      resolveItem(record, accessor ?? 'status') ??
+      resolveItem(record, 'status_custom_key') ??
+      resolveItem(record, 'status');
 
     return (
       status && (

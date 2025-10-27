@@ -33,6 +33,7 @@ import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
+import type { StockOperationProps } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
 import { StylishText } from '../../components/items/StylishText';
 import { useApi } from '../../contexts/ApiContext';
@@ -43,7 +44,6 @@ import {
   useScrapBuildOutputsForm
 } from '../../forms/BuildForms';
 import {
-  type StockOperationProps,
   useStockFields,
   useStockItemSerializeFields
 } from '../../forms/StockForms';
@@ -56,7 +56,12 @@ import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import { LocationColumn, PartColumn, StatusColumn } from '../ColumnRenderers';
+import {
+  LocationColumn,
+  PartColumn,
+  RenderPartColumn,
+  StatusColumn
+} from '../ColumnRenderers';
 import {
   BatchFilter,
   HasBatchCodeFilter,
@@ -95,20 +100,24 @@ function OutputAllocationDrawer({
       position='bottom'
       size='lg'
       title={
-        <Group p='md' wrap='nowrap' justify='space-apart'>
+        <Group p='xs' wrap='nowrap' justify='space-apart'>
           <StylishText size='lg'>{t`Build Output Stock Allocation`}</StylishText>
           <Space h='lg' />
-          <PartColumn part={build.part_detail} />
-          {output?.serial && (
-            <Text size='sm'>
-              {t`Serial Number`}: {output.serial}
-            </Text>
-          )}
-          {output?.batch && (
-            <Text size='sm'>
-              {t`Batch Code`}: {output.batch}
-            </Text>
-          )}
+          <Paper withBorder p='sm'>
+            <Group gap='xs'>
+              <RenderPartColumn part={build.part_detail} />
+              {output?.serial && (
+                <Text size='sm'>
+                  {t`Serial Number`}: {output.serial}
+                </Text>
+              )}
+              {output?.batch && (
+                <Text size='sm'>
+                  {t`Batch Code`}: {output.batch}
+                </Text>
+              )}
+            </Group>
+          </Paper>
           <Space h='lg' />
         </Group>
       }
@@ -446,7 +455,7 @@ export default function BuildOutputTable({
       <ActionButton
         key='scrap-selected-outputs'
         tooltip={t`Scrap selected outputs`}
-        icon={<InvenTreeIcon icon='delete' />}
+        icon={<InvenTreeIcon icon='scrap' />}
         color='red'
         disabled={!table.hasSelectedRecords}
         onClick={() => {
@@ -550,7 +559,7 @@ export default function BuildOutputTable({
         {
           title: t`Scrap`,
           tooltip: t`Scrap build output`,
-          icon: <InvenTreeIcon icon='delete' />,
+          icon: <InvenTreeIcon icon='scrap' />,
           color: 'red',
           onClick: () => {
             setSelectedOutputs([record]);
@@ -574,11 +583,7 @@ export default function BuildOutputTable({
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
-      {
-        accessor: 'part',
-        sortable: true,
-        render: (record: any) => PartColumn({ part: record?.part_detail })
-      },
+      PartColumn({}),
       {
         accessor: 'quantity',
         ordering: 'stock',

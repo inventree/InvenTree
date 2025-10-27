@@ -110,7 +110,7 @@ sentry_enabled: False
 #sentry_dsn: https://custom@custom.ingest.sentry.io/custom
 
 # OpenTelemetry tracing/metrics - disabled by default - refer to the documentation for full list of options
-# This can be used to send tracing data, logs and metrics to OpenTelemtry compatible backends
+# This can be used to send tracing data, logs and metrics to OpenTelemetry compatible backends
 tracing:
   enabled: false
 
@@ -142,9 +142,9 @@ allowed_hosts:
 # use_x_forwarded_proto: true
 
 # Cookie settings (nominally the default settings should be fine)
-cookie:
-  secure: false
-  samesite: false
+# cookie:
+#  secure: false
+#  samesite: false
 
 # Cross Origin Resource Sharing (CORS) settings (see https://github.com/adamchainz/django-cors-headers)
 cors:
@@ -203,7 +203,7 @@ remote_login_header: HTTP_REMOTE_USER
 #  - 'allauth.socialaccount.providers.github'
 
 # Add specific settings for social account providers (if required)
-# Refer to the djngo-allauth documentation for more details:
+# Refer to the django-allauth documentation for more details:
 # https://docs.allauth.org/en/latest/socialaccount/provider_configuration.html
 # social_providers:
 #   github:
@@ -217,6 +217,7 @@ ldap:
 # Customization options
 # Ref: https://docs.inventree.org/en/stable/start/config/#customization-options
 # customize:
+#   site_header: 'Custom Admin Panel'  # Django admin panel header text
 #   login_message: InvenTree demo instance - <a href='https://inventree.org/demo.html'> Click here for login details</a>
 #   navbar_message: <h6>InvenTree demo mode <a href='https://inventree.org/demo.html'><span class='fas fa-info-circle'></span></a></h6>
 #   hide_admin_link: true

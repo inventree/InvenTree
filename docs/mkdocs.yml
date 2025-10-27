@@ -125,16 +125,17 @@ nav:
       - Project Security: security.md
       - Resources: project/resources.md
       - Privacy: privacy.md
-  - Install:
+  - Setup:
     - Introduction: start/index.md
     - Processes: start/processes.md
     - Configuration: start/config.md
     - Docker:
         - Introduction: start/docker.md
         - Installation: start/docker_install.md
+    - Installer:
+        - Installer: start/installer.md
     - Bare Metal:
         - Introduction: start/install.md
-        - Installer: start/installer.md
         - Production: start/bare_prod.md
         - Development: start/bare_dev.md
     - User Accounts: start/accounts.md
@@ -145,6 +146,7 @@ nav:
   - Parts:
     - Parts: part/index.md
     - Creating Parts: part/create.md
+    - Virtual Parts: part/virtual.md
     - Part Views: part/views.md
     - Tracking: part/trackable.md
     - Parameters: part/parameter.md
@@ -228,11 +230,14 @@ nav:
       - Icon Pack Mixin: plugins/mixins/icon.md
       - Label Printing Mixin: plugins/mixins/label.md
       - Locate Mixin: plugins/mixins/locate.md
+      - Machine Mixin: plugins/mixins/machine.md
+      - Mail Mixin: plugins/mixins/mail.md
       - Navigation Mixin: plugins/mixins/navigation.md
       - Notification Mixin: plugins/mixins/notification.md
       - Report Mixin: plugins/mixins/report.md
       - Schedule Mixin: plugins/mixins/schedule.md
       - Settings Mixin: plugins/mixins/settings.md
+      - Supplier Mixin: plugins/mixins/supplier.md
       - Transition Mixin: plugins/mixins/transition.md
       - URL Mixin: plugins/mixins/urls.md
       - User Interface Mixin: plugins/mixins/ui.md

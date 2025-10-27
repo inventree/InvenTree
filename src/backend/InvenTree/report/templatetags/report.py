@@ -4,7 +4,7 @@ import base64
 import logging
 import os
 from datetime import date, datetime
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 from typing import Any, Optional, Union
 
 from django import template
@@ -32,6 +32,25 @@ logger = logging.getLogger('inventree')
 
 
 @register.simple_tag()
+def order_queryset(queryset: QuerySet, *args) -> QuerySet:
+    """Order a database queryset based on the provided arguments.
+
+    Arguments:
+        queryset: The queryset to order
+
+    Keyword Arguments:
+        field (str): Order the queryset based on the provided field
+
+    Example:
+        {% order_queryset companies 'name' as ordered_companies %}
+    """
+    if not isinstance(queryset, QuerySet):
+        return queryset
+
+    return queryset.order_by(*args)
+
+
+@register.simple_tag()
 def filter_queryset(queryset: QuerySet, **kwargs) -> QuerySet:
     """Filter a database queryset based on the provided keyword arguments.
 
@@ -50,7 +69,7 @@ def filter_queryset(queryset: QuerySet, **kwargs) -> QuerySet:
 
 
 @register.simple_tag()
-def filter_db_model(model_name: str, **kwargs) -> QuerySet:
+def filter_db_model(model_name: str, **kwargs) -> Optional[QuerySet]:
     """Filter a database model based on the provided keyword arguments.
 
     Arguments:
@@ -84,7 +103,7 @@ def filter_db_model(model_name: str, **kwargs) -> QuerySet:
 def getindex(container: list, index: int) -> Any:
     """Return the value contained at the specified index of the list.
 
-    This function is provideed to get around template rendering limitations.
+    This function is provided to get around template rendering limitations.
 
     Arguments:
         container: A python list object
@@ -102,7 +121,7 @@ def getindex(container: list, index: int) -> Any:
 
 
 @register.simple_tag()
-def getkey(container: dict, key: str, backup_value: Optional[any] = None) -> Any:
+def getkey(container: dict, key: str, backup_value: Optional[Any] = None) -> Any:
     """Perform key lookup in the provided dict object.
 
     This function is provided to get around template rendering limitations.
@@ -301,14 +320,13 @@ def part_image(part: Part, preview: bool = False, thumbnail: bool = False, **kwa
     if type(part) is not Part:
         raise TypeError(_('part_image tag requires a Part instance'))
 
-    if not part.image:
+    part_img = part.image
+    if not part_img:
         img = None
     elif preview:
-        img = None if not hasattr(part.image, 'preview') else part.image.preview.name
+        img = None if not hasattr(part.image, 'preview') else part_img.preview.name
     elif thumbnail:
-        img = (
-            None if not hasattr(part.image, 'thumbnail') else part.image.thumbnail.name
-        )
+        img = None if not hasattr(part.image, 'thumbnail') else part_img.thumbnail.name
     else:
         img = part.image.name
 
@@ -316,7 +334,7 @@ def part_image(part: Part, preview: bool = False, thumbnail: bool = False, **kwa
 
 
 @register.simple_tag()
-def part_parameter(part: Part, parameter_name: str) -> str:
+def part_parameter(part: Part, parameter_name: str) -> Optional[str]:
     """Return a PartParameter object for the given part and parameter name.
 
     Arguments:
@@ -348,12 +366,15 @@ def company_image(
     if type(company) is not Company:
         raise TypeError(_('company_image tag requires a Company instance'))
 
-    if preview:
-        img = company.image.preview.name
+    cmp_img = company.image
+    if not cmp_img:
+        img = None
+    elif preview:
+        img = cmp_img.preview.name
     elif thumbnail:
-        img = company.image.thumbnail.name
+        img = cmp_img.thumbnail.name
     else:
-        img = company.image.name
+        img = cmp_img.name
 
     return uploaded_image(img, **kwargs)
 
@@ -392,28 +413,161 @@ def internal_link(link, text) -> str:
     return mark_safe(f'<a href="{url}">{text}</a>')
 
 
-@register.simple_tag()
-def add(x: float, y: float, *args, **kwargs) -> float:
-    """Add two numbers together."""
-    return float(x) + float(y)
+def make_decimal(value: Any) -> Any:
+    """Convert an input value into a Decimal.
+
+    - Converts [string, int, float] types into Decimal
+    - If conversion fails, returns the original value
+
+    The purpose of this function is to provide "seamless" math operations in templates,
+    where numeric values may be provided as strings, or converted to strings during template rendering.
+    """
+    if any(isinstance(value, t) for t in [int, float, str]):
+        try:
+            value = Decimal(str(value).strip())
+        except (InvalidOperation, TypeError, ValueError):
+            logger.warning(
+                'make_decimal: Failed to convert value to Decimal: %s (%s)',
+                value,
+                type(value),
+            )
+
+    return value
+
+
+def cast_to_type(value: Any, cast: type) -> Any:
+    """Attempt to cast a value to the provided type.
+
+    If casting fails, the original value is returned.
+    """
+    if cast is not None:
+        try:
+            value = cast(value)
+        except (ValueError, TypeError):
+            pass
+
+    return value
+
+
+def debug_vars(x: Any, y: Any) -> str:
+    """Return a debug string showing the types and values of two variables."""
+    return f": x='{x}' ({type(x).__name__}), y='{y}' ({type(y).__name__})"
 
 
 @register.simple_tag()
-def subtract(x: float, y: float) -> float:
-    """Subtract one number from another."""
-    return float(x) - float(y)
+def add(x: Any, y: Any, cast: Optional[type] = None) -> Any:
+    """Add two numbers (or number like values) together.
+
+    Arguments:
+        x: The first value to add
+        y: The second value to add
+        cast: Optional type to cast the result to (e.g. int, float, str)
+
+    Raises:
+        ValidationError: If the values cannot be added together
+    """
+    try:
+        result = make_decimal(x) + make_decimal(y)
+    except (InvalidOperation, TypeError, ValueError):
+        raise ValidationError(
+            _('Cannot add values of incompatible types') + debug_vars(x, y)
+        )
+    return cast_to_type(result, cast)
 
 
 @register.simple_tag()
-def multiply(x: float, y: float) -> float:
-    """Multiply two numbers together."""
-    return float(x) * float(y)
+def subtract(x: Any, y: Any, cast: Optional[type] = None) -> Any:
+    """Subtract one number (or number-like value) from another.
+
+    Arguments:
+        x: The value to be subtracted from
+        y: The value to be subtracted
+        cast: Optional type to cast the result to (e.g. int, float, str)
+
+    Raises:
+        ValidationError: If the values cannot be subtracted
+    """
+    try:
+        result = make_decimal(x) - make_decimal(y)
+    except (InvalidOperation, TypeError, ValueError):
+        raise ValidationError(
+            _('Cannot subtract values of incompatible types') + debug_vars(x, y)
+        )
+
+    return cast_to_type(result, cast)
 
 
 @register.simple_tag()
-def divide(x: float, y: float) -> float:
-    """Divide one number by another."""
-    return float(x) / float(y)
+def multiply(x: Any, y: Any, cast: Optional[type] = None) -> Any:
+    """Multiply two numbers (or number-like values) together.
+
+    Arguments:
+        x: The first value to multiply
+        y: The second value to multiply
+        cast: Optional type to cast the result to (e.g. int, float, str)
+
+    Raises:
+        ValidationError: If the values cannot be multiplied together
+    """
+    try:
+        result = make_decimal(x) * make_decimal(y)
+    except (InvalidOperation, TypeError, ValueError):
+        raise ValidationError(
+            _('Cannot multiply values of incompatible types') + debug_vars(x, y)
+        )
+
+    return cast_to_type(result, cast)
+
+
+@register.simple_tag()
+def divide(x: Any, y: Any, cast: Optional[type] = None) -> Any:
+    """Divide one number (or number-like value) by another.
+
+    Arguments:
+        x: The value to be divided
+        y: The value to divide by
+        cast: Optional type to cast the result to (e.g. int, float, str)
+
+    Raises:
+        ValidationError: If the values cannot be divided
+    """
+    try:
+        result = make_decimal(x) / make_decimal(y)
+    except (InvalidOperation, TypeError, ValueError):
+        raise ValidationError(
+            _('Cannot divide values of incompatible types') + debug_vars(x, y)
+        )
+    except ZeroDivisionError:
+        raise ValidationError(_('Cannot divide by zero') + debug_vars(x, y))
+
+    return cast_to_type(result, cast)
+
+
+@register.simple_tag()
+def modulo(x: Any, y: Any, cast: Optional[type] = None) -> Any:
+    """Calculate the modulo of one number (or number-like value) by another.
+
+    Arguments:
+        x: The first value to be used in the modulo operation
+        y: The second value to be used in the modulo operation
+        cast: Optional type to cast the result to (e.g. int, float, str)
+
+    Raises:
+        ValidationError: If the values cannot be used in a modulo operation
+    """
+    try:
+        result = make_decimal(x) % make_decimal(y)
+    except (InvalidOperation, TypeError, ValueError):
+        raise ValidationError(
+            _('Cannot perform modulo operation with values of incompatible types')
+            + debug_vars(x, y)
+        )
+    except ZeroDivisionError:
+        raise ValidationError(
+            _('Cannot perform modulo operation with divisor of zero') + debug_vars(x, y)
+        )
+
+    return cast_to_type(result, cast)
 
 
 @register.simple_tag

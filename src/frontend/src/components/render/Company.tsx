@@ -1,5 +1,6 @@
-import { Text } from '@mantine/core';
 import type { ReactNode } from 'react';
+
+import { Text } from '@mantine/core';
 
 import { ModelType } from '@lib/enums/ModelType';
 import { getDetailUrl } from '@lib/functions/Navigation';
@@ -22,7 +23,20 @@ export function RenderAddress({
     .filter(Boolean)
     .join(', ');
 
-  return <RenderInlineModel primary={instance.title} secondary={text} />;
+  const primary: string = instance.title || text;
+  const secondary: string = !!instance.title ? text : '';
+
+  const suffix: ReactNode = instance.primary ? (
+    <Text size='xs'>Primary Address</Text>
+  ) : null;
+
+  return (
+    <RenderInlineModel
+      primary={primary}
+      secondary={secondary}
+      suffix={suffix}
+    />
+  );
 }
 
 /**
@@ -38,7 +52,7 @@ export function RenderCompany(
       {...props}
       image={instance.thumbnail || instance.image}
       primary={instance.name}
-      secondary={instance.description}
+      suffix={instance.description}
       url={
         props.link ? getDetailUrl(ModelType.company, instance.pk) : undefined
       }
@@ -73,9 +87,7 @@ export function RenderSupplierPart(
       image={
         part?.thumbnail ?? part?.image ?? supplier?.thumbnail ?? supplier?.image
       }
-      suffix={
-        part.full_name ? <Text size='sm'>{part.full_name}</Text> : undefined
-      }
+      suffix={part.full_name}
       url={
         props.link
           ? getDetailUrl(ModelType.supplierpart, instance.pk)
@@ -100,9 +112,7 @@ export function RenderManufacturerPart(
       {...props}
       primary={manufacturer.name}
       secondary={instance.MPN}
-      suffix={
-        part.full_name ? <Text size='sm'>{part.full_name}</Text> : undefined
-      }
+      suffix={part.full_name}
       image={manufacturer?.thumbnail ?? manufacturer.image}
       url={
         props.link

@@ -16,7 +16,7 @@ The ScheduleMixin class provides a plugin with the ability to call functions at 
 
 {{ image("plugin/enable_schedule.png", "Enable schedule integration") }}
 
-### SamplePlugin
+### Sample Plugin
 
 An example of a plugin which supports scheduled tasks:
 

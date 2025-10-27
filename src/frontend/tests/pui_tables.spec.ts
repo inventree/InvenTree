@@ -39,6 +39,38 @@ test('Tables - Filters', async ({ browser }) => {
   await clearTableFilters(page);
 });
 
+test('Tables - Pagination', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    url: 'manufacturing/index/buildorders',
+    username: 'steven',
+    password: 'wizardstaff'
+  });
+
+  await clearTableFilters(page);
+
+  // Expected pagination size is 25
+  // Note: Due to other tests, there may be more than 25 items in the list
+  await page.getByText(/1 - 25 \/ \d+/).waitFor();
+  await page.getByRole('button', { name: 'Next page' }).click();
+  await page.getByText(/26 - \d+ \/ \d+/).waitFor();
+
+  // Set page size to 10
+  await page.getByRole('button', { name: '25' }).click();
+  await page.getByRole('menuitem', { name: '10', exact: true }).click();
+
+  await page.getByText(/1 - 10 \/ \d+/).waitFor();
+  await page.getByRole('button', { name: '3' }).click();
+  await page.getByText(/21 - \d+ \/ \d+/).waitFor();
+  await page.getByRole('button', { name: 'Previous page' }).click();
+  await page.getByText(/11 - 20 \/ \d+/).waitFor();
+
+  // Set page size back to 25
+  await page.getByRole('button', { name: '10' }).click();
+  await page.getByRole('menuitem', { name: '25', exact: true }).click();
+
+  await page.getByText(/1 - 25 \/ \d+/).waitFor();
+});
+
 test('Tables - Columns', async ({ browser }) => {
   // Go to the "stock list" page
   const page = await doCachedLogin(browser, {

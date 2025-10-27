@@ -5,18 +5,20 @@ import { ActionButton } from '@lib/components/ActionButton';
 import {
   type RowAction,
   RowDeleteAction,
-  RowEditAction
+  RowEditAction,
+  RowViewAction
 } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
+import type { StockOperationProps } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
 import { IconTruckDelivery } from '@tabler/icons-react';
+import { useNavigate } from 'react-router-dom';
 import { formatDate } from '../../defaults/formatters';
 import { useSalesOrderAllocationFields } from '../../forms/SalesOrderForms';
-import type { StockOperationProps } from '../../forms/StockForms';
 import {
   useBulkEditApiFormModal,
   useDeleteApiFormModal,
@@ -61,6 +63,7 @@ export default function SalesOrderAllocationTable({
   modelField?: string;
 }>) {
   const user = useUserState();
+  const navigate = useNavigate();
 
   const tableId = useMemo(() => {
     let id = 'salesorderallocations';
@@ -119,14 +122,10 @@ export default function SalesOrderAllocationTable({
         title: t`Order Status`,
         hidden: showOrderInfo != true
       }),
-      {
-        accessor: 'part',
+      PartColumn({
         hidden: showPartInfo != true,
-        title: t`Part`,
-        sortable: true,
-        switchable: false,
-        render: (record: any) => PartColumn({ part: record.part_detail })
-      },
+        part: 'part_detail'
+      }),
       DescriptionColumn({
         accessor: 'part_detail.description',
         hidden: showPartInfo != true
@@ -225,13 +224,13 @@ export default function SalesOrderAllocationTable({
       // Do not allow "shipped" items to be manipulated
       const isShipped = !!record.shipment_detail?.shipment_date;
 
-      if (isShipped || !allowEdit) {
-        return [];
-      }
-
       return [
         RowEditAction({
           tooltip: t`Edit Allocation`,
+          hidden:
+            isShipped ||
+            !allowEdit ||
+            !user.hasChangeRole(UserRoles.sales_order),
           onClick: () => {
             setSelectedAllocation(record.pk);
             setSelectedShipment(record.shipment);
@@ -240,14 +239,26 @@ export default function SalesOrderAllocationTable({
         }),
         RowDeleteAction({
           tooltip: t`Delete Allocation`,
+          hidden:
+            isShipped ||
+            !allowEdit ||
+            !user.hasDeleteRole(UserRoles.sales_order),
           onClick: () => {
             setSelectedAllocation(record.pk);
             deleteAllocation.open();
           }
+        }),
+        RowViewAction({
+          tooltip: t`View Shipment`,
+          title: t`View Shipment`,
+          hidden: !record.shipment || !!shipmentId,
+          modelId: record.shipment,
+          modelType: ModelType.salesordershipment,
+          navigate: navigate
         })
       ];
     },
-    [allowEdit, user]
+    [allowEdit, shipmentId, user]
   );
 
   const stockOperationProps: StockOperationProps = useMemo(() => {

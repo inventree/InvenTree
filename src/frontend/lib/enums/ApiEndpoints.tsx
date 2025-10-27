@@ -97,6 +97,7 @@ export enum ApiEndpoints {
   build_output_delete = 'build/:id/delete-outputs/',
   build_order_auto_allocate = 'build/:id/auto-allocate/',
   build_order_allocate = 'build/:id/allocate/',
+  build_order_consume = 'build/:id/consume/',
   build_order_deallocate = 'build/:id/unallocate/',
 
   build_line_list = 'build/line/',
@@ -220,6 +221,9 @@ export enum ApiEndpoints {
 
   // Special plugin endpoints
   plugin_locate_item = 'locate/',
+  plugin_supplier_list = 'supplier/list/',
+  plugin_supplier_search = 'supplier/search/',
+  plugin_supplier_import = 'supplier/import/',
 
   // Machine API endpoints
   machine_types_list = 'machine/types/',

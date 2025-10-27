@@ -3,6 +3,7 @@ import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { getDetailUrl } from '@lib/functions/Navigation';
+import type { StockOperationProps } from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
 import { Group, Skeleton, Stack, Text } from '@mantine/core';
 import { IconInfoCircle, IconPackages, IconSitemap } from '@tabler/icons-react';
@@ -30,10 +31,7 @@ import { PageDetail } from '../../components/nav/PageDetail';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import LocateItemButton from '../../components/plugins/LocateItemButton';
-import {
-  type StockOperationProps,
-  stockLocationFields
-} from '../../forms/StockForms';
+import { stockLocationFields } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
 import {
   useDeleteApiFormModal,
@@ -173,7 +171,7 @@ export default function Stock() {
       },
       {
         name: 'sublocations',
-        label: t`Stock Locations`,
+        label: id ? t`Sublocations` : t`Stock Locations`,
         icon: <IconSitemap />,
         content: <StockLocationTable parentId={id} />
       },
@@ -417,7 +415,7 @@ export default function Stock() {
             selectedId={location?.pk}
           />
           <PageDetail
-            title={location?.name ?? t`Stock Location`}
+            title={(location?.name ?? id) ? t`Stock Location` : t`Stock`}
             subtitle={location?.description}
             icon={location?.icon && <ApiIcon name={location?.icon} />}
             actions={locationActions}

@@ -25,7 +25,7 @@ test('Stock - Basic Tests', async ({ browser }) => {
   await loadTab(page, 'Stock Locations');
   await page.getByRole('cell', { name: 'Electronics Lab' }).first().click();
   await loadTab(page, 'Default Parts');
-  await loadTab(page, 'Stock Locations');
+  await loadTab(page, 'Sublocations');
   await loadTab(page, 'Stock Items');
   await loadTab(page, 'Location Details');
 
@@ -33,7 +33,7 @@ test('Stock - Basic Tests', async ({ browser }) => {
   await page.getByText('D.123 | Doohickey').waitFor();
   await page.getByText('Batch Code: BX-123-2024-2-7').waitFor();
   await loadTab(page, 'Stock Tracking');
-  await loadTab(page, 'Test Data');
+  await loadTab(page, 'Test Results');
   await page.getByText('395c6d5586e5fb656901d047be27e1f7').waitFor();
   await loadTab(page, 'Installed Items');
 });
@@ -130,7 +130,9 @@ test('Stock - Serial Numbers', async ({ browser }) => {
   await page.getByLabel('action-button-add-stock-item').click();
 
   // Initially fill with invalid serial/quantity combinations
-  await page.getByLabel('text-field-serial_numbers').fill('200-250');
+  await page
+    .getByLabel('text-field-serial_numbers', { exact: true })
+    .fill('200-250');
   await page.getByLabel('number-field-quantity').fill('10');
 
   // Add delay to account to field debounce
@@ -171,7 +173,7 @@ test('Stock - Serial Navigation', async ({ browser }) => {
 
   await page.getByLabel('action-menu-stock-actions').click();
   await page.getByLabel('action-menu-stock-actions-search').click();
-  await page.getByLabel('text-field-serial').fill('359');
+  await page.getByLabel('text-field-serial', { exact: true }).fill('359');
   await page.getByRole('button', { name: 'Submit' }).click();
 
   // Start at serial 359
@@ -183,7 +185,7 @@ test('Stock - Serial Navigation', async ({ browser }) => {
   await page.getByText('358', { exact: true }).first().waitFor();
 
   await page.getByLabel('action-button-find-serial').click();
-  await page.getByLabel('text-field-serial').fill('200');
+  await page.getByLabel('text-field-serial', { exact: true }).fill('200');
   await page.getByRole('button', { name: 'Submit' }).click();
 
   await page.getByText('Serial Number: 200').waitFor();
@@ -201,10 +203,15 @@ test('Stock - Serialize', async ({ browser }) => {
 
   // Check for expected placeholder value
   await expect(
-    page.getByRole('textbox', { name: 'text-field-serial_numbers' })
-  ).toHaveAttribute('placeholder', 'Next serial number: 365');
+    page.getByRole('textbox', {
+      name: 'text-field-serial_numbers',
+      exact: true
+    })
+  ).toHaveAttribute('placeholder', '365+');
 
-  await page.getByLabel('text-field-serial_numbers').fill('200-250');
+  await page
+    .getByLabel('text-field-serial_numbers', { exact: true })
+    .fill('200-250');
 
   await page.getByRole('button', { name: 'Submit' }).click();
 
@@ -212,7 +219,9 @@ test('Stock - Serialize', async ({ browser }) => {
     .getByText('Number of unique serial numbers (51) must match quantity (100)')
     .waitFor();
 
-  await page.getByLabel('text-field-serial_numbers').fill('1, 2, 3');
+  await page
+    .getByLabel('text-field-serial_numbers', { exact: true })
+    .fill('1, 2, 3');
   await page.waitForTimeout(250);
   await page.getByRole('button', { name: 'Submit' }).click();
 
@@ -323,6 +332,7 @@ test('Stock - Return Items', async ({ browser }) => {
       name: 'action-menu-stock-operations-return-stock'
     })
     .click();
+
   await page.getByText('#128').waitFor();
   await page.getByText('Merge into existing stock').waitFor();
   await page.getByRole('textbox', { name: 'number-field-quantity' }).fill('0');
@@ -349,7 +359,7 @@ test('Stock - Location', async ({ browser }) => {
 
   await loadTab(page, 'Default Parts');
   await loadTab(page, 'Stock Items');
-  await loadTab(page, 'Stock Locations');
+  await loadTab(page, 'Sublocations');
   await loadTab(page, 'Location Details');
 
   await page.getByLabel('action-menu-barcode-actions').click();

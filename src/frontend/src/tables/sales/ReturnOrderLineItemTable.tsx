@@ -34,6 +34,7 @@ import {
   LinkColumn,
   NoteColumn,
   PartColumn,
+  ProjectCodeColumn,
   ReferenceColumn,
   StatusColumn
 } from '../ColumnRenderers';
@@ -45,12 +46,14 @@ export default function ReturnOrderLineItemTable({
   order,
   orderDetailRefresh,
   customerId,
+  editable,
   currency
 }: Readonly<{
   orderId: number;
   order: any;
   orderDetailRefresh: () => void;
   customerId: number;
+  editable: boolean;
   currency: string;
 }>) {
   const table = useTable('return-order-line-item');
@@ -106,12 +109,9 @@ export default function ReturnOrderLineItemTable({
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
-      {
-        accessor: 'part',
-        title: t`Part`,
-        switchable: false,
-        render: (record: any) => PartColumn({ part: record?.part_detail })
-      },
+      PartColumn({
+        part: 'part_detail'
+      }),
       {
         accessor: 'part_detail.IPN',
         sortable: false
@@ -138,6 +138,7 @@ export default function ReturnOrderLineItemTable({
         title: t`Status`
       }),
       ReferenceColumn({}),
+      ProjectCodeColumn({}),
       StatusColumn({
         model: ModelType.returnorderlineitem,
         sortable: true,
@@ -184,7 +185,7 @@ export default function ReturnOrderLineItemTable({
       <AddItemButton
         key='add-line-item'
         tooltip={t`Add Line Item`}
-        hidden={!user.hasAddRole(UserRoles.return_order)}
+        hidden={!editable || !user.hasAddRole(UserRoles.return_order)}
         onClick={() => {
           newLine.open();
         }}
@@ -193,7 +194,9 @@ export default function ReturnOrderLineItemTable({
         key='receive-items'
         tooltip={t`Receive selected items`}
         icon={<IconSquareArrowRight />}
-        hidden={!inProgress || !user.hasChangeRole(UserRoles.return_order)}
+        hidden={
+          !editable || inProgress || !user.hasChangeRole(UserRoles.return_order)
+        }
         onClick={() => {
           setSelectedItems(
             table.selectedRecords.filter((record: any) => !record.received_date)
@@ -203,7 +206,7 @@ export default function ReturnOrderLineItemTable({
         disabled={table.selectedRecords.length == 0}
       />
     ];
-  }, [user, inProgress, orderId, table.selectedRecords]);
+  }, [user, editable, inProgress, orderId, table.selectedRecords]);
 
   const [selectedItems, setSelectedItems] = useState<any[]>([]);
 
@@ -221,6 +224,7 @@ export default function ReturnOrderLineItemTable({
         {
           hidden:
             received ||
+            !editable ||
             !inProgress ||
             !user.hasChangeRole(UserRoles.return_order),
           title: t`Receive Item`,
@@ -231,14 +235,14 @@ export default function ReturnOrderLineItemTable({
           }
         },
         RowEditAction({
-          hidden: !user.hasChangeRole(UserRoles.return_order),
+          hidden: !editable || !user.hasChangeRole(UserRoles.return_order),
           onClick: () => {
             setSelectedLine(record.pk);
             editLine.open();
           }
         }),
         RowDeleteAction({
-          hidden: !user.hasDeleteRole(UserRoles.return_order),
+          hidden: !editable || !user.hasDeleteRole(UserRoles.return_order),
           onClick: () => {
             setSelectedLine(record.pk);
             deleteLine.open();
@@ -246,7 +250,7 @@ export default function ReturnOrderLineItemTable({
         })
       ];
     },
-    [user, inProgress]
+    [user, editable, inProgress]
   );
 
   return (

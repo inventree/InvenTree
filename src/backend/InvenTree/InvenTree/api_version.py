@@ -1,11 +1,144 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 384
-
+INVENTREE_API_VERSION = 419
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v419 -> 2025-10-24 : https://github.com/inventree/InvenTree/pull/10659
+    - Fixes regression introduced in v417 which reverted the changes from v416
+
+v418 -> 2025-10-24 : https://github.com/inventree/InvenTree/pull/10657
+    - Add "project_code" field(s) to OrderLineItem API endpoint(s)
+    - Add "project_code" field(s) to ExtraOrderLineItem API endpoint(s)
+
+v417 -> 2025-10-22 : https://github.com/inventree/InvenTree/pull/10654
+    - Adds "checked" filter to SalesOrderShipment API endpoint
+    - Adds "order_status" filter to SalesOrdereShipment API endpoint
+    - Adds "order_outstanding" filter to SalesOrderShipment API endpoint
+
+v416 -> 2025-10-22 : https://github.com/inventree/InvenTree/pull/10651
+    - Add missing nullable to make price_breaks (from v412) optional
+
+v415 -> 2025-10-22 : https://github.com/inventree/InvenTree/pull/10650
+    - Adds "shipment_address" fields to the SalesOrderShipment API endpoints
+
+v414 -> 2025-10-20 : https://github.com/inventree/InvenTree/pull/10629
+    - Add enums for all ordering fields in schema - no functional changes
+
+v413 -> 2025-10-20 : https://github.com/inventree/InvenTree/pull/10624
+    - Upstream fixes to django-allauth schema - no functional changes
+
+v412 -> 2025-10-19 : https://github.com/inventree/InvenTree/pull/10549
+    - added a new query parameter for the PartsList api: price_breaks (default: false)
+
+v411 -> 2025-10-19 : https://github.com/inventree/InvenTree/pull/10630
+    - Editorial changes to machine api - no functional changes
+
+v410 -> 2025-10-12 : https://github.com/inventree/InvenTree/pull/9761
+    - Add supplier search and import API endpoints
+    - Add part parameter bulk create API endpoint
+
+v409 -> 2025-10-17 : https://github.com/inventree/InvenTree/pull/10601
+    - Adds ability to filter StockList API by manufacturer part ID
+
+v408 -> 2025-10-13: https://github.com/inventree/InvenTree/pull/10561
+    - Allow search of assembly fields in BOM API endpoint
+
+v407 -> 2025-10-09: https://github.com/inventree/InvenTree/pull/10538
+    - Breaking: Set error status code for plugin action call instead of just returning error data
+
+v406 -> 2025-10-08: https://github.com/inventree/InvenTree/pull/10532
+    - Set return type for background task overview
+    - Implement serializer for part serial number detail
+
+v405 -> 2025-10-07: https://github.com/inventree/InvenTree/pull/10530
+    - Add response to generic/status endpoint
+    - Fix logic for generic status model lookup to allow searching by class name string
+
+v404 -> 2025-10-06: https://github.com/inventree/InvenTree/pull/10497
+    - Add minimum_stock to PartBrief api response
+
+v403 -> 2025-10-06: https://github.com/inventree/InvenTree/pull/10499
+    - Adds ability to partially scrap a build output
+    - Adds ability to partially complete a build output
+
+v402 -> 2025-10-05 : https://github.com/inventree/InvenTree/pull/10495
+    - Refactors 'part_detail' param in BuildList API endpoint
+    - Refactors 'order_detail' param in GeneralExtraLineList API endpoint
+    - Refactors 'part_detail', 'template_detail' param in PartParameterList / PartParameterDetail API endpoint
+
+v401 -> 2025-10-05 : https://github.com/inventree/InvenTree/pull/10381
+    - Adds machine properties to machine API endpoints
+
+v400 -> 2025-10-05 : https://github.com/inventree/InvenTree/pull/10486
+    - Adds return datatypes for admin/config and flags entpoints
+
+v399 -> 2025-10-05 : https://github.com/inventree/InvenTree/pull/10445
+    - Refactors 'customer_detail' param in SalesOrder API endpoint
+    - Refactors 'customer_detail' param in ReturnOrder API endpoint
+    - Refactors 'supplier_detail' param in PurchaseOrder API endpoint
+    - Refactors 'part_detail' and 'order_detail' params in PurchaseOrderLineItem API endpoint
+    - Refactors 'part_detail', 'item_detail' and 'order_detail' params in ReturnOrderLineItem API endpoint
+    - Refactors 'part_detail', 'order_detail' and 'customer_detail' params in SalesOrderLineItem API endpoint
+    - Refactors 'part_detail', 'item_detail', 'order_detail', 'location_detail' and 'customer_detail' params in SalesOrderAllocation API endpoint
+
+v398 -> 2025-10-05 : https://github.com/inventree/InvenTree/pull/10487
+    - Refactors 'part_detail', 'path_detail', 'supplier_part_detail', 'location_detail' and 'tests' params in Stock API endpoint
+
+v397 -> 2025-10-01 : https://github.com/inventree/InvenTree/pull/10444
+    - Refactors 'path_detail' param in StockLocation API endpoint
+    - Refactors 'user_detail' and 'template_detail' params in StockItemTestResult API endpoint
+    - Refactors 'item_detail' and 'user_detail' params in StockTracking API endpoint
+    - Refactors 'include_installed' and 'stock_item' params in StockItemTestResult API endpoint
+
+v396 -> 2025-10-01 : https://github.com/inventree/InvenTree/pull/10443
+    - Refactors 'part_detail', 'manufacturer_detail' and 'pretty' params in Manufacturer API endpoint
+    - Refactors 'manufacturer_part_detail' param in ManufacturerPartParameter API endpoint
+    - Refactors 'part_detail' and 'supplier_detail' param in SupplierPriceBreak API endpoint
+
+v395 -> 2025-10-01 : https://github.com/inventree/InvenTree/pull/10441
+    - Refactors 'parameters', 'category_detail', 'location_detail' and 'path_detail' params in Part API endpoint
+    - Refactors 'can_build', 'part_detail', 'sub_part_detail' and 'path_detail' params in BOM API endpoint
+    - Refactors 'path_detail' params in user Category API endpoint
+    - Refactors 'exclude_id', 'related' and 'exclude_related' params in Part API endpoint
+
+v394 -> 2025-10-01 : https://github.com/inventree/InvenTree/pull/10438
+    - Refactors 'bom_item_detail', 'assembly_detail', 'part_detail', 'build_detail' and 'allocations' params in BuildLine API endpoint
+    - Refactors 'part_detail', 'location_detail', 'stock_detail' and 'build_detail' params in BuildItem API endpoint
+
+v393 -> 2025-10-01 : https://github.com/inventree/InvenTree/pull/10437
+    - Refactors 'user_detail', 'permission_detail', 'role_detail' params in user GroupList API endpoint
+
+v392 -> 2025-09-22 : https://github.com/inventree/InvenTree/pull/10374
+    - Refactors 'part_detail', 'supplier_detail', 'manufacturer_detail'and 'pretty' params in SupplierPartList API endpoint
+
+v391 -> 2025-09-06 : https://github.com/inventree/InvenTree/pull/10279
+    - Refactors 'exclude_tree', 'cascade', and 'location' filters in StockList API endpoint
+
+v390 -> 2025-09-03 : https://github.com/inventree/InvenTree/pull/10257
+    - Fixes limitation on adding virtual parts to a SalesOrder
+    - Additional query filter options for BomItem API endpoint
+
+v389 -> 2025-08-27 : https://github.com/inventree/InvenTree/pull/10214
+    - Adds "output" filter to the BuildItem API endpoint
+    - Removes undocumented 'output' query parameter handling
+
+v388 -> 2025-08-23 : https://github.com/inventree/InvenTree/pull/10213
+    - Disable paging on PurchaseOrderReceive call
+
+v387 -> 2025-08-19 : https://github.com/inventree/InvenTree/pull/10188
+    - Adds "update_records" field to the DataImportSession API
+
+v386 -> 2025-08-11 : https://github.com/inventree/InvenTree/pull/8191
+    - Adds "consumed" field to the BuildItem API
+    - Adds API endpoint to consume stock against a BuildOrder
+
+v385 -> 2025-08-15 : https://github.com/inventree/InvenTree/pull/10174
+    - Adjust return type of PurchaseOrderReceive API serializer
+    - Now returns list of of the created stock items when receiving
+
 v384 -> 2025-08-08 : https://github.com/inventree/InvenTree/pull/9969
     - Bump allauth
 

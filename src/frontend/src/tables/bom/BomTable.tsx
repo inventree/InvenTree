@@ -137,6 +137,11 @@ export function BomTable({
       DescriptionColumn({
         accessor: 'sub_part_detail.description'
       }),
+      BooleanColumn({
+        accessor: 'sub_part_detail.virtual',
+        defaultVisible: false,
+        title: t`Virtual Part`
+      }),
       ReferenceColumn({
         switchable: true
       }),
@@ -280,9 +285,15 @@ export function BomTable({
         render: (record: any) => {
           const extra: ReactNode[] = [];
 
+          const part = record.sub_part_detail;
+
           const available_stock: number = availableStockQuantity(record);
           const on_order: number = record?.on_order ?? 0;
           const building: number = record?.building ?? 0;
+
+          if (part?.virtual) {
+            return <Text fs='italic'>{t`Virtual part`}</Text>;
+          }
 
           const text =
             available_stock <= 0 ? (
@@ -320,7 +331,7 @@ export function BomTable({
           if (on_order > 0) {
             extra.push(
               <Text key='on_order'>
-                {t`On order`}: {on_order}
+                {t`On order`}: {formatDecimal(on_order)}
               </Text>
             );
           }
@@ -328,7 +339,7 @@ export function BomTable({
           if (building > 0) {
             extra.push(
               <Text key='building'>
-                {t`Building`}: {building}
+                {t`Building`}: {formatDecimal(building)}
               </Text>
             );
           }
@@ -347,10 +358,17 @@ export function BomTable({
         title: t`Can Build`,
         sortable: true,
         render: (record: any) => {
+          // Virtual sub-part - the "can build" quantity does not make sense here
+          if (record.sub_part_detail?.virtual) {
+            return '-';
+          }
+
+          // No information available
           if (record.can_build === null || record.can_build === undefined) {
             return '-';
           }
 
+          // NaN or infinite values
           if (
             !Number.isFinite(record.can_build) ||
             Number.isNaN(record.can_build)
@@ -405,6 +423,11 @@ export function BomTable({
         description: t`Show assembled items`
       },
       {
+        name: 'sub_part_virtual',
+        label: t`Virtual Part`,
+        description: t`Show virtual items`
+      },
+      {
         name: 'available_stock',
         label: t`Available Stock`,
         description: t`Show items with available stock`
@@ -451,10 +474,9 @@ export function BomTable({
   const [selectedBomItem, setSelectedBomItem] = useState<any>({});
 
   const importSessionFields = useMemo(() => {
-    const fields = dataImporterSessionFields();
-
-    fields.model_type.hidden = true;
-    fields.model_type.value = 'bomitem';
+    const fields = dataImporterSessionFields({
+      modelType: 'bomitem'
+    });
 
     fields.field_overrides.value = {
       part: partId

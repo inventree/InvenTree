@@ -9,7 +9,13 @@ from drf_spectacular.contrib.django_oauth_toolkit import DjangoOAuthToolkitSchem
 from drf_spectacular.drainage import warn
 from drf_spectacular.openapi import AutoSchema
 from drf_spectacular.plumbing import ComponentRegistry
-from drf_spectacular.utils import _SchemaType
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import (
+    OpenApiParameter,
+    _SchemaType,
+    extend_schema,
+    extend_schema_view,
+)
 from rest_framework.pagination import LimitOffsetPagination
 
 from InvenTree.permissions import OASTokenMixin
@@ -99,9 +105,11 @@ class ExtendedAutoSchema(AutoSchema):
             parameters = operation.get('parameters', [])
             for parameter in parameters:
                 if parameter['name'] == 'ordering':
-                    parameter['description'] = (
-                        f'{parameter["description"]} Possible fields: {", ".join(ordering_fields)}.'
-                    )
+                    schema_order = []
+                    for field in ordering_fields:
+                        schema_order.append(field)
+                        schema_order.append('-' + field)
+                    parameter['schema']['enum'] = schema_order
 
         # Add valid search fields to the search description.
         search_fields = getattr(self.view, 'search_fields', None)
@@ -211,3 +219,29 @@ def postprocess_print_stats(result, generator, request, public):
         )
 
     return result
+
+
+def schema_for_view_output_options(view_class):
+    """A class decorator that automatically generates schema parameters for a view.
+
+    It works by introspecting the `output_options` attribute on the view itself.
+    This decorator reads the `output_options` attribute from the view class,
+    extracts the `OPTIONS` list from it, and creates an OpenApiParameter for each option.
+    """
+    output_config_class = view_class.output_options
+
+    parameters = []
+    for option in output_config_class.OPTIONS:
+        param = OpenApiParameter(
+            name=option.flag,
+            type=OpenApiTypes.BOOL,
+            location=OpenApiParameter.QUERY,
+            description=option.description,
+            default=option.default,
+        )
+        parameters.append(param)
+
+    extended_view = extend_schema_view(get=extend_schema(parameters=parameters))(
+        view_class
+    )
+    return extended_view

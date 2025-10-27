@@ -819,7 +819,7 @@ class Part(
         if not check_duplicates:
             return
 
-        from part.models import Part
+        # from part.models import Part
         from stock.models import StockItem
 
         if get_global_setting('SERIAL_NUMBER_GLOBALLY_UNIQUE', False):
@@ -850,7 +850,7 @@ class Part(
 
     def find_conflicting_serial_numbers(self, serials: list) -> list:
         """For a provided list of serials, return a list of those which are conflicting."""
-        from part.models import Part
+        # from part.models import Part
         from stock.models import StockItem
 
         conflicts = []
@@ -1400,9 +1400,13 @@ class Part(
 
             # Match BOM item to build
             for bom_item in bom_items:
-                build_quantity = build.quantity * bom_item.quantity
+                build_line = build.build_lines.filter(bom_item=bom_item).first()
 
-                quantity += build_quantity
+                if not build_line:
+                    continue
+
+                line_quantity = max(0, build_line.quantity - build_line.consumed)
+                quantity += line_quantity
 
         return quantity
 
@@ -1449,6 +1453,10 @@ class Part(
 
         for line in open_lines:
             # Determine the quantity "remaining" to be shipped out
+
+            if not line:
+                continue
+
             remaining = max(line.quantity - line.shipped, 0)
             quantity += remaining
 
@@ -1788,8 +1796,14 @@ class Part(
         """
         return self.get_stock_count(include_variants=True)
 
-    def get_bom_item_filter(self, include_inherited=True):
+    def get_bom_item_filter(
+        self, include_inherited: bool = True, include_virtual: bool = True
+    ):
         """Returns a query filter for all BOM items associated with this Part.
+
+        Arguments:
+            include_inherited: If True, include BomItem entries defined for parent parts
+            include_virtual: If True, include BomItem entries which are virtual
 
         There are some considerations:
 
@@ -1816,15 +1830,24 @@ class Part(
                 # OR the filters together
                 bom_filter |= parent_filter
 
+        if not include_virtual:
+            bom_filter &= Q(sub_part__virtual=False)
+
         return bom_filter
 
-    def get_bom_items(self, include_inherited=True) -> QuerySet[BomItem]:
+    def get_bom_items(
+        self, include_inherited: bool = True, include_virtual: bool = True
+    ) -> QuerySet[BomItem]:
         """Return a queryset containing all BOM items for this part.
 
-        By default, will include inherited BOM items
+        Arguments:
+            include_inherited (bool): If set, include BomItem entries defined for parent parts
+            include_virtual (bool): If set, include BomItem entries which are virtual parts
         """
         queryset = BomItem.objects.filter(
-            self.get_bom_item_filter(include_inherited=include_inherited)
+            self.get_bom_item_filter(
+                include_inherited=include_inherited, include_virtual=include_virtual
+            )
         )
 
         return queryset.prefetch_related('part', 'sub_part')
@@ -2059,7 +2082,9 @@ class Part(
 
         return pricing
 
-    def schedule_pricing_update(self, create: bool = False, force: bool = False):
+    def schedule_pricing_update(
+        self, create: bool = False, force: bool = False, refresh: bool = True
+    ):
         """Helper function to schedule a pricing update.
 
         Importantly, catches any errors which may occur during deletion of related objects,
@@ -2070,22 +2095,24 @@ class Part(
         Arguments:
             create: Whether or not a new PartPricing object should be created if it does not already exist
             force: If True, force the pricing to be updated even auto pricing is disabled
+            refresh: If True, refresh the PartPricing object from the database
         """
         if not force and not get_global_setting(
             'PRICING_AUTO_UPDATE', backup_value=True
         ):
             return
 
-        try:
-            self.refresh_from_db()
-        except Part.DoesNotExist:
-            return
+        if refresh:
+            try:
+                self.refresh_from_db()
+            except Part.DoesNotExist:
+                return
 
         try:
             pricing = self.pricing
 
             if create or pricing.pk:
-                pricing.schedule_for_update()
+                pricing.schedule_for_update(refresh=refresh)
         except IntegrityError:
             # If this part instance has been deleted,
             # some post-delete or post-save signals may still be fired
@@ -2320,7 +2347,7 @@ class Part(
         return None
 
     @transaction.atomic
-    def copy_bom_from(self, other, clear=True, **kwargs):
+    def copy_bom_from(self, other, clear: bool = True, **kwargs):
         """Copy the BOM from another part.
 
         Args:
@@ -2731,11 +2758,12 @@ class PartPricing(common.models.MetaMixin):
 
         return result
 
-    def schedule_for_update(self, counter: int = 0):
+    def schedule_for_update(self, counter: int = 0, refresh: bool = True):
         """Schedule this pricing to be updated.
 
         Arguments:
             counter: Recursion counter (used to prevent infinite recursion)
+            refresh: If specified, the PartPricing object will be refreshed from the database
         """
         import InvenTree.ready
 
@@ -2758,7 +2786,7 @@ class PartPricing(common.models.MetaMixin):
             return
 
         try:
-            if self.pk:
+            if refresh and self.pk:
                 self.refresh_from_db()
         except (PartPricing.DoesNotExist, IntegrityError):
             # Error thrown if this PartPricing instance has already been removed
@@ -2770,7 +2798,8 @@ class PartPricing(common.models.MetaMixin):
         # Ensure that the referenced part still exists in the database
         try:
             p = self.part
-            p.refresh_from_db()
+            if True:  # refresh and p.pk:
+                p.refresh_from_db()
         except IntegrityError:
             logger.exception(
                 "Could not update PartPricing as Part '%s' does not exist", self.part
@@ -4241,6 +4270,11 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         if allow_substitutes:
             for sub in self.substitutes.all():
                 parts.add(sub.part)
+
+                # Account for variants of the substitute part (if allowed)
+                if allow_variants and self.allow_variants:
+                    for sub_variant in sub.part.get_descendants(include_self=False):
+                        parts.add(sub_variant)
 
         valid_parts = []
 

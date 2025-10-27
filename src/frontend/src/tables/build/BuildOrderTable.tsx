@@ -8,7 +8,6 @@ import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
-import { RenderUser } from '../../components/render/User';
 import { useBuildOrderFields } from '../../forms/BuildForms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
@@ -18,13 +17,15 @@ import {
   BooleanColumn,
   CreationDateColumn,
   DateColumn,
+  DescriptionColumn,
   PartColumn,
   ProjectCodeColumn,
   ReferenceColumn,
   ResponsibleColumn,
   StartDateColumn,
   StatusColumn,
-  TargetDateColumn
+  TargetDateColumn,
+  UserColumn
 } from '../ColumnRenderers';
 import {
   AssignedToMeFilter,
@@ -68,12 +69,9 @@ export function BuildOrderTable({
   const tableColumns = useMemo(() => {
     return [
       ReferenceColumn({}),
-      {
-        accessor: 'part',
-        sortable: true,
-        switchable: false,
-        render: (record: any) => PartColumn({ part: record.part_detail })
-      },
+      PartColumn({
+        switchable: false
+      }),
       {
         accessor: 'part_detail.IPN',
         sortable: true,
@@ -86,12 +84,14 @@ export function BuildOrderTable({
         sortable: true,
         defaultVisible: false
       },
-      {
+      DescriptionColumn({
         accessor: 'title',
         sortable: false
-      },
+      }),
       {
         accessor: 'completed',
+        title: t`Completed`,
+        minWidth: 125,
         sortable: true,
         switchable: false,
         render: (record: any) => (
@@ -137,13 +137,11 @@ export function BuildOrderTable({
         title: t`Completion Date`,
         sortable: true
       }),
-      {
-        accessor: 'issued_by',
-        sortable: true,
-        render: (record: any) => (
-          <RenderUser instance={record?.issued_by_detail} />
-        )
-      },
+      UserColumn({
+        accessor: 'issued_by_detail',
+        ordering: 'issued_by',
+        title: t`Issued By`
+      }),
       ResponsibleColumn({})
     ];
   }, [parentBuildId, globalSettings]);
@@ -248,6 +246,7 @@ export function BuildOrderTable({
           modelType: ModelType.build,
           enableSelection: true,
           enableReports: true,
+          enableLabels: true,
           enableDownload: true
         }}
       />

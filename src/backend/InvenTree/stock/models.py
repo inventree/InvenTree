@@ -627,7 +627,11 @@ class StockItem(
 
         for serial in serials:
             data['serial'] = serial
-            data['serial_int'] = StockItem.convert_serial_to_int(serial)
+
+            if serial is not None:
+                data['serial_int'] = StockItem.convert_serial_to_int(serial) or 0
+            else:
+                data['serial_int'] = 0
 
             data['tree_id'] = tree_id
 
@@ -663,7 +667,7 @@ class StockItem(
         return items
 
     @staticmethod
-    def convert_serial_to_int(serial: str) -> int:
+    def convert_serial_to_int(serial: str) -> Optional[int]:
         """Convert the provided serial number to an integer value.
 
         This function hooks into the plugin system to allow for custom serial number conversion.
@@ -703,6 +707,10 @@ class StockItem(
         This is used for efficient numerical sorting
         """
         serial = str(getattr(self, 'serial', '')).strip()
+
+        if not serial:
+            self.serial_int = 0
+            return
 
         serial_int = self.convert_serial_to_int(serial)
 
@@ -1735,7 +1743,6 @@ class StockItem(
             self.belongs_to is None,  # Not installed inside another StockItem
             self.customer is None,  # Not assigned to a customer
             self.consumed_by is None,  # Not consumed by a build
-            not self.is_building,  # Not part of an active build
         ])
 
     @property
@@ -1776,7 +1783,7 @@ class StockItem(
         self,
         entry_type: int,
         user: User,
-        deltas: dict | None = None,
+        deltas: Optional[dict] = None,
         notes: str = '',
         commit: bool = True,
         **kwargs,
@@ -2201,6 +2208,7 @@ class StockItem(
             batch: If provided, override the batch (default = existing batch)
             status: If provided, override the status (default = existing status)
             packaging: If provided, override the packaging (default = existing packaging)
+            allow_production: If True, allow splitting of stock which is in production (default = False)
 
         Returns:
             The new StockItem object
@@ -2212,9 +2220,10 @@ class StockItem(
         - The new item will have a different StockItem ID, while this will remain the same.
         """
         # Run initial checks to test if the stock item can actually be "split"
+        allow_production = kwargs.get('allow_production', False)
 
         # Cannot split a stock item which is in production
-        if self.is_building:
+        if self.is_building and not allow_production:
             raise ValidationError(_('Stock item is currently in production'))
 
         notes = kwargs.get('notes', '')
@@ -2335,7 +2344,9 @@ class StockItem(
             'STOCK_ALLOW_OUT_OF_STOCK_TRANSFER', backup_value=False, cache=False
         )
 
-        if not allow_out_of_stock_transfer and not self.is_in_stock(check_status=False):
+        if not allow_out_of_stock_transfer and not self.is_in_stock(
+            check_status=False, check_in_production=False
+        ):
             raise ValidationError(_('StockItem cannot be moved as it is not in stock'))
 
         if quantity <= 0:
@@ -2351,7 +2362,7 @@ class StockItem(
             kwargs['notes'] = notes
 
             # Split the existing StockItem in two
-            self.splitStock(quantity, location, user, **kwargs)
+            self.splitStock(quantity, location, user, allow_production=True, **kwargs)
 
             return True
 

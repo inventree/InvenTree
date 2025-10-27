@@ -39,10 +39,14 @@ from .api import (
     VersionTextView,
     VersionView,
 )
+from .config import get_setting
 from .magic_login import GetSimpleLoginView
 from .views import auth_request
 
-admin.site.site_header = 'InvenTree Admin'
+# Set admin header from config or use default
+admin.site.site_header = get_setting(
+    'INVENTREE_SITE_HEADER', 'customize.site_header', 'InvenTree Admin'
+)
 
 
 apipatterns = [
@@ -135,10 +139,7 @@ backendpatterns = [
         RedirectView.as_view(url=f'/{settings.FRONTEND_URL_BASE}', permanent=False),
         name='account_login',
     ),  # Add a redirect for login views
-    path('api/', include(apipatterns)),
-    path('api-doc/', SpectacularRedocView.as_view(url_name='schema'), name='api-doc'),
-    # Emails
-    path('anymail/', include('anymail.urls')),
+    path('anymail/', include('anymail.urls')),  # Emails
 ]
 
 urlpatterns = []
@@ -153,6 +154,10 @@ if settings.INVENTREE_ADMIN_ENABLED:
     ]
 
 urlpatterns += backendpatterns
+urlpatterns += [  # API URLs
+    path('api/', include(apipatterns)),
+    path('api-doc/', SpectacularRedocView.as_view(url_name='schema'), name='api-doc'),
+]
 urlpatterns += platform_urls
 
 # Append custom plugin URLs (if custom plugin support is enabled)
