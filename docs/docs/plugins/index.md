@@ -51,11 +51,11 @@ If the InvenTree server is running in [debug mode](../start/config.md#debug-mode
 
 A list of known third-party InvenTree extensions is provided [on our website](https://inventree.org/extend/integrate/) If you have an extension that should be listed here, contact the InvenTree team on [GitHub](https://github.com/inventree/). Refer to the [InvenTree website](https://inventree.org/plugins.html) for a (non exhaustive) list of plugins that are available for InvenTree. This includes both official and third-party plugins.
 
-### PyPi
+### PyPI
 
-There are a number of third-party InvenTree plugins available via the Python Package Index (PyPi). These plugins can be installed using the PIP package manager.
+There are a number of third-party InvenTree plugins available via the [Python Package Index](https://pypi.org/) (PyPI). These plugins can be installed using the PIP package manager.
 
-These plugins are discoverable via the `Framekwork :: InvenTree` classifier tag. To view all available InvenTree plugins on PyPi, visit the [InvenTree PyPi page](https://pypi.org/search/?c=Framework+%3A%3A+InvenTree).
+These plugins are discoverable via the `Framekwork :: InvenTree` classifier tag. To view all available InvenTree plugins on PyPI, visit the [InvenTree PyPi page](https://pypi.org/search/?c=Framework+%3A%3A+InvenTree).
 
 !!! warning "Third-Party Plugins"
     Third-party plugins are developed and maintained by independent developers. InvenTree does not provide support for third-party plugins, and cannot guarantee their quality or security. Use third-party plugins at your own risk!
