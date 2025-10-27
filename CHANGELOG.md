@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Adds optional shipping address against individual sales order shipments in [#10650](https://github.com/inventree/InvenTree/pull/10650)
 - Adds UI elements to "check" and "uncheck" sales order shipments in [#10654](https://github.com/inventree/InvenTree/pull/10654)
 - Allow assigning project codes to order line items in [#10657](https://github.com/inventree/InvenTree/pull/10657)
+- Added support for webauthn login for the frontend in [#9729](https://github.com/inventree/InvenTree/pull/9729)
 
 ### Changed
 
