@@ -216,7 +216,7 @@ export function useBuildOrderOutputFields({
       location: {
         value: location,
         onValueChange: (value: any) => {
-          setQuantity(value);
+          setLocation(value);
         }
       },
       auto_allocate: {
@@ -568,10 +568,14 @@ function BuildAllocateLineRow({
         <RenderPartColumn part={record.part_detail} />
       </Table.Td>
       <Table.Td>
+        <Text size='sm'>{record.part_detail?.IPN}</Text>
+      </Table.Td>
+      <Table.Td>
         <ProgressBar
           value={record.allocatedQuantity}
           maximum={record.requiredQuantity - record.consumed}
           progressLabel
+          units={record.part_detail?.units}
         />
       </Table.Td>
       <Table.Td>
@@ -624,6 +628,7 @@ export function useAllocateStockToBuildForm({
         value: [],
         headers: [
           { title: t`Part`, style: { minWidth: '175px' } },
+          { title: t`IPN`, style: { minWidth: '50px' } },
           { title: t`Allocated`, style: { minWidth: '175px' } },
           { title: t`Stock Item`, style: { width: '100%' } },
           { title: t`Quantity`, style: { minWidth: '175px' } },

@@ -1169,15 +1169,16 @@ def gunicorn(c, address='0.0.0.0:8000', workers=None):
 @task(
     pre=[wait],
     help={
-        'address': 'Server address:port (default=127.0.0.1:8000)',
+        'address': 'Server address:port (default=0.0.0.0:8000)',
         'no_reload': 'Do not automatically reload the server in response to code changes',
         'no_threading': 'Disable multi-threading for the development server',
     },
 )
-def server(c, address='127.0.0.1:8000', no_reload=False, no_threading=False):
+def server(c, address='0.0.0.0:8000', no_reload=False, no_threading=False):
     """Launch a (development) server using Django's in-built webserver.
 
-    Note: This is *not* sufficient for a production installation.
+    - This is *not* sufficient for a production installation.
+    - The default address exposes the server on all network interfaces.
     """
     cmd = f'runserver {address}'
 
@@ -1556,10 +1557,10 @@ Static      {get_static_dir(error=False) or NOT_SPECIFIED}
 Backup      {get_backup_dir(error=False) or NOT_SPECIFIED}
 
 Versions:
-Python      {python_version()}
-Django      {InvenTreeVersion.inventreeDjangoVersion()}
 InvenTree   {InvenTreeVersion.inventreeVersion()}
 API         {InvenTreeVersion.inventreeApiVersion()}
+Python      {python_version()}
+Django      {InvenTreeVersion.inventreeDjangoVersion()}
 Node        {node if node else NA}
 Yarn        {yarn if yarn else NA}
 

@@ -215,9 +215,13 @@ class PartTestTemplateSerializer(
 
 @register_importer()
 class PartSalePriceSerializer(
-    DataImportExportSerializerMixin, InvenTree.serializers.InvenTreeModelSerializer
+    InvenTree.serializers.FilterableSerializerMixin,
+    DataImportExportSerializerMixin,
+    InvenTree.serializers.InvenTreeModelSerializer,
 ):
     """Serializer for sale prices for Part model."""
+
+    no_filters = True
 
     class Meta:
         """Metaclass defining serializer fields."""
@@ -694,6 +698,7 @@ class PartSerializer(
             'pricing_max',
             'pricing_updated',
             'responsible',
+            'price_breaks',
             # Annotated fields
             'allocated_to_build_orders',
             'allocated_to_sales_orders',
@@ -733,6 +738,7 @@ class PartSerializer(
         create = kwargs.pop('create', False)
         # pricing = kwargs.pop('pricing', True)
         # path_detail = kwargs.pop('path_detail', False)
+        # price_breaks = kwargs.pop('price_breaks', False)
 
         super().__init__(*args, **kwargs)
 
@@ -751,6 +757,9 @@ class PartSerializer(
 
         if not path_detail:
             self.fields.pop('category_path', None)
+
+        if not price_breaks:
+            self.fields.pop('price_breaks', None)
 
         if not pricing:
             self.fields.pop('pricing_min', None)
@@ -1032,6 +1041,14 @@ class PartSerializer(
 
     parameters = enable_filter(
         PartParameterSerializer(many=True, read_only=True, allow_null=True)
+    )
+
+    price_breaks = enable_filter(
+        PartSalePriceSerializer(
+            source='salepricebreaks', many=True, read_only=True, allow_null=True
+        ),
+        False,
+        filter_name='price_breaks',
     )
 
     # Extra fields used only for creation of a new Part instance

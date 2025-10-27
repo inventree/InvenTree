@@ -1,11 +1,11 @@
 import { t } from '@lingui/core/macro';
-import { Accordion, Grid, Skeleton, Stack } from '@mantine/core';
+import { Accordion, Grid, Skeleton, Stack, Text } from '@mantine/core';
 import {
   IconBookmark,
+  IconCubeSend,
   IconInfoCircle,
   IconList,
-  IconTools,
-  IconTruckDelivery
+  IconTools
 } from '@tabler/icons-react';
 import { type ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
@@ -38,6 +38,7 @@ import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
+import { RenderAddress } from '../../components/render/Company';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { formatCurrency } from '../../defaults/formatters';
 import { useSalesOrderFields } from '../../forms/SalesOrderForms';
@@ -183,6 +184,18 @@ export default function SalesOrderDetail() {
       },
       {
         type: 'text',
+        name: 'address',
+        label: t`Shipping Address`,
+        icon: 'address',
+        value_formatter: () =>
+          order.address_detail ? (
+            <RenderAddress instance={order.address_detail} />
+          ) : (
+            <Text size='sm' c='red'>{t`Not specified`}</Text>
+          )
+      },
+      {
+        type: 'text',
         name: 'contact_detail.name',
         label: t`Contact`,
         icon: 'user',
@@ -284,6 +297,17 @@ export default function SalesOrderDetail() {
 
   const soStatus = useStatusCodes({ modelType: ModelType.salesorder });
 
+  const lineItemsEditable: boolean = useMemo(() => {
+    const orderOpen: boolean =
+      order.status != soStatus.COMPLETE && order.status != soStatus.CANCELLED;
+
+    if (orderOpen) {
+      return true;
+    } else {
+      return globalSettings.isSet('SALESORDER_EDIT_COMPLETED_ORDERS');
+    }
+  }, [globalSettings, order.status, soStatus]);
+
   const salesOrderFields = useSalesOrderFields({});
 
   const editSalesOrder = useEditApiFormModal({
@@ -345,10 +369,7 @@ export default function SalesOrderDetail() {
                   orderDetailRefresh={refreshInstance}
                   currency={orderCurrency}
                   customerId={order.customer}
-                  editable={
-                    order.status != soStatus.COMPLETE &&
-                    order.status != soStatus.CANCELLED
-                  }
+                  editable={lineItemsEditable}
                 />
               </Accordion.Panel>
             </Accordion.Item>
@@ -360,6 +381,7 @@ export default function SalesOrderDetail() {
                 <ExtraLineItemTable
                   endpoint={ApiEndpoints.sales_order_extra_line_list}
                   orderId={order.pk}
+                  editable={lineItemsEditable}
                   orderDetailRefresh={refreshInstance}
                   currency={orderCurrency}
                   role={UserRoles.sales_order}
@@ -372,8 +394,13 @@ export default function SalesOrderDetail() {
       {
         name: 'shipments',
         label: t`Shipments`,
-        icon: <IconTruckDelivery />,
-        content: <SalesOrderShipmentTable orderId={order.pk} />
+        icon: <IconCubeSend />,
+        content: (
+          <SalesOrderShipmentTable
+            orderId={order.pk}
+            customerId={order.customer}
+          />
+        )
       },
       {
         name: 'allocations',

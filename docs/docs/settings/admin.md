@@ -2,15 +2,31 @@
 title: InvenTree Admin Interfaces
 ---
 
+## InvenTree Admin Interfaces
+
 There are multiple administration interfaces available in InvenTree, which provide different levels of access to the underlying resources and different operational safety.
 
-- Admin Center - Main interface for managing InvenTree - Robust verification and safety checks
-- System Settings - Access to all settings - Robust verification, requires reading the documentation
-- Backend Admin Interface - Low level access to the database - Few verification or safety checks
+[**Admin Center**](#admin-center):
+
+- Main interface for managing InvenTree
+- Robust verification and safety checks
+
+[**System Settings**](#system-settings):
+
+- Access to all settings
+- Robust verification, requires reading the documentation
+
+[**Backend Admin Interface**](#backend-admin-interface):
+
+- Low level access to the database
+- Few verification or safety checks
+- Requires knowledge of InvenTree internals
+- Recommended for advanced users only
 
 ### Admin Center
 
 The Admin Center is the main interface for managing InvenTree. It provides a user-friendly interface for managing all aspects of the system, including:
+
 - Users / Groups
 - Data import / export
 - Customisation (e.g. project codes, custom states, parameters and units)

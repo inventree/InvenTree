@@ -318,17 +318,20 @@ def define_env(env):
             json.dump(data, f, indent=4)
 
     @env.macro
-    def rendersetting(key: str, setting: dict, short: bool = False):
+    def rendersetting(
+        key: str, setting: dict, short: bool = False, default: Optional[str] = None
+    ):
         """Render a provided setting object into a table row.
 
         Arguments:
             key: The name of the setting to extract information for.
             setting: The setting object to render.
             short: If True, return a short version of the setting (default: False)
+            default: An optional default value to override the setting's default display value.
         """
         name = setting['name']
         description = setting['description']
-        default = setting.get('default')
+        default = default or setting.get('default')
         units = setting.get('units')
 
         default = f'`{default}`' if default else ''
@@ -340,12 +343,13 @@ def define_env(env):
         return f'| <div title="{key}"><strong>{name}</strong></div> | {description} | {default} | {units} |'
 
     @env.macro
-    def globalsetting(key: str, short: bool = False):
+    def globalsetting(key: str, short: bool = False, default: Optional[str] = None):
         """Extract information on a particular global setting.
 
         Arguments:
             key: The name of the global setting to extract information for.
             short: If True, return a short version of the setting (default: False)
+            default: An optional default value to override the setting's default display value.
         """
         global GLOBAL_SETTINGS
         setting = GLOBAL_SETTINGS[key]
@@ -354,7 +358,7 @@ def define_env(env):
         if not short:
             observe_setting(key, 'global')
 
-        return rendersetting(key, setting, short=short)
+        return rendersetting(key, setting, short=short, default=default)
 
     @env.macro
     def usersetting(key: str, short: bool = False):
