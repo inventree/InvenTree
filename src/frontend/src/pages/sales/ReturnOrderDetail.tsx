@@ -289,8 +289,8 @@ export default function ReturnOrderDetail() {
         <Grid grow>
           <DetailsImage
             appRole={UserRoles.purchase_order}
-            src={order.customer_detail?.image}
-            pk={order.customer}
+            object_id={order.customer_detail.pk}
+            content_model={ModelType.company}
           />
           <Grid.Col span={{ base: 12, sm: 8 }}>
             <DetailsTable fields={tl} item={order} />

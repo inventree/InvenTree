@@ -153,15 +153,14 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
         <Grid grow>
           <DetailsImage
             appRole={UserRoles.purchase_order}
-            src={company?.image}
-            pk={company.pk}
-            image_id={company?.image?.pk}
-            content_type={ModelType.company}
+            content_model={ModelType.company}
+            object_id={company.pk}
             refresh={refreshInstance}
+            multiple={false}
             EditImageActions={{
-              replaceImage: true,
+              deleteImage: true,
               downloadImage: true,
-              deleteImage: company?.image
+              replaceImage: true
             }}
           />
           <Grid.Col span={{ base: 12, sm: 8 }}>

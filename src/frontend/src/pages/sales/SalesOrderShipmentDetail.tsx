@@ -226,12 +226,8 @@ export default function SalesOrderShipmentDetail() {
           <Grid grow>
             <DetailsImage
               appRole={UserRoles.sales_order}
-              src={customer?.image}
-              pk={customer?.pk}
-              EditImageActions={{
-                downloadImage: false,
-                deleteImage: false
-              }}
+              object_id={customer.pk}
+              content_model={ModelType.company}
             />
             <Grid.Col span={{ base: 12, sm: 8 }}>
               <DetailsTable fields={tl} item={data} />

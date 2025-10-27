@@ -1,6 +1,6 @@
 import type { UserRoles } from '@lib/enums/Roles';
 import { cancelEvent } from '@lib/functions/Events';
-import { ApiEndpoints, ModelType, apiUrl } from '@lib/index';
+import { ApiEndpoints, type ModelType, apiUrl } from '@lib/index';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { Carousel } from '@mantine/carousel';
@@ -414,7 +414,7 @@ function ImageActionButtons({
         bottom={5}
       >
         <ActionDropdown
-          menuPosition='top-end'
+          position='top-end'
           noindicator={true}
           icon={
             <IconCameraPlus
@@ -436,7 +436,7 @@ function ImageActionButtons({
 /**
  * Renders an image with action buttons for display on Details panels
  */
-export function DetailsImage(props: Readonly<DetailImageProps>) {
+function ImageItem(props: Readonly<DetailImageProps>) {
   // Displays a group of ActionButtons on hover
   const { hovered, ref } = useHover();
   const [img, setImg] = useState<string>(props.src ?? backup_image);
@@ -467,6 +467,7 @@ export function DetailsImage(props: Readonly<DetailImageProps>) {
     }
   });
 
+  console.log(props);
   // Modal used for removing/deleting the current image
   const deleteUploadImage = useDeleteApiFormModal({
     url: ApiEndpoints.upload_image_list,
@@ -504,11 +505,11 @@ export function DetailsImage(props: Readonly<DetailImageProps>) {
 
   const hasOverlay: boolean = useMemo(() => {
     return (
-      props.AddImageActions?.selectExisting ||
-      props.EditImageActions?.deleteImage ||
-      false
+      Object.values(props.EditImageActions || {}).some(
+        (value) => value === true
+      ) || false
     );
-  }, [props.AddImageActions]);
+  }, [props.EditImageActions]);
 
   const expandImage = (event: any) => {
     cancelEvent(event);
@@ -577,28 +578,37 @@ interface UploadImage {
   primary?: boolean;
 }
 
-interface DetailsImageCarouselProps {
+interface DetailsImageProps {
   appRole?: UserRoles;
-  apiPath: string;
   object_id: string;
-  content_model: ModelType;
+  content_model: ModelType.part | ModelType.company;
+  multiple?: boolean;
   refresh?: () => void;
+  AddImageActions?: AddImageButtonProps;
+  EditImageActions?: EditImageButtonProps;
 }
 
 /**
- * Carousel component to display multiple images for a model instance
+ * Carousel component to display images for a model instance
  */
-export function MultipleDetailsImage(
-  props: Readonly<DetailsImageCarouselProps>
-) {
+export function DetailsImage(props: Readonly<DetailsImageProps>) {
+  const {
+    content_model,
+    multiple,
+    object_id,
+    AddImageActions,
+    EditImageActions
+  } = props;
+  const img_url = ApiEndpoints.upload_image_list;
+
   const imageQuery = useQuery<UploadImage[]>({
-    queryKey: [ApiEndpoints.upload_image_list, props.object_id],
+    queryKey: [img_url, object_id],
     queryFn: async () => {
       return api
-        .get(apiUrl(ApiEndpoints.upload_image_list), {
+        .get(apiUrl(img_url), {
           params: {
-            content_model: props.content_model,
-            object_id: props.object_id
+            content_model: content_model,
+            object_id: object_id
           }
         })
         .then((response) => {
@@ -619,75 +629,76 @@ export function MultipleDetailsImage(
 
   const config = useMemo(() => {
     const images = imageQuery.data || [];
-
+    const backup_image = images[0]?.pk === 'backup';
+    const hasMultipleImags = multiple && images.length > 1;
     return {
-      onlyOne: images.length === 1,
       startSlide: Math.max(
         0,
         images.findIndex((img) => img.primary)
       ),
+      hasMultipleImags,
       addImageActions: {
-        selectExisting: true,
-        uploadNewImage: true
+        selectExisting: AddImageActions?.selectExisting,
+        uploadNewImage: AddImageActions?.uploadNewImage
       },
       editImageActions: {
-        deleteImage: !(images.length === 1 && images[0]?.pk === 'backup'),
-        downloadImage: false,
-        setAsPrimary: images.length > 0,
-        replaceImage: false
+        deleteImage: EditImageActions?.deleteImage && !backup_image,
+        setAsPrimary: images.length > 1 && EditImageActions?.setAsPrimary,
+        replaceImage: EditImageActions?.replaceImage,
+        downloadImage: EditImageActions?.downloadImage
       }
     };
   }, [imageQuery.data]);
 
   return (
     <Grid.Col span={{ base: 12, sm: 4 }}>
-      <Carousel
-        slideSize='100%'
-        emblaOptions={{
-          loop: !config.onlyOne,
-          align: 'center'
-        }}
-        initialSlide={config.startSlide}
-        withControls={!config.onlyOne}
-        previousControlProps={{
-          style: {
-            transform: 'translateX(-45%)',
-            color: 'white',
-            backgroundColor: 'rgba(0, 0, 0, 0.4)'
-          }
-        }}
-        nextControlProps={{
-          style: {
-            transform: 'translateX(45%)',
-            color: 'white',
-            backgroundColor: 'rgba(0, 0, 0, 0.6)'
-          }
-        }}
-        styles={{
-          control: {
-            '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.6)' }
-          }
-        }}
-      >
-        {!imageQuery.isFetching &&
-          imageQuery.data &&
-          imageQuery.data.map((imgObj: UploadImage, index: number) => (
+      {!imageQuery.isFetching && imageQuery.data && (
+        <Carousel
+          slideSize='100%'
+          emblaOptions={{
+            loop: config.hasMultipleImags,
+            align: 'center'
+          }}
+          initialSlide={config.startSlide}
+          withControls={config.hasMultipleImags}
+          previousControlProps={{
+            style: {
+              transform: 'translateX(-45%)',
+              color: 'white',
+              backgroundColor: 'rgba(0, 0, 0, 0.4)'
+            }
+          }}
+          nextControlProps={{
+            style: {
+              transform: 'translateX(45%)',
+              color: 'white',
+              backgroundColor: 'rgba(0, 0, 0, 0.6)'
+            }
+          }}
+          styles={{
+            control: {
+              '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.6)' }
+            }
+          }}
+        >
+          {imageQuery.data.map((imgObj: UploadImage, index: number) => (
             <Carousel.Slide key={index}>
-              <DetailsImage
+              <ImageItem
                 appRole={props.appRole}
                 AddImageActions={config.addImageActions}
                 EditImageActions={config.editImageActions}
                 src={imgObj.image}
                 image_id={imgObj.pk}
-                pk={props.object_id}
+                pk={object_id}
                 primary={imgObj.primary}
-                content_type={ModelType.part}
+                content_type={content_model}
                 refresh={props.refresh}
                 useGridCol={false}
               />
             </Carousel.Slide>
           ))}
-      </Carousel>
+        </Carousel>
+      )}
     </Grid.Col>
   );
 }

@@ -2025,12 +2025,6 @@ class InvenTreeImage(models.Model):
                     successor.primary = True
                     successor.save()
 
-    def get_image_url(self):
-        """Return the URL of the image for this part."""
-        if self.image:
-            return helpers.getMediaUrl(self.image.url)
-        return helpers.getBlankImage()
-
     def get_thumbnail_url(self) -> str:
         """Return the URL of the image thumbnail for this part."""
         if self.image:

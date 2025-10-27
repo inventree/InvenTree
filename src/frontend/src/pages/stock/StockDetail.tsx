@@ -43,7 +43,7 @@ import {
   DetailsTable
 } from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
-import { MultipleDetailsImage } from '../../components/details/DetailsImage';
+import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
   ActionDropdown,
@@ -437,9 +437,8 @@ export default function StockDetail() {
     return (
       <ItemDetailsGrid>
         <Grid grow>
-          <MultipleDetailsImage
+          <DetailsImage
             appRole={UserRoles.part}
-            apiPath={ApiEndpoints.part_list}
             object_id={stockitem.part}
             content_model={ModelType.part}
           />

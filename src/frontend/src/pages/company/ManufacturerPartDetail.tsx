@@ -136,8 +136,9 @@ export default function ManufacturerPartDetail() {
         <Grid grow>
           <DetailsImage
             appRole={UserRoles.part}
-            src={manufacturerPart?.part_detail?.image}
-            pk={manufacturerPart?.part_detail?.pk}
+            object_id={manufacturerPart?.part_detail?.pk}
+            content_model={ModelType.part}
+            multiple={true}
           />
           <Grid.Col span={{ base: 12, sm: 8 }}>
             <DetailsTable title={t`Part Details`} fields={tl} item={data} />

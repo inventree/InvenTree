@@ -56,7 +56,7 @@ import {
   DetailsTable
 } from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
-import { MultipleDetailsImage } from '../../components/details/DetailsImage';
+import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import { Thumbnail } from '../../components/images/Thumbnail';
 import {
@@ -735,20 +735,20 @@ export default function PartDetail() {
       <ItemDetailsGrid>
         <Grid grow>
           <Grid.Col pos='relative' span={{ base: 12, sm: 3 }}>
-            <MultipleDetailsImage
+            <DetailsImage
               appRole={UserRoles.part}
-              // addImageActions={{
-              //   selectExisting: true,
-              //   uploadNewImage: true
-              // }}
-              // editImageActions={{
-              //   deleteImage: hasImage,
-              //   setAsPrimary: hasImage
-              // }}
-              apiPath={apiUrl(ApiEndpoints.part_list, part.pk)}
               object_id={part.pk}
               content_model={ModelType.part}
               refresh={refreshInstance}
+              AddImageActions={{
+                selectExisting: true,
+                uploadNewImage: true
+              }}
+              EditImageActions={{
+                deleteImage: true,
+                setAsPrimary: true
+              }}
+              multiple={true}
             />
           </Grid.Col>
 

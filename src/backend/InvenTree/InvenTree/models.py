@@ -1085,6 +1085,50 @@ class InvenTreeImageMixin(models.Model):
 
         abstract = True
 
+    def save_image(self, file, file_name, primary=False):
+        """Save an image to this instance.
+
+        Args:
+            file: File object or file-like object (e.g., UploadedFile, BytesIO, or file path)
+            file_name: Name for the image file
+            primary: If True, set this image as the primary image (default: False)
+
+        Returns:
+            InvenTreeImage: The created image instance
+
+        Raises:
+            ValueError: If single_image is True and an image already exists
+        """
+        from django.core.files import File
+        from django.core.files.base import ContentFile
+
+        from common.models import InvenTreeImage
+
+        # Check if single_image constraint is violated
+        if self.single_image and self.images.exists():
+            raise ValueError('This object can only have a single image')
+
+        # If setting as primary, unset any existing primary images
+        if primary:
+            self.images.filter(primary=True).update(primary=False)
+
+        # Create the InvenTreeImage instance
+        img = InvenTreeImage(content_object=self, primary=primary)
+
+        # Handle different file input types
+        if isinstance(file, str):
+            # If file is a path string, open it
+            with open(file, 'rb') as f:
+                img.image.save(file_name, File(f), save=True)
+        elif isinstance(file, bytes):
+            # If file is bytes, wrap in ContentFile
+            img.image.save(file_name, ContentFile(file), save=True)
+        else:
+            # Assume it's a file-like object (UploadedFile, BytesIO, etc.)
+            img.image.save(file_name, file, save=True)
+
+        return img
+
     def delete(self, *args, **kwargs):
         """Ensure related images are deleted first."""
         # delete all related images

@@ -764,13 +764,13 @@ class InvenTreeImageSerializerMixin(metaclass=serializers.SerializerMetaclass):
         images = getattr(instance, 'all_images', None)
         if not images or len(images) == 0:
             return None
-        return next((img for img in images if img.primary), images[0])
+        return next(img for img in images if img.primary)
 
     def get_image(self, instance):
         """Return the URL of the primary image."""
         primary = self._get_primary(instance)
-        if not primary or not getattr(primary, 'image', None):
-            return getBlankImage()
+        if not primary:
+            return None
 
         image_file = primary.image
         try:
