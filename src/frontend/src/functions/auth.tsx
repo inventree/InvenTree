@@ -692,6 +692,8 @@ export async function handleWebauthnLogin(
   navigate?: NavigateFunction,
   location?: Location<any>
 ) {
+  const { setAuthContext } = useServerApiState.getState();
+
   try {
     const credential = await get(
       parseRequestOptionsFromJSON(webauthn_challenge)
@@ -703,6 +705,21 @@ export async function handleWebauthnLogin(
       .then((response) => {
         if (response.status === 200) {
           handleSuccessFullAuth(response, navigate, location, undefined);
+        }
+      })
+      .catch((err) => {
+        if (err?.response?.status == 401) {
+          const mfa_trust = err.response.data.data.flows.find(
+            (flow: any) => flow.id == FlowEnum.MfaTrust
+          );
+          if (mfa_trust?.is_pending) {
+            setAuthContext(err.response.data.data);
+            authApi(apiUrl(ApiEndpoints.auth_trust), undefined, 'post', {
+              trust: false
+            }).then((response) => {
+              handleSuccessFullAuth(response, navigate, location, undefined);
+            });
+          }
         }
       });
   } catch (e) {
