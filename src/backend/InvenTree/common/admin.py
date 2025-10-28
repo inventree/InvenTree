@@ -6,6 +6,13 @@ import common.models
 import common.validators
 
 
+@admin.register(common.models.ParameterTemplate)
+class ParameterTemplateAdmin(admin.ModelAdmin):
+    """Admin interface for ParameterTemplate objects."""
+
+    list_display = ('name', 'description', 'units')
+
+
 @admin.register(common.models.Attachment)
 class AttachmentAdmin(admin.ModelAdmin):
     """Admin interface for Attachment objects."""
