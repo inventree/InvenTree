@@ -198,7 +198,7 @@ export default function SupplierPartDetail() {
         icon: 'purchase_orders'
       },
       {
-        type: 'string',
+        type: 'number',
         name: 'available',
         label: t`Supplier Availability`,
         hidden: !data.availability_updated,
@@ -206,7 +206,7 @@ export default function SupplierPartDetail() {
         icon: 'packages'
       },
       {
-        type: 'string',
+        type: 'date',
         name: 'availability_updated',
         label: t`Availability Updated`,
         copy: true,
