@@ -61,7 +61,7 @@ Addresses are composed differently across the world, and InvenTree reflects this
 
 | Field | Description |
 | ----- | ----------- |
-| Title: A descriptive name for the address (e.g. "Head Office", "Warehouse", etc)
+| Title | A descriptive name for the address (e.g. "Head Office", "Warehouse", etc)
 | Line 1 | Main street address |
 | Line 2 | Extra street address line |
 | Postal Code: Also known as ZIP code, this is normally a number 3-5 digits in length |
