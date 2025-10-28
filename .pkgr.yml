@@ -2,7 +2,7 @@ name: inventree
 description: Open Source Inventory Management System
 homepage: https://inventree.org
 notifications: true
-buildpack: https://github.com/mjmair/heroku-buildpack-python#v216-mjmair
+buildpack: http://github.com/ryandotsmith/null-buildpack.
 env:
   - STACK=heroku-20
   - DISABLE_COLLECTSTATIC=1
@@ -36,7 +36,7 @@ dependencies:
   - nginx
   - jq
   - "libffi7 | libffi8"
-build_dependencies: 
+build_dependencies:
   - libbz2-dev
   - libffi-dev
   - libssl-dev
