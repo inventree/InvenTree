@@ -15,6 +15,9 @@ interface ServerApiStateProps {
   auth_config?: AuthConfig;
   auth_context?: AuthContext;
   setAuthContext: (auth_context: AuthContext | undefined) => void;
+  mfa_context?: any;
+  setMfaContext: (mfa_context: any) => void;
+  // Helper functions
   sso_enabled: () => boolean;
   registration_enabled: () => boolean;
   sso_registration_enabled: () => boolean;
@@ -60,6 +63,10 @@ export const useServerApiState = create<ServerApiStateProps>()(
       auth_context: undefined,
       setAuthContext(auth_context) {
         set({ auth_context });
+      },
+      mfa_context: undefined,
+      setMfaContext(mfa_context) {
+        set({ mfa_context });
       },
       sso_enabled: () => {
         const data = get().auth_config?.socialaccount.providers;

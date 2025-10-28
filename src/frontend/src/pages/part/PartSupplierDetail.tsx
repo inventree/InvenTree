@@ -15,7 +15,7 @@ export default function PartSupplierDetail({
           <StylishText size='lg'>{t`Suppliers`}</StylishText>
         </Accordion.Control>
         <Accordion.Panel>
-          <SupplierPartTable params={{ part: partId }} />
+          <SupplierPartTable partId={partId} />
         </Accordion.Panel>
       </Accordion.Item>
       <Accordion.Item value='part-manufacturers'>

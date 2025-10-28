@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react';
 
+import { Text } from '@mantine/core';
+
 import { ModelType } from '@lib/enums/ModelType';
 import { getDetailUrl } from '@lib/functions/Navigation';
 import { type InstanceRenderInterface, RenderInlineModel } from './Instance';
@@ -22,9 +24,19 @@ export function RenderAddress({
     .join(', ');
 
   const primary: string = instance.title || text;
-  const secondary: string = instance.title ? text : '';
+  const secondary: string = !!instance.title ? text : '';
 
-  return <RenderInlineModel primary={primary} secondary={secondary} />;
+  const suffix: ReactNode = instance.primary ? (
+    <Text size='xs'>Primary Address</Text>
+  ) : null;
+
+  return (
+    <RenderInlineModel
+      primary={primary}
+      secondary={secondary}
+      suffix={suffix}
+    />
+  );
 }
 
 /**
@@ -67,15 +79,22 @@ export function RenderSupplierPart(
   const supplier = instance.supplier_detail ?? {};
   const part = instance.part_detail ?? {};
 
+  const secondary: string = instance.SKU;
+  let suffix: string = part.full_name;
+
+  if (instance.pack_quantity) {
+    suffix += ` (${instance.pack_quantity})`;
+  }
+
   return (
     <RenderInlineModel
       {...props}
       primary={supplier?.name}
-      secondary={instance.SKU}
+      secondary={secondary}
       image={
         part?.thumbnail ?? part?.image ?? supplier?.thumbnail ?? supplier?.image
       }
-      suffix={part.full_name}
+      suffix={suffix}
       url={
         props.link
           ? getDetailUrl(ModelType.supplierpart, instance.pk)

@@ -1,3 +1,8 @@
+import {
+  type CredentialRequestOptionsJSON,
+  get,
+  parseRequestOptionsFromJSON
+} from '@github/webauthn-json/browser-ponyfill';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import { type AuthProvider, FlowEnum } from '@lib/types/Auth';
@@ -71,7 +76,7 @@ export async function doBasicLogin(
   const { getHost } = useLocalState.getState();
   const { clearUserState, setAuthenticated, fetchUserState } =
     useUserState.getState();
-  const { setAuthContext } = useServerApiState.getState();
+  const { setAuthContext, setMfaContext } = useServerApiState.getState();
 
   if (username.length == 0 || password.length == 0) {
     return;
@@ -157,6 +162,7 @@ export async function doBasicLogin(
       (flow: any) => flow.id == FlowEnum.MfaAuthenticate
     );
     if (mfa_flow?.is_pending) {
+      setMfaContext(mfa_flow);
       // MFA is required - we might already have a code
       if (code && code.length > 0) {
         const rslt = await handleMfaLogin(
@@ -679,4 +685,58 @@ export function handleChangePassword(
         passwordError(errors);
       }
     });
+}
+
+export async function handleWebauthnLogin(
+  navigate?: NavigateFunction,
+  location?: Location<any>
+) {
+  const { setAuthContext } = useServerApiState.getState();
+
+  const webauthn_challenge = api
+    .get(apiUrl(ApiEndpoints.auth_webauthn_login))
+    .catch(() => {})
+    .then((response) => {
+      if (response && response.status === 200) {
+        return response.data.data.request_options;
+      }
+    });
+
+  if (!webauthn_challenge) {
+    return;
+  }
+
+  try {
+    const credential = await get(
+      parseRequestOptionsFromJSON(
+        webauthn_challenge as CredentialRequestOptionsJSON
+      )
+    );
+    await api
+      .post(apiUrl(ApiEndpoints.auth_webauthn_login), {
+        credential: credential
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          handleSuccessFullAuth(response, navigate, location, undefined);
+        }
+      })
+      .catch((err) => {
+        if (err?.response?.status == 401) {
+          const mfa_trust = err.response.data.data.flows.find(
+            (flow: any) => flow.id == FlowEnum.MfaTrust
+          );
+          if (mfa_trust?.is_pending) {
+            setAuthContext(err.response.data.data);
+            authApi(apiUrl(ApiEndpoints.auth_trust), undefined, 'post', {
+              trust: false
+            }).then((response) => {
+              handleSuccessFullAuth(response, navigate, location, undefined);
+            });
+          }
+        }
+      });
+  } catch (e) {
+    console.error(e);
+  }
 }

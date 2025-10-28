@@ -45,6 +45,7 @@ import {
   LocationColumn,
   NoteColumn,
   PartColumn,
+  ProjectCodeColumn,
   ReferenceColumn,
   TargetDateColumn
 } from '../ColumnRenderers';
@@ -150,6 +151,7 @@ export function PurchaseOrderLineItemTable({
         accessor: 'part_detail.description'
       }),
       ReferenceColumn({}),
+      ProjectCodeColumn({}),
       {
         accessor: 'build_order',
         title: t`Build Order`,
@@ -192,7 +194,7 @@ export function PurchaseOrderLineItemTable({
 
             extra.push(
               <Text key='total-quantity'>
-                {t`Total Quantity`}: {total} {part?.units}
+                {t`Total Quantity`}: {formatDecimal(total)} {part?.units}
               </Text>
             );
           }

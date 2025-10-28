@@ -1,11 +1,11 @@
 import { t } from '@lingui/core/macro';
-import { Accordion, Grid, Skeleton, Stack } from '@mantine/core';
+import { Accordion, Grid, Skeleton, Stack, Text } from '@mantine/core';
 import {
   IconBookmark,
+  IconCubeSend,
   IconInfoCircle,
   IconList,
-  IconTools,
-  IconTruckDelivery
+  IconTools
 } from '@tabler/icons-react';
 import { type ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
@@ -187,8 +187,12 @@ export default function SalesOrderDetail() {
         name: 'address',
         label: t`Shipping Address`,
         icon: 'address',
-        hidden: !order.address_detail,
-        value_formatter: () => <RenderAddress instance={order.address_detail} />
+        value_formatter: () =>
+          order.address_detail ? (
+            <RenderAddress instance={order.address_detail} />
+          ) : (
+            <Text size='sm' c='red'>{t`Not specified`}</Text>
+          )
       },
       {
         type: 'text',
@@ -390,8 +394,13 @@ export default function SalesOrderDetail() {
       {
         name: 'shipments',
         label: t`Shipments`,
-        icon: <IconTruckDelivery />,
-        content: <SalesOrderShipmentTable orderId={order.pk} />
+        icon: <IconCubeSend />,
+        content: (
+          <SalesOrderShipmentTable
+            orderId={order.pk}
+            customerId={order.customer}
+          />
+        )
       },
       {
         name: 'allocations',

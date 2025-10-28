@@ -267,7 +267,7 @@ Simple mathematical operators are available, as demonstrated in the example temp
 
 ### Input Types
 
-These mathematical functions accept inputs of various input types, and attempt to perform the operation accordingly. Note that any inputs which are provided as strings will be converted to floating point numbers before the operation is performed.
+These mathematical functions accept inputs of various input types, and attempt to perform the operation accordingly. Note that any inputs which are provided as strings or numbers will be converted to `Decimal` class types before the operation is performed.
 
 ### add
 
