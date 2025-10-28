@@ -202,7 +202,7 @@ function detect_envs() {
     export INVENTREE_DB_HOST=${INVENTREE_DB_HOST:-samplehost}
     export INVENTREE_DB_PORT=${INVENTREE_DB_PORT:-123456}
 
-    export INVENTREE_SITE_URL=${INVENTREE_SITE_URL:"http://${INVENTREE_IP}"}
+    export INVENTREE_SITE_URL=${INVENTREE_SITE_URL:-http://${INVENTREE_IP}}
 
     export SETUP_CONF_LOADED=true
   fi
