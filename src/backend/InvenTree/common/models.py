@@ -53,6 +53,7 @@ import InvenTree.helpers
 import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
+import InvenTree.validators
 import users.models
 from common.setting.type import InvenTreeSettingsKeyType, SettingsKeyType
 from common.settings import get_global_setting, global_setting_overrides
@@ -2360,6 +2361,154 @@ class SelectionListEntry(models.Model):
         if not self.active:
             return f'{self.label} (Inactive)'
         return self.label
+
+
+class ParameterTemplate(
+    InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
+):
+    """A ParameterTemplate provides a template for defining parameter values against various models.
+
+    This allow for assigning arbitrary data fields against existing models,
+    extending their functionality beyond the built-in fields.
+
+    Attributes:
+        name: The name (key) of the template
+        description: A description of the template
+        units: The units associated with the template (if applicable)
+        checkbox: Is this template a checkbox (boolean) type?
+        choices: Comma-separated list of choices (if applicable)
+        selectionlist: Optional link to a SelectionList for this template
+    """
+
+    class Meta:
+        """Metaclass options for the ParameterTemplate model."""
+
+    @staticmethod
+    def get_api_url() -> str:
+        """Return the API URL associated with the ParameterTemplate model."""
+        return reverse('api-parameter-template-list')
+
+    def __str__(self):
+        """Return a string representation of a ParameterTemplate instance."""
+        s = str(self.name)
+        if self.units:
+            s += f' ({self.units})'
+        return s
+
+    def clean(self):
+        """Custom cleaning step for this model.
+
+        Checks:
+        - A 'checkbox' field cannot have 'choices' set
+        - A 'checkbox' field cannot have 'units' set
+        """
+        super().clean()
+
+        # Check that checkbox parameters do not have units or choices
+        if self.checkbox:
+            if self.units:
+                raise ValidationError({
+                    'units': _('Checkbox parameters cannot have units')
+                })
+
+            if self.choices:
+                raise ValidationError({
+                    'choices': _('Checkbox parameters cannot have choices')
+                })
+
+        # Check that 'choices' are in fact valid
+        if self.choices is None:
+            self.choices = ''
+        else:
+            self.choices = str(self.choices).strip()
+
+        if self.choices:
+            choice_set = set()
+
+            for choice in self.choices.split(','):
+                choice = choice.strip()
+
+                # Ignore empty choices
+                if not choice:
+                    continue
+
+                if choice in choice_set:
+                    raise ValidationError({'choices': _('Choices must be unique')})
+
+                choice_set.add(choice)
+
+    def validate_unique(self, exclude=None):
+        """Ensure that PartParameterTemplates cannot be created with the same name.
+
+        This test should be case-insensitive (which the unique caveat does not cover).
+        """
+        super().validate_unique(exclude)
+
+        try:
+            others = ParameterTemplate.objects.filter(name__iexact=self.name).exclude(
+                pk=self.pk
+            )
+
+            if others.exists():
+                msg = _('Parameter template name must be unique')
+                raise ValidationError({'name': msg})
+        except ParameterTemplate.DoesNotExist:
+            pass
+
+    def get_choices(self):
+        """Return a list of choices for this parameter template."""
+        if self.selectionlist:
+            return self.selectionlist.get_choices()
+
+        if not self.choices:
+            return []
+
+        return [x.strip() for x in self.choices.split(',') if x.strip()]
+
+    name = models.CharField(
+        max_length=100,
+        verbose_name=_('Name'),
+        help_text=_('Parameter Name'),
+        unique=True,
+    )
+
+    units = models.CharField(
+        max_length=25,
+        verbose_name=_('Units'),
+        help_text=_('Physical units for this parameter'),
+        blank=True,
+        validators=[InvenTree.validators.validate_physical_units],
+    )
+
+    description = models.CharField(
+        max_length=250,
+        verbose_name=_('Description'),
+        help_text=_('Parameter description'),
+        blank=True,
+    )
+
+    checkbox = models.BooleanField(
+        default=False,
+        verbose_name=_('Checkbox'),
+        help_text=_('Is this parameter a checkbox?'),
+    )
+
+    choices = models.CharField(
+        max_length=5000,
+        verbose_name=_('Choices'),
+        help_text=_('Valid choices for this parameter (comma-separated)'),
+        blank=True,
+    )
+
+    selectionlist = models.ForeignKey(
+        SelectionList,
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name='templates',
+        verbose_name=_('Selection List'),
+        help_text=_('Selection list for this parameter'),
+    )
 
 
 class BarcodeScanResult(InvenTree.models.InvenTreeModel):
