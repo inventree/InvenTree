@@ -697,6 +697,26 @@ class AttachmentSerializer(InvenTreeModelSerializer):
         return super().save(**kwargs)
 
 
+class ParameterTemplateSerializer(
+    DataImportExportSerializerMixin, InvenTreeModelSerializer
+):
+    """Serializer for the ParameterTemplate model."""
+
+    class Meta:
+        """Meta options for ParameterTemplateSerializer."""
+
+        model = common_models.ParameterTemplate
+        fields = [
+            'pk',
+            'name',
+            'units',
+            'description',
+            'checkbox',
+            'choices',
+            'selectionlist',
+        ]
+
+
 class IconSerializer(serializers.Serializer):
     """Serializer for an icon."""
 

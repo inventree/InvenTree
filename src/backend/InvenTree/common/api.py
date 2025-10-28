@@ -38,7 +38,7 @@ from generic.states.api import urlpattern as generic_states_api_urls
 from InvenTree.api import BulkDeleteMixin, MetadataView
 from InvenTree.config import CONFIG_LOOKUPS
 from InvenTree.filters import ORDER_FILTER, SEARCH_ORDER_FILTER
-from InvenTree.helpers import inheritors
+from InvenTree.helpers import inheritors, str2bool
 from InvenTree.helpers_email import send_email
 from InvenTree.mixins import (
     CreateAPI,
@@ -765,6 +765,56 @@ class AttachmentDetail(RetrieveUpdateDestroyAPI):
         return super().destroy(request, *args, **kwargs)
 
 
+class ParameterTemplateFilter(FilterSet):
+    """FilterSet class for the ParameterTemplateList API endpoint."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = common.models.ParameterTemplate
+        fields = ['name', 'units', 'checkbox']
+
+    has_choices = rest_filters.BooleanFilter(
+        method='filter_has_choices', label='Has Choice'
+    )
+
+    def filter_has_choices(self, queryset, name, value):
+        """Filter queryset to include only PartParameterTemplates with choices."""
+        if str2bool(value):
+            return queryset.exclude(Q(choices=None) | Q(choices=''))
+
+        return queryset.filter(Q(choices=None) | Q(choices='')).distinct()
+
+    has_units = rest_filters.BooleanFilter(method='filter_has_units', label='Has Units')
+
+    def filter_has_units(self, queryset, name, value):
+        """Filter queryset to include only PartParameterTemplates with units."""
+        if str2bool(value):
+            return queryset.exclude(Q(units=None) | Q(units=''))
+
+        return queryset.filter(Q(units=None) | Q(units='')).distinct()
+
+
+class ParameterTemplateMixin:
+    """Mixin class for ParameterTemplate views."""
+
+    queryset = common.models.ParameterTemplate.objects.all()
+    serializer_class = common.serializers.ParameterTemplateSerializer
+
+
+class ParameterTemplateList(ParameterTemplateMixin, DataExportViewMixin, ListCreateAPI):
+    """List view for ParameterTemplate objects."""
+
+    filterset_class = ParameterTemplateFilter
+    filter_backends = SEARCH_ORDER_FILTER
+    search_fields = ['name', 'description']
+    ordering_fields = ['name', 'units', 'checkbox']
+
+
+class ParameterTemplateDetail(ParameterTemplateMixin, RetrieveUpdateDestroyAPI):
+    """Detail view for a ParameterTemplate object."""
+
+
 @method_decorator(cache_control(public=True, max_age=86400), name='dispatch')
 class IconList(ListAPI):
     """List view for available icon packages."""
@@ -995,6 +1045,32 @@ common_api_urls = [
                 ]),
             ),
             path('', AttachmentList.as_view(), name='api-attachment-list'),
+        ]),
+    ),
+    # Parameters and templates
+    path(
+        'parameter/',
+        include([
+            path(
+                'template/',
+                include([
+                    path(
+                        '<int:pk>/',
+                        include([
+                            path(
+                                '',
+                                ParameterTemplateDetail.as_view(),
+                                name='api-parameter-template-detail',
+                            )
+                        ]),
+                    ),
+                    path(
+                        '',
+                        ParameterTemplateList.as_view(),
+                        name='api-parameter-template-list',
+                    ),
+                ]),
+            )
         ]),
     ),
     path(
