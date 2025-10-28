@@ -327,7 +327,7 @@ function update_or_install() {
 
   # Run update as app user
   echo "# POI12| Updating InvenTree"
-  sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && pip install wheel"
+  sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && pip install wheel python-dotenv"
   sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && set -e && invoke update | sed -e 's/^/# POI12| u | /;'"
 
   # Make sure permissions are correct again
