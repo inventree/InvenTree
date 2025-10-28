@@ -2,10 +2,8 @@ name: inventree
 description: Open Source Inventory Management System
 homepage: https://inventree.org
 notifications: true
-buildpack: http://github.com/ryandotsmith/null-buildpack.
+buildpack: http://github.com/ryandotsmith/null-buildpack
 env:
-  - STACK=heroku-20
-  - DISABLE_COLLECTSTATIC=1
   - INVENTREE_DB_ENGINE=sqlite3
   - INVENTREE_DB_NAME=database.sqlite3
   - INVENTREE_PLUGINS_ENABLED
@@ -36,10 +34,6 @@ dependencies:
   - nginx
   - jq
   - "libffi7 | libffi8"
-build_dependencies:
-  - libbz2-dev
-  - libffi-dev
-  - libssl-dev
 targets:
   ubuntu-20.04: true
   ubuntu-24.04: true
