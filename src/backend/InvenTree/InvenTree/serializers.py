@@ -4,6 +4,7 @@ import os
 from collections import OrderedDict
 from copy import deepcopy
 from decimal import Decimal
+from typing import Any, Optional
 
 from django.conf import settings
 from django.core.exceptions import ValidationError as DjangoValidationError
@@ -26,16 +27,197 @@ import common.models as common_models
 import InvenTree.ready
 from common.currency import currency_code_default, currency_code_mappings
 from InvenTree.fields import InvenTreeRestURLField, InvenTreeURLField
+from InvenTree.helpers import str2bool
+
+
+# region path filtering
+class FilterableSerializerField:
+    """Mixin to mark serializer as filterable.
+
+    This needs to be used in conjunction with `enable_filter` on the serializer field!
+    """
+
+    is_filterable = None
+    is_filterable_vals = {}
+
+    def __init__(self, *args, **kwargs):
+        """Initialize the serializer."""
+        if self.is_filterable is None:  # Materialize parameters for later usage
+            self.is_filterable = kwargs.pop('is_filterable', None)
+            self.is_filterable_vals = kwargs.pop('is_filterable_vals', {})
+        super().__init__(*args, **kwargs)
+
+
+def enable_filter(
+    func: Any,
+    default_include: bool = False,
+    filter_name: Optional[str] = None,
+    filter_by_query: bool = True,
+):
+    """Decorator for marking a serializer field as filterable.
+
+    This can be customized by passing in arguments. This only works in conjunction with serializer fields or serializers that contain the `FilterableSerializerField` mixin.
+
+    Args:
+        func: The serializer field to mark as filterable. Will automatically be passed when used as a decorator.
+        default_include (bool): If True, the field will be included by default unless explicitly excluded. If False, the field will be excluded by default unless explicitly included.
+        filter_name (str, optional): The name of the filter parameter to use in the URL. If None, the function name of the (decorated) function will be used.
+        filter_by_query (bool): If True, also look for filter parameters in the request query parameters.
+
+    Returns:
+        The decorated serializer field, marked as filterable.
+    """
+    # Ensure this function can be actually filteres
+    if not issubclass(func.__class__, FilterableSerializerField):
+        raise TypeError(
+            'INVE-I2: `enable_filter` can only be applied to serializer fields / serializers that contain the `FilterableSerializerField` mixin!'
+        )
+
+    # Mark the function as filterable
+    func._kwargs['is_filterable'] = True
+    func._kwargs['is_filterable_vals'] = {
+        'default': default_include,
+        'filter_name': filter_name if filter_name else func.field_name,
+        'filter_by_query': filter_by_query,
+    }
+    return func
+
+
+class FilterableSerializerMixin:
+    """Mixin that enables filtering of marked fields on a serializer.
+
+    Use the `enable_filter` decorator to mark serializer fields as filterable.
+    This introduces overhead during initialization, so only use this mixin when necessary.
+    If you need to mark a serializer as filterable but it does not contain any filterable fields, set `no_filters = True` to avoid getting an exception that protects against over-application of this mixin.
+    """
+
+    _was_filtered = False
+    no_filters = False
+    """If True, do not raise an exception if no filterable fields are found."""
+    filter_on_query = True
+    """If True, also look for filter parameters in the request query parameters."""
+
+    def __init__(self, *args, **kwargs):
+        """Initialization routine for the serializer. This gathers and applies filters through kwargs."""
+        # add list_serializer_class to meta if not present - reduces duplication
+        if not isinstance(self, FilterableListSerializer) and (
+            not hasattr(self.Meta, 'list_serializer_class')
+        ):
+            self.Meta.list_serializer_class = FilterableListSerializer
+
+        self.gather_filters(kwargs)
+        super().__init__(*args, **kwargs)
+        self.do_filtering()
+
+    def gather_filters(self, kwargs) -> None:
+        """Gather filterable fields through introspection."""
+        # Fast exit if this has already been done or would not have any effect
+        if getattr(self, '_was_filtered', False) or not hasattr(self, 'fields'):
+            return
+        self._was_filtered = True
+
+        # Actually gather the filterable fields
+        # Also see `enable_filter` where` is_filterable and is_filterable_vals are set
+        self.filter_targets: dict[str, dict] = {
+            str(k): {'serializer': a, **getattr(a, 'is_filterable_vals', {})}
+            for k, a in self.fields.items()
+            if getattr(a, 'is_filterable', None)
+        }
+
+        # Gather query parameters from the request context
+        query_params = {}
+        if context := kwargs.get('context', {}):
+            query_params = dict(getattr(context.get('request', {}), 'query_params', {}))
+
+        # Remove filter args from kwargs to avoid issues with super().__init__
+        poped_kwargs = {}  # store popped kwargs as a arg might be reused for multiple fields
+        tgs_vals: dict[str, bool] = {}
+        for k, v in self.filter_targets.items():
+            pop_ref = v['filter_name'] or k
+            val = kwargs.pop(pop_ref, poped_kwargs.get(pop_ref))
+
+            # Optionally also look in query parameters
+            if val is None and self.filter_on_query and v.get('filter_by_query', True):
+                val = query_params.pop(pop_ref, None)
+                if isinstance(val, list) and len(val) == 1:
+                    val = val[0]
+
+            if val:  # Save popped value for reuse
+                poped_kwargs[pop_ref] = val
+            tgs_vals[k] = (
+                str2bool(val) if isinstance(val, (str, int, float)) else val
+            )  # Support for various filtering style for backwards compatibility
+        self.filter_target_values = tgs_vals
+
+        # Ensure this mixin is not proadly applied as it is expensive on scale (total CI time increased by 21% when running all coverage tests)
+        if len(self.filter_targets) == 0 and not self.no_filters:
+            raise Exception(
+                'INVE-I2: No filter targets found in fields, remove `PathScopedMixin`'
+            )
+
+    def do_filtering(self) -> None:
+        """Do the actual filtering."""
+        # This serializer might not contain filters or we do not want to pop fields while generating the schema
+        if (
+            not hasattr(self, 'filter_target_values')
+            or InvenTree.ready.isGeneratingSchema()
+        ):
+            return
+
+        # Throw out fields which are not requested (either by default or explicitly)
+        for k, v in self.filter_target_values.items():
+            # See `enable_filter` where` is_filterable and is_filterable_vals are set
+            value = v if v is not None else bool(self.filter_targets[k]['default'])
+            if value is not True:
+                self.fields.pop(k, None)
+
+
+# special serializers which allow filtering
+class FilterableListSerializer(
+    FilterableSerializerField, FilterableSerializerMixin, serializers.ListSerializer
+):
+    """Custom ListSerializer which allows filtering of fields."""
+
+
+# special serializer fields which allow filtering
+class FilterableListField(FilterableSerializerField, serializers.ListField):
+    """Custom ListField which allows filtering."""
+
+
+class FilterableSerializerMethodField(
+    FilterableSerializerField, serializers.SerializerMethodField
+):
+    """Custom SerializerMethodField which allows filtering."""
+
+
+class FilterableDateTimeField(FilterableSerializerField, serializers.DateTimeField):
+    """Custom DateTimeField which allows filtering."""
+
+
+class FilterableFloatField(FilterableSerializerField, serializers.FloatField):
+    """Custom FloatField which allows filtering."""
+
+
+class FilterableCharField(FilterableSerializerField, serializers.CharField):
+    """Custom CharField which allows filtering."""
+
+
+class FilterableIntegerField(FilterableSerializerField, serializers.IntegerField):
+    """Custom IntegerField which allows filtering."""
+
+
+# endregion
 
 
 class EmptySerializer(serializers.Serializer):
     """Empty serializer for use in testing."""
 
 
-class InvenTreeMoneySerializer(MoneyField):
+class InvenTreeMoneySerializer(FilterableSerializerField, MoneyField):
     """Custom serializer for 'MoneyField', which ensures that passed values are numerically valid.
 
     Ref: https://github.com/django-money/django-money/blob/master/djmoney/contrib/django_rest_framework/fields.py
+    This field allows filtering.
     """
 
     def __init__(self, *args, **kwargs):
@@ -222,7 +404,7 @@ class DependentField(serializers.Field):
         return None
 
 
-class InvenTreeModelSerializer(serializers.ModelSerializer):
+class InvenTreeModelSerializer(FilterableSerializerField, serializers.ModelSerializer):
     """Inherits the standard Django ModelSerializer class, but also ensures that the underlying model class data are checked on validation."""
 
     # Switch out URLField mapping

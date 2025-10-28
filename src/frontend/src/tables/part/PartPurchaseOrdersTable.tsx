@@ -8,7 +8,7 @@ import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
-import { formatCurrency } from '../../defaults/formatters';
+import { formatCurrency, formatDecimal } from '../../defaults/formatters';
 import { useTable } from '../../hooks/UseTable';
 import { DateColumn, ReferenceColumn, StatusColumn } from '../ColumnRenderers';
 import { IncludeVariantsFilter, StatusFilterOptions } from '../Filter';
@@ -76,7 +76,7 @@ export default function PartPurchaseOrdersTable({
 
             extra.push(
               <Text key='total-quantity'>
-                {t`Total Quantity`}: {total} {part?.units}
+                {t`Total Quantity`}: {formatDecimal(total)} {part?.units}
               </Text>
             );
           }

@@ -10,7 +10,7 @@ import { doCachedLogin } from './login';
  * Test the "admin" account
  * - This is a superuser account, so should have *all* permissions available
  */
-test('Permissions - Admin', async ({ browser, request }) => {
+test('Permissions - Admin', async ({ browser }) => {
   // Login, and start on the "admin" page
   const page = await doCachedLogin(browser, {
     username: 'admin',
@@ -57,7 +57,7 @@ test('Permissions - Admin', async ({ browser, request }) => {
  * Test the "reader" account
  * - This account is read-only, but should be able to access *most* pages
  */
-test('Permissions - Reader', async ({ browser, request }) => {
+test('Permissions - Reader', async ({ browser }) => {
   // Login, and start on the "admin" page
   const page = await doCachedLogin(browser, {
     username: 'reader',
@@ -103,7 +103,7 @@ test('Permissions - Reader', async ({ browser, request }) => {
 
   // Go to the user profile page
   await page.getByRole('button', { name: 'Ronald Reader' }).click();
-  await page.getByRole('menuitem', { name: 'Account Settings' }).click();
+  await page.getByRole('menuitem', { name: 'User Settings' }).click();
 
   await loadTab(page, 'Notifications');
   await loadTab(page, 'Display Options');

@@ -39,10 +39,9 @@ test('Dashboard - Basic', async ({ browser }) => {
   await page.getByLabel('dashboard-accept-layout').click();
 });
 
-test('Dashboard - Plugins', async ({ browser, request }) => {
+test('Dashboard - Plugins', async ({ browser }) => {
   // Ensure that the "SampleUI" plugin is enabled
   await setPluginState({
-    request,
     plugin: 'sampleui',
     state: true
   });

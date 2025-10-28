@@ -101,14 +101,36 @@ export function useSalesOrderFields({
 export function useSalesOrderLineItemFields({
   customerId,
   orderId,
-  create
+  create,
+  currency
 }: {
   customerId?: number;
   orderId?: number;
   create?: boolean;
+  currency?: string;
 }): ApiFormFieldSet {
-  const fields = useMemo(() => {
-    return {
+  const [salePrice, setSalePrice] = useState<string>('0');
+  const [partCurrency, setPartCurrency] = useState<string>(currency ?? '');
+  const [part, setPart] = useState<any>({});
+  const [quantity, setQuantity] = useState<string>('');
+
+  useEffect(() => {
+    if (!create || !part || !part.price_breaks) return;
+
+    const qty = quantity ? Number.parseInt(quantity, 10) : 0;
+
+    const applicablePriceBreaks = part.price_breaks
+      .filter(
+        (pb: any) => pb.price_currency == partCurrency && qty <= pb.quantity
+      )
+      .sort((a: any, b: any) => a.quantity - b.quantity);
+
+    if (applicablePriceBreaks.length)
+      setSalePrice(applicablePriceBreaks[0].price);
+  }, [part, quantity, partCurrency, create]);
+
+  return useMemo(() => {
+    const fields: ApiFormFieldSet = {
       order: {
         filters: {
           customer_detail: true
@@ -119,20 +141,32 @@ export function useSalesOrderLineItemFields({
       part: {
         filters: {
           active: true,
-          salable: true
-        }
+          salable: true,
+          price_breaks: true
+        },
+        onValueChange: (_: any, record?: any) => setPart(record)
       },
       reference: {},
-      quantity: {},
-      sale_price: {},
-      sale_price_currency: {},
+      quantity: {
+        onValueChange: setQuantity
+      },
+      sale_price: {
+        value: salePrice
+      },
+      sale_price_currency: {
+        value: partCurrency,
+        onValueChange: setPartCurrency
+      },
+      project_code: {
+        description: t`Select project code for this line item`
+      },
       target_date: {},
       notes: {},
       link: {}
     };
-  }, []);
 
-  return fields;
+    return fields;
+  }, [salePrice, partCurrency, orderId, create]);
 }
 
 function SalesOrderAllocateLineRow({
@@ -341,8 +375,10 @@ export function useSalesOrderAllocateSerialsFields({
 }
 
 export function useSalesOrderShipmentFields({
+  customerId,
   pending
 }: {
+  customerId?: number;
   pending?: boolean;
 }): ApiFormFieldSet {
   return useMemo(() => {
@@ -357,11 +393,18 @@ export function useSalesOrderShipmentFields({
       delivery_date: {
         hidden: pending ?? true
       },
+      shipment_address: {
+        placeholder: t`Leave blank to use the order address`,
+        filters: {
+          company: customerId,
+          ordering: '-primary'
+        }
+      },
       tracking_number: {},
       invoice_number: {},
       link: {}
     };
-  }, [pending]);
+  }, [customerId, pending]);
 }
 
 export function useSalesOrderShipmentCompleteFields({

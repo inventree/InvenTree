@@ -115,6 +115,8 @@ export function OptionsApiForm({
 
     if (!_props.fields) return _props;
 
+    _props.fields = { ..._props.fields };
+
     for (const [k, v] of Object.entries(_props.fields)) {
       _props.fields[k] = constructField({
         field: v,
@@ -172,8 +174,14 @@ export function ApiForm({
   );
 
   const defaultValues: FieldValues = useMemo(() => {
-    const defaultValuesMap = mapFields(fields ?? {}, (_path, field) => {
-      return field.value ?? field.default ?? undefined;
+    const defaultValuesMap = mapFields(props.fields ?? {}, (_path, field) => {
+      if (field.value !== undefined && field.value !== null) {
+        return field.value;
+      }
+      if (field.default !== undefined && field.default !== null) {
+        return field.default;
+      }
+      return undefined;
     });
 
     // If the user has specified initial data, that overrides default values
@@ -186,7 +194,6 @@ export function ApiForm({
         }
       });
     }
-
     return defaultValuesMap;
   }, [props.fields, props.initialData]);
 
@@ -580,9 +587,11 @@ export function ApiForm({
                 <Alert radius='sm' color='red' title={t`Form Error`}>
                   {nonFieldErrors.length > 0 ? (
                     <Stack gap='xs'>
-                      {nonFieldErrors.map((message) => (
-                        <Text key={message}>{message}</Text>
-                      ))}
+                      {nonFieldErrors
+                        .filter((message) => !!message && message !== 'None')
+                        .map((message) => (
+                          <Text key={message}>{message}</Text>
+                        ))}
                     </Stack>
                   ) : (
                     <Text>{t`Errors exist for one or more form fields`}</Text>

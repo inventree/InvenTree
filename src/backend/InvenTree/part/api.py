@@ -17,6 +17,7 @@ from rest_framework.response import Response
 import part.filters
 from data_exporter.mixins import DataExportViewMixin
 from InvenTree.api import (
+    BulkCreateMixin,
     BulkDeleteMixin,
     BulkUpdateMixin,
     ListCreateDestroyAPIView,
@@ -43,9 +44,9 @@ from InvenTree.mixins import (
     RetrieveAPI,
     RetrieveUpdateAPI,
     RetrieveUpdateDestroyAPI,
+    SerializerContextMixin,
     UpdateAPI,
 )
-from InvenTree.serializers import EmptySerializer
 from stock.models import StockLocation
 
 from . import serializers as part_serializers
@@ -282,13 +283,11 @@ class CategoryDetail(CategoryMixin, OutputOptionsMixin, CustomRetrieveUpdateDest
 
     def destroy(self, request, *args, **kwargs):
         """Delete a Part category instance via the API."""
-        delete_parts = (
-            'delete_parts' in request.data and request.data['delete_parts'] == '1'
+        delete_parts = str2bool(request.data.get('delete_parts', False))
+        delete_child_categories = str2bool(
+            request.data.get('delete_child_categories', False)
         )
-        delete_child_categories = (
-            'delete_child_categories' in request.data
-            and request.data['delete_child_categories'] == '1'
-        )
+
         return super().destroy(
             request,
             *args,
@@ -591,19 +590,7 @@ class PartSerialNumberDetail(RetrieveAPI):
     """API endpoint for returning extra serial number information about a particular part."""
 
     queryset = Part.objects.all()
-    serializer_class = EmptySerializer
-
-    def retrieve(self, request, *args, **kwargs):
-        """Return serial number information for the referenced Part instance."""
-        part = self.get_object()
-
-        # Calculate the "latest" serial number
-        latest_serial = part.get_latest_serial_number()
-        next_serial = part.get_next_serial_number()
-
-        data = {'latest': latest_serial, 'next': next_serial}
-
-        return Response(data)
+    serializer_class = part_serializers.PartSerialNumberSerializer
 
 
 class PartCopyBOM(CreateAPI):
@@ -1012,7 +999,7 @@ class PartFilter(FilterSet):
         return queryset.filter(category__in=children)
 
 
-class PartMixin:
+class PartMixin(SerializerContextMixin):
     """Mixin class for Part API endpoints."""
 
     serializer_class = part_serializers.PartSerializer
@@ -1031,13 +1018,13 @@ class PartMixin:
         if str2bool(self.request.query_params.get('parameters', False)):
             queryset = queryset.prefetch_related('parameters', 'parameters__template')
 
+        if str2bool(self.request.query_params.get('price_breaks', True)):
+            queryset = queryset.prefetch_related('salepricebreaks')
+
         return queryset
 
     def get_serializer(self, *args, **kwargs):
         """Return a serializer instance for this endpoint."""
-        # Ensure the request context is passed through
-        kwargs['context'] = self.get_serializer_context()
-
         # Indicate that we can create a new Part via this endpoint
         kwargs['create'] = self.is_create
 
@@ -1051,7 +1038,6 @@ class PartMixin:
             self.starred_parts = [
                 star.part for star in self.request.user.starred_parts.all()
             ]
-
         kwargs['starred_parts'] = self.starred_parts
 
         return super().get_serializer(*args, **kwargs)
@@ -1074,6 +1060,7 @@ class PartOutputOptions(OutputConfiguration):
         InvenTreeOutputOption('category_detail'),
         InvenTreeOutputOption('location_detail'),
         InvenTreeOutputOption('path_detail'),
+        InvenTreeOutputOption('price_breaks'),
     ]
 
 
@@ -1366,11 +1353,25 @@ class PartParameterTemplateDetail(PartParameterTemplateMixin, RetrieveUpdateDest
     """API endpoint for accessing the detail view for a PartParameterTemplate object."""
 
 
+class PartParameterOutputOptions(OutputConfiguration):
+    """Output options for the PartParameter endpoints."""
+
+    OPTIONS = [
+        InvenTreeOutputOption('part_detail'),
+        InvenTreeOutputOption(
+            'template_detail',
+            default=True,
+            description='Include detailed information about the part parameter template.',
+        ),
+    ]
+
+
 class PartParameterAPIMixin:
     """Mixin class for PartParameter API endpoints."""
 
     queryset = PartParameter.objects.all()
     serializer_class = part_serializers.PartParameterSerializer
+    output_options = PartParameterOutputOptions
 
     def get_queryset(self, *args, **kwargs):
         """Override get_queryset method to prefetch related fields."""
@@ -1384,23 +1385,6 @@ class PartParameterAPIMixin:
         context['request'] = self.request
 
         return context
-
-    def get_serializer(self, *args, **kwargs):
-        """Return the serializer instance for this API endpoint.
-
-        If requested, extra detail fields are annotated to the queryset:
-        - part_detail
-        - template_detail
-        """
-        try:
-            kwargs['part_detail'] = str2bool(self.request.GET.get('part_detail', False))
-            kwargs['template_detail'] = str2bool(
-                self.request.GET.get('template_detail', True)
-            )
-        except AttributeError:
-            pass
-
-        return super().get_serializer(*args, **kwargs)
 
 
 class PartParameterFilter(FilterSet):
@@ -1432,7 +1416,13 @@ class PartParameterFilter(FilterSet):
             return queryset.filter(part=part)
 
 
-class PartParameterList(PartParameterAPIMixin, DataExportViewMixin, ListCreateAPI):
+class PartParameterList(
+    BulkCreateMixin,
+    PartParameterAPIMixin,
+    OutputOptionsMixin,
+    DataExportViewMixin,
+    ListCreateAPI,
+):
     """API endpoint for accessing a list of PartParameter objects.
 
     - GET: Return list of PartParameter objects
@@ -1459,8 +1449,12 @@ class PartParameterList(PartParameterAPIMixin, DataExportViewMixin, ListCreateAP
         'template__units',
     ]
 
+    unique_create_fields = ['part', 'template']
 
-class PartParameterDetail(PartParameterAPIMixin, RetrieveUpdateDestroyAPI):
+
+class PartParameterDetail(
+    PartParameterAPIMixin, OutputOptionsMixin, RetrieveUpdateDestroyAPI
+):
     """API endpoint for detail view of a single PartParameter object."""
 
 
@@ -1612,18 +1606,11 @@ class BomFilter(FilterSet):
         return queryset.filter(part.get_used_in_bom_item_filter())
 
 
-class BomMixin:
+class BomMixin(SerializerContextMixin):
     """Mixin class for BomItem API endpoints."""
 
     serializer_class = part_serializers.BomItemSerializer
     queryset = BomItem.objects.all()
-
-    def get_serializer(self, *args, **kwargs):
-        """Return the serializer instance for this API endpoint."""
-        # Ensure the request context is passed through!
-        kwargs['context'] = self.get_serializer_context()
-
-        return super().get_serializer(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
         """Return the queryset object for this endpoint."""
@@ -1659,6 +1646,11 @@ class BomList(
 
     search_fields = [
         'reference',
+        'part__name',
+        'part__description',
+        'part__IPN',
+        'part__revision',
+        'part__keywords',
         'sub_part__name',
         'sub_part__description',
         'sub_part__IPN',

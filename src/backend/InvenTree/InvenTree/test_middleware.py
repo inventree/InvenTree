@@ -112,6 +112,15 @@ class MiddlewareTests(InvenTreeTestCase):
 
     def test_site_lax_protocol(self):
         """Test that the site URL check is correctly working with/without lax protocol check."""
+        # Test that a completely different host fails
+        with self.settings(
+            SITE_URL='https://testserver', CSRF_TRUSTED_ORIGINS=['https://testserver']
+        ):
+            response = self.client.get(
+                reverse('web'), HTTP_HOST='otherhost.example.com'
+            )
+            self.assertContains(response, 'INVE-E7: The visited path', status_code=500)
+
         # Simple setup with proxy
         with self.settings(
             SITE_URL='https://testserver', CSRF_TRUSTED_ORIGINS=['https://testserver']
@@ -126,7 +135,25 @@ class MiddlewareTests(InvenTreeTestCase):
             SITE_LAX_PROTOCOL_CHECK=False,
         ):
             response = self.client.get(reverse('web'))
-            self.assertContains(response, 'INVE-E7: The used path', status_code=500)
+            self.assertContains(response, 'INVE-E7: The visited path', status_code=500)
+
+    def test_site_url_port(self):
+        """URL checks with different ports."""
+        with self.settings(
+            SITE_URL='https://testserver:8000',
+            CSRF_TRUSTED_ORIGINS=['https://testserver:8000'],
+        ):
+            response = self.client.get(reverse('web'), HTTP_HOST='testserver:8008')
+            self.do_positive_test(response)
+
+        # Try again with strict protocol check
+        with self.settings(
+            SITE_URL='https://testserver:8000',
+            CSRF_TRUSTED_ORIGINS=['https://testserver:8000'],
+            SITE_LAX_PROTOCOL_CHECK=False,
+        ):
+            response = self.client.get(reverse('web'), HTTP_HOST='testserver:8008')
+            self.assertContains(response, 'INVE-E7: The visited path', status_code=500)
 
     def test_site_url_checks_multi(self):
         """Test that the site URL check is correctly working in a multi-site setup."""
@@ -149,7 +176,7 @@ class MiddlewareTests(InvenTreeTestCase):
             )
             self.do_positive_test(response)
 
-            # A non-trsuted origin must still fail in multi - origin setup
+            # A non-trusted origin must still fail in multi - origin setup
             response = self.client.get(
                 'https://not-my-testserver.example.com/web/',
                 SERVER_NAME='not-my-testserver.example.com',
@@ -194,7 +221,9 @@ class MiddlewareTests(InvenTreeTestCase):
         ):
             response = self.client.get(reverse('web'))
             self.assertContains(
-                response, 'INVE-E7: The used path `http://testserver` ', status_code=500
+                response,
+                'INVE-E7: The visited path `http://testserver` ',
+                status_code=500,
             )
             self.assertNotContains(
                 response, 'window.INVENTREE_SETTINGS', status_code=500
@@ -212,6 +241,6 @@ class MiddlewareTests(InvenTreeTestCase):
             # Check that the correct step triggers the error message
             self.assertContains(
                 response,
-                'INVE-E7: The used path `http://testserver` does not match',
+                'INVE-E7: The visited path `http://testserver` does not match',
                 status_code=500,
             )
