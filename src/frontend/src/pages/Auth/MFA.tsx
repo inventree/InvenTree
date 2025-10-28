@@ -1,5 +1,3 @@
-import type { CredentialRequestOptionsJSON } from '@github/webauthn-json/browser-ponyfill';
-import { ApiEndpoints, apiUrl } from '@lib/index';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { Button, Checkbox, TextInput } from '@mantine/core';
@@ -7,7 +5,6 @@ import { useForm } from '@mantine/form';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useShallow } from 'zustand/react/shallow';
-import { api } from '../../App';
 import { handleMfaLogin, handleWebauthnLogin } from '../../functions/auth';
 import { useServerApiState } from '../../states/ServerApiState';
 import { Wrapper } from './Layout';
@@ -20,37 +17,13 @@ export default function Mfa() {
   const [mfa_context] = useServerApiState(
     useShallow((state) => [state.mfa_context])
   );
-  const [webauthn_challenge, setWebauthnChallenge] = useState<string | null>();
   const mfa_types = mfa_context?.types || [];
 
   useEffect(() => {
-    // Extract webauthn challenge if the type is available and not already set
-    if (
-      (mfa_types.includes('webauthn') || mfa_types.includes('webauthn_2fa')) &&
-      !webauthn_challenge
-    ) {
-      api
-        .get(apiUrl(ApiEndpoints.auth_webauthn_login))
-        .catch(() => {})
-        .then((response) => {
-          if (response && response.status === 200) {
-            const challenge = response.data.data.request_options;
-            setWebauthnChallenge(challenge);
-          }
-        });
+    if (mfa_types.includes('webauthn') || mfa_types.includes('webauthn_2fa')) {
+      handleWebauthnLogin(navigate, location);
     }
-  }, [mfa_types, webauthn_challenge]);
-
-  // try webauthn login automatically if available
-  useEffect(() => {
-    if (webauthn_challenge) {
-      handleWebauthnLogin(
-        webauthn_challenge as CredentialRequestOptionsJSON,
-        navigate,
-        location
-      );
-    }
-  }, [webauthn_challenge]);
+  }, [mfa_types]);
 
   return (
     <Wrapper titleText={t`Multi-Factor Authentication`} logOff>

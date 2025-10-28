@@ -688,15 +688,29 @@ export function handleChangePassword(
 }
 
 export async function handleWebauthnLogin(
-  webauthn_challenge: CredentialRequestOptionsJSON,
   navigate?: NavigateFunction,
   location?: Location<any>
 ) {
   const { setAuthContext } = useServerApiState.getState();
 
+  const webauthn_challenge = api
+    .get(apiUrl(ApiEndpoints.auth_webauthn_login))
+    .catch(() => {})
+    .then((response) => {
+      if (response && response.status === 200) {
+        return response.data.data.request_options;
+      }
+    });
+
+  if (!webauthn_challenge) {
+    return;
+  }
+
   try {
     const credential = await get(
-      parseRequestOptionsFromJSON(webauthn_challenge)
+      parseRequestOptionsFromJSON(
+        webauthn_challenge as CredentialRequestOptionsJSON
+      )
     );
     await api
       .post(apiUrl(ApiEndpoints.auth_webauthn_login), {
