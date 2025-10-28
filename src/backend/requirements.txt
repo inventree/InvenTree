@@ -86,7 +86,9 @@ blessed==1.22.0 \
 boto3==1.40.55 \
     --hash=sha256:27e35b4fa9edd414ce06c1a748bf57cacd8203271847d93fc1053e4a4ec6e1a9 \
     --hash=sha256:2e30f5a0d49e107b8a5c0c487891afd300bfa410e1d918bf187ae45ac3839332
-    # via django-anymail
+    # via
+    #   django-anymail
+    #   django-storages
 botocore==1.40.55 \
     --hash=sha256:79b6472e2de92b3519d44fc1eec8c5feced7f99a0d10fdea6dc93133426057c1 \
     --hash=sha256:cdc38f7a4ddb30a2cd1cdd4fabde2a5a16e41b5a642292e1c30de5c4e46f5d44
