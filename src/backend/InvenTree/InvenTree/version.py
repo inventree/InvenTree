@@ -18,7 +18,7 @@ from django.conf import settings
 from .api_version import INVENTREE_API_TEXT, INVENTREE_API_VERSION
 
 # InvenTree software version
-INVENTREE_SW_VERSION = '0.18.0 dev'
+INVENTREE_SW_VERSION = '1.1.0 dev'
 
 
 logger = logging.getLogger('inventree')
@@ -107,7 +107,7 @@ def inventreeVersionTuple(version=None):
 
     match = re.match(r'^.*(\d+)\.(\d+)\.(\d+).*$', str(version))
 
-    return [int(g) for g in match.groups()]
+    return [int(g) for g in match.groups()] if match else []
 
 
 def isInvenTreeDevelopmentVersion():
@@ -269,7 +269,7 @@ def inventreeBranch():
     branch = os.environ.get('INVENTREE_PKG_BRANCH', '')
 
     if branch:
-        return branch
+        return ' '.join(branch.splitlines())
 
     if main_branch is None:
         return None
@@ -298,7 +298,7 @@ def inventree_identifier(override_announce: bool = False):
     from common.settings import get_global_setting
 
     if override_announce or get_global_setting(
-        'INVENTREE_ANNOUNCE_ID', enviroment_key='INVENTREE_ANNOUNCE_ID'
+        'INVENTREE_ANNOUNCE_ID', environment_key='INVENTREE_ANNOUNCE_ID'
     ):
         return get_global_setting('INVENTREE_INSTANCE_ID', default='')
     return None

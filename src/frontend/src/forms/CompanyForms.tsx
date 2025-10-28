@@ -18,8 +18,12 @@ import { useMemo } from 'react';
  * Field set for SupplierPart instance
  */
 export function useSupplierPartFields({
+  manufacturerId,
+  manufacturerPartId,
   partId
 }: {
+  manufacturerId?: number;
+  manufacturerPartId?: number;
   partId?: number;
 }) {
   return useMemo(() => {
@@ -34,7 +38,9 @@ export function useSupplierPartFields({
         }
       },
       manufacturer_part: {
+        value: manufacturerPartId,
         filters: {
+          manufacturer: manufacturerId,
           part_detail: true,
           manufacturer_detail: true
         },
@@ -69,7 +75,7 @@ export function useSupplierPartFields({
     };
 
     return fields;
-  }, [partId]);
+  }, [manufacturerId, manufacturerPartId, partId]);
 }
 
 export function useManufacturerPartFields() {

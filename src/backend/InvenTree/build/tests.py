@@ -15,7 +15,7 @@ from .models import Build
 class BuildTestSimple(InvenTreeTestCase):
     """Basic set of tests for the BuildOrder model functionality."""
 
-    fixtures = ['category', 'part', 'location', 'build']
+    fixtures = ['category', 'part', 'location', 'build', 'stock']
 
     roles = ['build.change', 'build.add', 'build.delete']
 

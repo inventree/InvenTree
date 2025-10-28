@@ -1,4 +1,5 @@
 import { RowActions } from '@lib/components/RowActions';
+import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import { resolveItem } from '@lib/functions/Conversion';
 import { cancelEvent } from '@lib/functions/Events';
 import { getDetailUrl } from '@lib/functions/Navigation';
@@ -260,7 +261,19 @@ export function InvenTreeTable<T extends Record<string, any>>({
         ...col,
         hidden: hidden,
         resizable: col.resizable ?? true,
-        title: col.title ?? fieldNames[col.accessor] ?? `${col.accessor}`
+        title: col.title ?? fieldNames[col.accessor] ?? `${col.accessor}`,
+        cellsStyle: (record: any, index: number) => {
+          const width = (col as any).minWidth ?? 100;
+          return {
+            minWidth: width
+          };
+        },
+        titleStyle: (record: any, index: number) => {
+          const width = (col as any).minWidth ?? 100;
+          return {
+            minWidth: width
+          };
+        }
       };
     });
 
@@ -340,7 +353,29 @@ export function InvenTreeTable<T extends Record<string, any>>({
   // Reset the pagination state when the search term changes
   useEffect(() => {
     tableState.setPage(1);
-  }, [tableState.searchTerm]);
+    tableState.clearSelectedRecords();
+  }, [
+    tableState.searchTerm,
+    tableState.filterSet.activeFilters,
+    tableState.queryFilters
+  ]);
+
+  // Account for invalid page offsets
+  useEffect(() => {
+    if (
+      tableState.page > 1 &&
+      pageSize * (tableState.page - 1) > tableState.recordCount
+    ) {
+      tableState.setPage(1);
+    } else if (tableState.page < 1) {
+      tableState.setPage(1);
+    }
+
+    if (pageSize < 10) {
+      // Default page size
+      setPageSize(25);
+    }
+  }, [tableState.records, tableState.page, pageSize]);
 
   // Data Sorting
   const [sortStatus, setSortStatus] = useState<DataTableSortStatus<T>>({
@@ -644,14 +679,24 @@ export function InvenTreeTable<T extends Record<string, any>>({
       }));
     }
 
-    if (props.modelType) {
+    if (props.modelType && props.detailAction !== false) {
       // Add action to navigate to the detail view
       const accessor = props.modelField ?? 'pk';
       const pk = resolveItem(record, accessor);
       const url = getDetailUrl(props.modelType, pk);
+
+      const model: string | undefined =
+        ModelInformationDict[props.modelType]?.label?.();
+
+      let detailsText: string = t`View details`;
+
+      if (!!model) {
+        detailsText = t`View ${model}`;
+      }
+
       items.push({
         key: 'detail',
-        title: t`View details`,
+        title: detailsText,
         icon: <IconArrowRight />,
         onClick: (event: any) => {
           cancelEvent(event);
@@ -705,7 +750,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
         ..._params,
         totalRecords: tableState.recordCount,
         recordsPerPage: tablePageSize,
-        page: tableState.page,
+        page: Math.max(1, tableState.page),
         onPageChange: tableState.setPage,
         recordsPerPageOptions: PAGE_SIZES,
         onRecordsPerPageChange: updatePageSize

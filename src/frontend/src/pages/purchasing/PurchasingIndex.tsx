@@ -91,7 +91,7 @@ export default function PurchasingIndex() {
         name: 'supplier-parts',
         label: t`Supplier Parts`,
         icon: <IconPackageExport />,
-        content: <SupplierPartTable params={{}} />
+        content: <SupplierPartTable />
       },
       {
         name: 'manufacturer',
@@ -108,7 +108,7 @@ export default function PurchasingIndex() {
         name: 'manufacturer-parts',
         label: t`Manufacturer Parts`,
         icon: <IconBuildingWarehouse />,
-        content: <ManufacturerPartTable params={{}} />
+        content: <ManufacturerPartTable />
       }
     ];
   }, [user, purchaseOrderView]);

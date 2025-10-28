@@ -31,7 +31,6 @@ const BASE_URL: string = IS_CI
   : 'http://localhost:5173';
 
 console.log('Running Playwright Tests:');
-console.log(`- CI Mode: ${IS_CI}`);
 console.log('- Base URL:', BASE_URL);
 
 export default defineConfig({
@@ -70,7 +69,7 @@ export default defineConfig({
       timeout: 120 * 1000
     },
     {
-      command: 'invoke dev.server',
+      command: 'invoke dev.server -a 0.0.0.0:8000',
       env: {
         INVENTREE_DEBUG: 'True',
         INVENTREE_LOG_LEVEL: 'WARNING',

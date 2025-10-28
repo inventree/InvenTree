@@ -32,6 +32,8 @@ export enum ApiEndpoints {
   auth_mfa_reauthenticate = 'auth/v1/auth/2fa/reauthenticate',
   auth_totp = 'auth/v1/account/authenticators/totp',
   auth_trust = 'auth/v1/auth/2fa/trust',
+  auth_webauthn = 'auth/v1/account/authenticators/webauthn',
+  auth_webauthn_login = 'auth/v1/auth/webauthn/authenticate',
   auth_reauthenticate = 'auth/v1/auth/reauthenticate',
   auth_email = 'auth/v1/account/email',
   auth_email_verify = 'auth/v1/auth/email/verify',
@@ -96,6 +98,7 @@ export enum ApiEndpoints {
   build_output_delete = 'build/:id/delete-outputs/',
   build_order_auto_allocate = 'build/:id/auto-allocate/',
   build_order_allocate = 'build/:id/allocate/',
+  build_order_consume = 'build/:id/consume/',
   build_order_deallocate = 'build/:id/unallocate/',
 
   build_line_list = 'build/line/',
@@ -219,6 +222,9 @@ export enum ApiEndpoints {
 
   // Special plugin endpoints
   plugin_locate_item = 'locate/',
+  plugin_supplier_list = 'supplier/list/',
+  plugin_supplier_search = 'supplier/search/',
+  plugin_supplier_import = 'supplier/import/',
 
   // Machine API endpoints
   machine_types_list = 'machine/types/',

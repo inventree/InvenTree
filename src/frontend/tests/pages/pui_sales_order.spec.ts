@@ -14,9 +14,18 @@ test('Sales Orders - Tabs', async ({ browser }) => {
 
   await page.waitForURL('**/web/sales/**');
 
+  // Sales Orders panel
   await loadTab(page, 'Sales Orders');
   await page.waitForURL('**/web/sales/index/salesorders');
+
+  // Pending Shipments panel
+  await loadTab(page, 'Pending Shipments');
+  await page.getByRole('cell', { name: 'SO0007' }).waitFor();
+  await page.getByRole('button', { name: 'Shipment Reference' }).waitFor();
+
+  // Return Orders panel
   await loadTab(page, 'Return Orders');
+  await page.getByRole('cell', { name: 'NOISE-COMPLAINT' }).waitFor();
 
   // Customers
   await loadTab(page, 'Customers');
@@ -120,8 +129,12 @@ test('Sales Orders - Shipments', async ({ browser }) => {
 
   // Create a new shipment
   await page.getByLabel('action-button-add-shipment').click();
-  await page.getByLabel('text-field-tracking_number').fill('1234567890');
-  await page.getByLabel('text-field-invoice_number').fill('9876543210');
+  await page
+    .getByLabel('text-field-tracking_number', { exact: true })
+    .fill('1234567890');
+  await page
+    .getByLabel('text-field-invoice_number', { exact: true })
+    .fill('9876543210');
   await page.getByRole('button', { name: 'Submit' }).click();
 
   // Expected field error
@@ -140,7 +153,7 @@ test('Sales Orders - Shipments', async ({ browser }) => {
   await page.waitForLoadState('networkidle');
 
   let tracking_number = await page
-    .getByLabel('text-field-tracking_number')
+    .getByLabel('text-field-tracking_number', { exact: true })
     .inputValue();
 
   if (!tracking_number) {
@@ -154,7 +167,9 @@ test('Sales Orders - Shipments', async ({ browser }) => {
   }
 
   // Change the tracking number
-  await page.getByLabel('text-field-tracking_number').fill(tracking_number);
+  await page
+    .getByLabel('text-field-tracking_number', { exact: true })
+    .fill(tracking_number);
   await page.waitForTimeout(250);
   await page.getByRole('button', { name: 'Submit' }).click();
 
@@ -175,7 +190,7 @@ test('Sales Orders - Shipments', async ({ browser }) => {
   await page.getByText(tracking_number).waitFor();
 
   // Link back to sales order
-  await page.getByRole('link', { name: 'SO0006' }).click();
+  await page.getByRole('link', { name: 'breadcrumb-1-so0006' }).click();
 
   // Let's try to allocate some stock
   await loadTab(page, 'Line Items');
@@ -217,7 +232,9 @@ test('Sales Orders - Duplicate', async ({ browser }) => {
   await page.getByLabel('action-menu-order-actions-duplicate').click();
 
   // Ensure a new reference is suggested
-  await expect(page.getByLabel('text-field-reference')).not.toBeEmpty();
+  await expect(
+    page.getByLabel('text-field-reference', { exact: true })
+  ).not.toBeEmpty();
 
   // Submit the duplicate request and ensure it completes
   await page.getByRole('button', { name: 'Submit' }).isEnabled();

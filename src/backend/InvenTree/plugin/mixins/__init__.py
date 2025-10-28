@@ -8,6 +8,7 @@ from plugin.base.integration.APICallMixin import APICallMixin
 from plugin.base.integration.AppMixin import AppMixin
 from plugin.base.integration.CurrencyExchangeMixin import CurrencyExchangeMixin
 from plugin.base.integration.DataExport import DataExportMixin
+from plugin.base.integration.MachineMixin import MachineDriverMixin
 from plugin.base.integration.NavigationMixin import NavigationMixin
 from plugin.base.integration.NotificationMixin import NotificationMixin
 from plugin.base.integration.ReportMixin import ReportMixin
@@ -19,6 +20,8 @@ from plugin.base.integration.ValidationMixin import ValidationMixin
 from plugin.base.label.mixins import LabelPrintingMixin
 from plugin.base.locate.mixins import LocateMixin
 from plugin.base.mail.mixins import MailMixin
+from plugin.base.supplier import helpers as supplier
+from plugin.base.supplier.mixins import SupplierMixin
 from plugin.base.ui.mixins import UserInterfaceMixin
 
 __all__ = [
@@ -32,6 +35,7 @@ __all__ = [
     'IconPackMixin',
     'LabelPrintingMixin',
     'LocateMixin',
+    'MachineDriverMixin',
     'MailMixin',
     'NavigationMixin',
     'NotificationMixin',
@@ -39,8 +43,10 @@ __all__ = [
     'ScheduleMixin',
     'SettingsMixin',
     'SupplierBarcodeMixin',
+    'SupplierMixin',
     'TransitionMixin',
     'UrlsMixin',
     'UserInterfaceMixin',
     'ValidationMixin',
+    'supplier',
 ]

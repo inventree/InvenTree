@@ -2,7 +2,15 @@
  * Common rendering functions for table column data.
  */
 import { t } from '@lingui/core/macro';
-import { Anchor, Group, Skeleton, Text, Tooltip } from '@mantine/core';
+import {
+  Anchor,
+  Badge,
+  Center,
+  Group,
+  Skeleton,
+  Text,
+  Tooltip
+} from '@mantine/core';
 import {
   IconBell,
   IconExclamationCircle,
@@ -16,9 +24,10 @@ import type { ModelType } from '@lib/enums/ModelType';
 import { resolveItem } from '@lib/functions/Conversion';
 import { cancelEvent } from '@lib/functions/Events';
 import type { TableColumn, TableColumnProps } from '@lib/types/Tables';
+import type { ReactNode } from 'react';
 import { Thumbnail } from '../components/images/Thumbnail';
 import { TableStatusRenderer } from '../components/render/StatusRenderer';
-import { RenderOwner, RenderUser } from '../components/render/User';
+import { RenderOwner } from '../components/render/User';
 import {
   formatCurrency,
   formatDate,
@@ -30,15 +39,24 @@ import {
 } from '../states/SettingsStates';
 import { ProjectCodeHoverCard, TableHoverCard } from './TableHoverCard';
 
-// Render a Part instance within a table
-export function PartColumn({
+export type PartColumnProps = TableColumnProps & {
+  part?: string;
+  full_name?: boolean;
+};
+
+// Extract rendering function for Part column
+export function RenderPartColumn({
   part,
   full_name
 }: {
   part: any;
   full_name?: boolean;
 }) {
-  return part ? (
+  if (!part) {
+    return <Skeleton />;
+  }
+
+  return (
     <Group justify='space-between' wrap='nowrap'>
       <Thumbnail
         src={part?.thumbnail ?? part?.image}
@@ -63,9 +81,30 @@ export function PartColumn({
         )}
       </Group>
     </Group>
-  ) : (
-    <Skeleton />
   );
+}
+
+// Render a Part instance within a table
+export function PartColumn(props: PartColumnProps): TableColumn {
+  return {
+    accessor: 'part',
+    title: t`Part`,
+    sortable: true,
+    switchable: false,
+    minWidth: '175px',
+    render: (record: any) => {
+      const part =
+        props.part === ''
+          ? record
+          : resolveItem(record, props.part ?? props.accessor ?? 'part_detail');
+
+      return RenderPartColumn({
+        part: part,
+        full_name: props.full_name ?? false
+      });
+    },
+    ...props
+  };
 }
 
 export function CompanyColumn({
@@ -146,6 +185,7 @@ export function LocationColumn(props: TableColumnProps): TableColumn {
       title: t`Location`,
       sortable: true,
       ordering: 'location',
+      minWidth: '150px',
       ...props
     });
   } else {
@@ -154,6 +194,7 @@ export function LocationColumn(props: TableColumnProps): TableColumn {
       title: t`Location`,
       sortable: true,
       ordering: 'location',
+      minWidth: '125px',
       ...props
     });
   }
@@ -192,6 +233,7 @@ export function CategoryColumn(props: TableColumnProps): TableColumn {
       title: t`Category`,
       sortable: true,
       ordering: 'category',
+      minWidth: '150px',
       ...props
     });
   } else {
@@ -200,6 +242,7 @@ export function CategoryColumn(props: TableColumnProps): TableColumn {
       title: t`Category`,
       sortable: true,
       ordering: 'category',
+      minWidth: '125px',
       ...props
     });
   }
@@ -209,8 +252,11 @@ export function BooleanColumn(props: TableColumn): TableColumn {
   return {
     sortable: true,
     switchable: true,
+    minWidth: '75px',
     render: (record: any) => (
-      <YesNoButton value={resolveItem(record, props.accessor ?? '')} />
+      <Center>
+        <YesNoButton value={resolveItem(record, props.accessor ?? '')} />
+      </Center>
     ),
     ...props
   };
@@ -232,7 +278,7 @@ export function DescriptionColumn(props: TableColumnProps): TableColumn {
     title: t`Description`,
     sortable: false,
     switchable: true,
-    width: 300,
+    minWidth: '200px',
     ...props
   };
 }
@@ -289,17 +335,19 @@ export function NoteColumn(props: TableColumnProps): TableColumn {
   };
 }
 
-export function LineItemsProgressColumn(): TableColumn {
+export function LineItemsProgressColumn(props: TableColumnProps): TableColumn {
   return {
     accessor: 'line_items',
     sortable: true,
+    minWidth: 125,
     render: (record: any) => (
       <ProgressBar
         progressLabel={true}
         value={record.completed_lines}
         maximum={record.line_items}
       />
-    )
+    ),
+    ...props
   };
 }
 
@@ -324,56 +372,98 @@ export function ProjectCodeColumn(props: TableColumnProps): TableColumn {
   };
 }
 
-export function StatusColumn({
-  model,
-  sortable,
-  switchable,
-  ordering,
-  accessor,
-  title,
-  hidden
-}: {
+export type StatusColumnProps = TableColumnProps & {
   model: ModelType;
-  sortable?: boolean;
-  switchable?: boolean;
-  accessor?: string;
-  ordering?: string;
-  hidden?: boolean;
-  title?: string;
-}) {
+};
+
+export function StatusColumn(props: StatusColumnProps): TableColumn {
+  const accessor: string = props.accessor ?? 'status_custom_key';
+
   return {
-    accessor: accessor ?? 'status',
-    sortable: sortable ?? true,
-    switchable: switchable ?? true,
-    ordering: ordering,
-    title: title,
-    hidden: hidden,
-    render: TableStatusRenderer(model, accessor ?? 'status_custom_key')
+    accessor: 'status',
+    sortable: true,
+    switchable: true,
+    minWidth: '50px',
+    render: TableStatusRenderer(props.model, accessor),
+    ...props
+  };
+}
+
+export function UserColumn(props: TableColumnProps): TableColumn {
+  return {
+    accessor: 'user',
+    title: t`User`,
+    sortable: true,
+    switchable: true,
+    render: (record: any) => {
+      const instance = resolveItem(record, props.accessor ?? 'user_detail');
+      if (instance) {
+        const extra: ReactNode[] = [
+          <Text size='sm'>
+            {instance.first_name} {instance.last_name}
+          </Text>
+        ];
+
+        if (instance.is_active === false) {
+          extra.push(
+            <Badge autoContrast color='red' size='xs'>
+              {t`Inactive`}
+            </Badge>
+          );
+        }
+
+        return (
+          <TableHoverCard
+            value={instance.username}
+            title={t`User Information`}
+            icon='user'
+            extra={extra}
+          />
+        );
+      } else {
+        return '-';
+      }
+    },
+    ...props
   };
 }
 
 export function CreatedByColumn(props: TableColumnProps): TableColumn {
-  return {
+  return UserColumn({
     accessor: 'created_by',
+    ordering: 'created_by',
     title: t`Created By`,
+    ...props
+  });
+}
+
+export function OwnerColumn(props: TableColumnProps): TableColumn {
+  return {
+    accessor: 'owner_detail',
+    ordering: 'owner',
+    title: t`Owner`,
     sortable: true,
     switchable: true,
-    render: (record: any) =>
-      record.created_by && RenderUser({ instance: record.created_by }),
+    render: (record: any) => {
+      const instance = resolveItem(record, props.accessor ?? 'owner_detail');
+
+      if (instance) {
+        return <RenderOwner instance={instance} />;
+      } else {
+        return '-';
+      }
+    },
     ...props
   };
 }
 
 export function ResponsibleColumn(props: TableColumnProps): TableColumn {
-  return {
-    accessor: 'responsible',
-    sortable: true,
-    switchable: true,
-    render: (record: any) =>
-      record.responsible &&
-      RenderOwner({ instance: record.responsible_detail }),
+  return OwnerColumn({
+    accessor: 'responsible_detail',
+    ordering: 'responsible',
+    title: t`Responsible`,
     ...props
-  };
+  });
 }
 
 export function DateColumn(props: TableColumnProps): TableColumn {

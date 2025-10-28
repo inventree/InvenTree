@@ -115,7 +115,7 @@ export function PurchaseOrderTable({
       {
         accessor: 'supplier_reference'
       },
-      LineItemsProgressColumn(),
+      LineItemsProgressColumn({}),
       StatusColumn({ model: ModelType.purchaseorder }),
       ProjectCodeColumn({
         defaultVisible: false
@@ -190,7 +190,8 @@ export function PurchaseOrderTable({
           modelType: ModelType.purchaseorder,
           enableSelection: true,
           enableDownload: true,
-          enableReports: true
+          enableReports: true,
+          enableLabels: true
         }}
       />
     </>

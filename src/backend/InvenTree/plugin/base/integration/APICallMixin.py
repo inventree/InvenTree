@@ -163,7 +163,8 @@ class APICallMixin:
             url = f'{self.api_url}/{endpoint}'
 
         # build kwargs for call
-        kwargs.update({'url': url, 'headers': headers})
+        kwargs.update({'headers': headers})
+        kwargs.pop('url', None)
 
         if data and json:
             raise ValueError('You can either pass `data` or `json` to this function.')
@@ -175,7 +176,7 @@ class APICallMixin:
             kwargs['data'] = data
 
         # run command
-        response = requests.request(method, **kwargs)
+        response = requests.request(method, url=url, **kwargs)
 
         # return
         if simple_response:

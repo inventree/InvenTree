@@ -1,3 +1,6 @@
+import { expect } from '@playwright/test';
+import { createApi } from './api';
+
 /**
  * Open the filter drawer for the currently visible table
  * @param page - The page object
@@ -33,7 +36,7 @@ export const clickButtonIfVisible = async (page, name, timeout = 500) => {
  */
 export const clearTableFilters = async (page) => {
   await openFilterDrawer(page);
-  await clickButtonIfVisible(page, 'Clear Filters');
+  await clickButtonIfVisible(page, 'Clear Filters', 250);
   await closeFilterDrawer(page);
   await page.waitForLoadState('networkidle');
 };
@@ -129,4 +132,21 @@ export const globalSearch = async (page, query) => {
   await page.getByLabel('global-search-input').clear();
   await page.getByPlaceholder('Enter search text').fill(query);
   await page.waitForTimeout(300);
+};
+
+export const deletePart = async (name: string) => {
+  const api = await createApi();
+  const parts = await api
+    .get('part/', {
+      params: { search: name }
+    })
+    .then((res) => res.json());
+  const existingPart = parts.find((p: any) => p.name === name);
+  if (existingPart) {
+    await api.patch(`part/${existingPart.pk}/`, {
+      data: { active: false }
+    });
+    const res = await api.delete(`part/${existingPart.pk}/`);
+    expect(res.status()).toBe(204);
+  }
 };

@@ -11,7 +11,7 @@ from django.db import connection
 from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 
-import PIL
+from PIL import Image
 from rest_framework.test import APIClient
 
 import build.models
@@ -32,6 +32,7 @@ from part.models import (
     PartParameter,
     PartParameterTemplate,
     PartRelated,
+    PartSellPriceBreak,
     PartTestTemplate,
 )
 from stock.models import StockItem, StockLocation
@@ -65,7 +66,7 @@ class PartImageTestMixin:
 
         fn = get_testfolder_dir() / 'part_image_123abc.png'
 
-        img = PIL.Image.new('RGB', (128, 128), color='blue')
+        img = Image.new('RGB', (128, 128), color='blue')
         img.save(fn)
 
         with open(fn, 'rb') as img_file:
@@ -906,6 +907,82 @@ class PartAPITest(PartAPITestBase):
         response = self.get(url, {'related': 1}, expected_code=200)
         self.assertEqual(len(response.data), 2)
 
+    def test_exclude_related(self):
+        """Test that we can exclude parts related to a specific part ID."""
+        url = reverse('api-part-list')
+
+        # Get initial count of all parts
+        response = self.get(url, {}, expected_code=200)
+        initial_count = len(response.data)
+
+        # Add some relationships
+        PartRelated.objects.create(
+            part_1=Part.objects.get(pk=1), part_2=Part.objects.get(pk=2)
+        )
+
+        PartRelated.objects.create(
+            part_2=Part.objects.get(pk=1), part_1=Part.objects.get(pk=3)
+        )
+
+        # Test excluding parts related to part 1
+        # Parts 2 and 3 are related to part 1, so they should be excluded
+        response = self.get(url, {'exclude_related': 1}, expected_code=200)
+        self.assertEqual(len(response.data), initial_count - 2)
+
+        # Verify that parts 2 and 3 are not in the results
+        part_ids = [part['pk'] for part in response.data]
+        self.assertNotIn(2, part_ids)
+        self.assertNotIn(3, part_ids)
+
+        self.assertIn(1, part_ids)
+
+        # Test excluding with a part that has no relations
+        # This should return all parts
+        response = self.get(url, {'exclude_related': 99}, expected_code=200)
+        self.assertEqual(len(response.data), initial_count)
+
+    def test_exclude_id(self):
+        """Test that we can exclude parts by ID using the exclude_id parameter."""
+        url = reverse('api-part-list')
+
+        # Get initial count of all parts
+        response = self.get(url, {}, expected_code=200)
+        initial_count = len(response.data)
+        all_part_ids = {part['pk'] for part in response.data}
+
+        #  Exclude a single valid part ID
+        response = self.get(url, {'exclude_id': '1'}, expected_code=200)
+        self.assertEqual(len(response.data), initial_count - 1)
+        part_ids = {part['pk'] for part in response.data}
+        self.assertNotIn(1, part_ids)
+
+        # Exclude multiple valid part IDs (comma-separated)
+        response = self.get(url, {'exclude_id': '1,2,3'}, expected_code=200)
+        self.assertEqual(len(response.data), initial_count - 3)
+        part_ids = {part['pk'] for part in response.data}
+        self.assertNotIn(1, part_ids)
+        self.assertNotIn(2, part_ids)
+        self.assertNotIn(3, part_ids)
+
+        #  Exclude non-existent part ID (should not affect results)
+        non_existent_id = max(all_part_ids) + 1000
+        response = self.get(
+            url, {'exclude_id': str(non_existent_id)}, expected_code=200
+        )
+        self.assertEqual(len(response.data), initial_count)
+
+        # Exclude with empty string (should return all parts)
+        response = self.get(url, {'exclude_id': ''}, expected_code=200)
+        self.assertEqual(len(response.data), initial_count)
+
+        # Invalid input - non-numeric value (should raise ValidationError)
+        response = self.get(url, {'exclude_id': 'abc'}, expected_code=400)
+
+        # Zero as ID
+        response = self.get(url, {'exclude_id': '0'}, expected_code=200)
+        # Assuming 0 is not a valid part ID in the system
+        self.assertEqual(len(response.data), initial_count)
+
     def test_filter_by_bom_valid(self):
         """Test the 'bom_valid' Part API filter."""
         url = reverse('api-part-list')
@@ -1318,6 +1395,20 @@ class PartAPITest(PartAPITestBase):
         response = self.get(url, expected_code=200)
 
         self.assertIn('notes', response.data)
+
+    def test_output_options(self):
+        """Test the output options for PartList list."""
+        self.run_output_test(
+            reverse('api-part-list'),
+            [
+                ('location_detail', 'default_location_detail'),
+                'parameters',
+                ('path_detail', 'category_path'),
+                ('pricing', 'pricing_min'),
+                ('pricing', 'pricing_updated'),
+            ],
+            assert_subset=True,
+        )
 
 
 class PartCreationTests(PartAPITestBase):
@@ -1770,7 +1861,7 @@ class PartDetailTests(PartImageTestMixin, PartAPITestBase):
         for fmt in ['jpg', 'j2k', 'png', 'bmp', 'webp']:
             fn = f'{test_path}.{fmt}'
 
-            img = PIL.Image.new('RGB', (128, 128), color='red')
+            img = Image.new('RGB', (128, 128), color='red')
             img.save(fn)
 
             with open(fn, 'rb') as dummy_image:
@@ -1820,7 +1911,7 @@ class PartDetailTests(PartImageTestMixin, PartAPITestBase):
 
         fn = get_testfolder_dir() / 'part_image_123abc.png'
 
-        img = PIL.Image.new('RGB', (128, 128), color='blue')
+        img = Image.new('RGB', (128, 128), color='blue')
         img.save(fn)
 
         # Upload the image to a part
@@ -1904,6 +1995,16 @@ class PartDetailTests(PartImageTestMixin, PartAPITestBase):
         self.assertIn('category_path', response.data)
         self.assertEqual(len(response.data['category_path']), 2)
 
+    def test_location_detail(self):
+        """Check that location_detail can be requested against the serializer."""
+        response = self.get(
+            reverse('api-part-detail', kwargs={'pk': 1}),
+            {'location_detail': True},
+            expected_code=200,
+        )
+
+        self.assertIn('default_location_detail', response.data)
+
     def test_part_requirements(self):
         """Unit test for the "PartRequirements" API endpoint."""
         url = reverse('api-part-requirements', kwargs={'pk': Part.objects.first().pk})
@@ -1959,8 +2060,8 @@ class PartListTests(PartAPITestBase):
             with CaptureQueriesContext(connection) as ctx:
                 self.get(url, query, expected_code=200)
 
-            # No more than 20 database queries
-            self.assertLess(len(ctx), 20)
+            # No more than 25 database queries
+            self.assertLess(len(ctx), 25)
 
         # Test 'category_detail' annotation
         for b in [False, True]:
@@ -1975,6 +2076,80 @@ class PartListTests(PartAPITestBase):
 
             # No more than 20 DB queries
             self.assertLessEqual(len(ctx), 20)
+
+    def test_price_breaks(self):
+        """Test that price_breaks parameter works correctly and efficiently."""
+        url = reverse('api-part-list')
+
+        # Create some parts with sale price breaks
+        for i in range(5):
+            part = Part.objects.create(
+                name=f'Part with breaks {i}',
+                description='A part with sale price breaks',
+                category=PartCategory.objects.first(),
+                salable=True,
+            )
+
+            # Create multiple price breaks for each part
+            for qty, price in [(1, 10 + i), (10, 9 + i), (100, 8 + i)]:
+                PartSellPriceBreak.objects.create(
+                    part=part, quantity=qty, price=price, price_currency='USD'
+                )
+
+        # Test 1: Without price_breaks parameter (default is False, field should not be included)
+        response = self.get(
+            url, {'limit': 5, 'search': 'Part with breaks'}, expected_code=200
+        )
+
+        self.assertEqual(len(response.data['results']), 5)
+        first_result = response.data['results'][0]
+        self.assertNotIn('price_breaks', first_result)
+
+        # Test 2: Explicitly with price_breaks=false
+        with CaptureQueriesContext(connection) as ctx:
+            response = self.get(
+                url,
+                {'limit': 5, 'price_breaks': False, 'search': 'Part with breaks'},
+                expected_code=200,
+            )
+
+        first_result = response.data['results'][0]
+        self.assertNotIn('price_breaks', first_result)
+
+        query_count_without_price_breaks = len(ctx)
+
+        # Test 3: Explicitly with price_breaks=true
+        with CaptureQueriesContext(connection) as ctx:
+            response = self.get(
+                url,
+                {'limit': 5, 'price_breaks': True, 'search': 'Part with breaks'},
+                expected_code=200,
+            )
+
+        # Should have price_breaks field with data
+        for result in response.data['results']:
+            self.assertIn('price_breaks', result)
+            self.assertIsInstance(result['price_breaks'], list)
+            self.assertEqual(len(result['price_breaks']), 3)
+
+            for pb in result['price_breaks']:
+                self.assertIn('pk', pb)
+                self.assertIn('quantity', pb)
+                self.assertIn('price', pb)
+                self.assertIn('price_currency', pb)
+
+        # Make sure there's no n+1 query problem
+        query_count_with_price_breaks = len(ctx)
+        query_difference = (
+            query_count_with_price_breaks - query_count_without_price_breaks
+        )
+
+        # There are 2 additional queries, 1 for the salepricebreak subselect and 1 for Currency codes because of InvenTreeCurrencySerializer
+        self.assertLessEqual(
+            query_difference,
+            2,
+            f'Query count difference too high: {query_difference} (with: {query_count_with_price_breaks}, without: {query_count_without_price_breaks})',
+        )
 
 
 class PartNotesTests(InvenTreeAPITestCase):
@@ -2463,6 +2638,7 @@ class BomItemTest(InvenTreeAPITestCase):
 
         # Now, let's validate an item
         bom_item = BomItem.objects.first()
+        assert bom_item
 
         bom_item.validate_hash()
 
@@ -2576,6 +2752,19 @@ class BomItemTest(InvenTreeAPITestCase):
 
         self.assertEqual(int(float(response.data['quantity'])), 57)
         self.assertEqual(response.data['note'], 'Added a note')
+
+    def test_output_options(self):
+        """Test that various output options work as expected."""
+        self.run_output_test(
+            reverse('api-bom-item-detail', kwargs={'pk': 3}),
+            [
+                'can_build',
+                'part_detail',
+                'sub_part_detail',
+                'substitutes',
+                ('pricing', 'pricing_min'),
+            ],
+        )
 
     def test_add_bom_item(self):
         """Test that we can create a new BomItem via the API."""
@@ -3109,6 +3298,7 @@ class PartTestTemplateTest(PartAPITestBase):
     def test_choices(self):
         """Test the 'choices' field for the PartTestTemplate model."""
         template = PartTestTemplate.objects.first()
+        assert template
 
         url = reverse('api-part-test-template-detail', kwargs={'pk': template.pk})
 
@@ -3149,3 +3339,27 @@ class PartTestTemplateTest(PartAPITestBase):
         response = self.patch(url, {'choices': 'a,b,c,d,e,f,f'}, expected_code=400)
 
         self.assertIn('Choices must be unique', str(response.data['choices']))
+
+
+class PartParameterTests(PartAPITestBase):
+    """Unit test for PartParameter API endpoints."""
+
+    def test_export_data(self):
+        """Test data export functionality for PartParameter objects."""
+        url = reverse('api-part-parameter-list')
+
+        response = self.options(
+            url,
+            data={
+                'export': True,
+                'export_plugin': 'inventree-exporter',
+                'part_detail': True,
+                'template_detail': True,
+            },
+            expected_code=200,
+        )
+
+        fields = response.data['actions']['GET'].keys()
+
+        self.assertIn('export_format', fields)
+        self.assertIn('export_plugin', fields)

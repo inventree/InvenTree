@@ -46,6 +46,7 @@ import NotesPanel from '../../components/panels/NotesPanel';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
+import { RenderStockLocation } from '../../components/render/Stock';
 import { useBuildOrderFields } from '../../forms/BuildForms';
 import {
   useCreateApiFormModal,
@@ -58,8 +59,8 @@ import { useUserState } from '../../states/UserState';
 import BuildAllocatedStockTable from '../../tables/build/BuildAllocatedStockTable';
 import BuildLineTable from '../../tables/build/BuildLineTable';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
-import BuildOrderTestTable from '../../tables/build/BuildOrderTestTable';
 import BuildOutputTable from '../../tables/build/BuildOutputTable';
+import PartTestResultTable from '../../tables/part/PartTestResultTable';
 import { PurchaseOrderTable } from '../../tables/purchasing/PurchaseOrderTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 
@@ -86,6 +87,13 @@ function BuildLinesPanel({
   isLoading: boolean;
   hasItems: boolean;
 }>) {
+  const buildLocation = useInstance({
+    endpoint: ApiEndpoints.stock_location_list,
+    pk: build?.take_from,
+    hasPrimaryKey: true,
+    defaultValue: {}
+  });
+
   if (isLoading || !build.pk) {
     return <Skeleton w={'100%'} h={400} animate />;
   }
@@ -94,7 +102,16 @@ function BuildLinesPanel({
     return <NoItems />;
   }
 
-  return <BuildLineTable build={build} />;
+  return (
+    <Stack gap='xs'>
+      {buildLocation.instance.pk && (
+        <Alert color='blue' icon={<IconSitemap />} title={t`Source Location`}>
+          <RenderStockLocation instance={buildLocation.instance} />
+        </Alert>
+      )}
+      <BuildLineTable build={build} />
+    </Stack>
+  );
 }
 
 function BuildAllocationsPanel({
@@ -220,17 +237,6 @@ export default function BuildDetail() {
         label: t`External`,
         icon: 'manufacturers',
         hidden: !build.external
-      },
-      {
-        type: 'text',
-        name: 'purchase_order',
-        label: t`Purchase Order`,
-        icon: 'purchase_orders',
-        copy: true,
-        hidden: !build.external,
-        value_formatter: () => {
-          return 'TODO: external PO';
-        }
       },
       {
         type: 'text',
@@ -508,7 +514,7 @@ export default function BuildDetail() {
         icon: <IconChecklist />,
         hidden: !build.part_detail?.testable,
         content: build.pk ? (
-          <BuildOrderTestTable buildId={build.pk} partId={build.part} />
+          <PartTestResultTable buildId={build.pk} partId={build.part} />
         ) : (
           <Skeleton />
         )
@@ -673,6 +679,7 @@ export default function BuildDetail() {
       <PrintingActions
         modelType={ModelType.build}
         items={[build.pk]}
+        enableLabels
         enableReports
       />,
       <OptionsActionDropdown

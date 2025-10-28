@@ -115,7 +115,7 @@ export function ReturnOrderTable({
         accessor: 'customer_reference'
       },
       DescriptionColumn({}),
-      LineItemsProgressColumn(),
+      LineItemsProgressColumn({}),
       StatusColumn({ model: ModelType.returnorder }),
       ProjectCodeColumn({
         defaultVisible: false
@@ -189,7 +189,8 @@ export function ReturnOrderTable({
           modelType: ModelType.returnorder,
           enableSelection: true,
           enableDownload: true,
-          enableReports: true
+          enableReports: true,
+          enableLabels: true
         }}
       />
     </>

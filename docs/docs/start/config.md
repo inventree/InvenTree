@@ -83,7 +83,7 @@ Date and time values are stored in the database in UTC format, and are converted
 
 By default, the InvenTree server will not automatically apply database migrations. When the InvenTree installation is updated (*or a plugin is installed which requires database migrations*), database migrations must be applied manually by the system administrator.
 
-With "auto update" enabled, the InvenTree server will automatically apply database migrations as required. To enable automatic database updates, set `INVENTREE_AUTO_UPDATE` to `True`.
+With "auto update" enabled, the InvenTree server will automatically apply database migrations as required when plugins are changed. To enable automatic database updates, set `INVENTREE_AUTO_UPDATE` to `True`. However, this setting is not sufficient when updating your InvenTree installation - you must still ensure that you follow the required steps for updating InvenTree as per your installation method.
 
 ## Debugging and Logging Options
 
@@ -135,6 +135,7 @@ Depending on how your InvenTree installation is configured, you will need to pay
 | INVENTREE_CORS_ORIGIN_WHITELIST | cors.whitelist | List of whitelisted CORS URLs. Refer to the [django-cors-headers documentation](https://github.com/adamchainz/django-cors-headers#cors_allowed_origins-sequencestr) | Uses the *INVENTREE_SITE_URL* parameter, if set. Otherwise, an empty list. |
 | INVENTREE_CORS_ORIGIN_REGEX | cors.regex | List of regular expressions for CORS whitelisted URL patterns | *Empty list* |
 | INVENTREE_CORS_ALLOW_CREDENTIALS | cors.allow_credentials | Allow cookies in cross-site requests | `True` |
+| INVENTREE_SITE_LAX_PROTOCOL | site_lax_protocol | Ignore protocol mismatches on INVE-E7 site checks | `True` |
 | INVENTREE_USE_X_FORWARDED_HOST | use_x_forwarded_host | Use forwarded host header | `False` |
 | INVENTREE_USE_X_FORWARDED_PORT | use_x_forwarded_port | Use forwarded port header | `False` |
 | INVENTREE_USE_X_FORWARDED_PROTO | use_x_forwarded_proto | Use forwarded protocol header | `False` |
@@ -308,6 +309,7 @@ The following cache settings are available:
 | INVENTREE_CACHE_HOST | cache.host | Cache server host | *Not specified* |
 | INVENTREE_CACHE_PORT | cache.port | Cache server port | 6379 |
 | INVENTREE_CACHE_PASSWORD | cache.password | Cache server password | none |
+| INVENTREE_CACHE_USER | cache.user | Cache server username | none |
 | INVENTREE_CACHE_CONNECT_TIMEOUT | cache.connect_timeout | Cache connection timeout (seconds) | 3 |
 | INVENTREE_CACHE_TIMEOUT | cache.timeout | Cache timeout (seconds) | 3 |
 | INVENTREE_CACHE_TCP_KEEPALIVE | cache.tcp_keepalive | Cache TCP keepalive | True |
@@ -413,7 +415,7 @@ The login-experience can be altered with the following settings:
 
 Custom authentication backends can be used by specifying them here. These can for example be used to add [LDAP / AD login](https://django-auth-ldap.readthedocs.io/en/latest/) to InvenTree
 
-### Sentry Integration
+## Sentry Integration
 
 The InvenTree server can be integrated with the [sentry.io](https://sentry.io) monitoring service, for error logging and performance tracking.
 
@@ -426,7 +428,7 @@ The InvenTree server can be integrated with the [sentry.io](https://sentry.io) m
 !!! info "Default DSN"
     If enabled with the default DSN, server errors will be logged to a sentry.io account monitored by the InvenTree developers.
 
-### Customization Options
+## Customization Options
 
 The logo and custom messages can be changed/set:
 
@@ -454,6 +456,28 @@ If you want to remove the InvenTree branding as far as possible from your end-us
 
 !!! info "Custom Logo Path"
     The provided *custom logo* path must be specified *relative* to the location of the `/static/` directory.
+
+## Frontend Options
+
+Set the `INVENTREE_FRONTEND_SETTINGS` Environment variable to a JSON object or use `frontend_settings` in the configuration file with the following options:
+
+| Option | Description | Default |
+| --- | --- | --- |
+| `base_url` | Set the base URL for the user interface. This is the UI path e.g. '/web/' | `web` |
+| `api_host` | If provided, specify the API host | *None* |
+| `server_list` | Set the server list. `{}` | `[]` |
+| `debug` | Set the debug mode | *Server debug mode* |
+| `environment` | `development` or `production` | *development if Server is in debug mode* |
+| `show_server_selector` | In debug mode, show server selector by default. If no servers are specified, show server selector. | |
+| `url_compatibility` | Support compatibility with "legacy" URLs? | `true` |
+| `sentry_dsn` | Set a Sentry DSN url | *Not specified* |
+| `mobile_mode` | Controls if InvenTree web UI can be used by mobile devices. There are 3 options: `default` - does not allow mobile devices; `allow-ignore` - shows a mobile device detected banner with a button to ignore this warning AT THE USERS OWN RISK; `allow-always` - skips the mobile check and allows mobile devices always (of course at the server admins OWN RISK) | `default` |
+
+E.g. to allow mobile devices to ignore the mobile check, use the following Environment variable:
+
+```env
+INVENTREE_FRONTEND_SETTINGS='{"mobile_mode": "allow-ignore"}'
+```
 
 ## Plugin Options
 

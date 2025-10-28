@@ -1,3 +1,8 @@
+import {
+  type CredentialRequestOptionsJSON,
+  get,
+  parseRequestOptionsFromJSON
+} from '@github/webauthn-json/browser-ponyfill';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import { type AuthProvider, FlowEnum } from '@lib/types/Auth';
@@ -71,7 +76,7 @@ export async function doBasicLogin(
   const { getHost } = useLocalState.getState();
   const { clearUserState, setAuthenticated, fetchUserState } =
     useUserState.getState();
-  const { setAuthContext } = useServerApiState.getState();
+  const { setAuthContext, setMfaContext } = useServerApiState.getState();
 
   if (username.length == 0 || password.length == 0) {
     return;
@@ -106,14 +111,37 @@ export async function doBasicLogin(
       }
     })
     .catch(async (err) => {
-      if (err?.response?.status == 401) {
-        await handlePossibleMFAError(err);
-      } else if (err?.response?.status == 409) {
+      notifications.hide('auth-login-error');
+
+      if (err?.response?.status) {
+        switch (err.response.status) {
+          case 401:
+            await handlePossibleMFAError(err);
+            break;
+          case 409:
+            notifications.show({
+              title: t`Already logged in`,
+              message: t`There is a conflicting session on the server for this browser. Please logout of that first.`,
+              color: 'red',
+              id: 'auth-login-error',
+              autoClose: false
+            });
+            break;
+          default:
+            notifications.show({
+              title: `${t`Login failed`} (${err.response.status})`,
+              message: t`Check your input and try again.`,
+              id: 'auth-login-error',
+              color: 'red'
+            });
+            break;
+        }
+      } else {
         notifications.show({
-          title: t`Already logged in`,
-          message: t`There is a conflicting session on the server for this browser. Please logout of that first.`,
+          title: t`Login failed`,
+          message: t`No response from server.`,
           color: 'red',
-          autoClose: false
+          id: 'login-error'
         });
       }
     });
@@ -134,6 +162,7 @@ export async function doBasicLogin(
       (flow: any) => flow.id == FlowEnum.MfaAuthenticate
     );
     if (mfa_flow?.is_pending) {
+      setMfaContext(mfa_flow);
       // MFA is required - we might already have a code
       if (code && code.length > 0) {
         const rslt = await handleMfaLogin(
@@ -169,6 +198,7 @@ export async function doBasicLogin(
  */
 export const doLogout = async (navigate: NavigateFunction) => {
   const { clearUserState, isLoggedIn } = useUserState.getState();
+  const { setAuthContext } = useServerApiState.getState();
 
   // Logout from the server session
   if (isLoggedIn() || !!getCsrfCookie()) {
@@ -183,6 +213,7 @@ export const doLogout = async (navigate: NavigateFunction) => {
 
   clearUserState();
   clearCsrfCookie();
+  setAuthContext(undefined);
   navigate('/login');
 };
 
@@ -654,4 +685,58 @@ export function handleChangePassword(
         passwordError(errors);
       }
     });
+}
+
+export async function handleWebauthnLogin(
+  navigate?: NavigateFunction,
+  location?: Location<any>
+) {
+  const { setAuthContext } = useServerApiState.getState();
+
+  const webauthn_challenge = api
+    .get(apiUrl(ApiEndpoints.auth_webauthn_login))
+    .catch(() => {})
+    .then((response) => {
+      if (response && response.status === 200) {
+        return response.data.data.request_options;
+      }
+    });
+
+  if (!webauthn_challenge) {
+    return;
+  }
+
+  try {
+    const credential = await get(
+      parseRequestOptionsFromJSON(
+        webauthn_challenge as CredentialRequestOptionsJSON
+      )
+    );
+    await api
+      .post(apiUrl(ApiEndpoints.auth_webauthn_login), {
+        credential: credential
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          handleSuccessFullAuth(response, navigate, location, undefined);
+        }
+      })
+      .catch((err) => {
+        if (err?.response?.status == 401) {
+          const mfa_trust = err.response.data.data.flows.find(
+            (flow: any) => flow.id == FlowEnum.MfaTrust
+          );
+          if (mfa_trust?.is_pending) {
+            setAuthContext(err.response.data.data);
+            authApi(apiUrl(ApiEndpoints.auth_trust), undefined, 'post', {
+              trust: false
+            }).then((response) => {
+              handleSuccessFullAuth(response, navigate, location, undefined);
+            });
+          }
+        }
+      });
+  } catch (e) {
+    console.error(e);
+  }
 }

@@ -91,6 +91,7 @@ export type TableState = {
  * @param filter - A custom filter function
  * @param filtering - Whether the column is filterable
  * @param width - The width of the column
+ * @param minWidth - The minimum width of the column
  * @param resizable - Whether the column is resizable (defaults to true)
  * @param noWrap - Whether the column should wrap
  * @param ellipsis - Whether the column should be ellipsized
@@ -113,6 +114,7 @@ export type TableColumnProps<T = any> = {
   filter?: any;
   filtering?: boolean;
   width?: number;
+  minWidth?: string | number;
   resizable?: boolean;
   noWrap?: boolean;
   ellipsis?: boolean;
@@ -120,6 +122,7 @@ export type TableColumnProps<T = any> = {
   cellsStyle?: any;
   extra?: any;
   noContext?: boolean;
+  style?: MantineStyleProp;
 };
 
 /**
@@ -170,6 +173,7 @@ export type RowViewProps = RowAction & RowModelProps;
  * @param barcodeActions : any[] - List of barcode actions
  * @param tableFilters : TableFilter[] - List of custom filters
  * @param tableActions : any[] - List of custom action groups
+ * @param detailAction: boolean - Enable detail action for each row (default = true)
  * @param dataFormatter : (data: any) => any - Callback function to reformat data returned by server (if not in default format)
  * @param rowActions : (record: any) => RowAction[] - Callback function to generate row actions
  * @param onRowClick : (record: any, index: number, event: any) => void - Callback function when a row is clicked
@@ -201,6 +205,7 @@ export type InvenTreeTableProps<T = any> = {
   rowExpansion?: DataTableRowExpansionProps<T>;
   dataFormatter?: (data: any) => any;
   rowActions?: (record: T) => RowAction[];
+  detailAction?: boolean;
   onRowClick?: (record: T, index: number, event: any) => void;
   onCellClick?: DataTableCellClickHandler<T>;
   modelType?: ModelType;

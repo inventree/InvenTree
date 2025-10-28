@@ -6,6 +6,10 @@ title: FAQ
 
 Below is a list of frequently asked questions. If you are having issues with InvenTree please consult this list first!
 
+Also, you can refer to our [GitHub page](https://github.com/inventree/inventree/issues) for known issues and bug reports - perhaps your issue has already been reported!
+
+If you cannot resolve the issue, please refer to the [troubleshooting guide](./troubleshooting.md) for further assistance.
+
 ## Installation Issues
 
 ### Installing on Windows

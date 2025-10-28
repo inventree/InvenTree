@@ -31,6 +31,10 @@ This will create JSON file at the specified location which contains all database
 !!! info "Specifying filename"
     The filename of the exported file can be specified using the `-f` option. To see all available options, run `invoke export-records --help`
 
+```
+{{ invoke_commands('export-records --help') }}
+```
+
 ### Initialize New Database
 
 Configure the new database using the normal processes (see [Configuration](./config.md))

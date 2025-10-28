@@ -1,7 +1,8 @@
 import { t } from '@lingui/core/macro';
-import { Alert, Divider, List, Stack, Table } from '@mantine/core';
+import { Alert, Divider, Group, List, Stack, Table, Text } from '@mantine/core';
 import {
   IconCalendar,
+  IconCircleCheck,
   IconInfoCircle,
   IconLink,
   IconList,
@@ -25,14 +26,17 @@ import {
   type TableFieldRowProps
 } from '../components/forms/fields/TableField';
 import { StatusRenderer } from '../components/render/StatusRenderer';
-import { RenderStockItem } from '../components/render/Stock';
+import {
+  RenderStockItem,
+  RenderStockLocation
+} from '../components/render/Stock';
 import { useCreateApiFormModal } from '../hooks/UseForm';
 import {
   useBatchCodeGenerator,
   useSerialNumberGenerator
 } from '../hooks/UseGenerator';
 import { useGlobalSettingsState } from '../states/SettingsStates';
-import { PartColumn } from '../tables/ColumnRenderers';
+import { RenderPartColumn } from '../tables/ColumnRenderers';
 
 /**
  * Field set for BuildOrder forms
@@ -103,9 +107,8 @@ export function useBuildOrderFields({
         icon: <IconTruckDelivery />
       },
       batch: {
-        placeholder:
-          batchGenerator.result &&
-          `${t`Next batch code`}: ${batchGenerator.result}`,
+        placeholder: batchGenerator.result,
+        placeholderAutofill: true,
         value: batchCode,
         onValueChange: (value: any) => setBatchCode(value)
       },
@@ -203,19 +206,17 @@ export function useBuildOrderOutputFields({
       },
       serial_numbers: {
         hidden: !trackable,
-        placeholder:
-          serialGenerator.result &&
-          `${t`Next serial number`}: ${serialGenerator.result}`
+        placeholder: serialGenerator.result && `${serialGenerator.result}+`,
+        placeholderAutofill: true
       },
       batch_code: {
-        placeholder:
-          batchGenerator.result &&
-          `${t`Next batch code`}: ${batchGenerator.result}`
+        placeholder: batchGenerator.result,
+        placeholderAutofill: true
       },
       location: {
         value: location,
         onValueChange: (value: any) => {
-          setQuantity(value);
+          setLocation(value);
         }
       },
       auto_allocate: {
@@ -232,7 +233,7 @@ function BuildOutputFormRow({
   props: TableFieldRowProps;
   record: any;
 }>) {
-  const serial = useMemo(() => {
+  const stockItemColumn = useMemo(() => {
     if (record.serial) {
       return `# ${record.serial}`;
     } else {
@@ -240,15 +241,39 @@ function BuildOutputFormRow({
     }
   }, [record]);
 
+  const quantityColumn = useMemo(() => {
+    // Serialized output - quantity cannot be changed
+    if (record.serial) {
+      return '1';
+    }
+
+    // Non-serialized output - quantity can be changed
+    return (
+      <StandaloneField
+        fieldName='quantity'
+        fieldDefinition={{
+          field_type: 'number',
+          required: true,
+          value: props.item.quantity,
+          onValueChange: (value: any) => {
+            props.changeFn(props.idx, 'quantity', value);
+          }
+        }}
+        error={props.rowErrors?.quantity?.message}
+      />
+    );
+  }, [props, record]);
+
   return (
     <>
       <Table.Tr>
         <Table.Td>
-          <PartColumn part={record.part_detail} />
+          <RenderPartColumn part={record.part_detail} />
         </Table.Td>
+        <Table.Td>{stockItemColumn}</Table.Td>
         <Table.Td>
           <TableFieldErrorWrapper props={props} errorKey='output'>
-            {serial}
+            {quantityColumn}
           </TableFieldErrorWrapper>
         </Table.Td>
         <Table.Td>{record.batch}</Table.Td>
@@ -293,7 +318,8 @@ export function useCompleteBuildOutputsForm({
         field_type: 'table',
         value: outputs.map((output: any) => {
           return {
-            output: output.pk
+            output: output.pk,
+            quantity: output.quantity
           };
         }),
         modelRenderer: (row: TableFieldRowProps) => {
@@ -305,6 +331,7 @@ export function useCompleteBuildOutputsForm({
         headers: [
           { title: t`Part` },
           { title: t`Build Output` },
+          { title: t`Quantity to Complete`, style: { width: '200px' } },
           { title: t`Batch` },
           { title: t`Status` },
           { title: '', style: { width: '50px' } }
@@ -378,7 +405,8 @@ export function useScrapBuildOutputsForm({
         },
         headers: [
           { title: t`Part` },
-          { title: t`Stock Item` },
+          { title: t`Build Output` },
+          { title: t`Quantity to Scrap`, style: { width: '200px' } },
           { title: t`Batch` },
           { title: t`Status` },
           { title: '', style: { width: '50px' } }
@@ -537,13 +565,17 @@ function BuildAllocateLineRow({
   return (
     <Table.Tr key={`table-row-${record.pk}`}>
       <Table.Td>
-        <PartColumn part={record.part_detail} />
+        <RenderPartColumn part={record.part_detail} />
+      </Table.Td>
+      <Table.Td>
+        <Text size='sm'>{record.part_detail?.IPN}</Text>
       </Table.Td>
       <Table.Td>
         <ProgressBar
           value={record.allocatedQuantity}
-          maximum={record.requiredQuantity}
+          maximum={record.requiredQuantity - record.consumed}
           progressLabel
+          units={record.part_detail?.units}
         />
       </Table.Td>
       <Table.Td>
@@ -596,6 +628,7 @@ export function useAllocateStockToBuildForm({
         value: [],
         headers: [
           { title: t`Part`, style: { minWidth: '175px' } },
+          { title: t`IPN`, style: { minWidth: '50px' } },
           { title: t`Allocated`, style: { minWidth: '175px' } },
           { title: t`Stock Item`, style: { width: '100%' } },
           { title: t`Quantity`, style: { minWidth: '175px' } },
@@ -670,15 +703,227 @@ export function useAllocateStockToBuildForm({
     successMessage: t`Stock items allocated`,
     onFormSuccess: onFormSuccess,
     initialData: {
-      items: lineItems.map((item) => {
-        return {
-          build_line: item.pk,
-          stock_item: undefined,
-          quantity: Math.max(0, item.requiredQuantity - item.allocatedQuantity),
-          output: outputId
-        };
-      })
+      items: lineItems
+        .filter((item) => {
+          if (outputId) {
+            // Do not filter items for tracked outputs
+            return true;
+          } else {
+            return (
+              item.requiredQuantity > item.allocatedQuantity + item.consumed
+            );
+          }
+        })
+        .map((item) => {
+          return {
+            build_line: item.pk,
+            stock_item: undefined,
+            quantity: Math.max(
+              0,
+              item.requiredQuantity - item.allocatedQuantity - item.consumed
+            ),
+            output: outputId
+          };
+        })
     },
     size: '80%'
+  });
+}
+
+function BuildConsumeItemRow({
+  props,
+  record
+}: {
+  props: TableFieldRowProps;
+  record: any;
+}) {
+  return (
+    <Table.Tr key={`table-row-${record.pk}`}>
+      <Table.Td>
+        <RenderPartColumn part={record.part_detail} />
+      </Table.Td>
+      <Table.Td>
+        <RenderStockItem instance={record.stock_item_detail} />
+      </Table.Td>
+      <Table.Td>
+        {record.location_detail && (
+          <RenderStockLocation instance={record.location_detail} />
+        )}
+      </Table.Td>
+      <Table.Td>{record.quantity}</Table.Td>
+      <Table.Td>
+        <StandaloneField
+          fieldName='quantity'
+          fieldDefinition={{
+            field_type: 'number',
+            required: true,
+            value: props.item.quantity,
+            onValueChange: (value: any) => {
+              props.changeFn(props.idx, 'quantity', value);
+            }
+          }}
+          error={props.rowErrors?.quantity?.message}
+        />
+      </Table.Td>
+      <Table.Td>
+        <RemoveRowButton onClick={() => props.removeFn(props.idx)} />
+      </Table.Td>
+    </Table.Tr>
+  );
+}
+
+/**
+ * Dynamic form for consuming stock against multiple BuildItem records
+ */
+export function useConsumeBuildItemsForm({
+  buildId,
+  allocatedItems,
+  onFormSuccess
+}: {
+  buildId: number;
+  allocatedItems: any[];
+  onFormSuccess: (response: any) => void;
+}) {
+  const consumeFields: ApiFormFieldSet = useMemo(() => {
+    return {
+      items: {
+        field_type: 'table',
+        value: [],
+        headers: [
+          { title: t`Part` },
+          { title: t`Stock Item` },
+          { title: t`Location` },
+          { title: t`Allocated` },
+          { title: t`Quantity` }
+        ],
+        modelRenderer: (row: TableFieldRowProps) => {
+          const record = allocatedItems.find(
+            (item) => item.pk == row.item.build_item
+          );
+
+          return (
+            <BuildConsumeItemRow key={row.idx} props={row} record={record} />
+          );
+        }
+      },
+      notes: {}
+    };
+  }, [allocatedItems]);
+
+  return useCreateApiFormModal({
+    url: ApiEndpoints.build_order_consume,
+    pk: buildId,
+    title: t`Consume Stock`,
+    successMessage: t`Stock items consumed`,
+    onFormSuccess: onFormSuccess,
+    size: '80%',
+    fields: consumeFields,
+    initialData: {
+      items: allocatedItems.map((item) => {
+        return {
+          build_item: item.pk,
+          quantity: item.quantity
+        };
+      })
+    }
+  });
+}
+
+function BuildConsumeLineRow({
+  props,
+  record
+}: {
+  props: TableFieldRowProps;
+  record: any;
+}) {
+  const allocated: number = record.allocatedQuantity ?? record.allocated;
+  const required: number = record.requiredQuantity ?? record.required;
+  const remaining: number = Math.max(0, required - record.consumed);
+
+  return (
+    <Table.Tr key={`table-row-${record.pk}`}>
+      <Table.Td>
+        <RenderPartColumn part={record.part_detail} />
+      </Table.Td>
+      <Table.Td>
+        {remaining <= 0 ? (
+          <Group gap='xs'>
+            <IconCircleCheck size={16} color='green' />
+            <Text size='sm' style={{ fontStyle: 'italic' }}>
+              {t`Fully consumed`}
+            </Text>
+          </Group>
+        ) : (
+          <ProgressBar value={allocated} maximum={remaining} progressLabel />
+        )}
+      </Table.Td>
+      <Table.Td>
+        <ProgressBar
+          value={record.consumed}
+          maximum={record.quantity}
+          progressLabel
+        />
+      </Table.Td>
+      <Table.Td>
+        <RemoveRowButton onClick={() => props.removeFn(props.idx)} />
+      </Table.Td>
+    </Table.Tr>
+  );
+}
+
+/**
+ * Dynamic form for consuming stock against multiple BuildLine records
+ */
+export function useConsumeBuildLinesForm({
+  buildId,
+  buildLines,
+  onFormSuccess
+}: {
+  buildId: number;
+  buildLines: any[];
+  onFormSuccess: (response: any) => void;
+}) {
+  const filteredLines = useMemo(() => {
+    return buildLines.filter((line) => !line.part_detail?.trackable);
+  }, [buildLines]);
+
+  const consumeFields: ApiFormFieldSet = useMemo(() => {
+    return {
+      lines: {
+        field_type: 'table',
+        value: [],
+        headers: [
+          { title: t`Part` },
+          { title: t`Allocated` },
+          { title: t`Consumed` }
+        ],
+        modelRenderer: (row: TableFieldRowProps) => {
+          const record = filteredLines.find(
+            (item) => item.pk == row.item.build_line
+          );
+
+          return (
+            <BuildConsumeLineRow key={row.idx} props={row} record={record} />
+          );
+        }
+      },
+      notes: {}
+    };
+  }, [filteredLines]);
+
+  return useCreateApiFormModal({
+    url: ApiEndpoints.build_order_consume,
+    pk: buildId,
+    title: t`Consume Stock`,
+    successMessage: t`Stock items consumed`,
+    onFormSuccess: onFormSuccess,
+    fields: consumeFields,
+    initialData: {
+      lines: filteredLines.map((item) => {
+        return {
+          build_line: item.pk
+        };
+      })
+    }
   });
 }
