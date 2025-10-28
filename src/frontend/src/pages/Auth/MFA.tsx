@@ -1,8 +1,4 @@
-import {
-  type CredentialRequestOptionsJSON,
-  get,
-  parseRequestOptionsFromJSON
-} from '@github/webauthn-json/browser-ponyfill';
+import type { CredentialRequestOptionsJSON } from '@github/webauthn-json/browser-ponyfill';
 import { ApiEndpoints, apiUrl } from '@lib/index';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
@@ -12,7 +8,7 @@ import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useShallow } from 'zustand/react/shallow';
 import { api } from '../../App';
-import { handleMfaLogin } from '../../functions/auth';
+import { handleMfaLogin, handleWebauthnLogin } from '../../functions/auth';
 import { useServerApiState } from '../../states/ServerApiState';
 import { Wrapper } from './Layout';
 
@@ -48,7 +44,11 @@ export default function Mfa() {
   // try webauthn login automatically if available
   useEffect(() => {
     if (webauthn_challenge) {
-      webauthnLoginTry(webauthn_challenge as CredentialRequestOptionsJSON);
+      handleWebauthnLogin(
+        webauthn_challenge as CredentialRequestOptionsJSON,
+        navigate,
+        location
+      );
     }
   }, [webauthn_challenge]);
 
@@ -81,18 +81,4 @@ export default function Mfa() {
       </Button>
     </Wrapper>
   );
-}
-
-async function webauthnLoginTry(
-  webauthn_challenge: CredentialRequestOptionsJSON
-) {
-  try {
-    const options = parseRequestOptionsFromJSON(webauthn_challenge);
-    const credential = await get(options);
-    const reauthResp = await api.post(ApiEndpoints.auth_webauthn_login, {
-      credential: credential
-    });
-  } catch (e) {
-    console.error(e);
-  }
 }

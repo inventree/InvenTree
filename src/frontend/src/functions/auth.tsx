@@ -1,3 +1,8 @@
+import {
+  type CredentialRequestOptionsJSON,
+  get,
+  parseRequestOptionsFromJSON
+} from '@github/webauthn-json/browser-ponyfill';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import { type AuthProvider, FlowEnum } from '@lib/types/Auth';
@@ -680,4 +685,27 @@ export function handleChangePassword(
         passwordError(errors);
       }
     });
+}
+
+export async function handleWebauthnLogin(
+  webauthn_challenge: CredentialRequestOptionsJSON,
+  navigate?: NavigateFunction,
+  location?: Location<any>
+) {
+  try {
+    const credential = await get(
+      parseRequestOptionsFromJSON(webauthn_challenge)
+    );
+    await api
+      .post(apiUrl(ApiEndpoints.auth_webauthn_login), {
+        credential: credential
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          handleSuccessFullAuth(response, navigate, location, undefined);
+        }
+      });
+  } catch (e) {
+    console.error(e);
+  }
 }
