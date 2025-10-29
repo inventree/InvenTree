@@ -388,6 +388,11 @@ It is also possible to use alternative storage backends for static and media fil
 | Environment Variable | Configuration File | Description | Default |
 | --- | --- | --- | --- |
 | INVENTREE_STORAGE_TARGET | storage.target | Storage target to use for static and media files, valid options: local, s3, sftp | local |
+
+#### S3
+
+| Environment Variable | Configuration File | Description | Default |
+| --- | --- | --- | --- |
 | INVENTREE_S3_ACCESS_KEY | storage.s3.access_key | Access key | *Not specified* |
 | INVENTREE_S3_SECRET_KEY | storage.s3.secret_key | Secret key |
 | *Not specified* |
@@ -403,6 +408,10 @@ It is also possible to use alternative storage backends for static and media fil
 | INVENTREE_S3_OVERWRITE | storage.s3.overwrite | Overwrite existing files in S3 bucket | False |
 | INVENTREE_S3_VIRTUAL | storage.s3.virtual | Use virtual addressing style - by default False -> `path` style, `virtual` style if True | False |
 
+#### SFTP
+
+| Environment Variable | Configuration File | Description | Default |
+| --- | --- | --- | --- |
 | INVENTREE_SFTP_HOST | storage.sftp.host | SFTP host | *Not specified* |
 | INVENTREE_SFTP_PARAMS | storage.sftp.params | SFTP connection parameters, see https://docs.paramiko.org/en/latest/api/client.html#paramiko.client.SSHClient.connect; e.g. `{'port': 22, 'user': 'usr', 'password': 'pwd'}` | *Not specified* |
 | INVENTREE_SFTP_UID | storage.sftp.uid | SFTP user ID - not required | *Not specified* |
