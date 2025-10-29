@@ -26,7 +26,7 @@ def init_storages() -> tuple[str, dict, Optional[str]]:
     target = get_setting(
         'INVENTREE_STORAGE_TARGET',
         'storage.target',
-        StorageBackends.LOCAL,
+        StorageBackends.LOCAL.value,
         typecast=str,
     )
 
