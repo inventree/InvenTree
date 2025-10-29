@@ -1387,10 +1387,12 @@ MFA_ENABLED = get_boolean_setting(
 MFA_SUPPORTED_TYPES = get_setting(
     'INVENTREE_MFA_SUPPORTED_TYPES',
     'mfa_supported_types',
-    ['totp', 'recovery_codes'],
+    ['totp', 'recovery_codes', 'webauthn'],
     typecast=list,
 )
 MFA_TRUST_ENABLED = True
+MFA_PASSKEY_LOGIN_ENABLED = True
+MFA_WEBAUTHN_ALLOW_INSECURE_ORIGIN = DEBUG
 
 LOGOUT_REDIRECT_URL = get_setting(
     'INVENTREE_LOGOUT_REDIRECT_URL', 'logout_redirect_url', 'index'

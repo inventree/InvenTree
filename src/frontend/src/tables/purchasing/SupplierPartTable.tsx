@@ -13,6 +13,7 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import { formatDecimal } from '@lib/functions/Formatting';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import { IconPackageImport } from '@tabler/icons-react';
@@ -43,8 +44,16 @@ import { TableHoverCard } from '../TableHoverCard';
  */
 
 export function SupplierPartTable({
-  params
-}: Readonly<{ params: any }>): ReactNode {
+  manufacturerId,
+  manufacturerPartId,
+  partId,
+  supplierId
+}: Readonly<{
+  manufacturerId?: number;
+  manufacturerPartId?: number;
+  partId?: number;
+  supplierId?: number;
+}>): ReactNode {
   const table = useTable('supplierparts');
 
   const user = useUserState();
@@ -53,7 +62,7 @@ export function SupplierPartTable({
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
       PartColumn({
-        switchable: 'part' in params,
+        switchable: !!partId,
         part: 'part_detail'
       }),
       {
@@ -119,7 +128,7 @@ export function SupplierPartTable({
 
           return (
             <TableHoverCard
-              value={record.pack_quantity}
+              value={formatDecimal(record.pack_quantity)}
               extra={extra}
               title={t`Pack Quantity`}
             />
@@ -147,10 +156,10 @@ export function SupplierPartTable({
         }
       }
     ];
-  }, [params]);
+  }, [partId]);
 
   const supplierPartFields = useSupplierPartFields({
-    partId: params?.part
+    partId: partId
   });
 
   const addSupplierPart = useCreateApiFormModal({
@@ -158,8 +167,9 @@ export function SupplierPartTable({
     title: t`Add Supplier Part`,
     fields: supplierPartFields,
     initialData: {
-      part: params?.part,
-      supplier: params?.supplier
+      part: partId,
+      supplier: supplierId,
+      manufacturer_part: manufacturerPartId
     },
     table: table,
     successMessage: t`Supplier part created`
@@ -167,7 +177,7 @@ export function SupplierPartTable({
 
   const supplierPlugins = usePluginsWithMixin('supplier');
   const importPartWizard = ImportPartWizard({
-    partId: params?.part
+    partId: partId
   });
 
   const tableActions = useMemo(() => {
@@ -187,11 +197,11 @@ export function SupplierPartTable({
         hidden={
           supplierPlugins.length === 0 ||
           !user.hasAddRole(UserRoles.part) ||
-          !params?.part
+          !partId
         }
       />
     ];
-  }, [user, supplierPlugins]);
+  }, [user, partId, supplierPlugins]);
 
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
@@ -272,7 +282,10 @@ export function SupplierPartTable({
         columns={tableColumns}
         props={{
           params: {
-            ...params,
+            manufacturer: manufacturerId,
+            manufacturer_part: manufacturerPartId,
+            supplier: supplierId,
+            part: partId,
             part_detail: true,
             supplier_detail: true,
             manufacturer_detail: true
