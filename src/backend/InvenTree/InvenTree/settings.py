@@ -41,7 +41,8 @@ from InvenTree.version import (
 )
 from users.oauth2_scopes import oauth2_scopes
 
-from . import config, locales, storages
+from . import config
+from .setting import locales, storages
 
 try:
     import django_stubs_ext
