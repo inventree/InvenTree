@@ -35,7 +35,7 @@ class GuideDefinitionSerializer(FilterableSerializerMixin, InvenTreeModelSeriali
     data = enable_filter(FilterableJSONField(required=False))
     is_applicable = serializers.SerializerMethodField()
 
-    def get_is_applicable(self, instance):
+    def get_is_applicable(self, instance) -> bool:
         """Determine if this guide is applicable in the current context.
 
         For example, a 'First Use Tipp' might only be applicable if the user has never used the system before.
