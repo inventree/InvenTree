@@ -286,6 +286,9 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
             fn(9988776655.4321, integer=True, separator=' '), '9 988 776 655'
         )
 
+        # Test with multiplier
+        self.assertEqual(fn(1000, multiplier=1.5), '1500')
+
         # Failure cases
         self.assertEqual(fn('abc'), 'abc')
         self.assertEqual(fn(1234.456, decimal_places='a'), '1234.456')
