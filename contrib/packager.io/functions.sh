@@ -202,7 +202,7 @@ function detect_envs() {
     export INVENTREE_DB_HOST=${INVENTREE_DB_HOST:-samplehost}
     export INVENTREE_DB_PORT=${INVENTREE_DB_PORT:-123456}
 
-    export INVENTREE_SITE_URL=${INVENTREE_SITE_URL}
+    export INVENTREE_SITE_URL=${INVENTREE_SITE_URL:-http://${INVENTREE_IP}}
 
     export SETUP_CONF_LOADED=true
   fi
@@ -327,7 +327,7 @@ function update_or_install() {
 
   # Run update as app user
   echo "# POI12| Updating InvenTree"
-  sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && pip install wheel"
+  sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && pip install wheel python-dotenv"
   sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && set -e && invoke update | sed -e 's/^/# POI12| u | /;'"
 
   # Make sure permissions are correct again
@@ -407,13 +407,13 @@ function final_message() {
   echo -e "${SETUP_NGINX_FILE}"
   echo -e "Try opening InvenTree with any of \n${INVENTREE_SITE_URL} , http://localhost/ or http://${INVENTREE_IP}/ \n"
   # Print admin user data only if set
-  if ["${INVENTREE_ADMIN_USER}" ]; then
+  if [ -n "${INVENTREE_ADMIN_USER}" ]; then
     echo -e "Admin user data:"
     echo -e "   Email: ${INVENTREE_ADMIN_EMAIL}"
     echo -e "   Username: ${INVENTREE_ADMIN_USER}"
     echo -e "   Password: ${INVENTREE_ADMIN_PASSWORD}"
   else
-    echo -e "No admin set during this operation - depending on the deployment method a admin user might have been created with an initial password saved in `${SETUP_ADMIN_PASSWORD_FILE}`"
+    echo -e "No admin set during this operation - depending on the deployment method a admin user might have been created with an initial password saved in `$SETUP_ADMIN_PASSWORD_FILE`"
   fi
   echo -e "####################################################################################"
 }
