@@ -8,6 +8,9 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
 import structlog
+from djmoney.contrib.exchange.exceptions import MissingRate
+from djmoney.contrib.exchange.models import convert_money
+from djmoney.money import Money
 from moneyed import CURRENCIES
 
 import InvenTree.helpers
@@ -131,19 +134,41 @@ def validate_currency_codes(value):
     return list(valid_currencies)
 
 
-def currency_exchange_plugins() -> Optional[list]:
-    """Return a list of plugin choices which can be used for currency exchange."""
-    try:
-        from plugin import PluginMixinEnum, registry
+def convert_currency(
+    money: Money, currency: Optional[str] = None, raise_error: bool = False
+) -> Money:
+    """Convert a Money object to the specified currency.
 
-        plugs = registry.with_mixin(PluginMixinEnum.CURRENCY_EXCHANGE, active=True)
-    except Exception:
-        plugs = []
+    Arguments:
+        money: The Money object to convert
+        currency: The target currency code (e.g. 'USD').
+        raise_error: If True, raise an exception if conversion fails.
 
-    if len(plugs) == 0:
+    If no currency is specified, convert to the default currency.
+    """
+    if money is None:
         return None
 
-    return [('', _('No plugin'))] + [(plug.slug, plug.human_name) for plug in plugs]
+    if currency is None:
+        currency = currency_code_default()
+
+    target_currency = currency_code_default()
+
+    try:
+        result = convert_money(money, target_currency)
+    except MissingRate as exc:
+        logger.warning(
+            'No currency conversion rate available for %s -> %s',
+            money.currency,
+            target_currency,
+        )
+
+        if raise_error:
+            raise exc
+
+        result = None
+
+        return result
 
 
 def get_price(

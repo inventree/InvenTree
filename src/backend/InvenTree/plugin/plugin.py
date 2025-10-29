@@ -71,6 +71,7 @@ class PluginMixinEnum(StringEnum):
     MAIL = 'mail'
     NAVIGATION = 'navigation'
     NOTIFICATION = 'notification'
+    PRICING = 'pricing'
     REPORT = 'report'
     SCHEDULE = 'schedule'
     SETTINGS = 'settings'

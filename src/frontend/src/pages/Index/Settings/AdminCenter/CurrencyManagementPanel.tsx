@@ -106,6 +106,7 @@ export default function CurrencyManagementPanel() {
       <GlobalSettingList
         keys={[
           'INVENTREE_DEFAULT_CURRENCY',
+          'CURRENCY_CODES',
           'CURRENCY_UPDATE_PLUGIN',
           'CURRENCY_UPDATE_INTERVAL'
         ]}

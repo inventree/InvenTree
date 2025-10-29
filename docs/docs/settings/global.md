@@ -108,6 +108,7 @@ Configuration of pricing data and currency support:
 {{ globalsetting("CURRENCY_CODES") }}
 {{ globalsetting("CURRENCY_UPDATE_PLUGIN") }}
 {{ globalsetting("CURRENCY_UPDATE_INTERVAL") }}
+{{ globalsetting("PRICING_PLUGIN") }}
 {{ globalsetting("PRICING_DECIMAL_PLACES_MIN") }}
 {{ globalsetting("PRICING_DECIMAL_PLACES") }}
 {{ globalsetting("PRICING_AUTO_UPDATE") }}
