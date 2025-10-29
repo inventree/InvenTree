@@ -6,7 +6,7 @@ from typing import Optional
 from InvenTree.config import get_boolean_setting, get_setting
 
 
-class StorageBackends(Enum):
+class StorageBackends(str, Enum):
     """Enumeration of available storage backends."""
 
     LOCAL = 'local'
@@ -31,7 +31,7 @@ def init_storages() -> tuple[str, dict, Optional[str]]:
     )
 
     # Check that the target is valid
-    if target not in StorageBackends:
+    if target not in STORAGE_BACKEND_MAPPING:
         raise ValueError(f"Invalid storage target: '{target}'")
 
     options = {}
