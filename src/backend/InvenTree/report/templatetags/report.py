@@ -607,6 +607,7 @@ def render_html_text(text: str, **kwargs):
 def format_number(
     number: Union[int, float, Decimal],
     decimal_places: Optional[int] = None,
+    multiplier: Optional[Union[int, float, Decimal]] = None,
     integer: bool = False,
     leading: int = 0,
     separator: Optional[str] = None,
@@ -616,15 +617,19 @@ def format_number(
     Arguments:
         number: The number to be formatted
         decimal_places: Number of decimal places to render
+        multiplier: Optional multiplier to apply to the number before formatting
         integer: Boolean, whether to render the number as an integer
         leading: Number of leading zeros (default = 0)
         separator: Character to use as a thousands separator (default = None)
     """
     try:
-        number = Decimal(str(number))
+        number = Decimal(str(number).strip())
     except Exception:
         # If the number cannot be converted to a Decimal, just return the original value
         return str(number)
+
+    if multiplier is not None:
+        number *= Decimal(str(multiplier).strip())
 
     if integer:
         # Convert to integer
@@ -641,7 +646,13 @@ def format_number(
             pass
 
     # Re-encode, and normalize again
-    value = Decimal(number).normalize()
+    # Ensure that the output never uses scientific notation
+    value = Decimal(number)
+    value = (
+        value.quantize(Decimal(1))
+        if value == value.to_integral()
+        else value.normalize()
+    )
 
     if separator:
         value = f'{value:,}'
