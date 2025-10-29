@@ -270,6 +270,14 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
         """Simple tests for number formatting tags."""
         fn = report_tags.format_number
 
+        self.assertEqual(fn(None), 'None')
+
+        for i in [1, '1', '1.0000', '  1  ']:
+            self.assertEqual(fn(i), '1')
+
+        for x in ['10.000000', '  10  ', 10.000000, 10]:
+            self.assertEqual(fn(x), '10')
+
         self.assertEqual(fn(1234), '1234')
         self.assertEqual(fn(1234.5678, decimal_places=2), '1234.57')
         self.assertEqual(fn(1234.5678, decimal_places=3), '1234.568')

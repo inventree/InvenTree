@@ -641,7 +641,13 @@ def format_number(
             pass
 
     # Re-encode, and normalize again
-    value = Decimal(number).normalize()
+    # Ensure that the output never uses scientific notation
+    value = Decimal(number)
+    value = (
+        value.quantize(Decimal(1))
+        if value == value.to_integral()
+        else value.normalize()
+    )
 
     if separator:
         value = f'{value:,}'
