@@ -194,6 +194,9 @@ def get_ruleset_ignore() -> list[str]:
         'common_selectionlist',
         'users_owner',
         'users_userprofile',  # User profile is handled in the serializer - only own user can change
+        # Web
+        'web_guidedefinition',
+        'web_guideexecution',
         # Third-party tables
         'error_report_error',
         'exchange_rate',
