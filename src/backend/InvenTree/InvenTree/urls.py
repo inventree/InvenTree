@@ -27,6 +27,7 @@ import plugin.api
 import report.api
 import stock.api
 import users.api
+import web.api
 from plugin.urls import get_plugin_urls
 from web.urls import cui_compatibility_urls
 from web.urls import urlpatterns as platform_urls
@@ -80,6 +81,7 @@ apipatterns = [
         ]),
     ),
     path('user/', include(users.api.user_urls)),
+    path('web/', include(web.api.web_urls)),
     # Plugin endpoints
     path('', include(plugin.api.plugin_api_urls)),
     # Common endpoints endpoint
