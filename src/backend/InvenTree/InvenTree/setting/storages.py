@@ -1,24 +1,37 @@
 """Settings for storage backends."""
 
+from enum import Enum
 from typing import Optional
 
 from InvenTree.config import get_boolean_setting, get_setting
 
-STORAGE_BACKENDS = {
-    'local': 'django.core.files.storage.FileSystemStorage',
-    's3': 'storages.backends.s3.S3Storage',
-    'sftp': 'storages.backends.sftpstorage.SFTPStorage',
+
+class StorageBackends(Enum):
+    """Enumeration of available storage backends."""
+
+    LOCAL = 'local'
+    S3 = 's3'
+    SFTP = 'sftp'
+
+
+STORAGE_BACKEND_MAPPING = {
+    StorageBackends.LOCAL: 'django.core.files.storage.FileSystemStorage',
+    StorageBackends.S3: 'storages.backends.s3.S3Storage',
+    StorageBackends.SFTP: 'storages.backends.sftpstorage.SFTPStorage',
 }
 
 
 def init_storages() -> tuple[str, dict, Optional[str]]:
     """Initialize storage backend settings."""
     target = get_setting(
-        'INVENTREE_STORAGE_TARGET', 'storage.target', 'local', typecast=str
+        'INVENTREE_STORAGE_TARGET',
+        'storage.target',
+        StorageBackends.LOCAL,
+        typecast=str,
     )
 
     # Check that the target is valid
-    if target not in STORAGE_BACKENDS:
+    if target not in StorageBackends:
         raise ValueError(f"Invalid storage target: '{target}'")
 
     options = {}
@@ -85,7 +98,9 @@ def init_storages() -> tuple[str, dict, Optional[str]]:
         target,
         {
             'default': {
-                'BACKEND': STORAGE_BACKENDS.get(target, STORAGE_BACKENDS['local']),
+                'BACKEND': STORAGE_BACKEND_MAPPING.get(
+                    target, STORAGE_BACKEND_MAPPING[StorageBackends.LOCAL]
+                ),
                 'OPTIONS': options,
             },
             'staticfiles': {
