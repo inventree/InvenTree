@@ -49,7 +49,7 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
         },
     }
 
-    def get_ui_actions(self, request, context, **kwargs):
+    def get_ui_spotlight_actions(self, request, context, **kwargs):
         """Return a list of custom actions to be injected into the UI spotlight."""
         return [
             {

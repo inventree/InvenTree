@@ -80,7 +80,7 @@ export default function LayoutComponent() {
       }
 
       const url = apiUrl(ApiEndpoints.plugin_ui_features_list, undefined, {
-        feature_type: PluginUIFeatureType.action
+        feature_type: PluginUIFeatureType.spotlight_action
       });
 
       return api.get(url).then((response: any) => response.data);

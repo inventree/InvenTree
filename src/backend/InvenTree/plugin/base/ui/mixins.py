@@ -15,7 +15,7 @@ logger = structlog.get_logger('inventree')
 
 # List of supported feature types
 FeatureType = Literal[
-    'action',  # Custom actions for the spotlight search
+    'spotlight_action',  # Custom actions for the spotlight search
     'dashboard',  # Custom dashboard items
     'panel',  # Custom panels
     'template_editor',  # Custom template editor
@@ -100,7 +100,7 @@ class UserInterfaceMixin:
 
         """
         feature_map = {
-            'action': self.get_ui_actions,
+            'spotlight_action': self.get_ui_spotlight_actions,
             'dashboard': self.get_ui_dashboard_items,
             'navigation': self.get_ui_navigation_items,
             'panel': self.get_ui_panels,
@@ -114,7 +114,7 @@ class UserInterfaceMixin:
             logger.warning(f'Invalid feature type: {feature_type}')
             return []
 
-    def get_ui_actions(
+    def get_ui_spotlight_actions(
         self, request: Request, context: dict, **kwargs
     ) -> list[UIFeature]:
         """Return a list of custom actions to be injected into the UI spotlight.
