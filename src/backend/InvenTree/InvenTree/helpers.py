@@ -1,6 +1,7 @@
 """Provides helper functions used throughout the InvenTree project."""
 
 import datetime
+import gc
 import hashlib
 import inspect
 import io
@@ -1103,6 +1104,15 @@ def inheritors(
                 if subclasses:
                     work.append(child)
     return subcls
+
+
+def instances_of(cls: type[Inheritors_T]) -> list[Inheritors_T]:
+    """Return instances of a class.
+
+    Args:
+        cls: The class of which type instances should be searched
+    """
+    return [k for k in gc.get_referrers(cls) if k.__class__ is cls]
 
 
 def pui_url(subpath: str) -> str:

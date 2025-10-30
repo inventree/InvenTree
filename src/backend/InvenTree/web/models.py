@@ -10,7 +10,7 @@ from django.utils.translation import gettext_lazy as _
 import structlog
 
 import InvenTree.models
-from InvenTree.helpers import inheritors
+from InvenTree.helpers import instances_of
 
 from .types import GuideDefinitionData
 
@@ -103,11 +103,8 @@ def collect_guides(
     Returns:
         tuple: A tuple containing a list of GuideDefinitionData instances and a set of the defining classes.
     """
-    all_types = inheritors(GuideDefinitionData)
-    instances = []
-    for guide_type in all_types:
-        guide: GuideDefinitionData = guide_type()
-        instances.append(guide)
+    all_types = instances_of(GuideDefinitionData)
+    for guide in all_types:
         try:
             obj = GuideDefinition.objects.get(slug=guide.slug)
         except GuideDefinition.DoesNotExist:
@@ -122,7 +119,8 @@ def collect_guides(
             )
             obj.save()
             logger.info(f'Created guide definition: {obj.slug} - {obj.uid}')
-    return instances, all_types
+        guide.set_db(obj)
+    return all_types
 
 
 class GuideExecution(InvenTree.models.MetadataMixin):

@@ -4,6 +4,7 @@ import dataclasses
 from dataclasses import dataclass
 from typing import Any, Optional, Union
 
+from django.utils.functional import Promise
 from django.utils.translation import gettext_lazy as _
 
 
@@ -131,7 +132,15 @@ class GuideDefinitionData:
     def data(self) -> dict[str, Any]:
         """Return the data as a dictionary suitable for JSONField storage."""
         _data = dataclasses.asdict(self.setup)
+        # Transform proxy objects into json friendly data
+        for key, value in _data.items():
+            if isinstance(value, Promise):
+                _data[key] = str(value)
         return _data
+
+    def set_db(self, obj):
+        """Set the linked database object."""
+        self._db_obj = obj
 
 
 # Real guides
