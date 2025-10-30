@@ -1,7 +1,9 @@
+import { Tipp } from '@lib/components/Tipp';
+import type { TippData } from '@lib/types/Core';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
-import { Accordion, Alert, SimpleGrid, Stack, Text } from '@mantine/core';
-import { type JSX, useMemo, useState } from 'react';
+import { Accordion, SimpleGrid, Stack } from '@mantine/core';
+import { type JSX, useMemo } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import { StylishText } from '../../../../components/items/StylishText';
 import { ServerAlert, getAlerts } from '../../../../components/nav/Alerts';
@@ -10,7 +12,6 @@ import { useServerApiState } from '../../../../states/ServerApiState';
 import { useGlobalSettingsState } from '../../../../states/SettingsStates';
 
 export default function HomePanel(): JSX.Element {
-  const [dismissed, setDismissed] = useState<boolean>(false);
   const [server] = useServerApiState(useShallow((state) => [state.server]));
   const globalSettings = useGlobalSettingsState();
 
@@ -32,39 +33,7 @@ export default function HomePanel(): JSX.Element {
 
   return (
     <Stack gap='xs'>
-      {dismissed ? null : (
-        <Alert
-          color='blue'
-          title={t`Admin Center Information`}
-          withCloseButton
-          onClose={() => setDismissed(true)}
-        >
-          <Stack gap='xs'>
-            <Text>
-              <Trans>
-                The home panel (and the whole Admin Center) is a new feature
-                starting with the new UI and was previously (before 1.0) not
-                available.
-              </Trans>
-            </Text>
-            <Text>
-              <Trans>
-                The admin center provides a centralized location for all
-                administration functionality and is meant to replace all
-                interaction with the (django) backend admin interface.
-              </Trans>
-            </Text>
-            <Text>
-              <Trans>
-                Please open feature requests (after checking the tracker) for
-                any existing backend admin functionality you are missing in this
-                UI. The backend admin interface should be used carefully and
-                seldom.
-              </Trans>
-            </Text>
-          </Stack>
-        </Alert>
-      )}
+      <Tipp id='admin_home_1' />
       <Accordion
         multiple
         defaultValue={['quick-actions', 'active']}
@@ -109,3 +78,22 @@ export default function HomePanel(): JSX.Element {
     </Stack>
   );
 }
+
+export const globalTipps: Record<string, TippData> = {
+  admin_home_1: {
+    title: t`Admin Center Information`,
+    color: 'blue',
+    text: t`The home panel (and the whole Admin Center) is a new feature
+    starting with the new UI and was previously (before 1.0) not
+    available.
+
+    The admin center provides a centralized location for all
+    administration functionality and is meant to replace all
+    interaction with the (django) backend admin interface.
+
+    Please open feature requests (after checking the tracker) for
+    any existing backend admin functionality you are missing in this
+    UI. The backend admin interface should be used carefully and
+    seldom.`
+  }
+}; // TODO: read from state / local storage
