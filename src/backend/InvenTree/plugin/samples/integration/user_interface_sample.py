@@ -56,7 +56,7 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
                 'key': 'sample-action',
                 'title': 'Sample Action',
                 'description': 'This is a sample action for the spotlight search',
-                'icon': 'ti:search',
+                'icon': 'ti:search:outline',
                 'source': self.plugin_static_file(
                     'sample_action.js:performSampleAction'
                 ),

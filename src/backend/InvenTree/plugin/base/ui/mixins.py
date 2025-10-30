@@ -100,7 +100,7 @@ class UserInterfaceMixin:
 
         """
         feature_map = {
-            'actions': self.get_ui_actions,
+            'action': self.get_ui_actions,
             'dashboard': self.get_ui_dashboard_items,
             'navigation': self.get_ui_navigation_items,
             'panel': self.get_ui_panels,
