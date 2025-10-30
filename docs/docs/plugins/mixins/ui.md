@@ -71,9 +71,9 @@ The following user interface feature types are available:
 
 ### Spotlight Actions
 
-Inject custom actions into the InvenTree "spotlight" search functionality by implementing the `get_ui_actions` method:
+Inject custom actions into the InvenTree "spotlight" search functionality by implementing the `get_ui_spotlight_actions` method:
 
-::: plugin.base.ui.mixins.UserInterfaceMixin.get_ui_actions
+::: plugin.base.ui.mixins.UserInterfaceMixin.get_ui_spotlight_actions
     options:
       show_bases: False
       show_root_heading: False
