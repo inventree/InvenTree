@@ -1,5 +1,6 @@
 import { systemKey, test } from './baseFixtures.js';
 import { doCachedLogin } from './login.js';
+import { setPluginState } from './settings.js';
 
 test('Modals - Admin', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
@@ -52,7 +53,10 @@ test('Modals - Admin', async ({ browser }) => {
   await page.getByRole('cell', { name: 'InvenTree Version' }).click();
 });
 
-test('Quick Command', async ({ browser }) => {
+test('Spotlight - Check Actions', async ({ browser }) => {
+  // Enable the UI sample plugin
+  await setPluginState({ plugin: 'sampleui', state: true });
+
   const page = await doCachedLogin(browser);
 
   await page.waitForLoadState('networkidle');
@@ -60,12 +64,24 @@ test('Quick Command', async ({ browser }) => {
   // Open Spotlight with Keyboard Shortcut and Search
   await page.locator('body').press(`${systemKey}+k`);
   await page.waitForTimeout(200);
-  await page.getByPlaceholder('Search...').fill('Dashboard');
-  await page.getByPlaceholder('Search...').press('Tab');
-  await page.getByPlaceholder('Search...').press('Enter');
+  await page.getByRole('textbox', { name: 'Search...' }).fill('Dashboard');
+
+  await page
+    .getByRole('button', { name: 'Dashboard Go to the InvenTree dashboard' })
+    .waitFor();
+
+  // User settings
+  await page.getByRole('textbox', { name: 'Search...' }).fill('settings');
+  await page
+    .getByRole('button', { name: 'User Settings Go to your user' })
+    .waitFor();
+
+  // Plugin generated action
+  await page.getByRole('textbox', { name: 'Search...' }).fill('sample');
+  await page.getByRole('button', { name: 'This is a sample action' }).waitFor();
 });
 
-test('Quick Command - No Keys', async ({ browser }) => {
+test('Spotlight - No Keys', async ({ browser }) => {
   const page = await doCachedLogin(browser);
 
   await page.waitForLoadState('networkidle');

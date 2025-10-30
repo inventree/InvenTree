@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added support for webauthn login for the frontend in [#9729](https://github.com/inventree/InvenTree/pull/9729)
 - Added support for Debian 12, Ubuntu 22.04 and Ubuntu 24.04 in the installer and package in [#10705](https://github.com/inventree/InvenTree/pull/10705)
 - Support for S3 and SFTP storage backends for media and static files ([#10140](https://github.com/inventree/InvenTree/pull/10140))
+- Adds hooks for custom UI spotlight actions in [#10720](https://github.com/inventree/InvenTree/pull/10720)
 
 ### Changed
 
