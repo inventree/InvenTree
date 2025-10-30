@@ -2,14 +2,21 @@ import { t } from '@lingui/core/macro';
 import { Container, Flex, Space } from '@mantine/core';
 import { Spotlight, createSpotlight } from '@mantine/spotlight';
 import { IconSearch } from '@tabler/icons-react';
-import { type JSX, useEffect, useState } from 'react';
+import { type JSX, useEffect, useMemo, useState } from 'react';
 import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 
+import { ApiEndpoints, apiUrl } from '@lib/index';
+import { useQuery } from '@tanstack/react-query';
+import { api } from '../../App';
 import { getActions } from '../../defaults/actions';
 import * as classes from '../../main.css';
-import { useUserSettingsState } from '../../states/SettingsStates';
+import {
+  useGlobalSettingsState,
+  useUserSettingsState
+} from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import { Boundary } from '../Boundary';
+import { PluginUIFeatureType } from '../plugins/PluginUIFeature';
 import { Footer } from './Footer';
 import { Header } from './Header';
 
@@ -38,7 +45,14 @@ export const [firstStore, firstSpotlight] = createSpotlight();
 export default function LayoutComponent() {
   const navigate = useNavigate();
   const location = useLocation();
+  const user = useUserState();
   const userSettings = useUserSettingsState();
+  const globalSettings = useGlobalSettingsState();
+
+  const pluginsEnabled: boolean = useMemo(
+    () => globalSettings.isSet('ENABLE_PLUGINS_INTERFACE'),
+    [globalSettings]
+  );
 
   const defaultActions = getActions(navigate);
   const [actions, setActions] = useState(defaultActions);
@@ -48,6 +62,24 @@ export default function LayoutComponent() {
     if (change.length > defaultActions.length) setCustomActions(true);
     setActions(change);
   }
+
+  const pluginActionsQuery = useQuery({
+    enabled: pluginsEnabled,
+    queryKey: ['plugin-actions', pluginsEnabled, user],
+    refetchOnMount: true,
+    queryFn: async () => {
+      if (!pluginsEnabled) {
+        return Promise.resolve([]);
+      }
+
+      const url = apiUrl(ApiEndpoints.plugin_ui_features_list, undefined, {
+        feature_type: PluginUIFeatureType.action
+      });
+
+      return api.get(url).then((response: any) => response.data);
+    }
+  });
+
   // firstStore.subscribe(actionsAreChanging);
 
   // clear additional actions on location change

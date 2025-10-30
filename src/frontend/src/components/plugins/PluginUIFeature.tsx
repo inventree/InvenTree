@@ -25,6 +25,7 @@ import type {
  * Enumeration for available plugin UI feature types.
  */
 export enum PluginUIFeatureType {
+  action = 'action',
   dashboard = 'dashboard',
   panel = 'panel',
   template_editor = 'template_editor',
