@@ -7,5 +7,6 @@
 
 export function performSampleAction(data) {
     // Simply log the data to the console
+    alert("Sample! Refer to the console");
     console.log("Sample action performed with data:", data);
 }
