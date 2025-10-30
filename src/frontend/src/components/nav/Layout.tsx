@@ -21,6 +21,7 @@ import {
 } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import { Boundary } from '../Boundary';
+import { ApiIcon } from '../items/ApiIcon';
 import { useInvenTreeContext } from '../plugins/PluginContext';
 import { callExternalPluginFunction } from '../plugins/PluginSource';
 import {
@@ -98,7 +99,7 @@ export default function LayoutComponent() {
           id: identifierString(`a-${item.plugin_name}-${item.key}`),
           label: item.title,
           description: item.description,
-          // leftSection:
+          leftSection: item.icon && <ApiIcon name={item.icon} />,
           onClick: () => {
             callExternalPluginFunction(
               item.source,
