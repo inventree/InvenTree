@@ -75,9 +75,19 @@ export default function HomePanel(): JSX.Element {
           (item) =>
             item.elements.length > 0 && (
               <Accordion.Item key={item.key} value={item.key}>
-                <Accordion.Control>{item.text}</Accordion.Control>
+                <Accordion.Control>
+                  <StylishText size='md'>{item.text}</StylishText>
+                </Accordion.Control>
                 <Accordion.Panel>
-                  <SimpleGrid cols={2} spacing='sm'>
+                  <SimpleGrid
+                    cols={{
+                      base: 1,
+                      '600px': 2,
+                      '1200px': 3
+                    }}
+                    type='container'
+                    spacing='sm'
+                  >
                     {item.elements.map((alert) => (
                       <ServerAlert alert={alert} />
                     ))}
