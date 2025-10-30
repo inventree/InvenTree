@@ -15,5 +15,5 @@ export type PathParams = Record<string, string | number>;
 export type TippData = {
   title: string;
   color: string;
-  text: string;
+  detail_text: string;
 };

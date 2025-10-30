@@ -9,7 +9,7 @@ type GuideState = {
   hasLoaded: boolean;
   guidesMap: Record<string, TippData>;
   fetchGuides: () => Promise<void>;
-  getGuideBySlug: (slug: string) => TippData | undefined;
+  getGuideBySlug: (slug: string) => any | undefined;
 };
 
 export const useGuideState = create<GuideState>()((set, get) => ({
@@ -18,7 +18,7 @@ export const useGuideState = create<GuideState>()((set, get) => ({
   fetchGuides: async () => {
     if (get().hasLoaded) return;
     const data = await api
-      .get(apiUrl(ApiEndpoints.guides_list))
+      .get(`${apiUrl(ApiEndpoints.guides_list)}?guide_data=true`)
       .catch((_error) => {
         console.error('Could not fetch guides');
       })
@@ -28,7 +28,6 @@ export const useGuideState = create<GuideState>()((set, get) => ({
     const guidesDictionary = Object.fromEntries(
       data?.data.map((itm: any) => [itm.slug, itm])
     );
-    console.log('Fetched guides:', guidesDictionary);
     set({
       hasLoaded: true,
       guidesMap: guidesDictionary

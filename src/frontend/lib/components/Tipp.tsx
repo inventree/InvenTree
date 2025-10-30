@@ -1,19 +1,17 @@
+import type { TippData } from '@lib/types/Core';
 import { Alert, Stack, Text } from '@mantine/core';
-import { type JSX, useState } from 'react';
+import { type JSX, useMemo, useState } from 'react';
 import { useGuideState } from '../../src/states/GuideState';
 
-export function Tipp({ id }: Readonly<{ id: string }>): JSX.Element | null {
+export function Tipp({ id }: Readonly<{ id: string }>): JSX.Element {
   const [dismissed, setDismissed] = useState<boolean>(false); // TODO: read from state / local storage
-  const [getGuideBySlug] = useGuideState((state) => [state.getGuideBySlug]);
+  const { getGuideBySlug } = useGuideState();
+  const tip = useMemo(() => getGuideBySlug(id), [id]);
 
-  if (dismissed) {
-    return null;
+  if (!tip || dismissed) {
+    return <></>;
   }
-
-  const tip_data = getGuideBySlug(id);
-  if (!tip_data) {
-    return null;
-  }
+  const tip_data: TippData = tip.guide_data;
   return (
     <Alert
       color={tip_data.color}
@@ -22,7 +20,7 @@ export function Tipp({ id }: Readonly<{ id: string }>): JSX.Element | null {
       onClose={() => setDismissed(true)}
     >
       <Stack gap='xs'>
-        <Text>{tip_data.text}</Text>
+        <Text>{tip_data.detail_text}</Text>
       </Stack>
     </Alert>
   );
