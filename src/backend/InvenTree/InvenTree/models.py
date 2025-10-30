@@ -466,6 +466,14 @@ class InvenTreeMetadataModel(MetadataMixin, InvenTreeModel):
         abstract = True
 
 
+class InvenTreeParameterMixin:
+    """Provides an abstracted class for managing parameters.
+
+    Links the implementing model to the common.models.Parameter table,
+    and provides the following methods:
+    """
+
+
 class InvenTreeAttachmentMixin:
     """Provides an abstracted class for managing file attachments.
 

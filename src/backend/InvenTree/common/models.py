@@ -1902,6 +1902,8 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
     An attachment can be either an uploaded file, or an external URL.
 
     Attributes:
+        model_type: The type of model to which this attachment is linked
+        model_id: The ID of the model to which this attachment is linked
         attachment: The uploaded file
         url: An external URL
         comment: A comment or description for the attachment
@@ -2511,6 +2513,66 @@ class ParameterTemplate(
     )
 
 
+class Parameter(
+    UpdatedUserMixin, InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
+):
+    """Class which represents a parameter value assigned to a particular model instance.
+
+    Attributes:
+        model_type: The type of model to which this parameter is linked
+        model_id: The ID of the model to which this parameter is linked
+        template: The ParameterTemplate which defines this parameter
+        data: The value of the parameter [string]
+        data_numeric: Numeric value of the parameter (if applicable) [float]
+        note: Optional note associated with this parameter [string]
+        updated: Date/time that this parameter was last updated
+        updated_by: User who last updated this parameter
+    """
+
+    class Meta:
+        """Meta options for Parameter model."""
+
+        verbose_name = _('Parameter')
+        verbose_name_plural = _('Parameters')
+        unique_together = [['model_type', 'model_id', 'template']]
+
+    @staticmethod
+    def get_api_url() -> str:
+        """Return the API URL associated with the Parameter model."""
+        return reverse('api-parameter-list')
+
+    def save(self, *args, **kwargs):
+        """Custom save method for Parameter model.
+
+        - Update the numeric data field (if applicable)
+        """
+        # TODO: Custom call against the model type this is linked to...
+
+        self.calculate_numeric_value()
+
+        # Convert 'boolean' values to 'True' / 'False'
+        if self.template.checkbox:
+            self.data = InvenTree.helpers.str2bool(self.data)
+            self.data_numeric = 1 if self.data else 0
+
+        super().save(*args, **kwargs)
+
+    def clean(self):
+        """Validate the Parameter before saving to the database."""
+        super().clean()
+
+        # Validate the parameter data against the template choices
+        if choices := self.template.get_choices():
+            if self.data not in choices:
+                raise ValidationError({'data': _('Invalid choice for parameter value')})
+
+        self.calculate_numeric_value()
+
+        # TODO: Validation of units (check global setting)
+
+        # TODO: Validate against plugins
+
+
 class BarcodeScanResult(InvenTree.models.InvenTreeModel):
     """Model for storing barcode scans results."""
 
@@ -3028,7 +3090,7 @@ def handle_event(sender, event, esp_name, **kwargs):
 if TRACE_PROC:  # pragma: no cover
 
     @receiver(post_spawn)
-    def spwan_callback(sender, proc_name, **kwargs):
+    def spawn_callback(sender, proc_name, **kwargs):
         """Callback to patch in tracing support."""
         TRACE_PROV.add_span_processor(TRACE_PROC)
         trace.set_tracer_provider(TRACE_PROV)
