@@ -56,7 +56,7 @@ export default function LayoutComponent() {
       setActions(defaultActions);
       setCustomActions(false);
     }
-  }, [location]);
+  }, [customActions, defaultActions, location]);
 
   return (
     <ProtectedRoute>
