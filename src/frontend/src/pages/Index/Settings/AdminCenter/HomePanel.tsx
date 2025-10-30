@@ -1,17 +1,11 @@
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
-import {
-  Accordion,
-  Alert,
-  Button,
-  SimpleGrid,
-  Stack,
-  Title
-} from '@mantine/core';
+import { Accordion, Alert, Button, SimpleGrid, Stack } from '@mantine/core';
 import { IconBrandGithub } from '@tabler/icons-react';
 import { type JSX, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useShallow } from 'zustand/react/shallow';
+import { StylishText } from '../../../../components/items/StylishText';
 import { ServerAlert, getAlerts } from '../../../../components/nav/Alerts';
 import { QuickAction } from '../../../../components/settings/QuickAction';
 import { useServerApiState } from '../../../../states/ServerApiState';
@@ -73,9 +67,9 @@ export default function HomePanel(): JSX.Element {
         </Alert>
       )}
       <QuickAction ml='' />
-      <Title order={5}>
-        <Trans>System status</Trans>
-      </Title>
+      <StylishText size='lg'>
+        <Trans>System Status</Trans>
+      </StylishText>
       <Accordion defaultValue={'active'} variant='contained'>
         {accElements.map(
           (item) =>

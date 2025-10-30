@@ -8,8 +8,7 @@ import {
   Group,
   Paper,
   Stack,
-  Text,
-  Title
+  Text
 } from '@mantine/core';
 import { IconHome } from '@tabler/icons-react';
 
@@ -21,6 +20,7 @@ import {
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { groupFields } from '../../tables/settings/GroupTable';
 import { userFields } from '../../tables/settings/UserTable';
+import { StylishText } from '../items/StylishText';
 
 interface ActionItem {
   id: string;
@@ -110,9 +110,9 @@ export const QuickAction = ({
   ];
   return (
     <Stack gap={'xs'} ml={ml}>
-      <Title order={5}>
+      <StylishText size='lg'>
         <Trans>Quick Actions</Trans>
-      </Title>
+      </StylishText>
       <Flex align={'flex-end'}>
         {navigate ? (
           <>
