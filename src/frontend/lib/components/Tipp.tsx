@@ -1,15 +1,19 @@
 import { Alert, Stack, Text } from '@mantine/core';
 import { type JSX, useState } from 'react';
-import { globalTipps } from '../../src/pages/Index/Settings/AdminCenter/HomePanel';
+import { useGuideState } from '../../src/states/GuideState';
 
 export function Tipp({ id }: Readonly<{ id: string }>): JSX.Element | null {
   const [dismissed, setDismissed] = useState<boolean>(false); // TODO: read from state / local storage
+  const [getGuideBySlug] = useGuideState((state) => [state.getGuideBySlug]);
 
   if (dismissed) {
     return null;
   }
 
-  const tip_data = globalTipps[id];
+  const tip_data = getGuideBySlug(id);
+  if (!tip_data) {
+    return null;
+  }
   return (
     <Alert
       color={tip_data.color}
