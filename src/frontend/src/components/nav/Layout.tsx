@@ -1,10 +1,15 @@
 import { t } from '@lingui/core/macro';
 import { Container, Flex, Space } from '@mantine/core';
-import { Spotlight, createSpotlight } from '@mantine/spotlight';
+import {
+  Spotlight,
+  type SpotlightActionData,
+  createSpotlight
+} from '@mantine/spotlight';
 import { IconSearch } from '@tabler/icons-react';
 import { type JSX, useEffect, useMemo, useState } from 'react';
 import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 
+import { identifierString } from '@lib/functions/Conversion';
 import { ApiEndpoints, apiUrl } from '@lib/index';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../../App';
@@ -16,7 +21,12 @@ import {
 } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import { Boundary } from '../Boundary';
-import { PluginUIFeatureType } from '../plugins/PluginUIFeature';
+import { useInvenTreeContext } from '../plugins/PluginContext';
+import { callExternalPluginFunction } from '../plugins/PluginSource';
+import {
+  type PluginUIFeature,
+  PluginUIFeatureType
+} from '../plugins/PluginUIFeature';
 import { Footer } from './Footer';
 import { Header } from './Header';
 
@@ -54,14 +64,10 @@ export default function LayoutComponent() {
     [globalSettings]
   );
 
+  const inventreeContext = useInvenTreeContext();
+
   const defaultActions = getActions(navigate);
   const [actions, setActions] = useState(defaultActions);
-  const [customActions, setCustomActions] = useState<boolean>(false);
-
-  function actionsAreChanging(change: []) {
-    if (change.length > defaultActions.length) setCustomActions(true);
-    setActions(change);
-  }
 
   const pluginActionsQuery = useQuery({
     enabled: pluginsEnabled,
@@ -80,15 +86,34 @@ export default function LayoutComponent() {
     }
   });
 
-  // firstStore.subscribe(actionsAreChanging);
+  const pluginActions: SpotlightActionData[] = useMemo(() => {
+    return (
+      pluginActionsQuery?.data?.map((item: PluginUIFeature) => {
+        const pluginContext = {
+          ...inventreeContext,
+          context: item.context
+        };
 
-  // clear additional actions on location change
+        return {
+          id: identifierString(`a-${item.plugin_name}-${item.key}`),
+          label: item.title,
+          description: item.description,
+          // leftSection:
+          onClick: () => {
+            callExternalPluginFunction(
+              item.source,
+              'executeAction',
+              pluginContext
+            );
+          }
+        };
+      }) ?? []
+    );
+  }, [pluginActionsQuery?.data, inventreeContext]);
+
   useEffect(() => {
-    if (customActions) {
-      setActions(defaultActions);
-      setCustomActions(false);
-    }
-  }, [location]);
+    setActions([...defaultActions, ...pluginActions]);
+  }, [defaultActions.length, pluginActions.length, location]);
 
   return (
     <ProtectedRoute>
