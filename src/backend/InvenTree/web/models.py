@@ -121,7 +121,7 @@ def collect_guides(
                 data=guide.data,
             )
             obj.save()
-            logger.info(f'Created guide definition: {guide.slug} - {obj.uid}')
+            logger.info(f'Created guide definition: {obj.slug} - {obj.uid}')
     return instances, all_types
 
 
