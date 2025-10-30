@@ -7,6 +7,7 @@ import {
   IconExclamationCircle,
   IconFileDownload,
   IconFileUpload,
+  IconHome,
   IconList,
   IconListDetails,
   IconMail,
@@ -39,6 +40,8 @@ const ReportTemplatePanel = Loadable(
 );
 
 const LabelTemplatePanel = Loadable(lazy(() => import('./LabelTemplatePanel')));
+
+const HomePanel = Loadable(lazy(() => import('./HomePanel')));
 
 const UserManagementPanel = Loadable(
   lazy(() => import('./UserManagementPanel'))
@@ -107,6 +110,13 @@ export default function AdminCenter() {
 
   const adminCenterPanels: PanelType[] = useMemo(() => {
     return [
+      {
+        name: 'home',
+        label: t`Home`,
+        icon: <IconHome />,
+        content: <HomePanel />,
+        showHeadline: false
+      },
       {
         name: 'user',
         label: t`Users / Access`,
@@ -231,6 +241,7 @@ export default function AdminCenter() {
   }, [user]);
   const grouping: PanelGroupType[] = useMemo(() => {
     return [
+      { id: 'home', label: '', panelIDs: ['home'] },
       {
         id: 'ops',
         label: t`Operations`,
