@@ -1,16 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
-import {
-  Accordion,
-  Alert,
-  Button,
-  SimpleGrid,
-  Stack,
-  Text
-} from '@mantine/core';
-import { IconBrandGithub } from '@tabler/icons-react';
+import { Accordion, Alert, SimpleGrid, Stack, Text } from '@mantine/core';
 import { type JSX, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { useShallow } from 'zustand/react/shallow';
 import { StylishText } from '../../../../components/items/StylishText';
 import { ServerAlert, getAlerts } from '../../../../components/nav/Alerts';
@@ -72,22 +63,23 @@ export default function HomePanel(): JSX.Element {
               </Trans>
             </Text>
           </Stack>
-          <Button
-            color='green'
-            component={Link}
-            size='compact-md'
-            to={'https://github.com/inventree/InvenTree/issues/new'}
-            target='_blank'
-          >
-            <IconBrandGithub /> <Trans>Open an issue</Trans>
-          </Button>
         </Alert>
       )}
-      <QuickAction ml='' />
-      <StylishText size='lg'>
-        <Trans>System Status</Trans>
-      </StylishText>
-      <Accordion defaultValue={'active'} variant='contained'>
+      <Accordion
+        multiple
+        defaultValue={['quick-actions', 'active']}
+        variant='contained'
+      >
+        <Accordion.Item value='quick-actions'>
+          <Accordion.Control>
+            <StylishText size='md'>
+              <Trans>Quick Actions</Trans>
+            </StylishText>
+          </Accordion.Control>
+          <Accordion.Panel>
+            <QuickAction />
+          </Accordion.Panel>
+        </Accordion.Item>
         {accElements.map(
           (item) =>
             item.elements.length > 0 && (

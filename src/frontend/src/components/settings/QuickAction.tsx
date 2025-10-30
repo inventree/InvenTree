@@ -1,18 +1,15 @@
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
-import { Carousel } from '@mantine/carousel';
+import { Button, Group, Paper, SimpleGrid, Stack, Text } from '@mantine/core';
 import {
-  Button,
-  Divider,
-  Flex,
-  Group,
-  Paper,
-  Stack,
-  Text
-} from '@mantine/core';
-import { IconHome } from '@tabler/icons-react';
+  IconBrandGithub,
+  IconListCheck,
+  IconUserPlus,
+  IconUsersGroup,
+  type ReactNode
+} from '@tabler/icons-react';
 
-import { ActionButton, ApiEndpoints } from '@lib/index';
+import { ApiEndpoints } from '@lib/index';
 import {
   projectCodeFields,
   useCustomStateFields
@@ -20,55 +17,55 @@ import {
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { groupFields } from '../../tables/settings/GroupTable';
 import { userFields } from '../../tables/settings/UserTable';
-import { StylishText } from '../items/StylishText';
 
 interface ActionItem {
   id: string;
   title: string;
   description: string;
+  icon?: ReactNode;
+  buttonText?: string;
   action: () => void;
 }
 
-function ActionCarousel({ items }: { items: ActionItem[] }) {
+function ActionGrid({ items }: { items: ActionItem[] }) {
   const slides = items.map((image) => (
-    <Carousel.Slide key={image.id}>
-      <Paper shadow='xs' p='sm' withBorder>
-        <Group>
-          <Stack>
-            <Text>
-              <strong>{image.title}</strong>
-              <br />
-              {image.description}
-            </Text>
-          </Stack>
-          <Button size='sm' variant='light' onClick={image.action}>
-            <Trans>Act</Trans>
-          </Button>
-        </Group>
-      </Paper>
-    </Carousel.Slide>
+    <Paper shadow='xs' p='sm' withBorder>
+      <Group justify='space-between' wrap='nowrap'>
+        <Stack>
+          <Text>
+            <strong>{image.title}</strong>
+            <br />
+            {image.description}
+          </Text>
+        </Stack>
+        <Button
+          size='sm'
+          variant='light'
+          onClick={image.action}
+          leftSection={image.icon}
+        >
+          {image.buttonText ?? <Trans>Act</Trans>}
+        </Button>
+      </Group>
+    </Paper>
   ));
 
   return (
-    <Carousel
-      height={80}
-      slideSize='40%'
-      withIndicators
-      slideGap='md'
-      emblaOptions={{ align: 'start', dragFree: true }}
+    <SimpleGrid
+      cols={{
+        base: 1,
+        '600px': 2,
+        '1200px': 3
+      }}
+      type='container'
+      spacing='sm'
     >
       {slides}
-    </Carousel>
+    </SimpleGrid>
   );
 }
 
-export const QuickAction = ({
-  navigate,
-  ml = 'sm'
-}: {
-  navigate?: any;
-  ml?: string;
-}) => {
+export const QuickAction = () => {
   const newUser = useCreateApiFormModal(userFields());
   const newGroup = useCreateApiFormModal(groupFields());
   const newProjectCode = useCreateApiFormModal({
@@ -84,52 +81,54 @@ export const QuickAction = ({
 
   const items = [
     {
+      id: '0',
+      title: t`Open an Issue`,
+      description: t`Report a bug or request a feature on GitHub`,
+      icon: <IconBrandGithub />,
+      buttonText: t`Open Issue`,
+      action: () =>
+        window.open(
+          'https://github.com/inventree/inventree/issues/new',
+          '_blank'
+        )
+    },
+    {
       id: '1',
-      title: 'Add a new group',
-      description: 'Create a new group to manage your users',
+      title: t`Add New Group`,
+      description: t`Create a new group to manage your users`,
+      icon: <IconUsersGroup />,
+      buttonText: t`New Group`,
       action: () => newGroup.open()
     },
     {
       id: '2',
-      title: 'Add a new user',
-      description: 'Create a new user to manage your groups',
+      title: t`Add New User`,
+      description: t`Create a new user to manage your groups`,
+      icon: <IconUserPlus />,
+      buttonText: t`New User`,
       action: () => newUser.open()
     },
     {
       id: '3',
-      title: 'Add a new project code',
-      description: 'Create a new project code to organize your items',
+      title: t`Add Project Code`,
+      description: t`Create a new project code to organize your items`,
+      icon: <IconListCheck />,
+      buttonText: t`Add Code`,
       action: () => newProjectCode.open()
     },
     {
       id: '4',
-      title: 'Add a new custom state',
-      description: 'Create a new custom state for your workflow',
+      title: t`Add Custom State`,
+      description: t`Create a new custom state for your workflow`,
+      icon: <IconListCheck />,
+      buttonText: t`Add State`,
       action: () => newCustomState.open()
     }
   ];
+
   return (
-    <Stack gap={'xs'} ml={ml}>
-      <StylishText size='lg'>
-        <Trans>Quick Actions</Trans>
-      </StylishText>
-      <Flex align={'flex-end'}>
-        {navigate ? (
-          <>
-            <ActionButton
-              icon={<IconHome />}
-              color='blue'
-              size='lg'
-              radius='sm'
-              variant='filled'
-              tooltip={t`Go to Home`}
-              onClick={() => navigate('home')}
-            />
-            <Divider orientation='vertical' mx='md' />
-          </>
-        ) : null}
-        <ActionCarousel items={items} />
-      </Flex>
+    <Stack gap={'xs'} ml={'sm'}>
+      <ActionGrid items={items} />
       {newUser.modal}
       {newGroup.modal}
       {newProjectCode.modal}
