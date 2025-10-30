@@ -1,7 +1,8 @@
 """Data structures for guides and tipps in InvenTree."""
 
+import dataclasses
 from dataclasses import dataclass
-from typing import Optional, Union
+from typing import Any, Optional, Union
 
 from django.utils.translation import gettext_lazy as _
 
@@ -119,3 +120,9 @@ class GuideDefinitionData:
             return 'guide'
         else:
             raise ValueError('Invalid setup type for GuideDefinitionData')
+
+    @property
+    def data(self) -> dict[str, Any]:
+        """Return the data as a dictionary suitable for JSONField storage."""
+        _data = dataclasses.asdict(self.setup)
+        return _data
