@@ -1,6 +1,13 @@
 import { t } from '@lingui/core/macro';
 import type { SpotlightActionData } from '@mantine/spotlight';
-import { IconBarcode, IconLink, IconPointer } from '@tabler/icons-react';
+import {
+  IconBarcode,
+  IconLink,
+  IconPointer,
+  IconSettings,
+  IconUserBolt,
+  IconUserCog
+} from '@tabler/icons-react';
 import type { NavigateFunction } from 'react-router-dom';
 
 import { openContextModal } from '@mantine/modals';
@@ -73,17 +80,35 @@ export function getActions(navigate: NavigateFunction) {
       description: t`Scan a barcode or QR code`,
       onClick: () => openQrModal(navigate),
       leftSection: <IconBarcode size='1.2rem' />
+    },
+    {
+      id: 'user-settings',
+      label: t`User Settings`,
+
+      description: t`Go to your user settings`,
+      onClick: () => navigate('/settings/user'),
+      leftSection: <IconUserCog size='1.2rem' />
     }
   ];
 
   // Staff actions
+
+  user?.is_staff &&
+    actions.push({
+      id: 'system-settings',
+      label: t`System Settings`,
+      description: t`Go to System Settings`,
+      onClick: () => navigate('/settings/system'),
+      leftSection: <IconSettings size='1.2rem' />
+    });
+
   user?.is_staff &&
     actions.push({
       id: 'admin-center',
       label: t`Admin Center`,
       description: t`Go to the Admin Center`,
       onClick: () => {}, /// navigate(menuItems['settings-admin'].link),}
-      leftSection: <IconLink size='1.2rem' />
+      leftSection: <IconUserBolt size='1.2rem' />
     });
 
   return actions;
