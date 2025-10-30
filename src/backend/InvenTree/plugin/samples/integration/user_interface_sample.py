@@ -49,6 +49,20 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
         },
     }
 
+    def get_ui_actions(self, request, context, **kwargs):
+        """Return a list of custom actions to be injected into the UI spotlight."""
+        return [
+            {
+                'key': 'sample-action',
+                'title': 'Sample Action',
+                'description': 'This is a sample action for the spotlight search',
+                'icon': 'ti:search',
+                'source': self.plugin_static_file(
+                    'sample_action.js:performSampleAction'
+                ),
+            }
+        ]
+
     def get_ui_panels(self, request, context, **kwargs):
         """Return a list of custom panels to be injected into the UI."""
         panels = []
