@@ -22,7 +22,6 @@ class GuideDefinition(InvenTree.models.MetadataMixin):
 
         Tipp = 'tipp', _('Tipp')
         FirstUseTipp = 'firstuse', _('First Use Tipp')
-        FirstAdminGuide = 'firstadmin', _('First Admin Guide')
         Guide = 'guide', _('Guide')
 
     uid = models.CharField(
@@ -73,7 +72,14 @@ class GuideDefinition(InvenTree.models.MetadataMixin):
         if not self.slug:
             self.slug = slugify(self.name)
 
-        # TODO ensure guide type and slug can not be edited once created
+        # Ensure that guide_type and slug are immutable once set
+        if self.pk:
+            old = GuideDefinition.objects.get(pk=self.pk)
+            if old.guide_type != self.guide_type:
+                raise ValueError('guide_type cannot be changed once set')
+            if old.slug != self.slug:
+                raise ValueError('slug cannot be changed once set')
+
         return super().save(*args, **kwargs)
 
     class Meta:
