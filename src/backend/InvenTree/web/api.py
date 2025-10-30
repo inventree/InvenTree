@@ -40,7 +40,7 @@ class GuideDefinitionDetailOptions(OutputConfiguration):
             description='Include description field (optional, may be large)',
         ),
         InvenTreeOutputOption(
-            'data',
+            'guide_data',
             description='Include data field (optional, may be large JSON object and is only meant for machines)',
         ),
     ]

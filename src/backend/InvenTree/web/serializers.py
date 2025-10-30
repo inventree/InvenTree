@@ -26,13 +26,13 @@ class GuideDefinitionSerializer(FilterableSerializerMixin, InvenTreeModelSeriali
             'guide_type',
             'name',
             'description',
-            'data',
+            'guide_data',
             'is_applicable',
         ]
         ordering_fields = ['guide_type', 'slug', 'name']
 
     description = enable_filter(FilterableCharField(allow_blank=True, required=False))
-    data = enable_filter(FilterableJSONField(required=False))
+    guide_data = enable_filter(FilterableJSONField(required=False, source='data'))
     is_applicable = serializers.SerializerMethodField()
 
     def get_is_applicable(self, instance) -> bool:
