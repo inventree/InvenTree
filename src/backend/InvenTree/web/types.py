@@ -21,7 +21,7 @@ class GeneralInfo:
 
     title: str
     detail_text: str
-    links: list[tuple[str, str]]
+    links: Optional[list[tuple[str, str]]] = None
     discoverable: bool = True
     permission_cls: Optional[object] = None
 
@@ -112,8 +112,8 @@ class GuideDefinitionData:
 
     name: str
     slug: str
-    description: str
     setup: Union[Tipp, FirstUseTipp, Guide]
+    description: str = ''
 
     @property
     def guide_type(self) -> str:
@@ -132,3 +132,20 @@ class GuideDefinitionData:
         """Return the data as a dictionary suitable for JSONField storage."""
         _data = dataclasses.asdict(self.setup)
         return _data
+
+
+# Real guides
+guides = [
+    GuideDefinitionData(
+        name='Admin Center Information Release Info',
+        slug='admin_center_1',
+        setup=Tipp(
+            title=_('Admin Center Information'),
+            detail_text=_(
+                'The home panel (and the whole Admin Center) is a new feature starting with the new UI and was previously (before 1.0) not available.\n'
+                'The admin center provides a centralized location for all administration functionality and is meant to replace all interaction with the (django) backend admin interface.\n'
+                'Please open feature requests (after checking the tracker) for any existing backend admin functionality you are missing in this UI. The backend admin interface should be used carefully and seldom.'
+            ),
+        ),
+    )
+]
