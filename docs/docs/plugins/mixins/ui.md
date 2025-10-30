@@ -69,6 +69,20 @@ For example:
 
 The following user interface feature types are available:
 
+### Spotlight Actions
+
+Inject custom actions into the InvenTree "spotlight" search functionality by implementing the `get_ui_actions` method:
+
+::: plugin.base.ui.mixins.UserInterfaceMixin.get_ui_actions
+    options:
+      show_bases: False
+      show_root_heading: False
+      show_root_toc_entry: False
+      extra:
+        show_source: True
+      summary: False
+      members: []
+
 ### Dashboard Items
 
 The InvenTree dashboard is a collection of "items" which are displayed on the main dashboard page. Custom dashboard items can be added to the dashboard by implementing the `get_ui_dashboard_items` method:
