@@ -819,7 +819,7 @@ class Part(
         if not check_duplicates:
             return
 
-        from part.models import Part
+        # from part.models import Part
         from stock.models import StockItem
 
         if get_global_setting('SERIAL_NUMBER_GLOBALLY_UNIQUE', False):
@@ -850,7 +850,7 @@ class Part(
 
     def find_conflicting_serial_numbers(self, serials: list) -> list:
         """For a provided list of serials, return a list of those which are conflicting."""
-        from part.models import Part
+        # from part.models import Part
         from stock.models import StockItem
 
         conflicts = []
@@ -4270,6 +4270,11 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         if allow_substitutes:
             for sub in self.substitutes.all():
                 parts.add(sub.part)
+
+                # Account for variants of the substitute part (if allowed)
+                if allow_variants and self.allow_variants:
+                    for sub_variant in sub.part.get_descendants(include_self=False):
+                        parts.add(sub_variant)
 
         valid_parts = []
 

@@ -62,6 +62,8 @@ export function PrintingActions({
     id: reportId
   });
 
+  const [itemIdList, setItemIdList] = useState<number[]>([]);
+
   // Fetch available printing fields via OPTIONS request
   const printingFields = useQuery({
     enabled: labelPrintingEnabled,
@@ -89,13 +91,13 @@ export function PrintingActions({
       filters: {
         enabled: true,
         model_type: modelType,
-        items: items.join(',')
+        items: itemIdList.join(',')
       }
     };
 
     fields.items = {
       ...fields.items,
-      value: items,
+      value: itemIdList,
       hidden: true
     };
 
@@ -115,7 +117,7 @@ export function PrintingActions({
     };
 
     return fields;
-  }, [defaultLabelPlugin, pluginKey, printingFields.data, items]);
+  }, [defaultLabelPlugin, pluginKey, printingFields.data, itemIdList]);
 
   const labelModal = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.label_print),
@@ -123,6 +125,9 @@ export function PrintingActions({
     modalId: 'print-labels',
     fields: labelFields,
     timeout: 5000,
+    onOpen: () => {
+      setItemIdList(items);
+    },
     onClose: () => {
       setPluginKey('');
     },
@@ -134,24 +139,31 @@ export function PrintingActions({
     }
   });
 
-  const reportModal = useCreateApiFormModal({
-    url: apiUrl(ApiEndpoints.report_print),
-    title: t`Print Report`,
-    modalId: 'print-reports',
-    timeout: 5000,
-    fields: {
+  const reportFields: ApiFormFieldSet = useMemo(() => {
+    return {
       template: {
         autoFill: true,
         filters: {
           enabled: true,
           model_type: modelType,
-          items: items.join(',')
+          items: itemIdList.join(',')
         }
       },
       items: {
         hidden: true,
-        value: items
+        value: itemIdList
       }
+    };
+  }, [itemIdList, modelType]);
+
+  const reportModal = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.report_print),
+    title: t`Print Report`,
+    modalId: 'print-reports',
+    timeout: 5000,
+    fields: reportFields,
+    onOpen: () => {
+      setItemIdList(items);
     },
     submitText: t`Print`,
     successMessage: null,
@@ -176,6 +188,7 @@ export function PrintingActions({
         <ActionDropdown
           tooltip={t`Printing Actions`}
           icon={<IconPrinter />}
+          position='bottom-start'
           disabled={!enabled}
           actions={[
             {

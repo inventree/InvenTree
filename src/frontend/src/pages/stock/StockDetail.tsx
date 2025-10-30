@@ -33,6 +33,7 @@ import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { getDetailUrl } from '@lib/functions/Navigation';
+import type { StockOperationProps } from '@lib/types/Forms';
 import { notifications } from '@mantine/notifications';
 import { useBarcodeScanDialog } from '../../components/barcodes/BarcodeScanDialog';
 import AdminButton from '../../components/buttons/AdminButton';
@@ -66,7 +67,6 @@ import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { useApi } from '../../contexts/ApiContext';
 import { formatCurrency, formatDecimal } from '../../defaults/formatters';
 import {
-  type StockOperationProps,
   useFindSerialNumberForm,
   useStockFields,
   useStockItemSerializeFields
@@ -157,6 +157,14 @@ export default function StockDetail() {
         hidden: !part.IPN
       },
       {
+        name: 'part_detail.revision',
+        label: t`Revision`,
+        type: 'string',
+        copy: true,
+        icon: 'revision',
+        hidden: !part.revision
+      },
+      {
         name: 'status',
         type: 'status',
         label: t`Status`,
@@ -173,17 +181,12 @@ export default function StockDetail() {
           stockitem.status_custom_key == stockitem.status
       },
       {
-        type: 'text',
-        name: 'updated',
-        icon: 'calendar',
-        label: t`Last Updated`
-      },
-      {
-        type: 'text',
-        name: 'stocktake',
-        icon: 'calendar',
-        label: t`Last Stocktake`,
-        hidden: !stockitem.stocktake
+        type: 'link',
+        name: 'link',
+        label: t`Link`,
+        external: true,
+        copy: true,
+        hidden: !stockitem.link
       }
     ];
 
@@ -415,6 +418,19 @@ export default function StockDetail() {
         icon: 'part',
         label: t`Packaging`,
         hidden: !stockitem.packaging
+      },
+      {
+        type: 'text',
+        name: 'updated',
+        icon: 'calendar',
+        label: t`Last Updated`
+      },
+      {
+        type: 'text',
+        name: 'stocktake',
+        icon: 'calendar',
+        label: t`Last Stocktake`,
+        hidden: !stockitem.stocktake
       }
     ];
 
@@ -567,8 +583,8 @@ export default function StockDetail() {
         )
       },
       {
-        name: 'testdata',
-        label: t`Test Data`,
+        name: 'test-results',
+        label: t`Test Results`,
         icon: <IconChecklist />,
         hidden: !stockitem?.part_detail?.testable,
         content: stockitem?.pk ? (

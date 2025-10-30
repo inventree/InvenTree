@@ -84,9 +84,32 @@ To return an element corresponding to a certain key in a container which support
 
 A number of helper functions are available for accessing database objects:
 
+### order_queryset
+
+The `order_queryset` function allows for ordering of a provided queryset. It takes a queryset and a list of ordering arguments, and returns an ordered queryset.
+
+::: report.templatetags.report.order_queryset
+    options:
+        show_docstring_description: false
+        show_source: False
+
+!!! info "Provided QuerySet"
+    The provided queryset must be a valid Django queryset object, which is already available in the template context.
+
+#### Example
+
+In a report template which has a `PurchaseOrder` object available in its context as the variable `order`, return the matching line items ordered by part name:
+
+```html
+{% raw %}
+{% load report %}
+
+{% order_queryset order.lines.all 'part__name' as ordered_lines %}
+```
+
 ### filter_queryset
 
-The `filter_queryset` function allows for arbitrary filtering of the provided querysert. It takes a queryset and a list of filter arguments, and returns a filtered queryset.
+The `filter_queryset` function allows for arbitrary filtering of the provided queryset. It takes a queryset and a list of filter arguments, and returns a filtered queryset.
 
 ::: report.templatetags.report.filter_queryset
     options:
@@ -240,7 +263,11 @@ Total Price: {% render_currency order.total_price currency='NZD' decimal_places=
 
 ## Maths Operations
 
-Simple mathematical operators are available, as demonstrated in the example template below:
+Simple mathematical operators are available, as demonstrated in the example template below. These operators can be used to perform basic arithmetic operations within the report template.
+
+### Input Types
+
+These mathematical functions accept inputs of various input types, and attempt to perform the operation accordingly. Note that any inputs which are provided as strings or numbers will be converted to `Decimal` class types before the operation is performed.
 
 ### add
 
@@ -266,6 +293,13 @@ Simple mathematical operators are available, as demonstrated in the example temp
 ### divide
 
 ::: report.templatetags.report.divide
+    options:
+        show_docstring_description: false
+        show_source: False
+
+### modulo
+
+::: report.templatetags.report.modulo
     options:
         show_docstring_description: false
         show_source: False

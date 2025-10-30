@@ -1,5 +1,6 @@
 """Test for custom report tags."""
 
+from decimal import Decimal
 from zoneinfo import ZoneInfo
 
 from django.conf import settings
@@ -198,17 +199,84 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
         """Simple tests for mathematical operator tags."""
         self.assertEqual(report_tags.add(1, 2), 3)
         self.assertEqual(report_tags.add('-33', '33'), 0)
-        self.assertEqual(report_tags.subtract(10, 4.2), 5.8)
-        self.assertEqual(report_tags.multiply(2.3, 4), 9.2)
-        self.assertEqual(report_tags.multiply('-2', 4), -8.0)
+        self.assertEqual(report_tags.add(4.5, Decimal(4.5), cast=float), 9.0)
+        self.assertEqual(report_tags.subtract(10, 4.2, cast=float), 5.8)
+        self.assertEqual(report_tags.multiply(2.3, 4, cast=str), '9.2')
+        self.assertEqual(report_tags.multiply('-2', 4), -8)
         self.assertEqual(report_tags.divide(100, 5), 20)
 
-        with self.assertRaises(ZeroDivisionError):
+        self.assertEqual(report_tags.modulo(10, 3), 1)
+        self.assertEqual(report_tags.modulo('10', '4'), 2)
+
+        with self.assertRaises(ValidationError):
             report_tags.divide(100, 0)
+
+    def test_maths_tags_with_strings(self):
+        """Tests for mathematical operator tags with string inputs."""
+        self.assertEqual(report_tags.add(Decimal('10'), '20'), 30)
+        self.assertEqual(report_tags.subtract('50.5', '20.2'), Decimal('30.3'))
+        self.assertEqual(report_tags.multiply(3.0000000000000, '7'), 21)
+
+        result = report_tags.divide(100, Decimal('4'), cast=int)
+        self.assertEqual(result, 25)
+        self.assertIsInstance(result, int)
+
+    def test_maths_tags_with_decimal(self):
+        """Tests for mathematical operator tags with Decimal inputs."""
+        from decimal import Decimal
+
+        self.assertEqual(
+            report_tags.add(Decimal('1.1'), Decimal('2.2')), Decimal('3.3')
+        )
+        self.assertEqual(
+            report_tags.subtract(Decimal('5.5'), Decimal('2.2')), Decimal('3.3')
+        )
+        self.assertEqual(report_tags.multiply(Decimal('3.0'), 4), Decimal('12.0'))
+        self.assertEqual(
+            report_tags.divide(Decimal('10.0'), Decimal('2.000')), Decimal('5.0')
+        )
+
+        self.assertEqual(report_tags.multiply(3.3, Decimal('2.0')), Decimal('6.6'))
+
+    def test_maths_tags_with_money(self):
+        """Tests for mathematical operator tags with Money inputs."""
+        m1 = Money(100, 'USD')
+        m2 = Money(50, 'USD')
+
+        self.assertEqual(report_tags.add(m1, m2), Money(150, 'USD'))
+        self.assertEqual(report_tags.subtract(m1, m2), Money(50, 'USD'))
+        self.assertEqual(report_tags.multiply(m2, 3), Money(150, 'USD'))
+        self.assertEqual(report_tags.multiply(-3, m2), Money(-150, 'USD'))
+        self.assertEqual(report_tags.divide(m1, '4'), Money(25, 'USD'))
+
+        result = report_tags.divide(Money(1000, 'GBP'), 4)
+        self.assertIsInstance(result, Money)
+
+    def test_maths_tags_invalid(self):
+        """Tests for mathematical operator tags with invalid inputs."""
+        with self.assertRaises(ValidationError):
+            report_tags.add('abc', 10)
+
+        with self.assertRaises(ValidationError):
+            report_tags.subtract(50, 'xyz')
+
+        with self.assertRaises(ValidationError):
+            report_tags.multiply('foo', 'bar')
+
+        with self.assertRaises(ValidationError):
+            report_tags.divide('100', 'baz')
 
     def test_number_tags(self):
         """Simple tests for number formatting tags."""
         fn = report_tags.format_number
+
+        self.assertEqual(fn(None), 'None')
+
+        for i in [1, '1', '1.0000', '  1  ']:
+            self.assertEqual(fn(i), '1')
+
+        for x in ['10.000000', '  10  ', 10.000000, 10]:
+            self.assertEqual(fn(x), '10')
 
         self.assertEqual(fn(1234), '1234')
         self.assertEqual(fn(1234.5678, decimal_places=2), '1234.57')
@@ -217,6 +285,9 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
         self.assertEqual(
             fn(9988776655.4321, integer=True, separator=' '), '9 988 776 655'
         )
+
+        # Test with multiplier
+        self.assertEqual(fn(1000, multiplier=1.5), '1500')
 
         # Failure cases
         self.assertEqual(fn('abc'), 'abc')
@@ -361,8 +432,19 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
             '$1,234.0',
         )
 
+        # Test with non-currency values
+        self.assertEqual(
+            report_tags.render_currency(1234.45, currency='USD', decimal_places=2),
+            '$1,234.45',
+        )
+
         # Test with an invalid amount
-        self.assertEqual(report_tags.render_currency('abc'), '-')
+        with self.assertRaises(ValidationError):
+            report_tags.render_currency('abc', currency='-')
+
+        with self.assertRaises(ValidationError):
+            report_tags.render_currency(m, multiplier='quork')
+
         self.assertEqual(report_tags.render_currency(m, decimal_places='a'), exp_m)
         self.assertEqual(report_tags.render_currency(m, min_decimal_places='a'), exp_m)
         self.assertEqual(report_tags.render_currency(m, max_decimal_places='a'), exp_m)

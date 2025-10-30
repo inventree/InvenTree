@@ -84,6 +84,7 @@ class ReportTest(InvenTreeAPITestCase):
         # Filter by items
         part_pk = Part.objects.first().pk
         report = ReportTemplate.objects.filter(model_type='part').first()
+        assert report
 
         try:
             response = self.get(
@@ -236,6 +237,7 @@ class ReportTest(InvenTreeAPITestCase):
         url = reverse('api-report-template-list')
 
         template = ReportTemplate.objects.first()
+        assert template
 
         detail_url = reverse('api-report-template-detail', kwargs={'pk': template.pk})
 
@@ -415,6 +417,7 @@ class PrintTestMixins:
 
         qs = qs.objects.all()
         template = mdl.objects.filter(enabled=True, model_type=model_type).first()
+        assert template
         plugin = registry.get_plugin(self.plugin_ref)
 
         # Single page printing
@@ -475,6 +478,7 @@ class TestReportTest(PrintTestMixins, ReportTest):
         template = ReportTemplate.objects.filter(
             enabled=True, model_type='stockitem'
         ).first()
+        assert template
 
         self.assertIsNotNone(template)
 

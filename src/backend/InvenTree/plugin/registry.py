@@ -27,10 +27,10 @@ from django.utils.translation import gettext_lazy as _
 import structlog
 
 import InvenTree.cache
+import InvenTree.ready
 from common.settings import get_global_setting, set_global_setting
 from InvenTree.config import get_plugin_dir
 from InvenTree.exceptions import log_error
-from InvenTree.ready import canAppAccessDatabase
 
 from .helpers import (
     IntegrationPluginError,
@@ -121,12 +121,12 @@ class PluginsRegistry:
         self.ready = False  # Marks if the registry is ready to be used
 
         # Keep an internal hash of the plugin registry state
-        self.registry_hash = None
+        self.registry_hash: Optional[str] = None
 
         self.plugin_modules: list[InvenTreePlugin] = []  # Holds all discovered plugins
         self.mixin_modules: dict[str, Any] = {}  # Holds all discovered mixins
 
-        self.errors = {}  # Holds errors discovered during loading
+        self.errors: dict[str, list[Any]] = {}  # Holds errors discovered during loading
 
         self.loading_lock = Lock()  # Lock to prevent multiple loading at the same time
 
@@ -152,8 +152,18 @@ class PluginsRegistry:
 
         # Install plugins from file (if required)
         if InvenTreeSetting.get_setting('PLUGIN_ON_STARTUP', create=False, cache=False):
-            # make sure all plugins are installed
-            registry.install_plugin_file()
+            if InvenTree.ready.isInTestMode() and not settings.PLUGIN_TESTING:
+                # Ignore plugin reload in test mode
+                pass
+            elif InvenTree.ready.isRunningBackup():
+                # Ignore plugin reload during backup
+                pass
+            elif InvenTree.ready.isGeneratingSchema():
+                # Ignore plugin reload during schema generation
+                pass
+            elif InvenTree.ready.isInWorkerThread() or InvenTree.ready.isInMainThread():
+                # make sure all plugins are installed
+                registry.install_plugin_file()
 
         # Perform initial plugin discovery
         self.reload_plugins(full_reload=True, force_reload=True, collect=True)
@@ -289,7 +299,7 @@ class PluginsRegistry:
 
     @registry_entrypoint(default_value=[])
     def with_mixin(
-        self, mixin: str, active: bool = True, builtin: Optional[bool] = None
+        self, mixin: str, active: Optional[bool] = True, builtin: Optional[bool] = None
     ) -> list[InvenTreePlugin]:
         """Returns reference to all plugins that have a specified mixin enabled.
 
@@ -375,7 +385,7 @@ class PluginsRegistry:
         logger.debug('Finished loading plugins')
 
         # Trigger plugins_loaded event
-        if canAppAccessDatabase():
+        if InvenTree.ready.canAppAccessDatabase():
             from plugin.events import PluginEvents, trigger_event
 
             trigger_event(PluginEvents.PLUGINS_LOADED)
@@ -764,9 +774,9 @@ class PluginsRegistry:
                     f"Plugin '{p}' is not compatible with the current InvenTree version {v}"
                 )
                 if v := plg_i.MIN_VERSION:
-                    _msg += _(f'Plugin requires at least version {v}')
+                    _msg += _(f'Plugin requires at least version {v}')  # type: ignore[unsupported-operator]
                 if v := plg_i.MAX_VERSION:
-                    _msg += _(f'Plugin requires at most version {v}')
+                    _msg += _(f'Plugin requires at most version {v}')  # type: ignore[unsupported-operator]
                 # Log to error stack
                 log_registry_error(_msg, reference=f'{p}:init_plugin')
             else:
@@ -809,7 +819,7 @@ class PluginsRegistry:
 
                         logger.exception(
                             '[PLUGIN] Encountered an error with %s:\n%s',
-                            error.path,
+                            getattr(error, 'path', None),
                             str(error),
                         )
 
@@ -1033,7 +1043,7 @@ class PluginsRegistry:
             # Skip if running during unit testing
             return False
 
-        if not canAppAccessDatabase(
+        if not InvenTree.ready.canAppAccessDatabase(
             allow_shell=True, allow_test=settings.PLUGIN_TESTING_RELOAD
         ):
             # Skip check if database cannot be accessed
@@ -1084,11 +1094,14 @@ def _load_source(modname, filename):
 
     # loader = importlib.machinery.SourceFileLoader(modname, filename)
     spec = importlib.util.spec_from_file_location(modname, filename)  # , loader=loader)
+    if spec is None:
+        raise ImportError(f"Cannot find module '{modname}'")  # pragma: no cover
     module = importlib.util.module_from_spec(spec)
 
     sys.modules[module.__name__] = module
 
-    if spec.loader:
-        spec.loader.exec_module(module)
+    loader = spec.loader
+    if loader is not None:
+        loader.exec_module(module)
 
     return module

@@ -7,6 +7,7 @@ import tempfile
 import textwrap
 from datetime import datetime
 from pathlib import Path
+from typing import Optional
 from unittest import mock
 from unittest.mock import patch
 
@@ -204,7 +205,9 @@ class InvenTreePluginTests(TestCase):
         self.assertFalse(self.plugin_version.check_version([0, 1, 4]))
 
         plug = registry.plugins_full.get('sampleversion')
-        self.assertEqual(plug.is_active(), False)
+        self.assertIsNotNone(plug)
+        if plug:
+            self.assertEqual(plug.is_active(), False)
 
 
 class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
@@ -251,7 +254,7 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
     def test_folder_loading(self):
         """Test that plugins in folders outside of BASE_DIR get loaded."""
         # Run in temporary directory -> always a new random name
-        with tempfile.TemporaryDirectory() as tmp:
+        with tempfile.TemporaryDirectory() as tmp:  # type: ignore[no-matching-overload]
             # Fill directory with sample data
             new_dir = Path(tmp).joinpath('mock')
             shutil.copytree(self.mockDir(), new_dir)
@@ -400,7 +403,7 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
 
         def create_plugin_file(
             version: str, enabled: bool = True, reload: bool = True
-        ) -> str:
+        ) -> Optional[str]:
             """Create a plugin file with the given version.
 
             Arguments:

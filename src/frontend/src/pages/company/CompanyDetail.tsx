@@ -187,9 +187,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
         label: t`Supplied Parts`,
         icon: <IconPackageExport />,
         hidden: !company?.is_supplier,
-        content: company?.pk && (
-          <SupplierPartTable params={{ supplier: company.pk }} />
-        )
+        content: company?.pk && <SupplierPartTable supplierId={company.pk} />
       },
       {
         name: 'manufactured-parts',
@@ -197,7 +195,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
         icon: <IconBuildingWarehouse />,
         hidden: !company?.is_manufacturer,
         content: company?.pk && (
-          <ManufacturerPartTable params={{ manufacturer: company.pk }} />
+          <ManufacturerPartTable manufacturerId={company.pk} />
         )
       },
       {

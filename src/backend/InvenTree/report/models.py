@@ -238,7 +238,7 @@ class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
         ),
     )
 
-    def generate_filename(self, context, **kwargs):
+    def generate_filename(self, context, **kwargs) -> str:
         """Generate a filename for this report."""
         template_string = Template(self.filename_pattern)
 
@@ -491,7 +491,7 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
         debug_mode = get_global_setting('REPORT_DEBUG_MODE', False)
 
         # Start with a default report name
-        report_name = None
+        report_name: Optional[str] = None
 
         # If a DataOutput object is not provided, create a new one
         if not output:
@@ -546,6 +546,9 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
                     msg = _('Template syntax error')
                     output.mark_failure(msg)
                     raise ValidationError(f'{msg}: {e!s}')
+                except ValidationError as e:
+                    output.mark_failure(str(e))
+                    raise e
                 except Exception as e:
                     msg = _('Error rendering report')
                     output.mark_failure(msg)
@@ -582,6 +585,9 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
                         msg = _('Template syntax error')
                         output.mark_failure(error=_('Template syntax error'))
                         raise ValidationError(f'{msg}: {e!s}')
+                    except ValidationError as e:
+                        output.mark_failure(str(e))
+                        raise e
                     except Exception as e:
                         msg = _('Error rendering report')
                         output.mark_failure(error=msg)
@@ -607,6 +613,9 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
                 'detail': str(exc),
                 'path': request.path if request else None,
             })
+
+        if not report_name:
+            report_name = ''  # pragma: no cover
 
         if not report_name.endswith('.pdf'):
             report_name += '.pdf'
@@ -695,7 +704,7 @@ class LabelTemplate(TemplateUploadMixin, ReportTemplateBase):
     def get_context(self, instance, request=None, **kwargs):
         """Supply context data to the label template for rendering."""
         base_context = super().get_context(instance, request, **kwargs)
-        label_context: LabelContextExtension = {
+        label_context: LabelContextExtension = {  # type: ignore[invalid-assignment]
             'width': self.width,
             'height': self.height,
             'page_style': None,

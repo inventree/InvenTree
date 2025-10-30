@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { IconPackages } from '@tabler/icons-react';
+import { IconBuildingStore, IconCopy, IconPackages } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
@@ -12,8 +12,10 @@ import { useGlobalSettingsState } from '../states/SettingsStates';
  * Construct a set of fields for creating / editing a Part instance
  */
 export function usePartFields({
-  create = false
+  create = false,
+  duplicatePartInstance
 }: {
+  duplicatePartInstance?: any;
   create?: boolean;
 }): ApiFormFieldSet {
   const settings = useGlobalSettingsState();
@@ -89,6 +91,7 @@ export function usePartFields({
       };
 
       fields.initial_supplier = {
+        icon: <IconBuildingStore />,
         children: {
           supplier: {
             filters: {
@@ -102,6 +105,36 @@ export function usePartFields({
             }
           },
           mpn: {}
+        }
+      };
+    }
+
+    // Additional fields for part duplication
+    if (create && duplicatePartInstance?.pk) {
+      fields.duplicate = {
+        icon: <IconCopy />,
+        children: {
+          part: {
+            value: duplicatePartInstance?.pk,
+            hidden: true
+          },
+          copy_image: {
+            value: true
+          },
+          copy_bom: {
+            value: settings.isSet('PART_COPY_BOM'),
+            hidden: !duplicatePartInstance?.assembly
+          },
+          copy_notes: {
+            value: true
+          },
+          copy_parameters: {
+            value: settings.isSet('PART_COPY_PARAMETERS')
+          },
+          copy_tests: {
+            value: true,
+            hidden: !duplicatePartInstance?.testable
+          }
         }
       };
     }
@@ -126,7 +159,7 @@ export function usePartFields({
     }
 
     return fields;
-  }, [create, settings]);
+  }, [create, duplicatePartInstance, settings]);
 }
 
 /**

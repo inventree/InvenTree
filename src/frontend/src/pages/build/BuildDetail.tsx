@@ -59,8 +59,8 @@ import { useUserState } from '../../states/UserState';
 import BuildAllocatedStockTable from '../../tables/build/BuildAllocatedStockTable';
 import BuildLineTable from '../../tables/build/BuildLineTable';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
-import BuildOrderTestTable from '../../tables/build/BuildOrderTestTable';
 import BuildOutputTable from '../../tables/build/BuildOutputTable';
+import PartTestResultTable from '../../tables/part/PartTestResultTable';
 import { PurchaseOrderTable } from '../../tables/purchasing/PurchaseOrderTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 
@@ -237,17 +237,6 @@ export default function BuildDetail() {
         label: t`External`,
         icon: 'manufacturers',
         hidden: !build.external
-      },
-      {
-        type: 'text',
-        name: 'purchase_order',
-        label: t`Purchase Order`,
-        icon: 'purchase_orders',
-        copy: true,
-        hidden: !build.external,
-        value_formatter: () => {
-          return 'TODO: external PO';
-        }
       },
       {
         type: 'text',
@@ -525,7 +514,7 @@ export default function BuildDetail() {
         icon: <IconChecklist />,
         hidden: !build.part_detail?.testable,
         content: build.pk ? (
-          <BuildOrderTestTable buildId={build.pk} partId={build.part} />
+          <PartTestResultTable buildId={build.pk} partId={build.part} />
         ) : (
           <Skeleton />
         )
@@ -690,6 +679,7 @@ export default function BuildDetail() {
       <PrintingActions
         modelType={ModelType.build}
         items={[build.pk]}
+        enableLabels
         enableReports
       />,
       <OptionsActionDropdown

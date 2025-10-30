@@ -305,7 +305,8 @@ export default function SystemSettings() {
               'SALESORDER_REQUIRE_RESPONSIBLE',
               'SALESORDER_DEFAULT_SHIPMENT',
               'SALESORDER_EDIT_COMPLETED_ORDERS',
-              'SALESORDER_SHIP_COMPLETE'
+              'SALESORDER_SHIP_COMPLETE',
+              'SALESORDER_SHIPMENT_REQUIRES_CHECK'
             ]}
           />
         )

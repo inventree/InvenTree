@@ -1,7 +1,7 @@
 """Plugin class for custom data exporting."""
 
 from collections import OrderedDict
-from typing import Union
+from typing import Optional, Union
 
 from django.contrib.auth.models import User
 from django.db.models import QuerySet
@@ -36,8 +36,8 @@ class DataExportMixin:
         self,
         model_class: type,
         user: User,
-        serializer_class: serializers.Serializer = None,
-        view_class: views.APIView = None,
+        serializer_class: Optional[serializers.Serializer] = None,
+        view_class: Optional[views.APIView] = None,
         *args,
         **kwargs,
     ) -> bool:

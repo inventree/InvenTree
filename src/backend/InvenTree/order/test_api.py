@@ -4,6 +4,7 @@ import base64
 import io
 import json
 from datetime import date, datetime, timedelta
+from typing import Optional
 
 from django.core.exceptions import ValidationError
 from django.db import connection
@@ -312,6 +313,12 @@ class PurchaseOrderTest(OrderTest):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    def test_output_options(self):
+        """Test the various output options for the PurchaseOrder detail endpoint."""
+        self.run_output_test(
+            reverse('api-po-detail', kwargs={'pk': 1}), ['supplier_detail']
+        )
+
     def test_po_operations(self):
         """Test that we can create / edit and delete a PurchaseOrder via the API."""
         n = models.PurchaseOrder.objects.count()
@@ -420,7 +427,9 @@ class PurchaseOrderTest(OrderTest):
 
         self.assertIn('Responsible user or group must be specified', str(response.data))
 
-        data['responsible'] = Owner.objects.first().pk
+        owner = Owner.objects.first()
+        assert owner
+        data['responsible'] = owner.pk
 
         response = self.post(url, data, expected_code=201)
 
@@ -848,6 +857,13 @@ class PurchaseOrderLineItemTest(OrderTest):
             expected_code=200,
         ).json()
         self.assertEqual(float(li5['purchase_price']), 1)
+
+    def test_output_options(self):
+        """Test PurchaseOrderLineItem output option endpoint."""
+        self.run_output_test(
+            reverse('api-po-line-detail', kwargs={'pk': 1}),
+            ['part_detail', 'order_detail'],
+        )
 
 
 class PurchaseOrderDownloadTest(OrderTest):
@@ -1689,6 +1705,7 @@ class SalesOrderTest(OrderTest):
             shipment = models.SalesOrderShipment.objects.create(
                 order=so, reference='SHIP-12345'
             )
+        assert shipment
 
         # Allocate some stock
         item = StockItem.objects.create(part=part, quantity=100, location=None)
@@ -1744,6 +1761,12 @@ class SalesOrderTest(OrderTest):
 
         self.assertIsNotNone(so.shipment_date)
         self.assertIsNotNone(so.shipped_by)
+
+    def test_output_options(self):
+        """Test the output options for the SalesOrder detail endpoint."""
+        self.run_output_test(
+            reverse('api-so-detail', kwargs={'pk': 1}), ['customer_detail']
+        )
 
 
 class SalesOrderLineItemTest(OrderTest):
@@ -1817,18 +1840,21 @@ class SalesOrderLineItemTest(OrderTest):
         self.filter({'completed': 0}, n)
 
         # Filter by 'allocated' status
-        self.filter({'allocated': 'true'}, 0)
-        self.filter({'allocated': 'false'}, n)
+        self.filter({'allocated': 'true'}, 1)
+        self.filter({'allocated': 'false'}, n - 1)
 
     def test_so_line_allocated_filters(self):
         """Test filtering by allocation status for a SalesOrderLineItem."""
         self.assignRole('sales_order.add')
 
         # Crete a new SalesOrder via the API
+        company = Company.objects.filter(is_customer=True).first()
+        assert company
+
         response = self.post(
             reverse('api-so-list'),
             {
-                'customer': Company.objects.filter(is_customer=True).first().pk,
+                'customer': company.pk,
                 'reference': 'SO-12345',
                 'description': 'Test Sales Order',
             },
@@ -1878,6 +1904,7 @@ class SalesOrderLineItemTest(OrderTest):
             p = Part.objects.get(pk=item)
             s = StockItem.objects.create(part=p, quantity=100)
             l = models.SalesOrderLineItem.objects.filter(order=order, part=p).first()
+            assert l
 
             # Allocate against the API
             self.post(
@@ -1901,6 +1928,13 @@ class SalesOrderLineItemTest(OrderTest):
         # Filter by 'completed' status
         self.filter({'order': order_id, 'completed': 1}, 2)
         self.filter({'order': order_id, 'completed': 0}, 1)
+
+    def test_output_options(self):
+        """Test the various output options for the SalesOrderLineItem detail endpoint."""
+        self.run_output_test(
+            reverse('api-so-line-detail', kwargs={'pk': 1}),
+            ['part_detail', 'order_detail', 'customer_detail'],
+        )
 
 
 class SalesOrderDownloadTest(OrderTest):
@@ -2099,12 +2133,14 @@ class SalesOrderAllocateTest(OrderTest):
             return line_item.part.is_template
 
         for line in filter(check_template, self.order.lines.all()):
-            stock_item = None
+            stock_item: Optional[StockItem] = None
 
             stock_item = None
 
             # Allocate a matching variant
-            parts = Part.objects.filter(salable=True).filter(variant_of=line.part.pk)
+            parts: list[Part] = Part.objects.filter(salable=True).filter(
+                variant_of=line.part.pk
+            )
             for part in parts:
                 stock_item = part.stock_items.last()
 
@@ -2117,6 +2153,9 @@ class SalesOrderAllocateTest(OrderTest):
 
                 if stock_item is not None:
                     break
+
+            if stock_item is None:
+                raise self.fail('No stock item found for part')  # pragma: no cover
 
             # Fully-allocate each line
             data['items'].append({
@@ -2237,6 +2276,20 @@ class SalesOrderAllocateTest(OrderTest):
 
         self.assertEqual(
             len(response.data), count_before + 3 * models.SalesOrder.objects.count()
+        )
+
+    def test_output_options(self):
+        """Test the various output options for the SalesOrderAllocation detail endpoint."""
+        self.run_output_test(
+            reverse('api-so-allocation-list'),
+            [
+                'part_detail',
+                'item_detail',
+                'order_detail',
+                'location_detail',
+                'customer_detail',
+            ],
+            assert_subset=True,
         )
 
 
@@ -2604,6 +2657,92 @@ class ReturnOrderTests(InvenTreeAPITestCase):
         self.process_csv(
             data, required_rows=0, required_cols=['Order', 'Reference', 'Target Date']
         )
+
+    def test_output_options(self):
+        """Test the various output options for the ReturnOrder detail endpoint."""
+        self.run_output_test(
+            reverse('api-return-order-detail', kwargs={'pk': 1}), ['customer_detail']
+        )
+
+
+class ReturnOrderLineItemTests(InvenTreeAPITestCase):
+    """Unit tests for ReturnOrderLineItem API endpoints."""
+
+    fixtures = [
+        'category',
+        'company',
+        'return_order',
+        'part',
+        'location',
+        'supplier_part',
+        'stock',
+    ]
+    roles = ['return_order.view']
+
+    def test_options(self):
+        """Test the OPTIONS endpoint."""
+        self.assignRole('return_order.add')
+        data = self.options(
+            reverse('api-return-order-line-list'), expected_code=200
+        ).data
+
+        self.assertEqual(data['name'], 'Return Order Line Item List')
+
+        # Check POST fields
+        post = data['actions']['POST']
+        self.assertIn('order', post)
+        self.assertIn('item', post)
+        self.assertIn('quantity', post)
+        self.assertIn('outcome', post)
+
+    def test_list(self):
+        """Test list endpoint."""
+        url = reverse('api-return-order-line-list')
+
+        response = self.get(url, expected_code=200)
+        self.assertGreater(len(response.data), 0)
+
+        # Test with pagination
+        data = self.get(
+            url, {'limit': 1, 'ordering': 'reference'}, expected_code=200
+        ).data
+
+        self.assertIn('count', data)
+        self.assertIn('results', data)
+        self.assertEqual(len(data['results']), 1)
+
+    def test_detail(self):
+        """Test detail endpoint."""
+        url = reverse('api-return-order-line-detail', kwargs={'pk': 1})
+
+        response = self.get(url, expected_code=200)
+        data = response.data
+
+        self.assertIn('order', data)
+        self.assertIn('item', data)
+        self.assertIn('quantity', data)
+        self.assertIn('outcome', data)
+
+    def test_output_options(self):
+        """Test output options for detail endpoint."""
+        self.run_output_test(
+            reverse('api-return-order-line-detail', kwargs={'pk': 1}),
+            ['part_detail', 'item_detail', 'order_detail'],
+        )
+
+    def test_update(self):
+        """Test updating ReturnOrderLineItem."""
+        url = reverse('api-return-order-line-detail', kwargs={'pk': 1})
+
+        # Without permissions
+        self.patch(url, {'price': '10.50'}, expected_code=403)
+
+        self.assignRole('return_order.change')
+
+        self.patch(url, {'price': '15.75'}, expected_code=200)
+
+        line = models.ReturnOrderLineItem.objects.get(pk=1)
+        self.assertEqual(float(line.price.amount), 15.75)
 
 
 class OrderMetadataAPITest(InvenTreeAPITestCase):

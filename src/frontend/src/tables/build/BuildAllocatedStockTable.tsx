@@ -12,10 +12,10 @@ import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { ActionButton } from '@lib/index';
 import type { TableFilter } from '@lib/types/Filters';
+import type { StockOperationProps } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
 import { IconCircleDashedCheck } from '@tabler/icons-react';
 import { useConsumeBuildItemsForm } from '../../forms/BuildForms';
-import type { StockOperationProps } from '../../forms/StockForms';
 import {
   useDeleteApiFormModal,
   useEditApiFormModal
@@ -183,9 +183,13 @@ export default function BuildAllocatedStockTable({
 
   const [selectedItems, setSelectedItems] = useState<any[]>([]);
 
+  const itemsToConsume = useMemo(() => {
+    return selectedItems.filter((item) => !item.part_detail?.trackable);
+  }, [selectedItems]);
+
   const consumeStock = useConsumeBuildItemsForm({
     buildId: buildId ?? 0,
-    allocatedItems: selectedItems,
+    allocatedItems: itemsToConsume,
     onFormSuccess: () => {
       table.clearSelectedRecords();
       table.refreshTable();
@@ -225,13 +229,16 @@ export default function BuildAllocatedStockTable({
 
   const rowActions = useCallback(
     (record: any): RowAction[] => {
+      const part = record.part_detail ?? {};
+      const trackable: boolean = part?.trackable ?? false;
+
       return [
         {
           color: 'green',
           icon: <IconCircleDashedCheck />,
           title: t`Consume`,
           tooltip: t`Consume Stock`,
-          hidden: !user.hasChangeRole(UserRoles.build),
+          hidden: !buildId || trackable || !user.hasChangeRole(UserRoles.build),
           onClick: () => {
             setSelectedItems([record]);
             consumeStock.open();

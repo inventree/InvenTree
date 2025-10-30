@@ -853,6 +853,14 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'SALESORDER_SHIPMENT_REQUIRES_CHECK': {
+        'name': _('Shipment Requires Checking'),
+        'description': _(
+            'Prevent completion of shipments until items have been checked'
+        ),
+        'default': False,
+        'validator': bool,
+    },
     'SALESORDER_SHIP_COMPLETE': {
         'name': _('Mark Shipped Orders as Complete'),
         'description': _(
@@ -1127,6 +1135,14 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'name': _('Enable Test Station Data'),
         'description': _('Enable test station data collection for test results'),
         'default': False,
+        'validator': bool,
+    },
+    'MACHINE_PING_ENABLED': {
+        'name': _('Enable Machine Ping'),
+        'description': _(
+            'Enable periodic ping task of registered machines to check their status'
+        ),
+        'default': True,
         'validator': bool,
     },
 }

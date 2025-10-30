@@ -22,11 +22,9 @@ from sql_util.utils import SubqueryCount
 from taggit.serializers import TagListSerializerField
 
 import common.currency
-import common.settings
 import company.models
 import InvenTree.helpers
 import InvenTree.serializers
-import InvenTree.status
 import part.filters as part_filters
 import part.helpers as part_helpers
 import stock.models
@@ -34,6 +32,13 @@ import users.models
 from importer.registry import register_importer
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.ready import isGeneratingSchema
+from InvenTree.serializers import (
+    FilterableDateTimeField,
+    FilterableFloatField,
+    FilterableListField,
+    FilterableListSerializer,
+    enable_filter,
+)
 from users.serializers import UserSerializer
 
 from .models import (
@@ -58,7 +63,9 @@ logger = structlog.get_logger('inventree')
 
 @register_importer()
 class CategorySerializer(
-    DataImportExportSerializerMixin, InvenTree.serializers.InvenTreeModelSerializer
+    InvenTree.serializers.FilterableSerializerMixin,
+    DataImportExportSerializerMixin,
+    InvenTree.serializers.InvenTreeModelSerializer,
 ):
     """Serializer for PartCategory."""
 
@@ -84,15 +91,6 @@ class CategorySerializer(
             'parent_default_location',
         ]
         read_only_fields = ['level', 'pathstring']
-
-    def __init__(self, *args, **kwargs):
-        """Optionally add or remove extra fields."""
-        path_detail = kwargs.pop('path_detail', False)
-
-        super().__init__(*args, **kwargs)
-
-        if not path_detail and not isGeneratingSchema():
-            self.fields.pop('path', None)
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -133,11 +131,14 @@ class CategorySerializer(
         """Return True if the category is directly "starred" by the current user."""
         return category in self.context.get('starred_categories', [])
 
-    path = serializers.ListField(
-        child=serializers.DictField(),
-        source='get_path',
-        read_only=True,
-        allow_null=True,
+    path = enable_filter(
+        FilterableListField(
+            child=serializers.DictField(),
+            source='get_path',
+            read_only=True,
+            allow_null=True,
+        ),
+        filter_name='path_detail',
     )
 
     icon = serializers.CharField(
@@ -212,9 +213,13 @@ class PartTestTemplateSerializer(
 
 @register_importer()
 class PartSalePriceSerializer(
-    DataImportExportSerializerMixin, InvenTree.serializers.InvenTreeModelSerializer
+    InvenTree.serializers.FilterableSerializerMixin,
+    DataImportExportSerializerMixin,
+    InvenTree.serializers.InvenTreeModelSerializer,
 ):
     """Serializer for sale prices for Part model."""
+
+    no_filters = True
 
     class Meta:
         """Metaclass defining serializer fields."""
@@ -255,7 +260,7 @@ class PartThumbSerializer(serializers.Serializer):
     Used to serve and display existing Part images.
     """
 
-    image = serializers.URLField(read_only=True)
+    image = InvenTree.serializers.InvenTreeImageSerializerField(read_only=True)
     count = serializers.IntegerField(read_only=True)
 
 
@@ -312,7 +317,10 @@ class PartParameterTemplateSerializer(
         return queryset.annotate(parts=SubqueryCount('instances'))
 
 
-class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+class PartBriefSerializer(
+    InvenTree.serializers.FilterableSerializerMixin,
+    InvenTree.serializers.InvenTreeModelSerializer,
+):
     """Serializer for Part (brief detail)."""
 
     class Meta:
@@ -336,6 +344,7 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'locked',
             'assembly',
             'component',
+            'minimum_stock',
             'is_template',
             'purchaseable',
             'salable',
@@ -346,18 +355,7 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'pricing_min',
             'pricing_max',
         ]
-
         read_only_fields = ['barcode_hash']
-
-    def __init__(self, *args, **kwargs):
-        """Custom initialization routine for the PartBrief serializer."""
-        pricing = kwargs.pop('pricing', True)
-
-        super().__init__(*args, **kwargs)
-
-        if not pricing and not isGeneratingSchema():
-            self.fields.pop('pricing_min', None)
-            self.fields.pop('pricing_max', None)
 
     category_default_location = serializers.IntegerField(
         read_only=True, allow_null=True
@@ -380,17 +378,27 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     )
 
     # Pricing fields
-    pricing_min = InvenTree.serializers.InvenTreeMoneySerializer(
-        source='pricing_data.overall_min', allow_null=True, read_only=True
+    pricing_min = enable_filter(
+        InvenTree.serializers.InvenTreeMoneySerializer(
+            source='pricing_data.overall_min', allow_null=True, read_only=True
+        ),
+        True,
+        filter_name='pricing',
     )
-    pricing_max = InvenTree.serializers.InvenTreeMoneySerializer(
-        source='pricing_data.overall_max', allow_null=True, read_only=True
+    pricing_max = enable_filter(
+        InvenTree.serializers.InvenTreeMoneySerializer(
+            source='pricing_data.overall_max', allow_null=True, read_only=True
+        ),
+        True,
+        filter_name='pricing',
     )
 
 
 @register_importer()
 class PartParameterSerializer(
-    DataImportExportSerializerMixin, InvenTree.serializers.InvenTreeModelSerializer
+    InvenTree.serializers.FilterableSerializerMixin,
+    DataImportExportSerializerMixin,
+    InvenTree.serializers.InvenTreeModelSerializer,
 ):
     """JSON serializers for the PartParameter model."""
 
@@ -411,27 +419,7 @@ class PartParameterSerializer(
             'updated_by',
             'updated_by_detail',
         ]
-
         read_only_fields = ['updated', 'updated_by']
-
-    def __init__(self, *args, **kwargs):
-        """Custom initialization method for the serializer.
-
-        Allows us to optionally include or exclude particular information
-        """
-        template_detail = kwargs.pop('template_detail', True)
-        part_detail = kwargs.pop('part_detail', False)
-
-        super().__init__(*args, **kwargs)
-
-        if isGeneratingSchema():
-            return
-
-        if not part_detail:
-            self.fields.pop('part_detail', None)
-
-        if not template_detail:
-            self.fields.pop('template_detail', None)
 
     def save(self):
         """Save the PartParameter instance."""
@@ -444,12 +432,15 @@ class PartParameterSerializer(
 
         return instance
 
-    part_detail = PartBriefSerializer(
-        source='part', many=False, read_only=True, allow_null=True
+    part_detail = enable_filter(
+        PartBriefSerializer(source='part', many=False, read_only=True, allow_null=True)
     )
 
-    template_detail = PartParameterTemplateSerializer(
-        source='template', many=False, read_only=True, allow_null=True
+    template_detail = enable_filter(
+        PartParameterTemplateSerializer(
+            source='template', many=False, read_only=True, allow_null=True
+        ),
+        True,
     )
 
     updated_by_detail = UserSerializer(
@@ -640,10 +631,12 @@ class DefaultLocationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
 @register_importer()
 class PartSerializer(
+    InvenTree.serializers.FilterableSerializerMixin,
     DataImportExportSerializerMixin,
     InvenTree.serializers.NotesFieldMixin,
     InvenTree.serializers.RemoteImageMixin,
-    InvenTree.serializers.InvenTreeTagModelSerializer,
+    InvenTree.serializers.InvenTreeTaggitSerializer,
+    InvenTree.serializers.InvenTreeModelSerializer,
 ):
     """Serializer for complete detail information of a part.
 
@@ -703,6 +696,7 @@ class PartSerializer(
             'pricing_max',
             'pricing_updated',
             'responsible',
+            'price_breaks',
             # Annotated fields
             'allocated_to_build_orders',
             'allocated_to_sales_orders',
@@ -726,7 +720,6 @@ class PartSerializer(
             'copy_category_parameters',
             'tags',
         ]
-
         read_only_fields = ['barcode_hash', 'creation_date', 'creation_user']
 
     tags = TagListSerializerField(required=False)
@@ -737,18 +730,20 @@ class PartSerializer(
         - Allows us to optionally pass extra fields based on the query.
         """
         self.starred_parts = kwargs.pop('starred_parts', [])
-        category_detail = kwargs.pop('category_detail', False)
-        location_detail = kwargs.pop('location_detail', False)
-        parameters = kwargs.pop('parameters', False)
+        # category_detail = kwargs.pop('category_detail', False)
+        # location_detail = kwargs.pop('location_detail', False)
+        # parameters = kwargs.pop('parameters', False)
         create = kwargs.pop('create', False)
-        pricing = kwargs.pop('pricing', True)
-        path_detail = kwargs.pop('path_detail', False)
+        # pricing = kwargs.pop('pricing', True)
+        # path_detail = kwargs.pop('path_detail', False)
+        # price_breaks = kwargs.pop('price_breaks', False)
 
         super().__init__(*args, **kwargs)
 
         if isGeneratingSchema():
             return
 
+        """
         if not category_detail:
             self.fields.pop('category_detail', None)
 
@@ -761,6 +756,15 @@ class PartSerializer(
         if not path_detail:
             self.fields.pop('category_path', None)
 
+        if not price_breaks:
+            self.fields.pop('price_breaks', None)
+
+        if not pricing:
+            self.fields.pop('pricing_min', None)
+            self.fields.pop('pricing_max', None)
+            self.fields.pop('pricing_updated', None)
+        """
+
         if not create:
             # These fields are only used for the LIST API endpoint
             for f in self.skip_create_fields():
@@ -768,11 +772,6 @@ class PartSerializer(
                 if f in ['remote_image', 'existing_image']:
                     continue
                 self.fields.pop(f, None)
-
-        if not pricing:
-            self.fields.pop('pricing_min', None)
-            self.fields.pop('pricing_max', None)
-            self.fields.pop('pricing_updated', None)
 
     def get_api_url(self):
         """Return the API url associated with this serializer."""
@@ -888,19 +887,27 @@ class PartSerializer(
         return part in self.starred_parts
 
     # Extra detail for the category
-    category_detail = CategorySerializer(
-        source='category', many=False, read_only=True, allow_null=True
+    category_detail = enable_filter(
+        CategorySerializer(
+            source='category', many=False, read_only=True, allow_null=True
+        )
     )
 
-    category_path = serializers.ListField(
-        child=serializers.DictField(),
-        source='category.get_path',
-        read_only=True,
-        allow_null=True,
+    category_path = enable_filter(
+        FilterableListField(
+            child=serializers.DictField(),
+            source='category.get_path',
+            read_only=True,
+            allow_null=True,
+        ),
+        filter_name='path_detail',
     )
 
-    default_location_detail = DefaultLocationSerializer(
-        source='default_location', many=False, read_only=True, allow_null=True
+    default_location_detail = enable_filter(
+        DefaultLocationSerializer(
+            source='default_location', many=False, read_only=True, allow_null=True
+        ),
+        filter_name='location_detail',
     )
 
     category_name = serializers.CharField(
@@ -1008,17 +1015,39 @@ class PartSerializer(
     )
 
     # Pricing fields
-    pricing_min = InvenTree.serializers.InvenTreeMoneySerializer(
-        source='pricing_data.overall_min', allow_null=True, read_only=True
+    pricing_min = enable_filter(
+        InvenTree.serializers.InvenTreeMoneySerializer(
+            source='pricing_data.overall_min', allow_null=True, read_only=True
+        ),
+        True,
+        filter_name='pricing',
     )
-    pricing_max = InvenTree.serializers.InvenTreeMoneySerializer(
-        source='pricing_data.overall_max', allow_null=True, read_only=True
+    pricing_max = enable_filter(
+        InvenTree.serializers.InvenTreeMoneySerializer(
+            source='pricing_data.overall_max', allow_null=True, read_only=True
+        ),
+        True,
+        filter_name='pricing',
     )
-    pricing_updated = serializers.DateTimeField(
-        source='pricing_data.updated', allow_null=True, read_only=True
+    pricing_updated = enable_filter(
+        FilterableDateTimeField(
+            source='pricing_data.updated', allow_null=True, read_only=True
+        ),
+        True,
+        filter_name='pricing',
     )
 
-    parameters = PartParameterSerializer(many=True, read_only=True, allow_null=True)
+    parameters = enable_filter(
+        PartParameterSerializer(many=True, read_only=True, allow_null=True)
+    )
+
+    price_breaks = enable_filter(
+        PartSalePriceSerializer(
+            source='salepricebreaks', many=True, read_only=True, allow_null=True
+        ),
+        False,
+        filter_name='price_breaks',
+    )
 
     # Extra fields used only for creation of a new Part instance
     duplicate = DuplicatePartSerializer(
@@ -1547,6 +1576,21 @@ class PartPricingSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             pricing.update_pricing()
 
 
+class PartSerialNumberSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+    """Serializer for Part serial number information."""
+
+    class Meta:
+        """Metaclass defining serializer fields."""
+
+        model = Part
+        fields = ['latest', 'next']
+
+    latest = serializers.CharField(
+        source='get_latest_serial_number', read_only=True, allow_null=True
+    )
+    next = serializers.CharField(source='get_next_serial_number', read_only=True)
+
+
 class PartRelationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     """Serializer for a PartRelated model."""
 
@@ -1581,6 +1625,7 @@ class BomItemSubstituteSerializer(InvenTree.serializers.InvenTreeModelSerializer
 
         model = BomItemSubstitute
         fields = ['pk', 'bom_item', 'part', 'part_detail']
+        list_serializer_class = FilterableListSerializer
 
     part_detail = PartBriefSerializer(
         source='part', read_only=True, many=False, pricing=False
@@ -1589,7 +1634,9 @@ class BomItemSubstituteSerializer(InvenTree.serializers.InvenTreeModelSerializer
 
 @register_importer()
 class BomItemSerializer(
-    DataImportExportSerializerMixin, InvenTree.serializers.InvenTreeModelSerializer
+    InvenTree.serializers.FilterableSerializerMixin,
+    DataImportExportSerializerMixin,
+    InvenTree.serializers.InvenTreeModelSerializer,
 ):
     """Serializer for BomItem object."""
 
@@ -1643,42 +1690,6 @@ class BomItemSerializer(
             'can_build',
         ]
 
-    def __init__(self, *args, **kwargs):
-        """Determine if extra detail fields are to be annotated on this serializer.
-
-        - part_detail and sub_part_detail serializers are only included if requested.
-        - This saves a bunch of database requests
-        """
-        can_build = kwargs.pop('can_build', True)
-        part_detail = kwargs.pop('part_detail', False)
-        sub_part_detail = kwargs.pop('sub_part_detail', True)
-        pricing = kwargs.pop('pricing', True)
-        substitutes = kwargs.pop('substitutes', True)
-
-        super().__init__(*args, **kwargs)
-
-        if isGeneratingSchema():
-            return
-
-        if not part_detail:
-            self.fields.pop('part_detail', None)
-
-        if not sub_part_detail:
-            self.fields.pop('sub_part_detail', None)
-
-        if not can_build:
-            self.fields.pop('can_build')
-
-        if not substitutes:
-            self.fields.pop('substitutes', None)
-
-        if not pricing:
-            self.fields.pop('pricing_min', None)
-            self.fields.pop('pricing_max', None)
-            self.fields.pop('pricing_min_total', None)
-            self.fields.pop('pricing_max_total', None)
-            self.fields.pop('pricing_updated', None)
-
     quantity = InvenTree.serializers.InvenTreeDecimalField(required=True)
 
     setup_quantity = InvenTree.serializers.InvenTreeDecimalField(required=False)
@@ -1702,12 +1713,18 @@ class BomItemSerializer(
         help_text=_('Select the parent assembly'),
     )
 
-    substitutes = BomItemSubstituteSerializer(
-        many=True, read_only=True, allow_null=True
+    substitutes = enable_filter(
+        BomItemSubstituteSerializer(many=True, read_only=True, allow_null=True), True
     )
 
-    part_detail = PartBriefSerializer(
-        source='part', label=_('Assembly'), many=False, read_only=True, allow_null=True
+    part_detail = enable_filter(
+        PartBriefSerializer(
+            source='part',
+            label=_('Assembly'),
+            many=False,
+            read_only=True,
+            allow_null=True,
+        )
     )
 
     sub_part = serializers.PrimaryKeyRelatedField(
@@ -1716,12 +1733,15 @@ class BomItemSerializer(
         help_text=_('Select the component part'),
     )
 
-    sub_part_detail = PartBriefSerializer(
-        source='sub_part',
-        label=_('Component'),
-        many=False,
-        read_only=True,
-        allow_null=True,
+    sub_part_detail = enable_filter(
+        PartBriefSerializer(
+            source='sub_part',
+            label=_('Component'),
+            many=False,
+            read_only=True,
+            allow_null=True,
+        ),
+        True,
     )
 
     on_order = serializers.FloatField(
@@ -1732,28 +1752,42 @@ class BomItemSerializer(
         label=_('In Production'), read_only=True, allow_null=True
     )
 
-    can_build = serializers.FloatField(
-        label=_('Can Build'), read_only=True, allow_null=True
+    can_build = enable_filter(
+        FilterableFloatField(label=_('Can Build'), read_only=True, allow_null=True),
+        True,
     )
 
     # Cached pricing fields
-    pricing_min = InvenTree.serializers.InvenTreeMoneySerializer(
-        source='sub_part.pricing_data.overall_min', allow_null=True, read_only=True
+    pricing_min = enable_filter(
+        InvenTree.serializers.InvenTreeMoneySerializer(
+            source='sub_part.pricing_data.overall_min', allow_null=True, read_only=True
+        ),
+        True,
+        filter_name='pricing',
     )
-
-    pricing_max = InvenTree.serializers.InvenTreeMoneySerializer(
-        source='sub_part.pricing_data.overall_max', allow_null=True, read_only=True
+    pricing_max = enable_filter(
+        InvenTree.serializers.InvenTreeMoneySerializer(
+            source='sub_part.pricing_data.overall_max', allow_null=True, read_only=True
+        ),
+        True,
+        filter_name='pricing',
     )
-
-    pricing_min_total = InvenTree.serializers.InvenTreeMoneySerializer(
-        allow_null=True, read_only=True
+    pricing_min_total = enable_filter(
+        InvenTree.serializers.InvenTreeMoneySerializer(allow_null=True, read_only=True),
+        True,
+        filter_name='pricing',
     )
-    pricing_max_total = InvenTree.serializers.InvenTreeMoneySerializer(
-        allow_null=True, read_only=True
+    pricing_max_total = enable_filter(
+        InvenTree.serializers.InvenTreeMoneySerializer(allow_null=True, read_only=True),
+        True,
+        filter_name='pricing',
     )
-
-    pricing_updated = serializers.DateTimeField(
-        source='sub_part.pricing_data.updated', allow_null=True, read_only=True
+    pricing_updated = enable_filter(
+        FilterableDateTimeField(
+            source='sub_part.pricing_data.updated', allow_null=True, read_only=True
+        ),
+        True,
+        filter_name='pricing',
     )
 
     # Annotated fields for available stock

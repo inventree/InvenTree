@@ -1,16 +1,17 @@
+
 ---
 title: Sales Orders
 ---
 
 ## Sales Orders
 
-Sales orders allow tracking of which stock items are sold to customers, therefore converting stock items / inventory into externally sold items.
+Sales orders allow tracking of which stock items are sold to [customers](./customer.md), therefore converting stock items / inventory into externally sold items.
 
 ### View Sales Orders
 
 To navigate to the Sales Order display, select *Sales* from the main navigation menu, and *Sales Orders* from the sidebar:
 
-{{ image("order/so_display.png", "Sales Order display") }}
+{{ image("sales/so_display.png", "Sales Order display") }}
 
 The following view modes are available:
 
@@ -18,13 +19,13 @@ The following view modes are available:
 
 *Table View* provides a list of Sales Orders, which can be filtered to display a subset of orders according to user supplied parameters.
 
-{{ image("order/so_list.png", "Sales Order list") }}
+{{ image("sales/so_list.png", "Sales Order list") }}
 
 #### Calendar View
 
 *Calendar View* shows a calendar display with outstanding sales orders.
 
-{{ image("order/so_calendar.png", "Sales Order calendar") }}
+{{ image("sales/so_calendar.png", "Sales Order calendar") }}
 
 ### Sales Order Status Codes
 
@@ -58,6 +59,10 @@ Sales Order Status supports [custom states](../concepts/custom_states.md).
 ### Sales Order Currency
 
 The currency code can be specified for an individual sales order. If not specified, the default currency specified against the [customer](./customer.md) will be used.
+
+### Sales Order Address
+
+A sales order can have a specific shipping address assigned to it. The shipping address can be selected from the list of addresses assigned to the [customer](./customer.md) which is linked to the sales order.
 
 ## Create a Sales Order
 
@@ -105,6 +110,18 @@ After shipments were created, user can either:
 
 During the allocation process, user is required to select the desired shipment that will contain the stock items.
 
+### Check Shipment
+
+Shipments can be marked as "checked" to indicate that the items in the shipment has been verified. To mark a shipment as "checked", open the shipment actions menu, and select the "Check" action:
+
+{{ image("sales/so_shipment_check.png", "Check shipment") }}
+
+The shipment will be marked as checked by the current user.
+
+### Uncheck Shipment
+
+If the shipment requires further verification after being marked as "checked", it can be marked as "unchecked" in a similar manner.
+
 ### Complete Shipment
 
 To complete a shipment, click on the <span class="badge inventree nav side">{{ icon("truck-loading") }} Pending Shipments</span> tab then click on {{ icon("truck-delivery") }} button shown in the shipment table.
@@ -148,7 +165,6 @@ By default, completed orders are not exported. These can be included by appendin
 
 ## Sales Order Shipments
 
-
 Shipments are used to track sales items when they are shipped to customers. Multiple shipments can be created against a [Sales Order](./sales_order.md), allowing line items to be sent to customers in multiple deliveries.
 
 On the main Sales Order detail page, the order shipments are split into two categories, *Pending Shipments* and *Completed Shipments*:
@@ -161,7 +177,7 @@ The *Pending Shipments* panel displays the shipments which have not yet been sen
 - Pending sales order items can be allocated to these shipments
 - New shipments can be created if the order is still open
 
-{{ image("order/pending_shipments.png", "Pending shipments") }}
+{{ image("sales/pending_shipments.png", "Pending shipments") }}
 
 #### Creating a new Shipment
 
@@ -171,11 +187,11 @@ To create a new shipment for a sales order, press the *New Shipment* button abov
 
 To complete a shipment, press the *Complete Shipment* button associated with the particular shipment:
 
-{{ image("order/complete_shipment.png", "Complete shipment") }}
+{{ image("sales/complete_shipment.png", "Complete shipment") }}
 
 ### Completed Shipments
 
-{{ image("order/completed_shipments.png", "Completed shipments") }}
+{{ image("sales/completed_shipments.png", "Completed shipments") }}
 
 ### Shipment Data
 
@@ -184,6 +200,10 @@ Each shipment provides the following data fields:
 #### Reference
 
 A unique number for the shipment, used to identify each shipment within a sales order. By default, this value starts at `1` for the first shipment (for each order) and automatically increments for each new shipment.
+
+#### Shipment Address
+
+A shipping address can be optionally specified for an individual shipment. If not specified, the [shipping address assigned to the sales order](#sales-order-address) will be used.
 
 #### Tracking Number
 
@@ -197,9 +217,10 @@ An optional field used to store an invoice reference for the shipment.
 
 An optional URL field which can be used to provide a link to an external URL.
 
+
 All these fields can be edited by the user:
 
-{{ image("order/edit_shipment.png", "Edit shipment") }}
+{{ image("sales/edit_shipment.png", "Edit shipment") }}
 
 ## Sales Order Settings
 
@@ -212,3 +233,4 @@ The following [global settings](../settings/global.md) are available for sales o
 {{ globalsetting("SALESORDER_DEFAULT_SHIPMENT") }}
 {{ globalsetting("SALESORDER_EDIT_COMPLETED_ORDERS") }}
 {{ globalsetting("SALESORDER_SHIP_COMPLETE") }}
+{{ globalsetting("SALESORDER_SHIPMENT_REQUIRES_CHECK") }}

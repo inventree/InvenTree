@@ -139,6 +139,27 @@ class TestDriverMachineInterface(TestMachineRegistryMixin, TestCase):
         # Test machine restart hook
         registry.restart_machine(machine.machine)
 
+        # Assert properties have been set and correctly initialized with default values
+        self.assertDictEqual(
+            machine.machine.properties_dict,
+            {
+                'Model': {
+                    'key': 'Model',
+                    'value': 'Sample Printer 3000',
+                    'type': 'str',
+                    'group': '',
+                    'max_progress': None,
+                },
+                'Battery': {
+                    'key': 'Battery',
+                    'value': 42,
+                    'type': 'progress',
+                    'group': '',
+                    'max_progress': 100,
+                },
+            },
+        )
+
         # Test remove machine
         self.assertEqual(len(registry.get_machines()), 2)
         registry.remove_machine(machine)
@@ -220,6 +241,7 @@ class TestLabelPrinterMachineType(InvenTreeAPITestCase):
 
         parts = Part.objects.all()[:2]
         template = LabelTemplate.objects.filter(enabled=True, model_type='part').first()
+        assert template
 
         url = reverse('api-label-print')
 

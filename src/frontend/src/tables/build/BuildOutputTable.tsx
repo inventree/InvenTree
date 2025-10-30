@@ -33,6 +33,7 @@ import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
+import type { StockOperationProps } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
 import { StylishText } from '../../components/items/StylishText';
 import { useApi } from '../../contexts/ApiContext';
@@ -43,7 +44,6 @@ import {
   useScrapBuildOutputsForm
 } from '../../forms/BuildForms';
 import {
-  type StockOperationProps,
   useStockFields,
   useStockItemSerializeFields
 } from '../../forms/StockForms';
@@ -455,7 +455,7 @@ export default function BuildOutputTable({
       <ActionButton
         key='scrap-selected-outputs'
         tooltip={t`Scrap selected outputs`}
-        icon={<InvenTreeIcon icon='delete' />}
+        icon={<InvenTreeIcon icon='scrap' />}
         color='red'
         disabled={!table.hasSelectedRecords}
         onClick={() => {
@@ -559,7 +559,7 @@ export default function BuildOutputTable({
         {
           title: t`Scrap`,
           tooltip: t`Scrap build output`,
-          icon: <InvenTreeIcon icon='delete' />,
+          icon: <InvenTreeIcon icon='scrap' />,
           color: 'red',
           onClick: () => {
             setSelectedOutputs([record]);

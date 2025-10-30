@@ -479,6 +479,7 @@ export default function BuildLineTable({
             );
           }
 
+          const allocated = record.allocatedQuantity ?? 0;
           let required = Math.max(0, record.quantity - record.consumed);
 
           if (output?.pk) {
@@ -486,7 +487,7 @@ export default function BuildLineTable({
             required = record.bom_item_detail?.quantity;
           }
 
-          if (required <= 0) {
+          if (allocated <= 0 && required <= 0) {
             return (
               <Group gap='xs' wrap='nowrap'>
                 <IconCircleCheck size={16} color='green' />
@@ -502,7 +503,7 @@ export default function BuildLineTable({
           return (
             <ProgressBar
               progressLabel={true}
-              value={record.allocatedQuantity}
+              value={allocated}
               maximum={required}
             />
           );
@@ -635,14 +636,14 @@ export default function BuildLineTable({
       },
       quantity: {}
     },
-    table: table
+    onFormSuccess: table.refreshTable
   });
 
   const deleteAllocation = useDeleteApiFormModal({
     url: ApiEndpoints.build_item_list,
     pk: selectedAllocation,
     title: t`Delete Stock Allocation`,
-    table: table
+    onFormSuccess: table.refreshTable
   });
 
   const [partsToOrder, setPartsToOrder] = useState<any[]>([]);
@@ -664,9 +665,10 @@ export default function BuildLineTable({
     (record: any): RowAction[] => {
       const part = record.part_detail ?? {};
       const in_production = build.status == buildStatus.PRODUCTION;
-      const consumable = record.bom_item_detail?.consumable ?? false;
+      const consumable: boolean = record.bom_item_detail?.consumable ?? false;
+      const trackable: boolean = part?.trackable ?? false;
 
-      const hasOutput = !!output?.pk;
+      const hasOutput: boolean = !!output?.pk;
 
       const required = Math.max(
         0,
@@ -677,6 +679,7 @@ export default function BuildLineTable({
       const canConsume =
         in_production &&
         !consumable &&
+        !trackable &&
         record.allocated > 0 &&
         user.hasChangeRole(UserRoles.build);
 
@@ -867,6 +870,8 @@ export default function BuildLineTable({
    */
   const formatRecords = useCallback(
     (records: any[]): any[] => {
+      console.log('format records:', records);
+
       return records.map((record) => {
         let allocations = [...record.allocations];
 
@@ -952,6 +957,10 @@ export default function BuildLineTable({
           dataFormatter: formatRecords,
           enableDownload: true,
           enableSelection: true,
+          enableLabels: true,
+          modelType: ModelType.buildline,
+          detailAction: false,
+          onCellClick: () => {},
           rowExpansion: rowExpansion
         }}
       />

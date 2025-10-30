@@ -1,6 +1,7 @@
 """Unit tests for the BuildOrder API."""
 
 from datetime import datetime, timedelta
+from typing import Optional
 
 from django.urls import reverse
 
@@ -21,7 +22,7 @@ class TestBuildAPI(InvenTreeAPITestCase):
     - Tests for BuildItem API
     """
 
-    fixtures = ['category', 'part', 'location', 'build', 'stock']
+    fixtures = ['category', 'part', 'location', 'bom', 'build', 'build_line', 'stock']
 
     roles = ['build.change', 'build.add', 'build.delete']
 
@@ -108,11 +109,29 @@ class TestBuildAPI(InvenTreeAPITestCase):
         self.assertIn(2, ids)
         self.assertNotIn(1, ids)
 
+        # test output options
+        # Test cases: (parameter_name, response_field_name)
+        test_cases = [
+            ('part_detail', 'part_detail'),
+            ('location_detail', 'location_detail'),
+            ('stock_detail', 'stock_item_detail'),
+            ('build_detail', 'build_detail'),
+        ]
+
+        for param, field in test_cases:
+            # Test with parameter set to 'true'
+            response = self.get(url, {param: 'true'}, expected_code=200)
+            self.assertIn(field, response.data[0])
+
+            # Test with parameter set to 'false'
+            response = self.get(url, {param: 'false'}, expected_code=200)
+            self.assertNotIn(field, response.data[0])
+
 
 class BuildAPITest(InvenTreeAPITestCase):
     """Series of tests for the Build DRF API."""
 
-    fixtures = ['category', 'part', 'location', 'bom', 'build', 'stock']
+    fixtures = ['category', 'part', 'location', 'bom', 'build', 'build_line', 'stock']
 
     # Required roles to access Build API endpoints
     roles = ['build.change', 'build.add']
@@ -668,6 +687,11 @@ class BuildAllocationTest(BuildAPITest):
                 wrong_line = line
                 break
 
+        if not wrong_line:
+            raise self.fail(
+                'No matching BuildLine found for the given stock item'
+            )  # pragma: no cover
+
         data = self.post(
             self.url,
             {
@@ -694,6 +718,11 @@ class BuildAllocationTest(BuildAPITest):
             if line.bom_item.sub_part.pk == si.part.pk:
                 right_line = line
                 break
+
+        if not right_line:
+            raise self.fail(
+                'No matching BuildLine found for the given stock item'
+            )  # pragma: no cover
 
         self.post(
             self.url,
@@ -722,11 +751,15 @@ class BuildAllocationTest(BuildAPITest):
         # Find the correct BuildLine
         si = StockItem.objects.get(pk=2)
 
-        right_line = None
+        right_line: Optional[BuildLine] = None
         for line in self.build.build_lines.all():
             if line.bom_item.sub_part.pk == si.part.pk:
-                right_line = line
+                right_line: BuildLine = line
                 break
+        if not right_line:
+            raise self.fail(
+                'No matching BuildLine found for the given stock item'
+            )  # pragma: no cover
 
         self.post(
             self.url,
@@ -1053,6 +1086,51 @@ class BuildListTest(BuildAPITest):
 
     url = reverse('api-build-list')
 
+    def test_api_options(self):
+        """Test OPTIONS endpoint for the Build list API."""
+        data = self.options(self.url, expected_code=200).data
+
+        self.assertEqual(data['name'], 'Build List')
+        actions = data['actions']['POST']
+
+        for field_name in [
+            'pk',
+            'title',
+            'part',
+            'part_detail',
+            'project_code',
+            'project_code_detail',
+            'quantity',
+        ]:
+            self.assertIn(field_name, actions)
+
+        # Specific checks for certain fields
+        for field_name in ['part', 'project_code', 'take_from']:
+            field = actions[field_name]
+            self.assertEqual(field['type'], 'related field')
+
+            for key in ['model', 'api_url', 'pk_field']:
+                self.assertIn(key, field)
+
+    def test_detail_fields(self):
+        """Test inclusion of detail fields."""
+        # Test without extra detail fields
+        for val in [True, False]:
+            response = self.get(
+                self.url,
+                data={'part_detail': val, 'project_code_detail': val, 'limit': 1},
+                expected_code=200,
+            )
+
+            data = response.data['results'][0]
+
+            if val:
+                self.assertIn('part_detail', data)
+                self.assertIn('project_code_detail', data)
+            else:
+                self.assertNotIn('part_detail', data)
+                self.assertNotIn('project_code_detail', data)
+
     def test_get_all_builds(self):
         """Retrieve *all* builds via the API."""
         builds = self.get(self.url)
@@ -1155,6 +1233,20 @@ class BuildListTest(BuildAPITest):
         builds = response.data
 
         self.assertEqual(len(builds), 20)
+
+    def test_output_options(self):
+        """Test the output options for BuildOrderList list."""
+        self.run_output_test(
+            self.url,
+            [
+                'part_detail',
+                'project_code_detail',
+                ('user_detail', 'responsible_detail'),
+                ('user_detail', 'issued_by_detail'),
+            ],
+            additional_params={'limit': 1},
+            assert_fnc=lambda x: x.data['results'][0],
+        )
 
 
 class BuildOutputCreateTest(BuildAPITest):
@@ -1316,6 +1408,77 @@ class BuildOutputScrapTest(BuildAPITest):
             self.assertEqual(output.status, StockStatus.REJECTED)
             self.assertFalse(output.is_building)
 
+    def test_partial_scrap(self):
+        """Test partial scrapping of a build output."""
+        # Create a build output
+        build = Build.objects.get(pk=1)
+        output = build.create_build_output(10).first()
+
+        self.assertEqual(build.build_outputs.count(), 1)
+
+        data = {
+            'outputs': [{'output': output.pk, 'quantity': 3}],
+            'location': 1,
+            'notes': 'Invalid scrap',
+        }
+
+        # Ensure that an invalid quantity raises an error
+        for q in [-3, 0, 99]:
+            data['outputs'][0]['quantity'] = q
+            self.scrap(build.pk, data, expected_code=400)
+
+        # Partially scrap the output (with a valid quantity)
+        data['outputs'][0]['quantity'] = 3
+        self.scrap(build.pk, data)
+
+        self.assertEqual(build.build_outputs.count(), 2)
+        output.refresh_from_db()
+        self.assertEqual(output.quantity, 7)
+        self.assertTrue(output.is_building)
+
+        scrapped = output.children.first()
+        self.assertEqual(scrapped.quantity, 3)
+        self.assertEqual(scrapped.status, StockStatus.REJECTED)
+        self.assertFalse(scrapped.is_building)
+
+    def test_partial_complete(self):
+        """Test partial completion of a build output."""
+        build = Build.objects.get(pk=1)
+        output = build.create_build_output(10).first()
+        self.assertEqual(build.build_outputs.count(), 1)
+        self.assertEqual(output.quantity, 10)
+        self.assertTrue(output.is_building)
+        self.assertEqual(build.completed, 0)
+
+        url = reverse('api-build-output-complete', kwargs={'pk': build.pk})
+
+        data = {
+            'outputs': [{'output': output.pk, 'quantity': 4}],
+            'location': 1,
+            'notes': 'Partial complete',
+        }
+
+        # Ensure that an invalid quantity raises an error
+        for q in [-4, 0, 999]:
+            data['outputs'][0]['quantity'] = q
+            self.post(url, data, expected_code=400)
+
+        # Partially complete the output (with a valid quantity)
+        data['outputs'][0]['quantity'] = 4
+        self.post(url, data, expected_code=201)
+
+        build.refresh_from_db()
+        output.refresh_from_db()
+        self.assertEqual(build.completed, 4)
+        self.assertEqual(build.build_outputs.count(), 2)
+        self.assertEqual(output.quantity, 6)
+        self.assertTrue(output.is_building)
+
+        completed_output = output.children.first()
+        self.assertEqual(completed_output.quantity, 4)
+        self.assertEqual(completed_output.status, StockStatus.OK)
+        self.assertFalse(completed_output.is_building)
+
 
 class BuildLineTests(BuildAPITest):
     """Unit tests for the BuildLine API endpoints."""
@@ -1340,6 +1503,19 @@ class BuildLineTests(BuildAPITest):
         self.assertGreater(n_f, 0)
 
         self.assertEqual(n_t + n_f, BuildLine.objects.count())
+
+    def test_output_options(self):
+        """Test output options  for the BuildLine endpoint."""
+        self.run_output_test(
+            reverse('api-build-line-detail', kwargs={'pk': 2}),
+            [
+                'bom_item_detail',
+                'assembly_detail',
+                'part_detail',
+                'build_detail',
+                'allocations',
+            ],
+        )
 
     def test_filter_consumed(self):
         """Filter for the 'consumed' status."""
@@ -1406,17 +1582,19 @@ class BuildLineTests(BuildAPITest):
         for line in lines:
             StockItem.objects.create(part=line.bom_item.sub_part, quantity=60)
 
+        # TODO: 2025-10-02: Work out why this query takes so long with PostgreSQL (in CI)
         # Note: The max_query_time is bumped up here, as postgresql backend has some strange issues (only during testing)
         response = self.get(
-            url, {'build': build.pk, 'available': True}, max_query_time=15
+            url, {'build': build.pk, 'available': True}, max_query_time=30
         )
 
         # We expect 2 lines to have "available" stock
         self.assertEqual(len(response.data), 2)
 
+        # TODO: 2025-10-02: Work out why this query takes so long with PostgreSQL (in CI)
         # Note: The max_query_time is bumped up here, as postgresql backend has some strange issues (only during testing)
         response = self.get(
-            url, {'build': build.pk, 'available': False}, max_query_time=15
+            url, {'build': build.pk, 'available': False}, max_query_time=30
         )
 
         self.assertEqual(len(response.data), 1)

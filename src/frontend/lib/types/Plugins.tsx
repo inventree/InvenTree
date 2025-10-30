@@ -5,7 +5,11 @@ import type { AxiosInstance } from 'axios';
 import type { NavigateFunction } from 'react-router-dom';
 import type { ModelDict } from '../enums/ModelInformation';
 import type { ModelType } from '../enums/ModelType';
-import type { ApiFormModalProps, BulkEditApiFormModalProps } from './Forms';
+import type {
+  ApiFormModalProps,
+  BulkEditApiFormModalProps,
+  StockOperationProps
+} from './Forms';
 import type { UseModalReturn } from './Modals';
 import type { RenderInstanceProps } from './Rendering';
 import type { SettingsStateProps } from './Settings';
@@ -24,11 +28,24 @@ export interface PluginVersion {
   mantine: string;
 }
 
+export type StockAdjustmentFormsContext = {
+  addStock: (props: StockOperationProps) => UseModalReturn;
+  assignStock: (props: StockOperationProps) => UseModalReturn;
+  changeStatus: (props: StockOperationProps) => UseModalReturn;
+  countStock: (props: StockOperationProps) => UseModalReturn;
+  deleteStock: (props: StockOperationProps) => UseModalReturn;
+  mergeStock: (props: StockOperationProps) => UseModalReturn;
+  removeStock: (props: StockOperationProps) => UseModalReturn;
+  transferStock: (props: StockOperationProps) => UseModalReturn;
+  returnStock: (props: StockOperationProps) => UseModalReturn;
+};
+
 export type InvenTreeFormsContext = {
   bulkEdit: (props: BulkEditApiFormModalProps) => UseModalReturn;
   create: (props: ApiFormModalProps) => UseModalReturn;
   delete: (props: ApiFormModalProps) => UseModalReturn;
   edit: (props: ApiFormModalProps) => UseModalReturn;
+  stockActions: StockAdjustmentFormsContext;
 };
 
 /**
