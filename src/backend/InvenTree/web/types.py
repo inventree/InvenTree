@@ -82,13 +82,19 @@ class GuideStep:
 class Guide(GeneralInfo):
     """(Multi)step guide."""
 
-    steps: list[GuideStep]
+    steps: Optional[list[GuideStep]] = None
     show_total_steps: bool = True
     """Whether to show total steps in the UI."""
     calculate_next_step: Optional[object] = None
     """Optional function to calculate the next step dynamically."""
     btn_final_text: str = _('Finish')
     """Text label for the final (last) button."""
+
+    def __init__(self, **kwargs):
+        """Initialize the Guide instance."""
+        super().__init__(**kwargs)
+        if self.steps is None:
+            raise ValueError('steps must be provided for Guide instances')
 
 
 @dataclass
