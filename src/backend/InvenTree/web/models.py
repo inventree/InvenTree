@@ -57,7 +57,7 @@ class GuideDefinition(InvenTree.models.MetadataMixin):
         verbose_name=_('Guide Type'),
         help_text=_('Type of the guide'),
     )
-    data = models.JSONField(
+    guide_data = models.JSONField(
         blank=True,
         null=True,
         verbose_name=_('Data'),
@@ -118,7 +118,7 @@ def collect_guides(
                 slug=guide.slug,
                 description=guide.description,
                 guide_type=guide.guide_type,
-                data=guide.data,
+                guide_data=guide.data,
             )
             obj.save()
             logger.info(f'Created guide definition: {obj.slug} - {obj.uid}')

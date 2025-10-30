@@ -19,5 +19,5 @@ class GuideDefinitionAdmin(admin.ModelAdmin):
     list_display = ('guide_type', 'name', 'slug')
     list_filter = ('guide_type',)
     inlines = [GuideExecutionInline]
-    fields = ('guide_type', 'name', 'slug', 'description', 'data', 'metadata')
+    fields = ('guide_type', 'name', 'slug', 'description', 'guide_data', 'metadata')
     prepopulated_fields = {'slug': ('name',)}
