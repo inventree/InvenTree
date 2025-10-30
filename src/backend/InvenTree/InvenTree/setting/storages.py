@@ -36,7 +36,7 @@ def init_storages() -> tuple[str, dict, Optional[str]]:
 
     options = {}
     media_url: Optional[str] = None
-    if target == StorageBackends.S3:
+    if target == StorageBackends.S3.value:
         s3_bucket = get_setting(
             'INVENTREE_S3_BUCKET_NAME', 'storage.s3.bucket_name', None, typecast=str
         )
@@ -79,7 +79,7 @@ def init_storages() -> tuple[str, dict, Optional[str]]:
             else 'path',
             'object_parameters': {'CacheControl': 'public,max-age=86400'},
         }
-    elif target == StorageBackends.STFP:
+    elif target == StorageBackends.SFTP:
         options = {
             'host': get_setting('INVENTREE_SFTP_HOST', 'sftp.host', None, typecast=str),
             'uid': get_setting('INVENTREE_SFTP_UID', 'sftp.uid', None, typecast=int),
