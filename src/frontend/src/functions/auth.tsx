@@ -693,7 +693,7 @@ export async function handleWebauthnLogin(
 ) {
   const { setAuthContext } = useServerApiState.getState();
 
-  const webauthn_challenge = api
+  const webauthn_challenge = await api
     .get(apiUrl(ApiEndpoints.auth_webauthn_login))
     .catch(() => {})
     .then((response) => {

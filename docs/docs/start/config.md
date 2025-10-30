@@ -380,6 +380,44 @@ Database and media backups **require** a local directory for storage. This direc
 
 Alternatively this location can be specified with the `INVENTREE_BACKUP_DIR` environment variable.
 
+
+### Storage backends
+
+It is also possible to use alternative storage backends for static and media files, at the moment there is direct provide direct support bundled for S3 and SFTP. Google cloud storage and Azure blob storage would also be supported by the [used library](https://django-storages.readthedocs.io), but require additional packages to be installed.
+
+| Environment Variable | Configuration File | Description | Default |
+| --- | --- | --- | --- |
+| INVENTREE_STORAGE_TARGET | storage.target | Storage target to use for static and media files, valid options: local, s3, sftp | local |
+
+#### S3
+
+| Environment Variable | Configuration File | Description | Default |
+| --- | --- | --- | --- |
+| INVENTREE_S3_ACCESS_KEY | storage.s3.access_key | Access key | *Not specified* |
+| INVENTREE_S3_SECRET_KEY | storage.s3.secret_key | Secret key |
+| *Not specified* |
+| INVENTREE_S3_BUCKET_NAME | storage.s3.bucket_name | Bucket name, required by most providers |
+| *Not specified* |
+| INVENTREE_S3_REGION_NAME | storage.s3.region_name | S3 region name |
+| *Not specified* |
+| INVENTREE_S3_ENDPOINT_URL | storage.s3.endpoint_url | Custom S3 endpoint URL, defaults to AWS endpoints if not set |
+| *Not specified* |
+| INVENTREE_S3_LOCATION | storage.s3.location | Sub-Location that should be used | inventree-server |
+| INVENTREE_S3_DEFAULT_ACL | storage.s3.default_acl | Default ACL for uploaded files, defaults to provider default if not set | *Not specified* |
+| INVENTREE_S3_VERIFY_SSL | storage.s3.verify_ssl | Verify SSL certificate for S3 endpoint | True |
+| INVENTREE_S3_OVERWRITE | storage.s3.overwrite | Overwrite existing files in S3 bucket | False |
+| INVENTREE_S3_VIRTUAL | storage.s3.virtual | Use virtual addressing style - by default False -> `path` style, `virtual` style if True | False |
+
+#### SFTP
+
+| Environment Variable | Configuration File | Description | Default |
+| --- | --- | --- | --- |
+| INVENTREE_SFTP_HOST | storage.sftp.host | SFTP host | *Not specified* |
+| INVENTREE_SFTP_PARAMS | storage.sftp.params | SFTP connection parameters, see https://docs.paramiko.org/en/latest/api/client.html#paramiko.client.SSHClient.connect; e.g. `{'port': 22, 'user': 'usr', 'password': 'pwd'}` | *Not specified* |
+| INVENTREE_SFTP_UID | storage.sftp.uid | SFTP user ID - not required | *Not specified* |
+| INVENTREE_SFTP_GID | storage.sftp.gid | SFTP group ID - not required | *Not specified* |
+| INVENTREE_SFTP_LOCATION | storage.sftp.location | Sub-Location that should be used | inventree-server |
+
 ## Authentication
 
 InvenTree provides allowance for additional sign-in options. The following options are not enabled by default, and care must be taken by the system administrator when configuring these settings.
