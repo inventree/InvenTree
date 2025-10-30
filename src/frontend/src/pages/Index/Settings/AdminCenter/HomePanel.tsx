@@ -1,6 +1,13 @@
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
-import { Accordion, Alert, Button, SimpleGrid, Stack } from '@mantine/core';
+import {
+  Accordion,
+  Alert,
+  Button,
+  SimpleGrid,
+  Stack,
+  Text
+} from '@mantine/core';
 import { IconBrandGithub } from '@tabler/icons-react';
 import { type JSX, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -37,24 +44,34 @@ export default function HomePanel(): JSX.Element {
       {dismissed ? null : (
         <Alert
           color='blue'
-          title={t`This is new!`}
+          title={t`Admin Center Information`}
           withCloseButton
           onClose={() => setDismissed(true)}
         >
-          <Trans>
-            The home panel (and the whole Admin Center) is a new feature
-            starting with the new UI and was previously (before 1.0) not
-            available. It provides a centralized location for all administration
-            functionality and is meant to replace all interaction with the
-            (django) backend admin interface.
-          </Trans>
-          <br />
-          <Trans>
-            Please open feature requests (after checking the tracker) for any
-            existing backend admin functionality you are missing in this UI. The
-            backend admin interface should be used carefully and seldome.
-          </Trans>
-          <br />
+          <Stack gap='xs'>
+            <Text>
+              <Trans>
+                The home panel (and the whole Admin Center) is a new feature
+                starting with the new UI and was previously (before 1.0) not
+                available.
+              </Trans>
+            </Text>
+            <Text>
+              <Trans>
+                The admin center provides a centralized location for all
+                administration functionality and is meant to replace all
+                interaction with the (django) backend admin interface.
+              </Trans>
+            </Text>
+            <Text>
+              <Trans>
+                Please open feature requests (after checking the tracker) for
+                any existing backend admin functionality you are missing in this
+                UI. The backend admin interface should be used carefully and
+                seldom.
+              </Trans>
+            </Text>
+          </Stack>
           <Button
             color='green'
             component={Link}
