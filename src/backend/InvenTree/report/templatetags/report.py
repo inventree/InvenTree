@@ -602,7 +602,9 @@ def render_currency(money, **kwargs):
 
 
 @register.simple_tag
-def create_currency(amount, currency: Optional[str] = None, **kwargs):
+def create_currency(
+    amount: Union[str, int, float, Decimal], currency: Optional[str] = None, **kwargs
+):
     """Create a Money object, with the provided amount and currency.
 
     Arguments:
@@ -630,7 +632,7 @@ def create_currency(amount, currency: Optional[str] = None, **kwargs):
 
 
 @register.simple_tag
-def convert_currency(money, currency: Optional[str] = None, **kwargs):
+def convert_currency(money: Money, currency: Optional[str] = None, **kwargs):
     """Convert a Money object to the specified currency.
 
     Arguments:
