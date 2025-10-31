@@ -870,8 +870,6 @@ export default function BuildLineTable({
    */
   const formatRecords = useCallback(
     (records: any[]): any[] => {
-      console.log('format records:', records);
-
       return records.map((record) => {
         let allocations = [...record.allocations];
 
