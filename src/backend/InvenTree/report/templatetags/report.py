@@ -718,6 +718,8 @@ def format_number(
         leading: Number of leading zeros (default = 0)
         separator: Character to use as a thousands separator (default = None)
     """
+    check_nulls('format_number', number)
+
     try:
         number = Decimal(str(number).strip())
     except Exception:
@@ -777,6 +779,8 @@ def format_datetime(
         timezone: The timezone to use for the date (defaults to the server timezone)
         fmt: The format string to use (defaults to ISO formatting)
     """
+    check_nulls('format_datetime', dt)
+
     dt = InvenTree.helpers.to_local_time(dt, timezone)
 
     if fmt:
@@ -794,6 +798,8 @@ def format_date(dt: date, timezone: Optional[str] = None, fmt: Optional[str] = N
         timezone: The timezone to use for the date (defaults to the server timezone)
         fmt: The format string to use (defaults to ISO formatting)
     """
+    check_nulls('format_date', dt)
+
     try:
         dt = InvenTree.helpers.to_local_time(dt, timezone).date()
     except TypeError:
