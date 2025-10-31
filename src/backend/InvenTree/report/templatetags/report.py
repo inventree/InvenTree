@@ -637,18 +637,18 @@ def create_currency(amount, currency: Optional[str] = None, **kwargs):
 
 
 @register.simple_tag
-def convert_currency(amount, currency: Optional[str] = None, **kwargs):
+def convert_currency(money, currency: Optional[str] = None, **kwargs):
     """Convert a Money object to the specified currency.
 
     Arguments:
-        amount: The numeric amount (a Money instance)
+        money: The Money instance to be converted
         currency: The target currency code (e.g. 'USD', 'EUR', etc.)
 
     Note: If the currency is not provided, the default system currency will be used.
     """
-    check_nulls('convert_currency', amount)
+    check_nulls('convert_currency', money)
 
-    if not isinstance(amount, Money):
+    if not isinstance(money, Money):
         raise TypeError('convert_currency tag requires a Money instance')
 
     currency = currency or common.currency.currency_code_default()
@@ -660,13 +660,13 @@ def convert_currency(amount, currency: Optional[str] = None, **kwargs):
         )
 
     try:
-        converted = convert_money(amount, currency)
+        converted = convert_money(money, currency)
     except MissingRate:
         # Re-throw error with more context
         raise ValidationError(
             'convert_currency: '
             + _('Missing exchange rate for from')
-            + f" {amount.currency} -> {currency}'"
+            + f" {money.currency} -> {currency}'"
         )
 
     return converted

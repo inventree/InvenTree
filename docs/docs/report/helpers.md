@@ -261,6 +261,27 @@ Total Price: {% render_currency order.total_price currency='NZD' decimal_places=
 {% endraw %}
 ```
 
+### convert_currency
+
+To convert a currency value from one currency to another, use the `convert_currency` helper function:
+
+::: InvenTree.helpers_model.convert_currency
+    options:
+        show_docstring_description: false
+        show_source: False
+
+!!! info "Data Types"
+    The `money` parameter must be `Money` class instance. If not, an error will be raised.
+
+#### create_currency
+
+Create a `currency` instance using the `create_currency` helper function. This returns a `Money` class instance based on the provided amount and currency type.
+
+::: InvenTree.helpers_model.create_currency
+    options:
+        show_docstring_description: false
+        show_source: False
+
 ## Maths Operations
 
 Simple mathematical operators are available, as demonstrated in the example template below. These operators can be used to perform basic arithmetic operations within the report template.
