@@ -669,6 +669,7 @@ class SupplierPartManager(models.Manager):
 
 
 class SupplierPart(
+    InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.MetadataMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,
