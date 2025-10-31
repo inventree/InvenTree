@@ -123,7 +123,10 @@ function SelectPartsStep({
         width: '1%',
         render: (record: PartOrderRecord) => (
           <Group gap='xs' wrap='nowrap' justify='left'>
-            <RemoveRowButton onClick={() => onRemovePart(record.part)} />
+            <RemoveRowButton
+              tooltipAlignment={'top-start'}
+              onClick={() => onRemovePart(record.part)}
+            />
           </Group>
         )
       },
@@ -170,7 +173,7 @@ function SelectPartsStep({
             </Expand>
             <AddItemButton
               tooltip={t`New supplier part`}
-              tooltipAlignment='top'
+              tooltipAlignment='top-end'
               onClick={() => {
                 setSelectedRecord(record);
                 newSupplierPart.open();
@@ -208,7 +211,7 @@ function SelectPartsStep({
             </Expand>
             <AddItemButton
               tooltip={t`New purchase order`}
-              tooltipAlignment='top'
+              tooltipAlignment='top-end'
               disabled={!record.supplier_part?.pk}
               onClick={() => {
                 setSelectedRecord(record);
@@ -223,19 +226,21 @@ function SelectPartsStep({
         title: t`Quantity`,
         width: 125,
         render: (record: PartOrderRecord) => (
-          <StandaloneField
-            fieldName='quantity'
-            hideLabels={true}
-            error={record.errors?.quantity}
-            fieldDefinition={{
-              field_type: 'number',
-              required: true,
-              value: record.quantity,
-              onValueChange: (value) => {
-                onSelectQuantity(record.part.pk, value);
-              }
-            }}
-          />
+          <Group gap='xs' wrap='nowrap'>
+            <StandaloneField
+              fieldName='quantity'
+              hideLabels={true}
+              error={record.errors?.quantity}
+              fieldDefinition={{
+                field_type: 'number',
+                required: true,
+                value: record.quantity,
+                onValueChange: (value) => {
+                  onSelectQuantity(record.part.pk, value);
+                }
+              }}
+            />
+          </Group>
         )
       },
       {
@@ -256,7 +261,7 @@ function SelectPartsStep({
               }
               icon={<IconShoppingCart />}
               tooltip={t`Add to selected purchase order`}
-              tooltipAlignment='top'
+              tooltipAlignment='top-end'
               color='blue'
             />
           </Group>
