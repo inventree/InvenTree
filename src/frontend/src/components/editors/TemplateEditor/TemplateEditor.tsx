@@ -2,8 +2,9 @@ import { t } from '@lingui/core/macro';
 import {
   Alert,
   CloseButton,
-  Code,
   Group,
+  List,
+  ListItem,
   Overlay,
   Stack,
   Tabs
@@ -91,7 +92,7 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
   const [hasSaveConfirmed, setHasSaveConfirmed] = useState(false);
 
   const [previewItem, setPreviewItem] = useState<string>('');
-  const [errorOverlay, setErrorOverlay] = useState(null);
+  const [renderingErrors, setRenderingErrors] = useState<string[] | null>(null);
   const [isPreviewLoading, setIsPreviewLoading] = useState(false);
 
   const [editorValue, setEditorValue] = useState<null | string>(editors[0].key);
@@ -210,7 +211,7 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
         )
       )
         .then(() => {
-          setErrorOverlay(null);
+          setRenderingErrors(null);
 
           notifications.hide('template-preview');
 
@@ -222,7 +223,19 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
           });
         })
         .catch((error) => {
-          setErrorOverlay(error.message);
+          const msg = error?.message;
+
+          if (msg) {
+            if (Array.isArray(msg)) {
+              setRenderingErrors(msg);
+            } else {
+              setRenderingErrors([msg]);
+            }
+          } else {
+            setRenderingErrors([
+              t`An unknown error occurred while rendering the preview.`
+            ]);
+          }
         })
         .finally(() => {
           setIsPreviewLoading(false);
@@ -392,10 +405,10 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
                   {/* @ts-ignore-next-line */}
                   <PreviewArea.component ref={previewRef} />
 
-                  {errorOverlay && (
+                  {renderingErrors && (
                     <Overlay color='red' center blur={0.2}>
                       <CloseButton
-                        onClick={() => setErrorOverlay(null)}
+                        onClick={() => setRenderingErrors(null)}
                         style={{
                           position: 'absolute',
                           top: '10px',
@@ -410,7 +423,11 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
                         title={t`Error rendering template`}
                         mx='10px'
                       >
-                        <Code>{errorOverlay}</Code>
+                        <List>
+                          {renderingErrors.map((error, index) => (
+                            <ListItem key={index}>{error}</ListItem>
+                          ))}
+                        </List>
                       </Alert>
                     </Overlay>
                   )}
