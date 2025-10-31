@@ -4,41 +4,75 @@ import re
 from typing import Union
 
 from django.core.exceptions import ValidationError
+from django.db.models import Model
 from django.utils.translation import gettext_lazy as _
 
 import common.icons
 from common.settings import get_global_setting
 
 
-def get_model_types(mixin_class):
-    """Return a list of valid attachment model choices."""
+def get_mixin_models(mixin_class: type[Model]):
+    """Return a list of Django model classes that inherit from the given mixin.
+
+    This function lazily imports the helper to avoid circular imports.
+
+    Args:
+        mixin_class: The mixin class to search for.
+
+    Returns:
+        A list of Django model classes that subclass the provided mixin.
+    """
+    # Lazy import to prevent circular dependency issues
     import InvenTree.helpers_model
 
     return list(InvenTree.helpers_model.getModelsWithMixin(mixin_class))
 
 
-def get_model_options(mixin_class):
-    """Return a list of options for models."""
-    return [
-        (model.__name__.lower(), model._meta.verbose_name)
-        for model in get_model_types(mixin_class)
-    ]
+def get_model_options_for_mixin(mixin_class: type[Model]):
+    """Build choice options for all models that inherit from a given mixin.
+
+    Each option is a tuple of:
+    - key: the lowercase model class name (e.g. 'part', 'stockitem')
+    - label: the model's verbose name for display
+
+    Args:
+        mixin_class: The mixin class used to filter models.
+
+    Returns:
+        A list of (key, label) tuples suitable for form field choices.
+    """
+    options = []
+    for model in get_mixin_models(mixin_class):
+        key = model.__name__.lower()
+        label = str(model._meta.verbose_name)
+        options.append((key, label))
+    return options
 
 
 def attachment_model_options():
     """Return a list of valid attachment model choices."""
     import InvenTree.models
 
-    return get_model_options(InvenTree.models.InvenTreeAttachmentMixin)
+    return get_model_options_for_mixin(InvenTree.models.InvenTreeAttachmentMixin)
 
 
-def get_model_class_from_label(label: str, mixin_class):
-    """Returns the model class matching the given label from a set of models inheriting a specific mixin."""
+def resolve_model_from_label(label: str, mixin_class: type[Model]):
+    """Resolve a model class by a case-insensitive label among models inheriting a mixin.
+
+    Args:
+        label: The identifier string to match (typically the model class name in lowercase).
+        mixin_class: The mixin class that candidate models must inherit from.
+
+    Returns:
+        The Django model class that matches the provided label.
+    """
     if not label:
         raise ValidationError(_('No attachment model type provided'))
 
-    for model in get_model_types(mixin_class):
-        if model.__name__.lower() == label.lower():
+    label_lc = label.lower()
+
+    for model in get_mixin_models(mixin_class):
+        if model.__name__.lower() == label_lc:
             return model
 
     raise ValidationError(_('Invalid attachment model type') + f": '{label}'")
@@ -49,7 +83,8 @@ def validate_attachment_model_type(value):
     import InvenTree.models
 
     model_names = [
-        el[0] for el in get_model_options(InvenTree.models.InvenTreeAttachmentMixin)
+        el[0]
+        for el in get_model_options_for_mixin(InvenTree.models.InvenTreeAttachmentMixin)
     ]
     if value not in model_names:
         raise ValidationError('Model type does not support attachments')
@@ -82,7 +117,7 @@ def limit_image_content_types():
     import InvenTree.models
 
     allowed_models = [
-        m[0] for m in get_model_options(InvenTree.models.InvenTreeImageMixin)
+        m[0] for m in get_model_options_for_mixin(InvenTree.models.InvenTreeImageMixin)
     ]
 
     return {'model__in': allowed_models}

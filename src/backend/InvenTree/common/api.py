@@ -734,13 +734,13 @@ class AttachmentList(BulkDeleteMixin, ListCreateAPI):
         - Extract all model types from the provided queryset
         - Ensure that the user has correct 'delete' permissions for each model
         """
-        from common.validators import get_model_class_from_label
+        from common.validators import resolve_model_from_label
         from users.permissions import check_user_permission
 
         model_types = queryset.values_list('model_type', flat=True).distinct()
 
         for model_type in model_types:
-            if model_class := get_model_class_from_label(
+            if model_class := resolve_model_from_label(
                 model_type, InvenTreeAttachmentMixin
             ):
                 if not check_user_permission(request.user, model_class, 'delete'):

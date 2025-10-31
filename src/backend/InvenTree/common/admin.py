@@ -15,7 +15,7 @@ class AttachmentAdmin(admin.ModelAdmin):
     def formfield_for_dbfield(self, db_field, request, **kwargs):
         """Provide custom choices for 'model_type' field."""
         if db_field.name == 'model_type':
-            db_field.choices = common.validators.get_model_options(
+            db_field.choices = common.validators.get_model_options_for_mixin(
                 InvenTree.models.InvenTreeAttachmentMixin
             )
 

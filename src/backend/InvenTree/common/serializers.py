@@ -616,9 +616,6 @@ class FailedTaskSerializer(InvenTreeModelSerializer):
     result = serializers.CharField()
 
 
-ALLOWED_IMAGE_CTS = common.validators.get_model_options(InvenTreeImageMixin)
-
-
 class InvenTreeImageSerializer(
     InvenTree.serializers.RemoteImageMixin, InvenTreeModelSerializer
 ):
@@ -664,8 +661,10 @@ class InvenTreeImageSerializer(
     def __init__(self, *args, **kwargs):
         """Initialize the serializer and set allowed content types."""
         super().__init__(*args, **kwargs)
-        # inject your allowed list
-        self.fields['content_type'].choices = ALLOWED_IMAGE_CTS
+
+        self.fields[
+            'content_type'
+        ].choices = common.validators.get_model_options_for_mixin(InvenTreeImageMixin)
 
     def validate_content_type(self, ct_value):
         """Turn the incoming model-name string into a real ContentType instance."""
@@ -834,7 +833,9 @@ class AttachmentSerializer(InvenTreeModelSerializer):
         super().__init__(*args, **kwargs)
 
         if len(self.fields['model_type'].choices) == 0:
-            self.fields['model_type'].choices = common.validators.get_model_options(
+            self.fields[
+                'model_type'
+            ].choices = common.validators.get_model_options_for_mixin(
                 InvenTreeAttachmentMixin
             )
 
@@ -854,7 +855,7 @@ class AttachmentSerializer(InvenTreeModelSerializer):
     # Note: The choices are overridden at run-time on class initialization
     model_type = serializers.ChoiceField(
         label=_('Model Type'),
-        choices=common.validators.get_model_options(InvenTreeAttachmentMixin),
+        choices=common.validators.get_model_options_for_mixin(InvenTreeAttachmentMixin),
         required=True,
         allow_blank=False,
         allow_null=False,
@@ -873,7 +874,7 @@ class AttachmentSerializer(InvenTreeModelSerializer):
         # Ensure that the user has permission to attach files to the specified model
         user = self.context.get('request').user
 
-        target_model_class = common.validators.get_model_class_from_label(
+        target_model_class = common.validators.resolve_model_from_label(
             model_type, InvenTreeAttachmentMixin
         )
 
