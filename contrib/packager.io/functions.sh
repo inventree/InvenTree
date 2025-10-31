@@ -4,7 +4,7 @@
 #
 Color_Off='\033[0m'
 On_Red='\033[41m'
-PYTHON_FROM=9
+PYTHON_FROM=10
 PYTHON_TO=14
 
 function detect_docker() {
@@ -61,7 +61,7 @@ function detect_python() {
     echo "# POI07| No python environment found - using environment variable: ${SETUP_PYTHON}"
   fi
 
-  # Try to detect a python between 3.9 and 3.12 in reverse order
+  # Try to detect a python between 3.10 and 3.12 in reverse order
   if [ -z "$(which ${SETUP_PYTHON})" ]; then
     echo "# POI07| Trying to detecting python3.${PYTHON_FROM} to python3.${PYTHON_TO} - using newest version"
     for i in $(seq $PYTHON_TO -1 $PYTHON_FROM); do

@@ -7,7 +7,7 @@ on:
 permissions:
   contents: read
 env:
-  python_version: 3.9
+  python_version: 3.11
 
 jobs:
   stable:
