@@ -265,7 +265,7 @@ Total Price: {% render_currency order.total_price currency='NZD' decimal_places=
 
 To convert a currency value from one currency to another, use the `convert_currency` helper function:
 
-::: InvenTree.helpers_model.convert_currency
+::: report.templatetags.report.convert_currency
     options:
         show_docstring_description: false
         show_source: False
@@ -277,7 +277,7 @@ To convert a currency value from one currency to another, use the `convert_curre
 
 Create a `currency` instance using the `create_currency` helper function. This returns a `Money` class instance based on the provided amount and currency type.
 
-::: InvenTree.helpers_model.create_currency
+::: report.templatetags.report.create_currency
     options:
         show_docstring_description: false
         show_source: False
