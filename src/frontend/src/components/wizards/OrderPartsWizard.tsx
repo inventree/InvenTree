@@ -5,19 +5,79 @@ import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
-import { Alert, Group, Paper, Tooltip } from '@mantine/core';
+import {
+  ActionIcon,
+  Alert,
+  Group,
+  HoverCard,
+  Loader,
+  Paper,
+  Tooltip
+} from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
-import { IconShoppingCart } from '@tabler/icons-react';
+import {
+  IconExclamationCircle,
+  IconInfoCircle,
+  IconShoppingCart
+} from '@tabler/icons-react';
 import { DataTable } from 'mantine-datatable';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSupplierPartFields } from '../../forms/CompanyForms';
 import { usePurchaseOrderFields } from '../../forms/PurchaseOrderForms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
+import { useInstance } from '../../hooks/UseInstance';
 import useWizard from '../../hooks/UseWizard';
 import { RenderPartColumn } from '../../tables/ColumnRenderers';
 import RemoveRowButton from '../buttons/RemoveRowButton';
 import { StandaloneField } from '../forms/StandaloneField';
 import Expand from '../items/Expand';
+
+/**
+ * Render the "requirements" info for a part
+ * This fetches the information dynamically from the API
+ */
+function PartRequirementsInfo({
+  partId
+}: {
+  partId: number | string;
+}) {
+  const requirements = useInstance({
+    endpoint: ApiEndpoints.part_requirements,
+    pk: partId,
+    hasPrimaryKey: true,
+    defaultValue: {}
+  });
+
+  if (
+    requirements.instanceQuery.isFetching ||
+    requirements.instanceQuery.isLoading
+  ) {
+    return <Loader size='sm' />;
+  }
+
+  if (requirements.instanceQuery.isError) {
+    return (
+      <Tooltip label={t`Error fetching part requirements`}>
+        <ActionIcon variant='transparent' color='red'>
+          <IconExclamationCircle />
+        </ActionIcon>
+      </Tooltip>
+    );
+  }
+
+  return (
+    <HoverCard>
+      <HoverCard.Target>
+        <ActionIcon variant='transparent' color='blue'>
+          <IconInfoCircle />
+        </ActionIcon>
+      </HoverCard.Target>
+      <HoverCard.Dropdown>
+        <div>hello world...</div>
+      </HoverCard.Dropdown>
+    </HoverCard>
+  );
+}
 
 /**
  * Attributes for each selected part
@@ -224,7 +284,7 @@ function SelectPartsStep({
       {
         accessor: 'quantity',
         title: t`Quantity`,
-        width: 125,
+        width: 150,
         render: (record: PartOrderRecord) => (
           <Group gap='xs' wrap='nowrap'>
             <StandaloneField
@@ -240,6 +300,7 @@ function SelectPartsStep({
                 }
               }}
             />
+            <PartRequirementsInfo partId={record.part.pk} />
           </Group>
         )
       },
