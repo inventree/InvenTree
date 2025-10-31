@@ -15,8 +15,12 @@ from django.db.models.query import QuerySet
 from django.utils.safestring import SafeString, mark_safe
 from django.utils.translation import gettext_lazy as _
 
+from djmoney.contrib.exchange.exceptions import MissingRate
+from djmoney.contrib.exchange.models import convert_money
+from djmoney.money import Money
 from PIL import Image
 
+import common.currency
 import common.icons
 import InvenTree.helpers
 import InvenTree.helpers_model
@@ -451,7 +455,17 @@ def cast_to_type(value: Any, cast: type) -> Any:
 
 def debug_vars(x: Any, y: Any) -> str:
     """Return a debug string showing the types and values of two variables."""
-    return f": x='{x}' ({type(x).__name__}), y='{y}' ({type(y).__name__})"
+    return f"x='{x}' ({type(x).__name__}), y='{y}' ({type(y).__name__})"
+
+
+def check_nulls(func: str, *arg):
+    """Check if any of the provided arguments is null.
+
+    Raises:
+        ValueError: If any argument is None
+    """
+    if any(a is None for a in arg):
+        raise ValidationError(f'{func}: {_("Null value provided to function")}')
 
 
 @register.simple_tag()
@@ -466,11 +480,13 @@ def add(x: Any, y: Any, cast: Optional[type] = None) -> Any:
     Raises:
         ValidationError: If the values cannot be added together
     """
+    check_nulls('add', x, y)
+
     try:
         result = make_decimal(x) + make_decimal(y)
     except (InvalidOperation, TypeError, ValueError):
         raise ValidationError(
-            _('Cannot add values of incompatible types') + debug_vars(x, y)
+            f'add: {_("Cannot add values of incompatible types")}: {debug_vars(x, y)}'
         )
     return cast_to_type(result, cast)
 
@@ -487,11 +503,13 @@ def subtract(x: Any, y: Any, cast: Optional[type] = None) -> Any:
     Raises:
         ValidationError: If the values cannot be subtracted
     """
+    check_nulls('subtract', x, y)
+
     try:
         result = make_decimal(x) - make_decimal(y)
     except (InvalidOperation, TypeError, ValueError):
         raise ValidationError(
-            _('Cannot subtract values of incompatible types') + debug_vars(x, y)
+            f'subtract: {_("Cannot subtract values of incompatible types")}: {debug_vars(x, y)}'
         )
 
     return cast_to_type(result, cast)
@@ -509,11 +527,13 @@ def multiply(x: Any, y: Any, cast: Optional[type] = None) -> Any:
     Raises:
         ValidationError: If the values cannot be multiplied together
     """
+    check_nulls('multiply', x, y)
+
     try:
         result = make_decimal(x) * make_decimal(y)
     except (InvalidOperation, TypeError, ValueError):
         raise ValidationError(
-            _('Cannot multiply values of incompatible types') + debug_vars(x, y)
+            f'multiply: {_("Cannot multiply values of incompatible types")}: {debug_vars(x, y)}'
         )
 
     return cast_to_type(result, cast)
@@ -531,14 +551,18 @@ def divide(x: Any, y: Any, cast: Optional[type] = None) -> Any:
     Raises:
         ValidationError: If the values cannot be divided
     """
+    check_nulls('divide', x, y)
+
     try:
         result = make_decimal(x) / make_decimal(y)
     except (InvalidOperation, TypeError, ValueError):
         raise ValidationError(
-            _('Cannot divide values of incompatible types') + debug_vars(x, y)
+            f'divide: {_("Cannot divide values of incompatible types")}: {debug_vars(x, y)}'
         )
     except ZeroDivisionError:
-        raise ValidationError(_('Cannot divide by zero') + debug_vars(x, y))
+        raise ValidationError(
+            f'divide: {_("Cannot divide by zero")}: {debug_vars(x, y)}'
+        )
 
     return cast_to_type(result, cast)
 
@@ -555,16 +579,17 @@ def modulo(x: Any, y: Any, cast: Optional[type] = None) -> Any:
     Raises:
         ValidationError: If the values cannot be used in a modulo operation
     """
+    check_nulls('modulo', x, y)
+
     try:
         result = make_decimal(x) % make_decimal(y)
     except (InvalidOperation, TypeError, ValueError):
         raise ValidationError(
-            _('Cannot perform modulo operation with values of incompatible types')
-            + debug_vars(x, y)
+            f'modulo: {_("Cannot perform modulo operation with values of incompatible types")} {debug_vars(x, y)}'
         )
     except ZeroDivisionError:
         raise ValidationError(
-            _('Cannot perform modulo operation with divisor of zero') + debug_vars(x, y)
+            f'modulo: {_("Cannot perform modulo operation with divisor of zero")}: {debug_vars(x, y)}'
         )
 
     return cast_to_type(result, cast)
@@ -574,6 +599,70 @@ def modulo(x: Any, y: Any, cast: Optional[type] = None) -> Any:
 def render_currency(money, **kwargs):
     """Render a currency / Money object."""
     return InvenTree.helpers_model.render_currency(money, **kwargs)
+
+
+@register.simple_tag
+def create_currency(
+    amount: Union[str, int, float, Decimal], currency: Optional[str] = None, **kwargs
+):
+    """Create a Money object, with the provided amount and currency.
+
+    Arguments:
+        amount: The numeric amount (a numeric type or string)
+        currency: The currency code (e.g. 'USD', 'EUR', etc.)
+
+    Note: If the currency is not provided, the default system currency will be used.
+    """
+    check_nulls('create_currency', amount)
+
+    currency = currency or common.currency.currency_code_default()
+    currency = currency.strip().upper()
+
+    if currency not in common.currency.CURRENCIES:
+        raise ValidationError(
+            f'create_currency: {_("Invalid currency code")}: {currency}'
+        )
+
+    try:
+        money = Money(amount, currency)
+    except InvalidOperation:
+        raise ValidationError(f'create_currency: {_("Invalid amount")}: {amount}')
+
+    return money
+
+
+@register.simple_tag
+def convert_currency(money: Money, currency: Optional[str] = None, **kwargs):
+    """Convert a Money object to the specified currency.
+
+    Arguments:
+        money: The Money instance to be converted
+        currency: The target currency code (e.g. 'USD', 'EUR', etc.)
+
+    Note: If the currency is not provided, the default system currency will be used.
+    """
+    check_nulls('convert_currency', money)
+
+    if not isinstance(money, Money):
+        raise TypeError('convert_currency tag requires a Money instance')
+
+    currency = currency or common.currency.currency_code_default()
+    currency = currency.strip().upper()
+
+    if currency not in common.currency.CURRENCIES:
+        raise ValidationError(
+            f'convert_currency: {_("Invalid currency code")}: {currency}'
+        )
+
+    try:
+        converted = convert_money(money, currency)
+    except MissingRate:
+        # Re-throw error with more context
+        raise ValidationError(
+            f'convert_currency: {_("Missing exchange rate")} {money.currency} -> {currency}'
+        )
+
+    return converted
 
 
 @register.simple_tag
@@ -607,6 +696,7 @@ def render_html_text(text: str, **kwargs):
 def format_number(
     number: Union[int, float, Decimal],
     decimal_places: Optional[int] = None,
+    multiplier: Optional[Union[int, float, Decimal]] = None,
     integer: bool = False,
     leading: int = 0,
     separator: Optional[str] = None,
@@ -616,15 +706,21 @@ def format_number(
     Arguments:
         number: The number to be formatted
         decimal_places: Number of decimal places to render
+        multiplier: Optional multiplier to apply to the number before formatting
         integer: Boolean, whether to render the number as an integer
         leading: Number of leading zeros (default = 0)
         separator: Character to use as a thousands separator (default = None)
     """
+    check_nulls('format_number', number)
+
     try:
-        number = Decimal(str(number))
+        number = Decimal(str(number).strip())
     except Exception:
         # If the number cannot be converted to a Decimal, just return the original value
         return str(number)
+
+    if multiplier is not None:
+        number *= Decimal(str(multiplier).strip())
 
     if integer:
         # Convert to integer
@@ -641,7 +737,13 @@ def format_number(
             pass
 
     # Re-encode, and normalize again
-    value = Decimal(number).normalize()
+    # Ensure that the output never uses scientific notation
+    value = Decimal(number)
+    value = (
+        value.quantize(Decimal(1))
+        if value == value.to_integral()
+        else value.normalize()
+    )
 
     if separator:
         value = f'{value:,}'
@@ -670,6 +772,8 @@ def format_datetime(
         timezone: The timezone to use for the date (defaults to the server timezone)
         fmt: The format string to use (defaults to ISO formatting)
     """
+    check_nulls('format_datetime', dt)
+
     dt = InvenTree.helpers.to_local_time(dt, timezone)
 
     if fmt:
@@ -687,6 +791,8 @@ def format_date(dt: date, timezone: Optional[str] = None, fmt: Optional[str] = N
         timezone: The timezone to use for the date (defaults to the server timezone)
         fmt: The format string to use (defaults to ISO formatting)
     """
+    check_nulls('format_date', dt)
+
     try:
         dt = InvenTree.helpers.to_local_time(dt, timezone).date()
     except TypeError:

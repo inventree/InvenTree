@@ -41,7 +41,8 @@ from InvenTree.version import (
 )
 from users.oauth2_scopes import oauth2_scopes
 
-from . import config, locales
+from . import config
+from .setting import locales, storages
 
 try:
     import django_stubs_ext
@@ -343,6 +344,7 @@ INSTALLED_APPS = [
     'django_ical',  # For exporting calendars
     'django_mailbox',  # For email import
     'anymail',  # For email sending/receiving via ESPs
+    'storages',
 ]
 
 MIDDLEWARE = CONFIG.get(
@@ -1386,10 +1388,12 @@ MFA_ENABLED = get_boolean_setting(
 MFA_SUPPORTED_TYPES = get_setting(
     'INVENTREE_MFA_SUPPORTED_TYPES',
     'mfa_supported_types',
-    ['totp', 'recovery_codes'],
+    ['totp', 'recovery_codes', 'webauthn'],
     typecast=list,
 )
 MFA_TRUST_ENABLED = True
+MFA_PASSKEY_LOGIN_ENABLED = True
+MFA_WEBAUTHN_ALLOW_INSECURE_ORIGIN = DEBUG
 
 LOGOUT_REDIRECT_URL = get_setting(
     'INVENTREE_LOGOUT_REDIRECT_URL', 'logout_redirect_url', 'index'
@@ -1560,3 +1564,9 @@ OAUTH2_CHECK_EXCLUDED = [  # This setting mutes schema checks for these rule/met
 
 if SITE_URL and not TESTING:  # pragma: no cover
     SPECTACULAR_SETTINGS['SERVERS'] = [{'url': SITE_URL}]
+
+# Storage backends
+STORAGE_TARGET, STORAGES, _media = storages.init_storages()
+if _media:
+    MEDIA_URL = _media
+PRESIGNED_URL_EXPIRATION = 600

@@ -91,7 +91,7 @@ export default function PurchasingIndex() {
         name: 'supplier-parts',
         label: t`Supplier Parts`,
         icon: <IconPackageExport />,
-        content: <SupplierPartTable params={{}} />
+        content: <SupplierPartTable />
       },
       {
         name: 'manufacturer',

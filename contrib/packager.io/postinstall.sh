@@ -33,10 +33,10 @@ export SETUP_ADMIN_NOCREATION=${SETUP_ADMIN_NOCREATION:-false}
 # SETUP_PYTHON can be set to use a different python version
 
 # get base info
+detect_ip
 detect_envs
 detect_docker
 detect_initcmd
-detect_ip
 detect_python
 
 # Check if we are updating and need to alert

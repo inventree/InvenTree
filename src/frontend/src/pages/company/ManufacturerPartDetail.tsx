@@ -189,9 +189,9 @@ export default function ManufacturerPartDetail() {
         icon: <IconBuildingWarehouse />,
         content: manufacturerPart?.pk ? (
           <SupplierPartTable
-            params={{
-              manufacturer_part: manufacturerPart.pk
-            }}
+            partId={manufacturerPart.part}
+            manufacturerId={manufacturerPart.manufacturer}
+            manufacturerPartId={manufacturerPart.pk}
           />
         ) : (
           <Skeleton />

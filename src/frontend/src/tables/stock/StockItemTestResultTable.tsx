@@ -153,19 +153,21 @@ export default function StockItemTestResultTable({
 
             return (
               <Group justify='space-between' wrap='nowrap'>
-                {!child && (
-                  <RowExpansionIcon
-                    enabled={multipleResults}
-                    expanded={table.isRowExpanded(record.pk)}
-                  />
-                )}
-                <Text
-                  style={{ fontStyle: installed ? 'italic' : undefined }}
-                  c={enabled ? undefined : 'red'}
-                >
-                  {!record.templateId && '- '}
-                  {record.test_name ?? record.template_detail?.test_name}
-                </Text>
+                <Group gap='xs'>
+                  {!child && (
+                    <RowExpansionIcon
+                      enabled={multipleResults}
+                      expanded={table.isRowExpanded(record.pk)}
+                    />
+                  )}
+                  <Text
+                    style={{ fontStyle: installed ? 'italic' : undefined }}
+                    c={enabled ? undefined : 'red'}
+                  >
+                    {!record.templateId && '- '}
+                    {record.test_name ?? record.template_detail?.test_name}
+                  </Text>
+                </Group>
                 <Group justify='right'>
                   {record.results && record.results.length > 1 && (
                     <Tooltip label={t`Test Results`}>
