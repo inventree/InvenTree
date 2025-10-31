@@ -15,8 +15,12 @@ from django.db.models.query import QuerySet
 from django.utils.safestring import SafeString, mark_safe
 from django.utils.translation import gettext_lazy as _
 
+from djmoney.contrib.exchange.exceptions import MissingRate
+from djmoney.contrib.exchange.models import convert_money
+from djmoney.money import Money
 from PIL import Image
 
+import common.currency
 import common.icons
 import InvenTree.helpers
 import InvenTree.helpers_model
@@ -454,6 +458,16 @@ def debug_vars(x: Any, y: Any) -> str:
     return f": x='{x}' ({type(x).__name__}), y='{y}' ({type(y).__name__})"
 
 
+def check_nulls(func: str, *arg):
+    """Check if any of the provided arguments is null.
+
+    Raises:
+        ValueError: If any argument is None
+    """
+    if any(a is None for a in arg):
+        raise ValidationError(f'{func}: ' + _('Null value provided to function'))
+
+
 @register.simple_tag()
 def add(x: Any, y: Any, cast: Optional[type] = None) -> Any:
     """Add two numbers (or number like values) together.
@@ -466,11 +480,13 @@ def add(x: Any, y: Any, cast: Optional[type] = None) -> Any:
     Raises:
         ValidationError: If the values cannot be added together
     """
+    check_nulls('add', x, y)
+
     try:
         result = make_decimal(x) + make_decimal(y)
     except (InvalidOperation, TypeError, ValueError):
         raise ValidationError(
-            _('Cannot add values of incompatible types') + debug_vars(x, y)
+            'add: ' + _('Cannot add values of incompatible types') + debug_vars(x, y)
         )
     return cast_to_type(result, cast)
 
@@ -487,11 +503,15 @@ def subtract(x: Any, y: Any, cast: Optional[type] = None) -> Any:
     Raises:
         ValidationError: If the values cannot be subtracted
     """
+    check_nulls('subtract', x, y)
+
     try:
         result = make_decimal(x) - make_decimal(y)
     except (InvalidOperation, TypeError, ValueError):
         raise ValidationError(
-            _('Cannot subtract values of incompatible types') + debug_vars(x, y)
+            'subtract: '
+            + _('Cannot subtract values of incompatible types')
+            + debug_vars(x, y)
         )
 
     return cast_to_type(result, cast)
@@ -509,11 +529,15 @@ def multiply(x: Any, y: Any, cast: Optional[type] = None) -> Any:
     Raises:
         ValidationError: If the values cannot be multiplied together
     """
+    check_nulls('multiply', x, y)
+
     try:
         result = make_decimal(x) * make_decimal(y)
     except (InvalidOperation, TypeError, ValueError):
         raise ValidationError(
-            _('Cannot multiply values of incompatible types') + debug_vars(x, y)
+            'multiply: '
+            + _('Cannot multiply values of incompatible types')
+            + debug_vars(x, y)
         )
 
     return cast_to_type(result, cast)
@@ -531,14 +555,20 @@ def divide(x: Any, y: Any, cast: Optional[type] = None) -> Any:
     Raises:
         ValidationError: If the values cannot be divided
     """
+    check_nulls('divide', x, y)
+
     try:
         result = make_decimal(x) / make_decimal(y)
     except (InvalidOperation, TypeError, ValueError):
         raise ValidationError(
-            _('Cannot divide values of incompatible types') + debug_vars(x, y)
+            'divide: '
+            + _('Cannot divide values of incompatible types')
+            + debug_vars(x, y)
         )
     except ZeroDivisionError:
-        raise ValidationError(_('Cannot divide by zero') + debug_vars(x, y))
+        raise ValidationError(
+            'divide: ' + _('Cannot divide by zero') + debug_vars(x, y)
+        )
 
     return cast_to_type(result, cast)
 
@@ -555,16 +585,21 @@ def modulo(x: Any, y: Any, cast: Optional[type] = None) -> Any:
     Raises:
         ValidationError: If the values cannot be used in a modulo operation
     """
+    check_nulls('modulo', x, y)
+
     try:
         result = make_decimal(x) % make_decimal(y)
     except (InvalidOperation, TypeError, ValueError):
         raise ValidationError(
-            _('Cannot perform modulo operation with values of incompatible types')
+            'modulo: '
+            + _('Cannot perform modulo operation with values of incompatible types')
             + debug_vars(x, y)
         )
     except ZeroDivisionError:
         raise ValidationError(
-            _('Cannot perform modulo operation with divisor of zero') + debug_vars(x, y)
+            'modulo: '
+            + _('Cannot perform modulo operation with divisor of zero')
+            + debug_vars(x, y)
         )
 
     return cast_to_type(result, cast)
@@ -574,6 +609,67 @@ def modulo(x: Any, y: Any, cast: Optional[type] = None) -> Any:
 def render_currency(money, **kwargs):
     """Render a currency / Money object."""
     return InvenTree.helpers_model.render_currency(money, **kwargs)
+
+
+@register.simple_tag
+def create_currency(amount, currency: Optional[str] = None, **kwargs):
+    """Create a Money object, with the provided amount and currency.
+
+    Arguments:
+        amount: The numeric amount (a numeric type or string)
+        currency: The currency code (e.g. 'USD', 'EUR', etc.)
+
+    Note: If the currency is not provided, the default system currency will be used.
+    """
+    check_nulls('create_currency', amount)
+
+    currency = currency or common.currency.currency_code_default()
+    currency = currency.strip().upper()
+
+    if currency not in common.currency.CURRENCIES:
+        raise ValidationError(
+            'create_currency: ' + _('Invalid currency code') + f": '{currency}'"
+        )
+
+    money = Money(amount, currency)
+
+    return money
+
+
+@register.simple_tag
+def convert_currency(amount, currency: Optional[str] = None, **kwargs):
+    """Convert a Money object to the specified currency.
+
+    Arguments:
+        amount: The numeric amount (a Money instance)
+        currency: The target currency code (e.g. 'USD', 'EUR', etc.)
+
+    Note: If the currency is not provided, the default system currency will be used.
+    """
+    check_nulls('convert_currency', amount)
+
+    if not isinstance(amount, Money):
+        raise TypeError('convert_currency tag requires a Money instance')
+
+    currency = currency or common.currency.currency_code_default()
+    currency = currency.strip().upper()
+
+    if currency not in common.currency.CURRENCIES:
+        raise ValidationError(
+            'convert_currency: ' + _('Invalid currency code') + f": '{currency}'"
+        )
+
+    try:
+        converted = convert_money(amount, currency)
+    except MissingRate:
+        # Re-throw error with more context
+        raise ValidationError(
+            'convert_currency: '
+            + _('Missing exchange rate for from')
+            + f" {amount.currency} -> {currency}'"
+        )
+
+    return converted
 
 
 @register.simple_tag
