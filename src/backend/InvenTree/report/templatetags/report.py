@@ -455,7 +455,7 @@ def cast_to_type(value: Any, cast: type) -> Any:
 
 def debug_vars(x: Any, y: Any) -> str:
     """Return a debug string showing the types and values of two variables."""
-    return f": x='{x}' ({type(x).__name__}), y='{y}' ({type(y).__name__})"
+    return f"x='{x}' ({type(x).__name__}), y='{y}' ({type(y).__name__})"
 
 
 def check_nulls(func: str, *arg):
@@ -465,7 +465,7 @@ def check_nulls(func: str, *arg):
         ValueError: If any argument is None
     """
     if any(a is None for a in arg):
-        raise ValidationError(f'{func}: ' + _('Null value provided to function'))
+        raise ValidationError(f'{func}: {_("Null value provided to function")}')
 
 
 @register.simple_tag()
@@ -486,7 +486,7 @@ def add(x: Any, y: Any, cast: Optional[type] = None) -> Any:
         result = make_decimal(x) + make_decimal(y)
     except (InvalidOperation, TypeError, ValueError):
         raise ValidationError(
-            'add: ' + _('Cannot add values of incompatible types') + debug_vars(x, y)
+            f'add: {_("Cannot add values of incompatible types")}: {debug_vars(x, y)}'
         )
     return cast_to_type(result, cast)
 
@@ -509,9 +509,7 @@ def subtract(x: Any, y: Any, cast: Optional[type] = None) -> Any:
         result = make_decimal(x) - make_decimal(y)
     except (InvalidOperation, TypeError, ValueError):
         raise ValidationError(
-            'subtract: '
-            + _('Cannot subtract values of incompatible types')
-            + debug_vars(x, y)
+            f'subtract: {_("Cannot subtract values of incompatible types")}: {debug_vars(x, y)}'
         )
 
     return cast_to_type(result, cast)
@@ -535,9 +533,7 @@ def multiply(x: Any, y: Any, cast: Optional[type] = None) -> Any:
         result = make_decimal(x) * make_decimal(y)
     except (InvalidOperation, TypeError, ValueError):
         raise ValidationError(
-            'multiply: '
-            + _('Cannot multiply values of incompatible types')
-            + debug_vars(x, y)
+            f'multiply: {_("Cannot multiply values of incompatible types")}: {debug_vars(x, y)}'
         )
 
     return cast_to_type(result, cast)
@@ -561,13 +557,11 @@ def divide(x: Any, y: Any, cast: Optional[type] = None) -> Any:
         result = make_decimal(x) / make_decimal(y)
     except (InvalidOperation, TypeError, ValueError):
         raise ValidationError(
-            'divide: '
-            + _('Cannot divide values of incompatible types')
-            + debug_vars(x, y)
+            f'divide: {_("Cannot divide values of incompatible types")}: {debug_vars(x, y)}'
         )
     except ZeroDivisionError:
         raise ValidationError(
-            'divide: ' + _('Cannot divide by zero') + debug_vars(x, y)
+            f'divide: {_("Cannot divide by zero")}: {debug_vars(x, y)}'
         )
 
     return cast_to_type(result, cast)
@@ -591,15 +585,11 @@ def modulo(x: Any, y: Any, cast: Optional[type] = None) -> Any:
         result = make_decimal(x) % make_decimal(y)
     except (InvalidOperation, TypeError, ValueError):
         raise ValidationError(
-            'modulo: '
-            + _('Cannot perform modulo operation with values of incompatible types')
-            + debug_vars(x, y)
+            f'modulo: {_("Cannot perform modulo operation with values of incompatible types")} {debug_vars(x, y)}'
         )
     except ZeroDivisionError:
         raise ValidationError(
-            'modulo: '
-            + _('Cannot perform modulo operation with divisor of zero')
-            + debug_vars(x, y)
+            f'modulo: {_("Cannot perform modulo operation with divisor of zero")}: {debug_vars(x, y)}'
         )
 
     return cast_to_type(result, cast)
@@ -628,7 +618,7 @@ def create_currency(amount, currency: Optional[str] = None, **kwargs):
 
     if currency not in common.currency.CURRENCIES:
         raise ValidationError(
-            'create_currency: ' + _('Invalid currency code') + f": '{currency}'"
+            f'create_currency: {_("Invalid currency code")}: {currency}'
         )
 
     money = Money(amount, currency)
@@ -656,7 +646,7 @@ def convert_currency(money, currency: Optional[str] = None, **kwargs):
 
     if currency not in common.currency.CURRENCIES:
         raise ValidationError(
-            'convert_currency: ' + _('Invalid currency code') + f": '{currency}'"
+            f'convert_currency: {_("Invalid currency code")}: {currency}'
         )
 
     try:
@@ -664,9 +654,7 @@ def convert_currency(money, currency: Optional[str] = None, **kwargs):
     except MissingRate:
         # Re-throw error with more context
         raise ValidationError(
-            'convert_currency: '
-            + _('Missing exchange rate for from')
-            + f" {money.currency} -> {currency}'"
+            f'convert_currency: {_("Missing exchange rate")} {money.currency} -> {currency}'
         )
 
     return converted
