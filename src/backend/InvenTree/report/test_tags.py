@@ -449,6 +449,55 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
         self.assertEqual(report_tags.render_currency(m, min_decimal_places='a'), exp_m)
         self.assertEqual(report_tags.render_currency(m, max_decimal_places='a'), exp_m)
 
+    def test_create_currency(self):
+        """Test the create_currency template tag."""
+        m = report_tags.create_currency(1000, 'USD')
+        self.assertIsInstance(m, Money)
+        self.assertEqual(m.amount, Decimal('1000'))
+        self.assertEqual(str(m.currency), 'USD')
+
+        # Test with invalid currency code
+        with self.assertRaises(ValidationError):
+            report_tags.create_currency(1000, 'QWERTY')
+
+        # Test with invalid amount
+        with self.assertRaises(ValidationError):
+            report_tags.create_currency('abc', 'USD')
+
+    def test_convert_currency(self):
+        """Test the convert_currency template tag."""
+        from djmoney.contrib.exchange.models import ExchangeBackend, Rate
+
+        # Generate some dummy exchange rates
+        rates = {'AUD': 1.5, 'CAD': 1.7, 'GBP': 0.9, 'USD': 1.0}
+
+        # Create a dummy backend
+        ExchangeBackend.objects.create(name='InvenTreeExchange', base_currency='USD')
+
+        backend = ExchangeBackend.objects.get(name='InvenTreeExchange')
+
+        items = []
+
+        for currency, rate in rates.items():
+            items.append(Rate(currency=currency, value=rate, backend=backend))
+
+        Rate.objects.bulk_create(items)
+
+        m = report_tags.create_currency(1000, 'GBP')
+
+        # Test with valid conversion
+        converted = report_tags.convert_currency(m, 'CAD')
+        self.assertIsInstance(converted, Money)
+        self.assertEqual(str(converted.currency), 'CAD')
+
+        # Test with invalid currency code
+        with self.assertRaises(ValidationError):
+            report_tags.convert_currency(m, 'QWERTY')
+
+        # Test with missing exchange rate
+        with self.assertRaises(ValidationError):
+            report_tags.convert_currency(m, 'AFD')
+
     def test_render_html_text(self):
         """Test the render_html_text template tag."""
         # Test with a valid text

@@ -621,7 +621,10 @@ def create_currency(amount, currency: Optional[str] = None, **kwargs):
             f'create_currency: {_("Invalid currency code")}: {currency}'
         )
 
-    money = Money(amount, currency)
+    try:
+        money = Money(amount, currency)
+    except InvalidOperation:
+        raise ValidationError(f'create_currency: {_("Invalid amount")}: {amount}')
 
     return money
 
