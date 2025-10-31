@@ -1,9 +1,11 @@
 """Database model definitions for the 'web' app."""
 
 import uuid
+from typing import Optional
 
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.utils import OperationalError
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
@@ -92,16 +94,14 @@ class GuideDefinition(InvenTree.models.MetadataMixin):
         verbose_name_plural = _('Guide Definitions')
 
 
-def collect_guides(
-    create: bool = False,
-) -> tuple[list[GuideDefinitionData], set[type[GuideDefinitionData]]]:
+def collect_guides(create: bool = False) -> Optional[list[GuideDefinitionData]]:
     """Collect all guide definitions (form types).
 
     Args:
         create (bool): If True, create missing GuideDefinition entries in the database.
 
     Returns:
-        tuple: A tuple containing a list of GuideDefinitionData instances and a set of the defining classes.
+        A list of GuideDefinitionData instances
     """
     all_types = instances_of(GuideDefinitionData)
     for guide in all_types:
@@ -119,6 +119,8 @@ def collect_guides(
             )
             obj.save()
             logger.info(f'Created guide definition: {obj.slug} - {obj.uid}')
+        except OperationalError:
+            return None  # Database is not ready
         guide.set_db(obj)
     return all_types
 
