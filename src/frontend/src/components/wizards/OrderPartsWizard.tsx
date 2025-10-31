@@ -3,15 +3,19 @@ import { AddItemButton } from '@lib/components/AddItemButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
+import { formatDecimal } from '@lib/functions/Formatting';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
 import {
   ActionIcon,
   Alert,
+  Divider,
   Group,
   HoverCard,
   Loader,
   Paper,
+  Stack,
+  Text,
   Tooltip
 } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
@@ -37,10 +41,19 @@ import Expand from '../items/Expand';
  * This fetches the information dynamically from the API
  */
 function PartRequirementsInfo({
-  partId
+  partId,
+  onQuantityChange
 }: {
   partId: number | string;
+  onQuantityChange?: (quantity: number) => void;
 }) {
+  const [requiredQuantity, setRequiredQuantity] = useState<number>(0);
+
+  // Notify parent component of quantity change
+  useEffect(() => {
+    onQuantityChange?.(requiredQuantity);
+  }, [requiredQuantity]);
+
   const requirements = useInstance({
     endpoint: ApiEndpoints.part_requirements,
     pk: partId,
@@ -48,35 +61,99 @@ function PartRequirementsInfo({
     defaultValue: {}
   });
 
-  if (
-    requirements.instanceQuery.isFetching ||
-    requirements.instanceQuery.isLoading
-  ) {
-    return <Loader size='sm' />;
-  }
+  const widget = useMemo(() => {
+    if (
+      requirements.instanceQuery.isFetching ||
+      requirements.instanceQuery.isLoading
+    ) {
+      return <Loader size='sm' />;
+    }
 
-  if (requirements.instanceQuery.isError) {
+    if (requirements.instanceQuery.isError) {
+      return (
+        <Tooltip label={t`Error fetching part requirements`}>
+          <ActionIcon variant='transparent' color='red'>
+            <IconExclamationCircle />
+          </ActionIcon>
+        </Tooltip>
+      );
+    }
+
+    // Calculate the total requirements
+    const buildRequirements =
+      requirements.instance?.required_for_build_orders || 0;
+    const salesRequirements =
+      requirements.instance?.required_for_sales_orders || 0;
+    const totalRequirements = buildRequirements + salesRequirements;
+
+    const building = requirements.instance?.building || 0;
+    const ordering = requirements.instance?.ordering || 0;
+    const incoming = building + ordering;
+
+    const inStock = requirements.instance?.total_stock || 0;
+
+    const required = Math.max(0, totalRequirements - inStock - incoming);
+
+    setRequiredQuantity(required);
+
     return (
-      <Tooltip label={t`Error fetching part requirements`}>
-        <ActionIcon variant='transparent' color='red'>
-          <IconExclamationCircle />
-        </ActionIcon>
-      </Tooltip>
+      <HoverCard position='bottom-end'>
+        <HoverCard.Target>
+          <ActionIcon variant='transparent' color='blue'>
+            <IconInfoCircle />
+          </ActionIcon>
+        </HoverCard.Target>
+        <HoverCard.Dropdown>
+          <Stack gap='xs'>
+            <Text>{t`Requirements`}</Text>
+            <Divider />
+            {buildRequirements > 0 && (
+              <Group justify='space-between'>
+                <Text size='xs'>{t`Build Requirements`}</Text>
+                <Text size='xs'>{formatDecimal(buildRequirements)}</Text>
+              </Group>
+            )}
+            {salesRequirements > 0 && (
+              <Group justify='space-between'>
+                <Text size='xs'>{t`Sales Requirements`}</Text>
+                <Text size='xs'>{formatDecimal(salesRequirements)}</Text>
+              </Group>
+            )}
+            {inStock > 0 && (
+              <Group justify='space-between'>
+                <Text size='xs'>{t`In Stock`}</Text>
+                <Text size='xs'>{formatDecimal(inStock)}</Text>
+              </Group>
+            )}
+            {ordering > 0 && (
+              <Group justify='space-between'>
+                <Text size='xs'>{t`On Order`}</Text>
+                <Text size='xs'>{formatDecimal(ordering)}</Text>
+              </Group>
+            )}
+            {building > 0 && (
+              <Group justify='space-between'>
+                <Text size='xs'>{t`In Production`}</Text>
+                <Text size='xs'>{formatDecimal(building)}</Text>
+              </Group>
+            )}
+            <Group justify='space-between'>
+              <Text size='xs'>{t`Required Quantity`}</Text>
+              <Text size='xs'>{formatDecimal(required)}</Text>
+            </Group>
+          </Stack>
+        </HoverCard.Dropdown>
+      </HoverCard>
     );
-  }
+  }, [
+    requirements.instanceQuery.isFetching,
+    requirements.instanceQuery.isLoading,
+    requirements.instanceQuery.isError,
+    requirements.instance,
+    setRequiredQuantity
+  ]);
 
-  return (
-    <HoverCard>
-      <HoverCard.Target>
-        <ActionIcon variant='transparent' color='blue'>
-          <IconInfoCircle />
-        </ActionIcon>
-      </HoverCard.Target>
-      <HoverCard.Dropdown>
-        <div>hello world...</div>
-      </HoverCard.Dropdown>
-    </HoverCard>
-  );
+  return widget;
 }
 
 /**
