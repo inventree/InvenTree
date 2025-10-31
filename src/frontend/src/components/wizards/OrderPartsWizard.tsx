@@ -162,6 +162,7 @@ function SelectPartsStep({
                   filters: {
                     part: record.part.pk,
                     active: true,
+                    part_detail: true,
                     supplier_detail: true
                   }
                 }}
