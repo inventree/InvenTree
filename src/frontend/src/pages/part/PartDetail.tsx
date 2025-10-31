@@ -184,7 +184,7 @@ function BomValidationInformation({
         <Text>{t`Do you want to validate the bill of materials for this assembly?`}</Text>
       </Alert>
     ),
-    successMessage: t`BOM validated`,
+    successMessage: t`Bill of materials scheduled for validation`,
     onFormSuccess: () => {
       bomInformationQuery.refetch();
     }
