@@ -225,8 +225,6 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
         .catch((error) => {
           const msg = error?.message;
 
-          console.log('error:', msg, typeof msg);
-
           if (msg) {
             if (Array.isArray(msg)) {
               setRenderingErrors(msg);
