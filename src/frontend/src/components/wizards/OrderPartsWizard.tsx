@@ -99,7 +99,11 @@ function PartRequirementsInfo({
     return (
       <HoverCard position='bottom-end'>
         <HoverCard.Target>
-          <ActionIcon variant='transparent' color='blue'>
+          <ActionIcon
+            variant='transparent'
+            color={required > 0 ? 'blue' : 'green'}
+            size='sm'
+          >
             <IconInfoCircle />
           </ActionIcon>
         </HoverCard.Target>
@@ -377,7 +381,12 @@ function SelectPartsStep({
                 }
               }}
             />
-            <PartRequirementsInfo partId={record.part.pk} />
+            <PartRequirementsInfo
+              partId={record.part.pk}
+              onQuantityChange={(quantity: number) =>
+                onSelectQuantity(record.part.pk, quantity)
+              }
+            />
           </Group>
         )
       },
