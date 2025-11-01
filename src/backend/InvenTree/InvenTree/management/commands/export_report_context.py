@@ -35,10 +35,6 @@ def get_type_str(type_obj):
     if type_obj.__module__ == 'builtins':
         return type_obj.__name__
 
-    # in python3.9, typing.Union has no __name__
-    if not hasattr(type_obj, '__module__') or not hasattr(type_obj, '__name__'):
-        return str(type_obj)
-
     return f'{type_obj.__module__}.{type_obj.__name__}'
 
 
