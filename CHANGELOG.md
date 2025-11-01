@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file (starting wi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [x.x.x]() - YYYY-MM-DD
+## Unreleased - YYYY-MM-DD
 
 ### Added
 
@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
-## [1.1.0](https://github.com/inventree/InvenTree/releases/tag/1.1.0) - 2025-11-02
+## 1.1.0 - 2025-11-02
 
 ### Added
 
@@ -39,7 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Changed call signature of `get_global_setting` to use `environment_key` instead of `enviroment_key` in [#10557](https://github.com/inventree/InvenTree/pull/10557)
 
 
-## [1.0.0](https://github.com/inventree/InvenTree/releases/tag/1.0.0) - 2025-09-15
+## 1.0.0 - 2025-09-15
 
 The first "stable" release following semver but not extensively other than the previous releases. The use of 1.0 indicates the stability that users already expect from InvenTree.
 
