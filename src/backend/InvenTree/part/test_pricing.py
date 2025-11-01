@@ -7,8 +7,6 @@ from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
 
 import common.currency
-import common.models
-import common.settings
 import company.models
 import order.models
 import part.models

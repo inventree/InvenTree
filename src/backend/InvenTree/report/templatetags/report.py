@@ -5,7 +5,7 @@ import logging
 import os
 from datetime import date, datetime
 from decimal import Decimal, InvalidOperation
-from typing import Any, Optional, Union
+from typing import Any, Optional
 
 from django import template
 from django.apps.registry import apps
@@ -603,7 +603,7 @@ def render_currency(money, **kwargs):
 
 @register.simple_tag
 def create_currency(
-    amount: Union[str, int, float, Decimal], currency: Optional[str] = None, **kwargs
+    amount: str | int | float | Decimal, currency: Optional[str] = None, **kwargs
 ):
     """Create a Money object, with the provided amount and currency.
 
@@ -694,9 +694,9 @@ def render_html_text(text: str, **kwargs):
 
 @register.simple_tag
 def format_number(
-    number: Union[int, float, Decimal],
+    number: int | float | Decimal,
     decimal_places: Optional[int] = None,
-    multiplier: Optional[Union[int, float, Decimal]] = None,
+    multiplier: Optional[int | float | Decimal] = None,
     integer: bool = False,
     leading: int = 0,
     separator: Optional[str] = None,

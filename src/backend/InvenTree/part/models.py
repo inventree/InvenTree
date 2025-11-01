@@ -41,7 +41,6 @@ from taggit.managers import TaggableManager
 
 import common.currency
 import common.models
-import common.settings
 import InvenTree.conversion
 import InvenTree.fields
 import InvenTree.helpers
