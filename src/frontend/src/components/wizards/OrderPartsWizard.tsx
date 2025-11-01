@@ -3,21 +3,162 @@ import { AddItemButton } from '@lib/components/AddItemButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
+import { formatDecimal } from '@lib/functions/Formatting';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
-import { Alert, Group, Paper, Tooltip } from '@mantine/core';
+import {
+  ActionIcon,
+  Alert,
+  Divider,
+  Group,
+  HoverCard,
+  Loader,
+  Paper,
+  Stack,
+  Text,
+  Tooltip
+} from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
-import { IconShoppingCart } from '@tabler/icons-react';
+import {
+  IconExclamationCircle,
+  IconInfoCircle,
+  IconShoppingCart
+} from '@tabler/icons-react';
 import { DataTable } from 'mantine-datatable';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSupplierPartFields } from '../../forms/CompanyForms';
 import { usePurchaseOrderFields } from '../../forms/PurchaseOrderForms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
+import { useInstance } from '../../hooks/UseInstance';
 import useWizard from '../../hooks/UseWizard';
 import { RenderPartColumn } from '../../tables/ColumnRenderers';
 import RemoveRowButton from '../buttons/RemoveRowButton';
 import { StandaloneField } from '../forms/StandaloneField';
 import Expand from '../items/Expand';
+
+/**
+ * Render the "requirements" info for a part
+ * This fetches the information dynamically from the API
+ */
+function PartRequirementsInfo({
+  partId,
+  onQuantityChange
+}: {
+  partId: number | string;
+  onQuantityChange?: (quantity: number) => void;
+}) {
+  const [requiredQuantity, setRequiredQuantity] = useState<number>(0);
+
+  // Notify parent component of quantity change
+  useEffect(() => {
+    onQuantityChange?.(requiredQuantity);
+  }, [requiredQuantity]);
+
+  const requirements = useInstance({
+    endpoint: ApiEndpoints.part_requirements,
+    pk: partId,
+    hasPrimaryKey: true,
+    defaultValue: {}
+  });
+
+  const widget = useMemo(() => {
+    if (
+      requirements.instanceQuery.isFetching ||
+      requirements.instanceQuery.isLoading
+    ) {
+      return <Loader size='sm' />;
+    }
+
+    if (requirements.instanceQuery.isError) {
+      return (
+        <Tooltip label={t`Error fetching part requirements`}>
+          <ActionIcon variant='transparent' color='red'>
+            <IconExclamationCircle />
+          </ActionIcon>
+        </Tooltip>
+      );
+    }
+
+    // Calculate the total requirements
+    const buildRequirements =
+      requirements.instance?.required_for_build_orders || 0;
+    const salesRequirements =
+      requirements.instance?.required_for_sales_orders || 0;
+    const totalRequirements = buildRequirements + salesRequirements;
+
+    const building = requirements.instance?.building || 0;
+    const ordering = requirements.instance?.ordering || 0;
+    const incoming = building + ordering;
+
+    const inStock = requirements.instance?.total_stock || 0;
+
+    const required = Math.max(0, totalRequirements - inStock - incoming);
+
+    setRequiredQuantity(required);
+
+    return (
+      <HoverCard position='bottom-end'>
+        <HoverCard.Target>
+          <ActionIcon
+            variant='transparent'
+            color={required > 0 ? 'blue' : 'green'}
+            size='sm'
+          >
+            <IconInfoCircle />
+          </ActionIcon>
+        </HoverCard.Target>
+        <HoverCard.Dropdown>
+          <Stack gap='xs'>
+            <Text>{t`Requirements`}</Text>
+            <Divider />
+            {buildRequirements > 0 && (
+              <Group justify='space-between'>
+                <Text size='xs'>{t`Build Requirements`}</Text>
+                <Text size='xs'>{formatDecimal(buildRequirements)}</Text>
+              </Group>
+            )}
+            {salesRequirements > 0 && (
+              <Group justify='space-between'>
+                <Text size='xs'>{t`Sales Requirements`}</Text>
+                <Text size='xs'>{formatDecimal(salesRequirements)}</Text>
+              </Group>
+            )}
+            {inStock > 0 && (
+              <Group justify='space-between'>
+                <Text size='xs'>{t`In Stock`}</Text>
+                <Text size='xs'>{formatDecimal(inStock)}</Text>
+              </Group>
+            )}
+            {ordering > 0 && (
+              <Group justify='space-between'>
+                <Text size='xs'>{t`On Order`}</Text>
+                <Text size='xs'>{formatDecimal(ordering)}</Text>
+              </Group>
+            )}
+            {building > 0 && (
+              <Group justify='space-between'>
+                <Text size='xs'>{t`In Production`}</Text>
+                <Text size='xs'>{formatDecimal(building)}</Text>
+              </Group>
+            )}
+            <Group justify='space-between'>
+              <Text size='xs'>{t`Required Quantity`}</Text>
+              <Text size='xs'>{formatDecimal(required)}</Text>
+            </Group>
+          </Stack>
+        </HoverCard.Dropdown>
+      </HoverCard>
+    );
+  }, [
+    requirements.instanceQuery.isFetching,
+    requirements.instanceQuery.isLoading,
+    requirements.instanceQuery.isError,
+    requirements.instance,
+    setRequiredQuantity
+  ]);
+
+  return widget;
+}
 
 /**
  * Attributes for each selected part
@@ -123,7 +264,10 @@ function SelectPartsStep({
         width: '1%',
         render: (record: PartOrderRecord) => (
           <Group gap='xs' wrap='nowrap' justify='left'>
-            <RemoveRowButton onClick={() => onRemovePart(record.part)} />
+            <RemoveRowButton
+              tooltipAlignment={'top-start'}
+              onClick={() => onRemovePart(record.part)}
+            />
           </Group>
         )
       },
@@ -162,6 +306,7 @@ function SelectPartsStep({
                   filters: {
                     part: record.part.pk,
                     active: true,
+                    part_detail: true,
                     supplier_detail: true
                   }
                 }}
@@ -169,7 +314,7 @@ function SelectPartsStep({
             </Expand>
             <AddItemButton
               tooltip={t`New supplier part`}
-              tooltipAlignment='top'
+              tooltipAlignment='top-end'
               onClick={() => {
                 setSelectedRecord(record);
                 newSupplierPart.open();
@@ -207,7 +352,7 @@ function SelectPartsStep({
             </Expand>
             <AddItemButton
               tooltip={t`New purchase order`}
-              tooltipAlignment='top'
+              tooltipAlignment='top-end'
               disabled={!record.supplier_part?.pk}
               onClick={() => {
                 setSelectedRecord(record);
@@ -220,21 +365,29 @@ function SelectPartsStep({
       {
         accessor: 'quantity',
         title: t`Quantity`,
-        width: 125,
+        width: 150,
         render: (record: PartOrderRecord) => (
-          <StandaloneField
-            fieldName='quantity'
-            hideLabels={true}
-            error={record.errors?.quantity}
-            fieldDefinition={{
-              field_type: 'number',
-              required: true,
-              value: record.quantity,
-              onValueChange: (value) => {
-                onSelectQuantity(record.part.pk, value);
+          <Group gap='xs' wrap='nowrap'>
+            <StandaloneField
+              fieldName='quantity'
+              hideLabels={true}
+              error={record.errors?.quantity}
+              fieldDefinition={{
+                field_type: 'number',
+                required: true,
+                value: record.quantity,
+                onValueChange: (value) => {
+                  onSelectQuantity(record.part.pk, value);
+                }
+              }}
+            />
+            <PartRequirementsInfo
+              partId={record.part.pk}
+              onQuantityChange={(quantity: number) =>
+                onSelectQuantity(record.part.pk, quantity)
               }
-            }}
-          />
+            />
+          </Group>
         )
       },
       {
@@ -255,7 +408,7 @@ function SelectPartsStep({
               }
               icon={<IconShoppingCart />}
               tooltip={t`Add to selected purchase order`}
-              tooltipAlignment='top'
+              tooltipAlignment='top-end'
               color='blue'
             />
           </Group>
