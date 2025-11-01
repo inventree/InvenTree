@@ -1,7 +1,6 @@
 """System settings definition."""
 
 import json
-import logging
 import os
 import re
 import uuid
@@ -13,6 +12,8 @@ from django.core.validators import MaxValueValidator, MinValueValidator, URLVali
 from django.template import Context, Template
 from django.utils.translation import gettext_lazy as _
 
+import structlog
+
 import build.validators
 import common.currency
 import common.validators
@@ -20,7 +21,7 @@ import order.validators
 import report.helpers
 from common.setting.type import InvenTreeSettingsKeyType
 
-logger = logging.getLogger('inventree')
+logger = structlog.getLogger('inventree')
 
 
 def validate_part_name_format(value):
