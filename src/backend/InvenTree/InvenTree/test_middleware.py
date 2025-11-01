@@ -117,7 +117,7 @@ class MiddlewareTests(InvenTreeTestCase):
             SITE_URL='https://testserver', CSRF_TRUSTED_ORIGINS=['https://testserver']
         ):
             response = self.client.get(
-                reverse('web'), HTTP_HOST='otherhost.example.com'
+                reverse('web'), headers={'host': 'otherhost.example.com'}
             )
             self.assertContains(response, 'INVE-E7: The visited path', status_code=500)
 
@@ -143,7 +143,9 @@ class MiddlewareTests(InvenTreeTestCase):
             SITE_URL='https://testserver:8000',
             CSRF_TRUSTED_ORIGINS=['https://testserver:8000'],
         ):
-            response = self.client.get(reverse('web'), HTTP_HOST='testserver:8008')
+            response = self.client.get(
+                reverse('web'), headers={'host': 'testserver:8008'}
+            )
             self.do_positive_test(response)
 
         # Try again with strict protocol check
@@ -152,7 +154,9 @@ class MiddlewareTests(InvenTreeTestCase):
             CSRF_TRUSTED_ORIGINS=['https://testserver:8000'],
             SITE_LAX_PROTOCOL_CHECK=False,
         ):
-            response = self.client.get(reverse('web'), HTTP_HOST='testserver:8008')
+            response = self.client.get(
+                reverse('web'), headers={'host': 'testserver:8008'}
+            )
             self.assertContains(response, 'INVE-E7: The visited path', status_code=500)
 
     def test_site_url_checks_multi(self):
