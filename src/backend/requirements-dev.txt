@@ -413,12 +413,6 @@ idna==3.11 \
     # via
     #   -c src/backend/requirements.txt
     #   requests
-importlib-metadata==8.7.0 \
-    --hash=sha256:d13b81ad223b890aa16c5471f2ac3056cf76c5f10f82d6f9292f0b415f389000 \
-    --hash=sha256:e5dd1551894c77868a30651cef00984d50e1002d06942a7101d34870c5f02afd
-    # via
-    #   -c src/backend/requirements.txt
-    #   build
 isort==7.0.0 \
     --hash=sha256:1bcabac8bc3c36c7fb7b98a76c8abb18e0f841a3ba81decac7691008592499c1 \
     --hash=sha256:5513527951aadb3ac4292a41a16cbc50dd1642432f5e8c20057d414bdafb4187
@@ -610,12 +604,7 @@ tomli==2.3.0 \
     --hash=sha256:f85209946d1fe94416debbb88d00eb92ce9cd5266775424ff81bc959e001acaf \
     --hash=sha256:feb0dacc61170ed7ab602d3d972a58f14ee3ee60494292d384649a3dc38ef463 \
     --hash=sha256:ff72b71b5d10d22ecb084d345fc26f42b5143c5533db5e2eaba7d2d335358876
-    # via
-    #   -c src/backend/requirements.txt
-    #   build
-    #   coverage
-    #   django-stubs
-    #   pip-tools
+    # via coverage
 ty==0.0.1a21 \
     --hash=sha256:0efba2e52b58f536f4198ba5c4a36cac2ba67d83ec6f429ebc7704233bcda4c3 \
     --hash=sha256:1474d883129bb63da3b2380fc7ead824cd3baf6a9551e6aa476ffefc58057af3 \
@@ -649,11 +638,9 @@ typing-extensions==4.15.0 \
     --hash=sha256:f0fa19c6845758ab08074a0cfa8b7aecb71c999ca73d62883bc25cc018c4e548
     # via
     #   -c src/backend/requirements.txt
-    #   asgiref
     #   django-stubs
     #   django-stubs-ext
     #   django-test-migrations
-    #   virtualenv
 urllib3==2.5.0 \
     --hash=sha256:3fc47733c7e419d4bc3f6b3dc2b4f890bb743906a30d56ba4a5bfa4bbff92760 \
     --hash=sha256:e6b01673c0fa6a13e374b50871808eb3bf7046c4b125b216f6bf1cc604cff0dc
@@ -668,9 +655,3 @@ wheel==0.45.1 \
     --hash=sha256:661e1abd9198507b1409a20c02106d9670b2576e916d58f520316666abca6729 \
     --hash=sha256:708e7481cc80179af0e556bbf0cc00b8444c7321e2700b8d8580231d13017248
     # via pip-tools
-zipp==3.23.0 \
-    --hash=sha256:071652d6115ed432f5ce1d34c336c0adfd6a884660d1e9712a256d3d3bd4b14e \
-    --hash=sha256:a07157588a12518c9d4034df3fbbee09c814741a33ff63c05fa29d26a2404166
-    # via
-    #   -c src/backend/requirements.txt
-    #   importlib-metadata
