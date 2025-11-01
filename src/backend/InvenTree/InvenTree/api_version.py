@@ -1,13 +1,16 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 421
+INVENTREE_API_VERSION = 422
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v421 -> 2025-10-30 : https://github.com/inventree/InvenTree/pull/10715
+v422 -> 2025-10-30 : https://github.com/inventree/InvenTree/pull/10715
     - Adds GuideDefinition and GuideExecution models and API endpoints to provide tipps and guides within InvenTree's web frontend.
+
+v421 -> 2025-10-31 : https://github.com/inventree/InvenTree/pull/10724
+    - Allow upload of attachments against SupplierPart objects via the API
 
 v420 -> 2025-10-26 : https://github.com/inventree/InvenTree/pull/10675
     - Adds optional "customer_detail" filter to SalesOrderShipment API endpoint

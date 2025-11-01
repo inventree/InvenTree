@@ -15,6 +15,7 @@ from rest_framework import serializers
 from rest_framework.response import Response
 
 import part.filters
+import part.tasks as part_tasks
 from data_exporter.mixins import DataExportViewMixin
 from InvenTree.api import (
     BulkCreateMixin,
@@ -47,6 +48,7 @@ from InvenTree.mixins import (
     SerializerContextMixin,
     UpdateAPI,
 )
+from InvenTree.tasks import offload_task
 from stock.models import StockLocation
 
 from . import serializers as part_serializers
@@ -633,7 +635,14 @@ class PartValidateBOM(RetrieveUpdateAPI):
 
         valid = str2bool(serializer.validated_data.get('valid', False))
 
-        part.validate_bom(request.user, valid=valid)
+        # BOM validation may take some time, so we offload it to a background task
+        offload_task(
+            part_tasks.validate_bom,
+            part.pk,
+            valid,
+            user_id=request.user.pk if request and request.user else None,
+            group='part',
+        )
 
         # Re-serialize the response
         serializer = self.get_serializer(part, many=False)
