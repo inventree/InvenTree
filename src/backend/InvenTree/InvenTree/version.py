@@ -69,7 +69,7 @@ def checkMinPythonVersion():
     - {docs}
     """
 
-    if sys.version_info.major < 3:
+    if sys.version_info.major < 3:  # noqa: UP036
         raise RuntimeError(msg)
 
     if sys.version_info.major == 3 and sys.version_info.minor < 11:
