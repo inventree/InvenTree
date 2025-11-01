@@ -61,7 +61,7 @@ function detect_python() {
     echo "# POI07| No python environment found - using environment variable: ${SETUP_PYTHON}"
   fi
 
-  # Try to detect a python between 3.10 and 3.12 in reverse order
+  # Try to detect a python between lowest and highest supported in reverse order
   if [ -z "$(which ${SETUP_PYTHON})" ]; then
     echo "# POI07| Trying to detecting python3.${PYTHON_FROM} to python3.${PYTHON_TO} - using newest version"
     for i in $(seq $PYTHON_TO -1 $PYTHON_FROM); do
