@@ -4,8 +4,8 @@
 #
 Color_Off='\033[0m'
 On_Red='\033[41m'
-PYTHON_FROM=10
-PYTHON_TO=14
+PYTHON_FROM=11
+PYTHON_TO=15
 
 function detect_docker() {
   if [ -n "$(grep docker </proc/1/cgroup)" ]; then
@@ -79,7 +79,7 @@ function detect_python() {
     echo "${On_Red}"
     echo "# POI07| Python ${SETUP_PYTHON} not found - aborting!"
     echo "# POI07| Please ensure python can be executed with the command '$SETUP_PYTHON' by the current user '$USER'."
-    echo "# POI07| If you are using a different python version, please set the environment variable SETUP_PYTHON to the correct command - eg. 'python3.10'."
+    echo "# POI07| If you are using a different python version, please set the environment variable SETUP_PYTHON to the correct command - eg. 'python3.11'."
     echo "${Color_Off}"
     exit 1
   fi

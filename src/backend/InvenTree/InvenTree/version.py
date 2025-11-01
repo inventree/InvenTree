@@ -59,12 +59,12 @@ except Exception as exc:
 
 
 def checkMinPythonVersion():
-    """Check that the Python version is at least 3.10."""
+    """Check that the Python version is at least 3.11."""
     version = sys.version.split(' ')[0]
     docs = 'https://docs.inventree.org/en/stable/start/intro/#python-requirements'
 
     msg = f"""
-    InvenTree requires Python 3.10 or above - you are running version {version}.
+    InvenTree requires Python 3.11 or above - you are running version {version}.
     - Refer to the InvenTree documentation for more information:
     - {docs}
     """
@@ -72,7 +72,7 @@ def checkMinPythonVersion():
     if sys.version_info.major < 3:
         raise RuntimeError(msg)
 
-    if sys.version_info.major == 3 and sys.version_info.minor < 10:
+    if sys.version_info.major == 3 and sys.version_info.minor < 11:
         raise RuntimeError(msg)
 
     print(f'Python version {version} - {sys.executable}')
