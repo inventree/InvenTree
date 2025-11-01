@@ -10,7 +10,7 @@ import os
 import re
 from datetime import timedelta
 from decimal import Decimal, InvalidOperation
-from typing import Optional, cast
+from typing import cast
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -394,15 +394,15 @@ class PartReportContext(report.mixins.BaseReportContext):
     """
 
     bom_items: report.mixins.QuerySet[BomItem]
-    category: Optional[PartCategory]
+    category: PartCategory | None
     description: str
-    IPN: Optional[str]
+    IPN: str | None
     name: str
     parameters: dict[str, str]
     part: Part
     qr_data: str
     qr_url: str
-    revision: Optional[str]
+    revision: str | None
     test_template_list: report.mixins.QuerySet[PartTestTemplate]
     test_templates: dict[str, PartTestTemplate]
 

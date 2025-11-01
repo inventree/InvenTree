@@ -89,3 +89,7 @@ repos:
     rev: 0.4.3
     hooks:
     -   id: teyit
+-   repo: https://github.com/asottile/pyupgrade
+    rev: v3.21.0
+    hooks:
+    -   id: pyupgrade

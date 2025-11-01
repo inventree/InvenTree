@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import Optional
-
 from django.contrib.auth.models import User
 from django.db.models import F, Q
 from django.urls import include, path
@@ -627,7 +625,7 @@ class BuildLineList(
         'bom_item__reference',
     ]
 
-    def get_source_build(self) -> Optional[Build]:
+    def get_source_build(self) -> Build | None:
         """Return the target build for the BuildLine queryset."""
         source_build = None
 
@@ -646,7 +644,7 @@ class BuildLineDetail(BuildLineMixin, OutputOptionsMixin, RetrieveUpdateDestroyA
 
     output_options = BuildLineOutputOptions
 
-    def get_source_build(self) -> Optional[Build]:
+    def get_source_build(self) -> Build | None:
         """Return the target source location for the BuildLine queryset."""
         return None
 
