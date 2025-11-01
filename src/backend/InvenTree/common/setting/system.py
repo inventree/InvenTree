@@ -1,6 +1,7 @@
 """System settings definition."""
 
 import json
+import logging
 import os
 import re
 import uuid
@@ -9,16 +10,17 @@ from django.conf import settings as django_settings
 from django.contrib.auth.models import Group
 from django.core.exceptions import FieldDoesNotExist, ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator, URLValidator
-from django.template import Template
+from django.template import Context, Template
 from django.utils.translation import gettext_lazy as _
 
 import build.validators
 import common.currency
-import common.models
 import common.validators
 import order.validators
 import report.helpers
 from common.setting.type import InvenTreeSettingsKeyType
+
+logger = logging.getLogger('inventree')
 
 
 def validate_part_name_format(value):
@@ -29,12 +31,15 @@ def validate_part_name_format(value):
     # Make sure that the field_name exists in Part model
     from part.models import Part
 
-    jinja_template_regex = re.compile(r'{{.*?}}')
+    if not value:
+        raise ValidationError({'value': 'Template string cannot be empty'})
+
+    template_regex = re.compile(r'{{.*?}}')
     field_name_regex = re.compile(r'(?<=part\.)[A-z]+')
 
-    for jinja_template in jinja_template_regex.findall(str(value)):
+    for template in template_regex.findall(str(value)):
         # make sure at least one and only one field is present inside the parser
-        field_names = field_name_regex.findall(jinja_template)
+        field_names = field_name_regex.findall(template)
         if len(field_names) < 1:
             raise ValidationError({
                 'value': 'At least one field must be present inside a jinja template container i.e {{}}'
@@ -52,7 +57,7 @@ def validate_part_name_format(value):
     p = Part(name='test part', description='some test part')
 
     try:
-        Template(value).render({'part': p})
+        Template(value).render(Context({'part': p}))
     except Exception as exc:
         raise ValidationError({'value': str(exc)})
 
@@ -98,7 +103,6 @@ def settings_group_options():
 
 def reload_plugin_registry(setting):
     """When a core plugin setting is changed, reload the plugin registry."""
-    from common.models import logger
     from plugin import registry
 
     logger.info("Reloading plugin registry due to change in setting '%s'", setting.key)
