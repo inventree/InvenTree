@@ -1,5 +1,6 @@
 """AppConfig for InvenTree app."""
 
+import sys
 from importlib import import_module
 from pathlib import Path
 
@@ -321,5 +322,5 @@ class InvenTreeConfig(AppConfig):
 
         if not InvenTree.tasks.check_for_migrations():
             logger.error('INVE-W8: Database Migrations required')
-            # sys.exit(1)
+            sys.exit(1)
         MIGRATIONS_CHECK_DONE = True

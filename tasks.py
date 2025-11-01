@@ -477,9 +477,6 @@ def plugins(c, uv=False):
         run(c, f"uv pip install -r '{plugin_file}'")
 
     # Collect plugin static files
-    print('#####listing all available commandsplugin')
-    manage(c, '')
-    print('#####')
     manage(c, 'collectplugins')
 
 
