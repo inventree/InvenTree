@@ -273,7 +273,7 @@ To convert a currency value from one currency to another, use the `convert_curre
 !!! info "Data Types"
     The `money` parameter must be `Money` class instance. If not, an error will be raised.
 
-#### create_currency
+### create_currency
 
 Create a `currency` instance using the `create_currency` helper function. This returns a `Money` class instance based on the provided amount and currency type.
 
