@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 421
+INVENTREE_API_VERSION = 422
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v422 -> 2025-11-02 : https://github.com/inventree/InvenTree/pull/10730
+    - Adds more lower / upper bounds to integer fields in the API schema due to bump to Django 5.2- no functional changes
 
 v421 -> 2025-10-31 : https://github.com/inventree/InvenTree/pull/10724
     - Allow upload of attachments against SupplierPart objects via the API
