@@ -1,5 +1,8 @@
 """DRF API serializers for the 'users' app."""
 
+import secrets
+import string
+
 from django.contrib.auth.models import Group, Permission, User
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
@@ -382,6 +385,20 @@ class MeUserSerializer(ExtendedUserSerializer):
     profile = UserProfileSerializer(many=False, read_only=True)
 
 
+def make_random_password(length=14):
+    """Generate a random password of given length."""
+    alphabet = string.ascii_letters + string.digits
+    while True:
+        password = ''.join(secrets.choice(alphabet) for i in range(length))
+        if (
+            any(c.islower() for c in password)
+            and any(c.isupper() for c in password)
+            and sum(c.isdigit() for c in password) >= 3
+        ):
+            break
+    return password
+
+
 class UserCreateSerializer(ExtendedUserSerializer):
     """Serializer for creating a new User."""
 
@@ -402,7 +419,7 @@ class UserCreateSerializer(ExtendedUserSerializer):
             )
 
         # Generate a random password
-        password = User.objects.make_random_password(length=14)
+        password = make_random_password(length=14)
         attrs.update({'password': password})
         return super().validate(attrs)
 
