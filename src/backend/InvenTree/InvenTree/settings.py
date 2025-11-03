@@ -42,7 +42,7 @@ from InvenTree.version import (
 from users.oauth2_scopes import oauth2_scopes
 
 from . import config
-from .setting import locales, storages
+from .setting import locales, markdown, storages
 
 try:
     import django_stubs_ext
@@ -1403,42 +1403,7 @@ LOGOUT_REDIRECT_URL = get_setting(
 # Markdownify configuration
 # Ref: https://django-markdownify.readthedocs.io/en/latest/settings.html
 
-MARKDOWNIFY = {
-    'default': {
-        'BLEACH': True,
-        'WHITELIST_ATTRS': ['href', 'src', 'alt'],
-        'MARKDOWN_EXTENSIONS': ['markdown.extensions.extra'],
-        'WHITELIST_TAGS': [
-            'a',
-            'abbr',
-            'b',
-            'blockquote',
-            'code',
-            'em',
-            'h1',
-            'h2',
-            'h3',
-            'h4',
-            'h5',
-            'hr',
-            'i',
-            'img',
-            'li',
-            'ol',
-            'p',
-            'pre',
-            's',
-            'strong',
-            'table',
-            'thead',
-            'tbody',
-            'th',
-            'tr',
-            'td',
-            'ul',
-        ],
-    }
-}
+MARKDOWNIFY = markdown.markdownify_config()
 
 # Ignore these error types for in-database error logging
 IGNORED_ERRORS = [Http404, HttpResponseGone, django.core.exceptions.PermissionDenied]
