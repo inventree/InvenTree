@@ -1,10 +1,14 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 421
+INVENTREE_API_VERSION = 422
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v422 -> 2025-11-03 : https://github.com/inventree/InvenTree/pull/10750
+    - Adds ability to search StockItem API by supplier SKU
+    - Adds ability to search StockItem API by manufacturer MPN
 
 v421 -> 2025-10-31 : https://github.com/inventree/InvenTree/pull/10724
     - Allow upload of attachments against SupplierPart objects via the API
