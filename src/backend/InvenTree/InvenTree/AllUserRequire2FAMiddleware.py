@@ -44,7 +44,9 @@ class AllUserRequire2FAMiddleware(MiddlewareMixin):
 
     def on_require_2fa(self, request: HttpRequest) -> HttpResponse:
         """Force user to mfa activation."""
-        return JsonResponse({'id': 'mfa_register'}, status=401)
+        return JsonResponse(
+            {'id': 'mfa_register', 'error': self.require_2fa_message}, status=401
+        )
 
     def is_allowed_page(self, request: HttpRequest) -> bool:
         """Check if the current page can be accessed without mfa."""
