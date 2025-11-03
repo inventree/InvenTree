@@ -1290,10 +1290,12 @@ class StockList(
     search_fields = [
         'serial',
         'batch',
+        'location__name',
         'part__name',
         'part__IPN',
         'part__description',
-        'location__name',
+        'supplier_part__SKU',
+        'supplier_part__supplier__name',
         'tags__name',
         'tags__slug',
     ]
