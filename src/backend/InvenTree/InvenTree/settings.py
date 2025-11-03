@@ -265,13 +265,9 @@ DBBACKUP_EMAIL_SUBJECT_PREFIX = InvenTree.backup.backup_email_prefix()
 DBBACKUP_CONNECTORS = {'default': InvenTree.backup.get_backup_connector_options()}
 
 # Data storage options
-STORAGES = {
-    'default': {'BACKEND': 'django.core.files.storage.FileSystemStorage'},
-    'staticfiles': {'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage'},
-    'dbbackup': {
-        'BACKEND': InvenTree.backup.get_backup_storage_backend(),
-        'OPTIONS': InvenTree.backup.get_backup_storage_options(),
-    },
+DBBACKUP_STORAGE_CONFIG = {
+    'BACKEND': InvenTree.backup.get_backup_storage_backend(),
+    'OPTIONS': InvenTree.backup.get_backup_storage_options(),
 }
 
 # Enable django admin interface?
@@ -1567,6 +1563,8 @@ if SITE_URL and not TESTING:  # pragma: no cover
 
 # Storage backends
 STORAGE_TARGET, STORAGES, _media = storages.init_storages()
+if 'dbbackup' not in STORAGES:
+    STORAGES['dbbackup'] = DBBACKUP_STORAGE_CONFIG
 if _media:
     MEDIA_URL = _media
 PRESIGNED_URL_EXPIRATION = 600
