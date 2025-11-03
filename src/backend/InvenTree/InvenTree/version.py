@@ -18,7 +18,7 @@ from django.conf import settings
 from .api_version import INVENTREE_API_TEXT, INVENTREE_API_VERSION
 
 # InvenTree software version
-INVENTREE_SW_VERSION = '1.1.1'
+INVENTREE_SW_VERSION = '1.1.2'
 
 
 logger = logging.getLogger('inventree')
