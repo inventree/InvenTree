@@ -355,13 +355,6 @@ export function PurchaseOrderLineItemTable({
             receiveLineItems.open();
           }
         },
-        RowViewAction({
-          hidden: !record.build_order,
-          title: t`View Build Order`,
-          modelType: ModelType.build,
-          modelId: record.build_order,
-          navigate: navigate
-        }),
         RowEditAction({
           hidden: !canEdit,
           onClick: () => {
@@ -382,6 +375,13 @@ export function PurchaseOrderLineItemTable({
             setSelectedLine(record.pk);
             deleteLine.open();
           }
+        }),
+        RowViewAction({
+          hidden: !record.build_order,
+          title: t`View Build Order`,
+          modelType: ModelType.build,
+          modelId: record.build_order,
+          navigate: navigate
         })
       ];
     },
