@@ -4,6 +4,7 @@ import { showNotification } from '@mantine/notifications';
 import {
   IconArrowRight,
   IconCircleCheck,
+  IconEdit,
   IconExclamationCircle,
   IconFileArrowLeft,
   IconLock,
@@ -27,7 +28,7 @@ import { apiUrl } from '@lib/functions/Api';
 import { navigateToLink } from '@lib/functions/Navigation';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
-import { Thumbnail } from '../../components/images/Thumbnail';
+import type { DataTableRowExpansionProps } from 'mantine-datatable';
 import ImporterDrawer from '../../components/importer/ImporterDrawer';
 import { RenderPart } from '../../components/render/Part';
 import { useApi } from '../../contexts/ApiContext';
@@ -45,11 +46,14 @@ import {
   BooleanColumn,
   DescriptionColumn,
   NoteColumn,
-  ReferenceColumn
+  ReferenceColumn,
+  RenderPartColumn
 } from '../ColumnRenderers';
 import { PartCategoryFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
+import RowExpansionIcon from '../RowExpansionIcon';
 import { TableHoverCard } from '../TableHoverCard';
+import BomSubassemblyTable from './BomSubassemblyTable';
 
 // Calculate the total stock quantity available for a given BomItem
 function availableStockQuantity(record: any): number {
@@ -81,6 +85,8 @@ export function BomTable({
   const table = useTable('bom');
   const navigate = useNavigate();
 
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+
   const [importOpened, setImportOpened] = useState<boolean>(false);
 
   const [selectedSession, setSelectedSession] = useState<number | undefined>(
@@ -93,6 +99,7 @@ export function BomTable({
         accessor: 'sub_part',
         switchable: false,
         sortable: true,
+        minWidth: 250,
         render: (record: any) => {
           const part = record.sub_part_detail;
           const extra = [];
@@ -105,18 +112,16 @@ export function BomTable({
 
           return (
             part && (
-              <Group gap='xs' justify='space-between' wrap='nowrap'>
-                <TableHoverCard
-                  value={
-                    <Thumbnail
-                      src={part.thumbnail || part.image}
-                      alt={part.description}
-                      text={part.full_name}
+              <Group justify='space-between'>
+                <Group gap='xs' wrap='nowrap'>
+                  {!isEditing && part?.assembly && (
+                    <RowExpansionIcon
+                      enabled={part?.assembly}
+                      expanded={table.isRowExpanded(record.pk)}
                     />
-                  }
-                  extra={extra}
-                  title={t`Part Information`}
-                />
+                  )}
+                  <RenderPartColumn part={part} />
+                </Group>
                 {!record.validated && (
                   <Tooltip label={t`This BOM item has not been validated`}>
                     <ActionIcon color='red' variant='transparent' size='sm'>
@@ -376,7 +381,8 @@ export function BomTable({
             return '-';
           }
 
-          const can_build = Math.trunc(record.can_build);
+          const can_build = Math.max(0, Math.trunc(record.can_build));
+
           const value = (
             <Text
               fs={record.consumable && 'italic'}
@@ -403,7 +409,7 @@ export function BomTable({
       },
       NoteColumn({})
     ];
-  }, [partId, params]);
+  }, [isEditing, partId, params]);
 
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
@@ -608,26 +614,71 @@ export function BomTable({
         })
       ];
     },
-    [partId, partLocked, user]
+    [isEditing, partId, partLocked, user]
   );
 
   const tableActions = useMemo(() => {
     return [
       <ActionButton
         key='import-bom'
-        hidden={partLocked || !user.hasAddRole(UserRoles.part)}
+        hidden={!isEditing || partLocked || !user.hasAddRole(UserRoles.part)}
         tooltip={t`Import BOM Data`}
         icon={<IconFileArrowLeft />}
         onClick={() => importBomItem.open()}
       />,
       <AddItemButton
         key='add-bom-item'
-        hidden={partLocked || !user.hasAddRole(UserRoles.part)}
+        hidden={!isEditing || partLocked || !user.hasAddRole(UserRoles.part)}
         tooltip={t`Add BOM Item`}
         onClick={() => newBomItem.open()}
+      />,
+      <ActionButton
+        key='edit-bom'
+        hidden={partLocked || !user.hasChangeRole(UserRoles.part) || isEditing}
+        tooltip={t`Edit BOM`}
+        icon={<IconEdit />}
+        onClick={() => {
+          setIsEditing(true);
+        }}
+      />,
+      <ActionButton
+        key='finish-editing'
+        hidden={!isEditing}
+        color='green'
+        tooltip={t`Finish Editing BOM`}
+        icon={<IconCircleCheck />}
+        onClick={() => {
+          setIsEditing(false);
+          table.refreshTable();
+        }}
       />
     ];
-  }, [partLocked, user]);
+  }, [isEditing, partLocked, user]);
+
+  // If not in "editing" mode, the BOM can be expanded to show subassemblies
+  const rowExpansionProps: DataTableRowExpansionProps<any> | undefined =
+    useMemo(() => {
+      if (isEditing) {
+        return undefined;
+      }
+
+      const subassemblyColumns: any[] = tableColumns.filter(
+        (col) => !col.hidden && !table.hiddenColumns.includes(col.accessor)
+      );
+
+      return {
+        allowMultiple: true,
+        expandable: ({ record }: { record: any }) =>
+          table.isRowExpanded(record.pk) || record.sub_part_detail?.assembly,
+        content: ({ record }: { record: any }) => (
+          <BomSubassemblyTable
+            columns={subassemblyColumns}
+            partId={record.sub_part}
+            depth={0}
+          />
+        )
+      };
+    }, [isEditing, tableColumns, table.hiddenColumns, table.isRowExpanded]);
 
   return (
     <>
@@ -662,10 +713,13 @@ export function BomTable({
             tableFilters: tableFilters,
             modelType: ModelType.part,
             modelField: 'sub_part',
-            rowActions: rowActions,
-            enableSelection: !partLocked,
-            enableBulkDelete: !partLocked && user.hasDeleteRole(UserRoles.part),
-            enableDownload: true
+            onCellClick: () => {},
+            rowActions: isEditing ? rowActions : undefined,
+            enableSelection: isEditing && !partLocked,
+            enableBulkDelete:
+              isEditing && !partLocked && user.hasDeleteRole(UserRoles.part),
+            enableDownload: true,
+            rowExpansion: rowExpansionProps
           }}
         />
       </Stack>
