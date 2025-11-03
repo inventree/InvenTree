@@ -1296,6 +1296,8 @@ class StockList(
         'part__description',
         'supplier_part__SKU',
         'supplier_part__supplier__name',
+        'supplier_part__manufacturer_part__MPN',
+        'supplier_part__manufacturer_part__manufacturer__name',
         'tags__name',
         'tags__slug',
     ]
