@@ -207,19 +207,17 @@ def image2name(img_obj: StdImageField, do_preview: bool, do_thumbnail: bool):
         do_thumbnail: Return thumbnail image name
     """
 
-    # Todo fix lookup
-    def extract_preview_filename(img_obj, ref: str):
+    def extract(ref: str):
         return None if not hasattr(img_obj, ref) else getattr(img_obj, ref).name
 
     if not img_obj:
-        img = None
+        return None
     elif do_preview:
-        img = extract_preview_filename(img_obj, 'preview')
+        return extract('preview')
     elif do_thumbnail:
-        img = extract_preview_filename(img_obj, 'thumbnail')
+        return extract('thumbnail')
     else:
-        img = img_obj.name
-    return img
+        return img_obj.name
 
 
 def getStaticUrl(filename):
