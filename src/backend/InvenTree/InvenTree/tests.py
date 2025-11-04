@@ -23,6 +23,7 @@ from djmoney.contrib.exchange.models import Rate, convert_money
 from djmoney.money import Money
 from maintenance_mode.core import get_maintenance_mode, set_maintenance_mode
 from sesame.utils import get_user
+from stdimage.models import StdImageFieldFile
 
 import InvenTree.conversion
 import InvenTree.format
@@ -700,7 +701,16 @@ class TestHelpers(TestCase):
 
     def testMediaUrl(self):
         """Test getMediaUrl."""
-        self.assertEqual(helpers.getMediaUrl('xx/yy.png'), '/media/xx/yy.png')
+        # Str should not work
+        with self.assertRaises(ValueError):
+            helpers.getMediaUrl('xx/yy.png')  # type: ignore
+
+        # Correct usage
+        part = Part().image
+        self.assertEqual(
+            helpers.getMediaUrl(StdImageFieldFile(part, part, 'xx/yy.png')),
+            '/media/xx/yy.png',
+        )
 
     def testDecimal2String(self):
         """Test decimal2string."""

@@ -176,15 +176,14 @@ def constructPathString(path: list[str], max_chars: int = 250) -> str:
     return pathstring
 
 
-def getMediaUrl(filename_or_obj, name: str | None = None):
+def getMediaUrl(file_obj: StdImageFieldFile, name: str | None = None):
     """Return the qualified access path for the given file, under the media directory."""
-    if name is not None and isinstance(filename_or_obj, StdImageFieldFile):
-        # Handle new thumbnail case
-        var_name = filename_or_obj.field.attr_class.get_variation_name(
-            filename_or_obj.name, name
-        )
-        filename_or_obj = ImageFieldFile(StdImageField, filename_or_obj, var_name)
-    val = filename_or_obj if isinstance(filename_or_obj, str) else filename_or_obj.url
+    if not isinstance(file_obj, StdImageFieldFile):
+        raise ValueError('file_obj must be an instance of StdImageFieldFile')
+    if name is not None:
+        var_name = file_obj.field.attr_class.get_variation_name(file_obj.name, name)
+        file_obj = ImageFieldFile(StdImageField, file_obj, var_name)
+    val = file_obj.url
     if settings.STORAGE_TARGET == StorageBackends.S3:
         return str(val)
     return os.path.join(MEDIA_URL, str(val))
