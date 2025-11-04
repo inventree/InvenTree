@@ -41,6 +41,7 @@ import { ProviderLogin, authApi } from '../../../../functions/auth';
 import { useServerApiState } from '../../../../states/ServerApiState';
 import { useUserState } from '../../../../states/UserState';
 import { ApiTokenTable } from '../../../../tables/settings/ApiTokenTable';
+import MFASettings from './MFASettings';
 import { QrRegistrationForm } from './QrRegistrationForm';
 import { useReauth } from './useConfirm';
 
@@ -85,7 +86,7 @@ export function SecurityContent() {
             <StylishText size='lg'>{t`Multi-Factor Authentication`}</StylishText>
           </Accordion.Control>
           <Accordion.Panel>
-            <MfaSection />
+            <MFASettings />
           </Accordion.Panel>
         </Accordion.Item>
         <Accordion.Item value='token'>
