@@ -323,8 +323,9 @@ def part_image(part: Part, preview: bool = False, thumbnail: bool = False, **kwa
     """
     if type(part) is not Part:
         raise TypeError(_('part_image tag requires a Part instance'))
-    img = InvenTree.helpers.image2name(part.image, preview, thumbnail)
-    return uploaded_image(img, **kwargs)
+    return uploaded_image(
+        InvenTree.helpers.image2name(part.image, preview, thumbnail), **kwargs
+    )
 
 
 @register.simple_tag()
@@ -359,8 +360,9 @@ def company_image(
     """
     if type(company) is not Company:
         raise TypeError(_('company_image tag requires a Company instance'))
-    img = InvenTree.helpers.image2name(company.image, preview, thumbnail)
-    return uploaded_image(img, **kwargs)
+    return uploaded_image(
+        InvenTree.helpers.image2name(company.image, preview, thumbnail), **kwargs
+    )
 
 
 @register.simple_tag()
