@@ -425,7 +425,7 @@ InvenTree provides allowance for additional sign-in options. The following optio
 | Environment Variable | Configuration File | Description | Default |
 | --- | --- | --- | --- |
 | INVENTREE_MFA_ENABLED | mfa_enabled | Enable or disable multi-factor authentication support for the InvenTree server | True |
-| INVENTREE_MFA_SUPPORTED_TYPES | mfa_supported_types | List of supported multi-factor authentication types | recovery_codes,totp |
+| INVENTREE_MFA_SUPPORTED_TYPES | mfa_supported_types | List of supported multi-factor authentication types | recovery_codes,totp,webauthn |
 
 ### Single Sign On
 
