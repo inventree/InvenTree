@@ -420,12 +420,14 @@ It is also possible to use alternative storage backends for static and media fil
 
 ## Authentication
 
-InvenTree provides allowance for additional sign-in options. The following options are not enabled by default, and care must be taken by the system administrator when configuring these settings.
+InvenTree provides allowance for additional sign-in options. Some of the following options are not enabled by default, and care must be taken by the system administrator when configuring these settings.
 
 | Environment Variable | Configuration File | Description | Default |
 | --- | --- | --- | --- |
 | INVENTREE_MFA_ENABLED | mfa_enabled | Enable or disable multi-factor authentication support for the InvenTree server | True |
-| INVENTREE_MFA_SUPPORTED_TYPES | mfa_supported_types | List of supported multi-factor authentication types | recovery_codes,totp |
+| INVENTREE_MFA_SUPPORTED_TYPES | mfa_supported_types | List of supported multi-factor authentication types | recovery_codes,totp,webauthn |
+| INVENTREE_MFA_PASSKEY_LOGIN_ENABLED | mfa_passkey_login_enabled | Enable or disable webauthn passkey login support for the InvenTree server. For this to work, webauthn must be included in the list of supported types. | True |
+| INVENTREE_MFA_WEBAUTHN_ALLOW_INSECURE | mfa_webauthn_allow_insecure | Allow insecure origins (i.e. non-https) for webauthn authentication. This is useful for development purposes, but should not be enabled in production environments. | False |
 
 ### Single Sign On
 

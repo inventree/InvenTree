@@ -1378,18 +1378,27 @@ ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True
 
 HEADLESS_ONLY = True
 HEADLESS_CLIENTS = 'browser'
-MFA_ENABLED = get_boolean_setting(
-    'INVENTREE_MFA_ENABLED', 'mfa_enabled', True
-)  # TODO re-implement
-MFA_SUPPORTED_TYPES = get_setting(
-    'INVENTREE_MFA_SUPPORTED_TYPES',
-    'mfa_supported_types',
-    ['totp', 'recovery_codes', 'webauthn'],
-    typecast=list,
+MFA_ENABLED = get_boolean_setting('INVENTREE_MFA_ENABLED', 'mfa_enabled', True)
+MFA_SUPPORTED_TYPES = (
+    get_setting(
+        'INVENTREE_MFA_SUPPORTED_TYPES',
+        'mfa_supported_types',
+        ['totp', 'recovery_codes', 'webauthn'],
+        typecast=list,
+    )
+    if MFA_ENABLED
+    else []
 )
+
 MFA_TRUST_ENABLED = True
-MFA_PASSKEY_LOGIN_ENABLED = True
-MFA_WEBAUTHN_ALLOW_INSECURE_ORIGIN = DEBUG
+
+MFA_PASSKEY_LOGIN_ENABLED = get_boolean_setting(
+    'INVENTREE_MFA_PASSKEY_LOGIN_ENABLED', 'mfa_passkey_login_enabled', True
+)
+
+MFA_WEBAUTHN_ALLOW_INSECURE_ORIGIN = get_boolean_setting(
+    'INVENTREE_MFA_WEBAUTHN_ALLOW_INSECURE', 'mfa_webauthn_allow_insecure', DEBUG
+)
 
 LOGOUT_REDIRECT_URL = get_setting(
     'INVENTREE_LOGOUT_REDIRECT_URL', 'logout_redirect_url', 'index'
