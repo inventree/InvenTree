@@ -441,9 +441,11 @@ function UserMFASection({
  * Section for adding new MFA methods for the user
  */
 function AddMFASection({
-  usedFactors
+  usedFactors,
+  refetchFactors
 }: {
   usedFactors: string[];
+  refetchFactors: () => void;
 }) {
   const [auth_config] = useServerApiState(
     useShallow((state) => [state.auth_config])
@@ -522,7 +524,7 @@ function AddMFASection({
         opened={registerTOTPModalOpen}
         setOpen={setRegisterTOTPModalOpen}
         onReauthFlow={reauthenticate}
-        onSuccess={() => {}}
+        onSuccess={refetchFactors}
       />
       <ReauthenticatePasswordModal
         opened={reauthPassOpen}
@@ -573,7 +575,7 @@ export default function MFASettings() {
   return (
     <SimpleGrid cols={{ xs: 1, md: 2 }} spacing='sm'>
       {isLoading ? <Loader /> : <UserMFASection data={data} />}
-      <AddMFASection usedFactors={usedFactors} />
+      <AddMFASection usedFactors={usedFactors} refetchFactors={refetch} />
     </SimpleGrid>
   );
 }
