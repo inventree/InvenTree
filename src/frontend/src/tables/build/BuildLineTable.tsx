@@ -102,12 +102,6 @@ export function BuildLineSubTable({
   const rowActions = useCallback(
     (record: any): RowAction[] => {
       return [
-        RowViewAction({
-          title: t`View Stock Item`,
-          modelType: ModelType.stockitem,
-          modelId: record.stock_item,
-          navigate: navigate
-        }),
         RowEditAction({
           hidden: !onEditAllocation || !user.hasChangeRole(UserRoles.build),
           onClick: () => {
@@ -119,6 +113,12 @@ export function BuildLineSubTable({
           onClick: () => {
             onDeleteAllocation?.(record.pk);
           }
+        }),
+        RowViewAction({
+          title: t`View Stock Item`,
+          modelType: ModelType.stockitem,
+          modelId: record.stock_item,
+          navigate: navigate
         })
       ];
     },

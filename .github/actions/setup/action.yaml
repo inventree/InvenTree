@@ -57,7 +57,7 @@ runs:
         run: |
           python3 -m pip install -U pip
           pip3 install -U invoke wheel
-          pip3 install 'uv>=0.9.4'
+          pip3 install 'uv>=0.9.6'
       - name: Allow uv to use the system Python by default
         run: echo "UV_SYSTEM_PYTHON=1" >> $GITHUB_ENV
         shell: bash

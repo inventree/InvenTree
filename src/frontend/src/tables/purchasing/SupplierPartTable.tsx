@@ -66,6 +66,12 @@ export function SupplierPartTable({
         part: 'part_detail'
       }),
       {
+        accessor: 'part_detail.IPN',
+        title: t`IPN`,
+        sortable: false,
+        switchable: true
+      },
+      {
         accessor: 'supplier',
         sortable: true,
         render: (record: any) => (
