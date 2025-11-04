@@ -34,15 +34,11 @@ from InvenTree.config import (
 )
 from InvenTree.ready import isInMainThread
 from InvenTree.sentry import default_sentry_dsn, init_sentry
-from InvenTree.version import (
-    checkMinPythonVersion,
-    inventreeApiVersion,
-    inventreeCommitHash,
-)
+from InvenTree.version import checkMinPythonVersion, inventreeCommitHash
 from users.oauth2_scopes import oauth2_scopes
 
 from . import config
-from .setting import locales, markdown, storages
+from .setting import locales, markdown, spectacular, storages
 
 try:
     import django_stubs_ext
@@ -1483,40 +1479,8 @@ SESAME_MAX_AGE = 300
 LOGIN_REDIRECT_URL = '/api/auth/login-redirect/'
 
 # Configuration for API schema generation / oAuth2
-SPECTACULAR_SETTINGS = {
-    'TITLE': 'InvenTree API',
-    'DESCRIPTION': 'API for InvenTree - the intuitive open source inventory management system',
-    'LICENSE': {
-        'name': 'MIT',
-        'url': 'https://github.com/inventree/InvenTree/blob/master/LICENSE',
-    },
-    'EXTERNAL_DOCS': {
-        'description': 'More information about InvenTree in the official docs',
-        'url': 'https://docs.inventree.org',
-    },
-    'VERSION': str(inventreeApiVersion()),
-    'SERVE_INCLUDE_SCHEMA': False,
-    'SCHEMA_PATH_PREFIX': '/api/',
-    'POSTPROCESSING_HOOKS': [
-        'drf_spectacular.hooks.postprocess_schema_enums',
-        'InvenTree.schema.postprocess_required_nullable',
-        'InvenTree.schema.postprocess_print_stats',
-    ],
-    'ENUM_NAME_OVERRIDES': {
-        'UserTypeEnum': 'users.models.UserProfile.UserType',
-        'TemplateModelTypeEnum': 'report.models.ReportTemplateBase.ModelChoices',
-        'AttachmentModelTypeEnum': 'common.models.Attachment.ModelChoices',
-        'DataImportSessionModelTypeEnum': 'importer.models.DataImportSession.ModelChoices',
-        # Allauth
-        'UnauthorizedStatus': [[401, 401]],
-        'IsTrueEnum': [[True, True]],
-    },
-    # oAuth2
-    'OAUTH2_FLOWS': ['authorizationCode', 'clientCredentials'],
-    'OAUTH2_AUTHORIZATION_URL': '/o/authorize/',
-    'OAUTH2_TOKEN_URL': '/o/token/',
-    'OAUTH2_REFRESH_URL': '/o/revoke_token/',
-}
+SPECTACULAR_SETTINGS = spectacular.get_spectacular_settings()
+
 OAUTH2_PROVIDER = {
     # default scopes
     'SCOPES': oauth2_scopes,
