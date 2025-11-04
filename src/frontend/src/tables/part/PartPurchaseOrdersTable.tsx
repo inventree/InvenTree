@@ -69,13 +69,13 @@ export default function PartPurchaseOrdersTable({
             const total = record.quantity * supplier_part.pack_quantity_native;
 
             extra.push(
-              <Text key='pack-quantity'>
+              <Text key='pack-quantity' size='sm'>
                 {t`Pack Quantity`}: {supplier_part.pack_quantity}
               </Text>
             );
 
             extra.push(
-              <Text key='total-quantity'>
+              <Text key='total-quantity' size='sm'>
                 {t`Total Quantity`}: {formatDecimal(total)} {part?.units}
               </Text>
             );
