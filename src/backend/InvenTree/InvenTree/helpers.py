@@ -198,13 +198,17 @@ def image2name(img_obj: StdImageField, do_preview: bool, do_thumbnail: bool):
         do_preview: Return preview image name
         do_thumbnail: Return thumbnail image name
     """
+
     # Todo fix lookup
+    def extract_preview_filename(img_obj, ref: str):
+        return None if not hasattr(img_obj, ref) else getattr(img_obj, ref).name
+
     if not img_obj:
         img = None
     elif do_preview:
-        img = None if not hasattr(img_obj, 'preview') else img_obj.preview.name
+        img = extract_preview_filename(img_obj, 'preview')
     elif do_thumbnail:
-        img = None if not hasattr(img_obj, 'thumbnail') else img_obj.thumbnail.name
+        img = extract_preview_filename(img_obj, 'thumbnail')
     else:
         img = img_obj.name
     return img
