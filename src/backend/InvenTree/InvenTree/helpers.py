@@ -176,17 +176,26 @@ def constructPathString(path: list[str], max_chars: int = 250) -> str:
     return pathstring
 
 
-def getMediaUrl(file_obj: StdImageFieldFile, name: str | None = None):
+def getMediaUrl(file: StdImageFieldFile | ImageFieldFile, name: str | None = None):
     """Return the qualified access path for the given file, under the media directory."""
-    if not isinstance(file_obj, StdImageFieldFile):
+    if not isinstance(file, StdImageFieldFile):
         raise ValueError('file_obj must be an instance of StdImageFieldFile')
     if name is not None:
-        var_name = file_obj.field.attr_class.get_variation_name(file_obj.name, name)
-        file_obj = ImageFieldFile(StdImageField, file_obj, var_name)
-    val = file_obj.url
+        file = regenerate_imagefile(file, name)
     if settings.STORAGE_TARGET == StorageBackends.S3:
-        return str(val)
-    return os.path.join(MEDIA_URL, str(val))
+        return str(file.url)
+    return os.path.join(MEDIA_URL, str(file.url))
+
+
+def regenerate_imagefile(_file, _name: str):
+    """Regenerate a file object for a given variation name.
+
+    Arguments:
+        _file: Original file object
+        _name: Name of the variation (e.g. 'thumbnail', 'preview')
+    """
+    name = _file.field.attr_class.get_variation_name(_file.name, _name)
+    return ImageFieldFile(StdImageField, _file, name)
 
 
 def image2name(img_obj: StdImageField, do_preview: bool, do_thumbnail: bool):
