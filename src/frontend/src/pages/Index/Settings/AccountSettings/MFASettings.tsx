@@ -8,7 +8,6 @@ import {
   Button,
   Divider,
   Group,
-  Loader,
   Modal,
   PasswordInput,
   SimpleGrid,
@@ -27,7 +26,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import { api } from '../../../../App';
 import { StylishText } from '../../../../components/items/StylishText';
-import { useTable } from '../../../../hooks/UseTable';
 import { useServerApiState } from '../../../../states/ServerApiState';
 import { QrRegistrationForm } from './QrRegistrationForm';
 import { parseDate } from './SecurityContent';
@@ -344,14 +342,56 @@ function RegisterTOTPModal({
 }
 
 /**
- * Section for displaying the user's existing MFA methods
+ * Section for adding new MFA methods for the user
  */
-function UserMFASection({
-  data
-}: {
-  data: any[];
-}) {
-  const table = useTable('user-mfa-methods');
+export default function MFASettings() {
+  const [auth_config] = useServerApiState(
+    useShallow((state) => [state.auth_config])
+  );
+
+  // Fetch list of MFA methods currently configured for the user
+  const { isLoading, data, refetch } = useQuery({
+    queryKey: ['mfa-list'],
+    queryFn: () =>
+      api
+        .get(apiUrl(ApiEndpoints.auth_authenticators))
+        .then((res) => res?.data?.data ?? [])
+        .catch(() => [])
+  });
+
+  // Memoize the list of currently used MFA factors
+  const usedFactors: string[] = useMemo(() => {
+    if (isLoading || !data) return [];
+    return data.map((token: any) => token.type);
+  }, [isLoading, data]);
+
+  const [reauthPassOpen, setReauthPassModalOpen] = useState<boolean>(false);
+  const [reauthTOTPOpen, setReauthTOTPModalOpen] = useState<boolean>(false);
+  const [registerTOTPModalOpen, setRegisterTOTPModalOpen] =
+    useState<boolean>(false);
+
+  // Callback function used to re-authenticate the user
+  const reauthenticate = useCallback((flow: FlowEnum) => {
+    switch (flow) {
+      case FlowEnum.Reauthenticate:
+        setReauthPassModalOpen(true);
+        break;
+      case FlowEnum.MfaReauthenticate:
+        setReauthTOTPModalOpen(true);
+        break;
+      default:
+        // Un-handled reauthentication flow
+        break;
+    }
+  }, []);
+
+  const registerRecoveryCodes = useCallback(() => {
+    // TODO
+  }, []);
+
+  const registerWebauthn = useCallback(() => {
+    // TODO
+  }, []);
 
   const removeTOTP = useCallback(() => {
     // TODO
@@ -365,10 +405,34 @@ function UserMFASection({
     // TODO
   }, []);
 
-  const rowActions = useCallback((record: any) => {
-    // TODO: Row actions
-    return [];
-  }, []);
+  // Memoize the list of possible MFA factors that can be registered
+  const possibleFactors = useMemo(() => {
+    return [
+      {
+        type: 'totp',
+        name: t`TOTP`,
+        description: t`Time-based One-Time Password`,
+        function: () => setRegisterTOTPModalOpen(true),
+        used: usedFactors?.includes('totp')
+      },
+      {
+        type: 'recovery_codes',
+        name: t`Recovery Codes`,
+        description: t`One-Time pre-generated recovery codes`,
+        function: registerRecoveryCodes,
+        used: usedFactors?.includes('recovery_codes')
+      },
+      {
+        type: 'webauthn',
+        name: t`WebAuthn`,
+        description: t`Web Authentication (WebAuthn) is a web standard for secure authentication`,
+        function: registerWebauthn,
+        used: usedFactors?.includes('webauthn')
+      }
+    ].filter((factor) => {
+      return auth_config?.mfa?.supported_types.includes(factor.type);
+    });
+  }, [usedFactors, auth_config]);
 
   const mfaRows = useMemo(() => {
     return data.map((token: any) => (
@@ -402,129 +466,13 @@ function UserMFASection({
     ));
   }, [data]);
 
-  if (data.length === 0) {
-    return (
-      <Alert
-        title={t`Not Configured`}
-        icon={<IconAlertCircle size='1rem' />}
-        color='yellow'
-      >
-        <Trans>No multi-factor tokens configured for this account</Trans>
-      </Alert>
-    );
-  }
-
-  return (
-    <Table stickyHeader striped highlightOnHover withTableBorder>
-      <Table.Thead>
-        <Table.Tr>
-          <Table.Th>
-            <Trans>Type</Trans>
-          </Table.Th>
-          <Table.Th>
-            <Trans>Last used at</Trans>
-          </Table.Th>
-          <Table.Th>
-            <Trans>Created at</Trans>
-          </Table.Th>
-          <Table.Th>
-            <Trans>Actions</Trans>
-          </Table.Th>
-        </Table.Tr>
-      </Table.Thead>
-      <Table.Tbody>{mfaRows}</Table.Tbody>
-    </Table>
-  );
-}
-
-/**
- * Section for adding new MFA methods for the user
- */
-function AddMFASection({
-  usedFactors,
-  refetchFactors
-}: {
-  usedFactors: string[];
-  refetchFactors: () => void;
-}) {
-  const [auth_config] = useServerApiState(
-    useShallow((state) => [state.auth_config])
-  );
-
-  const [reauthPassOpen, setReauthPassModalOpen] = useState<boolean>(false);
-  const [reauthTOTPOpen, setReauthTOTPModalOpen] = useState<boolean>(false);
-  const [registerTOTPModalOpen, setRegisterTOTPModalOpen] =
-    useState<boolean>(false);
-
-  const reauthenticate = useCallback((flow: FlowEnum) => {
-    switch (flow) {
-      case FlowEnum.Reauthenticate:
-        setReauthPassModalOpen(true);
-        break;
-      case FlowEnum.MfaReauthenticate:
-        setReauthTOTPModalOpen(true);
-        break;
-      default:
-        // Un-handled reauthentication flow
-        break;
-    }
-  }, []);
-
-  const registerRecoveryCodes = useCallback(() => {
-    // TODO
-  }, []);
-
-  const registerWebauthn = useCallback(() => {
-    // TODO
-  }, []);
-
-  const possibleFactors = useMemo(() => {
-    return [
-      {
-        type: 'totp',
-        name: t`TOTP`,
-        description: t`Time-based One-Time Password`,
-        function: () => setRegisterTOTPModalOpen(true),
-        used: usedFactors?.includes('totp')
-      },
-      {
-        type: 'recovery_codes',
-        name: t`Recovery Codes`,
-        description: t`One-Time pre-generated recovery codes`,
-        function: registerRecoveryCodes,
-        used: usedFactors?.includes('recovery_codes')
-      },
-      {
-        type: 'webauthn',
-        name: t`WebAuthn`,
-        description: t`Web Authentication (WebAuthn) is a web standard for secure authentication`,
-        function: registerWebauthn,
-        used: usedFactors?.includes('webauthn')
-      }
-    ].filter((factor) => {
-      return auth_config?.mfa?.supported_types.includes(factor.type);
-    });
-  }, [usedFactors, auth_config]);
-
-  if (possibleFactors.length === 0) {
-    return (
-      <Alert
-        title={t`No MFA Methods Available`}
-        icon={<IconAlertCircle size='1rem' />}
-        color='yellow'
-      >
-        <Trans>There are no MFA methods available for configuration</Trans>
-      </Alert>
-    );
-  }
-
   return (
     <>
       <RegisterTOTPModal
         opened={registerTOTPModalOpen}
         setOpen={setRegisterTOTPModalOpen}
         onReauthFlow={reauthenticate}
-        onSuccess={refetchFactors}
+        onSuccess={refetch}
       />
       <ReauthenticatePasswordModal
         opened={reauthPassOpen}
@@ -534,48 +482,61 @@ function AddMFASection({
         opened={reauthTOTPOpen}
         setOpen={setReauthTOTPModalOpen}
       />
-      <Stack>
-        <StylishText size='md'>{t`Register Authentication Method`}</StylishText>
-        {possibleFactors.map((factor) => (
-          <Tooltip label={factor.description} key={factor.type}>
-            <Button
-              onClick={factor.function}
-              disabled={factor.used}
-              variant='outline'
-            >
-              {factor.name}
-            </Button>
-          </Tooltip>
-        ))}
-      </Stack>
+      <SimpleGrid cols={{ xs: 1, md: 2 }} spacing='sm'>
+        {mfaRows.length > 0 ? (
+          <Table stickyHeader striped highlightOnHover withTableBorder>
+            <Table.Thead>
+              <Table.Tr>
+                <Table.Th>
+                  <Trans>Type</Trans>
+                </Table.Th>
+                <Table.Th>
+                  <Trans>Last used at</Trans>
+                </Table.Th>
+                <Table.Th>
+                  <Trans>Created at</Trans>
+                </Table.Th>
+                <Table.Th>
+                  <Trans>Actions</Trans>
+                </Table.Th>
+              </Table.Tr>
+            </Table.Thead>
+            <Table.Tbody>{mfaRows}</Table.Tbody>
+          </Table>
+        ) : (
+          <Alert
+            title={t`Not Configured`}
+            icon={<IconAlertCircle size='1rem' />}
+            color='yellow'
+          >
+            <Trans>No multi-factor tokens configured for this account</Trans>
+          </Alert>
+        )}
+        {possibleFactors.length > 0 ? (
+          <Stack>
+            <StylishText size='md'>{t`Register Authentication Method`}</StylishText>
+            {possibleFactors.map((factor) => (
+              <Tooltip label={factor.description} key={factor.type}>
+                <Button
+                  onClick={factor.function}
+                  disabled={factor.used}
+                  variant='outline'
+                >
+                  {factor.name}
+                </Button>
+              </Tooltip>
+            ))}
+          </Stack>
+        ) : (
+          <Alert
+            title={t`No MFA Methods Available`}
+            icon={<IconAlertCircle size='1rem' />}
+            color='yellow'
+          >
+            <Trans>There are no MFA methods available for configuration</Trans>
+          </Alert>
+        )}
+      </SimpleGrid>
     </>
-  );
-}
-
-/**
- * Configure user MFA (Multi-Factor Authentication) settings
- */
-export default function MFASettings() {
-  // Fetch list of MFA methods currently configured for the user
-  const { isLoading, data, refetch } = useQuery({
-    queryKey: ['mfa-list'],
-    queryFn: () =>
-      api
-        .get(apiUrl(ApiEndpoints.auth_authenticators))
-        .then((res) => res?.data?.data ?? [])
-        .catch(() => [])
-  });
-
-  // Memoize the list of currently used MFA factors
-  const usedFactors: string[] = useMemo(() => {
-    if (isLoading || !data) return [];
-    return data.map((token: any) => token.type);
-  }, [isLoading, data]);
-
-  return (
-    <SimpleGrid cols={{ xs: 1, md: 2 }} spacing='sm'>
-      {isLoading ? <Loader /> : <UserMFASection data={data} />}
-      <AddMFASection usedFactors={usedFactors} refetchFactors={refetch} />
-    </SimpleGrid>
   );
 }
