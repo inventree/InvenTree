@@ -67,7 +67,7 @@ from InvenTree.version import inventree_identifier
 logger = structlog.get_logger('inventree')
 
 
-class RenderMeta(enums.ChoicesMeta):
+class RenderMeta(enums.ChoicesType):
     """Metaclass for rendering choices."""
 
     choice_fnc = None
