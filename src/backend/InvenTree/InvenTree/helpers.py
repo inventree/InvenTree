@@ -190,6 +190,26 @@ def getMediaUrl(filename_or_obj, name: str | None = None):
     return os.path.join(MEDIA_URL, str(val))
 
 
+def image2name(img_obj: StdImageField, do_preview: bool, do_thumbnail: bool):
+    """Convert an image object to a filename string.
+
+    Arguments:
+        img_obj: Image object
+        do_preview: Return preview image name
+        do_thumbnail: Return thumbnail image name
+    """
+    # Todo fix lookup
+    if not img_obj:
+        img = None
+    elif do_preview:
+        img = None if not hasattr(img_obj, 'preview') else img_obj.preview.name
+    elif do_thumbnail:
+        img = None if not hasattr(img_obj, 'thumbnail') else img_obj.thumbnail.name
+    else:
+        img = img_obj.name
+    return img
+
+
 def getStaticUrl(filename):
     """Return the qualified access path for the given file, under the static media directory."""
     return os.path.join(STATIC_URL, str(filename))
