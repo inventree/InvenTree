@@ -138,7 +138,8 @@ export function BomTable({
         accessor: 'category_detail',
         defaultVisible: false,
         switchable: true,
-        sortable: false
+        sortable: true,
+        ordering: 'category'
       }),
       DescriptionColumn({
         accessor: 'sub_part_detail.description'
