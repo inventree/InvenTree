@@ -42,6 +42,7 @@ import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import {
   BooleanColumn,
+  CategoryColumn,
   DescriptionColumn,
   NoteColumn,
   ReferenceColumn
@@ -133,6 +134,12 @@ export function BomTable({
         title: t`IPN`,
         sortable: true
       },
+      CategoryColumn({
+        accessor: 'category_detail',
+        defaultVisible: false,
+        switchable: true,
+        sortable: false
+      }),
       DescriptionColumn({
         accessor: 'sub_part_detail.description'
       }),
@@ -662,6 +669,7 @@ export function BomTable({
             params: {
               ...params,
               part: partId,
+              category_detail: true,
               part_detail: true,
               sub_part_detail: true
             },

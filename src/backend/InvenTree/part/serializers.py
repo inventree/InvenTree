@@ -1668,13 +1668,11 @@ class BomItemSerializer(
             'rounding_multiple',
             'note',
             'pk',
-            'part_detail',
             'pricing_min',
             'pricing_max',
             'pricing_min_total',
             'pricing_max_total',
             'pricing_updated',
-            'sub_part_detail',
             'substitutes',
             'validated',
             # Annotated fields describing available quantity
@@ -1688,6 +1686,10 @@ class BomItemSerializer(
             'building',
             # Annotate the total potential quantity we can build
             'can_build',
+            # Optional detail fields
+            'part_detail',
+            'sub_part_detail',
+            'category_detail',
         ]
 
     quantity = InvenTree.serializers.InvenTreeDecimalField(required=True)
@@ -1742,6 +1744,17 @@ class BomItemSerializer(
             allow_null=True,
         ),
         True,
+    )
+
+    category_detail = enable_filter(
+        CategorySerializer(
+            source='sub_part.category',
+            label=_('Category'),
+            many=False,
+            read_only=True,
+            allow_null=True,
+        ),
+        False,
     )
 
     on_order = serializers.FloatField(
