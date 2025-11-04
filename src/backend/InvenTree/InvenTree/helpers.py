@@ -16,6 +16,7 @@ from django.conf import settings
 from django.contrib.staticfiles.storage import StaticFilesStorage
 from django.core.exceptions import FieldError, ValidationError
 from django.core.files.storage import default_storage
+from django.db.models.fields.files import ImageFieldFile
 from django.http import StreamingHttpResponse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -27,6 +28,7 @@ import structlog
 from bleach import clean
 from djmoney.money import Money
 from PIL import Image
+from stdimage.models import StdImageField, StdImageFieldFile
 
 from common.currency import currency_code_default
 
@@ -174,11 +176,18 @@ def constructPathString(path: list[str], max_chars: int = 250) -> str:
     return pathstring
 
 
-def getMediaUrl(filename):
+def getMediaUrl(filename_or_obj, name: str | None = None):
     """Return the qualified access path for the given file, under the media directory."""
+    if name is not None and isinstance(filename_or_obj, StdImageFieldFile):
+        # Handle new thumbnail case
+        var_name = filename_or_obj.field.attr_class.get_variation_name(
+            filename_or_obj.name, name
+        )
+        filename_or_obj = ImageFieldFile(StdImageField, filename_or_obj, var_name)
+    val = filename_or_obj.url
     if settings.STORAGE_TARGET == StorageBackends.S3:
-        return str(filename)
-    return os.path.join(MEDIA_URL, str(filename))
+        return str(val)
+    return os.path.join(MEDIA_URL, str(val))
 
 
 def getStaticUrl(filename):
