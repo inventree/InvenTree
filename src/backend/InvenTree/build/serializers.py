@@ -1339,6 +1339,7 @@ class BuildLineSerializer(
             'bom_item_detail',
             'assembly_detail',
             'part_detail',
+            'category_detail',
             'build_detail',
         ]
         read_only_fields = ['build', 'bom_item', 'allocations']
@@ -1428,6 +1429,17 @@ class BuildLineSerializer(
             pricing=False,
         ),
         True,
+    )
+
+    category_detail = enable_filter(
+        part_serializers.CategorySerializer(
+            label=_('Category'),
+            source='bom_item.sub_part.category',
+            many=False,
+            read_only=True,
+            allow_null=True,
+        ),
+        False,
     )
 
     build_detail = enable_filter(

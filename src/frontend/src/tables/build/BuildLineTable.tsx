@@ -43,6 +43,7 @@ import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import {
   BooleanColumn,
+  CategoryColumn,
   DecimalColumn,
   DescriptionColumn,
   LocationColumn,
@@ -327,6 +328,13 @@ export default function BuildLineTable({
         sortable: false,
         title: t`IPN`
       },
+      CategoryColumn({
+        accessor: 'category_detail',
+        defaultVisible: false,
+        switchable: true,
+        sortable: true,
+        ordering: 'category'
+      }),
       DescriptionColumn({
         accessor: 'part_detail.description'
       }),
@@ -947,6 +955,7 @@ export default function BuildLineTable({
             ...params,
             build: build.pk,
             assembly_detail: false,
+            category_detail: true,
             part_detail: true
           },
           tableActions: tableActions,
