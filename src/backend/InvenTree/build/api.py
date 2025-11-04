@@ -597,6 +597,7 @@ class BuildLineList(
     ordering_fields = [
         'part',
         'allocated',
+        'category',
         'consumed',
         'reference',
         'quantity',
@@ -613,6 +614,7 @@ class BuildLineList(
         'part': 'bom_item__sub_part__name',
         'reference': 'bom_item__reference',
         'unit_quantity': 'bom_item__quantity',
+        'category': 'bom_item__sub_part__category__name',
         'consumable': 'bom_item__consumable',
         'optional': 'bom_item__optional',
         'trackable': 'bom_item__sub_part__trackable',

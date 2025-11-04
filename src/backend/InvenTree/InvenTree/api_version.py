@@ -1,10 +1,14 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 422
+INVENTREE_API_VERSION = 423
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v423 -> 2025-11-05 : https://github.com/inventree/InvenTree/pull/10772
+    - Adds "category_detail" field to BomItem API endpoints
+    - Adds "category_detail" field to BuildLine API endpoints
 
 v422 -> 2025-11-03 : https://github.com/inventree/InvenTree/pull/10750
     - Adds ability to search StockItem API by supplier SKU

@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Adds "Category" columns to BOM and Build Item tables and APIs in [#10722](https://github.com/inventree/InvenTree/pull/10772)
+
 ### Changed
 
 ### Removed

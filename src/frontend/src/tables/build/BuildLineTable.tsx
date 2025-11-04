@@ -43,12 +43,14 @@ import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import {
   BooleanColumn,
+  CategoryColumn,
   DecimalColumn,
   DescriptionColumn,
   LocationColumn,
   PartColumn,
   RenderPartColumn
 } from '../ColumnRenderers';
+import { PartCategoryFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import RowExpansionIcon from '../RowExpansionIcon';
 import { TableHoverCard } from '../TableHoverCard';
@@ -214,7 +216,8 @@ export default function BuildLineTable({
         name: 'tracked',
         label: t`Tracked`,
         description: t`Show tracked lines`
-      }
+      },
+      PartCategoryFilter()
     ];
   }, []);
 
@@ -327,6 +330,13 @@ export default function BuildLineTable({
         sortable: false,
         title: t`IPN`
       },
+      CategoryColumn({
+        accessor: 'category_detail',
+        defaultVisible: false,
+        switchable: true,
+        sortable: true,
+        ordering: 'category'
+      }),
       DescriptionColumn({
         accessor: 'part_detail.description'
       }),
@@ -947,6 +957,7 @@ export default function BuildLineTable({
             ...params,
             build: build.pk,
             assembly_detail: false,
+            category_detail: true,
             part_detail: true
           },
           tableActions: tableActions,
