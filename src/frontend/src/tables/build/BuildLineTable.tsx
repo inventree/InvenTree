@@ -50,6 +50,7 @@ import {
   PartColumn,
   RenderPartColumn
 } from '../ColumnRenderers';
+import { PartCategoryFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import RowExpansionIcon from '../RowExpansionIcon';
 import { TableHoverCard } from '../TableHoverCard';
@@ -215,7 +216,8 @@ export default function BuildLineTable({
         name: 'tracked',
         label: t`Tracked`,
         description: t`Show tracked lines`
-      }
+      },
+      PartCategoryFilter()
     ];
   }, []);
 
