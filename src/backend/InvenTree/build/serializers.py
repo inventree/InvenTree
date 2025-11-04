@@ -1517,6 +1517,7 @@ class BuildLineSerializer(
             'bom_item',
             'bom_item__part',
             'bom_item__sub_part',
+            'bom_item__sub_part__category',
             'bom_item__sub_part__stock_items',
             'bom_item__sub_part__stock_items__allocations',
             'bom_item__sub_part__stock_items__sales_order_allocations',
