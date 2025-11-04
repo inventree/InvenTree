@@ -1,19 +1,3 @@
-import { t } from '@lingui/core/macro';
-import { ActionIcon, Alert, Group, Stack, Text, Tooltip } from '@mantine/core';
-import { showNotification } from '@mantine/notifications';
-import {
-  IconArrowRight,
-  IconCircleCheck,
-  IconExclamationCircle,
-  IconFileArrowLeft,
-  IconLock,
-  IconSwitch3
-} from '@tabler/icons-react';
-import { type ReactNode, useCallback, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-
-import { ActionButton } from '@lib/components/ActionButton';
-import { AddItemButton } from '@lib/components/AddItemButton';
 import {
   type RowAction,
   RowDeleteAction,
@@ -27,8 +11,23 @@ import { apiUrl } from '@lib/functions/Api';
 import { navigateToLink } from '@lib/functions/Navigation';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
+import { t } from '@lingui/core/macro';
+import { ActionIcon, Alert, Group, Stack, Text, Tooltip } from '@mantine/core';
+import { showNotification } from '@mantine/notifications';
+import {
+  IconArrowRight,
+  IconCircleCheck,
+  IconExclamationCircle,
+  IconFileUpload,
+  IconLock,
+  IconPlus,
+  IconSwitch3
+} from '@tabler/icons-react';
+import { type ReactNode, useCallback, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Thumbnail } from '../../components/images/Thumbnail';
 import ImporterDrawer from '../../components/importer/ImporterDrawer';
+import { ActionDropdown } from '../../components/items/ActionDropdown';
 import { RenderPart } from '../../components/render/Part';
 import { useApi } from '../../contexts/ApiContext';
 import { formatDecimal, formatPriceRange } from '../../defaults/formatters';
@@ -613,18 +612,26 @@ export function BomTable({
 
   const tableActions = useMemo(() => {
     return [
-      <ActionButton
-        key='import-bom'
+      <ActionDropdown
+        key='add-bom-actions'
+        tooltip={t`Add BOM Items`}
+        position='bottom-start'
+        icon={<IconPlus />}
         hidden={partLocked || !user.hasAddRole(UserRoles.part)}
-        tooltip={t`Import BOM Data`}
-        icon={<IconFileArrowLeft />}
-        onClick={() => importBomItem.open()}
-      />,
-      <AddItemButton
-        key='add-bom-item'
-        hidden={partLocked || !user.hasAddRole(UserRoles.part)}
-        tooltip={t`Add BOM Item`}
-        onClick={() => newBomItem.open()}
+        actions={[
+          {
+            name: t`Add BOM Item`,
+            icon: <IconPlus />,
+            tooltip: t`Add a single BOM item`,
+            onClick: () => newBomItem.open()
+          },
+          {
+            name: t`Import from File`,
+            icon: <IconFileUpload />,
+            tooltip: t`Import BOM items from a file`,
+            onClick: () => importBomItem.open()
+          }
+        ]}
       />
     ];
   }, [partLocked, user]);
