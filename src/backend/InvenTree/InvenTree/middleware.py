@@ -5,17 +5,17 @@ from urllib.parse import urlsplit
 
 from django.conf import settings
 from django.contrib.auth.middleware import PersistentRemoteUserMiddleware
-from django.http import HttpResponse
+from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import resolve, reverse_lazy
 from django.utils.deprecation import MiddlewareMixin
 from django.utils.http import is_same_domain
+from django.utils.translation import gettext_lazy as _
 
 import structlog
 from error_report.middleware import ExceptionProcessor
 
 from common.settings import get_global_setting
-from InvenTree.AllUserRequire2FAMiddleware import AllUserRequire2FAMiddleware
 from InvenTree.cache import create_session_cache, delete_session_cache
 from InvenTree.config import CONFIG_LOOKUPS, inventreeInstaller
 from users.models import ApiToken
@@ -146,8 +146,80 @@ class AuthRequiredMiddleware:
         return response
 
 
-class Check2FAMiddleware(AllUserRequire2FAMiddleware):
-    """Ensure that mfa is enforced if set so."""
+class Check2FAMiddleware(MiddlewareMixin):
+    """Ensure that users have two-factor authentication enabled before they have access restricted endpoints.
+
+    Adapted from https://github.com/pennersr/django-allauth/issues/3649
+    """
+
+    allowed_pages = [
+        'api-user-meta',
+        'api-user-me',
+        'api-user-roles',
+        'api-inventree-info',
+        'api-token',
+        # web platform urls
+        'password_reset_confirm',
+        'index',
+        'web',
+        'web-wildcard',
+        'web-assets',
+    ]
+    app_names = ['headless']
+    require_2fa_message = _(
+        'You must enable two-factor authentication before doing anything else.'
+    )
+
+    def on_require_2fa(self, request: HttpRequest) -> HttpResponse:
+        """Force user to mfa activation."""
+        return JsonResponse(
+            {'id': 'mfa_register', 'error': self.require_2fa_message}, status=401
+        )
+
+    def is_allowed_page(self, request: HttpRequest) -> bool:
+        """Check if the current page can be accessed without mfa."""
+        match = request.resolver_match
+        return (
+            None
+            if match is None
+            else any(ref in self.app_names for ref in match.app_names)
+            or match.url_name in self.allowed_pages
+            or match.route == 'favicon.ico'
+        )
+
+    def is_multifactor_logged_in(self, request: HttpRequest) -> bool:
+        """Check if the user is logged in with multifactor authentication."""
+        from allauth.account.authentication import get_authentication_records
+        from allauth.mfa.utils import is_mfa_enabled
+        from allauth.mfa.webauthn.internal.flows import did_use_passwordless_login
+
+        authns = get_authentication_records(request)
+
+        return is_mfa_enabled(request.user) and (
+            did_use_passwordless_login(request)
+            or any(record.get('method') == 'mfa' for record in authns)
+        )
+
+    def process_view(
+        self, request: HttpRequest, view_func, view_args, view_kwargs
+    ) -> HttpResponse:
+        """Determine if the server is set up enforce 2fa registration."""
+        from django.conf import settings
+
+        # Exit early if MFA is not enabled
+        if not settings.MFA_ENABLED:
+            return None
+
+        if request.user.is_anonymous:
+            return None
+        if self.is_allowed_page(request):
+            return None
+        if self.is_multifactor_logged_in(request):
+            return None
+
+        if self.enforce_2fa(request):
+            return self.on_require_2fa(request)
+        return None
 
     def enforce_2fa(self, request):
         """Use setting to check if MFA should be enforced."""

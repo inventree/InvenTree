@@ -1381,6 +1381,10 @@ HEADLESS_CLIENTS = 'browser'
 MFA_ENABLED = get_boolean_setting(
     'INVENTREE_MFA_ENABLED', 'mfa_enabled', True
 )  # TODO re-implement
+
+if not MFA_ENABLED:
+    MIDDLEWARE.remove('InvenTree.middleware.Check2FAMiddleware')
+
 MFA_SUPPORTED_TYPES = get_setting(
     'INVENTREE_MFA_SUPPORTED_TYPES',
     'mfa_supported_types',
