@@ -1004,12 +1004,12 @@ class TestSerialNumberExtraction(TestCase):
         # Extract a range of values with a smaller range
         with self.assertRaises(ValidationError) as exc:
             e('11-50', 10, 1)
-            self.assertIn('Range quantity exceeds 10', str(exc))
+        self.assertIn('Range quantity exceeds 10', str(exc))
 
         # Test groups are not interpolated with alpha characters
         with self.assertRaises(ValidationError) as exc:
             e('1, A-2, 3+', 5, 1)
-            self.assertIn('Invalid group range: A-2', str(exc))
+        self.assertIn('Invalid group range: A-2', str(exc))
 
     def test_combinations(self):
         """Test complex serial number combinations."""
