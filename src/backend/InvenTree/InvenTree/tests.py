@@ -708,7 +708,7 @@ class TestHelpers(TestCase):
         # Correct usage
         part = Part().image
         self.assertEqual(
-            helpers.getMediaUrl(StdImageFieldFile(part, part, 'xx/yy.png')),
+            helpers.getMediaUrl(StdImageFieldFile(part, part, 'xx/yy.png')),  # type: ignore
             '/media/xx/yy.png',
         )
 
