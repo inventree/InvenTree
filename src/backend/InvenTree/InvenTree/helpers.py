@@ -184,7 +184,7 @@ def getMediaUrl(filename_or_obj, name: str | None = None):
             filename_or_obj.name, name
         )
         filename_or_obj = ImageFieldFile(StdImageField, filename_or_obj, var_name)
-    val = filename_or_obj.url
+    val = filename_or_obj if isinstance(filename_or_obj, str) else filename_or_obj.url
     if settings.STORAGE_TARGET == StorageBackends.S3:
         return str(val)
     return os.path.join(MEDIA_URL, str(val))
