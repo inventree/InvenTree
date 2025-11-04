@@ -19,7 +19,8 @@ import { showNotification } from '@mantine/notifications';
 import {
   IconAlertCircle,
   IconCircleCheck,
-  IconExclamationCircle
+  IconExclamationCircle,
+  IconTrash
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -46,6 +47,22 @@ function getReauthFlow(err: any): FlowEnum | null {
   }
 }
 
+/**
+ * Extract an error message from an allauth error response.
+ *
+ * The allauth flows have a particular response structure,
+ * which this function handles.
+ */
+function extractErrorMessage(err: any, defaultMsg: string): string {
+  const backupMsg = `${defaultMsg}: ${err.status}`;
+
+  if (err.response?.data?.errors && err.response?.data?.errors.length > 0) {
+    return err.response?.data?.errors[0]?.message ?? backupMsg;
+  }
+
+  return backupMsg;
+}
+
 type ReauthInputProps = {
   label: string;
   name: string;
@@ -66,6 +83,7 @@ function ReauthenticateModalComponent({
   const { setAuthContext } = useServerApiState.getState();
 
   const [value, setValue] = useState<string>('');
+  const [error, setError] = useState<string>('');
 
   const onSubmit = useCallback(
     (value: string) => {
@@ -84,6 +102,9 @@ function ReauthenticateModalComponent({
           setOpen(false);
         })
         .catch((error) => {
+          setError(
+            extractErrorMessage(error, t`Error during reauthentication`)
+          );
           showNotification({
             title: t`Reauthentication Failed`,
             message: `${t`Failed to reauthenticate`}: ${error.status}`,
@@ -111,6 +132,7 @@ function ReauthenticateModalComponent({
         name={inputProps.name}
         description={inputProps.description}
         value={value}
+        error={error}
         onChange={(event) => setValue(event.target.value)}
       />
       <Group justify='right'>
@@ -137,6 +159,7 @@ function ReauthenticateModal({
   return (
     <Modal
       opened={opened}
+      zIndex={9999}
       size='lg'
       onClose={() => setOpen(false)}
       title={<StylishText size='lg'>{t`Reauthenticate`}</StylishText>}
@@ -186,7 +209,7 @@ function ReauthenticateTOTPModal({
       setOpen={setOpen}
       inputProps={{
         label: t`TOTP Code`,
-        name: 'TOTP',
+        name: 'code',
         description: t`Enter one of your TOTP codes`,
         url: apiUrl(ApiEndpoints.auth_mfa_reauthenticate)
       }}
@@ -195,7 +218,103 @@ function ReauthenticateTOTPModal({
 }
 
 /**
+ * Modal for removing a registered TOTP token:
+ * - Deletes the TOTP token from the server
+ * - Handles errors and re-authentication flows as needed
+ */
+function RemoveTOTPModal({
+  opened,
+  setOpen,
+  onReauthFlow,
+  onSuccess
+}: {
+  opened: boolean;
+  setOpen: (open: boolean) => void;
+  onReauthFlow: (flow: FlowEnum) => void;
+  onSuccess: () => void;
+}) {
+  const [processing, setProcessing] = useState<boolean>(false);
+  const [error, setError] = useState<string>('');
+
+  useEffect(() => {
+    setProcessing(false);
+    setError('');
+  }, [opened]);
+
+  const deleteToken = useCallback(() => {
+    api
+      .delete(apiUrl(ApiEndpoints.auth_totp))
+      .then((response) => {
+        showNotification({
+          title: t`TOTP Removed`,
+          message: t`TOTP token removed successfully.`,
+          color: 'green',
+          icon: <IconCircleCheck />
+        });
+        setOpen(false);
+        onSuccess();
+      })
+      .catch((error) => {
+        setError(extractErrorMessage(error, t`Error removing TOTP token`));
+
+        // A 401 error indicates that re-authentication is required
+        if (error.status === 401) {
+          const flow = getReauthFlow(error);
+          if (flow !== null) {
+            onReauthFlow(flow);
+          }
+        }
+      })
+      .finally(() => {
+        setProcessing(false);
+      });
+  }, []);
+
+  return (
+    <Modal
+      opened={opened}
+      onClose={() => setOpen(false)}
+      title={<StylishText size='lg'>{t`Remove TOTP Token`}</StylishText>}
+    >
+      <Stack>
+        <Divider />
+        <Alert
+          color='red'
+          icon={<IconAlertCircle />}
+          title={t`Confirm Removal`}
+        >
+          <Trans>Confirm removal of TOTP code</Trans>
+        </Alert>
+        {error && (
+          <Alert color='red' icon={<IconExclamationCircle />} title={t`Error`}>
+            {error}
+          </Alert>
+        )}
+        <Group justify='right'>
+          <Button onClick={() => setOpen(false)}>
+            <Trans>Cancel</Trans>
+          </Button>
+          <Button
+            onClick={deleteToken}
+            color='red'
+            leftSection={<IconTrash />}
+            disabled={processing}
+          >
+            <Trans>Delete</Trans>
+          </Button>
+        </Group>
+      </Stack>
+    </Modal>
+  );
+}
+
+/**
  * Modal for registering a new TOTP token
+ * - Fetches TOTP registration details from the server
+ * - Displays QR code and secret to the user
+ * - Accepts TOTP code input from the user
+ * - Submits TOTP code to the server for registration
+ * - Handles errors and re-authentication flows as needed
  */
 function RegisterTOTPModal({
   opened,
@@ -292,13 +411,7 @@ function RegisterTOTPModal({
       })
       .catch((error) => {
         // Set error message
-        const errorMsg = `${t`Error registering TOTP token`}: ${error.status}`;
-
-        if (error.response?.data?.errors) {
-          setError(error.response?.data?.errors[0]?.message ?? errorMsg);
-        } else {
-          setError(errorMsg);
-        }
+        setError(extractErrorMessage(error, t`Error registering TOTP token`));
 
         // A 401 error indicates that re-authentication is required
         if (error.status === 401) {
@@ -369,6 +482,8 @@ export default function MFASettings() {
   const [reauthTOTPOpen, setReauthTOTPModalOpen] = useState<boolean>(false);
   const [registerTOTPModalOpen, setRegisterTOTPModalOpen] =
     useState<boolean>(false);
+  const [removeTOTPModalOpen, setRemoveTOTPModalOpen] =
+    useState<boolean>(false);
 
   // Callback function used to re-authenticate the user
   const reauthenticate = useCallback((flow: FlowEnum) => {
@@ -394,7 +509,7 @@ export default function MFASettings() {
   }, []);
 
   const removeTOTP = useCallback(() => {
-    // TODO
+    setRemoveTOTPModalOpen(true);
   }, []);
 
   const viewRecoveryCodes = useCallback(() => {
@@ -468,6 +583,13 @@ export default function MFASettings() {
 
   return (
     <>
+      <RemoveTOTPModal
+        opened={removeTOTPModalOpen}
+        setOpen={setRemoveTOTPModalOpen}
+        onReauthFlow={reauthenticate}
+        onSuccess={refetch}
+      />
+
       <RegisterTOTPModal
         opened={registerTOTPModalOpen}
         setOpen={setRegisterTOTPModalOpen}
