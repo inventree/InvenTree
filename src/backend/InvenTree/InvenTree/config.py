@@ -375,7 +375,6 @@ def get_plugin_file() -> Path:
         logger.warning(
             'Plugin configuration file does not exist - creating default file'
         )
-
         logger.info("Creating plugin file at '%s'", plugin_file)
         ensure_dir(plugin_file.parent)
 
