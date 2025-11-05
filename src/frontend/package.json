@@ -125,6 +125,7 @@
         "@vitejs/plugin-react": "^5.0.2",
         "babel-plugin-macros": "^3.1.0",
         "nyc": "^17.1.0",
+        "otpauth": "^9.4.1",
         "path": "^0.12.7",
         "rollup": "^4.0.0",
         "rollup-plugin-license": "^3.5.3",
