@@ -8,11 +8,13 @@ import {
   Button,
   Divider,
   Group,
+  Loader,
   Modal,
   PasswordInput,
   SimpleGrid,
   Stack,
   Table,
+  Text,
   Tooltip
 } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
@@ -20,12 +22,14 @@ import {
   IconAlertCircle,
   IconCircleCheck,
   IconExclamationCircle,
+  IconInfoCircle,
   IconTrash
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import { api } from '../../../../App';
+import { CopyButton } from '../../../../components/buttons/CopyButton';
 import { StylishText } from '../../../../components/items/StylishText';
 import { useServerApiState } from '../../../../states/ServerApiState';
 import { QrRegistrationForm } from './QrRegistrationForm';
@@ -454,6 +458,112 @@ function RegisterTOTPModal({
   );
 }
 
+function RecoveryCodesModal({
+  opened,
+  setOpen,
+  onReauthFlow
+}: {
+  opened: boolean;
+  setOpen: (open: boolean) => void;
+  onReauthFlow: (flow: FlowEnum) => void;
+}) {
+  const [error, setError] = useState<string>('');
+
+  const recoveryCodesQuery = useQuery({
+    enabled: false,
+    queryKey: ['mfa-recovery-codes'],
+    queryFn: async () => {
+      return api.post(apiUrl(ApiEndpoints.auth_recovery)).catch((error) => {
+        setError(extractErrorMessage(error, t`Error fetching recovery codes`));
+
+        // A 401 error indicates that re-authentication is required
+        if (error.status === 401) {
+          const flow = getReauthFlow(error);
+          if (flow !== null) {
+            setOpen(false);
+            onReauthFlow(flow);
+          }
+        }
+
+        throw error;
+      });
+    }
+  });
+
+  const unusedCodes = useMemo(() => {
+    console.log('unused codes:');
+    console.log(recoveryCodesQuery.data?.data?.data?.unused_codes ?? []);
+    return recoveryCodesQuery.data?.data?.data?.unused_codes ?? [];
+  }, [recoveryCodesQuery.data]);
+
+  useEffect(() => {
+    setError('');
+
+    // Re-fetch codes on opened
+    if (opened) {
+      recoveryCodesQuery.refetch();
+    }
+  }, [opened]);
+
+  return (
+    <Modal
+      opened={opened}
+      onClose={() => setOpen(false)}
+      title={<StylishText size='lg'>{t`Recovery Codes`}</StylishText>}
+    >
+      <Stack>
+        <Divider />
+        {error && (
+          <Alert color='red' icon={<IconExclamationCircle />} title={t`Error`}>
+            {error}
+          </Alert>
+        )}
+        {recoveryCodesQuery.isFetching || recoveryCodesQuery.isLoading ? (
+          <Loader />
+        ) : (
+          <Stack gap='xs'>
+            <Alert
+              color='blue'
+              icon={<IconInfoCircle />}
+              title={t`Recovery Codes`}
+            >
+              <Trans>
+                The following one time recovery codes are available for use
+              </Trans>
+            </Alert>
+            {unusedCodes.length > 0 ? (
+              unusedCodes.map((code: string) => (
+                <Group
+                  p={3}
+                  justify='space-between'
+                  key={`mfa-recovery-code-${code}`}
+                >
+                  <Text>{code}</Text>
+                  <CopyButton value={code} />
+                </Group>
+              ))
+            ) : (
+              <Alert
+                color='yellow'
+                icon={<IconAlertCircle />}
+                title={t`No Unused Codes`}
+              >
+                <Trans>There are no available recovery codes</Trans>
+              </Alert>
+            )}
+          </Stack>
+        )}
+        <Divider />
+        <Group justify='right'>
+          <Button onClick={() => setOpen(false)}>
+            <Trans>Close</Trans>
+          </Button>
+        </Group>
+      </Stack>
+    </Modal>
+  );
+}
+
 /**
  * Section for adding new MFA methods for the user
  */
@@ -480,6 +590,7 @@ export default function MFASettings() {
 
   const [reauthPassOpen, setReauthPassModalOpen] = useState<boolean>(false);
   const [reauthTOTPOpen, setReauthTOTPModalOpen] = useState<boolean>(false);
+  const [recoveryCodesOpen, setRecoveryCodesOpen] = useState<boolean>(false);
   const [registerTOTPModalOpen, setRegisterTOTPModalOpen] =
     useState<boolean>(false);
   const [removeTOTPModalOpen, setRemoveTOTPModalOpen] =
@@ -501,7 +612,7 @@ export default function MFASettings() {
   }, []);
 
   const registerRecoveryCodes = useCallback(() => {
-    // TODO
+    setRecoveryCodesOpen(true);
   }, []);
 
   const registerWebauthn = useCallback(() => {
@@ -513,7 +624,7 @@ export default function MFASettings() {
   }, []);
 
   const viewRecoveryCodes = useCallback(() => {
-    // TODO
+    setRecoveryCodesOpen(true);
   }, []);
 
   const removeWebauthn = useCallback((id: number) => {
@@ -550,46 +661,53 @@ export default function MFASettings() {
   }, [usedFactors, auth_config]);
 
   const mfaRows = useMemo(() => {
-    return data.map((token: any) => (
-      <Table.Tr key={`${token.created_at}-${token.type}`}>
-        <Table.Td>{token.type}</Table.Td>
-        <Table.Td>{parseDate(token.last_used_at)}</Table.Td>
-        <Table.Td>{parseDate(token.created_at)}</Table.Td>
-        <Table.Td>
-          {token.type == 'totp' && (
-            <Button color='red' onClick={removeTOTP}>
-              <Trans>Remove</Trans>
-            </Button>
-          )}
-          {token.type == 'recovery_codes' && (
-            <Button onClick={viewRecoveryCodes}>
-              <Trans>View</Trans>
-            </Button>
-          )}
-          {token.type == 'webauthn' && (
-            <Button
-              color='red'
-              onClick={() => {
-                removeWebauthn(token.id);
-              }}
-            >
-              <Trans>Remove</Trans>
-            </Button>
-          )}
-        </Table.Td>
-      </Table.Tr>
-    ));
+    return (
+      data?.map((token: any) => (
+        <Table.Tr key={`${token.created_at}-${token.type}`}>
+          <Table.Td>{token.type}</Table.Td>
+          <Table.Td>{parseDate(token.last_used_at)}</Table.Td>
+          <Table.Td>{parseDate(token.created_at)}</Table.Td>
+          <Table.Td>
+            {token.type == 'totp' && (
+              <Button color='red' onClick={removeTOTP}>
+                <Trans>Remove</Trans>
+              </Button>
+            )}
+            {token.type == 'recovery_codes' && (
+              <Button onClick={viewRecoveryCodes}>
+                <Trans>View</Trans>
+              </Button>
+            )}
+            {token.type == 'webauthn' && (
+              <Button
+                color='red'
+                onClick={() => {
+                  removeWebauthn(token.id);
+                }}
+              >
+                <Trans>Remove</Trans>
+              </Button>
+            )}
+          </Table.Td>
+        </Table.Tr>
+      )) ?? []
+    );
   }, [data]);
 
   return (
     <>
+      <RecoveryCodesModal
+        opened={recoveryCodesOpen}
+        setOpen={setRecoveryCodesOpen}
+        onReauthFlow={reauthenticate}
+      />
+
       <RemoveTOTPModal
         opened={removeTOTPModalOpen}
         setOpen={setRemoveTOTPModalOpen}
         onReauthFlow={reauthenticate}
         onSuccess={refetch}
       />
-
       <RegisterTOTPModal
         opened={registerTOTPModalOpen}
         setOpen={setRegisterTOTPModalOpen}
