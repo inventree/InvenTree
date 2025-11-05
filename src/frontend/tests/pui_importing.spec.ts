@@ -80,8 +80,13 @@ test('Importing - BOM', async ({ browser }) => {
     url: 'part/109/bom'
   });
 
+  // Open the BOM importer wizard
+  await page.getByRole('button', { name: 'action-menu-add-bom-items' }).click();
+
   await page
-    .getByRole('button', { name: 'action-button-import-bom-data' })
+    .getByRole('menuitem', {
+      name: 'action-menu-add-bom-items-import-from-file'
+    })
     .click();
 
   // Select BOM file fixture for import

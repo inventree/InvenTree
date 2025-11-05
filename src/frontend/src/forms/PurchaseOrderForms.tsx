@@ -506,7 +506,7 @@ function LineItemFormRow({
               icon={<InvenTreeIcon icon='location' />}
               tooltip={t`Set Location`}
               tooltipAlignment='top'
-              variant={locationOpen ? 'filled' : 'transparent'}
+              variant={locationOpen ? 'outline' : 'transparent'}
             />
             <ActionButton
               size='sm'
@@ -514,7 +514,7 @@ function LineItemFormRow({
               icon={<InvenTreeIcon icon='batch_code' />}
               tooltip={batchToolTip}
               tooltipAlignment='top'
-              variant={batchOpen ? 'filled' : 'transparent'}
+              variant={batchOpen ? 'outline' : 'transparent'}
             />
             {settings.isSet('STOCK_ENABLE_EXPIRY') && (
               <ActionButton
@@ -523,7 +523,7 @@ function LineItemFormRow({
                 icon={<IconCalendarExclamation />}
                 tooltip={t`Set Expiry Date`}
                 tooltipAlignment='top'
-                variant={expiryDateOpen ? 'filled' : 'transparent'}
+                variant={expiryDateOpen ? 'outline' : 'transparent'}
               />
             )}
             <ActionButton
@@ -532,20 +532,20 @@ function LineItemFormRow({
               tooltip={t`Adjust Packaging`}
               tooltipAlignment='top'
               onClick={() => packagingHandlers.toggle()}
-              variant={packagingOpen ? 'filled' : 'transparent'}
+              variant={packagingOpen ? 'outline' : 'transparent'}
             />
             <ActionButton
               onClick={() => statusHandlers.toggle()}
               icon={<InvenTreeIcon icon='status' />}
               tooltip={t`Change Status`}
               tooltipAlignment='top'
-              variant={statusOpen ? 'filled' : 'transparent'}
+              variant={statusOpen ? 'outline' : 'transparent'}
             />
             <ActionButton
               icon={<InvenTreeIcon icon='note' />}
               tooltip={t`Add Note`}
               tooltipAlignment='top'
-              variant={noteOpen ? 'filled' : 'transparent'}
+              variant={noteOpen ? 'outline' : 'transparent'}
               onClick={() => noteHandlers.toggle()}
             />
             {barcode ? (
@@ -780,6 +780,10 @@ export function useReceiveLineItems(props: LineItemsForm) {
         }),
         modelRenderer: (row: TableFieldRowProps) => {
           const record = records[row.item.line_item];
+
+          if (!record) {
+            return null;
+          }
 
           return (
             <LineItemFormRow

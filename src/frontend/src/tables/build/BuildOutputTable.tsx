@@ -494,12 +494,6 @@ export default function BuildOutputTable({
       const production = build?.status == buildStatus.PRODUCTION;
 
       return [
-        RowViewAction({
-          title: t`View Build Output`,
-          modelId: record.pk,
-          modelType: ModelType.stockitem,
-          navigate: navigate
-        }),
         {
           title: t`Allocate`,
           tooltip: t`Allocate stock to build output`,
@@ -575,7 +569,13 @@ export default function BuildOutputTable({
             setSelectedOutputs([record]);
             cancelBuildOutputsForm.open();
           }
-        }
+        },
+        RowViewAction({
+          title: t`View Build Output`,
+          modelId: record.pk,
+          modelType: ModelType.stockitem,
+          navigate: navigate
+        })
       ];
     },
     [buildStatus, user, partId, hasTrackedItems]

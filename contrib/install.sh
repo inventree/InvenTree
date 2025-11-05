@@ -64,7 +64,7 @@ root_command() {
       Ubuntu)
           if [[ $VER == "24.04" ]]; then
               SUPPORTED=true
-          if [[ $VER == "22.04" ]]; then
+          elif [[ $VER == "22.04" ]]; then
               SUPPORTED=true
           elif [[ $VER == "20.04" ]]; then
               SUPPORTED=true
