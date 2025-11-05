@@ -22,8 +22,7 @@ import {
   IconAlertCircle,
   IconCircleCheck,
   IconExclamationCircle,
-  IconInfoCircle,
-  IconTrash
+  IconInfoCircle
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -128,7 +127,7 @@ function ReauthenticateModalComponent({
         icon={<IconExclamationCircle />}
         title={t`Reauthenticate`}
       >
-        {t`Reauthenticate to continue.`}
+        {t`Reauthenticatation is required to continue.`}
       </Alert>
       <PasswordInput
         required
@@ -298,13 +297,8 @@ function RemoveTOTPModal({
           <Button onClick={() => setOpen(false)}>
             <Trans>Cancel</Trans>
           </Button>
-          <Button
-            onClick={deleteToken}
-            color='red'
-            leftSection={<IconTrash />}
-            disabled={processing}
-          >
-            <Trans>Delete</Trans>
+          <Button onClick={deleteToken} color='red' disabled={processing}>
+            <Trans>Remove</Trans>
           </Button>
         </Group>
       </Stack>
