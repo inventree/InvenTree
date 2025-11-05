@@ -2,6 +2,7 @@
 
 import datetime
 import json
+import logging
 import os
 import random
 import shutil
@@ -9,9 +10,7 @@ import string
 from pathlib import Path
 from typing import Optional, Union
 
-import structlog
-
-logger = structlog.getLogger('inventree')
+logger = logging.getLogger('inventree')
 CONFIG_DATA = None
 CONFIG_LOOKUPS = {}
 
