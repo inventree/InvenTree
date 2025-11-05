@@ -867,17 +867,25 @@ export default function MFASettings() {
           <Table.Td>
             <Group grow>
               {token.type == 'totp' && (
-                <Button color='red' onClick={removeTOTP}>
+                <Button
+                  aria-label={'remove-totp'}
+                  color='red'
+                  onClick={removeTOTP}
+                >
                   <Trans>Remove</Trans>
                 </Button>
               )}
               {token.type == 'recovery_codes' && (
-                <Button onClick={viewRecoveryCodes}>
+                <Button
+                  aria-label={'view-recovery-codes'}
+                  onClick={viewRecoveryCodes}
+                >
                   <Trans>View</Trans>
                 </Button>
               )}
               {token.type == 'webauthn' && (
                 <Button
+                  aria-label={'remove-webauthn'}
                   color='red'
                   onClick={() => {
                     removeWebauthn(token.id);
@@ -966,6 +974,7 @@ export default function MFASettings() {
                   onClick={factor.function}
                   disabled={factor.used}
                   variant='outline'
+                  aria-label={`add-factor-${factor.type}`}
                 >
                   {factor.name}
                 </Button>
