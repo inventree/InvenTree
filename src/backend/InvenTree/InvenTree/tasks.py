@@ -661,7 +661,7 @@ def get_migration_plan():
     return plan
 
 
-def get_migriation_count():
+def get_migration_count():
     """Returns the number of all detected migrations."""
     executor = MigrationExecutor(connections[DEFAULT_DB_ALIAS])
     return executor.loader.applied_migrations
