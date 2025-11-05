@@ -1,3 +1,4 @@
+import { create } from '@github/webauthn-json/browser-ponyfill';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import { FlowEnum } from '@lib/types/Auth';
@@ -485,8 +486,6 @@ function RecoveryCodesModal({
   });
 
   const unusedCodes = useMemo(() => {
-    console.log('unused codes:');
-    console.log(recoveryCodesQuery.data?.data?.data?.unused_codes ?? []);
     return recoveryCodesQuery.data?.data?.data?.unused_codes ?? [];
   }, [recoveryCodesQuery.data]);
 
@@ -582,9 +581,9 @@ export default function MFASettings() {
     return data.map((token: any) => token.type);
   }, [isLoading, data]);
 
+  const [recoveryCodesOpen, setRecoveryCodesOpen] = useState<boolean>(false);
   const [reauthPassOpen, setReauthPassModalOpen] = useState<boolean>(false);
   const [reauthTOTPOpen, setReauthTOTPModalOpen] = useState<boolean>(false);
-  const [recoveryCodesOpen, setRecoveryCodesOpen] = useState<boolean>(false);
   const [registerTOTPModalOpen, setRegisterTOTPModalOpen] =
     useState<boolean>(false);
   const [removeTOTPModalOpen, setRemoveTOTPModalOpen] =
@@ -609,8 +608,83 @@ export default function MFASettings() {
     setRecoveryCodesOpen(true);
   }, []);
 
-  const registerWebauthn = useCallback(() => {
-    // TODO
+  // Register a WebAuthn credential with the provided key
+  const registerWebauthn = useCallback((key: any) => {
+    create({
+      publicKey: PublicKeyCredential.parseCreationOptionsFromJSON(key)
+    }).then((credential) => {
+      const credentialString: string = JSON.stringify(credential);
+
+      api
+        .post(
+          apiUrl(ApiEndpoints.auth_webauthn),
+          {
+            name: 'Master Key',
+            credential: credentialString
+          },
+          {
+            timeout: 30 * 1000
+          }
+        )
+        .then((response) => {
+          showNotification({
+            title: t`WebAuthn Registered`,
+            message: t`WebAuthn credential registered successfully`,
+            color: 'green',
+            icon: <IconCircleCheck />
+          });
+          refetch();
+        })
+        .catch((error) => {
+          const errorMsg = extractErrorMessage(
+            error,
+            t`Error registering WebAuthn credential`
+          );
+          showNotification({
+            title: t`WebAuthn Registration Failed`,
+            message: `${t`Failed to register WebAuthn credential`}: ${errorMsg}`,
+            color: 'red',
+            icon: <IconExclamationCircle />
+          });
+        });
+    });
+  }, []);
+
+  // Request a WebAuthn registration challenge from the server
+  const requestWebauthn = useCallback(() => {
+    api
+      .get(apiUrl(ApiEndpoints.auth_webauthn))
+      .then((response) => {
+        // Extract credential creation options from the response
+        const options = response.data?.data?.creation_options;
+        if (options) {
+          registerWebauthn(options.publicKey);
+        }
+        return response.data;
+      })
+      .catch((error) => {
+        const errorMsg: string = extractErrorMessage(
+          error,
+          t`Error fetching WebAuthn registration`
+        );
+
+        // A 401 error indicates that re-authentication is required
+        if (error.status === 401) {
+          const flow = getReauthFlow(error);
+          if (flow !== null) {
+            reauthenticate(flow);
+          }
+        } else {
+          showNotification({
+            title: t`Error`,
+            message: errorMsg,
+            color: 'red',
+            icon: <IconExclamationCircle />
+          });
+        }
+
+        throw error;
+      });
   }, []);
 
   const removeTOTP = useCallback(() => {
@@ -646,7 +720,7 @@ export default function MFASettings() {
         type: 'webauthn',
         name: t`WebAuthn`,
         description: t`Web Authentication (WebAuthn) is a web standard for secure authentication`,
-        function: registerWebauthn,
+        function: requestWebauthn,
         used: usedFactors?.includes('webauthn')
       }
     ].filter((factor) => {
@@ -662,26 +736,28 @@ export default function MFASettings() {
           <Table.Td>{parseDate(token.last_used_at)}</Table.Td>
           <Table.Td>{parseDate(token.created_at)}</Table.Td>
           <Table.Td>
-            {token.type == 'totp' && (
-              <Button color='red' onClick={removeTOTP}>
-                <Trans>Remove</Trans>
-              </Button>
-            )}
-            {token.type == 'recovery_codes' && (
-              <Button onClick={viewRecoveryCodes}>
-                <Trans>View</Trans>
-              </Button>
-            )}
-            {token.type == 'webauthn' && (
-              <Button
-                color='red'
-                onClick={() => {
-                  removeWebauthn(token.id);
-                }}
-              >
-                <Trans>Remove</Trans>
-              </Button>
-            )}
+            <Group grow>
+              {token.type == 'totp' && (
+                <Button color='red' onClick={removeTOTP}>
+                  <Trans>Remove</Trans>
+                </Button>
+              )}
+              {token.type == 'recovery_codes' && (
+                <Button onClick={viewRecoveryCodes}>
+                  <Trans>View</Trans>
+                </Button>
+              )}
+              {token.type == 'webauthn' && (
+                <Button
+                  color='red'
+                  onClick={() => {
+                    removeWebauthn(token.id);
+                  }}
+                >
+                  <Trans>Remove</Trans>
+                </Button>
+              )}
+            </Group>
           </Table.Td>
         </Table.Tr>
       )) ?? []
@@ -695,7 +771,6 @@ export default function MFASettings() {
         setOpen={setRecoveryCodesOpen}
         onReauthFlow={reauthenticate}
       />
-
       <RemoveTOTPModal
         opened={removeTOTPModalOpen}
         setOpen={setRemoveTOTPModalOpen}
