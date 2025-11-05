@@ -73,6 +73,7 @@ export const test = baseTest.extend({
         !url.includes('/api/user/token/') &&
         !url.includes('/api/auth/v1/auth/login') &&
         !url.includes('/api/auth/v1/auth/session') &&
+        !url.includes('/api/auth/v1/account/authenticators/totp') &&
         !url.includes('/api/auth/v1/account/password/change') &&
         !url.includes('/api/barcode/') &&
         !url.includes('/favicon.ico') &&
