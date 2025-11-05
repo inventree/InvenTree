@@ -336,7 +336,7 @@ class Order(
 
         A locked order cannot be modified after it has been completed.
 
-        Args:
+        Arguments:
             db: If True, check with the database. If False, check the instance (default False).
         """
         if not self.check_complete(db=db):
@@ -351,7 +351,7 @@ class Order(
     def check_complete(self, db: bool = False) -> bool:
         """Check if this order is 'complete'.
 
-        Args:
+        Arguments:
             db: If True, check with the database. If False, check the instance (default False).
         """
         status = self.get_db_instance().status if db else self.status
@@ -382,6 +382,13 @@ class Order(
                 'target_date': _('Target date must be after start date'),
                 'start_date': _('Start date must be before target date'),
             })
+
+        # Check that the referenced 'address' matches the correct 'company'
+        if self.company and self.address:
+            if self.address.company != self.company:
+                raise ValidationError({
+                    'address': _('Address does not match selected company')
+                })
 
     def clean_line_item(self, line):
         """Clean a line item for this order.
@@ -553,12 +560,12 @@ class PurchaseOrder(TotalPriceMixin, Order):
         """Return report context data for this PurchaseOrder."""
         return {**super().report_context(), 'supplier': self.supplier}
 
-    def get_absolute_url(self):
+    def get_absolute_url(self) -> str:
         """Get the 'web' URL for this order."""
         return pui_url(f'/purchasing/purchase-order/{self.pk}')
 
     @staticmethod
-    def get_api_url():
+    def get_api_url() -> str:
         """Return the API URL associated with the PurchaseOrder model."""
         return reverse('api-po-list')
 
@@ -577,7 +584,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
         return defaults
 
     @classmethod
-    def barcode_model_type_code(cls):
+    def barcode_model_type_code(cls) -> str:
         """Return the associated barcode model type code for this model."""
         return 'PO'
 
@@ -798,10 +805,10 @@ class PurchaseOrder(TotalPriceMixin, Order):
     @transaction.atomic
     def issue_order(self):
         """Equivalent to 'place_order'."""
-        self.place_order()
+        return self.place_order()
 
     @property
-    def can_issue(self):
+    def can_issue(self) -> bool:
         """Return True if this order can be issued."""
         return self.status in [
             PurchaseOrderStatus.PENDING.value,
@@ -837,17 +844,17 @@ class PurchaseOrder(TotalPriceMixin, Order):
         )
 
     @property
-    def is_pending(self):
+    def is_pending(self) -> bool:
         """Return True if the PurchaseOrder is 'pending'."""
         return self.status == PurchaseOrderStatus.PENDING.value
 
     @property
-    def is_open(self):
+    def is_open(self) -> bool:
         """Return True if the PurchaseOrder is 'open'."""
         return self.status in PurchaseOrderStatusGroups.OPEN
 
     @property
-    def can_cancel(self):
+    def can_cancel(self) -> bool:
         """A PurchaseOrder can only be cancelled under the following circumstances.
 
         - Status is PLACED
@@ -873,7 +880,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
             )
 
     @property
-    def can_hold(self):
+    def can_hold(self) -> bool:
         """Return True if this order can be placed on hold."""
         return self.status in [
             PurchaseOrderStatus.PENDING.value,
@@ -890,34 +897,34 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
     # endregion
 
-    def pending_line_items(self):
+    def pending_line_items(self) -> QuerySet:
         """Return a list of pending line items for this order.
 
         Any line item where 'received' < 'quantity' will be returned.
         """
         return self.lines.filter(quantity__gt=F('received'))
 
-    def completed_line_items(self):
+    def completed_line_items(self) -> QuerySet:
         """Return a list of completed line items against this order."""
         return self.lines.filter(quantity__lte=F('received'))
 
     @property
-    def line_count(self):
+    def line_count(self) -> int:
         """Return the total number of line items associated with this order."""
         return self.lines.count()
 
     @property
-    def completed_line_count(self):
+    def completed_line_count(self) -> int:
         """Return the number of complete line items associated with this order."""
         return self.completed_line_items().count()
 
     @property
-    def pending_line_count(self):
+    def pending_line_count(self) -> int:
         """Return the number of pending line items associated with this order."""
         return self.pending_line_items().count()
 
     @property
-    def is_complete(self):
+    def is_complete(self) -> bool:
         """Return True if all line items have been received."""
         return self.pending_line_items().count() == 0
 
@@ -1240,12 +1247,12 @@ class SalesOrder(TotalPriceMixin, Order):
         """Generate report context data for this SalesOrder."""
         return {**super().report_context(), 'customer': self.customer}
 
-    def get_absolute_url(self):
+    def get_absolute_url(self) -> str:
         """Get the 'web' URL for this order."""
         return pui_url(f'/sales/sales-order/{self.pk}')
 
     @staticmethod
-    def get_api_url():
+    def get_api_url() -> str:
         """Return the API URL associated with the SalesOrder model."""
         return reverse('api-so-list')
 
@@ -1255,14 +1262,14 @@ class SalesOrder(TotalPriceMixin, Order):
         return SalesOrderStatusGroups
 
     @classmethod
-    def api_defaults(cls, request=None):
+    def api_defaults(cls, request=None) -> dict:
         """Return default values for this model when issuing an API OPTIONS request."""
         defaults = {'reference': order.validators.generate_next_sales_order_reference()}
 
         return defaults
 
     @classmethod
-    def barcode_model_type_code(cls):
+    def barcode_model_type_code(cls) -> str:
         """Return the associated barcode model type code for this model."""
         return 'SO'
 
@@ -1319,7 +1326,7 @@ class SalesOrder(TotalPriceMixin, Order):
     )
 
     @property
-    def status_text(self):
+    def status_text(self) -> str:
         """Return the text representation of the status field."""
         return SalesOrderStatus.text(self.status)
 
@@ -1344,38 +1351,45 @@ class SalesOrder(TotalPriceMixin, Order):
     )
 
     @property
-    def is_pending(self):
+    def is_pending(self) -> bool:
         """Return True if this order is 'pending'."""
         return self.status == SalesOrderStatus.PENDING
 
     @property
-    def is_open(self):
+    def is_open(self) -> bool:
         """Return True if this order is 'open' (either 'pending' or 'in_progress')."""
         return self.status in SalesOrderStatusGroups.OPEN
 
     @property
-    def stock_allocations(self):
+    def stock_allocations(self) -> QuerySet:
         """Return a queryset containing all allocations for this order."""
         return SalesOrderAllocation.objects.filter(
             line__in=[line.pk for line in self.lines.all()]
         )
 
-    def is_fully_allocated(self):
+    def is_fully_allocated(self) -> bool:
         """Return True if all line items are fully allocated."""
         return all(line.is_fully_allocated() for line in self.lines.all())
 
-    def is_overallocated(self):
+    def is_overallocated(self) -> bool:
         """Return true if any lines in the order are over-allocated."""
         return any(line.is_overallocated() for line in self.lines.all())
 
-    def is_completed(self):
+    def is_completed(self) -> bool:
         """Check if this order is "shipped" (all line items delivered)."""
         return all(line.is_completed() for line in self.lines.all())
 
-    def can_complete(self, raise_error=False, allow_incomplete_lines=False):
+    def can_complete(
+        self, raise_error: bool = False, allow_incomplete_lines: bool = False
+    ) -> bool:
         """Test if this SalesOrder can be completed.
 
-        Throws a ValidationError if cannot be completed.
+        Arguments:
+            raise_error: If True, raise ValidationError if the order cannot be completed
+            allow_incomplete_lines: If True, allow incomplete line items when completing the order
+
+        Raises:
+            ValidationError: If the order cannot be completed, and raise_error is True
         """
         try:
             if self.status == SalesOrderStatus.COMPLETE.value:
@@ -1417,7 +1431,7 @@ class SalesOrder(TotalPriceMixin, Order):
         self.issue_order()
 
     @property
-    def can_issue(self):
+    def can_issue(self) -> bool:
         """Return True if this order can be issued."""
         return self.status in [
             SalesOrderStatus.PENDING.value,
@@ -1443,7 +1457,7 @@ class SalesOrder(TotalPriceMixin, Order):
             )
 
     @property
-    def can_hold(self):
+    def can_hold(self) -> bool:
         """Return True if this order can be placed on hold."""
         return self.status in [
             SalesOrderStatus.PENDING.value,
@@ -1490,7 +1504,7 @@ class SalesOrder(TotalPriceMixin, Order):
         return True
 
     @property
-    def can_cancel(self):
+    def can_cancel(self) -> bool:
         """Return True if this order can be cancelled."""
         return self.is_open
 
@@ -1572,15 +1586,15 @@ class SalesOrder(TotalPriceMixin, Order):
     # endregion
 
     @property
-    def line_count(self):
+    def line_count(self) -> int:
         """Return the total number of lines associated with this order."""
         return self.lines.count()
 
-    def completed_line_items(self):
+    def completed_line_items(self) -> QuerySet:
         """Return a queryset of the completed line items for this order."""
         return self.lines.filter(shipped__gte=F('quantity'))
 
-    def pending_line_items(self):
+    def pending_line_items(self) -> QuerySet:
         """Return a queryset of the pending line items for this order.
 
         Note: We exclude "virtual" parts here, as they do not get allocated
@@ -1588,28 +1602,28 @@ class SalesOrder(TotalPriceMixin, Order):
         return self.lines.filter(shipped__lt=F('quantity')).exclude(part__virtual=True)
 
     @property
-    def completed_line_count(self):
+    def completed_line_count(self) -> int:
         """Return the number of completed lines for this order."""
         return self.completed_line_items().count()
 
     @property
-    def pending_line_count(self):
+    def pending_line_count(self) -> int:
         """Return the number of pending (incomplete) lines associated with this order."""
         return self.pending_line_items().count()
 
-    def completed_shipments(self):
+    def completed_shipments(self) -> QuerySet:
         """Return a queryset of the completed shipments for this order."""
         return self.shipments.exclude(shipment_date=None)
 
-    def pending_shipments(self):
+    def pending_shipments(self) -> QuerySet:
         """Return a queryset of the pending shipments for this order."""
         return self.shipments.filter(shipment_date=None)
 
-    def allocations(self):
+    def allocations(self) -> QuerySet:
         """Return a queryset of all allocations for this order."""
         return SalesOrderAllocation.objects.filter(line__order=self)
 
-    def pending_allocations(self):
+    def pending_allocations(self) -> QuerySet:
         """Return a queryset of any pending allocations for this order.
 
         Allocations are pending if:
@@ -1623,22 +1637,22 @@ class SalesOrder(TotalPriceMixin, Order):
         return self.allocations().filter(Q1 | Q2).distinct()
 
     @property
-    def shipment_count(self):
+    def shipment_count(self) -> int:
         """Return the total number of shipments associated with this order."""
         return self.shipments.count()
 
     @property
-    def completed_shipment_count(self):
+    def completed_shipment_count(self) -> int:
         """Return the number of completed shipments associated with this order."""
         return self.completed_shipments().count()
 
     @property
-    def pending_shipment_count(self):
+    def pending_shipment_count(self) -> int:
         """Return the number of pending shipments associated with this order."""
         return self.pending_shipments().count()
 
     @property
-    def pending_allocation_count(self):
+    def pending_allocation_count(self) -> int:
         """Return the number of pending (non-shipped) allocations."""
         return self.pending_allocations().count()
 
@@ -1671,6 +1685,7 @@ class OrderLineItem(InvenTree.models.InvenTreeMetadataModel):
     Attributes:
         quantity: Number of items
         reference: Reference text (e.g. customer reference) for this line item
+        project_code: Project code associated with this line item (optional)
         note: Annotation for the item
         target_date: An (optional) date for expected shipment of this line item.
     """
@@ -1754,6 +1769,15 @@ class OrderLineItem(InvenTree.models.InvenTreeMetadataModel):
         ),
     )
 
+    project_code = models.ForeignKey(
+        common_models.ProjectCode,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name=_('Project Code'),
+        help_text=_('Select project code for this order'),
+    )
+
 
 class OrderExtraLine(OrderLineItem):
     """Abstract Model for a single ExtraLine in a Order.
@@ -1817,14 +1841,17 @@ class PurchaseOrderLineItem(OrderLineItem):
     )
 
     @staticmethod
-    def get_api_url():
+    def get_api_url() -> str:
         """Return the API URL associated with the PurchaseOrderLineItem model."""
         return reverse('api-po-line-list')
 
-    def clean(self):
+    def clean(self) -> None:
         """Custom clean method for the PurchaseOrderLineItem model.
 
-        Ensure the supplier part matches the supplier
+        Raises:
+            ValidationError: If the SupplierPart does not match the PurchaseOrder supplier
+            ValidationError: If the linked BuildOrder is not marked as external
+            ValidationError: If the linked BuildOrder part does not match the line item part
         """
         super().clean()
 
@@ -1956,7 +1983,7 @@ class PurchaseOrderLineItem(OrderLineItem):
         """Determine if this line item has been fully received."""
         return self.received >= self.quantity
 
-    def update_pricing(self):
+    def update_pricing(self) -> None:
         """Update pricing information based on the supplier part data."""
         if self.part:
             price = self.part.get_price(
@@ -1975,8 +2002,6 @@ class PurchaseOrderExtraLine(OrderExtraLine):
 
     Attributes:
         order: Link to the PurchaseOrder that this line belongs to
-        title: title of line
-        price: The unit price for this OrderLine
     """
 
     class Meta:
@@ -1985,7 +2010,7 @@ class PurchaseOrderExtraLine(OrderExtraLine):
         verbose_name = _('Purchase Order Extra Line')
 
     @staticmethod
-    def get_api_url():
+    def get_api_url() -> str:
         """Return the API URL associated with the PurchaseOrderExtraLine model."""
         return reverse('api-po-extra-line-list')
 
@@ -2025,8 +2050,12 @@ class SalesOrderLineItem(OrderLineItem):
         """Return the API URL associated with the SalesOrderLineItem model."""
         return reverse('api-so-line-list')
 
-    def clean(self):
-        """Perform extra validation steps for this SalesOrderLineItem instance."""
+    def clean(self) -> None:
+        """Perform extra validation steps for this SalesOrderLineItem instance.
+
+        Raises:
+            ValidationError: If the linked part is not salable
+        """
         super().clean()
 
         if self.part:
@@ -2101,7 +2130,7 @@ class SalesOrderLineItem(OrderLineItem):
 
         return query['allocated']
 
-    def is_fully_allocated(self):
+    def is_fully_allocated(self) -> bool:
         """Return True if this line item is fully allocated."""
         # If the linked part is "virtual", then we cannot allocate stock against it
         if self.part and self.part.virtual:
@@ -2112,11 +2141,11 @@ class SalesOrderLineItem(OrderLineItem):
 
         return self.allocated_quantity() >= self.quantity
 
-    def is_overallocated(self):
+    def is_overallocated(self) -> bool:
         """Return True if this line item is over allocated."""
         return self.allocated_quantity() > self.quantity
 
-    def is_completed(self):
+    def is_completed(self) -> bool:
         """Return True if this line item is completed (has been fully shipped)."""
         # A "virtual" part is always considered to be "completed"
         if self.part and self.part.virtual:
@@ -2130,6 +2159,7 @@ class SalesOrderShipmentReportContext(report.mixins.BaseReportContext):
 
     Attributes:
         allocations: QuerySet of SalesOrderAllocation objects
+        address: The shipping address for this shipment (or order)
         order: The associated SalesOrder object
         reference: Shipment reference string
         shipment: The SalesOrderShipment object itself
@@ -2140,6 +2170,7 @@ class SalesOrderShipmentReportContext(report.mixins.BaseReportContext):
     allocations: report.mixins.QuerySet['SalesOrderAllocation']
     order: 'SalesOrder'
     reference: str
+    address: 'Address'
     shipment: 'SalesOrderShipment'
     tracking_number: str
     title: str
@@ -2161,6 +2192,7 @@ class SalesOrderShipment(
 
     Attributes:
         order: SalesOrder reference
+        shipment_address: Shipping address for this shipment (optional)
         shipment_date: Date this shipment was "shipped" (or null)
         checked_by: User reference field indicating who checked this order
         reference: Custom reference text for this shipment (e.g. consignment number?)
@@ -2179,8 +2211,22 @@ class SalesOrderShipment(
         unique_together = ['order', 'reference']
         verbose_name = _('Sales Order Shipment')
 
+    def clean(self) -> None:
+        """Custom clean method for the SalesOrderShipment class.
+
+        Raises:
+            ValidationError: If the shipment address does not match the customer
+        """
+        super().clean()
+
+        if self.order and self.shipment_address:
+            if self.shipment_address.company != self.order.customer:
+                raise ValidationError({
+                    'shipment_address': _('Shipment address must match the customer')
+                })
+
     @staticmethod
-    def get_api_url():
+    def get_api_url() -> str:
         """Return the API URL associated with the SalesOrderShipment model."""
         return reverse('api-so-shipment-list')
 
@@ -2189,6 +2235,7 @@ class SalesOrderShipment(
         return {
             'allocations': self.allocations,
             'order': self.order,
+            'address': self.address,
             'reference': self.reference,
             'shipment': self,
             'tracking_number': self.tracking_number,
@@ -2203,6 +2250,16 @@ class SalesOrderShipment(
         related_name='shipments',
         verbose_name=_('Order'),
         help_text=_('Sales Order'),
+    )
+
+    shipment_address = models.ForeignKey(
+        Address,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name=_('Address'),
+        help_text=_('Shipping address for this shipment'),
+        related_name='+',
     )
 
     shipment_date = models.DateField(
@@ -2260,16 +2317,32 @@ class SalesOrderShipment(
         max_length=2000,
     )
 
-    def is_complete(self):
+    @property
+    def address(self) -> Address:
+        """Return the shipping address for this shipment.
+
+        If no specific shipment address is assigned, return the address from the order.
+        """
+        return self.shipment_address or self.order.address
+
+    def is_checked(self) -> bool:
+        """Return True if this shipment has been checked."""
+        return self.checked_by is not None
+
+    def is_complete(self) -> bool:
         """Return True if this shipment has already been completed."""
         return self.shipment_date is not None
 
-    def is_delivered(self):
+    def is_delivered(self) -> bool:
         """Return True if this shipment has already been delivered."""
         return self.delivery_date is not None
 
-    def check_can_complete(self, raise_error=True):
-        """Check if this shipment is able to be completed."""
+    def check_can_complete(self, raise_error: bool = True) -> bool:
+        """Check if this shipment is able to be completed.
+
+        Arguments:
+            raise_error: If True, raise ValidationError if cannot complete
+        """
         try:
             if self.shipment_date:
                 # Shipment has already been sent!
@@ -2277,6 +2350,14 @@ class SalesOrderShipment(
 
             if self.allocations.count() == 0:
                 raise ValidationError(_('Shipment has no allocated stock items'))
+
+            if (
+                get_global_setting('SALESORDER_SHIPMENT_REQUIRES_CHECK')
+                and not self.is_checked()
+            ):
+                raise ValidationError(
+                    _('Shipment must be checked before it can be completed')
+                )
 
         except ValidationError as e:
             if raise_error:
@@ -2349,8 +2430,6 @@ class SalesOrderExtraLine(OrderExtraLine):
 
     Attributes:
         order: Link to the SalesOrder that this line belongs to
-        title: title of line
-        price: The unit price for this OrderLine
     """
 
     class Meta:

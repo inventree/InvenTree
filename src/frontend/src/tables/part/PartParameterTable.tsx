@@ -16,7 +16,6 @@ import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
-import { RenderUser } from '../../components/render/User';
 import { formatDecimal } from '../../defaults/formatters';
 import { usePartParameterFields } from '../../forms/PartForms';
 import {
@@ -30,7 +29,8 @@ import {
   DateColumn,
   DescriptionColumn,
   NoteColumn,
-  PartColumn
+  PartColumn,
+  UserColumn
 } from '../ColumnRenderers';
 import { IncludeVariantsFilter, UserFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
@@ -122,19 +122,11 @@ export function PartParameterTable({
         sortable: true,
         switchable: true
       }),
-      {
-        accessor: 'updated_by',
-        title: t`Updated By`,
-        sortable: true,
-        switchable: true,
-        render: (record: any) => {
-          return record.updated_by_detail ? (
-            <RenderUser instance={record.updated_by_detail} />
-          ) : (
-            '-'
-          );
-        }
-      }
+      UserColumn({
+        accessor: 'updated_by_detail',
+        ordering: 'updated_by',
+        title: t`Updated By`
+      })
     ];
   }, [partId]);
 

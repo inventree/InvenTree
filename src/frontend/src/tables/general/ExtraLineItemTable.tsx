@@ -25,7 +25,8 @@ import {
   DecimalColumn,
   DescriptionColumn,
   LinkColumn,
-  NoteColumn
+  NoteColumn,
+  ProjectCodeColumn
 } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 
@@ -75,6 +76,7 @@ export default function ExtraLineItemTable({
             multiplier: record.quantity
           })
       },
+      ProjectCodeColumn({}),
       NoteColumn({
         accessor: 'notes'
       }),

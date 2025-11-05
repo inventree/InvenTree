@@ -21,11 +21,11 @@ def get_backup_connector_options() -> dict:
     connector_options = InvenTree.config.get_setting(
         'INVENTREE_BACKUP_CONNECTOR_OPTIONS',
         'backup_connector_options',
-        default_value=default_options,
+        default_value={},
         typecast=dict,
     )
 
-    return connector_options
+    return {**default_options, **connector_options}
 
 
 def get_backup_storage_backend() -> str:

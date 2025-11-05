@@ -3,7 +3,7 @@ import { codecovVitePlugin } from '@codecov/vite-plugin';
 import { vanillaExtractPlugin } from '@vanilla-extract/vite-plugin';
 import react from '@vitejs/plugin-react';
 import license from 'rollup-plugin-license';
-import { defineConfig, splitVendorChunkPlugin } from 'vite';
+import { defineConfig } from 'vite';
 import istanbul from 'vite-plugin-istanbul';
 
 import { __INVENTREE_VERSION_INFO__ } from './version-info';
@@ -32,7 +32,6 @@ export default defineConfig(({ command, mode }) => {
         }
       }),
       vanillaExtractPlugin(),
-      splitVendorChunkPlugin(),
       license({
         sourcemap: true,
         thirdParty: {

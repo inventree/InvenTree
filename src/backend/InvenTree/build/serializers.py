@@ -33,7 +33,6 @@ from generic.states.fields import InvenTreeCustomStatusSerializerMixin
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.serializers import (
     FilterableCharField,
-    FilterableIntegerField,
     FilterableSerializerMixin,
     InvenTreeDecimalField,
     InvenTreeModelSerializer,
@@ -159,17 +158,6 @@ class BuildSerializer(
     project_code_detail = enable_filter(
         ProjectCodeSerializer(
             source='project_code', many=False, read_only=True, allow_null=True
-        ),
-        True,
-        filter_name='project_code_detail',
-    )
-
-    project_code = enable_filter(
-        FilterableIntegerField(
-            allow_null=True,
-            required=False,
-            label=_('Project Code'),
-            help_text=_('Project code for this build order'),
         ),
         True,
         filter_name='project_code_detail',
@@ -1351,6 +1339,7 @@ class BuildLineSerializer(
             'bom_item_detail',
             'assembly_detail',
             'part_detail',
+            'category_detail',
             'build_detail',
         ]
         read_only_fields = ['build', 'bom_item', 'allocations']
@@ -1442,6 +1431,17 @@ class BuildLineSerializer(
         True,
     )
 
+    category_detail = enable_filter(
+        part_serializers.CategorySerializer(
+            label=_('Category'),
+            source='bom_item.sub_part.category',
+            many=False,
+            read_only=True,
+            allow_null=True,
+        ),
+        False,
+    )
+
     build_detail = enable_filter(
         BuildSerializer(
             label=_('Build'),
@@ -1517,6 +1517,7 @@ class BuildLineSerializer(
             'bom_item',
             'bom_item__part',
             'bom_item__sub_part',
+            'bom_item__sub_part__category',
             'bom_item__sub_part__stock_items',
             'bom_item__sub_part__stock_items__allocations',
             'bom_item__sub_part__stock_items__sales_order_allocations',

@@ -854,6 +854,14 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'SALESORDER_SHIPMENT_REQUIRES_CHECK': {
+        'name': _('Shipment Requires Checking'),
+        'description': _(
+            'Prevent completion of shipments until items have been checked'
+        ),
+        'default': False,
+        'validator': bool,
+    },
     'SALESORDER_SHIP_COMPLETE': {
         'name': _('Mark Shipped Orders as Complete'),
         'description': _(

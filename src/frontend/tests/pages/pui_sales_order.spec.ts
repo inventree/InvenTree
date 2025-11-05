@@ -14,9 +14,18 @@ test('Sales Orders - Tabs', async ({ browser }) => {
 
   await page.waitForURL('**/web/sales/**');
 
+  // Sales Orders panel
   await loadTab(page, 'Sales Orders');
   await page.waitForURL('**/web/sales/index/salesorders');
+
+  // Pending Shipments panel
+  await loadTab(page, 'Pending Shipments');
+  await page.getByRole('cell', { name: 'SO0007' }).waitFor();
+  await page.getByRole('button', { name: 'Shipment Reference' }).waitFor();
+
+  // Return Orders panel
   await loadTab(page, 'Return Orders');
+  await page.getByRole('cell', { name: 'NOISE-COMPLAINT' }).waitFor();
 
   // Customers
   await loadTab(page, 'Customers');

@@ -1169,15 +1169,16 @@ def gunicorn(c, address='0.0.0.0:8000', workers=None):
 @task(
     pre=[wait],
     help={
-        'address': 'Server address:port (default=127.0.0.1:8000)',
+        'address': 'Server address:port (default=0.0.0.0:8000)',
         'no_reload': 'Do not automatically reload the server in response to code changes',
         'no_threading': 'Disable multi-threading for the development server',
     },
 )
-def server(c, address='127.0.0.1:8000', no_reload=False, no_threading=False):
+def server(c, address='0.0.0.0:8000', no_reload=False, no_threading=False):
     """Launch a (development) server using Django's in-built webserver.
 
-    Note: This is *not* sufficient for a production installation.
+    - This is *not* sufficient for a production installation.
+    - The default address exposes the server on all network interfaces.
     """
     cmd = f'runserver {address}'
 
@@ -1727,7 +1728,7 @@ def frontend_download(
         # if clean, delete static/web directory
         if clean:
             shutil.rmtree(dest_path, ignore_errors=True)
-            dest_path.mkdir()
+            dest_path.mkdir(parents=True, exist_ok=True)
             info(f'Cleaned directory: {dest_path}')
 
         # unzip build to static folder
@@ -1791,6 +1792,7 @@ def frontend_download(
     # if zip file is specified, try to extract it directly
     if file:
         handle_extract(file)
+        static(c, frontend=False, skip_plugins=True)
         return
 
     # check arguments

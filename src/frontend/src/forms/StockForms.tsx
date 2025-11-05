@@ -977,6 +977,11 @@ function stockChangeStatusFields(items: any[]): ApiFormFieldSet {
 
   const records = Object.fromEntries(items.map((item) => [item.pk, item]));
 
+  // Extract all status values from the items
+  const statusValues = [
+    ...new Set(items.map((item) => item.status_custom_key ?? item.status))
+  ];
+
   const fields: ApiFormFieldSet = {
     items: {
       field_type: 'table',
@@ -1001,7 +1006,9 @@ function stockChangeStatusFields(items: any[]): ApiFormFieldSet {
         { title: '', style: { width: '50px' } }
       ]
     },
-    status: {},
+    status: {
+      value: statusValues.length === 1 ? statusValues[0] : undefined
+    },
     note: {}
   };
 
