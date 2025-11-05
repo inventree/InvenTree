@@ -31,6 +31,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { api } from '../../../../App';
 import { CopyButton } from '../../../../components/buttons/CopyButton';
 import { StylishText } from '../../../../components/items/StylishText';
+import { authApi } from '../../../../functions/auth';
 import { useServerApiState } from '../../../../states/ServerApiState';
 import { QrRegistrationForm } from './QrRegistrationForm';
 import { parseDate } from './SecurityContent';
@@ -222,6 +223,112 @@ function ReauthenticateTOTPModal({
 }
 
 /**
+ * Modal for removing a registered WebAuthn credential:
+ * - Deletes the WebAuthn credential from the server
+ * - Handles errors and re-authentication flows as needed
+ */
+function RemoveWebauthnModal({
+  tokenId,
+  opened,
+  setOpen,
+  onReauthFlow,
+  onSuccess
+}: {
+  opened: boolean;
+  tokenId: number | null;
+  setOpen: (open: boolean) => void;
+  onReauthFlow: (flow: FlowEnum) => void;
+  onSuccess: () => void;
+}) {
+  const [processing, setProcessing] = useState<boolean>(false);
+  const [error, setError] = useState<string>('');
+
+  useEffect(() => {
+    setProcessing(false);
+    setError('');
+  }, [opened]);
+
+  const removeCredential = useCallback(() => {
+    setProcessing(true);
+
+    if (!tokenId) {
+      return;
+    }
+
+    authApi(
+      apiUrl(ApiEndpoints.auth_webauthn),
+      {
+        timeout: 30 * 1000
+      },
+      'delete',
+      {
+        authenticators: [tokenId]
+      }
+    )
+      .then((response) => {
+        showNotification({
+          title: t`WebAuthn Credential Removed`,
+          message: t`WebAuthn credential removed successfully.`,
+          color: 'green',
+          icon: <IconCircleCheck />
+        });
+        setOpen(false);
+        onSuccess();
+      })
+      .catch((error) => {
+        setError(
+          extractErrorMessage(error, t`Error removing WebAuthn credential`)
+        );
+
+        // A 401 error indicates that re-authentication is required
+        if (error.status === 401) {
+          const flow = getReauthFlow(error);
+          if (flow !== null) {
+            onReauthFlow(flow);
+          }
+        }
+      })
+      .finally(() => {
+        setProcessing(false);
+      });
+  }, [tokenId]);
+
+  return (
+    <Modal
+      opened={opened}
+      onClose={() => setOpen(false)}
+      title={
+        <StylishText size='lg'>{t`Remove WebAuthn Credential`}</StylishText>
+      }
+    >
+      <Stack>
+        <Divider />
+        <Alert
+          color='red'
+          icon={<IconAlertCircle />}
+          title={t`Confirm Removal`}
+        >
+          <Trans>Confirm removal of webauth credential</Trans>
+        </Alert>
+        {error && (
+          <Alert color='red' icon={<IconExclamationCircle />} title={t`Error`}>
+            {error}
+          </Alert>
+        )}
+        <Group justify='right'>
+          <Button onClick={() => setOpen(false)}>
+            <Trans>Cancel</Trans>
+          </Button>
+          <Button onClick={removeCredential} color='red' disabled={processing}>
+            <Trans>Remove</Trans>
+          </Button>
+        </Group>
+      </Stack>
+    </Modal>
+  );
+}
+
+/**
  * Modal for removing a registered TOTP token:
  * - Deletes the TOTP token from the server
  * - Handles errors and re-authentication flows as needed
@@ -248,7 +355,9 @@ function RemoveTOTPModal({
   const deleteToken = useCallback(() => {
     setProcessing(true);
     api
-      .delete(apiUrl(ApiEndpoints.auth_totp), { timeout: 30 * 1000 })
+      .delete(apiUrl(ApiEndpoints.auth_totp), {
+        timeout: 30 * 1000
+      })
       .then((response) => {
         showNotification({
           title: t`TOTP Removed`,
@@ -258,6 +367,8 @@ function RemoveTOTPModal({
         });
         setOpen(false);
         onSuccess();
+
+        return response.data;
       })
       .catch((error) => {
         setError(extractErrorMessage(error, t`Error removing TOTP token`));
@@ -594,12 +705,16 @@ export default function MFASettings() {
     return data.map((token: any) => token.type);
   }, [isLoading, data]);
 
+  const [webauthnToken, setWebauthnToken] = useState<number | null>(null);
+
   const [recoveryCodesOpen, setRecoveryCodesOpen] = useState<boolean>(false);
   const [reauthPassOpen, setReauthPassModalOpen] = useState<boolean>(false);
   const [reauthTOTPOpen, setReauthTOTPModalOpen] = useState<boolean>(false);
   const [registerTOTPModalOpen, setRegisterTOTPModalOpen] =
     useState<boolean>(false);
   const [removeTOTPModalOpen, setRemoveTOTPModalOpen] =
+    useState<boolean>(false);
+  const [removeWebauthnModalOpen, setRemoveWebauthnModalOpen] =
     useState<boolean>(false);
 
   // Callback function used to re-authenticate the user
@@ -709,7 +824,8 @@ export default function MFASettings() {
   }, []);
 
   const removeWebauthn = useCallback((id: number) => {
-    // TODO
+    setWebauthnToken(id);
+    setRemoveWebauthnModalOpen(true);
   }, []);
 
   // Memoize the list of possible MFA factors that can be registered
@@ -787,6 +903,13 @@ export default function MFASettings() {
       <RemoveTOTPModal
         opened={removeTOTPModalOpen}
         setOpen={setRemoveTOTPModalOpen}
+        onReauthFlow={reauthenticate}
+        onSuccess={refetch}
+      />
+      <RemoveWebauthnModal
+        tokenId={webauthnToken}
+        opened={removeWebauthnModalOpen}
+        setOpen={setRemoveWebauthnModalOpen}
         onReauthFlow={reauthenticate}
         onSuccess={refetch}
       />
