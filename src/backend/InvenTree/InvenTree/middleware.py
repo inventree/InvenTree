@@ -5,18 +5,19 @@ from urllib.parse import urlsplit
 
 from django.conf import settings
 from django.contrib.auth.middleware import PersistentRemoteUserMiddleware
-from django.http import HttpResponse
+from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import resolve, reverse_lazy
 from django.utils.deprecation import MiddlewareMixin
 from django.utils.http import is_same_domain
+from django.utils.translation import gettext_lazy as _
 
 import structlog
 from error_report.middleware import ExceptionProcessor
 
 from common.settings import get_global_setting
-from InvenTree.AllUserRequire2FAMiddleware import AllUserRequire2FAMiddleware
 from InvenTree.cache import create_session_cache, delete_session_cache
+from InvenTree.config import CONFIG_LOOKUPS, inventreeInstaller
 from users.models import ApiToken
 
 logger = structlog.get_logger('inventree')
@@ -145,8 +146,80 @@ class AuthRequiredMiddleware:
         return response
 
 
-class Check2FAMiddleware(AllUserRequire2FAMiddleware):
-    """Ensure that mfa is enforced if set so."""
+class Check2FAMiddleware(MiddlewareMixin):
+    """Ensure that users have two-factor authentication enabled before they have access restricted endpoints.
+
+    Adapted from https://github.com/pennersr/django-allauth/issues/3649
+    """
+
+    allowed_pages = [
+        'api-user-meta',
+        'api-user-me',
+        'api-user-roles',
+        'api-inventree-info',
+        'api-token',
+        # web platform urls
+        'password_reset_confirm',
+        'index',
+        'web',
+        'web-wildcard',
+        'web-assets',
+    ]
+    app_names = ['headless']
+    require_2fa_message = _(
+        'You must enable two-factor authentication before doing anything else.'
+    )
+
+    def on_require_2fa(self, request: HttpRequest) -> HttpResponse:
+        """Force user to mfa activation."""
+        return JsonResponse(
+            {'id': 'mfa_register', 'error': self.require_2fa_message}, status=401
+        )
+
+    def is_allowed_page(self, request: HttpRequest) -> bool:
+        """Check if the current page can be accessed without mfa."""
+        match = request.resolver_match
+        return (
+            None
+            if match is None
+            else any(ref in self.app_names for ref in match.app_names)
+            or match.url_name in self.allowed_pages
+            or match.route == 'favicon.ico'
+        )
+
+    def is_multifactor_logged_in(self, request: HttpRequest) -> bool:
+        """Check if the user is logged in with multifactor authentication."""
+        from allauth.account.authentication import get_authentication_records
+        from allauth.mfa.utils import is_mfa_enabled
+        from allauth.mfa.webauthn.internal.flows import did_use_passwordless_login
+
+        authns = get_authentication_records(request)
+
+        return is_mfa_enabled(request.user) and (
+            did_use_passwordless_login(request)
+            or any(record.get('method') == 'mfa' for record in authns)
+        )
+
+    def process_view(
+        self, request: HttpRequest, view_func, view_args, view_kwargs
+    ) -> HttpResponse:
+        """Determine if the server is set up enforce 2fa registration."""
+        from django.conf import settings
+
+        # Exit early if MFA is not enabled
+        if not settings.MFA_ENABLED:
+            return None
+
+        if request.user.is_anonymous:
+            return None
+        if self.is_allowed_page(request):
+            return None
+        if self.is_multifactor_logged_in(request):
+            return None
+
+        if self.enforce_2fa(request):
+            return self.on_require_2fa(request)
+        return None
 
     def enforce_2fa(self, request):
         """Use setting to check if MFA should be enforced."""
@@ -238,13 +311,29 @@ class InvenTreeHostSettingsMiddleware(MiddlewareMixin):
         accessed_scheme = request._current_scheme_host
         referer = urlsplit(accessed_scheme)
 
-        # Ensure that the settings are set correctly with the current request
-        matches = (
-            (accessed_scheme and not accessed_scheme.startswith(settings.SITE_URL))
-            if not settings.SITE_LAX_PROTOCOL_CHECK
-            else not is_same_domain(referer.netloc, urlsplit(settings.SITE_URL).netloc)
+        site_url = urlsplit(settings.SITE_URL)
+
+        # Check if the accessed URL matches the SITE_URL setting
+        site_url_match = (
+            (
+                # Exact match on domain
+                is_same_domain(referer.netloc, site_url.netloc)
+                and referer.scheme == site_url.scheme
+            )
+            or (
+                # Lax protocol match, accessed URL starts with SITE_URL
+                settings.SITE_LAX_PROTOCOL_CHECK
+                and accessed_scheme.startswith(settings.SITE_URL)
+            )
+            or (
+                # Lax protocol match, same domain
+                settings.SITE_LAX_PROTOCOL_CHECK
+                and referer.hostname == site_url.hostname
+            )
         )
-        if matches:
+
+        if not site_url_match:
+            # The accessed URL does not match the SITE_URL setting
             if (
                 isinstance(settings.CSRF_TRUSTED_ORIGINS, list)
                 and len(settings.CSRF_TRUSTED_ORIGINS) > 1
@@ -252,23 +341,41 @@ class InvenTreeHostSettingsMiddleware(MiddlewareMixin):
                 # The used url might not be the primary url - next check determines if in a trusted origins
                 pass
             else:
-                msg = f'INVE-E7: The used path `{accessed_scheme}` does not match the SITE_URL `{settings.SITE_URL}`'
+                source = CONFIG_LOOKUPS.get('INVENTREE_SITE_URL', {}).get(
+                    'source', 'unknown'
+                )
+                dpl_method = inventreeInstaller()
+                msg = f'INVE-E7: The visited path `{accessed_scheme}` does not match the SITE_URL `{settings.SITE_URL}`. The INVENTREE_SITE_URL is set via `{source}` config method - deployment method `{dpl_method}`'
                 logger.error(msg)
                 return render(
                     request, 'config_error.html', {'error_message': msg}, status=500
                 )
 
-        # Check trusted origins
-        if not any(
-            is_same_domain(referer.netloc, host)
-            for host in [
-                urlsplit(origin).netloc.lstrip('*')
+        trusted_origins_match = (
+            # Matching domain found in allowed origins
+            any(
+                is_same_domain(referer.netloc, host)
+                for host in [
+                    urlsplit(origin).netloc.lstrip('*')
+                    for origin in settings.CSRF_TRUSTED_ORIGINS
+                ]
+            )
+        ) or (
+            # Lax protocol match allowed
+            settings.SITE_LAX_PROTOCOL_CHECK
+            and any(
+                referer.hostname == urlsplit(origin).hostname
                 for origin in settings.CSRF_TRUSTED_ORIGINS
-            ]
-        ):
+            )
+        )
+
+        # Check trusted origins
+        if not trusted_origins_match:
             msg = f'INVE-E7: The used path `{accessed_scheme}` is not in the TRUSTED_ORIGINS'
             logger.error(msg)
             return render(
                 request, 'config_error.html', {'error_message': msg}, status=500
             )
+
+        # All checks passed
         return None

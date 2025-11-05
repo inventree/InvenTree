@@ -12,7 +12,12 @@ export { ModelType } from './enums/ModelType';
 export type { ModelDict } from './enums/ModelInformation';
 export { UserRoles, UserPermissions } from './enums/Roles';
 
-export type { InvenTreePluginContext } from './types/Plugins';
+export type {
+  InvenTreePluginContext,
+  InvenTreeFormsContext,
+  PluginVersion,
+  StockAdjustmentFormsContext
+} from './types/Plugins';
 export type { RowAction, RowViewProps } from './types/Tables';
 
 export type {
@@ -24,6 +29,11 @@ export type {
   ApiFormModalProps,
   BulkEditApiFormModalProps
 } from './types/Forms';
+
+export type {
+  UseModalProps,
+  UseModalReturn
+} from './types/Modals';
 
 // Common utility functions
 export { apiUrl } from './functions/Api';

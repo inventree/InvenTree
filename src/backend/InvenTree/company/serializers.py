@@ -18,6 +18,8 @@ from importer.registry import register_importer
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.ready import isGeneratingSchema
 from InvenTree.serializers import (
+    FilterableCharField,
+    FilterableSerializerMixin,
     InvenTreeCurrencySerializer,
     InvenTreeDecimalField,
     InvenTreeImageSerializerField,
@@ -26,6 +28,7 @@ from InvenTree.serializers import (
     InvenTreeTagModelSerializer,
     NotesFieldMixin,
     RemoteImageMixin,
+    enable_filter,
 )
 
 from .models import (
@@ -248,7 +251,10 @@ class ContactSerializer(DataImportExportSerializerMixin, InvenTreeModelSerialize
 
 @register_importer()
 class ManufacturerPartSerializer(
-    DataImportExportSerializerMixin, InvenTreeTagModelSerializer, NotesFieldMixin
+    FilterableSerializerMixin,
+    DataImportExportSerializerMixin,
+    InvenTreeTagModelSerializer,
+    NotesFieldMixin,
 ):
     """Serializer for ManufacturerPart object."""
 
@@ -273,35 +279,23 @@ class ManufacturerPartSerializer(
 
     tags = TagListSerializerField(required=False)
 
-    def __init__(self, *args, **kwargs):
-        """Initialize this serializer with extra detail fields as required."""
-        part_detail = kwargs.pop('part_detail', True)
-        manufacturer_detail = kwargs.pop('manufacturer_detail', True)
-        prettify = kwargs.pop('pretty', False)
-
-        super().__init__(*args, **kwargs)
-
-        if isGeneratingSchema():
-            return
-
-        if part_detail is not True:
-            self.fields.pop('part_detail', None)
-
-        if manufacturer_detail is not True:
-            self.fields.pop('manufacturer_detail', None)
-
-        if prettify is not True:
-            self.fields.pop('pretty_name', None)
-
-    part_detail = part_serializers.PartBriefSerializer(
-        source='part', many=False, read_only=True, allow_null=True
+    part_detail = enable_filter(
+        part_serializers.PartBriefSerializer(
+            source='part', many=False, read_only=True, allow_null=True
+        ),
+        True,
     )
 
-    manufacturer_detail = CompanyBriefSerializer(
-        source='manufacturer', many=False, read_only=True, allow_null=True
+    manufacturer_detail = enable_filter(
+        CompanyBriefSerializer(
+            source='manufacturer', many=False, read_only=True, allow_null=True
+        ),
+        True,
     )
 
-    pretty_name = serializers.CharField(read_only=True, allow_null=True)
+    pretty_name = enable_filter(
+        FilterableCharField(read_only=True, allow_null=True), filter_name='pretty'
+    )
 
     manufacturer = serializers.PrimaryKeyRelatedField(
         queryset=Company.objects.filter(is_manufacturer=True)
@@ -310,7 +304,7 @@ class ManufacturerPartSerializer(
 
 @register_importer()
 class ManufacturerPartParameterSerializer(
-    DataImportExportSerializerMixin, InvenTreeModelSerializer
+    FilterableSerializerMixin, DataImportExportSerializerMixin, InvenTreeModelSerializer
 ):
     """Serializer for the ManufacturerPartParameter model."""
 
@@ -328,25 +322,23 @@ class ManufacturerPartParameterSerializer(
             'units',
         ]
 
-    def __init__(self, *args, **kwargs):
-        """Initialize this serializer with extra detail fields as required."""
-        man_detail = kwargs.pop('manufacturer_part_detail', False)
-
-        super().__init__(*args, **kwargs)
-
-        if not man_detail and not isGeneratingSchema():
-            self.fields.pop('manufacturer_part_detail', None)
-
-    manufacturer_part_detail = ManufacturerPartSerializer(
-        source='manufacturer_part', many=False, read_only=True, allow_null=True
+    manufacturer_part_detail = enable_filter(
+        ManufacturerPartSerializer(
+            source='manufacturer_part', many=False, read_only=True, allow_null=True
+        )
     )
 
 
 @register_importer()
 class SupplierPartSerializer(
-    DataImportExportSerializerMixin, InvenTreeTagModelSerializer, NotesFieldMixin
+    FilterableSerializerMixin,
+    DataImportExportSerializerMixin,
+    InvenTreeTagModelSerializer,
+    NotesFieldMixin,
 ):
     """Serializer for SupplierPart object."""
+
+    no_filters = True
 
     export_exclude_fields = ['tags']
 
@@ -390,7 +382,6 @@ class SupplierPartSerializer(
             'notes',
             'tags',
         ]
-
         read_only_fields = [
             'availability_updated',
             'barcode_hash',
@@ -402,13 +393,11 @@ class SupplierPartSerializer(
     def __init__(self, *args, **kwargs):
         """Initialize this serializer with extra detail fields as required."""
         # Check if 'available' quantity was supplied
-
         self.has_available_quantity = 'available' in kwargs.get('data', {})
 
+        # TODO INVE-T1 support complex filters
         brief = kwargs.pop('brief', False)
-
         detail_default = not brief
-
         part_detail = kwargs.pop('part_detail', detail_default)
         supplier_detail = kwargs.pop('supplier_detail', detail_default)
         manufacturer_detail = kwargs.pop('manufacturer_detail', detail_default)
@@ -543,7 +532,7 @@ class SupplierPartSerializer(
 
 @register_importer()
 class SupplierPriceBreakSerializer(
-    DataImportExportSerializerMixin, InvenTreeModelSerializer
+    FilterableSerializerMixin, DataImportExportSerializerMixin, InvenTreeModelSerializer
 ):
     """Serializer for SupplierPriceBreak object."""
 
@@ -563,22 +552,6 @@ class SupplierPriceBreakSerializer(
             'updated',
         ]
 
-    def __init__(self, *args, **kwargs):
-        """Initialize this serializer with extra fields as required."""
-        supplier_detail = kwargs.pop('supplier_detail', False)
-        part_detail = kwargs.pop('part_detail', False)
-
-        super().__init__(*args, **kwargs)
-
-        if isGeneratingSchema():
-            return
-
-        if not supplier_detail:
-            self.fields.pop('supplier_detail', None)
-
-        if not part_detail:
-            self.fields.pop('part_detail', None)
-
     @staticmethod
     def annotate_queryset(queryset):
         """Prefetch related fields for the queryset."""
@@ -596,11 +569,15 @@ class SupplierPriceBreakSerializer(
         source='part.supplier', many=False, read_only=True
     )
 
-    supplier_detail = CompanyBriefSerializer(
-        source='part.supplier', many=False, read_only=True, allow_null=True
+    supplier_detail = enable_filter(
+        CompanyBriefSerializer(
+            source='part.supplier', many=False, read_only=True, allow_null=True
+        )
     )
 
     # Detail serializer for SupplierPart
-    part_detail = SupplierPartSerializer(
-        source='part', brief=True, many=False, read_only=True, allow_null=True
+    part_detail = enable_filter(
+        SupplierPartSerializer(
+            source='part', brief=True, many=False, read_only=True, allow_null=True
+        )
     )

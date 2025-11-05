@@ -31,6 +31,7 @@ from PIL import Image
 
 from common.currency import currency_code_default
 
+from .setting.storages import StorageBackends
 from .settings import MEDIA_URL, STATIC_URL
 
 logger = structlog.get_logger('inventree')
@@ -176,6 +177,8 @@ def constructPathString(path: list[str], max_chars: int = 250) -> str:
 
 def getMediaUrl(filename):
     """Return the qualified access path for the given file, under the media directory."""
+    if settings.STORAGE_TARGET == StorageBackends.S3:
+        return str(filename)
     return os.path.join(MEDIA_URL, str(filename))
 
 

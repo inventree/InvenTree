@@ -1,6 +1,6 @@
 """Base machine type/base driver."""
 
-from typing import TYPE_CHECKING, Any, Literal, Union
+from typing import TYPE_CHECKING, Any, Literal, TypedDict, Union
 
 from generic.states import StatusCode
 from InvenTree.helpers_mixin import (
@@ -46,6 +46,27 @@ class MachineStatus(StatusCode):
         5XX - Unknown issues
         ```
     """
+
+
+MachinePropertyType = Literal['str', 'bool', 'progress', 'int', 'float']
+
+
+class MachineProperty(TypedDict, total=False):
+    """Type definition for machine properties.
+
+    Attributes:
+        key: Key of the property (required)
+        value: Value of the property (required)
+        group: Grouping of the property
+        type: Type of the property (one of 'str', 'bool', 'progress', 'int', 'float') default = 'str'
+        max_progress: Maximum value for progress type (required if type is 'progress')
+    """
+
+    key: str
+    value: Union[str, bool, int, float]
+    group: str
+    type: MachinePropertyType
+    max_progress: Union[int, None]
 
 
 class BaseDriver(
@@ -117,6 +138,12 @@ class BaseDriver(
             machine: Machine instance
         """
 
+    def ping_machines(self):
+        """Ping all machines using this driver to check if they are online.
+
+        This is called periodically by a background task if the setting 'MACHINE_PING_ENABLED' is active.
+        """
+
     def get_machines(self, **kwargs):
         """Return all machines using this driver (By default only initialized machines).
 
@@ -139,7 +166,8 @@ class BaseDriver(
         Arguments:
             error: Exception or string
         """
-        self.set_shared_state('errors', [*self.errors, error])
+        if error not in self.errors:
+            self.set_shared_state('errors', [*self.errors, error])
 
     # --- state getters/setters
     @property
@@ -321,7 +349,8 @@ class BaseMachineType(
         Arguments:
             error: Exception or string
         """
-        self.set_shared_state('errors', [*self.errors, error])
+        if error not in self.errors:
+            self.set_shared_state('errors', [*self.errors, error])
 
     def reset_errors(self):
         """Helper function for resetting the error list for a machine."""
@@ -406,6 +435,26 @@ class BaseMachineType(
         """
         self.set_shared_state('status_text', status_text)
 
+    def set_properties(self, properties: list[MachineProperty]):
+        """Set the machine properties. This can be any arbitrary dict with model information, etc.
+
+        Arguments:
+            properties: The new properties dict to set
+        """
+        for p in properties:
+            if 'type' not in p:
+                p['type'] = 'str'
+
+            if 'group' not in p:
+                p['group'] = ''
+
+            if p['type'] == 'progress' and 'max_progress' not in p:
+                p['max_progress'] = 100
+            if 'max_progress' not in p:
+                p['max_progress'] = None
+
+        self.set_shared_state('properties', properties)
+
     # --- state getters/setters
     @property
     def initialized(self) -> bool:
@@ -440,3 +489,13 @@ class BaseMachineType(
     def status_text(self) -> str:
         """Machine status text."""
         return self.get_shared_state('status_text', '')
+
+    @property
+    def properties(self) -> list[MachineProperty]:
+        """Return a dict of all relevant machine properties."""
+        return self.get_shared_state('properties', [])
+
+    @property
+    def properties_dict(self) -> dict[str, MachineProperty]:
+        """Return a dict of all machine properties with key as dict key."""
+        return {prop['key']: prop for prop in self.properties}

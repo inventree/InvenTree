@@ -74,67 +74,44 @@ nav:
   - InvenTree:
     - InvenTree: index.md
     - FAQ: faq.md
+    - Troubleshooting: troubleshooting.md
     - Demo: demo.md
     - Release Notes: releases/release_notes.md
-    - Core Concepts:
-      - Terminology: concepts/terminology.md
-      - Threat Model: concepts/threat_model.md
-      - Physical Units: concepts/units.md
-      - Companies: concepts/company.md
-      - Custom States: concepts/custom_states.md
-      - Pricing: concepts/pricing.md
-      - Project Codes: concepts/project_codes.md
-      - Barcodes:
-        - Barcode Support: barcodes/index.md
-        - Internal Barcodes: barcodes/internal.md
-        - External Barcodes: barcodes/external.md
-        - Custom Barcodes: barcodes/custom.md
     - Development:
       - Contributing: develop/contributing.md
       - Architecture: develop/architecture.md
       - Roadmap: develop/roadmap.md
       - Devcontainer: develop/devcontainer.md
       - React Frontend: develop/react-frontend.md
-    - Mobile App:
-      - Mobile App: app/index.md
-      - Connect: app/connect.md
-      - Navigation: app/navigation.md
-      - Search: app/search.md
-      - Barcodes: app/barcode.md
-      - Parts: app/part.md
-      - Stock: app/stock.md
-      - Purchase Orders: app/po.md
-      - Sales Orders: app/so.md
-      - Settings: app/settings.md
-      - Privacy: app/privacy.md
-      - Translation: app/translation.md
-      - Suggestions: app/issues.md
-    - InvenTree API:
-      - Overview: api/index.md
-      - API Schema: api/schema.md
-      - Model Metadata: api/metadata.md
-      - Download Data: api/download.md
-      - Bulk Delete: api/bulk_delete.md
-      - Interactive API: api/browse.md
-    - Python Interface:
-      - Overview: api/python/index.md
-      - Currency Support: api/python/currency.md
-      - Examples: api/python/examples.md
     - Project Details:
       - Governance: project/governance.md
       - Project Security: security.md
       - Resources: project/resources.md
       - Privacy: privacy.md
-  - Install:
+  - Concepts:
+    - Terminology: concepts/terminology.md
+    - Threat Model: concepts/threat_model.md
+    - Physical Units: concepts/units.md
+    - Companies: concepts/company.md
+    - Custom States: concepts/custom_states.md
+    - Pricing: concepts/pricing.md
+    - Project Codes: concepts/project_codes.md
+    - Barcodes:
+      - Barcode Support: barcodes/index.md
+      - Internal Barcodes: barcodes/internal.md
+      - External Barcodes: barcodes/external.md
+      - Custom Barcodes: barcodes/custom.md
+  - Setup:
     - Introduction: start/index.md
     - Processes: start/processes.md
     - Configuration: start/config.md
     - Docker:
         - Introduction: start/docker.md
         - Installation: start/docker_install.md
+    - Installer:
+        - Installer: start/installer.md
     - Bare Metal:
         - Introduction: start/install.md
-        - Installer: start/installer.md
         - Production: start/bare_prod.md
         - Development: start/bare_dev.md
     - User Accounts: start/accounts.md
@@ -200,7 +177,7 @@ nav:
       - User Permissions: settings/permissions.md
       - Single Sign on: settings/SSO.md
       - Multi Factor Authentication: settings/MFA.md
-      - Email: settings/email.md
+      - Email Settings: settings/email.md
       - Experimental Features: settings/experimental.md
     - Export Data: settings/export.md
     - Import Data: settings/import.md
@@ -236,6 +213,7 @@ nav:
       - Report Mixin: plugins/mixins/report.md
       - Schedule Mixin: plugins/mixins/schedule.md
       - Settings Mixin: plugins/mixins/settings.md
+      - Supplier Mixin: plugins/mixins/supplier.md
       - Transition Mixin: plugins/mixins/transition.md
       - URL Mixin: plugins/mixins/urls.md
       - User Interface Mixin: plugins/mixins/ui.md
@@ -243,7 +221,7 @@ nav:
     - Machines:
       - Overview: plugins/machines/overview.md
       - Label Printer: plugins/machines/label_printer.md
-    - Builtin Plugins:
+    - Builtin:
       - Builtin Plugins: plugins/builtin/index.md
       - Barcode Plugins:
         - Barcode Plugins: plugins/builtin/barcode_index.md
@@ -270,6 +248,32 @@ nav:
         - Slack Notifications: plugins/builtin/slack_notification.md
         - UI Notifications: plugins/builtin/ui_notification.md
       - Currency Exchange: plugins/builtin/currency_exchange.md
+  - "Mobile App":
+    - Overview: app/index.md
+    - Connect: app/connect.md
+    - Navigation: app/navigation.md
+    - Search: app/search.md
+    - Barcodes: app/barcode.md
+    - Parts: app/part.md
+    - Stock: app/stock.md
+    - Purchase Orders: app/po.md
+    - Sales Orders: app/so.md
+    - Settings: app/settings.md
+    - Privacy: app/privacy.md
+    - Translation: app/translation.md
+    - Suggestions: app/issues.md
+  - API:
+    - Overview: api/index.md
+    - API Schema: api/schema.md
+    - Model Metadata: api/metadata.md
+    - Download Data: api/download.md
+    - Bulk Delete: api/bulk_delete.md
+    - Interactive API: api/browse.md
+    - Python Interface:
+      - Overview: api/python/index.md
+      - Currency Support: api/python/currency.md
+      - Examples: api/python/examples.md
+
 
 # Plugins
 plugins:

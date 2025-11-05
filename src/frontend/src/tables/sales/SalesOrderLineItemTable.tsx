@@ -48,6 +48,7 @@ import {
   DecimalColumn,
   DescriptionColumn,
   LinkColumn,
+  ProjectCodeColumn,
   RenderPartColumn
 } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
@@ -106,6 +107,7 @@ export default function SalesOrderLineItemTable({
         sortable: false,
         switchable: true
       },
+      ProjectCodeColumn({}),
       DecimalColumn({
         accessor: 'quantity',
         sortable: true
@@ -148,7 +150,7 @@ export default function SalesOrderLineItemTable({
             0
           );
 
-          let color: string | undefined = undefined;
+          let color: string | undefined;
           let text = `${formatDecimal(available)}`;
 
           const extra: ReactNode[] = [];
@@ -241,7 +243,8 @@ export default function SalesOrderLineItemTable({
   const createLineFields = useSalesOrderLineItemFields({
     orderId: orderId,
     customerId: customerId,
-    create: true
+    create: true,
+    currency: currency
   });
 
   const newLine = useCreateApiFormModal({
@@ -392,13 +395,6 @@ export default function SalesOrderLineItemTable({
       const virtual = record?.part_detail?.virtual ?? false;
 
       return [
-        RowViewAction({
-          title: t`View Part`,
-          modelType: ModelType.part,
-          modelId: record.part,
-          navigate: navigate,
-          hidden: !user.hasViewRole(UserRoles.part)
-        }),
         {
           hidden:
             allocated ||
@@ -484,6 +480,13 @@ export default function SalesOrderLineItemTable({
             setSelectedLineId(record.pk);
             deleteLine.open();
           }
+        }),
+        RowViewAction({
+          title: t`View Part`,
+          modelType: ModelType.part,
+          modelId: record.part,
+          navigate: navigate,
+          hidden: !user.hasViewRole(UserRoles.part)
         })
       ];
     },

@@ -2,18 +2,17 @@
 title: Trackable Parts
 ---
 
-Denoting a part as *Trackble* changes the way that [stock items](../stock/index.md) associated with the particular part are handled in the database. A trackable part also has more restrictions imposed by the database scheme.
-
 ## Stock Tracking
+
+Denoting a part as *Trackble* changes the way that [stock items](../stock/index.md) associated with the particular part are handled in the database. A trackable part also has more restrictions imposed by the database scheme.
 
 For many parts in an InvenTree database, simply tracking current stock levels (and locations) is sufficient. However, some parts require more extensive tracking than simple stock level knowledge.
 
 Any stock item associated with a trackable part *must* have either a batch number or a serial number. This includes stock created manually or via an internal process (such as a [Purchase Order](../purchasing/purchase_order.md) or a [Build Order](../manufacturing/build.md)).
 
-
 ## Assign Serial Numbers
 
-Serial numbers (if activate for a part) are used in multiple forms and processes in InvenTree.
+Serial numbers (for parts which are marked as trackable) are used in multiple forms and processes in InvenTree.
 
 For faster input there are several ways to define the wanted serial numbers(SN):
 

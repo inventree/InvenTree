@@ -142,7 +142,7 @@ export default function UserSettings() {
       <Stack gap='xs'>
         <SettingsHeader
           label='user'
-          title={t`Account Settings`}
+          title={t`User Settings`}
           subtitle={
             user?.first_name && user?.last_name
               ? `${user?.first_name} ${user?.last_name}`

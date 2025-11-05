@@ -18,7 +18,7 @@ test('Machines - Admin Panel', async ({ browser }) => {
   await page.getByText('There are no machine registry errors').waitFor();
 });
 
-test('Machines - Activation', async ({ browser, request }) => {
+test('Machines - Activation', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
     username: 'admin',
     password: 'inventree',
@@ -27,7 +27,6 @@ test('Machines - Activation', async ({ browser, request }) => {
 
   // Ensure that the sample machine plugin is enabled
   await setPluginState({
-    request,
     plugin: 'sample-printer-machine-plugin',
     state: true
   });

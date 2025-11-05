@@ -194,7 +194,10 @@ export function TableStatusRenderer(
   accessor?: string
 ): ((record: any) => any) | undefined {
   return (record: any) => {
-    const status = resolveItem(record, accessor ?? 'status');
+    const status =
+      resolveItem(record, accessor ?? 'status') ??
+      resolveItem(record, 'status_custom_key') ??
+      resolveItem(record, 'status');
 
     return (
       status && (

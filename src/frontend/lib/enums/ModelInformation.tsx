@@ -170,9 +170,10 @@ export const ModelInformationDict: ModelDict = {
   salesordershipment: {
     label: () => t`Sales Order Shipment`,
     label_multiple: () => t`Sales Order Shipments`,
+    url_overview: '/sales/index/shipments',
     url_detail: '/sales/shipment/:pk/',
     api_endpoint: ApiEndpoints.sales_order_shipment_list,
-    icon: 'sales_orders'
+    icon: 'shipment'
   },
   returnorder: {
     label: () => t`Return Order`,

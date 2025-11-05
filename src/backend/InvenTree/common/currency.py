@@ -48,7 +48,7 @@ def currency_codes() -> list:
     from common.settings import get_global_setting
 
     codes = get_global_setting(
-        'CURRENCY_CODES', create=False, enviroment_key='INVENTREE_CURRENCY_CODES'
+        'CURRENCY_CODES', create=False, environment_key='INVENTREE_CURRENCY_CODES'
     ).strip()
 
     if not codes:

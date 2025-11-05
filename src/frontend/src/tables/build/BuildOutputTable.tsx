@@ -33,6 +33,7 @@ import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
+import type { StockOperationProps } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
 import { StylishText } from '../../components/items/StylishText';
 import { useApi } from '../../contexts/ApiContext';
@@ -43,7 +44,6 @@ import {
   useScrapBuildOutputsForm
 } from '../../forms/BuildForms';
 import {
-  type StockOperationProps,
   useStockFields,
   useStockItemSerializeFields
 } from '../../forms/StockForms';
@@ -494,12 +494,6 @@ export default function BuildOutputTable({
       const production = build?.status == buildStatus.PRODUCTION;
 
       return [
-        RowViewAction({
-          title: t`View Build Output`,
-          modelId: record.pk,
-          modelType: ModelType.stockitem,
-          navigate: navigate
-        }),
         {
           title: t`Allocate`,
           tooltip: t`Allocate stock to build output`,
@@ -575,7 +569,13 @@ export default function BuildOutputTable({
             setSelectedOutputs([record]);
             cancelBuildOutputsForm.open();
           }
-        }
+        },
+        RowViewAction({
+          title: t`View Build Output`,
+          modelId: record.pk,
+          modelType: ModelType.stockitem,
+          navigate: navigate
+        })
       ];
     },
     [buildStatus, user, partId, hasTrackedItems]

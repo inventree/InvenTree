@@ -12,8 +12,8 @@ from django.urls import include, path
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.generic.base import RedirectView
 
+import django_filters.rest_framework.filters as rest_filters
 import structlog
-from django_filters import rest_framework as rest_filters
 from django_filters.rest_framework.filterset import FilterSet
 from drf_spectacular.utils import OpenApiParameter, OpenApiResponse, extend_schema
 from rest_framework import exceptions
@@ -30,6 +30,7 @@ from InvenTree.mixins import (
     RetrieveAPI,
     RetrieveUpdateAPI,
     RetrieveUpdateDestroyAPI,
+    SerializerContextMixin,
     UpdateAPI,
 )
 from InvenTree.settings import FRONTEND_URL_BASE
@@ -278,7 +279,7 @@ class UserList(ListCreateAPI):
     filterset_fields = ['is_staff', 'is_active', 'is_superuser']
 
 
-class GroupMixin:
+class GroupMixin(SerializerContextMixin):
     """Mixin for Group API endpoints to add permissions filter.
 
     Permissions:
@@ -289,12 +290,6 @@ class GroupMixin:
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
     permission_classes = [InvenTree.permissions.IsStaffOrReadOnlyScope]
-
-    def get_serializer(self, *args, **kwargs):
-        """Return serializer instance for this endpoint."""
-        kwargs['context'] = self.get_serializer_context()
-
-        return super().get_serializer(*args, **kwargs)
 
     def get_queryset(self):
         """Return queryset for this endpoint.

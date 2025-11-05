@@ -35,6 +35,7 @@ declare global {
       api_host?: string;
       sentry_dsn?: string;
       environment?: string;
+      mobile_mode?: 'default' | 'allow-ignore' | 'allow-always';
     };
     react: typeof React;
     React: typeof React;

@@ -8,7 +8,6 @@ import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
-import { RenderUser } from '../../components/render/User';
 import { useBuildOrderFields } from '../../forms/BuildForms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
@@ -25,7 +24,8 @@ import {
   ResponsibleColumn,
   StartDateColumn,
   StatusColumn,
-  TargetDateColumn
+  TargetDateColumn,
+  UserColumn
 } from '../ColumnRenderers';
 import {
   AssignedToMeFilter,
@@ -137,13 +137,11 @@ export function BuildOrderTable({
         title: t`Completion Date`,
         sortable: true
       }),
-      {
-        accessor: 'issued_by',
-        sortable: true,
-        render: (record: any) => (
-          <RenderUser instance={record?.issued_by_detail} />
-        )
-      },
+      UserColumn({
+        accessor: 'issued_by_detail',
+        ordering: 'issued_by',
+        title: t`Issued By`
+      }),
       ResponsibleColumn({})
     ];
   }, [parentBuildId, globalSettings]);
@@ -248,6 +246,7 @@ export function BuildOrderTable({
           modelType: ModelType.build,
           enableSelection: true,
           enableReports: true,
+          enableLabels: true,
           enableDownload: true
         }}
       />

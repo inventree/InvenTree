@@ -25,7 +25,7 @@ Configuration of basic server settings:
 {{ globalsetting("INVENTREE_COMPANY_NAME") }}
 {{ globalsetting("INVENTREE_INSTANCE") }}
 {{ globalsetting("INVENTREE_INSTANCE_TITLE") }}
-{{ globalsetting("INVENTREE_INSTANCE_ID") }}
+{{ globalsetting("INVENTREE_INSTANCE_ID", default="Randomly generated value") }}
 {{ globalsetting("INVENTREE_ANNOUNCE_ID") }}
 {{ globalsetting("INVENTREE_RESTRICT_ABOUT") }}
 {{ globalsetting("DISPLAY_FULL_NAMES") }}
@@ -186,10 +186,10 @@ In this section of the settings, staff users can set a list of parameters associ
 
 To add a parameter to a part category:
 
-1. select the category in the dropdown list
-2. click the <span class="badge inventree add">{{ icon("plus-circle") }} New Parameter</span> button on the top right
-3. fill out the "Create Category Parameter Template" form
-4. click the <span class="badge inventree confirm">Submit</span> button.
+1. Select the category in the dropdown list
+2. Click the <span class="badge inventree add">{{ icon("plus-circle") }} New Parameter</span> button on the top right
+3. Fill out the "Create Category Parameter Template" form
+4. Click the <span class="badge inventree confirm">Submit</span> button.
 
 After a list of parameters is added to a part category and upon creation of a new part in this category, this list of parameters will be added by default to the new part.
 
@@ -242,6 +242,12 @@ Refer to the [return order settings](../sales/return_order.md#return-order-setti
 {{ globalsetting("ENABLE_PLUGINS_EVENTS") }}
 {{ globalsetting("ENABLE_PLUGINS_INTERFACE") }}
 {{ globalsetting("ENABLE_PLUGINS_MAILS") }}
+
+### Machine Settings
+
+| Name | Description | Default | Units |
+| ---- | ----------- | ------- | ----- |
+{{ globalsetting("MACHINE_PING_ENABLED") }}
 
 ### Project Codes
 

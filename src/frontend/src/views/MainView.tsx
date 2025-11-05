@@ -40,7 +40,11 @@ export default function MainView() {
   }, []);
 
   // Check if mobile
-  if (!allowMobile && checkMobile()) {
+  if (
+    !allowMobile &&
+    window.INVENTREE_SETTINGS.mobile_mode !== 'allow-always' &&
+    checkMobile()
+  ) {
     return <MobileAppView />;
   }
 

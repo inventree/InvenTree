@@ -557,6 +557,7 @@ class BackgroundTaskOverview(APIView):
     permission_classes = [IsAuthenticatedOrReadScope, IsAdminUser]
     serializer_class = None
 
+    @extend_schema(responses={200: common.serializers.TaskOverviewSerializer})
     def get(self, request, fmt=None):
         """Return information about the current status of the background task queue."""
         import django_q.models as q_models
@@ -623,6 +624,9 @@ class FlagList(ListAPI):
     queryset = settings.FLAGS
     serializer_class = common.serializers.FlagSerializer
     permission_classes = [AllowAnyOrReadScope]
+
+    # Specifically disable pagination for this view
+    pagination_class = None
 
 
 class FlagDetail(RetrieveAPI):

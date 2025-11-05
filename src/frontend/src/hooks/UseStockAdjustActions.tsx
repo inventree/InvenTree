@@ -1,11 +1,11 @@
 import { UserRoles } from '@lib/index';
+import type { StockOperationProps } from '@lib/types/Forms';
 import type { UseModalReturn } from '@lib/types/Modals';
 import { t } from '@lingui/core/macro';
 import { type ReactNode, useMemo } from 'react';
 import type { ActionDropdownItem } from '../components/items/ActionDropdown';
 import { ActionDropdown } from '../components/items/ActionDropdown';
 import {
-  type StockOperationProps,
   useAddStockItem,
   useAssignStockItem,
   useChangeStockStatus,
@@ -54,8 +54,8 @@ export function useStockAdjustActions(
   // The available modals for stock adjustment actions
   const addStock = useAddStockItem(props.formProps);
   const assignStock = useAssignStockItem(props.formProps);
-  const countStock = useCountStockItem(props.formProps);
   const changeStatus = useChangeStockStatus(props.formProps);
+  const countStock = useCountStockItem(props.formProps);
   const deleteStock = useDeleteStockItem(props.formProps);
   const mergeStock = useMergeStockItem(props.formProps);
   const removeStock = useRemoveStockItem(props.formProps);

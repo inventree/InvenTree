@@ -9,8 +9,8 @@ import { doLogin } from './login.js';
 test('Login - Failures', async ({ page }) => {
   const loginWithError = async () => {
     await page.getByRole('button', { name: 'Log In' }).click();
-    await page.getByText('Login failed').waitFor();
-    await page.getByText('Check your input and try again').waitFor();
+    await page.getByText('Login failed', { exact: true }).waitFor();
+    await page.getByText('Check your input and try again').first().waitFor();
     await page.locator('#login').getByRole('button').click();
   };
 

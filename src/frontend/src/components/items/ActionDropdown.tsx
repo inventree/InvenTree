@@ -48,7 +48,8 @@ export function ActionDropdown({
   actions,
   disabled = false,
   hidden = false,
-  noindicator = false
+  noindicator = false,
+  position
 }: {
   icon: ReactNode;
   tooltip: string;
@@ -57,6 +58,7 @@ export function ActionDropdown({
   disabled?: boolean;
   hidden?: boolean;
   noindicator?: boolean;
+  position?: FloatingPosition;
 }): ReactNode {
   const hasActions = useMemo(() => {
     return actions.some((action) => !action.hidden);
@@ -71,7 +73,7 @@ export function ActionDropdown({
   }, [tooltip]);
 
   return !hidden && hasActions ? (
-    <Menu position='bottom-end' key={menuName}>
+    <Menu position={position ?? 'bottom-end'} key={menuName}>
       <Indicator disabled={!indicatorProps} {...indicatorProps?.indicator}>
         <Menu.Target>
           <Tooltip

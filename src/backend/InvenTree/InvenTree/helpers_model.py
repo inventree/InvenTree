@@ -6,6 +6,7 @@ from typing import Optional, cast
 from urllib.parse import urljoin
 
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 from django.db.utils import OperationalError, ProgrammingError
 from django.utils.translation import gettext_lazy as _
@@ -184,6 +185,7 @@ def render_currency(
     money: Money,
     decimal_places: Optional[int] = None,
     currency: Optional[str] = None,
+    multiplier: Optional[Decimal] = None,
     min_decimal_places: Optional[int] = None,
     max_decimal_places: Optional[int] = None,
     include_symbol: bool = True,
@@ -194,6 +196,7 @@ def render_currency(
         money: The Money instance to be rendered
         decimal_places: The number of decimal places to render to. If unspecified, uses the PRICING_DECIMAL_PLACES setting.
         currency: Optionally convert to the specified currency
+        multiplier: An optional multiplier to apply to the money amount before rendering
         min_decimal_places: The minimum number of decimal places to render to. If unspecified, uses the PRICING_DECIMAL_PLACES_MIN setting.
         max_decimal_places: The maximum number of decimal places to render to. If unspecified, uses the PRICING_DECIMAL_PLACES setting.
         include_symbol: If True, include the currency symbol in the output
@@ -202,7 +205,16 @@ def render_currency(
         return '-'
 
     if type(money) is not Money:
-        return '-'
+        # Try to convert to a Money object
+        try:
+            money = Money(
+                Decimal(str(money)),
+                currency or get_global_setting('INVENTREE_DEFAULT_CURRENCY'),
+            )
+        except Exception:
+            raise ValidationError(
+                f"render_currency: {_('Invalid money value')}: '{money}' ({type(money).__name__})"
+            )
 
     if currency is not None:
         # Attempt to convert to the provided currency
@@ -211,6 +223,14 @@ def render_currency(
             money = convert_money(money, currency)
         except Exception:
             pass
+
+    if multiplier is not None:
+        try:
+            money *= Decimal(str(multiplier).strip())
+        except Exception:
+            raise ValidationError(
+                f"render_currency: {_('Invalid multiplier value')}: '{multiplier}' ({type(multiplier).__name__})"
+            )
 
     if min_decimal_places is None or not isinstance(min_decimal_places, (int, float)):
         min_decimal_places = get_global_setting('PRICING_DECIMAL_PLACES_MIN', 0)

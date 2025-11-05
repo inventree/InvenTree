@@ -2,7 +2,15 @@
  * Common rendering functions for table column data.
  */
 import { t } from '@lingui/core/macro';
-import { Anchor, Center, Group, Skeleton, Text, Tooltip } from '@mantine/core';
+import {
+  Anchor,
+  Badge,
+  Center,
+  Group,
+  Skeleton,
+  Text,
+  Tooltip
+} from '@mantine/core';
 import {
   IconBell,
   IconExclamationCircle,
@@ -16,9 +24,10 @@ import type { ModelType } from '@lib/enums/ModelType';
 import { resolveItem } from '@lib/functions/Conversion';
 import { cancelEvent } from '@lib/functions/Events';
 import type { TableColumn, TableColumnProps } from '@lib/types/Tables';
+import type { ReactNode } from 'react';
 import { Thumbnail } from '../components/images/Thumbnail';
 import { TableStatusRenderer } from '../components/render/StatusRenderer';
-import { RenderOwner, RenderUser } from '../components/render/User';
+import { RenderOwner } from '../components/render/User';
 import {
   formatCurrency,
   formatDate,
@@ -368,40 +377,93 @@ export type StatusColumnProps = TableColumnProps & {
 };
 
 export function StatusColumn(props: StatusColumnProps): TableColumn {
-  const accessor: string = props.accessor ?? 'status';
+  const accessor: string = props.accessor ?? 'status_custom_key';
 
   return {
     accessor: 'status',
     sortable: true,
     switchable: true,
     minWidth: '50px',
-    render: TableStatusRenderer(props.model, accessor ?? 'status_custom_key'),
+    render: TableStatusRenderer(props.model, accessor),
+    ...props
+  };
+}
+
+export function UserColumn(props: TableColumnProps): TableColumn {
+  return {
+    accessor: 'user',
+    title: t`User`,
+    sortable: true,
+    switchable: true,
+    render: (record: any) => {
+      const instance = resolveItem(record, props.accessor ?? 'user_detail');
+      if (instance) {
+        const extra: ReactNode[] = [
+          <Text size='sm'>
+            {instance.first_name} {instance.last_name}
+          </Text>
+        ];
+
+        if (instance.is_active === false) {
+          extra.push(
+            <Badge autoContrast color='red' size='xs'>
+              {t`Inactive`}
+            </Badge>
+          );
+        }
+
+        return (
+          <TableHoverCard
+            value={instance.username}
+            title={t`User Information`}
+            icon='user'
+            extra={extra}
+          />
+        );
+      } else {
+        return '-';
+      }
+    },
     ...props
   };
 }
 
 export function CreatedByColumn(props: TableColumnProps): TableColumn {
-  return {
+  return UserColumn({
     accessor: 'created_by',
+    ordering: 'created_by',
     title: t`Created By`,
+    ...props
+  });
+}
+
+export function OwnerColumn(props: TableColumnProps): TableColumn {
+  return {
+    accessor: 'owner_detail',
+    ordering: 'owner',
+    title: t`Owner`,
     sortable: true,
     switchable: true,
-    render: (record: any) =>
-      record.created_by && RenderUser({ instance: record.created_by }),
+    render: (record: any) => {
+      const instance = resolveItem(record, props.accessor ?? 'owner_detail');
+
+      if (instance) {
+        return <RenderOwner instance={instance} />;
+      } else {
+        return '-';
+      }
+    },
     ...props
   };
 }
 
 export function ResponsibleColumn(props: TableColumnProps): TableColumn {
-  return {
-    accessor: 'responsible',
-    sortable: true,
-    switchable: true,
-    render: (record: any) =>
-      record.responsible &&
-      RenderOwner({ instance: record.responsible_detail }),
+  return OwnerColumn({
+    accessor: 'responsible_detail',
+    ordering: 'responsible',
+    title: t`Responsible`,
     ...props
-  };
+  });
 }
 
 export function DateColumn(props: TableColumnProps): TableColumn {

@@ -24,14 +24,17 @@ export function BuiltinQueryCountWidgets(): DashboardWidgetProps[] {
       title: t`Subscribed Parts`,
       description: t`Show the number of parts which you have subscribed to`,
       modelType: ModelType.part,
-      params: { starred: true }
+      params: { starred: true, active: true }
     }),
     QueryCountDashboardWidget({
       label: 'sub-cat',
       title: t`Subscribed Categories`,
       description: t`Show the number of part categories which you have subscribed to`,
       modelType: ModelType.partcategory,
-      params: { starred: true }
+      params: {
+        starred: true,
+        top_level: 'none'
+      }
     }),
     QueryCountDashboardWidget({
       label: 'invalid-bom',
@@ -51,7 +54,11 @@ export function BuiltinQueryCountWidgets(): DashboardWidgetProps[] {
       label: 'low-stk',
       description: t`Show the number of parts which are low on stock`,
       modelType: ModelType.part,
-      params: { low_stock: true, active: true }
+      params: {
+        active: true,
+        low_stock: true,
+        virtual: false
+      }
     }),
     QueryCountDashboardWidget({
       title: t`Required for Build Orders`,
@@ -117,6 +124,13 @@ export function BuiltinQueryCountWidgets(): DashboardWidgetProps[] {
       description: t`Show the number of sales orders which are assigned to you`,
       modelType: ModelType.salesorder,
       params: { assigned_to_me: true, outstanding: true }
+    }),
+    QueryCountDashboardWidget({
+      title: t`Pending Shipments`,
+      label: 'pnd-shp',
+      description: t`Show the number of pending sales order shipments`,
+      modelType: ModelType.salesordershipment,
+      params: { order_outstanding: true, shipped: false }
     }),
     QueryCountDashboardWidget({
       title: t`Active Purchase Orders`,

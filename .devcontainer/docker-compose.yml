@@ -18,6 +18,8 @@ services:
       - 6379
 
   inventree:
+    ports:
+      - 8000:8000
     build:
       context: ..
       dockerfile: .devcontainer/Dockerfile

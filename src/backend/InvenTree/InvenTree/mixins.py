@@ -6,6 +6,7 @@ from rest_framework import generics, mixins, status
 from rest_framework.response import Response
 
 import data_exporter.mixins
+import data_exporter.serializers
 import importer.mixins
 from InvenTree.fields import InvenTreeNotesField, OutputConfiguration
 from InvenTree.helpers import (
@@ -14,6 +15,7 @@ from InvenTree.helpers import (
     strip_html_tags,
 )
 from InvenTree.schema import schema_for_view_output_options
+from InvenTree.serializers import FilterableSerializerMixin
 
 
 class CleanMixin:
@@ -212,17 +214,28 @@ class DataImportExportSerializerMixin(
 class OutputOptionsMixin:
     """Mixin to handle output options for API endpoints."""
 
-    output_options: OutputConfiguration
+    output_options: OutputConfiguration = None
 
     def __init_subclass__(cls, **kwargs):
         """Automatically attaches OpenAPI schema parameters for its output options."""
         super().__init_subclass__(**kwargs)
 
-        if getattr(cls, 'output_options', None) is None:
-            raise ValueError(
-                f"Class {cls.__name__} must define 'output_options' attribute"
+        if getattr(cls, 'output_options', None) is not None:
+            schema_for_view_output_options(cls)
+
+    def __init__(self) -> None:
+        """Initialize the mixin. Check that the serializer is compatible."""
+        super().__init__()
+
+        # Check that the serializer was defined
+        if (
+            hasattr(self, 'serializer_class')
+            and isinstance(self.serializer_class, type)
+            and (not issubclass(self.serializer_class, FilterableSerializerMixin))
+        ):
+            raise Exception(
+                'INVE-I2: `OutputOptionsMixin` can only be used with serializers that contain the `FilterableSerializerMixin` mixin'
             )
-        schema_for_view_output_options(cls)
 
     def get_serializer(self, *args, **kwargs):
         """Return serializer instance with output options applied."""
@@ -230,4 +243,26 @@ class OutputOptionsMixin:
             params = self.request.query_params
             kwargs.update(self.output_options.format_params(params))
 
+        serializer = super().get_serializer(*args, **kwargs)
+
+        # Check if the serializer actually can be filtered - makes not much sense to use this mixin without that prerequisite
+        if isinstance(
+            serializer, data_exporter.serializers.DataExportOptionsSerializer
+        ):
+            # Skip in this instance, special case for determining export options
+            pass
+        elif not isinstance(serializer, FilterableSerializerMixin):
+            raise Exception(
+                'INVE-I2: `OutputOptionsMixin` can only be used with serializers that contain the `FilterableSerializerMixin` mixin'
+            )
+
+        return serializer
+
+
+class SerializerContextMixin:
+    """Mixin to add context to serializer."""
+
+    def get_serializer(self, *args, **kwargs):
+        """Add context to serializer."""
+        kwargs['context'] = self.get_serializer_context()
         return super().get_serializer(*args, **kwargs)

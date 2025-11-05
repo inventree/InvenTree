@@ -188,6 +188,7 @@ export function PrintingActions({
         <ActionDropdown
           tooltip={t`Printing Actions`}
           icon={<IconPrinter />}
+          position='bottom-start'
           disabled={!enabled}
           actions={[
             {

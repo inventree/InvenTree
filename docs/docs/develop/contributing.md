@@ -186,6 +186,10 @@ To see all the available options:
 invoke dev.test --help
 ```
 
+```
+{{ invoke_commands('dev.test --help') }}
+```
+
 #### Database Permission Issues
 
 For local testing django creates a test database and removes it after testing. If you encounter permission issues while running unit test, ensure that your database user has permission to create new databases.
