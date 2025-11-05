@@ -246,8 +246,9 @@ function RemoveTOTPModal({
   }, [opened]);
 
   const deleteToken = useCallback(() => {
+    setProcessing(true);
     api
-      .delete(apiUrl(ApiEndpoints.auth_totp))
+      .delete(apiUrl(ApiEndpoints.auth_totp), { timeout: 30 * 1000 })
       .then((response) => {
         showNotification({
           title: t`TOTP Removed`,
@@ -395,9 +396,15 @@ function RegisterTOTPModal({
     setError('');
 
     api
-      .post(apiUrl(ApiEndpoints.auth_totp), {
-        code: code
-      })
+      .post(
+        apiUrl(ApiEndpoints.auth_totp),
+        {
+          code: code
+        },
+        {
+          timeout: 30 * 1000
+        }
+      )
       .then((response) => {
         showNotification({
           title: t`TOTP Registered`,
@@ -468,20 +475,26 @@ function RecoveryCodesModal({
     enabled: false,
     queryKey: ['mfa-recovery-codes'],
     queryFn: async () => {
-      return api.post(apiUrl(ApiEndpoints.auth_recovery)).catch((error) => {
-        setError(extractErrorMessage(error, t`Error fetching recovery codes`));
+      return api
+        .post(apiUrl(ApiEndpoints.auth_recovery), undefined, {
+          timeout: 30 * 1000
+        })
+        .catch((error) => {
+          setError(
+            extractErrorMessage(error, t`Error fetching recovery codes`)
+          );
 
-        // A 401 error indicates that re-authentication is required
-        if (error.status === 401) {
-          const flow = getReauthFlow(error);
-          if (flow !== null) {
-            setOpen(false);
-            onReauthFlow(flow);
+          // A 401 error indicates that re-authentication is required
+          if (error.status === 401) {
+            const flow = getReauthFlow(error);
+            if (flow !== null) {
+              setOpen(false);
+              onReauthFlow(flow);
+            }
           }
-        }
 
-        throw error;
-      });
+          throw error;
+        });
     }
   });
 
