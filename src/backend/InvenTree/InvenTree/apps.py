@@ -322,7 +322,11 @@ class InvenTreeConfig(AppConfig):
 
         if not InvenTree.tasks.check_for_migrations():
             # Detect if this an empty database - if so, start with a fresh migration
-            if settings.DOCKER and InvenTree.tasks.get_migriation_count() == 0:
+            if (
+                settings.DOCKER
+                and not InvenTree.ready.isInTestMode()
+                and InvenTree.tasks.get_migriation_count() == 0
+            ):
                 logger.warning(
                     'INVE-W8: Empty database detected - trying to run migrations'
                 )
