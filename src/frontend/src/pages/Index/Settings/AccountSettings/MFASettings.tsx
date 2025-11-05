@@ -29,7 +29,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
-import { api } from '../../../../App';
+import { api, queryClient } from '../../../../App';
 import { CopyButton } from '../../../../components/buttons/CopyButton';
 import { StylishText } from '../../../../components/items/StylishText';
 import { authApi } from '../../../../functions/auth';
@@ -603,6 +603,8 @@ function RecoveryCodesModal({
               setOpen(false);
               onReauthFlow(flow);
             }
+          } else {
+            queryClient.cancelQueries({ queryKey: ['mfa-recovery-codes'] });
           }
 
           throw error;
