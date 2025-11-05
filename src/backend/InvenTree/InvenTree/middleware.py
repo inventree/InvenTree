@@ -6,8 +6,8 @@ from urllib.parse import urlsplit
 from django.conf import settings
 from django.contrib.auth.middleware import PersistentRemoteUserMiddleware
 from django.http import HttpRequest, HttpResponse, JsonResponse
-from django.shortcuts import redirect, render
-from django.urls import resolve, reverse_lazy
+from django.shortcuts import render
+from django.urls import reverse_lazy
 from django.utils.deprecation import MiddlewareMixin
 from django.utils.http import is_same_domain
 from django.utils.translation import gettext_lazy as _
@@ -18,7 +18,6 @@ from error_report.middleware import ExceptionProcessor
 from common.settings import get_global_setting
 from InvenTree.cache import create_session_cache, delete_session_cache
 from InvenTree.config import CONFIG_LOOKUPS, inventreeInstaller
-from users.models import ApiToken
 
 logger = structlog.get_logger('inventree')
 
@@ -49,101 +48,6 @@ urls = [
 
 # Do not redirect requests to any of these paths
 paths_ignore = ['/api/', '/auth/', settings.MEDIA_URL, settings.STATIC_URL]
-
-
-class AuthRequiredMiddleware:
-    """Check for user to be authenticated."""
-
-    def __init__(self, get_response):
-        """Save response object."""
-        self.get_response = get_response
-
-    def check_token(self, request) -> bool:
-        """Check if the user is authenticated via token."""
-        if token := get_token_from_request(request):
-            # Does the provided token match a valid user?
-            try:
-                token = ApiToken.objects.get(key=token)
-
-                if token.active and token.user:
-                    # Provide the user information to the request
-                    request.user = token.user
-                    return True
-            except ApiToken.DoesNotExist:
-                logger.warning('Access denied for unknown token %s', token)
-
-        return False
-
-    def __call__(self, request):
-        """Check if user needs to be authenticated and is.
-
-        Redirects to login if not authenticated.
-        """
-        # Code to be executed for each request before
-        # the view (and later middleware) are called.
-
-        assert hasattr(request, 'user')
-
-        # API requests are handled by the DRF library
-        if request.path_info.startswith('/api/'):
-            return self.get_response(request)
-
-        # oAuth2 requests are handled by the oAuth2 library
-        if request.path_info.startswith('/o/'):
-            return self.get_response(request)
-
-        # anymail requests are handled by the anymail library
-        if request.path_info.startswith('/anymail/'):
-            return self.get_response(request)
-
-        # Is the function exempt from auth requirements?
-        path_func = resolve(request.path).func
-
-        if getattr(path_func, 'auth_exempt', False) is True:
-            return self.get_response(request)
-
-        if not request.user.is_authenticated:
-            """
-            Normally, a web-based session would use csrftoken based authentication.
-
-            However when running an external application (e.g. the InvenTree app or Python library),
-            we must validate the user token manually.
-            """
-
-            authorized = False
-
-            # Allow static files to be accessed without auth
-            # Important for e.g. login page
-            if (
-                request.path_info.startswith('/static/')
-                or request.path_info.startswith('/accounts/')
-                or (
-                    request.path_info.startswith(f'/{settings.FRONTEND_URL_BASE}/')
-                    or request.path_info.startswith('/assets/')
-                    or request.path_info == f'/{settings.FRONTEND_URL_BASE}'
-                )
-                or self.check_token(request)
-            ):
-                authorized = True
-
-            # No authorization was found for the request
-            if not authorized:
-                path = request.path_info
-
-                if path not in urls and not any(
-                    path.startswith(p) for p in paths_ignore
-                ):
-                    # Save the 'next' parameter to pass through to the login view
-
-                    return redirect(
-                        f'{reverse_lazy("account_login")}?next={request.path}'
-                    )
-                # Return a 401 (Unauthorized) response code for this request
-                return HttpResponse('Unauthorized', status=401)
-
-        response = self.get_response(request)
-
-        return response
 
 
 class Check2FAMiddleware(MiddlewareMixin):

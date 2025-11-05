@@ -356,7 +356,6 @@ MIDDLEWARE = CONFIG.get(
         'allauth.account.middleware.AccountMiddleware',
         'django.contrib.messages.middleware.MessageMiddleware',
         'django.middleware.clickjacking.XFrameOptionsMiddleware',
-        'InvenTree.middleware.AuthRequiredMiddleware',
         'InvenTree.middleware.Check2FAMiddleware',  # Check if the user should be forced to use MFA
         'oauth2_provider.middleware.OAuth2TokenMiddleware',  # oauth2_provider
         'maintenance_mode.middleware.MaintenanceModeMiddleware',

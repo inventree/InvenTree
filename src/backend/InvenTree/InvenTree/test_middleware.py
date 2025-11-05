@@ -21,7 +21,7 @@ class MiddlewareTests(InvenTreeTestCase):
         self.assertEqual(response.status_code, code)
         return response
 
-    def test_AuthRequiredMiddleware(self):
+    def test_auth_middleware(self):
         """Test the auth middleware."""
         # test that /api/ routes go through
         self.check_path(reverse('api-inventree-info'))
