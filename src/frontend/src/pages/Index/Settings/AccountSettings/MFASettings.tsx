@@ -129,7 +129,7 @@ function ReauthenticateModalComponent({
         icon={<IconExclamationCircle />}
         title={t`Reauthenticate`}
       >
-        {t`Reauthenticatation is required to continue.`}
+        {t`Reauthentiction is required to continue.`}
       </Alert>
       <PasswordInput
         required

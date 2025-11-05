@@ -139,7 +139,7 @@ test('Login - MFA - TOTP', async ({ page }) => {
   await page.getByRole('button', { name: 'Submit', exact: true }).click();
   await page.getByText('TOTP token registered successfully').waitFor();
 
-  // View recivery codes
+  // View recovery codes
   await page.getByRole('button', { name: 'view-recovery-codes' }).click();
   await page
     .getByText('The following one time recovery codes are available')
