@@ -11,6 +11,7 @@ import {
   Group,
   Loader,
   Modal,
+  Paper,
   PasswordInput,
   SimpleGrid,
   Stack,
@@ -648,26 +649,34 @@ function RecoveryCodesModal({
                 The following one time recovery codes are available for use
               </Trans>
             </Alert>
-            {unusedCodes.length > 0 ? (
-              unusedCodes.map((code: string) => (
-                <Group
-                  p={3}
-                  justify='space-between'
-                  key={`mfa-recovery-code-${code}`}
-                >
-                  <Text>{code}</Text>
-                  <CopyButton value={code} />
+            <Paper p='sm' withBorder>
+              <Stack gap='xs'>
+                {unusedCodes.length > 0 ? (
+                  unusedCodes.map((code: string) => (
+                    <Group
+                      p={3}
+                      justify='space-between'
+                      key={`mfa-recovery-code-${code}`}
+                    >
+                      <Text>{code}</Text>
+                    </Group>
+                  ))
+                ) : (
+                  <Alert
+                    color='yellow'
+                    icon={<IconAlertCircle />}
+                    title={t`No Unused Codes`}
+                  >
+                    <Trans>There are no available recovery codes</Trans>
+                  </Alert>
+                )}
+                <Divider />
+                <Group justify='space-between'>
+                  <Trans>Copy recovery codes to clipboard</Trans>
+                  <CopyButton value={unusedCodes.join('\n')} />
                 </Group>
-              ))
-            ) : (
-              <Alert
-                color='yellow'
-                icon={<IconAlertCircle />}
-                title={t`No Unused Codes`}
-              >
-                <Trans>There are no available recovery codes</Trans>
-              </Alert>
-            )}
+              </Stack>
+            </Paper>
           </Stack>
         )}
         <Divider />
