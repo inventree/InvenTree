@@ -13,11 +13,12 @@ from InvenTree.unit_test import InvenTreeTestCase
 class MiddlewareTests(InvenTreeTestCase):
     """Test for middleware functions."""
 
-    def check_path(self, url, code=200, **kwargs):
+    def check_path(self, url, code=200, auth_header=None, **kwargs):
         """Helper function to run a request."""
-        response = self.client.get(
-            url, headers={'accept': 'application/json'}, **kwargs
-        )
+        headers = {'accept': 'application/json'}
+        if auth_header:
+            headers['Authorization'] = auth_header
+        response = self.client.get(url, headers=headers, **kwargs)
         self.assertEqual(response.status_code, code)
         return response
 
@@ -41,8 +42,8 @@ class MiddlewareTests(InvenTreeTestCase):
         target = reverse('api-license')
 
         # get token
-        # response = self.client.get(reverse('api-token'), format='json', data={})
-        # token = response.data['token']
+        response = self.client.get(reverse('api-token'), format='json', data={})
+        token = response.data['token']
 
         # logout
         self.client.logout()
@@ -51,13 +52,15 @@ class MiddlewareTests(InvenTreeTestCase):
         self.check_path(target, 401)
 
         # Request with broken token
-        self.check_path(target, 401, HTTP_Authorization='Token abcd123')
+        self.check_path(target, 401, auth_header='Token abcd123')
 
         # should still fail without token
         self.check_path(target, 401)
 
-        # request with token
-        # self.check_path(target, HTTP_Authorization=f'Token {token}')
+        # request with token - should work
+        self.check_path(target, auth_header=f'Token {token}')
+        # Request something that is not on the API - should still work
+        self.check_path('/auth/', auth_header=f'Token {token}')
 
     def test_error_exceptions(self):
         """Test that ignored errors are not logged."""
