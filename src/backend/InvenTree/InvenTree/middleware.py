@@ -166,7 +166,7 @@ class Check2FAMiddleware(MiddlewareMixin):
         """Check if the current page can be accessed without mfa."""
         match = request.resolver_match
         return (
-            None
+            False
             if match is None
             else any(ref in self.app_names for ref in match.app_names)
             or match.url_name in self.allowed_pages
