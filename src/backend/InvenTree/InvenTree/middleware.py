@@ -79,6 +79,7 @@ class AuthRequiredMiddleware:
     def check_token(self, request) -> bool:
         """Check if the user is authenticated via token."""
         if token := get_token_from_request(request):
+            request.token = token
             # Does the provided token match a valid user?
             try:
                 token = ApiToken.objects.get(key=token)
@@ -202,7 +203,9 @@ class Check2FAMiddleware(MiddlewareMixin):
             return None
         if self.is_multifactor_logged_in(request):
             return None
-        if get_token_from_request(request):  # Token based login can not do MFA
+        if getattr(
+            request, 'token', get_token_from_request(request)
+        ):  # Token based login can not do MFA
             return None
 
         if self.enforce_2fa(request):
