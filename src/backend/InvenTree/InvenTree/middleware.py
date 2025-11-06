@@ -202,6 +202,8 @@ class Check2FAMiddleware(MiddlewareMixin):
             return None
         if self.is_multifactor_logged_in(request):
             return None
+        if get_token_from_request(request):  # Token based login can not do MFA
+            return None
 
         if self.enforce_2fa(request):
             return self.on_require_2fa(request)
