@@ -29,7 +29,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
-import { api } from '../../../../App';
+import { api, queryClient } from '../../../../App';
 import { CopyButton } from '../../../../components/buttons/CopyButton';
 import { StylishText } from '../../../../components/items/StylishText';
 import { authApi } from '../../../../functions/auth';
@@ -603,6 +603,8 @@ function RecoveryCodesModal({
               setOpen(false);
               onReauthFlow(flow);
             }
+          } else {
+            queryClient.cancelQueries({ queryKey: ['mfa-recovery-codes'] });
           }
 
           throw error;
@@ -638,7 +640,7 @@ function RecoveryCodesModal({
         )}
         {recoveryCodesQuery.isFetching || recoveryCodesQuery.isLoading ? (
           <Loader />
-        ) : (
+        ) : unusedCodes.length > 0 ? (
           <Stack gap='xs'>
             <Alert
               color='blue'
@@ -651,25 +653,15 @@ function RecoveryCodesModal({
             </Alert>
             <Paper p='sm' withBorder>
               <Stack gap='xs'>
-                {unusedCodes.length > 0 ? (
-                  unusedCodes.map((code: string) => (
-                    <Group
-                      p={3}
-                      justify='space-between'
-                      key={`mfa-recovery-code-${code}`}
-                    >
-                      <Text>{code}</Text>
-                    </Group>
-                  ))
-                ) : (
-                  <Alert
-                    color='yellow'
-                    icon={<IconAlertCircle />}
-                    title={t`No Unused Codes`}
+                {unusedCodes.map((code: string) => (
+                  <Group
+                    p={3}
+                    justify='space-between'
+                    key={`mfa-recovery-code-${code}`}
                   >
-                    <Trans>There are no available recovery codes</Trans>
-                  </Alert>
-                )}
+                    <Text>{code}</Text>
+                  </Group>
+                ))}
                 <Divider />
                 <Group justify='space-between'>
                   <Trans>Copy recovery codes to clipboard</Trans>
@@ -678,6 +670,14 @@ function RecoveryCodesModal({
               </Stack>
             </Paper>
           </Stack>
+        ) : (
+          <Alert
+            color='yellow'
+            icon={<IconAlertCircle />}
+            title={t`No Unused Codes`}
+          >
+            <Trans>There are no available recovery codes</Trans>
+          </Alert>
         )}
         <Divider />
         <Group justify='right'>
