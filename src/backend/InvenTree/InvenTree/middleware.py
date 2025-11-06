@@ -40,6 +40,15 @@ def get_token_from_request(request):
     return None
 
 
+def ensure_slashes(path: str):
+    """Ensure that slashes are suroudning the passed path."""
+    if not path.startswith('/'):
+        path = f'/{path}'
+    if not path.endswith('/'):
+        path = f'{path}/'
+    return path
+
+
 # List of target URL endpoints where *do not* want to redirect to
 urls = [
     reverse_lazy('account_login'),
@@ -49,6 +58,15 @@ urls = [
 
 # Do not redirect requests to any of these paths
 paths_ignore = ['/api/', '/auth/', settings.MEDIA_URL, settings.STATIC_URL]
+unhandled_paths_ignore = [
+    '/api/',  # DRF handles API
+    '/o/',  # oAuth2 library
+    '/anymail/',  # Mails
+    '/accounts/',  # allauth account management
+    '/assets/',  # Web assets
+    ensure_slashes(settings.STATIC_URL),  # Static files
+    ensure_slashes(settings.FRONTEND_URL_BASE),  # Frontend files
+]
 
 
 class AuthRequiredMiddleware:
@@ -79,70 +97,38 @@ class AuthRequiredMiddleware:
 
         Redirects to login if not authenticated.
         """
+        path: str = request.path_info
         # Code to be executed for each request before
         # the view (and later middleware) are called.
 
         assert hasattr(request, 'user')
 
-        # API requests are handled by the DRF library
-        if request.path_info.startswith('/api/'):
-            return self.get_response(request)
-
-        # oAuth2 requests are handled by the oAuth2 library
-        if request.path_info.startswith('/o/'):
-            return self.get_response(request)
-
-        # anymail requests are handled by the anymail library
-        if request.path_info.startswith('/anymail/'):
+        # API requests that are handled elsewhere
+        if any(path.startswith(a) for a in unhandled_paths_ignore):
             return self.get_response(request)
 
         # Is the function exempt from auth requirements?
         path_func = resolve(request.path).func
-
         if getattr(path_func, 'auth_exempt', False) is True:
             return self.get_response(request)
 
-        if not request.user.is_authenticated:
+        if not request.user.is_authenticated and not (
+            path == f'/{settings.FRONTEND_URL_BASE}' or self.check_token(request)
+        ):
             """
             Normally, a web-based session would use csrftoken based authentication.
 
             However when running an external application (e.g. the InvenTree app or Python library),
             we must validate the user token manually.
             """
+            if path not in urls and not any(path.startswith(p) for p in paths_ignore):
+                # Save the 'next' parameter to pass through to the login view
 
-            authorized = False
-
-            # Allow static files to be accessed without auth
-            # Important for e.g. login page
-            if (
-                request.path_info.startswith('/static/')
-                or request.path_info.startswith('/accounts/')
-                or (
-                    request.path_info.startswith(f'/{settings.FRONTEND_URL_BASE}/')
-                    or request.path_info.startswith('/assets/')
-                    or request.path_info == f'/{settings.FRONTEND_URL_BASE}'
-                )
-                or self.check_token(request)
-            ):
-                authorized = True
-
-            # No authorization was found for the request
-            if not authorized:
-                path = request.path_info
-
-                if path not in urls and not any(
-                    path.startswith(p) for p in paths_ignore
-                ):
-                    # Save the 'next' parameter to pass through to the login view
-
-                    return redirect(
-                        f'{reverse_lazy("account_login")}?next={request.path}'
-                    )
-                # Return a 401 (Unauthorized) response code for this request
-                return HttpResponse('Unauthorized', status=401)
+                return redirect(f'{reverse_lazy("account_login")}?next={request.path}')
+            # Return a 401 (Unauthorized) response code for this request
+            return HttpResponse('Unauthorized', status=401)
 
         response = self.get_response(request)
-
         return response
 
 
