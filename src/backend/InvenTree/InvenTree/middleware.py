@@ -57,7 +57,12 @@ urls = [
 ]
 
 # Do not redirect requests to any of these paths
-paths_ignore = ['/api/', '/auth/', settings.MEDIA_URL, settings.STATIC_URL]
+paths_ignore = [
+    '/api/',
+    reverse_lazy('auth-check'),
+    settings.MEDIA_URL,
+    settings.STATIC_URL,
+]
 unhandled_paths_ignore = [
     '/api/',  # DRF handles API
     '/o/',  # oAuth2 library

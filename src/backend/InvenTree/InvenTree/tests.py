@@ -188,7 +188,7 @@ class CorsTest(TestCase):
         Here, we are not authorized by default,
         but the CORS headers should still be included.
         """
-        url = '/auth/'
+        url = reverse('auth-check')
 
         # First, a preflight request with a "valid" origin
 
