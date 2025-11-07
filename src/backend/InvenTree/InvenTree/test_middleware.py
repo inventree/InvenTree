@@ -1,5 +1,7 @@
 """Tests for middleware functions."""
 
+from unittest.mock import patch
+
 from django.conf import settings
 from django.http import Http404
 from django.urls import reverse
@@ -36,6 +38,32 @@ class MiddlewareTests(InvenTreeTestCase):
         # check that frontend code is redirected to login
         response = self.check_path(reverse('index'), 302)
         self.assertEqual(response.url, '/accounts/login/?next=/')
+
+    def test_Check2FAMiddleware(self):
+        """Test the 2FA middleware."""
+        url = reverse('api-part-list')
+
+        self.assignRole(role='part.view', group=self.group)
+        # Ensure that normal access works with mfa enabled
+        with self.settings(MFA_ENABLED=True):
+            self.check_path(url)
+        # Ensure that normal access works with mfa disabled
+        with self.settings(MFA_ENABLED=False):
+            self.check_path(url)
+
+        # Now enforce MFA for the user
+        with self.settings(MFA_ENABLED=True) and patch.dict(
+            'os.environ', {'INVENTREE_LOGIN_ENFORCE_MFA': 'True'}
+        ):
+            # Enforced but not logged in via mfa -> should give 403
+            response = self.check_path(url, 401)
+            self.assertContains(
+                response,
+                'You must enable two-factor authentication before doing anything else.',
+                status_code=401,
+            )
+
+            # TODO test with working mfa session
 
     def test_token_auth(self):
         """Test auth with token auth."""

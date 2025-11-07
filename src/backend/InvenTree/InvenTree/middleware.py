@@ -217,7 +217,9 @@ class Check2FAMiddleware(MiddlewareMixin):
 
     def enforce_2fa(self, request):
         """Use setting to check if MFA should be enforced."""
-        return get_global_setting('LOGIN_ENFORCE_MFA')
+        return get_global_setting(
+            'LOGIN_ENFORCE_MFA', None, 'INVENTREE_LOGIN_ENFORCE_MFA'
+        )
 
 
 class InvenTreeRemoteUserMiddleware(PersistentRemoteUserMiddleware):
