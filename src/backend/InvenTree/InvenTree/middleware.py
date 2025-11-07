@@ -1,6 +1,7 @@
 """Middleware for InvenTree."""
 
 import sys
+from typing import Optional
 from urllib.parse import urlsplit
 
 from django.conf import settings
@@ -192,7 +193,7 @@ class Check2FAMiddleware(MiddlewareMixin):
 
     def process_view(
         self, request: HttpRequest, view_func, view_args, view_kwargs
-    ) -> HttpResponse | None:
+    ) -> Optional[HttpResponse]:
         """Determine if the server is set up enforce 2fa registration."""
         from django.conf import settings
 
