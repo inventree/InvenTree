@@ -106,8 +106,9 @@ class MiddlewareTests(InvenTreeTestCase):
 
         # request with token - should work
         self.check_path(target, auth_header=f'Token {token}')
+
         # Request something that is not on the API - should still work
-        self.check_path('/auth/', auth_header=f'Token {token}')
+        self.check_path(reverse('auth-check'), auth_header=f'Token {token}')
 
     def test_error_exceptions(self):
         """Test that ignored errors are not logged."""

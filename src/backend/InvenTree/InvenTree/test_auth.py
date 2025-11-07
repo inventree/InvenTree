@@ -139,13 +139,15 @@ class TestAuth(InvenTreeAPITestCase):
     """Test authentication functionality."""
 
     reg_url = '/api/auth/v1/auth/signup'
+    login_url = '/api/auth/v1/auth/login'
     test_email = 'tester@example.com'
 
     def test_buildin_token(self):
         """Test the built-in token authentication."""
         self.logout()
+
         response = self.post(
-            '/api/auth/v1/auth/login',
+            self.login_url,
             {'username': self.username, 'password': self.password},
             expected_code=200,
         )
@@ -155,7 +157,7 @@ class TestAuth(InvenTreeAPITestCase):
 
         # Test for conflicting login
         self.post(
-            '/api/auth/v1/auth/login',
+            self.login_url,
             {'username': self.username, 'password': self.password},
             expected_code=409,
         )
