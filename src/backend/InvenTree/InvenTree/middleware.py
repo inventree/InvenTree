@@ -67,6 +67,23 @@ unhandled_paths_ignore = [
     ensure_slashes(settings.STATIC_URL),  # Static files
     ensure_slashes(settings.FRONTEND_URL_BASE),  # Frontend files
 ]
+# Paths that do not require MFA enforcement
+mfa_bypass_allowed_pages = [
+    'api-user-meta',
+    'api-user-me',
+    'api-user-roles',
+    'api-inventree-info',
+    'api-token',
+    # web platform urls
+    'password_reset_confirm',
+    'index',
+    'web',
+    'web-wildcard',
+    'web-assets',
+]
+mfa_bypass_apps = [
+    'headless'  # Headless allauth app
+]
 
 
 class AuthRequiredMiddleware:
@@ -139,20 +156,6 @@ class Check2FAMiddleware(MiddlewareMixin):
     Adapted from https://github.com/pennersr/django-allauth/issues/3649
     """
 
-    allowed_pages = [
-        'api-user-meta',
-        'api-user-me',
-        'api-user-roles',
-        'api-inventree-info',
-        'api-token',
-        # web platform urls
-        'password_reset_confirm',
-        'index',
-        'web',
-        'web-wildcard',
-        'web-assets',
-    ]
-    app_names = ['headless']
     require_2fa_message = _(
         'You must enable two-factor authentication before doing anything else.'
     )
@@ -169,8 +172,8 @@ class Check2FAMiddleware(MiddlewareMixin):
         return (
             False
             if match is None
-            else any(ref in self.app_names for ref in match.app_names)
-            or match.url_name in self.allowed_pages
+            else any(ref in mfa_bypass_apps for ref in match.app_names)
+            or match.url_name in mfa_bypass_allowed_pages
             or match.route == 'favicon.ico'
         )
 
@@ -189,7 +192,7 @@ class Check2FAMiddleware(MiddlewareMixin):
 
     def process_view(
         self, request: HttpRequest, view_func, view_args, view_kwargs
-    ) -> HttpResponse:
+    ) -> HttpResponse | None:
         """Determine if the server is set up enforce 2fa registration."""
         from django.conf import settings
 
