@@ -4,6 +4,7 @@ from django.contrib.auth.models import Group, User
 from django.core.exceptions import ValidationError
 from django.test import override_settings
 from django.test.testcases import TransactionTestCase
+from django.urls import reverse
 
 from allauth.socialaccount.models import SocialAccount, SocialLogin
 
@@ -224,3 +225,21 @@ class TestAuth(InvenTreeAPITestCase):
         ):
             resp = self.post(self.reg_url, self.email_args(), expected_code=200)
             self.assertEqual(resp.json()['data']['user']['email'], self.test_email)
+
+    def test_auth_request(self):
+        """Test the auth_request view."""
+        url = reverse('auth-check')
+
+        # Logged in user
+        self.get(url)
+
+        # Inactive user
+        self.user.is_active = False
+        self.user.save()
+        self.get(url, expected_code=403)
+        self.user.is_active = True
+        self.user.save()
+
+        # Logged out user
+        self.client.logout()
+        self.get(url, expected_code=401)

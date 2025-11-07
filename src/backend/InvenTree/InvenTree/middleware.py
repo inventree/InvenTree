@@ -7,7 +7,7 @@ from django.conf import settings
 from django.contrib.auth.middleware import PersistentRemoteUserMiddleware
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
-from django.urls import resolve, reverse_lazy
+from django.urls import resolve, reverse, reverse_lazy
 from django.utils.deprecation import MiddlewareMixin
 from django.utils.http import is_same_domain
 from django.utils.translation import gettext_lazy as _
@@ -57,12 +57,7 @@ urls = [
 ]
 
 # Do not redirect requests to any of these paths
-paths_ignore = [
-    '/api/',
-    reverse_lazy('auth-check'),
-    settings.MEDIA_URL,
-    settings.STATIC_URL,
-]
+paths_ignore = ['/api/', reverse('auth-check'), settings.MEDIA_URL, settings.STATIC_URL]
 unhandled_paths_ignore = [
     '/api/',  # DRF handles API
     '/o/',  # oAuth2 library

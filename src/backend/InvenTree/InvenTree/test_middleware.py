@@ -65,25 +65,6 @@ class MiddlewareTests(InvenTreeTestCase):
 
         # TODO test with working mfa session
 
-    def test_auth_request(self):
-        """Test the auth_request view."""
-        url = reverse('auth-check')
-
-        # Logged in user
-        self.check_path(url)
-
-        self.user.is_active = False
-        self.user.save()
-        # Inactive user
-        self.check_path(url, code=403)
-
-        self.user.is_active = True
-        self.user.save()
-
-        # Logged out user
-        self.client.logout()
-        self.check_path(url, code=401)
-
     def test_token_auth(self):
         """Test auth with token auth."""
         target = reverse('api-license')
