@@ -1832,7 +1832,7 @@ class PartDetailTests(PartAPITestBase):
         # But we *can* change it to a unique revision code
         response = self.patch(url, {'revision': 'C'}, expected_code=200)
 
-    def test_image_upload(self):
+    def test_upload_multiple_images(self):
         """Test that we can upload an image to the part API."""
         self.assignRole('part.add')
 
@@ -1874,12 +1874,21 @@ class PartDetailTests(PartAPITestBase):
                 response = self.upload_client.post(
                     reverse('api-image-list'),
                     {'object_id': pk, 'content_type': 'part', 'image': dummy_image},
-                    expected_code=200,
+                    expected_code=201,
                 )
 
-            # And now check that the image has been set
-            p = Part.objects.get(pk=pk)
-            self.assertIsNotNone(p.image)
+                url = reverse('api-part-detail', kwargs={'pk': pk})
+                data = self.get(url, expected_code=200).data
+
+        self.assertIsNotNone(data['image'])
+        self.assertIn('dummy_image', data['image'])
+
+        response = self.get(
+            reverse('api-image-list'),
+            {'object_id': pk, 'content_type': 'part'},
+            expected_code=200,
+        )
+        self.assertEqual(len(response.data), 5)
 
     def test_update_existing_image(self):
         """Test that we can update the image of an existing part with an already existing image."""

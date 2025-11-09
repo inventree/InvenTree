@@ -800,7 +800,7 @@ class InvenTreeImageSerializerMixin(metaclass=serializers.SerializerMetaclass):
 class InvenTreeImageThumbSerializer(serializers.Serializer):
     """Serializer for a thumbnail of an uploaded image."""
 
-    image = serializers.URLField(read_only=True)
+    image = InvenTreeImageSerializerField(read_only=True)
     count = serializers.IntegerField(read_only=True)
 
 

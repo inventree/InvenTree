@@ -2,6 +2,7 @@
 
 from unittest.mock import MagicMock, patch
 
+from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import override_settings
@@ -179,7 +180,9 @@ class InvenTreeImageTest(InvenTreeAPITestCase):
             self.assertIn('count', entry)
 
         # The counts should match the actual usage
-        counts = {str(img.image): 1 for img in [self.img1, self.img2]}
+        counts = {
+            settings.MEDIA_URL + str(img.image): 1 for img in [self.img1, self.img2]
+        }
         for entry in response.data:
             img_name = entry['image']
             self.assertEqual(entry['count'], counts.get(img_name, 0))

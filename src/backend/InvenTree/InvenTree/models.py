@@ -1100,7 +1100,6 @@ class InvenTreeImageMixin(models.Model):
             ValueError: If single_image is True and an image already exists
         """
         from django.core.files import File
-        from django.core.files.base import ContentFile
 
         from common.models import InvenTreeImage
 
@@ -1120,9 +1119,6 @@ class InvenTreeImageMixin(models.Model):
             # If file is a path string, open it
             with open(file, 'rb') as f:
                 img.image.save(file_name, File(f), save=True)
-        elif isinstance(file, bytes):
-            # If file is bytes, wrap in ContentFile
-            img.image.save(file_name, ContentFile(file), save=True)
         else:
             # Assume it's a file-like object (UploadedFile, BytesIO, etc.)
             img.image.save(file_name, file, save=True)
