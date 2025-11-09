@@ -12,12 +12,13 @@ def auth_request(request):
 
     Useful for (for example) redirecting authentication requests through django's permission framework.
     """
-    if not request.user or not request.user.is_authenticated:
-        return HttpResponse(status=403)
-
-    if not request.user.is_active:
-        # Reject requests from inactive users
-        return HttpResponse(status=403)
+    if (
+        not request.user
+        or not request.user.is_authenticated
+        or not request.user.is_active
+    ):
+        # This is very unlikely to be reached, as the middleware stack should intercept unauthenticated requests
+        return HttpResponse(status=403)  # pragma: no cover
 
     # User is authenticated and active
     return HttpResponse(status=200)
