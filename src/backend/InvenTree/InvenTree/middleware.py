@@ -57,19 +57,29 @@ urls = [
     reverse_lazy('admin:logout'),
 ]
 
-# Do not redirect requests to any of these paths
-paths_ignore = ['/api/', reverse('auth-check'), settings.MEDIA_URL, settings.STATIC_URL]
-unhandled_paths_ignore = [
-    '/api/',  # DRF handles API
-    '/o/',  # oAuth2 library
-    '/anymail/',  # Mails
-    '/accounts/',  # allauth account management
-    '/assets/',  # Web assets
-    ensure_slashes(settings.STATIC_URL),  # Static files
-    ensure_slashes(settings.FRONTEND_URL_BASE),  # Frontend files
+paths_ignore_handling = [
+    '/api/',
+    reverse('auth-check'),
+    settings.MEDIA_URL,
+    settings.STATIC_URL,
 ]
-# Paths that do not require MFA enforcement
-mfa_bypass_allowed_pages = [
+"""Paths that should not use InvenTrees own auth rejection behaviour, no host checking or redirecting. Security
+ are still enforced."""
+paths_own_security = [
+    '/api/',  # DRF handles API
+    '/o/',  # oAuth2 library - has its own auth model
+    '/anymail/',  # Mails - wehbhooks etc
+    '/accounts/',  # allauth account management - has its own auth model
+    '/assets/',  # Web assets - only used for testing, no security model needed
+    ensure_slashes(
+        settings.STATIC_URL
+    ),  # Static files  - static files are considered safe to serve
+    ensure_slashes(
+        settings.FRONTEND_URL_BASE
+    ),  # Frontend files - frontend paths have their own security model
+]
+"""Paths that handle their own security model."""
+pages_mfa_bypass = [
     'api-user-meta',
     'api-user-me',
     'api-user-roles',
@@ -82,9 +92,11 @@ mfa_bypass_allowed_pages = [
     'web-wildcard',
     'web-assets',
 ]
-mfa_bypass_apps = [
-    'headless'  # Headless allauth app
+"""Exact page names that bypass MFA enforcement - normal security model is still enforced."""
+apps_mfa_bypass = [
+    'headless'  # Headless allauth app - has its own security model
 ]
+"""App namespaces that bypass MFA enforcement - normal security model is still enforced."""
 
 
 class AuthRequiredMiddleware:
@@ -123,7 +135,7 @@ class AuthRequiredMiddleware:
         assert hasattr(request, 'user')
 
         # API requests that are handled elsewhere
-        if any(path.startswith(a) for a in unhandled_paths_ignore):
+        if any(path.startswith(a) for a in paths_own_security):
             return self.get_response(request)
 
         # Is the function exempt from auth requirements?
@@ -140,7 +152,9 @@ class AuthRequiredMiddleware:
             However when running an external application (e.g. the InvenTree app or Python library),
             we must validate the user token manually.
             """
-            if path not in urls and not any(path.startswith(p) for p in paths_ignore):
+            if path not in urls and not any(
+                path.startswith(p) for p in paths_ignore_handling
+            ):
                 # Save the 'next' parameter to pass through to the login view
 
                 return redirect(f'{reverse_lazy("account_login")}?next={request.path}')
@@ -173,8 +187,8 @@ class Check2FAMiddleware(MiddlewareMixin):
         return (
             False
             if match is None
-            else any(ref in mfa_bypass_apps for ref in match.app_names)
-            or match.url_name in mfa_bypass_allowed_pages
+            else any(ref in apps_mfa_bypass for ref in match.app_names)
+            or match.url_name in pages_mfa_bypass
             or match.route == 'favicon.ico'
         )
 
@@ -301,7 +315,7 @@ class InvenTreeHostSettingsMiddleware(MiddlewareMixin):
 
         # Handle commonly ignored paths that might also work without a correct setup (api, auth)
         path = request.path_info
-        if path in urls or any(path.startswith(p) for p in paths_ignore):
+        if path in urls or any(path.startswith(p) for p in paths_ignore_handling):
             return None
 
         # treat the accessed scheme and host
