@@ -2,12 +2,14 @@ import { ActionIcon, Alert, Group, Menu, Stack, Tooltip } from '@mantine/core';
 import { IconExclamationCircle } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 
+import type { SettingsStateProps } from '@lib/types/Settings';
 import { t } from '@lingui/core/macro';
 import { useShallow } from 'zustand/react/shallow';
 import { docLinks } from '../../defaults/links';
 import { useServerApiState } from '../../states/ServerApiState';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
+import type { ServerAPIProps } from '../../states/states';
 
 interface AlertInfo {
   key: string;
@@ -32,64 +34,21 @@ export function Alerts() {
 
   const [dismissed, setDismissed] = useState<string[]>([]);
 
-  const alerts: AlertInfo[] = useMemo(() => {
-    const _alerts: AlertInfo[] = [];
-
-    if (server?.debug_mode) {
-      _alerts.push({
-        key: 'debug',
-        title: t`Debug Mode`,
-        code: 'INVE-W4',
-        message: t`The server is running in debug mode.`
-      });
-    }
-
-    if (!server?.worker_running) {
-      _alerts.push({
-        key: 'worker',
-        title: t`Background Worker`,
-        code: 'INVE-W5',
-        message: t`The background worker process is not running.`
-      });
-    }
-
-    if (!server?.email_configured) {
-      _alerts.push({
-        key: 'email',
-        title: t`Email settings`,
-        code: 'INVE-W7',
-        message: t`Email settings not configured.`
-      });
-    }
-
-    if (globalSettings.isSet('SERVER_RESTART_REQUIRED')) {
-      _alerts.push({
-        key: 'restart',
-        title: t`Server Restart`,
-        code: 'INVE-W6',
-        message: t`The server requires a restart to apply changes.`
-      });
-    }
-
-    const n_migrations =
-      Number.parseInt(globalSettings.getSetting('_PENDING_MIGRATIONS')) ?? 0;
-
-    if (n_migrations > 0) {
-      _alerts.push({
-        key: 'migrations',
-        title: t`Database Migrations`,
-        code: 'INVE-W8',
-        message: t`There are pending database migrations.`
-      });
-    }
-
-    return _alerts.filter((alert) => !dismissed.includes(alert.key));
-  }, [server, dismissed, globalSettings]);
+  const alerts: AlertInfo[] = useMemo(
+    () =>
+      getAlerts(server, globalSettings).filter(
+        (alert) => !dismissed.includes(alert.key)
+      ),
+    [server, dismissed, globalSettings]
+  );
 
   const anyErrors: boolean = useMemo(
     () => alerts.some((alert) => alert.error),
     [alerts]
   );
+  function closeAlert(key: string) {
+    setDismissed([...dismissed, key]);
+  }
 
   if (user.isStaff() && alerts.length > 0)
     return (
@@ -108,22 +67,7 @@ export function Alerts() {
         <Menu.Dropdown>
           {alerts.map((alert) => (
             <Menu.Item key={`alert-item-${alert.key}`}>
-              <Alert
-                withCloseButton
-                color={alert.error ? 'red' : 'orange'}
-                title={
-                  <Group gap='xs'>
-                    {alert.code && `${alert.code}: `}
-                    {alert.title}
-                  </Group>
-                }
-                onClose={() => setDismissed([...dismissed, alert.key])}
-              >
-                <Stack gap='xs'>
-                  {alert.message}
-                  {alert.code && errorCodeLink(alert.code)}
-                </Stack>
-              </Alert>
+              <ServerAlert alert={alert} closeAlert={closeAlert} />
             </Menu.Item>
           ))}
         </Menu.Dropdown>
@@ -131,6 +75,84 @@ export function Alerts() {
     );
   return null;
 }
+
+export function ServerAlert({
+  alert,
+  closeAlert
+}: { alert: AlertInfo; closeAlert?: (key: string) => void }) {
+  return (
+    <Alert
+      withCloseButton={!!closeAlert}
+      color={alert.error ? 'red' : 'orange'}
+      title={
+        <Group gap='xs'>
+          {alert.code && `${alert.code}: `}
+          {alert.title}
+        </Group>
+      }
+      onClose={closeAlert ? () => closeAlert(alert.key) : undefined}
+    >
+      <Stack gap='xs'>
+        {alert.message}
+        {alert.code && errorCodeLink(alert.code)}
+      </Stack>
+    </Alert>
+  );
+}
+
+type ExtendedAlertInfo = AlertInfo & {
+  condition: boolean;
+};
+
+export function getAlerts(
+  server: ServerAPIProps,
+  globalSettings: SettingsStateProps,
+  inactive = false
+): ExtendedAlertInfo[] {
+  const n_migrations =
+    Number.parseInt(globalSettings.getSetting('_PENDING_MIGRATIONS')) ?? 0;
+
+  const allalerts: ExtendedAlertInfo[] = [
+    {
+      key: 'debug',
+      title: t`Debug Mode`,
+      code: 'INVE-W4',
+      message: t`The server is running in debug mode.`,
+      condition: server?.debug_mode || false
+    },
+    {
+      key: 'worker',
+      title: t`Background Worker`,
+      code: 'INVE-W5',
+      message: t`The background worker process is not running.`,
+      condition: !server?.worker_running
+    },
+    {
+      key: 'restart',
+      title: t`Server Restart`,
+      code: 'INVE-W6',
+      message: t`The server requires a restart to apply changes.`,
+      condition: globalSettings.isSet('SERVER_RESTART_REQUIRED')
+    },
+    {
+      key: 'email',
+      title: t`Email settings`,
+      code: 'INVE-W7',
+      message: t`Email settings not configured.`,
+      condition: !server?.email_configured
+    },
+    {
+      key: 'migrations',
+      title: t`Database Migrations`,
+      code: 'INVE-W8',
+      message: t`There are pending database migrations.`,
+      condition: n_migrations > 0
+    }
+  ];
+
+  return allalerts.filter((alert) => inactive || alert.condition);
+}
+
 export function errorCodeLink(code: string) {
   return (
     <a

@@ -261,15 +261,37 @@ Total Price: {% render_currency order.total_price currency='NZD' decimal_places=
 {% endraw %}
 ```
 
+### convert_currency
+
+To convert a currency value from one currency to another, use the `convert_currency` helper function:
+
+::: report.templatetags.report.convert_currency
+    options:
+        show_docstring_description: false
+        show_source: False
+
+!!! info "Data Types"
+    The `money` parameter must be `Money` class instance. If not, an error will be raised.
+
+### create_currency
+
+Create a `currency` instance using the `create_currency` helper function. This returns a `Money` class instance based on the provided amount and currency type.
+
+::: report.templatetags.report.create_currency
+    options:
+        show_docstring_description: false
+        show_source: False
+
 ## Maths Operations
 
 Simple mathematical operators are available, as demonstrated in the example template below. These operators can be used to perform basic arithmetic operations within the report template.
 
-### Input Types
-
-These mathematical functions accept inputs of various input types, and attempt to perform the operation accordingly. Note that any inputs which are provided as strings or numbers will be converted to `Decimal` class types before the operation is performed.
+!!! info "Input Types"
+    These mathematical functions accept inputs of various input types, and attempt to perform the operation accordingly. Note that any inputs which are provided as strings or numbers will be converted to `Decimal` class types before the operation is performed.
 
 ### add
+
+Add two numbers together using the `add` helper function:
 
 ::: report.templatetags.report.add
     options:
@@ -278,12 +300,16 @@ These mathematical functions accept inputs of various input types, and attempt t
 
 ### subtract
 
+Subtract one number from another using the `subtract` helper function:
+
 ::: report.templatetags.report.subtract
     options:
         show_docstring_description: false
         show_source: False
 
 ### multiply
+
+Multiply two numbers together using the `multiply` helper function:
 
 ::: report.templatetags.report.multiply
     options:
@@ -292,12 +318,16 @@ These mathematical functions accept inputs of various input types, and attempt t
 
 ### divide
 
+Divide one number by another using the `divide` helper function:
+
 ::: report.templatetags.report.divide
     options:
         show_docstring_description: false
         show_source: False
 
 ### modulo
+
+Perform a modulo operation using the `modulo` helper function:
 
 ::: report.templatetags.report.modulo
     options:
