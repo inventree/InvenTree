@@ -108,6 +108,13 @@ class ApiAccessTests(InvenTreeAPITestCase):
         self.tokenAuth()
         self.assertIsNotNone(self.token)
 
+        # Run explicit test with token auth
+        url = reverse('api-license')
+        response = self.get(
+            url, headers={'Authorization': f'Token {self.token}'}, expected_code=200
+        )
+        self.assertIn('backend', response.json())
+
     def test_role_view(self):
         """Test that we can access the 'roles' view for the logged in user.
 
