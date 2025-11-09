@@ -5,9 +5,8 @@ from django.contrib.auth.models import Group
 from django.test import TestCase
 from django.urls import reverse
 
-from allauth.mfa.totp.internal import auth as totp_auth
-
 from common.settings import set_global_setting
+from InvenTree.helpers_mfa import get_codes
 from InvenTree.unit_test import AdminTestCase, InvenTreeAPITestCase, InvenTreeTestCase
 from users.models import ApiToken, Owner
 from users.oauth2_scopes import _roles
@@ -334,8 +333,6 @@ class OwnerModelTest(InvenTreeTestCase):
 class MFALoginTest(InvenTreeAPITestCase):
     """Some simplistic tests to ensure that MFA is working."""
 
-    mfa_secret = None
-
     def test_api(self):
         """Test that the API is working."""
         auth_data = {'username': self.username, 'password': self.password}
@@ -349,13 +346,8 @@ class MFALoginTest(InvenTreeAPITestCase):
         response = self.post(login_url, auth_data, expected_code=200)
         self._helper_meta_val(response)
 
-        return  # TODO @matmair re-enable MFA tests once stable
         # Add MFA - trying in a limited loop in case of timing issues
-        response = self.post(
-            reverse('browser:mfa:manage_totp'),
-            {'code': self.get_topt()},
-            expected_code=200,
-        )
+        rc_code = get_codes(user=self.user)[1][0]
 
         # There must be a TOTP device now - success
         self.get(reverse('browser:mfa:manage_totp'), expected_code=200)
@@ -373,11 +365,9 @@ class MFALoginTest(InvenTreeAPITestCase):
         response = self.post(login_url, auth_data, expected_code=401)
         # MFA not finished - no access allowed
         self.get(reverse('api-token'), expected_code=401)
-        # Complete
+        # Complete MFA (with recovery code to avoid timing issues)
         self.post(
-            reverse('browser:mfa:authenticate'),
-            {'code': self.get_topt()},
-            expected_code=401,
+            reverse('browser:mfa:authenticate'), {'code': rc_code}, expected_code=401
         )
         self.post(reverse('browser:mfa:trust'), {'trust': False}, expected_code=200)
         # and run through trust
@@ -404,15 +394,6 @@ class MFALoginTest(InvenTreeAPITestCase):
         """Helper to run a test on flow response."""
         flows = response.json()['data']['flows']
         return next(a for a in flows if a['id'] == flow_id)
-
-    def get_topt(self):
-        """Helper to get a current totp code."""
-        if not self.mfa_secret:
-            mfa_init = self.get(reverse('browser:mfa:manage_totp'), expected_code=404)
-            self.mfa_secret = mfa_init.json()['meta']['secret']
-        return totp_auth.hotp_value(
-            self.mfa_secret, next(totp_auth.yield_hotp_counters_from_time())
-        )
 
 
 class AdminTest(AdminTestCase):
