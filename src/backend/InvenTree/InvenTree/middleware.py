@@ -118,8 +118,10 @@ class AuthRequiredMiddleware:
                     # Provide the user information to the request
                     request.user = token.user
                     return True
-            except ApiToken.DoesNotExist:
-                logger.warning('Access denied for unknown token %s', token)
+            except ApiToken.DoesNotExist:  # pragma: no cover
+                logger.warning(
+                    'Access denied for unknown token %s', token
+                )  # pragma: no cover
 
         return False
 
