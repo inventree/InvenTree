@@ -395,13 +395,6 @@ export default function SalesOrderLineItemTable({
       const virtual = record?.part_detail?.virtual ?? false;
 
       return [
-        RowViewAction({
-          title: t`View Part`,
-          modelType: ModelType.part,
-          modelId: record.part,
-          navigate: navigate,
-          hidden: !user.hasViewRole(UserRoles.part)
-        }),
         {
           hidden:
             allocated ||
@@ -487,6 +480,13 @@ export default function SalesOrderLineItemTable({
             setSelectedLineId(record.pk);
             deleteLine.open();
           }
+        }),
+        RowViewAction({
+          title: t`View Part`,
+          modelType: ModelType.part,
+          modelId: record.part,
+          navigate: navigate,
+          hidden: !user.hasViewRole(UserRoles.part)
         })
       ];
     },

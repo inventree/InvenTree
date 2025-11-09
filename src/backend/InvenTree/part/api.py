@@ -1621,6 +1621,7 @@ class BomList(
 
     ordering_fields = [
         'can_build',
+        'category',
         'quantity',
         'setup_quantity',
         'attrition',
@@ -1641,6 +1642,7 @@ class BomList(
     ]
 
     ordering_field_aliases = {
+        'category': 'sub_part__category__name',
         'sub_part': 'sub_part__name',
         'pricing_min': 'sub_part__pricing_data__overall_min',
         'pricing_max': 'sub_part__pricing_data__overall_max',

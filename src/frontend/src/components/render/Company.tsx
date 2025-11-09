@@ -80,7 +80,7 @@ export function RenderSupplierPart(
   const part = instance.part_detail ?? {};
 
   const secondary: string = instance.SKU;
-  let suffix: string = part.full_name;
+  let suffix: string = part?.full_name ?? '';
 
   if (instance.pack_quantity) {
     suffix += ` (${instance.pack_quantity})`;

@@ -175,8 +175,12 @@ test('Part - Editing', async ({ browser }) => {
 
 test('Parts - Locking', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: 'part/104/bom' });
+
   await loadTab(page, 'Bill of Materials');
-  await page.getByLabel('action-button-add-bom-item').waitFor();
+  await page
+    .getByRole('button', { name: 'action-menu-add-bom-items' })
+    .waitFor();
+
   await loadTab(page, 'Parameters');
   await page.getByLabel('action-button-add-parameter').waitFor();
 
