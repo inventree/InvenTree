@@ -462,7 +462,7 @@ function StockItemDefaultMove({
           {value} x {stockItem.part_detail.name}
         </Text>
         <Thumbnail
-          src={stockItem.part_detail.thumbnail}
+          src={stockItem.part_detail?.thumbnail}
           size={80}
           align='center'
         />

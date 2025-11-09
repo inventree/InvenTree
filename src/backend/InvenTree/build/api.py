@@ -24,6 +24,7 @@ import stock.models as stock_models
 import stock.serializers
 from build.models import Build, BuildItem, BuildLine
 from build.status_codes import BuildStatus, BuildStatusGroups
+from common.filters import prefetch_related_images
 from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import StatusView
 from InvenTree.api import BulkDeleteMixin, MetadataView
@@ -328,6 +329,8 @@ class BuildMixin:
             'part',
             'part__pricing_data',
         )
+
+        queryset = prefetch_related_images(queryset, reference='part__')
 
         return queryset
 

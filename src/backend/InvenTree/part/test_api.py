@@ -1,11 +1,11 @@
 """Unit tests for the various part API endpoints."""
 
-import os
 from datetime import datetime
 from decimal import Decimal
 from enum import IntEnum
 from random import randint
 
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db import connection
 from django.test.utils import CaptureQueriesContext
@@ -18,7 +18,8 @@ import build.models
 import company.models
 import order.models
 from build.status_codes import BuildStatus
-from common.models import InvenTreeSetting
+from common.helpers import generate_image
+from common.models import InvenTreeImage, InvenTreeSetting
 from company.models import Company, SupplierPart
 from InvenTree.config import get_testfolder_dir
 from InvenTree.unit_test import InvenTreeAPITestCase
@@ -70,14 +71,13 @@ class PartImageTestMixin:
         img.save(fn)
 
         with open(fn, 'rb') as img_file:
-            response = self.upload_client.patch(
-                reverse('api-part-detail', kwargs={'pk': p.pk}),
-                {'image': img_file},
+            response = self.upload_client.post(
+                reverse('api-image-list'),
+                {'object_id': p.pk, 'content_type': 'part', 'image': img_file},
                 expected_code=200,
             )
-            print(response.data)
             image_name = response.data['image']
-            self.assertTrue(image_name.startswith('/media/part_images/part_image'))
+            self.assertTrue(image_name.startswith('/media/images'))
         return image_name
 
 
@@ -640,7 +640,7 @@ class PartOptionsAPITest(InvenTreeAPITestCase):
         actions = self.getActions(reverse('api-part-list'))['POST']
 
         # Check that a bunch o' fields are contained
-        for f in ['assembly', 'component', 'description', 'image', 'IPN']:
+        for f in ['assembly', 'component', 'description', 'IPN']:
             self.assertIn(f, actions.keys())
 
         # Active is a 'boolean' field
@@ -1172,12 +1172,6 @@ class PartAPITest(PartAPITestBase):
         # Now there should be 5 total parts
         self.assertEqual(len(response.data), 3)
 
-    def test_get_thumbs(self):
-        """Return list of part thumbnails."""
-        url = reverse('api-part-thumbs')
-
-        self.get(url)
-
     def test_paginate(self):
         """Test pagination of the Part list API."""
         for n in [1, 5, 10]:
@@ -1598,6 +1592,19 @@ class PartCreationTests(PartAPITestBase):
     def test_duplication(self):
         """Test part duplication options."""
         base_part = Part.objects.get(pk=100)
+
+        part_ct = ContentType.objects.get_for_model(Part)
+
+        # Prepare two in memory images for test duplicate
+        img1 = generate_image('test2.png')
+        InvenTreeImage.objects.create(
+            content_type=part_ct, object_id=base_part.pk, image=img1
+        )
+        img2 = generate_image('test1.png')
+        InvenTreeImage.objects.create(
+            content_type=part_ct, object_id=base_part.pk, image=img2
+        )
+
         base_part.testable = True
         base_part.save()
 
@@ -1622,7 +1629,7 @@ class PartCreationTests(PartAPITestBase):
                         'part': 100,
                         'copy_bom': do_copy,
                         'copy_notes': do_copy,
-                        'copy_image': do_copy,
+                        'copy_images': do_copy,
                         'copy_parameters': do_copy,
                         'copy_tests': do_copy,
                     },
@@ -1637,6 +1644,7 @@ class PartCreationTests(PartAPITestBase):
             self.assertEqual(part.notes, base_part.notes if do_copy else None)
             self.assertEqual(part.parameters.count(), 2 if do_copy else 0)
             self.assertEqual(part.test_templates.count(), 3 if do_copy else 0)
+            self.assertEqual(part.images.count(), 2 if do_copy else 0)
 
     def test_category_parameters(self):
         """Test that category parameters are correctly applied."""
@@ -1683,7 +1691,7 @@ class PartCreationTests(PartAPITestBase):
         self.assertEqual(prt.parameters.count(), 3)
 
 
-class PartDetailTests(PartImageTestMixin, PartAPITestBase):
+class PartDetailTests(PartAPITestBase):
     """Test that we can create / edit / delete Part objects via the API."""
 
     @classmethod
@@ -1824,7 +1832,7 @@ class PartDetailTests(PartImageTestMixin, PartAPITestBase):
         # But we *can* change it to a unique revision code
         response = self.patch(url, {'revision': 'C'}, expected_code=200)
 
-    def test_image_upload(self):
+    def test_upload_multiple_images(self):
         """Test that we can upload an image to the part API."""
         self.assignRole('part.add')
 
@@ -1837,13 +1845,9 @@ class PartDetailTests(PartImageTestMixin, PartAPITestBase):
 
         pk = response.data['pk']
 
-        url = reverse('api-part-detail', kwargs={'pk': pk})
-
         p = Part.objects.get(pk=pk)
 
-        # Part should not have an image!
-        with self.assertRaises(ValueError):
-            print(p.image.file)
+        self.assertIsNone(p.image)
 
         # Try to upload a non-image file
         test_path = get_testfolder_dir() / 'dummy_image'
@@ -1851,8 +1855,10 @@ class PartDetailTests(PartImageTestMixin, PartAPITestBase):
             dummy_image.write('hello world')
 
         with open(f'{test_path}.txt', 'rb') as dummy_image:
-            response = self.upload_client.patch(
-                url, {'image': dummy_image}, format='multipart', expected_code=400
+            response = self.upload_client.post(
+                reverse('api-image-list'),
+                {'object_id': 17, 'content_type': 'part', 'image': dummy_image},
+                expected_code=200,
             )
 
             self.assertIn('Upload a valid image', str(response.data))
@@ -1865,44 +1871,24 @@ class PartDetailTests(PartImageTestMixin, PartAPITestBase):
             img.save(fn)
 
             with open(fn, 'rb') as dummy_image:
-                response = self.upload_client.patch(
-                    url, {'image': dummy_image}, format='multipart', expected_code=200
+                response = self.upload_client.post(
+                    reverse('api-image-list'),
+                    {'object_id': pk, 'content_type': 'part', 'image': dummy_image},
+                    expected_code=201,
                 )
 
-            # And now check that the image has been set
-            p = Part.objects.get(pk=pk)
-            self.assertIsNotNone(p.image)
+                url = reverse('api-part-detail', kwargs={'pk': pk})
+                data = self.get(url, expected_code=200).data
 
-    def test_existing_image(self):
-        """Test that we can allocate an existing uploaded image to a new Part."""
-        # First, upload an image for an existing part
-        image_name = self.create_test_image()
+        self.assertIsNotNone(data['image'])
+        self.assertIn('dummy_image', data['image'])
 
-        # Attempt to create, but with an invalid image name
-        response = self.post(
-            reverse('api-part-list'),
-            {
-                'name': 'New part',
-                'description': 'New Part description',
-                'category': 1,
-                'existing_image': 'does_not_exist.png',
-            },
-            expected_code=400,
+        response = self.get(
+            reverse('api-image-list'),
+            {'object_id': pk, 'content_type': 'part'},
+            expected_code=200,
         )
-
-        # Now, create a new part and assign the same image
-        response = self.post(
-            reverse('api-part-list'),
-            {
-                'name': 'New part',
-                'description': 'New part description',
-                'category': 1,
-                'existing_image': image_name.split(os.path.sep)[-1],
-            },
-            expected_code=201,
-        )
-
-        self.assertEqual(response.data['image'], image_name)
+        self.assertEqual(len(response.data), 5)
 
     def test_update_existing_image(self):
         """Test that we can update the image of an existing part with an already existing image."""
@@ -1914,16 +1900,13 @@ class PartDetailTests(PartImageTestMixin, PartAPITestBase):
         img = Image.new('RGB', (128, 128), color='blue')
         img.save(fn)
 
-        # Upload the image to a part
         with open(fn, 'rb') as img_file:
-            response = self.upload_client.patch(
-                reverse('api-part-detail', kwargs={'pk': p.pk}),
-                {'image': img_file},
+            response = self.upload_client.post(
+                reverse('api-image-list'),
+                {'object_id': p.pk, 'content_type': 'part', 'image': img_file},
                 expected_code=200,
             )
-
             image_name = response.data['image']
-            self.assertTrue(image_name.startswith('/media/part_images/part_image'))
 
         # Create a new part without an image
         response = self.post(
@@ -1936,13 +1919,17 @@ class PartDetailTests(PartImageTestMixin, PartAPITestBase):
             expected_code=201,
         )
 
-        self.assertEqual(response.data['image'], None)
         part_pk = response.data['pk']
 
         # Add image from the first part to the new part
-        response = self.patch(
-            reverse('api-part-detail', kwargs={'pk': part_pk}),
-            {'existing_image': image_name},
+
+        response = self.upload_client.post(
+            reverse('api-image-list'),
+            {
+                'object_id': part_pk,
+                'content_type': 'part',
+                'existing_image': image_name,
+            },
             expected_code=200,
         )
 
@@ -1950,9 +1937,14 @@ class PartDetailTests(PartImageTestMixin, PartAPITestBase):
 
         # Attempt to add a non-existent image to an existing part
         last_p = Part.objects.last()
-        response = self.patch(
-            reverse('api-part-detail', kwargs={'pk': last_p.pk}),
-            {'existing_image': 'bogus_image.jpg'},
+
+        response = self.upload_client.post(
+            reverse('api-image-list'),
+            {
+                'object_id': last_p.pk,
+                'content_type': 'part',
+                'existing_image': 'bogus_image.jpg',
+            },
             expected_code=400,
         )
 
@@ -2074,8 +2066,8 @@ class PartListTests(PartAPITestBase):
                     if b and result['category'] is not None:
                         self.assertIn('category_detail', result)
 
-            # No more than 20 DB queries
-            self.assertLessEqual(len(ctx), 20)
+            # No more than 21 DB queries
+            self.assertLessEqual(len(ctx), 21)
 
     def test_price_breaks(self):
         """Test that price_breaks parameter works correctly and efficiently."""

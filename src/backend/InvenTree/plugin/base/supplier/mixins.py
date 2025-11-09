@@ -152,7 +152,9 @@ class SupplierMixin(SettingsMixin, Generic[PartData]):
                 parent_part = root_part
 
         if len(root_set) == 0 or (root_part and not root_part.is_template):
+            image = template_kwargs.pop('image', None)
             parent_part = part_models.Part.objects.create(**template_kwargs)
+            parent_part.save_image(image.image, image.image.name)
 
         if not parent_part:
             raise supplier.PartImportError(

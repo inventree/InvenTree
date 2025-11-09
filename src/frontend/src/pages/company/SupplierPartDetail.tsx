@@ -12,7 +12,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
-import { apiUrl } from '@lib/functions/Api';
 import { formatDecimal } from '@lib/functions/Formatting';
 import { getDetailUrl } from '@lib/functions/Navigation';
 import AdminButton from '../../components/buttons/AdminButton';
@@ -215,18 +214,13 @@ export default function SupplierPartDetail() {
         icon: 'calendar'
       }
     ];
-
     return (
       <ItemDetailsGrid>
         <Grid grow>
           <DetailsImage
             appRole={UserRoles.part}
-            src={supplierPart?.part_detail?.image}
-            apiPath={apiUrl(
-              ApiEndpoints.part_list,
-              supplierPart?.part_detail?.pk
-            )}
-            pk={supplierPart?.part_detail?.pk}
+            object_id={supplierPart?.part_detail?.pk}
+            content_model={ModelType.part}
           />
           <Grid.Col span={8}>
             <DetailsTable title={t`Part Details`} fields={tl} item={data} />
