@@ -68,7 +68,7 @@ def forwards_migrate_part_images(apps, schema_editor):
             img.save()
 
 
-def reverse_migrate_inventree_images_to_part(apps, schema_editor):
+def reverse_images(apps, schema_editor):
     """Reverse migration: move InvenTreeImage back to Part.image."""
     Part = apps.get_model('part', 'Part')
     InvenTreeImage = apps.get_model('common', 'InvenTreeImage')
@@ -88,7 +88,7 @@ def reverse_migrate_inventree_images_to_part(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('part', '0139_remove_bomitem_overage'),
+        ('part', '0142_remove_part_last_stocktake_remove_partstocktake_note_and_more'),
         ('common', '0041_migrate_company_images'),
         ('contenttypes', '0002_remove_content_type_name'),
     ]
@@ -96,6 +96,6 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RunPython(
             forwards_migrate_part_images,
-            reverse_migrate_inventree_images_to_part,
+            reverse_code=reverse_images,
         ),
     ]

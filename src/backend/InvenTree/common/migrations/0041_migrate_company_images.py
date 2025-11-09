@@ -45,7 +45,7 @@ def forwards_migrate_company_images(apps, schema_editor):
             
         new_img.save()
         
-def reverse_migrate_inventree_images_to_company(apps, schema_editor):
+def reverse_images(apps, schema_editor):
     """Reverse migration: move InvenTreeImage back to Company image field."""
     Company = apps.get_model('company', 'Company')
     InvenTreeImage = apps.get_model('common', 'InvenTreeImage')
@@ -82,7 +82,7 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RunPython(
             forwards_migrate_company_images,
-            reverse_migrate_inventree_images_to_company,
+             reverse_code=reverse_images,
         ),
 
     ]
