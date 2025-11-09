@@ -8,7 +8,7 @@ def get_codes(user):
     """Generate active TOTP and recovery codes for a user."""
     secret = allauth_totp_auth.generate_totp_secret()
     totp_auth = allauth_totp_auth.TOTP.activate(user, secret).instance
-    rc_auth = RecoveryCodes.activate(user)
+    rc_auth = RecoveryCodes.activate(user).instance
 
     # Get usable codes
     print(totp_auth)
