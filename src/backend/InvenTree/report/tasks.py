@@ -38,7 +38,7 @@ def print_reports(template_id: int, item_ids: list[int], output_id: int, **kwarg
     # Ensure they are sorted by the order of the provided item IDs
     items = sorted(items, key=lambda item: item_ids.index(item.pk))
 
-    template.print(items, output=output)
+    template.print(items, output=output, request=kwargs.get('request'))
 
 
 @tracer.start_as_current_span('print_labels')
