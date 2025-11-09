@@ -4,7 +4,9 @@ import { ErrorBoundary, type FallbackRender } from '@sentry/react';
 import { IconExclamationCircle } from '@tabler/icons-react';
 import { type ReactNode, useCallback } from 'react';
 
-function DefaultFallback({ title }: Readonly<{ title: string }>): ReactNode {
+export function DefaultFallback({
+  title
+}: Readonly<{ title: string }>): ReactNode {
   return (
     <Alert
       color='red'
