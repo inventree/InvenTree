@@ -9,6 +9,7 @@ from django.urls import reverse
 from error_report.models import Error
 
 from InvenTree.exceptions import log_error
+from InvenTree.helpers_mfa import get_codes
 from InvenTree.unit_test import InvenTreeTestCase
 
 
@@ -63,7 +64,30 @@ class MiddlewareTests(InvenTreeTestCase):
                 status_code=401,
             )
 
-        # TODO test with working mfa session
+            # Register a token and try again
+            rc_codes = get_codes(self.user)[1]
+            self.client.logout()
+            # Login step 1
+            self.client.post(
+                reverse('browser:account:login'),
+                {'username': self.username, 'password': self.password},
+                content_type='application/json',
+            )
+            # Login step 2
+            self.client.post(
+                reverse('browser:mfa:authenticate'),
+                {'code': rc_codes[0]},
+                expected_code=401,
+                content_type='application/json',
+            )
+            rsp3 = self.client.post(
+                reverse('browser:mfa:trust'),
+                {'trust': False},
+                expected_code=200,
+                content_type='application/json',
+            )
+            self.assertEqual(rsp3.status_code, 200)
+            self.check_path(url)
 
     def test_token_auth(self):
         """Test auth with token auth."""
