@@ -336,12 +336,29 @@ test('Settings - Admin - Barcode History', async ({ browser }) => {
 
   for (let i = 0; i < barcodes.length; i++) {
     const barcode = barcodes[i];
-    await api.post('barcode/', {
-      data: {
-        barcode: barcode
-      },
-      timeout: 5000
-    });
+
+    let attempts = 5;
+
+    while (attempts > 0) {
+      let result = false;
+
+      await api
+        .post('barcode/', {
+          data: {
+            barcode: barcode
+          },
+          timeout: 5000
+        })
+        .then(() => {
+          result = true;
+        });
+
+      if (result) {
+        break;
+      } else {
+        attempts -= 1;
+      }
+    }
   }
 
   await page.getByRole('button', { name: 'admin' }).click();

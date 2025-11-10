@@ -64,6 +64,12 @@ export function ManufacturerPartTable({
         switchable: !!partId
       }),
       {
+        accessor: 'part_detail.IPN',
+        title: t`IPN`,
+        sortable: false,
+        switchable: true
+      },
+      {
         accessor: 'manufacturer',
         sortable: true,
         render: (record: any) => (

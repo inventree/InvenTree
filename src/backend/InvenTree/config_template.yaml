@@ -229,3 +229,30 @@ ldap:
 #global_settings:
 #  INVENTREE_DEFAULT_CURRENCY: 'CNY'
 #  INVENTREE_RESTRICT_ABOUT: true
+
+# Storage configuration
+# Ref: https://docs.inventree.org/en/stable/start/config/#storage-backends
+storage:
+  target: local # s3, sftp
+#   s3:
+#     access_key: 'abc123-key'
+#     secret_key: 'abc123-secret'
+#     bucket_name: 'my-bucket'
+#     region_name: 'fsn1'
+#     endpoint_url: 'https://fsn1.your-objectstorage.com'
+#     location: 'inventree-server_subdir'
+#     default_acl: private
+#     verify_ssl: true
+#     overwrite: true
+#     virtual: true
+  # sftp:
+  #   host: 'sftp://ftp-target.example.org:22'
+  #   uid: 1000
+  #   gid: 1000
+  #   location: 'inventree-server_subdir'
+  #   params:
+  #     # See https://docs.paramiko.org/en/latest/api/client.html#paramiko.client.SSHClient.connect
+  #     port: 22
+  #     username: 'user'
+  #     password: 'pwd'
+  #     compress: False

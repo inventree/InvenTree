@@ -5,7 +5,7 @@ title: InvenTree Installer
 ## Installer
 The InvenTree installer automates the installation procedure for a production InvenTree server.
 
-Supported OSs are Debian 11 and Ubuntu 20.04 LTS.
+Supported OSs are Debian 10, 11, 12 and Ubuntu 20.04 LTS, 22.04 LTS, 24.04 LTS.
 
 ### Quick Script
 

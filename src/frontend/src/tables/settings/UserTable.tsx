@@ -20,9 +20,9 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
-import { getDetailUrl } from '@lib/index';
+import { type ApiFormModalProps, getDetailUrl } from '@lib/index';
 import type { TableFilter } from '@lib/types/Filters';
-import type { TableColumn } from '@lib/types/Tables';
+import type { TableColumn, TableState } from '@lib/types/Tables';
 import { showNotification } from '@mantine/notifications';
 import { useNavigate } from 'react-router-dom';
 import { useShallow } from 'zustand/react/shallow';
@@ -363,18 +363,7 @@ export function UserTable({
   });
 
   // Table Actions - Add New User
-  const newUser = useCreateApiFormModal({
-    url: ApiEndpoints.user_list,
-    title: t`Add User`,
-    fields: {
-      username: {},
-      email: {},
-      first_name: {},
-      last_name: {}
-    },
-    table: table,
-    successMessage: t`Added user`
-  });
+  const newUser = useCreateApiFormModal(userFields(table));
 
   const setPassword = useApiFormModal({
     url: ApiEndpoints.user_set_password,
@@ -466,6 +455,21 @@ export function UserTable({
       />
     </>
   );
+}
+
+export function userFields(table?: TableState): ApiFormModalProps {
+  return {
+    url: ApiEndpoints.user_list,
+    title: t`Add User`,
+    fields: {
+      username: {},
+      email: {},
+      first_name: {},
+      last_name: {}
+    },
+    table: table ?? undefined,
+    successMessage: t`Added user`
+  };
 }
 
 async function setUserActiveState(userId: number, active: boolean) {

@@ -4,6 +4,7 @@ from django.contrib.auth.models import Group, User
 from django.core.exceptions import ValidationError
 from django.test import override_settings
 from django.test.testcases import TransactionTestCase
+from django.urls import reverse
 
 from allauth.socialaccount.models import SocialAccount, SocialLogin
 
@@ -139,13 +140,15 @@ class TestAuth(InvenTreeAPITestCase):
     """Test authentication functionality."""
 
     reg_url = '/api/auth/v1/auth/signup'
+    login_url = '/api/auth/v1/auth/login'
     test_email = 'tester@example.com'
 
     def test_buildin_token(self):
         """Test the built-in token authentication."""
         self.logout()
+
         response = self.post(
-            '/api/auth/v1/auth/login',
+            self.login_url,
             {'username': self.username, 'password': self.password},
             expected_code=200,
         )
@@ -155,7 +158,7 @@ class TestAuth(InvenTreeAPITestCase):
 
         # Test for conflicting login
         self.post(
-            '/api/auth/v1/auth/login',
+            self.login_url,
             {'username': self.username, 'password': self.password},
             expected_code=409,
         )
@@ -222,3 +225,22 @@ class TestAuth(InvenTreeAPITestCase):
         ):
             resp = self.post(self.reg_url, self.email_args(), expected_code=200)
             self.assertEqual(resp.json()['data']['user']['email'], self.test_email)
+
+    def test_auth_request(self):
+        """Test the auth_request view."""
+        url = reverse('auth-check')
+
+        # Logged in user
+        self.get(url)
+
+        # Inactive user
+        # TODO @matmair - this part of auth_request is not triggering currently
+        # self.user.is_active = False
+        # self.user.save()
+        # self.get(url, expected_code=403)
+        # self.user.is_active = True
+        # self.user.save()
+
+        # Logged out user
+        self.client.logout()
+        self.get(url, expected_code=401)

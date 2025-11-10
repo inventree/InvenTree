@@ -95,8 +95,8 @@ class LicenseView(APIView):
     @extend_schema(responses={200: OpenApiResponse(response=LicenseViewSerializer)})
     def get(self, request, *args, **kwargs):
         """Return information about the InvenTree server."""
-        backend = Path(__file__).parent.joinpath('licenses.txt')
-        frontend = Path(__file__).parent.parent.joinpath(
+        backend = InvenTree.config.get_base_dir().joinpath('InvenTree', 'licenses.txt')
+        frontend = InvenTree.config.get_base_dir().joinpath(
             'web/static/web/.vite/dependencies.json'
         )
         return JsonResponse({

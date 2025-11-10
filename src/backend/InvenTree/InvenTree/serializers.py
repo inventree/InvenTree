@@ -29,6 +29,8 @@ from common.currency import currency_code_default, currency_code_mappings
 from InvenTree.fields import InvenTreeRestURLField, InvenTreeURLField
 from InvenTree.helpers import str2bool
 
+from .setting.storages import StorageBackends
+
 
 # region path filtering
 class FilterableSerializerField:
@@ -613,6 +615,8 @@ class InvenTreeAttachmentSerializerField(serializers.FileField):
         if not value:
             return None
 
+        if settings.STORAGE_TARGET == StorageBackends.S3:
+            return str(value.url)
         return os.path.join(str(settings.MEDIA_URL), str(value))
 
 
@@ -627,6 +631,8 @@ class InvenTreeImageSerializerField(serializers.ImageField):
         if not value:
             return None
 
+        if settings.STORAGE_TARGET == StorageBackends.S3:
+            return str(value.url)
         return os.path.join(str(settings.MEDIA_URL), str(value))
 
 

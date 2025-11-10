@@ -3,6 +3,8 @@ import { logoutUrl } from './defaults.js';
 import { navigate } from './helpers.js';
 import { doLogin } from './login.js';
 
+import { TOTP } from 'otpauth';
+
 /**
  * Test various types of login failure
  */
@@ -83,4 +85,75 @@ test('Login - Change Password', async ({ page }) => {
 
   await page.getByText('Password Changed').waitFor();
   await page.getByText('The password was set successfully').waitFor();
+});
+
+// Tests for assigning MFA tokens to users
+test('Login - MFA - TOTP', async ({ page }) => {
+  await doLogin(page, {
+    username: 'noaccess',
+    password: 'youshallnotpass'
+  });
+
+  await navigate(page, 'settings/user/security', { waitUntil: 'networkidle' });
+
+  // Expand the MFA section
+  await page
+    .getByRole('button', { name: 'Multi-Factor Authentication' })
+    .click();
+  await page.getByRole('button', { name: 'add-factor-totp' }).click();
+
+  // Ensure the user starts without any codes
+  await page
+    .getByText('No multi-factor tokens configured for this account')
+    .waitFor();
+
+  // Try to submit with an empty code
+  await page.getByRole('textbox', { name: 'text-input-otp-code' }).fill('');
+  await page.getByRole('button', { name: 'Submit', exact: true }).click();
+
+  await page.getByText('This field is required.').waitFor();
+
+  // Try to submit with an invalid secret
+  await page
+    .getByRole('textbox', { name: 'text-input-otp-code' })
+    .fill('ABCDEF');
+  await page.getByRole('button', { name: 'Submit', exact: true }).click();
+
+  await page.getByText('Incorrect code.').waitFor();
+
+  // Submit a valid code
+  const secret = await page
+    .getByLabel('otp-secret', { exact: true })
+    .innerText();
+
+  // Construct a TOTP code based on the secret
+  const totp = new TOTP({
+    secret: secret,
+    digits: 6,
+    period: 30
+  });
+
+  const token = totp.generate();
+
+  await page.getByRole('textbox', { name: 'text-input-otp-code' }).fill(token);
+  await page.getByRole('button', { name: 'Submit', exact: true }).click();
+  await page.getByText('TOTP token registered successfully').waitFor();
+
+  // View recovery codes
+  await page.getByRole('button', { name: 'view-recovery-codes' }).click();
+  await page
+    .getByText('The following one time recovery codes are available')
+    .waitFor();
+  await page.getByRole('button', { name: 'Close' }).click();
+
+  // Remove TOTP token
+  await page.getByRole('button', { name: 'remove-totp' }).click();
+  await page.getByRole('button', { name: 'Remove', exact: true }).click();
+
+  await page.getByText('TOTP token removed successfully').waitFor();
+
+  // And, once again there should be no configured tokens
+  await page
+    .getByText('No multi-factor tokens configured for this account')
+    .waitFor();
 });
