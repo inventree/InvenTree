@@ -772,7 +772,7 @@ class ParameterTemplateFilter(FilterSet):
         """Metaclass options."""
 
         model = common.models.ParameterTemplate
-        fields = ['name', 'units', 'checkbox']
+        fields = ['model_type', 'name', 'units', 'checkbox']
 
     has_choices = rest_filters.BooleanFilter(
         method='filter_has_choices', label='Has Choice'
@@ -793,6 +793,18 @@ class ParameterTemplateFilter(FilterSet):
             return queryset.exclude(Q(units=None) | Q(units=''))
 
         return queryset.filter(Q(units=None) | Q(units='')).distinct()
+
+    for_model = rest_filters.CharFilter(method='filter_for_model', label='For Model')
+
+    def filter_for_model(self, queryset, name, value):
+        """Filter queryset to include only ParameterTemplates which apply to the given model.
+
+        Note that this varies from the 'model_type' filter, in that ParameterTemplates
+        with a blank 'model_type' are considered to apply to all models.
+        """
+        return queryset.filter(
+            Q(model_type__iexact=value) | Q(model_type__isnull=True) | Q(model_type='')
+        ).distinct()
 
 
 class ParameterTemplateMixin:

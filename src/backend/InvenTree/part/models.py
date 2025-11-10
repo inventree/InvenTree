@@ -410,6 +410,7 @@ class PartReportContext(report.mixins.BaseReportContext):
 @cleanup.ignore
 class Part(
     InvenTree.models.PluginValidationMixin,
+    InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,

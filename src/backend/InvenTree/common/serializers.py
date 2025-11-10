@@ -724,13 +724,13 @@ class ParameterTemplateSerializer(
         if len(self.fields['model_type'].choices) == 0:
             self.fields[
                 'model_type'
-            ].choices = common.validators.attachment_model_options()
+            ].choices = common.validators.parameter_template_model_options()
 
     # Note: The choices are overridden at run-time on class initialization
     model_type = serializers.ChoiceField(
         label=_('Model Type'),
         default='',
-        choices=common.validators.attachment_model_options(),
+        choices=common.validators.parameter_template_model_options(),
         required=False,
         allow_blank=True,
         allow_null=True,

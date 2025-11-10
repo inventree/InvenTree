@@ -29,6 +29,14 @@ def parameter_model_options():
     ]
 
 
+def parameter_template_model_options():
+    """Return a list of options for models which support parameter templates.
+
+    Note: This includes a blank option at the start, since ParameterTemplate.model_type may be blank.
+    """
+    return [('', _('Any model type')), *parameter_model_options()]
+
+
 def validate_parameter_model_type(value: str):
     """Ensure that the provided parameter model is valid."""
     model_names = [el[0] for el in parameter_model_options()]

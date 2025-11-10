@@ -72,21 +72,14 @@ class RenderMeta(enums.ChoicesMeta):
     """Metaclass for rendering choices."""
 
     choice_fnc = None
-    allow_blank: bool = False
-    blank_label: str = '------'
 
     @property
     def choices(self):
         """Return a list of choices for the enum class."""
         fnc = getattr(self, 'choice_fnc', None)
         if fnc:
-            options = fnc()
-        options = []
-
-        if self.allow_blank:
-            options.insert(0, ('', self.blank_label))
-
-        return options
+            return fnc()
+        return []
 
 
 class RenderChoices(models.TextChoices, metaclass=RenderMeta):  # type: ignore
@@ -2395,8 +2388,7 @@ class ParameterTemplate(
     class ModelChoices(RenderChoices):
         """Model choices for parameter templates."""
 
-        allow_blank = True
-        choice_fnc = common.validators.parameter_model_options
+        choice_fnc = common.validators.parameter_template_model_options
 
     @staticmethod
     def get_api_url() -> str:
