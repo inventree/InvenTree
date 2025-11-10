@@ -147,8 +147,11 @@ export async function doBasicLogin(
     });
 
   if (loginDone) {
-    await fetchUserState();
     // see if mfa registration is required
+    checkMfaSetup(navigate);
+
+    // gather required states
+    await fetchUserState();
     await fetchGlobalStates(navigate);
     observeProfile();
   } else if (!success) {
@@ -236,6 +239,23 @@ export const doSimpleLogin = async (email: string) => {
     });
   return mail;
 };
+
+function checkMfaSetup(navigate?: NavigateFunction) {
+  api
+    .get(apiUrl(ApiEndpoints.auth_base))
+    .then(() => {})
+    .catch((err) => {
+      if (err?.response?.status == 401) {
+        if (navigate != undefined) {
+          navigate('/mfa-setup');
+        } else {
+          alert(
+            'MFA setup required, but no navigation possible - please reload the website'
+          );
+        }
+      }
+    });
+}
 
 function observeProfile() {
   // overwrite language and theme info in session with profile info
@@ -446,6 +466,10 @@ function handleSuccessFullAuth(
   }
   setAuthenticated();
 
+  // see if mfa registration is required
+  checkMfaSetup(navigate);
+
+  // get required states
   fetchUserState().finally(() => {
     observeProfile();
     fetchGlobalStates(navigate);
