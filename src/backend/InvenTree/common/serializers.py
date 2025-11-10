@@ -711,10 +711,30 @@ class ParameterTemplateSerializer(
             'name',
             'units',
             'description',
+            'model_type',
             'checkbox',
             'choices',
             'selectionlist',
         ]
+
+    def __init__(self, *args, **kwargs):
+        """Override the model_type field to provide dynamic choices."""
+        super().__init__(*args, **kwargs)
+
+        if len(self.fields['model_type'].choices) == 0:
+            self.fields[
+                'model_type'
+            ].choices = common.validators.attachment_model_options()
+
+    # Note: The choices are overridden at run-time on class initialization
+    model_type = serializers.ChoiceField(
+        label=_('Model Type'),
+        default='',
+        choices=common.validators.attachment_model_options(),
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+    )
 
 
 class IconSerializer(serializers.Serializer):

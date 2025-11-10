@@ -72,14 +72,21 @@ class RenderMeta(enums.ChoicesMeta):
     """Metaclass for rendering choices."""
 
     choice_fnc = None
+    allow_blank: bool = False
+    blank_label: str = '------'
 
     @property
     def choices(self):
         """Return a list of choices for the enum class."""
         fnc = getattr(self, 'choice_fnc', None)
         if fnc:
-            return fnc()
-        return []
+            options = fnc()
+        options = []
+
+        if self.allow_blank:
+            options.insert(0, ('', self.blank_label))
+
+        return options
 
 
 class RenderChoices(models.TextChoices, metaclass=RenderMeta):  # type: ignore
@@ -2385,6 +2392,12 @@ class ParameterTemplate(
     class Meta:
         """Metaclass options for the ParameterTemplate model."""
 
+    class ModelChoices(RenderChoices):
+        """Model choices for parameter templates."""
+
+        allow_blank = True
+        choice_fnc = common.validators.parameter_model_options
+
     @staticmethod
     def get_api_url() -> str:
         """Return the API URL associated with the ParameterTemplate model."""
@@ -2467,6 +2480,15 @@ class ParameterTemplate(
 
         return [x.strip() for x in self.choices.split(',') if x.strip()]
 
+    model_type = models.CharField(
+        max_length=100,
+        default='',
+        blank=True,
+        validators=[common.validators.validate_parameter_template_model_type],
+        verbose_name=_('Model type'),
+        help_text=_('Target model type for this parameter'),
+    )
+
     name = models.CharField(
         max_length=100,
         verbose_name=_('Name'),
@@ -2531,6 +2553,9 @@ class Parameter(
 
     class Meta:
         """Meta options for Parameter model."""
+
+        # TODO: Make this non-abstract, actually implement...
+        abstract = True
 
         verbose_name = _('Parameter')
         verbose_name_plural = _('Parameters')

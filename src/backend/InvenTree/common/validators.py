@@ -10,6 +10,47 @@ import common.icons
 from common.settings import get_global_setting
 
 
+def parameter_model_types():
+    """Return a list of valid parameter model choices."""
+    import InvenTree.models
+
+    return list(
+        InvenTree.helpers_model.getModelsWithMixin(
+            InvenTree.models.InvenTreeParameterMixin
+        )
+    )
+
+
+def parameter_model_options():
+    """Return a list of options for models which support parameters."""
+    return [
+        (model.__name__.lower(), model._meta.verbose_name)
+        for model in parameter_model_types()
+    ]
+
+
+def validate_parameter_model_type(value: str):
+    """Ensure that the provided parameter model is valid."""
+    model_names = [el[0] for el in parameter_model_options()]
+    if value not in model_names:
+        raise ValidationError('Model type does not support parameters')
+
+
+def validate_parameter_template_model_type(value: str):
+    """Ensure that the provided model type is valid.
+
+    Note: A ParameterTemplate may have a blank model type.
+    """
+    value = str(value).strip()
+
+    if not value:
+        # Empty values are allowed
+        return
+
+    # Pass any other value to the Parameter model type validator
+    validate_parameter_model_type(value)
+
+
 def attachment_model_types():
     """Return a list of valid attachment model choices."""
     import InvenTree.models

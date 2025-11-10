@@ -8,6 +8,11 @@ def copy_templates(old_model, new_model):
     
     templates = []
 
+    # Clear out all existing instances
+    new_model.objects.all().delete()
+
+    assert new_model.objects.count() == 0
+
     for template in old_model.objects.all():
         templates.append(new_model(
             name=template.name,
@@ -22,6 +27,8 @@ def copy_templates(old_model, new_model):
     if len(templates) > 0:
         new_model.objects.bulk_create(templates)
         print(f"Migrated {len(templates)} ParameterTemplate instances.")
+
+    assert new_model.objects.count() == len(templates)
 
 
 def forward_copy_templates(apps, schema_editor):
@@ -43,6 +50,7 @@ def reverse_copy_templates(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
+        ("part", "0132_partparametertemplate_selectionlist"),
         ("common", "0040_parametertemplate"),
     ]
 
