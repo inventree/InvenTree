@@ -3,60 +3,70 @@
 from django.db import migrations
 
 
-def copy_templates(old_model, new_model):
-    """Copy from one model type to another."""
-    
+def copy_part_parameters(apps, schema_editor):
+    """Forward migration: copy from PartParameterTemplate to ParameterTemplate."""
+    PartParameterTemplate = apps.get_model("part", "PartParameterTemplate")
+    ParameterTemplate = apps.get_model("common", "ParameterTemplate")
+
+    PartParameter = apps.get_model("part", "PartParameter")
+    Parameter = apps.get_model("common", "Parameter")
+
+    # First, create a ParameterTemplate instance for each PartParameterTemplate
     templates = []
 
-    # Clear out all existing instances
-    new_model.objects.all().delete()
-
-    assert new_model.objects.count() == 0
-
-    for template in old_model.objects.all():
-        templates.append(new_model(
+    for template in PartParameterTemplate.objects.all():
+        templates.append(ParameterTemplate(
             name=template.name,
             description=template.description,
             units=template.units,
             checkbox=template.checkbox,
             choices=template.choices,
             selectionlist=template.selectionlist,
+            model_type='part'
+        ))
+    
+    if len(templates) > 0:
+        ParameterTemplate.objects.bulk_create(templates)
+        print(f"\nMigrated {len(templates)} PartParameterTemplate instances.")
+
+    assert ParameterTemplate.objects.filter(model_type='part').count() == len(templates)
+
+    # Next, copy PartParameter instances to Parameter instances
+    parameters = []
+
+    for parameter in PartParameter.objects.all():
+        # Find the corresponding ParameterTemplate
+        template = ParameterTemplate.objects.get(name=parameter.template.name, model_type='part')
+
+        parameters.append(Parameter(
+            template=template,
+            model_type='part',
+            model_id=parameter.part.id,
+            data=parameter.data,
+            data_numeric=parameter.data_numeric,
+            note=parameter.note,
+            updated=parameter.updated,
+            updated_by=parameter.updated_by
         ))
 
+    if len(parameters) > 0:
+        Parameter.objects.bulk_create(parameters)
+        print(f"\nMigrated {len(parameters)} PartParameter instances.")
 
-    if len(templates) > 0:
-        new_model.objects.bulk_create(templates)
-        print(f"Migrated {len(templates)} ParameterTemplate instances.")
-
-    assert new_model.objects.count() == len(templates)
-
-
-def forward_copy_templates(apps, schema_editor):
-    """Forward migration: copy from PartParameterTemplate to ParameterTemplate."""
-    PartParameterTemplate = apps.get_model("part", "PartParameterTemplate")
-    ParameterTemplate = apps.get_model("common", "ParameterTemplate")
-
-    copy_templates(PartParameterTemplate, ParameterTemplate)
-
-
-def reverse_copy_templates(apps, schema_editor):
-    """Reverse migration: copy from ParameterTemplate to PartParameterTemplate."""
-    ParameterTemplate = apps.get_model("common", "ParameterTemplate")
-    PartParameterTemplate = apps.get_model("part", "PartParameterTemplate")
-
-    copy_templates(ParameterTemplate, PartParameterTemplate)
+    assert Parameter.objects.filter(model_type='part').count() == len(parameters)
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
         ("part", "0132_partparametertemplate_selectionlist"),
-        ("common", "0040_parametertemplate"),
+        ("common", "0040_parametertemplate_parameter"),
     ]
 
     operations = [
         migrations.RunPython(
-            forward_copy_templates,
-            reverse_code=reverse_copy_templates
-        )
+            copy_part_parameters,
+            reverse_code=migrations.RunPython.noop
+        ),
+        # TODO: Data migration for ManufacturerPartParameter
     ]

@@ -7,6 +7,7 @@ import base64
 import hashlib
 import hmac
 import json
+import math
 import os
 import uuid
 from datetime import timedelta, timezone
@@ -28,7 +29,7 @@ from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.core.mail import EmailMultiAlternatives, get_connection
 from django.core.mail.utils import DNS_NAME
-from django.core.validators import MinValueValidator
+from django.core.validators import MinLengthValidator, MinValueValidator
 from django.db import models, transaction
 from django.db.models import enums
 from django.db.models.signals import post_delete, post_save
@@ -48,6 +49,7 @@ from rest_framework.exceptions import PermissionDenied
 from taggit.managers import TaggableManager
 
 import common.validators
+import InvenTree.conversion
 import InvenTree.fields
 import InvenTree.helpers
 import InvenTree.models
@@ -2376,6 +2378,7 @@ class ParameterTemplate(
     Attributes:
         name: The name (key) of the template
         description: A description of the template
+        model_type: The type of model to which this template applies (e.g. 'part')
         units: The units associated with the template (if applicable)
         checkbox: Is this template a checkbox (boolean) type?
         choices: Comma-separated list of choices (if applicable)
@@ -2478,7 +2481,7 @@ class ParameterTemplate(
         blank=True,
         validators=[common.validators.validate_parameter_template_model_type],
         verbose_name=_('Model type'),
-        help_text=_('Target model type for this parameter'),
+        help_text=_('Target model type for this parameter template'),
     )
 
     name = models.CharField(
@@ -2546,9 +2549,6 @@ class Parameter(
     class Meta:
         """Meta options for Parameter model."""
 
-        # TODO: Make this non-abstract, actually implement...
-        abstract = True
-
         verbose_name = _('Parameter')
         verbose_name_plural = _('Parameters')
         unique_together = [['model_type', 'model_id', 'template']]
@@ -2574,6 +2574,11 @@ class Parameter(
 
         super().save(*args, **kwargs)
 
+    def delete(self):
+        """Perform custom delete checks before deleting a Parameter instance."""
+        # TODO: Custom delete checks against the model type this is linked to...
+        super().delete()
+
     def clean(self):
         """Validate the Parameter before saving to the database."""
         super().clean()
@@ -2588,6 +2593,86 @@ class Parameter(
         # TODO: Validation of units (check global setting)
 
         # TODO: Validate against plugins
+
+    def calculate_numeric_value(self):
+        """Calculate a numeric value for the parameter data.
+
+        - If a 'units' field is provided, then the data will be converted to the base SI unit.
+        - Otherwise, we'll try to do a simple float cast
+        """
+        if self.template.units:
+            try:
+                self.data_numeric = InvenTree.conversion.convert_physical_value(
+                    self.data, self.template.units
+                )
+            except (ValidationError, ValueError):
+                self.data_numeric = None
+
+        # No units provided, so try to cast to a float
+        else:
+            try:
+                self.data_numeric = float(self.data)
+            except ValueError:
+                self.data_numeric = None
+
+        if self.data_numeric is not None and type(self.data_numeric) is float:
+            # Prevent out of range numbers, etc
+            # Ref: https://github.com/inventree/InvenTree/issues/7593
+            if math.isnan(self.data_numeric) or math.isinf(self.data_numeric):
+                self.data_numeric = None
+
+    model_type = models.CharField(
+        max_length=100,
+        default='',
+        blank=True,
+        validators=[common.validators.validate_parameter_model_type],
+        verbose_name=_('Model type'),
+        help_text=_('Target model type for this parameter'),
+    )
+
+    model_id = models.PositiveIntegerField(
+        verbose_name=_('Model ID'),
+        help_text=_('ID of the target model for this parameter'),
+    )
+
+    template = models.ForeignKey(
+        ParameterTemplate,
+        on_delete=models.CASCADE,
+        related_name='parameters',
+        verbose_name=_('Template'),
+        help_text=_('Parameter template'),
+    )
+
+    data = models.CharField(
+        max_length=500,
+        verbose_name=_('Data'),
+        help_text=_('Parameter Value'),
+        validators=[MinLengthValidator(1)],
+    )
+
+    data_numeric = models.FloatField(default=None, null=True, blank=True)
+
+    note = models.CharField(
+        max_length=500,
+        blank=True,
+        verbose_name=_('Note'),
+        help_text=_('Optional note field'),
+    )
+
+    @property
+    def units(self):
+        """Return the units associated with the template."""
+        return self.template.units
+
+    @property
+    def name(self):
+        """Return the name of the template."""
+        return self.template.name
+
+    @property
+    def description(self):
+        """Return the description of the template."""
+        return self.template.description
 
 
 class BarcodeScanResult(InvenTree.models.InvenTreeModel):
