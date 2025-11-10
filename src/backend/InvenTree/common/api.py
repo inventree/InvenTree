@@ -44,6 +44,7 @@ from InvenTree.mixins import (
     CreateAPI,
     ListAPI,
     ListCreateAPI,
+    OutputOptionsMixin,
     RetrieveAPI,
     RetrieveDestroyAPI,
     RetrieveUpdateAPI,
@@ -708,12 +709,16 @@ class AttachmentFilter(FilterSet):
         return queryset.filter(Q(attachment=None) | Q(attachment='')).distinct()
 
 
-class AttachmentList(BulkDeleteMixin, ListCreateAPI):
-    """List API endpoint for Attachment objects."""
+class AttachmentMixin:
+    """Mixin class for Attachment views."""
 
     queryset = common.models.Attachment.objects.all()
     serializer_class = common.serializers.AttachmentSerializer
     permission_classes = [IsAuthenticatedOrReadScope]
+
+
+class AttachmentList(AttachmentMixin, BulkDeleteMixin, ListCreateAPI):
+    """List API endpoint for Attachment objects."""
 
     filter_backends = SEARCH_ORDER_FILTER
     filterset_class = AttachmentFilter
@@ -746,12 +751,8 @@ class AttachmentList(BulkDeleteMixin, ListCreateAPI):
                     )
 
 
-class AttachmentDetail(RetrieveUpdateDestroyAPI):
+class AttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI):
     """Detail API endpoint for Attachment objects."""
-
-    queryset = common.models.Attachment.objects.all()
-    serializer_class = common.serializers.AttachmentSerializer
-    permission_classes = [IsAuthenticatedOrReadScope]
 
     def destroy(self, request, *args, **kwargs):
         """Check user permissions before deleting an attachment."""
@@ -825,6 +826,58 @@ class ParameterTemplateList(ParameterTemplateMixin, DataExportViewMixin, ListCre
 
 class ParameterTemplateDetail(ParameterTemplateMixin, RetrieveUpdateDestroyAPI):
     """Detail view for a ParameterTemplate object."""
+
+
+class ParameterFilter(FilterSet):
+    """Custom filters for the ParameterList API endpoint."""
+
+    class Meta:
+        """Metaclass options for the filterset."""
+
+        model = common.models.Parameter
+        fields = ['model_type', 'model_id', 'template', 'updated_by']
+
+
+class ParameterMixin:
+    """Mixin class for Parameter views."""
+
+    queryset = common.models.Parameter.objects.all()
+    serializer_class = common.serializers.ParameterSerializer
+    permission_classes = [IsAuthenticatedOrReadScope]
+
+
+class ParameterList(
+    OutputOptionsMixin,
+    ParameterMixin,
+    BulkDeleteMixin,
+    DataExportViewMixin,
+    ListCreateAPI,
+):
+    """List API endpoint for Parameter objects."""
+
+    filterset_class = ParameterFilter
+    filter_backends = SEARCH_ORDER_FILTER
+
+    ordering_fields = ['name', 'data', 'units', 'template', 'updated', 'updated_by']
+
+    ordering_field_aliases = {
+        'name': 'template__name',
+        'units': 'template__units',
+        'data': ['data_numeric', 'data'],
+    }
+
+    search_fields = [
+        'data',
+        'template__name',
+        'template__description',
+        'template__units',
+    ]
+
+    unique_create_fields = ['model_type', 'model_id', 'template']
+
+
+class ParameterDetail(ParameterMixin, RetrieveUpdateDestroyAPI):
+    """Detail API endpoint for Parameter objects."""
 
 
 @method_decorator(cache_control(public=True, max_age=86400), name='dispatch')
@@ -1082,7 +1135,14 @@ common_api_urls = [
                         name='api-parameter-template-list',
                     ),
                 ]),
-            )
+            ),
+            path(
+                '<int:pk>/',
+                include([
+                    path('', ParameterDetail.as_view(), name='api-parameter-detail')
+                ]),
+            ),
+            path('', ParameterList.as_view(), name='api-parameter-list'),
         ]),
     ),
     path(

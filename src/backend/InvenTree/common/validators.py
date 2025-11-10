@@ -37,6 +37,18 @@ def parameter_template_model_options():
     return [('', _('Any model type')), *parameter_model_options()]
 
 
+def parameter_model_class_from_label(label: str):
+    """Return the model class for the given label."""
+    if not label:
+        raise ValidationError(_('No parameter model type provided'))
+
+    for model in parameter_model_types():
+        if model.__name__.lower() == label.lower():
+            return model
+
+    raise ValidationError(_('Invalid parameter model type') + f": '{label}'")
+
+
 def validate_parameter_model_type(value: str):
     """Ensure that the provided parameter model is valid."""
     model_names = [el[0] for el in parameter_model_options()]

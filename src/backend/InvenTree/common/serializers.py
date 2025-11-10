@@ -22,9 +22,11 @@ from InvenTree.helpers import get_objectreference
 from InvenTree.helpers_model import construct_absolute_url
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.serializers import (
+    FilterableSerializerMixin,
     InvenTreeAttachmentSerializerField,
     InvenTreeImageSerializerField,
     InvenTreeModelSerializer,
+    enable_filter,
 )
 from plugin import registry as plugin_registry
 from users.serializers import OwnerSerializer, UserSerializer
@@ -692,7 +694,7 @@ class AttachmentSerializer(InvenTreeModelSerializer):
 
         # Check that the user has the required permissions to attach files to the target model
         if not target_model_class.check_related_permission('change', user):
-            raise PermissionDenied(_(permission_error_msg))
+            raise PermissionDenied(permission_error_msg)
 
         return super().save(**kwargs)
 
@@ -734,6 +736,95 @@ class ParameterTemplateSerializer(
         required=False,
         allow_blank=True,
         allow_null=True,
+    )
+
+
+class ParameterSerializer(
+    FilterableSerializerMixin, DataImportExportSerializerMixin, InvenTreeModelSerializer
+):
+    """Serializer for the Parameter model."""
+
+    class Meta:
+        """Meta options for ParameterSerializer."""
+
+        model = common_models.Parameter
+        fields = [
+            'pk',
+            'template',
+            'model_type',
+            'model_id',
+            'data',
+            'data_numeric',
+            'note',
+            'updated',
+            'updated_by',
+            'template_detail',
+            'updated_by_detail',
+        ]
+
+        read_only_fields = ['updated', 'updated_by']
+
+    def __init__(self, *args, **kwargs):
+        """Override the model_type field to provide dynamic choices."""
+        super().__init__(*args, **kwargs)
+
+        if len(self.fields['model_type'].choices) == 0:
+            self.fields[
+                'model_type'
+            ].choices = common.validators.parameter_model_options()
+
+    def save(self, **kwargs):
+        """Save the Parameter instance."""
+        from InvenTree.models import InvenTreeParameterMixin
+        from users.permissions import check_user_permission
+
+        model_type = self.validated_data.get('model_type', None)
+
+        if model_type is None and self.instance:
+            model_type = self.instance.model_type
+
+        # Ensure that the user has permission to modify parameters for the specified model
+        user = self.context.get('request').user
+
+        target_model_class = common.validators.parameter_model_class_from_label(
+            model_type
+        )
+
+        if not issubclass(target_model_class, InvenTreeParameterMixin):
+            raise PermissionDenied(_('Invalid model type specified for parameter'))
+
+        permission_error_msg = _(
+            'User does not have permission to create or edit parameters for this model'
+        )
+
+        if not check_user_permission(user, target_model_class, 'change'):
+            raise PermissionDenied(permission_error_msg)
+
+        if not target_model_class.check_related_permission('change', user):
+            raise PermissionDenied(permission_error_msg)
+
+        instance = super().save(**kwargs)
+        instance.updated_by = user
+        instance.save()
+
+        return instance
+
+    # Note: The choices are overridden at run-time on class initialization
+    model_type = serializers.ChoiceField(
+        label=_('Model Type'),
+        default='',
+        choices=common.validators.parameter_model_options(),
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+    )
+
+    updated_by_detail = enable_filter(
+        UserSerializer(source='updated_by', read_only=True, many=False), True
+    )
+
+    template_detail = enable_filter(
+        ParameterTemplateSerializer(source='template', read_only=True, many=False), True
     )
 
 

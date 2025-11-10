@@ -2621,6 +2621,19 @@ class Parameter(
             if math.isnan(self.data_numeric) or math.isinf(self.data_numeric):
                 self.data_numeric = None
 
+    def check_permission(self, permission, user):
+        """Check if the user has the required permission for this parameter."""
+        from InvenTree.models import InvenTreeParameterMixin
+
+        model_class = common.validators.parameter_model_class_from_label(
+            self.model_type
+        )
+
+        if not issubclass(model_class, InvenTreeParameterMixin):
+            raise ValidationError(_('Invalid model type specified for parameter'))
+
+        return model_class.check_related_permission(permission, user)
+
     model_type = models.CharField(
         max_length=100,
         default='',
