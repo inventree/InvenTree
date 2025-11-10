@@ -65,6 +65,7 @@ export enum ApiEndpoints {
   selectionlist_list = 'selection/',
   selectionlist_detail = 'selection/:id/',
   guides_list = 'web/guides/',
+  guide_dismiss = 'web/guides/:id/dismiss/',
 
   // Barcode API endpoints
   barcode = 'barcode/',

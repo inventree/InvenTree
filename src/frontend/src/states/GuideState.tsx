@@ -10,6 +10,7 @@ type GuideState = {
   guidesMap: Record<string, TippData>;
   fetchGuides: () => Promise<void>;
   getGuideBySlug: (slug: string) => any | undefined;
+  closeGuide: (slug: string) => void;
 };
 
 export const useGuideState = create<GuideState>()((set, get) => ({
@@ -36,5 +37,17 @@ export const useGuideState = create<GuideState>()((set, get) => ({
   getGuideBySlug: (slug: string) => {
     get().fetchGuides();
     return get().guidesMap[slug];
+  },
+  closeGuide: async (slug) => {
+    const guides = get().guidesMap;
+    await api
+      .post(apiUrl(ApiEndpoints.guide_dismiss, slug))
+      .then(() => {})
+      .catch((err) => {
+        console.error(`Could not dismiss guide ${slug} with error: ${err}`);
+      });
+
+    delete guides[slug];
+    set({ guidesMap: { ...guides } });
   }
 }));
