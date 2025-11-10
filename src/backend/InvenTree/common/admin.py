@@ -10,7 +10,26 @@ import common.validators
 class ParameterTemplateAdmin(admin.ModelAdmin):
     """Admin interface for ParameterTemplate objects."""
 
-    list_display = ('name', 'description', 'units')
+    list_display = ('name', 'description', 'model_type', 'units')
+    search_fields = ('name', 'description')
+
+
+@admin.register(common.models.Parameter)
+class ParameterAdmin(admin.ModelAdmin):
+    """Admin interface for Parameter objects."""
+
+    list_display = (
+        'template',
+        'model_type',
+        'model_id',
+        'data',
+        'updated',
+        'updated_by',
+    )
+
+    autocomplete_fields = ('template', 'updated_by')
+    list_filter = ('template', 'model_type', 'updated_by')
+    search_fields = ('template__name', 'data', 'note')
 
 
 @admin.register(common.models.Attachment)
