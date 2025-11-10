@@ -466,15 +466,56 @@ class InvenTreeMetadataModel(MetadataMixin, InvenTreeModel):
         abstract = True
 
 
-class InvenTreeParameterMixin:
+class InvenTreePermissionCheckMixin:
+    """Provides an abstracted class for managing permissions against related fields."""
+
+    @classmethod
+    def check_related_permission(cls, permission, user) -> bool:
+        """Check if the user has permission to perform the specified action on the attachment.
+
+        The default implementation runs a permission check against *this* model class,
+        but this can be overridden in the implementing class if required.
+
+        Arguments:
+            permission: The permission to check (add / change / view / delete)
+            user: The user to check against
+
+        Returns:
+            bool: True if the user has permission, False otherwise
+        """
+        perm = f'{cls._meta.app_label}.{permission}_{cls._meta.model_name}'
+        return user.has_perm(perm)
+
+
+class InvenTreeParameterMixin(InvenTreePermissionCheckMixin):
     """Provides an abstracted class for managing parameters.
 
     Links the implementing model to the common.models.Parameter table,
     and provides the following methods:
     """
 
+    def delete(self, *args, **kwargs):
+        """Handle the deletion of a model instance.
 
-class InvenTreeAttachmentMixin:
+        Before deleting the model instance, delete any associated parameters.
+        """
+        self.parameters.all().delete()
+        super().delete(*args, **kwargs)
+
+    @property
+    def parameters(self) -> QuerySet:
+        """Return a queryset containing all parameters for this model."""
+        return self.parameters_for_model().filter(model_id=self.pk)
+
+    def parameters_for_model(self) -> QuerySet:
+        """Return a QuerySet containing all parameters for this model class."""
+        from common.models import Parameter
+
+        model_type = self.__class__.__name__.lower()
+        return Parameter.objects.filter(model_type=model_type)
+
+
+class InvenTreeAttachmentMixin(InvenTreePermissionCheckMixin):
     """Provides an abstracted class for managing file attachments.
 
     Links the implementing model to the common.models.Attachment table,
@@ -492,33 +533,15 @@ class InvenTreeAttachmentMixin:
         super().delete(*args, **kwargs)
 
     @property
-    def attachments(self):
+    def attachments(self) -> QuerySet:
         """Return a queryset containing all attachments for this model."""
         return self.attachments_for_model().filter(model_id=self.pk)
 
-    @classmethod
-    def check_attachment_permission(cls, permission, user) -> bool:
-        """Check if the user has permission to perform the specified action on the attachment.
-
-        The default implementation runs a permission check against *this* model class,
-        but this can be overridden in the implementing class if required.
-
-        Arguments:
-            permission: The permission to check (add / change / view / delete)
-            user: The user to check against
-
-        Returns:
-            bool: True if the user has permission, False otherwise
-        """
-        perm = f'{cls._meta.app_label}.{permission}_{cls._meta.model_name}'
-        return user.has_perm(perm)
-
-    def attachments_for_model(self):
+    def attachments_for_model(self) -> QuerySet:
         """Return all attachments for this model class."""
         from common.models import Attachment
 
         model_type = self.__class__.__name__.lower()
-
         return Attachment.objects.filter(model_type=model_type)
 
     def create_attachment(self, attachment=None, link=None, comment='', **kwargs):

@@ -2061,7 +2061,7 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
         if not issubclass(model_class, InvenTreeAttachmentMixin):
             raise ValidationError(_('Invalid model type specified for attachment'))
 
-        return model_class.check_attachment_permission(permission, user)
+        return model_class.check_related_permission(permission, user)
 
 
 class InvenTreeCustomUserStateModel(models.Model):
