@@ -5,79 +5,95 @@ title: Install InvenTree
 ## Bare Metal Setup
 
 !!! tip "Installer"
-    There is an [installer](./installer.md) available - we recommend using that method.
+    These are the instructions for a manual install instructions on bare metal.  For a more automated installation method, we recommend our [installer](./installer.md).
 
 !!! tip "Docker Guide"
-    This guide is for a *bare metal* InvenTree installation. If you want to install using Docker refer to the [Docker Setup Guide](./docker.md)
+    If you want to install using Docker refer to the [Docker Setup Guide](./docker.md).
 
-Follow the instructions below to install the required system packages, python modules, and InvenTree source code.
+Follow the instructions below to install the required system packages, python modules, and InvenTree source code.  There are also notes for configuring application and web servers.
 
 !!! warning "Experienced Users Only"
-    The following instructions assume a reasonably advanced level of system administration knowledge for a linux based OS
-
-### Install System Packages
-
-Install required system packages (as superuser):
+    The following instructions assume you are reasonably adept at Linux system administration.
 
 !!! warning "OS Specific Requirements"
-    The following packages are required on a debian system. A different distribution may require a slightly different set of packages
+    These instructions have been tested with the following distros and versions:
+    
+      * Ubuntu 25.10
+      * Debian FIXME
 
-!!! info "Python Version"
-    InvenTree requires a modern Python version [check here]({{ sourcefile("CONTRIBUTING.md") }}) for the current minimums.
+    The instructions may need to be tweaked for other distros and versions.
+
+!!! tip "Root and non-root users"
+    Commands which should be run as "root" (the privileged super user), are prefixed with `sudo`.  Commands _not_ prefixed with `sudo` should be run as the non-privileged user (see the `inventree` user created below).  In practice you might use ssh to get access to the server as root, then run `su -l inventree` to switch to the non-privileged user.  Or you might have two terminal windows open, one for root, and and one for the non-privileged user.  The `sudo` prefix in these instructions is your cue as to which user to use.
+
+### Install System Packages
+Install required system packages (as `root`, the super user):
 
 ```
 sudo apt-get update
 sudo apt-get install \
     python3 python3-dev python3-pip python3-invoke python3-venv \
     git gcc g++ gettext gnupg \
-    poppler-utils libpango-1.0-0 libpangoft2-1.0-0 \
+    poppler-utils pango1.0-tools \
     libjpeg-dev webp
 ```
 
-!!! warning "Weasyprint"
-    On some systems, the dependencies for the `weasyprint` package might not be installed. Consider running through the [weasyprint installation steps](https://doc.courtbouillon.org/weasyprint/stable/first_steps.html) before moving forward.
+!!! info "Python Version"
+    InvenTree requires a modern Python version [check here]({{ sourcefile("CONTRIBUTING.md") }}) for the current minimums.  Run `python3 --version` to check your installed version.  FIXME: CONTRIBUTING.md doesn't mention minimum versions.
 
+!!! warning "Weasyprint"
+    On some systems, the dependencies for the `weasyprint` package might not be installed. Consider running through the [weasyprint installation steps](https://doc.courtbouillon.org/weasyprint/stable/first_steps.html) before moving forward.  FIXME: FIXME: Delete.  Seems all Weasyprint needs is `pango1.0-tools`, which is handled above.
 
 ### Create InvenTree User
 
 !!! warning "Running as Root"
-    It is highly recommended that the InvenTree server is not run under root. The deployment instructions assume that InvenTree is installed and run from a different user account.
+    The InvenTree server should not be run by the root user. These deployment instructions assume that InvenTree is installed and run using a user account called `inventree`.
 
-Create a user account from which we will run the server:
-
-```
-sudo useradd -m -d /home/inventree -s /bin/bash inventree
-```
-
-InvenTree source code, log files, etc will be located under the `/home/inventree/` directory.
-
-Switch to the `inventree` user so commands are performed in the correct context:
+To create the user account:
 
 ```
-sudo su inventree
+sudo useradd -m -U -s /bin/bash inventree
 ```
 
-### Create Required Directories
+To allow the `inventree` user to perform privileged actions during this installation via `sudo` with no root password, run this::
 
-In addition to the location where the InvenTree source code is located, you will need to create some directories for storing data which will be served to the user (and thus must be available to the webserver). The location of these directories must be provided to the server via the [configuration options](./config.md).
+```
+echo 'inventree ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/inventree
+```
 
-#### Static Files
+From here on, most commands should be run by the `inventree` user, so switch to them now:
 
-InvenTree requires a directory for storage of [static files](./config.md#static-file-storage).
+```
+sudo su -l inventree
+```
+Alternatively, use ssh to login as the `inventree` user.
+
+### Set Up Directories
+
+InvenTree needs some directories for storing log files, backups, and files that are served to users, which we'll put in the `inventree` user's home directory, `/home/inventree/`.  Let's start by setting the "group" of these directories to `www-data`, which is the default user/group used by most webservers (e.g. nginx, apache) and app servers (e.g. gunicorn and uwsgi).
+
+```
+sudo chown inventree:www-data /home/inventree
+sudo chmod o-rwx /home/inventree
+```
+
+InvenTree requires a directory for storage of [static files](./config.md#static-file-storage), for [user uploaded files](./config.md#uploaded-file-storage), and for [database backups](./config.md#backup-file-storage).  We'll store these within a `data/` subdirectory.
+
+```
+cd
+mkdir data
+cd data
+mkdir static media backup
+sudo chgrp www-data static media backup
+sudo chmod g+s backup media
+cd ..
+```
+The `chgrp` is so the app server and web server can see these files.  The `chmod g+s` will allow the app server to store backup files, and data uploaded by users.
+
+Later, we'll tell Inventree about the location of these directories via [configuration options](./config.md).
 
 !!! info "Read More"
-    Refer to the [proxy server documentation](./processes.md#proxy-server) for more details
-
-#### Media Files
-
-InvenTree requires a directory for storage of [user uploaded files](./config.md#uploaded-file-storage)
-
-!!! info "Read More"
-    Refer to the [proxy server documentation](./processes.md#proxy-server) for more details
-
-#### Backup Directory
-
-Location for storing [database backups](./config.md#backup-file-storage)
+    For more information about static, media and backup files, please see the [proxy server documentation](./processes.md#proxy-server).
 
 ### Download Source Code
 
@@ -108,27 +124,6 @@ The Python packages required by the InvenTree server must be installed into the 
 
 ```
 pip install --upgrade --ignore-installed invoke
-```
-
-#### Install Python Bindings
-
-Depending on your database the python bindings must also be installed (into your virtual environment).
-
-For PostgreSQL install:
-
-```
-pip3 install psycopg pgcli
-```
-
-For MySQL install:
-
-```
-pip3 install mysqlclient mariadb
-```
-
-If all packages have been installed run:
-
-```
 invoke install
 ```
 
@@ -176,6 +171,14 @@ grant all privileges on database inventree to myuser;
 !!! info "Username / Password"
     You should change the username and password from the values specified above. This username and password will also be for the InvenTree database connection configuration.
 
+#### Install Python Bindings
+
+The PostgreSQL python binding must also be installed (into your virtual environment):
+
+```
+pip3 install psycopg pgcli
+```
+
 #### Install Postgresql client
 
 If PostgreSQL and InvenTree are installed on separate servers / containers the PostgreSQL client has to be installed also where InvenTree is running.
@@ -195,6 +198,14 @@ To run InvenTree with the MySQL or MariaDB backends, a number of extra packages 
 
 ```
 sudo apt-get install mysql-server libmysqlclient-dev
+```
+
+#### Install Python Bindings
+
+Install the python bindings for MySQL (into the python virtual environment).
+
+```
+pip3 install mysqlclient mariadb
 ```
 
 #### Create Database
@@ -330,3 +341,8 @@ This command performs the following steps:
 ### Restart Server
 
 Ensure the InvenTree server is restarted. This will depend on the particulars of your database installation.
+
+FIXME: Delete so that inventree can no longer sudo without password
+```
+sudo rm /etc/sudoers.d/inventree
+```
