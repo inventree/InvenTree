@@ -14,7 +14,6 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
-import { formatDecimal } from '@lib/functions/Formatting';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import { IconPackageImport } from '@tabler/icons-react';
@@ -119,7 +118,6 @@ export function SupplierPartTable({
       {
         accessor: 'pack_quantity',
         sortable: true,
-
         render: (record: any) => {
           const part = record?.part_detail ?? {};
 
@@ -127,7 +125,7 @@ export function SupplierPartTable({
 
           if (part.units) {
             extra.push(
-              <Text key='base'>
+              <Text key='base' size='sm'>
                 {t`Base units`} : {part.units}
               </Text>
             );
@@ -135,7 +133,7 @@ export function SupplierPartTable({
 
           return (
             <TableHoverCard
-              value={formatDecimal(record.pack_quantity)}
+              value={record.pack_quantity}
               extra={extra}
               title={t`Pack Quantity`}
             />
