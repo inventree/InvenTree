@@ -42,6 +42,7 @@ from common.settings import (
     get_global_setting,
     prevent_build_output_complete_on_incompleted_tests,
 )
+from generic.enums import StringEnum
 from generic.states import StateTransitionMixin, StatusCodeMixin
 from plugin.events import trigger_event
 from stock.status_codes import StockHistoryCode, StockStatus
@@ -121,6 +122,12 @@ class Build(
         """MPTT options for the BuildOrder model."""
 
         order_insertion_by = ['reference']
+
+    class BuildItemTypes(StringEnum):
+        """Enumeration of available item types."""
+
+        TRACKED = 'tracked'  # Tracked BOM items
+        UNTRACKED = 'untracked'  # Untracked BOM items
 
     OVERDUE_FILTER = (
         Q(status__in=BuildStatusGroups.ACTIVE_CODES)
