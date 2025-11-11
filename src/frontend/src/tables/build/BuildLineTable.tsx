@@ -217,6 +217,11 @@ export default function BuildLineTable({
         label: t`Tracked`,
         description: t`Show tracked lines`
       },
+      {
+        name: 'on_order',
+        label: t`On Order`,
+        description: t`Show items with stock on order`
+      },
       PartCategoryFilter()
     ];
   }, []);
