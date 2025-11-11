@@ -190,7 +190,7 @@ export default function BuildLineTable({
       {
         name: 'available',
         label: t`Available`,
-        description: t`Show items with available stock`
+        description: t`Show items with sufficient available stock`
       },
       {
         name: 'consumable',
@@ -216,6 +216,11 @@ export default function BuildLineTable({
         name: 'tracked',
         label: t`Tracked`,
         description: t`Show tracked lines`
+      },
+      {
+        name: 'on_order',
+        label: t`On Order`,
+        description: t`Show items with stock on order`
       },
       PartCategoryFilter()
     ];
@@ -455,6 +460,8 @@ export default function BuildLineTable({
       },
       {
         accessor: 'in_production',
+        sortable: true,
+        ordering: 'scheduled_to_build',
         render: (record: any) => {
           if (record.scheduled_to_build > 0) {
             return (
@@ -471,7 +478,8 @@ export default function BuildLineTable({
       },
       DecimalColumn({
         accessor: 'on_order',
-        defaultVisible: false
+        defaultVisible: false,
+        sortable: true
       }),
       {
         accessor: 'allocated',
