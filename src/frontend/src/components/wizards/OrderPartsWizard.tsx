@@ -236,6 +236,8 @@ function SelectPartsStep({
       quantity: {
         // TODO: Auto-fill with the desired quantity
       },
+      purchase_price: {},
+      purchase_price_currency: {},
       merge_items: {}
     };
   }, [selectedRecord]);
