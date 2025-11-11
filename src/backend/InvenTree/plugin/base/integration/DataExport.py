@@ -1,7 +1,7 @@
 """Plugin class for custom data exporting."""
 
 from collections import OrderedDict
-from typing import Optional, Union
+from typing import Optional
 
 from django.contrib.auth.models import User
 from django.db.models import QuerySet
@@ -109,9 +109,7 @@ class DataExportMixin:
         # The default implementation simply serializes the queryset
         return serializer_class(queryset, many=True, exporting=True).data
 
-    def get_export_options_serializer(
-        self, **kwargs
-    ) -> Union[serializers.Serializer, None]:
+    def get_export_options_serializer(self, **kwargs) -> serializers.Serializer | None:
         """Return a serializer class with dynamic export options for this plugin.
 
         Returns:

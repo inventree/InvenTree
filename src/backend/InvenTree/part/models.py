@@ -10,7 +10,7 @@ import os
 import re
 from datetime import timedelta
 from decimal import Decimal, InvalidOperation
-from typing import Optional, cast
+from typing import cast
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -36,12 +36,10 @@ from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
 from mptt.managers import TreeManager
 from mptt.models import TreeForeignKey
-from stdimage.models import StdImageField
 from taggit.managers import TaggableManager
 
 import common.currency
 import common.models
-import common.settings
 import InvenTree.conversion
 import InvenTree.fields
 import InvenTree.helpers
@@ -394,15 +392,15 @@ class PartReportContext(report.mixins.BaseReportContext):
     """
 
     bom_items: report.mixins.QuerySet[BomItem]
-    category: Optional[PartCategory]
+    category: PartCategory | None
     description: str
-    IPN: Optional[str]
+    IPN: str | None
     name: str
     parameters: dict[str, str]
     part: Part
     qr_data: str
     qr_url: str
-    revision: Optional[str]
+    revision: str | None
     test_template_list: report.mixins.QuerySet[PartTestTemplate]
     test_templates: dict[str, PartTestTemplate]
 
@@ -414,6 +412,7 @@ class Part(
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,
     report.mixins.InvenTreeReportMixin,
+    InvenTree.models.InvenTreeImageMixin,
     InvenTree.models.MetadataMixin,
     InvenTree.models.InvenTreeTree,
 ):
@@ -461,6 +460,7 @@ class Part(
     """
 
     NODE_PARENT_KEY = 'variant_of'
+    IMAGE_RENAME = rename_part_image
 
     objects = PartManager()
 
@@ -945,18 +945,6 @@ class Part(
         """Return the web URL for viewing this part."""
         return helpers.pui_url(f'/part/{self.id}')
 
-    def get_image_url(self):
-        """Return the URL of the image for this part."""
-        if self.image:
-            return helpers.getMediaUrl(self.image.url)
-        return helpers.getBlankImage()
-
-    def get_thumbnail_url(self) -> str:
-        """Return the URL of the image thumbnail for this part."""
-        if self.image:
-            return helpers.getMediaUrl(self.image.thumbnail.url)
-        return helpers.getBlankThumbnail()
-
     def validate_unique(self, exclude=None):
         """Validate that this Part instance is 'unique'.
 
@@ -1125,15 +1113,6 @@ class Part(
         verbose_name=_('Link'),
         help_text=_('Link to external URL'),
         max_length=2000,
-    )
-
-    image = StdImageField(
-        upload_to=rename_part_image,
-        null=True,
-        blank=True,
-        variations={'thumbnail': (128, 128), 'preview': (256, 256)},
-        delete_orphans=False,
-        verbose_name=_('Image'),
     )
 
     default_location = TreeForeignKey(

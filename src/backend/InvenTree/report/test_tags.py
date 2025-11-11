@@ -154,6 +154,7 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
 
         obj = Part.objects.create(name='test', description='test')
         self.create_test_image()
+        obj.refresh_from_db()
 
         report_tags.part_image(obj, preview=True)
         report_tags.part_image(obj, thumbnail=True)

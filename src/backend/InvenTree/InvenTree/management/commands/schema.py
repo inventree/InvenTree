@@ -1,7 +1,7 @@
 """Extended schema generator."""
 
 from pathlib import Path
-from typing import TypeVar, Union
+from typing import TypeVar
 
 from django.conf import settings
 
@@ -26,7 +26,7 @@ def prep_name(ref):
     return f'{dja_ref_prefix}.{ref}'
 
 
-def sub_component_name(name: T) -> Union[T, str]:
+def sub_component_name(name: T) -> T | str:
     """Clean up component references."""
     if not isinstance(name, str):
         return name

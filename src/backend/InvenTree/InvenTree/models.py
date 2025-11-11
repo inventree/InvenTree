@@ -1,8 +1,9 @@
 """Generic models which provide extra functionality over base Django model types."""
 
+from collections.abc import Callable
 from datetime import datetime
 from string import Formatter
-from typing import Optional
+from typing import Any, Optional
 
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
@@ -19,6 +20,7 @@ from django_q.models import Task
 from error_report.models import Error
 from mptt.exceptions import InvalidMove
 from mptt.models import MPTTModel, TreeForeignKey
+from stdimage.models import StdImageField
 
 import common.settings
 import InvenTree.exceptions
@@ -164,10 +166,14 @@ class MetadataMixin(models.Model):
 
         abstract = True
 
-    def save(self, *args, **kwargs):
+    def save(self, force_insert=False, force_update=False, *args, **kwargs):
         """Save the model instance, and perform validation on the metadata field."""
         self.validate_metadata()
-        super().save(*args, **kwargs)
+        if len(args) > 0:
+            raise TypeError(
+                'save() takes no positional arguments anymore'
+            )  # pragma: no cover
+        super().save(force_insert=force_insert, force_update=force_update, **kwargs)
 
     def clean(self, *args, **kwargs):
         """Perform model validation on the metadata field."""
@@ -1293,3 +1299,55 @@ def after_error_logged(sender, instance: Error, created: bool, **kwargs):
                 'link': url,
             },
         )
+
+
+class InvenTreeImageMixin(models.Model):
+    """A mixin class for adding image functionality to a model class.
+
+    The following fields are added to any model which implements this mixin:
+
+    - image : An image field for storing an image
+    """
+
+    IMAGE_RENAME: Callable | None = None
+
+    class Meta:
+        """Metaclass options for this mixin.
+
+        Note: abstract must be true, as this is only a mixin, not a separate table
+        """
+
+        abstract = True
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        """Custom init method for InvenTreeImageMixin to ensure IMAGE_RENAME is implemented."""
+        if self.IMAGE_RENAME is None:
+            raise NotImplementedError(
+                'IMAGE_RENAME must be implemented in the model class'
+            )
+        super().__init__(*args, **kwargs)
+
+    def rename_image(self, filename):
+        """Rename the uploaded image file using the IMAGE_RENAME function."""
+        return self.IMAGE_RENAME(filename)  # type: ignore
+
+    image = StdImageField(
+        upload_to=rename_image,
+        null=True,
+        blank=True,
+        variations={'thumbnail': (128, 128), 'preview': (256, 256)},
+        delete_orphans=False,
+        verbose_name=_('Image'),
+    )
+
+    def get_image_url(self):
+        """Return the URL of the image for this object."""
+        if self.image:
+            return InvenTree.helpers.getMediaUrl(self.image)
+        return InvenTree.helpers.getBlankImage()
+
+    def get_thumbnail_url(self) -> str:
+        """Return the URL of the image thumbnail for this object."""
+        if self.image:
+            return InvenTree.helpers.getMediaUrl(self.image, 'thumbnail')
+        return InvenTree.helpers.getBlankThumbnail()

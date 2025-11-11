@@ -2,7 +2,6 @@
 
 import datetime
 import time
-from typing import Union
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -109,7 +108,7 @@ class InvenTreeMailLoggingBackend(BaseEmailBackend):
         return self.backend.open()
 
     def send_messages(
-        self, email_messages: list[Union[EmailMessage, EmailMultiAlternatives]]
+        self, email_messages: list[EmailMessage | EmailMultiAlternatives]
     ) -> int:
         """Send email messages and log them to the database.
 
