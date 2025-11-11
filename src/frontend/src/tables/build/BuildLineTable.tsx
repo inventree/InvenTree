@@ -30,6 +30,7 @@ import type { RowAction, TableColumn } from '@lib/types/Tables';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import {
   useAllocateStockToBuildForm,
+  useBuildAutoAllocateFields,
   useBuildOrderFields,
   useConsumeBuildLinesForm
 } from '../../forms/BuildForms';
@@ -568,21 +569,15 @@ export default function BuildLineTable({
     modelType: ModelType.build
   });
 
+  const autoAllocateFields = useBuildAutoAllocateFields({
+    item_type: 'untracked'
+  });
+
   const autoAllocateStock = useCreateApiFormModal({
     url: ApiEndpoints.build_order_auto_allocate,
     pk: build.pk,
     title: t`Allocate Stock`,
-    fields: {
-      location: {
-        filters: {
-          structural: false
-        }
-      },
-      exclude_location: {},
-      interchangeable: {},
-      substitutes: {},
-      optional_items: {}
-    },
+    fields: autoAllocateFields,
     initialData: {
       location: build.take_from,
       interchangeable: true,

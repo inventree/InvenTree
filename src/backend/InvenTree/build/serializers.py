@@ -1125,9 +1125,10 @@ class BuildAutoAllocationSerializer(serializers.Serializer):
         help_text=_('Allocate optional BOM items to build order'),
     )
 
-    item_type = serializers.CharField(
+    item_type = serializers.ChoiceField(
         default=Build.BuildItemTypes.UNTRACKED,
         choices=[
+            (Build.BuildItemTypes.ALL, _('All Items')),
             (Build.BuildItemTypes.UNTRACKED, _('Untracked Items')),
             (Build.BuildItemTypes.TRACKED, _('Tracked Items')),
         ],

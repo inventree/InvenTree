@@ -226,6 +226,25 @@ export function useBuildOrderOutputFields({
   }, [quantity, batchGenerator.result, serialGenerator.result, trackable]);
 }
 
+export function useBuildAutoAllocateFields({
+  item_type
+}: {
+  item_type: 'all' | 'tracked' | 'untracked';
+}): ApiFormFieldSet {
+  return useMemo(() => {
+    return {
+      location: {},
+      exclude_location: {},
+      item_type: {
+        value: item_type
+      },
+      interchangeable: {},
+      substitutes: {},
+      optional_items: {}
+    };
+  }, [item_type]);
+}
+
 function BuildOutputFormRow({
   props,
   record

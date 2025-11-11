@@ -126,6 +126,7 @@ class Build(
     class BuildItemTypes(StringEnum):
         """Enumeration of available item types."""
 
+        ALL = 'all'  # All BOM items (both tracked and untracked)
         TRACKED = 'tracked'  # Tracked BOM items
         UNTRACKED = 'untracked'  # Untracked BOM items
 
