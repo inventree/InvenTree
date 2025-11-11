@@ -3,6 +3,7 @@ import {
   ActionIcon,
   Button,
   type DefaultMantineColor,
+  type FloatingPosition,
   CopyButton as MantineCopyButton,
   type MantineSize,
   Text,
@@ -16,12 +17,18 @@ import type { JSX } from 'react';
 export function CopyButton({
   value,
   label,
+  tooltip,
+  disabled,
+  tooltipPosition,
   content,
   size,
   color = 'gray'
 }: Readonly<{
   value: any;
   label?: string;
+  tooltip?: string;
+  disabled?: boolean;
+  tooltipPosition?: FloatingPosition;
   content?: JSX.Element;
   size?: MantineSize;
   color?: DefaultMantineColor;
@@ -31,8 +38,13 @@ export function CopyButton({
   return (
     <MantineCopyButton value={value}>
       {({ copied, copy }) => (
-        <Tooltip label={copied ? t`Copied` : t`Copy`} withArrow>
+        <Tooltip
+          label={copied ? t`Copied` : (tooltip ?? t`Copy`)}
+          withArrow
+          position={tooltipPosition}
+        >
           <ButtonComponent
+            disabled={disabled}
             color={copied ? 'teal' : color}
             onClick={copy}
             variant='transparent'
