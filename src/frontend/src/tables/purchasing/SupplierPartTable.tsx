@@ -248,8 +248,8 @@ export function SupplierPartTable({
 
   const duplicateSupplierPart = useCreateApiFormModal({
     url: ApiEndpoints.supplier_part_list,
-    title: t`Duplicate Supplier Part`,
-    fields: editSupplierPartFields,
+    title: t`Add Supplier Part`,
+    fields: useMemo(() => editSupplierPartFields, [editSupplierPartFields]),
     initialData: {
       ...selectedSupplierPart,
       active: true
