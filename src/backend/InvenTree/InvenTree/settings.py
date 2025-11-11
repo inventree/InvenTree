@@ -695,7 +695,7 @@ Ref: https://docs.djangoproject.com/en/3.2/ref/settings/#std:setting-OPTIONS
 # connecting to the database server (such as a replica failover) don't sit and
 # wait for possibly an hour or more, just tell the client something went wrong
 # and let the client retry when they want to.
-db_options = db_config.get('OPTIONS', db_config.get('options', None))
+db_options = db_config.get('OPTIONS', db_config.get('options'))
 
 if db_options is None:
     db_options = {}
@@ -1428,9 +1428,7 @@ if SITE_URL:
     GLOBAL_SETTINGS_OVERRIDES['INVENTREE_BASE_URL'] = SITE_URL
 
 if len(GLOBAL_SETTINGS_OVERRIDES) > 0:
-    logger.info(
-        'INVE-I1: Global settings overrides: %s', str(GLOBAL_SETTINGS_OVERRIDES)
-    )
+    logger.info('INVE-I1: Global settings overrides: %s', GLOBAL_SETTINGS_OVERRIDES)
     for key in GLOBAL_SETTINGS_OVERRIDES:
         # Set the global setting
         logger.debug('- Override value for %s = ********', key)
@@ -1469,9 +1467,9 @@ FLAGS = {
 CUSTOM_FLAGS = get_setting('INVENTREE_FLAGS', 'flags', None, typecast=dict)
 if CUSTOM_FLAGS:  # pragma: no cover
     if not isinstance(CUSTOM_FLAGS, dict):
-        logger.error('Invalid custom flags, must be valid dict: %s', str(CUSTOM_FLAGS))
+        logger.error('Invalid custom flags, must be valid dict: %s', CUSTOM_FLAGS)
     else:
-        logger.info('Custom flags: %s', str(CUSTOM_FLAGS))
+        logger.info('Custom flags: %s', CUSTOM_FLAGS)
         FLAGS.update(CUSTOM_FLAGS)
 
 # Magic login django-sesame

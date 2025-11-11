@@ -78,7 +78,7 @@ def get_installer(content: Optional[dict] = None):
     """Get the installer for the current environment or a content dict."""
     if content is None:
         content = dict(os.environ)
-    return content.get('INVENTREE_PKG_INSTALLER', None)
+    return content.get('INVENTREE_PKG_INSTALLER')
 
 
 # region execution logging helpers

@@ -1,5 +1,5 @@
 # Please keep this list sorted - if you pin a version provide a reason
-Django<6.0                              # Django package
+django<6.0                              # Django package
 blessed                                 # CLI for Q Monitor
 cryptography>=44.0.0                    # Core cryptographic functionality
 django-anymail[amazon_ses,postal]       # Email backend for various providers

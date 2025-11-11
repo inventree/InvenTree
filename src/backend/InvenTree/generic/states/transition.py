@@ -1,6 +1,6 @@
 """Classes and functions for plugin controlled object state transitions."""
 
-from typing import Callable
+from collections.abc import Callable
 
 from django.db.models import Model
 

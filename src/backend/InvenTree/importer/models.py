@@ -297,7 +297,7 @@ class DataImportSession(models.Model):
 
         # Iterate through each "row" in the data file, and create a new DataImportRow object
         for idx, row in enumerate(df):
-            row_data = dict(zip(headers, row))
+            row_data = dict(zip(headers, row, strict=False))
 
             # Skip completely empty rows
             if not any(row_data.values()):

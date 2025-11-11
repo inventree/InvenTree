@@ -134,7 +134,7 @@ test('Spotlight - No Keys', async ({ browser }) => {
     .click();
   await page.getByText('License Information').first().waitFor();
   await page.getByRole('tab', { name: 'backend Packages' }).waitFor();
-  await page.getByRole('button', { name: 'Django BSD License' }).click();
+  await page.getByRole('button', { name: 'Django BSD-3-Clause' }).click();
 
   await page.keyboard.press('Escape');
 

@@ -20,9 +20,9 @@ before:
   - contrib/packager.io/before.sh
 dependencies:
   - curl
-  - "python3.9 | python3.10 | python3.11 | python3.12 | python3.13 | python3.14"
-  - "python3.9-venv | python3.10-venv | python3.11-venv | python3.12-venv | python3.13-venv | python3.14-venv"
-  - "python3.9-dev | python3.10-dev | python3.11-dev | python3.12-dev | python3.13-dev | python3.14-dev"
+  - "python3.11 | python3.12 | python3.13 | python3.14"
+  - "python3.11-venv | python3.12-venv | python3.13-venv | python3.14-venv"
+  - "python3.11-dev | python3.12-dev | python3.13-dev | python3.14-dev"
   - python3-pip
   - python3-cffi
   - python3-brotli
@@ -35,8 +35,6 @@ dependencies:
   - jq
   - "libffi7 | libffi8"
 targets:
-  ubuntu-20.04: true
   ubuntu-22.04: true
   ubuntu-24.04: true
-  debian-11: true
   debian-12: true
