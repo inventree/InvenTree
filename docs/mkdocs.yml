@@ -357,9 +357,9 @@ extra:
   #  provider: google
   #  property: UA-143467500-1
 
-  min_python_version: 3.9
+  min_python_version: 3.10
   min_invoke_version: 2.0.0
-  django_version: 4.2
+  django_version: 5.2
   docker_postgres_version: 16
 
   version:

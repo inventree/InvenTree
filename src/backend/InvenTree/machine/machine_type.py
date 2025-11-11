@@ -1,6 +1,6 @@
 """Base machine type/base driver."""
 
-from typing import TYPE_CHECKING, Any, Literal, TypedDict, Union
+from typing import TYPE_CHECKING, Any, Literal, TypedDict
 
 from generic.states import StatusCode
 from InvenTree.helpers_mixin import (
@@ -63,10 +63,10 @@ class MachineProperty(TypedDict, total=False):
     """
 
     key: str
-    value: Union[str, bool, int, float]
+    value: str | bool | int | float
     group: str
     type: MachinePropertyType
-    max_progress: Union[int, None]
+    max_progress: int | None
 
 
 class BaseDriver(
@@ -160,7 +160,7 @@ class BaseDriver(
 
         return registry.get_machines(driver=self, **kwargs)
 
-    def handle_error(self, error: Union[Exception, str]):
+    def handle_error(self, error: Exception | str):
         """Handle driver error.
 
         Arguments:
@@ -171,7 +171,7 @@ class BaseDriver(
 
     # --- state getters/setters
     @property
-    def errors(self) -> list[Union[str, Exception]]:
+    def errors(self) -> list[str | Exception]:
         """List of driver errors."""
         return self.get_shared_state('errors', [])
 
@@ -343,7 +343,7 @@ class BaseMachineType(
             self.handle_error(e)
 
     # --- helper functions
-    def handle_error(self, error: Union[Exception, str]):
+    def handle_error(self, error: Exception | str):
         """Helper function for capturing errors with the machine.
 
         Arguments:
@@ -475,7 +475,7 @@ class BaseMachineType(
         self.set_shared_state('restart_required', value)
 
     @property
-    def errors(self) -> list[Union[str, Exception]]:
+    def errors(self) -> list[str | Exception]:
         """List of machine errors."""
         return self.get_shared_state('errors', [])
 

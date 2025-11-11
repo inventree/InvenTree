@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 ### Removed
+- Removed python 3.9 / 3.10 support as part of Django 5.2 upgrade in [#10730](https://github.com/inventree/InvenTree/pull/10730)
 
 ## 1.1.0 - 2025-11-02
 

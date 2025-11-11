@@ -1640,7 +1640,9 @@ class BuildConsumeTest(BuildAPITest):
         data = {
             'items': [
                 {'build_line': line.pk, 'stock_item': si.pk, 'quantity': 100}
-                for line, si in zip(self.build.build_lines.all(), self.stock_items)
+                for line, si in zip(
+                    self.build.build_lines.all(), self.stock_items, strict=False
+                )
             ]
         }
 

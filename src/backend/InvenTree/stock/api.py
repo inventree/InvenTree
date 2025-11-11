@@ -1557,9 +1557,7 @@ class StockTrackingList(
                 deltas = item['deltas'] or {}
 
                 if key in deltas:
-                    item['deltas'][f'{key}_detail'] = related_data.get(
-                        deltas[key], None
-                    )
+                    item['deltas'][f'{key}_detail'] = related_data.get(deltas[key])
 
         if page is not None:
             return self.get_paginated_response(data)
