@@ -7,6 +7,7 @@ import { AddItemButton } from '@lib/components/AddItemButton';
 import {
   type RowAction,
   RowDeleteAction,
+  RowDuplicateAction,
   RowEditAction
 } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
@@ -236,19 +237,32 @@ export function SupplierPartTable({
 
   const editSupplierPartFields = useSupplierPartFields({});
 
-  const [selectedSupplierPart, setSelectedSupplierPart] = useState<number>(0);
+  const [selectedSupplierPart, setSelectedSupplierPart] =
+    useState<any>(undefined);
 
   const editSupplierPart = useEditApiFormModal({
     url: ApiEndpoints.supplier_part_list,
-    pk: selectedSupplierPart,
+    pk: selectedSupplierPart?.pk,
     title: t`Edit Supplier Part`,
-    fields: editSupplierPartFields,
+    fields: useMemo(() => editSupplierPartFields, [editSupplierPartFields]),
     table: table
+  });
+
+  const duplicateSupplierPart = useCreateApiFormModal({
+    url: ApiEndpoints.supplier_part_list,
+    title: t`Duplicate Supplier Part`,
+    fields: editSupplierPartFields,
+    initialData: {
+      ...selectedSupplierPart,
+      active: true
+    },
+    table: table,
+    successMessage: t`Supplier part created`
   });
 
   const deleteSupplierPart = useDeleteApiFormModal({
     url: ApiEndpoints.supplier_part_list,
-    pk: selectedSupplierPart,
+    pk: selectedSupplierPart?.pk,
     title: t`Delete Supplier Part`,
     table: table
   });
@@ -260,14 +274,21 @@ export function SupplierPartTable({
         RowEditAction({
           hidden: !user.hasChangeRole(UserRoles.purchase_order),
           onClick: () => {
-            setSelectedSupplierPart(record.pk);
+            setSelectedSupplierPart(record);
             editSupplierPart.open();
+          }
+        }),
+        RowDuplicateAction({
+          hidden: !user.hasAddRole(UserRoles.purchase_order),
+          onClick: () => {
+            setSelectedSupplierPart(record);
+            duplicateSupplierPart.open();
           }
         }),
         RowDeleteAction({
           hidden: !user.hasDeleteRole(UserRoles.purchase_order),
           onClick: () => {
-            setSelectedSupplierPart(record.pk);
+            setSelectedSupplierPart(record);
             deleteSupplierPart.open();
           }
         })
@@ -280,6 +301,7 @@ export function SupplierPartTable({
     <>
       {addSupplierPart.modal}
       {editSupplierPart.modal}
+      {duplicateSupplierPart.modal}
       {deleteSupplierPart.modal}
       {importPartWizard.wizard}
       <InvenTreeTable
