@@ -617,6 +617,8 @@ class BuildLineList(
         'trackable',
         'allow_variants',
         'inherited',
+        'on_order',
+        'scheduled_to_build',
     ]
 
     ordering_field_aliases = {

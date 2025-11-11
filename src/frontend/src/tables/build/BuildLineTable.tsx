@@ -460,6 +460,8 @@ export default function BuildLineTable({
       },
       {
         accessor: 'in_production',
+        sortable: true,
+        ordering: 'scheduled_to_build',
         render: (record: any) => {
           if (record.scheduled_to_build > 0) {
             return (
@@ -476,7 +478,8 @@ export default function BuildLineTable({
       },
       DecimalColumn({
         accessor: 'on_order',
-        defaultVisible: false
+        defaultVisible: false,
+        sortable: true
       }),
       {
         accessor: 'allocated',
