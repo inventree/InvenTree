@@ -299,6 +299,7 @@ function SelectPartsStep({
                   model: ModelType.supplierpart,
                   placeholder: t`Select supplier part`,
                   required: true,
+                  autoFill: true,
                   value: record.supplier_part?.pk,
                   onValueChange: (value, instance) => {
                     onSelectSupplierPart(record.part.pk, instance);
