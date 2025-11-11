@@ -1282,11 +1282,38 @@ class Build(
         self.save()
 
     @transaction.atomic
-    def auto_allocate_stock(self, **kwargs):
+    def auto_allocate_stock(
+        self, item_type: str = BuildItemTypes.UNTRACKED, **kwargs
+    ) -> None:
         """Automatically allocate stock items against this build order.
 
-        Following a number of 'guidelines':
-        - Only "untracked" BOM items are considered (tracked BOM items must be manually allocated)
+        Arguments:
+            item_type: The type of BuildItem to allocate (default = untracked)
+        """
+        if item_type in [self.BuildItemTypes.UNTRACKED, self.BuildItemTypes.ALL]:
+            self.auto_allocate_untracked_stock(**kwargs)
+
+        if item_type in [self.BuildItemTypes.TRACKED, self.BuildItemTypes.ALL]:
+            self.auto_allocate_tracked_stock(**kwargs)
+
+    def auto_allocate_tracked_stock(self, **kwargs):
+        """Automatically allocate tracked stock items against serialized build outputs.
+
+        This function allocates tracked stock items automatically against serialized build outputs,
+        following a set of "guidelines":
+
+        - Only "tracked" BOM items are considered (untracked BOM items must be allocated separately)
+        - Only build outputs with serial numbers are considered
+        - Unallocated tracked components are allocated against build outputs with matching serial numbers
+        """
+
+    def auto_allocate_untracked_stock(self, **kwargs):
+        """Automatically allocate untracked stock items against this build order.
+
+        This function allocates untracked stock items automatically against a BuildOrder,
+        following a set of "guidelines":
+
+        - Only "untracked" BOM items are considered (tracked BOM items must be allocated separately)
         - If a particular BOM item is already fully allocated, it is skipped
         - Extract all available stock items for the BOM part
             - If variant stock is allowed, extract stock for those too
