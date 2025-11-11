@@ -1,9 +1,8 @@
 import { t } from '@lingui/core/macro';
-import { BarChart, type ChartTooltipProps, DonutChart } from '@mantine/charts';
+import { BarChart, DonutChart } from '@mantine/charts';
 import {
   Center,
   Group,
-  Paper,
   SegmentedControl,
   SimpleGrid,
   Stack,
@@ -17,39 +16,11 @@ import { apiUrl } from '@lib/functions/Api';
 import type { TableColumn } from '@lib/types/Tables';
 import { CHART_COLORS } from '../../../components/charts/colors';
 import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
-import {
-  formatCurrency,
-  formatDecimal,
-  formatPriceRange
-} from '../../../defaults/formatters';
+import { formatDecimal, formatPriceRange } from '../../../defaults/formatters';
 import { useTable } from '../../../hooks/UseTable';
 import { DateColumn, PartColumn } from '../../../tables/ColumnRenderers';
 import { InvenTreeTable } from '../../../tables/InvenTreeTable';
 import { LoadingPricingData, NoPricingData } from './PricingPanel';
-
-/*
- * Render a tooltip for the chart, with correct date information
- */
-function ChartTooltip({ label, payload }: ChartTooltipProps) {
-  if (!payload) {
-    return null;
-  }
-
-  const data = payload[0] ?? {};
-
-  return (
-    <Paper px='md' py='sm' withBorder shadow='md' radius='md'>
-      <Group justify='space-between' wrap='nowrap'>
-        <Text key='title' c={data.payload?.color}>
-          {data.name}
-        </Text>
-        <Text key='price' fz='sm'>
-          {formatCurrency(data.payload?.value)}
-        </Text>
-      </Group>
-    </Paper>
-  );
-}
 
 // Display BOM data as a pie chart
 function BomPieChart({
@@ -86,11 +57,6 @@ function BomPieChart({
         tooltipDataSource='segment'
         chartLabel={t`Total Price`}
         valueFormatter={(value) => tooltipFormatter(value, currency)}
-        tooltipProps={{
-          content: ({ label, payload }) => (
-            <ChartTooltip label={label} payload={payload} />
-          )
-        }}
       />
     </Center>
   );
@@ -116,11 +82,6 @@ function BomBarChart({
         { name: 'total_price_max', label: t`Maximum Price`, color: 'teal.6' }
       ]}
       valueFormatter={(value) => tooltipFormatter(value, currency)}
-      tooltipProps={{
-        content: ({ label, payload }) => (
-          <ChartTooltip label={label} payload={payload} />
-        )
-      }}
     />
   );
 }

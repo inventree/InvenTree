@@ -1,10 +1,17 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 423
+INVENTREE_API_VERSION = 425
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v425 -> 2025-11-11 : https://github.com/inventree/InvenTree/pull/10802
+    - Adds "on_order" filter to the BuildLine API endpoint
+    - Allow BuildLine list to be ordered by "on_order" and "in_production" fields
+
+v424 -> 2025-11-11 : https://github.com/inventree/InvenTree/pull/10730
+    - Adds more lower / upper bounds to integer fields in the API schema due to bump to Django 5.2- no functional changes
 
 v423 -> 2025-11-05 : https://github.com/inventree/InvenTree/pull/10772
     - Adds "category_detail" field to BomItem API endpoints

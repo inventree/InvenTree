@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import Optional
-
 from django.contrib.auth.models import User
 from django.db.models import F, Q
 from django.urls import include, path
@@ -522,6 +520,15 @@ class BuildLineFilter(FilterSet):
             return queryset.filter(flt)
         return queryset.exclude(flt)
 
+    on_order = rest_filters.BooleanFilter(label=_('On Order'), method='filter_on_order')
+
+    def filter_on_order(self, queryset, name, value):
+        """Filter by whether there is stock on order for each BuildLine."""
+        if str2bool(value):
+            return queryset.filter(on_order__gt=0)
+        else:
+            return queryset.filter(on_order=0)
+
 
 class BuildLineMixin(SerializerContextMixin):
     """Mixin class for BuildLine API endpoints."""
@@ -608,6 +615,8 @@ class BuildLineList(
         'trackable',
         'allow_variants',
         'inherited',
+        'on_order',
+        'scheduled_to_build',
     ]
 
     ordering_field_aliases = {
@@ -629,7 +638,7 @@ class BuildLineList(
         'bom_item__reference',
     ]
 
-    def get_source_build(self) -> Optional[Build]:
+    def get_source_build(self) -> Build | None:
         """Return the target build for the BuildLine queryset."""
         source_build = None
 
@@ -648,7 +657,7 @@ class BuildLineDetail(BuildLineMixin, OutputOptionsMixin, RetrieveUpdateDestroyA
 
     output_options = BuildLineOutputOptions
 
-    def get_source_build(self) -> Optional[Build]:
+    def get_source_build(self) -> Build | None:
         """Return the target source location for the BuildLine queryset."""
         return None
 

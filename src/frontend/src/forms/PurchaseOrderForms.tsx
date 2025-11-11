@@ -107,8 +107,8 @@ export function usePurchaseOrderLineItemFields({
           };
         }
       },
-      quantity: {},
       reference: {},
+      quantity: {},
       purchase_price: {
         icon: <IconCurrencyDollar />,
         value: purchasePrice,

@@ -951,7 +951,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
             batch_code: Optional batch code for the item (optional)
             expiry_date: Optional expiry date for the item (optional)
             serials: Optional list of serial numbers (optional)
-            notes: Optional notes for the item (optional)
+            note: Optional notes for the item (optional)
         """
         if self.status != PurchaseOrderStatus.PLACED:
             raise ValidationError(
@@ -1055,6 +1055,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
                 'quantity': 1 if serialize else stock_quantity,
                 'batch': item.get('batch_code', ''),
                 'expiry_date': item.get('expiry_date', None),
+                'notes': item.get('note', '') or item.get('notes', ''),
                 'packaging': item.get('packaging') or supplier_part.packaging,
             }
 
@@ -1143,9 +1144,11 @@ class PurchaseOrder(TotalPriceMixin, Order):
                 item.add_tracking_entry(
                     StockHistoryCode.RECEIVED_AGAINST_PURCHASE_ORDER,
                     user,
-                    location=item.location,
-                    purchaseorder=self,
-                    quantity=float(item.quantity),
+                    deltas={
+                        'location': item.location.pk if item.location else None,
+                        'purchaseorder': self.pk,
+                        'quantity': float(item.quantity),
+                    },
                     commit=False,
                 )
             )

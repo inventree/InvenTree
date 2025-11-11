@@ -16,7 +16,6 @@ from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext_lazy as __
 
 from moneyed import CURRENCIES
-from stdimage.models import StdImageField
 from taggit.managers import TaggableManager
 
 import common.currency
@@ -80,6 +79,7 @@ class Company(
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeNotesMixin,
     report.mixins.InvenTreeReportMixin,
+    InvenTree.models.InvenTreeImageMixin,
     InvenTree.models.InvenTreeMetadataModel,
 ):
     """A Company object represents an external company.
@@ -108,6 +108,8 @@ class Company(
         currency_code: Specifies the default currency for the company
         tax_id: Tax ID for the company
     """
+
+    IMAGE_RENAME = rename_company_image
 
     class Meta:
         """Metaclass defines extra model options."""
@@ -185,15 +187,6 @@ class Company(
         max_length=2000,
     )
 
-    image = StdImageField(
-        upload_to=rename_company_image,
-        null=True,
-        blank=True,
-        variations={'thumbnail': (128, 128), 'preview': (256, 256)},
-        delete_orphans=True,
-        verbose_name=_('Image'),
-    )
-
     active = models.BooleanField(
         default=True, verbose_name=_('Active'), help_text=_('Is this company active?')
     )
@@ -268,18 +261,6 @@ class Company(
     def get_absolute_url(self):
         """Get the web URL for the detail view for this Company."""
         return InvenTree.helpers.pui_url(f'/purchasing/manufacturer/{self.id}')
-
-    def get_image_url(self):
-        """Return the URL of the image for this company."""
-        if self.image:
-            return InvenTree.helpers.getMediaUrl(self.image.url)
-        return InvenTree.helpers.getBlankImage()
-
-    def get_thumbnail_url(self):
-        """Return the URL for the thumbnail image for this Company."""
-        if self.image:
-            return InvenTree.helpers.getMediaUrl(self.image.thumbnail.url)
-        return InvenTree.helpers.getBlankThumbnail()
 
     @property
     def parts(self):
