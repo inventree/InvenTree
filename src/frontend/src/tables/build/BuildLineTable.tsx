@@ -569,15 +569,13 @@ export default function BuildLineTable({
     modelType: ModelType.build
   });
 
-  const autoAllocateFields = useBuildAutoAllocateFields({
-    item_type: 'untracked'
-  });
-
   const autoAllocateStock = useCreateApiFormModal({
     url: ApiEndpoints.build_order_auto_allocate,
     pk: build.pk,
     title: t`Allocate Stock`,
-    fields: autoAllocateFields,
+    fields: useBuildAutoAllocateFields({
+      item_type: 'untracked'
+    }),
     initialData: {
       location: build.take_from,
       interchangeable: true,
@@ -588,7 +586,7 @@ export default function BuildLineTable({
     table: table,
     preFormContent: (
       <Alert color='green' title={t`Auto Allocate Stock`}>
-        <Text>{t`Automatically allocate stock to this build according to the selected options`}</Text>
+        <Text>{t`Automatically allocate untracked BOM items to this build according to the selected options`}</Text>
       </Alert>
     )
   });

@@ -236,11 +236,17 @@ export function useBuildAutoAllocateFields({
       location: {},
       exclude_location: {},
       item_type: {
-        value: item_type
+        value: item_type,
+        hidden: true
       },
-      interchangeable: {},
+      interchangeable: {
+        hidden: item_type === 'tracked'
+      },
       substitutes: {},
-      optional_items: {}
+      optional_items: {
+        hidden: item_type === 'tracked',
+        value: item_type === 'tracked' ? false : undefined
+      }
     };
   }, [item_type]);
 }
