@@ -1144,9 +1144,11 @@ class PurchaseOrder(TotalPriceMixin, Order):
                 item.add_tracking_entry(
                     StockHistoryCode.RECEIVED_AGAINST_PURCHASE_ORDER,
                     user,
-                    location=item.location,
-                    purchaseorder=self,
-                    quantity=float(item.quantity),
+                    deltas={
+                        'location': item.location.pk if item.location else None,
+                        'purchaseorder': self.pk,
+                        'quantity': float(item.quantity),
+                    },
                     commit=False,
                 )
             )
