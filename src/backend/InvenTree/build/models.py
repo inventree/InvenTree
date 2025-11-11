@@ -1306,6 +1306,81 @@ class Build(
         - Only build outputs with serial numbers are considered
         - Unallocated tracked components are allocated against build outputs with matching serial numbers
         """
+        location = kwargs.get('location')
+        exclude_location = kwargs.get('exclude_location')
+        substitutes = kwargs.get('substitutes', True)
+        optional_items = kwargs.get('optional_items', False)
+
+        new_items = []
+
+        # Select only "tracked" line items
+        for output in self.incomplete_outputs.all():
+            if not output.serialized:
+                # Cannot auto-allocate tracked stock to un-serialized outputs
+                continue
+
+            for line_item in self.tracked_line_items.all():
+                bom_item = line_item.bom_item
+
+                if bom_item.consumable:
+                    # Do not auto-allocate stock to consumable BOM items
+                    continue
+
+                if bom_item.optional and not optional_items:
+                    # User has specified that optional_items are to be ignored
+                    continue
+
+                # If the line item is already fully allocated, we can continue
+                if line_item.is_fully_allocated():
+                    continue
+
+                # If there is already allocated stock against this build output, skip it
+                if line_item.allocated_quantity(output=output) > 0:
+                    continue
+
+                # Find available parts (may include variants and substitutes)
+                available_parts = bom_item.get_valid_parts_for_allocation(
+                    allow_variants=True, allow_substitutes=substitutes
+                )
+
+                # Find stock items which match the output serial number
+                available_stock = stock.models.StockItem.objects.filter(
+                    stock.models.StockItem.IN_STOCK_FILTER,
+                    part__in=list(available_parts),
+                    part__active=True,
+                    part__virtual=False,
+                    serial=output.serial,
+                ).exclude(Q(serial=None) | Q(serial=''))
+
+                if location:
+                    # Filter only stock items located "below" the specified location
+                    sublocations = location.get_descendants(include_self=True)
+                    available_stock = available_stock.filter(
+                        location__in=list(sublocations)
+                    )
+
+                if exclude_location:
+                    # Exclude any stock items from the provided location
+                    sublocations = exclude_location.get_descendants(include_self=True)
+                    available_stock = available_stock.exclude(
+                        location__in=list(sublocations)
+                    )
+
+                # If there is a serial number match, we can allocate it directly
+                if available_stock.count() == 1:
+                    stock_item = available_stock.first()
+
+                    new_items.append(
+                        BuildItem(
+                            build_line=line_item,
+                            stock_item=stock_item,
+                            quantity=1,
+                            install_into=output,
+                        )
+                    )
+
+        # Bulk-create the new BuildItem objects
+        BuildItem.objects.bulk_create(new_items)
 
     def auto_allocate_untracked_stock(self, **kwargs):
         """Automatically allocate untracked stock items against this build order.
@@ -1337,7 +1412,7 @@ class Build(
 
         new_items = []
 
-        # Auto-allocation is only possible for "untracked" line items
+        # Select only "untracked" line items
         for line_item in self.untracked_line_items.all():
             # Find the referenced BomItem
             bom_item = line_item.bom_item
@@ -1370,6 +1445,11 @@ class Build(
 
             # Filter by list of available parts
             available_stock = available_stock.filter(part__in=list(available_parts))
+
+            # Ensure part is active and not virtual
+            available_stock = available_stock.filter(
+                part__active=True, part__virtual=False
+            )
 
             # Filter out "serialized" stock items, these cannot be auto-allocated
             available_stock = available_stock.filter(
@@ -1713,10 +1793,13 @@ class BuildLine(report.mixins.InvenTreeReportMixin, InvenTree.models.InvenTreeMo
         """Return the sub_part reference from the link bom_item."""
         return self.bom_item.sub_part
 
-    def allocated_quantity(self):
+    def allocated_quantity(self, output: Optional[stock.models.StockItem] = None):
         """Calculate the total allocated quantity for this BuildLine."""
         # Queryset containing all BuildItem objects allocated against this BuildLine
         allocations = self.allocations.all()
+
+        if output is not None:
+            allocations = allocations.filter(install_into=output)
 
         allocated = allocations.aggregate(
             q=Coalesce(Sum('quantity'), 0, output_field=models.DecimalField())
