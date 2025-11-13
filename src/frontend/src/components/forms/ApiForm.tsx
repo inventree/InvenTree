@@ -368,8 +368,9 @@ export function ApiForm({
 
     Object.keys(data).forEach((key: string) => {
       let value: any = data[key];
-      const field_type = fields[key]?.field_type;
-      const exclude = fields[key]?.exclude;
+      const field: ApiFormFieldType = fields[key] ?? {};
+      const field_type = field?.field_type;
+      const exclude = field?.exclude;
 
       if (field_type == 'file upload' && !!value) {
         hasFiles = true;
@@ -383,7 +384,7 @@ export function ApiForm({
           break;
         case 'string':
           // Replace null string values with an empty string
-          if (value === null) {
+          if (value === null && field?.allow_null == false) {
             value = '';
           }
           break;
