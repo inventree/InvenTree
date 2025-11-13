@@ -517,7 +517,7 @@ function BuildAllocateLineRow({
       field_type: 'related field',
       api_url: apiUrl(ApiEndpoints.stock_item_list),
       model: ModelType.stockitem,
-      autoFill: !!output?.serial,
+      autoFill: !output || !!output?.serial,
       autoFillFilters: {
         serial: output?.serial
       },
