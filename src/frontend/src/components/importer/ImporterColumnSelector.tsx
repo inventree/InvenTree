@@ -86,7 +86,11 @@ function ImporterDefaultField({
 
   const [rawValue, setRawValue] = useState<any>('');
 
-  const [value] = useDebouncedValue(rawValue, 500);
+  const fieldType: string = useMemo(() => {
+    return session.availableFields[fieldName]?.type;
+  }, [fieldName, session.availableFields]);
+
+  const [value] = useDebouncedValue(rawValue, fieldType == 'string' ? 500 : 10);
 
   const onChange = useCallback(
     (value: any) => {
@@ -124,6 +128,7 @@ function ImporterDefaultField({
         value: session.fieldDefaults[fieldName],
         field_type: def.type,
         description: def.help_text,
+        required: false,
         onValueChange: (value: string) => {
           setRawValue(value);
         }
