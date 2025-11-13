@@ -375,9 +375,20 @@ export function ApiForm({
         hasFiles = true;
       }
 
-      // Ensure any boolean values are actually boolean
-      if (field_type === 'boolean') {
-        value = isTrue(value) || false;
+      // Special consideration for various field types
+      switch (field_type) {
+        case 'boolean':
+          // Ensure boolean values are actually boolean
+          value = isTrue(value) || false;
+          break;
+        case 'string':
+          // Replace null string values with an empty string
+          if (value === null) {
+            value = '';
+          }
+          break;
+        default:
+          break;
       }
 
       // Stringify any JSON objects
@@ -386,7 +397,9 @@ export function ApiForm({
           case 'file upload':
             break;
           default:
-            value = JSON.stringify(value);
+            if (value !== null && value !== undefined) {
+              value = JSON.stringify(value);
+            }
             break;
         }
       }
@@ -395,6 +408,7 @@ export function ApiForm({
         // Remove the field from the data
         delete jsonData[key];
       } else if (value != undefined) {
+        jsonData[key] = value;
         formData.append(key, value);
       }
     });

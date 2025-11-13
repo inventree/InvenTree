@@ -46,6 +46,11 @@ export default function TextField({
 
   useEffect(() => {
     setRawText(value || '');
+
+    if (value === null) {
+      // Enforce empty string for null values
+      onChange('');
+    }
   }, [value]);
 
   const onTextChange = useCallback((value: any) => {
