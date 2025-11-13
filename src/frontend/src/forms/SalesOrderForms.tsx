@@ -184,6 +184,7 @@ function SalesOrderAllocateLineRow({
       field_type: 'related field',
       api_url: apiUrl(ApiEndpoints.stock_item_list),
       model: ModelType.stockitem,
+      autoFill: true,
       filters: {
         available: true,
         part_detail: true,
