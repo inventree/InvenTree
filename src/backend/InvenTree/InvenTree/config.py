@@ -223,6 +223,11 @@ def do_typecast(value, type, var_name=None):
     elif type is dict:
         value = to_dict(value)
 
+    # Special handling for boolean typecasting
+    elif type is bool:
+        val = is_true(value)
+        return val
+
     elif type is not None:
         # Try to typecast the value
         try:
