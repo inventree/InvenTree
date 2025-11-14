@@ -976,6 +976,9 @@ class PurchaseOrder(TotalPriceMixin, Order):
         # Prefetch line item objects for DB efficiency
         line_items_ids = [item['line_item'].pk for item in items]
 
+        # Cache the custom status options for the StockItem model
+        custom_stock_status_values = stock.models.StockItem.STATUS_CLASS.custom_values()
+
         line_items = PurchaseOrderLineItem.objects.filter(
             pk__in=line_items_ids
         ).prefetch_related('part', 'part__part', 'order')
@@ -1050,7 +1053,6 @@ class PurchaseOrder(TotalPriceMixin, Order):
                 'supplier_part': supplier_part,
                 'purchase_order': self,
                 'purchase_price': purchase_price,
-                'status': item.get('status', StockStatus.OK.value),
                 'location': stock_location,
                 'quantity': 1 if serialize else stock_quantity,
                 'batch': item.get('batch_code', ''),
@@ -1058,6 +1060,9 @@ class PurchaseOrder(TotalPriceMixin, Order):
                 'notes': item.get('note', '') or item.get('notes', ''),
                 'packaging': item.get('packaging') or supplier_part.packaging,
             }
+
+            # Extract the "status" field
+            status = item.get('status', StockStatus.OK.value)
 
             # Check linked build order
             # This is for receiving against an *external* build order
@@ -1099,11 +1104,14 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
             # Now, create the new stock items
             if serialize:
-                stock_items.extend(
-                    stock.models.StockItem._create_serial_numbers(
-                        serials=serials, **stock_data
-                    )
+                new_items = stock.models.StockItem._create_serial_numbers(
+                    serials=serials, **stock_data
                 )
+
+                for item in new_items:
+                    item.set_status(status, custom_values=custom_stock_status_values)
+                    stock_items.append(item)
+
             else:
                 new_item = stock.models.StockItem(
                     **stock_data,
@@ -1115,10 +1123,11 @@ class PurchaseOrder(TotalPriceMixin, Order):
                     rght=2,
                 )
 
+                new_item.set_status(status, custom_values=custom_stock_status_values)
+
                 if barcode:
                     new_item.assign_barcode(barcode_data=barcode, save=False)
 
-                # new_item.save()
                 bulk_create_items.append(new_item)
 
             # Update the line item quantity
