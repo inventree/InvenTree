@@ -1050,7 +1050,6 @@ class PurchaseOrder(TotalPriceMixin, Order):
                 'supplier_part': supplier_part,
                 'purchase_order': self,
                 'purchase_price': purchase_price,
-                'status': item.get('status', StockStatus.OK.value),
                 'location': stock_location,
                 'quantity': 1 if serialize else stock_quantity,
                 'batch': item.get('batch_code', ''),
@@ -1058,6 +1057,9 @@ class PurchaseOrder(TotalPriceMixin, Order):
                 'notes': item.get('note', '') or item.get('notes', ''),
                 'packaging': item.get('packaging') or supplier_part.packaging,
             }
+
+            # Extract the "status" field
+            status = item.get('status', StockStatus.OK.value)
 
             # Check linked build order
             # This is for receiving against an *external* build order
@@ -1099,11 +1101,14 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
             # Now, create the new stock items
             if serialize:
-                stock_items.extend(
-                    stock.models.StockItem._create_serial_numbers(
-                        serials=serials, **stock_data
-                    )
+                new_items = stock.models.StockItem._create_serial_numbers(
+                    serials=serials, **stock_data
                 )
+
+                for item in new_items:
+                    item.set_status(status)
+                    stock_items.append(item)
+
             else:
                 new_item = stock.models.StockItem(
                     **stock_data,
@@ -1114,6 +1119,8 @@ class PurchaseOrder(TotalPriceMixin, Order):
                     lft=1,
                     rght=2,
                 )
+
+                new_item.set_status(status)
 
                 if barcode:
                     new_item.assign_barcode(barcode_data=barcode, save=False)
