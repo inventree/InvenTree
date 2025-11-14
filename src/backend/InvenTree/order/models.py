@@ -976,6 +976,9 @@ class PurchaseOrder(TotalPriceMixin, Order):
         # Prefetch line item objects for DB efficiency
         line_items_ids = [item['line_item'].pk for item in items]
 
+        # Cache the custom status options for the StockItem model
+        custom_stock_status_values = stock.models.StockItem.STATUS_CLASS.custom_values()
+
         line_items = PurchaseOrderLineItem.objects.filter(
             pk__in=line_items_ids
         ).prefetch_related('part', 'part__part', 'order')
@@ -1106,7 +1109,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
                 )
 
                 for item in new_items:
-                    item.set_status(status)
+                    item.set_status(status, custom_values=custom_stock_status_values)
                     stock_items.append(item)
 
             else:
@@ -1120,12 +1123,11 @@ class PurchaseOrder(TotalPriceMixin, Order):
                     rght=2,
                 )
 
-                new_item.set_status(status)
+                new_item.set_status(status, custom_values=custom_stock_status_values)
 
                 if barcode:
                     new_item.assign_barcode(barcode_data=barcode, save=False)
 
-                # new_item.save()
                 bulk_create_items.append(new_item)
 
             # Update the line item quantity
