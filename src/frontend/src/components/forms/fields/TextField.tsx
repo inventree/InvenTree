@@ -1,6 +1,5 @@
 import { t } from '@lingui/core/macro';
 import { TextInput, Tooltip } from '@mantine/core';
-import { useDebouncedValue } from '@mantine/hooks';
 import { IconCopyCheck, IconX } from '@tabler/icons-react';
 import {
   type ReactNode,
@@ -40,30 +39,26 @@ export default function TextField({
 
   const { value } = useMemo(() => field, [field]);
 
-  const [rawText, setRawText] = useState<string>(value || '');
+  const [textValue, setTextValue] = useState<string>(value || '');
 
-  const [debouncedText] = useDebouncedValue(rawText, 100);
+  const onTextChange = useCallback(
+    (value: any) => {
+      setTextValue(value);
+      onChange(value);
+    },
+    [onChange]
+  );
 
   useEffect(() => {
-    setRawText(value || '');
+    setTextValue(value || '');
   }, [value]);
-
-  const onTextChange = useCallback((value: any) => {
-    setRawText(value);
-  }, []);
-
-  useEffect(() => {
-    if (debouncedText !== value) {
-      onChange(debouncedText);
-    }
-  }, [debouncedText]);
 
   // Construct a "right section" for the text field
   const textFieldRightSection: ReactNode = useMemo(() => {
     if (definition.rightSection) {
       // Use the specified override value
       return definition.rightSection;
-    } else if (value) {
+    } else if (textValue) {
       if (!definition.required && !definition.disabled) {
         // Render a button to clear the text field
         return (
@@ -78,7 +73,7 @@ export default function TextField({
         );
       }
     } else if (
-      !value &&
+      !textValue &&
       definition.placeholder &&
       placeholderAutofill &&
       !definition.disabled
@@ -94,7 +89,7 @@ export default function TextField({
         </Tooltip>
       );
     }
-  }, [placeholderAutofill, definition, value]);
+  }, [placeholderAutofill, definition, textValue]);
 
   return (
     <TextInput
@@ -103,19 +98,19 @@ export default function TextField({
       id={fieldId}
       aria-label={`text-field-${field.name}`}
       type={definition.field_type}
-      value={rawText || ''}
+      value={textValue || ''}
       error={definition.error ?? error?.message}
       radius='sm'
       onChange={(event) => onTextChange(event.currentTarget.value)}
       onBlur={(event) => {
-        if (event.currentTarget.value != value) {
-          onChange(event.currentTarget.value);
+        if (event.currentTarget.value != textValue) {
+          onTextChange(event.currentTarget.value);
         }
       }}
       onKeyDown={(event) => {
         if (event.code === 'Enter') {
           // Bypass debounce on enter key
-          onChange(event.currentTarget.value);
+          onTextChange(event.currentTarget.value);
         }
         onKeyDown(event.code);
       }}

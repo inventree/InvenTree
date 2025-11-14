@@ -98,7 +98,7 @@ test('Forms - Supplier Validation', async ({ browser }) => {
   // Check for validation errors
   await page.getByText('Form Error').waitFor();
   await page.getByText('Errors exist for one or more').waitFor();
-  await page.getByText('This field may not be blank.').waitFor();
+  await page.getByText('This field is required').waitFor();
   await page.getByText('Enter a valid URL.').waitFor();
 
   // Fill out another field, expect that the errors persist
@@ -106,7 +106,7 @@ test('Forms - Supplier Validation', async ({ browser }) => {
     .getByLabel('text-field-description', { exact: true })
     .fill('A description');
   await page.waitForTimeout(250);
-  await page.getByText('This field may not be blank.').waitFor();
+  await page.getByText('This field is required').waitFor();
   await page.getByText('Enter a valid URL.').waitFor();
 
   // Generate a unique supplier name
