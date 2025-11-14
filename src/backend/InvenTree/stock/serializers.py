@@ -1062,7 +1062,7 @@ class StockChangeStatusSerializer(serializers.Serializer):
 
         for item in items:
             # Ignore items which are already in the desired status
-            if item.compare_status(status):
+            if item.compare_status(status) and status == item.get_custom_status():
                 continue
 
             item.set_status(status)
