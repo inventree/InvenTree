@@ -1226,6 +1226,8 @@ class PurchaseOrderReceiveTest(OrderTest):
 
     def test_receive_large_quantity(self):
         """Test receipt of a large number of items."""
+        from stock.status_codes import StockStatus
+
         sp = SupplierPart.objects.first()
 
         # Create a new order
@@ -1256,7 +1258,12 @@ class PurchaseOrderReceiveTest(OrderTest):
             url,
             {
                 'items': [
-                    {'line_item': line.pk, 'quantity': line.quantity} for line in lines
+                    {
+                        'line_item': line.pk,
+                        'quantity': line.quantity,
+                        'status': StockStatus.QUARANTINED.value,
+                    }
+                    for line in lines
                 ],
                 'location': location.pk,
             },
@@ -1269,6 +1276,7 @@ class PurchaseOrderReceiveTest(OrderTest):
 
         for item in response:
             self.assertEqual(item['purchase_order'], po.pk)
+            self.assertEqual(item['status'], StockStatus.QUARANTINED)
 
         # Check that the order has been completed
         po.refresh_from_db()

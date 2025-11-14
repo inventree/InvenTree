@@ -309,13 +309,23 @@ class StatusCodeMixin:
 
         return status is not None and status == self.get_custom_status()
 
-    def set_status(self, status: int) -> bool:
-        """Set the status code for this object."""
+    def set_status(self, status: int, custom_values=None) -> bool:
+        """Set the status code for this object.
+
+        Arguments:
+            status: The status code to set
+            custom_values: Optional list of custom values to consider (can be used to avoid DB queries)
+        """
         if not self.status_class:
             raise NotImplementedError('Status class not defined')
 
         base_values = self.status_class.values()
-        custom_value_set = self.status_class.custom_values()
+
+        custom_value_set = (
+            self.status_class.custom_values()
+            if custom_values is None
+            else custom_values
+        )
 
         custom_field = f'{self.STATUS_FIELD}_custom_key'
 
