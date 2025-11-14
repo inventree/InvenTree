@@ -1701,12 +1701,18 @@ class StockItemTest(StockAPITestCase):
 
         prt = Part.objects.first()
 
+        # Number of items to create
+        N_ITEMS = 10
+
         # Create a bunch of items
-        items = [StockItem.objects.create(part=prt, quantity=10) for _ in range(10)]
+        items = [
+            StockItem.objects.create(part=prt, quantity=10) for _ in range(N_ITEMS)
+        ]
 
         for item in items:
             item.refresh_from_db()
             self.assertEqual(item.status, StockStatus.OK.value)
+            self.assertEqual(item.tracking_info.count(), 1)
 
         data = {
             'items': [item.pk for item in items],
@@ -1719,10 +1725,10 @@ class StockItemTest(StockAPITestCase):
         for item in items:
             item.refresh_from_db()
             self.assertEqual(item.status, StockStatus.DAMAGED.value)
-            self.assertEqual(item.tracking_info.count(), 1)
+            self.assertEqual(item.tracking_info.count(), 2)
 
         # Same test, but with one item unchanged
-        items[0].status = StockStatus.ATTENTION.value
+        items[0].set_status(StockStatus.ATTENTION.value)
         items[0].save()
 
         data['status'] = StockStatus.ATTENTION.value
@@ -1732,7 +1738,7 @@ class StockItemTest(StockAPITestCase):
         for item in items:
             item.refresh_from_db()
             self.assertEqual(item.status, StockStatus.ATTENTION.value)
-            self.assertEqual(item.tracking_info.count(), 2)
+            self.assertEqual(item.tracking_info.count(), 3)
 
             tracking = item.tracking_info.last()
             self.assertEqual(tracking.tracking_type, StockHistoryCode.EDITED.value)
