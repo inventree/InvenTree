@@ -215,7 +215,7 @@ export function RenderInlineModel({
 
   return (
     <Group gap='xs' justify='space-between' title={tooltip}>
-      <Group gap='xs' justify='left' wrap='nowrap'>
+      <Group gap='xs' justify='left'>
         {prefix}
         {image && <Thumbnail src={image} size={18} />}
         {url ? (

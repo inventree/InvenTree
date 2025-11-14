@@ -62,6 +62,13 @@ export function RelatedModelField({
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
+  const [autoFilled, setAutoFilled] = useState<boolean>(false);
+
+  useEffect(() => {
+    // Reset auto-fill status when the form is reconstructed
+    setAutoFilled(false);
+  }, []);
+
   // Auto-fill the field with data from the API
   useEffect(() => {
     // If there is *no value defined*, and autoFill is enabled, then fetch data from the API
@@ -69,9 +76,16 @@ export function RelatedModelField({
       return;
     }
 
+    // Return if the autofill has already been performed
+    if (autoFilled) {
+      return;
+    }
+
     if (field.value != undefined) {
       return;
     }
+
+    setAutoFilled(true);
 
     // Construct parameters for auto-filling the field
     const params = {
@@ -114,6 +128,7 @@ export function RelatedModelField({
         }
       });
   }, [
+    autoFilled,
     definition.autoFill,
     definition.api_url,
     definition.filters,
