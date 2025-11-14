@@ -41,7 +41,7 @@ export const useGuideState = create<GuideState>()((set, get) => ({
   closeGuide: async (slug) => {
     const guides = get().guidesMap;
     await api
-      .post(apiUrl(ApiEndpoints.guide_dismiss, slug))
+      .put(apiUrl(ApiEndpoints.guide_dismiss, slug))
       .then(() => {})
       .catch((err) => {
         console.error(`Could not dismiss guide ${slug} with error: ${err}`);
