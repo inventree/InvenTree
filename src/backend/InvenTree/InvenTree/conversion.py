@@ -1,5 +1,6 @@
 """Helper functions for converting between units."""
 
+import logging
 import re
 from typing import Optional
 
@@ -13,6 +14,9 @@ _unit_registry = None
 import structlog
 
 logger = structlog.get_logger('inventree')
+
+# Disable log output for Pint library
+logging.getLogger('pint').setLevel(logging.ERROR)
 
 
 def get_unit_registry():

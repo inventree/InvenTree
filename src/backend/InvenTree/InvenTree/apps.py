@@ -277,7 +277,7 @@ class InvenTreeConfig(AppConfig):
                     new_user = user.objects.create_superuser(
                         add_user, add_email, add_password
                     )
-                    logger.info('User %s was created!', str(new_user))
+                    logger.info('User %s was created!', new_user)
         except IntegrityError:
             logger.warning('The user "%s" could not be created', add_user)
 

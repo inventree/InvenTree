@@ -217,7 +217,7 @@ def check_stale_stock():
             logger.error(
                 'Error scheduling stale stock notification for user %s: %s',
                 user.username,
-                str(e),
+                e,
             )
 
     logger.info(

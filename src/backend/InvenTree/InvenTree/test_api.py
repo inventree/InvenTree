@@ -576,7 +576,7 @@ class GeneralApiTests(InvenTreeAPITestCase):
 
         with TemporaryDirectory() as tmp:  # type: ignore[no-matching-overload]
             sample_file = Path(tmp, 'temp.txt')
-            sample_file.write_text('abc')
+            sample_file.write_text('abc', 'utf-8')
 
             # File is not a json
             with self.assertLogs(logger='inventree', level='ERROR') as log:

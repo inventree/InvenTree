@@ -263,7 +263,9 @@ test('Purchase Orders - Order Parts', async ({ browser }) => {
 
   // Select supplier part
   await page.getByLabel('related-field-supplier_part').click();
-  await page.getByText('WM1731-ND').click();
+  await page
+    .getByRole('option', { name: 'Thumbnail DigiKey WM1731-ND' })
+    .click();
 
   // Option to create a new supplier part
   await page.getByLabel('action-button-new-supplier-part').click();

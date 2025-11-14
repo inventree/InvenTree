@@ -44,7 +44,7 @@
       "name": "InvenTree invoke schema",
       "type": "debugpy",
       "request": "launch",
-      "program": "${workspaceFolder}/.venv/lib/python3.9/site-packages/invoke/__main__.py",
+      "program": "${workspaceFolder}/.venv/lib/python3.11/site-packages/invoke/__main__.py",
       "cwd": "${workspaceFolder}",
       "args": [
         "dev.schema","--ignore-warnings"
