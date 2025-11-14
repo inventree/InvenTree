@@ -110,6 +110,7 @@ export function OptionsApiForm({
     }
   });
 
+  // Refetch form options whenever the modal is opened
   useEffect(() => {
     if (opened !== false) {
       optionsQuery.refetch();
