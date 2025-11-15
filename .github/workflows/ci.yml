@@ -1,0 +1,75 @@
+name: SiteLog CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  INVENTREE_DB_NAME: sitelog
+  INVENTREE_DB_USER: sitelog
+  INVENTREE_DB_PASSWORD: ${{ secrets.SITELOG_DB_PASSWORD || 'ci-password' }}
+  INVENTREE_SECRET_KEY: ${{ secrets.SITELOG_SECRET_KEY || 'ci-secret-key' }}
+  INVENTREE_ALLOWED_HOSTS: localhost
+  INVENTREE_DEBUG: "False"
+
+jobs:
+  backend:
+    name: Backend lint & tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+          cache-dependency-path: src/backend/requirements-dev.txt
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r src/backend/requirements-dev.txt
+          pip install ruff
+
+      - name: Ruff lint
+        run: |
+          ruff check src/backend/InvenTree
+
+      - name: Django tests
+        env:
+          INVENTREE_SUPERUSER_PASSWORD: ${{ secrets.SITELOG_SUPERUSER_PASSWORD || 'ci-superuser' }}
+        run: |
+          invoke test --check --disable-pty
+
+  frontend:
+    name: Frontend build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src/frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "yarn"
+          cache-dependency-path: src/frontend/yarn.lock
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Build
+        run: yarn build
+

@@ -61,7 +61,7 @@ services:
         image: redis:7-alpine
         container_name: inventree-cache
         env_file:
-            - .env
+            - ../../.env
         expose:
             - ${INVENTREE_CACHE_PORT:-6379}
         restart: always
@@ -79,7 +79,7 @@ services:
             - inventree-db
             - inventree-cache
         env_file:
-            - .env
+            - ../../.env
         volumes:
             # Data volume must map to /home/inventree/data
             - ${INVENTREE_EXT_VOLUME}:/home/inventree/data:z
@@ -94,7 +94,7 @@ services:
         depends_on:
             - inventree-server
         env_file:
-            - .env
+            - ../../.env
         volumes:
             # Data volume must map to /home/inventree/data
             - ${INVENTREE_EXT_VOLUME}:/home/inventree/data:z
@@ -113,7 +113,7 @@ services:
             - ${INVENTREE_HTTP_PORT:-80}:80
             - ${INVENTREE_HTTPS_PORT:-443}:443
         env_file:
-            - .env
+            - ../../.env
         volumes:
             - ./Caddyfile:/etc/caddy/Caddyfile:ro,z
             - ${INVENTREE_EXT_VOLUME}/static:/var/www/static:z

@@ -51,6 +51,7 @@ config.yaml
 plugins.txt
 secret_key.txt
 oidc.pem
+.env
 
 # Default data file
 data.json

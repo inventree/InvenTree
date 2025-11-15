@@ -5,7 +5,7 @@
 
 <!-- Badges -->
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/license/MIT)![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/inventree/inventree)
-![CI](https://github.com/inventree/inventree/actions/workflows/qc_checks.yaml/badge.svg)
+![SiteLog CI](https://github.com/orgersh/Sitelog/actions/workflows/ci.yml/badge.svg)
 [![Documentation Status](https://readthedocs.org/projects/inventree/badge/?version=latest)](https://inventree.readthedocs.io/en/latest/?badge=latest)
 ![Docker Build](https://github.com/inventree/inventree/actions/workflows/docker.yaml/badge.svg)
 [![Netlify Status](https://api.netlify.com/api/v1/badges/9bbb2101-0a4d-41e7-ad56-b63fb6053094/deploy-status)](https://app.netlify.com/sites/inventree/deploys)
@@ -126,6 +126,17 @@ wget -qO install.sh https://get.inventree.org && bash install.sh
 ```
 
 Refer to the [getting started guide](https://docs.inventree.org/en/latest/start/install/) for a full set of installation and setup instructions.
+
+### 🚀 SiteLog Quickstart (Docker)
+
+1. `cp .env.example .env` and update secrets / storage paths as needed (see `docs/config.md`).
+2. Run `./scripts/bootstrap_env.sh` to build containers defined in `contrib/container/docker-compose.yml`, apply migrations, and tail status output.
+3. Create a Django superuser:  
+   `docker compose --env-file .env -f contrib/container/docker-compose.yml exec inventree-server invoke superuser`
+4. Verify the API responds with credentials:  
+   `curl -u <user>:<pass> http://localhost:8000/api/user/`
+
+Detailed environment requirements and troubleshooting steps live in `docs/environment.md`. Use `docs/phase1-checklist.md` to record completion of bootstrap, CI validation, and secrets setup.
 
 <!-- Mobile App -->
 ## 	:iphone: Mobile App
