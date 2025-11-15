@@ -32,6 +32,7 @@ docker compose --env-file "${ENV_FILE}" -f "${COMPOSE_FILE}" exec inventree-serv
 echo "To create a Django superuser run:"
 echo "  docker compose --env-file ${ENV_FILE} -f ${COMPOSE_FILE} exec inventree-server invoke superuser"
 
-echo "Bootstrap complete. Access the API at http://localhost:8000/api/ once credentials are ready."
+echo "Bootstrap complete. Access the API at http://localhost:8080/api/ once credentials are ready."
+echo "Call this command: curl -u <user>:<pass> http://localhost:8080/api"
 
 
