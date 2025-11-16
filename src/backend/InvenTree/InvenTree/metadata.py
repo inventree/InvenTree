@@ -421,7 +421,8 @@ class InvenTreeMetadata(SimpleMetadata):
             field_info['depends_on'] = field.depends_on
 
         # Extends with extra attributes from the serializer
-        extra_field_attributes = ['allow_blank', 'allow_null']
+        # TODO: Re-implment these, trying to work out why CI is failing
+        extra_field_attributes = []  # ['allow_blank', 'allow_null']
 
         for attr in extra_field_attributes:
             if hasattr(field, attr):
