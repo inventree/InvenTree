@@ -410,7 +410,14 @@ export function RelatedModelField({
         menuPortalTarget={document.body}
         noOptionsMessage={() => t`No results found`}
         menuPosition='fixed'
-        styles={{ menuPortal: (base: any) => ({ ...base, zIndex: 9999 }) }}
+        styles={{
+          menuPortal: (base: any) => ({ ...base, zIndex: 9999 }),
+          clearIndicator: (base: any) => ({
+            ...base,
+            color: 'red',
+            ':hover': { color: 'red' }
+          })
+        }}
         formatOptionLabel={(option: any) => formatOption(option)}
         theme={(theme) => {
           return {

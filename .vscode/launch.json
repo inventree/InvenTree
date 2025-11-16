@@ -11,7 +11,7 @@
       "program": "${workspaceFolder}/src/backend/InvenTree/manage.py",
       "args": [
         "runserver",
-        // "0.0.0.0:8000", // expose server in network (useful for testing with mobile app)
+        "0.0.0.0:8000", // expose server in network (useful for testing with mobile app)
         // "--noreload" // disable auto-reload
       ],
       "django": true,
@@ -35,7 +35,8 @@
       "request": "launch",
       "program": "${workspaceFolder}/src/backend/InvenTree/manage.py",
       "args": [
-        "runserver"
+        "runserver",
+        "0.0.0.0:8000"
       ],
       "django": true,
       "justMyCode": false
