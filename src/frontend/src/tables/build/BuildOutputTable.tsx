@@ -23,11 +23,7 @@ import { useNavigate } from 'react-router-dom';
 import { ActionButton } from '@lib/components/ActionButton';
 import { AddItemButton } from '@lib/components/AddItemButton';
 import { ProgressBar } from '@lib/components/ProgressBar';
-import {
-  type RowAction,
-  RowEditAction,
-  RowViewAction
-} from '@lib/components/RowActions';
+import { type RowAction, RowEditAction } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
@@ -569,13 +565,7 @@ export default function BuildOutputTable({
             setSelectedOutputs([record]);
             cancelBuildOutputsForm.open();
           }
-        },
-        RowViewAction({
-          title: t`View Build Output`,
-          modelId: record.pk,
-          modelType: ModelType.stockitem,
-          navigate: navigate
-        })
+        }
       ];
     },
     [buildStatus, user, partId, hasTrackedItems]
