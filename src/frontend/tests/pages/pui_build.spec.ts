@@ -99,6 +99,50 @@ test('Build Order - Basic Tests', async ({ browser }) => {
     .waitFor();
 });
 
+// Test that the build order reference field increments correctly
+test('Build Order - Reference', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    url: 'manufacturing/index/buildorders'
+  });
+
+  await page
+    .getByRole('button', { name: 'action-button-add-build-order' })
+    .click();
+  await page.getByRole('button', { name: 'Submit' }).waitFor();
+
+  // Grab the next BuildOrder reference
+  const reference: string = await page
+    .getByRole('textbox', { name: 'text-field-reference' })
+    .inputValue();
+  expect(reference).toMatch(/BO\d+/);
+
+  // Select a part
+  await page.getByLabel('related-field-part').fill('MAST');
+  await page.getByText('MAST | Master Assembly').click();
+
+  // Submit the form
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Item Created').waitFor();
+
+  // Back to the "build order" page - to create a new order
+  await navigate(page, 'manufacturing/index/buildorders');
+
+  await page
+    .getByRole('button', { name: 'action-button-add-build-order' })
+    .click();
+  await page.getByRole('button', { name: 'Submit' }).waitFor();
+
+  const nextReference: string = await page
+    .getByRole('textbox', { name: 'text-field-reference' })
+    .inputValue();
+  expect(nextReference).toMatch(/BO\d+/);
+
+  // Ensure that the reference has incremented
+  const refNumber = Number(reference.replace('BO', ''));
+  const nextRefNumber = Number(nextReference.replace('BO', ''));
+  expect(nextRefNumber).toBe(refNumber + 1);
+});
+
 test('Build Order - Calendar', async ({ browser }) => {
   const page = await doCachedLogin(browser);
 
