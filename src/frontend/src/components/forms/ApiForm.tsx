@@ -24,7 +24,11 @@ import { type NavigateFunction, useNavigate } from 'react-router-dom';
 
 import { isTrue } from '@lib/functions/Conversion';
 import { getDetailUrl } from '@lib/functions/Navigation';
-import type { ApiFormFieldSet, ApiFormProps } from '@lib/types/Forms';
+import type {
+  ApiFormFieldSet,
+  ApiFormFieldType,
+  ApiFormProps
+} from '@lib/types/Forms';
 import { useApi } from '../../contexts/ApiContext';
 import {
   type NestedDict,
