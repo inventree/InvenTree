@@ -410,7 +410,7 @@ export function ApiForm({
             break;
           default:
             if (value !== null && value !== undefined) {
-              value = JSON.stringify(value);
+              // value = JSON.stringify(value);
             }
             break;
         }
@@ -420,7 +420,7 @@ export function ApiForm({
         // Remove the field from the data
         delete jsonData[key];
       } else if (value != undefined) {
-        jsonData[key] = value;
+        // jsonData[key] = value;
         formData.append(key, value);
       }
     });
