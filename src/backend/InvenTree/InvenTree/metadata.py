@@ -221,7 +221,7 @@ class InvenTreeMetadata(SimpleMetadata):
 
         # Attributes to copy extra attributes from the model to the field (if they don't exist)
         # Note that the attributes may be named differently on the underlying model!
-        extra_model_attributes = {
+        extra_attributes = {
             'help_text': 'help_text',
             'max_length': 'max_length',
             'label': 'verbose_name',
@@ -260,7 +260,7 @@ class InvenTreeMetadata(SimpleMetadata):
                     elif name in model_default_values:
                         serializer_info[name]['default'] = model_default_values[name]
 
-                    for field_key, model_key in extra_model_attributes.items():
+                    for field_key, model_key in extra_attributes.items():
                         field_value = getattr(serializer.fields[name], field_key, None)
                         model_value = getattr(field, model_key, None)
 
@@ -291,7 +291,7 @@ class InvenTreeMetadata(SimpleMetadata):
                     relation.model_field.get_limit_choices_to()
                 )
 
-                for field_key, model_key in extra_model_attributes.items():
+                for field_key, model_key in extra_attributes.items():
                     field_value = getattr(serializer.fields[name], field_key, None)
                     model_value = getattr(relation.model_field, model_key, None)
 
