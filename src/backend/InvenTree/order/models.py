@@ -1590,7 +1590,7 @@ class SalesOrder(TotalPriceMixin, Order):
         """Attempt to transition to COMPLETED status."""
         return self.handle_transition(
             self.status,
-            SalesOrderStatus.COMPLETED.value,
+            SalesOrderStatus.COMPLETE.value,
             self,
             self._action_complete,
             user=user,
