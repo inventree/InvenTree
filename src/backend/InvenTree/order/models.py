@@ -1494,6 +1494,7 @@ class SalesOrder(TotalPriceMixin, Order):
 
             trigger_event(SalesOrderEvents.HOLD, id=self.pk)
 
+    @transaction.atomic
     def _action_complete(self, *args, **kwargs):
         """Mark this order as "complete."""
         user = kwargs.pop('user', None)
@@ -1505,6 +1506,16 @@ class SalesOrder(TotalPriceMixin, Order):
             get_global_setting('SALESORDER_SHIP_COMPLETE')
         )
 
+        # Update line items
+        for line in self.lines.all():
+            # Mark any "virtual" parts as shipped at this point
+            if line.part and line.part.virtual:
+                line.shipped = line.quantity
+                line.save()
+
+            if line.part:
+                line.part.schedule_pricing_update(create=True)
+
         if bypass_shipped or self.status == SalesOrderStatus.SHIPPED:
             self.status = SalesOrderStatus.COMPLETE.value
         else:
@@ -1515,16 +1526,6 @@ class SalesOrder(TotalPriceMixin, Order):
             self.shipment_date = InvenTree.helpers.current_date()
 
         self.save()
-
-        # Schedule pricing update for any referenced parts
-        for line in self.lines.all():
-            # Mark any "virtual" parts as shipped at this point
-            if line.part and line.part.virtual:
-                line.shipped = line.quantity
-                line.save()
-
-            if line.part:
-                line.part.schedule_pricing_update(create=True)
 
         trigger_event(SalesOrderEvents.COMPLETED, id=self.pk)
 
