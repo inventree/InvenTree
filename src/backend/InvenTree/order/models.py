@@ -1509,7 +1509,7 @@ class SalesOrder(TotalPriceMixin, Order):
         # Update line items
         for line in self.lines.all():
             # Mark any "virtual" parts as shipped at this point
-            if line.part and line.part.virtual:
+            if line.part and line.part.virtual and line.shipped != line.quantity:
                 line.shipped = line.quantity
                 line.save()
 
