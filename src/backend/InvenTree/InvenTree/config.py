@@ -204,8 +204,6 @@ def load_config_data(set_cache: bool = False) -> map | None:
             )
             sys.exit(1)
 
-        data = {}
-
     # Set the cache if requested
     if set_cache:
         CONFIG_DATA = data
