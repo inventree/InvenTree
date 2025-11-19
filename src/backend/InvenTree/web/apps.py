@@ -16,7 +16,7 @@ class WebConfig(AppConfig):
 
     def ready(self):
         """Initialize restart flag clearance on startup."""
-        if InvenTree.ready.canAppAccessDatabase():  # pragma: no cover
+        if not InvenTree.ready.canAppAccessDatabase():  # pragma: no cover
             return
         from web.models import collect_guides
 
