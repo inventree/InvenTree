@@ -271,19 +271,21 @@ def apps():
 
 def content_excludes(
     allow_auth: bool = True,
-    allow_tokens: bool = True,
+    allow_email: bool = False,
     allow_plugins: bool = True,
-    allow_sso: bool = True,
     allow_session: bool = True,
+    allow_sso: bool = True,
+    allow_tokens: bool = True,
 ):
     """Returns a list of content types to exclude from import / export.
 
     Arguments:
         allow_auth (bool): Allow user authentication data to be exported / imported
-        allow_tokens (bool): Allow tokens to be exported / imported
+        allow_email (bool): Allow email log data to be exported / imported
         allow_plugins (bool): Allow plugin information to be exported / imported
-        allow_sso (bool): Allow SSO tokens to be exported / imported
         allow_session (bool): Allow user session data to be exported / imported
+        allow_sso (bool): Allow SSO tokens to be exported / imported
+        allow_tokens (bool): Allow tokens to be exported / imported
     """
     excludes = [
         'contenttypes',
@@ -304,29 +306,33 @@ def content_excludes(
         'importer.dataimportrow',
     ]
 
+    # Optional exclude email message logs
+    if not allow_email:
+        excludes.extend(['common.emailmessage', 'common.emailthread'])
+
     # Optionally exclude user auth data
     if not allow_auth:
-        excludes.append('auth.group')
-        excludes.append('auth.user')
+        excludes.extend(['auth.group', 'auth.user'])
 
     # Optionally exclude user token information
     if not allow_tokens:
-        excludes.append('users.apitoken')
+        excludes.extend(['users.apitoken'])
 
     # Optionally exclude plugin information
     if not allow_plugins:
-        excludes.append('plugin.pluginconfig')
-        excludes.append('plugin.pluginsetting')
+        excludes.extend([
+            'plugin.pluginconfig',
+            'plugin.pluginsetting',
+            'plugin.pluginusersetting',
+        ])
 
     # Optionally exclude SSO application information
     if not allow_sso:
-        excludes.append('socialaccount.socialapp')
-        excludes.append('socialaccount.socialtoken')
+        excludes.extend(['socialaccount.socialapp', 'socialaccount.socialtoken'])
 
     # Optionally exclude user session information
     if not allow_session:
-        excludes.append('sessions.session')
-        excludes.append('usersessions.usersession')
+        excludes.extend(['sessions.session', 'usersessions.usersession'])
 
     return ' '.join([f'--exclude {e}' for e in excludes])
 
@@ -886,6 +892,7 @@ def update(
     help={
         'filename': "Output filename (default = 'data.json')",
         'overwrite': 'Overwrite existing files without asking first (default = False)',
+        'include_email': 'Include email logs in the output file (default = False)',
         'include_permissions': 'Include user and group permissions in the output file (default = False)',
         'include_tokens': 'Include API tokens in the output file (default = False)',
         'exclude_plugins': 'Exclude plugin data from the output file (default = False)',
@@ -898,6 +905,7 @@ def export_records(
     c,
     filename='data.json',
     overwrite=False,
+    include_email=False,
     include_permissions=False,
     include_tokens=False,
     exclude_plugins=False,
@@ -934,6 +942,7 @@ def export_records(
     tmpfile = f'{target}.tmp'
 
     excludes = content_excludes(
+        allow_email=include_email,
         allow_tokens=include_tokens,
         allow_plugins=not exclude_plugins,
         allow_session=include_session,
