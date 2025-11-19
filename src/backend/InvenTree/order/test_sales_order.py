@@ -488,3 +488,45 @@ class SalesOrderTest(InvenTreeTestCase):
                 p.set_metadata(k, k)
 
             self.assertEqual(len(p.metadata.keys()), 4)
+
+    def test_virtual_parts(self):
+        """Test shipment of virtual parts against an order."""
+        vp = Part.objects.create(
+            name='Virtual Part',
+            salable=True,
+            virtual=True,
+            description='A virtual part that I sell',
+        )
+
+        so = SalesOrder.objects.create(
+            customer=self.customer,
+            reference='SO-VIRTUAL-1',
+            customer_reference='VIRT-001',
+        )
+
+        for qty in [5, 10, 15]:
+            SalesOrderLineItem.objects.create(order=so, part=vp, quantity=qty)
+
+        # Delete pending shipments (if any)
+        so.shipments.all().delete()
+
+        for line in so.lines.all():
+            self.assertEqual(line.part.virtual, True)
+            self.assertEqual(line.shipped, 0)
+            self.assertGreater(line.quantity, 0)
+            self.assertTrue(line.is_fully_allocated())
+            self.assertTrue(line.is_completed())
+
+        # Complete the order
+        so.ship_order(None)
+
+        so.refresh_from_db()
+        self.assertEqual(so.status, status.SalesOrderStatus.SHIPPED)
+
+        so.complete_order(None)
+        so.refresh_from_db()
+        self.assertEqual(so.status, status.SalesOrderStatus.COMPLETE)
+
+        # Ensure that virtual line item quantity values have been updated
+        for line in so.lines.all():
+            self.assertEqual(line.shipped, line.quantity)
