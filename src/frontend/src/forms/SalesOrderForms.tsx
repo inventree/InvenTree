@@ -113,7 +113,7 @@ export function useSalesOrderLineItemFields({
   const [salePrice, setSalePrice] = useState<string | undefined>(undefined);
   const [partCurrency, setPartCurrency] = useState<string>(currency ?? '');
   const [part, setPart] = useState<any>({});
-  const [quantity, setQuantity] = useState<string>('');
+  const [quantity, setQuantity] = useState<string>('1');
 
   useEffect(() => {
     // Only attempt to set sale price for new line items
