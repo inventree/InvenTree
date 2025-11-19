@@ -814,7 +814,7 @@ export function useConsumeBuildItemsForm({
     url: ApiEndpoints.build_order_consume,
     pk: buildId,
     title: t`Consume Stock`,
-    successMessage: t`Stock items consumed`,
+    successMessage: t`Stock items scheduled to be consumed`,
     onFormSuccess: onFormSuccess,
     size: '80%',
     fields: consumeFields,
@@ -915,7 +915,7 @@ export function useConsumeBuildLinesForm({
     url: ApiEndpoints.build_order_consume,
     pk: buildId,
     title: t`Consume Stock`,
-    successMessage: t`Stock items consumed`,
+    successMessage: t`Stock items scheduled to be consumed`,
     onFormSuccess: onFormSuccess,
     fields: consumeFields,
     initialData: {
