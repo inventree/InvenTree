@@ -76,13 +76,12 @@ export default function NumberField({
       }}
       rightSection={
         definition.placeholder &&
-        !!placeholderAutofill &&
+        placeholderAutofill &&
         numericalValue == null && (
           <AutoFillRightSection
             value={field.value}
             fieldName={field.name}
             definition={definition}
-            placeholderAutofill={placeholderAutofill}
             onChange={onChange}
           />
         )

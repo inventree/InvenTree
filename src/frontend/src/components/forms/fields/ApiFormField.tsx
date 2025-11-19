@@ -168,10 +168,10 @@ export function ApiFormField({
       case 'number':
         return (
           <NumberField
-            {...reducedDefinition}
             controller={controller}
             fieldName={fieldName}
-            definition={fieldDefinition}
+            definition={reducedDefinition}
+            placeholderAutofill={fieldDefinition.placeholderAutofill ?? false}
             onChange={(value: any) => {
               onChange(value);
             }}

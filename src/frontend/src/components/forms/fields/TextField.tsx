@@ -69,13 +69,14 @@ export default function TextField({
         onKeyDown(event.code);
       }}
       rightSection={
-        <AutoFillRightSection
-          value={textValue}
-          fieldName={field.name}
-          definition={definition}
-          placeholderAutofill={placeholderAutofill}
-          onChange={onChange}
-        />
+        placeholderAutofill && (
+          <AutoFillRightSection
+            value={textValue}
+            fieldName={field.name}
+            definition={definition}
+            onChange={onChange}
+          />
+        )
       }
     />
   );

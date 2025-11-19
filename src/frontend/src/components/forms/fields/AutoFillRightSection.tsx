@@ -13,7 +13,6 @@ export default function AutoFillRightSection({
   value,
   fieldName,
   definition,
-  placeholderAutofill,
   onChange
 }: {
   value: any;
@@ -42,12 +41,7 @@ export default function AutoFillRightSection({
         </Tooltip>
       );
     }
-  } else if (
-    !value &&
-    definition.placeholder &&
-    placeholderAutofill &&
-    !definition.disabled
-  ) {
+  } else if (!value && definition.placeholder && !definition.disabled) {
     // Render auto-fill button
     return (
       <Tooltip label={t`Accept suggested value`} position='top-end'>
