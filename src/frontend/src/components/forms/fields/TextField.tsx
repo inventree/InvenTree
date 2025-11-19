@@ -1,15 +1,7 @@
-import { t } from '@lingui/core/macro';
-import { TextInput, Tooltip } from '@mantine/core';
-import { IconCopyCheck, IconX } from '@tabler/icons-react';
-import {
-  type ReactNode,
-  useCallback,
-  useEffect,
-  useId,
-  useMemo,
-  useState
-} from 'react';
+import { TextInput } from '@mantine/core';
+import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import type { FieldValues, UseControllerReturn } from 'react-hook-form';
+import AutoFillRightSection from './AutoFillRightSection';
 
 /*
  * Custom implementation of the mantine <TextInput> component,
@@ -53,44 +45,6 @@ export default function TextField({
     setTextValue(value || '');
   }, [value]);
 
-  // Construct a "right section" for the text field
-  const textFieldRightSection: ReactNode = useMemo(() => {
-    if (definition.rightSection) {
-      // Use the specified override value
-      return definition.rightSection;
-    } else if (textValue) {
-      if (!definition.required && !definition.disabled) {
-        // Render a button to clear the text field
-        return (
-          <Tooltip label={t`Clear`} position='top-end'>
-            <IconX
-              aria-label={`text-field-${fieldName}-clear`}
-              size='1rem'
-              color='red'
-              onClick={() => onTextChange('')}
-            />
-          </Tooltip>
-        );
-      }
-    } else if (
-      !textValue &&
-      definition.placeholder &&
-      placeholderAutofill &&
-      !definition.disabled
-    ) {
-      return (
-        <Tooltip label={t`Accept suggested value`} position='top-end'>
-          <IconCopyCheck
-            aria-label={`text-field-${fieldName}-accept-placeholder`}
-            size='1rem'
-            color='green'
-            onClick={() => onTextChange(definition.placeholder)}
-          />
-        </Tooltip>
-      );
-    }
-  }, [placeholderAutofill, definition, textValue]);
-
   return (
     <TextInput
       {...definition}
@@ -114,7 +68,15 @@ export default function TextField({
         }
         onKeyDown(event.code);
       }}
-      rightSection={textFieldRightSection}
+      rightSection={
+        <AutoFillRightSection
+          value={textValue}
+          fieldName={field.name}
+          definition={definition}
+          placeholderAutofill={placeholderAutofill}
+          onChange={onChange}
+        />
+      }
     />
   );
 }
