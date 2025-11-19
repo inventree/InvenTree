@@ -116,6 +116,7 @@ export function useSalesOrderLineItemFields({
   const [part, setPart] = useState<any>({});
   const [quantity, setQuantity] = useState<string>('1');
 
+  // Update suggested sale price when part, quantity, or part currency changes
   useEffect(() => {
     // Only attempt to set sale price for new line items
     if (!create) return;

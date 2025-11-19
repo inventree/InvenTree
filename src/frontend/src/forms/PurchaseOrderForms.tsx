@@ -34,6 +34,7 @@ import { StandaloneField } from '../components/forms/StandaloneField';
 
 import { ProgressBar } from '@lib/components/ProgressBar';
 import { apiUrl } from '@lib/functions/Api';
+import { toNumber } from '@lib/functions/Conversion';
 import type {
   ApiFormAdjustFilterType,
   ApiFormFieldSet
@@ -75,9 +76,42 @@ export function usePurchaseOrderLineItemFields({
 
   const [autoPricing, setAutoPricing] = useState(false);
 
+  const [quantity, setQuantity] = useState<string>('1');
+
   // Internal part information
   const [part, setPart] = useState<any>({});
   const [priceBreaks, setPriceBreaks] = useState<any[]>([]);
+  const [suggestedPurchasePrice, setSuggestedPurchasePrice] = useState<
+    string | undefined
+  >(undefined);
+
+  // Update suggested purchase price when part, quantity, or price breaks change
+  useEffect(() => {
+    // Only attempt to set purchase price for new line items
+    if (!create) return;
+
+    const qty = toNumber(quantity, null);
+
+    if (qty == null || qty <= 0) {
+      setSuggestedPurchasePrice(undefined);
+      return;
+    }
+
+    if (!part || !priceBreaks || priceBreaks.length === 0) {
+      setSuggestedPurchasePrice(undefined);
+      return;
+    }
+
+    const applicablePriceBreaks = priceBreaks
+      .filter((pb: any) => qty >= pb.quantity)
+      .sort((a: any, b: any) => b.quantity - a.quantity);
+
+    if (applicablePriceBreaks.length) {
+      setSuggestedPurchasePrice(applicablePriceBreaks[0].price);
+    } else {
+      setSuggestedPurchasePrice(undefined);
+    }
+  }, [create, part, quantity, priceBreaks]);
 
   useEffect(() => {
     if (autoPricing) {
@@ -117,22 +151,26 @@ export function usePurchaseOrderLineItemFields({
         }
       },
       reference: {},
-      quantity: {},
-      auto_pricing: {
-        value: autoPricing,
-        onValueChange: setAutoPricing
+      quantity: {
+        onValueChange: (value) => {
+          setQuantity(value);
+        }
       },
       purchase_price: {
-        disabled: autoPricing,
         icon: <IconCurrencyDollar />,
         value: purchasePrice,
+        placeholder: suggestedPurchasePrice,
+        placeholderAutofill: true,
         onValueChange: setPurchasePrice
       },
       purchase_price_currency: {
         icon: <IconCoins />,
-        disabled: autoPricing,
         value: purchasePriceCurrency,
         onValueChange: setPurchasePriceCurrency
+      },
+      auto_pricing: {
+        value: autoPricing,
+        onValueChange: setAutoPricing
       },
       project_code: {
         description: t`Select project code for this line item`
@@ -175,7 +213,8 @@ export function usePurchaseOrderLineItemFields({
     globalSettings,
     supplierId,
     autoPricing,
-    purchasePrice
+    purchasePrice,
+    suggestedPurchasePrice
   ]);
 
   return fields;
