@@ -225,7 +225,7 @@ test('Sales Orders - Shipments', async ({ browser }) => {
 
 test('Sales Orders - Duplicate', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    url: 'sales/sales-order/11/detail'
+    url: 'sales/sales-order/14/detail'
   });
 
   await page.getByLabel('action-menu-order-actions').click();
@@ -243,4 +243,39 @@ test('Sales Orders - Duplicate', async ({ browser }) => {
   await page.getByRole('tab', { name: 'Order Details' }).click();
 
   await page.getByText('Pending').first().waitFor();
+
+  // Issue the order
+  await page.getByRole('button', { name: 'Issue Order' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('In Progress').first().waitFor();
+
+  // Cancel the outstanding shipment
+  await loadTab(page, 'Shipments');
+  await clearTableFilters(page);
+  const cell = await page.getByRole('cell', { name: '1', exact: true });
+  await clickOnRowMenu(cell);
+  await page.getByRole('menuitem', { name: 'Cancel' }).click();
+  await page.getByRole('button', { name: 'Delete' }).click();
+
+  // Check for expected line items
+  await loadTab(page, 'Line Items');
+  await page.getByRole('cell', { name: 'SW-001' }).waitFor();
+  await page.getByRole('cell', { name: 'SW-002' }).waitFor();
+  await page.getByText('1 - 2 / 2').waitFor();
+
+  // Ship the order
+  await page.getByRole('button', { name: 'Ship Order' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Complete the order
+  await page.getByRole('button', { name: 'Complete Order' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Go to the "details" tab
+  await loadTab(page, 'Order Details');
+
+  // Check for expected results
+  // 2 line items completed, as they are both virtual (no stock)
+  await page.getByText('Complete').first().waitFor();
+  await page.getByText('2 / 2').waitFor();
 });
