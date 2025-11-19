@@ -16,7 +16,7 @@ from django.conf import settings
 from django.contrib.staticfiles.storage import StaticFilesStorage
 from django.core.exceptions import FieldError, ValidationError
 from django.core.files.storage import default_storage
-from django.db.models.fields.files import ImageFieldFile
+from django.db.models.fields.files import FieldFile, ImageFieldFile
 from django.http import StreamingHttpResponse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -176,10 +176,14 @@ def constructPathString(path: list[str], max_chars: int = 250) -> str:
     return pathstring
 
 
-def getMediaUrl(file: StdImageFieldFile | ImageFieldFile, name: str | None = None):
+def getMediaUrl(
+    file: FieldFile | ImageFieldFile | StdImageFieldFile, name: str | None = None
+):
     """Return the qualified access path for the given file, under the media directory."""
-    if not isinstance(file, StdImageFieldFile):
-        raise ValueError('file_obj must be an instance of StdImageFieldFile')
+    if not isinstance(file, (FieldFile, ImageFieldFile, StdImageFieldFile)):
+        raise TypeError(
+            'file must be one of FileField, ImageFileField, StdImageFieldFile'
+        )
     if name is not None:
         file = regenerate_imagefile(file, name)
     if settings.STORAGE_TARGET == StorageBackends.S3:
