@@ -125,8 +125,11 @@ export function useSalesOrderLineItemFields({
       )
       .sort((a: any, b: any) => a.quantity - b.quantity);
 
-    if (applicablePriceBreaks.length)
+    if (applicablePriceBreaks.length) {
       setSalePrice(applicablePriceBreaks[0].price);
+    } else {
+      setSalePrice('');
+    }
   }, [part, quantity, partCurrency, create]);
 
   return useMemo(() => {
