@@ -46,7 +46,7 @@ export default function AutoFillRightSection({
     return (
       <Tooltip label={t`Accept suggested value`} position='top-end'>
         <IconCopyCheck
-          aria-label={`text-field-${fieldName}-accept-placeholder`}
+          aria-label={`field-${fieldName}-accept-placeholder`}
           size='1rem'
           color='green'
           onClick={() => onChange(definition.placeholder)}
