@@ -1023,6 +1023,7 @@ def import_records(
 
     auth_data = []
     load_data = []
+    user_pk_pairing = {}
 
     for entry in data:
         if 'model' in entry:
@@ -1030,9 +1031,10 @@ def import_records(
             if entry['model'] == 'auth.group':
                 entry['fields']['permissions'] = []
 
-            # Clear out any permissions specified for a user
+            # Clear out any permissions specified for a user and store the user's primary key for later
             if entry['model'] == 'auth.user':
                 entry['fields']['user_permissions'] = []
+                user_pk_pairing[entry['fields']['username']] = entry['pk']
 
             # Save auth data for later
             if entry['model'].startswith('auth.'):
@@ -1042,6 +1044,18 @@ def import_records(
         else:
             warning('WARNING: Invalid entry in data file')
             print(entry)
+
+    # User profiles should have the same primary key as auth.user, fix this if not the case
+    for entry in load_data:
+        if 'model' not in entry or 'fields' not in entry:
+            continue
+
+        if not entry['model'].startswith('users.userprofile'):
+            continue
+
+        user_profile_username = entry['fields']['user'][0]
+        # Set user profile primary key to corresponding auth.user primary key
+        entry['pk'] = user_pk_pairing[user_profile_username]
 
     # Write the auth file data
     with open(authfile, 'w', encoding='utf-8') as f_out:
