@@ -116,7 +116,8 @@ export function useSalesOrderLineItemFields({
   const [quantity, setQuantity] = useState<string>('');
 
   useEffect(() => {
-    if (!create || !part || !part.price_breaks) return;
+    // Only attempt to set sale price for new line items
+    if (!create) return;
 
     const qty = toNumber(quantity, null);
 
@@ -125,8 +126,13 @@ export function useSalesOrderLineItemFields({
       return;
     }
 
-    const applicablePriceBreaks = part.price_breaks
-      .filter(
+    if (!part || !part.price_breaks || part.price_breaks.length === 0) {
+      setSalePrice(undefined);
+      return;
+    }
+
+    const applicablePriceBreaks = part?.price_breaks
+      ?.filter(
         (pb: any) => pb.price_currency == partCurrency && qty >= pb.quantity
       )
       .sort((a: any, b: any) => b.quantity - a.quantity);
