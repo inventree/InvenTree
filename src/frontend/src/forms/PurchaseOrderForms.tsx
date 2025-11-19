@@ -95,7 +95,8 @@ export function usePurchaseOrderLineItemFields({
           part_detail: true,
           supplier_detail: true,
           active: true,
-          part_active: true
+          part_active: true,
+          price_breaks: true
         },
         onValueChange: (value, record) => {
           setPart(record?.part_detail ?? {});
