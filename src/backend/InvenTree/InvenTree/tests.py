@@ -702,7 +702,7 @@ class TestHelpers(TestCase):
     def testMediaUrl(self):
         """Test getMediaUrl."""
         # Str should not work
-        with self.assertRaises(ValueError):
+        with self.assertRaises(TypeError):
             helpers.getMediaUrl('xx/yy.png')  # type: ignore
 
         # Correct usage
