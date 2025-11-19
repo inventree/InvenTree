@@ -1062,7 +1062,18 @@ def import_records(
         if entry['model'] != 'users.userprofile':
             continue
 
-        user_profile_username = entry['fields']['user'][0]
+        # Validate 'user' field
+        user_field = entry['fields'].get('user')
+        if (
+            not isinstance(user_field, list)
+            or len(user_field) == 0
+            or user_field[0] not in user_pk_pairing
+        ):
+            warning(
+                f"WARNING: Skipping userprofile entry due to missing or invalid user field: {entry}"
+            )
+            continue
+        user_profile_username = user_field[0]
         # Set user profile primary key to corresponding auth.user primary key
         entry['pk'] = user_pk_pairing[user_profile_username]
 
