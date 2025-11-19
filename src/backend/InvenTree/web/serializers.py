@@ -50,3 +50,13 @@ class GuideDefinitionSerializer(FilterableSerializerMixin, InvenTreeModelSeriali
             has_activity = GuideExecution.objects.filter(user=user).exists()
             return not has_activity
         return True
+
+
+class EmptySerializer(serializers.Serializer):
+    """An empty serializer, useful for endpoints that do not require any input or output."""
+
+    class Meta:
+        """Metaclass defines serializer fields."""
+
+        fields = []
+        model = GuideDefinition
