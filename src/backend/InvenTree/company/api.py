@@ -474,6 +474,23 @@ class SupplierPriceBreakMixin:
         return queryset
 
 
+class SupplierPriceBreakOutputOptions(OutputConfiguration):
+    """Available output options for the SupplierPriceBreak endpoints."""
+
+    OPTIONS = [
+        InvenTreeOutputOption(
+            description='Include detailed information about the linked Part in the response',
+            flag='part_detail',
+            default=False,
+        ),
+        InvenTreeOutputOption(
+            description='Include detailed information about the Supplier in the response',
+            flag='supplier_detail',
+            default=False,
+        ),
+    ]
+
+
 class SupplierPriceBreakList(
     SupplierPriceBreakMixin, SerializerContextMixin, OutputOptionsMixin, ListCreateAPI
 ):
@@ -483,10 +500,10 @@ class SupplierPriceBreakList(
     - POST: Create a new SupplierPriceBreak object
     """
 
+    output_options = SupplierPriceBreakOutputOptions
+
     filterset_class = SupplierPriceBreakFilter
-
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
-
     ordering_fields = ['quantity', 'supplier', 'SKU', 'price']
 
     search_fields = ['part__SKU', 'part__supplier__name']
