@@ -2034,7 +2034,7 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
         if self.attachment:
             import InvenTree.helpers_model
 
-            media_url = InvenTree.helpers.getMediaUrl(self.attachment.url)
+            media_url = InvenTree.helpers.getMediaUrl(self.attachment)
             return InvenTree.helpers_model.construct_absolute_url(media_url)
 
         return ''

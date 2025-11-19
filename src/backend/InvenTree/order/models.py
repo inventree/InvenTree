@@ -1388,8 +1388,13 @@ class SalesOrder(TotalPriceMixin, Order):
         return any(line.is_overallocated() for line in self.lines.all())
 
     def is_completed(self) -> bool:
-        """Check if this order is "shipped" (all line items delivered)."""
-        return all(line.is_completed() for line in self.lines.all())
+        """Check if this order is "shipped" (all line items delivered).
+
+        Note: Any "virtual" parts are ignored in this calculation.
+        """
+        lines = self.lines.all().filter(part__virtual=False)
+
+        return all(line.is_completed() for line in lines)
 
     def can_complete(
         self, raise_error: bool = False, allow_incomplete_lines: bool = False
@@ -1424,10 +1429,15 @@ class SalesOrder(TotalPriceMixin, Order):
                     _('Order cannot be completed as there are incomplete allocations')
                 )
 
-            if not allow_incomplete_lines and self.pending_line_count > 0:
-                raise ValidationError(
-                    _('Order cannot be completed as there are incomplete line items')
-                )
+            if not allow_incomplete_lines:
+                pending_lines = self.pending_line_items().exclude(part__virtual=True)
+
+                if pending_lines.count() > 0:
+                    raise ValidationError(
+                        _(
+                            'Order cannot be completed as there are incomplete line items'
+                        )
+                    )
 
         except ValidationError as e:
             if raise_error:
@@ -1484,6 +1494,7 @@ class SalesOrder(TotalPriceMixin, Order):
 
             trigger_event(SalesOrderEvents.HOLD, id=self.pk)
 
+    @transaction.atomic
     def _action_complete(self, *args, **kwargs):
         """Mark this order as "complete."""
         user = kwargs.pop('user', None)
@@ -1495,6 +1506,16 @@ class SalesOrder(TotalPriceMixin, Order):
             get_global_setting('SALESORDER_SHIP_COMPLETE')
         )
 
+        # Update line items
+        for line in self.lines.all():
+            # Mark any "virtual" parts as shipped at this point
+            if line.part and line.part.virtual and line.shipped != line.quantity:
+                line.shipped = line.quantity
+                line.save()
+
+            if line.part:
+                line.part.schedule_pricing_update(create=True)
+
         if bypass_shipped or self.status == SalesOrderStatus.SHIPPED:
             self.status = SalesOrderStatus.COMPLETE.value
         else:
@@ -1505,11 +1526,6 @@ class SalesOrder(TotalPriceMixin, Order):
             self.shipment_date = InvenTree.helpers.current_date()
 
         self.save()
-
-        # Schedule pricing update for any referenced parts
-        for line in self.lines.all():
-            if line.part:
-                line.part.schedule_pricing_update(create=True)
 
         trigger_event(SalesOrderEvents.COMPLETED, id=self.pk)
 
@@ -1574,7 +1590,7 @@ class SalesOrder(TotalPriceMixin, Order):
         """Attempt to transition to COMPLETED status."""
         return self.handle_transition(
             self.status,
-            SalesOrderStatus.COMPLETED.value,
+            SalesOrderStatus.COMPLETE.value,
             self,
             self._action_complete,
             user=user,
