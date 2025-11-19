@@ -1059,7 +1059,7 @@ def import_records(
         if 'model' not in entry or 'fields' not in entry:
             continue
 
-        if not entry['model'].startswith('users.userprofile'):
+        if entry['model'] != 'users.userprofile':
             continue
 
         user_profile_username = entry['fields']['user'][0]
