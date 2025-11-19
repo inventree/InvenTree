@@ -32,7 +32,7 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
-import { getDetailUrl } from '@lib/functions/Navigation';
+import { getDetailUrl, getOverviewUrl } from '@lib/functions/Navigation';
 import type { StockOperationProps } from '@lib/types/Forms';
 import { notifications } from '@mantine/notifications';
 import { useBarcodeScanDialog } from '../../components/barcodes/BarcodeScanDialog';
@@ -730,7 +730,20 @@ export default function StockDetail() {
     return {
       items: [stockitem],
       model: ModelType.stockitem,
-      refresh: refreshInstance,
+      refresh: () => {
+        const location = stockitem?.location;
+        refreshInstancePromise().then((response) => {
+          if (response.status == 'error') {
+            // If an error occurs refreshing the instance,
+            // the stock likely has likely been depleted
+            if (location) {
+              navigate(getDetailUrl(ModelType.stocklocation, location));
+            } else {
+              navigate(getOverviewUrl(ModelType.stockitem));
+            }
+          }
+        });
+      },
       filters: {
         in_stock: true
       }
