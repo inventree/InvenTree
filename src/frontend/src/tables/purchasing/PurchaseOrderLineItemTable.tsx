@@ -289,7 +289,8 @@ export function PurchaseOrderLineItemTable({
   const addPurchaseOrderFields = usePurchaseOrderLineItemFields({
     create: true,
     orderId: orderId,
-    supplierId: supplierId
+    supplierId: supplierId,
+    currency: currency
   });
 
   const [initialData, setInitialData] = useState<any>({});
@@ -311,7 +312,8 @@ export function PurchaseOrderLineItemTable({
   const editLineItemFields = usePurchaseOrderLineItemFields({
     create: false,
     orderId: orderId,
-    supplierId: supplierId
+    supplierId: supplierId,
+    currency: currency
   });
 
   const editLine = useEditApiFormModal({

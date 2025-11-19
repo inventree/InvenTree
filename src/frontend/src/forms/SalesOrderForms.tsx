@@ -3,6 +3,7 @@ import { Table } from '@mantine/core';
 import {
   IconAddressBook,
   IconCalendar,
+  IconCoins,
   IconUser,
   IconUsers
 } from '@tabler/icons-react';
@@ -172,6 +173,7 @@ export function useSalesOrderLineItemFields({
         placeholderAutofill: true
       },
       sale_price_currency: {
+        icon: <IconCoins />,
         value: partCurrency,
         onValueChange: setPartCurrency
       },

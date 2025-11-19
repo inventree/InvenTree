@@ -58,19 +58,26 @@ import { useGlobalSettingsState } from '../states/SettingsStates';
 export function usePurchaseOrderLineItemFields({
   supplierId,
   orderId,
+  currency,
   create
 }: {
   supplierId?: number;
   orderId?: number;
+  currency?: string;
   create?: boolean;
 }) {
   const globalSettings = useGlobalSettingsState();
 
   const [purchasePrice, setPurchasePrice] = useState<string>('');
-  const [autoPricing, setAutoPricing] = useState(true);
+  const [purchasePriceCurrency, setPurchasePriceCurrency] = useState<string>(
+    currency ?? ''
+  );
+
+  const [autoPricing, setAutoPricing] = useState(false);
 
   // Internal part information
   const [part, setPart] = useState<any>({});
+  const [priceBreaks, setPriceBreaks] = useState<any[]>([]);
 
   useEffect(() => {
     if (autoPricing) {
@@ -99,6 +106,7 @@ export function usePurchaseOrderLineItemFields({
           price_breaks: true
         },
         onValueChange: (value, record) => {
+          setPriceBreaks(record?.price_breaks ?? []);
           setPart(record?.part_detail ?? {});
         },
         adjustFilters: (adjust: ApiFormAdjustFilterType) => {
@@ -110,17 +118,21 @@ export function usePurchaseOrderLineItemFields({
       },
       reference: {},
       quantity: {},
+      auto_pricing: {
+        value: autoPricing,
+        onValueChange: setAutoPricing
+      },
       purchase_price: {
+        disabled: autoPricing,
         icon: <IconCurrencyDollar />,
         value: purchasePrice,
         onValueChange: setPurchasePrice
       },
       purchase_price_currency: {
-        icon: <IconCoins />
-      },
-      auto_pricing: {
-        value: autoPricing,
-        onValueChange: setAutoPricing
+        icon: <IconCoins />,
+        disabled: autoPricing,
+        value: purchasePriceCurrency,
+        onValueChange: setPurchasePriceCurrency
       },
       project_code: {
         description: t`Select project code for this line item`
