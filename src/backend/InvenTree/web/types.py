@@ -2,7 +2,7 @@
 
 import dataclasses
 from dataclasses import dataclass
-from typing import Any, Optional, Union
+from typing import Any, Optional
 
 from django.utils.functional import Promise
 from django.utils.translation import gettext_lazy as _
@@ -113,7 +113,7 @@ class GuideDefinitionData:
 
     name: str
     slug: str
-    setup: Union[Tipp, FirstUseTipp, Guide]
+    setup: Tipp | FirstUseTipp | Guide
     description: str = ''
 
     @property
