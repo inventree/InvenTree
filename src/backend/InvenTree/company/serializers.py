@@ -329,11 +329,15 @@ class ManufacturerPartParameterSerializer(
     )
 
 
-@register_importer()
-class SupplierPriceBreakSerializer(
-    FilterableSerializerMixin, DataImportExportSerializerMixin, InvenTreeModelSerializer
+class SupplierPriceBreakBriefSerializer(
+    FilterableSerializerMixin, InvenTreeModelSerializer
 ):
-    """Serializer for SupplierPriceBreak object."""
+    """Brief serializer for SupplierPriceBreak object.
+
+    Used to provide a list of price breaks against the SupplierPart object.
+    """
+
+    no_filters = True
 
     class Meta:
         """Metaclass options."""
@@ -346,31 +350,15 @@ class SupplierPriceBreakSerializer(
             'price',
             'price_currency',
             'supplier',
-            'supplier_detail',
             'updated',
         ]
 
-    @staticmethod
-    def annotate_queryset(queryset):
-        """Prefetch related fields for the queryset."""
-        queryset = queryset.select_related('part', 'part__supplier', 'part__part')
-
-        return queryset
-
     quantity = InvenTreeDecimalField()
-
     price = InvenTreeMoneySerializer(allow_null=True, required=True, label=_('Price'))
-
     price_currency = InvenTreeCurrencySerializer()
 
     supplier = serializers.PrimaryKeyRelatedField(
         source='part.supplier', many=False, read_only=True
-    )
-
-    supplier_detail = enable_filter(
-        CompanyBriefSerializer(
-            source='part.supplier', many=False, read_only=True, allow_null=True
-        )
     )
 
 
@@ -488,8 +476,12 @@ class SupplierPartSerializer(
     pack_quantity_native = serializers.FloatField(read_only=True)
 
     price_breaks = enable_filter(
-        SupplierPriceBreakSerializer(
-            source='pricebreaks', many=True, read_only=True, label=_('Price Breaks')
+        SupplierPriceBreakBriefSerializer(
+            source='pricebreaks',
+            many=True,
+            read_only=True,
+            allow_null=True,
+            label=_('Price Breaks'),
         ),
         False,
         filter_name='price_breaks',
@@ -584,3 +576,46 @@ class SupplierPartSerializer(
             supplier_part.save(**kwargs)
 
         return supplier_part
+
+
+@register_importer()
+class SupplierPriceBreakSerializer(
+    SupplierPriceBreakBriefSerializer,
+    DataImportExportSerializerMixin,
+    InvenTreeModelSerializer,
+):
+    """Serializer for SupplierPriceBreak object.
+
+    Note that this inherits from the SupplierPriceBreakBriefSerializer,
+    and does so to prevent circular serializer import issues.
+    """
+
+    class Meta:
+        """Metaclass options."""
+
+        model = SupplierPriceBreak
+        fields = [
+            *SupplierPriceBreakBriefSerializer.Meta.fields,
+            'supplier_detail',
+            'part_detail',
+        ]
+
+    @staticmethod
+    def annotate_queryset(queryset):
+        """Prefetch related fields for the queryset."""
+        queryset = queryset.select_related('part', 'part__supplier', 'part__part')
+
+        return queryset
+
+    supplier_detail = enable_filter(
+        CompanyBriefSerializer(
+            source='part.supplier', many=False, read_only=True, allow_null=True
+        )
+    )
+
+    part_detail = enable_filter(
+        SupplierPartSerializer(
+            source='part', brief=True, many=False, read_only=True, allow_null=True
+        ),
+        False,
+    )

@@ -460,34 +460,11 @@ class SupplierPriceBreakFilter(FilterSet):
     )
 
 
-class SupplierPriceBreakOutputOptions(OutputConfiguration):
-    """Available output options for the SupplierPriceBreak endpoints."""
-
-    OPTIONS = [
-        InvenTreeOutputOption(
-            description='Include detailed information about the linked Part in the response',
-            flag='part_detail',
-            default=False,
-        ),
-        InvenTreeOutputOption(
-            description='Include detailed information about the Supplier in the response',
-            flag='supplier_detail',
-            default=False,
-        ),
-    ]
-
-
-class SupplierPriceBreakList(SerializerContextMixin, OutputOptionsMixin, ListCreateAPI):
-    """API endpoint for list view of SupplierPriceBreak object.
-
-    - GET: Retrieve list of SupplierPriceBreak objects
-    - POST: Create a new SupplierPriceBreak object
-    """
+class SupplierPriceBreakMixin:
+    """Mixin class for SupplierPriceBreak API endpoints."""
 
     queryset = SupplierPriceBreak.objects.all()
     serializer_class = SupplierPriceBreakSerializer
-    filterset_class = SupplierPriceBreakFilter
-    output_options = SupplierPriceBreakOutputOptions
 
     def get_queryset(self):
         """Return annotated queryset for the SupplierPriceBreak list endpoint."""
@@ -495,6 +472,18 @@ class SupplierPriceBreakList(SerializerContextMixin, OutputOptionsMixin, ListCre
         queryset = SupplierPriceBreakSerializer.annotate_queryset(queryset)
 
         return queryset
+
+
+class SupplierPriceBreakList(
+    SupplierPriceBreakMixin, SerializerContextMixin, OutputOptionsMixin, ListCreateAPI
+):
+    """API endpoint for list view of SupplierPriceBreak object.
+
+    - GET: Retrieve list of SupplierPriceBreak objects
+    - POST: Create a new SupplierPriceBreak object
+    """
+
+    filterset_class = SupplierPriceBreakFilter
 
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
@@ -507,18 +496,8 @@ class SupplierPriceBreakList(SerializerContextMixin, OutputOptionsMixin, ListCre
     ordering = 'quantity'
 
 
-class SupplierPriceBreakDetail(RetrieveUpdateDestroyAPI):
+class SupplierPriceBreakDetail(SupplierPriceBreakMixin, RetrieveUpdateDestroyAPI):
     """Detail endpoint for SupplierPriceBreak object."""
-
-    queryset = SupplierPriceBreak.objects.all()
-    serializer_class = SupplierPriceBreakSerializer
-
-    def get_queryset(self):
-        """Return annotated queryset for the SupplierPriceBreak list endpoint."""
-        queryset = super().get_queryset()
-        queryset = SupplierPriceBreakSerializer.annotate_queryset(queryset)
-
-        return queryset
 
 
 manufacturer_part_api_urls = [
