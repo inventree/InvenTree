@@ -1,5 +1,7 @@
 """Sample plugin for registering custom machines."""
 
+import time
+
 from django.db import models
 
 import structlog
@@ -26,7 +28,14 @@ class SamplePrinterDriver(LabelPrinterBaseDriver):
             'name': 'Connection String',
             'description': 'Custom string for connecting to the printer',
             'default': '123-xx123:8000',
-        }
+        },
+        'DELAY': {
+            'name': 'Print Delay',
+            'description': 'Delay (in seconds) before printing',
+            'default': 0,
+            'units': 'seconds',
+            'type': 'integer',
+        },
     }
 
     def init_machine(self, machine: BaseMachineType) -> None:
@@ -44,6 +53,10 @@ class SamplePrinterDriver(LabelPrinterBaseDriver):
         **kwargs,
     ) -> None:
         """Send the label to the printer."""
+        print_delay = int(machine.get_setting('DELAY', backup_value=0))
+
+        time.sleep(print_delay)
+
         print('MOCK LABEL PRINTING:')
         print('- machine:', machine)
         print('- label:', label)
