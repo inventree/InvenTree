@@ -93,9 +93,12 @@ export function ApiFormField({
   // Callback helper when form value changes
   const onChange = useCallback(
     (value: any) => {
-      const rtnValue = value;
+      let rtnValue: any = value;
       // Allow for custom value adjustments (per field)
-      definition.adjustValue?.(value);
+      if (definition.adjustValue) {
+        rtnValue = definition.adjustValue(value);
+      }
+
       field.onChange(rtnValue);
 
       // Run custom callback for this field
