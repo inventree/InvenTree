@@ -30,10 +30,8 @@ def get_unit_registry_hash():
     We use this to determine if we need to reload the unit registry,
     due to changes in the database.
     """
-    cache_key = _UNIT_REG_CACHE_KEY
-
     # Look in the session cache first (faster, and potentially newer)
-    registry_hash = get_session_cache(cache_key)
+    registry_hash = get_session_cache(_UNIT_REG_CACHE_KEY)
 
     if registry_hash is None:
         registry_hash = get_global_setting(
@@ -41,7 +39,7 @@ def get_unit_registry_hash():
         )
 
         if registry_hash:
-            set_session_cache(cache_key, registry_hash)
+            set_session_cache(_UNIT_REG_CACHE_KEY, registry_hash)
 
     return registry_hash
 
@@ -54,11 +52,10 @@ def set_unit_registry_hash(registry_hash: str):
     """
     global _unit_registry_hash
     _unit_registry_hash = registry_hash
-    cache_key = _UNIT_REG_CACHE_KEY
 
     # Save to both the global settings and the session cache
     set_global_setting('_UNIT_REGISTRY_HASH', registry_hash)
-    set_session_cache(cache_key, registry_hash)
+    set_session_cache(_UNIT_REG_CACHE_KEY, registry_hash)
 
 
 def get_unit_registry():
