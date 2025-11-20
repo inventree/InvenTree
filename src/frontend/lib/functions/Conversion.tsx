@@ -40,3 +40,36 @@ export function identifierString(value: string): string {
 
   return value.toLowerCase().replace(/[^a-z0-9]/g, '-');
 }
+
+export function toNumber(
+  value: any,
+  defaultValue: number | null = 0
+): number | null {
+  // Convert the provided value into a number (if possible)
+
+  if (value == undefined || value == null || value === '') {
+    return defaultValue;
+  }
+
+  // Case 1: numeric already
+  if (typeof value === 'number') return value;
+
+  // Case 2: react-number-format object
+  if (typeof value === 'object') {
+    if ('floatValue' in value && typeof value.floatValue === 'number') {
+      return value.floatValue;
+    }
+    if ('value' in value) {
+      const parsed = Number(value.value);
+      return Number.isNaN(parsed) ? Number.NaN : parsed;
+    }
+  }
+
+  // Case 3: string
+  if (typeof value === 'string') {
+    const parsed = Number(value);
+    return Number.isNaN(parsed) ? Number.NaN : parsed;
+  }
+
+  return Number.NaN;
+}
