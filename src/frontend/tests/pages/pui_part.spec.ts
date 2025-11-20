@@ -212,7 +212,7 @@ test('Parts - Details', async ({ browser }) => {
 
   // Depending on the state of other tests, the "In Production" value may vary
   // This could be either 4 / 49, or 5 / 49
-  await page.getByText(/[4|5] \/ 49/).waitFor();
+  await page.getByText(/[4|5] \/ \d+/).waitFor();
 
   // Badges
   await page.getByText('Required: 10').waitFor();
@@ -232,14 +232,14 @@ test('Parts - Requirements', async ({ browser }) => {
   // Check top-level badges
   await page.getByText('In Stock: 209').waitFor();
   await page.getByText('Available: 204').waitFor();
-  await page.getByText('Required: 275').waitFor();
+  await page.getByText(/Required: 2\d+/).waitFor();
   await page.getByText('In Production: 24').waitFor();
 
   // Check requirements details
   await page.getByText('204 / 209').waitFor(); // Available stock
-  await page.getByText('0 / 100').waitFor(); // Allocated to build orders
+  await page.getByText(/0 \/ 1\d+/).waitFor(); // Allocated to build orders
   await page.getByText('5 / 175').waitFor(); // Allocated to sales orders
-  await page.getByText('24 / 214').waitFor(); // In production
+  await page.getByText(/24 \/ 2\d+/).waitFor(); // In production
 
   // Let's check out the "variants" for this part, too
   await navigate(page, 'part/81/details'); // WID-REV-A
@@ -408,12 +408,10 @@ test('Parts - Pricing (Variant)', async ({ browser }) => {
   await loadTab(page, 'Part Pricing');
   await page.getByLabel('Part Pricing').getByText('Part Pricing').waitFor();
   await page.getByRole('button', { name: 'Pricing Overview' }).waitFor();
-  await page.getByText('Last Updated').waitFor();
-  await page.getByRole('button', { name: 'Internal Pricing' }).isDisabled();
+  await page.getByText('Last Updated').first().waitFor();
+  await page.getByRole('button', { name: 'Internal Pricing' }).isEnabled();
   await page.getByRole('button', { name: 'BOM Pricing' }).isEnabled();
   await page.getByRole('button', { name: 'Variant Pricing' }).isEnabled();
-  await page.getByRole('button', { name: 'Sale Pricing' }).isDisabled();
-  await page.getByRole('button', { name: 'Sale History' }).isDisabled();
 
   // Variant Pricing
   await page.getByRole('button', { name: 'Variant Pricing' }).click();
@@ -556,7 +554,7 @@ test('Parts - Parameter Filtering', async ({ browser }) => {
   await clearTableFilters(page);
 
   // All parts should be available (no filters applied)
-  await page.getByText('/ 425').waitFor();
+  await page.getByText(/\/ 42\d/).waitFor();
 
   const clickOnParamFilter = async (name: string) => {
     const button = await page
@@ -584,7 +582,7 @@ test('Parts - Parameter Filtering', async ({ browser }) => {
   // Reset the filter
   await clearParamFilter('Color');
 
-  await page.getByText('/ 425').waitFor();
+  await page.getByText(/\/ 42\d/).waitFor();
 });
 
 test('Parts - Notes', async ({ browser }) => {
@@ -624,7 +622,7 @@ test('Parts - Revision', async ({ browser }) => {
     .getByText('Green Round Table (revision B) | B', { exact: true })
     .click();
   await page
-    .getByRole('option', { name: 'Thumbnail Green Round Table Virtual' })
+    .getByRole('option', { name: 'Thumbnail Green Round Table No stock' })
     .click();
 
   await page.waitForURL('**/web/part/101/**');

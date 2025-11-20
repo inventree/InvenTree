@@ -125,8 +125,11 @@ export function useSalesOrderLineItemFields({
       )
       .sort((a: any, b: any) => a.quantity - b.quantity);
 
-    if (applicablePriceBreaks.length)
+    if (applicablePriceBreaks.length) {
       setSalePrice(applicablePriceBreaks[0].price);
+    } else {
+      setSalePrice('');
+    }
   }, [part, quantity, partCurrency, create]);
 
   return useMemo(() => {
@@ -184,6 +187,7 @@ function SalesOrderAllocateLineRow({
       field_type: 'related field',
       api_url: apiUrl(ApiEndpoints.stock_item_list),
       model: ModelType.stockitem,
+      autoFill: true,
       filters: {
         available: true,
         part_detail: true,

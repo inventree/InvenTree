@@ -202,6 +202,21 @@ class AttachmentTest(InvenTreeAPITestCase):
         self.assignRole('part.delete')
         self.delete(url, expected_code=204)
 
+    def test_fully_qualified_url(self):
+        """Test that the fully qualified URL is returned correctly."""
+        part = Part.objects.first()
+
+        attachment = Attachment.objects.create(
+            attachment=self.generate_file('test.txt'),
+            comment='Testing filename: test.txt',
+            model_type='part',
+            model_id=part.pk,
+        )
+
+        url = attachment.fully_qualified_url()
+        self.assertIs(type(url), str)
+        self.assertIn(f'/media/attachments/part/{part.pk}/test', url)
+
 
 class SettingsTest(InvenTreeTestCase):
     """Tests for the 'settings' model."""

@@ -116,9 +116,15 @@ test('Importing - BOM', async ({ browser }) => {
 
   // Delete selected rows
   await page
-    .getByRole('dialog', { name: 'Importing Data Upload File 2' })
+    .getByRole('dialog', { name: 'Importing Data Upload File' })
+    .getByLabel('action-button-delete-selected')
+    .waitFor();
+  await page.waitForTimeout(200);
+  await page
+    .getByRole('dialog', { name: 'Importing Data Upload File' })
     .getByLabel('action-button-delete-selected')
     .click();
+
   await page.getByRole('button', { name: 'Delete', exact: true }).click();
 
   await page.getByText('Success', { exact: true }).waitFor();

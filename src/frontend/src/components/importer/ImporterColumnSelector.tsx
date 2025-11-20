@@ -16,6 +16,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import type { ApiFormFieldType } from '@lib/types/Forms';
+import { useDebouncedValue } from '@mantine/hooks';
 import { useApi } from '../../contexts/ApiContext';
 import type { ImportSessionState } from '../../hooks/UseImportSession';
 import { StandaloneField } from '../forms/StandaloneField';
@@ -83,6 +84,14 @@ function ImporterDefaultField({
 }) {
   const api = useApi();
 
+  const [rawValue, setRawValue] = useState<any>('');
+
+  const fieldType: string = useMemo(() => {
+    return session.availableFields[fieldName]?.type;
+  }, [fieldName, session.availableFields]);
+
+  const [value] = useDebouncedValue(rawValue, fieldType == 'string' ? 500 : 10);
+
   const onChange = useCallback(
     (value: any) => {
       // Update the default value for the field
@@ -105,6 +114,11 @@ function ImporterDefaultField({
     [fieldName, session, session.fieldDefaults]
   );
 
+  // Update the default value after the debounced value changes
+  useEffect(() => {
+    onChange(value);
+  }, [value]);
+
   const fieldDef: ApiFormFieldType = useMemo(() => {
     let def: any = session.availableFields[fieldName];
 
@@ -114,7 +128,10 @@ function ImporterDefaultField({
         value: session.fieldDefaults[fieldName],
         field_type: def.type,
         description: def.help_text,
-        onValueChange: onChange
+        required: false,
+        onValueChange: (value: string) => {
+          setRawValue(value);
+        }
       };
     }
 
