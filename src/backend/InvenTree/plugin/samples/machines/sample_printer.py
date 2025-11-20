@@ -53,7 +53,7 @@ class SamplePrinterDriver(LabelPrinterBaseDriver):
         **kwargs,
     ) -> None:
         """Send the label to the printer."""
-        print_delay = int(machine.get_setting('DELAY', backup_value=0))
+        print_delay = int(machine.get_setting('DELAY', 'M', backup_value=0))
 
         time.sleep(print_delay)
 
