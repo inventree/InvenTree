@@ -39,6 +39,7 @@ from InvenTree.serializers import (
     NotesFieldMixin,
     enable_filter,
 )
+from InvenTree.tasks import offload_task
 from stock.generators import generate_batch_code
 from stock.models import StockItem, StockLocation
 from stock.serializers import (
@@ -51,6 +52,7 @@ from users.serializers import OwnerSerializer, UserSerializer
 
 from .models import Build, BuildItem, BuildLine
 from .status_codes import BuildStatus
+from .tasks import consume_build_item, consume_build_line
 
 
 class BuildSerializer(
@@ -1845,12 +1847,14 @@ class BuildConsumeSerializer(serializers.Serializer):
 
         return data
 
+    @transaction.atomic
     def save(self):
         """Perform the stock consumption step."""
         data = self.validated_data
         request = self.context.get('request')
         notes = data.get('notes', '')
 
+        # We may be passed either a list of BuildItem or BuildLine instances
         items = data.get('items', [])
         lines = data.get('lines', [])
 
@@ -1865,25 +1869,23 @@ class BuildConsumeSerializer(serializers.Serializer):
                     # Instead, it gets consumed when the output is completed
                     continue
 
-                build_item.complete_allocation(
-                    quantity=quantity,
+                # Offload a background task to consume this BuildItem
+                offload_task(
+                    consume_build_item,
+                    build_item.pk,
+                    quantity,
                     notes=notes,
-                    user=request.user if request else None,
+                    user_id=request.user.pk if request else None,
                 )
 
             # Process the provided BuildLine objects
             for line in lines:
                 build_line = line['build_line']
 
-                # In this case, perform full consumption of all allocated stock
-                for item in build_line.allocations.all():
-                    # If the build item is tracked into an output, we do not consume now
-                    # Instead, it gets consumed when the output is completed
-                    if item.install_into:
-                        continue
-
-                    item.complete_allocation(
-                        quantity=item.quantity,
-                        notes=notes,
-                        user=request.user if request else None,
-                    )
+                # Offload a background task to consume this BuildLine
+                offload_task(
+                    consume_build_line,
+                    build_line.pk,
+                    notes=notes,
+                    user_id=request.user.pk if request else None,
+                )

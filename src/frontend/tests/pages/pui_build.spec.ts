@@ -253,7 +253,7 @@ test('Build Order - Build Outputs', async ({ browser }) => {
 
   // Accept the suggested batch code
   await page
-    .getByRole('img', { name: 'text-field-batch_code-accept-placeholder' })
+    .getByRole('img', { name: 'field-batch_code-accept-placeholder' })
     .click();
 
   await page.getByLabel('related-field-location').click();

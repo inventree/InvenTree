@@ -39,6 +39,51 @@ def auto_allocate_build(build_id: int, **kwargs):
     build_order.auto_allocate_stock(**kwargs)
 
 
+@tracer.start_as_current_span('consume_build_item')
+def consume_build_item(
+    item_id: str, quantity, notes: str = '', user_id: int | None = None
+):
+    """Consume stock against a particular BuildOrderLineItem allocation."""
+    from build.models import BuildItem
+
+    item = BuildItem.objects.filter(pk=item_id).first()
+
+    if not item:
+        logger.warning(
+            'Could not consume stock for BuildItem <%s> - BuildItem does not exist',
+            item_id,
+        )
+        return
+
+    item.complete_allocation(
+        quantity=quantity,
+        notes=notes,
+        user=User.objects.filter(pk=user_id).first() if user_id else None,
+    )
+
+
+@tracer.start_as_current_span('consume_build_line')
+def consume_build_line(line_id: int, notes: str = '', user_id: int | None = None):
+    """Consume stock against a particular BuildOrderLineItem."""
+    from build.models import BuildLine
+
+    line_item = BuildLine.objects.filter(pk=line_id).first()
+
+    if not line_item:
+        logger.warning(
+            'Could not consume stock for LineItem <%s> - LineItem does not exist',
+            line_id,
+        )
+        return
+
+    for item in line_item.allocations.all():
+        item.complete_allocation(
+            quantity=item.quantity,
+            notes=notes,
+            user=User.objects.filter(pk=user_id).first() if user_id else None,
+        )
+
+
 @tracer.start_as_current_span('complete_build_allocations')
 def complete_build_allocations(build_id: int, user_id: int):
     """Complete build allocations for a specified BuildOrder."""
