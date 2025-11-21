@@ -34,7 +34,7 @@ class SamplePrinterDriver(LabelPrinterBaseDriver):
             'description': 'Delay (in seconds) before printing',
             'default': 0,
             'units': 'seconds',
-            'type': 'integer',
+            'validator': int,
         },
     }
 
@@ -53,7 +53,7 @@ class SamplePrinterDriver(LabelPrinterBaseDriver):
         **kwargs,
     ) -> None:
         """Send the label to the printer."""
-        print_delay = int(machine.get_setting('DELAY', 'D', backup_value=0) or 0)
+        print_delay = machine.get_setting('DELAY', 'D')
 
         print('MOCK LABEL PRINTING:')
 

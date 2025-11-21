@@ -357,11 +357,7 @@ class BaseMachineType(
         self.set_shared_state('errors', [])
 
     def get_setting(
-        self,
-        key: str,
-        config_type_str: Literal['M', 'D'],
-        cache: bool = False,
-        backup_value: Any = None,
+        self, key: str, config_type_str: Literal['M', 'D'], cache: bool = False
     ):
         """Return the 'value' of the setting associated with this machine.
 
@@ -369,7 +365,6 @@ class BaseMachineType(
             key: The 'name' of the setting value to be retrieved
             config_type_str: Either "M" (machine scoped settings) or "D" (driver scoped settings)
             cache: Whether to use RAM cached value (default = False)
-            backup_value: A backup value to return if the setting is not found
         """
         from machine.models import MachineSetting
 
@@ -379,7 +374,6 @@ class BaseMachineType(
             machine_config=self.machine_config,
             config_type=config_type,
             cache=cache,
-            backup_value=backup_value,
         )
 
     def set_setting(self, key: str, config_type_str: Literal['M', 'D'], value: Any):
