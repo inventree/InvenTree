@@ -166,10 +166,14 @@ class MetadataMixin(models.Model):
 
         abstract = True
 
-    def save(self, *args, **kwargs):
+    def save(self, force_insert=False, force_update=False, *args, **kwargs):
         """Save the model instance, and perform validation on the metadata field."""
         self.validate_metadata()
-        super().save(*args, **kwargs)
+        if len(args) > 0:
+            raise TypeError(
+                'save() takes no positional arguments anymore'
+            )  # pragma: no cover
+        super().save(force_insert=force_insert, force_update=force_update, **kwargs)
 
     def clean(self, *args, **kwargs):
         """Perform model validation on the metadata field."""
@@ -1064,96 +1068,6 @@ class InvenTreeNotesMixin(models.Model):
     )
 
 
-class InvenTreeImageMixin(models.Model):
-    """A mixin to add image  capability to any model.
-
-    Provides a GenericRelation back to InvenTreeImage, plus helpers for primary image logic.
-    """
-
-    # if True, only one image may ever be attached
-    single_image = False
-
-    images = GenericRelation(
-        'common.InvenTreeImage',
-        content_type_field='content_type',
-        object_id_field='object_id',
-        related_query_name='%(app_label)s_%(class)ss',
-    )
-
-    class Meta:
-        """Metaclass options for this mixin."""
-
-        abstract = True
-
-    def save_image(self, file, file_name, primary=False):
-        """Save an image to this instance.
-
-        Args:
-            file: File object or file-like object (e.g., UploadedFile, BytesIO, or file path)
-            file_name: Name for the image file
-            primary: If True, set this image as the primary image (default: False)
-
-        Returns:
-            InvenTreeImage: The created image instance
-
-        Raises:
-            ValueError: If single_image is True and an image already exists
-        """
-        from django.core.files import File
-
-        from common.models import InvenTreeImage
-
-        # Check if single_image constraint is violated
-        if self.single_image and self.images.exists():
-            raise ValueError('This object can only have a single image')
-
-        # If setting as primary, unset any existing primary images
-        if primary:
-            self.images.filter(primary=True).update(primary=False)
-
-        # Create the InvenTreeImage instance
-        img = InvenTreeImage(content_object=self, primary=primary)
-
-        # Handle different file input types
-        if isinstance(file, str):
-            # If file is a path string, open it
-            with open(file, 'rb') as f:
-                img.image.save(file_name, File(f), save=True)
-        else:
-            # Assume it's a file-like object (UploadedFile, BytesIO, etc.)
-            img.image.save(file_name, file, save=True)
-
-        return img
-
-    def delete(self, *args, **kwargs):
-        """Ensure related images are deleted first."""
-        # delete all related images
-        self.images.all().delete()
-        return super().delete(*args, **kwargs)
-
-    @property
-    def image(self):
-        """Return the primary image, or None."""
-        return self.images.filter(primary=True).first()
-
-    def copy_images_to(self, target_pk):
-        """Copy all images from this instance to another instance of the same model with pk."""
-        from common.models import InvenTreeImage
-
-        ct = ContentType.objects.get_for_model(self, for_concrete_model=False)
-        new_images = []
-        for img in self.images.all():
-            new_img = InvenTreeImage(
-                content_type=ct,
-                object_id=target_pk,
-                primary=img.primary,
-                image=img.image.name,
-            )
-            new_images.append(new_img)
-
-        InvenTreeImage.objects.bulk_create(new_images)
-
-
 class InvenTreeBarcodeMixin(models.Model):
     """A mixin class for adding barcode functionality to a model class.
 
@@ -1385,3 +1299,93 @@ def after_error_logged(sender, instance: Error, created: bool, **kwargs):
                 'link': url,
             },
         )
+
+
+class InvenTreeImageMixin(models.Model):
+    """A mixin to add image  capability to any model.
+
+    Provides a GenericRelation back to InvenTreeImage, plus helpers for primary image logic.
+    """
+
+    # if True, only one image may ever be attached
+    single_image = False
+
+    images = GenericRelation(
+        'common.InvenTreeImage',
+        content_type_field='content_type',
+        object_id_field='object_id',
+        related_query_name='%(app_label)s_%(class)ss',
+    )
+
+    class Meta:
+        """Metaclass options for this mixin."""
+
+        abstract = True
+
+    def save_image(self, file, file_name, primary=False):
+        """Save an image to this instance.
+
+        Args:
+            file: File object or file-like object (e.g., UploadedFile, BytesIO, or file path)
+            file_name: Name for the image file
+            primary: If True, set this image as the primary image (default: False)
+
+        Returns:
+            InvenTreeImage: The created image instance
+
+        Raises:
+            ValueError: If single_image is True and an image already exists
+        """
+        from django.core.files import File
+
+        from common.models import InvenTreeImage
+
+        # Check if single_image constraint is violated
+        if self.single_image and self.images.exists():
+            raise ValueError('This object can only have a single image')
+
+        # If setting as primary, unset any existing primary images
+        if primary:
+            self.images.filter(primary=True).update(primary=False)
+
+        # Create the InvenTreeImage instance
+        img = InvenTreeImage(content_object=self, primary=primary)
+
+        # Handle different file input types
+        if isinstance(file, str):
+            # If file is a path string, open it
+            with open(file, 'rb') as f:
+                img.image.save(file_name, File(f), save=True)
+        else:
+            # Assume it's a file-like object (UploadedFile, BytesIO, etc.)
+            img.image.save(file_name, file, save=True)
+
+        return img
+
+    def delete(self, *args, **kwargs):
+        """Ensure related images are deleted first."""
+        # delete all related images
+        self.images.all().delete()
+        return super().delete(*args, **kwargs)
+
+    @property
+    def image(self):
+        """Return the primary image, or None."""
+        return self.images.filter(primary=True).first()
+
+    def copy_images_to(self, target_pk):
+        """Copy all images from this instance to another instance of the same model with pk."""
+        from common.models import InvenTreeImage
+
+        ct = ContentType.objects.get_for_model(self, for_concrete_model=False)
+        new_images = []
+        for img in self.images.all():
+            new_img = InvenTreeImage(
+                content_type=ct,
+                object_id=target_pk,
+                primary=img.primary,
+                image=img.image.name,
+            )
+            new_images.append(new_img)
+
+        InvenTreeImage.objects.bulk_create(new_images)

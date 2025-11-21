@@ -1,8 +1,9 @@
 """Provides helper mixins that are used throughout the InvenTree project."""
 
 import inspect
+from collections.abc import Callable
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
 from django.conf import settings
 from django.core.cache import cache

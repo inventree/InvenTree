@@ -14,7 +14,7 @@ from email.utils import make_msgid
 from enum import Enum
 from io import BytesIO
 from secrets import compare_digest
-from typing import Any, Optional, Union
+from typing import Any, Optional
 
 from django.apps import apps
 from django.conf import settings as django_settings
@@ -71,7 +71,7 @@ from InvenTree.version import inventree_identifier
 logger = structlog.get_logger('inventree')
 
 
-class RenderMeta(enums.ChoicesMeta):
+class RenderMeta(enums.ChoicesType):
     """Metaclass for rendering choices."""
 
     choice_fnc = None
@@ -243,9 +243,7 @@ class BaseInvenTreeSetting(models.Model):
             missing_keys = set(settings_keys) - set(existing_keys)
 
             if len(missing_keys) > 0:
-                logger.info(
-                    'Building %s default values for %s', len(missing_keys), str(cls)
-                )
+                logger.info('Building %s default values for %s', len(missing_keys), cls)
                 cls.objects.bulk_create([
                     cls(key=key, value=cls.get_setting_default(key), **kwargs)
                     for key in missing_keys
@@ -253,7 +251,7 @@ class BaseInvenTreeSetting(models.Model):
                 ])
         except Exception as exc:
             logger.exception(
-                'Failed to build default values for %s (%s)', str(cls), str(type(exc))
+                'Failed to build default values for %s (%s)', cls, type(exc)
             )
 
     def _call_settings_function(self, reference: str, args, kwargs):
@@ -334,7 +332,7 @@ class BaseInvenTreeSetting(models.Model):
         cls,
         *,
         exclude_hidden=False,
-        settings_definition: Union[dict[str, SettingsKeyType], None] = None,
+        settings_definition: dict[str, SettingsKeyType] | None = None,
         **kwargs,
     ):
         """Return a list of "all" defined settings.
@@ -396,7 +394,7 @@ class BaseInvenTreeSetting(models.Model):
         cls,
         *,
         exclude_hidden=False,
-        settings_definition: Union[dict[str, SettingsKeyType], None] = None,
+        settings_definition: dict[str, SettingsKeyType] | None = None,
         **kwargs,
     ):
         """Return a dict of "all" defined global settings.
@@ -423,7 +421,7 @@ class BaseInvenTreeSetting(models.Model):
         cls,
         *,
         exclude_hidden=False,
-        settings_definition: Union[dict[str, SettingsKeyType], None] = None,
+        settings_definition: dict[str, SettingsKeyType] | None = None,
         **kwargs,
     ):
         """Check if all required settings are set by definition.
@@ -651,9 +649,7 @@ class BaseInvenTreeSetting(models.Model):
             and not key.startswith('_')
         ):
             logger.warning(
-                "get_setting: Setting key '%s' is not defined for class %s",
-                key,
-                str(cls),
+                "get_setting: Setting key '%s' is not defined for class %s", key, cls
             )
 
         # If no backup value is specified, attempt to retrieve a "default" value
@@ -697,9 +693,7 @@ class BaseInvenTreeSetting(models.Model):
             and not key.startswith('_')
         ):
             logger.warning(
-                "set_setting: Setting key '%s' is not defined for class %s",
-                key,
-                str(cls),
+                "set_setting: Setting key '%s' is not defined for class %s", key, cls
             )
 
         if change_user is not None and not change_user.is_staff:
@@ -738,7 +732,7 @@ class BaseInvenTreeSetting(models.Model):
             return
         except Exception as exc:  # pragma: no cover
             logger.exception(
-                "Error setting setting '%s' for %s: %s", key, str(cls), str(type(exc))
+                "Error setting setting '%s' for %s: %s", key, cls, type(exc)
             )
             return
 
@@ -757,7 +751,7 @@ class BaseInvenTreeSetting(models.Model):
             if attempts > 0:
                 # Try again
                 logger.info(
-                    "Duplicate setting key '%s' for %s - trying again", key, str(cls)
+                    "Duplicate setting key '%s' for %s - trying again", key, cls
                 )
                 cls.set_setting(
                     key,
@@ -774,7 +768,7 @@ class BaseInvenTreeSetting(models.Model):
         except Exception as exc:  # pragma: no cover
             # Some other error
             logger.exception(
-                "Error setting setting '%s' for %s: %s", key, str(cls), str(type(exc))
+                "Error setting setting '%s' for %s: %s", key, cls, type(exc)
             )
 
     key = models.CharField(
@@ -2177,7 +2171,7 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
         if self.attachment:
             import InvenTree.helpers_model
 
-            media_url = InvenTree.helpers.getMediaUrl(self.attachment.url)
+            media_url = InvenTree.helpers.getMediaUrl(self.attachment)
             return InvenTree.helpers_model.construct_absolute_url(media_url)
 
         return ''
@@ -2796,7 +2790,7 @@ class EmailMessage(models.Model):
     direction = models.CharField(
         max_length=50, blank=True, null=True, choices=EmailDirection.choices
     )
-    priority = models.IntegerField(verbose_name=_('Prioriy'), choices=Priority.choices)
+    priority = models.IntegerField(verbose_name=_('Prioriy'), choices=Priority)
     delivery_options = models.JSONField(
         blank=True,
         null=True,
@@ -2878,7 +2872,7 @@ def issue_mail(
     subject: str,
     body: str,
     from_email: str,
-    recipients: Union[str, list],
+    recipients: str | list,
     fail_silently: bool = False,
     html_message=None,
     prio: Priority = Priority.NORMAL,

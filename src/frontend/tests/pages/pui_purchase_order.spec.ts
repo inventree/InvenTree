@@ -216,6 +216,44 @@ test('Purchase Orders - Filters', async ({ browser }) => {
   await page.getByRole('option', { name: 'Target Date After' }).waitFor();
 });
 
+test('Purchase Orders - Price Breaks', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    url: 'purchasing/purchase-order/14/line-items'
+  });
+
+  await page
+    .getByRole('button', { name: 'action-button-add-line-item' })
+    .click();
+  await page.getByLabel('related-field-part').fill('002.01');
+  await page.getByRole('option', { name: 'PCBWOY PCB-002.01' }).click();
+
+  // Expected price-break values
+  const priceBreaks = {
+    1: 500,
+    8: 500,
+    10: 565,
+    99: 565,
+    999: 205
+  };
+
+  for (const [qty, expectedPrice] of Object.entries(priceBreaks)) {
+    await page.getByLabel('number-field-quantity').fill(qty);
+
+    await expect(
+      page.getByRole('textbox', { name: 'number-field-purchase_price' })
+    ).toHaveAttribute('placeholder', expectedPrice.toString(), {
+      timeout: 500
+    });
+  }
+
+  // Auto-fill the suggested sale price
+  await page.getByLabel('field-purchase_price-accept-placeholder').click();
+
+  await expect(
+    page.getByRole('textbox', { name: 'number-field-purchase_price' })
+  ).toHaveValue('205', { timeout: 500 });
+});
+
 test('Purchase Orders - Order Parts', async ({ browser }) => {
   const page = await doCachedLogin(browser);
 
@@ -263,7 +301,9 @@ test('Purchase Orders - Order Parts', async ({ browser }) => {
 
   // Select supplier part
   await page.getByLabel('related-field-supplier_part').click();
-  await page.getByText('WM1731-ND').click();
+  await page
+    .getByRole('option', { name: 'Thumbnail DigiKey WM1731-ND' })
+    .click();
 
   // Option to create a new supplier part
   await page.getByLabel('action-button-new-supplier-part').click();

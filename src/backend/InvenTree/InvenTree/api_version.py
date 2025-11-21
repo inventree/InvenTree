@@ -1,15 +1,25 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 424
+INVENTREE_API_VERSION = 427
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v424 -> 2025-11-01 : https://github.com/inventree/InvenTree/pull/...
+v427 -> 2025-11-01 : https://github.com/inventree/InvenTree/pull/...
     - Expose InvenTreeImage model to api/image API endpoints
     - Adds 'image_url' and 'thumbnail_url' fields to relevant API serializers
     - Updates Part and Company API endpoints to use new image architecture
+
+v426 -> 2025-11-19 : https://github.com/inventree/InvenTree/pull/10867
+    - Adds optional "price_breaks" filter to the SupplierPart API endpoint
+
+v425 -> 2025-11-11 : https://github.com/inventree/InvenTree/pull/10802
+    - Adds "on_order" filter to the BuildLine API endpoint
+    - Allow BuildLine list to be ordered by "on_order" and "in_production" fields
+
+v424 -> 2025-11-11 : https://github.com/inventree/InvenTree/pull/10730
+    - Adds more lower / upper bounds to integer fields in the API schema due to bump to Django 5.2- no functional changes
 
 v423 -> 2025-11-05 : https://github.com/inventree/InvenTree/pull/10772
     - Adds "category_detail" field to BomItem API endpoints

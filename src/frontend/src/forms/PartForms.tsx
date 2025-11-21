@@ -20,6 +20,9 @@ export function usePartFields({
 }): ApiFormFieldSet {
   const settings = useGlobalSettingsState();
 
+  const [virtual, setVirtual] = useState<boolean>(false);
+  const [purchaseable, setPurchaseable] = useState<boolean>(false);
+
   return useMemo(() => {
     const fields: ApiFormFieldSet = {
       category: {
@@ -62,9 +65,19 @@ export function usePartFields({
       is_template: {},
       testable: {},
       trackable: {},
-      purchaseable: {},
+      purchaseable: {
+        value: purchaseable,
+        onValueChange: (value: boolean) => {
+          setPurchaseable(value);
+        }
+      },
       salable: {},
-      virtual: {},
+      virtual: {
+        value: virtual,
+        onValueChange: (value: boolean) => {
+          setVirtual(value);
+        }
+      },
       locked: {},
       active: {},
       starred: {
@@ -80,33 +93,37 @@ export function usePartFields({
     if (create) {
       fields.copy_category_parameters = {};
 
-      fields.initial_stock = {
-        icon: <IconPackages />,
-        children: {
-          quantity: {
-            value: 0
-          },
-          location: {}
-        }
-      };
+      if (!virtual) {
+        fields.initial_stock = {
+          icon: <IconPackages />,
+          children: {
+            quantity: {
+              value: 0
+            },
+            location: {}
+          }
+        };
+      }
 
-      fields.initial_supplier = {
-        icon: <IconBuildingStore />,
-        children: {
-          supplier: {
-            filters: {
-              is_supplier: true
-            }
-          },
-          sku: {},
-          manufacturer: {
-            filters: {
-              is_manufacturer: true
-            }
-          },
-          mpn: {}
-        }
-      };
+      if (purchaseable) {
+        fields.initial_supplier = {
+          icon: <IconBuildingStore />,
+          children: {
+            supplier: {
+              filters: {
+                is_supplier: true
+              }
+            },
+            sku: {},
+            manufacturer: {
+              filters: {
+                is_manufacturer: true
+              }
+            },
+            mpn: {}
+          }
+        };
+      }
     }
 
     // Additional fields for part duplication
@@ -159,7 +176,7 @@ export function usePartFields({
     }
 
     return fields;
-  }, [create, duplicatePartInstance, settings]);
+  }, [virtual, purchaseable, create, duplicatePartInstance, settings]);
 }
 
 /**

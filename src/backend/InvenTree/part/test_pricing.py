@@ -7,8 +7,6 @@ from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
 
 import common.currency
-import common.models
-import common.settings
 import company.models
 import order.models
 import part.models
@@ -463,11 +461,11 @@ class PartPricingTests(InvenTreeTestCase):
         p.delete()
 
         # Check that the PartPricing object has been deleted
-        self.assertFalse(part.models.PartPricing.objects.filter(part=p).exists())
+        self.assertFalse(part.models.PartPricing.objects.filter(part_id=p.pk).exists())
 
         # Try to update pricing (should fail gracefully as the Part has been deleted)
         p.schedule_pricing_update(create=False)
-        self.assertFalse(part.models.PartPricing.objects.filter(part=p).exists())
+        self.assertFalse(part.models.PartPricing.objects.filter(part_id=p.pk).exists())
 
     @override_settings(TESTING_PRICING=True)
     def test_multi_level_bom(self):

@@ -6,9 +6,10 @@ import json
 import os
 import re
 import time
+from collections.abc import Callable
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Callable, Optional, Union
+from typing import Optional
 from unittest import mock
 
 from django.contrib.auth import get_user_model
@@ -731,7 +732,7 @@ class InvenTreeAPITestCase(
     def run_output_test(
         self,
         url: str,
-        test_cases: list[Union[tuple[str, str], str]],
+        test_cases: list[tuple[str, str] | str],
         additional_params: Optional[dict] = None,
         assert_subset: bool = False,
         assert_fnc: Optional[Callable] = None,

@@ -320,7 +320,9 @@ export default function SalesOrderLineItemTable({
 
   const allocateStock = useAllocateToSalesOrderForm({
     orderId: orderId,
-    lineItems: selectedItems,
+    lineItems: selectedItems.filter(
+      (item) => item.part_detail?.virtual !== true
+    ),
     onFormSuccess: () => {
       table.refreshTable();
       table.clearSelectedRecords();

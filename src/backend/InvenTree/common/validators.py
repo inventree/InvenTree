@@ -1,7 +1,6 @@
 """Validation helpers for common models."""
 
 import re
-from typing import Union
 
 from django.core.exceptions import ValidationError
 from django.db.models import Model
@@ -160,7 +159,7 @@ def validate_email_domains(setting):
             raise ValidationError(_(f'Invalid domain name: {domain}'))
 
 
-def validate_icon(name: Union[str, None]):
+def validate_icon(name: str | None):
     """Validate the provided icon name, and ignore if empty."""
     if name == '' or name is None:
         return

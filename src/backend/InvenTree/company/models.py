@@ -77,9 +77,9 @@ class CompanyReportContext(report.mixins.BaseReportContext):
 
 class Company(
     InvenTree.models.InvenTreeAttachmentMixin,
-    InvenTree.models.InvenTreeImageMixin,
     InvenTree.models.InvenTreeNotesMixin,
     report.mixins.InvenTreeReportMixin,
+    InvenTree.models.InvenTreeImageMixin,
     InvenTree.models.InvenTreeMetadataModel,
 ):
     """A Company object represents an external company.
@@ -110,6 +110,7 @@ class Company(
 
     # Each company has only an image
     single_image: bool = True
+    IMAGE_RENAME = rename_company_image
 
     class Meta:
         """Metaclass defines extra model options."""

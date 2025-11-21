@@ -3,6 +3,7 @@ import { Table } from '@mantine/core';
 import {
   IconAddressBook,
   IconCalendar,
+  IconCoins,
   IconUser,
   IconUsers
 } from '@tabler/icons-react';
@@ -15,6 +16,7 @@ import { StandaloneField } from '../components/forms/StandaloneField';
 
 import { ProgressBar } from '@lib/components/ProgressBar';
 import { apiUrl } from '@lib/functions/Api';
+import { toNumber } from '@lib/functions/Conversion';
 import type {
   ApiFormAdjustFilterType,
   ApiFormFieldSet,
@@ -109,24 +111,39 @@ export function useSalesOrderLineItemFields({
   create?: boolean;
   currency?: string;
 }): ApiFormFieldSet {
-  const [salePrice, setSalePrice] = useState<string>('0');
+  const [salePrice, setSalePrice] = useState<string | undefined>(undefined);
   const [partCurrency, setPartCurrency] = useState<string>(currency ?? '');
   const [part, setPart] = useState<any>({});
-  const [quantity, setQuantity] = useState<string>('');
+  const [quantity, setQuantity] = useState<string>('1');
 
+  // Update suggested sale price when part, quantity, or part currency changes
   useEffect(() => {
-    if (!create || !part || !part.price_breaks) return;
+    // Only attempt to set sale price for new line items
+    if (!create) return;
 
-    const qty = quantity ? Number.parseInt(quantity, 10) : 0;
+    const qty = toNumber(quantity, null);
 
-    const applicablePriceBreaks = part.price_breaks
-      .filter(
-        (pb: any) => pb.price_currency == partCurrency && qty <= pb.quantity
+    if (qty == null || qty <= 0) {
+      setSalePrice(undefined);
+      return;
+    }
+
+    if (!part || !part.price_breaks || part.price_breaks.length === 0) {
+      setSalePrice(undefined);
+      return;
+    }
+
+    const applicablePriceBreaks = part?.price_breaks
+      ?.filter(
+        (pb: any) => pb.price_currency == partCurrency && qty >= pb.quantity
       )
-      .sort((a: any, b: any) => a.quantity - b.quantity);
+      .sort((a: any, b: any) => b.quantity - a.quantity);
 
-    if (applicablePriceBreaks.length)
+    if (applicablePriceBreaks.length) {
       setSalePrice(applicablePriceBreaks[0].price);
+    } else {
+      setSalePrice(undefined);
+    }
   }, [part, quantity, partCurrency, create]);
 
   return useMemo(() => {
@@ -148,12 +165,16 @@ export function useSalesOrderLineItemFields({
       },
       reference: {},
       quantity: {
-        onValueChange: setQuantity
+        onValueChange: (value) => {
+          setQuantity(value);
+        }
       },
       sale_price: {
-        value: salePrice
+        placeholder: salePrice,
+        placeholderAutofill: true
       },
       sale_price_currency: {
+        icon: <IconCoins />,
         value: partCurrency,
         onValueChange: setPartCurrency
       },
@@ -184,6 +205,7 @@ function SalesOrderAllocateLineRow({
       field_type: 'related field',
       api_url: apiUrl(ApiEndpoints.stock_item_list),
       model: ModelType.stockitem,
+      autoFill: true,
       filters: {
         available: true,
         part_detail: true,

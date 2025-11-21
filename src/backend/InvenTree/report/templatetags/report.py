@@ -5,7 +5,7 @@ import logging
 import os
 from datetime import date, datetime
 from decimal import Decimal, InvalidOperation
-from typing import Any, Optional, Union
+from typing import Any, Optional
 
 from django import template
 from django.apps.registry import apps
@@ -323,18 +323,9 @@ def part_image(part: Part, preview: bool = False, thumbnail: bool = False, **kwa
     """
     if type(part) is not Part:
         raise TypeError(_('part_image tag requires a Part instance'))
-
-    part_img = part.image
-    if not part_img:
-        img = None
-    elif preview:
-        img = None if not hasattr(part.image, 'preview') else part_img.preview.name
-    elif thumbnail:
-        img = None if not hasattr(part.image, 'thumbnail') else part_img.thumbnail.name
-    else:
-        img = part.image.name
-
-    return uploaded_image(img, **kwargs)
+    return uploaded_image(
+        InvenTree.helpers.image2name(part.image, preview, thumbnail), **kwargs
+    )
 
 
 @register.simple_tag()
@@ -369,18 +360,9 @@ def company_image(
     """
     if type(company) is not Company:
         raise TypeError(_('company_image tag requires a Company instance'))
-
-    cmp_img = company.image
-    if not cmp_img:
-        img = None
-    elif preview:
-        img = cmp_img.preview.name
-    elif thumbnail:
-        img = cmp_img.thumbnail.name
-    else:
-        img = cmp_img.name
-
-    return uploaded_image(img, **kwargs)
+    return uploaded_image(
+        InvenTree.helpers.image2name(company.image, preview, thumbnail), **kwargs
+    )
 
 
 @register.simple_tag()
@@ -603,7 +585,7 @@ def render_currency(money, **kwargs):
 
 @register.simple_tag
 def create_currency(
-    amount: Union[str, int, float, Decimal], currency: Optional[str] = None, **kwargs
+    amount: str | int | float | Decimal, currency: Optional[str] = None, **kwargs
 ):
     """Create a Money object, with the provided amount and currency.
 
@@ -694,9 +676,9 @@ def render_html_text(text: str, **kwargs):
 
 @register.simple_tag
 def format_number(
-    number: Union[int, float, Decimal],
+    number: int | float | Decimal,
     decimal_places: Optional[int] = None,
-    multiplier: Optional[Union[int, float, Decimal]] = None,
+    multiplier: Optional[int | float | Decimal] = None,
     integer: bool = False,
     leading: int = 0,
     separator: Optional[str] = None,
