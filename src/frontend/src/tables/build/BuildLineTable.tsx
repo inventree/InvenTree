@@ -5,6 +5,7 @@ import {
   IconCircleCheck,
   IconCircleDashedCheck,
   IconCircleMinus,
+  IconCircleX,
   IconShoppingCart,
   IconTool,
   IconWand
@@ -15,11 +16,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { ActionButton } from '@lib/components/ActionButton';
 import { ProgressBar } from '@lib/components/ProgressBar';
-import {
-  RowDeleteAction,
-  RowEditAction,
-  RowViewAction
-} from '@lib/components/RowActions';
+import { RowEditAction, RowViewAction } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
@@ -110,12 +107,16 @@ export function BuildLineSubTable({
             onEditAllocation?.(record.pk);
           }
         }),
-        RowDeleteAction({
+        {
+          title: t`Remove`,
+          tooltip: t`Remove allocated stock`,
+          icon: <IconCircleX />,
+          color: 'red',
           hidden: !onDeleteAllocation || !user.hasDeleteRole(UserRoles.build),
           onClick: () => {
             onDeleteAllocation?.(record.pk);
           }
-        }),
+        },
         RowViewAction({
           title: t`View Stock Item`,
           modelType: ModelType.stockitem,
@@ -660,8 +661,14 @@ export default function BuildLineTable({
   const deleteAllocation = useDeleteApiFormModal({
     url: ApiEndpoints.build_item_list,
     pk: selectedAllocation,
-    title: t`Delete Stock Allocation`,
-    onFormSuccess: table.refreshTable
+    title: t`Remove Allocated Stock`,
+    submitText: t`Remove`,
+    onFormSuccess: table.refreshTable,
+    preFormContent: (
+      <Alert color='red' title={t`Confirm Removal`}>
+        {t`Are you sure you want to remove this allocated stock from the order?`}
+      </Alert>
+    )
   });
 
   const [partsToOrder, setPartsToOrder] = useState<any[]>([]);

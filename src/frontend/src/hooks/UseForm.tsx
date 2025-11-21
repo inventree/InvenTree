@@ -162,7 +162,7 @@ export function useDeleteApiFormModal(props: ApiFormModalProps) {
       ...props,
       method: props.method ?? 'DELETE',
       submitText: props.submitText ?? t`Delete`,
-      submitColor: 'red',
+      submitColor: props.submitColor ?? 'red',
       successMessage:
         props.successMessage === null
           ? null
