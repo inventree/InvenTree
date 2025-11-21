@@ -1907,7 +1907,7 @@ class StockItem(
         data = dict(StockItem.objects.filter(pk=self.pk).values()[0])
 
         if location:
-            data['location'] = location
+            data['location_id'] = location.pk
 
         # Set the parent ID correctly
         data['parent'] = self
