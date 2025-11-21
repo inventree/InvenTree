@@ -329,6 +329,39 @@ class ManufacturerPartParameterSerializer(
     )
 
 
+class SupplierPriceBreakBriefSerializer(
+    FilterableSerializerMixin, InvenTreeModelSerializer
+):
+    """Brief serializer for SupplierPriceBreak object.
+
+    Used to provide a list of price breaks against the SupplierPart object.
+    """
+
+    no_filters = True
+
+    class Meta:
+        """Metaclass options."""
+
+        model = SupplierPriceBreak
+        fields = [
+            'pk',
+            'part',
+            'quantity',
+            'price',
+            'price_currency',
+            'supplier',
+            'updated',
+        ]
+
+    quantity = InvenTreeDecimalField()
+    price = InvenTreeMoneySerializer(allow_null=True, required=True, label=_('Price'))
+    price_currency = InvenTreeCurrencySerializer()
+
+    supplier = serializers.PrimaryKeyRelatedField(
+        source='part.supplier', many=False, read_only=True
+    )
+
+
 @register_importer()
 class SupplierPartSerializer(
     FilterableSerializerMixin,
@@ -373,14 +406,15 @@ class SupplierPartSerializer(
             'pack_quantity',
             'pack_quantity_native',
             'part',
-            'part_detail',
             'pretty_name',
             'SKU',
             'supplier',
             'supplier_detail',
             'updated',
             'notes',
+            'part_detail',
             'tags',
+            'price_breaks',
         ]
         read_only_fields = [
             'availability_updated',
@@ -441,6 +475,18 @@ class SupplierPartSerializer(
 
     pack_quantity_native = serializers.FloatField(read_only=True)
 
+    price_breaks = enable_filter(
+        SupplierPriceBreakBriefSerializer(
+            source='pricebreaks',
+            many=True,
+            read_only=True,
+            allow_null=True,
+            label=_('Price Breaks'),
+        ),
+        False,
+        filter_name='price_breaks',
+    )
+
     part_detail = part_serializers.PartBriefSerializer(
         label=_('Part'), source='part', many=False, read_only=True, allow_null=True
     )
@@ -489,6 +535,8 @@ class SupplierPartSerializer(
         Fields:
             in_stock: Current stock quantity for each SupplierPart
         """
+        queryset = queryset.prefetch_related('part', 'pricebreaks')
+
         queryset = queryset.annotate(in_stock=part.filters.annotate_total_stock())
 
         queryset = queryset.annotate(
@@ -532,24 +580,24 @@ class SupplierPartSerializer(
 
 @register_importer()
 class SupplierPriceBreakSerializer(
-    FilterableSerializerMixin, DataImportExportSerializerMixin, InvenTreeModelSerializer
+    SupplierPriceBreakBriefSerializer,
+    DataImportExportSerializerMixin,
+    InvenTreeModelSerializer,
 ):
-    """Serializer for SupplierPriceBreak object."""
+    """Serializer for SupplierPriceBreak object.
+
+    Note that this inherits from the SupplierPriceBreakBriefSerializer,
+    and does so to prevent circular serializer import issues.
+    """
 
     class Meta:
         """Metaclass options."""
 
         model = SupplierPriceBreak
         fields = [
-            'pk',
-            'part',
-            'part_detail',
-            'quantity',
-            'price',
-            'price_currency',
-            'supplier',
+            *SupplierPriceBreakBriefSerializer.Meta.fields,
             'supplier_detail',
-            'updated',
+            'part_detail',
         ]
 
     @staticmethod
@@ -559,25 +607,15 @@ class SupplierPriceBreakSerializer(
 
         return queryset
 
-    quantity = InvenTreeDecimalField()
-
-    price = InvenTreeMoneySerializer(allow_null=True, required=True, label=_('Price'))
-
-    price_currency = InvenTreeCurrencySerializer()
-
-    supplier = serializers.PrimaryKeyRelatedField(
-        source='part.supplier', many=False, read_only=True
-    )
-
     supplier_detail = enable_filter(
         CompanyBriefSerializer(
             source='part.supplier', many=False, read_only=True, allow_null=True
         )
     )
 
-    # Detail serializer for SupplierPart
     part_detail = enable_filter(
         SupplierPartSerializer(
             source='part', brief=True, many=False, read_only=True, allow_null=True
-        )
+        ),
+        False,
     )
