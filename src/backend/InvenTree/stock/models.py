@@ -1907,6 +1907,11 @@ class StockItem(
         data = dict(StockItem.objects.filter(pk=self.pk).values()[0])
 
         if location:
+            if location.structural:
+                raise ValidationError({
+                    'location': _('Cannot assign stock to structural location')
+                })
+
             data['location_id'] = location.pk
 
         # Set the parent ID correctly
