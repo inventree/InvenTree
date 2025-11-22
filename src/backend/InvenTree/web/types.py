@@ -1,0 +1,160 @@
+"""Data structures for guides and tipps in InvenTree."""
+
+import dataclasses
+from dataclasses import dataclass
+from typing import Any, Optional
+
+from django.utils.functional import Promise
+from django.utils.translation import gettext_lazy as _
+
+
+@dataclass
+class GeneralInfo:
+    """General information structure for guides and tipps.
+
+    Attributes:
+        title (str): The title of the guide or tipp.
+        detail_text (str): Detailed text content.
+        links (list[tuple[str, str]]): List of (label, URL) tuples for related links.
+        discoverable (bool): Whether this info is discoverable in the user interface / API for non admins.
+        permission_cls (Optional[object]): Permission class for access control.
+    """
+
+    title: str
+    detail_text: str
+    links: Optional[list[tuple[str, str]]] = None
+    discoverable: bool = True
+    permission_cls: Optional[object] = None
+
+
+@dataclass
+class Tipp(GeneralInfo):
+    """Simple tipp."""
+
+
+@dataclass
+class FirstUseTipp(GeneralInfo):
+    """Tipp - shown only once."""
+
+    per_user: bool = True
+    """Only show once per user. If False, show once per installation."""
+    show_to_admins: bool = False
+    """Whether to show this tipp to all admin users."""
+
+
+@dataclass
+class GuideStep:
+    """Single step within a guide.
+
+    Attributes:
+        order_number (int): The execution order number of the step.
+        title (str): The title of the step.
+        detail_text (str): Detailed text content for the step.
+        links (list[tuple[str, str]]): List of (label, URL) tuples for related links.
+        btn_next_text (str): Text label for the 'next' button.
+        btn_back_text (str): Text label for the 'back' button.
+        style(str): Style of the step (e.g., 'normal', 'highlighted').
+        picture (Optional[str]): URL or path to a picture that should be shown.
+        action_text (Optional[str]): Text label for the action button, if applicable.
+        fnc_action (Optional[object]): Optional function to execute as an action for this step.
+        fnc_before (Optional[object]): Optional function to execute before this step.
+        fnc_after (Optional[object]): Optional function to execute after this step.
+    """
+
+    order_number: int
+    # General content
+    title: str
+    detail_text: str
+    links: list[tuple[str, str]]
+    # UI interactions
+    btn_next_text: str = _('Next')
+    btn_back_text: str = _('Back')
+    style: str = 'normal'
+    picture: Optional[str] = None
+    """URL or path to a picture that should be shown."""
+    # Things that cause actions
+    action_text: Optional[str] = None
+    fnc_action: Optional[object] = None
+    fnc_before: Optional[object] = None
+    fnc_after: Optional[object] = None
+
+
+@dataclass
+class Guide(GeneralInfo):
+    """(Multi)step guide."""
+
+    steps: Optional[list[GuideStep]] = None
+    show_total_steps: bool = True
+    """Whether to show total steps in the UI."""
+    calculate_next_step: Optional[object] = None
+    """Optional function to calculate the next step dynamically."""
+    btn_final_text: str = _('Finish')
+    """Text label for the final (last) button."""
+
+    def __init__(self, **kwargs):
+        """Initialize the Guide instance."""
+        super().__init__(**kwargs)
+        if self.steps is None:
+            raise ValueError('steps must be provided for Guide instances')
+
+
+@dataclass
+class GuideDefinitionData:
+    """Data structure for guide definition data.
+
+    Initiate a object of this class to define a guide definition. This will be discovered during startup, registered and made concrete in the database.
+
+    Attributes:
+        name (str): The name of the guide.
+        slug (str): The URL-friendly unique identifier for the guide.
+        description (str): Optional description of the guide.
+        setup (Union[Tipp, FirstUseTipp, Guide]): The functional data for the guide, which can be any of the defined types.
+    """
+
+    name: str
+    slug: str
+    setup: Tipp | FirstUseTipp | Guide
+    description: str = ''
+
+    @property
+    def guide_type(self) -> str:
+        """Determine the guide type based on the setup instance."""
+        if isinstance(self.setup, Tipp):
+            return 'tipp'
+        elif isinstance(self.setup, FirstUseTipp):
+            return 'firstuse'
+        elif isinstance(self.setup, Guide):
+            return 'guide'
+        else:
+            raise ValueError('Invalid setup type for GuideDefinitionData')
+
+    @property
+    def data(self) -> dict[str, Any]:
+        """Return the data as a dictionary suitable for JSONField storage."""
+        _data = dataclasses.asdict(self.setup)
+        # Transform proxy objects into json friendly data
+        for key, value in _data.items():
+            if isinstance(value, Promise):
+                _data[key] = str(value)
+        return _data
+
+    def set_db(self, obj):
+        """Set the linked database object."""
+        self._db_obj = obj
+
+
+# Real guides
+guides = [
+    GuideDefinitionData(
+        name='Admin Center Information Release Info',
+        slug='admin_center_1',
+        setup=Tipp(
+            title=_('Admin Center Information'),
+            detail_text=_(
+                'The home panel (and the whole Admin Center) is a new feature starting with the new UI and was previously (before 1.0) not available.\n'
+                'The admin center provides a centralized location for all administration functionality and is meant to replace all interaction with the (django) backend admin interface.\n'
+                'Please open feature requests (after checking the tracker) for any existing backend admin functionality you are missing in this UI. The backend admin interface should be used carefully and seldom.'
+            ),
+        ),
+    )
+]
