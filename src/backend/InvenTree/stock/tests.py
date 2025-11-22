@@ -1271,9 +1271,11 @@ class StockTreeTest(StockTestBase):
         self.assertEqual(item_1.get_children().count(), 1)
         self.assertEqual(item_2.parent, item_1)
 
+        loc = StockLocation.objects.filter(structural=False).first()
+
         # Serialize the secondary item
         serials = [str(i) for i in range(20)]
-        items = item_2.serializeStock(20, serials)
+        items = item_2.serializeStock(20, serials, location=loc)
 
         self.assertEqual(len(items), 20)
         self.assertEqual(StockItem.objects.count(), N + 22)
@@ -1290,6 +1292,9 @@ class StockTreeTest(StockTestBase):
             self.assertEqual(child.parent, item_2)
             self.assertGreater(child.lft, item_2.lft)
             self.assertLess(child.rght, item_2.rght)
+            self.assertEqual(child.location, loc)
+            self.assertIsNotNone(child.location)
+            self.assertEqual(child.tracking_info.count(), 2)
 
         # Delete item_2 : we expect that all children will be re-parented to item_1
         item_2.delete()
