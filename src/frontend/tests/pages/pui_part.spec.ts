@@ -586,7 +586,7 @@ test('Parts - Test Results', async ({ browser }) => {
 
   await page.waitForTimeout(2500);
 
-  await page.getByText(/- \d+ \/ 12\d/).waitFor();
+  await page.getByText(/1 - \d+ \/ 1\d\d/).waitFor();
   await page.getByText('Blue Paint Applied').waitFor();
 });
 
