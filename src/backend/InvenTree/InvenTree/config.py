@@ -7,6 +7,7 @@ import os
 import random
 import shutil
 import string
+import sys
 from pathlib import Path
 from typing import Optional
 
@@ -195,7 +196,13 @@ def load_config_data(set_cache: bool = False) -> map | None:
     cfg_file = get_config_file()
 
     with open(cfg_file, encoding='utf-8') as cfg:
-        data = yaml.safe_load(cfg)
+        try:
+            data = yaml.safe_load(cfg)
+        except yaml.parser.ParserError as error:
+            logger.error(
+                "Error reading InvenTree configuration file '%s': %s", cfg_file, error
+            )
+            sys.exit(1)
 
     # Set the cache if requested
     if set_cache:
@@ -222,6 +229,11 @@ def do_typecast(value, type, var_name=None):
     # Valid JSON string is required
     elif type is dict:
         value = to_dict(value)
+
+    # Special handling for boolean typecasting
+    elif type is bool:
+        val = is_true(value)
+        return val
 
     elif type is not None:
         # Try to typecast the value

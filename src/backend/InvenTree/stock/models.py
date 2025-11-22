@@ -827,7 +827,7 @@ class StockItem(
         super().save(*args, **kwargs)
 
         # If user information is provided, and no existing note exists, create one!
-        if user and add_note and self.tracking_info.count() == 0:
+        if add_note and self.tracking_info.count() == 0:
             tracking_info = {'status': self.status}
 
             self.add_tracking_entry(
@@ -1907,7 +1907,12 @@ class StockItem(
         data = dict(StockItem.objects.filter(pk=self.pk).values()[0])
 
         if location:
-            data['location'] = location
+            if location.structural:
+                raise ValidationError({
+                    'location': _('Cannot assign stock to structural location')
+                })
+
+            data['location_id'] = location.pk
 
         # Set the parent ID correctly
         data['parent'] = self
@@ -1920,7 +1925,17 @@ class StockItem(
         history_items = []
 
         for item in items:
-            # Construct a tracking entry for the new StockItem
+            # Construct tracking entries for the new StockItem
+            if entry := item.add_tracking_entry(
+                StockHistoryCode.SPLIT_FROM_PARENT,
+                user,
+                quantity=1,
+                notes=notes,
+                location=location,
+                commit=False,
+            ):
+                history_items.append(entry)
+
             if entry := item.add_tracking_entry(
                 StockHistoryCode.ASSIGNED_SERIAL,
                 user,
@@ -1937,7 +1952,9 @@ class StockItem(
         StockItemTracking.objects.bulk_create(history_items)
 
         # Remove the equivalent number of items
-        self.take_stock(quantity, user, notes=notes)
+        self.take_stock(
+            quantity, user, code=StockHistoryCode.STOCK_SERIZALIZED, notes=notes
+        )
 
         return items
 
