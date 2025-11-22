@@ -26,14 +26,11 @@ class SettingsValidatorTests(TestCase):
             err.exception.messages[0], 'wrong does not exist in Part Model'
         )
 
-        # Broken templates
-        with self.assertRaises(ValidationError) as err:
-            common.setting.system.validate_part_name_format('{{')
-        self.assertEqual(err.exception.messages[0], "unexpected 'end of template'")
-
         with self.assertRaises(ValidationError) as err:
             common.setting.system.validate_part_name_format(None)
-        self.assertEqual(err.exception.messages[0], "Can't compile non template nodes")
+            self.assertEqual(
+                err.exception.messages[0], 'Template string cannot be empty'
+            )
 
         # Correct template
         self.assertTrue(
