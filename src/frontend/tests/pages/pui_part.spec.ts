@@ -581,6 +581,15 @@ test('Parts - Parameter Filtering', async ({ browser }) => {
   await page.getByText(/\/ 42\d/).waitFor();
 });
 
+test('Parts - Test Results', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: '/part/74/test_results' });
+
+  await page.waitForTimeout(2500);
+
+  await page.getByText(/- \d+ \/ 12\d/).waitFor();
+  await page.getByText('Blue Paint Applied').waitFor();
+});
+
 test('Parts - Notes', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: 'part/69/notes' });
 
