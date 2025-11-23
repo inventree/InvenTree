@@ -83,6 +83,12 @@ This is a security measure to prevent plugins from changing the core functionali
 
 An error occurred when discovering or initializing a machine type from a plugin. This likely indicates a faulty or incompatible plugin.
 
+#### INVE-E14
+
+**Error reading InvenTree configuration file**
+
+An error occurred while reading the InvenTree configuration file. This might be caused by a syntax error or invalid value in the configuration file.
+
 ### INVE-W (InvenTree Warning)
 Warnings - These are non-critical errors which should be addressed when possible.
 
@@ -153,7 +159,7 @@ The warning text will show the recommended command for intended use.
 #### INVE-W10
 **Config not in recommended directory - Backend**
 
-A configuration file is not in the recommended directory. This might lead to issues with the deployment method you are using. It might also lead to confusinon.
+A configuration file is not in the recommended directory. This might lead to issues with the deployment method you are using. It might also lead to confusion.
 
 The warning text will show the recommended directory for your deployment method.
 
