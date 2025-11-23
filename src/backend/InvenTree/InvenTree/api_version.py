@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 426
+INVENTREE_API_VERSION = 427
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v427 -> 2025-11-22 : https://github.com/inventree/InvenTree/pull/10887
+    - Extend the "auto allocate" wizard API to include tracked items
 
 v426 -> 2025-11-19 : https://github.com/inventree/InvenTree/pull/10867
     - Adds optional "price_breaks" filter to the SupplierPart API endpoint
