@@ -83,7 +83,7 @@ This is a security measure to prevent plugins from changing the core functionali
 
 An error occurred when discovering or initializing a machine type from a plugin. This likely indicates a faulty or incompatible plugin.
 
-#### INVE-E14
+#### INVE-E13
 
 **Error reading InvenTree configuration file**
 
