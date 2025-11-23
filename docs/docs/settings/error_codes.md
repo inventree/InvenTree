@@ -89,6 +89,12 @@ An error occurred when discovering or initializing a machine type from a plugin.
 
 An error occurred while reading the InvenTree configuration file. This might be caused by a syntax error or invalid value in the configuration file.
 
+#### INVE-E14
+
+**Could not import Django**
+
+Django is not installed in the current Python environment. This means that the InvenTree backend is not running within the correct [python virtual environment](../start/index.md#virtual-environment) or that the required Python packages were not installed correctly.
+
 ### INVE-W (InvenTree Warning)
 Warnings - These are non-critical errors which should be addressed when possible.
 
