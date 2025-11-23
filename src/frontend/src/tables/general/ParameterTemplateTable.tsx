@@ -38,7 +38,8 @@ export default function ParameterTemplateTable() {
       model_type: {},
       choices: {},
       checkbox: {},
-      selectionlist: {}
+      selectionlist: {},
+      enabled: {}
     };
   }, []);
 
@@ -183,7 +184,8 @@ export default function ParameterTemplateTable() {
         accessor: 'choices'
       },
       BooleanColumn({
-        accessor: 'enabled'
+        accessor: 'enabled',
+        title: t`Enabled`
       })
     ];
   }, []);

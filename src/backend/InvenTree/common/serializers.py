@@ -717,6 +717,7 @@ class ParameterTemplateSerializer(
             'checkbox',
             'choices',
             'selectionlist',
+            'enabled',
         ]
 
     def __init__(self, *args, **kwargs):
