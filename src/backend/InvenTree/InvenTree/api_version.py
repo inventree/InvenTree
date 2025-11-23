@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 425
+INVENTREE_API_VERSION = 426
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v426 -> 2025-11-19 : https://github.com/inventree/InvenTree/pull/10867
+    - Adds optional "price_breaks" filter to the SupplierPart API endpoint
 
 v425 -> 2025-11-11 : https://github.com/inventree/InvenTree/pull/10802
     - Adds "on_order" filter to the BuildLine API endpoint

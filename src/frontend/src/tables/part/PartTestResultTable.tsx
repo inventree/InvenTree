@@ -26,7 +26,7 @@ import { formatDate } from '../../defaults/formatters';
 import { useTestResultFields } from '../../forms/StockForms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
-import { LocationColumn } from '../ColumnRenderers';
+import { LocationColumn, PartColumn } from '../ColumnRenderers';
 import {
   BatchFilter,
   HasBatchCodeFilter,
@@ -243,6 +243,14 @@ export default function PartTestResultTable({
   const tableColumns: TableColumn[] = useMemo(() => {
     // Fixed columns
     const columns: TableColumn[] = [
+      PartColumn({
+        title: t`Part`,
+        part: 'part_detail',
+        full_name: true,
+        ordering: 'part',
+        sortable: true,
+        switchable: true
+      }),
       {
         accessor: 'stock',
         title: t`Stock Item`,
@@ -354,6 +362,7 @@ export default function PartTestResultTable({
             part_detail: true,
             location_detail: true,
             tests: true,
+            part: partId,
             build: buildId
           },
           enableSelection: true,

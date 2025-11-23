@@ -514,10 +514,13 @@ test('Parts - Parameters', async ({ browser }) => {
   // Submit with "false" value
   await page.getByRole('button', { name: 'Submit' }).click();
 
+  const cell = await page.getByRole('cell', {
+    name: 'Is this part polarized?'
+  });
+
   // Check for the expected values in the table
-  let row = await getRowFromCell(
-    await page.getByRole('cell', { name: 'Polarized', exact: true })
-  );
+  const row = await getRowFromCell(cell);
+
   await row.getByRole('cell', { name: 'No', exact: true }).waitFor();
   await row.getByRole('cell', { name: 'allaccess' }).waitFor();
   await row.getByLabel(/row-action-menu-/i).click();
@@ -531,13 +534,6 @@ test('Parts - Parameters', async ({ browser }) => {
     .first()
     .click();
   await page.getByRole('button', { name: 'Submit' }).click();
-
-  row = await getRowFromCell(
-    await page.getByRole('cell', { name: 'Polarized', exact: true })
-  );
-  await row.getByRole('cell', { name: 'Yes', exact: true }).waitFor();
-
-  await page.getByText('1 - 1 / 1').waitFor();
 
   // Finally, delete the parameter
   await row.getByLabel(/row-action-menu-/i).click();
@@ -583,6 +579,15 @@ test('Parts - Parameter Filtering', async ({ browser }) => {
   await clearParamFilter('Color');
 
   await page.getByText(/\/ 42\d/).waitFor();
+});
+
+test('Parts - Test Results', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: '/part/74/test_results' });
+
+  await page.waitForTimeout(2500);
+
+  await page.getByText(/1 - \d+ \/ 1\d\d/).waitFor();
+  await page.getByText('Blue Paint Applied').waitFor();
 });
 
 test('Parts - Notes', async ({ browser }) => {

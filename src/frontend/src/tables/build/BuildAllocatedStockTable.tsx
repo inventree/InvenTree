@@ -1,11 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { useCallback, useMemo, useState } from 'react';
 
-import {
-  type RowAction,
-  RowDeleteAction,
-  RowEditAction
-} from '@lib/components/RowActions';
+import { type RowAction, RowEditAction } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
@@ -14,7 +10,8 @@ import { ActionButton } from '@lib/index';
 import type { TableFilter } from '@lib/types/Filters';
 import type { StockOperationProps } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
-import { IconCircleDashedCheck } from '@tabler/icons-react';
+import { Alert } from '@mantine/core';
+import { IconCircleDashedCheck, IconCircleX } from '@tabler/icons-react';
 import { useConsumeBuildItemsForm } from '../../forms/BuildForms';
 import {
   useDeleteApiFormModal,
@@ -177,8 +174,14 @@ export default function BuildAllocatedStockTable({
   const deleteItem = useDeleteApiFormModal({
     pk: selectedItemId,
     url: ApiEndpoints.build_item_list,
-    title: t`Delete Stock Allocation`,
-    table: table
+    title: t`Remove Allocated Stock`,
+    submitText: t`Remove`,
+    table: table,
+    preFormContent: (
+      <Alert color='red' title={t`Confirm Removal`}>
+        {t`Are you sure you want to remove this allocated stock from the order?`}
+      </Alert>
+    )
   });
 
   const [selectedItems, setSelectedItems] = useState<any[]>([]);
@@ -251,13 +254,17 @@ export default function BuildAllocatedStockTable({
             editItem.open();
           }
         }),
-        RowDeleteAction({
+        {
+          title: t`Remove`,
+          tooltip: t`Remove allocated stock`,
+          icon: <IconCircleX />,
+          color: 'red',
           hidden: !user.hasDeleteRole(UserRoles.build),
           onClick: () => {
             setSelectedItemId(record.pk);
             deleteItem.open();
           }
-        })
+        }
       ];
     },
     [user]
