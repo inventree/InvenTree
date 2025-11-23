@@ -68,5 +68,6 @@ class Migration(migrations.Migration):
             copy_part_parameters,
             reverse_code=migrations.RunPython.noop
         ),
-        # TODO: Data migration for ManufacturerPartParameter
+        # TODO: Data migration for existing ManufacturerPartParameter objects
+        # TODO: Data migration for existing CategoryParameter objects
     ]
