@@ -27,7 +27,6 @@ class GuideDefinition(InvenTree.models.MetadataMixin):
 
         Tipp = 'tipp', _('Tipp')
         FirstUseTipp = 'firstuse', _('First Use Tipp')
-        Guide = 'guide', _('Guide')
 
     uid = models.CharField(
         max_length=255,

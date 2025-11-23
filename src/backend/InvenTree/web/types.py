@@ -43,62 +43,6 @@ class FirstUseTipp(GeneralInfo):
 
 
 @dataclass
-class GuideStep:
-    """Single step within a guide.
-
-    Attributes:
-        order_number (int): The execution order number of the step.
-        title (str): The title of the step.
-        detail_text (str): Detailed text content for the step.
-        links (list[tuple[str, str]]): List of (label, URL) tuples for related links.
-        btn_next_text (str): Text label for the 'next' button.
-        btn_back_text (str): Text label for the 'back' button.
-        style(str): Style of the step (e.g., 'normal', 'highlighted').
-        picture (Optional[str]): URL or path to a picture that should be shown.
-        action_text (Optional[str]): Text label for the action button, if applicable.
-        fnc_action (Optional[object]): Optional function to execute as an action for this step.
-        fnc_before (Optional[object]): Optional function to execute before this step.
-        fnc_after (Optional[object]): Optional function to execute after this step.
-    """
-
-    order_number: int
-    # General content
-    title: str
-    detail_text: str
-    links: list[tuple[str, str]]
-    # UI interactions
-    btn_next_text: str = _('Next')
-    btn_back_text: str = _('Back')
-    style: str = 'normal'
-    picture: Optional[str] = None
-    """URL or path to a picture that should be shown."""
-    # Things that cause actions
-    action_text: Optional[str] = None
-    fnc_action: Optional[object] = None
-    fnc_before: Optional[object] = None
-    fnc_after: Optional[object] = None
-
-
-@dataclass
-class Guide(GeneralInfo):
-    """(Multi)step guide."""
-
-    steps: Optional[list[GuideStep]] = None
-    show_total_steps: bool = True
-    """Whether to show total steps in the UI."""
-    calculate_next_step: Optional[object] = None
-    """Optional function to calculate the next step dynamically."""
-    btn_final_text: str = _('Finish')
-    """Text label for the final (last) button."""
-
-    def __init__(self, **kwargs):
-        """Initialize the Guide instance."""
-        super().__init__(**kwargs)
-        if self.steps is None:
-            raise ValueError('steps must be provided for Guide instances')
-
-
-@dataclass
 class GuideDefinitionData:
     """Data structure for guide definition data.
 
@@ -113,7 +57,7 @@ class GuideDefinitionData:
 
     name: str
     slug: str
-    setup: Tipp | FirstUseTipp | Guide
+    setup: Tipp | FirstUseTipp
     description: str = ''
 
     @property
@@ -123,8 +67,6 @@ class GuideDefinitionData:
             return 'tipp'
         elif isinstance(self.setup, FirstUseTipp):
             return 'firstuse'
-        elif isinstance(self.setup, Guide):
-            return 'guide'
         else:
             raise ValueError('Invalid setup type for GuideDefinitionData')
 
