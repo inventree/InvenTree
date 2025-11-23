@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 426
+INVENTREE_API_VERSION = 427
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v427 -> 2025-11-24 : https://github.com/inventree/InvenTree/pull/10896
+    - Fixes a spelling mistake in the API field labels
 
 v426 -> 2025-11-19 : https://github.com/inventree/InvenTree/pull/10867
     - Adds optional "price_breaks" filter to the SupplierPart API endpoint
