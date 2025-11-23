@@ -40,15 +40,26 @@ class GuideDefinitionSerializer(FilterableSerializerMixin, InvenTreeModelSeriali
 
         For example, a 'First Use Tipp' might only be applicable if the user has never used the system before.
         """
-        # Example logic - this can be customized as needed
+        user = self.context['request'].user
+        executions = GuideExecution.objects.filter(user=user, type=instance.guide_type)
+
+        # Specific logic based on guide type
+
         if instance.guide_type == GuideDefinition.GuideType.FirstUseTipp:
             # Check if the user has any prior activity
-            user = self.context['request'].user
             if not user.is_authenticated:
                 return False
             # Placeholder for actual activity check
-            has_activity = GuideExecution.objects.filter(user=user).exists()
-            return not has_activity
+            return not executions.exists()
+
+        elif instance.guide_type == GuideDefinition.GuideType.Tipp:
+            # Check if the user has any prior activity
+            if not user.is_authenticated:
+                return False
+            # Tipps are always applicable if not a "done" execution is recorded
+            if executions.filter(done=True).exists():
+                return False
+
         return True
 
 
