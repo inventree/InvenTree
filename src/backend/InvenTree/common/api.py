@@ -38,12 +38,13 @@ from generic.states.api import urlpattern as generic_states_api_urls
 from InvenTree.api import BulkDeleteMixin, MetadataView
 from InvenTree.config import CONFIG_LOOKUPS
 from InvenTree.filters import ORDER_FILTER, SEARCH_ORDER_FILTER
-from InvenTree.helpers import inheritors
+from InvenTree.helpers import inheritors, str2bool
 from InvenTree.helpers_email import send_email
 from InvenTree.mixins import (
     CreateAPI,
     ListAPI,
     ListCreateAPI,
+    OutputOptionsMixin,
     RetrieveAPI,
     RetrieveDestroyAPI,
     RetrieveUpdateAPI,
@@ -708,12 +709,16 @@ class AttachmentFilter(FilterSet):
         return queryset.filter(Q(attachment=None) | Q(attachment='')).distinct()
 
 
-class AttachmentList(BulkDeleteMixin, ListCreateAPI):
-    """List API endpoint for Attachment objects."""
+class AttachmentMixin:
+    """Mixin class for Attachment views."""
 
     queryset = common.models.Attachment.objects.all()
     serializer_class = common.serializers.AttachmentSerializer
     permission_classes = [IsAuthenticatedOrReadScope]
+
+
+class AttachmentList(AttachmentMixin, BulkDeleteMixin, ListCreateAPI):
+    """List API endpoint for Attachment objects."""
 
     filter_backends = SEARCH_ORDER_FILTER
     filterset_class = AttachmentFilter
@@ -746,12 +751,8 @@ class AttachmentList(BulkDeleteMixin, ListCreateAPI):
                     )
 
 
-class AttachmentDetail(RetrieveUpdateDestroyAPI):
+class AttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI):
     """Detail API endpoint for Attachment objects."""
-
-    queryset = common.models.Attachment.objects.all()
-    serializer_class = common.serializers.AttachmentSerializer
-    permission_classes = [IsAuthenticatedOrReadScope]
 
     def destroy(self, request, *args, **kwargs):
         """Check user permissions before deleting an attachment."""
@@ -763,6 +764,120 @@ class AttachmentDetail(RetrieveUpdateDestroyAPI):
             )
 
         return super().destroy(request, *args, **kwargs)
+
+
+class ParameterTemplateFilter(FilterSet):
+    """FilterSet class for the ParameterTemplateList API endpoint."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = common.models.ParameterTemplate
+        fields = ['model_type', 'name', 'units', 'checkbox']
+
+    has_choices = rest_filters.BooleanFilter(
+        method='filter_has_choices', label='Has Choice'
+    )
+
+    def filter_has_choices(self, queryset, name, value):
+        """Filter queryset to include only PartParameterTemplates with choices."""
+        if str2bool(value):
+            return queryset.exclude(Q(choices=None) | Q(choices=''))
+
+        return queryset.filter(Q(choices=None) | Q(choices='')).distinct()
+
+    has_units = rest_filters.BooleanFilter(method='filter_has_units', label='Has Units')
+
+    def filter_has_units(self, queryset, name, value):
+        """Filter queryset to include only PartParameterTemplates with units."""
+        if str2bool(value):
+            return queryset.exclude(Q(units=None) | Q(units=''))
+
+        return queryset.filter(Q(units=None) | Q(units='')).distinct()
+
+    for_model = rest_filters.CharFilter(method='filter_for_model', label='For Model')
+
+    def filter_for_model(self, queryset, name, value):
+        """Filter queryset to include only ParameterTemplates which apply to the given model.
+
+        Note that this varies from the 'model_type' filter, in that ParameterTemplates
+        with a blank 'model_type' are considered to apply to all models.
+        """
+        return queryset.filter(
+            Q(model_type__iexact=value) | Q(model_type__isnull=True) | Q(model_type='')
+        ).distinct()
+
+
+class ParameterTemplateMixin:
+    """Mixin class for ParameterTemplate views."""
+
+    queryset = common.models.ParameterTemplate.objects.all()
+    serializer_class = common.serializers.ParameterTemplateSerializer
+
+
+class ParameterTemplateList(ParameterTemplateMixin, DataExportViewMixin, ListCreateAPI):
+    """List view for ParameterTemplate objects."""
+
+    filterset_class = ParameterTemplateFilter
+    filter_backends = SEARCH_ORDER_FILTER
+    search_fields = ['name', 'description']
+    ordering_fields = ['name', 'units', 'checkbox']
+
+
+class ParameterTemplateDetail(ParameterTemplateMixin, RetrieveUpdateDestroyAPI):
+    """Detail view for a ParameterTemplate object."""
+
+
+class ParameterFilter(FilterSet):
+    """Custom filters for the ParameterList API endpoint."""
+
+    class Meta:
+        """Metaclass options for the filterset."""
+
+        model = common.models.Parameter
+        fields = ['model_type', 'model_id', 'template', 'updated_by']
+
+
+class ParameterMixin:
+    """Mixin class for Parameter views."""
+
+    queryset = common.models.Parameter.objects.all()
+    serializer_class = common.serializers.ParameterSerializer
+    permission_classes = [IsAuthenticatedOrReadScope]
+
+
+class ParameterList(
+    OutputOptionsMixin,
+    ParameterMixin,
+    BulkDeleteMixin,
+    DataExportViewMixin,
+    ListCreateAPI,
+):
+    """List API endpoint for Parameter objects."""
+
+    filterset_class = ParameterFilter
+    filter_backends = SEARCH_ORDER_FILTER
+
+    ordering_fields = ['name', 'data', 'units', 'template', 'updated', 'updated_by']
+
+    ordering_field_aliases = {
+        'name': 'template__name',
+        'units': 'template__units',
+        'data': ['data_numeric', 'data'],
+    }
+
+    search_fields = [
+        'data',
+        'template__name',
+        'template__description',
+        'template__units',
+    ]
+
+    unique_create_fields = ['model_type', 'model_id', 'template']
+
+
+class ParameterDetail(ParameterMixin, RetrieveUpdateDestroyAPI):
+    """Detail API endpoint for Parameter objects."""
 
 
 @method_decorator(cache_control(public=True, max_age=86400), name='dispatch')
@@ -995,6 +1110,39 @@ common_api_urls = [
                 ]),
             ),
             path('', AttachmentList.as_view(), name='api-attachment-list'),
+        ]),
+    ),
+    # Parameters and templates
+    path(
+        'parameter/',
+        include([
+            path(
+                'template/',
+                include([
+                    path(
+                        '<int:pk>/',
+                        include([
+                            path(
+                                '',
+                                ParameterTemplateDetail.as_view(),
+                                name='api-parameter-template-detail',
+                            )
+                        ]),
+                    ),
+                    path(
+                        '',
+                        ParameterTemplateList.as_view(),
+                        name='api-parameter-template-list',
+                    ),
+                ]),
+            ),
+            path(
+                '<int:pk>/',
+                include([
+                    path('', ParameterDetail.as_view(), name='api-parameter-detail')
+                ]),
+            ),
+            path('', ParameterList.as_view(), name='api-parameter-list'),
         ]),
     ),
     path(

@@ -243,5 +243,7 @@ export enum ApiEndpoints {
   notes_image_upload = 'notes-image-upload/',
   email_list = 'admin/email/',
   email_test = 'admin/email/test/',
-  config_list = 'admin/config/'
+  config_list = 'admin/config/',
+  parameter_list = 'parameter/',
+  parameter_template_list = 'parameter/template/'
 }
