@@ -2873,7 +2873,7 @@ def handle_event(sender, event, esp_name, **kwargs):
 if TRACE_PROC:  # pragma: no cover
 
     @receiver(post_spawn)
-    def spwan_callback(sender, proc_name, **kwargs):
+    def spawn_callback(sender, proc_name, **kwargs):
         """Callback to patch in tracing support."""
         TRACE_PROV.add_span_processor(TRACE_PROC)
         trace.set_tracer_provider(TRACE_PROV)
