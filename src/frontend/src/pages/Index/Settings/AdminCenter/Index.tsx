@@ -191,8 +191,8 @@ export default function AdminCenter() {
         content: <UnitManagementPanel />
       },
       {
-        name: 'part-parameters',
-        label: t`Part Parameters`,
+        name: 'parameters',
+        label: t`Parameters`,
         icon: <IconList />,
         content: <PartParameterPanel />,
         hidden: !user.hasViewRole(UserRoles.part)
@@ -274,7 +274,7 @@ export default function AdminCenter() {
         id: 'plm',
         label: t`PLM`,
         panelIDs: [
-          'part-parameters',
+          'parameters',
           'category-parameters',
           'location-types',
           'stocktake'

@@ -773,7 +773,7 @@ class ParameterTemplateFilter(FilterSet):
         """Metaclass options."""
 
         model = common.models.ParameterTemplate
-        fields = ['model_type', 'name', 'units', 'checkbox']
+        fields = ['model_type', 'name', 'units', 'checkbox', 'enabled']
 
     has_choices = rest_filters.BooleanFilter(
         method='filter_has_choices', label='Has Choice'

@@ -108,6 +108,14 @@ class Migration(migrations.Migration):
                         verbose_name="Selection List",
                     ),
                 ),
+                (
+                    "enabled",
+                    models.BooleanField(
+                        default=True,
+                        help_text="Is this parameter template enabled?",
+                        verbose_name="Enabled",
+                    ),
+                )
             ],
             bases=(InvenTree.models.PluginValidationMixin, models.Model),
         ),

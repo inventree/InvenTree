@@ -2377,6 +2377,7 @@ class ParameterTemplate(
         checkbox: Is this template a checkbox (boolean) type?
         choices: Comma-separated list of choices (if applicable)
         selectionlist: Optional link to a SelectionList for this template
+        enabled: Is this template enabled?
     """
 
     class Meta:
@@ -2521,6 +2522,12 @@ class ParameterTemplate(
         related_name='templates',
         verbose_name=_('Selection List'),
         help_text=_('Selection list for this parameter'),
+    )
+
+    enabled = models.BooleanField(
+        default=True,
+        verbose_name=_('Enabled'),
+        help_text=_('Is this parameter template enabled?'),
     )
 
 

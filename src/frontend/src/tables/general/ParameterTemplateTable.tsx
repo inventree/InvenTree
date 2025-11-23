@@ -148,6 +148,11 @@ export default function ParameterTemplateTable() {
         description: t`Show templates with units`
       },
       {
+        name: 'enabled',
+        label: t`Enabled`,
+        description: t`Show enabled templates`
+      },
+      {
         name: 'model_type',
         label: t`Model Type`,
         description: t`Filter by model type`,
@@ -176,7 +181,10 @@ export default function ParameterTemplateTable() {
       }),
       {
         accessor: 'choices'
-      }
+      },
+      BooleanColumn({
+        accessor: 'enabled'
+      })
     ];
   }, []);
 
