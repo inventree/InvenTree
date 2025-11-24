@@ -41,7 +41,9 @@ class GuideDefinitionSerializer(FilterableSerializerMixin, InvenTreeModelSeriali
         For example, a 'First Use Tipp' might only be applicable if the user has never used the system before.
         """
         user = self.context['request'].user
-        executions = GuideExecution.objects.filter(user=user, type=instance.guide_type)
+        executions = GuideExecution.objects.filter(
+            user=user, guide__guide_type=instance.guide_type
+        )
 
         # Specific logic based on guide type
 

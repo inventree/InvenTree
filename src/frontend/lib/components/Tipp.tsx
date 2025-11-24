@@ -12,6 +12,10 @@ export function Tipp({ id }: Readonly<{ id: string }>): JSX.Element {
     return <></>;
   }
   const tip_data: TippData = tip.guide_data;
+  if (tip.is_applicable === false) {
+    return <></>;
+  }
+
   return (
     <Alert
       color={tip_data.color}
