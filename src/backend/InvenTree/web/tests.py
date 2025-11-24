@@ -123,6 +123,8 @@ class GuidesTest(InvenTreeTestCase):
         with self.assertRaises(ValueError):
             guide.guide_type = 'new_type'
             guide.save()
+        guide.refresh_from_db()
+
         with self.assertRaises(ValueError):
             guide.slug = 'new-slug'
             guide.save()
