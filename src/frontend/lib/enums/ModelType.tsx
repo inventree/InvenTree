@@ -17,6 +17,7 @@ export enum ModelType {
   buildline = 'buildline',
   builditem = 'builditem',
   company = 'company',
+  parameter = 'parameter',
   parametertemplate = 'parametertemplate',
   purchaseorder = 'purchaseorder',
   purchaseorderlineitem = 'purchaseorderlineitem',

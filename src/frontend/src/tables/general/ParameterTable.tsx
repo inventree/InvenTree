@@ -1,7 +1,6 @@
 import {
-  AddItemButton,
   ApiEndpoints,
-  type ModelType,
+  ModelType,
   RowDeleteAction,
   RowEditAction,
   YesNoButton,
@@ -11,8 +10,12 @@ import {
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import { t } from '@lingui/core/macro';
+import { IconFileUpload, IconPlus } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
+import ImporterDrawer from '../../components/importer/ImporterDrawer';
+import { ActionDropdown } from '../../components/items/ActionDropdown';
 import { useParameterFields } from '../../forms/CommonForms';
+import { dataImporterSessionFields } from '../../forms/ImporterForms';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -125,6 +128,35 @@ export function ParameterTable({
     undefined
   );
 
+  const [importOpened, setImportOpened] = useState<boolean>(false);
+
+  const [selectedSession, setSelectedSession] = useState<number | undefined>(
+    undefined
+  );
+
+  const importSessionFields = useMemo(() => {
+    const fields = dataImporterSessionFields({
+      modelType: ModelType.parameter
+    });
+
+    fields.field_overrides.value = {
+      model_type: modelType,
+      model_id: modelId
+    };
+
+    return fields;
+  }, [modelType, modelId]);
+
+  const importParameters = useCreateApiFormModal({
+    url: ApiEndpoints.import_session_list,
+    title: t`Import Parameters`,
+    fields: importSessionFields,
+    onFormSuccess: (response: any) => {
+      setSelectedSession(response.pk);
+      setImportOpened(true);
+    }
+  });
+
   const newParameter = useCreateApiFormModal({
     url: ApiEndpoints.parameter_list,
     title: t`Add Parameter`,
@@ -149,13 +181,31 @@ export function ParameterTable({
 
   const tableActions = useMemo(() => {
     return [
-      <AddItemButton
-        key='add-parameter'
+      <ActionDropdown
+        key='add-parameter-actions'
+        tooltip={t`Add Parameters`}
+        position='bottom-start'
+        icon={<IconPlus />}
         hidden={!user.hasAddPermission(modelType)}
-        onClick={() => {
-          setSelectedParameter(undefined);
-          newParameter.open();
-        }}
+        actions={[
+          {
+            name: t`Create Parameter`,
+            icon: <IconPlus />,
+            tooltip: t`Create a new parameter`,
+            onClick: () => {
+              setSelectedParameter(undefined);
+              newParameter.open();
+            }
+          },
+          {
+            name: t`Import from File`,
+            icon: <IconFileUpload />,
+            tooltip: t`Import parameters from a file`,
+            onClick: () => {
+              importParameters.open();
+            }
+          }
+        ]}
       />
     ];
   }, [user]);
@@ -189,6 +239,7 @@ export function ParameterTable({
       {newParameter.modal}
       {editParameter.modal}
       {deleteParameter.modal}
+      {importParameters.modal}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.parameter_list)}
         tableState={table}
@@ -204,6 +255,15 @@ export function ParameterTable({
             model_type: modelType,
             model_id: modelId
           }
+        }}
+      />
+      <ImporterDrawer
+        sessionId={selectedSession ?? -1}
+        opened={selectedSession !== undefined && importOpened}
+        onClose={() => {
+          setSelectedSession(undefined);
+          setImportOpened(false);
+          table.refreshTable();
         }}
       />
     </>
