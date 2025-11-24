@@ -9,7 +9,7 @@ from django.urls import reverse
 
 from InvenTree.config import get_frontend_settings
 from InvenTree.unit_test import InvenTreeAPITestCase, InvenTreeTestCase
-from web.models import GuideDefinition, collect_guides
+from web.models import GuideDefinition, GuideExecution, collect_guides
 
 from .templatetags import spa_helper
 
@@ -126,6 +126,7 @@ class WebAPITests(InvenTreeAPITestCase):
             reverse('api-guide-dismiss', kwargs={'slug': '123non'}), expected_code=404
         )
 
+        # Dismiss correct guide
         self.patch(
             reverse('api-guide-dismiss', kwargs={'slug': 'admin_center_1'}),
             expected_code=200,
@@ -133,6 +134,10 @@ class WebAPITests(InvenTreeAPITestCase):
         response = self.get(reverse('api-guide-list'), expected_code=200)
         self.assertEqual(len(response.data), NummerOfGuides)
         self.assertFalse(response.data[0]['is_applicable'])
+        self.assertEqual(
+            str(GuideExecution.objects.first()),
+            'Admin Center Information Release Info for testuser',
+        )
 
         # Dismissing again should have no effect
         self.patch(
@@ -149,3 +154,8 @@ class WebAPITests(InvenTreeAPITestCase):
         rsp = collect_guides(create=True)
         self.assertEqual(len(rsp), NummerOfGuides)
         self.assertEqual(GuideDefinition.objects.count(), NummerOfGuides)
+
+        # Model base test
+        guide = GuideDefinition.objects.first()
+        self.assertEqual(guide.slug, 'admin_center_1')
+        self.assertEqual(str(guide), 'Admin Center Information Release Info (tipp)')
