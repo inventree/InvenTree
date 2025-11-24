@@ -704,7 +704,7 @@ class BaseInvenTreeSetting(models.Model):
         ):  # pragma: no cover
             return
 
-        attempts = int(kwargs.get('attempts', 3))
+        attempts = int(kwargs.pop('attempts', 3))
 
         filters = {
             'key__iexact': key,
