@@ -29,7 +29,7 @@ interface ActionItem {
 
 function ActionGrid({ items }: { items: ActionItem[] }) {
   const slides = items.map((image) => (
-    <Paper shadow='xs' p='sm' withBorder>
+    <Paper shadow='xs' p='sm' withBorder key={image.id}>
       <Group justify='space-between' wrap='nowrap'>
         <Stack>
           <Text>
