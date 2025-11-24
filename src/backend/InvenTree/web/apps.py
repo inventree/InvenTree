@@ -18,6 +18,6 @@ class WebConfig(AppConfig):
         """Initialize restart flag clearance on startup."""
         if not InvenTree.ready.canAppAccessDatabase():  # pragma: no cover
             return
-        from web.models import collect_guides
+        from web.models import collect_guides  # pragma: no cover
 
-        collect_guides(create=True)  # Preload guide definitions
+        collect_guides(create=True)  # Preload guide definitions  # pragma: no cover

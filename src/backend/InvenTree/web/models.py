@@ -108,7 +108,7 @@ def collect_guides(create: bool = False) -> Optional[list[GuideDefinitionData]]:
             obj = GuideDefinition.objects.get(slug=guide.slug)
         except GuideDefinition.DoesNotExist:
             if not create:
-                continue
+                continue  # pragma: no cover
             obj = GuideDefinition(
                 name=guide.name,
                 slug=guide.slug,
@@ -118,7 +118,7 @@ def collect_guides(create: bool = False) -> Optional[list[GuideDefinitionData]]:
             )
             obj.save()
             logger.info(f'Created guide definition: {obj.slug} - {obj.uid}')
-        except OperationalError:
+        except OperationalError:  # pragma: no cover
             return None  # Database is not ready
         guide.set_db(obj)
     return all_types

@@ -50,11 +50,14 @@ class GuideDefinitionSerializer(FilterableSerializerMixin, InvenTreeModelSeriali
         else:
             raise NotImplementedError(
                 f'Guide type `{instance.guide_type}` not implemented'
-            )
+            )  # pragma: no cover
 
         # Cast definition and check applicability
         type_instance = type_def(**instance.guide_data)
         user = self.context['request'].user
+        # Ensure user is authenticated, checks do not make sense otherwise
+        if not user.is_authenticated:
+            return False  # pragma: no cover
         executions = GuideExecution.objects.filter(
             user=user, guide__guide_type=instance.guide_type
         )

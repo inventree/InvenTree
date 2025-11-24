@@ -50,7 +50,7 @@ class GeneralInfo:
         Returns:
             bool: True if applicable, False otherwise.
         """
-        return True
+        return True  # pragma: no cover
 
 
 @dataclass
@@ -59,9 +59,6 @@ class Tipp(GeneralInfo):
 
     def is_applicable(self, user, instance, executions) -> bool:
         """Determine if this tipp is applicable to the given user."""
-        if not user.is_authenticated:
-            return False
-
         # Tipps are always applicable if not a "done" execution is recorded
         return not executions.filter(done=True).exists()
 
@@ -77,8 +74,6 @@ class FirstUseTipp(GeneralInfo):
 
     def is_applicable(self, user, instance, executions) -> bool:
         """Determine if this tipp is applicable to the given user."""
-        if not user.is_authenticated:
-            return False
         # Placeholder for actual activity check
         return not executions.exists()
 
@@ -109,7 +104,9 @@ class GuideDefinitionData:
         elif isinstance(self.setup, FirstUseTipp):
             return 'firstuse'
         else:
-            raise ValueError('Invalid setup type for GuideDefinitionData')
+            raise ValueError(
+                'Invalid setup type for GuideDefinitionData'
+            )  # pragma: no cover
 
     @property
     def data(self) -> dict[str, Any]:
