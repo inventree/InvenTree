@@ -7,6 +7,7 @@ from decimal import Decimal
 from typing import Any, Optional
 
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -28,7 +29,7 @@ import InvenTree.ready
 from common.currency import currency_code_default, currency_code_mappings
 from InvenTree.fields import InvenTreeRestURLField, InvenTreeURLField
 from InvenTree.helpers import str2bool
-from InvenTree.helpers_model import getModelChoicesWithMixin
+from InvenTree.helpers_model import getModelsWithMixin
 
 from .setting.storages import StorageBackends
 
@@ -719,7 +720,7 @@ class RemoteImageMixin(metaclass=serializers.SerializerMetaclass):
         return url
 
 
-class ContentTypeField(serializers.Field):
+class ContentTypeField(serializers.ChoiceField):
     """Serializer field which represents a ContentType as 'app_label.model_name'.
 
     This field converts a ContentType instance to a string representation in the format 'app_label.model_name' during serialization, and vice versa during deserialization.
@@ -736,13 +737,26 @@ class ContentTypeField(serializers.Field):
             mixin_class: Optional mixin class to restrict valid content types.
         """
         self.mixin_class = mixin_class
-        super().__init__(*args, **kwargs)
 
         # Override the 'choices' field, to limit to the appropriate models
         if self.mixin_class is not None:
-            self.choices = getModelChoicesWithMixin(
-                self.mixin_class, allow_null=kwargs.get('allow_null', False)
-            )
+            models = getModelsWithMixin(self.mixin_class)
+
+            kwargs['choices'] = [
+                (
+                    f'{model._meta.app_label}.{model._meta.model_name}',
+                    model._meta.verbose_name,
+                )
+                for model in models
+            ]
+        else:
+            content_types = ContentType.objects.all()
+
+            kwargs['choices'] = [
+                (f'{ct.app_label}.{ct.model}', str(ct)) for ct in content_types
+            ]
+
+        super().__init__(*args, **kwargs)
 
     def to_representation(self, value):
         """Convert ContentType instance to string representation."""

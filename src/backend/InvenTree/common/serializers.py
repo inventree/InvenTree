@@ -21,7 +21,9 @@ from importer.registry import register_importer
 from InvenTree.helpers import get_objectreference
 from InvenTree.helpers_model import construct_absolute_url
 from InvenTree.mixins import DataImportExportSerializerMixin
+from InvenTree.models import InvenTreeParameterMixin
 from InvenTree.serializers import (
+    ContentTypeField,
     FilterableSerializerMixin,
     InvenTreeAttachmentSerializerField,
     InvenTreeImageSerializerField,
@@ -721,22 +723,12 @@ class ParameterTemplateSerializer(
             'enabled',
         ]
 
-    def __init__(self, *args, **kwargs):
-        """Override the model_type field to provide dynamic choices."""
-        super().__init__(*args, **kwargs)
-
-        if len(self.fields['model_type'].choices) == 0:
-            self.fields[
-                'model_type'
-            ].choices = common.validators.parameter_template_model_options()
-
     # Note: The choices are overridden at run-time on class initialization
-    model_type = serializers.ChoiceField(
+    model_type = ContentTypeField(
+        mixin_class=InvenTreeParameterMixin,
         label=_('Model Type'),
         default='',
-        choices=common.validators.parameter_template_model_options(),
         required=False,
-        allow_blank=True,
         allow_null=True,
     )
 
@@ -766,15 +758,6 @@ class ParameterSerializer(
         ]
 
         read_only_fields = ['updated', 'updated_by']
-
-    def __init__(self, *args, **kwargs):
-        """Override the model_type field to provide dynamic choices."""
-        super().__init__(*args, **kwargs)
-
-        if len(self.fields['model_type'].choices) == 0:
-            self.fields[
-                'model_type'
-            ].choices = common.validators.parameter_model_options()
 
     def save(self, **kwargs):
         """Save the Parameter instance."""
@@ -813,13 +796,11 @@ class ParameterSerializer(
         return instance
 
     # Note: The choices are overridden at run-time on class initialization
-    model_type = serializers.ChoiceField(
+    model_type = ContentTypeField(
+        mixin_class=InvenTreeParameterMixin,
         label=_('Model Type'),
         default='',
-        choices=common.validators.parameter_model_options(),
         required=False,
-        allow_blank=True,
-        allow_null=True,
     )
 
     updated_by_detail = enable_filter(

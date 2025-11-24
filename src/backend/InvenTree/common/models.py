@@ -2386,11 +2386,6 @@ class ParameterTemplate(
         verbose_name = _('Parameter Template')
         verbose_name_plural = _('Parameter Templates')
 
-    class ModelChoices(RenderChoices):
-        """Model choices for parameter templates."""
-
-        choice_fnc = common.validators.parameter_template_model_options
-
     @staticmethod
     def get_api_url() -> str:
         """Return the API URL associated with the ParameterTemplate model."""
