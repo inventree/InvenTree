@@ -2,6 +2,7 @@
 
 from rest_framework import serializers
 
+import web.types as web_types
 from InvenTree.serializers import (
     FilterableCharField,
     FilterableJSONField,
@@ -35,34 +36,28 @@ class GuideDefinitionSerializer(FilterableSerializerMixin, InvenTreeModelSeriali
     guide_data = enable_filter(FilterableJSONField(required=False))
     is_applicable = serializers.SerializerMethodField()
 
-    def get_is_applicable(self, instance) -> bool:
+    def get_is_applicable(self, instance: GuideDefinition) -> bool:
         """Determine if this guide is applicable in the current context.
 
         For example, a 'First Use Tipp' might only be applicable if the user has never used the system before.
         """
+        type_def = None
+        if instance.guide_type is GuideDefinition.GuideType.FirstUseTipp:
+            type_def = web_types.FirstUseTipp
+        elif instance.guide_type is GuideDefinition.GuideType.Tipp:
+            type_def = web_types.Tipp
+        else:
+            raise NotImplementedError(
+                f'Guide type {instance.guide_type} not implemented'
+            )
+
+        # Cast definition and check applicability
+        type_instance = type_def(**instance.guide_data)
         user = self.context['request'].user
         executions = GuideExecution.objects.filter(
             user=user, guide__guide_type=instance.guide_type
         )
-
-        # Specific logic based on guide type
-
-        if instance.guide_type == GuideDefinition.GuideType.FirstUseTipp:
-            # Check if the user has any prior activity
-            if not user.is_authenticated:
-                return False
-            # Placeholder for actual activity check
-            return not executions.exists()
-
-        elif instance.guide_type == GuideDefinition.GuideType.Tipp:
-            # Check if the user has any prior activity
-            if not user.is_authenticated:
-                return False
-            # Tipps are always applicable if not a "done" execution is recorded
-            if executions.filter(done=True).exists():
-                return False
-
-        return True
+        return type_instance.is_applicable(user, instance, executions)
 
 
 class EmptySerializer(serializers.Serializer):

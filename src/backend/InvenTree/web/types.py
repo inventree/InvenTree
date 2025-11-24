@@ -4,8 +4,12 @@ import dataclasses
 from dataclasses import dataclass
 from typing import Any, Optional
 
+from django.contrib.auth.models import User
+from django.db.models import QuerySet
 from django.utils.functional import Promise
 from django.utils.translation import gettext_lazy as _
+
+from backend.InvenTree.web.models import GuideDefinition, GuideExecution
 
 
 @dataclass
@@ -26,10 +30,38 @@ class GeneralInfo:
     discoverable: bool = True
     permission_cls: Optional[object] = None
 
+    def is_applicable(
+        self,
+        user: User,
+        instance: GuideDefinition,
+        executions: QuerySet[GuideExecution, GuideExecution],
+    ) -> bool:
+        """Determine if this guide is applicable to the given user.
+
+        This is a base method and should be overridden by subclasses.
+
+        Args:
+            user (User): The user to check applicability for.
+            instance (GuideDefinition): The guide definition instance.
+            executions (QuerySet[GuideExecution]): QuerySet of guide executions for the user.
+
+        Returns:
+            bool: True if applicable, False otherwise.
+        """
+        return True
+
 
 @dataclass
 class Tipp(GeneralInfo):
     """Simple tipp."""
+
+    def is_applicable(self, user, instance, executions) -> bool:
+        """Determine if this tipp is applicable to the given user."""
+        if not user.is_authenticated:
+            return False
+
+        # Tipps are always applicable if not a "done" execution is recorded
+        return not executions.filter(done=True).exists()
 
 
 @dataclass
@@ -40,6 +72,13 @@ class FirstUseTipp(GeneralInfo):
     """Only show once per user. If False, show once per installation."""
     show_to_admins: bool = False
     """Whether to show this tipp to all admin users."""
+
+    def is_applicable(self, user, instance, executions) -> bool:
+        """Determine if this tipp is applicable to the given user."""
+        if not user.is_authenticated:
+            return False
+        # Placeholder for actual activity check
+        return not executions.exists()
 
 
 @dataclass
