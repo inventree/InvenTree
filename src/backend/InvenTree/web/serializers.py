@@ -2,7 +2,6 @@
 
 from rest_framework import serializers
 
-import web.types as web_types
 from InvenTree.serializers import (
     FilterableCharField,
     FilterableJSONField,
@@ -41,6 +40,8 @@ class GuideDefinitionSerializer(FilterableSerializerMixin, InvenTreeModelSeriali
 
         For example, a 'First Use Tipp' might only be applicable if the user has never used the system before.
         """
+        import web.types as web_types
+
         type_def = None
         if instance.guide_type is GuideDefinition.GuideType.FirstUseTipp:
             type_def = web_types.FirstUseTipp
