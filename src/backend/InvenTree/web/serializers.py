@@ -43,9 +43,9 @@ class GuideDefinitionSerializer(FilterableSerializerMixin, InvenTreeModelSeriali
         import web.types as web_types
 
         type_def = None
-        if instance.guide_type is GuideDefinition.GuideType.FirstUseTipp:
+        if instance.guide_type == GuideDefinition.GuideType.FirstUseTipp.value:
             type_def = web_types.FirstUseTipp
-        elif instance.guide_type is GuideDefinition.GuideType.Tipp:
+        elif instance.guide_type == GuideDefinition.GuideType.Tipp.value:
             type_def = web_types.Tipp
         else:
             raise NotImplementedError(
