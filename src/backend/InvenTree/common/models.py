@@ -2587,6 +2587,20 @@ class Parameter(
         """Validate the Parameter before saving to the database."""
         super().clean()
 
+        # Validate the parameter data against the template units
+        if (
+            get_global_setting(
+                'PARAMETER_ENFORCE_UNITS', True, cache=False, create=False
+            )
+            and self.template.units
+        ):
+            try:
+                InvenTree.conversion.convert_physical_value(
+                    self.data, self.template.units
+                )
+            except ValidationError as e:
+                raise ValidationError({'data': e.message})
+
         # Validate the parameter data against the template choices
         if choices := self.template.get_choices():
             if self.data not in choices:
