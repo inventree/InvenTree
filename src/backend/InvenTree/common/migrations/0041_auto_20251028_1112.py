@@ -28,6 +28,26 @@ def convert_to_numeric_value(value: str, units: str):
     return result
 
 
+def update_global_setting(apps, schema_editor):
+    """Update global setting key from PART_PARAMETER_ENFORCE_UNITS to PARAMETER_ENFORCE_UNITS."""
+    GlobalSetting = apps.get_model("common", "InvenTreeSetting")
+
+    OLD_KEY = 'PART_PARAMETER_ENFORCE_UNITS'
+    NEW_KEY = 'PARAMETER_ENFORCE_UNITS'
+
+    try:
+        setting = GlobalSetting.objects.get(key=OLD_KEY)
+        
+        if setting is not None:
+            # Remove any existing new key
+            GlobalSetting.objects.filter(key=NEW_KEY).delete()
+            setting.key = NEW_KEY
+            setting.save()
+            print(f"Updated global setting key from {OLD_KEY} to {NEW_KEY}.")
+    except GlobalSetting.DoesNotExist:
+        print(f"Global setting {OLD_KEY} does not exist; no update needed.")
+
+
 def remove_existing_parameters(apps, schema_editor):
     """Remove any existing Parameter or ParameterTemplate objects from the database."""
 
@@ -150,6 +170,10 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.RunPython(
+            update_global_setting,
+            reverse_code=migrations.RunPython.noop
+        ),
         migrations.RunPython(
             remove_existing_parameters,
             reverse_code=migrations.RunPython.noop

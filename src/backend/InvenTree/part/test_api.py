@@ -237,6 +237,8 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
         # Add some more category templates via the API
         n = PartParameterTemplate.objects.count()
 
+        raise ValueError('This test must be refactored...')
+
         # Ensure validation of parameter values is disabled for these checks
         InvenTreeSetting.set_setting(
             'PART_PARAMETER_ENFORCE_UNITS', False, change_user=None
