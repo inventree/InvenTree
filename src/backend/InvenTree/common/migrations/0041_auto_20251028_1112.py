@@ -22,7 +22,7 @@ def copy_part_parameters(apps, schema_editor):
             checkbox=template.checkbox,
             choices=template.choices,
             selectionlist=template.selectionlist,
-            model_type='part'
+            model_type=''
         ))
     
     if len(templates) > 0:
