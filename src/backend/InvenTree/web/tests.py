@@ -134,7 +134,7 @@ class GuidesTest(InvenTreeTestCase):
         self.assertEqual(str(guide), 'Test Guide 2 (test_type)')
 
 
-NummerOfGuides = 1
+NummerOfGuides = 2
 
 
 class WebAPITests(InvenTreeAPITestCase):
