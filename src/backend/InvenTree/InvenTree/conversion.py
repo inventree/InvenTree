@@ -229,8 +229,6 @@ def convert_physical_value(value: str, unit: Optional[str] = None, strip_units=T
     """
     ureg = get_unit_registry()
 
-    print('convert_physical_value:', value, unit)
-
     # Check that the provided unit is available in the unit registry
     if unit:
         try:
