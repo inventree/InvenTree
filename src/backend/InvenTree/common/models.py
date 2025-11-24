@@ -704,7 +704,7 @@ class BaseInvenTreeSetting(models.Model):
         ):  # pragma: no cover
             return
 
-        attempts = int(kwargs.get('attempts', 3))
+        attempts = int(kwargs.pop('attempts', 3))
 
         filters = {
             'key__iexact': key,
@@ -2653,7 +2653,7 @@ class EmailMessage(models.Model):
     direction = models.CharField(
         max_length=50, blank=True, null=True, choices=EmailDirection.choices
     )
-    priority = models.IntegerField(verbose_name=_('Prioriy'), choices=Priority)
+    priority = models.IntegerField(verbose_name=_('Priority'), choices=Priority)
     delivery_options = models.JSONField(
         blank=True,
         null=True,
@@ -2873,7 +2873,7 @@ def handle_event(sender, event, esp_name, **kwargs):
 if TRACE_PROC:  # pragma: no cover
 
     @receiver(post_spawn)
-    def spwan_callback(sender, proc_name, **kwargs):
+    def spawn_callback(sender, proc_name, **kwargs):
         """Callback to patch in tracing support."""
         TRACE_PROV.add_span_processor(TRACE_PROC)
         trace.set_tracer_provider(TRACE_PROV)
