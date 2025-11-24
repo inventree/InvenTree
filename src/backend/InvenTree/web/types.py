@@ -74,8 +74,12 @@ class FirstUseTipp(GeneralInfo):
 
     def is_applicable(self, user, instance, executions) -> bool:
         """Determine if this tipp is applicable to the given user."""
-        # Placeholder for actual activity check
-        return not executions.exists()
+        from web.models import GuideExecution
+
+        # Not a single positive "done" execution recorded
+        return not GuideExecution.objects.filter(
+            guide__guide_type=instance.guide_type, done=True
+        ).exists()
 
 
 @dataclass
