@@ -2383,6 +2383,9 @@ class ParameterTemplate(
     class Meta:
         """Metaclass options for the ParameterTemplate model."""
 
+        verbose_name = _('Parameter Template')
+        verbose_name_plural = _('Parameter Templates')
+
     class ModelChoices(RenderChoices):
         """Model choices for parameter templates."""
 

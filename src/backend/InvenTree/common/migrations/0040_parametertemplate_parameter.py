@@ -117,6 +117,10 @@ class Migration(migrations.Migration):
                     ),
                 )
             ],
+            options={
+                "verbose_name": "Parameter Template",
+                "verbose_name_plural": "Parameter Templates",
+            },
             bases=(InvenTree.models.PluginValidationMixin, models.Model),
         ),
         migrations.CreateModel(

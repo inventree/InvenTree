@@ -699,6 +699,7 @@ class AttachmentSerializer(InvenTreeModelSerializer):
         return super().save(**kwargs)
 
 
+@register_importer()
 class ParameterTemplateSerializer(
     DataImportExportSerializerMixin, InvenTreeModelSerializer
 ):
