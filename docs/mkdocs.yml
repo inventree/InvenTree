@@ -360,7 +360,7 @@ extra:
   min_python_version: 3.10
   min_invoke_version: 2.0.0
   django_version: 5.2
-  docker_postgres_version: 16
+  docker_postgres_version: 17
 
   version:
     default: stable
