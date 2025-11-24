@@ -103,33 +103,32 @@ def reload_unit_registry():
     reg.define('thousand = 1000')
 
     # Allow for custom units to be defined in the database
+    # Calculate a hash of all custom units
+    hash_md5 = md5()
+
     try:
         from common.models import CustomUnit
 
-        # Calculate a hash of all custom units
-        hash_md5 = md5()
-
-        for cu in CustomUnit.objects.all():
-            try:
-                fmt = cu.fmt_string()
-                reg.define(fmt)
-
-                hash_md5.update(fmt.encode('utf-8'))
-
-            except Exception as e:
-                logger.exception(
-                    'Failed to load custom unit: %s - %s', cu.fmt_string(), e
-                )
-
-        # Once custom units are loaded, save registry
-        _unit_registry = reg
-
-        # Update the unit registry hash
-        set_unit_registry_hash(hash_md5.hexdigest())
-
+        custom_units = list(CustomUnit.objects.all())
     except Exception:
-        # Database is not ready, or CustomUnit model is not available
-        pass
+        # Database is likely not ready
+        custom_units = []
+
+    for cu in custom_units:
+        try:
+            fmt = cu.fmt_string()
+            reg.define(fmt)
+
+            hash_md5.update(fmt.encode('utf-8'))
+
+        except Exception as e:
+            logger.exception('Failed to load custom unit: %s - %s', cu.fmt_string(), e)
+
+    # Once custom units are loaded, save registry
+    _unit_registry = reg
+
+    # Update the unit registry hash
+    set_unit_registry_hash(hash_md5.hexdigest())
 
     dt = time.time() - t_start
     logger.debug('Loaded unit registry in %.3f s', dt)
