@@ -24,6 +24,22 @@ logger = structlog.get_logger('inventree')
 logging.getLogger('pint').setLevel(logging.ERROR)
 
 
+def can_cache_registry() -> bool:
+    """Return True if it is appropriate to cache the unit registry.
+
+    Prevent caching under certain conditions (such as database migration)
+    to prevent database access.
+    """
+    import InvenTree.ready
+
+    return not any([
+        InvenTree.ready.isImportingData(),
+        InvenTree.ready.isRunningBackup(),
+        InvenTree.ready.isRunningMigrations(),
+        InvenTree.ready.isInTestMode(),
+    ])
+
+
 def get_unit_registry_hash():
     """Return a hash representing the current state of the unit registry.
 
@@ -53,6 +69,9 @@ def set_unit_registry_hash(registry_hash: str):
     global _unit_registry_hash
     _unit_registry_hash = registry_hash
 
+    if not can_cache_registry():
+        return
+
     # Save to both the global settings and the session cache
     set_global_setting('_UNIT_REGISTRY_HASH', registry_hash)
     set_session_cache(_UNIT_REG_CACHE_KEY, registry_hash)
@@ -68,7 +87,7 @@ def get_unit_registry():
         return reload_unit_registry()
 
     # Check if the unit registry has changed
-    if _unit_registry_hash != get_unit_registry_hash():
+    if can_cache_registry() and _unit_registry_hash != get_unit_registry_hash():
         logger.info('Unit registry hash has changed, reloading unit registry')
         return reload_unit_registry()
 
@@ -210,12 +229,15 @@ def convert_physical_value(value: str, unit: Optional[str] = None, strip_units=T
     """
     ureg = get_unit_registry()
 
+    print('convert_physical_value:', value, unit)
+
     # Check that the provided unit is available in the unit registry
     if unit:
         try:
             valid = unit in ureg
-        except Exception:
+        except Exception as e:
             valid = False
+            raise e
 
         if not valid:
             raise ValidationError(_(f'Invalid unit provided ({unit})'))
