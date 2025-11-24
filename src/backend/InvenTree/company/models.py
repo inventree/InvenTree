@@ -77,6 +77,7 @@ class CompanyReportContext(report.mixins.BaseReportContext):
 
 class Company(
     InvenTree.models.InvenTreeAttachmentMixin,
+    InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.InvenTreeNotesMixin,
     report.mixins.InvenTreeReportMixin,
     InvenTree.models.InvenTreeImageMixin,
