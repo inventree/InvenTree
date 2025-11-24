@@ -473,6 +473,7 @@ class Address(InvenTree.models.InvenTreeModel):
 
 class ManufacturerPart(
     InvenTree.models.InvenTreeAttachmentMixin,
+    InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,
     InvenTree.models.InvenTreeMetadataModel,
@@ -652,6 +653,7 @@ class SupplierPartManager(models.Manager):
 
 class SupplierPart(
     InvenTree.models.InvenTreeAttachmentMixin,
+    InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.MetadataMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,

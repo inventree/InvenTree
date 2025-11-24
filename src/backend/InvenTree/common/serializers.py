@@ -740,6 +740,7 @@ class ParameterTemplateSerializer(
     )
 
 
+@register_importer()
 class ParameterSerializer(
     FilterableSerializerMixin, DataImportExportSerializerMixin, InvenTreeModelSerializer
 ):

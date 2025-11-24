@@ -36,7 +36,6 @@ from .models import (
     Company,
     Contact,
     ManufacturerPart,
-    ManufacturerPartParameter,
     SupplierPart,
     SupplierPriceBreak,
 )
@@ -299,33 +298,6 @@ class ManufacturerPartSerializer(
 
     manufacturer = serializers.PrimaryKeyRelatedField(
         queryset=Company.objects.filter(is_manufacturer=True)
-    )
-
-
-@register_importer()
-class ManufacturerPartParameterSerializer(
-    FilterableSerializerMixin, DataImportExportSerializerMixin, InvenTreeModelSerializer
-):
-    """Serializer for the ManufacturerPartParameter model."""
-
-    class Meta:
-        """Metaclass options."""
-
-        model = ManufacturerPartParameter
-
-        fields = [
-            'pk',
-            'manufacturer_part',
-            'manufacturer_part_detail',
-            'name',
-            'value',
-            'units',
-        ]
-
-    manufacturer_part_detail = enable_filter(
-        ManufacturerPartSerializer(
-            source='manufacturer_part', many=False, read_only=True, allow_null=True
-        )
     )
 
 

@@ -2,6 +2,53 @@
 
 from django.db import migrations
 
+def convert_to_numeric_value(value: str, units: str):
+    """Convert a value (with units) to a numeric value.
+
+    Defaults to zero if the value cannot be converted.
+    """
+
+    import InvenTree.conversion
+
+    # Default value is null
+    result = None
+
+    if units:
+        try:
+            result = InvenTree.conversion.convert_physical_value(value, units)
+            result = float(result.magnitude)
+        except Exception:
+            pass
+    else:
+        try:
+            result = float(value)
+        except Exception:
+            pass
+
+    return result
+
+
+def remove_existing_parameters(apps, schema_editor):
+    """Remove any existing Parameter or ParameterTemplate objects from the database."""
+
+    Parameter = apps.get_model("common", "Parameter")
+    ParameterTemplate = apps.get_model("common", "ParameterTemplate")
+
+    n_params = Parameter.objects.count()
+    n_templates = ParameterTemplate.objects.count()
+
+    Parameter.objects.all().delete()
+    ParameterTemplate.objects.all().delete()
+
+    if n_params > 0:
+        print(f"Removed {n_params} existing Parameter instances.")
+
+    if n_templates > 0:
+        print(f"Removed {n_templates} existing ParameterTemplate instances.")
+
+    assert Parameter.objects.count() == 0
+    assert ParameterTemplate.objects.count() == 0
+
 
 def copy_part_parameters(apps, schema_editor):
     """Forward migration: copy from PartParameterTemplate to ParameterTemplate."""
@@ -29,14 +76,14 @@ def copy_part_parameters(apps, schema_editor):
         ParameterTemplate.objects.bulk_create(templates)
         print(f"\nMigrated {len(templates)} PartParameterTemplate instances.")
 
-    assert ParameterTemplate.objects.filter(model_type='part').count() == len(templates)
+    assert ParameterTemplate.objects.filter().count() == len(templates)
 
     # Next, copy PartParameter instances to Parameter instances
     parameters = []
 
     for parameter in PartParameter.objects.all():
         # Find the corresponding ParameterTemplate
-        template = ParameterTemplate.objects.get(name=parameter.template.name, model_type='part')
+        template = ParameterTemplate.objects.get(name=parameter.template.name)
 
         parameters.append(Parameter(
             template=template,
@@ -56,6 +103,44 @@ def copy_part_parameters(apps, schema_editor):
     assert Parameter.objects.filter(model_type='part').count() == len(parameters)
 
 
+def copy_manufacturer_part_parameters(apps, schema_editor):
+    """Copy ManufacturerPartParameter to Parameter."""
+
+    ManufacturerPartParameter = apps.get_model("company", "ManufacturerPartParameter")
+    Parameter = apps.get_model("common", "Parameter")
+    ParameterTemplate = apps.get_model("common", "ParameterTemplate")
+
+    parameters = []
+
+    for parameter in ManufacturerPartParameter.objects.all():
+        # Find the corresponding ParameterTemplate
+        template = ParameterTemplate.objects.filter(name=parameter.template.name).first()
+
+        if not template:
+            # A matching template does not exist - let's create one
+            template = ParameterTemplate.objects.create(
+                name=parameter.name,
+                description='',
+                units=parameter.units,
+                checkbox=False
+            )
+
+        parameters.append(Parameter(
+            template=template,
+            model_type='manufacturerpart',
+            model_id=parameter.manufacturer_part.id,
+            data=parameter.value,
+            data_numeric=convert_to_numeric_value(parameter.value),
+            note=parameter.note
+        ))
+
+    if len(parameters) > 0:
+        Parameter.objects.bulk_create(parameters)
+        print(f"\nMigrated {len(parameters)} ManufacturerPartParameter instances.")
+
+    assert Parameter.objects.filter(model_type='manufacturerpart').count() == len(parameters)
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -65,9 +150,16 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RunPython(
+            remove_existing_parameters,
+            reverse_code=migrations.RunPython.noop
+        ),
+        migrations.RunPython(
             copy_part_parameters,
             reverse_code=migrations.RunPython.noop
         ),
-        # TODO: Data migration for existing ManufacturerPartParameter objects
+        migrations.RunPython(
+            copy_manufacturer_part_parameters,
+            reverse_code=migrations.RunPython.noop
+        )
         # TODO: Data migration for existing CategoryParameter objects
     ]

@@ -24,7 +24,6 @@ from .models import (
     Company,
     Contact,
     ManufacturerPart,
-    ManufacturerPartParameter,
     SupplierPart,
     SupplierPriceBreak,
 )
@@ -32,7 +31,6 @@ from .serializers import (
     AddressSerializer,
     CompanySerializer,
     ContactSerializer,
-    ManufacturerPartParameterSerializer,
     ManufacturerPartSerializer,
     SupplierPartSerializer,
     SupplierPriceBreakSerializer,
@@ -215,56 +213,6 @@ class ManufacturerPartDetail(RetrieveUpdateDestroyAPI):
 
     queryset = ManufacturerPart.objects.all()
     serializer_class = ManufacturerPartSerializer
-
-
-class ManufacturerPartParameterFilter(FilterSet):
-    """Custom filterset for the ManufacturerPartParameterList API endpoint."""
-
-    class Meta:
-        """Metaclass options."""
-
-        model = ManufacturerPartParameter
-        fields = ['name', 'value', 'units', 'manufacturer_part']
-
-    manufacturer = rest_filters.ModelChoiceFilter(
-        queryset=Company.objects.all(), field_name='manufacturer_part__manufacturer'
-    )
-
-    part = rest_filters.ModelChoiceFilter(
-        queryset=part.models.Part.objects.all(), field_name='manufacturer_part__part'
-    )
-
-
-class ManufacturerPartParameterOptions(OutputConfiguration):
-    """Available output options for the ManufacturerPartParameter endpoints."""
-
-    OPTIONS = [
-        InvenTreeOutputOption(
-            description='Include detailed information about the linked ManufacturerPart in the response',
-            flag='manufacturer_part_detail',
-            default=False,
-        )
-    ]
-
-
-class ManufacturerPartParameterList(
-    SerializerContextMixin, ListCreateDestroyAPIView, OutputOptionsMixin
-):
-    """API endpoint for list view of ManufacturerPartParamater model."""
-
-    queryset = ManufacturerPartParameter.objects.all()
-    serializer_class = ManufacturerPartParameterSerializer
-    filterset_class = ManufacturerPartParameterFilter
-    output_options = ManufacturerPartParameterOptions
-    filter_backends = SEARCH_ORDER_FILTER
-    search_fields = ['name', 'value', 'units']
-
-
-class ManufacturerPartParameterDetail(RetrieveUpdateDestroyAPI):
-    """API endpoint for detail view of ManufacturerPartParameter model."""
-
-    queryset = ManufacturerPartParameter.objects.all()
-    serializer_class = ManufacturerPartParameterSerializer
 
 
 class SupplierPartFilter(FilterSet):
@@ -518,22 +466,6 @@ class SupplierPriceBreakDetail(SupplierPriceBreakMixin, RetrieveUpdateDestroyAPI
 
 
 manufacturer_part_api_urls = [
-    path(
-        'parameter/',
-        include([
-            path(
-                '<int:pk>/',
-                ManufacturerPartParameterDetail.as_view(),
-                name='api-manufacturer-part-parameter-detail',
-            ),
-            # Catch anything else
-            path(
-                '',
-                ManufacturerPartParameterList.as_view(),
-                name='api-manufacturer-part-parameter-list',
-            ),
-        ]),
-    ),
     path(
         '<int:pk>/',
         include([
