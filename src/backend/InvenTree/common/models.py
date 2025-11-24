@@ -2473,11 +2473,11 @@ class ParameterTemplate(
 
         return [x.strip() for x in self.choices.split(',') if x.strip()]
 
-    model_type = models.CharField(
-        max_length=100,
-        default='',
+    # TODO: Reintroduce validator for model_type
+    model_type = models.ForeignKey(
+        ContentType,
+        on_delete=models.CASCADE,
         blank=True,
-        validators=[common.validators.validate_parameter_template_model_type],
         verbose_name=_('Model type'),
         help_text=_('Target model type for this parameter template'),
     )
@@ -2557,6 +2557,8 @@ class Parameter(
         verbose_name_plural = _('Parameters')
         unique_together = [['model_type', 'model_id', 'template']]
 
+        indexes = [models.Index(fields=['model_type', 'model_id'])]
+
     @staticmethod
     def get_api_url() -> str:
         """Return the API URL associated with the Parameter model."""
@@ -2608,6 +2610,8 @@ class Parameter(
 
         self.calculate_numeric_value()
 
+        # TODO: Check that the model_type for this parameter matches the template
+
         # TODO: Validation of units (check global setting)
 
         # TODO: Validate against plugins
@@ -2652,19 +2656,15 @@ class Parameter(
 
         return model_class.check_related_permission(permission, user)
 
-    model_type = models.CharField(
-        max_length=100,
-        default='',
-        blank=True,
-        validators=[common.validators.validate_parameter_model_type],
-        verbose_name=_('Model type'),
-        help_text=_('Target model type for this parameter'),
-    )
+    # TODO: Reintroduce validator for model_type
+    model_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
 
     model_id = models.PositiveIntegerField(
         verbose_name=_('Model ID'),
         help_text=_('ID of the target model for this parameter'),
     )
+
+    content_object = GenericForeignKey('model_type', 'model_id')
 
     template = models.ForeignKey(
         ParameterTemplate,

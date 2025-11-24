@@ -40,14 +40,11 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "model_type",
-                    models.CharField(
+                    models.ForeignKey(
                         blank=True,
-                        default="",
                         help_text="Target model type for this parameter template",
-                        max_length=100,
-                        validators=[
-                            common.validators.validate_parameter_template_model_type
-                        ],
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="contenttypes.contenttype",
                         verbose_name="Model type",
                     ),
                 ),
@@ -156,13 +153,9 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "model_type",
-                    models.CharField(
-                        blank=True,
-                        default="",
-                        help_text="Target model type for this parameter",
-                        max_length=100,
-                        validators=[common.validators.validate_parameter_model_type],
-                        verbose_name="Model type",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="contenttypes.contenttype",
                     ),
                 ),
                 (
@@ -223,5 +216,11 @@ class Migration(migrations.Migration):
                 "unique_together": {("model_type", "model_id", "template")},
             },
             bases=(InvenTree.models.PluginValidationMixin, models.Model),
+        ),
+        migrations.AddIndex(
+            model_name="parameter",
+            index=models.Index(
+                fields=["model_type", "model_id"], name="common_para_model_t_244405_idx"
+            ),
         ),
     ]
