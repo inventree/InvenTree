@@ -9,7 +9,7 @@ from django.db.models import QuerySet
 from django.utils.functional import Promise
 from django.utils.translation import gettext_lazy as _
 
-from backend.InvenTree.web.models import GuideDefinition, GuideExecution
+from web.models import GuideDefinition, GuideExecution
 
 
 @dataclass
