@@ -2,14 +2,15 @@
 
 import dataclasses
 from dataclasses import dataclass
-from typing import Any, Optional
+from typing import TYPE_CHECKING, Any, Optional
 
 from django.contrib.auth.models import User
 from django.db.models import QuerySet
 from django.utils.functional import Promise
 from django.utils.translation import gettext_lazy as _
 
-from web.models import GuideDefinition, GuideExecution
+if TYPE_CHECKING:
+    from web.models import GuideDefinition, GuideExecution
 
 
 @dataclass
@@ -33,8 +34,8 @@ class GeneralInfo:
     def is_applicable(
         self,
         user: User,
-        instance: GuideDefinition,
-        executions: QuerySet[GuideExecution, GuideExecution],
+        instance: 'GuideDefinition',
+        executions: QuerySet['GuideExecution', 'GuideExecution'],
     ) -> bool:
         """Determine if this guide is applicable to the given user.
 
