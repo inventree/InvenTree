@@ -49,7 +49,7 @@ class GuideDefinitionSerializer(FilterableSerializerMixin, InvenTreeModelSeriali
             type_def = web_types.Tipp
         else:
             raise NotImplementedError(
-                f'Guide type {instance.guide_type} not implemented'
+                f'Guide type `{instance.guide_type}` not implemented'
             )
 
         # Cast definition and check applicability
