@@ -768,20 +768,31 @@ class ContentTypeField(serializers.ChoiceField):
 
         content_type = None
 
+        # First, try to resolve the content type via direct pk value
         try:
-            app_label, model = data.split('.')
-            content_types = ContentType.objects.filter(app_label=app_label, model=model)
+            content_type_id = int(data)
+            content_type = ContentType.objects.get_for_id(content_type_id)
+        except (ValueError, ContentType.DoesNotExist):
+            content_type = None
 
-            if content_types.exists() and content_types.count() == 1:
-                # Try exact match first
-                content_type = content_types.first()
+        try:
+            if len(data.split('.')) == 2:
+                app_label, model = data.split('.')
+                content_types = ContentType.objects.filter(
+                    app_label=app_label, model=model
+                )
+
+                if content_types.count() == 1:
+                    # Try exact match first
+                    content_type = content_types.first()
             else:
                 # Try lookup just on model name
-                content_types = ContentType.objects.filter(model=model)
+                content_types = ContentType.objects.filter(model=data)
                 if content_types.exists() and content_types.count() == 1:
                     content_type = content_types.first()
 
-        except Exception:
+        except Exception as e:
+            print('e:', e)
             raise ValidationError(_('Invalid content type format'))
 
         if content_type is None:

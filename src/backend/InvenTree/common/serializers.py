@@ -772,9 +772,7 @@ class ParameterSerializer(
         # Ensure that the user has permission to modify parameters for the specified model
         user = self.context.get('request').user
 
-        target_model_class = common.validators.parameter_model_class_from_label(
-            model_type
-        )
+        target_model_class = model_type.model_class()
 
         if not issubclass(target_model_class, InvenTreeParameterMixin):
             raise PermissionDenied(_('Invalid model type specified for parameter'))

@@ -161,6 +161,9 @@ export function ParameterTable({
     url: ApiEndpoints.parameter_list,
     title: t`Add Parameter`,
     fields: useParameterFields({ modelType, modelId }),
+    initialData: {
+      data: ''
+    },
     table: table
   });
 

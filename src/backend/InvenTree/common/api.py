@@ -28,6 +28,7 @@ from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+import common.filters
 import common.models
 import common.serializers
 import InvenTree.conversion
@@ -777,7 +778,7 @@ class ParameterTemplateFilter(FilterSet):
         """Metaclass options."""
 
         model = common.models.ParameterTemplate
-        fields = ['model_type', 'name', 'units', 'checkbox', 'enabled']
+        fields = ['name', 'units', 'checkbox', 'enabled']
 
     has_choices = rest_filters.BooleanFilter(
         method='filter_has_choices', label='Has Choice'
@@ -799,6 +800,14 @@ class ParameterTemplateFilter(FilterSet):
 
         return queryset.filter(Q(units=None) | Q(units='')).distinct()
 
+    model_type = rest_filters.CharFilter(method='filter_model_type', label='Model Type')
+
+    def filter_model_type(self, queryset, name, value):
+        """Filter queryset to include only ParameterTemplates of the given model type."""
+        return common.filters.filter_content_type(
+            queryset, 'model_type', value, allow_null=False
+        )
+
     for_model = rest_filters.CharFilter(method='filter_for_model', label='For Model')
 
     def filter_for_model(self, queryset, name, value):
@@ -807,9 +816,9 @@ class ParameterTemplateFilter(FilterSet):
         Note that this varies from the 'model_type' filter, in that ParameterTemplates
         with a blank 'model_type' are considered to apply to all models.
         """
-        return queryset.filter(
-            Q(model_type__iexact=value) | Q(model_type__isnull=True) | Q(model_type='')
-        ).distinct()
+        return common.filters.filter_content_type(
+            queryset, 'model_type', value, allow_null=True
+        )
 
 
 class ParameterTemplateMixin:
@@ -839,11 +848,19 @@ class ParameterFilter(FilterSet):
         """Metaclass options for the filterset."""
 
         model = common.models.Parameter
-        fields = ['model_type', 'model_id', 'template', 'updated_by']
+        fields = ['model_id', 'template', 'updated_by']
 
     enabled = rest_filters.BooleanFilter(
         label='Template Enabled', field_name='template__enabled'
     )
+
+    model_type = rest_filters.CharFilter(method='filter_model_type', label='Model Type')
+
+    def filter_model_type(self, queryset, name, value):
+        """Filter queryset to include only Parameters of the given model type."""
+        return common.filters.filter_content_type(
+            queryset, 'model_type', value, allow_null=False
+        )
 
 
 class ParameterMixin:

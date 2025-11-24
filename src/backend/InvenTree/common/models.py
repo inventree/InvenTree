@@ -2643,9 +2643,7 @@ class Parameter(
         """Check if the user has the required permission for this parameter."""
         from InvenTree.models import InvenTreeParameterMixin
 
-        model_class = common.validators.parameter_model_class_from_label(
-            self.model_type
-        )
+        model_class = self.model_type.model_class()
 
         if not issubclass(model_class, InvenTreeParameterMixin):
             raise ValidationError(_('Invalid model type specified for parameter'))
