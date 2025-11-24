@@ -2,6 +2,18 @@ import type { ReactNode } from 'react';
 
 import { type InstanceRenderInterface, RenderInlineModel } from './Instance';
 
+export function RenderParameterTemplate({
+  instance
+}: Readonly<InstanceRenderInterface>): ReactNode {
+  return (
+    <RenderInlineModel
+      primary={instance.name}
+      secondary={instance.description}
+      suffix={instance.units}
+    />
+  );
+}
+
 export function RenderProjectCode({
   instance
 }: Readonly<InstanceRenderInterface>): ReactNode {

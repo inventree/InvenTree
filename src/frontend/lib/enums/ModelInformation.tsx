@@ -33,6 +33,11 @@ export const ModelInformationDict: ModelDict = {
     admin_url: '/part/part/',
     icon: 'part'
   },
+  parametertemplate: {
+    label: () => t`Parameter Template`,
+    label_multiple: () => t`Parameter Templates`,
+    api_endpoint: ApiEndpoints.parameter_template_list
+  },
   partparametertemplate: {
     label: () => t`Part Parameter Template`,
     label_multiple: () => t`Part Parameter Templates`,

@@ -37,7 +37,11 @@ from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import urlpattern as generic_states_api_urls
 from InvenTree.api import BulkDeleteMixin, MetadataView
 from InvenTree.config import CONFIG_LOOKUPS
-from InvenTree.filters import ORDER_FILTER, SEARCH_ORDER_FILTER
+from InvenTree.filters import (
+    ORDER_FILTER,
+    SEARCH_ORDER_FILTER,
+    SEARCH_ORDER_FILTER_ALIAS,
+)
 from InvenTree.helpers import inheritors, str2bool
 from InvenTree.helpers_email import send_email
 from InvenTree.mixins import (
@@ -837,6 +841,10 @@ class ParameterFilter(FilterSet):
         model = common.models.Parameter
         fields = ['model_type', 'model_id', 'template', 'updated_by']
 
+    enabled = rest_filters.BooleanFilter(
+        label='Template Enabled', field_name='template__enabled'
+    )
+
 
 class ParameterMixin:
     """Mixin class for Parameter views."""
@@ -856,7 +864,7 @@ class ParameterList(
     """List API endpoint for Parameter objects."""
 
     filterset_class = ParameterFilter
-    filter_backends = SEARCH_ORDER_FILTER
+    filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
     ordering_fields = ['name', 'data', 'units', 'template', 'updated', 'updated_by']
 

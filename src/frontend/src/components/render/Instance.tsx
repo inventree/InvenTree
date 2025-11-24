@@ -36,6 +36,7 @@ import {
   RenderContentType,
   RenderError,
   RenderImportSession,
+  RenderParameterTemplate,
   RenderProjectCode,
   RenderSelectionList
 } from './Generic';
@@ -71,6 +72,7 @@ export const RendererLookup: ModelRendererDict = {
   [ModelType.builditem]: RenderBuildItem,
   [ModelType.company]: RenderCompany,
   [ModelType.contact]: RenderContact,
+  [ModelType.parametertemplate]: RenderParameterTemplate,
   [ModelType.manufacturerpart]: RenderManufacturerPart,
   [ModelType.owner]: RenderOwner,
   [ModelType.part]: RenderPart,
