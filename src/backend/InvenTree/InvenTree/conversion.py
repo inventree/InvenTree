@@ -233,9 +233,8 @@ def convert_physical_value(value: str, unit: Optional[str] = None, strip_units=T
     if unit:
         try:
             valid = unit in ureg
-        except Exception as e:
+        except Exception:
             valid = False
-            raise e
 
         if not valid:
             raise ValidationError(_(f'Invalid unit provided ({unit})'))
