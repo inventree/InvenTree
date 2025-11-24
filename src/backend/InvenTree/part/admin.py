@@ -5,12 +5,6 @@ from django.contrib import admin
 from part import models
 
 
-class PartParameterInline(admin.TabularInline):
-    """Inline for part parameter data."""
-
-    model = models.PartParameter
-
-
 @admin.register(models.Part)
 class PartAdmin(admin.ModelAdmin):
     """Admin class for the Part model."""
@@ -36,7 +30,7 @@ class PartAdmin(admin.ModelAdmin):
         'creation_user',
     ]
 
-    inlines = [PartParameterInline]
+    inlines = []
 
 
 @admin.register(models.PartPricing)

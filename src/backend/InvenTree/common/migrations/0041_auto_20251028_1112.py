@@ -92,6 +92,7 @@ def copy_part_parameters(apps, schema_editor):
             data=parameter.data,
             data_numeric=parameter.data_numeric,
             note=parameter.note,
+            metadata=parameter.metadata,
             updated=parameter.updated,
             updated_by=parameter.updated_by
         ))
