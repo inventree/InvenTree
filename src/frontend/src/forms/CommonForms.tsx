@@ -134,7 +134,7 @@ export function useParameterFields({
       },
       template: {
         filters: {
-          model_type: modelType,
+          for_model: modelType,
           enabled: true
         },
         onValueChange: (value: any, record: any) => {
