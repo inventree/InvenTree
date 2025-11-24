@@ -116,6 +116,9 @@ class GuideDefinitionData:
         for key, value in _data.items():
             if isinstance(value, Promise):
                 _data[key] = str(value)
+        # Iterate over links and ensure they are tuples
+        if 'links' in _data and _data['links'] is not None:
+            _data['links'] = [(str(label), url) for label, url in _data['links']]
         return _data
 
     def set_db(self, obj):
