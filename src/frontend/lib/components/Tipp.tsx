@@ -1,5 +1,6 @@
 import type { TippData } from '@lib/types/Core';
-import { Alert, Stack, Text } from '@mantine/core';
+import { Alert, Button, Group, Stack, Text } from '@mantine/core';
+import { IconExternalLink } from '@tabler/icons-react';
 import { type JSX, useMemo, useState } from 'react';
 import { useGuideState } from '../../src/states/GuideState';
 
@@ -28,6 +29,24 @@ export function Tipp({ id }: Readonly<{ id: string }>): JSX.Element {
     >
       <Stack gap='xs'>
         <Text>{tip_data.detail_text}</Text>
+        {tip_data.links && tip_data.links.length > 0 && (
+          <Group gap='xs'>
+            {tip_data.links.map((link, index) => (
+              <Button
+                rightSection={<IconExternalLink />}
+                size='sm'
+                variant='light'
+                key={index}
+                component='a'
+                href={link[1]}
+                target='_blank'
+                rel='noopener noreferrer'
+              >
+                {link[0]}
+              </Button>
+            ))}
+          </Group>
+        )}
       </Stack>
     </Alert>
   );

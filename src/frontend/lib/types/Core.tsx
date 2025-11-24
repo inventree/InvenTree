@@ -16,4 +16,5 @@ export type TippData = {
   title: string;
   color: string;
   detail_text: string;
+  links?: [string, string][];
 };
