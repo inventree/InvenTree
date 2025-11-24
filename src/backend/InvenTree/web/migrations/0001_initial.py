@@ -4,7 +4,7 @@ import django.db.models.deletion
 import uuid
 from django.conf import settings
 from django.db import migrations, models
-
+from web.models import GuideDefinition
 
 class Migration(migrations.Migration):
 
@@ -24,7 +24,7 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(help_text='Name of the guide', max_length=100, unique=True, verbose_name='Name')),
                 ('slug', models.SlugField(help_text='URL-friendly unique identifier for the guide', max_length=100, unique=True, verbose_name='Slug')),
                 ('description', models.TextField(blank=True, help_text='Optional description of the guide', verbose_name='Description')),
-                ('guide_type', models.CharField(choices=[('tipp', 'Tipp'), ('firstuse', 'First Use Tipp')], help_text='Type of the guide', max_length=20, verbose_name='Guide Type')),
+                ('guide_type', models.CharField(choices=GuideDefinition.GuideType.choices, help_text='Type of the guide', max_length=20, verbose_name='Guide Type')),
                 ('guide_data', models.JSONField(blank=True, help_text='JSON data field for storing extra information', null=True, verbose_name='Data')),
             ],
             options={
