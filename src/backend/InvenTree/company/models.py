@@ -298,7 +298,7 @@ class Contact(InvenTree.models.InvenTreeMetadataModel):
 
     @staticmethod
     def get_api_url():
-        """Return the API URL associated with the Contcat model."""
+        """Return the API URL associated with the Contact model."""
         return reverse('api-contact-list')
 
     company = models.ForeignKey(
@@ -383,7 +383,7 @@ class Address(InvenTree.models.InvenTreeModel):
 
     @staticmethod
     def get_api_url():
-        """Return the API URL associated with the Contcat model."""
+        """Return the API URL associated with the Contact model."""
         return reverse('api-address-list')
 
     company = models.ForeignKey(
@@ -586,7 +586,7 @@ class ManufacturerPart(
 
 
 class ManufacturerPartParameter(InvenTree.models.InvenTreeModel):
-    """A ManufacturerPartParameter represents a key:value parameter for a MnaufacturerPart.
+    """A ManufacturerPartParameter represents a key:value parameter for a ManufacturerPart.
 
     This is used to represent parameters / properties for a particular manufacturer part.
 
@@ -891,7 +891,7 @@ class SupplierPart(
     )
 
     def base_quantity(self, quantity=1) -> Decimal:
-        """Calculate the base unit quantiy for a given quantity."""
+        """Calculate the base unit quantity for a given quantity."""
         q = Decimal(quantity) * Decimal(self.pack_quantity_native)
         q = round(q, 10).normalize()
 

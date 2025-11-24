@@ -2476,8 +2476,9 @@ class ParameterTemplate(
     # TODO: Reintroduce validator for model_type
     model_type = models.ForeignKey(
         ContentType,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         blank=True,
+        null=True,
         verbose_name=_('Model type'),
         help_text=_('Target model type for this parameter template'),
     )

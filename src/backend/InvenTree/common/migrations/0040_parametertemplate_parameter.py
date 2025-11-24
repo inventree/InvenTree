@@ -2,7 +2,6 @@
 
 import InvenTree.models
 import InvenTree.validators
-import common.validators
 from django.conf import settings
 import django.core.validators
 from django.db import migrations, models
@@ -41,9 +40,9 @@ class Migration(migrations.Migration):
                 (
                     "model_type",
                     models.ForeignKey(
-                        blank=True,
+                        blank=True, null=True,
                         help_text="Target model type for this parameter template",
-                        on_delete=django.db.models.deletion.CASCADE,
+                        on_delete=django.db.models.deletion.SET_NULL,
                         to="contenttypes.contenttype",
                         verbose_name="Model type",
                     ),

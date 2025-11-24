@@ -89,7 +89,7 @@ def copy_part_parameters(apps, schema_editor):
             checkbox=template.checkbox,
             choices=template.choices,
             selectionlist=template.selectionlist,
-            model_type=''
+            model_type=None
         ))
     
     if len(templates) > 0:
@@ -101,13 +101,15 @@ def copy_part_parameters(apps, schema_editor):
     # Next, copy PartParameter instances to Parameter instances
     parameters = []
 
+    content_type = apps.get_model("contenttypes", "ContentType").objects.get(app_label='part', model='part')
+
     for parameter in PartParameter.objects.all():
         # Find the corresponding ParameterTemplate
         template = ParameterTemplate.objects.get(name=parameter.template.name)
 
         parameters.append(Parameter(
             template=template,
-            model_type='part',
+            model_type=content_type,
             model_id=parameter.part.id,
             data=parameter.data,
             data_numeric=parameter.data_numeric,
@@ -121,7 +123,7 @@ def copy_part_parameters(apps, schema_editor):
         Parameter.objects.bulk_create(parameters)
         print(f"\nMigrated {len(parameters)} PartParameter instances.")
 
-    assert Parameter.objects.filter(model_type='part').count() == len(parameters)
+    assert Parameter.objects.filter(model_type=content_type).count() == len(parameters)
 
 
 def copy_manufacturer_part_parameters(apps, schema_editor):
@@ -133,6 +135,8 @@ def copy_manufacturer_part_parameters(apps, schema_editor):
 
     parameters = []
 
+    content_type = apps.get_model("contenttypes", "ContentType").objects.get(app_label='company', model='manufacturerpart')
+
     for parameter in ManufacturerPartParameter.objects.all():
         # Find the corresponding ParameterTemplate
         template = ParameterTemplate.objects.filter(name=parameter.template.name).first()
@@ -143,12 +147,13 @@ def copy_manufacturer_part_parameters(apps, schema_editor):
                 name=parameter.name,
                 description='',
                 units=parameter.units,
+                model_type=None,
                 checkbox=False
             )
 
         parameters.append(Parameter(
             template=template,
-            model_type='manufacturerpart',
+            model_type=content_type,
             model_id=parameter.manufacturer_part.id,
             data=parameter.value,
             data_numeric=convert_to_numeric_value(parameter.value),
@@ -159,7 +164,7 @@ def copy_manufacturer_part_parameters(apps, schema_editor):
         Parameter.objects.bulk_create(parameters)
         print(f"\nMigrated {len(parameters)} ManufacturerPartParameter instances.")
 
-    assert Parameter.objects.filter(model_type='manufacturerpart').count() == len(parameters)
+    assert Parameter.objects.filter(model_type=content_type).count() == len(parameters)
 
 
 class Migration(migrations.Migration):
