@@ -6,7 +6,7 @@ from string import Formatter
 from typing import Any, Optional
 
 from django.contrib.auth import get_user_model
-from django.contrib.contenttypes.fields import GenericRelation
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import QuerySet
@@ -501,7 +501,13 @@ class InvenTreeParameterMixin(InvenTreePermissionCheckMixin):
     and provides the following methods:
     """
 
-    parameters = GenericRelation('common.Parameter', related_query_name='+')
+    @property
+    def parameters(self) -> QuerySet:
+        """Return a QuerySet containing all the Parameter instances for this model."""
+        from common.models import Parameter
+
+        content_type = ContentType.objects.get_for_model(self.__class__)
+        return Parameter.objects.filter(model_type=content_type, model_id=self.pk)
 
     def delete(self, *args, **kwargs):
         """Handle the deletion of a model instance.
