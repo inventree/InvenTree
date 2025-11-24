@@ -99,14 +99,11 @@ class GuideDismissal(UpdateAPI):
     def perform_update(self, serializer):
         """Override to dismiss the guide for the user."""
         obj: GuideDefinition = serializer.instance
-        items = obj.executions.filter(done=True)
+        user = self.request.user
+        items = obj.executions.filter(user__pk=user.pk, done=True)
         if len(items) == 0:
-            obj.executions.create(
-                user=self.request.user, done=True, completed_at=datetime.now()
-            )
-            logger.info(
-                'Guide dismissed', guide=obj.slug, user=self.request.user.username
-            )
+            obj.executions.create(user=user, done=True, completed_at=datetime.now())
+            logger.info('Guide dismissed', guide=obj.slug, user=user.username)
 
 
 web_urls = [
