@@ -91,6 +91,47 @@ class TemplateTagTest(InvenTreeTestCase):
             self.assertEqual(rsp['server_list'], ['aa', 'bb'])
 
 
+class GuidesTest(InvenTreeTestCase):
+    """Tests for guide functionality."""
+
+    def test_collection(self):
+        """Test guide collection applicability."""
+        self.assertEqual(GuideDefinition.objects.count(), 0)
+
+        rsp = collect_guides(create=True)
+        self.assertEqual(len(rsp), NummerOfGuides)
+        self.assertEqual(GuideDefinition.objects.count(), NummerOfGuides)
+
+        # Model base test
+        guide = GuideDefinition.objects.first()
+        self.assertEqual(guide.slug, 'admin_center_1')
+        self.assertEqual(str(guide), 'Admin Center Information Release Info (tipp)')
+
+    def test_model_fences(self):
+        """Test GuideExecution model string representation."""
+        # No guide definition -> error
+        with self.assertRaises(ValueError):
+            GuideDefinition.objects.create(slug='test_slug', name='Test Guide')
+
+        # Auto slug
+        guide = GuideDefinition.objects.create(
+            name='Test Guide 2', guide_type='test_type'
+        )
+        self.assertEqual(guide.slug, 'test-guide-2')
+
+        # Changing immutable fields
+        with self.assertRaises(ValueError):
+            guide.guide_type = 'new_type'
+            guide.save()
+        with self.assertRaises(ValueError):
+            guide.slug = 'new-slug'
+            guide.save()
+
+        # Check str method
+        guide.refresh_from_db()
+        self.assertEqual(str(guide), 'Test Guide 2 (test_type)')
+
+
 NummerOfGuides = 1
 
 
@@ -146,16 +187,3 @@ class WebAPITests(InvenTreeAPITestCase):
         )
         response = self.get(reverse('api-guide-list'), expected_code=200)
         self.assertEqual(len(response.data), NummerOfGuides)
-
-    def test_collection(self):
-        """Test guide collection applicability."""
-        self.assertEqual(GuideDefinition.objects.count(), 0)
-
-        rsp = collect_guides(create=True)
-        self.assertEqual(len(rsp), NummerOfGuides)
-        self.assertEqual(GuideDefinition.objects.count(), NummerOfGuides)
-
-        # Model base test
-        guide = GuideDefinition.objects.first()
-        self.assertEqual(guide.slug, 'admin_center_1')
-        self.assertEqual(str(guide), 'Admin Center Information Release Info (tipp)')
