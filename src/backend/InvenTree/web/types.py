@@ -136,5 +136,23 @@ guides = [
                 'Please open feature requests (after checking the tracker) for any existing backend admin functionality you are missing in this UI. The backend admin interface should be used carefully and seldom.'
             ),
         ),
-    )
+    ),
+    GuideDefinitionData(
+        name='First Use Admin Welcome - Threat Model',
+        slug='ftue_admin_threat_model',
+        setup=FirstUseTipp(
+            title=_('Welcome to InvenTree!'),
+            detail_text=_(
+                'Welcome to InvenTree! As an administrator, it is important to understand the security implications of your installation.\n\n'
+                'InvenTree has been designed with security in mind, but it is crucial to follow best practices to protect your data and users.\n\n'
+                'Please take a moment to review the threat model and ensure that your installation is secure.'
+            ),
+            links=[
+                (
+                    _('InvenTree Threat Model'),
+                    'https://docs.inventree.org/en/stable/concepts/threat_model/',
+                )
+            ],
+        ),
+    ),
 ]

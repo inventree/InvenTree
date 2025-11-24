@@ -32,6 +32,7 @@ export default function HomePanel(): JSX.Element {
 
   return (
     <Stack gap='xs'>
+      <Tipp id='ftue_admin_threat_model' />
       <Tipp id='admin_center_1' />
       <Accordion
         multiple
