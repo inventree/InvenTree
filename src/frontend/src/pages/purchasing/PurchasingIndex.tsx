@@ -25,6 +25,7 @@ import { CompanyTable } from '../../tables/company/CompanyTable';
 import ParametricCompanyTable from '../../tables/company/ParametricCompanyTable';
 import ManufacturerPartParametricTable from '../../tables/purchasing/ManufacturerPartParametricTable';
 import { ManufacturerPartTable } from '../../tables/purchasing/ManufacturerPartTable';
+import PurchaseOrderParametricTable from '../../tables/purchasing/PurchaseOrderParametricTable';
 import { PurchaseOrderTable } from '../../tables/purchasing/PurchaseOrderTable';
 import SupplierPartParametricTable from '../../tables/purchasing/SupplierPartParametricTable';
 import { SupplierPartTable } from '../../tables/purchasing/SupplierPartTable';
@@ -85,6 +86,12 @@ export default function PurchasingIndex() {
                 params={{ outstanding: true }}
               />
             )
+          },
+          {
+            value: 'parametric',
+            label: t`Parametric View`,
+            icon: <IconListDetails />,
+            content: <PurchaseOrderParametricTable />
           }
         ]
       }),

@@ -3,7 +3,6 @@ import {
   ApiEndpoints,
   type ApiFormFieldSet,
   type ModelType,
-  RowViewAction,
   UserRoles,
   YesNoButton,
   apiUrl,
@@ -399,14 +398,7 @@ export default function ParametricDataTable({
             setSelectedTemplate(null);
             addParameter.open();
           }
-        },
-        RowViewAction({
-          title: t`View`,
-          modelType: modelType,
-          modelId: record.pk,
-          hidden: !user.hasViewPermission(modelType),
-          navigate: navigate
-        })
+        }
       ];
     },
     [modelType, user]
@@ -429,6 +421,7 @@ export default function ParametricDataTable({
             parameters: true,
             ...parametricQueryFilters
           },
+          modelType: modelType,
           onCellClick: ({ event, record, index, column, columnIndex }) => {
             cancelEvent(event);
 

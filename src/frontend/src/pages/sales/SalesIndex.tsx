@@ -22,7 +22,9 @@ import SegmentedControlPanel from '../../components/panels/SegmentedControlPanel
 import { useUserState } from '../../states/UserState';
 import { CompanyTable } from '../../tables/company/CompanyTable';
 import ParametricCompanyTable from '../../tables/company/ParametricCompanyTable';
+import ReturnOrderParametricTable from '../../tables/sales/ReturnOrderParametricTable';
 import { ReturnOrderTable } from '../../tables/sales/ReturnOrderTable';
+import SalesOrderParametricTable from '../../tables/sales/SalesOrderParametricTable';
 import SalesOrderShipmentTable from '../../tables/sales/SalesOrderShipmentTable';
 import { SalesOrderTable } from '../../tables/sales/SalesOrderTable';
 
@@ -71,6 +73,12 @@ export default function SalesIndex() {
                 params={{ outstanding: true }}
               />
             )
+          },
+          {
+            value: 'parametric',
+            label: t`Parametric View`,
+            icon: <IconListDetails />,
+            content: <SalesOrderParametricTable />
           }
         ]
       }),
@@ -111,6 +119,12 @@ export default function SalesIndex() {
                 params={{ outstanding: true }}
               />
             )
+          },
+          {
+            value: 'parametric',
+            label: t`Parametric View`,
+            icon: <IconListDetails />,
+            content: <ReturnOrderParametricTable />
           }
         ]
       }),
