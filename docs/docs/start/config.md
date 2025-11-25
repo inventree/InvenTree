@@ -318,6 +318,20 @@ The following cache settings are available:
 | INVENTREE_CACHE_KEEPALIVE_INTERVAL | cache.keepalive_interval | Cache keepalive interval | 1 |
 | INVENTREE_CACHE_USER_TIMEOUT | cache.user_timeout | Cache user timeout | 1000 |
 
+## Web Server Settings
+
+By default, the [Dockerized InvenTree web server](./docker.md) binds to all available network interfaces and listens for IPv4 traffic on port 8000.
+This can be adjusted using the following environment variables:
+
+| Environment Variable | Description | Default |
+| --- | --- | --- | --- |
+| INVENTREE_WEB_ADDR | Email backend module | 0.0.0.0 |
+| INVENTREE_WEB_PORT | Email server host | 8000 |
+
+These variables are combined in the [Dockerfile](../../../contrib/container/Dockerfile) to build the bind string passed to the InvenTree server on startup.
+
+To enable IPv6/Dual Stack support, set `INVENTREE_WEB_ADDR` to `[::]` when you create/start the container.
+
 ## Email Settings
 
 To enable [email functionality](../settings/email.md), email settings must be configured here, either via environment variables or within the configuration file.
