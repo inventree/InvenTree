@@ -6,6 +6,7 @@ from string import Formatter
 from typing import Any, Optional
 
 from django.contrib.auth import get_user_model
+from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -494,12 +495,22 @@ class InvenTreePermissionCheckMixin:
         return user.has_perm(perm)
 
 
-class InvenTreeParameterMixin(InvenTreePermissionCheckMixin):
+class InvenTreeParameterMixin(InvenTreePermissionCheckMixin, models.Model):
     """Provides an abstracted class for managing parameters.
 
     Links the implementing model to the common.models.Parameter table,
     and provides the following methods:
     """
+
+    class Meta:
+        """Metaclass options for InvenTreeParameterMixin."""
+
+        abstract = True
+
+    # Define a reverse relation to the Parameter model
+    parameters_list = GenericRelation(
+        'common.Parameter', content_type_field='model_type', object_id_field='model_id'
+    )
 
     @property
     def parameters(self) -> QuerySet:
