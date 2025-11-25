@@ -28,7 +28,12 @@ import stock.models as stock_models
 import stock.serializers as stock_serializers
 from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import StatusView
-from InvenTree.api import BulkUpdateMixin, ListCreateDestroyAPIView, MetadataView
+from InvenTree.api import (
+    BulkUpdateMixin,
+    ListCreateDestroyAPIView,
+    MetadataView,
+    ParameterListMixin,
+)
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import (
     SEARCH_ORDER_FILTER,
@@ -378,6 +383,7 @@ class PurchaseOrderList(
     OrderCreateMixin,
     DataExportViewMixin,
     OutputOptionsMixin,
+    ParameterListMixin,
     ListCreateAPI,
 ):
     """API endpoint for accessing a list of PurchaseOrder objects.
@@ -386,6 +392,7 @@ class PurchaseOrderList(
     - POST: Create a new PurchaseOrder object
     """
 
+    parameter_model_class = models.PurchaseOrder
     filterset_class = PurchaseOrderFilter
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
     output_options = PurchaseOrderOutputOptions
@@ -847,6 +854,7 @@ class SalesOrderList(
     OrderCreateMixin,
     DataExportViewMixin,
     OutputOptionsMixin,
+    ParameterListMixin,
     ListCreateAPI,
 ):
     """API endpoint for accessing a list of SalesOrder objects.
@@ -855,10 +863,9 @@ class SalesOrderList(
     - POST: Create a new SalesOrder
     """
 
+    parameter_model_class = models.SalesOrder
     filterset_class = SalesOrderFilter
-
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
-
     output_options = SalesOrderOutputOptions
 
     ordering_field_aliases = {
@@ -1323,7 +1330,7 @@ class SalesOrderAllocationList(
 
 
 class SalesOrderAllocationDetail(SalesOrderAllocationMixin, RetrieveUpdateDestroyAPI):
-    """API endpoint for detali view of a SalesOrderAllocation object."""
+    """API endpoint for detail view of a SalesOrderAllocation object."""
 
 
 class SalesOrderShipmentFilter(FilterSet):
@@ -1374,7 +1381,7 @@ class SalesOrderShipmentFilter(FilterSet):
     )
 
     def filter_order_status(self, queryset, name, value):
-        """Filter by linked SalesOrderrder status."""
+        """Filter by linked SalesOrder status."""
         q1 = Q(order__status=value, order__status_custom_key__isnull=True)
         q2 = Q(order__status_custom_key=value)
 
@@ -1412,7 +1419,7 @@ class SalesOrderShipmentList(SalesOrderShipmentMixin, ListCreateAPI):
 
 
 class SalesOrderShipmentDetail(SalesOrderShipmentMixin, RetrieveUpdateDestroyAPI):
-    """API detail endpooint for SalesOrderShipment model."""
+    """API detail endpoint for SalesOrderShipment model."""
 
 
 class SalesOrderShipmentComplete(CreateAPI):
@@ -1525,12 +1532,13 @@ class ReturnOrderList(
     OrderCreateMixin,
     DataExportViewMixin,
     OutputOptionsMixin,
+    ParameterListMixin,
     ListCreateAPI,
 ):
     """API endpoint for accessing a list of ReturnOrder objects."""
 
+    parameter_model_class = models.ReturnOrder
     filterset_class = ReturnOrderFilter
-
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
     output_options = ReturnOrderOutputOptions
@@ -1964,7 +1972,7 @@ order_api_urls = [
             ),
         ]),
     ),
-    # API endpoints for sales ordesr
+    # API endpoints for sales orders
     path(
         'so/',
         include([

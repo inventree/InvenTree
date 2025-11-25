@@ -22,6 +22,7 @@ from rest_framework.serializers import ValidationError
 from sql_util.utils import SubqueryCount, SubquerySum
 
 import build.serializers
+import common.serializers
 import order.models
 import part.filters as part_filters
 import part.models as part_models
@@ -177,6 +178,12 @@ class AbstractOrderSerializer(
         True,
     )
 
+    parameters = enable_filter(
+        common.serializers.ParameterSerializer(many=True, read_only=True),
+        False,
+        filter_name='parameters',
+    )
+
     # Boolean field indicating if this order is overdue (Note: must be annotated)
     overdue = serializers.BooleanField(read_only=True, allow_null=True)
 
@@ -240,6 +247,7 @@ class AbstractOrderSerializer(
             'project_code_detail',
             'project_code_label',
             'responsible_detail',
+            'parameters',
             *extra_fields,
         ]
 
@@ -443,6 +451,9 @@ class PurchaseOrderSerializer(
         - Overdue status of the PurchaseOrder
         """
         queryset = AbstractOrderSerializer.annotate_queryset(queryset)
+
+        # Annotate parametric data
+        queryset = order.models.PurchaseOrder.annotate_parameters(queryset)
 
         queryset = queryset.annotate(
             completed_lines=SubqueryCount(
@@ -1086,6 +1097,9 @@ class SalesOrderSerializer(
         - Overdue status of the SalesOrder
         """
         queryset = AbstractOrderSerializer.annotate_queryset(queryset)
+
+        # Annotate parametric data
+        queryset = order.models.SalesOrder.annotate_parameters(queryset)
 
         queryset = queryset.annotate(
             completed_lines=SubqueryCount('lines', filter=Q(quantity__lte=F('shipped')))
@@ -1935,6 +1949,9 @@ class ReturnOrderSerializer(
     def annotate_queryset(queryset):
         """Custom annotation for the serializer queryset."""
         queryset = AbstractOrderSerializer.annotate_queryset(queryset)
+
+        # Annotate parametric data
+        queryset = order.models.ReturnOrder.annotate_parameters(queryset)
 
         queryset = queryset.annotate(
             completed_lines=SubqueryCount(
