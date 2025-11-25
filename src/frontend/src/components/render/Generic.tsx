@@ -14,6 +14,18 @@ export function RenderParameterTemplate({
   );
 }
 
+export function RenderParameter({
+  instance
+}: Readonly<InstanceRenderInterface>): ReactNode {
+  return (
+    <RenderInlineModel
+      primary={instance.template?.name || ''}
+      secondary={instance.description}
+      suffix={instance.data || instance.data_numeric || ''}
+    />
+  );
+}
+
 export function RenderProjectCode({
   instance
 }: Readonly<InstanceRenderInterface>): ReactNode {
