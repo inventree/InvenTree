@@ -7,8 +7,9 @@ from typing import Any, Optional
 
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.fields import GenericRelation
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
-from django.db import models
+from django.db import models, transaction
 from django.db.models import QuerySet
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -549,6 +550,70 @@ class InvenTreeParameterMixin(InvenTreePermissionCheckMixin, models.Model):
         """
         self.parameters_list.all().delete()
         super().delete(*args, **kwargs)
+
+    @transaction.atomic
+    def copy_parameters_from(self, other, clear=True, **kwargs):
+        """Copy all parameters from another model instance.
+
+        Arguments:
+            other: The other model instance to copy parameters from
+            clear: If True, clear existing parameters before copying
+            **kwargs: Additional keyword arguments to pass to the Parameter constructor
+        """
+        import common.models
+
+        if clear:
+            self.parameters_list.all().delete()
+
+        parameters = []
+
+        content_type = ContentType.objects.get_for_model(self.__class__)
+
+        template_ids = [parameter.template.pk for parameter in other.parameters.all()]
+
+        # Remove all conflicting parameters first
+        self.parameters_list.filter(template__pk__in=template_ids).delete()
+
+        for parameter in other.parameters.all():
+            parameter.pk = None
+            parameter.model_id = self.pk
+            parameter.model_type = content_type
+
+            parameters.append(parameter)
+
+        if len(parameters) > 0:
+            common.models.Parameter.objects.bulk_create(parameters)
+
+    def get_parameter(self, name: str):
+        """Return a Parameter instance for the given parameter name.
+
+        Args:
+            name: Name of the parameter template
+
+        Returns:
+            Parameter instance if found, else None
+        """
+        return self.parameters_list.filter(template__name=name).first()
+
+    def get_parameters(self):
+        """Return all Parameter instances for this model."""
+        return self.parameters_list.all().order_by('template__name')
+
+    def parameters_map(self):
+        """Return a map (dict) of parameter values associated with this Part instance, of the form.
+
+        Example:
+        {
+            "name_1": "value_1",
+            "name_2": "value_2",
+        }
+        """
+        params = {}
+
+        for parameter in self.parameters.all().prefetch_related('template'):
+            params[parameter.template.name] = parameter.data
+
+        return params
 
 
 class InvenTreeAttachmentMixin(InvenTreePermissionCheckMixin):

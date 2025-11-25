@@ -18,7 +18,6 @@ from django.db import models
 from django.db.models import (
     Case,
     DecimalField,
-    Exists,
     ExpressionWrapper,
     F,
     FloatField,
@@ -517,59 +516,3 @@ def annotate_bom_item_can_build(queryset: QuerySet, reference: str = '') -> Quer
     )
 
     return queryset
-
-
-def order_by_parameter(
-    queryset: QuerySet, template_id: int, ascending: bool = True
-) -> QuerySet:
-    """Order the given queryset by a given template parameter.
-
-    Parts which do not have a value for the given parameter are ordered last.
-
-    Arguments:
-        queryset: A queryset of Part objects
-        template_id (int): The ID of the template parameter to order by
-        ascending (bool): Order by ascending or descending (default = True)
-
-    Returns:
-        A queryset of Part objects ordered by the given parameter
-    """
-    template_filter = part.models.PartParameter.objects.filter(
-        template__id=template_id, part_id=OuterRef('id')
-    )
-
-    # Annotate the queryset with the parameter value, and whether it exists
-    queryset = queryset.annotate(parameter_exists=Exists(template_filter))
-
-    # Annotate the text data value
-    queryset = queryset.annotate(
-        parameter_value=Case(
-            When(
-                parameter_exists=True,
-                then=Subquery(
-                    template_filter.values('data')[:1], output_field=models.CharField()
-                ),
-            ),
-            default=Value('', output_field=models.CharField()),
-        ),
-        parameter_value_numeric=Case(
-            When(
-                parameter_exists=True,
-                then=Subquery(
-                    template_filter.values('data_numeric')[:1],
-                    output_field=models.FloatField(),
-                ),
-            ),
-            default=Value(0, output_field=models.FloatField()),
-        ),
-    )
-
-    prefix = '' if ascending else '-'
-
-    # Return filtered queryset
-
-    return queryset.order_by(
-        '-parameter_exists',
-        f'{prefix}parameter_value_numeric',
-        f'{prefix}parameter_value',
-    )

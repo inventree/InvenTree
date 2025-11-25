@@ -23,7 +23,7 @@ class PartParameterExportOptionsSerializer(serializers.Serializer):
 
 
 class PartParameterExporter(DataExportMixin, InvenTreePlugin):
-    """Builtin plugin for exporting PartParameter data.
+    """Builtin plugin for exporting Part Parameter data.
 
     Extends the "part" export process, to include all associated PartParameter data.
     """
@@ -93,7 +93,9 @@ class PartParameterExporter(DataExportMixin, InvenTreePlugin):
 
     def prefetch_queryset(self, queryset):
         """Ensure that the part parameters are prefetched."""
-        queryset = queryset.prefetch_related('parameters', 'parameters__template')
+        queryset = queryset.prefetch_related(
+            'parameters_list', 'parameters_list__template'
+        )
 
         return queryset
 
@@ -118,7 +120,7 @@ class PartParameterExporter(DataExportMixin, InvenTreePlugin):
 
         for part in parts:
             # Extract the part parameters from the serialized data
-            for parameter in part.get('parameters', []):
+            for parameter in part.get('parameters_list', []):
                 if template := parameter.get('template_detail', None):
                     template_id = template['pk']
 

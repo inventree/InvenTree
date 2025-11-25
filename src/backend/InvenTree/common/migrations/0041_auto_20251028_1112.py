@@ -167,11 +167,37 @@ def copy_manufacturer_part_parameters(apps, schema_editor):
     assert Parameter.objects.filter(model_type=content_type).count() == len(parameters)
 
 
+def update_category_parameters(apps, schema_editor):
+    """Migration for PartCategoryParameterTemplate.
+    
+    Copies the contents of the 'parameter_template' field to the new 'template' field
+    """
+
+    PartCategoryParameterTemplate = apps.get_model("part", "partcategoryparametertemplate")
+    ParameterTemplate = apps.get_model("common", "parametertemplate")
+
+    to_update = []
+
+    for item in PartCategoryParameterTemplate.objects.all():
+        # Find a matching template
+        item.template = ParameterTemplate.objects.get(
+            name=item.parameter_template.name
+        )
+
+        to_update.append(item)
+
+
+    if len(to_update) > 0:
+        PartCategoryParameterTemplate.objects.bulk_update(to_update, ['template'])
+        print(f"Updated {len(to_update)} PartCategoryParameterTemplate instances.")
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
         ("part", "0132_partparametertemplate_selectionlist"),
         ("common", "0040_parametertemplate_parameter"),
+        ("part", "0144_partcategoryparametertemplate_template")
     ]
 
     operations = [
@@ -190,6 +216,9 @@ class Migration(migrations.Migration):
         migrations.RunPython(
             copy_manufacturer_part_parameters,
             reverse_code=migrations.RunPython.noop
+        ),
+        migrations.RunPython(
+            update_category_parameters,
+            reverse_code=migrations.RunPython.noop
         )
-        # TODO: Data migration for existing CategoryParameter objects
     ]

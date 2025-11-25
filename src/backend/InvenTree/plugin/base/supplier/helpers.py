@@ -3,6 +3,7 @@
 from dataclasses import dataclass
 from typing import Optional
 
+import common.models
 import part.models as part_models
 
 
@@ -61,22 +62,22 @@ class ImportParameter:
         name (str): The name of the parameter.
         value (str): The value of the parameter.
         on_category (Optional[bool]): Indicates if the parameter is associated with a category. This will be automatically set by InvenTree
-        parameter_template (Optional[PartParameterTemplate]): The associated parameter template, if any.
+        parameter_template (Optional[ParameterTemplate]): The associated parameter template, if any.
     """
 
     name: str
     value: str
     on_category: Optional[bool] = False
-    parameter_template: Optional[part_models.PartParameterTemplate] = None
+    parameter_template: Optional[common.models.ParameterTemplate] = None
 
     def __post_init__(self):
         """Post-initialization to fetch the parameter template if not provided."""
         if not self.parameter_template:
             try:
-                self.parameter_template = part_models.PartParameterTemplate.objects.get(
+                self.parameter_template = common.models.ParameterTemplate.objects.get(
                     name__iexact=self.name
                 )
-            except part_models.PartParameterTemplate.DoesNotExist:
+            except common.models.ParameterTemplate.DoesNotExist:
                 pass
 
 
