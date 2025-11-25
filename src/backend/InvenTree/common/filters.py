@@ -21,22 +21,17 @@ import InvenTree.conversion
 import InvenTree.helpers
 
 
-def filter_content_type(
-    queryset, field_name: str, content_type: str | int | None, allow_null: bool = True
-):
-    """Filter a queryset by content type.
+def determine_content_type(content_type: str | int | None) -> ContentType | None:
+    """Determine a ContentType instance from a string or integer input.
 
     Arguments:
-        queryset: The queryset to filter.
-        field_name: The name of the content type field within the current model context.
-        content_type: The content type to filter by (name or ID).
-        allow_null: If True, include entries with null content type.
+        content_type: The content type to resolve (name or ID).
 
     Returns:
-        Filtered queryset.
+        ContentType instance if found, else None.
     """
     if content_type is None:
-        return queryset
+        return None
 
     ct = None
 
@@ -58,6 +53,28 @@ def filter_content_type(
     else:
         # Next, try to resolve the content type via a model name
         ct = ContentType.objects.filter(model__iexact=content_type).first()
+
+    return ct
+
+
+def filter_content_type(
+    queryset, field_name: str, content_type: str | int | None, allow_null: bool = True
+):
+    """Filter a queryset by content type.
+
+    Arguments:
+        queryset: The queryset to filter.
+        field_name: The name of the content type field within the current model context.
+        content_type: The content type to filter by (name or ID).
+        allow_null: If True, include entries with null content type.
+
+    Returns:
+        Filtered queryset.
+    """
+    if content_type is None:
+        return queryset
+
+    ct = determine_content_type(content_type)
 
     if ct is None:
         raise ValueError(f'Invalid content type: {content_type}')

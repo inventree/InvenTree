@@ -27,6 +27,7 @@ from rest_framework.exceptions import NotAcceptable, NotFound, PermissionDenied
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from sql_util.utils import SubqueryCount
 
 import common.filters
 import common.models
@@ -819,6 +820,27 @@ class ParameterTemplateFilter(FilterSet):
         return common.filters.filter_content_type(
             queryset, 'model_type', value, allow_null=True
         )
+
+    exists_for_model = rest_filters.CharFilter(
+        method='filter_exists_for_model', label='Exists For Model'
+    )
+
+    def filter_exists_for_model(self, queryset, name, value):
+        """Filter queryset to include only ParameterTemplates which have at least one Parameter for the given model type."""
+        content_type = common.filters.determine_content_type(value)
+
+        if not content_type:
+            return queryset.none()
+
+        # Annotate the queryset to determine which ParameterTemplates have at least one Parameter for the given model type
+        queryset = queryset.annotate(
+            parameter_count=SubqueryCount(
+                'parameters', filter=Q(model_type=content_type)
+            )
+        )
+
+        # Return only those ParameterTemplates which have at least one Parameter for the given model type
+        return queryset.filter(parameter_count__gt=0)
 
 
 class ParameterTemplateMixin:
