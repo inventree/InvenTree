@@ -22,7 +22,7 @@ import { PanelGroup } from '../../components/panels/PanelGroup';
 import SegmentedControlPanel from '../../components/panels/SegmentedControlPanel';
 import { useUserState } from '../../states/UserState';
 import { CompanyTable } from '../../tables/company/CompanyTable';
-import ParametricCompanyTable from '../../tables/company/ParametericCompanyTable';
+import ParametricCompanyTable from '../../tables/company/ParametricCompanyTable';
 import { ManufacturerPartTable } from '../../tables/purchasing/ManufacturerPartTable';
 import { PurchaseOrderTable } from '../../tables/purchasing/PurchaseOrderTable';
 import { SupplierPartTable } from '../../tables/purchasing/SupplierPartTable';

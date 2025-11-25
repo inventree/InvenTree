@@ -21,7 +21,7 @@ import { PanelGroup } from '../../components/panels/PanelGroup';
 import SegmentedControlPanel from '../../components/panels/SegmentedControlPanel';
 import { useUserState } from '../../states/UserState';
 import { CompanyTable } from '../../tables/company/CompanyTable';
-import ParametricCompanyTable from '../../tables/company/ParametericCompanyTable';
+import ParametricCompanyTable from '../../tables/company/ParametricCompanyTable';
 import { ReturnOrderTable } from '../../tables/sales/ReturnOrderTable';
 import SalesOrderShipmentTable from '../../tables/sales/SalesOrderShipmentTable';
 import { SalesOrderTable } from '../../tables/sales/SalesOrderTable';
