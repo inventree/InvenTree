@@ -196,6 +196,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ("part", "0132_partparametertemplate_selectionlist"),
+        ("company", "0034_manufacturerpart"),
         ("common", "0040_parametertemplate_parameter"),
         ("part", "0144_partcategoryparametertemplate_template")
     ]
