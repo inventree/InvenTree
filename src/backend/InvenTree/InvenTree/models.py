@@ -7,7 +7,6 @@ from typing import Any, Optional
 
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.fields import GenericRelation
-from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import QuerySet
@@ -512,13 +511,36 @@ class InvenTreeParameterMixin(InvenTreePermissionCheckMixin, models.Model):
         'common.Parameter', content_type_field='model_type', object_id_field='model_id'
     )
 
-    @property
-    def parameters(self) -> QuerySet:
-        """Return a QuerySet containing all the Parameter instances for this model."""
+    @staticmethod
+    def annotate_parameters(queryset: QuerySet) -> QuerySet:
+        """Annotate a queryset with pre-fetched parameters.
+
+        Args:
+            queryset: Queryset to annotate
+
+        Returns:
+            Annotated queryset
+        """
         from common.models import Parameter
 
-        content_type = ContentType.objects.get_for_model(self.__class__)
-        return Parameter.objects.filter(model_type=content_type, model_id=self.pk)
+        return queryset.prefetch_related(
+            models.Prefetch(
+                'parameters_list',
+                queryset=Parameter.objects.all().select_related('template'),
+                to_attr='parameters_list_prefetched',
+            )
+        )
+
+    @property
+    def parameters(self) -> QuerySet:
+        """Return a QuerySet containing all the Parameter instances for this model.
+
+        This will return pre-fetched data if available (i.e. in a serializer context).
+        """
+        if hasattr(self, 'parameters_list_prefetched'):
+            return self.parameters_list_prefetched
+
+        return self.parameters_list.all()
 
     def delete(self, *args, **kwargs):
         """Handle the deletion of a model instance.
