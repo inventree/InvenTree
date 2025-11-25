@@ -97,12 +97,12 @@ def copy_part_parameters(apps, schema_editor):
         ParameterTemplate.objects.bulk_create(templates)
         print(f"\nMigrated {len(templates)} PartParameterTemplate instances.")
 
-    assert ParameterTemplate.objects.filter().count() == len(templates)
+    assert ParameterTemplate.objects.all().count() == len(templates)
 
     # Next, copy PartParameter instances to Parameter instances
     parameters = []
 
-    content_type =ContentType.objects.get_or_create(app_label='part', model='part')
+    content_type = ContentType.objects.get_or_create(app_label='part', model='part')
 
     for parameter in PartParameter.objects.all():
         # Find the corresponding ParameterTemplate
@@ -124,7 +124,7 @@ def copy_part_parameters(apps, schema_editor):
         Parameter.objects.bulk_create(parameters)
         print(f"\nMigrated {len(parameters)} PartParameter instances.")
 
-    assert Parameter.objects.filter(model_type=content_type).count() == len(parameters)
+    assert Parameter.objects.filter(model_type=content_type.id).count() == len(parameters)
 
 
 def copy_manufacturer_part_parameters(apps, schema_editor):
@@ -165,7 +165,7 @@ def copy_manufacturer_part_parameters(apps, schema_editor):
         Parameter.objects.bulk_create(parameters)
         print(f"\nMigrated {len(parameters)} ManufacturerPartParameter instances.")
 
-    assert Parameter.objects.filter(model_type=content_type).count() == len(parameters)
+    assert Parameter.objects.filter(model_type=content_type.id).count() == len(parameters)
 
 
 def update_category_parameters(apps, schema_editor):
