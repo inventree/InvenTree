@@ -50,6 +50,7 @@ from taggit.managers import TaggableManager
 
 import common.validators
 import InvenTree.conversion
+import InvenTree.exceptions
 import InvenTree.fields
 import InvenTree.helpers
 import InvenTree.models
@@ -2585,6 +2586,15 @@ class Parameter(
         """Validate the Parameter before saving to the database."""
         super().clean()
 
+        # Validate the parameter data against the template choices
+        if choices := self.template.get_choices():
+            if self.data not in choices:
+                raise ValidationError({'data': _('Invalid choice for parameter value')})
+
+        self.calculate_numeric_value()
+
+        # TODO: Check that the model_type for this parameter matches the template
+
         # Validate the parameter data against the template units
         if (
             get_global_setting(
@@ -2599,18 +2609,21 @@ class Parameter(
             except ValidationError as e:
                 raise ValidationError({'data': e.message})
 
-        # Validate the parameter data against the template choices
-        if choices := self.template.get_choices():
-            if self.data not in choices:
-                raise ValidationError({'data': _('Invalid choice for parameter value')})
+        # Finally, run custom validation checks (via plugins)
+        from plugin import PluginMixinEnum, registry
 
-        self.calculate_numeric_value()
-
-        # TODO: Check that the model_type for this parameter matches the template
-
-        # TODO: Validation of units (check global setting)
-
-        # TODO: Validate against plugins
+        for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
+            # Note: The validate_part_parameter function may raise a ValidationError
+            try:
+                if hasattr(plugin, 'validate_parameter'):
+                    result = plugin.validate_parameter(self, self.data)
+                    if result:
+                        break
+            except ValidationError as exc:
+                # Re-throw the ValidationError against the 'data' field
+                raise ValidationError({'data': exc.message})
+            except Exception:
+                InvenTree.exceptions.log_error('validate_parameter', plugin=plugin.slug)
 
     def calculate_numeric_value(self):
         """Calculate a numeric value for the parameter data.

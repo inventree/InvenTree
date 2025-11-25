@@ -227,9 +227,7 @@ class ValidationMixin:
         """
         return None
 
-    def validate_part_parameter(
-        self, parameter: part.models.PartParameter, data: str
-    ) -> Optional[bool]:
+    def validate_parameter(self, parameter, data: str) -> Optional[bool]:
         """Validate a parameter value.
 
         Arguments:

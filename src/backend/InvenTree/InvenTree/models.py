@@ -547,7 +547,7 @@ class InvenTreeParameterMixin(InvenTreePermissionCheckMixin, models.Model):
 
         Before deleting the model instance, delete any associated parameters.
         """
-        self.parameters.all().delete()
+        self.parameters_list.all().delete()
         super().delete(*args, **kwargs)
 
 
