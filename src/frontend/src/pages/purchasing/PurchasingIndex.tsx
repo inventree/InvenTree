@@ -14,68 +14,55 @@ import { useMemo } from 'react';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { useLocalStorage } from '@mantine/hooks';
-import SegmentedIconControl from '../../components/buttons/SegmentedIconControl';
 import OrderCalendar from '../../components/calendar/OrderCalendar';
 import PermissionDenied from '../../components/errors/PermissionDenied';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup } from '../../components/panels/PanelGroup';
+import SegmentedControlPanel from '../../components/panels/SegmentedControlPanel';
 import { useUserState } from '../../states/UserState';
 import { CompanyTable } from '../../tables/company/CompanyTable';
 import { ManufacturerPartTable } from '../../tables/purchasing/ManufacturerPartTable';
 import { PurchaseOrderTable } from '../../tables/purchasing/PurchaseOrderTable';
 import { SupplierPartTable } from '../../tables/purchasing/SupplierPartTable';
 
-function PurchaseOrderOverview({
-  view
-}: {
-  view: string;
-}) {
-  switch (view) {
-    case 'calendar':
-      return (
-        <OrderCalendar
-          model={ModelType.purchaseorder}
-          role={UserRoles.purchase_order}
-          params={{ outstanding: true }}
-        />
-      );
-    case 'table':
-    default:
-      return <PurchaseOrderTable />;
-  }
-}
-
 export default function PurchasingIndex() {
   const user = useUserState();
 
-  const [purchaseOrderView, setpurchaseOrderView] = useLocalStorage<string>({
-    key: 'purchaseOrderView',
+  const [purchaseOrderView, setPurchaseOrderView] = useLocalStorage<string>({
+    key: 'purchase-order-view',
     defaultValue: 'table'
   });
 
   const panels = useMemo(() => {
     return [
-      {
+      SegmentedControlPanel({
         name: 'purchaseorders',
         label: t`Purchase Orders`,
         icon: <IconShoppingCart />,
         hidden: !user.hasViewRole(UserRoles.purchase_order),
-        content: <PurchaseOrderOverview view={purchaseOrderView} />,
-        controls: (
-          <SegmentedIconControl
-            value={purchaseOrderView}
-            onChange={setpurchaseOrderView}
-            data={[
-              { value: 'table', label: t`Table View`, icon: <IconTable /> },
-              {
-                value: 'calendar',
-                label: t`Calendar View`,
-                icon: <IconCalendar />
-              }
-            ]}
-          />
-        )
-      },
+        selection: purchaseOrderView,
+        onChange: setPurchaseOrderView,
+        options: [
+          {
+            value: 'table',
+            label: t`Table View`,
+            icon: <IconTable />,
+            content: <PurchaseOrderTable />
+          },
+          {
+            value: 'calendar',
+            label: t`Calendar View`,
+            icon: <IconCalendar />,
+            content: (
+              <OrderCalendar
+                model={ModelType.purchaseorder}
+                role={UserRoles.purchase_order}
+                params={{ outstanding: true }}
+              />
+            )
+          }
+        ]
+      }),
       {
         name: 'suppliers',
         label: t`Suppliers`,
