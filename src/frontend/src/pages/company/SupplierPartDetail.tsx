@@ -248,10 +248,6 @@ export default function SupplierPartDetail() {
         icon: <IconInfoCircle />,
         content: detailsPanel
       },
-      ParametersPanel({
-        model_type: ModelType.supplierpart,
-        model_id: supplierPart?.pk
-      }),
       {
         name: 'stock',
         label: t`Received Stock`,
@@ -289,6 +285,10 @@ export default function SupplierPartDetail() {
           <Skeleton />
         )
       },
+      ParametersPanel({
+        model_type: ModelType.supplierpart,
+        model_id: supplierPart?.pk
+      }),
       AttachmentPanel({
         model_type: ModelType.supplierpart,
         model_id: supplierPart?.pk

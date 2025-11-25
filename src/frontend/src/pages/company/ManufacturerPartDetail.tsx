@@ -160,10 +160,6 @@ export default function ManufacturerPartDetail() {
         icon: <IconInfoCircle />,
         content: detailsPanel
       },
-      ParametersPanel({
-        model_type: ModelType.manufacturerpart,
-        model_id: manufacturerPart?.pk
-      }),
       {
         name: 'stock',
         label: t`Received Stock`,
@@ -192,6 +188,10 @@ export default function ManufacturerPartDetail() {
           <Skeleton />
         )
       },
+      ParametersPanel({
+        model_type: ModelType.manufacturerpart,
+        model_id: manufacturerPart?.pk
+      }),
       AttachmentPanel({
         model_type: ModelType.manufacturerpart,
         model_id: manufacturerPart?.pk

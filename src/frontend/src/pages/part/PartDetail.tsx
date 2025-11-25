@@ -787,10 +787,6 @@ export default function PartDetail() {
         icon: <IconInfoCircle />,
         content: detailsPanel
       },
-      ParametersPanel({
-        model_type: ModelType.part,
-        model_id: part?.pk
-      }),
       {
         name: 'stock',
         label: t`Stock`,
@@ -941,6 +937,10 @@ export default function PartDetail() {
         icon: <IconLayersLinked />,
         content: <RelatedPartTable partId={part.pk} />
       },
+      ParametersPanel({
+        model_type: ModelType.part,
+        model_id: part?.pk
+      }),
       AttachmentPanel({
         model_type: ModelType.part,
         model_id: part?.pk
