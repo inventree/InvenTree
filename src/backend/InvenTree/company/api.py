@@ -37,7 +37,21 @@ from .serializers import (
 )
 
 
-class CompanyList(DataExportViewMixin, ListCreateAPI):
+class CompanyMixin(OutputOptionsMixin):
+    """Mixin class for Company API endpoints."""
+
+    queryset = Company.objects.all()
+    serializer_class = CompanySerializer
+
+    def get_queryset(self):
+        """Return annotated queryset for the company endpoints."""
+        queryset = super().get_queryset()
+        queryset = CompanySerializer.annotate_queryset(queryset)
+
+        return queryset
+
+
+class CompanyList(CompanyMixin, DataExportViewMixin, ListCreateAPI):
     """API endpoint for accessing a list of Company objects.
 
     Provides two methods:
@@ -45,14 +59,6 @@ class CompanyList(DataExportViewMixin, ListCreateAPI):
     - GET: Return list of objects
     - POST: Create a new Company object
     """
-
-    serializer_class = CompanySerializer
-    queryset = Company.objects.all()
-
-    def get_queryset(self):
-        """Return annotated queryset for the company list endpoint."""
-        queryset = super().get_queryset()
-        return CompanySerializer.annotate_queryset(queryset)
 
     filter_backends = SEARCH_ORDER_FILTER
 
@@ -71,18 +77,8 @@ class CompanyList(DataExportViewMixin, ListCreateAPI):
     ordering = 'name'
 
 
-class CompanyDetail(RetrieveUpdateDestroyAPI):
+class CompanyDetail(CompanyMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail of a single Company object."""
-
-    queryset = Company.objects.all()
-    serializer_class = CompanySerializer
-
-    def get_queryset(self):
-        """Return annotated queryset for the company detail endpoint."""
-        queryset = super().get_queryset()
-        queryset = CompanySerializer.annotate_queryset(queryset)
-
-        return queryset
 
 
 class ContactList(DataExportViewMixin, ListCreateDestroyAPIView):
