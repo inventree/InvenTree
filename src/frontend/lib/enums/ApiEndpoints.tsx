@@ -111,8 +111,6 @@ export enum ApiEndpoints {
 
   // Part API endpoints
   part_list = 'part/',
-  part_parameter_list = 'part/parameter/',
-  part_parameter_template_list = 'part/parameter/template/',
   part_thumbs_list = 'part/thumbs/',
   part_pricing = 'part/:id/pricing/',
   part_requirements = 'part/:id/requirements/',
