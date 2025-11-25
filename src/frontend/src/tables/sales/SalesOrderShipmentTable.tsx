@@ -1,5 +1,9 @@
 import { t } from '@lingui/core/macro';
-import { IconTruckDelivery } from '@tabler/icons-react';
+import {
+  IconCircleCheck,
+  IconCircleX,
+  IconTruckDelivery
+} from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -19,8 +23,10 @@ import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import dayjs from 'dayjs';
 import {
+  useCheckShipmentForm,
   useSalesOrderShipmentCompleteFields,
-  useSalesOrderShipmentFields
+  useSalesOrderShipmentFields,
+  useUncheckShipmentForm
 } from '../../forms/SalesOrderForms';
 import {
   useCreateApiFormModal,
@@ -89,6 +95,20 @@ export default function SalesOrderShipmentTable({
     fields: editShipmentFields,
     title: t`Edit Shipment`,
     table: table
+  });
+
+  const checkShipment = useCheckShipmentForm({
+    shipmentId: selectedShipment.pk,
+    onSuccess: () => {
+      table.refreshTable();
+    }
+  });
+
+  const uncheckShipment = useUncheckShipmentForm({
+    shipmentId: selectedShipment.pk,
+    onSuccess: () => {
+      table.refreshTable();
+    }
   });
 
   const completeShipment = useCreateApiFormModal({
@@ -189,6 +209,30 @@ export default function SalesOrderShipmentTable({
 
       return [
         {
+          hidden:
+            !!record.checked_by || !user.hasChangeRole(UserRoles.sales_order),
+          title: t`Check Shipment`,
+          color: 'blue',
+          icon: <IconCircleCheck />,
+          onClick: () => {
+            setSelectedShipment(record);
+            checkShipment.open();
+          }
+        },
+        {
+          hidden:
+            shipped ||
+            !record.checked_by ||
+            !user.hasChangeRole(UserRoles.sales_order),
+          title: t`Uncheck Shipment`,
+          color: 'red',
+          icon: <IconCircleX />,
+          onClick: () => {
+            setSelectedShipment(record);
+            uncheckShipment.open();
+          }
+        },
+        {
           hidden: shipped || !user.hasChangeRole(UserRoles.sales_order),
           title: t`Complete Shipment`,
           color: 'green',
@@ -271,7 +315,9 @@ export default function SalesOrderShipmentTable({
     <>
       {newShipment.modal}
       {editShipment.modal}
+      {checkShipment.modal}
       {deleteShipment.modal}
+      {uncheckShipment.modal}
       {completeShipment.modal}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.sales_order_shipment_list)}
