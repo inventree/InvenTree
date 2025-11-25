@@ -14,6 +14,7 @@ from typing import cast
 
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models, transaction
@@ -2417,26 +2418,37 @@ class Part(
 
         This function is normally called when the Part is first created.
         """
-        # TODO: https://github.com/inventree/InvenTree/pull/10699
-        # TODO: Reimplement this
-        # for template in templates:
-        #     # First ensure that the part doesn't have that parameter
-        #     if PartParameter.objects.filter(
-        #         part=instance, template=template.parameter_template
-        #     ).exists():
-        #         continue
+        from common.models import Parameter
 
-        #     try:
-        #         PartParameter.create(
-        #             part=instance,
-        #             template=template.parameter_template,
-        #             data=template.default_value,
-        #             save=True,
-        #         )
-        #     except IntegrityError:
-        #         logger.exception(
-        #             'Could not create new PartParameter for part %s', instance
-        #         )
+        from .models import PartCategoryParameterTemplate
+
+        categories = category.get_ancestors(include_self=True)
+
+        category_templates = PartCategoryParameterTemplate.objects.filter(
+            category__in=categories
+        ).order_by('-category__level')
+
+        parameters = []
+        content_type = ContentType.objects.get_for_model(Part)
+
+        for category_template in category_templates:
+            # First ensure that the part doesn't have that parameter
+            if self.parameters_list.filter(
+                template=category_template.template
+            ).exists():
+                continue
+
+            parameters.append(
+                Parameter(
+                    template=category_template.template,
+                    model_type=content_type,
+                    model_id=self.pk,
+                    data=category_template.default_value,
+                )
+            )
+
+        if len(parameters) > 0:
+            Parameter.objects.bulk_create(parameters)
 
     def getTestTemplates(
         self, required=None, include_parent: bool = True, enabled=None
@@ -3734,8 +3746,8 @@ class PartCategoryParameterTemplate(InvenTree.models.InvenTreeMetadataModel):
     def __str__(self):
         """String representation of a PartCategoryParameterTemplate (admin interface)."""
         if self.default_value:
-            return f'{self.category.name} | {self.parameter_template.name} | {self.default_value}'
-        return f'{self.category.name} | {self.parameter_template.name}'
+            return f'{self.category.name} | {self.template.name} | {self.default_value}'
+        return f'{self.category.name} | {self.template.name}'
 
     def clean(self):
         """Validate this PartCategoryParameterTemplate instance.
@@ -3753,11 +3765,11 @@ class PartCategoryParameterTemplate(InvenTree.models.InvenTreeMetadataModel):
             and get_global_setting(
                 'PART_PARAMETER_ENFORCE_UNITS', True, cache=False, create=False
             )
-            and self.parameter_template.units
+            and self.template.units
         ):
             try:
                 InvenTree.conversion.convert_physical_value(
-                    self.default_value, self.parameter_template.units
+                    self.default_value, self.template.units
                 )
             except ValidationError as e:
                 raise ValidationError({'default_value': e.message})

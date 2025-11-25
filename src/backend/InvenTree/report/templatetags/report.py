@@ -343,6 +343,9 @@ def parameter(
     Returns:
         A Parameter object, or None if not found
     """
+    if not hasattr(instance, 'parameters'):
+        raise TypeError("parameter tag requires a Model with 'parameters' attribute")
+
     return (
         instance.parameters.prefetch_related('template')
         .filter(template__name=parameter_name)
