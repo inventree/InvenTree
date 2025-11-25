@@ -3028,7 +3028,7 @@ class EmailMessage(models.Model):
     direction = models.CharField(
         max_length=50, blank=True, null=True, choices=EmailDirection.choices
     )
-    priority = models.IntegerField(verbose_name=_('Prioriy'), choices=Priority)
+    priority = models.IntegerField(verbose_name=_('Priority'), choices=Priority)
     delivery_options = models.JSONField(
         blank=True,
         null=True,
