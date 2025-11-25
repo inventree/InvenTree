@@ -9,7 +9,7 @@ from django_filters.rest_framework.filterset import FilterSet
 
 import part.models
 from data_exporter.mixins import DataExportViewMixin
-from InvenTree.api import ListCreateDestroyAPIView, MetadataView
+from InvenTree.api import ListCreateDestroyAPIView, MetadataView, ParameterListMixin
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import SEARCH_ORDER_FILTER, SEARCH_ORDER_FILTER_ALIAS
 from InvenTree.mixins import (
@@ -51,7 +51,7 @@ class CompanyMixin(OutputOptionsMixin):
         return queryset
 
 
-class CompanyList(CompanyMixin, DataExportViewMixin, ListCreateAPI):
+class CompanyList(CompanyMixin, ParameterListMixin, DataExportViewMixin, ListCreateAPI):
     """API endpoint for accessing a list of Company objects.
 
     Provides two methods:
@@ -60,6 +60,7 @@ class CompanyList(CompanyMixin, DataExportViewMixin, ListCreateAPI):
     - POST: Create a new Company object
     """
 
+    parameter_model_class = Company
     filter_backends = SEARCH_ORDER_FILTER
 
     filterset_fields = [
@@ -191,6 +192,7 @@ class ManufacturerPartList(
     ManufacturerPartMixin,
     SerializerContextMixin,
     OutputOptionsMixin,
+    ParameterListMixin,
     ListCreateDestroyAPIView,
 ):
     """API endpoint for list view of ManufacturerPart object.
@@ -199,6 +201,7 @@ class ManufacturerPartList(
     - POST: Create a new ManufacturerPart object
     """
 
+    parameter_model_class = ManufacturerPart
     filterset_class = ManufacturerPartFilter
     filter_backends = SEARCH_ORDER_FILTER
     output_options = ManufacturerOutputOptions
@@ -337,7 +340,11 @@ class SupplierPartMixin:
 
 
 class SupplierPartList(
-    DataExportViewMixin, SupplierPartMixin, OutputOptionsMixin, ListCreateDestroyAPIView
+    DataExportViewMixin,
+    SupplierPartMixin,
+    ParameterListMixin,
+    OutputOptionsMixin,
+    ListCreateDestroyAPIView,
 ):
     """API endpoint for list view of SupplierPart object.
 
@@ -345,8 +352,8 @@ class SupplierPartList(
     - POST: Create a new SupplierPart object
     """
 
+    parameter_model_class = SupplierPart
     filterset_class = SupplierPartFilter
-
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
     output_options = SupplierPartOutputOptions
 

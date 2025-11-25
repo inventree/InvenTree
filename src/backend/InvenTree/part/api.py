@@ -19,6 +19,7 @@ from InvenTree.api import (
     BulkUpdateMixin,
     ListCreateDestroyAPIView,
     MetadataView,
+    ParameterListMixin,
 )
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import (
@@ -1066,31 +1067,19 @@ class PartOutputOptions(OutputConfiguration):
 
 
 class PartList(
-    PartMixin, BulkUpdateMixin, DataExportViewMixin, OutputOptionsMixin, ListCreateAPI
+    PartMixin,
+    BulkUpdateMixin,
+    ParameterListMixin,
+    DataExportViewMixin,
+    OutputOptionsMixin,
+    ListCreateAPI,
 ):
     """API endpoint for accessing a list of Part objects, or creating a new Part instance."""
 
+    parameter_model_class = Part
     output_options = PartOutputOptions
     filterset_class = PartFilter
     is_create = True
-
-    def filter_queryset(self, queryset):
-        """Perform custom filtering of the queryset."""
-        import common.filters
-
-        queryset = super().filter_queryset(queryset)
-
-        # Filter by parametric data
-        queryset = common.filters.filter_parametric_data(
-            queryset, self.request.query_params
-        )
-
-        # Apply ordering based on query parameter
-        queryset = common.filters.order_by_parameter(
-            queryset, Part, self.request.query_params.get('ordering', None)
-        )
-
-        return queryset
 
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
 

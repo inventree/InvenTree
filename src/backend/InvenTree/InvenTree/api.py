@@ -600,6 +600,32 @@ class BulkUpdateMixin(BulkOperationMixin):
         return Response({'success': f'Updated {n} items'}, status=200)
 
 
+class ParameterListMixin:
+    """Mixin class which supports filtering against parametric fields."""
+
+    parameter_model_class = None
+
+    def filter_queryset(self, queryset):
+        """Perform filtering against parametric fields."""
+        import common.filters
+
+        queryset = super().filter_queryset(queryset)
+
+        # Filter by parametric data
+        queryset = common.filters.filter_parametric_data(
+            queryset, self.request.query_params
+        )
+
+        # Apply ordering based on query parameter
+        queryset = common.filters.order_by_parameter(
+            queryset,
+            self.parameter_model_class,
+            self.request.query_params.get('ordering', None),
+        )
+
+        return queryset
+
+
 class BulkDeleteMixin(BulkOperationMixin):
     """Mixin class for enabling 'bulk delete' operations for various models.
 
