@@ -58,8 +58,6 @@ from .models import (
     PartCategory,
     PartCategoryParameterTemplate,
     PartInternalPriceBreak,
-    PartParameter,
-    PartParameterTemplate,
     PartRelated,
     PartSellPriceBreak,
     PartStocktake,
@@ -1024,10 +1022,6 @@ class PartMixin(SerializerContextMixin):
 
         queryset = part_serializers.PartSerializer.annotate_queryset(queryset)
 
-        # Annotate with parameter template data?
-        if str2bool(self.request.query_params.get('parameters', False)):
-            queryset = queryset.prefetch_related('parameters', 'parameters__template')
-
         if str2bool(self.request.query_params.get('price_breaks', True)):
             queryset = queryset.prefetch_related('salepricebreaks')
 
@@ -1264,64 +1258,6 @@ class PartRelatedList(PartRelatedMixin, ListCreateAPI):
 
 class PartRelatedDetail(PartRelatedMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for accessing detail view of a PartRelated object."""
-
-
-class PartParameterTemplateFilter(FilterSet):
-    """FilterSet for PartParameterTemplate objects."""
-
-    class Meta:
-        """Metaclass options."""
-
-        model = PartParameterTemplate
-
-        # Simple filter fields
-        fields = ['name', 'units', 'checkbox']
-
-    has_choices = rest_filters.BooleanFilter(
-        method='filter_has_choices', label='Has Choice'
-    )
-
-    def filter_has_choices(self, queryset, name, value):
-        """Filter queryset to include only PartParameterTemplates with choices."""
-        if str2bool(value):
-            return queryset.exclude(Q(choices=None) | Q(choices=''))
-
-        return queryset.filter(Q(choices=None) | Q(choices='')).distinct()
-
-    has_units = rest_filters.BooleanFilter(method='filter_has_units', label='Has Units')
-
-    def filter_has_units(self, queryset, name, value):
-        """Filter queryset to include only PartParameterTemplates with units."""
-        if str2bool(value):
-            return queryset.exclude(Q(units=None) | Q(units=''))
-
-        return queryset.filter(Q(units=None) | Q(units='')).distinct()
-
-    part = rest_filters.ModelChoiceFilter(
-        queryset=Part.objects.all(), method='filter_part', label=_('Part')
-    )
-
-    @extend_schema_field(OpenApiTypes.INT)
-    def filter_part(self, queryset, name, part):
-        """Filter queryset to include only PartParameterTemplates which are referenced by a part."""
-        parameters = PartParameter.objects.filter(part=part)
-        template_ids = parameters.values_list('template').distinct()
-        return queryset.filter(pk__in=[el[0] for el in template_ids])
-
-    # Filter against a "PartCategory" - return only parameter templates which are referenced by parts in this category
-    category = rest_filters.ModelChoiceFilter(
-        queryset=PartCategory.objects.all(),
-        method='filter_category',
-        label=_('Category'),
-    )
-
-    @extend_schema_field(OpenApiTypes.INT)
-    def filter_category(self, queryset, name, category):
-        """Filter queryset to include only PartParameterTemplates which are referenced by parts in this category."""
-        cats = category.get_descendants(include_self=True)
-        parameters = PartParameter.objects.filter(part__category__in=cats)
-        template_ids = parameters.values_list('template').distinct()
-        return queryset.filter(pk__in=[el[0] for el in template_ids])
 
 
 class PartStocktakeFilter(FilterSet):
