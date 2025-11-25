@@ -104,8 +104,10 @@ class GuidesTest(InvenTreeTestCase):
 
         # Model base test
         guide = GuideDefinition.objects.first()
-        self.assertEqual(guide.slug, 'admin_center_1')
-        self.assertEqual(str(guide), 'Admin Center Information Release Info (tipp)')
+        self.assertEqual(guide.slug, 'ftue_admin_threat_model')
+        self.assertEqual(
+            str(guide), 'First Use Admin Welcome - Threat Model (firstuse)'
+        )
 
     def test_model_fences(self):
         """Test GuideExecution model string representation."""
@@ -171,7 +173,7 @@ class WebAPITests(InvenTreeAPITestCase):
 
         # Dismiss correct guide
         self.patch(
-            reverse('api-guide-dismiss', kwargs={'slug': 'admin_center_1'}),
+            reverse('api-guide-dismiss', kwargs={'slug': 'ftue_admin_threat_model'}),
             expected_code=200,
         )
         response = self.get(reverse('api-guide-list'), expected_code=200)
@@ -179,7 +181,7 @@ class WebAPITests(InvenTreeAPITestCase):
         self.assertFalse(response.data[0]['is_applicable'])
         self.assertEqual(
             str(GuideExecution.objects.first()),
-            'Admin Center Information Release Info for testuser',
+            'First Use Admin Welcome - Threat Model for testuser',
         )
 
         # Dismissing again should have no effect
