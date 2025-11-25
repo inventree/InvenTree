@@ -2445,6 +2445,33 @@ class Part(
         if len(templates) > 0:
             PartTestTemplate.objects.bulk_create(templates)
 
+    @transaction.atomic
+    def copy_category_parameters(self, category: PartCategory):
+        """Copy parameter templates from the specified PartCategory.
+
+        This function is normally called when the Part is first created.
+        """
+        # TODO: https://github.com/inventree/InvenTree/pull/10699
+        # TODO: Reimplement this
+        # for template in templates:
+        #     # First ensure that the part doesn't have that parameter
+        #     if PartParameter.objects.filter(
+        #         part=instance, template=template.parameter_template
+        #     ).exists():
+        #         continue
+
+        #     try:
+        #         PartParameter.create(
+        #             part=instance,
+        #             template=template.parameter_template,
+        #             data=template.default_value,
+        #             save=True,
+        #         )
+        #     except IntegrityError:
+        #         logger.exception(
+        #             'Could not create new PartParameter for part %s', instance
+        #         )
+
     def getTestTemplates(
         self, required=None, include_parent: bool = True, enabled=None
     ) -> QuerySet[PartTestTemplate]:

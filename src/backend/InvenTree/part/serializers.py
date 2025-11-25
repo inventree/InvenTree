@@ -7,7 +7,7 @@ from decimal import Decimal
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from django.core.validators import MinValueValidator
-from django.db import IntegrityError, models, transaction
+from django.db import models, transaction
 from django.db.models import ExpressionWrapper, F, Q
 from django.db.models.functions import Coalesce, Greatest
 from django.urls import reverse_lazy
@@ -49,8 +49,6 @@ from .models import (
     PartCategory,
     PartCategoryParameterTemplate,
     PartInternalPriceBreak,
-    PartParameter,
-    PartParameterTemplate,
     PartPricing,
     PartRelated,
     PartSellPriceBreak,
@@ -282,40 +280,6 @@ class PartThumbSerializerUpdate(InvenTree.serializers.InvenTreeModelSerializer):
         return value
 
     image = InvenTree.serializers.InvenTreeAttachmentSerializerField(required=True)
-
-
-@register_importer()
-class PartParameterTemplateSerializer(
-    DataImportExportSerializerMixin, InvenTree.serializers.InvenTreeModelSerializer
-):
-    """JSON serializer for the PartParameterTemplate model."""
-
-    class Meta:
-        """Metaclass defining serializer fields."""
-
-        model = PartParameterTemplate
-        fields = [
-            'pk',
-            'name',
-            'units',
-            'description',
-            'parts',
-            'checkbox',
-            'choices',
-            'selectionlist',
-        ]
-
-    parts = serializers.IntegerField(
-        read_only=True,
-        allow_null=True,
-        label=_('Parts'),
-        help_text=_('Number of parts using this template'),
-    )
-
-    @staticmethod
-    def annotate_queryset(queryset):
-        """Annotate the queryset with the number of parts which use each parameter template."""
-        return queryset.annotate(parts=SubqueryCount('instances'))
 
 
 class PartBriefSerializer(
@@ -1066,31 +1030,7 @@ class PartSerializer(
         # Duplicate parameter data from part category (and parents)
         if copy_category_parameters and instance.category is not None:
             # Get flattened list of parent categories
-            categories = instance.category.get_ancestors(include_self=True)
-
-            # All parameter templates within these categories
-            templates = PartCategoryParameterTemplate.objects.filter(
-                category__in=categories
-            )
-
-            for template in templates:
-                # First ensure that the part doesn't have that parameter
-                if PartParameter.objects.filter(
-                    part=instance, template=template.parameter_template
-                ).exists():
-                    continue
-
-                try:
-                    PartParameter.create(
-                        part=instance,
-                        template=template.parameter_template,
-                        data=template.default_value,
-                        save=True,
-                    )
-                except IntegrityError:
-                    logger.exception(
-                        'Could not create new PartParameter for part %s', instance
-                    )
+            instance.copy_category_parameters(instance.category)
 
         # Create initial stock entry
         if initial_stock:
@@ -1818,13 +1758,14 @@ class CategoryParameterTemplateSerializer(
             'category',
             'category_detail',
             'parameter_template',
-            'parameter_template_detail',
+            # 'parameter_template_detail',
             'default_value',
         ]
 
-    parameter_template_detail = PartParameterTemplateSerializer(
-        source='parameter_template', many=False, read_only=True
-    )
+    # TODO: Re-implement this, but point to the ParameterTemplate model
+    # parameter_template_detail = PartParameterTemplateSerializer(
+    #     source='parameter_template', many=False, read_only=True
+    # )
 
     category_detail = CategorySerializer(
         source='category', many=False, read_only=True, allow_null=True
