@@ -132,7 +132,6 @@ export enum ApiEndpoints {
   supplier_part_list = 'company/part/',
   supplier_part_pricing_list = 'company/price-break/',
   manufacturer_part_list = 'company/part/manufacturer/',
-  manufacturer_part_parameter_list = 'company/part/manufacturer/parameter/',
 
   // Stock location endpoints
   stock_location_list = 'stock/location/',

@@ -683,7 +683,7 @@ export default function ImportPartWizard({
                 }));
                 try {
                   await api.post(
-                    apiUrl(ApiEndpoints.part_parameter_list),
+                    apiUrl(ApiEndpoints.parameter_list),
                     createParameters
                   );
                   showNotification({
