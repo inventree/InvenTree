@@ -2531,6 +2531,24 @@ class ParameterTemplate(
     )
 
 
+@receiver(
+    post_save, sender=ParameterTemplate, dispatch_uid='post_save_parameter_template'
+)
+def post_save_parameter_template(sender, instance, created, **kwargs):
+    """Callback function when a ParameterTemplate is created or saved."""
+    import common.tasks
+
+    if InvenTree.ready.canAppAccessDatabase() and not InvenTree.ready.isImportingData():
+        if not created:
+            # Schedule a background task to rebuild the parameters against this template
+            InvenTree.tasks.offload_task(
+                common.tasks.rebuild_parameters,
+                instance.pk,
+                force_async=True,
+                group='part',
+            )
+
+
 class Parameter(
     UpdatedUserMixin, InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
 ):

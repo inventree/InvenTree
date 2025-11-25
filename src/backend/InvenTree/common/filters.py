@@ -210,7 +210,7 @@ def filter_parametric_data(queryset: QuerySet, parameters: dict[str, str]) -> Qu
     - parameter_<x>_lte=<value>
 
     where:
-        - <x> is the ID of the PartParameterTemplate.
+        - <x> is the ID of the ParameterTemplate.
         - <value> is the value to filter against.
 
     Typically these filters would be provided against via an API request.
@@ -257,7 +257,7 @@ def order_by_parameter(
     - -parameter_<x>
 
     where:
-        - <x> is the ID of the PartParameterTemplate.
+        - <x> is the ID of the ParameterTemplate.
         - A leading '-' indicates descending order.
     """
     import common.models
