@@ -5,6 +5,7 @@ import {
   IconBuildingStore,
   IconBuildingWarehouse,
   IconCalendar,
+  IconListDetails,
   IconPackageExport,
   IconShoppingCart,
   IconTable
@@ -21,6 +22,7 @@ import { PanelGroup } from '../../components/panels/PanelGroup';
 import SegmentedControlPanel from '../../components/panels/SegmentedControlPanel';
 import { useUserState } from '../../states/UserState';
 import { CompanyTable } from '../../tables/company/CompanyTable';
+import ParametricCompanyTable from '../../tables/company/ParametericCompanyTable';
 import { ManufacturerPartTable } from '../../tables/purchasing/ManufacturerPartTable';
 import { PurchaseOrderTable } from '../../tables/purchasing/PurchaseOrderTable';
 import { SupplierPartTable } from '../../tables/purchasing/SupplierPartTable';
@@ -30,6 +32,16 @@ export default function PurchasingIndex() {
 
   const [purchaseOrderView, setPurchaseOrderView] = useLocalStorage<string>({
     key: 'purchase-order-view',
+    defaultValue: 'table'
+  });
+
+  const [supplierView, setSupplierView] = useLocalStorage<string>({
+    key: 'supplier-view',
+    defaultValue: 'table'
+  });
+
+  const [manufacturerView, setManufacturerView] = useLocalStorage<string>({
+    key: 'manufacturer-view',
     defaultValue: 'table'
   });
 
@@ -63,34 +75,68 @@ export default function PurchasingIndex() {
           }
         ]
       }),
-      {
+      SegmentedControlPanel({
         name: 'suppliers',
         label: t`Suppliers`,
         icon: <IconBuildingStore />,
-        content: (
-          <CompanyTable
-            path='purchasing/supplier'
-            params={{ is_supplier: true }}
-          />
-        )
-      },
+        selection: supplierView,
+        onChange: setSupplierView,
+        options: [
+          {
+            value: 'table',
+            label: t`Table View`,
+            icon: <IconTable />,
+            content: (
+              <CompanyTable
+                path='purchasing/supplier'
+                params={{ is_supplier: true }}
+              />
+            )
+          },
+          {
+            value: 'parametric',
+            label: t`Parametric View`,
+            icon: <IconListDetails />,
+            content: (
+              <ParametricCompanyTable queryParams={{ is_supplier: true }} />
+            )
+          }
+        ]
+      }),
       {
         name: 'supplier-parts',
         label: t`Supplier Parts`,
         icon: <IconPackageExport />,
         content: <SupplierPartTable />
       },
-      {
+      SegmentedControlPanel({
         name: 'manufacturer',
         label: t`Manufacturers`,
         icon: <IconBuildingFactory2 />,
-        content: (
-          <CompanyTable
-            path='purchasing/manufacturer'
-            params={{ is_manufacturer: true }}
-          />
-        )
-      },
+        selection: manufacturerView,
+        onChange: setManufacturerView,
+        options: [
+          {
+            value: 'table',
+            label: t`Table View`,
+            icon: <IconTable />,
+            content: (
+              <CompanyTable
+                path='purchasing/manufacturer'
+                params={{ is_manufacturer: true }}
+              />
+            )
+          },
+          {
+            value: 'parametric',
+            label: t`Parametric View`,
+            icon: <IconListDetails />,
+            content: (
+              <ParametricCompanyTable queryParams={{ is_manufacturer: true }} />
+            )
+          }
+        ]
+      }),
       {
         name: 'manufacturer-parts',
         label: t`Manufacturer Parts`,
@@ -98,7 +144,7 @@ export default function PurchasingIndex() {
         content: <ManufacturerPartTable />
       }
     ];
-  }, [user, purchaseOrderView]);
+  }, [user, manufacturerView, purchaseOrderView, supplierView]);
 
   if (!user.isLoggedIn() || !user.hasViewRole(UserRoles.purchase_order)) {
     return <PermissionDenied />;

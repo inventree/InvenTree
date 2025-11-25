@@ -4,6 +4,7 @@ import {
   IconBuildingStore,
   IconCalendar,
   IconCubeSend,
+  IconListDetails,
   IconTable,
   IconTruckDelivery,
   IconTruckReturn
@@ -20,6 +21,7 @@ import { PanelGroup } from '../../components/panels/PanelGroup';
 import SegmentedControlPanel from '../../components/panels/SegmentedControlPanel';
 import { useUserState } from '../../states/UserState';
 import { CompanyTable } from '../../tables/company/CompanyTable';
+import ParametricCompanyTable from '../../tables/company/ParametericCompanyTable';
 import { ReturnOrderTable } from '../../tables/sales/ReturnOrderTable';
 import SalesOrderShipmentTable from '../../tables/sales/SalesOrderShipmentTable';
 import { SalesOrderTable } from '../../tables/sales/SalesOrderTable';
@@ -27,13 +29,18 @@ import { SalesOrderTable } from '../../tables/sales/SalesOrderTable';
 export default function SalesIndex() {
   const user = useUserState();
 
+  const [customersView, setCustomersView] = useLocalStorage<string>({
+    key: 'customer-view',
+    defaultValue: 'table'
+  });
+
   const [salesOrderView, setSalesOrderView] = useLocalStorage<string>({
-    key: 'salesOrderView',
+    key: 'sales-order-view',
     defaultValue: 'table'
   });
 
   const [returnOrderView, setReturnOrderView] = useLocalStorage<string>({
-    key: 'returnOrderView',
+    key: 'return-order-view',
     defaultValue: 'table'
   });
 
@@ -107,16 +114,36 @@ export default function SalesIndex() {
           }
         ]
       }),
-      {
+      SegmentedControlPanel({
         name: 'customers',
         label: t`Customers`,
         icon: <IconBuildingStore />,
-        content: (
-          <CompanyTable path='sales/customer' params={{ is_customer: true }} />
-        )
-      }
+        selection: customersView,
+        onChange: setCustomersView,
+        options: [
+          {
+            value: 'table',
+            label: t`Table View`,
+            icon: <IconTable />,
+            content: (
+              <CompanyTable
+                path='sales/customer'
+                params={{ is_customer: true }}
+              />
+            )
+          },
+          {
+            value: 'parametric',
+            label: t`Parametric View`,
+            icon: <IconListDetails />,
+            content: (
+              <ParametricCompanyTable queryParams={{ is_customer: true }} />
+            )
+          }
+        ]
+      })
     ];
-  }, [user, salesOrderView, returnOrderView]);
+  }, [user, customersView, salesOrderView, returnOrderView]);
 
   if (!user.isLoggedIn() || !user.hasViewRole(UserRoles.sales_order)) {
     return <PermissionDenied />;

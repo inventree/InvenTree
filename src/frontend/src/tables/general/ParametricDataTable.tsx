@@ -124,7 +124,8 @@ export default function ParametricDataTable({
         .get(apiUrl(ApiEndpoints.parameter_template_list), {
           params: {
             active: true,
-            for_model: modelType
+            for_model: modelType,
+            exists_for_model: modelType
           }
         })
         .then((response) => response.data);
