@@ -7,8 +7,8 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("common", "0040_parametertemplate_parameter"),
         ("part", "0143_alter_part_image"),
+        ("common", "0040_parametertemplate_parameter"),
     ]
 
     operations = [

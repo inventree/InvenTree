@@ -13,6 +13,7 @@ class Migration(migrations.Migration):
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ("common", "0039_emailthread_emailmessage"),
+        ("part", "0143_alter_part_image")
     ]
 
     operations = [
