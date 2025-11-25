@@ -71,7 +71,7 @@ const MachineManagementPanel = Loadable(
   lazy(() => import('./MachineManagementPanel'))
 );
 
-const PartParameterPanel = Loadable(lazy(() => import('./PartParameterPanel')));
+const ParameterPanel = Loadable(lazy(() => import('./ParameterPanel')));
 
 const ErrorReportTable = Loadable(
   lazy(() => import('../../../../tables/settings/ErrorTable'))
@@ -194,7 +194,7 @@ export default function AdminCenter() {
         name: 'parameters',
         label: t`Parameters`,
         icon: <IconList />,
-        content: <PartParameterPanel />,
+        content: <ParameterPanel />,
         hidden: !user.hasViewRole(UserRoles.part)
       },
       {

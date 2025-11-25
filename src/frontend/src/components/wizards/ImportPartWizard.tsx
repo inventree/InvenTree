@@ -419,8 +419,8 @@ const ParametersStep = ({
                   hideLabels
                   fieldDefinition={{
                     field_type: 'related field',
-                    model: ModelType.partparametertemplate,
-                    api_url: apiUrl(ApiEndpoints.part_parameter_template_list),
+                    model: ModelType.parametertemplate,
+                    api_url: apiUrl(ApiEndpoints.parameter_template_list),
                     disabled: p.on_category,
                     value: p.parameter_template,
                     onValueChange: (v) => {
