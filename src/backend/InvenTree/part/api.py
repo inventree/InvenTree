@@ -1,7 +1,5 @@
 """Provides a JSON API for the Part app."""
 
-import re
-
 from django.db.models import Count, F, Q
 from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
@@ -14,7 +12,6 @@ from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 from rest_framework.response import Response
 
-import part.filters
 import part.tasks as part_tasks
 from data_exporter.mixins import DataExportViewMixin
 from InvenTree.api import (
@@ -1088,32 +1085,10 @@ class PartList(
             queryset, self.request.query_params
         )
 
-        # queryset = self.filter_parametric_data(queryset)
-        queryset = self.order_by_parameter(queryset)
-
-        return queryset
-
-    def order_by_parameter(self, queryset):
-        """Perform queryset ordering based on parameter value.
-
-        - Used if the 'ordering' query param points to a parameter
-        - e.g. '&ordering=param_<id>' where <id> specifies the PartParameterTemplate
-        - Only parts which have a matching parameter are returned
-        - Queryset is ordered based on parameter value
-        """
-        # Extract "ordering" parameter from query args
-        ordering = self.request.query_params.get('ordering', None)
-
-        if ordering:
-            # Ordering value must match required regex pattern
-            result = re.match(r'^\-?parameter_(\d+)$', ordering)
-
-            if result:
-                template_id = result.group(1)
-                ascending = not ordering.startswith('-')
-                queryset = part.filters.order_by_parameter(
-                    queryset, template_id, ascending
-                )
+        # Apply ordering based on query parameter
+        queryset = common.filters.order_by_parameter(
+            queryset, Part, self.request.query_params.get('ordering', None)
+        )
 
         return queryset
 

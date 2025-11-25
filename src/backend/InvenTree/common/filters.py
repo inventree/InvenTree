@@ -3,7 +3,18 @@
 import re
 
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import Q
+from django.db.models import (
+    Case,
+    CharField,
+    Exists,
+    FloatField,
+    Model,
+    OuterRef,
+    Q,
+    Subquery,
+    Value,
+    When,
+)
 from django.db.models.query import QuerySet
 
 import InvenTree.conversion
@@ -207,3 +218,81 @@ def filter_parametric_data(queryset: QuerySet, parameters: dict[str, str]) -> Qu
         )
 
     return queryset
+
+
+def order_by_parameter(
+    queryset: QuerySet, model_type: Model, ordering: str | None
+) -> QuerySet:
+    """Order the provided queryset by a parameter value.
+
+    Arguments:
+        queryset: The initial queryset to order.
+        model_type: The model type of the items in the queryset.
+        ordering: The ordering string provided by the user.
+
+    Returns:
+        Ordered queryset.
+
+    Used to order returned parts based on their parameter values.
+
+    To order based on parameter value, supply an ordering string like:
+    - parameter_<x>
+    - -parameter_<x>
+
+    where:
+        - <x> is the ID of the PartParameterTemplate.
+        - A leading '-' indicates descending order.
+    """
+    import common.models
+
+    if not ordering:
+        # No ordering provided - return the original queryset
+        return queryset
+
+    result = re.match(r'^-?parameter_(\d+)$', ordering)
+
+    if not result:
+        # Ordering does not match the expected pattern - return the original queryset
+        return queryset
+
+    template_id = result.group(1)
+    ascending = not ordering.startswith('-')
+
+    template_exists_filter = common.models.Parameter.objects.filter(
+        template__id=template_id,
+        model_type=ContentType.objects.get_for_model(model_type),
+        model_id=OuterRef('id'),
+    )
+
+    queryset = queryset.annotate(parameter_exists=Exists(template_exists_filter))
+
+    # Annotate the queryset with the parameter value for the provided template
+    queryset = queryset.annotate(
+        parameter_value=Case(
+            When(
+                parameter_exists=True,
+                then=Subquery(
+                    template_exists_filter.values('data')[:1], output_field=CharField()
+                ),
+            ),
+            default=Value('', output_field=CharField()),
+        ),
+        parameter_value_numeric=Case(
+            When(
+                parameter_exists=True,
+                then=Subquery(
+                    template_exists_filter.values('data_numeric')[:1],
+                    output_field=FloatField(),
+                ),
+            ),
+            default=Value(0, output_field=FloatField()),
+        ),
+    )
+
+    prefix = '' if ascending else '-'
+
+    return queryset.order_by(
+        '-parameter_exists',
+        f'{prefix}parameter_value_numeric',
+        f'{prefix}parameter_value',
+    )
