@@ -72,9 +72,10 @@ def remove_existing_parameters(apps, schema_editor):
 
 def copy_part_parameters(apps, schema_editor):
     """Forward migration: copy from PartParameterTemplate to ParameterTemplate."""
+
+    ContentType = apps.get_model("contenttypes", "ContentType")
     PartParameterTemplate = apps.get_model("part", "PartParameterTemplate")
     ParameterTemplate = apps.get_model("common", "ParameterTemplate")
-
     PartParameter = apps.get_model("part", "PartParameter")
     Parameter = apps.get_model("common", "Parameter")
 
@@ -101,7 +102,7 @@ def copy_part_parameters(apps, schema_editor):
     # Next, copy PartParameter instances to Parameter instances
     parameters = []
 
-    content_type = apps.get_model("contenttypes", "ContentType").objects.get(app_label='part', model='part')
+    content_type =ContentType.objects.get_or_create(app_label='part', model='part')
 
     for parameter in PartParameter.objects.all():
         # Find the corresponding ParameterTemplate
@@ -132,10 +133,10 @@ def copy_manufacturer_part_parameters(apps, schema_editor):
     ManufacturerPartParameter = apps.get_model("company", "ManufacturerPartParameter")
     Parameter = apps.get_model("common", "Parameter")
     ParameterTemplate = apps.get_model("common", "ParameterTemplate")
-
+    ContentType = apps.get_model("contenttypes", "ContentType")
     parameters = []
 
-    content_type = apps.get_model("contenttypes", "ContentType").objects.get(app_label='company', model='manufacturerpart')
+    content_type = ContentType.objects.get_or_create(app_label='company', model='manufacturerpart')
 
     for parameter in ManufacturerPartParameter.objects.all():
         # Find the corresponding ParameterTemplate
