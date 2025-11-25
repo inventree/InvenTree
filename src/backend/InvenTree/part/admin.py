@@ -93,33 +93,6 @@ class BomItemAdmin(admin.ModelAdmin):
     autocomplete_fields = ('part', 'sub_part')
 
 
-@admin.register(models.PartParameterTemplate)
-class ParameterTemplateAdmin(admin.ModelAdmin):
-    """Admin class for the PartParameterTemplate model."""
-
-    list_display = ('name', 'units')
-
-    search_fields = ('name', 'units')
-
-
-@admin.register(models.PartParameter)
-class ParameterAdmin(admin.ModelAdmin):
-    """Admin class for the PartParameter model."""
-
-    list_display = ('part', 'template', 'data')
-
-    readonly_fields = ('updated', 'updated_by')
-
-    autocomplete_fields = ('part', 'template')
-
-
-@admin.register(models.PartCategoryParameterTemplate)
-class PartCategoryParameterAdmin(admin.ModelAdmin):
-    """Admin class for the PartCategoryParameterTemplate model."""
-
-    autocomplete_fields = ('category', 'parameter_template')
-
-
 @admin.register(models.PartSellPriceBreak)
 class PartSellPriceBreakAdmin(admin.ModelAdmin):
     """Admin class for the PartSellPriceBreak model."""
