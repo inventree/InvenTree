@@ -168,9 +168,28 @@ class ManufacturerOutputOptions(OutputConfiguration):
     ]
 
 
+class ManufacturerPartMixin(SerializerContextMixin):
+    """Mixin class for ManufacturerPart API endpoints."""
+
+    queryset = ManufacturerPart.objects.all()
+    serializer_class = ManufacturerPartSerializer
+
+    def get_queryset(self, *args, **kwargs):
+        """Return annotated queryset for the ManufacturerPart list endpoint."""
+        queryset = super().get_queryset(*args, **kwargs)
+
+        queryset = queryset.prefetch_related(
+            'part', 'manufacturer', 'supplier_parts', 'tags'
+        )
+
+        queryset = ManufacturerPart.annotate_parameters(queryset)
+
+        return queryset
+
+
 class ManufacturerPartList(
+    ManufacturerPartMixin,
     SerializerContextMixin,
-    DataExportViewMixin,
     OutputOptionsMixin,
     ListCreateDestroyAPIView,
 ):
@@ -180,13 +199,10 @@ class ManufacturerPartList(
     - POST: Create a new ManufacturerPart object
     """
 
-    queryset = ManufacturerPart.objects.all().prefetch_related(
-        'part', 'manufacturer', 'supplier_parts', 'tags'
-    )
-    serializer_class = ManufacturerPartSerializer
     filterset_class = ManufacturerPartFilter
-    output_options = ManufacturerOutputOptions
     filter_backends = SEARCH_ORDER_FILTER
+    output_options = ManufacturerOutputOptions
+
     search_fields = [
         'manufacturer__name',
         'description',
@@ -199,16 +215,15 @@ class ManufacturerPartList(
     ]
 
 
-class ManufacturerPartDetail(RetrieveUpdateDestroyAPI):
+class ManufacturerPartDetail(
+    ManufacturerPartMixin, OutputOptionsMixin, RetrieveUpdateDestroyAPI
+):
     """API endpoint for detail view of ManufacturerPart object.
 
     - GET: Retrieve detail view
     - PATCH: Update object
     - DELETE: Delete object
     """
-
-    queryset = ManufacturerPart.objects.all()
-    serializer_class = ManufacturerPartSerializer
 
 
 class SupplierPartFilter(FilterSet):
@@ -310,7 +325,7 @@ class SupplierPartMixin:
     serializer_class = SupplierPartSerializer
 
     def get_queryset(self, *args, **kwargs):
-        """Return annotated queryest object for the SupplierPart list."""
+        """Return annotated queryset object for the SupplierPart list."""
         queryset = super().get_queryset(*args, **kwargs)
         queryset = SupplierPartSerializer.annotate_queryset(queryset)
 

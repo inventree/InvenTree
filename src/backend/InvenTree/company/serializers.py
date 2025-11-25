@@ -11,6 +11,7 @@ from rest_framework import serializers
 from sql_util.utils import SubqueryCount
 from taggit.serializers import TagListSerializerField
 
+import common.serializers
 import company.filters
 import part.filters
 import part.serializers as part_serializers
@@ -112,6 +113,7 @@ class AddressBriefSerializer(InvenTreeModelSerializer):
 
 @register_importer()
 class CompanySerializer(
+    FilterableSerializerMixin,
     DataImportExportSerializerMixin,
     NotesFieldMixin,
     RemoteImageMixin,
@@ -151,6 +153,7 @@ class CompanySerializer(
             'address_count',
             'primary_address',
             'tax_id',
+            'parameters',
         ]
 
     @staticmethod
@@ -172,6 +175,8 @@ class CompanySerializer(
                 to_attr='primary_address_list',
             )
         )
+
+        queryset = Company.annotate_parameters(queryset)
 
         return queryset
 
@@ -209,6 +214,12 @@ class CompanySerializer(
 
     currency = InvenTreeCurrencySerializer(
         help_text=_('Default currency used for this supplier'), required=True
+    )
+
+    parameters = enable_filter(
+        common.serializers.ParameterSerializer(many=True, read_only=True),
+        False,
+        filter_name='parameters',
     )
 
     def save(self):
@@ -274,9 +285,16 @@ class ManufacturerPartSerializer(
             'barcode_hash',
             'notes',
             'tags',
+            'parameters',
         ]
 
     tags = TagListSerializerField(required=False)
+
+    parameters = enable_filter(
+        common.serializers.ParameterSerializer(many=True, read_only=True),
+        False,
+        filter_name='parameters',
+    )
 
     part_detail = enable_filter(
         part_serializers.PartBriefSerializer(
@@ -387,6 +405,7 @@ class SupplierPartSerializer(
             'part_detail',
             'tags',
             'price_breaks',
+            'parameters',
         ]
         read_only_fields = [
             'availability_updated',
@@ -459,6 +478,12 @@ class SupplierPartSerializer(
         filter_name='price_breaks',
     )
 
+    parameters = enable_filter(
+        common.serializers.ParameterSerializer(many=True, read_only=True),
+        False,
+        filter_name='parameters',
+    )
+
     part_detail = part_serializers.PartBriefSerializer(
         label=_('Part'), source='part', many=False, read_only=True, allow_null=True
     )
@@ -514,6 +539,8 @@ class SupplierPartSerializer(
         queryset = queryset.annotate(
             on_order=company.filters.annotate_on_order_quantity()
         )
+
+        queryset = SupplierPart.annotate_parameters(queryset)
 
         return queryset
 

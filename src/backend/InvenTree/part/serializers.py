@@ -22,6 +22,7 @@ from sql_util.utils import SubqueryCount
 from taggit.serializers import TagListSerializerField
 
 import common.currency
+import common.serializers
 import company.models
 import InvenTree.helpers
 import InvenTree.serializers
@@ -394,60 +395,6 @@ class PartBriefSerializer(
     )
 
 
-@register_importer()
-class PartParameterSerializer(
-    InvenTree.serializers.FilterableSerializerMixin,
-    DataImportExportSerializerMixin,
-    InvenTree.serializers.InvenTreeModelSerializer,
-):
-    """JSON serializers for the PartParameter model."""
-
-    class Meta:
-        """Metaclass defining serializer fields."""
-
-        model = PartParameter
-        fields = [
-            'pk',
-            'part',
-            'part_detail',
-            'template',
-            'template_detail',
-            'data',
-            'data_numeric',
-            'note',
-            'updated',
-            'updated_by',
-            'updated_by_detail',
-        ]
-        read_only_fields = ['updated', 'updated_by']
-
-    def save(self):
-        """Save the PartParameter instance."""
-        instance = super().save()
-
-        if request := self.context.get('request', None):
-            # If the request is provided, update the 'updated_by' field
-            instance.updated_by = request.user
-            instance.save()
-
-        return instance
-
-    part_detail = enable_filter(
-        PartBriefSerializer(source='part', many=False, read_only=True, allow_null=True)
-    )
-
-    template_detail = enable_filter(
-        PartParameterTemplateSerializer(
-            source='template', many=False, read_only=True, allow_null=True
-        ),
-        True,
-    )
-
-    updated_by_detail = UserSerializer(
-        source='updated_by', many=False, read_only=True, allow_null=True
-    )
-
-
 class DuplicatePartSerializer(serializers.Serializer):
     """Serializer for specifying options when duplicating a Part.
 
@@ -771,6 +718,8 @@ class PartSerializer(
         """
         queryset = queryset.prefetch_related('category', 'default_location')
 
+        queryset = Part.annotate_parameters(queryset)
+
         # Annotate with the total number of revisions
         queryset = queryset.annotate(revision_count=SubqueryCount('revisions'))
 
@@ -1010,7 +959,11 @@ class PartSerializer(
     )
 
     parameters = enable_filter(
-        PartParameterSerializer(many=True, read_only=True, allow_null=True)
+        common.serializers.ParameterSerializer(
+            many=True, read_only=True, allow_null=True
+        ),
+        False,
+        filter_name='parameters',
     )
 
     price_breaks = enable_filter(
