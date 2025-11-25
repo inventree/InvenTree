@@ -832,6 +832,8 @@ class ParameterTemplateFilter(FilterSet):
         if not content_type:
             return queryset.none()
 
+        queryset = queryset.prefetch_related('parameters')
+
         # Annotate the queryset to determine which ParameterTemplates have at least one Parameter for the given model type
         queryset = queryset.annotate(
             parameter_count=SubqueryCount(
