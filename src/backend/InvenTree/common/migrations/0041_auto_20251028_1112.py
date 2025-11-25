@@ -186,7 +186,6 @@ def update_category_parameters(apps, schema_editor):
 
         to_update.append(item)
 
-
     if len(to_update) > 0:
         PartCategoryParameterTemplate.objects.bulk_update(to_update, ['template'])
         print(f"Updated {len(to_update)} PartCategoryParameterTemplate instances.")
@@ -195,6 +194,7 @@ def update_category_parameters(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
+        ('contenttypes', '__latest__'),
         ("part", "0132_partparametertemplate_selectionlist"),
         ("company", "0034_manufacturerpart"),
         ("common", "0040_parametertemplate_parameter"),
