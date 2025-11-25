@@ -23,8 +23,10 @@ import SegmentedControlPanel from '../../components/panels/SegmentedControlPanel
 import { useUserState } from '../../states/UserState';
 import { CompanyTable } from '../../tables/company/CompanyTable';
 import ParametricCompanyTable from '../../tables/company/ParametricCompanyTable';
+import ManufacturerPartParametricTable from '../../tables/purchasing/ManufacturerPartParametricTable';
 import { ManufacturerPartTable } from '../../tables/purchasing/ManufacturerPartTable';
 import { PurchaseOrderTable } from '../../tables/purchasing/PurchaseOrderTable';
+import SupplierPartParametricTable from '../../tables/purchasing/SupplierPartParametricTable';
 import { SupplierPartTable } from '../../tables/purchasing/SupplierPartTable';
 
 export default function PurchasingIndex() {
@@ -42,6 +44,17 @@ export default function PurchasingIndex() {
 
   const [manufacturerView, setManufacturerView] = useLocalStorage<string>({
     key: 'manufacturer-view',
+    defaultValue: 'table'
+  });
+
+  const [manufacturerPartsView, setManufacturerPartsView] =
+    useLocalStorage<string>({
+      key: 'manufacturer-parts-view',
+      defaultValue: 'table'
+    });
+
+  const [supplierPartsView, setSupplierPartsView] = useLocalStorage<string>({
+    key: 'supplier-parts-view',
     defaultValue: 'table'
   });
 
@@ -103,12 +116,27 @@ export default function PurchasingIndex() {
           }
         ]
       }),
-      {
+      SegmentedControlPanel({
         name: 'supplier-parts',
         label: t`Supplier Parts`,
         icon: <IconPackageExport />,
-        content: <SupplierPartTable />
-      },
+        selection: supplierPartsView,
+        onChange: setSupplierPartsView,
+        options: [
+          {
+            value: 'table',
+            label: t`Table View`,
+            icon: <IconTable />,
+            content: <SupplierPartTable />
+          },
+          {
+            value: 'parametric',
+            label: t`Parametric View`,
+            icon: <IconListDetails />,
+            content: <SupplierPartParametricTable />
+          }
+        ]
+      }),
       SegmentedControlPanel({
         name: 'manufacturer',
         label: t`Manufacturers`,
@@ -137,14 +165,36 @@ export default function PurchasingIndex() {
           }
         ]
       }),
-      {
+      SegmentedControlPanel({
         name: 'manufacturer-parts',
         label: t`Manufacturer Parts`,
         icon: <IconBuildingWarehouse />,
-        content: <ManufacturerPartTable />
-      }
+        selection: manufacturerPartsView,
+        onChange: setManufacturerPartsView,
+        options: [
+          {
+            value: 'table',
+            label: t`Table View`,
+            icon: <IconTable />,
+            content: <ManufacturerPartTable />
+          },
+          {
+            value: 'parametric',
+            label: t`Parametric View`,
+            icon: <IconListDetails />,
+            content: <ManufacturerPartParametricTable />
+          }
+        ]
+      })
     ];
-  }, [user, manufacturerView, purchaseOrderView, supplierView]);
+  }, [
+    user,
+    manufacturerPartsView,
+    manufacturerView,
+    purchaseOrderView,
+    supplierPartsView,
+    supplierView
+  ]);
 
   if (!user.isLoggedIn() || !user.hasViewRole(UserRoles.purchase_order)) {
     return <PermissionDenied />;

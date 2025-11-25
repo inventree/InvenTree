@@ -2,7 +2,8 @@ import { cancelEvent } from '@lib/functions/Events';
 import {
   ApiEndpoints,
   type ApiFormFieldSet,
-  ModelType,
+  type ModelType,
+  RowViewAction,
   UserRoles,
   YesNoButton,
   apiUrl,
@@ -15,6 +16,7 @@ import type { TableColumn } from '@lib/types/Tables';
 import { t } from '@lingui/core/macro';
 import { Group } from '@mantine/core';
 import { useHover } from '@mantine/hooks';
+import { IconCirclePlus } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -247,11 +249,11 @@ export default function ParametricDataTable({
   }, [parameterFilters]);
 
   const [selectedInstance, setSelectedInstance] = useState<number>(-1);
-  const [selectedTemplate, setSelectedTemplate] = useState<number>(-1);
+  const [selectedTemplate, setSelectedTemplate] = useState<number | null>(null);
   const [selectedParameter, setSelectedParameter] = useState<number>(-1);
 
   const parameterFields: ApiFormFieldSet = useParameterFields({
-    modelType: ModelType.part,
+    modelType: modelType,
     modelId: selectedInstance
   });
 
@@ -262,6 +264,16 @@ export default function ParametricDataTable({
     focus: 'data',
     onFormSuccess: (parameter: any) => {
       updateParameterRecord(selectedInstance, parameter);
+
+      // Ensure that the parameter template is included in the table
+      const template = parameterTemplates.data.find(
+        (t: any) => t.pk == parameter.template
+      );
+
+      if (!template) {
+        // Reload the parameter templates
+        parameterTemplates.refetch();
+      }
     },
     initialData: {
       part: selectedInstance,
@@ -374,6 +386,32 @@ export default function ParametricDataTable({
     return [...(customColumns || []), ...parameterColumns];
   }, [customColumns, parameterColumns]);
 
+  const rowActions = useCallback(
+    (record: any) => {
+      return [
+        {
+          title: t`Add Parameter`,
+          icon: <IconCirclePlus />,
+          color: 'green',
+          hidden: !user.hasAddPermission(modelType),
+          onClick: () => {
+            setSelectedInstance(record.pk);
+            setSelectedTemplate(null);
+            addParameter.open();
+          }
+        },
+        RowViewAction({
+          title: t`View`,
+          modelType: modelType,
+          modelId: record.pk,
+          hidden: !user.hasViewPermission(modelType),
+          navigate: navigate
+        })
+      ];
+    },
+    [modelType, user]
+  );
+
   return (
     <>
       {addParameter.modal}
@@ -384,6 +422,7 @@ export default function ParametricDataTable({
         columns={tableColumns}
         props={{
           enableDownload: true,
+          rowActions: rowActions,
           tableFilters: tableFilters,
           params: {
             ...queryParams,
