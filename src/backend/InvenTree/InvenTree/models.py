@@ -451,7 +451,17 @@ class ReferenceIndexingMixin(models.Model):
     reference_int = models.BigIntegerField(default=0)
 
 
-class InvenTreeModel(PluginValidationMixin, models.Model):
+class ContentTypeMixin:
+    """Mixin class which supports retrieval of the ContentType for a model instance."""
+
+    def get_content_type(self):
+        """Return the ContentType object associated with this model."""
+        from django.contrib.contenttypes.models import ContentType
+
+        return ContentType.objects.get_for_model(self.__class__)
+
+
+class InvenTreeModel(ContentTypeMixin, PluginValidationMixin, models.Model):
     """Base class for InvenTree models, which provides some common functionality.
 
     Includes the following mixins by default:
@@ -658,7 +668,7 @@ class InvenTreeAttachmentMixin(InvenTreePermissionCheckMixin):
         Attachment.objects.create(**kwargs)
 
 
-class InvenTreeTree(MPTTModel):
+class InvenTreeTree(ContentTypeMixin, MPTTModel):
     """Provides an abstracted self-referencing tree model, based on the MPTTModel class.
 
     Our implementation provides the following key improvements:

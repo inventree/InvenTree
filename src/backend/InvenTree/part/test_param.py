@@ -369,13 +369,21 @@ class PartParameterTest(InvenTreeAPITestCase):
 
         # test that having non unique part/template combinations fails
         res = self.post(url, data, expected_code=400)
+
         self.assertEqual(len(res.data), 3)
         self.assertEqual(len(res.data[1]), 0)
         for err in [res.data[0], res.data[2]]:
-            self.assertEqual(len(err), 2)
+            self.assertEqual(len(err), 3)
             self.assertEqual(str(err['model_id'][0]), 'This field must be unique.')
+            self.assertEqual(str(err['model_type'][0]), 'This field must be unique.')
             self.assertEqual(str(err['template'][0]), 'This field must be unique.')
-        self.assertEqual(Parameter.objects.filter(content_object=part4).count(), 0)
+
+        self.assertEqual(
+            Parameter.objects.filter(
+                model_type=part4.get_content_type(), model_id=part4.pk
+            ).count(),
+            0,
+        )
 
         # Now, create a valid set of parameters
         data = [
@@ -384,7 +392,13 @@ class PartParameterTest(InvenTreeAPITestCase):
         ]
         res = self.post(url, data, expected_code=201)
         self.assertEqual(len(res.data), 2)
-        self.assertEqual(Parameter.objects.filter(content_object=part4).count(), 2)
+
+        self.assertEqual(
+            Parameter.objects.filter(
+                model_type=part4.get_content_type(), model_id=part4.pk
+            ).count(),
+            2,
+        )
 
     def test_param_detail(self):
         """Tests for the Parameter detail endpoint."""
