@@ -1,5 +1,5 @@
 import { ActionIcon, Alert, Group, Menu, Stack, Tooltip } from '@mantine/core';
-import { IconExclamationCircle } from '@tabler/icons-react';
+import { IconCircleCheck, IconExclamationCircle } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 
 import type { SettingsStateProps } from '@lib/types/Settings';
@@ -85,6 +85,7 @@ export function ServerAlert({
     <Alert
       withCloseButton={!!closeAlert}
       color={alert.condition ? (alert.error ? 'red' : 'orange') : 'green'}
+      icon={alert.condition ? <IconExclamationCircle /> : <IconCircleCheck />}
       title={
         <Group gap='xs'>
           {alert.code && `${alert.code}: `}
@@ -101,7 +102,7 @@ export function ServerAlert({
   );
 }
 
-type ExtendedAlertInfo = AlertInfo & {
+export type ExtendedAlertInfo = AlertInfo & {
   condition: boolean;
 };
 
