@@ -135,7 +135,6 @@ def get_ruleset_models() -> dict:
             'company_contact',
             'company_address',
             'company_manufacturerpart',
-            'company_manufacturerpartparameter',
             'company_supplierpart',
             'company_supplierpricebreak',
             'order_purchaseorder',
