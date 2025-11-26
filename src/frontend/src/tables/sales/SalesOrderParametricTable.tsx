@@ -4,7 +4,11 @@ import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import { t } from '@lingui/core/macro';
 import { type ReactNode, useMemo } from 'react';
-import { CompanyColumn, ReferenceColumn } from '../ColumnRenderers';
+import {
+  CompanyColumn,
+  DescriptionColumn,
+  ReferenceColumn
+} from '../ColumnRenderers';
 import {
   AssignedToMeFilter,
   OrderStatusFilter,
@@ -22,7 +26,7 @@ export default function SalesOrderParametricTable({
 }): ReactNode {
   const customColumns: TableColumn[] = useMemo(() => {
     return [
-      ReferenceColumn({}),
+      ReferenceColumn({ switchable: false }),
       {
         accessor: 'customer__name',
         title: t`Customer`,
@@ -30,7 +34,8 @@ export default function SalesOrderParametricTable({
         render: (record: any) => (
           <CompanyColumn company={record.customer_detail} />
         )
-      }
+      },
+      DescriptionColumn({})
     ];
   }, []);
 

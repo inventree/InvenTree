@@ -392,7 +392,6 @@ class PurchaseOrderList(
     - POST: Create a new PurchaseOrder object
     """
 
-    parameter_model_class = models.PurchaseOrder
     filterset_class = PurchaseOrderFilter
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
     output_options = PurchaseOrderOutputOptions
@@ -863,7 +862,6 @@ class SalesOrderList(
     - POST: Create a new SalesOrder
     """
 
-    parameter_model_class = models.SalesOrder
     filterset_class = SalesOrderFilter
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
     output_options = SalesOrderOutputOptions
@@ -1537,7 +1535,6 @@ class ReturnOrderList(
 ):
     """API endpoint for accessing a list of ReturnOrder objects."""
 
-    parameter_model_class = models.ReturnOrder
     filterset_class = ReturnOrderFilter
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
