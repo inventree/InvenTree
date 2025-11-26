@@ -249,8 +249,6 @@ class ParameterTests(TestCase):
 
         bad_values = ['3 Amps', '-3 zogs', '3.14F']
 
-        raise ValueError('This test must be refactored...')
-
         # Disable enforcing of part parameter units
         InvenTreeSetting.set_setting('PARAMETER_ENFORCE_UNITS', False, change_user=None)
 

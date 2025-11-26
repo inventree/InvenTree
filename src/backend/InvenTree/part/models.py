@@ -226,7 +226,7 @@ class PartCategory(
         """Prefectch parts parameters."""
         return (
             self.get_parts(cascade=cascade)
-            .prefetch_related('parameters', 'parameters__template')
+            .prefetch_related('parameters_list', 'parameters_list__template')
             .all()
         )
 
@@ -237,7 +237,7 @@ class PartCategory(
         parts = prefetch or self.prefetch_parts_parameters(cascade=cascade)
 
         for part in parts:
-            for parameter in part.parameters.all():
+            for parameter in part.parameters_list.all():
                 parameter_name = parameter.template.name
                 if parameter_name not in unique_parameters_names:
                     unique_parameters_names.append(parameter_name)
@@ -260,7 +260,7 @@ class PartCategory(
             if part.IPN:
                 part_parameters['IPN'] = part.IPN
 
-            for parameter in part.parameters.all():
+            for parameter in part.parameters_list.all():
                 parameter_name = parameter.template.name
                 parameter_value = parameter.data
                 part_parameters[parameter_name] = parameter_value
@@ -3763,7 +3763,7 @@ class PartCategoryParameterTemplate(InvenTree.models.InvenTreeMetadataModel):
         if (
             self.default_value
             and get_global_setting(
-                'PART_PARAMETER_ENFORCE_UNITS', True, cache=False, create=False
+                'PARAMETER_ENFORCE_UNITS', True, cache=False, create=False
             )
             and self.template.units
         ):
