@@ -2420,8 +2420,6 @@ class Part(
         """
         from common.models import Parameter
 
-        from .models import PartCategoryParameterTemplate
-
         categories = category.get_ancestors(include_self=True)
 
         category_templates = PartCategoryParameterTemplate.objects.filter(
