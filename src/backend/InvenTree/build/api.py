@@ -349,7 +349,6 @@ class BuildList(
     - POST: Create a new Build object
     """
 
-    parameter_model_class = Build
     output_options = BuildListOutputOptions
     filterset_class = BuildFilter
     filter_backends = SEARCH_ORDER_FILTER_ALIAS

@@ -603,8 +603,6 @@ class BulkUpdateMixin(BulkOperationMixin):
 class ParameterListMixin:
     """Mixin class which supports filtering against parametric fields."""
 
-    parameter_model_class = None
-
     def filter_queryset(self, queryset):
         """Perform filtering against parametric fields."""
         import common.filters
@@ -616,11 +614,15 @@ class ParameterListMixin:
             queryset, self.request.query_params
         )
 
+        serializer_class = (
+            getattr(self, 'serializer_class', None) or self.get_serializer_class()
+        )
+
+        model_class = serializer_class.Meta.model
+
         # Apply ordering based on query parameter
         queryset = common.filters.order_by_parameter(
-            queryset,
-            self.parameter_model_class,
-            self.request.query_params.get('ordering', None),
+            queryset, model_class, self.request.query_params.get('ordering', None)
         )
 
         return queryset

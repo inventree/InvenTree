@@ -2442,7 +2442,7 @@ class ParameterTemplate(
                 choice_set.add(choice)
 
     def validate_unique(self, exclude=None):
-        """Ensure that PartParameterTemplates cannot be created with the same name.
+        """Ensure that ParameterTemplates cannot be created with the same name.
 
         This test should be case-insensitive (which the unique caveat does not cover).
         """

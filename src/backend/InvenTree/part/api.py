@@ -1076,7 +1076,6 @@ class PartList(
 ):
     """API endpoint for accessing a list of Part objects, or creating a new Part instance."""
 
-    parameter_model_class = Part
     output_options = PartOutputOptions
     filterset_class = PartFilter
     is_create = True

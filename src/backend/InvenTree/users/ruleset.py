@@ -40,7 +40,7 @@ RULESET_NAMES = [choice[0] for choice in RULESET_CHOICES]
 # Permission types available for each ruleset.
 RULESET_PERMISSIONS = ['view', 'add', 'change', 'delete']
 
-RULESET_CHANGE_INHERIT = [('part', 'partparameter'), ('part', 'bomitem')]
+RULESET_CHANGE_INHERIT = [('part', 'bomitem')]
 
 
 def get_ruleset_models() -> dict:

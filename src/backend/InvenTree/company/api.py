@@ -60,7 +60,6 @@ class CompanyList(CompanyMixin, ParameterListMixin, DataExportViewMixin, ListCre
     - POST: Create a new Company object
     """
 
-    parameter_model_class = Company
     filter_backends = SEARCH_ORDER_FILTER
 
     filterset_fields = [
@@ -201,7 +200,6 @@ class ManufacturerPartList(
     - POST: Create a new ManufacturerPart object
     """
 
-    parameter_model_class = ManufacturerPart
     filterset_class = ManufacturerPartFilter
     filter_backends = SEARCH_ORDER_FILTER
     output_options = ManufacturerOutputOptions
@@ -352,7 +350,6 @@ class SupplierPartList(
     - POST: Create a new SupplierPart object
     """
 
-    parameter_model_class = SupplierPart
     filterset_class = SupplierPartFilter
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
     output_options = SupplierPartOutputOptions
