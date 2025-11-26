@@ -343,7 +343,10 @@ def parameter(
     Returns:
         A Parameter object, or None if not found
     """
-    if not hasattr(instance, 'parameters'):
+    if instance is None:
+        raise ValueError('parameter tag requires a valid Model instance')
+
+    if not isinstance(instance, Model) or not hasattr(instance, 'parameters'):
         raise TypeError("parameter tag requires a Model with 'parameters' attribute")
 
     return (
@@ -354,7 +357,7 @@ def parameter(
 
 
 @register.simple_tag()
-def part_parametr(instance, parameter_name):
+def part_parameter(instance, parameter_name):
     """Included for backwards compatibility - use 'parameter' tag instead.
 
     Ref: https://github.com/inventree/InvenTree/pull/10699

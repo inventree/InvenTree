@@ -419,8 +419,14 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
         # Note, use the 'parameter' and 'part_parameter' tags interchangeably here
         self.assertEqual(report_tags.part_parameter(part, 'name'), None)
         self.assertEqual(report_tags.parameter(part, 'Template 1'), parameter)
-        # Test with an invalid part
-        self.assertEqual(report_tags.parameter(None, 'name'), None)
+
+        # Test with a null part
+        with self.assertRaises(ValueError):
+            report_tags.parameter(None, 'name')
+
+        # Test with an invalid model type
+        with self.assertRaises(TypeError):
+            report_tags.parameter(parameter, 'name')
 
     def test_render_currency(self):
         """Test the render_currency template tag."""
