@@ -1,6 +1,11 @@
 import { t } from '@lingui/core/macro';
 import { Stack } from '@mantine/core';
-import { IconCalendar, IconTable, IconTools } from '@tabler/icons-react';
+import {
+  IconCalendar,
+  IconListDetails,
+  IconTable,
+  IconTools
+} from '@tabler/icons-react';
 import { useMemo } from 'react';
 
 import { ModelType } from '@lib/enums/ModelType';
@@ -16,6 +21,7 @@ import SegmentedControlPanel from '../../components/panels/SegmentedControlPanel
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import { PartCategoryFilter } from '../../tables/Filter';
+import BuildOrderParametricTable from '../../tables/build/BuildOrderParametricTable';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
 
 function BuildOrderCalendar() {
@@ -74,6 +80,12 @@ export default function BuildIndex() {
             label: t`Calendar View`,
             icon: <IconCalendar />,
             content: <BuildOrderCalendar />
+          },
+          {
+            value: 'parametric',
+            label: t`Parametric View`,
+            icon: <IconListDetails />,
+            content: <BuildOrderParametricTable />
           }
         ]
       })
