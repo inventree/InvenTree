@@ -1757,7 +1757,7 @@ class CategoryParameterTemplateSerializer(
             'pk',
             'category',
             'category_detail',
-            'parameter_template',
+            'template',
             # 'parameter_template_detail',
             'default_value',
         ]
