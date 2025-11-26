@@ -1678,6 +1678,10 @@ class StockAddSerializer(StockAdjustmentSerializer):
                 stock_item = item['pk']
                 quantity = item['quantity']
 
+                if quantity is None or quantity <= 0:
+                    # Ignore in this case - no stock to add
+                    continue
+
                 # Optional fields
                 extra = {}
 
@@ -1702,6 +1706,10 @@ class StockRemoveSerializer(StockAdjustmentSerializer):
             for item in data['items']:
                 stock_item = item['pk']
                 quantity = item['quantity']
+
+                # Ignore in this case - no stock to remove
+                if quantity is None or quantity <= 0:
+                    continue
 
                 # Optional fields
                 extra = {}
