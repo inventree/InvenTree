@@ -3337,7 +3337,7 @@ class PartParameterTests(PartAPITestBase):
 
     def test_export_data(self):
         """Test data export functionality for PartParameter objects."""
-        url = reverse('api-part-parameter-list')
+        url = reverse('api-parameter-list')
 
         response = self.options(
             url,
