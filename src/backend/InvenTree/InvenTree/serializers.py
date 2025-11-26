@@ -768,6 +768,9 @@ class ContentTypeField(serializers.ChoiceField):
 
         content_type = None
 
+        if data in ['', None]:
+            return None
+
         # First, try to resolve the content type via direct pk value
         try:
             content_type_id = int(data)
