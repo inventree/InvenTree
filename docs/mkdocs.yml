@@ -96,6 +96,8 @@ nav:
     - Custom States: concepts/custom_states.md
     - Pricing: concepts/pricing.md
     - Project Codes: concepts/project_codes.md
+    - Attachments: concepts/attachments.md
+    - Parameters: concepts/parameters.md
     - Barcodes:
       - Barcode Support: barcodes/index.md
       - Internal Barcodes: barcodes/internal.md
@@ -125,7 +127,6 @@ nav:
     - Virtual Parts: part/virtual.md
     - Part Views: part/views.md
     - Tracking: part/trackable.md
-    - Parameters: part/parameter.md
     - Revisions: part/revision.md
     - Templates: part/template.md
     - Tests: part/test.md

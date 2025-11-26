@@ -370,6 +370,86 @@ class PartManager(TreeManager):
         )
 
 
+class PartCategoryParameterTemplate(InvenTree.models.InvenTreeMetadataModel):
+    """A PartCategoryParameterTemplate creates a unique relationship between a PartCategory and a ParameterTemplate.
+
+    Multiple ParameterTemplate instances can be associated to a PartCategory to drive a default list of parameter templates attached to a Part instance upon creation.
+
+    Attributes:
+        category: Reference to a single PartCategory object
+        template: Reference to a single ParameterTemplate object
+        default_value: The default value for the parameter in the context of the selected category
+    """
+
+    @staticmethod
+    def get_api_url():
+        """Return the API endpoint URL associated with the PartCategoryParameterTemplate model."""
+        return reverse('api-part-category-parameter-list')
+
+    class Meta:
+        """Metaclass providing extra model definition."""
+
+        verbose_name = _('Part Category Parameter Template')
+
+        constraints = [
+            UniqueConstraint(
+                fields=['category', 'template'], name='unique_category_parameter_pair'
+            )
+        ]
+
+    def __str__(self):
+        """String representation of a PartCategoryParameterTemplate (admin interface)."""
+        if self.default_value:
+            return f'{self.category.name} | {self.template.name} | {self.default_value}'
+        return f'{self.category.name} | {self.template.name}'
+
+    def clean(self):
+        """Validate this PartCategoryParameterTemplate instance.
+
+        Checks the provided 'default_value', and (if not blank), ensure it is valid.
+        """
+        super().clean()
+
+        self.default_value = (
+            '' if self.default_value is None else str(self.default_value.strip())
+        )
+
+        if (
+            self.default_value
+            and get_global_setting(
+                'PARAMETER_ENFORCE_UNITS', True, cache=False, create=False
+            )
+            and self.template.units
+        ):
+            try:
+                InvenTree.conversion.convert_physical_value(
+                    self.default_value, self.template.units
+                )
+            except ValidationError as e:
+                raise ValidationError({'default_value': e.message})
+
+    category = models.ForeignKey(
+        PartCategory,
+        on_delete=models.CASCADE,
+        related_name='parameter_templates',
+        verbose_name=_('Category'),
+        help_text=_('Part Category'),
+    )
+
+    template = models.ForeignKey(
+        common.models.ParameterTemplate,
+        on_delete=models.CASCADE,
+        related_name='part_categories',
+    )
+
+    default_value = models.CharField(
+        max_length=500,
+        blank=True,
+        verbose_name=_('Default Value'),
+        help_text=_('Default Parameter Value'),
+    )
+
+
 class PartReportContext(report.mixins.BaseReportContext):
     """Report context for the Part model.
 
@@ -3712,86 +3792,6 @@ class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
             return []
 
         return [x.strip() for x in self.choices.split(',') if x.strip()]
-
-
-class PartCategoryParameterTemplate(InvenTree.models.InvenTreeMetadataModel):
-    """A PartCategoryParameterTemplate creates a unique relationship between a PartCategory and a ParameterTemplate.
-
-    Multiple ParameterTemplate instances can be associated to a PartCategory to drive a default list of parameter templates attached to a Part instance upon creation.
-
-    Attributes:
-        category: Reference to a single PartCategory object
-        template: Reference to a single ParameterTemplate object
-        default_value: The default value for the parameter in the context of the selected category
-    """
-
-    @staticmethod
-    def get_api_url():
-        """Return the API endpoint URL associated with the PartCategoryParameterTemplate model."""
-        return reverse('api-part-category-parameter-list')
-
-    class Meta:
-        """Metaclass providing extra model definition."""
-
-        verbose_name = _('Part Category Parameter Template')
-
-        constraints = [
-            UniqueConstraint(
-                fields=['category', 'template'], name='unique_category_parameter_pair'
-            )
-        ]
-
-    def __str__(self):
-        """String representation of a PartCategoryParameterTemplate (admin interface)."""
-        if self.default_value:
-            return f'{self.category.name} | {self.template.name} | {self.default_value}'
-        return f'{self.category.name} | {self.template.name}'
-
-    def clean(self):
-        """Validate this PartCategoryParameterTemplate instance.
-
-        Checks the provided 'default_value', and (if not blank), ensure it is valid.
-        """
-        super().clean()
-
-        self.default_value = (
-            '' if self.default_value is None else str(self.default_value.strip())
-        )
-
-        if (
-            self.default_value
-            and get_global_setting(
-                'PARAMETER_ENFORCE_UNITS', True, cache=False, create=False
-            )
-            and self.template.units
-        ):
-            try:
-                InvenTree.conversion.convert_physical_value(
-                    self.default_value, self.template.units
-                )
-            except ValidationError as e:
-                raise ValidationError({'default_value': e.message})
-
-    category = models.ForeignKey(
-        PartCategory,
-        on_delete=models.CASCADE,
-        related_name='parameter_templates',
-        verbose_name=_('Category'),
-        help_text=_('Part Category'),
-    )
-
-    template = models.ForeignKey(
-        common.models.ParameterTemplate,
-        on_delete=models.CASCADE,
-        related_name='part_categories',
-    )
-
-    default_value = models.CharField(
-        max_length=500,
-        blank=True,
-        verbose_name=_('Default Value'),
-        help_text=_('Default Parameter Value'),
-    )
 
 
 class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):

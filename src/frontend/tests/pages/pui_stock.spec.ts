@@ -332,6 +332,11 @@ test('Stock - Stock Actions', async ({ browser }) => {
   await page.getByRole('button', { name: 'Scan', exact: true }).click();
   await page.getByText('Scanned stock item into location').waitFor();
 
+  // Add "zero" stock - ensure the quantity stays the same
+  await launchStockAction('add');
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Quantity: 123').first().waitFor();
+
   // Add stock, and change status
   await launchStockAction('add');
   await page.getByLabel('number-field-quantity').fill('12');
@@ -341,6 +346,11 @@ test('Stock - Stock Actions', async ({ browser }) => {
   await page.getByText('Lost').first().waitFor();
   await page.getByText('Unavailable').first().waitFor();
   await page.getByText('135').first().waitFor();
+
+  // Remove "zero" stock - ensure the quantity stays the same
+  await launchStockAction('remove');
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Quantity: 135').first().waitFor();
 
   // Remove stock, and change status
   await launchStockAction('remove');
