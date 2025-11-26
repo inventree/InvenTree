@@ -4,6 +4,7 @@ from decimal import Decimal
 from zoneinfo import ZoneInfo
 
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.test import TestCase, override_settings
 from django.utils import timezone
@@ -409,7 +410,11 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
         # Test with a valid part
         part = Part.objects.create(name='test', description='test')
         t1 = ParameterTemplate.objects.create(name='Template 1', units='mm')
-        parameter = Parameter.objects.create(part=part, template=t1, data='test')
+
+        content_type = ContentType.objects.get_for_model(Part)
+        parameter = Parameter.objects.create(
+            model_type=content_type, model_id=part.pk, template=t1, data='test'
+        )
 
         # Note, use the 'parameter' and 'part_parameter' tags interchangeably here
         self.assertEqual(report_tags.part_parameter(part, 'name'), None)
