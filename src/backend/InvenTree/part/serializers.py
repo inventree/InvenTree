@@ -1745,7 +1745,9 @@ class BomItemSerializer(
 
 @register_importer()
 class CategoryParameterTemplateSerializer(
-    DataImportExportSerializerMixin, InvenTree.serializers.InvenTreeModelSerializer
+    InvenTree.serializers.FilterableSerializerMixin,
+    DataImportExportSerializerMixin,
+    InvenTree.serializers.InvenTreeModelSerializer,
 ):
     """Serializer for the PartCategoryParameterTemplate model."""
 
@@ -1758,17 +1760,22 @@ class CategoryParameterTemplateSerializer(
             'category',
             'category_detail',
             'template',
-            # 'parameter_template_detail',
+            'template_detail',
             'default_value',
         ]
 
-    # TODO: Re-implement this, but point to the ParameterTemplate model
-    # parameter_template_detail = PartParameterTemplateSerializer(
-    #     source='parameter_template', many=False, read_only=True
-    # )
+    template_detail = enable_filter(
+        common.serializers.ParameterTemplateSerializer(
+            source='template', many=False, read_only=True
+        ),
+        True,
+    )
 
-    category_detail = CategorySerializer(
-        source='category', many=False, read_only=True, allow_null=True
+    category_detail = enable_filter(
+        CategorySerializer(
+            source='category', many=False, read_only=True, allow_null=True
+        ),
+        True,
     )
 
 
