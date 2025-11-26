@@ -236,9 +236,7 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
         n = ParameterTemplate.objects.count()
 
         # Ensure validation of parameter values is disabled for these checks
-        InvenTreeSetting.set_setting(
-            'PART_PARAMETER_ENFORCE_UNITS', False, change_user=None
-        )
+        InvenTreeSetting.set_setting('PARAMETER_ENFORCE_UNITS', False, change_user=None)
 
         for template in ParameterTemplate.objects.all():
             response = self.post(

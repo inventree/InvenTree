@@ -252,9 +252,7 @@ class ParameterTests(TestCase):
         raise ValueError('This test must be refactored...')
 
         # Disable enforcing of part parameter units
-        InvenTreeSetting.set_setting(
-            'PART_PARAMETER_ENFORCE_UNITS', False, change_user=None
-        )
+        InvenTreeSetting.set_setting('PARAMETER_ENFORCE_UNITS', False, change_user=None)
 
         # Invalid units also pass, but will be converted to the template units
         for value in bad_values:
@@ -262,9 +260,7 @@ class ParameterTests(TestCase):
             param.full_clean()
 
         # Enable enforcing of part parameter units
-        InvenTreeSetting.set_setting(
-            'PART_PARAMETER_ENFORCE_UNITS', True, change_user=None
-        )
+        InvenTreeSetting.set_setting('PARAMETER_ENFORCE_UNITS', True, change_user=None)
 
         for value in bad_values:
             param = Parameter(content_object=prt, template=template, data=value)

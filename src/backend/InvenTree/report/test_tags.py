@@ -12,7 +12,7 @@ from django.utils.safestring import SafeString
 from djmoney.money import Money
 from PIL import Image
 
-from common.models import InvenTreeSetting
+from common.models import InvenTreeSetting, Parameter, ParameterTemplate
 from InvenTree.config import get_testfolder_dir
 from InvenTree.unit_test import InvenTreeTestCase
 from part.models import Part  # TODO fix import: PartParameter, PartParameterTemplate
@@ -406,16 +406,16 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
 
     def test_part_parameter(self):
         """Test the part_parameter template tag."""
-        # TODO fix import: PartParameter, PartParameterTemplate
-        # # Test with a valid part
-        # part = Part.objects.create(name='test', description='test')
-        # t1 = PartParameterTemplate.objects.create(name='Template 1', units='mm')
-        # parameter = PartParameter.objects.create(part=part, template=t1, data='test')
+        # Test with a valid part
+        part = Part.objects.create(name='test', description='test')
+        t1 = ParameterTemplate.objects.create(name='Template 1', units='mm')
+        parameter = Parameter.objects.create(part=part, template=t1, data='test')
 
-        # self.assertEqual(report_tags.part_parameter(part, 'name'), None)
-        # self.assertEqual(report_tags.part_parameter(part, 'Template 1'), parameter)
-        # # Test with an invalid part
-        # self.assertEqual(report_tags.part_parameter(None, 'name'), None)
+        # Note, use the 'parameter' and 'part_parameter' tags interchangeably here
+        self.assertEqual(report_tags.part_parameter(part, 'name'), None)
+        self.assertEqual(report_tags.parameter(part, 'Template 1'), parameter)
+        # Test with an invalid part
+        self.assertEqual(report_tags.parameter(None, 'name'), None)
 
     def test_render_currency(self):
         """Test the render_currency template tag."""

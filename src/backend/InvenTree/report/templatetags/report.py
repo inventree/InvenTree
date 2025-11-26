@@ -354,6 +354,15 @@ def parameter(
 
 
 @register.simple_tag()
+def part_parametr(instance, parameter_name):
+    """Included for backwards compatibility - use 'parameter' tag instead.
+
+    Ref: https://github.com/inventree/InvenTree/pull/10699
+    """
+    return parameter(instance, parameter_name)
+
+
+@register.simple_tag()
 def company_image(
     company: Company, preview: bool = False, thumbnail: bool = False, **kwargs
 ) -> str:
