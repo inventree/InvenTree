@@ -101,8 +101,8 @@ python-version = "3.11.0"
 no-strip-extras=true
 generate-hashes=true
 
-[tool.ty.src]
-root = "src/backend/InvenTree"
+[tool.ty.environment]
+root = ["src/backend/InvenTree"]
 
 [tool.ty.rules]
 unresolved-reference="ignore"  # 21 # see https://github.com/astral-sh/ty/issues/220
