@@ -3,9 +3,9 @@
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
-from common.models import InvenTreeSetting
+from common.models import InvenTreeSetting, Parameter, ParameterTemplate
 
-from .models import Part, PartCategory, PartParameter, PartParameterTemplate
+from .models import Part, PartCategory
 
 
 class CategoryTest(TestCase):
@@ -164,8 +164,8 @@ class CategoryTest(TestCase):
             for fastener in fasteners:
                 self.assertIsInstance(fastener, Part)
                 for parameter in fastener.parameters.all():
-                    self.assertIsInstance(parameter, PartParameter)
-                    self.assertIsInstance(parameter.template, PartParameterTemplate)
+                    self.assertIsInstance(parameter, Parameter)
+                    self.assertIsInstance(parameter.template, ParameterTemplate)
 
             # Test number of unique parameters
             self.assertEqual(
