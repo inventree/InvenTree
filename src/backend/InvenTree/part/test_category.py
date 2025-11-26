@@ -163,7 +163,7 @@ class CategoryTest(TestCase):
             # Iterate through all parts and parameters
             for fastener in fasteners:
                 self.assertIsInstance(fastener, Part)
-                for parameter in fastener.parameters.all():
+                for parameter in fastener.parameters_list.all():
                     self.assertIsInstance(parameter, Parameter)
                     self.assertIsInstance(parameter.template, ParameterTemplate)
 

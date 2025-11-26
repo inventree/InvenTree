@@ -37,7 +37,7 @@ from common.icons import get_icon_packs
 from common.settings import get_global_setting
 from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import urlpattern as generic_states_api_urls
-from InvenTree.api import BulkDeleteMixin, MetadataView
+from InvenTree.api import BulkCreateMixin, BulkDeleteMixin, MetadataView
 from InvenTree.config import CONFIG_LOOKUPS
 from InvenTree.filters import (
     ORDER_FILTER,
@@ -898,6 +898,7 @@ class ParameterMixin:
 class ParameterList(
     OutputOptionsMixin,
     ParameterMixin,
+    BulkCreateMixin,
     BulkDeleteMixin,
     DataExportViewMixin,
     ListCreateAPI,

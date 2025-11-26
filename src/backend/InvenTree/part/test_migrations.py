@@ -273,3 +273,81 @@ class TestPartTestParameterMigration(MigratorTestCase):
         for key, value in self.test_keys.items():
             template = PartTestTemplate.objects.get(test_name=value)
             self.assertEqual(template.key, key)
+
+
+class TestPartParameterDeletion(MigratorTestCase):
+    """Test for PartParameter deletion migration.
+
+    Ref: https://github.com/inventree/InvenTree/pull/10699
+
+    In the linked PR:
+
+    1. The Parameter and ParameterTemplate models are added
+    2. Data is migrated from PartParameter to Parameter and PartParameterTemplate to ParameterTemplate
+    3. The PartParameter and PartParameterTemplate models are deleted
+    """
+
+    UNITS = ['mm', 'Ampere', 'kg']
+
+    migrate_from = ('part', '0143_alter_part_image')
+    migrate_to = ('part', '0145_remove_partparametertemplate_selectionlist_and_more')
+
+    def prepare(self):
+        """Prepare some parts and parameters."""
+        Part = self.old_state.apps.get_model('part', 'part')
+        PartParameter = self.old_state.apps.get_model('part', 'partparameter')
+        PartParameterTemplate = self.old_state.apps.get_model(
+            'part', 'partparametertemplate'
+        )
+
+        # Create some parts
+        for i in range(3):
+            Part.objects.create(
+                name=f'Part {i + 1}',
+                description=f'My part {i + 1}',
+                level=0,
+                lft=0,
+                rght=0,
+                tree_id=0,
+            )
+
+        # Create some parameter templates
+        for idx, units in enumerate(self.UNITS):
+            PartParameterTemplate.objects.create(
+                name=f'Template {idx + 1}',
+                description=f'Description for template {idx + 1}',
+                units=units,
+            )
+
+        # Create some parameters
+        for ii, part in enumerate(Part.objects.all()):
+            for jj, template in enumerate(PartParameterTemplate.objects.all()):
+                PartParameter.objects.create(
+                    part=part, template=template, data=str(ii * jj)
+                )
+
+        self.assertEqual(Part.objects.count(), 3)
+        self.assertEqual(PartParameterTemplate.objects.count(), 3)
+        self.assertEqual(PartParameter.objects.count(), 9)
+
+    def test_parameter_deletion(self):
+        """Test that PartParameter objects have been deleted."""
+        # Test that the PartParameter objects have been deleted
+        with self.assertRaises(ModuleNotFoundError):
+            self.new_state.apps.get_model('part', 'partparameter')
+
+        # Load the new PartParameter model
+        ParameterTemplate = self.new_state.apps.get_model('common', 'parametertemplate')
+        Parameter = self.new_state.apps.get_model('common', 'parameter')
+        Part = self.new_state.apps.get_model('part', 'part')
+
+        self.assertEqual(ParameterTemplate.objects.count(), 3)
+        self.assertEqual(Parameter.objects.count(), 9)
+        self.assertEqual(Part.objects.count(), 3)
+
+        for p in Part.objects.all():
+            params = p.parameters_list.all()
+            self.assertEqual(len(params), 3)
+
+            for unit in self.UNITS:
+                self.assertTrue(params.filter(units=unit).exists())

@@ -2631,7 +2631,7 @@ class Parameter(
         from plugin import PluginMixinEnum, registry
 
         for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
-            # Note: The validate_part_parameter function may raise a ValidationError
+            # Note: The validate_parameter function may raise a ValidationError
             try:
                 if hasattr(plugin, 'validate_parameter'):
                     result = plugin.validate_parameter(self, self.data)
