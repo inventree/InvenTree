@@ -318,7 +318,7 @@ class CategoryTree(ListAPI):
         return queryset
 
 
-class CategoryParameterList(DataExportViewMixin, ListCreateAPI):
+class CategoryParameterList(DataExportViewMixin, OutputOptionsMixin, ListCreateAPI):
     """API endpoint for accessing a list of PartCategoryParameterTemplate objects.
 
     - GET: Return a list of PartCategoryParameterTemplate objects
