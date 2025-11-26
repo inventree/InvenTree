@@ -91,7 +91,7 @@ def copy_part_parameters(apps, schema_editor):
         templates.append(ParameterTemplate(
             name=template.name,
             description=template.description,
-            units=template.units,
+            units=template.units or '',
             checkbox=template.checkbox,
             choices=template.choices,
             selectionlist=template.selectionlist,
@@ -145,14 +145,14 @@ def copy_manufacturer_part_parameters(apps, schema_editor):
 
     for parameter in ManufacturerPartParameter.objects.all():
         # Find the corresponding ParameterTemplate
-        template = ParameterTemplate.objects.filter(name=parameter.template.name).first()
+        template = ParameterTemplate.objects.filter(name=parameter.name).first()
 
         if not template:
             # A matching template does not exist - let's create one
             template = ParameterTemplate.objects.create(
                 name=parameter.name,
                 description='',
-                units=parameter.units,
+                units=parameter.units or '',
                 model_type=None,
                 checkbox=False
             )
@@ -162,8 +162,7 @@ def copy_manufacturer_part_parameters(apps, schema_editor):
             model_type=content_type,
             model_id=parameter.manufacturer_part.id,
             data=parameter.value,
-            data_numeric=convert_to_numeric_value(parameter.value),
-            note=parameter.note
+            data_numeric=convert_to_numeric_value(parameter.value, parameter.units),
         ))
 
     if len(parameters) > 0:
