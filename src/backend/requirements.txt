@@ -1482,9 +1482,9 @@ pynacl==1.6.0 \
     --hash=sha256:f46386c24a65383a9081d68e9c2de909b1834ec74ff3013271f1bca9c2d233eb \
     --hash=sha256:f4b3824920e206b4f52abd7de621ea7a44fd3cb5c8daceb7c3612345dfc54f2e
     # via paramiko
-pypdf==6.3.0 \
-    --hash=sha256:2d5f9741e851e378908692d571374b3cbd94582fdd1c740fcf7c029ec35ac0e6 \
-    --hash=sha256:d066a2fdf8195e1811ae5a9d5a2f97f5bed0e1e7954297295eadee6357e76c5d
+pypdf==6.4.0 \
+    --hash=sha256:4769d471f8ddc3341193ecc5d6560fa44cf8cd0abfabf21af4e195cc0c224072 \
+    --hash=sha256:55ab9837ed97fd7fcc5c131d52fcc2223bc5c6b8a1488bbf7c0e27f1f0023a79
     # via -r src/backend/requirements.in
 pyphen==0.17.2 \
     --hash=sha256:3a07fb017cb2341e1d9ff31b8634efb1ae4dc4b130468c7c39dd3d32e7c3affd \
