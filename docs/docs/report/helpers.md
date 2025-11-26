@@ -570,7 +570,7 @@ Length: {{ length.data }} [{{ length.units }}]
 {% endraw %}
 ```
 
-A [Part Parameter](../part/parameter.md) has the following available attributes:
+A [Parameter](../concepts/parameters.md) has the following available attributes:
 
 | Attribute | Description |
 | --- | --- |
@@ -578,7 +578,7 @@ A [Part Parameter](../part/parameter.md) has the following available attributes:
 | Description | The *description* of the parameter |
 | Data | The *value* of the parameter (e.g. "123.4") |
 | Units | The *units* of the parameter (e.g. "km") |
-| Template | A reference to a [PartParameterTemplate](../part/parameter.md#parameter-templates) |
+| Template | A reference to a [ParameterTemplate](../concepts/parameters.md#parameter-templates) |
 
 ## Rendering Markdown
 

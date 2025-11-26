@@ -175,9 +175,9 @@ Configuration of label printing:
 {{ globalsetting("PART_CATEGORY_PARAMETERS") }}
 {{ globalsetting("PART_CATEGORY_DEFAULT_ICON") }}
 
-#### Part Parameter Templates
+#### Parameter Templates
 
-Refer to the section describing [how to create part parameter templates](../part/parameter.md#create-template).
+Refer to the section describing [how to create parameter templates](../concepts/parameters.md#create-template).
 
 ### Categories
 

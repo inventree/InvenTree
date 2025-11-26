@@ -4,7 +4,7 @@ title: Part Parameter Exporter
 
 ## Part Parameter Exporter
 
-The **Part Parameter Exporter** plugin provides custom export functionality for [Part Parameter](../../part/parameter.md) data.
+The **Part Parameter Exporter** plugin provides custom export functionality for [Parameter](../../concepts/parameters.md) data.
 
 It utilizes the [ExporterMixin](../mixins/export.md) mixin to provide a custom export format for part parameter data.
 
