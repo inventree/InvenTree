@@ -21,11 +21,6 @@ export default function HomePanel(): JSX.Element {
         key: 'active',
         text: t`Active Alerts`,
         elements: _alerts.filter((alert) => alert.condition)
-      },
-      {
-        key: 'inactive',
-        text: t`Inactive Alerts`,
-        elements: _alerts.filter((alert) => !alert.condition)
       }
     ];
   }, [server, globalSettings]);
