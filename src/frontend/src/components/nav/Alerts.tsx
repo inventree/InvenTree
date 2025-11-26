@@ -16,6 +16,7 @@ interface AlertInfo {
   title: string;
   code?: string;
   message: string;
+  failMessage?: string;
   error?: boolean;
 }
 
@@ -34,7 +35,7 @@ export function Alerts() {
 
   const [dismissed, setDismissed] = useState<string[]>([]);
 
-  const alerts: AlertInfo[] = useMemo(
+  const alerts: ExtendedAlertInfo[] = useMemo(
     () =>
       getAlerts(server, globalSettings).filter(
         (alert) => !dismissed.includes(alert.key)
@@ -79,11 +80,11 @@ export function Alerts() {
 export function ServerAlert({
   alert,
   closeAlert
-}: { alert: AlertInfo; closeAlert?: (key: string) => void }) {
+}: { alert: ExtendedAlertInfo; closeAlert?: (key: string) => void }) {
   return (
     <Alert
       withCloseButton={!!closeAlert}
-      color={alert.error ? 'red' : 'orange'}
+      color={alert.condition ? (alert.error ? 'red' : 'orange') : 'green'}
       title={
         <Group gap='xs'>
           {alert.code && `${alert.code}: `}
@@ -112,45 +113,50 @@ export function getAlerts(
   const n_migrations =
     Number.parseInt(globalSettings.getSetting('_PENDING_MIGRATIONS')) ?? 0;
 
-  const allalerts: ExtendedAlertInfo[] = [
+  const allAlerts: ExtendedAlertInfo[] = [
     {
       key: 'debug',
       title: t`Debug Mode`,
       code: 'INVE-W4',
-      message: t`The server is running in debug mode.`,
+      message: t`The server is running in production mode.`,
+      failMessage: t`The server is running in debug mode.`,
       condition: server?.debug_mode || false
     },
     {
       key: 'worker',
       title: t`Background Worker`,
       code: 'INVE-W5',
-      message: t`The background worker process is not running.`,
+      message: t`The background worker process is running.`,
+      failMessage: t`The background worker process is not running.`,
       condition: !server?.worker_running
     },
     {
       key: 'restart',
       title: t`Server Restart`,
       code: 'INVE-W6',
-      message: t`The server requires a restart to apply changes.`,
+      message: t`Server restart not required.`,
+      failMessage: t`The server requires a restart to apply changes.`,
       condition: globalSettings.isSet('SERVER_RESTART_REQUIRED')
     },
     {
       key: 'email',
       title: t`Email settings`,
       code: 'INVE-W7',
-      message: t`Email settings not configured.`,
+      message: t`Email settings are properly configured.`,
+      failMessage: t`Email settings not configured.`,
       condition: !server?.email_configured
     },
     {
       key: 'migrations',
       title: t`Database Migrations`,
       code: 'INVE-W8',
-      message: t`There are pending database migrations.`,
+      message: t`No pending database migrations.`,
+      failMessage: t`There are pending database migrations.`,
       condition: n_migrations > 0
     }
   ];
 
-  return allalerts.filter((alert) => inactive || alert.condition);
+  return allAlerts.filter((alert) => inactive || alert.condition);
 }
 
 export function errorCodeLink(code: string) {
