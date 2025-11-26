@@ -18,7 +18,7 @@ import build.models
 import company.models
 import order.models
 from build.status_codes import BuildStatus
-from common.models import InvenTreeSetting
+from common.models import InvenTreeSetting, ParameterTemplate
 from company.models import Company, SupplierPart
 from InvenTree.config import get_testfolder_dir
 from InvenTree.unit_test import InvenTreeAPITestCase
@@ -29,8 +29,6 @@ from part.models import (
     Part,
     PartCategory,
     PartCategoryParameterTemplate,
-    PartParameter,
-    PartParameterTemplate,
     PartRelated,
     PartSellPriceBreak,
     PartTestTemplate,
@@ -235,23 +233,16 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
         self.assertEqual(len(response.data), 2)
 
         # Add some more category templates via the API
-        n = PartParameterTemplate.objects.count()
-
-        raise ValueError('This test must be refactored...')
+        n = ParameterTemplate.objects.count()
 
         # Ensure validation of parameter values is disabled for these checks
         InvenTreeSetting.set_setting(
             'PART_PARAMETER_ENFORCE_UNITS', False, change_user=None
         )
 
-        for template in PartParameterTemplate.objects.all():
+        for template in ParameterTemplate.objects.all():
             response = self.post(
-                url,
-                {
-                    'category': 2,
-                    'parameter_template': template.pk,
-                    'default_value': 'xyz',
-                },
+                url, {'category': 2, 'template': template.pk, 'default_value': '123'}
             )
 
         # Total number of category templates should have increased
@@ -275,8 +266,8 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
                 'pk',
                 'category',
                 'category_detail',
-                'parameter_template',
-                'parameter_template_detail',
+                'template',
+                'template_detail',
                 'default_value',
             ]:
                 self.assertIn(key, data.keys())
@@ -1647,7 +1638,7 @@ class PartCreationTests(PartAPITestBase):
         # Add some parameter template to the parent category
         for pk in [1, 2, 3]:
             PartCategoryParameterTemplate.objects.create(
-                parameter_template=PartParameterTemplate.objects.get(pk=pk),
+                template=ParameterTemplate.objects.get(pk=pk),
                 category=cat,
                 default_value=f'Value {pk}',
             )
@@ -3240,8 +3231,6 @@ class PartMetadataAPITest(InvenTreeAPITestCase):
             'api-part-category-metadata': PartCategory,
             'api-part-test-template-metadata': PartTestTemplate,
             'api-part-related-metadata': PartRelated,
-            'api-part-parameter-template-metadata': PartParameterTemplate,
-            'api-part-parameter-metadata': PartParameter,
             'api-part-metadata': Part,
             'api-bom-substitute-metadata': BomItemSubstitute,
             'api-bom-item-metadata': BomItem,
