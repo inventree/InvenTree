@@ -182,7 +182,14 @@ test('Parts - Locking', async ({ browser }) => {
     .waitFor();
 
   await loadTab(page, 'Parameters');
-  await page.getByLabel('action-button-add-parameter').waitFor();
+  await page
+    .getByRole('button', { name: 'action-menu-add-parameters' })
+    .click();
+  await page
+    .getByRole('menuitem', {
+      name: 'action-menu-add-parameters-create-parameter'
+    })
+    .click();
 
   // Navigate to a known assembly which *is* locked
   await navigate(page, 'part/100/bom');
@@ -495,7 +502,14 @@ test('Parts - Parameters', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: 'part/69/parameters' });
 
   // Create a new template
-  await page.getByLabel('action-button-add-parameter').click();
+  await page
+    .getByRole('button', { name: 'action-menu-add-parameters' })
+    .click();
+  await page
+    .getByRole('menuitem', {
+      name: 'action-menu-add-parameters-create-parameter'
+    })
+    .click();
 
   // Select the "Color" parameter template (should create a "choice" field)
   await page.getByLabel('related-field-template').fill('Color');
@@ -509,7 +523,7 @@ test('Parts - Parameters', async ({ browser }) => {
 
   // Select the "polarized" parameter template (should create a "checkbox" field)
   await page.getByLabel('related-field-template').fill('Polarized');
-  await page.getByText('Is this part polarized?').click();
+  await page.getByRole('option', { name: 'Polarized Is this part' }).click();
 
   // Submit with "false" value
   await page.getByRole('button', { name: 'Submit' }).click();
@@ -538,15 +552,19 @@ test('Parts - Parameters', async ({ browser }) => {
   // Finally, delete the parameter
   await row.getByLabel(/row-action-menu-/i).click();
   await page.getByRole('menuitem', { name: 'Delete' }).click();
-  await page.getByRole('button', { name: 'Delete' }).click();
 
+  await page.getByRole('button', { name: 'Delete', exact: true }).click();
   await page.getByText('No records found').first().waitFor();
 });
 
 test('Parts - Parameter Filtering', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: 'part/' });
 
-  await loadTab(page, 'Part Parameters');
+  await loadTab(page, 'Parts', true);
+  await page
+    .getByRole('button', { name: 'segmented-icon-control-parametric' })
+    .click();
+
   await clearTableFilters(page);
 
   // All parts should be available (no filters applied)
