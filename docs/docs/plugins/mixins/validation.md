@@ -136,9 +136,9 @@ Validation of the Part IPN (Internal Part Number) field is exposed to custom plu
 
 ### Parameter Values
 
-[Parameters](../../concepts/parameters.md) can also have custom validation rules applied, by implementing the `validate_part_parameter` method. A plugin which implements this method should raise a `ValidationError` with an appropriate message if the parameter value does not match a required convention.
+[Parameters](../../concepts/parameters.md) can also have custom validation rules applied, by implementing the `validate_parameter` method. A plugin which implements this method should raise a `ValidationError` with an appropriate message if the parameter value does not match a required convention.
 
-::: plugin.base.integration.ValidationMixin.ValidationMixin.validate_part_parameter
+::: plugin.base.integration.ValidationMixin.ValidationMixin.validate_parameter
     options:
       show_bases: False
       show_root_heading: False
