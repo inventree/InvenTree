@@ -177,7 +177,11 @@ Configuration of label printing:
 
 #### Parameter Templates
 
-Refer to the section describing [how to create parameter templates](../concepts/parameters.md#create-template).
+| Name | Description | Default | Units |
+| ---- | ----------- | ------- | ----- |
+{{ globalsetting("PARAMETER_ENFORCE_UNITS") }}
+
+For more information on parameters, refer to the [parameter documentation](../concepts/parameters.md).
 
 ### Categories
 
