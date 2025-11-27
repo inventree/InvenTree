@@ -86,7 +86,7 @@ class TestParameterMigrations(MigratorTestCase):
     """Unit test for part parameter migrations."""
 
     migrate_from = ('part', '0106_part_tags')
-    migrate_to = ('part', unit_test.getNewestMigrationFile('part'))
+    migrate_to = ('part', '0143_alter_part_image')
 
     def prepare(self):
         """Create some parts, and templates with parameters."""
@@ -333,7 +333,7 @@ class TestPartParameterDeletion(MigratorTestCase):
     def test_parameter_deletion(self):
         """Test that PartParameter objects have been deleted."""
         # Test that the PartParameter objects have been deleted
-        with self.assertRaises(ModuleNotFoundError):
+        with self.assertRaises(LookupError):
             self.new_state.apps.get_model('part', 'partparameter')
 
         # Load the new PartParameter model
