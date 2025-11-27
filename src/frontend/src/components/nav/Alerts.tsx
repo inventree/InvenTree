@@ -16,7 +16,6 @@ interface AlertInfo {
   title: string;
   code?: string;
   message: string;
-  failMessage?: string;
   error?: boolean;
 }
 
@@ -95,8 +94,9 @@ export function ServerAlert({
       onClose={closeAlert ? () => closeAlert(alert.key) : undefined}
     >
       <Stack gap='xs'>
-        {alert.message}
-        {alert.code && errorCodeLink(alert.code)}
+        {!alert.condition && t`No issues detected`}
+        {alert.condition && alert.message}
+        {alert.condition && alert.code && errorCodeLink(alert.code)}
       </Stack>
     </Alert>
   );
@@ -120,7 +120,6 @@ export function getAlerts(
       title: t`Debug Mode`,
       code: 'INVE-W4',
       message: t`The server is running in production mode.`,
-      failMessage: t`The server is running in debug mode.`,
       condition: server?.debug_mode || false
     },
     {
@@ -128,7 +127,6 @@ export function getAlerts(
       title: t`Background Worker`,
       code: 'INVE-W5',
       message: t`The background worker process is running.`,
-      failMessage: t`The background worker process is not running.`,
       condition: !server?.worker_running
     },
     {
@@ -136,7 +134,6 @@ export function getAlerts(
       title: t`Server Restart`,
       code: 'INVE-W6',
       message: t`Server restart not required.`,
-      failMessage: t`The server requires a restart to apply changes.`,
       condition: globalSettings.isSet('SERVER_RESTART_REQUIRED')
     },
     {
@@ -144,7 +141,6 @@ export function getAlerts(
       title: t`Email settings`,
       code: 'INVE-W7',
       message: t`Email settings are properly configured.`,
-      failMessage: t`Email settings not configured.`,
       condition: !server?.email_configured
     },
     {
@@ -152,7 +148,6 @@ export function getAlerts(
       title: t`Database Migrations`,
       code: 'INVE-W8',
       message: t`No pending database migrations.`,
-      failMessage: t`There are pending database migrations.`,
       condition: n_migrations > 0
     }
   ];
