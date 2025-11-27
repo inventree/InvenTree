@@ -65,7 +65,7 @@ Parametric tables gather all parameters from all objects of a particular type, t
 
 Tables views which support parametric filtering and sorting will have a "Parametric View" button above the table:
 
-{{ image("common/parametric-parts.png", "Parametric Parts Table") }}
+{{ image("concepts/parametric-parts.png", "Parametric Parts Table") }}
 
 ### Sorting by Parameter Value
 

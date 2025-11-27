@@ -15,4 +15,4 @@ Parameters can be associated with various InvenTree models.
 
 Any model which supports attachments will have an "Attachments" tab on its detail page. This tab displays all attachments associated with that object:
 
-{{ image("concepts/attachment-tab.png", "Order Attachments Example") }}
+{{ image("concepts/attachments-tab.png", "Order Attachments Example") }}
