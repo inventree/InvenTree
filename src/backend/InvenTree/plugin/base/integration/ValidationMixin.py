@@ -5,6 +5,7 @@ from typing import Optional
 from django.core.exceptions import ValidationError
 from django.db.models import Model
 
+import common.models
 import part.models
 import stock.models
 from plugin import PluginMixinEnum
@@ -227,7 +228,9 @@ class ValidationMixin:
         """
         return None
 
-    def validate_parameter(self, parameter, data: str) -> Optional[bool]:
+    def validate_parameter(
+        self, parameter: common.models.Parameter, data: str
+    ) -> Optional[bool]:
         """Validate a parameter value.
 
         Arguments:
@@ -240,3 +243,4 @@ class ValidationMixin:
         Raises:
             ValidationError: If the proposed parameter value is objectionable
         """
+        return None
