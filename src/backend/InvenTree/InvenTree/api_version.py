@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 427
+INVENTREE_API_VERSION = 428
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v428 -> 2025-11-24 : https://github.com/inventree/InvenTree/pull/10715
+    - Adds GuideDefinition and GuideExecution models and API endpoints to provide tipps and guides within InvenTree's web frontend.
 
 v427 -> 2025-11-24 : https://github.com/inventree/InvenTree/pull/10896
     - Fixes a spelling mistake in the API field labels
