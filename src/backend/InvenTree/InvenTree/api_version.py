@@ -8,6 +8,7 @@ INVENTREE_API_TEXT = """
 
 v429 -> 2025-12-01 : https://github.com/inventree/InvenTree/pull/10699
     - Removed the "PartParameter" and "PartParameterTemplate" API endpoints
+    - Removed the "ManufacturerPartParameter" API endpoint
     - Added generic "Parameter" and "ParameterTemplate" API endpoints
 
 v428 -> 2025-11-28 : https://github.com/inventree/InvenTree/pull/10926
