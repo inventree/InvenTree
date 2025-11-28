@@ -1,14 +1,17 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 428
+INVENTREE_API_VERSION = 429
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v428 -> 2025-11-25 : https://github.com/inventree/InvenTree/pull/10699
+v429 -> 2025-12-01 : https://github.com/inventree/InvenTree/pull/10699
     - Removed the "PartParameter" and "PartParameterTemplate" API endpoints
     - Added generic "Parameter" and "ParameterTemplate" API endpoints
+
+v428 -> 2025-11-28 : https://github.com/inventree/InvenTree/pull/10926
+    - Various typo fixes in API - no functional changes
 
 v427 -> 2025-11-24 : https://github.com/inventree/InvenTree/pull/10896
     - Fixes a spelling mistake in the API field labels
