@@ -971,6 +971,8 @@ export default function PartDetail() {
       partRequirements.required_for_build_orders +
       partRequirements.required_for_sales_orders;
 
+    const shortfall = Math.max(required - partRequirements.total_stock, 0);
+
     return [
       <DetailsBadge
         label={`${t`In Stock`}: ${formatDecimal(partRequirements.total_stock)}`}
@@ -1014,6 +1016,12 @@ export default function PartDetail() {
         color='blue'
         visible={partRequirements.building > 0}
         key='in_production'
+      />,
+      <DetailsBadge
+        label={`${t`Deficit`}: ${formatDecimal(shortfall)}`}
+        color='red'
+        visible={shortfall > 0}
+        key='deficit'
       />,
       <DetailsBadge
         label={t`Inactive`}
