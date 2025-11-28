@@ -26,11 +26,15 @@ The *Stock Item* detail view shows information regarding the particular stock it
 
 **Status** - Status of this stock item
 
+### Stock Availability
+
+InvenTree has a number of different mechanisms to determine whether stock is available for use. See the [Stock Availability](./availability.md) page for more information.
+
 ### Stock Tracking
 
 Every time a *Stock Item* is adjusted, a *Stock Tracking* entry is automatically created. This ensures a complete history of the *Stock Item* is maintained as long as the item is in the system.
 
-Each stock tracking historical item records the user who performed the action.
+Each stock tracking historical item records the user who performed the action. [Read more about stock tracking here](./tracking.md).
 
 ## Stock Location
 
@@ -49,12 +53,10 @@ If there are some icons missing in the tabler icons package, users can even inst
 A stock location type represents a specific type of location (e.g. one specific size of drawer, shelf, ... or box) which can be assigned to multiple stock locations. In the first place, it is used to specify an icon and having the icon in sync for all locations that use this location type, but it also serves as a data field to quickly see what type of location this is. It is planned to add e.g. drawer dimension information to the location type to add a "find a matching, empty stock location" tool.
 
 ## External Stock Location
-An external stock location can be used to indicate that items in there might not be available
-for immediate usage. Stock items in an external location are marked with an additional icon
+
+It may be useful to mark certain stock locations as *external*. An external stock location can be used to indicate that items in there might not be available for immediate usage. Stock items in an external location are marked with an additional icon
 in the build order line items view where the material is allocated.
 
 {{ image("stock/stock_external_icon.png", title="External stock indication") }}
-
-Anyhow there is no limitation on the stock item. It can be allocated as usual.
 
 The external flag does not get inherited to sublocations.

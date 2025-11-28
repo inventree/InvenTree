@@ -134,8 +134,9 @@ nav:
     - Notifications: part/notification.md
   - Stock:
     - Stock Items: stock/index.md
-    - Stock Status: stock/status.md
+    - Availability: stock/availability.md
     - Stock Tracking: stock/tracking.md
+    - Stock Status: stock/status.md
     - Adjusting Stock: stock/adjust.md
     - Stock Expiry: stock/expiry.md
     - Stock Ownership: stock/owner.md
