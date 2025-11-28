@@ -1189,7 +1189,12 @@ common_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path('', ParameterDetail.as_view(), name='api-parameter-detail')
+                    path(
+                        'metadata/',
+                        MetadataView.as_view(model=common.models.Parameter),
+                        name='api-parameter-metadata',
+                    ),
+                    path('', ParameterDetail.as_view(), name='api-parameter-detail'),
                 ]),
             ),
             path('', ParameterList.as_view(), name='api-parameter-list'),
