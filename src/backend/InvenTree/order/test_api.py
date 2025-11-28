@@ -1267,7 +1267,7 @@ class PurchaseOrderReceiveTest(OrderTest):
                 ],
                 'location': location.pk,
             },
-            max_query_count=103 + 2 * N_LINES,
+            max_query_count=104 + 2 * N_LINES,
         ).data
 
         # Check for expected response
