@@ -85,7 +85,7 @@ class Build(
     InvenTree.models.MetadataMixin,
     InvenTree.models.InvenTreeTree,
 ):
-    """A Build object organises the creation of new StockItem objects from other existing StockItem objects.
+    """A Build object organizes the creation of new StockItem objects from other existing StockItem objects.
 
     Attributes:
         part: The part to be built (from component BOM items)

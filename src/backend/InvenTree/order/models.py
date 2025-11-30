@@ -988,7 +988,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
         # Before we continue, validate that each line item is valid
         # We validate this here because it is far more efficient,
-        # after we have fetched *all* line itemes in a single DB query
+        # after we have fetched *all* line items in a single DB query
         for line_item in line_item_map.values():
             if line_item.order != self:
                 raise ValidationError({_('Line item does not match purchase order')})

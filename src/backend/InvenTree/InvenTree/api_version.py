@@ -1,13 +1,16 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 428
+INVENTREE_API_VERSION = 429
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v428 -> 2025-11-24 : https://github.com/inventree/InvenTree/pull/10715
+v429 -> 2025-12-01 : https://github.com/inventree/InvenTree/pull/10715
     - Adds GuideDefinition and GuideExecution models and API endpoints to provide tipps and guides within InvenTree's web frontend.
+
+v428 -> 2025-11-28 : https://github.com/inventree/InvenTree/pull/10926
+    - Various typo fixes in API - no functional changes
 
 v427 -> 2025-11-24 : https://github.com/inventree/InvenTree/pull/10896
     - Fixes a spelling mistake in the API field labels
@@ -45,7 +48,7 @@ v418 -> 2025-10-24 : https://github.com/inventree/InvenTree/pull/10657
 
 v417 -> 2025-10-22 : https://github.com/inventree/InvenTree/pull/10654
     - Adds "checked" filter to SalesOrderShipment API endpoint
-    - Adds "order_status" filter to SalesOrdereShipment API endpoint
+    - Adds "order_status" filter to SalesOrderShipment API endpoint
     - Adds "order_outstanding" filter to SalesOrderShipment API endpoint
 
 v416 -> 2025-10-22 : https://github.com/inventree/InvenTree/pull/10651
@@ -103,7 +106,7 @@ v401 -> 2025-10-05 : https://github.com/inventree/InvenTree/pull/10381
     - Adds machine properties to machine API endpoints
 
 v400 -> 2025-10-05 : https://github.com/inventree/InvenTree/pull/10486
-    - Adds return datatypes for admin/config and flags entpoints
+    - Adds return datatypes for admin/config and flags endpoints
 
 v399 -> 2025-10-05 : https://github.com/inventree/InvenTree/pull/10445
     - Refactors 'customer_detail' param in SalesOrder API endpoint

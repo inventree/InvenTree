@@ -1027,7 +1027,7 @@ class Part(
             self.ensure_trackable()
 
     def ensure_trackable(self):
-        """Ensure that trackable is set correctly downline."""
+        """Ensure that trackable is set correctly downstream."""
         if self.trackable:
             for part in self.get_used_in():
                 if not part.trackable:

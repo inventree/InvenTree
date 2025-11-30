@@ -69,7 +69,7 @@ def enable_filter(
     Returns:
         The decorated serializer field, marked as filterable.
     """
-    # Ensure this function can be actually filteres
+    # Ensure this function can be actually filtered
     if not issubclass(func.__class__, FilterableSerializerField):
         raise TypeError(
             'INVE-I2: `enable_filter` can only be applied to serializer fields / serializers that contain the `FilterableSerializerField` mixin!'
@@ -132,11 +132,11 @@ class FilterableSerializerMixin:
             query_params = dict(getattr(context.get('request', {}), 'query_params', {}))
 
         # Remove filter args from kwargs to avoid issues with super().__init__
-        poped_kwargs = {}  # store popped kwargs as a arg might be reused for multiple fields
+        popped_kwargs = {}  # store popped kwargs as a arg might be reused for multiple fields
         tgs_vals: dict[str, bool] = {}
         for k, v in self.filter_targets.items():
             pop_ref = v['filter_name'] or k
-            val = kwargs.pop(pop_ref, poped_kwargs.get(pop_ref))
+            val = kwargs.pop(pop_ref, popped_kwargs.get(pop_ref))
 
             # Optionally also look in query parameters
             if val is None and self.filter_on_query and v.get('filter_by_query', True):
@@ -145,13 +145,13 @@ class FilterableSerializerMixin:
                     val = val[0]
 
             if val:  # Save popped value for reuse
-                poped_kwargs[pop_ref] = val
+                popped_kwargs[pop_ref] = val
             tgs_vals[k] = (
                 str2bool(val) if isinstance(val, (str, int, float)) else val
             )  # Support for various filtering style for backwards compatibility
         self.filter_target_values = tgs_vals
 
-        # Ensure this mixin is not proadly applied as it is expensive on scale (total CI time increased by 21% when running all coverage tests)
+        # Ensure this mixin is not broadly applied as it is expensive on scale (total CI time increased by 21% when running all coverage tests)
         if len(self.filter_targets) == 0 and not self.no_filters:
             raise Exception(
                 'INVE-I2: No filter targets found in fields, remove `PathScopedMixin`'
