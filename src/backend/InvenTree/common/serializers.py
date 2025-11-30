@@ -798,7 +798,7 @@ class ParameterSerializer(
         mixin_class=InvenTreeParameterMixin,
         label=_('Model Type'),
         default='',
-        required=False,
+        allow_null=False,
     )
 
     updated_by_detail = enable_filter(
