@@ -603,11 +603,11 @@ class InvenTreeParameterMixin(InvenTreePermissionCheckMixin, models.Model):
         """
         return self.parameters_list.filter(template__name=name).first()
 
-    def get_parameters(self):
+    def get_parameters(self) -> QuerySet:
         """Return all Parameter instances for this model."""
         return self.parameters_list.all().order_by('template__name')
 
-    def parameters_map(self):
+    def parameters_map(self) -> dict:
         """Return a map (dict) of parameter values associated with this Part instance, of the form.
 
         Example:
