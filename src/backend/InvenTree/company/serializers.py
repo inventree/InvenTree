@@ -181,11 +181,13 @@ class CompanySerializer(
         return queryset
 
     address = serializers.SerializerMethodField(
-        label=_(
+        label=_('Primary Address'),
+        help_text=_(
             'Return the string representation for the primary address. This property exists for backwards compatibility.'
         ),
         allow_null=True,
     )
+
     primary_address = serializers.SerializerMethodField(allow_null=True)
 
     @extend_schema_field(serializers.CharField())
