@@ -850,6 +850,7 @@ class ParameterTemplateMixin:
 
     queryset = common.models.ParameterTemplate.objects.all()
     serializer_class = common.serializers.ParameterTemplateSerializer
+    permission_classes = [IsAuthenticatedOrReadScope]
 
 
 class ParameterTemplateList(ParameterTemplateMixin, DataExportViewMixin, ListCreateAPI):

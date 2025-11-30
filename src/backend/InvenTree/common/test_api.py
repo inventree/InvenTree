@@ -2,6 +2,7 @@
 
 from django.urls import reverse
 
+import common.models
 from InvenTree.unit_test import InvenTreeAPITestCase
 
 
@@ -67,3 +68,55 @@ class ParameterAPITests(InvenTreeAPITestCase):
 
         self.assertFalse(actions['data']['read_only'])
         self.assertFalse(actions['model_type']['read_only'])
+
+    def test_create_template(self):
+        """Test creation of a ParameterTemplate via the API."""
+        url = reverse('api-parameter-template-list')
+
+        N = common.models.ParameterTemplate.objects.count()
+
+        # Create a new ParameterTemplate - initially with invalid model_type field
+        data = {
+            'name': 'Test Parameter',
+            'units': 'mm',
+            'description': 'A test parameter template',
+            'model_type': 'order.salesorderx',
+            'enabled': True,
+        }
+
+        response = self.post(url, data, expected_code=400)
+        self.assertIn('Content type not found', str(response.data['model_type']))
+
+        data['model_type'] = 'order.salesorder'
+
+        response = self.post(url, data, expected_code=201)
+        pk = response.data['pk']
+
+        # Verify that the ParameterTemplate was created
+        self.assertEqual(common.models.ParameterTemplate.objects.count(), N + 1)
+
+        template = common.models.ParameterTemplate.objects.get(pk=pk)
+        self.assertEqual(template.name, 'Test Parameter')
+        self.assertEqual(template.description, 'A test parameter template')
+        self.assertEqual(template.units, 'mm')
+
+        # Let's update the Template via the API
+        data = {'description': 'An UPDATED test parameter template'}
+
+        response = self.patch(
+            reverse('api-parameter-template-detail', kwargs={'pk': pk}),
+            data,
+            expected_code=200,
+        )
+
+        template.refresh_from_db()
+        self.assertEqual(template.description, 'An UPDATED test parameter template')
+
+        # Finally, let's delete the Template
+        response = self.delete(
+            reverse('api-parameter-template-detail', kwargs={'pk': pk}),
+            expected_code=204,
+        )
+
+        self.assertEqual(common.models.ParameterTemplate.objects.count(), N)
+        self.assertFalse(common.models.ParameterTemplate.objects.filter(pk=pk).exists())
