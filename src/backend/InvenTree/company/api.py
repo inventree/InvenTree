@@ -366,7 +366,7 @@ class SupplierPartMixin:
     serializer_class = SupplierPartSerializer
 
     def get_queryset(self, *args, **kwargs):
-        """Return annotated queryest object for the SupplierPart list."""
+        """Return annotated queryset object for the SupplierPart list."""
         queryset = super().get_queryset(*args, **kwargs)
         queryset = SupplierPartSerializer.annotate_queryset(queryset)
 
