@@ -266,6 +266,9 @@ The following database options can be configured:
 | INVENTREE_DB_HOST | database.HOST | Database host address (if required) | *Not specified* |
 | INVENTREE_DB_PORT | database.PORT | Database host port (if required) | *Not specified* |
 
+!!! tip "Database Password"
+    The value specified for `INVENTREE_DB_PASSWORD` should not contain comma `,` or colon `:` characters, otherwise the connection to the database may fail.
+
 ### PostgreSQL Settings
 
 If running with a PostgreSQL database backend, the following additional options are available:
@@ -317,6 +320,9 @@ The following cache settings are available:
 | INVENTREE_CACHE_KEEPALIVE_IDLE | cache.keepalive_idle | Cache keepalive idle | 1 |
 | INVENTREE_CACHE_KEEPALIVE_INTERVAL | cache.keepalive_interval | Cache keepalive interval | 1 |
 | INVENTREE_CACHE_USER_TIMEOUT | cache.user_timeout | Cache user timeout | 1000 |
+
+!!! tip "Cache Password"
+    The value specified for `INVENTREE_CACHE_PASSWORD` should not contain comma `,` or colon `:` characters, otherwise the connection to the cache server may fail.
 
 ## Email Settings
 

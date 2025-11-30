@@ -9,6 +9,12 @@ If you are struggling with an issue which is not covered in the FAQ above, pleas
 
 Even if you cannot immediately resolve the issue, the information below will be very useful when reporting the issue on GitHub.
 
+## Error Codes
+
+InvenTree uses a system of error codes to help identify specific issues. Each error code is prefixed with `INVE-`, followed by a letter indicating the error type, and a number.
+
+Refer to the [error code documentation](./settings/error_codes.md) for more information on specific error codes.
+
 ## Recent Update
 
 If you have recently updated your InvenTree instance, please ensure that you have followed all update instructions carefully. In particular, make sure that you have run any required database migrations using the `invoke update` command.
