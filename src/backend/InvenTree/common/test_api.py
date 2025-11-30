@@ -69,8 +69,8 @@ class ParameterAPITests(InvenTreeAPITestCase):
         self.assertFalse(actions['data']['read_only'])
         self.assertFalse(actions['model_type']['read_only'])
 
-    def test_create_template(self):
-        """Test creation of a ParameterTemplate via the API."""
+    def test_template_api(self):
+        """Test ParameterTemplate API functionality."""
         url = reverse('api-parameter-template-list')
 
         N = common.models.ParameterTemplate.objects.count()
@@ -120,3 +120,75 @@ class ParameterAPITests(InvenTreeAPITestCase):
 
         self.assertEqual(common.models.ParameterTemplate.objects.count(), N)
         self.assertFalse(common.models.ParameterTemplate.objects.filter(pk=pk).exists())
+
+    def test_parameter_api(self):
+        """Test Parameter API functionality."""
+        # Create a simple part to test with
+        from part.models import Part
+
+        part = Part.objects.create(name='Test Part', description='A part for testing')
+
+        N = common.models.Parameter.objects.count()
+
+        # Create a ParameterTemplate for the Part model
+        template = common.models.ParameterTemplate.objects.create(
+            name='Length',
+            units='mm',
+            model_type=part.get_content_type(),
+            description='Length of part',
+            enabled=True,
+        )
+
+        # Create a Parameter via the API
+        url = reverse('api-parameter-list')
+
+        data = {
+            'template': template.pk,
+            'model_type': 'part.part',
+            'model_id': part.pk,
+            'data': '25.4',
+        }
+
+        # Initially, user does not have correct permissions
+        response = self.post(url, data=data, expected_code=403)
+
+        self.assertIn(
+            'User does not have permission to create or edit parameters for this model',
+            str(response.data['detail']),
+        )
+
+        # Grant user the correct permissions
+        self.assignRole('part.add')
+
+        response = self.post(url, data=data, expected_code=201)
+
+        parameter = common.models.Parameter.objects.get(pk=response.data['pk'])
+
+        # Check that the Parameter was created
+        self.assertEqual(common.models.Parameter.objects.count(), N + 1)
+
+        # Try to create a duplicate Parameter (should fail)
+        response = self.post(url, data=data, expected_code=400)
+
+        self.assertIn(
+            'The fields model_type, model_id, template must make a unique set.',
+            str(response.data['non_field_errors']),
+        )
+
+        # Let's edit the Parameter via the API
+        url = reverse('api-parameter-detail', kwargs={'pk': parameter.pk})
+
+        response = self.patch(url, data={'data': '-2 inches'}, expected_code=200)
+
+        # Ensure parameter conversion has correctly updated data_numeric field
+        data = response.data
+        self.assertEqual(data['data'], '-2 inches')
+        self.assertAlmostEqual(data['data_numeric'], -50.8, places=2)
+
+        # Finally, delete the Parameter via the API
+        response = self.delete(url, expected_code=204)
+
+        self.assertEqual(common.models.Parameter.objects.count(), N)
+        self.assertFalse(
+            common.models.Parameter.objects.filter(pk=parameter.pk).exists()
+        )
