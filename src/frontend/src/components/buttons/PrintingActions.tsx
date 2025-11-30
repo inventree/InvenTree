@@ -52,12 +52,12 @@ export function PrintingActions({
   const [labelId, setLabelId] = useState<number | undefined>(undefined);
   const [reportId, setReportId] = useState<number | undefined>(undefined);
 
-  const labelProgress = useDataOutput({
+  useDataOutput({
     title: t`Printing Labels`,
     id: labelId
   });
 
-  const reportProgress = useDataOutput({
+  useDataOutput({
     title: t`Printing Reports`,
     id: reportId
   });
