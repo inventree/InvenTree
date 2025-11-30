@@ -14,7 +14,7 @@ from collections import OrderedDict
 from importlib.machinery import SourceFileLoader
 from pathlib import Path
 from threading import Lock
-from typing import Any, Optional, Union
+from typing import Any, Optional
 
 from django.apps import apps
 from django.conf import settings
@@ -212,7 +212,7 @@ class PluginsRegistry:
 
         return plg
 
-    def get_plugin_config(self, slug: str, name: Union[str, None] = None):
+    def get_plugin_config(self, slug: str, name: str | None = None):
         """Return the matching PluginConfig instance for a given plugin.
 
         Arguments:
@@ -820,7 +820,7 @@ class PluginsRegistry:
                         logger.exception(
                             '[PLUGIN] Encountered an error with %s:\n%s',
                             getattr(error, 'path', None),
-                            str(error),
+                            error,
                         )
 
         logger.debug('Finished plugin initialization')
@@ -980,9 +980,8 @@ class PluginsRegistry:
 
         if old_hash != self.registry_hash:
             try:
-                logger.info(
-                    'Updating plugin registry hash: %s', str(self.registry_hash)
-                )
+                logger.info('Updating plugin registry hash: %s', self.registry_hash)
+
                 set_global_setting(
                     '_PLUGIN_REGISTRY_HASH', self.registry_hash, change_user=None
                 )
@@ -991,7 +990,7 @@ class PluginsRegistry:
                 pass
             except Exception as exc:
                 # Some other exception, we want to know about it
-                logger.exception('Failed to update plugin registry hash: %s', str(exc))
+                logger.exception('Failed to update plugin registry hash: %s', exc)
 
     def plugin_settings_keys(self):
         """A list of keys which are used to store plugin settings."""
@@ -1064,7 +1063,7 @@ class PluginsRegistry:
         try:
             reg_hash = get_global_setting('_PLUGIN_REGISTRY_HASH', '', create=False)
         except Exception as exc:
-            logger.exception('Failed to retrieve plugin registry hash: %s', str(exc))
+            logger.exception('Failed to retrieve plugin registry hash: %s', exc)
             return False
 
         if reg_hash and reg_hash != self.registry_hash:

@@ -202,6 +202,21 @@ class AttachmentTest(InvenTreeAPITestCase):
         self.assignRole('part.delete')
         self.delete(url, expected_code=204)
 
+    def test_fully_qualified_url(self):
+        """Test that the fully qualified URL is returned correctly."""
+        part = Part.objects.first()
+
+        attachment = Attachment.objects.create(
+            attachment=self.generate_file('test.txt'),
+            comment='Testing filename: test.txt',
+            model_type='part',
+            model_id=part.pk,
+        )
+
+        url = attachment.fully_qualified_url()
+        self.assertIs(type(url), str)
+        self.assertIn(f'/media/attachments/part/{part.pk}/test', url)
+
 
 class SettingsTest(InvenTreeTestCase):
     """Tests for the 'settings' model."""
@@ -1105,7 +1120,7 @@ class WebhookMessageTests(TestCase):
     def test_bad_token(self):
         """Test that a wrong token is not working."""
         response = self.client.post(
-            self.url, content_type=CONTENT_TYPE_JSON, HTTP_TOKEN='1234567fghj'
+            self.url, content_type=CONTENT_TYPE_JSON, headers={'token': '1234567fghj'}
         )
 
         assert response.status_code == HTTPStatus.FORBIDDEN
@@ -1128,7 +1143,7 @@ class WebhookMessageTests(TestCase):
             self.url,
             data="{'this': 123}",
             content_type=CONTENT_TYPE_JSON,
-            HTTP_TOKEN=str(self.endpoint_def.token),
+            headers={'token': str(self.endpoint_def.token)},
         )
 
         assert response.status_code == HTTPStatus.NOT_ACCEPTABLE
@@ -1176,7 +1191,7 @@ class WebhookMessageTests(TestCase):
         response = self.client.post(
             self.url,
             content_type=CONTENT_TYPE_JSON,
-            HTTP_TOKEN='68MXtc/OiXdA5e2Nq9hATEVrZFpLb3Zb0oau7n8s31I=',
+            headers={'token': '68MXtc/OiXdA5e2Nq9hATEVrZFpLb3Zb0oau7n8s31I='},
         )
 
         assert response.status_code == HTTPStatus.OK
@@ -1191,7 +1206,7 @@ class WebhookMessageTests(TestCase):
             self.url,
             data={'this': 'is a message'},
             content_type=CONTENT_TYPE_JSON,
-            HTTP_TOKEN=str(self.endpoint_def.token),
+            headers={'token': str(self.endpoint_def.token)},
         )
 
         assert response.status_code == HTTPStatus.OK

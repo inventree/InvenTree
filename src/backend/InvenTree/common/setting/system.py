@@ -15,7 +15,6 @@ from jinja2 import Template
 
 import build.validators
 import common.currency
-import common.models
 import common.validators
 import order.validators
 import report.helpers

@@ -24,11 +24,7 @@ import { type NavigateFunction, useNavigate } from 'react-router-dom';
 
 import { isTrue } from '@lib/functions/Conversion';
 import { getDetailUrl } from '@lib/functions/Navigation';
-import type {
-  ApiFormFieldSet,
-  ApiFormFieldType,
-  ApiFormProps
-} from '@lib/types/Forms';
+import type { ApiFormFieldSet, ApiFormProps } from '@lib/types/Forms';
 import { useApi } from '../../contexts/ApiContext';
 import {
   type NestedDict,
@@ -46,9 +42,11 @@ import { ApiFormField } from './fields/ApiFormField';
 
 export function OptionsApiForm({
   props: _props,
+  opened,
   id: pId
 }: Readonly<{
   props: ApiFormProps;
+  opened?: boolean;
   id?: string;
 }>) {
   const api = useApi();
@@ -75,24 +73,26 @@ export function OptionsApiForm({
   );
 
   const optionsQuery = useQuery({
-    enabled: true,
+    enabled: opened !== false && props.ignorePermissionCheck !== true,
     refetchOnMount: false,
     queryKey: [
       'form-options-data',
       id,
+      opened,
+      props.ignorePermissionCheck,
       props.method,
       props.url,
       props.pk,
       props.pathParams
     ],
     queryFn: async () => {
-      const response = await api.options(url);
-      let fields: Record<string, ApiFormFieldType> | null = {};
-      if (!props.ignorePermissionCheck) {
-        fields = extractAvailableFields(response, props.method);
+      if (props.ignorePermissionCheck === true || opened === false) {
+        return {};
       }
 
-      return fields;
+      return api.options(url).then((response: any) => {
+        return extractAvailableFields(response, props.method);
+      });
     },
     throwOnError: (error: any) => {
       if (error.response) {
@@ -109,6 +109,13 @@ export function OptionsApiForm({
       return false;
     }
   });
+
+  // Refetch form options whenever the modal is opened
+  useEffect(() => {
+    if (opened !== false) {
+      optionsQuery.refetch();
+    }
+  }, [opened]);
 
   const formProps: ApiFormProps = useMemo(() => {
     const _props = { ...props };

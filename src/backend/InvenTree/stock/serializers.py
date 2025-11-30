@@ -1060,12 +1060,19 @@ class StockChangeStatusSerializer(serializers.Serializer):
         # Instead of performing database updates for each item,
         # perform bulk database updates (much more efficient)
 
+        # Pre-cache the custom status values (to reduce DB hits)
+        custom_status_codes = StockItem.STATUS_CLASS.custom_values()
+
         for item in items:
             # Ignore items which are already in the desired status
-            if item.compare_status(status):
-                continue
 
-            item.set_status(status)
+            # Careful check for custom status codes also
+            if item.compare_status(status):
+                custom_status = item.get_custom_status()
+                if status == custom_status or custom_status is None:
+                    continue
+
+            item.set_status(status, custom_values=custom_status_codes)
             item.save(add_note=False)
 
             # Create a new transaction note for each item
@@ -1671,6 +1678,10 @@ class StockAddSerializer(StockAdjustmentSerializer):
                 stock_item = item['pk']
                 quantity = item['quantity']
 
+                if quantity is None or quantity <= 0:
+                    # Ignore in this case - no stock to add
+                    continue
+
                 # Optional fields
                 extra = {}
 
@@ -1695,6 +1706,10 @@ class StockRemoveSerializer(StockAdjustmentSerializer):
             for item in data['items']:
                 stock_item = item['pk']
                 quantity = item['quantity']
+
+                # Ignore in this case - no stock to remove
+                if quantity is None or quantity <= 0:
+                    continue
 
                 # Optional fields
                 extra = {}

@@ -517,7 +517,7 @@ function BuildAllocateLineRow({
       field_type: 'related field',
       api_url: apiUrl(ApiEndpoints.stock_item_list),
       model: ModelType.stockitem,
-      autoFill: !!output?.serial,
+      autoFill: !output || !!output?.serial,
       autoFillFilters: {
         serial: output?.serial
       },
@@ -814,7 +814,7 @@ export function useConsumeBuildItemsForm({
     url: ApiEndpoints.build_order_consume,
     pk: buildId,
     title: t`Consume Stock`,
-    successMessage: t`Stock items consumed`,
+    successMessage: t`Stock items scheduled to be consumed`,
     onFormSuccess: onFormSuccess,
     size: '80%',
     fields: consumeFields,
@@ -915,7 +915,7 @@ export function useConsumeBuildLinesForm({
     url: ApiEndpoints.build_order_consume,
     pk: buildId,
     title: t`Consume Stock`,
-    successMessage: t`Stock items consumed`,
+    successMessage: t`Stock items scheduled to be consumed`,
     onFormSuccess: onFormSuccess,
     fields: consumeFields,
     initialData: {

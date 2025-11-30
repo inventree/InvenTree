@@ -132,7 +132,7 @@ def trigger_notification(obj: Model, category: str = '', obj_ref: str = 'pk', **
         logger.info(
             "Notification '%s' has recently been sent for '%s' - SKIPPING",
             category,
-            str(obj),
+            obj,
         )
         return
 

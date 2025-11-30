@@ -18,11 +18,11 @@ repos:
         exclude: mkdocs.yml
     -   id: mixed-line-ending
 -   repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.11.13
+    rev: v0.14.3
     hooks:
     - id: ruff-format
       args: [--preview]
-    - id: ruff
+    - id: ruff-check
       args: [
         --fix,
         # --unsafe-fixes,

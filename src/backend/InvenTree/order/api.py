@@ -1323,7 +1323,7 @@ class SalesOrderAllocationList(
 
 
 class SalesOrderAllocationDetail(SalesOrderAllocationMixin, RetrieveUpdateDestroyAPI):
-    """API endpoint for detali view of a SalesOrderAllocation object."""
+    """API endpoint for detail view of a SalesOrderAllocation object."""
 
 
 class SalesOrderShipmentFilter(FilterSet):
@@ -1374,7 +1374,7 @@ class SalesOrderShipmentFilter(FilterSet):
     )
 
     def filter_order_status(self, queryset, name, value):
-        """Filter by linked SalesOrderrder status."""
+        """Filter by linked SalesOrder status."""
         q1 = Q(order__status=value, order__status_custom_key__isnull=True)
         q2 = Q(order__status_custom_key=value)
 
@@ -1412,7 +1412,7 @@ class SalesOrderShipmentList(SalesOrderShipmentMixin, ListCreateAPI):
 
 
 class SalesOrderShipmentDetail(SalesOrderShipmentMixin, RetrieveUpdateDestroyAPI):
-    """API detail endpooint for SalesOrderShipment model."""
+    """API detail endpoint for SalesOrderShipment model."""
 
 
 class SalesOrderShipmentComplete(CreateAPI):
@@ -1964,7 +1964,7 @@ order_api_urls = [
             ),
         ]),
     ),
-    # API endpoints for sales ordesr
+    # API endpoints for sales orders
     path(
         'so/',
         include([

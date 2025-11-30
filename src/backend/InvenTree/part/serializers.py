@@ -730,40 +730,12 @@ class PartSerializer(
         - Allows us to optionally pass extra fields based on the query.
         """
         self.starred_parts = kwargs.pop('starred_parts', [])
-        # category_detail = kwargs.pop('category_detail', False)
-        # location_detail = kwargs.pop('location_detail', False)
-        # parameters = kwargs.pop('parameters', False)
         create = kwargs.pop('create', False)
-        # pricing = kwargs.pop('pricing', True)
-        # path_detail = kwargs.pop('path_detail', False)
-        # price_breaks = kwargs.pop('price_breaks', False)
 
         super().__init__(*args, **kwargs)
 
         if isGeneratingSchema():
             return
-
-        """
-        if not category_detail:
-            self.fields.pop('category_detail', None)
-
-        if not location_detail:
-            self.fields.pop('default_location_detail', None)
-
-        if not parameters:
-            self.fields.pop('parameters', None)
-
-        if not path_detail:
-            self.fields.pop('category_path', None)
-
-        if not price_breaks:
-            self.fields.pop('price_breaks', None)
-
-        if not pricing:
-            self.fields.pop('pricing_min', None)
-            self.fields.pop('pricing_max', None)
-            self.fields.pop('pricing_updated', None)
-        """
 
         if not create:
             # These fields are only used for the LIST API endpoint
