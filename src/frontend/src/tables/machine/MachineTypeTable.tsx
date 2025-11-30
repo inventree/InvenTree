@@ -103,8 +103,6 @@ export function MachineDriverTable({
 function MachineTypeDrawer({
   machineTypeSlug
 }: Readonly<{ machineTypeSlug: string }>) {
-  const __navigate = useNavigate();
-
   const { machineTypes, isFetching } = useMachineTypeDriver({
     includeDrivers: false
   });
