@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased - YYYY-MM-DD
 
+### Breaking Changes
+
+- [#10699](https://github.com/inventree/InvenTree/pull/10699) removes the `PartParameter` and `PartParameterTempalate` models (and associated API endpoints). These have been replaced with generic `Parameter` and `ParameterTemplate` models (and API endpoints). Any external client applications which made use of the old endpoints will need to be updated.
+
 ### Added
 
 - Adds "Category" columns to BOM and Build Item tables and APIs in [#10722](https://github.com/inventree/InvenTree/pull/10772)
