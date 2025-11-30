@@ -63,7 +63,7 @@ export default function SalesOrderShipmentDetail() {
   const {
     instance: shipment,
     instanceQuery: shipmentQuery,
-    refreshInstance: __refreshShipment
+    refreshInstance: refreshShipment
   } = useInstance({
     endpoint: ApiEndpoints.sales_order_shipment_list,
     pk: id,
@@ -290,7 +290,7 @@ export default function SalesOrderShipmentDetail() {
     pk: shipment.pk,
     fields: editShipmentFields,
     title: t`Edit Shipment`,
-    onFormSuccess: __refreshShipment
+    onFormSuccess: refreshShipment
   });
 
   const deleteShipment = useDeleteApiFormModal({
@@ -315,17 +315,17 @@ export default function SalesOrderShipmentDetail() {
       ...shipment,
       shipment_date: dayjs().format('YYYY-MM-DD')
     },
-    onFormSuccess: __refreshShipment
+    onFormSuccess: refreshShipment
   });
 
   const checkShipment = useCheckShipmentForm({
     shipmentId: shipment.pk,
-    onSuccess: __refreshShipment
+    onSuccess: refreshShipment
   });
 
   const uncheckShipment = useUncheckShipmentForm({
     shipmentId: shipment.pk,
-    onSuccess: __refreshShipment
+    onSuccess: refreshShipment
   });
 
   const shipmentBadges = useMemo(() => {
@@ -461,7 +461,7 @@ export default function SalesOrderShipmentDetail() {
             pageKey='salesordershipment'
             panels={shipmentPanels}
             model={ModelType.salesordershipment}
-            reloadInstance={__refreshShipment}
+            reloadInstance={refreshShipment}
             instance={shipment}
             id={shipment.pk}
           />
