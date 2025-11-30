@@ -454,11 +454,12 @@ class ReferenceIndexingMixin(models.Model):
 class ContentTypeMixin:
     """Mixin class which supports retrieval of the ContentType for a model instance."""
 
-    def get_content_type(self):
+    @classmethod
+    def get_content_type(cls):
         """Return the ContentType object associated with this model."""
         from django.contrib.contenttypes.models import ContentType
 
-        return ContentType.objects.get_for_model(self.__class__)
+        return ContentType.objects.get_for_model(cls)
 
 
 class InvenTreeModel(ContentTypeMixin, PluginValidationMixin, models.Model):
@@ -532,14 +533,10 @@ class InvenTreeParameterMixin(InvenTreePermissionCheckMixin, models.Model):
         Returns:
             Annotated queryset
         """
-        from common.models import Parameter
-
         return queryset.prefetch_related(
-            models.Prefetch(
-                'parameters_list',
-                queryset=Parameter.objects.all().select_related('template'),
-                to_attr='parameters_list_prefetched',
-            )
+            'parameters_list',
+            'parameters_list__model_type',
+            'parameters_list__template',
         )
 
     @property
@@ -548,8 +545,9 @@ class InvenTreeParameterMixin(InvenTreePermissionCheckMixin, models.Model):
 
         This will return pre-fetched data if available (i.e. in a serializer context).
         """
-        if hasattr(self, 'parameters_list_prefetched'):
-            return self.parameters_list_prefetched
+        # Check the query cache for pre-fetched parameters
+        if 'parameters_list' in getattr(self, '_prefetched_objects_cache', {}):
+            return self._prefetched_objects_cache['parameters_list']
 
         return self.parameters_list.all()
 

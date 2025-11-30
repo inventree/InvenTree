@@ -192,3 +192,81 @@ class ParameterAPITests(InvenTreeAPITestCase):
         self.assertFalse(
             common.models.Parameter.objects.filter(pk=parameter.pk).exists()
         )
+
+    def test_parameter_annotation(self):
+        """Test that we can annotate parameters against a queryset."""
+        from company.models import Company
+
+        templates = []
+        parameters = []
+        companies = []
+
+        for ii in range(100):
+            company = Company(
+                name=f'Test Company {ii}',
+                description='A company for testing parameter annotations',
+            )
+            companies.append(company)
+
+        Company.objects.bulk_create(companies)
+
+        # Let's create a large number of parameters
+        for ii in range(25):
+            templates.append(
+                common.models.ParameterTemplate(
+                    name=f'Test Parameter {ii}',
+                    units='',
+                    description='A parameter for testing annotations',
+                    model_type=Company.get_content_type(),
+                    enabled=True,
+                )
+            )
+
+        common.models.ParameterTemplate.objects.bulk_create(templates)
+
+        # Create a parameter for every company against every template
+        for company in companies:
+            for template in templates:
+                parameters.append(
+                    common.models.Parameter(
+                        template=template,
+                        model_type=company.get_content_type(),
+                        model_id=company.pk,
+                        data=f'Test data for {company.name} - {template.name}',
+                    )
+                )
+
+        common.models.Parameter.objects.bulk_create(parameters)
+
+        self.assertEqual(
+            common.models.Parameter.objects.count(), len(companies) * len(templates)
+        )
+
+        # We will fetch the companies, annotated with all parameters
+        url = reverse('api-company-list')
+
+        # By default, we do not expect any parameter annotations
+        response = self.get(url, data={'limit': 5})
+
+        self.assertEqual(response.data['count'], len(companies))
+        for company in response.data['results']:
+            self.assertNotIn('parameters', company)
+
+        # Fetch all companies, explicitly without parameters
+        with self.assertNumQueriesLessThan(20):
+            response = self.get(url, data={'parameters': False})
+
+        # Now, annotate with parameters
+        # This must be done efficiently, without an 1 + N query pattern
+        with self.assertNumQueriesLessThan(45):
+            response = self.get(url, data={'parameters': True})
+
+        self.assertEqual(len(response.data), len(companies))
+
+        for company in response.data:
+            self.assertIn('parameters', company)
+            self.assertEqual(
+                len(company['parameters']),
+                len(templates),
+                'Incorrect number of parameter annotations found',
+            )
