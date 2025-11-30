@@ -213,17 +213,17 @@ class ImportPart(APIView):
 
             for c in category_parameters:
                 for p in parameters:
-                    if p.parameter_template == c.parameter_template:
+                    if p.parameter_template == c.template:
                         p.on_category = True
                         p.value = p.value if p.value is not None else c.default_value
                         break
                 else:
                     parameters.append(
                         supplier.ImportParameter(
-                            name=c.parameter_template.name,
+                            name=c.template.name,
                             value=c.default_value,
                             on_category=True,
-                            parameter_template=c.parameter_template,
+                            parameter_template=c.template,
                         )
                     )
             parameters.sort(key=lambda x: x.on_category, reverse=True)

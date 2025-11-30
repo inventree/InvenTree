@@ -22,7 +22,6 @@ import {
   IconExclamationCircle,
   IconInfoCircle,
   IconLayersLinked,
-  IconList,
   IconListCheck,
   IconListTree,
   IconLock,
@@ -74,6 +73,7 @@ import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
+import ParametersPanel from '../../components/panels/ParametersPanel';
 import { RenderPart } from '../../components/render/Part';
 import { RenderUser } from '../../components/render/User';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
@@ -97,7 +97,6 @@ import { useUserState } from '../../states/UserState';
 import { BomTable } from '../../tables/bom/BomTable';
 import { UsedInTable } from '../../tables/bom/UsedInTable';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
-import { PartParameterTable } from '../../tables/part/PartParameterTable';
 import PartPurchaseOrdersTable from '../../tables/part/PartPurchaseOrdersTable';
 import PartTestResultTable from '../../tables/part/PartTestResultTable';
 import PartTestTemplateTable from '../../tables/part/PartTestTemplateTable';
@@ -789,17 +788,6 @@ export default function PartDetail() {
         content: detailsPanel
       },
       {
-        name: 'parameters',
-        label: t`Parameters`,
-        icon: <IconList />,
-        content: (
-          <PartParameterTable
-            partId={id ?? -1}
-            partLocked={part?.locked == true}
-          />
-        )
-      },
-      {
         name: 'stock',
         label: t`Stock`,
         icon: <IconPackages />,
@@ -949,6 +937,10 @@ export default function PartDetail() {
         icon: <IconLayersLinked />,
         content: <RelatedPartTable partId={part.pk} />
       },
+      ParametersPanel({
+        model_type: ModelType.part,
+        model_id: part?.pk
+      }),
       AttachmentPanel({
         model_type: ModelType.part,
         model_id: part?.pk

@@ -32,6 +32,7 @@ import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
+import ParametersPanel from '../../components/panels/ParametersPanel';
 import { RenderAddress } from '../../components/render/Company';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { formatCurrency } from '../../defaults/formatters';
@@ -354,6 +355,10 @@ export default function ReturnOrderDetail() {
           </Accordion>
         )
       },
+      ParametersPanel({
+        model_type: ModelType.returnorder,
+        model_id: order.pk
+      }),
       AttachmentPanel({
         model_type: ModelType.returnorder,
         model_id: order.pk

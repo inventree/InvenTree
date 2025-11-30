@@ -268,6 +268,7 @@ class ReturnOrderReportContext(report.mixins.BaseReportContext):
 class Order(
     StatusCodeMixin,
     StateTransitionMixin,
+    InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,

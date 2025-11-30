@@ -40,7 +40,7 @@ RULESET_NAMES = [choice[0] for choice in RULESET_CHOICES]
 # Permission types available for each ruleset.
 RULESET_PERMISSIONS = ['view', 'add', 'change', 'delete']
 
-RULESET_CHANGE_INHERIT = [('part', 'partparameter'), ('part', 'bomitem')]
+RULESET_CHANGE_INHERIT = [('part', 'bomitem')]
 
 
 def get_ruleset_models() -> dict:
@@ -106,15 +106,12 @@ def get_ruleset_models() -> dict:
             'part_partsellpricebreak',
             'part_partinternalpricebreak',
             'part_parttesttemplate',
-            'part_partparametertemplate',
-            'part_partparameter',
             'part_partrelated',
             'part_partstar',
             'part_partstocktake',
             'part_partcategorystar',
             'company_supplierpart',
             'company_manufacturerpart',
-            'company_manufacturerpartparameter',
         ],
         RuleSetEnum.STOCK_LOCATION: ['stock_stocklocation', 'stock_stocklocationtype'],
         RuleSetEnum.STOCK: [
@@ -138,7 +135,6 @@ def get_ruleset_models() -> dict:
             'company_contact',
             'company_address',
             'company_manufacturerpart',
-            'company_manufacturerpartparameter',
             'company_supplierpart',
             'company_supplierpricebreak',
             'order_purchaseorder',
@@ -179,6 +175,8 @@ def get_ruleset_ignore() -> list[str]:
         'contenttypes_contenttype',
         # Models which currently do not require permissions
         'common_attachment',
+        'common_parametertemplate',
+        'common_parameter',
         'common_customunit',
         'common_dataoutput',
         'common_inventreesetting',

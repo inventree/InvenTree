@@ -7,6 +7,7 @@ import {
   IconCurrencyDollar,
   IconFileAnalytics,
   IconFingerprint,
+  IconList,
   IconPackages,
   IconPlugConnected,
   IconQrcode,
@@ -186,6 +187,12 @@ export default function SystemSettings() {
         )
       },
       {
+        name: 'parameters',
+        label: t`Parameters`,
+        icon: <IconList />,
+        content: <GlobalSettingList keys={['PARAMETER_ENFORCE_UNITS']} />
+      },
+      {
         name: 'parts',
         label: t`Parts`,
         icon: <IconCategory />,
@@ -213,8 +220,7 @@ export default function SystemSettings() {
               'PART_COPY_PARAMETERS',
               'PART_COPY_TESTS',
               'PART_CATEGORY_PARAMETERS',
-              'PART_CATEGORY_DEFAULT_ICON',
-              'PART_PARAMETER_ENFORCE_UNITS'
+              'PART_CATEGORY_DEFAULT_ICON'
             ]}
           />
         )

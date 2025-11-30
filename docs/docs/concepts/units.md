@@ -59,9 +59,9 @@ The [unit of measure](../part/index.md#units-of-measure) field for the [Part](..
 
 The [supplier part](../part/index.md/#supplier-parts) model uses real-world units to convert between supplier part quantities and internal stock quantities. Unit conversion rules ensure that only compatible unit types can be supplied
 
-### Part Parameter
+### Parameter
 
-The [part parameter template](../part/parameter.md#parameter-templates) model can specify units of measure, and part parameters can be specified against these templates with compatible units
+The [parameter template](../concepts/parameters.md#parameter-templates) model can specify units of measure, and part parameters can be specified against these templates with compatible units
 
 ## Custom Units
 

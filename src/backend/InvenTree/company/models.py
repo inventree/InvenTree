@@ -77,6 +77,7 @@ class CompanyReportContext(report.mixins.BaseReportContext):
 
 class Company(
     InvenTree.models.InvenTreeAttachmentMixin,
+    InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.InvenTreeNotesMixin,
     report.mixins.InvenTreeReportMixin,
     InvenTree.models.InvenTreeImageMixin,
@@ -472,6 +473,7 @@ class Address(InvenTree.models.InvenTreeModel):
 
 class ManufacturerPart(
     InvenTree.models.InvenTreeAttachmentMixin,
+    InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,
     InvenTree.models.InvenTreeMetadataModel,
@@ -583,55 +585,6 @@ class ManufacturerPart(
         return s
 
 
-class ManufacturerPartParameter(InvenTree.models.InvenTreeModel):
-    """A ManufacturerPartParameter represents a key:value parameter for a MnaufacturerPart.
-
-    This is used to represent parameters / properties for a particular manufacturer part.
-
-    Each parameter is a simple string (text) value.
-    """
-
-    class Meta:
-        """Metaclass defines extra model options."""
-
-        verbose_name = _('Manufacturer Part Parameter')
-        unique_together = ('manufacturer_part', 'name')
-
-    @staticmethod
-    def get_api_url():
-        """Return the API URL associated with the ManufacturerPartParameter model."""
-        return reverse('api-manufacturer-part-parameter-list')
-
-    manufacturer_part = models.ForeignKey(
-        ManufacturerPart,
-        on_delete=models.CASCADE,
-        related_name='parameters',
-        verbose_name=_('Manufacturer Part'),
-    )
-
-    name = models.CharField(
-        max_length=500,
-        blank=False,
-        verbose_name=_('Name'),
-        help_text=_('Parameter name'),
-    )
-
-    value = models.CharField(
-        max_length=500,
-        blank=False,
-        verbose_name=_('Value'),
-        help_text=_('Parameter value'),
-    )
-
-    units = models.CharField(
-        max_length=64,
-        blank=True,
-        null=True,
-        verbose_name=_('Units'),
-        help_text=_('Parameter units'),
-    )
-
-
 class SupplierPartManager(models.Manager):
     """Define custom SupplierPart objects manager.
 
@@ -651,6 +604,7 @@ class SupplierPartManager(models.Manager):
 
 class SupplierPart(
     InvenTree.models.InvenTreeAttachmentMixin,
+    InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.MetadataMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,

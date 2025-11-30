@@ -18,7 +18,6 @@ from django.db import models
 from django.db.models import (
     Case,
     DecimalField,
-    Exists,
     ExpressionWrapper,
     F,
     FloatField,
@@ -35,8 +34,6 @@ from django.db.models.query import QuerySet
 
 from sql_util.utils import SubquerySum
 
-import InvenTree.conversion
-import InvenTree.helpers
 import part.models
 import stock.models
 from build.status_codes import BuildStatusGroups
@@ -519,159 +516,3 @@ def annotate_bom_item_can_build(queryset: QuerySet, reference: str = '') -> Quer
     )
 
     return queryset
-
-
-"""A list of valid operators for filtering part parameters."""
-PARAMETER_FILTER_OPERATORS: list[str] = ['gt', 'gte', 'lt', 'lte', 'ne', 'icontains']
-
-
-def filter_by_parameter(
-    queryset: QuerySet, template_id: int, value: str, func: str = ''
-) -> QuerySet:
-    """Filter the given queryset by a given template parameter.
-
-    Parts which do not have a value for the given parameter are excluded.
-
-    Arguments:
-        queryset: A queryset of Part objects
-        template_id (int): The ID of the template parameter to filter by
-        value (str): The value of the parameter to filter by
-        func (str): The function to use for the filter (e.g. __gt, __lt, __contains)
-
-    Returns:
-        A queryset of Part objects filtered by the given parameter
-    """
-    if func and func not in PARAMETER_FILTER_OPERATORS:
-        raise ValueError(f'Invalid parameter filter function supplied: {func}.')
-
-    try:
-        template = part.models.PartParameterTemplate.objects.get(pk=template_id)
-    except (ValueError, part.models.PartParameterTemplate.DoesNotExist):
-        # Return queryset unchanged if the template does not exist
-        return queryset
-
-    # Construct a "numeric" value
-    try:
-        value_numeric = float(value)
-    except (ValueError, TypeError):
-        value_numeric = None
-
-    if template.checkbox:
-        # Account for 'boolean' parameter values
-        # Convert to "True" or "False" string in this case
-        bool_value = InvenTree.helpers.str2bool(value)
-        value_numeric = 1 if bool_value else 0
-        value = str(bool_value)
-
-        # Boolean filtering is limited to exact matches
-        func = ''
-
-    elif value_numeric is None and template.units:
-        # Convert the raw value to the units of the template parameter
-        try:
-            value_numeric = InvenTree.conversion.convert_physical_value(
-                value, template.units
-            )
-        except Exception:
-            # The value cannot be converted - return an empty queryset
-            return queryset.none()
-
-    # Special handling for the "not equal" operator
-    if func == 'ne':
-        invert = True
-        func = ''
-    else:
-        invert = False
-
-    # Some filters are only applicable to string values
-    text_only = any([func in ['icontains'], value_numeric is None])
-
-    # Ensure the function starts with a double underscore
-    if func and not func.startswith('__'):
-        func = f'__{func}'
-
-    # Query for 'numeric' value - this has priority over 'string' value
-    data_numeric = {
-        'parameters__template': template,
-        'parameters__data_numeric__isnull': False,
-        f'parameters__data_numeric{func}': value_numeric,
-    }
-
-    query_numeric = Q(**data_numeric)
-
-    # Query for 'string' value
-    data_text = {
-        'parameters__template': template,
-        f'parameters__data{func}': str(value),
-    }
-
-    if not text_only:
-        data_text['parameters__data_numeric__isnull'] = True
-
-    query_text = Q(**data_text)
-
-    # Combine the queries based on whether we are filtering by text or numeric value
-    q = query_text if text_only else query_text | query_numeric
-
-    # Special handling for the '__ne' (not equal) operator
-    # In this case, we want the *opposite* of the above queries
-    if invert:
-        return queryset.exclude(q).distinct()
-    else:
-        return queryset.filter(q).distinct()
-
-
-def order_by_parameter(
-    queryset: QuerySet, template_id: int, ascending: bool = True
-) -> QuerySet:
-    """Order the given queryset by a given template parameter.
-
-    Parts which do not have a value for the given parameter are ordered last.
-
-    Arguments:
-        queryset: A queryset of Part objects
-        template_id (int): The ID of the template parameter to order by
-        ascending (bool): Order by ascending or descending (default = True)
-
-    Returns:
-        A queryset of Part objects ordered by the given parameter
-    """
-    template_filter = part.models.PartParameter.objects.filter(
-        template__id=template_id, part_id=OuterRef('id')
-    )
-
-    # Annotate the queryset with the parameter value, and whether it exists
-    queryset = queryset.annotate(parameter_exists=Exists(template_filter))
-
-    # Annotate the text data value
-    queryset = queryset.annotate(
-        parameter_value=Case(
-            When(
-                parameter_exists=True,
-                then=Subquery(
-                    template_filter.values('data')[:1], output_field=models.CharField()
-                ),
-            ),
-            default=Value('', output_field=models.CharField()),
-        ),
-        parameter_value_numeric=Case(
-            When(
-                parameter_exists=True,
-                then=Subquery(
-                    template_filter.values('data_numeric')[:1],
-                    output_field=models.FloatField(),
-                ),
-            ),
-            default=Value(0, output_field=models.FloatField()),
-        ),
-    )
-
-    prefix = '' if ascending else '-'
-
-    # Return filtered queryset
-
-    return queryset.order_by(
-        '-parameter_exists',
-        f'{prefix}parameter_value_numeric',
-        f'{prefix}parameter_value',
-    )

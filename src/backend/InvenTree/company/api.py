@@ -9,7 +9,7 @@ from django_filters.rest_framework.filterset import FilterSet
 
 import part.models
 from data_exporter.mixins import DataExportViewMixin
-from InvenTree.api import ListCreateDestroyAPIView, MetadataView
+from InvenTree.api import ListCreateDestroyAPIView, MetadataView, ParameterListMixin
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import SEARCH_ORDER_FILTER, SEARCH_ORDER_FILTER_ALIAS
 from InvenTree.mixins import (
@@ -24,7 +24,6 @@ from .models import (
     Company,
     Contact,
     ManufacturerPart,
-    ManufacturerPartParameter,
     SupplierPart,
     SupplierPriceBreak,
 )
@@ -32,14 +31,27 @@ from .serializers import (
     AddressSerializer,
     CompanySerializer,
     ContactSerializer,
-    ManufacturerPartParameterSerializer,
     ManufacturerPartSerializer,
     SupplierPartSerializer,
     SupplierPriceBreakSerializer,
 )
 
 
-class CompanyList(DataExportViewMixin, ListCreateAPI):
+class CompanyMixin(OutputOptionsMixin):
+    """Mixin class for Company API endpoints."""
+
+    queryset = Company.objects.all()
+    serializer_class = CompanySerializer
+
+    def get_queryset(self):
+        """Return annotated queryset for the company endpoints."""
+        queryset = super().get_queryset()
+        queryset = CompanySerializer.annotate_queryset(queryset)
+
+        return queryset
+
+
+class CompanyList(CompanyMixin, ParameterListMixin, DataExportViewMixin, ListCreateAPI):
     """API endpoint for accessing a list of Company objects.
 
     Provides two methods:
@@ -47,14 +59,6 @@ class CompanyList(DataExportViewMixin, ListCreateAPI):
     - GET: Return list of objects
     - POST: Create a new Company object
     """
-
-    serializer_class = CompanySerializer
-    queryset = Company.objects.all()
-
-    def get_queryset(self):
-        """Return annotated queryset for the company list endpoint."""
-        queryset = super().get_queryset()
-        return CompanySerializer.annotate_queryset(queryset)
 
     filter_backends = SEARCH_ORDER_FILTER
 
@@ -73,18 +77,8 @@ class CompanyList(DataExportViewMixin, ListCreateAPI):
     ordering = 'name'
 
 
-class CompanyDetail(RetrieveUpdateDestroyAPI):
+class CompanyDetail(CompanyMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail of a single Company object."""
-
-    queryset = Company.objects.all()
-    serializer_class = CompanySerializer
-
-    def get_queryset(self):
-        """Return annotated queryset for the company detail endpoint."""
-        queryset = super().get_queryset()
-        queryset = CompanySerializer.annotate_queryset(queryset)
-
-        return queryset
 
 
 class ContactList(DataExportViewMixin, ListCreateDestroyAPIView):
@@ -174,10 +168,30 @@ class ManufacturerOutputOptions(OutputConfiguration):
     ]
 
 
+class ManufacturerPartMixin(SerializerContextMixin):
+    """Mixin class for ManufacturerPart API endpoints."""
+
+    queryset = ManufacturerPart.objects.all()
+    serializer_class = ManufacturerPartSerializer
+
+    def get_queryset(self, *args, **kwargs):
+        """Return annotated queryset for the ManufacturerPart list endpoint."""
+        queryset = super().get_queryset(*args, **kwargs)
+
+        queryset = queryset.prefetch_related(
+            'part', 'manufacturer', 'supplier_parts', 'tags'
+        )
+
+        queryset = ManufacturerPart.annotate_parameters(queryset)
+
+        return queryset
+
+
 class ManufacturerPartList(
+    ManufacturerPartMixin,
     SerializerContextMixin,
-    DataExportViewMixin,
     OutputOptionsMixin,
+    ParameterListMixin,
     ListCreateDestroyAPIView,
 ):
     """API endpoint for list view of ManufacturerPart object.
@@ -186,13 +200,10 @@ class ManufacturerPartList(
     - POST: Create a new ManufacturerPart object
     """
 
-    queryset = ManufacturerPart.objects.all().prefetch_related(
-        'part', 'manufacturer', 'supplier_parts', 'tags'
-    )
-    serializer_class = ManufacturerPartSerializer
     filterset_class = ManufacturerPartFilter
-    output_options = ManufacturerOutputOptions
     filter_backends = SEARCH_ORDER_FILTER
+    output_options = ManufacturerOutputOptions
+
     search_fields = [
         'manufacturer__name',
         'description',
@@ -205,66 +216,15 @@ class ManufacturerPartList(
     ]
 
 
-class ManufacturerPartDetail(RetrieveUpdateDestroyAPI):
+class ManufacturerPartDetail(
+    ManufacturerPartMixin, OutputOptionsMixin, RetrieveUpdateDestroyAPI
+):
     """API endpoint for detail view of ManufacturerPart object.
 
     - GET: Retrieve detail view
     - PATCH: Update object
     - DELETE: Delete object
     """
-
-    queryset = ManufacturerPart.objects.all()
-    serializer_class = ManufacturerPartSerializer
-
-
-class ManufacturerPartParameterFilter(FilterSet):
-    """Custom filterset for the ManufacturerPartParameterList API endpoint."""
-
-    class Meta:
-        """Metaclass options."""
-
-        model = ManufacturerPartParameter
-        fields = ['name', 'value', 'units', 'manufacturer_part']
-
-    manufacturer = rest_filters.ModelChoiceFilter(
-        queryset=Company.objects.all(), field_name='manufacturer_part__manufacturer'
-    )
-
-    part = rest_filters.ModelChoiceFilter(
-        queryset=part.models.Part.objects.all(), field_name='manufacturer_part__part'
-    )
-
-
-class ManufacturerPartParameterOptions(OutputConfiguration):
-    """Available output options for the ManufacturerPartParameter endpoints."""
-
-    OPTIONS = [
-        InvenTreeOutputOption(
-            description='Include detailed information about the linked ManufacturerPart in the response',
-            flag='manufacturer_part_detail',
-            default=False,
-        )
-    ]
-
-
-class ManufacturerPartParameterList(
-    SerializerContextMixin, ListCreateDestroyAPIView, OutputOptionsMixin
-):
-    """API endpoint for list view of ManufacturerPartParamater model."""
-
-    queryset = ManufacturerPartParameter.objects.all()
-    serializer_class = ManufacturerPartParameterSerializer
-    filterset_class = ManufacturerPartParameterFilter
-    output_options = ManufacturerPartParameterOptions
-    filter_backends = SEARCH_ORDER_FILTER
-    search_fields = ['name', 'value', 'units']
-
-
-class ManufacturerPartParameterDetail(RetrieveUpdateDestroyAPI):
-    """API endpoint for detail view of ManufacturerPartParameter model."""
-
-    queryset = ManufacturerPartParameter.objects.all()
-    serializer_class = ManufacturerPartParameterSerializer
 
 
 class SupplierPartFilter(FilterSet):
@@ -378,7 +338,11 @@ class SupplierPartMixin:
 
 
 class SupplierPartList(
-    DataExportViewMixin, SupplierPartMixin, OutputOptionsMixin, ListCreateDestroyAPIView
+    DataExportViewMixin,
+    SupplierPartMixin,
+    ParameterListMixin,
+    OutputOptionsMixin,
+    ListCreateDestroyAPIView,
 ):
     """API endpoint for list view of SupplierPart object.
 
@@ -387,7 +351,6 @@ class SupplierPartList(
     """
 
     filterset_class = SupplierPartFilter
-
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
     output_options = SupplierPartOutputOptions
 
@@ -518,22 +481,6 @@ class SupplierPriceBreakDetail(SupplierPriceBreakMixin, RetrieveUpdateDestroyAPI
 
 
 manufacturer_part_api_urls = [
-    path(
-        'parameter/',
-        include([
-            path(
-                '<int:pk>/',
-                ManufacturerPartParameterDetail.as_view(),
-                name='api-manufacturer-part-parameter-detail',
-            ),
-            # Catch anything else
-            path(
-                '',
-                ManufacturerPartParameterList.as_view(),
-                name='api-manufacturer-part-parameter-list',
-            ),
-        ]),
-    ),
     path(
         '<int:pk>/',
         include([

@@ -33,7 +33,7 @@ export default function SegmentedIconControl({
       data={data.map((item) => ({
         value: item.value,
         label: (
-          <Tooltip label={item.label}>
+          <Tooltip label={item.label} position='top-end'>
             <ActionIcon
               variant='transparent'
               color={color}

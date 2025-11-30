@@ -28,7 +28,12 @@ import stock.models as stock_models
 import stock.serializers as stock_serializers
 from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import StatusView
-from InvenTree.api import BulkUpdateMixin, ListCreateDestroyAPIView, MetadataView
+from InvenTree.api import (
+    BulkUpdateMixin,
+    ListCreateDestroyAPIView,
+    MetadataView,
+    ParameterListMixin,
+)
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import (
     SEARCH_ORDER_FILTER,
@@ -378,6 +383,7 @@ class PurchaseOrderList(
     OrderCreateMixin,
     DataExportViewMixin,
     OutputOptionsMixin,
+    ParameterListMixin,
     ListCreateAPI,
 ):
     """API endpoint for accessing a list of PurchaseOrder objects.
@@ -847,6 +853,7 @@ class SalesOrderList(
     OrderCreateMixin,
     DataExportViewMixin,
     OutputOptionsMixin,
+    ParameterListMixin,
     ListCreateAPI,
 ):
     """API endpoint for accessing a list of SalesOrder objects.
@@ -856,9 +863,7 @@ class SalesOrderList(
     """
 
     filterset_class = SalesOrderFilter
-
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
-
     output_options = SalesOrderOutputOptions
 
     ordering_field_aliases = {
@@ -1525,12 +1530,12 @@ class ReturnOrderList(
     OrderCreateMixin,
     DataExportViewMixin,
     OutputOptionsMixin,
+    ParameterListMixin,
     ListCreateAPI,
 ):
     """API endpoint for accessing a list of ReturnOrder objects."""
 
     filterset_class = ReturnOrderFilter
-
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
     output_options = ReturnOrderOutputOptions

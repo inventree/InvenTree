@@ -111,8 +111,6 @@ export enum ApiEndpoints {
 
   // Part API endpoints
   part_list = 'part/',
-  part_parameter_list = 'part/parameter/',
-  part_parameter_template_list = 'part/parameter/template/',
   part_thumbs_list = 'part/thumbs/',
   part_pricing = 'part/:id/pricing/',
   part_requirements = 'part/:id/requirements/',
@@ -134,7 +132,6 @@ export enum ApiEndpoints {
   supplier_part_list = 'company/part/',
   supplier_part_pricing_list = 'company/price-break/',
   manufacturer_part_list = 'company/part/manufacturer/',
-  manufacturer_part_parameter_list = 'company/part/manufacturer/parameter/',
 
   // Stock location endpoints
   stock_location_list = 'stock/location/',
@@ -243,5 +240,7 @@ export enum ApiEndpoints {
   notes_image_upload = 'notes-image-upload/',
   email_list = 'admin/email/',
   email_test = 'admin/email/test/',
-  config_list = 'admin/config/'
+  config_list = 'admin/config/',
+  parameter_list = 'parameter/',
+  parameter_template_list = 'parameter/template/'
 }

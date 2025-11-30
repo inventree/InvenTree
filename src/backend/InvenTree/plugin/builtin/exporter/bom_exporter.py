@@ -158,8 +158,8 @@ class BomExporterPlugin(DataExportMixin, InvenTreePlugin):
             queryset = queryset.prefetch_related('sub_part__manufacturer_parts')
 
         if self.export_parameter_data:
-            queryset = queryset.prefetch_related('sub_part__parameters')
-            queryset = queryset.prefetch_related('sub_part__parameters__template')
+            queryset = queryset.prefetch_related('sub_part__parameters_list')
+            queryset = queryset.prefetch_related('sub_part__parameters_list__template')
 
         return queryset
 
