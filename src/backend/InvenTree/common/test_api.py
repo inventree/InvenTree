@@ -270,3 +270,43 @@ class ParameterAPITests(InvenTreeAPITestCase):
                 len(templates),
                 'Incorrect number of parameter annotations found',
             )
+
+    def test_parameter_delete(self):
+        """Test that associated parameters are correctly deleted when removing the linked model."""
+        from part.models import Part
+
+        part = Part.objects.create(
+            name='Test Part', description='A part for testing', active=False
+        )
+
+        # Create a ParameterTemplate for the Part model
+        template = common.models.ParameterTemplate.objects.create(
+            name='Test Parameter',
+            description='A parameter template for testing parameter deletion',
+            model_type=None,
+        )
+
+        # Create a Parameter for the Build
+        parameter = common.models.Parameter.objects.create(
+            template=template,
+            model_type=part.get_content_type(),
+            model_id=part.pk,
+            data='Test data',
+        )
+
+        self.assertTrue(
+            common.models.Parameter.objects.filter(pk=parameter.pk).exists()
+        )
+
+        N = common.models.Parameter.objects.count()
+
+        # Now delete the part instance
+        self.assignRole('part.delete')
+        self.delete(
+            reverse('api-part-detail', kwargs={'pk': part.pk}), expected_code=204
+        )
+
+        self.assertEqual(common.models.Parameter.objects.count(), N - 1)
+        self.assertFalse(
+            common.models.Parameter.objects.filter(template=template.pk).exists()
+        )
