@@ -794,8 +794,7 @@ class ContentTypeField(serializers.ChoiceField):
                 if content_types.exists() and content_types.count() == 1:
                     content_type = content_types.first()
 
-        except Exception as e:
-            print('e:', e)
+        except Exception:
             raise ValidationError(_('Invalid content type format'))
 
         if content_type is None:
