@@ -55,7 +55,7 @@ def currency_codes() -> list:
 
     # Ensure we do not hit the database until the common app is loaded
     if InvenTree.ready.isAppLoaded('common'):
-        get_global_setting(
+        codes = get_global_setting(
             'CURRENCY_CODES', create=False, environment_key='INVENTREE_CURRENCY_CODES'
         ).strip()
 
