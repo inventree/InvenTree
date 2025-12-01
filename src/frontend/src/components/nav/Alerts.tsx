@@ -119,35 +119,35 @@ export function getAlerts(
       key: 'debug',
       title: t`Debug Mode`,
       code: 'INVE-W4',
-      message: t`The server is running in production mode.`,
+      message: t`The server is running in debug mode.`,
       condition: server?.debug_mode || false
     },
     {
       key: 'worker',
       title: t`Background Worker`,
       code: 'INVE-W5',
-      message: t`The background worker process is running.`,
+      message: t`The background worker process is not running.`,
       condition: !server?.worker_running
     },
     {
       key: 'restart',
       title: t`Server Restart`,
       code: 'INVE-W6',
-      message: t`Server restart not required.`,
+      message: t`The server requires a restart to apply changes.`,
       condition: globalSettings.isSet('SERVER_RESTART_REQUIRED')
     },
     {
       key: 'email',
       title: t`Email settings`,
       code: 'INVE-W7',
-      message: t`Email settings are properly configured.`,
+      message: t`Email settings not configured.`,
       condition: !server?.email_configured
     },
     {
       key: 'migrations',
       title: t`Database Migrations`,
       code: 'INVE-W8',
-      message: t`No pending database migrations.`,
+      message: t`There are pending database migrations.`,
       condition: n_migrations > 0
     }
   ];
