@@ -340,13 +340,19 @@ class TestPartParameterDeletion(MigratorTestCase):
         ParameterTemplate = self.new_state.apps.get_model('common', 'parametertemplate')
         Parameter = self.new_state.apps.get_model('common', 'parameter')
         Part = self.new_state.apps.get_model('part', 'part')
+        ContentType = self.new_state.apps.get_model('contenttypes', 'contenttype')
 
         self.assertEqual(ParameterTemplate.objects.count(), 3)
         self.assertEqual(Parameter.objects.count(), 9)
         self.assertEqual(Part.objects.count(), 3)
 
+        content_type, _created = ContentType.objects.get_or_create(
+            app_label='part', model='part'
+        )
+
         for p in Part.objects.all():
-            params = p.parameters_list.all()
+            params = Parameter.objects.filter(model_type=content_type, model_id=p.id)
+
             self.assertEqual(len(params), 3)
 
             for unit in self.UNITS:
