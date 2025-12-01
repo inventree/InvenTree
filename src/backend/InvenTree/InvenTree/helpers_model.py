@@ -281,25 +281,6 @@ def getModelsWithMixin(mixin_class) -> list:
     return [x for x in db_models if x is not None and issubclass(x, mixin_class)]
 
 
-def getModelChoicesWithMixin(
-    mixin_class, allow_null: bool = False
-) -> list[tuple[str, str]]:
-    """Return a list of model choices (app_label.model_name, verbose_name) for models that inherit from the given mixin class."""
-    choices = []
-
-    if allow_null:
-        choices.append((None, _('None')))
-
-    models = getModelsWithMixin(mixin_class)
-
-    for model in models:
-        label = f'{model._meta.app_label}.{model._meta.model_name}'
-        name = model._meta.verbose_name
-        choices.append((label, name))
-
-    return choices
-
-
 def notify_responsible(
     instance,
     sender,

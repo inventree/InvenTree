@@ -121,6 +121,109 @@ class ParameterAPITests(InvenTreeAPITestCase):
         self.assertEqual(common.models.ParameterTemplate.objects.count(), N)
         self.assertFalse(common.models.ParameterTemplate.objects.filter(pk=pk).exists())
 
+    def test_template_filters(self):
+        """Tests for API filters against ParameterTemplate endpoint."""
+        from company.models import Company
+
+        # Create some ParameterTemplate objects
+        t1 = common.models.ParameterTemplate.objects.create(
+            name='Template A',
+            description='Template with choices',
+            choices='apple,banana,cherry',
+            enabled=True,
+        )
+
+        t2 = common.models.ParameterTemplate.objects.create(
+            name='Template B',
+            description='Template without choices',
+            enabled=True,
+            units='mm',
+            model_type=Company.get_content_type(),
+        )
+
+        t3 = common.models.ParameterTemplate.objects.create(
+            name='Template C', description='Another template', enabled=False
+        )
+
+        url = reverse('api-parameter-template-list')
+
+        # Filter by 'enabled' status
+        response = self.get(url, data={'enabled': True})
+        self.assertEqual(len(response.data), 2)
+
+        response = self.get(url, data={'enabled': False})
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['pk'], t3.pk)
+
+        # Filter by 'has_choices'
+        response = self.get(url, data={'has_choices': True})
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['pk'], t1.pk)
+
+        response = self.get(url, data={'has_choices': False})
+        self.assertEqual(len(response.data), 2)
+
+        # Filter by 'model_type'
+        response = self.get(url, data={'model_type': 'company.company'})
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['pk'], t2.pk)
+
+        # Filter by 'has_units'
+        response = self.get(url, data={'has_units': True})
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['pk'], t2.pk)
+
+        response = self.get(url, data={'has_units': False})
+        self.assertEqual(len(response.data), 2)
+
+        # Filter by 'for_model'
+        # Note that a 'blank' model_type is considered to match all models
+        response = self.get(url, data={'for_model': 'part.part'})
+        self.assertEqual(len(response.data), 2)
+
+        response = self.get(url, data={'for_model': 'company'})
+        self.assertEqual(len(response.data), 3)
+
+        # Create a Parameter against a specific Company instance
+        company = Company.objects.create(
+            name='Test Company', description='A company for testing'
+        )
+
+        common.models.Parameter.objects.create(
+            template=t1,
+            model_type=company.get_content_type(),
+            model_id=company.pk,
+            data='apple',
+        )
+
+        model_types = {'company': 3, 'part.part': 2, 'order.purchaseorder': 2}
+
+        for model_name, count in model_types.items():
+            response = self.get(url, data={'for_model': model_name})
+            self.assertEqual(
+                len(response.data),
+                count,
+                f'Incorrect number of templates for model "{model_name}"',
+            )
+
+        # Filter with an invalid 'for_model'
+        response = self.get(
+            url, data={'for_model': 'invalid.modelname'}, expected_code=400
+        )
+
+        self.assertIn('Invalid content type: invalid.modelname', str(response.data))
+
+        # Filter the "exists for model" filter
+        model_types = {'company': 1, 'part.part': 0, 'order.purchaseorder': 0}
+
+        for model_name, count in model_types.items():
+            response = self.get(url, data={'exists_for_model': model_name})
+            self.assertEqual(
+                len(response.data),
+                count,
+                f'Incorrect number of templates for model "{model_name}"',
+            )
+
     def test_parameter_api(self):
         """Test Parameter API functionality."""
         # Create a simple part to test with

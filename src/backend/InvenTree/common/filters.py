@@ -3,6 +3,7 @@
 import re
 
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ValidationError
 from django.db.models import (
     Case,
     CharField,
@@ -77,7 +78,7 @@ def filter_content_type(
     ct = determine_content_type(content_type)
 
     if ct is None:
-        raise ValueError(f'Invalid content type: {content_type}')
+        raise ValidationError(f'Invalid content type: {content_type}')
 
     q = Q(**{f'{field_name}': ct})
 
