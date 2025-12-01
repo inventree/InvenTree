@@ -1174,7 +1174,10 @@ def plugins_info(*args, **kwargs):
 
 
 def ignore_ready_warning(func):
-    """Decorator to ignore 'AppRegistryNotReady' warnings in functions called during app ready phase."""
+    """Decorator to ignore 'AppRegistryNotReady' warnings in functions called during app ready phase.
+
+    Ref: https://github.com/inventree/InvenTree/issues/10806
+    """
 
     def wrapper(*args, **kwargs):
         with warnings.catch_warnings():
