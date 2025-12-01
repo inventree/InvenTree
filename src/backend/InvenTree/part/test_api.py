@@ -3047,13 +3047,13 @@ class BomItemTest(InvenTreeAPITestCase):
         self.assertAlmostEqual(can_build, 482.9, places=1)
 
 
-class PartAttachmentTest(InvenTreeAPITestCase):
-    """Unit tests for the PartAttachment API endpoint."""
+class AttachmentTest(InvenTreeAPITestCase):
+    """Unit tests for the Attachment API endpoint."""
 
     fixtures = ['category', 'part', 'location']
 
     def test_add_attachment(self):
-        """Test that we can create a new PartAttachment via the API."""
+        """Test that we can create a new Attachment instances via the API."""
         url = reverse('api-attachment-list')
 
         # Upload without permission
