@@ -6,6 +6,7 @@ import structlog
 
 import InvenTree.ready
 from common.settings import get_global_setting, set_global_setting
+from InvenTree.helpers import ignore_ready_warning
 
 logger = structlog.get_logger('inventree')
 
@@ -29,6 +30,7 @@ class CommonConfig(AppConfig):
 
         self.clear_restart_flag()
 
+    @ignore_ready_warning
     def clear_restart_flag(self):
         """Clear the SERVER_RESTART_REQUIRED setting."""
         try:
