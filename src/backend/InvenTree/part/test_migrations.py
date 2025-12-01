@@ -356,4 +356,4 @@ class TestPartParameterDeletion(MigratorTestCase):
             self.assertEqual(len(params), 3)
 
             for unit in self.UNITS:
-                self.assertTrue(params.filter(units=unit).exists())
+                self.assertTrue(params.filter(template__units=unit).exists())
