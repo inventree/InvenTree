@@ -361,3 +361,99 @@ class TestSupplierPartQuantity(MigratorTestCase):
             # And the 'pack_size' attribute has been removed
             with self.assertRaises(AttributeError):
                 sp.pack_size
+
+
+class TestManufacturerPartParameterMigration(MigratorTestCase):
+    """Test migration of ManufacturerPartParameter data.
+
+    Ref: https://github.com/inventree/InvenTree/pull/10699
+
+    In the referenced PR:
+
+    - Generic ParameterTemplate and Parameter models were created
+    - Existing ManufacturerPartParameter data was migrated to the new models
+    - ManufacturerPartParameter model was removed
+    """
+
+    migrate_from = ('company', '0076_alter_company_image')
+    migrate_to = ('company', '0077_delete_manufacturerpartparameter')
+
+    def prepare(self):
+        """Create some existing data before migration."""
+        Part = self.old_state.apps.get_model('part', 'part')
+        PartParameterTemplate = self.old_state.apps.get_model(
+            'part', 'partparametertemplate'
+        )
+        Company = self.old_state.apps.get_model('company', 'company')
+        ManufacturerPart = self.old_state.apps.get_model('company', 'manufacturerpart')
+        ManufacturerPartParameter = self.old_state.apps.get_model(
+            'company', 'manufacturerpartparameter'
+        )
+
+        # Create some existing templates
+        for ii in range(3):
+            PartParameterTemplate.objects.create(
+                name=f'Parameter {ii}', description=f'Description for parameter {ii}'
+            )
+
+        # Create a ManufacturerPart
+        part = Part.objects.create(
+            name='PART',
+            description='A purchaseable part',
+            purchaseable=True,
+            level=0,
+            tree_id=0,
+            lft=0,
+            rght=0,
+        )
+
+        manufacturer = Company.objects.create(
+            name='Manufacturer', description='A manufacturer', is_manufacturer=True
+        )
+
+        manu_part = ManufacturerPart.objects.create(
+            part=part, manufacturer=manufacturer, MPN='MPN-001'
+        )
+
+        # Create some parameters which correlate with existing templates
+        for ii in range(3):
+            ManufacturerPartParameter.objects.create(
+                manufacturer_part=manu_part, name=f'Parameter {ii}', value=str(ii * 10)
+            )
+
+        # Create a parameter which does NOT correlate with any existing template
+        for name in ['Width', 'Height', 'Depth']:
+            ManufacturerPartParameter.objects.create(name=name, value='100', units='mm')
+
+    def test_manufacturer_part_parameter_migration(self):
+        """Test that ManufacturerPartParameter data has been migrated correctly."""
+        ContentType = self.new_state.apps.get_model('contenttypes', 'contenttype')
+        ParameterTemplate = self.new_state.apps.get_model('common', 'parametertemplate')
+        Parameter = self.new_state.apps.get_model('common', 'parameter')
+        ManufacturerPart = self.new_state.apps.get_model('company', 'manufacturerpart')
+
+        # There should be 6 ParameterTemplate objects
+        self.assertEqual(ParameterTemplate.objects.count(), 6)
+
+        manu_part = ManufacturerPart.objects.first()
+
+        content_type, _created = ContentType.objects.get_or_create(
+            app_label='company', model='manufacturerpart'
+        )
+
+        # There should be 6 Parameter objects linked to the ManufacturerPart
+        params = Parameter.objects.filter(
+            content_type=content_type, object_id=manu_part.pk
+        )
+
+        self.assertEqual(params.count(), 6)
+
+        for name in [
+            'Parameter 0',
+            'Parameter 1',
+            'Parameter 2',
+            'Width',
+            'Height',
+            'Depth',
+        ]:
+            self.assertTrue(params.filter(template__name=name).exists())
