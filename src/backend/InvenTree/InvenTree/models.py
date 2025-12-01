@@ -627,6 +627,20 @@ class InvenTreeParameterMixin(InvenTreePermissionCheckMixin, models.Model):
 
         return params
 
+    def check_parameter_delete(self, parameter):
+        """Run a check to determine if the provided parameter can be deleted.
+
+        The default implementation always returns True, but this can be overridden in the implementing class.
+        """
+        return True
+
+    def check_parameter_save(self, parameter):
+        """Run a check to determine if the provided parameter can be saved.
+
+        The default implementation always returns True, but this can be overridden in the implementing class.
+        """
+        return True
+
 
 class InvenTreeAttachmentMixin(InvenTreePermissionCheckMixin):
     """Provides an abstracted class for managing file attachments.

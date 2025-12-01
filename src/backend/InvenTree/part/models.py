@@ -591,6 +591,16 @@ class Part(
             'test_templates': self.getTestTemplateMap(),
         }
 
+    def check_parameter_delete(self, parameter):
+        """Custom delete check for Paramteter instances associated with this Part."""
+        if self.locked:
+            raise ValidationError(_('Cannot delete parameters of a locked part'))
+
+    def check_parameter_save(self, parameter):
+        """Custom save check for Parameter instances associated with this Part."""
+        if self.locked:
+            raise ValidationError(_('Cannot modify parameters of a locked part'))
+
     def delete(self, **kwargs):
         """Custom delete method for the Part model.
 

@@ -2584,8 +2584,6 @@ class Parameter(
 
         - Update the numeric data field (if applicable)
         """
-        # TODO: Custom call against the model type this is linked to...
-
         self.calculate_numeric_value()
 
         # Convert 'boolean' values to 'True' / 'False'
@@ -2593,11 +2591,12 @@ class Parameter(
             self.data = InvenTree.helpers.str2bool(self.data)
             self.data_numeric = 1 if self.data else 0
 
+        self.check_save()
         super().save(*args, **kwargs)
 
     def delete(self):
         """Perform custom delete checks before deleting a Parameter instance."""
-        # TODO: Custom delete checks against the model type this is linked to...
+        self.check_delete()
         super().delete()
 
     def clean(self):
@@ -2680,6 +2679,34 @@ class Parameter(
             raise ValidationError(_('Invalid model type specified for parameter'))
 
         return model_class.check_related_permission(permission, user)
+
+    def check_save(self):
+        """Check if this parameter can be saved.
+
+        The linked content_object can implement custom checks by overriding
+        the 'check_parameter_edit' method.
+        """
+        from InvenTree.models import InvenTreeParameterMixin
+
+        try:
+            instance = self.content_object
+        except InvenTree.models.InvenTreeModel.DoesNotExist:
+            return
+
+        if instance and isinstance(instance, InvenTreeParameterMixin):
+            instance.check_parameter_save(self)
+
+    def check_delete(self):
+        """Check if this parameter can be deleted."""
+        from InvenTree.models import InvenTreeParameterMixin
+
+        try:
+            instance = self.content_object
+        except InvenTree.models.InvenTreeModel.DoesNotExist:
+            return
+
+        if instance and isinstance(instance, InvenTreeParameterMixin):
+            instance.check_parameter_delete(self)
 
     # TODO: Reintroduce validator for model_type
     model_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
