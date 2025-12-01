@@ -677,7 +677,8 @@ export default function ImportPartWizard({
                   {} as Record<number, number>
                 );
                 const createParameters = useParameters.map((p) => ({
-                  part: importResult!.part_id,
+                  model_type: 'part',
+                  model_id: importResult!.part_id,
                   template: p.parameter_template,
                   data: p.value
                 }));
