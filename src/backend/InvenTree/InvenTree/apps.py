@@ -18,7 +18,7 @@ import InvenTree.conversion
 import InvenTree.ready
 import InvenTree.tasks
 from InvenTree.config import get_setting
-from InvenTree.helpers import ignore_ready_warning
+from InvenTree.ready import ignore_ready_warning
 
 logger = structlog.get_logger('inventree')
 MIGRATIONS_CHECK_DONE = False

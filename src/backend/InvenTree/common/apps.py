@@ -6,7 +6,7 @@ import structlog
 
 import InvenTree.ready
 from common.settings import get_global_setting, set_global_setting
-from InvenTree.helpers import ignore_ready_warning
+from InvenTree.ready import ignore_ready_warning
 
 logger = structlog.get_logger('inventree')
 

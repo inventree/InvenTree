@@ -1,14 +1,12 @@
 """Provides helper functions used throughout the InvenTree project."""
 
 import datetime
-import functools
 import hashlib
 import inspect
 import io
 import json
 import os.path
 import re
-import warnings
 from decimal import Decimal, InvalidOperation
 from typing import Optional, TypeVar
 from wsgiref.util import FileWrapper
@@ -1172,22 +1170,3 @@ def plugins_info(*args, **kwargs):
     return [
         {'name': plg.name, 'slug': plg.slug, 'version': plg.version} for plg in plugins
     ]
-
-
-def ignore_ready_warning(func):
-    """Decorator to ignore 'AppRegistryNotReady' warnings in functions called during app ready phase.
-
-    Ref: https://github.com/inventree/InvenTree/issues/10806
-    """
-
-    @functools.wraps(func)
-    def wrapper(*args, **kwargs):
-        with warnings.catch_warnings():
-            warnings.filterwarnings(
-                'ignore',
-                message='Accessing the database during app initialization is discouraged',
-                category=RuntimeWarning,
-            )
-            return func(*args, **kwargs)
-
-    return wrapper

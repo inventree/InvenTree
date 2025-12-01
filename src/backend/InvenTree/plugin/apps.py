@@ -9,8 +9,12 @@ from django.apps import AppConfig
 import structlog
 from maintenance_mode.core import set_maintenance_mode
 
-from InvenTree.helpers import ignore_ready_warning
-from InvenTree.ready import canAppAccessDatabase, isInMainThread, isInWorkerThread
+from InvenTree.ready import (
+    canAppAccessDatabase,
+    ignore_ready_warning,
+    isInMainThread,
+    isInWorkerThread,
+)
 from plugin import registry
 
 logger = structlog.get_logger('inventree')

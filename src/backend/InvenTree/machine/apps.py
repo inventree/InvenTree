@@ -5,9 +5,9 @@ from django.db.utils import OperationalError, ProgrammingError
 
 import structlog
 
-from InvenTree.helpers import ignore_ready_warning
 from InvenTree.ready import (
     canAppAccessDatabase,
+    ignore_ready_warning,
     isImportingData,
     isInMainThread,
     isPluginRegistryLoaded,
