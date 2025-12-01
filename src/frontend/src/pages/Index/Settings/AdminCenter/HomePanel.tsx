@@ -4,10 +4,21 @@ import { Accordion, Alert, SimpleGrid, Stack, Text } from '@mantine/core';
 import { type JSX, useMemo, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import { StylishText } from '../../../../components/items/StylishText';
-import { ServerAlert, getAlerts } from '../../../../components/nav/Alerts';
+import {
+  type ExtendedAlertInfo,
+  ServerAlert,
+  getAlerts
+} from '../../../../components/nav/Alerts';
 import { QuickAction } from '../../../../components/settings/QuickAction';
 import { useServerApiState } from '../../../../states/ServerApiState';
 import { useGlobalSettingsState } from '../../../../states/SettingsStates';
+
+function rankAlert(alert: ExtendedAlertInfo): number {
+  if (!alert.condition) return 0;
+  if (alert.error) return 2;
+
+  return 1;
+}
 
 export default function HomePanel(): JSX.Element {
   const [dismissed, setDismissed] = useState<boolean>(false);
@@ -15,17 +26,15 @@ export default function HomePanel(): JSX.Element {
   const globalSettings = useGlobalSettingsState();
 
   const accElements = useMemo(() => {
-    const _alerts = getAlerts(server, globalSettings, true);
+    const _alerts = getAlerts(server, globalSettings, true).sort(
+      (a, b) => rankAlert(b) - rankAlert(a)
+    );
+
     return [
       {
-        key: 'active',
-        text: t`Active Alerts`,
-        elements: _alerts.filter((alert) => alert.condition)
-      },
-      {
-        key: 'inactive',
-        text: t`Inactive Alerts`,
-        elements: _alerts.filter((alert) => !alert.condition)
+        key: 'system-status',
+        text: t`System Status`,
+        elements: _alerts
       }
     ];
   }, [server, globalSettings]);
@@ -67,7 +76,7 @@ export default function HomePanel(): JSX.Element {
       )}
       <Accordion
         multiple
-        defaultValue={['quick-actions', 'active']}
+        defaultValue={['quick-actions', 'system-status']}
         variant='contained'
       >
         <Accordion.Item value='quick-actions'>
