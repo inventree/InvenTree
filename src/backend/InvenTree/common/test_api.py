@@ -225,8 +225,8 @@ class ParameterAPITests(InvenTreeAPITestCase):
         common.models.ParameterTemplate.objects.bulk_create(templates)
 
         # Create a parameter for every company against every template
-        for company in companies:
-            for template in templates:
+        for company in Company.objects.all():
+            for template in common.models.ParameterTemplate.objects.all():
                 parameters.append(
                     common.models.Parameter(
                         template=template,
