@@ -4,6 +4,27 @@ import inspect
 import os
 import sys
 
+# Keep track of loaded apps, to prevent multiple executions of ready functions
+_loaded_apps = set()
+
+
+def clearLoadedApps():
+    """Clear the set of loaded apps."""
+    global _loaded_apps
+    _loaded_apps = set()
+
+
+def setAppLoaded(app_name: str):
+    """Mark an app as loaded."""
+    global _loaded_apps
+    _loaded_apps.add(app_name)
+
+
+def isAppLoaded(app_name: str) -> bool:
+    """Return True if the app has been marked as loaded."""
+    global _loaded_apps
+    return app_name in _loaded_apps
+
 
 def isInTestMode():
     """Returns True if the database is in testing mode."""
