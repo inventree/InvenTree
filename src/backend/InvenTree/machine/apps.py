@@ -5,6 +5,7 @@ from django.db.utils import OperationalError, ProgrammingError
 
 import structlog
 
+from InvenTree.helpers import ignore_ready_warning
 from InvenTree.ready import (
     canAppAccessDatabase,
     isImportingData,
@@ -32,12 +33,17 @@ class MachineConfig(AppConfig):
             logger.debug('Machine app: Skipping machine loading sequence')
             return
 
-        from machine import registry
-
         try:
-            logger.info('Loading InvenTree machines')
-            if not registry.is_ready:
-                registry.initialize(main=isInMainThread())
+            self.initialize_registry()
         except (OperationalError, ProgrammingError):
             # Database might not yet be ready
             logger.warn('Database was not ready for initializing machines')
+
+    @ignore_ready_warning
+    def initialize_registry(self):
+        """Initialize the machine registry."""
+        from machine import registry
+
+        if not registry.is_ready:
+            logger.info('Loading InvenTree machines')
+            registry.initialize(main=isInMainThread())
