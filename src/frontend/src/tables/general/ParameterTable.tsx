@@ -38,10 +38,12 @@ import { TableHoverCard } from '../TableHoverCard';
  */
 export function ParameterTable({
   modelType,
-  modelId
+  modelId,
+  allowEdit = true
 }: {
   modelType: ModelType;
   modelId: number;
+  allowEdit?: boolean;
 }) {
   const table = useTable('parameters');
   const user = useUserState();
@@ -211,7 +213,7 @@ export function ParameterTable({
         ]}
       />
     ];
-  }, [user]);
+  }, [allowEdit, user]);
 
   const rowActions = useCallback(
     (record: any) => {
@@ -249,10 +251,10 @@ export function ParameterTable({
         columns={tableColumns}
         props={{
           enableDownload: true,
-          enableBulkDelete: true,
-          enableSelection: true,
-          rowActions: rowActions,
-          tableActions: tableActions,
+          enableBulkDelete: allowEdit != false,
+          enableSelection: allowEdit != false,
+          rowActions: allowEdit == false ? undefined : rowActions,
+          tableActions: allowEdit == false ? undefined : tableActions,
           tableFilters: tableFilters,
           params: {
             model_type: modelType,

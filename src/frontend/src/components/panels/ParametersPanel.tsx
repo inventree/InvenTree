@@ -7,10 +7,12 @@ import type { PanelType } from './Panel';
 
 export default function ParametersPanel({
   model_type,
-  model_id
+  model_id,
+  allowEdit = true
 }: {
   model_type: ModelType;
   model_id: number | undefined;
+  allowEdit?: boolean;
 }): PanelType {
   return {
     name: 'parameters',
@@ -18,7 +20,11 @@ export default function ParametersPanel({
     icon: <IconListDetails />,
     content:
       model_type && model_id ? (
-        <ParameterTable modelType={model_type} modelId={model_id} />
+        <ParameterTable
+          allowEdit={allowEdit}
+          modelType={model_type}
+          modelId={model_id}
+        />
       ) : (
         <Skeleton />
       )

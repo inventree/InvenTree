@@ -23,6 +23,7 @@ import {
   IconInfoCircle,
   IconLayersLinked,
   IconListCheck,
+  IconListDetails,
   IconListTree,
   IconLock,
   IconPackages,
@@ -73,7 +74,6 @@ import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
-import ParametersPanel from '../../components/panels/ParametersPanel';
 import { RenderPart } from '../../components/render/Part';
 import { RenderUser } from '../../components/render/User';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
@@ -97,6 +97,7 @@ import { useUserState } from '../../states/UserState';
 import { BomTable } from '../../tables/bom/BomTable';
 import { UsedInTable } from '../../tables/bom/UsedInTable';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
+import { ParameterTable } from '../../tables/general/ParameterTable';
 import PartPurchaseOrdersTable from '../../tables/part/PartPurchaseOrdersTable';
 import PartTestResultTable from '../../tables/part/PartTestResultTable';
 import PartTestTemplateTable from '../../tables/part/PartTestTemplateTable';
@@ -937,10 +938,30 @@ export default function PartDetail() {
         icon: <IconLayersLinked />,
         content: <RelatedPartTable partId={part.pk} />
       },
-      ParametersPanel({
-        model_type: ModelType.part,
-        model_id: part?.pk
-      }),
+      {
+        name: 'parameters',
+        label: t`Parameters`,
+        icon: <IconListDetails />,
+        content: (
+          <>
+            {part.locked && (
+              <Alert
+                title={t`Part is Locked`}
+                color='orange'
+                icon={<IconLock />}
+                p='xs'
+              >
+                <Text>{t`Part parameters cannot be edited, as the part is locked`}</Text>
+              </Alert>
+            )}
+            <ParameterTable
+              modelType={ModelType.part}
+              modelId={part?.pk}
+              allowEdit={part?.locked != true}
+            />
+          </>
+        )
+      },
       AttachmentPanel({
         model_type: ModelType.part,
         model_id: part?.pk
