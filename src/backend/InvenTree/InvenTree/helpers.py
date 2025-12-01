@@ -1,6 +1,7 @@
 """Provides helper functions used throughout the InvenTree project."""
 
 import datetime
+import functools
 import hashlib
 import inspect
 import io
@@ -1179,6 +1180,7 @@ def ignore_ready_warning(func):
     Ref: https://github.com/inventree/InvenTree/issues/10806
     """
 
+    @functools.wraps(func)
     def wrapper(*args, **kwargs):
         with warnings.catch_warnings():
             warnings.filterwarnings(
