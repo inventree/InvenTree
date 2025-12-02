@@ -3330,11 +3330,11 @@ class PartTestTemplateTest(PartAPITestBase):
         self.assertIn('Choices must be unique', str(response.data['choices']))
 
 
-class PartParameterTests(PartAPITestBase):
-    """Unit test for PartParameter API endpoints."""
+class ParameterTests(PartAPITestBase):
+    """Unit test for Parameter API endpoints."""
 
     def test_export_data(self):
-        """Test data export functionality for PartParameter objects."""
+        """Test data export functionality for Parameter objects."""
         url = reverse('api-parameter-list')
 
         response = self.options(

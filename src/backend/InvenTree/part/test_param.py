@@ -287,8 +287,8 @@ class ParameterTests(TestCase):
             self.assertAlmostEqual(param.data_numeric, expected, places=2)
 
 
-class PartParameterTest(InvenTreeAPITestCase):
-    """Tests for the ParParameter API."""
+class ParameterTest(InvenTreeAPITestCase):
+    """Tests for the Parameter API."""
 
     superuser = True
 
@@ -496,7 +496,7 @@ class PartParameterTest(InvenTreeAPITestCase):
             self.assertEqual(actual, expected)
 
 
-class PartParameterFilterTest(InvenTreeAPITestCase):
+class ParameterFilterTest(InvenTreeAPITestCase):
     """Unit tests for filtering parts by parameter values."""
 
     superuser = True

@@ -733,6 +733,10 @@ class ParameterTemplateSerializer(
         allow_null=True,
     )
 
+    def validate_model_type(self, model_type):
+        """Convert an empty string to None for the model_type field."""
+        return model_type or None
+
 
 @register_importer()
 class ParameterSerializer(

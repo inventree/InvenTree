@@ -121,6 +121,19 @@ class ParameterAPITests(InvenTreeAPITestCase):
         self.assertEqual(common.models.ParameterTemplate.objects.count(), N)
         self.assertFalse(common.models.ParameterTemplate.objects.filter(pk=pk).exists())
 
+        # Let's create a template which does not specify a model_type
+        data = {
+            'name': 'Universal Parameter',
+            'units': '',
+            'description': 'A parameter template for all models',
+            'enabled': False,
+        }
+
+        response = self.post(url, data, expected_code=201)
+
+        self.assertIsNone(response.data['model_type'])
+        self.assertFalse(response.data['enabled'])
+
     def test_template_filters(self):
         """Tests for API filters against ParameterTemplate endpoint."""
         from company.models import Company
