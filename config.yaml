@@ -1,0 +1,254 @@
+# InvenTree Configuration Template
+# Ref: https://docs.inventree.org/en/stable/start/config/
+# Note: Environment variables take precedence over values set in this file
+
+# Secret key for backend
+# Use the environment variable INVENTREE_SECRET_KEY_FILE
+#secret_key_file: '/etc/inventree/secret_key.txt'
+# Use the environment variable INVENTREE_OIDC_PRIVATE_KEY or INVENTREE_OIDC_PRIVATE_KEY_FILE
+#oidc_private_key: '-----BEGIN PRIVATE KEY-----aaa'
+#oidc_private_key_file: '/etc/inventree/oidc.key'
+
+# Database backend selection - Configure backend database settings
+# Documentation: https://docs.inventree.org/en/latest/start/config/
+# Note: Database configuration options can also be specified from environmental variables,
+#       with the prefix INVENTREE_DB_
+#       e.g INVENTREE_DB_NAME / INVENTREE_DB_USER / INVENTREE_DB_PASSWORD
+# Do not change this section if you are using the package - use `inventree config` instead
+# TO MAINTAINERS: Do not change database strings
+database: 
+  ENGINE: django.db.backends.postgresql  
+  NAME: inventree_demo
+  USER: inventree_demo
+  PASSWORD: GHHEZCvk7maEuxWjMGgy
+  HOST: localhost
+  PORT: 5432
+
+# Base URL for the InvenTree server (or use the environment variable INVENTREE_SITE_URL)
+# site_url: 'http://localhost:8000'
+
+# Set debug to False to run in production mode, or use the environment variable INVENTREE_DEBUG
+debug: False
+
+# Additional debug options
+debug_querycount: False
+debug_shell: False
+
+# Set to False to disable the admin interface, or use the environment variable INVENTREE_ADMIN_ENABLED
+#admin_enabled: True
+
+# Set the admin URL, or use the environment variable INVENTREE_ADMIN_URL
+#admin_url: 'admin'
+
+# Configure the system logging level (or use environment variable INVENTREE_LOG_LEVEL)
+# Options: DEBUG / INFO / WARNING / ERROR / CRITICAL
+log_level: WARNING
+
+# Configure if logs should be output in JSON format
+# Use environment variable INVENTREE_JSON_LOG
+json_log: False
+
+# Enable database-level logging, or use the environment variable INVENTREE_DB_LOGGING
+db_logging: False
+
+# Enable writing a log file, or use the environment variable INVENTREE_WRITE_LOG
+write_log: False
+
+# Enable writing logs to the console (stdout), or use the environment variable INVENTREE_CONSOLE_LOG
+console_log: True
+
+# Select default system language , or use the environment variable INVENTREE_LANGUAGE
+language: en-us
+
+# System time-zone (default is UTC). Reference: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+timezone: UTC
+
+
+# Add new user on first startup by either adding values here or from a file
+#admin_user: admin
+#admin_email: info@example.com
+#admin_password: inventree
+#admin_password_file: '/etc/inventree/admin_password.txt'
+
+# Email backend configuration
+# See https://docs.inventree.org/en/stable/settings/email for more information on email configuration
+# You can either use (1) SMTP, (2) console or (3) anymail backends
+# 1 (SMTP) : Ref: https://docs.djangoproject.com/en/dev/topics/email/
+# 2 (Console): Ref: https://docs.djangoproject.com/en/dev/topics/email/#console-backend
+# 3 (Anymail): Ref: https://anymail.dev/en/stable/esps/
+# Alternatively, these options can all be set using environment variables,
+# with the INVENTREE_EMAIL_ prefix:
+# e.g. INVENTREE_EMAIL_HOST / INVENTREE_EMAIL_PORT / INVENTREE_EMAIL_USERNAME
+
+email:
+  sender: '' #  'inventree@example.org'
+  # For 1
+  # backend: 'django.core.mail.backends.smtp.EmailBackend'
+  host: ''
+  port: 25
+  username: ''
+  password: ''
+  tls: False
+  ssl: False
+  # For 2
+  # backend: 'django.core.mail.backends.console.EmailBackend'
+  # For 3
+  # backend: 'anymail.backends.mailjet.EmailBackend'
+  # anymail:
+  #   MAILJET_API_KEY: abc456
+  #   MAILJET_SECRET_KEY: def123
+  #   WEBHOOK_SECRET: random:random  # generate a random string for webhook secret
+
+# Set sentry_enabled to True to report errors back to the maintainers
+# Set sentry,dsn to your custom DSN if you want to use your own instance for error reporting
+sentry_enabled: False
+#sentry_sample_rate: 0.1
+#sentry_dsn: https://custom@custom.ingest.sentry.io/custom
+
+# OpenTelemetry tracing/metrics - disabled by default - refer to the documentation for full list of options
+# This can be used to send tracing data, logs and metrics to OpenTelemetry compatible backends
+tracing:
+  enabled: false
+
+# Set this variable to True to enable InvenTree Plugins, or use the environment variable INVENTREE_PLUGINS_ENABLED
+plugins_enabled: False
+#plugin_noinstall: True
+#plugin_file: '/path/to/plugins.txt'
+#plugin_dir: '/path/to/plugins/'
+
+# Set this variable to True to enable auto-migrations, or use the environment variable INVENTREE_AUTO_UPDATE
+auto_update: False
+
+# Allowed hosts (see ALLOWED_HOSTS in Django settings documentation)
+# A list of strings representing the host/domain names that this Django site can serve.
+# Default behaviour is to allow all hosts (THIS IS NOT SECURE!)
+allowed_hosts:
+  - '*'
+
+# Trusted origins (see CSRF_TRUSTED_ORIGINS in Django settings documentation)
+# If you are running behind a proxy, you may need to add the proxy address here
+# trusted_origins:
+#   - 'http://localhost'
+#   - 'http://*.localhost'
+
+# Enable Proxy header passthrough
+# Override with the environment variable INVENTREE_USE_X_FORWARDED_<HEADER>
+# use_x_forwarded_host: true
+# use_x_forwarded_port: true
+# use_x_forwarded_proto: true
+
+# Cookie settings (nominally the default settings should be fine)
+# cookie:
+#  secure: false
+#  samesite: false
+
+# Cross Origin Resource Sharing (CORS) settings (see https://github.com/adamchainz/django-cors-headers)
+cors:
+  allow_all: true
+  allow_credentials: true
+
+  # whitelist:
+  # - https://example.com
+  # - https://sub.example.com
+
+  # regex:
+
+# MEDIA_ROOT is the local filesystem location for storing uploaded files
+#media_root: '/home/inventree/data/media'
+
+# STATIC_ROOT is the local filesystem location for storing static files
+#static_root: '/home/inventree/data/static'
+
+# INVENTREE_BACKUP_DIR is the local filesystem location for storing backups
+#backup_dir: '/home/inventree/data/backup'
+
+# Background worker options
+background:
+  workers: 4
+  timeout: 90
+  max_attempts: 5
+
+# External cache configuration (refer to the documentation for full list of options)
+cache:
+  enabled: false
+  host: 'inventree-cache'
+  port: 6379
+
+# Login configuration
+login_confirm_days: 3
+login_attempts: 5
+login_default_protocol: http
+
+# Remote / proxy login
+# These settings can introduce security problems if configured incorrectly. Please read
+# https://docs.djangoproject.com/en/4.2/howto/auth-remote-user/ for more details
+# The header name should be prefixed by `HTTP`. Please read the docs for more details
+# https://docs.djangoproject.com/en/stable/ref/request-response/#django.http.HttpRequest.META
+remote_login_enabled: False
+remote_login_header: HTTP_REMOTE_USER
+
+# Logout redirect configuration
+# This setting may be required if using remote / proxy login to redirect requests
+# during the logout process (default is 'index'). Please read the docs for more details
+# https://docs.djangoproject.com/en/stable/ref/settings/#logout-redirect-url
+#logout_redirect_url: 'index'
+
+# Add SSO login-backends (see examples below)
+# social_backends:
+#  - 'allauth.socialaccount.providers.google'
+#  - 'allauth.socialaccount.providers.github'
+
+# Add specific settings for social account providers (if required)
+# Refer to the django-allauth documentation for more details:
+# https://docs.allauth.org/en/latest/socialaccount/provider_configuration.html
+# social_providers:
+#   github:
+#     VERIFIED_EMAIL: true
+
+# Add LDAP support (refer to the documentation for available options)
+# Ref: https://docs.inventree.org/en/stable/start/advanced/#ldap
+ldap:
+  enabled: false
+
+# Customization options
+# Ref: https://docs.inventree.org/en/stable/start/config/#customization-options
+# customize:
+#   site_header: 'Custom Admin Panel'  # Django admin panel header text
+#   login_message: InvenTree demo instance - <a href='https://inventree.org/demo.html'> Click here for login details</a>
+#   navbar_message: <h6>InvenTree demo mode <a href='https://inventree.org/demo.html'><span class='fas fa-info-circle'></span></a></h6>
+#   hide_admin_link: true
+#   hide_password_reset: true
+#   logo: img/custom_logo.png
+#   splash: img/custom_splash.jpg
+
+# Override global settings
+#global_settings:
+#  INVENTREE_DEFAULT_CURRENCY: 'CNY'
+#  INVENTREE_RESTRICT_ABOUT: true
+
+# Storage configuration
+# Ref: https://docs.inventree.org/en/stable/start/config/#storage-backends
+storage:
+  target: local # s3, sftp
+#   s3:
+#     access_key: 'abc123-key'
+#     secret_key: 'abc123-secret'
+#     bucket_name: 'my-bucket'
+#     region_name: 'fsn1'
+#     endpoint_url: 'https://fsn1.your-objectstorage.com'
+#     location: 'inventree-server_subdir'
+#     default_acl: private
+#     verify_ssl: true
+#     overwrite: true
+#     virtual: true
+  # sftp:
+  #   host: 'sftp://ftp-target.example.org:22'
+  #   uid: 1000
+  #   gid: 1000
+  #   location: 'inventree-server_subdir'
+  #   params:
+  #     # See https://docs.paramiko.org/en/latest/api/client.html#paramiko.client.SSHClient.connect
+  #     port: 22
+  #     username: 'user'
+  #     password: 'pwd'
+  #     compress: False
