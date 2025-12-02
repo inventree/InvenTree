@@ -28,10 +28,9 @@ def get_spectacular_settings():
             'UserTypeEnum': 'users.models.UserProfile.UserType',
             'TemplateModelTypeEnum': 'report.models.ReportTemplateBase.ModelChoices',
             'AttachmentModelTypeEnum': 'common.models.Attachment.ModelChoices',
+            'ParameterModelTypeEnum': 'common.models.Parameter.ModelChoices',
+            'ParameterTemplateModelTypeEnum': 'common.models.ParameterTemplate.ModelChoices',
             'DataImportSessionModelTypeEnum': 'importer.models.DataImportSession.ModelChoices',
-            # Deconflict fields which use model_type ContentType fields
-            'common.models.Parameter.model_type': 'ParameterModelTypeEnum',
-            'common.models.ParameterTemplate.model_type': 'ParameterTemplateModelTypeEnum',
             # Allauth
             'UnauthorizedStatus': [[401, 401]],
             'IsTrueEnum': [[True, True]],

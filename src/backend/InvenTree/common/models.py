@@ -2387,6 +2387,11 @@ class ParameterTemplate(
         verbose_name = _('Parameter Template')
         verbose_name_plural = _('Parameter Templates')
 
+    class ModelChoices(RenderChoices):
+        """Model choices for parameters."""
+
+        choice_fnc = common.validators.parameter_template_model_options
+
     @staticmethod
     def get_api_url() -> str:
         """Return the API URL associated with the ParameterTemplate model."""
@@ -2573,6 +2578,11 @@ class Parameter(
         unique_together = [['model_type', 'model_id', 'template']]
 
         indexes = [models.Index(fields=['model_type', 'model_id'])]
+
+    class ModelChoices(RenderChoices):
+        """Model choices for parameters."""
+
+        choice_fnc = common.validators.parameter_model_options
 
     @staticmethod
     def get_api_url() -> str:
