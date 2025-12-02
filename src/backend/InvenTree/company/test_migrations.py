@@ -431,7 +431,7 @@ class TestManufacturerPartParameterMigration(MigratorTestCase):
 
         # There should be 3 Parameter objects linked to the ManufacturerPart
         params = Parameter.objects.filter(
-            content_type=content_type, object_id=manu_part.pk
+            model_type=content_type, model_id=manu_part.pk
         )
 
         self.assertEqual(params.count(), 3)
