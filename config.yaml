@@ -25,7 +25,7 @@ database:
   PORT: 5432
 
 # Base URL for the InvenTree server (or use the environment variable INVENTREE_SITE_URL)
-# site_url: 'http://localhost:8000'
+site_url: 'http://localhost:8000'
 
 # Set debug to False to run in production mode, or use the environment variable INVENTREE_DEBUG
 debug: False
@@ -35,10 +35,10 @@ debug_querycount: False
 debug_shell: False
 
 # Set to False to disable the admin interface, or use the environment variable INVENTREE_ADMIN_ENABLED
-#admin_enabled: True
+admin_enabled: True
 
 # Set the admin URL, or use the environment variable INVENTREE_ADMIN_URL
-#admin_url: 'admin'
+admin_url: 'admin'
 
 # Configure the system logging level (or use environment variable INVENTREE_LOG_LEVEL)
 # Options: DEBUG / INFO / WARNING / ERROR / CRITICAL
@@ -65,9 +65,9 @@ timezone: UTC
 
 
 # Add new user on first startup by either adding values here or from a file
-#admin_user: admin
-#admin_email: info@example.com
-#admin_password: inventree
+admin_user: superadmin
+admin_email: salam@zotezo.com
+admin_password: superadmin
 #admin_password_file: '/etc/inventree/admin_password.txt'
 
 # Email backend configuration
@@ -154,13 +154,13 @@ cors:
   # regex:
 
 # MEDIA_ROOT is the local filesystem location for storing uploaded files
-#media_root: '/home/inventree/data/media'
+media_root: '/home/inventree/webapps/inventree/data/media'
 
 # STATIC_ROOT is the local filesystem location for storing static files
-#static_root: '/home/inventree/data/static'
+static_root: '/home/inventree/webapps/inventree/data/static'
 
 # INVENTREE_BACKUP_DIR is the local filesystem location for storing backups
-#backup_dir: '/home/inventree/data/backup'
+backup_dir: '/home/inventree/webapps/inventree/data/backup'
 
 # Background worker options
 background:
