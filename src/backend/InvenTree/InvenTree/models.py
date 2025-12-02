@@ -9,6 +9,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import QuerySet
 from django.db.models.signals import post_save
+from django.db.transaction import TransactionManagementError
 from django.dispatch import receiver
 from django.urls import resolve, reverse
 from django.urls.exceptions import NoReverseMatch
@@ -757,7 +758,15 @@ class InvenTreeTree(MPTTModel):
 
         if len(trees) > 0:
             # A tree update was performed, so we need to refresh the instance
-            self.refresh_from_db()
+            try:
+                self.refresh_from_db()
+            except TransactionManagementError:
+                # If we are inside a transaction block, we cannot refresh from db
+                pass
+            except Exception as e:
+                # Any other error is unexpected
+                InvenTree.sentry.report_exception(e)
+                InvenTree.exceptions.log_error(f'{self.__class__.__name__}.save')
 
     def partial_rebuild(self, tree_id: int) -> bool:
         """Perform a partial rebuild of the tree structure.
