@@ -726,6 +726,7 @@ class ParameterTemplateSerializer(
     # Note: The choices are overridden at run-time on class initialization
     model_type = ContentTypeField(
         mixin_class=InvenTreeParameterMixin,
+        choices=common.validators.parameter_template_model_options,
         label=_('Model Type'),
         default='',
         required=False,
@@ -796,6 +797,7 @@ class ParameterSerializer(
     # Note: The choices are overridden at run-time on class initialization
     model_type = ContentTypeField(
         mixin_class=InvenTreeParameterMixin,
+        choices=common.validators.parameter_model_options,
         label=_('Model Type'),
         default='',
         allow_null=False,
