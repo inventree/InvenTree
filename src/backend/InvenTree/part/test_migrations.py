@@ -52,7 +52,7 @@ class TestBomItemMigrations(MigratorTestCase):
     """Tests for BomItem migrations."""
 
     migrate_from = ('part', '0002_auto_20190520_2204')
-    migrate_to = ('part', '0010_auto_20190620_2135')
+    migrate_to = ('part', '0101_bomitem_validated')
 
     def prepare(self):
         """Create initial dataset."""
