@@ -52,7 +52,7 @@ class TestBomItemMigrations(MigratorTestCase):
     """Tests for BomItem migrations."""
 
     migrate_from = ('part', '0002_auto_20190520_2204')
-    migrate_to = ('part', unit_test.getNewestMigrationFile('part'))
+    migrate_to = ('part', '0010_auto_20190620_2135')
 
     def prepare(self):
         """Create initial dataset."""
@@ -158,7 +158,7 @@ class PartUnitsMigrationTest(MigratorTestCase):
     """Test for data migration of Part.units field."""
 
     migrate_from = ('part', '0109_auto_20230517_1048')
-    migrate_to = ('part', unit_test.getNewestMigrationFile('part'))
+    migrate_to = ('part', '0115_part_responsible_owner')
 
     def prepare(self):
         """Prepare some parts with units."""

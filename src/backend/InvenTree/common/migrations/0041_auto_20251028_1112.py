@@ -201,7 +201,7 @@ class Migration(migrations.Migration):
     dependencies = [
         ('contenttypes', '__latest__'),
         ("part", "0144_partcategoryparametertemplate_template"),
-        ("company", "0034_manufacturerpart"),
+        ("company", "0076_alter_company_image"),
         ("common", "0040_parametertemplate_parameter"),
     ]
 
