@@ -61,48 +61,6 @@ def reverse_update_parameter(apps, schema_editor):
        )
 
 
-def update_category_parameters(apps, schema_editor):
-    """Copy the 'part_template' field to the new 'template' field."""
-
-    PartCategoryParameterTemplate = apps.get_model("part", "PartCategoryParameterTemplate")
-
-    category_parameters_to_update = []
-
-    for cat_param in PartCategoryParameterTemplate.objects.all():
-        cat_param.template = cat_param.part_template
-        category_parameters_to_update.append(cat_param)
-        
-    if len(category_parameters_to_update) > 0:
-        
-        print(f"Updating {len(category_parameters_to_update)} PartCategoryParameterTemplate records.")
-        
-        PartCategoryParameterTemplate.objects.bulk_update(
-            category_parameters_to_update,
-            fields=["template"],
-       )
-
-
-def reverse_update_category_parameters(apps, schema_editor):
-    """Copy the 'template' field back to the 'part_template' field."""
-
-    PartCategoryParameterTemplate = apps.get_model("part", "PartCategoryParameterTemplate")
-
-    category_parameters_to_update = []
-
-    for cat_param in PartCategoryParameterTemplate.objects.all():
-        cat_param.part_template = cat_param.template
-        category_parameters_to_update.append(cat_param)
-        
-    if len(category_parameters_to_update) > 0:
-        
-        print(f"Reversing update of {len(category_parameters_to_update)} PartCategoryParameterTemplate records.")
-        
-        PartCategoryParameterTemplate.objects.bulk_update(
-            category_parameters_to_update,
-            fields=["part_template"],
-       )
-
-
 class Migration(migrations.Migration):
     """Data migration for making the PartParameterTemplate and PartParameter models generic.
     
@@ -168,49 +126,32 @@ class Migration(migrations.Migration):
             update_parameter,
             reverse_code=reverse_update_parameter,
         ),
-        # Add a new "template" field to the PartCategoryParameterTemplate model
-        migrations.AddField(
-            model_name="partcategoryparametertemplate",
-            name="template",
-            field=models.ForeignKey(
-                blank=True,
-                null=True,
-                on_delete=deletion.CASCADE,
-                related_name="part_categories",
-                to="common.parametertemplate",
-            ),
-        ),
-        # Remove unique constraint on PartCategoryParameterTemplate model
-        migrations.RemoveConstraint(
-            model_name="partcategoryparametertemplate",
-            name="unique_category_parameter_template_pair",
-        ),
-        # Perform data migration for the PartCategoryParameterTemplate model
-        migrations.RunPython(
-            update_category_parameters,
-            reverse_code=reverse_update_category_parameters,
-        ),
-        # Remove the obsolete "part_template" field from the PartCategoryParameterTemplate model
-        migrations.RemoveField(
-            model_name="partcategoryparametertemplate",
-            name="parameter_template",
-        ),
-        # Remove nullable attribute from the new 'template' field
+        # Update the "model_type" field on the PartParameter model to be non-nullable
         migrations.AlterField(
-            model_name="partcategoryparametertemplate",
-            name="template",
+            model_name="partparameter",
+            name="model_type",
             field=models.ForeignKey(
                 on_delete=deletion.CASCADE,
-                related_name="part_categories",
-                to="common.parametertemplate",
+                to="contenttypes.contenttype",
             ),
         ),
-        # Update uniqueness constraint on PartCategoryParameterTemplate model
-        migrations.AddConstraint(
-            model_name="partcategoryparametertemplate",
-            constraint=models.UniqueConstraint(
-                fields=("category", "template"),
-                name="unique_category_parameter_pair",
-            ),
+        # Update the "model_id" field on the PartParameter model to be non-nullable
+        migrations.AlterField(
+            model_name="partparameter",
+            name="model_id",
+            field=models.PositiveIntegerField(
+                help_text="ID of the target model for this parameter",
+                verbose_name="Model ID",
+            )
+        ),
+        # Remove the "unique_together" constraint on the PartParameter model
+        migrations.AlterUniqueTogether(
+            name="partparameter",
+            unique_together={('model_type', 'model_id', 'template')},
+        ),
+        # Remove the obsolete "part" field from the PartParameter model
+        migrations.RemoveField(
+            model_name="partparameter",
+            name="part",
         ),
     ]
