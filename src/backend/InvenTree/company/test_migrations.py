@@ -375,7 +375,7 @@ class TestManufacturerPartParameterMigration(MigratorTestCase):
     - ManufacturerPartParameter model was removed
     """
 
-    migrate_from = ('company', '0076_alter_company_image')
+    migrate_from = ('common', '0038_alter_attachment_model_type')
     migrate_to = ('company', '0077_delete_manufacturerpartparameter')
 
     def prepare(self):

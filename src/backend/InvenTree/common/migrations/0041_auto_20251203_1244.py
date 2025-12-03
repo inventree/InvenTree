@@ -39,6 +39,11 @@ def copy_manufacturer_part_parameters(apps, schema_editor):
 
     content_type, _created = ContentType.objects.get_or_create(app_label='company', model='manufacturerpart')
 
+    N = ManufacturerPartParameter.objects.count()
+
+    if N > 0:
+        print(f"\nMigrating {N} ManufacturerPartParameter objects to the Parameter table.")
+
     for parameter in ManufacturerPartParameter.objects.all():
         # Find the corresponding ParameterTemplate
         template = ParameterTemplate.objects.filter(name=parameter.name).first()
@@ -62,6 +67,7 @@ def copy_manufacturer_part_parameters(apps, schema_editor):
         ))
 
     if len(parameters) > 0:
+        assert ParameterTemplate.objects.count() > 0
         Parameter.objects.bulk_create(parameters)
         print(f"\nMigrated {len(parameters)} ManufacturerPartParameter instances.")
 
@@ -90,6 +96,8 @@ def update_global_setting(apps, schema_editor):
 
 class Migration(migrations.Migration):
     """Perform data migration for the ManufacturerPartParameter model."""
+
+    atomic = False
 
     dependencies = [
         ("common", "0040_parametertemplate_parameter"),
