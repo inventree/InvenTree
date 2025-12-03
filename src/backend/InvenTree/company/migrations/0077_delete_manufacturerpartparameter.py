@@ -4,10 +4,15 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
+    """Remove the ManufacturerPartParameter model.
+    
+    The data has been migrated to the common.Parameter model in a previous migration.
+    """
 
     dependencies = [
         ("company", "0076_alter_company_image"),
-        ("common", "0041_auto_20251028_1112"),
+        ("common", "0041_auto_20251203_1244"),
+        ("part", "0146_auto_20251203_1241")
     ]
 
     operations = [

@@ -1,6 +1,7 @@
 import { test } from '../baseFixtures';
 import {
   clearTableFilters,
+  clickOnParamFilter,
   clickOnRowMenu,
   deletePart,
   getRowFromCell,
@@ -570,24 +571,15 @@ test('Parts - Parameter Filtering', async ({ browser }) => {
   // All parts should be available (no filters applied)
   await page.getByText(/\/ 42\d/).waitFor();
 
-  const clickOnParamFilter = async (name: string) => {
-    const button = await page
-      .getByRole('button', { name: `${name} Not sorted` })
-      .getByRole('button')
-      .first();
-    await button.scrollIntoViewIfNeeded();
-    await button.click();
-  };
-
   const clearParamFilter = async (name: string) => {
-    await clickOnParamFilter(name);
+    await clickOnParamFilter(page, name);
     await page.getByLabel(`clear-filter-${name}`).waitFor();
     await page.getByLabel(`clear-filter-${name}`).click();
     // await page.getByLabel(`clear-filter-${name}`).click();
   };
 
   // Let's filter by color
-  await clickOnParamFilter('Color');
+  await clickOnParamFilter(page, 'Color');
   await page.getByRole('option', { name: 'Red' }).click();
 
   // Only 10 parts available

@@ -290,7 +290,7 @@ class TestPartParameterDeletion(MigratorTestCase):
     UNITS = ['mm', 'Ampere', 'kg']
 
     migrate_from = ('part', '0143_alter_part_image')
-    migrate_to = ('part', '0145_remove_partparametertemplate_selectionlist_and_more')
+    migrate_to = ('part', '0146_auto_20251203_1241')
 
     def prepare(self):
         """Prepare some parts and parameters."""
@@ -311,20 +311,30 @@ class TestPartParameterDeletion(MigratorTestCase):
                 tree_id=0,
             )
 
+        self.templates = {}
+
         # Create some parameter templates
         for idx, units in enumerate(self.UNITS):
-            PartParameterTemplate.objects.create(
+            template = PartParameterTemplate.objects.create(
                 name=f'Template {idx + 1}',
                 description=f'Description for template {idx + 1}',
                 units=units,
             )
 
+            self.templates[template.pk] = template
+
+        # Keep track of the parameters we create
+        # We need to ensure that the PK values are preserved across the migration
+        self.parameters = {}
+
         # Create some parameters
         for ii, part in enumerate(Part.objects.all()):
             for jj, template in enumerate(PartParameterTemplate.objects.all()):
-                PartParameter.objects.create(
+                parameter = PartParameter.objects.create(
                     part=part, template=template, data=str(ii * jj)
                 )
+
+                self.parameters[parameter.pk] = parameter
 
         self.assertEqual(Part.objects.count(), 3)
         self.assertEqual(PartParameterTemplate.objects.count(), 3)
@@ -357,3 +367,19 @@ class TestPartParameterDeletion(MigratorTestCase):
 
             for unit in self.UNITS:
                 self.assertTrue(params.filter(template__units=unit).exists())
+
+        # Test that each parameter has been migrated correctly
+        for pk, old_parameter in self.parameters.items():
+            new_parameter = Parameter.objects.get(pk=pk)
+
+            self.assertEqual(new_parameter.data, old_parameter.data)
+            self.assertEqual(new_parameter.template.name, old_parameter.template.name)
+            self.assertEqual(new_parameter.template.units, old_parameter.template.units)
+
+        # Test that each template has been migrated correctly
+        for pk, old_template in self.templates.items():
+            new_template = ParameterTemplate.objects.get(pk=pk)
+
+            self.assertEqual(new_template.name, old_template.name)
+            self.assertEqual(new_template.description, old_template.description)
+            self.assertTrue(new_template.enabled)
