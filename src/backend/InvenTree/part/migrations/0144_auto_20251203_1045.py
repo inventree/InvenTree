@@ -20,21 +20,31 @@ def update_parameter(apps, schema_editor):
         model="partparameter",
     )
 
-    parmeters_to_update = []
+    parameters_to_update = []
 
+    N = PartParameter.objects.count()
+
+    # Update any existing PartParameter object, setting the new fields
     for parameter in PartParameter.objects.all():
         parameter.model_type = part_content_type
         parameter.model_id = parameter.part_id
-        parmeters_to_update.append(parameter)
+        parameters_to_update.append(parameter)
         
-    if len(parmeters_to_update) > 0:
+    if len(parameters_to_update) > 0:
         
-        print(f"Updating {len(parmeters_to_update)} PartParameter records.")
+        print(f"Updating {len(parameters_to_update)} PartParameter records.")
         
         PartParameter.objects.bulk_update(
-            parmeters_to_update,
+            parameters_to_update,
             fields=["model_type", "model_id"],
        )
+
+    # Ensure that the number of updated records matches the total number of records
+    assert PartParameter.objects.count() == N
+
+    # Ensure that no PartParameter records have null model_type or model_id
+    assert PartParameter.objects.filter(model_type=None).count() == 0
+    assert PartParameter.objects.filter(model_id=None).count() == 0
 
 
 def reverse_update_parameter(apps, schema_editor):
@@ -148,10 +158,5 @@ class Migration(migrations.Migration):
         migrations.AlterUniqueTogether(
             name="partparameter",
             unique_together={('model_type', 'model_id', 'template')},
-        ),
-        # Remove the obsolete "part" field from the PartParameter model
-        migrations.RemoveField(
-            model_name="partparameter",
-            name="part",
         ),
     ]

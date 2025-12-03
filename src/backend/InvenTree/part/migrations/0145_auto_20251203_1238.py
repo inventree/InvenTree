@@ -58,6 +58,11 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        # Remove the obsolete "part" field from the PartParameter model
+        migrations.RemoveField(
+            model_name="partparameter",
+            name="part",
+        ),
         # Add a new "template" field to the PartCategoryParameterTemplate model
         migrations.AddField(
             model_name="partcategoryparametertemplate",
