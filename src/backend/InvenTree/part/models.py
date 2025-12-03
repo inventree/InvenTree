@@ -2237,6 +2237,8 @@ class Part(
             internal_price = self.get_internal_price(quantity)
             return return_info(internal_price, internal_price, 'internal')
 
+        # TODO add sales pricing option?
+
         # only get purchase price if set and should be used
         if purchase:
             purchase_price = self.get_purchase_price(quantity)

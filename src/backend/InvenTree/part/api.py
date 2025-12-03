@@ -590,6 +590,27 @@ class PartPricingDetail(RetrieveUpdateAPI):
         return self.serializer_class(**kwargs)
 
 
+class PartLivePricingDetail(RetrieveAPI):
+    """API endpoint for calculating live part pricing data - this might be compute intensive."""
+
+    queryset = Part.objects.all()
+    serializer_class = part_serializers.PartLivePricingSerializer
+
+    def retrieve(self, request, *args, **kwargs):
+        """Fetch live pricing data for this part."""
+        quantity = 1  # TODO: retrieve from request parameters
+        part: Part = self.get_object()
+        pricing = part.get_price_range(
+            quantity, buy=True, bom=True, internal=True, purchase=True, info=True
+        )
+        serializer = self.get_serializer({
+            'price_min': pricing[0],
+            'price_max': pricing[1],
+            'source': pricing[2],
+        })
+        return Response(serializer.data)
+
+
 class PartSerialNumberDetail(RetrieveAPI):
     """API endpoint for returning extra serial number information about a particular part."""
 
@@ -1974,6 +1995,11 @@ part_api_urls = [
             ),
             # Part pricing
             path('pricing/', PartPricingDetail.as_view(), name='api-part-pricing'),
+            path(
+                'pricing-live/',
+                PartLivePricingDetail.as_view(),
+                name='api-part-pricing-live',
+            ),
             # Part detail endpoint
             path('', PartDetail.as_view(), name='api-part-detail'),
         ]),
