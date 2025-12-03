@@ -85,7 +85,7 @@ def update_global_setting(apps, schema_editor):
             setting.save()
             print(f"Updated global setting key from {OLD_KEY} to {NEW_KEY}.")
     except GlobalSetting.DoesNotExist:
-        print(f"Global setting {OLD_KEY} does not exist; no update needed.")
+        pass
 
 
 class Migration(migrations.Migration):
