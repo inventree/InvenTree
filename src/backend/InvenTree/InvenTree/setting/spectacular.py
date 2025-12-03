@@ -29,6 +29,7 @@ def get_spectacular_settings():
             'TemplateModelTypeEnum': 'report.models.ReportTemplateBase.ModelChoices',
             'AttachmentModelTypeEnum': 'common.models.Attachment.ModelChoices',
             'ParameterModelTypeEnum': 'common.models.Parameter.ModelChoices',
+            'ParameterTemplateModelTypeEnum': 'common.models.ParameterTemplate.ModelChoices',
             'DataImportSessionModelTypeEnum': 'importer.models.DataImportSession.ModelChoices',
             # Allauth
             'UnauthorizedStatus': [[401, 401]],

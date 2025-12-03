@@ -756,6 +756,9 @@ class ContentTypeField(serializers.ChoiceField):
                 (f'{ct.app_label}.{ct.model}', str(ct)) for ct in content_types
             ]
 
+        if kwargs.get('allow_null') or kwargs.get('allow_blank'):
+            kwargs['choices'] = [('', '---------'), *kwargs['choices']]
+
         super().__init__(*args, **kwargs)
 
     def to_representation(self, value):
