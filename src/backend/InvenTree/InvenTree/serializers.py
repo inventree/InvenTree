@@ -646,6 +646,11 @@ class InvenTreeDecimalField(serializers.FloatField):
 
     def to_internal_value(self, data):
         """Convert to python type."""
+        if data in [None, '']:
+            if self.allow_null:
+                return None
+            raise serializers.ValidationError(_('This field may not be null.'))
+
         # Convert the value to a string, and then a decimal
         try:
             return Decimal(str(data))
