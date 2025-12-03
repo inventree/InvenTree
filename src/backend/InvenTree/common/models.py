@@ -2387,11 +2387,6 @@ class ParameterTemplate(
         verbose_name = _('Parameter Template')
         verbose_name_plural = _('Parameter Templates')
 
-        # Note: Data was migrated from the existing 'part_partparametertemplate' table
-        # Ref: https://github.com/inventree/InvenTree/pull/10699
-        # To avoid data loss, we retain the existing table name
-        db_table = 'part_partparametertemplate'
-
     class ModelChoices(RenderChoices):
         """Model choices for parameters."""
 
@@ -2582,11 +2577,6 @@ class Parameter(
         verbose_name_plural = _('Parameters')
         unique_together = [['model_type', 'model_id', 'template']]
         indexes = [models.Index(fields=['model_type', 'model_id'])]
-
-        # Note: Data was migrated from the existing 'part_partparameter' table
-        # Ref: https://github.com/inventree/InvenTree/pull/10699
-        # To avoid data loss, we retain the existing table name
-        db_table = 'part_partparameter'
 
     class ModelChoices(RenderChoices):
         """Model choices for parameters."""
