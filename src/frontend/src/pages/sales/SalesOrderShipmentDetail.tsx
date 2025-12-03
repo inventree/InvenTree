@@ -72,11 +72,7 @@ export default function SalesOrderShipmentDetail() {
     }
   });
 
-  const {
-    instance: customer,
-    instanceQuery: customerQuery,
-    refreshInstance: refreshCustomer
-  } = useInstance({
+  const { instance: customer, instanceQuery: customerQuery } = useInstance({
     endpoint: ApiEndpoints.company_list,
     pk: shipment.order_detail?.customer,
     hasPrimaryKey: true

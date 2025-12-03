@@ -67,7 +67,8 @@ export default function SalesOrderShipmentTable({
   });
 
   const editShipmentFields = useSalesOrderShipmentFields({
-    customerId: customerId
+    customerId: customerId,
+    pending: !selectedShipment.shipment_date
   });
 
   const completeShipmentFields = useSalesOrderShipmentCompleteFields({});
