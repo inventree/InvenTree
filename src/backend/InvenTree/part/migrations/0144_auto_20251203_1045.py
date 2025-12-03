@@ -12,12 +12,11 @@ def update_parameter(apps, schema_editor):
     """
 
     PartParameter = apps.get_model("part", "PartParameter")
-    Part = apps.get_model("part", "Part")
     ContentType = apps.get_model("contenttypes", "ContentType")
 
     part_content_type, created = ContentType.objects.get_or_create(
         app_label="part",
-        model="partparameter",
+        model="part",
     )
 
     parameters_to_update = []
