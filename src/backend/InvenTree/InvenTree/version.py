@@ -129,7 +129,7 @@ def inventreeDocsVersion() -> str:
     if isInvenTreeDevelopmentVersion():
         return 'latest'
     else:
-        return 'stable'
+        INVENTREE_SW_VERSION
 
 
 def inventreeDocUrl() -> str:
