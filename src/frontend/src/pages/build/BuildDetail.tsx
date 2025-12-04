@@ -45,6 +45,7 @@ import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
+import ParametersPanel from '../../components/panels/ParametersPanel';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { RenderStockLocation } from '../../components/render/Stock';
 import { useBuildOrderFields } from '../../forms/BuildForms';
@@ -519,6 +520,10 @@ export default function BuildDetail() {
           <Skeleton />
         )
       },
+      ParametersPanel({
+        model_type: ModelType.build,
+        model_id: build.pk
+      }),
       AttachmentPanel({
         model_type: ModelType.build,
         model_id: build.pk

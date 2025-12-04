@@ -86,7 +86,7 @@ class TestReferencePatternMigration(MigratorTestCase):
     """
 
     migrate_from = ('build', '0019_auto_20201019_1302')
-    migrate_to = ('build', unit_test.getNewestMigrationFile('build'))
+    migrate_to = ('build', '0037_build_priority')
 
     def prepare(self):
         """Create some initial data prior to migration."""
