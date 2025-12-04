@@ -392,11 +392,13 @@ export function ApiForm({
         case 'boolean':
           // Ensure boolean values are actually boolean
           value = isTrue(value) || false;
+          jsonData[key] = value;
           break;
         case 'string':
           // Replace null string values with an empty string
           if (value === null && field?.allow_null == false) {
             value = '';
+            jsonData[key] = value;
           }
           break;
         default:
@@ -410,7 +412,7 @@ export function ApiForm({
             break;
           default:
             if (value !== null && value !== undefined) {
-              // value = JSON.stringify(value);
+              value = JSON.stringify(value);
             }
             break;
         }
@@ -420,7 +422,6 @@ export function ApiForm({
         // Remove the field from the data
         delete jsonData[key];
       } else if (value != undefined) {
-        // jsonData[key] = value;
         formData.append(key, value);
       }
     });
