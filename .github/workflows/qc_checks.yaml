@@ -626,7 +626,7 @@ jobs:
           pip-dependency: psycopg2
       - name: Set up test data
         run: |
-          invoke dev.setup-test -iv -b generic-parameters
+          invoke dev.setup-test -iv
           invoke int.rebuild-thumbnails
       - name: Install dependencies
         run: |
