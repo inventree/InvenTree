@@ -38,6 +38,10 @@ debug: False
 debug_querycount: False
 debug_shell: False
 
+# Schema generation options
+schema:
+  level: 0 # Level of added schema extensions detail (0-3) 0 = including no additional detail, or use the environment variable INVENTREE_SCHEMA_LEVEL
+
 # Set to False to disable the admin interface, or use the environment variable INVENTREE_ADMIN_ENABLED
 #admin_enabled: True
 
