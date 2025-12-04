@@ -99,7 +99,7 @@ Django is not installed in the current Python environment. This means that the I
 
 **Python version not supported**
 
-This error occurs attempting to run InvenTree on a version of Python which is older than the minimum required version. We [require Python {{ config.extra.min_python_version }} or newer](./start/index.md#python-requirements)
+This error occurs attempting to run InvenTree on a version of Python which is older than the minimum required version. We [require Python {{ config.extra.min_python_version }} or newer](../start/index.md#python-requirements)
 
 ### INVE-W (InvenTree Warning)
 Warnings - These are non-critical errors which should be addressed when possible.
