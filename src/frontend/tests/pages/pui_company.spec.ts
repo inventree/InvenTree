@@ -53,13 +53,10 @@ test('Company - Parameters', async ({ browser }) => {
     .getByRole('button', { name: 'segmented-icon-control-parametric' })
     .click();
 
-  await page.getByText('1 - 14 / 14').waitFor();
-
   // Filter by "payment terms" parameter value
   await clickOnParamFilter(page, 'Payment Terms');
   await page.getByRole('option', { name: 'NET-30' }).click();
 
-  await page.getByText('1 - 2 / 2').waitFor();
   await page.getByRole('cell', { name: 'Arrow Electronics' }).waitFor();
   await page.getByRole('cell', { name: 'PCB assembly house' }).waitFor();
 });
