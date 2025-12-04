@@ -1,7 +1,7 @@
 """Schema processing functions for cleaning up generated schema."""
 
 from itertools import chain
-from typing import Optional
+from typing import Any, Optional
 
 from django.conf import settings
 
@@ -136,6 +136,43 @@ class ExtendedAutoSchema(AutoSchema):
             del schema['$ref']
 
         return operation
+
+
+def postprocess_schema_enums(result, generator, **kwargs):
+    """Override call to drf-spectacular's enum postprocessor to filter out specific warnings."""
+    from drf_spectacular import drainage
+
+    # Monkey-patch the warn function temporarily
+    original_warn = drainage.warn
+
+    def custom_warn(msg: str, delayed: Any = None) -> None:
+        """Custom patch to ignore some drf-spectacular warnings.
+
+        - Some warnings are unavoidable due to the way that InvenTree implements generic relationships (via ContentType).
+        - The cleanest way to handle this appears to be to override the 'warn' function from drf-spectacular.
+
+        Ref: https://github.com/inventree/InvenTree/pull/10699
+        """
+        ignore_patterns = [
+            'enum naming encountered a non-optimally resolvable collision for fields named "model_type"'
+        ]
+
+        if any(pattern in msg for pattern in ignore_patterns):
+            return
+
+        original_warn(msg, delayed)
+
+    # Replace the warn function with our custom version
+    drainage.warn = custom_warn
+
+    import drf_spectacular.hooks
+
+    result = drf_spectacular.hooks.postprocess_schema_enums(result, generator, **kwargs)
+
+    # Restore the original warn function
+    drainage.warn = original_warn
+
+    return result
 
 
 def postprocess_required_nullable(result, generator, request, public):

@@ -18,7 +18,7 @@ import build.models
 import company.models
 import order.models
 from build.status_codes import BuildStatus
-from common.models import InvenTreeSetting
+from common.models import InvenTreeSetting, ParameterTemplate
 from company.models import Company, SupplierPart
 from InvenTree.config import get_testfolder_dir
 from InvenTree.unit_test import InvenTreeAPITestCase
@@ -29,8 +29,6 @@ from part.models import (
     Part,
     PartCategory,
     PartCategoryParameterTemplate,
-    PartParameter,
-    PartParameterTemplate,
     PartRelated,
     PartSellPriceBreak,
     PartTestTemplate,
@@ -235,21 +233,14 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
         self.assertEqual(len(response.data), 2)
 
         # Add some more category templates via the API
-        n = PartParameterTemplate.objects.count()
+        n = ParameterTemplate.objects.count()
 
         # Ensure validation of parameter values is disabled for these checks
-        InvenTreeSetting.set_setting(
-            'PART_PARAMETER_ENFORCE_UNITS', False, change_user=None
-        )
+        InvenTreeSetting.set_setting('PARAMETER_ENFORCE_UNITS', False, change_user=None)
 
-        for template in PartParameterTemplate.objects.all():
+        for template in ParameterTemplate.objects.all():
             response = self.post(
-                url,
-                {
-                    'category': 2,
-                    'parameter_template': template.pk,
-                    'default_value': 'xyz',
-                },
+                url, {'category': 2, 'template': template.pk, 'default_value': '123'}
             )
 
         # Total number of category templates should have increased
@@ -273,8 +264,8 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
                 'pk',
                 'category',
                 'category_detail',
-                'parameter_template',
-                'parameter_template_detail',
+                'template',
+                'template_detail',
                 'default_value',
             ]:
                 self.assertIn(key, data.keys())
@@ -1645,7 +1636,7 @@ class PartCreationTests(PartAPITestBase):
         # Add some parameter template to the parent category
         for pk in [1, 2, 3]:
             PartCategoryParameterTemplate.objects.create(
-                parameter_template=PartParameterTemplate.objects.get(pk=pk),
+                template=ParameterTemplate.objects.get(pk=pk),
                 category=cat,
                 default_value=f'Value {pk}',
             )
@@ -2074,8 +2065,8 @@ class PartListTests(PartAPITestBase):
                     if b and result['category'] is not None:
                         self.assertIn('category_detail', result)
 
-            # No more than 20 DB queries
-            self.assertLessEqual(len(ctx), 20)
+            # No more than 22 DB queries
+            self.assertLessEqual(len(ctx), 22)
 
     def test_price_breaks(self):
         """Test that price_breaks parameter works correctly and efficiently."""
@@ -3056,13 +3047,13 @@ class BomItemTest(InvenTreeAPITestCase):
         self.assertAlmostEqual(can_build, 482.9, places=1)
 
 
-class PartAttachmentTest(InvenTreeAPITestCase):
-    """Unit tests for the PartAttachment API endpoint."""
+class AttachmentTest(InvenTreeAPITestCase):
+    """Unit tests for the Attachment API endpoint."""
 
     fixtures = ['category', 'part', 'location']
 
     def test_add_attachment(self):
-        """Test that we can create a new PartAttachment via the API."""
+        """Test that we can create a new Attachment instances via the API."""
         url = reverse('api-attachment-list')
 
         # Upload without permission
@@ -3238,8 +3229,6 @@ class PartMetadataAPITest(InvenTreeAPITestCase):
             'api-part-category-metadata': PartCategory,
             'api-part-test-template-metadata': PartTestTemplate,
             'api-part-related-metadata': PartRelated,
-            'api-part-parameter-template-metadata': PartParameterTemplate,
-            'api-part-parameter-metadata': PartParameter,
             'api-part-metadata': Part,
             'api-bom-substitute-metadata': BomItemSubstitute,
             'api-bom-item-metadata': BomItem,
@@ -3341,12 +3330,12 @@ class PartTestTemplateTest(PartAPITestBase):
         self.assertIn('Choices must be unique', str(response.data['choices']))
 
 
-class PartParameterTests(PartAPITestBase):
-    """Unit test for PartParameter API endpoints."""
+class ParameterTests(PartAPITestBase):
+    """Unit test for Parameter API endpoints."""
 
     def test_export_data(self):
-        """Test data export functionality for PartParameter objects."""
-        url = reverse('api-part-parameter-list')
+        """Test data export functionality for Parameter objects."""
+        url = reverse('api-parameter-list')
 
         response = self.options(
             url,

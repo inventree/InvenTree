@@ -39,12 +39,6 @@ A Part is defined in the system by the following parameters:
 
 The Part view page organizes part data into sections, displayed as tabs. Each tab has its own function, which is described in this section.
 
-### Parameters
-
-Parts can have multiple defined parameters.
-
-[Read about Part parameters](./parameter.md)
-
 ### Variants
 
 If a part is a *Template Part* then the *Variants* tab will be visible.
@@ -125,9 +119,17 @@ Related parts can be added and are shown under a table of the same name in the "
 
 This feature can be enabled or disabled in the global part settings.
 
+### Parameters
+
+Parts can have multiple defined parameters.
+
+[Read about parameters](../concepts/parameters.md).
+
 ### Attachments
 
 The *Part Attachments* tab displays file attachments associated with the selected *Part*. Multiple file attachments (such as datasheets) can be uploaded for each *Part*.
+
+[Read about attachments](../concepts/attachments.md).
 
 ### Notes
 

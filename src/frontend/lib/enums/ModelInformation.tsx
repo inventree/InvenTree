@@ -33,13 +33,18 @@ export const ModelInformationDict: ModelDict = {
     admin_url: '/part/part/',
     icon: 'part'
   },
-  partparametertemplate: {
-    label: () => t`Part Parameter Template`,
-    label_multiple: () => t`Part Parameter Templates`,
-    url_overview: '/settings/admin/part-parameters',
-    url_detail: '/partparametertemplate/:pk/',
-    api_endpoint: ApiEndpoints.part_parameter_template_list,
-    icon: 'test_templates'
+  parameter: {
+    label: () => t`Parameter`,
+    label_multiple: () => t`Parameters`,
+    api_endpoint: ApiEndpoints.parameter_list,
+    icon: 'list_details'
+  },
+  parametertemplate: {
+    label: () => t`Parameter Template`,
+    label_multiple: () => t`Parameter Templates`,
+    api_endpoint: ApiEndpoints.parameter_template_list,
+    admin_url: '/common/parametertemplate/',
+    icon: 'list'
   },
   parttesttemplate: {
     label: () => t`Part Test Template`,

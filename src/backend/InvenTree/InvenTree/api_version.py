@@ -1,10 +1,15 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 429
+INVENTREE_API_VERSION = 430
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v430 -> 2025-12-04 : https://github.com/inventree/InvenTree/pull/10699
+    - Removed the "PartParameter" and "PartParameterTemplate" API endpoints
+    - Removed the "ManufacturerPartParameter" API endpoint
+    - Added generic "Parameter" and "ParameterTemplate" API endpoints
 
 v429 -> 2025-12-04 : https://github.com/inventree/InvenTree/pull/10938
     - Adjust default values for currency codes in the API schema

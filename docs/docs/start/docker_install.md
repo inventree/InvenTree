@@ -245,9 +245,10 @@ This can be adjusted using the following environment variables:
 | INVENTREE_WEB_ADDR | 0.0.0.0 |
 | INVENTREE_WEB_PORT | 8000 |
 
-These variables are combined in the [Dockerfile](../../../contrib/container/Dockerfile) to build the bind string passed to the InvenTree server on startup.
+These variables are combined in the [Dockerfile]({{ sourcefile("contrib/container/Dockerfile") }}) to build the bind string passed to the InvenTree server on startup.
 
-To enable IPv6/Dual Stack support, set `INVENTREE_WEB_ADDR` to `[::]` when you create/start the container.
+!!! tip "IPv6 Support"
+    To enable IPv6/Dual Stack support, set `INVENTREE_WEB_ADDR` to `[::]` when you create/start the container.
 
 ### Demo Dataset
 

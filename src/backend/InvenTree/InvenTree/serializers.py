@@ -7,6 +7,7 @@ from decimal import Decimal
 from typing import Any, Optional
 
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -28,6 +29,7 @@ import InvenTree.ready
 from common.currency import currency_code_default, currency_code_mappings
 from InvenTree.fields import InvenTreeRestURLField, InvenTreeURLField
 from InvenTree.helpers import str2bool
+from InvenTree.helpers_model import getModelsWithMixin
 
 from .setting.storages import StorageBackends
 
@@ -721,3 +723,96 @@ class RemoteImageMixin(metaclass=serializers.SerializerMetaclass):
             raise ValidationError(_('Failed to download image from remote URL'))
 
         return url
+
+
+class ContentTypeField(serializers.ChoiceField):
+    """Serializer field which represents a ContentType as 'app_label.model_name'.
+
+    This field converts a ContentType instance to a string representation in the format 'app_label.model_name' during serialization, and vice versa during deserialization.
+
+    Additionally, a "mixin_class" can be supplied to the field, which will restrict the valid content types to only those models which inherit from the specified mixin.
+    """
+
+    mixin_class = None
+
+    def __init__(self, *args, mixin_class=None, **kwargs):
+        """Initialize the ContentTypeField.
+
+        Args:
+            mixin_class: Optional mixin class to restrict valid content types.
+        """
+        self.mixin_class = mixin_class
+
+        # Override the 'choices' field, to limit to the appropriate models
+        if self.mixin_class is not None:
+            models = getModelsWithMixin(self.mixin_class)
+
+            kwargs['choices'] = [
+                (
+                    f'{model._meta.app_label}.{model._meta.model_name}',
+                    model._meta.verbose_name,
+                )
+                for model in models
+            ]
+        else:
+            content_types = ContentType.objects.all()
+
+            kwargs['choices'] = [
+                (f'{ct.app_label}.{ct.model}', str(ct)) for ct in content_types
+            ]
+
+        if kwargs.get('allow_null') or kwargs.get('allow_blank'):
+            kwargs['choices'] = [('', '---------'), *kwargs['choices']]
+
+        super().__init__(*args, **kwargs)
+
+    def to_representation(self, value):
+        """Convert ContentType instance to string representation."""
+        return f'{value.app_label}.{value.model}'
+
+    def to_internal_value(self, data):
+        """Convert string representation back to ContentType instance."""
+        from django.contrib.contenttypes.models import ContentType
+
+        content_type = None
+
+        if data in ['', None]:
+            return None
+
+        # First, try to resolve the content type via direct pk value
+        try:
+            content_type_id = int(data)
+            content_type = ContentType.objects.get_for_id(content_type_id)
+        except (ValueError, ContentType.DoesNotExist):
+            content_type = None
+
+        try:
+            if len(data.split('.')) == 2:
+                app_label, model = data.split('.')
+                content_types = ContentType.objects.filter(
+                    app_label=app_label, model=model
+                )
+
+                if content_types.count() == 1:
+                    # Try exact match first
+                    content_type = content_types.first()
+            else:
+                # Try lookup just on model name
+                content_types = ContentType.objects.filter(model=data)
+                if content_types.exists() and content_types.count() == 1:
+                    content_type = content_types.first()
+
+        except Exception:
+            raise ValidationError(_('Invalid content type format'))
+
+        if content_type is None:
+            raise ValidationError(_('Content type not found'))
+
+        if self.mixin_class is not None:
+            model_class = content_type.model_class()
+            if not issubclass(model_class, self.mixin_class):
+                raise ValidationError(
+                    _('Content type does not match required mixin class')
+                )
+
+        return content_type
