@@ -1,17 +1,21 @@
 ---
-title: Part Parameters
+title: Parameters
 ---
 
-## Part Parameters
+## Parameters
 
-A part *parameter* describes a particular "attribute" or "property" of a specific part.
+A *parameter* describes a particular "attribute" or "property" of a specific object in InvenTree. Parameters allow for flexible and customizable data to be stored against various InvenTree models.
 
-Part parameters are located in the "Parameters" tab, on each part detail page.
-There is no limit for the number of part parameters and they are fully customizable through the use of [parameter templates](#parameter-templates).
+!!! note "Business Logic"
+    Parameters are not used for any core business logic within InvenTree. They are intended to provide additional metadata for objects, which can be useful for documentation, filtering, or reporting purposes.
 
-Here is an example of parameters for a capacitor:
+Parameters can be associated with various InvenTree models.
 
-{{ image("part/part_parameters_example.png", "Part Parameters Example") }}
+### Parameter Tab
+
+Any model which supports parameters will have a "Parameters" tab on its detail page. This tab displays all parameters associated with that object:
+
+{{ image("concepts/parameter-tab.png", "Part Parameters Example") }}
 
 ## Parameter Templates
 
@@ -22,13 +26,16 @@ Parameter templates are used to define the different types of parameters which a
 | Name | The name of the parameter template (*must be unique*) |
 | Description | Optional description for the template |
 | Units | Optional units field (*must be a valid [physical unit](#parameter-units)*) |
+| Model Type | The InvenTree model to which this parameter template applies (e.g. Part, Company, etc). If this is left blank, the template can be used for any model type. |
 | Choices | A comma-separated list of valid choices for parameter values linked to this template. |
 | Checkbox | If set, parameters linked to this template can only be assigned values *true* or *false* |
 | Selection List | If set, parameters linked to this template can only be assigned values from the linked [selection list](#selection-lists) |
 
+{{ image("concepts/parameter-template.png", "Parameters Template") }}
+
 ### Create Template
 
-Parameter templates are created and edited via the [settings interface](../settings/global.md).
+Parameter templates are created and edited via the [admin interface](../settings/admin.md).
 
 To create a template:
 
@@ -54,11 +61,11 @@ Select the parameter `Template` you would like to use for this parameter, fill-o
 
 ## Parametric Tables
 
-Parametric tables gather all parameters from all parts inside a particular [part category](./index.md#part-category) to be sorted and filtered.
+Parametric tables gather all parameters from all objects of a particular type, to be sorted and filtered.
 
-To access a category's parametric table, click on the "Parameters" tab within the category view:
+Tables views which support parametric filtering and sorting will have a "Parametric View" button above the table:
 
-{{ image("part/parametric_table_tab.png", "Parametric Table Tab") }}
+{{ image("concepts/parametric-parts.png", "Parametric Parts Table") }}
 
 ### Sorting by Parameter Value
 
@@ -139,7 +146,7 @@ Parameter sorting takes unit conversion into account, meaning that values provid
 
 ### Selection Lists
 
-Selection Lists can be used to add a large number of predefined values to a parameter template. This can be useful for parameters which must be selected from a large predefined list of values (e.g. a list of standardised colo codes). Choices on templates are limited to 5000 characters, selection lists can be used to overcome this limitation.
+Selection Lists can be used to add a large number of predefined values to a parameter template. This can be useful for parameters which must be selected from a large predefined list of values (e.g. a list of standardized color codes). Choices on templates are limited to 5000 characters, selection lists can be used to overcome this limitation.
 
 It is possible that plugins lock selection lists to ensure a known state.
 
