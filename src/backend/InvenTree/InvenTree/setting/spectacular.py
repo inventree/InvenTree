@@ -20,7 +20,7 @@ def get_spectacular_settings():
         'SERVE_INCLUDE_SCHEMA': False,
         'SCHEMA_PATH_PREFIX': '/api/',
         'POSTPROCESSING_HOOKS': [
-            'drf_spectacular.hooks.postprocess_schema_enums',
+            'InvenTree.schema.postprocess_schema_enums',
             'InvenTree.schema.postprocess_required_nullable',
             'InvenTree.schema.postprocess_print_stats',
         ],
