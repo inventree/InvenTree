@@ -91,9 +91,9 @@ bleach[css]==6.3.0 \
     --hash=sha256:6f3b91b1c0a02bb9a78b5a454c92506aa0fdf197e1d5e114d2e00c6f64306d22 \
     --hash=sha256:fe10ec77c93ddf3d13a73b035abaac7a9f5e436513864ccdad516693213c65d6
     # via django-markdownify
-blessed==1.23.0 \
-    --hash=sha256:4c432dcde0d45112372d1d096b2c4c0a6a5db1b94d546124872d0c3e64b5ea26 \
-    --hash=sha256:56591a32966f704f6131f1400af4151d9e8f5f4144133a5ca034019763dee77b
+blessed==1.25.0 \
+    --hash=sha256:606aebfea69f85915c7ca6a96eb028e0031d30feccc5688e13fd5cec8277b28d \
+    --hash=sha256:e52b9f778b9e10c30b3f17f6b5f5d2208d1e9b53b270f1d94fc61a243fc4708f
     # via -r src/backend/requirements.in
 boto3==1.40.69 \
     --hash=sha256:5273f6bac347331a87db809dff97d8736c50c3be19f2bb36ad08c5131c408976 \
@@ -490,9 +490,9 @@ defusedxml==0.7.1 \
     --hash=sha256:1bb3032db185915b62d7c6209c5a8792be6a32ab2fedacc84e01b52c51aa3e69 \
     --hash=sha256:a352e7e428770286cc899e2542b6cdaedb2b4953ff269a210103ec58f6198a61
     # via python3-openid
-django==5.2.8 \
-    --hash=sha256:23254866a5bb9a2cfa6004e8b809ec6246eba4b58a7589bc2772f1bcc8456c7f \
-    --hash=sha256:37e687f7bd73ddf043e2b6b97cfe02fcbb11f2dbb3adccc6a2b18c6daa054d7f
+django==5.2.9 \
+    --hash=sha256:16b5ccfc5e8c27e6c0561af551d2ea32852d7352c67d452ae3e76b4f6b2ca495 \
+    --hash=sha256:3a4ea88a70370557ab1930b332fd2887a9f48654261cdffda663fef5976bb00a
     # via
     #   -r src/backend/requirements.in
     #   django-allauth
@@ -550,9 +550,9 @@ django-filter==25.2 \
     --hash=sha256:760e984a931f4468d096f5541787efb8998c61217b73006163bf2f9523fe8f23 \
     --hash=sha256:9c0f8609057309bba611062fe1b720b4a873652541192d232dd28970383633e3
     # via -r src/backend/requirements.in
-django-flags==5.0.14 \
-    --hash=sha256:0e07b715b1740a6e3f8df92d16eb743209d931ec585f8d545e040103fb7c5ed2 \
-    --hash=sha256:4d29cc8892c23c9f58676804edccd8822a3fb34458e3ac36deb1cf499c80f55e
+django-flags==5.1.0 \
+    --hash=sha256:47f33efba238fe83a2c1f6f5764147fe62d770039f64b3a039e0e461bbc36e79 \
+    --hash=sha256:6cfb15151f94d13de1a497901fc1dd4f0510251e5ec23a6732d674824f499e72
     # via -r src/backend/requirements.in
 django-ical==1.9.2 \
     --hash=sha256:44c9b6fa90d09f25e9ebaa91ed9eb007f079afbc23d6aac909cfc18188a8e90c \
@@ -1482,9 +1482,9 @@ pynacl==1.6.0 \
     --hash=sha256:f46386c24a65383a9081d68e9c2de909b1834ec74ff3013271f1bca9c2d233eb \
     --hash=sha256:f4b3824920e206b4f52abd7de621ea7a44fd3cb5c8daceb7c3612345dfc54f2e
     # via paramiko
-pypdf==6.2.0 \
-    --hash=sha256:46b4d8495d68ae9c818e7964853cd9984e6a04c19fe7112760195395992dce48 \
-    --hash=sha256:4c0f3e62677217a777ab79abe22bf1285442d70efabf552f61c7a03b6f5c569f
+pypdf==6.4.0 \
+    --hash=sha256:4769d471f8ddc3341193ecc5d6560fa44cf8cd0abfabf21af4e195cc0c224072 \
+    --hash=sha256:55ab9837ed97fd7fcc5c131d52fcc2223bc5c6b8a1488bbf7c0e27f1f0023a79
     # via -r src/backend/requirements.in
 pyphen==0.17.2 \
     --hash=sha256:3a07fb017cb2341e1d9ff31b8634efb1ae4dc4b130468c7c39dd3d32e7c3affd \
@@ -1832,9 +1832,9 @@ s3transfer==0.14.0 \
     --hash=sha256:ea3b790c7077558ed1f02a3072fb3cb992bbbd253392f4b6e9e8976941c7d456 \
     --hash=sha256:eff12264e7c8b4985074ccce27a3b38a485bb7f7422cc8046fee9be4983e4125
     # via boto3
-sentry-sdk==2.44.0 \
-    --hash=sha256:5b1fe54dfafa332e900b07dd8f4dfe35753b64e78e7d9b1655a28fd3065e2493 \
-    --hash=sha256:9e36a0372b881e8f92fdbff4564764ce6cec4b7f25424d0a3a8d609c9e4651a7
+sentry-sdk==2.45.0 \
+    --hash=sha256:86c8ab05dc3e8666aece77a5c747b45b25aa1d5f35f06cde250608f495d50f23 \
+    --hash=sha256:e9bbfe69d5f6742f48bad22452beffb525bbc5b797d817c7f1b1f7d210cdd271
     # via
     #   -r src/backend/requirements.in
     #   django-q-sentry

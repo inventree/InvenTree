@@ -20,7 +20,7 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout Code
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # pin@v5.0.0
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # pin@v6.0.0
         with:
           persist-credentials: false
       - name: Version Check
@@ -43,7 +43,7 @@ jobs:
       contents: write
       attestations: write
     steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # pin@v5.0.0
+      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # pin@v6.0.0
         with:
           persist-credentials: false
       - name: Environment Setup
@@ -55,7 +55,7 @@ jobs:
       - name: Build frontend
         run: cd src/frontend && npm run compile && npm run build
       - name: Create SBOM for frontend
-        uses: anchore/sbom-action@8e94d75ddd33f69f691467e42275782e4bfefe84 # pin@v0
+        uses: anchore/sbom-action@fbfd9c6c189226748411491745178e0c2017392d # pin@v0
         with:
           artifact-name: frontend-build.spdx
           path: src/frontend
@@ -76,7 +76,7 @@ jobs:
           subject-path: "${{ github.workspace }}/src/backend/InvenTree/web/static/frontend-build.zip"
 
       - name: Upload frontend
-        uses: svenstaro/upload-release-action@81c65b7cd4de9b2570615ce3aad67a41de5b1a13 # pin@2.11.2
+        uses: svenstaro/upload-release-action@6b7fa9f267e90b50a19fef07b3596790bb941741 # pin@2.11.3
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: src/backend/InvenTree/web/static/frontend-build.zip
@@ -84,7 +84,7 @@ jobs:
           tag: ${{ github.ref }}
           overwrite: true
       - name: Upload Attestation
-        uses: svenstaro/upload-release-action@81c65b7cd4de9b2570615ce3aad67a41de5b1a13 # pin@2.11.2
+        uses: svenstaro/upload-release-action@6b7fa9f267e90b50a19fef07b3596790bb941741 # pin@2.11.3
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           asset_name: frontend-build.intoto.jsonl
@@ -107,7 +107,7 @@ jobs:
       INVENTREE_DEBUG: true
 
     steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # pin@v5.0.0
+      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # pin@v6.0.0
         with:
           persist-credentials: false
       - name: Environment Setup
@@ -127,7 +127,7 @@ jobs:
           cd docs/site
           zip -r docs-html.zip *
       - name: Publish documentation
-        uses: svenstaro/upload-release-action@81c65b7cd4de9b2570615ce3aad67a41de5b1a13 # pin@2.11.2
+        uses: svenstaro/upload-release-action@6b7fa9f267e90b50a19fef07b3596790bb941741 # pin@2.11.3
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: docs/site/docs-html.zip

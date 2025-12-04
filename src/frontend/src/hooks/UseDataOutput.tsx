@@ -40,7 +40,7 @@ export default function useDataOutput({
     } else setLoading(false);
   }, [id, title]);
 
-  const progress = useQuery({
+  useQuery({
     enabled: !!id && loading && visibility === 'visible',
     refetchInterval: 500,
     queryKey: ['data-output', id, title],
