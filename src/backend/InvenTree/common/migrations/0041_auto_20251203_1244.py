@@ -101,6 +101,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ("common", "0040_parametertemplate_parameter"),
+        ("part", "0145_auto_20251203_1238"),
     ]
 
     operations = [
