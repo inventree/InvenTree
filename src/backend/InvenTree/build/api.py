@@ -24,7 +24,7 @@ from build.models import Build, BuildItem, BuildLine
 from build.status_codes import BuildStatus, BuildStatusGroups
 from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import StatusView
-from InvenTree.api import BulkDeleteMixin, MetadataView
+from InvenTree.api import BulkDeleteMixin, MetadataView, ParameterListMixin
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import (
     SEARCH_ORDER_FILTER_ALIAS,
@@ -336,7 +336,13 @@ class BuildListOutputOptions(OutputConfiguration):
     OPTIONS = [InvenTreeOutputOption('part_detail', default=True)]
 
 
-class BuildList(DataExportViewMixin, BuildMixin, OutputOptionsMixin, ListCreateAPI):
+class BuildList(
+    DataExportViewMixin,
+    BuildMixin,
+    OutputOptionsMixin,
+    ParameterListMixin,
+    ListCreateAPI,
+):
     """API endpoint for accessing a list of Build objects.
 
     - GET: Return list of objects (with filters)

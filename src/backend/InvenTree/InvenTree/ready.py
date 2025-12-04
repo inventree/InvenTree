@@ -1,8 +1,31 @@
 """Functions to check if certain parts of InvenTree are ready."""
 
+import functools
 import inspect
 import os
 import sys
+import warnings
+
+# Keep track of loaded apps, to prevent multiple executions of ready functions
+_loaded_apps = set()
+
+
+def clearLoadedApps():
+    """Clear the set of loaded apps."""
+    global _loaded_apps
+    _loaded_apps = set()
+
+
+def setAppLoaded(app_name: str):
+    """Mark an app as loaded."""
+    global _loaded_apps
+    _loaded_apps.add(app_name)
+
+
+def isAppLoaded(app_name: str) -> bool:
+    """Return True if the app has been marked as loaded."""
+    global _loaded_apps
+    return app_name in _loaded_apps
 
 
 def isInTestMode():
@@ -157,3 +180,22 @@ def isPluginRegistryLoaded():
     from plugin import registry
 
     return registry.plugins_loaded
+
+
+def ignore_ready_warning(func):
+    """Decorator to ignore 'AppRegistryNotReady' warnings in functions called during app ready phase.
+
+    Ref: https://github.com/inventree/InvenTree/issues/10806
+    """
+
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        with warnings.catch_warnings():
+            warnings.filterwarnings(
+                'ignore',
+                message='Accessing the database during app initialization is discouraged',
+                category=RuntimeWarning,
+            )
+            return func(*args, **kwargs)
+
+    return wrapper

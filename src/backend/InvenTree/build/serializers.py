@@ -22,6 +22,7 @@ from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 
 import build.tasks
+import common.serializers
 import common.settings
 import company.serializers
 import InvenTree.helpers
@@ -101,6 +102,7 @@ class BuildSerializer(
             'issued_by_detail',
             'responsible',
             'responsible_detail',
+            'parameters',
             'priority',
             'level',
         ]
@@ -122,6 +124,12 @@ class BuildSerializer(
     part_detail = enable_filter(
         part_serializers.PartBriefSerializer(source='part', many=False, read_only=True),
         True,
+    )
+
+    parameters = enable_filter(
+        common.serializers.ParameterSerializer(many=True, read_only=True),
+        False,
+        filter_name='parameters',
     )
 
     part_name = serializers.CharField(

@@ -1355,6 +1355,7 @@ def test(
         'dev': 'Set up development environment at the end',
         'validate_files': 'Validate media files are correctly copied',
         'use_ssh': 'Use SSH protocol for cloning the demo dataset (requires SSH key)',
+        'branch': 'Specify branch of demo-dataset to clone (default = main)',
     }
 )
 def setup_test(
@@ -1364,6 +1365,7 @@ def setup_test(
     validate_files=False,
     use_ssh=False,
     path='inventree-demo-dataset',
+    branch='main',
 ):
     """Setup a testing environment."""
     from src.backend.InvenTree.InvenTree.config import (  # type: ignore[import]
@@ -1388,7 +1390,7 @@ def setup_test(
 
     # Get test data
     info('Cloning demo dataset ...')
-    run(c, f'git clone {URL} {template_dir} -v --depth=1')
+    run(c, f'git clone {URL} {template_dir} -b {branch} -v --depth=1')
 
     # Make sure migrations are done - might have just deleted sqlite database
     if not ignore_update:
@@ -1466,7 +1468,7 @@ def schema(
             'False'  # Disable plugins to ensure they are kep out of schema
         )
         envs['INVENTREE_CURRENCY_CODES'] = (
-            'AUD,CNY,EUR,USD'  # Default currency codes to ensure they are stable
+            'AUD,CAD,CNY,EUR,GBP,JPY,NZD,USD'  # Default currency codes to ensure they are stable
         )
 
     manage(c, cmd, pty=True, env=envs)
