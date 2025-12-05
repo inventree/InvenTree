@@ -128,8 +128,8 @@ def inventreeDocsVersion() -> str:
     """
     if isInvenTreeDevelopmentVersion():
         return 'latest'
-    else:
-        INVENTREE_SW_VERSION
+
+    return INVENTREE_SW_VERSION
 
 
 def inventreeDocUrl() -> str:
