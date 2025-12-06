@@ -94,7 +94,10 @@ export function SecurityContent() {
             <StylishText size='lg'>{t`Access Tokens`}</StylishText>
           </Accordion.Control>
           <Accordion.Panel>
-            <ErrorBoundary fallback={DefaultFallback} onError={onError}>
+            <ErrorBoundary
+              fallback={<DefaultFallback title={'API Table'} />}
+              onError={onError}
+            >
               <ApiTokenTable only_myself />
             </ErrorBoundary>
           </Accordion.Panel>
