@@ -342,6 +342,10 @@ The following email settings are available:
 | INVENTREE_EMAIL_SENDER | email.sender | Sending email address | *Not specified* |
 | INVENTREE_EMAIL_PREFIX | email.prefix | Prefix for subject text | [InvenTree] |
 
+### Email Backend
+
+The default email implementation uses the Django STMP backend. This should be sufficient for most implementations, although other backends can be used if required. Note that selection of a different backend requires must use fully qualified module path, and requires advanced knowledge.
+
 ### Sender Email
 
 The "sender" email address is the address from which InvenTree emails are sent (by default) and must be specified for outgoing emails to function:
