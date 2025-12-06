@@ -1024,14 +1024,6 @@ INTERNAL_EMAIL_BACKEND = get_setting(
     'django.core.mail.backends.smtp.EmailBackend',
 )
 
-# Map from short-hand email backends to fully-qualified paths
-core_email_backends = ['smtp', 'console', 'file', 'locmem', 'dummy']
-
-if INTERNAL_EMAIL_BACKEND.lower() in core_email_backends:
-    INTERNAL_EMAIL_BACKEND = (
-        f'django.core.mail.backends.{INTERNAL_EMAIL_BACKEND.lower()}.EmailBackend'
-    )
-
 # SMTP backend
 EMAIL_HOST = get_setting('INVENTREE_EMAIL_HOST', 'email.host', '')
 EMAIL_PORT = get_setting('INVENTREE_EMAIL_PORT', 'email.port', 25, typecast=int)
