@@ -332,7 +332,7 @@ The following email settings are available:
 
 | Environment Variable | Configuration File | Description | Default |
 | --- | --- | --- | --- |
-| INVENTREE_EMAIL_BACKEND | email.backend | Email backend module | `django.core.mail.backends.smtp.EmailBackend` |
+| INVENTREE_EMAIL_BACKEND | email.backend | Email backend module | django.core.mail.backends.smtp.EmailBackend |
 | INVENTREE_EMAIL_HOST | email.host | Email server host | *Not specified* |
 | INVENTREE_EMAIL_PORT | email.port | Email server port | 25 |
 | INVENTREE_EMAIL_USERNAME | email.username | Email account username | *Not specified* |
