@@ -301,7 +301,7 @@ mkdocs==1.6.1 \
     --hash=sha256:7b432f01d928c084353ab39c57282f29f92136665bdd6abf7c1ec8d822ef86f2 \
     --hash=sha256:db91759624d1647f3f34aa0c3f327dd2601beae39a366d6e064c03468d35c20e
     # via
-    #   -r docs/requirements.in
+    #   -r requirements.in
     #   mkdocs-autorefs
     #   mkdocs-git-revision-date-localized-plugin
     #   mkdocs-include-markdown-plugin
@@ -325,19 +325,19 @@ mkdocs-get-deps==0.2.0 \
 mkdocs-git-revision-date-localized-plugin==1.5.0 \
     --hash=sha256:17345ccfdf69a1905dc96fb1070dce82d03a1eb6b0d48f958081a7589ce3c248 \
     --hash=sha256:933f9e35a8c135b113f21bb57610d82e9b7bcc71dd34fb06a029053c97e99656
-    # via -r docs/requirements.in
+    # via -r requirements.in
 mkdocs-include-markdown-plugin==7.2.0 \
     --hash=sha256:4a67a91ade680dc0e15f608e5b6343bec03372ffa112c40a4254c1bfb10f42f3 \
     --hash=sha256:d56cdaeb2d113fb66ed0fe4fb7af1da889926b0b9872032be24e19bbb09c9f5b
-    # via -r docs/requirements.in
+    # via -r requirements.in
 mkdocs-macros-plugin==1.5.0 \
     --hash=sha256:12aa45ce7ecb7a445c66b9f649f3dd05e9b92e8af6bc65e4acd91d26f878c01f \
     --hash=sha256:c10fabd812bf50f9170609d0ed518e54f1f0e12c334ac29141723a83c881dd6f
-    # via -r docs/requirements.in
+    # via -r requirements.in
 mkdocs-material==9.7.0 \
     --hash=sha256:602b359844e906ee402b7ed9640340cf8a474420d02d8891451733b6b02314ec \
     --hash=sha256:da2866ea53601125ff5baa8aa06404c6e07af3c5ce3d5de95e3b52b80b442887
-    # via -r docs/requirements.in
+    # via -r requirements.in
 mkdocs-material-extensions==1.3.1 \
     --hash=sha256:10c9511cea88f568257f960358a467d12b970e1f7b2c0e5fb2bb48cab1928443 \
     --hash=sha256:adff8b62700b25cb77b53358dad940f3ef973dd6db797907c49e3c2ef3ab4e31
@@ -345,20 +345,20 @@ mkdocs-material-extensions==1.3.1 \
 mkdocs-mermaid2-plugin==1.2.3 \
     --hash=sha256:33f60c582be623ed53829a96e19284fc7f1b74a1dbae78d4d2e47fe00c3e190d \
     --hash=sha256:fb6f901d53e5191e93db78f93f219cad926ccc4d51e176271ca5161b6cc5368c
-    # via -r docs/requirements.in
+    # via -r requirements.in
 mkdocs-redirects==1.2.2 \
     --hash=sha256:3094981b42ffab29313c2c1b8ac3969861109f58b2dd58c45fc81cd44bfa0095 \
     --hash=sha256:7dbfa5647b79a3589da4401403d69494bd1f4ad03b9c15136720367e1f340ed5
-    # via -r docs/requirements.in
+    # via -r requirements.in
 mkdocs-simple-hooks==0.1.5 \
     --hash=sha256:dddbdf151a18723c9302a133e5cf79538be8eb9d274e8e07d2ac3ac34890837c \
     --hash=sha256:efeabdbb98b0850a909adee285f3404535117159d5cb3a34f541d6eaa644d50a
-    # via -r docs/requirements.in
+    # via -r requirements.in
 mkdocstrings[python]==0.30.1 \
     --hash=sha256:41bd71f284ca4d44a668816193e4025c950b002252081e387433656ae9a70a82 \
     --hash=sha256:84a007aae9b707fb0aebfc9da23db4b26fc9ab562eb56e335e9ec480cb19744f
     # via
-    #   -r docs/requirements.in
+    #   -r requirements.in
     #   mkdocstrings-python
 mkdocstrings-python==1.16.12 \
     --hash=sha256:22ded3a63b3d823d57457a70ff9860d5a4de9e8b1e482876fc9baabaf6f5f374 \
@@ -367,7 +367,7 @@ mkdocstrings-python==1.16.12 \
 neoteroi-mkdocs==1.1.3 \
     --hash=sha256:3ecfb825e898d10a6d703a3ef3f0484d823b7b5660425e76af421e316ac18036 \
     --hash=sha256:772aee317c9bb10a89d67e71e322730f92cc349d5eecc8a08e8fb079398e514b
-    # via -r docs/requirements.in
+    # via -r requirements.in
 packaging==25.0 \
     --hash=sha256:29572ef2b1f17581046b3a2227d5c611fb25ec70ca1ba8554b24b0e69331a484 \
     --hash=sha256:d443872c98d677bf60f6a1f2f8c1cb748e8fe762d2bf9d3148b5599295b0fc4f
@@ -503,10 +503,6 @@ rich==14.1.0 \
     --hash=sha256:536f5f1785986d6dbdea3c75205c473f970777b4a0d6c6dd1b696aa05a3fa04f \
     --hash=sha256:e497a48b844b0320d45007cdebfeaeed8db2a4f4bcf49f15e455cfc4af11eaa8
     # via neoteroi-mkdocs
-setuptools==80.9.0 \
-    --hash=sha256:062d34222ad13e0cc312a4c02d73f059e86a4acbfbdea8f8f76b28c99f306922 \
-    --hash=sha256:f36b47402ecde768dbfafc46e8e4207b4360c654f1f3bb84475f0a28628fb19c
-    # via mkdocs-mermaid2-plugin
 six==1.17.0 \
     --hash=sha256:4721f391ed90541fddacab5acf947aa0d3dc7d27b2e1e8eda2be8970586c3274 \
     --hash=sha256:ff70335d468e7eb6ec65b95b99d3a2836546063f63acc5171de367e834932a81
@@ -536,12 +532,10 @@ termcolor==3.1.0 \
 typing-extensions==4.14.1 \
     --hash=sha256:38b39f4aeeab64884ce9f74c94263ef78f3c22467c8724005483154c26648d36 \
     --hash=sha256:d1e1e3b58374dc93031d6eda2420a48ea44a36c2b4766a4fdeb3710755731d76
-    # via
-    #   anyio
-    #   beautifulsoup4
-urllib3==2.5.0 \
-    --hash=sha256:3fc47733c7e419d4bc3f6b3dc2b4f890bb743906a30d56ba4a5bfa4bbff92760 \
-    --hash=sha256:e6b01673c0fa6a13e374b50871808eb3bf7046c4b125b216f6bf1cc604cff0dc
+    # via beautifulsoup4
+urllib3==2.6.0 \
+    --hash=sha256:c90f7a39f716c572c4e3e58509581ebd83f9b59cced005b7db7ad2d22b0db99f \
+    --hash=sha256:cb9bcef5a4b345d5da5d145dc3e30834f58e8018828cbc724d30b4cb7d4d49f1
     # via requests
 watchdog==6.0.0 \
     --hash=sha256:07df1fdd701c5d4c8e55ef6cf55b8f0120fe1aef7ef39a1c6fc6bc2e606d517a \
