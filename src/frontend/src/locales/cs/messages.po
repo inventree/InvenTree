@@ -8,7 +8,7 @@ msgstr ""
 "Language: cs\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-12-05 02:27\n"
+"PO-Revision-Date: 2025-12-06 12:04\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Plural-Forms: nplurals=4; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 3;\n"
@@ -30,7 +30,7 @@ msgid "Edit"
 msgstr "Upravit"
 
 #: lib/components/RowActions.tsx:56
-#: src/components/forms/ApiForm.tsx:735
+#: src/components/forms/ApiForm.tsx:754
 #: src/components/items/ActionDropdown.tsx:257
 #: src/components/items/RoleTable.tsx:155
 #: src/hooks/UseForm.tsx:164
@@ -140,7 +140,7 @@ msgstr "Díly"
 
 #: lib/enums/ModelInformation.tsx:37
 msgid "Parameter"
-msgstr ""
+msgstr "Parametr"
 
 #: lib/enums/ModelInformation.tsx:37
 #: src/pages/Index/Settings/AdminCenter/PartParameterPanel.tsx:13
@@ -168,7 +168,7 @@ msgstr "Šablona parametru"
 #: lib/enums/ModelInformation.tsx:44
 #: src/pages/Index/Settings/AdminCenter/ParameterPanel.tsx:13
 msgid "Parameter Templates"
-msgstr ""
+msgstr "Šablony parametru"
 
 #: lib/enums/ModelInformation.tsx:50
 msgid "Part Test Template"
@@ -684,7 +684,7 @@ msgstr "Čárkový kód neodpovídá očekávanému typu modelu"
 #: src/components/barcodes/BarcodeScanDialog.tsx:145
 #: src/components/editors/NotesEditor.tsx:84
 #: src/components/editors/NotesEditor.tsx:118
-#: src/components/forms/ApiForm.tsx:465
+#: src/components/forms/ApiForm.tsx:484
 #: src/components/wizards/ImportPartWizard.tsx:566
 #: src/components/wizards/ImportPartWizard.tsx:691
 #: src/pages/Index/Settings/AdminCenter/CurrencyManagementPanel.tsx:45
@@ -1278,7 +1278,7 @@ msgid "Clear"
 msgstr "Vymazat"
 
 #: src/components/details/DetailsImage.tsx:256
-#: src/components/forms/ApiForm.tsx:677
+#: src/components/forms/ApiForm.tsx:696
 #: src/contexts/ThemeContext.tsx:44
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:149
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:568
@@ -1531,8 +1531,8 @@ msgstr "Chyba serveru"
 msgid "A server error occurred"
 msgstr "Došlo k chybě serveru"
 
-#: src/components/forms/ApiForm.tsx:103
-#: src/components/forms/ApiForm.tsx:594
+#: src/components/forms/ApiForm.tsx:107
+#: src/components/forms/ApiForm.tsx:613
 msgid "Form Error"
 msgstr "Chyba formuláře"
 
@@ -1540,11 +1540,11 @@ msgstr "Chyba formuláře"
 #~ msgid "Form Errors Exist"
 #~ msgstr "Form Errors Exist"
 
-#: src/components/forms/ApiForm.tsx:604
+#: src/components/forms/ApiForm.tsx:623
 msgid "Errors exist for one or more form fields"
 msgstr "Existují chyby pro jedno nebo více polí formuláře"
 
-#: src/components/forms/ApiForm.tsx:715
+#: src/components/forms/ApiForm.tsx:734
 #: src/hooks/UseForm.tsx:133
 #: src/tables/plugin/PluginListTable.tsx:204
 msgid "Update"
@@ -2479,7 +2479,7 @@ msgstr "Výstrahy"
 
 #: src/components/nav/Alerts.tsx:97
 msgid "No issues detected"
-msgstr ""
+msgstr "Nebyly zjištěny žádné problémy"
 
 #: src/components/nav/Alerts.tsx:122
 msgid "The server is running in debug mode."
@@ -4572,8 +4572,8 @@ msgstr "Vyberte kód projektu pro tuto položku"
 #~ msgid "Company updated"
 #~ msgstr "Company updated"
 
-#: src/forms/PartForms.tsx:81
-#: src/forms/PartForms.tsx:203
+#: src/forms/PartForms.tsx:99
+#: src/forms/PartForms.tsx:228
 #: src/pages/part/CategoryDetail.tsx:127
 #: src/pages/part/PartDetail.tsx:668
 #: src/tables/part/PartCategoryTable.tsx:94
@@ -4581,7 +4581,7 @@ msgstr "Vyberte kód projektu pro tuto položku"
 msgid "Subscribed"
 msgstr "Odebírané"
 
-#: src/forms/PartForms.tsx:82
+#: src/forms/PartForms.tsx:100
 msgid "Subscribe to notifications for this part"
 msgstr "Přihlásit se k odběru oznámení pro tuto položku"
 
@@ -4593,11 +4593,11 @@ msgstr "Přihlásit se k odběru oznámení pro tuto položku"
 #~ msgid "Part updated"
 #~ msgstr "Part updated"
 
-#: src/forms/PartForms.tsx:189
+#: src/forms/PartForms.tsx:214
 msgid "Parent part category"
 msgstr "Nadřazená kategorie"
 
-#: src/forms/PartForms.tsx:204
+#: src/forms/PartForms.tsx:229
 msgid "Subscribe to notifications for this category"
 msgstr "Přihlásit se k odběru oznámení pro tuto kategorii"
 
@@ -6462,7 +6462,7 @@ msgstr "E-mailové zprávy"
 
 #: src/pages/Index/Settings/AdminCenter/HomePanel.tsx:36
 msgid "System Status"
-msgstr ""
+msgstr "Stav systému"
 
 #: src/pages/Index/Settings/AdminCenter/HomePanel.tsx:47
 msgid "Admin Center Information"
@@ -7246,7 +7246,7 @@ msgstr "Zobrazení kalendáře"
 #: src/pages/sales/SalesIndex.tsx:125
 #: src/pages/sales/SalesIndex.tsx:151
 msgid "Parametric View"
-msgstr ""
+msgstr "Parametrické zobrazení"
 
 #: src/pages/company/CompanyDetail.tsx:100
 msgid "Website"
@@ -7857,7 +7857,7 @@ msgstr "Požadováno"
 
 #: src/pages/part/PartDetail.tsx:1042
 msgid "Deficit"
-msgstr ""
+msgstr "Deficit"
 
 #: src/pages/part/PartDetail.tsx:1079
 #: src/tables/part/PartTable.tsx:396
@@ -10086,7 +10086,7 @@ msgstr "Aktualizoval(a)"
 
 #: src/tables/general/ParameterTable.tsx:118
 msgid "Show parameters for enabled templates"
-msgstr ""
+msgstr "Zobrazit parametry pro povoloné šablony"
 
 #: src/tables/general/ParameterTable.tsx:124
 msgid "Filter by user who last updated the parameter"
@@ -10094,7 +10094,7 @@ msgstr "Filtrovat podle uživatele, který naposledy aktualizoval parametr"
 
 #: src/tables/general/ParameterTable.tsx:154
 msgid "Import Parameters"
-msgstr ""
+msgstr "Importovat parametry"
 
 #: src/tables/general/ParameterTable.tsx:164
 #: src/tables/general/ParametricDataTable.tsx:261
@@ -10115,19 +10115,19 @@ msgstr "Odstranit parametr"
 
 #: src/tables/general/ParameterTable.tsx:191
 msgid "Add Parameters"
-msgstr ""
+msgstr "Přidat parametry"
 
 #: src/tables/general/ParameterTable.tsx:197
 msgid "Create Parameter"
-msgstr ""
+msgstr "Vytvořit parametry"
 
 #: src/tables/general/ParameterTable.tsx:199
 msgid "Create a new parameter"
-msgstr ""
+msgstr "Vytvořit nový parametr"
 
 #: src/tables/general/ParameterTable.tsx:208
 msgid "Import parameters from a file"
-msgstr ""
+msgstr "Importovat parametr ze souboru"
 
 #: src/tables/general/ParameterTemplateTable.tsx:48
 #: src/tables/general/ParameterTemplateTable.tsx:197
@@ -10173,7 +10173,7 @@ msgstr "Zobrazit šablony s jednotkami"
 
 #: src/tables/general/ParameterTemplateTable.tsx:154
 msgid "Show enabled templates"
-msgstr ""
+msgstr "Zobrazit povolené šablony"
 
 #: src/tables/general/ParameterTemplateTable.tsx:158
 #: src/tables/settings/ImportSessionTable.tsx:111
@@ -10183,7 +10183,7 @@ msgstr "Typ modelu"
 
 #: src/tables/general/ParameterTemplateTable.tsx:159
 msgid "Filter by model type"
-msgstr ""
+msgstr "Filtrovat podle typu modelu"
 
 #: src/tables/general/ParametricDataTable.tsx:79
 msgid "Click to edit"

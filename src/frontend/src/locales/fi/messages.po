@@ -8,7 +8,7 @@ msgstr ""
 "Language: fi\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-12-05 02:27\n"
+"PO-Revision-Date: 2025-12-06 12:04\n"
 "Last-Translator: \n"
 "Language-Team: Finnish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -30,7 +30,7 @@ msgid "Edit"
 msgstr ""
 
 #: lib/components/RowActions.tsx:56
-#: src/components/forms/ApiForm.tsx:735
+#: src/components/forms/ApiForm.tsx:754
 #: src/components/items/ActionDropdown.tsx:257
 #: src/components/items/RoleTable.tsx:155
 #: src/hooks/UseForm.tsx:164
@@ -684,7 +684,7 @@ msgstr ""
 #: src/components/barcodes/BarcodeScanDialog.tsx:145
 #: src/components/editors/NotesEditor.tsx:84
 #: src/components/editors/NotesEditor.tsx:118
-#: src/components/forms/ApiForm.tsx:465
+#: src/components/forms/ApiForm.tsx:484
 #: src/components/wizards/ImportPartWizard.tsx:566
 #: src/components/wizards/ImportPartWizard.tsx:691
 #: src/pages/Index/Settings/AdminCenter/CurrencyManagementPanel.tsx:45
@@ -1278,7 +1278,7 @@ msgid "Clear"
 msgstr ""
 
 #: src/components/details/DetailsImage.tsx:256
-#: src/components/forms/ApiForm.tsx:677
+#: src/components/forms/ApiForm.tsx:696
 #: src/contexts/ThemeContext.tsx:44
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:149
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:568
@@ -1531,8 +1531,8 @@ msgstr ""
 msgid "A server error occurred"
 msgstr ""
 
-#: src/components/forms/ApiForm.tsx:103
-#: src/components/forms/ApiForm.tsx:594
+#: src/components/forms/ApiForm.tsx:107
+#: src/components/forms/ApiForm.tsx:613
 msgid "Form Error"
 msgstr ""
 
@@ -1540,11 +1540,11 @@ msgstr ""
 #~ msgid "Form Errors Exist"
 #~ msgstr "Form Errors Exist"
 
-#: src/components/forms/ApiForm.tsx:604
+#: src/components/forms/ApiForm.tsx:623
 msgid "Errors exist for one or more form fields"
 msgstr ""
 
-#: src/components/forms/ApiForm.tsx:715
+#: src/components/forms/ApiForm.tsx:734
 #: src/hooks/UseForm.tsx:133
 #: src/tables/plugin/PluginListTable.tsx:204
 msgid "Update"
@@ -4572,8 +4572,8 @@ msgstr ""
 #~ msgid "Company updated"
 #~ msgstr "Company updated"
 
-#: src/forms/PartForms.tsx:81
-#: src/forms/PartForms.tsx:203
+#: src/forms/PartForms.tsx:99
+#: src/forms/PartForms.tsx:228
 #: src/pages/part/CategoryDetail.tsx:127
 #: src/pages/part/PartDetail.tsx:668
 #: src/tables/part/PartCategoryTable.tsx:94
@@ -4581,7 +4581,7 @@ msgstr ""
 msgid "Subscribed"
 msgstr ""
 
-#: src/forms/PartForms.tsx:82
+#: src/forms/PartForms.tsx:100
 msgid "Subscribe to notifications for this part"
 msgstr ""
 
@@ -4593,11 +4593,11 @@ msgstr ""
 #~ msgid "Part updated"
 #~ msgstr "Part updated"
 
-#: src/forms/PartForms.tsx:189
+#: src/forms/PartForms.tsx:214
 msgid "Parent part category"
 msgstr ""
 
-#: src/forms/PartForms.tsx:204
+#: src/forms/PartForms.tsx:229
 msgid "Subscribe to notifications for this category"
 msgstr ""
 

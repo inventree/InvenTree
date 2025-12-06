@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-05 02:23+0000\n"
-"PO-Revision-Date: 2025-12-05 02:27\n"
+"POT-Creation-Date: 2025-12-06 08:49+0000\n"
+"PO-Revision-Date: 2025-12-06 08:53\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -171,35 +171,35 @@ msgstr "Odstranit HTML tagy z této hodnoty"
 msgid "Data contains prohibited markdown content"
 msgstr "Data obsahují zakázaný markdown obsah"
 
-#: InvenTree/helpers_model.py:133
+#: InvenTree/helpers_model.py:134
 msgid "Connection error"
 msgstr "Chyba spojení"
 
-#: InvenTree/helpers_model.py:138 InvenTree/helpers_model.py:145
+#: InvenTree/helpers_model.py:139 InvenTree/helpers_model.py:146
 msgid "Server responded with invalid status code"
 msgstr "Server odpověděl s neplatným stavovým kódem"
 
-#: InvenTree/helpers_model.py:141
+#: InvenTree/helpers_model.py:142
 msgid "Exception occurred"
 msgstr "Došlo k výjimce"
 
-#: InvenTree/helpers_model.py:151
+#: InvenTree/helpers_model.py:152
 msgid "Server responded with invalid Content-Length value"
 msgstr "Server odpověděl s neplatnou hodnotou Content-Length"
 
-#: InvenTree/helpers_model.py:154
+#: InvenTree/helpers_model.py:155
 msgid "Image size is too large"
 msgstr "Velikost obrázku je příliš velká"
 
-#: InvenTree/helpers_model.py:166
+#: InvenTree/helpers_model.py:167
 msgid "Image download exceeded maximum size"
 msgstr "Stahování obrázku překročilo maximální velikost"
 
-#: InvenTree/helpers_model.py:171
+#: InvenTree/helpers_model.py:172
 msgid "Remote server returned empty response"
 msgstr "Vzdálený server vrátil prázdnou odpověď"
 
-#: InvenTree/helpers_model.py:179
+#: InvenTree/helpers_model.py:180
 msgid "Supplied URL is not a valid image file"
 msgstr "Zadaná URL adresa není platný soubor obrázku"
 
@@ -351,7 +351,7 @@ msgstr "Vyberte měnu z dostupných možností"
 
 #: InvenTree/serializers.py:654
 msgid "This field may not be null."
-msgstr ""
+msgstr "Toto pole nesmí být nulové."
 
 #: InvenTree/serializers.py:660
 msgid "Invalid value"
@@ -375,15 +375,15 @@ msgstr "Nepodařilo se stáhnout obrázek ze vzdálené adresy URL"
 
 #: InvenTree/serializers.py:806
 msgid "Invalid content type format"
-msgstr ""
+msgstr "Neplatný formát typu obsahu"
 
 #: InvenTree/serializers.py:809
 msgid "Content type not found"
-msgstr ""
+msgstr "Typ obsahu nenalezen"
 
 #: InvenTree/serializers.py:815
 msgid "Content type does not match required mixin class"
-msgstr ""
+msgstr "Typ obsahu neodpovídá požadované třídě mixinu"
 
 #: InvenTree/setting/locales.py:20
 msgid "Arabic"
@@ -2024,7 +2024,7 @@ msgstr "Šablona parametru"
 
 #: common/models.py:2388
 msgid "Parameter Templates"
-msgstr ""
+msgstr "Šablona parametru"
 
 #: common/models.py:2425
 msgid "Checkbox parameters cannot have units"
@@ -2044,7 +2044,7 @@ msgstr "Název šablony parametru musí být jedinečný"
 
 #: common/models.py:2489
 msgid "Target model type for this parameter template"
-msgstr ""
+msgstr "Cílový typ modelu pro šablonu tohoto parametru"
 
 #: common/models.py:2495
 msgid "Parameter Name"
@@ -2088,15 +2088,15 @@ msgstr "Povoleno"
 
 #: common/models.py:2540
 msgid "Is this parameter template enabled?"
-msgstr ""
+msgstr "Je šablona tohoto parametru povolena?"
 
 #: common/models.py:2581
 msgid "Parameter"
-msgstr ""
+msgstr "Parametr"
 
 #: common/models.py:2582
 msgid "Parameters"
-msgstr ""
+msgstr "Parametry"
 
 #: common/models.py:2628
 msgid "Invalid choice for parameter value"
@@ -2104,15 +2104,15 @@ msgstr "Neplatná volba pro hodnotu parametru"
 
 #: common/models.py:2698 common/serializers.py:783
 msgid "Invalid model type specified for parameter"
-msgstr ""
+msgstr "Neplatný typ modelu pro daný parametr"
 
 #: common/models.py:2734
 msgid "Model ID"
-msgstr ""
+msgstr "ID modelu"
 
 #: common/models.py:2735
 msgid "ID of the target model for this parameter"
-msgstr ""
+msgstr "ID cílového modelu pro tento parametr"
 
 #: common/models.py:2744 common/setting/system.py:450 report/models.py:373
 #: report/models.py:669 report/serializers.py:94 report/serializers.py:135
@@ -2122,7 +2122,7 @@ msgstr "Šablona"
 
 #: common/models.py:2745
 msgid "Parameter template"
-msgstr ""
+msgstr "Šablona parametru"
 
 #: common/models.py:2750 common/models.py:2792 importer/models.py:546
 msgid "Data"
@@ -2435,7 +2435,7 @@ msgstr "Uživatel nemá oprávnění k vytváření nebo úpravám příloh pro 
 
 #: common/serializers.py:786
 msgid "User does not have permission to create or edit parameters for this model"
-msgstr ""
+msgstr "Uživatel nemá práva vytvářet nebo upravovat parametry pro tento model"
 
 #: common/serializers.py:850 common/serializers.py:953
 msgid "Selection list is locked"
@@ -3860,7 +3860,7 @@ msgstr "Uložte poslední použité tiskárny pro uživatele"
 
 #: common/validators.py:38
 msgid "All models"
-msgstr ""
+msgstr "Všechny modely"
 
 #: common/validators.py:63
 msgid "No attachment model type provided"
@@ -4236,7 +4236,7 @@ msgstr "Cenová sleva dodavatele"
 
 #: company/serializers.py:184
 msgid "Primary Address"
-msgstr ""
+msgstr "Hlavní adresa"
 
 #: company/serializers.py:186
 msgid "Return the string representation for the primary address. This property exists for backwards compatibility."
@@ -5703,11 +5703,11 @@ msgstr "Díly"
 
 #: part/models.py:597
 msgid "Cannot delete parameters of a locked part"
-msgstr ""
+msgstr "Nelze odstranit parametry zamčeného dílu"
 
 #: part/models.py:602
 msgid "Cannot modify parameters of a locked part"
-msgstr ""
+msgstr "Nelze upravit parametry zamčeného dílu"
 
 #: part/models.py:613
 msgid "Cannot delete this part as it is locked"
@@ -7181,19 +7181,19 @@ msgstr "Poskytuje podporu pro exportování dat z InvenTree"
 
 #: plugin/builtin/exporter/parameter_exporter.py:16
 msgid "Exclude Inactive"
-msgstr ""
+msgstr "Vyloučit neaktivní"
 
 #: plugin/builtin/exporter/parameter_exporter.py:17
 msgid "Exclude parameters which are inactive"
-msgstr ""
+msgstr "Vyloučit parametry které jsou neaktivní"
 
 #: plugin/builtin/exporter/parameter_exporter.py:29
 msgid "Parameter Exporter"
-msgstr ""
+msgstr "Exportér parametru"
 
 #: plugin/builtin/exporter/parameter_exporter.py:30
 msgid "Exporter for model parameter data"
-msgstr ""
+msgstr "Exportér pro modelová parametrová data"
 
 #: plugin/builtin/exporter/stocktake_exporter.py:25
 msgid "Include External Stock"
