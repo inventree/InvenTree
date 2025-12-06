@@ -5,8 +5,11 @@ import os
 from pathlib import Path
 from unittest import mock
 
+from django.urls import reverse
+
 from InvenTree.config import get_frontend_settings
-from InvenTree.unit_test import InvenTreeTestCase
+from InvenTree.unit_test import InvenTreeAPITestCase, InvenTreeTestCase
+from web.models import GuideDefinition, GuideExecution, collect_guides
 
 from .templatetags import spa_helper
 
@@ -86,3 +89,105 @@ class TemplateTagTest(InvenTreeTestCase):
             rsp = get_frontend_settings(False)
             self.assertNotIn('show_server_selector', rsp)
             self.assertEqual(rsp['server_list'], ['aa', 'bb'])
+
+
+class GuidesTest(InvenTreeTestCase):
+    """Tests for guide functionality."""
+
+    def test_collection(self):
+        """Test guide collection applicability."""
+        self.assertEqual(GuideDefinition.objects.count(), 0)
+
+        rsp = collect_guides(create=True)
+        self.assertEqual(len(rsp), NummerOfGuides)
+        self.assertEqual(GuideDefinition.objects.count(), NummerOfGuides)
+
+        # Model base test
+        guide = GuideDefinition.objects.first()
+        self.assertEqual(guide.slug, 'ftue_admin_threat_model')
+        self.assertEqual(
+            str(guide), 'First Use Admin Welcome - Threat Model (firstuse)'
+        )
+
+    def test_model_fences(self):
+        """Test GuideExecution model string representation."""
+        # No guide definition -> error
+        with self.assertRaises(ValueError):
+            GuideDefinition.objects.create(slug='test_slug', name='Test Guide')
+
+        # Auto slug
+        guide = GuideDefinition.objects.create(
+            name='Test Guide 2', guide_type='test_type'
+        )
+        self.assertEqual(guide.slug, 'test-guide-2')
+
+        # Changing immutable fields
+        with self.assertRaises(ValueError):
+            guide.guide_type = 'new_type'
+            guide.save()
+        guide.refresh_from_db()
+
+        with self.assertRaises(ValueError):
+            guide.slug = 'new-slug'
+            guide.save()
+
+        # Check str method
+        guide.refresh_from_db()
+        self.assertEqual(str(guide), 'Test Guide 2 (test_type)')
+
+
+NummerOfGuides = 2
+
+
+class WebAPITests(InvenTreeAPITestCase):
+    """Tests for web API endpoints."""
+
+    def test_guide_api(self):
+        """Tests for User API endpoints."""
+        url = reverse('api-guide-list')
+        rsp = collect_guides(create=True)
+        self.assertEqual(len(rsp), NummerOfGuides)
+
+        response = self.get(url, expected_code=200)
+
+        # Check the correct number of results was returned
+        self.assertEqual(len(response.data), NummerOfGuides)
+
+        # filter for all
+        response = self.get(f'{url}?all=true', expected_code=200)
+        self.assertEqual(len(response.data), NummerOfGuides)
+
+    def test_guide_dismissal(self):
+        """Test guide dismissal endpoint."""
+        rsp = collect_guides(create=True)
+        self.assertEqual(len(rsp), NummerOfGuides)
+
+        response = self.get(reverse('api-guide-list'), expected_code=200)
+        self.assertEqual(len(response.data), NummerOfGuides)
+        self.assertTrue(response.data[0]['is_applicable'])
+
+        # Wrong slug
+        self.patch(
+            reverse('api-guide-dismiss', kwargs={'slug': '123non'}), expected_code=404
+        )
+
+        # Dismiss correct guide
+        self.patch(
+            reverse('api-guide-dismiss', kwargs={'slug': 'ftue_admin_threat_model'}),
+            expected_code=200,
+        )
+        response = self.get(reverse('api-guide-list'), expected_code=200)
+        self.assertEqual(len(response.data), NummerOfGuides)
+        self.assertFalse(response.data[0]['is_applicable'])
+        self.assertEqual(
+            str(GuideExecution.objects.first()),
+            'First Use Admin Welcome - Threat Model for testuser',
+        )
+
+        # Dismissing again should have no effect
+        self.patch(
+            reverse('api-guide-dismiss', kwargs={'slug': 'admin_center_1'}),
+            expected_code=200,
+        )
+        response = self.get(reverse('api-guide-list'), expected_code=200)
+        self.assertEqual(len(response.data), NummerOfGuides)
