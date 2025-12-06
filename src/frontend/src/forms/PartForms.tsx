@@ -16,8 +16,12 @@ export function usePartFields({
 }): ApiFormFieldSet {
   const settings = useGlobalSettingsState();
 
-  const [virtual, setVirtual] = useState<boolean>(false);
-  const [purchaseable, setPurchaseable] = useState<boolean>(false);
+  const globalSettings = useGlobalSettingsState();
+
+  const [virtual, setVirtual] = useState<boolean | undefined>(undefined);
+  const [purchaseable, setPurchaseable] = useState<boolean | undefined>(
+    undefined
+  );
 
   return useMemo(() => {
     const fields: ApiFormFieldSet = {
@@ -56,19 +60,33 @@ export function usePartFields({
           is_active: true
         }
       },
-      component: {},
-      assembly: {},
-      is_template: {},
-      testable: {},
-      trackable: {},
+      component: {
+        default: globalSettings.isSet('PART_COMPONENT')
+      },
+      assembly: {
+        default: globalSettings.isSet('PART_ASSEMBLY')
+      },
+      is_template: {
+        default: globalSettings.isSet('PART_TEMPLATE')
+      },
+      testable: {
+        default: false
+      },
+      trackable: {
+        default: globalSettings.isSet('PART_TRACKABLE')
+      },
       purchaseable: {
         value: purchaseable,
+        default: globalSettings.isSet('PART_PURCHASEABLE'),
         onValueChange: (value: boolean) => {
           setPurchaseable(value);
         }
       },
-      salable: {},
+      salable: {
+        default: globalSettings.isSet('PART_SALABLE')
+      },
       virtual: {
+        default: globalSettings.isSet('PART_VIRTUAL'),
         value: virtual,
         onValueChange: (value: boolean) => {
           setVirtual(value);
@@ -89,7 +107,7 @@ export function usePartFields({
     if (create) {
       fields.copy_category_parameters = {};
 
-      if (!virtual) {
+      if (virtual != false) {
         fields.initial_stock = {
           icon: <IconPackages />,
           children: {
@@ -172,7 +190,14 @@ export function usePartFields({
     }
 
     return fields;
-  }, [virtual, purchaseable, create, duplicatePartInstance, settings]);
+  }, [
+    virtual,
+    purchaseable,
+    create,
+    globalSettings,
+    duplicatePartInstance,
+    settings
+  ]);
 }
 
 /**

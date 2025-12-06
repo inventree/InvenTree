@@ -25,6 +25,7 @@ from common.notifications import (
 )
 from common.settings import get_global_setting
 from InvenTree.format import format_money
+from InvenTree.ready import ignore_ready_warning
 
 logger = structlog.get_logger('inventree')
 
@@ -260,6 +261,7 @@ def render_currency(
     )
 
 
+@ignore_ready_warning
 def getModelsWithMixin(mixin_class) -> list:
     """Return a list of database models that inherit from the given mixin class.
 

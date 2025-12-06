@@ -488,7 +488,7 @@ The INVENTREE_CUSTOMIZE environment variable must contain a json object with the
 the wanted values. Example:
 
 ```
-INVENTREE_CUSTOMIZE={"login_message":"Hallo Michi"}
+INVENTREE_CUSTOMIZE={"login_message":"Hello World"}
 ```
 
 This example sets a login message. Take care of the double quotes.

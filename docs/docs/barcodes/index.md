@@ -76,7 +76,7 @@ Barcode scanning is a key feature of the [companion mobile app](../app/barcode.m
 
 ## Barcode History
 
-If enabled, InvenTree can retain logs of the most recent barcode scans. This can be very useful for debugging or auditing purpopes.
+If enabled, InvenTree can retain logs of the most recent barcode scans. This can be very useful for debugging or auditing purposes.
 
 Refer to the [barcode settings](../settings/global.md#barcodes) to enable barcode history logging.
 
