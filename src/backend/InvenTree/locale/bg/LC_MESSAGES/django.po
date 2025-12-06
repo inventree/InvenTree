@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-05 02:23+0000\n"
-"PO-Revision-Date: 2025-12-05 02:27\n"
+"POT-Creation-Date: 2025-12-06 08:49+0000\n"
+"PO-Revision-Date: 2025-12-06 08:53\n"
 "Last-Translator: \n"
 "Language-Team: Bulgarian\n"
 "Language: bg_BG\n"
@@ -171,35 +171,35 @@ msgstr "Премахнете HTML маркерите от тази стойно�
 msgid "Data contains prohibited markdown content"
 msgstr ""
 
-#: InvenTree/helpers_model.py:133
+#: InvenTree/helpers_model.py:134
 msgid "Connection error"
 msgstr "Грешка при съединението"
 
-#: InvenTree/helpers_model.py:138 InvenTree/helpers_model.py:145
+#: InvenTree/helpers_model.py:139 InvenTree/helpers_model.py:146
 msgid "Server responded with invalid status code"
 msgstr "Сървърът отговари с невалиден статусен код"
 
-#: InvenTree/helpers_model.py:141
+#: InvenTree/helpers_model.py:142
 msgid "Exception occurred"
 msgstr "Възникна изключение"
 
-#: InvenTree/helpers_model.py:151
+#: InvenTree/helpers_model.py:152
 msgid "Server responded with invalid Content-Length value"
 msgstr "Сървърът отговори с невалидна стойност за дължината на съдържанието (Content-Length)"
 
-#: InvenTree/helpers_model.py:154
+#: InvenTree/helpers_model.py:155
 msgid "Image size is too large"
 msgstr "Размерът на изображението е твърде голям"
 
-#: InvenTree/helpers_model.py:166
+#: InvenTree/helpers_model.py:167
 msgid "Image download exceeded maximum size"
 msgstr "Сваляното на изображение превиши максималния размер"
 
-#: InvenTree/helpers_model.py:171
+#: InvenTree/helpers_model.py:172
 msgid "Remote server returned empty response"
 msgstr "Отдалеченият сървър върна празен отговор"
 
-#: InvenTree/helpers_model.py:179
+#: InvenTree/helpers_model.py:180
 msgid "Supplied URL is not a valid image file"
 msgstr ""
 
