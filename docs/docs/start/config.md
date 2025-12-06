@@ -342,6 +342,10 @@ The following email settings are available:
 | INVENTREE_EMAIL_SENDER | email.sender | Sending email address | *Not specified* |
 | INVENTREE_EMAIL_PREFIX | email.prefix | Prefix for subject text | [InvenTree] |
 
+### Email Backend
+
+The default email implementation uses the Django STMP backend. This should be sufficient for most implementations, although other backends can be used if required. Note that selection of a different backend requires must use fully qualified module path, and requires advanced knowledge.
+
 ### Sender Email
 
 The "sender" email address is the address from which InvenTree emails are sent (by default) and must be specified for outgoing emails to function:
@@ -488,7 +492,7 @@ The INVENTREE_CUSTOMIZE environment variable must contain a json object with the
 the wanted values. Example:
 
 ```
-INVENTREE_CUSTOMIZE={"login_message":"Hallo Michi"}
+INVENTREE_CUSTOMIZE={"login_message":"Hello World"}
 ```
 
 This example sets a login message. Take care of the double quotes.

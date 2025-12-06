@@ -96,6 +96,8 @@ nav:
     - Custom States: concepts/custom_states.md
     - Pricing: concepts/pricing.md
     - Project Codes: concepts/project_codes.md
+    - Attachments: concepts/attachments.md
+    - Parameters: concepts/parameters.md
     - Barcodes:
       - Barcode Support: barcodes/index.md
       - Internal Barcodes: barcodes/internal.md
@@ -125,7 +127,6 @@ nav:
     - Virtual Parts: part/virtual.md
     - Part Views: part/views.md
     - Tracking: part/trackable.md
-    - Parameters: part/parameter.md
     - Revisions: part/revision.md
     - Templates: part/template.md
     - Tests: part/test.md
@@ -238,7 +239,7 @@ nav:
       - Export Plugins:
         - BOM Exporter: plugins/builtin/bom_exporter.md
         - InvenTree Exporter: plugins/builtin/inventree_exporter.md
-        - Parameter Exporter: plugins/builtin/part_parameter_exporter.md
+        - Parameter Exporter: plugins/builtin/parameter_exporter.md
         - Stocktake Exporter: plugins/builtin/stocktake_exporter.md
       - Label Printing:
         - Label Printer: plugins/builtin/inventree_label.md
@@ -358,7 +359,7 @@ extra:
   #  provider: google
   #  property: UA-143467500-1
 
-  min_python_version: 3.10
+  min_python_version: 3.11
   min_invoke_version: 2.0.0
   django_version: 5.2
   docker_postgres_version: 17

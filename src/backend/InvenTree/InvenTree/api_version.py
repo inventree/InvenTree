@@ -1,14 +1,22 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 429
-
+INVENTREE_API_VERSION = 431
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v429 -> 2025-11-22 : https://github.com/inventree/InvenTree/pull/10887
+v431 -> 2025-12-07 : https://github.com/inventree/InvenTree/pull/10887
     - Extend the "auto allocate" wizard API to include tracked items
+
+v430 -> 2025-12-04 : https://github.com/inventree/InvenTree/pull/10699
+    - Removed the "PartParameter" and "PartParameterTemplate" API endpoints
+    - Removed the "ManufacturerPartParameter" API endpoint
+    - Added generic "Parameter" and "ParameterTemplate" API endpoints
+
+v429 -> 2025-12-04 : https://github.com/inventree/InvenTree/pull/10938
+    - Adjust default values for currency codes in the API schema
+    - Note that this does not change any functional behavior, only the schema documentation
 
 v428 -> 2025-11-28 : https://github.com/inventree/InvenTree/pull/10926
     - Various typo fixes in API - no functional changes

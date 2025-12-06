@@ -77,6 +77,7 @@ class BuildReportContext(report.mixins.BaseReportContext):
 class Build(
     InvenTree.models.PluginValidationMixin,
     report.mixins.InvenTreeReportMixin,
+    InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,

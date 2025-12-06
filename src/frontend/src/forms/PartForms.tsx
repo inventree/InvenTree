@@ -1,11 +1,7 @@
+import type { ApiFormFieldSet } from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
 import { IconBuildingStore, IconCopy, IconPackages } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
-
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { apiUrl } from '@lib/functions/Api';
-import type { ApiFormFieldSet } from '@lib/types/Forms';
-import { useApi } from '../contexts/ApiContext';
 import { useGlobalSettingsState } from '../states/SettingsStates';
 
 /**
@@ -20,8 +16,12 @@ export function usePartFields({
 }): ApiFormFieldSet {
   const settings = useGlobalSettingsState();
 
-  const [virtual, setVirtual] = useState<boolean>(false);
-  const [purchaseable, setPurchaseable] = useState<boolean>(false);
+  const globalSettings = useGlobalSettingsState();
+
+  const [virtual, setVirtual] = useState<boolean | undefined>(undefined);
+  const [purchaseable, setPurchaseable] = useState<boolean | undefined>(
+    undefined
+  );
 
   return useMemo(() => {
     const fields: ApiFormFieldSet = {
@@ -60,19 +60,33 @@ export function usePartFields({
           is_active: true
         }
       },
-      component: {},
-      assembly: {},
-      is_template: {},
-      testable: {},
-      trackable: {},
+      component: {
+        default: globalSettings.isSet('PART_COMPONENT')
+      },
+      assembly: {
+        default: globalSettings.isSet('PART_ASSEMBLY')
+      },
+      is_template: {
+        default: globalSettings.isSet('PART_TEMPLATE')
+      },
+      testable: {
+        default: false
+      },
+      trackable: {
+        default: globalSettings.isSet('PART_TRACKABLE')
+      },
       purchaseable: {
         value: purchaseable,
+        default: globalSettings.isSet('PART_PURCHASEABLE'),
         onValueChange: (value: boolean) => {
           setPurchaseable(value);
         }
       },
-      salable: {},
+      salable: {
+        default: globalSettings.isSet('PART_SALABLE')
+      },
       virtual: {
+        default: globalSettings.isSet('PART_VIRTUAL'),
         value: virtual,
         onValueChange: (value: boolean) => {
           setVirtual(value);
@@ -93,7 +107,7 @@ export function usePartFields({
     if (create) {
       fields.copy_category_parameters = {};
 
-      if (!virtual) {
+      if (virtual != false) {
         fields.initial_stock = {
           icon: <IconPackages />,
           children: {
@@ -176,7 +190,14 @@ export function usePartFields({
     }
 
     return fields;
-  }, [virtual, purchaseable, create, duplicatePartInstance, settings]);
+  }, [
+    virtual,
+    purchaseable,
+    create,
+    globalSettings,
+    duplicatePartInstance,
+    settings
+  ]);
 }
 
 /**
@@ -222,97 +243,6 @@ export function partCategoryFields({
   }, [create]);
 
   return fields;
-}
-
-export function usePartParameterFields({
-  editTemplate
-}: {
-  editTemplate?: boolean;
-}): ApiFormFieldSet {
-  const api = useApi();
-
-  // Valid field choices
-  const [choices, setChoices] = useState<any[]>([]);
-
-  // Field type for "data" input
-  const [fieldType, setFieldType] = useState<'string' | 'boolean' | 'choice'>(
-    'string'
-  );
-
-  return useMemo(() => {
-    return {
-      part: {
-        disabled: true
-      },
-      template: {
-        disabled: editTemplate == false,
-        onValueChange: (value: any, record: any) => {
-          // Adjust the type of the "data" field based on the selected template
-          if (record?.checkbox) {
-            // This is a "checkbox" field
-            setChoices([]);
-            setFieldType('boolean');
-          } else if (record?.choices) {
-            const _choices: string[] = record.choices.split(',');
-
-            if (_choices.length > 0) {
-              setChoices(
-                _choices.map((choice) => {
-                  return {
-                    display_name: choice.trim(),
-                    value: choice.trim()
-                  };
-                })
-              );
-              setFieldType('choice');
-            } else {
-              setChoices([]);
-              setFieldType('string');
-            }
-          } else if (record?.selectionlist) {
-            api
-              .get(
-                apiUrl(ApiEndpoints.selectionlist_detail, record.selectionlist)
-              )
-              .then((res) => {
-                setChoices(
-                  res.data.choices.map((item: any) => {
-                    return {
-                      value: item.value,
-                      display_name: item.label
-                    };
-                  })
-                );
-                setFieldType('choice');
-              });
-          } else {
-            setChoices([]);
-            setFieldType('string');
-          }
-        }
-      },
-      data: {
-        type: fieldType,
-        field_type: fieldType,
-        choices: fieldType === 'choice' ? choices : undefined,
-        default: fieldType === 'boolean' ? false : undefined,
-        adjustValue: (value: any) => {
-          // Coerce boolean value into a string (required by backend)
-
-          let v: string = value.toString().trim();
-
-          if (fieldType === 'boolean') {
-            if (v.toLowerCase() !== 'true') {
-              v = 'false';
-            }
-          }
-
-          return v;
-        }
-      },
-      note: {}
-    };
-  }, [editTemplate, fieldType, choices]);
 }
 
 export function partStocktakeFields(): ApiFormFieldSet {

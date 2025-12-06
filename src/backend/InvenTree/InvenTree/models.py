@@ -6,8 +6,10 @@ from string import Formatter
 from typing import Any, Optional
 
 from django.contrib.auth import get_user_model
+from django.contrib.contenttypes.fields import GenericRelation
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
-from django.db import models
+from django.db import models, transaction
 from django.db.models import QuerySet
 from django.db.models.signals import post_save
 from django.db.transaction import TransactionManagementError
@@ -450,7 +452,18 @@ class ReferenceIndexingMixin(models.Model):
     reference_int = models.BigIntegerField(default=0)
 
 
-class InvenTreeModel(PluginValidationMixin, models.Model):
+class ContentTypeMixin:
+    """Mixin class which supports retrieval of the ContentType for a model instance."""
+
+    @classmethod
+    def get_content_type(cls):
+        """Return the ContentType object associated with this model."""
+        from django.contrib.contenttypes.models import ContentType
+
+        return ContentType.objects.get_for_model(cls)
+
+
+class InvenTreeModel(ContentTypeMixin, PluginValidationMixin, models.Model):
     """Base class for InvenTree models, which provides some common functionality.
 
     Includes the following mixins by default:
@@ -473,7 +486,164 @@ class InvenTreeMetadataModel(MetadataMixin, InvenTreeModel):
         abstract = True
 
 
-class InvenTreeAttachmentMixin:
+class InvenTreePermissionCheckMixin:
+    """Provides an abstracted class for managing permissions against related fields."""
+
+    @classmethod
+    def check_related_permission(cls, permission, user) -> bool:
+        """Check if the user has permission to perform the specified action on the attachment.
+
+        The default implementation runs a permission check against *this* model class,
+        but this can be overridden in the implementing class if required.
+
+        Arguments:
+            permission: The permission to check (add / change / view / delete)
+            user: The user to check against
+
+        Returns:
+            bool: True if the user has permission, False otherwise
+        """
+        perm = f'{cls._meta.app_label}.{permission}_{cls._meta.model_name}'
+        return user.has_perm(perm)
+
+
+class InvenTreeParameterMixin(InvenTreePermissionCheckMixin, models.Model):
+    """Provides an abstracted class for managing parameters.
+
+    Links the implementing model to the common.models.Parameter table,
+    and provides the following methods:
+    """
+
+    class Meta:
+        """Metaclass options for InvenTreeParameterMixin."""
+
+        abstract = True
+
+    # Define a reverse relation to the Parameter model
+    parameters_list = GenericRelation(
+        'common.Parameter', content_type_field='model_type', object_id_field='model_id'
+    )
+
+    @staticmethod
+    def annotate_parameters(queryset: QuerySet) -> QuerySet:
+        """Annotate a queryset with pre-fetched parameters.
+
+        Args:
+            queryset: Queryset to annotate
+
+        Returns:
+            Annotated queryset
+        """
+        return queryset.prefetch_related(
+            'parameters_list',
+            'parameters_list__model_type',
+            'parameters_list__template',
+        )
+
+    @property
+    def parameters(self) -> QuerySet:
+        """Return a QuerySet containing all the Parameter instances for this model.
+
+        This will return pre-fetched data if available (i.e. in a serializer context).
+        """
+        # Check the query cache for pre-fetched parameters
+        if 'parameters_list' in getattr(self, '_prefetched_objects_cache', {}):
+            return self._prefetched_objects_cache['parameters_list']
+
+        return self.parameters_list.all()
+
+    def delete(self, *args, **kwargs):
+        """Handle the deletion of a model instance.
+
+        Before deleting the model instance, delete any associated parameters.
+        """
+        self.parameters_list.all().delete()
+        super().delete(*args, **kwargs)
+
+    @transaction.atomic
+    def copy_parameters_from(self, other, clear=True, **kwargs):
+        """Copy all parameters from another model instance.
+
+        Arguments:
+            other: The other model instance to copy parameters from
+            clear: If True, clear existing parameters before copying
+            **kwargs: Additional keyword arguments to pass to the Parameter constructor
+        """
+        import common.models
+
+        if clear:
+            self.parameters_list.all().delete()
+
+        parameters = []
+
+        content_type = ContentType.objects.get_for_model(self.__class__)
+
+        template_ids = [parameter.template.pk for parameter in other.parameters.all()]
+
+        # Remove all conflicting parameters first
+        self.parameters_list.filter(template__pk__in=template_ids).delete()
+
+        for parameter in other.parameters.all():
+            parameter.pk = None
+            parameter.model_id = self.pk
+            parameter.model_type = content_type
+
+            parameters.append(parameter)
+
+        if len(parameters) > 0:
+            common.models.Parameter.objects.bulk_create(parameters)
+
+    def get_parameter(self, name: str):
+        """Return a Parameter instance for the given parameter name.
+
+        Args:
+            name: Name of the parameter template
+
+        Returns:
+            Parameter instance if found, else None
+        """
+        return self.parameters_list.filter(template__name=name).first()
+
+    def get_parameters(self) -> QuerySet:
+        """Return all Parameter instances for this model."""
+        return (
+            self.parameters_list.all()
+            .prefetch_related('template', 'model_type')
+            .order_by('template__name')
+        )
+
+    def parameters_map(self) -> dict:
+        """Return a map (dict) of parameter values associated with this Part instance, of the form.
+
+        Example:
+        {
+            "name_1": "value_1",
+            "name_2": "value_2",
+        }
+        """
+        params = {}
+
+        for parameter in self.parameters.all().prefetch_related('template'):
+            params[parameter.template.name] = parameter.data
+
+        return params
+
+    def check_parameter_delete(self, parameter):
+        """Run a check to determine if the provided parameter can be deleted.
+
+        The default implementation always returns True, but this can be overridden in the implementing class.
+        """
+        return True
+
+    def check_parameter_save(self, parameter):
+        """Run a check to determine if the provided parameter can be saved.
+
+        The default implementation always returns True, but this can be overridden in the implementing class.
+        """
+        return True
+
+
+class InvenTreeAttachmentMixin(InvenTreePermissionCheckMixin):
     """Provides an abstracted class for managing file attachments.
 
     Links the implementing model to the common.models.Attachment table,
@@ -491,33 +661,15 @@ class InvenTreeAttachmentMixin:
         super().delete(*args, **kwargs)
 
     @property
-    def attachments(self):
+    def attachments(self) -> QuerySet:
         """Return a queryset containing all attachments for this model."""
         return self.attachments_for_model().filter(model_id=self.pk)
 
-    @classmethod
-    def check_attachment_permission(cls, permission, user) -> bool:
-        """Check if the user has permission to perform the specified action on the attachment.
-
-        The default implementation runs a permission check against *this* model class,
-        but this can be overridden in the implementing class if required.
-
-        Arguments:
-            permission: The permission to check (add / change / view / delete)
-            user: The user to check against
-
-        Returns:
-            bool: True if the user has permission, False otherwise
-        """
-        perm = f'{cls._meta.app_label}.{permission}_{cls._meta.model_name}'
-        return user.has_perm(perm)
-
-    def attachments_for_model(self):
+    def attachments_for_model(self) -> QuerySet:
         """Return all attachments for this model class."""
         from common.models import Attachment
 
         model_type = self.__class__.__name__.lower()
-
         return Attachment.objects.filter(model_type=model_type)
 
     def create_attachment(self, attachment=None, link=None, comment='', **kwargs):
@@ -533,7 +685,7 @@ class InvenTreeAttachmentMixin:
         Attachment.objects.create(**kwargs)
 
 
-class InvenTreeTree(MPTTModel):
+class InvenTreeTree(ContentTypeMixin, MPTTModel):
     """Provides an abstracted self-referencing tree model, based on the MPTTModel class.
 
     Our implementation provides the following key improvements:

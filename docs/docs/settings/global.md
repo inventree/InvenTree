@@ -174,11 +174,14 @@ Configuration of label printing:
 {{ globalsetting("PART_COPY_TESTS") }}
 {{ globalsetting("PART_CATEGORY_PARAMETERS") }}
 {{ globalsetting("PART_CATEGORY_DEFAULT_ICON") }}
-{{ globalsetting("PART_PARAMETER_ENFORCE_UNITS") }}
 
-#### Part Parameter Templates
+#### Parameter Templates
 
-Refer to the section describing [how to create part parameter templates](../part/parameter.md#create-template).
+| Name | Description | Default | Units |
+| ---- | ----------- | ------- | ----- |
+{{ globalsetting("PARAMETER_ENFORCE_UNITS") }}
+
+For more information on parameters, refer to the [parameter documentation](../concepts/parameters.md).
 
 ### Categories
 
