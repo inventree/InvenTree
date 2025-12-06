@@ -72,7 +72,7 @@ def report_page_size_default():
     try:
         page_size = get_global_setting('REPORT_DEFAULT_PAGE_SIZE', 'A4', create=False)
     except Exception as exc:
-        logger.exception('Error getting default page size: %s', str(exc))
+        logger.exception('Error getting default page size: %s', exc)
         page_size = 'A4'
 
     return page_size

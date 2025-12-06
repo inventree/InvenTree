@@ -13,6 +13,117 @@ import {
 } from '../helpers.ts';
 import { doCachedLogin } from '../login.ts';
 
+test('Purchasing - Index', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'purchasing/index/' });
+
+  // Purchase Orders tab
+  await loadTab(page, 'Purchase Orders');
+  await page
+    .getByRole('button', { name: 'segmented-icon-control-parametric' })
+    .click();
+
+  await page
+    .getByRole('button', { name: 'segmented-icon-control-calendar' })
+    .click();
+  await page.getByRole('button', { name: 'calendar-select-month' }).waitFor();
+  await page
+    .getByRole('button', { name: 'segmented-icon-control-table' })
+    .click();
+
+  // Suppliers tab
+  await loadTab(page, 'Suppliers');
+  await page
+    .getByRole('button', { name: 'segmented-icon-control-parametric' })
+    .click();
+  await page
+    .getByRole('button', { name: 'segmented-icon-control-table' })
+    .click();
+
+  // Supplier parts tab
+  await loadTab(page, 'Supplier Parts');
+  await page
+    .getByRole('button', { name: 'segmented-icon-control-parametric' })
+    .click();
+  await page
+    .getByRole('button', { name: 'segmented-icon-control-table' })
+    .click();
+
+  // Manufacturers tab
+  await loadTab(page, 'Manufacturers');
+  await page
+    .getByRole('button', { name: 'segmented-icon-control-parametric' })
+    .click();
+  await page
+    .getByRole('button', { name: 'segmented-icon-control-table' })
+    .click();
+
+  // Manufacturer parts tab
+  await loadTab(page, 'Manufacturer Parts');
+  await page
+    .getByRole('button', { name: 'segmented-icon-control-parametric' })
+    .click();
+  await page
+    .getByRole('button', { name: 'segmented-icon-control-table' })
+    .click();
+});
+
+test('Purchase Orders - General', async ({ browser }) => {
+  const page = await doCachedLogin(browser);
+
+  await page.getByRole('tab', { name: 'Purchasing' }).click();
+  await page.waitForURL('**/purchasing/index/**');
+
+  await page.getByRole('cell', { name: 'PO0012' }).click();
+  await page.waitForTimeout(200);
+
+  await loadTab(page, 'Line Items');
+  await loadTab(page, 'Received Stock');
+  await loadTab(page, 'Parameters');
+  await loadTab(page, 'Attachments');
+
+  await page.getByRole('tab', { name: 'Purchasing' }).click();
+  await loadTab(page, 'Suppliers');
+  await page.getByText('Arrow', { exact: true }).click();
+  await page.waitForTimeout(200);
+
+  await loadTab(page, 'Supplied Parts');
+  await loadTab(page, 'Purchase Orders');
+  await loadTab(page, 'Stock Items');
+  await loadTab(page, 'Contacts');
+  await loadTab(page, 'Addresses');
+  await loadTab(page, 'Attachments');
+
+  await page.getByRole('tab', { name: 'Purchasing' }).click();
+  await loadTab(page, 'Manufacturers');
+  await page.getByText('AVX Corporation').click();
+  await page.waitForTimeout(200);
+
+  await loadTab(page, 'Addresses');
+  await page.getByRole('cell', { name: 'West Branch' }).click();
+  await page.locator('.mantine-ScrollArea-root').click();
+  await page
+    .getByRole('row', { name: 'West Branch Yes Surf Avenue 9' })
+    .getByRole('button')
+    .click();
+  await page.getByRole('menuitem', { name: 'Edit' }).click();
+
+  await page.getByLabel('text-field-title', { exact: true }).waitFor();
+  await page.getByLabel('text-field-line2', { exact: true }).waitFor();
+
+  // Read the current value of the cell, to ensure we always *change* it!
+  const value = await page
+    .getByLabel('text-field-line2', { exact: true })
+    .inputValue();
+  await page
+    .getByLabel('text-field-line2', { exact: true })
+    .fill(value == 'old' ? 'new' : 'old');
+
+  await page.getByRole('button', { name: 'Submit' }).isEnabled();
+
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByRole('tab', { name: 'Details' }).waitFor();
+});
+
 test('Purchase Orders - Table', async ({ browser }) => {
   const page = await doCachedLogin(browser);
 
@@ -130,62 +241,6 @@ test('Purchase Orders - Barcodes', async ({ browser }) => {
   await page.getByRole('button', { name: 'Issue Order' }).waitFor();
 });
 
-test('Purchase Orders - General', async ({ browser }) => {
-  const page = await doCachedLogin(browser);
-
-  await page.getByRole('tab', { name: 'Purchasing' }).click();
-  await page.waitForURL('**/purchasing/index/**');
-
-  await page.getByRole('cell', { name: 'PO0012' }).click();
-  await page.waitForTimeout(200);
-
-  await loadTab(page, 'Line Items');
-  await loadTab(page, 'Received Stock');
-  await loadTab(page, 'Attachments');
-
-  await page.getByRole('tab', { name: 'Purchasing' }).click();
-  await loadTab(page, 'Suppliers');
-  await page.getByText('Arrow', { exact: true }).click();
-  await page.waitForTimeout(200);
-
-  await loadTab(page, 'Supplied Parts');
-  await loadTab(page, 'Purchase Orders');
-  await loadTab(page, 'Stock Items');
-  await loadTab(page, 'Contacts');
-  await loadTab(page, 'Addresses');
-  await loadTab(page, 'Attachments');
-
-  await page.getByRole('tab', { name: 'Purchasing' }).click();
-  await loadTab(page, 'Manufacturers');
-  await page.getByText('AVX Corporation').click();
-  await page.waitForTimeout(200);
-
-  await loadTab(page, 'Addresses');
-  await page.getByRole('cell', { name: 'West Branch' }).click();
-  await page.locator('.mantine-ScrollArea-root').click();
-  await page
-    .getByRole('row', { name: 'West Branch Yes Surf Avenue 9' })
-    .getByRole('button')
-    .click();
-  await page.getByRole('menuitem', { name: 'Edit' }).click();
-
-  await page.getByLabel('text-field-title', { exact: true }).waitFor();
-  await page.getByLabel('text-field-line2', { exact: true }).waitFor();
-
-  // Read the current value of the cell, to ensure we always *change* it!
-  const value = await page
-    .getByLabel('text-field-line2', { exact: true })
-    .inputValue();
-  await page
-    .getByLabel('text-field-line2', { exact: true })
-    .fill(value == 'old' ? 'new' : 'old');
-
-  await page.getByRole('button', { name: 'Submit' }).isEnabled();
-
-  await page.getByRole('button', { name: 'Submit' }).click();
-  await page.getByRole('tab', { name: 'Details' }).waitFor();
-});
-
 test('Purchase Orders - Filters', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
     username: 'reader',
@@ -214,6 +269,44 @@ test('Purchase Orders - Filters', async ({ browser }) => {
   await page.getByRole('option', { name: 'Created After' }).waitFor();
   await page.getByRole('option', { name: 'Completed After' }).waitFor();
   await page.getByRole('option', { name: 'Target Date After' }).waitFor();
+});
+
+test('Purchase Orders - Price Breaks', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    url: 'purchasing/purchase-order/14/line-items'
+  });
+
+  await page
+    .getByRole('button', { name: 'action-button-add-line-item' })
+    .click();
+  await page.getByLabel('related-field-part').fill('002.01');
+  await page.getByRole('option', { name: 'PCBWOY PCB-002.01' }).click();
+
+  // Expected price-break values
+  const priceBreaks = {
+    1: 500,
+    8: 500,
+    10: 565,
+    99: 565,
+    999: 205
+  };
+
+  for (const [qty, expectedPrice] of Object.entries(priceBreaks)) {
+    await page.getByLabel('number-field-quantity').fill(qty);
+
+    await expect(
+      page.getByRole('textbox', { name: 'number-field-purchase_price' })
+    ).toHaveAttribute('placeholder', expectedPrice.toString(), {
+      timeout: 500
+    });
+  }
+
+  // Auto-fill the suggested sale price
+  await page.getByLabel('field-purchase_price-accept-placeholder').click();
+
+  await expect(
+    page.getByRole('textbox', { name: 'number-field-purchase_price' })
+  ).toHaveValue('205', { timeout: 500 });
 });
 
 test('Purchase Orders - Order Parts', async ({ browser }) => {
@@ -263,7 +356,9 @@ test('Purchase Orders - Order Parts', async ({ browser }) => {
 
   // Select supplier part
   await page.getByLabel('related-field-supplier_part').click();
-  await page.getByText('WM1731-ND').click();
+  await page
+    .getByRole('option', { name: 'Thumbnail DigiKey WM1731-ND' })
+    .click();
 
   // Option to create a new supplier part
   await page.getByLabel('action-button-new-supplier-part').click();

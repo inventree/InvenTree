@@ -30,7 +30,7 @@ export default function useDataExport({
 
   const [exportId, setExportId] = useState<number | undefined>(undefined);
 
-  const progress = useDataOutput({
+  useDataOutput({
     title: t`Exporting Data`,
     id: exportId
   });

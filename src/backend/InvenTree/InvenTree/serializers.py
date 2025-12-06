@@ -7,6 +7,7 @@ from decimal import Decimal
 from typing import Any, Optional
 
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -28,6 +29,7 @@ import InvenTree.ready
 from common.currency import currency_code_default, currency_code_mappings
 from InvenTree.fields import InvenTreeRestURLField, InvenTreeURLField
 from InvenTree.helpers import str2bool
+from InvenTree.helpers_model import getModelsWithMixin
 
 from .setting.storages import StorageBackends
 
@@ -69,7 +71,7 @@ def enable_filter(
     Returns:
         The decorated serializer field, marked as filterable.
     """
-    # Ensure this function can be actually filteres
+    # Ensure this function can be actually filtered
     if not issubclass(func.__class__, FilterableSerializerField):
         raise TypeError(
             'INVE-I2: `enable_filter` can only be applied to serializer fields / serializers that contain the `FilterableSerializerField` mixin!'
@@ -132,11 +134,11 @@ class FilterableSerializerMixin:
             query_params = dict(getattr(context.get('request', {}), 'query_params', {}))
 
         # Remove filter args from kwargs to avoid issues with super().__init__
-        poped_kwargs = {}  # store popped kwargs as a arg might be reused for multiple fields
+        popped_kwargs = {}  # store popped kwargs as a arg might be reused for multiple fields
         tgs_vals: dict[str, bool] = {}
         for k, v in self.filter_targets.items():
             pop_ref = v['filter_name'] or k
-            val = kwargs.pop(pop_ref, poped_kwargs.get(pop_ref))
+            val = kwargs.pop(pop_ref, popped_kwargs.get(pop_ref))
 
             # Optionally also look in query parameters
             if val is None and self.filter_on_query and v.get('filter_by_query', True):
@@ -145,13 +147,13 @@ class FilterableSerializerMixin:
                     val = val[0]
 
             if val:  # Save popped value for reuse
-                poped_kwargs[pop_ref] = val
+                popped_kwargs[pop_ref] = val
             tgs_vals[k] = (
                 str2bool(val) if isinstance(val, (str, int, float)) else val
             )  # Support for various filtering style for backwards compatibility
         self.filter_target_values = tgs_vals
 
-        # Ensure this mixin is not proadly applied as it is expensive on scale (total CI time increased by 21% when running all coverage tests)
+        # Ensure this mixin is not broadly applied as it is expensive on scale (total CI time increased by 21% when running all coverage tests)
         if len(self.filter_targets) == 0 and not self.no_filters:
             raise Exception(
                 'INVE-I2: No filter targets found in fields, remove `PathScopedMixin`'
@@ -646,6 +648,11 @@ class InvenTreeDecimalField(serializers.FloatField):
 
     def to_internal_value(self, data):
         """Convert to python type."""
+        if data in [None, '']:
+            if self.allow_null:
+                return None
+            raise serializers.ValidationError(_('This field may not be null.'))
+
         # Convert the value to a string, and then a decimal
         try:
             return Decimal(str(data))
@@ -716,3 +723,96 @@ class RemoteImageMixin(metaclass=serializers.SerializerMetaclass):
             raise ValidationError(_('Failed to download image from remote URL'))
 
         return url
+
+
+class ContentTypeField(serializers.ChoiceField):
+    """Serializer field which represents a ContentType as 'app_label.model_name'.
+
+    This field converts a ContentType instance to a string representation in the format 'app_label.model_name' during serialization, and vice versa during deserialization.
+
+    Additionally, a "mixin_class" can be supplied to the field, which will restrict the valid content types to only those models which inherit from the specified mixin.
+    """
+
+    mixin_class = None
+
+    def __init__(self, *args, mixin_class=None, **kwargs):
+        """Initialize the ContentTypeField.
+
+        Args:
+            mixin_class: Optional mixin class to restrict valid content types.
+        """
+        self.mixin_class = mixin_class
+
+        # Override the 'choices' field, to limit to the appropriate models
+        if self.mixin_class is not None:
+            models = getModelsWithMixin(self.mixin_class)
+
+            kwargs['choices'] = [
+                (
+                    f'{model._meta.app_label}.{model._meta.model_name}',
+                    model._meta.verbose_name,
+                )
+                for model in models
+            ]
+        else:
+            content_types = ContentType.objects.all()
+
+            kwargs['choices'] = [
+                (f'{ct.app_label}.{ct.model}', str(ct)) for ct in content_types
+            ]
+
+        if kwargs.get('allow_null') or kwargs.get('allow_blank'):
+            kwargs['choices'] = [('', '---------'), *kwargs['choices']]
+
+        super().__init__(*args, **kwargs)
+
+    def to_representation(self, value):
+        """Convert ContentType instance to string representation."""
+        return f'{value.app_label}.{value.model}'
+
+    def to_internal_value(self, data):
+        """Convert string representation back to ContentType instance."""
+        from django.contrib.contenttypes.models import ContentType
+
+        content_type = None
+
+        if data in ['', None]:
+            return None
+
+        # First, try to resolve the content type via direct pk value
+        try:
+            content_type_id = int(data)
+            content_type = ContentType.objects.get_for_id(content_type_id)
+        except (ValueError, ContentType.DoesNotExist):
+            content_type = None
+
+        try:
+            if len(data.split('.')) == 2:
+                app_label, model = data.split('.')
+                content_types = ContentType.objects.filter(
+                    app_label=app_label, model=model
+                )
+
+                if content_types.count() == 1:
+                    # Try exact match first
+                    content_type = content_types.first()
+            else:
+                # Try lookup just on model name
+                content_types = ContentType.objects.filter(model=data)
+                if content_types.exists() and content_types.count() == 1:
+                    content_type = content_types.first()
+
+        except Exception:
+            raise ValidationError(_('Invalid content type format'))
+
+        if content_type is None:
+            raise ValidationError(_('Content type not found'))
+
+        if self.mixin_class is not None:
+            model_class = content_type.model_class()
+            if not issubclass(model_class, self.mixin_class):
+                raise ValidationError(
+                    _('Content type does not match required mixin class')
+                )
+
+        return content_type

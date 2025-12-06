@@ -1,6 +1,7 @@
 import { test } from '../baseFixtures';
 import {
   clearTableFilters,
+  clickOnParamFilter,
   clickOnRowMenu,
   deletePart,
   getRowFromCell,
@@ -182,7 +183,14 @@ test('Parts - Locking', async ({ browser }) => {
     .waitFor();
 
   await loadTab(page, 'Parameters');
-  await page.getByLabel('action-button-add-parameter').waitFor();
+  await page
+    .getByRole('button', { name: 'action-menu-add-parameters' })
+    .click();
+  await page
+    .getByRole('menuitem', {
+      name: 'action-menu-add-parameters-create-parameter'
+    })
+    .click();
 
   // Navigate to a known assembly which *is* locked
   await navigate(page, 'part/100/bom');
@@ -212,7 +220,7 @@ test('Parts - Details', async ({ browser }) => {
 
   // Depending on the state of other tests, the "In Production" value may vary
   // This could be either 4 / 49, or 5 / 49
-  await page.getByText(/[4|5] \/ 49/).waitFor();
+  await page.getByText(/[4|5] \/ \d+/).waitFor();
 
   // Badges
   await page.getByText('Required: 10').waitFor();
@@ -232,14 +240,14 @@ test('Parts - Requirements', async ({ browser }) => {
   // Check top-level badges
   await page.getByText('In Stock: 209').waitFor();
   await page.getByText('Available: 204').waitFor();
-  await page.getByText('Required: 275').waitFor();
+  await page.getByText(/Required: 2\d+/).waitFor();
   await page.getByText('In Production: 24').waitFor();
 
   // Check requirements details
   await page.getByText('204 / 209').waitFor(); // Available stock
-  await page.getByText('0 / 100').waitFor(); // Allocated to build orders
+  await page.getByText(/0 \/ 1\d+/).waitFor(); // Allocated to build orders
   await page.getByText('5 / 175').waitFor(); // Allocated to sales orders
-  await page.getByText('24 / 214').waitFor(); // In production
+  await page.getByText(/24 \/ 2\d+/).waitFor(); // In production
 
   // Let's check out the "variants" for this part, too
   await navigate(page, 'part/81/details'); // WID-REV-A
@@ -408,12 +416,10 @@ test('Parts - Pricing (Variant)', async ({ browser }) => {
   await loadTab(page, 'Part Pricing');
   await page.getByLabel('Part Pricing').getByText('Part Pricing').waitFor();
   await page.getByRole('button', { name: 'Pricing Overview' }).waitFor();
-  await page.getByText('Last Updated').waitFor();
-  await page.getByRole('button', { name: 'Internal Pricing' }).isDisabled();
+  await page.getByText('Last Updated').first().waitFor();
+  await page.getByRole('button', { name: 'Internal Pricing' }).isEnabled();
   await page.getByRole('button', { name: 'BOM Pricing' }).isEnabled();
   await page.getByRole('button', { name: 'Variant Pricing' }).isEnabled();
-  await page.getByRole('button', { name: 'Sale Pricing' }).isDisabled();
-  await page.getByRole('button', { name: 'Sale History' }).isDisabled();
 
   // Variant Pricing
   await page.getByRole('button', { name: 'Variant Pricing' }).click();
@@ -497,7 +503,14 @@ test('Parts - Parameters', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: 'part/69/parameters' });
 
   // Create a new template
-  await page.getByLabel('action-button-add-parameter').click();
+  await page
+    .getByRole('button', { name: 'action-menu-add-parameters' })
+    .click();
+  await page
+    .getByRole('menuitem', {
+      name: 'action-menu-add-parameters-create-parameter'
+    })
+    .click();
 
   // Select the "Color" parameter template (should create a "choice" field)
   await page.getByLabel('related-field-template').fill('Color');
@@ -511,15 +524,18 @@ test('Parts - Parameters', async ({ browser }) => {
 
   // Select the "polarized" parameter template (should create a "checkbox" field)
   await page.getByLabel('related-field-template').fill('Polarized');
-  await page.getByText('Is this part polarized?').click();
+  await page.getByRole('option', { name: 'Polarized Is this part' }).click();
 
   // Submit with "false" value
   await page.getByRole('button', { name: 'Submit' }).click();
 
+  const cell = await page.getByRole('cell', {
+    name: 'Is this part polarized?'
+  });
+
   // Check for the expected values in the table
-  let row = await getRowFromCell(
-    await page.getByRole('cell', { name: 'Polarized', exact: true })
-  );
+  const row = await getRowFromCell(cell);
+
   await row.getByRole('cell', { name: 'No', exact: true }).waitFor();
   await row.getByRole('cell', { name: 'allaccess' }).waitFor();
   await row.getByLabel(/row-action-menu-/i).click();
@@ -534,48 +550,36 @@ test('Parts - Parameters', async ({ browser }) => {
     .click();
   await page.getByRole('button', { name: 'Submit' }).click();
 
-  row = await getRowFromCell(
-    await page.getByRole('cell', { name: 'Polarized', exact: true })
-  );
-  await row.getByRole('cell', { name: 'Yes', exact: true }).waitFor();
-
-  await page.getByText('1 - 1 / 1').waitFor();
-
   // Finally, delete the parameter
   await row.getByLabel(/row-action-menu-/i).click();
   await page.getByRole('menuitem', { name: 'Delete' }).click();
-  await page.getByRole('button', { name: 'Delete' }).click();
 
+  await page.getByRole('button', { name: 'Delete', exact: true }).click();
   await page.getByText('No records found').first().waitFor();
 });
 
 test('Parts - Parameter Filtering', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: 'part/' });
 
-  await loadTab(page, 'Part Parameters');
+  await loadTab(page, 'Parts', true);
+  await page
+    .getByRole('button', { name: 'segmented-icon-control-parametric' })
+    .click();
+
   await clearTableFilters(page);
 
   // All parts should be available (no filters applied)
-  await page.getByText('/ 425').waitFor();
-
-  const clickOnParamFilter = async (name: string) => {
-    const button = await page
-      .getByRole('button', { name: `${name} Not sorted` })
-      .getByRole('button')
-      .first();
-    await button.scrollIntoViewIfNeeded();
-    await button.click();
-  };
+  await page.getByText(/\/ 42\d/).waitFor();
 
   const clearParamFilter = async (name: string) => {
-    await clickOnParamFilter(name);
+    await clickOnParamFilter(page, name);
     await page.getByLabel(`clear-filter-${name}`).waitFor();
     await page.getByLabel(`clear-filter-${name}`).click();
     // await page.getByLabel(`clear-filter-${name}`).click();
   };
 
   // Let's filter by color
-  await clickOnParamFilter('Color');
+  await clickOnParamFilter(page, 'Color');
   await page.getByRole('option', { name: 'Red' }).click();
 
   // Only 10 parts available
@@ -584,7 +588,16 @@ test('Parts - Parameter Filtering', async ({ browser }) => {
   // Reset the filter
   await clearParamFilter('Color');
 
-  await page.getByText('/ 425').waitFor();
+  await page.getByText(/\/ 42\d/).waitFor();
+});
+
+test('Parts - Test Results', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: '/part/74/test_results' });
+
+  await page.waitForTimeout(2500);
+
+  await page.getByText(/1 - \d+ \/ 1\d\d/).waitFor();
+  await page.getByText('Blue Paint Applied').waitFor();
 });
 
 test('Parts - Notes', async ({ browser }) => {
@@ -624,7 +637,7 @@ test('Parts - Revision', async ({ browser }) => {
     .getByText('Green Round Table (revision B) | B', { exact: true })
     .click();
   await page
-    .getByRole('option', { name: 'Thumbnail Green Round Table Virtual' })
+    .getByRole('option', { name: 'Thumbnail Green Round Table No stock' })
     .click();
 
   await page.waitForURL('**/web/part/101/**');

@@ -15,7 +15,6 @@ from jinja2 import Template
 
 import build.validators
 import common.currency
-import common.models
 import common.validators
 import order.validators
 import report.helpers
@@ -536,14 +535,6 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': '',
         'validator': common.validators.validate_icon,
     },
-    'PART_PARAMETER_ENFORCE_UNITS': {
-        'name': _('Enforce Parameter Units'),
-        'description': _(
-            'If units are provided, parameter values must match the specified units'
-        ),
-        'default': True,
-        'validator': bool,
-    },
     'PRICING_DECIMAL_PLACES_MIN': {
         'name': _('Minimum Pricing Decimal Places'),
         'description': _(
@@ -683,6 +674,14 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'description': _('Default page size for PDF reports'),
         'default': 'A4',
         'choices': report.helpers.report_page_size_options,
+    },
+    'PARAMETER_ENFORCE_UNITS': {
+        'name': _('Enforce Parameter Units'),
+        'description': _(
+            'If units are provided, parameter values must match the specified units'
+        ),
+        'default': True,
+        'validator': bool,
     },
     'SERIAL_NUMBER_GLOBALLY_UNIQUE': {
         'name': _('Globally Unique Serials'),

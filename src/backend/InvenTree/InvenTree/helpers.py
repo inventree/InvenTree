@@ -5,11 +5,10 @@ import hashlib
 import inspect
 import io
 import json
-import os
 import os.path
 import re
 from decimal import Decimal, InvalidOperation
-from typing import Optional, TypeVar, Union
+from typing import Optional, TypeVar
 from wsgiref.util import FileWrapper
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
@@ -17,6 +16,7 @@ from django.conf import settings
 from django.contrib.staticfiles.storage import StaticFilesStorage
 from django.core.exceptions import FieldError, ValidationError
 from django.core.files.storage import default_storage
+from django.db.models.fields.files import FieldFile, ImageFieldFile
 from django.http import StreamingHttpResponse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -28,6 +28,7 @@ import structlog
 from bleach import clean
 from djmoney.money import Money
 from PIL import Image
+from stdimage.models import StdImageField, StdImageFieldFile
 
 from common.currency import currency_code_default
 
@@ -127,7 +128,7 @@ def extract_int(
     return ref_int
 
 
-def generateTestKey(test_name: Union[str, None]) -> str:
+def generateTestKey(test_name: str | None) -> str:
     """Generate a test 'key' for a given test name. This must not have illegal chars as it will be used for dict lookup in a template.
 
     Tests must be named such that they will have unique keys.
@@ -175,11 +176,52 @@ def constructPathString(path: list[str], max_chars: int = 250) -> str:
     return pathstring
 
 
-def getMediaUrl(filename):
+def getMediaUrl(
+    file: FieldFile | ImageFieldFile | StdImageFieldFile, name: str | None = None
+):
     """Return the qualified access path for the given file, under the media directory."""
+    if not isinstance(file, (FieldFile, ImageFieldFile, StdImageFieldFile)):
+        raise TypeError(
+            'file must be one of FileField, ImageFileField, StdImageFieldFile'
+        )
+    if name is not None:
+        file = regenerate_imagefile(file, name)
     if settings.STORAGE_TARGET == StorageBackends.S3:
-        return str(filename)
-    return os.path.join(MEDIA_URL, str(filename))
+        return str(file.url)
+    return os.path.join(MEDIA_URL, str(file.url))
+
+
+def regenerate_imagefile(_file, _name: str):
+    """Regenerate a file object for a given variation name.
+
+    Arguments:
+        _file: Original file object
+        _name: Name of the variation (e.g. 'thumbnail', 'preview')
+    """
+    name = _file.field.attr_class.get_variation_name(_file.name, _name)
+    return ImageFieldFile(_file.instance, _file, name)  # type: ignore
+
+
+def image2name(img_obj: StdImageField, do_preview: bool, do_thumbnail: bool):
+    """Convert an image object to a filename string.
+
+    Arguments:
+        img_obj: Image object
+        do_preview: Return preview image name
+        do_thumbnail: Return thumbnail image name
+    """
+
+    def extract(ref: str):
+        return None if not hasattr(img_obj, ref) else getattr(img_obj, ref).name
+
+    if not img_obj:
+        return None
+    elif do_preview:
+        return extract('preview')
+    elif do_thumbnail:
+        return extract('thumbnail')
+    else:
+        return img_obj.name
 
 
 def getStaticUrl(filename):

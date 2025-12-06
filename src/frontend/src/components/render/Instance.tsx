@@ -36,6 +36,8 @@ import {
   RenderContentType,
   RenderError,
   RenderImportSession,
+  RenderParameter,
+  RenderParameterTemplate,
   RenderProjectCode,
   RenderSelectionList
 } from './Generic';
@@ -46,12 +48,7 @@ import {
   RenderSalesOrder,
   RenderSalesOrderShipment
 } from './Order';
-import {
-  RenderPart,
-  RenderPartCategory,
-  RenderPartParameterTemplate,
-  RenderPartTestTemplate
-} from './Part';
+import { RenderPart, RenderPartCategory, RenderPartTestTemplate } from './Part';
 import { RenderPlugin } from './Plugin';
 import { RenderLabelTemplate, RenderReportTemplate } from './Report';
 import {
@@ -71,11 +68,12 @@ export const RendererLookup: ModelRendererDict = {
   [ModelType.builditem]: RenderBuildItem,
   [ModelType.company]: RenderCompany,
   [ModelType.contact]: RenderContact,
+  [ModelType.parameter]: RenderParameter,
+  [ModelType.parametertemplate]: RenderParameterTemplate,
   [ModelType.manufacturerpart]: RenderManufacturerPart,
   [ModelType.owner]: RenderOwner,
   [ModelType.part]: RenderPart,
   [ModelType.partcategory]: RenderPartCategory,
-  [ModelType.partparametertemplate]: RenderPartParameterTemplate,
   [ModelType.parttesttemplate]: RenderPartTestTemplate,
   [ModelType.projectcode]: RenderProjectCode,
   [ModelType.purchaseorder]: RenderPurchaseOrder,
@@ -215,7 +213,7 @@ export function RenderInlineModel({
 
   return (
     <Group gap='xs' justify='space-between' title={tooltip}>
-      <Group gap='xs' justify='left' wrap='nowrap'>
+      <Group gap='xs' justify='left'>
         {prefix}
         {image && <Thumbnail src={image} size={18} />}
         {url ? (

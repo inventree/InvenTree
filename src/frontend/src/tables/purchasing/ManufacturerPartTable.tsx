@@ -5,6 +5,7 @@ import { AddItemButton } from '@lib/components/AddItemButton';
 import {
   type RowAction,
   RowDeleteAction,
+  RowDuplicateAction,
   RowEditAction
 } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
@@ -88,9 +89,7 @@ export function ManufacturerPartTable({
 
   const manufacturerPartFields = useManufacturerPartFields();
 
-  const [selectedPart, setSelectedPart] = useState<number | undefined>(
-    undefined
-  );
+  const [selectedPart, setSelectedPart] = useState<any>(undefined);
 
   const createManufacturerPart = useCreateApiFormModal({
     url: ApiEndpoints.manufacturer_part_list,
@@ -105,15 +104,25 @@ export function ManufacturerPartTable({
 
   const editManufacturerPart = useEditApiFormModal({
     url: ApiEndpoints.manufacturer_part_list,
-    pk: selectedPart,
+    pk: selectedPart?.pk,
     title: t`Edit Manufacturer Part`,
-    fields: manufacturerPartFields,
+    fields: useMemo(() => manufacturerPartFields, [manufacturerPartFields]),
     table: table
+  });
+
+  const duplicateManufacturerPart = useCreateApiFormModal({
+    url: ApiEndpoints.manufacturer_part_list,
+    title: t`Add Manufacturer Part`,
+    fields: useMemo(() => manufacturerPartFields, [manufacturerPartFields]),
+    table: table,
+    initialData: {
+      ...selectedPart
+    }
   });
 
   const deleteManufacturerPart = useDeleteApiFormModal({
     url: ApiEndpoints.manufacturer_part_list,
-    pk: selectedPart,
+    pk: selectedPart?.pk,
     title: t`Delete Manufacturer Part`,
     table: table
   });
@@ -157,14 +166,21 @@ export function ManufacturerPartTable({
         RowEditAction({
           hidden: !user.hasChangeRole(UserRoles.purchase_order),
           onClick: () => {
-            setSelectedPart(record.pk);
+            setSelectedPart(record);
             editManufacturerPart.open();
+          }
+        }),
+        RowDuplicateAction({
+          hidden: !user.hasAddRole(UserRoles.purchase_order),
+          onClick: () => {
+            setSelectedPart(record);
+            duplicateManufacturerPart.open();
           }
         }),
         RowDeleteAction({
           hidden: !user.hasDeleteRole(UserRoles.purchase_order),
           onClick: () => {
-            setSelectedPart(record.pk);
+            setSelectedPart(record);
             deleteManufacturerPart.open();
           }
         })
@@ -176,6 +192,7 @@ export function ManufacturerPartTable({
   return (
     <>
       {createManufacturerPart.modal}
+      {duplicateManufacturerPart.modal}
       {editManufacturerPart.modal}
       {deleteManufacturerPart.modal}
       <InvenTreeTable

@@ -49,7 +49,7 @@ export function useImportSession({
     setInstance(data);
   }, []);
 
-  const importSessionStatus = useStatusCodes({
+  useStatusCodes({
     modelType: ModelType.importsession
   });
 

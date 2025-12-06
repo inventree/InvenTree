@@ -219,7 +219,7 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
                         )
                         html += cell
                     except Exception as exc:
-                        logger.exception('Error rendering label: %s', str(exc))
+                        logger.exception('Error rendering label: %s', exc)
                         html += """
                         <div class='label-sheet-cell-error'></div>
                         """

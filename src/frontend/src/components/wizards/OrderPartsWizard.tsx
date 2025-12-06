@@ -32,6 +32,7 @@ import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import useWizard from '../../hooks/UseWizard';
 import { RenderPartColumn } from '../../tables/ColumnRenderers';
+import { CopyButton } from '../buttons/CopyButton';
 import RemoveRowButton from '../buttons/RemoveRowButton';
 import { StandaloneField } from '../forms/StandaloneField';
 import Expand from '../items/Expand';
@@ -235,6 +236,8 @@ function SelectPartsStep({
       quantity: {
         // TODO: Auto-fill with the desired quantity
       },
+      purchase_price: {},
+      purchase_price_currency: {},
       merge_items: {}
     };
   }, [selectedRecord]);
@@ -299,6 +302,7 @@ function SelectPartsStep({
                   model: ModelType.supplierpart,
                   placeholder: t`Select supplier part`,
                   required: true,
+                  autoFill: true,
                   value: record.supplier_part?.pk,
                   onValueChange: (value, instance) => {
                     onSelectSupplierPart(record.part.pk, instance);
@@ -312,6 +316,12 @@ function SelectPartsStep({
                 }}
               />
             </Expand>
+            <CopyButton
+              disabled={!record.supplier_part?.pk}
+              value={record.supplier_part?.SKU}
+              tooltipPosition='top-end'
+              tooltip={t`Copy supplier part number`}
+            />
             <AddItemButton
               tooltip={t`New supplier part`}
               tooltipAlignment='top-end'

@@ -11,6 +11,7 @@ from rest_framework import serializers
 from sql_util.utils import SubqueryCount
 from taggit.serializers import TagListSerializerField
 
+import common.serializers
 import company.filters
 import part.filters
 import part.serializers as part_serializers
@@ -36,7 +37,6 @@ from .models import (
     Company,
     Contact,
     ManufacturerPart,
-    ManufacturerPartParameter,
     SupplierPart,
     SupplierPriceBreak,
 )
@@ -113,6 +113,7 @@ class AddressBriefSerializer(InvenTreeModelSerializer):
 
 @register_importer()
 class CompanySerializer(
+    FilterableSerializerMixin,
     DataImportExportSerializerMixin,
     NotesFieldMixin,
     RemoteImageMixin,
@@ -152,6 +153,7 @@ class CompanySerializer(
             'address_count',
             'primary_address',
             'tax_id',
+            'parameters',
         ]
 
     @staticmethod
@@ -174,14 +176,18 @@ class CompanySerializer(
             )
         )
 
+        queryset = Company.annotate_parameters(queryset)
+
         return queryset
 
     address = serializers.SerializerMethodField(
-        label=_(
+        label=_('Primary Address'),
+        help_text=_(
             'Return the string representation for the primary address. This property exists for backwards compatibility.'
         ),
         allow_null=True,
     )
+
     primary_address = serializers.SerializerMethodField(allow_null=True)
 
     @extend_schema_field(serializers.CharField())
@@ -210,6 +216,12 @@ class CompanySerializer(
 
     currency = InvenTreeCurrencySerializer(
         help_text=_('Default currency used for this supplier'), required=True
+    )
+
+    parameters = enable_filter(
+        common.serializers.ParameterSerializer(many=True, read_only=True),
+        False,
+        filter_name='parameters',
     )
 
     def save(self):
@@ -275,9 +287,16 @@ class ManufacturerPartSerializer(
             'barcode_hash',
             'notes',
             'tags',
+            'parameters',
         ]
 
     tags = TagListSerializerField(required=False)
+
+    parameters = enable_filter(
+        common.serializers.ParameterSerializer(many=True, read_only=True),
+        False,
+        filter_name='parameters',
+    )
 
     part_detail = enable_filter(
         part_serializers.PartBriefSerializer(
@@ -302,30 +321,36 @@ class ManufacturerPartSerializer(
     )
 
 
-@register_importer()
-class ManufacturerPartParameterSerializer(
-    FilterableSerializerMixin, DataImportExportSerializerMixin, InvenTreeModelSerializer
+class SupplierPriceBreakBriefSerializer(
+    FilterableSerializerMixin, InvenTreeModelSerializer
 ):
-    """Serializer for the ManufacturerPartParameter model."""
+    """Brief serializer for SupplierPriceBreak object.
+
+    Used to provide a list of price breaks against the SupplierPart object.
+    """
+
+    no_filters = True
 
     class Meta:
         """Metaclass options."""
 
-        model = ManufacturerPartParameter
-
+        model = SupplierPriceBreak
         fields = [
             'pk',
-            'manufacturer_part',
-            'manufacturer_part_detail',
-            'name',
-            'value',
-            'units',
+            'part',
+            'quantity',
+            'price',
+            'price_currency',
+            'supplier',
+            'updated',
         ]
 
-    manufacturer_part_detail = enable_filter(
-        ManufacturerPartSerializer(
-            source='manufacturer_part', many=False, read_only=True, allow_null=True
-        )
+    quantity = InvenTreeDecimalField()
+    price = InvenTreeMoneySerializer(allow_null=True, required=True, label=_('Price'))
+    price_currency = InvenTreeCurrencySerializer()
+
+    supplier = serializers.PrimaryKeyRelatedField(
+        source='part.supplier', many=False, read_only=True
     )
 
 
@@ -373,14 +398,16 @@ class SupplierPartSerializer(
             'pack_quantity',
             'pack_quantity_native',
             'part',
-            'part_detail',
             'pretty_name',
             'SKU',
             'supplier',
             'supplier_detail',
             'updated',
             'notes',
+            'part_detail',
             'tags',
+            'price_breaks',
+            'parameters',
         ]
         read_only_fields = [
             'availability_updated',
@@ -441,6 +468,24 @@ class SupplierPartSerializer(
 
     pack_quantity_native = serializers.FloatField(read_only=True)
 
+    price_breaks = enable_filter(
+        SupplierPriceBreakBriefSerializer(
+            source='pricebreaks',
+            many=True,
+            read_only=True,
+            allow_null=True,
+            label=_('Price Breaks'),
+        ),
+        False,
+        filter_name='price_breaks',
+    )
+
+    parameters = enable_filter(
+        common.serializers.ParameterSerializer(many=True, read_only=True),
+        False,
+        filter_name='parameters',
+    )
+
     part_detail = part_serializers.PartBriefSerializer(
         label=_('Part'), source='part', many=False, read_only=True, allow_null=True
     )
@@ -489,11 +534,15 @@ class SupplierPartSerializer(
         Fields:
             in_stock: Current stock quantity for each SupplierPart
         """
+        queryset = queryset.prefetch_related('part', 'pricebreaks')
+
         queryset = queryset.annotate(in_stock=part.filters.annotate_total_stock())
 
         queryset = queryset.annotate(
             on_order=company.filters.annotate_on_order_quantity()
         )
+
+        queryset = SupplierPart.annotate_parameters(queryset)
 
         return queryset
 
@@ -532,24 +581,24 @@ class SupplierPartSerializer(
 
 @register_importer()
 class SupplierPriceBreakSerializer(
-    FilterableSerializerMixin, DataImportExportSerializerMixin, InvenTreeModelSerializer
+    SupplierPriceBreakBriefSerializer,
+    DataImportExportSerializerMixin,
+    InvenTreeModelSerializer,
 ):
-    """Serializer for SupplierPriceBreak object."""
+    """Serializer for SupplierPriceBreak object.
+
+    Note that this inherits from the SupplierPriceBreakBriefSerializer,
+    and does so to prevent circular serializer import issues.
+    """
 
     class Meta:
         """Metaclass options."""
 
         model = SupplierPriceBreak
         fields = [
-            'pk',
-            'part',
-            'part_detail',
-            'quantity',
-            'price',
-            'price_currency',
-            'supplier',
+            *SupplierPriceBreakBriefSerializer.Meta.fields,
             'supplier_detail',
-            'updated',
+            'part_detail',
         ]
 
     @staticmethod
@@ -559,25 +608,15 @@ class SupplierPriceBreakSerializer(
 
         return queryset
 
-    quantity = InvenTreeDecimalField()
-
-    price = InvenTreeMoneySerializer(allow_null=True, required=True, label=_('Price'))
-
-    price_currency = InvenTreeCurrencySerializer()
-
-    supplier = serializers.PrimaryKeyRelatedField(
-        source='part.supplier', many=False, read_only=True
-    )
-
     supplier_detail = enable_filter(
         CompanyBriefSerializer(
             source='part.supplier', many=False, read_only=True, allow_null=True
         )
     )
 
-    # Detail serializer for SupplierPart
     part_detail = enable_filter(
         SupplierPartSerializer(
             source='part', brief=True, many=False, read_only=True, allow_null=True
-        )
+        ),
+        False,
     )

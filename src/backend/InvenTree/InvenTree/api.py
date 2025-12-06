@@ -53,7 +53,7 @@ def read_license_file(path: Path) -> list:
         return []
 
     try:
-        data = json.loads(path.read_text())
+        data = json.loads(path.read_text(encoding='utf-8'))
     except Exception as e:
         logger.exception("Failed to parse license file '%s': %s", path, e)
         return []
@@ -598,6 +598,34 @@ class BulkUpdateMixin(BulkOperationMixin):
                 serializer.save()
 
         return Response({'success': f'Updated {n} items'}, status=200)
+
+
+class ParameterListMixin:
+    """Mixin class which supports filtering against parametric fields."""
+
+    def filter_queryset(self, queryset):
+        """Perform filtering against parametric fields."""
+        import common.filters
+
+        queryset = super().filter_queryset(queryset)
+
+        # Filter by parametric data
+        queryset = common.filters.filter_parametric_data(
+            queryset, self.request.query_params
+        )
+
+        serializer_class = (
+            getattr(self, 'serializer_class', None) or self.get_serializer_class()
+        )
+
+        model_class = serializer_class.Meta.model
+
+        # Apply ordering based on query parameter
+        queryset = common.filters.order_by_parameter(
+            queryset, model_class, self.request.query_params.get('ordering', None)
+        )
+
+        return queryset
 
 
 class BulkDeleteMixin(BulkOperationMixin):

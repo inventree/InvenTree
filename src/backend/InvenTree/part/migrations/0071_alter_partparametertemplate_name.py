@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='partparametertemplate',
             name='name',
-            field=models.CharField(help_text='Parameter Name', max_length=100, unique=True, validators=[part.models.validate_template_name], verbose_name='Name'),
+            field=models.CharField(help_text='Parameter Name', max_length=100, unique=True, validators=[], verbose_name='Name'),
         ),
     ]

@@ -20,6 +20,8 @@ from .api_version import INVENTREE_API_TEXT, INVENTREE_API_VERSION
 # InvenTree software version
 INVENTREE_SW_VERSION = '1.2.0 dev'
 
+# Minimum supported Python version
+MIN_PYTHON_VERSION = (3, 11)
 
 logger = logging.getLogger('inventree')
 
@@ -59,33 +61,36 @@ except Exception as exc:
 
 
 def checkMinPythonVersion():
-    """Check that the Python version is at least 3.9."""
+    """Check that the Python version meets the minimum requirements."""
+    V_MIN_MAJOR, V_MIN_MINOR = MIN_PYTHON_VERSION
+
     version = sys.version.split(' ')[0]
-    docs = 'https://docs.inventree.org/en/stable/start/intro/#python-requirements'
+    docs = 'https://docs.inventree.org/en/stable/start/#python-requirements'
 
     msg = f"""
-    InvenTree requires Python 3.9 or above - you are running version {version}.
+    INVE-E15: Python version not supported.
+    InvenTree requires Python {V_MIN_MAJOR}.{V_MIN_MINOR} or above - you are running version {version}.
     - Refer to the InvenTree documentation for more information:
     - {docs}
     """
 
-    if sys.version_info.major < 3:
+    if sys.version_info.major < V_MIN_MAJOR:
         raise RuntimeError(msg)
 
-    if sys.version_info.major == 3 and sys.version_info.minor < 9:
+    if sys.version_info.major == V_MIN_MAJOR and sys.version_info.minor < V_MIN_MINOR:
         raise RuntimeError(msg)
 
-    print(f'Python version {version} - {sys.executable}')
+    logger.info(f'Python version {version} - {sys.executable}')
 
 
-def inventreeInstanceName():
+def inventreeInstanceName() -> str:
     """Returns the InstanceName settings for the current database."""
     from common.settings import get_global_setting
 
     return get_global_setting('INVENTREE_INSTANCE')
 
 
-def inventreeInstanceTitle():
+def inventreeInstanceTitle() -> str:
     """Returns the InstanceTitle for the current database."""
     from common.settings import get_global_setting
 
@@ -95,7 +100,7 @@ def inventreeInstanceTitle():
     return 'InvenTree'
 
 
-def inventreeVersion():
+def inventreeVersion() -> str:
     """Returns the InvenTree version string."""
     return INVENTREE_SW_VERSION.lower().strip()
 
@@ -110,12 +115,12 @@ def inventreeVersionTuple(version=None):
     return [int(g) for g in match.groups()] if match else []
 
 
-def isInvenTreeDevelopmentVersion():
+def isInvenTreeDevelopmentVersion() -> bool:
     """Return True if current InvenTree version is a "development" version."""
     return inventreeVersion().endswith('dev')
 
 
-def inventreeDocsVersion():
+def inventreeDocsVersion() -> str:
     """Return the version string matching the latest documentation.
 
     Development -> "latest"
@@ -123,26 +128,27 @@ def inventreeDocsVersion():
     """
     if isInvenTreeDevelopmentVersion():
         return 'latest'
-    return INVENTREE_SW_VERSION  # pragma: no cover
+
+    return INVENTREE_SW_VERSION
 
 
-def inventreeDocUrl():
+def inventreeDocUrl() -> str:
     """Return URL for InvenTree documentation site."""
     tag = inventreeDocsVersion()
     return f'https://docs.inventree.org/en/{tag}'
 
 
-def inventreeAppUrl():
+def inventreeAppUrl() -> str:
     """Return URL for InvenTree app site."""
-    return 'https://docs.inventree.org/app/'
+    return 'https://docs.inventree.org/en/stable/app/'
 
 
-def inventreeGithubUrl():
+def inventreeGithubUrl() -> str:
     """Return URL for InvenTree github site."""
     return 'https://github.com/InvenTree/InvenTree/'
 
 
-def isInvenTreeUpToDate():
+def isInvenTreeUpToDate() -> bool:
     """Test if the InvenTree instance is "up to date" with the latest version.
 
     A background task periodically queries GitHub for latest version, and stores it to the database as "_INVENTREE_LATEST_VERSION"
@@ -164,7 +170,7 @@ def isInvenTreeUpToDate():
     return inventree_version >= latest_version  # pragma: no cover
 
 
-def inventreeApiVersion():
+def inventreeApiVersion() -> int:
     """Returns current API version of InvenTree."""
     return INVENTREE_API_VERSION
 

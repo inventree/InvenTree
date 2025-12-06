@@ -1,7 +1,7 @@
 """Machine registry."""
 
 import functools
-from typing import Any, Optional, Union, cast
+from typing import Any, Optional, cast
 from uuid import UUID
 
 from django.db.utils import IntegrityError, OperationalError, ProgrammingError
@@ -114,16 +114,16 @@ class MachineRegistry(
         self._hash = None
 
     @property
-    def errors(self) -> list[Union[str, Exception]]:
+    def errors(self) -> list[str | Exception]:
         """List of registry errors."""
-        return cast(list[Union[str, Exception]], self.get_shared_state('errors', []))
+        return cast(list[str | Exception], self.get_shared_state('errors', []))
 
     @property
     def is_ready(self) -> bool:
         """Check if the machine registry is ready."""
         return self.ready
 
-    def handle_error(self, error: Union[Exception, str]):
+    def handle_error(self, error: Exception | str):
         """Helper function for capturing errors with the machine registry."""
         if error not in self.errors:
             self.set_shared_state('errors', [*self.errors, error])
@@ -384,7 +384,7 @@ class MachineRegistry(
         return list(self.machine_types.values())
 
     @machine_registry_entrypoint()
-    def get_machine(self, pk: Union[str, UUID]) -> Optional[BaseMachineType]:
+    def get_machine(self, pk: str | UUID) -> Optional[BaseMachineType]:
         """Get machine from registry by pk."""
         return self.machines.get(str(pk), None)
 
@@ -454,7 +454,7 @@ class MachineRegistry(
         try:
             reg_hash = get_global_setting('_MACHINE_REGISTRY_HASH', '', create=False)
         except Exception as exc:
-            logger.exception('Failed to get machine registry hash: %s', str(exc))
+            logger.exception('Failed to get machine registry hash: %s', exc)
             return False
 
         if reg_hash and reg_hash != self._hash:
@@ -480,12 +480,12 @@ class MachineRegistry(
 
         if old_hash != self._hash:
             try:
-                logger.info('Updating machine registry hash: %s', str(self._hash))
+                logger.info('Updating machine registry hash: %s', self._hash)
                 set_global_setting('_MACHINE_REGISTRY_HASH', self._hash)
             except (IntegrityError, OperationalError, ProgrammingError):
                 pass
             except Exception as exc:
-                logger.exception('Failed to update machine registry hash: %s', str(exc))
+                logger.exception('Failed to update machine registry hash: %s', exc)
 
     @machine_registry_entrypoint()
     def call_machine_function(

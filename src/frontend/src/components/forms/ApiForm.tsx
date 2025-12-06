@@ -46,9 +46,11 @@ import { ApiFormField } from './fields/ApiFormField';
 
 export function OptionsApiForm({
   props: _props,
+  opened,
   id: pId
 }: Readonly<{
   props: ApiFormProps;
+  opened?: boolean;
   id?: string;
 }>) {
   const api = useApi();
@@ -75,24 +77,26 @@ export function OptionsApiForm({
   );
 
   const optionsQuery = useQuery({
-    enabled: true,
+    enabled: opened !== false && props.ignorePermissionCheck !== true,
     refetchOnMount: false,
     queryKey: [
       'form-options-data',
       id,
+      opened,
+      props.ignorePermissionCheck,
       props.method,
       props.url,
       props.pk,
       props.pathParams
     ],
     queryFn: async () => {
-      const response = await api.options(url);
-      let fields: Record<string, ApiFormFieldType> | null = {};
-      if (!props.ignorePermissionCheck) {
-        fields = extractAvailableFields(response, props.method);
+      if (props.ignorePermissionCheck === true || opened === false) {
+        return {};
       }
 
-      return fields;
+      return api.options(url).then((response: any) => {
+        return extractAvailableFields(response, props.method);
+      });
     },
     throwOnError: (error: any) => {
       if (error.response) {
@@ -109,6 +113,13 @@ export function OptionsApiForm({
       return false;
     }
   });
+
+  // Refetch form options whenever the modal is opened
+  useEffect(() => {
+    if (opened !== false) {
+      optionsQuery.refetch();
+    }
+  }, [opened]);
 
   const formProps: ApiFormProps = useMemo(() => {
     const _props = { ...props };
@@ -368,16 +379,29 @@ export function ApiForm({
 
     Object.keys(data).forEach((key: string) => {
       let value: any = data[key];
-      const field_type = fields[key]?.field_type;
-      const exclude = fields[key]?.exclude;
+      const field: ApiFormFieldType = fields[key] ?? {};
+      const field_type = field?.field_type;
+      const exclude = field?.exclude;
 
       if (field_type == 'file upload' && !!value) {
         hasFiles = true;
       }
 
-      // Ensure any boolean values are actually boolean
-      if (field_type === 'boolean') {
-        value = isTrue(value) || false;
+      // Special consideration for various field types
+      switch (field_type) {
+        case 'boolean':
+          // Ensure boolean values are actually boolean
+          value = isTrue(value) || false;
+          break;
+        case 'string':
+          // Replace null string values with an empty string
+          if (value === null && field?.allow_null == false) {
+            value = '';
+            jsonData[key] = value;
+          }
+          break;
+        default:
+          break;
       }
 
       // Stringify any JSON objects
@@ -386,7 +410,9 @@ export function ApiForm({
           case 'file upload':
             break;
           default:
-            value = JSON.stringify(value);
+            if (value !== null && value !== undefined) {
+              value = JSON.stringify(value);
+            }
             break;
         }
       }

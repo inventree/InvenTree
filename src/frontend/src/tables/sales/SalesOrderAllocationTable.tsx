@@ -4,7 +4,6 @@ import { useCallback, useMemo, useState } from 'react';
 import { ActionButton } from '@lib/components/ActionButton';
 import {
   type RowAction,
-  RowDeleteAction,
   RowEditAction,
   RowViewAction
 } from '@lib/components/RowActions';
@@ -15,7 +14,8 @@ import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
 import type { StockOperationProps } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
-import { IconTruckDelivery } from '@tabler/icons-react';
+import { Alert } from '@mantine/core';
+import { IconCircleX, IconTruckDelivery } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 import { formatDate } from '../../defaults/formatters';
 import { useSalesOrderAllocationFields } from '../../forms/SalesOrderForms';
@@ -215,7 +215,13 @@ export default function SalesOrderAllocationTable({
   const deleteAllocation = useDeleteApiFormModal({
     url: ApiEndpoints.sales_order_allocation_list,
     pk: selectedAllocation,
-    title: t`Delete Allocation`,
+    title: t`Remove Allocated Stock`,
+    preFormContent: (
+      <Alert color='red' title={t`Confirm Removal`}>
+        {t`Are you sure you want to remove this allocated stock from the order?`}
+      </Alert>
+    ),
+    submitText: t`Remove`,
     onFormSuccess: () => table.refreshTable()
   });
 
@@ -237,8 +243,11 @@ export default function SalesOrderAllocationTable({
             editAllocation.open();
           }
         }),
-        RowDeleteAction({
-          tooltip: t`Delete Allocation`,
+        {
+          title: t`Remove`,
+          tooltip: t`Remove allocated stock`,
+          icon: <IconCircleX />,
+          color: 'red',
           hidden:
             isShipped ||
             !allowEdit ||
@@ -247,7 +256,7 @@ export default function SalesOrderAllocationTable({
             setSelectedAllocation(record.pk);
             deleteAllocation.open();
           }
-        }),
+        },
         RowViewAction({
           tooltip: t`View Shipment`,
           title: t`View Shipment`,
