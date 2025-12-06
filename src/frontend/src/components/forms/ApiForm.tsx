@@ -392,7 +392,6 @@ export function ApiForm({
         case 'boolean':
           // Ensure boolean values are actually boolean
           value = isTrue(value) || false;
-          jsonData[key] = value;
           break;
         case 'string':
           // Replace null string values with an empty string
