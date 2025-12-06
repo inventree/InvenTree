@@ -420,6 +420,13 @@ class InvenTreeMetadata(SimpleMetadata):
         if field_info['type'] == 'dependent field':
             field_info['depends_on'] = field.depends_on
 
+        # Extends with extra attributes from the serializer
+        extra_field_attributes = ['allow_blank', 'allow_null']
+
+        for attr in extra_field_attributes:
+            if hasattr(field, attr):
+                field_info[attr] = getattr(field, attr)
+
         # Extend field info if the field has a get_field_info method
         if (
             not field_info.get('read_only')

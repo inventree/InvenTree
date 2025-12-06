@@ -24,7 +24,11 @@ import { type NavigateFunction, useNavigate } from 'react-router-dom';
 
 import { isTrue } from '@lib/functions/Conversion';
 import { getDetailUrl } from '@lib/functions/Navigation';
-import type { ApiFormFieldSet, ApiFormProps } from '@lib/types/Forms';
+import type {
+  ApiFormFieldSet,
+  ApiFormFieldType,
+  ApiFormProps
+} from '@lib/types/Forms';
 import { useApi } from '../../contexts/ApiContext';
 import {
   type NestedDict,
@@ -375,16 +379,29 @@ export function ApiForm({
 
     Object.keys(data).forEach((key: string) => {
       let value: any = data[key];
-      const field_type = fields[key]?.field_type;
-      const exclude = fields[key]?.exclude;
+      const field: ApiFormFieldType = fields[key] ?? {};
+      const field_type = field?.field_type;
+      const exclude = field?.exclude;
 
       if (field_type == 'file upload' && !!value) {
         hasFiles = true;
       }
 
-      // Ensure any boolean values are actually boolean
-      if (field_type === 'boolean') {
-        value = isTrue(value) || false;
+      // Special consideration for various field types
+      switch (field_type) {
+        case 'boolean':
+          // Ensure boolean values are actually boolean
+          value = isTrue(value) || false;
+          break;
+        case 'string':
+          // Replace null string values with an empty string
+          if (value === null && field?.allow_null == false) {
+            value = '';
+            jsonData[key] = value;
+          }
+          break;
+        default:
+          break;
       }
 
       // Stringify any JSON objects
@@ -393,7 +410,9 @@ export function ApiForm({
           case 'file upload':
             break;
           default:
-            value = JSON.stringify(value);
+            if (value !== null && value !== undefined) {
+              value = JSON.stringify(value);
+            }
             break;
         }
       }
