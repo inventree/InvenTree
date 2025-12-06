@@ -332,7 +332,7 @@ The following email settings are available:
 
 | Environment Variable | Configuration File | Description | Default |
 | --- | --- | --- | --- |
-| INVENTREE_EMAIL_BACKEND | email.backend | Email backend module | django.core.mail.backends.smtp.EmailBackend |
+| INVENTREE_EMAIL_BACKEND | email.backend | Email backend module | `django.core.mail.backends.smtp.EmailBackend` |
 | INVENTREE_EMAIL_HOST | email.host | Email server host | *Not specified* |
 | INVENTREE_EMAIL_PORT | email.port | Email server port | 25 |
 | INVENTREE_EMAIL_USERNAME | email.username | Email account username | *Not specified* |
@@ -341,6 +341,10 @@ The following email settings are available:
 | INVENTREE_EMAIL_SSL | email.ssl | Enable SSL support | False |
 | INVENTREE_EMAIL_SENDER | email.sender | Sending email address | *Not specified* |
 | INVENTREE_EMAIL_PREFIX | email.prefix | Prefix for subject text | [InvenTree] |
+
+### Email Backend
+
+The default email implementation uses the Django STMP backend. This should be sufficient for most implementations, although other backends can be used if required. Note that selection of a different backend requires must use fully qualified module path, and requires advanced knowledge.
 
 ### Sender Email
 
