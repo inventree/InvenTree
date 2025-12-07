@@ -1,5 +1,6 @@
 import { t } from '@lingui/core/macro';
 import {
+  Group,
   Input,
   darken,
   useMantineColorScheme,
@@ -15,9 +16,17 @@ import {
 } from 'react-hook-form';
 import Select from 'react-select';
 
+import { ModelInformationDict } from '@lib/enums/ModelInformation';
+import { ActionButton } from '@lib/index';
 import type { ApiFormFieldType } from '@lib/types/Forms';
+import { IconQrcode } from '@tabler/icons-react';
 import { useApi } from '../../../contexts/ApiContext';
+import {
+  useGlobalSettingsState,
+  useUserSettingsState
+} from '../../../states/SettingsStates';
 import { vars } from '../../../theme';
+import Expand from '../../items/Expand';
 import { RenderInstance } from '../../render/Instance';
 
 /**
@@ -59,6 +68,30 @@ export function RelatedModelField({
   const [initialData, setInitialData] = useState<{}>({});
   const [data, setData] = useState<any[]>([]);
   const dataRef = useRef<any[]>([]);
+
+  const globalSettings = useGlobalSettingsState();
+  const userSettings = useUserSettingsState();
+
+  // Memoize the model type information for this field
+  const modelInfo = useMemo(() => {
+    if (!definition.model) {
+      return null;
+    }
+    return ModelInformationDict[definition.model];
+  }, [definition.model]);
+
+  // Determine whether a barcode field should be added
+  const addBarcodeField: boolean = useMemo(() => {
+    if (!modelInfo || !modelInfo.supports_barcode) {
+      return false;
+    }
+
+    if (!globalSettings.isSet('BARCODE_ENABLE')) {
+      return false;
+    }
+
+    return true;
+  }, [globalSettings, userSettings, modelInfo]);
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
@@ -377,58 +410,70 @@ export function RelatedModelField({
       error={definition.error ?? error?.message}
       styles={{ description: { paddingBottom: '5px' } }}
     >
-      <Select
-        id={fieldId}
-        aria-label={`related-field-${field.name}`}
-        value={currentValue}
-        ref={field.ref}
-        options={data}
-        filterOption={null}
-        onInputChange={(value: any) => {
-          setValue(value);
-        }}
-        onChange={onChange}
-        onMenuScrollToBottom={() => setOffset(offset + limit)}
-        onMenuOpen={() => {
-          setIsOpen(true);
-          resetSearch();
-          selectQuery.refetch();
-        }}
-        onMenuClose={() => {
-          setIsOpen(false);
-        }}
-        isLoading={
-          selectQuery.isFetching ||
-          selectQuery.isLoading ||
-          selectQuery.isRefetching
-        }
-        isClearable={!definition.required}
-        isDisabled={definition.disabled}
-        isSearchable={true}
-        placeholder={definition.placeholder || `${t`Search`}...`}
-        loadingMessage={() => `${t`Loading`}...`}
-        menuPortalTarget={document.body}
-        noOptionsMessage={() => t`No results found`}
-        menuPosition='fixed'
-        styles={{
-          menuPortal: (base: any) => ({ ...base, zIndex: 9999 }),
-          clearIndicator: (base: any) => ({
-            ...base,
-            color: 'red',
-            ':hover': { color: 'red' }
-          })
-        }}
-        formatOptionLabel={(option: any) => formatOption(option)}
-        theme={(theme) => {
-          return {
-            ...theme,
-            colors: {
-              ...theme.colors,
-              ...colors
+      <Group justify='space-between' wrap='nowrap' gap={3}>
+        <Expand>
+          <Select
+            id={fieldId}
+            aria-label={`related-field-${field.name}`}
+            value={currentValue}
+            ref={field.ref}
+            options={data}
+            filterOption={null}
+            onInputChange={(value: any) => {
+              setValue(value);
+            }}
+            onChange={onChange}
+            onMenuScrollToBottom={() => setOffset(offset + limit)}
+            onMenuOpen={() => {
+              setIsOpen(true);
+              resetSearch();
+              selectQuery.refetch();
+            }}
+            onMenuClose={() => {
+              setIsOpen(false);
+            }}
+            isLoading={
+              selectQuery.isFetching ||
+              selectQuery.isLoading ||
+              selectQuery.isRefetching
             }
-          };
-        }}
-      />
+            isClearable={!definition.required}
+            isDisabled={definition.disabled}
+            isSearchable={true}
+            placeholder={definition.placeholder || `${t`Search`}...`}
+            loadingMessage={() => `${t`Loading`}...`}
+            menuPortalTarget={document.body}
+            noOptionsMessage={() => t`No results found`}
+            menuPosition='fixed'
+            styles={{
+              menuPortal: (base: any) => ({ ...base, zIndex: 9999 }),
+              clearIndicator: (base: any) => ({
+                ...base,
+                color: 'red',
+                ':hover': { color: 'red' }
+              })
+            }}
+            formatOptionLabel={(option: any) => formatOption(option)}
+            theme={(theme) => {
+              return {
+                ...theme,
+                colors: {
+                  ...theme.colors,
+                  ...colors
+                }
+              };
+            }}
+          />
+        </Expand>
+        {addBarcodeField && (
+          <ActionButton
+            icon={<IconQrcode />}
+            variant='transparent'
+            tooltip={t`Scan Barcode`}
+            onClick={() => {}}
+          />
+        )}
+      </Group>
     </Input.Wrapper>
   );
 }
