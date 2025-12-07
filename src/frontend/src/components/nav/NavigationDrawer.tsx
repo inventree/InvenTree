@@ -131,7 +131,7 @@ function DrawerContent({ closeFunc }: Readonly<{ closeFunc?: () => void }>) {
           !userSettings.isSet('BARCODE_SCANNER_ENABLE')
       }
     ];
-  }, [user, globalSettings]);
+  }, [user, globalSettings, userSettings]);
 
   const menuItemsSettings: MenuLinkItem[] = useMemo(() => {
     return [

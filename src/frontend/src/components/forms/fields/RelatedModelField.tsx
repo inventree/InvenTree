@@ -71,6 +71,53 @@ export function RelatedModelField({
   const globalSettings = useGlobalSettingsState();
   const userSettings = useUserSettingsState();
 
+  // Search input query
+  const [value, setValue] = useState<string>('');
+  const [searchText] = useDebouncedValue(value, 250);
+
+  // Fetch a single field by primary key, using the provided API filters
+  const fetchSingleField = useCallback(
+    (pk: number) => {
+      if (!definition?.api_url) {
+        return;
+      }
+
+      const params = definition?.filters ?? {};
+      const url = `${definition.api_url}${pk}/`;
+
+      api
+        .get(url, {
+          params: params
+        })
+        .then((response) => {
+          const pk_field = definition.pk_field ?? 'pk';
+          if (response.data?.[pk_field]) {
+            const value = {
+              value: response.data[pk_field],
+              data: response.data
+            };
+
+            // Run custom callback for this field (if provided)
+            if (definition.onValueChange) {
+              definition.onValueChange(response.data[pk_field], response.data);
+            }
+
+            setInitialData(value);
+            dataRef.current = [value];
+            setPk(response.data[pk_field]);
+          }
+        });
+    },
+    [
+      definition.api_url,
+      definition.filters,
+      definition.onValueChange,
+      definition.pk_field,
+      setValue,
+      setPk
+    ]
+  );
+
   // Memoize the model type information for this field
   const modelInfo = useMemo(() => {
     if (!definition.model) {
@@ -100,21 +147,24 @@ export function RelatedModelField({
   }, [globalSettings, userSettings, modelInfo]);
 
   // Callback function to handle barcode scan results
-  const onBarcodeScan = useCallback((barcode: string, response: any) => {
-    // Fetch model information from the response
-    const modelData = response?.[definition.model ?? ''] ?? null;
+  const onBarcodeScan = useCallback(
+    (barcode: string, response: any) => {
+      // Fetch model information from the response
+      const modelData = response?.[definition.model ?? ''] ?? null;
 
-    if (modelData) {
-      const pk_field = definition.pk_field ?? 'pk';
-      const pk = modelData[pk_field];
+      if (modelData) {
+        const pk_field = definition.pk_field ?? 'pk';
+        const pk = modelData[pk_field];
 
-      if (pk) {
-        // Perform a full re-fetch of the field data
-        // This is necessary as the barcode scan does not provide full data necessarily
-        fetchSingleField(pk);
+        if (pk) {
+          // Perform a full re-fetch of the field data
+          // This is necessary as the barcode scan does not provide full data necessarily
+          fetchSingleField(pk);
+        }
       }
-    }
-  }, []);
+    },
+    [definition.model, definition.pk_field, fetchSingleField]
+  );
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
@@ -192,42 +242,6 @@ export function RelatedModelField({
     field.value
   ]);
 
-  // Fetch a single field by primary key, using the provided API filters
-  const fetchSingleField = useCallback(
-    (pk: number) => {
-      if (!definition?.api_url) {
-        return;
-      }
-
-      const params = definition?.filters ?? {};
-      const url = `${definition.api_url}${pk}/`;
-
-      api
-        .get(url, {
-          params: params
-        })
-        .then((response) => {
-          const pk_field = definition.pk_field ?? 'pk';
-          if (response.data?.[pk_field]) {
-            const value = {
-              value: response.data[pk_field],
-              data: response.data
-            };
-
-            // Run custom callback for this field (if provided)
-            if (definition.onValueChange) {
-              definition.onValueChange(response.data[pk_field], response.data);
-            }
-
-            setInitialData(value);
-            dataRef.current = [value];
-            setPk(response.data[pk_field]);
-          }
-        });
-    },
-    [definition.api_url, definition.filters]
-  );
-
   // If an initial value is provided, load from the API
   useEffect(() => {
     // If the value is unchanged, do nothing
@@ -246,10 +260,6 @@ export function RelatedModelField({
     definition.pk_field,
     field.value
   ]);
-
-  // Search input query
-  const [value, setValue] = useState<string>('');
-  const [searchText] = useDebouncedValue(value, 250);
 
   const [filters, setFilters] = useState<any>({});
 
