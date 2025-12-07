@@ -100,4 +100,4 @@ The barcode history can be viewed via the admin panel in the web interface.
 There are a number of settings which control the behavior of barcodes within InvenTree. For more information, refer to the links below:
 
 - [Global Barcode Settings](../settings/global.md#barcodes)
-- [User Preferences for Barcode Scanning](../settings//user.md#display-settings)
+- [User Preferences for Barcode Scanning](../settings/user.md#display-settings)
