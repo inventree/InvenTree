@@ -54,7 +54,11 @@ export const clearTableFilters = async (page: Page) => {
   await page.waitForLoadState('networkidle');
 };
 
-export const setTableChoiceFilter = async (page: Page, filter, value) => {
+export const setTableChoiceFilter = async (
+  page: Page,
+  filter: string,
+  value: string
+) => {
   await openFilterDrawer(page);
 
   await page.getByRole('button', { name: 'Add Filter' }).click();
@@ -116,7 +120,7 @@ export const navigate = async (
 /**
  * CLick on the 'tab' element with the provided name
  */
-export const loadTab = async (page: Page, tabName, exact?) => {
+export const loadTab = async (page: Page, tabName: string, exact?: boolean) => {
   await page
     .getByLabel(/panel-tabs-/)
     .getByRole('tab', { name: tabName, exact: exact ?? false })
@@ -140,7 +144,7 @@ export const activateCalendarView = async (page: Page) => {
 /**
  * Perform a 'global search' on the provided page, for the provided query text
  */
-export const globalSearch = async (page: Page, query) => {
+export const globalSearch = async (page: Page, query: string) => {
   await page.getByLabel('open-search').click();
   await page.getByLabel('global-search-input').clear();
   await page.getByPlaceholder('Enter search text').fill(query);
