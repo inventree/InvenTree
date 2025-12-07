@@ -136,10 +136,7 @@ export function RelatedModelField({
       return false;
     }
 
-    if (
-      !userSettings.isSet('BARCODE_SCANNER_ENABLE') ||
-      !userSettings.isSet('BARCODE_IN_FORM_FIELDS')
-    ) {
+    if (!userSettings.isSet('BARCODE_IN_FORM_FIELDS')) {
       return false;
     }
 

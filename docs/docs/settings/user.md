@@ -22,7 +22,6 @@ The *Display Settings* screen shows general display configuration options:
 {{ usersetting("STICKY_HEADER") }}
 {{ usersetting("STICKY_TABLE_HEADER") }}
 {{ usersetting("SHOW_SPOTLIGHT") }}
-{{ usersetting("BARCODE_SCANNER_ENABLE") }}
 {{ usersetting("BARCODE_IN_FORM_FIELDS") }}
 {{ usersetting("DATE_DISPLAY_FORMAT") }}
 {{ usersetting("FORMS_CLOSE_USING_ESCAPE") }}
