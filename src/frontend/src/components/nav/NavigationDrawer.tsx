@@ -8,7 +8,10 @@ import { UserRoles } from '@lib/enums/Roles';
 import { AboutLinks, DocumentationLinks } from '../../defaults/links';
 import useInstanceName from '../../hooks/UseInstanceName';
 import * as classes from '../../main.css';
-import { useGlobalSettingsState } from '../../states/SettingsStates';
+import {
+  useGlobalSettingsState,
+  useUserSettingsState
+} from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import { InvenTreeLogo } from '../items/InvenTreeLogo';
 import { type MenuLinkItem, MenuLinks } from '../items/MenuLinks';
@@ -43,6 +46,7 @@ function DrawerContent({ closeFunc }: Readonly<{ closeFunc?: () => void }>) {
   const user = useUserState();
 
   const globalSettings = useGlobalSettingsState();
+  const userSettings = useUserSettingsState();
 
   const [scrollHeight, setScrollHeight] = useState(0);
   const ref = useRef(null);
@@ -122,7 +126,9 @@ function DrawerContent({ closeFunc }: Readonly<{ closeFunc?: () => void }>) {
         title: t`Scan Barcode`,
         link: '/scan',
         icon: 'barcode',
-        hidden: !globalSettings.isSet('BARCODE_ENABLE')
+        hidden:
+          !globalSettings.isSet('BARCODE_ENABLE') ||
+          !userSettings.isSet('BARCODE_SCANNER_ENABLE')
       }
     ];
   }, [user, globalSettings]);
