@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-05 02:23+0000\n"
-"PO-Revision-Date: 2025-12-05 02:27\n"
+"POT-Creation-Date: 2025-12-07 07:33+0000\n"
+"PO-Revision-Date: 2025-12-07 07:36\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -171,35 +171,35 @@ msgstr "Odstranit HTML tagy z této hodnoty"
 msgid "Data contains prohibited markdown content"
 msgstr "Data obsahují zakázaný markdown obsah"
 
-#: InvenTree/helpers_model.py:133
+#: InvenTree/helpers_model.py:134
 msgid "Connection error"
 msgstr "Chyba spojení"
 
-#: InvenTree/helpers_model.py:138 InvenTree/helpers_model.py:145
+#: InvenTree/helpers_model.py:139 InvenTree/helpers_model.py:146
 msgid "Server responded with invalid status code"
 msgstr "Server odpověděl s neplatným stavovým kódem"
 
-#: InvenTree/helpers_model.py:141
+#: InvenTree/helpers_model.py:142
 msgid "Exception occurred"
 msgstr "Došlo k výjimce"
 
-#: InvenTree/helpers_model.py:151
+#: InvenTree/helpers_model.py:152
 msgid "Server responded with invalid Content-Length value"
 msgstr "Server odpověděl s neplatnou hodnotou Content-Length"
 
-#: InvenTree/helpers_model.py:154
+#: InvenTree/helpers_model.py:155
 msgid "Image size is too large"
 msgstr "Velikost obrázku je příliš velká"
 
-#: InvenTree/helpers_model.py:166
+#: InvenTree/helpers_model.py:167
 msgid "Image download exceeded maximum size"
 msgstr "Stahování obrázku překročilo maximální velikost"
 
-#: InvenTree/helpers_model.py:171
+#: InvenTree/helpers_model.py:172
 msgid "Remote server returned empty response"
 msgstr "Vzdálený server vrátil prázdnou odpověď"
 
-#: InvenTree/helpers_model.py:179
+#: InvenTree/helpers_model.py:180
 msgid "Supplied URL is not a valid image file"
 msgstr "Zadaná URL adresa není platný soubor obrázku"
 
@@ -351,7 +351,7 @@ msgstr "Vyberte měnu z dostupných možností"
 
 #: InvenTree/serializers.py:654
 msgid "This field may not be null."
-msgstr ""
+msgstr "Toto pole nesmí být nulové."
 
 #: InvenTree/serializers.py:660
 msgid "Invalid value"
@@ -375,15 +375,15 @@ msgstr "Nepodařilo se stáhnout obrázek ze vzdálené adresy URL"
 
 #: InvenTree/serializers.py:806
 msgid "Invalid content type format"
-msgstr ""
+msgstr "Neplatný formát typu obsahu"
 
 #: InvenTree/serializers.py:809
 msgid "Content type not found"
-msgstr ""
+msgstr "Typ obsahu nenalezen"
 
 #: InvenTree/serializers.py:815
 msgid "Content type does not match required mixin class"
-msgstr ""
+msgstr "Typ obsahu neodpovídá požadované třídě mixinu"
 
 #: InvenTree/setting/locales.py:20
 msgid "Arabic"
@@ -2024,7 +2024,7 @@ msgstr "Šablona parametru"
 
 #: common/models.py:2388
 msgid "Parameter Templates"
-msgstr ""
+msgstr "Šablona parametru"
 
 #: common/models.py:2425
 msgid "Checkbox parameters cannot have units"
@@ -2044,7 +2044,7 @@ msgstr "Název šablony parametru musí být jedinečný"
 
 #: common/models.py:2489
 msgid "Target model type for this parameter template"
-msgstr ""
+msgstr "Cílový typ modelu pro šablonu tohoto parametru"
 
 #: common/models.py:2495
 msgid "Parameter Name"
@@ -2088,15 +2088,15 @@ msgstr "Povoleno"
 
 #: common/models.py:2540
 msgid "Is this parameter template enabled?"
-msgstr ""
+msgstr "Je šablona tohoto parametru povolena?"
 
 #: common/models.py:2581
 msgid "Parameter"
-msgstr ""
+msgstr "Parametr"
 
 #: common/models.py:2582
 msgid "Parameters"
-msgstr ""
+msgstr "Parametry"
 
 #: common/models.py:2628
 msgid "Invalid choice for parameter value"
@@ -2104,15 +2104,15 @@ msgstr "Neplatná volba pro hodnotu parametru"
 
 #: common/models.py:2698 common/serializers.py:783
 msgid "Invalid model type specified for parameter"
-msgstr ""
+msgstr "Neplatný typ modelu pro daný parametr"
 
 #: common/models.py:2734
 msgid "Model ID"
-msgstr ""
+msgstr "ID modelu"
 
 #: common/models.py:2735
 msgid "ID of the target model for this parameter"
-msgstr ""
+msgstr "ID cílového modelu pro tento parametr"
 
 #: common/models.py:2744 common/setting/system.py:450 report/models.py:373
 #: report/models.py:669 report/serializers.py:94 report/serializers.py:135
@@ -2122,7 +2122,7 @@ msgstr "Šablona"
 
 #: common/models.py:2745
 msgid "Parameter template"
-msgstr ""
+msgstr "Šablona parametru"
 
 #: common/models.py:2750 common/models.py:2792 importer/models.py:546
 msgid "Data"
@@ -2435,7 +2435,7 @@ msgstr "Uživatel nemá oprávnění k vytváření nebo úpravám příloh pro 
 
 #: common/serializers.py:786
 msgid "User does not have permission to create or edit parameters for this model"
-msgstr ""
+msgstr "Uživatel nemá práva vytvářet nebo upravovat parametry pro tento model"
 
 #: common/serializers.py:850 common/serializers.py:953
 msgid "Selection list is locked"
@@ -3595,272 +3595,280 @@ msgid "Display PDF reports in the browser, instead of downloading as a file"
 msgstr "Zobrazit reporty PDF v prohlížeči namísto stahování jako soubor"
 
 #: common/setting/user.py:45
+msgid "Barcode Scanner in Form Fields"
+msgstr ""
+
+#: common/setting/user.py:46
+msgid "Allow barcode scanner input in form fields"
+msgstr ""
+
+#: common/setting/user.py:51
 msgid "Search Parts"
 msgstr "Hledat díly"
 
-#: common/setting/user.py:46
+#: common/setting/user.py:52
 msgid "Display parts in search preview window"
 msgstr "Zobrazit díly v náhledu hledání"
 
-#: common/setting/user.py:51
+#: common/setting/user.py:57
 msgid "Search Supplier Parts"
 msgstr "Hledat díly dodavatele"
 
-#: common/setting/user.py:52
+#: common/setting/user.py:58
 msgid "Display supplier parts in search preview window"
 msgstr "Zobrazit díly dodavatele v náhledu hledání"
 
-#: common/setting/user.py:57
+#: common/setting/user.py:63
 msgid "Search Manufacturer Parts"
 msgstr "Vyhledávání dílů výrobce"
 
-#: common/setting/user.py:58
+#: common/setting/user.py:64
 msgid "Display manufacturer parts in search preview window"
 msgstr "Zobrazit díly výrobce v náhledu hledání"
 
-#: common/setting/user.py:63
+#: common/setting/user.py:69
 msgid "Hide Inactive Parts"
 msgstr "Skrýt neaktivní díly"
 
-#: common/setting/user.py:64
+#: common/setting/user.py:70
 msgid "Excluded inactive parts from search preview window"
 msgstr "Vyloučené neaktivní části z okna náhledu vyhledávání"
 
-#: common/setting/user.py:69
+#: common/setting/user.py:75
 msgid "Search Categories"
 msgstr "Hledat kategorie"
 
-#: common/setting/user.py:70
+#: common/setting/user.py:76
 msgid "Display part categories in search preview window"
 msgstr "Zobrazit kategorie dílů v náhledu hledání"
 
-#: common/setting/user.py:75
+#: common/setting/user.py:81
 msgid "Search Stock"
 msgstr "Hledat zásoby"
 
-#: common/setting/user.py:76
+#: common/setting/user.py:82
 msgid "Display stock items in search preview window"
 msgstr "Zobrazit skladové položky v náhledu hledání"
 
-#: common/setting/user.py:81
+#: common/setting/user.py:87
 msgid "Hide Unavailable Stock Items"
 msgstr "Skrýt nedostupné skladové položky"
 
-#: common/setting/user.py:83
+#: common/setting/user.py:89
 msgid "Exclude stock items which are not available from the search preview window"
 msgstr "Vyloučit skladové položky, které nejsou dostupné z okna náhledu hledání"
 
-#: common/setting/user.py:89
+#: common/setting/user.py:95
 msgid "Search Locations"
 msgstr "Hledat umístění"
 
-#: common/setting/user.py:90
+#: common/setting/user.py:96
 msgid "Display stock locations in search preview window"
 msgstr "Zobrazit skladová umístění v náhledu hledání"
 
-#: common/setting/user.py:95
+#: common/setting/user.py:101
 msgid "Search Companies"
 msgstr "Hledat společnosti"
 
-#: common/setting/user.py:96
+#: common/setting/user.py:102
 msgid "Display companies in search preview window"
 msgstr "Zobrazit společnosti v náhledu hledání"
 
-#: common/setting/user.py:101
+#: common/setting/user.py:107
 msgid "Search Build Orders"
 msgstr "Hledat výrobní příkazy"
 
-#: common/setting/user.py:102
+#: common/setting/user.py:108
 msgid "Display build orders in search preview window"
 msgstr "Zobrazit výrobní příkazy v náhledu hledání"
 
-#: common/setting/user.py:107
+#: common/setting/user.py:113
 msgid "Search Purchase Orders"
 msgstr "Hledat nákupní objednávky"
 
-#: common/setting/user.py:108
+#: common/setting/user.py:114
 msgid "Display purchase orders in search preview window"
 msgstr "Zobrazit nákupní objednávky v náhledu hledání"
 
-#: common/setting/user.py:113
+#: common/setting/user.py:119
 msgid "Exclude Inactive Purchase Orders"
 msgstr "Vyloučit neaktivní nákupní objednávky"
 
-#: common/setting/user.py:114
+#: common/setting/user.py:120
 msgid "Exclude inactive purchase orders from search preview window"
 msgstr "Vyloučit neaktivní nákupní objednávky z okna náhledu vyhledávání"
 
-#: common/setting/user.py:119
+#: common/setting/user.py:125
 msgid "Search Sales Orders"
 msgstr "Hledat prodejní objednávky"
 
-#: common/setting/user.py:120
+#: common/setting/user.py:126
 msgid "Display sales orders in search preview window"
 msgstr "Zobrazit prodejní objednávky v náhledu hledání"
 
-#: common/setting/user.py:125
+#: common/setting/user.py:131
 msgid "Exclude Inactive Sales Orders"
 msgstr "Vyloučit neaktivní prodejní objednávky"
 
-#: common/setting/user.py:126
+#: common/setting/user.py:132
 msgid "Exclude inactive sales orders from search preview window"
 msgstr "Vyloučit neaktivní prodejní objednávky z okna náhledu vyhledávání"
 
-#: common/setting/user.py:131
+#: common/setting/user.py:137
 msgid "Search Sales Order Shipments"
 msgstr "Vyhledat zásilky prodejních objednávek"
 
-#: common/setting/user.py:132
+#: common/setting/user.py:138
 msgid "Display sales order shipments in search preview window"
 msgstr "Zobrazit zásilky prodejních objednávek ve vyhledávacím náhledu"
 
-#: common/setting/user.py:137
+#: common/setting/user.py:143
 msgid "Search Return Orders"
 msgstr "Vyhledávání vrácených objednávek"
 
-#: common/setting/user.py:138
+#: common/setting/user.py:144
 msgid "Display return orders in search preview window"
 msgstr "Zobrazit vrácené objednávky v okně náhledu vyhledávání"
 
-#: common/setting/user.py:143
+#: common/setting/user.py:149
 msgid "Exclude Inactive Return Orders"
 msgstr "Vyloučit neaktivní vrácené objednávky"
 
-#: common/setting/user.py:144
+#: common/setting/user.py:150
 msgid "Exclude inactive return orders from search preview window"
 msgstr "Vyloučit neaktivní vrácené objednávky z okna náhledu vyhledávání"
 
-#: common/setting/user.py:149
+#: common/setting/user.py:155
 msgid "Search Preview Results"
 msgstr "Náhled výsledků vyhledávání"
 
-#: common/setting/user.py:151
+#: common/setting/user.py:157
 msgid "Number of results to show in each section of the search preview window"
 msgstr "Počet výsledků, které se mají zobrazit v každé části okna náhledu vyhledávání"
 
-#: common/setting/user.py:157
+#: common/setting/user.py:163
 msgid "Regex Search"
 msgstr "Regex hledání"
 
-#: common/setting/user.py:158
+#: common/setting/user.py:164
 msgid "Enable regular expressions in search queries"
 msgstr "Povolit regulární výrazy ve vyhledávacích dotazech"
 
-#: common/setting/user.py:163
+#: common/setting/user.py:169
 msgid "Whole Word Search"
 msgstr "Vyhledávání celého slova"
 
-#: common/setting/user.py:164
+#: common/setting/user.py:170
 msgid "Search queries return results for whole word matches"
 msgstr "Vyhledávací dotazy vracejí výsledky pro shody celých slov"
 
-#: common/setting/user.py:169
+#: common/setting/user.py:175
 msgid "Search Notes"
 msgstr "Hledat poznámky"
 
-#: common/setting/user.py:171
+#: common/setting/user.py:177
 msgid "Search queries return results for matches from the item's notes"
 msgstr "Vyhledávací dotazi vrátí výsledky pro shody v poznámek položek"
 
-#: common/setting/user.py:177
+#: common/setting/user.py:183
 msgid "Escape Key Closes Forms"
 msgstr "Klávesa Escape zavře formuláře"
 
-#: common/setting/user.py:178
+#: common/setting/user.py:184
 msgid "Use the escape key to close modal forms"
 msgstr "Zavřít modální formuláře pomocí klávesy escape"
 
-#: common/setting/user.py:183
+#: common/setting/user.py:189
 msgid "Fixed Navbar"
 msgstr "Pevná navigační lišta"
 
-#: common/setting/user.py:184
+#: common/setting/user.py:190
 msgid "The navbar position is fixed to the top of the screen"
 msgstr "Pozice navigační lišty je pevně nastavena na horní okraj obrazovky"
 
-#: common/setting/user.py:189
+#: common/setting/user.py:195
 msgid "Fixed Table Headers"
 msgstr "Pevné záhlaví tabulky"
 
-#: common/setting/user.py:190
+#: common/setting/user.py:196
 msgid "Table headers are fixed to the top of the table"
 msgstr "Hlavičky tabulky jsou připevněny k horní části tabulky"
 
-#: common/setting/user.py:195
+#: common/setting/user.py:201
 msgid "Show Spotlight"
 msgstr "Zobrazit Spotlight"
 
-#: common/setting/user.py:196
+#: common/setting/user.py:202
 msgid "Enable spotlight navigation functionality"
 msgstr "Povolit funkci spotlight navigace"
 
-#: common/setting/user.py:201
+#: common/setting/user.py:207
 msgid "Navigation Icons"
 msgstr "Navigační ikony"
 
-#: common/setting/user.py:202
+#: common/setting/user.py:208
 msgid "Display icons in the navigation bar"
 msgstr "Zobrazit ikony v navigačním panelu"
 
-#: common/setting/user.py:207
+#: common/setting/user.py:213
 msgid "Date Format"
 msgstr "Formát data"
 
-#: common/setting/user.py:208
+#: common/setting/user.py:214
 msgid "Preferred format for displaying dates"
 msgstr "Preferovaný formát pro zobrazení datumů"
 
-#: common/setting/user.py:221
+#: common/setting/user.py:227
 msgid "Show Stock History"
 msgstr "Zobrazit historii skladu"
 
-#: common/setting/user.py:222
+#: common/setting/user.py:228
 msgid "Display stock history information in the part detail page"
 msgstr "Zobrazit informace o historii zásob na stránce s podrobnostmi dílu"
 
-#: common/setting/user.py:227
+#: common/setting/user.py:233
 msgid "Show Last Breadcrumb"
 msgstr "Zobrazit poslední drobečkovou navigaci"
 
-#: common/setting/user.py:228
+#: common/setting/user.py:234
 msgid "Show the current page in breadcrumbs"
 msgstr "Zobrazit aktuální stránku v navigační službě"
 
-#: common/setting/user.py:233
+#: common/setting/user.py:239
 msgid "Show full stock location in tables"
 msgstr "Zobrazit plnou polohu zásob v tabulkách"
 
-#: common/setting/user.py:235
+#: common/setting/user.py:241
 msgid "Disabled: The full location path is displayed as a hover tooltip. Enabled: The full location path is displayed as plain text."
 msgstr "Vypnuto: Celá cesta lokace se ukáže jako nápověda. Zapnuto: Celá cesta lokace se ukáže jako prostý text."
 
-#: common/setting/user.py:241
+#: common/setting/user.py:247
 msgid "Show full part categories in tables"
 msgstr "Zobrazit celé kategorie dílů v tabulkách"
 
-#: common/setting/user.py:243
+#: common/setting/user.py:249
 msgid "Disabled: The full category path is displayed as a hover tooltip. Enabled: The full category path is displayed as plain text."
 msgstr "Vypnuto: Celá kategorie se ukáže jako nápověda. Zapnuto: Celá kategorie se ukáže jako prostý text."
 
-#: common/setting/user.py:249
+#: common/setting/user.py:255
 msgid "Receive error reports"
 msgstr "Přijímat zprávy o chybách"
 
-#: common/setting/user.py:250
+#: common/setting/user.py:256
 msgid "Receive notifications for system errors"
 msgstr "Dostávat oznámení o systémových chybách"
 
-#: common/setting/user.py:255
+#: common/setting/user.py:261
 msgid "Last used printing machines"
 msgstr "Poslední použité tiskárny"
 
-#: common/setting/user.py:256
+#: common/setting/user.py:262
 msgid "Save the last used printing machines for a user"
 msgstr "Uložte poslední použité tiskárny pro uživatele"
 
 #: common/validators.py:38
 msgid "All models"
-msgstr ""
+msgstr "Všechny modely"
 
 #: common/validators.py:63
 msgid "No attachment model type provided"
@@ -4236,7 +4244,7 @@ msgstr "Cenová sleva dodavatele"
 
 #: company/serializers.py:184
 msgid "Primary Address"
-msgstr ""
+msgstr "Hlavní adresa"
 
 #: company/serializers.py:186
 msgid "Return the string representation for the primary address. This property exists for backwards compatibility."
@@ -5703,11 +5711,11 @@ msgstr "Díly"
 
 #: part/models.py:597
 msgid "Cannot delete parameters of a locked part"
-msgstr ""
+msgstr "Nelze odstranit parametry zamčeného dílu"
 
 #: part/models.py:602
 msgid "Cannot modify parameters of a locked part"
-msgstr ""
+msgstr "Nelze upravit parametry zamčeného dílu"
 
 #: part/models.py:613
 msgid "Cannot delete this part as it is locked"
@@ -7181,19 +7189,19 @@ msgstr "Poskytuje podporu pro exportování dat z InvenTree"
 
 #: plugin/builtin/exporter/parameter_exporter.py:16
 msgid "Exclude Inactive"
-msgstr ""
+msgstr "Vyloučit neaktivní"
 
 #: plugin/builtin/exporter/parameter_exporter.py:17
 msgid "Exclude parameters which are inactive"
-msgstr ""
+msgstr "Vyloučit parametry které jsou neaktivní"
 
 #: plugin/builtin/exporter/parameter_exporter.py:29
 msgid "Parameter Exporter"
-msgstr ""
+msgstr "Exportér parametru"
 
 #: plugin/builtin/exporter/parameter_exporter.py:30
 msgid "Exporter for model parameter data"
-msgstr ""
+msgstr "Exportér pro modelová parametrová data"
 
 #: plugin/builtin/exporter/stocktake_exporter.py:25
 msgid "Include External Stock"
