@@ -26,6 +26,7 @@ export function ScanButton({
     <>
       <Tooltip position='bottom-end' label={t`Scan Barcode`}>
         <ActionIcon
+          aria-label={`barcode-scan-button-${modelType ?? 'any'}`}
           onClick={open}
           variant='transparent'
           title={t`Open Barcode Scanner`}

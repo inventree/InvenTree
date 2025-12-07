@@ -7,7 +7,7 @@ const scan = async (page, barcode) => {
   await page.getByRole('button', { name: 'Scan', exact: true }).click();
 };
 
-test('Scanning - Dialog', async ({ browser }) => {
+test('Barcode Scanning - Dialog', async ({ browser }) => {
   const page = await doCachedLogin(browser);
 
   await page.getByRole('button', { name: 'Open Barcode Scanner' }).click();
@@ -18,7 +18,7 @@ test('Scanning - Dialog', async ({ browser }) => {
   await page.getByText('Required:').waitFor();
 });
 
-test('Scanning - Basic', async ({ browser }) => {
+test('Barcode Scanning - Basic', async ({ browser }) => {
   const page = await doCachedLogin(browser);
 
   // Navigate to the 'scan' page
@@ -39,7 +39,7 @@ test('Scanning - Basic', async ({ browser }) => {
   await page.getByText('No match found for barcode').waitFor();
 });
 
-test('Scanning - Part', async ({ browser }) => {
+test('Barcode Scanning - Part', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: 'scan/' });
 
   await scan(page, '{"part": 1}');
@@ -49,7 +49,7 @@ test('Scanning - Part', async ({ browser }) => {
   await page.getByRole('cell', { name: 'part', exact: true }).waitFor();
 });
 
-test('Scanning - Stockitem', async ({ browser }) => {
+test('Barcode Scanning - Stockitem', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: 'scan/' });
   await scan(page, '{"stockitem": 408}');
 
@@ -58,7 +58,7 @@ test('Scanning - Stockitem', async ({ browser }) => {
   await page.getByRole('cell', { name: 'Quantity: 100' }).waitFor();
 });
 
-test('Scanning - StockLocation', async ({ browser }) => {
+test('Barcode Scanning - StockLocation', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: 'scan/' });
 
   await scan(page, '{"stocklocation": 3}');
@@ -71,7 +71,7 @@ test('Scanning - StockLocation', async ({ browser }) => {
     .waitFor();
 });
 
-test('Scanning - SupplierPart', async ({ browser }) => {
+test('Barcode Scanning - SupplierPart', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: 'scan/' });
   await scan(page, '{"supplierpart": 204}');
 
@@ -80,7 +80,7 @@ test('Scanning - SupplierPart', async ({ browser }) => {
   await page.getByRole('cell', { name: 'supplierpart', exact: true }).waitFor();
 });
 
-test('Scanning - PurchaseOrder', async ({ browser }) => {
+test('Barcode Scanning - PurchaseOrder', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: 'scan/' });
   await scan(page, '{"purchaseorder": 12}');
 
@@ -92,7 +92,7 @@ test('Scanning - PurchaseOrder', async ({ browser }) => {
     .waitFor();
 });
 
-test('Scanning - SalesOrder', async ({ browser }) => {
+test('Barcode Scanning - SalesOrder', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: 'scan/' });
 
   await scan(page, '{"salesorder": 6}');
@@ -103,7 +103,7 @@ test('Scanning - SalesOrder', async ({ browser }) => {
   await page.getByRole('cell', { name: 'salesorder', exact: true }).waitFor();
 });
 
-test('Scanning - Build', async ({ browser }) => {
+test('Barcode Scanning - Build', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: 'scan/' });
   await scan(page, '{"build": 8}');
 
@@ -111,4 +111,33 @@ test('Scanning - Build', async ({ browser }) => {
   await page.getByText('BO0008').waitFor();
   await page.getByText('PCBA build').waitFor();
   await page.getByRole('cell', { name: 'build', exact: true }).waitFor();
+});
+
+test('Barcode Scanning - Forms', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    url: '/stock/location/index/stock-items'
+  });
+
+  // Open the "Add Stock Item" form
+  await page
+    .getByRole('button', { name: 'action-button-add-stock-item' })
+    .click();
+
+  // Fill out the "part" data
+  await page.getByRole('button', { name: 'barcode-scan-button-part' }).click();
+  await page
+    .getByRole('textbox', { name: 'barcode-scan-keyboard-input' })
+    .fill('INV-PA99');
+  await page.getByRole('button', { name: 'Scan', exact: true }).click();
+  await page.getByText('Red Round Table').waitFor();
+
+  // Fill out the "location" data
+  await page
+    .getByRole('button', { name: 'barcode-scan-button-stocklocation' })
+    .click();
+  await page
+    .getByRole('textbox', { name: 'barcode-scan-keyboard-input' })
+    .fill('INV-SL37');
+  await page.getByRole('button', { name: 'Scan', exact: true }).click();
+  await page.getByText('Offsite Storage').waitFor();
 });
