@@ -60,7 +60,7 @@ export default function UserSettings() {
               'STICKY_TABLE_HEADER',
               'SHOW_SPOTLIGHT',
               'BARCODE_SCANNER_ENABLE',
-              'BARCODE_SCANNER_ENABLE',
+              'BARCODE_IN_FORM_FIELDS',
               'DATE_DISPLAY_FORMAT',
               'FORMS_CLOSE_USING_ESCAPE',
               'DISPLAY_STOCKTAKE_TAB',
