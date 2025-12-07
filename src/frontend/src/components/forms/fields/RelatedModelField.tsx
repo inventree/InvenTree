@@ -17,15 +17,14 @@ import {
 import Select from 'react-select';
 
 import { ModelInformationDict } from '@lib/enums/ModelInformation';
-import { ActionButton } from '@lib/index';
 import type { ApiFormFieldType } from '@lib/types/Forms';
-import { IconQrcode } from '@tabler/icons-react';
 import { useApi } from '../../../contexts/ApiContext';
 import {
   useGlobalSettingsState,
   useUserSettingsState
 } from '../../../states/SettingsStates';
 import { vars } from '../../../theme';
+import { ScanButton } from '../../buttons/ScanButton';
 import Expand from '../../items/Expand';
 import { RenderInstance } from '../../render/Instance';
 
@@ -99,6 +98,23 @@ export function RelatedModelField({
 
     return true;
   }, [globalSettings, userSettings, modelInfo]);
+
+  // Callback function to handle barcode scan results
+  const onBarcodeScan = useCallback((barcode: string, response: any) => {
+    // Fetch model information from the response
+    const modelData = response?.[definition.model ?? ''] ?? null;
+
+    if (modelData) {
+      const pk_field = definition.pk_field ?? 'pk';
+      const pk = modelData[pk_field];
+
+      if (pk) {
+        // Perform a full re-fetch of the field data
+        // This is necessary as the barcode scan does not provide full data necessarily
+        fetchSingleField(pk);
+      }
+    }
+  }, []);
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
@@ -176,22 +192,15 @@ export function RelatedModelField({
     field.value
   ]);
 
-  // If an initial value is provided, load from the API
-  useEffect(() => {
-    // If the value is unchanged, do nothing
-    if (field.value === pk) return;
-
-    const id = pk || field.value;
-
-    if (id !== null && id !== undefined && id !== '') {
-      const url = `${definition.api_url}${id}/`;
-
-      if (!url) {
-        setPk(null);
+  // Fetch a single field by primary key, using the provided API filters
+  const fetchSingleField = useCallback(
+    (pk: number) => {
+      if (!definition?.api_url) {
         return;
       }
 
       const params = definition?.filters ?? {};
+      const url = `${definition.api_url}${pk}/`;
 
       api
         .get(url, {
@@ -215,6 +224,19 @@ export function RelatedModelField({
             setPk(response.data[pk_field]);
           }
         });
+    },
+    [definition.api_url, definition.filters]
+  );
+
+  // If an initial value is provided, load from the API
+  useEffect(() => {
+    // If the value is unchanged, do nothing
+    if (field.value === pk) return;
+
+    const id = pk || field.value;
+
+    if (id !== null && id !== undefined && id !== '') {
+      fetchSingleField(id);
     } else {
       setPk(null);
     }
@@ -473,11 +495,9 @@ export function RelatedModelField({
           />
         </Expand>
         {addBarcodeField && (
-          <ActionButton
-            icon={<IconQrcode />}
-            variant='transparent'
-            tooltip={t`Scan Barcode`}
-            onClick={() => {}}
+          <ScanButton
+            modelType={definition.model}
+            onScanSuccess={onBarcodeScan}
           />
         )}
       </Group>
