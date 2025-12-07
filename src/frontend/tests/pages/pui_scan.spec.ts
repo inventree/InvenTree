@@ -1,7 +1,8 @@
+import type { Page } from '@playwright/test';
 import { test } from '../baseFixtures';
 import { doCachedLogin } from '../login';
 
-const scan = async (page, barcode) => {
+const scan = async (page: Page, barcode: string) => {
   await page.getByLabel('barcode-input-scanner').click();
   await page.getByLabel('barcode-scan-keyboard-input').fill(barcode);
   await page.getByRole('button', { name: 'Scan', exact: true }).click();
@@ -10,12 +11,24 @@ const scan = async (page, barcode) => {
 test('Barcode Scanning - Dialog', async ({ browser }) => {
   const page = await doCachedLogin(browser);
 
-  await page.getByRole('button', { name: 'Open Barcode Scanner' }).click();
+  // Attempt scan with invalid data
+  await page.getByRole('button', { name: 'barcode-scan-button-any' }).click();
+  await scan(page, 'invalid-barcode-123');
+  await page.getByText('No match found for barcode').waitFor();
+
+  // Attempt scan with "legacy" barcode format
   await scan(page, '{"part": 15}');
 
   await page.getByText('Part: R_550R_0805_1%', { exact: true }).waitFor();
   await page.getByText('Available:').waitFor();
   await page.getByText('Required:').waitFor();
+
+  // Attempt scan with "modern" barcode format
+  await page.getByRole('button', { name: 'barcode-scan-button-any' }).click();
+  await scan(page, 'INV-BO0010');
+
+  await page.getByText('Build Order: BO0010').waitFor();
+  await page.getByText('Making a high level assembly part').waitFor();
 });
 
 test('Barcode Scanning - Basic', async ({ browser }) => {
