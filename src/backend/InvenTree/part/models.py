@@ -2331,7 +2331,7 @@ class Part(
         if purchase:
             purchase_price = self.get_purchase_price(quantity)
             if purchase_price:
-                return return_info(*purchase_price, 'purchase')
+                return return_info(*purchase_price, 'purchase')  # type: ignore[too-many-positional-arguments]
 
         buy_price_range = self.get_supplier_price_range(quantity) if buy else None
         bom_price_range = (
@@ -2341,10 +2341,10 @@ class Part(
         if buy_price_range is None:
             if bom_price_range is None:
                 return None
-            return return_info(*bom_price_range, 'bom')
+            return return_info(*bom_price_range, 'bom')  # type: ignore[too-many-positional-arguments]
 
         elif bom_price_range is None:
-            return return_info(*buy_price_range, 'buy')
+            return return_info(*buy_price_range, 'buy')  # type: ignore[too-many-positional-arguments]
         return return_info(
             min(buy_price_range[0], bom_price_range[0]),
             max(buy_price_range[1], bom_price_range[1]),
