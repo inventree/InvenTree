@@ -7,7 +7,7 @@ INVENTREE_API_VERSION = 431
 INVENTREE_API_TEXT = """
 
 v431 -> 2025-12-09 : https://github.com/inventree/InvenTree/pull/10983
-    - Adds an API to gather dynamic price information for a Part
+    - Adds an API to gather live price information for a Part
 
 v430 -> 2025-12-04 : https://github.com/inventree/InvenTree/pull/10699
     - Removed the "PartParameter" and "PartParameterTemplate" API endpoints
