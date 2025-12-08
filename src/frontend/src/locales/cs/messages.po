@@ -8,7 +8,7 @@ msgstr ""
 "Language: cs\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-12-05 02:27\n"
+"PO-Revision-Date: 2025-12-07 07:36\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Plural-Forms: nplurals=4; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 3;\n"
@@ -30,7 +30,7 @@ msgid "Edit"
 msgstr "Upravit"
 
 #: lib/components/RowActions.tsx:56
-#: src/components/forms/ApiForm.tsx:735
+#: src/components/forms/ApiForm.tsx:754
 #: src/components/items/ActionDropdown.tsx:257
 #: src/components/items/RoleTable.tsx:155
 #: src/hooks/UseForm.tsx:164
@@ -68,11 +68,11 @@ msgid "Actions"
 msgstr "Akce"
 
 #: lib/components/SearchInput.tsx:34
-#: src/components/forms/fields/RelatedModelField.tsx:408
+#: src/components/forms/fields/RelatedModelField.tsx:479
 #: src/components/nav/Header.tsx:169
 #: src/components/wizards/ImportPartWizard.tsx:200
 #: src/components/wizards/ImportPartWizard.tsx:233
-#: src/pages/Index/Settings/UserSettings.tsx:74
+#: src/pages/Index/Settings/UserSettings.tsx:75
 #: src/pages/part/PartDetail.tsx:1176
 msgid "Search"
 msgstr "Hledat"
@@ -95,7 +95,7 @@ msgstr "Ano"
 msgid "No"
 msgstr "Ne"
 
-#: lib/enums/ModelInformation.tsx:28
+#: lib/enums/ModelInformation.tsx:29
 #: src/components/wizards/OrderPartsWizard.tsx:279
 #: src/forms/BuildForms.tsx:332
 #: src/forms/BuildForms.tsx:407
@@ -125,7 +125,7 @@ msgstr "Ne"
 msgid "Part"
 msgstr "Díl"
 
-#: lib/enums/ModelInformation.tsx:29
+#: lib/enums/ModelInformation.tsx:30
 #: lib/enums/Roles.tsx:35
 #: src/components/nav/NavigationDrawer.tsx:70
 #: src/defaults/links.tsx:36
@@ -139,15 +139,19 @@ msgid "Parts"
 msgstr "Díly"
 
 #: lib/enums/ModelInformation.tsx:37
-msgid "Parameter"
-msgstr ""
-
-#: lib/enums/ModelInformation.tsx:37
 #: src/pages/Index/Settings/AdminCenter/PartParameterPanel.tsx:13
 #~ msgid "Part Parameter Template"
 #~ msgstr "Part Parameter Template"
 
 #: lib/enums/ModelInformation.tsx:38
+#~ msgid "Part Parameter Templates"
+#~ msgstr "Part Parameter Templates"
+
+#: lib/enums/ModelInformation.tsx:39
+msgid "Parameter"
+msgstr "Parametr"
+
+#: lib/enums/ModelInformation.tsx:40
 #: src/components/panels/ParametersPanel.tsx:19
 #: src/components/wizards/ImportPartWizard.tsx:807
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:195
@@ -156,29 +160,25 @@ msgstr ""
 msgid "Parameters"
 msgstr "Parametry"
 
-#: lib/enums/ModelInformation.tsx:38
-#~ msgid "Part Parameter Templates"
-#~ msgstr "Part Parameter Templates"
-
-#: lib/enums/ModelInformation.tsx:43
+#: lib/enums/ModelInformation.tsx:45
 #: src/tables/part/PartCategoryTemplateTable.tsx:87
 msgid "Parameter Template"
 msgstr "Šablona parametru"
 
-#: lib/enums/ModelInformation.tsx:44
+#: lib/enums/ModelInformation.tsx:46
 #: src/pages/Index/Settings/AdminCenter/ParameterPanel.tsx:13
 msgid "Parameter Templates"
-msgstr ""
+msgstr "Šablony parametru"
 
-#: lib/enums/ModelInformation.tsx:50
+#: lib/enums/ModelInformation.tsx:52
 msgid "Part Test Template"
 msgstr "Šablona testu položky"
 
-#: lib/enums/ModelInformation.tsx:51
+#: lib/enums/ModelInformation.tsx:53
 msgid "Part Test Templates"
 msgstr "Šablony testu položky"
 
-#: lib/enums/ModelInformation.tsx:57
+#: lib/enums/ModelInformation.tsx:59
 #: src/components/wizards/OrderPartsWizard.tsx:290
 #: src/pages/company/SupplierPartDetail.tsx:418
 #: src/pages/stock/StockDetail.tsx:289
@@ -190,12 +190,12 @@ msgstr "Šablony testu položky"
 msgid "Supplier Part"
 msgstr "Díl dodavatele"
 
-#: lib/enums/ModelInformation.tsx:58
+#: lib/enums/ModelInformation.tsx:60
 #: src/pages/purchasing/PurchasingIndex.tsx:128
 msgid "Supplier Parts"
 msgstr "Díly dodavatele"
 
-#: lib/enums/ModelInformation.tsx:66
+#: lib/enums/ModelInformation.tsx:69
 #: src/pages/company/ManufacturerPartDetail.tsx:288
 #: src/pages/company/SupplierPartDetail.tsx:162
 #: src/tables/part/PartPurchaseOrdersTable.tsx:56
@@ -203,18 +203,18 @@ msgstr "Díly dodavatele"
 msgid "Manufacturer Part"
 msgstr "Díl výrobce"
 
-#: lib/enums/ModelInformation.tsx:67
+#: lib/enums/ModelInformation.tsx:70
 #: src/pages/purchasing/PurchasingIndex.tsx:177
 msgid "Manufacturer Parts"
 msgstr "Díly výrobce"
 
-#: lib/enums/ModelInformation.tsx:75
+#: lib/enums/ModelInformation.tsx:79
 #: src/pages/part/CategoryDetail.tsx:371
 #: src/tables/Filter.tsx:389
 msgid "Part Category"
 msgstr "Kategorie dílu"
 
-#: lib/enums/ModelInformation.tsx:76
+#: lib/enums/ModelInformation.tsx:80
 #: lib/enums/Roles.tsx:37
 #: src/pages/part/CategoryDetail.tsx:279
 #: src/pages/part/CategoryDetail.tsx:362
@@ -222,7 +222,7 @@ msgstr "Kategorie dílu"
 msgid "Part Categories"
 msgstr "Kategorie dílů"
 
-#: lib/enums/ModelInformation.tsx:84
+#: lib/enums/ModelInformation.tsx:88
 #: src/forms/BuildForms.tsx:473
 #: src/forms/BuildForms.tsx:633
 #: src/forms/BuildForms.tsx:794
@@ -234,7 +234,7 @@ msgstr "Kategorie dílů"
 msgid "Stock Item"
 msgstr "Skladová položka"
 
-#: lib/enums/ModelInformation.tsx:85
+#: lib/enums/ModelInformation.tsx:89
 #: lib/enums/Roles.tsx:45
 #: src/pages/company/CompanyDetail.tsx:211
 #: src/pages/part/CategoryDetail.tsx:314
@@ -244,62 +244,62 @@ msgstr "Skladová položka"
 msgid "Stock Items"
 msgstr "Skladové položky"
 
-#: lib/enums/ModelInformation.tsx:93
+#: lib/enums/ModelInformation.tsx:98
 #: lib/enums/Roles.tsx:47
 #: src/pages/stock/LocationDetail.tsx:420
 msgid "Stock Location"
 msgstr "Umístění skladu"
 
-#: lib/enums/ModelInformation.tsx:94
+#: lib/enums/ModelInformation.tsx:99
 #: src/pages/stock/LocationDetail.tsx:174
 #: src/pages/stock/LocationDetail.tsx:412
 #: src/pages/stock/StockDetail.tsx:996
 msgid "Stock Locations"
 msgstr "Skladová umístění"
 
-#: lib/enums/ModelInformation.tsx:102
+#: lib/enums/ModelInformation.tsx:108
 msgid "Stock Location Type"
 msgstr "Typ skladového umístění"
 
-#: lib/enums/ModelInformation.tsx:103
+#: lib/enums/ModelInformation.tsx:109
 msgid "Stock Location Types"
 msgstr "Typy skladových umístění"
 
-#: lib/enums/ModelInformation.tsx:108
+#: lib/enums/ModelInformation.tsx:114
 #: src/pages/Index/Settings/SystemSettings.tsx:254
 #: src/pages/part/PartDetail.tsx:900
 msgid "Stock History"
 msgstr "Historie skladu"
 
-#: lib/enums/ModelInformation.tsx:109
+#: lib/enums/ModelInformation.tsx:115
 msgid "Stock Histories"
 msgstr "Historie skladů"
 
-#: lib/enums/ModelInformation.tsx:114
+#: lib/enums/ModelInformation.tsx:120
 msgid "Build"
 msgstr "Sestava"
 
-#: lib/enums/ModelInformation.tsx:115
+#: lib/enums/ModelInformation.tsx:121
 msgid "Builds"
 msgstr "Sestavy"
 
-#: lib/enums/ModelInformation.tsx:123
+#: lib/enums/ModelInformation.tsx:130
 msgid "Build Line"
 msgstr "Řádek sestavy"
 
-#: lib/enums/ModelInformation.tsx:124
+#: lib/enums/ModelInformation.tsx:131
 msgid "Build Lines"
 msgstr "Řádky sestavy"
 
-#: lib/enums/ModelInformation.tsx:131
+#: lib/enums/ModelInformation.tsx:138
 msgid "Build Item"
 msgstr "Položka sestavy"
 
-#: lib/enums/ModelInformation.tsx:132
+#: lib/enums/ModelInformation.tsx:139
 msgid "Build Items"
 msgstr "Položky sestavy"
 
-#: lib/enums/ModelInformation.tsx:137
+#: lib/enums/ModelInformation.tsx:144
 #: src/pages/company/CompanyDetail.tsx:345
 #: src/tables/company/CompanyTable.tsx:47
 #: src/tables/company/ContactTable.tsx:67
@@ -307,11 +307,11 @@ msgstr "Položky sestavy"
 msgid "Company"
 msgstr "Firma"
 
-#: lib/enums/ModelInformation.tsx:138
+#: lib/enums/ModelInformation.tsx:145
 msgid "Companies"
 msgstr "Firmy"
 
-#: lib/enums/ModelInformation.tsx:145
+#: lib/enums/ModelInformation.tsx:152
 #: src/pages/build/BuildDetail.tsx:317
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:254
 #: src/pages/sales/ReturnOrderDetail.tsx:232
@@ -322,12 +322,12 @@ msgstr "Firmy"
 msgid "Project Code"
 msgstr "Kód projektu"
 
-#: lib/enums/ModelInformation.tsx:146
+#: lib/enums/ModelInformation.tsx:153
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:172
 msgid "Project Codes"
 msgstr "Kódy projektu"
 
-#: lib/enums/ModelInformation.tsx:152
+#: lib/enums/ModelInformation.tsx:159
 #: src/components/wizards/OrderPartsWizard.tsx:338
 #: src/pages/part/pricing/PurchaseHistoryPanel.tsx:33
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:555
@@ -338,7 +338,7 @@ msgstr "Kódy projektu"
 msgid "Purchase Order"
 msgstr "Objednávka"
 
-#: lib/enums/ModelInformation.tsx:153
+#: lib/enums/ModelInformation.tsx:160
 #: lib/enums/Roles.tsx:39
 #: src/defaults/actions.tsx:104
 #: src/pages/Index/Settings/SystemSettings.tsx:289
@@ -349,15 +349,15 @@ msgstr "Objednávka"
 msgid "Purchase Orders"
 msgstr "Objednávky"
 
-#: lib/enums/ModelInformation.tsx:161
+#: lib/enums/ModelInformation.tsx:169
 msgid "Purchase Order Line"
 msgstr "Řádek objednávky"
 
-#: lib/enums/ModelInformation.tsx:162
+#: lib/enums/ModelInformation.tsx:170
 msgid "Purchase Order Lines"
 msgstr "Řádky objednávky"
 
-#: lib/enums/ModelInformation.tsx:167
+#: lib/enums/ModelInformation.tsx:175
 #: src/pages/build/BuildDetail.tsx:290
 #: src/pages/part/pricing/SaleHistoryPanel.tsx:24
 #: src/pages/sales/SalesOrderDetail.tsx:619
@@ -371,7 +371,7 @@ msgstr "Řádky objednávky"
 msgid "Sales Order"
 msgstr "Prodejní objednávka"
 
-#: lib/enums/ModelInformation.tsx:168
+#: lib/enums/ModelInformation.tsx:176
 #: lib/enums/Roles.tsx:43
 #: src/defaults/actions.tsx:114
 #: src/pages/Index/Settings/SystemSettings.tsx:305
@@ -381,22 +381,22 @@ msgstr "Prodejní objednávka"
 msgid "Sales Orders"
 msgstr "Prodejní objednávky"
 
-#: lib/enums/ModelInformation.tsx:176
+#: lib/enums/ModelInformation.tsx:185
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:445
 msgid "Sales Order Shipment"
 msgstr ""
 
-#: lib/enums/ModelInformation.tsx:177
+#: lib/enums/ModelInformation.tsx:186
 msgid "Sales Order Shipments"
 msgstr "Nastavení prodejních objednávek"
 
-#: lib/enums/ModelInformation.tsx:184
+#: lib/enums/ModelInformation.tsx:194
 #: src/pages/sales/ReturnOrderDetail.tsx:554
 #: src/tables/stock/StockTrackingTable.tsx:142
 msgid "Return Order"
 msgstr "Vrácená objednávka"
 
-#: lib/enums/ModelInformation.tsx:185
+#: lib/enums/ModelInformation.tsx:195
 #: lib/enums/Roles.tsx:41
 #: src/defaults/actions.tsx:125
 #: src/pages/Index/Settings/SystemSettings.tsx:322
@@ -406,25 +406,25 @@ msgstr "Vrácená objednávka"
 msgid "Return Orders"
 msgstr "Vrácené objednávky"
 
-#: lib/enums/ModelInformation.tsx:193
+#: lib/enums/ModelInformation.tsx:204
 msgid "Return Order Line Item"
 msgstr "Řádek vrácené objednávky"
 
-#: lib/enums/ModelInformation.tsx:194
+#: lib/enums/ModelInformation.tsx:205
 msgid "Return Order Line Items"
 msgstr "Řádek vrácených objednávek"
 
-#: lib/enums/ModelInformation.tsx:199
+#: lib/enums/ModelInformation.tsx:210
 #: src/tables/company/AddressTable.tsx:52
 msgid "Address"
 msgstr "Adresa"
 
-#: lib/enums/ModelInformation.tsx:200
+#: lib/enums/ModelInformation.tsx:211
 #: src/pages/company/CompanyDetail.tsx:265
 msgid "Addresses"
 msgstr "Adresy"
 
-#: lib/enums/ModelInformation.tsx:206
+#: lib/enums/ModelInformation.tsx:217
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:89
 #: src/pages/core/UserDetail.tsx:135
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:230
@@ -433,22 +433,22 @@ msgstr "Adresy"
 msgid "Contact"
 msgstr "Kontakt"
 
-#: lib/enums/ModelInformation.tsx:207
+#: lib/enums/ModelInformation.tsx:218
 #: src/pages/company/CompanyDetail.tsx:259
 #: src/pages/core/CoreIndex.tsx:33
 msgid "Contacts"
 msgstr "Kontakty"
 
-#: lib/enums/ModelInformation.tsx:213
+#: lib/enums/ModelInformation.tsx:224
 #: src/tables/ColumnRenderers.tsx:444
 msgid "Owner"
 msgstr "Správce"
 
-#: lib/enums/ModelInformation.tsx:214
+#: lib/enums/ModelInformation.tsx:225
 msgid "Owners"
 msgstr "Správci"
 
-#: lib/enums/ModelInformation.tsx:220
+#: lib/enums/ModelInformation.tsx:231
 #: src/pages/Auth/ChangePassword.tsx:36
 #: src/pages/core/UserDetail.tsx:220
 #: src/tables/ColumnRenderers.tsx:395
@@ -463,7 +463,7 @@ msgstr "Správci"
 msgid "User"
 msgstr "Uživatel"
 
-#: lib/enums/ModelInformation.tsx:221
+#: lib/enums/ModelInformation.tsx:232
 #: src/components/nav/NavigationDrawer.tsx:105
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:15
 #: src/pages/core/CoreIndex.tsx:21
@@ -471,12 +471,12 @@ msgstr "Uživatel"
 msgid "Users"
 msgstr "Uživatelé"
 
-#: lib/enums/ModelInformation.tsx:227
+#: lib/enums/ModelInformation.tsx:238
 #: src/pages/core/GroupDetail.tsx:78
 msgid "Group"
 msgstr "Skupina"
 
-#: lib/enums/ModelInformation.tsx:228
+#: lib/enums/ModelInformation.tsx:239
 #: src/components/nav/NavigationDrawer.tsx:111
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:23
 #: src/pages/core/CoreIndex.tsx:27
@@ -486,59 +486,59 @@ msgstr "Skupina"
 msgid "Groups"
 msgstr "Skupiny"
 
-#: lib/enums/ModelInformation.tsx:235
+#: lib/enums/ModelInformation.tsx:246
 msgid "Import Session"
 msgstr "Importovat relaci"
 
-#: lib/enums/ModelInformation.tsx:236
+#: lib/enums/ModelInformation.tsx:247
 msgid "Import Sessions"
 msgstr "Importovat relace"
 
-#: lib/enums/ModelInformation.tsx:243
+#: lib/enums/ModelInformation.tsx:254
 msgid "Label Template"
 msgstr "Šablona štítku"
 
-#: lib/enums/ModelInformation.tsx:244
+#: lib/enums/ModelInformation.tsx:255
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:209
 msgid "Label Templates"
 msgstr "Šablony štítků"
 
-#: lib/enums/ModelInformation.tsx:251
+#: lib/enums/ModelInformation.tsx:262
 msgid "Report Template"
 msgstr "Šablona hlášení"
 
-#: lib/enums/ModelInformation.tsx:252
+#: lib/enums/ModelInformation.tsx:263
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:215
 msgid "Report Templates"
 msgstr "Šablony hlášení"
 
-#: lib/enums/ModelInformation.tsx:259
+#: lib/enums/ModelInformation.tsx:270
 #: src/components/plugins/PluginDrawer.tsx:145
 msgid "Plugin Configuration"
 msgstr "Nastavení pluginu"
 
-#: lib/enums/ModelInformation.tsx:260
+#: lib/enums/ModelInformation.tsx:271
 msgid "Plugin Configurations"
 msgstr "Nastavení přídavných modulů"
 
-#: lib/enums/ModelInformation.tsx:267
+#: lib/enums/ModelInformation.tsx:278
 msgid "Content Type"
 msgstr "Typ obsahu"
 
-#: lib/enums/ModelInformation.tsx:268
+#: lib/enums/ModelInformation.tsx:279
 msgid "Content Types"
 msgstr "Typy obsahu"
 
-#: lib/enums/ModelInformation.tsx:273
+#: lib/enums/ModelInformation.tsx:284
 msgid "Selection List"
 msgstr "Výběrové pole"
 
-#: lib/enums/ModelInformation.tsx:274
+#: lib/enums/ModelInformation.tsx:285
 #: src/pages/Index/Settings/AdminCenter/ParameterPanel.tsx:21
 msgid "Selection Lists"
 msgstr "Výběrová pole"
 
-#: lib/enums/ModelInformation.tsx:280
+#: lib/enums/ModelInformation.tsx:291
 #: src/components/barcodes/BarcodeInput.tsx:114
 #: src/components/dashboard/DashboardLayout.tsx:281
 #: src/components/editors/NotesEditor.tsx:74
@@ -573,7 +573,7 @@ msgstr "Výběrová pole"
 msgid "Error"
 msgstr "Chyba"
 
-#: lib/enums/ModelInformation.tsx:281
+#: lib/enums/ModelInformation.tsx:292
 #: src/tables/machine/MachineListTable.tsx:402
 #: src/tables/machine/MachineTypeTable.tsx:297
 msgid "Errors"
@@ -665,26 +665,26 @@ msgstr "Skenovat nebo zadávat data čárového kódu"
 msgid "Enter barcode data"
 msgstr "Zadat data čárového kódu"
 
-#: src/components/barcodes/BarcodeScanDialog.tsx:49
-#: src/components/buttons/ScanButton.tsx:15
+#: src/components/barcodes/BarcodeScanDialog.tsx:56
+#: src/components/buttons/ScanButton.tsx:27
 #: src/components/nav/NavigationDrawer.tsx:122
 #: src/forms/PurchaseOrderForms.tsx:509
 #: src/forms/PurchaseOrderForms.tsx:615
 msgid "Scan Barcode"
 msgstr "Skenovat čárový kód"
 
-#: src/components/barcodes/BarcodeScanDialog.tsx:105
+#: src/components/barcodes/BarcodeScanDialog.tsx:121
 msgid "No matching item found"
 msgstr "Nebyly nalezeny žádné odpovídající položky"
 
-#: src/components/barcodes/BarcodeScanDialog.tsx:134
+#: src/components/barcodes/BarcodeScanDialog.tsx:150
 msgid "Barcode does not match the expected model type"
 msgstr "Čárkový kód neodpovídá očekávanému typu modelu"
 
-#: src/components/barcodes/BarcodeScanDialog.tsx:145
+#: src/components/barcodes/BarcodeScanDialog.tsx:161
 #: src/components/editors/NotesEditor.tsx:84
 #: src/components/editors/NotesEditor.tsx:118
-#: src/components/forms/ApiForm.tsx:465
+#: src/components/forms/ApiForm.tsx:484
 #: src/components/wizards/ImportPartWizard.tsx:566
 #: src/components/wizards/ImportPartWizard.tsx:691
 #: src/pages/Index/Settings/AdminCenter/CurrencyManagementPanel.tsx:45
@@ -693,11 +693,11 @@ msgstr "Čárkový kód neodpovídá očekávanému typu modelu"
 msgid "Success"
 msgstr "Dokončeno"
 
-#: src/components/barcodes/BarcodeScanDialog.tsx:151
+#: src/components/barcodes/BarcodeScanDialog.tsx:167
 msgid "Failed to handle barcode"
 msgstr "Skenování čárového kódu se nezdařilo"
 
-#: src/components/barcodes/BarcodeScanDialog.tsx:167
+#: src/components/barcodes/BarcodeScanDialog.tsx:183
 #: src/pages/Index/Scan.tsx:129
 msgid "Failed to scan barcode"
 msgstr "Skenování čárového kódu se nezdařilo"
@@ -855,13 +855,13 @@ msgstr "Budete přesměrováni na poskytovatele pro další akce."
 #~ msgid "Scan QR code"
 #~ msgstr "Scan QR code"
 
-#: src/components/buttons/ScanButton.tsx:19
-msgid "Open Barcode Scanner"
-msgstr "Otevřít skener čárového kódu"
-
 #: src/components/buttons/ScanButton.tsx:20
 #~ msgid "Open QR code scanner"
 #~ msgstr "Open QR code scanner"
+
+#: src/components/buttons/ScanButton.tsx:32
+msgid "Open Barcode Scanner"
+msgstr "Otevřít skener čárového kódu"
 
 #: src/components/buttons/SpotlightButton.tsx:12
 msgid "Open spotlight"
@@ -1278,7 +1278,7 @@ msgid "Clear"
 msgstr "Vymazat"
 
 #: src/components/details/DetailsImage.tsx:256
-#: src/components/forms/ApiForm.tsx:677
+#: src/components/forms/ApiForm.tsx:696
 #: src/contexts/ThemeContext.tsx:44
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:149
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:568
@@ -1531,8 +1531,8 @@ msgstr "Chyba serveru"
 msgid "A server error occurred"
 msgstr "Došlo k chybě serveru"
 
-#: src/components/forms/ApiForm.tsx:103
-#: src/components/forms/ApiForm.tsx:594
+#: src/components/forms/ApiForm.tsx:107
+#: src/components/forms/ApiForm.tsx:613
 msgid "Form Error"
 msgstr "Chyba formuláře"
 
@@ -1540,11 +1540,11 @@ msgstr "Chyba formuláře"
 #~ msgid "Form Errors Exist"
 #~ msgstr "Form Errors Exist"
 
-#: src/components/forms/ApiForm.tsx:604
+#: src/components/forms/ApiForm.tsx:623
 msgid "Errors exist for one or more form fields"
 msgstr "Existují chyby pro jedno nebo více polí formuláře"
 
-#: src/components/forms/ApiForm.tsx:715
+#: src/components/forms/ApiForm.tsx:734
 #: src/hooks/UseForm.tsx:133
 #: src/tables/plugin/PluginListTable.tsx:204
 msgid "Update"
@@ -1890,13 +1890,13 @@ msgstr "Vyberte balení"
 msgid "{0} icons"
 msgstr "Ikony {0}"
 
-#: src/components/forms/fields/RelatedModelField.tsx:409
+#: src/components/forms/fields/RelatedModelField.tsx:480
 #: src/components/modals/AboutInvenTreeModal.tsx:96
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:383
 msgid "Loading"
 msgstr "Načítání"
 
-#: src/components/forms/fields/RelatedModelField.tsx:411
+#: src/components/forms/fields/RelatedModelField.tsx:482
 msgid "No results found"
 msgstr "Nebyly nalezeny žádné výsledky"
 
@@ -2479,7 +2479,7 @@ msgstr "Výstrahy"
 
 #: src/components/nav/Alerts.tsx:97
 msgid "No issues detected"
-msgstr ""
+msgstr "Nebyly zjištěny žádné problémy"
 
 #: src/components/nav/Alerts.tsx:122
 msgid "The server is running in debug mode."
@@ -2517,7 +2517,7 @@ msgstr "Další informace o {code}"
 #: src/components/nav/NavigationDrawer.tsx:134
 #: src/components/nav/NotificationDrawer.tsx:181
 #: src/pages/Index/Settings/SystemSettings.tsx:122
-#: src/pages/Index/Settings/UserSettings.tsx:106
+#: src/pages/Index/Settings/UserSettings.tsx:107
 #: src/pages/Notifications.tsx:45
 #: src/pages/Notifications.tsx:130
 msgid "Notifications"
@@ -2548,8 +2548,8 @@ msgstr "Nastavení"
 #: src/components/nav/NavigationDrawer.tsx:140
 #: src/components/nav/SettingsHeader.tsx:40
 #: src/defaults/actions.tsx:92
-#: src/pages/Index/Settings/UserSettings.tsx:141
-#: src/pages/Index/Settings/UserSettings.tsx:145
+#: src/pages/Index/Settings/UserSettings.tsx:142
+#: src/pages/Index/Settings/UserSettings.tsx:146
 msgid "User Settings"
 msgstr "Uživatelská nastavení"
 
@@ -2887,7 +2887,7 @@ msgstr "Balík"
 #: src/components/plugins/PluginDrawer.tsx:133
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:55
 #: src/pages/Index/Settings/SystemSettings.tsx:337
-#: src/pages/Index/Settings/UserSettings.tsx:128
+#: src/pages/Index/Settings/UserSettings.tsx:129
 msgid "Plugin Settings"
 msgstr "Nastavení pluginů"
 
@@ -4572,8 +4572,8 @@ msgstr "Vyberte kód projektu pro tuto položku"
 #~ msgid "Company updated"
 #~ msgstr "Company updated"
 
-#: src/forms/PartForms.tsx:81
-#: src/forms/PartForms.tsx:203
+#: src/forms/PartForms.tsx:99
+#: src/forms/PartForms.tsx:228
 #: src/pages/part/CategoryDetail.tsx:127
 #: src/pages/part/PartDetail.tsx:668
 #: src/tables/part/PartCategoryTable.tsx:94
@@ -4581,7 +4581,7 @@ msgstr "Vyberte kód projektu pro tuto položku"
 msgid "Subscribed"
 msgstr "Odebírané"
 
-#: src/forms/PartForms.tsx:82
+#: src/forms/PartForms.tsx:100
 msgid "Subscribe to notifications for this part"
 msgstr "Přihlásit se k odběru oznámení pro tuto položku"
 
@@ -4593,11 +4593,11 @@ msgstr "Přihlásit se k odběru oznámení pro tuto položku"
 #~ msgid "Part updated"
 #~ msgstr "Part updated"
 
-#: src/forms/PartForms.tsx:189
+#: src/forms/PartForms.tsx:214
 msgid "Parent part category"
 msgstr "Nadřazená kategorie"
 
-#: src/forms/PartForms.tsx:204
+#: src/forms/PartForms.tsx:229
 msgid "Subscribe to notifications for this category"
 msgstr "Přihlásit se k odběru oznámení pro tuto kategorii"
 
@@ -6462,7 +6462,7 @@ msgstr "E-mailové zprávy"
 
 #: src/pages/Index/Settings/AdminCenter/HomePanel.tsx:36
 msgid "System Status"
-msgstr ""
+msgstr "Stav systému"
 
 #: src/pages/Index/Settings/AdminCenter/HomePanel.tsx:47
 msgid "Admin Center Information"
@@ -6571,7 +6571,7 @@ msgstr "Správa dat"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:270
 #: src/pages/Index/Settings/SystemSettings.tsx:176
-#: src/pages/Index/Settings/UserSettings.tsx:118
+#: src/pages/Index/Settings/UserSettings.tsx:119
 msgid "Reporting"
 msgstr "Reporty"
 
@@ -6789,7 +6789,7 @@ msgstr "Čárové kódy"
 #~ msgstr "This panel is a placeholder."
 
 #: src/pages/Index/Settings/SystemSettings.tsx:128
-#: src/pages/Index/Settings/UserSettings.tsx:112
+#: src/pages/Index/Settings/UserSettings.tsx:113
 msgid "The settings below are specific to each available notification method"
 msgstr "Níže uvedená nastavení jsou specifická pro každou dostupnou metodu oznámení"
 
@@ -7246,7 +7246,7 @@ msgstr "Zobrazení kalendáře"
 #: src/pages/sales/SalesIndex.tsx:125
 #: src/pages/sales/SalesIndex.tsx:151
 msgid "Parametric View"
-msgstr ""
+msgstr "Parametrické zobrazení"
 
 #: src/pages/company/CompanyDetail.tsx:100
 msgid "Website"
@@ -7857,7 +7857,7 @@ msgstr "Požadováno"
 
 #: src/pages/part/PartDetail.tsx:1042
 msgid "Deficit"
-msgstr ""
+msgstr "Deficit"
 
 #: src/pages/part/PartDetail.tsx:1079
 #: src/tables/part/PartTable.tsx:396
@@ -10086,7 +10086,7 @@ msgstr "Aktualizoval(a)"
 
 #: src/tables/general/ParameterTable.tsx:118
 msgid "Show parameters for enabled templates"
-msgstr ""
+msgstr "Zobrazit parametry pro povoloné šablony"
 
 #: src/tables/general/ParameterTable.tsx:124
 msgid "Filter by user who last updated the parameter"
@@ -10094,7 +10094,7 @@ msgstr "Filtrovat podle uživatele, který naposledy aktualizoval parametr"
 
 #: src/tables/general/ParameterTable.tsx:154
 msgid "Import Parameters"
-msgstr ""
+msgstr "Importovat parametry"
 
 #: src/tables/general/ParameterTable.tsx:164
 #: src/tables/general/ParametricDataTable.tsx:261
@@ -10115,19 +10115,19 @@ msgstr "Odstranit parametr"
 
 #: src/tables/general/ParameterTable.tsx:191
 msgid "Add Parameters"
-msgstr ""
+msgstr "Přidat parametry"
 
 #: src/tables/general/ParameterTable.tsx:197
 msgid "Create Parameter"
-msgstr ""
+msgstr "Vytvořit parametry"
 
 #: src/tables/general/ParameterTable.tsx:199
 msgid "Create a new parameter"
-msgstr ""
+msgstr "Vytvořit nový parametr"
 
 #: src/tables/general/ParameterTable.tsx:208
 msgid "Import parameters from a file"
-msgstr ""
+msgstr "Importovat parametr ze souboru"
 
 #: src/tables/general/ParameterTemplateTable.tsx:48
 #: src/tables/general/ParameterTemplateTable.tsx:197
@@ -10173,7 +10173,7 @@ msgstr "Zobrazit šablony s jednotkami"
 
 #: src/tables/general/ParameterTemplateTable.tsx:154
 msgid "Show enabled templates"
-msgstr ""
+msgstr "Zobrazit povolené šablony"
 
 #: src/tables/general/ParameterTemplateTable.tsx:158
 #: src/tables/settings/ImportSessionTable.tsx:111
@@ -10183,7 +10183,7 @@ msgstr "Typ modelu"
 
 #: src/tables/general/ParameterTemplateTable.tsx:159
 msgid "Filter by model type"
-msgstr ""
+msgstr "Filtrovat podle typu modelu"
 
 #: src/tables/general/ParametricDataTable.tsx:79
 msgid "Click to edit"

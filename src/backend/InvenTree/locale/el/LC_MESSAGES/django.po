@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-05 02:23+0000\n"
-"PO-Revision-Date: 2025-12-05 02:27\n"
+"POT-Creation-Date: 2025-12-07 07:33+0000\n"
+"PO-Revision-Date: 2025-12-07 07:36\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "Language: el_GR\n"
@@ -171,35 +171,35 @@ msgstr "Αφαιρέστε τα HTML tags από την τιμή που εισά
 msgid "Data contains prohibited markdown content"
 msgstr "Τα δεδομένα περιέχουν απαγορευμένο περιεχόμενο markdown"
 
-#: InvenTree/helpers_model.py:133
+#: InvenTree/helpers_model.py:134
 msgid "Connection error"
 msgstr "Σφάλμα σύνδεσης"
 
-#: InvenTree/helpers_model.py:138 InvenTree/helpers_model.py:145
+#: InvenTree/helpers_model.py:139 InvenTree/helpers_model.py:146
 msgid "Server responded with invalid status code"
 msgstr "Ο διακομιστής απάντησε με μη έγκυρο κωδικό κατάστασης"
 
-#: InvenTree/helpers_model.py:141
+#: InvenTree/helpers_model.py:142
 msgid "Exception occurred"
 msgstr "Προέκυψε σφάλμα"
 
-#: InvenTree/helpers_model.py:151
+#: InvenTree/helpers_model.py:152
 msgid "Server responded with invalid Content-Length value"
 msgstr "Ο διακομιστής ανταποκρίθηκε με \"Invalid Content-Length value\""
 
-#: InvenTree/helpers_model.py:154
+#: InvenTree/helpers_model.py:155
 msgid "Image size is too large"
 msgstr "Η εικόνα είναι πολύ μεγάλη σε μέγεθος"
 
-#: InvenTree/helpers_model.py:166
+#: InvenTree/helpers_model.py:167
 msgid "Image download exceeded maximum size"
 msgstr "Η λήψη εικόνας ξεπέρασε το μέγιστο μέγεθος"
 
-#: InvenTree/helpers_model.py:171
+#: InvenTree/helpers_model.py:172
 msgid "Remote server returned empty response"
 msgstr "Ο διακομιστής επέστρεψε σφάλμα %1$d %2$s"
 
-#: InvenTree/helpers_model.py:179
+#: InvenTree/helpers_model.py:180
 msgid "Supplied URL is not a valid image file"
 msgstr "Το URL δεν είναι έγκυρο αρχείο εικόνας"
 
@@ -3595,266 +3595,274 @@ msgid "Display PDF reports in the browser, instead of downloading as a file"
 msgstr "Εμφάνιση αναφορών PDF στον browser αντί για λήψη ως αρχείο"
 
 #: common/setting/user.py:45
+msgid "Barcode Scanner in Form Fields"
+msgstr ""
+
+#: common/setting/user.py:46
+msgid "Allow barcode scanner input in form fields"
+msgstr ""
+
+#: common/setting/user.py:51
 msgid "Search Parts"
 msgstr "Αναζήτηση προϊόντων"
 
-#: common/setting/user.py:46
+#: common/setting/user.py:52
 msgid "Display parts in search preview window"
 msgstr "Εμφάνιση προϊόντων στο παράθυρο προεπισκόπησης αναζήτησης"
 
-#: common/setting/user.py:51
+#: common/setting/user.py:57
 msgid "Search Supplier Parts"
 msgstr "Αναζήτηση προϊόντων προμηθευτή"
 
-#: common/setting/user.py:52
+#: common/setting/user.py:58
 msgid "Display supplier parts in search preview window"
 msgstr "Εμφάνιση προϊόντων προμηθευτή στο παράθυρο προεπισκόπησης αναζήτησης"
 
-#: common/setting/user.py:57
+#: common/setting/user.py:63
 msgid "Search Manufacturer Parts"
 msgstr "Αναζήτηση προϊόντων κατασκευαστή"
 
-#: common/setting/user.py:58
+#: common/setting/user.py:64
 msgid "Display manufacturer parts in search preview window"
 msgstr "Εμφάνιση προϊόντων κατασκευαστή στο παράθυρο προεπισκόπησης αναζήτησης"
 
-#: common/setting/user.py:63
+#: common/setting/user.py:69
 msgid "Hide Inactive Parts"
 msgstr "Απόκρυψη ανενεργών προϊόντων"
 
-#: common/setting/user.py:64
+#: common/setting/user.py:70
 msgid "Excluded inactive parts from search preview window"
 msgstr "Εξαίρεση ανενεργών προϊόντων από το παράθυρο προεπισκόπησης αναζήτησης"
 
-#: common/setting/user.py:69
+#: common/setting/user.py:75
 msgid "Search Categories"
 msgstr "Αναζήτηση κατηγοριών"
 
-#: common/setting/user.py:70
+#: common/setting/user.py:76
 msgid "Display part categories in search preview window"
 msgstr "Εμφάνιση κατηγοριών προϊόντων στο παράθυρο προεπισκόπησης αναζήτησης"
 
-#: common/setting/user.py:75
+#: common/setting/user.py:81
 msgid "Search Stock"
 msgstr "Αναζήτηση αποθέματος"
 
-#: common/setting/user.py:76
+#: common/setting/user.py:82
 msgid "Display stock items in search preview window"
 msgstr "Εμφάνιση ειδών αποθέματος στο παράθυρο προεπισκόπησης αναζήτησης"
 
-#: common/setting/user.py:81
+#: common/setting/user.py:87
 msgid "Hide Unavailable Stock Items"
 msgstr "Απόκρυψη μη διαθέσιμων ειδών αποθέματος"
 
-#: common/setting/user.py:83
+#: common/setting/user.py:89
 msgid "Exclude stock items which are not available from the search preview window"
 msgstr "Εξαίρεση μη διαθέσιμων ειδών αποθέματος από το παράθυρο προεπισκόπησης αναζήτησης"
 
-#: common/setting/user.py:89
+#: common/setting/user.py:95
 msgid "Search Locations"
 msgstr "Αναζήτηση τοποθεσιών"
 
-#: common/setting/user.py:90
+#: common/setting/user.py:96
 msgid "Display stock locations in search preview window"
 msgstr "Εμφάνιση τοποθεσιών αποθέματος στο παράθυρο προεπισκόπησης αναζήτησης"
 
-#: common/setting/user.py:95
+#: common/setting/user.py:101
 msgid "Search Companies"
 msgstr "Αναζήτηση εταιρειών"
 
-#: common/setting/user.py:96
+#: common/setting/user.py:102
 msgid "Display companies in search preview window"
 msgstr "Εμφάνιση εταιρειών στο παράθυρο προεπισκόπησης αναζήτησης"
 
-#: common/setting/user.py:101
+#: common/setting/user.py:107
 msgid "Search Build Orders"
 msgstr "Αναζήτηση εντολών παραγωγής"
 
-#: common/setting/user.py:102
+#: common/setting/user.py:108
 msgid "Display build orders in search preview window"
 msgstr "Εμφάνιση εντολών παραγωγής στο παράθυρο προεπισκόπησης αναζήτησης"
 
-#: common/setting/user.py:107
+#: common/setting/user.py:113
 msgid "Search Purchase Orders"
 msgstr "Αναζήτηση εντολών αγοράς"
 
-#: common/setting/user.py:108
+#: common/setting/user.py:114
 msgid "Display purchase orders in search preview window"
 msgstr "Εμφάνιση εντολών αγοράς στο παράθυρο προεπισκόπησης αναζήτησης"
 
-#: common/setting/user.py:113
+#: common/setting/user.py:119
 msgid "Exclude Inactive Purchase Orders"
 msgstr "Εξαίρεση ανενεργών εντολών αγοράς"
 
-#: common/setting/user.py:114
+#: common/setting/user.py:120
 msgid "Exclude inactive purchase orders from search preview window"
 msgstr "Εξαίρεση ανενεργών εντολών αγοράς από το παράθυρο προεπισκόπησης αναζήτησης"
 
-#: common/setting/user.py:119
+#: common/setting/user.py:125
 msgid "Search Sales Orders"
 msgstr "Αναζήτηση εντολών πώλησης"
 
-#: common/setting/user.py:120
+#: common/setting/user.py:126
 msgid "Display sales orders in search preview window"
 msgstr "Εμφάνιση εντολών πώλησης στο παράθυρο προεπισκόπησης αναζήτησης"
 
-#: common/setting/user.py:125
+#: common/setting/user.py:131
 msgid "Exclude Inactive Sales Orders"
 msgstr "Εξαίρεση ανενεργών εντολών πώλησης"
 
-#: common/setting/user.py:126
+#: common/setting/user.py:132
 msgid "Exclude inactive sales orders from search preview window"
 msgstr "Εξαίρεση ανενεργών εντολών πώλησης από το παράθυρο προεπισκόπησης αναζήτησης"
 
-#: common/setting/user.py:131
+#: common/setting/user.py:137
 msgid "Search Sales Order Shipments"
 msgstr "Αναζήτηση αποστολών εντολών πώλησης"
 
-#: common/setting/user.py:132
+#: common/setting/user.py:138
 msgid "Display sales order shipments in search preview window"
 msgstr "Εμφάνιση αποστολών εντολών πώλησης στο παράθυρο προεπισκόπησης αναζήτησης"
 
-#: common/setting/user.py:137
+#: common/setting/user.py:143
 msgid "Search Return Orders"
 msgstr "Αναζήτηση εντολών επιστροφής"
 
-#: common/setting/user.py:138
+#: common/setting/user.py:144
 msgid "Display return orders in search preview window"
 msgstr "Εμφάνιση εντολών επιστροφής στο παράθυρο προεπισκόπησης αναζήτησης"
 
-#: common/setting/user.py:143
+#: common/setting/user.py:149
 msgid "Exclude Inactive Return Orders"
 msgstr "Εξαίρεση ανενεργών εντολών επιστροφής"
 
-#: common/setting/user.py:144
+#: common/setting/user.py:150
 msgid "Exclude inactive return orders from search preview window"
 msgstr "Εξαίρεση ανενεργών εντολών επιστροφής από το παράθυρο προεπισκόπησης αναζήτησης"
 
-#: common/setting/user.py:149
+#: common/setting/user.py:155
 msgid "Search Preview Results"
 msgstr "Αποτελέσματα προεπισκόπησης αναζήτησης"
 
-#: common/setting/user.py:151
+#: common/setting/user.py:157
 msgid "Number of results to show in each section of the search preview window"
 msgstr "Αριθμός αποτελεσμάτων που εμφανίζονται σε κάθε ενότητα του παραθύρου προεπισκόπησης αναζήτησης"
 
-#: common/setting/user.py:157
+#: common/setting/user.py:163
 msgid "Regex Search"
 msgstr "Αναζήτηση με regex"
 
-#: common/setting/user.py:158
+#: common/setting/user.py:164
 msgid "Enable regular expressions in search queries"
 msgstr "Ενεργοποίηση κανονικών εκφράσεων (regex) στα ερωτήματα αναζήτησης"
 
-#: common/setting/user.py:163
+#: common/setting/user.py:169
 msgid "Whole Word Search"
 msgstr "Αναζήτηση ολόκληρης λέξης"
 
-#: common/setting/user.py:164
+#: common/setting/user.py:170
 msgid "Search queries return results for whole word matches"
 msgstr "Τα ερωτήματα αναζήτησης επιστρέφουν αποτελέσματα μόνο για πλήρη ταίριασμα λέξης"
 
-#: common/setting/user.py:169
+#: common/setting/user.py:175
 msgid "Search Notes"
 msgstr "Αναζήτηση σημειώσεων"
 
-#: common/setting/user.py:171
+#: common/setting/user.py:177
 msgid "Search queries return results for matches from the item's notes"
 msgstr "Τα ερωτήματα αναζήτησης επιστρέφουν αποτελέσματα που ταιριάζουν με τις σημειώσεις του είδους"
 
-#: common/setting/user.py:177
+#: common/setting/user.py:183
 msgid "Escape Key Closes Forms"
 msgstr "Το πλήκτρο Escape κλείνει φόρμες"
 
-#: common/setting/user.py:178
+#: common/setting/user.py:184
 msgid "Use the escape key to close modal forms"
 msgstr "Χρήση του πλήκτρου Escape για κλείσιμο αναδυόμενων φορμών"
 
-#: common/setting/user.py:183
+#: common/setting/user.py:189
 msgid "Fixed Navbar"
 msgstr "Σταθερή γραμμή πλοήγησης"
 
-#: common/setting/user.py:184
+#: common/setting/user.py:190
 msgid "The navbar position is fixed to the top of the screen"
 msgstr "Η γραμμή πλοήγησης παραμένει σταθερή στο επάνω μέρος της οθόνης"
 
-#: common/setting/user.py:189
+#: common/setting/user.py:195
 msgid "Fixed Table Headers"
 msgstr "Σταθερές κεφαλίδες πινάκων"
 
-#: common/setting/user.py:190
+#: common/setting/user.py:196
 msgid "Table headers are fixed to the top of the table"
 msgstr "Οι κεφαλίδες πινάκων παραμένουν σταθερές στο επάνω μέρος του πίνακα"
 
-#: common/setting/user.py:195
+#: common/setting/user.py:201
 msgid "Show Spotlight"
 msgstr "Εμφάνιση Spotlight"
 
-#: common/setting/user.py:196
+#: common/setting/user.py:202
 msgid "Enable spotlight navigation functionality"
 msgstr "Ενεργοποίηση λειτουργίας πλοήγησης Spotlight"
 
-#: common/setting/user.py:201
+#: common/setting/user.py:207
 msgid "Navigation Icons"
 msgstr "Εικονίδια πλοήγησης"
 
-#: common/setting/user.py:202
+#: common/setting/user.py:208
 msgid "Display icons in the navigation bar"
 msgstr "Εμφάνιση εικονιδίων στη γραμμή πλοήγησης"
 
-#: common/setting/user.py:207
+#: common/setting/user.py:213
 msgid "Date Format"
 msgstr "Μορφή ημερομηνίας"
 
-#: common/setting/user.py:208
+#: common/setting/user.py:214
 msgid "Preferred format for displaying dates"
 msgstr "Προτιμώμενη μορφή εμφάνισης ημερομηνιών"
 
-#: common/setting/user.py:221
+#: common/setting/user.py:227
 msgid "Show Stock History"
 msgstr "Εμφάνιση ιστορικού αποθέματος"
 
-#: common/setting/user.py:222
+#: common/setting/user.py:228
 msgid "Display stock history information in the part detail page"
 msgstr "Εμφάνιση πληροφοριών ιστορικού αποθέματος στη σελίδα λεπτομερειών προϊόντος"
 
-#: common/setting/user.py:227
+#: common/setting/user.py:233
 msgid "Show Last Breadcrumb"
 msgstr "Εμφάνιση τελευταίου breadcrumb"
 
-#: common/setting/user.py:228
+#: common/setting/user.py:234
 msgid "Show the current page in breadcrumbs"
 msgstr "Εμφάνιση της τρέχουσας σελίδας στα breadcrumbs"
 
-#: common/setting/user.py:233
+#: common/setting/user.py:239
 msgid "Show full stock location in tables"
 msgstr "Εμφάνιση πλήρους τοποθεσίας αποθέματος σε πίνακες"
 
-#: common/setting/user.py:235
+#: common/setting/user.py:241
 msgid "Disabled: The full location path is displayed as a hover tooltip. Enabled: The full location path is displayed as plain text."
 msgstr "Ανενεργό: Η πλήρης διαδρομή τοποθεσίας εμφανίζεται ως tooltip κατά το πέρασμα του δείκτη. Ενεργό: Η πλήρης διαδρομή τοποθεσίας εμφανίζεται ως απλό κείμενο"
 
-#: common/setting/user.py:241
+#: common/setting/user.py:247
 msgid "Show full part categories in tables"
 msgstr "Εμφάνιση πλήρους κατηγορίας προϊόντων σε πίνακες"
 
-#: common/setting/user.py:243
+#: common/setting/user.py:249
 msgid "Disabled: The full category path is displayed as a hover tooltip. Enabled: The full category path is displayed as plain text."
 msgstr "Ανενεργό: Η πλήρης διαδρομή κατηγορίας εμφανίζεται ως tooltip κατά το πέρασμα του δείκτη. Ενεργό: Η πλήρης διαδρομή κατηγορίας εμφανίζεται ως απλό κείμενο"
 
-#: common/setting/user.py:249
+#: common/setting/user.py:255
 msgid "Receive error reports"
 msgstr "Λήψη αναφορών σφαλμάτων"
 
-#: common/setting/user.py:250
+#: common/setting/user.py:256
 msgid "Receive notifications for system errors"
 msgstr "Λήψη ειδοποιήσεων για σφάλματα συστήματος"
 
-#: common/setting/user.py:255
+#: common/setting/user.py:261
 msgid "Last used printing machines"
 msgstr "Τελευταίες χρησιμοποιημένες εκτυπωτικές μηχανές"
 
-#: common/setting/user.py:256
+#: common/setting/user.py:262
 msgid "Save the last used printing machines for a user"
 msgstr "Αποθήκευση των τελευταίων εκτυπωτικών μηχανών που χρησιμοποίησε ο χρήστης"
 
