@@ -272,7 +272,7 @@ class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
             bytes: PDF data
         """
         html = self.render_as_string(instance, request, context, **kwargs)
-        pdf = HTML(string=html).write_pdf()
+        pdf = HTML(string=html).write_pdf(pdf_forms=True)
 
         return pdf
 

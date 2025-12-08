@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Adds "Category" columns to BOM and Build Item tables and APIs in [#10722](https://github.com/inventree/InvenTree/pull/10772)
 - Adds generic "Parameter" and "ParameterTemplate" models (and associated API endpoints) in [#10699](https://github.com/inventree/InvenTree/pull/10699)
 - Adds parameter support for multiple new model types in [#10699](https://github.com/inventree/InvenTree/pull/10699)
+- Allows report generator to produce PDF input controls in [#10969](https://github.com/inventree/InvenTree/pull/10969)
 - UI overhaul of parameter management in [#10699](https://github.com/inventree/InvenTree/pull/10699)
 
 ### Changed
