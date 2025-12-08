@@ -1017,11 +1017,13 @@ EXCHANGE_BACKEND = 'InvenTree.exchange.InvenTreeExchange'
 # region email
 # Email configuration options
 EMAIL_BACKEND = 'InvenTree.backends.InvenTreeMailLoggingBackend'
+
 INTERNAL_EMAIL_BACKEND = get_setting(
     'INVENTREE_EMAIL_BACKEND',
     'email.backend',
     'django.core.mail.backends.smtp.EmailBackend',
 )
+
 # SMTP backend
 EMAIL_HOST = get_setting('INVENTREE_EMAIL_HOST', 'email.host', '')
 EMAIL_PORT = get_setting('INVENTREE_EMAIL_PORT', 'email.port', 25, typecast=int)
