@@ -78,7 +78,7 @@ If this setting is enabled, users can reset their password via email. This requi
 
 If this setting is enabled, users must have multi-factor authentication enabled to log in.
 
-#### Auto Fil SSO Users
+#### Auto Fill SSO Users
 
 Automatically fill out user-details from SSO account-data. If this feature is enabled the user is only asked for their username, first- and surname if those values can not be gathered from their SSO profile. This might lead to unwanted usernames bleeding over.
 

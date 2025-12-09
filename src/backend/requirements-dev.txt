@@ -462,9 +462,9 @@ platformdirs==4.5.0 \
     # via
     #   -c src/backend/requirements.txt
     #   virtualenv
-pre-commit==4.4.0 \
-    --hash=sha256:b35ea52957cbf83dcc5d8ee636cbead8624e3a15fbfa61a370e42158ac8a5813 \
-    --hash=sha256:f0233ebab440e9f17cabbb558706eb173d19ace965c68cdce2c081042b4fab15
+pre-commit==4.5.0 \
+    --hash=sha256:25e2ce09595174d9c97860a95609f9f852c0614ba602de3561e267547f2335e1 \
+    --hash=sha256:dc5a065e932b19fc1d4c653c6939068fe54325af8e741e74e88db4d28a4dd66b
     # via -r src/backend/requirements-dev.in
 pycparser==2.23 \
     --hash=sha256:78816d4f24add8f10a06d6f05b4d424ad9e96cfebf68a4ddc99c65c0720d00c2 \
