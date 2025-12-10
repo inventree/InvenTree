@@ -8,6 +8,7 @@ django-cleanup                          # Automated deletion of old / unused upl
 django-cors-headers                     # CORS headers extension for DRF
 django-dbbackup>=5.0.0                  # Backup / restore of database and media files
 django-error-report-2                   # Error report viewer for the admin interface
+django-eventstream[drf]                 # Server-Sent Events support
 django-filter                           # Extended filtering options
 django-flags                            # Feature flags
 django-ical                             # iCal export for calendar views

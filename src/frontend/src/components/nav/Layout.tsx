@@ -1,5 +1,7 @@
+import type { UserStateProps } from '@lib/types/User';
 import { t } from '@lingui/core/macro';
 import { Container, Flex, Space } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
 import {
   Spotlight,
   type SpotlightActionData,
@@ -141,7 +143,39 @@ export default function LayoutComponent() {
             nothingFound={t`Nothing found...`}
           />
         )}
+        <NotifiySSEElement user={user} />
       </Flex>
     </ProtectedRoute>
   );
+}
+
+function NotifiySSEElement({ user }: { user: UserStateProps }) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    if (!user?.user) {
+      return;
+    }
+    if (!isOpen) {
+      const evtSource = new EventSource(
+        `http://localhost:7999/events/${user?.user?.pk}/`,
+        {
+          withCredentials: true
+        }
+      );
+      evtSource.onmessage = (event) => {
+        notifications.show({
+          title: 'Server notification',
+          message: event.data
+        });
+      };
+      evtSource.onerror = (err) => {
+        console.error('SSE error:', err);
+        evtSource.close();
+      };
+      setIsOpen(true);
+    }
+  }, [user, isOpen]);
+
+  return <></>;
 }
