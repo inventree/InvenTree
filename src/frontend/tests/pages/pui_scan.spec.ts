@@ -135,13 +135,24 @@ test('Barcode Scanning - Forms', async ({ browser }) => {
   });
 
   // Ensure the user setting is enabled
-  const api = await createApi();
+  const api = await createApi({});
 
-  await api.patch('/settings/user/BARCODE_IN_FORM_FIELDS/', {
-    data: {
-      value: true
-    }
-  });
+  let patched = false;
+
+  await api
+    .patch('/api/settings/user/BARCODE_IN_FORM_FIELDS/', {
+      data: {
+        value: true
+      }
+    })
+    .then((response) => {
+      patched = response.status() === 200;
+    });
+
+  // Assert that the setting was patched successfully
+  if (!patched) {
+    throw new Error('Could not patch user setting: BARCODE_IN_FORM_FIELDS');
+  }
 
   await page.reload();
 
