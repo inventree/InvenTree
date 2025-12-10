@@ -1,4 +1,5 @@
 import type { Page } from '@playwright/test';
+import { createApi } from '../api';
 import { test } from '../baseFixtures';
 import { doCachedLogin } from '../login';
 
@@ -128,8 +129,21 @@ test('Barcode Scanning - Build', async ({ browser }) => {
 
 test('Barcode Scanning - Forms', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
+    username: 'admin',
+    password: 'inventree',
     url: '/stock/location/index/stock-items'
   });
+
+  // Ensure the user setting is enabled
+  const api = await createApi();
+
+  await api.patch('/settings/user/BARCODE_IN_FORM_FIELDS/', {
+    data: {
+      value: true
+    }
+  });
+
+  await page.reload();
 
   // Open the "Add Stock Item" form
   await page
