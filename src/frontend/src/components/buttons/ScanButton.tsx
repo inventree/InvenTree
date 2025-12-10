@@ -29,7 +29,6 @@ export function ScanButton({
           aria-label={`barcode-scan-button-${modelType ?? 'any'}`}
           onClick={open}
           variant='transparent'
-          title={t`Open Barcode Scanner`}
         >
           <IconQrcode />
         </ActionIcon>
