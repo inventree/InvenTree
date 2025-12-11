@@ -274,6 +274,24 @@ function create_initscripts() {
   ${INIT_CMD} start nginx
   echo "# POI09| Started nginx"
 
+  # Pushpin setup for SSE support
+  echo "# POI09| Stopping pushpin"
+  ${INIT_CMD} stop pushpin
+  echo "# POI09| Stopped pushpin"
+  echo "# POI09| Setting up pushpin"
+  $pushpin_routes_file="/etc/pushpin/routes"
+  # Check if pushpin config exists and was not created by us
+  if test -f "$pushpin_routes_file" && $(read -r firstline < "$pushpin_routes_file" && [[ $firstline = '#INVENTREE-SET'* ]])
+    echo "# POI09| Backing up existing pushpin routes file to $pushpin_routes_file.bak"
+    mv $pushpin_routes_file "$pushpin_routes_file.bak"
+  fi
+  echo "# POI09| Writing pushpin routes file to $pushpin_routes_file"
+  cp ${APP_HOME}/contrib/packager.io/pushpin.conf $pushpin_routes_file
+
+  echo "# POI09| Starting pushpin"
+  ${INIT_CMD} start pushpin
+  echo "# POI09| Started pushpin"
+
   echo "# POI09| (Re)creating init scripts"
   # This resets scale parameters to a known state
   inventree scale web="1" worker="1"

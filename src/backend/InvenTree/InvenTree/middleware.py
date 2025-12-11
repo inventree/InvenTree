@@ -71,6 +71,7 @@ paths_own_security = [
     '/anymail/',  # Mails - wehbhooks etc
     '/accounts/',  # allauth account management - has its own auth model
     '/assets/',  # Web assets - only used for testing, no security model needed
+    '/events/',  # SSE endpoints - have their own security model
     ensure_slashes(
         settings.STATIC_URL
     ),  # Static files  - static files are considered safe to serve

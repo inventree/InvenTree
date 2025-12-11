@@ -500,8 +500,10 @@ django==5.2.9 \
     #   django-cors-headers
     #   django-dbbackup
     #   django-error-report-2
+    #   django-eventstream
     #   django-filter
     #   django-flags
+    #   django-grip
     #   django-ical
     #   django-js-asset
     #   django-markdownify
@@ -546,6 +548,9 @@ django-error-report-2==0.4.2 \
     --hash=sha256:1dd99c497af09b7ea99f5fbaf910501838150a9d5390796ea00e187bc62f6c1b \
     --hash=sha256:603e1e3b24d01bbfeab6379af948893b2b034031c80fa8b45cf1c4735341c04b
     # via -r src/backend/requirements.in
+django-eventstream[drf]==5.3.3 \
+    --hash=sha256:6880b03298eebf18c1b736b972fb862eaf631dfbb79f8b27496418a3495d08dc
+    # via -r src/backend/requirements.in
 django-filter==25.2 \
     --hash=sha256:760e984a931f4468d096f5541787efb8998c61217b73006163bf2f9523fe8f23 \
     --hash=sha256:9c0f8609057309bba611062fe1b720b4a873652541192d232dd28970383633e3
@@ -554,6 +559,9 @@ django-flags==5.1.0 \
     --hash=sha256:47f33efba238fe83a2c1f6f5764147fe62d770039f64b3a039e0e461bbc36e79 \
     --hash=sha256:6cfb15151f94d13de1a497901fc1dd4f0510251e5ec23a6732d674824f499e72
     # via -r src/backend/requirements.in
+django-grip==3.5.2 \
+    --hash=sha256:1ee1601492cd110256bd03e4a68797a9fbefa27c15f5a838bf245df97db0450c
+    # via django-eventstream
 django-ical==1.9.2 \
     --hash=sha256:44c9b6fa90d09f25e9ebaa91ed9eb007f079afbc23d6aac909cfc18188a8e90c \
     --hash=sha256:74a16bca05735f91a00120cad7250f3c3aa292a9f698a6cfdc544a922c11de70
@@ -647,6 +655,7 @@ djangorestframework==3.16.1 \
     --hash=sha256:33a59f47fb9c85ede792cbf88bde71893bcda0667bc573f784649521f1102cec
     # via
     #   -r src/backend/requirements.in
+    #   django-eventstream
     #   djangorestframework-simplejwt
     #   drf-spectacular
 djangorestframework-simplejwt[crypto]==5.5.1 \
@@ -772,6 +781,11 @@ googleapis-common-protos==1.72.0 \
     # via
     #   opentelemetry-exporter-otlp-proto-grpc
     #   opentelemetry-exporter-otlp-proto-http
+gripcontrol==4.2.1 \
+    --hash=sha256:5f7c2de4b6cceaa4fc2ba0b77d591c881216004ff99ad7582a7d3e52a12f58bb
+    # via
+    #   django-eventstream
+    #   django-grip
 grpcio==1.76.0 \
     --hash=sha256:035d90bc79eaa4bed83f524331d55e35820725c9fbb00ffa1904d5550ed7ede3 \
     --hash=sha256:04bbe1bfe3a68bbfd4e52402ab7d4eb59d72d02647ae2042204326cf4bbad280 \
@@ -1125,7 +1139,9 @@ markupsafe==3.0.3 \
     --hash=sha256:f71a396b3bf33ecaa1626c255855702aca4d3d9fea5e051b41ac59a9c1c41edc \
     --hash=sha256:f9e130248f4462aaa8e2552d547f36ddadbeaa573879158d721bbd33dfe4743a \
     --hash=sha256:fed51ac40f757d41b7c48425901843666a6677e3e8eb0abcff09e4ba6e664f50
-    # via jinja2
+    # via
+    #   jinja2
+    #   werkzeug
 oauthlib==3.3.1 \
     --hash=sha256:0f0f8aa759826a193cf66c12ea1af1637f87b9b4622d46e866952bb022e538c9 \
     --hash=sha256:88119c938d2b8fb88561af5f6ee0eec8cc8d552b7bb1f712743136eb7523b7a1
@@ -1427,6 +1443,11 @@ psutil==7.1.3 \
     --hash=sha256:f39c2c19fe824b47484b96f9692932248a54c43799a84282cfe58d05a6449efd \
     --hash=sha256:fac9cd332c67f4422504297889da5ab7e05fd11e3c4392140f7370f4208ded1f
     # via opentelemetry-instrumentation-system-metrics
+pubcontrol==3.5.0 \
+    --hash=sha256:a5ec6b3f53edfd005675518e5e4cc23b34122776835ae7c6dbd1db173d1ff0cb
+    # via
+    #   django-grip
+    #   gripcontrol
 py-moneyed==3.0 \
     --hash=sha256:4906f0f02cf2b91edba2e156f2d4e9a78f224059ab8c8fa2ff26230c75d894e8 \
     --hash=sha256:9583a14f99c05b46196193d8185206e9b73c8439fc8a5eee9cfc7e733676d9bb
@@ -1444,7 +1465,10 @@ pyjwt[crypto]==2.10.1 \
     --hash=sha256:dcdd193e30abefd5debf142f9adfcdd2b58004e644f25406ffaebd50bd98dacb
     # via
     #   django-allauth
+    #   django-eventstream
     #   djangorestframework-simplejwt
+    #   gripcontrol
+    #   pubcontrol
 pynacl==1.6.0 \
     --hash=sha256:04f20784083014e265ad58c1b2dd562c3e35864b5394a14ab54f5d150ee9e53e \
     --hash=sha256:10d755cf2a455d8c0f8c767a43d68f24d163b8fe93ccfaabfa7bafd26be58d73 \
@@ -1701,6 +1725,7 @@ requests==2.32.5 \
     #   django-anymail
     #   django-oauth-toolkit
     #   opentelemetry-exporter-otlp-proto-http
+    #   pubcontrol
 rpds-py==0.28.0 \
     --hash=sha256:03065002fd2e287725d95fbc69688e0c6daf6c6314ba38bdbaa3895418e09296 \
     --hash=sha256:04c1b207ab8b581108801528d59ad80aa83bb170b35b0ddffb29c20e411acdc1 \
@@ -1842,7 +1867,11 @@ sgmllib3k==1.0.0 \
 six==1.17.0 \
     --hash=sha256:4721f391ed90541fddacab5acf947aa0d3dc7d27b2e1e8eda2be8970586c3274 \
     --hash=sha256:ff70335d468e7eb6ec65b95b99d3a2836546063f63acc5171de367e834932a81
-    # via python-dateutil
+    # via
+    #   django-eventstream
+    #   django-grip
+    #   gripcontrol
+    #   python-dateutil
 sqlparse==0.5.3 \
     --hash=sha256:09f67787f56a0b16ecdbde1bfc7f5d9c3371ca683cfeaa8e6ff60b4807ec9272 \
     --hash=sha256:cf2196ed3418f3ba5de6af7e82c694a9fbdbfecccdfc72e281548517081f16ca
@@ -1920,6 +1949,10 @@ webencodings==0.5.1 \
     #   cssselect2
     #   tinycss2
     #   tinyhtml5
+werkzeug==3.1.4 \
+    --hash=sha256:2ad50fb9ed09cc3af22c54698351027ace879a0b60a3b5edf5730b2f7d876905 \
+    --hash=sha256:cd3cd98b1b92dc3b7b3995038826c68097dcb16f9baa63abe35f20eafeb9fe5e
+    # via django-grip
 whitenoise==6.11.0 \
     --hash=sha256:0f5bfce6061ae6611cd9396a8231e088722e4fc67bc13a111be74c738d99375f \
     --hash=sha256:b2aeb45950597236f53b5342b3121c5de69c8da0109362aee506ce88e022d258
