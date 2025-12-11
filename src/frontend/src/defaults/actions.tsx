@@ -3,6 +3,7 @@ import type { SpotlightActionData } from '@mantine/spotlight';
 import {
   IconBarcode,
   IconLink,
+  IconPlug,
   IconPointer,
   IconSettings,
   IconUserBolt,
@@ -152,8 +153,17 @@ export function getActions(navigate: NavigateFunction) {
         id: 'admin-center',
         label: t`Admin Center`,
         description: t`Go to the Admin Center`,
-        onClick: () => {}, /// navigate(menuItems['settings-admin'].link),}
+        onClick: () => navigate('/settings/admin'),
         leftSection: <IconUserBolt size='1.2rem' />
+      });
+
+    user?.isStaff() &&
+      _actions.push({
+        id: 'plugin-settings',
+        label: t`Plugins`,
+        description: t`Manage InvenTree plugins`,
+        onClick: () => navigate('/settings/admin/plugin'),
+        leftSection: <IconPlug size='1.2rem' />
       });
 
     return _actions;
