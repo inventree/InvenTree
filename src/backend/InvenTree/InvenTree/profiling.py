@@ -9,7 +9,7 @@ Note: These functions are not to be used in production code.
 from functools import wraps
 
 
-def time_function(func):
+def time_function(func):  # pragma: no cover
     """Decorator to time a function's execution duration.
 
     Args:
@@ -32,7 +32,7 @@ def time_function(func):
     return wrapper
 
 
-def profile_function(filename='profile.prof'):
+def profile_function(filename='profile.prof'):  # pragma: no cover
     """Decorator to profile a function using cProfile.
 
     Args:
@@ -67,7 +67,9 @@ def profile_function(filename='profile.prof'):
     return decorator
 
 
-def log_slow_queries(threshold: float = 0.01, n: int = 5, log_to_file: bool = True):
+def log_slow_queries(
+    threshold: float = 0.01, n: int = 5, log_to_file: bool = True
+):  # pragma: no cover
     """Decorator to log slow database queries in a Django view function.
 
     Args:
