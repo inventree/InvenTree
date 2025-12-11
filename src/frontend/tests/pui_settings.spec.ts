@@ -332,7 +332,7 @@ test('Settings - Admin - Barcode History', async ({ browser }) => {
 
   // Scan some barcodes (via API calls)
   const barcodes = ['ABC1234', 'XYZ5678', 'QRS9012'];
-  const api = await createApi();
+  const api = await createApi({});
 
   for (let i = 0; i < barcodes.length; i++) {
     const barcode = barcodes[i];
@@ -349,8 +349,8 @@ test('Settings - Admin - Barcode History', async ({ browser }) => {
           },
           timeout: 5000
         })
-        .then(() => {
-          result = true;
+        .then((response) => {
+          result = response.status() === 200;
         });
 
       if (result) {
@@ -478,8 +478,6 @@ test('Settings - Admin - Parameter', async ({ browser }) => {
   await page.getByRole('option', { name: 'my custom parameter' }).click();
   await page.getByLabel('choice-field-data').fill('2');
   await page.getByRole('button', { name: 'Submit' }).click();
-
-  await page.waitForTimeout(2500);
 });
 
 test('Settings - Admin - Unauthorized', async ({ browser }) => {

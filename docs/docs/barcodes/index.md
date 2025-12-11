@@ -69,7 +69,7 @@ To access this page, select *Scan Barcode* from the main navigation menu:
 {{ image("barcode/barcode_nav_menu.png", "Barcode menu item") }}
 {{ image("barcode/barcode_scan_page.png", "Barcode scan page") }}
 
-### Barcodes in Forms
+## Barcodes in Forms
 
 The InvenTree user interface supports direct scanning of barcodes within certain forms in the web UI. This means that any form field which points to a model which supports barcodes can accept barcode input. If barcode scanning is supported for a particular field, a barcode icon will be displayed next to the input field:
 
@@ -82,6 +82,14 @@ To scan a barcode into a form field, click this barcode icon. A barcode scanning
 Once scanned, the form field will be automatically populated with the correct item.
 
 {{ image("barcode/barcode_field_filled.png", "Barcode field populated") }}
+
+Any field which supports barcode input will have this functionality, such as allocating stock items to an order:
+
+{{ image("barcode/barcode_allocate_stock.png", "Allocate stock via barcode") }}
+
+### User Configuration
+
+By default, barcode scanning in form fields is disabled. Each user can enable this feature via their [user preferences](../settings/user.md#display-settings).
 
 ## App Integration
 
