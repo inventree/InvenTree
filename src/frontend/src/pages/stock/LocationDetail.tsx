@@ -11,7 +11,8 @@ import {
   IconListDetails,
   IconPackages,
   IconSitemap,
-  IconTable
+  IconTable,
+  IconTransfer
 } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -219,6 +220,12 @@ export default function Stock() {
             }}
           />
         )
+      },
+      {
+        name: 'transfer-orders',
+        label: t`Transfer Orders`,
+        icon: <IconTransfer />,
+        content: <Text>Hello World</Text>
       },
       {
         name: 'default_parts',
