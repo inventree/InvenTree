@@ -9,6 +9,14 @@ Note: These functions are not to be used in production code.
 from functools import wraps
 
 
+def ensure_debug():
+    """Ensure that InvenTree is running in DEBUG mode."""
+    from django.conf import settings
+
+    if not settings.DEBUG:
+        raise RuntimeError('Profiling functions can only be used in DEBUG mode!')
+
+
 def time_function(func):  # pragma: no cover
     """Decorator to time a function's execution duration.
 
@@ -19,6 +27,8 @@ def time_function(func):  # pragma: no cover
     @wraps(func)
     def wrapper(*args, **kwargs):
         import time
+
+        ensure_debug()
 
         start_time = time.time()
         result = func(*args, **kwargs)
@@ -47,6 +57,8 @@ def profile_function(filename='profile.prof'):  # pragma: no cover
             import cProfile
             import io
             import pstats
+
+            ensure_debug()
 
             pr = cProfile.Profile()
             pr.enable()
@@ -84,6 +96,8 @@ def log_slow_queries(
         @wraps(func)
         def wrapper(*args, **kwargs):
             from django.db import connection
+
+            ensure_debug()
 
             result = func(*args, **kwargs)
 
