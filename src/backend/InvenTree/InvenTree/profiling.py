@@ -124,3 +124,7 @@ def log_slow_queries(
         return wrapper
 
     return decorator
+
+
+# Raise an exception if this file is imported outside of DEBUG mode
+ensure_debug()
