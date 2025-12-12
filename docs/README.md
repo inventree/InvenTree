@@ -15,12 +15,36 @@ $ git clone https://github.com/inventree/inventree
 $ pip install --require-hashes -r docs/requirements.txt
 ```
 
+## Build Documentation
+
+Before serving the documentation, you will need to build the documentation files:
+
+```
+invoke build-docs
+```
+
+This is required to generate the required API schema files, and must be run before the documentation can be served.
+
+Note that this command is only required when building the documentation for the first time, or when changes have been made to the API schema.
+
 ## Serve Locally
 
 To serve the pages locally, run the following command (from the top-level project directory):
 
 ```
 $ mkdocs serve -f docs/mkdocs.yml -a localhost:8080
+```
+
+Alternatively, you can use the `invoke` command:
+
+```
+invoke dev.docs-server
+```
+
+To see all the available options:
+
+```
+invoke dev.docs-server --help
 ```
 
 ## Edit Documentation Files
