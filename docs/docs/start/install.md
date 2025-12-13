@@ -108,6 +108,26 @@ The Python packages required by the InvenTree server must be installed into the 
 
 ```
 pip install --upgrade --ignore-installed invoke
+```
+
+#### Install Python Bindings
+
+Depending on your database the python bindings must also be installed (into your virtual environment). 
+For PostgreSQL install:
+
+```
+pip3 install psycopg pgcli
+```
+
+For MySQL install:
+
+```
+pip3 install mysqlclient mariadb
+```
+
+If all packages have been installed run:
+
+```
 invoke install
 ```
 
@@ -124,6 +144,31 @@ For MySQL install:
 
 ```
 pip3 install mysqlclient mariadb
+```
+
+This installs all required Python packages using pip package manager. It also creates a (default) database configuration file which needs to be edited to meet user needs before proceeding (see next step below).
+
+## Create Database
+
+As part of the initial setup, an empty database needs to be created. Follow the instructions below particular to your database engine of choice:
+
+### PostgreSQL
+
+#### Install PostgreSQL
+
+Install required system packages:
+
+!!! info "Sudo Actions"
+    Perform sudo actions from a separate shell, as 'inventree' user does not have sudo access
+
+```
+sudo apt-get install postgresql postgresql-contrib libpq-dev
+```
+
+And start the postgresql service:
+
+```
+sudo service postgresql start
 ```
 
 This installs all required Python packages using pip package manager. It also creates a (default) database configuration file which needs to be edited to meet user needs before proceeding (see next step below).
