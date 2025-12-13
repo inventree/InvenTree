@@ -377,6 +377,11 @@ if DJANGO_SILK_ENABLED:  # pragma: no cover
     MIDDLEWARE.append('silk.middleware.SilkyMiddleware')
     INSTALLED_APPS.append('silk')
 
+    # Optionally enable the silk python profiler
+    SILKY_PYTHON_PROFILER = get_boolean_setting(
+        'INVENTREE_DEBUG_SILK_PROFILING', 'debug_silk_profiling', False
+    )
+
 # In DEBUG mode, add support for django-querycount
 # Ref: https://github.com/bradmontgomery/django-querycount
 if DEBUG and get_boolean_setting(  # pragma: no cover

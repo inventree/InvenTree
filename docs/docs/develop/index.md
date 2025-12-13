@@ -37,6 +37,10 @@ Once enabled, you can access the silk interface at the `/silk/` endpoint of your
 !!! tip "Run Migrations"
     If you are enabling django-silk for the first time, you may need to run database migrations to create the necessary tables. You can do this by running `invoke migrate`.
 
+#### Detailed Profiling
+
+To enable detailed profiling in django-silk, set the `INVENTREE_DEBUG_SILK_PROFILING` environment variable to `True`, or set the `debug_silk_profiling` option to `True` in your config file. This will enable more granular profiling features within django-silk. Refer to the [django-silk documentation](https://github.com/jazzband/django-silk#profiling) for more information.
+
 ### Django QueryCount
 
 Enabling the `INVENTREE_DEBUG_QUERYCOUNT` setting will log (to the terminal) the number of database queries executed for each page load. This can be useful for identifying performance bottlenecks in the InvenTree server. Note that this setting is only available if `INVENTREE_DEBUG` is also enabled.

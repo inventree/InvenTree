@@ -94,6 +94,7 @@ The following debugging / logging options are available:
 | INVENTREE_DEBUG | debug | Enable [debug mode](./index.md#debug-mode) | False |
 | INVENTREE_DEBUG_QUERYCOUNT | debug_querycount | Enable support for [django-querycount](../develop/index.md#django-querycount) middleware. | False |
 | INVENTREE_DEBUG_SILK | debug_silk | Enable support for [django-silk](../develop/index.md#django-silk) profiling tool. | False |
+| INVENTREE_DEBUG_SILK_PROFILING | debug_silk_profiling | Enable detailed profiling in django-silk | False |
 | INVENTREE_DB_LOGGING | db_logging | Enable logging of database messages | False |
 | INVENTREE_LOG_LEVEL | log_level | Set level of logging to terminal | WARNING |
 | INVENTREE_JSON_LOG | json_log | log as json | False |

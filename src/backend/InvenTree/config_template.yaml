@@ -36,6 +36,8 @@ debug: False
 
 # Additional debug options
 debug_querycount: False
+debug_silk: False
+debug_silk_profiling: False
 debug_shell: False
 
 # Set to False to disable the admin interface, or use the environment variable INVENTREE_ADMIN_ENABLED
