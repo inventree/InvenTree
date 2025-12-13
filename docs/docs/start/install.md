@@ -131,21 +131,6 @@ If all packages have been installed run:
 invoke install
 ```
 
-#### Install Python Bindings
-
-Depending on your database the python bindings must also be installed (into your virtual environment). 
-For PostgreSQL install:
-
-```
-pip3 install psycopg pgcli
-```
-
-For MySQL install:
-
-```
-pip3 install mysqlclient mariadb
-```
-
 This installs all required Python packages using pip package manager. It also creates a (default) database configuration file which needs to be edited to meet user needs before proceeding (see next step below).
 
 ## Create Database
