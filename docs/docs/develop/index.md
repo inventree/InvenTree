@@ -34,6 +34,9 @@ To enable django-silk profiling, ensure that the `debug_silk` option is set to `
 
 Once enabled, you can access the silk interface at the `/silk/` endpoint of your InvenTree instance.
 
+!!! tip "Run Migrations"
+    If you are enabling django-silk for the first time, you may need to run database migrations to create the necessary tables. You can do this by running `invoke migrate`.
+
 ### Django QueryCount
 
 Enabling the `INVENTREE_DEBUG_QUERYCOUNT` setting will log (to the terminal) the number of database queries executed for each page load. This can be useful for identifying performance bottlenecks in the InvenTree server. Note that this setting is only available if `INVENTREE_DEBUG` is also enabled.
@@ -46,4 +49,4 @@ Enabling the `INVENTREE_DB_LOGGING` setting will log all database queries to the
 
 In addition to the above third-party tools, InvenTree includes some internal profiling tools that can be enabled in debug mode. These tools can be used to provide additional insights into the performance of various components of the InvenTree server.
 
-These profiling tools can be found in [src/backend/InvenTree/profiling.py]({{ sourcefile("src/backend/InvenTree/InvenTree/profiling.py") }}).
+These profiling tools can be found in `./src/backend/InvenTree/profiling.py`.
