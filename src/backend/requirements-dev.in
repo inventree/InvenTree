@@ -2,6 +2,7 @@
 -c requirements.txt
 coverage[toml]                          # Unit test coverage
 django-querycount                       # Display number of URL queries for requests
+django-silk                             # API query profiling
 django-slowtests                        # Show which unit tests are running slowly
 django-test-migrations                  # Unit testing for database migrations
 isort                                   # python import sorting

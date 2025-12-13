@@ -367,6 +367,16 @@ MIDDLEWARE = CONFIG.get(
     ],
 )
 
+# In DEBUG mode, add support for django-silk
+# Ref: https://silk.readthedocs.io/en/latest/
+DJANGO_SILK_ENABLED = DEBUG and get_boolean_setting(  # pragma: no cover
+    'INVENTREE_DEBUG_SILK', 'debug_silk', False
+)
+
+if DJANGO_SILK_ENABLED:  # pragma: no cover
+    MIDDLEWARE.append('silk.middleware.SilkyMiddleware')
+    INSTALLED_APPS.append('silk')
+
 # In DEBUG mode, add support for django-querycount
 # Ref: https://github.com/bradmontgomery/django-querycount
 if DEBUG and get_boolean_setting(  # pragma: no cover
