@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-12-07 07:33+0000\n"
-"PO-Revision-Date: 2025-12-07 07:36\n"
+"PO-Revision-Date: 2025-12-12 10:18\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -3596,11 +3596,11 @@ msgstr "Zobrazit reporty PDF v prohlížeči namísto stahování jako soubor"
 
 #: common/setting/user.py:45
 msgid "Barcode Scanner in Form Fields"
-msgstr ""
+msgstr "Skener čárových kódů v polích formuláře"
 
 #: common/setting/user.py:46
 msgid "Allow barcode scanner input in form fields"
-msgstr ""
+msgstr "Povolit zadávání čárového kódu v polích formuláře"
 
 #: common/setting/user.py:51
 msgid "Search Parts"

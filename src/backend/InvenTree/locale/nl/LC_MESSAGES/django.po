@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-12-07 07:33+0000\n"
-"PO-Revision-Date: 2025-12-07 07:36\n"
+"PO-Revision-Date: 2025-12-11 05:24\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -55,7 +55,7 @@ msgstr "Geen gegevens verstrekt"
 
 #: InvenTree/api.py:513
 msgid "This field must be unique."
-msgstr ""
+msgstr "Dit veld moet uniek zijn"
 
 #: InvenTree/api.py:803
 msgid "User does not have permission to view this model"
@@ -351,7 +351,7 @@ msgstr "Selecteer valuta uit beschikbare opties"
 
 #: InvenTree/serializers.py:654
 msgid "This field may not be null."
-msgstr ""
+msgstr "Dit veld mag niet nul zijn."
 
 #: InvenTree/serializers.py:660
 msgid "Invalid value"
@@ -375,11 +375,11 @@ msgstr "Fout bij het downloaden van afbeelding van externe URL"
 
 #: InvenTree/serializers.py:806
 msgid "Invalid content type format"
-msgstr ""
+msgstr "Ongeldig inhoudstype"
 
 #: InvenTree/serializers.py:809
 msgid "Content type not found"
-msgstr ""
+msgstr "Inhoudstype niet gevonden"
 
 #: InvenTree/serializers.py:815
 msgid "Content type does not match required mixin class"
@@ -2282,7 +2282,7 @@ msgstr "Gekoppeld onderwerp voor dit bericht"
 
 #: common/models.py:3077
 msgid "Priority"
-msgstr ""
+msgstr "Prioriteit"
 
 #: common/models.py:3119
 msgid "Email Thread"
@@ -4540,7 +4540,7 @@ msgstr "Afdrukken"
 
 #: machine/machine_types/label_printer.py:234
 msgid "Warning"
-msgstr ""
+msgstr "Waarschuwing"
 
 #: machine/machine_types/label_printer.py:235
 msgid "No media"
@@ -4556,7 +4556,7 @@ msgstr "Verbinding verbroken"
 
 #: machine/machine_types/label_printer.py:238
 msgid "Error"
-msgstr ""
+msgstr "Error"
 
 #: machine/machine_types/label_printer.py:245
 msgid "Label Printer"
@@ -4644,7 +4644,7 @@ msgstr ""
 
 #: machine/serializers.py:33
 msgid "Type"
-msgstr ""
+msgstr "Type"
 
 #: machine/serializers.py:35
 msgid "Type of the property"

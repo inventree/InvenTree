@@ -8,7 +8,7 @@ msgstr ""
 "Language: uk\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-12-07 07:36\n"
+"PO-Revision-Date: 2025-12-12 23:24\n"
 "Last-Translator: \n"
 "Language-Team: Ukrainian\n"
 "Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
@@ -340,7 +340,7 @@ msgstr "Замовлення на купівлю"
 
 #: lib/enums/ModelInformation.tsx:160
 #: lib/enums/Roles.tsx:39
-#: src/defaults/actions.tsx:104
+#: src/defaults/actions.tsx:105
 #: src/pages/Index/Settings/SystemSettings.tsx:289
 #: src/pages/company/CompanyDetail.tsx:204
 #: src/pages/company/SupplierPartDetail.tsx:267
@@ -373,7 +373,7 @@ msgstr "Замовлення на купівлю"
 
 #: lib/enums/ModelInformation.tsx:176
 #: lib/enums/Roles.tsx:43
-#: src/defaults/actions.tsx:114
+#: src/defaults/actions.tsx:115
 #: src/pages/Index/Settings/SystemSettings.tsx:305
 #: src/pages/company/CompanyDetail.tsx:224
 #: src/pages/part/PartDetail.tsx:876
@@ -398,7 +398,7 @@ msgstr ""
 
 #: lib/enums/ModelInformation.tsx:195
 #: lib/enums/Roles.tsx:41
-#: src/defaults/actions.tsx:125
+#: src/defaults/actions.tsx:126
 #: src/pages/Index/Settings/SystemSettings.tsx:322
 #: src/pages/company/CompanyDetail.tsx:231
 #: src/pages/part/PartDetail.tsx:883
@@ -584,7 +584,7 @@ msgid "Admin"
 msgstr "Адмін"
 
 #: lib/enums/Roles.tsx:33
-#: src/defaults/actions.tsx:135
+#: src/defaults/actions.tsx:136
 #: src/pages/Index/Settings/SystemSettings.tsx:270
 #: src/pages/build/BuildIndex.tsx:67
 #: src/pages/part/PartDetail.tsx:893
@@ -637,7 +637,7 @@ msgstr "Штрих-код"
 
 #: src/components/barcodes/BarcodeInput.tsx:35
 #: src/components/barcodes/BarcodeKeyboardInput.tsx:18
-#: src/defaults/actions.tsx:85
+#: src/defaults/actions.tsx:86
 msgid "Scan"
 msgstr "Сканувати"
 
@@ -860,8 +860,8 @@ msgstr "Вас буде перенаправлено до постачальни
 #~ msgstr "Open QR code scanner"
 
 #: src/components/buttons/ScanButton.tsx:32
-msgid "Open Barcode Scanner"
-msgstr "Відкрити сканер штрих-кодів"
+#~ msgid "Open Barcode Scanner"
+#~ msgstr "Open Barcode Scanner"
 
 #: src/components/buttons/SpotlightButton.tsx:12
 msgid "Open spotlight"
@@ -937,7 +937,7 @@ msgstr "Прийняти макет сторінки"
 
 #: src/components/dashboard/DashboardMenu.tsx:94
 #: src/components/nav/NavigationDrawer.tsx:64
-#: src/defaults/actions.tsx:41
+#: src/defaults/actions.tsx:42
 #: src/defaults/links.tsx:31
 #: src/pages/Index/Home.tsx:8
 msgid "Dashboard"
@@ -1818,6 +1818,7 @@ msgstr "Версія API"
 
 #: src/components/forms/InstanceOptions.tsx:142
 #: src/components/nav/NavigationDrawer.tsx:197
+#: src/defaults/actions.tsx:163
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:228
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:46
 msgid "Plugins"
@@ -2320,7 +2321,7 @@ msgstr ""
 
 #: src/components/modals/AboutInvenTreeModal.tsx:180
 #: src/components/nav/NavigationDrawer.tsx:208
-#: src/defaults/actions.tsx:48
+#: src/defaults/actions.tsx:49
 msgid "Documentation"
 msgstr "Документація"
 
@@ -2547,7 +2548,7 @@ msgstr "Налаштування"
 #: src/components/nav/MainMenu.tsx:61
 #: src/components/nav/NavigationDrawer.tsx:140
 #: src/components/nav/SettingsHeader.tsx:40
-#: src/defaults/actions.tsx:92
+#: src/defaults/actions.tsx:93
 #: src/pages/Index/Settings/UserSettings.tsx:142
 #: src/pages/Index/Settings/UserSettings.tsx:146
 msgid "User Settings"
@@ -2565,7 +2566,7 @@ msgstr ""
 #: src/components/nav/MainMenu.tsx:69
 #: src/components/nav/NavigationDrawer.tsx:146
 #: src/components/nav/SettingsHeader.tsx:41
-#: src/defaults/actions.tsx:144
+#: src/defaults/actions.tsx:145
 #: src/pages/Index/Settings/SystemSettings.tsx:354
 #: src/pages/Index/Settings/SystemSettings.tsx:359
 msgid "System Settings"
@@ -2578,14 +2579,14 @@ msgstr "Налаштування системи"
 #: src/components/nav/MainMenu.tsx:78
 #: src/components/nav/NavigationDrawer.tsx:153
 #: src/components/nav/SettingsHeader.tsx:42
-#: src/defaults/actions.tsx:153
+#: src/defaults/actions.tsx:154
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:293
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:298
 msgid "Admin Center"
 msgstr "Центр адміністрування"
 
 #: src/components/nav/MainMenu.tsx:99
-#: src/defaults/actions.tsx:57
+#: src/defaults/actions.tsx:58
 #: src/defaults/links.tsx:140
 #: src/defaults/links.tsx:186
 msgid "About InvenTree"
@@ -4038,75 +4039,79 @@ msgstr ""
 #~ msgid "About this Inventree instance"
 #~ msgstr "About this Inventree instance"
 
-#: src/defaults/actions.tsx:42
+#: src/defaults/actions.tsx:43
 msgid "Go to the InvenTree dashboard"
 msgstr "Перейти до панелі керування InvenTree"
 
-#: src/defaults/actions.tsx:49
+#: src/defaults/actions.tsx:50
 msgid "Visit the documentation to learn more about InvenTree"
 msgstr ""
 
-#: src/defaults/actions.tsx:58
+#: src/defaults/actions.tsx:59
 msgid "About the InvenTree org"
 msgstr ""
 
-#: src/defaults/actions.tsx:64
+#: src/defaults/actions.tsx:65
 msgid "Server Information"
 msgstr "Інформація про сервер"
 
-#: src/defaults/actions.tsx:65
+#: src/defaults/actions.tsx:66
 #: src/defaults/links.tsx:169
 msgid "About this InvenTree instance"
 msgstr ""
 
-#: src/defaults/actions.tsx:71
+#: src/defaults/actions.tsx:72
 #: src/defaults/links.tsx:153
 #: src/defaults/links.tsx:175
 msgid "License Information"
 msgstr "Відомості про ліцензію"
 
-#: src/defaults/actions.tsx:72
+#: src/defaults/actions.tsx:73
 msgid "Licenses for dependencies of the service"
 msgstr ""
 
-#: src/defaults/actions.tsx:78
+#: src/defaults/actions.tsx:79
 msgid "Open Navigation"
 msgstr ""
 
-#: src/defaults/actions.tsx:79
+#: src/defaults/actions.tsx:80
 msgid "Open the main navigation menu"
 msgstr ""
 
-#: src/defaults/actions.tsx:86
+#: src/defaults/actions.tsx:87
 msgid "Scan a barcode or QR code"
 msgstr ""
 
-#: src/defaults/actions.tsx:94
+#: src/defaults/actions.tsx:95
 msgid "Go to your user settings"
 msgstr ""
 
-#: src/defaults/actions.tsx:105
+#: src/defaults/actions.tsx:106
 msgid "Go to Purchase Orders"
 msgstr ""
 
-#: src/defaults/actions.tsx:115
+#: src/defaults/actions.tsx:116
 msgid "Go to Sales Orders"
 msgstr ""
 
-#: src/defaults/actions.tsx:126
+#: src/defaults/actions.tsx:127
 msgid "Go to Return Orders"
 msgstr ""
 
-#: src/defaults/actions.tsx:136
+#: src/defaults/actions.tsx:137
 msgid "Go to Build Orders"
 msgstr ""
 
-#: src/defaults/actions.tsx:145
+#: src/defaults/actions.tsx:146
 msgid "Go to System Settings"
 msgstr ""
 
-#: src/defaults/actions.tsx:154
+#: src/defaults/actions.tsx:155
 msgid "Go to the Admin Center"
+msgstr ""
+
+#: src/defaults/actions.tsx:164
+msgid "Manage InvenTree plugins"
 msgstr ""
 
 #: src/defaults/dashboardItems.tsx:29

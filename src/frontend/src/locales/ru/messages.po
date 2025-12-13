@@ -8,7 +8,7 @@ msgstr ""
 "Language: ru\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-12-07 07:36\n"
+"PO-Revision-Date: 2025-12-12 10:18\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
@@ -149,7 +149,7 @@ msgstr "Детали"
 
 #: lib/enums/ModelInformation.tsx:39
 msgid "Parameter"
-msgstr ""
+msgstr "Параметр"
 
 #: lib/enums/ModelInformation.tsx:40
 #: src/components/panels/ParametersPanel.tsx:19
@@ -168,7 +168,7 @@ msgstr "Шаблон параметра"
 #: lib/enums/ModelInformation.tsx:46
 #: src/pages/Index/Settings/AdminCenter/ParameterPanel.tsx:13
 msgid "Parameter Templates"
-msgstr ""
+msgstr "Шаблоны параметров"
 
 #: lib/enums/ModelInformation.tsx:52
 msgid "Part Test Template"
@@ -340,7 +340,7 @@ msgstr "Заказ на закупку"
 
 #: lib/enums/ModelInformation.tsx:160
 #: lib/enums/Roles.tsx:39
-#: src/defaults/actions.tsx:104
+#: src/defaults/actions.tsx:105
 #: src/pages/Index/Settings/SystemSettings.tsx:289
 #: src/pages/company/CompanyDetail.tsx:204
 #: src/pages/company/SupplierPartDetail.tsx:267
@@ -373,7 +373,7 @@ msgstr "Заказ на продажу"
 
 #: lib/enums/ModelInformation.tsx:176
 #: lib/enums/Roles.tsx:43
-#: src/defaults/actions.tsx:114
+#: src/defaults/actions.tsx:115
 #: src/pages/Index/Settings/SystemSettings.tsx:305
 #: src/pages/company/CompanyDetail.tsx:224
 #: src/pages/part/PartDetail.tsx:876
@@ -398,7 +398,7 @@ msgstr "Заказ на возврат"
 
 #: lib/enums/ModelInformation.tsx:195
 #: lib/enums/Roles.tsx:41
-#: src/defaults/actions.tsx:125
+#: src/defaults/actions.tsx:126
 #: src/pages/Index/Settings/SystemSettings.tsx:322
 #: src/pages/company/CompanyDetail.tsx:231
 #: src/pages/part/PartDetail.tsx:883
@@ -584,7 +584,7 @@ msgid "Admin"
 msgstr "Администрирование пользователей"
 
 #: lib/enums/Roles.tsx:33
-#: src/defaults/actions.tsx:135
+#: src/defaults/actions.tsx:136
 #: src/pages/Index/Settings/SystemSettings.tsx:270
 #: src/pages/build/BuildIndex.tsx:67
 #: src/pages/part/PartDetail.tsx:893
@@ -637,7 +637,7 @@ msgstr "Штрихкод"
 
 #: src/components/barcodes/BarcodeInput.tsx:35
 #: src/components/barcodes/BarcodeKeyboardInput.tsx:18
-#: src/defaults/actions.tsx:85
+#: src/defaults/actions.tsx:86
 msgid "Scan"
 msgstr "Сканировать"
 
@@ -860,8 +860,8 @@ msgstr "Вы будете перенаправлены на сайт поста�
 #~ msgstr "Open QR code scanner"
 
 #: src/components/buttons/ScanButton.tsx:32
-msgid "Open Barcode Scanner"
-msgstr "Открыть сканер штрих-кодов"
+#~ msgid "Open Barcode Scanner"
+#~ msgstr "Open Barcode Scanner"
 
 #: src/components/buttons/SpotlightButton.tsx:12
 msgid "Open spotlight"
@@ -937,7 +937,7 @@ msgstr "Сохранить макет"
 
 #: src/components/dashboard/DashboardMenu.tsx:94
 #: src/components/nav/NavigationDrawer.tsx:64
-#: src/defaults/actions.tsx:41
+#: src/defaults/actions.tsx:42
 #: src/defaults/links.tsx:31
 #: src/pages/Index/Home.tsx:8
 msgid "Dashboard"
@@ -1818,6 +1818,7 @@ msgstr "Версия API"
 
 #: src/components/forms/InstanceOptions.tsx:142
 #: src/components/nav/NavigationDrawer.tsx:197
+#: src/defaults/actions.tsx:163
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:228
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:46
 msgid "Plugins"
@@ -2320,7 +2321,7 @@ msgstr "Ссылки"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:180
 #: src/components/nav/NavigationDrawer.tsx:208
-#: src/defaults/actions.tsx:48
+#: src/defaults/actions.tsx:49
 msgid "Documentation"
 msgstr "Документация"
 
@@ -2479,7 +2480,7 @@ msgstr "Предупреждения"
 
 #: src/components/nav/Alerts.tsx:97
 msgid "No issues detected"
-msgstr ""
+msgstr "Проблем не обнаружено"
 
 #: src/components/nav/Alerts.tsx:122
 msgid "The server is running in debug mode."
@@ -2547,7 +2548,7 @@ msgstr "Настройки"
 #: src/components/nav/MainMenu.tsx:61
 #: src/components/nav/NavigationDrawer.tsx:140
 #: src/components/nav/SettingsHeader.tsx:40
-#: src/defaults/actions.tsx:92
+#: src/defaults/actions.tsx:93
 #: src/pages/Index/Settings/UserSettings.tsx:142
 #: src/pages/Index/Settings/UserSettings.tsx:146
 msgid "User Settings"
@@ -2565,7 +2566,7 @@ msgstr "Пользовательские настройки"
 #: src/components/nav/MainMenu.tsx:69
 #: src/components/nav/NavigationDrawer.tsx:146
 #: src/components/nav/SettingsHeader.tsx:41
-#: src/defaults/actions.tsx:144
+#: src/defaults/actions.tsx:145
 #: src/pages/Index/Settings/SystemSettings.tsx:354
 #: src/pages/Index/Settings/SystemSettings.tsx:359
 msgid "System Settings"
@@ -2578,14 +2579,14 @@ msgstr "Системные настройки"
 #: src/components/nav/MainMenu.tsx:78
 #: src/components/nav/NavigationDrawer.tsx:153
 #: src/components/nav/SettingsHeader.tsx:42
-#: src/defaults/actions.tsx:153
+#: src/defaults/actions.tsx:154
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:293
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:298
 msgid "Admin Center"
 msgstr "Админ центр"
 
 #: src/components/nav/MainMenu.tsx:99
-#: src/defaults/actions.tsx:57
+#: src/defaults/actions.tsx:58
 #: src/defaults/links.tsx:140
 #: src/defaults/links.tsx:186
 msgid "About InvenTree"
@@ -4038,76 +4039,80 @@ msgstr "Закупить детали"
 #~ msgid "About this Inventree instance"
 #~ msgstr "About this Inventree instance"
 
-#: src/defaults/actions.tsx:42
+#: src/defaults/actions.tsx:43
 msgid "Go to the InvenTree dashboard"
 msgstr "Перейти к панели InvenTree"
 
-#: src/defaults/actions.tsx:49
+#: src/defaults/actions.tsx:50
 msgid "Visit the documentation to learn more about InvenTree"
 msgstr "Посетите документацию, чтобы узнать больше о InvenTree"
 
-#: src/defaults/actions.tsx:58
+#: src/defaults/actions.tsx:59
 msgid "About the InvenTree org"
 msgstr "О программе InvenTree org"
 
-#: src/defaults/actions.tsx:64
+#: src/defaults/actions.tsx:65
 msgid "Server Information"
 msgstr "Информация о сервере"
 
-#: src/defaults/actions.tsx:65
+#: src/defaults/actions.tsx:66
 #: src/defaults/links.tsx:169
 msgid "About this InvenTree instance"
 msgstr "Об этом сервере InvenTree"
 
-#: src/defaults/actions.tsx:71
+#: src/defaults/actions.tsx:72
 #: src/defaults/links.tsx:153
 #: src/defaults/links.tsx:175
 msgid "License Information"
 msgstr "Информация о лицензии"
 
-#: src/defaults/actions.tsx:72
+#: src/defaults/actions.tsx:73
 msgid "Licenses for dependencies of the service"
 msgstr "Лицензии на зависимостей сервиса"
 
-#: src/defaults/actions.tsx:78
+#: src/defaults/actions.tsx:79
 msgid "Open Navigation"
 msgstr "Открыть панель навигации"
 
-#: src/defaults/actions.tsx:79
+#: src/defaults/actions.tsx:80
 msgid "Open the main navigation menu"
 msgstr "Открыть главное меню навигации"
 
-#: src/defaults/actions.tsx:86
+#: src/defaults/actions.tsx:87
 msgid "Scan a barcode or QR code"
 msgstr "Сканировать штрихкод или QR-код"
 
-#: src/defaults/actions.tsx:94
+#: src/defaults/actions.tsx:95
 msgid "Go to your user settings"
 msgstr "Перейти к настройкам пользователя"
 
-#: src/defaults/actions.tsx:105
+#: src/defaults/actions.tsx:106
 msgid "Go to Purchase Orders"
 msgstr "Перейти к заказам на закупку"
 
-#: src/defaults/actions.tsx:115
+#: src/defaults/actions.tsx:116
 msgid "Go to Sales Orders"
 msgstr "Перейти к заказам на продажу"
 
-#: src/defaults/actions.tsx:126
+#: src/defaults/actions.tsx:127
 msgid "Go to Return Orders"
 msgstr "Перейти к заказам на возврат"
 
-#: src/defaults/actions.tsx:136
+#: src/defaults/actions.tsx:137
 msgid "Go to Build Orders"
 msgstr "Перейти к заказам на сборку"
 
-#: src/defaults/actions.tsx:145
+#: src/defaults/actions.tsx:146
 msgid "Go to System Settings"
 msgstr "Перейти к системным настройкам"
 
-#: src/defaults/actions.tsx:154
+#: src/defaults/actions.tsx:155
 msgid "Go to the Admin Center"
 msgstr "Перейти в админ центр"
+
+#: src/defaults/actions.tsx:164
+msgid "Manage InvenTree plugins"
+msgstr "Управление плагинами InvenTree"
 
 #: src/defaults/dashboardItems.tsx:29
 #~ msgid "Latest Parts"
@@ -6462,7 +6467,7 @@ msgstr "Сообщения электронной почты"
 
 #: src/pages/Index/Settings/AdminCenter/HomePanel.tsx:36
 msgid "System Status"
-msgstr ""
+msgstr "Состояние системы"
 
 #: src/pages/Index/Settings/AdminCenter/HomePanel.tsx:47
 msgid "Admin Center Information"
@@ -7246,7 +7251,7 @@ msgstr "В виде календаря"
 #: src/pages/sales/SalesIndex.tsx:125
 #: src/pages/sales/SalesIndex.tsx:151
 msgid "Parametric View"
-msgstr ""
+msgstr "Параметрическое представление"
 
 #: src/pages/company/CompanyDetail.tsx:100
 msgid "Website"
@@ -7857,7 +7862,7 @@ msgstr "Требуется"
 
 #: src/pages/part/PartDetail.tsx:1042
 msgid "Deficit"
-msgstr ""
+msgstr "Дефицит"
 
 #: src/pages/part/PartDetail.tsx:1079
 #: src/tables/part/PartTable.tsx:396
@@ -10086,7 +10091,7 @@ msgstr "Кем обновлено"
 
 #: src/tables/general/ParameterTable.tsx:118
 msgid "Show parameters for enabled templates"
-msgstr ""
+msgstr "Показывать параметры для включённых шаблонов"
 
 #: src/tables/general/ParameterTable.tsx:124
 msgid "Filter by user who last updated the parameter"
@@ -10094,7 +10099,7 @@ msgstr "Фильтр по пользователю, который послед�
 
 #: src/tables/general/ParameterTable.tsx:154
 msgid "Import Parameters"
-msgstr ""
+msgstr "Импортировать параметры"
 
 #: src/tables/general/ParameterTable.tsx:164
 #: src/tables/general/ParametricDataTable.tsx:261
@@ -10115,19 +10120,19 @@ msgstr "Удалить параметр"
 
 #: src/tables/general/ParameterTable.tsx:191
 msgid "Add Parameters"
-msgstr ""
+msgstr "Добавить параметры"
 
 #: src/tables/general/ParameterTable.tsx:197
 msgid "Create Parameter"
-msgstr ""
+msgstr "Создать параметр"
 
 #: src/tables/general/ParameterTable.tsx:199
 msgid "Create a new parameter"
-msgstr ""
+msgstr "Создайте новый параметр"
 
 #: src/tables/general/ParameterTable.tsx:208
 msgid "Import parameters from a file"
-msgstr ""
+msgstr "Импортировать параметры из файла"
 
 #: src/tables/general/ParameterTemplateTable.tsx:48
 #: src/tables/general/ParameterTemplateTable.tsx:197
@@ -10173,7 +10178,7 @@ msgstr "Показать шаблоны с единицами измерения
 
 #: src/tables/general/ParameterTemplateTable.tsx:154
 msgid "Show enabled templates"
-msgstr ""
+msgstr "Показывать включённые шаблоны"
 
 #: src/tables/general/ParameterTemplateTable.tsx:158
 #: src/tables/settings/ImportSessionTable.tsx:111
@@ -10183,7 +10188,7 @@ msgstr "Тип модели"
 
 #: src/tables/general/ParameterTemplateTable.tsx:159
 msgid "Filter by model type"
-msgstr ""
+msgstr "Фильтровать по типу модели"
 
 #: src/tables/general/ParametricDataTable.tsx:79
 msgid "Click to edit"

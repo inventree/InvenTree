@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-12-07 07:33+0000\n"
-"PO-Revision-Date: 2025-12-07 07:36\n"
+"PO-Revision-Date: 2025-12-08 04:32\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -55,7 +55,7 @@ msgstr "Nincs adat megadva"
 
 #: InvenTree/api.py:513
 msgid "This field must be unique."
-msgstr ""
+msgstr "Ennek a mezőnek egyedinek kell lennie."
 
 #: InvenTree/api.py:803
 msgid "User does not have permission to view this model"
@@ -351,7 +351,7 @@ msgstr "Válassz pénznemet a lehetőségek közül"
 
 #: InvenTree/serializers.py:654
 msgid "This field may not be null."
-msgstr ""
+msgstr "Ez a mező nem lehet null."
 
 #: InvenTree/serializers.py:660
 msgid "Invalid value"
@@ -375,15 +375,15 @@ msgstr "Nem sikerült letölteni a képet a távoli URL-ről"
 
 #: InvenTree/serializers.py:806
 msgid "Invalid content type format"
-msgstr ""
+msgstr "Érvénytelen tartalomtípus-formátum"
 
 #: InvenTree/serializers.py:809
 msgid "Content type not found"
-msgstr ""
+msgstr "Tartalomtípus nem található"
 
 #: InvenTree/serializers.py:815
 msgid "Content type does not match required mixin class"
-msgstr ""
+msgstr "A tartalomtípus nem egyezik a szükséges mixin osztállyal"
 
 #: InvenTree/setting/locales.py:20
 msgid "Arabic"
@@ -999,7 +999,7 @@ msgstr "A {serial} gyártási kimenet nem felelt meg az összes kötelező teszt
 
 #: build/models.py:1230
 msgid "Cannot partially complete a build output with allocated items"
-msgstr ""
+msgstr "Nem lehet részben befejezni egy építési kimenetet lefoglalt tételekkel"
 
 #: build/models.py:1628
 msgid "Build Order Line Item"
@@ -2025,7 +2025,7 @@ msgstr "Paraméter sablon"
 
 #: common/models.py:2388
 msgid "Parameter Templates"
-msgstr ""
+msgstr "Paraméter Sablonok"
 
 #: common/models.py:2425
 msgid "Checkbox parameters cannot have units"
@@ -2045,7 +2045,7 @@ msgstr "A paraméter sablon nevének egyedinek kell lennie"
 
 #: common/models.py:2489
 msgid "Target model type for this parameter template"
-msgstr ""
+msgstr "Célmodell típusa ehhez a paramétersablonhoz"
 
 #: common/models.py:2495
 msgid "Parameter Name"
@@ -2089,15 +2089,15 @@ msgstr "Engedélyezve"
 
 #: common/models.py:2540
 msgid "Is this parameter template enabled?"
-msgstr ""
+msgstr "Ez a paramétersablon engedélyezett?"
 
 #: common/models.py:2581
 msgid "Parameter"
-msgstr ""
+msgstr "Paraméter"
 
 #: common/models.py:2582
 msgid "Parameters"
-msgstr ""
+msgstr "Paraméterek"
 
 #: common/models.py:2628
 msgid "Invalid choice for parameter value"
@@ -2105,15 +2105,15 @@ msgstr "Hibás választás a paraméterre"
 
 #: common/models.py:2698 common/serializers.py:783
 msgid "Invalid model type specified for parameter"
-msgstr ""
+msgstr "Érvénytelen modelltípus megadva a paraméterhez"
 
 #: common/models.py:2734
 msgid "Model ID"
-msgstr ""
+msgstr "Modell ID"
 
 #: common/models.py:2735
 msgid "ID of the target model for this parameter"
-msgstr ""
+msgstr "A célmodell azonosítója ehhez a paraméterhez"
 
 #: common/models.py:2744 common/setting/system.py:450 report/models.py:373
 #: report/models.py:669 report/serializers.py:94 report/serializers.py:135
@@ -2123,7 +2123,7 @@ msgstr "Sablon"
 
 #: common/models.py:2745
 msgid "Parameter template"
-msgstr ""
+msgstr "Paraméter sablon"
 
 #: common/models.py:2750 common/models.py:2792 importer/models.py:546
 msgid "Data"
@@ -2283,7 +2283,7 @@ msgstr "Ehhez az üzenethez kapcsolódó üzenet-lánc"
 
 #: common/models.py:3077
 msgid "Priority"
-msgstr ""
+msgstr "Prioritás"
 
 #: common/models.py:3119
 msgid "Email Thread"
@@ -2436,7 +2436,7 @@ msgstr "A felhasználónak nincs joga létrehozni vagy módosítani ehhez a mode
 
 #: common/serializers.py:786
 msgid "User does not have permission to create or edit parameters for this model"
-msgstr ""
+msgstr "A felhasználónak nincs jogosultsága paraméterek létrehozására vagy szerkesztésére ehhez a modellhez"
 
 #: common/serializers.py:850 common/serializers.py:953
 msgid "Selection list is locked"
@@ -3253,11 +3253,11 @@ msgstr "Vevői rendelések szerkesztésének engedélyezése szállítás vagy b
 
 #: common/setting/system.py:857
 msgid "Shipment Requires Checking"
-msgstr ""
+msgstr "Szállítmány Ellenőrzést Igényel"
 
 #: common/setting/system.py:859
 msgid "Prevent completion of shipments until items have been checked"
-msgstr ""
+msgstr "Megakadályozza a szállítmányok befejezését, amíg a tételeket nem ellenőrizték"
 
 #: common/setting/system.py:865
 msgid "Mark Shipped Orders as Complete"
@@ -3565,11 +3565,11 @@ msgstr "Tesztállomás adatok gyűjtésének teszt eredménybe gyűjtésének en
 
 #: common/setting/system.py:1141
 msgid "Enable Machine Ping"
-msgstr ""
+msgstr "Gép Ping Engedélyezése"
 
 #: common/setting/system.py:1143
 msgid "Enable periodic ping task of registered machines to check their status"
-msgstr ""
+msgstr "Időszakos ping feladat engedélyezése a regisztrált gépekhez az állapotuk ellenőrzésére"
 
 #: common/setting/user.py:23
 msgid "Inline label display"
@@ -3597,11 +3597,11 @@ msgstr "PDF riport megjelenítése a böngészőben letöltés helyett"
 
 #: common/setting/user.py:45
 msgid "Barcode Scanner in Form Fields"
-msgstr ""
+msgstr "Vonalkód olvasó az Űrlap mezők között"
 
 #: common/setting/user.py:46
 msgid "Allow barcode scanner input in form fields"
-msgstr ""
+msgstr "Vonalkód olvasó adatbevitel engedélyezése az űrlapokon"
 
 #: common/setting/user.py:51
 msgid "Search Parts"
@@ -3869,7 +3869,7 @@ msgstr "Az utoljára használt nyomtató tárolása a felhasználóhoz"
 
 #: common/validators.py:38
 msgid "All models"
-msgstr ""
+msgstr "Minden modell"
 
 #: common/validators.py:63
 msgid "No attachment model type provided"
@@ -4245,7 +4245,7 @@ msgstr "Beszállítói Ár Kedvezmény"
 
 #: company/serializers.py:184
 msgid "Primary Address"
-msgstr ""
+msgstr "Elsődleges Cím"
 
 #: company/serializers.py:186
 msgid "Return the string representation for the primary address. This property exists for backwards compatibility."
@@ -4265,7 +4265,7 @@ msgstr "Készleten"
 
 #: company/serializers.py:477
 msgid "Price Breaks"
-msgstr ""
+msgstr "Árkategóriák"
 
 #: data_exporter/mixins.py:325 data_exporter/mixins.py:403
 msgid "Error occurred during data export"
@@ -4541,7 +4541,7 @@ msgstr "Nyomtatás"
 
 #: machine/machine_types/label_printer.py:234
 msgid "Warning"
-msgstr ""
+msgstr "Figyelmeztetés"
 
 #: machine/machine_types/label_printer.py:235
 msgid "No media"
@@ -4557,7 +4557,7 @@ msgstr "Nincs kapcsolat"
 
 #: machine/machine_types/label_printer.py:238
 msgid "Error"
-msgstr ""
+msgstr "Hiba"
 
 #: machine/machine_types/label_printer.py:245
 msgid "Label Printer"
@@ -4629,11 +4629,11 @@ msgstr "Konfiguráció típusa"
 
 #: machine/serializers.py:24
 msgid "Key of the property"
-msgstr ""
+msgstr "A tulajdonság kulcsa"
 
 #: machine/serializers.py:27
 msgid "Value of the property"
-msgstr ""
+msgstr "A tulajdonság értéke"
 
 #: machine/serializers.py:30 users/models.py:238
 msgid "Group"
@@ -4641,23 +4641,23 @@ msgstr "Csoport"
 
 #: machine/serializers.py:30
 msgid "Grouping of the property"
-msgstr ""
+msgstr "A tulajdonság csoportosítása"
 
 #: machine/serializers.py:33
 msgid "Type"
-msgstr ""
+msgstr "Típus"
 
 #: machine/serializers.py:35
 msgid "Type of the property"
-msgstr ""
+msgstr "A tulajdonság típusa"
 
 #: machine/serializers.py:40
 msgid "Max Progress"
-msgstr ""
+msgstr "Maximális Előrehaladás"
 
 #: machine/serializers.py:41
 msgid "Maximum value for progress type, required if type=progress"
-msgstr ""
+msgstr "Maximális érték az előrehaladás típushoz, kötelező ha típus=előrehaladás"
 
 #: order/api.py:130
 msgid "Order Reference"
@@ -4804,7 +4804,7 @@ msgstr "A kezdeti dátumnak meg kell előznie a céldátumot"
 
 #: order/models.py:391
 msgid "Address does not match selected company"
-msgstr ""
+msgstr "A cím nem egyezik a kiválasztott vállalattal"
 
 #: order/models.py:444
 msgid "Order description (optional)"
@@ -5077,11 +5077,11 @@ msgstr "Vevői Rendelés Szállítása"
 
 #: order/models.py:2254
 msgid "Shipment address must match the customer"
-msgstr ""
+msgstr "A szállítási címnek egyeznie kell az ügyféllel"
 
 #: order/models.py:2290
 msgid "Shipping address for this shipment"
-msgstr ""
+msgstr "Szállítási cím ehhez a szállítmányhoz"
 
 #: order/models.py:2298
 msgid "Date of shipment"
@@ -5139,7 +5139,7 @@ msgstr "Szállítmány nem tartalmaz foglalt készlet tételeket"
 
 #: order/models.py:2388
 msgid "Shipment must be checked before it can be completed"
-msgstr ""
+msgstr "A szállítmányt ellenőrizni kell, mielőtt befejezhetné"
 
 #: order/models.py:2467
 msgid "Sales Order Extra Line"
@@ -5626,15 +5626,15 @@ msgstr "Alkatrészjegyzék ellenőrizve"
 
 #: part/api.py:969
 msgid "Cascade Categories"
-msgstr ""
+msgstr "Kaszkád Kategóriák"
 
 #: part/api.py:970
 msgid "If true, include items in child categories of the given category"
-msgstr ""
+msgstr "Ha igaz, tartalmazza az adott kategória alkategóriáiban lévő tételeket"
 
 #: part/api.py:976
 msgid "Filter by numeric category ID or the literal 'null'"
-msgstr ""
+msgstr "Szűrés numerikus kategória azonosító vagy a 'null' literál szerint"
 
 #: part/api.py:1258
 msgid "Assembly part is testable"
@@ -5712,11 +5712,11 @@ msgstr "Alkatrészek"
 
 #: part/models.py:597
 msgid "Cannot delete parameters of a locked part"
-msgstr ""
+msgstr "Nem lehet törölni egy zárolt alkatrész paramétereit"
 
 #: part/models.py:602
 msgid "Cannot modify parameters of a locked part"
-msgstr ""
+msgstr "Nem lehet módosítani egy zárolt alkatrész paramétereit"
 
 #: part/models.py:613
 msgid "Cannot delete this part as it is locked"
@@ -7190,19 +7190,19 @@ msgstr "InvenTree exportálás támogatása"
 
 #: plugin/builtin/exporter/parameter_exporter.py:16
 msgid "Exclude Inactive"
-msgstr ""
+msgstr "Inaktívak Kizárása"
 
 #: plugin/builtin/exporter/parameter_exporter.py:17
 msgid "Exclude parameters which are inactive"
-msgstr ""
+msgstr "Inaktív paraméterek kizárása"
 
 #: plugin/builtin/exporter/parameter_exporter.py:29
 msgid "Parameter Exporter"
-msgstr ""
+msgstr "Paraméter Exportáló"
 
 #: plugin/builtin/exporter/parameter_exporter.py:30
 msgid "Exporter for model parameter data"
-msgstr ""
+msgstr "Exportáló modell paraméter adatokhoz"
 
 #: plugin/builtin/exporter/stocktake_exporter.py:25
 msgid "Include External Stock"
@@ -8285,20 +8285,20 @@ msgstr "Sorozatszámot nem lehet megadni nem követésre kötelezett alkatrész 
 
 #: stock/api.py:1396
 msgid "Include Installed"
-msgstr ""
+msgstr "Beépítettek Belefoglalása"
 
 #: stock/api.py:1398
 msgid "If true, include test results for items installed underneath the given stock item"
-msgstr ""
+msgstr "Ha igaz, tartalmazza a megadott készlettétel alá beépített tételek teszteredményeit"
 
 #: stock/api.py:1405
 msgid "Filter by numeric Stock Item ID"
-msgstr ""
+msgstr "Szűrés numerikus készlettétel azonosító szerint"
 
 #: stock/api.py:1426
 #, python-brace-format
 msgid "Stock item with ID {id} does not exist"
-msgstr ""
+msgstr "A(z) {id} azonosítójú készlettétel nem létezik"
 
 #: stock/models.py:71
 msgid "Stock Location type"
@@ -8509,7 +8509,7 @@ msgstr "A mennyiség nem egyezik a megadott sorozatszámok számával"
 
 #: stock/models.py:1912
 msgid "Cannot assign stock to structural location"
-msgstr ""
+msgstr "Nem lehet készletet strukturális helyre rendelni"
 
 #: stock/models.py:2029 stock/models.py:2934
 msgid "Test template does not exist"
@@ -8960,7 +8960,7 @@ msgstr "Készlet manuálisan elvéve"
 
 #: stock/status_codes.py:56
 msgid "Serialized stock items"
-msgstr ""
+msgstr "Sorozatszámos készlettételek"
 
 #: stock/status_codes.py:58
 msgid "Returned to stock"
