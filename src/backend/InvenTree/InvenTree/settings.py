@@ -378,7 +378,7 @@ if DJANGO_SILK_ENABLED:  # pragma: no cover
     INSTALLED_APPS.append('silk')
 
     # Optionally enable the silk python profiler
-    SILKY_PYTHON_PROFILER = get_boolean_setting(
+    SILKY_PYTHON_PROFILER = SILKY_PYTHON_PROFILER_BINARY = get_boolean_setting(
         'INVENTREE_DEBUG_SILK_PROFILING', 'debug_silk_profiling', False
     )
 
