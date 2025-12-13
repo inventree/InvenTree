@@ -600,6 +600,10 @@ class UserProfile(InvenTree.models.MetadataMixin):
 @receiver(post_save, sender=User)
 def create_or_update_user_profile(sender, instance, created, **kwargs):
     """Create or update user profile when user is saved."""
+    # Disable profile creation if importing data from file
+    if isImportingData():
+        return
+
     if created:
         UserProfile.objects.create(user=instance)
     instance.profile.save()
@@ -629,6 +633,10 @@ def validate_primary_group_on_delete(sender, instance, **kwargs):
 @receiver(m2m_changed, sender=User.groups.through)
 def validate_primary_group_on_group_change(sender, instance, action, **kwargs):
     """Validate primary_group on user profiles when a group is added or removed."""
+    # Disable user profile validation if importing data from file
+    if isImportingData():
+        return
+
     if action in ['post_add', 'post_remove']:
         profile = instance.profile
         if profile.primary_group and profile.primary_group not in instance.groups.all():
