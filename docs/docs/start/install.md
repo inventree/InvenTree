@@ -112,7 +112,8 @@ pip install --upgrade --ignore-installed invoke
 
 #### Install Python Bindings
 
-Depending on your database the python bindings must also be installed (into your virtual environment). 
+Depending on your database the python bindings must also be installed (into your virtual environment).
+
 For PostgreSQL install:
 
 ```
