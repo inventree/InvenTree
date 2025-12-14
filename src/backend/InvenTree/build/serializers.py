@@ -23,7 +23,6 @@ from rest_framework.serializers import ValidationError
 
 import build.tasks
 import common.filters
-import common.serializers
 import common.settings
 import company.serializers
 import InvenTree.helpers
@@ -125,11 +124,7 @@ class BuildSerializer(
         True,
     )
 
-    parameters = enable_filter(
-        common.serializers.ParameterSerializer(many=True, read_only=True),
-        False,
-        filter_name='parameters',
-    )
+    parameters = common.filters.enable_parameters_filter()
 
     part_name = serializers.CharField(
         source='part.name', read_only=True, label=_('Part Name')
@@ -175,8 +170,6 @@ class BuildSerializer(
                 default=Value(False, output_field=BooleanField()),
             )
         )
-
-        queryset = Build.annotate_parameters(queryset)
 
         return queryset
 

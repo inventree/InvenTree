@@ -258,15 +258,18 @@ class OutputOptionsMixin:
 
         return serializer
 
-    def prefetch_queryset(self, queryset):
+    def get_queryset(self):
         """Return the queryset with output options applied.
 
         This automatically applies any prefetching defined against the optional fields.
         """
+        queryset = super().get_queryset()
         serializer = self.get_serializer()
 
         if isinstance(serializer, FilterableSerializerMixin):
             queryset = serializer.prefetch_queryset(queryset)
+
+            print('Applying prefetch for output options:', self.__class__.__name__)
 
         return queryset
 

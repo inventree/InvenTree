@@ -11,7 +11,7 @@ from rest_framework import serializers
 from sql_util.utils import SubqueryCount
 from taggit.serializers import TagListSerializerField
 
-import common.serializers
+import common.filters
 import company.filters
 import part.filters
 import part.serializers as part_serializers
@@ -176,8 +176,6 @@ class CompanySerializer(
             )
         )
 
-        queryset = Company.annotate_parameters(queryset)
-
         return queryset
 
     address = serializers.SerializerMethodField(
@@ -218,11 +216,7 @@ class CompanySerializer(
         help_text=_('Default currency used for this supplier'), required=True
     )
 
-    parameters = enable_filter(
-        common.serializers.ParameterSerializer(many=True, read_only=True),
-        False,
-        filter_name='parameters',
-    )
+    parameters = common.filters.enable_parameters_filter()
 
     def save(self):
         """Save the Company instance."""
@@ -292,11 +286,7 @@ class ManufacturerPartSerializer(
 
     tags = TagListSerializerField(required=False)
 
-    parameters = enable_filter(
-        common.serializers.ParameterSerializer(many=True, read_only=True),
-        False,
-        filter_name='parameters',
-    )
+    parameters = common.filters.enable_parameters_filter()
 
     part_detail = enable_filter(
         part_serializers.PartBriefSerializer(
@@ -480,11 +470,7 @@ class SupplierPartSerializer(
         filter_name='price_breaks',
     )
 
-    parameters = enable_filter(
-        common.serializers.ParameterSerializer(many=True, read_only=True),
-        False,
-        filter_name='parameters',
-    )
+    parameters = common.filters.enable_parameters_filter()
 
     part_detail = part_serializers.PartBriefSerializer(
         label=_('Part'), source='part', many=False, read_only=True, allow_null=True
@@ -541,8 +527,6 @@ class SupplierPartSerializer(
         queryset = queryset.annotate(
             on_order=company.filters.annotate_on_order_quantity()
         )
-
-        queryset = SupplierPart.annotate_parameters(queryset)
 
         return queryset
 

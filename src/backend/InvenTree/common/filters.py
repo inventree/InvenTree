@@ -1,6 +1,7 @@
 """Custom API filters for InvenTree."""
 
 import re
+from typing import Optional
 
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
@@ -358,4 +359,36 @@ def enable_project_label_filter(
         default,
         filter_name=filter_name,
         prefetch_fields=['project_code'],
+    )
+
+
+def enable_parameters_filter(
+    source: Optional[str] = None, filter_name: str = 'parameters', default: bool = False
+):
+    """Add an optional 'parameters' field to an API serializer.
+
+    Arguments:
+        source: The source field for the serializer.
+        filter_name: The name of the filter field.
+        default: If True, enable the filter by default.
+
+    If applied, this field will automatically annotate the queryset with parameter data.
+    """
+    from common.serializers import ParameterSerializer
+
+    serializer_args = {'many': True, 'read_only': True, 'allow_null': True}
+
+    if source is not None:
+        serializer_args['source'] = source
+
+    return InvenTree.serializers.enable_filter(
+        ParameterSerializer(**serializer_args),
+        default,
+        filter_name=filter_name,
+        prefetch_fields=[
+            'parameters_list',
+            'parameters_list__model_type',
+            'parameters_list__updated_by',
+            'parameters_list__template',
+        ],
     )

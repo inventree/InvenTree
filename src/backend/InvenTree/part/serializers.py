@@ -22,6 +22,7 @@ from sql_util.utils import SubqueryCount
 from taggit.serializers import TagListSerializerField
 
 import common.currency
+import common.filters
 import common.serializers
 import company.models
 import InvenTree.helpers
@@ -682,8 +683,6 @@ class PartSerializer(
         """
         queryset = queryset.prefetch_related('category', 'default_location')
 
-        queryset = Part.annotate_parameters(queryset)
-
         # Annotate with the total number of revisions
         queryset = queryset.annotate(revision_count=SubqueryCount('revisions'))
 
@@ -922,13 +921,7 @@ class PartSerializer(
         filter_name='pricing',
     )
 
-    parameters = enable_filter(
-        common.serializers.ParameterSerializer(
-            many=True, read_only=True, allow_null=True
-        ),
-        False,
-        filter_name='parameters',
-    )
+    parameters = common.filters.enable_parameters_filter()
 
     price_breaks = enable_filter(
         PartSalePriceSerializer(

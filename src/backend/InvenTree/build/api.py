@@ -323,8 +323,6 @@ class BuildMixin:
             'responsible', 'issued_by', 'build_lines', 'part', 'part__pricing_data'
         )
 
-        queryset = self.prefetch_queryset(queryset)
-
         return queryset
 
 

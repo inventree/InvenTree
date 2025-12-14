@@ -77,7 +77,6 @@ class GeneralExtraLineList(SerializerContextMixin, DataExportViewMixin):
         queryset = super().get_queryset(*args, **kwargs)
 
         queryset = queryset.prefetch_related('order')
-        queryset = self.prefetch_queryset(queryset)
 
         return queryset
 
@@ -374,8 +373,6 @@ class PurchaseOrderMixin(SerializerContextMixin):
 
         queryset = serializers.PurchaseOrderSerializer.annotate_queryset(queryset)
 
-        queryset = self.prefetch_queryset(queryset)
-
         return queryset
 
 
@@ -639,8 +636,6 @@ class PurchaseOrderLineItemMixin(SerializerContextMixin):
             queryset
         )
 
-        queryset = self.prefetch_queryset(queryset)
-
         return queryset
 
     def perform_update(self, serializer):
@@ -839,7 +834,6 @@ class SalesOrderMixin(SerializerContextMixin):
         queryset = queryset.prefetch_related('customer', 'responsible', 'lines')
 
         queryset = serializers.SalesOrderSerializer.annotate_queryset(queryset)
-        queryset = self.prefetch_queryset(queryset)
 
         return queryset
 
@@ -1032,7 +1026,6 @@ class SalesOrderLineItemMixin(SerializerContextMixin):
         queryset = queryset.select_related('part__pricing_data')
 
         queryset = serializers.SalesOrderLineItemSerializer.annotate_queryset(queryset)
-        queryset = self.prefetch_queryset(queryset)
 
         return queryset
 
@@ -1516,7 +1509,6 @@ class ReturnOrderMixin(SerializerContextMixin):
         queryset = queryset.prefetch_related('customer', 'lines', 'responsible')
 
         queryset = serializers.ReturnOrderSerializer.annotate_queryset(queryset)
-        queryset = self.prefetch_queryset(queryset)
 
         return queryset
 
@@ -1663,7 +1655,6 @@ class ReturnOrderLineItemMixin(SerializerContextMixin):
         queryset = super().get_queryset(*args, **kwargs)
 
         queryset = queryset.prefetch_related('order', 'item', 'item__part')
-        queryset = self.prefetch_queryset(queryset)
 
         return queryset
 

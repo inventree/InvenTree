@@ -182,8 +182,6 @@ class ManufacturerPartMixin(SerializerContextMixin):
             'part', 'manufacturer', 'supplier_parts', 'tags'
         )
 
-        queryset = ManufacturerPart.annotate_parameters(queryset)
-
         return queryset
 
 
