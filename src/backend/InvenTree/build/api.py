@@ -317,14 +317,15 @@ class BuildMixin:
         """Return the queryset for the Build API endpoints."""
         queryset = super().get_queryset()
 
+        queryset = build.serializers.BuildSerializer.annotate_queryset(queryset)
+
         queryset = queryset.prefetch_related(
             'responsible',
             'issued_by',
             'build_lines',
-            'build_lines__bom_item',
-            'build_lines__build',
             'part',
             'part__pricing_data',
+            'project_code',
         )
 
         return queryset
@@ -383,14 +384,6 @@ class BuildList(
         'project_code__code',
         'priority',
     ]
-
-    def get_queryset(self):
-        """Override the queryset filtering, as some of the fields don't natively play nicely with DRF."""
-        queryset = super().get_queryset().select_related('part')
-
-        queryset = build.serializers.BuildSerializer.annotate_queryset(queryset)
-
-        return queryset
 
     def get_serializer(self, *args, **kwargs):
         """Add extra context information to the endpoint serializer."""
