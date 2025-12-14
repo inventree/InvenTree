@@ -1921,7 +1921,8 @@ class ReturnOrderSerializer(
     customer_detail = enable_filter(
         CompanyBriefSerializer(
             source='customer', many=False, read_only=True, allow_null=True
-        )
+        ),
+        prefetch_fields=['customer'],
     )
 
 
