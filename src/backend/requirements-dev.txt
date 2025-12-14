@@ -514,7 +514,9 @@ pyproject-hooks==1.2.0 \
 pytest==9.0.2 \
     --hash=sha256:711ffd45bf766d5264d487b917733b453d917afd2b0ad65223959f59089f875b \
     --hash=sha256:75186651a92bd89611d1d9fc20f0b4345fd827c41ccd5c299a868a05d70edf11
-    # via pytest-codspeed
+    # via
+    #   pytest-codspeed
+    #   pytest-django
 pytest-codspeed==4.2.0 \
     --hash=sha256:04b5d0bc5a1851ba1504d46bf9d7dbb355222a69f2cd440d54295db721b331f7 \
     --hash=sha256:0881a736285f33b9a8894da8fe8e1775aa1a4310226abe5d1f0329228efb680c \
@@ -532,6 +534,10 @@ pytest-codspeed==4.2.0 \
     --hash=sha256:a0ebd87f2a99467a1cfd8e83492c4712976e43d353ee0b5f71cbb057f1393aca \
     --hash=sha256:dbbb2d61b85bef8fc7e2193f723f9ac2db388a48259d981bbce96319043e9830 \
     --hash=sha256:e81bbb45c130874ef99aca97929d72682733527a49f84239ba575b5cb843bab0
+    # via -r src/backend/requirements-dev.in
+pytest-django==4.11.1 \
+    --hash=sha256:1b63773f648aa3d8541000c26929c1ea63934be1cfa674c76436966d73fe6a10 \
+    --hash=sha256:a949141a1ee103cb0e7a20f1451d355f83f5e4a5d07bdd4dcfdd1fd0ff227991
     # via -r src/backend/requirements-dev.in
 pyyaml==6.0.3 \
     --hash=sha256:00c4bdeba853cc34e7dd471f16b4114f4162dc03e6b7afcc2128711f0eca823c \

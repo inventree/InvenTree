@@ -3359,9 +3359,8 @@ class PartApiPerformanceTest(PartAPITestBase, InvenTreeAPIPerformanceTestCase):
     """Performance tests for the Part API."""
 
     @pytest.mark.benchmark
-    def test_part_api_performance(self, benchmark):
+    def test_part_api_performance(self):
         """Test that Part API queries are performant."""
         url = reverse('api-part-list')
-
-        response = benchmark(self.get, url, expected_code=200)
+        response = self.get(url, expected_code=200)
         self.assertGreater(len(response.data), 0)
