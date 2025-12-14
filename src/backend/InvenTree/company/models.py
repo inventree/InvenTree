@@ -238,8 +238,14 @@ class Company(
 
     @property
     def primary_address(self):
-        """Returns address object of primary address. Parsed by serializer."""
-        return Address.objects.filter(company=self.id).filter(primary=True).first()
+        """Returns address object of primary address for this Company."""
+        # We may have a pre-fetched primary address list
+        if hasattr(self, 'primary_address_list'):
+            addresses = self.primary_address_list
+            return addresses[0] if len(addresses) > 0 else None
+
+        # Otherwise, query the database
+        return self.addresses.filter(primary=True).first()
 
     @property
     def currency_code(self):
