@@ -238,8 +238,21 @@ class Company(
 
     @property
     def primary_address(self):
-        """Returns address object of primary address. Parsed by serializer."""
-        return Address.objects.filter(company=self.id).filter(primary=True).first()
+        """Returns address object of primary address for this Company."""
+        # If a cached property exists, use it
+        if cache := getattr(self, '_prefetched_objects_cache', {}):
+            # First check for primary address list - the queryset is ordered by primary flag
+            if primary_address_list := cache.get('primary_address_list', None):
+                if len(primary_address_list) > 0:
+                    return primary_address_list[0]
+            if address_list := cache.get('addresses', None):
+                if len(address_list) > 0:
+                    return address_list[0]
+
+        # Otherwise, query the database
+        return (
+            Address.objects.filter(company=self.id).order_by('-primary', 'pk').first()
+        )
 
     @property
     def currency_code(self):
