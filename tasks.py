@@ -1280,6 +1280,7 @@ def test_translations(c):
         'disable_pty': 'Disable PTY',
         'runtest': 'Specify which tests to run, in format <module>.<file>.<class>.<method>',
         'migrations': 'Run migration unit tests',
+        'performance': 'Run performance unit tests',
         'report': 'Display a report of slow tests',
         'coverage': 'Run code coverage analysis (requires coverage package)',
         'translations': 'Compile translations before running tests',
@@ -1292,6 +1293,7 @@ def test(
     disable_pty=False,
     runtest='',
     migrations=False,
+    performance=False,
     report=False,
     coverage=False,
     translations=False,
@@ -1340,6 +1342,11 @@ def test(
         cmd += ' --tag migration_test'
     else:
         cmd += ' --exclude-tag migration_test'
+
+    if performance:
+        cmd += ' --tag performance_test'
+    else:
+        cmd += ' --exclude-tag performance_test'
 
     if coverage:
         # Run tests within coverage environment, and generate report

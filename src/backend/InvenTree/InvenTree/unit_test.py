@@ -16,7 +16,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission, User
 from django.db import connections, models
 from django.http.response import StreamingHttpResponse
-from django.test import TestCase
+from django.test import TestCase, tag
 from django.test.utils import CaptureQueriesContext, override_settings
 from django.urls import reverse
 
@@ -824,3 +824,11 @@ class AdminTestCase(InvenTreeAPITestCase):
 def in_env_context(envs):
     """Patch the env to include the given dict."""
     return mock.patch.dict(os.environ, envs)
+
+
+@tag('performance_test')
+class InvenTreeAPIPerformanceTestCase(InvenTreeAPITestCase):
+    """Base class for InvenTree API performance tests."""
+
+    MAX_QUERY_COUNT = 50
+    MAX_QUERY_TIME = 2.0
