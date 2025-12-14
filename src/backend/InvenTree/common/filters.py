@@ -17,9 +17,11 @@ from django.db.models import (
     When,
 )
 from django.db.models.query import QuerySet
+from django.utils.translation import gettext_lazy as _
 
 import InvenTree.conversion
 import InvenTree.helpers
+import InvenTree.serializers
 
 
 def determine_content_type(content_type: str | int | None) -> ContentType | None:
@@ -309,4 +311,51 @@ def order_by_parameter(
         '-parameter_exists',
         f'{prefix}parameter_value_numeric',
         f'{prefix}parameter_value',
+    )
+
+
+def enable_project_code_filter(
+    filter_name: str = 'project_code_detail', default: bool = True
+):
+    """Add an optional 'project_code_detail' field to an API serializer.
+
+    Arguments:
+        filter_name: The name of the filter field.
+        default: If True, enable the filter by default.
+
+    If applied, this field will automatically prefetch the 'project_code' relationship.
+    """
+    from common.serializers import ProjectCodeSerializer
+
+    return InvenTree.serializers.enable_filter(
+        ProjectCodeSerializer(
+            source='project_code', many=False, read_only=True, allow_null=True
+        ),
+        default,
+        filter_name=filter_name,
+        prefetch_fields=['project_code'],
+    )
+
+
+def enable_project_label_filter(
+    filter_name: str = 'project_label_detail', default: bool = True
+):
+    """Add an optional 'project_label_detail' field to an API serializer.
+
+    Arguments:
+        filter_name: The name of the filter field.
+        default: If True, enable the filter by default.
+
+    If applied, this field will automatically prefetch the 'project_label' relationship.
+    """
+    return InvenTree.serializers.enable_filter(
+        InvenTree.serializers.FilterableCharField(
+            source='project_code.code',
+            read_only=True,
+            label=_('Project Code Label'),
+            allow_null=True,
+        ),
+        default,
+        filter_name=filter_name,
+        prefetch_fields=['project_code'],
     )

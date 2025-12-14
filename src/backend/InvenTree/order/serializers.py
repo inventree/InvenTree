@@ -22,13 +22,13 @@ from rest_framework.serializers import ValidationError
 from sql_util.utils import SubqueryCount, SubquerySum
 
 import build.serializers
+import common.filters
 import common.serializers
 import order.models
 import part.filters as part_filters
 import part.models as part_models
 import stock.models
 import stock.serializers
-from common.serializers import ProjectCodeSerializer
 from company.serializers import (
     AddressBriefSerializer,
     CompanyBriefSerializer,
@@ -46,7 +46,6 @@ from InvenTree.helpers import (
 )
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.serializers import (
-    FilterableCharField,
     FilterableSerializerMixin,
     InvenTreeCurrencySerializer,
     InvenTreeDecimalField,
@@ -151,24 +150,8 @@ class AbstractOrderSerializer(
         True,
     )
 
-    project_code_label = enable_filter(
-        FilterableCharField(
-            source='project_code.code',
-            read_only=True,
-            label='Project Code Label',
-            allow_null=True,
-        ),
-        True,
-        filter_name='project_code_detail',
-    )
-
-    # Detail for project code field
-    project_code_detail = enable_filter(
-        ProjectCodeSerializer(
-            source='project_code', read_only=True, many=False, allow_null=True
-        ),
-        True,
-    )
+    project_code_label = common.filters.enable_project_label_filter()
+    project_code_detail = common.filters.enable_project_code_filter()
 
     # Detail for address field
     address_detail = enable_filter(
@@ -317,23 +300,9 @@ class AbstractLineItemSerializer(FilterableSerializerMixin, serializers.Serializ
         required=False, allow_null=True, label=_('Target Date')
     )
 
-    project_code_label = enable_filter(
-        FilterableCharField(
-            source='project_code.code',
-            read_only=True,
-            label='Project Code Label',
-            allow_null=True,
-        ),
-        True,
-        filter_name='project_code_detail',
-    )
+    project_code_label = common.filters.enable_project_label_filter()
 
-    project_code_detail = enable_filter(
-        ProjectCodeSerializer(
-            source='project_code', read_only=True, many=False, allow_null=True
-        ),
-        True,
-    )
+    project_code_detail = common.filters.enable_project_code_filter()
 
 
 class AbstractExtraLineSerializer(
@@ -369,24 +338,9 @@ class AbstractExtraLineSerializer(
 
     price_currency = InvenTreeCurrencySerializer()
 
-    project_code_label = enable_filter(
-        FilterableCharField(
-            source='project_code.code',
-            read_only=True,
-            label='Project Code Label',
-            allow_null=True,
-        ),
-        True,
-        filter_name='project_code_detail',
-    )
+    project_code_label = common.filters.enable_project_label_filter()
 
-    # Detail for project code field
-    project_code_detail = enable_filter(
-        ProjectCodeSerializer(
-            source='project_code', read_only=True, many=False, allow_null=True
-        ),
-        True,
-    )
+    project_code_detail = common.filters.enable_project_code_filter()
 
 
 class AbstractExtraLineMeta:
@@ -469,6 +423,10 @@ class PurchaseOrderSerializer(
                 ),
                 default=Value(False, output_field=BooleanField()),
             )
+        )
+
+        queryset = queryset.prefetch_related(
+            'address', 'contact', 'created_by', 'responsible', 'supplier'
         )
 
         return queryset

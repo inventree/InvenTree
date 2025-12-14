@@ -22,18 +22,17 @@ from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 
 import build.tasks
+import common.filters
 import common.serializers
 import common.settings
 import company.serializers
 import InvenTree.helpers
 import part.filters
 import part.serializers as part_serializers
-from common.serializers import ProjectCodeSerializer
 from common.settings import get_global_setting
 from generic.states.fields import InvenTreeCustomStatusSerializerMixin
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.serializers import (
-    FilterableCharField,
     FilterableSerializerMixin,
     InvenTreeDecimalField,
     InvenTreeModelSerializer,
@@ -154,24 +153,9 @@ class BuildSerializer(
 
     barcode_hash = serializers.CharField(read_only=True)
 
-    project_code_label = enable_filter(
-        FilterableCharField(
-            source='project_code.code',
-            read_only=True,
-            label=_('Project Code Label'),
-            allow_null=True,
-        ),
-        True,
-        filter_name='project_code_detail',
-    )
+    project_code_label = common.filters.enable_project_label_filter()
 
-    project_code_detail = enable_filter(
-        ProjectCodeSerializer(
-            source='project_code', many=False, read_only=True, allow_null=True
-        ),
-        True,
-        filter_name='project_code_detail',
-    )
+    project_code_detail = common.filters.enable_project_code_filter()
 
     @staticmethod
     def annotate_queryset(queryset):
