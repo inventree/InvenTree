@@ -412,12 +412,7 @@ class SupplierPartSerializer(
         # Check if 'available' quantity was supplied
         self.has_available_quantity = 'available' in kwargs.get('data', {})
 
-        # TODO INVE-T1 support complex filters
         brief = kwargs.pop('brief', False)
-        detail_default = not brief
-        part_detail = kwargs.pop('part_detail', detail_default)
-        supplier_detail = kwargs.pop('supplier_detail', detail_default)
-        manufacturer_detail = kwargs.pop('manufacturer_detail', detail_default)
 
         prettify = kwargs.pop('pretty', False)
 
@@ -425,16 +420,6 @@ class SupplierPartSerializer(
 
         if isGeneratingSchema():
             return
-
-        if part_detail is not True:
-            self.fields.pop('part_detail', None)
-
-        if supplier_detail is not True:
-            self.fields.pop('supplier_detail', None)
-
-        if manufacturer_detail is not True:
-            self.fields.pop('manufacturer_detail', None)
-            self.fields.pop('manufacturer_part_detail', None)
 
         if brief or prettify is not True:
             self.fields.pop('pretty_name', None)
@@ -468,28 +453,41 @@ class SupplierPartSerializer(
         ),
         False,
         filter_name='price_breaks',
+        prefetch_fields=['pricebreaks'],
     )
 
     parameters = common.filters.enable_parameters_filter()
 
-    part_detail = part_serializers.PartBriefSerializer(
-        label=_('Part'), source='part', many=False, read_only=True, allow_null=True
+    part_detail = enable_filter(
+        part_serializers.PartBriefSerializer(
+            label=_('Part'), source='part', many=False, read_only=True, allow_null=True
+        ),
+        default_include=True,
+        prefetch_fields=['part'],
     )
 
-    supplier_detail = CompanyBriefSerializer(
-        label=_('Supplier'),
-        source='supplier',
-        many=False,
-        read_only=True,
-        allow_null=True,
+    supplier_detail = enable_filter(
+        CompanyBriefSerializer(
+            label=_('Supplier'),
+            source='supplier',
+            many=False,
+            read_only=True,
+            allow_null=True,
+        ),
+        True,
+        prefetch_fields=['supplier'],
     )
 
-    manufacturer_detail = CompanyBriefSerializer(
-        label=_('Manufacturer'),
-        source='manufacturer_part.manufacturer',
-        many=False,
-        read_only=True,
-        allow_null=True,
+    manufacturer_detail = enable_filter(
+        CompanyBriefSerializer(
+            label=_('Manufacturer'),
+            source='manufacturer_part.manufacturer',
+            many=False,
+            read_only=True,
+            allow_null=True,
+        ),
+        True,
+        prefetch_fields=['manufacturer_part__manufacturer'],
     )
 
     pretty_name = serializers.CharField(read_only=True, allow_null=True)
@@ -498,12 +496,16 @@ class SupplierPartSerializer(
         label=_('Supplier'), queryset=Company.objects.filter(is_supplier=True)
     )
 
-    manufacturer_part_detail = ManufacturerPartSerializer(
-        label=_('Manufacturer Part'),
-        source='manufacturer_part',
-        part_detail=False,
-        read_only=True,
-        allow_null=True,
+    manufacturer_part_detail = enable_filter(
+        ManufacturerPartSerializer(
+            label=_('Manufacturer Part'),
+            source='manufacturer_part',
+            part_detail=False,
+            read_only=True,
+            allow_null=True,
+        ),
+        False,
+        prefetch_fields=['manufacturer_part'],
     )
 
     MPN = serializers.CharField(
@@ -520,13 +522,13 @@ class SupplierPartSerializer(
         Fields:
             in_stock: Current stock quantity for each SupplierPart
         """
-        queryset = queryset.prefetch_related('part', 'pricebreaks')
-
         queryset = queryset.annotate(in_stock=part.filters.annotate_total_stock())
 
         queryset = queryset.annotate(
             on_order=company.filters.annotate_on_order_quantity()
         )
+
+        queryset = queryset.prefetch_related('supplier', 'manufacturer_part')
 
         return queryset
 
