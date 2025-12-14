@@ -376,6 +376,11 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: inventree/InvenTree
           flags: backend
+      - name: Performance Reporting
+        uses: CodSpeedHQ/action@v4
+        with:
+          mode: simulation
+          run: pytest src/backend --codspeed
 
   postgres:
     name: Tests - DB [PostgreSQL]

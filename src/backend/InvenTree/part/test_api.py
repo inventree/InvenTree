@@ -11,6 +11,7 @@ from django.db import connection
 from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 
+import pytest
 from PIL import Image
 from rest_framework.test import APIClient
 
@@ -21,7 +22,7 @@ from build.status_codes import BuildStatus
 from common.models import InvenTreeSetting, ParameterTemplate
 from company.models import Company, SupplierPart
 from InvenTree.config import get_testfolder_dir
-from InvenTree.unit_test import InvenTreeAPITestCase
+from InvenTree.unit_test import InvenTreeAPIPerformanceTestCase, InvenTreeAPITestCase
 from order.status_codes import PurchaseOrderStatusGroups
 from part.models import (
     BomItem,
@@ -3352,3 +3353,15 @@ class ParameterTests(PartAPITestBase):
 
         self.assertIn('export_format', fields)
         self.assertIn('export_plugin', fields)
+
+
+class PartApiPerformanceTest(PartAPITestBase, InvenTreeAPIPerformanceTestCase):
+    """Performance tests for the Part API."""
+
+    @pytest.mark.benchmark
+    def test_part_api_performance(self, benchmark):
+        """Test that Part API queries are performant."""
+        url = reverse('api-part-list')
+
+        response = benchmark(self.get, url, expected_code=200)
+        self.assertGreater(len(response.data), 0)
