@@ -178,9 +178,7 @@ class ManufacturerPartMixin(SerializerContextMixin):
         """Return annotated queryset for the ManufacturerPart list endpoint."""
         queryset = super().get_queryset(*args, **kwargs)
 
-        queryset = queryset.prefetch_related(
-            'part', 'manufacturer', 'supplier_parts', 'tags'
-        )
+        queryset = queryset.prefetch_related('supplier_parts', 'tags')
 
         return queryset
 

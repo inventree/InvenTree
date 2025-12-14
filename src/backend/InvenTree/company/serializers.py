@@ -293,13 +293,7 @@ class ManufacturerPartSerializer(
             source='part', many=False, read_only=True, allow_null=True
         ),
         True,
-    )
-
-    manufacturer_detail = enable_filter(
-        CompanyBriefSerializer(
-            source='manufacturer', many=False, read_only=True, allow_null=True
-        ),
-        True,
+        prefetch_fields=['part'],
     )
 
     pretty_name = enable_filter(
@@ -308,6 +302,14 @@ class ManufacturerPartSerializer(
 
     manufacturer = serializers.PrimaryKeyRelatedField(
         queryset=Company.objects.filter(is_manufacturer=True)
+    )
+
+    manufacturer_detail = enable_filter(
+        CompanyBriefSerializer(
+            source='manufacturer', many=False, read_only=True, allow_null=True
+        ),
+        True,
+        prefetch_fields=['manufacturer'],
     )
 
 
