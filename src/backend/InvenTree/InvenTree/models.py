@@ -536,7 +536,6 @@ class InvenTreeParameterMixin(InvenTreePermissionCheckMixin, models.Model):
         """
         return queryset.prefetch_related(
             'parameters_list',
-            'parameters_list__updated_by',
             'parameters_list__model_type',
             'parameters_list__updated_by',
             'parameters_list__template',

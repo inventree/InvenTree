@@ -347,7 +347,7 @@ def enable_project_label_filter(
         filter_name: The name of the filter field.
         default: If True, enable the filter by default.
 
-    If applied, this field will automatically prefetch the 'project_label' relationship.
+    If applied, this field will automatically prefetch the 'project_code' relationship.
     """
     return InvenTree.serializers.enable_filter(
         InvenTree.serializers.FilterableCharField(
