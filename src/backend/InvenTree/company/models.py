@@ -239,21 +239,13 @@ class Company(
     @property
     def primary_address(self):
         """Returns address object of primary address for this Company."""
-        # If a cached property exists, use it
-        if cache := getattr(self, '_prefetched_objects_cache', {}):
-            # First check for primary address list - the queryset is ordered by primary flag
-            if 'primary_address_list' in cache:
-                addresses = cache['primary_address_list']
-                return addresses[0] if len(addresses) > 0 else None
-
-            if 'addresses' in cache:
-                address_list = cache['addresses']
-                return address_list[0] if len(address_list) > 0 else None
+        # We may have a pre-fetched primary address list
+        if hasattr(self, 'primary_address_list'):
+            addresses = self.primary_address_list
+            return addresses[0] if len(addresses) > 0 else None
 
         # Otherwise, query the database
-        return (
-            Address.objects.filter(company=self.id).order_by('-primary', 'pk').first()
-        )
+        return self.addresses.filter(primary=True).first()
 
     @property
     def currency_code(self):

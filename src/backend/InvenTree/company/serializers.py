@@ -172,7 +172,7 @@ class CompanySerializer(
                 queryset=Address.objects.filter(primary=True),
                 to_attr='primary_address_list',
             )
-        ).prefetch_related('addresses')
+        )
 
         queryset = Company.annotate_parameters(queryset)
 
