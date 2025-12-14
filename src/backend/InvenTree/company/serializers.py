@@ -441,7 +441,7 @@ class SupplierPartSerializer(
         part_serializers.PartBriefSerializer(
             label=_('Part'), source='part', many=False, read_only=True, allow_null=True
         ),
-        default_include=True,
+        True,
         prefetch_fields=['part'],
     )
 

@@ -1,7 +1,6 @@
 """Custom API filters for InvenTree."""
 
 import re
-from typing import Optional
 
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
@@ -315,9 +314,7 @@ def order_by_parameter(
     )
 
 
-def enable_project_code_filter(
-    filter_name: str = 'project_code_detail', default: bool = True
-):
+def enable_project_code_filter(default: bool = True):
     """Add an optional 'project_code_detail' field to an API serializer.
 
     Arguments:
@@ -333,14 +330,12 @@ def enable_project_code_filter(
             source='project_code', many=False, read_only=True, allow_null=True
         ),
         default,
-        filter_name=filter_name,
+        filter_name='project_code_detail',
         prefetch_fields=['project_code'],
     )
 
 
-def enable_project_label_filter(
-    filter_name: str = 'project_code_detail', default: bool = True
-):
+def enable_project_label_filter(default: bool = True):
     """Add an optional 'project_code_label' field to an API serializer.
 
     Arguments:
@@ -357,14 +352,12 @@ def enable_project_label_filter(
             allow_null=True,
         ),
         default,
-        filter_name=filter_name,
+        filter_name='project_code_detail',
         prefetch_fields=['project_code'],
     )
 
 
-def enable_parameters_filter(
-    source: Optional[str] = None, filter_name: str = 'parameters', default: bool = False
-):
+def enable_parameters_filter():
     """Add an optional 'parameters' field to an API serializer.
 
     Arguments:
@@ -376,15 +369,10 @@ def enable_parameters_filter(
     """
     from common.serializers import ParameterSerializer
 
-    serializer_args = {'many': True, 'read_only': True, 'allow_null': True}
-
-    if source is not None:
-        serializer_args['source'] = source
-
     return InvenTree.serializers.enable_filter(
-        ParameterSerializer(**serializer_args),
-        default,
-        filter_name=filter_name,
+        ParameterSerializer(many=True, read_only=True, allow_null=True),
+        False,
+        filter_name='parameters',
         prefetch_fields=[
             'parameters_list',
             'parameters_list__model_type',
