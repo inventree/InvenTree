@@ -183,8 +183,6 @@ def filter_parameters_by_value(
     # Combine the queries based on whether we are filtering by text or numeric value
     q = query_text if text_only else query_text | query_numeric
 
-    # queryset = Parameter.objects.prefetch_related('template').all()
-
     # Special handling for the '__ne' (not equal) operator
     # In this case, we want the *opposite* of the above queries
     if invert:
@@ -216,8 +214,6 @@ def filter_parametric_data(queryset: QuerySet, parameters: dict[str, str]) -> Qu
 
     Typically these filters would be provided against via an API request.
     """
-    queryset = queryset.prefetch_related('parameters_list', 'parameters_list__template')
-
     # Allowed lookup operations for parameter values
     operators = '|'.join(PARAMETER_FILTER_OPERATORS)
 
