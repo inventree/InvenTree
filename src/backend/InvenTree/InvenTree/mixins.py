@@ -269,8 +269,6 @@ class OutputOptionsMixin:
         if isinstance(serializer, FilterableSerializerMixin):
             queryset = serializer.prefetch_queryset(queryset)
 
-            print('Applying prefetch for output options:', self.__class__.__name__)
-
         return queryset
 
 
