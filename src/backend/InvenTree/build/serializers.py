@@ -122,6 +122,7 @@ class BuildSerializer(
     part_detail = enable_filter(
         part_serializers.PartBriefSerializer(source='part', many=False, read_only=True),
         True,
+        prefetch_fields=['part', 'part__category', 'part__pricing_data'],
     )
 
     parameters = common.filters.enable_parameters_filter()
@@ -138,12 +139,14 @@ class BuildSerializer(
         UserSerializer(source='issued_by', read_only=True),
         True,
         filter_name='user_detail',
+        prefetch_fields=['issued_by'],
     )
 
     responsible_detail = enable_filter(
         OwnerSerializer(source='responsible', read_only=True, allow_null=True),
         True,
         filter_name='user_detail',
+        prefetch_fields=['responsible'],
     )
 
     barcode_hash = serializers.CharField(read_only=True)

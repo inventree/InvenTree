@@ -319,10 +319,6 @@ class BuildMixin:
 
         queryset = build.serializers.BuildSerializer.annotate_queryset(queryset)
 
-        queryset = queryset.prefetch_related(
-            'responsible', 'issued_by', 'build_lines', 'part', 'part__pricing_data'
-        )
-
         return queryset
 
 
