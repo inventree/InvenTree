@@ -1,10 +1,15 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 430
+INVENTREE_API_VERSION = 431
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v431 -> 2025-12-14 : https://github.com/inventree/InvenTree/pull/11006
+    - Remove duplicate "address" field on the Company API endpoint
+    - Make "primary_address" field optional on the Company API endpoint
+    - Remove "address_count" field from the Company API endpoint
 
 v430 -> 2025-12-04 : https://github.com/inventree/InvenTree/pull/10699
     - Removed the "PartParameter" and "PartParameterTemplate" API endpoints

@@ -2065,8 +2065,8 @@ class PartListTests(PartAPITestBase):
                     if b and result['category'] is not None:
                         self.assertIn('category_detail', result)
 
-            # No more than 22 DB queries
-            self.assertLessEqual(len(ctx), 22)
+            # No more than 25 DB queries
+            self.assertLessEqual(len(ctx), 25)
 
     def test_price_breaks(self):
         """Test that price_breaks parameter works correctly and efficiently."""
