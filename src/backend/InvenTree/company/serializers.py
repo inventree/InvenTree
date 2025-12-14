@@ -178,7 +178,11 @@ class CompanySerializer(
 
         return queryset
 
-    primary_address = AddressBriefSerializer(read_only=True, allow_null=True)
+    primary_address = enable_filter(
+        AddressBriefSerializer(read_only=True, allow_null=True),
+        True,
+        filter_name='address_detail',
+    )
 
     image = InvenTreeImageSerializerField(required=False, allow_null=True)
 
