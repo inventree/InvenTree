@@ -339,9 +339,9 @@ def enable_project_code_filter(
 
 
 def enable_project_label_filter(
-    filter_name: str = 'project_label_detail', default: bool = True
+    filter_name: str = 'project_code_detail', default: bool = True
 ):
-    """Add an optional 'project_label_detail' field to an API serializer.
+    """Add an optional 'project_code_label' field to an API serializer.
 
     Arguments:
         filter_name: The name of the filter field.

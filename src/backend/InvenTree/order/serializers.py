@@ -139,6 +139,7 @@ class AbstractOrderSerializer(
             source='contact', many=False, read_only=True, allow_null=True
         ),
         True,
+        prefetch_fields=['contact'],
     )
 
     # Detail for responsible field
@@ -147,6 +148,7 @@ class AbstractOrderSerializer(
             source='responsible', read_only=True, allow_null=True, many=False
         ),
         True,
+        prefetch_fields=['responsible'],
     )
 
     project_code_label = common.filters.enable_project_label_filter()
@@ -158,6 +160,7 @@ class AbstractOrderSerializer(
             source='address', many=False, read_only=True, allow_null=True
         ),
         True,
+        prefetch_fields=['address'],
     )
 
     parameters = common.filters.enable_parameters_filter()
@@ -417,9 +420,7 @@ class PurchaseOrderSerializer(
             )
         )
 
-        queryset = queryset.prefetch_related(
-            'address', 'contact', 'created_by', 'responsible', 'supplier'
-        )
+        queryset = queryset.prefetch_related('created_by')
 
         return queryset
 
@@ -430,7 +431,8 @@ class PurchaseOrderSerializer(
     supplier_detail = enable_filter(
         CompanyBriefSerializer(
             source='supplier', many=False, read_only=True, allow_null=True
-        )
+        ),
+        prefetch_fields=['supplier'],
     )
 
 

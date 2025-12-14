@@ -369,9 +369,9 @@ class PurchaseOrderMixin(SerializerContextMixin):
         """Return the annotated queryset for this endpoint."""
         queryset = super().get_queryset(*args, **kwargs)
 
-        queryset = queryset.prefetch_related('supplier', 'lines', 'responsible')
-
         queryset = serializers.PurchaseOrderSerializer.annotate_queryset(queryset)
+
+        queryset = queryset.prefetch_related('supplier', 'created_by')
 
         return queryset
 
