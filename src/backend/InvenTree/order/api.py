@@ -831,7 +831,7 @@ class SalesOrderMixin(SerializerContextMixin):
         """Return annotated queryset for this endpoint."""
         queryset = super().get_queryset(*args, **kwargs)
 
-        queryset = queryset.prefetch_related('customer', 'responsible', 'lines')
+        queryset = queryset.prefetch_related('customer', 'created_by')
 
         queryset = serializers.SalesOrderSerializer.annotate_queryset(queryset)
 
