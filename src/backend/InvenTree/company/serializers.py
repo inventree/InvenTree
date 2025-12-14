@@ -148,7 +148,6 @@ class CompanySerializer(
             'parts_supplied',
             'parts_manufactured',
             'remote_image',
-            'address_count',
             'primary_address',
             'tax_id',
             'parameters',
@@ -163,8 +162,6 @@ class CompanySerializer(
         )
 
         queryset = queryset.annotate(parts_supplied=SubqueryCount('supplied_parts'))
-
-        queryset = queryset.annotate(address_count=SubqueryCount('addresses'))
 
         queryset = queryset.prefetch_related(
             Prefetch(
@@ -191,8 +188,8 @@ class CompanySerializer(
     )
 
     parts_supplied = serializers.IntegerField(read_only=True)
+
     parts_manufactured = serializers.IntegerField(read_only=True)
-    address_count = serializers.IntegerField(read_only=True)
 
     currency = InvenTreeCurrencySerializer(
         help_text=_('Default currency used for this supplier'), required=True

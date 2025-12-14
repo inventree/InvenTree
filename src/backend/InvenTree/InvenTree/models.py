@@ -537,7 +537,9 @@ class InvenTreeParameterMixin(InvenTreePermissionCheckMixin, models.Model):
         return queryset.prefetch_related(
             'parameters_list',
             'parameters_list__model_type',
+            'parameters_list__updated_by',
             'parameters_list__template',
+            'parameters_list__template__model_type',
         )
 
     @property
@@ -547,8 +549,9 @@ class InvenTreeParameterMixin(InvenTreePermissionCheckMixin, models.Model):
         This will return pre-fetched data if available (i.e. in a serializer context).
         """
         # Check the query cache for pre-fetched parameters
-        if 'parameters_list' in getattr(self, '_prefetched_objects_cache', {}):
-            return self._prefetched_objects_cache['parameters_list']
+        if cache := getattr(self, '_prefetched_objects_cache', None):
+            if 'parameters_list' in cache:
+                return cache['parameters_list']
 
         return self.parameters_list.all()
 
