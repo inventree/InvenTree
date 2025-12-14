@@ -192,6 +192,8 @@ class BuildSerializer(
             )
         )
 
+        queryset = Build.annotate_parameters(queryset)
+
         return queryset
 
     def __init__(self, *args, **kwargs):
