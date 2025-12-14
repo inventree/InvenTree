@@ -242,12 +242,13 @@ class Company(
         # If a cached property exists, use it
         if cache := getattr(self, '_prefetched_objects_cache', {}):
             # First check for primary address list - the queryset is ordered by primary flag
-            if primary_address_list := cache.get('primary_address_list', None):
-                if len(primary_address_list) > 0:
-                    return primary_address_list[0]
-            if address_list := cache.get('addresses', None):
-                if len(address_list) > 0:
-                    return address_list[0]
+            if 'primary_address_list' in cache:
+                addresses = cache['primary_address_list']
+                return addresses[0] if len(addresses) > 0 else None
+
+            if 'addresses' in cache:
+                address_list = cache['addresses']
+                return address_list[0] if len(address_list) > 0 else None
 
         # Otherwise, query the database
         return (
