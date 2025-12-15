@@ -393,15 +393,10 @@ class SupplierPartSerializer(
 
         brief = kwargs.pop('brief', False)
 
-        prettify = kwargs.pop('pretty', False)
-
         super().__init__(*args, **kwargs)
 
         if isGeneratingSchema():
             return
-
-        if brief or prettify is not True:
-            self.fields.pop('pretty_name', None)
 
         if brief:
             self.fields.pop('tags')
@@ -469,7 +464,9 @@ class SupplierPartSerializer(
         prefetch_fields=['manufacturer_part__manufacturer'],
     )
 
-    pretty_name = serializers.CharField(read_only=True, allow_null=True)
+    pretty_name = enable_filter(
+        FilterableCharField(read_only=True, allow_null=True), filter_name='pretty'
+    )
 
     supplier = serializers.PrimaryKeyRelatedField(
         label=_('Supplier'), queryset=Company.objects.filter(is_supplier=True)
