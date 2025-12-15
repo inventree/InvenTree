@@ -3358,6 +3358,7 @@ class ParameterTests(PartAPITestBase):
 class PartApiPerformanceTest(PartAPITestBase, InvenTreeAPIPerformanceTestCase):
     """Performance tests for the Part API."""
 
+    @pytest.mark.django_db
     @pytest.mark.benchmark
     def test_part_api_performance(self):
         """Test that Part API queries are performant."""
