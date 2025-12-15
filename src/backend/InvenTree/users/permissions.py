@@ -2,6 +2,7 @@
 
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.models.query import Prefetch, QuerySet
 
 import InvenTree.cache
 from users.ruleset import RULESET_CHANGE_INHERIT, get_ruleset_ignore, get_ruleset_models
@@ -55,8 +56,26 @@ def split_permission(app: str, perm: str) -> tuple[str, str]:
     return perm, model
 
 
+def prefetch_rule_sets(user) -> QuerySet:
+    """Return a queryset of groups with prefetched rule sets for the given user.
+
+    Arguments:
+        user: The user object
+
+    Returns:
+        QuerySet: The queryset of groups with prefetched rule sets
+    """
+    return user.groups.all().prefetch_related(
+        Prefetch('rule_sets', to_attr='prefetched_rule_sets')
+    )
+
+
 def check_user_role(
-    user: User, role: str, permission: str, allow_inactive: bool = False
+    user: User,
+    role: str,
+    permission: str,
+    allow_inactive: bool = False,
+    groups: QuerySet = None,
 ) -> bool:
     """Check if a user has a particular role:permission combination.
 
@@ -65,6 +84,7 @@ def check_user_role(
         role: The role to check (e.g. 'part' / 'stock')
         permission: The permission to check (e.g. 'view' / 'delete')
         allow_inactive: If False, disallow inactive users from having permissions
+        groups: Optional cached queryset of groups to check (defaults to user's groups)
 
     Returns:
         bool: True if the user has the specified role:permission combination
@@ -90,8 +110,10 @@ def check_user_role(
     # Default for no match
     result = False
 
-    for group in user.groups.all():
-        for rule in group.rule_sets.all():
+    groups = groups or prefetch_rule_sets(user)
+
+    for group in groups:
+        for rule in group.prefetched_rule_sets:
             if rule.name == role:
                 # Check if the rule has the specified permission
                 # e.g. "view" role maps to "can_view" attribute
