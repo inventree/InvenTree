@@ -559,26 +559,27 @@ class BuildLineOutputOptions(OutputConfiguration):
         InvenTreeOutputOption(
             'bom_item_detail',
             description='Include detailed information about the BOM item linked to this build line.',
-            default=True,
+            default=False,
         ),
         InvenTreeOutputOption(
             'assembly_detail',
             description='Include brief details of the assembly (parent part) related to the BOM item in this build line.',
-            default=True,
+            default=False,
         ),
         InvenTreeOutputOption(
             'part_detail',
             description='Include detailed information about the specific part being built or consumed in this build line.',
-            default=True,
+            default=False,
         ),
         InvenTreeOutputOption(
             'build_detail',
             description='Include detailed information about the associated build order.',
+            default=False,
         ),
         InvenTreeOutputOption(
             'allocations',
             description='Include allocation details showing which stock items are allocated to this build line.',
-            default=True,
+            default=False,
         ),
     ]
 

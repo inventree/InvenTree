@@ -973,7 +973,8 @@ export default function BuildLineTable({
             build: build.pk,
             assembly_detail: false,
             category_detail: true,
-            part_detail: true
+            part_detail: true,
+            allocations: true
           },
           tableActions: tableActions,
           tableFilters: tableFilters,

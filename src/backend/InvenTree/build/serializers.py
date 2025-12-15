@@ -1353,7 +1353,18 @@ class BuildLineSerializer(
     )
 
     allocations = enable_filter(
-        BuildItemSerializer(many=True, read_only=True, build_detail=False), True
+        BuildItemSerializer(many=True, read_only=True, build_detail=False),
+        True,
+        prefetch_fields=[
+            'allocations',
+            'allocations__stock_item',
+            'allocations__stock_item__part',
+            'allocations__stock_item__part__pricing_data',
+            'allocations__stock_item__supplier_part',
+            'allocations__stock_item__supplier_part__manufacturer_part',
+            'allocations__stock_item__location',
+            'allocations__stock_item__tags',
+        ],
     )
 
     # BOM item info fields
@@ -1397,7 +1408,7 @@ class BuildLineSerializer(
             part_detail=False,
             can_build=False,
         ),
-        True,
+        False,
     )
 
     assembly_detail = enable_filter(
@@ -1409,7 +1420,8 @@ class BuildLineSerializer(
             allow_null=True,
             pricing=False,
         ),
-        True,
+        False,
+        prefetch_fields=['bom_item__part', 'bom_item__part__pricing_data'],
     )
 
     part_detail = enable_filter(
@@ -1420,7 +1432,8 @@ class BuildLineSerializer(
             read_only=True,
             pricing=False,
         ),
-        True,
+        False,
+        prefetch_fields=['bom_item__sub_part', 'bom_item__sub_part__pricing_data'],
     )
 
     category_detail = enable_filter(
@@ -1497,77 +1510,16 @@ class BuildLineSerializer(
             'bom_item__sub_part__pricing_data',
         )
 
-        # Pre-fetch related fields
-        queryset = queryset.prefetch_related(
-            'allocations',
-            'allocations__stock_item',
-            'allocations__stock_item__part',
-            'allocations__stock_item__supplier_part',
-            'allocations__stock_item__supplier_part__manufacturer_part',
-            'allocations__stock_item__location',
-            'allocations__stock_item__tags',
-            'bom_item',
-            'bom_item__part',
-            'bom_item__sub_part',
-            'bom_item__sub_part__category',
-            'bom_item__sub_part__stock_items',
-            'bom_item__sub_part__stock_items__allocations',
-            'bom_item__sub_part__stock_items__sales_order_allocations',
-            'bom_item__substitutes',
-            'bom_item__substitutes__part__stock_items',
-            'bom_item__substitutes__part__stock_items__allocations',
-            'bom_item__substitutes__part__stock_items__sales_order_allocations',
-        )
-
         # Defer expensive fields which we do not need for this serializer
 
-        queryset = (
-            queryset.defer(
-                'build__lft',
-                'build__rght',
-                'build__level',
-                'build__tree_id',
-                'build__destination',
-                'build__take_from',
-                'build__completed_by',
-                'build__sales_order',
-                'build__parent',
-                'build__notes',
-                'build__metadata',
-                'build__responsible',
-                'build__barcode_data',
-                'build__barcode_hash',
-                'build__project_code',
-            )
-            .defer('bom_item__metadata')
-            .defer(
-                'bom_item__part__lft',
-                'bom_item__part__rght',
-                'bom_item__part__level',
-                'bom_item__part__tree_id',
-                'bom_item__part__tags',
-                'bom_item__part__notes',
-                'bom_item__part__variant_of',
-                'bom_item__part__revision_of',
-                'bom_item__part__creation_user',
-                'bom_item__part__bom_checked_by',
-                'bom_item__part__default_supplier',
-                'bom_item__part__responsible_owner',
-            )
-            .defer(
-                'bom_item__sub_part__lft',
-                'bom_item__sub_part__rght',
-                'bom_item__sub_part__level',
-                'bom_item__sub_part__tree_id',
-                'bom_item__sub_part__tags',
-                'bom_item__sub_part__notes',
-                'bom_item__sub_part__variant_of',
-                'bom_item__sub_part__revision_of',
-                'bom_item__sub_part__creation_user',
-                'bom_item__sub_part__bom_checked_by',
-                'bom_item__sub_part__default_supplier',
-                'bom_item__sub_part__responsible_owner',
-            )
+        queryset = queryset.defer(
+            'build__notes',
+            'build__metadata',
+            'bom_item__metadata',
+            'bom_item__part__notes',
+            'bom_item__part__metadata',
+            'bom_item__sub_part__notes',
+            'bom_item__sub_part__metadata',
         )
 
         # Annotate the "allocated" quantity

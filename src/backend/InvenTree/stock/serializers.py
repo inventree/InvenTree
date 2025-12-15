@@ -474,6 +474,7 @@ class StockItemSerializer(
     def annotate_queryset(queryset):
         """Add some extra annotations to the queryset, performing database queries as efficiently as possible."""
         queryset = queryset.prefetch_related(
+            'location',
             'sales_order',
             'purchase_order',
             Prefetch(
@@ -487,7 +488,6 @@ class StockItemSerializer(
             'parent',
             'part__category',
             'part__pricing_data',
-            'part__tags',
             'supplier_part',
             'supplier_part__manufacturer_part',
             'customer',
