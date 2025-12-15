@@ -380,7 +380,7 @@ jobs:
           slug: inventree/InvenTree
           flags: backend
       - name: Performance Reporting
-        uses: CodSpeedHQ/action@v4
+        uses: CodSpeedHQ/action@346a2d8a8d9d38909abd0bc3d23f773110f076ad # pin@v4
         with:
           mode: simulation
           run: pytest src/backend --codspeed
