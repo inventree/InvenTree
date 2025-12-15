@@ -1014,16 +1014,12 @@ class SalesOrderLineItemMixin(SerializerContextMixin):
 
         queryset = queryset.prefetch_related(
             'part',
-            'part__stock_items',
             'allocations',
             'allocations__shipment',
             'allocations__item__part',
             'allocations__item__location',
             'order',
-            'order__stock_items',
         )
-
-        queryset = queryset.select_related('part__pricing_data')
 
         queryset = serializers.SalesOrderLineItemSerializer.annotate_queryset(queryset)
 

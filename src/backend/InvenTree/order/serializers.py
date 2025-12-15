@@ -1222,15 +1222,26 @@ class SalesOrderLineItemSerializer(
     order_detail = enable_filter(
         SalesOrderSerializer(
             source='order', many=False, read_only=True, allow_null=True
-        )
+        ),
+        prefetch_fields=[
+            'order__created_by',
+            'order__responsible',
+            'order__address',
+            'order__project_code',
+            'order__contact',
+        ],
     )
+
     part_detail = enable_filter(
-        PartBriefSerializer(source='part', many=False, read_only=True, allow_null=True)
+        PartBriefSerializer(source='part', many=False, read_only=True, allow_null=True),
+        prefetch_fields=['part__pricing_data'],
     )
+
     customer_detail = enable_filter(
         CompanyBriefSerializer(
             source='order.customer', many=False, read_only=True, allow_null=True
-        )
+        ),
+        prefetch_fields=['order__customer'],
     )
 
     # Annotated fields
