@@ -264,10 +264,8 @@ class DataExportViewMixin:
         exporting = kwargs.pop('exporting', None)
 
         if exporting is None:
-            exporting = (
-                self.request.method.lower() in ['options', 'get']
-                and self.is_exporting()
-            )
+            method = str(getattr(self.request, 'method', '')).lower()
+            exporting = method in ['options', 'get'] and self.is_exporting()
 
         if exporting:
             # Override kwargs when initializing the DataExportOptionsSerializer
