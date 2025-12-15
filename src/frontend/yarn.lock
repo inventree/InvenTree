@@ -3975,14 +3975,14 @@ make-dir@^4.0.0:
     semver "^7.5.3"
 
 mantine-contextmenu@^8.2.0:
-  version "8.2.0"
-  resolved "https://registry.yarnpkg.com/mantine-contextmenu/-/mantine-contextmenu-8.2.0.tgz#6f96f881462c89e3dcc6d68035be71dc3371aee1"
-  integrity sha512-GKxC13wTnwCmToh6UvQtXN/vVbdbnScwXYtgzyKOzVGGEPBDmkqhKjG/IYq+JqSIqf/t9WoVHPm/81Jqi5FJgg==
+  version "8.3.11"
+  resolved "https://registry.yarnpkg.com/mantine-contextmenu/-/mantine-contextmenu-8.3.11.tgz#15075e156b7ea401ff07cf5007bb4e6c0fafd094"
+  integrity sha512-EyTztsfgoBeCDUTSifZHpWav8kFZCSBLc2Of44tMfSPIf+FSPVlpQ4OPD9+NUEcYdz2bH4hQwbWiwh4OQd87Nw==
 
 mantine-datatable@^8.2.0:
-  version "8.2.0"
-  resolved "https://registry.yarnpkg.com/mantine-datatable/-/mantine-datatable-8.2.0.tgz#05ee4f8ed59a0138bff2b9aee8ecc36fbb34f448"
-  integrity sha512-dkdOnDw1DF9t5kxl4VEPM0baubNW2Tc+lvbc0bkVU1bNaDpXphSeoTGU6lai0sQ21hrKSMbfiK0ACczdrSOKyg==
+  version "8.3.11"
+  resolved "https://registry.yarnpkg.com/mantine-datatable/-/mantine-datatable-8.3.11.tgz#97b40c17d5362d7df9ec0c2f218f1af66c725cda"
+  integrity sha512-n4R0lBr/CsSWeK4w+ljv52IQ1E0sDW3SfMn/qAdTvDWIgUh2fIsuHCjqkElvW2KQUNXR4rDRJ+RZrSJL1pOJjA==
 
 marked@^4.1.0:
   version "4.3.0"
