@@ -474,10 +474,7 @@ class StockItemSerializer(
     def annotate_queryset(queryset):
         """Add some extra annotations to the queryset, performing database queries as efficiently as possible."""
         queryset = queryset.prefetch_related(
-            'location',
-            'allocations',
             'sales_order',
-            'sales_order_allocations',
             'purchase_order',
             Prefetch(
                 'part',
@@ -489,25 +486,16 @@ class StockItemSerializer(
             ),
             'parent',
             'part__category',
-            'part__supplier_parts',
-            'part__supplier_parts__purchase_order_line_items',
             'part__pricing_data',
             'part__tags',
             'supplier_part',
-            'supplier_part__part',
-            'supplier_part__supplier',
             'supplier_part__manufacturer_part',
-            'supplier_part__manufacturer_part__manufacturer',
-            'supplier_part__manufacturer_part__tags',
-            'supplier_part__purchase_order_line_items',
-            'supplier_part__tags',
-            'test_results',
             'customer',
             'belongs_to',
             'sales_order',
             'consumed_by',
             'tags',
-        )
+        ).select_related('part')
 
         # Annotate the queryset with the total allocated to sales orders
         queryset = queryset.annotate(
@@ -586,7 +574,14 @@ class StockItemSerializer(
             read_only=True,
             allow_null=True,
         ),
-        True,
+        False,
+        prefetch_fields=[
+            'supplier_part__supplier',
+            'supplier_part__manufacturer_part__manufacturer',
+            'supplier_part__manufacturer_part__tags',
+            'supplier_part__purchase_order_line_items',
+            'supplier_part__tags',
+        ],
     )
 
     part_detail = enable_filter(
@@ -604,13 +599,20 @@ class StockItemSerializer(
             read_only=True,
             allow_null=True,
         ),
-        True,
+        False,
+        prefetch_fields=['location'],
     )
 
     tests = enable_filter(
         StockItemTestResultSerializer(
             source='test_results', many=True, read_only=True, allow_null=True
-        )
+        ),
+        False,
+        prefetch_fields=[
+            'test_results',
+            'test_results__user',
+            'test_results__template',
+        ],
     )
 
     quantity = InvenTreeDecimalField()
