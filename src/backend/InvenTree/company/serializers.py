@@ -448,7 +448,7 @@ class SupplierPartSerializer(
             read_only=True,
             allow_null=True,
         ),
-        True,
+        False,
         prefetch_fields=['supplier'],
     )
 

@@ -300,7 +300,7 @@ class SupplierPartOutputOptions(OutputConfiguration):
         InvenTreeOutputOption(
             description='Include detailed information about the Supplier in the response',
             flag='supplier_detail',
-            default=True,
+            default=False,
         ),
         InvenTreeOutputOption(
             description='Include detailed information about the Manufacturer in the response',

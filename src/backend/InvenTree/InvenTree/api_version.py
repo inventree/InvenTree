@@ -10,6 +10,7 @@ v432 -> 2025-12-15 : https://github.com/inventree/InvenTree/pull/11012
     - The "part_detail" field on the SupplierPart API endpoint is now optional
     - The "supplier_detail" field on the SupplierPart API endpoint is now optional
     - The "manufacturer_detail" field on the ManufacturerPart API endpoint is now optional
+    - The "part_detail" field on the StockItem API is now disabled by default
 
 v431 -> 2025-12-14 : https://github.com/inventree/InvenTree/pull/11006
     - Remove duplicate "address" field on the Company API endpoint

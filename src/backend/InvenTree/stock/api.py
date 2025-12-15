@@ -1042,7 +1042,7 @@ class StockOutputOptions(OutputConfiguration):
     """Output options for StockItem serializers."""
 
     OPTIONS = [
-        InvenTreeOutputOption('part_detail', default=True),
+        InvenTreeOutputOption('part_detail'),
         InvenTreeOutputOption('path_detail'),
         InvenTreeOutputOption('supplier_part_detail'),
         InvenTreeOutputOption('location_detail'),

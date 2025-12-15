@@ -53,7 +53,7 @@ class DataExportSerializerMixin:
         Determine if the serializer is being used for data export,
         and if so, adjust the serializer fields accordingly.
         """
-        exporting = kwargs.pop('exporting', False)
+        self._exporting_data = exporting = kwargs.pop('exporting', False)
 
         super().__init__(*args, **kwargs)
 
