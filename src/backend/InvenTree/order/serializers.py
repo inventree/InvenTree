@@ -4,16 +4,7 @@ from decimal import Decimal
 
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import models, transaction
-from django.db.models import (
-    BooleanField,
-    Case,
-    ExpressionWrapper,
-    F,
-    Prefetch,
-    Q,
-    Value,
-    When,
-)
+from django.db.models import BooleanField, Case, ExpressionWrapper, F, Q, Value, When
 from django.db.models.functions import Coalesce, Greatest
 from django.utils.translation import gettext_lazy as _
 
@@ -565,26 +556,17 @@ class PurchaseOrderLineItemSerializer(
         - "overdue" status (boolean field)
         """
         queryset = queryset.prefetch_related(
-            Prefetch(
-                'part__part',
-                queryset=part_models.Part.objects.annotate(
-                    category_default_location=part_filters.annotate_default_location(
-                        'category__'
-                    )
-                ).prefetch_related(None),
-            )
-        )
-
-        queryset = queryset.prefetch_related(
             'order',
             'order__responsible',
             'order__stock_items',
+            'part',
+            'part__part',
+            'part__part__pricing_data',
+            'part__part__default_location',
             'part__tags',
             'part__supplier',
             'part__manufacturer_part',
             'part__manufacturer_part__manufacturer',
-            'part__part__pricing_data',
-            'part__part__tags',
         )
 
         queryset = queryset.annotate(
@@ -639,6 +621,7 @@ class PurchaseOrderLineItemSerializer(
         PartBriefSerializer(
             source='get_base_part', many=False, read_only=True, allow_null=True
         ),
+        False,
         filter_name='part_detail',
     )
 
@@ -646,6 +629,7 @@ class PurchaseOrderLineItemSerializer(
         SupplierPartSerializer(
             source='part', brief=True, many=False, read_only=True, allow_null=True
         ),
+        False,
         filter_name='part_detail',
     )
 
@@ -659,8 +643,11 @@ class PurchaseOrderLineItemSerializer(
         default=True,
     )
 
-    destination_detail = stock.serializers.LocationBriefSerializer(
-        source='get_destination', read_only=True, allow_null=True
+    destination_detail = enable_filter(
+        stock.serializers.LocationBriefSerializer(
+            source='get_destination', read_only=True, allow_null=True
+        ),
+        True,
     )
 
     purchase_price_currency = InvenTreeCurrencySerializer(
@@ -673,8 +660,16 @@ class PurchaseOrderLineItemSerializer(
         )
     )
 
-    build_order_detail = build.serializers.BuildSerializer(
-        source='build_order', read_only=True, allow_null=True, many=False
+    build_order_detail = enable_filter(
+        build.serializers.BuildSerializer(
+            source='build_order', read_only=True, allow_null=True, many=False
+        ),
+        True,
+        prefetch_fields=[
+            'build_order__responsible',
+            'build_order__issued_by',
+            'build_order__part',
+        ],
     )
 
     merge_items = serializers.BooleanField(
