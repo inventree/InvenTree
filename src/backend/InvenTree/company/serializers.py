@@ -163,20 +163,19 @@ class CompanySerializer(
 
         queryset = queryset.annotate(parts_supplied=SubqueryCount('supplied_parts'))
 
-        queryset = queryset.prefetch_related(
+        return queryset
+
+    primary_address = enable_filter(
+        AddressBriefSerializer(read_only=True, allow_null=True),
+        False,
+        filter_name='address_detail',
+        prefetch_fields=[
             Prefetch(
                 'addresses',
                 queryset=Address.objects.filter(primary=True),
                 to_attr='primary_address_list',
             )
-        )
-
-        return queryset
-
-    primary_address = enable_filter(
-        AddressBriefSerializer(read_only=True, allow_null=True),
-        True,
-        filter_name='address_detail',
+        ],
     )
 
     image = InvenTreeImageSerializerField(required=False, allow_null=True)
