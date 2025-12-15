@@ -208,7 +208,7 @@ class FilterableSerializerMixin:
             return
 
         # Skip filtering when exporting data - leave all fields intact
-        if hasattr(self, '_exporting_data'):
+        if getattr(self, '_exporting_data', False):
             return
 
         # Throw out fields which are not requested (either by default or explicitly)
