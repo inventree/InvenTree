@@ -308,6 +308,11 @@ class SupplierPartOutputOptions(OutputConfiguration):
             default=False,
         ),
         InvenTreeOutputOption(
+            flag='manufacturer_part_detail',
+            description='Include detailed information about the linked ManufacturerPart in the response',
+            default=False,
+        ),
+        InvenTreeOutputOption(
             description='Format the output with a more readable (pretty) name',
             flag='pretty',
             default=False,
