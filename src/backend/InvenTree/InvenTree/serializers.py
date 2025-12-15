@@ -47,14 +47,12 @@ class FilterableSerializerField:
 
     # Options for automatic queryset prefetching
     prefetch_fields: Optional[list[str]] = None
-    prefetch_func: Optional[callable] = None
 
     def __init__(self, *args, **kwargs):
         """Initialize the serializer."""
         self.is_filterable = kwargs.pop('is_filterable', None)
         self.is_filterable_vals = kwargs.pop('is_filterable_vals', {})
         self.prefetch_fields = kwargs.pop('prefetch_fields', None)
-        self.prefetch_func = kwargs.pop('prefetch_func', None)
 
         super().__init__(*args, **kwargs)
 
@@ -65,7 +63,6 @@ def enable_filter(
     filter_name: Optional[str] = None,
     filter_by_query: bool = True,
     prefetch_fields: Optional[list[str]] = None,
-    prefetch_func: Optional[callable] = None,
 ):
     """Decorator for marking a serializer field as filterable.
 
@@ -77,7 +74,6 @@ def enable_filter(
         filter_name (str, optional): The name of the filter parameter to use in the URL. If None, the function name of the (decorated) function will be used.
         filter_by_query (bool): If True, also look for filter parameters in the request query parameters.
         prefetch_fields (list of str, optional): List of related fields to prefetch when this field is included. This can be used to optimize database queries.
-        prefetch_func (callable, optional): A callable function that takes a queryset and returns a modified queryset with appropriate prefetching applied.
 
     Returns:
         The decorated serializer field, marked as filterable.
@@ -98,7 +94,6 @@ def enable_filter(
 
     # Attach queryset prefetching information
     func._kwargs['prefetch_fields'] = prefetch_fields
-    func._kwargs['prefetch_func'] = prefetch_func
 
     return func
 
@@ -140,7 +135,6 @@ class FilterableSerializerMixin:
         """
         # Gather up the set of simple 'prefetch' fields and functions
         prefetch_fields = set()
-        prefetch_functions = []
 
         filterable_fields = [
             field
@@ -153,14 +147,8 @@ class FilterableSerializerMixin:
                 for pf in prefetch_names:
                     prefetch_fields.add(pf)
 
-            if prefetch_func := getattr(field, 'prefetch_func', None):
-                prefetch_functions.append(prefetch_func)
-
         if prefetch_fields and len(prefetch_fields) > 0:
             queryset = queryset.prefetch_related(*list(prefetch_fields))
-
-        for func in prefetch_functions:
-            queryset = func(queryset)
 
         return queryset
 
