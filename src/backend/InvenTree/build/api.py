@@ -325,11 +325,7 @@ class BuildMixin:
 class BuildListOutputOptions(OutputConfiguration):
     """Output options for the BuildList endpoint."""
 
-    OPTIONS = [
-        InvenTreeOutputOption('part_detail', default=True),
-        InvenTreeOutputOption('issued_by_detail', default=True),
-        InvenTreeOutputOption('responsible_detail', default=True),
-    ]
+    OPTIONS = [InvenTreeOutputOption('part_detail', default=True)]
 
 
 class BuildList(
