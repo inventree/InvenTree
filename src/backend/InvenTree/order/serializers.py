@@ -2088,7 +2088,14 @@ class ReturnOrderLineItemSerializer(
     order_detail = enable_filter(
         ReturnOrderSerializer(
             source='order', many=False, read_only=True, allow_null=True
-        )
+        ),
+        prefetch_fields=[
+            'order__created_by',
+            'order__responsible',
+            'order__address',
+            'order__project_code',
+            'order__contact',
+        ],
     )
 
     quantity = serializers.FloatField(
@@ -2098,7 +2105,8 @@ class ReturnOrderLineItemSerializer(
     item_detail = enable_filter(
         stock.serializers.StockItemSerializer(
             source='item', many=False, read_only=True, allow_null=True
-        )
+        ),
+        prefetch_fields=['item__supplier_part'],
     )
 
     part_detail = enable_filter(
