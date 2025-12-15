@@ -1280,11 +1280,11 @@ def test_translations(c):
         'disable_pty': 'Disable PTY',
         'runtest': 'Specify which tests to run, in format <module>.<file>.<class>.<method>',
         'migrations': 'Run migration unit tests',
-        'performance': 'Run performance unit tests',
         'report': 'Display a report of slow tests',
         'coverage': 'Run code coverage analysis (requires coverage package)',
         'translations': 'Compile translations before running tests',
         'keepdb': 'Keep the test database after running tests (default = False)',
+        'pytest': 'Use pytest to run tests',
     }
 )
 def test(
@@ -1293,11 +1293,11 @@ def test(
     disable_pty=False,
     runtest='',
     migrations=False,
-    performance=False,
     report=False,
     coverage=False,
     translations=False,
     keepdb=False,
+    pytest=False,
 ):
     """Run unit-tests for InvenTree codebase.
 
@@ -1343,15 +1343,16 @@ def test(
     else:
         cmd += ' --exclude-tag migration_test'
 
-    if performance:
-        cmd += ' --tag performance_test'
-    else:
-        cmd += ' --exclude-tag performance_test'
+    cmd += ' --exclude-tag performance_test'
 
     if coverage:
         # Run tests within coverage environment, and generate report
         run(c, f'coverage run {manage_py_path()} {cmd}')
         run(c, 'coverage xml -i')
+    elif pytest:
+        # Use pytest to run the tests
+        migrate(c)
+        run(c, f'pytest {manage_py_path().parent.parent} --codspeed')
     else:
         # Run simple test runner, without coverage
         manage(c, cmd, pty=pty)
