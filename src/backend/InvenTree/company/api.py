@@ -178,7 +178,7 @@ class ManufacturerPartMixin(SerializerContextMixin):
         """Return annotated queryset for the ManufacturerPart list endpoint."""
         queryset = super().get_queryset(*args, **kwargs)
 
-        queryset = queryset.prefetch_related('supplier_parts', 'tags')
+        queryset = queryset.prefetch_related('supplier_parts')
 
         return queryset
 
@@ -323,7 +323,7 @@ class SupplierPartOutputOptions(OutputConfiguration):
 class SupplierPartMixin:
     """Mixin class for SupplierPart API endpoints."""
 
-    queryset = SupplierPart.objects.all().prefetch_related('tags')
+    queryset = SupplierPart.objects.all()
     serializer_class = SupplierPartSerializer
 
     def get_queryset(self, *args, **kwargs):
@@ -331,9 +331,7 @@ class SupplierPartMixin:
         queryset = super().get_queryset(*args, **kwargs)
         queryset = SupplierPartSerializer.annotate_queryset(queryset)
 
-        queryset = queryset.prefetch_related(
-            'part', 'part__pricing_data', 'manufacturer_part__tags'
-        )
+        queryset = queryset.prefetch_related('part', 'part__pricing_data')
 
         return queryset
 

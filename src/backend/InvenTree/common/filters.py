@@ -380,3 +380,21 @@ def enable_parameters_filter():
             'parameters_list__template',
         ],
     )
+
+
+def enable_tags_filter(default: bool = False):
+    """Add an optional 'tags' field to an API serializer.
+
+    Arguments:
+        default: If True, enable the filter by default.
+
+    If applied, this field will automatically prefetch the 'tags' relationship.
+    """
+    from InvenTree.serializers import FilterableTagListField
+
+    return InvenTree.serializers.enable_filter(
+        FilterableTagListField(required=False),
+        default,
+        filter_name='tags',
+        prefetch_fields=['tags', 'tagged_items', 'tagged_items__tag'],
+    )

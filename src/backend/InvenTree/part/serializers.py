@@ -19,7 +19,6 @@ from djmoney.contrib.exchange.models import convert_money
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 from sql_util.utils import SubqueryCount
-from taggit.serializers import TagListSerializerField
 
 import common.currency
 import common.filters
@@ -633,8 +632,6 @@ class PartSerializer(
         ]
         read_only_fields = ['barcode_hash', 'creation_date', 'creation_user']
 
-    tags = TagListSerializerField(required=False)
-
     def __init__(self, *args, **kwargs):
         """Custom initialization method for PartSerializer.
 
@@ -909,6 +906,8 @@ class PartSerializer(
     )
 
     parameters = common.filters.enable_parameters_filter()
+
+    tags = common.filters.enable_tags_filter()
 
     price_breaks = enable_filter(
         PartSalePriceSerializer(

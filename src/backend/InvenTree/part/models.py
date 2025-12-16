@@ -347,29 +347,6 @@ def rename_part_image(instance, filename):
     return os.path.join(base, fname)
 
 
-class PartManager(TreeManager):
-    """Defines a custom object manager for the Part model.
-
-    The main purpose of this manager is to reduce the number of database hits,
-    as the Part model has a large number of ForeignKey fields!
-    """
-
-    def get_queryset(self):
-        """Perform default prefetch operations when accessing Part model from the database."""
-        return (
-            super()
-            .get_queryset()
-            .prefetch_related(
-                'category',
-                'pricing_data',
-                'category__parent',
-                'stock_items',
-                'builds',
-                'tags',
-            )
-        )
-
-
 class PartCategoryParameterTemplate(InvenTree.models.InvenTreeMetadataModel):
     """A PartCategoryParameterTemplate creates a unique relationship between a PartCategory and a ParameterTemplate.
 
@@ -540,7 +517,7 @@ class Part(
     NODE_PARENT_KEY = 'variant_of'
     IMAGE_RENAME = rename_part_image
 
-    objects = PartManager()
+    objects = TreeManager()
 
     tags = TaggableManager(blank=True)
 

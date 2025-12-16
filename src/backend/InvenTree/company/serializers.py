@@ -8,7 +8,6 @@ from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
 from sql_util.utils import SubqueryCount
-from taggit.serializers import TagListSerializerField
 
 import common.filters
 import company.filters
@@ -260,7 +259,7 @@ class ManufacturerPartSerializer(
             'parameters',
         ]
 
-    tags = TagListSerializerField(required=False)
+    tags = common.filters.enable_tags_filter()
 
     parameters = common.filters.enable_parameters_filter()
 
@@ -383,7 +382,7 @@ class SupplierPartSerializer(
             'pack_quantity_native',
         ]
 
-    tags = TagListSerializerField(required=False)
+    tags = common.filters.enable_tags_filter()
 
     def __init__(self, *args, **kwargs):
         """Initialize this serializer with extra detail fields as required."""
@@ -398,10 +397,9 @@ class SupplierPartSerializer(
             return
 
         if brief:
-            self.fields.pop('tags')
-            self.fields.pop('available')
-            self.fields.pop('on_order')
-            self.fields.pop('availability_updated')
+            self.fields.pop('available', None)
+            self.fields.pop('on_order', None)
+            self.fields.pop('availability_updated', None)
 
     # Annotated field showing total in-stock quantity
     in_stock = serializers.FloatField(
