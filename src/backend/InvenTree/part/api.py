@@ -570,7 +570,7 @@ class PartPricingDetail(RetrieveUpdateAPI):
     """API endpoint for viewing part pricing data."""
 
     serializer_class = part_serializers.PartPricingSerializer
-    queryset = Part.objects.all().select_related('sub_part', 'sub_part__pricing_data')
+    queryset = Part.objects.all().select_related('pricing_data')
 
     def get_object(self):
         """Return the PartPricing object associated with the linked Part."""

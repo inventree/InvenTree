@@ -2708,7 +2708,7 @@ class BomItemTest(InvenTreeAPITestCase):
         """Get the detail view for a single BomItem object."""
         url = reverse('api-bom-item-detail', kwargs={'pk': 3})
 
-        response = self.get(url, expected_code=200)
+        response = self.get(url, {'substitutes': True}, expected_code=200)
 
         expected_values = [
             'allow_variants',
@@ -2882,6 +2882,7 @@ class BomItemTest(InvenTreeAPITestCase):
         # The BomItem detail endpoint should now also reflect the substitute data
         data = self.get(
             reverse('api-bom-item-detail', kwargs={'pk': bom_item.pk}),
+            data={'substitutes': True},
             expected_code=200,
         ).data
 

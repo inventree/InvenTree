@@ -816,7 +816,7 @@ class ParameterSerializer(
     template_detail = enable_filter(
         ParameterTemplateSerializer(source='template', read_only=True, many=False),
         True,
-        prefetch_fields=['template', 'template_model_type'],
+        prefetch_fields=['template', 'template__model_type'],
     )
 
 
