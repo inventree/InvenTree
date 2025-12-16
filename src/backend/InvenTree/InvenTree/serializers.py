@@ -213,8 +213,9 @@ class FilterableSerializerMixin:
 
         # Skip filtering for a write requests - all fields should be present for data creation
         if request := self.context.get('request', None):
-            if str(request.method).lower() in ['post', 'put', 'patch']:
-                return
+            if method := getattr(request, 'method', None):
+                if str(method).lower() in ['post', 'put', 'patch']:
+                    return
 
         # Throw out fields which are not requested (either by default or explicitly)
         for k, v in self.filter_target_values.items():
