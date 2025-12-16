@@ -211,6 +211,11 @@ class FilterableSerializerMixin:
         if getattr(self, '_exporting_data', False):
             return
 
+        # Skip filtering for a write requests - all fields should be present for data creation
+        if request := self.context.get('request', None):
+            if str(request.method).lower() in ['post', 'put', 'patch']:
+                return
+
         # Throw out fields which are not requested (either by default or explicitly)
         for k, v in self.filter_target_values.items():
             # See `enable_filter` where` is_filterable and is_filterable_vals are set
