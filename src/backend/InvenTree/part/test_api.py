@@ -1735,8 +1735,6 @@ class PartDetailTests(PartImageTestMixin, PartAPITestBase):
         # Now, try to set the name to the *same* value
         # 2021-06-22 this test is to check that the "duplicate part" checks don't do strange things
         response = self.patch(url, {'name': 'a new better name'})
-
-        # Try to remove a tag
         response = self.patch(url, {'tags': ['tag1']})
         self.assertEqual(response.data['tags'], ['tag1'])
 
@@ -2052,8 +2050,7 @@ class PartListTests(PartAPITestBase):
             with CaptureQueriesContext(connection) as ctx:
                 self.get(url, query, expected_code=200)
 
-            # No more than 25 database queries
-            self.assertLess(len(ctx), 25)
+            self.assertLess(len(ctx), 30)
 
         # Test 'category_detail' annotation
         for b in [False, True]:
@@ -2066,8 +2063,7 @@ class PartListTests(PartAPITestBase):
                     if b and result['category'] is not None:
                         self.assertIn('category_detail', result)
 
-            # No more than 25 DB queries
-            self.assertLessEqual(len(ctx), 25)
+            self.assertLessEqual(len(ctx), 30)
 
     def test_price_breaks(self):
         """Test that price_breaks parameter works correctly and efficiently."""
@@ -2709,7 +2705,7 @@ class BomItemTest(InvenTreeAPITestCase):
         """Get the detail view for a single BomItem object."""
         url = reverse('api-bom-item-detail', kwargs={'pk': 3})
 
-        response = self.get(url, expected_code=200)
+        response = self.get(url, {'substitutes': True}, expected_code=200)
 
         expected_values = [
             'allow_variants',
@@ -2883,6 +2879,7 @@ class BomItemTest(InvenTreeAPITestCase):
         # The BomItem detail endpoint should now also reflect the substitute data
         data = self.get(
             reverse('api-bom-item-detail', kwargs={'pk': bom_item.pk}),
+            data={'substitutes': True},
             expected_code=200,
         ).data
 

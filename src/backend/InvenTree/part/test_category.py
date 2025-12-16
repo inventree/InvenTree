@@ -157,7 +157,7 @@ class CategoryTest(TestCase):
     def test_parameters(self):
         """Test that the Category parameters are correctly fetched."""
         # Check number of SQL queries to iterate other parameters
-        with self.assertNumQueries(9):
+        with self.assertNumQueries(3):
             # Prefetch: 3 queries (parts, parameters and parameters_template)
             fasteners = self.fasteners.prefetch_parts_parameters()
             # Iterate through all parts and parameters

@@ -12,8 +12,8 @@ from error_report.models import Error
 from flags.state import flag_state
 from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied
-from taggit.serializers import TagListSerializerField
 
+import common.filters
 import common.models as common_models
 import common.validators
 import generic.states.custom
@@ -612,7 +612,7 @@ class FailedTaskSerializer(InvenTreeModelSerializer):
     result = serializers.CharField()
 
 
-class AttachmentSerializer(InvenTreeModelSerializer):
+class AttachmentSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
     """Serializer class for the Attachment model."""
 
     class Meta:
@@ -645,7 +645,7 @@ class AttachmentSerializer(InvenTreeModelSerializer):
                 'model_type'
             ].choices = common.validators.attachment_model_options()
 
-    tags = TagListSerializerField(required=False)
+    tags = common.filters.enable_tags_filter()
 
     user_detail = UserSerializer(source='upload_user', read_only=True, many=False)
 
@@ -808,11 +808,15 @@ class ParameterSerializer(
     )
 
     updated_by_detail = enable_filter(
-        UserSerializer(source='updated_by', read_only=True, many=False), True
+        UserSerializer(source='updated_by', read_only=True, many=False),
+        True,
+        prefetch_fields=['updated_by'],
     )
 
     template_detail = enable_filter(
-        ParameterTemplateSerializer(source='template', read_only=True, many=False), True
+        ParameterTemplateSerializer(source='template', read_only=True, many=False),
+        True,
+        prefetch_fields=['template', 'template__model_type'],
     )
 
 
