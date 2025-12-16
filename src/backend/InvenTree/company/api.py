@@ -430,13 +430,6 @@ class SupplierPriceBreakMixin:
     queryset = SupplierPriceBreak.objects.all()
     serializer_class = SupplierPriceBreakSerializer
 
-    def get_queryset(self):
-        """Return annotated queryset for the SupplierPriceBreak list endpoint."""
-        queryset = super().get_queryset()
-        queryset = SupplierPriceBreakSerializer.annotate_queryset(queryset)
-
-        return queryset
-
 
 class SupplierPriceBreakOutputOptions(OutputConfiguration):
     """Available output options for the SupplierPriceBreak endpoints."""

@@ -268,11 +268,13 @@ class GroupSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
             source='rule_sets', many=True, read_only=True, allow_null=True
         ),
         filter_name='role_detail',
+        prefetch_fields=['rule_sets'],
     )
 
     users = enable_filter(
         UserSerializer(source='user_set', many=True, read_only=True, allow_null=True),
         filter_name='user_detail',
+        prefetch_fields=['user_set'],
     )
 
 

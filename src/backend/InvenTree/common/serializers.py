@@ -808,11 +808,15 @@ class ParameterSerializer(
     )
 
     updated_by_detail = enable_filter(
-        UserSerializer(source='updated_by', read_only=True, many=False), True
+        UserSerializer(source='updated_by', read_only=True, many=False),
+        True,
+        prefetch_fields=['updated_by'],
     )
 
     template_detail = enable_filter(
-        ParameterTemplateSerializer(source='template', read_only=True, many=False), True
+        ParameterTemplateSerializer(source='template', read_only=True, many=False),
+        True,
+        prefetch_fields=['template', 'template_model_type'],
     )
 
 
