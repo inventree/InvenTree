@@ -178,11 +178,7 @@ class ManufacturerPartMixin(SerializerContextMixin):
         """Return annotated queryset for the ManufacturerPart list endpoint."""
         queryset = super().get_queryset(*args, **kwargs)
 
-        queryset = queryset.prefetch_related(
-            'part', 'manufacturer', 'supplier_parts', 'tags'
-        )
-
-        queryset = ManufacturerPart.annotate_parameters(queryset)
+        queryset = queryset.prefetch_related('supplier_parts', 'tags')
 
         return queryset
 
@@ -304,11 +300,16 @@ class SupplierPartOutputOptions(OutputConfiguration):
         InvenTreeOutputOption(
             description='Include detailed information about the Supplier in the response',
             flag='supplier_detail',
-            default=True,
+            default=False,
         ),
         InvenTreeOutputOption(
             description='Include detailed information about the Manufacturer in the response',
             flag='manufacturer_detail',
+            default=False,
+        ),
+        InvenTreeOutputOption(
+            flag='manufacturer_part_detail',
+            description='Include detailed information about the linked ManufacturerPart in the response',
             default=False,
         ),
         InvenTreeOutputOption(

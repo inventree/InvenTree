@@ -369,11 +369,9 @@ class PurchaseOrderMixin(SerializerContextMixin):
         """Return the annotated queryset for this endpoint."""
         queryset = super().get_queryset(*args, **kwargs)
 
-        queryset = queryset.prefetch_related(
-            'supplier', 'project_code', 'lines', 'responsible'
-        )
-
         queryset = serializers.PurchaseOrderSerializer.annotate_queryset(queryset)
+
+        queryset = queryset.prefetch_related('supplier', 'created_by')
 
         return queryset
 
@@ -833,9 +831,7 @@ class SalesOrderMixin(SerializerContextMixin):
         """Return annotated queryset for this endpoint."""
         queryset = super().get_queryset(*args, **kwargs)
 
-        queryset = queryset.prefetch_related(
-            'customer', 'responsible', 'project_code', 'lines'
-        )
+        queryset = queryset.prefetch_related('customer', 'created_by')
 
         queryset = serializers.SalesOrderSerializer.annotate_queryset(queryset)
 
@@ -1018,16 +1014,12 @@ class SalesOrderLineItemMixin(SerializerContextMixin):
 
         queryset = queryset.prefetch_related(
             'part',
-            'part__stock_items',
             'allocations',
             'allocations__shipment',
             'allocations__item__part',
             'allocations__item__location',
             'order',
-            'order__stock_items',
         )
-
-        queryset = queryset.select_related('part__pricing_data')
 
         queryset = serializers.SalesOrderLineItemSerializer.annotate_queryset(queryset)
 
@@ -1510,9 +1502,7 @@ class ReturnOrderMixin(SerializerContextMixin):
         """Return annotated queryset for this endpoint."""
         queryset = super().get_queryset(*args, **kwargs)
 
-        queryset = queryset.prefetch_related(
-            'customer', 'lines', 'project_code', 'responsible'
-        )
+        queryset = queryset.prefetch_related('customer', 'created_by')
 
         queryset = serializers.ReturnOrderSerializer.annotate_queryset(queryset)
 

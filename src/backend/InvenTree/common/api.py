@@ -848,7 +848,9 @@ class ParameterTemplateFilter(FilterSet):
 class ParameterTemplateMixin:
     """Mixin class for ParameterTemplate views."""
 
-    queryset = common.models.ParameterTemplate.objects.all()
+    queryset = common.models.ParameterTemplate.objects.all().prefetch_related(
+        'model_type'
+    )
     serializer_class = common.serializers.ParameterTemplateSerializer
     permission_classes = [IsAuthenticatedOrReadScope]
 
@@ -891,7 +893,9 @@ class ParameterFilter(FilterSet):
 class ParameterMixin:
     """Mixin class for Parameter views."""
 
-    queryset = common.models.Parameter.objects.all()
+    queryset = common.models.Parameter.objects.all().prefetch_related(
+        'model_type', 'updated_by', 'template', 'template__model_type'
+    )
     serializer_class = common.serializers.ParameterSerializer
     permission_classes = [IsAuthenticatedOrReadScope]
 

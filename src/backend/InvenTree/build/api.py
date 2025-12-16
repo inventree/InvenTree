@@ -319,15 +319,6 @@ class BuildMixin:
 
         queryset = build.serializers.BuildSerializer.annotate_queryset(queryset)
 
-        queryset = queryset.prefetch_related(
-            'responsible',
-            'issued_by',
-            'build_lines',
-            'part',
-            'part__pricing_data',
-            'project_code',
-        )
-
         return queryset
 
 
@@ -568,26 +559,27 @@ class BuildLineOutputOptions(OutputConfiguration):
         InvenTreeOutputOption(
             'bom_item_detail',
             description='Include detailed information about the BOM item linked to this build line.',
-            default=True,
+            default=False,
         ),
         InvenTreeOutputOption(
             'assembly_detail',
             description='Include brief details of the assembly (parent part) related to the BOM item in this build line.',
-            default=True,
+            default=False,
         ),
         InvenTreeOutputOption(
             'part_detail',
             description='Include detailed information about the specific part being built or consumed in this build line.',
-            default=True,
+            default=False,
         ),
         InvenTreeOutputOption(
             'build_detail',
             description='Include detailed information about the associated build order.',
+            default=False,
         ),
         InvenTreeOutputOption(
             'allocations',
             description='Include allocation details showing which stock items are allocated to this build line.',
-            default=True,
+            default=False,
         ),
     ]
 
@@ -905,6 +897,7 @@ class BuildItemOutputOptions(OutputConfiguration):
         InvenTreeOutputOption('location_detail'),
         InvenTreeOutputOption('stock_detail'),
         InvenTreeOutputOption('build_detail'),
+        InvenTreeOutputOption('supplier_part_detail'),
     ]
 
 
@@ -927,26 +920,9 @@ class BuildItemList(
         """Override the queryset method, to perform custom prefetch."""
         queryset = super().get_queryset()
 
-        queryset = queryset.select_related(
-            'build_line',
-            'build_line__build',
-            'build_line__build__part',
-            'build_line__build__responsible',
-            'build_line__build__issued_by',
-            'build_line__build__project_code',
-            'build_line__build__part__pricing_data',
-            'build_line__bom_item',
-            'build_line__bom_item__part',
-            'build_line__bom_item__sub_part',
-            'install_into',
-            'stock_item',
-            'stock_item__location',
-            'stock_item__part',
-            'stock_item__supplier_part__part',
-            'stock_item__supplier_part__supplier',
-            'stock_item__supplier_part__manufacturer_part',
-            'stock_item__supplier_part__manufacturer_part__manufacturer',
-        ).prefetch_related('stock_item__location__tags', 'stock_item__tags')
+        queryset = queryset.select_related('install_into').prefetch_related(
+            'build_line', 'build_line__build', 'build_line__bom_item'
+        )
 
         return queryset
 
