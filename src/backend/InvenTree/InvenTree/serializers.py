@@ -158,7 +158,6 @@ class FilterableSerializerMixin:
 
         if prefetch_fields and len(prefetch_fields) > 0:
             queryset = queryset.prefetch_related(*list(prefetch_fields))
-            print('PREFETCHING:', prefetch_fields)
 
         return queryset
 

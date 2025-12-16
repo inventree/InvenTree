@@ -1,5 +1,9 @@
 """Custom metadata for DRF."""
 
+import json
+from hashlib import md5
+
+from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.http import Http404
 from django.urls import reverse
@@ -8,6 +12,7 @@ import structlog
 from rest_framework import exceptions, serializers
 from rest_framework.fields import empty
 from rest_framework.metadata import SimpleMetadata
+from rest_framework.renderers import JSONRenderer
 from rest_framework.request import clone_request
 from rest_framework.utils import model_meta
 
@@ -23,7 +28,7 @@ logger = structlog.get_logger('inventree')
 class InvenTreeMetadata(SimpleMetadata):
     """Custom metadata class for the DRF API.
 
-    This custom metadata class imits the available "actions",
+    This custom metadata class limits the available "actions",
     based on the user's role permissions.
 
     Thus when a client send an OPTIONS request to an API endpoint,
@@ -75,35 +80,57 @@ class InvenTreeMetadata(SimpleMetadata):
         return actions
 
     def determine_metadata(self, request, view):
-        """Overwrite the metadata to adapt to the request user."""
-        self.request = request
-        self.view = view
+        """Overwrite the metadata to adapt to the request user.
 
-        metadata = super().determine_metadata(request, view)
+        If possible, a cached version of this view is returned,
+        as the OPTIONS request can be expensive to compute (and rarely changes).
 
-        """
         Custom context information to pass through to the OPTIONS endpoint,
         if the "context=True" is supplied to the OPTIONS request
 
         Serializer class can supply context data by defining a get_context_data() method (no arguments)
         """
+        self.request = request
+        self.view = view
 
         context = {}
+        has_context = False
+        cache_key = None
 
         if str2bool(request.query_params.get('context', False)):
             if hasattr(self, 'serializer') and hasattr(
                 self.serializer, 'get_context_data'
             ):
                 context = self.serializer.get_context_data()
-
-            metadata['context'] = context
+                has_context = True
 
         user = request.user
 
+        # If no user is provided, return empty actions
         if user is None:
-            # No actions for you!
+            metadata = super().determine_metadata(request, view)
             metadata['actions'] = {}
             return metadata
+
+        # See if we can fetched a cached version of this view
+        # Note: Ignore if the user has requested context data
+        if not has_context:
+            view_hash = md5()
+            view_hash.update(view.__class__.__name__.encode('utf-8'))
+            view_hash.update(request.path.encode('utf-8'))
+            view_hash.update(request.query_params.urlencode().encode('utf-8'))
+
+            cache_key = f'inventree_metadata_{user.pk}_{view_hash.hexdigest()}'
+
+            if cached_response := cache.get(cache_key):
+                metadata = json.loads(cached_response)
+                return metadata
+
+        # Now that we have passed the cache check, determine the initial metadata
+        metadata = super().determine_metadata(request, view)
+
+        if has_context:
+            metadata['context'] = context
 
         # Prefetch rule sets for the provided user
         user_groups = prefetch_rule_sets(user)
@@ -163,6 +190,10 @@ class InvenTreeMetadata(SimpleMetadata):
             # We will assume that if the serializer class does *not* have a Meta
             # then we don't need a permission
             pass
+
+        if cache_key and not has_context:
+            rendered_response = JSONRenderer().render(metadata)
+            cache.set(cache_key, rendered_response.decode('utf-8'), 300)
 
         return metadata
 
@@ -414,10 +445,15 @@ class InvenTreeMetadata(SimpleMetadata):
             if model:
                 # Mark this field as "related", and point to the URL where we can get the data!
                 field_info['type'] = 'related field'
-                field_info['model'] = model._meta.model_name
+                model_name = model._meta.model_name
+                field_info['model'] = model_name
+
+                cache_key = f'inventree_model_api_url_{model_name}'
 
                 # Special case for special models
-                if field_info['model'] == 'user':
+                if model_url := cache.get(cache_key):
+                    field_info['api_url'] = model_url
+                elif field_info['model'] == 'user':
                     field_info['api_url'] = reverse('api-user-list')
                 elif field_info['model'] == 'group':
                     field_info['api_url'] = reverse('api-group-list')
@@ -428,6 +464,9 @@ class InvenTreeMetadata(SimpleMetadata):
                 else:
                     logger.warning("'get_api_url' method not defined for %s", model)
                     field_info['api_url'] = getattr(model, 'api_url', None)
+
+                # Cache the API URL for this model, to speed up future lookups
+                cache.set(cache_key, field_info['api_url'], 600)
 
                 # Handle custom 'primary key' field
                 field_info['pk_field'] = getattr(field, 'pk_field', 'pk') or 'pk'
