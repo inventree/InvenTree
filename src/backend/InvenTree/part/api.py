@@ -570,7 +570,7 @@ class PartPricingDetail(RetrieveUpdateAPI):
     """API endpoint for viewing part pricing data."""
 
     serializer_class = part_serializers.PartPricingSerializer
-    queryset = Part.objects.all()
+    queryset = Part.objects.all().select_related('pricing_data')
 
     def get_object(self):
         """Return the PartPricing object associated with the linked Part."""
@@ -1361,6 +1361,8 @@ class BomOutputOptions(OutputConfiguration):
         InvenTreeOutputOption('can_build', default=True),
         InvenTreeOutputOption('part_detail'),
         InvenTreeOutputOption('sub_part_detail'),
+        InvenTreeOutputOption('substitutes'),
+        InvenTreeOutputOption('pricing'),
     ]
 
 

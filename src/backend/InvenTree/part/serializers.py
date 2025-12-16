@@ -1563,7 +1563,15 @@ class BomItemSerializer(
     )
 
     substitutes = enable_filter(
-        BomItemSubstituteSerializer(many=True, read_only=True, allow_null=True), True
+        BomItemSubstituteSerializer(many=True, read_only=True, allow_null=True),
+        False,
+        filter_name='substitutes',
+        prefetch_fields=[
+            'substitutes',
+            'substitutes__part',
+            'substitutes__part__stock_items',
+            'substitutes__part__pricing_data',
+        ],
     )
 
     part_detail = enable_filter(
@@ -1684,9 +1692,7 @@ class BomItemSerializer(
             'sub_part__stock_items',
             'sub_part__stock_items__allocations',
             'sub_part__stock_items__sales_order_allocations',
-            'substitutes',
-            'substitutes__part__stock_items',
-        ).select_related('part__pricing_data', 'sub_part__pricing_data')
+        )
 
         # Annotate with the 'total pricing' information based on unit pricing and quantity
         queryset = queryset.annotate(
@@ -1751,6 +1757,7 @@ class CategoryParameterTemplateSerializer(
             source='template', many=False, read_only=True
         ),
         True,
+        prefetch_fields=['template'],
     )
 
     category_detail = enable_filter(
@@ -1758,6 +1765,7 @@ class CategoryParameterTemplateSerializer(
             source='category', many=False, read_only=True, allow_null=True
         ),
         True,
+        prefetch_fields=['category'],
     )
 
 
