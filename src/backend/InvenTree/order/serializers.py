@@ -648,6 +648,7 @@ class PurchaseOrderLineItemSerializer(
             source='get_destination', read_only=True, allow_null=True
         ),
         True,
+        prefetch_fields=['destination', 'order__destination'],
     )
 
     purchase_price_currency = InvenTreeCurrencySerializer(

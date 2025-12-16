@@ -897,6 +897,7 @@ class BuildItemOutputOptions(OutputConfiguration):
         InvenTreeOutputOption('location_detail'),
         InvenTreeOutputOption('stock_detail'),
         InvenTreeOutputOption('build_detail'),
+        InvenTreeOutputOption('supplier_part_detail'),
     ]
 
 
@@ -919,26 +920,9 @@ class BuildItemList(
         """Override the queryset method, to perform custom prefetch."""
         queryset = super().get_queryset()
 
-        queryset = queryset.select_related(
-            'build_line',
-            'build_line__build',
-            'build_line__build__part',
-            'build_line__build__responsible',
-            'build_line__build__issued_by',
-            'build_line__build__project_code',
-            'build_line__build__part__pricing_data',
-            'build_line__bom_item',
-            'build_line__bom_item__part',
-            'build_line__bom_item__sub_part',
-            'install_into',
-            'stock_item',
-            'stock_item__location',
-            'stock_item__part',
-            'stock_item__supplier_part__part',
-            'stock_item__supplier_part__supplier',
-            'stock_item__supplier_part__manufacturer_part',
-            'stock_item__supplier_part__manufacturer_part__manufacturer',
-        ).prefetch_related('stock_item__location__tags', 'stock_item__tags')
+        queryset = queryset.select_related('install_into').prefetch_related(
+            'build_line', 'build_line__build', 'build_line__bom_item'
+        )
 
         return queryset
 

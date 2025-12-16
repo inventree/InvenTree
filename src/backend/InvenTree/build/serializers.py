@@ -1220,6 +1220,7 @@ class BuildItemSerializer(
             pricing=False,
         ),
         True,
+        prefetch_fields=['stock_item__part'],
     )
 
     stock_item_detail = enable_filter(
@@ -1235,6 +1236,15 @@ class BuildItemSerializer(
         ),
         True,
         filter_name='stock_detail',
+        prefetch_fields=[
+            'stock_item',
+            'stock_item__tags',
+            'stock_item__part',
+            'stock_item__supplier_part',
+            'stock_item__supplier',
+            'stock_item__manufacturer_part',
+            'stock_item__manufacturer_part__manufacturer',
+        ],
     )
 
     location = serializers.PrimaryKeyRelatedField(
@@ -1249,6 +1259,7 @@ class BuildItemSerializer(
             allow_null=True,
         ),
         True,
+        prefetch_fields=['stock_item__location', 'stock_item__location__tags'],
     )
 
     build_detail = enable_filter(
@@ -1260,15 +1271,32 @@ class BuildItemSerializer(
             allow_null=True,
         ),
         True,
+        prefetch_fields=[
+            'build_line__build',
+            'build_line__build__part',
+            'build_line__build__responsible',
+            'build_line__build__issued_by',
+            'build_line__build__project_code',
+            'build_line__build__part__pricing_data',
+        ],
     )
 
-    supplier_part_detail = company.serializers.SupplierPartSerializer(
-        label=_('Supplier Part'),
-        source='stock_item.supplier_part',
-        many=False,
-        read_only=True,
-        allow_null=True,
-        brief=True,
+    supplier_part_detail = enable_filter(
+        company.serializers.SupplierPartSerializer(
+            label=_('Supplier Part'),
+            source='stock_item.supplier_part',
+            many=False,
+            read_only=True,
+            allow_null=True,
+            brief=True,
+        ),
+        False,
+        prefetch_fields=[
+            'stock_item__supplier_part',
+            'stock_item__supplier_part__supplier',
+            'stock_item__supplier_part__manufacturer_part',
+            'stock_item__supplier_part__manufacturer_part__manufacturer',
+        ],
     )
 
     quantity = InvenTreeDecimalField(label=_('Allocated Quantity'))
@@ -1445,6 +1473,7 @@ class BuildLineSerializer(
             allow_null=True,
         ),
         False,
+        prefetch_fields=['bom_item__sub_part__category'],
     )
 
     build_detail = enable_filter(

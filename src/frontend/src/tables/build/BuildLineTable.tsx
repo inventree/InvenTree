@@ -972,6 +972,7 @@ export default function BuildLineTable({
             ...params,
             build: build.pk,
             assembly_detail: false,
+            bom_item_detail: true,
             category_detail: true,
             part_detail: true,
             allocations: true
