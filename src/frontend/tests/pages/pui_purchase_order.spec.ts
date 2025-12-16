@@ -419,7 +419,8 @@ test('Purchase Orders - Receive Items', async ({ browser }) => {
     .getByRole('cell', { name: /Choose Location/ })
     .getByText('Room 101')
     .waitFor();
-  await page.getByText('Mechanical Lab').waitFor();
+
+  await page.getByText('Mechanical Lab').first().waitFor();
 
   await page.getByRole('button', { name: 'Cancel' }).click();
 

@@ -10,6 +10,7 @@ from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import models
+from django.db.models import QuerySet
 from django.utils.translation import gettext_lazy as _
 
 from djmoney.contrib.django_rest_framework.fields import MoneyField
@@ -44,11 +45,15 @@ class FilterableSerializerField:
     is_filterable = None
     is_filterable_vals = {}
 
+    # Options for automatic queryset prefetching
+    prefetch_fields: Optional[list[str]] = None
+
     def __init__(self, *args, **kwargs):
         """Initialize the serializer."""
-        if self.is_filterable is None:  # Materialize parameters for later usage
-            self.is_filterable = kwargs.pop('is_filterable', None)
-            self.is_filterable_vals = kwargs.pop('is_filterable_vals', {})
+        self.is_filterable = kwargs.pop('is_filterable', None)
+        self.is_filterable_vals = kwargs.pop('is_filterable_vals', {})
+        self.prefetch_fields = kwargs.pop('prefetch_fields', None)
+
         super().__init__(*args, **kwargs)
 
 
@@ -57,6 +62,7 @@ def enable_filter(
     default_include: bool = False,
     filter_name: Optional[str] = None,
     filter_by_query: bool = True,
+    prefetch_fields: Optional[list[str]] = None,
 ):
     """Decorator for marking a serializer field as filterable.
 
@@ -67,6 +73,7 @@ def enable_filter(
         default_include (bool): If True, the field will be included by default unless explicitly excluded. If False, the field will be excluded by default unless explicitly included.
         filter_name (str, optional): The name of the filter parameter to use in the URL. If None, the function name of the (decorated) function will be used.
         filter_by_query (bool): If True, also look for filter parameters in the request query parameters.
+        prefetch_fields (list of str, optional): List of related fields to prefetch when this field is included. This can be used to optimize database queries.
 
     Returns:
         The decorated serializer field, marked as filterable.
@@ -84,6 +91,10 @@ def enable_filter(
         'filter_name': filter_name if filter_name else func.field_name,
         'filter_by_query': filter_by_query,
     }
+
+    # Attach queryset prefetching information
+    func._kwargs['prefetch_fields'] = prefetch_fields
+
     return func
 
 
@@ -112,6 +123,34 @@ class FilterableSerializerMixin:
         self.gather_filters(kwargs)
         super().__init__(*args, **kwargs)
         self.do_filtering()
+
+    def prefetch_queryset(self, queryset: QuerySet) -> QuerySet:
+        """Apply any prefetching to the queryset based on the optionally included fields.
+
+        Args:
+            queryset: The original queryset.
+
+        Returns:
+            The modified queryset with prefetching applied.
+        """
+        # Gather up the set of simple 'prefetch' fields and functions
+        prefetch_fields = set()
+
+        filterable_fields = [
+            field
+            for field in self.fields.values()
+            if getattr(field, 'is_filterable', None)
+        ]
+
+        for field in filterable_fields:
+            if prefetch_names := getattr(field, 'prefetch_fields', None):
+                for pf in prefetch_names:
+                    prefetch_fields.add(pf)
+
+        if prefetch_fields and len(prefetch_fields) > 0:
+            queryset = queryset.prefetch_related(*list(prefetch_fields))
+
+        return queryset
 
     def gather_filters(self, kwargs) -> None:
         """Gather filterable fields through introspection."""
@@ -166,6 +205,10 @@ class FilterableSerializerMixin:
             not hasattr(self, 'filter_target_values')
             or InvenTree.ready.isGeneratingSchema()
         ):
+            return
+
+        # Skip filtering when exporting data - leave all fields intact
+        if getattr(self, '_exporting_data', False):
             return
 
         # Throw out fields which are not requested (either by default or explicitly)
