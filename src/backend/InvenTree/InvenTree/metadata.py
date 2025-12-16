@@ -199,7 +199,7 @@ class InvenTreeMetadata(SimpleMetadata):
             # then we don't need a permission
             pass
 
-        if cache_key and not has_context:
+        if cache_key:
             rendered_response = JSONRenderer().render(metadata)
             cache.set(cache_key, rendered_response.decode('utf-8'), 300)
 
