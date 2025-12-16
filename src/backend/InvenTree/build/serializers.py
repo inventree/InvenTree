@@ -1241,9 +1241,7 @@ class BuildItemSerializer(
             'stock_item__tags',
             'stock_item__part',
             'stock_item__supplier_part',
-            'stock_item__supplier',
-            'stock_item__manufacturer_part',
-            'stock_item__manufacturer_part__manufacturer',
+            'stock_item__supplier_part__manufacturer_part',
         ],
     )
 
