@@ -106,15 +106,23 @@ class InvenTreeMetadata(SimpleMetadata):
 
         user = request.user
 
+        # Disable caching if we are exporting data
+        # This is because the export serializer can change dynamically
+        exporting = str2bool(request.query_params.get('export', False))
+
         # If no user is provided, return empty actions
         if user is None:
             metadata = super().determine_metadata(request, view)
             metadata['actions'] = {}
             return metadata
 
+        # By default, views can be cached
+        # Specify CACHE_METADATA = False on the view to disable caching
+        view_allows_cache = getattr(view, 'CACHE_METADATA', True)
+
         # See if we can fetched a cached version of this view
         # Note: Ignore if the user has requested context data
-        if not has_context:
+        if view_allows_cache and not exporting and not has_context:
             view_hash = md5()
             view_hash.update(view.__class__.__name__.encode('utf-8'))
             view_hash.update(request.path.encode('utf-8'))
