@@ -15,7 +15,7 @@ import common.models
 import InvenTree.permissions
 from InvenTree.helpers import str2bool
 from InvenTree.serializers import DependentField
-from users.permissions import check_user_permission, check_user_role
+from users.permissions import check_user_permission, check_user_role, prefetch_rule_sets
 
 logger = structlog.get_logger('inventree')
 
@@ -50,6 +50,9 @@ class InvenTreeMetadata(SimpleMetadata):
 
         for method in {'PUT', 'POST', 'GET'} & set(view.allowed_methods):
             view.request = clone_request(request, method)
+
+            # Mark the request object as a "dummy" - so we can prevent DB operations
+            view.request._dummy_metadata_request = True
             try:
                 # Test global permissions
                 if hasattr(view, 'check_permissions'):
@@ -102,6 +105,9 @@ class InvenTreeMetadata(SimpleMetadata):
             metadata['actions'] = {}
             return metadata
 
+        # Prefetch rule sets for the provided user
+        user_groups = prefetch_rule_sets(user)
+
         try:
             # Extract the model name associated with the view
             self.model = InvenTree.permissions.get_model_for_view(view)
@@ -127,8 +133,13 @@ class InvenTreeMetadata(SimpleMetadata):
 
             # Remove any HTTP methods that the user does not have permission for
             for method, permission in rolemap.items():
-                result = check_user_permission(user, self.model, permission) or (
-                    role_required and check_user_role(user, role_required, permission)
+                result = check_user_permission(
+                    user, self.model, permission, groups=user_groups
+                ) or (
+                    role_required
+                    and check_user_role(
+                        user, role_required, permission, groups=user_groups
+                    )
                 )
 
                 if method in actions and not result:
@@ -136,8 +147,13 @@ class InvenTreeMetadata(SimpleMetadata):
 
             # Add a 'DELETE' action if we are allowed to delete
             if 'DELETE' in view.allowed_methods:
-                if check_user_permission(user, self.model, 'delete') or (
-                    role_required and check_user_role(user, role_required, 'delete')
+                if check_user_permission(
+                    user, self.model, 'delete', groups=user_groups
+                ) or (
+                    role_required
+                    and check_user_role(
+                        user, role_required, 'delete', groups=user_groups
+                    )
                 ):
                     actions['DELETE'] = {}
 

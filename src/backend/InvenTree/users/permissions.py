@@ -130,7 +130,11 @@ def check_user_role(
 
 
 def check_user_permission(
-    user: User, model: models.Model, permission: str, allow_inactive: bool = False
+    user: User,
+    model: models.Model,
+    permission: str,
+    allow_inactive: bool = False,
+    groups: Optional[QuerySet] = None,
 ) -> bool:
     """Check if the user has a particular permission against a given model type.
 
@@ -139,6 +143,7 @@ def check_user_permission(
         model: The model class to check (e.g. 'part')
         permission: The permission to check (e.g. 'view' / 'delete')
         allow_inactive: If False, disallow inactive users from having permissions
+        groups: Optional cached queryset of groups to check
 
     Returns:
         bool: True if the user has the specified permission
@@ -162,7 +167,7 @@ def check_user_permission(
 
     for role, table_names in get_ruleset_models().items():
         if table_name in table_names:
-            if check_user_role(user, role, permission):
+            if check_user_role(user, role, permission, groups=groups):
                 return True
 
     # Check for children models which inherits from parent role
@@ -172,7 +177,7 @@ def check_user_permission(
 
         if parent_child_string == table_name:
             # Check if parent role has change permission
-            if check_user_role(user, parent, 'change'):
+            if check_user_role(user, parent, 'change', groups=groups):
                 return True
 
     # Generate the permission name based on the model and permission
