@@ -70,8 +70,10 @@ class Command(spectacular.Command):
         # Reformat paths
         for p_name, p_spec in spec['paths'].items():
             # strip path name
-            p_name = p_name.removeprefix(dja_path_prefix).removeprefix(
-                '/_allauth/browser/v1/'
+            p_name = (
+                p_name.removeprefix(dja_path_prefix)
+                .removeprefix('/_allauth/browser/v1/')
+                .removeprefix('/_allauth/app/v1/')
             )
 
             # fix refs
