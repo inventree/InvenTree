@@ -1,10 +1,14 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 432
+INVENTREE_API_VERSION = 433
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v433 -> 2025-12-16 : https://github.com/inventree/InvenTree/pull/11021
+    - The "tags" fields (on various API endpoints) is now optional, and disabled by default
+    - To request tags information, add "tags=true" to the API request query parameters
 
 v432 -> 2025-12-15 : https://github.com/inventree/InvenTree/pull/11012
     - The "part_detail" field on the SupplierPart API endpoint is now optional
