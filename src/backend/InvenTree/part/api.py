@@ -570,7 +570,7 @@ class PartPricingDetail(RetrieveUpdateAPI):
     """API endpoint for viewing part pricing data."""
 
     serializer_class = part_serializers.PartPricingSerializer
-    queryset = Part.objects.all()
+    queryset = Part.objects.all().select_related('pricing_data')
 
     def get_object(self):
         """Return the PartPricing object associated with the linked Part."""
@@ -1009,7 +1009,7 @@ class PartMixin(SerializerContextMixin):
     """Mixin class for Part API endpoints."""
 
     serializer_class = part_serializers.PartSerializer
-    queryset = Part.objects.all()
+    queryset = Part.objects.all().select_related('pricing_data')
 
     starred_parts = None
     is_create = False
@@ -1019,9 +1019,6 @@ class PartMixin(SerializerContextMixin):
         queryset = super().get_queryset(*args, **kwargs)
 
         queryset = part_serializers.PartSerializer.annotate_queryset(queryset)
-
-        if str2bool(self.request.query_params.get('price_breaks', True)):
-            queryset = queryset.prefetch_related('salepricebreaks')
 
         return queryset
 
@@ -1063,6 +1060,7 @@ class PartOutputOptions(OutputConfiguration):
         InvenTreeOutputOption('location_detail'),
         InvenTreeOutputOption('path_detail'),
         InvenTreeOutputOption('price_breaks'),
+        InvenTreeOutputOption('tags'),
     ]
 
 
@@ -1364,6 +1362,8 @@ class BomOutputOptions(OutputConfiguration):
         InvenTreeOutputOption('can_build', default=True),
         InvenTreeOutputOption('part_detail'),
         InvenTreeOutputOption('sub_part_detail'),
+        InvenTreeOutputOption('substitutes'),
+        InvenTreeOutputOption('pricing'),
     ]
 
 

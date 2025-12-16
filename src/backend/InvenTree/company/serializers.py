@@ -8,9 +8,8 @@ from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
 from sql_util.utils import SubqueryCount
-from taggit.serializers import TagListSerializerField
 
-import common.serializers
+import common.filters
 import company.filters
 import part.filters
 import part.serializers as part_serializers
@@ -163,22 +162,19 @@ class CompanySerializer(
 
         queryset = queryset.annotate(parts_supplied=SubqueryCount('supplied_parts'))
 
-        queryset = queryset.prefetch_related(
+        return queryset
+
+    primary_address = enable_filter(
+        AddressBriefSerializer(read_only=True, allow_null=True),
+        False,
+        filter_name='address_detail',
+        prefetch_fields=[
             Prefetch(
                 'addresses',
                 queryset=Address.objects.filter(primary=True),
                 to_attr='primary_address_list',
             )
-        )
-
-        queryset = Company.annotate_parameters(queryset)
-
-        return queryset
-
-    primary_address = enable_filter(
-        AddressBriefSerializer(read_only=True, allow_null=True),
-        True,
-        filter_name='address_detail',
+        ],
     )
 
     image = InvenTreeImageSerializerField(required=False, allow_null=True)
@@ -195,11 +191,7 @@ class CompanySerializer(
         help_text=_('Default currency used for this supplier'), required=True
     )
 
-    parameters = enable_filter(
-        common.serializers.ParameterSerializer(many=True, read_only=True),
-        False,
-        filter_name='parameters',
-    )
+    parameters = common.filters.enable_parameters_filter()
 
     def save(self):
         """Save the Company instance."""
@@ -267,26 +259,16 @@ class ManufacturerPartSerializer(
             'parameters',
         ]
 
-    tags = TagListSerializerField(required=False)
+    tags = common.filters.enable_tags_filter()
 
-    parameters = enable_filter(
-        common.serializers.ParameterSerializer(many=True, read_only=True),
-        False,
-        filter_name='parameters',
-    )
+    parameters = common.filters.enable_parameters_filter()
 
     part_detail = enable_filter(
         part_serializers.PartBriefSerializer(
             source='part', many=False, read_only=True, allow_null=True
         ),
         True,
-    )
-
-    manufacturer_detail = enable_filter(
-        CompanyBriefSerializer(
-            source='manufacturer', many=False, read_only=True, allow_null=True
-        ),
-        True,
+        prefetch_fields=['part'],
     )
 
     pretty_name = enable_filter(
@@ -295,6 +277,14 @@ class ManufacturerPartSerializer(
 
     manufacturer = serializers.PrimaryKeyRelatedField(
         queryset=Company.objects.filter(is_manufacturer=True)
+    )
+
+    manufacturer_detail = enable_filter(
+        CompanyBriefSerializer(
+            source='manufacturer', many=False, read_only=True, allow_null=True
+        ),
+        True,
+        prefetch_fields=['manufacturer'],
     )
 
 
@@ -392,45 +382,24 @@ class SupplierPartSerializer(
             'pack_quantity_native',
         ]
 
-    tags = TagListSerializerField(required=False)
+    tags = common.filters.enable_tags_filter()
 
     def __init__(self, *args, **kwargs):
         """Initialize this serializer with extra detail fields as required."""
         # Check if 'available' quantity was supplied
         self.has_available_quantity = 'available' in kwargs.get('data', {})
 
-        # TODO INVE-T1 support complex filters
         brief = kwargs.pop('brief', False)
-        detail_default = not brief
-        part_detail = kwargs.pop('part_detail', detail_default)
-        supplier_detail = kwargs.pop('supplier_detail', detail_default)
-        manufacturer_detail = kwargs.pop('manufacturer_detail', detail_default)
-
-        prettify = kwargs.pop('pretty', False)
 
         super().__init__(*args, **kwargs)
 
         if isGeneratingSchema():
             return
 
-        if part_detail is not True:
-            self.fields.pop('part_detail', None)
-
-        if supplier_detail is not True:
-            self.fields.pop('supplier_detail', None)
-
-        if manufacturer_detail is not True:
-            self.fields.pop('manufacturer_detail', None)
-            self.fields.pop('manufacturer_part_detail', None)
-
-        if brief or prettify is not True:
-            self.fields.pop('pretty_name', None)
-
         if brief:
-            self.fields.pop('tags')
-            self.fields.pop('available')
-            self.fields.pop('on_order')
-            self.fields.pop('availability_updated')
+            self.fields.pop('available', None)
+            self.fields.pop('on_order', None)
+            self.fields.pop('availability_updated', None)
 
     # Annotated field showing total in-stock quantity
     in_stock = serializers.FloatField(
@@ -455,46 +424,61 @@ class SupplierPartSerializer(
         ),
         False,
         filter_name='price_breaks',
+        prefetch_fields=['pricebreaks'],
     )
 
-    parameters = enable_filter(
-        common.serializers.ParameterSerializer(many=True, read_only=True),
+    parameters = common.filters.enable_parameters_filter()
+
+    part_detail = enable_filter(
+        part_serializers.PartBriefSerializer(
+            label=_('Part'), source='part', many=False, read_only=True, allow_null=True
+        ),
         False,
-        filter_name='parameters',
+        prefetch_fields=['part'],
     )
 
-    part_detail = part_serializers.PartBriefSerializer(
-        label=_('Part'), source='part', many=False, read_only=True, allow_null=True
+    supplier_detail = enable_filter(
+        CompanyBriefSerializer(
+            label=_('Supplier'),
+            source='supplier',
+            many=False,
+            read_only=True,
+            allow_null=True,
+        ),
+        False,
+        prefetch_fields=['supplier'],
     )
 
-    supplier_detail = CompanyBriefSerializer(
-        label=_('Supplier'),
-        source='supplier',
-        many=False,
-        read_only=True,
-        allow_null=True,
+    manufacturer_detail = enable_filter(
+        CompanyBriefSerializer(
+            label=_('Manufacturer'),
+            source='manufacturer_part.manufacturer',
+            many=False,
+            read_only=True,
+            allow_null=True,
+        ),
+        False,
+        prefetch_fields=['manufacturer_part__manufacturer'],
     )
 
-    manufacturer_detail = CompanyBriefSerializer(
-        label=_('Manufacturer'),
-        source='manufacturer_part.manufacturer',
-        many=False,
-        read_only=True,
-        allow_null=True,
+    pretty_name = enable_filter(
+        FilterableCharField(read_only=True, allow_null=True), filter_name='pretty'
     )
-
-    pretty_name = serializers.CharField(read_only=True, allow_null=True)
 
     supplier = serializers.PrimaryKeyRelatedField(
         label=_('Supplier'), queryset=Company.objects.filter(is_supplier=True)
     )
 
-    manufacturer_part_detail = ManufacturerPartSerializer(
-        label=_('Manufacturer Part'),
-        source='manufacturer_part',
-        part_detail=False,
-        read_only=True,
-        allow_null=True,
+    manufacturer_part_detail = enable_filter(
+        ManufacturerPartSerializer(
+            label=_('Manufacturer Part'),
+            source='manufacturer_part',
+            part_detail=False,
+            read_only=True,
+            allow_null=True,
+        ),
+        False,
+        prefetch_fields=['manufacturer_part'],
     )
 
     MPN = serializers.CharField(
@@ -511,15 +495,13 @@ class SupplierPartSerializer(
         Fields:
             in_stock: Current stock quantity for each SupplierPart
         """
-        queryset = queryset.prefetch_related('part', 'pricebreaks')
-
         queryset = queryset.annotate(in_stock=part.filters.annotate_total_stock())
 
         queryset = queryset.annotate(
             on_order=company.filters.annotate_on_order_quantity()
         )
 
-        queryset = SupplierPart.annotate_parameters(queryset)
+        queryset = queryset.prefetch_related('supplier', 'manufacturer_part')
 
         return queryset
 
@@ -588,7 +570,9 @@ class SupplierPriceBreakSerializer(
     supplier_detail = enable_filter(
         CompanyBriefSerializer(
             source='part.supplier', many=False, read_only=True, allow_null=True
-        )
+        ),
+        False,
+        prefetch_fields=['part__supplier'],
     )
 
     part_detail = enable_filter(
@@ -596,4 +580,5 @@ class SupplierPriceBreakSerializer(
             source='part', brief=True, many=False, read_only=True, allow_null=True
         ),
         False,
+        prefetch_fields=['part', 'part__part', 'part__part__pricing_data'],
     )
