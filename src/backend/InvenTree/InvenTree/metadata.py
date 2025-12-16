@@ -461,6 +461,7 @@ class InvenTreeMetadata(SimpleMetadata):
                 # Special case for special models
                 if model_url := cache.get(cache_key):
                     field_info['api_url'] = model_url
+                    cache_key = None  # No need to cache again
                 elif field_info['model'] == 'user':
                     field_info['api_url'] = reverse('api-user-list')
                 elif field_info['model'] == 'group':
@@ -474,7 +475,8 @@ class InvenTreeMetadata(SimpleMetadata):
                     field_info['api_url'] = getattr(model, 'api_url', None)
 
                 # Cache the API URL for this model, to speed up future lookups
-                cache.set(cache_key, field_info['api_url'], 600)
+                if cache_key:
+                    cache.set(cache_key, field_info['api_url'], 600)
 
                 # Handle custom 'primary key' field
                 field_info['pk_field'] = getattr(field, 'pk_field', 'pk') or 'pk'
