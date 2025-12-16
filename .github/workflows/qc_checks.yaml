@@ -336,9 +336,6 @@ jobs:
       matrix:
         python_version: [3.11]
         # python_version: [3.11, 3.14]  # Disabled due to requirement issues
-    permissions:
-      contents: read
-      id-token: write
 
     env:
       INVENTREE_DB_NAME: ./inventree.sqlite
@@ -379,6 +376,33 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: inventree/InvenTree
           flags: backend
+
+  performance:
+    name: Tests - Performance
+    runs-on: ubuntu-24.04
+
+    needs: ["pre-commit", "paths-filter"]
+    if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true'
+    permissions:
+      contents: read
+      id-token: write
+
+    env:
+      INVENTREE_DB_NAME: ./inventree.sqlite
+      INVENTREE_DB_ENGINE: sqlite3
+      INVENTREE_PLUGINS_ENABLED: true
+      INVENTREE_CONSOLE_LOG: false
+
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # pin@v6.0.1
+        with:
+          persist-credentials: false
+      - name: Environment Setup
+        uses: ./.github/actions/setup
+        with:
+          apt-dependency: gettext poppler-utils
+          dev-install: true
+          update: true
       - name: Performance Reporting
         uses: CodSpeedHQ/action@346a2d8a8d9d38909abd0bc3d23f773110f076ad # pin@v4
         with:
