@@ -95,6 +95,8 @@ class LabelFilter(ReportFilterBase):
 class LabelPrint(GenericAPIView):
     """API endpoint for printing labels."""
 
+    CACHE_METADATA = False
+
     # Any authenticated user can print labels
     permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
     serializer_class = report.serializers.LabelPrintSerializer
@@ -244,6 +246,8 @@ class LabelTemplateDetail(TemplatePermissionMixin, RetrieveUpdateDestroyAPI):
 
 class ReportPrint(GenericAPIView):
     """API endpoint for printing reports."""
+
+    CACHE_METADATA = False
 
     # Any authenticated user can print reports
     permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
