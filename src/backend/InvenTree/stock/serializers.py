@@ -223,7 +223,8 @@ class StockItemTestResultSerializer(
         read_only_fields = ['pk', 'user', 'date']
 
     user_detail = enable_filter(
-        UserSerializer(source='user', read_only=True, allow_null=True)
+        UserSerializer(source='user', read_only=True, allow_null=True),
+        prefetch_fields=['user'],
     )
 
     template = serializers.PrimaryKeyRelatedField(
@@ -238,7 +239,8 @@ class StockItemTestResultSerializer(
     template_detail = enable_filter(
         part_serializers.PartTestTemplateSerializer(
             source='template', read_only=True, allow_null=True
-        )
+        ),
+        prefetch_fields=['template'],
     )
 
     attachment = InvenTree.serializers.InvenTreeAttachmentSerializerField(
@@ -1244,11 +1246,13 @@ class StockTrackingSerializer(
     label = serializers.CharField(read_only=True)
 
     item_detail = enable_filter(
-        StockItemSerializer(source='item', many=False, read_only=True, allow_null=True)
+        StockItemSerializer(source='item', many=False, read_only=True, allow_null=True),
+        prefetch_fields=['item'],
     )
 
     user_detail = enable_filter(
-        UserSerializer(source='user', many=False, read_only=True, allow_null=True)
+        UserSerializer(source='user', many=False, read_only=True, allow_null=True),
+        prefetch_fields=['user'],
     )
 
     deltas = serializers.JSONField(read_only=True)

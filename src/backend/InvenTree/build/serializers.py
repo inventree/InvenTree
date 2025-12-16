@@ -1435,6 +1435,7 @@ class BuildLineSerializer(
             can_build=False,
         ),
         False,
+        prefetch_fields=['bom_item'],
     )
 
     assembly_detail = enable_filter(
