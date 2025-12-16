@@ -178,11 +178,7 @@ class ManufacturerPartMixin(SerializerContextMixin):
         """Return annotated queryset for the ManufacturerPart list endpoint."""
         queryset = super().get_queryset(*args, **kwargs)
 
-        queryset = queryset.prefetch_related(
-            'part', 'manufacturer', 'supplier_parts', 'tags'
-        )
-
-        queryset = ManufacturerPart.annotate_parameters(queryset)
+        queryset = queryset.prefetch_related('supplier_parts')
 
         return queryset
 
@@ -304,11 +300,16 @@ class SupplierPartOutputOptions(OutputConfiguration):
         InvenTreeOutputOption(
             description='Include detailed information about the Supplier in the response',
             flag='supplier_detail',
-            default=True,
+            default=False,
         ),
         InvenTreeOutputOption(
             description='Include detailed information about the Manufacturer in the response',
             flag='manufacturer_detail',
+            default=False,
+        ),
+        InvenTreeOutputOption(
+            flag='manufacturer_part_detail',
+            description='Include detailed information about the linked ManufacturerPart in the response',
             default=False,
         ),
         InvenTreeOutputOption(
@@ -322,7 +323,7 @@ class SupplierPartOutputOptions(OutputConfiguration):
 class SupplierPartMixin:
     """Mixin class for SupplierPart API endpoints."""
 
-    queryset = SupplierPart.objects.all().prefetch_related('tags')
+    queryset = SupplierPart.objects.all()
     serializer_class = SupplierPartSerializer
 
     def get_queryset(self, *args, **kwargs):
@@ -330,9 +331,7 @@ class SupplierPartMixin:
         queryset = super().get_queryset(*args, **kwargs)
         queryset = SupplierPartSerializer.annotate_queryset(queryset)
 
-        queryset = queryset.prefetch_related(
-            'part', 'part__pricing_data', 'manufacturer_part__tags'
-        )
+        queryset = queryset.prefetch_related('part', 'part__pricing_data')
 
         return queryset
 
@@ -428,13 +427,6 @@ class SupplierPriceBreakMixin:
 
     queryset = SupplierPriceBreak.objects.all()
     serializer_class = SupplierPriceBreakSerializer
-
-    def get_queryset(self):
-        """Return annotated queryset for the SupplierPriceBreak list endpoint."""
-        queryset = super().get_queryset()
-        queryset = SupplierPriceBreakSerializer.annotate_queryset(queryset)
-
-        return queryset
 
 
 class SupplierPriceBreakOutputOptions(OutputConfiguration):

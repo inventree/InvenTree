@@ -591,23 +591,6 @@ class ManufacturerPart(
         return s
 
 
-class SupplierPartManager(models.Manager):
-    """Define custom SupplierPart objects manager.
-
-    The main purpose of this manager is to improve database hit as the
-    SupplierPart model involves A LOT of foreign keys lookups
-    """
-
-    def get_queryset(self):
-        """Prefetch related fields when querying against the SupplierPart model."""
-        # Always prefetch related models
-        return (
-            super()
-            .get_queryset()
-            .prefetch_related('part', 'supplier', 'manufacturer_part__manufacturer')
-        )
-
-
 class SupplierPart(
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeParameterMixin,
@@ -646,8 +629,6 @@ class SupplierPart(
 
         # This model was moved from the 'Part' app
         db_table = 'part_supplierpart'
-
-    objects = SupplierPartManager()
 
     tags = TaggableManager(blank=True)
 

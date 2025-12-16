@@ -17,9 +17,11 @@ from django.db.models import (
     When,
 )
 from django.db.models.query import QuerySet
+from django.utils.translation import gettext_lazy as _
 
 import InvenTree.conversion
 import InvenTree.helpers
+import InvenTree.serializers
 
 
 def determine_content_type(content_type: str | int | None) -> ContentType | None:
@@ -309,4 +311,90 @@ def order_by_parameter(
         '-parameter_exists',
         f'{prefix}parameter_value_numeric',
         f'{prefix}parameter_value',
+    )
+
+
+def enable_project_code_filter(default: bool = True):
+    """Add an optional 'project_code_detail' field to an API serializer.
+
+    Arguments:
+        filter_name: The name of the filter field.
+        default: If True, enable the filter by default.
+
+    If applied, this field will automatically prefetch the 'project_code' relationship.
+    """
+    from common.serializers import ProjectCodeSerializer
+
+    return InvenTree.serializers.enable_filter(
+        ProjectCodeSerializer(
+            source='project_code', many=False, read_only=True, allow_null=True
+        ),
+        default,
+        filter_name='project_code_detail',
+        prefetch_fields=['project_code'],
+    )
+
+
+def enable_project_label_filter(default: bool = True):
+    """Add an optional 'project_code_label' field to an API serializer.
+
+    Arguments:
+        filter_name: The name of the filter field.
+        default: If True, enable the filter by default.
+
+    If applied, this field will automatically prefetch the 'project_code' relationship.
+    """
+    return InvenTree.serializers.enable_filter(
+        InvenTree.serializers.FilterableCharField(
+            source='project_code.code',
+            read_only=True,
+            label=_('Project Code Label'),
+            allow_null=True,
+        ),
+        default,
+        filter_name='project_code_detail',
+        prefetch_fields=['project_code'],
+    )
+
+
+def enable_parameters_filter():
+    """Add an optional 'parameters' field to an API serializer.
+
+    Arguments:
+        source: The source field for the serializer.
+        filter_name: The name of the filter field.
+        default: If True, enable the filter by default.
+
+    If applied, this field will automatically annotate the queryset with parameter data.
+    """
+    from common.serializers import ParameterSerializer
+
+    return InvenTree.serializers.enable_filter(
+        ParameterSerializer(many=True, read_only=True, allow_null=True),
+        False,
+        filter_name='parameters',
+        prefetch_fields=[
+            'parameters_list',
+            'parameters_list__model_type',
+            'parameters_list__updated_by',
+            'parameters_list__template',
+        ],
+    )
+
+
+def enable_tags_filter(default: bool = False):
+    """Add an optional 'tags' field to an API serializer.
+
+    Arguments:
+        default: If True, enable the filter by default.
+
+    If applied, this field will automatically prefetch the 'tags' relationship.
+    """
+    from InvenTree.serializers import FilterableTagListField
+
+    return InvenTree.serializers.enable_filter(
+        FilterableTagListField(required=False),
+        default,
+        filter_name='tags',
+        prefetch_fields=['tags', 'tagged_items', 'tagged_items__tag'],
     )
