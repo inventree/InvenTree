@@ -9,7 +9,7 @@ from django.core.files.base import ContentFile
 from django.core.validators import MinValueValidator
 from django.db import models, transaction
 from django.db.models import ExpressionWrapper, F, Q
-from django.db.models.functions import Coalesce, Greatest
+from django.db.models.functions import Greatest
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 
@@ -620,7 +620,6 @@ class PartSerializer(
             'required_for_build_orders',
             'required_for_sales_orders',
             'stock_item_count',
-            'suppliers',
             'total_in_stock',
             'external_stock',
             'unallocated_stock',
@@ -681,8 +680,6 @@ class PartSerializer(
 
         Performing database queries as efficiently as possible, to reduce database trips.
         """
-        queryset = queryset.prefetch_related('category', 'default_location')
-
         # Annotate with the total number of revisions
         queryset = queryset.annotate(revision_count=SubqueryCount('revisions'))
 
@@ -705,15 +702,6 @@ class PartSerializer(
 
         queryset = queryset.annotate(
             scheduled_to_build=part_filters.annotate_scheduled_to_build_quantity()
-        )
-
-        # Annotate with the number of 'suppliers'
-        queryset = queryset.annotate(
-            suppliers=Coalesce(
-                SubqueryCount('supplier_parts'),
-                Decimal(0),
-                output_field=models.DecimalField(),
-            )
         )
 
         queryset = queryset.annotate(
@@ -774,7 +762,8 @@ class PartSerializer(
     category_detail = enable_filter(
         CategorySerializer(
             source='category', many=False, read_only=True, allow_null=True
-        )
+        ),
+        prefetch_fields=['category'],
     )
 
     category_path = enable_filter(
@@ -785,6 +774,7 @@ class PartSerializer(
             allow_null=True,
         ),
         filter_name='path_detail',
+        prefetch_fields=['category'],
     )
 
     default_location_detail = enable_filter(
@@ -792,6 +782,7 @@ class PartSerializer(
             source='default_location', many=False, read_only=True, allow_null=True
         ),
         filter_name='location_detail',
+        prefetch_fields=['default_location'],
     )
 
     category_name = serializers.CharField(
@@ -857,10 +848,6 @@ class PartSerializer(
 
     revision_count = serializers.IntegerField(
         read_only=True, allow_null=True, label=_('Revisions')
-    )
-
-    suppliers = serializers.IntegerField(
-        read_only=True, allow_null=True, label=_('Suppliers')
     )
 
     total_in_stock = serializers.FloatField(
@@ -929,6 +916,7 @@ class PartSerializer(
         ),
         False,
         filter_name='price_breaks',
+        prefetch_fields=['salepricebreaks'],
     )
 
     # Extra fields used only for creation of a new Part instance
@@ -956,6 +944,7 @@ class PartSerializer(
     copy_category_parameters = serializers.BooleanField(
         default=True,
         required=False,
+        write_only=True,
         label=_('Copy Category Parameters'),
         help_text=_('Copy parameter templates from selected part category'),
     )
