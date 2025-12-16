@@ -1,10 +1,11 @@
+import { ModelType } from '@lib/index';
+import type { ApiFormFieldSet } from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
 import { IconBuildingStore, IconCopy, IconPackages } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
-import type { ApiFormFieldSet } from '@lib/types/Forms';
 import { useApi } from '../contexts/ApiContext';
 import { useGlobalSettingsState } from '../states/SettingsStates';
 
@@ -55,6 +56,13 @@ export function usePartFields({
       default_location: {
         filters: {
           structural: false
+        }
+      },
+      default_supplier: {
+        model: ModelType.company,
+        api_url: apiUrl(ApiEndpoints.company_list),
+        filters: {
+          is_supplier: true
         }
       },
       default_expiry: {},

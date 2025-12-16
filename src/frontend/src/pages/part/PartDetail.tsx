@@ -502,6 +502,13 @@ export default function PartDetail() {
         hidden: part.default_location || !part.category_default_location
       },
       {
+        type: 'link',
+        name: 'default_supplier',
+        label: t`Default Supplier`,
+        model: ModelType.company,
+        hidden: !part.default_supplier
+      },
+      {
         type: 'string',
         name: 'units',
         label: t`Units`,
