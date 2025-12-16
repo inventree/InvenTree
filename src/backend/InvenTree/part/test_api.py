@@ -3361,4 +3361,4 @@ class PartApiPerformanceTest(PartAPITestBase, InvenTreeAPIPerformanceTestCase):
         """Test that Part API queries are performant."""
         url = reverse('api-part-list')
         response = self.get(url, expected_code=200)
-        self.assertGreater(len(response.data), 0)
+        self.assertGreater(len(response.data), 13)
