@@ -1,5 +1,7 @@
 """Helper functions for user permission checks."""
 
+from typing import Optional
+
 from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.query import Prefetch, QuerySet
@@ -75,7 +77,7 @@ def check_user_role(
     role: str,
     permission: str,
     allow_inactive: bool = False,
-    groups: QuerySet = None,
+    groups: Optional[QuerySet] = None,
 ) -> bool:
     """Check if a user has a particular role:permission combination.
 
