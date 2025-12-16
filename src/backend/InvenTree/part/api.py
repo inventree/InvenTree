@@ -1060,6 +1060,7 @@ class PartOutputOptions(OutputConfiguration):
         InvenTreeOutputOption('location_detail'),
         InvenTreeOutputOption('path_detail'),
         InvenTreeOutputOption('price_breaks'),
+        InvenTreeOutputOption('tags'),
     ]
 
 
