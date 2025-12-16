@@ -570,7 +570,9 @@ class SupplierPriceBreakSerializer(
     supplier_detail = enable_filter(
         CompanyBriefSerializer(
             source='part.supplier', many=False, read_only=True, allow_null=True
-        )
+        ),
+        False,
+        prefetch_fields=['part__supplier'],
     )
 
     part_detail = enable_filter(
@@ -578,4 +580,5 @@ class SupplierPriceBreakSerializer(
             source='part', brief=True, many=False, read_only=True, allow_null=True
         ),
         False,
+        prefetch_fields=['part', 'part__part', 'part__part__pricing_data'],
     )
