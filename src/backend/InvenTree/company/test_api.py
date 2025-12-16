@@ -715,7 +715,7 @@ class SupplierPartTest(InvenTreeAPITestCase):
         fields = {
             'price_breaks': False,
             'part_detail': False,
-            'supplier_detail': True,
+            'supplier_detail': False,
             'manufacturer_detail': False,
             'manufacturer_part_detail': False,
         }
