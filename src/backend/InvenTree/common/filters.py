@@ -393,5 +393,5 @@ def enable_tags_filter():
         FilterableTagListField(required=False),
         False,
         filter_name='tags',
-        prefetch_fields=['tags'],
+        prefetch_fields=['tags', 'tagged_items', 'tagged_items__tag'],
     )

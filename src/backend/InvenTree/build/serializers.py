@@ -1238,7 +1238,6 @@ class BuildItemSerializer(
         filter_name='stock_detail',
         prefetch_fields=[
             'stock_item',
-            'stock_item__tags',
             'stock_item__part',
             'stock_item__supplier_part',
             'stock_item__supplier_part__manufacturer_part',
@@ -1257,7 +1256,7 @@ class BuildItemSerializer(
             allow_null=True,
         ),
         True,
-        prefetch_fields=['stock_item__location', 'stock_item__location__tags'],
+        prefetch_fields=['stock_item__location'],
     )
 
     build_detail = enable_filter(
@@ -1389,7 +1388,6 @@ class BuildLineSerializer(
             'allocations__stock_item__supplier_part',
             'allocations__stock_item__supplier_part__manufacturer_part',
             'allocations__stock_item__location',
-            'allocations__stock_item__tags',
         ],
     )
 

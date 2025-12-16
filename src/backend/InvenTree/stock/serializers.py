@@ -14,9 +14,9 @@ from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 from sql_util.utils import SubqueryCount, SubquerySum
-from taggit.serializers import TagListSerializerField
 
 import build.models
+import common.filters
 import company.models
 import company.serializers as company_serializers
 import InvenTree.helpers
@@ -494,7 +494,6 @@ class StockItemSerializer(
             'belongs_to',
             'sales_order',
             'consumed_by',
-            'tags',
         ).select_related('part')
 
         # Annotate the queryset with the total allocated to sales orders
@@ -577,10 +576,8 @@ class StockItemSerializer(
         False,
         prefetch_fields=[
             'supplier_part__supplier',
-            'supplier_part__manufacturer_part__manufacturer',
-            'supplier_part__manufacturer_part__tags',
             'supplier_part__purchase_order_line_items',
-            'supplier_part__tags',
+            'supplier_part__manufacturer_part__manufacturer',
         ],
     )
 
@@ -653,7 +650,7 @@ class StockItemSerializer(
         source='sales_order.reference', read_only=True, allow_null=True
     )
 
-    tags = TagListSerializerField(required=False)
+    tags = common.filters.enable_tags_filter()
 
 
 class SerializeStockItemSerializer(serializers.Serializer):
@@ -1194,7 +1191,7 @@ class LocationSerializer(
 
     level = serializers.IntegerField(read_only=True)
 
-    tags = TagListSerializerField(required=False)
+    tags = common.filters.enable_tags_filter()
 
     path = enable_filter(
         FilterableListField(

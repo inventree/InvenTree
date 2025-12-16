@@ -563,7 +563,6 @@ class PurchaseOrderLineItemSerializer(
             'part__part',
             'part__part__pricing_data',
             'part__part__default_location',
-            'part__tags',
             'part__supplier',
             'part__manufacturer_part',
             'part__manufacturer_part__manufacturer',
