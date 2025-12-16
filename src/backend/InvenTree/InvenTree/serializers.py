@@ -23,7 +23,7 @@ from rest_framework.fields import empty
 from rest_framework.mixins import ListModelMixin
 from rest_framework.serializers import DecimalField
 from rest_framework.utils import model_meta
-from taggit.serializers import TaggitSerializer
+from taggit.serializers import TaggitSerializer, TagListSerializerField
 
 import common.models as common_models
 import InvenTree.ready
@@ -251,6 +251,13 @@ class FilterableCharField(FilterableSerializerField, serializers.CharField):
 
 class FilterableIntegerField(FilterableSerializerField, serializers.IntegerField):
     """Custom IntegerField which allows filtering."""
+
+
+class FilterableTagListField(FilterableSerializerField, TagListSerializerField):
+    """Custom TagListSerializerField which allows filtering."""
+
+    class Meta:
+        """Empty Meta class."""
 
 
 # endregion
