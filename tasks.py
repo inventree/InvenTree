@@ -483,7 +483,11 @@ def plugins(c, uv=False):
         run(c, f"uv pip install -r '{plugin_file}'")
 
     # Collect plugin static files
-    manage(c, 'collectplugins')
+    try:
+        manage(c, 'collectplugins')
+    except UnexpectedExit:
+        error('collectplugins failed!')
+        manage(c, 'help', pty=True)
 
 
 @task(
@@ -632,7 +636,11 @@ def static(c, frontend=False, clear=True, skip_plugins=False):
 
     # Collect plugin static files
     if not skip_plugins:
-        manage(c, 'collectplugins')
+        try:
+            manage(c, 'collectplugins')
+        except UnexpectedExit:
+            error('collectplugins failed!')
+            manage(c, 'help', pty=True)
 
     success('Static files collected successfully')
 
