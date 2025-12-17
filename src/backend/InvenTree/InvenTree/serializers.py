@@ -133,6 +133,15 @@ class FilterableSerializerMixin:
         Returns:
             The modified queryset with prefetching applied.
         """
+        # If we are inside an OPTIONS request, DO NOT PREFETCH
+        if request := getattr(self, 'request', None):
+            if method := getattr(request, 'method', None):
+                if str(method).lower() == 'options':
+                    return queryset
+
+            if getattr(request, '_metadata_requested', False):
+                return queryset
+
         # Gather up the set of simple 'prefetch' fields and functions
         prefetch_fields = set()
 
@@ -797,6 +806,8 @@ class ContentTypeField(serializers.ChoiceField):
         Args:
             mixin_class: Optional mixin class to restrict valid content types.
         """
+        from InvenTree.cache import get_cached_content_types
+
         self.mixin_class = mixin_class
 
         # Override the 'choices' field, to limit to the appropriate models
@@ -811,7 +822,7 @@ class ContentTypeField(serializers.ChoiceField):
                 for model in models
             ]
         else:
-            content_types = ContentType.objects.all()
+            content_types = get_cached_content_types()
 
             kwargs['choices'] = [
                 (f'{ct.app_label}.{ct.model}', str(ct)) for ct in content_types
@@ -828,8 +839,6 @@ class ContentTypeField(serializers.ChoiceField):
 
     def to_internal_value(self, data):
         """Convert string representation back to ContentType instance."""
-        from django.contrib.contenttypes.models import ContentType
-
         content_type = None
 
         if data in ['', None]:
