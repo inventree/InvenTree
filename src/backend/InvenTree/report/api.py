@@ -18,7 +18,7 @@ import report.models
 import report.serializers
 from common.models import DataOutput
 from common.serializers import DataOutputSerializer
-from InvenTree.api import MetadataView
+from InvenTree.api import redirect_metadata_view
 from InvenTree.filters import InvenTreeSearchFilter
 from InvenTree.mixins import ListCreateAPI, RetrieveUpdateDestroyAPI
 from plugin import PluginMixinEnum
@@ -357,9 +357,7 @@ label_api_urls = [
                 '<int:pk>/',
                 include([
                     path(
-                        'metadata/',
-                        MetadataView.as_view(model=report.models.LabelTemplate),
-                        name='api-label-template-metadata',
+                        'metadata/', redirect_metadata_view(report.models.LabelTemplate)
                     ),
                     path(
                         '',
@@ -385,8 +383,7 @@ report_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(model=report.models.ReportTemplate),
-                        name='api-report-template-metadata',
+                        redirect_metadata_view(report.models.ReportTemplate),
                     ),
                     path(
                         '',

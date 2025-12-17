@@ -17,7 +17,7 @@ from rest_framework.views import APIView
 
 import InvenTree.permissions
 import plugin.serializers as PluginSerializers
-from InvenTree.api import MetadataView
+from InvenTree.api import redirect_metadata_view
 from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.helpers import str2bool
 from InvenTree.mixins import (
@@ -509,11 +509,11 @@ class RegistryStatusView(APIView):
         return Response(result)
 
 
-class PluginMetadataView(MetadataView):
-    """Metadata API endpoint for the PluginConfig model."""
+# class PluginMetadataView(MetadataView):
+#     """Metadata API endpoint for the PluginConfig model."""
 
-    lookup_field = 'key'
-    lookup_url_kwarg = 'plugin'
+#     lookup_field = 'key'
+#     lookup_url_kwarg = 'plugin'
 
 
 plugin_api_urls = [
@@ -578,10 +578,7 @@ plugin_api_urls = [
                     ),
                     path(
                         'metadata/',
-                        PluginMetadataView.as_view(
-                            model=PluginConfig, lookup_field='key'
-                        ),
-                        name='api-plugin-metadata',
+                        redirect_metadata_view(PluginConfig, lookup_field='key'),
                     ),
                     path(
                         'activate/',

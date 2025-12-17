@@ -18,8 +18,8 @@ from InvenTree.api import (
     BulkDeleteMixin,
     BulkUpdateMixin,
     ListCreateDestroyAPIView,
-    MetadataView,
     ParameterListMixin,
+    redirect_metadata_view,
 )
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import (
@@ -1500,10 +1500,8 @@ part_api_urls = [
                         include([
                             path(
                                 'metadata/',
-                                MetadataView.as_view(
-                                    model=PartCategoryParameterTemplate
-                                ),
-                                name='api-part-category-parameter-metadata',
+                                redirect_metadata_view(PartCategoryParameterTemplate),
+                                # name='api-part-category-parameter-metadata',
                             ),
                             path(
                                 '',
@@ -1525,8 +1523,8 @@ part_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(model=PartCategory),
-                        name='api-part-category-metadata',
+                        redirect_metadata_view(PartCategory),
+                        # name='api-part-category-metadata',
                     ),
                     # PartCategory detail endpoint
                     path('', CategoryDetail.as_view(), name='api-part-category-detail'),
@@ -1544,8 +1542,8 @@ part_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(model=PartTestTemplate),
-                        name='api-part-test-template-metadata',
+                        redirect_metadata_view(PartTestTemplate),
+                        # name='api-part-test-template-metadata',
                     ),
                     path(
                         '',
@@ -1594,8 +1592,8 @@ part_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(model=PartRelated),
-                        name='api-part-related-metadata',
+                        redirect_metadata_view(PartRelated),
+                        # name='api-part-related-metadata',
                     ),
                     path(
                         '', PartRelatedDetail.as_view(), name='api-part-related-detail'
@@ -1647,9 +1645,7 @@ part_api_urls = [
                 'bom-validate/', PartValidateBOM.as_view(), name='api-part-bom-validate'
             ),
             # Part metadata
-            path(
-                'metadata/', MetadataView.as_view(model=Part), name='api-part-metadata'
-            ),
+            path('metadata/', redirect_metadata_view(Part)),
             # Part pricing
             path('pricing/', PartPricingDetail.as_view(), name='api-part-pricing'),
             # Part detail endpoint
@@ -1669,8 +1665,8 @@ bom_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(model=BomItemSubstitute),
-                        name='api-bom-substitute-metadata',
+                        redirect_metadata_view(BomItemSubstitute),
+                        # name='api-bom-substitute-metadata',
                     ),
                     path(
                         '',
@@ -1690,8 +1686,8 @@ bom_api_urls = [
             path('validate/', BomItemValidate.as_view(), name='api-bom-item-validate'),
             path(
                 'metadata/',
-                MetadataView.as_view(model=BomItem),
-                name='api-bom-item-metadata',
+                redirect_metadata_view(BomItem),
+                # name='api-bom-item-metadata',
             ),
             path('', BomDetail.as_view(), name='api-bom-item-detail'),
         ]),

@@ -8,6 +8,7 @@ from django.conf import settings
 from django.db import transaction
 from django.http import JsonResponse
 from django.utils.translation import gettext_lazy as _
+from django.views.generic.base import RedirectView
 
 import structlog
 from django_q.models import OrmQ
@@ -22,7 +23,7 @@ import InvenTree.config
 import InvenTree.permissions
 import InvenTree.version
 from common.settings import get_global_setting
-from InvenTree import helpers
+from InvenTree import helpers, ready
 from InvenTree.auth_overrides import registration_enabled
 from InvenTree.mixins import ListCreateAPI
 from InvenTree.sso import sso_registration_enabled
@@ -809,35 +810,68 @@ class APISearchView(GenericAPIView):
         return Response(results)
 
 
-class MetadataView(RetrieveUpdateAPI):
-    """Generic API endpoint for reading and editing metadata for a model."""
+class GenericMetadataView(RetrieveUpdateAPI):
+    """Metadata for specific instance; see https://docs.inventree.org/en/stable/plugins/metadata/ for more detail on how metadata works. Most core models support metadata."""
 
     model = None  # Placeholder for the model class
-
-    @classmethod
-    def as_view(cls, model, lookup_field=None, **initkwargs):
-        """Override to ensure model specific rendering."""
-        if model is None:
-            raise ValidationError(
-                "MetadataView defined without 'model' arg"
-            )  # pragma: no cover
-        initkwargs['model'] = model
-
-        # Set custom lookup field (instead of default 'pk' value) if supplied
-        if lookup_field:
-            initkwargs['lookup_field'] = lookup_field
-
-        return super().as_view(**initkwargs)
+    serializer_class = MetadataSerializer
 
     def get_permission_model(self):
         """Return the 'permission' model associated with this view."""
-        return self.model
+        import common.models
+
+        model_name = self.kwargs.get('model', None)
+
+        if model_name is None:
+            raise ValidationError(
+                "GenericMetadataView called without 'model' URL parameter"
+            )  # pragma: no cover
+
+        model = common.models.get_model_by_name(model_name)
+
+        if model is None:
+            raise ValidationError(
+                f"GenericMetadataView called with invalid model '{model_name}'"
+            )  # pragma: no cover
+
+        return model
 
     def get_queryset(self):
         """Return the queryset for this endpoint."""
-        return self.model.objects.all()
+        model = self.get_permission_model()
+        return model.objects.all()
 
     def get_serializer(self, *args, **kwargs):
         """Return MetadataSerializer instance."""
+        is_gen = ready.isGeneratingSchema()
         # Detect if we are currently generating the OpenAPI schema
+        if self.model is None and not is_gen:
+            self.model = self.get_permission_model()
+        if self.model is None and is_gen:
+            # Provide a default model for schema generation
+            import users.models
+
+            self.model = users.models.User
         return MetadataSerializer(self.model, *args, **kwargs)
+
+
+def redirect_metadata_view(model, lookup_field: str = 'pk', **initkwargs):
+    """Helper function for redirecting to the general metadata lookup with appropriate model.
+
+    Arguments:
+        model: The model class to use
+        lookup_field: The lookup field to use (if not 'pk')
+        **initkwargs: Additional keyword arguments for the view
+    Returns:
+        A redirect to the generic metadata view
+    """
+    # return MetadataView.as_view(model, lookup_field, **initkwargs)
+    if model is None:
+        raise ValidationError(
+            "redirect_metadata_view called without 'model' arg"
+        )  # pragma: no cover
+    return RedirectView.as_view(
+        url=f'/api/metadata/{model._meta.model_name}/<str:{lookup_field}>/',
+        permanent=True,
+        query_string=True,
+    )

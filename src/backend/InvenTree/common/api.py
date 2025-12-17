@@ -37,7 +37,12 @@ from common.icons import get_icon_packs
 from common.settings import get_global_setting
 from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import urlpattern as generic_states_api_urls
-from InvenTree.api import BulkCreateMixin, BulkDeleteMixin, MetadataView
+from InvenTree.api import (
+    BulkCreateMixin,
+    BulkDeleteMixin,
+    GenericMetadataView,
+    redirect_metadata_view,
+)
 from InvenTree.config import CONFIG_LOOKUPS
 from InvenTree.filters import (
     ORDER_FILTER,
@@ -1154,11 +1159,7 @@ common_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(model=common.models.Attachment),
-                        name='api-attachment-metadata',
-                    ),
+                    path('metadata/', redirect_metadata_view(common.models.Attachment)),
                     path('', AttachmentDetail.as_view(), name='api-attachment-detail'),
                 ]),
             ),
@@ -1177,10 +1178,7 @@ common_api_urls = [
                         include([
                             path(
                                 'metadata/',
-                                MetadataView.as_view(
-                                    model=common.models.ParameterTemplate
-                                ),
-                                name='api-parameter-template-metadata',
+                                redirect_metadata_view(common.models.ParameterTemplate),
                             ),
                             path(
                                 '',
@@ -1199,11 +1197,7 @@ common_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(model=common.models.Parameter),
-                        name='api-parameter-metadata',
-                    ),
+                    path('metadata/', redirect_metadata_view(common.models.Parameter)),
                     path('', ParameterDetail.as_view(), name='api-parameter-detail'),
                 ]),
             ),
@@ -1217,6 +1211,12 @@ common_api_urls = [
             path('', ErrorMessageList.as_view(), name='api-error-list'),
         ]),
     ),
+    # Metadata
+    path(
+        'metadata/<str:model>/<int:pk>/',
+        GenericMetadataView.as_view(),
+        name='api-generic-metadata',
+    ),
     # Project codes
     path(
         'project-code/',
@@ -1225,12 +1225,7 @@ common_api_urls = [
                 '<int:pk>/',
                 include([
                     path(
-                        'metadata/',
-                        MetadataView.as_view(
-                            model=common.models.ProjectCode,
-                            permission_classes=[IsStaffOrReadOnlyScope],
-                        ),
-                        name='api-project-code-metadata',
+                        'metadata/', redirect_metadata_view(common.models.ProjectCode)
                     ),
                     path(
                         '', ProjectCodeDetail.as_view(), name='api-project-code-detail'

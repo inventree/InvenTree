@@ -31,8 +31,8 @@ from generic.states.api import StatusView
 from InvenTree.api import (
     BulkUpdateMixin,
     ListCreateDestroyAPIView,
-    MetadataView,
     ParameterListMixin,
+    redirect_metadata_view,
 )
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import (
@@ -1888,11 +1888,7 @@ order_api_urls = [
                         name='api-po-complete',
                     ),
                     path('issue/', PurchaseOrderIssue.as_view(), name='api-po-issue'),
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(model=models.PurchaseOrder),
-                        name='api-po-metadata',
-                    ),
+                    path('metadata/', redirect_metadata_view(models.PurchaseOrder)),
                     path(
                         'receive/',
                         PurchaseOrderReceive.as_view(),
@@ -1922,8 +1918,7 @@ order_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(model=models.PurchaseOrderLineItem),
-                        name='api-po-line-metadata',
+                        redirect_metadata_view(models.PurchaseOrderLineItem),
                     ),
                     path(
                         '',
@@ -1944,8 +1939,7 @@ order_api_urls = [
                 include([
                     path(
                         'metadata/',
-                        MetadataView.as_view(model=models.PurchaseOrderExtraLine),
-                        name='api-po-extra-line-metadata',
+                        redirect_metadata_view(models.PurchaseOrderExtraLine),
                     ),
                     path(
                         '',
@@ -1976,8 +1970,7 @@ order_api_urls = [
                             ),
                             path(
                                 'metadata/',
-                                MetadataView.as_view(model=models.SalesOrderShipment),
-                                name='api-so-shipment-metadata',
+                                redirect_metadata_view(models.SalesOrderShipment),
                             ),
                             path(
                                 '',
@@ -2015,11 +2008,7 @@ order_api_urls = [
                         SalesOrderComplete.as_view(),
                         name='api-so-complete',
                     ),
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(model=models.SalesOrder),
-                        name='api-so-metadata',
-                    ),
+                    path('metadata/', redirect_metadata_view(models.SalesOrder)),
                     # SalesOrder detail endpoint
                     path('', SalesOrderDetail.as_view(), name='api-so-detail'),
                 ]),
@@ -2043,9 +2032,7 @@ order_api_urls = [
                 '<int:pk>/',
                 include([
                     path(
-                        'metadata/',
-                        MetadataView.as_view(model=models.SalesOrderLineItem),
-                        name='api-so-line-metadata',
+                        'metadata/', redirect_metadata_view(models.SalesOrderLineItem)
                     ),
                     path(
                         '',
@@ -2065,9 +2052,7 @@ order_api_urls = [
                 '<int:pk>/',
                 include([
                     path(
-                        'metadata/',
-                        MetadataView.as_view(model=models.SalesOrderExtraLine),
-                        name='api-so-extra-line-metadata',
+                        'metadata/', redirect_metadata_view(models.SalesOrderExtraLine)
                     ),
                     path(
                         '',
@@ -2120,11 +2105,7 @@ order_api_urls = [
                         ReturnOrderReceive.as_view(),
                         name='api-return-order-receive',
                     ),
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(model=models.ReturnOrder),
-                        name='api-return-order-metadata',
-                    ),
+                    path('metadata/', redirect_metadata_view(models.ReturnOrder)),
                     path(
                         '', ReturnOrderDetail.as_view(), name='api-return-order-detail'
                     ),
@@ -2149,9 +2130,7 @@ order_api_urls = [
                 '<int:pk>/',
                 include([
                     path(
-                        'metadata/',
-                        MetadataView.as_view(model=models.ReturnOrderLineItem),
-                        name='api-return-order-line-metadata',
+                        'metadata/', redirect_metadata_view(models.ReturnOrderLineItem)
                     ),
                     path(
                         '',
@@ -2180,9 +2159,7 @@ order_api_urls = [
                 '<int:pk>/',
                 include([
                     path(
-                        'metadata/',
-                        MetadataView.as_view(model=models.ReturnOrderExtraLine),
-                        name='api-return-order-extra-line-metadata',
+                        'metadata/', redirect_metadata_view(models.ReturnOrderExtraLine)
                     ),
                     path(
                         '',
