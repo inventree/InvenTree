@@ -64,7 +64,7 @@ runs:
       - name: Install Specific Python Dependencies
         if: ${{ inputs.pip-dependency }}
         shell: bash
-        run: uv pip install ${PIP_DEPS}
+        run: uv pip install ${PIP_DEPS} -U
         env:
           PIP_DEPS: ${{ inputs.pip-dependency }}
 

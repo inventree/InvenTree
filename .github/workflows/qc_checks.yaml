@@ -393,7 +393,7 @@ jobs:
       INVENTREE_PLUGINS_ENABLED: true
       INVENTREE_CONSOLE_LOG: false
       INVENTREE_AUTO_UPDATE: true
-      python_version: 3.13
+      python_version: 3.14
 
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # pin@v6.0.1
@@ -403,8 +403,8 @@ jobs:
         uses: ./.github/actions/setup
         with:
           apt-dependency: gettext poppler-utils
+          pip-dependency: cffi
           dev-install: true
-          install: true
           update: true
       - name: Performance Reporting
         uses: CodSpeedHQ/action@346a2d8a8d9d38909abd0bc3d23f773110f076ad # pin@v4
