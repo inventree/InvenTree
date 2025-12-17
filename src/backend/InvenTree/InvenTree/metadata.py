@@ -50,6 +50,10 @@ class InvenTreeMetadata(SimpleMetadata):
 
         for method in {'PUT', 'POST', 'GET'} & set(view.allowed_methods):
             view.request = clone_request(request, method)
+
+            # Mark this request, to prevent expensive prefetching
+            view.request._metadata_requested = True
+
             try:
                 # Test global permissions
                 if hasattr(view, 'check_permissions'):

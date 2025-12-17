@@ -133,6 +133,15 @@ class FilterableSerializerMixin:
         Returns:
             The modified queryset with prefetching applied.
         """
+        # If we are inside an OPTIONS request, DO NOT PREFETCH
+        if request := getattr(self, 'request', None):
+            if method := getattr(request, 'method', None):
+                if str(method).lower() == 'options':
+                    return queryset
+
+            if getattr(request, '_metadata_requested', False):
+                return queryset
+
         # Gather up the set of simple 'prefetch' fields and functions
         prefetch_fields = set()
 
