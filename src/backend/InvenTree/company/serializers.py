@@ -268,7 +268,11 @@ class ManufacturerPartSerializer(
             source='part', many=False, read_only=True, allow_null=True
         ),
         True,
-        prefetch_fields=['part'],
+        prefetch_fields=[
+            Prefetch(
+                'part', queryset=part.models.Part.objects.select_related('pricing_data')
+            )
+        ],
     )
 
     pretty_name = enable_filter(
