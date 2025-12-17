@@ -94,6 +94,9 @@ runs:
         if: ${{ inputs.install == 'true' }}
         shell: bash
         run: invoke install --uv --skip-plugins
+      - name: Version
+        shell: bash
+        run: invoke version
       - name: Run invoke update
         if: ${{ inputs.update == 'true' }}
         shell: bash
