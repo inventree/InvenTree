@@ -799,8 +799,10 @@ def migrate(c):
     This is a critical step if the database schema have been altered!
     """
     info('Running InvenTree database migrations...')
-    manage(c, '')
+    info('Listing commands...')
+    run(c, 'python3 manage.py --help', manage_py_dir(), False)
 
+    info('Making migrations...')
     # Run custom management command which wraps migrations in "maintenance mode"
     manage(c, 'makemigrations')
     manage(c, 'runmigrations', pty=True)
