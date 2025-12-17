@@ -7,6 +7,7 @@ from pathlib import Path
 from django.conf import settings
 from django.db import transaction
 from django.http import JsonResponse
+from django.urls import path
 from django.utils.translation import gettext_lazy as _
 from django.views.generic.base import RedirectView
 
@@ -875,3 +876,16 @@ def redirect_metadata_view(model, lookup_field: str = 'pk', **initkwargs):
         permanent=True,
         query_string=True,
     )
+
+
+def meta_path(model, lookup_field: str = 'pk'):
+    """Helper function for constructing metadata path for a given model.
+
+    Arguments:
+        model: The model class to use
+        lookup_field: The lookup field to use (if not 'pk')
+
+    Returns:
+        A path to the generic metadata view for the given model
+    """
+    return path('metadata/', redirect_metadata_view(model, lookup_field=lookup_field))

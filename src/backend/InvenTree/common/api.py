@@ -41,7 +41,7 @@ from InvenTree.api import (
     BulkCreateMixin,
     BulkDeleteMixin,
     GenericMetadataView,
-    redirect_metadata_view,
+    meta_path,
 )
 from InvenTree.config import CONFIG_LOOKUPS
 from InvenTree.filters import (
@@ -1159,7 +1159,7 @@ common_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path('metadata/', redirect_metadata_view(common.models.Attachment)),
+                    meta_path(common.models.Attachment),
                     path('', AttachmentDetail.as_view(), name='api-attachment-detail'),
                 ]),
             ),
@@ -1176,10 +1176,7 @@ common_api_urls = [
                     path(
                         '<int:pk>/',
                         include([
-                            path(
-                                'metadata/',
-                                redirect_metadata_view(common.models.ParameterTemplate),
-                            ),
+                            meta_path(common.models.ParameterTemplate),
                             path(
                                 '',
                                 ParameterTemplateDetail.as_view(),
@@ -1197,7 +1194,7 @@ common_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path('metadata/', redirect_metadata_view(common.models.Parameter)),
+                    meta_path(common.models.Parameter),
                     path('', ParameterDetail.as_view(), name='api-parameter-detail'),
                 ]),
             ),
@@ -1224,9 +1221,7 @@ common_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'metadata/', redirect_metadata_view(common.models.ProjectCode)
-                    ),
+                    meta_path(common.models.ProjectCode),
                     path(
                         '', ProjectCodeDetail.as_view(), name='api-project-code-detail'
                     ),

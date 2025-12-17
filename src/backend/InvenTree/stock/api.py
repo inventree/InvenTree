@@ -33,7 +33,7 @@ from InvenTree.api import (
     BulkCreateMixin,
     BulkUpdateMixin,
     ListCreateDestroyAPIView,
-    redirect_metadata_view,
+    meta_path,
 )
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import (
@@ -1610,7 +1610,7 @@ stock_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path('metadata/', redirect_metadata_view(StockLocation)),
+                    meta_path(StockLocation),
                     path('', StockLocationDetail.as_view(), name='api-location-detail'),
                 ]),
             ),
@@ -1624,7 +1624,7 @@ stock_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path('metadata/', redirect_metadata_view(StockLocationType)),
+                    meta_path(StockLocationType),
                     path(
                         '',
                         StockLocationTypeDetail.as_view(),
@@ -1651,7 +1651,7 @@ stock_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path('metadata/', redirect_metadata_view(StockItemTestResult)),
+                    meta_path(StockItemTestResult),
                     path(
                         '',
                         StockItemTestResultDetail.as_view(),
@@ -1689,7 +1689,7 @@ stock_api_urls = [
         include([
             path('convert/', StockItemConvert.as_view(), name='api-stock-item-convert'),
             path('install/', StockItemInstall.as_view(), name='api-stock-item-install'),
-            path('metadata/', redirect_metadata_view(StockItem)),
+            meta_path(StockItem),
             path(
                 'serialize/',
                 StockItemSerialize.as_view(),
