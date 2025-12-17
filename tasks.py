@@ -802,7 +802,11 @@ def migrate(c):
 
     # Run custom management command which wraps migrations in "maintenance mode"
     manage(c, 'makemigrations')
-    manage(c, 'runmigrations', pty=True)
+    try:
+        manage(c, 'runmigrations', pty=True)
+    except UnexpectedExit:
+        error('Database migration failed!')
+        manage(c, 'help', pty=True)
     manage(c, 'migrate --run-syncdb')
     manage(c, 'remove_stale_contenttypes --include-stale-apps --no-input', pty=True)
 
