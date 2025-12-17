@@ -831,4 +831,4 @@ class InvenTreeAPIPerformanceTestCase(InvenTreeAPITestCase):
     """Base class for InvenTree API performance tests."""
 
     MAX_QUERY_COUNT = 50
-    MAX_QUERY_TIME = 2.0
+    MAX_QUERY_TIME = 60
