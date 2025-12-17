@@ -93,11 +93,11 @@ runs:
       - name: Run invoke install
         if: ${{ inputs.install == 'true' }}
         shell: bash
-        run: invoke install --uv --skip-plugins
+        run: invoke install --uv
       - name: Version
         shell: bash
         run: invoke version
       - name: Run invoke update
         if: ${{ inputs.update == 'true' }}
         shell: bash
-        run: invoke update --uv --skip-backup --skip-plugins --skip-static
+        run: invoke update --uv --skip-backup --skip-static

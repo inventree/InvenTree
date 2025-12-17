@@ -822,7 +822,6 @@ def showmigrations(c, app=''):
         'frontend': 'Force frontend compilation/download step (ignores INVENTREE_DOCKER)',
         'no_frontend': 'Skip frontend compilation/download step',
         'skip_static': 'Skip static file collection step',
-        'skip_plugins': 'Skip plugin install step',
         'uv': 'Use UV (experimental package manager)',
     },
 )
@@ -833,7 +832,6 @@ def update(
     frontend: bool = False,
     no_frontend: bool = False,
     skip_static: bool = False,
-    skip_plugins: bool = False,
     uv: bool = False,
 ):
     """Update InvenTree installation.
@@ -853,7 +851,7 @@ def update(
     info('Updating InvenTree installation...')
 
     # Ensure required components are installed
-    install(c, uv=uv, skip_plugins=skip_plugins)
+    install(c, uv=uv)
 
     if not skip_backup:
         backup(c)
