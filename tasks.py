@@ -1540,6 +1540,13 @@ def version(c):
         get_static_dir,
     )
 
+    def get_value(fnc):
+        """Helper function to safely get value from function, catching import exceptions."""
+        try:
+            return fnc()
+        except (ModuleNotFoundError, ImportError):
+            return wrap_color('ENVIRONMENT ERROR', '91')
+
     # Gather frontend version information
     _, node, yarn = node_available(versions=True)
 
@@ -1572,17 +1579,17 @@ Invoke Tool {invoke_path}
 
 Installation paths:
 Base        {local_dir()}
-Config      {get_config_file()}
-Plugin File {get_plugin_file() or NOT_SPECIFIED}
-Media       {get_media_dir(error=False) or NOT_SPECIFIED}
-Static      {get_static_dir(error=False) or NOT_SPECIFIED}
-Backup      {get_backup_dir(error=False) or NOT_SPECIFIED}
+Config      {get_value(get_config_file)}
+Plugin File {get_value(get_plugin_file) or NOT_SPECIFIED}
+Media       {get_value(lambda: get_media_dir(error=False)) or NOT_SPECIFIED}
+Static      {get_value(lambda: get_static_dir(error=False)) or NOT_SPECIFIED}
+Backup      {get_value(lambda: get_backup_dir(error=False)) or NOT_SPECIFIED}
 
 Versions:
 InvenTree   {InvenTreeVersion.inventreeVersion()}
 API         {InvenTreeVersion.inventreeApiVersion()}
 Python      {python_version()}
-Django      {InvenTreeVersion.inventreeDjangoVersion()}
+Django      {get_value(InvenTreeVersion.inventreeDjangoVersion)}
 Node        {node if node else NA}
 Yarn        {yarn if yarn else NA}
 
