@@ -1501,7 +1501,6 @@ part_api_urls = [
                             path(
                                 'metadata/',
                                 redirect_metadata_view(PartCategoryParameterTemplate),
-                                # name='api-part-category-parameter-metadata',
                             ),
                             path(
                                 '',
@@ -1521,11 +1520,7 @@ part_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'metadata/',
-                        redirect_metadata_view(PartCategory),
-                        # name='api-part-category-metadata',
-                    ),
+                    path('metadata/', redirect_metadata_view(PartCategory)),
                     # PartCategory detail endpoint
                     path('', CategoryDetail.as_view(), name='api-part-category-detail'),
                 ]),
@@ -1540,11 +1535,7 @@ part_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'metadata/',
-                        redirect_metadata_view(PartTestTemplate),
-                        # name='api-part-test-template-metadata',
-                    ),
+                    path('metadata/', redirect_metadata_view(PartTestTemplate)),
                     path(
                         '',
                         PartTestTemplateDetail.as_view(),
@@ -1590,11 +1581,7 @@ part_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'metadata/',
-                        redirect_metadata_view(PartRelated),
-                        # name='api-part-related-metadata',
-                    ),
+                    path('metadata/', redirect_metadata_view(PartRelated)),
                     path(
                         '', PartRelatedDetail.as_view(), name='api-part-related-detail'
                     ),
@@ -1663,11 +1650,7 @@ bom_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'metadata/',
-                        redirect_metadata_view(BomItemSubstitute),
-                        # name='api-bom-substitute-metadata',
-                    ),
+                    path('metadata/', redirect_metadata_view(BomItemSubstitute)),
                     path(
                         '',
                         BomItemSubstituteDetail.as_view(),
@@ -1684,11 +1667,7 @@ bom_api_urls = [
         '<int:pk>/',
         include([
             path('validate/', BomItemValidate.as_view(), name='api-bom-item-validate'),
-            path(
-                'metadata/',
-                redirect_metadata_view(BomItem),
-                # name='api-bom-item-metadata',
-            ),
+            path('metadata/', redirect_metadata_view(BomItem)),
             path('', BomDetail.as_view(), name='api-bom-item-detail'),
         ]),
     ),
