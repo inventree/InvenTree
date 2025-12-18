@@ -483,11 +483,7 @@ def plugins(c, uv=False):
         run(c, f"uv pip install -r '{plugin_file}'")
 
     # Collect plugin static files
-    try:
-        manage(c, 'collectplugins')
-    except UnexpectedExit:
-        error('collectplugins failed!')
-        manage(c, 'help', pty=True)
+    manage(c, 'collectplugins')
 
 
 @task(
@@ -636,11 +632,7 @@ def static(c, frontend=False, clear=True, skip_plugins=False):
 
     # Collect plugin static files
     if not skip_plugins:
-        try:
-            manage(c, 'collectplugins')
-        except UnexpectedExit:
-            error('collectplugins failed!')
-            manage(c, 'help', pty=True)
+        manage(c, 'collectplugins')
 
     success('Static files collected successfully')
 
@@ -810,11 +802,7 @@ def migrate(c):
 
     # Run custom management command which wraps migrations in "maintenance mode"
     manage(c, 'makemigrations')
-    try:
-        manage(c, 'runmigrations', pty=True)
-    except UnexpectedExit:
-        error('Database migration failed!')
-        manage(c, 'help', pty=True)
+    manage(c, 'runmigrations', pty=True)
     manage(c, 'migrate --run-syncdb')
     manage(c, 'remove_stale_contenttypes --include-stale-apps --no-input', pty=True)
 
