@@ -179,10 +179,6 @@ class BomExporterPlugin(DataExportMixin, InvenTreePlugin):
         """Export BOM data from the queryset."""
         self.serializer_class = serializer_class
 
-        print('export_data:')
-        print('-- kwargrs:', kwargs)
-        print('-- context:', context)
-
         # Track how many extra columns we need
         self.n_substitute_cols = 0
         self.n_supplier_cols = 0
