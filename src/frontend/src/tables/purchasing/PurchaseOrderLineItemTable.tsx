@@ -439,7 +439,8 @@ export function PurchaseOrderLineItemTable({
           params: {
             ...params,
             order: orderId,
-            part_detail: true
+            part_detail: true,
+            destination_detail: true
           },
           rowActions: rowActions,
           tableActions: tableActions,

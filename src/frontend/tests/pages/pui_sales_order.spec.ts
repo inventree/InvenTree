@@ -18,6 +18,16 @@ test('Sales Orders - Tabs', async ({ browser }) => {
   await loadTab(page, 'Sales Orders');
   await page.waitForURL('**/web/sales/index/salesorders');
 
+  await page
+    .getByRole('button', { name: 'segmented-icon-control-parametric' })
+    .click();
+  await page
+    .getByRole('button', { name: 'segmented-icon-control-calendar' })
+    .click();
+  await page
+    .getByRole('button', { name: 'segmented-icon-control-table' })
+    .click();
+
   // Pending Shipments panel
   await loadTab(page, 'Pending Shipments');
   await page.getByRole('cell', { name: 'SO0007' }).waitFor();
@@ -27,8 +37,26 @@ test('Sales Orders - Tabs', async ({ browser }) => {
   await loadTab(page, 'Return Orders');
   await page.getByRole('cell', { name: 'NOISE-COMPLAINT' }).waitFor();
 
+  await page
+    .getByRole('button', { name: 'segmented-icon-control-parametric' })
+    .click();
+  await page
+    .getByRole('button', { name: 'segmented-icon-control-calendar' })
+    .click();
+  await page
+    .getByRole('button', { name: 'segmented-icon-control-table' })
+    .click();
+
   // Customers
   await loadTab(page, 'Customers');
+
+  await page
+    .getByRole('button', { name: 'segmented-icon-control-parametric' })
+    .click();
+  await page
+    .getByRole('button', { name: 'segmented-icon-control-table' })
+    .click();
+
   await page.getByText('Customer A').click();
   await loadTab(page, 'Notes');
   await loadTab(page, 'Attachments');

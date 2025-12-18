@@ -1,7 +1,5 @@
 """Provides a JSON API for the Part app."""
 
-import re
-
 from django.db.models import Count, F, Q
 from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
@@ -14,15 +12,14 @@ from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 from rest_framework.response import Response
 
-import part.filters
 import part.tasks as part_tasks
 from data_exporter.mixins import DataExportViewMixin
 from InvenTree.api import (
-    BulkCreateMixin,
     BulkDeleteMixin,
     BulkUpdateMixin,
     ListCreateDestroyAPIView,
     MetadataView,
+    ParameterListMixin,
 )
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import (
@@ -59,8 +56,6 @@ from .models import (
     PartCategory,
     PartCategoryParameterTemplate,
     PartInternalPriceBreak,
-    PartParameter,
-    PartParameterTemplate,
     PartRelated,
     PartSellPriceBreak,
     PartStocktake,
@@ -323,7 +318,7 @@ class CategoryTree(ListAPI):
         return queryset
 
 
-class CategoryParameterList(DataExportViewMixin, ListCreateAPI):
+class CategoryParameterList(DataExportViewMixin, OutputOptionsMixin, ListCreateAPI):
     """API endpoint for accessing a list of PartCategoryParameterTemplate objects.
 
     - GET: Return a list of PartCategoryParameterTemplate objects
@@ -575,7 +570,7 @@ class PartPricingDetail(RetrieveUpdateAPI):
     """API endpoint for viewing part pricing data."""
 
     serializer_class = part_serializers.PartPricingSerializer
-    queryset = Part.objects.all()
+    queryset = Part.objects.all().select_related('pricing_data')
 
     def get_object(self):
         """Return the PartPricing object associated with the linked Part."""
@@ -1014,7 +1009,7 @@ class PartMixin(SerializerContextMixin):
     """Mixin class for Part API endpoints."""
 
     serializer_class = part_serializers.PartSerializer
-    queryset = Part.objects.all()
+    queryset = Part.objects.all().select_related('pricing_data')
 
     starred_parts = None
     is_create = False
@@ -1024,13 +1019,6 @@ class PartMixin(SerializerContextMixin):
         queryset = super().get_queryset(*args, **kwargs)
 
         queryset = part_serializers.PartSerializer.annotate_queryset(queryset)
-
-        # Annotate with parameter template data?
-        if str2bool(self.request.query_params.get('parameters', False)):
-            queryset = queryset.prefetch_related('parameters', 'parameters__template')
-
-        if str2bool(self.request.query_params.get('price_breaks', True)):
-            queryset = queryset.prefetch_related('salepricebreaks')
 
         return queryset
 
@@ -1072,86 +1060,23 @@ class PartOutputOptions(OutputConfiguration):
         InvenTreeOutputOption('location_detail'),
         InvenTreeOutputOption('path_detail'),
         InvenTreeOutputOption('price_breaks'),
+        InvenTreeOutputOption('tags'),
     ]
 
 
 class PartList(
-    PartMixin, BulkUpdateMixin, DataExportViewMixin, OutputOptionsMixin, ListCreateAPI
+    PartMixin,
+    BulkUpdateMixin,
+    ParameterListMixin,
+    DataExportViewMixin,
+    OutputOptionsMixin,
+    ListCreateAPI,
 ):
     """API endpoint for accessing a list of Part objects, or creating a new Part instance."""
 
     output_options = PartOutputOptions
     filterset_class = PartFilter
     is_create = True
-
-    def filter_queryset(self, queryset):
-        """Perform custom filtering of the queryset."""
-        queryset = super().filter_queryset(queryset)
-
-        queryset = self.filter_parametric_data(queryset)
-        queryset = self.order_by_parameter(queryset)
-
-        return queryset
-
-    def filter_parametric_data(self, queryset):
-        """Filter queryset against part parameters.
-
-        Used to filter returned parts based on their parameter values.
-
-        To filter based on parameter value, supply query parameters like:
-        - parameter_<x>=<value>
-        - parameter_<x>_gt=<value>
-        - parameter_<x>_lte=<value>
-
-        where:
-            - <x> is the ID of the PartParameterTemplate.
-            - <value> is the value to filter against.
-        """
-        # Allowed lookup operations for parameter values
-        operators = '|'.join(part.filters.PARAMETER_FILTER_OPERATORS)
-
-        regex_pattern = rf'^parameter_(\d+)(_({operators}))?$'
-
-        for param in self.request.query_params:
-            result = re.match(regex_pattern, param)
-
-            if not result:
-                continue
-
-            template_id = result.group(1)
-            operator = result.group(3) or ''
-
-            value = self.request.query_params.get(param, None)
-
-            queryset = part.filters.filter_by_parameter(
-                queryset, template_id, value, func=operator
-            )
-
-        return queryset
-
-    def order_by_parameter(self, queryset):
-        """Perform queryset ordering based on parameter value.
-
-        - Used if the 'ordering' query param points to a parameter
-        - e.g. '&ordering=param_<id>' where <id> specifies the PartParameterTemplate
-        - Only parts which have a matching parameter are returned
-        - Queryset is ordered based on parameter value
-        """
-        # Extract "ordering" parameter from query args
-        ordering = self.request.query_params.get('ordering', None)
-
-        if ordering:
-            # Ordering value must match required regex pattern
-            result = re.match(r'^\-?parameter_(\d+)$', ordering)
-
-            if result:
-                template_id = result.group(1)
-                ascending = not ordering.startswith('-')
-                queryset = part.filters.order_by_parameter(
-                    queryset, template_id, ascending
-                )
-
-        return queryset
 
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
@@ -1265,208 +1190,6 @@ class PartRelatedList(PartRelatedMixin, ListCreateAPI):
 
 class PartRelatedDetail(PartRelatedMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for accessing detail view of a PartRelated object."""
-
-
-class PartParameterTemplateFilter(FilterSet):
-    """FilterSet for PartParameterTemplate objects."""
-
-    class Meta:
-        """Metaclass options."""
-
-        model = PartParameterTemplate
-
-        # Simple filter fields
-        fields = ['name', 'units', 'checkbox']
-
-    has_choices = rest_filters.BooleanFilter(
-        method='filter_has_choices', label='Has Choice'
-    )
-
-    def filter_has_choices(self, queryset, name, value):
-        """Filter queryset to include only PartParameterTemplates with choices."""
-        if str2bool(value):
-            return queryset.exclude(Q(choices=None) | Q(choices=''))
-
-        return queryset.filter(Q(choices=None) | Q(choices='')).distinct()
-
-    has_units = rest_filters.BooleanFilter(method='filter_has_units', label='Has Units')
-
-    def filter_has_units(self, queryset, name, value):
-        """Filter queryset to include only PartParameterTemplates with units."""
-        if str2bool(value):
-            return queryset.exclude(Q(units=None) | Q(units=''))
-
-        return queryset.filter(Q(units=None) | Q(units='')).distinct()
-
-    part = rest_filters.ModelChoiceFilter(
-        queryset=Part.objects.all(), method='filter_part', label=_('Part')
-    )
-
-    @extend_schema_field(OpenApiTypes.INT)
-    def filter_part(self, queryset, name, part):
-        """Filter queryset to include only PartParameterTemplates which are referenced by a part."""
-        parameters = PartParameter.objects.filter(part=part)
-        template_ids = parameters.values_list('template').distinct()
-        return queryset.filter(pk__in=[el[0] for el in template_ids])
-
-    # Filter against a "PartCategory" - return only parameter templates which are referenced by parts in this category
-    category = rest_filters.ModelChoiceFilter(
-        queryset=PartCategory.objects.all(),
-        method='filter_category',
-        label=_('Category'),
-    )
-
-    @extend_schema_field(OpenApiTypes.INT)
-    def filter_category(self, queryset, name, category):
-        """Filter queryset to include only PartParameterTemplates which are referenced by parts in this category."""
-        cats = category.get_descendants(include_self=True)
-        parameters = PartParameter.objects.filter(part__category__in=cats)
-        template_ids = parameters.values_list('template').distinct()
-        return queryset.filter(pk__in=[el[0] for el in template_ids])
-
-
-class PartParameterTemplateMixin:
-    """Mixin class for PartParameterTemplate API endpoints."""
-
-    queryset = PartParameterTemplate.objects.all()
-    serializer_class = part_serializers.PartParameterTemplateSerializer
-
-    def get_queryset(self, *args, **kwargs):
-        """Return an annotated queryset for the PartParameterTemplateDetail endpoint."""
-        queryset = super().get_queryset(*args, **kwargs)
-
-        queryset = part_serializers.PartParameterTemplateSerializer.annotate_queryset(
-            queryset
-        )
-
-        return queryset
-
-
-class PartParameterTemplateList(
-    PartParameterTemplateMixin, DataExportViewMixin, ListCreateAPI
-):
-    """API endpoint for accessing a list of PartParameterTemplate objects.
-
-    - GET: Return list of PartParameterTemplate objects
-    - POST: Create a new PartParameterTemplate object
-    """
-
-    filterset_class = PartParameterTemplateFilter
-
-    filter_backends = SEARCH_ORDER_FILTER
-
-    search_fields = ['name', 'description']
-
-    ordering_fields = ['name', 'units', 'checkbox', 'parts']
-
-
-class PartParameterTemplateDetail(PartParameterTemplateMixin, RetrieveUpdateDestroyAPI):
-    """API endpoint for accessing the detail view for a PartParameterTemplate object."""
-
-
-class PartParameterOutputOptions(OutputConfiguration):
-    """Output options for the PartParameter endpoints."""
-
-    OPTIONS = [
-        InvenTreeOutputOption('part_detail'),
-        InvenTreeOutputOption(
-            'template_detail',
-            default=True,
-            description='Include detailed information about the part parameter template.',
-        ),
-    ]
-
-
-class PartParameterAPIMixin:
-    """Mixin class for PartParameter API endpoints."""
-
-    queryset = PartParameter.objects.all()
-    serializer_class = part_serializers.PartParameterSerializer
-    output_options = PartParameterOutputOptions
-
-    def get_queryset(self, *args, **kwargs):
-        """Override get_queryset method to prefetch related fields."""
-        queryset = super().get_queryset(*args, **kwargs)
-        queryset = queryset.prefetch_related('part', 'template', 'updated_by')
-        return queryset
-
-    def get_serializer_context(self):
-        """Pass the 'request' object through to the serializer context."""
-        context = super().get_serializer_context()
-        context['request'] = self.request
-
-        return context
-
-
-class PartParameterFilter(FilterSet):
-    """Custom filters for the PartParameterList API endpoint."""
-
-    class Meta:
-        """Metaclass options for the filterset."""
-
-        model = PartParameter
-        fields = ['template', 'updated_by']
-
-    part = rest_filters.ModelChoiceFilter(
-        queryset=Part.objects.all(), method='filter_part'
-    )
-
-    def filter_part(self, queryset, name, part):
-        """Filter against the provided part.
-
-        If 'include_variants' query parameter is provided, filter against variant parts also
-        """
-        try:
-            include_variants = str2bool(self.request.GET.get('include_variants', False))
-        except AttributeError:
-            include_variants = False
-
-        if include_variants:
-            return queryset.filter(part__in=part.get_descendants(include_self=True))
-        else:
-            return queryset.filter(part=part)
-
-
-class PartParameterList(
-    BulkCreateMixin,
-    PartParameterAPIMixin,
-    OutputOptionsMixin,
-    DataExportViewMixin,
-    ListCreateAPI,
-):
-    """API endpoint for accessing a list of PartParameter objects.
-
-    - GET: Return list of PartParameter objects
-    - POST: Create a new PartParameter object
-    """
-
-    filterset_class = PartParameterFilter
-
-    filter_backends = SEARCH_ORDER_FILTER_ALIAS
-
-    ordering_fields = ['name', 'data', 'part', 'template', 'updated', 'updated_by']
-
-    ordering_field_aliases = {
-        'name': 'template__name',
-        'units': 'template__units',
-        'data': ['data_numeric', 'data'],
-        'part': 'part__name',
-    }
-
-    search_fields = [
-        'data',
-        'template__name',
-        'template__description',
-        'template__units',
-    ]
-
-    unique_create_fields = ['part', 'template']
-
-
-class PartParameterDetail(
-    PartParameterAPIMixin, OutputOptionsMixin, RetrieveUpdateDestroyAPI
-):
-    """API endpoint for detail view of a single PartParameter object."""
 
 
 class PartStocktakeFilter(FilterSet):
@@ -1639,6 +1362,8 @@ class BomOutputOptions(OutputConfiguration):
         InvenTreeOutputOption('can_build', default=True),
         InvenTreeOutputOption('part_detail'),
         InvenTreeOutputOption('sub_part_detail'),
+        InvenTreeOutputOption('substitutes'),
+        InvenTreeOutputOption('pricing'),
     ]
 
 
@@ -1878,53 +1603,6 @@ part_api_urls = [
                 ]),
             ),
             path('', PartRelatedList.as_view(), name='api-part-related-list'),
-        ]),
-    ),
-    # Base URL for PartParameter API endpoints
-    path(
-        'parameter/',
-        include([
-            path(
-                'template/',
-                include([
-                    path(
-                        '<int:pk>/',
-                        include([
-                            path(
-                                'metadata/',
-                                MetadataView.as_view(model=PartParameterTemplate),
-                                name='api-part-parameter-template-metadata',
-                            ),
-                            path(
-                                '',
-                                PartParameterTemplateDetail.as_view(),
-                                name='api-part-parameter-template-detail',
-                            ),
-                        ]),
-                    ),
-                    path(
-                        '',
-                        PartParameterTemplateList.as_view(),
-                        name='api-part-parameter-template-list',
-                    ),
-                ]),
-            ),
-            path(
-                '<int:pk>/',
-                include([
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(model=PartParameter),
-                        name='api-part-parameter-metadata',
-                    ),
-                    path(
-                        '',
-                        PartParameterDetail.as_view(),
-                        name='api-part-parameter-detail',
-                    ),
-                ]),
-            ),
-            path('', PartParameterList.as_view(), name='api-part-parameter-list'),
         ]),
     ),
     # Part stocktake data

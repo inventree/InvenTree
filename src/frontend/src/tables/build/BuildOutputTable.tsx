@@ -208,7 +208,9 @@ export default function BuildOutputTable({
         .get(apiUrl(ApiEndpoints.build_line_list), {
           params: {
             build: buildId,
-            tracked: true
+            tracked: true,
+            bom_item_detail: true,
+            allocations: true
           }
         })
         .then((response) => response.data);

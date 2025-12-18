@@ -1,8 +1,10 @@
 import { t } from '@lingui/core/macro';
-import { Table } from '@mantine/core';
+import { Alert, Table, Text } from '@mantine/core';
 import {
   IconAddressBook,
   IconCalendar,
+  IconCircleCheck,
+  IconCircleX,
   IconCoins,
   IconUser,
   IconUsers
@@ -23,8 +25,9 @@ import type {
   ApiFormFieldType
 } from '@lib/types/Forms';
 import type { TableFieldRowProps } from '../components/forms/fields/TableField';
-import { useCreateApiFormModal } from '../hooks/UseForm';
+import { useCreateApiFormModal, useEditApiFormModal } from '../hooks/UseForm';
 import { useGlobalSettingsState } from '../states/SettingsStates';
+import { useUserState } from '../states/UserState';
 import { RenderPartColumn } from '../tables/ColumnRenderers';
 
 export function useSalesOrderFields({
@@ -188,6 +191,64 @@ export function useSalesOrderLineItemFields({
 
     return fields;
   }, [salePrice, partCurrency, orderId, create]);
+}
+
+export function useCheckShipmentForm({
+  shipmentId,
+  onSuccess
+}: {
+  shipmentId: number;
+  onSuccess: (response: any) => void;
+}) {
+  const user = useUserState();
+
+  return useEditApiFormModal({
+    url: ApiEndpoints.sales_order_shipment_list,
+    pk: shipmentId,
+    title: t`Check Shipment`,
+    preFormContent: (
+      <Alert color='green' icon={<IconCircleCheck />} title={t`Check Shipment`}>
+        <Text>{t`Marking the shipment as checked indicates that you have verified that all items included in this shipment are correct`}</Text>
+      </Alert>
+    ),
+    fetchInitialData: false,
+    fields: {
+      checked_by: {
+        hidden: true,
+        value: user.getUser()?.pk
+      }
+    },
+    successMessage: t`Shipment marked as checked`,
+    onFormSuccess: onSuccess
+  });
+}
+
+export function useUncheckShipmentForm({
+  shipmentId,
+  onSuccess
+}: {
+  shipmentId: number;
+  onSuccess: (response: any) => void;
+}) {
+  return useEditApiFormModal({
+    url: ApiEndpoints.sales_order_shipment_list,
+    pk: shipmentId,
+    title: t`Uncheck Shipment`,
+    preFormContent: (
+      <Alert color='red' icon={<IconCircleX />} title={t`Uncheck Shipment`}>
+        <Text>{t`Marking the shipment as unchecked indicates that the shipment requires further verification`}</Text>
+      </Alert>
+    ),
+    fetchInitialData: false,
+    fields: {
+      checked_by: {
+        hidden: true,
+        value: null
+      }
+    },
+    successMessage: t`Shipment marked as unchecked`,
+    onFormSuccess: onSuccess
+  });
 }
 
 function SalesOrderAllocateLineRow({

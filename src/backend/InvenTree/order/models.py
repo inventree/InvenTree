@@ -268,6 +268,7 @@ class ReturnOrderReportContext(report.mixins.BaseReportContext):
 class Order(
     StatusCodeMixin,
     StateTransitionMixin,
+    InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,
@@ -988,7 +989,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
         # Before we continue, validate that each line item is valid
         # We validate this here because it is far more efficient,
-        # after we have fetched *all* line itemes in a single DB query
+        # after we have fetched *all* line items in a single DB query
         for line_item in line_item_map.values():
             if line_item.order != self:
                 raise ValidationError({_('Line item does not match purchase order')})
@@ -1988,17 +1989,16 @@ class PurchaseOrderLineItem(OrderLineItem):
     def get_destination(self):
         """Show where the line item is or should be placed.
 
-        NOTE: If a line item gets split when received, only an arbitrary
-              stock items location will be reported as the location for the
-              entire line.
+        1. If a destination is specified against this line item, return that.
+        2. If a destination is specified against the PurchaseOrderPart, return that.
+        3. If a default location is specified against the linked Part, return that.
         """
-        for item in stock.models.StockItem.objects.filter(
-            supplier_part=self.part, purchase_order=self.order
-        ):
-            if item.location:
-                return item.location
         if self.destination:
             return self.destination
+
+        if self.order.destination:
+            return self.order.destination
+
         if self.part and self.part.part and self.part.part.default_location:
             return self.part.part.default_location
 

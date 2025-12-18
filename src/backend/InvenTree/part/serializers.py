@@ -7,9 +7,9 @@ from decimal import Decimal
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from django.core.validators import MinValueValidator
-from django.db import IntegrityError, models, transaction
+from django.db import models, transaction
 from django.db.models import ExpressionWrapper, F, Q
-from django.db.models.functions import Coalesce, Greatest
+from django.db.models.functions import Greatest
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 
@@ -19,9 +19,10 @@ from djmoney.contrib.exchange.models import convert_money
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 from sql_util.utils import SubqueryCount
-from taggit.serializers import TagListSerializerField
 
 import common.currency
+import common.filters
+import common.serializers
 import company.models
 import InvenTree.helpers
 import InvenTree.serializers
@@ -48,8 +49,6 @@ from .models import (
     PartCategory,
     PartCategoryParameterTemplate,
     PartInternalPriceBreak,
-    PartParameter,
-    PartParameterTemplate,
     PartPricing,
     PartRelated,
     PartSellPriceBreak,
@@ -283,40 +282,6 @@ class PartThumbSerializerUpdate(InvenTree.serializers.InvenTreeModelSerializer):
     image = InvenTree.serializers.InvenTreeAttachmentSerializerField(required=True)
 
 
-@register_importer()
-class PartParameterTemplateSerializer(
-    DataImportExportSerializerMixin, InvenTree.serializers.InvenTreeModelSerializer
-):
-    """JSON serializer for the PartParameterTemplate model."""
-
-    class Meta:
-        """Metaclass defining serializer fields."""
-
-        model = PartParameterTemplate
-        fields = [
-            'pk',
-            'name',
-            'units',
-            'description',
-            'parts',
-            'checkbox',
-            'choices',
-            'selectionlist',
-        ]
-
-    parts = serializers.IntegerField(
-        read_only=True,
-        allow_null=True,
-        label=_('Parts'),
-        help_text=_('Number of parts using this template'),
-    )
-
-    @staticmethod
-    def annotate_queryset(queryset):
-        """Annotate the queryset with the number of parts which use each parameter template."""
-        return queryset.annotate(parts=SubqueryCount('instances'))
-
-
 class PartBriefSerializer(
     InvenTree.serializers.FilterableSerializerMixin,
     InvenTree.serializers.InvenTreeModelSerializer,
@@ -391,60 +356,6 @@ class PartBriefSerializer(
         ),
         True,
         filter_name='pricing',
-    )
-
-
-@register_importer()
-class PartParameterSerializer(
-    InvenTree.serializers.FilterableSerializerMixin,
-    DataImportExportSerializerMixin,
-    InvenTree.serializers.InvenTreeModelSerializer,
-):
-    """JSON serializers for the PartParameter model."""
-
-    class Meta:
-        """Metaclass defining serializer fields."""
-
-        model = PartParameter
-        fields = [
-            'pk',
-            'part',
-            'part_detail',
-            'template',
-            'template_detail',
-            'data',
-            'data_numeric',
-            'note',
-            'updated',
-            'updated_by',
-            'updated_by_detail',
-        ]
-        read_only_fields = ['updated', 'updated_by']
-
-    def save(self):
-        """Save the PartParameter instance."""
-        instance = super().save()
-
-        if request := self.context.get('request', None):
-            # If the request is provided, update the 'updated_by' field
-            instance.updated_by = request.user
-            instance.save()
-
-        return instance
-
-    part_detail = enable_filter(
-        PartBriefSerializer(source='part', many=False, read_only=True, allow_null=True)
-    )
-
-    template_detail = enable_filter(
-        PartParameterTemplateSerializer(
-            source='template', many=False, read_only=True, allow_null=True
-        ),
-        True,
-    )
-
-    updated_by_detail = UserSerializer(
-        source='updated_by', many=False, read_only=True, allow_null=True
     )
 
 
@@ -708,7 +619,6 @@ class PartSerializer(
             'required_for_build_orders',
             'required_for_sales_orders',
             'stock_item_count',
-            'suppliers',
             'total_in_stock',
             'external_stock',
             'unallocated_stock',
@@ -721,8 +631,6 @@ class PartSerializer(
             'tags',
         ]
         read_only_fields = ['barcode_hash', 'creation_date', 'creation_user']
-
-    tags = TagListSerializerField(required=False)
 
     def __init__(self, *args, **kwargs):
         """Custom initialization method for PartSerializer.
@@ -769,8 +677,6 @@ class PartSerializer(
 
         Performing database queries as efficiently as possible, to reduce database trips.
         """
-        queryset = queryset.prefetch_related('category', 'default_location')
-
         # Annotate with the total number of revisions
         queryset = queryset.annotate(revision_count=SubqueryCount('revisions'))
 
@@ -793,15 +699,6 @@ class PartSerializer(
 
         queryset = queryset.annotate(
             scheduled_to_build=part_filters.annotate_scheduled_to_build_quantity()
-        )
-
-        # Annotate with the number of 'suppliers'
-        queryset = queryset.annotate(
-            suppliers=Coalesce(
-                SubqueryCount('supplier_parts'),
-                Decimal(0),
-                output_field=models.DecimalField(),
-            )
         )
 
         queryset = queryset.annotate(
@@ -862,7 +759,8 @@ class PartSerializer(
     category_detail = enable_filter(
         CategorySerializer(
             source='category', many=False, read_only=True, allow_null=True
-        )
+        ),
+        prefetch_fields=['category'],
     )
 
     category_path = enable_filter(
@@ -873,6 +771,7 @@ class PartSerializer(
             allow_null=True,
         ),
         filter_name='path_detail',
+        prefetch_fields=['category'],
     )
 
     default_location_detail = enable_filter(
@@ -880,6 +779,7 @@ class PartSerializer(
             source='default_location', many=False, read_only=True, allow_null=True
         ),
         filter_name='location_detail',
+        prefetch_fields=['default_location'],
     )
 
     category_name = serializers.CharField(
@@ -947,10 +847,6 @@ class PartSerializer(
         read_only=True, allow_null=True, label=_('Revisions')
     )
 
-    suppliers = serializers.IntegerField(
-        read_only=True, allow_null=True, label=_('Suppliers')
-    )
-
     total_in_stock = serializers.FloatField(
         read_only=True, allow_null=True, label=_('Total Stock')
     )
@@ -1009,9 +905,9 @@ class PartSerializer(
         filter_name='pricing',
     )
 
-    parameters = enable_filter(
-        PartParameterSerializer(many=True, read_only=True, allow_null=True)
-    )
+    parameters = common.filters.enable_parameters_filter()
+
+    tags = common.filters.enable_tags_filter()
 
     price_breaks = enable_filter(
         PartSalePriceSerializer(
@@ -1019,6 +915,7 @@ class PartSerializer(
         ),
         False,
         filter_name='price_breaks',
+        prefetch_fields=['salepricebreaks'],
     )
 
     # Extra fields used only for creation of a new Part instance
@@ -1046,6 +943,7 @@ class PartSerializer(
     copy_category_parameters = serializers.BooleanField(
         default=True,
         required=False,
+        write_only=True,
         label=_('Copy Category Parameters'),
         help_text=_('Copy parameter templates from selected part category'),
     )
@@ -1113,31 +1011,7 @@ class PartSerializer(
         # Duplicate parameter data from part category (and parents)
         if copy_category_parameters and instance.category is not None:
             # Get flattened list of parent categories
-            categories = instance.category.get_ancestors(include_self=True)
-
-            # All parameter templates within these categories
-            templates = PartCategoryParameterTemplate.objects.filter(
-                category__in=categories
-            )
-
-            for template in templates:
-                # First ensure that the part doesn't have that parameter
-                if PartParameter.objects.filter(
-                    part=instance, template=template.parameter_template
-                ).exists():
-                    continue
-
-                try:
-                    PartParameter.create(
-                        part=instance,
-                        template=template.parameter_template,
-                        data=template.default_value,
-                        save=True,
-                    )
-                except IntegrityError:
-                    logger.exception(
-                        'Could not create new PartParameter for part %s', instance
-                    )
+            instance.copy_category_parameters(instance.category)
 
         # Create initial stock entry
         if initial_stock:
@@ -1688,7 +1562,15 @@ class BomItemSerializer(
     )
 
     substitutes = enable_filter(
-        BomItemSubstituteSerializer(many=True, read_only=True, allow_null=True), True
+        BomItemSubstituteSerializer(many=True, read_only=True, allow_null=True),
+        False,
+        filter_name='substitutes',
+        prefetch_fields=[
+            'substitutes',
+            'substitutes__part',
+            'substitutes__part__stock_items',
+            'substitutes__part__pricing_data',
+        ],
     )
 
     part_detail = enable_filter(
@@ -1809,9 +1691,7 @@ class BomItemSerializer(
             'sub_part__stock_items',
             'sub_part__stock_items__allocations',
             'sub_part__stock_items__sales_order_allocations',
-            'substitutes',
-            'substitutes__part__stock_items',
-        ).select_related('part__pricing_data', 'sub_part__pricing_data')
+        )
 
         # Annotate with the 'total pricing' information based on unit pricing and quantity
         queryset = queryset.annotate(
@@ -1852,7 +1732,9 @@ class BomItemSerializer(
 
 @register_importer()
 class CategoryParameterTemplateSerializer(
-    DataImportExportSerializerMixin, InvenTree.serializers.InvenTreeModelSerializer
+    InvenTree.serializers.FilterableSerializerMixin,
+    DataImportExportSerializerMixin,
+    InvenTree.serializers.InvenTreeModelSerializer,
 ):
     """Serializer for the PartCategoryParameterTemplate model."""
 
@@ -1864,17 +1746,25 @@ class CategoryParameterTemplateSerializer(
             'pk',
             'category',
             'category_detail',
-            'parameter_template',
-            'parameter_template_detail',
+            'template',
+            'template_detail',
             'default_value',
         ]
 
-    parameter_template_detail = PartParameterTemplateSerializer(
-        source='parameter_template', many=False, read_only=True
+    template_detail = enable_filter(
+        common.serializers.ParameterTemplateSerializer(
+            source='template', many=False, read_only=True
+        ),
+        True,
+        prefetch_fields=['template'],
     )
 
-    category_detail = CategorySerializer(
-        source='category', many=False, read_only=True, allow_null=True
+    category_detail = enable_filter(
+        CategorySerializer(
+            source='category', many=False, read_only=True, allow_null=True
+        ),
+        True,
+        prefetch_fields=['category'],
     )
 
 

@@ -2,21 +2,21 @@ import { t } from '@lingui/core/macro';
 import { Accordion } from '@mantine/core';
 
 import { StylishText } from '../../../../components/items/StylishText';
-import PartParameterTemplateTable from '../../../../tables/part/PartParameterTemplateTable';
+import ParameterTemplateTable from '../../../../tables/general/ParameterTemplateTable';
 import SelectionListTable from '../../../../tables/part/SelectionListTable';
 
 export default function PartParameterPanel() {
   return (
-    <Accordion defaultValue='parametertemplate'>
-      <Accordion.Item value='parametertemplate' key='parametertemplate'>
+    <Accordion multiple defaultValue={['parameter-templates']}>
+      <Accordion.Item value='parameter-templates' key='parameter-templates'>
         <Accordion.Control>
-          <StylishText size='lg'>{t`Part Parameter Template`}</StylishText>
+          <StylishText size='lg'>{t`Parameter Templates`}</StylishText>
         </Accordion.Control>
         <Accordion.Panel>
-          <PartParameterTemplateTable />
+          <ParameterTemplateTable />
         </Accordion.Panel>
       </Accordion.Item>
-      <Accordion.Item value='selectionlist' key='selectionlist'>
+      <Accordion.Item value='selection-lists' key='selection-lists'>
         <Accordion.Control>
           <StylishText size='lg'>{t`Selection Lists`}</StylishText>
         </Accordion.Control>
