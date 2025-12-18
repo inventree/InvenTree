@@ -1298,9 +1298,6 @@ class SalesOrderShipmentSerializer(
     @staticmethod
     def annotate_queryset(queryset):
         """Annotate the queryset with extra information."""
-        # Prefetch related objects
-        queryset = queryset.prefetch_related('order', 'order__customer', 'allocations')
-
         queryset = queryset.annotate(allocated_items=SubqueryCount('allocations'))
 
         return queryset
@@ -1314,6 +1311,7 @@ class SalesOrderShipmentSerializer(
             source='checked_by', many=False, read_only=True, allow_null=True
         ),
         True,
+        prefetch_fields=['checked_by'],
     )
 
     order_detail = enable_filter(
@@ -1321,6 +1319,13 @@ class SalesOrderShipmentSerializer(
             source='order', read_only=True, allow_null=True, many=False
         ),
         True,
+        prefetch_fields=[
+            'order',
+            'order__customer',
+            'order__created_by',
+            'order__responsible',
+            'order__project_code',
+        ],
     )
 
     customer_detail = enable_filter(
@@ -1328,6 +1333,7 @@ class SalesOrderShipmentSerializer(
             source='order.customer', many=False, read_only=True, allow_null=True
         ),
         False,
+        prefetch_fields=['order__customer'],
     )
 
     shipment_address_detail = enable_filter(
@@ -1335,6 +1341,7 @@ class SalesOrderShipmentSerializer(
             source='shipment_address', many=False, read_only=True, allow_null=True
         ),
         True,
+        prefetch_fields=['shipment_address'],
     )
 
 

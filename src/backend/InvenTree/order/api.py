@@ -1501,10 +1501,10 @@ class ReturnOrderMixin(SerializerContextMixin):
     def get_queryset(self, *args, **kwargs):
         """Return annotated queryset for this endpoint."""
         queryset = super().get_queryset(*args, **kwargs)
-
-        queryset = queryset.prefetch_related('customer', 'created_by')
-
         queryset = serializers.ReturnOrderSerializer.annotate_queryset(queryset)
+        queryset = queryset.prefetch_related(
+            'contact', 'created_by', 'customer', 'responsible'
+        )
 
         return queryset
 
