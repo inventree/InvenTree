@@ -2533,6 +2533,7 @@ class StockMetadataAPITest(InvenTreeAPITestCase):
             url,
             {'metadata': {f'abc-{numstr}': f'xyz-{raw_url}-{numstr}'}},
             expected_code=200,
+            follow=True,
         )
 
         # Refresh
@@ -2544,8 +2545,8 @@ class StockMetadataAPITest(InvenTreeAPITestCase):
     def test_metadata(self):
         """Test all endpoints."""
         for raw_url, model in {
-            'api/stock/location/{pk}/metadata/': StockLocation,
-            'api/stock/test/{pk}/metadata/': StockItemTestResult,
-            'api/stock/{pk}/metadata/': StockItem,
+            '/api/stock/location/{pk}/metadata/': StockLocation,
+            '/api/stock/test/{pk}/metadata/': StockItemTestResult,
+            '/api/stock/{pk}/metadata/': StockItem,
         }.items():
             self.metatester(raw_url, model)
