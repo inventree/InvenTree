@@ -23,10 +23,6 @@ inputs:
         required: false
         description: 'Should a full update cycle be run?'
         default: 'false'
-    cffi:
-        required: false
-        description: 'Reinstall cffi package?'
-        default: 'false'
 
     apt-dependency:
         required: false
@@ -68,7 +64,7 @@ runs:
       - name: Install Specific Python Dependencies
         if: ${{ inputs.pip-dependency }}
         shell: bash
-        run: uv pip install ${PIP_DEPS} -U
+        run: uv pip install ${PIP_DEPS}
         env:
           PIP_DEPS: ${{ inputs.pip-dependency }}
 
@@ -98,14 +94,6 @@ runs:
         if: ${{ inputs.install == 'true' }}
         shell: bash
         run: invoke install --uv
-      # reinstall cffi
-      - name: Reinstall cffi
-        if: ${{ inputs.cffi == 'true' }}
-        shell: bash
-        run: |
-          pip uninstall cffi -y
-          sudo apt remove --purge -y python3-cffi
-          pip install --no-cache-dir --force-reinstall --ignore-installed cffi
       - name: Run invoke update
         if: ${{ inputs.update == 'true' }}
         shell: bash
