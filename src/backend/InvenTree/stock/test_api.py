@@ -9,6 +9,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.urls import reverse
 
+import pytest
 from djmoney.money import Money
 from rest_framework import status
 
@@ -17,7 +18,7 @@ import company.models
 import part.models
 from common.models import InvenTreeCustomUserStateModel, InvenTreeSetting
 from common.settings import set_global_setting
-from InvenTree.unit_test import InvenTreeAPITestCase
+from InvenTree.unit_test import InvenTreeAPIPerformanceTestCase, InvenTreeAPITestCase
 from part.models import Part, PartTestTemplate
 from stock.models import (
     StockItem,
@@ -2549,3 +2550,15 @@ class StockMetadataAPITest(InvenTreeAPITestCase):
             'api-stock-item-metadata': StockItem,
         }.items():
             self.metatester(apikey, model)
+
+
+class StockApiPerformanceTest(StockAPITestCase, InvenTreeAPIPerformanceTestCase):
+    """Performance tests for the Stock API."""
+
+    @pytest.mark.django_db
+    @pytest.mark.benchmark
+    def test_api_stock_list(self):
+        """Test that Stock API queries are performant."""
+        url = reverse('api-stock-list')
+        response = self.get(url, expected_code=200)
+        self.assertGreater(len(response.data), 13)

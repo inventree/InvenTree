@@ -3357,7 +3357,7 @@ class PartApiPerformanceTest(PartAPITestBase, InvenTreeAPIPerformanceTestCase):
 
     @pytest.mark.django_db
     @pytest.mark.benchmark
-    def test_part_api_performance(self):
+    def test_api_part_list(self):
         """Test that Part API queries are performant."""
         url = reverse('api-part-list')
         response = self.get(url, expected_code=200)
