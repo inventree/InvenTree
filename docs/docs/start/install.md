@@ -125,15 +125,15 @@ Several more options need settings, but these depend on your particular installa
 
 | Option name | Value | Notes |
 |-------------|-------|-------|
-| ```site_url``` | ```https://itree.example.com/``` | Use http://localhost:8000 for local testing. |
-| ```database``` &raquo; ```ENGINE```<br>```database``` &raquo; ```NAME```<br>```database``` &raquo; ```USER```<br>```database``` &raquo; ```PASSWORD``` | ```mysql```<br>```inventree```<br>```dbuser```<br>```VeryC0mPLekSP4SS``` | For configuring other databases, see [Database configuration for Django](https://docs.djangoproject.com/en/5.2/ref/databases/).  Database creation is covered below.|
-| ```admin_url``` | ```itree-admin``` | Moves admin interface to https://itree.example.com/itree-admin/\, to reduce scripted attacks. |
-| ```admin_email``` | ```itree-admin@example.com``` | Who puzzled users should email.
-| ```admin_password``` | ```^TotalllllyUnge55ible``` | Password for the admin user. |
-| ```language``` | ```en-US``` | See this list of [language codes](http://www.i18nguy.com/unicode/language-identifiers.html). |
-| ```timezone``` | ```Australia/Hobart``` | See this list of [timezone names](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones). |
-| ```email``` &raquo; ```sender```<br>```email``` &raquo; ```host```<br>```email``` &raquo; ```port```<br>```email``` &raquo; ```username```<br>```email``` &raquo; ```password``` | ```itree@example.com```<br>```mail.unst0ppable-email.com```<br>```2525```<br>```itree```<br>```tHE_n4emOfMyCAT``` | Credentials and connection details for your favorite email sending company.  See [Django email settings](https://docs.djangoproject.com/en/5.2/ref/settings/#email-backend). |
-| ```global_settings``` &raquo; ```INVENTREE_DEFAULT_CURRENCY``` | ```USD``` | See this list of [currency codes](https://en.wikipedia.org/wiki/ISO_4217). |
+| `site_url` | `https://itree.example.com/` | Use http://localhost:8000 for local testing. |
+| `database` &raquo; `ENGINE`<br>`database` &raquo; `NAME`<br>`database` &raquo; `USER`<br>`database` &raquo; `PASSWORD` | `mysql`<br>`inventree`<br>`dbuser`<br>`VeryC0mPLekSP4SS` | For configuring other databases, see [Database configuration for Django](https://docs.djangoproject.com/en/5.2/ref/databases/).  Database creation is covered below.|
+| `admin_url` | `itree-admin` | Moves admin interface to https://itree.example.com/itree-admin/\, to reduce scripted attacks. |
+| `admin_email` | `itree-admin@example.com` | Who puzzled users should email.
+| `admin_password` | `^TotalllllyUnge55ible` | Password for the admin user. |
+| `language` | `en-US` | See this list of [language codes](http://www.i18nguy.com/unicode/language-identifiers.html). |
+| `timezone` | `Australia/Hobart` | See this list of [timezone names](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones). |
+| `email` &raquo; `sender`<br>`email` &raquo; `host`<br>`email` &raquo; `port`<br>`email` &raquo; `username`<br>`email` &raquo; `password` | `itree@example.com`<br>`mail.unst0ppable-email.com`<br>`2525`<br>`itree`<br>`tHE_n4emOfMyCAT` | Credentials and connection details for your favorite email sending company.  See [Django email settings](https://docs.djangoproject.com/en/5.2/ref/settings/#email-backend). |
+| `global_settings` &raquo; `INVENTREE_DEFAULT_CURRENCY` | `USD` | See this list of [currency codes](https://en.wikipedia.org/wiki/ISO_4217). |
 
 !!! tip "Configuration Options"
     InvenTree configuration can be performed using environment variables, the `src/config/config.yaml` configuration file, or a combination of both.
