@@ -53,7 +53,7 @@ INVENTREE_BASE_URL = 'https://inventree.org'
 INVENTREE_NEWS_URL = f'{INVENTREE_BASE_URL}/news/feed.atom'
 
 # Determine if we are running in "test" mode e.g. "manage.py test"
-TESTING = 'test' in sys.argv or 'TESTING' in os.environ
+TESTING = 'test' in sys.argv or 'TESTING' in os.environ or 'pytest' in sys.argv
 
 if TESTING:
     # Use a weaker password hasher for testing (improves testing speed)
@@ -592,7 +592,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
-        'rest_framework.permissions.DjangoModelPermissions',
+        'InvenTree.permissions.ModelPermission',
         'InvenTree.permissions.RolePermission',
         'InvenTree.permissions.InvenTreeTokenMatchesOASRequirements',
     ],

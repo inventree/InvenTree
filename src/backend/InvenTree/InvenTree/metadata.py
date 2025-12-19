@@ -23,7 +23,7 @@ logger = structlog.get_logger('inventree')
 class InvenTreeMetadata(SimpleMetadata):
     """Custom metadata class for the DRF API.
 
-    This custom metadata class imits the available "actions",
+    This custom metadata class limits the available "actions",
     based on the user's role permissions.
 
     Thus when a client send an OPTIONS request to an API endpoint,
@@ -50,6 +50,10 @@ class InvenTreeMetadata(SimpleMetadata):
 
         for method in {'PUT', 'POST', 'GET'} & set(view.allowed_methods):
             view.request = clone_request(request, method)
+
+            # Mark this request, to prevent expensive prefetching
+            view.request._metadata_requested = True
+
             try:
                 # Test global permissions
                 if hasattr(view, 'check_permissions'):
