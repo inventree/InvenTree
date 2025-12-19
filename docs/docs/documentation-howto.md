@@ -122,7 +122,9 @@ Click [here](/part/views)
 Images are served from the `./docs/assets/images` folder and can be added as follows:
 
 ```
+{% raw %}
 {{ image("image_name.png", base="subfolder", title="Image title") }}
+{% endraw %}
 ```
 
 See the `image` macro in `./docs/main.py` for more information.
@@ -132,7 +134,9 @@ See the `image` macro in `./docs/main.py` for more information.
 Icons can be rendered (using the [tabler icon set](https://tabler.io/icons)) as follows:
 
 ```
+{% raw %}
 {{ icon("brand-github", color="red")}}
+{% endraw %}
 ```
 
 See the `icon` macro in `./docs/main.py` for more information.
