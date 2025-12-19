@@ -91,7 +91,7 @@ Later, we'll tell InvenTree about the location of these directories via [configu
 
 ### Download Source Code
 
-Download InvenTree source code, into the `./src` directory:
+Download InvenTree source code into the `~/src` directory:
 
 ```
 git clone --branch stable https://github.com/inventree/inventree src
@@ -127,7 +127,7 @@ Several more options need settings, but these depend on your particular installa
 |-------------|-------|-------|
 | `site_url` | `https://itree.example.com/` | Use http://localhost:8000 for local testing. |
 | `database` &raquo; `ENGINE`<br>`database` &raquo; `NAME`<br>`database` &raquo; `USER`<br>`database` &raquo; `PASSWORD` | `mysql`<br>`inventree`<br>`dbuser`<br>`VeryC0mPLekSP4SS` | For configuring other databases, see [Database configuration for Django](https://docs.djangoproject.com/en/5.2/ref/databases/).  Database creation is covered below.|
-| `admin_url` | `itree-admin` | Moves admin interface to https://itree.example.com/itree-admin/\, to reduce scripted attacks. |
+| `admin_url` | `itree-admin` | Moves admin interface to `https://itree.example.com/itree-admin/`, to reduce scripted attacks. |
 | `admin_email` | `itree-admin@example.com` | Who puzzled users should email.
 | `admin_password` | `^TotalllllyUnge55ible` | Password for the admin user. |
 | `language` | `en-US` | See this list of [language codes](http://www.i18nguy.com/unicode/language-identifiers.html). |
@@ -165,9 +165,9 @@ pip install --upgrade --ignore-installed invoke
 invoke install --skip-plugins
 ```
 
-`--skip-plugins` is necessary because otherwise, `invoke` tries to access the db, which hasn't been set up yet.
+`--skip-plugins` is necessary because without it, `invoke` tries to access the db, which hasn't been set up yet.
 
-!!! info "Possible errors"
+!!! warning "Possible errors"
     If you run `invoke` and get a message `Can't find any collection named 'tasks'!`, then you need to run `cd ~/src` first, because invoke is sensitive to the directory it runs in.
 
 ## Create Database
@@ -192,7 +192,7 @@ sudo systemctl start postgresql
 
 #### Create Database and User
 
-We need to create new database, and a postgres user to allow database access.  Start the database client:
+We need to create a new database, and a user who will access the database.  Start the database client:
 
 ```
 sudo -u postgres psql
@@ -246,7 +246,7 @@ systemctl start mariadb
 
 #### Create Database and User
 
-We need to create new database, and a MySQL/MariaDB user to allow database access.  Start the database client:
+We need to create a new database, and a user who will access the database.  Start the database client:
 
 ```
 sudo mysql -u root
@@ -288,7 +288,7 @@ Run the following command to create the database tables and populate them with i
 
 ```
 cd ~/src
-invoke update  --skip-backup --no-frontend
+invoke update --skip-backup --no-frontend
 ```
 
 ### Create Admin Account
