@@ -14,7 +14,7 @@ InvenTree uses [MkDocs](https://www.mkdocs.org/) to convert [Markdown](https://w
     * Python 3 installed on your system.
     * An existing InvenTree installation containing the virtual environment that was created during installation.
 
-    These instructions assume you followed the [InvenTree bare metal installation instructions](./docs/start/install.md), so you'll have an `inventree` user, a home directory at `/home/inventree`, the InvenTree source code cloned from [GitHub](https://github.com/inventree/inventree) into `/home/inventree/src`, and a virtual environment at `/home/inventree/env`.  If you installed InvenTree some other way, this might vary, and you'll have to adjust these instructions accordingly.
+    These instructions assume you followed the [InvenTree bare metal installation instructions](./start/install.md), so you'll have an `inventree` user, a home directory at `/home/inventree`, the InvenTree source code cloned from [GitHub](https://github.com/inventree/inventree) into `/home/inventree/src`, and a virtual environment at `/home/inventree/env`.  If you installed InvenTree some other way, this might vary, and you'll have to adjust these instructions accordingly.
 
 !!! warning "Your InvenTree install will be updated!"
     Some of the commands that follow will make changes to your install, for example, by running any pending database migrations.  There's a small risk this may cause issues with your existing installation.  If you can't risk this, consider setting up a separate InvenTree installation specifically for documentation development.
@@ -109,13 +109,11 @@ For example, to link to the page `/part/views` from `/stock/stocktake`, the link
 Click [here](../part/views.md)
 ```
 
-*Formatting the link as follows:*
+*The following format will result in a broken link.*
 
 ```
 Click [here](/part/views)
 ```
-
-*will result in a broken link.*
 
 ### Images
 
