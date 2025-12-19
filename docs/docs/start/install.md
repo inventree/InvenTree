@@ -4,7 +4,7 @@ title: Install InvenTree
 
 ## Bare Metal Setup
 
-These are the instructions for a manual install instructions on bare metal.  At the end you will be almost ready to run InvenTree locally.  Further steps are required to set up a production server.
+These are the instructions for a manual install instructions on bare metal.  At the end you will be almost ready to run InvenTree locally, with some further steps start either a production or development server.
 
 !!! tip "Installer"
       For a more automated installation method, we recommend using our [installer](./installer.md).
@@ -44,7 +44,7 @@ sudo apt-get install \
 
 ### User Accounts
 
-!!! warning "Running as Root"
+!!! warning "Don't Run As Root"
     The InvenTree server should not be run by the root user. These installation instructions assume that InvenTree is installed and run using a user account called `inventree`.
 
 !!! tip "Run programs as root more easily"
@@ -97,8 +97,8 @@ Download InvenTree source code, into the `./src` directory:
 git clone --branch stable https://github.com/inventree/inventree src
 ```
 
-!!! info "Main Branch = Development"
-    These instructions give you the lastest `stable` version of InvenTree.  If you'd like to try the development branch, replace `stable` with `master`.  Please note the install instructions may be different for `master`.
+!!! info "_Main Branch_ means _Development_"
+    These instructions give you the latest `stable` version of InvenTree.  If you'd like to try the development branch, replace `stable` with `master`.  Please note the development version may have serious bugs, and the install instructions may have changed.
 
 ### Make A Minimal Configuration
 
