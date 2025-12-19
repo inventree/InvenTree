@@ -4,27 +4,29 @@ title: Install InvenTree
 
 ## Bare Metal Setup
 
+These are the instructions for a manual install instructions on bare metal.  At the end you will be almost ready to run InvenTree locally.  Further steps are required to set up a production server.
+
 !!! tip "Installer"
-    These are the instructions for a manual install instructions on bare metal.  For a more automated installation method, we recommend our [installer](./installer.md).
+      For a more automated installation method, we recommend using our [installer](./installer.md).
 
 !!! tip "Docker Guide"
     If you want to install using Docker refer to the [Docker Setup Guide](./docker.md).
 
-Follow the instructions below to install the required system packages, python modules, and InvenTree source code.  There are also notes for configuring application and web servers.
+Follow the instructions below to install the required system packages, python modules, and InvenTree source code.
 
 !!! warning "Experienced Users Only"
     The following instructions assume you are reasonably adept at Linux system administration.
 
 !!! warning "OS Specific Requirements"
     These instructions have been tested with the following distros and versions:
-    
+
       * Ubuntu 25.10
       * Debian FIXME
 
     The instructions may need to be tweaked for other distros and versions.
 
 !!! tip "Root and non-root users"
-    Commands which should be run as "root" (the privileged super user), are prefixed with `sudo`.  Commands _not_ prefixed with `sudo` should be run as the non-privileged user (see the `inventree` user created below).  In practice you might use ssh to get access to the server as root, then run `su -l inventree` to switch to the non-privileged user.  Or you might have two terminal windows open, one for root, and and one for the non-privileged user.  The `sudo` prefix in these instructions is your cue as to which user to use.
+    Commands which should be run as "root" (the privileged super user), are prefixed with `sudo`.  Commands _not_ prefixed with `sudo` should be run as the non-privileged user (see the `inventree` user created below).  In practice you might use ssh to get access to the server as root, then run `su -l inventree` to switch to the non-privileged user.  Or you might have two terminal windows open, one for root, and and one for the non-privileged user.  The `sudo` prefix in these instructions is your cue as to which account should run the command.
 
 ### Install System Packages
 Install required system packages (as `root`, the super user):
@@ -32,33 +34,38 @@ Install required system packages (as `root`, the super user):
 ```
 sudo apt-get update
 sudo apt-get install \
-    python3 python3-dev python3-pip python3-invoke python3-venv \
+    python3 python3-dev python3-pip \
     git gcc g++ gettext gnupg \
     poppler-utils pango1.0-tools \
     libjpeg-dev webp
 ```
 
-!!! info "Python Version"
-    InvenTree requires a modern Python version [check here]({{ sourcefile("CONTRIBUTING.md") }}) for the current minimums.  Run `python3 --version` to check your installed version.  FIXME: CONTRIBUTING.md doesn't mention minimum versions.
 
-!!! warning "Weasyprint"
-    On some systems, the dependencies for the `weasyprint` package might not be installed. Consider running through the [weasyprint installation steps](https://doc.courtbouillon.org/weasyprint/stable/first_steps.html) before moving forward.  FIXME: FIXME: Delete.  Seems all Weasyprint needs is `pango1.0-tools`, which is handled above.
 
-### Create InvenTree User
+### User Accounts
 
 !!! warning "Running as Root"
-    The InvenTree server should not be run by the root user. These deployment instructions assume that InvenTree is installed and run using a user account called `inventree`.
+    The InvenTree server should not be run by the root user. These installation instructions assume that InvenTree is installed and run using a user account called `inventree`.
+
+!!! tip "Run programs as root more easily"
+    To allow the `inventree` user to perform privileged actions during this installation via `sudo` with no root password, run this:
+
+    ```
+    echo 'inventree ALL=(ALL) NOPASSWD: ALL' | sudo tee /etc/sudoers.d/inventree
+    sudo chmod 0440 /etc/sudoers.d/inventree
+    ```
+
+    To revoke this:
+    ```
+    sudo rm /etc/sudoers.d/inventree
+    ```
+
+#### Create InvenTree User
 
 To create the user account:
 
 ```
 sudo useradd -m -U -s /bin/bash inventree
-```
-
-To allow the `inventree` user to perform privileged actions during this installation via `sudo` with no root password, run this::
-
-```
-echo 'inventree ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/inventree
 ```
 
 From here on, most commands should be run by the `inventree` user, so switch to them now:
@@ -70,27 +77,14 @@ Alternatively, use ssh to login as the `inventree` user.
 
 ### Set Up Directories
 
-InvenTree needs some directories for storing log files, backups, and files that are served to users, which we'll put in the `inventree` user's home directory, `/home/inventree/`.  Let's start by setting the "group" of these directories to `www-data`, which is the default user/group used by most webservers (e.g. nginx, apache) and app servers (e.g. gunicorn and uwsgi).
-
-```
-sudo chown inventree:www-data /home/inventree
-sudo chmod o-rwx /home/inventree
-```
-
 InvenTree requires a directory for storage of [static files](./config.md#static-file-storage), for [user uploaded files](./config.md#uploaded-file-storage), and for [database backups](./config.md#backup-file-storage).  We'll store these within a `data/` subdirectory.
 
 ```
 cd
-mkdir data
-cd data
-mkdir static media backup
-sudo chgrp www-data static media backup
-sudo chmod g+s backup media
-cd ..
+mkdir -p data/static data/media data/backup
 ```
-The `chgrp` is so the app server and web server can see these files.  The `chmod g+s` will allow the app server to store backup files, and data uploaded by users.
 
-Later, we'll tell Inventree about the location of these directories via [configuration options](./config.md).
+Later, we'll tell InvenTree about the location of these directories via [configuration options](./config.md).
 
 !!! info "Read More"
     For more information about static, media and backup files, please see the [proxy server documentation](./processes.md#proxy-server).
@@ -100,13 +94,55 @@ Later, we'll tell Inventree about the location of these directories via [configu
 Download InvenTree source code, into the `./src` directory:
 
 ```
-git clone https://github.com/inventree/inventree src
+git clone --branch stable https://github.com/inventree/inventree src
 ```
 
 !!! info "Main Branch = Development"
-    The "main" branch of the InvenTree code base represents the "latest" (development) code. If you would like to use most recent "stable" release, target the `stable` branch.
+    These instructions give you the lastest `stable` version of InvenTree.  If you'd like to try the development branch, replace `stable` with `master`.  Please note the install instructions may be different for `master`.
+
+### Make A Minimal Configuration
+
+Run these commands to create a minimal configuration file from the template.
+```
+ln -sf ../src/backend/InvenTree/config_template.yaml src/config/config.yaml.orig
+cp src/config/config.yaml.orig src/config/config.yaml
+```
+
+For a minimally useful configuration, edit `src/config/config.yaml` and set these options, uncommenting them if necessary:
+
+| Option name | Value |
+|----------------|-------|
+| ```debug``` | ```False``` |
+| ```admin_enabled``` | ```True``` |
+| ```admin_user``` | ```admin``` |
+| ```plugins_enabled``` | ```True``` |
+| ```media_root``` | ```/home/inventree/data/media``` |
+| ```static_root``` | ```/home/inventree/data/static``` |
+| ```backup_dir``` | ```/home/inventree/data/backup``` |
+| ```background``` &raquo; ```workers``` | ```1``` |
+
+Several more options need settings, but these depend on your particular installation.  Here is an example configuration for a site running at `https://itree.example.com/`, using a MariaDB database backend.  Choose values suitable for your installation.
+
+| Option name | Value | Notes |
+|-------------|-------|-------|
+| ```site_url``` | ```https://itree.example.com/``` | Use http://localhost:8000 for local testing. |
+| ```database``` &raquo; ```ENGINE```<br>```database``` &raquo; ```NAME```<br>```database``` &raquo; ```USER```<br>```database``` &raquo; ```PASSWORD``` | ```mysql```<br>```inventree```<br>```dbuser```<br>```VeryC0mPLekSP4SS``` | For configuring other databases, see [Database configuration for Django](https://docs.djangoproject.com/en/5.2/ref/databases/).  Database creation is covered below.|
+| ```admin_url``` | ```itree-admin``` | Moves admin interface to https://itree.example.com/itree-admin/\, to reduce scripted attacks. |
+| ```admin_email``` | ```itree-admin@example.com``` | Who puzzled users should email.
+| ```admin_password``` | ```^TotalllllyUnge55ible``` | Password for the admin user. |
+| ```language``` | ```en-US``` | See this list of [language codes](http://www.i18nguy.com/unicode/language-identifiers.html). |
+| ```timezone``` | ```Australia/Hobart``` | See this list of [timezone names](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones). |
+| ```email``` &raquo; ```sender```<br>```email``` &raquo; ```host```<br>```email``` &raquo; ```port```<br>```email``` &raquo; ```username```<br>```email``` &raquo; ```password``` | ```itree@example.com```<br>```mail.unst0ppable-email.com```<br>```2525```<br>```itree```<br>```tHE_n4emOfMyCAT``` | Credentials and connection details for your favorite email sending company.  See [Django email settings](https://docs.djangoproject.com/en/5.2/ref/settings/#email-backend). |
+| ```global_settings``` &raquo; ```INVENTREE_DEFAULT_CURRENCY``` | ```USD``` | See this list of [currency codes](https://en.wikipedia.org/wiki/ISO_4217). |
+
+!!! tip "Configuration Options"
+    InvenTree configuration can be performed using environment variables, the `src/config/config.yaml` configuration file, or a combination of both.
+    Refer to the [configuration guidelines](./config.md) for more detail.
 
 ### Create Virtual Environment
+
+!!! info "Python Version"
+    InvenTree requires a modern Python version.  To see the minimum version we support, search for `python-version` in [pyproj.toml]({{ sourcefile("pyproject.toml") }}) for the current minimums.  Run `python3 --version` to check your installed version.
 
 Create a python virtual environment for installing required Python packages and binaries:
 
@@ -116,107 +152,107 @@ source ./env/bin/activate
 ```
 
 !!! info "(env) prefix"
-    The shell prompt should now display the `(env)` prefix, showing that you are operating within the context of the python virtual environment
+    The shell prompt should now display the `(env)` prefix, showing that you are operating within the Python virtual environment.
 
 ### Install InvenTree Packages
 
-The Python packages required by the InvenTree server must be installed into the virtual environment.
+Let's now use `pip` to install Python packages the InvenTree server needs into the virtual environment.
 
 ```
+cd src
+pip install --upgrade pip
 pip install --upgrade --ignore-installed invoke
-invoke install
+invoke install --skip-plugins
 ```
 
-This installs all required Python packages using pip package manager. It also creates a (default) database configuration file which needs to be edited to meet user needs before proceeding (see next step below).
+`--skip-plugins` is necessary because otherwise, `invoke` tries to access the db, which hasn't been set up yet.
+
+!!! info "Possible errors"
+    If you run `invoke` and get a message `Can't find any collection named 'tasks'!`, then you need to run `cd ~/src` first, because invoke is sensitive to the directory it runs in.
 
 ## Create Database
 
-As part of the initial setup, an empty database needs to be created. Follow the instructions below particular to your database engine of choice:
+Setting up the database depends on the database program you're using.
 
 ### PostgreSQL
 
-#### Install PostgreSQL
-
-Install required system packages:
-
-!!! info "Sudo Actions"
-    Perform sudo actions from a separate shell, as 'inventree' user does not have sudo access
+Install the database system packages:
 
 ```
 sudo apt-get install postgresql postgresql-contrib libpq-dev
+sudo apt-get install postgresql-client
 ```
 
-And start the postgresql service:
+Then start the postgresql service:
 
 ```
-sudo service postgresql start
+sudo systemctl enable postgresql
+sudo systemctl start postgresql
 ```
 
 #### Create Database and User
 
-We need to create new database, and a postgres user to allow database access.
+We need to create new database, and a postgres user to allow database access.  Start the database client:
 
 ```
 sudo -u postgres psql
 ```
 
-You should now be in an interactive database shell:
+You should now be in an interactive database shell. Create a new database as follows:
 
 ```
-create database inventree;
-create user myuser with encrypted password 'mypass';
-grant all privileges on database inventree to myuser;
+postgres=# CREATE DATABASE inventree;
+```
+
+Create a new user with complete access to the database:
+
+```
+postgres=# CREATE USER myuser WITH ENCRYPTED PASSWORD 'mypass';
+postgres=# GRANT ALL PRIVILEGES ON DATABASE inventree TO myuser;
 ```
 
 !!! info "Username / Password"
-    You should change the username and password from the values specified above. This username and password will also be for the InvenTree database connection configuration.
+    You should change the username and password to the ones from your `src/config/config.yaml` file.
+
+Exit the Postgres shell:
+
+```
+postgres=# EXIT;
+```
 
 #### Install Python Bindings
 
-The PostgreSQL python binding must also be installed (into your virtual environment):
+Install the python bindings for PostgreSQL into your virtual environment:
 
 ```
 pip3 install psycopg pgcli
 ```
 
-#### Install Postgresql client
-
-If PostgreSQL and InvenTree are installed on separate servers / containers the PostgreSQL client has to be installed also where InvenTree is running.
-
-```
-sudo apt-get install postgresql-client
-```
-
 ### MySQL / MariaDB
 
-#### Install Backend
-
-To run InvenTree with the MySQL or MariaDB backends, a number of extra packages need to be installed:
-
-!!! info "Sudo Actions"
-    Perform sudo actions from a separate shell, as 'inventree' user does not have sudo access
+Install the database system packages:
 
 ```
 sudo apt-get install mysql-server libmysqlclient-dev
+sudo apt-get install mariadb-server libmysqlclient-dev
 ```
 
-#### Install Python Bindings
-
-Install the python bindings for MySQL (into the python virtual environment).
+Then start the MariaDB service:
 
 ```
-pip3 install mysqlclient mariadb
+systemctl enable mariadb
+systemctl start mariadb
 ```
 
-#### Create Database
+#### Create Database and User
 
-Assuming the MySQL server is installed and running, login to the MySQL server as follows:
+We need to create new database, and a MySQL/MariaDB user to allow database access.  Start the database client:
 
 ```
 sudo mysql -u root
 ```
 
-Create a new database as follows:
+You should now be in an interactive database shell. Create a new database as follows:
 
 ```
 mysql> CREATE DATABASE inventree;
@@ -230,41 +266,30 @@ mysql> GRANT ALL ON inventree.* TO 'myuser'@'%';
 mysql> FLUSH PRIVILEGES;
 ```
 
-Exit the mysql shell:
+!!! info "Username / Password"
+    You should change the username and password to the ones from your `src/config/config.yaml` file.
+
+Exit the MySQL/MariaDB shell:
 
 ```
 mysql> EXIT;
 ```
 
-!!! info "Username / Password"
-    You should change the username and password from the values specified above. This username and password will also be for the InvenTree database connection configuration.
+#### Install Python Bindings
 
-## Configure InvenTree Options
-
-Once the required software packages are installed and the database has been created, the InvenTree server options must be configured.
-
-!!! tip "Configuration Options"
-    InvenTree configuration can be performed using environment variables, or the `config.yaml` configuration file (or a combination of both).
-
-!!! info "Config Guidelines"
-    Refer to the [configuration guidelines](./config.md) for full details.
-
-!!! warning "Configure Database"
-    Ensure database settings are correctly configured before proceeding to the next step! In particular, check that the database connection settings match the database you have created in the previous step.
-
-## Initialize Database
-
-The database has been configured above, but is currently empty.
-
-### Schema Migrations
-
-Run the following command to initialize the database with the required tables.
+Install the python bindings for MySQL/Maria into your virtual environment:
 
 ```
-cd /home/inventree/src
-invoke update
+pip3 install mysqlclient
 ```
-NOTE: If you are on Debian, and get "No module named 'django', it might be that `/usr/bin/invoke` are used. Make sure that the python environment (`/home/inventree/env/bin`) is ahead in the PATH variable.
+## Initialising The Database
+
+Run the following command to create the database tables and populate them with initial data:
+
+```
+cd ~/src
+invoke update  --skip-backup --no-frontend
+```
 
 ### Create Admin Account
 
@@ -274,75 +299,91 @@ Create a superuser (admin) account for the InvenTree installation:
 invoke superuser
 ```
 
-!!! success "Ready to Serve"
-    The InvenTree database is now fully configured, and ready to go.
+## Download Front End Files
 
-## Start Server
+A front end app runs in the user's browser page.  Let's download the files for the app:
+```
+mkdir -p ~/src/src/backend/InvenTree/web/static
+invoke frontend-download --tag=auto
+invoke static
+```
+
+## Starting A Server
+
+!!! success "Almost ready to serve!"
+    The InvenTree database is now fully configured, and ready to go.
 
 ### Development Server
 
-The InvenTree database is now setup and ready to run. A simple development server can be launched from the command line.
-
-The InvenTree development server is useful for testing and configuration - and it may be wholly sufficient for a small-scale installation.
-
-Refer to the [development server instructions](./bare_dev.md) for further information.
+To do InvenTree evaluation, testing or development, follow the [development server instructions](./bare_dev.md) for a simple server you can start and stop from the command line.
 
 ### Production Server
 
-In a production environment, a more robust server setup is required.
-
-Refer to the [production server instructions](./bare_prod.md) for further information.
+To set InvenTree up for you and others to use on an intranet or on the Internet, follow the [production server instructions](./bare_prod.md).  These instructions will also ensure InvenTree restarts automatically when the server reboots.
 
 ## Updating InvenTree
 
-Administrators wishing to update InvenTree to the latest version should follow the instructions below. The commands listed below should be run from the InvenTree root directory.
+!!! info "Stay up to date!"
+    InvenTree is under very active development, with frequent fixes and new features.
 
-!!! info "Update Database"
-	It is advisable to [backup the InvenTree database](./backup.md) before performing these steps. The particular backup procedure may depend on your installation details.
+!!! tip "Quick Update"
+    If you've skipped everything above because you just want to update your existing InvenTree installation, run these commands first, as the `inventree` user:
+    ```
+    cd ~/src
+    source ~/env/bin/activate
+    ```
 
-### Stop InvenTree Server
+### Backing Up Your Data
+!!! warning "Update Database"
+	While InvenTree will make a backup before updating your database, you should first make sure you have backups to fall back on if there's a problem.  To view the current backups:
 
-Ensure the InvenTree server is stopped. This will depend on the particulars of your database installation.
+    ```
+    invoke listbackups
+    ```
 
-!!! info "Stop Server"
-    The method by which the InvenTree server is stopped depends on your particular installation!
+    `.dump.gz` files are compressed SQL dumps, and `.tar.gz` files contain user uploaded "media" files.  For help backing up and restoring, see the [backing up](./backup.md) documentation.
 
-### Update Source Code
+### Updating Source Code
 
-Update the InvenTree source code to the latest version (or a particular commit if required).
+To update InvenTree to the latest stable version:
 
-For example, pull down the latest InvenTree sourcecode using Git:
+```
+git pull origin stable
+```
+
+To update InvenTree to the latest development version:
 
 ```
 git pull origin master
 ```
 
-!!! info "Release Versions"
-    If you are using a particular version of InvenTree, you may wish to target a specific code branch or tag, instead of just pulling down latest master
-
 ### Perform Database Migrations
 
-Updating the database is as simple as calling the `update` script:
+This command performs the following steps:
+
+* Ensures all the packages InvenTree requires are installed and up to date
+* Performs schema changes to tables in the database
+* Walks you through any steps which require interaction
+* Collects any new or updated static files
 
 ```
 invoke update
 ```
 
 !!! info "Skip Backup"
-    By default, the `invoke update` command performs a database backup. To skip this step, add the `--skip-backup` flag
-
-This command performs the following steps:
-
-* Ensure all required packages are installed and up to date
-* Perform required database schema changes
-* Run the user through any steps which require interaction
-* Collect any new or updated static files
+    `invoke update` will first create a new database backup.  To skip this, add the `--skip-backup` flag
 
 ### Restart Server
 
-Ensure the InvenTree server is restarted. This will depend on the particulars of your database installation.
+After an update, you'll need to restart the InvenTree server processes.  See the development and production server instructions above for how to do this.
 
-FIXME: Delete so that inventree can no longer sudo without password
+## Revoke Sudo Access
+
+If you granted the `inventree` user passwordless `sudo` access during installation, you should revoke this now:
+
 ```
 sudo rm /etc/sudoers.d/inventree
 ```
+
+!!! success "All done!"
+    If you've made it this far, congratulations!  You now have a working InvenTree installation.  If you had problems with the installation, please let us know so we can improve this documentation.
