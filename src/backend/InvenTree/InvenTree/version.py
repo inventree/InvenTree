@@ -12,9 +12,6 @@ import sys
 from datetime import datetime as dt
 from datetime import timedelta as td
 
-import django
-from django.conf import settings
-
 from .api_version import INVENTREE_API_TEXT, INVENTREE_API_VERSION
 
 # InvenTree software version
@@ -230,6 +227,8 @@ def inventreeApiText(versions: int = 10, start_version: int = 0):
 
 def inventreeDjangoVersion():
     """Returns the version of Django library."""
+    import django
+
     return django.get_version()
 
 
@@ -296,6 +295,8 @@ def inventreePlatform():
 
 def inventreeDatabase():
     """Return the InvenTree database backend e.g. 'postgresql'."""
+    from django.conf import settings
+
     return settings.DB_ENGINE
 
 
