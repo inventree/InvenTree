@@ -17,7 +17,7 @@ from rest_framework.views import APIView
 
 import InvenTree.permissions
 import plugin.serializers as PluginSerializers
-from InvenTree.api import redirect_metadata_view
+from InvenTree.api import meta_path
 from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.helpers import str2bool
 from InvenTree.mixins import (
@@ -576,10 +576,7 @@ plugin_api_urls = [
                             ),
                         ]),
                     ),
-                    path(
-                        'metadata/',
-                        redirect_metadata_view(PluginConfig, lookup_field='key'),
-                    ),
+                    meta_path(PluginConfig, lookup_field='key'),
                     path(
                         'activate/',
                         PluginActivate.as_view(),

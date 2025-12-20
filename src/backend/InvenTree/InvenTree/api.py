@@ -856,26 +856,14 @@ class GenericMetadataView(RetrieveUpdateAPI):
         return MetadataSerializer(self.model, *args, **kwargs)
 
 
-def redirect_metadata_view(model, lookup_field: str = 'pk', **initkwargs):
-    """Helper function for redirecting to the general metadata lookup with appropriate model.
+class MetadataView(RedirectView):
+    """Redirect to the generic metadata view for a given model."""
 
-    Arguments:
-        model: The model class to use
-        lookup_field: The lookup field to use (if not 'pk')
-        **initkwargs: Additional keyword arguments for the view
-    Returns:
-        A redirect to the generic metadata view
-    """
-    # return MetadataView.as_view(model, lookup_field, **initkwargs)
-    if model is None:
-        raise ValidationError(
-            "redirect_metadata_view called without 'model' arg"
-        )  # pragma: no cover
-    return RedirectView.as_view(
-        url=f'/api/metadata/{model._meta.model_name}/<str:{lookup_field}>/',
-        permanent=True,
-        query_string=True,
-    )
+    model_name = None  # Placeholder for the model class
+    lookup_field = 'pk'
+
+    # default
+    permanent = True
 
 
 def meta_path(model, lookup_field: str = 'pk'):
@@ -888,4 +876,14 @@ def meta_path(model, lookup_field: str = 'pk'):
     Returns:
         A path to the generic metadata view for the given model
     """
-    return path('metadata/', redirect_metadata_view(model, lookup_field=lookup_field))
+    if model is None:
+        raise ValidationError(
+            "redirect_metadata_view called without 'model' arg"
+        )  # pragma: no cover
+
+    return path(
+        'metadata/',
+        MetadataView.as_view(
+            model_name=model._meta.model_name, lookup_field=lookup_field
+        ),
+    )
