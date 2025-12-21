@@ -38,18 +38,12 @@ $ cd src
 $ pip install --require-hashes -r docs/requirements.txt
 ```
 
-## Build Documentation
+## Schema generation
 
-Before serving the documentation, you will need to build the API schema files from the source code, so they can be included in the documentation:
-
-```
-invoke build-docs
-```
+Building the documentation requires extracting the API schema from the source code.
 
 !!! tip
     This command is only required when building the documentation for the first time, or when changes have been made to the API schema.
-
-## Serve Local files
 
 ```
 $ invoke build-docs
@@ -71,41 +65,31 @@ Schema export completed: /home/inventree/src/docs/generated/schema.yml
 Documentation build complete, but mkdocs not requested
 ```
 
-If that worked, you can now generate the HTML format documentation pages:
+## Viewing the documentation
+
+Generate the HTML files from the markdown source files, and start the MkDocs webpage server:
 
 ```
-$ mkdocs build -f docs/mkdocs.yml
-```
-
-## Viewing the generated output
-
-To view the documentation locally, run the following command to start the MkDocs webpage server:
-
-```
-$ mkdocs serve -f docs/mkdocs.yml -a localhost:8080
-```
-
-Alternatively, you can use the `invoke` command:
-
-```
-invoke dev.docs-server
-```
-
-To see all the available options:
-
-```
-invoke dev.docs-server --help
+$ mkdocs serve -f docs/mkdocs.yml
 ```
 
 You can then point your web browser at http://localhost:8080/
 
+Alternatively, you can use the `invoke` command:
+
+```
+$ invoke dev.docs-server
+```
+
+If you need to, use the `-a` option after `mkdocs` or `invoke` to set the address and port.  Run `invoke dev.docs-server --help` for details.
+
 ## Editing the Documentation Files
 
-Once the server is running, it will monitor the documentation files for any changes, and regenerate the HTML pages.
+Once the server is running, it will monitor the documentation files for changes, and regenerate the HTML pages as required.  Refresh your web browser to see the changes.
 
 ### Admonitions
 
-"Admonition" blocks can be added as follow:
+"Admonition" blocks can be added to the documentation source as follows:
 ```
 !!! info "This is the admonition block title"
     This is the admonition block content
