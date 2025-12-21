@@ -5,9 +5,10 @@ import json
 from pathlib import Path
 
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
 from django.http import JsonResponse
-from django.urls import path
+from django.urls import path, reverse
 from django.utils.translation import gettext_lazy as _
 from django.views.generic.base import RedirectView
 
@@ -819,8 +820,6 @@ class GenericMetadataView(RetrieveUpdateAPI):
 
     def get_permission_model(self):
         """Return the 'permission' model associated with this view."""
-        import common.models
-
         model_name = self.kwargs.get('model', None)
 
         if model_name is None:
@@ -828,14 +827,14 @@ class GenericMetadataView(RetrieveUpdateAPI):
                 "GenericMetadataView called without 'model' URL parameter"
             )  # pragma: no cover
 
-        model = common.models.get_model_by_name(model_name)
+        model = ContentType.objects.filter(model=model_name).first()
 
         if model is None:
             raise ValidationError(
                 f"GenericMetadataView called with invalid model '{model_name}'"
             )  # pragma: no cover
 
-        return model
+        return model.model_class()
 
     def get_queryset(self):
         """Return the queryset for this endpoint."""
@@ -855,23 +854,40 @@ class GenericMetadataView(RetrieveUpdateAPI):
             self.model = users.models.User
         return MetadataSerializer(self.model, *args, **kwargs)
 
+    def dispatch(self, request, *args, **kwargs):
+        """Override dispatch to set lookup field dynamically."""
+        self.lookup_field = self.kwargs.get('lookup_field', 'pk')
+        self.lookup_url_kwarg = (
+            'lookup_value' if 'lookup_field' in self.kwargs else 'pk'
+        )
+        return super().dispatch(request, *args, **kwargs)
 
-class MetadataView(RedirectView):
+
+class MetadataRedirectView(RedirectView):
     """Redirect to the generic metadata view for a given model."""
 
     model_name = None  # Placeholder for the model class
     lookup_field = 'pk'
-
-    # default
+    lookup_field_ref = 'pk'
     permanent = True
 
+    def get_redirect_url(self, *args, **kwargs) -> str | None:
+        """Return the redirect URL for this view."""
+        _kwargs = {
+            'model': self.model_name,
+            'lookup_value': self.kwargs.get(self.lookup_field_ref, None),
+            'lookup_field': self.lookup_field,
+        }
+        return reverse('api-generic-metadata', args=args, kwargs=_kwargs)
 
-def meta_path(model, lookup_field: str = 'pk'):
+
+def meta_path(model, lookup_field: str = 'pk', lookup_field_ref: str = 'pk'):
     """Helper function for constructing metadata path for a given model.
 
     Arguments:
         model: The model class to use
         lookup_field: The lookup field to use (if not 'pk')
+        lookup_field_ref: The reference name for the lookup field in the request(if not 'pk')
 
     Returns:
         A path to the generic metadata view for the given model
@@ -883,7 +899,9 @@ def meta_path(model, lookup_field: str = 'pk'):
 
     return path(
         'metadata/',
-        MetadataView.as_view(
-            model_name=model._meta.model_name, lookup_field=lookup_field
+        MetadataRedirectView.as_view(
+            model_name=model._meta.model_name,
+            lookup_field=lookup_field,
+            lookup_field_ref=lookup_field_ref,
         ),
     )

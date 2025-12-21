@@ -576,7 +576,9 @@ plugin_api_urls = [
                             ),
                         ]),
                     ),
-                    meta_path(PluginConfig, lookup_field='key'),
+                    meta_path(
+                        PluginConfig, lookup_field='key', lookup_field_ref='plugin'
+                    ),
                     path(
                         'activate/',
                         PluginActivate.as_view(),

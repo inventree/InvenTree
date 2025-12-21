@@ -1210,9 +1210,19 @@ common_api_urls = [
     ),
     # Metadata
     path(
-        'metadata/<str:model>/<int:pk>/',
-        GenericMetadataView.as_view(),
-        name='api-generic-metadata',
+        'metadata/',
+        include([
+            path(
+                '<str:model>/<str:lookup_field>/<str:lookup_value>/',
+                GenericMetadataView.as_view(),
+                name='api-generic-metadata',
+            ),
+            path(
+                '<str:model>/<int:pk>/',
+                GenericMetadataView.as_view(),
+                name='api-generic-metadata',
+            ),
+        ]),
     ),
     # Project codes
     path(
