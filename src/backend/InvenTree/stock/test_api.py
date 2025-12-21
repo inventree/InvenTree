@@ -909,6 +909,50 @@ class StockItemListTest(StockAPITestCase):
         with self.export_data(self.list_url, {'part': 25}) as data_file:
             self.process_csv(data_file, required_rows=items.count())
 
+    def test_large_export(self):
+        """Test export of very large dataset.
+
+        - Ensure that the time taken to export a large dataset is reasonable.
+        - Ensure that the number of DB queries is reasonable.
+        """
+        # Create a large number of stock items
+        locations = list(StockLocation.objects.all())
+        parts = list(Part.objects.filter(virtual=False))
+
+        idx = 0
+
+        N_LOCATIONS = len(locations)
+        N_PARTS = len(parts)
+
+        stock_items = []
+
+        while idx < 2500:
+            part = parts[idx % N_PARTS]
+            location = locations[idx % N_LOCATIONS]
+
+            item = StockItem(
+                part=part,
+                location=location,
+                quantity=10,
+                level=0,
+                tree_id=0,
+                lft=0,
+                rght=0,
+            )
+            stock_items.append(item)
+            idx += 1
+
+        StockItem.objects.bulk_create(stock_items)
+
+        self.assertGreaterEqual(StockItem.objects.count(), 2500)
+
+        with self.export_data(
+            self.list_url, max_query_count=50, max_query_time=2.5
+        ) as data_file:
+            data = self.process_csv(data_file)
+
+            self.assertGreaterEqual(len(data), 2500)
+
     def test_filter_by_allocated(self):
         """Test that we can filter by "allocated" status.
 
