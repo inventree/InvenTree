@@ -863,6 +863,31 @@ class GenericMetadataView(RetrieveUpdateAPI):
         return super().dispatch(request, *args, **kwargs)
 
 
+class SimpleGenericMetadataView(GenericMetadataView):
+    """Simplified version of GenericMetadataView which always uses 'pk' as the lookup field."""
+
+    def dispatch(self, request, *args, **kwargs):
+        """Override dispatch to set lookup field to 'pk'."""
+        self.lookup_field = 'pk'
+        self.lookup_url_kwarg = None
+        return super().dispatch(request, *args, **kwargs)
+
+    @extend_schema(operation_id='metadata_pk_retrieve')
+    def get(self, request, *args, **kwargs):
+        """Perform a GET request to retrieve metadata for the given object."""
+        return super().get(request, *args, **kwargs)
+
+    @extend_schema(operation_id='metadata_pk_update')
+    def put(self, request, *args, **kwargs):
+        """Perform a PUT request to update metadata for the given object."""
+        return super().put(request, *args, **kwargs)
+
+    @extend_schema(operation_id='metadata_pk_partial_update')
+    def patch(self, request, *args, **kwargs):
+        """Perform a PATCH request to partially update metadata for the given object."""
+        return super().patch(request, *args, **kwargs)
+
+
 class MetadataRedirectView(RedirectView):
     """Redirect to the generic metadata view for a given model."""
 

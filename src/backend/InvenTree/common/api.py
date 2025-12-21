@@ -41,6 +41,7 @@ from InvenTree.api import (
     BulkCreateMixin,
     BulkDeleteMixin,
     GenericMetadataView,
+    SimpleGenericMetadataView,
     meta_path,
 )
 from InvenTree.config import CONFIG_LOOKUPS
@@ -1219,7 +1220,7 @@ common_api_urls = [
             ),
             path(
                 '<str:model>/<int:pk>/',
-                GenericMetadataView.as_view(),
+                SimpleGenericMetadataView.as_view(),
                 name='api-generic-metadata',
             ),
         ]),
