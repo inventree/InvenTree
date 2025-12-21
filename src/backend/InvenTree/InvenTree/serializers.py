@@ -163,6 +163,9 @@ class FilterableSerializerMixin:
 
     def gather_filters(self, kwargs) -> None:
         """Gather filterable fields through introspection."""
+        # Is this a "top level" serializer?
+        top_level_serializer = kwargs.pop('top_level_serializer', False)
+
         # Fast exit if this has already been done or would not have any effect
         if getattr(self, '_was_filtered', False) or not hasattr(self, 'fields'):
             return
@@ -189,7 +192,13 @@ class FilterableSerializerMixin:
             val = kwargs.pop(pop_ref, popped_kwargs.get(pop_ref))
 
             # Optionally also look in query parameters
-            if val is None and self.filter_on_query and v.get('filter_by_query', True):
+            # Note that we only do this for a top-level seiralizer, to avoid issues with nested serializers
+            if (
+                top_level_serializer
+                and val is None
+                and self.filter_on_query
+                and v.get('filter_by_query', True)
+            ):
                 val = query_params.pop(pop_ref, None)
                 if isinstance(val, list) and len(val) == 1:
                     val = val[0]
