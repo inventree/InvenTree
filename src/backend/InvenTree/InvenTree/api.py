@@ -817,6 +817,7 @@ class GenericMetadataView(RetrieveUpdateAPI):
 
     model = None  # Placeholder for the model class
     serializer_class = MetadataSerializer
+    permission_classes = [InvenTree.permissions.ContentTypePermission]
 
     def get_permission_model(self):
         """Return the 'permission' model associated with this view."""
