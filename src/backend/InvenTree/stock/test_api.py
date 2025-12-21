@@ -2529,19 +2529,17 @@ class StockMetadataAPITest(InvenTreeAPITestCase):
         self.assertIsNone(modeldata.metadata)
 
         numstr = f'12{len(raw_url)}'
+        target_key = f'abc-{numstr}'
+        target_value = f'xyz-{raw_url}-{numstr}'
 
-        self.patch(
-            url,
-            {'metadata': {f'abc-{numstr}': f'xyz-{raw_url}-{numstr}'}},
-            expected_code=200,
-            follow=True,
-        )
+        # Create / update metadata entry (first try via old addresses)
+        data = {'metadata': {target_key: target_value}}
+        rsp = self.patch(url, data, expected_code=301)
+        self.patch(rsp.url, data, expected_code=200)
 
-        # Refresh
+        # Refresh and check that metadata has been updated
         modeldata.refresh_from_db()
-        self.assertEqual(
-            modeldata.get_metadata(f'abc-{numstr}'), f'xyz-{raw_url}-{numstr}'
-        )
+        self.assertEqual(modeldata.get_metadata(target_key), target_value)
 
     def test_metadata(self):
         """Test all endpoints."""
