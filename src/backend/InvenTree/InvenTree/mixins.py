@@ -239,7 +239,9 @@ class OutputOptionsMixin:
 
     def get_serializer(self, *args, **kwargs):
         """Return serializer instance with output options applied."""
-        if self.output_options and hasattr(self, 'request'):
+        request = getattr(self, 'request', None)
+
+        if self.output_options and request:
             params = self.request.query_params
             kwargs.update(self.output_options.format_params(params))
 
@@ -247,6 +249,7 @@ class OutputOptionsMixin:
         # This will be removed from any nested serializers
         context = kwargs.get('context', {})
         context['top_level_serializer'] = True
+        context['request'] = request
         kwargs['context'] = context
 
         serializer = super().get_serializer(*args, **kwargs)

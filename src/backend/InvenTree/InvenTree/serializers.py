@@ -163,10 +163,12 @@ class FilterableSerializerMixin:
 
     def gather_filters(self, kwargs) -> None:
         """Gather filterable fields through introspection."""
-        # Is this a "top level" serializer?
-
         context = kwargs.get('context', {})
         top_level_serializer = context.get('top_level_serializer', False)
+        request = context.get('request', None) or getattr(self, 'request', None)
+
+        # Gather query parameters from the request context
+        query_params = dict(getattr(request, 'query_params', {})) if request else {}
 
         # Update the context to ensure that the top_level_serializer flag is removed for nested serializers
         context['top_level_serializer'] = False
@@ -175,7 +177,6 @@ class FilterableSerializerMixin:
         # Fast exit if this has already been done or would not have any effect
         if getattr(self, '_was_filtered', False) or not hasattr(self, 'fields'):
             return
-        self._was_filtered = True
 
         # Actually gather the filterable fields
         # Also see `enable_filter` where` is_filterable and is_filterable_vals are set
@@ -184,9 +185,6 @@ class FilterableSerializerMixin:
             for k, a in self.fields.items()
             if getattr(a, 'is_filterable', None)
         }
-
-        # Gather query parameters from the request context
-        query_params = dict(getattr(context.get('request', {}), 'query_params', {}))
 
         # Remove filter args from kwargs to avoid issues with super().__init__
         popped_kwargs = {}  # store popped kwargs as a arg might be reused for multiple fields
@@ -212,7 +210,9 @@ class FilterableSerializerMixin:
             tgs_vals[k] = (
                 str2bool(val) if isinstance(val, (str, int, float)) else val
             )  # Support for various filtering style for backwards compatibility
+
         self.filter_target_values = tgs_vals
+        self._was_filtered = True
 
         # Ensure this mixin is not broadly applied as it is expensive on scale (total CI time increased by 21% when running all coverage tests)
         if len(self.filter_targets) == 0 and not self.no_filters:
