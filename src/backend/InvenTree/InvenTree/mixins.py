@@ -242,7 +242,8 @@ class OutputOptionsMixin:
         if self.output_options and hasattr(self, 'request'):
             params = self.request.query_params
             kwargs.update(self.output_options.format_params(params))
-            kwargs['top_level_serializer'] = True
+
+        kwargs['top_level_serializer'] = True
 
         serializer = super().get_serializer(*args, **kwargs)
 
