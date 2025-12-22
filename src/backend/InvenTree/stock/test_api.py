@@ -950,8 +950,9 @@ class StockItemListTest(StockAPITestCase):
 
         self.assertGreaterEqual(StockItem.objects.count(), 2500)
 
+        # Note: While the export is quick on pgsql, it is still quite slow on sqlite3
         with self.export_data(
-            self.list_url, max_query_count=50, max_query_time=2.5
+            self.list_url, max_query_count=50, max_query_time=7.5
         ) as data_file:
             data = self.process_csv(data_file)
 
