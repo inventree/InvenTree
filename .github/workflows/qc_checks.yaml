@@ -94,7 +94,7 @@ jobs:
         uses: pre-commit/action@2c7b3805fd2a0fd8c1884dcaebf91fc102a13ecd # pin@v3.0.1
       - name: Check Version
         run: |
-          pip install --require-hashes -r contrib/dev_reqs/requirements.txt
+          pip install  -r contrib/dev_reqs/requirements.txt
           python3 .github/scripts/version_check.py
 
   typecheck:
@@ -135,8 +135,8 @@ jobs:
           python-version: ${{ env.python_version }}
       - name: Check Config
         run: |
-          pip install --require-hashes -r contrib/dev_reqs/requirements.txt
-          pip install --require-hashes -r docs/requirements.txt
+          pip install  -r contrib/dev_reqs/requirements.txt
+          pip install  -r docs/requirements.txt
           python docs/ci/check_mkdocs_config.py
       - name: Check Links
         uses: gaurav-nelson/github-action-markdown-link-check@5c5dfc0ac2e225883c0e5f03a85311ec2830d368 # pin@v1
@@ -184,7 +184,7 @@ jobs:
         env:
           API: ${{ needs.paths-filter.outputs.api }}
         run: |
-          pip install --require-hashes -r contrib/dev_reqs/requirements.txt >/dev/null 2>&1
+          pip install  -r contrib/dev_reqs/requirements.txt >/dev/null 2>&1
           version="$(python3 .github/scripts/version_check.py --show-api-version --decrement-api=${API} 2>&1)"
           echo "API Version: $version"
           url="https://raw.githubusercontent.com/inventree/schema/main/export/${version}/api.yaml"
@@ -218,7 +218,7 @@ jobs:
         id: version
         if: github.ref == 'refs/heads/master' && needs.paths-filter.outputs.api == 'true'
         run: |
-          pip install --require-hashes -r contrib/dev_reqs/requirements.txt >/dev/null 2>&1
+          pip install  -r contrib/dev_reqs/requirements.txt >/dev/null 2>&1
           version="$(python3 .github/scripts/version_check.py --show-api-version 2>&1)"
           echo "API Version: $version"
           echo "version=$version" >> "$GITHUB_OUTPUT"

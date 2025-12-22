@@ -146,7 +146,7 @@ function detect_envs() {
 
     # Install parser
     echo "# POI03| Installing requirements"
-    pip install --require-hashes -r ${APP_HOME}/contrib/dev_reqs/requirements.txt -q
+    pip install  -r ${APP_HOME}/contrib/dev_reqs/requirements.txt -q
     echo "# POI03| Installed requirements"
 
     # Load config

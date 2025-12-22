@@ -25,7 +25,7 @@ jobs:
           persist-credentials: false
       - name: Version Check
         run: |
-          pip install --require-hashes -r contrib/dev_reqs/requirements.txt
+          pip install  -r contrib/dev_reqs/requirements.txt
           python3 .github/scripts/version_check.py
       - name: Push to Stable Branch
         uses: ad-m/github-push-action@77c5b412c50b723d2a4fbc6d71fb5723bcd439aa # pin@v1.0.0
@@ -117,8 +117,8 @@ jobs:
           npm: true
       - name: Install dependencies
         run: |
-          pip install --require-hashes -r contrib/dev_reqs/requirements.txt
-          pip install --require-hashes -r docs/requirements.txt
+          pip install  -r contrib/dev_reqs/requirements.txt
+          pip install  -r docs/requirements.txt
       - name: Build documentation
         run: |
           invoke build-docs --mkdocs
