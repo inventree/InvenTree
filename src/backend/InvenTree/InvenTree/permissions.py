@@ -487,14 +487,8 @@ class ContentTypePermission(OASTokenMixin, permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
         """Check if the user has permission to access the object."""
-        # if isinstance(obj, importer.models.DataImportSession):
-        #    session = obj
-        # else:
-        session = getattr(obj, 'session', None)
-
-        if session:
-            if model_class := session.model_class:
-                return users.permissions.check_user_permission(
-                    request.user, model_class, 'change'
-                )
+        if model_class := obj.__class__:
+            return users.permissions.check_user_permission(
+                request.user, model_class, 'change'
+            )
         return False
