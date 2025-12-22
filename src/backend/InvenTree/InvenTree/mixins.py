@@ -248,7 +248,6 @@ class OutputOptionsMixin:
         # Indicate that this is a "top level" serializer
         # This will be removed from any nested serializers
         context = kwargs.get('context', {})
-        context['top_level_serializer'] = True
         context['request'] = request
         kwargs['context'] = context
 

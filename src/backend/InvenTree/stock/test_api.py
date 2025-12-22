@@ -867,9 +867,13 @@ class StockItemListTest(StockAPITestCase):
 
         excluded_headers = ['metadata']
 
-        filters = {}
+        filters = {
+            'part_detail': True,
+            'location_detail': True,
+            'supplier_part_detail': True,
+        }
 
-        with self.export_data(self.list_url, filters) as data_file:
+        with self.export_data(self.list_url, params=filters) as data_file:
             self.process_csv(
                 data_file,
                 required_cols=required_headers,
@@ -881,7 +885,7 @@ class StockItemListTest(StockAPITestCase):
         filters['location'] = 1
         filters['cascade'] = True
 
-        with self.export_data(self.list_url, filters) as data_file:
+        with self.export_data(self.list_url, params=filters) as data_file:
             data = self.process_csv(data_file, required_rows=9)
 
             for row in data:
