@@ -48,6 +48,8 @@ export type ApiFormFieldHeader = {
  * @param model : The model to use for related fields
  * @param filters : Optional API filters to apply to related fields
  * @param required : Whether the field is required
+ * @param allow_null: Whether the field allows null values
+ * @param allow_blank: Whether the field allows blank values
  * @param hidden : Whether the field is hidden
  * @param disabled : Whether the field is disabled
  * @param error : Optional error message to display
@@ -103,6 +105,8 @@ export type ApiFormFieldType = {
   choices?: ApiFormFieldChoice[];
   hidden?: boolean;
   disabled?: boolean;
+  allow_null?: boolean;
+  allow_blank?: boolean;
   exclude?: boolean;
   read_only?: boolean;
   placeholder?: string;

@@ -210,6 +210,34 @@ class CompanyTest(InvenTreeAPITestCase):
 
             self.assertEqual(response.data['notes'], note)
 
+    def test_company_parameters(self):
+        """Test for annotation of 'parameters' field in Company API."""
+        url = reverse('api-company-list')
+
+        response = self.get(url, expected_code=200)
+
+        self.assertGreater(len(response.data), 0)
+
+        # Default = not included
+        for result in response.data:
+            self.assertNotIn('parameters', result)
+
+        # Exclude parameters
+        response = self.get(url, {'parameters': 'false'}, expected_code=200)
+
+        self.assertGreater(len(response.data), 0)
+
+        for result in response.data:
+            self.assertNotIn('parameters', result)
+
+        # Include parameters
+        response = self.get(url, {'parameters': 'true'}, expected_code=200)
+
+        self.assertGreater(len(response.data), 0)
+
+        for result in response.data:
+            self.assertIn('parameters', result)
+
 
 class ContactTest(InvenTreeAPITestCase):
     """Tests for the Contact models."""
@@ -681,6 +709,42 @@ class SupplierPartTest(InvenTreeAPITestCase):
         self.assertEqual(len(response.data), 5)
         for result in response.data:
             self.assertEqual(result['supplier'], company.pk)
+
+    def test_filterable_fields(self):
+        """Test inclusion/exclusion of optional API fields."""
+        fields = {
+            'price_breaks': False,
+            'part_detail': False,
+            'supplier_detail': False,
+            'manufacturer_detail': False,
+            'manufacturer_part_detail': False,
+        }
+
+        url = reverse('api-supplier-part-list')
+
+        for field, included in fields.items():
+            # Test default behavior
+            response = self.get(url, data={}, expected_code=200)
+            self.assertGreater(len(response.data), 0)
+            self.assertEqual(
+                included,
+                field in response.data[0],
+                f'Field: {field} failed default test',
+            )
+
+            # Test explicit inclusion
+            response = self.get(url, data={field: 'true'}, expected_code=200)
+            self.assertGreater(len(response.data), 0)
+            self.assertIn(
+                field, response.data[0], f'Field: {field} failed inclusion test'
+            )
+
+            # Test explicit exclusion
+            response = self.get(url, data={field: 'false'}, expected_code=200)
+            self.assertGreater(len(response.data), 0)
+            self.assertNotIn(
+                field, response.data[0], f'Field: {field} failed exclusion test'
+            )
 
 
 class CompanyMetadataAPITest(InvenTreeAPITestCase):

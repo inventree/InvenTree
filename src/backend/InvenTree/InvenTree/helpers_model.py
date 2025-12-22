@@ -24,7 +24,13 @@ from common.notifications import (
     trigger_notification,
 )
 from common.settings import get_global_setting
+from InvenTree.cache import (
+    get_cached_content_types,
+    get_session_cache,
+    set_session_cache,
+)
 from InvenTree.format import format_money
+from InvenTree.ready import ignore_ready_warning
 
 logger = structlog.get_logger('inventree')
 
@@ -260,6 +266,7 @@ def render_currency(
     )
 
 
+@ignore_ready_warning
 def getModelsWithMixin(mixin_class) -> list:
     """Return a list of database models that inherit from the given mixin class.
 
@@ -268,17 +275,23 @@ def getModelsWithMixin(mixin_class) -> list:
     Returns:
         List of models that inherit from the given mixin class
     """
-    from django.contrib.contenttypes.models import ContentType
+    # First, look in the session cache - to prevent repeated expensive comparisons
+    cache_key = f'models_with_mixin_{mixin_class.__name__}'
 
-    try:
-        db_models = [
-            x.model_class() for x in ContentType.objects.all() if x is not None
-        ]
-    except (OperationalError, ProgrammingError):
-        # Database is likely not yet ready
-        db_models = []
+    if cached_models := get_session_cache(cache_key):
+        return cached_models
 
-    return [x for x in db_models if x is not None and issubclass(x, mixin_class)]
+    content_types = get_cached_content_types()
+
+    db_models = [x.model_class() for x in content_types if x is not None]
+
+    models_with_mixin = [
+        x for x in db_models if x is not None and issubclass(x, mixin_class)
+    ]
+
+    # Store the result in the session cache
+    set_session_cache(cache_key, models_with_mixin)
+    return models_with_mixin
 
 
 def notify_responsible(

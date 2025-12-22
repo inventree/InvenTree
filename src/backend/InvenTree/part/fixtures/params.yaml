@@ -1,70 +1,100 @@
 # Create some PartParameter templtes
 
-- model: part.PartParameterTemplate
+- model: common.parametertemplate
   pk: 1
   fields:
     name: Length
     units: mm
+    model_type:
+    - part
+    - part
 
-- model: part.PartParameterTemplate
+- model: common.parametertemplate
   pk: 2
   fields:
     name: Width
     units: mm
+    model_type:
+    - part
+    - part
 
-- model: part.PartParameterTemplate
+- model: common.parametertemplate
   pk: 3
   fields:
     name: Thickness
     units: mm
+    model_type:
+    - part
+    - part
 
 # Add some parameters to parts (requires part.yaml)
-- model: part.PartParameter
+- model: common.parameter
   pk: 1
   fields:
-    part: 1
+    model_id: 1
+    model_type:
+    - part
+    - part
     template: 1
     data: 4
 
-- model: part.PartParameter
+- model: common.parameter
   pk: 2
   fields:
-    part: 2
+    model_id: 2
+    model_type:
+    - part
+    - part
     template: 1
     data: 12
 
-- model: part.PartParameter
+- model: common.parameter
   pk: 3
   fields:
-    part: 3
+    model_id: 3
+    model_type:
+    - part
+    - part
     template: 1
     data: 12
 
-- model: part.PartParameter
+- model: common.parameter
   pk: 4
   fields:
-    part: 3
+    model_id: 3
+    model_type:
+    - part
+    - part
     template: 2
     data: 12
 
-- model: part.PartParameter
+- model: common.parameter
   pk: 5
   fields:
-    part: 3
+    model_id: 3
+    model_type:
+    - part
+    - part
     template: 3
     data: 12
 
-- model: part.PartParameter
+- model: common.parameter
   pk: 6
   fields:
-    part: 100
+    model_id: 100
+    model_type:
+    - part
+    - part
     template: 3
     data: 12
 
-- model: part.PartParameter
+- model: common.parameter
   pk: 7
   fields:
-    part: 100
+    model_id: 100
+    model_type:
+    - part
+    - part
     template: 1
     data: 12
 
@@ -73,12 +103,12 @@
   pk: 1
   fields:
     category: 7
-    parameter_template: 1
+    template: 1
     default_value: '2.8'
 
 - model: part.PartCategoryParameterTemplate
   pk: 2
   fields:
     category: 7
-    parameter_template: 3
+    template: 3
     default_value: '0.5'

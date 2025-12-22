@@ -149,7 +149,7 @@ class InvenTreeRoleScopeMixin(OASTokenMixin):
 class InvenTreeTokenMatchesOASRequirements(InvenTreeRoleScopeMixin):
     """Combines InvenTree role-based scope handling with OpenAPI schema token requirements.
 
-    Usesd as default permission class.
+    Used as default permission class.
     """
 
     def has_permission(self, request, view):
@@ -164,6 +164,29 @@ class InvenTreeTokenMatchesOASRequirements(InvenTreeRoleScopeMixin):
     def has_object_permission(self, request, view, obj):
         """Return `True` if permission is granted, `False` otherwise."""
         return True
+
+
+class ModelPermission(permissions.DjangoModelPermissions):
+    """Custom ModelPermission implementation which provides cached lookup of queryset.
+
+    This is entirely for optimization purposes.
+    """
+
+    def _queryset(self, view):
+        """Return the queryset associated with this view, with caching.
+
+        This is because in a metadata OPTIONS request, the view is copied multiple times.
+        We can cache the queryset to avoid repeated calculation.
+        """
+        if getattr(view, '_cached_queryset', None) is not None:
+            return view._cached_queryset
+
+        queryset = super()._queryset(view)
+
+        if queryset is not None:
+            view._cached_queryset = queryset
+
+        return queryset
 
 
 class RolePermission(InvenTreeRoleScopeMixin, permissions.BasePermission):
