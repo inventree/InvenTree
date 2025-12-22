@@ -650,12 +650,15 @@ class InvenTreeAPITestCase(
         # Add in any other export specific kwargs
         for key, value in kwargs.items():
             if key.startswith('export_'):
+                kwargs.pop(key)
                 params[key] = value
 
         # Append URL params
         url += '?' + '&'.join([f'{key}={value}' for key, value in params.items()])
 
-        response = self.get(url, data=None, format='json', **kwargs)
+        response = self.get(
+            url, data=None, format='json', expected_code=expected_code, **kwargs
+        )
         self.check_response(url, response, expected_code=expected_code)
 
         # Check that the response is of the correct type
