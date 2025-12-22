@@ -99,7 +99,7 @@ line-ending = "auto"
 [tool.uv.pip]
 python-version = "3.11.0"
 no-strip-extras=true
-generate-hashes=true
+# generate-hashes=true
 
 [tool.ty.environment]
 root = ["src/backend/InvenTree"]
