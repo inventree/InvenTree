@@ -144,107 +144,116 @@ python_files = ["test*.py",]
 name = "inventree-server"
 version = "0.0.0"
 dependencies = [
-    "blessed>=1.25.0",
-    "cryptography>=44.0.0",
-    "django<6.0",
-    "django-allauth[headless,mfa,openid,saml,socialaccount]>=65.13.1",
-    "django-anymail[amazon-ses,postal]>=13.1",
-    "django-cleanup>=9.0.0",
-    "django-cors-headers>=4.9.0",
-    "django-dbbackup>=5.0.0",
-    "django-error-report-2>=0.4.2",
-    "django-filter>=25.2",
-    "django-flags>=5.1.0",
-    "django-ical>=1.9.2",
-    "django-mailbox>=4.10.1",
-    "django-maintenance-mode>=0.22.0",
-    "django-markdownify>=0.9.6",
-    "django-money>=3.5.4",
-    "django-mptt>=0.18.0",
-    "django-oauth-toolkit>=3.1.0",
-    "django-otp>=1.3.0",
-    "django-q-sentry>=0.1.6",
-    "django-q2>=1.9.0",
-    "django-redis>=5.0.0",
-    "django-sesame>=3.2.3",
-    "django-sql-utils>=0.7.0",
-    "django-sslserver>=0.22",
-    "django-stdimage>=6.0.2",
-    "django-storages[s3,sftp]>=1.14.6",
-    "django-structlog>=10.0.0",
-    "django-taggit>=6.1.0",
-    "django-xforwardedfor-middleware>=2.0",
-    "djangorestframework>=3.16.1",
-    "djangorestframework-simplejwt[crypto]>=5.5.1",
-    "docutils>=0.22.3",
-    "drf-spectacular>=0.29.0",
-    "dulwich>=0.24.10",
-    "feedparser>=6.0.12",
-    "grpcio>=1.76.0",
-    "gunicorn>=23.0.0",
-    "jinja2>=3.1.6",
-    "opentelemetry-api>=1.38.0",
-    "opentelemetry-exporter-otlp>=1.38.0",
-    "opentelemetry-instrumentation-django>=0.59b0",
-    "opentelemetry-instrumentation-psycopg>=0.59b0",
-    "opentelemetry-instrumentation-pymysql>=0.59b0",
-    "opentelemetry-instrumentation-redis>=0.59b0",
-    "opentelemetry-instrumentation-requests>=0.59b0",
-    "opentelemetry-instrumentation-sqlite3>=0.59b0",
-    "opentelemetry-instrumentation-system-metrics>=0.59b0",
-    "opentelemetry-instrumentation-wsgi>=0.59b0",
-    "opentelemetry-sdk>=1.38.0",
-    "pdf2image>=1.17.0",
-    "pillow>=12.0.0",
-    "pint>=0.25.2",
-    "pip-licenses>=5.5.0",
-    "ppf-datamatrix>=0.2",
-    "pypdf>=6.4.1",
-    "python-barcode[images]>=0.16.1",
-    "python-dotenv>=1.2.1",
-    "pyyaml>=6.0.1",
-    "qrcode[pil]>=8.2",
-    "rapidfuzz>=3.14.3",
-    "sentry-sdk>=2.47.0",
-    "setuptools>=80.9.0",
-    "tablib[xls,xlsx,yaml]>=3.9.0",
-    "weasyprint>=66.0",
-    "whitenoise>=6.11.0",
+    "django<6.0",                               # Django package
+    "blessed",                                  # CLI for Q Monitor
+    "cryptography>=44.0.0",                     # Core cryptographic functionality
+    "django-anymail[amazon_ses,postal]",        # Email backend for various providers
+    "django-allauth[mfa,socialaccount,saml,openid,headless]",   # SSO for external providers via OpenID
+    "django-cleanup",                           # Automated deletion of old / unused uploaded files
+    "django-cors-headers",                      # CORS headers extension for DRF
+    "django-dbbackup>=5.0.0",                   # Backup / restore of database and media files
+    "django-error-report-2",                    # Error report viewer for the admin interface
+    "django-filter",                            # Extended filtering options
+    "django-flags",                             # Feature flags
+    "django-ical",                              # iCal export for calendar views
+    "django-maintenance-mode",                  # Shut down application while reloading etc.
+    "django-mailbox",                           # Email scraping
+    "django-markdownify",                       # Markdown rendering
+    "django-mptt",                              # Modified Preorder Tree Traversal
+    "django-markdownify",                       # Markdown rendering
+    "django-money",                             # Django app for currency management
+    "django-mptt",                              # Modified Preorder Tree Traversal
+    "django-redis>=5.0.0",                      # Redis integration
+    "django-q2",                                # Background task scheduling
+    "django-q-sentry",                          # sentry.io integration for django-q
+    "django-sesame",                            # Magic link authentication
+    "django-sql-utils",                         # Advanced query annotation / aggregation
+    "django-sslserver",                         # Secure HTTP development server
+    "django-structlog",                         # Structured logging
+    "django-stdimage",                          # Advanced ImageField management
+    "django-storages[s3,sftp]",                 # Storage backends for Django
+    "django-taggit",                            # Tagging support
+    "django-otp==1.3.0",                        # Two-factor authentication (legacy to ensure migrations) https://github.com/inventree/InvenTree/pull/6293
+    "django-oauth-toolkit",                     # OAuth2 provider
+    "djangorestframework",                      # DRF framework
+    "djangorestframework-simplejwt[crypto]",    # JWT authentication
+    "django-xforwardedfor-middleware",          # IP forwarding metadata
+    "dulwich",                                  # pure Python git integration
+    "docutils",                                 # Documentation utilities for auto admin docs
+    "drf-spectacular",                          # DRF API documentation
+    "feedparser",                               # RSS newsfeed parser
+    "gunicorn",                                 # Gunicorn web server
+    "jinja2",                                   # Jinja2 templating engine
+    "pdf2image",                                # PDF to image conversion
+    "pillow",                                   # Image manipulation
+    "pint",                                     # Unit conversion
+    "pip-licenses",                             # License information for installed packages
+    "ppf.datamatrix",                           # Data Matrix barcode generator
+    "pypdf",                                    # PDF manipulation tools
+    "python-barcode[images]",                   # Barcode generator
+    "python-dotenv",                            # Environment variable management
+    "pyyaml>=6.0.1",                            # YAML parsing
+    "qrcode[pil]",                              # QR code generator
+    "rapidfuzz",                                # Fuzzy string matching
+    "sentry-sdk",                               # Error reporting (optional)
+    "setuptools",                               # Standard dependency
+    "tablib[xls,xlsx,yaml]",                    # Support for XLS and XLSX formats
+    "weasyprint",                               # PDF generation
+    "whitenoise",                               # Enhanced static file serving
+    # OpenTelemetry dependencies
+    "grpcio",
+    "opentelemetry-api",
+    "opentelemetry-sdk",
+    "opentelemetry-exporter-otlp",
+    "opentelemetry-instrumentation-django",
+    "opentelemetry-instrumentation-requests",
+    "opentelemetry-instrumentation-redis",
+    "opentelemetry-instrumentation-sqlite3",
+    "opentelemetry-instrumentation-system_metrics",
+    "opentelemetry-instrumentation-wsgi",
+    "opentelemetry-instrumentation-psycopg",
+    "opentelemetry-instrumentation-pymysql",
+    # Pins
     "xmlsec==1.3.17",
 ]
 
 [dependency-groups]
 dev = [
-    "coverage[toml]>=7.13.0",
-    "django-querycount>=0.8.3",
-    "django-silk>=5.4.3",
-    "django-slowtests>=1.1.1",
-    "django-stubs>=5.2.8",
-    "django-test-migrations>=1.5.0",
-    "django-types>=0.22.0",
-    "isort>=7.0.0",
-    "pdfminer-six>=20251107",
-    "pip-tools>=7.5.2",
-    "pre-commit>=4.5.0",
-    "pytest-codspeed>=4.2.0",
-    "pytest-django>=4.11.1",
-    "requests-mock>=1.12.1",
-    "setuptools>=80.9.0",
-    "ty>=0.0.1a21",
+    "coverage[toml]",                   # Unit test coverage
+    "django-querycount",                # Display number of URL queries for requests
+    "django-silk",                      # API query profiling
+    "django-slowtests",                 # Show which unit tests are running slowly
+    "django-test-migrations",           # Unit testing for database migrations
+    "isort",                            # python import sorting
+    "pip-tools",                        # Compile pip requirements
+    "pre-commit",                       # Git pre-commit
+    "setuptools",                       # Standard dependency
+    "pdfminer.six",                     # PDF validation
+    "ty",                               # type checking
+    "django-types",                     # typing
+    "django-stubs",                     # typing
+    "requests-mock",                    # Mock requests for unit tests
+    "pytest-codspeed",                  # Performance testing with Codspeed
+    "pytest-django",                    # Pytest support for Django (for benchnmarking)
 ]
 container = [
-    "django<6.0",
-    "django-auth-ldap",
-    "gunicorn>=22.0.0",
+    # Basic package requirements
     "invoke>=2.2.0",
-    "mariadb>=1.1.8",
-    "mysqlclient>=2.2.0",
-    "psycopg[binary,pool]",
-    "python-ldap",
     "pyyaml>=6.0.1",
     "setuptools>=69.0.0",
-    "uv",
     "wheel>=0.41.0",
+    # Database links
+    "psycopg[binary,pool]",
+    "mysqlclient>=2.2.0",
+    "mariadb>=1.1.8",
+    # gunicorn web server
+    "gunicorn>=22.0.0",
+    # LDAP required packages
+    "django-auth-ldap",  # Django integration for ldap auth
+    "python-ldap",  # LDAP auth support
+    "django<6.0",   # Force lower versions
+
+    "uv",  # Upgraded python package installer
 ]
 ci = [
     "jc>=1.25.6",
