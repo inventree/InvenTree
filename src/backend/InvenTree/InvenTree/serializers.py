@@ -164,7 +164,13 @@ class FilterableSerializerMixin:
     def gather_filters(self, kwargs) -> None:
         """Gather filterable fields through introspection."""
         # Is this a "top level" serializer?
-        top_level_serializer = kwargs.pop('top_level_serializer', False)
+
+        context = kwargs.get('context', {})
+        top_level_serializer = context.get('top_level_serializer', False)
+
+        # Update the context to ensure that the top_level_serializer flag is removed for nested serializers
+        context['top_level_serializer'] = False
+        kwargs['context'] = context
 
         # Fast exit if this has already been done or would not have any effect
         if getattr(self, '_was_filtered', False) or not hasattr(self, 'fields'):
@@ -180,9 +186,7 @@ class FilterableSerializerMixin:
         }
 
         # Gather query parameters from the request context
-        query_params = {}
-        if context := kwargs.get('context', {}):
-            query_params = dict(getattr(context.get('request', {}), 'query_params', {}))
+        query_params = dict(getattr(context.get('request', {}), 'query_params', {}))
 
         # Remove filter args from kwargs to avoid issues with super().__init__
         popped_kwargs = {}  # store popped kwargs as a arg might be reused for multiple fields
