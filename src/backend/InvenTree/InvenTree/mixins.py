@@ -245,8 +245,7 @@ class OutputOptionsMixin:
             params = self.request.query_params
             kwargs.update(self.output_options.format_params(params))
 
-        # Indicate that this is a "top level" serializer
-        # This will be removed from any nested serializers
+        # Ensure the request is included in the serializer context
         context = kwargs.get('context', {})
         context['request'] = request
         kwargs['context'] = context
