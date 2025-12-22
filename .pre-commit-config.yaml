@@ -32,12 +32,12 @@ repos:
     rev: 0.9.16
     hooks:
       - id: pip-compile
-        name: pip-compile devel
-        args: [--group, devel, -o, src/backend/requirements-dev.txt, -c, src/backend/requirements.txt, --no-strip-extras, --generate-hashes]
+        name: pip-compile normal
+        args: [pyproject.toml, -o, src/backend/requirements.txt, --no-strip-extras, --generate-hashes]
         files: uv.lock
       - id: pip-compile
-        name: pip-compile normal
-        args: [--group, normal, -o, src/backend/requirements.txt, --no-strip-extras, --generate-hashes]
+        name: pip-compile dev
+        args: [--group, dev, -o, src/backend/requirements-dev.txt, -c, src/backend/requirements.txt, --no-strip-extras, --generate-hashes]
         files: uv.lock
       - id: pip-compile
         name: pip-compile ci
