@@ -650,7 +650,6 @@ class InvenTreeAPITestCase(
         # Add in any other export specific kwargs
         for key, value in kwargs.items():
             if key.startswith('export_'):
-                kwargs.pop(key)
                 params[key] = value
 
         # Append URL params
