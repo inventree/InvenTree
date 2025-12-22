@@ -128,7 +128,7 @@ export default function BuildAllocatedStockTable({
         render: (record: any) => record?.stock_item_detail?.batch
       },
       DecimalColumn({
-        accessor: 'available',
+        accessor: 'stock_item_detail.quantity',
         title: t`Available`
       }),
       DecimalColumn({
