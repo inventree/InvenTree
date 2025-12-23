@@ -135,7 +135,7 @@ test('Parts - BOM', async ({ browser }) => {
   await page.getByRole('button', { name: 'Close' }).click();
 });
 
-test('Part - Editing', async ({ browser }) => {
+test('Parts - Editing', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: 'part/104/details' });
 
   await page.getByText('A square table - with blue paint').first().waitFor();
