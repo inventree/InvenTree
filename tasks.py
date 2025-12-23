@@ -1846,6 +1846,12 @@ def frontend_download(
     if ref is None and tag is None:
         error('ERROR: Either ref or tag needs to be set.')
 
+    if tag == 'auto':
+        # Fetch the installed InvenTree version
+        import src.backend.InvenTree.InvenTree.version as InvenTreeVersion  # type: ignore[import]
+        tag = InvenTreeVersion.inventreeVersion()
+        info(f'Auto-detected tag: {tag}')
+
     if tag:
         tag = tag.lstrip('v')
         try:
