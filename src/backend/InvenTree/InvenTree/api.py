@@ -5,9 +5,12 @@ import json
 from pathlib import Path
 
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
 from django.http import JsonResponse
+from django.urls import path, reverse
 from django.utils.translation import gettext_lazy as _
+from django.views.generic.base import RedirectView
 
 import structlog
 from django_q.models import OrmQ
@@ -22,7 +25,7 @@ import InvenTree.config
 import InvenTree.permissions
 import InvenTree.version
 from common.settings import get_global_setting
-from InvenTree import helpers
+from InvenTree import helpers, ready
 from InvenTree.auth_overrides import registration_enabled
 from InvenTree.mixins import ListCreateAPI
 from InvenTree.sso import sso_registration_enabled
@@ -809,35 +812,122 @@ class APISearchView(GenericAPIView):
         return Response(results)
 
 
-class MetadataView(RetrieveUpdateAPI):
-    """Generic API endpoint for reading and editing metadata for a model."""
+class GenericMetadataView(RetrieveUpdateAPI):
+    """Metadata for specific instance; see https://docs.inventree.org/en/stable/plugins/metadata/ for more detail on how metadata works. Most core models support metadata."""
 
     model = None  # Placeholder for the model class
-
-    @classmethod
-    def as_view(cls, model, lookup_field=None, **initkwargs):
-        """Override to ensure model specific rendering."""
-        if model is None:
-            raise ValidationError(
-                "MetadataView defined without 'model' arg"
-            )  # pragma: no cover
-        initkwargs['model'] = model
-
-        # Set custom lookup field (instead of default 'pk' value) if supplied
-        if lookup_field:
-            initkwargs['lookup_field'] = lookup_field
-
-        return super().as_view(**initkwargs)
+    serializer_class = MetadataSerializer
+    permission_classes = [InvenTree.permissions.ContentTypePermission]
 
     def get_permission_model(self):
         """Return the 'permission' model associated with this view."""
-        return self.model
+        model_name = self.kwargs.get('model', None)
+
+        if model_name is None:
+            raise ValidationError(
+                "GenericMetadataView called without 'model' URL parameter"
+            )  # pragma: no cover
+
+        model = ContentType.objects.filter(model=model_name).first()
+
+        if model is None:
+            raise ValidationError(
+                f"GenericMetadataView called with invalid model '{model_name}'"
+            )  # pragma: no cover
+
+        return model.model_class()
 
     def get_queryset(self):
         """Return the queryset for this endpoint."""
-        return self.model.objects.all()
+        model = self.get_permission_model()
+        return model.objects.all()
 
     def get_serializer(self, *args, **kwargs):
         """Return MetadataSerializer instance."""
+        is_gen = ready.isGeneratingSchema()
         # Detect if we are currently generating the OpenAPI schema
+        if self.model is None and not is_gen:
+            self.model = self.get_permission_model()
+        if self.model is None and is_gen:
+            # Provide a default model for schema generation
+            import users.models
+
+            self.model = users.models.User
         return MetadataSerializer(self.model, *args, **kwargs)
+
+    def dispatch(self, request, *args, **kwargs):
+        """Override dispatch to set lookup field dynamically."""
+        self.lookup_field = self.kwargs.get('lookup_field', 'pk')
+        self.lookup_url_kwarg = (
+            'lookup_value' if 'lookup_field' in self.kwargs else 'pk'
+        )
+        return super().dispatch(request, *args, **kwargs)
+
+
+class SimpleGenericMetadataView(GenericMetadataView):
+    """Simplified version of GenericMetadataView which always uses 'pk' as the lookup field."""
+
+    def dispatch(self, request, *args, **kwargs):
+        """Override dispatch to set lookup field to 'pk'."""
+        self.lookup_field = 'pk'
+        self.lookup_url_kwarg = None
+        return super().dispatch(request, *args, **kwargs)
+
+    @extend_schema(operation_id='metadata_pk_retrieve')
+    def get(self, request, *args, **kwargs):
+        """Perform a GET request to retrieve metadata for the given object."""
+        return super().get(request, *args, **kwargs)
+
+    @extend_schema(operation_id='metadata_pk_update')
+    def put(self, request, *args, **kwargs):
+        """Perform a PUT request to update metadata for the given object."""
+        return super().put(request, *args, **kwargs)
+
+    @extend_schema(operation_id='metadata_pk_partial_update')
+    def patch(self, request, *args, **kwargs):
+        """Perform a PATCH request to partially update metadata for the given object."""
+        return super().patch(request, *args, **kwargs)
+
+
+class MetadataRedirectView(RedirectView):
+    """Redirect to the generic metadata view for a given model."""
+
+    model_name = None  # Placeholder for the model class
+    lookup_field = 'pk'
+    lookup_field_ref = 'pk'
+    permanent = True
+
+    def get_redirect_url(self, *args, **kwargs) -> str | None:
+        """Return the redirect URL for this view."""
+        _kwargs = {
+            'model': self.model_name,
+            'lookup_value': self.kwargs.get(self.lookup_field_ref, None),
+            'lookup_field': self.lookup_field,
+        }
+        return reverse('api-generic-metadata', args=args, kwargs=_kwargs)
+
+
+def meta_path(model, lookup_field: str = 'pk', lookup_field_ref: str = 'pk'):
+    """Helper function for constructing metadata path for a given model.
+
+    Arguments:
+        model: The model class to use
+        lookup_field: The lookup field to use (if not 'pk')
+        lookup_field_ref: The reference name for the lookup field in the request(if not 'pk')
+
+    Returns:
+        A path to the generic metadata view for the given model
+    """
+    if model is None:
+        raise ValidationError(
+            "redirect_metadata_view called without 'model' arg"
+        )  # pragma: no cover
+
+    return path(
+        'metadata/',
+        MetadataRedirectView.as_view(
+            model_name=model._meta.model_name,
+            lookup_field=lookup_field,
+            lookup_field_ref=lookup_field_ref,
+        ),
+    )
