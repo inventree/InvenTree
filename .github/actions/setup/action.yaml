@@ -41,7 +41,8 @@ runs:
 
       # Python installs
       - name: Set up Python ${{ env.python_version }}
-        if: ${{ inputs.python == 'true' }}
+        # do not cache 3.14 as it causes issues with cffi
+        if: ${{ inputs.python == 'true' && env.python_version != '3.14' }}
         uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # pin@v5.0.0
         with:
           python-version: ${{ env.python_version }}
@@ -51,6 +52,12 @@ runs:
             src/backend/requirements-dev.txt
             contrib/container/requirements.txt
             contrib/dev_reqs/requirements.txt
+      - name: Setup Python 3.14
+        if: ${{ inputs.python == 'true' && env.python_version == '3.14' }}
+        uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # pin@v5.0.0
+        with:
+          python-version: ${{ env.python_version }}
+          cache: false
       - name: Install Base Python Dependencies
         if: ${{ inputs.python == 'true' }}
         shell: bash
@@ -94,6 +101,14 @@ runs:
         if: ${{ inputs.install == 'true' }}
         shell: bash
         run: invoke install --uv
+      - name: Fix cffi issues
+        # only needed for python 3.14
+        if: ${{ env.python_version == '3.14' }}
+        shell: bash
+        run: |
+          pip uninstall cffi -y
+          sudo apt remove --purge -y python3-cffi
+          pip install --no-cache-dir --force-reinstall --ignore-installed cffi
       - name: Run invoke update
         if: ${{ inputs.update == 'true' }}
         shell: bash
