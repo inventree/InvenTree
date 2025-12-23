@@ -32,25 +32,25 @@ repos:
     rev: 0.9.16
     hooks:
       - id: pip-compile
-        name: pip-compile requirements-dev.in
-        args: [src/backend/requirements-dev.in, -o, src/backend/requirements-dev.txt, --no-strip-extras, --generate-hashes]
-        files: src/backend/requirements-dev\.(in|txt)$
+        name: pip-compile normal
+        args: [pyproject.toml, -o, src/backend/requirements.txt, --no-strip-extras, --generate-hashes]
+        files: uv.lock
       - id: pip-compile
-        name: pip-compile requirements.txt
-        args: [src/backend/requirements.in, -o, src/backend/requirements.txt, --no-strip-extras, --generate-hashes]
-        files: src/backend/requirements\.(in|txt)$
+        name: pip-compile dev
+        args: [--group, dev, -o, src/backend/requirements-dev.txt, -c, src/backend/requirements.txt, --no-strip-extras, --generate-hashes]
+        files: uv.lock
       - id: pip-compile
-        name: pip-compile requirements.txt
-        args: [contrib/dev_reqs/requirements.in, -o, contrib/dev_reqs/requirements.txt, --no-strip-extras, --generate-hashes, -b, src/backend/requirements.txt]
-        files: contrib/dev_reqs/requirements\.(in|txt)$
+        name: pip-compile ci
+        args: [--group, ci, -o, contrib/dev_reqs/requirements.txt, --no-strip-extras, --generate-hashes, -b, src/backend/requirements.txt]
+        files: uv.lock
       - id: pip-compile
-        name: pip-compile requirements.txt
-        args: [docs/requirements.in, -o, docs/requirements.txt, --no-strip-extras, --generate-hashes, -b, src/backend/requirements.txt]
-        files: docs/requirements\.(in|txt)$
+        name: pip-compile docs
+        args: [--group, docs, -o, docs/requirements.txt, --no-strip-extras, --generate-hashes, -b, src/backend/requirements.txt]
+        files: uv.lock
       - id: pip-compile
-        name: pip-compile requirements.txt
-        args: [contrib/container/requirements.in, -o, contrib/container/requirements.txt, --python-version=3.11, --no-strip-extras, --generate-hashes, -b, src/backend/requirements.txt]
-        files: contrib/container/requirements\.(in|txt)$
+        name: pip-compile container
+        args: [--group, container, -o, contrib/container/requirements.txt, --python-version=3.11, --no-strip-extras, --generate-hashes, -b, src/backend/requirements.txt]
+        files: uv.lock
 -   repo: https://github.com/Riverside-Healthcare/djLint
     rev: v1.36.4
     hooks:
