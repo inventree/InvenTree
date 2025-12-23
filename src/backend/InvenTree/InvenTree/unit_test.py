@@ -655,7 +655,9 @@ class InvenTreeAPITestCase(
         # Append URL params
         url += '?' + '&'.join([f'{key}={value}' for key, value in params.items()])
 
-        response = self.client.get(url, data=None, format='json')
+        response = self.get(
+            url, data=None, format='json', expected_code=expected_code, **kwargs
+        )
         self.check_response(url, response, expected_code=expected_code)
 
         # Check that the response is of the correct type
