@@ -9,6 +9,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.urls import reverse
 
+import pytest
 from djmoney.money import Money
 from rest_framework import status
 
@@ -17,7 +18,7 @@ import company.models
 import part.models
 from common.models import InvenTreeCustomUserStateModel, InvenTreeSetting
 from common.settings import set_global_setting
-from InvenTree.unit_test import InvenTreeAPITestCase
+from InvenTree.unit_test import InvenTreeAPIPerformanceTestCase, InvenTreeAPITestCase
 from part.models import Part, PartTestTemplate
 from stock.models import (
     StockItem,
@@ -866,9 +867,13 @@ class StockItemListTest(StockAPITestCase):
 
         excluded_headers = ['metadata']
 
-        filters = {}
+        filters = {
+            'part_detail': True,
+            'location_detail': True,
+            'supplier_part_detail': True,
+        }
 
-        with self.export_data(self.list_url, filters) as data_file:
+        with self.export_data(self.list_url, params=filters) as data_file:
             self.process_csv(
                 data_file,
                 required_cols=required_headers,
@@ -880,7 +885,7 @@ class StockItemListTest(StockAPITestCase):
         filters['location'] = 1
         filters['cascade'] = True
 
-        with self.export_data(self.list_url, filters) as data_file:
+        with self.export_data(self.list_url, params=filters) as data_file:
             data = self.process_csv(data_file, required_rows=9)
 
             for row in data:
@@ -907,6 +912,51 @@ class StockItemListTest(StockAPITestCase):
         # Export stock items with a specific part
         with self.export_data(self.list_url, {'part': 25}) as data_file:
             self.process_csv(data_file, required_rows=items.count())
+
+    def test_large_export(self):
+        """Test export of very large dataset.
+
+        - Ensure that the time taken to export a large dataset is reasonable.
+        - Ensure that the number of DB queries is reasonable.
+        """
+        # Create a large number of stock items
+        locations = list(StockLocation.objects.all())
+        parts = list(Part.objects.filter(virtual=False))
+
+        idx = 0
+
+        N_LOCATIONS = len(locations)
+        N_PARTS = len(parts)
+
+        stock_items = []
+
+        while idx < 2500:
+            part = parts[idx % N_PARTS]
+            location = locations[idx % N_LOCATIONS]
+
+            item = StockItem(
+                part=part,
+                location=location,
+                quantity=10,
+                level=0,
+                tree_id=0,
+                lft=0,
+                rght=0,
+            )
+            stock_items.append(item)
+            idx += 1
+
+        StockItem.objects.bulk_create(stock_items)
+
+        self.assertGreaterEqual(StockItem.objects.count(), 2500)
+
+        # Note: While the export is quick on pgsql, it is still quite slow on sqlite3
+        with self.export_data(
+            self.list_url, max_query_count=50, max_query_time=7.5
+        ) as data_file:
+            data = self.process_csv(data_file)
+
+            self.assertGreaterEqual(len(data), 2500)
 
     def test_filter_by_allocated(self):
         """Test that we can filter by "allocated" status.
@@ -2549,3 +2599,15 @@ class StockMetadataAPITest(InvenTreeAPITestCase):
             'api-stock-item-metadata': StockItem,
         }.items():
             self.metatester(apikey, model)
+
+
+class StockApiPerformanceTest(StockAPITestCase, InvenTreeAPIPerformanceTestCase):
+    """Performance tests for the Stock API."""
+
+    @pytest.mark.django_db
+    @pytest.mark.benchmark
+    def test_api_stock_list(self):
+        """Test that Stock API queries are performant."""
+        url = reverse('api-stock-list')
+        response = self.get(url, expected_code=200)
+        self.assertGreater(len(response.data), 13)
