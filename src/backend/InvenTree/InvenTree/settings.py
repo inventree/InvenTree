@@ -1519,3 +1519,23 @@ if 'dbbackup' not in STORAGES:
 if _media:
     MEDIA_URL = _media
 PRESIGNED_URL_EXPIRATION = 600
+
+
+# SSE / GRIP
+GRIP_ENABLED = get_boolean_setting('INVENTREE_GRIP_ENABLED', 'grip.enabled', False)
+if GRIP_ENABLED:  # pragma: no cover
+    logger.info('GRIP / SSE support enabled')
+    INSTALLED_APPS.append('django_eventstream')
+    EVENTSTREAM_STORAGE_CLASS = 'django_eventstream.storage.DjangoModelStorage'
+    EVENTSTREAM_CHANNELMANAGER_CLASS = 'InvenTree.sse.MyChannelManager'
+
+    # GRIP backend
+    # MIDDLEWARE.insert(0, 'django_grip.GripMiddleware')
+    MIDDLEWARE.append('django_grip.GripMiddleware')
+    GRIP_URL = get_setting('INVENTREE_GRIP_URL', 'grip.url', 'http://localhost:5561')
+    REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'].append(
+        'django_eventstream.renderers.SSEEventRenderer'
+    )
+    REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'].append(
+        'django_eventstream.renderers.BrowsableAPIEventStreamRenderer'
+    )

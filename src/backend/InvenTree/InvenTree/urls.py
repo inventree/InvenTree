@@ -162,6 +162,14 @@ urlpatterns += [  # API URLs
 ]
 urlpatterns += platform_urls
 
+
+# SSE endpoints
+if settings.GRIP_ENABLED:
+    from .sse import sse_urlpatterns
+
+    urlpatterns += sse_urlpatterns
+
+
 # Append custom plugin URLs (if custom plugin support is enabled)
 if settings.PLUGINS_ENABLED:
     urlpatterns.append(get_plugin_urls())
