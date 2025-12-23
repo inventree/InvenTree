@@ -670,9 +670,10 @@ export function BomTable({
             params: {
               ...params,
               part: partId,
-              category_detail: true,
+              substitutes: true,
               part_detail: true,
-              sub_part_detail: true
+              sub_part_detail: true,
+              category_detail: true
             },
             tableActions: tableActions,
             tableFilters: tableFilters,
