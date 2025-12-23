@@ -111,8 +111,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Build and install python dependencies
-RUN pip install --user --require-hashes -r base_requirements.txt --no-cache-dir && \
-    pip install --user --require-hashes -r requirements.txt --no-cache-dir && \
+RUN pip install --user  -r base_requirements.txt --no-cache-dir && \
+    pip install --user  -r requirements.txt --no-cache-dir && \
     pip cache purge && \
     rm -rf /root/.cache/pip
 

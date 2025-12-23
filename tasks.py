@@ -511,14 +511,14 @@ def install(c, uv=False, skip_plugins=False):
         )
         run(
             c,
-            f'pip3 install --no-cache-dir --disable-pip-version-check -U --require-hashes -r {INSTALL_FILE}',
+            f'pip3 install --no-cache-dir --disable-pip-version-check -U  -r {INSTALL_FILE}',
         )
     else:
         run(
             c,
             'pip3 install --no-cache-dir --disable-pip-version-check -U uv setuptools',
         )
-        run(c, f'uv pip install -U --require-hashes  -r {INSTALL_FILE}')
+        run(c, f'uv pip install -U   -r {INSTALL_FILE}')
 
     # Run plugins install
     if not skip_plugins:
@@ -540,7 +540,7 @@ def setup_dev(c, tests=False):
     info("Installing required python packages from 'src/backend/requirements-dev.txt'")
 
     # Install required Python packages with PIP
-    run(c, 'pip3 install -U --require-hashes -r src/backend/requirements-dev.txt')
+    run(c, 'pip3 install -U  -r src/backend/requirements-dev.txt')
 
     # Install pre-commit hook
     info('Installing pre-commit for checks before git commits...')
