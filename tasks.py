@@ -1693,7 +1693,7 @@ def frontend_build(c):
 
     # Write version marker
     try:
-        import src.backend.InvenTree.InvenTree.version as InvenTreeVersion
+        import src.backend.InvenTree.InvenTree.version as InvenTreeVersion  # type: ignore[import]
 
         if version_hash := InvenTreeVersion.inventreeCommitHash():
             write_info(version_sha_pth(), version_hash)
