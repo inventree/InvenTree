@@ -1,6 +1,5 @@
 """Tasks for automating certain actions and interacting with InvenTree from the CLI."""
 
-import datetime
 import json
 import os
 import pathlib
@@ -356,26 +355,6 @@ def manage_py_dir():
 def manage_py_path():
     """Return the path of the manage.py file."""
     return manage_py_dir().joinpath('manage.py')
-
-
-def _frontend_info():
-    """Return the path of the frontend info directory."""
-    return manage_py_dir().joinpath('web', 'static', 'web', '.vite')
-
-
-def version_target_pth():
-    """Return the path of the target version file."""
-    return _frontend_info().joinpath('tag.txt')
-
-
-def version_sha_pth():
-    """Return the path of the SHA version file."""
-    return _frontend_info().joinpath('sha.txt')
-
-
-def version_source_pth():
-    """Return the path of the source version file."""
-    return _frontend_info().joinpath('source.txt')
 
 
 # endregion
@@ -1685,31 +1664,6 @@ def frontend_build(c):
     info('Building frontend')
     yarn(c, 'yarn run build')
 
-    def write_info(path: Path, content: str):
-        """Helper function to write version content to file after cleaning it if it exists."""
-        if path.exists():
-            path.unlink()
-        path.write_text(content, encoding='utf-8')
-
-    # Write version marker
-    try:
-        import src.backend.InvenTree.InvenTree.version as InvenTreeVersion
-
-        if version_hash := InvenTreeVersion.inventreeCommitHash():
-            write_info(version_sha_pth(), version_hash)
-        elif version_tag := InvenTreeVersion.inventreeVersion():
-            write_info(version_target_pth(), version_tag)
-        else:
-            warning('No version information available to write frontend version marker')
-
-        # Write source marker
-        write_info(
-            version_source_pth(),
-            f'local build on {datetime.datetime.now().isoformat()}',
-        )
-    except Exception:
-        warning('Failed to write frontend version marker')
-
 
 @task
 def frontend_server(c):
@@ -1834,9 +1788,13 @@ def frontend_download(
         ref = 'tag' if tag else 'commit'
 
         if tag:
-            current = version_target_pth()
+            current = manage_py_dir().joinpath(
+                'web', 'static', 'web', '.vite', 'tag.txt'
+            )
         elif sha:
-            current = version_sha_pth()
+            current = manage_py_dir().joinpath(
+                'web', 'static', 'web', '.vite', 'sha.txt'
+            )
         else:
             raise ValueError('Either tag or sha needs to be set')
 
