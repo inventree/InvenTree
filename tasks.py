@@ -357,6 +357,21 @@ def manage_py_path():
     return manage_py_dir().joinpath('manage.py')
 
 
+def _frontend_info():
+    """Return the path of the frontend info directory."""
+    return manage_py_dir().joinpath('web', 'static', 'web', '.vite')
+
+
+def version_target_pth():
+    """Return the path of the target version file."""
+    return _frontend_info().joinpath('tag.txt')
+
+
+def version_sha_pth():
+    """Return the path of the SHA version file."""
+    return _frontend_info().joinpath('sha.txt')
+
+
 # endregion
 
 if __name__ in ['__main__', 'tasks']:
@@ -1788,13 +1803,9 @@ def frontend_download(
         ref = 'tag' if tag else 'commit'
 
         if tag:
-            current = manage_py_dir().joinpath(
-                'web', 'static', 'web', '.vite', 'tag.txt'
-            )
+            current = version_target_pth()
         elif sha:
-            current = manage_py_dir().joinpath(
-                'web', 'static', 'web', '.vite', 'sha.txt'
-            )
+            current = version_sha_pth()
         else:
             raise ValueError('Either tag or sha needs to be set')
 
