@@ -1,5 +1,6 @@
 """Tasks for automating certain actions and interacting with InvenTree from the CLI."""
 
+import datetime
 import json
 import os
 import pathlib
@@ -370,6 +371,11 @@ def version_target_pth():
 def version_sha_pth():
     """Return the path of the SHA version file."""
     return _frontend_info().joinpath('sha.txt')
+
+
+def version_source_pth():
+    """Return the path of the source version file."""
+    return _frontend_info().joinpath('source.txt')
 
 
 # endregion
@@ -1678,6 +1684,31 @@ def frontend_build(c):
     """
     info('Building frontend')
     yarn(c, 'yarn run build')
+
+    def write_info(path: Path, content: str):
+        """Helper function to write version content to file after cleaning it if it exists."""
+        if path.exists():
+            path.unlink()
+        path.write_text(content, encoding='utf-8')
+
+    # Write version marker
+    try:
+        import src.backend.InvenTree.InvenTree.version as InvenTreeVersion
+
+        if version_hash := InvenTreeVersion.inventreeCommitHash():
+            write_info(version_sha_pth(), version_hash)
+        elif version_tag := InvenTreeVersion.inventreeVersion():
+            write_info(version_target_pth(), version_tag)
+        else:
+            warning('No version information available to write frontend version marker')
+
+        # Write source marker
+        write_info(
+            version_source_pth(),
+            f'local build on {datetime.datetime.now().isoformat()}',
+        )
+    except Exception:
+        warning('Failed to write frontend version marker')
 
 
 @task
