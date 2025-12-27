@@ -60,6 +60,7 @@ import {
 } from '../hooks/UseGenerator';
 import { useGlobalSettingsState } from '../states/SettingsStates';
 import { StatusFilterOptions } from '../tables/Filter';
+import { keepFormOpenField } from './CommonForms';
 
 /**
  * Construct a set of fields for creating / editing a StockItem instance
@@ -1395,7 +1396,7 @@ export function useDeleteStockItem(props: StockOperationProps) {
   });
 }
 
-export function stockLocationFields(): ApiFormFieldSet {
+export function stockLocationFields(create = false): ApiFormFieldSet {
   const fields: ApiFormFieldSet = {
     parent: {
       description: t`Parent stock location`,
@@ -1408,7 +1409,8 @@ export function stockLocationFields(): ApiFormFieldSet {
     custom_icon: {
       field_type: 'icon'
     },
-    location_type: {}
+    location_type: {},
+    keep_form_open: keepFormOpenField(create)
   };
 
   return fields;

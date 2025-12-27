@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import type { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
-import type { ApiFormFieldSet } from '@lib/types/Forms';
+import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
 import type {
   StatusCodeInterface,
@@ -209,3 +209,11 @@ export function useParameterFields({
     };
   }, [data, modelType, fieldType, choices, modelId]);
 }
+
+export const keepFormOpenField = (create = true): ApiFormFieldType => ({
+  label: 'Keep form open',
+  field_type: 'boolean',
+  exclude: true,
+  hidden: !create,
+  description: 'Keep form open after submitting'
+});

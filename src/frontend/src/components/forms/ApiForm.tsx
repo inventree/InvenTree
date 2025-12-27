@@ -459,9 +459,16 @@ export function ApiForm({
               props.onFormSuccess(response.data, form);
             }
 
-            if (props.follow && props.modelType && response.data?.pk) {
+            const keepOpen = form.getValues()?.keep_form_open ?? false;
+
+            if (
+              props.follow &&
+              props.modelType &&
+              response.data?.pk &&
+              !keepOpen
+            ) {
               // If we want to automatically follow the returned data
-              if (!!navigate) {
+              if (!!navigate && !keepOpen) {
                 navigate(getDetailUrl(props.modelType, response.data?.pk));
               }
             } else if (props.table) {
