@@ -111,3 +111,16 @@ api.yaml
 # web frontend (static files)
 src/backend/InvenTree/web/static
 InvenTree/web/static
+
+
+media/*
+backup/*
+static/*
+
+schema.yml
+.yarn/*
+
+package-lock.json
+yarn.lock
+install-state.gz
+.yarnrc.yml
