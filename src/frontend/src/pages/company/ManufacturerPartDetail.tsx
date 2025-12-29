@@ -3,7 +3,6 @@ import { Grid, Skeleton, Stack } from '@mantine/core';
 import {
   IconBuildingWarehouse,
   IconInfoCircle,
-  IconList,
   IconPackages
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
@@ -32,6 +31,7 @@ import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
+import ParametersPanel from '../../components/panels/ParametersPanel';
 import { useManufacturerPartFields } from '../../forms/CompanyForms';
 import {
   useCreateApiFormModal,
@@ -40,7 +40,6 @@ import {
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { useUserState } from '../../states/UserState';
-import ManufacturerPartParameterTable from '../../tables/purchasing/ManufacturerPartParameterTable';
 import { SupplierPartTable } from '../../tables/purchasing/SupplierPartTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 
@@ -158,18 +157,6 @@ export default function ManufacturerPartDetail() {
         content: detailsPanel
       },
       {
-        name: 'parameters',
-        label: t`Parameters`,
-        icon: <IconList />,
-        content: manufacturerPart?.pk ? (
-          <ManufacturerPartParameterTable
-            params={{ manufacturer_part: manufacturerPart.pk }}
-          />
-        ) : (
-          <Skeleton />
-        )
-      },
-      {
         name: 'stock',
         label: t`Received Stock`,
         hidden: !user.hasViewRole(UserRoles.stock),
@@ -197,6 +184,10 @@ export default function ManufacturerPartDetail() {
           <Skeleton />
         )
       },
+      ParametersPanel({
+        model_type: ModelType.manufacturerpart,
+        model_id: manufacturerPart?.pk
+      }),
       AttachmentPanel({
         model_type: ModelType.manufacturerpart,
         model_id: manufacturerPart?.pk

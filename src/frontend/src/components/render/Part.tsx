@@ -141,23 +141,6 @@ export function RenderPartCategory(
   );
 }
 
-/**
- * Inline rendering of a PartParameterTemplate instance
- */
-export function RenderPartParameterTemplate({
-  instance
-}: Readonly<{
-  instance: any;
-}>): ReactNode {
-  return (
-    <RenderInlineModel
-      primary={instance.name}
-      secondary={instance.description}
-      suffix={instance.units}
-    />
-  );
-}
-
 export function RenderPartTestTemplate({
   instance
 }: Readonly<{

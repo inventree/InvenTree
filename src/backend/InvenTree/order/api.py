@@ -29,7 +29,12 @@ import stock.serializers as stock_serializers
 from common.filters import prefetch_related_images
 from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import StatusView
-from InvenTree.api import BulkUpdateMixin, ListCreateDestroyAPIView, MetadataView
+from InvenTree.api import (
+    BulkUpdateMixin,
+    ListCreateDestroyAPIView,
+    MetadataView,
+    ParameterListMixin,
+)
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import (
     SEARCH_ORDER_FILTER,
@@ -365,12 +370,10 @@ class PurchaseOrderMixin(SerializerContextMixin):
         """Return the annotated queryset for this endpoint."""
         queryset = super().get_queryset(*args, **kwargs)
 
-        queryset = queryset.prefetch_related(
-            'supplier', 'project_code', 'lines', 'responsible'
-        )
-
         queryset = serializers.PurchaseOrderSerializer.annotate_queryset(queryset)
         queryset = prefetch_related_images(queryset, reference='supplier__')
+
+        queryset = queryset.prefetch_related('supplier', 'created_by')
 
         return queryset
 
@@ -380,6 +383,7 @@ class PurchaseOrderList(
     OrderCreateMixin,
     DataExportViewMixin,
     OutputOptionsMixin,
+    ParameterListMixin,
     ListCreateAPI,
 ):
     """API endpoint for accessing a list of PurchaseOrder objects.
@@ -829,9 +833,7 @@ class SalesOrderMixin(SerializerContextMixin):
         """Return annotated queryset for this endpoint."""
         queryset = super().get_queryset(*args, **kwargs)
 
-        queryset = queryset.prefetch_related(
-            'customer', 'responsible', 'project_code', 'lines'
-        )
+        queryset = queryset.prefetch_related('customer', 'created_by')
 
         queryset = serializers.SalesOrderSerializer.annotate_queryset(queryset)
         queryset = prefetch_related_images(queryset, reference='customer__')
@@ -850,6 +852,7 @@ class SalesOrderList(
     OrderCreateMixin,
     DataExportViewMixin,
     OutputOptionsMixin,
+    ParameterListMixin,
     ListCreateAPI,
 ):
     """API endpoint for accessing a list of SalesOrder objects.
@@ -859,9 +862,7 @@ class SalesOrderList(
     """
 
     filterset_class = SalesOrderFilter
-
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
-
     output_options = SalesOrderOutputOptions
 
     ordering_field_aliases = {
@@ -1016,16 +1017,12 @@ class SalesOrderLineItemMixin(SerializerContextMixin):
 
         queryset = queryset.prefetch_related(
             'part',
-            'part__stock_items',
             'allocations',
             'allocations__shipment',
             'allocations__item__part',
             'allocations__item__location',
             'order',
-            'order__stock_items',
         )
-
-        queryset = queryset.select_related('part__pricing_data')
 
         queryset = serializers.SalesOrderLineItemSerializer.annotate_queryset(queryset)
 
@@ -1327,7 +1324,7 @@ class SalesOrderAllocationList(
 
 
 class SalesOrderAllocationDetail(SalesOrderAllocationMixin, RetrieveUpdateDestroyAPI):
-    """API endpoint for detali view of a SalesOrderAllocation object."""
+    """API endpoint for detail view of a SalesOrderAllocation object."""
 
 
 class SalesOrderShipmentFilter(FilterSet):
@@ -1378,7 +1375,7 @@ class SalesOrderShipmentFilter(FilterSet):
     )
 
     def filter_order_status(self, queryset, name, value):
-        """Filter by linked SalesOrderrder status."""
+        """Filter by linked SalesOrder status."""
         q1 = Q(order__status=value, order__status_custom_key__isnull=True)
         q2 = Q(order__status_custom_key=value)
 
@@ -1416,7 +1413,7 @@ class SalesOrderShipmentList(SalesOrderShipmentMixin, ListCreateAPI):
 
 
 class SalesOrderShipmentDetail(SalesOrderShipmentMixin, RetrieveUpdateDestroyAPI):
-    """API detail endpooint for SalesOrderShipment model."""
+    """API detail endpoint for SalesOrderShipment model."""
 
 
 class SalesOrderShipmentComplete(CreateAPI):
@@ -1508,13 +1505,11 @@ class ReturnOrderMixin(SerializerContextMixin):
     def get_queryset(self, *args, **kwargs):
         """Return annotated queryset for this endpoint."""
         queryset = super().get_queryset(*args, **kwargs)
-
-        queryset = queryset.prefetch_related(
-            'customer', 'lines', 'project_code', 'responsible'
-        )
-
         queryset = serializers.ReturnOrderSerializer.annotate_queryset(queryset)
         queryset = prefetch_related_images(queryset, reference='customer__')
+        queryset = queryset.prefetch_related(
+            'contact', 'created_by', 'customer', 'responsible'
+        )
 
         return queryset
 
@@ -1530,12 +1525,12 @@ class ReturnOrderList(
     OrderCreateMixin,
     DataExportViewMixin,
     OutputOptionsMixin,
+    ParameterListMixin,
     ListCreateAPI,
 ):
     """API endpoint for accessing a list of ReturnOrder objects."""
 
     filterset_class = ReturnOrderFilter
-
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
     output_options = ReturnOrderOutputOptions
@@ -1969,7 +1964,7 @@ order_api_urls = [
             ),
         ]),
     ),
-    # API endpoints for sales ordesr
+    # API endpoints for sales orders
     path(
         'so/',
         include([

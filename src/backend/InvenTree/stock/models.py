@@ -100,21 +100,6 @@ class StockLocationType(InvenTree.models.MetadataMixin, models.Model):
     )
 
 
-class StockLocationManager(TreeManager):
-    """Custom database manager for the StockLocation class.
-
-    StockLocation querysets will automatically select related fields for performance.
-    """
-
-    def get_queryset(self):
-        """Prefetch queryset to optimize db hits.
-
-        - Joins the StockLocationType by default for speedier icon access
-        """
-        # return super().get_queryset().select_related("location_type")
-        return super().get_queryset()
-
-
 class StockLocationReportContext(report.mixins.BaseReportContext):
     """Report context for the StockLocation model.
 
@@ -151,7 +136,7 @@ class StockLocation(
 
     EXTRA_PATH_FIELDS = ['icon']
 
-    objects = StockLocationManager()
+    objects = TreeManager()
 
     class Meta:
         """Metaclass defines extra model properties."""
@@ -1907,7 +1892,12 @@ class StockItem(
         data = dict(StockItem.objects.filter(pk=self.pk).values()[0])
 
         if location:
-            data['location'] = location
+            if location.structural:
+                raise ValidationError({
+                    'location': _('Cannot assign stock to structural location')
+                })
+
+            data['location_id'] = location.pk
 
         # Set the parent ID correctly
         data['parent'] = self
@@ -1920,7 +1910,17 @@ class StockItem(
         history_items = []
 
         for item in items:
-            # Construct a tracking entry for the new StockItem
+            # Construct tracking entries for the new StockItem
+            if entry := item.add_tracking_entry(
+                StockHistoryCode.SPLIT_FROM_PARENT,
+                user,
+                quantity=1,
+                notes=notes,
+                location=location,
+                commit=False,
+            ):
+                history_items.append(entry)
+
             if entry := item.add_tracking_entry(
                 StockHistoryCode.ASSIGNED_SERIAL,
                 user,
@@ -1937,7 +1937,9 @@ class StockItem(
         StockItemTracking.objects.bulk_create(history_items)
 
         # Remove the equivalent number of items
-        self.take_stock(quantity, user, notes=notes)
+        self.take_stock(
+            quantity, user, code=StockHistoryCode.STOCK_SERIZALIZED, notes=notes
+        )
 
         return items
 

@@ -47,7 +47,7 @@ class TestLegacyAttachmentMigration(MigratorTestCase):
     """Test entire schema migration sequence for the common app."""
 
     migrate_from = ('common', '0024_notesimage_model_id_notesimage_model_type')
-    migrate_to = ('common', unit_test.getNewestMigrationFile('common'))
+    migrate_to = ('common', '0039_emailthread_emailmessage')
 
     def prepare(self):
         """Create initial data.

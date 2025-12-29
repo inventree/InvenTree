@@ -254,7 +254,7 @@ test('Settings - Admin', async ({ browser }) => {
   await loadTab(page, 'Currencies');
   await loadTab(page, 'Project Codes');
   await loadTab(page, 'Custom Units');
-  await loadTab(page, 'Part Parameters');
+  await loadTab(page, 'Parameters', true);
   await loadTab(page, 'Category Parameters');
   await loadTab(page, 'Label Templates');
   await loadTab(page, 'Report Templates');
@@ -332,7 +332,7 @@ test('Settings - Admin - Barcode History', async ({ browser }) => {
 
   // Scan some barcodes (via API calls)
   const barcodes = ['ABC1234', 'XYZ5678', 'QRS9012'];
-  const api = await createApi();
+  const api = await createApi({});
 
   for (let i = 0; i < barcodes.length; i++) {
     const barcode = barcodes[i];
@@ -349,8 +349,8 @@ test('Settings - Admin - Barcode History', async ({ browser }) => {
           },
           timeout: 5000
         })
-        .then(() => {
-          result = true;
+        .then((response) => {
+          result = response.status() === 200;
         });
 
       if (result) {
@@ -371,6 +371,113 @@ test('Settings - Admin - Barcode History', async ({ browser }) => {
   barcodes.forEach(async (barcode) => {
     await page.getByText(barcode).first().waitFor();
   });
+});
+
+test('Settings - Admin - Parameter', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    username: 'admin',
+    password: 'inventree'
+  });
+  await page.getByRole('button', { name: 'admin' }).click();
+  await page.getByRole('menuitem', { name: 'Admin Center' }).click();
+
+  await loadTab(page, 'Parameters', true);
+
+  await page.waitForTimeout(1000);
+  await page.waitForLoadState('networkidle');
+
+  // Clean old template data if exists
+  await page
+    .getByRole('cell', { name: 'my custom parameter' })
+    .waitFor({ timeout: 500 })
+    .then(async (cell) => {
+      await page
+        .getByRole('cell', { name: 'my custom parameter' })
+        .locator('..')
+        .getByLabel('row-action-menu-')
+        .click();
+      await page.getByRole('menuitem', { name: 'Delete' }).click();
+      await page.getByRole('button', { name: 'Delete' }).click();
+    })
+    .catch(() => {});
+
+  await page.getByRole('button', { name: 'Selection Lists' }).click();
+  // Allow time for the table to load
+  await page.waitForTimeout(1000);
+  await page.waitForLoadState('networkidle');
+
+  // Clean old list data if exists
+  await page
+    .getByRole('cell', { name: 'some list' })
+    .waitFor({ timeout: 500 })
+    .then(async (cell) => {
+      await page
+        .getByRole('cell', { name: 'some list' })
+        .locator('..')
+        .getByLabel('row-action-menu-')
+        .click();
+      await page.getByRole('menuitem', { name: 'Delete' }).click();
+      await page.getByRole('button', { name: 'Delete' }).click();
+    })
+    .catch(() => {});
+
+  // Add selection list
+  await page.getByLabel('action-button-add-selection-').waitFor();
+  await page.getByLabel('action-button-add-selection-').click();
+  await page.getByLabel('text-field-name').fill('some list');
+  await page.getByLabel('text-field-description').fill('Listdescription');
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByRole('cell', { name: 'some list' }).waitFor();
+
+  await page.getByLabel('action-button-add-parameter').waitFor();
+  await page.getByLabel('action-button-add-parameter').click();
+  await page.getByLabel('text-field-name').fill('my custom parameter');
+  await page.getByLabel('text-field-description').fill('description');
+  await page
+    .locator('div')
+    .filter({ hasText: /^Search\.\.\.$/ })
+    .nth(2)
+    .click();
+  await page
+    .getByRole('option', { name: 'some list' })
+    .locator('div')
+    .first()
+    .click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByRole('cell', { name: 'my custom parameter' }).click();
+
+  // Fill parameter
+  await navigate(page, 'part/104/parameters/');
+  await page.getByLabel('Parameters').getByText('Parameters').waitFor();
+  await page.waitForLoadState('networkidle');
+  await page
+    .getByRole('button', { name: 'action-menu-add-parameters' })
+    .click();
+
+  await page
+    .getByRole('menuitem', {
+      name: 'action-menu-add-parameters-create-parameter'
+    })
+    .click();
+
+  await page.waitForTimeout(500);
+
+  await page.getByText('Add Parameter').waitFor();
+  await page
+    .getByText('Template *Parameter')
+    .locator('div')
+    .filter({ hasText: /^Search\.\.\.$/ })
+    .first()
+    .click();
+  await page
+    .getByText('Template *Parameter')
+    .locator('div')
+    .filter({ hasText: /^Search\.\.\.$/ })
+    .locator('input')
+    .fill('my custom parameter');
+  await page.getByRole('option', { name: 'my custom parameter' }).click();
+  await page.getByLabel('choice-field-data').fill('2');
+  await page.getByRole('button', { name: 'Submit' }).click();
 });
 
 test('Settings - Admin - Unauthorized', async ({ browser }) => {

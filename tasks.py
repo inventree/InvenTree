@@ -1284,6 +1284,7 @@ def test_translations(c):
         'coverage': 'Run code coverage analysis (requires coverage package)',
         'translations': 'Compile translations before running tests',
         'keepdb': 'Keep the test database after running tests (default = False)',
+        'pytest': 'Use pytest to run tests',
     }
 )
 def test(
@@ -1296,6 +1297,7 @@ def test(
     coverage=False,
     translations=False,
     keepdb=False,
+    pytest=False,
 ):
     """Run unit-tests for InvenTree codebase.
 
@@ -1341,10 +1343,16 @@ def test(
     else:
         cmd += ' --exclude-tag migration_test'
 
+    cmd += ' --exclude-tag performance_test'
+
     if coverage:
         # Run tests within coverage environment, and generate report
         run(c, f'coverage run {manage_py_path()} {cmd}')
         run(c, 'coverage xml -i')
+    elif pytest:
+        # Use pytest to run the tests
+        migrate(c)
+        run(c, f'pytest {manage_py_path().parent.parent} --codspeed')
     else:
         # Run simple test runner, without coverage
         manage(c, cmd, pty=pty)
@@ -1355,6 +1363,7 @@ def test(
         'dev': 'Set up development environment at the end',
         'validate_files': 'Validate media files are correctly copied',
         'use_ssh': 'Use SSH protocol for cloning the demo dataset (requires SSH key)',
+        'branch': 'Specify branch of demo-dataset to clone (default = main)',
     }
 )
 def setup_test(
@@ -1364,6 +1373,7 @@ def setup_test(
     validate_files=False,
     use_ssh=False,
     path='inventree-demo-dataset',
+    branch='main',
 ):
     """Setup a testing environment."""
     from src.backend.InvenTree.InvenTree.config import (  # type: ignore[import]
@@ -1389,7 +1399,7 @@ def setup_test(
 
     # Get test data
     info('Cloning demo dataset ...')
-    run(c, f'git clone {URL} {template_dir} -v --depth=1')
+    run(c, f'git clone {URL} {template_dir} -b {branch} -v --depth=1')
 
     # Make sure migrations are done - might have just deleted sqlite database
     if not ignore_update:
@@ -1467,7 +1477,7 @@ def schema(
             'False'  # Disable plugins to ensure they are kep out of schema
         )
         envs['INVENTREE_CURRENCY_CODES'] = (
-            'AUD,CNY,EUR,USD'  # Default currency codes to ensure they are stable
+            'AUD,CAD,CNY,EUR,GBP,JPY,NZD,USD'  # Default currency codes to ensure they are stable
         )
 
     manage(c, cmd, pty=True, env=envs)
@@ -1528,6 +1538,13 @@ def version(c):
         get_static_dir,
     )
 
+    def get_value(fnc):
+        """Helper function to safely get value from function, catching import exceptions."""
+        try:
+            return fnc()
+        except (ModuleNotFoundError, ImportError):
+            return wrap_color('ENVIRONMENT ERROR', '91')
+
     # Gather frontend version information
     _, node, yarn = node_available(versions=True)
 
@@ -1560,17 +1577,17 @@ Invoke Tool {invoke_path}
 
 Installation paths:
 Base        {local_dir()}
-Config      {get_config_file()}
-Plugin File {get_plugin_file() or NOT_SPECIFIED}
-Media       {get_media_dir(error=False) or NOT_SPECIFIED}
-Static      {get_static_dir(error=False) or NOT_SPECIFIED}
-Backup      {get_backup_dir(error=False) or NOT_SPECIFIED}
+Config      {get_value(get_config_file)}
+Plugin File {get_value(get_plugin_file) or NOT_SPECIFIED}
+Media       {get_value(lambda: get_media_dir(error=False)) or NOT_SPECIFIED}
+Static      {get_value(lambda: get_static_dir(error=False)) or NOT_SPECIFIED}
+Backup      {get_value(lambda: get_backup_dir(error=False)) or NOT_SPECIFIED}
 
 Versions:
 InvenTree   {InvenTreeVersion.inventreeVersion()}
 API         {InvenTreeVersion.inventreeApiVersion()}
 Python      {python_version()}
-Django      {InvenTreeVersion.inventreeDjangoVersion()}
+Django      {get_value(InvenTreeVersion.inventreeDjangoVersion)}
 Node        {node if node else NA}
 Yarn        {yarn if yarn else NA}
 
@@ -1903,7 +1920,7 @@ def doc_schema(c):
 @task(
     help={
         'address': 'Host and port to run the server on (default: localhost:8080)',
-        'compile_schema': 'Compile the schema documentation first (default: False)',
+        'compile_schema': 'Compile the API schema documentation first (default: False)',
     }
 )
 def docs_server(c, address='localhost:8080', compile_schema=False):

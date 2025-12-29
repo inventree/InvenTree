@@ -2,14 +2,12 @@
 
 from django_test_migrations.contrib.unittest_case import MigratorTestCase
 
-from InvenTree import unit_test
-
 
 class TestSerialNumberMigration(MigratorTestCase):
     """Test data migration which updates serial numbers."""
 
     migrate_from = ('stock', '0067_alter_stockitem_part')
-    migrate_to = ('stock', unit_test.getNewestMigrationFile('stock'))
+    migrate_to = ('stock', '0070_auto_20211128_0151')
 
     def prepare(self):
         """Create initial data for this migration."""
@@ -72,7 +70,7 @@ class TestScheduledForDeletionMigration(MigratorTestCase):
     """Test data migration for removing 'scheduled_for_deletion' field."""
 
     migrate_from = ('stock', '0066_stockitem_scheduled_for_deletion')
-    migrate_to = ('stock', unit_test.getNewestMigrationFile('stock'))
+    migrate_to = ('stock', '0073_alter_stockitem_belongs_to')
 
     def prepare(self):
         """Create some initial stock items."""

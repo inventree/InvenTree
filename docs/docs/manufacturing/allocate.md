@@ -31,7 +31,7 @@ Before continuing, it is important that the difference between *untracked* and *
 
 #### BOM Considerations
 
-A [Bill of Materials](./bom.md) to generate an assembly may consist of a mixture of *untracked* and *tracked* components. The build order process can facilitate this, as documentated in the sections below.
+A [Bill of Materials](./bom.md) to generate an assembly may consist of a mixture of *untracked* and *tracked* components. The build order process can facilitate this, as documented in the sections below.
 
 ### Tracked Build Outputs
 

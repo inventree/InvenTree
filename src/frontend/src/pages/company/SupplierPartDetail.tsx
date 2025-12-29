@@ -35,6 +35,7 @@ import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
+import ParametersPanel from '../../components/panels/ParametersPanel';
 import { useSupplierPartFields } from '../../forms/CompanyForms';
 import {
   useCreateApiFormModal,
@@ -278,6 +279,10 @@ export default function SupplierPartDetail() {
           <Skeleton />
         )
       },
+      ParametersPanel({
+        model_type: ModelType.supplierpart,
+        model_id: supplierPart?.pk
+      }),
       AttachmentPanel({
         model_type: ModelType.supplierpart,
         model_id: supplierPart?.pk
