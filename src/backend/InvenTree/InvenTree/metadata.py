@@ -364,6 +364,15 @@ class InvenTreeMetadata(SimpleMetadata):
 
         We take the regular DRF metadata and add our own unique flavor
         """
+        from InvenTree.serializers import OptionalField
+
+        if isinstance(field, OptionalField) or issubclass(
+            field.__class__, OptionalField
+        ):
+            # Rehydrate the OptionalField for proper introspection
+            rehydrated_field = field.serializer_class(**(field.serializer_kwargs or {}))
+            return self.get_field_info(rehydrated_field)
+
         # Try to add the child property to the dependent field to be used by the super call
         if self.label_lookup[field] == 'dependent field':
             field.get_child(raise_exception=True)
