@@ -1485,6 +1485,7 @@ class BuildLineSerializer(
             'many': False,
             'read_only': True,
             'allow_null': True,
+            'path_detail': False,
         },
         default_include=False,
         prefetch_fields=['bom_item__sub_part__category'],

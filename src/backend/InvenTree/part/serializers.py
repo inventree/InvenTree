@@ -38,7 +38,7 @@ from InvenTree.serializers import (
     FilterableFloatField,
     FilterableListField,
     FilterableListSerializer,
-    enable_filter,
+    OptionalField,
 )
 from users.serializers import UserSerializer
 
@@ -130,13 +130,15 @@ class CategorySerializer(
         """Return True if the category is directly "starred" by the current user."""
         return category in self.context.get('starred_categories', [])
 
-    path = enable_filter(
-        FilterableListField(
-            child=serializers.DictField(),
-            source='get_path',
-            read_only=True,
-            allow_null=True,
-        ),
+    path = OptionalField(
+        serializer_class=FilterableListField,
+        serializer_kwargs={
+            'child': serializers.DictField(),
+            'source': 'get_path',
+            'read_only': True,
+            'allow_null': True,
+        },
+        default_include=False,
         filter_name='path_detail',
     )
 
@@ -343,18 +345,24 @@ class PartBriefSerializer(
     )
 
     # Pricing fields
-    pricing_min = enable_filter(
-        InvenTree.serializers.InvenTreeMoneySerializer(
-            source='pricing_data.overall_min', allow_null=True, read_only=True
-        ),
-        True,
+    pricing_min = OptionalField(
+        serializer_class=InvenTree.serializers.InvenTreeMoneySerializer,
+        serializer_kwargs={
+            'source': 'pricing_data.overall_min',
+            'allow_null': True,
+            'read_only': True,
+        },
+        default_include=True,
         filter_name='pricing',
     )
-    pricing_max = enable_filter(
-        InvenTree.serializers.InvenTreeMoneySerializer(
-            source='pricing_data.overall_max', allow_null=True, read_only=True
-        ),
-        True,
+    pricing_max = OptionalField(
+        serializer_class=InvenTree.serializers.InvenTreeMoneySerializer,
+        serializer_kwargs={
+            'source': 'pricing_data.overall_max',
+            'allow_null': True,
+            'read_only': True,
+        },
+        default_include=True,
         filter_name='pricing',
     )
 
@@ -756,28 +764,37 @@ class PartSerializer(
         return part in self.starred_parts
 
     # Extra detail for the category
-    category_detail = enable_filter(
-        CategorySerializer(
-            source='category', many=False, read_only=True, allow_null=True
-        ),
+    category_detail = OptionalField(
+        serializer_class=CategorySerializer,
+        serializer_kwargs={
+            'source': 'category',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
         prefetch_fields=['category'],
     )
 
-    category_path = enable_filter(
-        FilterableListField(
-            child=serializers.DictField(),
-            source='category.get_path',
-            read_only=True,
-            allow_null=True,
-        ),
+    category_path = OptionalField(
+        serializer_class=FilterableListField,
+        serializer_kwargs={
+            'child': serializers.DictField(),
+            'source': 'category.get_path',
+            'read_only': True,
+            'allow_null': True,
+        },
         filter_name='path_detail',
         prefetch_fields=['category'],
     )
 
-    default_location_detail = enable_filter(
-        DefaultLocationSerializer(
-            source='default_location', many=False, read_only=True, allow_null=True
-        ),
+    default_location_detail = OptionalField(
+        serializer_class=DefaultLocationSerializer,
+        serializer_kwargs={
+            'source': 'default_location',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
         filter_name='location_detail',
         prefetch_fields=['default_location'],
     )
@@ -883,25 +900,36 @@ class PartSerializer(
     )
 
     # Pricing fields
-    pricing_min = enable_filter(
-        InvenTree.serializers.InvenTreeMoneySerializer(
-            source='pricing_data.overall_min', allow_null=True, read_only=True
-        ),
-        True,
+    pricing_min = OptionalField(
+        serializer_class=InvenTree.serializers.InvenTreeMoneySerializer,
+        serializer_kwargs={
+            'source': 'pricing_data.overall_min',
+            'allow_null': True,
+            'read_only': True,
+        },
+        default_include=True,
         filter_name='pricing',
     )
-    pricing_max = enable_filter(
-        InvenTree.serializers.InvenTreeMoneySerializer(
-            source='pricing_data.overall_max', allow_null=True, read_only=True
-        ),
-        True,
+
+    pricing_max = OptionalField(
+        serializer_class=InvenTree.serializers.InvenTreeMoneySerializer,
+        serializer_kwargs={
+            'source': 'pricing_data.overall_max',
+            'allow_null': True,
+            'read_only': True,
+        },
+        default_include=True,
         filter_name='pricing',
     )
-    pricing_updated = enable_filter(
-        FilterableDateTimeField(
-            source='pricing_data.updated', allow_null=True, read_only=True
-        ),
-        True,
+
+    pricing_updated = OptionalField(
+        serializer_class=FilterableDateTimeField,
+        serializer_kwargs={
+            'source': 'pricing_data.updated',
+            'allow_null': True,
+            'read_only': True,
+        },
+        default_include=True,
         filter_name='pricing',
     )
 
@@ -909,11 +937,15 @@ class PartSerializer(
 
     tags = common.filters.enable_tags_filter()
 
-    price_breaks = enable_filter(
-        PartSalePriceSerializer(
-            source='salepricebreaks', many=True, read_only=True, allow_null=True
-        ),
-        False,
+    price_breaks = OptionalField(
+        serializer_class=PartSalePriceSerializer,
+        serializer_kwargs={
+            'source': 'salepricebreaks',
+            'many': True,
+            'read_only': True,
+            'allow_null': True,
+        },
+        default_include=False,
         filter_name='price_breaks',
         prefetch_fields=['salepricebreaks'],
     )
@@ -1561,9 +1593,10 @@ class BomItemSerializer(
         help_text=_('Select the parent assembly'),
     )
 
-    substitutes = enable_filter(
-        BomItemSubstituteSerializer(many=True, read_only=True, allow_null=True),
-        False,
+    substitutes = OptionalField(
+        serializer_class=BomItemSubstituteSerializer,
+        serializer_kwargs={'many': True, 'read_only': True, 'allow_null': True},
+        default_include=False,
         filter_name='substitutes',
         prefetch_fields=[
             'substitutes',
@@ -1573,14 +1606,15 @@ class BomItemSerializer(
         ],
     )
 
-    part_detail = enable_filter(
-        PartBriefSerializer(
-            source='part',
-            label=_('Assembly'),
-            many=False,
-            read_only=True,
-            allow_null=True,
-        )
+    part_detail = OptionalField(
+        serializer_class=PartBriefSerializer,
+        serializer_kwargs={
+            'source': 'part',
+            'label': _('Assembly'),
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
     )
 
     sub_part = serializers.PrimaryKeyRelatedField(
@@ -1589,26 +1623,28 @@ class BomItemSerializer(
         help_text=_('Select the component part'),
     )
 
-    sub_part_detail = enable_filter(
-        PartBriefSerializer(
-            source='sub_part',
-            label=_('Component'),
-            many=False,
-            read_only=True,
-            allow_null=True,
-        ),
-        True,
+    sub_part_detail = OptionalField(
+        serializer_class=PartBriefSerializer,
+        serializer_kwargs={
+            'source': 'sub_part',
+            'label': _('Component'),
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
+        default_include=True,
     )
 
-    category_detail = enable_filter(
-        CategorySerializer(
-            source='sub_part.category',
-            label=_('Category'),
-            many=False,
-            read_only=True,
-            allow_null=True,
-        ),
-        False,
+    category_detail = OptionalField(
+        serializer_class=CategorySerializer,
+        serializer_kwargs={
+            'source': 'sub_part.category',
+            'label': _('Category'),
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
+        default_include=False,
     )
 
     on_order = serializers.FloatField(
@@ -1619,41 +1655,61 @@ class BomItemSerializer(
         label=_('In Production'), read_only=True, allow_null=True
     )
 
-    can_build = enable_filter(
-        FilterableFloatField(label=_('Can Build'), read_only=True, allow_null=True),
-        True,
+    can_build = OptionalField(
+        serializer_class=FilterableFloatField,
+        serializer_kwargs={
+            'label': _('Can Build'),
+            'read_only': True,
+            'allow_null': True,
+        },
+        default_include=True,
     )
 
     # Cached pricing fields
-    pricing_min = enable_filter(
-        InvenTree.serializers.InvenTreeMoneySerializer(
-            source='sub_part.pricing_data.overall_min', allow_null=True, read_only=True
-        ),
-        True,
+    pricing_min = OptionalField(
+        serializer_class=InvenTree.serializers.InvenTreeMoneySerializer,
+        serializer_kwargs={
+            'source': 'sub_part.pricing_data.overall_min',
+            'allow_null': True,
+            'read_only': True,
+        },
+        default_include=True,
         filter_name='pricing',
     )
-    pricing_max = enable_filter(
-        InvenTree.serializers.InvenTreeMoneySerializer(
-            source='sub_part.pricing_data.overall_max', allow_null=True, read_only=True
-        ),
-        True,
+
+    pricing_max = OptionalField(
+        serializer_class=InvenTree.serializers.InvenTreeMoneySerializer,
+        serializer_kwargs={
+            'source': 'sub_part.pricing_data.overall_max',
+            'allow_null': True,
+            'read_only': True,
+        },
+        default_include=True,
         filter_name='pricing',
     )
-    pricing_min_total = enable_filter(
-        InvenTree.serializers.InvenTreeMoneySerializer(allow_null=True, read_only=True),
-        True,
+
+    pricing_min_total = OptionalField(
+        serializer_class=InvenTree.serializers.InvenTreeMoneySerializer,
+        serializer_kwargs={'allow_null': True, 'read_only': True},
+        default_include=True,
         filter_name='pricing',
     )
-    pricing_max_total = enable_filter(
-        InvenTree.serializers.InvenTreeMoneySerializer(allow_null=True, read_only=True),
-        True,
+
+    pricing_max_total = OptionalField(
+        serializer_class=InvenTree.serializers.InvenTreeMoneySerializer,
+        serializer_kwargs={'allow_null': True, 'read_only': True},
+        default_include=True,
         filter_name='pricing',
     )
-    pricing_updated = enable_filter(
-        FilterableDateTimeField(
-            source='sub_part.pricing_data.updated', allow_null=True, read_only=True
-        ),
-        True,
+
+    pricing_updated = OptionalField(
+        serializer_class=FilterableDateTimeField,
+        serializer_kwargs={
+            'source': 'sub_part.pricing_data.updated',
+            'allow_null': True,
+            'read_only': True,
+        },
+        default_include=True,
         filter_name='pricing',
     )
 
@@ -1751,19 +1807,22 @@ class CategoryParameterTemplateSerializer(
             'default_value',
         ]
 
-    template_detail = enable_filter(
-        common.serializers.ParameterTemplateSerializer(
-            source='template', many=False, read_only=True
-        ),
-        True,
+    template_detail = OptionalField(
+        serializer_class=common.serializers.ParameterTemplateSerializer,
+        serializer_kwargs={'source': 'template', 'many': False, 'read_only': True},
+        default_include=True,
         prefetch_fields=['template'],
     )
 
-    category_detail = enable_filter(
-        CategorySerializer(
-            source='category', many=False, read_only=True, allow_null=True
-        ),
-        True,
+    category_detail = OptionalField(
+        serializer_class=CategorySerializer,
+        serializer_kwargs={
+            'source': 'category',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
+        default_include=True,
         prefetch_fields=['category'],
     )
 
