@@ -120,9 +120,10 @@ class BuildSerializer(
 
     status_text = serializers.CharField(source='get_status_display', read_only=True)
 
-    part_detail = enable_filter(
-        part_serializers.PartBriefSerializer(source='part', many=False, read_only=True),
-        True,
+    part_detail = OptionalField(
+        serializer_class=part_serializers.PartBriefSerializer,
+        serializer_kwargs={'source': 'part', 'many': False, 'read_only': True},
+        default_include=True,
         prefetch_fields=['part', 'part__category', 'part__pricing_data'],
     )
 
@@ -136,16 +137,22 @@ class BuildSerializer(
 
     overdue = serializers.BooleanField(read_only=True, default=False)
 
-    issued_by_detail = enable_filter(
-        UserSerializer(source='issued_by', read_only=True),
-        True,
+    issued_by_detail = OptionalField(
+        serializer_class=UserSerializer,
+        serializer_kwargs={'source': 'issued_by', 'read_only': True},
+        default_include=True,
         filter_name='user_detail',
         prefetch_fields=['issued_by'],
     )
 
-    responsible_detail = enable_filter(
-        OwnerSerializer(source='responsible', read_only=True, allow_null=True),
-        True,
+    responsible_detail = OptionalField(
+        serializer_class=OwnerSerializer,
+        serializer_kwargs={
+            'source': 'responsible',
+            'read_only': True,
+            'allow_null': True,
+        },
+        default_include=True,
         filter_name='user_detail',
         prefetch_fields=['responsible'],
     )

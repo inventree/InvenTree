@@ -212,7 +212,12 @@ class FilterableSerializerMixin:
                 return True
 
         # For a top-level serializer, check request query parameters
-        if self.is_top_level and self.filter_on_query and field.filter_by_query:
+        if (
+            self.is_top_level
+            and self.request
+            and self.filter_on_query
+            and field.filter_by_query
+        ):
             param_value = self.request.query_params.get(field_ref, None)
 
             if param_value is not None:
