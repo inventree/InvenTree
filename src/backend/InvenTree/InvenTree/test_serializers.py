@@ -8,6 +8,7 @@ from rest_framework.serializers import SerializerMethodField
 
 import InvenTree.serializers
 from InvenTree.mixins import ListCreateAPI, OutputOptionsMixin
+from InvenTree.serializers import OptionalField
 from InvenTree.unit_test import InvenTreeAPITestCase
 from InvenTree.urls import backendpatterns
 
@@ -25,21 +26,25 @@ class SampleSerializer(
         fields = ['field_a', 'field_b', 'field_c', 'field_d', 'field_e', 'id']
 
     field_a = SerializerMethodField(method_name='sample')
-    field_b = InvenTree.serializers.enable_filter(
-        InvenTree.serializers.FilterableSerializerMethodField(method_name='sample')
+    field_b = OptionalField(
+        serializer_class=InvenTree.serializers.FilterableSerializerMethodField,
+        serializer_kwargs={'method_name': 'sample'},
     )
-    field_c = InvenTree.serializers.enable_filter(
-        InvenTree.serializers.FilterableSerializerMethodField(method_name='sample'),
-        True,
+    field_c = OptionalField(
+        serializer_class=InvenTree.serializers.FilterableSerializerMethodField,
+        serializer_kwargs={'method_name': 'sample'},
+        default_include=True,
         filter_name='crazy_name',
     )
-    field_d = InvenTree.serializers.enable_filter(
-        InvenTree.serializers.FilterableSerializerMethodField(method_name='sample'),
-        True,
+    field_d = OptionalField(
+        serializer_class=InvenTree.serializers.FilterableSerializerMethodField,
+        serializer_kwargs={'method_name': 'sample'},
+        default_include=True,
         filter_name='crazy_name',
     )
-    field_e = InvenTree.serializers.enable_filter(
-        InvenTree.serializers.FilterableSerializerMethodField(method_name='sample'),
+    field_e = OptionalField(
+        serializer_class=InvenTree.serializers.FilterableSerializerMethodField,
+        serializer_kwargs={'method_name': 'sample'},
         filter_name='field_e',
         filter_by_query=False,
     )
@@ -107,24 +112,7 @@ class FilteredSerializers(InvenTreeAPITestCase):
             self.assertContains(response, 'field_d')
             self.assertNotContains(response, 'field_e')
 
-    def test_failiure_enable_filter(self):
-        """Test sanity check for enable_filter."""
-        # Allowed usage
-        field_b = InvenTree.serializers.enable_filter(  # noqa: F841
-            InvenTree.serializers.FilterableSerializerMethodField(method_name='sample')
-        )
-
-        # Disallowed usage
-        with self.assertRaises(Exception) as cm:
-            field_a = InvenTree.serializers.enable_filter(  # noqa: F841
-                SerializerMethodField(method_name='sample')
-            )
-        self.assertIn(
-            'INVE-I2: `enable_filter` can only be applied to serializer fields',
-            str(cm.exception),
-        )
-
-    def test_failiure_FilterableSerializerMixin(self):
+    def test_failure_FilterableSerializerMixin(self):
         """Test failure case for FilteredSerializerMixin."""
 
         class BadSerializer(

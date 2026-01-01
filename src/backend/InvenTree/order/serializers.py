@@ -42,7 +42,7 @@ from InvenTree.serializers import (
     InvenTreeModelSerializer,
     InvenTreeMoneySerializer,
     NotesFieldMixin,
-    enable_filter,
+    OptionalField,
 )
 from order.status_codes import (
     PurchaseOrderStatusGroups,
@@ -125,20 +125,28 @@ class AbstractOrderSerializer(
     reference = serializers.CharField(required=True)
 
     # Detail for point-of-contact field
-    contact_detail = enable_filter(
-        ContactSerializer(
-            source='contact', many=False, read_only=True, allow_null=True
-        ),
-        True,
+    contact_detail = OptionalField(
+        serializer_class=ContactSerializer,
+        serializer_kwargs={
+            'source': 'contact',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
+        default_include=True,
         prefetch_fields=['contact'],
     )
 
     # Detail for responsible field
-    responsible_detail = enable_filter(
-        OwnerSerializer(
-            source='responsible', read_only=True, allow_null=True, many=False
-        ),
-        True,
+    responsible_detail = OptionalField(
+        serializer_class=OwnerSerializer,
+        serializer_kwargs={
+            'source': 'responsible',
+            'read_only': True,
+            'allow_null': True,
+            'many': False,
+        },
+        default_include=True,
         prefetch_fields=['responsible'],
     )
 
@@ -146,11 +154,15 @@ class AbstractOrderSerializer(
     project_code_detail = common.filters.enable_project_code_filter()
 
     # Detail for address field
-    address_detail = enable_filter(
-        AddressBriefSerializer(
-            source='address', many=False, read_only=True, allow_null=True
-        ),
-        True,
+    address_detail = OptionalField(
+        serializer_class=AddressBriefSerializer,
+        serializer_kwargs={
+            'source': 'address',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
+        default_include=True,
         prefetch_fields=['address'],
     )
 
@@ -419,10 +431,14 @@ class PurchaseOrderSerializer(
         source='supplier.name', read_only=True, label=_('Supplier Name')
     )
 
-    supplier_detail = enable_filter(
-        CompanyBriefSerializer(
-            source='supplier', many=False, read_only=True, allow_null=True
-        ),
+    supplier_detail = OptionalField(
+        serializer_class=CompanyBriefSerializer,
+        serializer_kwargs={
+            'source': 'supplier',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
         prefetch_fields=['supplier'],
     )
 
@@ -616,19 +632,28 @@ class PurchaseOrderLineItemSerializer(
 
     total_price = serializers.FloatField(read_only=True)
 
-    part_detail = enable_filter(
-        PartBriefSerializer(
-            source='get_base_part', many=False, read_only=True, allow_null=True
-        ),
-        False,
+    part_detail = OptionalField(
+        serializer_class=PartBriefSerializer,
+        serializer_kwargs={
+            'source': 'get_base_part',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
+        default_include=False,
         filter_name='part_detail',
     )
 
-    supplier_part_detail = enable_filter(
-        SupplierPartSerializer(
-            source='part', brief=True, many=False, read_only=True, allow_null=True
-        ),
-        False,
+    supplier_part_detail = OptionalField(
+        serializer_class=SupplierPartSerializer,
+        serializer_kwargs={
+            'source': 'part',
+            'brief': True,
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
+        default_include=False,
         filter_name='part_detail',
     )
 
@@ -642,11 +667,14 @@ class PurchaseOrderLineItemSerializer(
         default=True,
     )
 
-    destination_detail = enable_filter(
-        stock.serializers.LocationBriefSerializer(
-            source='get_destination', read_only=True, allow_null=True
-        ),
-        True,
+    destination_detail = OptionalField(
+        serializer_class=stock.serializers.LocationBriefSerializer,
+        serializer_kwargs={
+            'source': 'get_destination',
+            'read_only': True,
+            'allow_null': True,
+        },
+        default_include=True,
         prefetch_fields=['destination', 'order__destination'],
     )
 
@@ -654,17 +682,26 @@ class PurchaseOrderLineItemSerializer(
         help_text=_('Purchase price currency')
     )
 
-    order_detail = enable_filter(
-        PurchaseOrderSerializer(
-            source='order', read_only=True, allow_null=True, many=False
-        )
+    order_detail = OptionalField(
+        serializer_class=PurchaseOrderSerializer,
+        serializer_kwargs={
+            'source': 'order',
+            'read_only': True,
+            'allow_null': True,
+            'many': False,
+        },
+        default_include=True,
     )
 
-    build_order_detail = enable_filter(
-        build.serializers.BuildSerializer(
-            source='build_order', read_only=True, allow_null=True, many=False
-        ),
-        True,
+    build_order_detail = OptionalField(
+        serializer_class=build.serializers.BuildSerializer,
+        serializer_kwargs={
+            'source': 'build_order',
+            'read_only': True,
+            'allow_null': True,
+            'many': False,
+        },
+        default_include=True,
         prefetch_fields=[
             'build_order__responsible',
             'build_order__issued_by',
@@ -750,10 +787,14 @@ class PurchaseOrderExtraLineSerializer(
         model = order.models.PurchaseOrderExtraLine
         fields = AbstractExtraLineSerializer.extra_line_fields([])
 
-    order_detail = enable_filter(
-        PurchaseOrderSerializer(
-            source='order', many=False, read_only=True, allow_null=True
-        )
+    order_detail = OptionalField(
+        serializer_class=PurchaseOrderSerializer,
+        serializer_kwargs={
+            'source': 'order',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
     )
 
 
@@ -1069,10 +1110,14 @@ class SalesOrderSerializer(
 
         return queryset
 
-    customer_detail = enable_filter(
-        CompanyBriefSerializer(
-            source='customer', many=False, read_only=True, allow_null=True
-        ),
+    customer_detail = OptionalField(
+        serializer_class=CompanyBriefSerializer,
+        serializer_kwargs={
+            'source': 'customer',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
         prefetch_fields=['customer'],
     )
 
@@ -1219,10 +1264,14 @@ class SalesOrderLineItemSerializer(
 
         return queryset
 
-    order_detail = enable_filter(
-        SalesOrderSerializer(
-            source='order', many=False, read_only=True, allow_null=True
-        ),
+    order_detail = OptionalField(
+        serializer_class=SalesOrderSerializer,
+        serializer_kwargs={
+            'source': 'order',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
         prefetch_fields=[
             'order__created_by',
             'order__responsible',
@@ -1232,15 +1281,25 @@ class SalesOrderLineItemSerializer(
         ],
     )
 
-    part_detail = enable_filter(
-        PartBriefSerializer(source='part', many=False, read_only=True, allow_null=True),
+    part_detail = OptionalField(
+        serializer_class=PartBriefSerializer,
+        serializer_kwargs={
+            'source': 'part',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
         prefetch_fields=['part__pricing_data'],
     )
 
-    customer_detail = enable_filter(
-        CompanyBriefSerializer(
-            source='order.customer', many=False, read_only=True, allow_null=True
-        ),
+    customer_detail = OptionalField(
+        serializer_class=CompanyBriefSerializer,
+        serializer_kwargs={
+            'source': 'order.customer',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
         prefetch_fields=['order__customer'],
     )
 
@@ -1306,19 +1365,27 @@ class SalesOrderShipmentSerializer(
         read_only=True, allow_null=True, label=_('Allocated Items')
     )
 
-    checked_by_detail = enable_filter(
-        UserSerializer(
-            source='checked_by', many=False, read_only=True, allow_null=True
-        ),
-        True,
+    checked_by_detail = OptionalField(
+        serializer_class=UserSerializer,
+        serializer_kwargs={
+            'source': 'checked_by',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
+        default_include=True,
         prefetch_fields=['checked_by'],
     )
 
-    order_detail = enable_filter(
-        SalesOrderSerializer(
-            source='order', read_only=True, allow_null=True, many=False
-        ),
-        True,
+    order_detail = OptionalField(
+        serializer_class=SalesOrderSerializer,
+        serializer_kwargs={
+            'source': 'order',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
+        default_include=True,
         prefetch_fields=[
             'order',
             'order__customer',
@@ -1328,19 +1395,27 @@ class SalesOrderShipmentSerializer(
         ],
     )
 
-    customer_detail = enable_filter(
-        CompanyBriefSerializer(
-            source='order.customer', many=False, read_only=True, allow_null=True
-        ),
-        False,
+    customer_detail = OptionalField(
+        serializer_class=CompanyBriefSerializer,
+        serializer_kwargs={
+            'source': 'order.customer',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
+        default_include=False,
         prefetch_fields=['order__customer'],
     )
 
-    shipment_address_detail = enable_filter(
-        AddressBriefSerializer(
-            source='shipment_address', many=False, read_only=True, allow_null=True
-        ),
-        True,
+    shipment_address_detail = OptionalField(
+        serializer_class=AddressBriefSerializer,
+        serializer_kwargs={
+            'source': 'shipment_address',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
+        default_include=True,
         prefetch_fields=['shipment_address'],
     )
 
@@ -1389,46 +1464,71 @@ class SalesOrderAllocationSerializer(
     )
 
     # Extra detail fields
-    order_detail = enable_filter(
-        SalesOrderSerializer(
-            source='line.order', many=False, read_only=True, allow_null=True
-        )
-    )
-    part_detail = enable_filter(
-        PartBriefSerializer(
-            source='item.part', many=False, read_only=True, allow_null=True
-        ),
-        True,
-    )
-    item_detail = enable_filter(
-        stock.serializers.StockItemSerializer(
-            source='item',
-            many=False,
-            read_only=True,
-            allow_null=True,
-            part_detail=False,
-            location_detail=False,
-            supplier_part_detail=False,
-        ),
-        True,
-    )
-    location_detail = enable_filter(
-        stock.serializers.LocationBriefSerializer(
-            source='item.location', many=False, read_only=True, allow_null=True
-        )
-    )
-    customer_detail = enable_filter(
-        CompanyBriefSerializer(
-            source='line.order.customer', many=False, read_only=True, allow_null=True
-        )
+    order_detail = OptionalField(
+        serializer_class=SalesOrderSerializer,
+        serializer_kwargs={
+            'source': 'line.order',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
     )
 
-    shipment_detail = SalesOrderShipmentSerializer(
-        source='shipment',
-        order_detail=False,
-        many=False,
-        read_only=True,
-        allow_null=True,
+    part_detail = OptionalField(
+        serializer_class=PartBriefSerializer,
+        serializer_kwargs={
+            'source': 'item.part',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
+        default_include=True,
+    )
+
+    item_detail = OptionalField(
+        serializer_class=stock.serializers.StockItemSerializer,
+        serializer_kwargs={
+            'source': 'item',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+            'part_detail': False,
+            'location_detail': False,
+            'supplier_part_detail': False,
+        },
+        default_include=True,
+    )
+    location_detail = OptionalField(
+        serializer_class=stock.serializers.LocationBriefSerializer,
+        serializer_kwargs={
+            'source': 'item.location',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
+    )
+
+    customer_detail = OptionalField(
+        serializer_class=CompanyBriefSerializer,
+        serializer_kwargs={
+            'source': 'line.order.customer',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
+    )
+
+    shipment_detail = OptionalField(
+        serializer_class=SalesOrderShipmentSerializer,
+        serializer_kwargs={
+            'source': 'shipment',
+            'order_detail': False,
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
+        default_include=True,
+        prefetch_fields=['shipment'],
     )
 
 
@@ -1871,10 +1971,14 @@ class SalesOrderExtraLineSerializer(
         model = order.models.SalesOrderExtraLine
         fields = AbstractExtraLineSerializer.extra_line_fields([])
 
-    order_detail = enable_filter(
-        SalesOrderSerializer(
-            source='order', many=False, read_only=True, allow_null=True
-        )
+    order_detail = OptionalField(
+        serializer_class=SalesOrderSerializer,
+        serializer_kwargs={
+            'source': 'order',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
     )
 
 
@@ -1931,10 +2035,14 @@ class ReturnOrderSerializer(
 
         return queryset
 
-    customer_detail = enable_filter(
-        CompanyBriefSerializer(
-            source='customer', many=False, read_only=True, allow_null=True
-        ),
+    customer_detail = OptionalField(
+        serializer_class=CompanyBriefSerializer,
+        serializer_kwargs={
+            'source': 'customer',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
         prefetch_fields=['customer'],
     )
 
@@ -2092,10 +2200,14 @@ class ReturnOrderLineItemSerializer(
             'part_detail',
         ])
 
-    order_detail = enable_filter(
-        ReturnOrderSerializer(
-            source='order', many=False, read_only=True, allow_null=True
-        ),
+    order_detail = OptionalField(
+        serializer_class=ReturnOrderSerializer,
+        serializer_kwargs={
+            'source': 'order',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
         prefetch_fields=[
             'order__created_by',
             'order__responsible',
@@ -2109,17 +2221,25 @@ class ReturnOrderLineItemSerializer(
         label=_('Quantity'), help_text=_('Quantity to return')
     )
 
-    item_detail = enable_filter(
-        stock.serializers.StockItemSerializer(
-            source='item', many=False, read_only=True, allow_null=True
-        ),
+    item_detail = OptionalField(
+        serializer_class=stock.serializers.StockItemSerializer,
+        serializer_kwargs={
+            'source': 'item',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
         prefetch_fields=['item__supplier_part'],
     )
 
-    part_detail = enable_filter(
-        PartBriefSerializer(
-            source='item.part', many=False, read_only=True, allow_null=True
-        )
+    part_detail = OptionalField(
+        serializer_class=PartBriefSerializer,
+        serializer_kwargs={
+            'source': 'item.part',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
     )
 
     price = InvenTreeMoneySerializer(allow_null=True)
@@ -2138,8 +2258,12 @@ class ReturnOrderExtraLineSerializer(
         model = order.models.ReturnOrderExtraLine
         fields = AbstractExtraLineSerializer.extra_line_fields([])
 
-    order_detail = enable_filter(
-        ReturnOrderSerializer(
-            source='order', many=False, read_only=True, allow_null=True
-        )
+    order_detail = OptionalField(
+        serializer_class=ReturnOrderSerializer,
+        serializer_kwargs={
+            'source': 'order',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
     )
