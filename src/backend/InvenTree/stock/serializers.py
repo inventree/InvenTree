@@ -36,7 +36,7 @@ from InvenTree.serializers import (
     FilterableListField,
     InvenTreeCurrencySerializer,
     InvenTreeDecimalField,
-    enable_filter,
+    OptionalField,
 )
 from users.serializers import UserSerializer
 
@@ -222,8 +222,9 @@ class StockItemTestResultSerializer(
         ]
         read_only_fields = ['pk', 'user', 'date']
 
-    user_detail = enable_filter(
-        UserSerializer(source='user', read_only=True, allow_null=True),
+    user_detail = OptionalField(
+        serializer_class=UserSerializer,
+        serializer_kwargs={'source': 'user', 'read_only': True, 'allow_null': True},
         prefetch_fields=['user'],
     )
 
@@ -236,10 +237,9 @@ class StockItemTestResultSerializer(
         label=_('Test template for this result'),
     )
 
-    template_detail = enable_filter(
-        part_serializers.PartTestTemplateSerializer(
-            source='template', read_only=True, allow_null=True
-        ),
+    template_detail = OptionalField(
+        serializer_class=part_serializers.PartTestTemplateSerializer,
+        serializer_kwargs={'source': 'template', 'read_only': True, 'allow_null': True},
         prefetch_fields=['template'],
     )
 
@@ -417,13 +417,14 @@ class StockItemSerializer(
         help_text=_('Parent stock item'),
     )
 
-    location_path = enable_filter(
-        FilterableListField(
-            child=serializers.DictField(),
-            source='location.get_path',
-            read_only=True,
-            allow_null=True,
-        ),
+    location_path = OptionalField(
+        serializer_class=FilterableListField,
+        serializer_kwargs={
+            'child': serializers.DictField(),
+            'source': 'location.get_path',
+            'read_only': True,
+            'allow_null': True,
+        },
         filter_name='path_detail',
     )
 
@@ -563,19 +564,20 @@ class StockItemSerializer(
     )
 
     # Optional detail fields, which can be appended via query parameters
-    supplier_part_detail = enable_filter(
-        company_serializers.SupplierPartSerializer(
-            label=_('Supplier Part'),
-            source='supplier_part',
-            brief=True,
-            supplier_detail=False,
-            manufacturer_detail=False,
-            part_detail=False,
-            many=False,
-            read_only=True,
-            allow_null=True,
-        ),
-        False,
+    supplier_part_detail = OptionalField(
+        serializer_class=company_serializers.SupplierPartSerializer,
+        serializer_kwargs={
+            'label': _('Supplier Part'),
+            'source': 'supplier_part',
+            'brief': True,
+            'supplier_detail': False,
+            'manufacturer_detail': False,
+            'part_detail': False,
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
+        default_include=False,
         prefetch_fields=[
             'supplier_part__supplier',
             'supplier_part__purchase_order_line_items',
@@ -583,30 +585,40 @@ class StockItemSerializer(
         ],
     )
 
-    part_detail = enable_filter(
-        part_serializers.PartBriefSerializer(
-            label=_('Part'), source='part', many=False, read_only=True, allow_null=True
-        ),
-        True,
+    part_detail = OptionalField(
+        serializer_class=part_serializers.PartBriefSerializer,
+        serializer_kwargs={
+            'label': _('Part'),
+            'source': 'part',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
+        default_include=True,
     )
 
-    location_detail = enable_filter(
-        LocationBriefSerializer(
-            label=_('Location'),
-            source='location',
-            many=False,
-            read_only=True,
-            allow_null=True,
-        ),
-        False,
+    location_detail = OptionalField(
+        serializer_class=LocationBriefSerializer,
+        serializer_kwargs={
+            'label': _('Location'),
+            'source': 'location',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
+        default_include=False,
         prefetch_fields=['location'],
     )
 
-    tests = enable_filter(
-        StockItemTestResultSerializer(
-            source='test_results', many=True, read_only=True, allow_null=True
-        ),
-        False,
+    tests = OptionalField(
+        serializer_class=StockItemTestResultSerializer,
+        serializer_kwargs={
+            'source': 'test_results',
+            'many': True,
+            'read_only': True,
+            'allow_null': True,
+        },
+        default_include=False,
         prefetch_fields=[
             'test_results',
             'test_results__user',
@@ -1195,13 +1207,15 @@ class LocationSerializer(
 
     tags = common.filters.enable_tags_filter()
 
-    path = enable_filter(
-        FilterableListField(
-            child=serializers.DictField(),
-            source='get_path',
-            read_only=True,
-            allow_null=True,
-        ),
+    path = OptionalField(
+        serializer_class=FilterableListField,
+        serializer_kwargs={
+            'child': serializers.DictField(),
+            'source': 'get_path',
+            'read_only': True,
+            'allow_null': True,
+        },
+        default_include=False,
         filter_name='path_detail',
     )
 
@@ -1242,13 +1256,25 @@ class StockTrackingSerializer(
 
     label = serializers.CharField(read_only=True)
 
-    item_detail = enable_filter(
-        StockItemSerializer(source='item', many=False, read_only=True, allow_null=True),
+    item_detail = OptionalField(
+        serializer_class=StockItemSerializer,
+        serializer_kwargs={
+            'source': 'item',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
         prefetch_fields=['item'],
     )
 
-    user_detail = enable_filter(
-        UserSerializer(source='user', many=False, read_only=True, allow_null=True),
+    user_detail = OptionalField(
+        serializer_class=UserSerializer,
+        serializer_kwargs={
+            'source': 'user',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
         prefetch_fields=['user'],
     )
 

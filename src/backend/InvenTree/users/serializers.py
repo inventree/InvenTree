@@ -15,7 +15,7 @@ from InvenTree.serializers import (
     FilterableSerializerMethodField,
     FilterableSerializerMixin,
     InvenTreeModelSerializer,
-    enable_filter,
+    OptionalField,
 )
 
 from .models import ApiToken, Owner, RuleSet, UserProfile
@@ -254,8 +254,9 @@ class GroupSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
         model = Group
         fields = ['pk', 'name', 'permissions', 'roles', 'users']
 
-    permissions = enable_filter(
-        FilterableSerializerMethodField(allow_null=True, read_only=True),
+    permissions = OptionalField(
+        serializer_class=FilterableSerializerMethodField,
+        serializer_kwargs={'allow_null': True, 'read_only': True},
         filter_name='permission_detail',
     )
 
@@ -263,16 +264,26 @@ class GroupSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
         """Return a list of permissions associated with the group."""
         return generate_permission_dict(group.permissions.all())
 
-    roles = enable_filter(
-        RuleSetSerializer(
-            source='rule_sets', many=True, read_only=True, allow_null=True
-        ),
+    roles = OptionalField(
+        serializer_class=RuleSetSerializer,
+        serializer_kwargs={
+            'source': 'rule_sets',
+            'many': True,
+            'read_only': True,
+            'allow_null': True,
+        },
         filter_name='role_detail',
         prefetch_fields=['rule_sets'],
     )
 
-    users = enable_filter(
-        UserSerializer(source='user_set', many=True, read_only=True, allow_null=True),
+    users = OptionalField(
+        serializer_class=UserSerializer,
+        serializer_kwargs={
+            'source': 'user_set',
+            'many': True,
+            'read_only': True,
+            'allow_null': True,
+        },
         filter_name='user_detail',
         prefetch_fields=['user_set'],
     )
