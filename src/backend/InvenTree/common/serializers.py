@@ -810,6 +810,7 @@ class ParameterSerializer(
     updated_by_detail = OptionalField(
         serializer_class=UserSerializer,
         serializer_kwargs={'source': 'updated_by', 'read_only': True, 'many': False},
+        default_include=True,
         prefetch_fields=['updated_by'],
     )
 

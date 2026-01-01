@@ -1447,7 +1447,7 @@ class BuildLineSerializer(
             'can_build': False,
         },
         default_include=False,
-        prefetch_fields=['bom_item', 'bom_item__substitutes'],
+        prefetch_fields=['bom_item'],
     )
 
     assembly_detail = OptionalField(
