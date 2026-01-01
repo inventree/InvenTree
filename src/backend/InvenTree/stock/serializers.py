@@ -368,20 +368,20 @@ class StockItemSerializer(
             'purchase_price_currency',
             'use_pack_size',
             'serial_numbers',
-            'tests',
             # Annotated fields
             'allocated',
             'expired',
             'installed_items',
             'child_items',
-            'location_path',
             'stale',
-            'tracking_items',
-            'tags',
-            # Detail fields (FK relationships)
-            'supplier_part_detail',
-            'part_detail',
+            # Optional fields (FK relationships)
             'location_detail',
+            'location_path',
+            'part_detail',
+            'supplier_part_detail',
+            'tags',
+            'tests',
+            'tracking_items',
         ]
         read_only_fields = [
             'allocated',
@@ -425,6 +425,7 @@ class StockItemSerializer(
             'read_only': True,
             'allow_null': True,
         },
+        default_include=False,
         filter_name='path_detail',
     )
 

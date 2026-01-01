@@ -82,6 +82,7 @@ class FilterableSerializerMixin:
     """
 
     fields_to_remove: set = None
+    optional_fields: set = None
     filter_on_query: bool = True
 
     def __init__(self, *args, **kwargs):
@@ -116,8 +117,9 @@ class FilterableSerializerMixin:
         super().__init__(*args, **kwargs)
 
         # Ensure any fields we are *not* using are removed
-        for field_name in self.fields_to_remove:
-            self.fields.pop(field_name, None)
+        if len(self.fields_to_remove) > 0:
+            for field_name in self.fields_to_remove:
+                self.fields.pop(field_name, None)
 
     def is_exporting(self) -> bool:
         """Determine if we are exporting data."""
@@ -191,6 +193,7 @@ class FilterableSerializerMixin:
         """
         self.prefetch_list = set()
         self.fields_to_remove = set()
+        self.optional_fields = set()
 
         # Walk upwards through the class hierarchy
         seen_vars = set()
@@ -204,6 +207,7 @@ class FilterableSerializerMixin:
 
                 if field and isinstance(field, OptionalField):
                     if self.is_field_included(field_name, field, kwargs):
+                        self.optional_fields.add(field_name)
                         # Add prefetch information
                         if field.prefetch_fields:
                             for pf in field.prefetch_fields:
@@ -214,6 +218,11 @@ class FilterableSerializerMixin:
     def get_field_names(self, declared_fields, info):
         """Remove unused fields before returning field names."""
         field_names = super().get_field_names(declared_fields, info)
+
+        # Add any optional fields which are included
+        for field_name in self.optional_fields:
+            if field_name not in field_names:
+                field_names.append(field_name)
 
         # Remove any fields which are marked for removal
         for field_name in self.fields_to_remove:
