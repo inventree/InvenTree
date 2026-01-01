@@ -315,6 +315,34 @@ class EmptySerializer(serializers.Serializer):
     """Empty serializer for use in testing."""
 
 
+class TreePathSerializer(serializers.Serializer):
+    """Serializer field for representing a tree path."""
+
+    class Meta:
+        """Metaclass options."""
+
+        fields = [
+            'pk',
+            'name',
+            # Any fields after this point are optional, and can be included via extra_fields
+            'icon',
+        ]
+
+    def __init__(self, *args, extra_fields: Optional[list[str]] = None, **kwargs):
+        """Initialize the TreePathSerializer."""
+        super().__init__(*args, **kwargs)
+
+        allowed_fields = ['pk', 'name', *(extra_fields or [])]
+
+        for field in list(self.fields.keys()):
+            if field not in allowed_fields:
+                self.fields.pop(field, None)
+
+    pk = serializers.IntegerField(read_only=True)
+    name = serializers.CharField(read_only=True)
+    icon = serializers.CharField(required=False, read_only=True)
+
+
 class InvenTreeMoneySerializer(FilterableSerializerField, MoneyField):
     """Custom serializer for 'MoneyField', which ensures that passed values are numerically valid.
 

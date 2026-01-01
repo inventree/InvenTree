@@ -33,10 +33,10 @@ from generic.states.fields import InvenTreeCustomStatusSerializerMixin
 from importer.registry import register_importer
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.serializers import (
-    FilterableListField,
     InvenTreeCurrencySerializer,
     InvenTreeDecimalField,
     OptionalField,
+    TreePathSerializer,
 )
 from users.serializers import UserSerializer
 
@@ -418,10 +418,11 @@ class StockItemSerializer(
     )
 
     location_path = OptionalField(
-        serializer_class=FilterableListField,
+        serializer_class=TreePathSerializer,
         serializer_kwargs={
-            'child': serializers.DictField(),
             'source': 'location.get_path',
+            'extra_fields': ['icon'],
+            'many': True,
             'read_only': True,
             'allow_null': True,
         },
@@ -1209,10 +1210,11 @@ class LocationSerializer(
     tags = common.filters.enable_tags_filter()
 
     path = OptionalField(
-        serializer_class=FilterableListField,
+        serializer_class=TreePathSerializer,
         serializer_kwargs={
-            'child': serializers.DictField(),
+            'many': True,
             'source': 'get_path',
+            'extra_fields': ['icon'],
             'read_only': True,
             'allow_null': True,
         },

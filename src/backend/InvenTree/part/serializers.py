@@ -36,9 +36,9 @@ from InvenTree.ready import isGeneratingSchema
 from InvenTree.serializers import (
     FilterableDateTimeField,
     FilterableFloatField,
-    FilterableListField,
     FilterableListSerializer,
     OptionalField,
+    TreePathSerializer,
 )
 from users.serializers import UserSerializer
 
@@ -131,10 +131,10 @@ class CategorySerializer(
         return category in self.context.get('starred_categories', [])
 
     path = OptionalField(
-        serializer_class=FilterableListField,
+        serializer_class=TreePathSerializer,
         serializer_kwargs={
-            'child': serializers.DictField(),
             'source': 'get_path',
+            'many': True,
             'read_only': True,
             'allow_null': True,
         },
@@ -776,10 +776,10 @@ class PartSerializer(
     )
 
     category_path = OptionalField(
-        serializer_class=FilterableListField,
+        serializer_class=TreePathSerializer,
         serializer_kwargs={
-            'child': serializers.DictField(),
             'source': 'category.get_path',
+            'many': True,
             'read_only': True,
             'allow_null': True,
         },
