@@ -5,7 +5,7 @@ from collections import OrderedDict
 from copy import deepcopy
 from dataclasses import dataclass
 from decimal import Decimal
-from typing import Any, Optional
+from typing import Optional
 
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
@@ -40,7 +40,7 @@ from .setting.storages import StorageBackends
 class FilterableSerializerField:
     """Mixin to mark serializer as filterable.
 
-    This needs to be used in conjunction with `enable_filter` on the serializer field!
+    This needs to be used in conjunction with OptionalField(s) on the serializer field!
     """
 
     is_filterable = None
@@ -74,62 +74,15 @@ class OptionalField:
     prefetch_fields: Optional[list[str]] = None
 
 
-def enable_filter(
-    func: Any,
-    default_include: bool = False,
-    filter_name: Optional[str] = None,
-    filter_by_query: bool = True,
-    prefetch_fields: Optional[list[str]] = None,
-):
-    """Decorator for marking a serializer field as filterable.
-
-    This can be customized by passing in arguments. This only works in conjunction with serializer fields or serializers that contain the `FilterableSerializerField` mixin.
-
-    Args:
-        func: The serializer field to mark as filterable. Will automatically be passed when used as a decorator.
-        default_include (bool): If True, the field will be included by default unless explicitly excluded. If False, the field will be excluded by default unless explicitly included.
-        filter_name (str, optional): The name of the filter parameter to use in the URL. If None, the function name of the (decorated) function will be used.
-        filter_by_query (bool): If True, also look for filter parameters in the request query parameters.
-        prefetch_fields (list of str, optional): List of related fields to prefetch when this field is included. This can be used to optimize database queries.
-
-    Returns:
-        The decorated serializer field, marked as filterable.
-    """
-    # Ensure this function can be actually filtered
-    if not issubclass(func.__class__, FilterableSerializerField):
-        raise TypeError(
-            'INVE-I2: `enable_filter` can only be applied to serializer fields / serializers that contain the `FilterableSerializerField` mixin!'
-        )
-
-    # Mark the function as filterable
-    func._kwargs['is_filterable'] = True
-    func._kwargs['is_filterable_vals'] = {
-        'default': default_include,
-        'filter_name': filter_name if filter_name else func.field_name,
-        'filter_by_query': filter_by_query,
-    }
-
-    # Attach queryset prefetching information
-    func._kwargs['prefetch_fields'] = prefetch_fields
-
-    return func
-
-
 class FilterableSerializerMixin:
     """Mixin that enables filtering of marked fields on a serializer.
 
-    Use the `enable_filter` decorator to mark serializer fields as filterable.
+    Use the `OptionalField` helper class to mark serializer fields as filterable.
     This introduces overhead during initialization, so only use this mixin when necessary.
-    If you need to mark a serializer as filterable but it does not contain any filterable fields, set `no_filters = True` to avoid getting an exception that protects against over-application of this mixin.
     """
 
     fields_to_remove: set = None
-
-    _was_filtered = False
-    no_filters = False
-    """If True, do not raise an exception if no filterable fields are found."""
     filter_on_query: bool = True
-    """If True, also look for filter parameters in the request query parameters."""
 
     def __init__(self, *args, **kwargs):
         """Initialization routine for the serializer. This gathers and applies filters through kwargs."""
@@ -160,9 +113,7 @@ class FilterableSerializerMixin:
 
         self.gather_optional_fields(kwargs)
 
-        self.gather_filters(kwargs)
         super().__init__(*args, **kwargs)
-        # self.do_filtering()
 
         # Ensure any fields we are *not* using are removed
         for field_name in self.fields_to_remove:
@@ -227,11 +178,10 @@ class FilterableSerializerMixin:
 
                 value = str2bool(param_value)
 
-        if value is not None:
-            return bool(value)
+        if value is None:
+            value = field.default_include
 
-        # Fallback to the default include value specified for the field itself
-        return field.default_include
+        return value
 
     def gather_optional_fields(self, kwargs):
         """Determine which optional fields will be included on this serializer.
@@ -242,15 +192,24 @@ class FilterableSerializerMixin:
         self.prefetch_list = set()
         self.fields_to_remove = set()
 
-        for field_name, field in vars(self.__class__).items():
-            if field and isinstance(field, OptionalField):
-                if self.is_field_included(field_name, field, kwargs):
-                    # Add prefetch information
-                    if field.prefetch_fields:
-                        for pf in field.prefetch_fields:
-                            self.prefetch_list.add(pf)
-                else:
-                    self.fields_to_remove.add(field_name)
+        # Walk upwards through the class hierarchy
+        seen_vars = set()
+
+        for base in self.__class__.__mro__:
+            for field_name, field in vars(base).items():
+                if field_name in seen_vars:
+                    continue
+
+                seen_vars.add(field_name)
+
+                if field and isinstance(field, OptionalField):
+                    if self.is_field_included(field_name, field, kwargs):
+                        # Add prefetch information
+                        if field.prefetch_fields:
+                            for pf in field.prefetch_fields:
+                                self.prefetch_list.add(pf)
+                    else:
+                        self.fields_to_remove.add(field_name)
 
     def get_field_names(self, declared_fields, info):
         """Remove unused fields before returning field names."""
@@ -297,95 +256,6 @@ class FilterableSerializerMixin:
             queryset = queryset.prefetch_related(*list(self.prefetch_list))
 
         return queryset
-
-    def gather_filters(self, kwargs) -> None:
-        """Gather filterable fields through introspection."""
-        context = kwargs.get('context', {})
-        top_level_serializer = context.get('top_level_serializer', None)
-        request = context.get('request', None) or getattr(self, 'request', None)
-
-        # Gather query parameters from the request context
-        query_params = dict(getattr(request, 'query_params', {})) if request else {}
-
-        is_top_level = (
-            top_level_serializer is None
-            or top_level_serializer == self.__class__.__name__
-        )
-
-        # Update the context to ensure that the top_level_serializer flag is removed for nested serializers
-        if top_level_serializer is None:
-            context['top_level_serializer'] = self.__class__.__name__
-            kwargs['context'] = context
-
-        # Fast exit if this has already been done or would not have any effect
-        if getattr(self, '_was_filtered', False) or not hasattr(self, 'fields'):
-            return
-
-        # Actually gather the filterable fields
-        # Also see `enable_filter` where` is_filterable and is_filterable_vals are set
-        self.filter_targets: dict[str, dict] = {
-            str(k): {'serializer': a, **getattr(a, 'is_filterable_vals', {})}
-            for k, a in self.fields.items()
-            if getattr(a, 'is_filterable', None)
-        }
-
-        # Remove filter args from kwargs to avoid issues with super().__init__
-        popped_kwargs = {}  # store popped kwargs as a arg might be reused for multiple fields
-        tgs_vals: dict[str, bool] = {}
-        for k, v in self.filter_targets.items():
-            pop_ref = v['filter_name'] or k
-            val = kwargs.pop(pop_ref, popped_kwargs.get(pop_ref))
-            # Optionally also look in query parameters
-            # Note that we only do this for a top-level serializer, to avoid issues with nested serializers
-            if (
-                is_top_level
-                and val is None
-                and self.filter_on_query
-                and v.get('filter_by_query', True)
-            ):
-                val = query_params.pop(pop_ref, None)
-
-                if isinstance(val, list) and len(val) == 1:
-                    val = val[0]
-
-            if val:  # Save popped value for reuse
-                popped_kwargs[pop_ref] = val
-            tgs_vals[k] = (
-                str2bool(val) if isinstance(val, (str, int, float)) else val
-            )  # Support for various filtering style for backwards compatibility
-
-        self.filter_target_values = tgs_vals
-        self._was_filtered = True
-
-        # Ensure this mixin is not broadly applied as it is expensive on scale (total CI time increased by 21% when running all coverage tests)
-        # if len(self.filter_targets) == 0 and not self.no_filters:
-        #     raise Exception(
-        #         'INVE-I2: No filter targets found in fields, remove `PathScopedMixin`'
-        #     )
-
-    def do_filtering(self) -> None:
-        """Do the actual filtering."""
-        # This serializer might not contain filters or we do not want to pop fields while generating the schema
-        if (
-            not hasattr(self, 'filter_target_values')
-            or InvenTree.ready.isGeneratingSchema()
-        ):
-            return
-
-        is_exporting = getattr(self, '_exporting_data', False)
-
-        # Skip filtering for a write requests - all fields should be present for data creation
-        if request := self.context.get('request', None):
-            if method := getattr(request, 'method', None):
-                if str(method).lower() in ['post', 'put', 'patch'] and not is_exporting:
-                    return
-
-        # Throw out fields which are not requested (either by default or explicitly)
-        for k, v in self.filter_target_values.items():
-            # See `enable_filter` where` is_filterable and is_filterable_vals are set
-            value = v if v is not None else bool(self.filter_targets[k]['default'])
-            if value is not True:
-                self.fields.pop(k, None)
 
 
 # special serializers which allow filtering
