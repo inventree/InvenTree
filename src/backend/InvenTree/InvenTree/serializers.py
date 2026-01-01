@@ -164,6 +164,7 @@ class FilterableSerializerMixin:
         super().__init__(*args, **kwargs)
         # self.do_filtering()
 
+        # Ensure any fields we are *not* using are removed
         for field_name in self.fields_to_remove:
             self.fields.pop(field_name, None)
 
@@ -195,6 +196,7 @@ class FilterableSerializerMixin:
         field_ref = field.filter_name or field_name
 
         # First, check kwargs provided to the serializer instance
+        # We also pop the value to avoid issues with nested serializers
         value = kwargs.pop(field_ref, None)
 
         # We do not want to pop fields while generating the schema
@@ -233,30 +235,28 @@ class FilterableSerializerMixin:
         which need to either be instantiated or removed.
         """
         self.prefetch_list = set()
-
-        if self.fields_to_remove is not None:
-            return
-
         self.fields_to_remove = set()
 
-        # Find all OptionalField attributes on this serializer class
-        field_names = list(self.Meta.fields) if hasattr(self, 'Meta') else []
-
-        # Before we get to the point of returning the fields,
-        # we need to identify any OptionalField instances,
-        # and either instantiate them or remove them.
-        for field_name in field_names:
-            field = getattr(self, field_name, None)
-
+        for field_name, field in vars(self.__class__).items():
             if field and isinstance(field, OptionalField):
                 if self.is_field_included(field_name, field, kwargs):
                     # Add prefetch information
                     if field.prefetch_fields:
                         for pf in field.prefetch_fields:
                             self.prefetch_list.add(pf)
-
                 else:
                     self.fields_to_remove.add(field_name)
+
+    def get_field_names(self, declared_fields, info):
+        """Remove unused fields before returning field names."""
+        field_names = super().get_field_names(declared_fields, info)
+
+        # Remove any fields which are marked for removal
+        for field_name in self.fields_to_remove:
+            if field_name in field_names:
+                field_names.remove(field_name)
+
+        return field_names
 
     def build_unknown_field(self, field_name, model_class):
         """Perform lazy initialization of OptionalFields.
