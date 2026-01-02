@@ -244,11 +244,6 @@ class OutputOptionsMixin:
         as 'get_serializer' may be called multiple times per request.
         """
         request = getattr(self, 'request', None)
-        method = getattr(request, 'method', 'GET').upper()
-        cache_key = f'_cached_serializer_{method}'
-
-        if serializer := getattr(self, cache_key, None):
-            return serializer
 
         if self.output_options and request:
             params = self.request.query_params
@@ -271,9 +266,6 @@ class OutputOptionsMixin:
             raise Exception(
                 'INVE-I2: `OutputOptionsMixin` can only be used with serializers that contain the `FilterableSerializerMixin` mixin'
             )
-
-        # Cache the serializer for future use
-        setattr(self, cache_key, serializer)
 
         return serializer
 
