@@ -155,8 +155,6 @@ class FilterableSerializerMixin:
         if InvenTree.ready.isGeneratingSchema():
             return True
 
-        write_request = False
-
         field_kwargs = field.serializer_kwargs or {}
 
         # Skip filtering for a write request - all fields should be present for data creation
@@ -165,15 +163,12 @@ class FilterableSerializerMixin:
                 str(method).lower() in ['post', 'put', 'patch']
                 and not self.is_exporting()
             ):
-                write_request = True
-
-        if write_request:
-            # Ignore read_only fields for write requests
-            return field_kwargs.get('read_only', False) is not True
-        else:
-            # Ignore write_only fields for read requests
-            if field_kwargs.get('write_only', False):
-                return False
+                # Write request (POST, PUT, PATCH)
+                return True
+            else:
+                # Ignore write_only fields for read requests
+                if field_kwargs.get('write_only', False):
+                    return False
 
         # For a top-level serializer, check request query parameters
         if self.request and self.filter_on_query and field.filter_by_query:
