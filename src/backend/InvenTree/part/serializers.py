@@ -355,6 +355,7 @@ class PartBriefSerializer(
         default_include=True,
         filter_name='pricing',
     )
+
     pricing_max = OptionalField(
         serializer_class=InvenTree.serializers.InvenTreeMoneySerializer,
         serializer_kwargs={

@@ -81,6 +81,7 @@ class FilterableSerializerMixin:
     This introduces overhead during initialization, so only use this mixin when necessary.
     """
 
+    optional_filters: dict = None
     fields_to_remove: set = None
     optional_fields: set = None
     filter_on_query: bool = True
@@ -148,9 +149,20 @@ class FilterableSerializerMixin:
         """
         field_ref = field.filter_name or field_name
 
+        # If we have already found a value for this filter, use it
+        # This allows multiple optional fields to share the same filter value
+        cached_value = self.optional_filters.get(field_ref, None)
+
+        if cached_value is not None:
+            return cached_value
+
         # First, check kwargs provided to the serializer instance
         # We also pop the value to avoid issues with nested serializers
         value = kwargs.pop(field_ref, None)
+
+        if value is not None:
+            # Cache the value for future reference
+            self.optional_filters[field_ref] = value
 
         # We do not want to pop fields while generating the schema
         if InvenTree.ready.isGeneratingSchema():
@@ -193,6 +205,9 @@ class FilterableSerializerMixin:
 
                 value = str2bool(param_value)
 
+                # Cache the value for future reference
+                self.optional_filters[field_ref] = value
+
         if value is None:
             value = field.default_include
 
@@ -204,6 +219,7 @@ class FilterableSerializerMixin:
         Note that there may be instances of OptionalField in the field set,
         which need to either be instantiated or removed.
         """
+        self.optional_filters = {}
         self.prefetch_list = set()
         self.fields_to_remove = set()
         self.optional_fields = set()
