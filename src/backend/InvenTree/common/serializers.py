@@ -758,6 +758,7 @@ class ParameterSerializer(
             'note',
             'updated',
             'updated_by',
+            # Optional fields
             'template_detail',
             'updated_by_detail',
         ]

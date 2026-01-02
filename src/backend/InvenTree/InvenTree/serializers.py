@@ -156,13 +156,26 @@ class FilterableSerializerMixin:
         if InvenTree.ready.isGeneratingSchema():
             return True
 
+        write_request = False
+
+        field_kwargs = field.serializer_kwargs or {}
+
         # Skip filtering for a write request - all fields should be present for data creation
         if method := getattr(self.request, 'method', None):
             if (
-                str(method).lower() in ['post', 'put', 'patch']
+                self.is_top_level
+                and str(method).lower() in ['post', 'put', 'patch']
                 and not self.is_exporting()
             ):
-                return True
+                write_request = True
+
+        if write_request:
+            # Ignore read_only fields for write requests
+            return field_kwargs.get('read_only', False) is not True
+        else:
+            # Ignore write_only fields for read requests
+            if field_kwargs.get('write_only', False):
+                return False
 
         # For a top-level serializer, check request query parameters
         if (
@@ -230,6 +243,13 @@ class FilterableSerializerMixin:
                 field_names.remove(field_name)
 
         return field_names
+
+    def build_property_field(self, field_name, model_class):
+        """Handle a special case where an OptionalField shadows a model property."""
+        if field_name in self.optional_fields:
+            return self.build_unknown_field(field_name, model_class)
+
+        return super().build_property_field(field_name, model_class)
 
     def build_unknown_field(self, field_name, model_class):
         """Perform lazy initialization of OptionalFields.

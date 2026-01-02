@@ -1595,7 +1595,12 @@ class BomItemSerializer(
 
     substitutes = OptionalField(
         serializer_class=BomItemSubstituteSerializer,
-        serializer_kwargs={'many': True, 'read_only': True, 'allow_null': True},
+        serializer_kwargs={
+            'many': True,
+            'read_only': True,
+            'allow_null': True,
+            'required': False,
+        },
         default_include=False,
         filter_name='substitutes',
         prefetch_fields=[

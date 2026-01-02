@@ -376,7 +376,12 @@ def enable_parameters_filter():
 
     return InvenTree.serializers.OptionalField(
         serializer_class=ParameterSerializer,
-        serializer_kwargs={'many': True, 'read_only': True, 'allow_null': True},
+        serializer_kwargs={
+            'many': True,
+            'read_only': True,
+            'allow_null': True,
+            'required': False,
+        },
         default_include=False,
         filter_name='parameters',
         prefetch_fields=[
