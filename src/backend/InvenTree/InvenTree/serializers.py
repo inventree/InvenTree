@@ -244,10 +244,26 @@ class FilterableSerializerMixin:
 
         return field_names
 
+    def build_optional_field(self, field_name: str):
+        """Build an optional field, based on the provided field name."""
+        field = getattr(self, field_name, None)
+
+        if field and isinstance(field, OptionalField):
+            return field.serializer_class, field.serializer_kwargs or {}
+
+    def build_relational_field(self, field_name, relation_info):
+        """Handle a special case where an OptionalField shadows a model relation."""
+        if field_name in self.optional_fields:
+            if field := self.build_optional_field(field_name):
+                return field
+
+        return super().build_relational_field(field_name, relation_info)
+
     def build_property_field(self, field_name, model_class):
         """Handle a special case where an OptionalField shadows a model property."""
         if field_name in self.optional_fields:
-            return self.build_unknown_field(field_name, model_class)
+            if field := self.build_optional_field(field_name):
+                return field
 
         return super().build_property_field(field_name, model_class)
 
@@ -256,10 +272,8 @@ class FilterableSerializerMixin:
 
         The DRF framework calls this method when it encounters a field which is not yet initialized.
         """
-        field = getattr(self, field_name, None)
-
-        if field and isinstance(field, OptionalField):
-            return (field.serializer_class, field.serializer_kwargs or {})
+        if field := self.build_optional_field(field_name):
+            return field
 
         return super().build_unknown_field(field_name, model_class)
 
