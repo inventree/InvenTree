@@ -1091,18 +1091,19 @@ class BuildListTest(BuildAPITest):
         data = self.options(self.url, expected_code=200).data
 
         self.assertEqual(data['name'], 'Build List')
-        actions = data['actions']['POST']
+        actions = data['actions']['GET']
 
-        for field_name in [
-            'pk',
-            'title',
-            'part',
-            'part_detail',
-            'project_code',
-            'project_code_detail',
-            'quantity',
-        ]:
+        # TODO: Separate checks for GET and POST actions
+
+        for field_name in ['pk', 'title', 'part', 'project_code', 'quantity']:
+            # Fields should exist in both GET and POST actions
             self.assertIn(field_name, actions)
+            self.assertIn(field_name, data['actions']['POST'])
+
+        # Ensure that certain fields are NOT in the POST actions
+        for field_name in ['part_detail', 'project_code_detail']:
+            self.assertIn(field_name, actions)
+            self.assertNotIn(field_name, data['actions']['POST'])
 
         # Specific checks for certain fields
         for field_name in ['part', 'project_code', 'take_from']:
