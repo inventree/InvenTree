@@ -101,26 +101,13 @@ class FilterableSerializerMixin:
             dict(getattr(self.request, 'query_params', {})) if self.request else {}
         )
 
-        # Determine if this is a top-level serializer
-        top_level_serializer = context.get('top_level_serializer', None)
-
-        self.is_top_level = (
-            top_level_serializer is None
-            or top_level_serializer == self.__class__.__name__
-        )
-
-        if top_level_serializer is None:
-            context['top_level_serializer'] = self.__class__.__name__
-            kwargs['context'] = context
-
         self.gather_optional_fields(kwargs)
 
         super().__init__(*args, **kwargs)
 
         # Ensure any fields we are *not* using are removed
-        if len(self.fields_to_remove) > 0:
-            for field_name in self.fields_to_remove:
-                self.fields.pop(field_name, None)
+        for field_name in self.fields_to_remove:
+            self.fields.pop(field_name, None)
 
     def is_exporting(self) -> bool:
         """Determine if we are exporting data."""
@@ -175,8 +162,7 @@ class FilterableSerializerMixin:
         # Skip filtering for a write request - all fields should be present for data creation
         if method := getattr(self.request, 'method', None):
             if (
-                self.is_top_level
-                and str(method).lower() in ['post', 'put', 'patch']
+                str(method).lower() in ['post', 'put', 'patch']
                 and not self.is_exporting()
             ):
                 write_request = True
@@ -190,12 +176,7 @@ class FilterableSerializerMixin:
                 return False
 
         # For a top-level serializer, check request query parameters
-        if (
-            self.is_top_level
-            and self.request
-            and self.filter_on_query
-            and field.filter_by_query
-        ):
+        if self.request and self.filter_on_query and field.filter_by_query:
             param_value = self.request.query_params.get(field_ref, None)
 
             if param_value is not None:
@@ -213,16 +194,9 @@ class FilterableSerializerMixin:
 
         return value
 
-    def gather_optional_fields(self, kwargs):
-        """Determine which optional fields will be included on this serializer.
-
-        Note that there may be instances of OptionalField in the field set,
-        which need to either be instantiated or removed.
-        """
-        self.optional_filters = {}
-        self.prefetch_list = set()
-        self.fields_to_remove = set()
-        self.optional_fields = set()
+    def find_optional_fields(self):
+        """Find all optional fields defined on this serializer."""
+        optional_fields = {}
 
         # Walk upwards through the class hierarchy
         seen_vars = set()
@@ -235,14 +209,30 @@ class FilterableSerializerMixin:
                 seen_vars.add(field_name)
 
                 if field and isinstance(field, OptionalField):
-                    if self.is_field_included(field_name, field, kwargs):
-                        self.optional_fields.add(field_name)
-                        # Add prefetch information
-                        if field.prefetch_fields:
-                            for pf in field.prefetch_fields:
-                                self.prefetch_list.add(pf)
-                    else:
-                        self.fields_to_remove.add(field_name)
+                    optional_fields[field_name] = field
+
+        return optional_fields
+
+    def gather_optional_fields(self, kwargs):
+        """Determine which optional fields will be included on this serializer.
+
+        Note that there may be instances of OptionalField in the field set,
+        which need to either be instantiated or removed.
+        """
+        self.optional_filters = {}
+        self.prefetch_list = set()
+        self.fields_to_remove = set()
+        self.optional_fields = set()
+
+        for field_name, field in self.find_optional_fields().items():
+            if self.is_field_included(field_name, field, kwargs):
+                self.optional_fields.add(field_name)
+                # Add prefetch information
+                if field.prefetch_fields:
+                    for pf in field.prefetch_fields:
+                        self.prefetch_list.add(pf)
+            else:
+                self.fields_to_remove.add(field_name)
 
     def get_field_names(self, declared_fields, info):
         """Remove unused fields before returning field names."""
@@ -265,7 +255,8 @@ class FilterableSerializerMixin:
         field = getattr(self, field_name, None)
 
         if field and isinstance(field, OptionalField):
-            return field.serializer_class, field.serializer_kwargs or {}
+            serializer_kwargs = {**field.serializer_kwargs} or {}
+            return field.serializer_class, serializer_kwargs
 
     def build_relational_field(self, field_name, relation_info):
         """Handle a special case where an OptionalField shadows a model relation."""
