@@ -18,7 +18,7 @@ from djmoney.contrib.django_rest_framework.fields import MoneyField
 from djmoney.money import Money
 from djmoney.utils import MONEY_CLASSES, get_currency_field_name
 from drf_spectacular.utils import extend_schema_field
-from rest_framework import serializers
+from rest_framework import permissions, serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import empty
 from rest_framework.mixins import ListModelMixin
@@ -160,7 +160,7 @@ class FilterableSerializerMixin:
         # Skip filtering for a write request - all fields should be present for data creation
         if method := getattr(self.request, 'method', None):
             if (
-                str(method).lower() in ['post', 'put', 'patch']
+                str(method).lower() not in permissions.SAFE_METHODS
                 and not self.is_exporting()
             ):
                 # Write request (POST, PUT, PATCH)
