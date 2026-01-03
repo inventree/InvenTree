@@ -159,10 +159,7 @@ class FilterableSerializerMixin:
 
         # Skip filtering for a write request - all fields should be present for data creation
         if method := getattr(self.request, 'method', None):
-            if (
-                str(method).lower() not in permissions.SAFE_METHODS
-                and not self.is_exporting()
-            ):
+            if method not in permissions.SAFE_METHODS and not self.is_exporting():
                 # Write request (POST, PUT, PATCH)
                 return True
             else:
