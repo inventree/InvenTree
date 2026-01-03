@@ -238,11 +238,7 @@ class OutputOptionsMixin:
             )
 
     def get_serializer(self, *args, **kwargs):
-        """Return serializer instance with output options applied.
-
-        Note that the serializer is cached after first evaluation,
-        as 'get_serializer' may be called multiple times per request.
-        """
+        """Return serializer instance with output options applied."""
         request = getattr(self, 'request', None)
 
         if self.output_options and request:
