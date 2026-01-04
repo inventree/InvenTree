@@ -129,6 +129,10 @@ class FilterableSerializerMixin:
         - Check the kwargs provided to the serializer instance
         - Finally, fall back to the default_include value for the field itself
         """
+        # We do not want to pop fields while generating the schema
+        if InvenTree.ready.isGeneratingSchema():
+            return True
+
         field_ref = field.filter_name or field_name
 
         # If we have already found a value for this filter, use it
@@ -146,16 +150,11 @@ class FilterableSerializerMixin:
             # Cache the value for future reference
             self.optional_filters[field_ref] = value
 
-        # We do not want to pop fields while generating the schema
-        if InvenTree.ready.isGeneratingSchema():
-            return True
-
         field_kwargs = field.serializer_kwargs or {}
 
         # Skip filtering for a write request - all fields should be present for data creation
         if method := getattr(self.request, 'method', None):
             if method not in permissions.SAFE_METHODS and not self.is_exporting():
-                # Write request (POST, PUT, PATCH)
                 return True
             else:
                 # Ignore write_only fields for read requests
