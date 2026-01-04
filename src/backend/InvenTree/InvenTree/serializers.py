@@ -24,7 +24,7 @@ from rest_framework.fields import empty
 from rest_framework.mixins import ListModelMixin
 from rest_framework.serializers import DecimalField, Serializer
 from rest_framework.utils import model_meta
-from taggit.serializers import TaggitSerializer, TagListSerializerField
+from taggit.serializers import TaggitSerializer
 
 import common.models as common_models
 import InvenTree.ready
@@ -34,28 +34,6 @@ from InvenTree.helpers import str2bool
 from InvenTree.helpers_model import getModelsWithMixin
 
 from .setting.storages import StorageBackends
-
-
-# region path filtering
-class FilterableSerializerField:
-    """Mixin to mark serializer as filterable.
-
-    This needs to be used in conjunction with OptionalField(s) on the serializer field!
-    """
-
-    is_filterable = None
-    is_filterable_vals = {}
-
-    # Options for automatic queryset prefetching
-    prefetch_fields: Optional[list[str]] = None
-
-    def __init__(self, *args, **kwargs):
-        """Initialize the serializer."""
-        self.is_filterable = kwargs.pop('is_filterable', None)
-        self.is_filterable_vals = kwargs.pop('is_filterable_vals', {})
-        self.prefetch_fields = kwargs.pop('prefetch_fields', None)
-
-        super().__init__(*args, **kwargs)
 
 
 @dataclass
@@ -111,12 +89,6 @@ class FilterableSerializerMixin:
 
     def __init__(self, *args, **kwargs):
         """Initialization routine for the serializer. This gathers and applies filters through kwargs."""
-        # add list_serializer_class to meta if not present - reduces duplication
-        if not isinstance(self, FilterableListSerializer) and (
-            not hasattr(self.Meta, 'list_serializer_class')
-        ):
-            self.Meta.list_serializer_class = FilterableListSerializer
-
         # Extract some useful context information for later use
         context = kwargs.get('context', {})
         self.request = context.get('request', None) or getattr(self, 'request', None)
@@ -323,50 +295,6 @@ class FilterableSerializerMixin:
         return queryset
 
 
-# special serializers which allow filtering
-class FilterableListSerializer(
-    FilterableSerializerField, FilterableSerializerMixin, serializers.ListSerializer
-):
-    """Custom ListSerializer which allows filtering of fields."""
-
-
-# special serializer fields which allow filtering
-class FilterableListField(FilterableSerializerField, serializers.ListField):
-    """Custom ListField which allows filtering."""
-
-
-class FilterableSerializerMethodField(
-    FilterableSerializerField, serializers.SerializerMethodField
-):
-    """Custom SerializerMethodField which allows filtering."""
-
-
-class FilterableDateTimeField(FilterableSerializerField, serializers.DateTimeField):
-    """Custom DateTimeField which allows filtering."""
-
-
-class FilterableFloatField(FilterableSerializerField, serializers.FloatField):
-    """Custom FloatField which allows filtering."""
-
-
-class FilterableCharField(FilterableSerializerField, serializers.CharField):
-    """Custom CharField which allows filtering."""
-
-
-class FilterableIntegerField(FilterableSerializerField, serializers.IntegerField):
-    """Custom IntegerField which allows filtering."""
-
-
-class FilterableTagListField(FilterableSerializerField, TagListSerializerField):
-    """Custom TagListSerializerField which allows filtering."""
-
-    class Meta:
-        """Empty Meta class."""
-
-
-# endregion
-
-
 class EmptySerializer(serializers.Serializer):
     """Empty serializer for use in testing."""
 
@@ -399,11 +327,10 @@ class TreePathSerializer(serializers.Serializer):
     icon = serializers.CharField(required=False, read_only=True)
 
 
-class InvenTreeMoneySerializer(FilterableSerializerField, MoneyField):
+class InvenTreeMoneySerializer(MoneyField):
     """Custom serializer for 'MoneyField', which ensures that passed values are numerically valid.
 
     Ref: https://github.com/django-money/django-money/blob/master/djmoney/contrib/django_rest_framework/fields.py
-    This field allows filtering.
     """
 
     def __init__(self, *args, **kwargs):
@@ -590,7 +517,7 @@ class DependentField(serializers.Field):
         return None
 
 
-class InvenTreeModelSerializer(FilterableSerializerField, serializers.ModelSerializer):
+class InvenTreeModelSerializer(serializers.ModelSerializer):
     """Inherits the standard Django ModelSerializer class, but also ensures that the underlying model class data are checked on validation."""
 
     # Switch out URLField mapping

@@ -27,23 +27,23 @@ class SampleSerializer(
 
     field_a = SerializerMethodField(method_name='sample')
     field_b = OptionalField(
-        serializer_class=InvenTree.serializers.FilterableSerializerMethodField,
+        serializer_class=SerializerMethodField,
         serializer_kwargs={'method_name': 'sample'},
     )
     field_c = OptionalField(
-        serializer_class=InvenTree.serializers.FilterableSerializerMethodField,
+        serializer_class=SerializerMethodField,
         serializer_kwargs={'method_name': 'sample'},
         default_include=True,
         filter_name='crazy_name',
     )
     field_d = OptionalField(
-        serializer_class=InvenTree.serializers.FilterableSerializerMethodField,
+        serializer_class=SerializerMethodField,
         serializer_kwargs={'method_name': 'sample'},
         default_include=True,
         filter_name='crazy_name',
     )
     field_e = OptionalField(
-        serializer_class=InvenTree.serializers.FilterableSerializerMethodField,
+        serializer_class=SerializerMethodField,
         serializer_kwargs={'method_name': 'sample'},
         filter_name='field_e',
         filter_by_query=False,
@@ -111,60 +111,3 @@ class FilteredSerializers(InvenTreeAPITestCase):
             self.assertContains(response, 'field_c')
             self.assertContains(response, 'field_d')
             self.assertNotContains(response, 'field_e')
-
-    def test_failure_OutputOptionsMixin(self):
-        """Test failure case for OutputOptionsMixin."""
-
-        class BadSerializer(InvenTree.serializers.InvenTreeModelSerializer):
-            """Sample serializer."""
-
-            class Meta:
-                """Meta options."""
-
-                model = User
-                fields = ['id']
-
-            field_a = SerializerMethodField(method_name='sample')
-
-        # Bad implementation of OutputOptionsMixin
-        with self.assertRaises(Exception) as cm:
-
-            class BadList(OutputOptionsMixin, ListCreateAPI):
-                """Bad list endpoint for testing OutputOptionsMixin."""
-
-                serializer_class = BadSerializer
-                queryset = User.objects.all()
-                permission_classes = []
-
-            self.assertTrue(True)
-            _ = BadList()  # this should raise an exception
-        self.assertEqual(
-            str(cm.exception),
-            'INVE-I2: `OutputOptionsMixin` can only be used with serializers that contain the `FilterableSerializerMixin` mixin',
-        )
-
-        # More creative bad implementation
-        with self.assertRaises(Exception) as cm:
-
-            class BadList(OutputOptionsMixin, ListCreateAPI):
-                """Bad list endpoint for testing OutputOptionsMixin."""
-
-                queryset = User.objects.all()
-                permission_classes = []
-
-                def get_serializer(self, *args, **kwargs):
-                    """Get serializer override."""
-                    self.serializer_class = BadSerializer
-                    return super().get_serializer(*args, **kwargs)
-
-            view = BadList()
-            self.assertTrue(True)
-            # mock some stuff to allow get_serializer to run
-            view.request = self.client.request()
-            view.format_kwarg = {}
-            view.get_serializer()  # this should raise an exception
-
-        self.assertEqual(
-            str(cm.exception),
-            'INVE-I2: `OutputOptionsMixin` can only be used with serializers that contain the `FilterableSerializerMixin` mixin',
-        )

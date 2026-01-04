@@ -33,13 +33,7 @@ import users.models
 from importer.registry import register_importer
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.ready import isGeneratingSchema
-from InvenTree.serializers import (
-    FilterableDateTimeField,
-    FilterableFloatField,
-    FilterableListSerializer,
-    OptionalField,
-    TreePathSerializer,
-)
+from InvenTree.serializers import OptionalField, TreePathSerializer
 from users.serializers import UserSerializer
 
 from .models import (
@@ -924,7 +918,7 @@ class PartSerializer(
     )
 
     pricing_updated = OptionalField(
-        serializer_class=FilterableDateTimeField,
+        serializer_class=serializers.DateTimeField,
         serializer_kwargs={
             'source': 'pricing_data.updated',
             'allow_null': True,
@@ -1504,7 +1498,7 @@ class BomItemSubstituteSerializer(InvenTree.serializers.InvenTreeModelSerializer
 
         model = BomItemSubstitute
         fields = ['pk', 'bom_item', 'part', 'part_detail']
-        list_serializer_class = FilterableListSerializer
+        # list_serializer_class = FilterableListSerializer
 
     part_detail = PartBriefSerializer(
         source='part', read_only=True, many=False, pricing=False
@@ -1662,7 +1656,7 @@ class BomItemSerializer(
     )
 
     can_build = OptionalField(
-        serializer_class=FilterableFloatField,
+        serializer_class=serializers.FloatField,
         serializer_kwargs={
             'label': _('Can Build'),
             'read_only': True,
@@ -1709,7 +1703,7 @@ class BomItemSerializer(
     )
 
     pricing_updated = OptionalField(
-        serializer_class=FilterableDateTimeField,
+        serializer_class=serializers.DateTimeField,
         serializer_kwargs={
             'source': 'sub_part.pricing_data.updated',
             'allow_null': True,

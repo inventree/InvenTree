@@ -17,7 +17,6 @@ from importer.registry import register_importer
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.ready import isGeneratingSchema
 from InvenTree.serializers import (
-    FilterableCharField,
     FilterableSerializerMixin,
     InvenTreeCurrencySerializer,
     InvenTreeDecimalField,
@@ -281,7 +280,7 @@ class ManufacturerPartSerializer(
     )
 
     pretty_name = OptionalField(
-        serializer_class=FilterableCharField,
+        serializer_class=serializers.CharField,
         serializer_kwargs={'read_only': True, 'allow_null': True},
         filter_name='pretty',
     )
@@ -485,7 +484,7 @@ class SupplierPartSerializer(
     )
 
     pretty_name = OptionalField(
-        serializer_class=FilterableCharField,
+        serializer_class=serializers.CharField,
         serializer_kwargs={
             'read_only': True,
             'allow_null': True,

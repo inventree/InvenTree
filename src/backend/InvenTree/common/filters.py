@@ -19,6 +19,9 @@ from django.db.models import (
 from django.db.models.query import QuerySet
 from django.utils.translation import gettext_lazy as _
 
+from rest_framework import serializers
+from taggit.serializers import TagListSerializerField
+
 import InvenTree.conversion
 import InvenTree.helpers
 import InvenTree.serializers
@@ -349,7 +352,7 @@ def enable_project_label_filter(default: bool = True):
     If applied, this field will automatically prefetch the 'project_code' relationship.
     """
     return InvenTree.serializers.OptionalField(
-        serializer_class=InvenTree.serializers.FilterableCharField,
+        serializer_class=serializers.CharField,
         serializer_kwargs={
             'source': 'project_code.code',
             'read_only': True,
@@ -401,10 +404,8 @@ def enable_tags_filter(default: bool = False):
 
     If applied, this field will automatically prefetch the 'tags' relationship.
     """
-    from InvenTree.serializers import FilterableTagListField
-
     return InvenTree.serializers.OptionalField(
-        serializer_class=FilterableTagListField,
+        serializer_class=TagListSerializerField,
         serializer_kwargs={'required': False},
         default_include=default,
         filter_name='tags',

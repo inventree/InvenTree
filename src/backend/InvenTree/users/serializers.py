@@ -11,8 +11,6 @@ from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied
 
 from InvenTree.serializers import (
-    FilterableListSerializer,
-    FilterableSerializerMethodField,
     FilterableSerializerMixin,
     InvenTreeModelSerializer,
     OptionalField,
@@ -56,7 +54,6 @@ class RuleSetSerializer(InvenTreeModelSerializer):
             'can_delete',
         ]
         read_only_fields = ['pk', 'name', 'label', 'group']
-        list_serializer_class = FilterableListSerializer
 
 
 class RoleSerializer(InvenTreeModelSerializer):
@@ -185,7 +182,6 @@ class UserSerializer(InvenTreeModelSerializer):
         model = User
         fields = ['pk', 'username', 'first_name', 'last_name', 'email']
         read_only_fields = ['username', 'email']
-        list_serializer_class = FilterableListSerializer
 
     username = serializers.CharField(label=_('Username'), help_text=_('Username'))
 
@@ -255,7 +251,7 @@ class GroupSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
         fields = ['pk', 'name', 'permissions', 'roles', 'users']
 
     permissions = OptionalField(
-        serializer_class=FilterableSerializerMethodField,
+        serializer_class=serializers.SerializerMethodField,
         serializer_kwargs={'allow_null': True, 'read_only': True},
         filter_name='permission_detail',
     )
