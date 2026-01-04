@@ -129,10 +129,6 @@ class FilterableSerializerMixin:
         - Check the kwargs provided to the serializer instance
         - Finally, fall back to the default_include value for the field itself
         """
-        # We do not want to pop fields while generating the schema
-        if InvenTree.ready.isGeneratingSchema():
-            return True
-
         field_ref = field.filter_name or field_name
 
         # If we have already found a value for this filter, use it
@@ -145,6 +141,10 @@ class FilterableSerializerMixin:
         # First, check kwargs provided to the serializer instance
         # We also pop the value to avoid issues with nested serializers
         value = kwargs.pop(field_ref, None)
+
+        # We do not want to pop fields while generating the schema
+        if InvenTree.ready.isGeneratingSchema():
+            return True
 
         if value is not None:
             # Cache the value for future reference
