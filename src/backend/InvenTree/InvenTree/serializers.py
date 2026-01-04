@@ -64,6 +64,29 @@ class OptionalField:
 
     This is used in conjunction with the `FilterableSerializerMixin` to allow
     dynamic inclusion or exclusion of serializer fields at runtime.
+
+    Adding OptionalField instances to a serializer class is more "efficient"
+    than directly adding the field (and later removing it),
+    as the field is never instantiated unless it is required.
+
+    Additionally, you can specify prefetch fields which will be applied
+    to the queryset, *only* if the field is included in the final serializer.
+
+    This allows for optimization of database queries based only on the requested data.
+
+    Example:
+    class MySerializer(FilterableSerializerMixin, serializers.ModelSerializer):
+        my_optional_field = OptionalField(
+            serializer_class=serializers.CharField,
+            default_include=False,
+            filter_name='include_my_field',
+            serializer_kwargs={
+                'help_text': 'This is an optional field',
+                'read_only': True,
+            },
+            prefetch_fields=['related_field'],
+        )
+
     """
 
     serializer_class: Serializer
