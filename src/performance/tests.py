@@ -1,28 +1,67 @@
 """Performance benchmarking tests for InvenTree using the module."""
 
+import os
+
 import pytest
 
+from inventree.api import InvenTreeAPI
 
-# Define the function we want to benchmark
-def fibonacci(n: int) -> int:
-    """Compute the nth Fibonacci number (inefficiently)."""
-    if n <= 1:
-        return n
-    else:
-        return fibonacci(n - 2) + fibonacci(n - 1)
-
-
-# Register a simple benchmark using the pytest marker
-@pytest.mark.benchmark
-def test_fib_bench():
-    """Benchmark the fibonacci function for n=30."""
-    result = fibonacci(30)
-    assert result == 832040
+host = os.getenv('INVENTREE_PYTHON_TEST_SERVER')
+api_client = InvenTreeAPI(host=host)
 
 
 @pytest.mark.benchmark
-@pytest.mark.parametrize('n', [5, 10, 15, 20, 30])
-def test_fib_parametrized(n):
+@pytest.mark.parametrize(
+    'url',
+    [
+        '/api/part/',
+        '/api/part/category/',
+        '/api/stock/',
+        '/api/stock/location/',
+        '/api/company/',
+        '/api/build/',
+        '/api/build/line/',
+        '/api/build/item/',
+        '/api/order/so/',
+        '/api/order/so/shipment/',
+        '/api/order/po/',
+        '/api/order/po-line/',
+        '/api/user/roles/',
+        '/api/parameter/',
+        '/api/parameter/template/',
+    ],
+)
+def test_api_list_performance(url):
     """Benchmark the fibonacci function for various n values."""
-    result = fibonacci(n)
-    assert result > 0
+    result = api_client.get(url)
+    assert result
+    assert len(result) > 0
+
+
+@pytest.mark.benchmark
+@pytest.mark.parametrize(
+    'url',
+    [
+        '/api/part/',
+        '/api/part/category/',
+        '/api/stock/location/',
+        '/api/company/',
+        '/api/build/',
+        '/api/build/line/',
+        '/api/build/item/',
+        '/api/order/so/',
+        '/api/order/so/shipment/',
+        '/api/order/po/',
+        '/api/order/po-line/',
+        '/api/user/roles/',
+        '/api/parameter/',
+        '/api/parameter/template/',
+    ],
+)
+def test_api_options_performance(url):
+    """Benchmark the API OPTIONS request performance."""
+    url = '/api/part/'
+    result = api_client.request(url, method='OPTIONS')
+    assert result
+    assert 'actions' in result
+    assert len(result['actions']) > 0
