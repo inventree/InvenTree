@@ -327,7 +327,8 @@ jobs:
       - name: Prepare environment for performance tests
         run: |
           pip uninstall pytest-django -y
-          pip install ${WRAPPER_NAME}
+          cd ${WRAPPER_NAME}
+          pip install .
       - name: Performance Reporting
         uses: CodSpeedHQ/action@972e3437949c89e1357ebd1a2dbc852fcbc57245 # pin@v4
         with:
