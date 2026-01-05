@@ -324,6 +324,10 @@ jobs:
           cd ${WRAPPER_NAME}
           invoke check-server
           coverage run -m unittest discover -s test/
+      - name: Prepare environment for performance tests
+        run: |
+          pip uninstall pytest-django
+          pip install ${WRAPPER_NAME}
       - name: Performance Reporting
         uses: CodSpeedHQ/action@972e3437949c89e1357ebd1a2dbc852fcbc57245 # pin@v4
         with:
