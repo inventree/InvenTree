@@ -379,7 +379,7 @@ jobs:
 
   performance:
     name: Tests - Performance
-    runs-on: ubuntu-24.04
+    runs-on: codspeed-macro
 
     needs: ["pre-commit", "paths-filter"]
     if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true'
