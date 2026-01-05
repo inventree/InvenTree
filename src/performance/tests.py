@@ -1,5 +1,6 @@
 """Performance benchmarking tests for InvenTree using the module."""
 
+import json
 import os
 
 import pytest
@@ -70,7 +71,8 @@ def test_api_list_performance(url):
 def test_api_options_performance(url):
     """Benchmark the API OPTIONS request performance."""
     url = '/api/part/'
-    result = api_client.request(url, method='OPTIONS')
+    response = api_client.request(url, method='OPTIONS')
+    result = json.loads(response.text)
     assert result
     assert 'actions' in result
     assert len(result['actions']) > 0
