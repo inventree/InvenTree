@@ -3,7 +3,6 @@
 import os
 
 import pytest
-
 from inventree.api import InvenTreeAPI
 
 host = os.getenv('INVENTREE_PYTHON_TEST_SERVER')
