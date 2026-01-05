@@ -157,7 +157,7 @@ class FilteredSerializers(InvenTreeAPITestCase):
         _ = BadSerializer()
         self.assertTrue(True)  # Dummy assertion to ensure we reach here
 
-    def test_failiure_OutputOptionsMixin(self):
+    def test_failure_OutputOptionsMixin(self):
         """Test failure case for OutputOptionsMixin."""
 
         class BadSerializer(InvenTree.serializers.InvenTreeModelSerializer):
