@@ -83,7 +83,6 @@ def test_api_list_performance(url):
 )
 def test_api_options_performance(url):
     """Benchmark the API OPTIONS request performance."""
-    url = '/api/part/'
     response = api_client.request(url, method='OPTIONS')
     result = json.loads(response.text)
     assert result
