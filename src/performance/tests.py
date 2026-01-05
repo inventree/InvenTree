@@ -3,10 +3,20 @@
 import os
 
 import pytest
+
 from inventree.api import InvenTreeAPI
 
-host = os.getenv('INVENTREE_PYTHON_TEST_SERVER')
-api_client = InvenTreeAPI(host=host)
+server = os.environ.get('INVENTREE_PYTHON_TEST_SERVER', 'http://127.0.0.1:12345')
+user = os.environ.get('INVENTREE_PYTHON_TEST_USERNAME', 'testuser')
+pwd = os.environ.get('INVENTREE_PYTHON_TEST_PASSWORD', 'testpassword')
+api_client = InvenTreeAPI(
+    server,
+    username=user,
+    password=pwd,
+    timeout=30,
+    token_name='python-test',
+    use_token_auth=True,
+)
 
 
 @pytest.mark.benchmark
@@ -31,7 +41,7 @@ api_client = InvenTreeAPI(host=host)
     ],
 )
 def test_api_list_performance(url):
-    """Benchmark the fibonacci function for various n values."""
+    """Benchmark the API list request performance."""
     result = api_client.get(url)
     assert result
     assert len(result) > 0
