@@ -20,6 +20,20 @@ api_client = InvenTreeAPI(
 
 
 @pytest.mark.benchmark
+def test_api_auth_performance():
+    """Benchmark the API authentication performance."""
+    client = InvenTreeAPI(
+        server,
+        username=user,
+        password=pwd,
+        timeout=30,
+        token_name='python-test',
+        use_token_auth=True,
+    )
+    assert client
+
+
+@pytest.mark.benchmark
 @pytest.mark.parametrize(
     'url',
     [
