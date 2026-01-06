@@ -13,29 +13,27 @@
 # then the default setup in this file should work straight out of the box, without modification
 
 services:
-
     # Database service
     # Use PostgreSQL as the database backend
     # Note: This can be changed to a different backend if required
     inventree-dev-db:
         image: postgres:17
-        expose:
-            - 5432/tcp
+        ports:
+            - 54320:5432
+        env_file:
+            - contrib/container/.env.local
         environment:
             - PGDATA=/var/lib/postgresql/data/pgdb
-            - POSTGRES_USER=pguser
-            - POSTGRES_PASSWORD=pgpassword
-            - POSTGRES_DB=inventree
         volumes:
-          # Map 'data' volume such that postgres database is stored externally
-          - ./data:/var/lib/postgresql/data:z
+            # Map 'data' volume such that postgres database is stored externally
+            - ./data:/var/lib/postgresql/data:z
         restart: unless-stopped
 
     # InvenTree web server service
     # Runs the django built-in webserver application
     inventree-dev-server:
         depends_on:
-          - inventree-dev-db
+            - inventree-dev-db
         build: &build_config
             context: .
             dockerfile: contrib/container/Dockerfile
@@ -49,7 +47,7 @@ services:
             # Mount local source directory to /home/inventree
             - ./:/home/inventree:z
         env_file:
-            - contrib/container/docker.dev.env
+            - contrib/container/.env.local
         restart: unless-stopped
 
     # Background worker process handles long-running or periodic tasks
@@ -63,5 +61,5 @@ services:
             # Mount local source directory to /home/inventree
             - ./:/home/inventree:z
         env_file:
-            - contrib/container/docker.dev.env
+            - contrib/container/.env.local
         restart: unless-stopped

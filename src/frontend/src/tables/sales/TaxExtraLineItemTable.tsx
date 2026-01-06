@@ -35,12 +35,14 @@ export default function ExtraLineItemTable({
   endpoint,
   orderId,
   orderDetailRefresh,
+  editable,
   currency,
   role
 }: Readonly<{
   endpoint: ApiEndpoints;
   orderId: number;
   orderDetailRefresh: () => void;
+  editable: boolean;
   currency: string;
   role: UserRoles;
 }>) {

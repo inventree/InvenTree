@@ -8,10 +8,35 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ("company", "0075_company_tax_id"),
-        ("order", "0112_alter_salesorderlineitem_part"),
+        ("order", "0112_tax"),
+        ('tenant', '0001_initial'),
+        ('part', '0142_remove_part_last_stocktake_remove_partstocktake_note_and_more'),
     ]
 
     operations = [
+        migrations.AddField(
+            model_name='purchaseorder',
+            name='tenant',
+            field=models.ForeignKey(default=1, help_text='Tenant this order belongs to', on_delete=django.db.models.deletion.CASCADE, related_name='%(class)s_orders', to='tenant.tenant', verbose_name='Tenant'),
+            preserve_default=False,
+        ),
+        migrations.AddField(
+            model_name='returnorder',
+            name='tenant',
+            field=models.ForeignKey(default=1, help_text='Tenant this order belongs to', on_delete=django.db.models.deletion.CASCADE, related_name='%(class)s_orders', to='tenant.tenant', verbose_name='Tenant'),
+            preserve_default=False,
+        ),
+        migrations.AddField(
+            model_name='salesorder',
+            name='tenant',
+            field=models.ForeignKey(default=1, help_text='Tenant this order belongs to', on_delete=django.db.models.deletion.CASCADE, related_name='%(class)s_orders', to='tenant.tenant', verbose_name='Tenant'),
+            preserve_default=False,
+        ),
+        migrations.AlterField(
+            model_name='salesorderlineitem',
+            name='part',
+            field=models.ForeignKey(help_text='Part', limit_choices_to={'salable': True}, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='sales_order_line_items', to='part.part', verbose_name='Part'),
+        ),
         migrations.AddField(
             model_name="salesordershipment",
             name="shipment_address",
