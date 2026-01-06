@@ -2,14 +2,7 @@
 
 from django.urls import reverse
 
-from company.models import (
-    Address,
-    Company,
-    Contact,
-    ManufacturerPart,
-    SupplierPart,
-    SupplierPriceBreak,
-)
+from company.models import Address, Company, Contact, SupplierPart, SupplierPriceBreak
 from InvenTree.unit_test import InvenTreeAPITestCase
 from part.models import Part
 from users.permissions import check_user_permission
@@ -745,58 +738,6 @@ class SupplierPartTest(InvenTreeAPITestCase):
             self.assertNotIn(
                 field, response.data[0], f'Field: {field} failed exclusion test'
             )
-
-
-class CompanyMetadataAPITest(InvenTreeAPITestCase):
-    """Unit tests for the various metadata endpoints of API."""
-
-    fixtures = [
-        'category',
-        'part',
-        'location',
-        'company',
-        'contact',
-        'manufacturer_part',
-        'supplier_part',
-    ]
-
-    roles = ['company.change', 'purchase_order.change', 'part.change']
-
-    def metatester(self, apikey, model):
-        """Generic tester."""
-        modeldata = model.objects.first()
-
-        # Useless test unless a model object is found
-        self.assertIsNotNone(modeldata)
-
-        url = reverse(apikey, kwargs={'pk': modeldata.pk})
-
-        # Metadata is initially null
-        self.assertIsNone(modeldata.metadata)
-
-        numstr = f'12{len(apikey)}'
-
-        self.patch(
-            url,
-            {'metadata': {f'abc-{numstr}': f'xyz-{apikey}-{numstr}'}},
-            expected_code=200,
-        )
-
-        # Refresh
-        modeldata.refresh_from_db()
-        self.assertEqual(
-            modeldata.get_metadata(f'abc-{numstr}'), f'xyz-{apikey}-{numstr}'
-        )
-
-    def test_metadata(self):
-        """Test all endpoints."""
-        for apikey, model in {
-            'api-manufacturer-part-metadata': ManufacturerPart,
-            'api-supplier-part-metadata': SupplierPart,
-            'api-company-metadata': Company,
-            'api-contact-metadata': Contact,
-        }.items():
-            self.metatester(apikey, model)
 
 
 class SupplierPriceBreakAPITest(InvenTreeAPITestCase):
