@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 435
+INVENTREE_API_VERSION = 436
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v436 -> 2025-12-19 : https://github.com/inventree/InvenTree/pull/10887
+    - Extend the "auto allocate" wizard API to include tracked items
 
 v435 -> 2025-12-16 : https://github.com/inventree/InvenTree/pull/11030
     - Adds token refresh endpoint to auth API

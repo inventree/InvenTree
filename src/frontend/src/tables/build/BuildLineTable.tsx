@@ -27,6 +27,7 @@ import type { RowAction, TableColumn } from '@lib/types/Tables';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import {
   useAllocateStockToBuildForm,
+  useBuildAutoAllocateFields,
   useBuildOrderFields,
   useConsumeBuildLinesForm
 } from '../../forms/BuildForms';
@@ -573,17 +574,9 @@ export default function BuildLineTable({
     url: ApiEndpoints.build_order_auto_allocate,
     pk: build.pk,
     title: t`Allocate Stock`,
-    fields: {
-      location: {
-        filters: {
-          structural: false
-        }
-      },
-      exclude_location: {},
-      interchangeable: {},
-      substitutes: {},
-      optional_items: {}
-    },
+    fields: useBuildAutoAllocateFields({
+      item_type: 'untracked'
+    }),
     initialData: {
       location: build.take_from,
       interchangeable: true,
@@ -594,7 +587,7 @@ export default function BuildLineTable({
     table: table,
     preFormContent: (
       <Alert color='green' title={t`Auto Allocate Stock`}>
-        <Text>{t`Automatically allocate stock to this build according to the selected options`}</Text>
+        <Text>{t`Automatically allocate untracked BOM items to this build according to the selected options`}</Text>
       </Alert>
     )
   });
