@@ -312,7 +312,7 @@ jobs:
           dev-install: true
           update: true
       - name: Download Python Code For `${WRAPPER_NAME}`
-        run: git clone --depth 1 https://github.com/matmair/${WRAPPER_NAME} -b new-metadata-endpoint ./${WRAPPER_NAME}
+        run: git clone --depth 1 https://github.com/inventree/${WRAPPER_NAME} ./${WRAPPER_NAME}
       - name: Start InvenTree Server
         run: |
           invoke dev.delete-data -f
