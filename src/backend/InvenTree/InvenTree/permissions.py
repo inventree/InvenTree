@@ -470,3 +470,25 @@ class DataImporterPermission(OASTokenMixin, permissions.BasePermission):
                 )
 
         return True
+
+
+class ContentTypePermission(OASTokenMixin, permissions.BasePermission):
+    """Mixin class for determining if the user has correct permissions."""
+
+    ENFORCE_USER_PERMS = True
+
+    def has_permission(self, request, view):
+        """Class level permission checks are handled via InvenTree.permissions.IsAuthenticatedOrReadScope."""
+        return request.user and request.user.is_authenticated
+
+    def get_required_alternate_scopes(self, request, view):
+        """Return the required scopes for the current request."""
+        return map_scope(roles=_roles)
+
+    def has_object_permission(self, request, view, obj):
+        """Check if the user has permission to access the object."""
+        if model_class := obj.__class__:
+            return users.permissions.check_user_permission(
+                request.user, model_class, 'change'
+            )
+        return False
