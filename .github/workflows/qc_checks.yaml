@@ -415,6 +415,8 @@ jobs:
           dev-install: true
           update: true
           npm: true
+        env:
+          node_version: '>=20.19.0'
       - name: Performance Reporting
         uses: CodSpeedHQ/action@972e3437949c89e1357ebd1a2dbc852fcbc57245 # pin@v4
         with:
