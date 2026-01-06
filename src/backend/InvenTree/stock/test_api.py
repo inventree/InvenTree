@@ -9,6 +9,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.urls import reverse
 
+import pytest
 from djmoney.money import Money
 from rest_framework import status
 
@@ -17,7 +18,7 @@ import company.models
 import part.models
 from common.models import InvenTreeCustomUserStateModel, InvenTreeSetting
 from common.settings import set_global_setting
-from InvenTree.unit_test import InvenTreeAPITestCase
+from InvenTree.unit_test import InvenTreeAPIPerformanceTestCase, InvenTreeAPITestCase
 from part.models import Part, PartTestTemplate
 from stock.models import (
     StockItem,
@@ -866,7 +867,13 @@ class StockItemListTest(StockAPITestCase):
 
         excluded_headers = ['metadata']
 
-        with self.export_data(self.list_url) as data_file:
+        filters = {
+            'part_detail': True,
+            'location_detail': True,
+            'supplier_part_detail': True,
+        }
+
+        with self.export_data(self.list_url, params=filters) as data_file:
             self.process_csv(
                 data_file,
                 required_cols=required_headers,
@@ -875,9 +882,10 @@ class StockItemListTest(StockAPITestCase):
             )
 
         # Now, add a filter to the results
-        with self.export_data(
-            self.list_url, {'location': 1, 'cascade': True}
-        ) as data_file:
+        filters['location'] = 1
+        filters['cascade'] = True
+
+        with self.export_data(self.list_url, params=filters) as data_file:
             data = self.process_csv(data_file, required_rows=9)
 
             for row in data:
@@ -904,6 +912,51 @@ class StockItemListTest(StockAPITestCase):
         # Export stock items with a specific part
         with self.export_data(self.list_url, {'part': 25}) as data_file:
             self.process_csv(data_file, required_rows=items.count())
+
+    def test_large_export(self):
+        """Test export of very large dataset.
+
+        - Ensure that the time taken to export a large dataset is reasonable.
+        - Ensure that the number of DB queries is reasonable.
+        """
+        # Create a large number of stock items
+        locations = list(StockLocation.objects.all())
+        parts = list(Part.objects.filter(virtual=False))
+
+        idx = 0
+
+        N_LOCATIONS = len(locations)
+        N_PARTS = len(parts)
+
+        stock_items = []
+
+        while idx < 2500:
+            part = parts[idx % N_PARTS]
+            location = locations[idx % N_LOCATIONS]
+
+            item = StockItem(
+                part=part,
+                location=location,
+                quantity=10,
+                level=0,
+                tree_id=0,
+                lft=0,
+                rght=0,
+            )
+            stock_items.append(item)
+            idx += 1
+
+        StockItem.objects.bulk_create(stock_items)
+
+        self.assertGreaterEqual(StockItem.objects.count(), 2500)
+
+        # Note: While the export is quick on pgsql, it is still quite slow on sqlite3
+        with self.export_data(
+            self.list_url, max_query_count=50, max_query_time=7.5
+        ) as data_file:
+            data = self.process_csv(data_file)
+
+            self.assertGreaterEqual(len(data), 2500)
 
     def test_filter_by_allocated(self):
         """Test that we can filter by "allocated" status.
@@ -1701,12 +1754,18 @@ class StockItemTest(StockAPITestCase):
 
         prt = Part.objects.first()
 
+        # Number of items to create
+        N_ITEMS = 10
+
         # Create a bunch of items
-        items = [StockItem.objects.create(part=prt, quantity=10) for _ in range(10)]
+        items = [
+            StockItem.objects.create(part=prt, quantity=10) for _ in range(N_ITEMS)
+        ]
 
         for item in items:
             item.refresh_from_db()
             self.assertEqual(item.status, StockStatus.OK.value)
+            self.assertEqual(item.tracking_info.count(), 1)
 
         data = {
             'items': [item.pk for item in items],
@@ -1719,10 +1778,10 @@ class StockItemTest(StockAPITestCase):
         for item in items:
             item.refresh_from_db()
             self.assertEqual(item.status, StockStatus.DAMAGED.value)
-            self.assertEqual(item.tracking_info.count(), 1)
+            self.assertEqual(item.tracking_info.count(), 2)
 
         # Same test, but with one item unchanged
-        items[0].status = StockStatus.ATTENTION.value
+        items[0].set_status(StockStatus.ATTENTION.value)
         items[0].save()
 
         data['status'] = StockStatus.ATTENTION.value
@@ -1732,7 +1791,7 @@ class StockItemTest(StockAPITestCase):
         for item in items:
             item.refresh_from_db()
             self.assertEqual(item.status, StockStatus.ATTENTION.value)
-            self.assertEqual(item.tracking_info.count(), 2)
+            self.assertEqual(item.tracking_info.count(), 3)
 
             tracking = item.tracking_info.last()
             self.assertEqual(tracking.tracking_type, StockHistoryCode.EDITED.value)
@@ -2599,3 +2658,15 @@ class StockMetadataAPITest(InvenTreeAPITestCase):
             'api-stock-item-metadata': StockItem,
         }.items():
             self.metatester(apikey, model)
+
+
+class StockApiPerformanceTest(StockAPITestCase, InvenTreeAPIPerformanceTestCase):
+    """Performance tests for the Stock API."""
+
+    @pytest.mark.django_db
+    @pytest.mark.benchmark
+    def test_api_stock_list(self):
+        """Test that Stock API queries are performant."""
+        url = reverse('api-stock-list')
+        response = self.get(url, expected_code=200)
+        self.assertGreater(len(response.data), 13)

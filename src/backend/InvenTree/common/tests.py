@@ -32,7 +32,7 @@ from InvenTree.unit_test import (
     PluginMixin,
     addUserPermission,
 )
-from part.models import Part, PartParameterTemplate
+from part.models import Part
 from plugin import registry
 
 from .api import WebhookView
@@ -45,6 +45,7 @@ from .models import (
     NotesImage,
     NotificationEntry,
     NotificationMessage,
+    ParameterTemplate,
     ProjectCode,
     SelectionList,
     SelectionListEntry,
@@ -201,6 +202,21 @@ class AttachmentTest(InvenTreeAPITestCase):
         # Assign 'delete' permission to 'part' model
         self.assignRole('part.delete')
         self.delete(url, expected_code=204)
+
+    def test_fully_qualified_url(self):
+        """Test that the fully qualified URL is returned correctly."""
+        part = Part.objects.first()
+
+        attachment = Attachment.objects.create(
+            attachment=self.generate_file('test.txt'),
+            comment='Testing filename: test.txt',
+            model_type='part',
+            model_id=part.pk,
+        )
+
+        url = attachment.fully_qualified_url()
+        self.assertIs(type(url), str)
+        self.assertIn(f'/media/attachments/part/{part.pk}/test', url)
 
 
 class SettingsTest(InvenTreeTestCase):
@@ -1105,7 +1121,7 @@ class WebhookMessageTests(TestCase):
     def test_bad_token(self):
         """Test that a wrong token is not working."""
         response = self.client.post(
-            self.url, content_type=CONTENT_TYPE_JSON, HTTP_TOKEN='1234567fghj'
+            self.url, content_type=CONTENT_TYPE_JSON, headers={'token': '1234567fghj'}
         )
 
         assert response.status_code == HTTPStatus.FORBIDDEN
@@ -1128,7 +1144,7 @@ class WebhookMessageTests(TestCase):
             self.url,
             data="{'this': 123}",
             content_type=CONTENT_TYPE_JSON,
-            HTTP_TOKEN=str(self.endpoint_def.token),
+            headers={'token': str(self.endpoint_def.token)},
         )
 
         assert response.status_code == HTTPStatus.NOT_ACCEPTABLE
@@ -1176,7 +1192,7 @@ class WebhookMessageTests(TestCase):
         response = self.client.post(
             self.url,
             content_type=CONTENT_TYPE_JSON,
-            HTTP_TOKEN='68MXtc/OiXdA5e2Nq9hATEVrZFpLb3Zb0oau7n8s31I=',
+            headers={'token': '68MXtc/OiXdA5e2Nq9hATEVrZFpLb3Zb0oau7n8s31I='},
         )
 
         assert response.status_code == HTTPStatus.OK
@@ -1191,7 +1207,7 @@ class WebhookMessageTests(TestCase):
             self.url,
             data={'this': 'is a message'},
             content_type=CONTENT_TYPE_JSON,
-            HTTP_TOKEN=str(self.endpoint_def.token),
+            headers={'token': str(self.endpoint_def.token)},
         )
 
         assert response.status_code == HTTPStatus.OK
@@ -2040,27 +2056,37 @@ class SelectionListTest(InvenTreeAPITestCase):
 
         # Add to parameter
         part = Part.objects.get(pk=1)
-        template = PartParameterTemplate.objects.create(
+        template = ParameterTemplate.objects.create(
             name='test_parameter', units='', selectionlist=self.list
         )
         rsp = self.get(
-            reverse('api-part-parameter-template-detail', kwargs={'pk': template.pk})
+            reverse('api-parameter-template-detail', kwargs={'pk': template.pk})
         )
         self.assertEqual(rsp.data['name'], 'test_parameter')
         self.assertEqual(rsp.data['choices'], '')
 
         # Add to part
-        url = reverse('api-part-parameter-list')
+        url = reverse('api-parameter-list')
         response = self.post(
             url,
-            {'part': part.pk, 'template': template.pk, 'data': 70},
+            {
+                'model_id': part.pk,
+                'model_type': 'part.part',
+                'template': template.pk,
+                'data': 70,
+            },
             expected_code=400,
         )
         self.assertIn('Invalid choice for parameter value', response.data['data'])
 
         response = self.post(
             url,
-            {'part': part.pk, 'template': template.pk, 'data': self.entry1.value},
+            {
+                'model_id': part.pk,
+                'model_type': 'part.part',
+                'template': template.pk,
+                'data': self.entry1.value,
+            },
             expected_code=201,
         )
         self.assertEqual(response.data['data'], self.entry1.value)

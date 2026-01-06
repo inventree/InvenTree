@@ -34,6 +34,7 @@ import { StandaloneField } from '../components/forms/StandaloneField';
 
 import { ProgressBar } from '@lib/components/ProgressBar';
 import { apiUrl } from '@lib/functions/Api';
+import { toNumber } from '@lib/functions/Conversion';
 import type {
   ApiFormAdjustFilterType,
   ApiFormFieldSet
@@ -58,19 +59,59 @@ import { useGlobalSettingsState } from '../states/SettingsStates';
 export function usePurchaseOrderLineItemFields({
   supplierId,
   orderId,
+  currency,
   create
 }: {
   supplierId?: number;
   orderId?: number;
+  currency?: string;
   create?: boolean;
 }) {
   const globalSettings = useGlobalSettingsState();
 
   const [purchasePrice, setPurchasePrice] = useState<string>('');
-  const [autoPricing, setAutoPricing] = useState(true);
+  const [purchasePriceCurrency, setPurchasePriceCurrency] = useState<string>(
+    currency ?? ''
+  );
+
+  const [autoPricing, setAutoPricing] = useState(false);
+
+  const [quantity, setQuantity] = useState<string>('1');
 
   // Internal part information
   const [part, setPart] = useState<any>({});
+  const [priceBreaks, setPriceBreaks] = useState<any[]>([]);
+  const [suggestedPurchasePrice, setSuggestedPurchasePrice] = useState<
+    string | undefined
+  >(undefined);
+
+  // Update suggested purchase price when part, quantity, or price breaks change
+  useEffect(() => {
+    // Only attempt to set purchase price for new line items
+    if (!create) return;
+
+    const qty = toNumber(quantity, null);
+
+    if (qty == null || qty <= 0) {
+      setSuggestedPurchasePrice(undefined);
+      return;
+    }
+
+    if (!part || !priceBreaks || priceBreaks.length === 0) {
+      setSuggestedPurchasePrice(undefined);
+      return;
+    }
+
+    const applicablePriceBreaks = priceBreaks
+      .filter((pb: any) => qty >= pb.quantity)
+      .sort((a: any, b: any) => b.quantity - a.quantity);
+
+    if (applicablePriceBreaks.length) {
+      setSuggestedPurchasePrice(applicablePriceBreaks[0].price);
+    } else {
+      setSuggestedPurchasePrice(undefined);
+    }
+  }, [create, part, quantity, priceBreaks]);
 
   useEffect(() => {
     if (autoPricing) {
@@ -95,9 +136,11 @@ export function usePurchaseOrderLineItemFields({
           part_detail: true,
           supplier_detail: true,
           active: true,
-          part_active: true
+          part_active: true,
+          price_breaks: true
         },
-        onValueChange: (_value, record) => {
+        onValueChange: (value, record) => {
+          setPriceBreaks(record?.price_breaks ?? []);
           setPart(record?.part_detail ?? {});
         },
         adjustFilters: (adjust: ApiFormAdjustFilterType) => {
@@ -107,19 +150,30 @@ export function usePurchaseOrderLineItemFields({
           };
         }
       },
-      quantity: {},
       reference: {},
+      quantity: {
+        onValueChange: (value) => {
+          setQuantity(value);
+        }
+      },
       purchase_price: {
         icon: <IconCurrencyDollar />,
         value: purchasePrice,
+        placeholder: suggestedPurchasePrice,
+        placeholderAutofill: true,
         onValueChange: setPurchasePrice
       },
       purchase_price_currency: {
-        icon: <IconCoins />
+        icon: <IconCoins />,
+        value: purchasePriceCurrency,
+        onValueChange: setPurchasePriceCurrency
       },
       auto_pricing: {
         value: autoPricing,
         onValueChange: setAutoPricing
+      },
+      project_code: {
+        description: t`Select project code for this line item`
       },
       target_date: {
         icon: <IconCalendar />
@@ -159,7 +213,8 @@ export function usePurchaseOrderLineItemFields({
     globalSettings,
     supplierId,
     autoPricing,
-    purchasePrice
+    purchasePrice,
+    suggestedPurchasePrice
   ]);
 
   return fields;
@@ -510,7 +565,7 @@ function LineItemFormRow({
               icon={<InvenTreeIcon icon='location' />}
               tooltip={t`Set Location`}
               tooltipAlignment='top'
-              variant={locationOpen ? 'filled' : 'transparent'}
+              variant={locationOpen ? 'outline' : 'transparent'}
             />
             <ActionButton
               size='sm'
@@ -518,7 +573,7 @@ function LineItemFormRow({
               icon={<InvenTreeIcon icon='batch_code' />}
               tooltip={batchToolTip}
               tooltipAlignment='top'
-              variant={batchOpen ? 'filled' : 'transparent'}
+              variant={batchOpen ? 'outline' : 'transparent'}
             />
             {settings.isSet('STOCK_ENABLE_EXPIRY') && (
               <ActionButton
@@ -527,7 +582,7 @@ function LineItemFormRow({
                 icon={<IconCalendarExclamation />}
                 tooltip={t`Set Expiry Date`}
                 tooltipAlignment='top'
-                variant={expiryDateOpen ? 'filled' : 'transparent'}
+                variant={expiryDateOpen ? 'outline' : 'transparent'}
               />
             )}
             <ActionButton
@@ -536,20 +591,20 @@ function LineItemFormRow({
               tooltip={t`Adjust Packaging`}
               tooltipAlignment='top'
               onClick={() => packagingHandlers.toggle()}
-              variant={packagingOpen ? 'filled' : 'transparent'}
+              variant={packagingOpen ? 'outline' : 'transparent'}
             />
             <ActionButton
               onClick={() => statusHandlers.toggle()}
               icon={<InvenTreeIcon icon='status' />}
               tooltip={t`Change Status`}
               tooltipAlignment='top'
-              variant={statusOpen ? 'filled' : 'transparent'}
+              variant={statusOpen ? 'outline' : 'transparent'}
             />
             <ActionButton
               icon={<InvenTreeIcon icon='note' />}
               tooltip={t`Add Note`}
               tooltipAlignment='top'
-              variant={noteOpen ? 'filled' : 'transparent'}
+              variant={noteOpen ? 'outline' : 'transparent'}
               onClick={() => noteHandlers.toggle()}
             />
             {barcode ? (
@@ -784,6 +839,10 @@ export function useReceiveLineItems(props: LineItemsForm) {
         }),
         modelRenderer: (row: TableFieldRowProps) => {
           const record = records[row.item.line_item];
+
+          if (!record) {
+            return null;
+          }
 
           return (
             <LineItemFormRow

@@ -54,6 +54,67 @@ test('Stock - Location Tree', async ({ browser }) => {
   await page.getByRole('cell', { name: 'Factory' }).first().waitFor();
 });
 
+test('Stock - Location Delete', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    url: 'stock/location/38/sublocations'
+  });
+
+  // Create a sub-location
+  await page
+    .getByRole('button', { name: 'action-button-add-stock-location' })
+    .click();
+  await page
+    .getByRole('textbox', { name: 'text-field-name' })
+    .fill('my-location-1');
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Create a secondary sub-location
+  await loadTab(page, 'Sublocations');
+  await page
+    .getByRole('button', { name: 'action-button-add-stock-location' })
+    .click();
+  await page
+    .getByRole('textbox', { name: 'text-field-name' })
+    .fill('my-location-2');
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Navigate up to parent
+  await page.getByRole('link', { name: 'breadcrumb-2-my-location-1' }).click();
+  await loadTab(page, 'Sublocations');
+  await page
+    .getByRole('cell', { name: 'my-location-2', exact: true })
+    .waitFor();
+
+  // Delete this location, and all child locations
+  await page
+    .locator('div')
+    .filter({ hasText: /^Stock>PCB Assembler>my-location-1Stock Location$/ })
+    .getByLabel('action-menu-location-actions')
+    .click();
+  await page
+    .getByRole('menuitem', { name: 'action-menu-location-actions-delete' })
+    .click();
+
+  await page
+    .getByRole('textbox', { name: 'choice-field-delete_stock_items' })
+    .click();
+  await page
+    .getByRole('option', { name: 'Move items to parent location' })
+    .click();
+
+  await page
+    .getByRole('textbox', { name: 'choice-field-delete_sub_locations' })
+    .click();
+  await page.getByRole('option', { name: 'Delete items' }).click();
+
+  await page.getByRole('button', { name: 'Delete' }).click();
+
+  // Confirm we are on the right page
+  await page.getByText('External PCB assembler').waitFor();
+  await loadTab(page, 'Sublocations');
+  await page.getByText('No records found').first().waitFor();
+});
+
 test('Stock - Filters', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
     username: 'steven',
@@ -271,6 +332,11 @@ test('Stock - Stock Actions', async ({ browser }) => {
   await page.getByRole('button', { name: 'Scan', exact: true }).click();
   await page.getByText('Scanned stock item into location').waitFor();
 
+  // Add "zero" stock - ensure the quantity stays the same
+  await launchStockAction('add');
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Quantity: 123').first().waitFor();
+
   // Add stock, and change status
   await launchStockAction('add');
   await page.getByLabel('number-field-quantity').fill('12');
@@ -280,6 +346,11 @@ test('Stock - Stock Actions', async ({ browser }) => {
   await page.getByText('Lost').first().waitFor();
   await page.getByText('Unavailable').first().waitFor();
   await page.getByText('135').first().waitFor();
+
+  // Remove "zero" stock - ensure the quantity stays the same
+  await launchStockAction('remove');
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Quantity: 135').first().waitFor();
 
   // Remove stock, and change status
   await launchStockAction('remove');

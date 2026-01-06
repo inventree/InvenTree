@@ -76,6 +76,7 @@ class BuildReportContext(report.mixins.BaseReportContext):
 class Build(
     InvenTree.models.PluginValidationMixin,
     report.mixins.InvenTreeReportMixin,
+    InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,
@@ -85,7 +86,7 @@ class Build(
     InvenTree.models.MetadataMixin,
     InvenTree.models.InvenTreeTree,
 ):
-    """A Build object organises the creation of new StockItem objects from other existing StockItem objects.
+    """A Build object organizes the creation of new StockItem objects from other existing StockItem objects.
 
     Attributes:
         part: The part to be built (from component BOM items)
@@ -1886,7 +1887,7 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
         return self.build_line.bom_item if self.build_line else None
 
     @transaction.atomic
-    def complete_allocation(self, quantity=None, notes='', user=None) -> None:
+    def complete_allocation(self, quantity=None, notes: str = '', user=None) -> None:
         """Complete the allocation of this BuildItem into the output stock item.
 
         Arguments:
@@ -1909,9 +1910,7 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
 
         # Ensure we are not allocating more than available
         if quantity > item.quantity:
-            raise ValidationError({
-                'quantity': _('Allocated quantity exceeds available stock quantity')
-            })
+            quantity = item.quantity
 
         # Split the allocated stock if there are more available than allocated
         if item.quantity > quantity:

@@ -14,7 +14,7 @@ from collections import OrderedDict
 from importlib.machinery import SourceFileLoader
 from pathlib import Path
 from threading import Lock
-from typing import Any, Optional, Union
+from typing import Any, Optional
 
 from django.apps import apps
 from django.conf import settings
@@ -27,10 +27,10 @@ from django.utils.translation import gettext_lazy as _
 import structlog
 
 import InvenTree.cache
+import InvenTree.ready
 from common.settings import get_global_setting, set_global_setting
 from InvenTree.config import get_plugin_dir
 from InvenTree.exceptions import log_error
-from InvenTree.ready import canAppAccessDatabase
 
 from .helpers import (
     IntegrationPluginError,
@@ -152,8 +152,18 @@ class PluginsRegistry:
 
         # Install plugins from file (if required)
         if InvenTreeSetting.get_setting('PLUGIN_ON_STARTUP', create=False, cache=False):
-            # make sure all plugins are installed
-            registry.install_plugin_file()
+            if InvenTree.ready.isInTestMode() and not settings.PLUGIN_TESTING:
+                # Ignore plugin reload in test mode
+                pass
+            elif InvenTree.ready.isRunningBackup():
+                # Ignore plugin reload during backup
+                pass
+            elif InvenTree.ready.isGeneratingSchema():
+                # Ignore plugin reload during schema generation
+                pass
+            elif InvenTree.ready.isInWorkerThread() or InvenTree.ready.isInMainThread():
+                # make sure all plugins are installed
+                registry.install_plugin_file()
 
         # Perform initial plugin discovery
         self.reload_plugins(full_reload=True, force_reload=True, collect=True)
@@ -202,7 +212,7 @@ class PluginsRegistry:
 
         return plg
 
-    def get_plugin_config(self, slug: str, name: Union[str, None] = None):
+    def get_plugin_config(self, slug: str, name: str | None = None):
         """Return the matching PluginConfig instance for a given plugin.
 
         Arguments:
@@ -375,7 +385,7 @@ class PluginsRegistry:
         logger.debug('Finished loading plugins')
 
         # Trigger plugins_loaded event
-        if canAppAccessDatabase():
+        if InvenTree.ready.canAppAccessDatabase():
             from plugin.events import PluginEvents, trigger_event
 
             trigger_event(PluginEvents.PLUGINS_LOADED)
@@ -810,7 +820,7 @@ class PluginsRegistry:
                         logger.exception(
                             '[PLUGIN] Encountered an error with %s:\n%s',
                             getattr(error, 'path', None),
-                            str(error),
+                            error,
                         )
 
         logger.debug('Finished plugin initialization')
@@ -970,9 +980,8 @@ class PluginsRegistry:
 
         if old_hash != self.registry_hash:
             try:
-                logger.info(
-                    'Updating plugin registry hash: %s', str(self.registry_hash)
-                )
+                logger.info('Updating plugin registry hash: %s', self.registry_hash)
+
                 set_global_setting(
                     '_PLUGIN_REGISTRY_HASH', self.registry_hash, change_user=None
                 )
@@ -981,7 +990,7 @@ class PluginsRegistry:
                 pass
             except Exception as exc:
                 # Some other exception, we want to know about it
-                logger.exception('Failed to update plugin registry hash: %s', str(exc))
+                logger.exception('Failed to update plugin registry hash: %s', exc)
 
     def plugin_settings_keys(self):
         """A list of keys which are used to store plugin settings."""
@@ -1033,7 +1042,7 @@ class PluginsRegistry:
             # Skip if running during unit testing
             return False
 
-        if not canAppAccessDatabase(
+        if not InvenTree.ready.canAppAccessDatabase(
             allow_shell=True, allow_test=settings.PLUGIN_TESTING_RELOAD
         ):
             # Skip check if database cannot be accessed
@@ -1054,7 +1063,7 @@ class PluginsRegistry:
         try:
             reg_hash = get_global_setting('_PLUGIN_REGISTRY_HASH', '', create=False)
         except Exception as exc:
-            logger.exception('Failed to retrieve plugin registry hash: %s', str(exc))
+            logger.exception('Failed to retrieve plugin registry hash: %s', exc)
             return False
 
         if reg_hash and reg_hash != self.registry_hash:

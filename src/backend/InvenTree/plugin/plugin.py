@@ -6,7 +6,7 @@ from datetime import datetime
 from distutils.sysconfig import get_python_lib  # type: ignore[import]
 from importlib.metadata import PackageNotFoundError, metadata
 from pathlib import Path
-from typing import Optional, Union
+from typing import Optional
 
 from django.conf import settings
 from django.utils.text import slugify
@@ -483,7 +483,7 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
 
     @classmethod
     @mark_final
-    def check_package_install_name(cls) -> Union[str, None]:
+    def check_package_install_name(cls) -> str | None:
         """Installable package name of the plugin.
 
         e.g. if this plugin was installed via 'pip install <x>',
@@ -496,7 +496,7 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
 
     @property
     @mark_final
-    def package_install_name(self) -> Union[str, None]:
+    def package_install_name(self) -> str | None:
         """Installable package name of the plugin.
 
         e.g. if this plugin was installed via 'pip install <x>',
@@ -610,7 +610,7 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
 
         return url
 
-    def get_admin_source(self) -> Union[str, None]:
+    def get_admin_source(self) -> str | None:
         """Return a path to a JavaScript file which contains custom UI settings.
 
         The frontend code expects that this file provides a function named 'renderPluginSettings'.
@@ -620,7 +620,7 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
 
         return self.plugin_static_file(self.ADMIN_SOURCE)
 
-    def get_admin_context(self) -> Union[dict, None]:
+    def get_admin_context(self) -> dict | None:
         """Return a context dictionary for the admin panel settings.
 
         This is an optional method which can be overridden by the plugin.

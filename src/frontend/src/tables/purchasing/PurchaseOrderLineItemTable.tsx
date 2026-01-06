@@ -45,6 +45,7 @@ import {
   LocationColumn,
   NoteColumn,
   PartColumn,
+  ProjectCodeColumn,
   ReferenceColumn,
   TargetDateColumn
 } from '../ColumnRenderers';
@@ -150,6 +151,7 @@ export function PurchaseOrderLineItemTable({
         accessor: 'part_detail.description'
       }),
       ReferenceColumn({}),
+      ProjectCodeColumn({}),
       {
         accessor: 'build_order',
         title: t`Build Order`,
@@ -185,14 +187,14 @@ export function PurchaseOrderLineItemTable({
             const total = record.quantity * supplier_part.pack_quantity_native;
 
             extra.push(
-              <Text key='pack-quantity'>
+              <Text key='pack-quantity' size='sm'>
                 {t`Pack Quantity`}: {supplier_part.pack_quantity}
               </Text>
             );
 
             extra.push(
-              <Text key='total-quantity'>
-                {t`Total Quantity`}: {total} {part?.units}
+              <Text key='total-quantity' size='sm'>
+                {t`Total Quantity`}: {formatDecimal(total)} {part?.units}
               </Text>
             );
           }
@@ -287,7 +289,8 @@ export function PurchaseOrderLineItemTable({
   const addPurchaseOrderFields = usePurchaseOrderLineItemFields({
     create: true,
     orderId: orderId,
-    supplierId: supplierId
+    supplierId: supplierId,
+    currency: currency
   });
 
   const [initialData, setInitialData] = useState<any>({});
@@ -309,7 +312,8 @@ export function PurchaseOrderLineItemTable({
   const editLineItemFields = usePurchaseOrderLineItemFields({
     create: false,
     orderId: orderId,
-    supplierId: supplierId
+    supplierId: supplierId,
+    currency: currency
   });
 
   const editLine = useEditApiFormModal({
@@ -353,13 +357,6 @@ export function PurchaseOrderLineItemTable({
             receiveLineItems.open();
           }
         },
-        RowViewAction({
-          hidden: !record.build_order,
-          title: t`View Build Order`,
-          modelType: ModelType.build,
-          modelId: record.build_order,
-          navigate: navigate
-        }),
         RowEditAction({
           hidden: !canEdit,
           onClick: () => {
@@ -380,6 +377,13 @@ export function PurchaseOrderLineItemTable({
             setSelectedLine(record.pk);
             deleteLine.open();
           }
+        }),
+        RowViewAction({
+          hidden: !record.build_order,
+          title: t`View Build Order`,
+          modelType: ModelType.build,
+          modelId: record.build_order,
+          navigate: navigate
         })
       ];
     },
@@ -435,7 +439,8 @@ export function PurchaseOrderLineItemTable({
           params: {
             ...params,
             order: orderId,
-            part_detail: true
+            part_detail: true,
+            destination_detail: true
           },
           rowActions: rowActions,
           tableActions: tableActions,

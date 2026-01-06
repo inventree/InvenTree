@@ -4,9 +4,10 @@ import json
 import os
 import re
 import warnings
+from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-from typing import Callable, Optional
+from typing import Optional
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -626,7 +627,7 @@ def update_exchange_rates(force: bool = False):
     except (AppRegistryNotReady, OperationalError, ProgrammingError):
         logger.warning('Could not update exchange rates - database not ready')
     except Exception as e:  # pragma: no cover
-        logger.exception('Error updating exchange rates: %s', str(type(e)))
+        logger.exception('Error updating exchange rates: %s', type(e))
 
 
 @tracer.start_as_current_span('run_backup')
@@ -659,6 +660,12 @@ def get_migration_plan():
     executor = MigrationExecutor(connections[DEFAULT_DB_ALIAS])
     plan = executor.migration_plan(executor.loader.graph.leaf_nodes())
     return plan
+
+
+def get_migration_count():
+    """Returns the number of all detected migrations."""
+    executor = MigrationExecutor(connections[DEFAULT_DB_ALIAS])
+    return executor.loader.applied_migrations
 
 
 @tracer.start_as_current_span('check_for_migrations')
@@ -710,7 +717,7 @@ def check_for_migrations(force: bool = False, reload_registry: bool = True) -> b
 
     # Log open migrations
     for migration in plan:
-        logger.info('- %s', str(migration[0]))
+        logger.info('- %s', migration[0])
 
     # Set the application to maintenance mode - no access from now on.
     set_maintenance_mode(True)

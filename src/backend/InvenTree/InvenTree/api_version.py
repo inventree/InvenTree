@@ -1,19 +1,103 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 412
-
+INVENTREE_API_VERSION = 435
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
+v435 -> 2025-12-16 : https://github.com/inventree/InvenTree/pull/11030
+    - Adds token refresh endpoint to auth API
+
+v434 -> 2025-12-16 : https://github.com/inventree/InvenTree/pull/11021
+    - The "tags" fields (on various API endpoints) is now optional, and disabled by default
+    - To request tags information, add "tags=true" to the API request query parameters
+
+v433 -> 2025-12-16 : https://github.com/inventree/InvenTree/pull/11023
+    - "substitutes" field on the BomItem API endpoint is now excluded by default
+    - Add "?substitutes=true" query parameter to include substitute parts in BomItem API endpoint(s)
+
+v432 -> 2025-12-15 : https://github.com/inventree/InvenTree/pull/11012
+    - The "part_detail" field on the SupplierPart API endpoint is now optional
+    - The "supplier_detail" field on the SupplierPart API endpoint is now optional
+    - The "manufacturer_detail" field on the ManufacturerPart API endpoint is now optional
+    - The "part_detail" field on the StockItem API is now disabled by default
+
+v431 -> 2025-12-14 : https://github.com/inventree/InvenTree/pull/11006
+    - Remove duplicate "address" field on the Company API endpoint
+    - Make "primary_address" field optional on the Company API endpoint
+    - Remove "address_count" field from the Company API endpoint
+
+v430 -> 2025-12-04 : https://github.com/inventree/InvenTree/pull/10699
+    - Removed the "PartParameter" and "PartParameterTemplate" API endpoints
+    - Removed the "ManufacturerPartParameter" API endpoint
+    - Added generic "Parameter" and "ParameterTemplate" API endpoints
+
+v429 -> 2025-12-04 : https://github.com/inventree/InvenTree/pull/10938
+    - Adjust default values for currency codes in the API schema
+    - Note that this does not change any functional behavior, only the schema documentation
+
+v428 -> 2025-11-28 : https://github.com/inventree/InvenTree/pull/10926
+    - Various typo fixes in API - no functional changes
+
+v427 -> 2025-11-24 : https://github.com/inventree/InvenTree/pull/10896
+    - Fixes a spelling mistake in the API field labels
+
+v426 -> 2025-11-19 : https://github.com/inventree/InvenTree/pull/10867
+    - Adds optional "price_breaks" filter to the SupplierPart API endpoint
+
+v425 -> 2025-11-11 : https://github.com/inventree/InvenTree/pull/10802
+    - Adds "on_order" filter to the BuildLine API endpoint
+    - Allow BuildLine list to be ordered by "on_order" and "in_production" fields
+
+v424 -> 2025-11-11 : https://github.com/inventree/InvenTree/pull/10730
+    - Adds more lower / upper bounds to integer fields in the API schema due to bump to Django 5.2- no functional changes
+
+v423 -> 2025-11-05 : https://github.com/inventree/InvenTree/pull/10772
+    - Adds "category_detail" field to BomItem API endpoints
+    - Adds "category_detail" field to BuildLine API endpoints
+
+v422 -> 2025-11-03 : https://github.com/inventree/InvenTree/pull/10750
+    - Adds ability to search StockItem API by supplier SKU
+    - Adds ability to search StockItem API by manufacturer MPN
+
+v421 -> 2025-10-31 : https://github.com/inventree/InvenTree/pull/10724
+    - Allow upload of attachments against SupplierPart objects via the API
+
+v420 -> 2025-10-26 : https://github.com/inventree/InvenTree/pull/10675
+    - Adds optional "customer_detail" filter to SalesOrderShipment API endpoint
+
+v419 -> 2025-10-24 : https://github.com/inventree/InvenTree/pull/10659
+    - Fixes regression introduced in v417 which reverted the changes from v416
+
+v418 -> 2025-10-24 : https://github.com/inventree/InvenTree/pull/10657
+    - Add "project_code" field(s) to OrderLineItem API endpoint(s)
+    - Add "project_code" field(s) to ExtraOrderLineItem API endpoint(s)
+
+v417 -> 2025-10-22 : https://github.com/inventree/InvenTree/pull/10654
+    - Adds "checked" filter to SalesOrderShipment API endpoint
+    - Adds "order_status" filter to SalesOrderShipment API endpoint
+    - Adds "order_outstanding" filter to SalesOrderShipment API endpoint
+
+v416 -> 2025-10-22 : https://github.com/inventree/InvenTree/pull/10651
+    - Add missing nullable to make price_breaks (from v412) optional
+
+v415 -> 2025-10-22 : https://github.com/inventree/InvenTree/pull/10650
+    - Adds "shipment_address" fields to the SalesOrderShipment API endpoints
+
+v414 -> 2025-10-20 : https://github.com/inventree/InvenTree/pull/10629
+    - Add enums for all ordering fields in schema - no functional changes
+
+v413 -> 2025-10-20 : https://github.com/inventree/InvenTree/pull/10624
+    - Upstream fixes to django-allauth schema - no functional changes
+
 v412 -> 2025-10-19 : https://github.com/inventree/InvenTree/pull/10549
     - added a new query parameter for the PartsList api: price_breaks (default: false)
 
-v411 -> 2025-06-19 : https://github.com/inventree/InvenTree/pull/10630
-    - Editorialy changes to machine api - no functional changes
+v411 -> 2025-10-19 : https://github.com/inventree/InvenTree/pull/10630
+    - Editorial changes to machine api - no functional changes
 
-v410 -> 2025-06-12 : https://github.com/inventree/InvenTree/pull/9761
+v410 -> 2025-10-12 : https://github.com/inventree/InvenTree/pull/9761
     - Add supplier search and import API endpoints
     - Add part parameter bulk create API endpoint
 
@@ -50,7 +134,7 @@ v401 -> 2025-10-05 : https://github.com/inventree/InvenTree/pull/10381
     - Adds machine properties to machine API endpoints
 
 v400 -> 2025-10-05 : https://github.com/inventree/InvenTree/pull/10486
-    - Adds return datatypes for admin/config and flags entpoints
+    - Adds return datatypes for admin/config and flags endpoints
 
 v399 -> 2025-10-05 : https://github.com/inventree/InvenTree/pull/10445
     - Refactors 'customer_detail' param in SalesOrder API endpoint

@@ -34,14 +34,11 @@ from InvenTree.config import (
 )
 from InvenTree.ready import isInMainThread
 from InvenTree.sentry import default_sentry_dsn, init_sentry
-from InvenTree.version import (
-    checkMinPythonVersion,
-    inventreeApiVersion,
-    inventreeCommitHash,
-)
+from InvenTree.version import checkMinPythonVersion, inventreeCommitHash
 from users.oauth2_scopes import oauth2_scopes
 
-from . import config, locales
+from . import config
+from .setting import locales, markdown, spectacular, storages
 
 try:
     import django_stubs_ext
@@ -56,7 +53,7 @@ INVENTREE_BASE_URL = 'https://inventree.org'
 INVENTREE_NEWS_URL = f'{INVENTREE_BASE_URL}/news/feed.atom'
 
 # Determine if we are running in "test" mode e.g. "manage.py test"
-TESTING = 'test' in sys.argv or 'TESTING' in os.environ
+TESTING = 'test' in sys.argv or 'TESTING' in os.environ or 'pytest' in sys.argv
 
 if TESTING:
     # Use a weaker password hasher for testing (improves testing speed)
@@ -264,13 +261,9 @@ DBBACKUP_EMAIL_SUBJECT_PREFIX = InvenTree.backup.backup_email_prefix()
 DBBACKUP_CONNECTORS = {'default': InvenTree.backup.get_backup_connector_options()}
 
 # Data storage options
-STORAGES = {
-    'default': {'BACKEND': 'django.core.files.storage.FileSystemStorage'},
-    'staticfiles': {'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage'},
-    'dbbackup': {
-        'BACKEND': InvenTree.backup.get_backup_storage_backend(),
-        'OPTIONS': InvenTree.backup.get_backup_storage_options(),
-    },
+DBBACKUP_STORAGE_CONFIG = {
+    'BACKEND': InvenTree.backup.get_backup_storage_backend(),
+    'OPTIONS': InvenTree.backup.get_backup_storage_options(),
 }
 
 # Enable django admin interface?
@@ -345,6 +338,7 @@ INSTALLED_APPS = [
     'django_ical',  # For exporting calendars
     'django_mailbox',  # For email import
     'anymail',  # For email sending/receiving via ESPs
+    'storages',
 ]
 
 MIDDLEWARE = CONFIG.get(
@@ -374,6 +368,21 @@ MIDDLEWARE = CONFIG.get(
         'django_structlog.middlewares.RequestMiddleware',  # Structured logging
     ],
 )
+
+# In DEBUG mode, add support for django-silk
+# Ref: https://silk.readthedocs.io/en/latest/
+DJANGO_SILK_ENABLED = DEBUG and get_boolean_setting(  # pragma: no cover
+    'INVENTREE_DEBUG_SILK', 'debug_silk', False
+)
+
+if DJANGO_SILK_ENABLED:  # pragma: no cover
+    MIDDLEWARE.append('silk.middleware.SilkyMiddleware')
+    INSTALLED_APPS.append('silk')
+
+    # Optionally enable the silk python profiler
+    SILKY_PYTHON_PROFILER = SILKY_PYTHON_PROFILER_BINARY = get_boolean_setting(
+        'INVENTREE_DEBUG_SILK_PROFILING', 'debug_silk_profiling', False
+    )
 
 # In DEBUG mode, add support for django-querycount
 # Ref: https://github.com/bradmontgomery/django-querycount
@@ -585,7 +594,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
-        'rest_framework.permissions.DjangoModelPermissions',
+        'InvenTree.permissions.ModelPermission',
         'InvenTree.permissions.RolePermission',
         'InvenTree.permissions.InvenTreeTokenMatchesOASRequirements',
     ],
@@ -703,7 +712,7 @@ Ref: https://docs.djangoproject.com/en/3.2/ref/settings/#std:setting-OPTIONS
 # connecting to the database server (such as a replica failover) don't sit and
 # wait for possibly an hour or more, just tell the client something went wrong
 # and let the client retry when they want to.
-db_options = db_config.get('OPTIONS', db_config.get('options', None))
+db_options = db_config.get('OPTIONS', db_config.get('options'))
 
 if db_options is None:
     db_options = {}
@@ -1025,11 +1034,13 @@ EXCHANGE_BACKEND = 'InvenTree.exchange.InvenTreeExchange'
 # region email
 # Email configuration options
 EMAIL_BACKEND = 'InvenTree.backends.InvenTreeMailLoggingBackend'
+
 INTERNAL_EMAIL_BACKEND = get_setting(
     'INVENTREE_EMAIL_BACKEND',
     'email.backend',
     'django.core.mail.backends.smtp.EmailBackend',
 )
+
 # SMTP backend
 EMAIL_HOST = get_setting('INVENTREE_EMAIL_HOST', 'email.host', '')
 EMAIL_PORT = get_setting('INVENTREE_EMAIL_PORT', 'email.port', 25, typecast=int)
@@ -1382,16 +1393,25 @@ ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True
 
 HEADLESS_ONLY = True
 HEADLESS_CLIENTS = 'browser'
-MFA_ENABLED = get_boolean_setting(
-    'INVENTREE_MFA_ENABLED', 'mfa_enabled', True
-)  # TODO re-implement
-MFA_SUPPORTED_TYPES = get_setting(
-    'INVENTREE_MFA_SUPPORTED_TYPES',
-    'mfa_supported_types',
-    ['totp', 'recovery_codes'],
-    typecast=list,
+MFA_ENABLED = get_boolean_setting('INVENTREE_MFA_ENABLED', 'mfa_enabled', True)
+
+if not MFA_ENABLED:
+    MIDDLEWARE.remove('InvenTree.middleware.Check2FAMiddleware')
+
+MFA_SUPPORTED_TYPES = (
+    get_setting(
+        'INVENTREE_MFA_SUPPORTED_TYPES',
+        'mfa_supported_types',
+        ['totp', 'recovery_codes', 'webauthn'],
+        typecast=list,
+    )
+    if MFA_ENABLED
+    else []
 )
+
 MFA_TRUST_ENABLED = True
+MFA_PASSKEY_LOGIN_ENABLED = True
+MFA_WEBAUTHN_ALLOW_INSECURE_ORIGIN = DEBUG
 
 LOGOUT_REDIRECT_URL = get_setting(
     'INVENTREE_LOGOUT_REDIRECT_URL', 'logout_redirect_url', 'index'
@@ -1401,42 +1421,7 @@ LOGOUT_REDIRECT_URL = get_setting(
 # Markdownify configuration
 # Ref: https://django-markdownify.readthedocs.io/en/latest/settings.html
 
-MARKDOWNIFY = {
-    'default': {
-        'BLEACH': True,
-        'WHITELIST_ATTRS': ['href', 'src', 'alt'],
-        'MARKDOWN_EXTENSIONS': ['markdown.extensions.extra'],
-        'WHITELIST_TAGS': [
-            'a',
-            'abbr',
-            'b',
-            'blockquote',
-            'code',
-            'em',
-            'h1',
-            'h2',
-            'h3',
-            'h4',
-            'h5',
-            'hr',
-            'i',
-            'img',
-            'li',
-            'ol',
-            'p',
-            'pre',
-            's',
-            'strong',
-            'table',
-            'thead',
-            'tbody',
-            'th',
-            'tr',
-            'td',
-            'ul',
-        ],
-    }
-}
+MARKDOWNIFY = markdown.markdownify_config()
 
 # Ignore these error types for in-database error logging
 IGNORED_ERRORS = [Http404, HttpResponseGone, django.core.exceptions.PermissionDenied]
@@ -1462,9 +1447,7 @@ if SITE_URL:
     GLOBAL_SETTINGS_OVERRIDES['INVENTREE_BASE_URL'] = SITE_URL
 
 if len(GLOBAL_SETTINGS_OVERRIDES) > 0:
-    logger.info(
-        'INVE-I1: Global settings overrides: %s', str(GLOBAL_SETTINGS_OVERRIDES)
-    )
+    logger.info('INVE-I1: Global settings overrides: %s', GLOBAL_SETTINGS_OVERRIDES)
     for key in GLOBAL_SETTINGS_OVERRIDES:
         # Set the global setting
         logger.debug('- Override value for %s = ********', key)
@@ -1503,9 +1486,9 @@ FLAGS = {
 CUSTOM_FLAGS = get_setting('INVENTREE_FLAGS', 'flags', None, typecast=dict)
 if CUSTOM_FLAGS:  # pragma: no cover
     if not isinstance(CUSTOM_FLAGS, dict):
-        logger.error('Invalid custom flags, must be valid dict: %s', str(CUSTOM_FLAGS))
+        logger.error('Invalid custom flags, must be valid dict: %s', CUSTOM_FLAGS)
     else:
-        logger.info('Custom flags: %s', str(CUSTOM_FLAGS))
+        logger.info('Custom flags: %s', CUSTOM_FLAGS)
         FLAGS.update(CUSTOM_FLAGS)
 
 # Magic login django-sesame
@@ -1513,40 +1496,8 @@ SESAME_MAX_AGE = 300
 LOGIN_REDIRECT_URL = '/api/auth/login-redirect/'
 
 # Configuration for API schema generation / oAuth2
-SPECTACULAR_SETTINGS = {
-    'TITLE': 'InvenTree API',
-    'DESCRIPTION': 'API for InvenTree - the intuitive open source inventory management system',
-    'LICENSE': {
-        'name': 'MIT',
-        'url': 'https://github.com/inventree/InvenTree/blob/master/LICENSE',
-    },
-    'EXTERNAL_DOCS': {
-        'description': 'More information about InvenTree in the official docs',
-        'url': 'https://docs.inventree.org',
-    },
-    'VERSION': str(inventreeApiVersion()),
-    'SERVE_INCLUDE_SCHEMA': False,
-    'SCHEMA_PATH_PREFIX': '/api/',
-    'POSTPROCESSING_HOOKS': [
-        'drf_spectacular.hooks.postprocess_schema_enums',
-        'InvenTree.schema.postprocess_required_nullable',
-        'InvenTree.schema.postprocess_print_stats',
-    ],
-    'ENUM_NAME_OVERRIDES': {
-        'UserTypeEnum': 'users.models.UserProfile.UserType',
-        'TemplateModelTypeEnum': 'report.models.ReportTemplateBase.ModelChoices',
-        'AttachmentModelTypeEnum': 'common.models.Attachment.ModelChoices',
-        'DataImportSessionModelTypeEnum': 'importer.models.DataImportSession.ModelChoices',
-        # Allauth
-        'UnauthorizedStatus': [[401, 401]],
-        'IsTrueEnum': [[True, True]],
-    },
-    # oAuth2
-    'OAUTH2_FLOWS': ['authorizationCode', 'clientCredentials'],
-    'OAUTH2_AUTHORIZATION_URL': '/o/authorize/',
-    'OAUTH2_TOKEN_URL': '/o/token/',
-    'OAUTH2_REFRESH_URL': '/o/revoke_token/',
-}
+SPECTACULAR_SETTINGS = spectacular.get_spectacular_settings()
+
 OAUTH2_PROVIDER = {
     # default scopes
     'SCOPES': oauth2_scopes,
@@ -1562,3 +1513,11 @@ OAUTH2_CHECK_EXCLUDED = [  # This setting mutes schema checks for these rule/met
 
 if SITE_URL and not TESTING:  # pragma: no cover
     SPECTACULAR_SETTINGS['SERVERS'] = [{'url': SITE_URL}]
+
+# Storage backends
+STORAGE_TARGET, STORAGES, _media = storages.init_storages()
+if 'dbbackup' not in STORAGES:
+    STORAGES['dbbackup'] = DBBACKUP_STORAGE_CONFIG
+if _media:
+    MEDIA_URL = _media
+PRESIGNED_URL_EXPIRATION = 600

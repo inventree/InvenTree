@@ -1,7 +1,5 @@
 """Serializers for the machine app."""
 
-from typing import Union
-
 from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
@@ -96,7 +94,7 @@ class MachineConfigSerializer(serializers.ModelSerializer):
             return status.value
         return -1
 
-    def get_status_model(self, obj: MachineConfig) -> Union[str, None]:
+    def get_status_model(self, obj: MachineConfig) -> str | None:
         """Textual machine status name if available, else None."""
         if obj.machine and obj.machine.MACHINE_STATUS:
             return obj.machine.MACHINE_STATUS.__name__
@@ -171,7 +169,7 @@ class BaseMachineClassSerializer(serializers.Serializer):
         """File that contains the class definition."""
         return obj.get_provider_file()
 
-    def get_provider_plugin(self, obj: ClassProviderMixin) -> Union[dict, None]:
+    def get_provider_plugin(self, obj: ClassProviderMixin) -> dict | None:
         """Plugin(s) that contain(s) the class definition."""
         plugin = obj.get_provider_plugin()
         if plugin:

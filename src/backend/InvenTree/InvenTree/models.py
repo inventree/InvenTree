@@ -1,14 +1,18 @@
 """Generic models which provide extra functionality over base Django model types."""
 
+from collections.abc import Callable
 from datetime import datetime
 from string import Formatter
-from typing import Optional
+from typing import Any, Optional
 
 from django.contrib.auth import get_user_model
+from django.contrib.contenttypes.fields import GenericRelation
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
-from django.db import models
+from django.db import models, transaction
 from django.db.models import QuerySet
 from django.db.models.signals import post_save
+from django.db.transaction import TransactionManagementError
 from django.dispatch import receiver
 from django.urls import resolve, reverse
 from django.urls.exceptions import NoReverseMatch
@@ -19,6 +23,7 @@ from django_q.models import Task
 from error_report.models import Error
 from mptt.exceptions import InvalidMove
 from mptt.models import MPTTModel, TreeForeignKey
+from stdimage.models import StdImageField
 
 import common.settings
 import InvenTree.exceptions
@@ -164,10 +169,14 @@ class MetadataMixin(models.Model):
 
         abstract = True
 
-    def save(self, *args, **kwargs):
+    def save(self, force_insert=False, force_update=False, *args, **kwargs):
         """Save the model instance, and perform validation on the metadata field."""
         self.validate_metadata()
-        super().save(*args, **kwargs)
+        if len(args) > 0:
+            raise TypeError(
+                'save() takes no positional arguments anymore'
+            )  # pragma: no cover
+        super().save(force_insert=force_insert, force_update=force_update, **kwargs)
 
     def clean(self, *args, **kwargs):
         """Perform model validation on the metadata field."""
@@ -443,7 +452,18 @@ class ReferenceIndexingMixin(models.Model):
     reference_int = models.BigIntegerField(default=0)
 
 
-class InvenTreeModel(PluginValidationMixin, models.Model):
+class ContentTypeMixin:
+    """Mixin class which supports retrieval of the ContentType for a model instance."""
+
+    @classmethod
+    def get_content_type(cls):
+        """Return the ContentType object associated with this model."""
+        from django.contrib.contenttypes.models import ContentType
+
+        return ContentType.objects.get_for_model(cls)
+
+
+class InvenTreeModel(ContentTypeMixin, PluginValidationMixin, models.Model):
     """Base class for InvenTree models, which provides some common functionality.
 
     Includes the following mixins by default:
@@ -466,7 +486,167 @@ class InvenTreeMetadataModel(MetadataMixin, InvenTreeModel):
         abstract = True
 
 
-class InvenTreeAttachmentMixin:
+class InvenTreePermissionCheckMixin:
+    """Provides an abstracted class for managing permissions against related fields."""
+
+    @classmethod
+    def check_related_permission(cls, permission, user) -> bool:
+        """Check if the user has permission to perform the specified action on the attachment.
+
+        The default implementation runs a permission check against *this* model class,
+        but this can be overridden in the implementing class if required.
+
+        Arguments:
+            permission: The permission to check (add / change / view / delete)
+            user: The user to check against
+
+        Returns:
+            bool: True if the user has permission, False otherwise
+        """
+        perm = f'{cls._meta.app_label}.{permission}_{cls._meta.model_name}'
+        return user.has_perm(perm)
+
+
+class InvenTreeParameterMixin(InvenTreePermissionCheckMixin, models.Model):
+    """Provides an abstracted class for managing parameters.
+
+    Links the implementing model to the common.models.Parameter table,
+    and provides the following methods:
+    """
+
+    class Meta:
+        """Metaclass options for InvenTreeParameterMixin."""
+
+        abstract = True
+
+    # Define a reverse relation to the Parameter model
+    parameters_list = GenericRelation(
+        'common.Parameter', content_type_field='model_type', object_id_field='model_id'
+    )
+
+    @staticmethod
+    def annotate_parameters(queryset: QuerySet) -> QuerySet:
+        """Annotate a queryset with pre-fetched parameters.
+
+        Args:
+            queryset: Queryset to annotate
+
+        Returns:
+            Annotated queryset
+        """
+        return queryset.prefetch_related(
+            'parameters_list',
+            'parameters_list__model_type',
+            'parameters_list__updated_by',
+            'parameters_list__template',
+            'parameters_list__template__model_type',
+        )
+
+    @property
+    def parameters(self) -> QuerySet:
+        """Return a QuerySet containing all the Parameter instances for this model.
+
+        This will return pre-fetched data if available (i.e. in a serializer context).
+        """
+        # Check the query cache for pre-fetched parameters
+        if cache := getattr(self, '_prefetched_objects_cache', None):
+            if 'parameters_list' in cache:
+                return cache['parameters_list']
+
+        return self.parameters_list.all()
+
+    def delete(self, *args, **kwargs):
+        """Handle the deletion of a model instance.
+
+        Before deleting the model instance, delete any associated parameters.
+        """
+        self.parameters_list.all().delete()
+        super().delete(*args, **kwargs)
+
+    @transaction.atomic
+    def copy_parameters_from(self, other, clear=True, **kwargs):
+        """Copy all parameters from another model instance.
+
+        Arguments:
+            other: The other model instance to copy parameters from
+            clear: If True, clear existing parameters before copying
+            **kwargs: Additional keyword arguments to pass to the Parameter constructor
+        """
+        import common.models
+
+        if clear:
+            self.parameters_list.all().delete()
+
+        parameters = []
+
+        content_type = ContentType.objects.get_for_model(self.__class__)
+
+        template_ids = [parameter.template.pk for parameter in other.parameters.all()]
+
+        # Remove all conflicting parameters first
+        self.parameters_list.filter(template__pk__in=template_ids).delete()
+
+        for parameter in other.parameters.all():
+            parameter.pk = None
+            parameter.model_id = self.pk
+            parameter.model_type = content_type
+
+            parameters.append(parameter)
+
+        if len(parameters) > 0:
+            common.models.Parameter.objects.bulk_create(parameters)
+
+    def get_parameter(self, name: str):
+        """Return a Parameter instance for the given parameter name.
+
+        Args:
+            name: Name of the parameter template
+
+        Returns:
+            Parameter instance if found, else None
+        """
+        return self.parameters_list.filter(template__name=name).first()
+
+    def get_parameters(self) -> QuerySet:
+        """Return all Parameter instances for this model."""
+        return (
+            self.parameters_list.all()
+            .prefetch_related('template', 'model_type')
+            .order_by('template__name')
+        )
+
+    def parameters_map(self) -> dict:
+        """Return a map (dict) of parameter values associated with this Part instance, of the form.
+
+        Example:
+        {
+            "name_1": "value_1",
+            "name_2": "value_2",
+        }
+        """
+        params = {}
+
+        for parameter in self.parameters.all().prefetch_related('template'):
+            params[parameter.template.name] = parameter.data
+
+        return params
+
+    def check_parameter_delete(self, parameter):
+        """Run a check to determine if the provided parameter can be deleted.
+
+        The default implementation always returns True, but this can be overridden in the implementing class.
+        """
+        return True
+
+    def check_parameter_save(self, parameter):
+        """Run a check to determine if the provided parameter can be saved.
+
+        The default implementation always returns True, but this can be overridden in the implementing class.
+        """
+        return True
+
+
+class InvenTreeAttachmentMixin(InvenTreePermissionCheckMixin):
     """Provides an abstracted class for managing file attachments.
 
     Links the implementing model to the common.models.Attachment table,
@@ -484,33 +664,15 @@ class InvenTreeAttachmentMixin:
         super().delete(*args, **kwargs)
 
     @property
-    def attachments(self):
+    def attachments(self) -> QuerySet:
         """Return a queryset containing all attachments for this model."""
         return self.attachments_for_model().filter(model_id=self.pk)
 
-    @classmethod
-    def check_attachment_permission(cls, permission, user) -> bool:
-        """Check if the user has permission to perform the specified action on the attachment.
-
-        The default implementation runs a permission check against *this* model class,
-        but this can be overridden in the implementing class if required.
-
-        Arguments:
-            permission: The permission to check (add / change / view / delete)
-            user: The user to check against
-
-        Returns:
-            bool: True if the user has permission, False otherwise
-        """
-        perm = f'{cls._meta.app_label}.{permission}_{cls._meta.model_name}'
-        return user.has_perm(perm)
-
-    def attachments_for_model(self):
+    def attachments_for_model(self) -> QuerySet:
         """Return all attachments for this model class."""
         from common.models import Attachment
 
         model_type = self.__class__.__name__.lower()
-
         return Attachment.objects.filter(model_type=model_type)
 
     def create_attachment(self, attachment=None, link=None, comment='', **kwargs):
@@ -526,7 +688,7 @@ class InvenTreeAttachmentMixin:
         Attachment.objects.create(**kwargs)
 
 
-class InvenTreeTree(MPTTModel):
+class InvenTreeTree(ContentTypeMixin, MPTTModel):
     """Provides an abstracted self-referencing tree model, based on the MPTTModel class.
 
     Our implementation provides the following key improvements:
@@ -757,7 +919,15 @@ class InvenTreeTree(MPTTModel):
 
         if len(trees) > 0:
             # A tree update was performed, so we need to refresh the instance
-            self.refresh_from_db()
+            try:
+                self.refresh_from_db()
+            except TransactionManagementError:
+                # If we are inside a transaction block, we cannot refresh from db
+                pass
+            except Exception as e:
+                # Any other error is unexpected
+                InvenTree.sentry.report_exception(e)
+                InvenTree.exceptions.log_error(f'{self.__class__.__name__}.save')
 
     def partial_rebuild(self, tree_id: int) -> bool:
         """Perform a partial rebuild of the tree structure.
@@ -1293,3 +1463,55 @@ def after_error_logged(sender, instance: Error, created: bool, **kwargs):
                 'link': url,
             },
         )
+
+
+class InvenTreeImageMixin(models.Model):
+    """A mixin class for adding image functionality to a model class.
+
+    The following fields are added to any model which implements this mixin:
+
+    - image : An image field for storing an image
+    """
+
+    IMAGE_RENAME: Callable | None = None
+
+    class Meta:
+        """Metaclass options for this mixin.
+
+        Note: abstract must be true, as this is only a mixin, not a separate table
+        """
+
+        abstract = True
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        """Custom init method for InvenTreeImageMixin to ensure IMAGE_RENAME is implemented."""
+        if self.IMAGE_RENAME is None:
+            raise NotImplementedError(
+                'IMAGE_RENAME must be implemented in the model class'
+            )
+        super().__init__(*args, **kwargs)
+
+    def rename_image(self, filename):
+        """Rename the uploaded image file using the IMAGE_RENAME function."""
+        return self.IMAGE_RENAME(filename)  # type: ignore
+
+    image = StdImageField(
+        upload_to=rename_image,
+        null=True,
+        blank=True,
+        variations={'thumbnail': (128, 128), 'preview': (256, 256)},
+        delete_orphans=False,
+        verbose_name=_('Image'),
+    )
+
+    def get_image_url(self):
+        """Return the URL of the image for this object."""
+        if self.image:
+            return InvenTree.helpers.getMediaUrl(self.image)
+        return InvenTree.helpers.getBlankImage()
+
+    def get_thumbnail_url(self) -> str:
+        """Return the URL of the image thumbnail for this object."""
+        if self.image:
+            return InvenTree.helpers.getMediaUrl(self.image, 'thumbnail')
+        return InvenTree.helpers.getBlankThumbnail()

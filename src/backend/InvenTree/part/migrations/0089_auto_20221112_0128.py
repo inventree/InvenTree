@@ -8,7 +8,7 @@ import djmoney.models.validators
 
 import InvenTree.fields
 import common.currency
-import common.settings
+
 
 class Migration(migrations.Migration):
 

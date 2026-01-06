@@ -15,6 +15,8 @@ from rest_framework.fields import URLField as RestURLField
 from rest_framework.fields import empty
 
 import InvenTree.helpers
+import InvenTree.ready
+from common.currency import currency_code_default
 from common.settings import get_global_setting
 
 from .validators import AllowedURLValidator, allowable_url_schemes
@@ -59,7 +61,7 @@ class InvenTreeURLField(models.URLField):
 
 def money_kwargs(**kwargs):
     """Returns the database settings for MoneyFields."""
-    from common.currency import currency_code_default, currency_code_mappings
+    from common.currency import currency_code_mappings
 
     # Default values (if not specified)
     if 'max_digits' not in kwargs:
@@ -71,8 +73,14 @@ def money_kwargs(**kwargs):
     if 'currency_choices' not in kwargs:
         kwargs['currency_choices'] = currency_code_mappings()
 
-    if 'default_currency' not in kwargs:
-        kwargs['default_currency'] = currency_code_default()
+    if InvenTree.ready.isRunningMigrations():
+        # During migrations, avoid setting a default currency
+        # This prevents issues related to early evaluation of the default currency value
+        kwargs['default_currency'] = ''
+    else:
+        # Override default currency with a callable function
+        # This ensures that the default currency is always up-to-date
+        kwargs['default_currency'] = currency_code_default
 
     return kwargs
 

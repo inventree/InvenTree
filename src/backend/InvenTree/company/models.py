@@ -16,7 +16,6 @@ from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext_lazy as __
 
 from moneyed import CURRENCIES
-from stdimage.models import StdImageField
 from taggit.managers import TaggableManager
 
 import common.currency
@@ -78,8 +77,10 @@ class CompanyReportContext(report.mixins.BaseReportContext):
 
 class Company(
     InvenTree.models.InvenTreeAttachmentMixin,
+    InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.InvenTreeNotesMixin,
     report.mixins.InvenTreeReportMixin,
+    InvenTree.models.InvenTreeImageMixin,
     InvenTree.models.InvenTreeMetadataModel,
 ):
     """A Company object represents an external company.
@@ -108,6 +109,8 @@ class Company(
         currency_code: Specifies the default currency for the company
         tax_id: Tax ID for the company
     """
+
+    IMAGE_RENAME = rename_company_image
 
     class Meta:
         """Metaclass defines extra model options."""
@@ -185,15 +188,6 @@ class Company(
         max_length=2000,
     )
 
-    image = StdImageField(
-        upload_to=rename_company_image,
-        null=True,
-        blank=True,
-        variations={'thumbnail': (128, 128), 'preview': (256, 256)},
-        delete_orphans=True,
-        verbose_name=_('Image'),
-    )
-
     active = models.BooleanField(
         default=True, verbose_name=_('Active'), help_text=_('Is this company active?')
     )
@@ -244,8 +238,14 @@ class Company(
 
     @property
     def primary_address(self):
-        """Returns address object of primary address. Parsed by serializer."""
-        return Address.objects.filter(company=self.id).filter(primary=True).first()
+        """Returns address object of primary address for this Company."""
+        # We may have a pre-fetched primary address list
+        if hasattr(self, 'primary_address_list'):
+            addresses = self.primary_address_list
+            return addresses[0] if len(addresses) > 0 else None
+
+        # Otherwise, query the database
+        return self.addresses.filter(primary=True).first()
 
     @property
     def currency_code(self):
@@ -268,18 +268,6 @@ class Company(
     def get_absolute_url(self):
         """Get the web URL for the detail view for this Company."""
         return InvenTree.helpers.pui_url(f'/purchasing/manufacturer/{self.id}')
-
-    def get_image_url(self):
-        """Return the URL of the image for this company."""
-        if self.image:
-            return InvenTree.helpers.getMediaUrl(self.image.url)
-        return InvenTree.helpers.getBlankImage()
-
-    def get_thumbnail_url(self):
-        """Return the URL for the thumbnail image for this Company."""
-        if self.image:
-            return InvenTree.helpers.getMediaUrl(self.image.thumbnail.url)
-        return InvenTree.helpers.getBlankThumbnail()
 
     @property
     def parts(self):
@@ -316,7 +304,7 @@ class Contact(InvenTree.models.InvenTreeMetadataModel):
 
     @staticmethod
     def get_api_url():
-        """Return the API URL associated with the Contcat model."""
+        """Return the API URL associated with the Contact model."""
         return reverse('api-contact-list')
 
     company = models.ForeignKey(
@@ -401,7 +389,7 @@ class Address(InvenTree.models.InvenTreeModel):
 
     @staticmethod
     def get_api_url():
-        """Return the API URL associated with the Contcat model."""
+        """Return the API URL associated with the Contact model."""
         return reverse('api-address-list')
 
     company = models.ForeignKey(
@@ -491,6 +479,7 @@ class Address(InvenTree.models.InvenTreeModel):
 
 class ManufacturerPart(
     InvenTree.models.InvenTreeAttachmentMixin,
+    InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,
     InvenTree.models.InvenTreeMetadataModel,
@@ -602,73 +591,9 @@ class ManufacturerPart(
         return s
 
 
-class ManufacturerPartParameter(InvenTree.models.InvenTreeModel):
-    """A ManufacturerPartParameter represents a key:value parameter for a MnaufacturerPart.
-
-    This is used to represent parameters / properties for a particular manufacturer part.
-
-    Each parameter is a simple string (text) value.
-    """
-
-    class Meta:
-        """Metaclass defines extra model options."""
-
-        verbose_name = _('Manufacturer Part Parameter')
-        unique_together = ('manufacturer_part', 'name')
-
-    @staticmethod
-    def get_api_url():
-        """Return the API URL associated with the ManufacturerPartParameter model."""
-        return reverse('api-manufacturer-part-parameter-list')
-
-    manufacturer_part = models.ForeignKey(
-        ManufacturerPart,
-        on_delete=models.CASCADE,
-        related_name='parameters',
-        verbose_name=_('Manufacturer Part'),
-    )
-
-    name = models.CharField(
-        max_length=500,
-        blank=False,
-        verbose_name=_('Name'),
-        help_text=_('Parameter name'),
-    )
-
-    value = models.CharField(
-        max_length=500,
-        blank=False,
-        verbose_name=_('Value'),
-        help_text=_('Parameter value'),
-    )
-
-    units = models.CharField(
-        max_length=64,
-        blank=True,
-        null=True,
-        verbose_name=_('Units'),
-        help_text=_('Parameter units'),
-    )
-
-
-class SupplierPartManager(models.Manager):
-    """Define custom SupplierPart objects manager.
-
-    The main purpose of this manager is to improve database hit as the
-    SupplierPart model involves A LOT of foreign keys lookups
-    """
-
-    def get_queryset(self):
-        """Prefetch related fields when querying against the SupplierPart model."""
-        # Always prefetch related models
-        return (
-            super()
-            .get_queryset()
-            .prefetch_related('part', 'supplier', 'manufacturer_part__manufacturer')
-        )
-
-
 class SupplierPart(
+    InvenTree.models.InvenTreeAttachmentMixin,
+    InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.MetadataMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,
@@ -704,8 +629,6 @@ class SupplierPart(
 
         # This model was moved from the 'Part' app
         db_table = 'part_supplierpart'
-
-    objects = SupplierPartManager()
 
     tags = TaggableManager(blank=True)
 
@@ -906,7 +829,7 @@ class SupplierPart(
     )
 
     def base_quantity(self, quantity=1) -> Decimal:
-        """Calculate the base unit quantiy for a given quantity."""
+        """Calculate the base unit quantity for a given quantity."""
         q = Decimal(quantity) * Decimal(self.pack_quantity_native)
         q = round(q, 10).normalize()
 

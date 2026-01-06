@@ -2,14 +2,12 @@
 
 from __future__ import annotations
 
-from typing import Optional
-
 from django.contrib.auth.models import User
 from django.db.models import F, Q
 from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
 
-from django_filters import rest_framework as rest_filters
+import django_filters.rest_framework.filters as rest_filters
 from django_filters.rest_framework.filterset import FilterSet
 from drf_spectacular.utils import extend_schema, extend_schema_field
 from rest_framework import serializers, status
@@ -26,7 +24,7 @@ from build.models import Build, BuildItem, BuildLine
 from build.status_codes import BuildStatus, BuildStatusGroups
 from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import StatusView
-from InvenTree.api import BulkDeleteMixin, MetadataView
+from InvenTree.api import BulkDeleteMixin, MetadataView, ParameterListMixin
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import (
     SEARCH_ORDER_FILTER_ALIAS,
@@ -319,15 +317,7 @@ class BuildMixin:
         """Return the queryset for the Build API endpoints."""
         queryset = super().get_queryset()
 
-        queryset = queryset.prefetch_related(
-            'responsible',
-            'issued_by',
-            'build_lines',
-            'build_lines__bom_item',
-            'build_lines__build',
-            'part',
-            'part__pricing_data',
-        )
+        queryset = build.serializers.BuildSerializer.annotate_queryset(queryset)
 
         return queryset
 
@@ -338,7 +328,13 @@ class BuildListOutputOptions(OutputConfiguration):
     OPTIONS = [InvenTreeOutputOption('part_detail', default=True)]
 
 
-class BuildList(DataExportViewMixin, BuildMixin, OutputOptionsMixin, ListCreateAPI):
+class BuildList(
+    DataExportViewMixin,
+    BuildMixin,
+    OutputOptionsMixin,
+    ParameterListMixin,
+    ListCreateAPI,
+):
     """API endpoint for accessing a list of Build objects.
 
     - GET: Return list of objects (with filters)
@@ -379,14 +375,6 @@ class BuildList(DataExportViewMixin, BuildMixin, OutputOptionsMixin, ListCreateA
         'project_code__code',
         'priority',
     ]
-
-    def get_queryset(self):
-        """Override the queryset filtering, as some of the fields don't natively play nicely with DRF."""
-        queryset = super().get_queryset().select_related('part')
-
-        queryset = build.serializers.BuildSerializer.annotate_queryset(queryset)
-
-        return queryset
 
     def get_serializer(self, *args, **kwargs):
         """Add extra context information to the endpoint serializer."""
@@ -522,6 +510,15 @@ class BuildLineFilter(FilterSet):
             return queryset.filter(flt)
         return queryset.exclude(flt)
 
+    on_order = rest_filters.BooleanFilter(label=_('On Order'), method='filter_on_order')
+
+    def filter_on_order(self, queryset, name, value):
+        """Filter by whether there is stock on order for each BuildLine."""
+        if str2bool(value):
+            return queryset.filter(on_order__gt=0)
+        else:
+            return queryset.filter(on_order=0)
+
 
 class BuildLineMixin(SerializerContextMixin):
     """Mixin class for BuildLine API endpoints."""
@@ -562,26 +559,27 @@ class BuildLineOutputOptions(OutputConfiguration):
         InvenTreeOutputOption(
             'bom_item_detail',
             description='Include detailed information about the BOM item linked to this build line.',
-            default=True,
+            default=False,
         ),
         InvenTreeOutputOption(
             'assembly_detail',
             description='Include brief details of the assembly (parent part) related to the BOM item in this build line.',
-            default=True,
+            default=False,
         ),
         InvenTreeOutputOption(
             'part_detail',
             description='Include detailed information about the specific part being built or consumed in this build line.',
-            default=True,
+            default=False,
         ),
         InvenTreeOutputOption(
             'build_detail',
             description='Include detailed information about the associated build order.',
+            default=False,
         ),
         InvenTreeOutputOption(
             'allocations',
             description='Include allocation details showing which stock items are allocated to this build line.',
-            default=True,
+            default=False,
         ),
     ]
 
@@ -597,6 +595,7 @@ class BuildLineList(
     ordering_fields = [
         'part',
         'allocated',
+        'category',
         'consumed',
         'reference',
         'quantity',
@@ -607,12 +606,15 @@ class BuildLineList(
         'trackable',
         'allow_variants',
         'inherited',
+        'on_order',
+        'scheduled_to_build',
     ]
 
     ordering_field_aliases = {
         'part': 'bom_item__sub_part__name',
         'reference': 'bom_item__reference',
         'unit_quantity': 'bom_item__quantity',
+        'category': 'bom_item__sub_part__category__name',
         'consumable': 'bom_item__consumable',
         'optional': 'bom_item__optional',
         'trackable': 'bom_item__sub_part__trackable',
@@ -627,7 +629,7 @@ class BuildLineList(
         'bom_item__reference',
     ]
 
-    def get_source_build(self) -> Optional[Build]:
+    def get_source_build(self) -> Build | None:
         """Return the target build for the BuildLine queryset."""
         source_build = None
 
@@ -646,7 +648,7 @@ class BuildLineDetail(BuildLineMixin, OutputOptionsMixin, RetrieveUpdateDestroyA
 
     output_options = BuildLineOutputOptions
 
-    def get_source_build(self) -> Optional[Build]:
+    def get_source_build(self) -> Build | None:
         """Return the target source location for the BuildLine queryset."""
         return None
 
@@ -895,6 +897,7 @@ class BuildItemOutputOptions(OutputConfiguration):
         InvenTreeOutputOption('location_detail'),
         InvenTreeOutputOption('stock_detail'),
         InvenTreeOutputOption('build_detail'),
+        InvenTreeOutputOption('supplier_part_detail'),
     ]
 
 
@@ -917,26 +920,9 @@ class BuildItemList(
         """Override the queryset method, to perform custom prefetch."""
         queryset = super().get_queryset()
 
-        queryset = queryset.select_related(
-            'build_line',
-            'build_line__build',
-            'build_line__build__part',
-            'build_line__build__responsible',
-            'build_line__build__issued_by',
-            'build_line__build__project_code',
-            'build_line__build__part__pricing_data',
-            'build_line__bom_item',
-            'build_line__bom_item__part',
-            'build_line__bom_item__sub_part',
-            'install_into',
-            'stock_item',
-            'stock_item__location',
-            'stock_item__part',
-            'stock_item__supplier_part__part',
-            'stock_item__supplier_part__supplier',
-            'stock_item__supplier_part__manufacturer_part',
-            'stock_item__supplier_part__manufacturer_part__manufacturer',
-        ).prefetch_related('stock_item__location__tags', 'stock_item__tags')
+        queryset = queryset.select_related('install_into').prefetch_related(
+            'build_line', 'build_line__build', 'build_line__bom_item'
+        )
 
         return queryset
 

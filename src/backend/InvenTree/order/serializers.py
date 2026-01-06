@@ -4,16 +4,7 @@ from decimal import Decimal
 
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import models, transaction
-from django.db.models import (
-    BooleanField,
-    Case,
-    ExpressionWrapper,
-    F,
-    Prefetch,
-    Q,
-    Value,
-    When,
-)
+from django.db.models import BooleanField, Case, ExpressionWrapper, F, Q, Value, When
 from django.db.models.functions import Coalesce, Greatest
 from django.utils.translation import gettext_lazy as _
 
@@ -22,12 +13,12 @@ from rest_framework.serializers import ValidationError
 from sql_util.utils import SubqueryCount, SubquerySum
 
 import build.serializers
+import common.filters
 import order.models
 import part.filters as part_filters
 import part.models as part_models
 import stock.models
 import stock.serializers
-from common.serializers import ProjectCodeSerializer
 from company.serializers import (
     AddressBriefSerializer,
     CompanyBriefSerializer,
@@ -167,7 +158,9 @@ class DuplicateOrderSerializer(serializers.Serializer):
     )
 
 
-class AbstractOrderSerializer(DataImportExportSerializerMixin, serializers.Serializer):
+class AbstractOrderSerializer(
+    DataImportExportSerializerMixin, FilterableSerializerMixin, serializers.Serializer
+):
     """Abstract serializer class which provides fields common to all order types."""
 
     export_exclude_fields = ['notes', 'duplicate']
@@ -194,31 +187,36 @@ class AbstractOrderSerializer(DataImportExportSerializerMixin, serializers.Seria
     reference = serializers.CharField(required=True)
 
     # Detail for point-of-contact field
-    contact_detail = ContactSerializer(
-        source='contact', many=False, read_only=True, allow_null=True
+    contact_detail = enable_filter(
+        ContactSerializer(
+            source='contact', many=False, read_only=True, allow_null=True
+        ),
+        True,
+        prefetch_fields=['contact'],
     )
 
     # Detail for responsible field
-    responsible_detail = OwnerSerializer(
-        source='responsible', read_only=True, allow_null=True, many=False
+    responsible_detail = enable_filter(
+        OwnerSerializer(
+            source='responsible', read_only=True, allow_null=True, many=False
+        ),
+        True,
+        prefetch_fields=['responsible'],
     )
 
-    project_code_label = serializers.CharField(
-        source='project_code.code',
-        read_only=True,
-        label='Project Code Label',
-        allow_null=True,
-    )
-
-    # Detail for project code field
-    project_code_detail = ProjectCodeSerializer(
-        source='project_code', read_only=True, many=False, allow_null=True
-    )
+    project_code_label = common.filters.enable_project_label_filter()
+    project_code_detail = common.filters.enable_project_code_filter()
 
     # Detail for address field
-    address_detail = AddressBriefSerializer(
-        source='address', many=False, read_only=True, allow_null=True
+    address_detail = enable_filter(
+        AddressBriefSerializer(
+            source='address', many=False, read_only=True, allow_null=True
+        ),
+        True,
+        prefetch_fields=['address'],
     )
+
+    parameters = common.filters.enable_parameters_filter()
 
     # Boolean field indicating if this order is overdue (Note: must be annotated)
     overdue = serializers.BooleanField(read_only=True, allow_null=True)
@@ -266,17 +264,12 @@ class AbstractOrderSerializer(DataImportExportSerializerMixin, serializers.Seria
             'completed_lines',
             'link',
             'project_code',
-            'project_code_label',
-            'project_code_detail',
             'tenant',
             'tenant_detail',
             'reference',
             'responsible',
-            'responsible_detail',
             'contact',
-            'contact_detail',
             'address',
-            'address_detail',
             'status',
             'status_text',
             'status_custom_key',
@@ -284,6 +277,13 @@ class AbstractOrderSerializer(DataImportExportSerializerMixin, serializers.Seria
             'barcode_hash',
             'overdue',
             'duplicate',
+            # Extra detail fields
+            'address_detail',
+            'contact_detail',
+            'project_code_detail',
+            'project_code_label',
+            'responsible_detail',
+            'parameters',
             *extra_fields,
         ]
 
@@ -327,24 +327,73 @@ class AbstractOrderSerializer(DataImportExportSerializerMixin, serializers.Seria
         return instance
 
 
-class AbstractLineItemSerializer:
+class AbstractLineItemSerializer(FilterableSerializerMixin, serializers.Serializer):
     """Abstract serializer for LineItem object."""
+
+    @staticmethod
+    def line_fields(extra_fields):
+        """Construct a set of fields for this serializer."""
+        return [
+            'pk',
+            'link',
+            'notes',
+            'order',
+            'project_code',
+            'quantity',
+            'reference',
+            'target_date',
+            # Filterable detail fields
+            'order_detail',
+            'project_code_label',
+            'project_code_detail',
+            *extra_fields,
+        ]
 
     target_date = serializers.DateField(
         required=False, allow_null=True, label=_('Target Date')
     )
 
+    project_code_label = common.filters.enable_project_label_filter()
+
+    project_code_detail = common.filters.enable_project_code_filter()
+
 
 class AbstractExtraLineSerializer(
-    DataImportExportSerializerMixin, serializers.Serializer
+    DataImportExportSerializerMixin, FilterableSerializerMixin, serializers.Serializer
 ):
     """Abstract Serializer for a ExtraLine object."""
+
+    @staticmethod
+    def extra_line_fields(extra_fields):
+        """Construct a set of fields for this serializer."""
+        return [
+            'pk',
+            'description',
+            'link',
+            'notes',
+            'order',
+            'price',
+            'price_currency',
+            'project_code',
+            'quantity',
+            'reference',
+            'target_date',
+            # Filterable detail fields
+            'order_detail',
+            'project_code_label',
+            'project_code_detail',
+            *extra_fields,
+        ]
 
     quantity = serializers.FloatField()
 
     price = InvenTreeMoneySerializer(allow_null=True)
 
     price_currency = InvenTreeCurrencySerializer()
+
+    project_code_label = common.filters.enable_project_label_filter()
+
+    project_code_detail = common.filters.enable_project_code_filter()
 
 
 class AbstractExtraLineMeta:
@@ -367,7 +416,6 @@ class AbstractExtraLineMeta:
 
 @register_importer()
 class PurchaseOrderSerializer(
-    FilterableSerializerMixin,
     NotesFieldMixin,
     TotalPriceMixin,
     TenantSerializerMixin,
@@ -428,6 +476,8 @@ class PurchaseOrderSerializer(
             )
         )
 
+        queryset = queryset.prefetch_related('created_by')
+
         return queryset
 
     supplier_name = serializers.CharField(
@@ -437,7 +487,8 @@ class PurchaseOrderSerializer(
     supplier_detail = enable_filter(
         CompanyBriefSerializer(
             source='supplier', many=False, read_only=True, allow_null=True
-        )
+        ),
+        prefetch_fields=['supplier'],
     )
 
 
@@ -525,7 +576,6 @@ class PurchaseOrderIssueSerializer(OrderAdjustSerializer):
 
 @register_importer()
 class PurchaseOrderLineItemSerializer(
-    FilterableSerializerMixin,
     DataImportExportSerializerMixin,
     AbstractLineItemSerializer,
     InvenTreeModelSerializer,
@@ -536,35 +586,28 @@ class PurchaseOrderLineItemSerializer(
         """Metaclass options."""
 
         model = order.models.PurchaseOrderLineItem
-        fields = [
-            'pk',
+        fields = AbstractLineItemSerializer.line_fields([
             'part',
-            'quantity',
-            'reference',
-            'notes',
-            'order',
-            'order_detail',
             'build_order',
-            'build_order_detail',
             'overdue',
-            'part_detail',
-            'supplier_part_detail',
             'received',
             'purchase_price',
             'purchase_price_currency',
             'auto_pricing',
             'destination',
-            'destination_detail',
-            'target_date',
             'total_price',
-            'link',
             'merge_items',
             'sku',
             'mpn',
             'ipn',
             'internal_part',
             'internal_part_name',
-        ]
+            # Filterable detail fields
+            'build_order_detail',
+            'destination_detail',
+            'part_detail',
+            'supplier_part_detail',
+        ])
 
     def skip_create_fields(self):
         """Return a list of fields to skip when creating a new object."""
@@ -578,26 +621,16 @@ class PurchaseOrderLineItemSerializer(
         - "overdue" status (boolean field)
         """
         queryset = queryset.prefetch_related(
-            Prefetch(
-                'part__part',
-                queryset=part_models.Part.objects.annotate(
-                    category_default_location=part_filters.annotate_default_location(
-                        'category__'
-                    )
-                ).prefetch_related(None),
-            )
-        )
-
-        queryset = queryset.prefetch_related(
             'order',
             'order__responsible',
             'order__stock_items',
-            'part__tags',
+            'part',
+            'part__part',
+            'part__part__pricing_data',
+            'part__part__default_location',
             'part__supplier',
             'part__manufacturer_part',
             'part__manufacturer_part__manufacturer',
-            'part__part__pricing_data',
-            'part__part__tags',
         )
 
         queryset = queryset.annotate(
@@ -652,6 +685,7 @@ class PurchaseOrderLineItemSerializer(
         PartBriefSerializer(
             source='get_base_part', many=False, read_only=True, allow_null=True
         ),
+        False,
         filter_name='part_detail',
     )
 
@@ -659,6 +693,7 @@ class PurchaseOrderLineItemSerializer(
         SupplierPartSerializer(
             source='part', brief=True, many=False, read_only=True, allow_null=True
         ),
+        False,
         filter_name='part_detail',
     )
 
@@ -672,8 +707,12 @@ class PurchaseOrderLineItemSerializer(
         default=True,
     )
 
-    destination_detail = stock.serializers.LocationBriefSerializer(
-        source='get_destination', read_only=True, allow_null=True
+    destination_detail = enable_filter(
+        stock.serializers.LocationBriefSerializer(
+            source='get_destination', read_only=True, allow_null=True
+        ),
+        True,
+        prefetch_fields=['destination', 'order__destination'],
     )
 
     purchase_price_currency = InvenTreeCurrencySerializer(
@@ -686,8 +725,16 @@ class PurchaseOrderLineItemSerializer(
         )
     )
 
-    build_order_detail = build.serializers.BuildSerializer(
-        source='build_order', read_only=True, allow_null=True, many=False
+    build_order_detail = enable_filter(
+        build.serializers.BuildSerializer(
+            source='build_order', read_only=True, allow_null=True, many=False
+        ),
+        True,
+        prefetch_fields=[
+            'build_order__responsible',
+            'build_order__issued_by',
+            'build_order__part',
+        ],
     )
 
     merge_items = serializers.BooleanField(
@@ -758,20 +805,21 @@ class PurchaseOrderLineItemSerializer(
 
 @register_importer()
 class PurchaseOrderExtraLineSerializer(
-    FilterableSerializerMixin, AbstractExtraLineSerializer, InvenTreeModelSerializer
+    AbstractExtraLineSerializer, InvenTreeModelSerializer
 ):
     """Serializer for a PurchaseOrderExtraLine object."""
+
+    class Meta(AbstractExtraLineMeta):
+        """Metaclass options."""
+
+        model = order.models.PurchaseOrderExtraLine
+        fields = AbstractExtraLineSerializer.extra_line_fields([])
 
     order_detail = enable_filter(
         PurchaseOrderSerializer(
             source='order', many=False, read_only=True, allow_null=True
         )
     )
-
-    class Meta(AbstractExtraLineMeta):
-        """Metaclass options."""
-
-        model = order.models.PurchaseOrderExtraLine
 
 
 class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
@@ -1021,7 +1069,6 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
 
 @register_importer()
 class SalesOrderSerializer(
-    FilterableSerializerMixin,
     NotesFieldMixin,
     TotalPriceMixin,
     TaxMixin,
@@ -1098,7 +1145,8 @@ class SalesOrderSerializer(
     customer_detail = enable_filter(
         CompanyBriefSerializer(
             source='customer', many=False, read_only=True, allow_null=True
-        )
+        ),
+        prefetch_fields=['customer'],
     )
 
     shipments_count = serializers.IntegerField(
@@ -1120,7 +1168,6 @@ class SalesOrderIssueSerializer(OrderAdjustSerializer):
 
 @register_importer()
 class SalesOrderLineItemSerializer(
-    FilterableSerializerMixin,
     DataImportExportSerializerMixin,
     AbstractLineItemSerializer,
     TaxLineItemMixin,
@@ -1132,23 +1179,15 @@ class SalesOrderLineItemSerializer(
         """Metaclass options."""
 
         model = order.models.SalesOrderLineItem
-        fields = [
-            'pk',
+        fields = AbstractLineItemSerializer.line_fields([
             'allocated',
             'customer_detail',
-            'quantity',
-            'reference',
-            'notes',
-            'order',
-            'order_detail',
             'overdue',
             'part',
             'part_detail',
             'sale_price',
             'sale_price_currency',
             'shipped',
-            'target_date',
-            'link',
             # Tax fields
             'tax_rate',
             'tax_amount',
@@ -1161,7 +1200,8 @@ class SalesOrderLineItemSerializer(
             'available_variant_stock',
             'building',
             'on_order',
-        ]
+            # Filterable detail fields
+        ])
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -1263,15 +1303,26 @@ class SalesOrderLineItemSerializer(
     order_detail = enable_filter(
         SalesOrderSerializer(
             source='order', many=False, read_only=True, allow_null=True
-        )
+        ),
+        prefetch_fields=[
+            'order__created_by',
+            'order__responsible',
+            'order__address',
+            'order__project_code',
+            'order__contact',
+        ],
     )
+
     part_detail = enable_filter(
-        PartBriefSerializer(source='part', many=False, read_only=True, allow_null=True)
+        PartBriefSerializer(source='part', many=False, read_only=True, allow_null=True),
+        prefetch_fields=['part__pricing_data'],
     )
+
     customer_detail = enable_filter(
         CompanyBriefSerializer(
             source='order.customer', many=False, read_only=True, allow_null=True
-        )
+        ),
+        prefetch_fields=['order__customer'],
     )
 
     # Annotated fields
@@ -1307,9 +1358,9 @@ class SalesOrderShipmentSerializer(
         fields = [
             'pk',
             'order',
-            'order_detail',
             'allocated_items',
             'shipment_date',
+            'shipment_address',
             'delivery_date',
             'checked_by',
             'reference',
@@ -1318,14 +1369,16 @@ class SalesOrderShipmentSerializer(
             'barcode_hash',
             'link',
             'notes',
+            # Extra detail fields
+            'checked_by_detail',
+            'customer_detail',
+            'order_detail',
+            'shipment_address_detail',
         ]
 
     @staticmethod
     def annotate_queryset(queryset):
         """Annotate the queryset with extra information."""
-        # Prefetch related objects
-        queryset = queryset.prefetch_related('order', 'order__customer', 'allocations')
-
         queryset = queryset.annotate(allocated_items=SubqueryCount('allocations'))
 
         return queryset
@@ -1334,11 +1387,42 @@ class SalesOrderShipmentSerializer(
         read_only=True, allow_null=True, label=_('Allocated Items')
     )
 
+    checked_by_detail = enable_filter(
+        UserSerializer(
+            source='checked_by', many=False, read_only=True, allow_null=True
+        ),
+        True,
+        prefetch_fields=['checked_by'],
+    )
+
     order_detail = enable_filter(
         SalesOrderSerializer(
             source='order', read_only=True, allow_null=True, many=False
         ),
         True,
+        prefetch_fields=[
+            'order',
+            'order__customer',
+            'order__created_by',
+            'order__responsible',
+            'order__project_code',
+        ],
+    )
+
+    customer_detail = enable_filter(
+        CompanyBriefSerializer(
+            source='order.customer', many=False, read_only=True, allow_null=True
+        ),
+        False,
+        prefetch_fields=['order__customer'],
+    )
+
+    shipment_address_detail = enable_filter(
+        AddressBriefSerializer(
+            source='shipment_address', many=False, read_only=True, allow_null=True
+        ),
+        True,
+        prefetch_fields=['shipment_address'],
     )
 
 
@@ -1858,10 +1942,7 @@ class SalesOrderShipmentAllocationSerializer(serializers.Serializer):
 
 @register_importer()
 class SalesOrderExtraLineSerializer(
-    FilterableSerializerMixin,
-    AbstractExtraLineSerializer,
-    TaxLineItemMixin,
-    InvenTreeModelSerializer,
+    AbstractExtraLineSerializer, TaxLineItemMixin, InvenTreeModelSerializer
 ):
     """Serializer for a SalesOrderExtraLine object."""
 
@@ -1869,17 +1950,14 @@ class SalesOrderExtraLineSerializer(
         """Metaclass options."""
 
         model = order.models.SalesOrderExtraLine
-
-        fields = [
-            *AbstractExtraLineMeta.fields,
-            # Tax fields
+        fields = AbstractExtraLineSerializer.extra_line_fields([
             'tax_rate',
             'tax_amount',
             'is_tax_inclusive',
             'subtotal',
             'price_with_tax',
             'total_with_tax',
-        ]
+        ])
 
     order_detail = enable_filter(
         SalesOrderSerializer(
@@ -1890,7 +1968,6 @@ class SalesOrderExtraLineSerializer(
 
 @register_importer()
 class ReturnOrderSerializer(
-    FilterableSerializerMixin,
     NotesFieldMixin,
     TaxMixin,
     TenantSerializerMixin,
@@ -1953,7 +2030,8 @@ class ReturnOrderSerializer(
     customer_detail = enable_filter(
         CompanyBriefSerializer(
             source='customer', many=False, read_only=True, allow_null=True
-        )
+        ),
+        prefetch_fields=['customer'],
     )
 
 
@@ -2089,7 +2167,6 @@ class ReturnOrderReceiveSerializer(serializers.Serializer):
 
 @register_importer()
 class ReturnOrderLineItemSerializer(
-    FilterableSerializerMixin,
     DataImportExportSerializerMixin,
     AbstractLineItemSerializer,
     InvenTreeModelSerializer,
@@ -2100,29 +2177,28 @@ class ReturnOrderLineItemSerializer(
         """Metaclass options."""
 
         model = order.models.ReturnOrderLineItem
-        fields = [
-            'pk',
-            'order',
-            'order_detail',
+        fields = AbstractLineItemSerializer.line_fields([
             'item',
-            'item_detail',
-            'quantity',
             'received_date',
             'outcome',
-            'part_detail',
             'price',
             'price_currency',
-            'link',
-            'reference',
-            'notes',
-            'target_date',
-            'link',
-        ]
+            # Filterable detail fields
+            'item_detail',
+            'part_detail',
+        ])
 
     order_detail = enable_filter(
         ReturnOrderSerializer(
             source='order', many=False, read_only=True, allow_null=True
-        )
+        ),
+        prefetch_fields=[
+            'order__created_by',
+            'order__responsible',
+            'order__address',
+            'order__project_code',
+            'order__contact',
+        ],
     )
 
     quantity = serializers.FloatField(
@@ -2132,7 +2208,8 @@ class ReturnOrderLineItemSerializer(
     item_detail = enable_filter(
         stock.serializers.StockItemSerializer(
             source='item', many=False, read_only=True, allow_null=True
-        )
+        ),
+        prefetch_fields=['item__supplier_part'],
     )
 
     part_detail = enable_filter(
@@ -2147,7 +2224,7 @@ class ReturnOrderLineItemSerializer(
 
 @register_importer()
 class ReturnOrderExtraLineSerializer(
-    FilterableSerializerMixin, AbstractExtraLineSerializer, InvenTreeModelSerializer
+    AbstractExtraLineSerializer, InvenTreeModelSerializer
 ):
     """Serializer for a ReturnOrderExtraLine object."""
 
@@ -2155,6 +2232,7 @@ class ReturnOrderExtraLineSerializer(
         """Metaclass options."""
 
         model = order.models.ReturnOrderExtraLine
+        fields = AbstractExtraLineSerializer.extra_line_fields([])
 
     order_detail = enable_filter(
         ReturnOrderSerializer(

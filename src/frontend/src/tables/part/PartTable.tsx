@@ -336,11 +336,13 @@ function partTableFilters(): TableFilter[] {
  */
 export function PartListTable({
   enableImport = true,
+  basePartInstance,
   props,
   defaultPartData
 }: Readonly<{
   enableImport?: boolean;
   props?: InvenTreeTableProps;
+  basePartInstance?: any;
   defaultPartData?: any;
 }>) {
   const tableColumns = useMemo(() => partTableColumns(), []);
@@ -384,10 +386,15 @@ export function PartListTable({
     return defaultPartData ?? props?.params ?? {};
   }, [defaultPartData, props?.params]);
 
+  const newPartFields = usePartFields({
+    create: true,
+    duplicatePartInstance: basePartInstance
+  });
+
   const newPart = useCreateApiFormModal({
     url: ApiEndpoints.part_list,
     title: t`Add Part`,
-    fields: usePartFields({ create: true }),
+    fields: newPartFields,
     initialData: initialPartData,
     follow: true,
     modelType: ModelType.part

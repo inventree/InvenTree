@@ -2,7 +2,6 @@
 
 from django.db import migrations
 import common.currency
-import common.settings
 import djmoney.models.fields
 
 
@@ -16,11 +15,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='salesorderlineitem',
             name='sale_price',
-            field=djmoney.models.fields.MoneyField(blank=True, decimal_places=4, default_currency=common.currency.currency_code_default(), help_text='Unit sale price', max_digits=19, null=True, verbose_name='Sale Price'),
+            field=djmoney.models.fields.MoneyField(blank=True, decimal_places=4, default_currency='', help_text='Unit sale price', max_digits=19, null=True, verbose_name='Sale Price'),
         ),
         migrations.AddField(
             model_name='salesorderlineitem',
             name='sale_price_currency',
-            field=djmoney.models.fields.CurrencyField(choices=common.currency.currency_code_mappings(), default=common.currency.currency_code_default(), editable=False, max_length=3),
+            field=djmoney.models.fields.CurrencyField(choices=common.currency.currency_code_mappings(), default='', editable=False, max_length=3),
         ),
     ]

@@ -12,8 +12,8 @@ from django.urls import include, path
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.generic.base import RedirectView
 
+import django_filters.rest_framework.filters as rest_filters
 import structlog
-from django_filters import rest_framework as rest_filters
 from django_filters.rest_framework.filterset import FilterSet
 from drf_spectacular.utils import OpenApiParameter, OpenApiResponse, extend_schema
 from rest_framework import exceptions
@@ -290,13 +290,6 @@ class GroupMixin(SerializerContextMixin):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
     permission_classes = [InvenTree.permissions.IsStaffOrReadOnlyScope]
-
-    def get_queryset(self):
-        """Return queryset for this endpoint.
-
-        Note that the queryset is filtered by the permissions of the current user.
-        """
-        return super().get_queryset().prefetch_related('rule_sets', 'user_set')
 
 
 class GroupOutputOptions(OutputConfiguration):

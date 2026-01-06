@@ -5,6 +5,7 @@ import {
   IconCircleCheck,
   IconCircleDashedCheck,
   IconCircleMinus,
+  IconCircleX,
   IconShoppingCart,
   IconTool,
   IconWand
@@ -15,11 +16,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { ActionButton } from '@lib/components/ActionButton';
 import { ProgressBar } from '@lib/components/ProgressBar';
-import {
-  RowDeleteAction,
-  RowEditAction,
-  RowViewAction
-} from '@lib/components/RowActions';
+import { RowEditAction, RowViewAction } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
@@ -43,12 +40,14 @@ import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import {
   BooleanColumn,
+  CategoryColumn,
   DecimalColumn,
   DescriptionColumn,
   LocationColumn,
   PartColumn,
   RenderPartColumn
 } from '../ColumnRenderers';
+import { PartCategoryFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import RowExpansionIcon from '../RowExpansionIcon';
 import { TableHoverCard } from '../TableHoverCard';
@@ -102,23 +101,27 @@ export function BuildLineSubTable({
   const rowActions = useCallback(
     (record: any): RowAction[] => {
       return [
-        RowViewAction({
-          title: t`View Stock Item`,
-          modelType: ModelType.stockitem,
-          modelId: record.stock_item,
-          navigate: navigate
-        }),
         RowEditAction({
           hidden: !onEditAllocation || !user.hasChangeRole(UserRoles.build),
           onClick: () => {
             onEditAllocation?.(record.pk);
           }
         }),
-        RowDeleteAction({
+        {
+          title: t`Remove`,
+          tooltip: t`Remove allocated stock`,
+          icon: <IconCircleX />,
+          color: 'red',
           hidden: !onDeleteAllocation || !user.hasDeleteRole(UserRoles.build),
           onClick: () => {
             onDeleteAllocation?.(record.pk);
           }
+        },
+        RowViewAction({
+          title: t`View Stock Item`,
+          modelType: ModelType.stockitem,
+          modelId: record.stock_item,
+          navigate: navigate
         })
       ];
     },
@@ -188,7 +191,7 @@ export default function BuildLineTable({
       {
         name: 'available',
         label: t`Available`,
-        description: t`Show items with available stock`
+        description: t`Show items with sufficient available stock`
       },
       {
         name: 'consumable',
@@ -214,7 +217,13 @@ export default function BuildLineTable({
         name: 'tracked',
         label: t`Tracked`,
         description: t`Show tracked lines`
-      }
+      },
+      {
+        name: 'on_order',
+        label: t`On Order`,
+        description: t`Show items with stock on order`
+      },
+      PartCategoryFilter()
     ];
   }, []);
 
@@ -327,6 +336,13 @@ export default function BuildLineTable({
         sortable: false,
         title: t`IPN`
       },
+      CategoryColumn({
+        accessor: 'category_detail',
+        defaultVisible: false,
+        switchable: true,
+        sortable: true,
+        ordering: 'category'
+      }),
       DescriptionColumn({
         accessor: 'part_detail.description'
       }),
@@ -445,6 +461,8 @@ export default function BuildLineTable({
       },
       {
         accessor: 'in_production',
+        sortable: true,
+        ordering: 'scheduled_to_build',
         render: (record: any) => {
           if (record.scheduled_to_build > 0) {
             return (
@@ -461,7 +479,8 @@ export default function BuildLineTable({
       },
       DecimalColumn({
         accessor: 'on_order',
-        defaultVisible: false
+        defaultVisible: false,
+        sortable: true
       }),
       {
         accessor: 'allocated',
@@ -636,14 +655,20 @@ export default function BuildLineTable({
       },
       quantity: {}
     },
-    table: table
+    onFormSuccess: table.refreshTable
   });
 
   const deleteAllocation = useDeleteApiFormModal({
     url: ApiEndpoints.build_item_list,
     pk: selectedAllocation,
-    title: t`Delete Stock Allocation`,
-    table: table
+    title: t`Remove Allocated Stock`,
+    submitText: t`Remove`,
+    onFormSuccess: table.refreshTable,
+    preFormContent: (
+      <Alert color='red' title={t`Confirm Removal`}>
+        {t`Are you sure you want to remove this allocated stock from the order?`}
+      </Alert>
+    )
   });
 
   const [partsToOrder, setPartsToOrder] = useState<any[]>([]);
@@ -947,7 +972,10 @@ export default function BuildLineTable({
             ...params,
             build: build.pk,
             assembly_detail: false,
-            part_detail: true
+            bom_item_detail: true,
+            category_detail: true,
+            part_detail: true,
+            allocations: true
           },
           tableActions: tableActions,
           tableFilters: tableFilters,
@@ -957,6 +985,7 @@ export default function BuildLineTable({
           enableSelection: true,
           enableLabels: true,
           modelType: ModelType.buildline,
+          detailAction: false,
           onCellClick: () => {},
           rowExpansion: rowExpansion
         }}

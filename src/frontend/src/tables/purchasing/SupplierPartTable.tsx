@@ -7,6 +7,7 @@ import { AddItemButton } from '@lib/components/AddItemButton';
 import {
   type RowAction,
   RowDeleteAction,
+  RowDuplicateAction,
   RowEditAction
 } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
@@ -43,8 +44,16 @@ import { TableHoverCard } from '../TableHoverCard';
  */
 
 export function SupplierPartTable({
-  params
-}: Readonly<{ params: any }>): ReactNode {
+  manufacturerId,
+  manufacturerPartId,
+  partId,
+  supplierId
+}: Readonly<{
+  manufacturerId?: number;
+  manufacturerPartId?: number;
+  partId?: number;
+  supplierId?: number;
+}>): ReactNode {
   const table = useTable('supplierparts');
 
   const user = useUserState();
@@ -53,9 +62,15 @@ export function SupplierPartTable({
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
       PartColumn({
-        switchable: 'part' in params,
+        switchable: !!partId,
         part: 'part_detail'
       }),
+      {
+        accessor: 'part_detail.IPN',
+        title: t`IPN`,
+        sortable: false,
+        switchable: true
+      },
       {
         accessor: 'supplier',
         sortable: true,
@@ -103,7 +118,6 @@ export function SupplierPartTable({
       {
         accessor: 'pack_quantity',
         sortable: true,
-
         render: (record: any) => {
           const part = record?.part_detail ?? {};
 
@@ -111,7 +125,7 @@ export function SupplierPartTable({
 
           if (part.units) {
             extra.push(
-              <Text key='base'>
+              <Text key='base' size='sm'>
                 {t`Base units`} : {part.units}
               </Text>
             );
@@ -147,10 +161,10 @@ export function SupplierPartTable({
         }
       }
     ];
-  }, [params]);
+  }, [partId]);
 
   const supplierPartFields = useSupplierPartFields({
-    partId: params?.part
+    partId: partId
   });
 
   const addSupplierPart = useCreateApiFormModal({
@@ -158,8 +172,9 @@ export function SupplierPartTable({
     title: t`Add Supplier Part`,
     fields: supplierPartFields,
     initialData: {
-      part: params?.part,
-      supplier: params?.supplier
+      part: partId,
+      supplier: supplierId,
+      manufacturer_part: manufacturerPartId
     },
     table: table,
     successMessage: t`Supplier part created`
@@ -167,7 +182,7 @@ export function SupplierPartTable({
 
   const supplierPlugins = usePluginsWithMixin('supplier');
   const importPartWizard = ImportPartWizard({
-    partId: params?.part
+    partId: partId
   });
 
   const tableActions = useMemo(() => {
@@ -187,11 +202,11 @@ export function SupplierPartTable({
         hidden={
           supplierPlugins.length === 0 ||
           !user.hasAddRole(UserRoles.part) ||
-          !params?.part
+          !partId
         }
       />
     ];
-  }, [user, supplierPlugins]);
+  }, [user, partId, supplierPlugins]);
 
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
@@ -220,19 +235,32 @@ export function SupplierPartTable({
 
   const editSupplierPartFields = useSupplierPartFields({});
 
-  const [selectedSupplierPart, setSelectedSupplierPart] = useState<number>(0);
+  const [selectedSupplierPart, setSelectedSupplierPart] =
+    useState<any>(undefined);
 
   const editSupplierPart = useEditApiFormModal({
     url: ApiEndpoints.supplier_part_list,
-    pk: selectedSupplierPart,
+    pk: selectedSupplierPart?.pk,
     title: t`Edit Supplier Part`,
-    fields: editSupplierPartFields,
+    fields: useMemo(() => editSupplierPartFields, [editSupplierPartFields]),
     table: table
+  });
+
+  const duplicateSupplierPart = useCreateApiFormModal({
+    url: ApiEndpoints.supplier_part_list,
+    title: t`Add Supplier Part`,
+    fields: useMemo(() => editSupplierPartFields, [editSupplierPartFields]),
+    initialData: {
+      ...selectedSupplierPart,
+      active: true
+    },
+    table: table,
+    successMessage: t`Supplier part created`
   });
 
   const deleteSupplierPart = useDeleteApiFormModal({
     url: ApiEndpoints.supplier_part_list,
-    pk: selectedSupplierPart,
+    pk: selectedSupplierPart?.pk,
     title: t`Delete Supplier Part`,
     table: table
   });
@@ -244,14 +272,21 @@ export function SupplierPartTable({
         RowEditAction({
           hidden: !user.hasChangeRole(UserRoles.purchase_order),
           onClick: () => {
-            setSelectedSupplierPart(record.pk);
+            setSelectedSupplierPart(record);
             editSupplierPart.open();
+          }
+        }),
+        RowDuplicateAction({
+          hidden: !user.hasAddRole(UserRoles.purchase_order),
+          onClick: () => {
+            setSelectedSupplierPart(record);
+            duplicateSupplierPart.open();
           }
         }),
         RowDeleteAction({
           hidden: !user.hasDeleteRole(UserRoles.purchase_order),
           onClick: () => {
-            setSelectedSupplierPart(record.pk);
+            setSelectedSupplierPart(record);
             deleteSupplierPart.open();
           }
         })
@@ -264,6 +299,7 @@ export function SupplierPartTable({
     <>
       {addSupplierPart.modal}
       {editSupplierPart.modal}
+      {duplicateSupplierPart.modal}
       {deleteSupplierPart.modal}
       {importPartWizard.wizard}
       <InvenTreeTable
@@ -272,7 +308,10 @@ export function SupplierPartTable({
         columns={tableColumns}
         props={{
           params: {
-            ...params,
+            manufacturer: manufacturerId,
+            manufacturer_part: manufacturerPartId,
+            supplier: supplierId,
+            part: partId,
             part_detail: true,
             supplier_detail: true,
             manufacturer_detail: true

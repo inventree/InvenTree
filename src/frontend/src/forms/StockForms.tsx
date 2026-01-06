@@ -124,9 +124,17 @@ export function useStockFields({
     }
   }, [pricing, quantity]);
 
+  // Set the supplier part if provided
   useEffect(() => {
     if (supplierPartId && !supplierPart) setSupplierPart(supplierPartId);
   }, [partInstance, supplierPart, supplierPartId]);
+
+  // Set default currency from global settings
+  useEffect(() => {
+    setPurchasePriceCurrency(
+      globalSettings.getSetting('INVENTREE_DEFAULT_CURRENCY')
+    );
+  }, [globalSettings]);
 
   return useMemo(() => {
     const fields: ApiFormFieldSet = {
@@ -248,6 +256,7 @@ export function useStockFields({
       },
       purchase_price_currency: {
         icon: <IconCoins />,
+        default: globalSettings.getSetting('INVENTREE_DEFAULT_CURRENCY'),
         value: purchasePriceCurrency,
         onValueChange: (value) => {
           setPurchasePriceCurrency(value);
@@ -853,10 +862,17 @@ function stockRemoveFields(items: any[]): ApiFormFieldSet {
 
   const records = Object.fromEntries(items.map((item) => [item.pk, item]));
 
+  const initialValue = mapAdjustmentItems(items).map((elem) => {
+    return {
+      ...elem,
+      quantity: 0
+    };
+  });
+
   const fields: ApiFormFieldSet = {
     items: {
       field_type: 'table',
-      value: mapAdjustmentItems(items),
+      value: initialValue,
       modelRenderer: (row: TableFieldRowProps) => {
         const record = records[row.item.pk];
 
@@ -893,10 +909,17 @@ function stockAddFields(items: any[]): ApiFormFieldSet {
 
   const records = Object.fromEntries(items.map((item) => [item.pk, item]));
 
+  const initialValue = mapAdjustmentItems(items).map((elem) => {
+    return {
+      ...elem,
+      quantity: 0
+    };
+  });
+
   const fields: ApiFormFieldSet = {
     items: {
       field_type: 'table',
-      value: mapAdjustmentItems(items),
+      value: initialValue,
       modelRenderer: (row: TableFieldRowProps) => {
         const record = records[row.item.pk];
 
@@ -932,10 +955,12 @@ function stockCountFields(items: any[]): ApiFormFieldSet {
 
   const records = Object.fromEntries(items.map((item) => [item.pk, item]));
 
+  const initialValue = mapAdjustmentItems(items);
+
   const fields: ApiFormFieldSet = {
     items: {
       field_type: 'table',
-      value: mapAdjustmentItems(items),
+      value: initialValue,
       modelRenderer: (row: TableFieldRowProps) => {
         return (
           <StockOperationsRow
@@ -968,6 +993,11 @@ function stockChangeStatusFields(items: any[]): ApiFormFieldSet {
 
   const records = Object.fromEntries(items.map((item) => [item.pk, item]));
 
+  // Extract all status values from the items
+  const statusValues = [
+    ...new Set(items.map((item) => item.status_custom_key ?? item.status))
+  ];
+
   const fields: ApiFormFieldSet = {
     items: {
       field_type: 'table',
@@ -992,7 +1022,9 @@ function stockChangeStatusFields(items: any[]): ApiFormFieldSet {
         { title: '', style: { width: '50px' } }
       ]
     },
-    status: {},
+    status: {
+      value: statusValues.length === 1 ? statusValues[0] : undefined
+    },
     note: {}
   };
 

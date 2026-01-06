@@ -32,9 +32,11 @@ import {
 } from '../../components/items/ActionDropdown';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
+import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
+import ParametersPanel from '../../components/panels/ParametersPanel';
 import { useSupplierPartFields } from '../../forms/CompanyForms';
 import {
   useCreateApiFormModal,
@@ -198,7 +200,7 @@ export default function SupplierPartDetail() {
         icon: 'purchase_orders'
       },
       {
-        type: 'string',
+        type: 'number',
         name: 'available',
         label: t`Supplier Availability`,
         hidden: !data.availability_updated,
@@ -206,7 +208,7 @@ export default function SupplierPartDetail() {
         icon: 'packages'
       },
       {
-        type: 'string',
+        type: 'date',
         name: 'availability_updated',
         label: t`Availability Updated`,
         copy: true,
@@ -283,6 +285,14 @@ export default function SupplierPartDetail() {
           <Skeleton />
         )
       },
+      ParametersPanel({
+        model_type: ModelType.supplierpart,
+        model_id: supplierPart?.pk
+      }),
+      AttachmentPanel({
+        model_type: ModelType.supplierpart,
+        model_id: supplierPart?.pk
+      }),
       NotesPanel({
         model_type: ModelType.supplierpart,
         model_id: supplierPart?.pk

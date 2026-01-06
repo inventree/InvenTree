@@ -6,16 +6,17 @@ import json
 import os
 import re
 import time
+from collections.abc import Callable
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Callable, Optional, Union
+from typing import Optional
 from unittest import mock
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission, User
 from django.db import connections, models
 from django.http.response import StreamingHttpResponse
-from django.test import TestCase
+from django.test import TestCase, tag
 from django.test.utils import CaptureQueriesContext, override_settings
 from django.urls import reverse
 
@@ -654,7 +655,9 @@ class InvenTreeAPITestCase(
         # Append URL params
         url += '?' + '&'.join([f'{key}={value}' for key, value in params.items()])
 
-        response = self.client.get(url, data=None, format='json')
+        response = self.get(
+            url, data=None, format='json', expected_code=expected_code, **kwargs
+        )
         self.check_response(url, response, expected_code=expected_code)
 
         # Check that the response is of the correct type
@@ -731,7 +734,7 @@ class InvenTreeAPITestCase(
     def run_output_test(
         self,
         url: str,
-        test_cases: list[Union[tuple[str, str], str]],
+        test_cases: list[tuple[str, str] | str],
         additional_params: Optional[dict] = None,
         assert_subset: bool = False,
         assert_fnc: Optional[Callable] = None,
@@ -823,3 +826,11 @@ class AdminTestCase(InvenTreeAPITestCase):
 def in_env_context(envs):
     """Patch the env to include the given dict."""
     return mock.patch.dict(os.environ, envs)
+
+
+@tag('performance_test')
+class InvenTreeAPIPerformanceTestCase(InvenTreeAPITestCase):
+    """Base class for InvenTree API performance tests."""
+
+    MAX_QUERY_COUNT = 50
+    MAX_QUERY_TIME = 60

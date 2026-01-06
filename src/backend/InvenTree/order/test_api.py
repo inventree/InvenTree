@@ -204,8 +204,8 @@ class PurchaseOrderTest(OrderTest):
                     self.LIST_URL, data={'limit': limit}, expected_code=200
                 )
 
-                # Total database queries must be below 20, independent of the number of results
-                self.assertLess(len(ctx), 20)
+                # Total database queries must be below 25, independent of the number of results
+                self.assertLess(len(ctx), 25)
 
                 for result in response.data['results']:
                     self.assertIn('total_price', result)
@@ -1226,6 +1226,8 @@ class PurchaseOrderReceiveTest(OrderTest):
 
     def test_receive_large_quantity(self):
         """Test receipt of a large number of items."""
+        from stock.status_codes import StockStatus
+
         sp = SupplierPart.objects.first()
 
         # Create a new order
@@ -1256,11 +1258,16 @@ class PurchaseOrderReceiveTest(OrderTest):
             url,
             {
                 'items': [
-                    {'line_item': line.pk, 'quantity': line.quantity} for line in lines
+                    {
+                        'line_item': line.pk,
+                        'quantity': line.quantity,
+                        'status': StockStatus.QUARANTINED.value,
+                    }
+                    for line in lines
                 ],
                 'location': location.pk,
             },
-            max_query_count=100 + 2 * N_LINES,
+            max_query_count=104 + 2 * N_LINES,
         ).data
 
         # Check for expected response
@@ -1269,6 +1276,7 @@ class PurchaseOrderReceiveTest(OrderTest):
 
         for item in response:
             self.assertEqual(item['purchase_order'], po.pk)
+            self.assertEqual(item['status'], StockStatus.QUARANTINED)
 
         # Check that the order has been completed
         po.refresh_from_db()
@@ -1420,8 +1428,8 @@ class SalesOrderTest(OrderTest):
                     self.LIST_URL, data={'limit': limit}, expected_code=200
                 )
 
-                # Total database queries must be less than 20
-                self.assertLess(len(ctx), 20)
+                # Total database queries must be less than 25
+                self.assertLess(len(ctx), 25)
 
                 n = len(response.data['results'])
 

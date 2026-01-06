@@ -1,5 +1,5 @@
 import { test } from '../baseFixtures.js';
-import { loadTab, navigate } from '../helpers.js';
+import { clickOnParamFilter, loadTab, navigate } from '../helpers.js';
 import { doCachedLogin } from '../login.js';
 
 test('Company', async ({ browser }) => {
@@ -39,4 +39,24 @@ test('Company', async ({ browser }) => {
   await page.getByText('This field may not be blank.').waitFor();
   await page.getByText('Enter a valid URL.').waitFor();
   await page.getByRole('button', { name: 'Cancel' }).click();
+});
+
+test('Company - Parameters', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    username: 'steven',
+    password: 'wizardstaff',
+    url: 'purchasing/index/suppliers'
+  });
+
+  // Show parametric view
+  await page
+    .getByRole('button', { name: 'segmented-icon-control-parametric' })
+    .click();
+
+  // Filter by "payment terms" parameter value
+  await clickOnParamFilter(page, 'Payment Terms');
+  await page.getByRole('option', { name: 'NET-30' }).click();
+
+  await page.getByRole('cell', { name: 'Arrow Electronics' }).waitFor();
+  await page.getByRole('cell', { name: 'PCB assembly house' }).waitFor();
 });

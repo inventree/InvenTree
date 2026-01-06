@@ -4,8 +4,8 @@
 #
 Color_Off='\033[0m'
 On_Red='\033[41m'
-PYTHON_FROM=9
-PYTHON_TO=14
+PYTHON_FROM=11
+PYTHON_TO=15
 
 function detect_docker() {
   if [ -n "$(grep docker </proc/1/cgroup)" ]; then
@@ -61,7 +61,7 @@ function detect_python() {
     echo "# POI07| No python environment found - using environment variable: ${SETUP_PYTHON}"
   fi
 
-  # Try to detect a python between 3.9 and 3.12 in reverse order
+  # Try to detect a python between lowest and highest supported in reverse order
   if [ -z "$(which ${SETUP_PYTHON})" ]; then
     echo "# POI07| Trying to detecting python3.${PYTHON_FROM} to python3.${PYTHON_TO} - using newest version"
     for i in $(seq $PYTHON_TO -1 $PYTHON_FROM); do
@@ -79,7 +79,7 @@ function detect_python() {
     echo "${On_Red}"
     echo "# POI07| Python ${SETUP_PYTHON} not found - aborting!"
     echo "# POI07| Please ensure python can be executed with the command '$SETUP_PYTHON' by the current user '$USER'."
-    echo "# POI07| If you are using a different python version, please set the environment variable SETUP_PYTHON to the correct command - eg. 'python3.10'."
+    echo "# POI07| If you are using a different python version, please set the environment variable SETUP_PYTHON to the correct command - eg. 'python3.11'."
     echo "${Color_Off}"
     exit 1
   fi
@@ -202,7 +202,7 @@ function detect_envs() {
     export INVENTREE_DB_HOST=${INVENTREE_DB_HOST:-samplehost}
     export INVENTREE_DB_PORT=${INVENTREE_DB_PORT:-123456}
 
-    export INVENTREE_SITE_URL=${INVENTREE_SITE_URL}
+    export INVENTREE_SITE_URL=${INVENTREE_SITE_URL:-http://${INVENTREE_IP}}
 
     export SETUP_CONF_LOADED=true
   fi
@@ -327,7 +327,7 @@ function update_or_install() {
 
   # Run update as app user
   echo "# POI12| Updating InvenTree"
-  sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && pip install wheel"
+  sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && pip install wheel python-dotenv"
   sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && set -e && invoke update | sed -e 's/^/# POI12| u | /;'"
 
   # Make sure permissions are correct again
@@ -407,13 +407,13 @@ function final_message() {
   echo -e "${SETUP_NGINX_FILE}"
   echo -e "Try opening InvenTree with any of \n${INVENTREE_SITE_URL} , http://localhost/ or http://${INVENTREE_IP}/ \n"
   # Print admin user data only if set
-  if ["${INVENTREE_ADMIN_USER}" ]; then
+  if [ -n "${INVENTREE_ADMIN_USER}" ]; then
     echo -e "Admin user data:"
     echo -e "   Email: ${INVENTREE_ADMIN_EMAIL}"
     echo -e "   Username: ${INVENTREE_ADMIN_USER}"
     echo -e "   Password: ${INVENTREE_ADMIN_PASSWORD}"
   else
-    echo -e "No admin set during this operation - depending on the deployment method a admin user might have been created with an initial password saved in `${SETUP_ADMIN_PASSWORD_FILE}`"
+    echo -e "No admin set during this operation - depending on the deployment method a admin user might have been created with an initial password saved in `$SETUP_ADMIN_PASSWORD_FILE`"
   fi
   echo -e "####################################################################################"
 }

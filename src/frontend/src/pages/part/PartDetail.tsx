@@ -22,8 +22,8 @@ import {
   IconExclamationCircle,
   IconInfoCircle,
   IconLayersLinked,
-  IconList,
   IconListCheck,
+  IconListDetails,
   IconListTree,
   IconLock,
   IconPackages,
@@ -47,7 +47,7 @@ import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { getDetailUrl } from '@lib/functions/Navigation';
 import { ActionButton } from '@lib/index';
-import type { ApiFormFieldSet, StockOperationProps } from '@lib/types/Forms';
+import type { StockOperationProps } from '@lib/types/Forms';
 import AdminButton from '../../components/buttons/AdminButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
 import StarredToggleButton from '../../components/buttons/StarredToggleButton';
@@ -97,7 +97,7 @@ import { useUserState } from '../../states/UserState';
 import { BomTable } from '../../tables/bom/BomTable';
 import { UsedInTable } from '../../tables/bom/UsedInTable';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
-import { PartParameterTable } from '../../tables/part/PartParameterTable';
+import { ParameterTable } from '../../tables/general/ParameterTable';
 import PartPurchaseOrdersTable from '../../tables/part/PartPurchaseOrdersTable';
 import PartTestResultTable from '../../tables/part/PartTestResultTable';
 import PartTestTemplateTable from '../../tables/part/PartTestTemplateTable';
@@ -184,7 +184,7 @@ function BomValidationInformation({
         <Text>{t`Do you want to validate the bill of materials for this assembly?`}</Text>
       </Alert>
     ),
-    successMessage: t`BOM validated`,
+    successMessage: t`Bill of materials scheduled for validation`,
     onFormSuccess: () => {
       bomInformationQuery.refetch();
     }
@@ -502,6 +502,13 @@ export default function PartDetail() {
         hidden: part.default_location || !part.category_default_location
       },
       {
+        type: 'link',
+        name: 'default_supplier',
+        label: t`Default Supplier`,
+        model: ModelType.company,
+        hidden: !part.default_supplier
+      },
+      {
         type: 'string',
         name: 'units',
         label: t`Units`,
@@ -789,17 +796,6 @@ export default function PartDetail() {
         content: detailsPanel
       },
       {
-        name: 'parameters',
-        label: t`Parameters`,
-        icon: <IconList />,
-        content: (
-          <PartParameterTable
-            partId={id ?? -1}
-            partLocked={part?.locked == true}
-          />
-        )
-      },
-      {
         name: 'stock',
         label: t`Stock`,
         icon: <IconPackages />,
@@ -949,6 +945,30 @@ export default function PartDetail() {
         icon: <IconLayersLinked />,
         content: <RelatedPartTable partId={part.pk} />
       },
+      {
+        name: 'parameters',
+        label: t`Parameters`,
+        icon: <IconListDetails />,
+        content: (
+          <>
+            {part.locked && (
+              <Alert
+                title={t`Part is Locked`}
+                color='orange'
+                icon={<IconLock />}
+                p='xs'
+              >
+                <Text>{t`Part parameters cannot be edited, as the part is locked`}</Text>
+              </Alert>
+            )}
+            <ParameterTable
+              modelType={ModelType.part}
+              modelId={part?.pk}
+              allowEdit={part?.locked != true}
+            />
+          </>
+        )
+      },
       AttachmentPanel({
         model_type: ModelType.part,
         model_id: part?.pk
@@ -978,6 +998,8 @@ export default function PartDetail() {
     const required =
       partRequirements.required_for_build_orders +
       partRequirements.required_for_sales_orders;
+
+    const shortfall = Math.max(required - partRequirements.total_stock, 0);
 
     return [
       <DetailsBadge
@@ -1024,6 +1046,12 @@ export default function PartDetail() {
         key='in_production'
       />,
       <DetailsBadge
+        label={`${t`Deficit`}: ${formatDecimal(shortfall)}`}
+        color='red'
+        visible={shortfall > 0}
+        key='deficit'
+      />,
+      <DetailsBadge
         label={t`Inactive`}
         color='red'
         visible={!part.active}
@@ -1048,38 +1076,10 @@ export default function PartDetail() {
     onFormSuccess: refreshInstance
   });
 
-  const createPartFields = usePartFields({ create: true });
-
-  const duplicatePartFields: ApiFormFieldSet = useMemo(() => {
-    return {
-      ...createPartFields,
-      duplicate: {
-        children: {
-          part: {
-            value: part.pk,
-            hidden: true
-          },
-          copy_image: {
-            value: true
-          },
-          copy_bom: {
-            value: part.assembly && globalSettings.isSet('PART_COPY_BOM'),
-            hidden: !part.assembly
-          },
-          copy_notes: {
-            value: true
-          },
-          copy_parameters: {
-            value: globalSettings.isSet('PART_COPY_PARAMETERS')
-          },
-          copy_tests: {
-            value: part.testable,
-            hidden: !part.testable
-          }
-        }
-      }
-    };
-  }, [createPartFields, globalSettings, part]);
+  const duplicatePartFields = usePartFields({
+    create: true,
+    duplicatePartInstance: part
+  });
 
   const duplicatePart = useCreateApiFormModal({
     url: ApiEndpoints.part_list,

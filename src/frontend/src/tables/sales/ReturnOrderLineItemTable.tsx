@@ -36,6 +36,7 @@ import {
   NoteColumn,
   PartColumn,
   PercentageColumn,
+  ProjectCodeColumn,
   ReferenceColumn,
   StatusColumn
 } from '../ColumnRenderers';
@@ -139,6 +140,7 @@ export default function ReturnOrderLineItemTable({
         title: t`Status`
       }),
       ReferenceColumn({}),
+      ProjectCodeColumn({}),
       StatusColumn({
         model: ModelType.returnorderlineitem,
         sortable: true,

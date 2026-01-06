@@ -5,7 +5,30 @@ All notable changes to this project will be documented in this file (starting wi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased] - yyyy-mm-dd (in UTC)
+## Unreleased - YYYY-MM-DD
+
+### Breaking Changes
+
+- [#10699](https://github.com/inventree/InvenTree/pull/10699) removes the `PartParameter` and `PartParameterTempalate` models (and associated API endpoints). These have been replaced with generic `Parameter` and `ParameterTemplate` models (and API endpoints). Any external client applications which made use of the old endpoints will need to be updated.
+
+### Added
+
+- Adds "Category" columns to BOM and Build Item tables and APIs in [#10722](https://github.com/inventree/InvenTree/pull/10772)
+- Adds generic "Parameter" and "ParameterTemplate" models (and associated API endpoints) in [#10699](https://github.com/inventree/InvenTree/pull/10699)
+- Adds parameter support for multiple new model types in [#10699](https://github.com/inventree/InvenTree/pull/10699)
+- Allows report generator to produce PDF input controls in [#10969](https://github.com/inventree/InvenTree/pull/10969)
+- UI overhaul of parameter management in [#10699](https://github.com/inventree/InvenTree/pull/10699)
+
+### Changed
+
+-
+
+### Removed
+- Removed python 3.9 / 3.10 support as part of Django 5.2 upgrade in [#10730](https://github.com/inventree/InvenTree/pull/10730)
+- Removed the "PartParameter" and "PartParameterTemplate" models (and associated API endpoints) in [#10699](https://github.com/inventree/InvenTree/pull/10699)
+- Removed the "ManufacturerPartParameter" model (and associated API endpoints) [#10699](https://github.com/inventree/InvenTree/pull/10699)
+
+## 1.1.0 - 2025-11-02
 
 ### Added
 
@@ -16,16 +39,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added support for Redis ACL user-based authentication in [#10551](https://github.com/inventree/InvenTree/pull/10551)
 - Expose stock adjustment forms to the UI plugin context in [#10584](https://github.com/inventree/InvenTree/pull/10584)
 - Allow stock adjustments for "in production" items in [#10600](https://github.com/inventree/InvenTree/pull/10600)
+- Adds optional shipping address against individual sales order shipments in [#10650](https://github.com/inventree/InvenTree/pull/10650)
+- Adds UI elements to "check" and "uncheck" sales order shipments in [#10654](https://github.com/inventree/InvenTree/pull/10654)
+- Allow assigning project codes to order line items in [#10657](https://github.com/inventree/InvenTree/pull/10657)
+- Added support for webauthn login for the frontend in [#9729](https://github.com/inventree/InvenTree/pull/9729)
+- Added support for Debian 12, Ubuntu 22.04 and Ubuntu 24.04 in the installer and package in [#10705](https://github.com/inventree/InvenTree/pull/10705)
+- Support for S3 and SFTP storage backends for media and static files ([#10140](https://github.com/inventree/InvenTree/pull/10140))
+- Adds hooks for custom UI spotlight actions in [#10720](https://github.com/inventree/InvenTree/pull/10720)
+- Support uploading attachments against SupplierPart in [#10724](https://github.com/inventree/InvenTree/pull/10724)
 
 ### Changed
 
 - Changed site URL check to allow protocol mismatches if `INVENTREE_SITE_LAX_PROTOCOL` is set to `True` (default) in [#10454](https://github.com/inventree/InvenTree/pull/10454)
 - Changed call signature of `get_global_setting` to use `environment_key` instead of `enviroment_key` in [#10557](https://github.com/inventree/InvenTree/pull/10557)
 
-### Removed
 
-
-## [1.0.0 ] - 2025-09-15
+## 1.0.0 - 2025-09-15
 
 The first "stable" release following semver but not extensively other than the previous releases. The use of 1.0 indicates the stability that users already expect from InvenTree.
 

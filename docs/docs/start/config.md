@@ -92,7 +92,9 @@ The following debugging / logging options are available:
 | Environment Variable | Configuration File | Description | Default |
 | --- | --- | --- | --- |
 | INVENTREE_DEBUG | debug | Enable [debug mode](./index.md#debug-mode) | False |
-| INVENTREE_DEBUG_QUERYCOUNT | debug_querycount | Enable [query count logging](https://github.com/bradmontgomery/django-querycount) in the terminal | False |
+| INVENTREE_DEBUG_QUERYCOUNT | debug_querycount | Enable support for [django-querycount](../develop/index.md#django-querycount) middleware. | False |
+| INVENTREE_DEBUG_SILK | debug_silk | Enable support for [django-silk](../develop/index.md#django-silk) profiling tool. | False |
+| INVENTREE_DEBUG_SILK_PROFILING | debug_silk_profiling | Enable detailed profiling in django-silk | False |
 | INVENTREE_DB_LOGGING | db_logging | Enable logging of database messages | False |
 | INVENTREE_LOG_LEVEL | log_level | Set level of logging to terminal | WARNING |
 | INVENTREE_JSON_LOG | json_log | log as json | False |
@@ -103,13 +105,7 @@ The following debugging / logging options are available:
 
 Enabling the `INVENTREE_DEBUG` setting will turn on [Django debug mode]({% include "django.html" %}/ref/settings/#debug). This mode is intended for development purposes, and should not be enabled in a production environment. Read more about [InvenTree debug mode](./index.md#debug-mode).
 
-### Query Count Logging
-
-Enabling the `INVENTREE_DEBUG_QUERYCOUNT` setting will log the number of database queries executed for each page load. This can be useful for identifying performance bottlenecks in the InvenTree server. Note that this setting is only available if `INVENTREE_DEBUG` is also enabled.
-
-### Database Logging
-
-Enabling the `INVENTREE_DB_LOGGING` setting will log all database queries to the terminal. This can be useful for debugging database-related issues.
+In debug mode, there are additional [profiling tools](../develop/index.md#profiling-tools) available to help developers analyze and optimize performance.
 
 ## Server Access
 
@@ -266,6 +262,9 @@ The following database options can be configured:
 | INVENTREE_DB_HOST | database.HOST | Database host address (if required) | *Not specified* |
 | INVENTREE_DB_PORT | database.PORT | Database host port (if required) | *Not specified* |
 
+!!! tip "Database Password"
+    The value specified for `INVENTREE_DB_PASSWORD` should not contain comma `,` or colon `:` characters, otherwise the connection to the database may fail.
+
 ### PostgreSQL Settings
 
 If running with a PostgreSQL database backend, the following additional options are available:
@@ -318,6 +317,9 @@ The following cache settings are available:
 | INVENTREE_CACHE_KEEPALIVE_INTERVAL | cache.keepalive_interval | Cache keepalive interval | 1 |
 | INVENTREE_CACHE_USER_TIMEOUT | cache.user_timeout | Cache user timeout | 1000 |
 
+!!! tip "Cache Password"
+    The value specified for `INVENTREE_CACHE_PASSWORD` should not contain comma `,` or colon `:` characters, otherwise the connection to the cache server may fail.
+
 ## Email Settings
 
 To enable [email functionality](../settings/email.md), email settings must be configured here, either via environment variables or within the configuration file.
@@ -335,6 +337,10 @@ The following email settings are available:
 | INVENTREE_EMAIL_SSL | email.ssl | Enable SSL support | False |
 | INVENTREE_EMAIL_SENDER | email.sender | Sending email address | *Not specified* |
 | INVENTREE_EMAIL_PREFIX | email.prefix | Prefix for subject text | [InvenTree] |
+
+### Email Backend
+
+The default email implementation uses the Django STMP backend. This should be sufficient for most implementations, although other backends can be used if required. Note that selection of a different backend requires must use fully qualified module path, and requires advanced knowledge.
 
 ### Sender Email
 
@@ -380,6 +386,44 @@ Database and media backups **require** a local directory for storage. This direc
 
 Alternatively this location can be specified with the `INVENTREE_BACKUP_DIR` environment variable.
 
+
+### Storage backends
+
+It is also possible to use alternative storage backends for static and media files, at the moment there is direct provide direct support bundled for S3 and SFTP. Google cloud storage and Azure blob storage would also be supported by the [used library](https://django-storages.readthedocs.io), but require additional packages to be installed.
+
+| Environment Variable | Configuration File | Description | Default |
+| --- | --- | --- | --- |
+| INVENTREE_STORAGE_TARGET | storage.target | Storage target to use for static and media files, valid options: local, s3, sftp | local |
+
+#### S3
+
+| Environment Variable | Configuration File | Description | Default |
+| --- | --- | --- | --- |
+| INVENTREE_S3_ACCESS_KEY | storage.s3.access_key | Access key | *Not specified* |
+| INVENTREE_S3_SECRET_KEY | storage.s3.secret_key | Secret key |
+| *Not specified* |
+| INVENTREE_S3_BUCKET_NAME | storage.s3.bucket_name | Bucket name, required by most providers |
+| *Not specified* |
+| INVENTREE_S3_REGION_NAME | storage.s3.region_name | S3 region name |
+| *Not specified* |
+| INVENTREE_S3_ENDPOINT_URL | storage.s3.endpoint_url | Custom S3 endpoint URL, defaults to AWS endpoints if not set |
+| *Not specified* |
+| INVENTREE_S3_LOCATION | storage.s3.location | Sub-Location that should be used | inventree-server |
+| INVENTREE_S3_DEFAULT_ACL | storage.s3.default_acl | Default ACL for uploaded files, defaults to provider default if not set | *Not specified* |
+| INVENTREE_S3_VERIFY_SSL | storage.s3.verify_ssl | Verify SSL certificate for S3 endpoint | True |
+| INVENTREE_S3_OVERWRITE | storage.s3.overwrite | Overwrite existing files in S3 bucket | False |
+| INVENTREE_S3_VIRTUAL | storage.s3.virtual | Use virtual addressing style - by default False -> `path` style, `virtual` style if True | False |
+
+#### SFTP
+
+| Environment Variable | Configuration File | Description | Default |
+| --- | --- | --- | --- |
+| INVENTREE_SFTP_HOST | storage.sftp.host | SFTP host | *Not specified* |
+| INVENTREE_SFTP_PARAMS | storage.sftp.params | SFTP connection parameters, see https://docs.paramiko.org/en/latest/api/client.html#paramiko.client.SSHClient.connect; e.g. `{'port': 22, 'user': 'usr', 'password': 'pwd'}` | *Not specified* |
+| INVENTREE_SFTP_UID | storage.sftp.uid | SFTP user ID - not required | *Not specified* |
+| INVENTREE_SFTP_GID | storage.sftp.gid | SFTP group ID - not required | *Not specified* |
+| INVENTREE_SFTP_LOCATION | storage.sftp.location | Sub-Location that should be used | inventree-server |
+
 ## Authentication
 
 InvenTree provides allowance for additional sign-in options. The following options are not enabled by default, and care must be taken by the system administrator when configuring these settings.
@@ -387,7 +431,7 @@ InvenTree provides allowance for additional sign-in options. The following optio
 | Environment Variable | Configuration File | Description | Default |
 | --- | --- | --- | --- |
 | INVENTREE_MFA_ENABLED | mfa_enabled | Enable or disable multi-factor authentication support for the InvenTree server | True |
-| INVENTREE_MFA_SUPPORTED_TYPES | mfa_supported_types | List of supported multi-factor authentication types | recovery_codes,totp |
+| INVENTREE_MFA_SUPPORTED_TYPES | mfa_supported_types | List of supported multi-factor authentication types | recovery_codes,totp,webauthn |
 
 ### Single Sign On
 
@@ -444,7 +488,7 @@ The INVENTREE_CUSTOMIZE environment variable must contain a json object with the
 the wanted values. Example:
 
 ```
-INVENTREE_CUSTOMIZE={"login_message":"Hallo Michi"}
+INVENTREE_CUSTOMIZE={"login_message":"Hello World"}
 ```
 
 This example sets a login message. Take care of the double quotes.

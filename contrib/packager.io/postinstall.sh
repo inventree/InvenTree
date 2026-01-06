@@ -26,17 +26,17 @@ export DATA_DIR=${APP_HOME}/data
 export SETUP_NGINX_FILE=${SETUP_NGINX_FILE:-/etc/nginx/sites-enabled/inventree.conf}
 export SETUP_ADMIN_PASSWORD_FILE=${CONF_DIR}/admin_password.txt
 export SETUP_NO_CALLS=${SETUP_NO_CALLS:-false}
-export SETUP_PYTHON=${SETUP_PYTHON:-python3.9}
+export SETUP_PYTHON=${SETUP_PYTHON:-python3.11}
 export SETUP_ADMIN_NOCREATION=${SETUP_ADMIN_NOCREATION:-false}
 # SETUP_DEBUG can be set to get debug info
 # SETUP_EXTRA_PIP can be set to install extra pip packages
 # SETUP_PYTHON can be set to use a different python version
 
 # get base info
+detect_ip
 detect_envs
 detect_docker
 detect_initcmd
-detect_ip
 detect_python
 
 # Check if we are updating and need to alert

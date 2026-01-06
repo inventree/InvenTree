@@ -1,5 +1,8 @@
 """DRF API serializers for the 'users' app."""
 
+import secrets
+import string
+
 from django.contrib.auth.models import Group, Permission, User
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
@@ -16,7 +19,7 @@ from InvenTree.serializers import (
 )
 
 from .models import ApiToken, Owner, RuleSet, UserProfile
-from .permissions import check_user_role
+from .permissions import check_user_role, prefetch_rule_sets
 from .ruleset import RULESET_CHOICES, RULESET_PERMISSIONS, RuleSetEnum
 
 
@@ -80,13 +83,16 @@ class RoleSerializer(InvenTreeModelSerializer):
         """Roles associated with the user."""
         roles = {}
 
+        # Cache the 'groups' queryset for the user
+        groups = prefetch_rule_sets(user)
+
         for ruleset in RULESET_CHOICES:
             role, _text = ruleset
 
             permissions = []
 
             for permission in RULESET_PERMISSIONS:
-                if check_user_role(user, role, permission):
+                if check_user_role(user, role, permission, groups=groups):
                     permissions.append(permission)
 
             if len(permissions) > 0:
@@ -262,11 +268,13 @@ class GroupSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
             source='rule_sets', many=True, read_only=True, allow_null=True
         ),
         filter_name='role_detail',
+        prefetch_fields=['rule_sets'],
     )
 
     users = enable_filter(
         UserSerializer(source='user_set', many=True, read_only=True, allow_null=True),
         filter_name='user_detail',
+        prefetch_fields=['user_set'],
     )
 
 
@@ -382,6 +390,20 @@ class MeUserSerializer(ExtendedUserSerializer):
     profile = UserProfileSerializer(many=False, read_only=True)
 
 
+def make_random_password(length=14):
+    """Generate a random password of given length."""
+    alphabet = string.ascii_letters + string.digits
+    while True:
+        password = ''.join(secrets.choice(alphabet) for i in range(length))
+        if (
+            any(c.islower() for c in password)
+            and any(c.isupper() for c in password)
+            and sum(c.isdigit() for c in password) >= 3
+        ):
+            break
+    return password
+
+
 class UserCreateSerializer(ExtendedUserSerializer):
     """Serializer for creating a new User."""
 
@@ -402,7 +424,7 @@ class UserCreateSerializer(ExtendedUserSerializer):
             )
 
         # Generate a random password
-        password = User.objects.make_random_password(length=14)
+        password = make_random_password(length=14)
         attrs.update({'password': password})
         return super().validate(attrs)
 
