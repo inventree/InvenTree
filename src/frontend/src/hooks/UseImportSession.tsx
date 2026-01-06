@@ -42,6 +42,7 @@ export function useImportSession({
   } = useInstance({
     endpoint: ApiEndpoints.import_session_list,
     pk: sessionId,
+    hasPrimaryKey: true,
     defaultValue: {}
   });
 

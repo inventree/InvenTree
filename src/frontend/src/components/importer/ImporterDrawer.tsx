@@ -42,7 +42,7 @@ function ImportDrawerStepper({
     >
       <Stepper.Step label={t`Upload File`} />
       <Stepper.Step label={t`Map Columns`} />
-      <Stepper.Step label={t`Import Data`} />
+      <Stepper.Step label={t`Import Rows`} />
       <Stepper.Step label={t`Process Data`} />
       <Stepper.Step label={t`Complete Import`} />
     </Stepper>
@@ -133,7 +133,7 @@ export default function ImporterDrawer({
         <Divider />
       </Stack>
     );
-  }, [session.sessionData]);
+  }, [currentStep, session.sessionData]);
 
   return (
     <Drawer
