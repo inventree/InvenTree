@@ -1159,8 +1159,10 @@ class LocationSerializer(
             'structural',
             'external',
             'location_type',
+            # Optional fields
             'location_type_detail',
             'tags',
+            'parameters',
         ]
         read_only_fields = ['barcode_hash', 'icon', 'level', 'pathstring']
 
@@ -1204,6 +1206,8 @@ class LocationSerializer(
         ),
         filter_name='path_detail',
     )
+
+    parameters = common.filters.enable_parameters_filter()
 
     # explicitly set this field, so it gets included for AutoSchema
     icon = serializers.CharField(read_only=True)
