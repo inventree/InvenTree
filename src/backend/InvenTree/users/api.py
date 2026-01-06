@@ -291,13 +291,6 @@ class GroupMixin(SerializerContextMixin):
     serializer_class = GroupSerializer
     permission_classes = [InvenTree.permissions.IsStaffOrReadOnlyScope]
 
-    def get_queryset(self):
-        """Return queryset for this endpoint.
-
-        Note that the queryset is filtered by the permissions of the current user.
-        """
-        return super().get_queryset().prefetch_related('rule_sets', 'user_set')
-
 
 class GroupOutputOptions(OutputConfiguration):
     """Holds all available output options for Group views."""

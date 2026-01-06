@@ -18,8 +18,8 @@ from InvenTree.api import (
     BulkDeleteMixin,
     BulkUpdateMixin,
     ListCreateDestroyAPIView,
-    MetadataView,
     ParameterListMixin,
+    meta_path,
 )
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import (
@@ -570,7 +570,7 @@ class PartPricingDetail(RetrieveUpdateAPI):
     """API endpoint for viewing part pricing data."""
 
     serializer_class = part_serializers.PartPricingSerializer
-    queryset = Part.objects.all()
+    queryset = Part.objects.all().select_related('pricing_data')
 
     def get_object(self):
         """Return the PartPricing object associated with the linked Part."""
@@ -1009,7 +1009,7 @@ class PartMixin(SerializerContextMixin):
     """Mixin class for Part API endpoints."""
 
     serializer_class = part_serializers.PartSerializer
-    queryset = Part.objects.all()
+    queryset = Part.objects.all().select_related('pricing_data')
 
     starred_parts = None
     is_create = False
@@ -1019,9 +1019,6 @@ class PartMixin(SerializerContextMixin):
         queryset = super().get_queryset(*args, **kwargs)
 
         queryset = part_serializers.PartSerializer.annotate_queryset(queryset)
-
-        if str2bool(self.request.query_params.get('price_breaks', True)):
-            queryset = queryset.prefetch_related('salepricebreaks')
 
         return queryset
 
@@ -1063,6 +1060,7 @@ class PartOutputOptions(OutputConfiguration):
         InvenTreeOutputOption('location_detail'),
         InvenTreeOutputOption('path_detail'),
         InvenTreeOutputOption('price_breaks'),
+        InvenTreeOutputOption('tags'),
     ]
 
 
@@ -1364,6 +1362,8 @@ class BomOutputOptions(OutputConfiguration):
         InvenTreeOutputOption('can_build', default=True),
         InvenTreeOutputOption('part_detail'),
         InvenTreeOutputOption('sub_part_detail'),
+        InvenTreeOutputOption('substitutes'),
+        InvenTreeOutputOption('pricing'),
     ]
 
 
@@ -1498,13 +1498,7 @@ part_api_urls = [
                     path(
                         '<int:pk>/',
                         include([
-                            path(
-                                'metadata/',
-                                MetadataView.as_view(
-                                    model=PartCategoryParameterTemplate
-                                ),
-                                name='api-part-category-parameter-metadata',
-                            ),
+                            meta_path(PartCategoryParameterTemplate),
                             path(
                                 '',
                                 CategoryParameterDetail.as_view(),
@@ -1523,11 +1517,7 @@ part_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(model=PartCategory),
-                        name='api-part-category-metadata',
-                    ),
+                    meta_path(PartCategory),
                     # PartCategory detail endpoint
                     path('', CategoryDetail.as_view(), name='api-part-category-detail'),
                 ]),
@@ -1542,11 +1532,7 @@ part_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(model=PartTestTemplate),
-                        name='api-part-test-template-metadata',
-                    ),
+                    meta_path(PartTestTemplate),
                     path(
                         '',
                         PartTestTemplateDetail.as_view(),
@@ -1592,11 +1578,7 @@ part_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(model=PartRelated),
-                        name='api-part-related-metadata',
-                    ),
+                    meta_path(PartRelated),
                     path(
                         '', PartRelatedDetail.as_view(), name='api-part-related-detail'
                     ),
@@ -1647,9 +1629,7 @@ part_api_urls = [
                 'bom-validate/', PartValidateBOM.as_view(), name='api-part-bom-validate'
             ),
             # Part metadata
-            path(
-                'metadata/', MetadataView.as_view(model=Part), name='api-part-metadata'
-            ),
+            meta_path(Part),
             # Part pricing
             path('pricing/', PartPricingDetail.as_view(), name='api-part-pricing'),
             # Part detail endpoint
@@ -1667,11 +1647,7 @@ bom_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(model=BomItemSubstitute),
-                        name='api-bom-substitute-metadata',
-                    ),
+                    meta_path(BomItemSubstitute),
                     path(
                         '',
                         BomItemSubstituteDetail.as_view(),
@@ -1688,11 +1664,7 @@ bom_api_urls = [
         '<int:pk>/',
         include([
             path('validate/', BomItemValidate.as_view(), name='api-bom-item-validate'),
-            path(
-                'metadata/',
-                MetadataView.as_view(model=BomItem),
-                name='api-bom-item-metadata',
-            ),
+            meta_path(BomItem),
             path('', BomDetail.as_view(), name='api-bom-item-detail'),
         ]),
     ),

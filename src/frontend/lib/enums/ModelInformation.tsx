@@ -10,6 +10,7 @@ export interface ModelInformationInterface {
   url_detail?: string;
   api_endpoint: ApiEndpoints;
   admin_url?: string;
+  supports_barcode?: boolean;
   icon: keyof InvenTreeIconType;
 }
 
@@ -31,6 +32,7 @@ export const ModelInformationDict: ModelDict = {
     url_detail: '/part/:pk/',
     api_endpoint: ApiEndpoints.part_list,
     admin_url: '/part/part/',
+    supports_barcode: true,
     icon: 'part'
   },
   parameter: {
@@ -60,6 +62,7 @@ export const ModelInformationDict: ModelDict = {
     url_detail: '/purchasing/supplier-part/:pk/',
     api_endpoint: ApiEndpoints.supplier_part_list,
     admin_url: '/company/supplierpart/',
+    supports_barcode: true,
     icon: 'supplier_part'
   },
   manufacturerpart: {
@@ -69,6 +72,7 @@ export const ModelInformationDict: ModelDict = {
     url_detail: '/purchasing/manufacturer-part/:pk/',
     api_endpoint: ApiEndpoints.manufacturer_part_list,
     admin_url: '/company/manufacturerpart/',
+    supports_barcode: true,
     icon: 'manufacturers'
   },
   partcategory: {
@@ -87,6 +91,7 @@ export const ModelInformationDict: ModelDict = {
     url_detail: '/stock/item/:pk/',
     api_endpoint: ApiEndpoints.stock_item_list,
     admin_url: '/stock/stockitem/',
+    supports_barcode: true,
     icon: 'stock'
   },
   stocklocation: {
@@ -96,6 +101,7 @@ export const ModelInformationDict: ModelDict = {
     url_detail: '/stock/location/:pk/',
     api_endpoint: ApiEndpoints.stock_location_list,
     admin_url: '/stock/stocklocation/',
+    supports_barcode: true,
     icon: 'location'
   },
   stocklocationtype: {
@@ -117,6 +123,7 @@ export const ModelInformationDict: ModelDict = {
     url_detail: '/manufacturing/build-order/:pk/',
     api_endpoint: ApiEndpoints.build_order_list,
     admin_url: '/build/build/',
+    supports_barcode: true,
     icon: 'build_order'
   },
   buildline: {
@@ -155,6 +162,7 @@ export const ModelInformationDict: ModelDict = {
     url_detail: '/purchasing/purchase-order/:pk/',
     api_endpoint: ApiEndpoints.purchase_order_list,
     admin_url: '/order/purchaseorder/',
+    supports_barcode: true,
     icon: 'purchase_orders'
   },
   purchaseorderlineitem: {
@@ -170,6 +178,7 @@ export const ModelInformationDict: ModelDict = {
     url_detail: '/sales/sales-order/:pk/',
     api_endpoint: ApiEndpoints.sales_order_list,
     admin_url: '/order/salesorder/',
+    supports_barcode: true,
     icon: 'sales_orders'
   },
   salesordershipment: {
@@ -178,6 +187,7 @@ export const ModelInformationDict: ModelDict = {
     url_overview: '/sales/index/shipments',
     url_detail: '/sales/shipment/:pk/',
     api_endpoint: ApiEndpoints.sales_order_shipment_list,
+    supports_barcode: true,
     icon: 'shipment'
   },
   returnorder: {
@@ -187,6 +197,7 @@ export const ModelInformationDict: ModelDict = {
     url_detail: '/sales/return-order/:pk/',
     api_endpoint: ApiEndpoints.return_order_list,
     admin_url: '/order/returnorder/',
+    supports_barcode: true,
     icon: 'return_orders'
   },
   returnorderlineitem: {

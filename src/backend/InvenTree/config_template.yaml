@@ -36,6 +36,8 @@ debug: False
 
 # Additional debug options
 debug_querycount: False
+debug_silk: False
+debug_silk_profiling: False
 debug_shell: False
 
 # Set to False to disable the admin interface, or use the environment variable INVENTREE_ADMIN_ENABLED
@@ -43,6 +45,12 @@ debug_shell: False
 
 # Set the admin URL, or use the environment variable INVENTREE_ADMIN_URL
 #admin_url: 'admin'
+
+# Add new user on first startup by either adding values here or from a file
+#admin_user: admin
+#admin_email: info@example.com
+#admin_password: inventree
+#admin_password_file: '/etc/inventree/admin_password.txt'
 
 # Configure the system logging level (or use environment variable INVENTREE_LOG_LEVEL)
 # Options: DEBUG / INFO / WARNING / ERROR / CRITICAL
@@ -66,13 +74,6 @@ language: en-us
 
 # System time-zone (default is UTC). Reference: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 timezone: UTC
-
-
-# Add new user on first startup by either adding values here or from a file
-#admin_user: admin
-#admin_email: info@example.com
-#admin_password: inventree
-#admin_password_file: '/etc/inventree/admin_password.txt'
 
 # Email backend configuration
 # See https://docs.inventree.org/en/stable/settings/email for more information on email configuration

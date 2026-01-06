@@ -1887,7 +1887,7 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
         return self.build_line.bom_item if self.build_line else None
 
     @transaction.atomic
-    def complete_allocation(self, quantity=None, notes='', user=None) -> None:
+    def complete_allocation(self, quantity=None, notes: str = '', user=None) -> None:
         """Complete the allocation of this BuildItem into the output stock item.
 
         Arguments:
@@ -1910,9 +1910,7 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
 
         # Ensure we are not allocating more than available
         if quantity > item.quantity:
-            raise ValidationError({
-                'quantity': _('Allocated quantity exceeds available stock quantity')
-            })
+            quantity = item.quantity
 
         # Split the allocated stock if there are more available than allocated
         if item.quantity > quantity:

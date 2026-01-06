@@ -1,10 +1,36 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 430
+INVENTREE_API_VERSION = 436
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v436 -> 2026-01-06 : https://github.com/inventree/InvenTree/pull/11035
+    - Removes model-specific metadata endpoints and replaces them with redirects
+    - Adds new generic /api/metadata/<model_name>/ endpoint to retrieve metadata for any model
+
+v435 -> 2025-12-16 : https://github.com/inventree/InvenTree/pull/11030
+    - Adds token refresh endpoint to auth API
+
+v434 -> 2025-12-16 : https://github.com/inventree/InvenTree/pull/11021
+    - The "tags" fields (on various API endpoints) is now optional, and disabled by default
+    - To request tags information, add "tags=true" to the API request query parameters
+
+v433 -> 2025-12-16 : https://github.com/inventree/InvenTree/pull/11023
+    - "substitutes" field on the BomItem API endpoint is now excluded by default
+    - Add "?substitutes=true" query parameter to include substitute parts in BomItem API endpoint(s)
+
+v432 -> 2025-12-15 : https://github.com/inventree/InvenTree/pull/11012
+    - The "part_detail" field on the SupplierPart API endpoint is now optional
+    - The "supplier_detail" field on the SupplierPart API endpoint is now optional
+    - The "manufacturer_detail" field on the ManufacturerPart API endpoint is now optional
+    - The "part_detail" field on the StockItem API is now disabled by default
+
+v431 -> 2025-12-14 : https://github.com/inventree/InvenTree/pull/11006
+    - Remove duplicate "address" field on the Company API endpoint
+    - Make "primary_address" field optional on the Company API endpoint
+    - Remove "address_count" field from the Company API endpoint
 
 v430 -> 2025-12-04 : https://github.com/inventree/InvenTree/pull/10699
     - Removed the "PartParameter" and "PartParameterTemplate" API endpoints

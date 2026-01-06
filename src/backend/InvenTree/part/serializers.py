@@ -9,7 +9,7 @@ from django.core.files.base import ContentFile
 from django.core.validators import MinValueValidator
 from django.db import models, transaction
 from django.db.models import ExpressionWrapper, F, Q
-from django.db.models.functions import Coalesce, Greatest
+from django.db.models.functions import Greatest
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 
@@ -19,9 +19,9 @@ from djmoney.contrib.exchange.models import convert_money
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 from sql_util.utils import SubqueryCount
-from taggit.serializers import TagListSerializerField
 
 import common.currency
+import common.filters
 import common.serializers
 import company.models
 import InvenTree.helpers
@@ -619,7 +619,6 @@ class PartSerializer(
             'required_for_build_orders',
             'required_for_sales_orders',
             'stock_item_count',
-            'suppliers',
             'total_in_stock',
             'external_stock',
             'unallocated_stock',
@@ -632,8 +631,6 @@ class PartSerializer(
             'tags',
         ]
         read_only_fields = ['barcode_hash', 'creation_date', 'creation_user']
-
-    tags = TagListSerializerField(required=False)
 
     def __init__(self, *args, **kwargs):
         """Custom initialization method for PartSerializer.
@@ -680,10 +677,6 @@ class PartSerializer(
 
         Performing database queries as efficiently as possible, to reduce database trips.
         """
-        queryset = queryset.prefetch_related('category', 'default_location')
-
-        queryset = Part.annotate_parameters(queryset)
-
         # Annotate with the total number of revisions
         queryset = queryset.annotate(revision_count=SubqueryCount('revisions'))
 
@@ -706,15 +699,6 @@ class PartSerializer(
 
         queryset = queryset.annotate(
             scheduled_to_build=part_filters.annotate_scheduled_to_build_quantity()
-        )
-
-        # Annotate with the number of 'suppliers'
-        queryset = queryset.annotate(
-            suppliers=Coalesce(
-                SubqueryCount('supplier_parts'),
-                Decimal(0),
-                output_field=models.DecimalField(),
-            )
         )
 
         queryset = queryset.annotate(
@@ -775,7 +759,8 @@ class PartSerializer(
     category_detail = enable_filter(
         CategorySerializer(
             source='category', many=False, read_only=True, allow_null=True
-        )
+        ),
+        prefetch_fields=['category'],
     )
 
     category_path = enable_filter(
@@ -786,6 +771,7 @@ class PartSerializer(
             allow_null=True,
         ),
         filter_name='path_detail',
+        prefetch_fields=['category'],
     )
 
     default_location_detail = enable_filter(
@@ -793,6 +779,7 @@ class PartSerializer(
             source='default_location', many=False, read_only=True, allow_null=True
         ),
         filter_name='location_detail',
+        prefetch_fields=['default_location'],
     )
 
     category_name = serializers.CharField(
@@ -860,10 +847,6 @@ class PartSerializer(
         read_only=True, allow_null=True, label=_('Revisions')
     )
 
-    suppliers = serializers.IntegerField(
-        read_only=True, allow_null=True, label=_('Suppliers')
-    )
-
     total_in_stock = serializers.FloatField(
         read_only=True, allow_null=True, label=_('Total Stock')
     )
@@ -922,13 +905,9 @@ class PartSerializer(
         filter_name='pricing',
     )
 
-    parameters = enable_filter(
-        common.serializers.ParameterSerializer(
-            many=True, read_only=True, allow_null=True
-        ),
-        False,
-        filter_name='parameters',
-    )
+    parameters = common.filters.enable_parameters_filter()
+
+    tags = common.filters.enable_tags_filter()
 
     price_breaks = enable_filter(
         PartSalePriceSerializer(
@@ -936,6 +915,7 @@ class PartSerializer(
         ),
         False,
         filter_name='price_breaks',
+        prefetch_fields=['salepricebreaks'],
     )
 
     # Extra fields used only for creation of a new Part instance
@@ -963,6 +943,7 @@ class PartSerializer(
     copy_category_parameters = serializers.BooleanField(
         default=True,
         required=False,
+        write_only=True,
         label=_('Copy Category Parameters'),
         help_text=_('Copy parameter templates from selected part category'),
     )
@@ -1581,7 +1562,15 @@ class BomItemSerializer(
     )
 
     substitutes = enable_filter(
-        BomItemSubstituteSerializer(many=True, read_only=True, allow_null=True), True
+        BomItemSubstituteSerializer(many=True, read_only=True, allow_null=True),
+        False,
+        filter_name='substitutes',
+        prefetch_fields=[
+            'substitutes',
+            'substitutes__part',
+            'substitutes__part__stock_items',
+            'substitutes__part__pricing_data',
+        ],
     )
 
     part_detail = enable_filter(
@@ -1702,9 +1691,7 @@ class BomItemSerializer(
             'sub_part__stock_items',
             'sub_part__stock_items__allocations',
             'sub_part__stock_items__sales_order_allocations',
-            'substitutes',
-            'substitutes__part__stock_items',
-        ).select_related('part__pricing_data', 'sub_part__pricing_data')
+        )
 
         # Annotate with the 'total pricing' information based on unit pricing and quantity
         queryset = queryset.annotate(
@@ -1769,6 +1756,7 @@ class CategoryParameterTemplateSerializer(
             source='template', many=False, read_only=True
         ),
         True,
+        prefetch_fields=['template'],
     )
 
     category_detail = enable_filter(
@@ -1776,6 +1764,7 @@ class CategoryParameterTemplateSerializer(
             source='category', many=False, read_only=True, allow_null=True
         ),
         True,
+        prefetch_fields=['category'],
     )
 
 
