@@ -2565,40 +2565,39 @@ class StockMetadataAPITest(InvenTreeAPITestCase):
 
     roles = ['stock.change', 'stock_location.change']
 
-    def metatester(self, apikey, model):
+    def metatester(self, raw_url: str, model):
         """Generic tester."""
         modeldata = model.objects.first()
 
         # Useless test unless a model object is found
         self.assertIsNotNone(modeldata)
 
-        url = reverse(apikey, kwargs={'pk': modeldata.pk})
+        url = raw_url.format(pk=modeldata.pk)
 
         # Metadata is initially null
         self.assertIsNone(modeldata.metadata)
 
-        numstr = f'12{len(apikey)}'
+        numstr = f'12{len(raw_url)}'
+        target_key = f'abc-{numstr}'
+        target_value = f'xyz-{raw_url}-{numstr}'
 
-        self.patch(
-            url,
-            {'metadata': {f'abc-{numstr}': f'xyz-{apikey}-{numstr}'}},
-            expected_code=200,
-        )
+        # Create / update metadata entry (first try via old addresses)
+        data = {'metadata': {target_key: target_value}}
+        rsp = self.patch(url, data, expected_code=301)
+        self.patch(rsp.url, data, expected_code=200)
 
-        # Refresh
+        # Refresh and check that metadata has been updated
         modeldata.refresh_from_db()
-        self.assertEqual(
-            modeldata.get_metadata(f'abc-{numstr}'), f'xyz-{apikey}-{numstr}'
-        )
+        self.assertEqual(modeldata.get_metadata(target_key), target_value)
 
     def test_metadata(self):
         """Test all endpoints."""
-        for apikey, model in {
-            'api-location-metadata': StockLocation,
-            'api-stock-test-result-metadata': StockItemTestResult,
-            'api-stock-item-metadata': StockItem,
+        for raw_url, model in {
+            '/api/stock/location/{pk}/metadata/': StockLocation,
+            '/api/stock/test/{pk}/metadata/': StockItemTestResult,
+            '/api/stock/{pk}/metadata/': StockItem,
         }.items():
-            self.metatester(apikey, model)
+            self.metatester(raw_url, model)
 
 
 class StockApiPerformanceTest(StockAPITestCase, InvenTreeAPIPerformanceTestCase):
