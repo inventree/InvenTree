@@ -24,7 +24,7 @@ MIN_PYTHON_VERSION = (3, 11)
 
 logger = logging.getLogger('inventree')
 
-warning_txt = 'INVE-W3: Could not detect git information.'
+git_warning_txt = 'INVE-W3: Could not detect git information.'
 
 # Discover git
 try:
@@ -38,9 +38,9 @@ try:
     except NotGitRepository:
         # If we are running in a docker container, the repo may not be available, only logging as warning if not in docker
         if settings.DOCKER:
-            logger.info(warning_txt)
+            logger.info(git_warning_txt)
         else:
-            logger.warning(warning_txt)
+            logger.warning(git_warning_txt)
         main_repo = None
         main_commit = None
 
@@ -57,7 +57,7 @@ except ImportError:
     main_commit = None
     main_branch = None
 except Exception as exc:
-    logger.warning(warning_txt, exc_info=exc)
+    logger.warning(git_warning_txt, exc_info=exc)
     main_repo = None
     main_commit = None
     main_branch = None
