@@ -116,7 +116,7 @@ jobs:
           update: true
       - name: Check types
         run: |
-          ty check --python ${Python_ROOT_DIR}/bin/python3
+          ty check --python ${Python_ROOT_DIR}/bin/python3 src/backend
 
   mkdocs:
     name: Style [Documentation]
@@ -324,6 +324,16 @@ jobs:
           cd ${WRAPPER_NAME}
           invoke check-server
           coverage run -m unittest discover -s test/
+      - name: Prepare environment for performance tests
+        run: |
+          pip uninstall pytest-django -y
+          cd ${WRAPPER_NAME}
+          pip install .
+      - name: Performance Reporting
+        uses: CodSpeedHQ/action@972e3437949c89e1357ebd1a2dbc852fcbc57245 # pin@v4
+        with:
+          mode: simulation
+          run: pytest ./src/performance --codspeed
 
   coverage:
     name: Tests - DB [SQLite] + Coverage ${{ matrix.python_version }}
