@@ -6,7 +6,7 @@ INVENTREE_API_VERSION = 436
 
 INVENTREE_API_TEXT = """
 
-v436 -> 2025-12-18 : https://github.com/inventree/InvenTree/pull/11035
+v436 -> 2026-01-06 : https://github.com/inventree/InvenTree/pull/11035
     - Removes model-specific metadata endpoints and replaces them with redirects
     - Adds new generic /api/metadata/<model_name>/ endpoint to retrieve metadata for any model
 
