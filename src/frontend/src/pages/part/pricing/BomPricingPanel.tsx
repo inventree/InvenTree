@@ -54,7 +54,6 @@ function BomPieChart({
         thickness={80}
         withLabels={false}
         withLabelsLine={false}
-        tooltipDataSource='segment'
         chartLabel={t`Total Price`}
         valueFormatter={(value) => tooltipFormatter(value, currency)}
       />

@@ -1,13 +1,17 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 436
+INVENTREE_API_VERSION = 437
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v436 -> 2026-01-06 : https://github.com/inventree/InvenTree/pull/11084
+v437 -> 2026-01-07 : https://github.com/inventree/InvenTree/pull/11084
     - Add generic parameter support for the StockLocation model
+
+v436 -> 2026-01-06 : https://github.com/inventree/InvenTree/pull/11035
+    - Removes model-specific metadata endpoints and replaces them with redirects
+    - Adds new generic /api/metadata/<model_name>/ endpoint to retrieve metadata for any model
 
 v435 -> 2025-12-16 : https://github.com/inventree/InvenTree/pull/11030
     - Adds token refresh endpoint to auth API
