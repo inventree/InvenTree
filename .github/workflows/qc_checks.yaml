@@ -324,49 +324,6 @@ jobs:
           cd ${WRAPPER_NAME}
           invoke check-server
           coverage run -m unittest discover -s test/
-
-  api-perf:
-    name: Tests - API Performance
-    runs-on: codspeed-macro
-
-    needs: ["pre-commit", "paths-filter"]
-    if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true'
-
-    env:
-      WRAPPER_NAME: inventree-python
-      INVENTREE_DB_ENGINE: django.db.backends.sqlite3
-      INVENTREE_DB_NAME: ../inventree_unit_test_db.sqlite3
-      INVENTREE_ADMIN_USER: testuser
-      INVENTREE_ADMIN_PASSWORD: testpassword
-      INVENTREE_ADMIN_EMAIL: test@test.com
-      INVENTREE_PYTHON_TEST_SERVER: http://127.0.0.1:12345
-      INVENTREE_PYTHON_TEST_USERNAME: testuser
-      INVENTREE_PYTHON_TEST_PASSWORD: testpassword
-      INVENTREE_SITE_URL: http://127.0.0.1:12345
-      INVENTREE_DEBUG: False
-      INVENTREE_LOG_LEVEL: WARNING
-
-    steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # pin@v6.0.1
-        with:
-          persist-credentials: false
-      - name: Environment Setup
-        uses: ./.github/actions/setup
-        with:
-          apt-dependency: gettext poppler-utils
-          dev-install: true
-          update: true
-          npm: true
-        env:
-          node_version: '>=20.19.0'
-      - name: Download Python Code For `${WRAPPER_NAME}`
-        run: git clone --depth 1 https://github.com/inventree/${WRAPPER_NAME} ./${WRAPPER_NAME}
-      - name: Start InvenTree Server
-        run: |
-          invoke dev.delete-data -f
-          invoke dev.import-fixtures
-          invoke dev.server -a 127.0.0.1:12345 &
-          invoke wait
       - name: Prepare environment for performance tests
         run: |
           pip uninstall pytest-django -y
