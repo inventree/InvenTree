@@ -153,5 +153,7 @@ def test_search_performance(key: str):
     if key == 'all':
         for model_type in SEARCH_DATA:
             assert model_type in result
+            assert 'error' not in result[model_type]
     else:
         assert key in result
+        assert 'error' not in result[key]
