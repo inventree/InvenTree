@@ -772,6 +772,9 @@ class APISearchView(GenericAPIView):
         # Use GET method for the individual list views
         cloned_request = clone_request(request, 'GET')
 
+        # Fetch and cache all groups associated with the current user
+        groups = prefetch_rule_sets(request.user)
+
         for key, cls in self.get_result_types().items():
             # Only return results which are specifically requested
             if key in data:
@@ -802,20 +805,16 @@ class APISearchView(GenericAPIView):
                 # Check permissions and update results dict with particular query
                 model = view.serializer_class.Meta.model
 
-                # Fetch all groups associated with the current user
-                groups = prefetch_rule_sets(request.user)
+                if not check_user_permission(
+                    request.user, model, 'view', groups=groups
+                ):
+                    results[key] = {
+                        'error': _('User does not have permission to view this model')
+                    }
+                    continue
 
                 try:
-                    if check_user_permission(
-                        request.user, model, 'view', groups=groups
-                    ):
-                        results[key] = view.list(request, *args, **kwargs).data
-                    else:
-                        results[key] = {
-                            'error': _(
-                                'User does not have permission to view this model'
-                            )
-                        }
+                    results[key] = view.list(request, *args, **kwargs).data
                 except Exception as exc:
                     results[key] = {'error': str(exc)}
 
