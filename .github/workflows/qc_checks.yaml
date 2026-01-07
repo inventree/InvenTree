@@ -286,6 +286,9 @@ jobs:
 
     needs: ["pre-commit", "paths-filter"]
     if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true'
+    permissions:
+      contents: read
+      id-token: write
 
     env:
       WRAPPER_NAME: inventree-python
@@ -332,7 +335,7 @@ jobs:
       - name: Performance Reporting
         uses: CodSpeedHQ/action@972e3437949c89e1357ebd1a2dbc852fcbc57245 # pin@v4
         with:
-          mode: simulation
+          mode: walltime
           run: pytest ./src/performance --codspeed
 
   coverage:
@@ -389,7 +392,7 @@ jobs:
 
   performance:
     name: Tests - Performance
-    runs-on: ubuntu-24.04
+    runs-on: codspeed-macro
 
     needs: ["pre-commit", "paths-filter"]
     if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true'
@@ -414,10 +417,13 @@ jobs:
           apt-dependency: gettext poppler-utils
           dev-install: true
           update: true
+          npm: true
+        env:
+          node_version: '>=20.19.0'
       - name: Performance Reporting
         uses: CodSpeedHQ/action@972e3437949c89e1357ebd1a2dbc852fcbc57245 # pin@v4
         with:
-          mode: simulation
+          mode: walltime
           run: inv dev.test --pytest
 
   postgres:
