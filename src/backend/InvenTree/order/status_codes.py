@@ -121,8 +121,8 @@ class TransferOrderStatus(StatusCode):
     """Defines a set of status codes for a TransferOrder."""
 
     # Order status codes
-    PENDING = 10, _('Pending'), ColorEnum.secondary  # Order is pending (not yet placed)
-    PLACED = 20, _('Placed'), ColorEnum.primary  # Order has been placed
+    PENDING = 10, _('Pending'), ColorEnum.secondary  # Order is pending (not yet issued)
+    ISSUED = 20, _('Issued'), ColorEnum.primary  # Order has been issued
     ON_HOLD = 25, _('On Hold'), ColorEnum.warning  # Order is on hold
     COMPLETE = 30, _('Complete'), ColorEnum.success  # Order has been completed
     CANCELLED = 40, _('Cancelled'), ColorEnum.danger  # Order was cancelled
@@ -135,7 +135,7 @@ class TransferOrderStatusGroups:
     OPEN = [
         TransferOrderStatus.PENDING.value,
         TransferOrderStatus.ON_HOLD.value,
-        TransferOrderStatus.PLACED.value,
+        TransferOrderStatus.ISSUED.value,
     ]
 
     # Failed orders
