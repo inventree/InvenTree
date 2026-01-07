@@ -31,7 +31,7 @@ from InvenTree.mixins import ListCreateAPI
 from InvenTree.sso import sso_registration_enabled
 from plugin.serializers import MetadataSerializer
 from users.models import ApiToken
-from users.permissions import check_user_permission
+from users.permissions import check_user_permission, prefetch_rule_sets
 
 from .helpers import plugins_info
 from .helpers_email import is_email_configured
@@ -797,8 +797,13 @@ class APISearchView(GenericAPIView):
                 # Check permissions and update results dict with particular query
                 model = view.serializer_class.Meta.model
 
+                # Fetch all groups associated with the current user
+                groups = prefetch_rule_sets(request.user)
+
                 try:
-                    if check_user_permission(request.user, model, 'view'):
+                    if check_user_permission(
+                        request.user, model, 'view', groups=groups
+                    ):
                         results[key] = view.list(request, *args, **kwargs).data
                     else:
                         results[key] = {
