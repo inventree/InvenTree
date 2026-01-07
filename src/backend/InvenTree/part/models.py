@@ -225,7 +225,8 @@ class PartCategory(
     def prefetch_parts_parameters(self, cascade=True):
         """Prefectch parts parameters."""
         return (
-            self.get_parts(cascade=cascade)
+            self
+            .get_parts(cascade=cascade)
             .prefetch_related('parameters_list', 'parameters_list__template')
             .all()
         )
@@ -615,7 +616,8 @@ class Part(
                 if previous.image is not None and self.image != previous.image:
                     # Are there any (other) parts which reference the image?
                     n_refs = (
-                        Part.objects.filter(image=previous.image)
+                        Part.objects
+                        .filter(image=previous.image)
                         .exclude(pk=self.pk)
                         .count()
                     )
@@ -1040,7 +1042,8 @@ class Part(
             self.revision_of
             and self.revision
             and (
-                Part.objects.exclude(pk=self.pk)
+                Part.objects
+                .exclude(pk=self.pk)
                 .filter(revision_of=self.revision_of, revision=self.revision)
                 .exists()
             )
@@ -1049,7 +1052,8 @@ class Part(
 
         # Ensure unique across (Name, revision, IPN) (as specified)
         if (self.revision or self.IPN) and (
-            Part.objects.exclude(pk=self.pk)
+            Part.objects
+            .exclude(pk=self.pk)
             .filter(name=self.name, revision=self.revision, IPN=self.IPN)
             .exists()
         ):

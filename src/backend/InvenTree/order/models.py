@@ -432,7 +432,8 @@ class Order(
         Makes use of the overdue_filter() method to avoid code duplication
         """
         return (
-            self.__class__.objects.filter(pk=self.pk)
+            self.__class__.objects
+            .filter(pk=self.pk)
             .filter(self.__class__.overdue_filter())
             .exists()
         )
