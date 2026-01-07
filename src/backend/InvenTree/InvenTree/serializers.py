@@ -164,21 +164,10 @@ class FilterableSerializerMixin:
     def gather_filters(self, kwargs) -> None:
         """Gather filterable fields through introspection."""
         context = kwargs.get('context', {})
-        top_level_serializer = context.get('top_level_serializer', None)
         request = context.get('request', None) or getattr(self, 'request', None)
 
         # Gather query parameters from the request context
         query_params = dict(getattr(request, 'query_params', {})) if request else {}
-
-        is_top_level = (
-            top_level_serializer is None
-            or top_level_serializer == self.__class__.__name__
-        )
-
-        # Update the context to ensure that the top_level_serializer flag is removed for nested serializers
-        if top_level_serializer is None:
-            context['top_level_serializer'] = self.__class__.__name__
-            kwargs['context'] = context
 
         # Fast exit if this has already been done or would not have any effect
         if getattr(self, '_was_filtered', False) or not hasattr(self, 'fields'):
@@ -201,7 +190,7 @@ class FilterableSerializerMixin:
             # Optionally also look in query parameters
             # Note that we only do this for a top-level serializer, to avoid issues with nested serializers
             if (
-                is_top_level
+                request
                 and val is None
                 and self.filter_on_query
                 and v.get('filter_by_query', True)
