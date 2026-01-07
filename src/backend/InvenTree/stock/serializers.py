@@ -484,12 +484,11 @@ class StockItemSerializer(
                 queryset=part_models.Part.objects.annotate(
                     category_default_location=part_filters.annotate_default_location(
                         'category__'
-                    )
+                    ).select_related('pricing_data')
                 ).prefetch_related(None),
             ),
             'parent',
             'part__category',
-            'part__pricing_data',
             'supplier_part',
             'supplier_part__manufacturer_part',
             'customer',
