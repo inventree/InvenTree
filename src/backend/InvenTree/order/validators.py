@@ -22,6 +22,13 @@ def generate_next_return_order_reference():
     return ReturnOrder.generate_reference()
 
 
+def generate_next_transfer_order_reference():
+    """Generate the next available TransferOrder reference."""
+    from order.models import TransferOrder
+
+    return TransferOrder.generate_reference()
+
+
 def validate_sales_order_reference_pattern(pattern):
     """Validate the SalesOrder reference 'pattern' setting."""
     from order.models import SalesOrder
@@ -62,3 +69,10 @@ def validate_return_order_reference(value):
     from order.models import ReturnOrder
 
     ReturnOrder.validate_reference_field(value)
+
+
+def validate_transfer_order_reference(value):
+    """Validate that the ReturnOrder reference field matches the required pattern."""
+    from order.models import TransferOrder
+
+    TransferOrder.validate_reference_field(value)
