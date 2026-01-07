@@ -100,21 +100,6 @@ class StockLocationType(InvenTree.models.MetadataMixin, models.Model):
     )
 
 
-class StockLocationManager(TreeManager):
-    """Custom database manager for the StockLocation class.
-
-    StockLocation querysets will automatically select related fields for performance.
-    """
-
-    def get_queryset(self):
-        """Prefetch queryset to optimize db hits.
-
-        - Joins the StockLocationType by default for speedier icon access
-        """
-        # return super().get_queryset().select_related("location_type")
-        return super().get_queryset()
-
-
 class StockLocationReportContext(report.mixins.BaseReportContext):
     """Report context for the StockLocation model.
 
@@ -135,6 +120,7 @@ class StockLocationReportContext(report.mixins.BaseReportContext):
 
 class StockLocation(
     InvenTree.models.PluginValidationMixin,
+    InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     report.mixins.InvenTreeReportMixin,
     InvenTree.models.PathStringMixin,
@@ -151,7 +137,7 @@ class StockLocation(
 
     EXTRA_PATH_FIELDS = ['icon']
 
-    objects = StockLocationManager()
+    objects = TreeManager()
 
     class Meta:
         """Metaclass defines extra model properties."""

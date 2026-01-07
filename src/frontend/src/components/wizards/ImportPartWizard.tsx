@@ -419,8 +419,8 @@ const ParametersStep = ({
                   hideLabels
                   fieldDefinition={{
                     field_type: 'related field',
-                    model: ModelType.partparametertemplate,
-                    api_url: apiUrl(ApiEndpoints.part_parameter_template_list),
+                    model: ModelType.parametertemplate,
+                    api_url: apiUrl(ApiEndpoints.parameter_template_list),
                     disabled: p.on_category,
                     value: p.parameter_template,
                     onValueChange: (v) => {
@@ -677,13 +677,14 @@ export default function ImportPartWizard({
                   {} as Record<number, number>
                 );
                 const createParameters = useParameters.map((p) => ({
-                  part: importResult!.part_id,
+                  model_type: 'part',
+                  model_id: importResult!.part_id,
                   template: p.parameter_template,
                   data: p.value
                 }));
                 try {
                   await api.post(
-                    apiUrl(ApiEndpoints.part_parameter_list),
+                    apiUrl(ApiEndpoints.parameter_list),
                     createParameters
                   );
                   showNotification({

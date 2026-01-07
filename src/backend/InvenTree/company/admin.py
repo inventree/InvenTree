@@ -9,7 +9,6 @@ from .models import (
     Company,
     Contact,
     ManufacturerPart,
-    ManufacturerPartParameter,
     SupplierPart,
     SupplierPriceBreak,
 )
@@ -54,17 +53,6 @@ class ManufacturerPartAdmin(admin.ModelAdmin):
     search_fields = ['manufacturer__name', 'part__name', 'MPN']
 
     autocomplete_fields = ('part', 'manufacturer')
-
-
-@admin.register(ManufacturerPartParameter)
-class ManufacturerPartParameterAdmin(admin.ModelAdmin):
-    """Admin class for ManufacturerPartParameter model."""
-
-    list_display = ('manufacturer_part', 'name', 'value')
-
-    search_fields = ['manufacturer_part__manufacturer__name', 'name', 'value']
-
-    autocomplete_fields = ('manufacturer_part',)
 
 
 @admin.register(SupplierPriceBreak)

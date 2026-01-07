@@ -92,7 +92,9 @@ The following debugging / logging options are available:
 | Environment Variable | Configuration File | Description | Default |
 | --- | --- | --- | --- |
 | INVENTREE_DEBUG | debug | Enable [debug mode](./index.md#debug-mode) | False |
-| INVENTREE_DEBUG_QUERYCOUNT | debug_querycount | Enable [query count logging](https://github.com/bradmontgomery/django-querycount) in the terminal | False |
+| INVENTREE_DEBUG_QUERYCOUNT | debug_querycount | Enable support for [django-querycount](../develop/index.md#django-querycount) middleware. | False |
+| INVENTREE_DEBUG_SILK | debug_silk | Enable support for [django-silk](../develop/index.md#django-silk) profiling tool. | False |
+| INVENTREE_DEBUG_SILK_PROFILING | debug_silk_profiling | Enable detailed profiling in django-silk | False |
 | INVENTREE_DB_LOGGING | db_logging | Enable logging of database messages | False |
 | INVENTREE_LOG_LEVEL | log_level | Set level of logging to terminal | WARNING |
 | INVENTREE_JSON_LOG | json_log | log as json | False |
@@ -104,13 +106,7 @@ The following debugging / logging options are available:
 
 Enabling the `INVENTREE_DEBUG` setting will turn on [Django debug mode]({% include "django.html" %}/ref/settings/#debug). This mode is intended for development purposes, and should not be enabled in a production environment. Read more about [InvenTree debug mode](./index.md#debug-mode).
 
-### Query Count Logging
-
-Enabling the `INVENTREE_DEBUG_QUERYCOUNT` setting will log the number of database queries executed for each page load. This can be useful for identifying performance bottlenecks in the InvenTree server. Note that this setting is only available if `INVENTREE_DEBUG` is also enabled.
-
-### Database Logging
-
-Enabling the `INVENTREE_DB_LOGGING` setting will log all database queries to the terminal. This can be useful for debugging database-related issues.
+In debug mode, there are additional [profiling tools](../develop/index.md#profiling-tools) available to help developers analyze and optimize performance.
 
 ## Server Access
 
@@ -343,6 +339,10 @@ The following email settings are available:
 | INVENTREE_EMAIL_SENDER | email.sender | Sending email address | *Not specified* |
 | INVENTREE_EMAIL_PREFIX | email.prefix | Prefix for subject text | [InvenTree] |
 
+### Email Backend
+
+The default email implementation uses the Django STMP backend. This should be sufficient for most implementations, although other backends can be used if required. Note that selection of a different backend requires must use fully qualified module path, and requires advanced knowledge.
+
 ### Sender Email
 
 The "sender" email address is the address from which InvenTree emails are sent (by default) and must be specified for outgoing emails to function:
@@ -489,7 +489,7 @@ The INVENTREE_CUSTOMIZE environment variable must contain a json object with the
 the wanted values. Example:
 
 ```
-INVENTREE_CUSTOMIZE={"login_message":"Hallo Michi"}
+INVENTREE_CUSTOMIZE={"login_message":"Hello World"}
 ```
 
 This example sets a login message. Take care of the double quotes.

@@ -8,7 +8,7 @@ export type PanelType = {
   label: string;
   controls?: ReactNode;
   icon?: ReactNode;
-  content: ReactNode;
+  content?: ReactNode;
   hidden?: boolean;
   disabled?: boolean;
   showHeadline?: boolean;

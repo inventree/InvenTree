@@ -1,11 +1,20 @@
-import { expect } from '@playwright/test';
+import { type Page, expect } from '@playwright/test';
 import { createApi } from './api';
+
+export const clickOnParamFilter = async (page: Page, name: string) => {
+  const button = await page
+    .getByRole('button', { name: `${name} Not sorted` })
+    .getByRole('button')
+    .first();
+  await button.scrollIntoViewIfNeeded();
+  await button.click();
+};
 
 /**
  * Open the filter drawer for the currently visible table
  * @param page - The page object
  */
-export const openFilterDrawer = async (page) => {
+export const openFilterDrawer = async (page: Page) => {
   await page.getByLabel('table-select-filters').click();
 };
 
@@ -13,7 +22,7 @@ export const openFilterDrawer = async (page) => {
  * Close the filter drawer for the currently visible table
  * @param page - The page object
  */
-export const closeFilterDrawer = async (page) => {
+export const closeFilterDrawer = async (page: Page) => {
   await page.getByLabel('filter-drawer-close').click();
 };
 
@@ -22,7 +31,11 @@ export const closeFilterDrawer = async (page) => {
  * @param page - The page object
  * @param name - The name of the button to click
  */
-export const clickButtonIfVisible = async (page, name, timeout = 500) => {
+export const clickButtonIfVisible = async (
+  page: Page,
+  name: string,
+  timeout = 500
+) => {
   await page.waitForTimeout(timeout);
 
   if (await page.getByRole('button', { name }).isVisible()) {
@@ -34,14 +47,18 @@ export const clickButtonIfVisible = async (page, name, timeout = 500) => {
  * Clear all filters from the currently visible table
  * @param page - The page object
  */
-export const clearTableFilters = async (page) => {
+export const clearTableFilters = async (page: Page) => {
   await openFilterDrawer(page);
   await clickButtonIfVisible(page, 'Clear Filters', 250);
   await closeFilterDrawer(page);
   await page.waitForLoadState('networkidle');
 };
 
-export const setTableChoiceFilter = async (page, filter, value) => {
+export const setTableChoiceFilter = async (
+  page: Page,
+  filter: string,
+  value: string
+) => {
   await openFilterDrawer(page);
 
   await page.getByRole('button', { name: 'Add Filter' }).click();
@@ -103,7 +120,7 @@ export const navigate = async (
 /**
  * CLick on the 'tab' element with the provided name
  */
-export const loadTab = async (page, tabName, exact?) => {
+export const loadTab = async (page: Page, tabName: string, exact?: boolean) => {
   await page
     .getByLabel(/panel-tabs-/)
     .getByRole('tab', { name: tabName, exact: exact ?? false })
@@ -113,13 +130,13 @@ export const loadTab = async (page, tabName, exact?) => {
 };
 
 // Activate "table" view in certain contexts
-export const activateTableView = async (page) => {
+export const activateTableView = async (page: Page) => {
   await page.getByLabel('segmented-icon-control-table').click();
   await page.waitForLoadState('networkidle');
 };
 
 // Activate "calendar" view in certain contexts
-export const activateCalendarView = async (page) => {
+export const activateCalendarView = async (page: Page) => {
   await page.getByLabel('segmented-icon-control-calendar').click();
   await page.waitForLoadState('networkidle');
 };
@@ -127,7 +144,7 @@ export const activateCalendarView = async (page) => {
 /**
  * Perform a 'global search' on the provided page, for the provided query text
  */
-export const globalSearch = async (page, query) => {
+export const globalSearch = async (page: Page, query: string) => {
   await page.getByLabel('open-search').click();
   await page.getByLabel('global-search-input').clear();
   await page.getByPlaceholder('Enter search text').fill(query);
@@ -135,7 +152,7 @@ export const globalSearch = async (page, query) => {
 };
 
 export const deletePart = async (name: string) => {
-  const api = await createApi();
+  const api = await createApi({});
   const parts = await api
     .get('part/', {
       params: { search: name }

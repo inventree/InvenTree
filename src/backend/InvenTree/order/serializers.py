@@ -4,16 +4,7 @@ from decimal import Decimal
 
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import models, transaction
-from django.db.models import (
-    BooleanField,
-    Case,
-    ExpressionWrapper,
-    F,
-    Prefetch,
-    Q,
-    Value,
-    When,
-)
+from django.db.models import BooleanField, Case, ExpressionWrapper, F, Q, Value, When
 from django.db.models.functions import Coalesce, Greatest
 from django.utils.translation import gettext_lazy as _
 
@@ -22,12 +13,12 @@ from rest_framework.serializers import ValidationError
 from sql_util.utils import SubqueryCount, SubquerySum
 
 import build.serializers
+import common.filters
 import order.models
 import part.filters as part_filters
 import part.models as part_models
 import stock.models
 import stock.serializers
-from common.serializers import ProjectCodeSerializer
 from company.serializers import (
     AddressBriefSerializer,
     CompanyBriefSerializer,
@@ -45,7 +36,6 @@ from InvenTree.helpers import (
 )
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.serializers import (
-    FilterableCharField,
     FilterableSerializerMixin,
     InvenTreeCurrencySerializer,
     InvenTreeDecimalField,
@@ -140,6 +130,7 @@ class AbstractOrderSerializer(
             source='contact', many=False, read_only=True, allow_null=True
         ),
         True,
+        prefetch_fields=['contact'],
     )
 
     # Detail for responsible field
@@ -148,26 +139,11 @@ class AbstractOrderSerializer(
             source='responsible', read_only=True, allow_null=True, many=False
         ),
         True,
+        prefetch_fields=['responsible'],
     )
 
-    project_code_label = enable_filter(
-        FilterableCharField(
-            source='project_code.code',
-            read_only=True,
-            label='Project Code Label',
-            allow_null=True,
-        ),
-        True,
-        filter_name='project_code_detail',
-    )
-
-    # Detail for project code field
-    project_code_detail = enable_filter(
-        ProjectCodeSerializer(
-            source='project_code', read_only=True, many=False, allow_null=True
-        ),
-        True,
-    )
+    project_code_label = common.filters.enable_project_label_filter()
+    project_code_detail = common.filters.enable_project_code_filter()
 
     # Detail for address field
     address_detail = enable_filter(
@@ -175,7 +151,10 @@ class AbstractOrderSerializer(
             source='address', many=False, read_only=True, allow_null=True
         ),
         True,
+        prefetch_fields=['address'],
     )
+
+    parameters = common.filters.enable_parameters_filter()
 
     # Boolean field indicating if this order is overdue (Note: must be annotated)
     overdue = serializers.BooleanField(read_only=True, allow_null=True)
@@ -240,6 +219,7 @@ class AbstractOrderSerializer(
             'project_code_detail',
             'project_code_label',
             'responsible_detail',
+            'parameters',
             *extra_fields,
         ]
 
@@ -309,23 +289,9 @@ class AbstractLineItemSerializer(FilterableSerializerMixin, serializers.Serializ
         required=False, allow_null=True, label=_('Target Date')
     )
 
-    project_code_label = enable_filter(
-        FilterableCharField(
-            source='project_code.code',
-            read_only=True,
-            label='Project Code Label',
-            allow_null=True,
-        ),
-        True,
-        filter_name='project_code_detail',
-    )
+    project_code_label = common.filters.enable_project_label_filter()
 
-    project_code_detail = enable_filter(
-        ProjectCodeSerializer(
-            source='project_code', read_only=True, many=False, allow_null=True
-        ),
-        True,
-    )
+    project_code_detail = common.filters.enable_project_code_filter()
 
 
 class AbstractExtraLineSerializer(
@@ -361,24 +327,9 @@ class AbstractExtraLineSerializer(
 
     price_currency = InvenTreeCurrencySerializer()
 
-    project_code_label = enable_filter(
-        FilterableCharField(
-            source='project_code.code',
-            read_only=True,
-            label='Project Code Label',
-            allow_null=True,
-        ),
-        True,
-        filter_name='project_code_detail',
-    )
+    project_code_label = common.filters.enable_project_label_filter()
 
-    # Detail for project code field
-    project_code_detail = enable_filter(
-        ProjectCodeSerializer(
-            source='project_code', read_only=True, many=False, allow_null=True
-        ),
-        True,
-    )
+    project_code_detail = common.filters.enable_project_code_filter()
 
 
 class AbstractExtraLineMeta:
@@ -460,6 +411,8 @@ class PurchaseOrderSerializer(
             )
         )
 
+        queryset = queryset.prefetch_related('created_by')
+
         return queryset
 
     supplier_name = serializers.CharField(
@@ -469,7 +422,8 @@ class PurchaseOrderSerializer(
     supplier_detail = enable_filter(
         CompanyBriefSerializer(
             source='supplier', many=False, read_only=True, allow_null=True
-        )
+        ),
+        prefetch_fields=['supplier'],
     )
 
 
@@ -602,26 +556,16 @@ class PurchaseOrderLineItemSerializer(
         - "overdue" status (boolean field)
         """
         queryset = queryset.prefetch_related(
-            Prefetch(
-                'part__part',
-                queryset=part_models.Part.objects.annotate(
-                    category_default_location=part_filters.annotate_default_location(
-                        'category__'
-                    )
-                ).prefetch_related(None),
-            )
-        )
-
-        queryset = queryset.prefetch_related(
             'order',
             'order__responsible',
             'order__stock_items',
-            'part__tags',
+            'part',
+            'part__part',
+            'part__part__pricing_data',
+            'part__part__default_location',
             'part__supplier',
             'part__manufacturer_part',
             'part__manufacturer_part__manufacturer',
-            'part__part__pricing_data',
-            'part__part__tags',
         )
 
         queryset = queryset.annotate(
@@ -676,6 +620,7 @@ class PurchaseOrderLineItemSerializer(
         PartBriefSerializer(
             source='get_base_part', many=False, read_only=True, allow_null=True
         ),
+        False,
         filter_name='part_detail',
     )
 
@@ -683,6 +628,7 @@ class PurchaseOrderLineItemSerializer(
         SupplierPartSerializer(
             source='part', brief=True, many=False, read_only=True, allow_null=True
         ),
+        False,
         filter_name='part_detail',
     )
 
@@ -696,8 +642,12 @@ class PurchaseOrderLineItemSerializer(
         default=True,
     )
 
-    destination_detail = stock.serializers.LocationBriefSerializer(
-        source='get_destination', read_only=True, allow_null=True
+    destination_detail = enable_filter(
+        stock.serializers.LocationBriefSerializer(
+            source='get_destination', read_only=True, allow_null=True
+        ),
+        True,
+        prefetch_fields=['destination', 'order__destination'],
     )
 
     purchase_price_currency = InvenTreeCurrencySerializer(
@@ -710,8 +660,16 @@ class PurchaseOrderLineItemSerializer(
         )
     )
 
-    build_order_detail = build.serializers.BuildSerializer(
-        source='build_order', read_only=True, allow_null=True, many=False
+    build_order_detail = enable_filter(
+        build.serializers.BuildSerializer(
+            source='build_order', read_only=True, allow_null=True, many=False
+        ),
+        True,
+        prefetch_fields=[
+            'build_order__responsible',
+            'build_order__issued_by',
+            'build_order__part',
+        ],
     )
 
     merge_items = serializers.BooleanField(
@@ -1114,7 +1072,8 @@ class SalesOrderSerializer(
     customer_detail = enable_filter(
         CompanyBriefSerializer(
             source='customer', many=False, read_only=True, allow_null=True
-        )
+        ),
+        prefetch_fields=['customer'],
     )
 
     shipments_count = serializers.IntegerField(
@@ -1263,15 +1222,26 @@ class SalesOrderLineItemSerializer(
     order_detail = enable_filter(
         SalesOrderSerializer(
             source='order', many=False, read_only=True, allow_null=True
-        )
+        ),
+        prefetch_fields=[
+            'order__created_by',
+            'order__responsible',
+            'order__address',
+            'order__project_code',
+            'order__contact',
+        ],
     )
+
     part_detail = enable_filter(
-        PartBriefSerializer(source='part', many=False, read_only=True, allow_null=True)
+        PartBriefSerializer(source='part', many=False, read_only=True, allow_null=True),
+        prefetch_fields=['part__pricing_data'],
     )
+
     customer_detail = enable_filter(
         CompanyBriefSerializer(
             source='order.customer', many=False, read_only=True, allow_null=True
-        )
+        ),
+        prefetch_fields=['order__customer'],
     )
 
     # Annotated fields
@@ -1328,9 +1298,6 @@ class SalesOrderShipmentSerializer(
     @staticmethod
     def annotate_queryset(queryset):
         """Annotate the queryset with extra information."""
-        # Prefetch related objects
-        queryset = queryset.prefetch_related('order', 'order__customer', 'allocations')
-
         queryset = queryset.annotate(allocated_items=SubqueryCount('allocations'))
 
         return queryset
@@ -1344,6 +1311,7 @@ class SalesOrderShipmentSerializer(
             source='checked_by', many=False, read_only=True, allow_null=True
         ),
         True,
+        prefetch_fields=['checked_by'],
     )
 
     order_detail = enable_filter(
@@ -1351,6 +1319,13 @@ class SalesOrderShipmentSerializer(
             source='order', read_only=True, allow_null=True, many=False
         ),
         True,
+        prefetch_fields=[
+            'order',
+            'order__customer',
+            'order__created_by',
+            'order__responsible',
+            'order__project_code',
+        ],
     )
 
     customer_detail = enable_filter(
@@ -1358,6 +1333,7 @@ class SalesOrderShipmentSerializer(
             source='order.customer', many=False, read_only=True, allow_null=True
         ),
         False,
+        prefetch_fields=['order__customer'],
     )
 
     shipment_address_detail = enable_filter(
@@ -1365,6 +1341,7 @@ class SalesOrderShipmentSerializer(
             source='shipment_address', many=False, read_only=True, allow_null=True
         ),
         True,
+        prefetch_fields=['shipment_address'],
     )
 
 
@@ -1957,7 +1934,8 @@ class ReturnOrderSerializer(
     customer_detail = enable_filter(
         CompanyBriefSerializer(
             source='customer', many=False, read_only=True, allow_null=True
-        )
+        ),
+        prefetch_fields=['customer'],
     )
 
 
@@ -2117,7 +2095,14 @@ class ReturnOrderLineItemSerializer(
     order_detail = enable_filter(
         ReturnOrderSerializer(
             source='order', many=False, read_only=True, allow_null=True
-        )
+        ),
+        prefetch_fields=[
+            'order__created_by',
+            'order__responsible',
+            'order__address',
+            'order__project_code',
+            'order__contact',
+        ],
     )
 
     quantity = serializers.FloatField(
@@ -2127,7 +2112,8 @@ class ReturnOrderLineItemSerializer(
     item_detail = enable_filter(
         stock.serializers.StockItemSerializer(
             source='item', many=False, read_only=True, allow_null=True
-        )
+        ),
+        prefetch_fields=['item__supplier_part'],
     )
 
     part_detail = enable_filter(

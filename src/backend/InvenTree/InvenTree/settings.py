@@ -53,7 +53,7 @@ INVENTREE_BASE_URL = 'https://inventree.org'
 INVENTREE_NEWS_URL = f'{INVENTREE_BASE_URL}/news/feed.atom'
 
 # Determine if we are running in "test" mode e.g. "manage.py test"
-TESTING = 'test' in sys.argv or 'TESTING' in os.environ
+TESTING = 'test' in sys.argv or 'TESTING' in os.environ or 'pytest' in sys.argv
 
 if TESTING:
     # Use a weaker password hasher for testing (improves testing speed)
@@ -367,6 +367,21 @@ MIDDLEWARE = CONFIG.get(
     ],
 )
 
+# In DEBUG mode, add support for django-silk
+# Ref: https://silk.readthedocs.io/en/latest/
+DJANGO_SILK_ENABLED = DEBUG and get_boolean_setting(  # pragma: no cover
+    'INVENTREE_DEBUG_SILK', 'debug_silk', False
+)
+
+if DJANGO_SILK_ENABLED:  # pragma: no cover
+    MIDDLEWARE.append('silk.middleware.SilkyMiddleware')
+    INSTALLED_APPS.append('silk')
+
+    # Optionally enable the silk python profiler
+    SILKY_PYTHON_PROFILER = SILKY_PYTHON_PROFILER_BINARY = get_boolean_setting(
+        'INVENTREE_DEBUG_SILK_PROFILING', 'debug_silk_profiling', False
+    )
+
 # In DEBUG mode, add support for django-querycount
 # Ref: https://github.com/bradmontgomery/django-querycount
 if DEBUG and get_boolean_setting(  # pragma: no cover
@@ -577,7 +592,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
-        'rest_framework.permissions.DjangoModelPermissions',
+        'InvenTree.permissions.ModelPermission',
         'InvenTree.permissions.RolePermission',
         'InvenTree.permissions.InvenTreeTokenMatchesOASRequirements',
     ],
@@ -1017,11 +1032,13 @@ EXCHANGE_BACKEND = 'InvenTree.exchange.InvenTreeExchange'
 # region email
 # Email configuration options
 EMAIL_BACKEND = 'InvenTree.backends.InvenTreeMailLoggingBackend'
+
 INTERNAL_EMAIL_BACKEND = get_setting(
     'INVENTREE_EMAIL_BACKEND',
     'email.backend',
     'django.core.mail.backends.smtp.EmailBackend',
 )
+
 # SMTP backend
 EMAIL_HOST = get_setting('INVENTREE_EMAIL_HOST', 'email.host', '')
 EMAIL_PORT = get_setting('INVENTREE_EMAIL_PORT', 'email.port', 25, typecast=int)
