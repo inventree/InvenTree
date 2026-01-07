@@ -2162,3 +2162,91 @@ class ReturnOrderExtraLineSerializer(
             source='order', many=False, read_only=True, allow_null=True
         )
     )
+
+
+@register_importer()
+class TransferOrderSerializer(
+    NotesFieldMixin,
+    InvenTreeCustomStatusSerializerMixin,
+    AbstractOrderSerializer,
+    InvenTreeModelSerializer,
+):
+    """Serializer for a TransferOrder object."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = order.models.TransferOrder
+        fields = AbstractOrderSerializer.order_fields([
+            'take_from',
+            'destination',
+            'consume',
+            'complete_date',
+        ])
+        read_only_fields = ['creation_date']
+        extra_kwargs = {}
+
+    def skip_create_fields(self):
+        """Skip these fields when instantiating a new object."""
+        fields = super().skip_create_fields()
+
+        return [*fields, 'duplicate']
+
+    # TODO:
+    # @staticmethod
+    # def annotate_queryset(queryset):
+    #     """Custom annotation for the serializer queryset."""
+    #     queryset = AbstractOrderSerializer.annotate_queryset(queryset)
+
+    #     queryset = queryset.annotate(
+    #         completed_lines=SubqueryCount(
+    #             'lines', filter=~Q(outcome=ReturnOrderLineStatus.PENDING.value)
+    #         )
+    #     )
+
+    #     queryset = queryset.annotate(
+    #         overdue=Case(
+    #             When(
+    #                 order.models.ReturnOrder.overdue_filter(),
+    #                 then=Value(True, output_field=BooleanField()),
+    #             ),
+    #             default=Value(False, output_field=BooleanField()),
+    #         )
+    #     )
+
+    #     return queryset
+
+
+class TransferOrderHoldSerializer(OrderAdjustSerializer):
+    """Serializer for placing a TransferOrder on hold."""
+
+    def save(self):
+        """Save the serializer to 'hold' the order."""
+        self.order.hold_order()
+
+
+class TransferOrderIssueSerializer(OrderAdjustSerializer):
+    """Serializer for issuing a transfer order."""
+
+    def save(self):
+        """Save the serializer to 'issue' the order."""
+        self.order.issue_order()
+
+
+class TransferOrderCancelSerializer(OrderAdjustSerializer):
+    """Serializer for cancelling a TransferOrder."""
+
+    def save(self):
+        """Save the serializer to 'cancel' the order."""
+        if not self.order.can_cancel:
+            raise ValidationError(_('Order cannot be cancelled'))
+
+        self.order.cancel_order()
+
+
+class TransferOrderCompleteSerializer(OrderAdjustSerializer):
+    """Serializer for completing a transfer order."""
+
+    def save(self):
+        """Save the serializer to 'complete' the order."""
+        self.order.complete_order()

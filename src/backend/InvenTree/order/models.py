@@ -45,7 +45,12 @@ from InvenTree.fields import (
 )
 from InvenTree.helpers import decimal2string, pui_url
 from InvenTree.helpers_model import notify_responsible
-from order.events import PurchaseOrderEvents, ReturnOrderEvents, SalesOrderEvents
+from order.events import (
+    PurchaseOrderEvents,
+    ReturnOrderEvents,
+    SalesOrderEvents,
+    TransferOrderEvents,
+)
 from order.status_codes import (
     PurchaseOrderStatus,
     PurchaseOrderStatusGroups,
@@ -3124,21 +3129,21 @@ class TransferOrder(Order):
 
         return defaults
 
-    # TODO:
-    # def subscribed_users(self) -> list[User]:
-    #     """Return a list of users subscribed to this TransferOrder.
+    def subscribed_users(self) -> list[User]:
+        """Return a list of users subscribed to this TransferOrder.
 
-    #     By this, we mean users to are interested in any of the parts associated with this order.
-    #     """
-    #     subscribed_users = set()
+        By this, we mean users to are interested in any of the parts associated with this order.
+        """
+        subscribed_users = set()
 
-    #     for line in self.lines.all():
-    #         if line.part and line.part.part:
-    #             # Add the part to the list of subscribed users
-    #             for user in line.part.part.get_subscribers():
-    #                 subscribed_users.add(user)
+        # TODO: add these when I implement line items for the Transfer Order
+        # for line in self.lines.all():
+        #     if line.part and line.part.part:
+        #         # Add the part to the list of subscribed users
+        #         for user in line.part.part.get_subscribers():
+        #             subscribed_users.add(user)
 
-    #     return list(subscribed_users)
+        return list(subscribed_users)
 
     def __str__(self):
         """Render a string representation of this TransferOrder."""
@@ -3199,3 +3204,128 @@ class TransferOrder(Order):
         verbose_name=_('Completion Date'),
         help_text=_('Date order was completed'),
     )
+
+    # region state changes
+    def _action_issue(self, *args, **kwargs):
+        """Marks the TransferOrder as ISSUED.
+
+        Order must be currently PENDING.
+        """
+        if self.can_issue:
+            self.status = TransferOrderStatus.ISSUED.value
+            self.issue_date = InvenTree.helpers.current_date()
+            self.save()
+
+            trigger_event(TransferOrderEvents.ISSUED, id=self.pk)
+
+            # Notify users that the order has been issued
+            notify_responsible(
+                self,
+                TransferOrder,
+                exclude=self.created_by,
+                content=InvenTreeNotificationBodies.NewOrder,
+                extra_users=self.subscribed_users(),
+            )
+
+    def _action_complete(self, *args, **kwargs):
+        """Marks the TransferOrder as COMPLETE.
+
+        Order must be currently ISSUED.
+        """
+        if self.status == TransferOrderStatus.ISSUED:
+            self.status = TransferOrderStatus.COMPLETE.value
+            self.complete_date = InvenTree.helpers.current_date()
+
+            self.save()
+
+            trigger_event(TransferOrderEvents.COMPLETED, id=self.pk)
+
+    @property
+    def can_issue(self) -> bool:
+        """Return True if this order can be issued."""
+        return self.status in [
+            TransferOrderStatus.PENDING.value,
+            TransferOrderStatus.ON_HOLD.value,
+        ]
+
+    @transaction.atomic
+    def issue_order(self):
+        """Attempt to transition to PLACED status."""
+        return self.handle_transition(
+            self.status, TransferOrderStatus.ISSUED.value, self, self._action_issue
+        )
+
+    @transaction.atomic
+    def complete_order(self):
+        """Attempt to transition to COMPLETE status."""
+        return self.handle_transition(
+            self.status, TransferOrderStatus.COMPLETE.value, self, self._action_complete
+        )
+
+    @transaction.atomic
+    def hold_order(self):
+        """Attempt to transition to ON_HOLD status."""
+        return self.handle_transition(
+            self.status, TransferOrderStatus.ON_HOLD.value, self, self._action_hold
+        )
+
+    @transaction.atomic
+    def cancel_order(self):
+        """Attempt to transition to CANCELLED status."""
+        return self.handle_transition(
+            self.status, TransferOrderStatus.CANCELLED.value, self, self._action_cancel
+        )
+
+    @property
+    def is_pending(self) -> bool:
+        """Return True if the TransferOrder is 'pending'."""
+        return self.status == TransferOrderStatus.PENDING.value
+
+    @property
+    def is_open(self) -> bool:
+        """Return True if the TransferOrder is 'open'."""
+        return self.status in TransferOrderStatusGroups.OPEN
+
+    @property
+    def can_cancel(self) -> bool:
+        """A TransferOrder can only be cancelled under the following circumstances.
+
+        - Status is ISSUED
+        - Status is PENDING (or ON_HOLD)
+        """
+        return self.status in TransferOrderStatusGroups.OPEN
+
+    def _action_cancel(self, *args, **kwargs):
+        """Marks the TransferOrder as CANCELLED."""
+        if self.can_cancel:
+            self.status = TransferOrderStatus.CANCELLED.value
+            self.save()
+
+            trigger_event(TransferOrderEvents.CANCELLED, id=self.pk)
+
+            # Notify users that the order has been canceled
+            notify_responsible(
+                self,
+                TransferOrder,
+                exclude=self.created_by,
+                content=InvenTreeNotificationBodies.OrderCanceled,
+                extra_users=self.subscribed_users(),
+            )
+
+    @property
+    def can_hold(self) -> bool:
+        """Return True if this order can be placed on hold."""
+        return self.status in [
+            TransferOrderStatus.PENDING.value,
+            TransferOrderStatus.ISSUED.value,
+        ]
+
+    def _action_hold(self, *args, **kwargs):
+        """Mark this transfer order as 'on hold'."""
+        if self.can_hold:
+            self.status = TransferOrderStatus.ON_HOLD.value
+            self.save()
+
+            trigger_event(TransferOrderEvents.HOLD, id=self.pk)
+
+    # endregion
