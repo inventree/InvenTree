@@ -21,6 +21,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import empty
 from rest_framework.mixins import ListModelMixin
+from rest_framework.permissions import SAFE_METHODS
 from rest_framework.serializers import DecimalField
 from rest_framework.utils import model_meta
 from taggit.serializers import TaggitSerializer, TagListSerializerField
@@ -229,7 +230,7 @@ class FilterableSerializerMixin:
         # Skip filtering for a write requests - all fields should be present for data creation
         if request := self.context.get('request', None):
             if method := getattr(request, 'method', None):
-                if str(method).lower() in ['post', 'put', 'patch'] and not is_exporting:
+                if method not in SAFE_METHODS and not is_exporting:
                     return
 
         # Throw out fields which are not requested (either by default or explicitly)

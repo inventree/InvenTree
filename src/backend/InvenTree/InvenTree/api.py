@@ -17,6 +17,7 @@ from django_q.models import OrmQ
 from drf_spectacular.utils import OpenApiParameter, OpenApiResponse, extend_schema
 from rest_framework import serializers
 from rest_framework.generics import GenericAPIView
+from rest_framework.request import clone_request
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 from rest_framework.views import APIView
@@ -767,6 +768,10 @@ class APISearchView(GenericAPIView):
 
         search_filters = self.get_result_filters()
 
+        # Create a clone of the request object to modify
+        # Use GET method for the individual list views
+        cloned_request = clone_request(request, 'GET')
+
         for key, cls in self.get_result_types().items():
             # Only return results which are specifically requested
             if key in data:
@@ -790,8 +795,8 @@ class APISearchView(GenericAPIView):
                 view = cls()
 
                 # Override regular query params with specific ones for this search request
-                request._request.GET = params
-                view.request = request
+                cloned_request._request.GET = params
+                view.request = cloned_request
                 view.format_kwarg = 'format'
 
                 # Check permissions and update results dict with particular query
