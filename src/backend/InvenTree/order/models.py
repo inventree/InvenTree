@@ -54,6 +54,8 @@ from order.status_codes import (
     ReturnOrderStatusGroups,
     SalesOrderStatus,
     SalesOrderStatusGroups,
+    TransferOrderStatus,
+    TransferOrderStatusGroups,
 )
 from part import models as PartModels
 from plugin.events import trigger_event
@@ -3071,4 +3073,129 @@ class ReturnOrderExtraLine(OrderExtraLine):
         related_name='extra_lines',
         verbose_name=_('Order'),
         help_text=_('Return Order'),
+    )
+
+
+class TransferOrder(Order):
+    """A Transfer Order represents a request to transfer stock from one location to another. It provides a place to queue and review changes before execution.
+
+    Attributes:
+        take_from: The stock location to source items from (or null to )
+        destination: The stock location to move items to
+        consume: Rather than move the stock, "consume" it. Helpful if you want to queue up removing stock from inventory
+    """
+
+    # Global setting for specifying reference pattern
+    REFERENCE_PATTERN_SETTING = 'TRANSFERORDER_REFERENCE_PATTERN'
+    # REQUIRE_RESPONSIBLE_SETTING = 'PURCHASEORDER_REQUIRE_RESPONSIBLE'
+    STATUS_CLASS = TransferOrderStatus
+    # UNLOCK_SETTING = 'PURCHASEORDER_EDIT_COMPLETED_ORDERS'
+
+    class Meta:
+        """Model meta options."""
+
+        verbose_name = _('Transfer Order')
+
+    # TODO:
+    # def report_context(self) -> TransferOrderReportContext:
+    #     """Return report context data for this TransferOrder."""
+    #     return {**super().report_context(), 'supplier': self.supplier}
+
+    def get_absolute_url(self) -> str:
+        """Get the 'web' URL for this order."""
+        return pui_url(f'/stock/transfer-order/{self.pk}')
+
+    @staticmethod
+    def get_api_url() -> str:
+        """Return the API URL associated with the TransferOrder model."""
+        return reverse('api-po-list')
+
+    @classmethod
+    def get_status_class(cls):
+        """Return the TransferOrderStatus class."""
+        return TransferOrderStatusGroups
+
+    @classmethod
+    def api_defaults(cls, request=None):
+        """Return default values for this model when issuing an API OPTIONS request."""
+        defaults = {
+            'reference': order.validators.generate_next_transfer_order_reference()
+        }
+
+        return defaults
+
+    # TODO:
+    # def subscribed_users(self) -> list[User]:
+    #     """Return a list of users subscribed to this TransferOrder.
+
+    #     By this, we mean users to are interested in any of the parts associated with this order.
+    #     """
+    #     subscribed_users = set()
+
+    #     for line in self.lines.all():
+    #         if line.part and line.part.part:
+    #             # Add the part to the list of subscribed users
+    #             for user in line.part.part.get_subscribers():
+    #                 subscribed_users.add(user)
+
+    #     return list(subscribed_users)
+
+    def __str__(self):
+        """Render a string representation of this TransferOrder."""
+        return f'{self.reference} - {self.take_from.name if self.take_from else _("deleted")} --> {self.destination.name if self.destination else _("deleted")}'
+
+    reference = models.CharField(
+        unique=True,
+        max_length=64,
+        blank=False,
+        help_text=_('Transfer Order Reference'),
+        verbose_name=_('Reference'),
+        default=order.validators.generate_next_transfer_order_reference,
+        validators=[order.validators.validate_transfer_order_reference],
+    )
+
+    status = InvenTreeCustomStatusModelField(
+        default=TransferOrderStatus.PENDING.value,
+        choices=TransferOrderStatus.items(),
+        status_class=TransferOrderStatus,
+        verbose_name=_('Status'),
+        help_text=_('Transfer order status'),
+    )
+
+    @property
+    def status_text(self):
+        """Return the text representation of the status field."""
+        return TransferOrderStatus.text(self.status)
+
+    take_from = models.ForeignKey(
+        'stock.StockLocation',
+        verbose_name=_('Source Location'),
+        on_delete=models.SET_NULL,
+        related_name='sourcing_transferes',
+        blank=True,
+        null=True,
+        help_text=_('Source for transferred items'),
+    )
+
+    destination = models.ForeignKey(
+        'stock.StockLocation',
+        verbose_name=_('Destination Location'),
+        on_delete=models.SET_NULL,
+        related_name='incoming_transferes',
+        blank=True,
+        null=True,
+        help_text=_('Destination for transferred items'),
+    )
+
+    consume = models.BooleanField(
+        default=False,
+        verbose_name=_('Consume Stock'),
+        help_text=_('Rather than transfer the stock to the destination, consume it'),
+    )
+
+    complete_date = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Completion Date'),
+        help_text=_('Date order was completed'),
     )
