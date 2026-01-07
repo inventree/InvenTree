@@ -484,7 +484,7 @@ class StockItemSerializer(
                 queryset=part_models.Part.objects.annotate(
                     category_default_location=part_filters.annotate_default_location(
                         'category__'
-                    ).select_related('pricing_data')
+                    )
                 ).prefetch_related(None),
             ),
             'parent',
@@ -495,7 +495,7 @@ class StockItemSerializer(
             'belongs_to',
             'sales_order',
             'consumed_by',
-        ).select_related('part')
+        ).select_related('part', 'part__pricing_data')
 
         # Annotate the queryset with the total allocated to sales orders
         queryset = queryset.annotate(
