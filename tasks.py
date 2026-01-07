@@ -1149,6 +1149,144 @@ def delete_data(c, force: bool = False, migrate: bool = False):
         manage(c, 'flush')
 
 
+@task(
+    help={
+        'force': 'Force deletion without confirmation',
+        'migrate': 'Run migrations before deleting data (default = False)',
+    }
+)
+def delete_partial(c, force: bool = False, migrate: bool = False):
+    """Delete all database records except user data, account data, authorization groups, tenant data, tax data, settings, templates, part parameters, and location types.
+
+    Warning: This will delete most records in the database!!
+
+    The following data will be PRESERVED:
+    - User accounts and profiles (auth.user, users.*)
+    - Authorization groups and permissions (auth.group, auth.permission)
+    - Account/authentication data (account.*, socialaccount.*)
+    - Tenant data (tenant.tenant)
+    - Tax configurations (tax.taxconfiguration)
+    - Server and system settings (common.inventreesetting, common.inventreeusersetting, common.projectcode)
+    - Plugin configurations and settings (plugin.*)
+    - Report and label templates (report.reporttemplate, report.labeltemplate, report.reportsnippet, report.reportasset)
+    - Part parameters (common.parametertemplate, common.parameter, part.partcategoryparametertemplate)
+    - Stock location types (stock.stocklocationtype)
+
+    All other data (parts, stock items, stock locations, orders, companies, builds, etc.) will be DELETED!
+    """
+    info('Deleting partial data from InvenTree database...')
+    info(
+        'Preserving: user data, account data, groups, tenants, tax configurations, settings, templates, part parameters, and location types'
+    )
+
+    if migrate:
+        manage(c, 'migrate --run-syncdb')
+
+    if not force:
+        response = input(
+            'Warning: This will delete all data except users, accounts, groups, tenants, tax data, settings, templates, part parameters, and location types. Continue? [y/N]: '
+        )
+        response = str(response).strip().lower()
+
+        if response not in ['y', 'yes']:
+            error('Cancelled partial delete operation')
+            sys.exit(1)
+
+    # Import Django to access models
+    import django
+    from django.apps import apps as django_apps
+
+    # Setup Django if not already done
+    sys.path.insert(0, str(manage_py_dir()))
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'InvenTree.settings')
+    django.setup()
+
+    # Models to preserve (exclude from deletion)
+    preserve_models = [
+        # User and authentication
+        'auth.user',
+        'auth.group',
+        'auth.permission',
+        'users.owner',
+        'users.ruleset',
+        'users.apitoken',
+        'users.userprofile',
+        # Account and social auth
+        'account.emailaddress',
+        'account.emailconfirmation',
+        'socialaccount.socialaccount',
+        'socialaccount.socialapp',
+        'socialaccount.socialtoken',
+        'socialaccount.socialapp_sites',
+        # Tenant
+        'tenant.tenant',
+        # Tax
+        'tax.taxconfiguration',
+        # Server and system settings
+        'common.inventreesetting',
+        'common.inventreeusersetting',
+        'common.projectcode',
+        # Plugin configuration and settings
+        'plugin.pluginconfig',
+        'plugin.pluginsetting',
+        'plugin.pluginusersetting',
+        # Report and label templates
+        'report.reporttemplate',
+        'report.labeltemplate',
+        'report.reportsnippet',
+        'report.reportasset',
+        # Part parameters
+        'common.parametertemplate',
+        'common.parameter',
+        'part.partcategoryparametertemplate',
+        # Stock location types
+        'stock.stocklocationtype',
+        # Content types (needed for Django to function)
+        'contenttypes.contenttype',
+        # Sessions (preserve active sessions)
+        'sessions.session',
+    ]
+
+    # Convert to lowercase for comparison
+    preserve_models_set = {model.lower() for model in preserve_models}
+
+    # Get all models from all apps
+    all_models = django_apps.get_models()
+
+    # Track deletion statistics
+    deleted_count = 0
+    preserved_count = 0
+
+    info('Starting selective deletion...')
+
+    # Iterate through all models and delete data from non-preserved models
+    for model in all_models:
+        app_label = model._meta.app_label
+        model_name = model._meta.model_name
+        full_model_name = f'{app_label}.{model_name}'
+
+        # Skip if this model should be preserved
+        if full_model_name.lower() in preserve_models_set:
+            count = model.objects.count()
+            preserved_count += count
+            info(f'  Preserving {full_model_name}: {count} records')
+            continue
+
+        # Delete all records from this model
+        try:
+            count = model.objects.count()
+            if count > 0:
+                model.objects.all().delete()
+                deleted_count += count
+                success(f'  Deleted {full_model_name}: {count} records')
+        except Exception as e:
+            warning(f'  Could not delete {full_model_name}: {e}')
+
+    success('Partial deletion complete!')
+    success(f'  Deleted: {deleted_count} records')
+    success(f'  Preserved: {preserved_count} records')
+
+
 @task(post=[rebuild_models, rebuild_thumbnails])
 def import_fixtures(c):
     """Import fixture data into the database.
@@ -2021,6 +2159,7 @@ def monitor(c):
 # Collection sorting
 development = Collection(
     delete_data,
+    delete_partial,
     docs_server,
     frontend_server,
     frontend_test,
