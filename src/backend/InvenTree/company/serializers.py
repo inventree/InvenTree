@@ -271,7 +271,8 @@ class ManufacturerPartSerializer(
         prefetch_fields=[
             Prefetch(
                 'part', queryset=part.models.Part.objects.select_related('pricing_data')
-            )
+            ),
+            'part__category',
         ],
     )
 
@@ -438,7 +439,12 @@ class SupplierPartSerializer(
             label=_('Part'), source='part', many=False, read_only=True, allow_null=True
         ),
         False,
-        prefetch_fields=['part'],
+        prefetch_fields=[
+            Prefetch(
+                'part', queryset=part.models.Part.objects.select_related('pricing_data')
+            ),
+            'part__category',
+        ],
     )
 
     supplier_detail = enable_filter(
