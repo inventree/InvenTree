@@ -286,6 +286,9 @@ jobs:
 
     needs: ["pre-commit", "paths-filter"]
     if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true'
+    permissions:
+      contents: read
+      id-token: write
 
     env:
       WRAPPER_NAME: inventree-python
