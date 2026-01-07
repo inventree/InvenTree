@@ -509,8 +509,6 @@ class ManufacturerTest(InvenTreeAPITestCase):
 
         url = reverse('api-manufacturer-part-detail', kwargs={'pk': mp.pk})
 
-        print('url:', url)
-
         response = self.get(url)
         self.assertEqual(response.data['MPN'], 'MPN123')
 
