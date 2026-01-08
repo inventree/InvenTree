@@ -1834,6 +1834,14 @@ class TransferOrderList(
     ordering = '-reference'
 
 
+class TransferOrderDetail(
+    TransferOrderMixin, OutputOptionsMixin, RetrieveUpdateDestroyAPI
+):
+    """API endpoint for detail view of a single TransferOrder object."""
+
+    # output_options = TransferOrderOutputOptions
+
+
 class OrderCalendarExport(ICalFeed):
     """Calendar export for Purchase/Sales Orders.
 
@@ -2288,8 +2296,41 @@ order_api_urls = [
     path(
         'to/',
         include([
+            # Transfer Order detail endpoints
+            path(
+                '<int:pk>/',
+                include([
+                    # path(
+                    #     'cancel/',
+                    #     TransferOrderCancel.as_view(),
+                    #     name='api-transfer-order-cancel',
+                    # ),
+                    # path('hold/', TransferOrderHold.as_view(), name='api-ro-hold'),
+                    # path(
+                    #     'complete/',
+                    #     TransferOrderComplete.as_view(),
+                    #     name='api-transfer-order-complete',
+                    # ),
+                    # path(
+                    #     'issue/',
+                    #     TransferOrderIssue.as_view(),
+                    #     name='api-transfer-order-issue',
+                    # ),
+                    # path(
+                    #     'receive/',
+                    #     TransferOrderReceive.as_view(),
+                    #     name='api-transfer-order-receive',
+                    # ),
+                    # meta_path(models.TransferOrder),
+                    path(
+                        '',
+                        TransferOrderDetail.as_view(),
+                        name='api-transfer-order-detail',
+                    )
+                ]),
+            ),
             # Transfer Order list
-            path('', TransferOrderList.as_view(), name='api-transfer-order-list')
+            path('', TransferOrderList.as_view(), name='api-transfer-order-list'),
         ]),
     ),
     # API endpoint for subscribing to ICS calendar of purchase/sales/return orders
