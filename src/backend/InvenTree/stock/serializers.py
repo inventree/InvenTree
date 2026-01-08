@@ -489,14 +489,13 @@ class StockItemSerializer(
             ),
             'parent',
             'part__category',
-            'part__pricing_data',
             'supplier_part',
             'supplier_part__manufacturer_part',
             'customer',
             'belongs_to',
             'sales_order',
             'consumed_by',
-        ).select_related('part')
+        ).select_related('part', 'part__pricing_data')
 
         # Annotate the queryset with the total allocated to sales orders
         queryset = queryset.annotate(

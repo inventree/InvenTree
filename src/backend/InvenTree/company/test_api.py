@@ -2,7 +2,14 @@
 
 from django.urls import reverse
 
-from company.models import Address, Company, Contact, SupplierPart, SupplierPriceBreak
+from company.models import (
+    Address,
+    Company,
+    Contact,
+    ManufacturerPart,
+    SupplierPart,
+    SupplierPriceBreak,
+)
 from InvenTree.unit_test import InvenTreeAPITestCase
 from part.models import Part
 from users.permissions import check_user_permission
@@ -498,7 +505,9 @@ class ManufacturerTest(InvenTreeAPITestCase):
 
     def test_manufacturer_part_detail(self):
         """Tests for the ManufacturerPart detail endpoint."""
-        url = reverse('api-manufacturer-part-detail', kwargs={'pk': 1})
+        mp = ManufacturerPart.objects.first()
+
+        url = reverse('api-manufacturer-part-detail', kwargs={'pk': mp.pk})
 
         response = self.get(url)
         self.assertEqual(response.data['MPN'], 'MPN123')
