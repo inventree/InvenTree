@@ -6,7 +6,19 @@ import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import { ReferenceColumn, StatusColumn } from '../ColumnRenderers';
+import {
+  BooleanColumn,
+  CompletionDateColumn,
+  CreatedByColumn,
+  CreationDateColumn,
+  DescriptionColumn,
+  ProjectCodeColumn,
+  ReferenceColumn,
+  ResponsibleColumn,
+  StartDateColumn,
+  StatusColumn,
+  TargetDateColumn
+} from '../ColumnRenderers';
 import {
   AssignedToMeFilter,
   CompletedAfterFilter,
@@ -97,40 +109,36 @@ export function TransferOrderTable({
       //   {
       //     accessor: 'customer_reference'
       //   },
-      //   DescriptionColumn({}),
+      DescriptionColumn({}),
+      BooleanColumn({
+        accessor: 'consume',
+        title: t`Consume Stock`,
+        sortable: true,
+        switchable: true
+      }),
       //   LineItemsProgressColumn({}),
-      StatusColumn({ model: ModelType.returnorder })
-      //   ProjectCodeColumn({
-      //     defaultVisible: false
-      //   }),
-      //   CreationDateColumn({
-      //     defaultVisible: false
-      //   }),
-      //   CreatedByColumn({
-      //     defaultVisible: false
-      //   }),
-      //   StartDateColumn({
-      //     defaultVisible: false
-      //   }),
-      //   TargetDateColumn({}),
-      //   CompletionDateColumn({
-      //     accessor: 'complete_date'
-      //   }),
-      //   ResponsibleColumn({}),
-      //   {
-      //     accessor: 'total_price',
-      //     title: t`Total Price`,
-      //     sortable: true,
-      //     render: (record: any) => {
-      //       return formatCurrency(record.total_price, {
-      //         currency: record.order_currency || record.customer_detail?.currency
-      //       });
-      //     }
-      //   }
+      StatusColumn({ model: ModelType.returnorder }),
+      ProjectCodeColumn({
+        defaultVisible: false
+      }),
+      CreationDateColumn({
+        defaultVisible: false
+      }),
+      CreatedByColumn({
+        defaultVisible: false
+      }),
+      StartDateColumn({
+        defaultVisible: false
+      }),
+      TargetDateColumn({}),
+      CompletionDateColumn({
+        accessor: 'complete_date'
+      }),
+      ResponsibleColumn({})
     ];
   }, []);
 
-  //   const returnOrderFields = useReturnOrderFields({});
+  // const transferOrderFields = useTransferOrderFields({});
 
   //   const newReturnOrder = useCreateApiFormModal({
   //     url: ApiEndpoints.return_order_list,
