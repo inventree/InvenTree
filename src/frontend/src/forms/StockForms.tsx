@@ -60,7 +60,6 @@ import {
 } from '../hooks/UseGenerator';
 import { useGlobalSettingsState } from '../states/SettingsStates';
 import { StatusFilterOptions } from '../tables/Filter';
-import { keepFormOpenField } from './CommonForms';
 
 /**
  * Construct a set of fields for creating / editing a StockItem instance
@@ -1410,7 +1409,9 @@ export function stockLocationFields(create = false): ApiFormFieldSet {
       field_type: 'icon'
     },
     location_type: {},
-    keep_form_open: keepFormOpenField(create)
+    keep_form_open: {
+      hidden: !create
+    }
   };
 
   return fields;

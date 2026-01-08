@@ -210,10 +210,11 @@ export function useParameterFields({
   }, [data, modelType, fieldType, choices, modelId]);
 }
 
-export const keepFormOpenField = (create = true): ApiFormFieldType => ({
-  label: 'Keep form open',
-  field_type: 'boolean',
-  exclude: true,
-  hidden: !create,
-  description: 'Keep form open after submitting'
-});
+export const ExtraFormData: Record<string, ApiFormFieldType> = {
+  keep_form_open: {
+    label: 'Keep form open',
+    field_type: 'boolean',
+    exclude: true,
+    description: 'Keep form open after submitting'
+  }
+};
