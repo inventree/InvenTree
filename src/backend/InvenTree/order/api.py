@@ -362,7 +362,9 @@ class PurchaseOrderOutputOptions(OutputConfiguration):
 class PurchaseOrderMixin(SerializerContextMixin):
     """Mixin class for PurchaseOrder endpoints."""
 
-    queryset = models.PurchaseOrder.objects.all()
+    queryset = models.PurchaseOrder.objects.all().prefetch_related(
+        'supplier', 'created_by'
+    )
     serializer_class = serializers.PurchaseOrderSerializer
 
     def get_queryset(self, *args, **kwargs):
@@ -370,8 +372,6 @@ class PurchaseOrderMixin(SerializerContextMixin):
         queryset = super().get_queryset(*args, **kwargs)
 
         queryset = serializers.PurchaseOrderSerializer.annotate_queryset(queryset)
-
-        queryset = queryset.prefetch_related('supplier', 'created_by')
 
         return queryset
 
@@ -824,14 +824,14 @@ class SalesOrderFilter(OrderFilter):
 class SalesOrderMixin(SerializerContextMixin):
     """Mixin class for SalesOrder endpoints."""
 
-    queryset = models.SalesOrder.objects.all()
+    queryset = models.SalesOrder.objects.all().prefetch_related(
+        'customer', 'created_by'
+    )
     serializer_class = serializers.SalesOrderSerializer
 
     def get_queryset(self, *args, **kwargs):
         """Return annotated queryset for this endpoint."""
         queryset = super().get_queryset(*args, **kwargs)
-
-        queryset = queryset.prefetch_related('customer', 'created_by')
 
         queryset = serializers.SalesOrderSerializer.annotate_queryset(queryset)
 

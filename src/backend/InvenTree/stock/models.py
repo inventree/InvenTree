@@ -120,6 +120,7 @@ class StockLocationReportContext(report.mixins.BaseReportContext):
 
 class StockLocation(
     InvenTree.models.PluginValidationMixin,
+    InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     report.mixins.InvenTreeReportMixin,
     InvenTree.models.PathStringMixin,
