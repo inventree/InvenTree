@@ -147,7 +147,7 @@ def test_search_performance(key: str):
 
     response = api_client.post(SEARCH_URL, data=search_params)
 
-    result = json.loads(response.text)
+    result = json.loads(response)
     assert result
 
     if key == 'all':
