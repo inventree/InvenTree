@@ -25,7 +25,7 @@ export enum ModelType {
   returnorder = 'returnorder',
   returnorderlineitem = 'returnorderlineitem',
   transferorder = 'transferorder',
-  // transferorderlineitem = 'transferorderlineitem',
+  transferorderlineitem = 'transferorderlineitem',
   importsession = 'importsession',
   address = 'address',
   contact = 'contact',
