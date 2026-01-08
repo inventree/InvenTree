@@ -146,14 +146,12 @@ def test_search_performance(key: str):
     search_params.update({'search': '0', 'limit': 50})
 
     response = api_client.post(SEARCH_URL, data=search_params)
-
-    result = json.loads(response)
-    assert result
+    assert response
 
     if key == 'all':
         for model_type in SEARCH_DATA:
-            assert model_type in result
-            assert 'error' not in result[model_type]
+            assert model_type in response
+            assert 'error' not in response[model_type]
     else:
-        assert key in result
-        assert 'error' not in result[key]
+        assert key in response
+        assert 'error' not in response[key]
