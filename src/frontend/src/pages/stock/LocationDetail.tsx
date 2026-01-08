@@ -53,6 +53,7 @@ import { PartListTable } from '../../tables/part/PartTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 import StockLocationParametricTable from '../../tables/stock/StockLocationParametricTable';
 import { StockLocationTable } from '../../tables/stock/StockLocationTable';
+import { TransferOrderTable } from '../../tables/stock/TransferOrderTable';
 
 export default function Stock() {
   const { id: _id } = useParams();
@@ -225,7 +226,7 @@ export default function Stock() {
         name: 'transfer-orders',
         label: t`Transfer Orders`,
         icon: <IconTransfer />,
-        content: <Text>Hello World</Text>
+        content: <TransferOrderTable />
       },
       {
         name: 'default_parts',

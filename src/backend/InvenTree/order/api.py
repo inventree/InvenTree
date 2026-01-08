@@ -1723,6 +1723,117 @@ class ReturnOrderExtraLineDetail(RetrieveUpdateDestroyAPI):
     serializer_class = serializers.ReturnOrderExtraLineSerializer
 
 
+# class TransferOrderFilter(OrderFilter):
+#     """Custom API filters for the TransferOrderList endpoint."""
+
+#     class Meta:
+#         """Metaclass options."""
+
+#         model = models.TransferOrder
+#         fields = ['customer']
+
+#     include_variants = rest_filters.BooleanFilter(
+#         label=_('Include Variants'), method='filter_include_variants'
+#     )
+
+#     def filter_include_variants(self, queryset, name, value):
+#         """Filter by whether or not to include variants of the selected part.
+
+#         Note:
+#         - This filter does nothing by itself, and requires the 'part' filter to be set.
+#         - Refer to the 'filter_part' method for more information.
+#         """
+#         return queryset
+
+#     part = rest_filters.ModelChoiceFilter(
+#         queryset=Part.objects.all(), field_name='part', method='filter_part'
+#     )
+
+#     @extend_schema_field(OpenApiTypes.INT)
+#     def filter_part(self, queryset, name, part):
+#         """Filter by selected 'part'.
+
+#         Note:
+#         - If 'include_variants' is set to True, then all variants of the selected part will be included.
+#         - Otherwise, just filter by the selected part.
+#         """
+#         include_variants = str2bool(self.data.get('include_variants', False))
+
+#         if include_variants:
+#             parts = part.get_descendants(include_self=True)
+#         else:
+#             parts = Part.objects.filter(pk=part.pk)
+
+#         # Now that we have a queryset of parts, find all the matching return orders
+#         line_items = models.TransferOrderLineItem.objects.filter(item__part__in=parts)
+
+#         # Generate a list of ID values for the matching transfer orders
+#         transfer_orders = line_items.values_list('order', flat=True).distinct()
+
+#         # Now we have a list of matching IDs, filter the queryset
+#         return queryset.filter(pk__in=transfer_orders)
+
+#     completed_before = InvenTreeDateFilter(
+#         label=_('Completed Before'), field_name='complete_date', lookup_expr='lt'
+#     )
+
+#     completed_after = InvenTreeDateFilter(
+#         label=_('Completed After'), field_name='complete_date', lookup_expr='gt'
+#     )
+
+
+class TransferOrderMixin(SerializerContextMixin):
+    """Mixin class for TransferOrder endpoints."""
+
+    queryset = models.TransferOrder.objects.all()
+    serializer_class = serializers.TransferOrderSerializer
+
+    def get_queryset(self, *args, **kwargs):
+        """Return annotated queryset for this endpoint."""
+        queryset = super().get_queryset(*args, **kwargs)
+        queryset = serializers.TransferOrderSerializer.annotate_queryset(queryset)
+        queryset = queryset.prefetch_related('created_by', 'responsible')
+
+        return queryset
+
+
+class TransferOrderList(
+    TransferOrderMixin,
+    OrderCreateMixin,
+    DataExportViewMixin,
+    OutputOptionsMixin,
+    ParameterListMixin,
+    ListCreateAPI,
+):
+    """API endpoint for accessing a list of TransferOrder objects."""
+
+    # filterset_class = TransferOrderFilter
+    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+
+    # output_options = TransferOrderOutputOptions
+
+    ordering_field_aliases = {
+        'reference': ['reference_int', 'reference'],
+        'project_code': ['project_code__code'],
+    }
+
+    ordering_fields = [
+        'creation_date',
+        'created_by',
+        'reference',
+        # 'line_items',
+        'status',
+        'start_date',
+        'target_date',
+        'complete_date',
+        'project_code',
+    ]
+
+    search_fields = ['reference', 'description', 'project_code__code']
+
+    ordering = '-reference'
+
+
 class OrderCalendarExport(ICalFeed):
     """Calendar export for Purchase/Sales Orders.
 
@@ -2171,6 +2282,14 @@ order_api_urls = [
                 ReturnOrderExtraLineList.as_view(),
                 name='api-return-order-extra-line-list',
             ),
+        ]),
+    ),
+    # API endpoints for transfer orders
+    path(
+        'to/',
+        include([
+            # Transfer Order list
+            path('', TransferOrderList.as_view(), name='api-transfer-order-list')
         ]),
     ),
     # API endpoint for subscribing to ICS calendar of purchase/sales/return orders
