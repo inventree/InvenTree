@@ -194,6 +194,7 @@ class TransferOrderAdmin(admin.ModelAdmin):
         'description',
         'take_from',
         'destination',
+        'consume',
         'creation_date',
     )
 
