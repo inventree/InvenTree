@@ -15,6 +15,7 @@ from InvenTree.unit_test import AdminTestCase, InvenTreeTestCase
 from order.models import SalesOrder
 from part.models import Part, PartTestTemplate
 from stock.status_codes import StockHistoryCode, StockStatus
+from tenant.models import Tenant
 
 from .models import (
     StockItem,
@@ -29,6 +30,7 @@ class StockTestBase(InvenTreeTestCase):
     """Base class for running Stock tests."""
 
     fixtures = [
+        'tenant',
         'category',
         'part',
         'test_templates',
@@ -410,7 +412,8 @@ class StockTest(StockTestBase):
         n = it.quantity
         an = n - 10
         customer = Company.objects.create(name='MyTestCompany')
-        order = SalesOrder.objects.create(description='Test order')
+        tenant = Tenant.objects.first()
+        order = SalesOrder.objects.create(description='Test order', tenant=tenant)
         ait = it.allocateToCustomer(
             customer, quantity=an, order=order, user=None, notes='Allocated some stock'
         )
@@ -446,7 +449,8 @@ class StockTest(StockTestBase):
         n = it.quantity
         an = n - 10
         customer = Company.objects.create(name='MyTestCompany')
-        order = SalesOrder.objects.create(description='Test order')
+        tenant = Tenant.objects.first()
+        order = SalesOrder.objects.create(description='Test order', tenant=tenant)
 
         ait = it.allocateToCustomer(
             customer, quantity=an, order=order, user=None, notes='Allocated some stock'
@@ -1531,6 +1535,8 @@ class TestResultTest(StockTestBase):
 
 class StockLocationTest(InvenTreeTestCase):
     """Tests for the StockLocation model."""
+
+    fixtures = ['tenant']
 
     def test_icon(self):
         """Test stock location icon."""

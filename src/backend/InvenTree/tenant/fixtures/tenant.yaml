@@ -1,0 +1,9 @@
+# Default tenant fixture for testing
+
+- model: tenant.tenant
+  pk: 1
+  fields:
+    name: 'Default Tenant'
+    description: 'Default tenant for testing'
+    code: 'DEFAULT'
+    is_active: true

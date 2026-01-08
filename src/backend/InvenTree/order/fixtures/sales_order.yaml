@@ -5,6 +5,7 @@
     description: "One sales order, please"
     customer: 4
     status: 10  # Pending
+    tenant: 1
 
 - model: order.salesorder
   pk: 2
@@ -13,6 +14,7 @@
     description: "One sales order, please"
     customer: 4
     status: 10  # Pending
+    tenant: 1
 
 - model: order.salesorder
   pk: 3
@@ -21,6 +23,7 @@
     description: "One sales order, please"
     customer: 4
     status: 10  # Pending
+    tenant: 1
 
 - model: order.salesorder
   pk: 4
@@ -29,6 +32,7 @@
     description: "One sales order, please"
     customer: 5
     status: 20  # Shipped
+    tenant: 1
 
 - model: order.salesorder
   pk: 5
@@ -37,6 +41,7 @@
     description: "One sales order, please"
     customer: 5
     status: 60  # Returned
+    tenant: 1
 
 # 1 x R_4K7_0603
 - model: order.salesorderlineitem

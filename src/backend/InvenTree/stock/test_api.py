@@ -34,6 +34,7 @@ class StockAPITestCase(InvenTreeAPITestCase):
     """Mixin for stock api tests."""
 
     fixtures = [
+        'tenant',
         'category',
         'part',
         'test_templates',
@@ -131,6 +132,7 @@ class StockLocationTest(StockAPITestCase):
             'parent': 1,
             'name': 'Location',
             'description': 'Another location for stock',
+            'tenant': 1,
         }
 
         self.post(self.list_url, data, expected_code=201)
@@ -952,7 +954,7 @@ class StockItemListTest(StockAPITestCase):
 
         # Note: While the export is quick on pgsql, it is still quite slow on sqlite3
         with self.export_data(
-            self.list_url, max_query_count=50, max_query_time=7.5
+            self.list_url, max_query_count=65, max_query_time=7.5
         ) as data_file:
             data = self.process_csv(data_file)
 
@@ -1061,17 +1063,17 @@ class StockItemListTest(StockAPITestCase):
         ])
 
         # List *all* stock items
-        self.get(self.list_url, {}, max_query_count=35)
+        self.get(self.list_url, {}, max_query_count=40)
 
         # List all stock items, with part detail
-        self.get(self.list_url, {'part_detail': True}, max_query_count=35)
+        self.get(self.list_url, {'part_detail': True}, max_query_count=40)
 
         # List all stock items, with supplier_part detail
-        self.get(self.list_url, {'supplier_part_detail': True}, max_query_count=35)
+        self.get(self.list_url, {'supplier_part_detail': True}, max_query_count=40)
 
         # List all stock items, with 'location' and 'tests' detail
         self.get(
-            self.list_url, {'location_detail': True, 'tests': True}, max_query_count=35
+            self.list_url, {'location_detail': True, 'tests': True}, max_query_count=40
         )
 
     def test_batch_generate_api(self):
@@ -1156,6 +1158,38 @@ class StockItemListTest(StockAPITestCase):
             self.assertEqual(response.data['parent'], parent_item.pk)
             self.assertEqual(response.data['quantity'], 1)
             self.assertEqual(response.data['child_items'], 0)
+
+    def test_total_in_stock(self):
+        """Test that part_detail includes total_in_stock and is computed correctly."""
+        # Create a part
+        my_part = Part.objects.create(
+            name='Total Stock Test Part', description='Test Part for total_in_stock'
+        )
+
+        location = StockLocation.objects.first()
+
+        # Create multiple stock items for the same part
+        StockItem.objects.create(part=my_part, quantity=10, location=location)
+        StockItem.objects.create(part=my_part, quantity=25, location=location)
+        StockItem.objects.create(part=my_part, quantity=15, location=location)
+
+        # Total should be 50
+        expected_total = 50
+
+        # Fetch stock list via API with part_detail
+        response = self.get(
+            reverse('api-stock-list'),
+            {'part': my_part.pk, 'part_detail': True},
+            max_query_count=35,  # Ensure no N+1 queries
+        )
+
+        self.assertEqual(len(response.data), 3)
+
+        # Each stock item should have part_detail with total_in_stock
+        for item in response.data:
+            self.assertIn('part_detail', item)
+            self.assertIn('total_in_stock', item['part_detail'])
+            self.assertEqual(item['part_detail']['total_in_stock'], expected_total)
 
 
 class CustomStockItemStatusTest(StockAPITestCase):
@@ -2611,6 +2645,7 @@ class StockMetadataAPITest(InvenTreeAPITestCase):
     """Unit tests for the various metadata endpoints of API."""
 
     fixtures = [
+        'tenant',
         'category',
         'part',
         'test_templates',

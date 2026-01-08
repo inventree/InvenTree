@@ -6,6 +6,7 @@
     description: 'RMA from a customer'
     customer: 4
     status: 10  # Pending
+    tenant: 1
 
 - model: order.returnorder
   pk: 2
@@ -15,6 +16,7 @@
     description: 'RMA from a customer'
     customer: 4
     status: 20  # In Progress
+    tenant: 1
 
 - model: order.returnorder
   pk: 3
@@ -24,6 +26,7 @@
     description: 'RMA from a customer'
     customer: 4
     status: 30  # Complete
+    tenant: 1
 
 - model: order.returnorder
   pk: 4
@@ -33,6 +36,7 @@
     description: 'RMA from a customer'
     customer: 5
     status: 40  # Cancelled
+    tenant: 1
 
 - model: order.returnorder
   pk: 5
@@ -42,6 +46,7 @@
     description: 'RMA from a customer'
     customer: 5
     status: 20  # In progress
+    tenant: 1
 
 - model: order.returnorder
   pk: 6
@@ -51,6 +56,7 @@
     description: 'RMA from a customer'
     customer: 5
     status: 10  # Pending
+    tenant: 1
 
 # 1 x R_4K7_0603
 - model: order.returnorderlineitem

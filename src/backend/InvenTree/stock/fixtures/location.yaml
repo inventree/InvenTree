@@ -9,6 +9,7 @@
     tree_id: 1
     lft: 1
     rght: 6
+    tenant: 1
 
 - model: stock.stocklocation
   pk: 2
@@ -20,6 +21,7 @@
     tree_id: 1
     lft: 2
     rght: 3
+    tenant: 1
 
 - model: stock.stocklocation
   pk: 3
@@ -31,6 +33,7 @@
     level: 1
     lft: 4
     rght: 5
+    tenant: 1
 
 - model: stock.stocklocation
   pk: 4
@@ -42,6 +45,7 @@
     lft: 1
     rght: 8
     external: True
+    tenant: 1
 
 - model: stock.stocklocation
   pk: 5
@@ -53,6 +57,7 @@
     level: 1
     lft: 2
     rght: 3
+    tenant: 1
 
 - model: stock.stocklocation
   pk: 6
@@ -64,6 +69,7 @@
     level: 1
     lft: 4
     rght: 5
+    tenant: 1
 
 - model: stock.stocklocation
   pk: 7
@@ -75,3 +81,4 @@
     level: 1
     lft: 6
     rght: 7
+    tenant: 1

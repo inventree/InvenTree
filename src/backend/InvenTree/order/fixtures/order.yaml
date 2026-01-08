@@ -9,6 +9,7 @@
     description: "Ordering some screws"
     supplier: 1
     status: 10  # Pending
+    tenant: 1
 
 # Ordering some screws from Zerg Corp
 - model: order.purchaseorder
@@ -19,6 +20,7 @@
     description: "Ordering some more screws"
     supplier: 3
     status: 10  # Pending
+    tenant: 1
 
 - model: order.purchaseorder
   pk: 3
@@ -28,6 +30,7 @@
     description: 'Another PO'
     supplier: 3
     status: 20  # Placed
+    tenant: 1
 
 - model: order.purchaseorder
   pk: 4
@@ -37,6 +40,7 @@
     description: 'Another PO'
     supplier: 3
     status: 20  # Placed
+    tenant: 1
 
 - model: order.purchaseorder
   pk: 5
@@ -46,6 +50,7 @@
     description: 'Another PO'
     supplier: 3
     status: 30  # Complete
+    tenant: 1
 
 - model: order.purchaseorder
   pk: 6
@@ -55,6 +60,7 @@
     description: 'Another PO'
     supplier: 3
     status: 40  # Cancelled
+    tenant: 1
 
   # for pricebreaks
 - model: order.purchaseorder
@@ -65,6 +71,7 @@
     description: 'Another PO'
     supplier: 2
     status: 10  # Pending
+    tenant: 1
 
 # Add some line items against PO 0001
 

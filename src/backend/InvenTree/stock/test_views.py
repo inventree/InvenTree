@@ -13,7 +13,15 @@ from users.models import Owner
 class StockViewTestCase(InvenTreeTestCase):
     """Mixin for StockView tests."""
 
-    fixtures = ['category', 'part', 'company', 'location', 'supplier_part', 'stock']
+    fixtures = [
+        'tenant',
+        'category',
+        'part',
+        'company',
+        'location',
+        'supplier_part',
+        'stock',
+    ]
 
     roles = 'all'
 
