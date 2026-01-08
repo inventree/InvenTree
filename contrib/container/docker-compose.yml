@@ -3,7 +3,7 @@
 # - gunicorn as the InvenTree web server
 # - django-q as the InvenTree background worker process
 # - Caddy as a reverse proxy
-# - redis as the cache manager (optional, disabled by default)
+# - redis as the cache manager (optional, enabled by default)
 
 # ---------------------
 # READ BEFORE STARTING!
