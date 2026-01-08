@@ -141,6 +141,8 @@ def test_search_performance(key: str):
         'returnorder': {'customer_detail': True, 'outstanding': True},
     }
 
+    model_types = list(SEARCH_DATA.keys())
+
     search_params = SEARCH_DATA if key == 'all' else {key: SEARCH_DATA[key]}
 
     # Add in a common search term
@@ -150,7 +152,7 @@ def test_search_performance(key: str):
     assert response
 
     if key == 'all':
-        for model_type in SEARCH_DATA:
+        for model_type in model_types:
             assert model_type in response
             assert 'error' not in response[model_type]
     else:
