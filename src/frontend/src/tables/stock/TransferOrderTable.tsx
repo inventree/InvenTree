@@ -1,9 +1,12 @@
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
+import { AddItemButton, UserRoles } from '@lib/index';
 import type { TableFilter } from '@lib/types/Filters';
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
+import { useTransferOrderFields } from '../../forms/TransferOrderForms';
+import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import {
@@ -98,17 +101,6 @@ export function TransferOrderTable({
   const tableColumns = useMemo(() => {
     return [
       ReferenceColumn({}),
-      //   {
-      //     accessor: 'customer__name',
-      //     title: t`Customer`,
-      //     sortable: true,
-      //     render: (record: any) => (
-      //       <CompanyColumn company={record.customer_detail} />
-      //     )
-      //   },
-      //   {
-      //     accessor: 'customer_reference'
-      //   },
       DescriptionColumn({}),
       BooleanColumn({
         accessor: 'consume',
@@ -138,33 +130,31 @@ export function TransferOrderTable({
     ];
   }, []);
 
-  // const transferOrderFields = useTransferOrderFields({});
+  const transferOrderFields = useTransferOrderFields({});
 
-  //   const newReturnOrder = useCreateApiFormModal({
-  //     url: ApiEndpoints.return_order_list,
-  //     title: t`Add Return Order`,
-  //     fields: returnOrderFields,
-  //     initialData: {
-  //       customer: customerId
-  //     },
-  //     follow: true,
-  //     modelType: ModelType.returnorder
-  //   });
+  const newTransferOrder = useCreateApiFormModal({
+    url: ApiEndpoints.transfer_order_list,
+    title: t`Add Transfer Order`,
+    fields: transferOrderFields,
+    initialData: {},
+    follow: true,
+    modelType: ModelType.transferorder
+  });
 
-  //   const tableActions = useMemo(() => {
-  //     return [
-  //       <AddItemButton
-  //         key='add-return-order'
-  //         tooltip={t`Add Return Order`}
-  //         onClick={() => newReturnOrder.open()}
-  //         hidden={!user.hasAddRole(UserRoles.return_order)}
-  //       />
-  //     ];
-  //   }, [user]);
+  const tableActions = useMemo(() => {
+    return [
+      <AddItemButton
+        key='add-return-order'
+        tooltip={t`Add Return Order`}
+        onClick={() => newTransferOrder.open()}
+        hidden={!user.hasAddRole(UserRoles.transfer_order)}
+      />
+    ];
+  }, [user]);
 
   return (
     <>
-      {/* {newReturnOrder.modal} */}
+      {newTransferOrder.modal}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.transfer_order_list)}
         tableState={table}
@@ -176,7 +166,7 @@ export function TransferOrderTable({
             // customer_detail: true
           },
           tableFilters: tableFilters,
-          //   tableActions: tableActions,
+          tableActions: tableActions,
           modelType: ModelType.transferorder,
           enableSelection: true,
           enableDownload: true,
