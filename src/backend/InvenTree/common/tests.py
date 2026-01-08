@@ -408,6 +408,8 @@ class SettingsTest(InvenTreeTestCase):
             'requires_restart',
             'after_save',
             'before_save',
+            'confirm',
+            'confirm_text',
         ]
 
         for k in setting:
