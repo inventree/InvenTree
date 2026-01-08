@@ -379,11 +379,12 @@ class Order(
                     })
 
         # Check that the referenced 'contact' matches the correct 'company'
-        if self.company and self.contact:
-            if self.contact.company != self.company:
-                raise ValidationError({
-                    'contact': _('Contact does not match selected company')
-                })
+        if hasattr(self, 'company'):
+            if self.company and self.contact:
+                if self.contact.company != self.company:
+                    raise ValidationError({
+                        'contact': _('Contact does not match selected company')
+                    })
 
         # Target date should be *after* the start date
         if self.start_date and self.target_date and self.start_date > self.target_date:
@@ -393,11 +394,12 @@ class Order(
             })
 
         # Check that the referenced 'address' matches the correct 'company'
-        if self.company and self.address:
-            if self.address.company != self.company:
-                raise ValidationError({
-                    'address': _('Address does not match selected company')
-                })
+        if hasattr(self, 'company'):
+            if self.company and self.address:
+                if self.address.company != self.company:
+                    raise ValidationError({
+                        'address': _('Address does not match selected company')
+                    })
 
     def clean_line_item(self, line):
         """Clean a line item for this order.
