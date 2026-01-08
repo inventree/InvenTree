@@ -59,7 +59,7 @@ export function TransferOrderTable({
 
   const tableFilters: TableFilter[] = useMemo(() => {
     const filters: TableFilter[] = [
-      OrderStatusFilter({ model: ModelType.returnorder }),
+      OrderStatusFilter({ model: ModelType.transferorder }),
       OutstandingFilter(),
       OverdueFilter(),
       AssignedToMeFilter(),
@@ -109,7 +109,7 @@ export function TransferOrderTable({
         switchable: true
       }),
       //   LineItemsProgressColumn({}),
-      StatusColumn({ model: ModelType.returnorder }),
+      StatusColumn({ model: ModelType.transferorder }),
       ProjectCodeColumn({
         defaultVisible: false
       }),
@@ -144,8 +144,8 @@ export function TransferOrderTable({
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
-        key='add-return-order'
-        tooltip={t`Add Return Order`}
+        key='add-transfer-order'
+        tooltip={t`Add Transfer Order`}
         onClick={() => newTransferOrder.open()}
         hidden={!user.hasAddRole(UserRoles.transfer_order)}
       />

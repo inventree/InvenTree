@@ -152,6 +152,7 @@ const icons: InvenTreeIconType = {
   customers: IconBuildingStore,
   purchase_orders: IconShoppingCart,
   return_orders: IconTruckReturn,
+  transfer_orders: IconTransfer,
   sales_orders: IconTruckDelivery,
   scheduling: IconCalendarStats,
   scrap: IconCircleX,
