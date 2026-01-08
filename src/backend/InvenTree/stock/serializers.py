@@ -23,7 +23,6 @@ import InvenTree.helpers
 import InvenTree.ready
 import InvenTree.serializers
 import order.models
-import part.filters as part_filters
 import part.models as part_models
 import part.serializers as part_serializers
 import stock.filters
@@ -482,22 +481,18 @@ class StockItemSerializer(
             'purchase_order',
             Prefetch(
                 'part',
-                queryset=part_models.Part.objects.annotate(
-                    category_default_location=part_filters.annotate_default_location(
-                        'category__'
-                    )
-                ).prefetch_related(None),
+                queryset=part_serializers.PartSerializer.annotate_queryset(
+                    part_models.Part.objects.all()
+                ),
             ),
             'parent',
-            'part__category',
-            'part__pricing_data',
             'supplier_part',
             'supplier_part__manufacturer_part',
             'customer',
             'belongs_to',
             'sales_order',
             'consumed_by',
-        ).select_related('part')
+        )
 
         # Annotate the queryset with the total allocated to sales orders
         queryset = queryset.annotate(
@@ -585,7 +580,7 @@ class StockItemSerializer(
     )
 
     part_detail = enable_filter(
-        part_serializers.PartBriefSerializer(
+        part_serializers.PartSerializer(
             label=_('Part'), source='part', many=False, read_only=True, allow_null=True
         ),
         True,

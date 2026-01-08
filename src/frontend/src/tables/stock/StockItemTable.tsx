@@ -225,6 +225,22 @@ function stockItemTableColumns({
         );
       }
     },
+    {
+      accessor: 'part_detail.total_in_stock',
+      title: t`Total Stock`,
+      sortable: false,
+      defaultVisible: false,
+      render: (record: any) => {
+        const part = record?.part_detail ?? {};
+        const totalStock = part?.total_in_stock ?? 0;
+        return (
+          <Group gap='xs' justify='left' wrap='nowrap'>
+            <Text>{formatDecimal(totalStock)}</Text>
+            {part.units && <Text size='xs'>[{part.units}]</Text>}
+          </Group>
+        );
+      }
+    },
     StatusColumn({ model: ModelType.stockitem }),
     {
       accessor: 'batch',
