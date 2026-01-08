@@ -1046,7 +1046,16 @@ class SalesOrderSerializer(
         queryset = AbstractOrderSerializer.annotate_queryset(queryset)
 
         queryset = queryset.annotate(
-            completed_lines=SubqueryCount('lines', filter=Q(quantity__lte=F('shipped')))
+            completed_lines=SubqueryCount(
+                'lines',
+                filter=Q(part__virtual=True)
+                | Q(shipped__gte=F('quantity'))
+                | Q(
+                    quantity__lte=Coalesce(
+                        SubquerySum('allocations__quantity'), Decimal(0)
+                    )
+                ),
+            )
         )
 
         queryset = queryset.annotate(
