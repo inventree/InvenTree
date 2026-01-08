@@ -197,6 +197,8 @@ export enum ApiEndpoints {
   return_order_line_list = 'order/ro-line/',
   return_order_extra_line_list = 'order/ro-extra-line/',
 
+  transfer_order_list = 'order/to/',
+
   // Template API endpoints
   label_list = 'label/template/',
   label_print = 'label/print/',
