@@ -64,6 +64,8 @@ services:
             - .env
         expose:
             - ${INVENTREE_CACHE_PORT:-6379}
+        volumes:
+            - ${INVENTREE_EXT_VOLUME}/redis:/data
         restart: always
 
     # InvenTree web server service
