@@ -1106,7 +1106,9 @@ class HealthCheckView(APIView):
         Use the root API endpoint for more detailed information (using an authenticated request).
         """
         status = (
-            InvenTree.ready.isPluginRegistryLoaded if settings.PLUGINS_ENABLED else True
+            InvenTree.ready.isPluginRegistryLoaded()
+            if settings.PLUGINS_ENABLED
+            else True
         )
         return JsonResponse(
             {'status': 'ok' if status else 'loading'}, status=200 if status else 503
