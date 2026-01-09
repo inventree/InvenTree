@@ -4247,9 +4247,17 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         return assemblies
 
     def get_valid_parts_for_allocation(
-        self, allow_variants=True, allow_substitutes=True
+        self,
+        allow_variants: bool = True,
+        allow_substitutes: bool = True,
+        allow_inactive: bool = True,
     ):
         """Return a list of valid parts which can be allocated against this BomItem.
+
+        Arguments:
+            allow_variants: If True, include variants of the sub_part
+            allow_substitutes: If True, include any directly specified substitute parts
+            allow_inactive: If True, include inactive parts in the returned list
 
         Includes:
         - The referenced sub_part
@@ -4281,6 +4289,10 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         for p in parts:
             # Trackable status must be the same as the sub_part
             if p.trackable != self.sub_part.trackable:
+                continue
+
+            # Filter by 'active' status
+            if not allow_inactive and not p.active:
                 continue
 
             valid_parts.append(p)
