@@ -49,6 +49,7 @@ from order.status_codes import (
     ReturnOrderLineStatus,
     ReturnOrderStatus,
     SalesOrderStatusGroups,
+    TransferOrderStatusGroups,
 )
 from part.serializers import PartBriefSerializer
 from stock.status_codes import StockStatus
@@ -2194,6 +2195,42 @@ class TransferOrderSerializer(
 
         return [*fields, 'duplicate']
 
+    @staticmethod
+    def annotate_queryset(queryset):
+        """Add extra information to the queryset.
+
+        - Number of line items in the TransferOrder
+        - Number of completed line items in the TransferOrder
+        - Overdue status of the TransferOrder
+        """
+        queryset = AbstractOrderSerializer.annotate_queryset(queryset)
+
+        # TODO: decide what it means for a line to be complete
+        # queryset = queryset.annotate(
+        #     completed_lines=SubqueryCount('lines', filter=Q(quantity__lte=F('transferred')))
+        # )
+
+        queryset = queryset.annotate(
+            overdue=Case(
+                When(
+                    order.models.TransferOrder.overdue_filter(),
+                    then=Value(True, output_field=BooleanField()),
+                ),
+                default=Value(False, output_field=BooleanField()),
+            )
+        )
+
+        # TODO:
+        # Annotate transferred details
+        # queryset = queryset.annotate(
+        #     shipments_count=SubqueryCount('shipments'),
+        #     completed_shipments_count=SubqueryCount(
+        #         'shipments', filter=Q(shipment_date__isnull=False)
+        #     ),
+        # )
+
+        return queryset
+
     take_from_detail = enable_filter(
         stock.serializers.LocationSerializer(
             source='take_from', many=False, read_only=True, allow_null=True
@@ -2207,30 +2244,6 @@ class TransferOrderSerializer(
         ),
         default_include=True,
     )
-
-    # TODO:
-    # @staticmethod
-    # def annotate_queryset(queryset):
-    #     """Custom annotation for the serializer queryset."""
-    #     queryset = AbstractOrderSerializer.annotate_queryset(queryset)
-
-    #     queryset = queryset.annotate(
-    #         completed_lines=SubqueryCount(
-    #             'lines', filter=~Q(outcome=ReturnOrderLineStatus.PENDING.value)
-    #         )
-    #     )
-
-    #     queryset = queryset.annotate(
-    #         overdue=Case(
-    #             When(
-    #                 order.models.ReturnOrder.overdue_filter(),
-    #                 then=Value(True, output_field=BooleanField()),
-    #             ),
-    #             default=Value(False, output_field=BooleanField()),
-    #         )
-    #     )
-
-    #     return queryset
 
 
 class TransferOrderHoldSerializer(OrderAdjustSerializer):
@@ -2266,3 +2279,125 @@ class TransferOrderCompleteSerializer(OrderAdjustSerializer):
     def save(self):
         """Save the serializer to 'complete' the order."""
         self.order.complete_order()
+
+
+@register_importer()
+class TransferOrderLineItemSerializer(
+    DataImportExportSerializerMixin,
+    AbstractLineItemSerializer,
+    InvenTreeModelSerializer,
+):
+    """Serializer for a TransferOrderLineItem object."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = order.models.TransferOrderLineItem
+        fields = AbstractLineItemSerializer.line_fields([
+            'allocated',
+            'overdue',
+            'part',
+            'part_detail',
+            # 'transferred',
+            # Annotated fields for part stocking information
+            'available_stock',
+            'available_variant_stock',
+            'building',
+            'on_order',
+            # Filterable detail fields
+        ])
+
+    @staticmethod
+    def annotate_queryset(queryset):
+        """Add some extra annotations to this queryset.
+
+        - "overdue" status (boolean field)
+        - "available_quantity"
+        - "building"
+        - "on_order"
+        """
+        queryset = queryset.annotate(
+            overdue=Case(
+                When(
+                    Q(order__status__in=TransferOrderStatusGroups.OPEN)
+                    & order.models.TransferOrderLineItem.OVERDUE_FILTER,
+                    then=Value(True, output_field=BooleanField()),
+                ),
+                default=Value(False, output_field=BooleanField()),
+            )
+        )
+
+        # Annotate each line with the available stock quantity
+        # To do this, we need to look at the total stock and any allocations
+        queryset = queryset.alias(
+            total_stock=part_filters.annotate_total_stock(reference='part__'),
+            allocated_to_sales_orders=part_filters.annotate_sales_order_allocations(
+                reference='part__'
+            ),
+            allocated_to_build_orders=part_filters.annotate_build_order_allocations(
+                reference='part__'
+            ),
+        )
+
+        queryset = queryset.annotate(
+            available_stock=Greatest(
+                ExpressionWrapper(
+                    F('total_stock')
+                    - F('allocated_to_sales_orders')
+                    - F('allocated_to_build_orders'),
+                    output_field=models.DecimalField(),
+                ),
+                0,
+                output_field=models.DecimalField(),
+            )
+        )
+
+        # Add information about the quantity of parts currently on order
+        queryset = queryset.annotate(
+            on_order=part_filters.annotate_on_order_quantity(reference='part__')
+        )
+
+        # Add information about the quantity of parts currently in production
+        queryset = queryset.annotate(
+            building=part_filters.annotate_in_production_quantity(reference='part__')
+        )
+
+        # Annotate total 'allocated' stock quantity
+        queryset = queryset.annotate(
+            allocated=Coalesce(
+                SubquerySum('allocations__quantity'),
+                Decimal(0),
+                output_field=models.DecimalField(),
+            )
+        )
+
+        return queryset
+
+    order_detail = enable_filter(
+        TransferOrderSerializer(
+            source='order', many=False, read_only=True, allow_null=True
+        ),
+        prefetch_fields=[
+            'order__created_by',
+            'order__responsible',
+            'order__project_code',
+        ],
+    )
+
+    part_detail = enable_filter(
+        PartBriefSerializer(source='part', many=False, read_only=True, allow_null=True)
+        # prefetch_fields=['part__pricing_data'],
+    )
+
+    # Annotated fields
+    overdue = serializers.BooleanField(read_only=True, allow_null=True)
+    available_stock = serializers.FloatField(read_only=True)
+    available_variant_stock = serializers.FloatField(read_only=True)
+    on_order = serializers.FloatField(label=_('On Order'), read_only=True)
+    building = serializers.FloatField(label=_('In Production'), read_only=True)
+
+    quantity = InvenTreeDecimalField()
+
+    allocated = serializers.FloatField(read_only=True)
+
+    # transferred = InvenTreeDecimalField(read_only=True)
