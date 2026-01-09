@@ -1742,11 +1742,10 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
 
     def save(self, *args, **kwargs):
         """Custom save method for the BuildItem model."""
-        self.clean()
-
+        self.clean(raise_error=False)
         super().save()
 
-    def clean(self):
+    def clean(self, raise_error: bool = True):
         """Check validity of this BuildItem instance.
 
         The following checks are performed:
@@ -1770,47 +1769,7 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
                     )
                 )
 
-            # Allocated quantity cannot exceed available stock quantity
-            if self.quantity > self.stock_item.quantity:
-                q = InvenTree.helpers.normalize(self.quantity)
-                a = InvenTree.helpers.normalize(self.stock_item.quantity)
-
-                raise ValidationError({
-                    'quantity': _(
-                        f'Allocated quantity ({q}) must not exceed available stock quantity ({a})'
-                    )
-                })
-
-            # Ensure that we do not 'over allocate' a stock item
-            available = decimal.Decimal(self.stock_item.quantity)
-            quantity = decimal.Decimal(self.quantity)
-            build_allocation_count = decimal.Decimal(
-                self.stock_item.build_allocation_count(
-                    exclude_allocations={'pk': self.pk}
-                )
-            )
-            sales_allocation_count = decimal.Decimal(
-                self.stock_item.sales_order_allocation_count()
-            )
-
-            total_allocation = (
-                build_allocation_count + sales_allocation_count + quantity
-            )
-
-            if total_allocation > available:
-                raise ValidationError({'quantity': _('Stock item is over-allocated')})
-
-            # Allocated quantity must be positive
-            if self.quantity <= 0:
-                raise ValidationError({
-                    'quantity': _('Allocation quantity must be greater than zero')
-                })
-
-            # Quantity must be 1 for serialized stock
-            if self.stock_item.serialized and self.quantity != 1:
-                raise ValidationError({
-                    'quantity': _('Quantity must be 1 for serialized stock')
-                })
+            self.check_allocated_quantity(raise_error=raise_error)
 
         except stock.models.StockItem.DoesNotExist:
             raise ValidationError('Stock item must be specified')
@@ -1871,6 +1830,60 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
             raise ValidationError({
                 'stock_item': _('Selected stock item does not match BOM line')
             })
+
+    def check_allocated_quantity(self, raise_error: bool = False):
+        """Ensure that the allocated quantity is valid.
+
+        Will reduce the allocated quantity if it exceeds available stock.
+
+        Arguments:
+            raise_error: If True, raise ValidationError on failure
+
+        Raises:
+            ValidationError: If the allocated quantity is invalid and raise_error is True
+        """
+        error = None
+
+        # Allocated quantity must be positive
+        if self.quantity <= 0:
+            self.quantity = 0
+            error = {'quantity': _('Allocated quantity must be greater than zero')}
+
+        # Quantity must be 1 for serialized stock
+        if self.stock_item.serialized and self.quantity != 1:
+            self.quantity = 1
+            raise ValidationError({
+                'quantity': _('Quantity must be 1 for serialized stock')
+            })
+
+        # Allocated quantity cannot exceed available stock quantity
+        if self.quantity > self.stock_item.quantity:
+            q = InvenTree.helpers.normalize(self.quantity)
+            a = InvenTree.helpers.normalize(self.stock_item.quantity)
+            self.quantity = self.stock_item.quantity
+            error = {
+                'quantity': _(
+                    f'Allocated quantity ({q}) must not exceed available stock quantity ({a})'
+                )
+            }
+
+        # Ensure that we do not 'over allocate' a stock item
+        available = decimal.Decimal(self.stock_item.quantity)
+        quantity = decimal.Decimal(self.quantity)
+        build_allocation_count = decimal.Decimal(
+            self.stock_item.build_allocation_count(exclude_allocations={'pk': self.pk})
+        )
+        sales_allocation_count = decimal.Decimal(
+            self.stock_item.sales_order_allocation_count()
+        )
+
+        total_allocation = build_allocation_count + sales_allocation_count + quantity
+
+        if total_allocation > available:
+            error = {'quantity': _('Stock item is over-allocated')}
+
+        if error and raise_error:
+            raise ValidationError(error)
 
     @property
     def build(self):
