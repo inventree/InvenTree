@@ -6,6 +6,7 @@ import { useParams } from 'react-router-dom';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
+import { IconInfoCircle } from '@tabler/icons-react';
 import {
   type DetailsField,
   DetailsTable
@@ -13,8 +14,11 @@ import {
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
+import AttachmentPanel from '../../components/panels/AttachmentPanel';
+import NotesPanel from '../../components/panels/NotesPanel';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
+import ParametersPanel from '../../components/panels/ParametersPanel';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { useInstance } from '../../hooks/UseInstance';
 import useStatusCodes from '../../hooks/UseStatusCodes';
@@ -129,7 +133,26 @@ export default function TransferOrderDetail() {
   }, [order, instanceQuery]);
 
   const orderPanels: PanelType[] = useMemo(() => {
-    return [];
+    return [
+      {
+        name: 'detail',
+        label: t`Order Details`,
+        icon: <IconInfoCircle />,
+        content: detailsPanel
+      },
+      ParametersPanel({
+        model_type: ModelType.transferorder,
+        model_id: order.pk
+      }),
+      AttachmentPanel({
+        model_type: ModelType.transferorder,
+        model_id: order.pk
+      }),
+      NotesPanel({
+        model_type: ModelType.transferorder,
+        model_id: order.pk
+      })
+    ];
   }, [order, id, user]);
 
   const orderBadges: ReactNode[] = useMemo(() => {
@@ -149,8 +172,8 @@ export default function TransferOrderDetail() {
   }, [user, order, orderOpen, toStatus]);
 
   const subtitle: string = useMemo(() => {
-    const t = order.take_from?.name || '';
-    const d = order.destination?.name || '';
+    const t = order.take_from_detail?.pathstring || '';
+    const d = order.destination_detail?.pathstring || '';
     return `${t} → ${d}`;
   }, [order]);
 
