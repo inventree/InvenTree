@@ -3115,7 +3115,7 @@ class TransferOrder(Order):
     @staticmethod
     def get_api_url() -> str:
         """Return the API URL associated with the TransferOrder model."""
-        return reverse('api-po-list')
+        return reverse('api-transfer-order-list')
 
     @classmethod
     def get_status_class(cls):

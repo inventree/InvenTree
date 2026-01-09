@@ -123,3 +123,29 @@ export function RenderSalesOrderShipment({
     />
   );
 }
+
+/**
+ * Inline rendering of a single TransferOrder instance
+ */
+export function RenderTransferOrder(
+  props: Readonly<InstanceRenderInterface>
+): ReactNode {
+  const { instance } = props;
+
+  return (
+    <RenderInlineModel
+      {...props}
+      primary={instance.reference}
+      secondary={instance.description}
+      suffix={StatusRenderer({
+        status: instance.status_custom_key,
+        type: ModelType.transferorder
+      })}
+      url={
+        props.link
+          ? getDetailUrl(ModelType.transferorder, instance.pk)
+          : undefined
+      }
+    />
+  );
+}

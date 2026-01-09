@@ -219,7 +219,7 @@ export const ModelInformationDict: ModelDict = {
   transferorderlineitem: {
     label: () => t`Transfer Order Line Item`,
     label_multiple: () => t`Transfer Order Line Items`,
-    api_endpoint: ApiEndpoints.transfser_order_line_list,
+    api_endpoint: ApiEndpoints.transfer_order_line_list,
     icon: 'transfer-orders'
   },
   address: {

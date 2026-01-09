@@ -1,4 +1,5 @@
 import type { ApiFormFieldSet } from '@lib/types/Forms';
+import { t } from '@lingui/core/macro';
 import { IconCalendar, IconUsers } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { useGlobalSettingsState } from '../states/SettingsStates';
@@ -61,4 +62,41 @@ export function useTransferOrderFields({
 
     return fields;
   }, [duplicateOrderId, globalSettings]);
+}
+
+export function useTransferOrderLineItemFields({
+  orderId,
+  create
+}: {
+  orderId?: number;
+  create?: boolean;
+}): ApiFormFieldSet {
+  return useMemo(() => {
+    const fields: ApiFormFieldSet = {
+      order: {
+        filters: {},
+        disabled: true
+      },
+      part: {
+        filters: {
+          active: true
+        }
+        // onValueChange: (_: any, record?: any) => setPart(record)
+      },
+      reference: {},
+      quantity: {
+        // onValueChange: (value) => {
+        //   setQuantity(value);
+        // }
+      },
+      project_code: {
+        description: t`Select project code for this line item`
+      },
+      target_date: {},
+      notes: {},
+      link: {}
+    };
+
+    return fields;
+  }, [orderId, create]);
 }
