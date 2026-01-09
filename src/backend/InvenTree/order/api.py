@@ -58,6 +58,7 @@ from order.status_codes import (
     ReturnOrderStatus,
     SalesOrderStatus,
     SalesOrderStatusGroups,
+    TransferOrderStatusGroups,
 )
 from part.models import Part
 from users.models import Owner
@@ -1723,63 +1724,63 @@ class ReturnOrderExtraLineDetail(RetrieveUpdateDestroyAPI):
     serializer_class = serializers.ReturnOrderExtraLineSerializer
 
 
-# class TransferOrderFilter(OrderFilter):
-#     """Custom API filters for the TransferOrderList endpoint."""
+class TransferOrderFilter(OrderFilter):
+    """Custom API filters for the TransferOrderList endpoint."""
 
-#     class Meta:
-#         """Metaclass options."""
+    class Meta:
+        """Metaclass options."""
 
-#         model = models.TransferOrder
-#         fields = ['customer']
+        model = models.TransferOrder
+        fields = []
 
-#     include_variants = rest_filters.BooleanFilter(
-#         label=_('Include Variants'), method='filter_include_variants'
-#     )
+    include_variants = rest_filters.BooleanFilter(
+        label=_('Include Variants'), method='filter_include_variants'
+    )
 
-#     def filter_include_variants(self, queryset, name, value):
-#         """Filter by whether or not to include variants of the selected part.
+    def filter_include_variants(self, queryset, name, value):
+        """Filter by whether or not to include variants of the selected part.
 
-#         Note:
-#         - This filter does nothing by itself, and requires the 'part' filter to be set.
-#         - Refer to the 'filter_part' method for more information.
-#         """
-#         return queryset
+        Note:
+        - This filter does nothing by itself, and requires the 'part' filter to be set.
+        - Refer to the 'filter_part' method for more information.
+        """
+        return queryset
 
-#     part = rest_filters.ModelChoiceFilter(
-#         queryset=Part.objects.all(), field_name='part', method='filter_part'
-#     )
+    part = rest_filters.ModelChoiceFilter(
+        queryset=Part.objects.all(), field_name='part', method='filter_part'
+    )
 
-#     @extend_schema_field(OpenApiTypes.INT)
-#     def filter_part(self, queryset, name, part):
-#         """Filter by selected 'part'.
+    @extend_schema_field(OpenApiTypes.INT)
+    def filter_part(self, queryset, name, part):
+        """Filter by selected 'part'.
 
-#         Note:
-#         - If 'include_variants' is set to True, then all variants of the selected part will be included.
-#         - Otherwise, just filter by the selected part.
-#         """
-#         include_variants = str2bool(self.data.get('include_variants', False))
+        Note:
+        - If 'include_variants' is set to True, then all variants of the selected part will be included.
+        - Otherwise, just filter by the selected part.
+        """
+        include_variants = str2bool(self.data.get('include_variants', False))
 
-#         if include_variants:
-#             parts = part.get_descendants(include_self=True)
-#         else:
-#             parts = Part.objects.filter(pk=part.pk)
+        if include_variants:
+            parts = part.get_descendants(include_self=True)
+        else:
+            parts = Part.objects.filter(pk=part.pk)
 
-#         # Now that we have a queryset of parts, find all the matching return orders
-#         line_items = models.TransferOrderLineItem.objects.filter(item__part__in=parts)
+        # Now that we have a queryset of parts, find all the matching return orders
+        line_items = models.TransferOrderLineItem.objects.filter(item__part__in=parts)
 
-#         # Generate a list of ID values for the matching transfer orders
-#         transfer_orders = line_items.values_list('order', flat=True).distinct()
+        # Generate a list of ID values for the matching transfer orders
+        transfer_orders = line_items.values_list('order', flat=True).distinct()
 
-#         # Now we have a list of matching IDs, filter the queryset
-#         return queryset.filter(pk__in=transfer_orders)
+        # Now we have a list of matching IDs, filter the queryset
+        return queryset.filter(pk__in=transfer_orders)
 
-#     completed_before = InvenTreeDateFilter(
-#         label=_('Completed Before'), field_name='complete_date', lookup_expr='lt'
-#     )
+    completed_before = InvenTreeDateFilter(
+        label=_('Completed Before'), field_name='complete_date', lookup_expr='lt'
+    )
 
-#     completed_after = InvenTreeDateFilter(
-#         label=_('Completed After'), field_name='complete_date', lookup_expr='gt'
-#     )
+    completed_after = InvenTreeDateFilter(
+        label=_('Completed After'), field_name='complete_date', lookup_expr='gt'
+    )
 
 
 class TransferOrderMixin(SerializerContextMixin):
@@ -1807,8 +1808,7 @@ class TransferOrderList(
 ):
     """API endpoint for accessing a list of TransferOrder objects."""
 
-    # TODO:
-    # filterset_class = TransferOrderFilter
+    filterset_class = TransferOrderFilter
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
     # TODO:
@@ -1897,6 +1897,108 @@ class TransferOrderIssue(TransferOrderContextMixin, CreateAPI):
 #     serializer_class = serializers.TransferOrderReceiveSerializer
 
 
+class TransferOrderLineItemFilter(LineItemFilter):
+    """Custom filters for TransferOrderLineItemList endpoint."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = models.TransferOrderLineItem
+        fields = []
+
+    order = rest_filters.ModelChoiceFilter(
+        queryset=models.TransferOrder.objects.all(),
+        field_name='order',
+        label=_('Order'),
+    )
+
+    def filter_include_variants(self, queryset, name, value):
+        """Filter by whether or not to include variants of the selected part.
+
+        Note:
+        - This filter does nothing by itself, and requires the 'part' filter to be set.
+        - Refer to the 'filter_part' method for more information.
+        """
+        return queryset
+
+    part = rest_filters.ModelChoiceFilter(
+        queryset=Part.objects.all(),
+        field_name='part',
+        label=_('Part'),
+        method='filter_part',
+    )
+
+    @extend_schema_field(OpenApiTypes.INT)
+    def filter_part(self, queryset, name, part):
+        """Filter TransferOrderLineItem by selected 'part'.
+
+        Note:
+        - If 'include_variants' is set to True, then all variants of the selected part will be included.
+        - Otherwise, just filter by the selected part.
+        """
+        include_variants = str2bool(self.data.get('include_variants', False))
+
+        # Construct a queryset of parts to filter by
+        if include_variants:
+            parts = part.get_descendants(include_self=True)
+        else:
+            parts = Part.objects.filter(pk=part.pk)
+
+        return queryset.filter(part__in=parts)
+
+    allocated = rest_filters.BooleanFilter(
+        label=_('Allocated'), method='filter_allocated'
+    )
+
+    def filter_allocated(self, queryset, name, value):
+        """Filter by lines which are 'allocated'.
+
+        A line is 'allocated' when allocated >= quantity
+        """
+        q = Q(allocated__gte=F('quantity'))
+
+        if str2bool(value):
+            return queryset.filter(q)
+        return queryset.exclude(q)
+
+    completed = rest_filters.BooleanFilter(
+        label=_('Completed'), method='filter_completed'
+    )
+
+    def filter_completed(self, queryset, name, value):
+        """Filter by lines which are "completed".
+
+        A line is 'completed' when transferred >= quantity
+        """
+        q = Q(transferred__gte=F('quantity'))
+
+        if str2bool(value):
+            return queryset.filter(q)
+        return queryset.exclude(q)
+
+    order_complete = rest_filters.BooleanFilter(
+        label=_('Order Complete'), method='filter_order_complete'
+    )
+
+    def filter_order_complete(self, queryset, name, value):
+        """Filter by whether the order is 'complete' or not."""
+        if str2bool(value):
+            return queryset.filter(order__status__in=TransferOrderStatusGroups.COMPLETE)
+
+        return queryset.exclude(order__status__in=TransferOrderStatusGroups.COMPLETE)
+
+    order_outstanding = rest_filters.BooleanFilter(
+        label=_('Order Outstanding'), method='filter_order_outstanding'
+    )
+
+    def filter_order_outstanding(self, queryset, name, value):
+        """Filter by whether the order is 'outstanding' or not."""
+        if str2bool(value):
+            return queryset.filter(order__status__in=TransferOrderStatusGroups.OPEN)
+
+        return queryset.exclude(order__status__in=TransferOrderStatusGroups.OPEN)
+
+
 class TransferOrderLineItemMixin(SerializerContextMixin):
     """Mixin class for TransferOrderLineItem endpoints."""
 
@@ -1937,8 +2039,7 @@ class TransferOrderLineItemList(
 ):
     """API endpoint for accessing a list of TransferOrderLineItem objects."""
 
-    # TODO:
-    # filterset_class = TransferOrderLineItemFilter
+    filterset_class = TransferOrderLineItemFilter
 
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
