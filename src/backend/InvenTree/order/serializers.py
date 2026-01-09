@@ -2195,11 +2195,17 @@ class TransferOrderSerializer(
         return [*fields, 'duplicate']
 
     take_from_detail = enable_filter(
-        stock.serializers.LocationSerializer(source='take_from'), default_include=True
+        stock.serializers.LocationSerializer(
+            source='take_from', many=False, read_only=True, allow_null=True
+        ),
+        default_include=True,
     )
 
     destination_detail = enable_filter(
-        stock.serializers.LocationSerializer(source='destination'), default_include=True
+        stock.serializers.LocationSerializer(
+            source='destination', many=False, read_only=True, allow_null=True
+        ),
+        default_include=True,
     )
 
     # TODO:

@@ -1842,6 +1842,57 @@ class TransferOrderDetail(
     # output_options = TransferOrderOutputOptions
 
 
+class TransferOrderContextMixin:
+    """Simple mixin class to add a TransferOrder to the serializer context."""
+
+    queryset = models.TransferOrder.objects.all()
+
+    def get_serializer_context(self):
+        """Add the TransferOrder object to the serializer context."""
+        context = super().get_serializer_context()
+
+        # Pass the Transfer instance through to the serializer for validation
+        try:
+            context['order'] = models.TransferOrder.objects.get(
+                pk=self.kwargs.get('pk', None)
+            )
+        except Exception:
+            pass
+
+        context['request'] = self.request
+
+        return context
+
+
+# class ReturnOrderCancel(ReturnOrderContextMixin, CreateAPI):
+#     """API endpoint to cancel a ReturnOrder."""
+
+#     serializer_class = serializers.ReturnOrderCancelSerializer
+
+# class ReturnOrderHold(ReturnOrderContextMixin, CreateAPI):
+#     """API endpoint to hold a ReturnOrder."""
+
+#     serializer_class = serializers.ReturnOrderHoldSerializer
+
+# class ReturnOrderComplete(ReturnOrderContextMixin, CreateAPI):
+#     """API endpoint to complete a ReturnOrder."""
+
+#     serializer_class = serializers.ReturnOrderCompleteSerializer
+
+
+class TransferOrderIssue(TransferOrderContextMixin, CreateAPI):
+    """API endpoint to issue a Transfer Order."""
+
+    serializer_class = serializers.ReturnOrderIssueSerializer
+
+
+# class ReturnOrderReceive(ReturnOrderContextMixin, CreateAPI):
+#     """API endpoint to receive items against a ReturnOrder."""
+
+#     queryset = models.ReturnOrder.objects.none()
+#     serializer_class = serializers.ReturnOrderReceiveSerializer
+
+
 class OrderCalendarExport(ICalFeed):
     """Calendar export for Purchase/Sales Orders.
 
@@ -2311,11 +2362,11 @@ order_api_urls = [
                     #     TransferOrderComplete.as_view(),
                     #     name='api-transfer-order-complete',
                     # ),
-                    # path(
-                    #     'issue/',
-                    #     TransferOrderIssue.as_view(),
-                    #     name='api-transfer-order-issue',
-                    # ),
+                    path(
+                        'issue/',
+                        TransferOrderIssue.as_view(),
+                        name='api-transfer-order-issue',
+                    ),
                     # path(
                     #     'receive/',
                     #     TransferOrderReceive.as_view(),
@@ -2326,7 +2377,7 @@ order_api_urls = [
                         '',
                         TransferOrderDetail.as_view(),
                         name='api-transfer-order-detail',
-                    )
+                    ),
                 ]),
             ),
             # Transfer Order list
