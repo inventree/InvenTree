@@ -199,6 +199,7 @@ export enum ApiEndpoints {
 
   transfer_order_list = 'order/to/',
   transfser_order_line_list = 'order/to-line/',
+  transfer_order_issue = 'order/to/:id/issue/',
 
   // Template API endpoints
   label_list = 'label/template/',
