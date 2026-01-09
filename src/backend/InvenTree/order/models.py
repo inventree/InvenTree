@@ -3178,7 +3178,7 @@ class TransferOrder(Order):
         'stock.StockLocation',
         verbose_name=_('Source Location'),
         on_delete=models.SET_NULL,
-        related_name='sourcing_transferes',
+        related_name='sourcing_transfers',
         blank=True,
         null=True,
         help_text=_('Source for transferred items'),
@@ -3188,7 +3188,7 @@ class TransferOrder(Order):
         'stock.StockLocation',
         verbose_name=_('Destination Location'),
         on_delete=models.SET_NULL,
-        related_name='incoming_transferes',
+        related_name='incoming_transfers',
         blank=True,
         null=True,
         help_text=_('Destination for transferred items'),
@@ -3331,3 +3331,233 @@ class TransferOrder(Order):
             trigger_event(TransferOrderEvents.HOLD, id=self.pk)
 
     # endregion
+
+
+class TransferOrderLineItem(OrderLineItem):
+    """Model for a single LineItem in a TransferOrder.
+
+    Attributes:
+        order: Link to the TransferOrder that this line item belongs to
+        part: Link to a Part object (may be null)
+        transferred: The number of items which have actually transferred against this line item
+    """
+
+    class Meta:
+        """Model meta options."""
+
+        verbose_name = _('Transfer Order Line Item')
+
+    # Filter for determining if a particular TransferOrderLineItem is overdue
+    OVERDUE_FILTER = (
+        Q(transferred__lt=F('quantity'))
+        & ~Q(target_date=None)
+        & Q(target_date__lt=InvenTree.helpers.current_date())
+    )
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL associated with the TransferOrderLineItem model."""
+        return reverse('api-to-line-list')
+
+    order = models.ForeignKey(
+        TransferOrder,
+        on_delete=models.CASCADE,
+        related_name='lines',
+        verbose_name=_('Order'),
+        help_text=_('Transfer Order'),
+    )
+
+    part = models.ForeignKey(
+        'part.Part',
+        on_delete=models.SET_NULL,
+        related_name='transfer_order_line_items',
+        null=True,
+        verbose_name=_('Part'),
+        help_text=_('Part'),
+        # limit_choices_to={'salable': True},
+    )
+
+    transferred = RoundingDecimalField(
+        verbose_name=_('transferred'),
+        help_text=_('transferred quantity'),
+        default=0,
+        max_digits=15,
+        decimal_places=5,
+        validators=[MinValueValidator(0)],
+    )
+
+    def fulfilled_quantity(self):
+        """Return the total stock quantity fulfilled against this line item."""
+        if not self.pk:
+            return 0
+
+        query = self.order.stock_items.filter(part=self.part).aggregate(
+            fulfilled=Coalesce(Sum('quantity'), Decimal(0))
+        )
+
+        return query['fulfilled']
+
+    def allocated_quantity(self):
+        """Return the total stock quantity allocated to this LineItem.
+
+        This is a summation of the quantity of each attached StockItem
+        """
+        if not self.pk:
+            return 0
+
+        query = self.allocations.aggregate(
+            allocated=Coalesce(Sum('quantity'), Decimal(0))
+        )
+
+        return query['allocated']
+
+    def is_fully_allocated(self) -> bool:
+        """Return True if this line item is fully allocated."""
+        # If the linked part is "virtual", then we cannot allocate stock against it
+        if self.part and self.part.virtual:
+            return True
+
+        if self.order.status == TransferOrderStatus.COMPLETE:
+            return self.fulfilled_quantity() >= self.quantity
+
+        return self.allocated_quantity() >= self.quantity
+
+    def is_overallocated(self) -> bool:
+        """Return True if this line item is over allocated."""
+        return self.allocated_quantity() > self.quantity
+
+    def is_completed(self) -> bool:
+        """Return True if this line item is completed (has been fully shipped)."""
+        # A "virtual" part is always considered to be "completed"
+        if self.part and self.part.virtual:
+            return True
+
+        return self.transferred >= self.quantity
+
+
+class TransferOrderAllocation(models.Model):
+    """This model is used to 'allocate' stock items to a TransferOrder. Items that are "allocated" to a TransferOrder are not yet "attached" to the order, but they will be once the order is fulfilled.
+
+    Attributes:
+        line: TransferOrderLineItem reference
+        item: StockItem reference
+        quantity: Quantity to take from the StockItem
+    """
+
+    class Meta:
+        """Model meta options."""
+
+        verbose_name = _('Transfer Order Allocation')
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL associated with the TransferOrderAllocation model."""
+        return reverse('api-to-allocation-list')
+
+    def clean(self):
+        """Validate the TransferOrderAllocation object.
+
+        Executes:
+        - Cannot allocate stock to a line item without a part reference
+        - The referenced part must match the part associated with the line item
+        - Allocated quantity cannot exceed the quantity of the stock item
+        - Allocation quantity must be "1" if the StockItem is serialized
+        - Allocation quantity cannot be zero
+        """
+        super().clean()
+
+        errors = {}
+
+        try:
+            if not self.item:
+                raise ValidationError({'item': _('Stock item has not been assigned')})
+        except stock.models.StockItem.DoesNotExist:
+            raise ValidationError({'item': _('Stock item has not been assigned')})
+
+        try:
+            if self.line.part != self.item.part:
+                variants = self.line.part.get_descendants(include_self=True)
+                if self.line.part not in variants:
+                    errors['item'] = _(
+                        'Cannot allocate stock item to a line with a different part'
+                    )
+        except PartModels.Part.DoesNotExist:
+            errors['line'] = _('Cannot allocate stock to a line without a part')
+
+        if self.quantity > self.item.quantity:
+            errors['quantity'] = _('Allocation quantity cannot exceed stock quantity')
+
+        # Ensure that we do not 'over allocate' a stock item
+        build_allocation_count = self.item.build_allocation_count()
+        sales_allocation_count = self.item.sales_order_allocation_count(
+            exclude_allocations={'pk': self.pk}
+        )
+
+        total_allocation = (
+            build_allocation_count + sales_allocation_count + self.quantity
+        )
+
+        if total_allocation > self.item.quantity:
+            errors['quantity'] = _('Stock item is over-allocated')
+
+        if self.quantity <= 0:
+            errors['quantity'] = _('Allocation quantity must be greater than zero')
+
+        if self.item.serial and self.quantity != 1:
+            errors['quantity'] = _('Quantity must be 1 for serialized stock item')
+
+        if len(errors) > 0:
+            raise ValidationError(errors)
+
+    line = models.ForeignKey(
+        TransferOrderLineItem,
+        on_delete=models.CASCADE,
+        verbose_name=_('Line'),
+        related_name='allocations',
+    )
+
+    item = models.ForeignKey(
+        'stock.StockItem',
+        on_delete=models.CASCADE,
+        related_name='transfer_order_allocations',
+        limit_choices_to={
+            'part__virtual': False,
+            'belongs_to': None,
+            'sales_order': None,
+        },
+        verbose_name=_('Item'),
+        help_text=_('Select stock item to allocate'),
+    )
+
+    quantity = RoundingDecimalField(
+        max_digits=15,
+        decimal_places=5,
+        validators=[MinValueValidator(0)],
+        default=1,
+        verbose_name=_('Quantity'),
+        help_text=_('Enter stock allocation quantity'),
+    )
+
+    def get_location(self):
+        """Return the <pk> value of the location associated with this allocation."""
+        return self.item.location.id if self.item.location else None
+
+    def get_po(self):
+        """Return the PurchaseOrder associated with this allocation."""
+        return self.item.purchase_order
+
+    def complete_allocation(self, user):
+        """Complete this allocation (called when the parent TransferOrder is marked as "completed").
+
+        Executes:
+        - Determine if the referenced StockItem needs to be "split" (if allocated quantity != stock quantity)
+        - Move the StockItem to the new location
+        """
+        # order = self.line.order
+        # # item = self.item.move(location=TARGET_LOCATION, notes="", user=USER, quantity=self.quantity, status=STATUS)
+
+        # # Update our own reference to the StockItem
+        # # (It may have changed if the stock was split)
+        # self.item = item
+        # self.save()
+        raise NotImplementedError

@@ -7,7 +7,7 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/index';
-import { IconInfoCircle } from '@tabler/icons-react';
+import { IconInfoCircle, IconList } from '@tabler/icons-react';
 import AdminButton from '../../components/buttons/AdminButton';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
@@ -41,6 +41,7 @@ import { useInstance } from '../../hooks/UseInstance';
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
+import TransferOrderLineItemTable from '../../tables/stock/TransferOrderLineItemTable';
 
 export default function TransferOrderDetail() {
   const { id } = useParams();
@@ -60,6 +61,18 @@ export default function TransferOrderDetail() {
   });
 
   const toStatus = useStatusCodes({ modelType: ModelType.transferorder });
+
+  const lineItemsEditable: boolean = useMemo(() => {
+    const orderOpen: boolean =
+      order.status != toStatus.COMPLETE && order.status != toStatus.CANCELLED;
+
+    return orderOpen;
+    // if (orderOpen) {
+    //     return true;
+    // } else {
+    //     return globalSettings.isSet('TRANSFERORDER_EDIT_COMPLETED_ORDERS');
+    // }
+  }, [globalSettings, order.status, toStatus]);
 
   const orderOpen = useMemo(() => {
     return (
@@ -247,6 +260,54 @@ export default function TransferOrderDetail() {
         label: t`Order Details`,
         icon: <IconInfoCircle />,
         content: detailsPanel
+      },
+      {
+        name: 'line-items',
+        label: t`Line Items`,
+        icon: <IconList />,
+        content: (
+          <TransferOrderLineItemTable
+            orderId={order.pk}
+            orderDetailRefresh={refreshInstance}
+            editable={lineItemsEditable}
+          />
+          // TODO: add back the accordion if we need extra lines
+          // <Accordion
+          //     multiple={true}
+          //     defaultValue={[
+          //         'line-items',
+          //         // 'extra-items'
+          //     ]}
+          // >
+          //     <Accordion.Item value='line-items' key='lineitems'>
+          //         <Accordion.Control>
+          //             <StylishText size='lg'>{t`Line Items`}</StylishText>
+          //         </Accordion.Control>
+          //         <Accordion.Panel>
+          //             <TransferOrderLineItemTable
+          //                 orderId={order.pk}
+          //                 orderDetailRefresh={refreshInstance}
+          //                 editable={lineItemsEditable}
+          //             />
+          //         </Accordion.Panel>
+          //     </Accordion.Item>
+          //     {/* <Accordion.Item value='extra-items' key='extraitems'>
+          //         <Accordion.Control>
+          //             <StylishText size='lg'>{t`Extra Line Items`}</StylishText>
+          //         </Accordion.Control>
+          //         <Accordion.Panel>
+          //             <ExtraLineItemTable
+          //                 endpoint={ApiEndpoints.sales_order_extra_line_list}
+          //                 orderId={order.pk}
+          //                 editable={lineItemsEditable}
+          //                 orderDetailRefresh={refreshInstance}
+          //                 currency={orderCurrency}
+          //                 role={UserRoles.sales_order}
+          //             />
+          //         </Accordion.Panel>
+          //     </Accordion.Item> */}
+          // </Accordion>
+        )
       },
       ParametersPanel({
         model_type: ModelType.transferorder,

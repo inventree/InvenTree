@@ -1807,9 +1807,11 @@ class TransferOrderList(
 ):
     """API endpoint for accessing a list of TransferOrder objects."""
 
+    # TODO:
     # filterset_class = TransferOrderFilter
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
+    # TODO:
     # output_options = TransferOrderOutputOptions
 
     ordering_field_aliases = {
@@ -1893,6 +1895,77 @@ class TransferOrderIssue(TransferOrderContextMixin, CreateAPI):
 
 #     queryset = models.TransferOrder.objects.none()
 #     serializer_class = serializers.TransferOrderReceiveSerializer
+
+
+class TransferOrderLineItemMixin(SerializerContextMixin):
+    """Mixin class for TransferOrderLineItem endpoints."""
+
+    queryset = models.TransferOrderLineItem.objects.all()
+    serializer_class = serializers.TransferOrderLineItemSerializer
+
+    def get_queryset(self, *args, **kwargs):
+        """Return annotated queryset for this endpoint."""
+        queryset = super().get_queryset(*args, **kwargs)
+
+        queryset = queryset.prefetch_related(
+            'part',
+            'allocations',
+            'allocations__transfer',
+            'allocations__item__part',
+            'allocations__item__location',
+            'order',
+        )
+
+        queryset = serializers.TransferOrderLineItemSerializer.annotate_queryset(
+            queryset
+        )
+
+        return queryset
+
+
+class TransferOrderLineItemOutputOptions(OutputConfiguration):
+    """Output options for the TransferOrderAllocation endpoint."""
+
+    OPTIONS = [
+        InvenTreeOutputOption('part_detail'),
+        InvenTreeOutputOption('order_detail'),
+    ]
+
+
+class TransferOrderLineItemList(
+    TransferOrderLineItemMixin, DataExportViewMixin, OutputOptionsMixin, ListCreateAPI
+):
+    """API endpoint for accessing a list of TransferOrderLineItem objects."""
+
+    # TODO:
+    # filterset_class = TransferOrderLineItemFilter
+
+    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+
+    output_options = TransferOrderLineItemOutputOptions
+
+    ordering_fields = [
+        'order',
+        'part',
+        'part__name',
+        'quantity',
+        'allocated',
+        # 'transferred',
+        'reference',
+        'target_date',
+    ]
+
+    ordering_field_aliases = {'part': 'part__name', 'order': 'order__reference'}
+
+    search_fields = ['part__name', 'quantity', 'reference']
+
+
+class TransferOrderLineItemDetail(
+    TransferOrderLineItemMixin, OutputOptionsMixin, RetrieveUpdateDestroyAPI
+):
+    """API endpoint for detail view of a TransferOrderLineItem object."""
+
+    output_options = TransferOrderLineItemOutputOptions
 
 
 class OrderCalendarExport(ICalFeed):
@@ -2384,6 +2457,24 @@ order_api_urls = [
             ),
             # Transfer Order list
             path('', TransferOrderList.as_view(), name='api-transfer-order-list'),
+        ]),
+    ),
+    # API endpoints for transfer order line items
+    path(
+        'to-line/',
+        include([
+            # path(
+            #     '<int:pk>/',
+            #     include([
+            #         meta_path(models.TransferOrderLineItem),
+            #         path(
+            #             '',
+            #             TransferOrderLineItemDetail.as_view(),
+            #             name='api-to-line-detail',
+            #         ),
+            #     ]),
+            # ),
+            path('', TransferOrderLineItemList.as_view(), name='api-to-line-list')
         ]),
     ),
     # API endpoint for subscribing to ICS calendar of purchase/sales/return orders
