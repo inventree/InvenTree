@@ -1073,19 +1073,21 @@ class TestEmail(CreateAPI):
             )  # pragma: no cover
 
 
-class HealthCheckSerializer(serializers.Serializer):
-    """Serializer for health check response."""
+class HealthCheckStatusSerializer(serializers.Serializer):
+    """Status of the overall system health."""
 
-    status = serializers.CharField(
-        help_text='Health status of the InvenTree server'
-        # example='ok',
+    status = serializers.ChoiceField(
+        help_text='Health status of the InvenTree server',
+        choices=['ok', 'loading'],
+        read_only=True,
+        default='ok',
     )
 
 
 class HealthCheckView(APIView):
     """Simple JSON endpoint for InvenTree health check.
 
-    Used by external services to confirm that the InvenTree server is running.
+    Intended to be used by external services to confirm that the InvenTree server is running.
     """
 
     permission_classes = [AllowAnyOrReadScope]
@@ -1093,13 +1095,16 @@ class HealthCheckView(APIView):
     @extend_schema(
         responses={
             200: OpenApiResponse(
-                response=HealthCheckSerializer,
-                description='InvenTree server health check',
+                response=HealthCheckStatusSerializer,
+                description='InvenTree server health status',
             )
         }
     )
     def get(self, request, *args, **kwargs):
-        """Return information about the InvenTree server."""
+        """Simple health check endpoint for monitoring purposes.
+
+        Use the root API endpoint for more detailed information (using an authenticated request).
+        """
         status = (
             InvenTree.ready.isPluginRegistryLoaded if settings.PLUGINS_ENABLED else True
         )
