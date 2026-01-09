@@ -1845,10 +1845,12 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
         """
         error = None
 
+        print('check_allocated_quantity:', raise_error)
+
         # Allocated quantity must be positive
         if self.quantity <= 0:
             self.quantity = 0
-            error = {'quantity': _('Allocation quantity must be greater than zero')}
+            error = {'quantity': _('Allocated quantity must be greater than zero')}
 
         # Quantity must be 1 for serialized stock
         if self.stock_item.serialized and self.quantity != 1:
@@ -1859,10 +1861,9 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
 
         # Allocated quantity cannot exceed available stock quantity
         if self.quantity > self.stock_item.quantity:
-            self.quantity = self.stock_item.quantity
-
             q = InvenTree.helpers.normalize(self.quantity)
             a = InvenTree.helpers.normalize(self.stock_item.quantity)
+            self.quantity = self.stock_item.quantity
             error = {
                 'quantity': _(
                     f'Allocated quantity ({q}) must not exceed available stock quantity ({a})'
@@ -1883,6 +1884,9 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
 
         if total_allocation > available:
             error = {'quantity': _('Stock item is over-allocated')}
+
+        if error:
+            print('FOUND AN ERROR:', error)
 
         if error and raise_error:
             raise ValidationError(error)
