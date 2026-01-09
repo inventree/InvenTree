@@ -16,7 +16,11 @@ from rest_framework import status
 import build.models
 import company.models
 import part.models
-from common.models import InvenTreeCustomUserStateModel, InvenTreeSetting
+from common.models import (
+    InvenTreeCustomUserStateModel,
+    InvenTreeSetting,
+    ParameterTemplate,
+)
 from common.settings import set_global_setting
 from InvenTree.unit_test import InvenTreeAPIPerformanceTestCase, InvenTreeAPITestCase
 from part.models import Part, PartTestTemplate
@@ -2705,3 +2709,68 @@ class StockApiPerformanceTest(StockAPITestCase, InvenTreeAPIPerformanceTestCase)
         url = reverse('api-stock-list')
         response = self.get(url, expected_code=200)
         self.assertGreater(len(response.data), 13)
+
+
+class StockLocationParameterTest(InvenTreeAPITestCase):
+    """Tests for StockLocation parameters."""
+
+    superuser = True
+    fixtures = ['tenant', 'location']
+
+    def test_location_parameter_crud(self):
+        """Test basic CRUD operations for location parameters."""
+        url = reverse('api-parameter-list')
+
+        # Create a parameter template
+        template = ParameterTemplate.objects.create(
+            name='Temperature', description='Storage temperature', units='°C'
+        )
+
+        # Get a stock location
+        location = StockLocation.objects.first()
+        self.assertIsNotNone(location)
+
+        # Create a parameter for the stock location
+        response = self.post(
+            url,
+            {
+                'model_type': 'stock.stocklocation',
+                'model_id': location.pk,
+                'template': template.pk,
+                'data': '25',
+            },
+            expected_code=201,
+        )
+
+        param_pk = response.data['pk']
+
+        # Read the parameter via API
+        response = self.get(
+            url,
+            {'model_type': 'stock.stocklocation', 'model_id': location.pk},
+            expected_code=200,
+        )
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['data'], '25')
+
+        # Update the parameter
+        detail_url = reverse('api-parameter-detail', kwargs={'pk': param_pk})
+        response = self.patch(detail_url, {'data': '30'}, expected_code=200)
+        self.assertEqual(response.data['data'], '30')
+
+        # Verify the update via model
+        location.refresh_from_db()
+        param = location.get_parameter('Temperature')
+        self.assertIsNotNone(param)
+        self.assertEqual(param.data, '30')
+
+        # Delete the parameter
+        response = self.delete(detail_url, expected_code=204)
+
+        # Verify deletion
+        response = self.get(
+            url,
+            {'model_type': 'stock.stocklocation', 'model_id': location.pk},
+            expected_code=200,
+        )
+        self.assertEqual(len(response.data), 0)

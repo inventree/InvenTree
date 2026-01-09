@@ -6,7 +6,12 @@ import { getDetailUrl } from '@lib/functions/Navigation';
 import type { StockOperationProps } from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
 import { Group, Skeleton, Stack, Text } from '@mantine/core';
-import { IconInfoCircle, IconPackages, IconSitemap } from '@tabler/icons-react';
+import {
+  IconInfoCircle,
+  IconListDetails,
+  IconPackages,
+  IconSitemap
+} from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { api } from '../../App';
@@ -40,6 +45,7 @@ import {
 import { useInstance } from '../../hooks/UseInstance';
 import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
 import { useUserState } from '../../states/UserState';
+import { ParameterTable } from '../../tables/general/ParameterTable';
 import { PartListTable } from '../../tables/part/PartTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 import { StockLocationTable } from '../../tables/stock/StockLocationTable';
@@ -209,6 +215,18 @@ export default function Stock() {
                 default_location: location.pk
               }
             }}
+          />
+        )
+      },
+      {
+        name: 'parameters',
+        label: t`Parameters`,
+        icon: <IconListDetails />,
+        hidden: !location.pk,
+        content: (
+          <ParameterTable
+            modelType={ModelType.stocklocation}
+            modelId={location?.pk}
           />
         )
       }
