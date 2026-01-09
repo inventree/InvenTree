@@ -10,14 +10,18 @@ import { apiUrl } from '@lib/index';
 import { IconInfoCircle } from '@tabler/icons-react';
 import AdminButton from '../../components/buttons/AdminButton';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
+import { PrintingActions } from '../../components/buttons/PrintingActions';
 import {
   type DetailsField,
   DetailsTable
 } from '../../components/details/Details';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
+  BarcodeActionDropdown,
+  CancelItemAction,
   DuplicateItemAction,
   EditItemAction,
+  HoldItemAction,
   OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
 import InstanceDetail from '../../components/nav/InstanceDetail';
@@ -313,6 +317,30 @@ export default function TransferOrderDetail() {
     successMessage: t`Order issued`
   });
 
+  const cancelOrder = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.transfer_order_cancel, order.pk),
+    title: t`Cancel Transfer Order`,
+    onFormSuccess: refreshInstance,
+    preFormWarning: t`Cancel this order`,
+    successMessage: t`Order cancelled`
+  });
+
+  const holdOrder = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.transfer_order_hold, order.pk),
+    title: t`Hold Transfer Order`,
+    onFormSuccess: refreshInstance,
+    preFormWarning: t`Place this order on hold`,
+    successMessage: t`Order placed on hold`
+  });
+
+  const completeOrder = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.transfer_order_complete, order.pk),
+    title: t`Complete Transfer Order`,
+    onFormSuccess: refreshInstance,
+    preFormWarning: t`Mark this order as complete`,
+    successMessage: t`Order completed`
+  });
+
   const orderActions = useMemo(() => {
     const canEdit: boolean = user.hasChangeRole(UserRoles.transfer_order);
 
@@ -338,18 +366,25 @@ export default function TransferOrderDetail() {
         color='blue'
         onClick={() => issueOrder.open()}
       />,
+      <PrimaryActionButton
+        title={t`Complete Order`}
+        icon='complete'
+        hidden={!canComplete}
+        color='green'
+        onClick={() => completeOrder.open()}
+      />,
       <AdminButton model={ModelType.transferorder} id={order.pk} />,
-      // <BarcodeActionDropdown
-      //     model={ModelType.transferorder}
-      //     pk={order.pk}
-      //     hash={order?.barcode_hash}
-      // />,
-      // <PrintingActions
-      //     modelType={ModelType.transferorder}
-      //     items={[order.pk]}
-      //     enableReports
-      //     enableLabels
-      // />,
+      <BarcodeActionDropdown
+        model={ModelType.transferorder}
+        pk={order.pk}
+        hash={order?.barcode_hash}
+      />,
+      <PrintingActions
+        modelType={ModelType.transferorder}
+        items={[order.pk]}
+        enableReports
+        enableLabels
+      />,
       <OptionsActionDropdown
         tooltip={t`Order Actions`}
         actions={[
@@ -364,17 +399,17 @@ export default function TransferOrderDetail() {
             tooltip: t`Duplicate order`,
             hidden: !user.hasChangeRole(UserRoles.transfer_order),
             onClick: () => duplicateTransferOrder.open()
+          }),
+          HoldItemAction({
+            tooltip: t`Hold order`,
+            hidden: !canHold,
+            onClick: () => holdOrder.open()
+          }),
+          CancelItemAction({
+            tooltip: t`Cancel order`,
+            hidden: !canCancel,
+            onClick: () => cancelOrder.open()
           })
-          // HoldItemAction({
-          //     tooltip: t`Hold order`,
-          //     hidden: !canHold,
-          //     onClick: () => holdOrder.open()
-          // }),
-          // CancelItemAction({
-          //     tooltip: t`Cancel order`,
-          //     hidden: !canCancel,
-          //     onClick: () => cancelOrder.open()
-          // })
         ]}
       />
     ];
@@ -390,9 +425,9 @@ export default function TransferOrderDetail() {
     <>
       {editTransferOrder.modal}
       {issueOrder.modal}
-      {/* {cancelOrder.modal} */}
-      {/* {holdOrder.modal} */}
-      {/* {completeOrder.modal} */}
+      {cancelOrder.modal}
+      {holdOrder.modal}
+      {completeOrder.modal}
       {duplicateTransferOrder.modal}
       <InstanceDetail
         query={instanceQuery}
@@ -402,6 +437,7 @@ export default function TransferOrderDetail() {
           <PageDetail
             title={`${t`Transfer Order`}: ${order.reference}`}
             subtitle={subtitle}
+            // What should be the Transfer Order image?
             // imageUrl={order.customer_detail?.image}
             badges={orderBadges}
             actions={orderActions}
@@ -412,7 +448,7 @@ export default function TransferOrderDetail() {
                 url: `/stock/transfer-order/${order.pk}`
               }
             ]}
-            // editAction={edittransferorder.open}
+            editAction={editTransferOrder.open}
             editEnabled={user.hasChangePermission(ModelType.transferorder)}
           />
           <PanelGroup

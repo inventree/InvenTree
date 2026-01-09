@@ -198,8 +198,11 @@ export enum ApiEndpoints {
   return_order_extra_line_list = 'order/ro-extra-line/',
 
   transfer_order_list = 'order/to/',
-  transfser_order_line_list = 'order/to-line/',
   transfer_order_issue = 'order/to/:id/issue/',
+  transfer_order_hold = 'order/to/:id/hold/',
+  transfer_order_cancel = 'order/to/:id/cancel/',
+  transfer_order_complete = 'order/to/:id/complete/',
+  transfser_order_line_list = 'order/to-line/',
 
   // Template API endpoints
   label_list = 'label/template/',

@@ -1864,33 +1864,35 @@ class TransferOrderContextMixin:
         return context
 
 
-# class ReturnOrderCancel(ReturnOrderContextMixin, CreateAPI):
-#     """API endpoint to cancel a ReturnOrder."""
+class TransferOrderCancel(TransferOrderContextMixin, CreateAPI):
+    """API endpoint to cancel a TransferOrder."""
 
-#     serializer_class = serializers.ReturnOrderCancelSerializer
+    serializer_class = serializers.TransferOrderCancelSerializer
 
-# class ReturnOrderHold(ReturnOrderContextMixin, CreateAPI):
-#     """API endpoint to hold a ReturnOrder."""
 
-#     serializer_class = serializers.ReturnOrderHoldSerializer
+class TransferOrderHold(TransferOrderContextMixin, CreateAPI):
+    """API endpoint to hold a TransferOrder."""
 
-# class ReturnOrderComplete(ReturnOrderContextMixin, CreateAPI):
-#     """API endpoint to complete a ReturnOrder."""
+    serializer_class = serializers.TransferOrderHoldSerializer
 
-#     serializer_class = serializers.ReturnOrderCompleteSerializer
+
+class TransferOrderComplete(TransferOrderContextMixin, CreateAPI):
+    """API endpoint to complete a TransferOrder."""
+
+    serializer_class = serializers.TransferOrderCompleteSerializer
 
 
 class TransferOrderIssue(TransferOrderContextMixin, CreateAPI):
     """API endpoint to issue a Transfer Order."""
 
-    serializer_class = serializers.ReturnOrderIssueSerializer
+    serializer_class = serializers.TransferOrderIssueSerializer
 
 
-# class ReturnOrderReceive(ReturnOrderContextMixin, CreateAPI):
-#     """API endpoint to receive items against a ReturnOrder."""
+# class TransferOrderReceive(TransferOrderContextMixin, CreateAPI):
+#     """API endpoint to receive items against a TransferOrder."""
 
-#     queryset = models.ReturnOrder.objects.none()
-#     serializer_class = serializers.ReturnOrderReceiveSerializer
+#     queryset = models.TransferOrder.objects.none()
+#     serializer_class = serializers.TransferOrderReceiveSerializer
 
 
 class OrderCalendarExport(ICalFeed):
@@ -2351,17 +2353,17 @@ order_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    # path(
-                    #     'cancel/',
-                    #     TransferOrderCancel.as_view(),
-                    #     name='api-transfer-order-cancel',
-                    # ),
-                    # path('hold/', TransferOrderHold.as_view(), name='api-ro-hold'),
-                    # path(
-                    #     'complete/',
-                    #     TransferOrderComplete.as_view(),
-                    #     name='api-transfer-order-complete',
-                    # ),
+                    path(
+                        'cancel/',
+                        TransferOrderCancel.as_view(),
+                        name='api-transfer-order-cancel',
+                    ),
+                    path('hold/', TransferOrderHold.as_view(), name='api-ro-hold'),
+                    path(
+                        'complete/',
+                        TransferOrderComplete.as_view(),
+                        name='api-transfer-order-complete',
+                    ),
                     path(
                         'issue/',
                         TransferOrderIssue.as_view(),
