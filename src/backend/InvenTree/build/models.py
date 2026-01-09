@@ -1845,8 +1845,6 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
         """
         error = None
 
-        print('check_allocated_quantity:', raise_error)
-
         # Allocated quantity must be positive
         if self.quantity <= 0:
             self.quantity = 0
@@ -1884,9 +1882,6 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
 
         if total_allocation > available:
             error = {'quantity': _('Stock item is over-allocated')}
-
-        if error:
-            print('FOUND AN ERROR:', error)
 
         if error and raise_error:
             raise ValidationError(error)
