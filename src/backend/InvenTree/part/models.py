@@ -1819,7 +1819,7 @@ class Part(
 
         if include_external is False:
             # Exclude stock entries which are not 'internal'
-            query = query.filter(external=False)
+            query = query.filter(location__external=False)
 
         if location:
             locations = location.get_descendants(include_self=True)
