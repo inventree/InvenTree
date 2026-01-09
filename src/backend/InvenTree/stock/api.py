@@ -29,12 +29,7 @@ from company.models import Company, ManufacturerPart, SupplierPart
 from company.serializers import CompanySerializer
 from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import StatusView
-from InvenTree.api import (
-    BulkCreateMixin,
-    BulkUpdateMixin,
-    ListCreateDestroyAPIView,
-    meta_path,
-)
+from InvenTree.api import BulkCreateMixin, BulkUpdateMixin, ListCreateDestroyAPIView
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import (
     ORDER_FILTER_ALIAS,
@@ -1608,11 +1603,7 @@ stock_api_urls = [
             path('tree/', StockLocationTree.as_view(), name='api-location-tree'),
             # Stock location detail endpoints
             path(
-                '<int:pk>/',
-                include([
-                    meta_path(StockLocation),
-                    path('', StockLocationDetail.as_view(), name='api-location-detail'),
-                ]),
+                '<int:pk>/', StockLocationDetail.as_view(), name='api-location-detail'
             ),
             path('', StockLocationList.as_view(), name='api-location-list'),
         ]),
@@ -1623,14 +1614,8 @@ stock_api_urls = [
         include([
             path(
                 '<int:pk>/',
-                include([
-                    meta_path(StockLocationType),
-                    path(
-                        '',
-                        StockLocationTypeDetail.as_view(),
-                        name='api-location-type-detail',
-                    ),
-                ]),
+                StockLocationTypeDetail.as_view(),
+                name='api-location-type-detail',
             ),
             path('', StockLocationTypeList.as_view(), name='api-location-type-list'),
         ]),
@@ -1650,14 +1635,8 @@ stock_api_urls = [
         include([
             path(
                 '<int:pk>/',
-                include([
-                    meta_path(StockItemTestResult),
-                    path(
-                        '',
-                        StockItemTestResultDetail.as_view(),
-                        name='api-stock-test-result-detail',
-                    ),
-                ]),
+                StockItemTestResultDetail.as_view(),
+                name='api-stock-test-result-detail',
             ),
             path(
                 '', StockItemTestResultList.as_view(), name='api-stock-test-result-list'
@@ -1689,7 +1668,6 @@ stock_api_urls = [
         include([
             path('convert/', StockItemConvert.as_view(), name='api-stock-item-convert'),
             path('install/', StockItemInstall.as_view(), name='api-stock-item-install'),
-            meta_path(StockItem),
             path(
                 'serialize/',
                 StockItemSerialize.as_view(),

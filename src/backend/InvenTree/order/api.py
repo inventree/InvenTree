@@ -28,12 +28,7 @@ import stock.models as stock_models
 import stock.serializers as stock_serializers
 from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import StatusView
-from InvenTree.api import (
-    BulkUpdateMixin,
-    ListCreateDestroyAPIView,
-    ParameterListMixin,
-    meta_path,
-)
+from InvenTree.api import BulkUpdateMixin, ListCreateDestroyAPIView, ParameterListMixin
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import (
     SEARCH_ORDER_FILTER,
@@ -1888,7 +1883,6 @@ order_api_urls = [
                         name='api-po-complete',
                     ),
                     path('issue/', PurchaseOrderIssue.as_view(), name='api-po-issue'),
-                    meta_path(models.PurchaseOrder),
                     path(
                         'receive/',
                         PurchaseOrderReceive.as_view(),
@@ -1915,14 +1909,8 @@ order_api_urls = [
         include([
             path(
                 '<int:pk>/',
-                include([
-                    meta_path(models.PurchaseOrderLineItem),
-                    path(
-                        '',
-                        PurchaseOrderLineItemDetail.as_view(),
-                        name='api-po-line-detail',
-                    ),
-                ]),
+                PurchaseOrderLineItemDetail.as_view(),
+                name='api-po-line-detail',
             ),
             path('', PurchaseOrderLineItemList.as_view(), name='api-po-line-list'),
         ]),
@@ -1933,14 +1921,8 @@ order_api_urls = [
         include([
             path(
                 '<int:pk>/',
-                include([
-                    meta_path(models.PurchaseOrderExtraLine),
-                    path(
-                        '',
-                        PurchaseOrderExtraLineDetail.as_view(),
-                        name='api-po-extra-line-detail',
-                    ),
-                ]),
+                PurchaseOrderExtraLineDetail.as_view(),
+                name='api-po-extra-line-detail',
             ),
             path(
                 '', PurchaseOrderExtraLineList.as_view(), name='api-po-extra-line-list'
@@ -1962,7 +1944,6 @@ order_api_urls = [
                                 SalesOrderShipmentComplete.as_view(),
                                 name='api-so-shipment-ship',
                             ),
-                            meta_path(models.SalesOrderShipment),
                             path(
                                 '',
                                 SalesOrderShipmentDetail.as_view(),
@@ -1999,7 +1980,6 @@ order_api_urls = [
                         SalesOrderComplete.as_view(),
                         name='api-so-complete',
                     ),
-                    meta_path(models.SalesOrder),
                     # SalesOrder detail endpoint
                     path('', SalesOrderDetail.as_view(), name='api-so-detail'),
                 ]),
@@ -2021,14 +2001,8 @@ order_api_urls = [
         include([
             path(
                 '<int:pk>/',
-                include([
-                    meta_path(models.SalesOrderLineItem),
-                    path(
-                        '',
-                        SalesOrderLineItemDetail.as_view(),
-                        name='api-so-line-detail',
-                    ),
-                ]),
+                SalesOrderLineItemDetail.as_view(),
+                name='api-so-line-detail',
             ),
             path('', SalesOrderLineItemList.as_view(), name='api-so-line-list'),
         ]),
@@ -2039,14 +2013,8 @@ order_api_urls = [
         include([
             path(
                 '<int:pk>/',
-                include([
-                    meta_path(models.SalesOrderExtraLine),
-                    path(
-                        '',
-                        SalesOrderExtraLineDetail.as_view(),
-                        name='api-so-extra-line-detail',
-                    ),
-                ]),
+                SalesOrderExtraLineDetail.as_view(),
+                name='api-so-extra-line-detail',
             ),
             path('', SalesOrderExtraLineList.as_view(), name='api-so-extra-line-list'),
         ]),
@@ -2092,7 +2060,6 @@ order_api_urls = [
                         ReturnOrderReceive.as_view(),
                         name='api-return-order-receive',
                     ),
-                    meta_path(models.ReturnOrder),
                     path(
                         '', ReturnOrderDetail.as_view(), name='api-return-order-detail'
                     ),
@@ -2115,14 +2082,8 @@ order_api_urls = [
         include([
             path(
                 '<int:pk>/',
-                include([
-                    meta_path(models.ReturnOrderLineItem),
-                    path(
-                        '',
-                        ReturnOrderLineItemDetail.as_view(),
-                        name='api-return-order-line-detail',
-                    ),
-                ]),
+                ReturnOrderLineItemDetail.as_view(),
+                name='api-return-order-line-detail',
             ),
             # Return order line item status code information
             path(
@@ -2142,14 +2103,8 @@ order_api_urls = [
         include([
             path(
                 '<int:pk>/',
-                include([
-                    meta_path(models.ReturnOrderExtraLine),
-                    path(
-                        '',
-                        ReturnOrderExtraLineDetail.as_view(),
-                        name='api-return-order-extra-line-detail',
-                    ),
-                ]),
+                ReturnOrderExtraLineDetail.as_view(),
+                name='api-return-order-extra-line-detail',
             ),
             path(
                 '',

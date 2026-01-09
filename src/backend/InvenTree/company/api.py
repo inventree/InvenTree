@@ -9,7 +9,7 @@ from django_filters.rest_framework.filterset import FilterSet
 
 import part.models
 from data_exporter.mixins import DataExportViewMixin
-from InvenTree.api import ListCreateDestroyAPIView, ParameterListMixin, meta_path
+from InvenTree.api import ListCreateDestroyAPIView, ParameterListMixin
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import SEARCH_ORDER_FILTER, SEARCH_ORDER_FILTER_ALIAS
 from InvenTree.mixins import (
@@ -475,29 +475,15 @@ class SupplierPriceBreakDetail(SupplierPriceBreakMixin, RetrieveUpdateDestroyAPI
 manufacturer_part_api_urls = [
     path(
         '<int:pk>/',
-        include([
-            meta_path(ManufacturerPart),
-            path(
-                '',
-                ManufacturerPartDetail.as_view(),
-                name='api-manufacturer-part-detail',
-            ),
-        ]),
+        ManufacturerPartDetail.as_view(),
+        name='api-manufacturer-part-detail',
     ),
-    # Catch anything else
     path('', ManufacturerPartList.as_view(), name='api-manufacturer-part-list'),
 ]
 
 
 supplier_part_api_urls = [
-    path(
-        '<int:pk>/',
-        include([
-            meta_path(SupplierPart),
-            path('', SupplierPartDetail.as_view(), name='api-supplier-part-detail'),
-        ]),
-    ),
-    # Catch anything else
+    path('<int:pk>/', SupplierPartDetail.as_view(), name='api-supplier-part-detail'),
     path('', SupplierPartList.as_view(), name='api-supplier-part-list'),
 ]
 
@@ -521,23 +507,11 @@ company_api_urls = [
             ),
         ]),
     ),
-    path(
-        '<int:pk>/',
-        include([
-            meta_path(Company),
-            path('', CompanyDetail.as_view(), name='api-company-detail'),
-        ]),
-    ),
+    path('<int:pk>/', CompanyDetail.as_view(), name='api-company-detail'),
     path(
         'contact/',
         include([
-            path(
-                '<int:pk>/',
-                include([
-                    meta_path(Contact),
-                    path('', ContactDetail.as_view(), name='api-contact-detail'),
-                ]),
-            ),
+            path('<int:pk>/', ContactDetail.as_view(), name='api-contact-detail'),
             path('', ContactList.as_view(), name='api-contact-list'),
         ]),
     ),

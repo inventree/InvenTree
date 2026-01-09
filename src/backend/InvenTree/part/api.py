@@ -19,7 +19,6 @@ from InvenTree.api import (
     BulkUpdateMixin,
     ListCreateDestroyAPIView,
     ParameterListMixin,
-    meta_path,
 )
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import (
@@ -1499,14 +1498,8 @@ part_api_urls = [
                 include([
                     path(
                         '<int:pk>/',
-                        include([
-                            meta_path(PartCategoryParameterTemplate),
-                            path(
-                                '',
-                                CategoryParameterDetail.as_view(),
-                                name='api-part-category-parameter-detail',
-                            ),
-                        ]),
+                        CategoryParameterDetail.as_view(),
+                        name='api-part-category-parameter-detail',
                     ),
                     path(
                         '',
@@ -1517,12 +1510,7 @@ part_api_urls = [
             ),
             # Category detail endpoints
             path(
-                '<int:pk>/',
-                include([
-                    meta_path(PartCategory),
-                    # PartCategory detail endpoint
-                    path('', CategoryDetail.as_view(), name='api-part-category-detail'),
-                ]),
+                '<int:pk>/', CategoryDetail.as_view(), name='api-part-category-detail'
             ),
             path('', CategoryList.as_view(), name='api-part-category-list'),
         ]),
@@ -1533,14 +1521,8 @@ part_api_urls = [
         include([
             path(
                 '<int:pk>/',
-                include([
-                    meta_path(PartTestTemplate),
-                    path(
-                        '',
-                        PartTestTemplateDetail.as_view(),
-                        name='api-part-test-template-detail',
-                    ),
-                ]),
+                PartTestTemplateDetail.as_view(),
+                name='api-part-test-template-detail',
             ),
             path(
                 '', PartTestTemplateList.as_view(), name='api-part-test-template-list'
@@ -1578,13 +1560,7 @@ part_api_urls = [
         'related/',
         include([
             path(
-                '<int:pk>/',
-                include([
-                    meta_path(PartRelated),
-                    path(
-                        '', PartRelatedDetail.as_view(), name='api-part-related-detail'
-                    ),
-                ]),
+                '<int:pk>/', PartRelatedDetail.as_view(), name='api-part-related-detail'
             ),
             path('', PartRelatedList.as_view(), name='api-part-related-list'),
         ]),
@@ -1630,8 +1606,6 @@ part_api_urls = [
             path(
                 'bom-validate/', PartValidateBOM.as_view(), name='api-part-bom-validate'
             ),
-            # Part metadata
-            meta_path(Part),
             # Part pricing
             path('pricing/', PartPricingDetail.as_view(), name='api-part-pricing'),
             # Part detail endpoint
@@ -1648,14 +1622,8 @@ bom_api_urls = [
             # Detail view
             path(
                 '<int:pk>/',
-                include([
-                    meta_path(BomItemSubstitute),
-                    path(
-                        '',
-                        BomItemSubstituteDetail.as_view(),
-                        name='api-bom-substitute-detail',
-                    ),
-                ]),
+                BomItemSubstituteDetail.as_view(),
+                name='api-bom-substitute-detail',
             ),
             # Catch all
             path('', BomItemSubstituteList.as_view(), name='api-bom-substitute-list'),
@@ -1666,7 +1634,6 @@ bom_api_urls = [
         '<int:pk>/',
         include([
             path('validate/', BomItemValidate.as_view(), name='api-bom-item-validate'),
-            meta_path(BomItem),
             path('', BomDetail.as_view(), name='api-bom-item-detail'),
         ]),
     ),
