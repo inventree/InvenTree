@@ -1743,11 +1743,10 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
 
     def save(self, *args, **kwargs):
         """Custom save method for the BuildItem model."""
-        self.clean()
-
+        self.clean(raise_error=False)
         super().save()
 
-    def clean(self):
+    def clean(self, raise_error: bool = True):
         """Check validity of this BuildItem instance.
 
         The following checks are performed:
@@ -1771,7 +1770,7 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
                     )
                 )
 
-            self.check_allocated_quantity()
+            self.check_allocated_quantity(raise_error=raise_error)
 
         except stock.models.StockItem.DoesNotExist:
             raise ValidationError('Stock item must be specified')
