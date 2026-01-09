@@ -7,6 +7,7 @@ from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db.models import Q
+from django.http import JsonResponse
 from django.http.response import HttpResponse
 from django.urls import include, path, re_path
 from django.utils.decorators import method_decorator
@@ -33,6 +34,7 @@ import common.filters
 import common.models
 import common.serializers
 import InvenTree.conversion
+import InvenTree.ready
 from common.icons import get_icon_packs
 from common.settings import get_global_setting
 from data_exporter.mixins import DataExportViewMixin
@@ -1071,6 +1073,48 @@ class TestEmail(CreateAPI):
             )  # pragma: no cover
 
 
+class HealthCheckStatusSerializer(serializers.Serializer):
+    """Status of the overall system health."""
+
+    status = serializers.ChoiceField(
+        help_text='Health status of the InvenTree server',
+        choices=['ok', 'loading'],
+        read_only=True,
+        default='ok',
+    )
+
+
+class HealthCheckView(APIView):
+    """Simple JSON endpoint for InvenTree health check.
+
+    Intended to be used by external services to confirm that the InvenTree server is running.
+    """
+
+    permission_classes = [AllowAnyOrReadScope]
+
+    @extend_schema(
+        responses={
+            200: OpenApiResponse(
+                response=HealthCheckStatusSerializer,
+                description='InvenTree server health status',
+            )
+        }
+    )
+    def get(self, request, *args, **kwargs):
+        """Simple health check endpoint for monitoring purposes.
+
+        Use the root API endpoint for more detailed information (using an authenticated request).
+        """
+        status = (
+            InvenTree.ready.isPluginRegistryLoaded()
+            if settings.PLUGINS_ENABLED
+            else True
+        )
+        return JsonResponse(
+            {'status': 'ok' if status else 'loading'}, status=200 if status else 503
+        )
+
+
 selection_urls = [
     path(
         '<int:pk>/',
@@ -1345,6 +1389,11 @@ common_api_urls = [
             ),
             path('', DataOutputList.as_view(), name='api-data-output-list'),
         ]),
+    ),
+    # System APIs (related to basic system functions)
+    path(
+        'system/',
+        include([path('health/', HealthCheckView.as_view(), name='api-system-health')]),
     ),
 ]
 

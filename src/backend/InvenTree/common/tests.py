@@ -1471,6 +1471,35 @@ class CommonTest(InvenTreeAPITestCase):
         self.user.is_superuser = False
         self.user.save()
 
+    def test_health_api(self):
+        """Test health check URL."""
+        from plugin import registry
+
+        # Fully started system - ok
+        response_data = self.get(reverse('api-system-health'), expected_code=200).json()
+        self.assertIn('status', response_data)
+        self.assertEqual(response_data['status'], 'ok')
+
+        # Simulate plugin reloading - Not ready
+        try:
+            registry.plugins_loaded = False
+            response_data = self.get(
+                reverse('api-system-health'), expected_code=503
+            ).json()
+            self.assertIn('status', response_data)
+            self.assertEqual(response_data['status'], 'loading')
+        finally:
+            registry.plugins_loaded = True
+
+        # No plugins enabled - still ok
+        with self.settings(PLUGINS_ENABLED=False):
+            self.assertEqual(
+                self.get(reverse('api-system-health'), expected_code=200).json()[
+                    'status'
+                ],
+                'ok',
+            )
+
 
 class CurrencyAPITests(InvenTreeAPITestCase):
     """Unit tests for the currency exchange API endpoints."""
