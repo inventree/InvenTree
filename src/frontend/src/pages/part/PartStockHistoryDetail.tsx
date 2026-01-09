@@ -211,7 +211,10 @@ export default function PartStockHistoryDetail({
             rightYAxisLabel={t`Stock Value`}
             tooltipProps={{
               content: ({ label, payload }) => (
-                <ChartTooltip label={label} payload={payload} />
+                <ChartTooltip
+                  label={label}
+                  payload={payload as Record<string, any>[]}
+                />
               )
             }}
             yAxisProps={{
