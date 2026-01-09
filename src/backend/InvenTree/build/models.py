@@ -1325,7 +1325,7 @@ class Build(
 
             # Check which parts we can "use" (may include variants and substitutes)
             available_parts = bom_item.get_valid_parts_for_allocation(
-                allow_variants=True, allow_substitutes=substitutes
+                allow_variants=True, allow_inactive=False, allow_substitutes=substitutes
             )
 
             # Look for available stock items
@@ -1368,10 +1368,7 @@ class Build(
                 key=lambda item, b=bom_item, v=variant_parts: stock_sort(item, b, v),
             )
 
-            if len(available_stock) == 0:
-                # No stock items are available
-                continue
-            elif len(available_stock) == 1 or interchangeable:
+            if len(available_stock) == 1 or interchangeable:
                 # Either there is only a single stock item available,
                 # or all items are "interchangeable" and we don't care where we take stock from
 
