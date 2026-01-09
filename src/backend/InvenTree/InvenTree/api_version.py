@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 437
+INVENTREE_API_VERSION = 438
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v438 -> 2026-01-08 : https://github.com/inventree/InvenTree/pull/10628
+    - Extend schema generation to include inventree vendor fields
 
 v437 -> 2026-01-07 : https://github.com/inventree/InvenTree/pull/11084
     - Add generic parameter support for the StockLocation model

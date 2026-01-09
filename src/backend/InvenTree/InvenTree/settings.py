@@ -1495,6 +1495,9 @@ LOGIN_REDIRECT_URL = '/api/auth/login-redirect/'
 
 # Configuration for API schema generation / oAuth2
 SPECTACULAR_SETTINGS = spectacular.get_spectacular_settings()
+SCHEMA_VENDOREXTENSION_LEVEL = get_setting(
+    'INVENTREE_SCHEMA_LEVEL', 'schema.level', default_value=0, typecast=int
+)
 
 OAUTH2_PROVIDER = {
     # default scopes
