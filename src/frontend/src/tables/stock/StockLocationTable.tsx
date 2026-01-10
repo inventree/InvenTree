@@ -103,7 +103,7 @@ export function StockLocationTable({ parentId }: Readonly<{ parentId?: any }>) {
   const newLocation = useCreateApiFormModal({
     url: ApiEndpoints.stock_location_list,
     title: t`Add Stock Location`,
-    fields: stockLocationFields(),
+    fields: stockLocationFields(true),
     focus: 'name',
     initialData: {
       parent: parentId
