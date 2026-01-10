@@ -372,7 +372,14 @@ class DataImportSession(models.Model):
 
         if serializer_class := self.serializer_class:
             serializer = serializer_class(data={}, importing=True)
-            fields.update(metadata.get_serializer_info(serializer))
+            serializer_fields = metadata.get_serializer_info(serializer)
+
+            for field_name, field in serializer_fields.items():
+                # Skip read-only fields
+                if field.get('read_only', False):
+                    continue
+
+                fields[field_name] = field
 
         # Cache the available fields against this instance
         self._available_fields = fields
