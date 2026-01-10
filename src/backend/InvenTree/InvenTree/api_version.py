@@ -1,13 +1,22 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 437
+INVENTREE_API_VERSION = 440
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v437 -> 2026-01-07 : https://github.com/inventree/InvenTree/pull/11073
+v440 -> 2026-01-10 : https://github.com/inventree/InvenTree/pull/11073
     - Add OptionalField class for cleaner handling of optional fields in serializers
+
+v439 -> 2026-01-09 : https://github.com/inventree/InvenTree/pull/11092
+    - Add missing nullable annotations
+
+v438 -> 2026-01-09 : https://github.com/inventree/InvenTree/pull/11104
+    - Adds a simpler / faster health check endpoint at /api/system/health/
+
+v437 -> 2026-01-07 : https://github.com/inventree/InvenTree/pull/11084
+    - Adds generic parameter support for the StockLocation model
 
 v436 -> 2026-01-06 : https://github.com/inventree/InvenTree/pull/11035
     - Removes model-specific metadata endpoints and replaces them with redirects

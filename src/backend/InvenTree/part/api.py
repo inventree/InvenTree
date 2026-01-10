@@ -1009,7 +1009,9 @@ class PartMixin(SerializerContextMixin):
     """Mixin class for Part API endpoints."""
 
     serializer_class = part_serializers.PartSerializer
-    queryset = Part.objects.all().select_related('pricing_data')
+    queryset = (
+        Part.objects.all().select_related('pricing_data').prefetch_related('category')
+    )
 
     starred_parts = None
     is_create = False

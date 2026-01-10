@@ -492,14 +492,13 @@ class StockItemSerializer(
             ),
             'parent',
             'part__category',
-            'part__pricing_data',
             'supplier_part',
             'supplier_part__manufacturer_part',
             'customer',
             'belongs_to',
             'sales_order',
             'consumed_by',
-        ).select_related('part')
+        ).select_related('part', 'part__pricing_data')
 
         # Annotate the queryset with the total allocated to sales orders
         queryset = queryset.annotate(
@@ -1173,8 +1172,10 @@ class LocationSerializer(
             'structural',
             'external',
             'location_type',
+            # Optional fields
             'location_type_detail',
             'tags',
+            'parameters',
         ]
         read_only_fields = ['barcode_hash', 'icon', 'level', 'pathstring']
 
@@ -1221,6 +1222,8 @@ class LocationSerializer(
         default_include=False,
         filter_name='path_detail',
     )
+
+    parameters = common.filters.enable_parameters_filter()
 
     # explicitly set this field, so it gets included for AutoSchema
     icon = serializers.CharField(read_only=True)

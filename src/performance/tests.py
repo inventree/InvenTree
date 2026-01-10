@@ -88,3 +88,73 @@ def test_api_options_performance(url):
     assert result
     assert 'actions' in result
     assert len(result['actions']) > 0
+
+
+@pytest.mark.benchmark
+@pytest.mark.parametrize(
+    'key',
+    [
+        'all',
+        'part',
+        'partcategory',
+        'supplierpart',
+        'manufacturerpart',
+        'stockitem',
+        'stocklocation',
+        'build',
+        'supplier',
+        'manufacturer',
+        'customer',
+        'purchaseorder',
+        'salesorder',
+        'salesordershipment',
+        'returnorder',
+    ],
+)
+def test_search_performance(key: str):
+    """Benchmark the API search performance."""
+    SEARCH_URL = '/api/search/'
+
+    # An indicative search query for various model types
+    SEARCH_DATA = {
+        'part': {'active': True},
+        'partcategory': {},
+        'supplierpart': {
+            'part_detail': True,
+            'supplier_detail': True,
+            'manufacturer_detail': True,
+        },
+        'manufacturerpart': {
+            'part_detail': True,
+            'supplier_detail': True,
+            'manufacturer_detail': True,
+        },
+        'stockitem': {'part_detail': True, 'location_detail': True, 'in_stock': True},
+        'stocklocation': {},
+        'build': {'part_detail': True},
+        'supplier': {},
+        'manufacturer': {},
+        'customer': {},
+        'purchaseorder': {'supplier_detail': True, 'outstanding': True},
+        'salesorder': {'customer_detail': True, 'outstanding': True},
+        'salesordershipment': {},
+        'returnorder': {'customer_detail': True, 'outstanding': True},
+    }
+
+    model_types = list(SEARCH_DATA.keys())
+
+    search_params = SEARCH_DATA if key == 'all' else {key: SEARCH_DATA[key]}
+
+    # Add in a common search term
+    search_params.update({'search': '0', 'limit': 50})
+
+    response = api_client.post(SEARCH_URL, data=search_params)
+    assert response
+
+    if key == 'all':
+        for model_type in model_types:
+            assert model_type in response
+            assert 'error' not in response[model_type]
+    else:
+        assert key in response
+        assert 'error' not in response[key]

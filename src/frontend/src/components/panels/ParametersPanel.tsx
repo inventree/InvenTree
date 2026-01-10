@@ -8,16 +8,19 @@ import type { PanelType } from './Panel';
 export default function ParametersPanel({
   model_type,
   model_id,
+  hidden,
   allowEdit = true
 }: {
   model_type: ModelType;
   model_id: number | undefined;
+  hidden?: boolean;
   allowEdit?: boolean;
 }): PanelType {
   return {
     name: 'parameters',
     label: t`Parameters`,
     icon: <IconListDetails />,
+    hidden: hidden ?? false,
     content:
       model_type && model_id ? (
         <ParameterTable

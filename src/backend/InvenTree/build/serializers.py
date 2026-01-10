@@ -1391,7 +1391,12 @@ class BuildLineSerializer(
 
     allocations = OptionalField(
         serializer_class=BuildItemSerializer,
-        serializer_kwargs={'many': True, 'read_only': True, 'build_detail': False},
+        serializer_kwargs={
+            'many': True,
+            'read_only': True,
+            'allow_null': True,
+            'build_detail': False,
+        },
         default_include=True,
         prefetch_fields=[
             'allocations',
@@ -1440,6 +1445,7 @@ class BuildLineSerializer(
             'source': 'bom_item',
             'many': False,
             'read_only': True,
+            'allow_null': True,
             'pricing': False,
             'substitutes': False,
             'sub_part_detail': False,
@@ -1471,6 +1477,7 @@ class BuildLineSerializer(
             'source': 'bom_item.sub_part',
             'many': False,
             'read_only': True,
+            'allow_null': True,
             'pricing': False,
         },
         default_include=False,
