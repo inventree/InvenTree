@@ -339,6 +339,8 @@ jobs:
           pip install .
       - name: Performance Reporting
         uses: CodSpeedHQ/action@972e3437949c89e1357ebd1a2dbc852fcbc57245 # pin@v4
+        # check if we are in inventree/inventree - reporting only works in that OIDC context
+        if: github.repository == 'inventree/InvenTree'
         with:
           mode: walltime
           run: pytest ./src/performance --codspeed
@@ -400,7 +402,8 @@ jobs:
     runs-on: ${{ needs.paths-filter.outputs.runner-perf }}
 
     needs: ["pre-commit", "paths-filter"]
-    if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true'
+    # check if we are in inventree/inventree - reporting only works in that OIDC context
+    if: (needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true') && github.repository == 'inventree/InvenTree'
     permissions:
       contents: read
       id-token: write
