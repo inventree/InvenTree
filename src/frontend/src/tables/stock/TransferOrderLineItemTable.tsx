@@ -1,6 +1,7 @@
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import {
+  ActionButton,
   AddItemButton,
   ModelType,
   ProgressBar,
@@ -15,11 +16,23 @@ import type { TableFilter } from '@lib/types/Filters';
 import type { RowAction, TableColumn } from '@lib/types/Tables';
 import { t } from '@lingui/core/macro';
 import { Group, Text } from '@mantine/core';
-import { IconHash, IconSquareArrowRight } from '@tabler/icons-react';
+import {
+  IconArrowRight,
+  IconHash,
+  IconShoppingCart,
+  IconSquareArrowRight,
+  IconTools
+} from '@tabler/icons-react';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
+import { useBuildOrderFields } from '../../forms/BuildForms';
 import { useTransferOrderLineItemFields } from '../../forms/TransferOrderForms';
-import { useCreateApiFormModal } from '../../hooks/UseForm';
+import {
+  useCreateApiFormModal,
+  useDeleteApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import {
@@ -197,6 +210,26 @@ export default function TransferOrderLineItemTable({
   const [initialData, setInitialData] = useState({});
   const [selectedItems, setSelectedItems] = useState<any[]>([]);
   const [selectedLineId, setSelectedLineId] = useState<number>(0);
+  const [partsToOrder, setPartsToOrder] = useState<any[]>([]);
+
+  const orderPartsWizard = OrderPartsWizard({
+    parts: partsToOrder
+  });
+
+  const buildOrderFields = useBuildOrderFields({
+    create: true,
+    modalId: 'build-order-create-from-transfer-order'
+  });
+
+  const newBuildOrder = useCreateApiFormModal({
+    url: ApiEndpoints.build_order_list,
+    title: t`Create Build Order`,
+    modalId: 'build-order-create-from-transfer-order',
+    fields: buildOrderFields,
+    initialData: initialData,
+    follow: true,
+    modelType: ModelType.build
+  });
 
   const createLineFields = useTransferOrderLineItemFields({
     orderId: orderId,
@@ -214,6 +247,28 @@ export default function TransferOrderLineItemTable({
     table: table
   });
 
+  const editLineFields = useTransferOrderLineItemFields({
+    orderId: orderId,
+    create: false
+  });
+
+  const editLine = useEditApiFormModal({
+    url: ApiEndpoints.transfer_order_line_list,
+    pk: selectedLineId,
+    title: t`Edit Line Item`,
+    fields: editLineFields,
+    onFormSuccess: orderDetailRefresh,
+    table: table
+  });
+
+  const deleteLine = useDeleteApiFormModal({
+    url: ApiEndpoints.transfer_order_line_list,
+    pk: selectedLineId,
+    title: t`Delete Line Item`,
+    onFormSuccess: orderDetailRefresh,
+    table: table
+  });
+
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
@@ -226,32 +281,32 @@ export default function TransferOrderLineItemTable({
           newLine.open();
         }}
         hidden={!editable || !user.hasAddRole(UserRoles.transfer_order)}
+      />,
+      <ActionButton
+        key='order-parts'
+        hidden={!user.hasAddRole(UserRoles.purchase_order)}
+        disabled={!table.hasSelectedRecords}
+        tooltip={t`Order Parts`}
+        icon={<IconShoppingCart />}
+        color='blue'
+        onClick={() => {
+          setPartsToOrder(table.selectedRecords.map((r) => r.part_detail));
+          orderPartsWizard.openWizard();
+        }}
+      />,
+      <ActionButton
+        key='allocate-stock'
+        tooltip={t`Allocate Stock`}
+        icon={<IconArrowRight />}
+        disabled={!table.hasSelectedRecords}
+        color='green'
+        onClick={() => {
+          setSelectedItems(
+            table.selectedRecords.filter((r) => r.allocated < r.quantity)
+          );
+          // allocateStock.open();
+        }}
       />
-      //   <ActionButton
-      //     key='order-parts'
-      //     hidden={!user.hasAddRole(UserRoles.purchase_order)}
-      //     disabled={!table.hasSelectedRecords}
-      //     tooltip={t`Order Parts`}
-      //     icon={<IconShoppingCart />}
-      //     color='blue'
-      //     onClick={() => {
-      //       setPartsToOrder(table.selectedRecords.map((r) => r.part_detail));
-      //       orderPartsWizard.openWizard();
-      //     }}
-      //   />,
-      //   <ActionButton
-      //     key='allocate-stock'
-      //     tooltip={t`Allocate Stock`}
-      //     icon={<IconArrowRight />}
-      //     disabled={!table.hasSelectedRecords}
-      //     color='green'
-      //     onClick={() => {
-      //       setSelectedItems(
-      //         table.selectedRecords.filter((r) => r.allocated < r.quantity)
-      //       );
-      //       allocateStock.open();
-      //     }}
-      //   />
     ];
   }, [user, orderId, table.hasSelectedRecords, table.selectedRecords]);
 
@@ -294,57 +349,57 @@ export default function TransferOrderLineItemTable({
             // allocateBySerials.open();
           }
         },
-        // {
-        //     hidden:
-        //         allocated ||
-        //         virtual ||
-        //         !user.hasAddRole(UserRoles.build) ||
-        //         !record?.part_detail?.assembly,
-        //     title: t`Build stock`,
-        //     icon: <IconTools />,
-        //     color: 'blue',
-        //     onClick: () => {
-        //         setInitialData({
-        //             part: record.part,
-        //             quantity: (record?.quantity ?? 1) - (record?.allocated ?? 0),
-        //             transfer_order: orderId
-        //         });
-        //         newBuildOrder.open();
-        //     }
-        // },
-        // {
-        //     hidden:
-        //         allocated ||
-        //         virtual ||
-        //         !user.hasAddRole(UserRoles.purchase_order) ||
-        //         !record?.part_detail?.purchaseable,
-        //     title: t`Order stock`,
-        //     icon: <IconShoppingCart />,
-        //     color: 'blue',
-        //     onClick: () => {
-        //         setPartsToOrder([record.part_detail]);
-        //         orderPartsWizard.openWizard();
-        //     }
-        // },
+        {
+          hidden:
+            allocated ||
+            virtual ||
+            !user.hasAddRole(UserRoles.build) ||
+            !record?.part_detail?.assembly,
+          title: t`Build stock`,
+          icon: <IconTools />,
+          color: 'blue',
+          onClick: () => {
+            setInitialData({
+              part: record.part,
+              quantity: (record?.quantity ?? 1) - (record?.allocated ?? 0),
+              transfer_order: orderId
+            });
+            newBuildOrder.open();
+          }
+        },
+        {
+          hidden:
+            allocated ||
+            virtual ||
+            !user.hasAddRole(UserRoles.purchase_order) ||
+            !record?.part_detail?.purchaseable,
+          title: t`Order stock`,
+          icon: <IconShoppingCart />,
+          color: 'blue',
+          onClick: () => {
+            setPartsToOrder([record.part_detail]);
+            orderPartsWizard.openWizard();
+          }
+        },
         RowEditAction({
           hidden: !editable || !user.hasChangeRole(UserRoles.transfer_order),
           onClick: () => {
             setSelectedLineId(record.pk);
-            // editLine.open();
+            editLine.open();
           }
         }),
         RowDuplicateAction({
           hidden: !editable || !user.hasAddRole(UserRoles.transfer_order),
           onClick: () => {
             setInitialData(record);
-            // newLine.open();
+            newLine.open();
           }
         }),
         RowDeleteAction({
           hidden: !editable || !user.hasDeleteRole(UserRoles.transfer_order),
           onClick: () => {
             setSelectedLineId(record.pk);
-            // deleteLine.open();
+            deleteLine.open();
           }
         }),
         RowViewAction({
@@ -376,13 +431,13 @@ export default function TransferOrderLineItemTable({
 
   return (
     <>
-      {/* {editLine.modal} */}
-      {/* {deleteLine.modal} */}
+      {editLine.modal}
+      {deleteLine.modal}
       {newLine.modal}
-      {/* {newBuildOrder.modal} */}
+      {newBuildOrder.modal}
       {/* {allocateBySerials.modal} */}
       {/* {allocateStock.modal} */}
-      {/* {orderPartsWizard.wizard} */}
+      {orderPartsWizard.wizard}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.transfer_order_line_list)}
         tableState={table}
