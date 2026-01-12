@@ -1,11 +1,22 @@
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
-import { AddItemButton, ProgressBar, UserRoles } from '@lib/index';
+import {
+  AddItemButton,
+  ModelType,
+  ProgressBar,
+  RowDeleteAction,
+  RowDuplicateAction,
+  RowEditAction,
+  RowViewAction,
+  UserRoles,
+  formatDecimal
+} from '@lib/index';
 import type { TableFilter } from '@lib/types/Filters';
-import type { TableColumn } from '@lib/types/Tables';
+import type { RowAction, TableColumn } from '@lib/types/Tables';
 import { t } from '@lingui/core/macro';
 import { Group, Text } from '@mantine/core';
-import { useMemo, useState } from 'react';
+import { IconHash, IconSquareArrowRight } from '@tabler/icons-react';
+import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTransferOrderLineItemFields } from '../../forms/TransferOrderForms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
@@ -21,6 +32,7 @@ import {
 } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import RowExpansionIcon from '../RowExpansionIcon';
+import { TableHoverCard } from '../TableHoverCard';
 
 export default function TransferOrderLineItemTable({
   orderId,
@@ -83,9 +95,61 @@ export default function TransferOrderLineItemTable({
         accessor: 'stock',
         title: t`Available Stock`,
         render: (record: any) => {
-          return <>TODO</>;
+          if (record.part_detail?.virtual) {
+            return <Text size='sm' fs='italic'>{t`Virtual part`}</Text>;
+          }
+
+          const part_stock = record?.available_stock ?? 0;
+          const variant_stock = record?.available_variant_stock ?? 0;
+          const available = part_stock + variant_stock;
+
+          const required = Math.max(
+            record.quantity - record.allocated - record.shipped,
+            0
+          );
+
+          let color: string | undefined;
+          let text = `${formatDecimal(available)}`;
+
+          const extra: ReactNode[] = [];
+
+          if (available <= 0) {
+            color = 'red';
+            text = t`No stock available`;
+          } else if (available < required) {
+            color = 'orange';
+          }
+
+          if (variant_stock > 0) {
+            extra.push(<Text size='sm'>{t`Includes variant stock`}</Text>);
+          }
+
+          if (record.building > 0) {
+            extra.push(
+              <Text size='sm'>
+                {t`In production`}: {formatDecimal(record.building)}
+              </Text>
+            );
+          }
+
+          if (record.on_order > 0) {
+            extra.push(
+              <Text size='sm'>
+                {t`On order`}: {formatDecimal(record.on_order)}
+              </Text>
+            );
+          }
+
+          return (
+            <TableHoverCard
+              value={<Text c={color}>{text}</Text>}
+              extra={extra}
+              title={t`Stock Information`}
+            />
+          );
         }
       },
+
       {
         accessor: 'allocated',
         sortable: true,
@@ -108,7 +172,17 @@ export default function TransferOrderLineItemTable({
         title: t`Transferred`,
         sortable: true,
         render: (record: any) => {
-          return <>TODO</>;
+          if (record.part_detail?.virtual) {
+            return <Text size='sm' fs='italic'>{t`Virtual part`}</Text>;
+          }
+
+          return (
+            <ProgressBar
+              progressLabel={true}
+              value={record.transferred}
+              maximum={record.quantity}
+            />
+          );
         }
       },
       {
@@ -121,6 +195,8 @@ export default function TransferOrderLineItemTable({
   }, [table.isRowExpanded]);
 
   const [initialData, setInitialData] = useState({});
+  const [selectedItems, setSelectedItems] = useState<any[]>([]);
+  const [selectedLineId, setSelectedLineId] = useState<number>(0);
 
   const createLineFields = useTransferOrderLineItemFields({
     orderId: orderId,
@@ -179,6 +255,110 @@ export default function TransferOrderLineItemTable({
     ];
   }, [user, orderId, table.hasSelectedRecords, table.selectedRecords]);
 
+  const rowActions = useCallback(
+    (record: any): RowAction[] => {
+      const allocated = (record?.allocated ?? 0) > (record?.quantity ?? 0);
+      const virtual = record?.part_detail?.virtual ?? false;
+
+      return [
+        {
+          hidden:
+            allocated ||
+            virtual ||
+            !editable ||
+            !user.hasChangeRole(UserRoles.transfer_order),
+          title: t`Allocate Stock`,
+          icon: <IconSquareArrowRight />,
+          color: 'green',
+          onClick: () => {
+            setSelectedItems([record]);
+            // allocateStock.open();
+          }
+        },
+        {
+          hidden:
+            !record?.part_detail?.trackable ||
+            allocated ||
+            virtual ||
+            !editable ||
+            !user.hasChangeRole(UserRoles.transfer_order),
+          title: t`Allocate serials`,
+          icon: <IconHash />,
+          color: 'green',
+          onClick: () => {
+            // setSelectedLineId(record.pk);
+            // setSelectedSupplierPart(record?.part_detail ?? null);
+            // setInitialData({
+            //     quantity: record.quantity - record.allocated
+            // });
+            // allocateBySerials.open();
+          }
+        },
+        // {
+        //     hidden:
+        //         allocated ||
+        //         virtual ||
+        //         !user.hasAddRole(UserRoles.build) ||
+        //         !record?.part_detail?.assembly,
+        //     title: t`Build stock`,
+        //     icon: <IconTools />,
+        //     color: 'blue',
+        //     onClick: () => {
+        //         setInitialData({
+        //             part: record.part,
+        //             quantity: (record?.quantity ?? 1) - (record?.allocated ?? 0),
+        //             transfer_order: orderId
+        //         });
+        //         newBuildOrder.open();
+        //     }
+        // },
+        // {
+        //     hidden:
+        //         allocated ||
+        //         virtual ||
+        //         !user.hasAddRole(UserRoles.purchase_order) ||
+        //         !record?.part_detail?.purchaseable,
+        //     title: t`Order stock`,
+        //     icon: <IconShoppingCart />,
+        //     color: 'blue',
+        //     onClick: () => {
+        //         setPartsToOrder([record.part_detail]);
+        //         orderPartsWizard.openWizard();
+        //     }
+        // },
+        RowEditAction({
+          hidden: !editable || !user.hasChangeRole(UserRoles.transfer_order),
+          onClick: () => {
+            setSelectedLineId(record.pk);
+            // editLine.open();
+          }
+        }),
+        RowDuplicateAction({
+          hidden: !editable || !user.hasAddRole(UserRoles.transfer_order),
+          onClick: () => {
+            setInitialData(record);
+            // newLine.open();
+          }
+        }),
+        RowDeleteAction({
+          hidden: !editable || !user.hasDeleteRole(UserRoles.transfer_order),
+          onClick: () => {
+            setSelectedLineId(record.pk);
+            // deleteLine.open();
+          }
+        }),
+        RowViewAction({
+          title: t`View Part`,
+          modelType: ModelType.part,
+          modelId: record.part,
+          navigate: navigate,
+          hidden: !user.hasViewRole(UserRoles.part)
+        })
+      ];
+    },
+    [navigate, user, editable]
+  );
+
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
       {
@@ -214,7 +394,7 @@ export default function TransferOrderLineItemTable({
             order: orderId,
             part_detail: true
           },
-          //   rowActions: rowActions,
+          rowActions: rowActions,
           tableActions: tableActions,
           tableFilters: tableFilters
           //   rowExpansion: rowExpansion
