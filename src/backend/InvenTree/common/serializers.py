@@ -808,7 +808,9 @@ class ParameterSerializer(
     )
 
     updated_by_detail = enable_filter(
-        UserSerializer(source='updated_by', read_only=True, many=False),
+        UserSerializer(
+            source='updated_by', read_only=True, allow_null=True, many=False
+        ),
         True,
         prefetch_fields=['updated_by'],
     )

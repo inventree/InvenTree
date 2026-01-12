@@ -867,6 +867,16 @@ class VariantTest(StockTestBase):
         self.assertEqual(green.stock_entries(include_variants=False).count(), 0)
         self.assertEqual(green.stock_entries().count(), 3)
 
+        # Test with an "external" location
+        entry = green.stock_entries().first()
+        entry.location = StockLocation.objects.create(
+            name='External Location', description='An external location', external=True
+        )
+        entry.save()
+
+        self.assertEqual(green.stock_entries(include_external=True).count(), 3)
+        self.assertEqual(green.stock_entries(include_external=False).count(), 2)
+
     def test_serial_numbers(self):
         """Test serial number functionality for variant / template parts."""
         InvenTreeSetting.set_setting('SERIAL_NUMBER_GLOBALLY_UNIQUE', False, self.user)
