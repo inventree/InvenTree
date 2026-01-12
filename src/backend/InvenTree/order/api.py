@@ -2564,18 +2564,18 @@ order_api_urls = [
     path(
         'to-line/',
         include([
-            # path(
-            #     '<int:pk>/',
-            #     include([
-            #         meta_path(models.TransferOrderLineItem),
-            #         path(
-            #             '',
-            #             TransferOrderLineItemDetail.as_view(),
-            #             name='api-to-line-detail',
-            #         ),
-            #     ]),
-            # ),
-            path('', TransferOrderLineItemList.as_view(), name='api-to-line-list')
+            path(
+                '<int:pk>/',
+                include([
+                    meta_path(models.TransferOrderLineItem),
+                    path(
+                        '',
+                        TransferOrderLineItemDetail.as_view(),
+                        name='api-to-line-detail',
+                    ),
+                ]),
+            ),
+            path('', TransferOrderLineItemList.as_view(), name='api-to-line-list'),
         ]),
     ),
     # API endpoint for subscribing to ICS calendar of purchase/sales/return orders
