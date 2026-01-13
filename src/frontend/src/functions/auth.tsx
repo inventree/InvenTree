@@ -246,13 +246,23 @@ function checkMfaSetup(navigate?: NavigateFunction) {
     .then(() => {})
     .catch((err) => {
       if (err?.response?.status == 401) {
-        if (navigate != undefined) {
+        const mfa_register = err.response.data.data.flows.find(
+          (flow: any) => flow.id == FlowEnum.MfaRegister
+        );
+        if (mfa_register && navigate != undefined) {
           navigate('/mfa-setup');
         } else {
           alert(
             'MFA setup required, but no navigation possible - please reload the website'
           );
+          console.error(
+            'No navigation possible to MFA setup',
+            navigate,
+            mfa_register
+          );
         }
+      } else {
+        console.error(err);
       }
     });
 }
