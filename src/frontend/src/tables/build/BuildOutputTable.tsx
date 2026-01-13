@@ -18,7 +18,6 @@ import {
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { ActionButton } from '@lib/components/ActionButton';
 import { AddItemButton } from '@lib/components/AddItemButton';
@@ -151,7 +150,6 @@ export default function BuildOutputTable({
 }: Readonly<{ build: any; refreshBuild: () => void }>) {
   const api = useApi();
   const user = useUserState();
-  const navigate = useNavigate();
   const table = useTable('build-outputs');
 
   const buildId: number = useMemo(() => {
