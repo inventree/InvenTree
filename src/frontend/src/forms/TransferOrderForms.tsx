@@ -46,12 +46,9 @@ export function useTransferOrderFields({
             hidden: true,
             value: duplicateOrderId
           },
-          copy_lines: {
-            // Cannot duplicate lines from a transfer order!
-            value: false,
-            hidden: true
-          },
-          copy_extra_lines: {}
+          copy_lines: {},
+          // Transfer Orders don't have extra lines for now...
+          copy_extra_lines: { hidden: true, value: false }
         }
       };
     }
