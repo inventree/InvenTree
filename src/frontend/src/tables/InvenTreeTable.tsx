@@ -343,23 +343,6 @@ export function InvenTreeTable<T extends Record<string, any>>({
     getInitialValueInEffect: false
   });
 
-  // Cache the "ordering" of the columns
-  const dataColumnsOrder: string[] = useMemo(() => {
-    return dataColumns.map((col: any) => col.accessor);
-  }, [dataColumns]);
-
-  // Ensure that the "actions" column is always at the end of the list
-  // This effect is necessary as sometimes the underlying mantine-datatable columns change
-  useEffect(() => {
-    // Update the columns order only if it has changed
-    if (
-      JSON.stringify(tableColumns.columnsOrder) !=
-      JSON.stringify(dataColumnsOrder)
-    ) {
-      tableColumns.setColumnsOrder(dataColumnsOrder);
-    }
-  }, [cacheKey, dataColumnsOrder]);
-
   // Reset the pagination state when the search term changes
   useEffect(() => {
     tableState.setPage(1);
