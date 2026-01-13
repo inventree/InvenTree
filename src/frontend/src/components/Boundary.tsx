@@ -30,6 +30,7 @@ export function Boundary({
   const onError = useCallback(
     (error: unknown, componentStack: string | undefined, eventId: string) => {
       console.error(`ERR: Error rendering component: ${label}`);
+      console.error(error);
     },
     []
   );
