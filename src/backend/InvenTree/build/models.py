@@ -1254,7 +1254,9 @@ class Build(
         output.build = self
         output.is_building = False
         output.location = location
-        output.status = status
+
+        # Assign the stock status
+        output.set_status(status)
 
         output.save(add_note=False)
 
