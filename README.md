@@ -56,7 +56,7 @@ InvenTree is designed to be **extensible**, and provides multiple options for **
 * [InvenTree API](https://docs.inventree.org/en/latest/api/)
 * [Python module](https://docs.inventree.org/en/latest/api/python/)
 * [Plugin interface](https://docs.inventree.org/en/latest/plugins/)
-* [Third party tools](https://docs.inventree.org/en/latest/plugins/integrate/)
+* [Third party tools](https://inventree.org/extend/integrate/)
 
 <!-- TechStack -->
 ### :space_invader: Tech Stack
