@@ -320,6 +320,7 @@ jobs:
           apt-dependency: gettext poppler-utils
           dev-install: true
           update: true
+          npm: true
       - name: Download Python Code For `${WRAPPER_NAME}`
         run: git clone --depth 1 https://github.com/inventree/${WRAPPER_NAME} ./${WRAPPER_NAME}
       - name: Start InvenTree Server
