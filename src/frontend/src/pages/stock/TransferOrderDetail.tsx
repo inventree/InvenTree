@@ -67,6 +67,7 @@ export default function TransferOrderDetail() {
       order.status != toStatus.COMPLETE && order.status != toStatus.CANCELLED;
 
     return orderOpen;
+    // TODO: does this setting make any sense for Transfer Orders???
     // if (orderOpen) {
     //     return true;
     // } else {
@@ -81,15 +82,6 @@ export default function TransferOrderDetail() {
       order.status == toStatus.ON_HOLD
     );
   }, [order, toStatus]);
-
-  // TODO: does this make any sense for Transfer Orders???
-  //   const lineItemsEditable: boolean = useMemo(() => {
-  //     if (orderOpen) {
-  //       return true;
-  //     } else {
-  //       return globalSettings.isSet('TRANSFERORDER_EDIT_COMPLETED_ORDERS');
-  //     }
-  //   }, [orderOpen, globalSettings]);
 
   const detailsPanel = useMemo(() => {
     if (instanceQuery.isFetching) {
