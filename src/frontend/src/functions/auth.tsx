@@ -356,14 +356,9 @@ export async function handleMfaLogin(
 ) {
   const { setAuthContext } = useServerApiState.getState();
 
-  const result = await authApi(
-    apiUrl(ApiEndpoints.auth_login_2fa),
-    undefined,
-    'post',
-    {
-      code: values.code
-    }
-  )
+  return await authApi(apiUrl(ApiEndpoints.auth_login_2fa), undefined, 'post', {
+    code: values.code
+  })
     .then((response) => {
       handleSuccessFullAuth(response, navigate, location, setError);
       return true;
@@ -401,7 +396,6 @@ export async function handleMfaLogin(
       }
       return false;
     });
-  return result;
 }
 
 /**
