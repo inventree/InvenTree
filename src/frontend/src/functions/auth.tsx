@@ -119,12 +119,13 @@ export async function doBasicLogin(
             await handlePossibleMFAError(err);
             break;
           case 409:
+            doLogout(navigate);
             notifications.show({
-              title: t`Already logged in`,
-              message: t`There is a conflicting session on the server for this browser. Please logout of that first.`,
+              title: t`Logged Out`,
+              message: t`There was a conflicting session for this browser, which has been logged out.`,
               color: 'red',
               id: 'auth-login-error',
-              autoClose: false
+              autoClose: true
             });
             break;
           default:
