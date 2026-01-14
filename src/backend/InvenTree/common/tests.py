@@ -643,6 +643,18 @@ class GlobalSettingsApiTest(InvenTreeAPITestCase):
             setting.refresh_from_db()
             self.assertEqual(setting.value, val)
 
+    def test_mfa_change(self):
+        """Test that changes in LOGIN_ENFORCE_MFA are handled correctly."""
+        # Setup admin users
+        self.user.usersession_set.create(ip='1')
+        self.assertEqual(self.user.usersession_set.count(), 1)
+
+        # Enable enforced MFA
+        set_global_setting('LOGIN_ENFORCE_MFA', True)
+
+        # There should be no user sessions now
+        self.assertEqual(self.user.usersession_set.count(), 0)
+
     def test_api_detail(self):
         """Test that we can access the detail view for a setting based on the <key>."""
         # These keys are invalid, and should return 404
