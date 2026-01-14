@@ -619,14 +619,19 @@ def clean_settings(c):
     success('Settings cleaned successfully')
 
 
-@task(help={'mail': "mail of the user who's MFA should be disabled"})
-def remove_mfa(c, mail=''):
+@task(
+    help={
+        'mail': "mail of the user who's MFA should be disabled",
+        'username': "username of the user who's MFA should be disabled",
+    }
+)
+def remove_mfa(c, mail='', username=''):
     """Remove MFA for a user."""
-    if not mail:
-        warning('You must provide a users mail')
+    if not mail and not username:
+        warning('You must provide a users mail or username')
         return
 
-    manage(c, f'remove_mfa {mail}')
+    manage(c, f'remove_mfa --mail {mail} --username {username}')
 
 
 @task(
