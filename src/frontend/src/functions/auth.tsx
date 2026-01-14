@@ -149,7 +149,9 @@ export async function doBasicLogin(
   // see if mfa registration is required
   if (loginDone) {
     // stop further processing if mfa setup is required
-    if (await checkMfaSetup()) loginDone = false;
+    if (await checkMfaSetup(navigate)) {
+      loginDone = false;
+    }
   }
 
   // we are successfully logged in - gather required states for app
@@ -247,19 +249,14 @@ function checkMfaSetup(navigate?: NavigateFunction) {
   return api
     .get(apiUrl(ApiEndpoints.auth_base))
     .then(() => {
-      return true;
+      return false;
     })
     .catch((err) => {
       if (err?.response?.status == 401) {
         const mfa_register = err.response.data.id == FlowEnum.MfaRegister;
         if (mfa_register && navigate != undefined) {
           navigate('/mfa-setup');
-        } else {
-          console.log(
-            'MFA setup required, but no navigation possible - please reload the website',
-            navigate,
-            mfa_register
-          );
+          return true;
         }
       } else {
         console.error(err);
@@ -363,7 +360,7 @@ export async function handleMfaLogin(
       handleSuccessFullAuth(response, navigate, location, setError);
       return true;
     })
-    .catch((err) => {
+    .catch(async (err) => {
       // Already logged in, but with a different session
       if (err?.response?.status == 409) {
         notifications.show({
@@ -379,11 +376,12 @@ export async function handleMfaLogin(
         );
         if (mfa_trust?.is_pending) {
           setAuthContext(err.response.data.data);
-          authApi(apiUrl(ApiEndpoints.auth_trust), undefined, 'post', {
+          await authApi(apiUrl(ApiEndpoints.auth_trust), undefined, 'post', {
             trust: values.remember ?? false
           }).then((response) => {
             handleSuccessFullAuth(response, navigate, location, setError);
           });
+          return true;
         }
       } else {
         const errors = err.response?.data?.errors;
@@ -420,22 +418,27 @@ export const checkLoginState = async (
   const { isLoggedIn, fetchUserState } = useUserState.getState();
 
   // Callback function when login is successful
-  const loginSuccess = () => {
+  const loginSuccess = async () => {
     setLoginChecked(true);
     showLoginNotification({
       title: t`Logged In`,
       message: t`Successfully logged in`
     });
+    checkMfaSetup(navigate).then(async (mfasetup) => {
+      if (mfasetup) {
+        return;
+      } else {
+        observeProfile();
 
-    observeProfile();
-
-    fetchGlobalStates();
-    followRedirect(navigate, redirect);
+        await fetchGlobalStates();
+        followRedirect(navigate, redirect);
+      }
+    });
   };
 
   if (isLoggedIn()) {
     // Already logged in
-    loginSuccess();
+    await loginSuccess();
     return;
   }
 
@@ -444,7 +447,7 @@ export const checkLoginState = async (
   await fetchUserState();
 
   if (isLoggedIn()) {
-    loginSuccess();
+    await loginSuccess();
   } else if (!no_redirect) {
     setLoginChecked(true);
     navigate('/login', { state: redirect });
@@ -472,15 +475,18 @@ function handleSuccessFullAuth(
   setAuthenticated();
 
   // see if mfa registration is required
-  checkMfaSetup(navigate);
+  checkMfaSetup(navigate).then(async (mfasetup) => {
+    if (mfasetup) {
+      return;
+    } else {
+      // get required states if we did not navigate away to setup mfa
+      await fetchUserState();
+      observeProfile();
+      await fetchGlobalStates();
 
-  // get required states
-  fetchUserState().finally(() => {
-    observeProfile();
-    fetchGlobalStates();
-
-    if (navigate && location) {
-      followRedirect(navigate, location?.state);
+      if (navigate && location) {
+        followRedirect(navigate, location?.state);
+      }
     }
   });
 }
