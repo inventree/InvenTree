@@ -149,9 +149,7 @@ export async function doBasicLogin(
   // see if mfa registration is required
   if (loginDone) {
     // stop further processing if mfa setup is required
-    if (await checkMfaSetup(navigate)) {
-      loginDone = false;
-    }
+    if (!(await MfaSetupOk(navigate))) loginDone = false;
   }
 
   // we are successfully logged in - gather required states for app
@@ -245,23 +243,23 @@ export const doSimpleLogin = async (email: string) => {
   return mail;
 };
 
-function checkMfaSetup(navigate?: NavigateFunction) {
+function MfaSetupOk(navigate: NavigateFunction) {
   return api
     .get(apiUrl(ApiEndpoints.auth_base))
     .then(() => {
-      return false;
+      return true;
     })
     .catch((err) => {
       if (err?.response?.status == 401) {
         const mfa_register = err.response.data.id == FlowEnum.MfaRegister;
         if (mfa_register && navigate != undefined) {
           navigate('/mfa-setup');
-          return true;
+          return false;
         }
       } else {
         console.error(err);
       }
-      return false;
+      return true;
     });
 }
 
@@ -404,7 +402,7 @@ export async function handleMfaLogin(
  * - An existing CSRF cookie is stored in the browser
  */
 export const checkLoginState = async (
-  navigate: any,
+  navigate: NavigateFunction,
   redirect?: any,
   no_redirect?: boolean
 ) => {
@@ -424,13 +422,11 @@ export const checkLoginState = async (
       title: t`Logged In`,
       message: t`Successfully logged in`
     });
-    checkMfaSetup(navigate).then(async (mfasetup) => {
-      if (mfasetup) {
-        return;
-      } else {
+    MfaSetupOk(navigate).then(async (isOk) => {
+      if (isOk) {
         observeProfile();
-
         await fetchGlobalStates();
+
         followRedirect(navigate, redirect);
       }
     });
@@ -456,8 +452,8 @@ export const checkLoginState = async (
 };
 
 function handleSuccessFullAuth(
-  response?: any,
-  navigate?: NavigateFunction,
+  response: any,
+  navigate: NavigateFunction,
   location?: Location<any>,
   setError?: (message: string | undefined) => void
 ) {
@@ -475,16 +471,14 @@ function handleSuccessFullAuth(
   setAuthenticated();
 
   // see if mfa registration is required
-  checkMfaSetup(navigate).then(async (mfasetup) => {
-    if (mfasetup) {
-      return;
-    } else {
+  MfaSetupOk(navigate).then(async (isOk) => {
+    if (isOk) {
       // get required states if we did not navigate away to setup mfa
       await fetchUserState();
       observeProfile();
       await fetchGlobalStates();
 
-      if (navigate && location) {
+      if (location !== undefined) {
         followRedirect(navigate, location?.state);
       }
     }
@@ -728,8 +722,8 @@ export function handleChangePassword(
 }
 
 export async function handleWebauthnLogin(
-  navigate?: NavigateFunction,
-  location?: Location<any>
+  navigate: NavigateFunction,
+  location: Location<any>
 ) {
   const { setAuthContext } = useServerApiState.getState();
 
