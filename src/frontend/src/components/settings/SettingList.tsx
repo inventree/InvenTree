@@ -91,7 +91,7 @@ export function SettingList({
 
   // Callback for editing a single setting instance
   const onValueEdit = useCallback(
-    (setting: Setting) => {
+    (setting: Setting, confirmed: boolean) => {
       setSetting(setting);
       editSettingModal.open();
     },
@@ -100,13 +100,17 @@ export function SettingList({
 
   // Callback for toggling a single boolean setting instance
   const onValueToggle = useCallback(
-    (setting: Setting, value: boolean) => {
+    (setting: Setting, value: boolean, confirmed: boolean) => {
+      let data: any = {
+        value: value
+      };
+      if (confirmed) {
+        data = { ...data, manual_confirm: true };
+      }
       api
         .patch(
           apiUrl(settingsState.endpoint, setting.key, settingsState.pathParams),
-          {
-            value: value
-          }
+          data
         )
         .then(() => {
           notifications.hide('setting');
