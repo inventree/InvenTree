@@ -970,6 +970,22 @@ class BaseInvenTreeSetting(models.Model):
 
         return setting.get('model', None)
 
+    def confirm(self) -> bool:
+        """Return if this setting requires confirmation on change."""
+        setting = self.get_setting_definition(
+            self.key, **self.get_filters_for_instance()
+        )
+
+        return setting.get('confirm', False)
+
+    def confirm_text(self) -> str:
+        """Return the confirmation text for this setting, if provided."""
+        setting = self.get_setting_definition(
+            self.key, **self.get_filters_for_instance()
+        )
+
+        return setting.get('confirm_text', '')
+
     def model_filters(self) -> Optional[dict]:
         """Return the model filters associated with this setting."""
         setting = self.get_setting_definition(
