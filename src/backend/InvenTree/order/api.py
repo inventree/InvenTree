@@ -1890,11 +1890,22 @@ class TransferOrderIssue(TransferOrderContextMixin, CreateAPI):
     serializer_class = serializers.TransferOrderIssueSerializer
 
 
-# class TransferOrderReceive(TransferOrderContextMixin, CreateAPI):
-#     """API endpoint to receive items against a TransferOrder."""
+# class TransferOrderAllocateSerials(TransferOrderContextMixin, CreateAPI):
+#     """API endpoint to allocation stock items against a TransferOrder, by specifying serial numbers."""
 
 #     queryset = models.TransferOrder.objects.none()
-#     serializer_class = serializers.TransferOrderReceiveSerializer
+#     serializer_class = serializers.TransferOrderSerialAllocationSerializer
+
+
+class TransferOrderAllocate(TransferOrderContextMixin, CreateAPI):
+    """API endpoint to allocate stock items against a TransferOrder.
+
+    - The TransferOrder is specified in the URL
+    - See the TransferOrderAllocationSerializer class
+    """
+
+    queryset = models.TransferOrder.objects.none()
+    serializer_class = serializers.TransferOrderAllocationSerializer
 
 
 class TransferOrderLineItemFilter(LineItemFilter):
@@ -2012,7 +2023,7 @@ class TransferOrderLineItemMixin(SerializerContextMixin):
         queryset = queryset.prefetch_related(
             'part',
             'allocations',
-            'allocations__transfer',
+            # 'allocations__transfer',
             'allocations__item__part',
             'allocations__item__location',
             'order',
@@ -2527,6 +2538,16 @@ order_api_urls = [
             path(
                 '<int:pk>/',
                 include([
+                    path(
+                        'allocate/',
+                        TransferOrderAllocate.as_view(),
+                        name='api-to-allocate',
+                    ),
+                    # path(
+                    #     'allocate-serials/',
+                    #     SalesOrderAllocateSerials.as_view(),
+                    #     name='api-so-allocate-serials',
+                    # ),
                     path(
                         'cancel/',
                         TransferOrderCancel.as_view(),

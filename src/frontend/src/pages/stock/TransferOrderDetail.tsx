@@ -260,6 +260,7 @@ export default function TransferOrderDetail() {
         content: (
           <TransferOrderLineItemTable
             orderId={order.pk}
+            sourceLocationId={order.take_from}
             orderDetailRefresh={refreshInstance}
             editable={lineItemsEditable}
           />
