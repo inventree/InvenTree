@@ -333,7 +333,7 @@ jobs:
           cd ${WRAPPER_NAME}
           pip install .
       - name: Performance Reporting
-        uses: CodSpeedHQ/action@972e3437949c89e1357ebd1a2dbc852fcbc57245 # pin@v4
+        uses: CodSpeedHQ/action@dbda7111f8ac363564b0c51b992d4ce76bb89f2f # pin@v4
         with:
           mode: walltime
           run: pytest ./src/performance --codspeed
@@ -421,7 +421,7 @@ jobs:
         env:
           node_version: '>=20.19.0'
       - name: Performance Reporting
-        uses: CodSpeedHQ/action@972e3437949c89e1357ebd1a2dbc852fcbc57245 # pin@v4
+        uses: CodSpeedHQ/action@dbda7111f8ac363564b0c51b992d4ce76bb89f2f # pin@v4
         with:
           mode: walltime
           run: inv dev.test --pytest
