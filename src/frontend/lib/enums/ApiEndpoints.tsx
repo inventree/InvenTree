@@ -202,7 +202,11 @@ export enum ApiEndpoints {
   transfer_order_hold = 'order/to/:id/hold/',
   transfer_order_cancel = 'order/to/:id/cancel/',
   transfer_order_complete = 'order/to/:id/complete/',
+  transfer_order_allocate = 'order/to/:id/allocate/',
+  transfer_order_allocate_serials = 'order/to/:id/allocate-serials/',
+
   transfer_order_line_list = 'order/to-line/',
+  transfer_order_allocation_list = 'order/to-allocation/',
 
   // Template API endpoints
   label_list = 'label/template/',

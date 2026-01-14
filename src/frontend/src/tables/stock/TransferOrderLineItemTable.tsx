@@ -27,7 +27,10 @@ import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { useBuildOrderFields } from '../../forms/BuildForms';
-import { useTransferOrderLineItemFields } from '../../forms/TransferOrderForms';
+import {
+  useAllocateToTransferOrderForm,
+  useTransferOrderLineItemFields
+} from '../../forms/TransferOrderForms';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -49,10 +52,12 @@ import { TableHoverCard } from '../TableHoverCard';
 
 export default function TransferOrderLineItemTable({
   orderId,
+  sourceLocationId,
   orderDetailRefresh,
   editable
 }: Readonly<{
   orderId: number;
+  sourceLocationId?: number;
   orderDetailRefresh: () => void;
   editable: boolean;
 }>) {
@@ -212,6 +217,18 @@ export default function TransferOrderLineItemTable({
   const [selectedLineId, setSelectedLineId] = useState<number>(0);
   const [partsToOrder, setPartsToOrder] = useState<any[]>([]);
 
+  const allocateStock = useAllocateToTransferOrderForm({
+    orderId: orderId,
+    lineItems: selectedItems.filter(
+      (item) => item.part_detail?.virtual !== true
+    ),
+    sourceLocationId: sourceLocationId,
+    onFormSuccess: () => {
+      table.refreshTable();
+      table.clearSelectedRecords();
+    }
+  });
+
   const orderPartsWizard = OrderPartsWizard({
     parts: partsToOrder
   });
@@ -304,7 +321,7 @@ export default function TransferOrderLineItemTable({
           setSelectedItems(
             table.selectedRecords.filter((r) => r.allocated < r.quantity)
           );
-          // allocateStock.open();
+          allocateStock.open();
         }}
       />
     ];
@@ -327,7 +344,7 @@ export default function TransferOrderLineItemTable({
           color: 'green',
           onClick: () => {
             setSelectedItems([record]);
-            // allocateStock.open();
+            allocateStock.open();
           }
         },
         {
@@ -436,7 +453,7 @@ export default function TransferOrderLineItemTable({
       {newLine.modal}
       {newBuildOrder.modal}
       {/* {allocateBySerials.modal} */}
-      {/* {allocateStock.modal} */}
+      {allocateStock.modal}
       {orderPartsWizard.wizard}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.transfer_order_line_list)}

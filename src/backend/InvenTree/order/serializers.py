@@ -2401,3 +2401,140 @@ class TransferOrderLineItemSerializer(
     allocated = serializers.FloatField(read_only=True)
 
     # transferred = InvenTreeDecimalField(read_only=True)
+
+
+class TransferOrderAllocationItemSerializer(serializers.Serializer):
+    """A serializer for allocating a single stock-item against a TransferOrder line item."""
+
+    class Meta:
+        """Metaclass options."""
+
+        fields = ['line_item', 'stock_item', 'quantity']
+
+    line_item = serializers.PrimaryKeyRelatedField(
+        queryset=order.models.TransferOrderLineItem.objects.all(),
+        many=False,
+        allow_null=False,
+        required=True,
+        label=_('Stock Item'),
+    )
+
+    def validate_line_item(self, line_item):
+        """Custom validation for the 'line_item' field.
+
+        - Ensure the line_item is associated with the particular TransferOrder
+        """
+        order = self.context['order']
+
+        # Ensure that the line item points to the correct order
+        if line_item.order != order:
+            raise ValidationError(_('Line item is not associated with this order'))
+
+        return line_item
+
+    stock_item = serializers.PrimaryKeyRelatedField(
+        queryset=stock.models.StockItem.objects.all(),
+        many=False,
+        allow_null=False,
+        required=True,
+        label=_('Stock Item'),
+    )
+
+    quantity = serializers.DecimalField(
+        max_digits=15, decimal_places=5, min_value=Decimal(0), required=True
+    )
+
+    def validate_quantity(self, quantity):
+        """Custom validation for the 'quantity' field."""
+        if quantity <= 0:
+            raise ValidationError(_('Quantity must be positive'))
+
+        return quantity
+
+    def validate(self, data):
+        """Custom validation for the serializer.
+
+        - Ensure that the quantity is 1 for serialized stock
+        - Quantity cannot exceed the available amount
+        """
+        data = super().validate(data)
+
+        stock_item = data['stock_item']
+        quantity = data['quantity']
+
+        if stock_item.serialized and quantity != 1:
+            raise ValidationError({
+                'quantity': _('Quantity must be 1 for serialized stock item')
+            })
+
+        q = normalize(stock_item.unallocated_quantity())
+
+        if quantity > q:
+            raise ValidationError({'quantity': _(f'Available quantity ({q}) exceeded')})
+
+        return data
+
+
+class TransferOrderAllocationSerializer(serializers.Serializer):
+    """DRF serializer for allocation of stock items against a transfer order."""
+
+    class Meta:
+        """Metaclass options."""
+
+        fields = ['items']
+
+    items = TransferOrderAllocationItemSerializer(many=True)
+
+    # transfer = serializers.PrimaryKeyRelatedField(
+    #     queryset=order.models.TransferOrderTransfer.objects.all(),
+    #     many=False,
+    #     required=False,
+    #     allow_null=True,
+    #     label=_('Transfer'),
+    # )
+
+    # def validate_shipment(self, shipment):
+    #     """Run validation against the provided shipment instance."""
+    #     order = self.context['order']
+
+    #     if shipment and shipment.shipment_date is not None:
+    #         raise ValidationError(_('Shipment has already been shipped'))
+
+    #     if shipment and shipment.order != order:
+    #         raise ValidationError(_('Shipment is not associated with this order'))
+
+    #     return shipment
+
+    def validate(self, data):
+        """Serializer validation."""
+        data = super().validate(data)
+
+        # Extract TransferOrder from serializer context
+        # order = self.context['order']
+
+        items = data.get('items', [])
+
+        if len(items) == 0:
+            raise ValidationError(_('Allocation items must be provided'))
+
+        return data
+
+    def save(self):
+        """Perform the allocation of items against this order."""
+        data = self.validated_data
+
+        items = data['items']
+        # transfer = data.get('transfer')
+
+        with transaction.atomic():
+            for entry in items:
+                # Create a new TransferOrderAllocation
+                allocation = order.models.TransferOrderAllocation(
+                    line=entry.get('line_item'),
+                    item=entry.get('stock_item'),
+                    quantity=entry.get('quantity'),
+                    # transfer=transfer,
+                )
+
+                allocation.full_clean()
+                allocation.save()
