@@ -13,17 +13,24 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         """Add the arguments."""
-        parser.add_argument('mail', type=str)
+        parser.add_argument('--mail', type=str, nargs='?')
+        parser.add_argument('--username', type=str, nargs='?')
 
-    def handle(self, *args, mail, **kwargs):
-        """Remove MFA for the supplied user (by mail)."""
+    def handle(self, *args, mail, username, **kwargs):
+        """Remove MFA for the supplied user (by mail or username)."""
         user = get_user_model()
-        mfa_user = [
-            *set(
-                user.objects.filter(email=mail)
-                | user.objects.filter(emailaddress__email=mail)
-            )
-        ]
+        if mail is not None:
+            mfa_user = [
+                *set(
+                    user.objects.filter(email=mail)
+                    | user.objects.filter(emailaddress__email=mail)
+                )
+            ]
+        elif username is not None:
+            mfa_user = user.objects.filter(username=username)
+        else:
+            logger.error('No mail or username provided')
+            return False
 
         if len(mfa_user) == 0:
             logger.warning('No user with this mail associated')
