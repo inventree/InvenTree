@@ -7,7 +7,7 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/index';
-import { IconInfoCircle, IconList } from '@tabler/icons-react';
+import { IconBookmark, IconInfoCircle, IconList } from '@tabler/icons-react';
 import AdminButton from '../../components/buttons/AdminButton';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
@@ -41,6 +41,7 @@ import { useInstance } from '../../hooks/UseInstance';
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
+import TransferOrderAllocationTable from '../../tables/stock/TransferOrderAllocationTable';
 import TransferOrderLineItemTable from '../../tables/stock/TransferOrderLineItemTable';
 
 export default function TransferOrderDetail() {
@@ -300,6 +301,20 @@ export default function TransferOrderDetail() {
           //         </Accordion.Panel>
           //     </Accordion.Item> */}
           // </Accordion>
+        )
+      },
+      {
+        name: 'allocations',
+        label: t`Allocated Stock`,
+        icon: <IconBookmark />,
+        content: (
+          <TransferOrderAllocationTable
+            orderId={order.pk}
+            showPartInfo
+            allowEdit
+            modelField='item'
+            modelTarget={ModelType.stockitem}
+          />
         )
       },
       ParametersPanel({

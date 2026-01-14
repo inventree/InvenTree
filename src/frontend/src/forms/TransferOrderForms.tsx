@@ -292,3 +292,19 @@ export function useAllocateToTransferOrderForm({
     }
   });
 }
+
+export function useTransferOrderAllocationFields({
+  orderId
+}: {
+  orderId?: number;
+}): ApiFormFieldSet {
+  return useMemo(() => {
+    return {
+      item: {
+        // Cannot change item, but display for reference
+        disabled: true
+      },
+      quantity: {}
+    };
+  }, [orderId]);
+}
