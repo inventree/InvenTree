@@ -90,7 +90,7 @@ export async function doBasicLogin(
 
   const host: string = getHost();
 
-  // Attempt login with
+  // Attempt login with basic info
   await api
     .post(
       apiUrl(ApiEndpoints.auth_login),
@@ -146,13 +146,16 @@ export async function doBasicLogin(
       }
     });
 
+  // see if mfa registration is required
   if (loginDone) {
-    // see if mfa registration is required
-    checkMfaSetup(navigate);
+    // stop further processing if mfa setup is required
+    if (await checkMfaSetup()) loginDone = false;
+  }
 
-    // gather required states
+  // we are successfully logged in - gather required states for app
+  if (loginDone) {
     await fetchUserState();
-    await fetchGlobalStates(navigate);
+    await fetchGlobalStates();
     observeProfile();
   } else if (!success) {
     clearUserState();
@@ -241,22 +244,19 @@ export const doSimpleLogin = async (email: string) => {
 };
 
 function checkMfaSetup(navigate?: NavigateFunction) {
-  api
+  return api
     .get(apiUrl(ApiEndpoints.auth_base))
-    .then(() => {})
+    .then(() => {
+      return true;
+    })
     .catch((err) => {
       if (err?.response?.status == 401) {
-        const mfa_register = err.response.data.data.flows.find(
-          (flow: any) => flow.id == FlowEnum.MfaRegister
-        );
+        const mfa_register = err.response.data.id == FlowEnum.MfaRegister;
         if (mfa_register && navigate != undefined) {
           navigate('/mfa-setup');
         } else {
-          alert(
-            'MFA setup required, but no navigation possible - please reload the website'
-          );
-          console.error(
-            'No navigation possible to MFA setup',
+          console.log(
+            'MFA setup required, but no navigation possible - please reload the website',
             navigate,
             mfa_register
           );
@@ -264,6 +264,7 @@ function checkMfaSetup(navigate?: NavigateFunction) {
       } else {
         console.error(err);
       }
+      return false;
     });
 }
 
@@ -434,7 +435,7 @@ export const checkLoginState = async (
 
     observeProfile();
 
-    fetchGlobalStates(navigate);
+    fetchGlobalStates();
     followRedirect(navigate, redirect);
   };
 
@@ -482,7 +483,7 @@ function handleSuccessFullAuth(
   // get required states
   fetchUserState().finally(() => {
     observeProfile();
-    fetchGlobalStates(navigate);
+    fetchGlobalStates();
 
     if (navigate && location) {
       followRedirect(navigate, location?.state);
@@ -578,7 +579,12 @@ export function handleVerifyTotp(
     authApi(apiUrl(ApiEndpoints.auth_totp), undefined, 'post', {
       code: value
     }).then(() => {
-      followRedirect(navigate, location?.state);
+      showNotification({
+        title: t`MFA Setup successful`,
+        message: t`MFA via TOTP has been set up successfully; you will need to login again.`,
+        color: 'green'
+      });
+      doLogout(navigate);
     });
   };
 }
