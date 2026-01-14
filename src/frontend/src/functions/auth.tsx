@@ -474,7 +474,6 @@ function handleSuccessFullAuth(
   // see if mfa registration is required
   MfaSetupOk(navigate).then(async (isOk) => {
     if (isOk) {
-      // get required states if we did not navigate away to setup mfa
       await fetchUserState();
       observeProfile();
       await fetchGlobalStates();
