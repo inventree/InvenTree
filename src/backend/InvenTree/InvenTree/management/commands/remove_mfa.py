@@ -30,7 +30,9 @@ class Command(BaseCommand):
             mfa_user = user.objects.filter(username=username)
         else:
             logger.error('No mail or username provided')
-            return False
+            raise ValueError(
+                'Error: the following arguments are required: mail or username'
+            )
 
         if len(mfa_user) == 0:
             logger.warning('No user with this mail associated')

@@ -23,13 +23,14 @@ class CommandTestCase(TestCase):
         with self.assertRaises(Exception) as cm:
             call_command('remove_mfa', verbosity=0)
         self.assertEqual(
-            'Error: the following arguments are required: mail', str(cm.exception)
+            'Error: the following arguments are required: mail or username',
+            str(cm.exception),
         )
 
         # no user
         with self.assertLogs('inventree') as cm:
             self.assertFalse(
-                call_command('remove_mfa', 'admin@example.org', verbosity=0)
+                call_command('remove_mfa', mail='admin@example.org', verbosity=0)
             )
         self.assertIn('No user with this mail associated', str(cm[1]))
 
@@ -39,7 +40,7 @@ class CommandTestCase(TestCase):
         )
         my_admin1.authenticator_set.create(type='TOTP', data={})
         self.assertEqual(my_admin1.authenticator_set.all().count(), 1)
-        output = call_command('remove_mfa', 'admin@example.org', verbosity=0)
+        output = call_command('remove_mfa', mail='admin@example.org', verbosity=0)
         self.assertEqual(output, 'done')
         self.assertEqual(my_admin1.authenticator_set.all().count(), 0)
 
@@ -51,7 +52,7 @@ class CommandTestCase(TestCase):
         my_admin2.emailaddress_set.create(email='123')
         with self.assertLogs('inventree') as cm:
             self.assertFalse(
-                call_command('remove_mfa', 'admin@example.org', verbosity=0)
+                call_command('remove_mfa', mail='admin@example.org', verbosity=0)
             )
         self.assertIn('Multiple users found with the provided email', str(cm[1]))
         self.assertIn('admin, admin2', str(cm[1]))
