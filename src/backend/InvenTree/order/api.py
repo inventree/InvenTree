@@ -1905,7 +1905,166 @@ class TransferOrderAllocate(TransferOrderContextMixin, CreateAPI):
     """
 
     queryset = models.TransferOrder.objects.none()
+    serializer_class = serializers.TransferOrderLineItemAllocationSerializer
+
+
+class TransferOrderAllocationFilter(FilterSet):
+    """Custom filterset for the TransferOrderAllocationList endpoint."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = models.TransferOrderAllocation
+        fields = ['line', 'item']
+
+    order = rest_filters.ModelChoiceFilter(
+        queryset=models.TransferOrder.objects.all(),
+        field_name='line__order',
+        label=_('Order'),
+    )
+
+    include_variants = rest_filters.BooleanFilter(
+        label=_('Include Variants'), method='filter_include_variants'
+    )
+
+    def filter_include_variants(self, queryset, name, value):
+        """Filter by whether or not to include variants of the selected part.
+
+        Note:
+        - This filter does nothing by itself, and requires the 'part' filter to be set.
+        - Refer to the 'filter_part' method for more information.
+        """
+        return queryset
+
+    part = rest_filters.ModelChoiceFilter(
+        queryset=Part.objects.all(), method='filter_part', label=_('Part')
+    )
+
+    @extend_schema_field(rest_framework.serializers.IntegerField(help_text=_('Part')))
+    def filter_part(self, queryset, name, part):
+        """Filter by the 'part' attribute.
+
+        Note:
+        - If "include_variants" is True, include all variants of the selected part
+        - Otherwise, just filter by the selected part
+        """
+        include_variants = str2bool(self.data.get('include_variants', False))
+
+        if include_variants:
+            parts = part.get_descendants(include_self=True)
+            return queryset.filter(item__part__in=parts)
+        else:
+            return queryset.filter(item__part=part)
+
+    outstanding = rest_filters.BooleanFilter(
+        label=_('Outstanding'), method='filter_outstanding'
+    )
+
+    def filter_outstanding(self, queryset, name, value):
+        """Filter by "outstanding" status (boolean)."""
+        if str2bool(value):
+            return queryset.filter(
+                line__order__status__in=TransferOrderStatusGroups.OPEN
+                # TODO: is there an additional filter here if we aren't using a "shipment"
+                # shipment__shipment_date=None,
+            )
+        return queryset.exclude(
+            # TODO: is there an additional filter here if we aren't using a "shipment"
+            # shipment__shipment_date=None,
+            line__order__status__in=TransferOrderStatusGroups.OPEN
+        )
+
+    location = rest_filters.ModelChoiceFilter(
+        queryset=stock_models.StockLocation.objects.all(),
+        label=_('Location'),
+        method='filter_location',
+    )
+
+    @extend_schema_field(
+        rest_framework.serializers.IntegerField(help_text=_('Location'))
+    )
+    def filter_location(self, queryset, name, location):
+        """Filter by the location of the allocated StockItem."""
+        locations = location.get_descendants(include_self=True)
+        return queryset.filter(item__location__in=locations)
+
+
+class TransferOrderAllocationMixin:
+    """Mixin class for TransferOrderAllocation endpoints."""
+
+    queryset = models.TransferOrderAllocation.objects.all()
     serializer_class = serializers.TransferOrderAllocationSerializer
+
+    def get_queryset(self, *args, **kwargs):
+        """Annotate the queryset for this endpoint."""
+        queryset = super().get_queryset(*args, **kwargs)
+
+        queryset = queryset.prefetch_related(
+            'item',
+            'item__sales_order',
+            'item__part',
+            'line__part',
+            'item__location',
+            'line__order',
+            'line__order__responsible',
+            'line__order__project_code',
+            'line__order__project_code__responsible',
+        ).select_related('line__part__pricing_data', 'item__part__pricing_data')
+
+        return queryset
+
+
+class TransferOrderAllocationOutputOptions(OutputConfiguration):
+    """Output options for the TransferOrderAllocation endpoint."""
+
+    OPTIONS = [
+        InvenTreeOutputOption('part_detail'),
+        InvenTreeOutputOption('item_detail'),
+        InvenTreeOutputOption('order_detail'),
+        InvenTreeOutputOption('location_detail'),
+    ]
+
+
+class TransferOrderAllocationList(
+    TransferOrderAllocationMixin, BulkUpdateMixin, OutputOptionsMixin, ListAPI
+):
+    """API endpoint for listing TransferOrderAllocation objects."""
+
+    filterset_class = TransferOrderAllocationFilter
+    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+    output_options = TransferOrderAllocationOutputOptions
+
+    ordering_fields = [
+        'quantity',
+        'part',
+        'serial',
+        'IPN',
+        'batch',
+        'location',
+        'order',
+    ]
+
+    ordering_field_aliases = {
+        'IPN': 'item__part__IPN',
+        'part': 'item__part__name',
+        'serial': ['item__serial_int', 'item__serial'],
+        'batch': 'item__batch',
+        'location': 'item__location__name',
+        'order': 'line__order__reference',
+    }
+
+    search_fields = {
+        'item__part__name',
+        'item__part__IPN',
+        'item__serial',
+        'item__batch',
+    }
+
+
+class TransferOrderAllocationDetail(
+    TransferOrderAllocationMixin, RetrieveUpdateDestroyAPI
+):
+    """API endpoint for detail view of a TransferOrderAllocation object."""
 
 
 class TransferOrderLineItemFilter(LineItemFilter):
@@ -2597,6 +2756,20 @@ order_api_urls = [
                 ]),
             ),
             path('', TransferOrderLineItemList.as_view(), name='api-to-line-list'),
+        ]),
+    ),
+    # API endpoints for sales order allocations
+    path(
+        'to-allocation/',
+        include([
+            path(
+                '<int:pk>/',
+                TransferOrderAllocationDetail.as_view(),
+                name='api-to-allocation-detail',
+            ),
+            path(
+                '', TransferOrderAllocationList.as_view(), name='api-to-allocation-list'
+            ),
         ]),
     ),
     # API endpoint for subscribing to ICS calendar of purchase/sales/return orders

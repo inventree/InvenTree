@@ -2475,8 +2475,8 @@ class TransferOrderAllocationItemSerializer(serializers.Serializer):
         return data
 
 
-class TransferOrderAllocationSerializer(serializers.Serializer):
-    """DRF serializer for allocation of stock items against a transfer order."""
+class TransferOrderLineItemAllocationSerializer(serializers.Serializer):
+    """DRF serializer for allocation of stock items against a transfer order line item."""
 
     class Meta:
         """Metaclass options."""
@@ -2538,3 +2538,74 @@ class TransferOrderAllocationSerializer(serializers.Serializer):
 
                 allocation.full_clean()
                 allocation.save()
+
+
+class TransferOrderAllocationSerializer(
+    FilterableSerializerMixin, InvenTreeModelSerializer
+):
+    """Serializer for the TransferOrderAllocation model.
+
+    This includes some fields from the related model objects.
+    """
+
+    class Meta:
+        """Metaclass options."""
+
+        model = order.models.TransferOrderAllocation
+        fields = [
+            'pk',
+            'item',
+            'quantity',
+            # Annotated read-only fields
+            'line',
+            'part',
+            'order',
+            'serial',
+            'location',
+            # Extra detail fields
+            'item_detail',
+            'part_detail',
+            'order_detail',
+            'location_detail',
+        ]
+        read_only_fields = ['line', '']
+
+    part = serializers.PrimaryKeyRelatedField(source='item.part', read_only=True)
+    order = serializers.PrimaryKeyRelatedField(
+        source='line.order', many=False, read_only=True
+    )
+    serial = serializers.CharField(source='get_serial', read_only=True, allow_null=True)
+    quantity = serializers.FloatField(read_only=False)
+    location = serializers.PrimaryKeyRelatedField(
+        source='item.location', many=False, read_only=True
+    )
+
+    # Extra detail fields
+    order_detail = enable_filter(
+        TransferOrderSerializer(
+            source='line.order', many=False, read_only=True, allow_null=True
+        )
+    )
+    part_detail = enable_filter(
+        PartBriefSerializer(
+            source='item.part', many=False, read_only=True, allow_null=True
+        ),
+        True,
+    )
+    item_detail = enable_filter(
+        stock.serializers.StockItemSerializer(
+            source='item',
+            many=False,
+            read_only=True,
+            allow_null=True,
+            part_detail=False,
+            location_detail=False,
+            supplier_part_detail=False,
+        ),
+        True,
+    )
+    location_detail = enable_filter(
+        stock.serializers.LocationBriefSerializer(
+            source='item.location', many=False, read_only=True, allow_null=True
+        )
+    )
