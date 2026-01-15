@@ -90,7 +90,7 @@ export async function doBasicLogin(
 
   const host: string = getHost();
 
-  // Attempt login with
+  // Attempt login with basic info
   await api
     .post(
       apiUrl(ApiEndpoints.auth_login),
@@ -147,10 +147,16 @@ export async function doBasicLogin(
       }
     });
 
+  // see if mfa registration is required
+  if (loginDone) {
+    // stop further processing if mfa setup is required
+    if (!(await MfaSetupOk(navigate))) loginDone = false;
+  }
+
+  // we are successfully logged in - gather required states for app
   if (loginDone) {
     await fetchUserState();
-    // see if mfa registration is required
-    await fetchGlobalStates(navigate);
+    await fetchGlobalStates();
     observeProfile();
   } else if (!success) {
     clearUserState();
@@ -237,6 +243,26 @@ export const doSimpleLogin = async (email: string) => {
     });
   return mail;
 };
+
+function MfaSetupOk(navigate: NavigateFunction) {
+  return api
+    .get(apiUrl(ApiEndpoints.auth_base))
+    .then(() => {
+      return true;
+    })
+    .catch((err) => {
+      if (err?.response?.status == 401) {
+        const mfa_register = err.response.data.id == FlowEnum.MfaRegister;
+        if (mfa_register && navigate != undefined) {
+          navigate('/mfa-setup');
+          return false;
+        }
+      } else {
+        console.error(err);
+      }
+      return true;
+    });
+}
 
 function observeProfile() {
   // overwrite language and theme info in session with profile info
@@ -326,19 +352,14 @@ export async function handleMfaLogin(
 ) {
   const { setAuthContext } = useServerApiState.getState();
 
-  const result = await authApi(
-    apiUrl(ApiEndpoints.auth_login_2fa),
-    undefined,
-    'post',
-    {
-      code: values.code
-    }
-  )
+  return await authApi(apiUrl(ApiEndpoints.auth_login_2fa), undefined, 'post', {
+    code: values.code
+  })
     .then((response) => {
       handleSuccessFullAuth(response, navigate, location, setError);
       return true;
     })
-    .catch((err) => {
+    .catch(async (err) => {
       // Already logged in, but with a different session
       if (err?.response?.status == 409) {
         notifications.show({
@@ -354,11 +375,12 @@ export async function handleMfaLogin(
         );
         if (mfa_trust?.is_pending) {
           setAuthContext(err.response.data.data);
-          authApi(apiUrl(ApiEndpoints.auth_trust), undefined, 'post', {
+          await authApi(apiUrl(ApiEndpoints.auth_trust), undefined, 'post', {
             trust: values.remember ?? false
           }).then((response) => {
             handleSuccessFullAuth(response, navigate, location, setError);
           });
+          return true;
         }
       } else {
         const errors = err.response?.data?.errors;
@@ -371,7 +393,6 @@ export async function handleMfaLogin(
       }
       return false;
     });
-  return result;
 }
 
 /**
@@ -382,7 +403,7 @@ export async function handleMfaLogin(
  * - An existing CSRF cookie is stored in the browser
  */
 export const checkLoginState = async (
-  navigate: any,
+  navigate: NavigateFunction,
   redirect?: any,
   no_redirect?: boolean
 ) => {
@@ -396,22 +417,25 @@ export const checkLoginState = async (
   const { isLoggedIn, fetchUserState } = useUserState.getState();
 
   // Callback function when login is successful
-  const loginSuccess = () => {
+  const loginSuccess = async () => {
     setLoginChecked(true);
     showLoginNotification({
       title: t`Logged In`,
       message: t`Successfully logged in`
     });
+    MfaSetupOk(navigate).then(async (isOk) => {
+      if (isOk) {
+        observeProfile();
+        await fetchGlobalStates();
 
-    observeProfile();
-
-    fetchGlobalStates(navigate);
-    followRedirect(navigate, redirect);
+        followRedirect(navigate, redirect);
+      }
+    });
   };
 
   if (isLoggedIn()) {
     // Already logged in
-    loginSuccess();
+    await loginSuccess();
     return;
   }
 
@@ -420,7 +444,7 @@ export const checkLoginState = async (
   await fetchUserState();
 
   if (isLoggedIn()) {
-    loginSuccess();
+    await loginSuccess();
   } else if (!no_redirect) {
     setLoginChecked(true);
     navigate('/login', { state: redirect });
@@ -429,8 +453,8 @@ export const checkLoginState = async (
 };
 
 function handleSuccessFullAuth(
-  response?: any,
-  navigate?: NavigateFunction,
+  response: any,
+  navigate: NavigateFunction,
   location?: Location<any>,
   setError?: (message: string | undefined) => void
 ) {
@@ -447,12 +471,16 @@ function handleSuccessFullAuth(
   }
   setAuthenticated();
 
-  fetchUserState().finally(() => {
-    observeProfile();
-    fetchGlobalStates(navigate);
+  // see if mfa registration is required
+  MfaSetupOk(navigate).then(async (isOk) => {
+    if (isOk) {
+      await fetchUserState();
+      observeProfile();
+      await fetchGlobalStates();
 
-    if (navigate && location) {
-      followRedirect(navigate, location?.state);
+      if (location !== undefined) {
+        followRedirect(navigate, location?.state);
+      }
     }
   });
 }
@@ -545,7 +573,12 @@ export function handleVerifyTotp(
     authApi(apiUrl(ApiEndpoints.auth_totp), undefined, 'post', {
       code: value
     }).then(() => {
-      followRedirect(navigate, location?.state);
+      showNotification({
+        title: t`MFA Setup successful`,
+        message: t`MFA via TOTP has been set up successfully; you will need to login again.`,
+        color: 'green'
+      });
+      doLogout(navigate);
     });
   };
 }
@@ -689,8 +722,8 @@ export function handleChangePassword(
 }
 
 export async function handleWebauthnLogin(
-  navigate?: NavigateFunction,
-  location?: Location<any>
+  navigate: NavigateFunction,
+  location: Location<any>
 ) {
   const { setAuthContext } = useServerApiState.getState();
 
