@@ -4,8 +4,7 @@ from inspect import signature
 from typing import Optional
 
 from django.core.exceptions import ValidationError
-
-from jinja2 import Template
+from django.template import Template
 
 import common.models
 import InvenTree.exceptions
