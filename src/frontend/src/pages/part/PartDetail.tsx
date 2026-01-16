@@ -1066,7 +1066,10 @@ export default function PartDetail() {
     ];
   }, [partRequirements, partRequirementsQuery.isFetching, part]);
 
-  const partFields = usePartFields({ create: false });
+  const partFields = usePartFields({
+    create: false,
+    partId: part.pk
+  });
 
   const editPart = useEditApiFormModal({
     url: ApiEndpoints.part_list,
