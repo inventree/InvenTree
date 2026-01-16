@@ -149,6 +149,15 @@ export default function SalesOrderDetail() {
       },
       {
         type: 'progressbar',
+        name: 'allocations',
+        icon: 'progress',
+        label: t`Allocated Line Items`,
+        total: order.line_items,
+        progress: order.allocated_lines,
+        hidden: !order.line_items
+      },
+      {
+        type: 'progressbar',
         name: 'shipments',
         icon: 'shipment',
         label: t`Completed Shipments`,
@@ -363,6 +372,47 @@ export default function SalesOrderDetail() {
             <Accordion.Item value='line-items' key='lineitems'>
               <Accordion.Control>
                 <StylishText size='lg'>{t`Line Items`}</StylishText>
+              </Accordion.Control>
+              <Accordion.Panel>
+                <SalesOrderLineItemTable
+                  orderId={order.pk}
+                  orderDetailRefresh={refreshInstance}
+                  currency={orderCurrency}
+                  customerId={order.customer}
+                  editable={lineItemsEditable}
+                />
+              </Accordion.Panel>
+            </Accordion.Item>
+            <Accordion.Item value='extra-items' key='extraitems'>
+              <Accordion.Control>
+                <StylishText size='lg'>{t`Extra Line Items`}</StylishText>
+              </Accordion.Control>
+              <Accordion.Panel>
+                <ExtraLineItemTable
+                  endpoint={ApiEndpoints.sales_order_extra_line_list}
+                  orderId={order.pk}
+                  editable={lineItemsEditable}
+                  orderDetailRefresh={refreshInstance}
+                  currency={orderCurrency}
+                  role={UserRoles.sales_order}
+                />
+              </Accordion.Panel>
+            </Accordion.Item>
+          </Accordion>
+        )
+      },
+      {
+        name: 'allocated-lines',
+        label: t`Allocated Lines`,
+        icon: <IconList />,
+        content: (
+          <Accordion
+            multiple={true}
+            defaultValue={['allocated-lines', 'extra-items']}
+          >
+            <Accordion.Item value='allocated-lines' key='allocatedlines'>
+              <Accordion.Control>
+                <StylishText size='lg'>{t`Allocated Lines`}</StylishText>
               </Accordion.Control>
               <Accordion.Panel>
                 <SalesOrderLineItemTable

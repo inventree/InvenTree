@@ -14,6 +14,7 @@ import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import {
+  AllocatedLinesProgressColumn,
   CompanyColumn,
   CreatedByColumn,
   CreationDateColumn,
@@ -142,6 +143,9 @@ export function SalesOrderTable({
       },
       DescriptionColumn({}),
       LineItemsProgressColumn({}),
+      AllocatedLinesProgressColumn({
+        defaultVisible: false
+      }),
       {
         accessor: 'shipments_count',
         title: t`Shipments`,

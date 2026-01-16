@@ -351,6 +351,25 @@ export function LineItemsProgressColumn(props: TableColumnProps): TableColumn {
   };
 }
 
+export function AllocatedLinesProgressColumn(
+  props: TableColumnProps
+): TableColumn {
+  return {
+    accessor: 'allocated_lines',
+    sortable: true,
+    title: t`Allocated Lines`,
+    minWidth: 125,
+    render: (record: any) => (
+      <ProgressBar
+        progressLabel={true}
+        value={record.allocated_lines}
+        maximum={record.line_items}
+      />
+    ),
+    ...props
+  };
+}
+
 export function ProjectCodeColumn(props: TableColumnProps): TableColumn {
   const globalSettings = useGlobalSettingsState.getState();
   const enabled = globalSettings.isSet('PROJECT_CODES_ENABLED', true);
