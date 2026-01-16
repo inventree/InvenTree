@@ -56,12 +56,7 @@ export function usePartFields({
         }
       },
       default_supplier: {
-        // model: ModelType.company,
-        // api_url: apiUrl(ApiEndpoints.company_list),
-        // filters: {
-        //   is_supplier: true
-        // }
-        hidden: !partId,
+        hidden: !partId || !purchaseable,
         filters: {
           part: partId,
           part_detail: true,
