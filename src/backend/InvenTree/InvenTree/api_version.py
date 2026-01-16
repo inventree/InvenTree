@@ -1,13 +1,16 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 440
+INVENTREE_API_VERSION = 441
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v440 -> 2026-01-10 : https://github.com/inventree/InvenTree/pull/11073
+v441 -> 2026-01-16 : https://github.com/inventree/InvenTree/pull/11073
     - Add OptionalField class for cleaner handling of optional fields in serializers
+
+v440 -> 2026-01-15 : https://github.com/inventree/InvenTree/pull/10796
+    - Adds confirm and confirm_text to all settings
 
 v439 -> 2026-01-09 : https://github.com/inventree/InvenTree/pull/11092
     - Add missing nullable annotations

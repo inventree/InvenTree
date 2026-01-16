@@ -1,5 +1,4 @@
 import type { PluginProps } from '@lib/types/Plugins';
-import type { NavigateFunction } from 'react-router-dom';
 import { setApiDefaults } from '../App';
 import { useGlobalStatusState } from './GlobalStatusState';
 import { useIconState } from './IconState';
@@ -45,9 +44,7 @@ export interface ServerAPIProps {
  * Refetch all global state information.
  * Necessary on login, or if locale is changed.
  */
-export async function fetchGlobalStates(
-  navigate?: NavigateFunction | undefined
-) {
+export async function fetchGlobalStates() {
   const { isLoggedIn } = useUserState.getState();
 
   if (!isLoggedIn()) {
