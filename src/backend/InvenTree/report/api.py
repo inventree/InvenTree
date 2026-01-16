@@ -18,7 +18,6 @@ import report.models
 import report.serializers
 from common.models import DataOutput
 from common.serializers import DataOutputSerializer
-from InvenTree.api import meta_path
 from InvenTree.filters import InvenTreeSearchFilter
 from InvenTree.mixins import ListCreateAPI, RetrieveUpdateDestroyAPI
 from plugin import PluginMixinEnum
@@ -355,14 +354,8 @@ label_api_urls = [
         include([
             path(
                 '<int:pk>/',
-                include([
-                    meta_path(report.models.LabelTemplate),
-                    path(
-                        '',
-                        LabelTemplateDetail.as_view(),
-                        name='api-label-template-detail',
-                    ),
-                ]),
+                LabelTemplateDetail.as_view(),
+                name='api-label-template-detail',
             ),
             path('', LabelTemplateList.as_view(), name='api-label-template-list'),
         ]),
@@ -378,14 +371,8 @@ report_api_urls = [
         include([
             path(
                 '<int:pk>/',
-                include([
-                    meta_path(report.models.ReportTemplate),
-                    path(
-                        '',
-                        ReportTemplateDetail.as_view(),
-                        name='api-report-template-detail',
-                    ),
-                ]),
+                ReportTemplateDetail.as_view(),
+                name='api-report-template-detail',
             ),
             path('', ReportTemplateList.as_view(), name='api-report-template-list'),
         ]),
