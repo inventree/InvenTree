@@ -263,7 +263,7 @@ class Build(
         null=True,
         related_name='children',
         verbose_name=_('Parent Build'),
-        help_text=_('BuildOrder to which this build is allocated'),
+        help_text=_('Build Order to which this build is allocated'),
     )
 
     part = models.ForeignKey(
@@ -282,7 +282,7 @@ class Build(
         related_name='builds',
         null=True,
         blank=True,
-        help_text=_('SalesOrder to which this build is allocated'),
+        help_text=_('Sales Order to which this build is allocated'),
     )
 
     take_from = models.ForeignKey(

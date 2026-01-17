@@ -3022,7 +3022,7 @@ class ReturnOrderLineItem(StatusCodeMixin, OrderLineItem):
         null=True,
         blank=True,
         verbose_name=_('Received Date'),
-        help_text=_('The date this this return item was received'),
+        help_text=_('The date this return item was received'),
     )
 
     @property
