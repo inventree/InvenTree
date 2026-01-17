@@ -771,6 +771,7 @@ class StockItem(
         Performs a number of checks:
         - Unique serial number requirement
         - Adds a transaction note when the item is first created.
+        - Updates related order allocations if quantity changes
         """
         self.validate_unique()
         self.clean()
@@ -787,6 +788,9 @@ class StockItem(
 
         notes = kwargs.pop('notes', '')
 
+        # Track old quantity for allocation update
+        old_quantity = None
+        
         if self.pk:
             # StockItem has already been saved
 
@@ -802,6 +806,11 @@ class StockItem(
                 if old.status != self.status:
                     deltas['status'] = self.status
 
+                # Quantity changed?
+                if old.quantity != self.quantity:
+                    deltas['quantity'] = self.quantity
+                    old_quantity = old.quantity
+
                 if add_note and len(deltas) > 0:
                     self.add_tracking_entry(
                         StockHistoryCode.EDITED, user, deltas=deltas, notes=notes
@@ -811,6 +820,10 @@ class StockItem(
                 pass
 
         super().save(*args, **kwargs)
+        
+        # Update related order allocations if quantity changed
+        if old_quantity is not None and old_quantity != self.quantity:
+            self.update_order_allocations(old_quantity, user)
 
         # If user information is provided, and no existing note exists, create one!
         if add_note and self.tracking_info.count() == 0:
@@ -824,6 +837,57 @@ class StockItem(
                 location=self.location,
                 quantity=float(self.quantity),
             )
+
+    def update_order_allocations(self, old_quantity, user=None):
+        """Update order allocations when stock quantity changes."""
+        from InvenTree.order.models import SalesOrderAllocation
+
+        if old_quantity == self.quantity:
+            return
+
+        quantity_delta = self.quantity - old_quantity
+
+        allocations = SalesOrderAllocation.objects.filter(
+            item=self,
+            allocation_date__isnull=False
+        )
+
+        if not allocations.exists():
+            return
+
+        for allocation in allocations:
+            allocated_quantity = allocation.quantity
+
+            if quantity_delta > 0:
+                pass
+            elif quantity_delta < 0:
+                shortage = min(-quantity_delta, allocated_quantity)
+
+                if self.quantity < allocated_quantity:
+                    new_allocated = self.quantity
+
+                    if new_allocated <= 0:
+                        allocation.delete()
+
+                        if user:
+                            self.add_tracking_entry(
+                                StockHistoryCode.ALLOCATION_REMOVED,
+                                user,
+                                notes=f'Allocation removed due to stock shortage: {shortage} units',
+                                order=allocation.order,
+                            )
+                    else:
+                        allocation.quantity = new_allocated
+                        allocation.save()
+
+                        if user:
+                            self.add_tracking_entry(
+                                StockHistoryCode.ALLOCATION_EDITED,
+                                user,
+                                deltas={'quantity': new_allocated},
+                                notes=f'Allocation adjusted due to stock shortage: {shortage} units reduced',
+                                order=allocation.order,
+                            )
 
     @property
     def status_label(self):
