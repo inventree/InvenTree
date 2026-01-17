@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 441
+INVENTREE_API_VERSION = 442
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v442 -> 2026-01-17 : https://github.com/inventree/InvenTree/pull/11157
+    - Typo fixes, no functional changes
 
 v441 -> 2026-01-17 : https://github.com/inventree/InvenTree/pull/11153
     - Allow export of supplier part pricing data
