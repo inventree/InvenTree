@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 440
+INVENTREE_API_VERSION = 441
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v441 -> 2026-01-17 : https://github.com/inventree/InvenTree/pull/11157
+    - Typo fixes, no functional changes
 
 v440 -> 2026-01-15 : https://github.com/inventree/InvenTree/pull/10796
     - Adds confirm and confirm_text to all settings
