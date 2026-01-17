@@ -839,7 +839,18 @@ class StockItem(
             )
 
     def update_order_allocations(self, old_quantity, user=None):
-        """Update order allocations when stock quantity changes."""
+        """Update order allocations when stock quantity changes.
+        
+        This method handles the following scenarios:
+        1. Stock quantity increased: No action needed (allocations remain valid)
+        2. Stock quantity decreased: Adjust or remove allocations that exceed available stock
+        
+        The adjustment follows these business rules:
+        - Sort allocations by order date (earliest first) to prioritize older orders
+        - Reduce allocations proportionally when total allocated exceeds available stock
+        - Remove allocations only when necessary (when remaining stock is zero)
+        - Log all changes with detailed tracking information
+        """
         from InvenTree.order.models import SalesOrderAllocation
 
         if old_quantity == self.quantity:
@@ -850,42 +861,68 @@ class StockItem(
         allocations = SalesOrderAllocation.objects.filter(
             item=self,
             allocation_date__isnull=False
-        )
+        ).select_related('order').order_by('order__created')
 
         if not allocations.exists():
             return
 
-        for allocation in allocations:
-            allocated_quantity = allocation.quantity
+        total_allocated = sum(alloc.quantity for alloc in allocations)
 
-            if quantity_delta > 0:
-                pass
-            elif quantity_delta < 0:
-                shortage = min(-quantity_delta, allocated_quantity)
+        if quantity_delta > 0:
+            pass
+        elif quantity_delta < 0:
+            shortage = -quantity_delta
+            available_stock = self.quantity
 
-                if self.quantity < allocated_quantity:
-                    new_allocated = self.quantity
+            if available_stock >= total_allocated:
+                return
 
-                    if new_allocated <= 0:
+            if available_stock <= 0:
+                for allocation in allocations:
+                    removed_quantity = allocation.quantity
+                    allocation.delete()
+
+                    if user:
+                        self.add_tracking_entry(
+                            StockHistoryCode.ALLOCATION_REMOVED,
+                            user,
+                            notes=f'Allocation removed due to stock depletion: {removed_quantity} units',
+                            order=allocation.order,
+                        )
+            else:
+                remaining_stock = available_stock
+                total_to_reduce = total_allocated - available_stock
+
+                for allocation in allocations:
+                    if remaining_stock <= 0:
+                        removed_quantity = allocation.quantity
                         allocation.delete()
 
                         if user:
                             self.add_tracking_entry(
                                 StockHistoryCode.ALLOCATION_REMOVED,
                                 user,
-                                notes=f'Allocation removed due to stock shortage: {shortage} units',
+                                notes=f'Allocation removed due to stock shortage: {removed_quantity} units',
                                 order=allocation.order,
                             )
+                        continue
+
+                    if allocation.quantity <= remaining_stock:
+                        remaining_stock -= allocation.quantity
                     else:
-                        allocation.quantity = new_allocated
+                        reduction = allocation.quantity - remaining_stock
+                        new_quantity = remaining_stock
+                        remaining_stock = 0
+
+                        allocation.quantity = new_quantity
                         allocation.save()
 
                         if user:
                             self.add_tracking_entry(
                                 StockHistoryCode.ALLOCATION_EDITED,
                                 user,
-                                deltas={'quantity': new_allocated},
-                                notes=f'Allocation adjusted due to stock shortage: {shortage} units reduced',
+                                deltas={'quantity': new_quantity},
+                                notes=f'Allocation adjusted due to stock shortage: {reduction} units reduced',
                                 order=allocation.order,
                             )
 

@@ -169,7 +169,7 @@ export interface ApiFormProps {
   preFormSuccess?: string;
   postFormContent?: JSX.Element;
   successMessage?: string | null;
-  onFormSuccess?: (data: any, form: UseFormReturn) => void;
+  onFormSuccess?: (data: any, form: UseFormReturn) => void | Promise<void>;
   onFormError?: (response: any, form: UseFormReturn) => void;
   processFormData?: (data: any, form: UseFormReturn) => any;
   checkClose?: (data: any, form: UseFormReturn) => boolean;
