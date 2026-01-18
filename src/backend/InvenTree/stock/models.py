@@ -771,6 +771,7 @@ class StockItem(
         Performs a number of checks:
         - Unique serial number requirement
         - Adds a transaction note when the item is first created.
+        - Updates related order allocations if quantity changes
         """
         self.validate_unique()
         self.clean()
@@ -787,6 +788,9 @@ class StockItem(
 
         notes = kwargs.pop('notes', '')
 
+        # Track old quantity for allocation update
+        old_quantity = None
+        
         if self.pk:
             # StockItem has already been saved
 
@@ -802,6 +806,11 @@ class StockItem(
                 if old.status != self.status:
                     deltas['status'] = self.status
 
+                # Quantity changed?
+                if old.quantity != self.quantity:
+                    deltas['quantity'] = self.quantity
+                    old_quantity = old.quantity
+
                 if add_note and len(deltas) > 0:
                     self.add_tracking_entry(
                         StockHistoryCode.EDITED, user, deltas=deltas, notes=notes
@@ -811,6 +820,10 @@ class StockItem(
                 pass
 
         super().save(*args, **kwargs)
+        
+        # Update related order allocations if quantity changed
+        if old_quantity is not None and old_quantity != self.quantity:
+            self.update_order_allocations(old_quantity, user)
 
         # If user information is provided, and no existing note exists, create one!
         if add_note and self.tracking_info.count() == 0:
@@ -824,6 +837,94 @@ class StockItem(
                 location=self.location,
                 quantity=float(self.quantity),
             )
+
+    def update_order_allocations(self, old_quantity, user=None):
+        """Update order allocations when stock quantity changes.
+        
+        This method handles the following scenarios:
+        1. Stock quantity increased: No action needed (allocations remain valid)
+        2. Stock quantity decreased: Adjust or remove allocations that exceed available stock
+        
+        The adjustment follows these business rules:
+        - Sort allocations by order date (earliest first) to prioritize older orders
+        - Reduce allocations proportionally when total allocated exceeds available stock
+        - Remove allocations only when necessary (when remaining stock is zero)
+        - Log all changes with detailed tracking information
+        """
+        from InvenTree.order.models import SalesOrderAllocation
+
+        if old_quantity == self.quantity:
+            return
+
+        quantity_delta = self.quantity - old_quantity
+
+        allocations = SalesOrderAllocation.objects.filter(
+            item=self,
+            allocation_date__isnull=False
+        ).select_related('order').order_by('order__created')
+
+        if not allocations.exists():
+            return
+
+        total_allocated = sum(alloc.quantity for alloc in allocations)
+
+        if quantity_delta > 0:
+            pass
+        elif quantity_delta < 0:
+            shortage = -quantity_delta
+            available_stock = self.quantity
+
+            if available_stock >= total_allocated:
+                return
+
+            if available_stock <= 0:
+                for allocation in allocations:
+                    removed_quantity = allocation.quantity
+                    allocation.delete()
+
+                    if user:
+                        self.add_tracking_entry(
+                            StockHistoryCode.ALLOCATION_REMOVED,
+                            user,
+                            notes=f'Allocation removed due to stock depletion: {removed_quantity} units',
+                            order=allocation.order,
+                        )
+            else:
+                remaining_stock = available_stock
+                total_to_reduce = total_allocated - available_stock
+
+                for allocation in allocations:
+                    if remaining_stock <= 0:
+                        removed_quantity = allocation.quantity
+                        allocation.delete()
+
+                        if user:
+                            self.add_tracking_entry(
+                                StockHistoryCode.ALLOCATION_REMOVED,
+                                user,
+                                notes=f'Allocation removed due to stock shortage: {removed_quantity} units',
+                                order=allocation.order,
+                            )
+                        continue
+
+                    if allocation.quantity <= remaining_stock:
+                        remaining_stock -= allocation.quantity
+                    else:
+                        reduction = allocation.quantity - remaining_stock
+                        new_quantity = remaining_stock
+                        remaining_stock = 0
+
+                        allocation.quantity = new_quantity
+                        allocation.save()
+
+                        if user:
+                            self.add_tracking_entry(
+                                StockHistoryCode.ALLOCATION_EDITED,
+                                user,
+                                deltas={'quantity': new_quantity},
+                                notes=f'Allocation adjusted due to stock shortage: {reduction} units reduced',
+                                order=allocation.order,
+                            )
 
     @property
     def status_label(self):
