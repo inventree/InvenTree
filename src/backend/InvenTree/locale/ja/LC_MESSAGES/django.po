@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-15 22:34+0000\n"
-"PO-Revision-Date: 2026-01-15 22:38\n"
+"POT-Creation-Date: 2026-01-17 23:47+0000\n"
+"PO-Revision-Date: 2026-01-17 23:50\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -794,8 +794,8 @@ msgid "Brief description of the build (optional)"
 msgstr "建築の簡単な説明（任意）"
 
 #: build/models.py:266
-msgid "BuildOrder to which this build is allocated"
-msgstr "このビルドが割り当てられる ビルドオーダー"
+msgid "Build Order to which this build is allocated"
+msgstr ""
 
 #: build/models.py:275
 msgid "Select part to build"
@@ -806,8 +806,8 @@ msgid "Sales Order Reference"
 msgstr "セールス・オーダー・リファレンス"
 
 #: build/models.py:285
-msgid "SalesOrder to which this build is allocated"
-msgstr "このビルドが割り当てられる SalesOrder"
+msgid "Sales Order to which this build is allocated"
+msgstr ""
 
 #: build/models.py:290 build/serializers.py:1087
 msgid "Source Location"
@@ -5241,8 +5241,8 @@ msgid "Received Date"
 msgstr "受領日"
 
 #: order/models.py:3025
-msgid "The date this this return item was received"
-msgstr "この返品商品が届いた日付"
+msgid "The date this return item was received"
+msgstr ""
 
 #: order/models.py:3037
 msgid "Outcome"
@@ -7276,8 +7276,8 @@ msgid "Integrated Slack notification methods"
 msgstr "統合されたSlack通知方法"
 
 #: plugin/builtin/integration/core_notifications.py:131
-msgid "Slack incoming webhook url"
-msgstr "Slack受信ウェブフックURL"
+msgid "Slack incoming webhook URL"
+msgstr ""
 
 #: plugin/builtin/integration/core_notifications.py:132
 msgid "URL that is used to send messages to a slack channel"
@@ -7536,8 +7536,8 @@ msgid "Key of plugin"
 msgstr "プラグインのキー"
 
 #: plugin/models.py:55
-msgid "PluginName of the plugin"
-msgstr "プラグインのプラグイン名"
+msgid "Name of the plugin"
+msgstr ""
 
 #: plugin/models.py:62 plugin/serializers.py:119
 msgid "Package Name"
@@ -7763,8 +7763,8 @@ msgid "Installation not confirmed"
 msgstr "設置未確認"
 
 #: plugin/serializers.py:152
-msgid "Either packagename of URL must be provided"
-msgstr "URL のパッケージ名のどちらかを指定する必要があります。"
+msgid "Either packagename or URL must be provided"
+msgstr ""
 
 #: plugin/serializers.py:188
 msgid "Full reload"
