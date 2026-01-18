@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-15 22:34+0000\n"
-"PO-Revision-Date: 2026-01-15 22:38\n"
+"POT-Creation-Date: 2026-01-17 23:47+0000\n"
+"PO-Revision-Date: 2026-01-17 23:50\n"
 "Last-Translator: \n"
 "Language-Team: Finnish\n"
 "Language: fi_FI\n"
@@ -794,7 +794,7 @@ msgid "Brief description of the build (optional)"
 msgstr ""
 
 #: build/models.py:266
-msgid "BuildOrder to which this build is allocated"
+msgid "Build Order to which this build is allocated"
 msgstr ""
 
 #: build/models.py:275
@@ -806,7 +806,7 @@ msgid "Sales Order Reference"
 msgstr ""
 
 #: build/models.py:285
-msgid "SalesOrder to which this build is allocated"
+msgid "Sales Order to which this build is allocated"
 msgstr ""
 
 #: build/models.py:290 build/serializers.py:1087
@@ -5241,7 +5241,7 @@ msgid "Received Date"
 msgstr ""
 
 #: order/models.py:3025
-msgid "The date this this return item was received"
+msgid "The date this return item was received"
 msgstr ""
 
 #: order/models.py:3037
@@ -7276,7 +7276,7 @@ msgid "Integrated Slack notification methods"
 msgstr ""
 
 #: plugin/builtin/integration/core_notifications.py:131
-msgid "Slack incoming webhook url"
+msgid "Slack incoming webhook URL"
 msgstr ""
 
 #: plugin/builtin/integration/core_notifications.py:132
@@ -7536,7 +7536,7 @@ msgid "Key of plugin"
 msgstr ""
 
 #: plugin/models.py:55
-msgid "PluginName of the plugin"
+msgid "Name of the plugin"
 msgstr ""
 
 #: plugin/models.py:62 plugin/serializers.py:119
@@ -7763,7 +7763,7 @@ msgid "Installation not confirmed"
 msgstr ""
 
 #: plugin/serializers.py:152
-msgid "Either packagename of URL must be provided"
+msgid "Either packagename or URL must be provided"
 msgstr ""
 
 #: plugin/serializers.py:188

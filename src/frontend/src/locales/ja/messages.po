@@ -8,7 +8,7 @@ msgstr ""
 "Language: ja\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-01-17 04:57\n"
+"PO-Revision-Date: 2026-01-17 23:50\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -4507,7 +4507,7 @@ msgstr "ビルドアウトプットはキャンセルされました"
 #: src/tables/sales/SalesOrderLineItemTable.tsx:99
 #: src/tables/stock/StockItemTable.tsx:69
 msgid "IPN"
-msgstr "即時支払通知"
+msgstr "IPN"
 
 #: src/forms/BuildForms.tsx:641
 #: src/forms/BuildForms.tsx:805

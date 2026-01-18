@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-15 22:34+0000\n"
-"PO-Revision-Date: 2026-01-15 22:38\n"
+"POT-Creation-Date: 2026-01-17 23:47+0000\n"
+"PO-Revision-Date: 2026-01-17 23:50\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -794,8 +794,8 @@ msgid "Brief description of the build (optional)"
 msgstr "Gyártás rövid leírása (opcionális)"
 
 #: build/models.py:266
-msgid "BuildOrder to which this build is allocated"
-msgstr "Gyártás, amihez ez a gyártás hozzá van rendelve"
+msgid "Build Order to which this build is allocated"
+msgstr ""
 
 #: build/models.py:275
 msgid "Select part to build"
@@ -806,8 +806,8 @@ msgid "Sales Order Reference"
 msgstr "Vevői rendelés azonosító"
 
 #: build/models.py:285
-msgid "SalesOrder to which this build is allocated"
-msgstr "Vevői rendelés amihez ez a gyártás hozzá van rendelve"
+msgid "Sales Order to which this build is allocated"
+msgstr ""
 
 #: build/models.py:290 build/serializers.py:1087
 msgid "Source Location"
@@ -5242,8 +5242,8 @@ msgid "Received Date"
 msgstr "Visszavétel dátuma"
 
 #: order/models.py:3025
-msgid "The date this this return item was received"
-msgstr "Mikor lett visszavéve a tétel"
+msgid "The date this return item was received"
+msgstr ""
 
 #: order/models.py:3037
 msgid "Outcome"
@@ -7277,8 +7277,8 @@ msgid "Integrated Slack notification methods"
 msgstr "InvenTree slack értesítési módok"
 
 #: plugin/builtin/integration/core_notifications.py:131
-msgid "Slack incoming webhook url"
-msgstr "Slack bejövő webhook URL"
+msgid "Slack incoming webhook URL"
+msgstr ""
 
 #: plugin/builtin/integration/core_notifications.py:132
 msgid "URL that is used to send messages to a slack channel"
@@ -7537,8 +7537,8 @@ msgid "Key of plugin"
 msgstr "Plugin kulcsa"
 
 #: plugin/models.py:55
-msgid "PluginName of the plugin"
-msgstr "PluginNeve a pluginnak"
+msgid "Name of the plugin"
+msgstr ""
 
 #: plugin/models.py:62 plugin/serializers.py:119
 msgid "Package Name"
@@ -7764,8 +7764,8 @@ msgid "Installation not confirmed"
 msgstr "Tlepítés nincs megerősítve"
 
 #: plugin/serializers.py:152
-msgid "Either packagename of URL must be provided"
-msgstr "Vagy csomag nevet vagy URL-t meg kell adni"
+msgid "Either packagename or URL must be provided"
+msgstr ""
 
 #: plugin/serializers.py:188
 msgid "Full reload"
