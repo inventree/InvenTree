@@ -550,11 +550,22 @@ def plugins(c, uv=False):
     help={
         'uv': 'Use UV package manager (experimental)',
         'skip_plugins': 'Skip plugin installation',
+        'dev': 'Install development requirements instead of production requirements',
     }
 )
 @state_logger('TASK02')
-def install(c, uv=False, skip_plugins=False):
+def install(c, uv=False, skip_plugins=False, dev=False):
     """Installs required python packages."""
+    if dev:
+        run_install(
+            c,
+            uv,
+            local_dir().joinpath('src/backend/requirements-dev.txt'),
+            version_check=True,
+        )
+        success('Dependency installation complete')
+        return
+
     # Ensure path is relative to *this* directory
     run_install(
         c, uv, local_dir().joinpath('src/backend/requirements.txt'), version_check=True
@@ -578,12 +589,7 @@ def install(c, uv=False, skip_plugins=False):
 def setup_dev(c, tests=False):
     """Sets up everything needed for the dev environment."""
     # Install required Python packages with PIP
-    run_install(
-        c,
-        False,
-        local_dir().joinpath('src/backend/requirements-dev.txt'),
-        run_preflight=False,
-    )
+    install(c, uv=False, skip_plugins=True, dev=True)
 
     # Install pre-commit hook
     info('Installing pre-commit for checks before git commits...')
