@@ -430,7 +430,7 @@ def run_install(
         )
         if install_file_vers.exists():
             install_file = install_file_vers
-            info(f'Using version-specific requirements file: {install_file_vers}')
+            info(f"Using version-specific requirements file '{install_file_vers}'")
 
     info(f"Installing required python packages from '{install_file}'")
     if not Path(install_file).is_file():
@@ -453,6 +453,7 @@ def run_install(
                 c,
                 'pip3 install --no-cache-dir --disable-pip-version-check -U uv setuptools',
             )
+            info('Installed package manager')
         run(c, f'uv pip install -U --require-hashes -r {install_file}')
 
 
