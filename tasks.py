@@ -421,7 +421,7 @@ def run_install(
     c, uv: bool, install_file: Path, run_preflight=True, version_check=False
 ):
     """Run the installation of python packages from a requirements file."""
-    if version_check:
+    if False:  # version_check:
         # Test if there is a version specific requirements file
         sys_ver_s = python_version().split('.')
         sys_string = f'{sys_ver_s[0]}.{sys_ver_s[1]}'
