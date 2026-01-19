@@ -99,14 +99,6 @@ runs:
         if: ${{ inputs.install == 'true' }}
         shell: bash
         run: invoke install --uv
-      # - name: Fix cffi issues
-      #   # only needed for python 3.14
-      #   if: ${{ env.python_version == '3.14' }}
-      #   shell: bash
-      #   run: |
-      #     pip uninstall cffi -y
-      #     sudo apt remove --purge -y python3-cffi
-      #     pip install --no-cache-dir --force-reinstall --ignore-installed cffi
       - name: Run invoke update
         if: ${{ inputs.update == 'true' }}
         shell: bash
