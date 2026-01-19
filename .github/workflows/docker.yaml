@@ -162,7 +162,7 @@ jobs:
           python-version: ${{ env.python_version }}
       - name: Version Check
         run: |
-          pip install  -r contrib/dev_reqs/requirements.txt
+          pip install --require-hashes -r contrib/dev_reqs/requirements.txt
           python3 .github/scripts/version_check.py
           echo "git_commit_hash=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
           echo "git_commit_date=$(git show -s --format=%ci)" >> $GITHUB_ENV

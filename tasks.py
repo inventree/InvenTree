@@ -432,7 +432,7 @@ def run_install(c, uv, install_file, run_preflight=True):
             )
         run(
             c,
-            f'pip3 install --no-cache-dir --disable-pip-version-check -U  -r {install_file}',
+            f'pip3 install --no-cache-dir --disable-pip-version-check -U --require-hashes -r {install_file}',
         )
     else:
         if run_preflight:
@@ -440,7 +440,7 @@ def run_install(c, uv, install_file, run_preflight=True):
                 c,
                 'pip3 install --no-cache-dir --disable-pip-version-check -U uv setuptools',
             )
-        run(c, f'uv pip install -U   -r {install_file}')
+        run(c, f'uv pip install -U --require-hashes -r {install_file}')
 
 
 def yarn(c, cmd):
@@ -568,7 +568,7 @@ def setup_dev(c, tests=False):
     info("Installing required python packages from 'src/backend/requirements-dev.txt'")
 
     # Install required Python packages with PIP
-    run(c, 'pip3 install -U  -r src/backend/requirements-dev.txt')
+    run(c, 'pip3 install -U --require-hashes -r src/backend/requirements-dev.txt')
 
     # Install pre-commit hook
     info('Installing pre-commit for checks before git commits...')
