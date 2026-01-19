@@ -46,12 +46,12 @@ runs:
         uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # pin@v5.0.0
         with:
           python-version: ${{ env.python_version }}
-          cache: pip
-          cache-dependency-path: |
-            src/backend/requirements.txt
-            src/backend/requirements-dev.txt
-            contrib/container/requirements.txt
-            contrib/dev_reqs/requirements.txt
+          # cache: pip
+          # cache-dependency-path: |
+          #   src/backend/requirements.txt
+          #   src/backend/requirements-dev.txt
+          #   contrib/container/requirements.txt
+          #   contrib/dev_reqs/requirements.txt
       - name: Setup Python 3.14
         if: ${{ inputs.python == 'true' && env.python_version == '3.14' }}
         uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # pin@v5.0.0
