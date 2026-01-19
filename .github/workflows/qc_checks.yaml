@@ -373,8 +373,8 @@ jobs:
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
-          apt-dependency: gettext poppler-utils python3-cffi
-          dev-install: false
+          apt-dependency: gettext poppler-utils
+          dev-install: true
           update: true
       - name: Data Export Test
         uses: ./.github/actions/migration
