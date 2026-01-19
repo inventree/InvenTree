@@ -417,6 +417,32 @@ def manage(c, cmd, pty: bool = False, env=None):
     run(c, f'python3 manage.py {cmd}', manage_py_dir(), pty, env)
 
 
+def run_install(c, uv, install_file, run_preflight=True):
+    """Run the installation of python packages from a requirements file."""
+    info(f"Installing required python packages from '{install_file}'")
+    if not Path(install_file).is_file():
+        raise FileNotFoundError(f"Requirements file '{install_file}' not found")
+
+    # Install required Python packages with PIP
+    if not uv:
+        if run_preflight:
+            run(
+                c,
+                'pip3 install --no-cache-dir --disable-pip-version-check -U pip setuptools',
+            )
+        run(
+            c,
+            f'pip3 install --no-cache-dir --disable-pip-version-check -U  -r {install_file}',
+        )
+    else:
+        if run_preflight:
+            run(
+                c,
+                'pip3 install --no-cache-dir --disable-pip-version-check -U uv setuptools',
+            )
+        run(c, f'uv pip install -U   -r {install_file}')
+
+
 def yarn(c, cmd):
     """Runs a given command against the yarn package manager.
 
@@ -492,16 +518,7 @@ def plugins(c, uv=False):
         get_plugin_file,
     )
 
-    plugin_file = get_plugin_file()
-
-    info(f"Installing plugin packages from '{plugin_file}'")
-
-    # Install the plugins
-    if not uv:
-        run(c, f"pip3 install --disable-pip-version-check -U -r '{plugin_file}'")
-    else:
-        run(c, 'pip3 install --no-cache-dir --disable-pip-version-check uv')
-        run(c, f"uv pip install -r '{plugin_file}'")
+    run_install(c, uv, get_plugin_file(), run_preflight=False)
 
     # Collect plugin static files
     manage(c, 'collectplugins')
@@ -517,29 +534,19 @@ def plugins(c, uv=False):
 def install(c, uv=False, skip_plugins=False):
     """Installs required python packages."""
     # Ensure path is relative to *this* directory
-    INSTALL_FILE = local_dir().joinpath('src/backend/requirements.txt')
+    install_file = local_dir().joinpath('src/backend/requirements.txt')
 
-    info(f"Installing required python packages from '{INSTALL_FILE}'")
+    # Test if there is a version specific requirements file
+    sys_ver_s = python_version().split('.')
+    sys_string = f'{sys_ver_s[0]}.{sys_ver_s[1]}'
+    install_file_vers = local_dir().joinpath(
+        f'src/backend/requirements-{sys_string}.txt'
+    )
+    if install_file_vers.exists():
+        install_file = install_file_vers
+        info(f'Using version-specific requirements file: {install_file_vers}')
 
-    if not Path(INSTALL_FILE).is_file():
-        raise FileNotFoundError(f"Requirements file '{INSTALL_FILE}' not found")
-
-    # Install required Python packages with PIP
-    if not uv:
-        run(
-            c,
-            'pip3 install --no-cache-dir --disable-pip-version-check -U pip setuptools',
-        )
-        run(
-            c,
-            f'pip3 install --no-cache-dir --disable-pip-version-check -U  -r {INSTALL_FILE}',
-        )
-    else:
-        run(
-            c,
-            'pip3 install --no-cache-dir --disable-pip-version-check -U uv setuptools',
-        )
-        run(c, f'uv pip install -U   -r {INSTALL_FILE}')
+    run_install(c, uv, install_file)
 
     # Run plugins install
     if not skip_plugins:

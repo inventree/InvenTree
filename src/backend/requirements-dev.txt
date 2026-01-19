@@ -134,6 +134,8 @@ sqlparse==0.5.5
     #   -c src/backend/requirements.txt
     #   django
     #   django-silk
+tomli==2.4.0
+    # via coverage
 ty==0.0.1a21
     # via -r src/backend/requirements-dev.in
 types-psycopg2==2.9.21.20251012
