@@ -417,8 +417,21 @@ def manage(c, cmd, pty: bool = False, env=None):
     run(c, f'python3 manage.py {cmd}', manage_py_dir(), pty, env)
 
 
-def run_install(c, uv, install_file, run_preflight=True):
+def run_install(
+    c, uv: bool, install_file: Path, run_preflight=True, version_check=False
+):
     """Run the installation of python packages from a requirements file."""
+    if version_check:
+        # Test if there is a version specific requirements file
+        sys_ver_s = python_version().split('.')
+        sys_string = f'{sys_ver_s[0]}.{sys_ver_s[1]}'
+        install_file_vers = install_file.parent.joinpath(
+            f'{install_file.stem}-{sys_string}{install_file.suffix}'
+        )
+        if install_file_vers.exists():
+            install_file = install_file_vers
+            info(f'Using version-specific requirements file: {install_file_vers}')
+
     info(f"Installing required python packages from '{install_file}'")
     if not Path(install_file).is_file():
         raise FileNotFoundError(f"Requirements file '{install_file}' not found")
@@ -534,19 +547,9 @@ def plugins(c, uv=False):
 def install(c, uv=False, skip_plugins=False):
     """Installs required python packages."""
     # Ensure path is relative to *this* directory
-    install_file = local_dir().joinpath('src/backend/requirements.txt')
-
-    # Test if there is a version specific requirements file
-    sys_ver_s = python_version().split('.')
-    sys_string = f'{sys_ver_s[0]}.{sys_ver_s[1]}'
-    install_file_vers = local_dir().joinpath(
-        f'src/backend/requirements-{sys_string}.txt'
+    run_install(
+        c, uv, local_dir().joinpath('src/backend/requirements.txt'), version_check=True
     )
-    if install_file_vers.exists():
-        install_file = install_file_vers
-        info(f'Using version-specific requirements file: {install_file_vers}')
-
-    run_install(c, uv, install_file)
 
     # Run plugins install
     if not skip_plugins:
@@ -565,10 +568,13 @@ def install(c, uv=False, skip_plugins=False):
 @task(help={'tests': 'Set up test dataset at the end'})
 def setup_dev(c, tests=False):
     """Sets up everything needed for the dev environment."""
-    info("Installing required python packages from 'src/backend/requirements-dev.txt'")
-
     # Install required Python packages with PIP
-    run(c, 'pip3 install -U --require-hashes -r src/backend/requirements-dev.txt')
+    run_install(
+        c,
+        False,
+        local_dir().joinpath('src/backend/requirements-dev.txt'),
+        run_preflight=False,
+    )
 
     # Install pre-commit hook
     info('Installing pre-commit for checks before git commits...')
