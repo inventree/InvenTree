@@ -33,11 +33,11 @@ repos:
     hooks:
       - id: pip-compile
         name: pip-compile requirements-dev.in
-        args: [src/backend/requirements-dev.in, -o, src/backend/requirements-dev.txt]
+        args: [src/backend/requirements-dev.in, -o, src/backend/requirements-dev.txt, -c, src/backend/requirements.txt]
         files: src/backend/requirements-dev\.(in|txt)$
       - id: pip-compile
         name: pip-compile requirements-dev.in 3.14
-        args: [src/backend/requirements-dev.in, -o, src/backend/requirements-dev-3.14.txt, --python-version=3.14]
+        args: [src/backend/requirements-dev.in, -o, src/backend/requirements-dev-3.14.txt, -c, src/backend/requirements-3.14.txt, --python-version=3.14]
         files: src/backend/requirements-dev\.(in|txt)$
       - id: pip-compile
         name: pip-compile requirements.txt
