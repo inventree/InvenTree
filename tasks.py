@@ -418,7 +418,12 @@ def manage(c, cmd, pty: bool = False, env=None):
 
 
 def run_install(
-    c, uv: bool, install_file: Path, run_preflight=True, version_check=False
+    c,
+    uv: bool,
+    install_file: Path,
+    run_preflight=True,
+    version_check=False,
+    pinned=True,
 ):
     """Run the installation of python packages from a requirements file."""
     if version_check:
@@ -445,7 +450,7 @@ def run_install(
             )
         run(
             c,
-            f'pip3 install --no-cache-dir --disable-pip-version-check -U --require-hashes -r {install_file}',
+            f'pip3 install --no-cache-dir --disable-pip-version-check -U {"--require-hashes" if pinned else ""} -r {install_file}',
         )
     else:
         if run_preflight:
@@ -454,7 +459,10 @@ def run_install(
                 'pip3 install --no-cache-dir --disable-pip-version-check -U uv setuptools',
             )
             info('Installed package manager')
-        run(c, f'uv pip install -U -r {install_file}')
+        run(
+            c,
+            f'uv pip install -U {"--require-hashes" if pinned else ""} -r {install_file}',
+        )
 
 
 def yarn(c, cmd):
@@ -532,7 +540,7 @@ def plugins(c, uv=False):
         get_plugin_file,
     )
 
-    run_install(c, uv, get_plugin_file(), run_preflight=False)
+    run_install(c, uv, get_plugin_file(), run_preflight=False, pinned=False)
 
     # Collect plugin static files
     manage(c, 'collectplugins')
