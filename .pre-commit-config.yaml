@@ -37,7 +37,7 @@ repos:
         files: src/backend/requirements-dev\.(in|txt)$
       - id: pip-compile
         name: pip-compile requirements-dev.in 3.14
-        args: [src/backend/requirements-dev.in, -o, src/backend/requirements-dev-3.14.txt]
+        args: [src/backend/requirements-dev.in, -o, src/backend/requirements-dev-3.14.txt, --python-version=3.14]
         files: src/backend/requirements-dev\.(in|txt)$
       - id: pip-compile
         name: pip-compile requirements.txt
