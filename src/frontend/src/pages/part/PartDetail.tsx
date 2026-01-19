@@ -502,13 +502,6 @@ export default function PartDetail() {
         hidden: part.default_location || !part.category_default_location
       },
       {
-        type: 'link',
-        name: 'default_supplier',
-        label: t`Default Supplier`,
-        model: ModelType.company,
-        hidden: !part.default_supplier
-      },
-      {
         type: 'string',
         name: 'units',
         label: t`Units`,
@@ -704,6 +697,9 @@ export default function PartDetail() {
         name: 'default_supplier',
         label: t`Default Supplier`,
         model: ModelType.supplierpart,
+        model_formatter: (model: any) => {
+          return model.SKU;
+        },
         hidden: !part.default_supplier
       },
       {
@@ -1066,7 +1062,10 @@ export default function PartDetail() {
     ];
   }, [partRequirements, partRequirementsQuery.isFetching, part]);
 
-  const partFields = usePartFields({ create: false });
+  const partFields = usePartFields({
+    create: false,
+    partId: part.pk
+  });
 
   const editPart = useEditApiFormModal({
     url: ApiEndpoints.part_list,

@@ -39,6 +39,7 @@ jobs:
       force: ${{ steps.force.outputs.force }}
       cicd: ${{ steps.filter.outputs.cicd }}
       requirements: ${{ steps.filter.outputs.requirements }}
+      runner-perf: ${{ steps.runner-perf.outputs.runner }}
 
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # pin@v6.0.1
@@ -74,6 +75,10 @@ jobs:
         if: |
           contains(github.event.pull_request.labels.*.name, 'dependency') ||
           contains(github.event.pull_request.labels.*.name, 'full-run')
+      - name: Which runner to use?
+        id: runner-perf
+        # decide if we are running in inventree/inventree -> use codspeed-macro runner else ubuntu-24.04
+        run: echo "runner=$([[ '${{ github.repository }}' == 'inventree/InvenTree' ]] && echo 'codspeed-macro' || echo 'ubuntu-24.04')" >> $GITHUB_OUTPUT
 
   pre-commit:
     name: Style [pre-commit]
@@ -116,7 +121,7 @@ jobs:
           update: true
       - name: Check types
         run: |
-          ty check --python ${Python_ROOT_DIR}/bin/python3
+          ty check --python ${Python_ROOT_DIR}/bin/python3 src/backend
 
   mkdocs:
     name: Style [Documentation]
@@ -176,7 +181,7 @@ jobs:
       - name: Export API Documentation
         run: invoke dev.schema --ignore-warnings --filename src/backend/InvenTree/schema.yml
       - name: Upload schema
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # pin@v5.0.0
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # pin@v6.0.0
         with:
           name: schema.yml
           path: src/backend/InvenTree/schema.yml
@@ -225,17 +230,17 @@ jobs:
       - name: Extract settings / tags
         run: invoke int.export-definitions --basedir docs
       - name: Upload settings
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # pin@v5.0.0
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # pin@v6.0.0
         with:
           name: inventree_settings.json
           path: docs/generated/inventree_settings.json
       - name: Upload tags
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # pin@v5.0.0
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # pin@v6.0.0
         with:
           name: inventree_tags.yml
           path: docs/generated/inventree_tags.yml
       - name: Upload filters
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # pin@v5.0.0
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # pin@v6.0.0
         with:
           name: inventree_filters.yml
           path: docs/generated/inventree_filters.yml
@@ -258,7 +263,7 @@ jobs:
       - name: Create artifact directory
         run: mkdir -p artifact
       - name: Download schema artifact
-        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # pin@v6.0.0
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # pin@v7.0.0
         with:
           path: artifact
           merge-multiple: true
@@ -275,17 +280,20 @@ jobs:
           echo "after move"
           ls -la artifact
           rm -rf artifact
-      - uses: stefanzweifel/git-auto-commit-action@28e16e81777b558cc906c8750092100bbb34c5e3 # pin@v7.0.0
+      - uses: stefanzweifel/git-auto-commit-action@04702edda442b2e678b25b537cec683a1493fcb9 # pin@v7.1.0
         name: Commit schema changes
         with:
           commit_message: "Update API schema for ${{ env.version }} / ${{ github.sha }}"
 
   python:
     name: Tests - inventree-python
-    runs-on: ubuntu-24.04
+    runs-on: ${{ needs.paths-filter.outputs.runner-perf }}
 
     needs: ["pre-commit", "paths-filter"]
     if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true'
+    permissions:
+      contents: read
+      id-token: write
 
     env:
       WRAPPER_NAME: inventree-python
@@ -300,6 +308,7 @@ jobs:
       INVENTREE_SITE_URL: http://127.0.0.1:12345
       INVENTREE_DEBUG: true
       INVENTREE_LOG_LEVEL: WARNING
+      node_version: '>=20.19.6'
 
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # pin@v6.0.1
@@ -311,6 +320,7 @@ jobs:
           apt-dependency: gettext poppler-utils
           dev-install: true
           update: true
+          npm: true
       - name: Download Python Code For `${WRAPPER_NAME}`
         run: git clone --depth 1 https://github.com/inventree/${WRAPPER_NAME} ./${WRAPPER_NAME}
       - name: Start InvenTree Server
@@ -324,6 +334,18 @@ jobs:
           cd ${WRAPPER_NAME}
           invoke check-server
           coverage run -m unittest discover -s test/
+      - name: Prepare environment for performance tests
+        run: |
+          pip uninstall pytest-django -y
+          cd ${WRAPPER_NAME}
+          pip install .
+      - name: Performance Reporting
+        uses: CodSpeedHQ/action@dbda7111f8ac363564b0c51b992d4ce76bb89f2f # pin@v4
+        # check if we are in inventree/inventree - reporting only works in that OIDC context
+        if: github.repository == 'inventree/InvenTree'
+        with:
+          mode: walltime
+          run: pytest ./src/performance --codspeed
 
   coverage:
     name: Tests - DB [SQLite] + Coverage ${{ matrix.python_version }}
@@ -363,13 +385,13 @@ jobs:
       - name: Coverage Tests
         run: invoke dev.test --check --coverage --translations
       - name: Upload raw coverage to artifacts
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # pin@v5.0.0
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # pin@v6.0.0
         with:
           name: coverage
           path: .coverage
           retention-days: 14
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@5a1091511ad55cbe89839c7260b706298ca349f7 # pin@v5.5.1
+        uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # pin@v5.5.2
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -378,10 +400,11 @@ jobs:
 
   performance:
     name: Tests - Performance
-    runs-on: ubuntu-24.04
+    runs-on: ${{ needs.paths-filter.outputs.runner-perf }}
 
     needs: ["pre-commit", "paths-filter"]
-    if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true'
+    # check if we are in inventree/inventree - reporting only works in that OIDC context
+    if: (needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true') && github.repository == 'inventree/InvenTree'
     permissions:
       contents: read
       id-token: write
@@ -403,10 +426,13 @@ jobs:
           apt-dependency: gettext poppler-utils
           dev-install: true
           update: true
+          npm: true
+        env:
+          node_version: '>=20.19.0'
       - name: Performance Reporting
-        uses: CodSpeedHQ/action@346a2d8a8d9d38909abd0bc3d23f773110f076ad # pin@v4
+        uses: CodSpeedHQ/action@dbda7111f8ac363564b0c51b992d4ce76bb89f2f # pin@v4
         with:
-          mode: simulation
+          mode: walltime
           run: inv dev.test --pytest
 
   postgres:
@@ -545,7 +571,7 @@ jobs:
       - name: Run Tests
         run: invoke dev.test --check --migrations --report --coverage --translations
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@5a1091511ad55cbe89839c7260b706298ca349f7 # pin@v5.5.1
+        uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # pin@v5.5.2
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -667,7 +693,7 @@ jobs:
       - name: Run Playwright tests
         id: tests
         run: cd src/frontend && npx nyc playwright test
-      - uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # pin@v5.0.0
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # pin@v6.0.0
         if: ${{ !cancelled() && steps.tests.outcome == 'failure' }}
         with:
           name: playwright-report
@@ -676,7 +702,7 @@ jobs:
       - name: Report coverage
         run: cd src/frontend && npx nyc report --report-dir ./coverage --temp-dir .nyc_output --reporter=lcov --exclude-after-remap false
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@5a1091511ad55cbe89839c7260b706298ca349f7 # pin@v5.5.1
+        uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # pin@v5.5.2
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: inventree/InvenTree
@@ -712,7 +738,7 @@ jobs:
         run: |
           cd src/backend/InvenTree/web/static
           zip -r frontend-build.zip web/ web/.vite
-      - uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # pin@v5.0.0
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # pin@v6.0.0
         with:
           name: frontend-build
           path: src/backend/InvenTree/web/static/web
@@ -737,7 +763,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@fdbfb4d2750291e159f0156def62b853c2798ca2 # pin@v3
+        uses: github/codeql-action/upload-sarif@5d4e8d1aca955e8d8589aabd499c5cae939e33c7 # pin@v3
         with:
           sarif_file: results.sarif
           category: zizmor

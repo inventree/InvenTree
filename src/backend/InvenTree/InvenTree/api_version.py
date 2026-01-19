@@ -1,10 +1,32 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 435
+INVENTREE_API_VERSION = 442
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v442 -> 2026-01-17 : https://github.com/inventree/InvenTree/pull/11157
+    - Typo fixes, no functional changes
+
+v441 -> 2026-01-17 : https://github.com/inventree/InvenTree/pull/11153
+    - Allow export of supplier part pricing data
+
+v440 -> 2026-01-15 : https://github.com/inventree/InvenTree/pull/10796
+    - Adds confirm and confirm_text to all settings
+
+v439 -> 2026-01-09 : https://github.com/inventree/InvenTree/pull/11092
+    - Add missing nullable annotations
+
+v438 -> 2026-01-09 : https://github.com/inventree/InvenTree/pull/11104
+    - Adds a simpler / faster health check endpoint at /api/system/health/
+
+v437 -> 2026-01-07 : https://github.com/inventree/InvenTree/pull/11084
+    - Adds generic parameter support for the StockLocation model
+
+v436 -> 2026-01-06 : https://github.com/inventree/InvenTree/pull/11035
+    - Removes model-specific metadata endpoints and replaces them with redirects
+    - Adds new generic /api/metadata/<model_name>/ endpoint to retrieve metadata for any model
 
 v435 -> 2025-12-16 : https://github.com/inventree/InvenTree/pull/11030
     - Adds token refresh endpoint to auth API

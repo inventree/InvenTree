@@ -337,6 +337,12 @@ class DataExportViewMixin:
         # Update the output instance with the total number of items to export
         output.total = queryset.count()
         output.save()
+        request = context.get('request', None)
+
+        if request:
+            query_params = getattr(request, 'query_params', {})
+            context.update(**query_params)
+            context['request'] = request
 
         data = None
         serializer = serializer_class(context=context, exporting=True)
@@ -363,7 +369,12 @@ class DataExportViewMixin:
         # The returned data *must* be a list of dict objects
         try:
             data = export_plugin.export_data(
-                queryset, serializer_class, headers, export_context, output
+                queryset,
+                serializer_class,
+                headers,
+                export_context,
+                output,
+                serializer_context=context,
             )
 
         except Exception as e:

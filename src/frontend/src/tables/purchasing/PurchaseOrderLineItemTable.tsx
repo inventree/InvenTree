@@ -301,6 +301,7 @@ export function PurchaseOrderLineItemTable({
     fields: addPurchaseOrderFields,
     initialData: {
       ...initialData,
+      purchase_price: null,
       purchase_price_currency: currency
     },
     onFormSuccess: orderDetailRefresh,

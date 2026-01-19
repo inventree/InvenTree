@@ -106,6 +106,20 @@ def reload_plugin_registry(setting):
     registry.reload_plugins(full_reload=True, force_reload=True, collect=True)
 
 
+def enforce_mfa(setting):
+    """Enforce multifactor authentication for all users."""
+    from allauth.usersessions.models import UserSession
+
+    from common.models import logger
+
+    logger.info(
+        'Enforcing multifactor authentication for all users by signing out all sessions.'
+    )
+    for session in UserSession.objects.all():
+        session.end()
+    logger.info('All user sessions have been ended.')
+
+
 def barcode_plugins() -> list:
     """Return a list of plugin choices which can be used for barcode generation."""
     try:
@@ -1007,6 +1021,11 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'description': _('Users must use multifactor security.'),
         'default': False,
         'validator': bool,
+        'confirm': True,
+        'confirm_text': _(
+            'Enabling this setting will require all users to set up multifactor authentication. All sessions will be disconnected immediately.'
+        ),
+        'after_save': enforce_mfa,
     },
     'PLUGIN_ON_STARTUP': {
         'name': _('Check plugins on startup'),

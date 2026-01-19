@@ -333,8 +333,8 @@ The following email settings are available:
 | INVENTREE_EMAIL_PORT | email.port | Email server port | 25 |
 | INVENTREE_EMAIL_USERNAME | email.username | Email account username | *Not specified* |
 | INVENTREE_EMAIL_PASSWORD | email.password | Email account password | *Not specified* |
-| INVENTREE_EMAIL_TLS | email.tls | Enable TLS support | False |
-| INVENTREE_EMAIL_SSL | email.ssl | Enable SSL support | False |
+| INVENTREE_EMAIL_TLS | email.tls | Enable STARTTLS support (commonly port 567) | False |
+| INVENTREE_EMAIL_SSL | email.ssl | Enable legacy SSL/TLS support (commonly port 465) | False |
 | INVENTREE_EMAIL_SENDER | email.sender | Sending email address | *Not specified* |
 | INVENTREE_EMAIL_PREFIX | email.prefix | Prefix for subject text | [InvenTree] |
 

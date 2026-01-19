@@ -9,7 +9,7 @@ from django_filters.rest_framework.filterset import FilterSet
 
 import part.models
 from data_exporter.mixins import DataExportViewMixin
-from InvenTree.api import ListCreateDestroyAPIView, MetadataView, ParameterListMixin
+from InvenTree.api import ListCreateDestroyAPIView, ParameterListMixin, meta_path
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import SEARCH_ORDER_FILTER, SEARCH_ORDER_FILTER_ALIAS
 from InvenTree.mixins import (
@@ -447,7 +447,11 @@ class SupplierPriceBreakOutputOptions(OutputConfiguration):
 
 
 class SupplierPriceBreakList(
-    SupplierPriceBreakMixin, SerializerContextMixin, OutputOptionsMixin, ListCreateAPI
+    DataExportViewMixin,
+    SupplierPriceBreakMixin,
+    SerializerContextMixin,
+    OutputOptionsMixin,
+    ListCreateAPI,
 ):
     """API endpoint for list view of SupplierPriceBreak object.
 
@@ -476,11 +480,7 @@ manufacturer_part_api_urls = [
     path(
         '<int:pk>/',
         include([
-            path(
-                'metadata/',
-                MetadataView.as_view(model=ManufacturerPart),
-                name='api-manufacturer-part-metadata',
-            ),
+            meta_path(ManufacturerPart),
             path(
                 '',
                 ManufacturerPartDetail.as_view(),
@@ -497,11 +497,7 @@ supplier_part_api_urls = [
     path(
         '<int:pk>/',
         include([
-            path(
-                'metadata/',
-                MetadataView.as_view(model=SupplierPart),
-                name='api-supplier-part-metadata',
-            ),
+            meta_path(SupplierPart),
             path('', SupplierPartDetail.as_view(), name='api-supplier-part-detail'),
         ]),
     ),
@@ -532,11 +528,7 @@ company_api_urls = [
     path(
         '<int:pk>/',
         include([
-            path(
-                'metadata/',
-                MetadataView.as_view(model=Company),
-                name='api-company-metadata',
-            ),
+            meta_path(Company),
             path('', CompanyDetail.as_view(), name='api-company-detail'),
         ]),
     ),
@@ -546,11 +538,7 @@ company_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(model=Contact),
-                        name='api-contact-metadata',
-                    ),
+                    meta_path(Contact),
                     path('', ContactDetail.as_view(), name='api-contact-detail'),
                 ]),
             ),
