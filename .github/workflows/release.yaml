@@ -55,7 +55,7 @@ jobs:
       - name: Build frontend
         run: cd src/frontend && npm run compile && npm run build
       - name: Create SBOM for frontend
-        uses: anchore/sbom-action@a930d0ac434e3182448fe678398ba5713717112a # pin@v0
+        uses: anchore/sbom-action@0b82b0b1a22399a1c542d4d656f70cd903571b5c # pin@v0
         with:
           artifact-name: frontend-build.spdx
           path: src/frontend
