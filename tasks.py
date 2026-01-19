@@ -454,7 +454,7 @@ def run_install(
                 'pip3 install --no-cache-dir --disable-pip-version-check -U uv setuptools',
             )
             info('Installed package manager')
-        run(c, f'uv pip install -U --require-hashes -r {install_file}')
+        run(c, f'uv pip install -U -r {install_file}')
 
 
 def yarn(c, cmd):
