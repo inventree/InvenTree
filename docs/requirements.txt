@@ -187,9 +187,7 @@ super-collections==0.6.2
 termcolor==3.3.0
     # via mkdocs-macros-plugin
 typing-extensions==4.15.0
-    # via
-    #   anyio
-    #   beautifulsoup4
+    # via beautifulsoup4
 urllib3==2.6.3
     # via requests
 watchdog==6.0.0

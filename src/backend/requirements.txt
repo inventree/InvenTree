@@ -6,8 +6,6 @@ asgiref==3.11.0
     #   django-allauth
     #   django-cors-headers
     #   django-structlog
-async-timeout==5.0.1
-    # via redis
 attrs==25.4.0
     # via
     #   jsonschema
@@ -430,7 +428,6 @@ tinyhtml5==2.0.0
     # via weasyprint
 typing-extensions==4.15.0
     # via
-    #   dulwich
     #   flexcache
     #   flexparser
     #   grpcio
@@ -442,7 +439,6 @@ typing-extensions==4.15.0
     #   opentelemetry-semantic-conventions
     #   pint
     #   py-moneyed
-    #   referencing
 tzdata==2025.3
     # via icalendar
 uritemplate==4.2.0
