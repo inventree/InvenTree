@@ -98,8 +98,8 @@ runs:
       - name: Run invoke install
         if: ${{ inputs.install == 'true' }}
         shell: bash
-        run: invoke install --uv
+        run: invoke install
       - name: Run invoke update
         if: ${{ inputs.update == 'true' }}
         shell: bash
-        run: invoke update --uv --skip-backup --skip-static
+        run: invoke update --skip-backup --skip-static
