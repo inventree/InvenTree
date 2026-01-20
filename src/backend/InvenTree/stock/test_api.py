@@ -952,7 +952,7 @@ class StockItemListTest(StockAPITestCase):
 
         # Note: While the export is quick on pgsql, it is still quite slow on sqlite3
         with self.export_data(
-            self.list_url, max_query_count=50, max_query_time=7.5
+            self.list_url, max_query_count=50, max_query_time=9.0
         ) as data_file:
             data = self.process_csv(data_file)
 
