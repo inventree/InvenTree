@@ -1,0 +1,12 @@
+- model: common.inventreecustomuserstatemodel
+  pk: 1
+  fields:
+    reference_status: StockStatus
+    logical_key: 50
+    key: 150
+    name: INSPECT
+    label: Incoming goods inspection
+    color: warning
+    model:
+    - stock
+    - stockitem
