@@ -795,6 +795,8 @@ class StockItem(
 
             try:
                 old = StockItem.objects.get(pk=self.pk)
+                old_custom_status = old.get_custom_status()
+                custom_status = self.get_custom_status()
 
                 deltas = {}
 
@@ -802,13 +804,13 @@ class StockItem(
                 if old.status != self.status:
                     # Custom status changed?
                     # Matches custom status tracking behavior of StockChangeStatusSerializer
-                    if old.get_custom_status() != self.get_custom_status():
-                        deltas['status'] = self.get_custom_status()
+                    if old_custom_status != custom_status:
+                        deltas['status'] = custom_status
                     else:
                         deltas['status'] = self.status
 
-                    if old.get_custom_status():
-                        deltas['old_status'] = old.get_custom_status()
+                    if old_custom_status:
+                        deltas['old_status'] = old_custom_status
                     else:
                         deltas['old_status'] = old.status
 
