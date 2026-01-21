@@ -1405,6 +1405,7 @@ class BomList(
         'attrition',
         'rounding_multiple',
         'sub_part',
+        'IPN',
         'available_stock',
         'allow_variants',
         'inherited',
@@ -1422,6 +1423,7 @@ class BomList(
     ordering_field_aliases = {
         'category': 'sub_part__category__name',
         'sub_part': 'sub_part__name',
+        'IPN': 'sub_part__IPN',
         'pricing_min': 'sub_part__pricing_data__overall_min',
         'pricing_max': 'sub_part__pricing_data__overall_max',
         'pricing_updated': 'sub_part__pricing_data__updated',
