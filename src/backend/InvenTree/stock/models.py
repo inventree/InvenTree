@@ -807,6 +807,11 @@ class StockItem(
                     else:
                         deltas['status'] = self.status
 
+                    if old.get_custom_status():
+                        deltas['old_status'] = old.get_custom_status()
+                    else:
+                        deltas['old_status'] = old.status
+
                 if add_note and len(deltas) > 0:
                     self.add_tracking_entry(
                         StockHistoryCode.EDITED, user, deltas=deltas, notes=notes
