@@ -1801,12 +1801,35 @@ class StockItemTest(StockAPITestCase):
             tracking = item.tracking_info.last()
             self.assertEqual(tracking.tracking_type, StockHistoryCode.EDITED.value)
 
+    def test_set_custom_status(self):
+        """Test API endpoint for setting StockItem custom status."""
+        url = reverse('api-stock-change-status')
+
+        prt = Part.objects.first()
+
+        # Number of items to create
+        N_ITEMS = 10
+
+        # Create a bunch of items
+        items = [
+            StockItem.objects.create(part=prt, quantity=10) for _ in range(N_ITEMS)
+        ]
+
+        for item in items:
+            item.refresh_from_db()
+            self.assertEqual(item.status, StockStatus.OK.value)
+            self.assertEqual(item.tracking_info.count(), 1)
+
         # Test tracking with custom status
         # *from* standard *to* custom
         INSPECT_CUSTOM_STATUS = common.models.InvenTreeCustomUserStateModel.objects.get(
             name='INSPECT'
         )
-        data['status'] = INSPECT_CUSTOM_STATUS.key
+
+        data = {
+            'items': [item.pk for item in items],
+            'status': INSPECT_CUSTOM_STATUS.key,
+        }
 
         self.post(url, data, expected_code=201)
 
@@ -1815,7 +1838,7 @@ class StockItemTest(StockAPITestCase):
             self.assertEqual(item.status, INSPECT_CUSTOM_STATUS.logical_key)
             self.assertEqual(item.get_custom_status(), INSPECT_CUSTOM_STATUS.key)
             tracking = item.tracking_info.last()
-            self.assertEqual(tracking.deltas['old_status'], StockStatus.ATTENTION.value)
+            self.assertEqual(tracking.deltas['old_status'], StockStatus.OK.value)
             self.assertEqual(tracking.deltas['status'], INSPECT_CUSTOM_STATUS.key)
 
         # reverse case
