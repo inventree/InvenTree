@@ -1625,8 +1625,8 @@ class Part(
         if not self.has_bom:
             return 0
 
-        # Prefetch related tables, to reduce query expense
-        queryset = self.get_bom_items()
+        # Ignore virtual parts when calculating the "can_build" quantity
+        queryset = self.get_bom_items(include_virtual=False)
 
         # Ignore 'consumable' BOM items for this calculation
         queryset = queryset.filter(consumable=False)
