@@ -86,7 +86,7 @@ class CustomSignupForm(SignupForm):
         return cleaned_data
 
 
-type RegistrationKeys = Literal['LOGIN_ENABLE_REG', 'LOGIN_ENABLE_SSO_REG']
+RegistrationKeys = Literal['LOGIN_ENABLE_REG', 'LOGIN_ENABLE_SSO_REG']
 
 
 def registration_enabled(setting_name: RegistrationKeys = 'LOGIN_ENABLE_REG'):
