@@ -15,6 +15,7 @@ from allauth.account.adapter import DefaultAccountAdapter
 from allauth.account.forms import LoginForm, SignupForm, set_form_field_order
 from allauth.headless.adapter import DefaultHeadlessAdapter
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
+from backend.InvenTree.InvenTree.helpers import str2bool
 
 from common.settings import get_global_setting
 from InvenTree.exceptions import log_error
@@ -91,7 +92,7 @@ RegistrationKeys = Literal['LOGIN_ENABLE_REG', 'LOGIN_ENABLE_SSO_REG']
 
 def registration_enabled(setting_name: RegistrationKeys = 'LOGIN_ENABLE_REG'):
     """Determine whether user registration is enabled."""
-    if get_global_setting(setting_name):
+    if str2bool(get_global_setting(setting_name)):
         if is_email_configured():
             return True
         else:
@@ -112,7 +113,10 @@ class RegistrationMixin:
         Configure the class variable `REGISTRATION_SETTING` to set which setting should be used, default: `LOGIN_ENABLE_REG`.
         """
         if registration_enabled(self.REGISTRATION_SETTING):
-            return super().is_open_for_signup(request, *args, **kwargs)
+            return True
+        logger.warning(
+            f'INVE-W12: Signup attempt blocked, because registration is disabled via setting {self.REGISTRATION_SETTING}.'
+        )
         return False
 
     def clean_email(self, email):
