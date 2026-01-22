@@ -1057,8 +1057,6 @@ class StockChangeStatusSerializer(serializers.Serializer):
 
         transaction_notes = []
 
-        deltas = {'status': status}
-
         now = InvenTree.helpers.current_time()
 
         # Instead of performing database updates for each item,
@@ -1075,6 +1073,8 @@ class StockChangeStatusSerializer(serializers.Serializer):
                 custom_status = item.get_custom_status()
                 if status == custom_status or custom_status is None:
                     continue
+
+            deltas = {'status': status}
 
             # before save, track old status logical
             deltas['old_status_logical'] = item.status
