@@ -69,6 +69,16 @@ export function StockTrackingTable({ itemId }: Readonly<{ itemId: number }>) {
             StatusRenderer({ status: deltas.status, type: ModelType.stockitem })
         },
         {
+          label: t`Old Status`,
+          key: 'old_status',
+          details:
+            deltas.old_status &&
+            StatusRenderer({
+              status: deltas.old_status,
+              type: ModelType.stockitem
+            })
+        },
+        {
           label: t`Quantity`,
           key: 'quantity',
           details: formatDecimal(deltas.quantity)
