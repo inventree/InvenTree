@@ -303,7 +303,20 @@ class StatusCodeMixin:
         return getattr(self, f'{self.STATUS_FIELD}_custom_key', None)
 
     def compare_status(self, status: int) -> bool:
-        """Determine if the current status matches the provided status code."""
+        """Determine if the current status matches the provided status code.
+
+        Arguments:
+            status: The status code to compare against
+
+        Returns:
+            True if the status matches, False otherwise.
+        """
+        try:
+            status = int(status)
+        except (ValueError, TypeError):
+            # Value cannot be converted to integer - so it cannot match
+            return False
+
         if status == self.get_status():
             return True
 
@@ -326,6 +339,13 @@ class StatusCodeMixin:
             if custom_values is None
             else custom_values
         )
+
+        # The status must be an integer
+        try:
+            status = int(status)
+        except (ValueError, TypeError):
+            logger.warning(f'Invalid status value {status} for class {self.__class__}')
+            return False
 
         custom_field = f'{self.STATUS_FIELD}_custom_key'
 
