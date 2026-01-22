@@ -1076,6 +1076,9 @@ class StockChangeStatusSerializer(serializers.Serializer):
                 if status == custom_status or custom_status is None:
                     continue
 
+            # before save, track old status logical
+            deltas['old_status_logical'] = item.status
+
             if item.get_custom_status():
                 deltas['old_status'] = item.get_custom_status()
             else:
@@ -1083,6 +1086,9 @@ class StockChangeStatusSerializer(serializers.Serializer):
 
             item.set_status(status, custom_values=custom_status_codes)
             item.save(add_note=False)
+
+            # after save, can track new status_logical
+            deltas['status_logical'] = item.status
 
             # Create a new transaction note for each item
             transaction_notes.append(

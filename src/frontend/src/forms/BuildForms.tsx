@@ -283,7 +283,8 @@ function BuildOutputFormRow({
         <Table.Td>{record.batch}</Table.Td>
         <Table.Td>
           <StatusRenderer
-            status={record.status}
+            status={record.custom_status_key || record.status}
+            fallbackStatus={record.status}
             type={ModelType.stockitem}
           />{' '}
         </Table.Td>

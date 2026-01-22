@@ -66,7 +66,11 @@ export function StockTrackingTable({ itemId }: Readonly<{ itemId: number }>) {
           key: 'status',
           details:
             deltas.status &&
-            StatusRenderer({ status: deltas.status, type: ModelType.stockitem })
+            StatusRenderer({
+              status: deltas.status,
+              type: ModelType.stockitem,
+              fallbackStatus: deltas.status_logical
+            })
         },
         {
           label: t`Old Status`,
@@ -75,7 +79,8 @@ export function StockTrackingTable({ itemId }: Readonly<{ itemId: number }>) {
             deltas.old_status &&
             StatusRenderer({
               status: deltas.old_status,
-              type: ModelType.stockitem
+              type: ModelType.stockitem,
+              fallbackStatus: deltas.old_status_logical
             })
         },
         {

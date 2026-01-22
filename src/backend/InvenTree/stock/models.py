@@ -806,13 +806,17 @@ class StockItem(
                     # Matches custom status tracking behavior of StockChangeStatusSerializer
                     if old_custom_status != custom_status:
                         deltas['status'] = custom_status
+                        deltas['status_logical'] = self.status
                     else:
                         deltas['status'] = self.status
+                        deltas['status_logical'] = self.status
 
                     if old_custom_status:
                         deltas['old_status'] = old_custom_status
+                        deltas['old_status_logical'] = old.status
                     else:
                         deltas['old_status'] = old.status
+                        deltas['old_status_logical'] = old.status
 
                 if add_note and len(deltas) > 0:
                     self.add_tracking_entry(

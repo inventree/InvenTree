@@ -1792,7 +1792,13 @@ class StockItemTest(StockAPITestCase):
             self.assertEqual(item.tracking_info.count(), 2)
             tracking = item.tracking_info.last()
             self.assertEqual(tracking.deltas['old_status'], StockStatus.OK.value)
+            self.assertEqual(
+                tracking.deltas['old_status_logical'], StockStatus.OK.value
+            )
             self.assertEqual(tracking.deltas['status'], StockStatus.DAMAGED.value)
+            self.assertEqual(
+                tracking.deltas['status_logical'], StockStatus.DAMAGED.value
+            )
 
         # Same test, but with one item unchanged
         items[0].set_status(StockStatus.ATTENTION.value)
@@ -1844,7 +1850,14 @@ class StockItemTest(StockAPITestCase):
             self.assertEqual(item.get_custom_status(), self.inspect_custom_status.key)
             tracking = item.tracking_info.last()
             self.assertEqual(tracking.deltas['old_status'], StockStatus.OK.value)
+            self.assertEqual(
+                tracking.deltas['old_status_logical'], StockStatus.OK.value
+            )
             self.assertEqual(tracking.deltas['status'], self.inspect_custom_status.key)
+            self.assertEqual(
+                tracking.deltas['status_logical'],
+                self.inspect_custom_status.logical_key,
+            )
 
         # reverse case
         # *from* custom *to* standard
@@ -1858,7 +1871,12 @@ class StockItemTest(StockAPITestCase):
             self.assertEqual(
                 tracking.deltas['old_status'], self.inspect_custom_status.key
             )
+            self.assertEqual(
+                tracking.deltas['old_status_logical'],
+                self.inspect_custom_status.logical_key,
+            )
             self.assertEqual(tracking.deltas['status'], StockStatus.OK.value)
+            self.assertEqual(tracking.deltas['status_logical'], StockStatus.OK.value)
 
 
 class StocktakeTest(StockAPITestCase):
