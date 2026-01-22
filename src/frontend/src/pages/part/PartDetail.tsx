@@ -971,7 +971,8 @@ export default function PartDetail() {
       }),
       NotesPanel({
         model_type: ModelType.part,
-        model_id: part?.pk
+        model_id: part?.pk,
+        has_note: !!part?.notes
       })
     ];
   }, [id, part, user, globalSettings, userSettings, detailsPanel]);
