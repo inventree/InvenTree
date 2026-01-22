@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-15 22:34+0000\n"
-"PO-Revision-Date: 2026-01-15 22:38\n"
+"POT-Creation-Date: 2026-01-21 06:02+0000\n"
+"PO-Revision-Date: 2026-01-21 06:06\n"
 "Last-Translator: \n"
 "Language-Team: Serbian (Latin)\n"
 "Language: sr_CS\n"
@@ -562,12 +562,12 @@ msgstr "Status naloga"
 msgid "Parent Build"
 msgstr "Roditeljski proizvod"
 
-#: build/api.py:84 build/api.py:822 order/api.py:551 order/api.py:774
+#: build/api.py:84 build/api.py:824 order/api.py:551 order/api.py:774
 #: order/api.py:1171 order/api.py:1446 stock/api.py:573
 msgid "Include Variants"
 msgstr "Uključi varijante"
 
-#: build/api.py:100 build/api.py:456 build/api.py:836 build/models.py:271
+#: build/api.py:100 build/api.py:456 build/api.py:838 build/models.py:271
 #: build/serializers.py:1215 build/serializers.py:1371
 #: build/serializers.py:1457 company/models.py:1008 company/serializers.py:434
 #: order/api.py:303 order/api.py:307 order/api.py:930 order/api.py:1184
@@ -717,14 +717,14 @@ msgstr "Dostupno"
 msgid "On Order"
 msgstr "Po narudžbini"
 
-#: build/api.py:859 build/models.py:118 order/models.py:1976
+#: build/api.py:861 build/models.py:118 order/models.py:1976
 #: report/templates/report/inventree_build_order_report.html:105
 #: stock/serializers.py:93 templates/email/build_order_completed.html:16
 #: templates/email/overdue_build_order.html:15
 msgid "Build Order"
 msgstr "Nalog za izradu"
 
-#: build/api.py:873 build/api.py:877 build/serializers.py:362
+#: build/api.py:875 build/api.py:879 build/serializers.py:362
 #: build/serializers.py:487 build/serializers.py:557 build/serializers.py:1248
 #: build/serializers.py:1253 order/api.py:1231 order/api.py:1236
 #: order/serializers.py:791 order/serializers.py:931 order/serializers.py:2020
@@ -735,11 +735,11 @@ msgstr "Nalog za izradu"
 msgid "Location"
 msgstr "Lokacija"
 
-#: build/api.py:885
+#: build/api.py:887
 msgid "Output"
 msgstr ""
 
-#: build/api.py:887
+#: build/api.py:889
 msgid "Filter by output stock item ID. Use 'null' to find uninstalled build items."
 msgstr ""
 
@@ -794,8 +794,8 @@ msgid "Brief description of the build (optional)"
 msgstr "Kratak opis izrade (nije obavezno)"
 
 #: build/models.py:266
-msgid "BuildOrder to which this build is allocated"
-msgstr "Nalog za izradu za koju je ova izrada alocirana"
+msgid "Build Order to which this build is allocated"
+msgstr ""
 
 #: build/models.py:275
 msgid "Select part to build"
@@ -806,8 +806,8 @@ msgid "Sales Order Reference"
 msgstr "Referenca naloga za prodaju"
 
 #: build/models.py:285
-msgid "SalesOrder to which this build is allocated"
-msgstr "Nalog za prodaju za koju je ova izrada alocirana"
+msgid "Sales Order to which this build is allocated"
+msgstr ""
 
 #: build/models.py:290 build/serializers.py:1087
 msgid "Source Location"
@@ -5241,8 +5241,8 @@ msgid "Received Date"
 msgstr "Primljeno datuma"
 
 #: order/models.py:3025
-msgid "The date this this return item was received"
-msgstr "Datum kada je ova vraćena stavka primljena"
+msgid "The date this return item was received"
+msgstr ""
 
 #: order/models.py:3037
 msgid "Outcome"
@@ -7276,8 +7276,8 @@ msgid "Integrated Slack notification methods"
 msgstr ""
 
 #: plugin/builtin/integration/core_notifications.py:131
-msgid "Slack incoming webhook url"
-msgstr "Slack dolazeći webhook url"
+msgid "Slack incoming webhook URL"
+msgstr ""
 
 #: plugin/builtin/integration/core_notifications.py:132
 msgid "URL that is used to send messages to a slack channel"
@@ -7536,8 +7536,8 @@ msgid "Key of plugin"
 msgstr "Ključ plugina"
 
 #: plugin/models.py:55
-msgid "PluginName of the plugin"
-msgstr "Ime plugina"
+msgid "Name of the plugin"
+msgstr ""
 
 #: plugin/models.py:62 plugin/serializers.py:119
 msgid "Package Name"
@@ -7763,8 +7763,8 @@ msgid "Installation not confirmed"
 msgstr "Instalacija nije potvrđena"
 
 #: plugin/serializers.py:152
-msgid "Either packagename of URL must be provided"
-msgstr "Ili ime paketa ili URL moraju biti dostavljeni"
+msgid "Either packagename or URL must be provided"
+msgstr ""
 
 #: plugin/serializers.py:188
 msgid "Full reload"
