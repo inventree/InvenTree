@@ -29,7 +29,6 @@ from common.settings import get_global_setting
 from InvenTree import helpers, ready
 from InvenTree.auth_overrides import registration_enabled
 from InvenTree.mixins import ListCreateAPI
-from InvenTree.sso import sso_registration_enabled
 from plugin.serializers import MetadataSerializer
 from users.models import ApiToken
 from users.permissions import check_user_permission, prefetch_rule_sets
@@ -322,8 +321,8 @@ class InfoView(APIView):
             if (is_staff and settings.INVENTREE_ADMIN_ENABLED)
             else None,
             'settings': {
-                'sso_registration': sso_registration_enabled(),
-                'registration_enabled': registration_enabled(),
+                'sso_registration': registration_enabled('LOGIN_ENABLE_SSO_REG'),
+                'registration_enabled': registration_enabled('LOGIN_ENABLE_REG'),
                 'password_forgotten_enabled': get_global_setting(
                     'LOGIN_ENABLE_PWD_FORGOT'
                 ),
