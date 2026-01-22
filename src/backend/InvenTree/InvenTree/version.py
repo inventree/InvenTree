@@ -36,11 +36,17 @@ try:
         main_repo = Repo(pathlib.Path(__file__).parent.parent.parent.parent.parent)
         main_commit = main_repo[main_repo.head()]
     except NotGitRepository:
-        # If we are running in a docker container, the repo may not be available, only logging as warning if not in docker
-        if settings.DOCKER:
-            logger.info(git_warning_txt)
-        else:
-            logger.warning(git_warning_txt)
+        output = logger.warning
+
+        try:
+            if settings.DOCKER:
+                output = logger.info
+        except Exception:
+            # We may not have access to settings at this point
+            pass
+
+        output(git_warning_txt)
+
         main_repo = None
         main_commit = None
 
