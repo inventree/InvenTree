@@ -23,6 +23,7 @@ import {
   IconSquareArrowRight,
   IconTools
 } from '@tabler/icons-react';
+import type { DataTableRowExpansionProps } from 'mantine-datatable';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { RenderPart } from '../../components/render/Part';
@@ -51,6 +52,7 @@ import {
 import { InvenTreeTable } from '../InvenTreeTable';
 import RowExpansionIcon from '../RowExpansionIcon';
 import { TableHoverCard } from '../TableHoverCard';
+import TransferOrderAllocationTable from './TransferOrderAllocationTable';
 
 export default function TransferOrderLineItemTable({
   orderId,
@@ -453,6 +455,34 @@ export default function TransferOrderLineItemTable({
     [navigate, user, editable]
   );
 
+  // Control row expansion
+  const rowExpansion: DataTableRowExpansionProps<any> = useMemo(() => {
+    return {
+      allowMultiple: true,
+      expandable: ({ record }: { record: any }) => {
+        if (record?.part_detail?.virtual) {
+          return false;
+        }
+        return table.isRowExpanded(record.pk) || record.allocated > 0;
+      },
+      content: ({ record }: { record: any }) => {
+        return (
+          <TransferOrderAllocationTable
+            showOrderInfo={false}
+            showPartInfo={false}
+            orderId={orderId}
+            lineItemId={record.pk}
+            partId={record.part}
+            allowEdit={true}
+            modelTarget={ModelType.stockitem}
+            modelField={'item'}
+            isSubTable
+          />
+        );
+      }
+    };
+  }, [orderId, table.isRowExpanded]);
+
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
       {
@@ -490,8 +520,8 @@ export default function TransferOrderLineItemTable({
           },
           rowActions: rowActions,
           tableActions: tableActions,
-          tableFilters: tableFilters
-          //   rowExpansion: rowExpansion
+          tableFilters: tableFilters,
+          rowExpansion: rowExpansion
         }}
       />
     </>
