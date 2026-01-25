@@ -3094,9 +3094,9 @@ class TransferOrder(Order):
 
     # Global setting for specifying reference pattern
     REFERENCE_PATTERN_SETTING = 'TRANSFERORDER_REFERENCE_PATTERN'
-    # REQUIRE_RESPONSIBLE_SETTING = 'PURCHASEORDER_REQUIRE_RESPONSIBLE'
+    # REQUIRE_RESPONSIBLE_SETTING = 'TRANSFERORDER_REQUIRE_RESPONSIBLE'
     STATUS_CLASS = TransferOrderStatus
-    # UNLOCK_SETTING = 'PURCHASEORDER_EDIT_COMPLETED_ORDERS'
+    # UNLOCK_SETTING = 'TRANSFERORDER_EDIT_COMPLETED_ORDERS'
 
     class Meta:
         """Model meta options."""
@@ -3146,6 +3146,11 @@ class TransferOrder(Order):
         #             subscribed_users.add(user)
 
         return list(subscribed_users)
+
+    def clean_line_item(self, line):
+        """Clean a line item for this PurchaseOrder."""
+        super().clean_line_item(line)
+        line.transferred = 0
 
     def __str__(self):
         """Render a string representation of this TransferOrder."""
@@ -3207,6 +3212,76 @@ class TransferOrder(Order):
         help_text=_('Date order was completed'),
     )
 
+    @property
+    def is_pending(self) -> bool:
+        """Return True if the TransferOrder is 'pending'."""
+        return self.status == TransferOrderStatus.PENDING.value
+
+    @property
+    def is_open(self) -> bool:
+        """Return True if the TransferOrder is 'open'."""
+        return self.status in TransferOrderStatusGroups.OPEN
+
+    @property
+    def stock_allocations(self) -> QuerySet:
+        """Return a queryset containing all allocations for this order."""
+        return TransferOrderAllocation.objects.filter(
+            line__in=[line.pk for line in self.lines.all()]
+        )
+
+    def is_fully_allocated(self) -> bool:
+        """Return True if all line items are fully allocated."""
+        return all(line.is_fully_allocated() for line in self.lines.all())
+
+    def is_overallocated(self) -> bool:
+        """Return true if any lines in the order are over-allocated."""
+        return any(line.is_overallocated() for line in self.lines.all())
+
+    def is_completed(self) -> bool:
+        """Check if this order is "transferred" (all line items transferred)."""
+        return all(line.is_completed() for line in self.lines.all())
+
+    def can_complete(self, raise_error: bool = False) -> bool:
+        """Test if this TransferOrder can be completed."""
+        try:
+            if self.status == TransferOrderStatus.COMPLETE.value:
+                raise ValidationError(_('Order is already complete'))
+
+            if self.status == TransferOrderStatus.CANCELLED.value:
+                raise ValidationError(_('Order is already cancelled'))
+
+            if not self.destination:
+                raise ValidationError(
+                    _('Order cannot be completed until a destination location is set')
+                )
+
+            if not self.is_fully_allocated():
+                raise ValidationError(
+                    _('Order cannot be completed until it is fully allocated')
+                )
+        except ValidationError as e:
+            if raise_error:
+                raise e
+            else:
+                return False
+
+        return True
+
+    @property
+    def can_issue(self) -> bool:
+        """Return True if this order can be issued."""
+        return self.status in [
+            TransferOrderStatus.PENDING.value,
+            TransferOrderStatus.ON_HOLD.value,
+        ]
+
+    @transaction.atomic
+    def issue_order(self):
+        """Attempt to transition to PLACED status."""
+        return self.handle_transition(
+            self.status, TransferOrderStatus.ISSUED.value, self, self._action_issue
+        )
+
     # region state changes
     def _action_issue(self, *args, **kwargs):
         """Marks the TransferOrder as ISSUED.
@@ -3229,12 +3304,38 @@ class TransferOrder(Order):
                 extra_users=self.subscribed_users(),
             )
 
+    @property
+    def can_hold(self) -> bool:
+        """Return True if this order can be placed on hold."""
+        return self.status in [
+            TransferOrderStatus.PENDING.value,
+            TransferOrderStatus.ISSUED.value,
+        ]
+
+    def _action_hold(self, *args, **kwargs):
+        """Mark this transfer order as 'on hold'."""
+        if self.can_hold:
+            self.status = TransferOrderStatus.ON_HOLD.value
+            self.save()
+
+            trigger_event(TransferOrderEvents.HOLD, id=self.pk)
+
+    @transaction.atomic
     def _action_complete(self, *args, **kwargs):
         """Marks the TransferOrder as COMPLETE.
 
         Order must be currently ISSUED.
         """
+        user = kwargs.pop('user', None)
+
+        if not self.can_complete(raise_error=True, **kwargs):
+            return False
+
         if self.status == TransferOrderStatus.ISSUED:
+            for allocation in self.allocations():
+                # execute each transfer
+                allocation.complete_allocation(user)
+
             self.status = TransferOrderStatus.COMPLETE.value
             self.complete_date = InvenTree.helpers.current_date()
 
@@ -3242,26 +3343,18 @@ class TransferOrder(Order):
 
             trigger_event(TransferOrderEvents.COMPLETED, id=self.pk)
 
-    @property
-    def can_issue(self) -> bool:
-        """Return True if this order can be issued."""
-        return self.status in [
-            TransferOrderStatus.PENDING.value,
-            TransferOrderStatus.ON_HOLD.value,
-        ]
+            return True
 
     @transaction.atomic
-    def issue_order(self):
-        """Attempt to transition to PLACED status."""
-        return self.handle_transition(
-            self.status, TransferOrderStatus.ISSUED.value, self, self._action_issue
-        )
-
-    @transaction.atomic
-    def complete_order(self):
+    def complete_order(self, user, **kwargs):
         """Attempt to transition to COMPLETE status."""
         return self.handle_transition(
-            self.status, TransferOrderStatus.COMPLETE.value, self, self._action_complete
+            self.status,
+            TransferOrderStatus.COMPLETE.value,
+            self,
+            self._action_complete,
+            user=user,
+            **kwargs,
         )
 
     @transaction.atomic
@@ -3277,16 +3370,6 @@ class TransferOrder(Order):
         return self.handle_transition(
             self.status, TransferOrderStatus.CANCELLED.value, self, self._action_cancel
         )
-
-    @property
-    def is_pending(self) -> bool:
-        """Return True if the TransferOrder is 'pending'."""
-        return self.status == TransferOrderStatus.PENDING.value
-
-    @property
-    def is_open(self) -> bool:
-        """Return True if the TransferOrder is 'open'."""
-        return self.status in TransferOrderStatusGroups.OPEN
 
     @property
     def can_cancel(self) -> bool:
@@ -3314,23 +3397,34 @@ class TransferOrder(Order):
                 extra_users=self.subscribed_users(),
             )
 
-    @property
-    def can_hold(self) -> bool:
-        """Return True if this order can be placed on hold."""
-        return self.status in [
-            TransferOrderStatus.PENDING.value,
-            TransferOrderStatus.ISSUED.value,
-        ]
-
-    def _action_hold(self, *args, **kwargs):
-        """Mark this transfer order as 'on hold'."""
-        if self.can_hold:
-            self.status = TransferOrderStatus.ON_HOLD.value
-            self.save()
-
-            trigger_event(TransferOrderEvents.HOLD, id=self.pk)
-
     # endregion
+
+    @property
+    def line_count(self) -> int:
+        """Return the total number of lines associated with this order."""
+        return self.lines.count()
+
+    def completed_line_items(self) -> QuerySet:
+        """Return a queryset of the completed line items for this order."""
+        return self.lines.filter(transferred__gte=F('quantity'))
+
+    def pending_line_items(self) -> QuerySet:
+        """Return a queryset of the pending line items for this order."""
+        return self.lines.filter(transferred__lt=F('quantity'))
+
+    @property
+    def completed_line_count(self) -> int:
+        """Return the number of completed lines for this order."""
+        return self.completed_line_items().count()
+
+    @property
+    def pending_line_count(self) -> int:
+        """Return the number of pending (incomplete) lines associated with this order."""
+        return self.pending_line_items().count()
+
+    def allocations(self) -> QuerySet:
+        """Return a queryset of all allocations for this order."""
+        return TransferOrderAllocation.objects.filter(line__order=self)
 
 
 class TransferOrderLineItem(OrderLineItem):
@@ -3552,12 +3646,25 @@ class TransferOrderAllocation(models.Model):
         Executes:
         - Determine if the referenced StockItem needs to be "split" (if allocated quantity != stock quantity)
         - Move the StockItem to the new location
+        - Updates the transferred qty
         """
-        # order = self.line.order
-        # # item = self.item.move(location=TARGET_LOCATION, notes="", user=USER, quantity=self.quantity, status=STATUS)
+        order = self.line.order
 
-        # # Update our own reference to the StockItem
-        # # (It may have changed if the stock was split)
-        # self.item = item
-        # self.save()
-        raise NotImplementedError
+        if self.quantity < self.item.quantity:
+            # update our own reference to the StockItem which was split
+            self.item = self.item.splitStock(
+                quantity=self.quantity,
+                location=order.destination,
+                user=user,
+                transferorder=order,
+            )
+            self.save()
+        else:
+            # move item directly, we don't have to split
+            self.item.move(
+                location=order.destination, user=user, transferorder=order, notes=''
+            )
+
+        # Update the transferred qty
+        self.line.transferred += self.quantity
+        self.line.save()

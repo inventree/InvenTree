@@ -54,11 +54,12 @@ from InvenTree.mixins import (
     RetrieveUpdateDestroyAPI,
     SerializerContextMixin,
 )
-from order.models import PurchaseOrder, ReturnOrder, SalesOrder
+from order.models import PurchaseOrder, ReturnOrder, SalesOrder, TransferOrder
 from order.serializers import (
     PurchaseOrderSerializer,
     ReturnOrderSerializer,
     SalesOrderSerializer,
+    TransferOrderSerializer,
 )
 from part.models import BomItem, Part, PartCategory
 from part.serializers import PartBriefSerializer
@@ -1572,6 +1573,7 @@ class StockTrackingList(
             'purchaseorder': (PurchaseOrder, PurchaseOrderSerializer),
             'salesorder': (SalesOrder, SalesOrderSerializer),
             'returnorder': (ReturnOrder, ReturnOrderSerializer),
+            'transferorder': (TransferOrder, TransferOrderSerializer),
             'buildorder': (Build, BuildSerializer),
             'item': (StockItem, StockSerializers.StockItemSerializer),
             'stockitem': (StockItem, StockSerializers.StockItemSerializer),

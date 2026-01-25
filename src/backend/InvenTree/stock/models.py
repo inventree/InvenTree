@@ -2304,6 +2304,10 @@ class StockItem(
 
         deltas = {'stockitem': self.pk}
 
+        transferorder = kwargs.pop('transferorder', None)
+        if transferorder:
+            deltas['transferorder'] = transferorder.pk
+
         # Optional fields which can be supplied in a 'move' call
         for field in StockItem.optional_transfer_fields():
             if field in kwargs:
@@ -2451,6 +2455,10 @@ class StockItem(
                 old_custom_status if old_custom_status else old_status_logical
             )
             tracking_info['old_status_logical'] = old_status_logical
+
+        transferorder = kwargs.pop('transferorder', None)
+        if transferorder:
+            tracking_info['transferorder'] = transferorder.pk
 
         # Optional fields which can be supplied in a 'move' call
         for field in StockItem.optional_transfer_fields():
