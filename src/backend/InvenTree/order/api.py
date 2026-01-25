@@ -1823,7 +1823,7 @@ class TransferOrderList(
         'creation_date',
         'created_by',
         'reference',
-        # 'line_items',
+        'line_items',
         'status',
         'start_date',
         'target_date',
@@ -2221,7 +2221,7 @@ class TransferOrderLineItemList(
         'part__name',
         'quantity',
         'allocated',
-        # 'transferred',
+        'transferred',
         'reference',
         'target_date',
     ]
