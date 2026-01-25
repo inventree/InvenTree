@@ -2270,7 +2270,10 @@ class TransferOrderCompleteSerializer(OrderAdjustSerializer):
 
     def save(self):
         """Save the serializer to 'complete' the order."""
-        self.order.complete_order()
+        request = self.context.get('request')
+        user = request.user if request else None
+
+        self.order.complete_order(user=user)
 
 
 @register_importer()
