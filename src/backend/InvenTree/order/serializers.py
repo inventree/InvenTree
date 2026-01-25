@@ -2609,3 +2609,129 @@ class TransferOrderAllocationSerializer(
             source='item.location', many=False, read_only=True, allow_null=True
         )
     )
+
+
+class TransferOrderSerialAllocationSerializer(serializers.Serializer):
+    """DRF serializer for allocation of serial numbers against a transfer order."""
+
+    class Meta:
+        """Metaclass options."""
+
+        fields = ['line_item', 'quantity', 'serial_numbers']
+
+    line_item = serializers.PrimaryKeyRelatedField(
+        queryset=order.models.TransferOrderLineItem.objects.all(),
+        many=False,
+        required=True,
+        allow_null=False,
+        label=_('Line Item'),
+    )
+
+    def validate_line_item(self, line_item):
+        """Ensure that the line_item is valid."""
+        order = self.context['order']
+
+        # Ensure that the line item points to the correct order
+        if line_item.order != order:
+            raise ValidationError(_('Line item is not associated with this order'))
+
+        return line_item
+
+    quantity = serializers.IntegerField(
+        min_value=1, required=True, allow_null=False, label=_('Quantity')
+    )
+
+    serial_numbers = serializers.CharField(
+        label=_('Serial Numbers'),
+        help_text=_('Enter serial numbers to allocate'),
+        required=True,
+        allow_blank=False,
+    )
+
+    def validate(self, data):
+        """Validation for the serializer.
+
+        - Ensure the serial_numbers and quantity fields match
+        - Check that all serial numbers exist
+        - Check that the serial numbers are not yet allocated
+        """
+        data = super().validate(data)
+
+        line_item = data['line_item']
+        quantity = data['quantity']
+        serial_numbers = data['serial_numbers']
+
+        part = line_item.part
+
+        try:
+            data['serials'] = extract_serial_numbers(
+                serial_numbers, quantity, part.get_latest_serial_number(), part=part
+            )
+        except DjangoValidationError as e:
+            raise ValidationError({'serial_numbers': e.messages})
+
+        serials_not_exist = set()
+        serials_unavailable = set()
+        stock_items_to_allocate = []
+
+        for serial in data['serials']:
+            serial = str(serial).strip()
+
+            items = stock.models.StockItem.objects.filter(
+                part=part, serial=serial, quantity=1
+            )
+
+            if not items.exists():
+                serials_not_exist.add(str(serial))
+                continue
+
+            stock_item = items[0]
+
+            if not stock_item.in_stock:
+                serials_unavailable.add(str(serial))
+                continue
+
+            if stock_item.unallocated_quantity() < 1:
+                serials_unavailable.add(str(serial))
+                continue
+
+            # At this point, the serial number is valid, and can be added to the list
+            stock_items_to_allocate.append(stock_item)
+
+        if len(serials_not_exist) > 0:
+            error_msg = _('No match found for the following serial numbers')
+            error_msg += ': '
+            error_msg += ','.join(sorted(serials_not_exist))
+
+            raise ValidationError({'serial_numbers': error_msg})
+
+        if len(serials_unavailable) > 0:
+            error_msg = _('The following serial numbers are unavailable')
+            error_msg += ': '
+            error_msg += ','.join(sorted(serials_unavailable))
+
+            raise ValidationError({'serial_numbers': error_msg})
+
+        data['stock_items'] = stock_items_to_allocate
+
+        return data
+
+    def save(self):
+        """Allocate stock items against the transfer order."""
+        data = self.validated_data
+
+        line_item = data['line_item']
+        stock_items = data['stock_items']
+
+        allocations = []
+
+        for stock_item in stock_items:
+            # Create a new TransferOrderAllocation
+            allocations.append(
+                order.models.TransferOrderAllocation(
+                    line=line_item, item=stock_item, quantity=1
+                )
+            )
+
+        with transaction.atomic():
+            order.models.TransferOrderAllocation.objects.bulk_create(allocations)

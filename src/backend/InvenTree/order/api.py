@@ -1890,11 +1890,11 @@ class TransferOrderIssue(TransferOrderContextMixin, CreateAPI):
     serializer_class = serializers.TransferOrderIssueSerializer
 
 
-# class TransferOrderAllocateSerials(TransferOrderContextMixin, CreateAPI):
-#     """API endpoint to allocation stock items against a TransferOrder, by specifying serial numbers."""
+class TransferOrderAllocateSerials(TransferOrderContextMixin, CreateAPI):
+    """API endpoint to allocation stock items against a TransferOrder, by specifying serial numbers."""
 
-#     queryset = models.TransferOrder.objects.none()
-#     serializer_class = serializers.TransferOrderSerialAllocationSerializer
+    queryset = models.TransferOrder.objects.none()
+    serializer_class = serializers.TransferOrderSerialAllocationSerializer
 
 
 class TransferOrderAllocate(TransferOrderContextMixin, CreateAPI):
@@ -2702,11 +2702,11 @@ order_api_urls = [
                         TransferOrderAllocate.as_view(),
                         name='api-to-allocate',
                     ),
-                    # path(
-                    #     'allocate-serials/',
-                    #     SalesOrderAllocateSerials.as_view(),
-                    #     name='api-so-allocate-serials',
-                    # ),
+                    path(
+                        'allocate-serials/',
+                        TransferOrderAllocateSerials.as_view(),
+                        name='api-to-allocate-serials',
+                    ),
                     path(
                         'cancel/',
                         TransferOrderCancel.as_view(),
@@ -2723,12 +2723,7 @@ order_api_urls = [
                         TransferOrderIssue.as_view(),
                         name='api-transfer-order-issue',
                     ),
-                    # path(
-                    #     'receive/',
-                    #     TransferOrderReceive.as_view(),
-                    #     name='api-transfer-order-receive',
-                    # ),
-                    # meta_path(models.TransferOrder),
+                    meta_path(models.TransferOrder),
                     path(
                         '',
                         TransferOrderDetail.as_view(),
