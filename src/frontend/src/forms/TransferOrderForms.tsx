@@ -308,3 +308,22 @@ export function useTransferOrderAllocationFields({
     };
   }, [orderId]);
 }
+
+export function useTransferOrderAllocateSerialsFields({
+  itemId,
+  orderId
+}: {
+  itemId: number;
+  orderId: number;
+}): ApiFormFieldSet {
+  return useMemo(() => {
+    return {
+      line_item: {
+        value: itemId,
+        hidden: true
+      },
+      quantity: {},
+      serial_numbers: {}
+    };
+  }, [itemId, orderId]);
+}

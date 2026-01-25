@@ -15,7 +15,7 @@ import {
 import type { TableFilter } from '@lib/types/Filters';
 import type { RowAction, TableColumn } from '@lib/types/Tables';
 import { t } from '@lingui/core/macro';
-import { Group, Text } from '@mantine/core';
+import { Group, Paper, Text } from '@mantine/core';
 import {
   IconArrowRight,
   IconHash,
@@ -25,10 +25,12 @@ import {
 } from '@tabler/icons-react';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { RenderPart } from '../../components/render/Part';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { useBuildOrderFields } from '../../forms/BuildForms';
 import {
   useAllocateToTransferOrderForm,
+  useTransferOrderAllocateSerialsFields,
   useTransferOrderLineItemFields
 } from '../../forms/TransferOrderForms';
 import {
@@ -215,6 +217,7 @@ export default function TransferOrderLineItemTable({
   const [initialData, setInitialData] = useState({});
   const [selectedItems, setSelectedItems] = useState<any[]>([]);
   const [selectedLineId, setSelectedLineId] = useState<number>(0);
+  const [selectedPart, setSelectedPart] = useState<any>(null);
   const [partsToOrder, setPartsToOrder] = useState<any[]>([]);
 
   const allocateStock = useAllocateToTransferOrderForm({
@@ -283,6 +286,25 @@ export default function TransferOrderLineItemTable({
     pk: selectedLineId,
     title: t`Delete Line Item`,
     onFormSuccess: orderDetailRefresh,
+    table: table
+  });
+
+  const allocateSerialFields = useTransferOrderAllocateSerialsFields({
+    itemId: selectedLineId,
+    orderId: orderId
+  });
+
+  const allocateBySerials = useCreateApiFormModal({
+    url: ApiEndpoints.transfer_order_allocate_serials,
+    pk: orderId,
+    title: t`Allocate Serial Numbers`,
+    preFormContent: selectedPart ? (
+      <Paper withBorder p='sm'>
+        <RenderPart instance={selectedPart} />
+      </Paper>
+    ) : undefined,
+    initialData: initialData,
+    fields: allocateSerialFields,
     table: table
   });
 
@@ -358,12 +380,12 @@ export default function TransferOrderLineItemTable({
           icon: <IconHash />,
           color: 'green',
           onClick: () => {
-            // setSelectedLineId(record.pk);
-            // setSelectedSupplierPart(record?.part_detail ?? null);
-            // setInitialData({
-            //     quantity: record.quantity - record.allocated
-            // });
-            // allocateBySerials.open();
+            setSelectedLineId(record.pk);
+            setSelectedPart(record?.part_detail ?? null);
+            setInitialData({
+              quantity: record.quantity - record.allocated
+            });
+            allocateBySerials.open();
           }
         },
         {
@@ -452,7 +474,7 @@ export default function TransferOrderLineItemTable({
       {deleteLine.modal}
       {newLine.modal}
       {newBuildOrder.modal}
-      {/* {allocateBySerials.modal} */}
+      {allocateBySerials.modal}
       {allocateStock.modal}
       {orderPartsWizard.wizard}
       <InvenTreeTable
