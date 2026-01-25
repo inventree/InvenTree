@@ -2205,10 +2205,11 @@ class TransferOrderSerializer(
         """
         queryset = AbstractOrderSerializer.annotate_queryset(queryset)
 
-        # TODO: decide what it means for a line to be complete
-        # queryset = queryset.annotate(
-        #     completed_lines=SubqueryCount('lines', filter=Q(quantity__lte=F('transferred')))
-        # )
+        queryset = queryset.annotate(
+            completed_lines=SubqueryCount(
+                'lines', filter=Q(quantity__lte=F('transferred'))
+            )
+        )
 
         queryset = queryset.annotate(
             overdue=Case(
@@ -2219,15 +2220,6 @@ class TransferOrderSerializer(
                 default=Value(False, output_field=BooleanField()),
             )
         )
-
-        # TODO:
-        # Annotate transferred details
-        # queryset = queryset.annotate(
-        #     shipments_count=SubqueryCount('shipments'),
-        #     completed_shipments_count=SubqueryCount(
-        #         'shipments', filter=Q(shipment_date__isnull=False)
-        #     ),
-        # )
 
         return queryset
 
@@ -2298,7 +2290,7 @@ class TransferOrderLineItemSerializer(
             'overdue',
             'part',
             'part_detail',
-            # 'transferred',
+            'transferred',
             # Annotated fields for part stocking information
             'available_stock',
             'available_variant_stock',
@@ -2400,7 +2392,7 @@ class TransferOrderLineItemSerializer(
 
     allocated = serializers.FloatField(read_only=True)
 
-    # transferred = InvenTreeDecimalField(read_only=True)
+    transferred = InvenTreeDecimalField(read_only=True)
 
 
 class TransferOrderAllocationItemSerializer(serializers.Serializer):
@@ -2485,26 +2477,6 @@ class TransferOrderLineItemAllocationSerializer(serializers.Serializer):
 
     items = TransferOrderAllocationItemSerializer(many=True)
 
-    # transfer = serializers.PrimaryKeyRelatedField(
-    #     queryset=order.models.TransferOrderTransfer.objects.all(),
-    #     many=False,
-    #     required=False,
-    #     allow_null=True,
-    #     label=_('Transfer'),
-    # )
-
-    # def validate_shipment(self, shipment):
-    #     """Run validation against the provided shipment instance."""
-    #     order = self.context['order']
-
-    #     if shipment and shipment.shipment_date is not None:
-    #         raise ValidationError(_('Shipment has already been shipped'))
-
-    #     if shipment and shipment.order != order:
-    #         raise ValidationError(_('Shipment is not associated with this order'))
-
-    #     return shipment
-
     def validate(self, data):
         """Serializer validation."""
         data = super().validate(data)
@@ -2524,7 +2496,6 @@ class TransferOrderLineItemAllocationSerializer(serializers.Serializer):
         data = self.validated_data
 
         items = data['items']
-        # transfer = data.get('transfer')
 
         with transaction.atomic():
             for entry in items:
@@ -2533,7 +2504,6 @@ class TransferOrderLineItemAllocationSerializer(serializers.Serializer):
                     line=entry.get('line_item'),
                     item=entry.get('stock_item'),
                     quantity=entry.get('quantity'),
-                    # transfer=transfer,
                 )
 
                 allocation.full_clean()
