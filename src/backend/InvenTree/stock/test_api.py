@@ -1171,7 +1171,7 @@ class CustomStockItemStatusTest(StockAPITestCase):
             name='OK - advanced',
             label='OK - adv.',
             color='secondary',
-            logical_key=10,
+            logical_key=StockStatus.OK.value,
             model=ContentType.objects.get(model='stockitem'),
             reference_status='StockStatus',
         )
@@ -1180,14 +1180,55 @@ class CustomStockItemStatusTest(StockAPITestCase):
             name='attention 2',
             label='attention 2',
             color='secondary',
-            logical_key=50,
+            logical_key=StockStatus.ATTENTION.value,
             model=ContentType.objects.get(model='stockitem'),
             reference_status='StockStatus',
         )
 
     def test_custom_status(self):
         """Tests interaction with states."""
+        part = Part.objects.filter(virtual=False).first()
+
+        # Try creating a new stock item with an invalid status code
+        response = self.post(
+            reverse('api-stock-list'),
+            {'part': part.pk, 'quantity': 10, 'status_custom_key': 'xyz'},
+        )
+
+        data = response.data[0]
+
+        # An invalid status value has been set to the default value
+        self.assertEqual(data['status'], StockStatus.OK.value)
+
+        # Create a stock item with a non-default, built-in status value
+        response = self.post(
+            reverse('api-stock-list'),
+            {
+                'part': part.pk,
+                'quantity': 10,
+                'status_custom_key': StockStatus.QUARANTINED.value,
+            },
+        )
+
+        data = response.data[0]
+
+        self.assertEqual(data['status'], StockStatus.QUARANTINED.value)
+        self.assertEqual(data['status_custom_key'], StockStatus.QUARANTINED.value)
+        self.assertEqual(data['status_text'], 'Quarantined')
+
+        # Create a stock item with a custom status value
+        response = self.post(
+            reverse('api-stock-list'),
+            {'part': part.pk, 'quantity': 10, 'status_custom_key': self.status2.key},
+        )
+
+        data = response.data[0]
+
+        self.assertEqual(data['status'], StockStatus.ATTENTION.value)
+        self.assertEqual(data['status_custom_key'], self.status2.key)
+
         # Create a stock item with the custom status code via the API
+        # Note: We test with a string value here
         response = self.post(
             self.list_url,
             {
@@ -1195,7 +1236,7 @@ class CustomStockItemStatusTest(StockAPITestCase):
                 'description': 'Test desc 1',
                 'quantity': 1,
                 'part': 1,
-                'status_custom_key': self.status.key,
+                'status_custom_key': str(self.status.key),
             },
             expected_code=201,
         )
