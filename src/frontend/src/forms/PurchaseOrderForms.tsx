@@ -361,12 +361,7 @@ function LineItemFormRow({
 
   // Serial number generator
   const serialNumberGenerator = useSerialNumberGenerator({
-    isEnabled: () => batchOpen && trackable,
-    onGenerate: (value: any) => {
-      if (value) {
-        props.changeFn(props.idx, 'serial_numbers', value);
-      }
-    }
+    isEnabled: () => batchOpen && trackable
   });
 
   const [packagingOpen, packagingHandlers] = useDisclosure(false, {
@@ -726,7 +721,10 @@ function LineItemFormRow({
           field_type: 'string',
           label: t`Serial Numbers`,
           description: t`Enter serial numbers for received items`,
-          value: props.item.serial_numbers
+          value: props.item.serial_numbers,
+          placeholderAutofill: true,
+          placeholder:
+            serialNumberGenerator.result && `${serialNumberGenerator.result}`
         }}
         error={props.rowErrors?.serial_numbers?.message}
       />

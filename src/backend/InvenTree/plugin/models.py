@@ -24,7 +24,7 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
 
     Attributes:
         key: slug of the plugin (this must be unique across all installed plugins!)
-        name: PluginName of the plugin - serves for a manual double check  if the right plugin is used
+        name: Name of the plugin - serves for a manual double check  if the right plugin is used
         active: Should the plugin be loaded?
     """
 
@@ -52,7 +52,7 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
         blank=True,
         max_length=255,
         verbose_name=_('Name'),
-        help_text=_('PluginName of the plugin'),
+        help_text=_('Name of the plugin'),
     )
 
     package_name = models.CharField(

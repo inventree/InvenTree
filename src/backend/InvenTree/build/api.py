@@ -594,6 +594,7 @@ class BuildLineList(
     output_options = BuildLineOutputOptions
     ordering_fields = [
         'part',
+        'IPN',
         'allocated',
         'category',
         'consumed',
@@ -612,6 +613,7 @@ class BuildLineList(
 
     ordering_field_aliases = {
         'part': 'bom_item__sub_part__name',
+        'IPN': 'bom_item__sub_part__IPN',
         'reference': 'bom_item__reference',
         'unit_quantity': 'bom_item__quantity',
         'category': 'bom_item__sub_part__category__name',

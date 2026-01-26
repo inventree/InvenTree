@@ -540,8 +540,8 @@ class SupplierPartSerializer(
 
 @register_importer()
 class SupplierPriceBreakSerializer(
-    SupplierPriceBreakBriefSerializer,
     DataImportExportSerializerMixin,
+    SupplierPriceBreakBriefSerializer,
     InvenTreeModelSerializer,
 ):
     """Serializer for SupplierPriceBreak object.

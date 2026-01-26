@@ -447,7 +447,11 @@ class SupplierPriceBreakOutputOptions(OutputConfiguration):
 
 
 class SupplierPriceBreakList(
-    SupplierPriceBreakMixin, SerializerContextMixin, OutputOptionsMixin, ListCreateAPI
+    DataExportViewMixin,
+    SupplierPriceBreakMixin,
+    SerializerContextMixin,
+    OutputOptionsMixin,
+    ListCreateAPI,
 ):
     """API endpoint for list view of SupplierPriceBreak object.
 

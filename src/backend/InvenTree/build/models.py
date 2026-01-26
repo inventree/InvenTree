@@ -263,7 +263,7 @@ class Build(
         null=True,
         related_name='children',
         verbose_name=_('Parent Build'),
-        help_text=_('BuildOrder to which this build is allocated'),
+        help_text=_('Build Order to which this build is allocated'),
     )
 
     part = models.ForeignKey(
@@ -282,7 +282,7 @@ class Build(
         related_name='builds',
         null=True,
         blank=True,
-        help_text=_('SalesOrder to which this build is allocated'),
+        help_text=_('Sales Order to which this build is allocated'),
     )
 
     take_from = models.ForeignKey(
@@ -1254,7 +1254,9 @@ class Build(
         output.build = self
         output.is_building = False
         output.location = location
-        output.status = status
+
+        # Assign the stock status
+        output.set_status(status)
 
         output.save(add_note=False)
 

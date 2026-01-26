@@ -132,7 +132,8 @@ export function BomTable({
       {
         accessor: 'sub_part_detail.IPN',
         title: t`IPN`,
-        sortable: true
+        sortable: true,
+        ordering: 'IPN'
       },
       CategoryColumn({
         accessor: 'category_detail',
