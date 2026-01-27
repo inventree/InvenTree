@@ -223,6 +223,7 @@ ldap:
 #   navbar_message: <h6>InvenTree demo mode <a href='https://inventree.org/demo.html'><span class='fas fa-info-circle'></span></a></h6>
 #   hide_admin_link: true
 #   hide_password_reset: true
+#   disable_theme_storage: true
 #   logo: img/custom_logo.png
 #   splash: img/custom_splash.jpg
 
