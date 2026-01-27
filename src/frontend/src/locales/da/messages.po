@@ -8,7 +8,7 @@ msgstr ""
 "Language: da\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-01-10 01:48\n"
+"PO-Revision-Date: 2026-01-22 00:51\n"
 "Last-Translator: \n"
 "Language-Team: Danish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -46,24 +46,24 @@ msgstr "Slet"
 #: src/components/items/ActionDropdown.tsx:278
 #: src/contexts/ThemeContext.tsx:45
 #: src/hooks/UseForm.tsx:33
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:146
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:321
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:412
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:148
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:323
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:414
 #: src/tables/FilterSelectDrawer.tsx:336
-#: src/tables/build/BuildOutputTable.tsx:562
+#: src/tables/build/BuildOutputTable.tsx:560
 msgid "Cancel"
 msgstr "Annuller"
 
 #: lib/components/RowActions.tsx:136
 #: src/components/nav/NavigationDrawer.tsx:190
-#: src/forms/PurchaseOrderForms.tsx:854
-#: src/forms/StockForms.tsx:796
-#: src/forms/StockForms.tsx:843
-#: src/forms/StockForms.tsx:896
-#: src/forms/StockForms.tsx:942
-#: src/forms/StockForms.tsx:980
-#: src/forms/StockForms.tsx:1066
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:962
+#: src/forms/PurchaseOrderForms.tsx:852
+#: src/forms/StockForms.tsx:802
+#: src/forms/StockForms.tsx:849
+#: src/forms/StockForms.tsx:902
+#: src/forms/StockForms.tsx:948
+#: src/forms/StockForms.tsx:986
+#: src/forms/StockForms.tsx:1096
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:976
 msgid "Actions"
 msgstr "Handlinger"
 
@@ -73,7 +73,7 @@ msgstr "Handlinger"
 #: src/components/wizards/ImportPartWizard.tsx:200
 #: src/components/wizards/ImportPartWizard.tsx:233
 #: src/pages/Index/Settings/UserSettings.tsx:75
-#: src/pages/part/PartDetail.tsx:1183
+#: src/pages/part/PartDetail.tsx:1182
 msgid "Search"
 msgstr "Søg"
 
@@ -97,27 +97,27 @@ msgstr "Nej"
 
 #: lib/enums/ModelInformation.tsx:29
 #: src/components/wizards/OrderPartsWizard.tsx:279
-#: src/forms/BuildForms.tsx:332
-#: src/forms/BuildForms.tsx:407
-#: src/forms/BuildForms.tsx:472
-#: src/forms/BuildForms.tsx:630
-#: src/forms/BuildForms.tsx:793
-#: src/forms/BuildForms.tsx:896
-#: src/forms/PurchaseOrderForms.tsx:850
+#: src/forms/BuildForms.tsx:336
+#: src/forms/BuildForms.tsx:411
+#: src/forms/BuildForms.tsx:481
+#: src/forms/BuildForms.tsx:639
+#: src/forms/BuildForms.tsx:802
+#: src/forms/BuildForms.tsx:905
+#: src/forms/PurchaseOrderForms.tsx:848
 #: src/forms/ReturnOrderForms.tsx:242
 #: src/forms/SalesOrderForms.tsx:384
-#: src/forms/StockForms.tsx:360
-#: src/forms/StockForms.tsx:791
-#: src/forms/StockForms.tsx:838
-#: src/forms/StockForms.tsx:891
-#: src/forms/StockForms.tsx:937
-#: src/forms/StockForms.tsx:975
-#: src/forms/StockForms.tsx:1018
-#: src/forms/StockForms.tsx:1062
-#: src/forms/StockForms.tsx:1110
-#: src/forms/StockForms.tsx:1154
+#: src/forms/StockForms.tsx:366
+#: src/forms/StockForms.tsx:797
+#: src/forms/StockForms.tsx:844
+#: src/forms/StockForms.tsx:897
+#: src/forms/StockForms.tsx:943
+#: src/forms/StockForms.tsx:981
+#: src/forms/StockForms.tsx:1024
+#: src/forms/StockForms.tsx:1092
+#: src/forms/StockForms.tsx:1140
+#: src/forms/StockForms.tsx:1184
 #: src/pages/build/BuildDetail.tsx:201
-#: src/pages/part/PartDetail.tsx:1235
+#: src/pages/part/PartDetail.tsx:1234
 #: src/tables/ColumnRenderers.tsx:91
 #: src/tables/build/BuildOrderParametricTable.tsx:26
 #: src/tables/part/PartTestResultTable.tsx:247
@@ -135,7 +135,7 @@ msgstr "Del"
 #: src/pages/part/CategoryDetail.tsx:285
 #: src/pages/part/CategoryDetail.tsx:340
 #: src/pages/part/CategoryDetail.tsx:371
-#: src/pages/part/PartDetail.tsx:985
+#: src/pages/part/PartDetail.tsx:981
 msgid "Parts"
 msgstr "Dele"
 
@@ -157,7 +157,7 @@ msgstr "Parameter"
 #: src/components/wizards/ImportPartWizard.tsx:807
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:195
 #: src/pages/Index/Settings/SystemSettings.tsx:191
-#: src/pages/part/PartDetail.tsx:950
+#: src/pages/part/PartDetail.tsx:946
 msgid "Parameters"
 msgstr "Parameter"
 
@@ -219,14 +219,14 @@ msgstr "Del Kategori"
 #: lib/enums/Roles.tsx:37
 #: src/pages/part/CategoryDetail.tsx:279
 #: src/pages/part/CategoryDetail.tsx:362
-#: src/pages/part/PartDetail.tsx:1224
+#: src/pages/part/PartDetail.tsx:1223
 msgid "Part Categories"
 msgstr "Del Kategorier"
 
 #: lib/enums/ModelInformation.tsx:88
-#: src/forms/BuildForms.tsx:473
-#: src/forms/BuildForms.tsx:633
-#: src/forms/BuildForms.tsx:794
+#: src/forms/BuildForms.tsx:482
+#: src/forms/BuildForms.tsx:642
+#: src/forms/BuildForms.tsx:803
 #: src/forms/SalesOrderForms.tsx:386
 #: src/pages/stock/StockDetail.tsx:1005
 #: src/tables/part/PartTestResultTable.tsx:256
@@ -268,7 +268,7 @@ msgstr "Lager Lokationstyper"
 
 #: lib/enums/ModelInformation.tsx:114
 #: src/pages/Index/Settings/SystemSettings.tsx:254
-#: src/pages/part/PartDetail.tsx:907
+#: src/pages/part/PartDetail.tsx:903
 msgid "Stock History"
 msgstr "Lager Historik"
 
@@ -345,7 +345,7 @@ msgstr "Købsordre"
 #: src/pages/Index/Settings/SystemSettings.tsx:289
 #: src/pages/company/CompanyDetail.tsx:204
 #: src/pages/company/SupplierPartDetail.tsx:267
-#: src/pages/part/PartDetail.tsx:871
+#: src/pages/part/PartDetail.tsx:867
 #: src/pages/purchasing/PurchasingIndex.tsx:66
 msgid "Purchase Orders"
 msgstr "Købsordrer"
@@ -377,7 +377,7 @@ msgstr "Salgsordrer"
 #: src/defaults/actions.tsx:115
 #: src/pages/Index/Settings/SystemSettings.tsx:305
 #: src/pages/company/CompanyDetail.tsx:224
-#: src/pages/part/PartDetail.tsx:883
+#: src/pages/part/PartDetail.tsx:879
 #: src/pages/sales/SalesIndex.tsx:53
 msgid "Sales Orders"
 msgstr "Salgsordrer"
@@ -402,7 +402,7 @@ msgstr "Returordre"
 #: src/defaults/actions.tsx:126
 #: src/pages/Index/Settings/SystemSettings.tsx:322
 #: src/pages/company/CompanyDetail.tsx:231
-#: src/pages/part/PartDetail.tsx:890
+#: src/pages/part/PartDetail.tsx:886
 #: src/pages/sales/SalesIndex.tsx:99
 msgid "Return Orders"
 msgstr "Returordre"
@@ -553,22 +553,22 @@ msgstr "Valg Lister"
 #: src/components/nav/NavigationTree.tsx:211
 #: src/components/nav/NotificationDrawer.tsx:235
 #: src/components/nav/SearchDrawer.tsx:572
-#: src/components/settings/SettingList.tsx:139
+#: src/components/settings/SettingList.tsx:143
 #: src/components/wizards/ImportPartWizard.tsx:574
 #: src/components/wizards/ImportPartWizard.tsx:719
 #: src/forms/BomForms.tsx:69
-#: src/functions/auth.tsx:643
+#: src/functions/auth.tsx:677
 #: src/pages/ErrorPage.tsx:11
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:315
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:406
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:637
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:816
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:175
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:317
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:408
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:639
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:830
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:189
 #: src/pages/part/PartPricingPanel.tsx:71
 #: src/states/IconState.tsx:46
 #: src/states/IconState.tsx:76
 #: src/tables/InvenTreeTableHeader.tsx:125
-#: src/tables/bom/BomTable.tsx:557
+#: src/tables/bom/BomTable.tsx:558
 #: src/tables/settings/EmailTable.tsx:109
 #: src/tables/stock/StockItemTestResultTable.tsx:338
 msgid "Error"
@@ -588,7 +588,7 @@ msgstr "Admin"
 #: src/defaults/actions.tsx:136
 #: src/pages/Index/Settings/SystemSettings.tsx:270
 #: src/pages/build/BuildIndex.tsx:67
-#: src/pages/part/PartDetail.tsx:900
+#: src/pages/part/PartDetail.tsx:896
 #: src/pages/sales/SalesOrderDetail.tsx:422
 msgid "Build Orders"
 msgstr "Produktionsordrer"
@@ -598,11 +598,11 @@ msgstr "Produktionsordrer"
 #~ msgid "Stocktake"
 #~ msgstr "Stocktake"
 
-#: src/components/Boundary.tsx:12
+#: src/components/Boundary.tsx:14
 msgid "Error rendering component"
 msgstr "Render fejl af komponent"
 
-#: src/components/Boundary.tsx:14
+#: src/components/Boundary.tsx:16
 msgid "An error occurred while rendering this component. Refer to the console for more information."
 msgstr "Der opstod en fejl under render af denne komponent. Se konsollen for mere information."
 
@@ -669,8 +669,8 @@ msgstr "Indtast stregkode data"
 #: src/components/barcodes/BarcodeScanDialog.tsx:56
 #: src/components/buttons/ScanButton.tsx:27
 #: src/components/nav/NavigationDrawer.tsx:122
-#: src/forms/PurchaseOrderForms.tsx:509
-#: src/forms/PurchaseOrderForms.tsx:615
+#: src/forms/PurchaseOrderForms.tsx:504
+#: src/forms/PurchaseOrderForms.tsx:610
 msgid "Scan Barcode"
 msgstr "Scan stregkode"
 
@@ -689,7 +689,7 @@ msgstr "Stregkode matcher ikke den forventede modeltype"
 #: src/components/wizards/ImportPartWizard.tsx:566
 #: src/components/wizards/ImportPartWizard.tsx:691
 #: src/pages/Index/Settings/AdminCenter/CurrencyManagementPanel.tsx:45
-#: src/tables/bom/BomTable.tsx:548
+#: src/tables/bom/BomTable.tsx:549
 #: src/tables/settings/PendingTasksTable.tsx:68
 msgid "Success"
 msgstr "Succes"
@@ -740,7 +740,7 @@ msgid "Failed to link barcode"
 msgstr "Kunne ikke linke stregkode"
 
 #: src/components/barcodes/QRCode.tsx:179
-#: src/pages/part/PartDetail.tsx:528
+#: src/pages/part/PartDetail.tsx:521
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:223
 #: src/pages/sales/ReturnOrderDetail.tsx:189
 #: src/pages/sales/SalesOrderDetail.tsx:182
@@ -755,7 +755,7 @@ msgstr "Dette vil fjerne linket til den tilknyttede stregkode"
 
 #: src/components/barcodes/QRCode.tsx:205
 #: src/components/items/ActionDropdown.tsx:192
-#: src/forms/PurchaseOrderForms.tsx:606
+#: src/forms/PurchaseOrderForms.tsx:601
 msgid "Unlink Barcode"
 msgstr "Fjern linket til stregkode"
 
@@ -1237,16 +1237,16 @@ msgid "Remove the associated image from this item?"
 msgstr "Fjern det tilknyttede billede fra denne vare?"
 
 #: src/components/details/DetailsImage.tsx:83
-#: src/forms/StockForms.tsx:895
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:324
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:415
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:884
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:903
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:254
+#: src/forms/StockForms.tsx:901
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:326
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:417
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:898
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:917
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:268
 #: src/tables/build/BuildAllocatedStockTable.tsx:178
 #: src/tables/build/BuildAllocatedStockTable.tsx:258
 #: src/tables/build/BuildLineTable.tsx:111
-#: src/tables/build/BuildLineTable.tsx:665
+#: src/tables/build/BuildLineTable.tsx:666
 #: src/tables/sales/SalesOrderAllocationTable.tsx:224
 #: src/tables/sales/SalesOrderAllocationTable.tsx:247
 msgid "Remove"
@@ -1281,8 +1281,8 @@ msgstr "Ryd"
 #: src/components/details/DetailsImage.tsx:256
 #: src/components/forms/ApiForm.tsx:696
 #: src/contexts/ThemeContext.tsx:44
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:149
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:568
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:151
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:570
 msgid "Submit"
 msgstr "Indsend"
 
@@ -1580,21 +1580,21 @@ msgstr "Logget ind"
 
 #: src/components/forms/AuthenticationForm.tsx:81
 #: src/components/forms/AuthenticationForm.tsx:89
-#: src/functions/auth.tsx:132
-#: src/functions/auth.tsx:141
+#: src/functions/auth.tsx:133
+#: src/functions/auth.tsx:142
 msgid "Login failed"
 msgstr "Login mislykkedes"
 
 #: src/components/forms/AuthenticationForm.tsx:82
 #: src/components/forms/AuthenticationForm.tsx:90
 #: src/components/forms/AuthenticationForm.tsx:106
-#: src/functions/auth.tsx:133
-#: src/functions/auth.tsx:313
+#: src/functions/auth.tsx:134
+#: src/functions/auth.tsx:340
 msgid "Check your input and try again."
 msgstr "Tjek din indtastning og prøv igen."
 
 #: src/components/forms/AuthenticationForm.tsx:100
-#: src/functions/auth.tsx:304
+#: src/functions/auth.tsx:331
 msgid "Mail delivery successful"
 msgstr "Mail levering succesfuld"
 
@@ -1629,7 +1629,7 @@ msgstr "Dit brugernavn"
 #: src/components/forms/AuthenticationForm.tsx:143
 #: src/components/forms/AuthenticationForm.tsx:311
 #: src/pages/Auth/ResetPassword.tsx:34
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:193
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:195
 msgid "Password"
 msgstr "Adgangskode"
 
@@ -1894,7 +1894,7 @@ msgstr "{0} ikoner"
 
 #: src/components/forms/fields/RelatedModelField.tsx:480
 #: src/components/modals/AboutInvenTreeModal.tsx:96
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:383
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:397
 msgid "Loading"
 msgstr "Indlæser"
 
@@ -1964,7 +1964,7 @@ msgstr "Filtrer efter rækkevaliderings status"
 
 #: src/components/importer/ImportDataSelector.tsx:374
 #: src/components/wizards/WizardDrawer.tsx:113
-#: src/tables/build/BuildOutputTable.tsx:535
+#: src/tables/build/BuildOutputTable.tsx:533
 msgid "Complete"
 msgstr "Færdiggjort"
 
@@ -1984,7 +1984,7 @@ msgstr "Behandler Data"
 #: src/components/importer/ImporterColumnSelector.tsx:230
 #: src/components/items/ErrorItem.tsx:12
 #: src/functions/api.tsx:60
-#: src/functions/auth.tsx:364
+#: src/functions/auth.tsx:387
 msgid "An error occurred"
 msgstr "En feil opstod"
 
@@ -2077,7 +2077,7 @@ msgstr "Data er blevet importeret"
 #: src/components/modals/ServerInfoModal.tsx:134
 #: src/components/wizards/ImportPartWizard.tsx:773
 #: src/forms/BomForms.tsx:132
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:685
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:687
 msgid "Close"
 msgstr "Luk"
 
@@ -2229,7 +2229,7 @@ msgid "Role"
 msgstr "Rolle"
 
 #: src/components/items/RoleTable.tsx:140
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:892
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:906
 msgid "View"
 msgstr "Vis"
 
@@ -2238,7 +2238,7 @@ msgid "Change"
 msgstr "Ændre"
 
 #: src/components/items/RoleTable.tsx:150
-#: src/forms/StockForms.tsx:941
+#: src/forms/StockForms.tsx:947
 #: src/tables/stock/StockItemTestResultTable.tsx:367
 msgid "Add"
 msgstr "Tilføj"
@@ -2261,7 +2261,7 @@ msgstr "Ingen varer"
 
 #: src/components/items/TransferList.tsx:161
 #: src/components/render/Stock.tsx:102
-#: src/pages/part/PartDetail.tsx:1016
+#: src/pages/part/PartDetail.tsx:1012
 #: src/pages/stock/StockDetail.tsx:265
 #: src/pages/stock/StockDetail.tsx:942
 #: src/tables/build/BuildAllocatedStockTable.tsx:125
@@ -2622,9 +2622,9 @@ msgstr "Log ud"
 #: src/components/render/Part.tsx:36
 #: src/components/wizards/ImportPartWizard.tsx:808
 #: src/defaults/links.tsx:42
-#: src/forms/StockForms.tsx:794
+#: src/forms/StockForms.tsx:800
 #: src/pages/Index/Settings/SystemSettings.tsx:230
-#: src/pages/part/PartDetail.tsx:800
+#: src/pages/part/PartDetail.tsx:796
 #: src/pages/stock/LocationDetail.tsx:426
 #: src/pages/stock/LocationDetail.tsx:456
 #: src/pages/stock/StockDetail.tsx:642
@@ -2711,7 +2711,7 @@ msgstr "Fjern søgegruppe"
 
 #: src/components/nav/SearchDrawer.tsx:288
 #: src/pages/company/ManufacturerPartDetail.tsx:179
-#: src/pages/part/PartDetail.tsx:858
+#: src/pages/part/PartDetail.tsx:854
 #: src/pages/part/PartSupplierDetail.tsx:15
 #: src/pages/purchasing/PurchasingIndex.tsx:100
 msgid "Suppliers"
@@ -2851,7 +2851,7 @@ msgstr "Dato"
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:68
 #: src/pages/core/UserDetail.tsx:81
 #: src/pages/core/UserDetail.tsx:209
-#: src/pages/part/PartDetail.tsx:622
+#: src/pages/part/PartDetail.tsx:615
 #: src/tables/bom/UsedInTable.tsx:90
 #: src/tables/company/CompanyTable.tsx:57
 #: src/tables/company/CompanyTable.tsx:91
@@ -2985,7 +2985,7 @@ msgstr "Forsendelse"
 #: src/pages/company/CompanyDetail.tsx:328
 #: src/pages/company/SupplierPartDetail.tsx:378
 #: src/pages/core/UserDetail.tsx:211
-#: src/pages/part/PartDetail.tsx:1055
+#: src/pages/part/PartDetail.tsx:1051
 #: src/tables/ColumnRenderers.tsx:410
 msgid "Inactive"
 msgstr "Inaktiv"
@@ -2998,7 +2998,7 @@ msgid "Virtual"
 msgstr "Virtuel"
 
 #: src/components/render/Part.tsx:34
-#: src/tables/bom/BomTable.tsx:307
+#: src/tables/bom/BomTable.tsx:308
 #: src/tables/part/PartTable.tsx:152
 msgid "No stock"
 msgstr "Intet lager"
@@ -3007,8 +3007,8 @@ msgstr "Intet lager"
 #: src/components/wizards/OrderPartsWizard.tsx:135
 #: src/pages/company/SupplierPartDetail.tsx:198
 #: src/pages/company/SupplierPartDetail.tsx:399
-#: src/pages/part/PartDetail.tsx:1037
-#: src/tables/bom/BomTable.tsx:444
+#: src/pages/part/PartDetail.tsx:1033
+#: src/tables/bom/BomTable.tsx:445
 #: src/tables/build/BuildLineTable.tsx:223
 #: src/tables/part/PartTable.tsx:108
 msgid "On Order"
@@ -3016,8 +3016,8 @@ msgstr "På Ordre"
 
 #: src/components/render/Part.tsx:55
 #: src/components/wizards/OrderPartsWizard.tsx:141
-#: src/pages/part/PartDetail.tsx:594
-#: src/pages/part/PartDetail.tsx:1043
+#: src/pages/part/PartDetail.tsx:587
+#: src/pages/part/PartDetail.tsx:1039
 #: src/pages/stock/StockDetail.tsx:925
 #: src/tables/part/PartTestResultTable.tsx:305
 #: src/tables/stock/StockItemTable.tsx:359
@@ -3042,17 +3042,17 @@ msgstr "Kategori"
 #: src/components/render/Stock.tsx:36
 #: src/components/render/Stock.tsx:114
 #: src/components/render/Stock.tsx:132
-#: src/forms/BuildForms.tsx:795
-#: src/forms/PurchaseOrderForms.tsx:647
-#: src/forms/StockForms.tsx:792
-#: src/forms/StockForms.tsx:839
-#: src/forms/StockForms.tsx:892
-#: src/forms/StockForms.tsx:938
-#: src/forms/StockForms.tsx:976
-#: src/forms/StockForms.tsx:1019
-#: src/forms/StockForms.tsx:1063
-#: src/forms/StockForms.tsx:1111
-#: src/forms/StockForms.tsx:1155
+#: src/forms/BuildForms.tsx:804
+#: src/forms/PurchaseOrderForms.tsx:642
+#: src/forms/StockForms.tsx:798
+#: src/forms/StockForms.tsx:845
+#: src/forms/StockForms.tsx:898
+#: src/forms/StockForms.tsx:944
+#: src/forms/StockForms.tsx:982
+#: src/forms/StockForms.tsx:1025
+#: src/forms/StockForms.tsx:1093
+#: src/forms/StockForms.tsx:1141
+#: src/forms/StockForms.tsx:1185
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:88
 #: src/pages/core/UserDetail.tsx:158
 #: src/pages/stock/StockDetail.tsx:298
@@ -3066,20 +3066,20 @@ msgstr "Lokation"
 #: src/components/render/Stock.tsx:99
 #: src/pages/stock/StockDetail.tsx:198
 #: src/pages/stock/StockDetail.tsx:930
-#: src/tables/build/BuildOutputTable.tsx:107
+#: src/tables/build/BuildOutputTable.tsx:106
 #: src/tables/sales/SalesOrderAllocationTable.tsx:142
 msgid "Serial Number"
 msgstr "Serienummer"
 
 #: src/components/render/Stock.tsx:104
 #: src/components/wizards/OrderPartsWizard.tsx:377
-#: src/forms/BuildForms.tsx:240
-#: src/forms/BuildForms.tsx:634
-#: src/forms/BuildForms.tsx:797
-#: src/forms/PurchaseOrderForms.tsx:853
+#: src/forms/BuildForms.tsx:242
+#: src/forms/BuildForms.tsx:643
+#: src/forms/BuildForms.tsx:806
+#: src/forms/PurchaseOrderForms.tsx:851
 #: src/forms/ReturnOrderForms.tsx:243
 #: src/forms/SalesOrderForms.tsx:387
-#: src/forms/StockForms.tsx:841
+#: src/forms/StockForms.tsx:847
 #: src/pages/part/PartStockHistoryDetail.tsx:56
 #: src/pages/part/PartStockHistoryDetail.tsx:210
 #: src/pages/part/PartStockHistoryDetail.tsx:234
@@ -3100,18 +3100,18 @@ msgid "Quantity"
 msgstr "Antal"
 
 #: src/components/render/Stock.tsx:117
-#: src/forms/BuildForms.tsx:335
-#: src/forms/BuildForms.tsx:410
-#: src/forms/BuildForms.tsx:474
-#: src/forms/StockForms.tsx:793
-#: src/forms/StockForms.tsx:840
-#: src/forms/StockForms.tsx:893
-#: src/forms/StockForms.tsx:939
-#: src/forms/StockForms.tsx:977
-#: src/forms/StockForms.tsx:1020
-#: src/forms/StockForms.tsx:1064
-#: src/forms/StockForms.tsx:1112
-#: src/forms/StockForms.tsx:1156
+#: src/forms/BuildForms.tsx:339
+#: src/forms/BuildForms.tsx:414
+#: src/forms/BuildForms.tsx:483
+#: src/forms/StockForms.tsx:799
+#: src/forms/StockForms.tsx:846
+#: src/forms/StockForms.tsx:899
+#: src/forms/StockForms.tsx:945
+#: src/forms/StockForms.tsx:983
+#: src/forms/StockForms.tsx:1026
+#: src/forms/StockForms.tsx:1094
+#: src/forms/StockForms.tsx:1142
+#: src/forms/StockForms.tsx:1186
 #: src/tables/build/BuildLineTable.tsx:93
 msgid "Batch"
 msgstr "Batch"
@@ -3198,10 +3198,18 @@ msgstr "Tilføj Brugerdefineret Tilstand"
 msgid "Create a new custom state for your workflow"
 msgstr ""
 
+#: src/components/settings/SettingItem.tsx:33
+msgid "Do you want to proceed to change this setting?"
+msgstr ""
+
 #: src/components/settings/SettingItem.tsx:47
 #: src/components/settings/SettingItem.tsx:100
 #~ msgid "{0} updated successfully"
 #~ msgstr "{0} updated successfully"
+
+#: src/components/settings/SettingItem.tsx:221
+msgid "This setting requires confirmation"
+msgstr ""
 
 #: src/components/settings/SettingList.tsx:72
 msgid "Edit Setting"
@@ -3211,32 +3219,32 @@ msgstr "Rediger indstilling"
 msgid "Setting {key} updated successfully"
 msgstr "Indstilling af {key} opdateret"
 
-#: src/components/settings/SettingList.tsx:114
+#: src/components/settings/SettingList.tsx:118
 msgid "Setting updated"
 msgstr "Indstillinger opdateret"
 
 #. placeholder {0}: setting.key
-#: src/components/settings/SettingList.tsx:115
+#: src/components/settings/SettingList.tsx:119
 msgid "Setting {0} updated successfully"
 msgstr "Indstilling af {0} opdateret"
 
-#: src/components/settings/SettingList.tsx:124
+#: src/components/settings/SettingList.tsx:128
 msgid "Error editing setting"
 msgstr "Fejl under redigering af indstilling"
 
-#: src/components/settings/SettingList.tsx:140
+#: src/components/settings/SettingList.tsx:144
 msgid "Error loading settings"
 msgstr "Fejl ved indlæsning af indstillinger"
 
-#: src/components/settings/SettingList.tsx:151
+#: src/components/settings/SettingList.tsx:155
 msgid "No Settings"
 msgstr "Ingen indstillinger"
 
-#: src/components/settings/SettingList.tsx:152
+#: src/components/settings/SettingList.tsx:156
 msgid "There are no configurable settings available"
 msgstr "Der er ingen tilgængelige konfigurerbar indstillinger"
 
-#: src/components/settings/SettingList.tsx:189
+#: src/components/settings/SettingList.tsx:193
 msgid "No settings specified"
 msgstr "Ingen indstillinger specificeret"
 
@@ -3602,7 +3610,7 @@ msgstr ""
 
 #: src/components/wizards/ImportPartWizard.tsx:112
 msgid "Current part"
-msgstr ""
+msgstr "Aktuelle del"
 
 #: src/components/wizards/ImportPartWizard.tsx:118
 msgid "Already Imported"
@@ -3625,7 +3633,7 @@ msgid "Supplier"
 msgstr "Leverandør"
 
 #: src/components/wizards/ImportPartWizard.tsx:221
-#: src/forms/StockForms.tsx:614
+#: src/forms/StockForms.tsx:620
 msgid "Loading..."
 msgstr "Indlæser..."
 
@@ -3687,7 +3695,7 @@ msgid "Next"
 msgstr "Næste"
 
 #: src/components/wizards/ImportPartWizard.tsx:540
-#: src/pages/part/PartDetail.tsx:1074
+#: src/pages/part/PartDetail.tsx:1073
 #: src/tables/part/PartTable.tsx:408
 msgid "Edit Part"
 msgstr "Rediger Del"
@@ -3771,24 +3779,24 @@ msgid "Sales Requirements"
 msgstr "Salgs Krav"
 
 #: src/components/wizards/OrderPartsWizard.tsx:129
-#: src/forms/StockForms.tsx:894
-#: src/forms/StockForms.tsx:940
-#: src/forms/StockForms.tsx:978
-#: src/forms/StockForms.tsx:1021
-#: src/forms/StockForms.tsx:1065
-#: src/forms/StockForms.tsx:1113
-#: src/forms/StockForms.tsx:1157
+#: src/forms/StockForms.tsx:900
+#: src/forms/StockForms.tsx:946
+#: src/forms/StockForms.tsx:984
+#: src/forms/StockForms.tsx:1027
+#: src/forms/StockForms.tsx:1095
+#: src/forms/StockForms.tsx:1143
+#: src/forms/StockForms.tsx:1187
 #: src/pages/company/SupplierPartDetail.tsx:191
 #: src/pages/company/SupplierPartDetail.tsx:383
-#: src/pages/part/PartDetail.tsx:541
-#: src/pages/part/PartDetail.tsx:1006
+#: src/pages/part/PartDetail.tsx:534
+#: src/pages/part/PartDetail.tsx:1002
 #: src/tables/Filter.tsx:92
 #: src/tables/purchasing/SupplierPartTable.tsx:230
 msgid "In Stock"
 msgstr "På Lager"
 
 #: src/components/wizards/OrderPartsWizard.tsx:146
-#: src/tables/build/BuildLineTable.tsx:405
+#: src/tables/build/BuildLineTable.tsx:406
 msgid "Required Quantity"
 msgstr "Krævet Antal"
 
@@ -3880,7 +3888,7 @@ msgid "Please correct the errors in the selected parts"
 msgstr "Ret venligst fejlene i de valgte dele"
 
 #: src/components/wizards/OrderPartsWizard.tsx:587
-#: src/tables/build/BuildLineTable.tsx:822
+#: src/tables/build/BuildLineTable.tsx:823
 #: src/tables/part/PartTable.tsx:522
 #: src/tables/sales/SalesOrderLineItemTable.tsx:370
 msgid "Order Parts"
@@ -4383,26 +4391,26 @@ msgstr "Erstatning tilføjet"
 #~ msgid "Remove output"
 #~ msgstr "Remove output"
 
-#: src/forms/BuildForms.tsx:333
-#: src/forms/BuildForms.tsx:408
-#: src/forms/BuildForms.tsx:685
+#: src/forms/BuildForms.tsx:337
+#: src/forms/BuildForms.tsx:412
+#: src/forms/BuildForms.tsx:694
 #: src/tables/build/BuildAllocatedStockTable.tsx:147
-#: src/tables/build/BuildOutputTable.tsx:584
+#: src/tables/build/BuildOutputTable.tsx:582
 #: src/tables/part/PartTestResultTable.tsx:280
 msgid "Build Output"
 msgstr "Bygge Output"
 
-#: src/forms/BuildForms.tsx:334
+#: src/forms/BuildForms.tsx:338
 msgid "Quantity to Complete"
-msgstr ""
+msgstr "Antal til fuldførelse"
 
-#: src/forms/BuildForms.tsx:336
-#: src/forms/BuildForms.tsx:411
-#: src/forms/BuildForms.tsx:475
-#: src/forms/PurchaseOrderForms.tsx:769
+#: src/forms/BuildForms.tsx:340
+#: src/forms/BuildForms.tsx:415
+#: src/forms/BuildForms.tsx:484
+#: src/forms/PurchaseOrderForms.tsx:767
 #: src/forms/ReturnOrderForms.tsx:197
 #: src/forms/ReturnOrderForms.tsx:244
-#: src/forms/StockForms.tsx:712
+#: src/forms/StockForms.tsx:718
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:87
 #: src/pages/build/BuildDetail.tsx:223
 #: src/pages/core/UserDetail.tsx:151
@@ -4411,7 +4419,7 @@ msgstr ""
 #: src/pages/sales/SalesOrderDetail.tsx:126
 #: src/pages/stock/StockDetail.tsx:170
 #: src/tables/Filter.tsx:274
-#: src/tables/build/BuildOutputTable.tsx:406
+#: src/tables/build/BuildOutputTable.tsx:404
 #: src/tables/machine/MachineListTable.tsx:387
 #: src/tables/part/PartPurchaseOrdersTable.tsx:38
 #: src/tables/part/PartTestResultTable.tsx:317
@@ -4425,11 +4433,11 @@ msgstr ""
 msgid "Status"
 msgstr "Status"
 
-#: src/forms/BuildForms.tsx:358
+#: src/forms/BuildForms.tsx:362
 msgid "Complete Build Outputs"
 msgstr "Færdiggøre Bygge Output"
 
-#: src/forms/BuildForms.tsx:361
+#: src/forms/BuildForms.tsx:365
 msgid "Build outputs have been completed"
 msgstr ""
 
@@ -4437,24 +4445,24 @@ msgstr ""
 #~ msgid "Selected build outputs will be deleted"
 #~ msgstr "Selected build outputs will be deleted"
 
-#: src/forms/BuildForms.tsx:409
+#: src/forms/BuildForms.tsx:413
 msgid "Quantity to Scrap"
 msgstr "Antal til skrot"
 
-#: src/forms/BuildForms.tsx:429
-#: src/forms/BuildForms.tsx:431
+#: src/forms/BuildForms.tsx:433
+#: src/forms/BuildForms.tsx:435
 msgid "Scrap Build Outputs"
 msgstr "Skrot Byggeoutput"
 
-#: src/forms/BuildForms.tsx:434
+#: src/forms/BuildForms.tsx:438
 msgid "Selected build outputs will be completed, but marked as scrapped"
 msgstr "Valgte Byggeoutput vil blive fuldført, men markeret som skrot"
 
-#: src/forms/BuildForms.tsx:436
+#: src/forms/BuildForms.tsx:440
 msgid "Allocated stock items will be consumed"
 msgstr "Allokerede lagervarer vil blive forbrugt"
 
-#: src/forms/BuildForms.tsx:442
+#: src/forms/BuildForms.tsx:446
 msgid "Build outputs have been scrapped"
 msgstr "Byggeoutput er blevet skrottet"
 
@@ -4462,24 +4470,24 @@ msgstr "Byggeoutput er blevet skrottet"
 #~ msgid "Remove line"
 #~ msgstr "Remove line"
 
-#: src/forms/BuildForms.tsx:485
-#: src/forms/BuildForms.tsx:487
+#: src/forms/BuildForms.tsx:494
+#: src/forms/BuildForms.tsx:496
 msgid "Cancel Build Outputs"
 msgstr "Annuller Bygge Output"
 
-#: src/forms/BuildForms.tsx:489
+#: src/forms/BuildForms.tsx:498
 msgid "Selected build outputs will be removed"
 msgstr ""
 
-#: src/forms/BuildForms.tsx:491
+#: src/forms/BuildForms.tsx:500
 msgid "Allocated stock items will be returned to stock"
 msgstr ""
 
-#: src/forms/BuildForms.tsx:498
+#: src/forms/BuildForms.tsx:507
 msgid "Build outputs have been cancelled"
 msgstr ""
 
-#: src/forms/BuildForms.tsx:631
+#: src/forms/BuildForms.tsx:640
 #: src/pages/build/BuildDetail.tsx:208
 #: src/pages/company/ManufacturerPartDetail.tsx:84
 #: src/pages/company/SupplierPartDetail.tsx:97
@@ -4488,7 +4496,7 @@ msgstr ""
 #: src/tables/bom/BomTable.tsx:134
 #: src/tables/bom/UsedInTable.tsx:40
 #: src/tables/build/BuildAllocatedStockTable.tsx:105
-#: src/tables/build/BuildLineTable.tsx:337
+#: src/tables/build/BuildLineTable.tsx:338
 #: src/tables/build/BuildOrderTable.tsx:79
 #: src/tables/part/PartSalesAllocationsTable.tsx:61
 #: src/tables/part/RelatedPartTable.tsx:73
@@ -4501,9 +4509,9 @@ msgstr ""
 msgid "IPN"
 msgstr ""
 
-#: src/forms/BuildForms.tsx:632
-#: src/forms/BuildForms.tsx:796
-#: src/forms/BuildForms.tsx:897
+#: src/forms/BuildForms.tsx:641
+#: src/forms/BuildForms.tsx:805
+#: src/forms/BuildForms.tsx:906
 #: src/forms/SalesOrderForms.tsx:385
 #: src/tables/build/BuildAllocatedStockTable.tsx:129
 #: src/tables/build/BuildLineTable.tsx:183
@@ -4512,59 +4520,59 @@ msgstr ""
 msgid "Allocated"
 msgstr "Allokere"
 
-#: src/forms/BuildForms.tsx:667
+#: src/forms/BuildForms.tsx:676
 #: src/forms/SalesOrderForms.tsx:374
 #: src/pages/build/BuildDetail.tsx:109
 #: src/pages/build/BuildDetail.tsx:327
 msgid "Source Location"
 msgstr ""
 
-#: src/forms/BuildForms.tsx:668
+#: src/forms/BuildForms.tsx:677
 #: src/forms/SalesOrderForms.tsx:375
 msgid "Select the source location for the stock allocation"
 msgstr ""
 
-#: src/forms/BuildForms.tsx:700
+#: src/forms/BuildForms.tsx:709
 #: src/forms/SalesOrderForms.tsx:415
-#: src/tables/build/BuildLineTable.tsx:575
-#: src/tables/build/BuildLineTable.tsx:738
-#: src/tables/build/BuildLineTable.tsx:837
+#: src/tables/build/BuildLineTable.tsx:576
+#: src/tables/build/BuildLineTable.tsx:739
+#: src/tables/build/BuildLineTable.tsx:838
 #: src/tables/sales/SalesOrderLineItemTable.tsx:380
 #: src/tables/sales/SalesOrderLineItemTable.tsx:406
 msgid "Allocate Stock"
 msgstr ""
 
-#: src/forms/BuildForms.tsx:703
+#: src/forms/BuildForms.tsx:712
 #: src/forms/SalesOrderForms.tsx:420
 msgid "Stock items allocated"
 msgstr "Lagervarer tildelt"
-
-#: src/forms/BuildForms.tsx:816
-#: src/forms/BuildForms.tsx:917
-#: src/tables/build/BuildAllocatedStockTable.tsx:243
-#: src/tables/build/BuildAllocatedStockTable.tsx:279
-#: src/tables/build/BuildLineTable.tsx:748
-#: src/tables/build/BuildLineTable.tsx:871
-msgid "Consume Stock"
-msgstr ""
-
-#: src/forms/BuildForms.tsx:817
-#: src/forms/BuildForms.tsx:918
-msgid "Stock items scheduled to be consumed"
-msgstr ""
 
 #: src/forms/BuildForms.tsx:817
 #: src/forms/BuildForms.tsx:918
 #~ msgid "Stock items consumed"
 #~ msgstr "Stock items consumed"
 
-#: src/forms/BuildForms.tsx:853
-#: src/tables/build/BuildLineTable.tsx:515
+#: src/forms/BuildForms.tsx:825
+#: src/forms/BuildForms.tsx:926
+#: src/tables/build/BuildAllocatedStockTable.tsx:243
+#: src/tables/build/BuildAllocatedStockTable.tsx:279
+#: src/tables/build/BuildLineTable.tsx:749
+#: src/tables/build/BuildLineTable.tsx:872
+msgid "Consume Stock"
+msgstr ""
+
+#: src/forms/BuildForms.tsx:826
+#: src/forms/BuildForms.tsx:927
+msgid "Stock items scheduled to be consumed"
+msgstr ""
+
+#: src/forms/BuildForms.tsx:862
+#: src/tables/build/BuildLineTable.tsx:516
 #: src/tables/part/PartBuildAllocationsTable.tsx:101
 msgid "Fully consumed"
 msgstr "Fuldt forbrugte"
 
-#: src/forms/BuildForms.tsx:898
+#: src/forms/BuildForms.tsx:907
 #: src/tables/build/BuildLineTable.tsx:188
 #: src/tables/stock/StockItemTable.tsx:367
 msgid "Consumed"
@@ -4581,32 +4589,32 @@ msgstr "Vælg projektkode for dette linjeelement"
 #~ msgid "Company updated"
 #~ msgstr "Company updated"
 
-#: src/forms/PartForms.tsx:107
-#: src/forms/PartForms.tsx:236
+#: src/forms/PartForms.tsx:108
+#~ msgid "Part created"
+#~ msgstr "Part created"
+
+#: src/forms/PartForms.tsx:109
+#: src/forms/PartForms.tsx:239
 #: src/pages/part/CategoryDetail.tsx:127
-#: src/pages/part/PartDetail.tsx:675
+#: src/pages/part/PartDetail.tsx:668
 #: src/tables/part/PartCategoryTable.tsx:94
 #: src/tables/part/PartTable.tsx:325
 msgid "Subscribed"
 msgstr "Abonner"
 
-#: src/forms/PartForms.tsx:108
+#: src/forms/PartForms.tsx:110
 msgid "Subscribe to notifications for this part"
 msgstr "Abonner på notifikationer for denne del"
-
-#: src/forms/PartForms.tsx:108
-#~ msgid "Part created"
-#~ msgstr "Part created"
 
 #: src/forms/PartForms.tsx:129
 #~ msgid "Part updated"
 #~ msgstr "Part updated"
 
-#: src/forms/PartForms.tsx:222
+#: src/forms/PartForms.tsx:225
 msgid "Parent part category"
 msgstr "Overordnet del kategori"
 
-#: src/forms/PartForms.tsx:237
+#: src/forms/PartForms.tsx:240
 msgid "Subscribe to notifications for this category"
 msgstr "Abonner på notifikationer for denne kategori"
 
@@ -4614,11 +4622,11 @@ msgstr "Abonner på notifikationer for denne kategori"
 #~ msgid "Assign Batch Code{0}"
 #~ msgstr "Assign Batch Code{0}"
 
-#: src/forms/PurchaseOrderForms.tsx:440
+#: src/forms/PurchaseOrderForms.tsx:435
 msgid "Assign Batch Code and Serial Numbers"
 msgstr "Tildel Batch kode og serienumre"
 
-#: src/forms/PurchaseOrderForms.tsx:442
+#: src/forms/PurchaseOrderForms.tsx:437
 msgid "Assign Batch Code"
 msgstr "Tildel Batchkode"
 
@@ -4627,27 +4635,27 @@ msgstr "Tildel Batchkode"
 #~ msgid "Remove item from list"
 #~ msgstr "Remove item from list"
 
-#: src/forms/PurchaseOrderForms.tsx:462
+#: src/forms/PurchaseOrderForms.tsx:457
 msgid "Choose Location"
 msgstr "Vælg lokation"
 
-#: src/forms/PurchaseOrderForms.tsx:470
+#: src/forms/PurchaseOrderForms.tsx:465
 msgid "Item Destination selected"
 msgstr ""
 
-#: src/forms/PurchaseOrderForms.tsx:480
+#: src/forms/PurchaseOrderForms.tsx:475
 msgid "Part category default location selected"
 msgstr ""
 
-#: src/forms/PurchaseOrderForms.tsx:490
+#: src/forms/PurchaseOrderForms.tsx:485
 msgid "Received stock location selected"
-msgstr ""
+msgstr "Modtaget lager placering valgt"
 
-#: src/forms/PurchaseOrderForms.tsx:498
+#: src/forms/PurchaseOrderForms.tsx:493
 msgid "Default location selected"
 msgstr "Standard lokation valgt"
 
-#: src/forms/PurchaseOrderForms.tsx:559
+#: src/forms/PurchaseOrderForms.tsx:554
 msgid "Set Location"
 msgstr "Indstil Lokation"
 
@@ -4655,83 +4663,83 @@ msgstr "Indstil Lokation"
 #~ msgid "Serial numbers"
 #~ msgstr "Serial numbers"
 
-#: src/forms/PurchaseOrderForms.tsx:576
+#: src/forms/PurchaseOrderForms.tsx:571
 msgid "Set Expiry Date"
 msgstr "Sæt Udløbsdato"
+
+#: src/forms/PurchaseOrderForms.tsx:579
+#: src/forms/StockForms.tsx:699
+msgid "Adjust Packaging"
+msgstr "Juster Emballering"
 
 #: src/forms/PurchaseOrderForms.tsx:582
 #~ msgid "Store at line item destination"
 #~ msgstr "Store at line item destination"
 
-#: src/forms/PurchaseOrderForms.tsx:584
-#: src/forms/StockForms.tsx:693
-msgid "Adjust Packaging"
-msgstr "Juster Emballering"
-
-#: src/forms/PurchaseOrderForms.tsx:592
-#: src/forms/StockForms.tsx:684
+#: src/forms/PurchaseOrderForms.tsx:587
+#: src/forms/StockForms.tsx:690
 #: src/hooks/UseStockAdjustActions.tsx:148
 msgid "Change Status"
 msgstr "Ændre Status"
 
-#: src/forms/PurchaseOrderForms.tsx:598
+#: src/forms/PurchaseOrderForms.tsx:593
 msgid "Add Note"
 msgstr "Tilføj Note"
+
+#: src/forms/PurchaseOrderForms.tsx:657
+msgid "Store at default location"
+msgstr "Gem på standard lokation"
 
 #: src/forms/PurchaseOrderForms.tsx:658
 #~ msgid "Receive line items"
 #~ msgstr "Receive line items"
 
-#: src/forms/PurchaseOrderForms.tsx:662
-msgid "Store at default location"
-msgstr "Gem på standard lokation"
-
-#: src/forms/PurchaseOrderForms.tsx:677
+#: src/forms/PurchaseOrderForms.tsx:672
 msgid "Store at line item destination "
 msgstr ""
 
-#: src/forms/PurchaseOrderForms.tsx:689
+#: src/forms/PurchaseOrderForms.tsx:684
 msgid "Store with already received stock"
 msgstr ""
 
-#: src/forms/PurchaseOrderForms.tsx:713
+#: src/forms/PurchaseOrderForms.tsx:708
 #: src/pages/build/BuildDetail.tsx:341
 #: src/pages/stock/StockDetail.tsx:280
 #: src/pages/stock/StockDetail.tsx:952
 #: src/tables/Filter.tsx:83
 #: src/tables/build/BuildAllocatedStockTable.tsx:118
-#: src/tables/build/BuildOutputTable.tsx:112
+#: src/tables/build/BuildOutputTable.tsx:111
 #: src/tables/part/PartTestResultTable.tsx:268
 #: src/tables/part/PartTestResultTable.tsx:289
 #: src/tables/sales/SalesOrderAllocationTable.tsx:149
 msgid "Batch Code"
 msgstr "Batch kode"
 
-#: src/forms/PurchaseOrderForms.tsx:714
+#: src/forms/PurchaseOrderForms.tsx:709
 msgid "Enter batch code for received items"
 msgstr "Indtast batch kode for modtagne varer"
 
-#: src/forms/PurchaseOrderForms.tsx:727
-#: src/forms/StockForms.tsx:218
+#: src/forms/PurchaseOrderForms.tsx:722
+#: src/forms/StockForms.tsx:223
 msgid "Serial Numbers"
 msgstr "Serienummer"
 
-#: src/forms/PurchaseOrderForms.tsx:728
+#: src/forms/PurchaseOrderForms.tsx:723
 msgid "Enter serial numbers for received items"
 msgstr "Indtast serienumre for modtagne elementer"
 
-#: src/forms/PurchaseOrderForms.tsx:742
+#: src/forms/PurchaseOrderForms.tsx:740
 #: src/pages/stock/StockDetail.tsx:382
 #: src/tables/stock/StockItemTable.tsx:294
 msgid "Expiry Date"
 msgstr "Udløbsdato"
 
-#: src/forms/PurchaseOrderForms.tsx:743
+#: src/forms/PurchaseOrderForms.tsx:741
 msgid "Enter an expiry date for received items"
 msgstr "Indtast en udløbsdato for modtagne vare"
 
-#: src/forms/PurchaseOrderForms.tsx:755
-#: src/forms/StockForms.tsx:728
+#: src/forms/PurchaseOrderForms.tsx:753
+#: src/forms/StockForms.tsx:734
 #: src/pages/company/SupplierPartDetail.tsx:173
 #: src/pages/company/SupplierPartDetail.tsx:237
 #: src/pages/stock/StockDetail.tsx:419
@@ -4739,19 +4747,19 @@ msgstr "Indtast en udløbsdato for modtagne vare"
 msgid "Packaging"
 msgstr "Emballage"
 
-#: src/forms/PurchaseOrderForms.tsx:779
+#: src/forms/PurchaseOrderForms.tsx:777
 #: src/pages/company/SupplierPartDetail.tsx:121
 #: src/tables/ColumnRenderers.tsx:332
 msgid "Note"
 msgstr "Note"
 
-#: src/forms/PurchaseOrderForms.tsx:851
+#: src/forms/PurchaseOrderForms.tsx:849
 #: src/pages/company/SupplierPartDetail.tsx:139
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:49
 msgid "SKU"
 msgstr "SKU"
 
-#: src/forms/PurchaseOrderForms.tsx:852
+#: src/forms/PurchaseOrderForms.tsx:850
 #: src/tables/part/PartPurchaseOrdersTable.tsx:127
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:213
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:283
@@ -4759,11 +4767,11 @@ msgstr "SKU"
 msgid "Received"
 msgstr "Modtaget"
 
-#: src/forms/PurchaseOrderForms.tsx:869
+#: src/forms/PurchaseOrderForms.tsx:867
 msgid "Receive Line Items"
 msgstr "Modtag linje element"
 
-#: src/forms/PurchaseOrderForms.tsx:875
+#: src/forms/PurchaseOrderForms.tsx:873
 msgid "Items received"
 msgstr "Varer modtaget"
 
@@ -4815,193 +4823,193 @@ msgstr "Efterlad blank for at bruge ordreadressen"
 #~ msgid "Stock item updated"
 #~ msgstr "Stock item updated"
 
-#: src/forms/StockForms.tsx:196
+#: src/forms/StockForms.tsx:201
 msgid "Add given quantity as packs instead of individual items"
 msgstr "Tilføj givet antal som pakker i stedet for individuelle elementer"
 
-#: src/forms/StockForms.tsx:210
+#: src/forms/StockForms.tsx:215
 msgid "Enter initial quantity for this stock item"
 msgstr "Angiv første antal for denne lagervare"
 
-#: src/forms/StockForms.tsx:220
+#: src/forms/StockForms.tsx:225
 msgid "Enter serial numbers for new stock (or leave blank)"
 msgstr "Indtast serienumre for nyt lager (eller efterlad blank)"
 
-#: src/forms/StockForms.tsx:240
+#: src/forms/StockForms.tsx:245
 msgid "Stock Status"
 msgstr "Lager Status"
 
-#: src/forms/StockForms.tsx:317
+#: src/forms/StockForms.tsx:323
 #: src/pages/stock/StockDetail.tsx:686
 #: src/tables/stock/StockItemTable.tsx:525
 #: src/tables/stock/StockItemTable.tsx:572
 msgid "Add Stock Item"
 msgstr "Tilføj Lagervare"
 
-#: src/forms/StockForms.tsx:361
+#: src/forms/StockForms.tsx:367
 msgid "Select the part to install"
 msgstr "Vælg den del, der skal installeres"
 
-#: src/forms/StockForms.tsx:487
+#: src/forms/StockForms.tsx:493
 msgid "Confirm Stock Transfer"
 msgstr "Bekræft Lager Overførsel"
 
-#: src/forms/StockForms.tsx:672
+#: src/forms/StockForms.tsx:678
 msgid "Move to default location"
 msgstr "Flyt til standard lokation"
 
-#: src/forms/StockForms.tsx:795
+#: src/forms/StockForms.tsx:801
 msgid "Move"
 msgstr "Flyt"
 
-#: src/forms/StockForms.tsx:842
+#: src/forms/StockForms.tsx:848
 msgid "Return"
 msgstr "Retur"
 
-#: src/forms/StockForms.tsx:979
+#: src/forms/StockForms.tsx:985
 #: src/pages/Index/Scan.tsx:182
 msgid "Count"
 msgstr "Antal"
 
-#: src/forms/StockForms.tsx:1262
+#: src/forms/StockForms.tsx:1292
 #: src/hooks/UseStockAdjustActions.tsx:108
 msgid "Add Stock"
 msgstr "Tilføj Lagerbeholdning"
 
-#: src/forms/StockForms.tsx:1263
+#: src/forms/StockForms.tsx:1293
 msgid "Stock added"
 msgstr "Lager tilføjet"
 
-#: src/forms/StockForms.tsx:1266
+#: src/forms/StockForms.tsx:1296
 msgid "Increase the quantity of the selected stock items by a given amount."
 msgstr "Forøg antallet af valgte lagervarer med et givet beløb."
 
-#: src/forms/StockForms.tsx:1277
+#: src/forms/StockForms.tsx:1307
 #: src/hooks/UseStockAdjustActions.tsx:118
 msgid "Remove Stock"
 msgstr "Fjern Lagervarer"
 
-#: src/forms/StockForms.tsx:1278
+#: src/forms/StockForms.tsx:1308
 msgid "Stock removed"
 msgstr "Lager fjernet"
 
-#: src/forms/StockForms.tsx:1281
+#: src/forms/StockForms.tsx:1311
 msgid "Decrease the quantity of the selected stock items by a given amount."
 msgstr "Reducer antallet af de valgte lagervarer med et givet beløb."
 
-#: src/forms/StockForms.tsx:1292
+#: src/forms/StockForms.tsx:1322
 #: src/hooks/UseStockAdjustActions.tsx:128
 msgid "Transfer Stock"
 msgstr "Overfør Lager"
 
-#: src/forms/StockForms.tsx:1293
+#: src/forms/StockForms.tsx:1323
 msgid "Stock transferred"
 msgstr "Lager overført"
 
-#: src/forms/StockForms.tsx:1296
+#: src/forms/StockForms.tsx:1326
 msgid "Transfer selected items to the specified location."
 msgstr "Overfør valgte elementer til den angivne lokation."
 
-#: src/forms/StockForms.tsx:1307
+#: src/forms/StockForms.tsx:1337
 #: src/hooks/UseStockAdjustActions.tsx:168
 msgid "Return Stock"
 msgstr "Retur Lager"
 
-#: src/forms/StockForms.tsx:1308
+#: src/forms/StockForms.tsx:1338
 msgid "Stock returned"
 msgstr "Lager returneret"
 
-#: src/forms/StockForms.tsx:1311
+#: src/forms/StockForms.tsx:1341
 msgid "Return selected items into stock, to the specified location."
 msgstr "Returner valgte elementer til lager, til den angivne lokation."
 
-#: src/forms/StockForms.tsx:1322
+#: src/forms/StockForms.tsx:1352
 #: src/hooks/UseStockAdjustActions.tsx:98
 msgid "Count Stock"
 msgstr "Tæl Lager"
 
-#: src/forms/StockForms.tsx:1323
+#: src/forms/StockForms.tsx:1353
 msgid "Stock counted"
 msgstr "Lager er optalt"
 
-#: src/forms/StockForms.tsx:1326
+#: src/forms/StockForms.tsx:1356
 msgid "Count the selected stock items, and adjust the quantity accordingly."
 msgstr "Tæl de valgte lagervarer, og juster mængden i overensstemmelse."
 
-#: src/forms/StockForms.tsx:1337
+#: src/forms/StockForms.tsx:1367
 msgid "Change Stock Status"
 msgstr "Ændr Lagerstatus"
 
-#: src/forms/StockForms.tsx:1338
+#: src/forms/StockForms.tsx:1368
 msgid "Stock status changed"
 msgstr "Lagerstatus ændret"
 
-#: src/forms/StockForms.tsx:1341
+#: src/forms/StockForms.tsx:1371
 msgid "Change the status of the selected stock items."
 msgstr "Ændre status for de valgte lagervarer."
 
-#: src/forms/StockForms.tsx:1352
+#: src/forms/StockForms.tsx:1382
 #: src/hooks/UseStockAdjustActions.tsx:138
 msgid "Merge Stock"
 msgstr "Flet Lager"
 
-#: src/forms/StockForms.tsx:1353
+#: src/forms/StockForms.tsx:1383
 msgid "Stock merged"
 msgstr "Lager sammenlagt"
 
-#: src/forms/StockForms.tsx:1355
+#: src/forms/StockForms.tsx:1385
 msgid "Merge Stock Items"
 msgstr "Flet Lagervarer"
 
-#: src/forms/StockForms.tsx:1357
+#: src/forms/StockForms.tsx:1387
 msgid "Merge operation cannot be reversed"
 msgstr "Fletningshandlingen kan ikke fortrydes"
 
-#: src/forms/StockForms.tsx:1358
+#: src/forms/StockForms.tsx:1388
 msgid "Tracking information may be lost when merging items"
 msgstr "Sporingsoplysninger kan gå tabt ved sammenlægning af elementer"
 
-#: src/forms/StockForms.tsx:1359
+#: src/forms/StockForms.tsx:1389
 msgid "Supplier information may be lost when merging items"
 msgstr "Leverandøroplysninger kan gå tabt ved sammenlægning af elementer"
 
-#: src/forms/StockForms.tsx:1377
+#: src/forms/StockForms.tsx:1407
 msgid "Assign Stock to Customer"
 msgstr "Tildel lager til kunde"
 
-#: src/forms/StockForms.tsx:1378
+#: src/forms/StockForms.tsx:1408
 msgid "Stock assigned to customer"
 msgstr "Lager tildelt kunden"
 
-#: src/forms/StockForms.tsx:1388
+#: src/forms/StockForms.tsx:1418
 msgid "Delete Stock Items"
 msgstr "Slet Lagervare"
 
-#: src/forms/StockForms.tsx:1389
+#: src/forms/StockForms.tsx:1419
 msgid "Stock deleted"
 msgstr "Lagervare slettet"
 
-#: src/forms/StockForms.tsx:1392
+#: src/forms/StockForms.tsx:1422
 msgid "This operation will permanently delete the selected stock items."
 msgstr "Denne handling vil permanent slette de valgte lagervarer."
 
-#: src/forms/StockForms.tsx:1401
+#: src/forms/StockForms.tsx:1431
 msgid "Parent stock location"
 msgstr "Overordnet lager lokation"
 
-#: src/forms/StockForms.tsx:1528
+#: src/forms/StockForms.tsx:1558
 msgid "Find Serial Number"
 msgstr "Find Serienummer"
 
-#: src/forms/StockForms.tsx:1539
+#: src/forms/StockForms.tsx:1569
 msgid "No matching items"
 msgstr "Ingen matchende varer"
 
-#: src/forms/StockForms.tsx:1545
+#: src/forms/StockForms.tsx:1575
 msgid "Multiple matching items"
 msgstr "Flere matchende varer"
 
-#: src/forms/StockForms.tsx:1554
+#: src/forms/StockForms.tsx:1584
 msgid "Invalid response from server"
 msgstr "Ugyldigt svar fra server"
 
@@ -5071,99 +5079,110 @@ msgstr "Intern serverfejl"
 #~ msgid "You have been logged out"
 #~ msgstr "You have been logged out"
 
-#: src/functions/auth.tsx:123
-#: src/functions/auth.tsx:344
-msgid "Already logged in"
-msgstr "Allerede logget ind"
-
 #: src/functions/auth.tsx:124
-#: src/functions/auth.tsx:345
-msgid "There is a conflicting session on the server for this browser. Please logout of that first."
-msgstr "Der er en konfliktfyldt session på serveren for denne browser. Log ud af det først."
+#: src/functions/auth.tsx:216
+msgid "Logged Out"
+msgstr "Logget af"
 
-#: src/functions/auth.tsx:142
-msgid "No response from server."
-msgstr "Intet svar fra server."
+#: src/functions/auth.tsx:125
+msgid "There was a conflicting session for this browser, which has been logged out."
+msgstr ""
 
 #: src/functions/auth.tsx:142
 #~ msgid "Found an existing login - using it to log you in."
 #~ msgstr "Found an existing login - using it to log you in."
 
 #: src/functions/auth.tsx:143
+msgid "No response from server."
+msgstr "Intet svar fra server."
+
+#: src/functions/auth.tsx:143
 #~ msgid "Found an existing login - welcome back!"
 #~ msgstr "Found an existing login - welcome back!"
 
-#: src/functions/auth.tsx:179
+#: src/functions/auth.tsx:186
 msgid "MFA Login successful"
 msgstr "Multifaktorgodkendelse Login succesfuld"
 
-#: src/functions/auth.tsx:180
+#: src/functions/auth.tsx:187
 msgid "MFA details were automatically provided in the browser"
 msgstr "Multifaktorgodkendelse detaljer blev automatisk givet i browseren"
 
-#: src/functions/auth.tsx:209
-msgid "Logged Out"
-msgstr "Logget af"
-
-#: src/functions/auth.tsx:210
+#: src/functions/auth.tsx:217
 msgid "Successfully logged out"
 msgstr "Du er nu logget af"
 
-#: src/functions/auth.tsx:249
+#: src/functions/auth.tsx:276
 msgid "Language changed"
 msgstr "Sprog ændret"
 
-#: src/functions/auth.tsx:250
+#: src/functions/auth.tsx:277
 msgid "Your active language has been changed to the one set in your profile"
 msgstr "Dit aktive sprog er blevet ændret til det der er sat i din profil"
 
-#: src/functions/auth.tsx:270
+#: src/functions/auth.tsx:297
 msgid "Theme changed"
 msgstr "Tema ændret"
 
-#: src/functions/auth.tsx:271
+#: src/functions/auth.tsx:298
 msgid "Your active theme has been changed to the one set in your profile"
 msgstr "Dit aktive tema er blevet ændret til det der er sat i din profil"
 
-#: src/functions/auth.tsx:305
+#: src/functions/auth.tsx:332
 msgid "Check your inbox for a reset link. This only works if you have an account. Check in spam too."
 msgstr "Tjek din indbakke for et nulstillingslink. Dette virker kun, hvis du har en konto. Tjek også spam."
 
-#: src/functions/auth.tsx:312
-#: src/functions/auth.tsx:569
+#: src/functions/auth.tsx:339
+#: src/functions/auth.tsx:603
 msgid "Reset failed"
 msgstr "Nulstilling fejlede"
 
-#: src/functions/auth.tsx:401
+#: src/functions/auth.tsx:366
+msgid "Already logged in"
+msgstr "Allerede logget ind"
+
+#: src/functions/auth.tsx:367
+msgid "There is a conflicting session on the server for this browser. Please logout of that first."
+msgstr "Der er en konfliktfyldt session på serveren for denne browser. Log ud af det først."
+
+#: src/functions/auth.tsx:423
 msgid "Logged In"
 msgstr "Logget ind"
 
-#: src/functions/auth.tsx:402
+#: src/functions/auth.tsx:424
 msgid "Successfully logged in"
 msgstr "Logget ind"
 
-#: src/functions/auth.tsx:529
+#: src/functions/auth.tsx:558
 msgid "Failed to set up MFA"
 msgstr "Kunne ikke oprette Multifaktorgodkendelse"
 
-#: src/functions/auth.tsx:559
+#: src/functions/auth.tsx:577
+msgid "MFA Setup successful"
+msgstr ""
+
+#: src/functions/auth.tsx:578
+msgid "MFA via TOTP has been set up successfully; you will need to login again."
+msgstr ""
+
+#: src/functions/auth.tsx:593
 msgid "Password set"
 msgstr "Adgangskode sat"
 
-#: src/functions/auth.tsx:560
-#: src/functions/auth.tsx:669
+#: src/functions/auth.tsx:594
+#: src/functions/auth.tsx:703
 msgid "The password was set successfully. You can now login with your new password"
 msgstr "Adgangskoden blev oprettet. Du kan nu logge ind med din nye adgangskode"
 
-#: src/functions/auth.tsx:634
+#: src/functions/auth.tsx:668
 msgid "Password could not be changed"
 msgstr "Adgangskoden kunne ikke ændres"
 
-#: src/functions/auth.tsx:652
+#: src/functions/auth.tsx:686
 msgid "The two password fields didn’t match"
 msgstr "De to adgangskodefelter matcher ikke"
 
-#: src/functions/auth.tsx:668
+#: src/functions/auth.tsx:702
 msgid "Password Changed"
 msgstr "Adgangskode ændret"
 
@@ -5274,11 +5293,11 @@ msgstr "Tilføj til valgte lagervarer"
 
 #: src/hooks/UseStockAdjustActions.tsx:120
 msgid "Remove from selected stock items"
-msgstr ""
+msgstr "Fjern fra valgte lagervarer"
 
 #: src/hooks/UseStockAdjustActions.tsx:130
 msgid "Transfer selected stock items"
-msgstr ""
+msgstr "Overfør valgte lagervarer"
 
 #: src/hooks/UseStockAdjustActions.tsx:140
 msgid "Merge selected stock items"
@@ -5290,7 +5309,7 @@ msgstr ""
 
 #: src/hooks/UseStockAdjustActions.tsx:158
 msgid "Assign Stock"
-msgstr ""
+msgstr "Tildel Lager"
 
 #: src/hooks/UseStockAdjustActions.tsx:160
 msgid "Assign selected stock items to a customer"
@@ -5309,9 +5328,9 @@ msgid "Delete selected stock items"
 msgstr "Slet valgte lagervarer"
 
 #: src/hooks/UseStockAdjustActions.tsx:205
-#: src/pages/part/PartDetail.tsx:1165
+#: src/pages/part/PartDetail.tsx:1164
 msgid "Stock Actions"
-msgstr ""
+msgstr "Lager Handlinger"
 
 #: src/pages/Auth/ChangePassword.tsx:32
 #: src/pages/Auth/Reset.tsx:14
@@ -5392,12 +5411,12 @@ msgstr "Har du ikke en konto?"
 #~ msgstr "Enter your TOTP or recovery code"
 
 #: src/pages/Auth/MFA.tsx:29
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:77
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:86
 msgid "Multi-Factor Authentication"
 msgstr "Multifaktorgodkendelse"
 
 #: src/pages/Auth/MFA.tsx:33
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:217
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:219
 msgid "TOTP Code"
 msgstr "TOTP Kode"
 
@@ -5670,7 +5689,7 @@ msgstr "Valgte elementer er ikke kendte"
 
 #: src/pages/Index/Scan.tsx:169
 msgid "Multiple object types selected"
-msgstr ""
+msgstr "Flere objekter typer valgt"
 
 #: src/pages/Index/Scan.tsx:175
 #~ msgid "Actions ..."
@@ -5895,7 +5914,7 @@ msgid "Position"
 msgstr "Stilling"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:90
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:953
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:967
 msgid "Type"
 msgstr "Type"
 
@@ -5942,220 +5961,220 @@ msgstr "Rediger Profil"
 msgid "{0}"
 msgstr "{0}"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:103
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:105
 msgid "Reauthentication Succeeded"
 msgstr "Genautentificer Gennemført"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:104
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:106
 msgid "You have been reauthenticated successfully."
 msgstr "Du er blevet genautentificer med succes."
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:112
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:114
 msgid "Error during reauthentication"
 msgstr "Fejl under genautentificer"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:115
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:117
 msgid "Reauthentication Failed"
 msgstr "Genautentificer Mislykkedes"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:116
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:118
 msgid "Failed to reauthenticate"
 msgstr "Genautentificer mislykkedes"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:131
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:171
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:133
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:173
 msgid "Reauthenticate"
 msgstr "Genautentificer"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:133
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:135
 msgid "Reauthentiction is required to continue."
 msgstr "Genautentificering kræves for at fortsætte."
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:195
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:197
 msgid "Enter your password"
 msgstr "Indtast din adgangskode"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:219
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:221
 msgid "Enter one of your TOTP codes"
 msgstr "Indtast en af dine TOTP koder"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:271
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:273
 msgid "WebAuthn Credential Removed"
 msgstr "WebAuthn legitimationsoplysninger fjernet"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:272
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:274
 msgid "WebAuthn credential removed successfully."
 msgstr "WebAuthn legitimationsoplysninger blev fjernet."
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:281
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:283
 msgid "Error removing WebAuthn credential"
 msgstr "Fejl ved fjernelse af WebAuthn legitimationsoplysninger"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:302
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:304
 msgid "Remove WebAuthn Credential"
 msgstr "Fjern WebAuthn legitimationsoplysninger"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:310
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:401
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:312
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:403
 #: src/tables/build/BuildAllocatedStockTable.tsx:181
-#: src/tables/build/BuildLineTable.tsx:668
+#: src/tables/build/BuildLineTable.tsx:669
 #: src/tables/sales/SalesOrderAllocationTable.tsx:220
 msgid "Confirm Removal"
 msgstr "Bekræft sletning"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:312
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:314
 msgid "Confirm removal of webauth credential"
 msgstr "Bekræft fjernelse af webauth legitimationsoplysninger"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:364
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:366
 msgid "TOTP Removed"
 msgstr "TOTP Fjernet"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:365
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:367
 msgid "TOTP token removed successfully."
 msgstr "TOTP token blev fjernet."
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:375
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:377
 msgid "Error removing TOTP token"
 msgstr "Fejl ved fjernelse af TOTP token"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:394
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:396
 msgid "Remove TOTP Token"
 msgstr "Fjern TOTP Token"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:403
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:405
 msgid "Confirm removal of TOTP code"
 msgstr "Bekræft fjernelse af TOTP kode"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:463
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:465
 msgid "TOTP Already Registered"
 msgstr "TOTP Allerede Registreret"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:464
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:466
 msgid "A TOTP token is already registered for this account."
 msgstr "En TOTP token er allerede registreret for denne konto."
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:479
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:481
 msgid "Error Fetching TOTP Registration"
 msgstr "Fejl Ved Hentning Af TOTP Registrering"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:480
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:482
 msgid "An unexpected error occurred while fetching TOTP registration data."
 msgstr "En uventet fejl opstod under hentning af TOTP registreringsdata."
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:522
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:524
 msgid "TOTP Registered"
 msgstr "TOTP Registrerede"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:523
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:525
 msgid "TOTP token registered successfully."
 msgstr "TOTP token registreret."
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:532
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:534
 msgid "Error registering TOTP token"
 msgstr "Fejl ved registrering af TOTP token"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:551
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:553
 msgid "Register TOTP Token"
 msgstr "Registrer TOTP Token"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:596
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:598
 msgid "Error fetching recovery codes"
 msgstr "Fejl ved hentning af gendannelseskoder"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:632
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:648
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:852
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:634
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:650
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:866
 msgid "Recovery Codes"
 msgstr "Gendannelseskoder"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:650
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:652
 msgid "The following one time recovery codes are available for use"
 msgstr "Følgende engangskoder til gendannelse er tilgængelige til brug"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:667
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:669
 msgid "Copy recovery codes to clipboard"
 msgstr "Kopier gendannelseskoder til udklipsholder"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:677
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:679
 msgid "No Unused Codes"
 msgstr "Ingen Ubrugte Koder"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:679
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:681
 msgid "There are no available recovery codes"
 msgstr "Der er ingen tilgængelige gendannelseskoder"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:768
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:782
 msgid "WebAuthn Registered"
 msgstr "WebAuthn Registreret"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:769
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:783
 msgid "WebAuthn credential registered successfully"
 msgstr "WebAuthn legitimationsoplysninger registreret"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:778
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:792
 msgid "Error registering WebAuthn credential"
 msgstr "Fejl ved registrering af WebAuthn legitimationsoplysninger"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:781
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:795
 msgid "WebAuthn Registration Failed"
 msgstr "WebAuthn Registrering Fejlede"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:782
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:796
 msgid "Failed to register WebAuthn credential"
 msgstr "Kunne ikke registrere WebAuthn legitimationsoplysninger"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:805
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:819
 msgid "Error fetching WebAuthn registration"
 msgstr "Fejl ved hentning af WebAuthn registrering"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:845
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:859
 msgid "TOTP"
 msgstr "TOTP"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:846
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:860
 msgid "Time-based One-Time Password"
 msgstr "Tidsbaseret Engangskodeord"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:853
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:867
 msgid "One-Time pre-generated recovery codes"
 msgstr "Engangs prægenererede gendannelseskoder"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:859
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:873
 msgid "WebAuthn"
 msgstr "WebAuthn"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:860
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:874
 msgid "Web Authentication (WebAuthn) is a web standard for secure authentication"
 msgstr "Webgodkendelse (WebAuthn) er en webstandard til sikker godkendelse"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:956
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:970
 msgid "Last used at"
 msgstr "Sidst anvendt den"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:959
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:973
 msgid "Created at"
 msgstr "Oprettet den"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:970
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:190
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:348
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:984
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:204
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:362
 msgid "Not Configured"
 msgstr "Ikke konfigureret"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:974
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:988
 msgid "No multi-factor tokens configured for this account"
 msgstr "Ingen multi-faktor tokens konfigureret for denne konto"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:979
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:993
 msgid "Register Authentication Method"
 msgstr "Registrer Autentificerings Metode"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:995
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:1009
 msgid "No MFA Methods Available"
 msgstr "Ingen Multifaktorgodkendelse Metoder Tilgængelige"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:999
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:1013
 msgid "There are no MFA methods available for configuration"
 msgstr "Der er ingen Multifaktorgodkendelse metoder til rådighed til konfiguration"
 
@@ -6171,47 +6190,47 @@ msgstr "Engangskodeord"
 msgid "Enter the TOTP code to ensure it registered correctly"
 msgstr "Indtast TOTP koden for at sikre at den er registreret korrekt"
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:51
-msgid "Email Addresses"
-msgstr "E-mail adresser"
-
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:55
 #~ msgid "Single Sign On Accounts"
 #~ msgstr "Single Sign On Accounts"
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:59
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:60
+msgid "Email Addresses"
+msgstr "E-mail adresser"
+
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:68
 msgid "Single Sign On"
 msgstr "Single Sign On"
-
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:67
-msgid "Not enabled"
-msgstr "Ikke aktiveret"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:69
 #~ msgid "Multifactor"
 #~ msgstr "Multifactor"
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:70
-msgid "Single Sign On is not enabled for this server "
-msgstr "Single Sign On er ikke aktiveret for denne server "
-
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:71
 #~ msgid "Single Sign On is not enabled for this server"
 #~ msgstr "Single Sign On is not enabled for this server"
+
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:76
+msgid "Not enabled"
+msgstr "Ikke aktiveret"
+
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:79
+msgid "Single Sign On is not enabled for this server "
+msgstr "Single Sign On er ikke aktiveret for denne server "
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:83
 #~ msgid "Multifactor authentication is not configured for your account"
 #~ msgstr "Multifactor authentication is not configured for your account"
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:85
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:94
 msgid "Access Tokens"
 msgstr "Adgangs Token"
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:94
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:108
 msgid "Session Information"
 msgstr "Session Information"
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:132
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:146
 #: src/tables/general/BarcodeScanTable.tsx:60
 #: src/tables/settings/BarcodeScanHistoryTable.tsx:75
 #: src/tables/settings/EmailTable.tsx:131
@@ -6219,61 +6238,57 @@ msgstr "Session Information"
 msgid "Timestamp"
 msgstr "Tidsstempel"
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:133
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:147
 msgid "Method"
 msgstr "Metode"
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:176
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:190
 msgid "Error while updating email"
 msgstr "Fejl under opdatering af e-mail"
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:193
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:207
 msgid "Currently no email addresses are registered."
 msgstr "Der er i øjeblikket ingen e-mailadresser registreret."
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:201
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:215
 msgid "The following email addresses are associated with your account:"
 msgstr "Følgende e-mailadresser er knyttet til din konto:"
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:214
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:228
 msgid "Primary"
 msgstr "Primær"
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:219
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:233
 msgid "Verified"
 msgstr "Verificeret"
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:223
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:237
 msgid "Unverified"
 msgstr "Ikke verificeret"
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:241
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:255
 msgid "Make Primary"
 msgstr "Sæt som primær"
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:247
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:261
 msgid "Re-send Verification"
 msgstr "Gensend Verifikation"
-
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:261
-msgid "Add Email Address"
-msgstr "Tilføj e-mailadresse"
-
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:263
-msgid "E-Mail"
-msgstr "E-mail"
-
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:264
-msgid "E-Mail address"
-msgstr "E-mail adresse"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:270
 #~ msgid "Provider has not been configured"
 #~ msgstr "Provider has not been configured"
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:276
-msgid "Error while adding email"
-msgstr "Fejl ved tilføjelse af e-mail"
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:275
+msgid "Add Email Address"
+msgstr "Tilføj e-mailadresse"
+
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:277
+msgid "E-Mail"
+msgstr "E-mail"
+
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:278
+msgid "E-Mail address"
+msgstr "E-mail adresse"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:280
 #~ msgid "Not configured"
@@ -6283,23 +6298,27 @@ msgstr "Fejl ved tilføjelse af e-mail"
 #~ msgid "There are no social network accounts connected to this account."
 #~ msgstr "There are no social network accounts connected to this account."
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:287
-msgid "Add Email"
-msgstr "Tilføj E-mail"
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:290
+msgid "Error while adding email"
+msgstr "Fejl ved tilføjelse af e-mail"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:293
 #~ msgid "You can sign in to your account using any of the following third party accounts"
 #~ msgstr "You can sign in to your account using any of the following third party accounts"
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:351
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:301
+msgid "Add Email"
+msgstr "Tilføj E-mail"
+
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:365
 msgid "There are no providers connected to this account."
 msgstr "Der er ingen udbydere forbundet til denne konto."
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:360
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:374
 msgid "You can sign in to your account using any of the following providers"
 msgstr "Du kan logge ind på din konto ved hjælp af en af følgende udbydere"
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:373
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:387
 msgid "Remove Provider Link"
 msgstr "Fjern Udbyderlink"
 
@@ -6558,7 +6577,7 @@ msgstr "Kategori Parametre"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:221
 msgid "Location Types"
-msgstr ""
+msgstr "Lokationstyper"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:226
 #~ msgid "Add a new user"
@@ -6943,7 +6962,7 @@ msgstr "Ekstern"
 #: src/pages/sales/SalesOrderDetail.tsx:99
 #: src/tables/ColumnRenderers.tsx:321
 #: src/tables/build/BuildAllocatedStockTable.tsx:112
-#: src/tables/build/BuildLineTable.tsx:353
+#: src/tables/build/BuildLineTable.tsx:354
 msgid "Reference"
 msgstr "Reference"
 
@@ -6956,16 +6975,16 @@ msgid "Build Quantity"
 msgstr "Produktions antal"
 
 #: src/pages/build/BuildDetail.tsx:276
-#: src/pages/part/PartDetail.tsx:605
-#: src/tables/bom/BomTable.tsx:365
-#: src/tables/bom/BomTable.tsx:407
+#: src/pages/part/PartDetail.tsx:598
+#: src/tables/bom/BomTable.tsx:366
+#: src/tables/bom/BomTable.tsx:408
 msgid "Can Build"
 msgstr "Kan Bygge"
 
 #: src/pages/build/BuildDetail.tsx:285
 #: src/pages/build/BuildDetail.tsx:475
 msgid "Completed Outputs"
-msgstr ""
+msgstr "Gennemførte Output"
 
 #: src/pages/build/BuildDetail.tsx:302
 #: src/tables/Filter.tsx:381
@@ -6974,7 +6993,7 @@ msgid "Issued By"
 msgstr "Udstedt Af"
 
 #: src/pages/build/BuildDetail.tsx:310
-#: src/pages/part/PartDetail.tsx:698
+#: src/pages/part/PartDetail.tsx:691
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:262
 #: src/pages/sales/ReturnOrderDetail.tsx:240
 #: src/pages/sales/SalesOrderDetail.tsx:233
@@ -7056,7 +7075,7 @@ msgstr "Forbrugt Lager"
 
 #: src/pages/build/BuildDetail.tsx:462
 msgid "Incomplete Outputs"
-msgstr ""
+msgstr "Ufuldstændige Output"
 
 #: src/pages/build/BuildDetail.tsx:490
 msgid "External Orders"
@@ -7067,9 +7086,9 @@ msgid "Child Build Orders"
 msgstr "Byg Underordnede Ordrer"
 
 #: src/pages/build/BuildDetail.tsx:514
-#: src/pages/part/PartDetail.tsx:933
+#: src/pages/part/PartDetail.tsx:929
 #: src/pages/stock/StockDetail.tsx:587
-#: src/tables/build/BuildOutputTable.tsx:656
+#: src/tables/build/BuildOutputTable.tsx:654
 #: src/tables/stock/StockItemTestResultTable.tsx:173
 msgid "Test Results"
 msgstr "Testresultater"
@@ -7140,7 +7159,7 @@ msgstr "Ordre udstedt"
 
 #: src/pages/build/BuildDetail.tsx:629
 msgid "Complete Build Order"
-msgstr ""
+msgstr "Færdiggør Byggeordre"
 
 #: src/pages/build/BuildDetail.tsx:635
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:441
@@ -7172,7 +7191,7 @@ msgstr "Fuldfør ordre"
 
 #: src/pages/build/BuildDetail.tsx:691
 msgid "Build Order Actions"
-msgstr ""
+msgstr "Byg Ordre Handlinger"
 
 #: src/pages/build/BuildDetail.tsx:696
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:494
@@ -7218,7 +7237,7 @@ msgstr "Produktionsordre"
 #: src/pages/build/BuildIndex.tsx:35
 #: src/tables/build/BuildOrderTable.tsx:184
 msgid "Show external build orders"
-msgstr ""
+msgstr "Vis eksterne bygge ordrer"
 
 #: src/pages/build/BuildIndex.tsx:39
 #~ msgid "New Build Order"
@@ -7317,7 +7336,7 @@ msgstr "Firma detaljer"
 
 #: src/pages/company/CompanyDetail.tsx:188
 msgid "Supplied Parts"
-msgstr ""
+msgstr "Leverede Dele"
 
 #: src/pages/company/CompanyDetail.tsx:189
 #~ msgid "Delete company"
@@ -7329,7 +7348,7 @@ msgstr "Fremstillede Dele"
 
 #: src/pages/company/CompanyDetail.tsx:242
 msgid "Assigned Stock"
-msgstr ""
+msgstr "Tildelt Lager"
 
 #: src/pages/company/CompanyDetail.tsx:287
 #: src/tables/company/CompanyTable.tsx:82
@@ -7347,7 +7366,7 @@ msgstr "Virksomheds Handlinger"
 #: src/pages/company/ManufacturerPartDetail.tsx:77
 #: src/pages/company/SupplierPartDetail.tsx:90
 msgid "Internal Part"
-msgstr ""
+msgstr "Intern Del"
 
 #: src/pages/company/ManufacturerPartDetail.tsx:111
 msgid "Manufacturer Part Number"
@@ -7360,7 +7379,7 @@ msgstr "Ekstern link"
 
 #: src/pages/company/ManufacturerPartDetail.tsx:147
 #: src/pages/company/SupplierPartDetail.tsx:233
-#: src/pages/part/PartDetail.tsx:794
+#: src/pages/part/PartDetail.tsx:790
 msgid "Part Details"
 msgstr "Del Detaljer"
 
@@ -7376,7 +7395,7 @@ msgstr "Producent Del Detaljer"
 #: src/pages/company/SupplierPartDetail.tsx:253
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:382
 msgid "Received Stock"
-msgstr ""
+msgstr "Modtaget Lager"
 
 #: src/pages/company/ManufacturerPartDetail.tsx:211
 #: src/tables/purchasing/ManufacturerPartTable.tsx:108
@@ -7397,7 +7416,7 @@ msgstr "Slet Producent Del"
 
 #: src/pages/company/ManufacturerPartDetail.tsx:245
 msgid "Manufacturer Part Actions"
-msgstr ""
+msgstr "Producent Del Handlinger"
 
 #: src/pages/company/ManufacturerPartDetail.tsx:281
 #~ msgid "ManufacturerPart"
@@ -7414,7 +7433,7 @@ msgstr "Del Beskrivelse"
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:233
 #: src/tables/purchasing/SupplierPartTable.tsx:138
 msgid "Pack Quantity"
-msgstr ""
+msgstr "Pakkemængde"
 
 #: src/pages/company/SupplierPartDetail.tsx:205
 msgid "Supplier Availability"
@@ -7459,7 +7478,7 @@ msgid "Add Supplier Part"
 msgstr "Tilføj leverandørdel"
 
 #: src/pages/company/SupplierPartDetail.tsx:393
-#: src/pages/part/PartDetail.tsx:1025
+#: src/pages/part/PartDetail.tsx:1021
 msgid "No Stock"
 msgstr "Intet lager"
 
@@ -7563,11 +7582,11 @@ msgstr "Slet Del Kategori"
 
 #: src/pages/part/CategoryDetail.tsx:207
 msgid "Parts Action"
-msgstr ""
+msgstr "Dele Handling"
 
 #: src/pages/part/CategoryDetail.tsx:208
 msgid "Action for parts in this category"
-msgstr ""
+msgstr "Handling for dele i denne kategori"
 
 #: src/pages/part/CategoryDetail.tsx:214
 msgid "Child Categories Action"
@@ -7673,58 +7692,53 @@ msgstr "Revision af"
 #: src/tables/ColumnRenderers.tsx:209
 #: src/tables/ColumnRenderers.tsx:218
 msgid "Default Location"
-msgstr ""
+msgstr "Standard lokation"
 
 #: src/pages/part/PartDetail.tsx:500
 msgid "Category Default Location"
-msgstr ""
+msgstr "Kategori Standard Lokation"
 
 #: src/pages/part/PartDetail.tsx:507
-#: src/pages/part/PartDetail.tsx:705
-msgid "Default Supplier"
-msgstr "Standard leverandør"
+msgid "Units"
+msgstr "Enheder"
 
 #: src/pages/part/PartDetail.tsx:510
 #~ msgid "Stocktake By"
 #~ msgstr "Stocktake By"
 
 #: src/pages/part/PartDetail.tsx:514
-msgid "Units"
-msgstr "Enheder"
-
-#: src/pages/part/PartDetail.tsx:521
 #: src/tables/settings/PendingTasksTable.tsx:51
 msgid "Keywords"
 msgstr "Nøgleord"
 
-#: src/pages/part/PartDetail.tsx:549
-#: src/tables/bom/BomTable.tsx:439
+#: src/pages/part/PartDetail.tsx:542
+#: src/tables/bom/BomTable.tsx:440
 #: src/tables/build/BuildLineTable.tsx:306
 #: src/tables/part/PartTable.tsx:319
 #: src/tables/sales/SalesOrderLineItemTable.tsx:138
 msgid "Available Stock"
 msgstr "Tilgængelig Lager"
 
-#: src/pages/part/PartDetail.tsx:555
-#: src/tables/bom/BomTable.tsx:341
+#: src/pages/part/PartDetail.tsx:548
+#: src/tables/bom/BomTable.tsx:342
 #: src/tables/build/BuildLineTable.tsx:268
 #: src/tables/sales/SalesOrderLineItemTable.tsx:180
 msgid "On order"
 msgstr "På bestilling"
 
-#: src/pages/part/PartDetail.tsx:562
+#: src/pages/part/PartDetail.tsx:555
 msgid "Required for Orders"
 msgstr "Kræves til ordrer"
 
-#: src/pages/part/PartDetail.tsx:573
+#: src/pages/part/PartDetail.tsx:566
 msgid "Allocated to Build Orders"
 msgstr "Allokeret til Byggeordrer"
 
-#: src/pages/part/PartDetail.tsx:585
+#: src/pages/part/PartDetail.tsx:578
 msgid "Allocated to Sales Orders"
 msgstr "Allokeret til Salgsordrer"
 
-#: src/pages/part/PartDetail.tsx:612
+#: src/pages/part/PartDetail.tsx:605
 msgid "Minimum Stock"
 msgstr ""
 
@@ -7732,51 +7746,51 @@ msgstr ""
 #~ msgid "Scheduling"
 #~ msgstr "Scheduling"
 
-#: src/pages/part/PartDetail.tsx:627
+#: src/pages/part/PartDetail.tsx:620
 #: src/tables/part/ParametricPartTable.tsx:24
 #: src/tables/part/PartTable.tsx:203
 msgid "Locked"
 msgstr "Låst"
 
-#: src/pages/part/PartDetail.tsx:633
+#: src/pages/part/PartDetail.tsx:626
 msgid "Template Part"
 msgstr "Skabelon Del"
 
-#: src/pages/part/PartDetail.tsx:638
-#: src/tables/bom/BomTable.tsx:429
+#: src/pages/part/PartDetail.tsx:631
+#: src/tables/bom/BomTable.tsx:430
 msgid "Assembled Part"
 msgstr "Samlede Del"
 
-#: src/pages/part/PartDetail.tsx:643
+#: src/pages/part/PartDetail.tsx:636
 msgid "Component Part"
 msgstr "Komponent Del"
 
-#: src/pages/part/PartDetail.tsx:648
-#: src/tables/bom/BomTable.tsx:419
+#: src/pages/part/PartDetail.tsx:641
+#: src/tables/bom/BomTable.tsx:420
 msgid "Testable Part"
 msgstr "Testbar Del"
 
-#: src/pages/part/PartDetail.tsx:654
-#: src/tables/bom/BomTable.tsx:424
+#: src/pages/part/PartDetail.tsx:647
+#: src/tables/bom/BomTable.tsx:425
 msgid "Trackable Part"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:659
+#: src/pages/part/PartDetail.tsx:652
 msgid "Purchaseable Part"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:665
+#: src/pages/part/PartDetail.tsx:658
 msgid "Saleable Part"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:670
-#: src/pages/part/PartDetail.tsx:1061
-#: src/tables/bom/BomTable.tsx:150
-#: src/tables/bom/BomTable.tsx:434
+#: src/pages/part/PartDetail.tsx:663
+#: src/pages/part/PartDetail.tsx:1057
+#: src/tables/bom/BomTable.tsx:151
+#: src/tables/bom/BomTable.tsx:435
 msgid "Virtual Part"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:685
+#: src/pages/part/PartDetail.tsx:678
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:272
 #: src/pages/sales/ReturnOrderDetail.tsx:250
 #: src/pages/sales/SalesOrderDetail.tsx:243
@@ -7784,67 +7798,71 @@ msgstr ""
 msgid "Creation Date"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:690
+#: src/pages/part/PartDetail.tsx:683
 #: src/tables/ColumnRenderers.tsx:435
 #: src/tables/Filter.tsx:373
 msgid "Created By"
 msgstr "Oprettet af"
 
-#: src/pages/part/PartDetail.tsx:711
+#: src/pages/part/PartDetail.tsx:698
+msgid "Default Supplier"
+msgstr "Standard leverandør"
+
+#: src/pages/part/PartDetail.tsx:707
 msgid "Default Expiry"
 msgstr "Standard Udløbsdato"
 
-#: src/pages/part/PartDetail.tsx:716
+#: src/pages/part/PartDetail.tsx:712
 msgid "days"
 msgstr "dage"
 
-#: src/pages/part/PartDetail.tsx:726
+#: src/pages/part/PartDetail.tsx:722
 #: src/pages/part/pricing/BomPricingPanel.tsx:78
 #: src/pages/part/pricing/VariantPricingPanel.tsx:95
 #: src/tables/part/PartTable.tsx:179
 msgid "Price Range"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:736
+#: src/pages/part/PartDetail.tsx:732
 msgid "Latest Serial Number"
 msgstr "Seneste Serienummer"
 
-#: src/pages/part/PartDetail.tsx:764
+#: src/pages/part/PartDetail.tsx:760
 msgid "Select Part Revision"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:819
+#: src/pages/part/PartDetail.tsx:815
 msgid "Variants"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:826
+#: src/pages/part/PartDetail.tsx:822
 #: src/pages/stock/StockDetail.tsx:542
 msgid "Allocations"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:833
+#: src/pages/part/PartDetail.tsx:829
 msgid "Bill of Materials"
 msgstr "Stykliste"
 
-#: src/pages/part/PartDetail.tsx:845
+#: src/pages/part/PartDetail.tsx:841
 msgid "Used In"
 msgstr "Brugt I"
 
-#: src/pages/part/PartDetail.tsx:852
+#: src/pages/part/PartDetail.tsx:848
 msgid "Part Pricing"
-msgstr ""
+msgstr "Del Prisfastsættelse"
 
-#: src/pages/part/PartDetail.tsx:922
+#: src/pages/part/PartDetail.tsx:918
 msgid "Test Templates"
 msgstr "Test Skabeloner"
 
-#: src/pages/part/PartDetail.tsx:944
+#: src/pages/part/PartDetail.tsx:940
 msgid "Related Parts"
-msgstr ""
+msgstr "Relaterede Dele"
 
-#: src/pages/part/PartDetail.tsx:956
+#: src/pages/part/PartDetail.tsx:952
 #: src/tables/ColumnRenderers.tsx:73
-#: src/tables/bom/BomTable.tsx:657
+#: src/tables/bom/BomTable.tsx:658
 #: src/tables/part/PartTestTemplateTable.tsx:258
 msgid "Part is Locked"
 msgstr "Delen er låst"
@@ -7853,7 +7871,7 @@ msgstr "Delen er låst"
 #~ msgid "Count part stock"
 #~ msgstr "Count part stock"
 
-#: src/pages/part/PartDetail.tsx:961
+#: src/pages/part/PartDetail.tsx:957
 msgid "Part parameters cannot be edited, as the part is locked"
 msgstr "Delparametre kan ikke redigeres, da delen er låst"
 
@@ -7861,49 +7879,49 @@ msgstr "Delparametre kan ikke redigeres, da delen er låst"
 #~ msgid "Transfer part stock"
 #~ msgstr "Transfer part stock"
 
-#: src/pages/part/PartDetail.tsx:1031
+#: src/pages/part/PartDetail.tsx:1027
 #: src/tables/part/PartTestTemplateTable.tsx:112
 #: src/tables/stock/StockItemTestResultTable.tsx:404
 msgid "Required"
 msgstr "Påkrævet"
 
-#: src/pages/part/PartDetail.tsx:1049
+#: src/pages/part/PartDetail.tsx:1045
 msgid "Deficit"
 msgstr "Underskud"
 
-#: src/pages/part/PartDetail.tsx:1086
+#: src/pages/part/PartDetail.tsx:1085
 #: src/tables/part/PartTable.tsx:396
 #: src/tables/part/PartTable.tsx:449
 msgid "Add Part"
 msgstr "Tilføj del"
 
-#: src/pages/part/PartDetail.tsx:1100
+#: src/pages/part/PartDetail.tsx:1099
 msgid "Delete Part"
 msgstr "Slet Del"
 
-#: src/pages/part/PartDetail.tsx:1109
+#: src/pages/part/PartDetail.tsx:1108
 msgid "Deleting this part cannot be reversed"
 msgstr "Sletning af denne del kan ikke fortrydes"
 
-#: src/pages/part/PartDetail.tsx:1171
+#: src/pages/part/PartDetail.tsx:1170
 #: src/pages/stock/StockDetail.tsx:883
 msgid "Order"
 msgstr "Ordre"
 
-#: src/pages/part/PartDetail.tsx:1172
+#: src/pages/part/PartDetail.tsx:1171
 #: src/pages/stock/StockDetail.tsx:884
-#: src/tables/build/BuildLineTable.tsx:768
+#: src/tables/build/BuildLineTable.tsx:769
 msgid "Order Stock"
 msgstr "Bestil Lager"
 
-#: src/pages/part/PartDetail.tsx:1184
+#: src/pages/part/PartDetail.tsx:1183
 msgid "Search by serial number"
 msgstr "Søg på serienummer"
 
-#: src/pages/part/PartDetail.tsx:1192
+#: src/pages/part/PartDetail.tsx:1191
 #: src/tables/part/PartTable.tsx:506
 msgid "Part Actions"
-msgstr ""
+msgstr "Del Handlinger"
 
 #: src/pages/part/PartIndex.tsx:29
 #~ msgid "Categories"
@@ -8023,7 +8041,7 @@ msgstr "Maksimal Værdi"
 #: src/pages/part/pricing/BomPricingPanel.tsx:57
 #: src/pages/part/pricing/BomPricingPanel.tsx:135
 #: src/tables/ColumnRenderers.tsx:552
-#: src/tables/bom/BomTable.tsx:282
+#: src/tables/bom/BomTable.tsx:283
 #: src/tables/general/ExtraLineItemTable.tsx:72
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:261
 #: src/tables/purchasing/PurchaseOrderTable.tsx:138
@@ -8066,7 +8084,7 @@ msgstr "Maksimal Pris"
 #: src/pages/part/pricing/PurchaseHistoryPanel.tsx:126
 #: src/pages/part/pricing/SupplierPricingPanel.tsx:66
 #: src/pages/stock/StockDetail.tsx:390
-#: src/tables/bom/BomTable.tsx:272
+#: src/tables/bom/BomTable.tsx:273
 #: src/tables/general/ExtraLineItemTable.tsx:64
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:257
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:84
@@ -8125,7 +8143,7 @@ msgstr "Rediger Pris"
 
 #: src/pages/part/pricing/PricingOverviewPanel.tsx:141
 msgid "Pricing Category"
-msgstr ""
+msgstr "Prissætning Kategori"
 
 #: src/pages/part/pricing/PricingOverviewPanel.tsx:160
 msgid "Minimum"
@@ -8137,11 +8155,11 @@ msgstr "Maksimum"
 
 #: src/pages/part/pricing/PricingOverviewPanel.tsx:192
 msgid "Override Pricing"
-msgstr ""
+msgstr "Overskriv Priser"
 
 #: src/pages/part/pricing/PricingOverviewPanel.tsx:203
 msgid "Overall Pricing"
-msgstr ""
+msgstr "Samlet Prissætning"
 
 #: src/pages/part/pricing/PricingOverviewPanel.tsx:229
 msgid "Purchase Pricing"
@@ -8156,27 +8174,27 @@ msgstr "Sidst Opdateret"
 
 #: src/pages/part/pricing/PricingOverviewPanel.tsx:292
 msgid "Pricing Not Set"
-msgstr ""
+msgstr "Pris Ikke Fastsat"
 
 #: src/pages/part/pricing/PricingOverviewPanel.tsx:293
 msgid "Pricing data has not been calculated for this part"
-msgstr ""
+msgstr "Prisdata er ikke beregnet for denne del"
 
 #: src/pages/part/pricing/PricingOverviewPanel.tsx:297
 msgid "Pricing Actions"
-msgstr ""
+msgstr "Pris Handlinger"
 
 #: src/pages/part/pricing/PricingOverviewPanel.tsx:300
 msgid "Refresh"
-msgstr ""
+msgstr "Genindlæser"
 
 #: src/pages/part/pricing/PricingOverviewPanel.tsx:301
 msgid "Refresh pricing data"
-msgstr ""
+msgstr "Genindlæser prisdata"
 
 #: src/pages/part/pricing/PricingOverviewPanel.tsx:316
 msgid "Edit pricing data"
-msgstr ""
+msgstr "Rediger prisdata"
 
 #: src/pages/part/pricing/PricingPanel.tsx:24
 msgid "No data available"
@@ -8188,7 +8206,7 @@ msgstr "Ingen data"
 
 #: src/pages/part/pricing/PricingPanel.tsx:66
 msgid "No pricing data available"
-msgstr ""
+msgstr "Ingen tilgængelige prisdata"
 
 #: src/pages/part/pricing/PricingPanel.tsx:77
 msgid "Loading pricing data"
@@ -8329,20 +8347,20 @@ msgstr ""
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:434
 msgid "Complete Purchase Order"
-msgstr ""
+msgstr "Færdiggør Indkøbsordre"
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:490
 #: src/pages/sales/ReturnOrderDetail.tsx:501
 #: src/pages/sales/SalesOrderDetail.tsx:554
 msgid "Order Actions"
-msgstr ""
+msgstr "Ordre Handlinger"
 
 #: src/pages/sales/ReturnOrderDetail.tsx:115
 #: src/pages/sales/SalesOrderDetail.tsx:105
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:132
 #: src/tables/sales/SalesOrderTable.tsx:141
 msgid "Customer Reference"
-msgstr ""
+msgstr "Kundens Reference"
 
 #: src/pages/sales/ReturnOrderDetail.tsx:196
 msgid "Return Address"
@@ -8443,7 +8461,7 @@ msgstr "Send ordre"
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:140
 #: src/tables/sales/SalesOrderShipmentTable.tsx:156
 msgid "Shipment Reference"
-msgstr ""
+msgstr "Forsendelse Reference"
 
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:146
 msgid "Tracking Number"
@@ -8455,7 +8473,7 @@ msgstr "Faktura Nummer"
 
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:189
 msgid "Allocated Items"
-msgstr ""
+msgstr "Allokeret Elementer"
 
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:194
 msgid "Checked By"
@@ -8470,7 +8488,7 @@ msgstr "Ikke kontrolleret"
 #: src/tables/sales/SalesOrderAllocationTable.tsx:182
 #: src/tables/sales/SalesOrderShipmentTable.tsx:189
 msgid "Shipment Date"
-msgstr ""
+msgstr "Forsendelse Dato"
 
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:211
 #~ msgid "Assigned Items"
@@ -8579,7 +8597,7 @@ msgstr "Lokations Detaljer"
 
 #: src/pages/stock/LocationDetail.tsx:225
 msgid "Default Parts"
-msgstr ""
+msgstr "Standard Dele"
 
 #: src/pages/stock/LocationDetail.tsx:243
 #~ msgid "Child Locations Action"
@@ -8589,7 +8607,7 @@ msgstr ""
 #: src/pages/stock/LocationDetail.tsx:410
 #: src/tables/stock/StockLocationTable.tsx:121
 msgid "Edit Stock Location"
-msgstr ""
+msgstr "Rediger Lagerlokation"
 
 #: src/pages/stock/LocationDetail.tsx:258
 msgid "Move items to parent location"
@@ -8610,15 +8628,15 @@ msgstr ""
 
 #: src/pages/stock/LocationDetail.tsx:280
 msgid "Locations Action"
-msgstr ""
+msgstr "Lokation Handlinger"
 
 #: src/pages/stock/LocationDetail.tsx:282
 msgid "Action for child locations in this location"
-msgstr ""
+msgstr "Handling for underordnede lokation i denne lokation"
 
 #: src/pages/stock/LocationDetail.tsx:316
 msgid "Scan Stock Item"
-msgstr ""
+msgstr "Scan Lagervare"
 
 #: src/pages/stock/LocationDetail.tsx:334
 #: src/pages/stock/StockDetail.tsx:812
@@ -8640,16 +8658,16 @@ msgstr ""
 
 #: src/pages/stock/LocationDetail.tsx:365
 msgid "Error scanning stock location"
-msgstr ""
+msgstr "Fejl under scanning af lager lokation"
 
 #: src/pages/stock/LocationDetail.tsx:406
 #: src/tables/stock/StockLocationTable.tsx:142
 msgid "Location Actions"
-msgstr ""
+msgstr "Lokation Handlinger"
 
 #: src/pages/stock/StockDetail.tsx:147
 msgid "Base Part"
-msgstr ""
+msgstr "Basis Del"
 
 #: src/pages/stock/StockDetail.tsx:155
 #~ msgid "Link custom barcode to stock item"
@@ -8685,11 +8703,11 @@ msgstr "Næste serienummer"
 
 #: src/pages/stock/StockDetail.tsx:272
 msgid "Allocated to Orders"
-msgstr ""
+msgstr "Allokeret Til Ordrer"
 
 #: src/pages/stock/StockDetail.tsx:305
 msgid "Installed In"
-msgstr ""
+msgstr "Installeret I"
 
 #: src/pages/stock/StockDetail.tsx:325
 msgid "Parent Item"
@@ -8697,7 +8715,7 @@ msgstr "Overordnet Element"
 
 #: src/pages/stock/StockDetail.tsx:329
 msgid "Parent stock item"
-msgstr ""
+msgstr "Overordnet lagervare"
 
 #: src/pages/stock/StockDetail.tsx:335
 msgid "Consumed By"
@@ -8713,11 +8731,11 @@ msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:526
 msgid "Stock Details"
-msgstr ""
+msgstr "Lager Detaljer"
 
 #: src/pages/stock/StockDetail.tsx:532
 msgid "Stock Tracking"
-msgstr ""
+msgstr "Lager Sporing"
 
 #: src/pages/stock/StockDetail.tsx:571
 #~ msgid "Test Data"
@@ -8725,15 +8743,15 @@ msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:601
 msgid "Installed Items"
-msgstr ""
+msgstr "Installerede Elementer"
 
 #: src/pages/stock/StockDetail.tsx:608
 msgid "Child Items"
-msgstr ""
+msgstr "Underordnede Elementer"
 
 #: src/pages/stock/StockDetail.tsx:661
 msgid "Edit Stock Item"
-msgstr ""
+msgstr "Rediger Lagervare"
 
 #: src/pages/stock/StockDetail.tsx:671
 #: src/tables/stock/StockItemTable.tsx:452
@@ -8752,7 +8770,7 @@ msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:703
 msgid "Items Created"
-msgstr ""
+msgstr "Elementer Oprettet"
 
 #: src/pages/stock/StockDetail.tsx:704
 msgid "Created {n} stock items"
@@ -8785,26 +8803,26 @@ msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:794
 msgid "Scan Into Location"
-msgstr ""
+msgstr "Scan Ind I Lokation"
 
 #: src/pages/stock/StockDetail.tsx:852
 msgid "Scan into location"
-msgstr ""
+msgstr "Scan ind i lokation"
 
 #: src/pages/stock/StockDetail.tsx:854
 msgid "Scan this item into a location"
-msgstr ""
+msgstr "Skan dette element ind på en lokation"
 
 #: src/pages/stock/StockDetail.tsx:866
 msgid "Stock Operations"
-msgstr ""
+msgstr "Lager Operationer"
 
 #: src/pages/stock/StockDetail.tsx:868
 #~ msgid "Count stock"
 #~ msgstr "Count stock"
 
 #: src/pages/stock/StockDetail.tsx:871
-#: src/tables/build/BuildOutputTable.tsx:524
+#: src/tables/build/BuildOutputTable.tsx:522
 msgid "Serialize"
 msgstr ""
 
@@ -8943,7 +8961,7 @@ msgstr ""
 
 #: src/tables/Filter.tsx:118
 msgid "Show items with serial numbers less than or equal to a given value"
-msgstr ""
+msgstr "Vis elementer med serienumre mindre end eller lig med en given værdi"
 
 #: src/tables/Filter.tsx:126
 msgid "Serial Above"
@@ -8951,7 +8969,7 @@ msgstr ""
 
 #: src/tables/Filter.tsx:127
 msgid "Show items with serial numbers greater than or equal to a given value"
-msgstr ""
+msgstr "Vis elementer med serienumre større end eller lig med en given værdi"
 
 #: src/tables/Filter.tsx:136
 msgid "Assigned to me"
@@ -8988,7 +9006,7 @@ msgstr ""
 
 #: src/tables/Filter.tsx:170
 msgid "Show items before this date"
-msgstr ""
+msgstr "Vis elementer før denne dato"
 
 #: src/tables/Filter.tsx:178
 msgid "Created Before"
@@ -9008,11 +9026,11 @@ msgstr "Vis elementer oprettet efter denne dato"
 
 #: src/tables/Filter.tsx:196
 msgid "Start Date Before"
-msgstr ""
+msgstr "Start dato før"
 
 #: src/tables/Filter.tsx:197
 msgid "Show items with a start date before this date"
-msgstr ""
+msgstr "Vis elementer med en startdato før denne dato"
 
 #: src/tables/Filter.tsx:205
 msgid "Start Date After"
@@ -9020,7 +9038,7 @@ msgstr "Start Dato Efter"
 
 #: src/tables/Filter.tsx:206
 msgid "Show items with a start date after this date"
-msgstr ""
+msgstr "Vis elementer med en startdato efter denne dato"
 
 #: src/tables/Filter.tsx:214
 msgid "Target Date Before"
@@ -9040,7 +9058,7 @@ msgstr ""
 
 #: src/tables/Filter.tsx:232
 msgid "Completed Before"
-msgstr ""
+msgstr "Færdiggjort Før"
 
 #: src/tables/Filter.tsx:233
 msgid "Show items completed before this date"
@@ -9048,7 +9066,7 @@ msgstr ""
 
 #: src/tables/Filter.tsx:241
 msgid "Completed After"
-msgstr ""
+msgstr "Færdiggjort Efter"
 
 #: src/tables/Filter.tsx:242
 msgid "Show items completed after this date"
@@ -9150,14 +9168,14 @@ msgstr "Tilføj Filter"
 
 #: src/tables/FilterSelectDrawer.tsx:355
 msgid "Clear Filters"
-msgstr ""
+msgstr "Nulstil filtre"
 
-#: src/tables/InvenTreeTable.tsx:45
-#: src/tables/InvenTreeTable.tsx:488
+#: src/tables/InvenTreeTable.tsx:46
+#: src/tables/InvenTreeTable.tsx:481
 msgid "No records found"
 msgstr ""
 
-#: src/tables/InvenTreeTable.tsx:152
+#: src/tables/InvenTreeTable.tsx:153
 msgid "Error loading table options"
 msgstr ""
 
@@ -9169,9 +9187,9 @@ msgstr ""
 #~ msgid "Are you sure you want to delete the selected records?"
 #~ msgstr "Are you sure you want to delete the selected records?"
 
-#: src/tables/InvenTreeTable.tsx:529
+#: src/tables/InvenTreeTable.tsx:522
 msgid "Server returned incorrect data type"
-msgstr ""
+msgstr "Server returnerede forkert datatype"
 
 #: src/tables/InvenTreeTable.tsx:535
 #~ msgid "Deleted records"
@@ -9189,7 +9207,7 @@ msgstr ""
 #~ msgid "This action cannot be undone!"
 #~ msgstr "This action cannot be undone!"
 
-#: src/tables/InvenTreeTable.tsx:562
+#: src/tables/InvenTreeTable.tsx:555
 msgid "Error loading table data"
 msgstr ""
 
@@ -9203,11 +9221,11 @@ msgstr ""
 #~ msgid "Barcode actions"
 #~ msgstr "Barcode actions"
 
-#: src/tables/InvenTreeTable.tsx:691
+#: src/tables/InvenTreeTable.tsx:684
 msgid "View details"
 msgstr "Vis detaljer"
 
-#: src/tables/InvenTreeTable.tsx:694
+#: src/tables/InvenTreeTable.tsx:687
 msgid "View {model}"
 msgstr "Vis {model}"
 
@@ -9225,12 +9243,12 @@ msgstr "Slet valgte del"
 
 #: src/tables/InvenTreeTableHeader.tsx:108
 msgid "Are you sure you want to delete the selected items?"
-msgstr ""
+msgstr "Er du sikker på at du ønsker at slette de valgte varer?"
 
 #: src/tables/InvenTreeTableHeader.tsx:110
 #: src/tables/plugin/PluginListTable.tsx:316
 msgid "This action cannot be undone"
-msgstr ""
+msgstr "Denne handling kan ikke fortrydes"
 
 #: src/tables/InvenTreeTableHeader.tsx:121
 msgid "Items deleted"
@@ -9255,7 +9273,7 @@ msgstr ""
 
 #: src/tables/InvenTreeTableHeader.tsx:272
 msgid "Active Filters"
-msgstr ""
+msgstr "Aktive Filtre"
 
 #: src/tables/TableHoverCard.tsx:35
 #~ msgid "item-{idx}"
@@ -9277,7 +9295,7 @@ msgstr "Del Information"
 msgid "This BOM item has not been validated"
 msgstr "Dette Stykliste element er ikke blevet valideret"
 
-#: src/tables/bom/BomTable.tsx:240
+#: src/tables/bom/BomTable.tsx:241
 msgid "Substitutes"
 msgstr ""
 
@@ -9285,7 +9303,7 @@ msgstr ""
 #~ msgid "Create BOM Item"
 #~ msgstr "Create BOM Item"
 
-#: src/tables/bom/BomTable.tsx:302
+#: src/tables/bom/BomTable.tsx:303
 #: src/tables/sales/SalesOrderLineItemTable.tsx:141
 #: src/tables/sales/SalesOrderLineItemTable.tsx:199
 #: src/tables/sales/SalesOrderLineItemTable.tsx:216
@@ -9296,13 +9314,13 @@ msgstr ""
 #~ msgid "Show asssmbled items"
 #~ msgstr "Show asssmbled items"
 
-#: src/tables/bom/BomTable.tsx:315
+#: src/tables/bom/BomTable.tsx:316
 #: src/tables/build/BuildLineTable.tsx:277
 #: src/tables/part/PartTable.tsx:145
 msgid "External stock"
 msgstr "Ekstern Lager"
 
-#: src/tables/bom/BomTable.tsx:323
+#: src/tables/bom/BomTable.tsx:324
 #: src/tables/build/BuildLineTable.tsx:240
 msgid "Includes substitute stock"
 msgstr "Inkluderer erstatningsbeholdning"
@@ -9311,7 +9329,7 @@ msgstr "Inkluderer erstatningsbeholdning"
 #~ msgid "Edit Bom Item"
 #~ msgstr "Edit Bom Item"
 
-#: src/tables/bom/BomTable.tsx:332
+#: src/tables/bom/BomTable.tsx:333
 #: src/tables/build/BuildLineTable.tsx:250
 #: src/tables/sales/SalesOrderLineItemTable.tsx:166
 msgid "Includes variant stock"
@@ -9326,13 +9344,13 @@ msgstr ""
 #~ msgstr "Delete Bom Item"
 
 #: src/tables/bom/BomTable.tsx:349
+#~ msgid "Bom item deleted"
+#~ msgstr "Bom item deleted"
+
+#: src/tables/bom/BomTable.tsx:350
 #: src/tables/part/PartTable.tsx:114
 msgid "Building"
 msgstr ""
-
-#: src/tables/bom/BomTable.tsx:349
-#~ msgid "Bom item deleted"
-#~ msgstr "Bom item deleted"
 
 #: src/tables/bom/BomTable.tsx:351
 #~ msgid "Are you sure you want to remove this BOM item?"
@@ -9342,172 +9360,172 @@ msgstr ""
 #~ msgid "Validate BOM line"
 #~ msgstr "Validate BOM line"
 
-#: src/tables/bom/BomTable.tsx:358
+#: src/tables/bom/BomTable.tsx:359
 #: src/tables/part/PartTable.tsx:171
 #: src/tables/sales/SalesOrderLineItemTable.tsx:189
 #: src/tables/stock/StockItemTable.tsx:222
 msgid "Stock Information"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:399
-#: src/tables/build/BuildLineTable.tsx:497
-#: src/tables/build/BuildLineTable.tsx:538
+#: src/tables/bom/BomTable.tsx:400
+#: src/tables/build/BuildLineTable.tsx:498
+#: src/tables/build/BuildLineTable.tsx:539
 msgid "Consumable item"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:402
+#: src/tables/bom/BomTable.tsx:403
 msgid "No available stock"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:420
+#: src/tables/bom/BomTable.tsx:421
 #: src/tables/build/BuildLineTable.tsx:214
 msgid "Show testable items"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:425
+#: src/tables/bom/BomTable.tsx:426
 msgid "Show trackable items"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:430
+#: src/tables/bom/BomTable.tsx:431
 #: src/tables/build/BuildLineTable.tsx:209
 msgid "Show assembled items"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:435
+#: src/tables/bom/BomTable.tsx:436
 msgid "Show virtual items"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:440
+#: src/tables/bom/BomTable.tsx:441
 msgid "Show items with available stock"
-msgstr ""
+msgstr "Vis varer med disponibelt lager"
 
-#: src/tables/bom/BomTable.tsx:445
+#: src/tables/bom/BomTable.tsx:446
 msgid "Show items on order"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:449
+#: src/tables/bom/BomTable.tsx:450
 msgid "Validated"
 msgstr "Valideret"
 
-#: src/tables/bom/BomTable.tsx:450
+#: src/tables/bom/BomTable.tsx:451
 msgid "Show validated items"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:454
+#: src/tables/bom/BomTable.tsx:455
 #: src/tables/bom/UsedInTable.tsx:80
 msgid "Inherited"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:455
+#: src/tables/bom/BomTable.tsx:456
 #: src/tables/bom/UsedInTable.tsx:81
 msgid "Show inherited items"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:459
+#: src/tables/bom/BomTable.tsx:460
 msgid "Allow Variants"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:460
+#: src/tables/bom/BomTable.tsx:461
 msgid "Show items which allow variant substitution"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:464
+#: src/tables/bom/BomTable.tsx:465
 #: src/tables/bom/UsedInTable.tsx:85
 #: src/tables/build/BuildLineTable.tsx:203
 msgid "Optional"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:465
+#: src/tables/bom/BomTable.tsx:466
 #: src/tables/bom/UsedInTable.tsx:86
 msgid "Show optional items"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:469
+#: src/tables/bom/BomTable.tsx:470
 #: src/tables/build/BuildLineTable.tsx:198
 msgid "Consumable"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:470
+#: src/tables/bom/BomTable.tsx:471
 msgid "Show consumable items"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:474
+#: src/tables/bom/BomTable.tsx:475
 #: src/tables/part/PartTable.tsx:313
 msgid "Has Pricing"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:475
+#: src/tables/bom/BomTable.tsx:476
 msgid "Show items with pricing"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:497
+#: src/tables/bom/BomTable.tsx:498
 msgid "Import BOM Data"
 msgstr "Importere Stykliste Data"
 
-#: src/tables/bom/BomTable.tsx:507
-#: src/tables/bom/BomTable.tsx:631
+#: src/tables/bom/BomTable.tsx:508
+#: src/tables/bom/BomTable.tsx:632
 msgid "Add BOM Item"
 msgstr "Tilføj stykliste element"
 
-#: src/tables/bom/BomTable.tsx:512
+#: src/tables/bom/BomTable.tsx:513
 msgid "BOM item created"
 msgstr "Styklistevare oprette"
 
-#: src/tables/bom/BomTable.tsx:519
+#: src/tables/bom/BomTable.tsx:520
 msgid "Edit BOM Item"
 msgstr "Rediger stykliste element"
 
-#: src/tables/bom/BomTable.tsx:521
+#: src/tables/bom/BomTable.tsx:522
 msgid "BOM item updated"
 msgstr "Styklistevare opdateret"
 
-#: src/tables/bom/BomTable.tsx:528
+#: src/tables/bom/BomTable.tsx:529
 msgid "Delete BOM Item"
 msgstr "Slet styklistevare"
 
-#: src/tables/bom/BomTable.tsx:529
+#: src/tables/bom/BomTable.tsx:530
 msgid "BOM item deleted"
 msgstr "Styklistevare slettet"
 
-#: src/tables/bom/BomTable.tsx:549
+#: src/tables/bom/BomTable.tsx:550
 msgid "BOM item validated"
 msgstr "Styklistevare valideret"
 
-#: src/tables/bom/BomTable.tsx:558
+#: src/tables/bom/BomTable.tsx:559
 msgid "Failed to validate BOM item"
 msgstr "Kunne ikke validere styklistevare"
 
-#: src/tables/bom/BomTable.tsx:570
+#: src/tables/bom/BomTable.tsx:571
 msgid "View BOM"
 msgstr "Vis stykliste"
 
-#: src/tables/bom/BomTable.tsx:581
+#: src/tables/bom/BomTable.tsx:582
 msgid "Validate BOM Line"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:600
+#: src/tables/bom/BomTable.tsx:601
 msgid "Edit Substitutes"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:625
+#: src/tables/bom/BomTable.tsx:626
 msgid "Add BOM Items"
 msgstr "Tilføj styklistevare"
 
-#: src/tables/bom/BomTable.tsx:633
+#: src/tables/bom/BomTable.tsx:634
 msgid "Add a single BOM item"
 msgstr "Tilføj et enkelt Stykliste element"
 
-#: src/tables/bom/BomTable.tsx:637
+#: src/tables/bom/BomTable.tsx:638
 #: src/tables/general/ParameterTable.tsx:206
 #: src/tables/part/PartTable.tsx:546
 msgid "Import from File"
-msgstr ""
+msgstr "Importer fra fil"
 
-#: src/tables/bom/BomTable.tsx:639
+#: src/tables/bom/BomTable.tsx:640
 msgid "Import BOM items from a file"
 msgstr "Importer Stykliste elementer fra en fil"
 
-#: src/tables/bom/BomTable.tsx:662
+#: src/tables/bom/BomTable.tsx:663
 msgid "Bill of materials cannot be edited, as the part is locked"
 msgstr "Styklisten kan ikke redigeres, da delen er låst"
 
@@ -9561,7 +9579,7 @@ msgid "Order Status"
 msgstr "Ordre status"
 
 #: src/tables/build/BuildAllocatedStockTable.tsx:164
-#: src/tables/build/BuildLineTable.tsx:651
+#: src/tables/build/BuildLineTable.tsx:652
 msgid "Edit Stock Allocation"
 msgstr ""
 
@@ -9574,7 +9592,7 @@ msgstr ""
 #~ msgstr "Delete Build Item"
 
 #: src/tables/build/BuildAllocatedStockTable.tsx:177
-#: src/tables/build/BuildLineTable.tsx:664
+#: src/tables/build/BuildLineTable.tsx:665
 #: src/tables/sales/SalesOrderAllocationTable.tsx:218
 msgid "Remove Allocated Stock"
 msgstr "Fjern Allokeret Lager"
@@ -9585,7 +9603,7 @@ msgstr "Fjern Allokeret Lager"
 #~ msgstr "Delete Stock Allocation"
 
 #: src/tables/build/BuildAllocatedStockTable.tsx:182
-#: src/tables/build/BuildLineTable.tsx:669
+#: src/tables/build/BuildLineTable.tsx:670
 #: src/tables/sales/SalesOrderAllocationTable.tsx:221
 msgid "Are you sure you want to remove this allocated stock from the order?"
 msgstr "Er du sikker på, at du vil fjerne denne allokerede lager fra ordren?"
@@ -9665,79 +9683,79 @@ msgstr ""
 msgid "No stock available"
 msgstr ""
 
-#: src/tables/build/BuildLineTable.tsx:376
+#: src/tables/build/BuildLineTable.tsx:377
 msgid "Gets Inherited"
 msgstr ""
 
-#: src/tables/build/BuildLineTable.tsx:389
+#: src/tables/build/BuildLineTable.tsx:390
 msgid "Unit Quantity"
 msgstr ""
 
-#: src/tables/build/BuildLineTable.tsx:416
+#: src/tables/build/BuildLineTable.tsx:417
 msgid "Setup Quantity"
 msgstr ""
 
-#: src/tables/build/BuildLineTable.tsx:425
+#: src/tables/build/BuildLineTable.tsx:426
 msgid "Attrition"
 msgstr ""
 
-#: src/tables/build/BuildLineTable.tsx:433
+#: src/tables/build/BuildLineTable.tsx:434
 msgid "Rounding Multiple"
 msgstr ""
 
-#: src/tables/build/BuildLineTable.tsx:442
+#: src/tables/build/BuildLineTable.tsx:443
 msgid "BOM Information"
 msgstr "Stykliste Information"
 
-#: src/tables/build/BuildLineTable.tsx:516
+#: src/tables/build/BuildLineTable.tsx:517
 #: src/tables/part/PartBuildAllocationsTable.tsx:102
 msgid "Fully allocated"
 msgstr ""
 
-#: src/tables/build/BuildLineTable.tsx:564
+#: src/tables/build/BuildLineTable.tsx:565
 #: src/tables/sales/SalesOrderLineItemTable.tsx:311
 msgid "Create Build Order"
 msgstr ""
 
-#: src/tables/build/BuildLineTable.tsx:593
+#: src/tables/build/BuildLineTable.tsx:594
 msgid "Auto allocation in progress"
 msgstr ""
 
-#: src/tables/build/BuildLineTable.tsx:596
-#: src/tables/build/BuildLineTable.tsx:809
+#: src/tables/build/BuildLineTable.tsx:597
+#: src/tables/build/BuildLineTable.tsx:810
 msgid "Auto Allocate Stock"
 msgstr ""
 
-#: src/tables/build/BuildLineTable.tsx:597
+#: src/tables/build/BuildLineTable.tsx:598
 msgid "Automatically allocate stock to this build according to the selected options"
 msgstr "Automatisk tildel lager til dette byg, i henhold til de valgte indstillinger"
 
-#: src/tables/build/BuildLineTable.tsx:617
-#: src/tables/build/BuildLineTable.tsx:631
-#: src/tables/build/BuildLineTable.tsx:758
-#: src/tables/build/BuildLineTable.tsx:859
-#: src/tables/build/BuildOutputTable.tsx:357
-#: src/tables/build/BuildOutputTable.tsx:362
+#: src/tables/build/BuildLineTable.tsx:618
+#: src/tables/build/BuildLineTable.tsx:632
+#: src/tables/build/BuildLineTable.tsx:759
+#: src/tables/build/BuildLineTable.tsx:860
+#: src/tables/build/BuildOutputTable.tsx:355
+#: src/tables/build/BuildOutputTable.tsx:360
 msgid "Deallocate Stock"
 msgstr ""
 
-#: src/tables/build/BuildLineTable.tsx:633
+#: src/tables/build/BuildLineTable.tsx:634
 msgid "Deallocate all untracked stock for this build order"
 msgstr ""
 
-#: src/tables/build/BuildLineTable.tsx:635
+#: src/tables/build/BuildLineTable.tsx:636
 msgid "Deallocate stock from the selected line item"
 msgstr ""
 
-#: src/tables/build/BuildLineTable.tsx:639
+#: src/tables/build/BuildLineTable.tsx:640
 msgid "Stock has been deallocated"
 msgstr ""
 
-#: src/tables/build/BuildLineTable.tsx:778
+#: src/tables/build/BuildLineTable.tsx:779
 msgid "Build Stock"
 msgstr ""
 
-#: src/tables/build/BuildLineTable.tsx:791
+#: src/tables/build/BuildLineTable.tsx:792
 #: src/tables/sales/SalesOrderLineItemTable.tsx:487
 msgid "View Part"
 msgstr "Vis Del"
@@ -9801,7 +9819,7 @@ msgstr "Vis ordrer med en startdato"
 #~ msgid "Filter by user who issued this order"
 #~ msgstr "Filter by user who issued this order"
 
-#: src/tables/build/BuildOutputTable.tsx:100
+#: src/tables/build/BuildOutputTable.tsx:99
 msgid "Build Output Stock Allocation"
 msgstr ""
 
@@ -9809,12 +9827,12 @@ msgstr ""
 #~ msgid "Delete build output"
 #~ msgstr "Delete build output"
 
-#: src/tables/build/BuildOutputTable.tsx:292
-#: src/tables/build/BuildOutputTable.tsx:477
+#: src/tables/build/BuildOutputTable.tsx:290
+#: src/tables/build/BuildOutputTable.tsx:475
 msgid "Add Build Output"
 msgstr ""
 
-#: src/tables/build/BuildOutputTable.tsx:295
+#: src/tables/build/BuildOutputTable.tsx:293
 msgid "Build output created"
 msgstr ""
 
@@ -9822,42 +9840,42 @@ msgstr ""
 #~ msgid "Edit build output"
 #~ msgstr "Edit build output"
 
-#: src/tables/build/BuildOutputTable.tsx:348
-#: src/tables/build/BuildOutputTable.tsx:545
+#: src/tables/build/BuildOutputTable.tsx:346
+#: src/tables/build/BuildOutputTable.tsx:543
 msgid "Edit Build Output"
 msgstr ""
 
-#: src/tables/build/BuildOutputTable.tsx:364
+#: src/tables/build/BuildOutputTable.tsx:362
 msgid "This action will deallocate all stock from the selected build output"
 msgstr ""
 
-#: src/tables/build/BuildOutputTable.tsx:389
+#: src/tables/build/BuildOutputTable.tsx:387
 msgid "Serialize Build Output"
 msgstr ""
 
-#: src/tables/build/BuildOutputTable.tsx:407
+#: src/tables/build/BuildOutputTable.tsx:405
 #: src/tables/part/PartTestResultTable.tsx:318
 #: src/tables/stock/StockItemTable.tsx:328
 msgid "Filter by stock status"
 msgstr ""
 
-#: src/tables/build/BuildOutputTable.tsx:444
+#: src/tables/build/BuildOutputTable.tsx:442
 msgid "Complete selected outputs"
 msgstr ""
 
-#: src/tables/build/BuildOutputTable.tsx:455
+#: src/tables/build/BuildOutputTable.tsx:453
 msgid "Scrap selected outputs"
 msgstr "Skrot valgte outputs"
 
-#: src/tables/build/BuildOutputTable.tsx:466
+#: src/tables/build/BuildOutputTable.tsx:464
 msgid "Cancel selected outputs"
 msgstr "Annuller valgte output"
 
-#: src/tables/build/BuildOutputTable.tsx:496
+#: src/tables/build/BuildOutputTable.tsx:494
 msgid "Allocate"
 msgstr "Allokere"
 
-#: src/tables/build/BuildOutputTable.tsx:497
+#: src/tables/build/BuildOutputTable.tsx:495
 msgid "Allocate stock to build output"
 msgstr ""
 
@@ -9865,47 +9883,47 @@ msgstr ""
 #~ msgid "View Build Output"
 #~ msgstr "View Build Output"
 
-#: src/tables/build/BuildOutputTable.tsx:510
+#: src/tables/build/BuildOutputTable.tsx:508
 msgid "Deallocate"
 msgstr ""
 
-#: src/tables/build/BuildOutputTable.tsx:511
+#: src/tables/build/BuildOutputTable.tsx:509
 msgid "Deallocate stock from build output"
 msgstr ""
 
-#: src/tables/build/BuildOutputTable.tsx:525
+#: src/tables/build/BuildOutputTable.tsx:523
 msgid "Serialize build output"
 msgstr ""
 
-#: src/tables/build/BuildOutputTable.tsx:536
+#: src/tables/build/BuildOutputTable.tsx:534
 msgid "Complete build output"
 msgstr ""
 
-#: src/tables/build/BuildOutputTable.tsx:552
+#: src/tables/build/BuildOutputTable.tsx:550
 msgid "Scrap"
 msgstr "Skrot"
 
-#: src/tables/build/BuildOutputTable.tsx:553
+#: src/tables/build/BuildOutputTable.tsx:551
 msgid "Scrap build output"
-msgstr ""
+msgstr "Skrot bygge output"
 
-#: src/tables/build/BuildOutputTable.tsx:563
+#: src/tables/build/BuildOutputTable.tsx:561
 msgid "Cancel build output"
-msgstr ""
+msgstr "Annuller bygge output"
 
-#: src/tables/build/BuildOutputTable.tsx:612
+#: src/tables/build/BuildOutputTable.tsx:610
 msgid "Allocated Lines"
 msgstr ""
 
-#: src/tables/build/BuildOutputTable.tsx:627
+#: src/tables/build/BuildOutputTable.tsx:625
 msgid "Required Tests"
 msgstr "Påkrævede Test"
 
-#: src/tables/build/BuildOutputTable.tsx:702
+#: src/tables/build/BuildOutputTable.tsx:700
 msgid "External Build"
 msgstr ""
 
-#: src/tables/build/BuildOutputTable.tsx:704
+#: src/tables/build/BuildOutputTable.tsx:702
 msgid "This build order is fulfilled by an external purchase order"
 msgstr ""
 
@@ -10200,7 +10218,7 @@ msgstr ""
 
 #: src/tables/general/ParametricDataTable.tsx:79
 msgid "Click to edit"
-msgstr ""
+msgstr "Klik for at redigere"
 
 #: src/tables/general/ParametricDataTableFilters.tsx:36
 msgid "True"
@@ -10499,11 +10517,11 @@ msgstr "Inkluder underkategorier i resultaterne"
 
 #: src/tables/part/PartCategoryTable.tsx:90
 msgid "Show structural categories"
-msgstr ""
+msgstr "Vis strukturelle kategorier"
 
 #: src/tables/part/PartCategoryTable.tsx:95
 msgid "Show categories to which the user is subscribed"
-msgstr ""
+msgstr "Vis kategorier, som brugeren abonnerer på"
 
 #: src/tables/part/PartCategoryTable.tsx:104
 msgid "New Part Category"
@@ -10537,7 +10555,7 @@ msgstr "Rediger Kategori Parameter"
 
 #: src/tables/part/PartCategoryTemplateTable.tsx:65
 msgid "Delete Category Parameter"
-msgstr ""
+msgstr "Slet Kategori Parameter"
 
 #: src/tables/part/PartCategoryTemplateTable.tsx:93
 #~ msgid "[{0}]"
@@ -10636,11 +10654,11 @@ msgstr ""
 
 #: src/tables/part/PartTable.tsx:258
 msgid "Filter by parts which have stock"
-msgstr ""
+msgstr "Filtrer efter dele, der har lager"
 
 #: src/tables/part/PartTable.tsx:264
 msgid "Filter by parts which have low stock"
-msgstr ""
+msgstr "Filtrer efter dele med lavt lager"
 
 #: src/tables/part/PartTable.tsx:269
 msgid "Purchaseable"
@@ -10720,7 +10738,7 @@ msgstr ""
 
 #: src/tables/part/PartTable.tsx:377
 msgid "Import Parts"
-msgstr ""
+msgstr "Importer Dele"
 
 #: src/tables/part/PartTable.tsx:464
 #: src/tables/part/PartTable.tsx:512
@@ -10870,7 +10888,7 @@ msgstr ""
 
 #: src/tables/part/PartTestTemplateTable.tsx:263
 msgid "Part templates cannot be edited, as the part is locked"
-msgstr ""
+msgstr "Del skabeloner kan ikke redigeres, da delen er låst"
 
 #: src/tables/part/PartThumbTable.tsx:222
 msgid "Select"
@@ -10899,7 +10917,7 @@ msgstr ""
 #: src/tables/part/RelatedPartTable.tsx:104
 #: src/tables/part/RelatedPartTable.tsx:137
 msgid "Add Related Part"
-msgstr ""
+msgstr "Tilføj Relateret Del"
 
 #: src/tables/part/RelatedPartTable.tsx:109
 #~ msgid "Add related part"
@@ -10907,11 +10925,11 @@ msgstr ""
 
 #: src/tables/part/RelatedPartTable.tsx:119
 msgid "Delete Related Part"
-msgstr ""
+msgstr "Slet Relateret Del"
 
 #: src/tables/part/RelatedPartTable.tsx:126
 msgid "Edit Related Part"
-msgstr ""
+msgstr "Rediger Relateret Del"
 
 #: src/tables/part/SelectionListTable.tsx:64
 #: src/tables/part/SelectionListTable.tsx:115
@@ -11301,11 +11319,11 @@ msgstr ""
 
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:195
 msgid "Receive selected items"
-msgstr ""
+msgstr "Modtag valgte elementer"
 
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:230
 msgid "Receive Item"
-msgstr ""
+msgstr "Modtag Vare"
 
 #: src/tables/sales/SalesOrderAllocationTable.tsx:89
 msgid "Show outstanding allocations"
@@ -11321,16 +11339,16 @@ msgstr ""
 
 #: src/tables/sales/SalesOrderAllocationTable.tsx:156
 msgid "Available Quantity"
-msgstr ""
+msgstr "Tilgængelig Antal"
 
 #: src/tables/sales/SalesOrderAllocationTable.tsx:163
 msgid "Allocated Quantity"
-msgstr ""
+msgstr "Tildelt Antal"
 
 #: src/tables/sales/SalesOrderAllocationTable.tsx:177
 #: src/tables/sales/SalesOrderAllocationTable.tsx:191
 msgid "No shipment"
-msgstr ""
+msgstr "Ingen forsendelse"
 
 #: src/tables/sales/SalesOrderAllocationTable.tsx:189
 msgid "Not shipped"
@@ -11353,11 +11371,11 @@ msgstr "Vis Forsendelser"
 
 #: src/tables/sales/SalesOrderAllocationTable.tsx:317
 msgid "Assign to Shipment"
-msgstr ""
+msgstr "Tildel til Forsendelse"
 
 #: src/tables/sales/SalesOrderAllocationTable.tsx:333
 msgid "Assign to shipment"
-msgstr ""
+msgstr "Tildel til Forsendelse"
 
 #: src/tables/sales/SalesOrderLineItemTable.tsx:280
 #~ msgid "Allocate stock"
@@ -11369,7 +11387,7 @@ msgstr ""
 
 #: src/tables/sales/SalesOrderLineItemTable.tsx:293
 msgid "Allocate Serial Numbers"
-msgstr ""
+msgstr "Tildel Serienummer"
 
 #: src/tables/sales/SalesOrderLineItemTable.tsx:343
 msgid "Show lines which are fully allocated"
@@ -11397,7 +11415,7 @@ msgstr ""
 
 #: src/tables/sales/SalesOrderShipmentTable.tsx:79
 msgid "Create Shipment"
-msgstr ""
+msgstr "Opret Forsendelse"
 
 #: src/tables/sales/SalesOrderShipmentTable.tsx:164
 msgid "Items"
@@ -11566,7 +11584,7 @@ msgstr "Sendt"
 
 #: src/tables/settings/EmailTable.tsx:29
 msgid "Failed"
-msgstr ""
+msgstr "Fejlede"
 
 #: src/tables/settings/EmailTable.tsx:33
 msgid "Read"
@@ -11660,7 +11678,7 @@ msgstr ""
 
 #: src/tables/settings/ExportSessionTable.tsx:59
 msgid "Delete Output"
-msgstr ""
+msgstr "Slet Output"
 
 #: src/tables/settings/FailedTasksTable.tsx:32
 #: src/tables/settings/PendingTasksTable.tsx:28
@@ -11776,7 +11794,7 @@ msgstr "Fjern alle udestående opgaver"
 
 #: src/tables/settings/PendingTasksTable.tsx:69
 msgid "All pending tasks deleted"
-msgstr ""
+msgstr "Alle ventende opgaver slettet"
 
 #: src/tables/settings/PendingTasksTable.tsx:76
 msgid "Error while deleting all pending tasks"
@@ -11921,7 +11939,7 @@ msgstr "Er Superbruger"
 
 #: src/tables/settings/UserTable.tsx:189
 msgid "Designates that this user has all permissions without explicitly assigning them."
-msgstr ""
+msgstr "Angiver, at denne bruger har alle tilladelser uden eksplicit at tildele dem."
 
 #: src/tables/settings/UserTable.tsx:199
 msgid "You cannot edit the rights for the currently logged-in user."
@@ -12022,7 +12040,7 @@ msgstr "Element afinstalleret"
 
 #: src/tables/stock/InstalledItemsTable.tsx:108
 msgid "Uninstall stock item"
-msgstr ""
+msgstr "Afinstaller lagervare"
 
 #: src/tables/stock/LocationTypesTable.tsx:44
 #: src/tables/stock/LocationTypesTable.tsx:111
@@ -12156,7 +12174,7 @@ msgstr "Vis sporede elementer"
 
 #: src/tables/stock/StockItemTable.tsx:393
 msgid "Has Purchase Price"
-msgstr ""
+msgstr "Har Købspris"
 
 #: src/tables/stock/StockItemTable.tsx:394
 msgid "Show items which have a purchase price"
@@ -12350,7 +12368,7 @@ msgstr ""
 
 #: src/tables/stock/StockItemTestResultTable.tsx:410
 msgid "Show results for installed stock items"
-msgstr ""
+msgstr "Vis resultater for installerede lagervarer"
 
 #: src/tables/stock/StockItemTestResultTable.tsx:414
 msgid "Passed"

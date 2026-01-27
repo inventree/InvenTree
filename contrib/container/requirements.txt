@@ -53,6 +53,7 @@ packaging==25.0 \
     # via
     #   gunicorn
     #   mariadb
+    #   wheel
 psycopg[binary, pool]==3.3.2 \
     --hash=sha256:3e94bc5f4690247d734599af56e51bae8e0db8e4311ea413f801fef82b14a99b \
     --hash=sha256:707a67975ee214d200511177a6a80e56e654754c9afca06a7194ea6bbfde9ca7
@@ -118,9 +119,9 @@ psycopg-pool==3.3.0 \
     --hash=sha256:2e44329155c410b5e8666372db44276a8b1ebd8c90f1c3026ebba40d4bc81063 \
     --hash=sha256:fa115eb2860bd88fce1717d75611f41490dec6135efb619611142b24da3f6db5
     # via psycopg
-pyasn1==0.6.1 \
-    --hash=sha256:0d632f46f2ba09143da3a8afe9e33fb6f92fa2320ab7e886e2d0f7672af84629 \
-    --hash=sha256:6f580d2bdd84365380830acf45550f2511469f673cb4a5ae3857a3170128b034
+pyasn1==0.6.2 \
+    --hash=sha256:1eb26d860996a18e9b6ed05e7aae0e9fc21619fcee6af91cca9bad4fbea224bf \
+    --hash=sha256:9b59a2b25ba7e4f8197db7686c09fb33e658b98339fadb826e9512629017833b
     # via
     #   pyasn1-modules
     #   python-ldap
@@ -243,7 +244,7 @@ uv==0.9.22 \
     --hash=sha256:d9d4be990bb92a68781f7c98d2321b528667b61d565c02ba978488c0210aa768 \
     --hash=sha256:e4b61a9c8b8dcbf64e642d2052342d36a46886b8bc3ccc407282962b970101af
     # via -r contrib/container/requirements.in
-wheel==0.45.1 \
-    --hash=sha256:661e1abd9198507b1409a20c02106d9670b2576e916d58f520316666abca6729 \
-    --hash=sha256:708e7481cc80179af0e556bbf0cc00b8444c7321e2700b8d8580231d13017248
+wheel==0.46.3 \
+    --hash=sha256:4b399d56c9d9338230118d705d9737a2a468ccca63d5e813e2a4fc7815d8bc4d \
+    --hash=sha256:e3e79874b07d776c40bd6033f8ddf76a7dad46a7b8aa1b2787a83083519a1803
     # via -r contrib/container/requirements.in

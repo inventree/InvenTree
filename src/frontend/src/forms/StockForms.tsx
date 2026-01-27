@@ -58,6 +58,7 @@ import {
   useBatchCodeGenerator,
   useSerialNumberGenerator
 } from '../hooks/UseGenerator';
+import useStatusCodes from '../hooks/UseStatusCodes';
 import { useGlobalSettingsState } from '../states/SettingsStates';
 import { StatusFilterOptions } from '../tables/Filter';
 
@@ -135,6 +136,10 @@ export function useStockFields({
       globalSettings.getSetting('INVENTREE_DEFAULT_CURRENCY')
     );
   }, [globalSettings]);
+
+  const stockItemStatusCodes = useStatusCodes({
+    modelType: ModelType.stockitem
+  });
 
   return useMemo(() => {
     const fields: ApiFormFieldSet = {
@@ -237,7 +242,8 @@ export function useStockFields({
         placeholder: batchGenerator.result
       },
       status_custom_key: {
-        label: t`Stock Status`
+        label: t`Stock Status`,
+        default: stockItemStatusCodes.OK
       },
       expiry_date: {
         icon: <IconCalendarExclamation />,
@@ -640,7 +646,8 @@ function StockOperationsRow({
           <Group grow justify='space-between' wrap='nowrap'>
             <Text>{stockString}</Text>
             <StatusRenderer
-              status={record.status_custom_key}
+              status={record.status_custom_key || record.status}
+              fallbackStatus={record.status}
               type={ModelType.stockitem}
             />
           </Group>
