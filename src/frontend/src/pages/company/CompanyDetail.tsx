@@ -276,7 +276,8 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
       }),
       NotesPanel({
         model_type: ModelType.company,
-        model_id: company.pk
+        model_id: company.pk,
+        has_note: !!company.notes
       })
     ];
   }, [id, company, user]);

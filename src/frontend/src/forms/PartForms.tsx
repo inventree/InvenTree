@@ -9,8 +9,10 @@ import { useGlobalSettingsState } from '../states/SettingsStates';
  */
 export function usePartFields({
   create = false,
+  partId,
   duplicatePartInstance
 }: {
+  partId?: number;
   duplicatePartInstance?: any;
   create?: boolean;
 }): ApiFormFieldSet {
@@ -51,6 +53,14 @@ export function usePartFields({
       default_location: {
         filters: {
           structural: false
+        }
+      },
+      default_supplier: {
+        hidden: !partId || !purchaseable,
+        filters: {
+          part: partId,
+          part_detail: true,
+          supplier_detail: true
         }
       },
       default_expiry: {},
@@ -191,6 +201,7 @@ export function usePartFields({
 
     return fields;
   }, [
+    partId,
     virtual,
     purchaseable,
     create,

@@ -32,6 +32,8 @@ class SettingsKeyType(TypedDict, total=False):
         protected: Protected values are not returned to the client, instead "***" is returned (optional, default: False)
         required: Is this setting required to work, can be used in combination with .check_all_settings(...) (optional, default: False)
         model: Auto create a dropdown menu to select an associated model instance (e.g. 'company.company', 'auth.user' and 'auth.group' are possible too, optional)
+        confirm: Require an explicit confirmation before changing the setting (optional, default: False)
+        confirm_text: Text to display in the confirmation dialog (optional)
     """
 
     name: str
@@ -46,6 +48,8 @@ class SettingsKeyType(TypedDict, total=False):
     protected: bool
     required: bool
     model: str
+    confirm: bool
+    confirm_text: str
 
 
 class InvenTreeSettingsKeyType(SettingsKeyType):

@@ -100,21 +100,6 @@ class StockLocationType(InvenTree.models.MetadataMixin, models.Model):
     )
 
 
-class StockLocationManager(TreeManager):
-    """Custom database manager for the StockLocation class.
-
-    StockLocation querysets will automatically select related fields for performance.
-    """
-
-    def get_queryset(self):
-        """Prefetch queryset to optimize db hits.
-
-        - Joins the StockLocationType by default for speedier icon access
-        """
-        # return super().get_queryset().select_related("location_type")
-        return super().get_queryset()
-
-
 class StockLocationReportContext(report.mixins.BaseReportContext):
     """Report context for the StockLocation model.
 
@@ -135,6 +120,7 @@ class StockLocationReportContext(report.mixins.BaseReportContext):
 
 class StockLocation(
     InvenTree.models.PluginValidationMixin,
+    InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     report.mixins.InvenTreeReportMixin,
     InvenTree.models.PathStringMixin,
@@ -151,7 +137,7 @@ class StockLocation(
 
     EXTRA_PATH_FIELDS = ['icon']
 
-    objects = StockLocationManager()
+    objects = TreeManager()
 
     class Meta:
         """Metaclass defines extra model properties."""
@@ -809,12 +795,28 @@ class StockItem(
 
             try:
                 old = StockItem.objects.get(pk=self.pk)
+                old_custom_status = old.get_custom_status()
+                custom_status = self.get_custom_status()
 
                 deltas = {}
 
                 # Status changed?
                 if old.status != self.status:
-                    deltas['status'] = self.status
+                    # Custom status changed?
+                    # Matches custom status tracking behavior of StockChangeStatusSerializer
+                    if old_custom_status != custom_status:
+                        deltas['status'] = custom_status
+                        deltas['status_logical'] = self.status
+                    else:
+                        deltas['status'] = self.status
+                        deltas['status_logical'] = self.status
+
+                    if old_custom_status:
+                        deltas['old_status'] = old_custom_status
+                        deltas['old_status_logical'] = old.status
+                    else:
+                        deltas['old_status'] = old.status
+                        deltas['old_status_logical'] = old.status
 
                 if add_note and len(deltas) > 0:
                     self.add_tracking_entry(
@@ -1460,8 +1462,17 @@ class StockItem(
 
         if status := kwargs.pop('status', None):
             if not item.compare_status(status):
+                old_custom_status = item.get_custom_status()
+                old_status_logical = item.status
                 item.set_status(status)
-                tracking_info['status'] = status
+                tracking_info['status'] = status  # may be a custom value
+                tracking_info['status_logicial'] = (
+                    item.status
+                )  # always the logical value
+                tracking_info['old_status'] = (
+                    old_custom_status if old_custom_status else old_status_logical
+                )
+                tracking_info['old_status_logical'] = old_status_logical
 
         item.save()
 
@@ -2282,8 +2293,26 @@ class StockItem(
         # Optional fields which can be supplied in a 'move' call
         for field in StockItem.optional_transfer_fields():
             if field in kwargs:
-                setattr(new_stock, field, kwargs[field])
-                deltas[field] = kwargs[field]
+                # handle specific case for status deltas
+                if field == 'status':
+                    status = kwargs[field]
+                    if not new_stock.compare_status(status):
+                        old_custom_status = new_stock.get_custom_status()
+                        old_status_logical = new_stock.status
+                        new_stock.set_status(status)
+                        deltas['status'] = status  # may be a custom value
+                        deltas['status_logicial'] = (
+                            new_stock.status
+                        )  # always the logical value
+                        deltas['old_status'] = (
+                            old_custom_status
+                            if old_custom_status
+                            else old_status_logical
+                        )
+                        deltas['old_status_logical'] = old_status_logical
+                else:
+                    setattr(new_stock, field, kwargs[field])
+                    deltas[field] = kwargs[field]
 
         new_stock.save(add_note=False)
 
@@ -2399,8 +2428,15 @@ class StockItem(
         status = kwargs.pop('status', None) or kwargs.pop('status_custom_key', None)
 
         if status and not self.compare_status(status):
+            old_custom_status = self.get_custom_status()
+            old_status_logical = self.status
             self.set_status(status)
-            tracking_info['status'] = status
+            tracking_info['status'] = status  # may be a custom value
+            tracking_info['status_logicial'] = self.status  # always the logical value
+            tracking_info['old_status'] = (
+                old_custom_status if old_custom_status else old_status_logical
+            )
+            tracking_info['old_status_logical'] = old_status_logical
 
         # Optional fields which can be supplied in a 'move' call
         for field in StockItem.optional_transfer_fields():
@@ -2451,7 +2487,7 @@ class StockItem(
 
             return False
 
-        self.save()
+        self.save(add_note=False)
 
         trigger_event(
             StockEvents.ITEM_QUANTITY_UPDATED, id=self.id, quantity=float(self.quantity)
@@ -2484,8 +2520,15 @@ class StockItem(
         status = kwargs.pop('status', None) or kwargs.pop('status_custom_key', None)
 
         if status and not self.compare_status(status):
+            old_custom_status = self.get_custom_status()
+            old_status_logical = self.status
             self.set_status(status)
-            tracking_info['status'] = status
+            tracking_info['status'] = status  # may be a custom value
+            tracking_info['status_logicial'] = self.status  # always the logical value
+            tracking_info['old_status'] = (
+                old_custom_status if old_custom_status else old_status_logical
+            )
+            tracking_info['old_status_logical'] = old_status_logical
 
         if self.updateQuantity(count):
             tracking_info['quantity'] = float(count)
@@ -2547,8 +2590,15 @@ class StockItem(
         status = kwargs.pop('status', None) or kwargs.pop('status_custom_key', None)
 
         if status and not self.compare_status(status):
+            old_custom_status = self.get_custom_status()
+            old_status_logical = self.status
             self.set_status(status)
-            tracking_info['status'] = status
+            tracking_info['status'] = status  # may be a custom value
+            tracking_info['status_logicial'] = self.status  # always the logical value
+            tracking_info['old_status'] = (
+                old_custom_status if old_custom_status else old_status_logical
+            )
+            tracking_info['old_status_logical'] = old_status_logical
 
         if self.updateQuantity(self.quantity + quantity):
             tracking_info['added'] = float(quantity)
@@ -2601,8 +2651,15 @@ class StockItem(
         status = kwargs.pop('status', None) or kwargs.pop('status_custom_key', None)
 
         if status and not self.compare_status(status):
+            old_custom_status = self.get_custom_status()
+            old_status_logical = self.status
             self.set_status(status)
-            deltas['status'] = status
+            deltas['status'] = status  # may be a custom value
+            deltas['status_logicial'] = self.status  # always the logical value
+            deltas['old_status'] = (
+                old_custom_status if old_custom_status else old_status_logical
+            )
+            deltas['old_status_logical'] = old_status_logical
 
         if self.updateQuantity(self.quantity - quantity):
             deltas['removed'] = float(quantity)

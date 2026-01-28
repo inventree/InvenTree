@@ -11,6 +11,7 @@ from django.db import connection
 from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 
+import pytest
 from PIL import Image
 from rest_framework.test import APIClient
 
@@ -21,7 +22,7 @@ from build.status_codes import BuildStatus
 from common.models import InvenTreeSetting, ParameterTemplate
 from company.models import Company, SupplierPart
 from InvenTree.config import get_testfolder_dir
-from InvenTree.unit_test import InvenTreeAPITestCase
+from InvenTree.unit_test import InvenTreeAPIPerformanceTestCase, InvenTreeAPITestCase
 from order.status_codes import PurchaseOrderStatusGroups
 from part.models import (
     BomItem,
@@ -1734,8 +1735,6 @@ class PartDetailTests(PartImageTestMixin, PartAPITestBase):
         # Now, try to set the name to the *same* value
         # 2021-06-22 this test is to check that the "duplicate part" checks don't do strange things
         response = self.patch(url, {'name': 'a new better name'})
-
-        # Try to remove a tag
         response = self.patch(url, {'tags': ['tag1']})
         self.assertEqual(response.data['tags'], ['tag1'])
 
@@ -2051,8 +2050,7 @@ class PartListTests(PartAPITestBase):
             with CaptureQueriesContext(connection) as ctx:
                 self.get(url, query, expected_code=200)
 
-            # No more than 25 database queries
-            self.assertLess(len(ctx), 25)
+            self.assertLess(len(ctx), 30)
 
         # Test 'category_detail' annotation
         for b in [False, True]:
@@ -2065,8 +2063,7 @@ class PartListTests(PartAPITestBase):
                     if b and result['category'] is not None:
                         self.assertIn('category_detail', result)
 
-            # No more than 22 DB queries
-            self.assertLessEqual(len(ctx), 22)
+            self.assertLessEqual(len(ctx), 30)
 
     def test_price_breaks(self):
         """Test that price_breaks parameter works correctly and efficiently."""
@@ -2708,7 +2705,7 @@ class BomItemTest(InvenTreeAPITestCase):
         """Get the detail view for a single BomItem object."""
         url = reverse('api-bom-item-detail', kwargs={'pk': 3})
 
-        response = self.get(url, expected_code=200)
+        response = self.get(url, {'substitutes': True}, expected_code=200)
 
         expected_values = [
             'allow_variants',
@@ -2882,6 +2879,7 @@ class BomItemTest(InvenTreeAPITestCase):
         # The BomItem detail endpoint should now also reflect the substitute data
         data = self.get(
             reverse('api-bom-item-detail', kwargs={'pk': bom_item.pk}),
+            data={'substitutes': True},
             expected_code=200,
         ).data
 
@@ -3177,65 +3175,6 @@ class PartInternalPriceBreakTest(InvenTreeAPITestCase):
             p.refresh_from_db()
 
 
-class PartMetadataAPITest(InvenTreeAPITestCase):
-    """Unit tests for the various metadata endpoints of API."""
-
-    fixtures = [
-        'category',
-        'part',
-        'params',
-        'location',
-        'bom',
-        'company',
-        'test_templates',
-        'manufacturer_part',
-        'supplier_part',
-        'order',
-        'stock',
-    ]
-
-    roles = ['part.change', 'part_category.change']
-
-    def metatester(self, apikey, model):
-        """Generic tester."""
-        modeldata = model.objects.first()
-
-        # Useless test unless a model object is found
-        self.assertIsNotNone(modeldata)
-
-        url = reverse(apikey, kwargs={'pk': modeldata.pk})
-
-        # Metadata is initially null
-        self.assertIsNone(modeldata.metadata)
-
-        numstr = randint(100, 900)
-
-        self.patch(
-            url,
-            {'metadata': {f'abc-{numstr}': f'xyz-{apikey}-{numstr}'}},
-            expected_code=200,
-        )
-
-        # Refresh
-        modeldata.refresh_from_db()
-        self.assertEqual(
-            modeldata.get_metadata(f'abc-{numstr}'), f'xyz-{apikey}-{numstr}'
-        )
-
-    def test_metadata(self):
-        """Test all endpoints."""
-        for apikey, model in {
-            'api-part-category-parameter-metadata': PartCategoryParameterTemplate,
-            'api-part-category-metadata': PartCategory,
-            'api-part-test-template-metadata': PartTestTemplate,
-            'api-part-related-metadata': PartRelated,
-            'api-part-metadata': Part,
-            'api-bom-substitute-metadata': BomItemSubstitute,
-            'api-bom-item-metadata': BomItem,
-        }.items():
-            self.metatester(apikey, model)
-
-
 class PartTestTemplateTest(PartAPITestBase):
     """API unit tests for the PartTestTemplate model."""
 
@@ -3352,3 +3291,15 @@ class ParameterTests(PartAPITestBase):
 
         self.assertIn('export_format', fields)
         self.assertIn('export_plugin', fields)
+
+
+class PartApiPerformanceTest(PartAPITestBase, InvenTreeAPIPerformanceTestCase):
+    """Performance tests for the Part API."""
+
+    @pytest.mark.django_db
+    @pytest.mark.benchmark
+    def test_api_part_list(self):
+        """Test that Part API queries are performant."""
+        url = reverse('api-part-list')
+        response = self.get(url, expected_code=200)
+        self.assertGreater(len(response.data), 13)

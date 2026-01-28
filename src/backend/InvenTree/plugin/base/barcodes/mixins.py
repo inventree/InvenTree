@@ -191,7 +191,8 @@ class SupplierBarcodeMixin(BarcodeMixin):
             q1 = Q(manufacturer=supplier)
             # Case 2: Supplied by this supplier
             m = (
-                SupplierPart.objects.filter(supplier=supplier)
+                SupplierPart.objects
+                .filter(supplier=supplier)
                 .values_list('manufacturer_part', flat=True)
                 .distinct()
             )

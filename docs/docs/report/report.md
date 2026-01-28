@@ -44,5 +44,45 @@ For example, rendering the name of a part (which is available in the particular 
 </p></i>
 {% endraw %}
 ```
-#### Rendering a single report vs. multiple report from selection
-Users can select multiple items such as `part`, `stockItem`,...etc to render from a report template. By default, the `merge` attribute of report template is disabled, which means an independent report will be generated for each item in the list of selected items. If `merge` is enabled, all selected items will be available in the `instances` context variable of the report template. Users are free to access them by indexing or in a loop. For more details, visit [context variable](./context_variables.md)
+
+## Merging Reports
+
+When rendering reports for multiple items, the default behaviour is that each item is rendered as a separate report. The chosen templeate is rendered multiple times, once for each item selected, and expects a single item in the context variable.
+
+However, it is possible to merge multiple items into a single report document. This is achieved by enabling the `merge` attribute of the report template:
+
+{{ image("report/report_merge.png", alt="Report Merge Option") }}
+
+When the `merge` is enabled, all selected items are passed to the report template in the `instances` context variable, which is a list of all selected items. The user can then iterate over this list to render multiple items in a single report document.
+
+### Instance Context
+
+When rendering a single template against multiple *instances* of a particular model (e.g. multiple parts, multiple stock items, etc), each instance being rendered has its own unique context data.
+
+Each "instance" is provided to the report template as a dictionary of context variables, which can be accessed using standard django template syntax.
+
+Refer to the [context variable documentation](./context_variables.md) for more information about the available context variables for each model type.
+
+The `instances` variable is provided as a list of all selected items, where each item in the list is a dictionary of context variables for that particular instance. Within the report template, the user can iterate over the `instances` list to render each item in turn.
+
+### Example
+
+As an example, let's consider a report template where we are printing multiple parts in a single report document.
+
+When the `merge` option is enabled, the report template is provided with an `instances` variable, which is a list of all selected parts.
+
+Each *instance* in the `instances` list is a dictionary of context variables for that particular part, which conforms to the standard [part context structure](./context_variables.md#part).
+
+```django
+{% raw %}
+
+{% for instance in instances %}
+Part Name: {{ instance.part.name }} <br>
+IPN: {{ instance.part.IPN }} <br>
+Description: {{ instance.part.description }} <br>
+
+{% endraw %}
+```
+
+!!! tip "Instance Prefix"
+    Note that the context variable is prefixed with `instance.` when accessing variables for each item in the `instances` list.

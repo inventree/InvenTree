@@ -152,7 +152,7 @@ export const globalSearch = async (page: Page, query: string) => {
 };
 
 export const deletePart = async (name: string) => {
-  const api = await createApi();
+  const api = await createApi({});
   const parts = await api
     .get('part/', {
       params: { search: name }
