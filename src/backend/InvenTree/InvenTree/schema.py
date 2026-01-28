@@ -143,8 +143,6 @@ class ExtendedAutoSchema(AutoSchema):
         from rest_framework.generics import RetrieveAPIView
         from rest_framework.mixins import RetrieveModelMixin, UpdateModelMixin
 
-        # from rest_framework.generics import ListAPIView
-        # from rest_framework.mixins import CreateModelMixin,ListModelMixin,
         from data_exporter.mixins import DataExportViewMixin
         from InvenTree.api import BulkOperationMixin
         from InvenTree.mixins import CleanMixin
