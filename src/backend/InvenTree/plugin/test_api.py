@@ -17,7 +17,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
 
     def setUp(self):
         """Setup for all tests."""
-        self.MSG_NO_PKG = 'Either packagename of URL must be provided'
+        self.MSG_NO_PKG = 'Either packagename or URL must be provided'
 
         self.PKG_NAME = 'inventree-brother-plugin'
         self.PKG_URL = 'git+https://github.com/inventree/inventree-brother-plugin'

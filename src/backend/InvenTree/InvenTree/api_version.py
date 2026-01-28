@@ -1,16 +1,35 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 438
+INVENTREE_API_VERSION = 444
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v438 -> 2026-01-08 : https://github.com/inventree/InvenTree/pull/10628
+v444 -> 2026-02-02 : https://github.com/inventree/InvenTree/pull/10628
     - Extend schema generation to include inventree vendor fields
 
+v443 -> 2026-01-21 : https://github.com/inventree/InvenTree/pull/11177
+    - Adds IPN ordering option for BomItem API endpoint
+    - Adds IPN ordering option for BuildLine API endpoint
+
+v442 -> 2026-01-17 : https://github.com/inventree/InvenTree/pull/11157
+    - Typo fixes, no functional changes
+
+v441 -> 2026-01-17 : https://github.com/inventree/InvenTree/pull/11153
+    - Allow export of supplier part pricing data
+
+v440 -> 2026-01-15 : https://github.com/inventree/InvenTree/pull/10796
+    - Adds confirm and confirm_text to all settings
+
+v439 -> 2026-01-09 : https://github.com/inventree/InvenTree/pull/11092
+    - Add missing nullable annotations
+
+v438 -> 2026-01-09 : https://github.com/inventree/InvenTree/pull/11104
+    - Adds a simpler / faster health check endpoint at /api/system/health/
+
 v437 -> 2026-01-07 : https://github.com/inventree/InvenTree/pull/11084
-    - Add generic parameter support for the StockLocation model
+    - Adds generic parameter support for the StockLocation model
 
 v436 -> 2026-01-06 : https://github.com/inventree/InvenTree/pull/11035
     - Removes model-specific metadata endpoints and replaces them with redirects

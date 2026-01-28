@@ -39,9 +39,10 @@ jobs:
       force: ${{ steps.force.outputs.force }}
       cicd: ${{ steps.filter.outputs.cicd }}
       requirements: ${{ steps.filter.outputs.requirements }}
+      runner-perf: ${{ steps.runner-perf.outputs.runner }}
 
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # pin@v6.0.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
         with:
           persist-credentials: false
       - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # pin@v3.0.2
@@ -74,6 +75,10 @@ jobs:
         if: |
           contains(github.event.pull_request.labels.*.name, 'dependency') ||
           contains(github.event.pull_request.labels.*.name, 'full-run')
+      - name: Which runner to use?
+        id: runner-perf
+        # decide if we are running in inventree/inventree -> use codspeed-macro runner else ubuntu-24.04
+        run: echo "runner=$([[ '${{ github.repository }}' == 'inventree/InvenTree' ]] && echo 'codspeed-macro' || echo 'ubuntu-24.04')" >> $GITHUB_OUTPUT
 
   pre-commit:
     name: Style [pre-commit]
@@ -82,7 +87,7 @@ jobs:
     if: needs.paths-filter.outputs.cicd == 'true' || needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.frontend == 'true' || needs.paths-filter.outputs.requirements == 'true' || needs.paths-filter.outputs.force == 'true'
 
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # pin@v6.0.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
         with:
           persist-credentials: false
       - name: Set up Python ${{ env.python_version }}
@@ -104,7 +109,7 @@ jobs:
     if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.requirements == 'true' || needs.paths-filter.outputs.force == 'true'
 
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # pin@v6.0.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
         with:
           persist-credentials: false
       - name: Environment Setup
@@ -126,7 +131,7 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # pin@v6.0.1
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
         with:
           persist-credentials: false
       - name: Set up Python ${{ env.python_version }}
@@ -164,7 +169,7 @@ jobs:
       version: ${{ steps.version.outputs.version }}
 
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # pin@v6.0.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
         with:
           persist-credentials: false
       - name: Environment Setup
@@ -249,7 +254,7 @@ jobs:
       version: ${{ needs.schema.outputs.version }}
 
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # pin@v6.0.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
         name: Checkout Code
         with:
           repository: inventree/schema
@@ -282,7 +287,7 @@ jobs:
 
   python:
     name: Tests - inventree-python
-    runs-on: ubuntu-24.04
+    runs-on: ${{ needs.paths-filter.outputs.runner-perf }}
 
     needs: ["pre-commit", "paths-filter"]
     if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true'
@@ -303,9 +308,10 @@ jobs:
       INVENTREE_SITE_URL: http://127.0.0.1:12345
       INVENTREE_DEBUG: true
       INVENTREE_LOG_LEVEL: WARNING
+      node_version: '>=20.19.6'
 
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # pin@v6.0.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
         with:
           persist-credentials: false
       - name: Environment Setup
@@ -314,6 +320,7 @@ jobs:
           apt-dependency: gettext poppler-utils
           dev-install: true
           update: true
+          npm: true
       - name: Download Python Code For `${WRAPPER_NAME}`
         run: git clone --depth 1 https://github.com/inventree/${WRAPPER_NAME} ./${WRAPPER_NAME}
       - name: Start InvenTree Server
@@ -333,7 +340,9 @@ jobs:
           cd ${WRAPPER_NAME}
           pip install .
       - name: Performance Reporting
-        uses: CodSpeedHQ/action@972e3437949c89e1357ebd1a2dbc852fcbc57245 # pin@v4
+        uses: CodSpeedHQ/action@dbda7111f8ac363564b0c51b992d4ce76bb89f2f # pin@v4
+        # check if we are in inventree/inventree - reporting only works in that OIDC context
+        if: github.repository == 'inventree/InvenTree'
         with:
           mode: walltime
           run: pytest ./src/performance --codspeed
@@ -347,8 +356,7 @@ jobs:
     continue-on-error: true # continue if a step fails so that coverage gets pushed
     strategy:
       matrix:
-        python_version: [3.11]
-        # python_version: [3.11, 3.14]  # Disabled due to requirement issues
+        python_version: [3.11, 3.14]
 
     env:
       INVENTREE_DB_NAME: ./inventree.sqlite
@@ -359,7 +367,7 @@ jobs:
       python_version: ${{ matrix.python_version }}
 
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # pin@v6.0.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
         with:
           persist-credentials: false
       - name: Environment Setup
@@ -392,10 +400,11 @@ jobs:
 
   performance:
     name: Tests - Performance
-    runs-on: codspeed-macro
+    runs-on: ${{ needs.paths-filter.outputs.runner-perf }}
 
     needs: ["pre-commit", "paths-filter"]
-    if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true'
+    # check if we are in inventree/inventree - reporting only works in that OIDC context
+    if: (needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true') && github.repository == 'inventree/InvenTree'
     permissions:
       contents: read
       id-token: write
@@ -408,7 +417,7 @@ jobs:
       INVENTREE_AUTO_UPDATE: true
 
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # pin@v6.0.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
         with:
           persist-credentials: false
       - name: Environment Setup
@@ -421,7 +430,7 @@ jobs:
         env:
           node_version: '>=20.19.0'
       - name: Performance Reporting
-        uses: CodSpeedHQ/action@972e3437949c89e1357ebd1a2dbc852fcbc57245 # pin@v4
+        uses: CodSpeedHQ/action@dbda7111f8ac363564b0c51b992d4ce76bb89f2f # pin@v4
         with:
           mode: walltime
           run: inv dev.test --pytest
@@ -459,7 +468,7 @@ jobs:
           - 6379:6379
 
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # pin@v6.0.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
         with:
           persist-credentials: false
       - name: Environment Setup
@@ -507,7 +516,7 @@ jobs:
           - 3306:3306
 
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # pin@v6.0.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
         with:
           persist-credentials: false
       - name: Environment Setup
@@ -549,7 +558,7 @@ jobs:
           - 5432:5432
 
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # pin@v6.0.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
         with:
           persist-credentials: false
       - name: Environment Setup
@@ -583,7 +592,7 @@ jobs:
       INVENTREE_PLUGINS_ENABLED: false
 
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # pin@v6.0.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
         with:
           persist-credentials: false
         name: Checkout Code
@@ -662,7 +671,7 @@ jobs:
       VITE_COVERAGE_BUILD: true
 
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # pin@v6.0.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
         with:
           persist-credentials: false
       - name: Environment Setup
@@ -712,7 +721,7 @@ jobs:
     timeout-minutes: 60
 
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # pin@v6.0.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
         with:
           persist-credentials: false
       - name: Environment Setup
@@ -745,7 +754,7 @@ jobs:
       security-events: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # pin@v6.0.1
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
         with:
           persist-credentials: false
       - uses: hynek/setup-cached-uv@757bedc3f972eb7227a1aa657651f15a8527c817 # pin@v2
@@ -754,7 +763,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@5d4e8d1aca955e8d8589aabd499c5cae939e33c7 # pin@v3
+        uses: github/codeql-action/upload-sarif@cdefb33c0f6224e58673d9004f47f7cb3e328b89 # pin@v3
         with:
           sarif_file: results.sarif
           category: zizmor

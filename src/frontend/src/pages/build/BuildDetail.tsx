@@ -530,7 +530,8 @@ export default function BuildDetail() {
       }),
       NotesPanel({
         model_type: ModelType.build,
-        model_id: build.pk
+        model_id: build.pk,
+        has_note: !!build.notes
       })
     ];
   }, [

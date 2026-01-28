@@ -109,7 +109,7 @@ function HoverNameBadge(data: any, type: BadgeType) {
         return [
           `${data.label}: ${data.name}`,
           data.name,
-          getDetailUrl(data.owner_model, data.pk, true),
+          getDetailUrl(data.owner_model, data.owner_id, true),
           undefined,
           undefined
         ];

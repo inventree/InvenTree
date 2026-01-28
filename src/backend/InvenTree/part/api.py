@@ -1009,7 +1009,9 @@ class PartMixin(SerializerContextMixin):
     """Mixin class for Part API endpoints."""
 
     serializer_class = part_serializers.PartSerializer
-    queryset = Part.objects.all().select_related('pricing_data')
+    queryset = (
+        Part.objects.all().select_related('pricing_data').prefetch_related('category')
+    )
 
     starred_parts = None
     is_create = False
@@ -1403,6 +1405,7 @@ class BomList(
         'attrition',
         'rounding_multiple',
         'sub_part',
+        'IPN',
         'available_stock',
         'allow_variants',
         'inherited',
@@ -1420,6 +1423,7 @@ class BomList(
     ordering_field_aliases = {
         'category': 'sub_part__category__name',
         'sub_part': 'sub_part__name',
+        'IPN': 'sub_part__IPN',
         'pricing_min': 'sub_part__pricing_data__overall_min',
         'pricing_max': 'sub_part__pricing_data__overall_max',
         'pricing_updated': 'sub_part__pricing_data__updated',
