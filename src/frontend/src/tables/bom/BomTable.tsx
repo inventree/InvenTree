@@ -132,7 +132,8 @@ export function BomTable({
       {
         accessor: 'sub_part_detail.IPN',
         title: t`IPN`,
-        sortable: true
+        sortable: true,
+        ordering: 'IPN'
       },
       CategoryColumn({
         accessor: 'category_detail',
@@ -670,9 +671,10 @@ export function BomTable({
             params: {
               ...params,
               part: partId,
-              category_detail: true,
+              substitutes: true,
               part_detail: true,
-              sub_part_detail: true
+              sub_part_detail: true,
+              category_detail: true
             },
             tableActions: tableActions,
             tableFilters: tableFilters,

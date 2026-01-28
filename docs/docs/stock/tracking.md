@@ -132,6 +132,17 @@ If a provided serial number (or group of numbers) is not considered valid, an er
 !!! tip "Serial Number Validation"
     Custom serial number validation can be implemented using an external plugin
 
+#### Adjusting Serial Numbers
+
+Once a stock item has been created with a serial number, it is possible to adjust that serial number value if required. This can be achieved by navigating to the stock item's detail page, and selecting the "Edit" option from the actions menu. Here, the serial number value can be modified as required:
+
+{{ image("stock/serial_edit.png", title="Editing a serial number") }}
+
+Note that any serial number adjustments are subject to the same validation rules as when the stock item was created. If the new serial number value is not valid, an error message will be displayed to the user:
+
+{{ image("stock/serial_edit_error.png", title="Error while editing a serial number") }}
+
+
 #### Plugin Support
 
 Custom serial number functionality, with any arbitrary requirements or level of complexity, can be implemented using the [Validation Plugin Mixin class](../plugins/mixins/validation.md#serial-numbers). Refer to the documentation for this plugin for technical details.

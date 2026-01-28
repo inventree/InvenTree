@@ -78,6 +78,7 @@ nav:
     - Demo: demo.md
     - Release Notes: releases/release_notes.md
     - Development:
+      - InvenTree Development: develop/index.md
       - Contributing: develop/contributing.md
       - Architecture: develop/architecture.md
       - Roadmap: develop/roadmap.md
@@ -359,7 +360,7 @@ extra:
   #  provider: google
   #  property: UA-143467500-1
 
-  min_python_version: 3.10
+  min_python_version: 3.11
   min_invoke_version: 2.0.0
   django_version: 5.2
   docker_postgres_version: 17

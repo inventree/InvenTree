@@ -9,6 +9,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.urls import reverse
 
+import pytest
 from djmoney.money import Money
 from rest_framework import status
 
@@ -17,7 +18,7 @@ import company.models
 import part.models
 from common.models import InvenTreeCustomUserStateModel, InvenTreeSetting
 from common.settings import set_global_setting
-from InvenTree.unit_test import InvenTreeAPITestCase
+from InvenTree.unit_test import InvenTreeAPIPerformanceTestCase, InvenTreeAPITestCase
 from part.models import Part, PartTestTemplate
 from stock.models import (
     StockItem,
@@ -866,7 +867,13 @@ class StockItemListTest(StockAPITestCase):
 
         excluded_headers = ['metadata']
 
-        with self.export_data(self.list_url) as data_file:
+        filters = {
+            'part_detail': True,
+            'location_detail': True,
+            'supplier_part_detail': True,
+        }
+
+        with self.export_data(self.list_url, params=filters) as data_file:
             self.process_csv(
                 data_file,
                 required_cols=required_headers,
@@ -875,9 +882,10 @@ class StockItemListTest(StockAPITestCase):
             )
 
         # Now, add a filter to the results
-        with self.export_data(
-            self.list_url, {'location': 1, 'cascade': True}
-        ) as data_file:
+        filters['location'] = 1
+        filters['cascade'] = True
+
+        with self.export_data(self.list_url, params=filters) as data_file:
             data = self.process_csv(data_file, required_rows=9)
 
             for row in data:
@@ -904,6 +912,51 @@ class StockItemListTest(StockAPITestCase):
         # Export stock items with a specific part
         with self.export_data(self.list_url, {'part': 25}) as data_file:
             self.process_csv(data_file, required_rows=items.count())
+
+    def test_large_export(self):
+        """Test export of very large dataset.
+
+        - Ensure that the time taken to export a large dataset is reasonable.
+        - Ensure that the number of DB queries is reasonable.
+        """
+        # Create a large number of stock items
+        locations = list(StockLocation.objects.all())
+        parts = list(Part.objects.filter(virtual=False))
+
+        idx = 0
+
+        N_LOCATIONS = len(locations)
+        N_PARTS = len(parts)
+
+        stock_items = []
+
+        while idx < 2500:
+            part = parts[idx % N_PARTS]
+            location = locations[idx % N_LOCATIONS]
+
+            item = StockItem(
+                part=part,
+                location=location,
+                quantity=10,
+                level=0,
+                tree_id=0,
+                lft=0,
+                rght=0,
+            )
+            stock_items.append(item)
+            idx += 1
+
+        StockItem.objects.bulk_create(stock_items)
+
+        self.assertGreaterEqual(StockItem.objects.count(), 2500)
+
+        # Note: While the export is quick on pgsql, it is still quite slow on sqlite3
+        with self.export_data(
+            self.list_url, max_query_count=50, max_query_time=9.0
+        ) as data_file:
+            data = self.process_csv(data_file)
+
+            self.assertGreaterEqual(len(data), 2500)
 
     def test_filter_by_allocated(self):
         """Test that we can filter by "allocated" status.
@@ -1118,7 +1171,7 @@ class CustomStockItemStatusTest(StockAPITestCase):
             name='OK - advanced',
             label='OK - adv.',
             color='secondary',
-            logical_key=10,
+            logical_key=StockStatus.OK.value,
             model=ContentType.objects.get(model='stockitem'),
             reference_status='StockStatus',
         )
@@ -1127,14 +1180,55 @@ class CustomStockItemStatusTest(StockAPITestCase):
             name='attention 2',
             label='attention 2',
             color='secondary',
-            logical_key=50,
+            logical_key=StockStatus.ATTENTION.value,
             model=ContentType.objects.get(model='stockitem'),
             reference_status='StockStatus',
         )
 
     def test_custom_status(self):
         """Tests interaction with states."""
+        part = Part.objects.filter(virtual=False).first()
+
+        # Try creating a new stock item with an invalid status code
+        response = self.post(
+            reverse('api-stock-list'),
+            {'part': part.pk, 'quantity': 10, 'status_custom_key': 'xyz'},
+        )
+
+        data = response.data[0]
+
+        # An invalid status value has been set to the default value
+        self.assertEqual(data['status'], StockStatus.OK.value)
+
+        # Create a stock item with a non-default, built-in status value
+        response = self.post(
+            reverse('api-stock-list'),
+            {
+                'part': part.pk,
+                'quantity': 10,
+                'status_custom_key': StockStatus.QUARANTINED.value,
+            },
+        )
+
+        data = response.data[0]
+
+        self.assertEqual(data['status'], StockStatus.QUARANTINED.value)
+        self.assertEqual(data['status_custom_key'], StockStatus.QUARANTINED.value)
+        self.assertEqual(data['status_text'], 'Quarantined')
+
+        # Create a stock item with a custom status value
+        response = self.post(
+            reverse('api-stock-list'),
+            {'part': part.pk, 'quantity': 10, 'status_custom_key': self.status2.key},
+        )
+
+        data = response.data[0]
+
+        self.assertEqual(data['status'], StockStatus.ATTENTION.value)
+        self.assertEqual(data['status_custom_key'], self.status2.key)
+
         # Create a stock item with the custom status code via the API
+        # Note: We test with a string value here
         response = self.post(
             self.list_url,
             {
@@ -1142,7 +1236,7 @@ class CustomStockItemStatusTest(StockAPITestCase):
                 'description': 'Test desc 1',
                 'quantity': 1,
                 'part': 1,
-                'status_custom_key': self.status.key,
+                'status_custom_key': str(self.status.key),
             },
             expected_code=201,
         )
@@ -1220,6 +1314,17 @@ class StockItemTest(StockAPITestCase):
 
         StockLocation.objects.create(name='B', description='location b', parent=top)
         StockLocation.objects.create(name='C', description='location c', parent=top)
+
+        # Create a custom status
+        self.inspect_custom_status = InvenTreeCustomUserStateModel.objects.create(
+            key=150,
+            name='INSPECT',
+            label='Incoming goods inspection',
+            color='warning',
+            logical_key=50,
+            model=ContentType.objects.get(model='stockitem'),
+            reference_status='StockStatus',
+        )
 
     def test_create_default_location(self):
         """Test the default location functionality, if a 'location' is not specified in the creation request."""
@@ -1726,6 +1831,15 @@ class StockItemTest(StockAPITestCase):
             item.refresh_from_db()
             self.assertEqual(item.status, StockStatus.DAMAGED.value)
             self.assertEqual(item.tracking_info.count(), 2)
+            tracking = item.tracking_info.last()
+            self.assertEqual(tracking.deltas['old_status'], StockStatus.OK.value)
+            self.assertEqual(
+                tracking.deltas['old_status_logical'], StockStatus.OK.value
+            )
+            self.assertEqual(tracking.deltas['status'], StockStatus.DAMAGED.value)
+            self.assertEqual(
+                tracking.deltas['status_logical'], StockStatus.DAMAGED.value
+            )
 
         # Same test, but with one item unchanged
         items[0].set_status(StockStatus.ATTENTION.value)
@@ -1742,6 +1856,68 @@ class StockItemTest(StockAPITestCase):
 
             tracking = item.tracking_info.last()
             self.assertEqual(tracking.tracking_type, StockHistoryCode.EDITED.value)
+
+    def test_set_custom_status(self):
+        """Test API endpoint for setting StockItem custom status."""
+        url = reverse('api-stock-change-status')
+
+        prt = Part.objects.first()
+
+        # Number of items to create
+        N_ITEMS = 10
+
+        # Create a bunch of items
+        items = [
+            StockItem.objects.create(part=prt, quantity=10) for _ in range(N_ITEMS)
+        ]
+
+        for item in items:
+            item.refresh_from_db()
+            self.assertEqual(item.status, StockStatus.OK.value)
+            self.assertEqual(item.tracking_info.count(), 1)
+
+        # Test tracking with custom status
+        # *from* standard *to* custom
+        data = {
+            'items': [item.pk for item in items],
+            'status': self.inspect_custom_status.key,
+        }
+
+        self.post(url, data, expected_code=201)
+
+        for item in items:
+            item.refresh_from_db()
+            self.assertEqual(item.status, self.inspect_custom_status.logical_key)
+            self.assertEqual(item.get_custom_status(), self.inspect_custom_status.key)
+            tracking = item.tracking_info.last()
+            self.assertEqual(tracking.deltas['old_status'], StockStatus.OK.value)
+            self.assertEqual(
+                tracking.deltas['old_status_logical'], StockStatus.OK.value
+            )
+            self.assertEqual(tracking.deltas['status'], self.inspect_custom_status.key)
+            self.assertEqual(
+                tracking.deltas['status_logical'],
+                self.inspect_custom_status.logical_key,
+            )
+
+        # reverse case
+        # *from* custom *to* standard
+        data['status'] = StockStatus.OK.value
+        self.post(url, data, expected_code=201)
+        for item in items:
+            item.refresh_from_db()
+            self.assertEqual(item.status, StockStatus.OK.value)
+            self.assertIsNone(item.get_custom_status())
+            tracking = item.tracking_info.last()
+            self.assertEqual(
+                tracking.deltas['old_status'], self.inspect_custom_status.key
+            )
+            self.assertEqual(
+                tracking.deltas['old_status_logical'],
+                self.inspect_custom_status.logical_key,
+            )
+            self.assertEqual(tracking.deltas['status'], StockStatus.OK.value)
+            self.assertEqual(tracking.deltas['status_logical'], StockStatus.OK.value)
 
 
 class StocktakeTest(StockAPITestCase):
@@ -2512,37 +2688,48 @@ class StockMetadataAPITest(InvenTreeAPITestCase):
 
     roles = ['stock.change', 'stock_location.change']
 
-    def metatester(self, apikey, model):
+    def metatester(self, raw_url: str, model):
         """Generic tester."""
         modeldata = model.objects.first()
 
         # Useless test unless a model object is found
         self.assertIsNotNone(modeldata)
 
-        url = reverse(apikey, kwargs={'pk': modeldata.pk})
+        url = raw_url.format(pk=modeldata.pk)
 
         # Metadata is initially null
         self.assertIsNone(modeldata.metadata)
 
-        numstr = f'12{len(apikey)}'
+        numstr = f'12{len(raw_url)}'
+        target_key = f'abc-{numstr}'
+        target_value = f'xyz-{raw_url}-{numstr}'
 
-        self.patch(
-            url,
-            {'metadata': {f'abc-{numstr}': f'xyz-{apikey}-{numstr}'}},
-            expected_code=200,
-        )
+        # Create / update metadata entry (first try via old addresses)
+        data = {'metadata': {target_key: target_value}}
+        rsp = self.patch(url, data, expected_code=301)
+        self.patch(rsp.url, data, expected_code=200)
 
-        # Refresh
+        # Refresh and check that metadata has been updated
         modeldata.refresh_from_db()
-        self.assertEqual(
-            modeldata.get_metadata(f'abc-{numstr}'), f'xyz-{apikey}-{numstr}'
-        )
+        self.assertEqual(modeldata.get_metadata(target_key), target_value)
 
     def test_metadata(self):
         """Test all endpoints."""
-        for apikey, model in {
-            'api-location-metadata': StockLocation,
-            'api-stock-test-result-metadata': StockItemTestResult,
-            'api-stock-item-metadata': StockItem,
+        for raw_url, model in {
+            '/api/stock/location/{pk}/metadata/': StockLocation,
+            '/api/stock/test/{pk}/metadata/': StockItemTestResult,
+            '/api/stock/{pk}/metadata/': StockItem,
         }.items():
-            self.metatester(apikey, model)
+            self.metatester(raw_url, model)
+
+
+class StockApiPerformanceTest(StockAPITestCase, InvenTreeAPIPerformanceTestCase):
+    """Performance tests for the Stock API."""
+
+    @pytest.mark.django_db
+    @pytest.mark.benchmark
+    def test_api_stock_list(self):
+        """Test that Stock API queries are performant."""
+        url = reverse('api-stock-list')
+        response = self.get(url, expected_code=200)
+        self.assertGreater(len(response.data), 13)

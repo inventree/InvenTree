@@ -143,7 +143,7 @@ pip install django-storages[google]
 You will need to change the storage backend, which is set via the `INVENTREE_BACKUP_STORAGE` environment variable, or via `backup_storage` in the configuration file:
 
 ```yaml
-backup_stoage: storages.backends.gcloud.GoogleCloudStorage
+backup_storage: storages.backends.gcloud.GoogleCloudStorage
 ```
 
 ### Configure Backend Options
