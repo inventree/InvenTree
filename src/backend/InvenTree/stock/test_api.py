@@ -1315,6 +1315,17 @@ class StockItemTest(StockAPITestCase):
         StockLocation.objects.create(name='B', description='location b', parent=top)
         StockLocation.objects.create(name='C', description='location c', parent=top)
 
+        # Create a custom status
+        self.inspect_custom_status = InvenTreeCustomUserStateModel.objects.create(
+            key=150,
+            name='INSPECT',
+            label='Incoming goods inspection',
+            color='warning',
+            logical_key=50,
+            model=ContentType.objects.get(model='stockitem'),
+            reference_status='StockStatus',
+        )
+
     def test_create_default_location(self):
         """Test the default location functionality, if a 'location' is not specified in the creation request."""
         # The part 'R_4K7_0603' (pk=4) has a default location specified
@@ -1820,6 +1831,15 @@ class StockItemTest(StockAPITestCase):
             item.refresh_from_db()
             self.assertEqual(item.status, StockStatus.DAMAGED.value)
             self.assertEqual(item.tracking_info.count(), 2)
+            tracking = item.tracking_info.last()
+            self.assertEqual(tracking.deltas['old_status'], StockStatus.OK.value)
+            self.assertEqual(
+                tracking.deltas['old_status_logical'], StockStatus.OK.value
+            )
+            self.assertEqual(tracking.deltas['status'], StockStatus.DAMAGED.value)
+            self.assertEqual(
+                tracking.deltas['status_logical'], StockStatus.DAMAGED.value
+            )
 
         # Same test, but with one item unchanged
         items[0].set_status(StockStatus.ATTENTION.value)
@@ -1836,6 +1856,68 @@ class StockItemTest(StockAPITestCase):
 
             tracking = item.tracking_info.last()
             self.assertEqual(tracking.tracking_type, StockHistoryCode.EDITED.value)
+
+    def test_set_custom_status(self):
+        """Test API endpoint for setting StockItem custom status."""
+        url = reverse('api-stock-change-status')
+
+        prt = Part.objects.first()
+
+        # Number of items to create
+        N_ITEMS = 10
+
+        # Create a bunch of items
+        items = [
+            StockItem.objects.create(part=prt, quantity=10) for _ in range(N_ITEMS)
+        ]
+
+        for item in items:
+            item.refresh_from_db()
+            self.assertEqual(item.status, StockStatus.OK.value)
+            self.assertEqual(item.tracking_info.count(), 1)
+
+        # Test tracking with custom status
+        # *from* standard *to* custom
+        data = {
+            'items': [item.pk for item in items],
+            'status': self.inspect_custom_status.key,
+        }
+
+        self.post(url, data, expected_code=201)
+
+        for item in items:
+            item.refresh_from_db()
+            self.assertEqual(item.status, self.inspect_custom_status.logical_key)
+            self.assertEqual(item.get_custom_status(), self.inspect_custom_status.key)
+            tracking = item.tracking_info.last()
+            self.assertEqual(tracking.deltas['old_status'], StockStatus.OK.value)
+            self.assertEqual(
+                tracking.deltas['old_status_logical'], StockStatus.OK.value
+            )
+            self.assertEqual(tracking.deltas['status'], self.inspect_custom_status.key)
+            self.assertEqual(
+                tracking.deltas['status_logical'],
+                self.inspect_custom_status.logical_key,
+            )
+
+        # reverse case
+        # *from* custom *to* standard
+        data['status'] = StockStatus.OK.value
+        self.post(url, data, expected_code=201)
+        for item in items:
+            item.refresh_from_db()
+            self.assertEqual(item.status, StockStatus.OK.value)
+            self.assertIsNone(item.get_custom_status())
+            tracking = item.tracking_info.last()
+            self.assertEqual(
+                tracking.deltas['old_status'], self.inspect_custom_status.key
+            )
+            self.assertEqual(
+                tracking.deltas['old_status_logical'],
+                self.inspect_custom_status.logical_key,
+            )
+            self.assertEqual(tracking.deltas['status'], StockStatus.OK.value)
+            self.assertEqual(tracking.deltas['status_logical'], StockStatus.OK.value)
 
 
 class StocktakeTest(StockAPITestCase):

@@ -956,6 +956,7 @@ export default function StockDetail() {
           />,
           <StatusRenderer
             status={stockitem.status_custom_key || stockitem.status}
+            fallbackStatus={stockitem.status}
             type={ModelType.stockitem}
             options={{
               size: 'lg'
