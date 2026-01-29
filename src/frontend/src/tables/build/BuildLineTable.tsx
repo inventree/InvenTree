@@ -333,7 +333,8 @@ export default function BuildLineTable({
       }),
       {
         accessor: 'part_detail.IPN',
-        sortable: false,
+        sortable: true,
+        ordering: 'IPN',
         title: t`IPN`
       },
       CategoryColumn({

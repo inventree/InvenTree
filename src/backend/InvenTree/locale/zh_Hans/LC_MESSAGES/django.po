@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-10 01:45+0000\n"
-"PO-Revision-Date: 2026-01-10 01:48\n"
+"POT-Creation-Date: 2026-01-21 06:02+0000\n"
+"PO-Revision-Date: 2026-01-21 06:06\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -259,16 +259,16 @@ msgstr "参考编号过大"
 msgid "Invalid choice"
 msgstr "无效选项"
 
-#: InvenTree/models.py:1022 common/models.py:1414 common/models.py:1841
-#: common/models.py:2102 common/models.py:2227 common/models.py:2494
-#: common/serializers.py:539 generic/states/serializers.py:20
+#: InvenTree/models.py:1022 common/models.py:1430 common/models.py:1857
+#: common/models.py:2118 common/models.py:2243 common/models.py:2510
+#: common/serializers.py:566 generic/states/serializers.py:20
 #: machine/models.py:25 part/models.py:1108 plugin/models.py:54
 #: report/models.py:216 stock/models.py:84
 msgid "Name"
 msgstr "名称"
 
 #: InvenTree/models.py:1028 build/models.py:253 common/models.py:175
-#: common/models.py:2234 common/models.py:2347 common/models.py:2509
+#: common/models.py:2250 common/models.py:2363 common/models.py:2525
 #: company/models.py:551 company/models.py:789 order/models.py:444
 #: order/models.py:1827 part/models.py:1131 report/models.py:222
 #: report/models.py:815 report/models.py:841
@@ -281,7 +281,7 @@ msgstr "描述"
 msgid "Description (optional)"
 msgstr "描述（选填）"
 
-#: InvenTree/models.py:1044 common/models.py:2815
+#: InvenTree/models.py:1044 common/models.py:2831
 msgid "Path"
 msgstr "路径"
 
@@ -330,7 +330,7 @@ msgstr "服务器错误"
 msgid "An error has been logged by the server."
 msgstr "服务器记录了一个错误。"
 
-#: InvenTree/models.py:1506 common/models.py:1752
+#: InvenTree/models.py:1506 common/models.py:1768
 #: report/templates/report/inventree_bill_of_materials_report.html:126
 #: report/templates/report/inventree_bill_of_materials_report.html:148
 #: report/templates/report/inventree_return_order_report.html:35
@@ -562,12 +562,12 @@ msgstr "订单状态"
 msgid "Parent Build"
 msgstr "父级生产订单"
 
-#: build/api.py:84 build/api.py:822 order/api.py:551 order/api.py:774
+#: build/api.py:84 build/api.py:824 order/api.py:551 order/api.py:774
 #: order/api.py:1171 order/api.py:1446 stock/api.py:573
 msgid "Include Variants"
 msgstr "包含变体"
 
-#: build/api.py:100 build/api.py:456 build/api.py:836 build/models.py:271
+#: build/api.py:100 build/api.py:456 build/api.py:838 build/models.py:271
 #: build/serializers.py:1215 build/serializers.py:1371
 #: build/serializers.py:1457 company/models.py:1008 company/serializers.py:434
 #: order/api.py:303 order/api.py:307 order/api.py:930 order/api.py:1184
@@ -678,7 +678,7 @@ msgstr "耗材"
 msgid "Optional"
 msgstr "可选项"
 
-#: build/api.py:445 build/serializers.py:1444 common/setting/system.py:456
+#: build/api.py:445 build/serializers.py:1444 common/setting/system.py:470
 #: part/models.py:1271 part/serializers.py:1560 part/serializers.py:1579
 #: stock/api.py:639
 msgid "Assembly"
@@ -700,7 +700,7 @@ msgstr "未结算订单"
 msgid "Allocated"
 msgstr "已分配"
 
-#: build/api.py:480 build/models.py:1670 build/serializers.py:1420
+#: build/api.py:480 build/models.py:1672 build/serializers.py:1420
 msgid "Consumed"
 msgstr "已消耗"
 
@@ -717,14 +717,14 @@ msgstr "可用数量"
 msgid "On Order"
 msgstr "已订购"
 
-#: build/api.py:859 build/models.py:118 order/models.py:1976
+#: build/api.py:861 build/models.py:118 order/models.py:1976
 #: report/templates/report/inventree_build_order_report.html:105
 #: stock/serializers.py:93 templates/email/build_order_completed.html:16
 #: templates/email/overdue_build_order.html:15
 msgid "Build Order"
 msgstr "生产订单"
 
-#: build/api.py:873 build/api.py:877 build/serializers.py:362
+#: build/api.py:875 build/api.py:879 build/serializers.py:362
 #: build/serializers.py:487 build/serializers.py:557 build/serializers.py:1248
 #: build/serializers.py:1253 order/api.py:1231 order/api.py:1236
 #: order/serializers.py:791 order/serializers.py:931 order/serializers.py:2020
@@ -735,11 +735,11 @@ msgstr "生产订单"
 msgid "Location"
 msgstr "库存位置"
 
-#: build/api.py:885
+#: build/api.py:887
 msgid "Output"
 msgstr "产出"
 
-#: build/api.py:887
+#: build/api.py:889
 msgid "Filter by output stock item ID. Use 'null' to find uninstalled build items."
 msgstr "按产出库存项ID筛选，使用“null”查找未安装的生产项。"
 
@@ -794,8 +794,8 @@ msgid "Brief description of the build (optional)"
 msgstr "生产订单的简要说明（可选）"
 
 #: build/models.py:266
-msgid "BuildOrder to which this build is allocated"
-msgstr "该生产订单所属的上级生产订单"
+msgid "Build Order to which this build is allocated"
+msgstr ""
 
 #: build/models.py:275
 msgid "Select part to build"
@@ -806,8 +806,8 @@ msgid "Sales Order Reference"
 msgstr "销售订单编号"
 
 #: build/models.py:285
-msgid "SalesOrder to which this build is allocated"
-msgstr "该生产订单关联的销售订单"
+msgid "Sales Order to which this build is allocated"
+msgstr ""
 
 #: build/models.py:290 build/serializers.py:1087
 msgid "Source Location"
@@ -917,7 +917,7 @@ msgstr "该生产订单的责任人或责任团队"
 msgid "External Link"
 msgstr "外部链接"
 
-#: build/models.py:407 common/models.py:1990 part/models.py:1183
+#: build/models.py:407 common/models.py:2006 part/models.py:1183
 #: stock/models.py:1081
 msgid "Link to external URL"
 msgstr "指向外部资源的URL链接"
@@ -1001,16 +1001,16 @@ msgstr "产出 {serial} 未通过所有必要测试"
 msgid "Cannot partially complete a build output with allocated items"
 msgstr "存在已分配物料时无法部分完成生产输出"
 
-#: build/models.py:1625
+#: build/models.py:1627
 msgid "Build Order Line Item"
 msgstr "生产订单行项目"
 
-#: build/models.py:1649
+#: build/models.py:1651
 msgid "Build object"
 msgstr "生产对象"
 
-#: build/models.py:1661 build/models.py:1983 build/serializers.py:261
-#: build/serializers.py:310 build/serializers.py:1419 common/models.py:1344
+#: build/models.py:1663 build/models.py:1985 build/serializers.py:261
+#: build/serializers.py:310 build/serializers.py:1419 common/models.py:1360
 #: order/models.py:1758 order/models.py:2598 order/serializers.py:1673
 #: order/serializers.py:2109 part/models.py:3498 part/models.py:4008
 #: report/templates/report/inventree_bill_of_materials_report.html:138
@@ -1030,40 +1030,40 @@ msgstr "生产对象"
 msgid "Quantity"
 msgstr "数量"
 
-#: build/models.py:1662
+#: build/models.py:1664
 msgid "Required quantity for build order"
 msgstr "生产订单所需数量"
 
-#: build/models.py:1671
+#: build/models.py:1673
 msgid "Quantity of consumed stock"
 msgstr "库存消耗量"
 
-#: build/models.py:1769
+#: build/models.py:1771
 msgid "Build item must specify a build output, as master part is marked as trackable"
 msgstr "生产项必须指定产出，因为主零件已经被标记为可追踪的"
 
-#: build/models.py:1832
+#: build/models.py:1834
 msgid "Selected stock item does not match BOM line"
 msgstr "所选库存项与物料清单行项不匹配"
 
-#: build/models.py:1851
+#: build/models.py:1853
 msgid "Allocated quantity must be greater than zero"
 msgstr ""
 
-#: build/models.py:1857
+#: build/models.py:1859
 msgid "Quantity must be 1 for serialized stock"
 msgstr "序列化物料的数量必须为1"
 
-#: build/models.py:1867
+#: build/models.py:1869
 #, python-brace-format
 msgid "Allocated quantity ({q}) must not exceed available stock quantity ({a})"
 msgstr "分配数量 ({q}) 不得超过可用库存数量 ({a})"
 
-#: build/models.py:1884 order/models.py:2547
+#: build/models.py:1886 order/models.py:2547
 msgid "Stock item is over-allocated"
 msgstr "库存品项超额分配"
 
-#: build/models.py:1973 build/serializers.py:938 build/serializers.py:1231
+#: build/models.py:1975 build/serializers.py:938 build/serializers.py:1231
 #: order/serializers.py:1510 order/serializers.py:1531
 #: report/templates/report/inventree_sales_order_shipment_report.html:29
 #: stock/api.py:1404 stock/models.py:442 stock/serializers.py:102
@@ -1071,19 +1071,19 @@ msgstr "库存品项超额分配"
 msgid "Stock Item"
 msgstr "库存项"
 
-#: build/models.py:1974
+#: build/models.py:1976
 msgid "Source stock item"
 msgstr "源库存项"
 
-#: build/models.py:1984
+#: build/models.py:1986
 msgid "Stock quantity to allocate to build"
 msgstr "分配给该生产任务的库存量"
 
-#: build/models.py:1993
+#: build/models.py:1995
 msgid "Install into"
 msgstr "安裝到"
 
-#: build/models.py:1994
+#: build/models.py:1996
 msgid "Destination stock item"
 msgstr "目标库存项"
 
@@ -1376,7 +1376,7 @@ msgstr "生产订单编号"
 msgid "Part Category Name"
 msgstr "零件类别名称"
 
-#: build/serializers.py:1410 common/setting/system.py:480 part/models.py:1283
+#: build/serializers.py:1410 common/setting/system.py:494 part/models.py:1283
 msgid "Trackable"
 msgstr "可追踪"
 
@@ -1526,7 +1526,7 @@ msgstr "暂无插件"
 msgid "Project Code Label"
 msgstr "项目编号标签"
 
-#: common/models.py:105 common/models.py:130 common/models.py:3150
+#: common/models.py:105 common/models.py:130 common/models.py:3166
 msgid "Updated"
 msgstr "已是最新"
 
@@ -1554,7 +1554,7 @@ msgstr "项目描述"
 msgid "User or group responsible for this project"
 msgstr "负责此项目的用户或团队"
 
-#: common/models.py:775 common/models.py:1276 common/models.py:1314
+#: common/models.py:775 common/models.py:1292 common/models.py:1330
 msgid "Settings key"
 msgstr "设置密钥"
 
@@ -1586,9 +1586,9 @@ msgstr "值未通过验证检查"
 msgid "Key string must be unique"
 msgstr "键字符串必须是唯一的"
 
-#: common/models.py:1322 common/models.py:1323 common/models.py:1427
-#: common/models.py:1428 common/models.py:1673 common/models.py:1674
-#: common/models.py:2006 common/models.py:2007 common/models.py:2803
+#: common/models.py:1338 common/models.py:1339 common/models.py:1443
+#: common/models.py:1444 common/models.py:1689 common/models.py:1690
+#: common/models.py:2022 common/models.py:2023 common/models.py:2819
 #: importer/models.py:100 part/models.py:3592 part/models.py:3620
 #: plugin/models.py:355 plugin/models.py:356
 #: report/templates/report/inventree_test_report.html:105 users/models.py:124
@@ -1596,111 +1596,111 @@ msgstr "键字符串必须是唯一的"
 msgid "User"
 msgstr "使用者"
 
-#: common/models.py:1345
+#: common/models.py:1361
 msgid "Price break quantity"
 msgstr "批发价数量"
 
-#: common/models.py:1352 company/serializers.py:316 order/models.py:1844
+#: common/models.py:1368 company/serializers.py:316 order/models.py:1844
 #: order/models.py:3044
 msgid "Price"
 msgstr "价格"
 
-#: common/models.py:1353
+#: common/models.py:1369
 msgid "Unit price at specified quantity"
 msgstr "指定数量的单位价格"
 
-#: common/models.py:1404 common/models.py:1589
+#: common/models.py:1420 common/models.py:1605
 msgid "Endpoint"
 msgstr "端点"
 
-#: common/models.py:1405
+#: common/models.py:1421
 msgid "Endpoint at which this webhook is received"
 msgstr "接收此网络钩子的端点"
 
-#: common/models.py:1415
+#: common/models.py:1431
 msgid "Name for this webhook"
 msgstr "此网络钩子的名称"
 
-#: common/models.py:1419 common/models.py:2247 common/models.py:2354
+#: common/models.py:1435 common/models.py:2263 common/models.py:2370
 #: company/models.py:192 company/models.py:763 machine/models.py:40
 #: part/models.py:1306 plugin/models.py:69 stock/api.py:642 users/models.py:195
 #: users/models.py:554 users/serializers.py:319
 msgid "Active"
 msgstr "激活"
 
-#: common/models.py:1419
+#: common/models.py:1435
 msgid "Is this webhook active"
 msgstr "网络钩子是否已启用"
 
-#: common/models.py:1435 users/models.py:172
+#: common/models.py:1451 users/models.py:172
 msgid "Token"
 msgstr "令牌"
 
-#: common/models.py:1436
+#: common/models.py:1452
 msgid "Token for access"
 msgstr "访问令牌"
 
-#: common/models.py:1444
+#: common/models.py:1460
 msgid "Secret"
 msgstr "密钥"
 
-#: common/models.py:1445
+#: common/models.py:1461
 msgid "Shared secret for HMAC"
 msgstr "HMAC共享密钥"
 
-#: common/models.py:1553 common/models.py:3040
+#: common/models.py:1569 common/models.py:3056
 msgid "Message ID"
 msgstr "消息ID"
 
-#: common/models.py:1554 common/models.py:3030
+#: common/models.py:1570 common/models.py:3046
 msgid "Unique identifier for this message"
 msgstr "此邮件的唯一标识符"
 
-#: common/models.py:1562
+#: common/models.py:1578
 msgid "Host"
 msgstr "主机"
 
-#: common/models.py:1563
+#: common/models.py:1579
 msgid "Host from which this message was received"
 msgstr "接收此消息的主机"
 
-#: common/models.py:1571
+#: common/models.py:1587
 msgid "Header"
 msgstr "标题"
 
-#: common/models.py:1572
+#: common/models.py:1588
 msgid "Header of this message"
 msgstr "此消息的标题"
 
-#: common/models.py:1579
+#: common/models.py:1595
 msgid "Body"
 msgstr "正文"
 
-#: common/models.py:1580
+#: common/models.py:1596
 msgid "Body of this message"
 msgstr "此消息的正文"
 
-#: common/models.py:1590
+#: common/models.py:1606
 msgid "Endpoint on which this message was received"
 msgstr "接收此消息的终点"
 
-#: common/models.py:1595
+#: common/models.py:1611
 msgid "Worked on"
 msgstr "工作于"
 
-#: common/models.py:1596
+#: common/models.py:1612
 msgid "Was the work on this message finished?"
 msgstr "这条消息的工作完成了吗？"
 
-#: common/models.py:1722
+#: common/models.py:1738
 msgid "Id"
 msgstr "标识"
 
-#: common/models.py:1724
+#: common/models.py:1740
 msgid "Title"
 msgstr "标题"
 
-#: common/models.py:1726 common/models.py:1989 company/models.py:186
+#: common/models.py:1742 common/models.py:2005 company/models.py:186
 #: company/models.py:474 company/models.py:542 company/models.py:780
 #: order/models.py:459 order/models.py:1788 order/models.py:2344
 #: part/models.py:1182
@@ -1708,427 +1708,427 @@ msgstr "标题"
 msgid "Link"
 msgstr "链接"
 
-#: common/models.py:1728
+#: common/models.py:1744
 msgid "Published"
 msgstr "已发布"
 
-#: common/models.py:1730
+#: common/models.py:1746
 msgid "Author"
 msgstr "作者"
 
-#: common/models.py:1732
+#: common/models.py:1748
 msgid "Summary"
 msgstr "摘要"
 
-#: common/models.py:1735 common/models.py:3007
+#: common/models.py:1751 common/models.py:3023
 msgid "Read"
 msgstr "阅读"
 
-#: common/models.py:1735
+#: common/models.py:1751
 msgid "Was this news item read?"
 msgstr "这条新闻被阅读了吗？"
 
-#: common/models.py:1752
+#: common/models.py:1768
 msgid "Image file"
 msgstr "图像文件"
 
-#: common/models.py:1764
+#: common/models.py:1780
 msgid "Target model type for this image"
 msgstr "此图像的目标模型类型"
 
-#: common/models.py:1768
+#: common/models.py:1784
 msgid "Target model ID for this image"
 msgstr "此图像的目标型号ID"
 
-#: common/models.py:1790
+#: common/models.py:1806
 msgid "Custom Unit"
 msgstr "自定义单位"
 
-#: common/models.py:1808
+#: common/models.py:1824
 msgid "Unit symbol must be unique"
 msgstr "单位符号必须唯一"
 
-#: common/models.py:1823
+#: common/models.py:1839
 msgid "Unit name must be a valid identifier"
 msgstr "单位名称必须是有效的标识符"
 
-#: common/models.py:1842
+#: common/models.py:1858
 msgid "Unit name"
 msgstr "单位名称"
 
-#: common/models.py:1849
+#: common/models.py:1865
 msgid "Symbol"
 msgstr "符号"
 
-#: common/models.py:1850
+#: common/models.py:1866
 msgid "Optional unit symbol"
 msgstr "可选单位符号"
 
-#: common/models.py:1856
+#: common/models.py:1872
 msgid "Definition"
 msgstr "定义"
 
-#: common/models.py:1857
+#: common/models.py:1873
 msgid "Unit definition"
 msgstr "单位定义"
 
-#: common/models.py:1917 common/models.py:1980 stock/models.py:2970
+#: common/models.py:1933 common/models.py:1996 stock/models.py:2970
 #: stock/serializers.py:249
 msgid "Attachment"
 msgstr "附件"
 
-#: common/models.py:1934
+#: common/models.py:1950
 msgid "Missing file"
 msgstr "缺少文件"
 
-#: common/models.py:1935
+#: common/models.py:1951
 msgid "Missing external link"
 msgstr "缺少外部链接"
 
-#: common/models.py:1972 common/models.py:2488
+#: common/models.py:1988 common/models.py:2504
 msgid "Model type"
 msgstr "模型类型"
 
-#: common/models.py:1973
+#: common/models.py:1989
 msgid "Target model type for image"
 msgstr "图片的目标模型类型"
 
-#: common/models.py:1981
+#: common/models.py:1997
 msgid "Select file to attach"
 msgstr "选择附件"
 
-#: common/models.py:1997
+#: common/models.py:2013
 msgid "Comment"
 msgstr "备注"
 
-#: common/models.py:1998
+#: common/models.py:2014
 msgid "Attachment comment"
 msgstr "附件备注"
 
-#: common/models.py:2014
+#: common/models.py:2030
 msgid "Upload date"
 msgstr "上传日期"
 
-#: common/models.py:2015
+#: common/models.py:2031
 msgid "Date the file was uploaded"
 msgstr "上传文件的日期"
 
-#: common/models.py:2019
+#: common/models.py:2035
 msgid "File size"
 msgstr "文件大小"
 
-#: common/models.py:2019
+#: common/models.py:2035
 msgid "File size in bytes"
 msgstr "文件大小，以字节为单位"
 
-#: common/models.py:2057 common/serializers.py:688
+#: common/models.py:2073 common/serializers.py:715
 msgid "Invalid model type specified for attachment"
 msgstr "为附件指定的模型类型无效"
 
-#: common/models.py:2078
+#: common/models.py:2094
 msgid "Custom State"
 msgstr "自定状态"
 
-#: common/models.py:2079
+#: common/models.py:2095
 msgid "Custom States"
 msgstr "定制状态"
 
-#: common/models.py:2084
+#: common/models.py:2100
 msgid "Reference Status Set"
 msgstr "参考状态设置"
 
-#: common/models.py:2085
+#: common/models.py:2101
 msgid "Status set that is extended with this custom state"
 msgstr "使用此自定义状态扩展状态的状态集"
 
-#: common/models.py:2089 generic/states/serializers.py:18
+#: common/models.py:2105 generic/states/serializers.py:18
 msgid "Logical Key"
 msgstr "逻辑密钥"
 
-#: common/models.py:2091
+#: common/models.py:2107
 msgid "State logical key that is equal to this custom state in business logic"
 msgstr "等同于商业逻辑中自定义状态的状态逻辑键"
 
-#: common/models.py:2096 common/models.py:2335 machine/serializers.py:27
+#: common/models.py:2112 common/models.py:2351 machine/serializers.py:27
 #: report/templates/report/inventree_test_report.html:104 stock/models.py:2962
 msgid "Value"
 msgstr "值"
 
-#: common/models.py:2097
+#: common/models.py:2113
 msgid "Numerical value that will be saved in the models database"
 msgstr "将保存至模型数据库的数值"
 
-#: common/models.py:2103
+#: common/models.py:2119
 msgid "Name of the state"
 msgstr "状态名"
 
-#: common/models.py:2112 common/models.py:2341 generic/states/serializers.py:22
+#: common/models.py:2128 common/models.py:2357 generic/states/serializers.py:22
 msgid "Label"
 msgstr "标签"
 
-#: common/models.py:2113
+#: common/models.py:2129
 msgid "Label that will be displayed in the frontend"
 msgstr "将在前端显示的标签"
 
-#: common/models.py:2120 generic/states/serializers.py:24
+#: common/models.py:2136 generic/states/serializers.py:24
 msgid "Color"
 msgstr "颜色"
 
-#: common/models.py:2121
+#: common/models.py:2137
 msgid "Color that will be displayed in the frontend"
 msgstr "将在前端显示颜色"
 
-#: common/models.py:2129
+#: common/models.py:2145
 msgid "Model"
 msgstr "型号"
 
-#: common/models.py:2130
+#: common/models.py:2146
 msgid "Model this state is associated with"
 msgstr "该状态关联的模型"
 
-#: common/models.py:2145
+#: common/models.py:2161
 msgid "Model must be selected"
 msgstr "必须选定模型"
 
-#: common/models.py:2148
+#: common/models.py:2164
 msgid "Key must be selected"
 msgstr "必须选取密钥"
 
-#: common/models.py:2151
+#: common/models.py:2167
 msgid "Logical key must be selected"
 msgstr "必须选中逻辑密钥"
 
-#: common/models.py:2155
+#: common/models.py:2171
 msgid "Key must be different from logical key"
 msgstr "密钥必须不同于逻辑密钥"
 
-#: common/models.py:2162
+#: common/models.py:2178
 msgid "Valid reference status class must be provided"
 msgstr "必须提供有效的参考状态类"
 
-#: common/models.py:2168
+#: common/models.py:2184
 msgid "Key must be different from the logical keys of the reference status"
 msgstr "密钥必须不同于参考状态的逻辑密钥"
 
-#: common/models.py:2175
+#: common/models.py:2191
 msgid "Logical key must be in the logical keys of the reference status"
 msgstr "逻辑密钥必须在参考状态的逻辑键中"
 
-#: common/models.py:2182
+#: common/models.py:2198
 msgid "Name must be different from the names of the reference status"
 msgstr "名称必须不同于参考状态的名称"
 
-#: common/models.py:2222 common/models.py:2329 common/models.py:2533
+#: common/models.py:2238 common/models.py:2345 common/models.py:2549
 msgid "Selection List"
 msgstr "选择列表"
 
-#: common/models.py:2223
+#: common/models.py:2239
 msgid "Selection Lists"
 msgstr "选择列表"
 
-#: common/models.py:2228
+#: common/models.py:2244
 msgid "Name of the selection list"
 msgstr "选择列表的名称"
 
-#: common/models.py:2235
+#: common/models.py:2251
 msgid "Description of the selection list"
 msgstr "选择列表的描述"
 
-#: common/models.py:2241 part/models.py:1311
+#: common/models.py:2257 part/models.py:1311
 msgid "Locked"
 msgstr "已锁定"
 
-#: common/models.py:2242
+#: common/models.py:2258
 msgid "Is this selection list locked?"
 msgstr "此选择列表是否已锁定？"
 
-#: common/models.py:2248
+#: common/models.py:2264
 msgid "Can this selection list be used?"
 msgstr "能否使用此选择列表？"
 
-#: common/models.py:2256
+#: common/models.py:2272
 msgid "Source Plugin"
 msgstr "源插件"
 
-#: common/models.py:2257
+#: common/models.py:2273
 msgid "Plugin which provides the selection list"
 msgstr "提供选择列表的插件"
 
-#: common/models.py:2262
+#: common/models.py:2278
 msgid "Source String"
 msgstr "源字符串"
 
-#: common/models.py:2263
+#: common/models.py:2279
 msgid "Optional string identifying the source used for this list"
 msgstr "可选字符串，用于标识本列表的数据来源"
 
-#: common/models.py:2272
+#: common/models.py:2288
 msgid "Default Entry"
 msgstr "缺省项"
 
-#: common/models.py:2273
+#: common/models.py:2289
 msgid "Default entry for this selection list"
 msgstr "本选择列表的默认选项"
 
-#: common/models.py:2278 common/models.py:3145
+#: common/models.py:2294 common/models.py:3161
 msgid "Created"
 msgstr "已创建"
 
-#: common/models.py:2279
+#: common/models.py:2295
 msgid "Date and time that the selection list was created"
 msgstr "选择列表的创建日期和时间"
 
-#: common/models.py:2284
+#: common/models.py:2300
 msgid "Last Updated"
 msgstr "最近更新"
 
-#: common/models.py:2285
+#: common/models.py:2301
 msgid "Date and time that the selection list was last updated"
 msgstr "选择列表的最后更新时间"
 
-#: common/models.py:2319
+#: common/models.py:2335
 msgid "Selection List Entry"
 msgstr "选择列表项"
 
-#: common/models.py:2320
+#: common/models.py:2336
 msgid "Selection List Entries"
 msgstr "选择列表项"
 
-#: common/models.py:2330
+#: common/models.py:2346
 msgid "Selection list to which this entry belongs"
 msgstr "此选项归属的选择列表"
 
-#: common/models.py:2336
+#: common/models.py:2352
 msgid "Value of the selection list entry"
 msgstr "选择列表项的值"
 
-#: common/models.py:2342
+#: common/models.py:2358
 msgid "Label for the selection list entry"
 msgstr "选择列表项的标签"
 
-#: common/models.py:2348
+#: common/models.py:2364
 msgid "Description of the selection list entry"
 msgstr "选择列表项的描述"
 
-#: common/models.py:2355
+#: common/models.py:2371
 msgid "Is this selection list entry active?"
 msgstr "该选择列表项是否处于激活状态？"
 
-#: common/models.py:2387
+#: common/models.py:2403
 msgid "Parameter Template"
 msgstr "参数模板"
 
-#: common/models.py:2388
+#: common/models.py:2404
 msgid "Parameter Templates"
 msgstr "参数模板"
 
-#: common/models.py:2425
+#: common/models.py:2441
 msgid "Checkbox parameters cannot have units"
 msgstr "勾选框参数不能有单位"
 
-#: common/models.py:2430
+#: common/models.py:2446
 msgid "Checkbox parameters cannot have choices"
 msgstr "复选框参数不能有选项"
 
-#: common/models.py:2450 part/models.py:3688
+#: common/models.py:2466 part/models.py:3688
 msgid "Choices must be unique"
 msgstr "选择必须是唯一的"
 
-#: common/models.py:2467
+#: common/models.py:2483
 msgid "Parameter template name must be unique"
 msgstr "参数模板名称必须是唯一的"
 
-#: common/models.py:2489
+#: common/models.py:2505
 msgid "Target model type for this parameter template"
 msgstr "此参数模板的目标模型类型"
 
-#: common/models.py:2495
+#: common/models.py:2511
 msgid "Parameter Name"
 msgstr "参数名称"
 
-#: common/models.py:2501 part/models.py:1264
+#: common/models.py:2517 part/models.py:1264
 msgid "Units"
 msgstr "单位"
 
-#: common/models.py:2502
+#: common/models.py:2518
 msgid "Physical units for this parameter"
 msgstr "此参数的物理单位"
 
-#: common/models.py:2510
+#: common/models.py:2526
 msgid "Parameter description"
 msgstr "参数说明"
 
-#: common/models.py:2516
+#: common/models.py:2532
 msgid "Checkbox"
 msgstr "勾选框"
 
-#: common/models.py:2517
+#: common/models.py:2533
 msgid "Is this parameter a checkbox?"
 msgstr "此参数是否为勾选框？"
 
-#: common/models.py:2522 part/models.py:3775
+#: common/models.py:2538 part/models.py:3775
 msgid "Choices"
 msgstr "选项"
 
-#: common/models.py:2523
+#: common/models.py:2539
 msgid "Valid choices for this parameter (comma-separated)"
 msgstr "此参数的有效选择 (逗号分隔)"
 
-#: common/models.py:2534
+#: common/models.py:2550
 msgid "Selection list for this parameter"
 msgstr "此参数的选择列表"
 
-#: common/models.py:2539 part/models.py:3750 report/models.py:287
+#: common/models.py:2555 part/models.py:3750 report/models.py:287
 msgid "Enabled"
 msgstr "已启用"
 
-#: common/models.py:2540
+#: common/models.py:2556
 msgid "Is this parameter template enabled?"
 msgstr "此参数模板是否启用？"
 
-#: common/models.py:2581
+#: common/models.py:2597
 msgid "Parameter"
 msgstr "参数"
 
-#: common/models.py:2582
+#: common/models.py:2598
 msgid "Parameters"
 msgstr "参数"
 
-#: common/models.py:2628
+#: common/models.py:2644
 msgid "Invalid choice for parameter value"
 msgstr "无效的参数值选择"
 
-#: common/models.py:2698 common/serializers.py:783
+#: common/models.py:2714 common/serializers.py:810
 msgid "Invalid model type specified for parameter"
 msgstr "为附件指定的模型类型无效"
 
-#: common/models.py:2734
+#: common/models.py:2750
 msgid "Model ID"
 msgstr "型号ID"
 
-#: common/models.py:2735
+#: common/models.py:2751
 msgid "ID of the target model for this parameter"
 msgstr "此参数的目标模型的 ID"
 
-#: common/models.py:2744 common/setting/system.py:450 report/models.py:373
+#: common/models.py:2760 common/setting/system.py:464 report/models.py:373
 #: report/models.py:669 report/serializers.py:94 report/serializers.py:135
 #: stock/serializers.py:235
 msgid "Template"
 msgstr "模板"
 
-#: common/models.py:2745
+#: common/models.py:2761
 msgid "Parameter template"
 msgstr "参数模板"
 
-#: common/models.py:2750 common/models.py:2792 importer/models.py:546
+#: common/models.py:2766 common/models.py:2808 importer/models.py:546
 msgid "Data"
 msgstr "数据"
 
-#: common/models.py:2751
+#: common/models.py:2767
 msgid "Parameter Value"
 msgstr "参数值"
 
-#: common/models.py:2760 company/models.py:797 order/serializers.py:841
+#: common/models.py:2776 company/models.py:797 order/serializers.py:841
 #: order/serializers.py:2025 part/models.py:4068 part/models.py:4437
 #: report/templates/report/inventree_bill_of_materials_report.html:140
 #: report/templates/report/inventree_purchase_order_report.html:39
@@ -2139,181 +2139,181 @@ msgstr "参数值"
 msgid "Note"
 msgstr "备注"
 
-#: common/models.py:2761 stock/serializers.py:718
+#: common/models.py:2777 stock/serializers.py:718
 msgid "Optional note field"
 msgstr "可选注释字段"
 
-#: common/models.py:2788
+#: common/models.py:2804
 msgid "Barcode Scan"
 msgstr "扫描条码"
 
-#: common/models.py:2793
+#: common/models.py:2809
 msgid "Barcode data"
 msgstr "条码数据"
 
-#: common/models.py:2804
+#: common/models.py:2820
 msgid "User who scanned the barcode"
 msgstr "扫描条码的用户"
 
-#: common/models.py:2809 importer/models.py:69
+#: common/models.py:2825 importer/models.py:69
 msgid "Timestamp"
 msgstr "时间戳"
 
-#: common/models.py:2810
+#: common/models.py:2826
 msgid "Date and time of the barcode scan"
 msgstr "扫描条形码的日期和时间"
 
-#: common/models.py:2816
+#: common/models.py:2832
 msgid "URL endpoint which processed the barcode"
 msgstr "处理条码的 URL 端点"
 
-#: common/models.py:2823 order/models.py:1834 plugin/serializers.py:93
+#: common/models.py:2839 order/models.py:1834 plugin/serializers.py:93
 msgid "Context"
 msgstr "上下文"
 
-#: common/models.py:2824
+#: common/models.py:2840
 msgid "Context data for the barcode scan"
 msgstr "扫描条形码的上下文数据"
 
-#: common/models.py:2831
+#: common/models.py:2847
 msgid "Response"
 msgstr "响应"
 
-#: common/models.py:2832
+#: common/models.py:2848
 msgid "Response data from the barcode scan"
 msgstr "扫描条形码的响应数据"
 
-#: common/models.py:2838 report/templates/report/inventree_test_report.html:103
+#: common/models.py:2854 report/templates/report/inventree_test_report.html:103
 #: stock/models.py:2956
 msgid "Result"
 msgstr "结果"
 
-#: common/models.py:2839
+#: common/models.py:2855
 msgid "Was the barcode scan successful?"
 msgstr "条码扫描成功吗？"
 
-#: common/models.py:2921
+#: common/models.py:2937
 msgid "An error occurred"
 msgstr "发生错误"
 
-#: common/models.py:2942
+#: common/models.py:2958
 msgid "INVE-E8: Email log deletion is protected. Set INVENTREE_PROTECT_EMAIL_LOG to False to allow deletion."
 msgstr "INVE-E8：邮件日志删除受保护。需设置 INVENTREE_PROTECT_EMAIL_LOG 为 False 以允许删除。"
 
-#: common/models.py:2989
+#: common/models.py:3005
 msgid "Email Message"
 msgstr "电子邮件信息"
 
-#: common/models.py:2990
+#: common/models.py:3006
 msgid "Email Messages"
 msgstr "电子邮箱信息"
 
-#: common/models.py:2997
+#: common/models.py:3013
 msgid "Announced"
 msgstr "已发布"
 
-#: common/models.py:2999
+#: common/models.py:3015
 msgid "Sent"
 msgstr "已发送"
 
-#: common/models.py:3000
+#: common/models.py:3016
 msgid "Failed"
 msgstr "失败"
 
-#: common/models.py:3003
+#: common/models.py:3019
 msgid "Delivered"
 msgstr "已送达"
 
-#: common/models.py:3011
+#: common/models.py:3027
 msgid "Confirmed"
 msgstr "已确认"
 
-#: common/models.py:3017
+#: common/models.py:3033
 msgid "Inbound"
 msgstr "入站"
 
-#: common/models.py:3018
+#: common/models.py:3034
 msgid "Outbound"
 msgstr "出站"
 
-#: common/models.py:3023
+#: common/models.py:3039
 msgid "No Reply"
 msgstr "暂无回复消息"
 
-#: common/models.py:3024
+#: common/models.py:3040
 msgid "Track Delivery"
 msgstr "跟踪交付"
 
-#: common/models.py:3025
+#: common/models.py:3041
 msgid "Track Read"
 msgstr "已读追踪"
 
-#: common/models.py:3026
+#: common/models.py:3042
 msgid "Track Click"
 msgstr "点击追踪"
 
-#: common/models.py:3029 common/models.py:3132
+#: common/models.py:3045 common/models.py:3148
 msgid "Global ID"
 msgstr "全局ID"
 
-#: common/models.py:3042
+#: common/models.py:3058
 msgid "Identifier for this message (might be supplied by external system)"
 msgstr "此消息的标识符 (可能由外部系统提供)"
 
-#: common/models.py:3049
+#: common/models.py:3065
 msgid "Thread ID"
 msgstr "主题 ID"
 
-#: common/models.py:3051
+#: common/models.py:3067
 msgid "Identifier for this message thread (might be supplied by external system)"
 msgstr "此消息主题的标识符 (可能由外部系统提供)"
 
-#: common/models.py:3060
+#: common/models.py:3076
 msgid "Thread"
 msgstr "主题"
 
-#: common/models.py:3061
+#: common/models.py:3077
 msgid "Linked thread for this message"
 msgstr "链接到此消息的主题"
 
-#: common/models.py:3077
+#: common/models.py:3093
 msgid "Priority"
 msgstr "优先"
 
-#: common/models.py:3119
+#: common/models.py:3135
 msgid "Email Thread"
 msgstr "邮件主题"
 
-#: common/models.py:3120
+#: common/models.py:3136
 msgid "Email Threads"
 msgstr "邮件主题"
 
-#: common/models.py:3126 generic/states/serializers.py:16
+#: common/models.py:3142 generic/states/serializers.py:16
 #: machine/serializers.py:24 plugin/models.py:46 users/models.py:113
 msgid "Key"
 msgstr "键"
 
-#: common/models.py:3129
+#: common/models.py:3145
 msgid "Unique key for this thread (used to identify the thread)"
 msgstr "此主题的唯一密钥 (用于识别主题)"
 
-#: common/models.py:3133
+#: common/models.py:3149
 msgid "Unique identifier for this thread"
 msgstr "此主题的唯一标识符"
 
-#: common/models.py:3140
+#: common/models.py:3156
 msgid "Started Internal"
 msgstr "内部服务已启动"
 
-#: common/models.py:3141
+#: common/models.py:3157
 msgid "Was this thread started internally?"
 msgstr "该线程是否为内部启动的？"
 
-#: common/models.py:3146
+#: common/models.py:3162
 msgid "Date and time that the thread was created"
 msgstr "创建主题的日期和时间"
 
-#: common/models.py:3151
+#: common/models.py:3167
 msgid "Date and time that the thread was last updated"
 msgstr "主题最后更新的日期和时间"
 
@@ -2347,93 +2347,101 @@ msgstr "已根据采购订单收到物品"
 msgid "Items have been received against a return order"
 msgstr "已收到退货订单中的物品"
 
-#: common/serializers.py:149
+#: common/serializers.py:125
+msgid "Indicates if changing this setting requires confirmation"
+msgstr ""
+
+#: common/serializers.py:139
+msgid "This setting requires confirmation before changing. Please confirm the change."
+msgstr ""
+
+#: common/serializers.py:172
 msgid "Indicates if the setting is overridden by an environment variable"
 msgstr "表示设置是否被环境变量覆盖"
 
-#: common/serializers.py:151
+#: common/serializers.py:174
 msgid "Override"
 msgstr "覆盖"
 
-#: common/serializers.py:502
+#: common/serializers.py:529
 msgid "Is Running"
 msgstr "正在运行"
 
-#: common/serializers.py:508
+#: common/serializers.py:535
 msgid "Pending Tasks"
 msgstr "等待完成的任务"
 
-#: common/serializers.py:514
+#: common/serializers.py:541
 msgid "Scheduled Tasks"
 msgstr "预定的任务"
 
-#: common/serializers.py:520
+#: common/serializers.py:547
 msgid "Failed Tasks"
 msgstr "失败的任务"
 
-#: common/serializers.py:535
+#: common/serializers.py:562
 msgid "Task ID"
 msgstr "任务ID"
 
-#: common/serializers.py:535
+#: common/serializers.py:562
 msgid "Unique task ID"
 msgstr "唯一任务ID"
 
-#: common/serializers.py:537
+#: common/serializers.py:564
 msgid "Lock"
 msgstr "锁定"
 
-#: common/serializers.py:537
+#: common/serializers.py:564
 msgid "Lock time"
 msgstr "锁定时间"
 
-#: common/serializers.py:539
+#: common/serializers.py:566
 msgid "Task name"
 msgstr "任务名称"
 
-#: common/serializers.py:541
+#: common/serializers.py:568
 msgid "Function"
 msgstr "功能"
 
-#: common/serializers.py:541
+#: common/serializers.py:568
 msgid "Function name"
 msgstr "功能名称"
 
-#: common/serializers.py:543
+#: common/serializers.py:570
 msgid "Arguments"
 msgstr "参数"
 
-#: common/serializers.py:543
+#: common/serializers.py:570
 msgid "Task arguments"
 msgstr "任务参数"
 
-#: common/serializers.py:546
+#: common/serializers.py:573
 msgid "Keyword Arguments"
 msgstr "关键字参数"
 
-#: common/serializers.py:546
+#: common/serializers.py:573
 msgid "Task keyword arguments"
 msgstr "任务关键词参数"
 
-#: common/serializers.py:656
+#: common/serializers.py:683
 msgid "Filename"
 msgstr "文件名"
 
-#: common/serializers.py:663 common/serializers.py:730
-#: common/serializers.py:805 importer/models.py:89 report/api.py:41
+#: common/serializers.py:690 common/serializers.py:757
+#: common/serializers.py:832 importer/models.py:89 report/api.py:41
 #: report/models.py:293 report/serializers.py:52
 msgid "Model Type"
 msgstr "模型类型"
 
-#: common/serializers.py:691
+#: common/serializers.py:718
 msgid "User does not have permission to create or edit attachments for this model"
 msgstr "用户无权为此模式创建或编辑附件"
 
-#: common/serializers.py:786
+#: common/serializers.py:813
 msgid "User does not have permission to create or edit parameters for this model"
 msgstr "用户没有权限为此模型创建或编辑参数"
 
-#: common/serializers.py:856 common/serializers.py:959
+#: common/serializers.py:883 common/serializers.py:986
 msgid "Selection list is locked"
 msgstr "选择列表已锁定"
 
@@ -2441,1128 +2449,1132 @@ msgstr "选择列表已锁定"
 msgid "No group"
 msgstr "无分组"
 
-#: common/setting/system.py:155
+#: common/setting/system.py:169
 msgid "Site URL is locked by configuration"
 msgstr "网站 URL 已配置为锁定"
 
-#: common/setting/system.py:172
+#: common/setting/system.py:186
 msgid "Restart required"
 msgstr "需要重启"
 
-#: common/setting/system.py:173
+#: common/setting/system.py:187
 msgid "A setting has been changed which requires a server restart"
 msgstr "设置已更改，需要服务器重启"
 
-#: common/setting/system.py:179
+#: common/setting/system.py:193
 msgid "Pending migrations"
 msgstr "等待迁移"
 
-#: common/setting/system.py:180
+#: common/setting/system.py:194
 msgid "Number of pending database migrations"
 msgstr "待处理的数据库迁移数"
 
-#: common/setting/system.py:185
+#: common/setting/system.py:199
 msgid "Active warning codes"
 msgstr "活动的警告代码"
 
-#: common/setting/system.py:186
+#: common/setting/system.py:200
 msgid "A dict of active warning codes"
 msgstr "活跃警告代码的字典"
 
-#: common/setting/system.py:192
+#: common/setting/system.py:206
 msgid "Instance ID"
 msgstr "实例ID"
 
-#: common/setting/system.py:193
+#: common/setting/system.py:207
 msgid "Unique identifier for this InvenTree instance"
 msgstr "此 InvenTree 实例的唯一标识符"
 
-#: common/setting/system.py:198
+#: common/setting/system.py:212
 msgid "Announce ID"
 msgstr "公告 ID"
 
-#: common/setting/system.py:200
+#: common/setting/system.py:214
 msgid "Announce the instance ID of the server in the server status info (unauthenticated)"
 msgstr "在服务器状态信息中公开实例ID（未认证状态下）"
 
-#: common/setting/system.py:206
+#: common/setting/system.py:220
 msgid "Server Instance Name"
 msgstr "服务器实例名称"
 
-#: common/setting/system.py:208
+#: common/setting/system.py:222
 msgid "String descriptor for the server instance"
 msgstr "服务器实例的字符串描述符"
 
-#: common/setting/system.py:212
+#: common/setting/system.py:226
 msgid "Use instance name"
 msgstr "使用实例名称"
 
-#: common/setting/system.py:213
+#: common/setting/system.py:227
 msgid "Use the instance name in the title-bar"
 msgstr "在标题栏中使用实例名称"
 
-#: common/setting/system.py:218
+#: common/setting/system.py:232
 msgid "Restrict showing `about`"
 msgstr "限制显示 `关于` 信息"
 
-#: common/setting/system.py:219
+#: common/setting/system.py:233
 msgid "Show the `about` modal only to superusers"
 msgstr "只向超级管理员显示关于信息"
 
-#: common/setting/system.py:224 company/models.py:145 company/models.py:146
+#: common/setting/system.py:238 company/models.py:145 company/models.py:146
 msgid "Company name"
 msgstr "公司名称"
 
-#: common/setting/system.py:225
+#: common/setting/system.py:239
 msgid "Internal company name"
 msgstr "内部公司名称"
 
-#: common/setting/system.py:229
+#: common/setting/system.py:243
 msgid "Base URL"
 msgstr "基本 URL"
 
-#: common/setting/system.py:230
+#: common/setting/system.py:244
 msgid "Base URL for server instance"
 msgstr "服务器实例的基准 URL"
 
-#: common/setting/system.py:236
+#: common/setting/system.py:250
 msgid "Default Currency"
 msgstr "默认货币"
 
-#: common/setting/system.py:237
+#: common/setting/system.py:251
 msgid "Select base currency for pricing calculations"
 msgstr "系统价格计算使用的基准货币"
 
-#: common/setting/system.py:243
+#: common/setting/system.py:257
 msgid "Supported Currencies"
 msgstr "支持币种"
 
-#: common/setting/system.py:244
+#: common/setting/system.py:258
 msgid "List of supported currency codes"
 msgstr "支持的货币代码列表"
 
-#: common/setting/system.py:250
+#: common/setting/system.py:264
 msgid "Currency Update Interval"
 msgstr "货币更新间隔时间"
 
-#: common/setting/system.py:251
+#: common/setting/system.py:265
 msgid "How often to update exchange rates (set to zero to disable)"
 msgstr "检查更新的频率(设置为零以禁用)"
 
-#: common/setting/system.py:253 common/setting/system.py:293
-#: common/setting/system.py:306 common/setting/system.py:314
-#: common/setting/system.py:321 common/setting/system.py:330
-#: common/setting/system.py:339 common/setting/system.py:580
-#: common/setting/system.py:608 common/setting/system.py:707
-#: common/setting/system.py:1103 common/setting/system.py:1119
+#: common/setting/system.py:267 common/setting/system.py:307
+#: common/setting/system.py:320 common/setting/system.py:328
+#: common/setting/system.py:335 common/setting/system.py:344
+#: common/setting/system.py:353 common/setting/system.py:594
+#: common/setting/system.py:622 common/setting/system.py:721
+#: common/setting/system.py:1122 common/setting/system.py:1138
 msgid "days"
 msgstr "天"
 
-#: common/setting/system.py:257
+#: common/setting/system.py:271
 msgid "Currency Update Plugin"
 msgstr "币种更新插件"
 
-#: common/setting/system.py:258
+#: common/setting/system.py:272
 msgid "Currency update plugin to use"
 msgstr "使用货币更新插件"
 
-#: common/setting/system.py:263
+#: common/setting/system.py:277
 msgid "Download from URL"
 msgstr "从URL下载"
 
-#: common/setting/system.py:264
+#: common/setting/system.py:278
 msgid "Allow download of remote images and files from external URL"
 msgstr "允许从外部 URL 下载远程图片和文件"
 
-#: common/setting/system.py:269
+#: common/setting/system.py:283
 msgid "Download Size Limit"
 msgstr "下载大小限制"
 
-#: common/setting/system.py:270
+#: common/setting/system.py:284
 msgid "Maximum allowable download size for remote image"
 msgstr "远程图片的最大允许下载大小"
 
-#: common/setting/system.py:276
+#: common/setting/system.py:290
 msgid "User-agent used to download from URL"
 msgstr "用于从 URL 下载的 User-agent"
 
-#: common/setting/system.py:278
+#: common/setting/system.py:292
 msgid "Allow to override the user-agent used to download images and files from external URL (leave blank for the default)"
 msgstr "允许覆盖用于从外部 URL 下载图片和文件的 user-agent(留空为默认值)"
 
-#: common/setting/system.py:283
+#: common/setting/system.py:297
 msgid "Strict URL Validation"
 msgstr "严格的 URL 验证"
 
-#: common/setting/system.py:284
+#: common/setting/system.py:298
 msgid "Require schema specification when validating URLs"
 msgstr "验证 URL 时需要 schema 规范"
 
-#: common/setting/system.py:289
+#: common/setting/system.py:303
 msgid "Update Check Interval"
 msgstr "更新检查间隔"
 
-#: common/setting/system.py:290
+#: common/setting/system.py:304
 msgid "How often to check for updates (set to zero to disable)"
 msgstr "检查更新的频率(设置为零以禁用)"
 
-#: common/setting/system.py:296
+#: common/setting/system.py:310
 msgid "Automatic Backup"
 msgstr "自动备份"
 
-#: common/setting/system.py:297
+#: common/setting/system.py:311
 msgid "Enable automatic backup of database and media files"
 msgstr "启用数据库和媒体文件的自动备份"
 
-#: common/setting/system.py:302
+#: common/setting/system.py:316
 msgid "Auto Backup Interval"
 msgstr "自动备份间隔"
 
-#: common/setting/system.py:303
+#: common/setting/system.py:317
 msgid "Specify number of days between automated backup events"
 msgstr "指定自动备份之间的间隔天数"
 
-#: common/setting/system.py:309
+#: common/setting/system.py:323
 msgid "Task Deletion Interval"
 msgstr "任务删除间隔"
 
-#: common/setting/system.py:311
+#: common/setting/system.py:325
 msgid "Background task results will be deleted after specified number of days"
 msgstr "后台任务结果将在指定天数后删除"
 
-#: common/setting/system.py:318
+#: common/setting/system.py:332
 msgid "Error Log Deletion Interval"
 msgstr "错误日志删除间隔"
 
-#: common/setting/system.py:319
+#: common/setting/system.py:333
 msgid "Error logs will be deleted after specified number of days"
 msgstr "错误日志将在指定天数后被删除"
 
-#: common/setting/system.py:325
+#: common/setting/system.py:339
 msgid "Notification Deletion Interval"
 msgstr "通知删除间隔"
 
-#: common/setting/system.py:327
+#: common/setting/system.py:341
 msgid "User notifications will be deleted after specified number of days"
 msgstr "用户通知将在指定天数后被删除"
 
-#: common/setting/system.py:334
+#: common/setting/system.py:348
 msgid "Email Deletion Interval"
 msgstr "邮件自动清理周期"
 
-#: common/setting/system.py:336
+#: common/setting/system.py:350
 msgid "Email messages will be deleted after specified number of days"
 msgstr "邮件将在指定天数后删除"
 
-#: common/setting/system.py:343
+#: common/setting/system.py:357
 msgid "Protect Email Log"
 msgstr "保护邮件日志"
 
-#: common/setting/system.py:344
+#: common/setting/system.py:358
 msgid "Prevent deletion of email log entries"
 msgstr "防止邮件日志条目被删除"
 
-#: common/setting/system.py:349
+#: common/setting/system.py:363
 msgid "Barcode Support"
 msgstr "条形码支持"
 
-#: common/setting/system.py:350
+#: common/setting/system.py:364
 msgid "Enable barcode scanner support in the web interface"
 msgstr "在网页界面启用条形码扫描器支持"
 
-#: common/setting/system.py:355
+#: common/setting/system.py:369
 msgid "Store Barcode Results"
 msgstr "存储条形码结果"
 
-#: common/setting/system.py:356
+#: common/setting/system.py:370
 msgid "Store barcode scan results in the database"
 msgstr "存储条形码扫描结果"
 
-#: common/setting/system.py:361
+#: common/setting/system.py:375
 msgid "Barcode Scans Maximum Count"
 msgstr "条形码扫描最大计数"
 
-#: common/setting/system.py:362
+#: common/setting/system.py:376
 msgid "Maximum number of barcode scan results to store"
 msgstr "保存的条形码扫描结果的最大数量"
 
-#: common/setting/system.py:367
+#: common/setting/system.py:381
 msgid "Barcode Input Delay"
 msgstr "条形码扫描延迟设置"
 
-#: common/setting/system.py:368
+#: common/setting/system.py:382
 msgid "Barcode input processing delay time"
 msgstr "条形码输入处理延迟时间"
 
-#: common/setting/system.py:374
+#: common/setting/system.py:388
 msgid "Barcode Webcam Support"
 msgstr "启用摄像头扫码支持"
 
-#: common/setting/system.py:375
+#: common/setting/system.py:389
 msgid "Allow barcode scanning via webcam in browser"
 msgstr "允许通过网络摄像头扫描条形码"
 
-#: common/setting/system.py:380
+#: common/setting/system.py:394
 msgid "Barcode Show Data"
 msgstr "显示条形码数据"
 
-#: common/setting/system.py:381
+#: common/setting/system.py:395
 msgid "Display barcode data in browser as text"
 msgstr "在浏览器中将条形码数据显示为文本"
 
-#: common/setting/system.py:386
+#: common/setting/system.py:400
 msgid "Barcode Generation Plugin"
 msgstr "条形码生成插件"
 
-#: common/setting/system.py:387
+#: common/setting/system.py:401
 msgid "Plugin to use for internal barcode data generation"
 msgstr "用于内部条形码数据生成的插件"
 
-#: common/setting/system.py:392
+#: common/setting/system.py:406
 msgid "Part Revisions"
 msgstr "零件修订"
 
-#: common/setting/system.py:393
+#: common/setting/system.py:407
 msgid "Enable revision field for Part"
 msgstr "启用零件修订字段"
 
-#: common/setting/system.py:398
+#: common/setting/system.py:412
 msgid "Assembly Revision Only"
 msgstr "仅限装配修订版本"
 
-#: common/setting/system.py:399
+#: common/setting/system.py:413
 msgid "Only allow revisions for assembly parts"
 msgstr "仅允许对装配零件进行修订"
 
-#: common/setting/system.py:404
+#: common/setting/system.py:418
 msgid "Allow Deletion from Assembly"
 msgstr "允许从装配中删除"
 
-#: common/setting/system.py:405
+#: common/setting/system.py:419
 msgid "Allow deletion of parts which are used in an assembly"
 msgstr "允许删除已在装配中使用的零件"
 
-#: common/setting/system.py:410
+#: common/setting/system.py:424
 msgid "IPN Regex"
 msgstr "IPN（内部零件号）正则规则"
 
-#: common/setting/system.py:411
+#: common/setting/system.py:425
 msgid "Regular expression pattern for matching Part IPN"
 msgstr "用于匹配IPN（内部零件号）格式的正则表达式"
 
-#: common/setting/system.py:414
+#: common/setting/system.py:428
 msgid "Allow Duplicate IPN"
 msgstr "允许重复的 IPN（内部零件号）"
 
-#: common/setting/system.py:415
+#: common/setting/system.py:429
 msgid "Allow multiple parts to share the same IPN"
 msgstr "允许多个零件共享相同的 IPN（内部零件号）"
 
-#: common/setting/system.py:420
+#: common/setting/system.py:434
 msgid "Allow Editing IPN"
 msgstr "允许编辑 IPN（内部零件号）"
 
-#: common/setting/system.py:421
+#: common/setting/system.py:435
 msgid "Allow changing the IPN value while editing a part"
 msgstr "允许编辑零件时更改IPN（内部零件号）"
 
-#: common/setting/system.py:426
+#: common/setting/system.py:440
 msgid "Copy Part BOM Data"
 msgstr "复制零件物料清单数据"
 
-#: common/setting/system.py:427
+#: common/setting/system.py:441
 msgid "Copy BOM data by default when duplicating a part"
 msgstr "复制零件时默认复制物料清单数据"
 
-#: common/setting/system.py:432
+#: common/setting/system.py:446
 msgid "Copy Part Parameter Data"
 msgstr "复制零件参数数据"
 
-#: common/setting/system.py:433
+#: common/setting/system.py:447
 msgid "Copy parameter data by default when duplicating a part"
 msgstr "复制零件时默认复制参数数据"
 
-#: common/setting/system.py:438
+#: common/setting/system.py:452
 msgid "Copy Part Test Data"
 msgstr "复制零件测试数据"
 
-#: common/setting/system.py:439
+#: common/setting/system.py:453
 msgid "Copy test data by default when duplicating a part"
 msgstr "复制零件时默认复制测试数据"
 
-#: common/setting/system.py:444
+#: common/setting/system.py:458
 msgid "Copy Category Parameter Templates"
 msgstr "复制类别参数模板"
 
-#: common/setting/system.py:445
+#: common/setting/system.py:459
 msgid "Copy category parameter templates when creating a part"
 msgstr "创建零件时复制类别参数模板"
 
-#: common/setting/system.py:451
+#: common/setting/system.py:465
 msgid "Parts are templates by default"
 msgstr "零件默认为模板"
 
-#: common/setting/system.py:457
+#: common/setting/system.py:471
 msgid "Parts can be assembled from other components by default"
 msgstr "默认情况下，元件可由其他零件组装而成"
 
-#: common/setting/system.py:462 part/models.py:1277 part/serializers.py:1588
+#: common/setting/system.py:476 part/models.py:1277 part/serializers.py:1588
 #: part/serializers.py:1595
 msgid "Component"
 msgstr "组件"
 
-#: common/setting/system.py:463
+#: common/setting/system.py:477
 msgid "Parts can be used as sub-components by default"
 msgstr "默认情况下，零件可用作子部件"
 
-#: common/setting/system.py:468 part/models.py:1295
+#: common/setting/system.py:482 part/models.py:1295
 msgid "Purchaseable"
 msgstr "可购买"
 
-#: common/setting/system.py:469
+#: common/setting/system.py:483
 msgid "Parts are purchaseable by default"
 msgstr "默认情况下可购买零件"
 
-#: common/setting/system.py:474 part/models.py:1301 stock/api.py:643
+#: common/setting/system.py:488 part/models.py:1301 stock/api.py:643
 msgid "Salable"
 msgstr "可销售"
 
-#: common/setting/system.py:475
+#: common/setting/system.py:489
 msgid "Parts are salable by default"
 msgstr "零件默认为可销售"
 
-#: common/setting/system.py:481
+#: common/setting/system.py:495
 msgid "Parts are trackable by default"
 msgstr "默认情况下可跟踪零件"
 
-#: common/setting/system.py:486 part/models.py:1317
+#: common/setting/system.py:500 part/models.py:1317
 msgid "Virtual"
 msgstr "虚拟的"
 
-#: common/setting/system.py:487
+#: common/setting/system.py:501
 msgid "Parts are virtual by default"
 msgstr "默认情况下，零件是虚拟的"
 
-#: common/setting/system.py:492
+#: common/setting/system.py:506
 msgid "Show related parts"
 msgstr "显示关联零件"
 
-#: common/setting/system.py:493
+#: common/setting/system.py:507
 msgid "Display related parts for a part"
 msgstr "显示零件的关联零件"
 
-#: common/setting/system.py:498
+#: common/setting/system.py:512
 msgid "Initial Stock Data"
 msgstr "允许创建初始库存"
 
-#: common/setting/system.py:499
+#: common/setting/system.py:513
 msgid "Allow creation of initial stock when adding a new part"
 msgstr "允许在添加新零件时创建初始库存数据"
 
-#: common/setting/system.py:504
+#: common/setting/system.py:518
 msgid "Initial Supplier Data"
 msgstr "允许创建供应商数据"
 
-#: common/setting/system.py:506
+#: common/setting/system.py:520
 msgid "Allow creation of initial supplier data when adding a new part"
 msgstr "允许在添加新零件时创建初始供应商数据"
 
-#: common/setting/system.py:512
+#: common/setting/system.py:526
 msgid "Part Name Display Format"
 msgstr "零件名称显示格式"
 
-#: common/setting/system.py:513
+#: common/setting/system.py:527
 msgid "Format to display the part name"
 msgstr "显示零件名称的格式"
 
-#: common/setting/system.py:519
+#: common/setting/system.py:533
 msgid "Part Category Default Icon"
 msgstr "零件类别默认图标"
 
-#: common/setting/system.py:520
+#: common/setting/system.py:534
 msgid "Part category default icon (empty means no icon)"
 msgstr "零件类别默认图标 (空表示没有图标)"
 
-#: common/setting/system.py:525
+#: common/setting/system.py:539
 msgid "Minimum Pricing Decimal Places"
 msgstr "最小定价小数位数"
 
-#: common/setting/system.py:527
+#: common/setting/system.py:541
 msgid "Minimum number of decimal places to display when rendering pricing data"
 msgstr "呈现定价数据时显示的最小小数位数"
 
-#: common/setting/system.py:538
+#: common/setting/system.py:552
 msgid "Maximum Pricing Decimal Places"
 msgstr "最大定价小数位数"
 
-#: common/setting/system.py:540
+#: common/setting/system.py:554
 msgid "Maximum number of decimal places to display when rendering pricing data"
 msgstr "呈现定价数据时显示的最大小数位数"
 
-#: common/setting/system.py:551
+#: common/setting/system.py:565
 msgid "Use Supplier Pricing"
 msgstr "使用供应商定价"
 
-#: common/setting/system.py:553
+#: common/setting/system.py:567
 msgid "Include supplier price breaks in overall pricing calculations"
 msgstr "将供应商的批发价纳入整体价格计算"
 
-#: common/setting/system.py:559
+#: common/setting/system.py:573
 msgid "Purchase History Override"
 msgstr "采购历史价优先"
 
-#: common/setting/system.py:561
+#: common/setting/system.py:575
 msgid "Historical purchase order pricing overrides supplier price breaks"
 msgstr "当存在历史采购订单价格时，将忽略供应商的批发价"
 
-#: common/setting/system.py:567
+#: common/setting/system.py:581
 msgid "Use Stock Item Pricing"
 msgstr "使用库存项定价"
 
-#: common/setting/system.py:569
+#: common/setting/system.py:583
 msgid "Use pricing from manually entered stock data for pricing calculations"
 msgstr "使用手动输入的库存数据进行定价计算"
 
-#: common/setting/system.py:575
+#: common/setting/system.py:589
 msgid "Stock Item Pricing Age"
 msgstr "库存项目定价时间"
 
-#: common/setting/system.py:577
+#: common/setting/system.py:591
 msgid "Exclude stock items older than this number of days from pricing calculations"
 msgstr "从定价计算中排除超过此天数的库存项目"
 
-#: common/setting/system.py:584
+#: common/setting/system.py:598
 msgid "Use Variant Pricing"
 msgstr "使用变体定价"
 
-#: common/setting/system.py:585
+#: common/setting/system.py:599
 msgid "Include variant pricing in overall pricing calculations"
 msgstr "将产品变体的特殊定价纳入整体价格计算"
 
-#: common/setting/system.py:590
+#: common/setting/system.py:604
 msgid "Active Variants Only"
 msgstr "仅限活跃变体"
 
-#: common/setting/system.py:592
+#: common/setting/system.py:606
 msgid "Only use active variant parts for calculating variant pricing"
 msgstr "仅使用活跃变体零件计算变体价格"
 
-#: common/setting/system.py:598
+#: common/setting/system.py:612
 msgid "Auto Update Pricing"
 msgstr "自动更新定价"
 
-#: common/setting/system.py:600
+#: common/setting/system.py:614
 msgid "Automatically update part pricing when internal data changes"
 msgstr "当内部数据变化时自动更新零件价格"
 
-#: common/setting/system.py:606
+#: common/setting/system.py:620
 msgid "Pricing Rebuild Interval"
 msgstr "价格重建间隔"
 
-#: common/setting/system.py:607
+#: common/setting/system.py:621
 msgid "Number of days before part pricing is automatically updated"
 msgstr "零件价格自动更新前的天数"
 
-#: common/setting/system.py:613
+#: common/setting/system.py:627
 msgid "Internal Prices"
 msgstr "内部价格"
 
-#: common/setting/system.py:614
+#: common/setting/system.py:628
 msgid "Enable internal prices for parts"
 msgstr "为零件启用内部核算价格功能"
 
-#: common/setting/system.py:619
+#: common/setting/system.py:633
 msgid "Internal Price Override"
 msgstr "内部价格优先"
 
-#: common/setting/system.py:621
+#: common/setting/system.py:635
 msgid "If available, internal prices override price range calculations"
 msgstr "若存在内部价格，将覆盖BOM价格区间计算结果"
 
-#: common/setting/system.py:627
+#: common/setting/system.py:641
 msgid "Enable label printing"
 msgstr "启用标签打印功能"
 
-#: common/setting/system.py:628
+#: common/setting/system.py:642
 msgid "Enable label printing from the web interface"
 msgstr "启用从网络界面打印标签"
 
-#: common/setting/system.py:633
+#: common/setting/system.py:647
 msgid "Label Image DPI"
 msgstr "标签图片 DPI"
 
-#: common/setting/system.py:635
+#: common/setting/system.py:649
 msgid "DPI resolution when generating image files to supply to label printing plugins"
 msgstr "生成图像文件以供标签打印插件使用时的 DPI 分辨率"
 
-#: common/setting/system.py:641
+#: common/setting/system.py:655
 msgid "Enable Reports"
 msgstr "启用报告"
 
-#: common/setting/system.py:642
+#: common/setting/system.py:656
 msgid "Enable generation of reports"
 msgstr "启用报告生成"
 
-#: common/setting/system.py:647
+#: common/setting/system.py:661
 msgid "Debug Mode"
 msgstr "调试模式"
 
-#: common/setting/system.py:648
+#: common/setting/system.py:662
 msgid "Generate reports in debug mode (HTML output)"
 msgstr "以调试模式生成报告（HTML 输出）"
 
-#: common/setting/system.py:653
+#: common/setting/system.py:667
 msgid "Log Report Errors"
 msgstr "日志错误报告"
 
-#: common/setting/system.py:654
+#: common/setting/system.py:668
 msgid "Log errors which occur when generating reports"
 msgstr "记录生成报告时出现的错误"
 
-#: common/setting/system.py:659 plugin/builtin/labels/label_sheet.py:29
+#: common/setting/system.py:673 plugin/builtin/labels/label_sheet.py:29
 #: report/models.py:381
 msgid "Page Size"
 msgstr "页面大小"
 
-#: common/setting/system.py:660
+#: common/setting/system.py:674
 msgid "Default page size for PDF reports"
 msgstr "PDF 报告默认页面大小"
 
-#: common/setting/system.py:665
+#: common/setting/system.py:679
 msgid "Enforce Parameter Units"
 msgstr "强制参数单位"
 
-#: common/setting/system.py:667
+#: common/setting/system.py:681
 msgid "If units are provided, parameter values must match the specified units"
 msgstr "如果提供了单位，参数值必须与指定的单位匹配"
 
-#: common/setting/system.py:673
+#: common/setting/system.py:687
 msgid "Globally Unique Serials"
 msgstr "全局唯一序列号"
 
-#: common/setting/system.py:674
+#: common/setting/system.py:688
 msgid "Serial numbers for stock items must be globally unique"
 msgstr "库存项的序列号必须全局唯一"
 
-#: common/setting/system.py:679
+#: common/setting/system.py:693
 msgid "Delete Depleted Stock"
 msgstr "删除已耗尽的库存"
 
-#: common/setting/system.py:680
+#: common/setting/system.py:694
 msgid "Determines default behavior when a stock item is depleted"
 msgstr "设置库存耗尽时的默认行为"
 
-#: common/setting/system.py:685
+#: common/setting/system.py:699
 msgid "Batch Code Template"
 msgstr "批号模板"
 
-#: common/setting/system.py:686
+#: common/setting/system.py:700
 msgid "Template for generating default batch codes for stock items"
 msgstr "为库存项生成默认批号的模板"
 
-#: common/setting/system.py:690
+#: common/setting/system.py:704
 msgid "Stock Expiry"
 msgstr "库存过期"
 
-#: common/setting/system.py:691
+#: common/setting/system.py:705
 msgid "Enable stock expiry functionality"
 msgstr "启用库存过期功能"
 
-#: common/setting/system.py:696
+#: common/setting/system.py:710
 msgid "Sell Expired Stock"
 msgstr "销售过期库存"
 
-#: common/setting/system.py:697
+#: common/setting/system.py:711
 msgid "Allow sale of expired stock"
 msgstr "允许销售过期库存"
 
-#: common/setting/system.py:702
+#: common/setting/system.py:716
 msgid "Stock Stale Time"
 msgstr "库存临期预警天数"
 
-#: common/setting/system.py:704
+#: common/setting/system.py:718
 msgid "Number of days stock items are considered stale before expiring"
 msgstr "库存项过期前被标记为\"临期\"的天数"
 
-#: common/setting/system.py:711
+#: common/setting/system.py:725
 msgid "Build Expired Stock"
 msgstr "允许使用过期库存"
 
-#: common/setting/system.py:712
+#: common/setting/system.py:726
 msgid "Allow building with expired stock"
 msgstr "允许在生产中使用已过期的库存"
 
-#: common/setting/system.py:717
+#: common/setting/system.py:731
 msgid "Stock Ownership Control"
 msgstr "库存所有权管控"
 
-#: common/setting/system.py:718
+#: common/setting/system.py:732
 msgid "Enable ownership control over stock locations and items"
 msgstr "启用对库存地点和库存物品的归属权管理"
 
-#: common/setting/system.py:723
+#: common/setting/system.py:737
 msgid "Stock Location Default Icon"
 msgstr "库存地点默认图标"
 
-#: common/setting/system.py:724
+#: common/setting/system.py:738
 msgid "Stock location default icon (empty means no icon)"
 msgstr "库存地点默认图标 (空表示没有图标)"
 
-#: common/setting/system.py:729
+#: common/setting/system.py:743
 msgid "Show Installed Stock Items"
 msgstr "显示已安装的库存项"
 
-#: common/setting/system.py:730
+#: common/setting/system.py:744
 msgid "Display installed stock items in stock tables"
 msgstr "在库存列表中显示已被安装到设备中的库存项"
 
-#: common/setting/system.py:735
+#: common/setting/system.py:749
 msgid "Check BOM when installing items"
 msgstr "在安装项目时检查物料清单"
 
-#: common/setting/system.py:737
+#: common/setting/system.py:751
 msgid "Installed stock items must exist in the BOM for the parent part"
 msgstr "已安装的库存项目必须存在于上级零件的物料清单中"
 
-#: common/setting/system.py:743
+#: common/setting/system.py:757
 msgid "Allow Out of Stock Transfer"
 msgstr "允许零库存调拨"
 
-#: common/setting/system.py:745
+#: common/setting/system.py:759
 msgid "Allow stock items which are not in stock to be transferred between stock locations"
 msgstr "允许对当前库存量为零的物品执行库位间调拨操作"
 
-#: common/setting/system.py:751
+#: common/setting/system.py:765
 msgid "Build Order Reference Pattern"
 msgstr "生产订单参考模式"
 
-#: common/setting/system.py:752
+#: common/setting/system.py:766
 msgid "Required pattern for generating Build Order reference field"
 msgstr "生成生产订单参考字段所需的模式"
 
-#: common/setting/system.py:757 common/setting/system.py:817
-#: common/setting/system.py:837 common/setting/system.py:881
+#: common/setting/system.py:771 common/setting/system.py:831
+#: common/setting/system.py:851 common/setting/system.py:895
 msgid "Require Responsible Owner"
 msgstr "要求负责人"
 
-#: common/setting/system.py:758 common/setting/system.py:818
-#: common/setting/system.py:838 common/setting/system.py:882
+#: common/setting/system.py:772 common/setting/system.py:832
+#: common/setting/system.py:852 common/setting/system.py:896
 msgid "A responsible owner must be assigned to each order"
 msgstr "必须为每个订单分配一个负责人"
 
-#: common/setting/system.py:763
+#: common/setting/system.py:777
 msgid "Require Active Part"
 msgstr "需要活动零件"
 
-#: common/setting/system.py:764
+#: common/setting/system.py:778
 msgid "Prevent build order creation for inactive parts"
 msgstr "防止为非活动零件创建生产订单"
 
-#: common/setting/system.py:769
+#: common/setting/system.py:783
 msgid "Require Locked Part"
 msgstr "需要锁定零件"
 
-#: common/setting/system.py:770
+#: common/setting/system.py:784
 msgid "Prevent build order creation for unlocked parts"
 msgstr "防止为未锁定的零件创建生产订单"
 
-#: common/setting/system.py:775
+#: common/setting/system.py:789
 msgid "Require Valid BOM"
 msgstr "需要有效的物料清单"
 
-#: common/setting/system.py:776
+#: common/setting/system.py:790
 msgid "Prevent build order creation unless BOM has been validated"
 msgstr "除非物料清单已验证，否则禁止创建生产订单"
 
-#: common/setting/system.py:781
+#: common/setting/system.py:795
 msgid "Require Closed Child Orders"
 msgstr "需要关闭子订单"
 
-#: common/setting/system.py:783
+#: common/setting/system.py:797
 msgid "Prevent build order completion until all child orders are closed"
 msgstr "在所有子订单关闭之前，阻止生产订单的完成"
 
-#: common/setting/system.py:789
+#: common/setting/system.py:803
 msgid "External Build Orders"
 msgstr "外部生产订单"
 
-#: common/setting/system.py:790
+#: common/setting/system.py:804
 msgid "Enable external build order functionality"
 msgstr "启用外部生产订单功能"
 
-#: common/setting/system.py:795
+#: common/setting/system.py:809
 msgid "Block Until Tests Pass"
 msgstr "阻止直到测试通过"
 
-#: common/setting/system.py:797
+#: common/setting/system.py:811
 msgid "Prevent build outputs from being completed until all required tests pass"
 msgstr "在所有必要的测试通过之前，阻止产出完成"
 
-#: common/setting/system.py:803
+#: common/setting/system.py:817
 msgid "Enable Return Orders"
 msgstr "启用订单退货"
 
-#: common/setting/system.py:804
+#: common/setting/system.py:818
 msgid "Enable return order functionality in the user interface"
 msgstr "在用户界面中启用订单退货功能"
 
-#: common/setting/system.py:809
+#: common/setting/system.py:823
 msgid "Return Order Reference Pattern"
 msgstr "退货订单参考模式"
 
-#: common/setting/system.py:811
+#: common/setting/system.py:825
 msgid "Required pattern for generating Return Order reference field"
 msgstr "生成退货订单参考字段所需的模式"
 
-#: common/setting/system.py:823
+#: common/setting/system.py:837
 msgid "Edit Completed Return Orders"
 msgstr "编辑已完成的退货订单"
 
-#: common/setting/system.py:825
+#: common/setting/system.py:839
 msgid "Allow editing of return orders after they have been completed"
 msgstr "允许编辑已完成的退货订单"
 
-#: common/setting/system.py:831
+#: common/setting/system.py:845
 msgid "Sales Order Reference Pattern"
 msgstr "销售订单参考模式"
 
-#: common/setting/system.py:832
+#: common/setting/system.py:846
 msgid "Required pattern for generating Sales Order reference field"
 msgstr "生成销售订单参考字段所需参照模式"
 
-#: common/setting/system.py:843
+#: common/setting/system.py:857
 msgid "Sales Order Default Shipment"
 msgstr "销售订单默认配送方式"
 
-#: common/setting/system.py:844
+#: common/setting/system.py:858
 msgid "Enable creation of default shipment with sales orders"
 msgstr "启用创建销售订单的默认配送功能"
 
-#: common/setting/system.py:849
+#: common/setting/system.py:863
 msgid "Edit Completed Sales Orders"
 msgstr "编辑已完成的销售订单"
 
-#: common/setting/system.py:851
+#: common/setting/system.py:865
 msgid "Allow editing of sales orders after they have been shipped or completed"
 msgstr "允许在订单配送或完成后编辑销售订单"
 
-#: common/setting/system.py:857
+#: common/setting/system.py:871
 msgid "Shipment Requires Checking"
 msgstr "货件需核对"
 
-#: common/setting/system.py:859
+#: common/setting/system.py:873
 msgid "Prevent completion of shipments until items have been checked"
 msgstr "只有所有物品均经核对，才能确认发货完成"
 
-#: common/setting/system.py:865
+#: common/setting/system.py:879
 msgid "Mark Shipped Orders as Complete"
 msgstr "标记该订单为已完成？"
 
-#: common/setting/system.py:867
+#: common/setting/system.py:881
 msgid "Sales orders marked as shipped will automatically be completed, bypassing the \"shipped\" status"
 msgstr "标记为已发货的销售订单将自动完成，绕过“已发货”状态"
 
-#: common/setting/system.py:873
+#: common/setting/system.py:887
 msgid "Purchase Order Reference Pattern"
 msgstr "采购订单参考模式"
 
-#: common/setting/system.py:875
+#: common/setting/system.py:889
 msgid "Required pattern for generating Purchase Order reference field"
 msgstr "生成采购订单参考字段所需的模式"
 
-#: common/setting/system.py:887
+#: common/setting/system.py:901
 msgid "Edit Completed Purchase Orders"
 msgstr "编辑已完成的采购订单"
 
-#: common/setting/system.py:889
+#: common/setting/system.py:903
 msgid "Allow editing of purchase orders after they have been shipped or completed"
 msgstr "允许在采购订单已配送或完成后编辑订单"
 
-#: common/setting/system.py:895
+#: common/setting/system.py:909
 msgid "Convert Currency"
 msgstr "货币转换"
 
-#: common/setting/system.py:896
+#: common/setting/system.py:910
 msgid "Convert item value to base currency when receiving stock"
 msgstr "收货时将物料价值折算为基准货币"
 
-#: common/setting/system.py:901
+#: common/setting/system.py:915
 msgid "Auto Complete Purchase Orders"
 msgstr "自动完成采购订单"
 
-#: common/setting/system.py:903
+#: common/setting/system.py:917
 msgid "Automatically mark purchase orders as complete when all line items are received"
 msgstr "当收到所有行项目时，自动将采购订单标记为完成"
 
-#: common/setting/system.py:910
+#: common/setting/system.py:924
 msgid "Enable password forgot"
 msgstr "忘记启用密码"
 
-#: common/setting/system.py:911
+#: common/setting/system.py:925
 msgid "Enable password forgot function on the login pages"
 msgstr "在登录页面上启用忘记密码功能"
 
-#: common/setting/system.py:916
+#: common/setting/system.py:930
 msgid "Enable registration"
 msgstr "启用注册"
 
-#: common/setting/system.py:917
+#: common/setting/system.py:931
 msgid "Enable self-registration for users on the login pages"
 msgstr "在登录页面为用户启用自行注册功能"
 
-#: common/setting/system.py:922
+#: common/setting/system.py:936
 msgid "Enable SSO"
 msgstr "启用SSO登录"
 
-#: common/setting/system.py:923
+#: common/setting/system.py:937
 msgid "Enable SSO on the login pages"
 msgstr "在登录页面启用单点登录(SSO)功能"
 
-#: common/setting/system.py:928
+#: common/setting/system.py:942
 msgid "Enable SSO registration"
 msgstr "启用SSO注册"
 
-#: common/setting/system.py:930
+#: common/setting/system.py:944
 msgid "Enable self-registration via SSO for users on the login pages"
 msgstr "允许用户通过登录页面的SSO系统注册账号"
 
-#: common/setting/system.py:936
+#: common/setting/system.py:950
 msgid "Enable SSO group sync"
 msgstr "启用SSO组同步"
 
-#: common/setting/system.py:938
+#: common/setting/system.py:952
 msgid "Enable synchronizing InvenTree groups with groups provided by the IdP"
 msgstr "启用后，将自动同步InvenTree用户组与身份提供商(IdP)提供的用户组"
 
-#: common/setting/system.py:944
+#: common/setting/system.py:958
 msgid "SSO group key"
 msgstr "SSO组属性键"
 
-#: common/setting/system.py:945
+#: common/setting/system.py:959
 msgid "The name of the groups claim attribute provided by the IdP"
 msgstr "身份提供商(IdP)返回的组信息声明属性名称"
 
-#: common/setting/system.py:950
+#: common/setting/system.py:964
 msgid "SSO group map"
 msgstr "SSO组映射关系"
 
-#: common/setting/system.py:952
+#: common/setting/system.py:966
 msgid "A mapping from SSO groups to local InvenTree groups. If the local group does not exist, it will be created."
 msgstr "将SSO用户组映射到本地InvenTree用户组的对应关系表。如果本地组不存在，系统会自动创建对应的用户组。"
 
-#: common/setting/system.py:958
+#: common/setting/system.py:972
 msgid "Remove groups outside of SSO"
 msgstr "移除非SSO来源的用户组"
 
-#: common/setting/system.py:960
+#: common/setting/system.py:974
 msgid "Whether groups assigned to the user should be removed if they are not backend by the IdP. Disabling this setting might cause security issues"
 msgstr "当用户组未被身份提供商(IdP)支持时，是否移除该用户组。禁用此选项可能导致安全风险"
 
-#: common/setting/system.py:966
+#: common/setting/system.py:980
 msgid "Email required"
 msgstr "必须提供邮箱"
 
-#: common/setting/system.py:967
+#: common/setting/system.py:981
 msgid "Require user to supply mail on signup"
 msgstr "用户注册时必须提供邮箱"
 
-#: common/setting/system.py:972
+#: common/setting/system.py:986
 msgid "Auto-fill SSO users"
 msgstr "自动填充SSO用户信息"
 
-#: common/setting/system.py:973
+#: common/setting/system.py:987
 msgid "Automatically fill out user-details from SSO account-data"
 msgstr "自动从SSO账户数据中填充用户详细信息"
 
-#: common/setting/system.py:978
+#: common/setting/system.py:992
 msgid "Mail twice"
 msgstr "发两次邮件"
 
-#: common/setting/system.py:979
+#: common/setting/system.py:993
 msgid "On signup ask users twice for their mail"
 msgstr "注册时询问用户他们的电子邮件两次"
 
-#: common/setting/system.py:984
+#: common/setting/system.py:998
 msgid "Password twice"
 msgstr "两次输入密码"
 
-#: common/setting/system.py:985
+#: common/setting/system.py:999
 msgid "On signup ask users twice for their password"
 msgstr "当注册时请用户输入密码两次"
 
-#: common/setting/system.py:990
+#: common/setting/system.py:1004
 msgid "Allowed domains"
 msgstr "域名白名单"
 
-#: common/setting/system.py:992
+#: common/setting/system.py:1006
 msgid "Restrict signup to certain domains (comma-separated, starting with @)"
 msgstr "限制注册到某些域名 (逗号分隔，以 @ 开头)"
 
-#: common/setting/system.py:998
+#: common/setting/system.py:1012
 msgid "Group on signup"
 msgstr "注册默认分组"
 
-#: common/setting/system.py:1000
+#: common/setting/system.py:1014
 msgid "Group to which new users are assigned on registration. If SSO group sync is enabled, this group is only set if no group can be assigned from the IdP."
 msgstr "新用户注册时被分配的默认用户组。 如果启用了SSO组同步功能，当无法从身份提供商(IdP)分配组时才会应用此分组。"
 
-#: common/setting/system.py:1006
+#: common/setting/system.py:1020
 msgid "Enforce MFA"
 msgstr "强制启用多因素安全认证"
 
-#: common/setting/system.py:1007
+#: common/setting/system.py:1021
 msgid "Users must use multifactor security."
 msgstr "用户必须使用多因素安全认证。"
 
-#: common/setting/system.py:1012
+#: common/setting/system.py:1026
+msgid "Enabling this setting will require all users to set up multifactor authentication. All sessions will be disconnected immediately."
+msgstr ""
+
+#: common/setting/system.py:1031
 msgid "Check plugins on startup"
 msgstr "启动时检查插件"
 
-#: common/setting/system.py:1014
+#: common/setting/system.py:1033
 msgid "Check that all plugins are installed on startup - enable in container environments"
 msgstr "启动时检查全部插件是否已安装 - 在容器环境中启用"
 
-#: common/setting/system.py:1021
+#: common/setting/system.py:1040
 msgid "Check for plugin updates"
 msgstr "检查插件更新"
 
-#: common/setting/system.py:1022
+#: common/setting/system.py:1041
 msgid "Enable periodic checks for updates to installed plugins"
 msgstr "启用定期检查已安装插件的更新"
 
-#: common/setting/system.py:1028
+#: common/setting/system.py:1047
 msgid "Enable URL integration"
 msgstr "启用统一资源定位符集成"
 
-#: common/setting/system.py:1029
+#: common/setting/system.py:1048
 msgid "Enable plugins to add URL routes"
 msgstr "启用插件以添加统一资源定位符路由"
 
-#: common/setting/system.py:1035
+#: common/setting/system.py:1054
 msgid "Enable navigation integration"
 msgstr "启用导航集成"
 
-#: common/setting/system.py:1036
+#: common/setting/system.py:1055
 msgid "Enable plugins to integrate into navigation"
 msgstr "启用插件以集成到导航中"
 
-#: common/setting/system.py:1042
+#: common/setting/system.py:1061
 msgid "Enable app integration"
 msgstr "启用应用集成"
 
-#: common/setting/system.py:1043
+#: common/setting/system.py:1062
 msgid "Enable plugins to add apps"
 msgstr "启用插件添加应用"
 
-#: common/setting/system.py:1049
+#: common/setting/system.py:1068
 msgid "Enable schedule integration"
 msgstr "启用调度集成"
 
-#: common/setting/system.py:1050
+#: common/setting/system.py:1069
 msgid "Enable plugins to run scheduled tasks"
 msgstr "启用插件来运行预定任务"
 
-#: common/setting/system.py:1056
+#: common/setting/system.py:1075
 msgid "Enable event integration"
 msgstr "启用事件集成"
 
-#: common/setting/system.py:1057
+#: common/setting/system.py:1076
 msgid "Enable plugins to respond to internal events"
 msgstr "启用插件响应内部事件"
 
-#: common/setting/system.py:1063
+#: common/setting/system.py:1082
 msgid "Enable interface integration"
 msgstr "启用界面集成"
 
-#: common/setting/system.py:1064
+#: common/setting/system.py:1083
 msgid "Enable plugins to integrate into the user interface"
 msgstr "启用插件集成到用户界面"
 
-#: common/setting/system.py:1070
+#: common/setting/system.py:1089
 msgid "Enable mail integration"
 msgstr "启用邮件集成"
 
-#: common/setting/system.py:1071
+#: common/setting/system.py:1090
 msgid "Enable plugins to process outgoing/incoming mails"
 msgstr "启用插件来处理发送/接收邮件"
 
-#: common/setting/system.py:1077
+#: common/setting/system.py:1096
 msgid "Enable project codes"
 msgstr "启用项目编码"
 
-#: common/setting/system.py:1078
+#: common/setting/system.py:1097
 msgid "Enable project codes for tracking projects"
 msgstr "启用项目编码来跟踪项目"
 
-#: common/setting/system.py:1083
+#: common/setting/system.py:1102
 msgid "Enable Stock History"
 msgstr "启用库存历史"
 
-#: common/setting/system.py:1085
+#: common/setting/system.py:1104
 msgid "Enable functionality for recording historical stock levels and value"
 msgstr "启用历史库存水平及价值记录功能"
 
-#: common/setting/system.py:1091
+#: common/setting/system.py:1110
 msgid "Exclude External Locations"
 msgstr "排除外部地点"
 
-#: common/setting/system.py:1093
+#: common/setting/system.py:1112
 msgid "Exclude stock items in external locations from stock history calculations"
 msgstr "在库存历史统计中排除外部库位的库存项"
 
-#: common/setting/system.py:1099
+#: common/setting/system.py:1118
 msgid "Automatic Stocktake Period"
 msgstr "自动盘点周期"
 
-#: common/setting/system.py:1100
+#: common/setting/system.py:1119
 msgid "Number of days between automatic stock history recording"
 msgstr "自动记录库存历史的间隔天数"
 
-#: common/setting/system.py:1106
+#: common/setting/system.py:1125
 msgid "Delete Old Stock History Entries"
 msgstr "删除旧的库存历史记录"
 
-#: common/setting/system.py:1108
+#: common/setting/system.py:1127
 msgid "Delete stock history entries older than the specified number of days"
 msgstr "删除超过指定天数的库存历史记录"
 
-#: common/setting/system.py:1114
+#: common/setting/system.py:1133
 msgid "Stock History Deletion Interval"
 msgstr "库存历史删除间隔"
 
-#: common/setting/system.py:1116
+#: common/setting/system.py:1135
 msgid "Stock history entries will be deleted after specified number of days"
 msgstr "库存历史记录将在指定天数后删除"
 
-#: common/setting/system.py:1123
+#: common/setting/system.py:1142
 msgid "Display Users full names"
 msgstr "显示用户全名"
 
-#: common/setting/system.py:1124
+#: common/setting/system.py:1143
 msgid "Display Users full names instead of usernames"
 msgstr "显示用户全名而不是用户名"
 
-#: common/setting/system.py:1129
+#: common/setting/system.py:1148
 msgid "Display User Profiles"
 msgstr "显示用户配置"
 
-#: common/setting/system.py:1130
+#: common/setting/system.py:1149
 msgid "Display Users Profiles on their profile page"
 msgstr "在用户个人资料页展示其档案信息"
 
-#: common/setting/system.py:1135
+#: common/setting/system.py:1154
 msgid "Enable Test Station Data"
 msgstr "启用测试站数据"
 
-#: common/setting/system.py:1136
+#: common/setting/system.py:1155
 msgid "Enable test station data collection for test results"
 msgstr "启用测试站数据收集以获取测试结果"
 
-#: common/setting/system.py:1141
+#: common/setting/system.py:1160
 msgid "Enable Machine Ping"
 msgstr "启用设备状态检测"
 
-#: common/setting/system.py:1143
+#: common/setting/system.py:1162
 msgid "Enable periodic ping task of registered machines to check their status"
 msgstr "启用定期 Ping 检测，确认注册设备的运行状态"
 
@@ -5231,8 +5243,8 @@ msgid "Received Date"
 msgstr "接收日期"
 
 #: order/models.py:3025
-msgid "The date this this return item was received"
-msgstr "收到此退货的日期"
+msgid "The date this return item was received"
+msgstr ""
 
 #: order/models.py:3037
 msgid "Outcome"
@@ -7266,8 +7278,8 @@ msgid "Integrated Slack notification methods"
 msgstr "已集成Slack通知方法"
 
 #: plugin/builtin/integration/core_notifications.py:131
-msgid "Slack incoming webhook url"
-msgstr "Slack传入Webhook url"
+msgid "Slack incoming webhook URL"
+msgstr ""
 
 #: plugin/builtin/integration/core_notifications.py:132
 msgid "URL that is used to send messages to a slack channel"
@@ -7526,8 +7538,8 @@ msgid "Key of plugin"
 msgstr "插件的键"
 
 #: plugin/models.py:55
-msgid "PluginName of the plugin"
-msgstr "插件名称"
+msgid "Name of the plugin"
+msgstr ""
 
 #: plugin/models.py:62 plugin/serializers.py:119
 msgid "Package Name"
@@ -7753,8 +7765,8 @@ msgid "Installation not confirmed"
 msgstr "安装尚未确认"
 
 #: plugin/serializers.py:152
-msgid "Either packagename of URL must be provided"
-msgstr "必须提供软件包名称或者URL"
+msgid "Either packagename or URL must be provided"
+msgstr ""
 
 #: plugin/serializers.py:188
 msgid "Full reload"
