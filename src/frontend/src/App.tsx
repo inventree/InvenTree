@@ -33,3 +33,11 @@ export const queryClient = new QueryClient({
     }
   }
 });
+export function setTraceId() {
+  const traceId = crypto.randomUUID().replace(/-/g, '');
+  const frontendID = '706f6f7062757474';
+  api.defaults.headers['traceparent'] = `00-${traceId}-${frontendID}-01`;
+}
+export function removeTraceId() {
+  delete api.defaults.headers['traceparent'];
+}
