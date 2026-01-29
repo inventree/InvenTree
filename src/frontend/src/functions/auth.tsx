@@ -270,7 +270,15 @@ function observeProfile() {
   const user = useUserState.getState().getUser();
   const { language, setLanguage, userTheme, setTheme, setWidgets, setLayouts } =
     useLocalState.getState();
+  const { server } = useServerApiState.getState(); //(useShallow((state) => [state.server]));
+
+  // fast exit if loading is disabled for this server
+  if (server.customize?.disable_theme_storage) {
+    return;
+  }
+
   if (user) {
+    // set profile language
     if (user.profile?.language && language != user.profile.language) {
       showNotification({
         title: t`Language changed`,
@@ -281,6 +289,7 @@ function observeProfile() {
       setLanguage(user.profile.language, true);
     }
 
+    // set profile theme
     if (user.profile?.theme) {
       // extract keys of usertheme and set them to the values of user.profile.theme
       const newTheme = Object.keys(userTheme).map((key) => {
@@ -302,6 +311,7 @@ function observeProfile() {
       }
     }
 
+    // set profile widgets/layouts
     if (user.profile?.widgets) {
       const data = user.profile.widgets;
       // split data into widgets and layouts (either might be undefined)

@@ -38,6 +38,7 @@ export interface ServerAPIProps {
     splash: string;
     login_message: string;
     navbar_message: string;
+    disable_theme_storage: boolean;
   };
 }
 

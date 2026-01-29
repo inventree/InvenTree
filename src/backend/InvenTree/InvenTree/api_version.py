@@ -1,13 +1,18 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 443
+INVENTREE_API_VERSION = 445
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v443 -> 2026-01-28 : https://github.com/inventree/InvenTree/pull/10715
+v445 -> 2026-01-28 : https://github.com/inventree/InvenTree/pull/10715
     - Adds GuideDefinition and GuideExecution models and API endpoints to provide tipps and guides within InvenTree's web frontend.v443 -> 2026-01-21 : https://github.com/inventree/InvenTree/pull/11177
+
+v444 -> 2026-01-27 : https://github.com/inventree/InvenTree/pull/11208
+    - Add customize option to disable theme loading from user profile (mainly for demo site use)
+
+v443 -> 2026-01-21 : https://github.com/inventree/InvenTree/pull/11177
     - Adds IPN ordering option for BomItem API endpoint
     - Adds IPN ordering option for BuildLine API endpoint
 
