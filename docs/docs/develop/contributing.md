@@ -119,6 +119,20 @@ The translation process is as follows:
 
 The [API version]({{ sourcefile("src/backend/InvenTree/InvenTree/api_version.py") }}) needs to be bumped every time when the API is changed.
 
+### Understanding API shape
+
+While the default Open API schema generation provides a good overview of the API endpoints, it does not provide insights into the shape of the underlying API (serializer) code.
+
+The default schema generation cli command `invoke dev.schema` / endpoint `/api/schema/` can be enhanced by setting the schema generation level in the config file or via the [debugging environment variable or config value](../start/config.md#debugging-and-logging-options) `INVENTREE_SCHEMA_LEVEL`.
+
+At level 1 only simple attributes describing the underlying Django Rest Framework API view of a endpoint are added under the `x-inventree-meta` key.
+
+At level 2 details about the inheritance of the view (key `x-inventree-components`) and model (key `x-inventree-model`) are added. This allows to trace back the view to the underlying serializer and model and ensure naming of endpoints is consistent with the data model.
+
+!!! note "For experiments only"
+    There are no CI or system checks to use these additional attributes yet. This is an experimental feature to help developers understand the API shape and how it changes better.
+
+
 ## Environment
 
 ### Software Versions

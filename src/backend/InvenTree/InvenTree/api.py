@@ -33,7 +33,7 @@ from plugin.serializers import MetadataSerializer
 from users.models import ApiToken
 from users.permissions import check_user_permission, prefetch_rule_sets
 
-from .helpers import plugins_info
+from .helpers import plugins_info, str2bool
 from .helpers_email import is_email_configured
 from .mixins import ListAPI, RetrieveUpdateAPI
 from .status import check_system_health, is_worker_running
@@ -237,6 +237,7 @@ class InfoApiSerializer(serializers.Serializer):
         splash = serializers.CharField()
         login_message = serializers.CharField(allow_null=True)
         navbar_message = serializers.CharField(allow_null=True)
+        disable_theme_storage = serializers.BooleanField(default=False)
 
     server = serializers.CharField(read_only=True)
     id = serializers.CharField(read_only=True, allow_null=True)
@@ -309,6 +310,9 @@ class InfoView(APIView):
                 'splash': helpers.getSplashScreen(),
                 'login_message': helpers.getCustomOption('login_message'),
                 'navbar_message': helpers.getCustomOption('navbar_message'),
+                'disable_theme_storage': str2bool(
+                    helpers.getCustomOption('disable_theme_storage')
+                ),
             },
             'active_plugins': plugins_info(),
             # Following fields are only available to staff users

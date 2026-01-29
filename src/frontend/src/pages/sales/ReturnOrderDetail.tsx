@@ -365,7 +365,8 @@ export default function ReturnOrderDetail() {
       }),
       NotesPanel({
         model_type: ModelType.returnorder,
-        model_id: order.pk
+        model_id: order.pk,
+        has_note: !!order.notes
       })
     ];
   }, [order, id, user]);
