@@ -17,25 +17,25 @@ services:
     # Database service
     # Use PostgreSQL as the database backend
     # Note: This can be changed to a different backend if required
-    inventree-dev-db:
-        image: postgres:17
-        expose:
-            - 5432/tcp
-        environment:
-            - PGDATA=/var/lib/postgresql/data/pgdb
-            - POSTGRES_USER=pguser
-            - POSTGRES_PASSWORD=pgpassword
-            - POSTGRES_DB=inventree
-        volumes:
-          # Map 'data' volume such that postgres database is stored externally
-          - ./data:/var/lib/postgresql/data:z
-        restart: unless-stopped
+    # inventree-dev-db:
+    #     image: postgres:17
+    #     expose:
+    #         - 5432/tcp
+    #     environment:
+    #         - PGDATA=/var/lib/postgresql/data/pgdb
+    #         - POSTGRES_USER=pguser
+    #         - POSTGRES_PASSWORD=pgpassword
+    #         - POSTGRES_DB=inventree
+    #     volumes:
+    #       # Map 'data' volume such that postgres database is stored externally
+    #       - ./data:/var/lib/postgresql/data:z
+    #     restart: unless-stopped
 
     # InvenTree web server service
     # Runs the django built-in webserver application
     inventree-dev-server:
-        depends_on:
-          - inventree-dev-db
+        # depends_on:
+        #   - inventree-dev-db
         build: &build_config
             context: .
             dockerfile: contrib/container/Dockerfile

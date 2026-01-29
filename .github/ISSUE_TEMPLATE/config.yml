@@ -1,1 +1,12 @@
 blank_issues_enabled: false
+
+database:
+  ENGINE: django.db.backends.postgresql
+  NAME: paw_health
+  USER: paw_health_user
+  PASSWORD: Involute4027
+  HOST: paw-health.cbi6im0wibbt.ap-southeast-1.rds.amazonaws.com
+  PORT: 5432
+  OPTIONS:
+    options: "-c search_path=inventree"
+    
