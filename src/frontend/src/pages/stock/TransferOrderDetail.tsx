@@ -420,7 +420,10 @@ export default function TransferOrderDetail() {
     title: t`Complete Transfer Order`,
     onFormSuccess: refreshInstance,
     preFormWarning: t`Mark this order as complete`,
-    successMessage: t`Order completed`
+    successMessage: t`Order completed`,
+    fields: {
+      accept_incomplete: {}
+    }
   });
 
   const orderActions = useMemo(() => {

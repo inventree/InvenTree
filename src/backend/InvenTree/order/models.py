@@ -3241,7 +3241,9 @@ class TransferOrder(Order):
         """Check if this order is "transferred" (all line items transferred)."""
         return all(line.is_completed() for line in self.lines.all())
 
-    def can_complete(self, raise_error: bool = False) -> bool:
+    def can_complete(
+        self, raise_error: bool = False, allow_incomplete_lines: bool = False
+    ) -> bool:
         """Test if this TransferOrder can be completed."""
         try:
             if self.status == TransferOrderStatus.COMPLETE.value:
@@ -3255,7 +3257,7 @@ class TransferOrder(Order):
                     _('Order cannot be completed until a destination location is set')
                 )
 
-            if not self.is_fully_allocated():
+            if not (self.is_fully_allocated() or allow_incomplete_lines):
                 raise ValidationError(
                     _('Order cannot be completed until it is fully allocated')
                 )

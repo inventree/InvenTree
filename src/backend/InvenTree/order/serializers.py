@@ -2268,12 +2268,51 @@ class TransferOrderCancelSerializer(OrderAdjustSerializer):
 class TransferOrderCompleteSerializer(OrderAdjustSerializer):
     """Serializer for completing a transfer order."""
 
+    class Meta:
+        """Metaclass options."""
+
+        fields = ['accept_incomplete']
+
+    accept_incomplete = serializers.BooleanField(
+        label=_('Accept Incomplete Allocation'),
+        help_text=_('Allow order to complete with incomplete allocations'),
+        required=False,
+        default=False,
+    )
+
+    def validate_accept_incomplete(self, value):
+        """Check if the 'accept_incomplete' field is required."""
+        order = self.context['order']
+
+        if not value and not order.is_completed():
+            raise ValidationError(_('Order has incomplete allocations'))
+
+        return value
+
+    def get_context_data(self):
+        """Custom context information for this serializer."""
+        order = self.context['order']
+
+        return {'is_complete': order.is_completed()}
+
+    def validate(self, data):
+        """Custom validation for the serializer."""
+        data = super().validate(data)
+        self.order.can_complete(
+            raise_error=True,
+            allow_incomplete_lines=str2bool(data.get('accept_incomplete', False)),
+        )
+        return data
+
     def save(self):
         """Save the serializer to 'complete' the order."""
         request = self.context.get('request')
+        data = self.validated_data
         user = request.user if request else None
 
-        self.order.complete_order(user=user)
+        self.order.complete_order(
+            user=user, allow_incomplete_lines=data.get('accept_incomplete', False)
+        )
 
 
 @register_importer()
