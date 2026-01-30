@@ -7,7 +7,12 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/index';
-import { IconBookmark, IconInfoCircle, IconList } from '@tabler/icons-react';
+import {
+  IconBookmark,
+  IconInfoCircle,
+  IconList,
+  IconListCheck
+} from '@tabler/icons-react';
 import AdminButton from '../../components/buttons/AdminButton';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
@@ -305,8 +310,16 @@ export default function TransferOrderDetail() {
       },
       {
         name: 'allocations',
-        label: t`Allocated Stock`,
-        icon: <IconBookmark />,
+        label:
+          order.status != toStatus.COMPLETE
+            ? t`Allocated Stock`
+            : t`Transferred Stock`,
+        icon:
+          order.status != toStatus.COMPLETE ? (
+            <IconBookmark />
+          ) : (
+            <IconListCheck />
+          ),
         content: (
           <TransferOrderAllocationTable
             orderId={order.pk}
