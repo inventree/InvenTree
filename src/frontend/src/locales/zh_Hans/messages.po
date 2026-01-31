@@ -157,6 +157,7 @@ msgstr ""
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:217
 #: src/pages/Index/Settings/SystemSettings.tsx:191
 #: src/pages/part/PartDetail.tsx:950
+#: src/pages/stock/LocationDetail.tsx:223
 msgid "Parameters"
 msgstr "参数"
 
@@ -186,7 +187,7 @@ msgstr "零件测试模板"
 #: src/tables/part/PartPurchaseOrdersTable.tsx:50
 #: src/tables/purchasing/SupplierPartParametricTable.tsx:29
 #: src/tables/purchasing/SupplierPartTable.tsx:83
-#: src/tables/stock/StockItemTable.tsx:247
+#: src/tables/stock/StockItemTable.tsx:263
 msgid "Supplier Part"
 msgstr "供应商零件"
 
@@ -199,7 +200,7 @@ msgstr "供应商零件"
 #: src/pages/company/ManufacturerPartDetail.tsx:288
 #: src/pages/company/SupplierPartDetail.tsx:162
 #: src/tables/part/PartPurchaseOrdersTable.tsx:56
-#: src/tables/stock/StockItemTable.tsx:253
+#: src/tables/stock/StockItemTable.tsx:269
 msgid "Manufacturer Part"
 msgstr "制造商零件"
 
@@ -239,20 +240,20 @@ msgstr "库存项"
 #: src/pages/company/CompanyDetail.tsx:211
 #: src/pages/part/CategoryDetail.tsx:314
 #: src/pages/part/PartStockHistoryDetail.tsx:101
-#: src/pages/stock/LocationDetail.tsx:121
-#: src/pages/stock/LocationDetail.tsx:188
+#: src/pages/stock/LocationDetail.tsx:127
+#: src/pages/stock/LocationDetail.tsx:194
 msgid "Stock Items"
 msgstr "库存项"
 
 #: lib/enums/ModelInformation.tsx:98
 #: lib/enums/Roles.tsx:47
-#: src/pages/stock/LocationDetail.tsx:428
+#: src/pages/stock/LocationDetail.tsx:446
 msgid "Stock Location"
 msgstr "库存地点"
 
 #: lib/enums/ModelInformation.tsx:99
-#: src/pages/stock/LocationDetail.tsx:182
-#: src/pages/stock/LocationDetail.tsx:420
+#: src/pages/stock/LocationDetail.tsx:188
+#: src/pages/stock/LocationDetail.tsx:438
 #: src/pages/stock/StockDetail.tsx:996
 msgid "Stock Locations"
 msgstr "库存地点"
@@ -333,7 +334,7 @@ msgstr "项目编码"
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:563
 #: src/pages/stock/StockDetail.tsx:352
 #: src/tables/part/PartPurchaseOrdersTable.tsx:32
-#: src/tables/stock/StockItemTable.tsx:239
+#: src/tables/stock/StockItemTable.tsx:255
 #: src/tables/stock/StockTrackingTable.tsx:120
 msgid "Purchase Order"
 msgstr "采购订单"
@@ -583,7 +584,7 @@ msgstr "错误"
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:262
 #: src/pages/sales/ReturnOrderDetail.tsx:240
 #: src/pages/sales/SalesOrderDetail.tsx:275
-#: src/pages/stock/LocationDetail.tsx:134
+#: src/pages/stock/LocationDetail.tsx:140
 #: src/tables/ColumnRenderers.tsx:374
 #: src/tables/Filter.tsx:299
 msgid "Tenant"
@@ -1749,7 +1750,7 @@ msgstr "主机"
 #: src/pages/Index/Settings/AdminCenter/UnitManagementPanel.tsx:19
 #: src/pages/part/CategoryDetail.tsx:91
 #: src/pages/part/PartDetail.tsx:446
-#: src/pages/stock/LocationDetail.tsx:82
+#: src/pages/stock/LocationDetail.tsx:88
 #: src/tables/machine/MachineTypeTable.tsx:67
 #: src/tables/machine/MachineTypeTable.tsx:149
 #: src/tables/machine/MachineTypeTable.tsx:252
@@ -2286,7 +2287,7 @@ msgstr "没有项目"
 #: src/tables/build/BuildLineTable.tsx:193
 #: src/tables/part/PartTable.tsx:137
 #: src/tables/stock/StockItemTable.tsx:182
-#: src/tables/stock/StockItemTable.tsx:343
+#: src/tables/stock/StockItemTable.tsx:359
 msgid "Available"
 msgstr "可用的"
 
@@ -2643,8 +2644,8 @@ msgstr "登出"
 #: src/forms/StockForms.tsx:794
 #: src/pages/Index/Settings/SystemSettings.tsx:230
 #: src/pages/part/PartDetail.tsx:800
-#: src/pages/stock/LocationDetail.tsx:398
-#: src/pages/stock/LocationDetail.tsx:428
+#: src/pages/stock/LocationDetail.tsx:416
+#: src/pages/stock/LocationDetail.tsx:446
 #: src/pages/stock/StockDetail.tsx:642
 #: src/tables/stock/StockItemTable.tsx:85
 msgid "Stock"
@@ -2844,7 +2845,7 @@ msgstr "插件信息"
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:163
 #: src/pages/sales/ReturnOrderDetail.tsx:130
 #: src/pages/sales/SalesOrderDetail.tsx:120
-#: src/pages/stock/LocationDetail.tsx:102
+#: src/pages/stock/LocationDetail.tsx:108
 #: src/tables/ColumnRenderers.tsx:272
 #: src/tables/build/BuildAllocatedStockTable.tsx:88
 #: src/tables/machine/MachineTypeTable.tsx:159
@@ -2888,7 +2889,7 @@ msgstr "日期"
 #: src/tables/settings/TaxConfigurationTable.tsx:54
 #: src/tables/settings/TenantTable.tsx:48
 #: src/tables/settings/UserTable.tsx:400
-#: src/tables/stock/StockItemTable.tsx:322
+#: src/tables/stock/StockItemTable.tsx:338
 msgid "Active"
 msgstr "激活"
 
@@ -3042,7 +3043,7 @@ msgstr "订购中"
 #: src/pages/part/PartDetail.tsx:1043
 #: src/pages/stock/StockDetail.tsx:925
 #: src/tables/part/PartTestResultTable.tsx:305
-#: src/tables/stock/StockItemTable.tsx:359
+#: src/tables/stock/StockItemTable.tsx:375
 msgid "In Production"
 msgstr "生产中"
 
@@ -4442,7 +4443,7 @@ msgstr "待完成数量"
 #: src/tables/settings/CustomStateTable.tsx:79
 #: src/tables/settings/EmailTable.tsx:95
 #: src/tables/settings/ImportSessionTable.tsx:117
-#: src/tables/stock/StockItemTable.tsx:327
+#: src/tables/stock/StockItemTable.tsx:343
 #: src/tables/stock/StockTrackingTable.tsx:65
 msgid "Status"
 msgstr "状态"
@@ -4530,7 +4531,7 @@ msgstr "内部零件编码 IPN"
 #: src/tables/build/BuildAllocatedStockTable.tsx:129
 #: src/tables/build/BuildLineTable.tsx:183
 #: src/tables/sales/SalesOrderLineItemTable.tsx:365
-#: src/tables/stock/StockItemTable.tsx:338
+#: src/tables/stock/StockItemTable.tsx:354
 msgid "Allocated"
 msgstr "已分配"
 
@@ -4588,7 +4589,7 @@ msgstr "已全部消耗"
 
 #: src/forms/BuildForms.tsx:898
 #: src/tables/build/BuildLineTable.tsx:188
-#: src/tables/stock/StockItemTable.tsx:367
+#: src/tables/stock/StockItemTable.tsx:383
 msgid "Consumed"
 msgstr "已消耗"
 
@@ -4744,7 +4745,7 @@ msgstr "输入接收项目的序列号"
 
 #: src/forms/PurchaseOrderForms.tsx:749
 #: src/pages/stock/StockDetail.tsx:382
-#: src/tables/stock/StockItemTable.tsx:294
+#: src/tables/stock/StockItemTable.tsx:310
 msgid "Expiry Date"
 msgstr "有效期至"
 
@@ -4855,8 +4856,8 @@ msgstr "库存状态"
 
 #: src/forms/StockForms.tsx:317
 #: src/pages/stock/StockDetail.tsx:686
-#: src/tables/stock/StockItemTable.tsx:525
-#: src/tables/stock/StockItemTable.tsx:572
+#: src/tables/stock/StockItemTable.tsx:541
+#: src/tables/stock/StockItemTable.tsx:588
 msgid "Add Stock Item"
 msgstr "编辑库存项"
 
@@ -7025,7 +7026,7 @@ msgstr "自定义状态"
 #: src/pages/build/BuildDetail.tsx:238
 #: src/pages/build/BuildDetail.tsx:728
 #: src/pages/build/BuildIndex.tsx:34
-#: src/pages/stock/LocationDetail.tsx:148
+#: src/pages/stock/LocationDetail.tsx:154
 #: src/tables/build/BuildOrderTable.tsx:123
 #: src/tables/build/BuildOrderTable.tsx:183
 #: src/tables/stock/StockLocationTable.tsx:53
@@ -7602,7 +7603,7 @@ msgid "Basic user"
 msgstr "基本用户"
 
 #: src/pages/part/CategoryDetail.tsx:103
-#: src/pages/stock/LocationDetail.tsx:94
+#: src/pages/stock/LocationDetail.tsx:100
 #: src/tables/settings/ErrorTable.tsx:63
 #: src/tables/settings/ErrorTable.tsx:108
 msgid "Path"
@@ -7618,7 +7619,7 @@ msgid "Subcategories"
 msgstr "子类别"
 
 #: src/pages/part/CategoryDetail.tsx:149
-#: src/pages/stock/LocationDetail.tsx:142
+#: src/pages/stock/LocationDetail.tsx:148
 #: src/tables/part/PartCategoryTable.tsx:89
 #: src/tables/stock/StockLocationTable.tsx:48
 msgid "Structural"
@@ -7647,7 +7648,7 @@ msgid "Move items to parent category"
 msgstr "移动项目到父类别"
 
 #: src/pages/part/CategoryDetail.tsx:196
-#: src/pages/stock/LocationDetail.tsx:234
+#: src/pages/stock/LocationDetail.tsx:252
 msgid "Delete items"
 msgstr "删除项"
 
@@ -8086,7 +8087,7 @@ msgstr "删除盘点条目"
 #: src/pages/part/PartStockHistoryDetail.tsx:107
 #: src/pages/part/PartStockHistoryDetail.tsx:211
 #: src/pages/stock/StockDetail.tsx:402
-#: src/tables/stock/StockItemTable.tsx:271
+#: src/tables/stock/StockItemTable.tsx:287
 msgid "Stock Value"
 msgstr "库存价值"
 
@@ -8125,7 +8126,7 @@ msgstr "最大值"
 #: src/tables/sales/ReturnOrderTable.tsx:146
 #: src/tables/sales/SalesOrderLineItemTable.tsx:126
 #: src/tables/sales/SalesOrderTable.tsx:182
-#: src/tables/sales/TaxExtraLineItemTable.tsx:71
+#: src/tables/sales/TaxExtraLineItemTable.tsx:73
 msgid "Total Price"
 msgstr "总价"
 
@@ -8166,8 +8167,8 @@ msgstr "最高价格"
 #: src/tables/general/ExtraLineItemTable.tsx:64
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:257
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:84
-#: src/tables/sales/TaxExtraLineItemTable.tsx:63
-#: src/tables/stock/StockItemTable.tsx:259
+#: src/tables/sales/TaxExtraLineItemTable.tsx:65
+#: src/tables/stock/StockItemTable.tsx:275
 msgid "Unit Price"
 msgstr "单价"
 
@@ -8247,7 +8248,7 @@ msgstr "采购价格"
 #: src/pages/part/pricing/PricingOverviewPanel.tsx:288
 #: src/pages/stock/StockDetail.tsx:426
 #: src/tables/general/ParameterTable.tsx:101
-#: src/tables/stock/StockItemTable.tsx:300
+#: src/tables/stock/StockItemTable.tsx:316
 msgid "Last Updated"
 msgstr "最近更新"
 
@@ -8492,7 +8493,7 @@ msgstr "完成配送"
 #: src/tables/sales/ReturnOrderTable.tsx:162
 #: src/tables/sales/SalesOrderLineItemTable.tsx:151
 #: src/tables/sales/SalesOrderTable.tsx:198
-#: src/tables/sales/TaxExtraLineItemTable.tsx:96
+#: src/tables/sales/TaxExtraLineItemTable.tsx:98
 msgid "Tax Rate"
 msgstr ""
 
@@ -8501,7 +8502,7 @@ msgstr ""
 #: src/tables/sales/ReturnOrderTable.tsx:150
 #: src/tables/sales/SalesOrderLineItemTable.tsx:139
 #: src/tables/sales/SalesOrderTable.tsx:186
-#: src/tables/sales/TaxExtraLineItemTable.tsx:84
+#: src/tables/sales/TaxExtraLineItemTable.tsx:86
 msgid "Subtotal"
 msgstr ""
 
@@ -8514,7 +8515,7 @@ msgstr ""
 #: src/tables/sales/ReturnOrderTable.tsx:158
 #: src/tables/sales/SalesOrderLineItemTable.tsx:147
 #: src/tables/sales/SalesOrderTable.tsx:194
-#: src/tables/sales/TaxExtraLineItemTable.tsx:92
+#: src/tables/sales/TaxExtraLineItemTable.tsx:94
 msgid "Total with Tax"
 msgstr ""
 
@@ -8685,94 +8686,94 @@ msgstr ""
 msgid "Mark shipment as unchecked"
 msgstr ""
 
-#: src/pages/stock/LocationDetail.tsx:110
+#: src/pages/stock/LocationDetail.tsx:116
 msgid "Parent Location"
 msgstr "上级地点"
 
-#: src/pages/stock/LocationDetail.tsx:128
-#: src/pages/stock/LocationDetail.tsx:182
+#: src/pages/stock/LocationDetail.tsx:134
+#: src/pages/stock/LocationDetail.tsx:188
 msgid "Sublocations"
 msgstr "次级地点"
 
-#: src/pages/stock/LocationDetail.tsx:154
+#: src/pages/stock/LocationDetail.tsx:160
 #: src/tables/stock/StockLocationTable.tsx:62
 msgid "Location Type"
 msgstr "位置类型"
 
-#: src/pages/stock/LocationDetail.tsx:165
+#: src/pages/stock/LocationDetail.tsx:171
 msgid "Top level stock location"
 msgstr "最高级库存位置"
 
-#: src/pages/stock/LocationDetail.tsx:176
+#: src/pages/stock/LocationDetail.tsx:182
 msgid "Location Details"
 msgstr "位置详细信息"
 
-#: src/pages/stock/LocationDetail.tsx:202
+#: src/pages/stock/LocationDetail.tsx:208
 msgid "Default Parts"
 msgstr "默认零件"
 
-#: src/pages/stock/LocationDetail.tsx:221
-#: src/pages/stock/LocationDetail.tsx:382
+#: src/pages/stock/LocationDetail.tsx:239
+#: src/pages/stock/LocationDetail.tsx:400
 #: src/tables/stock/StockLocationTable.tsx:128
 msgid "Edit Stock Location"
 msgstr "编辑库存地点"
-
-#: src/pages/stock/LocationDetail.tsx:230
-msgid "Move items to parent location"
-msgstr "移动项目到父位置"
-
-#: src/pages/stock/LocationDetail.tsx:242
-#: src/pages/stock/LocationDetail.tsx:387
-msgid "Delete Stock Location"
-msgstr "删除库存地点"
 
 #: src/pages/stock/LocationDetail.tsx:243
 #~ msgid "Child Locations Action"
 #~ msgstr "Child Locations Action"
 
-#: src/pages/stock/LocationDetail.tsx:245
+#: src/pages/stock/LocationDetail.tsx:248
+msgid "Move items to parent location"
+msgstr "移动项目到父位置"
+
+#: src/pages/stock/LocationDetail.tsx:260
+#: src/pages/stock/LocationDetail.tsx:405
+msgid "Delete Stock Location"
+msgstr "删除库存地点"
+
+#: src/pages/stock/LocationDetail.tsx:263
 msgid "Items Action"
 msgstr "项目操作"
 
-#: src/pages/stock/LocationDetail.tsx:247
+#: src/pages/stock/LocationDetail.tsx:265
 msgid "Action for stock items in this location"
 msgstr "对此位置中的库存物品执行的操作"
 
-#: src/pages/stock/LocationDetail.tsx:252
+#: src/pages/stock/LocationDetail.tsx:270
 msgid "Locations Action"
 msgstr ""
 
-#: src/pages/stock/LocationDetail.tsx:254
+#: src/pages/stock/LocationDetail.tsx:272
 msgid "Action for child locations in this location"
 msgstr "对此位置中的子位置执行的操作"
 
-#: src/pages/stock/LocationDetail.tsx:288
+#: src/pages/stock/LocationDetail.tsx:306
 msgid "Scan Stock Item"
 msgstr "扫描库存物料"
 
-#: src/pages/stock/LocationDetail.tsx:306
+#: src/pages/stock/LocationDetail.tsx:324
 #: src/pages/stock/StockDetail.tsx:812
 msgid "Scanned stock item into location"
 msgstr "库存物料已扫描入库"
 
-#: src/pages/stock/LocationDetail.tsx:312
+#: src/pages/stock/LocationDetail.tsx:330
 #: src/pages/stock/StockDetail.tsx:818
 msgid "Error scanning stock item"
 msgstr "库存物料扫描错误"
 
-#: src/pages/stock/LocationDetail.tsx:319
+#: src/pages/stock/LocationDetail.tsx:337
 msgid "Scan Stock Location"
 msgstr "扫描库存地点"
 
-#: src/pages/stock/LocationDetail.tsx:331
+#: src/pages/stock/LocationDetail.tsx:349
 msgid "Scanned stock location into location"
 msgstr "库存地点绑定完成"
 
-#: src/pages/stock/LocationDetail.tsx:337
+#: src/pages/stock/LocationDetail.tsx:355
 msgid "Error scanning stock location"
 msgstr "库存地点扫描错误"
 
-#: src/pages/stock/LocationDetail.tsx:378
+#: src/pages/stock/LocationDetail.tsx:396
 #: src/tables/stock/StockLocationTable.tsx:149
 msgid "Location Actions"
 msgstr "位置操作"
@@ -8909,7 +8910,7 @@ msgstr "序列化库存"
 #~ msgstr "Item returned to stock"
 
 #: src/pages/stock/StockDetail.tsx:786
-#: src/tables/stock/StockItemTable.tsx:539
+#: src/tables/stock/StockItemTable.tsx:555
 msgid "Stock item serialized"
 msgstr "库存项已创建"
 
@@ -8963,12 +8964,12 @@ msgstr "库存项操作"
 #~ msgstr "Assign to a customer"
 
 #: src/pages/stock/StockDetail.tsx:966
-#: src/tables/stock/StockItemTable.tsx:404
+#: src/tables/stock/StockItemTable.tsx:420
 msgid "Stale"
 msgstr "呆滞"
 
 #: src/pages/stock/StockDetail.tsx:972
-#: src/tables/stock/StockItemTable.tsx:398
+#: src/tables/stock/StockItemTable.tsx:414
 msgid "Expired"
 msgstr "已过期"
 
@@ -9650,7 +9651,7 @@ msgstr "无法编辑材料清单，因为零件已锁定"
 #: src/tables/part/ParametricPartTable.tsx:29
 #: src/tables/part/PartBuildAllocationsTable.tsx:60
 #: src/tables/part/PartTable.tsx:209
-#: src/tables/stock/StockItemTable.tsx:333
+#: src/tables/stock/StockItemTable.tsx:349
 msgid "Assembly"
 msgstr "装配"
 
@@ -9772,7 +9773,7 @@ msgid "Testable"
 msgstr "可测试"
 
 #: src/tables/build/BuildLineTable.tsx:218
-#: src/tables/stock/StockItemTable.tsx:388
+#: src/tables/stock/StockItemTable.tsx:404
 msgid "Tracked"
 msgstr "已跟踪"
 
@@ -9971,7 +9972,7 @@ msgstr "序列化生产产出"
 
 #: src/tables/build/BuildOutputTable.tsx:407
 #: src/tables/part/PartTestResultTable.tsx:318
-#: src/tables/stock/StockItemTable.tsx:328
+#: src/tables/stock/StockItemTable.tsx:344
 msgid "Filter by stock status"
 msgstr "按库存状态筛选"
 
@@ -10201,7 +10202,7 @@ msgstr "查看项目"
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:215
 #: src/tables/sales/SalesOrderLineItemTable.tsx:275
 #: src/tables/sales/SalesOrderLineItemTable.tsx:380
-#: src/tables/sales/TaxExtraLineItemTable.tsx:114
+#: src/tables/sales/TaxExtraLineItemTable.tsx:116
 msgid "Add Line Item"
 msgstr "添加行项目"
 
@@ -10209,7 +10210,7 @@ msgstr "添加行项目"
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:322
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:98
 #: src/tables/sales/SalesOrderLineItemTable.tsx:294
-#: src/tables/sales/TaxExtraLineItemTable.tsx:127
+#: src/tables/sales/TaxExtraLineItemTable.tsx:129
 msgid "Edit Line Item"
 msgstr "编辑行项目"
 
@@ -10217,12 +10218,12 @@ msgstr "编辑行项目"
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:331
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:107
 #: src/tables/sales/SalesOrderLineItemTable.tsx:303
-#: src/tables/sales/TaxExtraLineItemTable.tsx:136
+#: src/tables/sales/TaxExtraLineItemTable.tsx:138
 msgid "Delete Line Item"
 msgstr "删除行项目"
 
 #: src/tables/general/ExtraLineItemTable.tsx:155
-#: src/tables/sales/TaxExtraLineItemTable.tsx:174
+#: src/tables/sales/TaxExtraLineItemTable.tsx:176
 msgid "Add Extra Line Item"
 msgstr "添加额外行项目"
 
@@ -11283,7 +11284,7 @@ msgid "Sample"
 msgstr "样本"
 
 #: src/tables/plugin/PluginListTable.tsx:432
-#: src/tables/stock/StockItemTable.tsx:372
+#: src/tables/stock/StockItemTable.tsx:388
 msgid "Installed"
 msgstr "已安装"
 
@@ -11427,13 +11428,13 @@ msgstr "显示供应商零件库存"
 
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:156
 #: src/tables/sales/SalesOrderLineItemTable.tsx:135
-#: src/tables/sales/TaxExtraLineItemTable.tsx:80
+#: src/tables/sales/TaxExtraLineItemTable.tsx:82
 msgid "Price with Tax"
 msgstr ""
 
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:164
 #: src/tables/sales/SalesOrderLineItemTable.tsx:143
-#: src/tables/sales/TaxExtraLineItemTable.tsx:88
+#: src/tables/sales/TaxExtraLineItemTable.tsx:90
 msgid "Total Tax"
 msgstr ""
 
@@ -12292,152 +12293,156 @@ msgstr "此库存项已被部分分配"
 msgid "This stock item has been depleted"
 msgstr "库存项已耗尽"
 
+#: src/tables/stock/StockItemTable.tsx:230
+msgid "Total Stock"
+msgstr ""
+
 #: src/tables/stock/StockItemTable.tsx:301
 #~ msgid "Show stock for assmebled parts"
 #~ msgstr "Show stock for assmebled parts"
 
-#: src/tables/stock/StockItemTable.tsx:305
+#: src/tables/stock/StockItemTable.tsx:321
 msgid "Stocktake Date"
 msgstr "盘点日期"
 
-#: src/tables/stock/StockItemTable.tsx:323
+#: src/tables/stock/StockItemTable.tsx:339
 msgid "Show stock for active parts"
 msgstr "显示激活零件的库存"
 
-#: src/tables/stock/StockItemTable.tsx:334
+#: src/tables/stock/StockItemTable.tsx:350
 msgid "Show stock for assembled parts"
 msgstr "显示已组装零件的库存"
 
-#: src/tables/stock/StockItemTable.tsx:339
+#: src/tables/stock/StockItemTable.tsx:355
 msgid "Show items which have been allocated"
 msgstr "显示已分配的项目"
 
-#: src/tables/stock/StockItemTable.tsx:344
+#: src/tables/stock/StockItemTable.tsx:360
 msgid "Show items which are available"
 msgstr "显示可用的项目"
-
-#: src/tables/stock/StockItemTable.tsx:348
-#: src/tables/stock/StockLocationTable.tsx:43
-msgid "Include Sublocations"
-msgstr "包括子地点"
-
-#: src/tables/stock/StockItemTable.tsx:349
-msgid "Include stock in sublocations"
-msgstr "包括子地点的库存"
-
-#: src/tables/stock/StockItemTable.tsx:353
-msgid "Depleted"
-msgstr "耗尽"
-
-#: src/tables/stock/StockItemTable.tsx:354
-msgid "Show depleted stock items"
-msgstr "显示耗尽的库存项"
-
-#: src/tables/stock/StockItemTable.tsx:360
-msgid "Show items which are in production"
-msgstr "显示正在生产的项目"
 
 #: src/tables/stock/StockItemTable.tsx:362
 #~ msgid "Include stock items for variant parts"
 #~ msgstr "Include stock items for variant parts"
 
-#: src/tables/stock/StockItemTable.tsx:368
+#: src/tables/stock/StockItemTable.tsx:364
+#: src/tables/stock/StockLocationTable.tsx:43
+msgid "Include Sublocations"
+msgstr "包括子地点"
+
+#: src/tables/stock/StockItemTable.tsx:365
+msgid "Include stock in sublocations"
+msgstr "包括子地点的库存"
+
+#: src/tables/stock/StockItemTable.tsx:369
+msgid "Depleted"
+msgstr "耗尽"
+
+#: src/tables/stock/StockItemTable.tsx:370
+msgid "Show depleted stock items"
+msgstr "显示耗尽的库存项"
+
+#: src/tables/stock/StockItemTable.tsx:376
+msgid "Show items which are in production"
+msgstr "显示正在生产的项目"
+
+#: src/tables/stock/StockItemTable.tsx:384
 msgid "Show items which have been consumed by a build order"
 msgstr "显示被生产订单消耗的项目"
 
-#: src/tables/stock/StockItemTable.tsx:373
+#: src/tables/stock/StockItemTable.tsx:389
 msgid "Show stock items which are installed in other items"
 msgstr "显示安装在其他项目中的库存项"
 
-#: src/tables/stock/StockItemTable.tsx:377
+#: src/tables/stock/StockItemTable.tsx:393
 msgid "Sent to Customer"
 msgstr "发送给客户"
 
-#: src/tables/stock/StockItemTable.tsx:378
+#: src/tables/stock/StockItemTable.tsx:394
 msgid "Show items which have been sent to a customer"
 msgstr "显示已发送给客户的项目"
-
-#: src/tables/stock/StockItemTable.tsx:389
-msgid "Show tracked items"
-msgstr "显示已跟踪项目"
-
-#: src/tables/stock/StockItemTable.tsx:393
-msgid "Has Purchase Price"
-msgstr "有采购价格"
-
-#: src/tables/stock/StockItemTable.tsx:394
-msgid "Show items which have a purchase price"
-msgstr "显示有购买价格的项目"
 
 #: src/tables/stock/StockItemTable.tsx:397
 #~ msgid "Serial Number LTE"
 #~ msgstr "Serial Number LTE"
-
-#: src/tables/stock/StockItemTable.tsx:399
-msgid "Show items which have expired"
-msgstr "显示已过期的项目"
 
 #: src/tables/stock/StockItemTable.tsx:403
 #~ msgid "Serial Number GTE"
 #~ msgstr "Serial Number GTE"
 
 #: src/tables/stock/StockItemTable.tsx:405
+msgid "Show tracked items"
+msgstr "显示已跟踪项目"
+
+#: src/tables/stock/StockItemTable.tsx:409
+msgid "Has Purchase Price"
+msgstr "有采购价格"
+
+#: src/tables/stock/StockItemTable.tsx:410
+msgid "Show items which have a purchase price"
+msgstr "显示有购买价格的项目"
+
+#: src/tables/stock/StockItemTable.tsx:415
+msgid "Show items which have expired"
+msgstr "显示已过期的项目"
+
+#: src/tables/stock/StockItemTable.tsx:421
 msgid "Show items which are stale"
 msgstr "显示旧项目"
 
-#: src/tables/stock/StockItemTable.tsx:410
+#: src/tables/stock/StockItemTable.tsx:426
 msgid "Expired Before"
 msgstr "过期前"
 
-#: src/tables/stock/StockItemTable.tsx:411
+#: src/tables/stock/StockItemTable.tsx:427
 msgid "Show items which expired before this date"
 msgstr "显示在此日期之前过期的项目"
 
-#: src/tables/stock/StockItemTable.tsx:417
+#: src/tables/stock/StockItemTable.tsx:433
 msgid "Expired After"
 msgstr "过期后"
 
-#: src/tables/stock/StockItemTable.tsx:418
+#: src/tables/stock/StockItemTable.tsx:434
 msgid "Show items which expired after this date"
 msgstr "显示在此日期后过期的项目"
 
-#: src/tables/stock/StockItemTable.tsx:424
+#: src/tables/stock/StockItemTable.tsx:440
 msgid "Updated Before"
 msgstr "在此之前更新"
 
-#: src/tables/stock/StockItemTable.tsx:425
+#: src/tables/stock/StockItemTable.tsx:441
 msgid "Show items updated before this date"
 msgstr "显示此日期之前更新的项目"
 
-#: src/tables/stock/StockItemTable.tsx:430
+#: src/tables/stock/StockItemTable.tsx:446
 msgid "Updated After"
 msgstr "在此之后更新"
 
-#: src/tables/stock/StockItemTable.tsx:431
+#: src/tables/stock/StockItemTable.tsx:447
 msgid "Show items updated after this date"
 msgstr "显示此日期后更新的项目"
 
-#: src/tables/stock/StockItemTable.tsx:436
+#: src/tables/stock/StockItemTable.tsx:452
 msgid "Stocktake Before"
 msgstr "在此之前的盘点"
 
-#: src/tables/stock/StockItemTable.tsx:437
+#: src/tables/stock/StockItemTable.tsx:453
 msgid "Show items counted before this date"
 msgstr "显示在此日期之前计数的项目"
 
-#: src/tables/stock/StockItemTable.tsx:442
+#: src/tables/stock/StockItemTable.tsx:458
 msgid "Stocktake After"
 msgstr "在此之后的盘点"
 
-#: src/tables/stock/StockItemTable.tsx:443
+#: src/tables/stock/StockItemTable.tsx:459
 msgid "Show items counted after this date"
 msgstr "显示在此日期后计数的项目"
 
-#: src/tables/stock/StockItemTable.tsx:448
+#: src/tables/stock/StockItemTable.tsx:464
 msgid "External Location"
 msgstr "外部地点"
 
-#: src/tables/stock/StockItemTable.tsx:449
+#: src/tables/stock/StockItemTable.tsx:465
 msgid "Show items in an external location"
 msgstr "显示外部库存地点的项目"
 
@@ -12445,7 +12450,7 @@ msgstr "显示外部库存地点的项目"
 #~ msgid "Delete stock items"
 #~ msgstr "Delete stock items"
 
-#: src/tables/stock/StockItemTable.tsx:559
+#: src/tables/stock/StockItemTable.tsx:575
 msgid "Order items"
 msgstr "订单明细"
 

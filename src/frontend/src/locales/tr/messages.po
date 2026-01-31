@@ -157,6 +157,7 @@ msgstr ""
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:217
 #: src/pages/Index/Settings/SystemSettings.tsx:191
 #: src/pages/part/PartDetail.tsx:950
+#: src/pages/stock/LocationDetail.tsx:223
 msgid "Parameters"
 msgstr "Parametreler"
 
@@ -186,7 +187,7 @@ msgstr "Parça Test Şablonları"
 #: src/tables/part/PartPurchaseOrdersTable.tsx:50
 #: src/tables/purchasing/SupplierPartParametricTable.tsx:29
 #: src/tables/purchasing/SupplierPartTable.tsx:83
-#: src/tables/stock/StockItemTable.tsx:247
+#: src/tables/stock/StockItemTable.tsx:263
 msgid "Supplier Part"
 msgstr "Sağlayıcı Parçası"
 
@@ -199,7 +200,7 @@ msgstr "Tedarikçi Parçaları"
 #: src/pages/company/ManufacturerPartDetail.tsx:288
 #: src/pages/company/SupplierPartDetail.tsx:162
 #: src/tables/part/PartPurchaseOrdersTable.tsx:56
-#: src/tables/stock/StockItemTable.tsx:253
+#: src/tables/stock/StockItemTable.tsx:269
 msgid "Manufacturer Part"
 msgstr "Üretici Parçası"
 
@@ -239,20 +240,20 @@ msgstr "Stok Ögesi"
 #: src/pages/company/CompanyDetail.tsx:211
 #: src/pages/part/CategoryDetail.tsx:314
 #: src/pages/part/PartStockHistoryDetail.tsx:101
-#: src/pages/stock/LocationDetail.tsx:121
-#: src/pages/stock/LocationDetail.tsx:188
+#: src/pages/stock/LocationDetail.tsx:127
+#: src/pages/stock/LocationDetail.tsx:194
 msgid "Stock Items"
 msgstr "Stok Kalemleri"
 
 #: lib/enums/ModelInformation.tsx:98
 #: lib/enums/Roles.tsx:47
-#: src/pages/stock/LocationDetail.tsx:428
+#: src/pages/stock/LocationDetail.tsx:446
 msgid "Stock Location"
 msgstr "Stok Konumu"
 
 #: lib/enums/ModelInformation.tsx:99
-#: src/pages/stock/LocationDetail.tsx:182
-#: src/pages/stock/LocationDetail.tsx:420
+#: src/pages/stock/LocationDetail.tsx:188
+#: src/pages/stock/LocationDetail.tsx:438
 #: src/pages/stock/StockDetail.tsx:996
 msgid "Stock Locations"
 msgstr "Stok Konumları"
@@ -333,7 +334,7 @@ msgstr "Proje Kodları"
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:563
 #: src/pages/stock/StockDetail.tsx:352
 #: src/tables/part/PartPurchaseOrdersTable.tsx:32
-#: src/tables/stock/StockItemTable.tsx:239
+#: src/tables/stock/StockItemTable.tsx:255
 #: src/tables/stock/StockTrackingTable.tsx:120
 msgid "Purchase Order"
 msgstr "Satın Alma Siparişi"
@@ -583,7 +584,7 @@ msgstr "Hatalar"
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:262
 #: src/pages/sales/ReturnOrderDetail.tsx:240
 #: src/pages/sales/SalesOrderDetail.tsx:275
-#: src/pages/stock/LocationDetail.tsx:134
+#: src/pages/stock/LocationDetail.tsx:140
 #: src/tables/ColumnRenderers.tsx:374
 #: src/tables/Filter.tsx:299
 msgid "Tenant"
@@ -1749,7 +1750,7 @@ msgstr "Sunucu"
 #: src/pages/Index/Settings/AdminCenter/UnitManagementPanel.tsx:19
 #: src/pages/part/CategoryDetail.tsx:91
 #: src/pages/part/PartDetail.tsx:446
-#: src/pages/stock/LocationDetail.tsx:82
+#: src/pages/stock/LocationDetail.tsx:88
 #: src/tables/machine/MachineTypeTable.tsx:67
 #: src/tables/machine/MachineTypeTable.tsx:149
 #: src/tables/machine/MachineTypeTable.tsx:252
@@ -2286,7 +2287,7 @@ msgstr "Öğe yok"
 #: src/tables/build/BuildLineTable.tsx:193
 #: src/tables/part/PartTable.tsx:137
 #: src/tables/stock/StockItemTable.tsx:182
-#: src/tables/stock/StockItemTable.tsx:343
+#: src/tables/stock/StockItemTable.tsx:359
 msgid "Available"
 msgstr "Mevcut"
 
@@ -2643,8 +2644,8 @@ msgstr "Çıkış"
 #: src/forms/StockForms.tsx:794
 #: src/pages/Index/Settings/SystemSettings.tsx:230
 #: src/pages/part/PartDetail.tsx:800
-#: src/pages/stock/LocationDetail.tsx:398
-#: src/pages/stock/LocationDetail.tsx:428
+#: src/pages/stock/LocationDetail.tsx:416
+#: src/pages/stock/LocationDetail.tsx:446
 #: src/pages/stock/StockDetail.tsx:642
 #: src/tables/stock/StockItemTable.tsx:85
 msgid "Stock"
@@ -2844,7 +2845,7 @@ msgstr "Eklenti Bilgileri"
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:163
 #: src/pages/sales/ReturnOrderDetail.tsx:130
 #: src/pages/sales/SalesOrderDetail.tsx:120
-#: src/pages/stock/LocationDetail.tsx:102
+#: src/pages/stock/LocationDetail.tsx:108
 #: src/tables/ColumnRenderers.tsx:272
 #: src/tables/build/BuildAllocatedStockTable.tsx:88
 #: src/tables/machine/MachineTypeTable.tsx:159
@@ -2888,7 +2889,7 @@ msgstr "Tarih"
 #: src/tables/settings/TaxConfigurationTable.tsx:54
 #: src/tables/settings/TenantTable.tsx:48
 #: src/tables/settings/UserTable.tsx:400
-#: src/tables/stock/StockItemTable.tsx:322
+#: src/tables/stock/StockItemTable.tsx:338
 msgid "Active"
 msgstr "Aktif"
 
@@ -3042,7 +3043,7 @@ msgstr "Siparişte"
 #: src/pages/part/PartDetail.tsx:1043
 #: src/pages/stock/StockDetail.tsx:925
 #: src/tables/part/PartTestResultTable.tsx:305
-#: src/tables/stock/StockItemTable.tsx:359
+#: src/tables/stock/StockItemTable.tsx:375
 msgid "In Production"
 msgstr "Üretimde"
 
@@ -4442,7 +4443,7 @@ msgstr ""
 #: src/tables/settings/CustomStateTable.tsx:79
 #: src/tables/settings/EmailTable.tsx:95
 #: src/tables/settings/ImportSessionTable.tsx:117
-#: src/tables/stock/StockItemTable.tsx:327
+#: src/tables/stock/StockItemTable.tsx:343
 #: src/tables/stock/StockTrackingTable.tsx:65
 msgid "Status"
 msgstr "Durum"
@@ -4530,7 +4531,7 @@ msgstr "DPN"
 #: src/tables/build/BuildAllocatedStockTable.tsx:129
 #: src/tables/build/BuildLineTable.tsx:183
 #: src/tables/sales/SalesOrderLineItemTable.tsx:365
-#: src/tables/stock/StockItemTable.tsx:338
+#: src/tables/stock/StockItemTable.tsx:354
 msgid "Allocated"
 msgstr "Ayrıldı"
 
@@ -4588,7 +4589,7 @@ msgstr ""
 
 #: src/forms/BuildForms.tsx:898
 #: src/tables/build/BuildLineTable.tsx:188
-#: src/tables/stock/StockItemTable.tsx:367
+#: src/tables/stock/StockItemTable.tsx:383
 msgid "Consumed"
 msgstr "Tüketildi"
 
@@ -4744,7 +4745,7 @@ msgstr ""
 
 #: src/forms/PurchaseOrderForms.tsx:749
 #: src/pages/stock/StockDetail.tsx:382
-#: src/tables/stock/StockItemTable.tsx:294
+#: src/tables/stock/StockItemTable.tsx:310
 msgid "Expiry Date"
 msgstr "Son Kullanma Tarihi"
 
@@ -4855,8 +4856,8 @@ msgstr "Stok Durumu"
 
 #: src/forms/StockForms.tsx:317
 #: src/pages/stock/StockDetail.tsx:686
-#: src/tables/stock/StockItemTable.tsx:525
-#: src/tables/stock/StockItemTable.tsx:572
+#: src/tables/stock/StockItemTable.tsx:541
+#: src/tables/stock/StockItemTable.tsx:588
 msgid "Add Stock Item"
 msgstr "Stok Ögesi Ekle"
 
@@ -7025,7 +7026,7 @@ msgstr ""
 #: src/pages/build/BuildDetail.tsx:238
 #: src/pages/build/BuildDetail.tsx:728
 #: src/pages/build/BuildIndex.tsx:34
-#: src/pages/stock/LocationDetail.tsx:148
+#: src/pages/stock/LocationDetail.tsx:154
 #: src/tables/build/BuildOrderTable.tsx:123
 #: src/tables/build/BuildOrderTable.tsx:183
 #: src/tables/stock/StockLocationTable.tsx:53
@@ -7602,7 +7603,7 @@ msgid "Basic user"
 msgstr "Temel kullanıcı"
 
 #: src/pages/part/CategoryDetail.tsx:103
-#: src/pages/stock/LocationDetail.tsx:94
+#: src/pages/stock/LocationDetail.tsx:100
 #: src/tables/settings/ErrorTable.tsx:63
 #: src/tables/settings/ErrorTable.tsx:108
 msgid "Path"
@@ -7618,7 +7619,7 @@ msgid "Subcategories"
 msgstr "Alt sınıflar"
 
 #: src/pages/part/CategoryDetail.tsx:149
-#: src/pages/stock/LocationDetail.tsx:142
+#: src/pages/stock/LocationDetail.tsx:148
 #: src/tables/part/PartCategoryTable.tsx:89
 #: src/tables/stock/StockLocationTable.tsx:48
 msgid "Structural"
@@ -7647,7 +7648,7 @@ msgid "Move items to parent category"
 msgstr ""
 
 #: src/pages/part/CategoryDetail.tsx:196
-#: src/pages/stock/LocationDetail.tsx:234
+#: src/pages/stock/LocationDetail.tsx:252
 msgid "Delete items"
 msgstr "Ögeleri sil"
 
@@ -8086,7 +8087,7 @@ msgstr ""
 #: src/pages/part/PartStockHistoryDetail.tsx:107
 #: src/pages/part/PartStockHistoryDetail.tsx:211
 #: src/pages/stock/StockDetail.tsx:402
-#: src/tables/stock/StockItemTable.tsx:271
+#: src/tables/stock/StockItemTable.tsx:287
 msgid "Stock Value"
 msgstr "Stok Değeri"
 
@@ -8125,7 +8126,7 @@ msgstr "Maksimum Değer"
 #: src/tables/sales/ReturnOrderTable.tsx:146
 #: src/tables/sales/SalesOrderLineItemTable.tsx:126
 #: src/tables/sales/SalesOrderTable.tsx:182
-#: src/tables/sales/TaxExtraLineItemTable.tsx:71
+#: src/tables/sales/TaxExtraLineItemTable.tsx:73
 msgid "Total Price"
 msgstr "Toplam Fiyat"
 
@@ -8166,8 +8167,8 @@ msgstr "Maximum Fiyat"
 #: src/tables/general/ExtraLineItemTable.tsx:64
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:257
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:84
-#: src/tables/sales/TaxExtraLineItemTable.tsx:63
-#: src/tables/stock/StockItemTable.tsx:259
+#: src/tables/sales/TaxExtraLineItemTable.tsx:65
+#: src/tables/stock/StockItemTable.tsx:275
 msgid "Unit Price"
 msgstr "Birim Fiyatı"
 
@@ -8247,7 +8248,7 @@ msgstr "Satın Alma Fiyatlandırması"
 #: src/pages/part/pricing/PricingOverviewPanel.tsx:288
 #: src/pages/stock/StockDetail.tsx:426
 #: src/tables/general/ParameterTable.tsx:101
-#: src/tables/stock/StockItemTable.tsx:300
+#: src/tables/stock/StockItemTable.tsx:316
 msgid "Last Updated"
 msgstr "Son Güncelle"
 
@@ -8492,7 +8493,7 @@ msgstr "Tamamlanan Gönderiler"
 #: src/tables/sales/ReturnOrderTable.tsx:162
 #: src/tables/sales/SalesOrderLineItemTable.tsx:151
 #: src/tables/sales/SalesOrderTable.tsx:198
-#: src/tables/sales/TaxExtraLineItemTable.tsx:96
+#: src/tables/sales/TaxExtraLineItemTable.tsx:98
 msgid "Tax Rate"
 msgstr ""
 
@@ -8501,7 +8502,7 @@ msgstr ""
 #: src/tables/sales/ReturnOrderTable.tsx:150
 #: src/tables/sales/SalesOrderLineItemTable.tsx:139
 #: src/tables/sales/SalesOrderTable.tsx:186
-#: src/tables/sales/TaxExtraLineItemTable.tsx:84
+#: src/tables/sales/TaxExtraLineItemTable.tsx:86
 msgid "Subtotal"
 msgstr ""
 
@@ -8514,7 +8515,7 @@ msgstr ""
 #: src/tables/sales/ReturnOrderTable.tsx:158
 #: src/tables/sales/SalesOrderLineItemTable.tsx:147
 #: src/tables/sales/SalesOrderTable.tsx:194
-#: src/tables/sales/TaxExtraLineItemTable.tsx:92
+#: src/tables/sales/TaxExtraLineItemTable.tsx:94
 msgid "Total with Tax"
 msgstr ""
 
@@ -8685,94 +8686,94 @@ msgstr ""
 msgid "Mark shipment as unchecked"
 msgstr ""
 
-#: src/pages/stock/LocationDetail.tsx:110
+#: src/pages/stock/LocationDetail.tsx:116
 msgid "Parent Location"
 msgstr "Üst Konum"
 
-#: src/pages/stock/LocationDetail.tsx:128
-#: src/pages/stock/LocationDetail.tsx:182
+#: src/pages/stock/LocationDetail.tsx:134
+#: src/pages/stock/LocationDetail.tsx:188
 msgid "Sublocations"
 msgstr "Alt Konumlar"
 
-#: src/pages/stock/LocationDetail.tsx:154
+#: src/pages/stock/LocationDetail.tsx:160
 #: src/tables/stock/StockLocationTable.tsx:62
 msgid "Location Type"
 msgstr "Konum Türü"
 
-#: src/pages/stock/LocationDetail.tsx:165
+#: src/pages/stock/LocationDetail.tsx:171
 msgid "Top level stock location"
 msgstr "En üst düzey stok konumu"
 
-#: src/pages/stock/LocationDetail.tsx:176
+#: src/pages/stock/LocationDetail.tsx:182
 msgid "Location Details"
 msgstr "Konum Ayrıntıları"
 
-#: src/pages/stock/LocationDetail.tsx:202
+#: src/pages/stock/LocationDetail.tsx:208
 msgid "Default Parts"
 msgstr "Varsayılan Parçalar"
 
-#: src/pages/stock/LocationDetail.tsx:221
-#: src/pages/stock/LocationDetail.tsx:382
+#: src/pages/stock/LocationDetail.tsx:239
+#: src/pages/stock/LocationDetail.tsx:400
 #: src/tables/stock/StockLocationTable.tsx:128
 msgid "Edit Stock Location"
 msgstr "Stok Konumunu Düzenle"
-
-#: src/pages/stock/LocationDetail.tsx:230
-msgid "Move items to parent location"
-msgstr ""
-
-#: src/pages/stock/LocationDetail.tsx:242
-#: src/pages/stock/LocationDetail.tsx:387
-msgid "Delete Stock Location"
-msgstr "Stok Konumunu Sil"
 
 #: src/pages/stock/LocationDetail.tsx:243
 #~ msgid "Child Locations Action"
 #~ msgstr "Child Locations Action"
 
-#: src/pages/stock/LocationDetail.tsx:245
+#: src/pages/stock/LocationDetail.tsx:248
+msgid "Move items to parent location"
+msgstr ""
+
+#: src/pages/stock/LocationDetail.tsx:260
+#: src/pages/stock/LocationDetail.tsx:405
+msgid "Delete Stock Location"
+msgstr "Stok Konumunu Sil"
+
+#: src/pages/stock/LocationDetail.tsx:263
 msgid "Items Action"
 msgstr "Ögeler Eylemi"
 
-#: src/pages/stock/LocationDetail.tsx:247
+#: src/pages/stock/LocationDetail.tsx:265
 msgid "Action for stock items in this location"
 msgstr "Bu konumdaki stok ögeleri için eylem"
 
-#: src/pages/stock/LocationDetail.tsx:252
+#: src/pages/stock/LocationDetail.tsx:270
 msgid "Locations Action"
 msgstr ""
 
-#: src/pages/stock/LocationDetail.tsx:254
+#: src/pages/stock/LocationDetail.tsx:272
 msgid "Action for child locations in this location"
 msgstr "Bu konumdaki alt konumlar için eylem"
 
-#: src/pages/stock/LocationDetail.tsx:288
+#: src/pages/stock/LocationDetail.tsx:306
 msgid "Scan Stock Item"
 msgstr ""
 
-#: src/pages/stock/LocationDetail.tsx:306
+#: src/pages/stock/LocationDetail.tsx:324
 #: src/pages/stock/StockDetail.tsx:812
 msgid "Scanned stock item into location"
 msgstr ""
 
-#: src/pages/stock/LocationDetail.tsx:312
+#: src/pages/stock/LocationDetail.tsx:330
 #: src/pages/stock/StockDetail.tsx:818
 msgid "Error scanning stock item"
 msgstr ""
 
-#: src/pages/stock/LocationDetail.tsx:319
+#: src/pages/stock/LocationDetail.tsx:337
 msgid "Scan Stock Location"
 msgstr ""
 
-#: src/pages/stock/LocationDetail.tsx:331
+#: src/pages/stock/LocationDetail.tsx:349
 msgid "Scanned stock location into location"
 msgstr ""
 
-#: src/pages/stock/LocationDetail.tsx:337
+#: src/pages/stock/LocationDetail.tsx:355
 msgid "Error scanning stock location"
 msgstr ""
 
-#: src/pages/stock/LocationDetail.tsx:378
+#: src/pages/stock/LocationDetail.tsx:396
 #: src/tables/stock/StockLocationTable.tsx:149
 msgid "Location Actions"
 msgstr "Konum Eylemleri"
@@ -8909,7 +8910,7 @@ msgstr ""
 #~ msgstr "Item returned to stock"
 
 #: src/pages/stock/StockDetail.tsx:786
-#: src/tables/stock/StockItemTable.tsx:539
+#: src/tables/stock/StockItemTable.tsx:555
 msgid "Stock item serialized"
 msgstr ""
 
@@ -8963,12 +8964,12 @@ msgstr "Stok Ögesi Eylemleri"
 #~ msgstr "Assign to a customer"
 
 #: src/pages/stock/StockDetail.tsx:966
-#: src/tables/stock/StockItemTable.tsx:404
+#: src/tables/stock/StockItemTable.tsx:420
 msgid "Stale"
 msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:972
-#: src/tables/stock/StockItemTable.tsx:398
+#: src/tables/stock/StockItemTable.tsx:414
 msgid "Expired"
 msgstr ""
 
@@ -9650,7 +9651,7 @@ msgstr "Parça kilitli olduğundan malzeme listesi düzenlenemez"
 #: src/tables/part/ParametricPartTable.tsx:29
 #: src/tables/part/PartBuildAllocationsTable.tsx:60
 #: src/tables/part/PartTable.tsx:209
-#: src/tables/stock/StockItemTable.tsx:333
+#: src/tables/stock/StockItemTable.tsx:349
 msgid "Assembly"
 msgstr "Montaj"
 
@@ -9772,7 +9773,7 @@ msgid "Testable"
 msgstr "Test Edilebilir"
 
 #: src/tables/build/BuildLineTable.tsx:218
-#: src/tables/stock/StockItemTable.tsx:388
+#: src/tables/stock/StockItemTable.tsx:404
 msgid "Tracked"
 msgstr "İzlenen"
 
@@ -9971,7 +9972,7 @@ msgstr ""
 
 #: src/tables/build/BuildOutputTable.tsx:407
 #: src/tables/part/PartTestResultTable.tsx:318
-#: src/tables/stock/StockItemTable.tsx:328
+#: src/tables/stock/StockItemTable.tsx:344
 msgid "Filter by stock status"
 msgstr "Stok durumuna göre süz"
 
@@ -10201,7 +10202,7 @@ msgstr ""
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:215
 #: src/tables/sales/SalesOrderLineItemTable.tsx:275
 #: src/tables/sales/SalesOrderLineItemTable.tsx:380
-#: src/tables/sales/TaxExtraLineItemTable.tsx:114
+#: src/tables/sales/TaxExtraLineItemTable.tsx:116
 msgid "Add Line Item"
 msgstr "Satır Ögesi Ekle"
 
@@ -10209,7 +10210,7 @@ msgstr "Satır Ögesi Ekle"
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:322
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:98
 #: src/tables/sales/SalesOrderLineItemTable.tsx:294
-#: src/tables/sales/TaxExtraLineItemTable.tsx:127
+#: src/tables/sales/TaxExtraLineItemTable.tsx:129
 msgid "Edit Line Item"
 msgstr "Satır Ögesini Düzenle"
 
@@ -10217,12 +10218,12 @@ msgstr "Satır Ögesini Düzenle"
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:331
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:107
 #: src/tables/sales/SalesOrderLineItemTable.tsx:303
-#: src/tables/sales/TaxExtraLineItemTable.tsx:136
+#: src/tables/sales/TaxExtraLineItemTable.tsx:138
 msgid "Delete Line Item"
 msgstr "Satır Ögesini Sil"
 
 #: src/tables/general/ExtraLineItemTable.tsx:155
-#: src/tables/sales/TaxExtraLineItemTable.tsx:174
+#: src/tables/sales/TaxExtraLineItemTable.tsx:176
 msgid "Add Extra Line Item"
 msgstr "Fazladan Satır Ögesi Ekle"
 
@@ -11283,7 +11284,7 @@ msgid "Sample"
 msgstr "Örnek"
 
 #: src/tables/plugin/PluginListTable.tsx:432
-#: src/tables/stock/StockItemTable.tsx:372
+#: src/tables/stock/StockItemTable.tsx:388
 msgid "Installed"
 msgstr "Kuruldu"
 
@@ -11427,13 +11428,13 @@ msgstr ""
 
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:156
 #: src/tables/sales/SalesOrderLineItemTable.tsx:135
-#: src/tables/sales/TaxExtraLineItemTable.tsx:80
+#: src/tables/sales/TaxExtraLineItemTable.tsx:82
 msgid "Price with Tax"
 msgstr ""
 
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:164
 #: src/tables/sales/SalesOrderLineItemTable.tsx:143
-#: src/tables/sales/TaxExtraLineItemTable.tsx:88
+#: src/tables/sales/TaxExtraLineItemTable.tsx:90
 msgid "Total Tax"
 msgstr ""
 
@@ -12292,152 +12293,156 @@ msgstr "Bu stok ögesi kısmen ayrıldı"
 msgid "This stock item has been depleted"
 msgstr "Bu stok ögesi tükendi"
 
+#: src/tables/stock/StockItemTable.tsx:230
+msgid "Total Stock"
+msgstr ""
+
 #: src/tables/stock/StockItemTable.tsx:301
 #~ msgid "Show stock for assmebled parts"
 #~ msgstr "Show stock for assmebled parts"
 
-#: src/tables/stock/StockItemTable.tsx:305
+#: src/tables/stock/StockItemTable.tsx:321
 msgid "Stocktake Date"
 msgstr "Stok Sayımı Tarihi"
 
-#: src/tables/stock/StockItemTable.tsx:323
+#: src/tables/stock/StockItemTable.tsx:339
 msgid "Show stock for active parts"
 msgstr "Aktif parçalar için stoku göster"
 
-#: src/tables/stock/StockItemTable.tsx:334
+#: src/tables/stock/StockItemTable.tsx:350
 msgid "Show stock for assembled parts"
 msgstr ""
 
-#: src/tables/stock/StockItemTable.tsx:339
+#: src/tables/stock/StockItemTable.tsx:355
 msgid "Show items which have been allocated"
 msgstr "Ayrılan ögeleri göster"
 
-#: src/tables/stock/StockItemTable.tsx:344
+#: src/tables/stock/StockItemTable.tsx:360
 msgid "Show items which are available"
 msgstr "Stokta olan ögeleri göster"
-
-#: src/tables/stock/StockItemTable.tsx:348
-#: src/tables/stock/StockLocationTable.tsx:43
-msgid "Include Sublocations"
-msgstr "Alt Konumları İçer"
-
-#: src/tables/stock/StockItemTable.tsx:349
-msgid "Include stock in sublocations"
-msgstr "Alt konumlardaki stoku içer"
-
-#: src/tables/stock/StockItemTable.tsx:353
-msgid "Depleted"
-msgstr "Tükendi"
-
-#: src/tables/stock/StockItemTable.tsx:354
-msgid "Show depleted stock items"
-msgstr "Tükenen stok ögelerini göster"
-
-#: src/tables/stock/StockItemTable.tsx:360
-msgid "Show items which are in production"
-msgstr "Üretimde olan ögeleri göster"
 
 #: src/tables/stock/StockItemTable.tsx:362
 #~ msgid "Include stock items for variant parts"
 #~ msgstr "Include stock items for variant parts"
 
-#: src/tables/stock/StockItemTable.tsx:368
+#: src/tables/stock/StockItemTable.tsx:364
+#: src/tables/stock/StockLocationTable.tsx:43
+msgid "Include Sublocations"
+msgstr "Alt Konumları İçer"
+
+#: src/tables/stock/StockItemTable.tsx:365
+msgid "Include stock in sublocations"
+msgstr "Alt konumlardaki stoku içer"
+
+#: src/tables/stock/StockItemTable.tsx:369
+msgid "Depleted"
+msgstr "Tükendi"
+
+#: src/tables/stock/StockItemTable.tsx:370
+msgid "Show depleted stock items"
+msgstr "Tükenen stok ögelerini göster"
+
+#: src/tables/stock/StockItemTable.tsx:376
+msgid "Show items which are in production"
+msgstr "Üretimde olan ögeleri göster"
+
+#: src/tables/stock/StockItemTable.tsx:384
 msgid "Show items which have been consumed by a build order"
 msgstr ""
 
-#: src/tables/stock/StockItemTable.tsx:373
+#: src/tables/stock/StockItemTable.tsx:389
 msgid "Show stock items which are installed in other items"
 msgstr "Başka ögelerde kurulu olan stok ögelerini göster"
 
-#: src/tables/stock/StockItemTable.tsx:377
+#: src/tables/stock/StockItemTable.tsx:393
 msgid "Sent to Customer"
 msgstr "Müşteriye Gönderildi"
 
-#: src/tables/stock/StockItemTable.tsx:378
+#: src/tables/stock/StockItemTable.tsx:394
 msgid "Show items which have been sent to a customer"
 msgstr "Bir müşteriye gönderilen ögeleri göster"
-
-#: src/tables/stock/StockItemTable.tsx:389
-msgid "Show tracked items"
-msgstr "İzlenen ögeleri göster"
-
-#: src/tables/stock/StockItemTable.tsx:393
-msgid "Has Purchase Price"
-msgstr "Satın Alma Fiyatı Olanlar"
-
-#: src/tables/stock/StockItemTable.tsx:394
-msgid "Show items which have a purchase price"
-msgstr "Satın alma fiyatı olan ögeleri göster"
 
 #: src/tables/stock/StockItemTable.tsx:397
 #~ msgid "Serial Number LTE"
 #~ msgstr "Serial Number LTE"
-
-#: src/tables/stock/StockItemTable.tsx:399
-msgid "Show items which have expired"
-msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:403
 #~ msgid "Serial Number GTE"
 #~ msgstr "Serial Number GTE"
 
 #: src/tables/stock/StockItemTable.tsx:405
+msgid "Show tracked items"
+msgstr "İzlenen ögeleri göster"
+
+#: src/tables/stock/StockItemTable.tsx:409
+msgid "Has Purchase Price"
+msgstr "Satın Alma Fiyatı Olanlar"
+
+#: src/tables/stock/StockItemTable.tsx:410
+msgid "Show items which have a purchase price"
+msgstr "Satın alma fiyatı olan ögeleri göster"
+
+#: src/tables/stock/StockItemTable.tsx:415
+msgid "Show items which have expired"
+msgstr ""
+
+#: src/tables/stock/StockItemTable.tsx:421
 msgid "Show items which are stale"
 msgstr ""
 
-#: src/tables/stock/StockItemTable.tsx:410
+#: src/tables/stock/StockItemTable.tsx:426
 msgid "Expired Before"
 msgstr ""
 
-#: src/tables/stock/StockItemTable.tsx:411
+#: src/tables/stock/StockItemTable.tsx:427
 msgid "Show items which expired before this date"
 msgstr ""
 
-#: src/tables/stock/StockItemTable.tsx:417
+#: src/tables/stock/StockItemTable.tsx:433
 msgid "Expired After"
 msgstr ""
 
-#: src/tables/stock/StockItemTable.tsx:418
+#: src/tables/stock/StockItemTable.tsx:434
 msgid "Show items which expired after this date"
 msgstr ""
 
-#: src/tables/stock/StockItemTable.tsx:424
+#: src/tables/stock/StockItemTable.tsx:440
 msgid "Updated Before"
 msgstr ""
 
-#: src/tables/stock/StockItemTable.tsx:425
+#: src/tables/stock/StockItemTable.tsx:441
 msgid "Show items updated before this date"
 msgstr ""
 
-#: src/tables/stock/StockItemTable.tsx:430
+#: src/tables/stock/StockItemTable.tsx:446
 msgid "Updated After"
 msgstr ""
 
-#: src/tables/stock/StockItemTable.tsx:431
+#: src/tables/stock/StockItemTable.tsx:447
 msgid "Show items updated after this date"
 msgstr ""
 
-#: src/tables/stock/StockItemTable.tsx:436
+#: src/tables/stock/StockItemTable.tsx:452
 msgid "Stocktake Before"
 msgstr ""
 
-#: src/tables/stock/StockItemTable.tsx:437
+#: src/tables/stock/StockItemTable.tsx:453
 msgid "Show items counted before this date"
 msgstr ""
 
-#: src/tables/stock/StockItemTable.tsx:442
+#: src/tables/stock/StockItemTable.tsx:458
 msgid "Stocktake After"
 msgstr ""
 
-#: src/tables/stock/StockItemTable.tsx:443
+#: src/tables/stock/StockItemTable.tsx:459
 msgid "Show items counted after this date"
 msgstr ""
 
-#: src/tables/stock/StockItemTable.tsx:448
+#: src/tables/stock/StockItemTable.tsx:464
 msgid "External Location"
 msgstr "Harici Konum"
 
-#: src/tables/stock/StockItemTable.tsx:449
+#: src/tables/stock/StockItemTable.tsx:465
 msgid "Show items in an external location"
 msgstr "Harici bir konumdaki ögeleri göster"
 
@@ -12445,7 +12450,7 @@ msgstr "Harici bir konumdaki ögeleri göster"
 #~ msgid "Delete stock items"
 #~ msgstr "Delete stock items"
 
-#: src/tables/stock/StockItemTable.tsx:559
+#: src/tables/stock/StockItemTable.tsx:575
 msgid "Order items"
 msgstr ""
 
