@@ -414,14 +414,14 @@ class Address(InvenTree.models.InvenTreeModel):
     )
 
     line1 = models.CharField(
-        max_length=50,
+        max_length=200,
         verbose_name=_('Line 1'),
         help_text=_('Address line 1'),
         blank=True,
     )
 
     line2 = models.CharField(
-        max_length=50,
+        max_length=200,
         verbose_name=_('Line 2'),
         help_text=_('Address line 2'),
         blank=True,
