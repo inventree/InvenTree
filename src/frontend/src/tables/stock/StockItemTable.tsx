@@ -226,8 +226,8 @@ function stockItemTableColumns({
       }
     },
     {
-      accessor: 'part_detail.total_in_stock',
-      title: t`Total Stock`,
+      accessor: 'part_detail.unallocated_stock',
+      title: t`Available Stock`,
       sortable: false,
       defaultVisible: false,
       render: (record: any) => {

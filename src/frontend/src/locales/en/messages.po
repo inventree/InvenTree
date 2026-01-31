@@ -5887,6 +5887,7 @@ msgstr "Keywords"
 #: src/tables/build/BuildLineTable.tsx:306
 #: src/tables/part/PartTable.tsx:319
 #: src/tables/sales/SalesOrderLineItemTable.tsx:161
+#: src/tables/stock/StockItemTable.tsx:230
 msgid "Available Stock"
 msgstr "Available Stock"
 
@@ -9713,8 +9714,8 @@ msgid "This stock item has been depleted"
 msgstr "This stock item has been depleted"
 
 #: src/tables/stock/StockItemTable.tsx:230
-msgid "Total Stock"
-msgstr "Total Stock"
+#~ msgid "Total Stock"
+#~ msgstr "Total Stock"
 
 #: src/tables/stock/StockItemTable.tsx:321
 msgid "Stocktake Date"

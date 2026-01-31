@@ -7798,6 +7798,7 @@ msgstr "关键词"
 #: src/tables/build/BuildLineTable.tsx:306
 #: src/tables/part/PartTable.tsx:319
 #: src/tables/sales/SalesOrderLineItemTable.tsx:161
+#: src/tables/stock/StockItemTable.tsx:230
 msgid "Available Stock"
 msgstr "可用库存"
 
@@ -12294,8 +12295,8 @@ msgid "This stock item has been depleted"
 msgstr "库存项已耗尽"
 
 #: src/tables/stock/StockItemTable.tsx:230
-msgid "Total Stock"
-msgstr ""
+#~ msgid "Total Stock"
+#~ msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:301
 #~ msgid "Show stock for assmebled parts"
