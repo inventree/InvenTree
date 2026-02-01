@@ -1,6 +1,6 @@
 import type { ApiFormFieldType } from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
-import { DateInput } from '@mantine/dates';
+import { DateTimePicker } from '@mantine/dates';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { useCallback, useId, useMemo } from 'react';
@@ -8,7 +8,7 @@ import type { FieldValues, UseControllerReturn } from 'react-hook-form';
 
 dayjs.extend(customParseFormat);
 
-export default function DateField({
+export default function DateTimeField({
   controller,
   definition
 }: Readonly<{
@@ -22,7 +22,7 @@ export default function DateField({
     fieldState: { error }
   } = controller;
 
-  const valueFormat = 'YYYY-MM-DD';
+  const valueFormat = 'YYYY-MM-DD HH:mm:ss';
 
   const onChange = useCallback(
     (value: any) => {
@@ -30,9 +30,6 @@ export default function DateField({
       if (value) {
         value = value.toString();
         value = dayjs(value).format(valueFormat);
-
-        // Strip the time portion from the date input
-        value = value.toString().split('T')[0];
       }
 
       field.onChange(value);
@@ -41,7 +38,7 @@ export default function DateField({
     [field.onChange, definition, valueFormat]
   );
 
-  const dateValue: Date | null = useMemo(() => {
+  const dateTimeValue: Date | null = useMemo(() => {
     let dv: Date | null = null;
 
     if (field.value) {
@@ -57,22 +54,22 @@ export default function DateField({
   }, [field.value]);
 
   return (
-    <DateInput
+    <DateTimePicker
       id={fieldId}
-      aria-label={`date-field-${field.name}`}
+      aria-label={`date-time-field-${field.name}`}
       radius='sm'
       ref={field.ref}
-      type={undefined}
-      error={definition.error ?? error?.message}
-      value={dateValue}
-      clearable={!definition.required}
-      onChange={onChange}
-      valueFormat={valueFormat}
       label={definition.label}
       description={definition.description}
-      placeholder={definition.placeholder ?? t`Select date`}
+      placeholder={definition.placeholder ?? t`Select date and time`}
+      clearable={!definition.required}
+      error={definition.error ?? error?.message}
+      value={dateTimeValue}
+      onChange={onChange}
+      valueFormat={valueFormat}
       leftSection={definition.icon}
       highlightToday
+      withSeconds
     />
   );
 }
