@@ -296,7 +296,7 @@ INSTALLED_APPS = [
     'machine.apps.MachineConfig',
     'data_exporter.apps.DataExporterConfig',
     'importer.apps.ImporterConfig',
-    'web',
+    'web.apps.WebConfig',
     'generic',
     'InvenTree.apps.InvenTreeConfig',  # InvenTree app runs last
     # Core django modules

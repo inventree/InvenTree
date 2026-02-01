@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 445
+INVENTREE_API_VERSION = 446
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v446 -> 2026-02-202 : https://github.com/inventree/InvenTree/pull/10715
+    - Adds GuideDefinition and GuideExecution models and API endpoints to provide tipps and guides within InvenTree's web frontend.v443 -> 2026-01-21 : https://github.com/inventree/InvenTree/pull/11177
 
 v445 -> 2026-01-29 : https://github.com/inventree/InvenTree/pull/11102
     - Added "allocated_lines" field to SalesOrderSerializer to track fully allocated line items

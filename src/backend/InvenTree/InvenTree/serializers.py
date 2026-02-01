@@ -275,6 +275,10 @@ class FilterableIntegerField(FilterableSerializerField, serializers.IntegerField
     """Custom IntegerField which allows filtering."""
 
 
+class FilterableJSONField(FilterableSerializerField, serializers.JSONField):
+    """Custom JSONField which allows filtering."""
+
+
 class FilterableTagListField(FilterableSerializerField, TagListSerializerField):
     """Custom TagListSerializerField which allows filtering."""
 
