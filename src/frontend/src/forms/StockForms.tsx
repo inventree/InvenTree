@@ -1478,6 +1478,10 @@ export function useTestResultFields({
               setChoices([]);
               setFieldType('string');
             }
+          } else {
+            // No choices defined - this is a free-form text field
+            setChoices([]);
+            setFieldType('string');
           }
         }
       },
