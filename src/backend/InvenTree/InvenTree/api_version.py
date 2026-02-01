@@ -1,10 +1,17 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 444
+INVENTREE_API_VERSION = 446
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v446 -> 2026-02-01 : https://github.com/inventree/InvenTree/pull/11232
+    - Allow ordering of test results by started_datetime and finished_datetime fields
+    - Allow ordering of test results by test_station field
+
+v445 -> 2026-01-29 : https://github.com/inventree/InvenTree/pull/11102
+    - Added "allocated_lines" field to SalesOrderSerializer to track fully allocated line items
 
 v444 -> 2026-01-27 : https://github.com/inventree/InvenTree/pull/11208
     - Add customize option to disable theme loading from user profile (mainly for demo site use)
