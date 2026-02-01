@@ -1452,7 +1452,7 @@ class StockItemTestResultList(
     output_options = StockItemTestResultOutputOptions
 
     filterset_fields = ['user', 'template', 'result', 'value']
-    ordering_fields = ['date', 'result']
+    ordering_fields = ['date', 'result', 'started_datetime', 'finished_datetime']
 
     ordering = 'date'
 
