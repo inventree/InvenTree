@@ -1466,7 +1466,7 @@ class StockItem(
                 old_status_logical = item.status
                 item.set_status(status)
                 tracking_info['status'] = status  # may be a custom value
-                tracking_info['status_logicial'] = (
+                tracking_info['status_logical'] = (
                     item.status
                 )  # always the logical value
                 tracking_info['old_status'] = (
@@ -1805,7 +1805,7 @@ class StockItem(
             user (User): The user performing this action
             deltas (dict, optional): A map of the changes made to the model. Defaults to None.
             notes (str, optional): URL associated with this tracking entry. Defaults to ''.
-            commit (boolm optional): If True, save the entry to the database. Defaults to True.
+            commit (bool, optional): If True, save the entry to the database. Defaults to True.
 
         Returns:
             StockItemTracking: The created tracking entry
@@ -2301,7 +2301,7 @@ class StockItem(
                         old_status_logical = new_stock.status
                         new_stock.set_status(status)
                         deltas['status'] = status  # may be a custom value
-                        deltas['status_logicial'] = (
+                        deltas['status_logical'] = (
                             new_stock.status
                         )  # always the logical value
                         deltas['old_status'] = (
@@ -2432,7 +2432,7 @@ class StockItem(
             old_status_logical = self.status
             self.set_status(status)
             tracking_info['status'] = status  # may be a custom value
-            tracking_info['status_logicial'] = self.status  # always the logical value
+            tracking_info['status_logical'] = self.status  # always the logical value
             tracking_info['old_status'] = (
                 old_custom_status if old_custom_status else old_status_logical
             )
@@ -2524,7 +2524,7 @@ class StockItem(
             old_status_logical = self.status
             self.set_status(status)
             tracking_info['status'] = status  # may be a custom value
-            tracking_info['status_logicial'] = self.status  # always the logical value
+            tracking_info['status_logical'] = self.status  # always the logical value
             tracking_info['old_status'] = (
                 old_custom_status if old_custom_status else old_status_logical
             )
@@ -2594,7 +2594,7 @@ class StockItem(
             old_status_logical = self.status
             self.set_status(status)
             tracking_info['status'] = status  # may be a custom value
-            tracking_info['status_logicial'] = self.status  # always the logical value
+            tracking_info['status_logical'] = self.status  # always the logical value
             tracking_info['old_status'] = (
                 old_custom_status if old_custom_status else old_status_logical
             )
@@ -2655,7 +2655,7 @@ class StockItem(
             old_status_logical = self.status
             self.set_status(status)
             deltas['status'] = status  # may be a custom value
-            deltas['status_logicial'] = self.status  # always the logical value
+            deltas['status_logical'] = self.status  # always the logical value
             deltas['old_status'] = (
                 old_custom_status if old_custom_status else old_status_logical
             )
