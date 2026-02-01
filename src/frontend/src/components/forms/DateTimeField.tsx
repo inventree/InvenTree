@@ -69,6 +69,7 @@ export default function DateTimeField({
       valueFormat={valueFormat}
       leftSection={definition.icon}
       highlightToday
+      withSeconds
     />
   );
 }
