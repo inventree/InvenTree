@@ -8,6 +8,7 @@ INVENTREE_API_TEXT = """
 
 v446 -> 2026-02-01 : https://github.com/inventree/InvenTree/pull/11232
     - Allow ordering of test results by started_datetime and finished_datetime fields
+    - Allow ordering of test results by test_station field
 
 v445 -> 2026-01-29 : https://github.com/inventree/InvenTree/pull/11102
     - Added "allocated_lines" field to SalesOrderSerializer to track fully allocated line items
