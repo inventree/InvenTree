@@ -53,7 +53,7 @@ rapidfuzz                               # Fuzzy string matching
 sentry-sdk                              # Error reporting (optional)
 setuptools                              # Standard dependency
 tablib[xls,xlsx,yaml]                   # Support for XLS and XLSX formats
-weasyprint                              # PDF generation
+weasyprint>=68.0                        # PDF generation
 whitenoise                              # Enhanced static file serving
 
 # OpenTelemetry dependencies
