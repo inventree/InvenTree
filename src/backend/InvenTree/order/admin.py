@@ -172,14 +172,13 @@ class ReturnOrdeerExtraLineAdmin(GeneralExtraLineAdmin, admin.ModelAdmin):
     """Admin class for the ReturnOrderExtraLine model."""
 
 
-# TODO
-# class TransferOrderLineItemInlineAdmin(admin.StackedInline):
-#     """Inline admin class for the TransferOrderLineItem model."""
+class TransferOrderLineItemInlineAdmin(admin.StackedInline):
+    """Inline admin class for the TransferOrderLineItem model."""
 
-#     autocomplete_fields = ['part', 'destination', 'build_order']
+    autocomplete_fields = ['part']
 
-#     model = models.TransferOrderLineItem
-#     extra = 0
+    model = models.TransferOrderLineItem
+    extra = 0
 
 
 @admin.register(models.TransferOrder)
@@ -200,8 +199,7 @@ class TransferOrderAdmin(admin.ModelAdmin):
 
     search_fields = ['reference', 'description']
 
-    # TODO:
-    # inlines = [TransferOrderLineItemInlineAdmin]
+    inlines = [TransferOrderLineItemInlineAdmin]
 
     autocomplete_fields = [
         'created_by',
