@@ -116,8 +116,7 @@ export default function TransferOrderDetail() {
         name: 'destination',
         icon: 'location',
         label: t`Destination Location`,
-        model: ModelType.stocklocation,
-        hidden: !order.destination
+        model: ModelType.stocklocation
       },
       {
         type: 'text',
