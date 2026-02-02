@@ -1247,11 +1247,11 @@ class BomFilter(FilterSet):
 
     # Filters for linked 'part'
     part_active = rest_filters.BooleanFilter(
-        label='Assembly part is active', field_name='part__active'
+        label=_('Assembly part is active'), field_name='part__active'
     )
 
     part_trackable = rest_filters.BooleanFilter(
-        label='Assembly part is trackable', field_name='part__trackable'
+        label=_('Assembly part is trackable'), field_name='part__trackable'
     )
 
     part_testable = rest_filters.BooleanFilter(
@@ -1259,8 +1259,12 @@ class BomFilter(FilterSet):
     )
 
     # Filters for linked 'sub_part'
+    sub_part_active = rest_filters.BooleanFilter(
+        label=_('Component part is active'), field_name='sub_part__active'
+    )
+
     sub_part_trackable = rest_filters.BooleanFilter(
-        label='Component part is trackable', field_name='sub_part__trackable'
+        label=_('Component part is trackable'), field_name='sub_part__trackable'
     )
 
     sub_part_testable = rest_filters.BooleanFilter(
@@ -1268,15 +1272,15 @@ class BomFilter(FilterSet):
     )
 
     sub_part_assembly = rest_filters.BooleanFilter(
-        label='Component part is an assembly', field_name='sub_part__assembly'
+        label=_('Component part is an assembly'), field_name='sub_part__assembly'
     )
 
     sub_part_virtual = rest_filters.BooleanFilter(
-        label='Component part is virtual', field_name='sub_part__virtual'
+        label=_('Component part is virtual'), field_name='sub_part__virtual'
     )
 
     available_stock = rest_filters.BooleanFilter(
-        label='Has available stock', method='filter_available_stock'
+        label=_('Has available stock'), method='filter_available_stock'
     )
 
     def filter_available_stock(self, queryset, name, value):
