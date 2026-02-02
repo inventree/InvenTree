@@ -63,9 +63,9 @@ export default function Login() {
     if (newHost === null) return;
     setHost(hostList[newHost]?.host, newHost);
     setApiDefaults();
-    setTraceId();
+    const traceid = setTraceId();
     fetchServerApiState();
-    removeTraceId;
+    removeTraceId(traceid);
   }
 
   // Set default host to localhost if no host is selected

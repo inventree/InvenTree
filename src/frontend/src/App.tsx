@@ -1,6 +1,8 @@
 import { QueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 
+import { ApiEndpoints, apiUrl } from '@lib/index';
+import { frontendID, serviceName } from './defaults/defaults';
 import { useLocalState } from './states/LocalState';
 
 // Global API instance
@@ -34,10 +36,21 @@ export const queryClient = new QueryClient({
   }
 });
 export function setTraceId() {
-  const traceId = crypto.randomUUID().replace(/-/g, '');
-  const frontendID = '706f6f7062757474';
-  api.defaults.headers['traceparent'] = `00-${traceId}-${frontendID}-01`;
+  const runID = crypto.randomUUID().replace(/-/g, '');
+  const traceId = `00-${runID}-${frontendID}-01`;
+  api.defaults.headers['traceparent'] = traceId;
+
+  return runID;
 }
-export function removeTraceId() {
+export function removeTraceId(traceId: string) {
   delete api.defaults.headers['traceparent'];
+
+  api
+    .post(apiUrl(ApiEndpoints.system_internal_trace_end), {
+      traceId: traceId,
+      service: serviceName
+    })
+    .catch((error) => {
+      console.error('Error removing trace ID:', error);
+    });
 }
