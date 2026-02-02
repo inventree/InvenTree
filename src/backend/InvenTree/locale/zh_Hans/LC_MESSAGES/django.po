@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-29 23:44+0000\n"
-"PO-Revision-Date: 2026-01-29 23:47\n"
+"POT-Creation-Date: 2026-02-02 02:16+0000\n"
+"PO-Revision-Date: 2026-02-02 02:19\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -17,67 +17,67 @@ msgstr ""
 "X-Crowdin-File: /src/backend/InvenTree/locale/en/LC_MESSAGES/django.po\n"
 "X-Crowdin-File-ID: 250\n"
 
-#: InvenTree/api.py:366
+#: InvenTree/api.py:365
 msgid "API endpoint not found"
 msgstr "未找到 API 端点"
 
-#: InvenTree/api.py:443
+#: InvenTree/api.py:442
 msgid "List of items or filters must be provided for bulk operation"
 msgstr "批量操作必须提供物品或过滤器列表"
 
-#: InvenTree/api.py:450
+#: InvenTree/api.py:449
 msgid "Items must be provided as a list"
 msgstr "必须以列表形式提供项目"
 
-#: InvenTree/api.py:458
+#: InvenTree/api.py:457
 msgid "Invalid items list provided"
 msgstr "提供了无效的单位"
 
-#: InvenTree/api.py:464
+#: InvenTree/api.py:463
 msgid "Filters must be provided as a dict"
 msgstr "必须以字典形式提供筛选器"
 
-#: InvenTree/api.py:471
+#: InvenTree/api.py:470
 msgid "Invalid filters provided"
 msgstr "提供了无效的过滤器"
 
-#: InvenTree/api.py:476
+#: InvenTree/api.py:475
 msgid "All filter must only be used with true"
 msgstr "所有过滤器只能使用true"
 
-#: InvenTree/api.py:481
+#: InvenTree/api.py:480
 msgid "No items match the provided criteria"
 msgstr "没有符合所供条件的项目"
 
-#: InvenTree/api.py:505
+#: InvenTree/api.py:504
 msgid "No data provided"
 msgstr "未提供数据"
 
-#: InvenTree/api.py:521
+#: InvenTree/api.py:520
 msgid "This field must be unique."
 msgstr "此字段的值必须是唯一的。"
 
-#: InvenTree/api.py:816
+#: InvenTree/api.py:815
 msgid "User does not have permission to view this model"
 msgstr "用户没有权限查阅当前模型。"
 
-#: InvenTree/auth_overrides.py:57
+#: InvenTree/auth_overrides.py:58
 msgid "Email (again)"
 msgstr "电子邮件 (重复)"
 
-#: InvenTree/auth_overrides.py:61
+#: InvenTree/auth_overrides.py:62
 msgid "Email address confirmation"
 msgstr "邮箱地址已确认"
 
-#: InvenTree/auth_overrides.py:84
+#: InvenTree/auth_overrides.py:85
 msgid "You must type the same email each time."
 msgstr "您必须每次输入相同的电子邮件。"
 
-#: InvenTree/auth_overrides.py:128 InvenTree/auth_overrides.py:135
+#: InvenTree/auth_overrides.py:132 InvenTree/auth_overrides.py:139
 msgid "The provided primary email address is not valid."
 msgstr "提供的主电子邮件地址无效。"
 
-#: InvenTree/auth_overrides.py:141
+#: InvenTree/auth_overrides.py:145
 msgid "The provided email domain is not approved."
 msgstr "提供的邮箱域名未被批准。"
 
