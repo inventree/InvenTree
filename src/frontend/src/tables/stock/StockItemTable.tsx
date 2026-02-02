@@ -157,7 +157,15 @@ function stockItemTableColumns({
 
         if (record.in_stock) {
           if (allocated > 0) {
-            if (allocated >= quantity) {
+            if (allocated > quantity) {
+              color = 'red';
+              extra.push(
+                <Text
+                  key='over-allocated'
+                  size='sm'
+                >{t`This stock item is over-allocated`}</Text>
+              );
+            } else if (allocated == quantity) {
               color = 'orange';
               extra.push(
                 <Text
