@@ -6,7 +6,7 @@ INVENTREE_API_VERSION = 447
 
 INVENTREE_API_TEXT = """
 
-v447 -> 2026-02-02 : https://github.com/inventree/InvenTree/pull/xxx
+v447 -> 2026-02-02 : https://github.com/inventree/InvenTree/pull/11244
     - Adds (internal) endpoint to end a observability tooling session
 
 v446 -> 2026-02-01 : https://github.com/inventree/InvenTree/pull/11232
