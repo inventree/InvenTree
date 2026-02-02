@@ -8,7 +8,7 @@ msgstr ""
 "Language: da\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-02-01 10:26\n"
+"PO-Revision-Date: 2026-02-02 02:19\n"
 "Last-Translator: \n"
 "Language-Team: Danish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -1723,7 +1723,7 @@ msgstr "Dette kan være relateret til manglende mail-indstillinger eller kunne v
 
 #: src/components/forms/DateTimeField.tsx:64
 msgid "Select date and time"
-msgstr ""
+msgstr "Vælg dato og klokkeslæt"
 
 #: src/components/forms/HostOptionsForm.tsx:36
 #: src/components/forms/HostOptionsForm.tsx:67
@@ -2298,15 +2298,15 @@ msgstr "Django Version"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:144
 msgid "Commit Hash"
-msgstr ""
+msgstr "Commit Hash"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:149
 msgid "Commit Date"
-msgstr ""
+msgstr "Commit Dato"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:154
 msgid "Commit Branch"
-msgstr ""
+msgstr "Commit Branch"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:165
 msgid "Version Information"
@@ -2401,7 +2401,7 @@ msgstr "{key} Pakker"
 
 #: src/components/modals/ServerInfoModal.tsx:22
 msgid "Instance Name"
-msgstr ""
+msgstr "Instansnavn"
 
 #: src/components/modals/ServerInfoModal.tsx:28
 msgid "Server Version"
@@ -2450,7 +2450,7 @@ msgstr "Server detaljer"
 
 #: src/components/modals/ServerInfoModal.tsx:91
 msgid "Healthy"
-msgstr ""
+msgstr "Sund"
 
 #: src/components/modals/ServerInfoModal.tsx:93
 msgid "Issues detected"
@@ -2755,7 +2755,7 @@ msgstr "Hele ord søgning"
 
 #: src/components/nav/SearchDrawer.tsx:518
 msgid "Regex search"
-msgstr ""
+msgstr "Regex søgning"
 
 #: src/components/nav/SearchDrawer.tsx:527
 msgid "Notes search"
@@ -2928,7 +2928,7 @@ msgstr "Plugin indstillinger"
 
 #: src/components/plugins/PluginUIFeature.tsx:103
 msgid "Error occurred while rendering the template editor."
-msgstr ""
+msgstr "Der opstod fejl under rendering af skabeloneditoren."
 
 #: src/components/plugins/PluginUIFeature.tsx:120
 msgid "Error Loading Plugin Editor"
@@ -2944,7 +2944,7 @@ msgstr "Fejl Under Indlæsning Af Plugin-forhåndsvisning"
 
 #: src/components/plugins/RemoteComponent.tsx:111
 msgid "Invalid source or function name"
-msgstr ""
+msgstr "Ugyldigt kilde- eller funktionsnavn"
 
 #: src/components/plugins/RemoteComponent.tsx:143
 msgid "Error Loading Content"
@@ -3148,7 +3148,7 @@ msgstr "Tilføj Projektkode"
 #: src/tables/settings/CustomStateTable.tsx:140
 #: src/tables/settings/CustomStateTable.tsx:202
 msgid "Add State"
-msgstr ""
+msgstr "Tilføj Tilstand"
 
 #: src/components/settings/QuickAction.tsx:85
 msgid "Open an Issue"
@@ -3200,11 +3200,11 @@ msgstr "Tilføj Brugerdefineret Tilstand"
 
 #: src/components/settings/QuickAction.tsx:122
 msgid "Create a new custom state for your workflow"
-msgstr ""
+msgstr "Opret en ny brugerdefineret tilstand til din arbejdsgang"
 
 #: src/components/settings/SettingItem.tsx:33
 msgid "Do you want to proceed to change this setting?"
-msgstr ""
+msgstr "Vil du fortsætte med at ændre denne indstilling?"
 
 #: src/components/settings/SettingItem.tsx:47
 #: src/components/settings/SettingItem.tsx:100
@@ -3213,7 +3213,7 @@ msgstr ""
 
 #: src/components/settings/SettingItem.tsx:221
 msgid "This setting requires confirmation"
-msgstr ""
+msgstr "Denne indstilling kræver bekræftelse"
 
 #: src/components/settings/SettingList.tsx:72
 msgid "Edit Setting"
@@ -3610,7 +3610,7 @@ msgstr "Ingen indstillinger specificeret"
 
 #: src/components/wizards/ImportPartWizard.tsx:105
 msgid "Exact Match"
-msgstr ""
+msgstr "Præcis match"
 
 #: src/components/wizards/ImportPartWizard.tsx:112
 msgid "Current part"
@@ -4443,7 +4443,7 @@ msgstr "Færdiggøre Bygge Output"
 
 #: src/forms/BuildForms.tsx:366
 msgid "Build outputs have been completed"
-msgstr ""
+msgstr "Byggeresultater er udført"
 
 #: src/forms/BuildForms.tsx:408
 #~ msgid "Selected build outputs will be deleted"
@@ -4481,15 +4481,15 @@ msgstr "Annuller Bygge Output"
 
 #: src/forms/BuildForms.tsx:499
 msgid "Selected build outputs will be removed"
-msgstr ""
+msgstr "Valgte byggeresultater vil blive fjernet"
 
 #: src/forms/BuildForms.tsx:501
 msgid "Allocated stock items will be returned to stock"
-msgstr ""
+msgstr "Tildelte lagervarer vil blive returneret til lager"
 
 #: src/forms/BuildForms.tsx:508
 msgid "Build outputs have been cancelled"
-msgstr ""
+msgstr "Byggeoutput er blevet aflyst"
 
 #: src/forms/BuildForms.tsx:641
 #: src/pages/build/BuildDetail.tsx:208
@@ -4511,7 +4511,7 @@ msgstr ""
 #: src/tables/sales/SalesOrderLineItemTable.tsx:99
 #: src/tables/stock/StockItemTable.tsx:69
 msgid "IPN"
-msgstr ""
+msgstr "IPN"
 
 #: src/forms/BuildForms.tsx:642
 #: src/forms/BuildForms.tsx:806
@@ -4529,12 +4529,12 @@ msgstr "Allokere"
 #: src/pages/build/BuildDetail.tsx:109
 #: src/pages/build/BuildDetail.tsx:327
 msgid "Source Location"
-msgstr ""
+msgstr "Kilde Lokation"
 
 #: src/forms/BuildForms.tsx:678
 #: src/forms/SalesOrderForms.tsx:375
 msgid "Select the source location for the stock allocation"
-msgstr ""
+msgstr "Vælg kildelokationen for lagertildelingen"
 
 #: src/forms/BuildForms.tsx:710
 #: src/forms/SalesOrderForms.tsx:415
@@ -4544,7 +4544,7 @@ msgstr ""
 #: src/tables/sales/SalesOrderLineItemTable.tsx:380
 #: src/tables/sales/SalesOrderLineItemTable.tsx:406
 msgid "Allocate Stock"
-msgstr ""
+msgstr "Tildel lager"
 
 #: src/forms/BuildForms.tsx:713
 #: src/forms/SalesOrderForms.tsx:420
@@ -4563,12 +4563,12 @@ msgstr "Lagervarer tildelt"
 #: src/tables/build/BuildLineTable.tsx:749
 #: src/tables/build/BuildLineTable.tsx:872
 msgid "Consume Stock"
-msgstr ""
+msgstr "Forbrug Lager"
 
 #: src/forms/BuildForms.tsx:827
 #: src/forms/BuildForms.tsx:928
 msgid "Stock items scheduled to be consumed"
-msgstr ""
+msgstr "Lagervarer der er planlagt til forbrug"
 
 #: src/forms/BuildForms.tsx:863
 #: src/tables/build/BuildLineTable.tsx:516
