@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-21 06:02+0000\n"
-"PO-Revision-Date: 2026-01-21 06:06\n"
+"POT-Creation-Date: 2026-02-02 02:16+0000\n"
+"PO-Revision-Date: 2026-02-02 02:19\n"
 "Last-Translator: \n"
 "Language-Team: Serbian (Latin)\n"
 "Language: sr_CS\n"
@@ -17,67 +17,67 @@ msgstr ""
 "X-Crowdin-File: /src/backend/InvenTree/locale/en/LC_MESSAGES/django.po\n"
 "X-Crowdin-File-ID: 250\n"
 
-#: InvenTree/api.py:362
+#: InvenTree/api.py:365
 msgid "API endpoint not found"
 msgstr "API krajnja tačka nije pronađena"
 
-#: InvenTree/api.py:439
+#: InvenTree/api.py:442
 msgid "List of items or filters must be provided for bulk operation"
 msgstr ""
 
-#: InvenTree/api.py:446
+#: InvenTree/api.py:449
 msgid "Items must be provided as a list"
 msgstr ""
 
-#: InvenTree/api.py:454
+#: InvenTree/api.py:457
 msgid "Invalid items list provided"
 msgstr "Lista nevalidiranih stavki"
 
-#: InvenTree/api.py:460
+#: InvenTree/api.py:463
 msgid "Filters must be provided as a dict"
 msgstr ""
 
-#: InvenTree/api.py:467
+#: InvenTree/api.py:470
 msgid "Invalid filters provided"
 msgstr "Dati su neispravni filteri"
 
-#: InvenTree/api.py:472
+#: InvenTree/api.py:475
 msgid "All filter must only be used with true"
 msgstr ""
 
-#: InvenTree/api.py:477
+#: InvenTree/api.py:480
 msgid "No items match the provided criteria"
 msgstr ""
 
-#: InvenTree/api.py:501
+#: InvenTree/api.py:504
 msgid "No data provided"
 msgstr ""
 
-#: InvenTree/api.py:517
+#: InvenTree/api.py:520
 msgid "This field must be unique."
 msgstr ""
 
-#: InvenTree/api.py:812
+#: InvenTree/api.py:815
 msgid "User does not have permission to view this model"
 msgstr "Korisnik nema dozvolu za pregled ovog modela"
 
-#: InvenTree/auth_overrides.py:56
+#: InvenTree/auth_overrides.py:58
 msgid "Email (again)"
 msgstr "E-pošta (ponovo)"
 
-#: InvenTree/auth_overrides.py:60
+#: InvenTree/auth_overrides.py:62
 msgid "Email address confirmation"
 msgstr "Potvrda adrese e-pošte"
 
-#: InvenTree/auth_overrides.py:83
+#: InvenTree/auth_overrides.py:85
 msgid "You must type the same email each time."
 msgstr "Svaki put morate upisati istu e-poštu."
 
-#: InvenTree/auth_overrides.py:125 InvenTree/auth_overrides.py:132
+#: InvenTree/auth_overrides.py:132 InvenTree/auth_overrides.py:139
 msgid "The provided primary email address is not valid."
 msgstr "Navedena primarna adresa e-pošte nije važeća."
 
-#: InvenTree/auth_overrides.py:138
+#: InvenTree/auth_overrides.py:145
 msgid "The provided email domain is not approved."
 msgstr "Navedeni domen adrese e-pošte nije prihvaćen."
 
@@ -116,9 +116,9 @@ msgstr "Neispravna decimalna vrednost"
 #: build/serializers.py:570 build/serializers.py:1760 company/models.py:798
 #: order/models.py:1782
 #: report/templates/report/inventree_build_order_report.html:172
-#: stock/models.py:2851 stock/models.py:2975 stock/serializers.py:717
-#: stock/serializers.py:893 stock/serializers.py:1035 stock/serializers.py:1342
-#: stock/serializers.py:1431 stock/serializers.py:1630
+#: stock/models.py:2922 stock/models.py:3046 stock/serializers.py:721
+#: stock/serializers.py:897 stock/serializers.py:1039 stock/serializers.py:1357
+#: stock/serializers.py:1446 stock/serializers.py:1645
 msgid "Notes"
 msgstr "Napomene"
 
@@ -586,7 +586,7 @@ msgstr "Uključi varijante"
 #: report/templates/report/inventree_sales_order_shipment_report.html:28
 #: report/templates/report/inventree_stock_location_report.html:102
 #: stock/api.py:586 stock/serializers.py:120 stock/serializers.py:172
-#: stock/serializers.py:410 stock/serializers.py:587 stock/serializers.py:926
+#: stock/serializers.py:410 stock/serializers.py:591 stock/serializers.py:930
 #: templates/email/build_order_completed.html:17
 #: templates/email/build_order_required_stock.html:17
 #: templates/email/low_stock_notification.html:15
@@ -712,7 +712,7 @@ msgid "Available"
 msgstr "Dostupno"
 
 #: build/api.py:513 build/serializers.py:1499 company/serializers.py:410
-#: order/serializers.py:1251 part/serializers.py:831 part/serializers.py:1152
+#: order/serializers.py:1270 part/serializers.py:831 part/serializers.py:1152
 #: part/serializers.py:1615
 msgid "On Order"
 msgstr "Po narudžbini"
@@ -727,10 +727,10 @@ msgstr "Nalog za izradu"
 #: build/api.py:875 build/api.py:879 build/serializers.py:362
 #: build/serializers.py:487 build/serializers.py:557 build/serializers.py:1248
 #: build/serializers.py:1253 order/api.py:1231 order/api.py:1236
-#: order/serializers.py:791 order/serializers.py:931 order/serializers.py:2020
-#: stock/api.py:987 stock/serializers.py:111 stock/serializers.py:594
-#: stock/serializers.py:710 stock/serializers.py:888 stock/serializers.py:1424
-#: stock/serializers.py:1745 stock/serializers.py:1794
+#: order/serializers.py:791 order/serializers.py:931 order/serializers.py:2039
+#: stock/api.py:987 stock/serializers.py:111 stock/serializers.py:598
+#: stock/serializers.py:714 stock/serializers.py:892 stock/serializers.py:1439
+#: stock/serializers.py:1760 stock/serializers.py:1809
 #: templates/email/stale_stock_notification.html:18 users/models.py:549
 msgid "Location"
 msgstr "Lokacija"
@@ -858,7 +858,7 @@ msgid "Build status code"
 msgstr "Kod statusa izgradnje"
 
 #: build/models.py:344 build/serializers.py:349 order/serializers.py:807
-#: stock/models.py:1086 stock/serializers.py:85 stock/serializers.py:1597
+#: stock/models.py:1102 stock/serializers.py:85 stock/serializers.py:1612
 msgid "Batch Code"
 msgstr "Kod serije"
 
@@ -913,12 +913,12 @@ msgstr "Odgovoran"
 msgid "User or group responsible for this build order"
 msgstr "Korisnik ili grupa koja je odgovorna za ovaj nalog za izgradnju"
 
-#: build/models.py:405 stock/models.py:1079
+#: build/models.py:405 stock/models.py:1095
 msgid "External Link"
 msgstr "Spoljašnja konekcija"
 
 #: build/models.py:407 common/models.py:2006 part/models.py:1183
-#: stock/models.py:1081
+#: stock/models.py:1097
 msgid "Link to external URL"
 msgstr "Link za eksterni URL"
 
@@ -979,8 +979,8 @@ msgstr "Izlaz izgradnje se ne slaže sa Nalogom za izgradnju"
 #: build/models.py:1137 build/models.py:1235 build/serializers.py:275
 #: build/serializers.py:325 build/serializers.py:955 build/serializers.py:1711
 #: order/models.py:719 order/serializers.py:602 order/serializers.py:802
-#: part/serializers.py:1554 stock/models.py:926 stock/models.py:1416
-#: stock/models.py:1864 stock/serializers.py:688 stock/serializers.py:1586
+#: part/serializers.py:1554 stock/models.py:942 stock/models.py:1432
+#: stock/models.py:1889 stock/serializers.py:692 stock/serializers.py:1601
 msgid "Quantity must be greater than zero"
 msgstr "Količina mora biti veća od nule"
 
@@ -1011,8 +1011,8 @@ msgstr "Objekat izgradnje"
 
 #: build/models.py:1663 build/models.py:1985 build/serializers.py:261
 #: build/serializers.py:310 build/serializers.py:1419 common/models.py:1360
-#: order/models.py:1758 order/models.py:2598 order/serializers.py:1673
-#: order/serializers.py:2109 part/models.py:3498 part/models.py:4008
+#: order/models.py:1758 order/models.py:2598 order/serializers.py:1692
+#: order/serializers.py:2128 part/models.py:3498 part/models.py:4008
 #: report/templates/report/inventree_bill_of_materials_report.html:138
 #: report/templates/report/inventree_build_order_report.html:113
 #: report/templates/report/inventree_purchase_order_report.html:36
@@ -1024,7 +1024,7 @@ msgstr "Objekat izgradnje"
 #: report/templates/report/inventree_stock_report_merge.html:113
 #: report/templates/report/inventree_test_report.html:90
 #: report/templates/report/inventree_test_report.html:169
-#: stock/serializers.py:136 stock/serializers.py:180 stock/serializers.py:676
+#: stock/serializers.py:136 stock/serializers.py:180 stock/serializers.py:680
 #: templates/email/build_order_completed.html:18
 #: templates/email/stale_stock_notification.html:19
 msgid "Quantity"
@@ -1064,10 +1064,10 @@ msgid "Stock item is over-allocated"
 msgstr "Stavka zaliha je prealocirana"
 
 #: build/models.py:1975 build/serializers.py:938 build/serializers.py:1231
-#: order/serializers.py:1510 order/serializers.py:1531
+#: order/serializers.py:1529 order/serializers.py:1550
 #: report/templates/report/inventree_sales_order_shipment_report.html:29
 #: stock/api.py:1404 stock/models.py:442 stock/serializers.py:102
-#: stock/serializers.py:800 stock/serializers.py:1280 stock/serializers.py:1392
+#: stock/serializers.py:804 stock/serializers.py:1295 stock/serializers.py:1407
 msgid "Stock Item"
 msgstr "Stavka zaliha"
 
@@ -1127,8 +1127,8 @@ msgstr "Brojčana količina potrebna za delove koji mogu da se prate"
 msgid "Integer quantity required, as the bill of materials contains trackable parts"
 msgstr "Potrebna je brojčana količina, jer opis materijala sadrži delove koji se mogu pratiti"
 
-#: build/serializers.py:356 order/serializers.py:823 order/serializers.py:1677
-#: stock/serializers.py:699
+#: build/serializers.py:356 order/serializers.py:823 order/serializers.py:1696
+#: stock/serializers.py:703
 msgid "Serial Numbers"
 msgstr "Serijski brojevi"
 
@@ -1149,7 +1149,7 @@ msgid "Automatically allocate required items with matching serial numbers"
 msgstr "Automatski alociraj tražene stavke sa odgovarajućim serijskim brojevima"
 
 #: build/serializers.py:413 order/serializers.py:909 stock/api.py:1183
-#: stock/models.py:1887
+#: stock/models.py:1912
 msgid "The following serial numbers already exist or are invalid"
 msgstr "Sledeći serijski brojevi već postoje ili su neispravni"
 
@@ -1237,7 +1237,7 @@ msgstr "Prihvati da stavke zaliha nisu u potpunosti alocirane za ovaj nalog za i
 msgid "Required stock has not been fully allocated"
 msgstr "Tražene zalihe nisu u potpunosti alocirane"
 
-#: build/serializers.py:793 order/serializers.py:478 order/serializers.py:1578
+#: build/serializers.py:793 order/serializers.py:478 order/serializers.py:1597
 msgid "Accept Incomplete"
 msgstr "Prihvati nekompletirano"
 
@@ -1281,11 +1281,11 @@ msgstr "Stavka porudžbine za izradu"
 msgid "bom_item.part must point to the same part as the build order"
 msgstr "bom_item.part mora da se referencira istom delu kao u nalogu za izgradnju"
 
-#: build/serializers.py:944 stock/serializers.py:1293
+#: build/serializers.py:944 stock/serializers.py:1308
 msgid "Item must be in stock"
 msgstr "Stavka mora da bude u zalihama"
 
-#: build/serializers.py:987 order/serializers.py:1564
+#: build/serializers.py:987 order/serializers.py:1583
 #, python-brace-format
 msgid "Available quantity ({q}) exceeded"
 msgstr "Dostupna količina ({q}) premašena"
@@ -1298,7 +1298,7 @@ msgstr "Izlaz izgradnje mora da određen za alokaciju praćenih delova"
 msgid "Build output cannot be specified for allocation of untracked parts"
 msgstr "Izlaz izgradnje ne može biti određen za alokaciju nepraćenih delova"
 
-#: build/serializers.py:1025 order/serializers.py:1837
+#: build/serializers.py:1025 order/serializers.py:1856
 msgid "Allocation items must be provided"
 msgstr "Stavke alociranja se moraju odrediti"
 
@@ -1360,11 +1360,11 @@ msgstr ""
 
 #: build/serializers.py:1283 company/models.py:628 order/api.py:316
 #: order/api.py:321 order/api.py:547 order/serializers.py:594
-#: stock/models.py:1022 stock/serializers.py:567
+#: stock/models.py:1038 stock/serializers.py:571
 msgid "Supplier Part"
 msgstr "Deo dobavljača"
 
-#: build/serializers.py:1299 stock/serializers.py:620
+#: build/serializers.py:1299 stock/serializers.py:624
 msgid "Allocated Quantity"
 msgstr "Alocirana količina"
 
@@ -1393,7 +1393,7 @@ msgstr "Dozvoli varijante"
 msgid "BOM Item"
 msgstr "BOM stavka"
 
-#: build/serializers.py:1500 order/serializers.py:1252 part/serializers.py:1156
+#: build/serializers.py:1500 order/serializers.py:1271 part/serializers.py:1156
 #: part/serializers.py:1619
 msgid "In Production"
 msgstr "U proizvodnji"
@@ -1772,7 +1772,7 @@ msgstr "Definicija"
 msgid "Unit definition"
 msgstr "Definicija jedinice"
 
-#: common/models.py:1933 common/models.py:1996 stock/models.py:2970
+#: common/models.py:1933 common/models.py:1996 stock/models.py:3041
 #: stock/serializers.py:249
 msgid "Attachment"
 msgstr "Prilog"
@@ -1850,7 +1850,7 @@ msgid "State logical key that is equal to this custom state in business logic"
 msgstr "Stanje logičkog ključa je jednako posebnom ključu u poslovnoj logici"
 
 #: common/models.py:2112 common/models.py:2351 machine/serializers.py:27
-#: report/templates/report/inventree_test_report.html:104 stock/models.py:2962
+#: report/templates/report/inventree_test_report.html:104 stock/models.py:3033
 msgid "Value"
 msgstr "Vrednost"
 
@@ -2129,17 +2129,17 @@ msgid "Parameter Value"
 msgstr "Vrednost parametra"
 
 #: common/models.py:2776 company/models.py:797 order/serializers.py:841
-#: order/serializers.py:2025 part/models.py:4068 part/models.py:4437
+#: order/serializers.py:2044 part/models.py:4068 part/models.py:4437
 #: report/templates/report/inventree_bill_of_materials_report.html:140
 #: report/templates/report/inventree_purchase_order_report.html:39
 #: report/templates/report/inventree_return_order_report.html:27
 #: report/templates/report/inventree_sales_order_report.html:32
 #: report/templates/report/inventree_stock_location_report.html:105
-#: stock/serializers.py:813
+#: stock/serializers.py:817
 msgid "Note"
 msgstr "Beleška"
 
-#: common/models.py:2777 stock/serializers.py:718
+#: common/models.py:2777 stock/serializers.py:722
 msgid "Optional note field"
 msgstr "Opciona beleška"
 
@@ -2184,7 +2184,7 @@ msgid "Response data from the barcode scan"
 msgstr "Podaci odgovora za skeniranje bar koda"
 
 #: common/models.py:2854 report/templates/report/inventree_test_report.html:103
-#: stock/models.py:2956
+#: stock/models.py:3027
 msgid "Result"
 msgstr "Rezultat"
 
@@ -4127,7 +4127,7 @@ msgstr "Link za adresne informacije (eksterni)"
 msgid "Manufacturer Part"
 msgstr "Deo proizvođača"
 
-#: company/models.py:517 company/models.py:741 stock/models.py:1011
+#: company/models.py:517 company/models.py:741 stock/models.py:1027
 #: stock/serializers.py:409
 msgid "Base Part"
 msgstr "Osnovni deo"
@@ -4145,7 +4145,7 @@ msgstr "Izaberi proizvođača"
 msgid "MPN"
 msgstr "Broj dela proizvođača"
 
-#: company/models.py:536 stock/serializers.py:560
+#: company/models.py:536 stock/serializers.py:564
 msgid "Manufacturer Part Number"
 msgstr "Broj dela proizvođača"
 
@@ -4209,8 +4209,8 @@ msgstr "osnovni trošak"
 msgid "Minimum charge (e.g. stocking fee)"
 msgstr "Minimalna naplata (npr. taksa za slaganje)"
 
-#: company/models.py:814 order/serializers.py:833 stock/models.py:1042
-#: stock/serializers.py:1612
+#: company/models.py:814 order/serializers.py:833 stock/models.py:1058
+#: stock/serializers.py:1627
 msgid "Packaging"
 msgstr "Pakovanje"
 
@@ -4859,7 +4859,7 @@ msgid "Order reference"
 msgstr "Referenca naloga"
 
 #: order/models.py:626 order/models.py:1338 order/models.py:2738
-#: stock/serializers.py:547 stock/serializers.py:988 users/models.py:542
+#: stock/serializers.py:551 stock/serializers.py:992 users/models.py:542
 msgid "Status"
 msgstr "Status"
 
@@ -4911,8 +4911,8 @@ msgstr ""
 msgid "Quantity must be a positive number"
 msgstr "Količina mora biti pozitivan broj"
 
-#: order/models.py:1325 order/models.py:2725 stock/models.py:1064
-#: stock/models.py:1065 stock/serializers.py:1328
+#: order/models.py:1325 order/models.py:2725 stock/models.py:1080
+#: stock/models.py:1081 stock/serializers.py:1343
 #: templates/email/overdue_return_order.html:16
 #: templates/email/overdue_sales_order.html:16
 msgid "Customer"
@@ -5030,7 +5030,7 @@ msgstr "Primljeno"
 msgid "Number of items received"
 msgstr "Broj primljenih stavki"
 
-#: order/models.py:1960 stock/models.py:1187 stock/serializers.py:637
+#: order/models.py:1960 stock/models.py:1203 stock/serializers.py:641
 msgid "Purchase Price"
 msgstr "Kupovna cena"
 
@@ -5102,8 +5102,8 @@ msgstr "Provereno od strane"
 msgid "User who checked this shipment"
 msgstr "Korisnik koji je proverio ovu isporuku"
 
-#: order/models.py:2321 order/models.py:2575 order/serializers.py:1688
-#: order/serializers.py:1812
+#: order/models.py:2321 order/models.py:2575 order/serializers.py:1707
+#: order/serializers.py:1831
 #: report/templates/report/inventree_sales_order_shipment_report.html:14
 msgid "Shipment"
 msgstr "Isporuka"
@@ -5168,7 +5168,7 @@ msgstr "Alocirana količina ne sme da pređe količinu zaliha"
 msgid "Allocation quantity must be greater than zero"
 msgstr "Količina alokacije mora da bude veća od nule"
 
-#: order/models.py:2553 order/serializers.py:1558
+#: order/models.py:2553 order/serializers.py:1577
 msgid "Quantity must be 1 for serialized stock item"
 msgstr "Količina mora biti 1 za serijalizovane stavke sa zaliha"
 
@@ -5315,11 +5315,11 @@ msgstr "Naziv dobavljača"
 msgid "Order cannot be cancelled"
 msgstr "Nalog ne može biti otkazan"
 
-#: order/serializers.py:479 order/serializers.py:1579
+#: order/serializers.py:479 order/serializers.py:1598
 msgid "Allow order to be closed with incomplete line items"
 msgstr "Dozvoli da nalog bude zatvoren sa nepotpunim porudžbinama"
 
-#: order/serializers.py:489 order/serializers.py:1589
+#: order/serializers.py:489 order/serializers.py:1608
 msgid "Order has incomplete line items"
 msgstr "Nalog ima nepotpune stavke porudžbine"
 
@@ -5375,11 +5375,11 @@ msgstr "Dobavljač mora da se poklapa sa nalogom za kupovinu"
 msgid "Purchase order must match supplier"
 msgstr "Nalog za kupovinu mora da se poklapa sa dobavljačem"
 
-#: order/serializers.py:783 order/serializers.py:1659
+#: order/serializers.py:783 order/serializers.py:1678
 msgid "Line Item"
 msgstr "Stavka porudbžine"
 
-#: order/serializers.py:792 order/serializers.py:932 order/serializers.py:2021
+#: order/serializers.py:792 order/serializers.py:932 order/serializers.py:2040
 msgid "Select destination location for received items"
 msgstr "Izaberi odredišnu lokaciju za primljene stavke"
 
@@ -5387,7 +5387,7 @@ msgstr "Izaberi odredišnu lokaciju za primljene stavke"
 msgid "Enter batch code for incoming stock items"
 msgstr "Unesi šifru ture za nadolazeće stavke sa zaliha"
 
-#: order/serializers.py:815 stock/models.py:1146
+#: order/serializers.py:815 stock/models.py:1162
 #: templates/email/stale_stock_notification.html:22 users/models.py:137
 msgid "Expiry Date"
 msgstr "Datum isteka"
@@ -5404,7 +5404,7 @@ msgstr "Unesi serijske brojeve za nadolazeće stavke sa zaliha"
 msgid "Override packaging information for incoming stock items"
 msgstr "Promeni informacije o pakovanju za nadolazeće stavke sa zaliha"
 
-#: order/serializers.py:842 order/serializers.py:2026
+#: order/serializers.py:842 order/serializers.py:2045
 msgid "Additional note for incoming stock items"
 msgstr "Dodatne beleške za nadolazeće stavke sa zaliha"
 
@@ -5420,7 +5420,7 @@ msgstr "Skeniran bar kod"
 msgid "Barcode is already in use"
 msgstr "Bar kod je već u upotrebi"
 
-#: order/serializers.py:949 order/serializers.py:2045
+#: order/serializers.py:949 order/serializers.py:2064
 msgid "Line items must be provided"
 msgstr "Stavke porudžbine moraju biti dostavljene"
 
@@ -5432,75 +5432,79 @@ msgstr "Odredišna lokacija mora biti određena"
 msgid "Supplied barcode values must be unique"
 msgstr "Pružene vrednosti bar kodova moraju biti jedinstvene"
 
-#: order/serializers.py:1080
+#: order/serializers.py:1095
 msgid "Shipments"
 msgstr "Isporuke"
 
-#: order/serializers.py:1084
+#: order/serializers.py:1099
 msgid "Completed Shipments"
 msgstr "Završene isporuke"
 
-#: order/serializers.py:1263
+#: order/serializers.py:1103
+msgid "Allocated Lines"
+msgstr ""
+
+#: order/serializers.py:1282
 msgid "Sale price currency"
 msgstr "Valuta prodajne cene"
 
-#: order/serializers.py:1306
+#: order/serializers.py:1325
 msgid "Allocated Items"
 msgstr "Alocirane stavke"
 
-#: order/serializers.py:1461
+#: order/serializers.py:1480
 msgid "No shipment details provided"
 msgstr "Nisu dostavljeni detalji isporuke"
 
-#: order/serializers.py:1522 order/serializers.py:1668
+#: order/serializers.py:1541 order/serializers.py:1687
 msgid "Line item is not associated with this order"
 msgstr "Stavka porudžbine nije asocirana sa ovim nalogom"
 
-#: order/serializers.py:1541
+#: order/serializers.py:1560
 msgid "Quantity must be positive"
 msgstr "Količina mora biti pozitivna"
 
-#: order/serializers.py:1678
+#: order/serializers.py:1697
 msgid "Enter serial numbers to allocate"
 msgstr "Unesi serijske brojeve za alokaciju"
 
-#: order/serializers.py:1700 order/serializers.py:1820
+#: order/serializers.py:1719 order/serializers.py:1839
 msgid "Shipment has already been shipped"
 msgstr "Isporuka je već isporučena"
 
-#: order/serializers.py:1703 order/serializers.py:1823
+#: order/serializers.py:1722 order/serializers.py:1842
 msgid "Shipment is not associated with this order"
 msgstr "Isporuka nije povezana sa ovim nalogom"
 
-#: order/serializers.py:1758
+#: order/serializers.py:1777
 msgid "No match found for the following serial numbers"
 msgstr "Nema pronađenih poklapanja za sledeće serijske brojeve"
 
-#: order/serializers.py:1765
+#: order/serializers.py:1784
 msgid "The following serial numbers are unavailable"
 msgstr "Sledeći serijski brojevi su nedostupni"
 
-#: order/serializers.py:1987
+#: order/serializers.py:2006
 msgid "Return order line item"
 msgstr "Stavka porudžbine naloga za vraćanje"
 
-#: order/serializers.py:1997
+#: order/serializers.py:2016
 msgid "Line item does not match return order"
 msgstr "Stavka porudžbine se ne poklapa sa nalogom za vraćanje"
 
-#: order/serializers.py:2000
+#: order/serializers.py:2019
 msgid "Line item has already been received"
 msgstr "Stavka porudžbine je već primljena"
 
-#: order/serializers.py:2037
+#: order/serializers.py:2056
 msgid "Items can only be received against orders which are in progress"
 msgstr "Stavke se mogu primiti samo na osnovu naloga koji su u toku"
 
-#: order/serializers.py:2109
+#: order/serializers.py:2128
 msgid "Quantity to return"
 msgstr "Količina za vraćanje"
 
-#: order/serializers.py:2126
+#: order/serializers.py:2145
 msgid "Line price currency"
 msgstr "Valuta cene porudžbine"
 
@@ -6301,7 +6305,7 @@ msgstr "Ova stavka sa spiska materijala je nasleđivana od spiska materijala za 
 msgid "Stock items for variant parts can be used for this BOM item"
 msgstr "Stavke sa zaliha za varijante delova se mogu koristiti za ovu stavku sa spiska materijala"
 
-#: part/models.py:4201 stock/models.py:911
+#: part/models.py:4201 stock/models.py:927
 msgid "Quantity must be integer value for trackable parts"
 msgstr "Količina mora biti ceo broj za delove koji se mogu pratiti"
 
@@ -6369,7 +6373,7 @@ msgstr "Rezultati"
 msgid "Number of results recorded against this template"
 msgstr "Broj rezultata napravljenih na osnovu ovog šablona"
 
-#: part/serializers.py:234 part/serializers.py:252 stock/serializers.py:643
+#: part/serializers.py:234 part/serializers.py:252 stock/serializers.py:647
 msgid "Purchase currency of this stock item"
 msgstr "Valuta kupovine za ovu stavku sa zaliha"
 
@@ -6485,7 +6489,7 @@ msgstr ""
 msgid "Outstanding quantity of this part scheduled to be built"
 msgstr ""
 
-#: part/serializers.py:843 stock/serializers.py:1019 stock/serializers.py:1191
+#: part/serializers.py:843 stock/serializers.py:1023 stock/serializers.py:1206
 #: users/ruleset.py:30
 msgid "Stock Items"
 msgstr "Stavke sa zaliha"
@@ -8072,7 +8076,7 @@ msgstr "Ukupno"
 #: report/templates/report/inventree_return_order_report.html:25
 #: report/templates/report/inventree_sales_order_shipment_report.html:45
 #: report/templates/report/inventree_stock_report_merge.html:88
-#: report/templates/report/inventree_test_report.html:88 stock/models.py:1069
+#: report/templates/report/inventree_test_report.html:88 stock/models.py:1085
 #: stock/serializers.py:164 templates/email/stale_stock_notification.html:21
 msgid "Serial Number"
 msgstr "Serijski broj"
@@ -8097,7 +8101,7 @@ msgstr "Izveštaj sa testa za stavku sa zaliha"
 
 #: report/templates/report/inventree_stock_report_merge.html:97
 #: report/templates/report/inventree_test_report.html:153
-#: stock/serializers.py:626
+#: stock/serializers.py:630
 msgid "Installed Items"
 msgstr "Instalirane stavke"
 
@@ -8158,7 +8162,7 @@ msgstr "Filtriraj po nadređenim lokacijama"
 msgid "Include sub-locations in filtered results"
 msgstr "Uključi podlokacije u filtriranim rezultatima"
 
-#: stock/api.py:344 stock/serializers.py:1187
+#: stock/api.py:344 stock/serializers.py:1202
 msgid "Parent Location"
 msgstr "Nadređena lokacija"
 
@@ -8242,7 +8246,7 @@ msgstr "Datum isteka pre"
 msgid "Expiry date after"
 msgstr "Datum isteka nakon"
 
-#: stock/api.py:937 stock/serializers.py:631
+#: stock/api.py:937 stock/serializers.py:635
 msgid "Stale"
 msgstr "Zastarelo"
 
@@ -8311,7 +8315,7 @@ msgstr "Tipovi lokacija zaliha"
 msgid "Default icon for all locations that have no icon set (optional)"
 msgstr "Podrazumevana ikonica za sve lokacije koje nemaju podešenu ikonicu (opciono)"
 
-#: stock/models.py:145 stock/models.py:1031
+#: stock/models.py:145 stock/models.py:1047
 msgid "Stock Location"
 msgstr "Lokacija zaliha"
 
@@ -8319,11 +8323,11 @@ msgstr "Lokacija zaliha"
 msgid "Stock Locations"
 msgstr "Lokacija zaliha"
 
-#: stock/models.py:195 stock/models.py:1196
+#: stock/models.py:195 stock/models.py:1212
 msgid "Owner"
 msgstr "Vlasnik"
 
-#: stock/models.py:196 stock/models.py:1197
+#: stock/models.py:196 stock/models.py:1213
 msgid "Select Owner"
 msgstr "Izaberi vlasnika"
 
@@ -8360,265 +8364,265 @@ msgstr ""
 msgid "Part must be specified"
 msgstr "Deo mora biti određen"
 
-#: stock/models.py:890
+#: stock/models.py:906
 msgid "Stock items cannot be located into structural stock locations!"
 msgstr "Stavka sa zaliha ne može biti locirana u strukturnim lokacijama zaliha!"
 
-#: stock/models.py:917 stock/serializers.py:455
+#: stock/models.py:933 stock/serializers.py:455
 msgid "Stock item cannot be created for virtual parts"
 msgstr "Stavka sa zaliha ne može biti kreirana za virtuelne delove"
 
-#: stock/models.py:934
+#: stock/models.py:950
 #, python-brace-format
 msgid "Part type ('{self.supplier_part.part}') must be {self.part}"
 msgstr "Deo tipa ('{self.supplier_part.part}') mora biti {self.part}"
 
-#: stock/models.py:944 stock/models.py:957
+#: stock/models.py:960 stock/models.py:973
 msgid "Quantity must be 1 for item with a serial number"
 msgstr "Količina mora biti 1 za stavku sa serijskim brojem"
 
-#: stock/models.py:947
+#: stock/models.py:963
 msgid "Serial number cannot be set if quantity greater than 1"
 msgstr "Serijski broj ne može biti postavljen ukoliko je količina veća od 1"
 
-#: stock/models.py:969
+#: stock/models.py:985
 msgid "Item cannot belong to itself"
 msgstr "Stavka ne može da pripada samoj sebi"
 
-#: stock/models.py:974
+#: stock/models.py:990
 msgid "Item must have a build reference if is_building=True"
 msgstr "Stavka mora da ima referencu izgradnje ukoliko is_building=True"
 
-#: stock/models.py:987
+#: stock/models.py:1003
 msgid "Build reference does not point to the same part object"
 msgstr "Referenca izgradnje ne ukazuje na isti objekat dela"
 
-#: stock/models.py:1001
+#: stock/models.py:1017
 msgid "Parent Stock Item"
 msgstr "Nadređena stavka sa zaliha"
 
-#: stock/models.py:1013
+#: stock/models.py:1029
 msgid "Base part"
 msgstr "Osnovni deo"
 
-#: stock/models.py:1023
+#: stock/models.py:1039
 msgid "Select a matching supplier part for this stock item"
 msgstr "Izaberi odgovarajući deo dobavljača za ovu stavku sa zaliha"
 
-#: stock/models.py:1035
+#: stock/models.py:1051
 msgid "Where is this stock item located?"
 msgstr "Gde je locirana ova stavka sa zaliha?"
 
-#: stock/models.py:1043 stock/serializers.py:1613
+#: stock/models.py:1059 stock/serializers.py:1628
 msgid "Packaging this stock item is stored in"
 msgstr "Pakovanje u kom je ova stavka sa zaliha"
 
-#: stock/models.py:1049
+#: stock/models.py:1065
 msgid "Installed In"
 msgstr "Instalirano u"
 
-#: stock/models.py:1054
+#: stock/models.py:1070
 msgid "Is this item installed in another item?"
 msgstr "Da li je ova stavka instalirana u drugu stavku?"
 
-#: stock/models.py:1073
+#: stock/models.py:1089
 msgid "Serial number for this item"
 msgstr "Serijski broj za ovu stavku"
 
-#: stock/models.py:1090 stock/serializers.py:1598
+#: stock/models.py:1106 stock/serializers.py:1613
 msgid "Batch code for this stock item"
 msgstr "Šifra ture za ovu stavku sa zaliha"
 
-#: stock/models.py:1095
+#: stock/models.py:1111
 msgid "Stock Quantity"
 msgstr "Količina zaliha"
 
-#: stock/models.py:1105
+#: stock/models.py:1121
 msgid "Source Build"
 msgstr "Izvorna gradnja"
 
-#: stock/models.py:1108
+#: stock/models.py:1124
 msgid "Build for this stock item"
 msgstr "Nalog za ovu stavku sa zaliha"
 
-#: stock/models.py:1115
+#: stock/models.py:1131
 msgid "Consumed By"
 msgstr "Potrošeno od strane"
 
-#: stock/models.py:1118
+#: stock/models.py:1134
 msgid "Build order which consumed this stock item"
 msgstr "Nalog za izradu koji je potrošio ovu stavku sa zaliha"
 
-#: stock/models.py:1127
+#: stock/models.py:1143
 msgid "Source Purchase Order"
 msgstr "Izvorni nalog za kupovinu"
 
-#: stock/models.py:1131
+#: stock/models.py:1147
 msgid "Purchase order for this stock item"
 msgstr "Nalog za kupovinu za ovu stavku sa zaliha"
 
-#: stock/models.py:1137
+#: stock/models.py:1153
 msgid "Destination Sales Order"
 msgstr "Odredište naloga za prodaju"
 
-#: stock/models.py:1148
+#: stock/models.py:1164
 msgid "Expiry date for stock item. Stock will be considered expired after this date"
 msgstr "Datum isteka za stavku sa zaliha. Zalihe će se smatrati isteklim nakon ovog datuma"
 
-#: stock/models.py:1166
+#: stock/models.py:1182
 msgid "Delete on deplete"
 msgstr "Obriši kad je potrošeno"
 
-#: stock/models.py:1167
+#: stock/models.py:1183
 msgid "Delete this Stock Item when stock is depleted"
 msgstr "Obriši ovu stavku sa zaliha kada su zalihe potrošene"
 
-#: stock/models.py:1188
+#: stock/models.py:1204
 msgid "Single unit purchase price at time of purchase"
 msgstr "Cena kupovine jedne jedinice u vreme kupovine"
 
-#: stock/models.py:1219
+#: stock/models.py:1235
 msgid "Converted to part"
 msgstr "Konvertovano u deo"
 
-#: stock/models.py:1421
+#: stock/models.py:1437
 msgid "Quantity exceeds available stock"
 msgstr ""
 
-#: stock/models.py:1855
+#: stock/models.py:1880
 msgid "Part is not set as trackable"
 msgstr "Deo nije postavljen kao deo koji je moguće pratiti"
 
-#: stock/models.py:1861
+#: stock/models.py:1886
 msgid "Quantity must be integer"
 msgstr "Količina mora biti ceo broj"
 
-#: stock/models.py:1869
+#: stock/models.py:1894
 #, python-brace-format
 msgid "Quantity must not exceed available stock quantity ({self.quantity})"
 msgstr "Količina ne sme da pređe dostupnu količinu zaliha ({self.quantity})"
 
-#: stock/models.py:1875
+#: stock/models.py:1900
 msgid "Serial numbers must be provided as a list"
 msgstr "Serijski brojevi moraju biti dostavljeni kao lista"
 
-#: stock/models.py:1880
+#: stock/models.py:1905
 msgid "Quantity does not match serial numbers"
 msgstr "Količine se ne poklapaju sa serijskim brojevima"
 
-#: stock/models.py:1898
+#: stock/models.py:1923
 msgid "Cannot assign stock to structural location"
 msgstr ""
 
-#: stock/models.py:2015 stock/models.py:2920
+#: stock/models.py:2040 stock/models.py:2991
 msgid "Test template does not exist"
 msgstr "Test šablon ne postoji"
 
-#: stock/models.py:2033
+#: stock/models.py:2058
 msgid "Stock item has been assigned to a sales order"
 msgstr "Stavka sa zaliha je dodeljena nalogu za prodaju"
 
-#: stock/models.py:2037
+#: stock/models.py:2062
 msgid "Stock item is installed in another item"
 msgstr "Stavka sa zaliha je instalirana u drugu stavku"
 
-#: stock/models.py:2040
+#: stock/models.py:2065
 msgid "Stock item contains other items"
 msgstr "Stavka sa zaliha sadrži druge stavke"
 
-#: stock/models.py:2043
+#: stock/models.py:2068
 msgid "Stock item has been assigned to a customer"
 msgstr "Stavka sa zaliha je dodeljena mušteriji"
 
-#: stock/models.py:2046 stock/models.py:2229
+#: stock/models.py:2071 stock/models.py:2254
 msgid "Stock item is currently in production"
 msgstr "Stavka sa zaliha je trenutno u produkciji"
 
-#: stock/models.py:2049
+#: stock/models.py:2074
 msgid "Serialized stock cannot be merged"
 msgstr "Serijalizovane zalihe se ne mogu spojiti"
 
-#: stock/models.py:2056 stock/serializers.py:1468
+#: stock/models.py:2081 stock/serializers.py:1483
 msgid "Duplicate stock items"
 msgstr "Dupliraj stavke sa zaliha"
 
-#: stock/models.py:2060
+#: stock/models.py:2085
 msgid "Stock items must refer to the same part"
 msgstr "Stavke sa zaliha se moraju odnositi na isti deo"
 
-#: stock/models.py:2068
+#: stock/models.py:2093
 msgid "Stock items must refer to the same supplier part"
 msgstr "Stavke sa zaliha se moraju odnositi na isti deo dobavljača"
 
-#: stock/models.py:2073
+#: stock/models.py:2098
 msgid "Stock status codes must match"
 msgstr "Statusne šifre zaliha moraju da se poklapaju"
 
-#: stock/models.py:2352
+#: stock/models.py:2395
 msgid "StockItem cannot be moved as it is not in stock"
 msgstr "Stavka se ne može pomeriti jer nije na zalihama"
 
-#: stock/models.py:2821
+#: stock/models.py:2892
 msgid "Stock Item Tracking"
 msgstr "Praćenje stavke sa zaliha"
 
-#: stock/models.py:2852
+#: stock/models.py:2923
 msgid "Entry notes"
 msgstr "Ulazne beleške"
 
-#: stock/models.py:2892
+#: stock/models.py:2963
 msgid "Stock Item Test Result"
 msgstr "Rezultat testa stavke sa zaliha"
 
-#: stock/models.py:2923
+#: stock/models.py:2994
 msgid "Value must be provided for this test"
 msgstr "Vrednost mora biti dostavljena za ovaj test"
 
-#: stock/models.py:2927
+#: stock/models.py:2998
 msgid "Attachment must be uploaded for this test"
 msgstr "Prilog mora biti dostavljen za ovaj test"
 
-#: stock/models.py:2932
+#: stock/models.py:3003
 msgid "Invalid value for this test"
 msgstr "Nevažeća vrednost za ovaj test"
 
-#: stock/models.py:2956
+#: stock/models.py:3027
 msgid "Test result"
 msgstr "Rezultat testa"
 
-#: stock/models.py:2963
+#: stock/models.py:3034
 msgid "Test output value"
 msgstr "Vrednost završetka testa"
 
-#: stock/models.py:2971 stock/serializers.py:250
+#: stock/models.py:3042 stock/serializers.py:250
 msgid "Test result attachment"
 msgstr "Prilog uz test rezultat"
 
-#: stock/models.py:2975
+#: stock/models.py:3046
 msgid "Test notes"
 msgstr "Beleške sa testa"
 
-#: stock/models.py:2983
+#: stock/models.py:3054
 msgid "Test station"
 msgstr "Stanica za testiranje"
 
-#: stock/models.py:2984
+#: stock/models.py:3055
 msgid "The identifier of the test station where the test was performed"
 msgstr "Identifikator stanice za testiranje gde je test izvršen"
 
-#: stock/models.py:2990
+#: stock/models.py:3061
 msgid "Started"
 msgstr "Započeto"
 
-#: stock/models.py:2991
+#: stock/models.py:3062
 msgid "The timestamp of the test start"
 msgstr "Vreme početka testa"
 
-#: stock/models.py:2997
+#: stock/models.py:3068
 msgid "Finished"
 msgstr "Završeno"
 
-#: stock/models.py:2998
+#: stock/models.py:3069
 msgid "The timestamp of the test finish"
 msgstr "Vreme završetka testa"
 
@@ -8694,214 +8698,214 @@ msgstr "Koristi pakovanja prilikom dodavanja: količina je definisana brojem pak
 msgid "Use pack size"
 msgstr ""
 
-#: stock/serializers.py:449 stock/serializers.py:700
+#: stock/serializers.py:449 stock/serializers.py:704
 msgid "Enter serial numbers for new items"
 msgstr "Unesi serijske brojeve za nove stavke"
 
-#: stock/serializers.py:553
+#: stock/serializers.py:557
 msgid "Supplier Part Number"
 msgstr "Dobavljački broj dela"
 
-#: stock/serializers.py:623 users/models.py:187
+#: stock/serializers.py:627 users/models.py:187
 msgid "Expired"
 msgstr "Isteklo"
 
-#: stock/serializers.py:629
+#: stock/serializers.py:633
 msgid "Child Items"
 msgstr "Podređene stavke"
 
-#: stock/serializers.py:633
+#: stock/serializers.py:637
 msgid "Tracking Items"
 msgstr "Stavke za praćenje"
 
-#: stock/serializers.py:639
+#: stock/serializers.py:643
 msgid "Purchase price of this stock item, per unit or pack"
 msgstr "Nabavna cena ove stavke, po jedinici ili pakovanju"
 
-#: stock/serializers.py:677
+#: stock/serializers.py:681
 msgid "Enter number of stock items to serialize"
 msgstr "Unesi broj stavka sa zaliha za serijalizaciju"
 
-#: stock/serializers.py:685 stock/serializers.py:728 stock/serializers.py:766
-#: stock/serializers.py:904
+#: stock/serializers.py:689 stock/serializers.py:732 stock/serializers.py:770
+#: stock/serializers.py:908
 msgid "No stock item provided"
 msgstr ""
 
-#: stock/serializers.py:693
+#: stock/serializers.py:697
 #, python-brace-format
 msgid "Quantity must not exceed available stock quantity ({q})"
 msgstr "Količina ne sme da pređe dostupnu količinu zaliha ({q})"
 
-#: stock/serializers.py:711 stock/serializers.py:1425 stock/serializers.py:1746
-#: stock/serializers.py:1795
+#: stock/serializers.py:715 stock/serializers.py:1440 stock/serializers.py:1761
+#: stock/serializers.py:1810
 msgid "Destination stock location"
 msgstr "Odredišna lokacija zaliha"
 
-#: stock/serializers.py:731
+#: stock/serializers.py:735
 msgid "Serial numbers cannot be assigned to this part"
 msgstr "Serijski brojevi ne mogu biti dodeljeni ovom delu"
 
-#: stock/serializers.py:751
+#: stock/serializers.py:755
 msgid "Serial numbers already exist"
 msgstr "Serijski broj već postoji"
 
-#: stock/serializers.py:801
+#: stock/serializers.py:805
 msgid "Select stock item to install"
 msgstr "Izaberi stavku za instaliranje"
 
-#: stock/serializers.py:808
+#: stock/serializers.py:812
 msgid "Quantity to Install"
 msgstr "Količina za instaliranje"
 
-#: stock/serializers.py:809
+#: stock/serializers.py:813
 msgid "Enter the quantity of items to install"
 msgstr "Izaberi količinu stavki za instaliranje"
 
-#: stock/serializers.py:814 stock/serializers.py:894 stock/serializers.py:1036
+#: stock/serializers.py:818 stock/serializers.py:898 stock/serializers.py:1040
 msgid "Add transaction note (optional)"
 msgstr "Dodaj beleške transakcija (opciono)"
 
-#: stock/serializers.py:822
+#: stock/serializers.py:826
 msgid "Quantity to install must be at least 1"
 msgstr "Količina za instaliranje mora biti najmanje 1"
 
-#: stock/serializers.py:830
+#: stock/serializers.py:834
 msgid "Stock item is unavailable"
 msgstr "Stavka je nedostupna"
 
-#: stock/serializers.py:841
+#: stock/serializers.py:845
 msgid "Selected part is not in the Bill of Materials"
 msgstr "Izabrani deo nije na spisku materijala"
 
-#: stock/serializers.py:854
+#: stock/serializers.py:858
 msgid "Quantity to install must not exceed available quantity"
 msgstr "Količina za instaliranje ne sme preći dostupnu količinu"
 
-#: stock/serializers.py:889
+#: stock/serializers.py:893
 msgid "Destination location for uninstalled item"
 msgstr "Odredišna lokacija za deinstalirane stavke"
 
-#: stock/serializers.py:927
+#: stock/serializers.py:931
 msgid "Select part to convert stock item into"
 msgstr "Izaberi deo u koji će se konvertovati stavka"
 
-#: stock/serializers.py:940
+#: stock/serializers.py:944
 msgid "Selected part is not a valid option for conversion"
 msgstr "Izabrani deo nije validna opcija za konverziju"
 
-#: stock/serializers.py:957
+#: stock/serializers.py:961
 msgid "Cannot convert stock item with assigned SupplierPart"
 msgstr "Ne može se konvertovati stavka sa dodeljenim delom dobavljača"
 
-#: stock/serializers.py:991
+#: stock/serializers.py:995
 msgid "Stock item status code"
 msgstr "Statusni kod stavke sa zaliha"
 
-#: stock/serializers.py:1020
+#: stock/serializers.py:1024
 msgid "Select stock items to change status"
 msgstr "Izaberi stavke kojoj će se promeniti status"
 
-#: stock/serializers.py:1026
+#: stock/serializers.py:1030
 msgid "No stock items selected"
 msgstr "Nije izabrana stavka"
 
-#: stock/serializers.py:1122 stock/serializers.py:1193
+#: stock/serializers.py:1137 stock/serializers.py:1208
 msgid "Sublocations"
 msgstr "Podlokacije"
 
-#: stock/serializers.py:1188
+#: stock/serializers.py:1203
 msgid "Parent stock location"
 msgstr "Lokacija nadređenih zaliha"
 
-#: stock/serializers.py:1297
+#: stock/serializers.py:1312
 msgid "Part must be salable"
 msgstr "Deo mora biti za prodaju"
 
-#: stock/serializers.py:1301
+#: stock/serializers.py:1316
 msgid "Item is allocated to a sales order"
 msgstr "Stavka je alocirana nalogu za prodaju"
 
-#: stock/serializers.py:1305
+#: stock/serializers.py:1320
 msgid "Item is allocated to a build order"
 msgstr "Stavka je alocirana nalogu za izradu"
 
-#: stock/serializers.py:1329
+#: stock/serializers.py:1344
 msgid "Customer to assign stock items"
 msgstr "Mušterija kojoj će se dodeliti stavke sa zaliha"
 
-#: stock/serializers.py:1335
+#: stock/serializers.py:1350
 msgid "Selected company is not a customer"
 msgstr "Izabrana kompanija nije mušterija"
 
-#: stock/serializers.py:1343
+#: stock/serializers.py:1358
 msgid "Stock assignment notes"
 msgstr "Beleške dodeljivanja zaliha"
 
-#: stock/serializers.py:1353 stock/serializers.py:1641
+#: stock/serializers.py:1368 stock/serializers.py:1656
 msgid "A list of stock items must be provided"
 msgstr "Lista stavki mora biti dostavljena"
 
-#: stock/serializers.py:1432
+#: stock/serializers.py:1447
 msgid "Stock merging notes"
 msgstr "Beleške spajanja zaliha"
 
-#: stock/serializers.py:1437
+#: stock/serializers.py:1452
 msgid "Allow mismatched suppliers"
 msgstr "Dozvoli neslagajuće dobavljače"
 
-#: stock/serializers.py:1438
+#: stock/serializers.py:1453
 msgid "Allow stock items with different supplier parts to be merged"
 msgstr "Dozvoli spajanje stavki sa različitim delovima dobavljača"
 
-#: stock/serializers.py:1443
+#: stock/serializers.py:1458
 msgid "Allow mismatched status"
 msgstr "Dozvoli neslagajući status"
 
-#: stock/serializers.py:1444
+#: stock/serializers.py:1459
 msgid "Allow stock items with different status codes to be merged"
 msgstr "Dozvoli spajanje stavki sa različitim statusnim kodovima"
 
-#: stock/serializers.py:1454
+#: stock/serializers.py:1469
 msgid "At least two stock items must be provided"
 msgstr "Bar dve stavke moraju biti dostavljene"
 
-#: stock/serializers.py:1521
+#: stock/serializers.py:1536
 msgid "No Change"
 msgstr "Nema promena"
 
-#: stock/serializers.py:1559
+#: stock/serializers.py:1574
 msgid "StockItem primary key value"
 msgstr "Vrednost primarnog ključa stavke"
 
-#: stock/serializers.py:1572
+#: stock/serializers.py:1587
 msgid "Stock item is not in stock"
 msgstr "Stavka nije na zalihama"
 
-#: stock/serializers.py:1575
+#: stock/serializers.py:1590
 msgid "Stock item is already in stock"
 msgstr ""
 
-#: stock/serializers.py:1589
+#: stock/serializers.py:1604
 msgid "Quantity must not be negative"
 msgstr ""
 
-#: stock/serializers.py:1631
+#: stock/serializers.py:1646
 msgid "Stock transaction notes"
 msgstr "Beleške transakcija zaliha"
 
-#: stock/serializers.py:1801
+#: stock/serializers.py:1816
 msgid "Merge into existing stock"
 msgstr ""
 
-#: stock/serializers.py:1802
+#: stock/serializers.py:1817
 msgid "Merge returned items into existing stock items if possible"
 msgstr ""
 
-#: stock/serializers.py:1845
+#: stock/serializers.py:1860
 msgid "Next Serial Number"
 msgstr ""
 
-#: stock/serializers.py:1851
+#: stock/serializers.py:1866
 msgid "Previous Serial Number"
 msgstr ""
 
