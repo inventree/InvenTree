@@ -426,6 +426,11 @@ export function BomTable({
         description: t`Show trackable items`
       },
       {
+        name: 'sub_part_active',
+        label: t`Active Part`,
+        description: t`Show active items`
+      },
+      {
         name: 'sub_part_assembly',
         label: t`Assembled Part`,
         description: t`Show assembled items`
