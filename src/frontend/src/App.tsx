@@ -37,17 +37,17 @@ export const queryClient = new QueryClient({
 });
 export function setTraceId() {
   const runID = crypto.randomUUID().replace(/-/g, '');
-  const traceId = `00-${runID}-${frontendID}-01`;
-  api.defaults.headers['traceparent'] = traceId;
+  const traceid = `00-${runID}-${frontendID}-01`;
+  api.defaults.headers['traceparent'] = traceid;
 
   return runID;
 }
-export function removeTraceId(traceId: string) {
+export function removeTraceId(traceid: string) {
   delete api.defaults.headers['traceparent'];
 
   api
     .post(apiUrl(ApiEndpoints.system_internal_trace_end), {
-      traceId: traceId,
+      traceid: traceid,
       service: serviceName
     })
     .catch((error) => {

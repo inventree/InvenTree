@@ -22,6 +22,7 @@ from django_q.tasks import async_task
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
 from drf_spectacular.utils import OpenApiResponse, extend_schema
 from error_report.models import Error
+from opentelemetry import trace
 from pint._typing import UnitLike
 from rest_framework import generics, serializers
 from rest_framework.exceptions import NotAcceptable, NotFound, PermissionDenied
@@ -1138,9 +1139,20 @@ class ObservabilityEnd(CreateAPI):
         data.is_valid(raise_exception=True)
 
         traceid = data.validated_data['traceid']
-        service = data.validated_data['service']
+        # service = data.validated_data['service']  # This will become interesting with frontend observability
 
-        InvenTree.observability.end_trace(traceid, service)
+        # End the foreign trend via the low level otel API
+        tracer = trace.get_tracer(__name__)
+        span_context = trace.SpanContext(
+            trace_id=int(traceid, 16),
+            span_id=0,
+            is_remote=True,
+            trace_flags=trace.TraceFlags(0x01),
+            trace_state=trace.TraceState(),
+        )
+        with tracer.start_span('Ending session') as span:
+            span.add_event('Ending external trace')
+            span.add_link(span_context)
 
         return Response({'status': 'ok'})
 
