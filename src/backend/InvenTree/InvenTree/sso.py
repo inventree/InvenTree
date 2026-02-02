@@ -10,7 +10,6 @@ import structlog
 from allauth.socialaccount.models import SocialAccount, SocialLogin
 
 from common.settings import get_global_setting
-from InvenTree.helpers import str2bool
 
 logger = structlog.get_logger('inventree')
 
@@ -67,21 +66,6 @@ def provider_display_name(provider):
 
     # Fallback value if app not found
     return provider.name
-
-
-def sso_login_enabled() -> bool:
-    """Return True if SSO login is enabled."""
-    return str2bool(get_global_setting('LOGIN_ENABLE_SSO'))
-
-
-def sso_registration_enabled() -> bool:
-    """Return True if SSO registration is enabled."""
-    return str2bool(get_global_setting('LOGIN_ENABLE_SSO_REG'))
-
-
-def auto_registration_enabled() -> bool:
-    """Return True if SSO auto-registration is enabled."""
-    return str2bool(get_global_setting('LOGIN_SIGNUP_SSO_AUTO'))
 
 
 def ensure_sso_groups(sender, sociallogin: SocialLogin, **kwargs):
