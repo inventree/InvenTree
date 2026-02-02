@@ -81,6 +81,9 @@ export default function TransferOrderDetail() {
     // }
   }, [globalSettings, order.status, toStatus]);
 
+  // for now, only permit editing allocations when line items can be edited
+  const allocationsEditable = lineItemsEditable;
+
   const orderOpen = useMemo(() => {
     return (
       order.status == toStatus.PENDING ||
@@ -324,7 +327,7 @@ export default function TransferOrderDetail() {
           <TransferOrderAllocationTable
             orderId={order.pk}
             showPartInfo
-            allowEdit
+            allowEdit={allocationsEditable}
             modelField='item'
             modelTarget={ModelType.stockitem}
           />
