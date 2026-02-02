@@ -1135,6 +1135,9 @@ class ObservabilityEnd(CreateAPI):
 
     def create(self, request, *args, **kwargs):
         """End a trace in the observability system."""
+        if not settings.TRACING_ENABLED:
+            return Response({'status': 'ok'})
+
         data = self.get_serializer(data=request.data)
         data.is_valid(raise_exception=True)
 
