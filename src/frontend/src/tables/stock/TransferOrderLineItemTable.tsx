@@ -473,7 +473,7 @@ export default function TransferOrderLineItemTable({
             orderId={orderId}
             lineItemId={record.pk}
             partId={record.part}
-            allowEdit={true}
+            allowEdit={editable}
             modelTarget={ModelType.stockitem}
             modelField={'item'}
             isSubTable
