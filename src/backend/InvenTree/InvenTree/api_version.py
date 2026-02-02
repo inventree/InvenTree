@@ -1,13 +1,16 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 447
+INVENTREE_API_VERSION = 448
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v447 -> 2026-02-02 : https://github.com/inventree/InvenTree/pull/11244
+v448 -> 2026-02-03 : https://github.com/inventree/InvenTree/pull/11244
     - Adds (internal) endpoint to end a observability tooling session
+
+v447 -> 2026-02-02 : https://github.com/inventree/InvenTree/pull/11242
+    - Adds "sub_part_active" filter to BomItem API endpoint
 
 v446 -> 2026-02-01 : https://github.com/inventree/InvenTree/pull/11232
     - Allow ordering of test results by started_datetime and finished_datetime fields
