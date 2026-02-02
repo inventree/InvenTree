@@ -48,6 +48,7 @@ import {
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import { PartListTable } from '../../tables/part/PartTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
@@ -65,6 +66,8 @@ export default function Stock() {
 
   const navigate = useNavigate();
   const user = useUserState();
+
+  const globalSettings = useGlobalSettingsState();
 
   const [treeOpen, setTreeOpen] = useState(false);
 
@@ -226,6 +229,7 @@ export default function Stock() {
         name: 'transfer-orders',
         label: t`Transfer Orders`,
         icon: <IconTransfer />,
+        hidden: !globalSettings.isSet('TRANSFERORDER_ENABLED'),
         content: <TransferOrderTable />
       },
       {

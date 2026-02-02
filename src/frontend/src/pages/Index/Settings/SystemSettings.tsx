@@ -15,6 +15,7 @@ import {
   IconShoppingCart,
   IconTag,
   IconTools,
+  IconTransfer,
   IconTruckDelivery,
   IconTruckReturn
 } from '@tabler/icons-react';
@@ -339,6 +340,20 @@ export default function SystemSettings() {
               'RETURNORDER_REFERENCE_PATTERN',
               'RETURNORDER_REQUIRE_RESPONSIBLE',
               'RETURNORDER_EDIT_COMPLETED_ORDERS'
+            ]}
+          />
+        )
+      },
+      {
+        name: 'transferorders',
+        label: t`Transfer Orders`,
+        icon: <IconTransfer />,
+        content: (
+          <GlobalSettingList
+            keys={[
+              'TRANSFERORDER_ENABLED',
+              'TRANSFERORDER_REFERENCE_PATTERN',
+              'TRANSFERORDER_REQUIRE_RESPONSIBLE'
             ]}
           />
         )
