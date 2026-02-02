@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-29 23:44+0000\n"
-"PO-Revision-Date: 2026-01-29 23:47\n"
+"POT-Creation-Date: 2026-02-02 02:16+0000\n"
+"PO-Revision-Date: 2026-02-02 02:19\n"
 "Last-Translator: \n"
 "Language-Team: Arabic\n"
 "Language: ar_SA\n"
@@ -17,67 +17,67 @@ msgstr ""
 "X-Crowdin-File: /src/backend/InvenTree/locale/en/LC_MESSAGES/django.po\n"
 "X-Crowdin-File-ID: 250\n"
 
-#: InvenTree/api.py:366
+#: InvenTree/api.py:365
 msgid "API endpoint not found"
 msgstr "نقطة نهاية API غير موجودة"
 
-#: InvenTree/api.py:443
+#: InvenTree/api.py:442
 msgid "List of items or filters must be provided for bulk operation"
 msgstr ""
 
-#: InvenTree/api.py:450
+#: InvenTree/api.py:449
 msgid "Items must be provided as a list"
 msgstr ""
 
-#: InvenTree/api.py:458
+#: InvenTree/api.py:457
 msgid "Invalid items list provided"
 msgstr ""
 
-#: InvenTree/api.py:464
+#: InvenTree/api.py:463
 msgid "Filters must be provided as a dict"
 msgstr ""
 
-#: InvenTree/api.py:471
+#: InvenTree/api.py:470
 msgid "Invalid filters provided"
 msgstr ""
 
-#: InvenTree/api.py:476
+#: InvenTree/api.py:475
 msgid "All filter must only be used with true"
 msgstr ""
 
-#: InvenTree/api.py:481
+#: InvenTree/api.py:480
 msgid "No items match the provided criteria"
 msgstr ""
 
-#: InvenTree/api.py:505
+#: InvenTree/api.py:504
 msgid "No data provided"
 msgstr ""
 
-#: InvenTree/api.py:521
+#: InvenTree/api.py:520
 msgid "This field must be unique."
 msgstr ""
 
-#: InvenTree/api.py:816
+#: InvenTree/api.py:815
 msgid "User does not have permission to view this model"
 msgstr "المستخدم ليس لديه الصلاحية لعرض هذا النموذج"
 
-#: InvenTree/auth_overrides.py:57
+#: InvenTree/auth_overrides.py:58
 msgid "Email (again)"
 msgstr "البريد الإلكتروني (مرة أخرى)"
 
-#: InvenTree/auth_overrides.py:61
+#: InvenTree/auth_overrides.py:62
 msgid "Email address confirmation"
 msgstr "تأكيد البريد الإلكتروني"
 
-#: InvenTree/auth_overrides.py:84
+#: InvenTree/auth_overrides.py:85
 msgid "You must type the same email each time."
 msgstr "يجب عليك كتابة نفس البريد الإلكتروني كل مرة."
 
-#: InvenTree/auth_overrides.py:128 InvenTree/auth_overrides.py:135
+#: InvenTree/auth_overrides.py:132 InvenTree/auth_overrides.py:139
 msgid "The provided primary email address is not valid."
 msgstr "عنوان البريد الإلكتروني الرئيسي المقدم غير صالح."
 
-#: InvenTree/auth_overrides.py:141
+#: InvenTree/auth_overrides.py:145
 msgid "The provided email domain is not approved."
 msgstr "لم تتم الموافقة على نطاق البريد الإلكتروني المقدم."
 

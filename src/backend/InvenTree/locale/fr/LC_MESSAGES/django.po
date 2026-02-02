@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-29 23:44+0000\n"
-"PO-Revision-Date: 2026-01-29 23:47\n"
+"POT-Creation-Date: 2026-02-02 02:16+0000\n"
+"PO-Revision-Date: 2026-02-02 02:19\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -17,67 +17,67 @@ msgstr ""
 "X-Crowdin-File: /src/backend/InvenTree/locale/en/LC_MESSAGES/django.po\n"
 "X-Crowdin-File-ID: 250\n"
 
-#: InvenTree/api.py:366
+#: InvenTree/api.py:365
 msgid "API endpoint not found"
 msgstr "Point de terminaison de l'API introuvable"
 
-#: InvenTree/api.py:443
+#: InvenTree/api.py:442
 msgid "List of items or filters must be provided for bulk operation"
 msgstr "Liste des éléments ou des filtres à fournir pour les opérations en vrac"
 
-#: InvenTree/api.py:450
+#: InvenTree/api.py:449
 msgid "Items must be provided as a list"
 msgstr "Les éléments doivent être fournis sous forme de liste"
 
-#: InvenTree/api.py:458
+#: InvenTree/api.py:457
 msgid "Invalid items list provided"
 msgstr "Liste d'éléments non valide fournie"
 
-#: InvenTree/api.py:464
+#: InvenTree/api.py:463
 msgid "Filters must be provided as a dict"
 msgstr "Les filtres doivent être fournis sous forme de dictionnaire"
 
-#: InvenTree/api.py:471
+#: InvenTree/api.py:470
 msgid "Invalid filters provided"
 msgstr "Filtres fournis invalides"
 
-#: InvenTree/api.py:476
+#: InvenTree/api.py:475
 msgid "All filter must only be used with true"
 msgstr "Tous les filtres ne doivent être utilisés qu'avec \"true\""
 
-#: InvenTree/api.py:481
+#: InvenTree/api.py:480
 msgid "No items match the provided criteria"
 msgstr "Aucun élément ne correspond aux critères fournis"
 
-#: InvenTree/api.py:505
+#: InvenTree/api.py:504
 msgid "No data provided"
 msgstr "Aucune donnée disponible"
 
-#: InvenTree/api.py:521
+#: InvenTree/api.py:520
 msgid "This field must be unique."
 msgstr ""
 
-#: InvenTree/api.py:816
+#: InvenTree/api.py:815
 msgid "User does not have permission to view this model"
 msgstr "L'utilisateur n'a pas la permission de voir ce modèle"
 
-#: InvenTree/auth_overrides.py:57
+#: InvenTree/auth_overrides.py:58
 msgid "Email (again)"
 msgstr "Email (encore)"
 
-#: InvenTree/auth_overrides.py:61
+#: InvenTree/auth_overrides.py:62
 msgid "Email address confirmation"
 msgstr "Confirmation de l'adresse email"
 
-#: InvenTree/auth_overrides.py:84
+#: InvenTree/auth_overrides.py:85
 msgid "You must type the same email each time."
 msgstr "Vous devez taper le même e-mail à chaque fois."
 
-#: InvenTree/auth_overrides.py:128 InvenTree/auth_overrides.py:135
+#: InvenTree/auth_overrides.py:132 InvenTree/auth_overrides.py:139
 msgid "The provided primary email address is not valid."
 msgstr "L'adresse e-mail principale fournie n'est pas valide."
 
-#: InvenTree/auth_overrides.py:141
+#: InvenTree/auth_overrides.py:145
 msgid "The provided email domain is not approved."
 msgstr "Le domaine e-mail fourni n'est pas approuvé."
 

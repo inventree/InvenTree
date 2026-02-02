@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-29 23:44+0000\n"
-"PO-Revision-Date: 2026-01-29 23:47\n"
+"POT-Creation-Date: 2026-02-02 02:16+0000\n"
+"PO-Revision-Date: 2026-02-02 02:19\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "Language: el_GR\n"
@@ -17,67 +17,67 @@ msgstr ""
 "X-Crowdin-File: /src/backend/InvenTree/locale/en/LC_MESSAGES/django.po\n"
 "X-Crowdin-File-ID: 250\n"
 
-#: InvenTree/api.py:366
+#: InvenTree/api.py:365
 msgid "API endpoint not found"
 msgstr "Το API endpoint δε βρέθηκε"
 
-#: InvenTree/api.py:443
+#: InvenTree/api.py:442
 msgid "List of items or filters must be provided for bulk operation"
 msgstr "Πρέπει να παρέχεται λίστα Προϊόντων ή φίλτρων για μαζική ενέργεια"
 
-#: InvenTree/api.py:450
+#: InvenTree/api.py:449
 msgid "Items must be provided as a list"
 msgstr "Τα Προϊόντα πρέπει να δοθούν ως λίστα"
 
-#: InvenTree/api.py:458
+#: InvenTree/api.py:457
 msgid "Invalid items list provided"
 msgstr "Η λίστα Προϊόντων που δόθηκε δεν είναι έγκυρη"
 
-#: InvenTree/api.py:464
+#: InvenTree/api.py:463
 msgid "Filters must be provided as a dict"
 msgstr "Τα φίλτρα πρέπει να δοθούν ως λεξικό"
 
-#: InvenTree/api.py:471
+#: InvenTree/api.py:470
 msgid "Invalid filters provided"
 msgstr "Τα φίλτρα που δόθηκαν δεν είναι έγκυρα"
 
-#: InvenTree/api.py:476
+#: InvenTree/api.py:475
 msgid "All filter must only be used with true"
 msgstr "Το φίλτρο all πρέπει να χρησιμοποιείται μόνο με τιμή true"
 
-#: InvenTree/api.py:481
+#: InvenTree/api.py:480
 msgid "No items match the provided criteria"
 msgstr "Κανένα Aντικείμενο δεν ταιριάζει στα κριτήρια που δόθηκαν"
 
-#: InvenTree/api.py:505
+#: InvenTree/api.py:504
 msgid "No data provided"
 msgstr "Δεν δόθηκαν δεδομένα"
 
-#: InvenTree/api.py:521
+#: InvenTree/api.py:520
 msgid "This field must be unique."
 msgstr "Αυτό το πεδίο πρέπει να είναι μοναδικό."
 
-#: InvenTree/api.py:816
+#: InvenTree/api.py:815
 msgid "User does not have permission to view this model"
 msgstr "Δεν έχετε δικαιώματα να το δείτε αυτό"
 
-#: InvenTree/auth_overrides.py:57
+#: InvenTree/auth_overrides.py:58
 msgid "Email (again)"
 msgstr "E-mail (ξανά)"
 
-#: InvenTree/auth_overrides.py:61
+#: InvenTree/auth_overrides.py:62
 msgid "Email address confirmation"
 msgstr "Επιβεβαίωση διεύθυνσης email"
 
-#: InvenTree/auth_overrides.py:84
+#: InvenTree/auth_overrides.py:85
 msgid "You must type the same email each time."
 msgstr "Πρέπει να πληκτρολογήσετε το ίδιο email κάθε φορά."
 
-#: InvenTree/auth_overrides.py:128 InvenTree/auth_overrides.py:135
+#: InvenTree/auth_overrides.py:132 InvenTree/auth_overrides.py:139
 msgid "The provided primary email address is not valid."
 msgstr "Η παρεχόμενη κύρια διεύθυνση ηλεκτρονικού ταχυδρομείου δεν είναι έγκυρη."
 
-#: InvenTree/auth_overrides.py:141
+#: InvenTree/auth_overrides.py:145
 msgid "The provided email domain is not approved."
 msgstr "Ο παρεχόμενος τομέας ηλεκτρονικού ταχυδρομείου δεν έχει εγκριθεί."
 
