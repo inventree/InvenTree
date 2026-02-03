@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-02 02:16+0000\n"
-"PO-Revision-Date: 2026-02-02 02:19\n"
+"POT-Creation-Date: 2026-02-02 23:23+0000\n"
+"PO-Revision-Date: 2026-02-02 23:26\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -572,7 +572,7 @@ msgstr "Zahrnout varianty"
 #: build/serializers.py:1457 company/models.py:1008 company/serializers.py:434
 #: order/api.py:303 order/api.py:307 order/api.py:930 order/api.py:1184
 #: order/api.py:1187 order/models.py:1943 order/models.py:2109
-#: order/models.py:2110 part/api.py:1160 part/api.py:1163 part/api.py:1314
+#: order/models.py:2110 part/api.py:1160 part/api.py:1163 part/api.py:1318
 #: part/models.py:528 part/models.py:3341 part/models.py:3484
 #: part/models.py:3542 part/models.py:3563 part/models.py:3585
 #: part/models.py:3724 part/models.py:3986 part/models.py:4405
@@ -597,7 +597,7 @@ msgid "Part"
 msgstr "Díl"
 
 #: build/api.py:120 build/api.py:123 build/serializers.py:1470 part/api.py:975
-#: part/api.py:1325 part/models.py:413 part/models.py:1149 part/models.py:3613
+#: part/api.py:1329 part/models.py:413 part/models.py:1149 part/models.py:3613
 #: part/serializers.py:1606 stock/api.py:869
 msgid "Category"
 msgstr "Kategorie"
@@ -5643,15 +5643,43 @@ msgstr "Pokud je pravda, zahrne položky z podkategorií dané kategorie"
 msgid "Filter by numeric category ID or the literal 'null'"
 msgstr "Filtrovat podle numerického ID kategorie nebo doslovného 'null'"
 
+#: part/api.py:1250
+msgid "Assembly part is active"
+msgstr ""
+
+#: part/api.py:1254
+msgid "Assembly part is trackable"
+msgstr ""
+
 #: part/api.py:1258
 msgid "Assembly part is testable"
 msgstr "Sestavený díl je testovatelný"
 
+#: part/api.py:1263
+msgid "Component part is active"
+msgstr ""
+
 #: part/api.py:1267
+msgid "Component part is trackable"
+msgstr ""
+
+#: part/api.py:1271
 msgid "Component part is testable"
 msgstr "Díl komponenty je testovatelný"
 
-#: part/api.py:1336
+#: part/api.py:1275
+msgid "Component part is an assembly"
+msgstr ""
+
+#: part/api.py:1279
+msgid "Component part is virtual"
+msgstr ""
+
+#: part/api.py:1283
+msgid "Has available stock"
+msgstr ""
+
+#: part/api.py:1340
 msgid "Uses"
 msgstr "Využití"
 

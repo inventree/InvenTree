@@ -8,7 +8,7 @@ msgstr ""
 "Language: ja\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-02-01 10:26\n"
+"PO-Revision-Date: 2026-02-02 23:26\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -568,7 +568,7 @@ msgstr "セレクション・リスト"
 #: src/states/IconState.tsx:46
 #: src/states/IconState.tsx:76
 #: src/tables/InvenTreeTableHeader.tsx:125
-#: src/tables/bom/BomTable.tsx:558
+#: src/tables/bom/BomTable.tsx:563
 #: src/tables/settings/EmailTable.tsx:109
 #: src/tables/stock/StockItemTestResultTable.tsx:338
 msgid "Error"
@@ -689,7 +689,7 @@ msgstr "バーコードが想定されるモデルタイプと一致しません
 #: src/components/wizards/ImportPartWizard.tsx:566
 #: src/components/wizards/ImportPartWizard.tsx:691
 #: src/pages/Index/Settings/AdminCenter/CurrencyManagementPanel.tsx:45
-#: src/tables/bom/BomTable.tsx:549
+#: src/tables/bom/BomTable.tsx:554
 #: src/tables/settings/PendingTasksTable.tsx:68
 msgid "Success"
 msgstr "成功"
@@ -3012,7 +3012,7 @@ msgstr "在庫なし"
 #: src/pages/company/SupplierPartDetail.tsx:198
 #: src/pages/company/SupplierPartDetail.tsx:400
 #: src/pages/part/PartDetail.tsx:1034
-#: src/tables/bom/BomTable.tsx:445
+#: src/tables/bom/BomTable.tsx:450
 #: src/tables/build/BuildLineTable.tsx:223
 #: src/tables/part/PartTable.tsx:108
 msgid "On Order"
@@ -7720,7 +7720,7 @@ msgid "Keywords"
 msgstr "キーワード"
 
 #: src/pages/part/PartDetail.tsx:542
-#: src/tables/bom/BomTable.tsx:440
+#: src/tables/bom/BomTable.tsx:445
 #: src/tables/build/BuildLineTable.tsx:306
 #: src/tables/part/PartTable.tsx:319
 #: src/tables/sales/SalesOrderLineItemTable.tsx:138
@@ -7765,7 +7765,7 @@ msgid "Template Part"
 msgstr "テンプレート部品"
 
 #: src/pages/part/PartDetail.tsx:631
-#: src/tables/bom/BomTable.tsx:430
+#: src/tables/bom/BomTable.tsx:435
 msgid "Assembled Part"
 msgstr "組立部品"
 
@@ -7794,7 +7794,7 @@ msgstr "売却可能部分"
 #: src/pages/part/PartDetail.tsx:663
 #: src/pages/part/PartDetail.tsx:1058
 #: src/tables/bom/BomTable.tsx:151
-#: src/tables/bom/BomTable.tsx:435
+#: src/tables/bom/BomTable.tsx:440
 msgid "Virtual Part"
 msgstr "バーチャルパート"
 
@@ -7870,7 +7870,7 @@ msgstr "関連部品"
 
 #: src/pages/part/PartDetail.tsx:952
 #: src/tables/ColumnRenderers.tsx:73
-#: src/tables/bom/BomTable.tsx:658
+#: src/tables/bom/BomTable.tsx:663
 #: src/tables/part/PartTestTemplateTable.tsx:258
 msgid "Part is Locked"
 msgstr "部品がロックされています"
@@ -9399,146 +9399,157 @@ msgstr "テスト可能な項目を表示"
 msgid "Show trackable items"
 msgstr "追跡可能なアイテムの表示"
 
+#: src/tables/bom/BomTable.tsx:430
+#: src/tables/purchasing/ManufacturerPartParametricTable.tsx:44
+#: src/tables/purchasing/ManufacturerPartTable.tsx:134
+#: src/tables/purchasing/SupplierPartTable.tsx:220
+msgid "Active Part"
+msgstr "アクティブパート"
+
 #: src/tables/bom/BomTable.tsx:431
+msgid "Show active items"
+msgstr ""
+
+#: src/tables/bom/BomTable.tsx:436
 #: src/tables/build/BuildLineTable.tsx:209
 msgid "Show assembled items"
 msgstr "組み立てられた商品を表示"
 
-#: src/tables/bom/BomTable.tsx:436
+#: src/tables/bom/BomTable.tsx:441
 msgid "Show virtual items"
 msgstr "仮想アイテムを表示します"
 
-#: src/tables/bom/BomTable.tsx:441
+#: src/tables/bom/BomTable.tsx:446
 msgid "Show items with available stock"
 msgstr "在庫のある商品を表示"
 
-#: src/tables/bom/BomTable.tsx:446
+#: src/tables/bom/BomTable.tsx:451
 msgid "Show items on order"
 msgstr "注文商品の表示"
 
-#: src/tables/bom/BomTable.tsx:450
+#: src/tables/bom/BomTable.tsx:455
 msgid "Validated"
 msgstr "検証済み"
 
-#: src/tables/bom/BomTable.tsx:451
+#: src/tables/bom/BomTable.tsx:456
 msgid "Show validated items"
 msgstr "有効な項目を表示"
 
-#: src/tables/bom/BomTable.tsx:455
+#: src/tables/bom/BomTable.tsx:460
 #: src/tables/bom/UsedInTable.tsx:80
 msgid "Inherited"
 msgstr "継承"
 
-#: src/tables/bom/BomTable.tsx:456
+#: src/tables/bom/BomTable.tsx:461
 #: src/tables/bom/UsedInTable.tsx:81
 msgid "Show inherited items"
 msgstr "継承された項目を表示"
 
-#: src/tables/bom/BomTable.tsx:460
+#: src/tables/bom/BomTable.tsx:465
 msgid "Allow Variants"
 msgstr "バリアントを許可"
 
-#: src/tables/bom/BomTable.tsx:461
+#: src/tables/bom/BomTable.tsx:466
 msgid "Show items which allow variant substitution"
 msgstr "バリアント置換が可能な項目を表示"
 
-#: src/tables/bom/BomTable.tsx:465
+#: src/tables/bom/BomTable.tsx:470
 #: src/tables/bom/UsedInTable.tsx:85
 #: src/tables/build/BuildLineTable.tsx:203
 msgid "Optional"
 msgstr "オプション"
 
-#: src/tables/bom/BomTable.tsx:466
+#: src/tables/bom/BomTable.tsx:471
 #: src/tables/bom/UsedInTable.tsx:86
 msgid "Show optional items"
 msgstr "オプション項目の表示"
 
-#: src/tables/bom/BomTable.tsx:470
+#: src/tables/bom/BomTable.tsx:475
 #: src/tables/build/BuildLineTable.tsx:198
 msgid "Consumable"
 msgstr "消耗品"
 
-#: src/tables/bom/BomTable.tsx:471
+#: src/tables/bom/BomTable.tsx:476
 msgid "Show consumable items"
 msgstr "消耗品の表示"
 
-#: src/tables/bom/BomTable.tsx:475
+#: src/tables/bom/BomTable.tsx:480
 #: src/tables/part/PartTable.tsx:313
 msgid "Has Pricing"
 msgstr "価格"
 
-#: src/tables/bom/BomTable.tsx:476
+#: src/tables/bom/BomTable.tsx:481
 msgid "Show items with pricing"
 msgstr "価格表示アイテム"
 
-#: src/tables/bom/BomTable.tsx:498
+#: src/tables/bom/BomTable.tsx:503
 msgid "Import BOM Data"
 msgstr "BOMデータのインポート"
 
-#: src/tables/bom/BomTable.tsx:508
-#: src/tables/bom/BomTable.tsx:632
+#: src/tables/bom/BomTable.tsx:513
+#: src/tables/bom/BomTable.tsx:637
 msgid "Add BOM Item"
 msgstr "BOMアイテムの追加"
 
-#: src/tables/bom/BomTable.tsx:513
+#: src/tables/bom/BomTable.tsx:518
 msgid "BOM item created"
 msgstr "BOMアイテムの作成"
 
-#: src/tables/bom/BomTable.tsx:520
+#: src/tables/bom/BomTable.tsx:525
 msgid "Edit BOM Item"
 msgstr "BOMアイテムの編集"
 
-#: src/tables/bom/BomTable.tsx:522
+#: src/tables/bom/BomTable.tsx:527
 msgid "BOM item updated"
 msgstr "BOMアイテム更新"
 
-#: src/tables/bom/BomTable.tsx:529
+#: src/tables/bom/BomTable.tsx:534
 msgid "Delete BOM Item"
 msgstr "BOMアイテムの削除"
 
-#: src/tables/bom/BomTable.tsx:530
+#: src/tables/bom/BomTable.tsx:535
 msgid "BOM item deleted"
 msgstr "BOMアイテム削除"
 
-#: src/tables/bom/BomTable.tsx:550
+#: src/tables/bom/BomTable.tsx:555
 msgid "BOM item validated"
 msgstr "BOMアイテムの検証"
 
-#: src/tables/bom/BomTable.tsx:559
+#: src/tables/bom/BomTable.tsx:564
 msgid "Failed to validate BOM item"
 msgstr "BOMアイテムの検証に失敗しました"
 
-#: src/tables/bom/BomTable.tsx:571
+#: src/tables/bom/BomTable.tsx:576
 msgid "View BOM"
 msgstr "BOMを見る"
 
-#: src/tables/bom/BomTable.tsx:582
+#: src/tables/bom/BomTable.tsx:587
 msgid "Validate BOM Line"
 msgstr "BOMラインの検証"
 
-#: src/tables/bom/BomTable.tsx:601
+#: src/tables/bom/BomTable.tsx:606
 msgid "Edit Substitutes"
 msgstr "代理編集"
 
-#: src/tables/bom/BomTable.tsx:626
+#: src/tables/bom/BomTable.tsx:631
 msgid "Add BOM Items"
 msgstr "BOMの項目を追加する"
 
-#: src/tables/bom/BomTable.tsx:634
+#: src/tables/bom/BomTable.tsx:639
 msgid "Add a single BOM item"
 msgstr "BOMに1つの部品を追加する"
 
-#: src/tables/bom/BomTable.tsx:638
+#: src/tables/bom/BomTable.tsx:643
 #: src/tables/general/ParameterTable.tsx:206
 #: src/tables/part/PartTable.tsx:546
 msgid "Import from File"
 msgstr "ファイルからインポート"
 
-#: src/tables/bom/BomTable.tsx:640
+#: src/tables/bom/BomTable.tsx:645
 msgid "Import BOM items from a file"
 msgstr "ファイルからBOMの項目をインポートする"
 
-#: src/tables/bom/BomTable.tsx:663
+#: src/tables/bom/BomTable.tsx:668
 msgid "Bill of materials cannot be edited, as the part is locked"
 msgstr "部品がロックされているため、部品表を編集できません。"
 
@@ -11197,12 +11208,6 @@ msgstr "インストール済み"
 #: src/tables/purchasing/SupplierPartTable.tsx:99
 msgid "MPN"
 msgstr "MPN"
-
-#: src/tables/purchasing/ManufacturerPartParametricTable.tsx:44
-#: src/tables/purchasing/ManufacturerPartTable.tsx:134
-#: src/tables/purchasing/SupplierPartTable.tsx:220
-msgid "Active Part"
-msgstr "アクティブパート"
 
 #: src/tables/purchasing/ManufacturerPartParametricTable.tsx:45
 #: src/tables/purchasing/ManufacturerPartTable.tsx:135
