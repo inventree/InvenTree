@@ -22,6 +22,7 @@ from sql_util.utils import SubqueryCount
 
 import common.currency
 import common.filters
+import common.models
 import common.serializers
 import company.models
 import InvenTree.helpers
@@ -41,6 +42,7 @@ from InvenTree.serializers import (
     FilterableListSerializer,
     enable_filter,
 )
+from InvenTree.tasks import offload_task
 from users.serializers import UserSerializer
 
 from .models import (
@@ -1247,10 +1249,21 @@ class PartStocktakeGenerateSerializer(serializers.Serializer):
     class Meta:
         """Metaclass options."""
 
-        fields = ['part', 'category', 'location', 'generate_report', 'output']
+        fields = [
+            'part',
+            'category',
+            'location',
+            'generate_entry',
+            'generate_report',
+            'output',
+        ]
 
     part = serializers.PrimaryKeyRelatedField(
-        queryset=Part.objects.all(), label=_('Part'), write_only=True, required=True
+        queryset=Part.objects.all(),
+        label=_('Part'),
+        write_only=True,
+        required=False,
+        allow_null=True,
     )
 
     category = serializers.PrimaryKeyRelatedField(
@@ -1269,13 +1282,55 @@ class PartStocktakeGenerateSerializer(serializers.Serializer):
         allow_null=True,
     )
 
+    generate_entry = serializers.BooleanField(
+        label=_('Generate Stocktake Entries'),
+        write_only=True,
+        required=False,
+        default=False,
+    )
+
     generate_report = serializers.BooleanField(
-        label=_('Generate Report'), write_only=True, required=False, default=True
+        label=_('Generate Report'), write_only=True, required=False, default=False
     )
 
     output = common.serializers.DataOutputSerializer(
         read_only=True, many=False, label=_('Output')
     )
+
+    def save(self):
+        """Perform stocktake generation."""
+        import part.stocktake as part_stocktake
+
+        data = self.validated_data
+
+        part = data.get('part', None)
+        category = data.get('category', None)
+        location = data.get('location', None)
+
+        # Do we want to generate a report?
+        if data.get('generate_report', True):
+            report_output = common.models.DataOutput.objects.create(
+                user=self.context.get('request').user
+                if self.context.get('request')
+                else None,
+                output_type='stocktake',
+            )
+        else:
+            report_output = None
+
+        offload_task(
+            part_stocktake.perform_stocktake,
+            part_id=part.pk if part else None,
+            category_id=category.pk if category else None,
+            location_id=location.pk if location else None,
+            generate_entry=data.get('generate_entry', True),
+            report_output_id=report_output.pk if report_output else None,
+            group='stocktake',
+        )
+
+        self.instance = {'output': report_output.pk}
+
+        return self.instance
 
 
 @extend_schema_field(

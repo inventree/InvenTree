@@ -2,7 +2,7 @@
 
 from typing import Optional
 
-from django.db.models import QuerySet
+from django.core.files.base import ContentFile
 
 import structlog
 from djmoney.contrib.exchange.models import convert_money
@@ -14,22 +14,22 @@ logger = structlog.get_logger('inventree')
 
 
 def perform_stocktake(
-    parts: Optional[QuerySet] = None,
+    part_id: Optional[int] = None,
     category_id: Optional[int] = None,
     location_id: Optional[int] = None,
     exclude_external: Optional[bool] = None,
     generate_entry: bool = True,
-    report_output: Optional[common.models.DataOutput] = None,
+    report_output_id: Optional[int] = None,
 ) -> None:
     """Capture a snapshot of stock-on-hand and stock value.
 
     Arguments:
-        parts: Optional queryset of parts to perform stocktake on. If not provided, all active parts will be processed.
+        part_id: Optional ID of a part to perform stocktake on. If not provided, all active parts will be processed.
         category_id: Optional category ID to use to filter parts
         location_id: Optional location ID to use to filter stock items
         exclude_external: If True, exclude external stock items from the stocktake
         generate_entry: If True, create stocktake entries in the database
-        report_output: Optional output destination for the stocktake report (e.g. for download)
+        report_output_id: Optional ID of a DataOutput object for the stocktake report (e.g. for download)
 
     The default implementation creates stocktake entries for all active parts,
     and writes these stocktake entries to the database.
@@ -39,6 +39,7 @@ def perform_stocktake(
     """
     import InvenTree.helpers
     import part.models as part_models
+    import part.serializers as part_serializers
     import stock.models as stock_models
     from common.currency import currency_code_default
     from common.settings import get_global_setting
@@ -53,8 +54,23 @@ def perform_stocktake(
             'STOCKTAKE_EXCLUDE_EXTERNAL', False, cache=False
         )
 
-    if parts is None:
-        parts = part_models.Part.objects.filter(active=True)
+    # If a single part is provided, limit to that part
+    # Otherwise, start with all active parts
+    if part_id is not None:
+        try:
+            part = part_models.Part.objects.get(id=part_id)
+            parts = part.get_descendants(include_self=True)
+        except (ValueError, part_models.Part.DoesNotExist):
+            parts = part_models.Part.objects.all()
+    else:
+        parts = part_models.Part.objects.all()
+
+    # Only use active parts
+    parts = parts.filter(active=True)
+
+    # Prefetch related pricing information
+    parts = parts.select_related('pricing_data')
+    parts = parts.prefetch_related('stock_items')
 
     # Filter part queryset by category, if provided
     if category_id is not None:
@@ -87,6 +103,15 @@ def perform_stocktake(
     today = InvenTree.helpers.current_date()
 
     logger.info('Creating new stock history entries for %s parts', parts.count())
+
+    # Fetch report output object if provided
+    if report_output_id is not None:
+        try:
+            report_output = common.models.DataOutput.objects.get(id=report_output_id)
+        except (ValueError, common.models.DataOutput.DoesNotExist):
+            report_output = None
+    else:
+        report_output = None
 
     if report_output:
         # Initialize progress on the report output
@@ -148,6 +173,10 @@ def perform_stocktake(
             total_cost_min += entry_cost_min
             total_cost_max += entry_cost_max
 
+        if report_output:
+            report_output.progress += 1
+            report_output.save()
+
         # Add a new stocktake entry for this part
         history_entries.append(
             part_models.PartStocktake(
@@ -165,4 +194,15 @@ def perform_stocktake(
 
     if report_output:
         # Save report data, and mark as complete
-        ...
+
+        serializer = part_serializers.PartStocktakeSerializer(
+            history_entries, many=True, context={'request': None}
+        )
+
+        datafile = serializer.export_to_file(
+            history_entries, serializer.generate_headers(), 'csv'
+        )
+
+        report_output.mark_complete(
+            output=ContentFile(datafile, 'stocktake_report.csv')
+        )
