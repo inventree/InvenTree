@@ -464,12 +464,16 @@ class StockItemSerializer(
         status_custom_key = validated_data.pop('status_custom_key', None)
         status = validated_data.pop('status', None)
 
-        instance = super().update(instance, validated_data=validated_data)
-
         if status_code := status_custom_key or status:
-            if not instance.compare_status(status_code):
-                instance.set_status(status_code)
-                instance.save()
+            # avoid a second .save() call and perform both status updates at once (to support `old_status` in tracking event)
+            # by setting the values in validated_data as computed by set_status()
+            instance.set_status(status_code)
+            validated_data['status'] = instance.status
+            validated_data['status_custom_key'] = (
+                status_code  # for compatibility with custom "leader/follower" concept in super().update()
+            )
+
+        instance = super().update(instance, validated_data=validated_data)
 
         return instance
 
@@ -490,14 +494,13 @@ class StockItemSerializer(
             ),
             'parent',
             'part__category',
-            'part__pricing_data',
             'supplier_part',
             'supplier_part__manufacturer_part',
             'customer',
             'belongs_to',
             'sales_order',
             'consumed_by',
-        ).select_related('part')
+        ).select_related('part', 'part__pricing_data')
 
         # Annotate the queryset with the total allocated to sales orders
         queryset = queryset.annotate(
@@ -1057,8 +1060,6 @@ class StockChangeStatusSerializer(serializers.Serializer):
 
         transaction_notes = []
 
-        deltas = {'status': status}
-
         now = InvenTree.helpers.current_time()
 
         # Instead of performing database updates for each item,
@@ -1076,8 +1077,21 @@ class StockChangeStatusSerializer(serializers.Serializer):
                 if status == custom_status or custom_status is None:
                     continue
 
+            deltas = {'status': status}
+
+            # before save, track old status logical
+            deltas['old_status_logical'] = item.status
+
+            if item.get_custom_status():
+                deltas['old_status'] = item.get_custom_status()
+            else:
+                deltas['old_status'] = item.status
+
             item.set_status(status, custom_values=custom_status_codes)
             item.save(add_note=False)
+
+            # after save, can track new status_logical
+            deltas['status_logical'] = item.status
 
             # Create a new transaction note for each item
             transaction_notes.append(
@@ -1162,8 +1176,10 @@ class LocationSerializer(
             'structural',
             'external',
             'location_type',
+            # Optional fields
             'location_type_detail',
             'tags',
+            'parameters',
         ]
         read_only_fields = ['barcode_hash', 'icon', 'level', 'pathstring']
 
@@ -1207,6 +1223,8 @@ class LocationSerializer(
         ),
         filter_name='path_detail',
     )
+
+    parameters = common.filters.enable_parameters_filter()
 
     # explicitly set this field, so it gets included for AutoSchema
     icon = serializers.CharField(read_only=True)

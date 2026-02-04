@@ -84,16 +84,28 @@ function ImporterDefaultField({
 }) {
   const api = useApi();
 
-  const [rawValue, setRawValue] = useState<any>('');
+  const [rawValue, setRawValue] = useState<any>(undefined);
+
+  // Initialize raw value with provided default
+  useEffect(() => {
+    setRawValue(session.fieldDefaults[fieldName]);
+  }, [fieldName, session.fieldDefaults]);
 
   const fieldType: string = useMemo(() => {
     return session.availableFields[fieldName]?.type;
   }, [fieldName, session.availableFields]);
 
-  const [value] = useDebouncedValue(rawValue, fieldType == 'string' ? 500 : 10);
-
   const onChange = useCallback(
     (value: any) => {
+      if (value === undefined) {
+        value = session.fieldDefaults[fieldName];
+      }
+
+      // No change - do nothing
+      if (value === session.fieldDefaults[fieldName]) {
+        return;
+      }
+
       // Update the default value for the field
       const defaults = {
         ...session.fieldDefaults,
@@ -113,6 +125,21 @@ function ImporterDefaultField({
     },
     [fieldName, session, session.fieldDefaults]
   );
+
+  const getDebounceTime = (type: string) => {
+    switch (type) {
+      case 'string':
+        return 500;
+      case 'number':
+      case 'float':
+      case 'integer':
+        return 200;
+      default:
+        return 50;
+    }
+  };
+
+  const [value] = useDebouncedValue(rawValue, getDebounceTime(fieldType));
 
   // Update the default value after the debounced value changes
   useEffect(() => {

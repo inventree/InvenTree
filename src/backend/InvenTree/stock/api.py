@@ -33,7 +33,7 @@ from InvenTree.api import (
     BulkCreateMixin,
     BulkUpdateMixin,
     ListCreateDestroyAPIView,
-    MetadataView,
+    meta_path,
 )
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import (
@@ -1452,7 +1452,13 @@ class StockItemTestResultList(
     output_options = StockItemTestResultOutputOptions
 
     filterset_fields = ['user', 'template', 'result', 'value']
-    ordering_fields = ['date', 'result']
+    ordering_fields = [
+        'date',
+        'result',
+        'started_datetime',
+        'finished_datetime',
+        'test_station',
+    ]
 
     ordering = 'date'
 
@@ -1610,11 +1616,7 @@ stock_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(model=StockLocation),
-                        name='api-location-metadata',
-                    ),
+                    meta_path(StockLocation),
                     path('', StockLocationDetail.as_view(), name='api-location-detail'),
                 ]),
             ),
@@ -1628,11 +1630,7 @@ stock_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(model=StockLocationType),
-                        name='api-location-type-metadata',
-                    ),
+                    meta_path(StockLocationType),
                     path(
                         '',
                         StockLocationTypeDetail.as_view(),
@@ -1659,11 +1657,7 @@ stock_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(model=StockItemTestResult),
-                        name='api-stock-test-result-metadata',
-                    ),
+                    meta_path(StockItemTestResult),
                     path(
                         '',
                         StockItemTestResultDetail.as_view(),
@@ -1701,11 +1695,7 @@ stock_api_urls = [
         include([
             path('convert/', StockItemConvert.as_view(), name='api-stock-item-convert'),
             path('install/', StockItemInstall.as_view(), name='api-stock-item-install'),
-            path(
-                'metadata/',
-                MetadataView.as_view(model=StockItem),
-                name='api-stock-item-metadata',
-            ),
+            meta_path(StockItem),
             path(
                 'serialize/',
                 StockItemSerialize.as_view(),

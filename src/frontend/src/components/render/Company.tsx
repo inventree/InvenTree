@@ -82,7 +82,8 @@ export function RenderSupplierPart(
   const secondary: string = instance.SKU;
   let suffix: string = part?.full_name ?? '';
 
-  if (instance.pack_quantity) {
+  // Display non-unitary pack quantities
+  if (instance.pack_quantity && instance.pack_quantity_native != 1) {
     suffix += ` (${instance.pack_quantity})`;
   }
 

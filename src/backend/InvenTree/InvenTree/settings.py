@@ -83,6 +83,9 @@ config.load_version_file()
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = get_boolean_setting('INVENTREE_DEBUG', 'debug', False)
 
+# Internal flag to determine if we are running in docker mode
+DOCKER = get_boolean_setting('INVENTREE_DOCKER', default_value=False)
+
 # Configure logging settings
 LOG_LEVEL = get_setting('INVENTREE_LOG_LEVEL', 'log_level', 'WARNING')
 JSON_LOG = get_boolean_setting('INVENTREE_JSON_LOG', 'json_log', False)
@@ -543,9 +546,6 @@ if LDAP_AUTH:  # pragma: no cover
         typecast=dict,
     )
     AUTH_LDAP_FIND_GROUP_PERMS = True
-
-# Internal flag to determine if we are running in docker mode
-DOCKER = get_boolean_setting('INVENTREE_DOCKER', default_value=False)
 
 # Allow secure http developer server in debug mode
 if DEBUG:
@@ -1495,6 +1495,9 @@ LOGIN_REDIRECT_URL = '/api/auth/login-redirect/'
 
 # Configuration for API schema generation / oAuth2
 SPECTACULAR_SETTINGS = spectacular.get_spectacular_settings()
+SCHEMA_VENDOREXTENSION_LEVEL = get_setting(
+    'INVENTREE_SCHEMA_LEVEL', 'schema.level', default_value=0, typecast=int
+)
 
 OAUTH2_PROVIDER = {
     # default scopes

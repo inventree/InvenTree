@@ -399,7 +399,8 @@ export default function PurchaseOrderDetail() {
       }),
       NotesPanel({
         model_type: ModelType.purchaseorder,
-        model_id: order.pk
+        model_id: order.pk,
+        has_note: !!order.notes
       })
     ];
   }, [order, id, user]);

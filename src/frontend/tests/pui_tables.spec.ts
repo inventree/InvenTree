@@ -84,7 +84,8 @@ test('Tables - Columns', async ({ browser }) => {
 
   // De-select some items
   await page.getByRole('menuitem', { name: 'Description' }).click();
-  await page.getByRole('menuitem', { name: 'Stocktake' }).click();
+  await page.getByRole('menuitem', { name: 'Batch Code' }).click();
+
   await page.keyboard.press('Escape');
 
   await navigate(page, '/sales/index/salesorders');

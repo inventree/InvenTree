@@ -974,6 +974,22 @@ class BaseInvenTreeSetting(models.Model):
 
         return setting.get('model', None)
 
+    def confirm(self) -> bool:
+        """Return if this setting requires confirmation on change."""
+        setting = self.get_setting_definition(
+            self.key, **self.get_filters_for_instance()
+        )
+
+        return setting.get('confirm', False)
+
+    def confirm_text(self) -> str:
+        """Return the confirmation text for this setting, if provided."""
+        setting = self.get_setting_definition(
+            self.key, **self.get_filters_for_instance()
+        )
+
+        return setting.get('confirm_text', '')
+
     def model_filters(self) -> Optional[dict]:
         """Return the model filters associated with this setting."""
         setting = self.get_setting_definition(
@@ -1972,9 +1988,8 @@ class InvenTreeImage(models.Model):
             # If single_image is True, delete any siblings first
             if single:
                 (
-                    InvenTreeImage.objects.filter(
-                        content_type=self.content_type, object_id=self.object_id
-                    )
+                    InvenTreeImage.objects
+                    .filter(content_type=self.content_type, object_id=self.object_id)
                     # Exclude ourselves if we are updating an existing record
                     .exclude(pk=self.pk)
                     .delete()
@@ -1996,7 +2011,8 @@ class InvenTreeImage(models.Model):
             if self.primary:
                 # Turn off primary flag on any siblings
                 (
-                    InvenTreeImage.objects.filter(
+                    InvenTreeImage.objects
+                    .filter(
                         content_type=self.content_type,
                         object_id=self.object_id,
                         primary=True,
@@ -2013,9 +2029,8 @@ class InvenTreeImage(models.Model):
         with transaction.atomic():
             if was_primary:
                 successor = (
-                    InvenTreeImage.objects.filter(
-                        content_type=self.content_type, object_id=self.object_id
-                    )
+                    InvenTreeImage.objects
+                    .filter(content_type=self.content_type, object_id=self.object_id)
                     .order_by('-id')
                     .first()
                 )

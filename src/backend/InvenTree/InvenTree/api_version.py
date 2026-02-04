@@ -1,15 +1,54 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 436
+INVENTREE_API_VERSION = 448
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v436 -> 2025-12-28 : https://github.com/inventree/InvenTree/pull/...
+v448 -> 2026-02-06 : https://github.com/inventree/InvenTree/pull/...
     - Expose InvenTreeImage model to api/image API endpoints
     - Adds 'image_url' and 'thumbnail_url' fields to relevant API serializers
     - Updates Part and Company API endpoints to use new image architecture
+
+v447 -> 2026-02-02 : https://github.com/inventree/InvenTree/pull/11242
+    - Adds "sub_part_active" filter to BomItem API endpoint
+
+v446 -> 2026-02-01 : https://github.com/inventree/InvenTree/pull/11232
+    - Allow ordering of test results by started_datetime and finished_datetime fields
+    - Allow ordering of test results by test_station field
+
+v445 -> 2026-01-29 : https://github.com/inventree/InvenTree/pull/11102
+    - Added "allocated_lines" field to SalesOrderSerializer to track fully allocated line items
+
+v444 -> 2026-01-27 : https://github.com/inventree/InvenTree/pull/11208
+    - Add customize option to disable theme loading from user profile (mainly for demo site use)
+
+v443 -> 2026-01-21 : https://github.com/inventree/InvenTree/pull/11177
+    - Adds IPN ordering option for BomItem API endpoint
+    - Adds IPN ordering option for BuildLine API endpoint
+
+v442 -> 2026-01-17 : https://github.com/inventree/InvenTree/pull/11157
+    - Typo fixes, no functional changes
+
+v441 -> 2026-01-17 : https://github.com/inventree/InvenTree/pull/11153
+    - Allow export of supplier part pricing data
+
+v440 -> 2026-01-15 : https://github.com/inventree/InvenTree/pull/10796
+    - Adds confirm and confirm_text to all settings
+
+v439 -> 2026-01-09 : https://github.com/inventree/InvenTree/pull/11092
+    - Add missing nullable annotations
+
+v438 -> 2026-01-09 : https://github.com/inventree/InvenTree/pull/11104
+    - Adds a simpler / faster health check endpoint at /api/system/health/
+
+v437 -> 2026-01-07 : https://github.com/inventree/InvenTree/pull/11084
+    - Adds generic parameter support for the StockLocation model
+
+v436 -> 2026-01-06 : https://github.com/inventree/InvenTree/pull/11035
+    - Removes model-specific metadata endpoints and replaces them with redirects
+    - Adds new generic /api/metadata/<model_name>/ endpoint to retrieve metadata for any model
 
 v435 -> 2025-12-16 : https://github.com/inventree/InvenTree/pull/11030
     - Adds token refresh endpoint to auth API

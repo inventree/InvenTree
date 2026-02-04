@@ -18,8 +18,8 @@ from InvenTree.api import (
     BulkDeleteMixin,
     BulkUpdateMixin,
     ListCreateDestroyAPIView,
-    MetadataView,
     ParameterListMixin,
+    meta_path,
 )
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import (
@@ -955,7 +955,9 @@ class PartMixin(SerializerContextMixin):
     """Mixin class for Part API endpoints."""
 
     serializer_class = part_serializers.PartSerializer
-    queryset = Part.objects.all().select_related('pricing_data')
+    queryset = (
+        Part.objects.all().select_related('pricing_data').prefetch_related('category')
+    )
 
     starred_parts = None
     is_create = False
@@ -1191,11 +1193,11 @@ class BomFilter(FilterSet):
 
     # Filters for linked 'part'
     part_active = rest_filters.BooleanFilter(
-        label='Assembly part is active', field_name='part__active'
+        label=_('Assembly part is active'), field_name='part__active'
     )
 
     part_trackable = rest_filters.BooleanFilter(
-        label='Assembly part is trackable', field_name='part__trackable'
+        label=_('Assembly part is trackable'), field_name='part__trackable'
     )
 
     part_testable = rest_filters.BooleanFilter(
@@ -1203,8 +1205,12 @@ class BomFilter(FilterSet):
     )
 
     # Filters for linked 'sub_part'
+    sub_part_active = rest_filters.BooleanFilter(
+        label=_('Component part is active'), field_name='sub_part__active'
+    )
+
     sub_part_trackable = rest_filters.BooleanFilter(
-        label='Component part is trackable', field_name='sub_part__trackable'
+        label=_('Component part is trackable'), field_name='sub_part__trackable'
     )
 
     sub_part_testable = rest_filters.BooleanFilter(
@@ -1212,15 +1218,15 @@ class BomFilter(FilterSet):
     )
 
     sub_part_assembly = rest_filters.BooleanFilter(
-        label='Component part is an assembly', field_name='sub_part__assembly'
+        label=_('Component part is an assembly'), field_name='sub_part__assembly'
     )
 
     sub_part_virtual = rest_filters.BooleanFilter(
-        label='Component part is virtual', field_name='sub_part__virtual'
+        label=_('Component part is virtual'), field_name='sub_part__virtual'
     )
 
     available_stock = rest_filters.BooleanFilter(
-        label='Has available stock', method='filter_available_stock'
+        label=_('Has available stock'), method='filter_available_stock'
     )
 
     def filter_available_stock(self, queryset, name, value):
@@ -1349,6 +1355,7 @@ class BomList(
         'attrition',
         'rounding_multiple',
         'sub_part',
+        'IPN',
         'available_stock',
         'allow_variants',
         'inherited',
@@ -1366,6 +1373,7 @@ class BomList(
     ordering_field_aliases = {
         'category': 'sub_part__category__name',
         'sub_part': 'sub_part__name',
+        'IPN': 'sub_part__IPN',
         'pricing_min': 'sub_part__pricing_data__overall_min',
         'pricing_max': 'sub_part__pricing_data__overall_max',
         'pricing_updated': 'sub_part__pricing_data__updated',
@@ -1444,13 +1452,7 @@ part_api_urls = [
                     path(
                         '<int:pk>/',
                         include([
-                            path(
-                                'metadata/',
-                                MetadataView.as_view(
-                                    model=PartCategoryParameterTemplate
-                                ),
-                                name='api-part-category-parameter-metadata',
-                            ),
+                            meta_path(PartCategoryParameterTemplate),
                             path(
                                 '',
                                 CategoryParameterDetail.as_view(),
@@ -1469,11 +1471,7 @@ part_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(model=PartCategory),
-                        name='api-part-category-metadata',
-                    ),
+                    meta_path(PartCategory),
                     # PartCategory detail endpoint
                     path('', CategoryDetail.as_view(), name='api-part-category-detail'),
                 ]),
@@ -1488,11 +1486,7 @@ part_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(model=PartTestTemplate),
-                        name='api-part-test-template-metadata',
-                    ),
+                    meta_path(PartTestTemplate),
                     path(
                         '',
                         PartTestTemplateDetail.as_view(),
@@ -1538,11 +1532,7 @@ part_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(model=PartRelated),
-                        name='api-part-related-metadata',
-                    ),
+                    meta_path(PartRelated),
                     path(
                         '', PartRelatedDetail.as_view(), name='api-part-related-detail'
                     ),
@@ -1590,9 +1580,7 @@ part_api_urls = [
                 'bom-validate/', PartValidateBOM.as_view(), name='api-part-bom-validate'
             ),
             # Part metadata
-            path(
-                'metadata/', MetadataView.as_view(model=Part), name='api-part-metadata'
-            ),
+            meta_path(Part),
             # Part pricing
             path('pricing/', PartPricingDetail.as_view(), name='api-part-pricing'),
             # Part detail endpoint
@@ -1610,11 +1598,7 @@ bom_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(model=BomItemSubstitute),
-                        name='api-bom-substitute-metadata',
-                    ),
+                    meta_path(BomItemSubstitute),
                     path(
                         '',
                         BomItemSubstituteDetail.as_view(),
@@ -1631,11 +1615,7 @@ bom_api_urls = [
         '<int:pk>/',
         include([
             path('validate/', BomItemValidate.as_view(), name='api-bom-item-validate'),
-            path(
-                'metadata/',
-                MetadataView.as_view(model=BomItem),
-                name='api-bom-item-metadata',
-            ),
+            meta_path(BomItem),
             path('', BomDetail.as_view(), name='api-bom-item-detail'),
         ]),
     ),

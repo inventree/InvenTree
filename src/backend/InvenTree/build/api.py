@@ -25,7 +25,7 @@ from build.status_codes import BuildStatus, BuildStatusGroups
 from common.filters import prefetch_related_images
 from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import StatusView
-from InvenTree.api import BulkDeleteMixin, MetadataView, ParameterListMixin
+from InvenTree.api import BulkDeleteMixin, ParameterListMixin, meta_path
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import (
     SEARCH_ORDER_FILTER_ALIAS,
@@ -597,6 +597,7 @@ class BuildLineList(
     output_options = BuildLineOutputOptions
     ordering_fields = [
         'part',
+        'IPN',
         'allocated',
         'category',
         'consumed',
@@ -615,6 +616,7 @@ class BuildLineList(
 
     ordering_field_aliases = {
         'part': 'bom_item__sub_part__name',
+        'IPN': 'bom_item__sub_part__IPN',
         'reference': 'bom_item__reference',
         'unit_quantity': 'bom_item__quantity',
         'category': 'bom_item__sub_part__category__name',
@@ -963,11 +965,7 @@ build_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(model=BuildItem),
-                        name='api-build-item-metadata',
-                    ),
+                    meta_path(BuildItem),
                     path('', BuildItemDetail.as_view(), name='api-build-item-detail'),
                 ]),
             ),
@@ -1010,11 +1008,7 @@ build_api_urls = [
             path('finish/', BuildFinish.as_view(), name='api-build-finish'),
             path('cancel/', BuildCancel.as_view(), name='api-build-cancel'),
             path('unallocate/', BuildUnallocate.as_view(), name='api-build-unallocate'),
-            path(
-                'metadata/',
-                MetadataView.as_view(model=Build),
-                name='api-build-metadata',
-            ),
+            meta_path(Build),
             path('', BuildDetail.as_view(), name='api-build-detail'),
         ]),
     ),
