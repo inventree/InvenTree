@@ -8,6 +8,8 @@ import structlog
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
 
+import common.models
+
 logger = structlog.get_logger('inventree')
 
 
@@ -17,7 +19,7 @@ def perform_stocktake(
     location_id: Optional[int] = None,
     exclude_external: Optional[bool] = None,
     generate_entry: bool = True,
-    report_output=None,
+    report_output: Optional[common.models.DataOutput] = None,
 ) -> None:
     """Capture a snapshot of stock-on-hand and stock value.
 
@@ -74,15 +76,24 @@ def perform_stocktake(
     else:
         location = None
 
+    if location is not None:
+        # Location limited, so we will disable saving of stocktake entries
+        generate_entry = False
+
     # New history entries to be created
     history_entries = []
-
-    N_BULK_CREATE = 250
 
     base_currency = currency_code_default()
     today = InvenTree.helpers.current_date()
 
     logger.info('Creating new stock history entries for %s parts', parts.count())
+
+    if report_output:
+        # Initialize progress on the report output
+        report_output.total = parts.count()
+        report_output.progress = 0
+        report_output.complete = False
+        report_output.save()
 
     for part in parts:
         # Is there a recent stock history record for this part?
@@ -138,22 +149,20 @@ def perform_stocktake(
             total_cost_max += entry_cost_max
 
         # Add a new stocktake entry for this part
-        if generate_entry:
-            history_entries.append(
-                part_models.PartStocktake(
-                    part=part,
-                    item_count=items_count,
-                    quantity=total_quantity,
-                    cost_min=total_cost_min,
-                    cost_max=total_cost_max,
-                )
+        history_entries.append(
+            part_models.PartStocktake(
+                part=part,
+                item_count=items_count,
+                quantity=total_quantity,
+                cost_min=total_cost_min,
+                cost_max=total_cost_max,
             )
+        )
 
-        # Batch create stock history entries
-        if len(history_entries) >= N_BULK_CREATE:
-            part_models.PartStocktake.objects.bulk_create(history_entries)
-            history_entries = []
-
-    if len(history_entries) > 0:
-        # Save any remaining stocktake entries
+    if generate_entry:
+        # Bulk-create PartStocktake entries
         part_models.PartStocktake.objects.bulk_create(history_entries)
+
+    if report_output:
+        # Save report data, and mark as complete
+        ...
