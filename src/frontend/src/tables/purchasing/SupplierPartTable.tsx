@@ -314,7 +314,8 @@ export function SupplierPartTable({
             part: partId,
             part_detail: true,
             supplier_detail: true,
-            manufacturer_detail: true
+            manufacturer_detail: true,
+            manufacturer_part_detail: true
           },
           rowActions: rowActions,
           enableDownload: true,
