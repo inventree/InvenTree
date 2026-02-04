@@ -30,6 +30,7 @@ import part.filters as part_filters
 import part.helpers as part_helpers
 import stock.models
 import users.models
+from data_exporter.mixins import DataExportSerializerMixin
 from importer.registry import register_importer
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.ready import isGeneratingSchema
@@ -1187,8 +1188,16 @@ class PartRequirementsSerializer(InvenTree.serializers.InvenTreeModelSerializer)
         return part.sales_order_allocation_count(include_variants=True, pending=True)
 
 
-class PartStocktakeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+class PartStocktakeSerializer(
+    DataExportSerializerMixin, InvenTree.serializers.InvenTreeModelSerializer
+):
     """Serializer for the PartStocktake model."""
+
+    export_child_fields = [
+        'part_detail.name',
+        'part_detail.IPN',
+        'part_detail.description',
+    ]
 
     class Meta:
         """Metaclass options."""
@@ -1204,6 +1213,8 @@ class PartStocktakeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'cost_min_currency',
             'cost_max',
             'cost_max_currency',
+            # Optional detail fields
+            'part_detail',
         ]
 
         read_only_fields = ['date', 'user']
@@ -1215,6 +1226,10 @@ class PartStocktakeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
     cost_max = InvenTree.serializers.InvenTreeMoneySerializer(allow_null=True)
     cost_max_currency = InvenTree.serializers.InvenTreeCurrencySerializer()
+
+    part_detail = PartBriefSerializer(
+        source='part', read_only=True, many=False, pricing=False
+    )
 
     def save(self):
         """Called when this serializer is saved."""

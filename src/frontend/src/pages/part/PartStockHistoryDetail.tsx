@@ -188,6 +188,7 @@ export default function PartStockHistoryDetail({
           props={{
             enableSelection: true,
             enableBulkDelete: true,
+            enableDownload: true,
             params: {
               part: partId,
               ordering: '-date'

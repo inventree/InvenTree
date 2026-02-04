@@ -1204,11 +1204,18 @@ class PartStocktakeFilter(FilterSet):
         fields = ['part']
 
 
-class PartStocktakeList(BulkDeleteMixin, ListCreateAPI):
+class PartStocktakeMixin:
+    """Mixin class for PartStocktake API endpoints."""
+
+    queryset = PartStocktake.objects.all().prefetch_related('part')
+    serializer_class = part_serializers.PartStocktakeSerializer
+
+
+class PartStocktakeList(
+    PartStocktakeMixin, DataExportViewMixin, BulkDeleteMixin, ListCreateAPI
+):
     """API endpoint for listing part stocktake information."""
 
-    queryset = PartStocktake.objects.all()
-    serializer_class = part_serializers.PartStocktakeSerializer
     filterset_class = PartStocktakeFilter
 
     def get_serializer_context(self):
@@ -1226,14 +1233,11 @@ class PartStocktakeList(BulkDeleteMixin, ListCreateAPI):
     ordering = '-pk'
 
 
-class PartStocktakeDetail(RetrieveUpdateDestroyAPI):
+class PartStocktakeDetail(PartStocktakeMixin, RetrieveUpdateDestroyAPI):
     """Detail API endpoint for a single PartStocktake instance.
 
     Note: Only staff (admin) users can access this endpoint.
     """
-
-    queryset = PartStocktake.objects.all()
-    serializer_class = part_serializers.PartStocktakeSerializer
 
 
 class BomFilter(FilterSet):
