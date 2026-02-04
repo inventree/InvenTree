@@ -1,5 +1,9 @@
 """Stock history functionality."""
 
+from typing import Optional
+
+from django.db.models import QuerySet
+
 import structlog
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
@@ -7,8 +11,15 @@ from djmoney.money import Money
 logger = structlog.get_logger('inventree')
 
 
-def perform_stocktake() -> None:
-    """Generate stock history entries for all active parts."""
+def perform_stocktake(parts: Optional[QuerySet] = None) -> None:
+    """Capture a snapshot of stock-on-hand and stock value.
+
+    Arguments:
+        parts: Optional queryset of parts to perform stocktake on. If not provided, all active parts will be processed.
+
+    The default implementation creates stocktake entries for all active parts,
+    and writes these stocktake entries to the database.
+    """
     import InvenTree.helpers
     import part.models as part_models
     from common.currency import currency_code_default
@@ -22,7 +33,8 @@ def perform_stocktake() -> None:
         'STOCKTAKE_EXCLUDE_EXTERNAL', False, cache=False
     )
 
-    active_parts = part_models.Part.objects.filter(active=True)
+    if parts is None:
+        parts = part_models.Part.objects.filter(active=True)
 
     # New history entries to be created
     history_entries = []
@@ -32,11 +44,9 @@ def perform_stocktake() -> None:
     base_currency = currency_code_default()
     today = InvenTree.helpers.current_date()
 
-    logger.info(
-        'Creating new stock history entries for %s active parts', active_parts.count()
-    )
+    logger.info('Creating new stock history entries for %s parts', parts.count())
 
-    for part in active_parts:
+    for part in parts:
         # Is there a recent stock history record for this part?
         if part_models.PartStocktake.objects.filter(
             part=part, date__gte=today
