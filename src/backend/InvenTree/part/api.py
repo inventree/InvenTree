@@ -1240,6 +1240,13 @@ class PartStocktakeDetail(PartStocktakeMixin, RetrieveUpdateDestroyAPI):
     """
 
 
+class PartStocktakeGenerate(CreateAPI):
+    """API endpoint for generating a PartStocktake instance."""
+
+    queryset = PartStocktake.objects.all()
+    serializer_class = part_serializers.PartStocktakeGenerateSerializer
+
+
 class BomFilter(FilterSet):
     """Custom filters for the BOM list."""
 
@@ -1607,6 +1614,11 @@ part_api_urls = [
                 '<int:pk>/',
                 PartStocktakeDetail.as_view(),
                 name='api-part-stocktake-detail',
+            ),
+            path(
+                'generate/',
+                PartStocktakeGenerate.as_view(),
+                name='api-part-stocktake-generate',
             ),
             path('', PartStocktakeList.as_view(), name='api-part-stocktake-list'),
         ]),

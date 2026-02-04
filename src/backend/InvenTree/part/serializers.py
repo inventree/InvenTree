@@ -1241,6 +1241,43 @@ class PartStocktakeSerializer(
         return super().save()
 
 
+class PartStocktakeGenerateSerializer(serializers.Serializer):
+    """Serializer for generating PartStocktake entries."""
+
+    class Meta:
+        """Metaclass options."""
+
+        fields = ['part', 'category', 'location', 'generate_report', 'output']
+
+    part = serializers.PrimaryKeyRelatedField(
+        queryset=Part.objects.all(), label=_('Part'), write_only=True, required=True
+    )
+
+    category = serializers.PrimaryKeyRelatedField(
+        queryset=PartCategory.objects.all(),
+        label=_('Category'),
+        write_only=True,
+        required=False,
+        allow_null=True,
+    )
+
+    location = serializers.PrimaryKeyRelatedField(
+        queryset=stock.models.StockLocation.objects.all(),
+        label=_('Location'),
+        write_only=True,
+        required=False,
+        allow_null=True,
+    )
+
+    generate_report = serializers.BooleanField(
+        label=_('Generate Report'), write_only=True, required=False, default=True
+    )
+
+    output = common.serializers.DataOutputSerializer(
+        read_only=True, many=False, label=_('Output')
+    )
+
+
 @extend_schema_field(
     serializers.CharField(
         help_text=_('Select currency from available options')
