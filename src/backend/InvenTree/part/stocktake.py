@@ -11,17 +11,33 @@ from djmoney.money import Money
 logger = structlog.get_logger('inventree')
 
 
-def perform_stocktake(parts: Optional[QuerySet] = None) -> None:
+def perform_stocktake(
+    parts: Optional[QuerySet] = None,
+    category_id: Optional[int] = None,
+    location_id: Optional[int] = None,
+    exclude_external: Optional[bool] = None,
+    generate_entry: bool = True,
+    report_output=None,
+) -> None:
     """Capture a snapshot of stock-on-hand and stock value.
 
     Arguments:
         parts: Optional queryset of parts to perform stocktake on. If not provided, all active parts will be processed.
+        category_id: Optional category ID to use to filter parts
+        location_id: Optional location ID to use to filter stock items
+        exclude_external: If True, exclude external stock items from the stocktake
+        generate_entry: If True, create stocktake entries in the database
+        report_output: Optional output destination for the stocktake report (e.g. for download)
 
     The default implementation creates stocktake entries for all active parts,
     and writes these stocktake entries to the database.
+
+    Alternatively, the scope of the stocktake can be limited by providing a queryset of parts,
+    or by providing a category ID or location ID to filter the parts/stock items.
     """
     import InvenTree.helpers
     import part.models as part_models
+    import stock.models as stock_models
     from common.currency import currency_code_default
     from common.settings import get_global_setting
 
@@ -29,12 +45,34 @@ def perform_stocktake(parts: Optional[QuerySet] = None) -> None:
         logger.info('Stocktake functionality is disabled - skipping')
         return
 
-    exclude_external = get_global_setting(
-        'STOCKTAKE_EXCLUDE_EXTERNAL', False, cache=False
-    )
+    # If exclude_external is not provided, use global setting
+    if exclude_external is None:
+        exclude_external = get_global_setting(
+            'STOCKTAKE_EXCLUDE_EXTERNAL', False, cache=False
+        )
 
     if parts is None:
         parts = part_models.Part.objects.filter(active=True)
+
+    # Filter part queryset by category, if provided
+    if category_id is not None:
+        # Filter parts by category (including subcategories)
+        try:
+            category = part_models.PartCategory.objects.get(id=category_id)
+            parts = parts.filter(
+                category__in=category.get_descendants(include_self=True)
+            )
+        except (ValueError, part_models.PartCategory.DoesNotExist):
+            pass
+
+    # Fetch location if provided
+    if location_id is not None:
+        try:
+            location = stock_models.StockLocation.objects.get(id=location_id)
+        except (ValueError, stock_models.StockLocation.DoesNotExist):
+            location = None
+    else:
+        location = None
 
     # New history entries to be created
     history_entries = []
@@ -48,16 +86,22 @@ def perform_stocktake(parts: Optional[QuerySet] = None) -> None:
 
     for part in parts:
         # Is there a recent stock history record for this part?
-        if part_models.PartStocktake.objects.filter(
-            part=part, date__gte=today
-        ).exists():
+        if (
+            generate_entry
+            and part_models.PartStocktake.objects.filter(
+                part=part, date__gte=today
+            ).exists()
+        ):
             continue
 
         pricing = part.pricing
 
         # Fetch all 'in stock' items for this part
         stock_items = part.stock_entries(
-            in_stock=True, include_external=not exclude_external, include_variants=True
+            location=location,
+            in_stock=True,
+            include_external=not exclude_external,
+            include_variants=True,
         )
 
         total_cost_min = Money(0, base_currency)
@@ -94,15 +138,16 @@ def perform_stocktake(parts: Optional[QuerySet] = None) -> None:
             total_cost_max += entry_cost_max
 
         # Add a new stocktake entry for this part
-        history_entries.append(
-            part_models.PartStocktake(
-                part=part,
-                item_count=items_count,
-                quantity=total_quantity,
-                cost_min=total_cost_min,
-                cost_max=total_cost_max,
+        if generate_entry:
+            history_entries.append(
+                part_models.PartStocktake(
+                    part=part,
+                    item_count=items_count,
+                    quantity=total_quantity,
+                    cost_min=total_cost_min,
+                    cost_max=total_cost_max,
+                )
             )
-        )
 
         # Batch create stock history entries
         if len(history_entries) >= N_BULK_CREATE:
