@@ -48,6 +48,46 @@ def get_model_options_for_mixin(mixin_class: type[Model]):
     return options
 
 
+def parameter_model_types():
+    """Return a list of valid parameter model choices."""
+    import InvenTree.models
+
+    return list(
+        InvenTree.helpers_model.getModelsWithMixin(
+            InvenTree.models.InvenTreeParameterMixin
+        )
+    )
+
+
+def parameter_model_options():
+    """Return a list of options for models which support parameters."""
+    return [
+        (model.__name__.lower(), model._meta.verbose_name)
+        for model in parameter_model_types()
+    ]
+
+
+def parameter_template_model_options():
+    """Return a list of options for models which support parameter templates."""
+    options = [
+        (model.__name__.lower(), model._meta.verbose_name)
+        for model in parameter_model_types()
+    ]
+
+    return [(None, _('All models')), *options]
+
+
+def attachment_model_types():
+    """Return a list of valid attachment model choices."""
+    import InvenTree.models
+
+    return list(
+        InvenTree.helpers_model.getModelsWithMixin(
+            InvenTree.models.InvenTreeAttachmentMixin
+        )
+    )
+
+
 def attachment_model_options():
     """Return a list of valid attachment model choices."""
     import InvenTree.models
