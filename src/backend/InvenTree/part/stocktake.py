@@ -71,8 +71,7 @@ def perform_stocktake(
     parts = parts.filter(active=True)
 
     # Prefetch related pricing information
-    parts = parts.select_related('pricing_data')
-    parts = parts.prefetch_related('stock_items')
+    parts = parts.prefetch_related('pricing_data', 'stock_items')
 
     # Filter part queryset by category, if provided
     if category_id is not None:
@@ -132,7 +131,7 @@ def perform_stocktake(
         ):
             continue
 
-        pricing = part.pricing
+        pricing = part.pricing_data
 
         # Fetch all 'in stock' items for this part
         stock_items = part.stock_entries(
@@ -156,20 +155,26 @@ def perform_stocktake(
         for item in stock_items:
             # Extract cost information
 
-            entry_cost_min = pricing.overall_min or pricing.overall_max
-            entry_cost_max = pricing.overall_max or pricing.overall_min
+            entry_cost_min = (
+                (pricing.overall_min or pricing.overall_max) if pricing else None
+            )
+            entry_cost_max = (
+                (pricing.overall_max or pricing.overall_min) if pricing else None
+            )
 
             if item.purchase_price is not None:
                 entry_cost_min = item.purchase_price
                 entry_cost_max = item.purchase_price
 
             try:
-                entry_cost_min = (
-                    convert_money(entry_cost_min, base_currency) * item.quantity
-                )
-                entry_cost_max = (
-                    convert_money(entry_cost_max, base_currency) * item.quantity
-                )
+                entry_cost_min = entry_cost_min * item.quantity
+                entry_cost_max = entry_cost_max * item.quantity
+
+                if entry_cost_min.currency != base_currency:
+                    entry_cost_min = convert_money(entry_cost_min, base_currency)
+
+                if entry_cost_max.currency != base_currency:
+                    entry_cost_max = convert_money(entry_cost_max, base_currency)
             except Exception:
                 entry_cost_min = Money(0, base_currency)
                 entry_cost_max = Money(0, base_currency)
@@ -182,7 +187,10 @@ def perform_stocktake(
 
         if report_output:
             report_output.progress += 1
-            report_output.save()
+
+            # Update report progress every few items, to avoid excessive database writes
+            if report_output.progress % 50 == 0:
+                report_output.save()
 
         # Add a new stocktake entry for this part
         history_entries.append(
