@@ -1964,7 +1964,7 @@ class StockItem(
 
         # Remove the equivalent number of items
         self.take_stock(
-            quantity, user, code=StockHistoryCode.STOCK_SERIZALIZED, notes=notes
+            quantity, user, code=StockHistoryCode.STOCK_SERIALIZED, notes=notes
         )
 
         return items

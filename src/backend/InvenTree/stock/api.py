@@ -1529,6 +1529,14 @@ class StockTrackingFilter(FilterSet):
         else:
             return queryset.filter(part=part)
 
+    min_date = InvenTreeDateFilter(
+        label=_('Date after'), field_name='date', lookup_expr='gt'
+    )
+
+    max_date = InvenTreeDateFilter(
+        label=_('Date before'), field_name='date', lookup_expr='lt'
+    )
+
 
 class StockTrackingList(
     SerializerContextMixin, DataExportViewMixin, OutputOptionsMixin, ListAPI

@@ -25,7 +25,12 @@ import {
 import { RenderUser } from '../../components/render/User';
 import { useTable } from '../../hooks/UseTable';
 import { DateColumn, DescriptionColumn } from '../ColumnRenderers';
-import { UserFilter } from '../Filter';
+import {
+  IncludeVariantsFilter,
+  MaxDateFilter,
+  MinDateFilter,
+  UserFilter
+} from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 type StockTrackingEntry = {
@@ -34,7 +39,13 @@ type StockTrackingEntry = {
   details: ReactNode;
 };
 
-export function StockTrackingTable({ itemId }: Readonly<{ itemId: number }>) {
+export function StockTrackingTable({
+  itemId,
+  partId
+}: Readonly<{
+  itemId?: number;
+  partId?: number;
+}>) {
   const navigate = useNavigate();
   const table = useTable('stock_tracking');
 
@@ -200,6 +211,9 @@ export function StockTrackingTable({ itemId }: Readonly<{ itemId: number }>) {
 
   const filters: TableFilter[] = useMemo(() => {
     return [
+      MinDateFilter(),
+      MaxDateFilter(),
+      IncludeVariantsFilter(),
       UserFilter({
         name: 'user',
         label: t`User`,
@@ -250,6 +264,7 @@ export function StockTrackingTable({ itemId }: Readonly<{ itemId: number }>) {
       props={{
         params: {
           item: itemId,
+          part: partId,
           user_detail: true
         },
         enableDownload: true,
