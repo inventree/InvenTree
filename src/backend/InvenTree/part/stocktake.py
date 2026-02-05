@@ -131,7 +131,10 @@ def perform_stocktake(
         ):
             continue
 
-        pricing = part.pricing_data
+        try:
+            pricing = part.pricing_data
+        except Exception:
+            pricing = None
 
         # Fetch all 'in stock' items for this part
         stock_items = part.stock_entries(
