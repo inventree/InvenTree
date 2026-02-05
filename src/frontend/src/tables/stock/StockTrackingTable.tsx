@@ -24,7 +24,7 @@ import {
 } from '../../components/render/Stock';
 import { RenderUser } from '../../components/render/User';
 import { useTable } from '../../hooks/UseTable';
-import { DateColumn, DescriptionColumn } from '../ColumnRenderers';
+import { DateColumn, DescriptionColumn, PartColumn } from '../ColumnRenderers';
 import {
   IncludeVariantsFilter,
   MaxDateFilter,
@@ -47,7 +47,7 @@ export function StockTrackingTable({
   partId?: number;
 }>) {
   const navigate = useNavigate();
-  const table = useTable('stock_tracking');
+  const table = useTable(partId ? 'part_stock_tracking' : 'stock_tracking');
 
   // Render "details" for a stock tracking record
   const renderDetails = useCallback(
@@ -227,6 +227,20 @@ export function StockTrackingTable({
       DateColumn({
         switchable: false
       }),
+      PartColumn({
+        title: t`Part`,
+        part: 'part_detail',
+        switchable: true,
+        hidden: !partId
+      }),
+      {
+        title: t`IPN`,
+        accessor: 'part_detail.IPN',
+        sortable: true,
+        defaultVisible: false,
+        switchable: true,
+        hidden: !partId
+      },
       DescriptionColumn({
         accessor: 'label'
       }),
@@ -265,10 +279,14 @@ export function StockTrackingTable({
         params: {
           item: itemId,
           part: partId,
+          part_detail: partId ? true : undefined,
+          item_detail: partId ? true : undefined,
           user_detail: true
         },
         enableDownload: true,
-        tableFilters: filters
+        tableFilters: filters,
+        modelType: partId ? ModelType.stockitem : undefined,
+        modelField: 'item'
       }}
     />
   );
