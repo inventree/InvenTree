@@ -1,8 +1,9 @@
+import type { Page } from '@playwright/test';
 import { test } from '../baseFixtures.js';
 import { doCachedLogin } from '../login.js';
 import { setPluginState } from '../settings.js';
 
-const resetDashboard = async (page) => {
+const resetDashboard = async (page: Page) => {
   await page.getByLabel('dashboard-menu').click();
   await page.getByRole('menuitem', { name: 'Clear Widgets' }).click();
 };
