@@ -22,7 +22,6 @@ from sql_util.utils import SubqueryCount
 
 import common.currency
 import common.filters
-import common.models
 import common.serializers
 import company.models
 import InvenTree.helpers
@@ -42,7 +41,6 @@ from InvenTree.serializers import (
     FilterableListSerializer,
     enable_filter,
 )
-from InvenTree.tasks import offload_task
 from users.serializers import UserSerializer
 
 from .models import (
@@ -1191,15 +1189,11 @@ class PartRequirementsSerializer(InvenTree.serializers.InvenTreeModelSerializer)
 
 
 class PartStocktakeSerializer(
-    DataExportSerializerMixin, InvenTree.serializers.InvenTreeModelSerializer
+    InvenTree.serializers.FilterableSerializerMixin,
+    DataExportSerializerMixin,
+    InvenTree.serializers.InvenTreeModelSerializer,
 ):
     """Serializer for the PartStocktake model."""
-
-    export_child_fields = [
-        'part_detail.name',
-        'part_detail.IPN',
-        'part_detail.description',
-    ]
 
     class Meta:
         """Metaclass options."""
@@ -1207,8 +1201,11 @@ class PartStocktakeSerializer(
         model = PartStocktake
         fields = [
             'pk',
-            'date',
             'part',
+            'part_name',
+            'part_ipn',
+            'part_description',
+            'date',
             'item_count',
             'quantity',
             'cost_min',
@@ -1221,6 +1218,15 @@ class PartStocktakeSerializer(
 
         read_only_fields = ['date', 'user']
 
+    def __init__(self, *args, **kwargs):
+        """Custom initialization for PartStocktakeSerializer."""
+        exclude_pk = kwargs.pop('exclude_pk', False)
+
+        super().__init__(*args, **kwargs)
+
+        if exclude_pk:
+            self.fields.pop('pk', None)
+
     quantity = serializers.FloatField()
 
     cost_min = InvenTree.serializers.InvenTreeMoneySerializer(allow_null=True)
@@ -1229,8 +1235,21 @@ class PartStocktakeSerializer(
     cost_max = InvenTree.serializers.InvenTreeMoneySerializer(allow_null=True)
     cost_max_currency = InvenTree.serializers.InvenTreeCurrencySerializer()
 
-    part_detail = PartBriefSerializer(
-        source='part', read_only=True, many=False, pricing=False
+    part_name = serializers.CharField(
+        source='part.name', read_only=True, label=_('Part Name')
+    )
+
+    part_ipn = serializers.CharField(
+        source='part.IPN', read_only=True, label=_('Part IPN')
+    )
+
+    part_description = serializers.CharField(
+        source='part.description', read_only=True, label=_('Part Description')
+    )
+
+    part_detail = enable_filter(
+        PartBriefSerializer(source='part', read_only=True, many=False, pricing=False),
+        default_include=False,
     )
 
     def save(self):
@@ -1261,7 +1280,9 @@ class PartStocktakeGenerateSerializer(serializers.Serializer):
     part = serializers.PrimaryKeyRelatedField(
         queryset=Part.objects.all(),
         label=_('Part'),
-        write_only=True,
+        help_text=_(
+            'Select a part to generate stocktake information for that part (and any variant parts)'
+        ),
         required=False,
         allow_null=True,
     )
@@ -1269,7 +1290,9 @@ class PartStocktakeGenerateSerializer(serializers.Serializer):
     category = serializers.PrimaryKeyRelatedField(
         queryset=PartCategory.objects.all(),
         label=_('Category'),
-        write_only=True,
+        help_text=_(
+            'Select a category to include all parts within that category (and subcategories)'
+        ),
         required=False,
         allow_null=True,
     )
@@ -1277,60 +1300,32 @@ class PartStocktakeGenerateSerializer(serializers.Serializer):
     location = serializers.PrimaryKeyRelatedField(
         queryset=stock.models.StockLocation.objects.all(),
         label=_('Location'),
-        write_only=True,
+        help_text=_(
+            'Select a location to include all parts with stock in that location (including sub-locations)'
+        ),
         required=False,
         allow_null=True,
     )
 
     generate_entry = serializers.BooleanField(
         label=_('Generate Stocktake Entries'),
+        help_text=_('Save stocktake entries for the selected parts'),
         write_only=True,
         required=False,
         default=False,
     )
 
     generate_report = serializers.BooleanField(
-        label=_('Generate Report'), write_only=True, required=False, default=False
+        label=_('Generate Report'),
+        help_text=_('Generate a stocktake report for the selected parts'),
+        write_only=True,
+        required=False,
+        default=False,
     )
 
     output = common.serializers.DataOutputSerializer(
         read_only=True, many=False, label=_('Output')
     )
-
-    def save(self):
-        """Perform stocktake generation."""
-        import part.stocktake as part_stocktake
-
-        data = self.validated_data
-
-        part = data.get('part', None)
-        category = data.get('category', None)
-        location = data.get('location', None)
-
-        # Do we want to generate a report?
-        if data.get('generate_report', True):
-            report_output = common.models.DataOutput.objects.create(
-                user=self.context.get('request').user
-                if self.context.get('request')
-                else None,
-                output_type='stocktake',
-            )
-        else:
-            report_output = None
-
-        offload_task(
-            part_stocktake.perform_stocktake,
-            part_id=part.pk if part else None,
-            category_id=category.pk if category else None,
-            location_id=location.pk if location else None,
-            generate_entry=data.get('generate_entry', True),
-            report_output_id=report_output.pk if report_output else None,
-            group='stocktake',
-        )
-
-        self.instance = {'output': report_output.pk}
-
-        return self.instance
 
 
 @extend_schema_field(

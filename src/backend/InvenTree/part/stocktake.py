@@ -5,10 +5,12 @@ from typing import Optional
 from django.core.files.base import ContentFile
 
 import structlog
+import tablib
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
 
 import common.models
+from InvenTree.helpers import current_date
 
 logger = structlog.get_logger('inventree')
 
@@ -146,6 +148,11 @@ def perform_stocktake(
         total_quantity = 0
         items_count = 0
 
+        if stock_items.count() == 0:
+            # No stock items - skip this part if location is specified
+            if location:
+                continue
+
         for item in stock_items:
             # Extract cost information
 
@@ -195,13 +202,23 @@ def perform_stocktake(
     if report_output:
         # Save report data, and mark as complete
 
-        serializer = part_serializers.PartStocktakeSerializer(
-            history_entries, many=True, context={'request': None}
-        )
+        today = current_date()
 
-        datafile = serializer.export_to_file(
-            history_entries, serializer.generate_headers(), 'csv'
-        )
+        serializer = part_serializers.PartStocktakeSerializer(exclude_pk=True)
+
+        headers = serializer.generate_headers()
+
+        # Export the data to a file
+        dataset = tablib.Dataset(headers=list(headers.values()))
+
+        header_keys = list(headers.keys())
+
+        for entry in history_entries:
+            entry.date = today
+            row = serializer.to_representation(entry)
+            dataset.append([row.get(header, '') for header in header_keys])
+
+        datafile = dataset.export('csv')
 
         report_output.mark_complete(
             output=ContentFile(datafile, 'stocktake_report.csv')
