@@ -14,18 +14,18 @@ In particular, an individual *Stocktake* record tracks the following information
 - A reference to the [part](./index.md) which is being counted
 - The total number of individual [stock items](../stock/index.md) available
 - The total stock quantity of available stock
-- The total cost of stock on hand
+- The total value range of stock on hand
 
 ### Stock Items vs Stock Quantity
 
 *Stock Items* refers to the number of stock entries (e.g. *"3 reels of capacitors"*). *Stock Quantity* refers to the total cumulative stock count (e.g. *"4,560 total capacitors"*).
 
-### Cost of Stock on Hand
+### Value Range of Stock on Hand
 
-The total cost of stock on hand is calculated based on the provided pricing data. For stock items which have a recorded *cost* (e.g. *purchase price*), this value is used. If no direct pricing information is available for a particular stock item, the price range of the part itself is used.
+The total value range of stock on hand is calculated based on the provided pricing data. For stock items which have a recorded *cost* (e.g. *purchase price*), this value is used. If no direct pricing information is available for a particular stock item, the price range of the part itself is used.
 
-!!! info "Cost Range"
-    Cost data is provided as a *range* of values, accounting for any variability in available pricing data.
+!!! info "Value Range"
+    Value data is provided as a *range* of values, accounting for any variability in available pricing data.
 
 ### Display Historical Stock Data
 
@@ -38,6 +38,44 @@ This tab displays a chart of historical stock quantity and cost data, and corres
 If this tab is not visible, ensure that the *Enable Stock History* [user setting](../settings/user.md) is enabled in the *Display Settings* section.
 
 {{ image("part/part_stocktake_enable_tab.png", "Enable stock history tab") }}
+
+### Stocktake Entry Generation
+
+By default, stocktake entries are generated automatically at regular intervals (see [settings](#stock-history-settings) below). However, users can generate a stocktake entry on demand, using the *Generate Stocktake Entry* button in the *Stock History* tab:
+
+{{ image("part/part_stocktake_manual.png", "Generate stocktake entry") }}
+
+This will schedule the generation of a new stocktake entry for the selected part, and the new entry will be visible in the stock history data once the generation process is complete.
+
+## Stocktake Reports
+
+In addition to the part stocktake entries, which are periodically generated for all parts in the database, users can also generate a stocktake *report*, against a particular set of input parameters. Instead of generating a stocktake entry for a single part, this process generates a report which contains stocktake data for all parts which match the specified parameters.
+
+The generated report (once completed) will be available for download as a CSV file, and will contain the stocktake entry data for all parts which match the specified parameters.
+
+### Report Options
+
+The following parameters can be specified when generating a stocktake report:
+
+| Parameter | Description |
+| --------- | ----------- |
+| Part | If provided, the report will only include stocktake data for the specified part, including and variant parts. If left blank, the report will include data for all parts in the database. |
+| Category | If provided, the report will only include stocktake data for parts which belong to the specified category, including any sub-categories. If left blank, the report will include data for all parts in the database. |
+| Location | If provided, the report will only include stocktake data for parts which have stock items located at the specified location, including any sub-locations. If left blank, the report will include data for all parts in the database. |
+
+### Generating a Stocktake Report
+
+The following methods for generating a stocktake report via the user interface are available:
+
+#### Dashboard Widget
+
+A dashboard widget is available for generating stocktake reports, which can be added to any dashboard view:
+
+{{ image("part/stocktake_report_dashboard.png", "Stocktake dashboard widget") }}
+
+Here, the user can specify the report parameters, and then click the *Generate Report* button to generate a new stocktake report based on the specified parameters.
+
+#### Admin Center
 
 ## Stock History Settings
 
