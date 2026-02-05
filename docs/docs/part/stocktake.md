@@ -75,8 +75,6 @@ A dashboard widget is available for generating stocktake reports, which can be a
 
 Here, the user can specify the report parameters, and then click the *Generate Report* button to generate a new stocktake report based on the specified parameters.
 
-#### Admin Center
-
 ## Stock History Settings
 
 There are a number of configuration options available in the [settings view](../settings/global.md):
