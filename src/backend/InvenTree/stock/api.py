@@ -1490,6 +1490,46 @@ class StockTrackingOutputOptions(OutputConfiguration):
     ]
 
 
+class StockTrackingFilter(FilterSet):
+    """API filter options for the StockTrackingList endpoint."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = StockItemTracking
+        fields = ['item', 'user']
+
+    include_variants = rest_filters.BooleanFilter(
+        label=_('Include Part Variants'), method='filter_include_variants'
+    )
+
+    def filter_include_variants(self, queryset, name, value):
+        """Filter by whether or not to include part variants.
+
+        Note:
+        - This filter does nothing by itself, and is only used to modify the behavior of the 'part' filter.
+        - Refer to the 'filter_part' method for more information on how this works.
+        """
+        return queryset
+
+    part = rest_filters.ModelChoiceFilter(
+        label=_('Part'), queryset=Part.objects.all(), method='filter_part'
+    )
+
+    def filter_part(self, queryset, name, part):
+        """Filter StockTracking entries by the linked part.
+
+        Note:
+        - This filter behavior also takes into account the 'include_variants' filter, which determines whether or not to include part variants in the results.
+        """
+        include_variants = str2bool(self.data.get('include_variants', False))
+
+        if include_variants:
+            return queryset.filter(part__in=part.get_descendants(include_self=True))
+        else:
+            return queryset.filter(part=part)
+
+
 class StockTrackingList(
     SerializerContextMixin, DataExportViewMixin, OutputOptionsMixin, ListAPI
 ):
@@ -1501,8 +1541,9 @@ class StockTrackingList(
     - GET: Return list of StockItemTracking objects
     """
 
-    queryset = StockItemTracking.objects.all()
+    queryset = StockItemTracking.objects.all().prefetch_related('item', 'part')
     serializer_class = StockSerializers.StockTrackingSerializer
+    filterset_class = StockTrackingFilter
     output_options = StockTrackingOutputOptions
 
     def get_delta_model_map(self) -> dict:
@@ -1597,8 +1638,6 @@ class StockTrackingList(
         )
 
     filter_backends = SEARCH_ORDER_FILTER
-
-    filterset_fields = ['item', 'user']
 
     ordering = '-date'
 
