@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 447
+INVENTREE_API_VERSION = 448
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v448 -> 2026-02-05 : https://github.com/inventree/InvenTree/pull/11257
+    - Adds API endpoint for manually generating a stocktake entry
 
 v447 -> 2026-02-02 : https://github.com/inventree/InvenTree/pull/11242
     - Adds "sub_part_active" filter to BomItem API endpoint
