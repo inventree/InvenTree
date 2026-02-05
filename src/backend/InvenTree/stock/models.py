@@ -2869,21 +2869,18 @@ def after_save_stock_item(sender, instance: StockItem, created, **kwargs):
 class StockItemTracking(InvenTree.models.InvenTreeModel):
     """Stock tracking entry - used for tracking history of a particular StockItem.
 
-    Note: 2021-05-11
-    The legacy StockTrackingItem model contained very little information about the "history" of the item.
-    In fact, only the "quantity" of the item was recorded at each interaction.
-    Also, the "title" was translated at time of generation, and thus was not really translatable.
-    The "new" system tracks all 'delta' changes to the model,
-    and tracks change "type" which can then later be translated
-
-
     Attributes:
         item: ForeignKey reference to a particular StockItem
+        part: ForeignKey reference to the Part associated with this StockItem
         date: Date that this tracking info was created
         tracking_type: The type of tracking information
         notes: Associated notes (input by user)
         user: The user associated with this tracking info
         deltas: The changes associated with this history item
+
+    Notes:
+        If the underlying stock item is deleted, the "item" field will be set to null, but the tracking information will be retained.
+        The tracking data will be removed if the associated part is deleted, as the tracking information is not relevant without the part context.
     """
 
     class Meta:
@@ -2895,6 +2892,13 @@ class StockItemTracking(InvenTree.models.InvenTreeModel):
     def get_api_url():
         """Return API url."""
         return reverse('api-stock-tracking-list')
+
+    def save(self, *args, **kwargs):
+        """Ensure that the 'part' link is always correct."""
+        if self.item:
+            self.part = self.item.part
+
+        super().save(*args, **kwargs)
 
     def get_absolute_url(self):
         """Return url for instance."""
@@ -2910,7 +2914,19 @@ class StockItemTracking(InvenTree.models.InvenTreeModel):
     tracking_type = models.IntegerField(default=StockHistoryCode.LEGACY)
 
     item = models.ForeignKey(
-        StockItem, on_delete=models.CASCADE, related_name='tracking_info'
+        StockItem,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=False,
+        related_name='tracking_info',
+    )
+
+    part = models.ForeignKey(
+        'part.part',
+        on_delete=models.CASCADE,
+        related_name='stock_tracking_info',
+        null=True,
+        blank=True,
     )
 
     date = models.DateTimeField(auto_now_add=True, editable=False)
