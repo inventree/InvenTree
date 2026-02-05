@@ -6,6 +6,7 @@ import type { TableColumn } from '@lib/types/Tables';
 import { t } from '@lingui/core/macro';
 import { type ChartTooltipProps, LineChart } from '@mantine/charts';
 import {
+  Accordion,
   Center,
   Divider,
   Loader,
@@ -15,6 +16,7 @@ import {
 } from '@mantine/core';
 import dayjs from 'dayjs';
 import { useCallback, useMemo, useState } from 'react';
+import { StylishText } from '../../components/items/StylishText';
 import { formatDate, formatPriceRange } from '../../defaults/formatters';
 import { partStocktakeFields } from '../../forms/PartForms';
 import {
@@ -25,6 +27,7 @@ import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import { DecimalColumn } from '../../tables/ColumnRenderers';
 import { InvenTreeTable } from '../../tables/InvenTreeTable';
+import { StockTrackingTable } from '../../tables/stock/StockTrackingTable';
 
 /*
  * Render a tooltip for the chart, with correct date information
@@ -62,9 +65,7 @@ function ChartTooltip({ label, payload }: Readonly<ChartTooltipProps>) {
   );
 }
 
-export default function PartStockHistoryDetail({
-  partId
-}: Readonly<{ partId: number }>) {
+export function PartStocktakePanel({ partId }: Readonly<{ partId: number }>) {
   const user = useUserState();
   const table = useTable('part-stocktake');
 
@@ -252,5 +253,30 @@ export default function PartStockHistoryDetail({
         )}
       </SimpleGrid>
     </>
+  );
+}
+
+export default function PartStockHistoryDetail({
+  partId
+}: Readonly<{ partId: number }>) {
+  return (
+    <Accordion multiple defaultValue={['stocktake']}>
+      <Accordion.Item value='tracking'>
+        <Accordion.Control>
+          <StylishText size='lg'>{t`Stock Tracking History`}</StylishText>
+        </Accordion.Control>
+        <Accordion.Panel>
+          <StockTrackingTable partId={partId} />
+        </Accordion.Panel>
+      </Accordion.Item>
+      <Accordion.Item value='stocktake'>
+        <Accordion.Control>
+          <StylishText size='lg'>{t`Stocktake Entries`}</StylishText>
+        </Accordion.Control>
+        <Accordion.Panel>
+          <PartStocktakePanel partId={partId} />
+        </Accordion.Panel>
+      </Accordion.Item>
+    </Accordion>
   );
 }
