@@ -1842,6 +1842,7 @@ class StockItem(
 
         entry = StockItemTracking(
             item=self,
+            part=self.part,
             tracking_type=entry_type.value,
             user=user,
             date=InvenTree.helpers.current_time(),
