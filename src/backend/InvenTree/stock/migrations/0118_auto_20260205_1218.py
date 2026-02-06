@@ -30,6 +30,19 @@ def add_part_links(apps, schema_editor):
         print(f"\nUpdated {len(history_entries)} StockItemTracking entries with part links")
 
 
+def remove_null_items(apps, schema_editor):
+    """Reverse migration - remove any StockItemTracking entries which have a null item link."""
+
+    StockItemTracking = apps.get_model('stock', 'StockItemTracking')
+
+    null_items = StockItemTracking.objects.filter(item__isnull=True)
+
+    count = null_items.count()
+
+    if count > 0:
+        null_items.delete()
+        print(f"\nDeleted {count} StockItemTracking entries with null item links")
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -39,6 +52,6 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RunPython(
             add_part_links,
-            reverse_code=migrations.RunPython.noop,
+            reverse_code=remove_null_items,
         )
     ]
