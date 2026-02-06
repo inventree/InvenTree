@@ -2282,10 +2282,11 @@ class TransferOrderCompleteSerializer(OrderAdjustSerializer):
 
     def validate_accept_incomplete(self, value):
         """Check if the 'accept_incomplete' field is required."""
-        order = self.context['order']
+        # order = self.context['order']
 
-        if not value and not order.is_completed():
-            raise ValidationError(_('Order has incomplete allocations'))
+        # TODO: this is broken. I don't want to check if the whole order is completed, I want to check allocation counts
+        # if not value and not order.is_completed():
+        #     raise ValidationError(_('Order has incomplete allocations'))
 
         return value
 
