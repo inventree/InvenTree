@@ -251,7 +251,11 @@ export function StockTrackingTable({
           const item = record.item_detail;
           if (!item) {
             return (
-              <Text c='red' size='sm' fs='italic'>{t`Stock item removed`}</Text>
+              <Text
+                c='red'
+                size='xs'
+                fs='italic'
+              >{t`Stock item no longer exists`}</Text>
             );
           } else if (item.serial && item.quantity == 1) {
             return `${t`Serial`} #${item.serial}`;
