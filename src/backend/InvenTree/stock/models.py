@@ -1360,7 +1360,7 @@ class StockItem(
         item.save(add_note=False)
 
         code = StockHistoryCode.SENT_TO_CUSTOMER
-        deltas = {'quantity': quantity}
+        deltas = {'quantity': float(quantity)}
 
         if customer is not None:
             deltas['customer'] = customer.pk
@@ -1442,7 +1442,9 @@ class StockItem(
                 item = self.splitStock(quantity, None, user)
 
         tracking_info = {
-            'quantity': quantity if quantity is not None else item.quantity
+            'quantity': float(quantity)
+            if quantity is not None
+            else float(item.quantity)
         }
 
         if location:
