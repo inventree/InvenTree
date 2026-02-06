@@ -415,7 +415,9 @@ class Order(
         """Generate context data for the reporting interface."""
         return {
             'description': self.description,
-            'extra_lines': self.extra_lines,
+            'extra_lines': getattr(
+                self, 'extra_lines', None
+            ),  # Transfer Order doesn't have extra lines
             'lines': self.lines,
             'order': self,
             'reference': self.reference,

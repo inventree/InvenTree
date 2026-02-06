@@ -225,6 +225,13 @@ class ReportConfig(AppConfig):
                 'filename_pattern': 'ReturnOrder-{{ reference }}.pdf',
             },
             {
+                'file': 'inventree_transfer_order_report.html',
+                'name': 'InvenTree Transfer Order',
+                'description': 'Sample transfer order report',
+                'model_type': 'transferorder',
+                'filename_pattern': 'TransferOrder-{{ reference }}.pdf',
+            },
+            {
                 'file': 'inventree_test_report.html',
                 'name': 'InvenTree Test Report',
                 'description': 'Sample stock item test report',
