@@ -241,6 +241,25 @@ export function StockTrackingTable({
         switchable: true,
         hidden: !partId
       },
+      {
+        accessor: 'item',
+        title: t`Stock Item`,
+        sortable: false,
+        switchable: false,
+        hidden: !partId,
+        render: (record: any) => {
+          const item = record.item_detail;
+          if (!item) {
+            return (
+              <Text c='red' size='sm' fs='italic'>{t`Stock item removed`}</Text>
+            );
+          } else if (item.serial && item.quantity == 1) {
+            return `${t`Serial`} #${item.serial}`;
+          } else {
+            return `${t`Item ID`} ${item.pk}`;
+          }
+        }
+      },
       DescriptionColumn({
         accessor: 'label'
       }),

@@ -209,7 +209,7 @@ export function PartStocktakePanel({ partId }: Readonly<{ partId: number }>) {
       {newStocktakeEntry.modal}
       {editStocktakeEntry.modal}
       {deleteStocktakeEntry.modal}
-      <SimpleGrid cols={{ base: 1, md: 2 }}>
+      <SimpleGrid cols={{ base: 1, lg: 2 }}>
         <InvenTreeTable
           url={apiUrl(ApiEndpoints.part_stocktake_list)}
           tableState={table}
@@ -293,7 +293,7 @@ export default function PartStockHistoryDetail({
     <Accordion multiple defaultValue={['stocktake']}>
       <Accordion.Item value='tracking'>
         <Accordion.Control>
-          <StylishText size='lg'>{t`Stock Tracking History`}</StylishText>
+          <StylishText size='lg'>{t`Stock Tracking`}</StylishText>
         </Accordion.Control>
         <Accordion.Panel>
           <StockTrackingTable partId={partId} />
