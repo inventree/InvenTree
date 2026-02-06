@@ -23,9 +23,9 @@ def forwards_migrate_part_images(apps, schema_editor):
 
     Part = apps.get_model('part', 'Part')
     InvenTreeImage = apps.get_model('common', 'InvenTreeImage')
-    ContentType = apps.get_model('contenttypes', 'ContentType')
+    ContentTypes = apps.get_model('contenttypes', 'ContentType')
 
-    part_ct = ContentType.objects.get_for_model(Part)
+    part_ct, _created = ContentTypes.objects.get_or_create(app_label='part', model='part')
 
     # A mapping from hash → stored filename in the ImageField storage
     saved_files = {}
@@ -72,9 +72,10 @@ def reverse_images(apps, schema_editor):
     """Reverse migration: move InvenTreeImage back to Part.image."""
     Part = apps.get_model('part', 'Part')
     InvenTreeImage = apps.get_model('common', 'InvenTreeImage')
-    ContentType = apps.get_model('contenttypes', 'ContentType')
+    ContentTypes = apps.get_model('contenttypes', 'ContentType')
 
-    part_ct = ContentType.objects.get_for_model(Part)
+    part_ct, _created = ContentTypes.objects.get_or_create(app_label='part', model='part')
+
     for img in InvenTreeImage.objects.filter(content_type=part_ct, primary=True):
         try:
             part = Part.objects.get(pk=img.object_id)
@@ -89,7 +90,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('part', '0142_remove_part_last_stocktake_remove_partstocktake_note_and_more'),
-        ('common', '0041_migrate_company_images'),
+        ('common', '0042_inventreeimage'),
         ('contenttypes', '0002_remove_content_type_name'),
     ]
 

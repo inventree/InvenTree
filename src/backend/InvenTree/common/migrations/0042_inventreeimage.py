@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('contenttypes', '0002_remove_content_type_name'),
-        ('common', '0039_emailthread_emailmessage'),
+        ('common', '0041_auto_20251203_1244'),
     ]
 
     operations = [

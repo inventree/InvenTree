@@ -2041,7 +2041,7 @@ class InvenTreeImage(models.Model):
     def get_thumbnail_url(self) -> str:
         """Return the URL of the image thumbnail for this part."""
         if self.image:
-            return helpers.getMediaUrl(self.image.thumbnail.url)
+            return helpers.getMediaUrl(self.image.thumbnail)
         return helpers.getBlankThumbnail()
 
 

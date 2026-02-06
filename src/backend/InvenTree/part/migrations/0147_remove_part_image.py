@@ -7,7 +7,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('part', '0146_auto_20251203_1241'),
-        ('common', '0042_migrate_part_images'),
+        ('common', '0043_migrate_part_images'),
     ]
 
     operations = [

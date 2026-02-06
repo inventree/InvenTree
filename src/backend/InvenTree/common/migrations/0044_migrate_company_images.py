@@ -16,9 +16,9 @@ def forwards_migrate_company_images(apps, schema_editor):
 
     Company = apps.get_model('company', 'Company')
     InvenTreeImage = apps.get_model('common', 'InvenTreeImage')
-    ContentType = apps.get_model('contenttypes', 'ContentType')
+    ContentTypes = apps.get_model('contenttypes', 'ContentType')
 
-    company_ct = ContentType.objects.get_for_model(Company)
+    company_ct, _created = ContentTypes.objects.get_or_create(app_label='company', model='company')
 
     # Iterate over all companies that have an image set
     for comp in Company.objects.exclude(image__isnull=True).exclude(image=''):
@@ -50,9 +50,9 @@ def reverse_images(apps, schema_editor):
     Company = apps.get_model('company', 'Company')
     InvenTreeImage = apps.get_model('common', 'InvenTreeImage')
     
-    ContentType = apps.get_model('contenttypes', 'ContentType')
+    ContentTypes = apps.get_model('contenttypes', 'ContentType')
 
-    company_ct = ContentType.objects.get_for_model(Company)
+    company_ct, _created = ContentTypes.objects.get_or_create(app_label='company', model='company')
     
     # Get all InvenTreeImages for Company objects
     company_images = InvenTreeImage.objects.filter(
@@ -74,7 +74,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('company', '0075_company_tax_id'),
-        ('common', '0040_inventreeimage'),  
+        ('common', '0043_migrate_part_images'),  
         ('contenttypes', '0002_remove_content_type_name'),
     ]
 

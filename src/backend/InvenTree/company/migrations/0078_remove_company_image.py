@@ -6,8 +6,8 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('company', '0075_company_tax_id'),
-        ('common', '0041_migrate_company_images'),
+        ('company', '0077_delete_manufacturerpartparameter'),
+        ('common', '0044_migrate_company_images'),
     ]
 
     operations = [

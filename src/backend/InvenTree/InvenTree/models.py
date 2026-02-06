@@ -1,5 +1,6 @@
 """Generic models which provide extra functionality over base Django model types."""
 
+from collections.abc import Callable
 from datetime import datetime
 from string import Formatter
 from typing import Optional
@@ -1471,6 +1472,8 @@ class InvenTreeImageMixin(models.Model):
     Provides a GenericRelation back to InvenTreeImage, plus helpers for primary image logic.
     """
 
+    IMAGE_RENAME: Callable | None = None
+
     # if True, only one image may ever be attached
     single_image = False
 
@@ -1485,6 +1488,10 @@ class InvenTreeImageMixin(models.Model):
         """Metaclass options for this mixin."""
 
         abstract = True
+
+    def rename_image(self, filename):
+        """Rename the uploaded image file using the IMAGE_RENAME function."""
+        return self.IMAGE_RENAME(filename)  # type: ignore
 
     def save_image(self, file, file_name, primary=False):
         """Save an image to this instance.
