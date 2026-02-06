@@ -1264,7 +1264,7 @@ class StockTrackingSerializer(
 
     item_detail = enable_filter(
         StockItemSerializer(source='item', many=False, read_only=True, allow_null=True),
-        prefetch_fields=['item'],
+        prefetch_fields=['item', 'item__part'],
     )
 
     part_detail = enable_filter(
@@ -1272,6 +1272,7 @@ class StockTrackingSerializer(
             source='part', many=False, read_only=True, allow_null=True
         ),
         default_include=False,
+        prefetch_fields=['part'],
     )
 
     user_detail = enable_filter(
