@@ -30,7 +30,7 @@ From the main menu, users can access the following items:
 
 As well as allowing navigation to the following main sections:
 
-- [Parts](../parts/index.md)
+- [Parts](../part/index.md)
 - [Stock](../stock/index.md)
 - [Manufacturing](../manufacturing/index.md)
 - [Purchasing](../purchasing/index.md)
@@ -58,8 +58,8 @@ The user menu is located in the top-right corner of the interface and provides a
 
 The user menu provides access to the following items:
 
-- **User Settings:** Access to [user-specific](../settings/user.md) settings, such as profile information and preferences.
-- **System Settings:** Access to [system-wide](../settings/system.md) settings, such as configuration options and system information. *Note: Access to system settings may be restricted based on user permissions.*
+- **User Settings:** Access to [user settings](../settings/user.md).
+- **System Settings:** Access to [global settings](../settings/global.md) settings. *Note: Access to system settings may be restricted based on user permissions.*
 - **Admin Interface:** Access to the [admin interface](../settings/admin.md) for data management. *Note: Access to the admin interface may be restricted based on user permissions.*
 - **Change Color Mode:** Toggle between light and dark color modes.
 - **About InvenTree:** View version and license information about InvenTree.
