@@ -37,7 +37,11 @@ from sql_util.utils import SubquerySum
 import part.models
 import stock.models
 from build.status_codes import BuildStatusGroups
-from order.status_codes import PurchaseOrderStatusGroups, SalesOrderStatusGroups
+from order.status_codes import (
+    PurchaseOrderStatusGroups,
+    SalesOrderStatusGroups,
+    TransferOrderStatusGroups,
+)
 
 
 def annotate_in_production_quantity(reference: str = '') -> QuerySet:
@@ -260,6 +264,40 @@ def annotate_sales_order_allocations(reference: str = '', location=None) -> Quer
     return Coalesce(
         SubquerySum(
             f'{reference}stock_items__sales_order_allocations__quantity',
+            filter=order_filter,
+        ),
+        Decimal(0),
+        output_field=models.DecimalField(),
+    )
+
+
+def annotate_transfer_order_allocations(reference: str = '', location=None) -> QuerySet:
+    """Annotate the total quantity of each part allocated to transfer orders.
+
+    - This function calculates the total part quantity allocated to open transfer orders"
+    - Finds all transfer order allocations for each part (using the provided filter)
+    - Aggregates the 'allocated quantity' for each relevant transfer order allocation item
+
+    Arguments:
+        reference: The relationship reference of the part from the current model
+        location: If provided, only allocated stock items from this location are considered
+    """
+    # Order filter only returns open orders
+    order_filter = Q(line__order__status__in=TransferOrderStatusGroups.OPEN)
+
+    if location is not None:
+        # Filter by location (including any child locations)
+
+        order_filter &= Q(
+            item__location__tree_id=location.tree_id,
+            item__location__lft__gte=location.lft,
+            item__location__rght__lte=location.rght,
+            item__location__level__gte=location.level,
+        )
+
+    return Coalesce(
+        SubquerySum(
+            f'{reference}stock_items__transfer_order_allocations__quantity',
             filter=order_filter,
         ),
         Decimal(0),

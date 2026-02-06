@@ -670,13 +670,17 @@ class StockFilter(FilterSet):
     def filter_allocated(self, queryset, name, value):
         """Filter by whether or not the stock item is 'allocated'."""
         if str2bool(value):
-            # Filter StockItem with either build allocations or sales order allocations
+            # Filter StockItem with either build allocations or transfer order allocations or sales order allocations
             return queryset.filter(
-                Q(sales_order_allocations__isnull=False) | Q(allocations__isnull=False)
+                Q(sales_order_allocations__isnull=False)
+                | Q(transfer_order_allocations__isnull=False)
+                | Q(allocations__isnull=False)
             ).distinct()
-        # Filter StockItem without build allocations or sales order allocations
+        # Filter StockItem without build allocations or transfer order allocations or sales order allocations
         return queryset.filter(
-            Q(sales_order_allocations__isnull=True) & Q(allocations__isnull=True)
+            Q(sales_order_allocations__isnull=True)
+            & Q(transfer_order_allocations__isnull=True)
+            & Q(allocations__isnull=True)
         )
 
     expired = rest_filters.BooleanFilter(label='Expired', method='filter_expired')
