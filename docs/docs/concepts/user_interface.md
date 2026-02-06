@@ -73,6 +73,10 @@ Panels are arranged in a vertical stack on the left side of the page, with the m
 
 {{ image("concepts/ui_panels.png", "Page Panels") }}
 
+#### Collapse Panels
+
+The panel sidebar can be collapsed to provide more space for the main content area. To collapse or expand the panel sidebar, click the collapse icon located at the bottom of the sidebar. To expand the sidebar again, click the expand icon that appears when the sidebar is collapsed.
+
 ### Breadcrumbs
 
 On some pages, a breadcrumb navigation trail is provided at the top of the page, just below the main menu. Breadcrumbs provide a visual representation of the user's current location within the system and allow for easy navigation back to previous pages.
@@ -103,25 +107,114 @@ To edit the layout (add, remove, or rearrange widgets) of the dashboard, open th
 
 In addition to the set of built-in widgets provided by InvenTree, custom dashboard widgets can be implemented using [plugins](../plugins/mixins/ui.md#dashboard-items). This allows users to create personalized dashboard experiences tailored to their specific needs and workflows.
 
-## Settings
+## Table Views
 
-### User Settings
+Information throughout the InvenTree interface is often presented in tabular format, allowing users to easily view and interact with large datasets. Tables are designed to be flexible and customizable, providing a range of features to enhance the user experience.
 
-### System Settings
+{{ image("concepts/ui_table.png", "Table View") }}
 
-### Admin Interface
+### Pagination
 
-## Forms
+The pagination controls are located at the bottom of the table, allowing users to navigate through large datasets by moving between pages. Users can also adjust the number of rows displayed per page using the pagination settings.
 
-## Tables
+### Row Selection
 
-### Filtering
+For tables where data selection is supported, a checkbox is provided at the left-hand side of each row, allowing users to select one or more rows for further actions. A master checkbox is also provided in the table header, allowing users to quickly select or deselect all rows in the table.
+
+!!! info "Pagination and Row Selection"
+    When using the "master select" checkbox to select all rows, only the rows on the current page will be selected.
+
+{{ image("concepts/ui_table_row_selection.png", "Row Selection") }}
+
+### Table Actions
+
+A particular table view may have a set of actions associated with it, which are typically located at the top-left corner of the table. These actions may include options for adding new entries, or performing bulk actions on [selected rows](#row-selection).
+
+{{ image("concepts/ui_table_actions.png", "Table Actions") }}
 
 ### Searching
 
-### Data Download
+Some tables support searching, allowing users to quickly find specific entries within the dataset. The search bar is  located at the top-right corner of the table view:
+
+{{ image("concepts/ui_table_search.png", "Table Search") }}
+
+### Column Selection
+
+Some tables allow the user to toggle the visibility of certain columns to, enabling a more customized view of the data.
+
+Column selection is accessed via the "Select Columns" menu, located to the top-right of the table view:
+
+{{ image("concepts/ui_table_column_selection.png", "Column Selection") }}
+
+### Filtering
+
+The dataset (which is fetched dynamically from the server via an API request) can be filtered by providing query parameters to the API endpoint.
+
+Select the "table filters" button to open the filter selection menu
+
+{{ image("concepts/ui_table_filter_button.png", "Table Filter Button") }}
+
+{{ image("concepts/ui_table_filter_menu.png", "Table Filter Menu") }}
+
+Table filters are saved across browser sessions, allowing users to maintain their preferred filter settings when returning to the particular table view.
+
+### Data Sorting
+
+Some table columns support data sorting, allowing the dataset to be sorted in ascending or descending order based on the values in that column. To sort a column, click on the column header. Clicking the column header again will toggle the sort order between ascending and descending. The current sort order is indicated by an arrow icon in the column header.
+
+{{ image("concepts/ui_table_sorting.png", "Data Sorting") }}
+
+### Data Export
+
+Some tables support downloading of the dataset in various formats (e.g. CSV, Excel, PDF). If data download is available for a given table, the "export data" button will be located at the top-right corner of the table view.
+
+This opens the "Export Data" form, which allows the user to select the desired file format for download, as well as any additional options related to the data export.
+
+{{ image("concepts/ui_table_download.png", "Data Download") }}
 
 ### Row Actions
+
+In some tables, there may be specific actions associated with individual rows, allowing users to perform actions directly on a particular entry in the dataset. Row actions are typically accessed via an "actions" menu located at the right-hand side of each row.
+
+{{ image("concepts/ui_table_row_actions.png", "Row Actions") }}
+
+### Right-Click Context Menu
+
+For rows that support row actions, a right-click context menu is also available, providing quick access to the same set of actions without needing to click on the "actions" menu.
+
+{{ image("concepts/ui_table_context_menu.png", "Right-Click Context Menu") }}
+
+### Row Navigation
+
+For tables which reference other objects within the system, clicking on a row will navigate to the detail page for that particular entry. For example, clicking on a row in the "Part" table will navigate to the detail page for that specific part.
+
+## Calendar Views
+
+Some [table views](#table-views) can be switched to a calendar view, which provides a visual representation of data based on date fields. The calendar view allows users to easily see and interact with data that is organized by date, such as scheduled tasks, events, or deadlines.
+
+To switch to the "calendar view" (for a table which supports it), click on the "calendar view" button located above and to the right of the table view:
+
+{{ image("concepts/ui_calendar_select.png", "Calendar View Button") }}
+
+This will display the data in a calendar format:
+
+{{ image("concepts/ui_calendar_view.png", "Calendar View") }}
+
+## Parametric Views
+
+Some [table views](#table-views) can be switched to a parametric view, which provides a visual representation of data based on specific parameters or attributes. The parametric view allows users to easily see and interact with data that is organized by certain characteristics, such as categories, types, or other relevant attributes.
+
+To switch to the "parametric view" (for a table which supports it), click on the "parametric view" button located above and to the right of the table view:
+
+{{ image("concepts/ui_parametric_select.png", "Parametric View Button") }}
+
+This will display the data in a parametric format:
+
+{{ image("concepts/ui_parametric_view.png", "Parametric View") }}
+
+## Forms
+
+
 
 ## Global Search
 
