@@ -1173,6 +1173,7 @@ class Build(
             user,
             notes=notes,
             deltas={
+                'quantity': float(quantity),
                 'location': location.pk,
                 'status': StockStatus.REJECTED.value,
                 'buildorder': self.pk,
@@ -1260,7 +1261,11 @@ class Build(
 
         output.save(add_note=False)
 
-        deltas = {'status': status, 'buildorder': self.pk}
+        deltas = {
+            'status': status,
+            'buildorder': self.pk,
+            'quantity': float(output.quantity),
+        }
 
         if location:
             deltas['location'] = location.pk

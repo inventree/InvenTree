@@ -1360,7 +1360,7 @@ class StockItem(
         item.save(add_note=False)
 
         code = StockHistoryCode.SENT_TO_CUSTOMER
-        deltas = {}
+        deltas = {'quantity': quantity}
 
         if customer is not None:
             deltas['customer'] = customer.pk
@@ -1441,7 +1441,9 @@ class StockItem(
                 # Split the stock item
                 item = self.splitStock(quantity, None, user)
 
-        tracking_info = {}
+        tracking_info = {
+            'quantity': quantity if quantity is not None else item.quantity
+        }
 
         if location:
             tracking_info['location'] = location.pk
@@ -1651,7 +1653,7 @@ class StockItem(
         stock_item.location = None
         stock_item.save(add_note=False)
 
-        deltas = {'stockitem': self.pk}
+        deltas = {'stockitem': self.pk, 'quantity': float(quantity)}
 
         if build is not None:
             deltas['buildorder'] = build.pk
@@ -1666,7 +1668,7 @@ class StockItem(
             StockHistoryCode.INSTALLED_CHILD_ITEM,
             user,
             notes=notes,
-            deltas={'stockitem': stock_item.pk},
+            deltas={'stockitem': stock_item.pk, 'quantity': float(quantity)},
         )
 
         trigger_event(
@@ -1692,11 +1694,14 @@ class StockItem(
         self.belongs_to.add_tracking_entry(
             StockHistoryCode.REMOVED_CHILD_ITEM,
             user,
-            deltas={'stockitem': self.pk},
+            deltas={'stockitem': self.pk, 'quantity': float(self.quantity)},
             notes=notes,
         )
 
-        tracking_info = {'stockitem': self.belongs_to.pk}
+        tracking_info = {
+            'stockitem': self.belongs_to.pk,
+            'quantity': float(self.quantity),
+        }
 
         self.add_tracking_entry(
             StockHistoryCode.REMOVED_FROM_ASSEMBLY,
@@ -2175,7 +2180,10 @@ class StockItem(
             user,
             quantity=self.quantity,
             notes=notes,
-            deltas={'location': location.pk if location else None},
+            deltas={
+                'location': location.pk if location else None,
+                'quantity': self.quantity,
+            },
         )
 
         # Update the location of the item
@@ -2416,7 +2424,7 @@ class StockItem(
 
         self.location = location
 
-        tracking_info = {}
+        tracking_info = {'quantity': float(quantity)}
 
         tracking_code = StockHistoryCode.STOCK_MOVE
 
