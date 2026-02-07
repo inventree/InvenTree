@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-21 06:02+0000\n"
-"PO-Revision-Date: 2026-01-21 06:06\n"
+"POT-Creation-Date: 2026-02-02 23:23+0000\n"
+"PO-Revision-Date: 2026-02-02 23:26\n"
 "Last-Translator: \n"
 "Language-Team: Lithuanian\n"
 "Language: lt_LT\n"
@@ -17,67 +17,67 @@ msgstr ""
 "X-Crowdin-File: /src/backend/InvenTree/locale/en/LC_MESSAGES/django.po\n"
 "X-Crowdin-File-ID: 250\n"
 
-#: InvenTree/api.py:362
+#: InvenTree/api.py:365
 msgid "API endpoint not found"
 msgstr "API galinis taškas nerastas"
 
-#: InvenTree/api.py:439
+#: InvenTree/api.py:442
 msgid "List of items or filters must be provided for bulk operation"
 msgstr "Masiniam veiksmui turi būti pateiktas elementų arba filtrų sąrašas"
 
-#: InvenTree/api.py:446
+#: InvenTree/api.py:449
 msgid "Items must be provided as a list"
 msgstr "Elementai turi būti pateikti kaip sąrašas"
 
-#: InvenTree/api.py:454
+#: InvenTree/api.py:457
 msgid "Invalid items list provided"
 msgstr "Pateiktas neteisingas elementų sąrašas"
 
-#: InvenTree/api.py:460
+#: InvenTree/api.py:463
 msgid "Filters must be provided as a dict"
 msgstr "\"Filtrai turi būti pateikti kaip žodynas"
 
-#: InvenTree/api.py:467
+#: InvenTree/api.py:470
 msgid "Invalid filters provided"
 msgstr "Pateikti neteisingi filtrai"
 
-#: InvenTree/api.py:472
+#: InvenTree/api.py:475
 msgid "All filter must only be used with true"
 msgstr "Filtras „all“ gali būti naudojamas tik su reikšme „true“"
 
-#: InvenTree/api.py:477
+#: InvenTree/api.py:480
 msgid "No items match the provided criteria"
 msgstr "Nė vienas elementas neatitinka pateiktų kriterijų"
 
-#: InvenTree/api.py:501
+#: InvenTree/api.py:504
 msgid "No data provided"
 msgstr ""
 
-#: InvenTree/api.py:517
+#: InvenTree/api.py:520
 msgid "This field must be unique."
 msgstr ""
 
-#: InvenTree/api.py:812
+#: InvenTree/api.py:815
 msgid "User does not have permission to view this model"
 msgstr "Vartotojas neturi teisių peržiūrėti šio modelio"
 
-#: InvenTree/auth_overrides.py:56
+#: InvenTree/auth_overrides.py:58
 msgid "Email (again)"
 msgstr "El. paštas (pakartotinai)"
 
-#: InvenTree/auth_overrides.py:60
+#: InvenTree/auth_overrides.py:62
 msgid "Email address confirmation"
 msgstr "El. pašto adreso patvirtinimas"
 
-#: InvenTree/auth_overrides.py:83
+#: InvenTree/auth_overrides.py:85
 msgid "You must type the same email each time."
 msgstr "Kiekvieną kartą turite įvesti tą patį el. pašto adresą."
 
-#: InvenTree/auth_overrides.py:125 InvenTree/auth_overrides.py:132
+#: InvenTree/auth_overrides.py:132 InvenTree/auth_overrides.py:139
 msgid "The provided primary email address is not valid."
 msgstr "Pateiktas pagrindinis el. pašto adresas neteisingas."
 
-#: InvenTree/auth_overrides.py:138
+#: InvenTree/auth_overrides.py:145
 msgid "The provided email domain is not approved."
 msgstr "Pateiktas el. pašto domenas nepatvirtintas."
 
@@ -116,9 +116,9 @@ msgstr "Neteisinga dešimtainė reikšmė"
 #: build/serializers.py:570 build/serializers.py:1760 company/models.py:798
 #: order/models.py:1782
 #: report/templates/report/inventree_build_order_report.html:172
-#: stock/models.py:2851 stock/models.py:2975 stock/serializers.py:717
-#: stock/serializers.py:893 stock/serializers.py:1035 stock/serializers.py:1342
-#: stock/serializers.py:1431 stock/serializers.py:1630
+#: stock/models.py:2922 stock/models.py:3046 stock/serializers.py:721
+#: stock/serializers.py:897 stock/serializers.py:1039 stock/serializers.py:1357
+#: stock/serializers.py:1446 stock/serializers.py:1645
 msgid "Notes"
 msgstr "Pastabos"
 
@@ -572,7 +572,7 @@ msgstr "Įtraukti variantus"
 #: build/serializers.py:1457 company/models.py:1008 company/serializers.py:434
 #: order/api.py:303 order/api.py:307 order/api.py:930 order/api.py:1184
 #: order/api.py:1187 order/models.py:1943 order/models.py:2109
-#: order/models.py:2110 part/api.py:1160 part/api.py:1163 part/api.py:1314
+#: order/models.py:2110 part/api.py:1160 part/api.py:1163 part/api.py:1318
 #: part/models.py:528 part/models.py:3341 part/models.py:3484
 #: part/models.py:3542 part/models.py:3563 part/models.py:3585
 #: part/models.py:3724 part/models.py:3986 part/models.py:4405
@@ -586,7 +586,7 @@ msgstr "Įtraukti variantus"
 #: report/templates/report/inventree_sales_order_shipment_report.html:28
 #: report/templates/report/inventree_stock_location_report.html:102
 #: stock/api.py:586 stock/serializers.py:120 stock/serializers.py:172
-#: stock/serializers.py:410 stock/serializers.py:587 stock/serializers.py:926
+#: stock/serializers.py:410 stock/serializers.py:591 stock/serializers.py:930
 #: templates/email/build_order_completed.html:17
 #: templates/email/build_order_required_stock.html:17
 #: templates/email/low_stock_notification.html:15
@@ -597,7 +597,7 @@ msgid "Part"
 msgstr "Detalė"
 
 #: build/api.py:120 build/api.py:123 build/serializers.py:1470 part/api.py:975
-#: part/api.py:1325 part/models.py:413 part/models.py:1149 part/models.py:3613
+#: part/api.py:1329 part/models.py:413 part/models.py:1149 part/models.py:3613
 #: part/serializers.py:1606 stock/api.py:869
 msgid "Category"
 msgstr "Kategorija"
@@ -712,7 +712,7 @@ msgid "Available"
 msgstr "Prieinama"
 
 #: build/api.py:513 build/serializers.py:1499 company/serializers.py:410
-#: order/serializers.py:1251 part/serializers.py:831 part/serializers.py:1152
+#: order/serializers.py:1270 part/serializers.py:831 part/serializers.py:1152
 #: part/serializers.py:1615
 msgid "On Order"
 msgstr "Užsakyta"
@@ -727,10 +727,10 @@ msgstr "Gamybos užsakymas"
 #: build/api.py:875 build/api.py:879 build/serializers.py:362
 #: build/serializers.py:487 build/serializers.py:557 build/serializers.py:1248
 #: build/serializers.py:1253 order/api.py:1231 order/api.py:1236
-#: order/serializers.py:791 order/serializers.py:931 order/serializers.py:2020
-#: stock/api.py:987 stock/serializers.py:111 stock/serializers.py:594
-#: stock/serializers.py:710 stock/serializers.py:888 stock/serializers.py:1424
-#: stock/serializers.py:1745 stock/serializers.py:1794
+#: order/serializers.py:791 order/serializers.py:931 order/serializers.py:2039
+#: stock/api.py:987 stock/serializers.py:111 stock/serializers.py:598
+#: stock/serializers.py:714 stock/serializers.py:892 stock/serializers.py:1439
+#: stock/serializers.py:1760 stock/serializers.py:1809
 #: templates/email/stale_stock_notification.html:18 users/models.py:549
 msgid "Location"
 msgstr "Vieta"
@@ -858,7 +858,7 @@ msgid "Build status code"
 msgstr "Gamybos būsenos kodas"
 
 #: build/models.py:344 build/serializers.py:349 order/serializers.py:807
-#: stock/models.py:1086 stock/serializers.py:85 stock/serializers.py:1597
+#: stock/models.py:1102 stock/serializers.py:85 stock/serializers.py:1612
 msgid "Batch Code"
 msgstr "Partijos kodas"
 
@@ -913,12 +913,12 @@ msgstr "Atsakingas"
 msgid "User or group responsible for this build order"
 msgstr "Vartotojas ar grupė, atsakinga už šį gamybos užsakymą"
 
-#: build/models.py:405 stock/models.py:1079
+#: build/models.py:405 stock/models.py:1095
 msgid "External Link"
 msgstr "Išorinė nuoroda"
 
 #: build/models.py:407 common/models.py:2006 part/models.py:1183
-#: stock/models.py:1081
+#: stock/models.py:1097
 msgid "Link to external URL"
 msgstr "Nuoroda į išorinį URL"
 
@@ -979,8 +979,8 @@ msgstr "Gamybos rezultatas neatitinka gamybos užsakymo"
 #: build/models.py:1137 build/models.py:1235 build/serializers.py:275
 #: build/serializers.py:325 build/serializers.py:955 build/serializers.py:1711
 #: order/models.py:719 order/serializers.py:602 order/serializers.py:802
-#: part/serializers.py:1554 stock/models.py:926 stock/models.py:1416
-#: stock/models.py:1864 stock/serializers.py:688 stock/serializers.py:1586
+#: part/serializers.py:1554 stock/models.py:942 stock/models.py:1432
+#: stock/models.py:1889 stock/serializers.py:692 stock/serializers.py:1601
 msgid "Quantity must be greater than zero"
 msgstr "Kiekis turi būti didesnis nei nulis"
 
@@ -1011,8 +1011,8 @@ msgstr "Gamybos objektas"
 
 #: build/models.py:1663 build/models.py:1985 build/serializers.py:261
 #: build/serializers.py:310 build/serializers.py:1419 common/models.py:1360
-#: order/models.py:1758 order/models.py:2598 order/serializers.py:1673
-#: order/serializers.py:2109 part/models.py:3498 part/models.py:4008
+#: order/models.py:1758 order/models.py:2598 order/serializers.py:1692
+#: order/serializers.py:2128 part/models.py:3498 part/models.py:4008
 #: report/templates/report/inventree_bill_of_materials_report.html:138
 #: report/templates/report/inventree_build_order_report.html:113
 #: report/templates/report/inventree_purchase_order_report.html:36
@@ -1024,7 +1024,7 @@ msgstr "Gamybos objektas"
 #: report/templates/report/inventree_stock_report_merge.html:113
 #: report/templates/report/inventree_test_report.html:90
 #: report/templates/report/inventree_test_report.html:169
-#: stock/serializers.py:136 stock/serializers.py:180 stock/serializers.py:676
+#: stock/serializers.py:136 stock/serializers.py:180 stock/serializers.py:680
 #: templates/email/build_order_completed.html:18
 #: templates/email/stale_stock_notification.html:19
 msgid "Quantity"
@@ -1064,10 +1064,10 @@ msgid "Stock item is over-allocated"
 msgstr "Atsargų elementas per daug paskirstytas"
 
 #: build/models.py:1975 build/serializers.py:938 build/serializers.py:1231
-#: order/serializers.py:1510 order/serializers.py:1531
+#: order/serializers.py:1529 order/serializers.py:1550
 #: report/templates/report/inventree_sales_order_shipment_report.html:29
 #: stock/api.py:1404 stock/models.py:442 stock/serializers.py:102
-#: stock/serializers.py:800 stock/serializers.py:1280 stock/serializers.py:1392
+#: stock/serializers.py:804 stock/serializers.py:1295 stock/serializers.py:1407
 msgid "Stock Item"
 msgstr "Atsargų elementas"
 
@@ -1127,8 +1127,8 @@ msgstr "Sekamoms detalėms reikalingas sveikasis kiekis"
 msgid "Integer quantity required, as the bill of materials contains trackable parts"
 msgstr "Reikalingas sveikasis kiekis, nes komplektavimo žiniaraštyje yra sekamų detalių"
 
-#: build/serializers.py:356 order/serializers.py:823 order/serializers.py:1677
-#: stock/serializers.py:699
+#: build/serializers.py:356 order/serializers.py:823 order/serializers.py:1696
+#: stock/serializers.py:703
 msgid "Serial Numbers"
 msgstr "Serijos numeriai"
 
@@ -1149,7 +1149,7 @@ msgid "Automatically allocate required items with matching serial numbers"
 msgstr "Automatiškai priskirti reikalingas prekes su atitinkančiais serijos numeriais"
 
 #: build/serializers.py:413 order/serializers.py:909 stock/api.py:1183
-#: stock/models.py:1887
+#: stock/models.py:1912
 msgid "The following serial numbers already exist or are invalid"
 msgstr "Šie serijos numeriai jau egzistuoja arba yra neteisingi"
 
@@ -1237,7 +1237,7 @@ msgstr "Priimti, kad atsargos nebuvo visiškai priskirtos šiam gamybos užsakym
 msgid "Required stock has not been fully allocated"
 msgstr "Reikalingos atsargos nėra visiškai priskirtos"
 
-#: build/serializers.py:793 order/serializers.py:478 order/serializers.py:1578
+#: build/serializers.py:793 order/serializers.py:478 order/serializers.py:1597
 msgid "Accept Incomplete"
 msgstr "Priimti nepilną"
 
@@ -1281,11 +1281,11 @@ msgstr "Gamybos eilutės įrašas"
 msgid "bom_item.part must point to the same part as the build order"
 msgstr "bom_item.part turi būti ta pati detalė kaip ir gamybos užsakyme"
 
-#: build/serializers.py:944 stock/serializers.py:1293
+#: build/serializers.py:944 stock/serializers.py:1308
 msgid "Item must be in stock"
 msgstr "Prekė turi būti atsargose"
 
-#: build/serializers.py:987 order/serializers.py:1564
+#: build/serializers.py:987 order/serializers.py:1583
 #, python-brace-format
 msgid "Available quantity ({q}) exceeded"
 msgstr "Viršytas prieinamas kiekis ({q})"
@@ -1298,7 +1298,7 @@ msgstr "Sekamų detalių priskyrymui turi būti nurodytas gamybos rezultatas"
 msgid "Build output cannot be specified for allocation of untracked parts"
 msgstr "Negalima nurodyti gamybos rezultato nesekamoms detalėms"
 
-#: build/serializers.py:1025 order/serializers.py:1837
+#: build/serializers.py:1025 order/serializers.py:1856
 msgid "Allocation items must be provided"
 msgstr "Turi būti pateikti paskirstymo elementai"
 
@@ -1360,11 +1360,11 @@ msgstr "Gamyba"
 
 #: build/serializers.py:1283 company/models.py:628 order/api.py:316
 #: order/api.py:321 order/api.py:547 order/serializers.py:594
-#: stock/models.py:1022 stock/serializers.py:567
+#: stock/models.py:1038 stock/serializers.py:571
 msgid "Supplier Part"
 msgstr "Tiekėjo detalė"
 
-#: build/serializers.py:1299 stock/serializers.py:620
+#: build/serializers.py:1299 stock/serializers.py:624
 msgid "Allocated Quantity"
 msgstr "Priskirtas kiekis"
 
@@ -1393,7 +1393,7 @@ msgstr "Leisti variantus"
 msgid "BOM Item"
 msgstr "BOM elementas"
 
-#: build/serializers.py:1500 order/serializers.py:1252 part/serializers.py:1156
+#: build/serializers.py:1500 order/serializers.py:1271 part/serializers.py:1156
 #: part/serializers.py:1619
 msgid "In Production"
 msgstr "Gamyboje"
@@ -1772,7 +1772,7 @@ msgstr "Apibrėžimas"
 msgid "Unit definition"
 msgstr "Vieneto apibrėžimas"
 
-#: common/models.py:1933 common/models.py:1996 stock/models.py:2970
+#: common/models.py:1933 common/models.py:1996 stock/models.py:3041
 #: stock/serializers.py:249
 msgid "Attachment"
 msgstr "Priedas"
@@ -1850,7 +1850,7 @@ msgid "State logical key that is equal to this custom state in business logic"
 msgstr "Loginis būsenos raktas, atitinkantis šią pasirinkitinę būseną"
 
 #: common/models.py:2112 common/models.py:2351 machine/serializers.py:27
-#: report/templates/report/inventree_test_report.html:104 stock/models.py:2962
+#: report/templates/report/inventree_test_report.html:104 stock/models.py:3033
 msgid "Value"
 msgstr "Reikšmė"
 
@@ -2129,17 +2129,17 @@ msgid "Parameter Value"
 msgstr "Parametro reikšmė"
 
 #: common/models.py:2776 company/models.py:797 order/serializers.py:841
-#: order/serializers.py:2025 part/models.py:4068 part/models.py:4437
+#: order/serializers.py:2044 part/models.py:4068 part/models.py:4437
 #: report/templates/report/inventree_bill_of_materials_report.html:140
 #: report/templates/report/inventree_purchase_order_report.html:39
 #: report/templates/report/inventree_return_order_report.html:27
 #: report/templates/report/inventree_sales_order_report.html:32
 #: report/templates/report/inventree_stock_location_report.html:105
-#: stock/serializers.py:813
+#: stock/serializers.py:817
 msgid "Note"
 msgstr "Pastaba"
 
-#: common/models.py:2777 stock/serializers.py:718
+#: common/models.py:2777 stock/serializers.py:722
 msgid "Optional note field"
 msgstr "Neprivalomas pastabų laukas"
 
@@ -2184,7 +2184,7 @@ msgid "Response data from the barcode scan"
 msgstr "Atsako duomenys iš brūkšninio kodo nuskaitymo"
 
 #: common/models.py:2854 report/templates/report/inventree_test_report.html:103
-#: stock/models.py:2956
+#: stock/models.py:3027
 msgid "Result"
 msgstr "Rezultatas"
 
@@ -4127,7 +4127,7 @@ msgstr "Nuoroda į adreso informaciją (išorinė)"
 msgid "Manufacturer Part"
 msgstr "Gamintojo detalė"
 
-#: company/models.py:517 company/models.py:741 stock/models.py:1011
+#: company/models.py:517 company/models.py:741 stock/models.py:1027
 #: stock/serializers.py:409
 msgid "Base Part"
 msgstr "Pagrindinė detalė"
@@ -4145,7 +4145,7 @@ msgstr "Pasirinkite gamintoją"
 msgid "MPN"
 msgstr "MPN"
 
-#: company/models.py:536 stock/serializers.py:560
+#: company/models.py:536 stock/serializers.py:564
 msgid "Manufacturer Part Number"
 msgstr "Gamintojo detalės numeris (MPN)"
 
@@ -4209,8 +4209,8 @@ msgstr "bazinė kaina"
 msgid "Minimum charge (e.g. stocking fee)"
 msgstr "Minimalus mokestis (pvz., sandėliavimo mokestis)"
 
-#: company/models.py:814 order/serializers.py:833 stock/models.py:1042
-#: stock/serializers.py:1612
+#: company/models.py:814 order/serializers.py:833 stock/models.py:1058
+#: stock/serializers.py:1627
 msgid "Packaging"
 msgstr "Pakuotė"
 
@@ -4859,7 +4859,7 @@ msgid "Order reference"
 msgstr "Užsakymo nuoroda"
 
 #: order/models.py:626 order/models.py:1338 order/models.py:2738
-#: stock/serializers.py:547 stock/serializers.py:988 users/models.py:542
+#: stock/serializers.py:551 stock/serializers.py:992 users/models.py:542
 msgid "Status"
 msgstr "Būsena"
 
@@ -4911,8 +4911,8 @@ msgstr ""
 msgid "Quantity must be a positive number"
 msgstr "Kiekis turi būti teigiamas skaičius"
 
-#: order/models.py:1325 order/models.py:2725 stock/models.py:1064
-#: stock/models.py:1065 stock/serializers.py:1328
+#: order/models.py:1325 order/models.py:2725 stock/models.py:1080
+#: stock/models.py:1081 stock/serializers.py:1343
 #: templates/email/overdue_return_order.html:16
 #: templates/email/overdue_sales_order.html:16
 msgid "Customer"
@@ -5030,7 +5030,7 @@ msgstr "Gauta"
 msgid "Number of items received"
 msgstr "Gautų prekių kiekis"
 
-#: order/models.py:1960 stock/models.py:1187 stock/serializers.py:637
+#: order/models.py:1960 stock/models.py:1203 stock/serializers.py:641
 msgid "Purchase Price"
 msgstr "Pirkimo kaina"
 
@@ -5102,8 +5102,8 @@ msgstr "Patikrino"
 msgid "User who checked this shipment"
 msgstr "Vartotojas, patikrinęs šią siuntą"
 
-#: order/models.py:2321 order/models.py:2575 order/serializers.py:1688
-#: order/serializers.py:1812
+#: order/models.py:2321 order/models.py:2575 order/serializers.py:1707
+#: order/serializers.py:1831
 #: report/templates/report/inventree_sales_order_shipment_report.html:14
 msgid "Shipment"
 msgstr "Siunta"
@@ -5168,7 +5168,7 @@ msgstr "Priskiriamas kiekis negali viršyti atsargų kiekio"
 msgid "Allocation quantity must be greater than zero"
 msgstr "Priskirtas kiekis turi būti didesnis nei nulis"
 
-#: order/models.py:2553 order/serializers.py:1558
+#: order/models.py:2553 order/serializers.py:1577
 msgid "Quantity must be 1 for serialized stock item"
 msgstr "Kiekis turi būti 1, jei prekė turi serijos numerį"
 
@@ -5315,11 +5315,11 @@ msgstr "Tiekėjo pavadinimas"
 msgid "Order cannot be cancelled"
 msgstr "Užsakymo atšaukti negalima"
 
-#: order/serializers.py:479 order/serializers.py:1579
+#: order/serializers.py:479 order/serializers.py:1598
 msgid "Allow order to be closed with incomplete line items"
 msgstr "Leisti užbaigti užsakymą su neužbaigtais eilutės įrašais"
 
-#: order/serializers.py:489 order/serializers.py:1589
+#: order/serializers.py:489 order/serializers.py:1608
 msgid "Order has incomplete line items"
 msgstr "Užsakyme yra neužbaigtų eilutės įrašų"
 
@@ -5375,11 +5375,11 @@ msgstr "Tiekėjas turi atitikti pirkimo užsakymą"
 msgid "Purchase order must match supplier"
 msgstr "Pirkimo užsakymas turi atitikti tiekėją"
 
-#: order/serializers.py:783 order/serializers.py:1659
+#: order/serializers.py:783 order/serializers.py:1678
 msgid "Line Item"
 msgstr "Eilutės įrašas"
 
-#: order/serializers.py:792 order/serializers.py:932 order/serializers.py:2021
+#: order/serializers.py:792 order/serializers.py:932 order/serializers.py:2040
 msgid "Select destination location for received items"
 msgstr "Pasirinkite paskirties vietą gautiems elementams"
 
@@ -5387,7 +5387,7 @@ msgstr "Pasirinkite paskirties vietą gautiems elementams"
 msgid "Enter batch code for incoming stock items"
 msgstr "Įveskite partijos kodą gaunamoms atsargoms"
 
-#: order/serializers.py:815 stock/models.py:1146
+#: order/serializers.py:815 stock/models.py:1162
 #: templates/email/stale_stock_notification.html:22 users/models.py:137
 msgid "Expiry Date"
 msgstr "Galiojimo data"
@@ -5404,7 +5404,7 @@ msgstr "Įveskite gaunamų atsargų serijos numerius"
 msgid "Override packaging information for incoming stock items"
 msgstr "Pakeisti gaunamų atsargų pakavimo informaciją"
 
-#: order/serializers.py:842 order/serializers.py:2026
+#: order/serializers.py:842 order/serializers.py:2045
 msgid "Additional note for incoming stock items"
 msgstr "Papildoma pastaba gaunamoms atsargoms"
 
@@ -5420,7 +5420,7 @@ msgstr "Nuskaitytas brūkšninis kodas"
 msgid "Barcode is already in use"
 msgstr "Brūkšninis kodas jau naudojamas"
 
-#: order/serializers.py:949 order/serializers.py:2045
+#: order/serializers.py:949 order/serializers.py:2064
 msgid "Line items must be provided"
 msgstr "Turi būti pateikti eilutės įrašai"
 
@@ -5432,75 +5432,79 @@ msgstr "Turi būti nurodyta paskirties vieta"
 msgid "Supplied barcode values must be unique"
 msgstr "Pateiktos brūkšninių kodų reikšmės turi būti unikalios"
 
-#: order/serializers.py:1080
+#: order/serializers.py:1095
 msgid "Shipments"
 msgstr "Siuntos"
 
-#: order/serializers.py:1084
+#: order/serializers.py:1099
 msgid "Completed Shipments"
 msgstr "Užbaigtos siuntos"
 
-#: order/serializers.py:1263
+#: order/serializers.py:1103
+msgid "Allocated Lines"
+msgstr ""
+
+#: order/serializers.py:1282
 msgid "Sale price currency"
 msgstr "Pardavimo kainos valiuta"
 
-#: order/serializers.py:1306
+#: order/serializers.py:1325
 msgid "Allocated Items"
 msgstr "Paskirstyti elementai"
 
-#: order/serializers.py:1461
+#: order/serializers.py:1480
 msgid "No shipment details provided"
 msgstr "Nepateikta siuntos informacija"
 
-#: order/serializers.py:1522 order/serializers.py:1668
+#: order/serializers.py:1541 order/serializers.py:1687
 msgid "Line item is not associated with this order"
 msgstr "Eilutės įrašas nėra susijęs su šiuo užsakymu"
 
-#: order/serializers.py:1541
+#: order/serializers.py:1560
 msgid "Quantity must be positive"
 msgstr "Kiekis turi būti teigiamas"
 
-#: order/serializers.py:1678
+#: order/serializers.py:1697
 msgid "Enter serial numbers to allocate"
 msgstr "Įveskite priskiriamus serijos numerius"
 
-#: order/serializers.py:1700 order/serializers.py:1820
+#: order/serializers.py:1719 order/serializers.py:1839
 msgid "Shipment has already been shipped"
 msgstr "Siunta jau išsiųsta"
 
-#: order/serializers.py:1703 order/serializers.py:1823
+#: order/serializers.py:1722 order/serializers.py:1842
 msgid "Shipment is not associated with this order"
 msgstr "Siunta nėra susieta su šiuo užsakymu"
 
-#: order/serializers.py:1758
+#: order/serializers.py:1777
 msgid "No match found for the following serial numbers"
 msgstr "Nerasta atitikmenų šiems serijos numeriams"
 
-#: order/serializers.py:1765
+#: order/serializers.py:1784
 msgid "The following serial numbers are unavailable"
 msgstr "Šie serijos numeriai nepasiekiami"
 
-#: order/serializers.py:1987
+#: order/serializers.py:2006
 msgid "Return order line item"
 msgstr "Grąžinimo užsakymo eilutės įrašas"
 
-#: order/serializers.py:1997
+#: order/serializers.py:2016
 msgid "Line item does not match return order"
 msgstr "Eilutės įrašas neatitinka grąžinimo užsakymo"
 
-#: order/serializers.py:2000
+#: order/serializers.py:2019
 msgid "Line item has already been received"
 msgstr "Eilutės įrašas jau gautas"
 
-#: order/serializers.py:2037
+#: order/serializers.py:2056
 msgid "Items can only be received against orders which are in progress"
 msgstr "Elementai gali būti priimami tik pagal vykdomus užsakymus"
 
-#: order/serializers.py:2109
+#: order/serializers.py:2128
 msgid "Quantity to return"
 msgstr "Grąžinamas kiekis"
 
-#: order/serializers.py:2126
+#: order/serializers.py:2145
 msgid "Line price currency"
 msgstr "Eilutės kainos valiuta"
 
@@ -5639,15 +5643,43 @@ msgstr ""
 msgid "Filter by numeric category ID or the literal 'null'"
 msgstr ""
 
+#: part/api.py:1250
+msgid "Assembly part is active"
+msgstr ""
+
+#: part/api.py:1254
+msgid "Assembly part is trackable"
+msgstr ""
+
 #: part/api.py:1258
 msgid "Assembly part is testable"
 msgstr "Surinkimo detalė gali būti testuojama"
 
+#: part/api.py:1263
+msgid "Component part is active"
+msgstr ""
+
 #: part/api.py:1267
+msgid "Component part is trackable"
+msgstr ""
+
+#: part/api.py:1271
 msgid "Component part is testable"
 msgstr "Komponento detalė gali būti testuojama"
 
-#: part/api.py:1336
+#: part/api.py:1275
+msgid "Component part is an assembly"
+msgstr ""
+
+#: part/api.py:1279
+msgid "Component part is virtual"
+msgstr ""
+
+#: part/api.py:1283
+msgid "Has available stock"
+msgstr ""
+
+#: part/api.py:1340
 msgid "Uses"
 msgstr "Naudoja"
 
@@ -6301,7 +6333,7 @@ msgstr "Šį BOM elementą paveldi variantų sąrašai"
 msgid "Stock items for variant parts can be used for this BOM item"
 msgstr "Šiam BOM elementui galima naudoti variantinių detalių atsargas"
 
-#: part/models.py:4201 stock/models.py:911
+#: part/models.py:4201 stock/models.py:927
 msgid "Quantity must be integer value for trackable parts"
 msgstr "Sekamoms detalėms kiekis turi būti sveikasis skaičius"
 
@@ -6369,7 +6401,7 @@ msgstr "Rezultatai"
 msgid "Number of results recorded against this template"
 msgstr "Rezultatų skaičius, susietas su šiuo šablonu"
 
-#: part/serializers.py:234 part/serializers.py:252 stock/serializers.py:643
+#: part/serializers.py:234 part/serializers.py:252 stock/serializers.py:647
 msgid "Purchase currency of this stock item"
 msgstr "Šio atsargų elemento pirkimo valiuta"
 
@@ -6485,7 +6517,7 @@ msgstr ""
 msgid "Outstanding quantity of this part scheduled to be built"
 msgstr ""
 
-#: part/serializers.py:843 stock/serializers.py:1019 stock/serializers.py:1191
+#: part/serializers.py:843 stock/serializers.py:1023 stock/serializers.py:1206
 #: users/ruleset.py:30
 msgid "Stock Items"
 msgstr "Atsargos"
@@ -8072,7 +8104,7 @@ msgstr "Iš viso"
 #: report/templates/report/inventree_return_order_report.html:25
 #: report/templates/report/inventree_sales_order_shipment_report.html:45
 #: report/templates/report/inventree_stock_report_merge.html:88
-#: report/templates/report/inventree_test_report.html:88 stock/models.py:1069
+#: report/templates/report/inventree_test_report.html:88 stock/models.py:1085
 #: stock/serializers.py:164 templates/email/stale_stock_notification.html:21
 msgid "Serial Number"
 msgstr "Serijos numeris"
@@ -8097,7 +8129,7 @@ msgstr "Atsargų elemento bandymo ataskaita"
 
 #: report/templates/report/inventree_stock_report_merge.html:97
 #: report/templates/report/inventree_test_report.html:153
-#: stock/serializers.py:626
+#: stock/serializers.py:630
 msgid "Installed Items"
 msgstr "Sumontuoti elementai"
 
@@ -8158,7 +8190,7 @@ msgstr "Filtruoti pagal aukščiausio lygio vietas"
 msgid "Include sub-locations in filtered results"
 msgstr "Įtraukti sub-vietas į filtravimo rezultatus"
 
-#: stock/api.py:344 stock/serializers.py:1187
+#: stock/api.py:344 stock/serializers.py:1202
 msgid "Parent Location"
 msgstr "Pirminė vieta"
 
@@ -8242,7 +8274,7 @@ msgstr "Galiojimo data iki"
 msgid "Expiry date after"
 msgstr "Galiojimo data po"
 
-#: stock/api.py:937 stock/serializers.py:631
+#: stock/api.py:937 stock/serializers.py:635
 msgid "Stale"
 msgstr "Pasenusi"
 
@@ -8311,7 +8343,7 @@ msgstr "Atsargų vietos tipai"
 msgid "Default icon for all locations that have no icon set (optional)"
 msgstr "Numatytoji piktograma visoms vietoms, kurioms nepaskirta piktograma (neprivaloma)"
 
-#: stock/models.py:145 stock/models.py:1031
+#: stock/models.py:145 stock/models.py:1047
 msgid "Stock Location"
 msgstr "Atsargų vieta"
 
@@ -8319,11 +8351,11 @@ msgstr "Atsargų vieta"
 msgid "Stock Locations"
 msgstr "Atsargų vietos"
 
-#: stock/models.py:195 stock/models.py:1196
+#: stock/models.py:195 stock/models.py:1212
 msgid "Owner"
 msgstr "Savininkas"
 
-#: stock/models.py:196 stock/models.py:1197
+#: stock/models.py:196 stock/models.py:1213
 msgid "Select Owner"
 msgstr "Pasirinkite savininką"
 
@@ -8360,265 +8392,265 @@ msgstr ""
 msgid "Part must be specified"
 msgstr "Turi būti nurodyta detalė"
 
-#: stock/models.py:890
+#: stock/models.py:906
 msgid "Stock items cannot be located into structural stock locations!"
 msgstr "Atsargos negali būti patalpintos į struktūrines atsargų vietas!"
 
-#: stock/models.py:917 stock/serializers.py:455
+#: stock/models.py:933 stock/serializers.py:455
 msgid "Stock item cannot be created for virtual parts"
 msgstr "Atsargų elementas negali būti sukurtas virtualioms detalėms"
 
-#: stock/models.py:934
+#: stock/models.py:950
 #, python-brace-format
 msgid "Part type ('{self.supplier_part.part}') must be {self.part}"
 msgstr "Detalės tipas ('{self.supplier_part.part}') turi būti {self.part}"
 
-#: stock/models.py:944 stock/models.py:957
+#: stock/models.py:960 stock/models.py:973
 msgid "Quantity must be 1 for item with a serial number"
 msgstr "Elemento, turinčio serijos numerį, kiekis turi būti 1"
 
-#: stock/models.py:947
+#: stock/models.py:963
 msgid "Serial number cannot be set if quantity greater than 1"
 msgstr "Serijos numeris negali būti nustatytas, jei kiekis didesnis nei 1"
 
-#: stock/models.py:969
+#: stock/models.py:985
 msgid "Item cannot belong to itself"
 msgstr "Elementas negali priklausyti pats sau"
 
-#: stock/models.py:974
+#: stock/models.py:990
 msgid "Item must have a build reference if is_building=True"
 msgstr "Elementas turi turėti surinkimo nuorodą, jei is_building=True"
 
-#: stock/models.py:987
+#: stock/models.py:1003
 msgid "Build reference does not point to the same part object"
 msgstr "Surinkimo nuoroda nenurodo į tą pačią detalę"
 
-#: stock/models.py:1001
+#: stock/models.py:1017
 msgid "Parent Stock Item"
 msgstr "Pirminis atsargų elementas"
 
-#: stock/models.py:1013
+#: stock/models.py:1029
 msgid "Base part"
 msgstr "Pagrindinė detalė"
 
-#: stock/models.py:1023
+#: stock/models.py:1039
 msgid "Select a matching supplier part for this stock item"
 msgstr "Pasirinkite atitinkančią tiekėjo detalę šiam atsargų elementui"
 
-#: stock/models.py:1035
+#: stock/models.py:1051
 msgid "Where is this stock item located?"
 msgstr "Kur yra šis atsargų elementas?"
 
-#: stock/models.py:1043 stock/serializers.py:1613
+#: stock/models.py:1059 stock/serializers.py:1628
 msgid "Packaging this stock item is stored in"
 msgstr "Pakuotė, kurioje laikomas šis atsargų elementas"
 
-#: stock/models.py:1049
+#: stock/models.py:1065
 msgid "Installed In"
 msgstr "Sumontuotas į"
 
-#: stock/models.py:1054
+#: stock/models.py:1070
 msgid "Is this item installed in another item?"
 msgstr "Ar šis elementas yra sumontuotas kitame elemente?"
 
-#: stock/models.py:1073
+#: stock/models.py:1089
 msgid "Serial number for this item"
 msgstr "Šio elemento serijos numeris"
 
-#: stock/models.py:1090 stock/serializers.py:1598
+#: stock/models.py:1106 stock/serializers.py:1613
 msgid "Batch code for this stock item"
 msgstr "Šio atsargų elemento partijos kodas"
 
-#: stock/models.py:1095
+#: stock/models.py:1111
 msgid "Stock Quantity"
 msgstr "Atsargų kiekis"
 
-#: stock/models.py:1105
+#: stock/models.py:1121
 msgid "Source Build"
 msgstr "Surinkimo šaltinis"
 
-#: stock/models.py:1108
+#: stock/models.py:1124
 msgid "Build for this stock item"
 msgstr "Surinkimas šiam atsargų elementui"
 
-#: stock/models.py:1115
+#: stock/models.py:1131
 msgid "Consumed By"
 msgstr "Sunaudojo"
 
-#: stock/models.py:1118
+#: stock/models.py:1134
 msgid "Build order which consumed this stock item"
 msgstr "Gamybos užsakymas, kuris sunaudojo šį atsargų elementą"
 
-#: stock/models.py:1127
+#: stock/models.py:1143
 msgid "Source Purchase Order"
 msgstr "Pirkimo užsakymo šaltinis"
 
-#: stock/models.py:1131
+#: stock/models.py:1147
 msgid "Purchase order for this stock item"
 msgstr "Pirkimo užsakymas šiam atsargų elementui"
 
-#: stock/models.py:1137
+#: stock/models.py:1153
 msgid "Destination Sales Order"
 msgstr "Pardavimo užsakymo paskirtis"
 
-#: stock/models.py:1148
+#: stock/models.py:1164
 msgid "Expiry date for stock item. Stock will be considered expired after this date"
 msgstr "Atsargų elemento galiojimo data. Po šios datos atsargos bus laikomos pasibaigusiomis"
 
-#: stock/models.py:1166
+#: stock/models.py:1182
 msgid "Delete on deplete"
 msgstr "Ištrinti išnaudojus"
 
-#: stock/models.py:1167
+#: stock/models.py:1183
 msgid "Delete this Stock Item when stock is depleted"
 msgstr "Ištrinti šį atsargų elementą, kai atsargos bus išnaudotos"
 
-#: stock/models.py:1188
+#: stock/models.py:1204
 msgid "Single unit purchase price at time of purchase"
 msgstr "Vieneto pirkimo kaina pirkimo metu"
 
-#: stock/models.py:1219
+#: stock/models.py:1235
 msgid "Converted to part"
 msgstr "Konvertuota į detalę"
 
-#: stock/models.py:1421
+#: stock/models.py:1437
 msgid "Quantity exceeds available stock"
 msgstr ""
 
-#: stock/models.py:1855
+#: stock/models.py:1880
 msgid "Part is not set as trackable"
 msgstr "Detalė nenustatyta kaip sekama"
 
-#: stock/models.py:1861
+#: stock/models.py:1886
 msgid "Quantity must be integer"
 msgstr "Kiekis turi būti sveikasis skaičius"
 
-#: stock/models.py:1869
+#: stock/models.py:1894
 #, python-brace-format
 msgid "Quantity must not exceed available stock quantity ({self.quantity})"
 msgstr "Kiekis negali viršyti galimų atsargų kiekio ({self.quantity})"
 
-#: stock/models.py:1875
+#: stock/models.py:1900
 msgid "Serial numbers must be provided as a list"
 msgstr "Serijos numeriai turi būti pateikti sąraše"
 
-#: stock/models.py:1880
+#: stock/models.py:1905
 msgid "Quantity does not match serial numbers"
 msgstr "Kiekis nesutampa su serijos numeriais"
 
-#: stock/models.py:1898
+#: stock/models.py:1923
 msgid "Cannot assign stock to structural location"
 msgstr ""
 
-#: stock/models.py:2015 stock/models.py:2920
+#: stock/models.py:2040 stock/models.py:2991
 msgid "Test template does not exist"
 msgstr "Bandomasis šablonas neegzistuoja"
 
-#: stock/models.py:2033
+#: stock/models.py:2058
 msgid "Stock item has been assigned to a sales order"
 msgstr "Atsargų elementas buvo priskirtas pardavimo užsakymui"
 
-#: stock/models.py:2037
+#: stock/models.py:2062
 msgid "Stock item is installed in another item"
 msgstr "Atsargų elementas sumontuotas kitame elemente"
 
-#: stock/models.py:2040
+#: stock/models.py:2065
 msgid "Stock item contains other items"
 msgstr "Atsargų elementas turi kitų elementų"
 
-#: stock/models.py:2043
+#: stock/models.py:2068
 msgid "Stock item has been assigned to a customer"
 msgstr "Atsargų elementas buvo priskirtas klientui"
 
-#: stock/models.py:2046 stock/models.py:2229
+#: stock/models.py:2071 stock/models.py:2254
 msgid "Stock item is currently in production"
 msgstr "Atsargų elementas šiuo metu gaminamas"
 
-#: stock/models.py:2049
+#: stock/models.py:2074
 msgid "Serialized stock cannot be merged"
 msgstr "Su serijos numeriais pažymėtų atsargų sujungti negalima"
 
-#: stock/models.py:2056 stock/serializers.py:1468
+#: stock/models.py:2081 stock/serializers.py:1483
 msgid "Duplicate stock items"
 msgstr "Pasikartojantys atsargų elementai"
 
-#: stock/models.py:2060
+#: stock/models.py:2085
 msgid "Stock items must refer to the same part"
 msgstr "Atsargų elementai turi būti susiję su ta pačia detale"
 
-#: stock/models.py:2068
+#: stock/models.py:2093
 msgid "Stock items must refer to the same supplier part"
 msgstr "Atsargų elementai turi būti susiję su ta pačia tiekėjo detale"
 
-#: stock/models.py:2073
+#: stock/models.py:2098
 msgid "Stock status codes must match"
 msgstr "Atsargų būsenos kodai turi sutapti"
 
-#: stock/models.py:2352
+#: stock/models.py:2395
 msgid "StockItem cannot be moved as it is not in stock"
 msgstr "Atsargų elemento negalima perkelti, nes jo nėra sandėlyje"
 
-#: stock/models.py:2821
+#: stock/models.py:2892
 msgid "Stock Item Tracking"
 msgstr "Atsargų elemento sekimas"
 
-#: stock/models.py:2852
+#: stock/models.py:2923
 msgid "Entry notes"
 msgstr "Įrašo pastabos"
 
-#: stock/models.py:2892
+#: stock/models.py:2963
 msgid "Stock Item Test Result"
 msgstr "Atsargų elemento bandymo rezultatas"
 
-#: stock/models.py:2923
+#: stock/models.py:2994
 msgid "Value must be provided for this test"
 msgstr "Šiam bandymui turi būti pateikta reikšmė"
 
-#: stock/models.py:2927
+#: stock/models.py:2998
 msgid "Attachment must be uploaded for this test"
 msgstr "Šiam bandymui turi būti įkeltas priedas"
 
-#: stock/models.py:2932
+#: stock/models.py:3003
 msgid "Invalid value for this test"
 msgstr "Netinkama reikšmė šiam bandymui"
 
-#: stock/models.py:2956
+#: stock/models.py:3027
 msgid "Test result"
 msgstr "Bandymo rezultatas"
 
-#: stock/models.py:2963
+#: stock/models.py:3034
 msgid "Test output value"
 msgstr "Bandymo išvesties reikšmė"
 
-#: stock/models.py:2971 stock/serializers.py:250
+#: stock/models.py:3042 stock/serializers.py:250
 msgid "Test result attachment"
 msgstr "Bandymo rezultato priedas"
 
-#: stock/models.py:2975
+#: stock/models.py:3046
 msgid "Test notes"
 msgstr "Bandymo pastabos"
 
-#: stock/models.py:2983
+#: stock/models.py:3054
 msgid "Test station"
 msgstr "Bandymų stotis"
 
-#: stock/models.py:2984
+#: stock/models.py:3055
 msgid "The identifier of the test station where the test was performed"
 msgstr "Bandymų stoties identifikatorius, kurioje atliktas bandymas"
 
-#: stock/models.py:2990
+#: stock/models.py:3061
 msgid "Started"
 msgstr "Pradėta"
 
-#: stock/models.py:2991
+#: stock/models.py:3062
 msgid "The timestamp of the test start"
 msgstr "Bandymo pradžios laiko žyma"
 
-#: stock/models.py:2997
+#: stock/models.py:3068
 msgid "Finished"
 msgstr "Pabaigta"
 
-#: stock/models.py:2998
+#: stock/models.py:3069
 msgid "The timestamp of the test finish"
 msgstr "Bandymo pabaigos laiko žyma"
 
@@ -8694,214 +8726,214 @@ msgstr "Naudoti pakuotės dydį pridedant: nurodytas kiekis yra pakuočių skai�
 msgid "Use pack size"
 msgstr ""
 
-#: stock/serializers.py:449 stock/serializers.py:700
+#: stock/serializers.py:449 stock/serializers.py:704
 msgid "Enter serial numbers for new items"
 msgstr "Įveskite serijos numerius naujiems elementams"
 
-#: stock/serializers.py:553
+#: stock/serializers.py:557
 msgid "Supplier Part Number"
 msgstr "Tiekėjo detalės numeris"
 
-#: stock/serializers.py:623 users/models.py:187
+#: stock/serializers.py:627 users/models.py:187
 msgid "Expired"
 msgstr "Nebegaliojantis"
 
-#: stock/serializers.py:629
+#: stock/serializers.py:633
 msgid "Child Items"
 msgstr "Antriniai elementai"
 
-#: stock/serializers.py:633
+#: stock/serializers.py:637
 msgid "Tracking Items"
 msgstr "Sekami elementai"
 
-#: stock/serializers.py:639
+#: stock/serializers.py:643
 msgid "Purchase price of this stock item, per unit or pack"
 msgstr "Šio atsargų elemento pirkimo kaina, vienetui arba pakuotei"
 
-#: stock/serializers.py:677
+#: stock/serializers.py:681
 msgid "Enter number of stock items to serialize"
 msgstr "Įveskite atsargų elementų, kuriuos reikia serializuoti, skaičių"
 
-#: stock/serializers.py:685 stock/serializers.py:728 stock/serializers.py:766
-#: stock/serializers.py:904
+#: stock/serializers.py:689 stock/serializers.py:732 stock/serializers.py:770
+#: stock/serializers.py:908
 msgid "No stock item provided"
 msgstr ""
 
-#: stock/serializers.py:693
+#: stock/serializers.py:697
 #, python-brace-format
 msgid "Quantity must not exceed available stock quantity ({q})"
 msgstr "Kiekis negali viršyti galimų atsargų kiekio ({q})"
 
-#: stock/serializers.py:711 stock/serializers.py:1425 stock/serializers.py:1746
-#: stock/serializers.py:1795
+#: stock/serializers.py:715 stock/serializers.py:1440 stock/serializers.py:1761
+#: stock/serializers.py:1810
 msgid "Destination stock location"
 msgstr "Paskirties atsargų vieta"
 
-#: stock/serializers.py:731
+#: stock/serializers.py:735
 msgid "Serial numbers cannot be assigned to this part"
 msgstr "Šiai detalei negali būti priskirti serijos numeriai"
 
-#: stock/serializers.py:751
+#: stock/serializers.py:755
 msgid "Serial numbers already exist"
 msgstr "Serijos numeriai jau egzistuoja"
 
-#: stock/serializers.py:801
+#: stock/serializers.py:805
 msgid "Select stock item to install"
 msgstr "Pasirinkite atsargų elementą montavimui"
 
-#: stock/serializers.py:808
+#: stock/serializers.py:812
 msgid "Quantity to Install"
 msgstr "Montuojamas kiekis"
 
-#: stock/serializers.py:809
+#: stock/serializers.py:813
 msgid "Enter the quantity of items to install"
 msgstr "Įveskite montuojamų elementų kiekį"
 
-#: stock/serializers.py:814 stock/serializers.py:894 stock/serializers.py:1036
+#: stock/serializers.py:818 stock/serializers.py:898 stock/serializers.py:1040
 msgid "Add transaction note (optional)"
 msgstr "Pridėkite operacijos pastabą (neprivaloma)"
 
-#: stock/serializers.py:822
+#: stock/serializers.py:826
 msgid "Quantity to install must be at least 1"
 msgstr "Montuojamas kiekis turi būti bent 1"
 
-#: stock/serializers.py:830
+#: stock/serializers.py:834
 msgid "Stock item is unavailable"
 msgstr "Atsargų elementas nepasiekiamas"
 
-#: stock/serializers.py:841
+#: stock/serializers.py:845
 msgid "Selected part is not in the Bill of Materials"
 msgstr "Pasirinktos detalės nėra komplektavimo žiniaraštyje"
 
-#: stock/serializers.py:854
+#: stock/serializers.py:858
 msgid "Quantity to install must not exceed available quantity"
 msgstr "Montuojamas kiekis negali viršyti turimo kiekio"
 
-#: stock/serializers.py:889
+#: stock/serializers.py:893
 msgid "Destination location for uninstalled item"
 msgstr "Paskirties vieta išmontuotam elementui"
 
-#: stock/serializers.py:927
+#: stock/serializers.py:931
 msgid "Select part to convert stock item into"
 msgstr "Pasirinkite detalę, į kurią konvertuoti atsargų elementą"
 
-#: stock/serializers.py:940
+#: stock/serializers.py:944
 msgid "Selected part is not a valid option for conversion"
 msgstr "Pasirinkta detalė netinkama konvertavimui"
 
-#: stock/serializers.py:957
+#: stock/serializers.py:961
 msgid "Cannot convert stock item with assigned SupplierPart"
 msgstr "Negalima konvertuoti atsargų elemento, kuriam priskirta tiekėjo detalė"
 
-#: stock/serializers.py:991
+#: stock/serializers.py:995
 msgid "Stock item status code"
 msgstr "Atsargų elemento būsenos kodas"
 
-#: stock/serializers.py:1020
+#: stock/serializers.py:1024
 msgid "Select stock items to change status"
 msgstr "Pasirinkite atsargų elementus būsenai pakeisti"
 
-#: stock/serializers.py:1026
+#: stock/serializers.py:1030
 msgid "No stock items selected"
 msgstr "Nepasirinkti jokie atsargų elementai"
 
-#: stock/serializers.py:1122 stock/serializers.py:1193
+#: stock/serializers.py:1137 stock/serializers.py:1208
 msgid "Sublocations"
 msgstr "Sub-vietos"
 
-#: stock/serializers.py:1188
+#: stock/serializers.py:1203
 msgid "Parent stock location"
 msgstr "Pirminė atsargų vieta"
 
-#: stock/serializers.py:1297
+#: stock/serializers.py:1312
 msgid "Part must be salable"
 msgstr "Detalė turi būti parduodama"
 
-#: stock/serializers.py:1301
+#: stock/serializers.py:1316
 msgid "Item is allocated to a sales order"
 msgstr "Elementas priskirtas pardavimo užsakymui"
 
-#: stock/serializers.py:1305
+#: stock/serializers.py:1320
 msgid "Item is allocated to a build order"
 msgstr "Elementas priskirtas gamybos užsakymui"
 
-#: stock/serializers.py:1329
+#: stock/serializers.py:1344
 msgid "Customer to assign stock items"
 msgstr "Klientas, kuriam priskiriami atsargų elementai"
 
-#: stock/serializers.py:1335
+#: stock/serializers.py:1350
 msgid "Selected company is not a customer"
 msgstr "Pasirinkta įmonė nėra klientas"
 
-#: stock/serializers.py:1343
+#: stock/serializers.py:1358
 msgid "Stock assignment notes"
 msgstr "Atsargų priskyrimo pastabos"
 
-#: stock/serializers.py:1353 stock/serializers.py:1641
+#: stock/serializers.py:1368 stock/serializers.py:1656
 msgid "A list of stock items must be provided"
 msgstr "Turi būti pateiktas atsargų elementų sąrašas"
 
-#: stock/serializers.py:1432
+#: stock/serializers.py:1447
 msgid "Stock merging notes"
 msgstr "Atsargų sujungimo pastabos"
 
-#: stock/serializers.py:1437
+#: stock/serializers.py:1452
 msgid "Allow mismatched suppliers"
 msgstr "Leisti skirtingus tiekėjus"
 
-#: stock/serializers.py:1438
+#: stock/serializers.py:1453
 msgid "Allow stock items with different supplier parts to be merged"
 msgstr "Leisti sujungti atsargų elementus su skirtingomis tiekėjų detalėmis"
 
-#: stock/serializers.py:1443
+#: stock/serializers.py:1458
 msgid "Allow mismatched status"
 msgstr "Leisti skirtingas būsenas"
 
-#: stock/serializers.py:1444
+#: stock/serializers.py:1459
 msgid "Allow stock items with different status codes to be merged"
 msgstr "Leisti sujungti atsargų elementus su skirtingais būsenos kodais"
 
-#: stock/serializers.py:1454
+#: stock/serializers.py:1469
 msgid "At least two stock items must be provided"
 msgstr "Turi būti pateikti bent du atsargų elementai"
 
-#: stock/serializers.py:1521
+#: stock/serializers.py:1536
 msgid "No Change"
 msgstr "Be pakeitimų"
 
-#: stock/serializers.py:1559
+#: stock/serializers.py:1574
 msgid "StockItem primary key value"
 msgstr "Atsargų elemento pirminio rakto reikšmė"
 
-#: stock/serializers.py:1572
+#: stock/serializers.py:1587
 msgid "Stock item is not in stock"
 msgstr "Atsargų elemento nėra sandėlyje"
 
-#: stock/serializers.py:1575
+#: stock/serializers.py:1590
 msgid "Stock item is already in stock"
 msgstr ""
 
-#: stock/serializers.py:1589
+#: stock/serializers.py:1604
 msgid "Quantity must not be negative"
 msgstr ""
 
-#: stock/serializers.py:1631
+#: stock/serializers.py:1646
 msgid "Stock transaction notes"
 msgstr "Atsargų operacijos pastabos"
 
-#: stock/serializers.py:1801
+#: stock/serializers.py:1816
 msgid "Merge into existing stock"
 msgstr ""
 
-#: stock/serializers.py:1802
+#: stock/serializers.py:1817
 msgid "Merge returned items into existing stock items if possible"
 msgstr ""
 
-#: stock/serializers.py:1845
+#: stock/serializers.py:1860
 msgid "Next Serial Number"
 msgstr "Kitas serijos numeris"
 
-#: stock/serializers.py:1851
+#: stock/serializers.py:1866
 msgid "Previous Serial Number"
 msgstr "Ankstesnis serijos numeris"
 

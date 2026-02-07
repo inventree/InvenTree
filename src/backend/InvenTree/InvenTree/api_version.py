@@ -1,13 +1,29 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 444
+INVENTREE_API_VERSION = 449
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v444 -> 2026-01-16 : https://github.com/inventree/InvenTree/pull/11073
+v449 -> 2026-02-07 : https://github.com/inventree/InvenTree/pull/11073
     - Add OptionalField class for cleaner handling of optional fields in serializers
+
+v448 -> 2026-02-05 : https://github.com/inventree/InvenTree/pull/11257
+    - Adds API endpoint for manually generating a stocktake entry
+
+v447 -> 2026-02-02 : https://github.com/inventree/InvenTree/pull/11242
+    - Adds "sub_part_active" filter to BomItem API endpoint
+
+v446 -> 2026-02-01 : https://github.com/inventree/InvenTree/pull/11232
+    - Allow ordering of test results by started_datetime and finished_datetime fields
+    - Allow ordering of test results by test_station field
+
+v445 -> 2026-01-29 : https://github.com/inventree/InvenTree/pull/11102
+    - Added "allocated_lines" field to SalesOrderSerializer to track fully allocated line items
+
+v444 -> 2026-01-27 : https://github.com/inventree/InvenTree/pull/11208
+    - Add customize option to disable theme loading from user profile (mainly for demo site use)
 
 v443 -> 2026-01-21 : https://github.com/inventree/InvenTree/pull/11177
     - Adds IPN ordering option for BomItem API endpoint
