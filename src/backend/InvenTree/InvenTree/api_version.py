@@ -1,15 +1,18 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 448
+INVENTREE_API_VERSION = 449
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v448 -> 2026-02-06 : https://github.com/inventree/InvenTree/pull/...
+v449 -> 2026-02-08 : https://github.com/inventree/InvenTree/pull/...
     - Expose InvenTreeImage model to api/image API endpoints
     - Adds 'image_url' and 'thumbnail_url' fields to relevant API serializers
     - Updates Part and Company API endpoints to use new image architecture
+
+v448 -> 2026-02-05 : https://github.com/inventree/InvenTree/pull/11257
+    - Adds API endpoint for manually generating a stocktake entry
 
 v447 -> 2026-02-02 : https://github.com/inventree/InvenTree/pull/11242
     - Adds "sub_part_active" filter to BomItem API endpoint

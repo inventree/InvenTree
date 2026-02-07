@@ -1150,11 +1150,18 @@ class PartStocktakeFilter(FilterSet):
         fields = ['part']
 
 
-class PartStocktakeList(BulkDeleteMixin, ListCreateAPI):
+class PartStocktakeMixin:
+    """Mixin class for PartStocktake API endpoints."""
+
+    queryset = PartStocktake.objects.all().prefetch_related('part')
+    serializer_class = part_serializers.PartStocktakeSerializer
+
+
+class PartStocktakeList(
+    PartStocktakeMixin, DataExportViewMixin, BulkDeleteMixin, ListCreateAPI
+):
     """API endpoint for listing part stocktake information."""
 
-    queryset = PartStocktake.objects.all()
-    serializer_class = part_serializers.PartStocktakeSerializer
     filterset_class = PartStocktakeFilter
 
     def get_serializer_context(self):
@@ -1172,14 +1179,65 @@ class PartStocktakeList(BulkDeleteMixin, ListCreateAPI):
     ordering = '-pk'
 
 
-class PartStocktakeDetail(RetrieveUpdateDestroyAPI):
+class PartStocktakeDetail(PartStocktakeMixin, RetrieveUpdateDestroyAPI):
     """Detail API endpoint for a single PartStocktake instance.
 
     Note: Only staff (admin) users can access this endpoint.
     """
 
+
+class PartStocktakeGenerate(CreateAPI):
+    """API endpoint for generating a PartStocktake instance."""
+
     queryset = PartStocktake.objects.all()
-    serializer_class = part_serializers.PartStocktakeSerializer
+    serializer_class = part_serializers.PartStocktakeGenerateSerializer
+
+    def post(self, request, *args, **kwargs):
+        """Perform stocktake generation on POST request."""
+        from common.models import DataOutput
+        from part.stocktake import perform_stocktake
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        data = serializer.validated_data
+
+        part = data.get('part', None)
+        category = data.get('category', None)
+        location = data.get('location', None)
+
+        # Do we want to generate a report?
+        if data.get('generate_report', True):
+            report_output = DataOutput.objects.create(
+                user=request.user, output_type='stocktake'
+            )
+        else:
+            report_output = None
+
+        # Offload the actual stocktake generation to a background task, as it may take some time to complete
+        offload_task(
+            perform_stocktake,
+            part_id=part.pk if part else None,
+            category_id=category.pk if category else None,
+            location_id=location.pk if location else None,
+            generate_entry=data.get('generate_entry', True),
+            report_output_id=report_output.pk if report_output else None,
+            group='stocktake',
+        )
+
+        if report_output:
+            report_output.refresh_from_db()
+
+        result = {
+            'category': category,
+            'location': location,
+            'part': part,
+            'output': report_output,
+        }
+
+        output_serializer = part_serializers.PartStocktakeGenerateSerializer(result)
+
+        return Response(output_serializer.data)
 
 
 class BomFilter(FilterSet):
@@ -1549,6 +1607,11 @@ part_api_urls = [
                 '<int:pk>/',
                 PartStocktakeDetail.as_view(),
                 name='api-part-stocktake-detail',
+            ),
+            path(
+                'generate/',
+                PartStocktakeGenerate.as_view(),
+                name='api-part-stocktake-generate',
             ),
             path('', PartStocktakeList.as_view(), name='api-part-stocktake-list'),
         ]),

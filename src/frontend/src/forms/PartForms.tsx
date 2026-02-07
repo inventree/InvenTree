@@ -266,7 +266,6 @@ export function partStocktakeFields(): ApiFormFieldSet {
     cost_min: {},
     cost_min_currency: {},
     cost_max: {},
-    cost_max_currency: {},
-    note: {}
+    cost_max_currency: {}
   };
 }
