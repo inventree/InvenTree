@@ -1422,7 +1422,7 @@ def test(
 )
 def setup_test(
     c,
-    ignore_update=True,
+    ignore_update=False,
     dev=False,
     validate_files=False,
     use_ssh=False,
@@ -1440,20 +1440,19 @@ def setup_test(
     template_dir = local_dir().joinpath(path)
 
     # Remove old data directory
-    # if template_dir.exists():
-    #     info(f'Removing old data ...{template_dir}')
-    #     run(c, f'rm {template_dir} -r')
+    if template_dir.exists():
+        info('Removing old data ...')
+        run(c, f'rm {template_dir} -r')
 
-    # TODO: The test dataset loader needs to be updated to handle the `UploadImage` model and include sample images.
-    # URL = 'https://github.com/inventree/demo-dataset'
+    URL = 'https://github.com/inventree/demo-dataset'
 
-    # if use_ssh:
-    #     # Use SSH protocol for cloning the demo dataset
-    #     URL = 'git@github.com:inventree/demo-dataset.git'
+    if use_ssh:
+        # Use SSH protocol for cloning the demo dataset
+        URL = 'git@github.com:inventree/demo-dataset.git'
 
-    # # Get test data
-    # info('Cloning demo dataset ...')
-    # run(c, f'git clone {URL} {template_dir} -b {branch} -v --depth=1')
+    # Get test data
+    info('Cloning demo dataset ...')
+    run(c, f'git clone {URL} {template_dir} -b {branch} -v --depth=1')
 
     # Make sure migrations are done - might have just deleted sqlite database
     if not ignore_update:
