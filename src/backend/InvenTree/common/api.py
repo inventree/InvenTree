@@ -790,8 +790,8 @@ class InvenTreeImageFilter(FilterSet):
     - object_id             (the PK of the related object)
     """
 
-    content_model = rest_filters.CharFilter(
-        field_name='content_type__model',
+    model_type = rest_filters.CharFilter(
+        field_name='model_type__model',
         lookup_expr='iexact',
         label=_('Content model name'),
         help_text=_('Exact match on the content type model name, e.g. "part"'),
@@ -815,7 +815,7 @@ class InvenTreeImageFilter(FilterSet):
         """Meta options for the InvenTreeImageFilter."""
 
         model = common.models.InvenTreeImage
-        fields = ['content_model', 'object_id', 'primary']
+        fields = ['model_type', 'object_id', 'primary']
 
 
 class InvenTreeImageList(ListCreateAPI):

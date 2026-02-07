@@ -740,6 +740,7 @@ class InvenTreeImageSerializer(
     def create(self, validated_data):
         """Create a new InvenTreeImage instance with the provided data."""
         # Extract the fields from validated data
+
         image = validated_data.get('image', None)
         existing_image = validated_data.get('existing_image', None)
         remote_image = validated_data.get(
@@ -860,9 +861,7 @@ class AttachmentSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
         if len(self.fields['model_type'].choices) == 0:
             self.fields[
                 'model_type'
-            ].choices = common.validators.get_model_options_for_mixin(
-                InvenTreeAttachmentMixin
-            )
+            ].choices = common.validators.attachment_model_options()
 
     tags = common.filters.enable_tags_filter()
 
@@ -880,7 +879,7 @@ class AttachmentSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
     # Note: The choices are overridden at run-time on class initialization
     model_type = serializers.ChoiceField(
         label=_('Model Type'),
-        choices=common.validators.get_model_options_for_mixin(InvenTreeAttachmentMixin),
+        choices=common.validators.attachment_model_options(),
         required=True,
         allow_blank=False,
         allow_null=False,
@@ -888,7 +887,6 @@ class AttachmentSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
 
     def save(self, **kwargs):
         """Override the save method to handle the model_type field."""
-        from InvenTree.models import InvenTreeAttachmentMixin
         from users.permissions import check_user_permission
 
         model_type = self.validated_data.get('model_type', None)
