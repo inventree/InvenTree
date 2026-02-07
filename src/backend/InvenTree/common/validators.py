@@ -59,6 +59,15 @@ def parameter_model_types():
     )
 
 
+def image_model_types():
+    """Return a list of valid image model choices."""
+    import InvenTree.models
+
+    return list(
+        InvenTree.helpers_model.getModelsWithMixin(InvenTree.models.InvenTreeImageMixin)
+    )
+
+
 def parameter_model_options():
     """Return a list of options for models which support parameters."""
     return [
@@ -75,6 +84,14 @@ def parameter_template_model_options():
     ]
 
     return [(None, _('All models')), *options]
+
+
+def image_model_options():
+    """Return a list of options for models which support InvenTreeImageMixin."""
+    return [
+        (model.__name__.lower(), model._meta.verbose_name)
+        for model in image_model_types()
+    ]
 
 
 def attachment_model_types():

@@ -1937,26 +1937,26 @@ class InvenTreeImage(models.Model):
     """Class which represents an uploaded image linked to another model instance.
 
     Attributes:
-        content_type: The ContentType of the target model
+        model_type: The ContentType of the target model
         object_id: The primary key of the target object
         content_object: The GenericForeignKey to the target object
         primary: Flag to mark this image as the “primary” image
         image: The actual uploaded file
     """
 
-    content_type = models.ForeignKey(
+    model_type = models.ForeignKey(
         ContentType,
         on_delete=models.CASCADE,
         related_name='inventree_images',
         limit_choices_to=common.validators.limit_image_content_types,
-        verbose_name=_('Content type'),
+        verbose_name=_('Model type'),
         help_text=_('The type of object this image is attached to'),
     )
     object_id = models.PositiveIntegerField(
         verbose_name=_('Object ID'),
         help_text=_('The ID of the object this image is attached to'),
     )
-    content_object = GenericForeignKey('content_type', 'object_id')
+    content_object = GenericForeignKey('model_type', 'object_id')
 
     primary = models.BooleanField(default=False)
     image = CustomStdImage(
@@ -2041,7 +2041,7 @@ class InvenTreeImage(models.Model):
     def get_thumbnail_url(self) -> str:
         """Return the URL of the image thumbnail for this part."""
         if self.image:
-            return helpers.getMediaUrl(self.image.thumbnail)
+            return helpers.getMediaUrl(self.image, 'thumbnail')
         return helpers.getBlankThumbnail()
 
 

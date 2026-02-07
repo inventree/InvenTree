@@ -658,12 +658,18 @@ class InvenTreeImageSerializer(
     image = InvenTreeImageSerializerField(required=False)
     thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
 
-    # we accept the model name here
-    content_type = serializers.ChoiceField(
-        choices=[],  # populated in __init__
-        write_only=True,
+    # # we accept the model name here
+    # content_type = serializers.ChoiceField(
+    #     choices=[],  # populated in __init__
+    #     write_only=True,
+    #     label=_('Content Type'),
+    # )
+
+    model_type = ContentTypeField(
+        mixin_class=InvenTreeImageMixin,
+        choices=common.validators.image_model_options,
+        label=_('Model Type'),
         help_text=_('Type of object this image is attached to'),
-        label=_('Content Type'),
     )
 
     existing_image = serializers.CharField(
@@ -685,20 +691,12 @@ class InvenTreeImageSerializer(
             'primary',
             'image',
             'thumbnail',
-            'content_type',
+            'model_type',
             'existing_image',
             'remote_image',
             'object_id',
         ]
         read_only_fields = ['pk', 'thumbnail']
-
-    def __init__(self, *args, **kwargs):
-        """Initialize the serializer and set allowed content types."""
-        super().__init__(*args, **kwargs)
-
-        self.fields[
-            'content_type'
-        ].choices = common.validators.get_model_options_for_mixin(InvenTreeImageMixin)
 
     def validate_content_type(self, ct_value):
         """Turn the incoming model-name string into a real ContentType instance."""

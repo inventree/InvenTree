@@ -69,13 +69,13 @@ class InvenTreeImageAdmin(admin.ModelAdmin):
 
     list_display = (
         'id',
-        'content_type',
+        'model_type',
         'object_id',
         'primary',
         'image',
         'image_thumbnail',
     )
-    list_filter = ('content_type', 'primary', 'image')
+    list_filter = ('model_type', 'primary', 'image')
     search_fields = ('object_id',)
     readonly_fields = ('image_thumbnail',)
     fieldsets = (
@@ -83,7 +83,7 @@ class InvenTreeImageAdmin(admin.ModelAdmin):
             None,
             {
                 'fields': (
-                    'content_type',
+                    'model_type',
                     'object_id',
                     'primary',
                     'image',

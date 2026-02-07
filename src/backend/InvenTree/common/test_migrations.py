@@ -218,7 +218,7 @@ class TestLegacyAttachmentMigration(MigratorTestCase):
 class TestLegacyImageMigration(MigratorTestCase):
     """Test that any Company.image and Part.image values are correctly migrated."""
 
-    migrate_from = [('common', '0040_inventreeimage')]
+    migrate_from = [('common', '0042_inventreeimage')]
     migrate_to = [('common', unit_test.getNewestMigrationFile('common'))]
 
     @classmethod
@@ -421,8 +421,8 @@ class TestLegacyImageMigrationReverse(MigratorTestCase):
     """Test that InvenTreeImage values are correctly migrated back to Company.image and Part.image."""
 
     # Start from the new state (after migration) and migrate back
-    migrate_from = [('common', '0042_migrate_part_images')]
-    migrate_to = [('common', '0040_inventreeimage')]
+    migrate_from = [('common', '0043_migrate_part_images')]
+    migrate_to = [('common', '0042_inventreeimage')]
 
     @classmethod
     def setUpClass(cls):

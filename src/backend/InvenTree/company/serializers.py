@@ -144,8 +144,6 @@ class CompanySerializer(
             'notes',
             'parts_supplied',
             'parts_manufactured',
-            'address_count',
-            'remote_image',
             'primary_address',
             'tax_id',
             'parameters',

@@ -1489,10 +1489,6 @@ class InvenTreeImageMixin(models.Model):
 
         abstract = True
 
-    def rename_image(self, filename):
-        """Rename the uploaded image file using the IMAGE_RENAME function."""
-        return self.IMAGE_RENAME(filename)  # type: ignore
-
     def save_image(self, file, file_name, primary=False):
         """Save an image to this instance.
 
@@ -1539,6 +1535,19 @@ class InvenTreeImageMixin(models.Model):
         self.images.all().delete()
         return super().delete(*args, **kwargs)
 
+    def rename_image(self, filename):
+        """Rename the uploaded image file using the IMAGE_RENAME function."""
+        return self.IMAGE_RENAME(filename)  # type: ignore
+
+    # image = StdImageField(
+    #     upload_to=rename_image,
+    #     null=True,
+    #     blank=True,
+    #     variations={'thumbnail': (128, 128), 'preview': (256, 256)},
+    #     delete_orphans=False,
+    #     verbose_name=_('Image'),
+    # )
+
     @property
     def image(self):
         """Return the primary image, or None."""
@@ -1560,3 +1569,55 @@ class InvenTreeImageMixin(models.Model):
             new_images.append(new_img)
 
         InvenTreeImage.objects.bulk_create(new_images)
+
+
+# class InvenTreeImageMixin(models.Model):
+#     """A mixin class for adding image functionality to a model class.
+
+#     The following fields are added to any model which implements this mixin:
+
+#     - image : An image field for storing an image
+#     """
+
+#     IMAGE_RENAME: Callable | None = None
+
+#     class Meta:
+#         """Metaclass options for this mixin.
+
+#         Note: abstract must be true, as this is only a mixin, not a separate table
+#         """
+
+#         abstract = True
+
+#     def __init__(self, *args: Any, **kwargs: Any) -> None:
+#         """Custom init method for InvenTreeImageMixin to ensure IMAGE_RENAME is implemented."""
+#         if self.IMAGE_RENAME is None:
+#             raise NotImplementedError(
+#                 'IMAGE_RENAME must be implemented in the model class'
+#             )
+#         super().__init__(*args, **kwargs)
+
+#     def rename_image(self, filename):
+#         """Rename the uploaded image file using the IMAGE_RENAME function."""
+#         return self.IMAGE_RENAME(filename)  # type: ignore
+
+#     image = StdImageField(
+#         upload_to=rename_image,
+#         null=True,
+#         blank=True,
+#         variations={'thumbnail': (128, 128), 'preview': (256, 256)},
+#         delete_orphans=False,
+#         verbose_name=_('Image'),
+#     )
+
+#     def get_image_url(self):
+#         """Return the URL of the image for this object."""
+#         if self.image:
+#             return InvenTree.helpers.getMediaUrl(self.image)
+#         return InvenTree.helpers.getBlankImage()
+
+#     def get_thumbnail_url(self) -> str:
+#         """Return the URL of the image thumbnail for this object."""
+#         if self.image:
+#             return InvenTree.helpers.getMediaUrl(self.image, 'thumbnail')
+#         return InvenTree.helpers.getBlankThumbnail()

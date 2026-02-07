@@ -2,7 +2,6 @@
     "name": "@inventreedb/ui",
     "description": "UI components for the InvenTree project",
     "version": "0.7.0",
-    "private": false,
     "type": "module",
     "license": "MIT",
     "keywords": [
