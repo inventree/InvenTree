@@ -111,7 +111,7 @@ async function setNewImage(
   await api
     .post(apiUrl(ApiEndpoints.upload_image_list), {
       existing_image: image,
-      content_type: ModelType.part,
+      model_type: ModelType.part,
       object_id: object_id
     })
     .then((response) => {
@@ -164,7 +164,7 @@ export function PartThumbTable({ pk, onSuccess }: Readonly<ThumbTableProps>) {
             offset: offset,
             limit: limit,
             search: searchText,
-            content_model: ModelType.part
+            model_type: ModelType.part
           }
         })
         .then((response) => {

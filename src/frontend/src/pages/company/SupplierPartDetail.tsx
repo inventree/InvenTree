@@ -221,7 +221,7 @@ export default function SupplierPartDetail() {
           <DetailsImage
             appRole={UserRoles.part}
             object_id={supplierPart?.part_detail?.pk}
-            content_model={ModelType.part}
+            model_type={ModelType.part}
           />
           <Grid.Col span={8}>
             <DetailsTable title={t`Part Details`} fields={tl} item={data} />

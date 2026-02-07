@@ -136,7 +136,7 @@ export default function ManufacturerPartDetail() {
           <DetailsImage
             appRole={UserRoles.part}
             object_id={manufacturerPart?.part_detail?.pk}
-            content_model={ModelType.part}
+            model_type={ModelType.part}
             multiple={true}
           />
           <Grid.Col span={{ base: 12, sm: 8 }}>

@@ -385,7 +385,7 @@ export default function BuildDetail() {
           <DetailsImage
             appRole={UserRoles.part}
             object_id={build.part}
-            content_model={ModelType.part}
+            model_type={ModelType.part}
             multiple={true}
           />
           <Grid.Col span={{ base: 12, sm: 6 }}>

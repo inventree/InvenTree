@@ -741,7 +741,7 @@ export default function PartDetail() {
             <DetailsImage
               appRole={UserRoles.part}
               object_id={part.pk}
-              content_model={ModelType.part}
+              model_type={ModelType.part}
               refresh={refreshInstance}
               AddImageActions={{
                 selectExisting: true,

@@ -1479,7 +1479,7 @@ class InvenTreeImageMixin(models.Model):
 
     images = GenericRelation(
         'common.InvenTreeImage',
-        content_type_field='content_type',
+        content_type_field='model_type',
         object_id_field='object_id',
         related_query_name='%(app_label)s_%(class)ss',
     )
@@ -1561,7 +1561,7 @@ class InvenTreeImageMixin(models.Model):
         new_images = []
         for img in self.images.all():
             new_img = InvenTreeImage(
-                content_type=ct,
+                model_type=ct,
                 object_id=target_pk,
                 primary=img.primary,
                 image=img.image.name,

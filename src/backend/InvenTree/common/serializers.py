@@ -698,13 +698,6 @@ class InvenTreeImageSerializer(
         ]
         read_only_fields = ['pk', 'thumbnail']
 
-    def validate_content_type(self, ct_value):
-        """Turn the incoming model-name string into a real ContentType instance."""
-        try:
-            return ContentType.objects.get(model=ct_value)
-        except ContentType.DoesNotExist:
-            raise ValidationError(f"Invalid content type '{ct_value}'")
-
     def validate_existing_image(self, img):
         """Check the file really exists in storage backend."""
         if not img:

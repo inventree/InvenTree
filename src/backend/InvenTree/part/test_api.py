@@ -72,7 +72,7 @@ class PartImageTestMixin:
         with open(fn, 'rb') as img_file:
             response = self.upload_client.post(
                 reverse('api-image-list'),
-                {'object_id': p.pk, 'content_type': 'part', 'image': img_file},
+                {'object_id': p.pk, 'model_type': 'part', 'image': img_file},
                 expected_code=200,
             )
             image_name = response.data['image']
@@ -1590,11 +1590,11 @@ class PartCreationTests(PartAPITestBase):
         # Prepare two in memory images for test duplicate
         img1 = generate_image('test2.png')
         InvenTreeImage.objects.create(
-            content_type=part_ct, object_id=base_part.pk, image=img1
+            model_type=part_ct, object_id=base_part.pk, image=img1
         )
         img2 = generate_image('test1.png')
         InvenTreeImage.objects.create(
-            content_type=part_ct, object_id=base_part.pk, image=img2
+            model_type=part_ct, object_id=base_part.pk, image=img2
         )
 
         base_part.testable = True
@@ -1847,7 +1847,7 @@ class PartDetailTests(PartAPITestBase):
         with open(f'{test_path}.txt', 'rb') as dummy_image:
             response = self.upload_client.post(
                 reverse('api-image-list'),
-                {'object_id': 17, 'content_type': 'part', 'image': dummy_image},
+                {'object_id': 17, 'model_type': 'part', 'image': dummy_image},
                 expected_code=200,
             )
 
@@ -1863,7 +1863,7 @@ class PartDetailTests(PartAPITestBase):
             with open(fn, 'rb') as dummy_image:
                 response = self.upload_client.post(
                     reverse('api-image-list'),
-                    {'object_id': pk, 'content_type': 'part', 'image': dummy_image},
+                    {'object_id': pk, 'model_type': 'part', 'image': dummy_image},
                     expected_code=201,
                 )
 
@@ -1875,7 +1875,7 @@ class PartDetailTests(PartAPITestBase):
 
         response = self.get(
             reverse('api-image-list'),
-            {'object_id': pk, 'content_type': 'part'},
+            {'object_id': pk, 'model_type': 'part'},
             expected_code=200,
         )
         self.assertEqual(len(response.data), 5)
@@ -1893,7 +1893,7 @@ class PartDetailTests(PartAPITestBase):
         with open(fn, 'rb') as img_file:
             response = self.upload_client.post(
                 reverse('api-image-list'),
-                {'object_id': p.pk, 'content_type': 'part', 'image': img_file},
+                {'object_id': p.pk, 'model_type': 'part', 'image': img_file},
                 expected_code=200,
             )
             image_name = response.data['image']
@@ -1915,11 +1915,7 @@ class PartDetailTests(PartAPITestBase):
 
         response = self.upload_client.post(
             reverse('api-image-list'),
-            {
-                'object_id': part_pk,
-                'content_type': 'part',
-                'existing_image': image_name,
-            },
+            {'object_id': part_pk, 'model_type': 'part', 'existing_image': image_name},
             expected_code=200,
         )
 
@@ -1932,7 +1928,7 @@ class PartDetailTests(PartAPITestBase):
             reverse('api-image-list'),
             {
                 'object_id': last_p.pk,
-                'content_type': 'part',
+                'model_type': 'part',
                 'existing_image': 'bogus_image.jpg',
             },
             expected_code=400,

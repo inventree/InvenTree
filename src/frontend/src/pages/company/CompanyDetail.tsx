@@ -154,7 +154,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
         <Grid grow>
           <DetailsImage
             appRole={UserRoles.purchase_order}
-            content_model={ModelType.company}
+            model_type={ModelType.company}
             object_id={company.pk}
             refresh={refreshInstance}
             multiple={false}

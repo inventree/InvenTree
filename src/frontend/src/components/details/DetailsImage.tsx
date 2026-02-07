@@ -58,7 +58,7 @@ export type ImageItemProps = {
   EditImageActions?: EditImageButtonProps;
   pk: string;
   image_id?: string;
-  content_type?: ModelType.part | ModelType.company;
+  model_type?: ModelType.part | ModelType.company;
   hasAction?: boolean;
 };
 
@@ -100,11 +100,11 @@ const backup_image = '/static/img/blank_image.png';
 function UploadModal({
   setImage,
   object_id,
-  content_type
+  model_type
 }: Readonly<{
   setImage: (image: string) => void;
   object_id: string;
-  content_type: string;
+  model_type: string;
 }>) {
   const [currentFile, setCurrentFile] = useState<FileWithPath | null>(null);
   let uploading = false;
@@ -171,7 +171,7 @@ function UploadModal({
     uploading = true;
     const formData = new FormData();
     formData.append('image', file, file.name);
-    formData.append('content_type', content_type);
+    formData.append('model_type', model_type);
     formData.append('object_id', object_id);
 
     const url = apiUrl(ApiEndpoints.upload_image_list);
@@ -281,7 +281,7 @@ function ImageActionButtons({
   pk,
   addActions,
   editActions,
-  content_type,
+  model_type,
   setAsPrimary,
   downloadImage,
   setAndRefresh,
@@ -290,7 +290,7 @@ function ImageActionButtons({
   pk: string;
   addActions?: AddImageButtonProps;
   editActions?: EditImageButtonProps;
-  content_type?: string;
+  model_type?: string;
   setAsPrimary: () => void;
   downloadImage: () => void;
   setAndRefresh: (image: string) => void;
@@ -317,7 +317,7 @@ function ImageActionButtons({
           children: (
             <UploadModal
               object_id={pk!}
-              content_type={String(content_type)}
+              model_type={String(model_type)}
               setImage={setAndRefresh}
             />
           )
@@ -358,7 +358,7 @@ function ImageActionButtons({
           title: <StylishText size='xl'>{t`Upload Image`}</StylishText>,
           children: (
             <UploadModal
-              content_type={String(content_type)}
+              model_type={String(model_type)}
               object_id={pk!}
               setImage={setAndRefresh}
             />
@@ -455,7 +455,7 @@ function ImageItem(props: Readonly<ImageItemProps>) {
     fields: {
       remote_image: {},
       object_id: { hidden: true, value: props.pk },
-      content_type: { hidden: true, value: props.content_type }
+      model_type: { hidden: true, value: props.model_type }
     },
     timeout: 10000,
     submitText: t`Download`,
@@ -538,7 +538,7 @@ function ImageItem(props: Readonly<ImageItemProps>) {
                 addActions={props.AddImageActions}
                 editActions={props.EditImageActions}
                 pk={props.pk}
-                content_type={props.content_type}
+                model_type={props.model_type}
                 downloadImage={downloadImage.open}
                 setAndRefresh={setAndRefresh}
                 setAsPrimary={setAsPrimary}
@@ -567,7 +567,7 @@ interface UploadImage {
 interface DetailsImageProps {
   appRole?: UserRoles;
   object_id: string;
-  content_model: ModelType.part | ModelType.company;
+  model_type: ModelType.part | ModelType.company;
   multiple?: boolean;
   refresh?: () => void;
   AddImageActions?: AddImageButtonProps;
@@ -590,7 +590,7 @@ const FALLBACK_IMAGE: UploadImage = {
  */
 export function DetailsImage({
   appRole,
-  content_model,
+  model_type,
   multiple,
   object_id,
   refresh,
@@ -610,7 +610,7 @@ export function DetailsImage({
     queryFn: async () => {
       const response = await api.get(apiUrl(imgUrl), {
         params: {
-          content_model,
+          model_type,
           object_id
         }
       });
@@ -696,7 +696,7 @@ export function DetailsImage({
                 image_id={imgObj.pk}
                 pk={object_id}
                 primary={imgObj.primary}
-                content_type={content_model}
+                model_type={model_type}
                 refresh={refresh}
                 hasAction={carouselConfig.hasAction}
               />

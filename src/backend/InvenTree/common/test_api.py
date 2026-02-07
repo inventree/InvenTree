@@ -468,7 +468,7 @@ class InvenTreeImageTest(InvenTreeAPITestCase):
         )
 
         # Determine the ContentType for our Part model
-        cls.content_type = ContentType.objects.get_for_model(Part)
+        cls.model_type = ContentType.objects.get_for_model(Part)
 
         # Prepare two in memory image files
         cls.image_file_1 = generate_image('test1.png')
@@ -476,14 +476,10 @@ class InvenTreeImageTest(InvenTreeAPITestCase):
 
         # Create two images on the part
         cls.img1 = InvenTreeImage.objects.create(
-            content_type=cls.content_type,
-            object_id=cls.part1.pk,
-            image=cls.image_file_1,
+            model_type=cls.model_type, object_id=cls.part1.pk, image=cls.image_file_1
         )
         cls.img2 = InvenTreeImage.objects.create(
-            content_type=cls.content_type,
-            object_id=cls.part1.pk,
-            image=cls.image_file_2,
+            model_type=cls.model_type, object_id=cls.part1.pk, image=cls.image_file_2
         )
 
     def test_image_list_and_filtering(self):
@@ -542,14 +538,14 @@ class InvenTreeImageTest(InvenTreeAPITestCase):
 
         # Missing image file
         self.post(
-            url, {'content_type': 'part', 'object_id': self.part1.pk}, expected_code=400
+            url, {'model_type': 'part', 'object_id': self.part1.pk}, expected_code=400
         )
 
-        # Invalid content_type
+        # Invalid model_type
         bad_file = SimpleUploadedFile('bad.png', b'123', content_type='image/png')
         response = self.post(
             url,
-            {'content_type': 9999, 'object_id': self.part1.pk, 'image': bad_file},
+            {'model_type': 9999, 'object_id': self.part1.pk, 'image': bad_file},
             expected_code=400,
         )
         error_msg = str(response.data)
@@ -560,7 +556,7 @@ class InvenTreeImageTest(InvenTreeAPITestCase):
         file_name = self.img2.image.name
         url = reverse('api-image-list')
         data = {
-            'content_type': 'part',
+            'model_type': 'part',
             'object_id': self.part1.pk,
             'existing_image': file_name,
         }
@@ -578,7 +574,7 @@ class InvenTreeImageTest(InvenTreeAPITestCase):
         """Test creating an image with non-existent file fails."""
         url = reverse('api-image-list')
         data = {
-            'content_type': 'part',
+            'model_type': 'part',
             'object_id': self.part1.pk,
             'existing_image': 'nonexistent_image.png',
         }
@@ -649,7 +645,7 @@ class InvenTreeImageTest(InvenTreeAPITestCase):
 
         url = reverse('api-image-list')
         data = {
-            'content_type': 'part',
+            'model_type': 'part',
             'object_id': self.part1.pk,
             'remote_image': 'https://example.com/test-image.png',
         }
@@ -676,7 +672,7 @@ class InvenTreeImageTest(InvenTreeAPITestCase):
 
         url = reverse('api-image-list')
         data = {
-            'content_type': 'part',
+            'model_type': 'part',
             'object_id': self.part1.pk,
             'remote_image': 'https://example.com/test-image.png',
         }
@@ -701,7 +697,7 @@ class InvenTreeImageTest(InvenTreeAPITestCase):
 
         url = reverse('api-image-list')
         data = {
-            'content_type': 'part',
+            'model_type': 'part',
             'object_id': self.part1.pk,
             'remote_image': 'https://example.com/invalid-image.png',
         }
@@ -720,7 +716,7 @@ class InvenTreeImageTest(InvenTreeAPITestCase):
 
         # Create initial image
         img = InvenTreeImage.objects.create(
-            content_type=self.content_type,
+            model_type=self.model_type,
             object_id=self.part1.pk,
             image=generate_image('initial.png'),
         )
@@ -754,7 +750,7 @@ class InvenTreeImageTest(InvenTreeAPITestCase):
 
         url = reverse('api-image-list')
         data = {
-            'content_type': 'part',
+            'model_type': 'part',
             'object_id': self.part1.pk,
             'remote_image': 'https://example.com/test-image.png',
         }
@@ -768,7 +764,7 @@ class InvenTreeImageTest(InvenTreeAPITestCase):
         """Test that creating without image, existing_image, or remote_image fails."""
         url = reverse('api-image-list')
         data = {
-            'content_type': 'part',
+            'model_type': 'part',
             'object_id': self.part1.pk,
             # No image source provided
         }
@@ -787,7 +783,7 @@ class InvenTreeImageTest(InvenTreeAPITestCase):
 
         url = reverse('api-image-list')
         data = {
-            'content_type': 'part',
+            'model_type': 'part',
             'object_id': self.part1.pk,
             'remote_image': '',  # Empty URL
         }
@@ -805,7 +801,7 @@ class InvenTreeImageTest(InvenTreeAPITestCase):
 
         url = reverse('api-image-list')
         data = {
-            'content_type': 'part',
+            'model_type': 'part',
             'object_id': self.part1.pk,
             'remote_image': 'not-a-valid-url',
         }

@@ -313,7 +313,7 @@ export default function PurchaseOrderDetail() {
           <DetailsImage
             appRole={UserRoles.purchase_order}
             object_id={order.company.pk}
-            content_model={ModelType.company}
+            model_type={ModelType.company}
           />
           <Grid.Col span={{ base: 12, sm: 8 }}>
             <DetailsTable fields={tl} item={order} />

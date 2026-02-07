@@ -440,7 +440,7 @@ export default function StockDetail() {
           <DetailsImage
             appRole={UserRoles.part}
             object_id={stockitem.part}
-            content_model={ModelType.part}
+            model_type={ModelType.part}
           />
           <Grid.Col span={{ base: 12, sm: 6 }}>
             <DetailsTable fields={tl} item={data} />

@@ -1989,7 +1989,7 @@ class InvenTreeImage(models.Model):
             if single:
                 (
                     InvenTreeImage.objects
-                    .filter(content_type=self.content_type, object_id=self.object_id)
+                    .filter(model_type=self.model_type, object_id=self.object_id)
                     # Exclude ourselves if we are updating an existing record
                     .exclude(pk=self.pk)
                     .delete()
@@ -1999,7 +1999,7 @@ class InvenTreeImage(models.Model):
             else:
                 # If not single_image, check if this is the first image for this object
                 existing_images = InvenTreeImage.objects.filter(
-                    content_type=self.content_type, object_id=self.object_id
+                    model_type=self.model_type, object_id=self.object_id
                 ).exclude(pk=self.pk)
 
                 if not existing_images.exists():
@@ -2013,7 +2013,7 @@ class InvenTreeImage(models.Model):
                 (
                     InvenTreeImage.objects
                     .filter(
-                        content_type=self.content_type,
+                        model_type=self.model_type,
                         object_id=self.object_id,
                         primary=True,
                     )
@@ -2030,7 +2030,7 @@ class InvenTreeImage(models.Model):
             if was_primary:
                 successor = (
                     InvenTreeImage.objects
-                    .filter(content_type=self.content_type, object_id=self.object_id)
+                    .filter(model_type=self.model_type, object_id=self.object_id)
                     .order_by('-id')
                     .first()
                 )

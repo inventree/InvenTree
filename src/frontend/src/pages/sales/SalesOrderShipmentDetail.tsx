@@ -225,7 +225,7 @@ export default function SalesOrderShipmentDetail() {
             <DetailsImage
               appRole={UserRoles.sales_order}
               object_id={customer.pk}
-              content_model={ModelType.company}
+              model_type={ModelType.company}
             />
             <Grid.Col span={{ base: 12, sm: 8 }}>
               <DetailsTable fields={tl} item={data} />
