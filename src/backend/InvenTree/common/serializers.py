@@ -897,8 +897,8 @@ class AttachmentSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
         # Ensure that the user has permission to attach files to the specified model
         user = self.context.get('request').user
 
-        target_model_class = common.validators.resolve_model_from_label(
-            model_type, InvenTreeAttachmentMixin
+        target_model_class = common.validators.attachment_model_class_from_label(
+            model_type
         )
 
         if not issubclass(target_model_class, InvenTreeAttachmentMixin):

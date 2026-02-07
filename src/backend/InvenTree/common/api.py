@@ -64,7 +64,6 @@ from InvenTree.mixins import (
     RetrieveUpdateAPI,
     RetrieveUpdateDestroyAPI,
 )
-from InvenTree.models import InvenTreeAttachmentMixin
 from InvenTree.permissions import (
     AllowAnyOrReadScope,
     GlobalSettingsPermissions,
@@ -753,15 +752,13 @@ class AttachmentList(AttachmentMixin, BulkDeleteMixin, ListCreateAPI):
         - Extract all model types from the provided queryset
         - Ensure that the user has correct 'delete' permissions for each model
         """
-        from common.validators import resolve_model_from_label
+        from common.validators import attachment_model_class_from_label
         from users.permissions import check_user_permission
 
         model_types = queryset.values_list('model_type', flat=True).distinct()
 
         for model_type in model_types:
-            if model_class := resolve_model_from_label(
-                model_type, InvenTreeAttachmentMixin
-            ):
+            if model_class := attachment_model_class_from_label(model_type):
                 if not check_user_permission(request.user, model_class, 'delete'):
                     raise ValidationError(
                         _('User does not have permission to delete these attachments')

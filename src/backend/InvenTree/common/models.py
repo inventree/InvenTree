@@ -2201,8 +2201,8 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
         """Check if the user has the required permission for this attachment."""
         from InvenTree.models import InvenTreeAttachmentMixin
 
-        model_class = common.validators.resolve_model_from_label(
-            self.model_type, InvenTreeAttachmentMixin
+        model_class = common.validators.attachment_model_class_from_label(
+            self.model_type
         )
 
         if not issubclass(model_class, InvenTreeAttachmentMixin):
