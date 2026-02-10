@@ -107,13 +107,16 @@ export function PartColumn(props: PartColumnProps): TableColumn {
   };
 }
 
-export type StockColumnProps = TableColumnProps & {};
+export type StockColumnProps = TableColumnProps & {
+  nullMessage?: string;
+};
 
 // Render a StockItem instance within a table
 export function StockColumn(props: StockColumnProps): TableColumn {
   return {
     accessor: props.accessor ?? 'stock_item',
     title: t`Stock Item`,
+    ...props,
     render: (record: any) => {
       const stock_item =
         resolveItem(record, props.accessor ?? 'stock_item_detail') ?? {};
@@ -126,6 +129,11 @@ export function StockColumn(props: StockColumnProps): TableColumn {
       const extra: ReactNode[] = [];
       let color = undefined;
       let text = formatDecimal(quantity);
+
+      // Handle case where stock item detail is not provided
+      if (!record || !record.pk) {
+        return props.nullMessage ?? '-';
+      }
 
       // Override with serial number if available
       if (stock_item.serial && quantity == 1) {
@@ -263,8 +271,7 @@ export function StockColumn(props: StockColumnProps): TableColumn {
           extra={extra}
         />
       );
-    },
-    ...props
+    }
   };
 }
 
