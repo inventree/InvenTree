@@ -424,7 +424,7 @@ export default function TransferOrderDetail() {
     preFormWarning: t`Mark this order as complete`,
     successMessage: t`Order completed`,
     fields: {
-      accept_incomplete: {}
+      accept_incomplete_allocation: {}
     }
   });
 
