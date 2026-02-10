@@ -900,6 +900,7 @@ class BuildItemOutputOptions(OutputConfiguration):
         InvenTreeOutputOption('stock_detail'),
         InvenTreeOutputOption('build_detail'),
         InvenTreeOutputOption('supplier_part_detail'),
+        InvenTreeOutputOption('install_into_detail'),
     ]
 
 
