@@ -25,6 +25,7 @@
             <th>{% trans "Part" %}</th>
             <th>{% trans "Reference" %}</th>
             <th>{% trans "Quantity" %}</th>
+            <th>{% trans "Transferred" %}</th>
             <th>{% trans "Note" %}</th>
         </tr>
     </thead>
@@ -41,6 +42,7 @@
             </td>
             <td>{{ line.reference }}</td>
             <td>{% decimal line.quantity %}</td>
+            <td>{% decimal line.transferred %}</td>
             <td>{{ line.notes }}</td>
         </tr>
         {% endfor %}
