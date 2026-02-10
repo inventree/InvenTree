@@ -2271,22 +2271,21 @@ class TransferOrderCompleteSerializer(OrderAdjustSerializer):
     class Meta:
         """Metaclass options."""
 
-        fields = ['accept_incomplete']
+        fields = ['accept_incomplete_allocation']
 
-    accept_incomplete = serializers.BooleanField(
+    accept_incomplete_allocation = serializers.BooleanField(
         label=_('Accept Incomplete Allocation'),
         help_text=_('Allow order to complete with incomplete allocations'),
         required=False,
         default=False,
     )
 
-    def validate_accept_incomplete(self, value):
-        """Check if the 'accept_incomplete' field is required."""
-        # order = self.context['order']
+    def validate_accept_incomplete_allocation(self, value):
+        """Check if the 'accept_incomplete_allocation' field is required."""
+        order = self.context['order']
 
-        # TODO: this is broken. I don't want to check if the whole order is completed, I want to check allocation counts
-        # if not value and not order.is_completed():
-        #     raise ValidationError(_('Order has incomplete allocations'))
+        if not value and not order.is_fully_allocated():
+            raise ValidationError(_('Order has incomplete allocations'))
 
         return value
 
@@ -2301,7 +2300,9 @@ class TransferOrderCompleteSerializer(OrderAdjustSerializer):
         data = super().validate(data)
         self.order.can_complete(
             raise_error=True,
-            allow_incomplete_lines=str2bool(data.get('accept_incomplete', False)),
+            allow_incomplete_lines=str2bool(
+                data.get('accept_incomplete_allocation', False)
+            ),
         )
         return data
 
@@ -2312,7 +2313,8 @@ class TransferOrderCompleteSerializer(OrderAdjustSerializer):
         user = request.user if request else None
 
         self.order.complete_order(
-            user=user, allow_incomplete_lines=data.get('accept_incomplete', False)
+            user=user,
+            allow_incomplete_lines=data.get('accept_incomplete_allocation', False),
         )
 
 
