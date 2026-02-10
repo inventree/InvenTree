@@ -1051,6 +1051,7 @@ class SalesOrderLineItemList(
         'customer',
         'order',
         'part',
+        'IPN',
         'part__name',
         'quantity',
         'allocated',
@@ -1063,6 +1064,7 @@ class SalesOrderLineItemList(
     ordering_field_aliases = {
         'customer': 'order__customer__name',
         'part': 'part__name',
+        'IPN': 'part__IPN',
         'order': 'order__reference',
     }
 
