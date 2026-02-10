@@ -1,14 +1,17 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 449
+INVENTREE_API_VERSION = 450
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v449 -> 2026-02-06 : https://github.com/inventree/InvenTree/pull/11260
+v450 -> 2026-02-10 : https://github.com/inventree/InvenTree/pull/11260
     - Adds "part" field to the StockItemTracking model and API endpoints
     - Additional filtering options for the StockItemTracking API endpoint
+
+v449 -> 2026-02-07 : https://github.com/inventree/InvenTree/pull/11266
+    - Add missing nullable annotations to PartStocktakeSerializer
 
 v448 -> 2026-02-05 : https://github.com/inventree/InvenTree/pull/11257
     - Adds API endpoint for manually generating a stocktake entry
