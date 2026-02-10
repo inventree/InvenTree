@@ -777,7 +777,7 @@ export default function BuildLineTable({
         {
           icon: <IconTool />,
           title: t`Build Stock`,
-          hidden: !canBuild,
+          hidden: !canBuild || !isActive,
           color: 'blue',
           onClick: () => {
             setInitialData({
@@ -796,7 +796,7 @@ export default function BuildLineTable({
         })
       ];
     },
-    [user, navigate, output, build, buildStatus]
+    [user, navigate, output, build, buildStatus, isActive]
   );
 
   const tableActions = useMemo(() => {
