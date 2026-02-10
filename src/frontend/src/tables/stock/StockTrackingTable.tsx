@@ -24,7 +24,12 @@ import {
 } from '../../components/render/Stock';
 import { RenderUser } from '../../components/render/User';
 import { useTable } from '../../hooks/UseTable';
-import { DateColumn, DescriptionColumn, PartColumn } from '../ColumnRenderers';
+import {
+  DateColumn,
+  DescriptionColumn,
+  PartColumn,
+  StockColumn
+} from '../ColumnRenderers';
 import {
   IncludeVariantsFilter,
   MaxDateFilter,
@@ -241,29 +246,13 @@ export function StockTrackingTable({
         switchable: true,
         hidden: !partId
       },
-      {
-        accessor: 'item',
+      StockColumn({
         title: t`Stock Item`,
+        accessor: 'item_detail',
         sortable: false,
         switchable: false,
-        hidden: !partId,
-        render: (record: any) => {
-          const item = record.item_detail;
-          if (!item) {
-            return (
-              <Text
-                c='red'
-                size='xs'
-                fs='italic'
-              >{t`Stock item no longer exists`}</Text>
-            );
-          } else if (item.serial && item.quantity == 1) {
-            return `${t`Serial`} #${item.serial}`;
-          } else {
-            return `${t`Item ID`} ${item.pk}`;
-          }
-        }
-      },
+        hidden: !partId
+      }),
       DescriptionColumn({
         accessor: 'label'
       }),
