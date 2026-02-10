@@ -53,7 +53,7 @@ class StockHistoryCode(StatusCode):
     STOCK_COUNT = 10, _('Stock counted')
     STOCK_ADD = 11, _('Stock manually added')
     STOCK_REMOVE = 12, _('Stock manually removed')
-    STOCK_SERIZALIZED = 13, _('Serialized stock items')
+    STOCK_SERIALIZED = 13, _('Serialized stock items')
 
     RETURNED_TO_STOCK = 15, _('Returned to stock')  # Stock item returned to stock
 
