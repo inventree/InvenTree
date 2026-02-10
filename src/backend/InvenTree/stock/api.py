@@ -1263,7 +1263,9 @@ class StockList(
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
     ordering_field_aliases = {
+        'part': 'part__name',
         'location': 'location__pathstring',
+        'IPN': 'part__IPN',
         'SKU': 'supplier_part__SKU',
         'MPN': 'supplier_part__manufacturer_part__MPN',
         'stock': ['quantity', 'serial_int', 'serial'],
@@ -1272,6 +1274,7 @@ class StockList(
     ordering_fields = [
         'batch',
         'location',
+        'part',
         'part__name',
         'part__IPN',
         'updated',
@@ -1281,6 +1284,7 @@ class StockList(
         'quantity',
         'stock',
         'status',
+        'IPN',
         'SKU',
         'MPN',
     ]
