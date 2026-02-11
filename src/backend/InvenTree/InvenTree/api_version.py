@@ -1,13 +1,16 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 451
+INVENTREE_API_VERSION = 452
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v451 -> 2026-02-10 : https://github.com/inventree/InvenTree/pull/11276
+v452 -> 2026-02-10 : https://github.com/inventree/InvenTree/pull/11276
     - Adds "install_into_detail" field to the BuildItem API endpoint
+
+v451 -> 2026-02-10 : https://github.com/inventree/InvenTree/pull/11277
+    - Adds sorting to multiple part related endpoints (part, IPN, ...)
 
 v450 -> 2026-02-10 : https://github.com/inventree/InvenTree/pull/11260
     - Adds "part" field to the StockItemTracking model and API endpoints

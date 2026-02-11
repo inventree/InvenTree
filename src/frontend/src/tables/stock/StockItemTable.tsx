@@ -62,7 +62,8 @@ function stockItemTableColumns({
     {
       accessor: 'part_detail.IPN',
       title: t`IPN`,
-      sortable: true
+      sortable: true,
+      ordering: 'IPN'
     },
     {
       accessor: 'part_detail.revision',
