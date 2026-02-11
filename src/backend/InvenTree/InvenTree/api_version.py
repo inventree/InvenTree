@@ -1,19 +1,14 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 452
+INVENTREE_API_VERSION = 453
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-<<<<<<< HEAD
-v431 -> 2025-12-09 : https://github.com/inventree/InvenTree/pull/10983
-    - Adds an API to gather live price information for a Part
-=======
-<<<<<<< feat-add-calculation
-v447 -> 2026-02-05 : https://github.com/inventree/InvenTree/pull/10983
+v453 -> 2026-02-12 : https://github.com/inventree/InvenTree/pull/10983
     - Adds an API to gather dynamic price information for a Part
-=======
+
 v452 -> 2026-02-10 : https://github.com/inventree/InvenTree/pull/11276
     - Adds "install_into_detail" field to the BuildItem API endpoint
 
