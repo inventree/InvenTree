@@ -1172,15 +1172,20 @@ class PartStocktakeSerializer(
     )
 
     part_ipn = serializers.CharField(
-        source='part.IPN', read_only=True, label=_('Part IPN')
+        source='part.IPN', read_only=True, allow_null=True, label=_('Part IPN')
     )
 
     part_description = serializers.CharField(
-        source='part.description', read_only=True, label=_('Part Description')
+        source='part.description',
+        read_only=True,
+        allow_null=True,
+        label=_('Part Description'),
     )
 
     part_detail = enable_filter(
-        PartBriefSerializer(source='part', read_only=True, many=False, pricing=False),
+        PartBriefSerializer(
+            source='part', read_only=True, allow_null=True, many=False, pricing=False
+        ),
         default_include=False,
     )
 

@@ -67,7 +67,8 @@ export function ManufacturerPartTable({
       {
         accessor: 'part_detail.IPN',
         title: t`IPN`,
-        sortable: false,
+        sortable: true,
+        ordering: 'IPN',
         switchable: true
       },
       {

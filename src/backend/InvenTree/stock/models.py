@@ -1360,7 +1360,7 @@ class StockItem(
         item.save(add_note=False)
 
         code = StockHistoryCode.SENT_TO_CUSTOMER
-        deltas = {}
+        deltas = {'quantity': float(quantity)}
 
         if customer is not None:
             deltas['customer'] = customer.pk
@@ -1441,7 +1441,11 @@ class StockItem(
                 # Split the stock item
                 item = self.splitStock(quantity, None, user)
 
-        tracking_info = {}
+        tracking_info = {
+            'quantity': float(quantity)
+            if quantity is not None
+            else float(item.quantity)
+        }
 
         if location:
             tracking_info['location'] = location.pk
@@ -1651,7 +1655,7 @@ class StockItem(
         stock_item.location = None
         stock_item.save(add_note=False)
 
-        deltas = {'stockitem': self.pk}
+        deltas = {'stockitem': self.pk, 'quantity': float(quantity)}
 
         if build is not None:
             deltas['buildorder'] = build.pk
@@ -1666,7 +1670,7 @@ class StockItem(
             StockHistoryCode.INSTALLED_CHILD_ITEM,
             user,
             notes=notes,
-            deltas={'stockitem': stock_item.pk},
+            deltas={'stockitem': stock_item.pk, 'quantity': float(quantity)},
         )
 
         trigger_event(
@@ -1692,11 +1696,14 @@ class StockItem(
         self.belongs_to.add_tracking_entry(
             StockHistoryCode.REMOVED_CHILD_ITEM,
             user,
-            deltas={'stockitem': self.pk},
+            deltas={'stockitem': self.pk, 'quantity': float(self.quantity)},
             notes=notes,
         )
 
-        tracking_info = {'stockitem': self.belongs_to.pk}
+        tracking_info = {
+            'stockitem': self.belongs_to.pk,
+            'quantity': float(self.quantity),
+        }
 
         self.add_tracking_entry(
             StockHistoryCode.REMOVED_FROM_ASSEMBLY,
@@ -1835,6 +1842,7 @@ class StockItem(
 
         entry = StockItemTracking(
             item=self,
+            part=self.part,
             tracking_type=entry_type.value,
             user=user,
             date=InvenTree.helpers.current_time(),
@@ -1964,7 +1972,7 @@ class StockItem(
 
         # Remove the equivalent number of items
         self.take_stock(
-            quantity, user, code=StockHistoryCode.STOCK_SERIZALIZED, notes=notes
+            quantity, user, code=StockHistoryCode.STOCK_SERIALIZED, notes=notes
         )
 
         return items
@@ -2175,7 +2183,10 @@ class StockItem(
             user,
             quantity=self.quantity,
             notes=notes,
-            deltas={'location': location.pk if location else None},
+            deltas={
+                'location': location.pk if location else None,
+                'quantity': self.quantity,
+            },
         )
 
         # Update the location of the item
@@ -2416,7 +2427,7 @@ class StockItem(
 
         self.location = location
 
-        tracking_info = {}
+        tracking_info = {'quantity': float(quantity)}
 
         tracking_code = StockHistoryCode.STOCK_MOVE
 
@@ -2869,21 +2880,18 @@ def after_save_stock_item(sender, instance: StockItem, created, **kwargs):
 class StockItemTracking(InvenTree.models.InvenTreeModel):
     """Stock tracking entry - used for tracking history of a particular StockItem.
 
-    Note: 2021-05-11
-    The legacy StockTrackingItem model contained very little information about the "history" of the item.
-    In fact, only the "quantity" of the item was recorded at each interaction.
-    Also, the "title" was translated at time of generation, and thus was not really translatable.
-    The "new" system tracks all 'delta' changes to the model,
-    and tracks change "type" which can then later be translated
-
-
     Attributes:
         item: ForeignKey reference to a particular StockItem
+        part: ForeignKey reference to the Part associated with this StockItem
         date: Date that this tracking info was created
         tracking_type: The type of tracking information
         notes: Associated notes (input by user)
         user: The user associated with this tracking info
         deltas: The changes associated with this history item
+
+    Notes:
+        If the underlying stock item is deleted, the "item" field will be set to null, but the tracking information will be retained.
+        The tracking data will be removed if the associated part is deleted, as the tracking information is not relevant without the part context.
     """
 
     class Meta:
@@ -2895,6 +2903,13 @@ class StockItemTracking(InvenTree.models.InvenTreeModel):
     def get_api_url():
         """Return API url."""
         return reverse('api-stock-tracking-list')
+
+    def save(self, *args, **kwargs):
+        """Ensure that the 'part' link is always correct."""
+        if self.item:
+            self.part = self.item.part
+
+        super().save(*args, **kwargs)
 
     def get_absolute_url(self):
         """Return url for instance."""
@@ -2910,7 +2925,19 @@ class StockItemTracking(InvenTree.models.InvenTreeModel):
     tracking_type = models.IntegerField(default=StockHistoryCode.LEGACY)
 
     item = models.ForeignKey(
-        StockItem, on_delete=models.CASCADE, related_name='tracking_info'
+        StockItem,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=False,
+        related_name='tracking_info',
+    )
+
+    part = models.ForeignKey(
+        'part.part',
+        on_delete=models.CASCADE,
+        related_name='stock_tracking_info',
+        null=True,
+        blank=True,
     )
 
     date = models.DateTimeField(auto_now_add=True, editable=False)

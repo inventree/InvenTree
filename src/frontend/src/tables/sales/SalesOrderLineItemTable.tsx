@@ -97,6 +97,8 @@ export default function SalesOrderLineItemTable({
       {
         accessor: 'part_detail.IPN',
         title: t`IPN`,
+        sortable: true,
+        ordering: 'IPN',
         switchable: true
       },
       DescriptionColumn({

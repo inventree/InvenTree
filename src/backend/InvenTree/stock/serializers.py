@@ -1251,6 +1251,8 @@ class StockTrackingSerializer(
             'pk',
             'item',
             'item_detail',
+            'part',
+            'part_detail',
             'date',
             'deltas',
             'label',
@@ -1259,13 +1261,21 @@ class StockTrackingSerializer(
             'user',
             'user_detail',
         ]
-        read_only_fields = ['date', 'user', 'label', 'tracking_type']
+        read_only_fields = ['date', 'part', 'user', 'label', 'tracking_type']
 
     label = serializers.CharField(read_only=True)
 
     item_detail = enable_filter(
         StockItemSerializer(source='item', many=False, read_only=True, allow_null=True),
-        prefetch_fields=['item'],
+        prefetch_fields=['item', 'item__part'],
+    )
+
+    part_detail = enable_filter(
+        part_serializers.PartBriefSerializer(
+            source='part', many=False, read_only=True, allow_null=True
+        ),
+        default_include=False,
+        prefetch_fields=['part'],
     )
 
     user_detail = enable_filter(
