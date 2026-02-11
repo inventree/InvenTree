@@ -2915,7 +2915,12 @@ class ReturnOrder(TotalPriceMixin, Order):
         if status is None:
             status = StockStatus.QUARANTINED.value
 
-        deltas = {'status': status, 'returnorder': self.pk, 'location': location.pk}
+        deltas = {
+            'status': status,
+            'returnorder': self.pk,
+            'location': location.pk,
+            'quantity': float(line.quantity),
+        }
 
         if stock_item.customer:
             deltas['customer'] = stock_item.customer.pk

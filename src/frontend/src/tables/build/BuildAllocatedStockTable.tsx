@@ -25,7 +25,8 @@ import {
   LocationColumn,
   PartColumn,
   ReferenceColumn,
-  StatusColumn
+  StatusColumn,
+  StockColumn
 } from '../ColumnRenderers';
 import { IncludeVariantsFilter, StockLocationFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
@@ -142,11 +143,11 @@ export default function BuildAllocatedStockTable({
         switchable: true,
         sortable: true
       }),
-      {
-        accessor: 'install_into',
+      StockColumn({
+        accessor: 'install_into_detail',
         title: t`Build Output`,
-        sortable: true
-      },
+        sortable: false
+      }),
       {
         accessor: 'sku',
         title: t`Supplier Part`,
@@ -307,11 +308,12 @@ export default function BuildAllocatedStockTable({
             part_detail: showPartInfo ?? false,
             location_detail: true,
             stock_detail: true,
+            install_into_detail: true,
             supplier_detail: true
           },
           enableBulkDelete: allowEdit && user.hasDeleteRole(UserRoles.build),
           enableDownload: true,
-          enableSelection: allowEdit && user.hasDeleteRole(UserRoles.build),
+          enableSelection: allowEdit && user.hasChangeRole(UserRoles.build),
           rowActions: rowActions,
           tableActions: tableActions,
           tableFilters: tableFilters,

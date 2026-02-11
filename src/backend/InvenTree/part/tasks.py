@@ -329,7 +329,7 @@ def scheduled_stocktake_reports():
         threshold = datetime.now() - timedelta(days=delete_n_days)
         old_entries = PartStocktake.objects.filter(date__lt=threshold)
 
-        if old_entries.count() > 0:
+        if old_entries.exists():
             logger.info('Deleting %s old stock entries', old_entries.count())
             old_entries.delete()
 

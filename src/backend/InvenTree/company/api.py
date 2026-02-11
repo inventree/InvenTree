@@ -197,8 +197,16 @@ class ManufacturerPartList(
     """
 
     filterset_class = ManufacturerPartFilter
-    filter_backends = SEARCH_ORDER_FILTER
+    filter_backends = SEARCH_ORDER_FILTER_ALIAS
     output_options = ManufacturerOutputOptions
+
+    ordering_fields = ['part', 'IPN', 'MPN', 'manufacturer']
+
+    ordering_field_aliases = {
+        'part': 'part__name',
+        'IPN': 'part__IPN',
+        'manufacturer': 'manufacturer__name',
+    }
 
     search_fields = [
         'manufacturer__name',
@@ -354,12 +362,13 @@ class SupplierPartList(
     output_options = SupplierPartOutputOptions
 
     ordering_fields = [
-        'SKU',
         'part',
         'supplier',
         'manufacturer',
         'active',
+        'IPN',
         'MPN',
+        'SKU',
         'packaging',
         'pack_quantity',
         'in_stock',
@@ -370,8 +379,9 @@ class SupplierPartList(
         'part': 'part__name',
         'supplier': 'supplier__name',
         'manufacturer': 'manufacturer_part__manufacturer__name',
-        'MPN': 'manufacturer_part__MPN',
         'pack_quantity': ['pack_quantity_native', 'pack_quantity'],
+        'IPN': 'part__IPN',
+        'MPN': 'manufacturer_part__MPN',
     }
 
     search_fields = [

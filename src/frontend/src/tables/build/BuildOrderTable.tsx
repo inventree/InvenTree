@@ -75,6 +75,7 @@ export function BuildOrderTable({
       {
         accessor: 'part_detail.IPN',
         sortable: true,
+        ordering: 'IPN',
         switchable: true,
         title: t`IPN`
       },
