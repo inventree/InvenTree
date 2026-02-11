@@ -734,9 +734,11 @@ class DataImportRow(models.Model):
                 except ValueError:
                     continue
 
-                if queryset.count() == 1:
+                # Evaluate at most two results to determine if there is exactly one match
+                results = list(queryset[:2])
+                if len(results) == 1:
                     # We have a single match against this field
-                    valid_items.add(queryset.first().pk)
+                    valid_items.add(results[0].pk)
 
         if len(valid_items) == 1:
             # We found a single valid match against the related model - return this value
