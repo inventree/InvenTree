@@ -2,7 +2,8 @@ import { test } from './baseFixtures.js';
 import {
   clearTableFilters,
   navigate,
-  setTableChoiceFilter
+  setTableChoiceFilter,
+  toggleColumnSorting
 } from './helpers.js';
 import { doCachedLogin } from './login.js';
 
@@ -97,4 +98,26 @@ test('Tables - Columns', async ({ browser }) => {
   await page.getByRole('menuitem', { name: 'Target Date' }).click();
   await page.getByRole('menuitem', { name: 'Reference', exact: true }).click();
   await page.getByRole('menuitem', { name: 'Project Code' }).click();
+});
+
+test('Tables - Sorting', async ({ browser }) => {
+  // Go to the "stock list" page
+  const page = await doCachedLogin(browser, {
+    url: 'stock/location/index/stock-items',
+    username: 'steven',
+    password: 'wizardstaff'
+  });
+
+  // Stock table sorting
+  await toggleColumnSorting(page, 'Part');
+  await toggleColumnSorting(page, 'IPN');
+  await toggleColumnSorting(page, 'Stock');
+  await toggleColumnSorting(page, 'Status');
+
+  // Purchase order sorting
+  await navigate(page, '/web/purchasing/index/purchaseorders');
+  await toggleColumnSorting(page, 'Reference');
+  await toggleColumnSorting(page, 'Supplier');
+  await toggleColumnSorting(page, 'Order Status');
+  await toggleColumnSorting(page, 'Line Items');
 });

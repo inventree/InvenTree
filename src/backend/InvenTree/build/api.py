@@ -346,6 +346,8 @@ class BuildList(
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
     ordering_fields = [
         'reference',
+        'part',
+        'IPN',
         'part__name',
         'status',
         'creation_date',
@@ -364,6 +366,8 @@ class BuildList(
     ordering_field_aliases = {
         'reference': ['reference_int', 'reference'],
         'project_code': ['project_code__code'],
+        'part': ['part__name'],
+        'IPN': ['part__IPN'],
     }
     ordering = '-reference'
     search_fields = [
