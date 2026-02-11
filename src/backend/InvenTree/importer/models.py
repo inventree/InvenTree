@@ -720,13 +720,17 @@ class DataImportRow(models.Model):
 
         valid_items = set()
 
-        if hasattr(model, 'import_id_fields'):
-            id_fields = model.import_id_fields()
+        base_filters = (
+            self.session.field_filters.get(field_name, {})
+            if self.session.field_filters
+            else {}
+        )
 
+        if id_fields := getattr(model, 'IMPORT_ID_FIELDS', None):
             # Iterate through the provided list - if any of the values match, we can perform the lookup
             for id_field in id_fields:
                 try:
-                    queryset = model.objects.filter(**{id_field: value})
+                    queryset = model.objects.filter(**{id_field: value}, **base_filters)
                 except ValueError:
                     continue
 
