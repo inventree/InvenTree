@@ -1173,6 +1173,7 @@ class Build(
             user,
             notes=notes,
             deltas={
+                'quantity': float(quantity),
                 'location': location.pk,
                 'status': StockStatus.REJECTED.value,
                 'buildorder': self.pk,
@@ -1222,6 +1223,13 @@ class Build(
         # List the allocated BuildItem objects for the given output
         allocated_items = output.items_to_install.all()
 
+        # Ensure that none of the allocated items are themselves still "in production"
+        for build_item in allocated_items:
+            if build_item.stock_item.is_building:
+                raise ValidationError(
+                    _('Allocated stock items are still in production')
+                )
+
         # If a partial quantity is provided, split the stock output
         if quantity is not None and quantity != output.quantity:
             # Cannot split a build output with allocated items
@@ -1260,7 +1268,11 @@ class Build(
 
         output.save(add_note=False)
 
-        deltas = {'status': status, 'buildorder': self.pk}
+        deltas = {
+            'status': status,
+            'buildorder': self.pk,
+            'quantity': float(output.quantity),
+        }
 
         if location:
             deltas['location'] = location.pk

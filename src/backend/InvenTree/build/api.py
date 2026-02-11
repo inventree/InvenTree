@@ -346,6 +346,8 @@ class BuildList(
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
     ordering_fields = [
         'reference',
+        'part',
+        'IPN',
         'part__name',
         'status',
         'creation_date',
@@ -364,6 +366,8 @@ class BuildList(
     ordering_field_aliases = {
         'reference': ['reference_int', 'reference'],
         'project_code': ['project_code__code'],
+        'part': ['part__name'],
+        'IPN': ['part__IPN'],
     }
     ordering = '-reference'
     search_fields = [
@@ -804,11 +808,15 @@ class BuildCancel(BuildOrderContextMixin, CreateAPI):
     serializer_class = build.serializers.BuildCancelSerializer
 
 
-class BuildItemDetail(RetrieveUpdateDestroyAPI):
-    """API endpoint for detail view of a BuildItem object."""
+class BuildItemMixin:
+    """Mixin class for BuildItem API endpoints."""
 
-    queryset = BuildItem.objects.all()
+    queryset = BuildItem.objects.all().prefetch_related('stock_item__location')
     serializer_class = build.serializers.BuildItemSerializer
+
+
+class BuildItemDetail(BuildItemMixin, RetrieveUpdateDestroyAPI):
+    """API endpoint for detail view of a BuildItem object."""
 
 
 class BuildItemFilter(FilterSet):
@@ -895,16 +903,45 @@ class BuildItemOutputOptions(OutputConfiguration):
     """Output options for BuildItem endpoint."""
 
     OPTIONS = [
-        InvenTreeOutputOption('part_detail'),
-        InvenTreeOutputOption('location_detail'),
-        InvenTreeOutputOption('stock_detail'),
-        InvenTreeOutputOption('build_detail'),
-        InvenTreeOutputOption('supplier_part_detail'),
+        InvenTreeOutputOption(
+            'part_detail',
+            default=False,
+            description='Include detailed information about the part associated with this build item.',
+        ),
+        InvenTreeOutputOption(
+            'location_detail',
+            default=False,
+            description='Include detailed information about the location of the allocated stock item.',
+        ),
+        InvenTreeOutputOption(
+            'stock_detail',
+            default=False,
+            description='Include detailed information about the allocated stock item.',
+        ),
+        InvenTreeOutputOption(
+            'build_detail',
+            default=False,
+            description='Include detailed information about the associated build order.',
+        ),
+        InvenTreeOutputOption(
+            'supplier_part_detail',
+            default=False,
+            description='Include detailed information about the supplier part associated with this build item.',
+        ),
+        InvenTreeOutputOption(
+            'install_into_detail',
+            default=False,
+            description='Include detailed information about the build output for this build item.',
+        ),
     ]
 
 
 class BuildItemList(
-    DataExportViewMixin, OutputOptionsMixin, BulkDeleteMixin, ListCreateAPI
+    BuildItemMixin,
+    DataExportViewMixin,
+    OutputOptionsMixin,
+    BulkDeleteMixin,
+    ListCreateAPI,
 ):
     """API endpoint for accessing a list of BuildItem objects.
 
@@ -913,8 +950,6 @@ class BuildItemList(
     """
 
     output_options = BuildItemOutputOptions
-    queryset = BuildItem.objects.all()
-    serializer_class = build.serializers.BuildItemSerializer
     filterset_class = BuildItemFilter
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
 

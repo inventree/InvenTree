@@ -68,6 +68,11 @@ class StockLocationTest(StockAPITestCase):
         # Add some stock locations
         StockLocation.objects.create(name='top', description='top category')
 
+    def test_ordering(self):
+        """Test ordering options for the StockLocation list endpoint."""
+        for ordering in ['name', 'pathstring', 'level', 'tree_id']:
+            self.run_ordering_test(self.list_url, ordering)
+
     def test_list(self):
         """Test the StockLocationList API endpoint."""
         test_cases = [
@@ -564,6 +569,11 @@ class StockItemListTest(StockAPITestCase):
 
         # Return JSON data
         return response.data
+
+    def test_ordering(self):
+        """Run ordering tests against the StockItem list endpoint."""
+        for ordering in ['part', 'location', 'stock', 'status', 'IPN', 'MPN', 'SKU']:
+            self.run_ordering_test(self.list_url, ordering)
 
     def test_top_level_filtering(self):
         """Test filtering against "top level" stock location."""

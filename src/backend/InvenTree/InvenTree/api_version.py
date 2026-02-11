@@ -1,13 +1,38 @@
 """InvenTree API version information."""
 
 # InvenTree API version
+<<<<<<< feat-add-calculation
 INVENTREE_API_VERSION = 447
+=======
+INVENTREE_API_VERSION = 452
+>>>>>>> master
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
+<<<<<<< feat-add-calculation
 v447 -> 2026-02-05 : https://github.com/inventree/InvenTree/pull/10983
     - Adds an API to gather dynamic price information for a Part
+=======
+v452 -> 2026-02-10 : https://github.com/inventree/InvenTree/pull/11276
+    - Adds "install_into_detail" field to the BuildItem API endpoint
+
+v451 -> 2026-02-10 : https://github.com/inventree/InvenTree/pull/11277
+    - Adds sorting to multiple part related endpoints (part, IPN, ...)
+
+v450 -> 2026-02-10 : https://github.com/inventree/InvenTree/pull/11260
+    - Adds "part" field to the StockItemTracking model and API endpoints
+    - Additional filtering options for the StockItemTracking API endpoint
+
+v449 -> 2026-02-07 : https://github.com/inventree/InvenTree/pull/11266
+    - Add missing nullable annotations to PartStocktakeSerializer
+
+v448 -> 2026-02-05 : https://github.com/inventree/InvenTree/pull/11257
+    - Adds API endpoint for manually generating a stocktake entry
+
+v447 -> 2026-02-02 : https://github.com/inventree/InvenTree/pull/11242
+    - Adds "sub_part_active" filter to BomItem API endpoint
+>>>>>>> master
 
 v446 -> 2026-02-01 : https://github.com/inventree/InvenTree/pull/11232
     - Allow ordering of test results by started_datetime and finished_datetime fields
