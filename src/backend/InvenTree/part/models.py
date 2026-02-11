@@ -84,8 +84,8 @@ class PartCategory(
     """
 
     ITEM_PARENT_KEY = 'category'
-
     EXTRA_PATH_FIELDS = ['icon']
+    IMPORT_ID_FIELDS = ['name']
 
     class Meta:
         """Metaclass defines extra model properties."""
@@ -517,6 +517,7 @@ class Part(
 
     NODE_PARENT_KEY = 'variant_of'
     IMAGE_RENAME = rename_part_image
+    IMPORT_ID_FIELDS = ['IPN', 'name']
 
     objects = TreeManager()
 
@@ -3634,6 +3635,8 @@ class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
     To enable generation of unique lookup-keys for each test, there are some validation tests
     run on the model (refer to the validate_unique function).
     """
+
+    IMPORT_ID_FIELDS = ['key']
 
     class Meta:
         """Metaclass options for the PartTestTemplate model."""
