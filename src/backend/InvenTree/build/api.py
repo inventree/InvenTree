@@ -808,11 +808,15 @@ class BuildCancel(BuildOrderContextMixin, CreateAPI):
     serializer_class = build.serializers.BuildCancelSerializer
 
 
-class BuildItemDetail(RetrieveUpdateDestroyAPI):
-    """API endpoint for detail view of a BuildItem object."""
+class BuildItemMixin:
+    """Mixin class for BuildItem API endpoints."""
 
-    queryset = BuildItem.objects.all()
+    queryset = BuildItem.objects.all().prefetch_related('stock_item__location')
     serializer_class = build.serializers.BuildItemSerializer
+
+
+class BuildItemDetail(BuildItemMixin, RetrieveUpdateDestroyAPI):
+    """API endpoint for detail view of a BuildItem object."""
 
 
 class BuildItemFilter(FilterSet):
@@ -933,7 +937,11 @@ class BuildItemOutputOptions(OutputConfiguration):
 
 
 class BuildItemList(
-    DataExportViewMixin, OutputOptionsMixin, BulkDeleteMixin, ListCreateAPI
+    BuildItemMixin,
+    DataExportViewMixin,
+    OutputOptionsMixin,
+    BulkDeleteMixin,
+    ListCreateAPI,
 ):
     """API endpoint for accessing a list of BuildItem objects.
 
@@ -942,8 +950,6 @@ class BuildItemList(
     """
 
     output_options = BuildItemOutputOptions
-    queryset = BuildItem.objects.all()
-    serializer_class = build.serializers.BuildItemSerializer
     filterset_class = BuildItemFilter
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
