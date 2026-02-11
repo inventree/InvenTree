@@ -111,6 +111,7 @@ class Company(
     """
 
     IMAGE_RENAME = rename_company_image
+    IMPORT_ID_FIELDS = ['name']
 
     class Meta:
         """Metaclass defines extra model options."""
@@ -494,6 +495,8 @@ class ManufacturerPart(
         description: Descriptive notes field
     """
 
+    IMPORT_ID_FIELDS = ['MPN']
+
     class Meta:
         """Metaclass defines extra model options."""
 
@@ -619,6 +622,8 @@ class SupplierPart(
         pack_quantity_native: Pack quantity, converted to "native" units of the referenced part
         updated: Date that the SupplierPart was last updated
     """
+
+    IMPORT_ID_FIELDS = ['SKU']
 
     class Meta:
         """Metaclass defines extra model options."""
