@@ -110,11 +110,13 @@ export default function ReturnOrderLineItemTable({
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
       PartColumn({
-        part: 'part_detail'
+        part: 'part_detail',
+        ordering: 'part'
       }),
       {
         accessor: 'part_detail.IPN',
-        sortable: false
+        sortable: true,
+        ordering: 'IPN'
       },
       DescriptionColumn({
         accessor: 'part_detail.description'
@@ -123,6 +125,8 @@ export default function ReturnOrderLineItemTable({
         accessor: 'item_detail.serial',
         title: t`Quantity`,
         switchable: false,
+        sortable: true,
+        ordering: 'stock',
         render: (record: any) => {
           if (record.item_detail.serial && record.quantity == 1) {
             return `# ${record.item_detail.serial}`;
