@@ -304,7 +304,7 @@ export default function BuildAllocatedStockTable({
           },
           enableBulkDelete: allowEdit && user.hasDeleteRole(UserRoles.build),
           enableDownload: true,
-          enableSelection: allowEdit && user.hasDeleteRole(UserRoles.build),
+          enableSelection: allowEdit && user.hasChangeRole(UserRoles.build),
           rowActions: rowActions,
           tableActions: tableActions,
           tableFilters: tableFilters,
