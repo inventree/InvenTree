@@ -22,8 +22,8 @@ import {
   IconExclamationCircle,
   IconInfoCircle,
   IconLayersLinked,
-  IconList,
   IconListCheck,
+  IconListDetails,
   IconListTree,
   IconLock,
   IconPackages,
@@ -47,7 +47,7 @@ import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { getDetailUrl } from '@lib/functions/Navigation';
 import { ActionButton } from '@lib/index';
-import type { ApiFormFieldSet } from '@lib/types/Forms';
+import type { StockOperationProps } from '@lib/types/Forms';
 import AdminButton from '../../components/buttons/AdminButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
 import StarredToggleButton from '../../components/buttons/StarredToggleButton';
@@ -80,10 +80,7 @@ import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { useApi } from '../../contexts/ApiContext';
 import { formatDecimal, formatPriceRange } from '../../defaults/formatters';
 import { usePartFields } from '../../forms/PartForms';
-import {
-  type StockOperationProps,
-  useFindSerialNumberForm
-} from '../../forms/StockForms';
+import { useFindSerialNumberForm } from '../../forms/StockForms';
 import {
   useApiFormModal,
   useCreateApiFormModal,
@@ -100,7 +97,7 @@ import { useUserState } from '../../states/UserState';
 import { BomTable } from '../../tables/bom/BomTable';
 import { UsedInTable } from '../../tables/bom/UsedInTable';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
-import { PartParameterTable } from '../../tables/part/PartParameterTable';
+import { ParameterTable } from '../../tables/general/ParameterTable';
 import PartPurchaseOrdersTable from '../../tables/part/PartPurchaseOrdersTable';
 import PartTestResultTable from '../../tables/part/PartTestResultTable';
 import PartTestTemplateTable from '../../tables/part/PartTestTemplateTable';
@@ -187,7 +184,7 @@ function BomValidationInformation({
         <Text>{t`Do you want to validate the bill of materials for this assembly?`}</Text>
       </Alert>
     ),
-    successMessage: t`BOM validated`,
+    successMessage: t`Bill of materials scheduled for validation`,
     onFormSuccess: () => {
       bomInformationQuery.refetch();
     }
@@ -700,6 +697,9 @@ export default function PartDetail() {
         name: 'default_supplier',
         label: t`Default Supplier`,
         model: ModelType.supplierpart,
+        model_formatter: (model: any) => {
+          return model.SKU;
+        },
         hidden: !part.default_supplier
       },
       {
@@ -790,17 +790,6 @@ export default function PartDetail() {
         label: t`Part Details`,
         icon: <IconInfoCircle />,
         content: detailsPanel
-      },
-      {
-        name: 'parameters',
-        label: t`Parameters`,
-        icon: <IconList />,
-        content: (
-          <PartParameterTable
-            partId={id ?? -1}
-            partLocked={part?.locked == true}
-          />
-        )
       },
       {
         name: 'stock',
@@ -952,13 +941,38 @@ export default function PartDetail() {
         icon: <IconLayersLinked />,
         content: <RelatedPartTable partId={part.pk} />
       },
+      {
+        name: 'parameters',
+        label: t`Parameters`,
+        icon: <IconListDetails />,
+        content: (
+          <>
+            {part.locked && (
+              <Alert
+                title={t`Part is Locked`}
+                color='orange'
+                icon={<IconLock />}
+                p='xs'
+              >
+                <Text>{t`Part parameters cannot be edited, as the part is locked`}</Text>
+              </Alert>
+            )}
+            <ParameterTable
+              modelType={ModelType.part}
+              modelId={part?.pk}
+              allowEdit={part?.locked != true}
+            />
+          </>
+        )
+      },
       AttachmentPanel({
         model_type: ModelType.part,
         model_id: part?.pk
       }),
       NotesPanel({
         model_type: ModelType.part,
-        model_id: part?.pk
+        model_id: part?.pk,
+        has_note: !!part?.notes
       })
     ];
   }, [id, part, user, globalSettings, userSettings, detailsPanel]);
@@ -981,6 +995,8 @@ export default function PartDetail() {
     const required =
       partRequirements.required_for_build_orders +
       partRequirements.required_for_sales_orders;
+
+    const shortfall = Math.max(required - partRequirements.total_stock, 0);
 
     return [
       <DetailsBadge
@@ -1027,6 +1043,12 @@ export default function PartDetail() {
         key='in_production'
       />,
       <DetailsBadge
+        label={`${t`Deficit`}: ${formatDecimal(shortfall)}`}
+        color='red'
+        visible={shortfall > 0}
+        key='deficit'
+      />,
+      <DetailsBadge
         label={t`Inactive`}
         color='red'
         visible={!part.active}
@@ -1041,7 +1063,10 @@ export default function PartDetail() {
     ];
   }, [partRequirements, partRequirementsQuery.isFetching, part]);
 
-  const partFields = usePartFields({ create: false });
+  const partFields = usePartFields({
+    create: false,
+    partId: part.pk
+  });
 
   const editPart = useEditApiFormModal({
     url: ApiEndpoints.part_list,
@@ -1051,38 +1076,10 @@ export default function PartDetail() {
     onFormSuccess: refreshInstance
   });
 
-  const createPartFields = usePartFields({ create: true });
-
-  const duplicatePartFields: ApiFormFieldSet = useMemo(() => {
-    return {
-      ...createPartFields,
-      duplicate: {
-        children: {
-          part: {
-            value: part.pk,
-            hidden: true
-          },
-          copy_image: {
-            value: true
-          },
-          copy_bom: {
-            value: part.assembly && globalSettings.isSet('PART_COPY_BOM'),
-            hidden: !part.assembly
-          },
-          copy_notes: {
-            value: true
-          },
-          copy_parameters: {
-            value: globalSettings.isSet('PART_COPY_PARAMETERS')
-          },
-          copy_tests: {
-            value: part.testable,
-            hidden: !part.testable
-          }
-        }
-      }
-    };
-  }, [createPartFields, globalSettings, part]);
+  const duplicatePartFields = usePartFields({
+    create: true,
+    duplicatePartInstance: part
+  });
 
   const duplicatePart = useCreateApiFormModal({
     url: ApiEndpoints.part_list,

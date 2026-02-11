@@ -38,6 +38,10 @@ class InvenTreeUINotifications(NotificationMixin, InvenTreePlugin):
         if not users:
             return False
 
+        # Ensure that there is always target object - see https://github.com/inventree/InvenTree/issues/10435
+        if not target:
+            target = self.plugin_config()
+
         # Bulk create notification messages for all provided users
         for user in users:
             entries.append(
@@ -124,7 +128,7 @@ class InvenTreeSlackNotifications(NotificationMixin, SettingsMixin, InvenTreePlu
 
     SETTINGS = {
         'NOTIFICATION_SLACK_URL': {
-            'name': _('Slack incoming webhook url'),
+            'name': _('Slack incoming webhook URL'),
             'description': _('URL that is used to send messages to a slack channel'),
             'protected': True,
         }

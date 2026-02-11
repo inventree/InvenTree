@@ -14,12 +14,49 @@ test('Sales Orders - Tabs', async ({ browser }) => {
 
   await page.waitForURL('**/web/sales/**');
 
+  // Sales Orders panel
   await loadTab(page, 'Sales Orders');
   await page.waitForURL('**/web/sales/index/salesorders');
+
+  await page
+    .getByRole('button', { name: 'segmented-icon-control-parametric' })
+    .click();
+  await page
+    .getByRole('button', { name: 'segmented-icon-control-calendar' })
+    .click();
+  await page
+    .getByRole('button', { name: 'segmented-icon-control-table' })
+    .click();
+
+  // Pending Shipments panel
+  await loadTab(page, 'Pending Shipments');
+  await page.getByRole('cell', { name: 'SO0007' }).waitFor();
+  await page.getByRole('button', { name: 'Shipment Reference' }).waitFor();
+
+  // Return Orders panel
   await loadTab(page, 'Return Orders');
+  await page.getByRole('cell', { name: 'NOISE-COMPLAINT' }).waitFor();
+
+  await page
+    .getByRole('button', { name: 'segmented-icon-control-parametric' })
+    .click();
+  await page
+    .getByRole('button', { name: 'segmented-icon-control-calendar' })
+    .click();
+  await page
+    .getByRole('button', { name: 'segmented-icon-control-table' })
+    .click();
 
   // Customers
   await loadTab(page, 'Customers');
+
+  await page
+    .getByRole('button', { name: 'segmented-icon-control-parametric' })
+    .click();
+  await page
+    .getByRole('button', { name: 'segmented-icon-control-table' })
+    .click();
+
   await page.getByText('Customer A').click();
   await loadTab(page, 'Notes');
   await loadTab(page, 'Attachments');
@@ -120,8 +157,12 @@ test('Sales Orders - Shipments', async ({ browser }) => {
 
   // Create a new shipment
   await page.getByLabel('action-button-add-shipment').click();
-  await page.getByLabel('text-field-tracking_number').fill('1234567890');
-  await page.getByLabel('text-field-invoice_number').fill('9876543210');
+  await page
+    .getByLabel('text-field-tracking_number', { exact: true })
+    .fill('1234567890');
+  await page
+    .getByLabel('text-field-invoice_number', { exact: true })
+    .fill('9876543210');
   await page.getByRole('button', { name: 'Submit' }).click();
 
   // Expected field error
@@ -140,7 +181,7 @@ test('Sales Orders - Shipments', async ({ browser }) => {
   await page.waitForLoadState('networkidle');
 
   let tracking_number = await page
-    .getByLabel('text-field-tracking_number')
+    .getByLabel('text-field-tracking_number', { exact: true })
     .inputValue();
 
   if (!tracking_number) {
@@ -154,7 +195,9 @@ test('Sales Orders - Shipments', async ({ browser }) => {
   }
 
   // Change the tracking number
-  await page.getByLabel('text-field-tracking_number').fill(tracking_number);
+  await page
+    .getByLabel('text-field-tracking_number', { exact: true })
+    .fill(tracking_number);
   await page.waitForTimeout(250);
   await page.getByRole('button', { name: 'Submit' }).click();
 
@@ -210,14 +253,16 @@ test('Sales Orders - Shipments', async ({ browser }) => {
 
 test('Sales Orders - Duplicate', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    url: 'sales/sales-order/11/detail'
+    url: 'sales/sales-order/14/detail'
   });
 
   await page.getByLabel('action-menu-order-actions').click();
   await page.getByLabel('action-menu-order-actions-duplicate').click();
 
   // Ensure a new reference is suggested
-  await expect(page.getByLabel('text-field-reference')).not.toBeEmpty();
+  await expect(
+    page.getByLabel('text-field-reference', { exact: true })
+  ).not.toBeEmpty();
 
   // Submit the duplicate request and ensure it completes
   await page.getByRole('button', { name: 'Submit' }).isEnabled();
@@ -226,4 +271,81 @@ test('Sales Orders - Duplicate', async ({ browser }) => {
   await page.getByRole('tab', { name: 'Order Details' }).click();
 
   await page.getByText('Pending').first().waitFor();
+
+  // Issue the order
+  await page.getByRole('button', { name: 'Issue Order' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('In Progress').first().waitFor();
+
+  // Cancel the outstanding shipment
+  await loadTab(page, 'Shipments');
+  await clearTableFilters(page);
+  const cell = await page.getByRole('cell', { name: '1', exact: true });
+  await clickOnRowMenu(cell);
+  await page.getByRole('menuitem', { name: 'Cancel' }).click();
+  await page.getByRole('button', { name: 'Delete' }).click();
+
+  // Check for expected line items
+  await loadTab(page, 'Line Items');
+  await page.getByRole('cell', { name: 'SW-001' }).waitFor();
+  await page.getByRole('cell', { name: 'SW-002' }).waitFor();
+  await page.getByText('1 - 2 / 2').waitFor();
+
+  // Ship the order
+  await page.getByRole('button', { name: 'Ship Order' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Complete the order
+  await page.getByRole('button', { name: 'Complete Order' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Go to the "details" tab
+  await loadTab(page, 'Order Details');
+
+  // Check for expected results
+  // 2 line items completed, as they are both virtual (no stock)
+  await page.getByText('Complete').first().waitFor();
+  await page.getByText('2 / 2').waitFor();
+});
+
+/**
+ * Test auto-calculation of price breaks on sales order line items
+ */
+test('Sales Orders - Price Breaks', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    url: 'sales/sales-order/14/line-items'
+  });
+
+  await page
+    .getByRole('button', { name: 'action-button-add-line-item' })
+    .click();
+  await page.getByLabel('related-field-part').fill('software');
+  await page.getByRole('option', { name: 'Software License' }).click();
+
+  const priceBreaks = {
+    1: 123,
+    2: 123,
+    10: 104,
+    49: 104,
+    56: 96,
+    104: 78
+  };
+
+  for (const [qty, expectedPrice] of Object.entries(priceBreaks)) {
+    await page.getByLabel('number-field-quantity').fill(qty);
+
+    await expect(
+      page.getByRole('textbox', { name: 'number-field-sale_price' })
+    ).toHaveAttribute('placeholder', expectedPrice.toString(), {
+      timeout: 500
+    });
+  }
+
+  // Auto-fill the suggested sale price
+  await page.getByLabel('field-sale_price-accept-placeholder').click();
+
+  // The sale price field should now contain the suggested value
+  await expect(
+    page.getByRole('textbox', { name: 'number-field-sale_price' })
+  ).toHaveValue('78', { timeout: 500 });
 });

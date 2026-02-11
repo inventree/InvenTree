@@ -6,6 +6,8 @@ from django.core.exceptions import ValidationError
 from django.db.models import Sum
 from django.test import override_settings
 
+from djmoney.money import Money
+
 from build.models import Build
 from common.models import InvenTreeSetting
 from company.models import Company
@@ -803,6 +805,27 @@ class StockTest(StockTestBase):
 
         self.assertTrue(check_func())
 
+    def test_purchase_price(self):
+        """Test purchase price field."""
+        from common.currency import currency_code_default
+        from common.settings import set_global_setting
+
+        part = Part.objects.filter(virtual=False).first()
+
+        for currency in ['AUD', 'USD', 'JPY']:
+            set_global_setting('INVENTREE_DEFAULT_CURRENCY', currency)
+            self.assertEqual(currency_code_default(), currency)
+
+            # Create stock item, do not specify currency - should get default
+            item = StockItem.objects.create(part=part, quantity=10)
+            self.assertEqual(item.purchase_price_currency, currency)
+
+            # Create stock item, specify currency
+            item = StockItem.objects.create(
+                part=part, quantity=10, purchase_price=Money(5, 'GBP')
+            )
+            self.assertEqual(item.purchase_price_currency, 'GBP')
+
 
 class StockBarcodeTest(StockTestBase):
     """Run barcode tests for the stock app."""
@@ -843,6 +866,16 @@ class VariantTest(StockTestBase):
         green = Part.objects.get(pk=10003)
         self.assertEqual(green.stock_entries(include_variants=False).count(), 0)
         self.assertEqual(green.stock_entries().count(), 3)
+
+        # Test with an "external" location
+        entry = green.stock_entries().first()
+        entry.location = StockLocation.objects.create(
+            name='External Location', description='An external location', external=True
+        )
+        entry.save()
+
+        self.assertEqual(green.stock_entries(include_external=True).count(), 3)
+        self.assertEqual(green.stock_entries(include_external=False).count(), 2)
 
     def test_serial_numbers(self):
         """Test serial number functionality for variant / template parts."""
@@ -1248,9 +1281,11 @@ class StockTreeTest(StockTestBase):
         self.assertEqual(item_1.get_children().count(), 1)
         self.assertEqual(item_2.parent, item_1)
 
+        loc = StockLocation.objects.filter(structural=False).first()
+
         # Serialize the secondary item
         serials = [str(i) for i in range(20)]
-        items = item_2.serializeStock(20, serials)
+        items = item_2.serializeStock(20, serials, location=loc)
 
         self.assertEqual(len(items), 20)
         self.assertEqual(StockItem.objects.count(), N + 22)
@@ -1267,6 +1302,9 @@ class StockTreeTest(StockTestBase):
             self.assertEqual(child.parent, item_2)
             self.assertGreater(child.lft, item_2.lft)
             self.assertLess(child.rght, item_2.rght)
+            self.assertEqual(child.location, loc)
+            self.assertIsNotNone(child.location)
+            self.assertEqual(child.tracking_info.count(), 2)
 
         # Delete item_2 : we expect that all children will be re-parented to item_1
         item_2.delete()
@@ -1469,7 +1507,7 @@ class TestResultTest(StockTestBase):
 
         # Should return the same number of tests as before
         tests = item.testResultMap(include_installed=True)
-        self.assertEqual(len(tests), 3)
+        self.assertEqual(len(tests), 6)
 
         if template := PartTestTemplate.objects.filter(
             part=item.part, key='somenewtest'
@@ -1490,7 +1528,7 @@ class TestResultTest(StockTestBase):
         )
 
         tests = item.testResultMap(include_installed=True)
-        self.assertEqual(len(tests), 4)
+        self.assertEqual(len(tests), 7)
 
         self.assertIn('somenewtest', tests)
         self.assertEqual(sub_item.test_results.count(), 2)

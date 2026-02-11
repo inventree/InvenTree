@@ -9,12 +9,13 @@ import GetStartedWidget from './widgets/GetStartedWidget';
 import LanguageSelectDashboardWidget from './widgets/LanguageSelectWidget';
 import NewsWidget from './widgets/NewsWidget';
 import QueryCountDashboardWidget from './widgets/QueryCountDashboardWidget';
+import StocktakeDashboardWidget from './widgets/StocktakeDashboardWidget';
 
 /**
  *
  * @returns A list of built-in dashboard widgets which display the number of results for a particular query
  */
-export function BuiltinQueryCountWidgets(): DashboardWidgetProps[] {
+function BuiltinQueryCountWidgets(): DashboardWidgetProps[] {
   const user = useUserState.getState();
   const globalSettings = useGlobalSettingsState.getState();
 
@@ -24,14 +25,17 @@ export function BuiltinQueryCountWidgets(): DashboardWidgetProps[] {
       title: t`Subscribed Parts`,
       description: t`Show the number of parts which you have subscribed to`,
       modelType: ModelType.part,
-      params: { starred: true }
+      params: { starred: true, active: true }
     }),
     QueryCountDashboardWidget({
       label: 'sub-cat',
       title: t`Subscribed Categories`,
       description: t`Show the number of part categories which you have subscribed to`,
       modelType: ModelType.partcategory,
-      params: { starred: true }
+      params: {
+        starred: true,
+        top_level: 'none'
+      }
     }),
     QueryCountDashboardWidget({
       label: 'invalid-bom',
@@ -51,7 +55,11 @@ export function BuiltinQueryCountWidgets(): DashboardWidgetProps[] {
       label: 'low-stk',
       description: t`Show the number of parts which are low on stock`,
       modelType: ModelType.part,
-      params: { low_stock: true, active: true }
+      params: {
+        active: true,
+        low_stock: true,
+        virtual: false
+      }
     }),
     QueryCountDashboardWidget({
       title: t`Required for Build Orders`,
@@ -119,6 +127,13 @@ export function BuiltinQueryCountWidgets(): DashboardWidgetProps[] {
       params: { assigned_to_me: true, outstanding: true }
     }),
     QueryCountDashboardWidget({
+      title: t`Pending Shipments`,
+      label: 'pnd-shp',
+      description: t`Show the number of pending sales order shipments`,
+      modelType: ModelType.salesordershipment,
+      params: { order_outstanding: true, shipped: false }
+    }),
+    QueryCountDashboardWidget({
       title: t`Active Purchase Orders`,
       label: 'act-po',
       description: t`Show the number of purchase orders which are currently active`,
@@ -172,7 +187,7 @@ export function BuiltinQueryCountWidgets(): DashboardWidgetProps[] {
   });
 }
 
-export function BuiltinGettingStartedWidgets(): DashboardWidgetProps[] {
+function BuiltinGettingStartedWidgets(): DashboardWidgetProps[] {
   return [
     {
       label: 'gstart',
@@ -193,8 +208,12 @@ export function BuiltinGettingStartedWidgets(): DashboardWidgetProps[] {
   ];
 }
 
-export function BuiltinSettingsWidgets(): DashboardWidgetProps[] {
+function BuiltinSettingsWidgets(): DashboardWidgetProps[] {
   return [ColorToggleDashboardWidget(), LanguageSelectDashboardWidget()];
+}
+
+function BuiltinActionWidgets(): DashboardWidgetProps[] {
+  return [StocktakeDashboardWidget()];
 }
 
 /**
@@ -205,6 +224,7 @@ export default function DashboardWidgetLibrary(): DashboardWidgetProps[] {
   return [
     ...BuiltinQueryCountWidgets(),
     ...BuiltinGettingStartedWidgets(),
-    ...BuiltinSettingsWidgets()
+    ...BuiltinSettingsWidgets(),
+    ...BuiltinActionWidgets()
   ];
 }

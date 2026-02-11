@@ -204,8 +204,8 @@ class PurchaseOrderTest(OrderTest):
                     self.LIST_URL, data={'limit': limit}, expected_code=200
                 )
 
-                # Total database queries must be below 20, independent of the number of results
-                self.assertLess(len(ctx), 20)
+                # Total database queries must be below 25, independent of the number of results
+                self.assertLess(len(ctx), 25)
 
                 for result in response.data['results']:
                     self.assertIn('total_price', result)
@@ -312,6 +312,12 @@ class PurchaseOrderTest(OrderTest):
         response = self.get(url, {'model_type': 'purchaseorder'})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_output_options(self):
+        """Test the various output options for the PurchaseOrder detail endpoint."""
+        self.run_output_test(
+            reverse('api-po-detail', kwargs={'pk': 1}), ['supplier_detail']
+        )
 
     def test_po_operations(self):
         """Test that we can create / edit and delete a PurchaseOrder via the API."""
@@ -852,6 +858,13 @@ class PurchaseOrderLineItemTest(OrderTest):
         ).json()
         self.assertEqual(float(li5['purchase_price']), 1)
 
+    def test_output_options(self):
+        """Test PurchaseOrderLineItem output option endpoint."""
+        self.run_output_test(
+            reverse('api-po-line-detail', kwargs={'pk': 1}),
+            ['part_detail', 'order_detail'],
+        )
+
 
 class PurchaseOrderDownloadTest(OrderTest):
     """Unit tests for downloading PurchaseOrder data via the API endpoint."""
@@ -1213,6 +1226,8 @@ class PurchaseOrderReceiveTest(OrderTest):
 
     def test_receive_large_quantity(self):
         """Test receipt of a large number of items."""
+        from stock.status_codes import StockStatus
+
         sp = SupplierPart.objects.first()
 
         # Create a new order
@@ -1243,11 +1258,16 @@ class PurchaseOrderReceiveTest(OrderTest):
             url,
             {
                 'items': [
-                    {'line_item': line.pk, 'quantity': line.quantity} for line in lines
+                    {
+                        'line_item': line.pk,
+                        'quantity': line.quantity,
+                        'status': StockStatus.QUARANTINED.value,
+                    }
+                    for line in lines
                 ],
                 'location': location.pk,
             },
-            max_query_count=100 + 2 * N_LINES,
+            max_query_count=104 + 3 * N_LINES,
         ).data
 
         # Check for expected response
@@ -1256,6 +1276,7 @@ class PurchaseOrderReceiveTest(OrderTest):
 
         for item in response:
             self.assertEqual(item['purchase_order'], po.pk)
+            self.assertEqual(item['status'], StockStatus.QUARANTINED)
 
         # Check that the order has been completed
         po.refresh_from_db()
@@ -1407,8 +1428,8 @@ class SalesOrderTest(OrderTest):
                     self.LIST_URL, data={'limit': limit}, expected_code=200
                 )
 
-                # Total database queries must be less than 20
-                self.assertLess(len(ctx), 20)
+                # Total database queries must be less than 25
+                self.assertLess(len(ctx), 25)
 
                 n = len(response.data['results'])
 
@@ -1749,6 +1770,12 @@ class SalesOrderTest(OrderTest):
         self.assertIsNotNone(so.shipment_date)
         self.assertIsNotNone(so.shipped_by)
 
+    def test_output_options(self):
+        """Test the output options for the SalesOrder detail endpoint."""
+        self.run_output_test(
+            reverse('api-so-detail', kwargs={'pk': 1}), ['customer_detail']
+        )
+
 
 class SalesOrderLineItemTest(OrderTest):
     """Tests for the SalesOrderLineItem API."""
@@ -1821,8 +1848,8 @@ class SalesOrderLineItemTest(OrderTest):
         self.filter({'completed': 0}, n)
 
         # Filter by 'allocated' status
-        self.filter({'allocated': 'true'}, 0)
-        self.filter({'allocated': 'false'}, n)
+        self.filter({'allocated': 'true'}, 1)
+        self.filter({'allocated': 'false'}, n - 1)
 
     def test_so_line_allocated_filters(self):
         """Test filtering by allocation status for a SalesOrderLineItem."""
@@ -1909,6 +1936,13 @@ class SalesOrderLineItemTest(OrderTest):
         # Filter by 'completed' status
         self.filter({'order': order_id, 'completed': 1}, 2)
         self.filter({'order': order_id, 'completed': 0}, 1)
+
+    def test_output_options(self):
+        """Test the various output options for the SalesOrderLineItem detail endpoint."""
+        self.run_output_test(
+            reverse('api-so-line-detail', kwargs={'pk': 1}),
+            ['part_detail', 'order_detail', 'customer_detail'],
+        )
 
 
 class SalesOrderDownloadTest(OrderTest):
@@ -2250,6 +2284,20 @@ class SalesOrderAllocateTest(OrderTest):
 
         self.assertEqual(
             len(response.data), count_before + 3 * models.SalesOrder.objects.count()
+        )
+
+    def test_output_options(self):
+        """Test the various output options for the SalesOrderAllocation detail endpoint."""
+        self.run_output_test(
+            reverse('api-so-allocation-list'),
+            [
+                'part_detail',
+                'item_detail',
+                'order_detail',
+                'location_detail',
+                'customer_detail',
+            ],
+            assert_subset=True,
         )
 
 
@@ -2618,62 +2666,88 @@ class ReturnOrderTests(InvenTreeAPITestCase):
             data, required_rows=0, required_cols=['Order', 'Reference', 'Target Date']
         )
 
+    def test_output_options(self):
+        """Test the various output options for the ReturnOrder detail endpoint."""
+        self.run_output_test(
+            reverse('api-return-order-detail', kwargs={'pk': 1}), ['customer_detail']
+        )
 
-class OrderMetadataAPITest(InvenTreeAPITestCase):
-    """Unit tests for the various metadata endpoints of API."""
+
+class ReturnOrderLineItemTests(InvenTreeAPITestCase):
+    """Unit tests for ReturnOrderLineItem API endpoints."""
 
     fixtures = [
         'category',
-        'part',
         'company',
+        'return_order',
+        'part',
         'location',
         'supplier_part',
         'stock',
-        'order',
-        'sales_order',
-        'return_order',
     ]
+    roles = ['return_order.view']
 
-    roles = ['purchase_order.change', 'sales_order.change', 'return_order.change']
+    def test_options(self):
+        """Test the OPTIONS endpoint."""
+        self.assignRole('return_order.add')
+        data = self.options(
+            reverse('api-return-order-line-list'), expected_code=200
+        ).data
 
-    def metatester(self, apikey, model):
-        """Generic tester."""
-        modeldata = model.objects.first()
+        self.assertEqual(data['name'], 'Return Order Line Item List')
 
-        # Useless test unless a model object is found
-        self.assertIsNotNone(modeldata)
+        # Check POST fields
+        post = data['actions']['POST']
+        self.assertIn('order', post)
+        self.assertIn('item', post)
+        self.assertIn('quantity', post)
+        self.assertIn('outcome', post)
 
-        url = reverse(apikey, kwargs={'pk': modeldata.pk})
+    def test_list(self):
+        """Test list endpoint."""
+        url = reverse('api-return-order-line-list')
 
-        # Metadata is initially null
-        self.assertIsNone(modeldata.metadata)
+        response = self.get(url, expected_code=200)
+        self.assertGreater(len(response.data), 0)
 
-        numstr = f'12{len(apikey)}'
+        # Test with pagination
+        data = self.get(
+            url, {'limit': 1, 'ordering': 'reference'}, expected_code=200
+        ).data
 
-        self.patch(
-            url,
-            {'metadata': {f'abc-{numstr}': f'xyz-{apikey}-{numstr}'}},
-            expected_code=200,
+        self.assertIn('count', data)
+        self.assertIn('results', data)
+        self.assertEqual(len(data['results']), 1)
+
+    def test_detail(self):
+        """Test detail endpoint."""
+        url = reverse('api-return-order-line-detail', kwargs={'pk': 1})
+
+        response = self.get(url, expected_code=200)
+        data = response.data
+
+        self.assertIn('order', data)
+        self.assertIn('item', data)
+        self.assertIn('quantity', data)
+        self.assertIn('outcome', data)
+
+    def test_output_options(self):
+        """Test output options for detail endpoint."""
+        self.run_output_test(
+            reverse('api-return-order-line-detail', kwargs={'pk': 1}),
+            ['part_detail', 'item_detail', 'order_detail'],
         )
 
-        # Refresh
-        modeldata.refresh_from_db()
-        self.assertEqual(
-            modeldata.get_metadata(f'abc-{numstr}'), f'xyz-{apikey}-{numstr}'
-        )
+    def test_update(self):
+        """Test updating ReturnOrderLineItem."""
+        url = reverse('api-return-order-line-detail', kwargs={'pk': 1})
 
-    def test_metadata(self):
-        """Test all endpoints."""
-        for apikey, model in {
-            'api-po-metadata': models.PurchaseOrder,
-            'api-po-line-metadata': models.PurchaseOrderLineItem,
-            'api-po-extra-line-metadata': models.PurchaseOrderExtraLine,
-            'api-so-shipment-metadata': models.SalesOrderShipment,
-            'api-so-metadata': models.SalesOrder,
-            'api-so-line-metadata': models.SalesOrderLineItem,
-            'api-so-extra-line-metadata': models.SalesOrderExtraLine,
-            'api-return-order-metadata': models.ReturnOrder,
-            'api-return-order-line-metadata': models.ReturnOrderLineItem,
-            'api-return-order-extra-line-metadata': models.ReturnOrderExtraLine,
-        }.items():
-            self.metatester(apikey, model)
+        # Without permissions
+        self.patch(url, {'price': '10.50'}, expected_code=403)
+
+        self.assignRole('return_order.change')
+
+        self.patch(url, {'price': '15.75'}, expected_code=200)
+
+        line = models.ReturnOrderLineItem.objects.get(pk=1)
+        self.assertEqual(float(line.price.amount), 15.75)

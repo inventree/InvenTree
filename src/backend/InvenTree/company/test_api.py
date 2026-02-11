@@ -2,7 +2,14 @@
 
 from django.urls import reverse
 
-from company.models import Address, Company, Contact, ManufacturerPart, SupplierPart
+from company.models import (
+    Address,
+    Company,
+    Contact,
+    ManufacturerPart,
+    SupplierPart,
+    SupplierPriceBreak,
+)
 from InvenTree.unit_test import InvenTreeAPITestCase
 from part.models import Part
 from users.permissions import check_user_permission
@@ -202,6 +209,34 @@ class CompanyTest(InvenTreeAPITestCase):
             response = self.patch(url, {'notes': note}, expected_code=200)
 
             self.assertEqual(response.data['notes'], note)
+
+    def test_company_parameters(self):
+        """Test for annotation of 'parameters' field in Company API."""
+        url = reverse('api-company-list')
+
+        response = self.get(url, expected_code=200)
+
+        self.assertGreater(len(response.data), 0)
+
+        # Default = not included
+        for result in response.data:
+            self.assertNotIn('parameters', result)
+
+        # Exclude parameters
+        response = self.get(url, {'parameters': 'false'}, expected_code=200)
+
+        self.assertGreater(len(response.data), 0)
+
+        for result in response.data:
+            self.assertNotIn('parameters', result)
+
+        # Include parameters
+        response = self.get(url, {'parameters': 'true'}, expected_code=200)
+
+        self.assertGreater(len(response.data), 0)
+
+        for result in response.data:
+            self.assertIn('parameters', result)
 
 
 class ContactTest(InvenTreeAPITestCase):
@@ -470,7 +505,9 @@ class ManufacturerTest(InvenTreeAPITestCase):
 
     def test_manufacturer_part_detail(self):
         """Tests for the ManufacturerPart detail endpoint."""
-        url = reverse('api-manufacturer-part-detail', kwargs={'pk': 1})
+        mp = ManufacturerPart.objects.first()
+
+        url = reverse('api-manufacturer-part-detail', kwargs={'pk': mp.pk})
 
         response = self.get(url)
         self.assertEqual(response.data['MPN'], 'MPN123')
@@ -529,6 +566,14 @@ class ManufacturerTest(InvenTreeAPITestCase):
             'https://www.axel-larsson.se/Exego.aspx?p_id=341&ArtNr=0804020E',
         )
 
+    def test_output_options(self):
+        """Test the output options for SupplierPart detail."""
+        self.run_output_test(
+            reverse('api-manufacturer-part-list'),
+            ['part_detail', 'manufacturer_detail', ('pretty', 'pretty_name')],
+            assert_subset=True,
+        )
+
 
 class SupplierPartTest(InvenTreeAPITestCase):
     """Unit tests for the SupplierPart API endpoints."""
@@ -568,25 +613,15 @@ class SupplierPartTest(InvenTreeAPITestCase):
     def test_output_options(self):
         """Test the output options for SupplierPart detail."""
         sp = SupplierPart.objects.all().first()
-        url = reverse('api-supplier-part-detail', kwargs={'pk': sp.pk})
-
-        response = self.get(url, {'part_detail': 'true'}, expected_code=200)
-        self.assertIn('part_detail', response.data)
-
-        response = self.get(url, {'supplier_detail': 'true'}, expected_code=200)
-        self.assertIn('supplier_detail', response.data)
-
-        response = self.get(url, {'supplier_detail': 'false'}, expected_code=200)
-        self.assertNotIn('supplier_detail', response.data)
-
-        response = self.get(url, {'manufacturer_detail': 'true'}, expected_code=200)
-        self.assertIn('manufacturer_detail', response.data)
-
-        response = self.get(url, {'pretty': 'true'}, expected_code=200)
-        self.assertIn('pretty_name', response.data)
-
-        response = self.get(url, {'pretty': 'false'}, expected_code=200)
-        self.assertNotIn('pretty_name', response.data)
+        self.run_output_test(
+            reverse('api-supplier-part-detail', kwargs={'pk': sp.pk}),
+            [
+                'part_detail',
+                'supplier_detail',
+                'manufacturer_detail',
+                ('pretty', 'pretty_name'),
+            ],
+        )
 
     def test_available(self):
         """Tests for updating the 'available' field."""
@@ -677,54 +712,92 @@ class SupplierPartTest(InvenTreeAPITestCase):
         for result in response.data:
             self.assertEqual(result['supplier'], company.pk)
 
+    def test_filterable_fields(self):
+        """Test inclusion/exclusion of optional API fields."""
+        fields = {
+            'price_breaks': False,
+            'part_detail': False,
+            'supplier_detail': False,
+            'manufacturer_detail': False,
+            'manufacturer_part_detail': False,
+        }
 
-class CompanyMetadataAPITest(InvenTreeAPITestCase):
-    """Unit tests for the various metadata endpoints of API."""
+        url = reverse('api-supplier-part-list')
+
+        for field, included in fields.items():
+            # Test default behavior
+            response = self.get(url, data={}, expected_code=200)
+            self.assertGreater(len(response.data), 0)
+            self.assertEqual(
+                included,
+                field in response.data[0],
+                f'Field: {field} failed default test',
+            )
+
+            # Test explicit inclusion
+            response = self.get(url, data={field: 'true'}, expected_code=200)
+            self.assertGreater(len(response.data), 0)
+            self.assertIn(
+                field, response.data[0], f'Field: {field} failed inclusion test'
+            )
+
+            # Test explicit exclusion
+            response = self.get(url, data={field: 'false'}, expected_code=200)
+            self.assertGreater(len(response.data), 0)
+            self.assertNotIn(
+                field, response.data[0], f'Field: {field} failed exclusion test'
+            )
+
+
+class SupplierPriceBreakAPITest(InvenTreeAPITestCase):
+    """Unit tests for the SupplierPart price break API."""
 
     fixtures = [
         'category',
         'part',
         'location',
         'company',
-        'contact',
         'manufacturer_part',
         'supplier_part',
+        'price_breaks',
     ]
 
     roles = ['company.change', 'purchase_order.change', 'part.change']
 
-    def metatester(self, apikey, model):
-        """Generic tester."""
-        modeldata = model.objects.first()
-
-        # Useless test unless a model object is found
-        self.assertIsNotNone(modeldata)
-
-        url = reverse(apikey, kwargs={'pk': modeldata.pk})
-
-        # Metadata is initially null
-        self.assertIsNone(modeldata.metadata)
-
-        numstr = f'12{len(apikey)}'
-
-        self.patch(
-            url,
-            {'metadata': {f'abc-{numstr}': f'xyz-{apikey}-{numstr}'}},
-            expected_code=200,
+    def test_output_options(self):
+        """Test the output options for SupplierPart price break list."""
+        self.run_output_test(
+            reverse('api-part-supplier-price-list'),
+            ['part_detail', 'supplier_detail'],
+            additional_params={'limit': 1},
+            assert_fnc=lambda x: x.data['results'][0],
         )
 
-        # Refresh
-        modeldata.refresh_from_db()
-        self.assertEqual(
-            modeldata.get_metadata(f'abc-{numstr}'), f'xyz-{apikey}-{numstr}'
-        )
+    def test_supplier_price_break_list(self):
+        """Test the SupplierPriceBreak API list functionality."""
+        url = reverse('api-part-supplier-price-list')
 
-    def test_metadata(self):
-        """Test all endpoints."""
-        for apikey, model in {
-            'api-manufacturer-part-metadata': ManufacturerPart,
-            'api-supplier-part-metadata': SupplierPart,
-            'api-company-metadata': Company,
-            'api-contact-metadata': Contact,
-        }.items():
-            self.metatester(apikey, model)
+        # Return *all* SupplierPriceBreaks
+        response = self.get(url, {}, expected_code=200)
+        self.assertEqual(len(response.data), SupplierPriceBreak.objects.count())
+
+        # Filter by supplier part
+        expected = {1: 3, 2: 2, 4: 2}  # Based on fixture data
+
+        for part_pk, count in expected.items():
+            response = self.get(url, {'part': part_pk}, expected_code=200)
+            self.assertEqual(len(response.data), count)
+
+        # Test ordering by quantity
+        response = self.get(url, {'ordering': 'quantity'}, expected_code=200)
+        quantities = [item['quantity'] for item in response.data]
+        self.assertEqual(quantities, sorted(quantities))
+
+        # Test ordering by price
+        response = self.get(url, {'ordering': 'price'}, expected_code=200)
+        prices = [float(item['price']) for item in response.data]
+        self.assertEqual(prices, sorted(prices))
+
+        # Test search by supplier name
+        response = self.get(url, {'search': 'ACME'}, expected_code=200)
+        self.assertGreater(len(response.data), 0)

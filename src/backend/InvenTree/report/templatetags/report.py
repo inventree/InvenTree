@@ -4,20 +4,26 @@ import base64
 import logging
 import os
 from datetime import date, datetime
-from decimal import Decimal
-from typing import Any, Optional, Union
+from decimal import Decimal, InvalidOperation
+from typing import Any, Optional
 
 from django import template
 from django.apps.registry import apps
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from django.db.models import Model
 from django.db.models.query import QuerySet
 from django.utils.safestring import SafeString, mark_safe
 from django.utils.translation import gettext_lazy as _
 
+from djmoney.contrib.exchange.exceptions import MissingRate
+from djmoney.contrib.exchange.models import convert_money
+from djmoney.money import Money
 from PIL import Image
 
+import common.currency
 import common.icons
+import common.models
 import InvenTree.helpers
 import InvenTree.helpers_model
 import report.helpers
@@ -103,7 +109,7 @@ def filter_db_model(model_name: str, **kwargs) -> Optional[QuerySet]:
 def getindex(container: list, index: int) -> Any:
     """Return the value contained at the specified index of the list.
 
-    This function is provideed to get around template rendering limitations.
+    This function is provided to get around template rendering limitations.
 
     Arguments:
         container: A python list object
@@ -319,34 +325,45 @@ def part_image(part: Part, preview: bool = False, thumbnail: bool = False, **kwa
     """
     if type(part) is not Part:
         raise TypeError(_('part_image tag requires a Part instance'))
-
-    part_img = part.image
-    if not part_img:
-        img = None
-    elif preview:
-        img = None if not hasattr(part.image, 'preview') else part_img.preview.name
-    elif thumbnail:
-        img = None if not hasattr(part.image, 'thumbnail') else part_img.thumbnail.name
-    else:
-        img = part.image.name
-
-    return uploaded_image(img, **kwargs)
+    return uploaded_image(
+        InvenTree.helpers.image2name(part.image, preview, thumbnail), **kwargs
+    )
 
 
 @register.simple_tag()
-def part_parameter(part: Part, parameter_name: str) -> Optional[str]:
-    """Return a PartParameter object for the given part and parameter name.
+def parameter(
+    instance: Model, parameter_name: str
+) -> Optional[common.models.Parameter]:
+    """Return a Parameter object for the given part and parameter name.
 
     Arguments:
-        part: A Part object
+        instance: A Model object
         parameter_name: The name of the parameter to retrieve
 
     Returns:
-        A PartParameter object, or None if not found
+        A Parameter object, or None if not found
     """
-    if type(part) is Part:
-        return part.get_parameter(parameter_name)
-    return None
+    if instance is None:
+        raise ValueError('parameter tag requires a valid Model instance')
+
+    if not isinstance(instance, Model) or not hasattr(instance, 'parameters'):
+        raise TypeError("parameter tag requires a Model with 'parameters' attribute")
+
+    return (
+        instance.parameters
+        .prefetch_related('template')
+        .filter(template__name=parameter_name)
+        .first()
+    )
+
+
+@register.simple_tag()
+def part_parameter(instance, parameter_name):
+    """Included for backwards compatibility - use 'parameter' tag instead.
+
+    Ref: https://github.com/inventree/InvenTree/pull/10699
+    """
+    return parameter(instance, parameter_name)
 
 
 @register.simple_tag()
@@ -365,18 +382,9 @@ def company_image(
     """
     if type(company) is not Company:
         raise TypeError(_('company_image tag requires a Company instance'))
-
-    cmp_img = company.image
-    if not cmp_img:
-        img = None
-    elif preview:
-        img = cmp_img.preview.name
-    elif thumbnail:
-        img = cmp_img.thumbnail.name
-    else:
-        img = cmp_img.name
-
-    return uploaded_image(img, **kwargs)
+    return uploaded_image(
+        InvenTree.helpers.image2name(company.image, preview, thumbnail), **kwargs
+    )
 
 
 @register.simple_tag()
@@ -413,34 +421,252 @@ def internal_link(link, text) -> str:
     return mark_safe(f'<a href="{url}">{text}</a>')
 
 
-@register.simple_tag()
-def add(x: float, y: float, *args, **kwargs) -> float:
-    """Add two numbers together."""
-    return float(x) + float(y)
+def make_decimal(value: Any) -> Any:
+    """Convert an input value into a Decimal.
+
+    - Converts [string, int, float] types into Decimal
+    - If conversion fails, returns the original value
+
+    The purpose of this function is to provide "seamless" math operations in templates,
+    where numeric values may be provided as strings, or converted to strings during template rendering.
+    """
+    if any(isinstance(value, t) for t in [int, float, str]):
+        try:
+            value = Decimal(str(value).strip())
+        except (InvalidOperation, TypeError, ValueError):
+            logger.warning(
+                'make_decimal: Failed to convert value to Decimal: %s (%s)',
+                value,
+                type(value),
+            )
+
+    return value
+
+
+def cast_to_type(value: Any, cast: type) -> Any:
+    """Attempt to cast a value to the provided type.
+
+    If casting fails, the original value is returned.
+    """
+    if cast is not None:
+        try:
+            value = cast(value)
+        except (ValueError, TypeError):
+            pass
+
+    return value
+
+
+def debug_vars(x: Any, y: Any) -> str:
+    """Return a debug string showing the types and values of two variables."""
+    return f"x='{x}' ({type(x).__name__}), y='{y}' ({type(y).__name__})"
+
+
+def check_nulls(func: str, *arg):
+    """Check if any of the provided arguments is null.
+
+    Raises:
+        ValueError: If any argument is None
+    """
+    if any(a is None for a in arg):
+        raise ValidationError(f'{func}: {_("Null value provided to function")}')
 
 
 @register.simple_tag()
-def subtract(x: float, y: float) -> float:
-    """Subtract one number from another."""
-    return float(x) - float(y)
+def add(x: Any, y: Any, cast: Optional[type] = None) -> Any:
+    """Add two numbers (or number like values) together.
+
+    Arguments:
+        x: The first value to add
+        y: The second value to add
+        cast: Optional type to cast the result to (e.g. int, float, str)
+
+    Raises:
+        ValidationError: If the values cannot be added together
+    """
+    check_nulls('add', x, y)
+
+    try:
+        result = make_decimal(x) + make_decimal(y)
+    except (InvalidOperation, TypeError, ValueError):
+        raise ValidationError(
+            f'add: {_("Cannot add values of incompatible types")}: {debug_vars(x, y)}'
+        )
+    return cast_to_type(result, cast)
 
 
 @register.simple_tag()
-def multiply(x: float, y: float) -> float:
-    """Multiply two numbers together."""
-    return float(x) * float(y)
+def subtract(x: Any, y: Any, cast: Optional[type] = None) -> Any:
+    """Subtract one number (or number-like value) from another.
+
+    Arguments:
+        x: The value to be subtracted from
+        y: The value to be subtracted
+        cast: Optional type to cast the result to (e.g. int, float, str)
+
+    Raises:
+        ValidationError: If the values cannot be subtracted
+    """
+    check_nulls('subtract', x, y)
+
+    try:
+        result = make_decimal(x) - make_decimal(y)
+    except (InvalidOperation, TypeError, ValueError):
+        raise ValidationError(
+            f'subtract: {_("Cannot subtract values of incompatible types")}: {debug_vars(x, y)}'
+        )
+
+    return cast_to_type(result, cast)
 
 
 @register.simple_tag()
-def divide(x: float, y: float) -> float:
-    """Divide one number by another."""
-    return float(x) / float(y)
+def multiply(x: Any, y: Any, cast: Optional[type] = None) -> Any:
+    """Multiply two numbers (or number-like values) together.
+
+    Arguments:
+        x: The first value to multiply
+        y: The second value to multiply
+        cast: Optional type to cast the result to (e.g. int, float, str)
+
+    Raises:
+        ValidationError: If the values cannot be multiplied together
+    """
+    check_nulls('multiply', x, y)
+
+    try:
+        result = make_decimal(x) * make_decimal(y)
+    except (InvalidOperation, TypeError, ValueError):
+        raise ValidationError(
+            f'multiply: {_("Cannot multiply values of incompatible types")}: {debug_vars(x, y)}'
+        )
+
+    return cast_to_type(result, cast)
+
+
+@register.simple_tag()
+def divide(x: Any, y: Any, cast: Optional[type] = None) -> Any:
+    """Divide one number (or number-like value) by another.
+
+    Arguments:
+        x: The value to be divided
+        y: The value to divide by
+        cast: Optional type to cast the result to (e.g. int, float, str)
+
+    Raises:
+        ValidationError: If the values cannot be divided
+    """
+    check_nulls('divide', x, y)
+
+    try:
+        result = make_decimal(x) / make_decimal(y)
+    except (InvalidOperation, TypeError, ValueError):
+        raise ValidationError(
+            f'divide: {_("Cannot divide values of incompatible types")}: {debug_vars(x, y)}'
+        )
+    except ZeroDivisionError:
+        raise ValidationError(
+            f'divide: {_("Cannot divide by zero")}: {debug_vars(x, y)}'
+        )
+
+    return cast_to_type(result, cast)
+
+
+@register.simple_tag()
+def modulo(x: Any, y: Any, cast: Optional[type] = None) -> Any:
+    """Calculate the modulo of one number (or number-like value) by another.
+
+    Arguments:
+        x: The first value to be used in the modulo operation
+        y: The second value to be used in the modulo operation
+        cast: Optional type to cast the result to (e.g. int, float, str)
+
+    Raises:
+        ValidationError: If the values cannot be used in a modulo operation
+    """
+    check_nulls('modulo', x, y)
+
+    try:
+        result = make_decimal(x) % make_decimal(y)
+    except (InvalidOperation, TypeError, ValueError):
+        raise ValidationError(
+            f'modulo: {_("Cannot perform modulo operation with values of incompatible types")} {debug_vars(x, y)}'
+        )
+    except ZeroDivisionError:
+        raise ValidationError(
+            f'modulo: {_("Cannot perform modulo operation with divisor of zero")}: {debug_vars(x, y)}'
+        )
+
+    return cast_to_type(result, cast)
 
 
 @register.simple_tag
 def render_currency(money, **kwargs):
     """Render a currency / Money object."""
     return InvenTree.helpers_model.render_currency(money, **kwargs)
+
+
+@register.simple_tag
+def create_currency(
+    amount: str | int | float | Decimal, currency: Optional[str] = None, **kwargs
+):
+    """Create a Money object, with the provided amount and currency.
+
+    Arguments:
+        amount: The numeric amount (a numeric type or string)
+        currency: The currency code (e.g. 'USD', 'EUR', etc.)
+
+    Note: If the currency is not provided, the default system currency will be used.
+    """
+    check_nulls('create_currency', amount)
+
+    currency = currency or common.currency.currency_code_default()
+    currency = currency.strip().upper()
+
+    if currency not in common.currency.CURRENCIES:
+        raise ValidationError(
+            f'create_currency: {_("Invalid currency code")}: {currency}'
+        )
+
+    try:
+        money = Money(amount, currency)
+    except InvalidOperation:
+        raise ValidationError(f'create_currency: {_("Invalid amount")}: {amount}')
+
+    return money
+
+
+@register.simple_tag
+def convert_currency(money: Money, currency: Optional[str] = None, **kwargs):
+    """Convert a Money object to the specified currency.
+
+    Arguments:
+        money: The Money instance to be converted
+        currency: The target currency code (e.g. 'USD', 'EUR', etc.)
+
+    Note: If the currency is not provided, the default system currency will be used.
+    """
+    check_nulls('convert_currency', money)
+
+    if not isinstance(money, Money):
+        raise TypeError('convert_currency tag requires a Money instance')
+
+    currency = currency or common.currency.currency_code_default()
+    currency = currency.strip().upper()
+
+    if currency not in common.currency.CURRENCIES:
+        raise ValidationError(
+            f'convert_currency: {_("Invalid currency code")}: {currency}'
+        )
+
+    try:
+        converted = convert_money(money, currency)
+    except MissingRate:
+        # Re-throw error with more context
+        raise ValidationError(
+            f'convert_currency: {_("Missing exchange rate")} {money.currency} -> {currency}'
+        )
+
+    return converted
 
 
 @register.simple_tag
@@ -472,8 +698,9 @@ def render_html_text(text: str, **kwargs):
 
 @register.simple_tag
 def format_number(
-    number: Union[int, float, Decimal],
+    number: int | float | Decimal,
     decimal_places: Optional[int] = None,
+    multiplier: Optional[int | float | Decimal] = None,
     integer: bool = False,
     leading: int = 0,
     separator: Optional[str] = None,
@@ -483,15 +710,21 @@ def format_number(
     Arguments:
         number: The number to be formatted
         decimal_places: Number of decimal places to render
+        multiplier: Optional multiplier to apply to the number before formatting
         integer: Boolean, whether to render the number as an integer
         leading: Number of leading zeros (default = 0)
         separator: Character to use as a thousands separator (default = None)
     """
+    check_nulls('format_number', number)
+
     try:
-        number = Decimal(str(number))
+        number = Decimal(str(number).strip())
     except Exception:
         # If the number cannot be converted to a Decimal, just return the original value
         return str(number)
+
+    if multiplier is not None:
+        number *= Decimal(str(multiplier).strip())
 
     if integer:
         # Convert to integer
@@ -508,7 +741,13 @@ def format_number(
             pass
 
     # Re-encode, and normalize again
-    value = Decimal(number).normalize()
+    # Ensure that the output never uses scientific notation
+    value = Decimal(number)
+    value = (
+        value.quantize(Decimal(1))
+        if value == value.to_integral()
+        else value.normalize()
+    )
 
     if separator:
         value = f'{value:,}'
@@ -537,6 +776,8 @@ def format_datetime(
         timezone: The timezone to use for the date (defaults to the server timezone)
         fmt: The format string to use (defaults to ISO formatting)
     """
+    check_nulls('format_datetime', dt)
+
     dt = InvenTree.helpers.to_local_time(dt, timezone)
 
     if fmt:
@@ -554,6 +795,8 @@ def format_date(dt: date, timezone: Optional[str] = None, fmt: Optional[str] = N
         timezone: The timezone to use for the date (defaults to the server timezone)
         fmt: The format string to use (defaults to ISO formatting)
     """
+    check_nulls('format_date', dt)
+
     try:
         dt = InvenTree.helpers.to_local_time(dt, timezone).date()
     except TypeError:

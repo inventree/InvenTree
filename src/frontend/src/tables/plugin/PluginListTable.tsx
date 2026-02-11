@@ -30,7 +30,7 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { useServerApiState } from '../../states/ServerApiState';
 import { useUserState } from '../../states/UserState';
-import { BooleanColumn } from '../ColumnRenderers';
+import { BooleanColumn, LinkColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 /**
@@ -134,7 +134,13 @@ export default function PluginListTable() {
         accessor: 'meta.author',
         title: 'Author',
         sortable: false
-      }
+      },
+      LinkColumn({
+        accessor: 'meta.website',
+        title: t`Website`,
+        sortable: false,
+        switchable: true
+      })
     ];
   }, []);
 

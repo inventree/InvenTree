@@ -20,6 +20,7 @@ export enum ApiEndpoints {
   user_simple_login = 'email/generate/',
 
   // User auth endpoints
+  auth_base = '/auth/',
   user_reset = 'auth/v1/auth/password/request',
   user_reset_set = 'auth/v1/auth/password/reset',
   auth_pwd_change = 'auth/v1/account/password/change',
@@ -32,6 +33,8 @@ export enum ApiEndpoints {
   auth_mfa_reauthenticate = 'auth/v1/auth/2fa/reauthenticate',
   auth_totp = 'auth/v1/account/authenticators/totp',
   auth_trust = 'auth/v1/auth/2fa/trust',
+  auth_webauthn = 'auth/v1/account/authenticators/webauthn',
+  auth_webauthn_login = 'auth/v1/auth/webauthn/authenticate',
   auth_reauthenticate = 'auth/v1/auth/reauthenticate',
   auth_email = 'auth/v1/account/email',
   auth_email_verify = 'auth/v1/auth/email/verify',
@@ -109,8 +112,6 @@ export enum ApiEndpoints {
 
   // Part API endpoints
   part_list = 'part/',
-  part_parameter_list = 'part/parameter/',
-  part_parameter_template_list = 'part/parameter/template/',
   part_thumbs_list = 'part/thumbs/',
   part_pricing = 'part/:id/pricing/',
   part_requirements = 'part/:id/requirements/',
@@ -119,6 +120,7 @@ export enum ApiEndpoints {
   part_pricing_internal = 'part/internal-price/',
   part_pricing_sale = 'part/sale-price/',
   part_stocktake_list = 'part/stocktake/',
+  part_stocktake_generate = 'part/stocktake/generate/',
   category_list = 'part/category/',
   category_tree = 'part/category/tree/',
   category_parameter_list = 'part/category/parameters/',
@@ -132,7 +134,6 @@ export enum ApiEndpoints {
   supplier_part_list = 'company/part/',
   supplier_part_pricing_list = 'company/price-break/',
   manufacturer_part_list = 'company/part/manufacturer/',
-  manufacturer_part_parameter_list = 'company/part/manufacturer/parameter/',
 
   // Stock location endpoints
   stock_location_list = 'stock/location/',
@@ -220,6 +221,9 @@ export enum ApiEndpoints {
 
   // Special plugin endpoints
   plugin_locate_item = 'locate/',
+  plugin_supplier_list = 'supplier/list/',
+  plugin_supplier_search = 'supplier/search/',
+  plugin_supplier_import = 'supplier/import/',
 
   // Machine API endpoints
   machine_types_list = 'machine/types/',
@@ -238,5 +242,7 @@ export enum ApiEndpoints {
   notes_image_upload = 'notes-image-upload/',
   email_list = 'admin/email/',
   email_test = 'admin/email/test/',
-  config_list = 'admin/config/'
+  config_list = 'admin/config/',
+  parameter_list = 'parameter/',
+  parameter_template_list = 'parameter/template/'
 }

@@ -88,11 +88,17 @@ Note that inherited BOM Line Items only flow "downwards" in the variant inherita
 
 ## BOM Creation
 
-BOMs can be created manually, by adjusting individual line items, or by upload an existing BOM file.
+BOMs can be created manually, by adjusting individual line items, or by uploading (importing) an existing BOM file.
+
+### Importing a BOM
+
+BOM data can be imported from an existing file (such as CSV or Excel) from the *BOM* panel for a particular part/assembly. This process is a special case of the more general [data import process](../settings/import.md).
+
+At the top of the *BOM* panel, click on the {{ icon("file-arrow-left", color="green", title="Import BOM Data") }} icon to open the import dialog.
 
 ### Add BOM Item
 
-To manually add a BOM item, navigate to the part/assembly detail page then click on the "BOM" tab. On top of the tab view, click on the {{ icon("edit", color="blue", title="Edit") }} icon then, after the page reloads, click on the {{ icon("plus-circle") }} icon.
+To manually add a BOM item, navigate to the part/assembly detail page then click on the *BOM* panel tab. On top of the *BOM* view, click on the {{ icon("edit", color="blue", title="Edit") }} icon then, after the page reloads, click on the {{ icon("plus-circle") }} icon.
 
 The `Create BOM Item` form will be displayed:
 

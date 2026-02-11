@@ -36,13 +36,25 @@ debug: False
 
 # Additional debug options
 debug_querycount: False
+debug_silk: False
+debug_silk_profiling: False
 debug_shell: False
+
+# Schema generation options
+#schema:
+#  level: 0 # Level of added schema extensions detail (0-3) 0 = including no additional detail, or use the environment variable INVENTREE_SCHEMA_LEVEL
 
 # Set to False to disable the admin interface, or use the environment variable INVENTREE_ADMIN_ENABLED
 #admin_enabled: True
 
 # Set the admin URL, or use the environment variable INVENTREE_ADMIN_URL
 #admin_url: 'admin'
+
+# Add new user on first startup by either adding values here or from a file
+#admin_user: admin
+#admin_email: info@example.com
+#admin_password: inventree
+#admin_password_file: '/etc/inventree/admin_password.txt'
 
 # Configure the system logging level (or use environment variable INVENTREE_LOG_LEVEL)
 # Options: DEBUG / INFO / WARNING / ERROR / CRITICAL
@@ -66,13 +78,6 @@ language: en-us
 
 # System time-zone (default is UTC). Reference: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 timezone: UTC
-
-
-# Add new user on first startup by either adding values here or from a file
-#admin_user: admin
-#admin_email: info@example.com
-#admin_password: inventree
-#admin_password_file: '/etc/inventree/admin_password.txt'
 
 # Email backend configuration
 # See https://docs.inventree.org/en/stable/settings/email for more information on email configuration
@@ -110,7 +115,7 @@ sentry_enabled: False
 #sentry_dsn: https://custom@custom.ingest.sentry.io/custom
 
 # OpenTelemetry tracing/metrics - disabled by default - refer to the documentation for full list of options
-# This can be used to send tracing data, logs and metrics to OpenTelemtry compatible backends
+# This can be used to send tracing data, logs and metrics to OpenTelemetry compatible backends
 tracing:
   enabled: false
 
@@ -142,9 +147,9 @@ allowed_hosts:
 # use_x_forwarded_proto: true
 
 # Cookie settings (nominally the default settings should be fine)
-cookie:
-  secure: false
-  samesite: false
+# cookie:
+#  secure: false
+#  samesite: false
 
 # Cross Origin Resource Sharing (CORS) settings (see https://github.com/adamchainz/django-cors-headers)
 cors:
@@ -203,7 +208,7 @@ remote_login_header: HTTP_REMOTE_USER
 #  - 'allauth.socialaccount.providers.github'
 
 # Add specific settings for social account providers (if required)
-# Refer to the djngo-allauth documentation for more details:
+# Refer to the django-allauth documentation for more details:
 # https://docs.allauth.org/en/latest/socialaccount/provider_configuration.html
 # social_providers:
 #   github:
@@ -222,6 +227,7 @@ ldap:
 #   navbar_message: <h6>InvenTree demo mode <a href='https://inventree.org/demo.html'><span class='fas fa-info-circle'></span></a></h6>
 #   hide_admin_link: true
 #   hide_password_reset: true
+#   disable_theme_storage: true
 #   logo: img/custom_logo.png
 #   splash: img/custom_splash.jpg
 
@@ -229,3 +235,30 @@ ldap:
 #global_settings:
 #  INVENTREE_DEFAULT_CURRENCY: 'CNY'
 #  INVENTREE_RESTRICT_ABOUT: true
+
+# Storage configuration
+# Ref: https://docs.inventree.org/en/stable/start/config/#storage-backends
+storage:
+  target: local # s3, sftp
+#   s3:
+#     access_key: 'abc123-key'
+#     secret_key: 'abc123-secret'
+#     bucket_name: 'my-bucket'
+#     region_name: 'fsn1'
+#     endpoint_url: 'https://fsn1.your-objectstorage.com'
+#     location: 'inventree-server_subdir'
+#     default_acl: private
+#     verify_ssl: true
+#     overwrite: true
+#     virtual: true
+  # sftp:
+  #   host: 'sftp://ftp-target.example.org:22'
+  #   uid: 1000
+  #   gid: 1000
+  #   location: 'inventree-server_subdir'
+  #   params:
+  #     # See https://docs.paramiko.org/en/latest/api/client.html#paramiko.client.SSHClient.connect
+  #     port: 22
+  #     username: 'user'
+  #     password: 'pwd'
+  #     compress: False

@@ -6,15 +6,15 @@ import {
   IconCircleCheck,
   IconEdit,
   IconExclamationCircle,
-  IconFileArrowLeft,
+  IconFileUpload,
   IconLock,
+  IconPlus,
   IconSwitch3
 } from '@tabler/icons-react';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ActionButton } from '@lib/components/ActionButton';
-import { AddItemButton } from '@lib/components/AddItemButton';
 import {
   type RowAction,
   RowDeleteAction,
@@ -30,6 +30,7 @@ import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import type { DataTableRowExpansionProps } from 'mantine-datatable';
 import ImporterDrawer from '../../components/importer/ImporterDrawer';
+import { ActionDropdown } from '../../components/items/ActionDropdown';
 import { RenderPart } from '../../components/render/Part';
 import { useApi } from '../../contexts/ApiContext';
 import { formatDecimal, formatPriceRange } from '../../defaults/formatters';
@@ -44,6 +45,7 @@ import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import {
   BooleanColumn,
+  CategoryColumn,
   DescriptionColumn,
   NoteColumn,
   ReferenceColumn,
@@ -137,8 +139,16 @@ export function BomTable({
       {
         accessor: 'sub_part_detail.IPN',
         title: t`IPN`,
-        sortable: true
+        sortable: true,
+        ordering: 'IPN'
       },
+      CategoryColumn({
+        accessor: 'category_detail',
+        defaultVisible: false,
+        switchable: true,
+        sortable: true,
+        ordering: 'category'
+      }),
       DescriptionColumn({
         accessor: 'sub_part_detail.description'
       }),
@@ -290,9 +300,15 @@ export function BomTable({
         render: (record: any) => {
           const extra: ReactNode[] = [];
 
+          const part = record.sub_part_detail;
+
           const available_stock: number = availableStockQuantity(record);
           const on_order: number = record?.on_order ?? 0;
           const building: number = record?.building ?? 0;
+
+          if (part?.virtual) {
+            return <Text fs='italic'>{t`Virtual part`}</Text>;
+          }
 
           const text =
             available_stock <= 0 ? (
@@ -357,10 +373,17 @@ export function BomTable({
         title: t`Can Build`,
         sortable: true,
         render: (record: any) => {
+          // Virtual sub-part - the "can build" quantity does not make sense here
+          if (record.sub_part_detail?.virtual) {
+            return '-';
+          }
+
+          // No information available
           if (record.can_build === null || record.can_build === undefined) {
             return '-';
           }
 
+          // NaN or infinite values
           if (
             !Number.isFinite(record.can_build) ||
             Number.isNaN(record.can_build)
@@ -409,6 +432,11 @@ export function BomTable({
         name: 'sub_part_trackable',
         label: t`Trackable Part`,
         description: t`Show trackable items`
+      },
+      {
+        name: 'sub_part_active',
+        label: t`Active Part`,
+        description: t`Show active items`
       },
       {
         name: 'sub_part_assembly',
@@ -606,18 +634,26 @@ export function BomTable({
 
   const tableActions = useMemo(() => {
     return [
-      <ActionButton
-        key='import-bom'
-        hidden={!isEditing || partLocked || !user.hasAddRole(UserRoles.part)}
-        tooltip={t`Import BOM Data`}
-        icon={<IconFileArrowLeft />}
-        onClick={() => importBomItem.open()}
-      />,
-      <AddItemButton
-        key='add-bom-item'
-        hidden={!isEditing || partLocked || !user.hasAddRole(UserRoles.part)}
-        tooltip={t`Add BOM Item`}
-        onClick={() => newBomItem.open()}
+      <ActionDropdown
+        key='add-bom-actions'
+        tooltip={t`Add BOM Items`}
+        position='bottom-start'
+        icon={<IconPlus />}
+        hidden={partLocked || !user.hasAddRole(UserRoles.part)}
+        actions={[
+          {
+            name: t`Add BOM Item`,
+            icon: <IconPlus />,
+            tooltip: t`Add a single BOM item`,
+            onClick: () => newBomItem.open()
+          },
+          {
+            name: t`Import from File`,
+            icon: <IconFileUpload />,
+            tooltip: t`Import BOM items from a file`,
+            onClick: () => importBomItem.open()
+          }
+        ]}
       />,
       <ActionButton
         key='edit-bom'
@@ -693,8 +729,10 @@ export function BomTable({
             params: {
               ...params,
               part: partId,
+              substitutes: true,
               part_detail: true,
-              sub_part_detail: true
+              sub_part_detail: true,
+              category_detail: true
             },
             tableActions: tableActions,
             tableFilters: tableFilters,

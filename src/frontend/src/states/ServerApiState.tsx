@@ -15,6 +15,9 @@ interface ServerApiStateProps {
   auth_config?: AuthConfig;
   auth_context?: AuthContext;
   setAuthContext: (auth_context: AuthContext | undefined) => void;
+  mfa_context?: any;
+  setMfaContext: (mfa_context: any) => void;
+  // Helper functions
   sso_enabled: () => boolean;
   registration_enabled: () => boolean;
   sso_registration_enabled: () => boolean;
@@ -34,32 +37,38 @@ export const useServerApiState = create<ServerApiStateProps>()(
       server: emptyServerAPI,
       setServer: (newServer: ServerAPIProps) => set({ server: newServer }),
       fetchServerApiState: async () => {
-        // Fetch server data
-        await api
-          .get(apiUrl(ApiEndpoints.api_server_info))
-          .then((response) => {
-            set({ server: response.data });
-          })
-          .catch(() => {
-            console.error('ERR: Error fetching server info');
-          });
+        await Promise.all([
+          // Fetch server data
+          api
+            .get(apiUrl(ApiEndpoints.api_server_info))
+            .then((response) => {
+              set({ server: response.data });
+            })
+            .catch(() => {
+              console.error('ERR: Error fetching server info');
+            }),
 
-        // Fetch login/SSO behaviour
-        await api
-          .get(apiUrl(ApiEndpoints.auth_config), {
-            headers: { Authorization: '' }
-          })
-          .then((response) => {
-            set({ auth_config: response.data.data });
-          })
-          .catch(() => {
-            console.error('ERR: Error fetching SSO information');
-          });
+          // Fetch login/SSO behaviour
+          api
+            .get(apiUrl(ApiEndpoints.auth_config), {
+              headers: { Authorization: '' }
+            })
+            .then((response) => {
+              set({ auth_config: response.data.data });
+            })
+            .catch(() => {
+              console.error('ERR: Error fetching SSO information');
+            })
+        ]);
       },
       auth_config: undefined,
       auth_context: undefined,
       setAuthContext(auth_context) {
         set({ auth_context });
+      },
+      mfa_context: undefined,
+      setMfaContext(mfa_context) {
+        set({ mfa_context });
       },
       sso_enabled: () => {
         const data = get().auth_config?.socialaccount.providers;

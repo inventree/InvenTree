@@ -13,7 +13,8 @@ from djmoney.money import Money
 import common.models
 import order.tasks
 from common.settings import get_global_setting, set_global_setting
-from company.models import Company, SupplierPart
+from company.models import Company, Contact, SupplierPart
+from InvenTree.helpers import current_date
 from InvenTree.unit_test import (
     ExchangeRateMixin,
     PluginRegistryMixin,
@@ -54,6 +55,49 @@ class OrderTest(ExchangeRateMixin, PluginRegistryMixin, TestCase):
 
         line = PurchaseOrderLineItem.objects.get(pk=1)
         self.assertEqual(str(line), '100 x ACME0001 - PO-0001 - ACME')
+
+    def test_validate_dates(self):
+        """Test for validation of date fields."""
+        order = PurchaseOrder.objects.first()
+
+        order.start_date = current_date()
+        order.target_date = current_date() - timedelta(days=5)
+
+        with self.assertRaises(django_exceptions.ValidationError) as err:
+            order.clean()
+
+        self.assertIn('Target date must be after start date', err.exception.messages)
+        self.assertIn('Start date must be before target date', err.exception.messages)
+
+        order.target_date = current_date() + timedelta(days=5)
+
+        # This should now pass
+        order.clean()
+        order.save()
+
+    def test_validate_contact(self):
+        """Test for validation of linked Contact."""
+        order = PurchaseOrder.objects.first()
+
+        # Create a contact which does does not match the company
+        company = Company.objects.exclude(pk=order.supplier.pk).first()
+        self.assertIsNotNone(company)
+        contact = Contact.objects.create(company=company, name='Harold Henderson')
+
+        order.contact = contact
+
+        with self.assertRaises(django_exceptions.ValidationError) as err:
+            order.clean()
+
+        self.assertIn('Contact does not match selected company', err.exception.messages)
+
+        # Update the contact, point to the right company
+        contact.company = order.supplier
+        contact.save()
+
+        order.contact = contact
+        order.clean()  # Should not raise
+        order.save()
 
     def test_rebuild_reference(self):
         """Test that the reference_int field is correctly updated when the model is saved."""

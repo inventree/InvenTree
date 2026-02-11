@@ -23,6 +23,7 @@ from djmoney.contrib.exchange.models import Rate, convert_money
 from djmoney.money import Money
 from maintenance_mode.core import get_maintenance_mode, set_maintenance_mode
 from sesame.utils import get_user
+from stdimage.models import StdImageFieldFile
 
 import InvenTree.conversion
 import InvenTree.format
@@ -188,7 +189,7 @@ class CorsTest(TestCase):
         Here, we are not authorized by default,
         but the CORS headers should still be included.
         """
-        url = '/auth/'
+        url = reverse('auth-check')
 
         # First, a preflight request with a "valid" origin
 
@@ -700,7 +701,16 @@ class TestHelpers(TestCase):
 
     def testMediaUrl(self):
         """Test getMediaUrl."""
-        self.assertEqual(helpers.getMediaUrl('xx/yy.png'), '/media/xx/yy.png')
+        # Str should not work
+        with self.assertRaises(TypeError):
+            helpers.getMediaUrl('xx/yy.png')  # type: ignore
+
+        # Correct usage
+        part = Part().image
+        self.assertEqual(
+            helpers.getMediaUrl(StdImageFieldFile(part, part, 'xx/yy.png')),  # type: ignore
+            '/media/xx/yy.png',
+        )
 
     def testDecimal2String(self):
         """Test decimal2string."""
@@ -994,12 +1004,14 @@ class TestSerialNumberExtraction(TestCase):
         # Extract a range of values with a smaller range
         with self.assertRaises(ValidationError) as exc:
             e('11-50', 10, 1)
-            self.assertIn('Range quantity exceeds 10', str(exc))
+        self.assertIn(
+            'Group range 11-50 exceeds allowed quantity (10)', str(exc.exception)
+        )
 
         # Test groups are not interpolated with alpha characters
         with self.assertRaises(ValidationError) as exc:
             e('1, A-2, 3+', 5, 1)
-            self.assertIn('Invalid group range: A-2', str(exc))
+        self.assertIn('Invalid group: A-2', str(exc.exception))
 
     def test_combinations(self):
         """Test complex serial number combinations."""

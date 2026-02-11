@@ -1,6 +1,7 @@
 """Background task definitions for the 'part' app."""
 
 from datetime import datetime, timedelta
+from typing import Optional
 
 from django.core.exceptions import ValidationError
 from django.db.models import Model
@@ -216,7 +217,7 @@ def check_stale_stock():
             logger.error(
                 'Error scheduling stale stock notification for user %s: %s',
                 user.username,
-                str(e),
+                e,
             )
 
     logger.info(
@@ -328,7 +329,7 @@ def scheduled_stocktake_reports():
         threshold = datetime.now() - timedelta(days=delete_n_days)
         old_entries = PartStocktake.objects.filter(date__lt=threshold)
 
-        if old_entries.count() > 0:
+        if old_entries.exists():
             logger.info('Deleting %s old stock entries', old_entries.count())
             old_entries.delete()
 
@@ -352,38 +353,6 @@ def scheduled_stocktake_reports():
 
     # Record the date of this task run
     record_task_success('STOCKTAKE_RECENT_REPORT')
-
-
-@tracer.start_as_current_span('rebuild_parameters')
-def rebuild_parameters(template_id):
-    """Rebuild all parameters for a given template.
-
-    This function is called when a base template is changed,
-    which may cause the base unit to be adjusted.
-    """
-    from part.models import PartParameter, PartParameterTemplate
-
-    try:
-        template = PartParameterTemplate.objects.get(pk=template_id)
-    except PartParameterTemplate.DoesNotExist:
-        return
-
-    parameters = PartParameter.objects.filter(template=template)
-
-    n = 0
-
-    for parameter in parameters:
-        # Update the parameter if the numeric value has changed
-        value_old = parameter.data_numeric
-        parameter.calculate_numeric_value()
-
-        if value_old != parameter.data_numeric:
-            parameter.full_clean()
-            parameter.save()
-            n += 1
-
-    if n > 0:
-        logger.info("Rebuilt %s parameters for template '%s'", n, template.name)
 
 
 @tracer.start_as_current_span('rebuild_supplier_parts')
@@ -437,3 +406,35 @@ def check_bom_valid(part_id: int):
     if valid != part.bom_validated:
         part.bom_validated = valid
         part.save()
+
+
+@tracer.start_as_current_span('validate_bom')
+def validate_bom(part_id: int, valid: bool, user_id: Optional[int] = None):
+    """Run BOM validation for the specified Part.
+
+    Arguments:
+        part_id: The ID of the part for which to validate the BOM.
+        valid: Boolean indicating whether the BOM is valid or not.
+        user_id: Optional ID of the user performing the validation.
+    """
+    from django.contrib.auth import get_user_model
+
+    from part.models import Part
+
+    User = get_user_model()
+
+    try:
+        part = Part.objects.get(pk=part_id)
+    except Part.DoesNotExist:
+        logger.warning('validate_bom: Part with ID %s does not exist', part_id)
+        return
+
+    if user_id:
+        try:
+            user = User.objects.get(pk=user_id)
+        except User.DoesNotExist:
+            user = None
+    else:
+        user = None
+
+    part.validate_bom(user, valid=valid)

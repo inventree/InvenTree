@@ -4,19 +4,21 @@ import { useCallback, useMemo, useState } from 'react';
 import { ActionButton } from '@lib/components/ActionButton';
 import {
   type RowAction,
-  RowDeleteAction,
-  RowEditAction
+  RowEditAction,
+  RowViewAction
 } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
+import type { StockOperationProps } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
-import { IconTruckDelivery } from '@tabler/icons-react';
+import { Alert } from '@mantine/core';
+import { IconCircleX, IconTruckDelivery } from '@tabler/icons-react';
+import { useNavigate } from 'react-router-dom';
 import { formatDate } from '../../defaults/formatters';
 import { useSalesOrderAllocationFields } from '../../forms/SalesOrderForms';
-import type { StockOperationProps } from '../../forms/StockForms';
 import {
   useBulkEditApiFormModal,
   useDeleteApiFormModal,
@@ -61,6 +63,7 @@ export default function SalesOrderAllocationTable({
   modelField?: string;
 }>) {
   const user = useUserState();
+  const navigate = useNavigate();
 
   const tableId = useMemo(() => {
     let id = 'salesorderallocations';
@@ -212,7 +215,13 @@ export default function SalesOrderAllocationTable({
   const deleteAllocation = useDeleteApiFormModal({
     url: ApiEndpoints.sales_order_allocation_list,
     pk: selectedAllocation,
-    title: t`Delete Allocation`,
+    title: t`Remove Allocated Stock`,
+    preFormContent: (
+      <Alert color='red' title={t`Confirm Removal`}>
+        {t`Are you sure you want to remove this allocated stock from the order?`}
+      </Alert>
+    ),
+    submitText: t`Remove`,
     onFormSuccess: () => table.refreshTable()
   });
 
@@ -221,29 +230,44 @@ export default function SalesOrderAllocationTable({
       // Do not allow "shipped" items to be manipulated
       const isShipped = !!record.shipment_detail?.shipment_date;
 
-      if (isShipped || !allowEdit) {
-        return [];
-      }
-
       return [
         RowEditAction({
           tooltip: t`Edit Allocation`,
+          hidden:
+            isShipped ||
+            !allowEdit ||
+            !user.hasChangeRole(UserRoles.sales_order),
           onClick: () => {
             setSelectedAllocation(record.pk);
             setSelectedShipment(record.shipment);
             editAllocation.open();
           }
         }),
-        RowDeleteAction({
-          tooltip: t`Delete Allocation`,
+        {
+          title: t`Remove`,
+          tooltip: t`Remove allocated stock`,
+          icon: <IconCircleX />,
+          color: 'red',
+          hidden:
+            isShipped ||
+            !allowEdit ||
+            !user.hasDeleteRole(UserRoles.sales_order),
           onClick: () => {
             setSelectedAllocation(record.pk);
             deleteAllocation.open();
           }
+        },
+        RowViewAction({
+          tooltip: t`View Shipment`,
+          title: t`View Shipment`,
+          hidden: !record.shipment || !!shipmentId,
+          modelId: record.shipment,
+          modelType: ModelType.salesordershipment,
+          navigate: navigate
         })
       ];
     },
-    [allowEdit, user]
+    [allowEdit, shipmentId, user]
   );
 
   const stockOperationProps: StockOperationProps = useMemo(() => {

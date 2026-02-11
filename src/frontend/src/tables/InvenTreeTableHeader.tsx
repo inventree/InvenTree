@@ -250,7 +250,10 @@ export default function InvenTreeTableHeader({
                 <HoverCard
                   position='bottom-end'
                   withinPortal={true}
-                  disabled={!tableState.filterSet.activeFilters?.length}
+                  disabled={
+                    hasCustomFilters ||
+                    !tableState.filterSet.activeFilters?.length
+                  }
                 >
                   <HoverCard.Target>
                     <Tooltip
@@ -288,7 +291,7 @@ export default function InvenTreeTableHeader({
           )}
           {tableUrl && tableProps.enableDownload && (
             <ActionIcon variant='transparent' aria-label='table-export-data'>
-              <Tooltip label={t`Download data`} position='top-end'>
+              <Tooltip label={t`Export data`} position='top-end'>
                 <IconDownload onClick={exportModal.open} />
               </Tooltip>
             </ActionIcon>

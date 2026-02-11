@@ -18,6 +18,7 @@ import InvenTree.conversion
 import InvenTree.ready
 import InvenTree.tasks
 from InvenTree.config import get_setting
+from InvenTree.ready import ignore_ready_warning
 
 logger = structlog.get_logger('inventree')
 MIGRATIONS_CHECK_DONE = False
@@ -70,9 +71,7 @@ class InvenTreeConfig(AppConfig):
                 InvenTree.tasks.offload_task(InvenTree.tasks.check_for_migrations)
 
         self.update_site_url()
-
-        # Ensure the unit registry is loaded
-        InvenTree.conversion.get_unit_registry()
+        self.load_unit_registry()
 
         if InvenTree.ready.canAppAccessDatabase() or settings.TESTING_ENV:
             self.add_user_on_startup()
@@ -84,6 +83,7 @@ class InvenTreeConfig(AppConfig):
 
         social_account_updated.connect(sso.ensure_sso_groups)
 
+    @ignore_ready_warning
     def remove_obsolete_tasks(self):
         """Delete any obsolete scheduled tasks in the database."""
         obsolete = [
@@ -112,6 +112,7 @@ class InvenTreeConfig(AppConfig):
         except Exception:
             logger.exception('Failed to remove obsolete tasks - database not ready')
 
+    @ignore_ready_warning
     def start_background_tasks(self):
         """Start all background tests for InvenTree."""
         logger.info('Starting background tasks...')
@@ -171,6 +172,7 @@ class InvenTreeConfig(AppConfig):
 
         logger.info('Started %s scheduled background tasks...', len(tasks))
 
+    @ignore_ready_warning
     def add_heartbeat(self):
         """Ensure there is at least one background task in the queue."""
         import django_q.models
@@ -185,6 +187,7 @@ class InvenTreeConfig(AppConfig):
         except Exception:
             pass
 
+    @ignore_ready_warning
     def collect_tasks(self):
         """Collect all background tasks."""
         for app_name, app in apps.app_configs.items():
@@ -197,6 +200,7 @@ class InvenTreeConfig(AppConfig):
                 except Exception as e:  # pragma: no cover
                     logger.exception('Error loading tasks for %s: %s', app_name, e)
 
+    @ignore_ready_warning
     def update_site_url(self):
         """Update the site URL setting.
 
@@ -223,6 +227,12 @@ class InvenTreeConfig(AppConfig):
             except Exception:
                 pass
 
+    @ignore_ready_warning
+    def load_unit_registry(self):
+        """Ensure the unit registry is loaded."""
+        InvenTree.conversion.get_unit_registry()
+
+    @ignore_ready_warning
     def add_user_on_startup(self):
         """Add a user on startup."""
         # stop if checks were already created
@@ -277,10 +287,11 @@ class InvenTreeConfig(AppConfig):
                     new_user = user.objects.create_superuser(
                         add_user, add_email, add_password
                     )
-                    logger.info('User %s was created!', str(new_user))
+                    logger.info('User %s was created!', new_user)
         except IntegrityError:
             logger.warning('The user "%s" could not be created', add_user)
 
+    @ignore_ready_warning
     def add_user_from_file(self):
         """Add the superuser from a file."""
         # stop if checks were already created
@@ -321,6 +332,18 @@ class InvenTreeConfig(AppConfig):
             return
 
         if not InvenTree.tasks.check_for_migrations():
-            logger.error('INVE-W8: Database Migrations required')
-            sys.exit(1)
+            # Detect if this an empty database - if so, start with a fresh migration
+            if (
+                settings.DOCKER
+                and not InvenTree.ready.isInTestMode()
+                and not InvenTree.ready.isRunningMigrations()
+                and InvenTree.tasks.get_migration_count() == 0
+            ):
+                logger.warning(
+                    'INVE-W8: Empty database detected - trying to run migrations'
+                )
+                InvenTree.tasks.check_for_migrations(force_run=True)
+            else:
+                logger.error('INVE-W8: Database Migrations required')
+                sys.exit(1)
         MIGRATIONS_CHECK_DONE = True

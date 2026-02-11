@@ -1,6 +1,6 @@
 """Label printing machine type."""
 
-from typing import Union, cast
+from typing import cast
 
 from django.contrib.auth.models import AnonymousUser
 from django.db import models
@@ -59,7 +59,7 @@ class LabelPrinterBaseDriver(BaseDriver):
         label: LabelTemplate,
         items: QuerySet[models.Model],
         **kwargs,
-    ) -> Union[JsonResponse, None]:
+    ) -> JsonResponse | None:
         """Print one or more labels with the provided template and items.
 
         Arguments:
@@ -155,7 +155,7 @@ class LabelPrinterBaseDriver(BaseDriver):
 
     def render_to_png(
         self, label: LabelTemplate, item: models.Model, **kwargs
-    ) -> Union[Image, None]:
+    ) -> Image | None:
         """Helper method to render a label to PNG format for a specific item.
 
         Arguments:
@@ -221,16 +221,21 @@ class LabelPrinterStatus(MachineStatus):
         CONNECTED: The printer is connected and ready to print
         UNKNOWN: The printer status is unknown (e.g. there is no active connection to the printer)
         PRINTING: The printer is currently printing a label
+        WARNING: The printer is in an unknown warning condition
         NO_MEDIA: The printer is out of media (e.g. the label spool is empty)
+        PAPER_JAM: The printer has a paper jam
         DISCONNECTED: The driver cannot establish a connection to the printer
+        ERROR: The printer is in an unknown error condition
     """
 
     CONNECTED = 100, _('Connected'), ColorEnum.success
     UNKNOWN = 101, _('Unknown'), ColorEnum.secondary
     PRINTING = 110, _('Printing'), ColorEnum.primary
+    WARNING = 200, _('Warning'), ColorEnum.warning
     NO_MEDIA = 301, _('No media'), ColorEnum.warning
     PAPER_JAM = 302, _('Paper jam'), ColorEnum.warning
     DISCONNECTED = 400, _('Disconnected'), ColorEnum.danger
+    ERROR = 500, _('Error'), ColorEnum.danger
 
 
 class LabelPrinterMachine(BaseMachineType):
@@ -250,7 +255,7 @@ class LabelPrinterMachine(BaseMachineType):
         }
     }
 
-    MACHINE_STATUS = LabelPrinterStatus
+    MACHINE_STATUS: type[LabelPrinterStatus] = LabelPrinterStatus
 
     default_machine_status = LabelPrinterStatus.UNKNOWN
 

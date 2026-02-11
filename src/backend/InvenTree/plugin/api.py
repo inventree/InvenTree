@@ -17,7 +17,7 @@ from rest_framework.views import APIView
 
 import InvenTree.permissions
 import plugin.serializers as PluginSerializers
-from InvenTree.api import MetadataView
+from InvenTree.api import meta_path
 from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.helpers import str2bool
 from InvenTree.mixins import (
@@ -31,6 +31,7 @@ from InvenTree.mixins import (
 from plugin.base.action.api import ActionPluginView
 from plugin.base.barcodes.api import barcode_api_urls
 from plugin.base.locate.api import LocatePluginView
+from plugin.base.supplier.api import supplier_api_urls
 from plugin.base.ui.api import ui_plugins_api_urls
 from plugin.models import PluginConfig, PluginSetting, PluginUserSetting
 from plugin.plugin import InvenTreePlugin
@@ -508,11 +509,11 @@ class RegistryStatusView(APIView):
         return Response(result)
 
 
-class PluginMetadataView(MetadataView):
-    """Metadata API endpoint for the PluginConfig model."""
+# class PluginMetadataView(MetadataView):
+#     """Metadata API endpoint for the PluginConfig model."""
 
-    lookup_field = 'key'
-    lookup_url_kwarg = 'plugin'
+#     lookup_field = 'key'
+#     lookup_url_kwarg = 'plugin'
 
 
 plugin_api_urls = [
@@ -575,12 +576,8 @@ plugin_api_urls = [
                             ),
                         ]),
                     ),
-                    path(
-                        'metadata/',
-                        PluginMetadataView.as_view(
-                            model=PluginConfig, lookup_field='key'
-                        ),
-                        name='api-plugin-metadata',
+                    meta_path(
+                        PluginConfig, lookup_field='key', lookup_field_ref='plugin'
                     ),
                     path(
                         'activate/',
@@ -601,4 +598,5 @@ plugin_api_urls = [
             path('', PluginList.as_view(), name='api-plugin-list'),
         ]),
     ),
+    path('supplier/', include(supplier_api_urls)),
 ]

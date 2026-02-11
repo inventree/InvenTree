@@ -44,7 +44,7 @@ def set_currencies(apps, schema_editor):
             valid_codes.add(code)
     
     if len(valid_codes) == 0:
-        print(f"No valid currency codes found in configuration file")
+        print(f"No currency codes found in configuration file - skipping migration")
         return
     
     value = ','.join(valid_codes)

@@ -5,12 +5,14 @@ import { AddItemButton } from '@lib/components/AddItemButton';
 import {
   type RowAction,
   RowDeleteAction,
+  RowDuplicateAction,
   RowEditAction
 } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import { useManufacturerPartFields } from '../../forms/CompanyForms';
 import {
@@ -32,9 +34,27 @@ import { InvenTreeTable } from '../InvenTreeTable';
  * Construct a table listing manufacturer parts
  */
 export function ManufacturerPartTable({
-  params
-}: Readonly<{ params: any }>): ReactNode {
-  const table = useTable('manufacturerparts');
+  manufacturerId,
+  partId
+}: Readonly<{
+  manufacturerId?: number;
+  partId?: number;
+}>): ReactNode {
+  const tableId: string = useMemo(() => {
+    let tId = 'manufacturer-part';
+
+    if (manufacturerId) {
+      tId += '-manufacturer';
+    }
+
+    if (partId) {
+      tId += '-part';
+    }
+
+    return tId;
+  }, [manufacturerId, partId]);
+
+  const table = useTable(tableId);
 
   const user = useUserState();
 
@@ -42,8 +62,15 @@ export function ManufacturerPartTable({
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
       PartColumn({
-        switchable: 'part' in params
+        switchable: !!partId
       }),
+      {
+        accessor: 'part_detail.IPN',
+        title: t`IPN`,
+        sortable: true,
+        ordering: 'IPN',
+        switchable: true
+      },
       {
         accessor: 'manufacturer',
         sortable: true,
@@ -59,13 +86,11 @@ export function ManufacturerPartTable({
       DescriptionColumn({}),
       LinkColumn({})
     ];
-  }, [params]);
+  }, [partId]);
 
   const manufacturerPartFields = useManufacturerPartFields();
 
-  const [selectedPart, setSelectedPart] = useState<number | undefined>(
-    undefined
-  );
+  const [selectedPart, setSelectedPart] = useState<any>(undefined);
 
   const createManufacturerPart = useCreateApiFormModal({
     url: ApiEndpoints.manufacturer_part_list,
@@ -73,25 +98,53 @@ export function ManufacturerPartTable({
     fields: manufacturerPartFields,
     table: table,
     initialData: {
-      manufacturer: params?.manufacturer,
-      part: params?.part
+      manufacturer: manufacturerId,
+      part: partId
     }
   });
 
   const editManufacturerPart = useEditApiFormModal({
     url: ApiEndpoints.manufacturer_part_list,
-    pk: selectedPart,
+    pk: selectedPart?.pk,
     title: t`Edit Manufacturer Part`,
-    fields: manufacturerPartFields,
+    fields: useMemo(() => manufacturerPartFields, [manufacturerPartFields]),
     table: table
+  });
+
+  const duplicateManufacturerPart = useCreateApiFormModal({
+    url: ApiEndpoints.manufacturer_part_list,
+    title: t`Add Manufacturer Part`,
+    fields: useMemo(() => manufacturerPartFields, [manufacturerPartFields]),
+    table: table,
+    initialData: {
+      ...selectedPart
+    }
   });
 
   const deleteManufacturerPart = useDeleteApiFormModal({
     url: ApiEndpoints.manufacturer_part_list,
-    pk: selectedPart,
+    pk: selectedPart?.pk,
     title: t`Delete Manufacturer Part`,
     table: table
   });
+
+  const tableFilters: TableFilter[] = useMemo(() => {
+    return [
+      {
+        name: 'part_active',
+        label: t`Active Part`,
+        description: t`Show manufacturer parts for active internal parts.`,
+        type: 'boolean'
+      },
+      {
+        name: 'manufacturer_active',
+        label: t`Active Manufacturer`,
+        active: !manufacturerId,
+        description: t`Show manufacturer parts for active manufacturers.`,
+        type: 'boolean'
+      }
+    ];
+  }, [manufacturerId]);
 
   const tableActions = useMemo(() => {
     const can_add =
@@ -114,14 +167,21 @@ export function ManufacturerPartTable({
         RowEditAction({
           hidden: !user.hasChangeRole(UserRoles.purchase_order),
           onClick: () => {
-            setSelectedPart(record.pk);
+            setSelectedPart(record);
             editManufacturerPart.open();
+          }
+        }),
+        RowDuplicateAction({
+          hidden: !user.hasAddRole(UserRoles.purchase_order),
+          onClick: () => {
+            setSelectedPart(record);
+            duplicateManufacturerPart.open();
           }
         }),
         RowDeleteAction({
           hidden: !user.hasDeleteRole(UserRoles.purchase_order),
           onClick: () => {
-            setSelectedPart(record.pk);
+            setSelectedPart(record);
             deleteManufacturerPart.open();
           }
         })
@@ -133,6 +193,7 @@ export function ManufacturerPartTable({
   return (
     <>
       {createManufacturerPart.modal}
+      {duplicateManufacturerPart.modal}
       {editManufacturerPart.modal}
       {deleteManufacturerPart.modal}
       <InvenTreeTable
@@ -141,13 +202,15 @@ export function ManufacturerPartTable({
         columns={tableColumns}
         props={{
           params: {
-            ...params,
+            part: partId,
+            manufacturer: manufacturerId,
             part_detail: true,
             manufacturer_detail: true
           },
           enableDownload: true,
           rowActions: rowActions,
           tableActions: tableActions,
+          tableFilters: tableFilters,
           modelType: ModelType.manufacturerpart
         }}
       />

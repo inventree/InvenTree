@@ -1,16 +1,19 @@
 import { t } from '@lingui/core/macro';
-import { Alert, FileInput, NumberInput, Stack } from '@mantine/core';
+import { Alert, FileInput, Stack } from '@mantine/core';
 import { useId } from '@mantine/hooks';
 import { useCallback, useEffect, useMemo } from 'react';
 import { type Control, type FieldValues, useController } from 'react-hook-form';
 
 import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
+import { IconFileUpload } from '@tabler/icons-react';
+import DateTimeField from '../DateTimeField';
 import { BooleanField } from './BooleanField';
 import { ChoiceField } from './ChoiceField';
 import DateField from './DateField';
 import { DependentField } from './DependentField';
 import IconField from './IconField';
 import { NestedObjectField } from './NestedObjectField';
+import NumberField from './NumberField';
 import { RelatedModelField } from './RelatedModelField';
 import { TableField } from './TableField';
 import TextField from './TextField';
@@ -55,7 +58,11 @@ export function ApiFormField({
 
     // hook up the value state to the input field
     if (definition.value !== undefined) {
-      field.onChange(definition.value);
+      field.onChange(
+        definition.adjustValue
+          ? definition.adjustValue(definition.value)
+          : definition.value
+      );
     }
   }, [definition.value]);
 
@@ -73,6 +80,7 @@ export function ApiFormField({
     return {
       ...fieldDefinition,
       autoFill: undefined,
+      placeholderAutofill: undefined,
       autoFillFilters: undefined,
       onValueChange: undefined,
       adjustFilters: undefined,
@@ -86,7 +94,7 @@ export function ApiFormField({
   // Callback helper when form value changes
   const onChange = useCallback(
     (value: any) => {
-      let rtnValue = value;
+      let rtnValue: any = value;
       // Allow for custom value adjustments (per field)
       if (definition.adjustValue) {
         rtnValue = definition.adjustValue(value);
@@ -99,34 +107,6 @@ export function ApiFormField({
     },
     [fieldName, definition]
   );
-
-  // Coerce the value to a numerical value
-  const numericalValue: number | null = useMemo(() => {
-    let val: number | null = 0;
-
-    if (value == null) {
-      return null;
-    }
-
-    switch (definition.field_type) {
-      case 'integer':
-        val = Number.parseInt(value) ?? '';
-        break;
-      case 'decimal':
-      case 'float':
-      case 'number':
-        val = Number.parseFloat(value) ?? '';
-        break;
-      default:
-        break;
-    }
-
-    if (Number.isNaN(val) || !Number.isFinite(val)) {
-      val = null;
-    }
-
-    return val;
-  }, [definition.field_type, value]);
 
   // Construct the individual field
   const fieldInstance = useMemo(() => {
@@ -145,6 +125,7 @@ export function ApiFormField({
         return (
           <TextField
             definition={reducedDefinition}
+            placeholderAutofill={fieldDefinition.placeholderAutofill ?? false}
             controller={controller}
             fieldName={fieldName}
             onChange={onChange}
@@ -181,32 +162,26 @@ export function ApiFormField({
           />
         );
       case 'date':
-      case 'datetime':
         return (
           <DateField controller={controller} definition={fieldDefinition} />
+        );
+      case 'datetime':
+        return (
+          <DateTimeField controller={controller} definition={fieldDefinition} />
         );
       case 'integer':
       case 'decimal':
       case 'float':
       case 'number':
         return (
-          <NumberInput
-            {...reducedDefinition}
-            radius='sm'
-            ref={field.ref}
-            id={fieldId}
-            aria-label={`number-field-${field.name}`}
-            value={numericalValue === null ? '' : numericalValue}
-            error={definition.error ?? error?.message}
-            decimalScale={definition.field_type == 'integer' ? 0 : 10}
-            onChange={(value: number | string | null) => {
-              if (value != null && value.toString().trim() === '') {
-                onChange(null);
-              } else {
-                onChange(value);
-              }
+          <NumberField
+            controller={controller}
+            fieldName={fieldName}
+            definition={reducedDefinition}
+            placeholderAutofill={fieldDefinition.placeholderAutofill ?? false}
+            onChange={(value: any) => {
+              onChange(value);
             }}
-            step={1}
           />
         );
       case 'choice':
@@ -221,7 +196,10 @@ export function ApiFormField({
         return (
           <FileInput
             {...reducedDefinition}
+            clearable={!definition.required}
             aria-label={`file-field-${fieldName}`}
+            placeholder={definition.placeholder ?? t`Select file to upload`}
+            leftSection={<IconFileUpload />}
             id={fieldId}
             ref={field.ref}
             radius='sm'
@@ -274,7 +252,6 @@ export function ApiFormField({
     fieldId,
     fieldName,
     fieldDefinition,
-    numericalValue,
     onChange,
     onKeyDown,
     reducedDefinition,

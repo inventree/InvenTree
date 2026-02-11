@@ -3,6 +3,7 @@
 from datetime import datetime
 
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.utils import timezone
 from django.utils.timezone import make_aware
 
@@ -21,7 +22,7 @@ class InvenTreeDateFilter(rest_filters.DateFilter):
         if settings.USE_TZ and value is not None:
             tz = timezone.get_current_timezone()
             value = datetime(value.year, value.month, value.day)
-            value = make_aware(value, timezone=tz, is_dst=True)
+            value = make_aware(value, timezone=tz)
 
         return super().filter(qs, value)
 
@@ -190,6 +191,33 @@ class NumberOrNullFilter(rest_filters.NumberFilter):
 
         field.clean = custom_clean
         return field
+
+
+class NumericInFilter(rest_filters.BaseInFilter):
+    """A filter that only accepts numeric values for 'in' queries.
+
+    This filter ensures that all provided values can be converted to integers
+    before passing them to the parent filter. Any non-numeric values will
+    be ignored (or optionally, a ValidationError can be raised).
+    """
+
+    def filter(self, qs, value):
+        """Filter the queryset based on numeric values only."""
+        if not value:
+            return qs
+
+        # Check that all values are numeric
+        numeric_values = []
+        for v in value:
+            try:
+                numeric_values.append(int(v))
+            except (ValueError, TypeError):
+                raise ValidationError(f"'{v}' is not a valid number")
+
+        if not numeric_values:
+            return qs
+
+        return super().filter(qs, numeric_values)
 
 
 SEARCH_ORDER_FILTER = [

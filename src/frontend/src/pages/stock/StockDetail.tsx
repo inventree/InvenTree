@@ -32,7 +32,8 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
-import { getDetailUrl } from '@lib/functions/Navigation';
+import { getDetailUrl, getOverviewUrl } from '@lib/functions/Navigation';
+import type { StockOperationProps } from '@lib/types/Forms';
 import { notifications } from '@mantine/notifications';
 import { useBarcodeScanDialog } from '../../components/barcodes/BarcodeScanDialog';
 import AdminButton from '../../components/buttons/AdminButton';
@@ -66,7 +67,6 @@ import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { useApi } from '../../contexts/ApiContext';
 import { formatCurrency, formatDecimal } from '../../defaults/formatters';
 import {
-  type StockOperationProps,
   useFindSerialNumberForm,
   useStockFields,
   useStockItemSerializeFields
@@ -623,7 +623,8 @@ export default function StockDetail() {
       }),
       NotesPanel({
         model_type: ModelType.stockitem,
-        model_id: stockitem.pk
+        model_id: stockitem.pk,
+        has_note: !!stockitem.notes
       })
     ];
   }, [
@@ -730,7 +731,20 @@ export default function StockDetail() {
     return {
       items: [stockitem],
       model: ModelType.stockitem,
-      refresh: refreshInstance,
+      refresh: () => {
+        const location = stockitem?.location;
+        refreshInstancePromise().then((response) => {
+          if (response.status == 'error') {
+            // If an error occurs refreshing the instance,
+            // the stock likely has likely been depleted
+            if (location) {
+              navigate(getDetailUrl(ModelType.stocklocation, location));
+            } else {
+              navigate(getOverviewUrl(ModelType.stockitem));
+            }
+          }
+        });
+      },
       filters: {
         in_stock: true
       }
@@ -740,7 +754,7 @@ export default function StockDetail() {
   const stockAdjustActions = useStockAdjustActions({
     formProps: stockOperationProps,
     delete: false,
-    assign: !!stockitem.in_stock,
+    assign: !!stockitem.in_stock && stockitem.part_detail?.salable,
     return: !!stockitem.consumed_by || !!stockitem.customer,
     merge: false
   });
@@ -942,6 +956,7 @@ export default function StockDetail() {
           />,
           <StatusRenderer
             status={stockitem.status_custom_key || stockitem.status}
+            fallbackStatus={stockitem.status}
             type={ModelType.stockitem}
             options={{
               size: 'lg'

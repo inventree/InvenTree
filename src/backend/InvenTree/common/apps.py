@@ -6,6 +6,7 @@ import structlog
 
 import InvenTree.ready
 from common.settings import get_global_setting, set_global_setting
+from InvenTree.ready import ignore_ready_warning
 
 logger = structlog.get_logger('inventree')
 
@@ -20,11 +21,16 @@ class CommonConfig(AppConfig):
 
     def ready(self):
         """Initialize restart flag clearance on startup."""
+        from InvenTree.ready import setAppLoaded
+
+        setAppLoaded(self.name)
+
         if InvenTree.ready.isRunningMigrations():  # pragma: no cover
             return
 
         self.clear_restart_flag()
 
+    @ignore_ready_warning
     def clear_restart_flag(self):
         """Clear the SERVER_RESTART_REQUIRED setting."""
         try:

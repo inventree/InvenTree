@@ -1,8 +1,7 @@
 import { TextInput } from '@mantine/core';
-import { useDebouncedValue } from '@mantine/hooks';
-import { IconX } from '@tabler/icons-react';
-import { useCallback, useEffect, useId, useState } from 'react';
+import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import type { FieldValues, UseControllerReturn } from 'react-hook-form';
+import AutoFillRightSection from './AutoFillRightSection';
 
 /*
  * Custom implementation of the mantine <TextInput> component,
@@ -13,12 +12,14 @@ export default function TextField({
   controller,
   fieldName,
   definition,
+  placeholderAutofill,
   onChange,
   onKeyDown
 }: Readonly<{
   controller: UseControllerReturn<FieldValues, any>;
   definition: any;
   fieldName: string;
+  placeholderAutofill?: boolean;
   onChange: (value: any) => void;
   onKeyDown: (value: any) => void;
 }>) {
@@ -28,25 +29,21 @@ export default function TextField({
     fieldState: { error }
   } = controller;
 
-  const { value } = field;
+  const { value } = useMemo(() => field, [field]);
 
-  const [rawText, setRawText] = useState<string>(value || '');
+  const [textValue, setTextValue] = useState<string>(value || '');
 
-  const [debouncedText] = useDebouncedValue(rawText, 100);
+  const onTextChange = useCallback(
+    (value: any) => {
+      setTextValue(value);
+      onChange(value);
+    },
+    [onChange]
+  );
 
   useEffect(() => {
-    setRawText(value || '');
+    setTextValue(value || '');
   }, [value]);
-
-  const onTextChange = useCallback((value: any) => {
-    setRawText(value);
-  }, []);
-
-  useEffect(() => {
-    if (debouncedText !== value) {
-      onChange(debouncedText);
-    }
-  }, [debouncedText]);
 
   return (
     <TextInput
@@ -55,26 +52,31 @@ export default function TextField({
       id={fieldId}
       aria-label={`text-field-${field.name}`}
       type={definition.field_type}
-      value={rawText || ''}
+      value={textValue || ''}
       error={definition.error ?? error?.message}
       radius='sm'
       onChange={(event) => onTextChange(event.currentTarget.value)}
       onBlur={(event) => {
-        if (event.currentTarget.value != value) {
-          onChange(event.currentTarget.value);
+        if (event.currentTarget.value != textValue) {
+          onTextChange(event.currentTarget.value);
         }
       }}
       onKeyDown={(event) => {
         if (event.code === 'Enter') {
           // Bypass debounce on enter key
-          onChange(event.currentTarget.value);
+          onTextChange(event.currentTarget.value);
         }
         onKeyDown(event.code);
       }}
       rightSection={
-        value && !definition.required ? (
-          <IconX size='1rem' color='red' onClick={() => onTextChange('')} />
-        ) : null
+        placeholderAutofill && (
+          <AutoFillRightSection
+            value={textValue}
+            fieldName={field.name}
+            definition={definition}
+            onChange={onChange}
+          />
+        )
       }
     />
   );

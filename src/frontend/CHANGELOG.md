@@ -2,6 +2,14 @@
 
 This file contains historical changelog information for the InvenTree UI components library.
 
+### 0.7.0 - October 2025
+
+Exposes stock adjustment forms to plugins, allowing plugins to adjust stock adjustments using the common InvenTree UI form components.
+
+### 0.6.0 - September 2025
+
+Updated underlying Mantine library versions.
+
 ### 0.5.0 - August 2025
 
 This release updates the base `react` major version from `18.3.1` to `19.1.1`. This change may introduce breaking changes for plugins that rely on the InvenTree UI components library (plugin developers should test their plugins against this new version).

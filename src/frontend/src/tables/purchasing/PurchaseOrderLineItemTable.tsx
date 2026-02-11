@@ -23,6 +23,7 @@ import type { TableColumn } from '@lib/types/Tables';
 import { useNavigate } from 'react-router-dom';
 import ImporterDrawer from '../../components/importer/ImporterDrawer';
 import { RenderInstance } from '../../components/render/Instance';
+import { formatCurrency } from '../../defaults/formatters';
 import { dataImporterSessionFields } from '../../forms/ImporterForms';
 import {
   usePurchaseOrderLineItemFields,
@@ -35,6 +36,7 @@ import {
 } from '../../hooks/UseForm';
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useTable } from '../../hooks/UseTable';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import {
   CurrencyColumn,
@@ -43,6 +45,7 @@ import {
   LocationColumn,
   NoteColumn,
   PartColumn,
+  ProjectCodeColumn,
   ReferenceColumn,
   TargetDateColumn
 } from '../ColumnRenderers';
@@ -58,6 +61,7 @@ export function PurchaseOrderLineItemTable({
   orderId,
   currency,
   supplierId,
+  editable,
   params
 }: Readonly<{
   order: any;
@@ -65,10 +69,12 @@ export function PurchaseOrderLineItemTable({
   orderId: number;
   currency: string;
   supplierId?: number;
+  editable: boolean;
   params?: any;
 }>) {
   const table = useTable('purchase-order-line-item');
 
+  const globalSettings = useGlobalSettingsState();
   const navigate = useNavigate();
   const user = useUserState();
 
@@ -145,6 +151,7 @@ export function PurchaseOrderLineItemTable({
         accessor: 'part_detail.description'
       }),
       ReferenceColumn({}),
+      ProjectCodeColumn({}),
       {
         accessor: 'build_order',
         title: t`Build Order`,
@@ -180,14 +187,14 @@ export function PurchaseOrderLineItemTable({
             const total = record.quantity * supplier_part.pack_quantity_native;
 
             extra.push(
-              <Text key='pack-quantity'>
+              <Text key='pack-quantity' size='sm'>
                 {t`Pack Quantity`}: {supplier_part.pack_quantity}
               </Text>
             );
 
             extra.push(
-              <Text key='total-quantity'>
-                {t`Total Quantity`}: {total} {part?.units}
+              <Text key='total-quantity' size='sm'>
+                {t`Total Quantity`}: {formatDecimal(total)} {part?.units}
               </Text>
             );
           }
@@ -249,11 +256,15 @@ export function PurchaseOrderLineItemTable({
         accessor: 'purchase_price',
         title: t`Unit Price`
       }),
-      CurrencyColumn({
+      {
         accessor: 'total_price',
-        currency_accessor: 'purchase_price_currency',
-        title: t`Total Price`
-      }),
+        title: t`Total Price`,
+        render: (record: any) =>
+          formatCurrency(record.purchase_price, {
+            currency: record.purchase_price_currency,
+            multiplier: record.quantity
+          })
+      },
       TargetDateColumn({}),
       LocationColumn({
         accessor: 'destination_detail',
@@ -278,7 +289,8 @@ export function PurchaseOrderLineItemTable({
   const addPurchaseOrderFields = usePurchaseOrderLineItemFields({
     create: true,
     orderId: orderId,
-    supplierId: supplierId
+    supplierId: supplierId,
+    currency: currency
   });
 
   const [initialData, setInitialData] = useState<any>({});
@@ -289,6 +301,7 @@ export function PurchaseOrderLineItemTable({
     fields: addPurchaseOrderFields,
     initialData: {
       ...initialData,
+      purchase_price: null,
       purchase_price_currency: currency
     },
     onFormSuccess: orderDetailRefresh,
@@ -300,7 +313,8 @@ export function PurchaseOrderLineItemTable({
   const editLineItemFields = usePurchaseOrderLineItemFields({
     create: false,
     orderId: orderId,
-    supplierId: supplierId
+    supplierId: supplierId,
+    currency: currency
   });
 
   const editLine = useEditApiFormModal({
@@ -322,14 +336,6 @@ export function PurchaseOrderLineItemTable({
 
   const poStatus = useStatusCodes({ modelType: ModelType.purchaseorder });
 
-  const orderOpen: boolean = useMemo(() => {
-    return (
-      order.status == poStatus.PENDING ||
-      order.status == poStatus.PLACED ||
-      order.status == poStatus.ON_HOLD
-    );
-  }, [order, poStatus]);
-
   const orderPlaced: boolean = useMemo(() => {
     return order.status == poStatus.PLACED;
   }, [order, poStatus]);
@@ -337,6 +343,9 @@ export function PurchaseOrderLineItemTable({
   const rowActions = useCallback(
     (record: any): RowAction[] => {
       const received = (record?.received ?? 0) >= (record?.quantity ?? 0);
+
+      const canEdit: boolean =
+        editable && user.hasChangeRole(UserRoles.purchase_order);
 
       return [
         {
@@ -349,37 +358,37 @@ export function PurchaseOrderLineItemTable({
             receiveLineItems.open();
           }
         },
-        RowViewAction({
-          hidden: !record.build_order,
-          title: t`View Build Order`,
-          modelType: ModelType.build,
-          modelId: record.build_order,
-          navigate: navigate
-        }),
         RowEditAction({
-          hidden: !user.hasChangeRole(UserRoles.purchase_order),
+          hidden: !canEdit,
           onClick: () => {
             setSelectedLine(record.pk);
             editLine.open();
           }
         }),
         RowDuplicateAction({
-          hidden: !orderOpen || !user.hasAddRole(UserRoles.purchase_order),
+          hidden: !canEdit || !user.hasAddRole(UserRoles.purchase_order),
           onClick: () => {
             setInitialData({ ...record });
             newLine.open();
           }
         }),
         RowDeleteAction({
-          hidden: !user.hasDeleteRole(UserRoles.purchase_order),
+          hidden: !canEdit || !user.hasDeleteRole(UserRoles.purchase_order),
           onClick: () => {
             setSelectedLine(record.pk);
             deleteLine.open();
           }
+        }),
+        RowViewAction({
+          hidden: !record.build_order,
+          title: t`View Build Order`,
+          modelType: ModelType.build,
+          modelId: record.build_order,
+          navigate: navigate
         })
       ];
     },
-    [orderId, user, orderOpen, orderPlaced]
+    [orderId, user, editable, orderPlaced]
   );
 
   // Custom table actions
@@ -387,7 +396,7 @@ export function PurchaseOrderLineItemTable({
     return [
       <ActionButton
         key='import-line-items'
-        hidden={!orderOpen || !user.hasAddRole(UserRoles.purchase_order)}
+        hidden={!editable || !user.hasAddRole(UserRoles.purchase_order)}
         tooltip={t`Import Line Items`}
         icon={<IconFileArrowLeft />}
         onClick={() => importLineItems.open()}
@@ -401,7 +410,7 @@ export function PurchaseOrderLineItemTable({
           });
           newLine.open();
         }}
-        hidden={!orderOpen || !user?.hasAddRole(UserRoles.purchase_order)}
+        hidden={!editable || !user?.hasAddRole(UserRoles.purchase_order)}
       />,
       <ActionButton
         key='receive-items'
@@ -412,7 +421,7 @@ export function PurchaseOrderLineItemTable({
         hidden={!orderPlaced || !user.hasChangeRole(UserRoles.purchase_order)}
       />
     ];
-  }, [orderId, user, table, orderOpen, orderPlaced]);
+  }, [orderId, user, table, editable, orderPlaced]);
 
   return (
     <>
@@ -431,7 +440,8 @@ export function PurchaseOrderLineItemTable({
           params: {
             ...params,
             order: orderId,
-            part_detail: true
+            part_detail: true,
+            destination_detail: true
           },
           rowActions: rowActions,
           tableActions: tableActions,

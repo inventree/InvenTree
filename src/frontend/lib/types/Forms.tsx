@@ -48,14 +48,19 @@ export type ApiFormFieldHeader = {
  * @param model : The model to use for related fields
  * @param filters : Optional API filters to apply to related fields
  * @param required : Whether the field is required
+ * @param allow_null: Whether the field allows null values
+ * @param allow_blank: Whether the field allows blank values
  * @param hidden : Whether the field is hidden
  * @param disabled : Whether the field is disabled
  * @param error : Optional error message to display
  * @param exclude : Whether to exclude the field from the submitted data
  * @param placeholder : The placeholder text to display
+ * @param placeholderAutofill: Whether to allow auto-filling of the placeholder value
  * @param description : The description to display for the field
  * @param preFieldContent : Content to render before the field
  * @param postFieldContent : Content to render after the field
+ * @param leftSection : Content to render in the left section of the field
+ * @param rightSection : Content to render in the right section of the field
  * @param autoFill: Whether to automatically fill the field with data from the API
  * @param autoFillFilters: Optional filters to apply when auto-filling the field
  * @param onValueChange : Callback function to call when the field value changes
@@ -100,12 +105,17 @@ export type ApiFormFieldType = {
   choices?: ApiFormFieldChoice[];
   hidden?: boolean;
   disabled?: boolean;
+  allow_null?: boolean;
+  allow_blank?: boolean;
   exclude?: boolean;
   read_only?: boolean;
   placeholder?: string;
+  placeholderAutofill?: boolean;
   description?: string;
   preFieldContent?: JSX.Element;
   postFieldContent?: JSX.Element;
+  leftSection?: JSX.Element;
+  rightSection?: JSX.Element;
   autoFill?: boolean;
   autoFillFilters?: any;
   adjustValue?: (value: any) => any;
@@ -191,3 +201,11 @@ export interface ApiFormModalProps extends ApiFormProps {
 export interface BulkEditApiFormModalProps extends ApiFormModalProps {
   items: number[];
 }
+
+export type StockOperationProps = {
+  items?: any[];
+  pk?: number;
+  filters?: any;
+  model: ModelType.stockitem | 'location' | ModelType.part;
+  refresh: () => void;
+};

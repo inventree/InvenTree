@@ -59,6 +59,7 @@ export default function UserSettings() {
               'STICKY_HEADER',
               'STICKY_TABLE_HEADER',
               'SHOW_SPOTLIGHT',
+              'BARCODE_IN_FORM_FIELDS',
               'DATE_DISPLAY_FORMAT',
               'FORMS_CLOSE_USING_ESCAPE',
               'DISPLAY_STOCKTAKE_TAB',
@@ -142,7 +143,7 @@ export default function UserSettings() {
       <Stack gap='xs'>
         <SettingsHeader
           label='user'
-          title={t`Account Settings`}
+          title={t`User Settings`}
           subtitle={
             user?.first_name && user?.last_name
               ? `${user?.first_name} ${user?.last_name}`

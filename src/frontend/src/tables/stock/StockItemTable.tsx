@@ -11,6 +11,7 @@ import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { getDetailUrl } from '@lib/functions/Navigation';
 import type { TableFilter } from '@lib/types/Filters';
+import type { StockOperationProps } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import {
@@ -18,10 +19,7 @@ import {
   formatDecimal,
   formatPriceRange
 } from '../../defaults/formatters';
-import {
-  type StockOperationProps,
-  useStockFields
-} from '../../forms/StockForms';
+import { useStockFields } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
@@ -69,7 +67,8 @@ function stockItemTableColumns({
     {
       accessor: 'part_detail.IPN',
       title: t`IPN`,
-      sortable: true
+      sortable: true,
+      ordering: 'IPN'
     },
     {
       accessor: 'part_detail.revision',
@@ -159,7 +158,15 @@ function stockItemTableColumns({
 
         if (record.in_stock) {
           if (allocated > 0) {
-            if (allocated >= quantity) {
+            if (allocated > quantity) {
+              color = 'red';
+              extra.push(
+                <Text
+                  key='over-allocated'
+                  size='sm'
+                >{t`This stock item is over-allocated`}</Text>
+              );
+            } else if (allocated == quantity) {
               color = 'orange';
               extra.push(
                 <Text
@@ -504,7 +511,10 @@ export function StockItemTable({
     return {
       items: table.selectedRecords,
       model: ModelType.stockitem,
-      refresh: table.refreshTable,
+      refresh: () => {
+        table.clearSelectedRecords();
+        table.refreshTable();
+      },
       filters: {
         in_stock: true
       }
@@ -514,6 +524,8 @@ export function StockItemTable({
   const newStockItemFields = useStockFields({
     create: true,
     partId: params.part,
+    supplierPartId: params.supplier_part,
+    pricing: params.pricing,
     modalId: 'add-stock-item'
   });
 
@@ -526,7 +538,7 @@ export function StockItemTable({
       part: params.part,
       location: params.location
     },
-    follow: true,
+    follow: params.openNewStockItem ?? true,
     table: table,
     onFormSuccess: (response: any) => {
       // Returns a list that may contain multiple serialized stock items

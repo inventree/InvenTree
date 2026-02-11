@@ -1,7 +1,5 @@
 """Provides a JSON API for the Part app."""
 
-import re
-
 from django.db.models import Count, F, Q
 from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
@@ -14,14 +12,16 @@ from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 from rest_framework.response import Response
 
-import part.filters
+import part.tasks as part_tasks
 from data_exporter.mixins import DataExportViewMixin
 from InvenTree.api import (
     BulkDeleteMixin,
     BulkUpdateMixin,
     ListCreateDestroyAPIView,
-    MetadataView,
+    ParameterListMixin,
+    meta_path,
 )
+from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import (
     ORDER_FILTER,
     ORDER_FILTER_ALIAS,
@@ -29,19 +29,23 @@ from InvenTree.filters import (
     SEARCH_ORDER_FILTER_ALIAS,
     InvenTreeDateFilter,
     InvenTreeSearchFilter,
+    NumberOrNullFilter,
+    NumericInFilter,
 )
-from InvenTree.helpers import isNull, str2bool
+from InvenTree.helpers import str2bool
 from InvenTree.mixins import (
     CreateAPI,
     CustomRetrieveUpdateDestroyAPI,
     ListAPI,
     ListCreateAPI,
+    OutputOptionsMixin,
     RetrieveAPI,
     RetrieveUpdateAPI,
     RetrieveUpdateDestroyAPI,
+    SerializerContextMixin,
     UpdateAPI,
 )
-from InvenTree.serializers import EmptySerializer
+from InvenTree.tasks import offload_task
 from stock.models import StockLocation
 
 from . import serializers as part_serializers
@@ -52,8 +56,6 @@ from .models import (
     PartCategory,
     PartCategoryParameterTemplate,
     PartInternalPriceBreak,
-    PartParameter,
-    PartParameterTemplate,
     PartRelated,
     PartSellPriceBreak,
     PartStocktake,
@@ -66,17 +68,6 @@ class CategoryMixin:
 
     serializer_class = part_serializers.CategorySerializer
     queryset = PartCategory.objects.all()
-
-    def get_serializer(self, *args, **kwargs):
-        """Add additional context based on query parameters."""
-        try:
-            params = self.request.query_params
-
-            kwargs['path_detail'] = str2bool(params.get('path_detail', False))
-        except AttributeError:
-            pass
-
-        return super().get_serializer(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
         """Return an annotated queryset for the CategoryDetail endpoint."""
@@ -235,7 +226,19 @@ class CategoryFilter(FilterSet):
         return queryset
 
 
-class CategoryList(CategoryMixin, BulkUpdateMixin, DataExportViewMixin, ListCreateAPI):
+class CategoryOutputOption(OutputConfiguration):
+    """Output option for PartCategory endpoints."""
+
+    OPTIONS = [InvenTreeOutputOption(flag='path_detail')]
+
+
+class CategoryList(
+    CategoryMixin,
+    BulkUpdateMixin,
+    DataExportViewMixin,
+    OutputOptionsMixin,
+    ListCreateAPI,
+):
     """API endpoint for accessing a list of PartCategory objects.
 
     - GET: Return a list of PartCategory objects
@@ -246,6 +249,8 @@ class CategoryList(CategoryMixin, BulkUpdateMixin, DataExportViewMixin, ListCrea
 
     filter_backends = SEARCH_ORDER_FILTER
 
+    output_options = CategoryOutputOption
+
     ordering_fields = ['name', 'pathstring', 'level', 'tree_id', 'lft', 'part_count']
 
     # Use hierarchical ordering by default
@@ -254,8 +259,10 @@ class CategoryList(CategoryMixin, BulkUpdateMixin, DataExportViewMixin, ListCrea
     search_fields = ['name', 'description', 'pathstring']
 
 
-class CategoryDetail(CategoryMixin, CustomRetrieveUpdateDestroyAPI):
+class CategoryDetail(CategoryMixin, OutputOptionsMixin, CustomRetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a single PartCategory object."""
+
+    output_options = CategoryOutputOption
 
     def update(self, request, *args, **kwargs):
         """Perform 'update' function and mark this part as 'starred' (or not)."""
@@ -273,13 +280,11 @@ class CategoryDetail(CategoryMixin, CustomRetrieveUpdateDestroyAPI):
 
     def destroy(self, request, *args, **kwargs):
         """Delete a Part category instance via the API."""
-        delete_parts = (
-            'delete_parts' in request.data and request.data['delete_parts'] == '1'
+        delete_parts = str2bool(request.data.get('delete_parts', False))
+        delete_child_categories = str2bool(
+            request.data.get('delete_child_categories', False)
         )
-        delete_child_categories = (
-            'delete_child_categories' in request.data
-            and request.data['delete_child_categories'] == '1'
-        )
+
         return super().destroy(
             request,
             *args,
@@ -313,7 +318,7 @@ class CategoryTree(ListAPI):
         return queryset
 
 
-class CategoryParameterList(DataExportViewMixin, ListCreateAPI):
+class CategoryParameterList(DataExportViewMixin, OutputOptionsMixin, ListCreateAPI):
     """API endpoint for accessing a list of PartCategoryParameterTemplate objects.
 
     - GET: Return a list of PartCategoryParameterTemplate objects
@@ -565,7 +570,7 @@ class PartPricingDetail(RetrieveUpdateAPI):
     """API endpoint for viewing part pricing data."""
 
     serializer_class = part_serializers.PartPricingSerializer
-    queryset = Part.objects.all()
+    queryset = Part.objects.all().select_related('pricing_data')
 
     def get_object(self):
         """Return the PartPricing object associated with the linked Part."""
@@ -584,19 +589,7 @@ class PartSerialNumberDetail(RetrieveAPI):
     """API endpoint for returning extra serial number information about a particular part."""
 
     queryset = Part.objects.all()
-    serializer_class = EmptySerializer
-
-    def retrieve(self, request, *args, **kwargs):
-        """Return serial number information for the referenced Part instance."""
-        part = self.get_object()
-
-        # Calculate the "latest" serial number
-        latest_serial = part.get_latest_serial_number()
-        next_serial = part.get_next_serial_number()
-
-        data = {'latest': latest_serial, 'next': next_serial}
-
-        return Response(data)
+    serializer_class = part_serializers.PartSerialNumberSerializer
 
 
 class PartCopyBOM(CreateAPI):
@@ -637,7 +630,14 @@ class PartValidateBOM(RetrieveUpdateAPI):
 
         valid = str2bool(serializer.validated_data.get('valid', False))
 
-        part.validate_bom(request.user, valid=valid)
+        # BOM validation may take some time, so we offload it to a background task
+        offload_task(
+            part_tasks.validate_bom,
+            part.pk,
+            valid,
+            user_id=request.user.pk if request and request.user else None,
+            group='part',
+        )
 
         # Re-serialize the response
         serializer = self.get_serializer(part, many=False)
@@ -909,12 +909,109 @@ class PartFilter(FilterSet):
         label='Updated after', field_name='creation_date', lookup_expr='gt'
     )
 
+    exclude_id = NumericInFilter(
+        field_name='id',
+        lookup_expr='in',
+        exclude=True,
+        help_text='Exclude parts with these IDs (comma-separated)',
+    )
 
-class PartMixin:
+    related = rest_filters.NumberFilter(
+        method='filter_related_parts', help_text='Show parts related to this part ID'
+    )
+
+    exclude_related = rest_filters.NumberFilter(
+        method='filter_exclude_related_parts',
+        help_text='Exclude parts related to this part ID',
+    )
+
+    def filter_related_parts(self, queryset, name, value):
+        """Filter parts related to the specified part ID."""
+        if not value:
+            return queryset
+
+        try:
+            related_part = Part.objects.get(pk=value)
+            part_ids = self._get_related_part_ids(related_part)
+            return queryset.filter(pk__in=list(part_ids))
+        except (ValueError, Part.DoesNotExist):
+            return queryset.none()
+
+    def filter_exclude_related_parts(self, queryset, name, value):
+        """Exclude parts related to the specified part ID."""
+        if not value:
+            return queryset
+
+        try:
+            related_part = Part.objects.get(pk=value)
+            part_ids = self._get_related_part_ids(related_part)
+            return queryset.exclude(pk__in=list(part_ids))
+        except (ValueError, Part.DoesNotExist):
+            return queryset
+
+    def _get_related_part_ids(self, related_part):
+        """Return a set of part IDs which are related to the specified part."""
+        part_ids = set()
+        pk = related_part.pk
+
+        relation_filter = Q(part_1=related_part) | Q(part_2=related_part)
+
+        for relation in PartRelated.objects.filter(relation_filter).distinct():
+            if relation.part_1.pk != pk:
+                part_ids.add(relation.part_1.pk)
+            if relation.part_2.pk != pk:
+                part_ids.add(relation.part_2.pk)
+
+        return part_ids
+
+    cascade = rest_filters.BooleanFilter(
+        method='filter_cascade',
+        label=_('Cascade Categories'),
+        help_text=_('If true, include items in child categories of the given category'),
+    )
+
+    category = NumberOrNullFilter(
+        method='filter_category',
+        label=_('Category'),
+        help_text=_("Filter by numeric category ID or the literal 'null'"),
+    )
+
+    def filter_cascade(self, queryset, name, value):
+        """Dummy filter method for 'cascade'.
+
+        - Ensures 'cascade' appears in API documentation
+        - Does NOT actually filter the queryset directly
+        """
+        return queryset
+
+    def filter_category(self, queryset, name, value):
+        """Filter for category that also applies cascade logic."""
+        cascade = str2bool(self.data.get('cascade', True))
+
+        if value == 'null':
+            if not cascade:
+                return queryset.filter(category=None)
+            return queryset
+
+        if not cascade:
+            return queryset.filter(category=value)
+
+        try:
+            category = PartCategory.objects.get(pk=value)
+        except PartCategory.DoesNotExist:
+            return queryset
+
+        children = category.getUniqueChildren()
+        return queryset.filter(category__in=children)
+
+
+class PartMixin(SerializerContextMixin):
     """Mixin class for Part API endpoints."""
 
     serializer_class = part_serializers.PartSerializer
-    queryset = Part.objects.all()
+    queryset = (
+        Part.objects.all().select_related('pricing_data').prefetch_related('category')
+    )
 
     starred_parts = None
     is_create = False
@@ -925,17 +1022,10 @@ class PartMixin:
 
         queryset = part_serializers.PartSerializer.annotate_queryset(queryset)
 
-        # Annotate with parameter template data?
-        if str2bool(self.request.query_params.get('parameters', False)):
-            queryset = queryset.prefetch_related('parameters', 'parameters__template')
-
         return queryset
 
     def get_serializer(self, *args, **kwargs):
         """Return a serializer instance for this endpoint."""
-        # Ensure the request context is passed through
-        kwargs['context'] = self.get_serializer_context()
-
         # Indicate that we can create a new Part via this endpoint
         kwargs['create'] = self.is_create
 
@@ -949,19 +1039,7 @@ class PartMixin:
             self.starred_parts = [
                 star.part for star in self.request.user.starred_parts.all()
             ]
-
         kwargs['starred_parts'] = self.starred_parts
-
-        try:
-            params = self.request.query_params
-
-            kwargs['parameters'] = str2bool(params.get('parameters', None))
-            kwargs['category_detail'] = str2bool(params.get('category_detail', False))
-            kwargs['location_detail'] = str2bool(params.get('location_detail', False))
-            kwargs['path_detail'] = str2bool(params.get('path_detail', False))
-
-        except AttributeError:
-            pass
 
         return super().get_serializer(*args, **kwargs)
 
@@ -973,164 +1051,34 @@ class PartMixin:
         return context
 
 
-class PartList(PartMixin, BulkUpdateMixin, DataExportViewMixin, ListCreateAPI):
+class PartOutputOptions(OutputConfiguration):
+    """Output options for Part endpoints."""
+
+    OPTIONS = [
+        InvenTreeOutputOption(
+            'parameters', description='Include part parameters in response'
+        ),
+        InvenTreeOutputOption('category_detail'),
+        InvenTreeOutputOption('location_detail'),
+        InvenTreeOutputOption('path_detail'),
+        InvenTreeOutputOption('price_breaks'),
+        InvenTreeOutputOption('tags'),
+    ]
+
+
+class PartList(
+    PartMixin,
+    BulkUpdateMixin,
+    ParameterListMixin,
+    DataExportViewMixin,
+    OutputOptionsMixin,
+    ListCreateAPI,
+):
     """API endpoint for accessing a list of Part objects, or creating a new Part instance."""
 
+    output_options = PartOutputOptions
     filterset_class = PartFilter
     is_create = True
-
-    def filter_queryset(self, queryset):
-        """Perform custom filtering of the queryset."""
-        params = self.request.query_params
-
-        queryset = super().filter_queryset(queryset)
-
-        # Exclude specific part ID values?
-        exclude_id = []
-
-        for key in ['exclude_id', 'exclude_id[]']:
-            if key in params:
-                exclude_id += params.getlist(key, [])
-
-        if exclude_id:
-            id_values = []
-
-            for val in exclude_id:
-                try:
-                    # pk values must be integer castable
-                    val = int(val)
-                    id_values.append(val)
-                except ValueError:
-                    pass
-
-            queryset = queryset.exclude(pk__in=id_values)
-
-        # Filter by 'related' parts?
-        related = params.get('related', None)
-        exclude_related = params.get('exclude_related', None)
-
-        if related is not None or exclude_related is not None:
-            try:
-                pk = related if related is not None else exclude_related
-                pk = int(pk)
-
-                related_part = Part.objects.get(pk=pk)
-
-                part_ids = set()
-
-                # Return any relationship which points to the part in question
-                relation_filter = Q(part_1=related_part) | Q(part_2=related_part)
-
-                for relation in PartRelated.objects.filter(relation_filter).distinct():
-                    if relation.part_1.pk != pk:
-                        part_ids.add(relation.part_1.pk)
-
-                    if relation.part_2.pk != pk:
-                        part_ids.add(relation.part_2.pk)
-
-                if related is not None:
-                    # Only return related results
-                    queryset = queryset.filter(pk__in=list(part_ids))
-                elif exclude_related is not None:
-                    # Exclude related results
-                    queryset = queryset.exclude(pk__in=list(part_ids))
-
-            except (ValueError, Part.DoesNotExist):
-                pass
-
-        # Cascade? (Default = True)
-        cascade = str2bool(params.get('cascade', True))
-
-        # Does the user wish to filter by category?
-        cat_id = params.get('category', None)
-
-        if cat_id is not None:
-            # Category has been specified!
-            if isNull(cat_id):
-                # A 'null' category is the top-level category
-                if not cascade:
-                    # Do not cascade, only list parts in the top-level category
-                    queryset = queryset.filter(category=None)
-
-            else:
-                try:
-                    category = PartCategory.objects.get(pk=cat_id)
-
-                    # If '?cascade=true' then include parts which exist in sub-categories
-                    if cascade:
-                        queryset = queryset.filter(
-                            category__in=category.getUniqueChildren()
-                        )
-                    # Just return parts directly in the requested category
-                    else:
-                        queryset = queryset.filter(category=cat_id)
-                except (ValueError, PartCategory.DoesNotExist):
-                    pass
-
-        queryset = self.filter_parametric_data(queryset)
-        queryset = self.order_by_parameter(queryset)
-
-        return queryset
-
-    def filter_parametric_data(self, queryset):
-        """Filter queryset against part parameters.
-
-        Used to filter returned parts based on their parameter values.
-
-        To filter based on parameter value, supply query parameters like:
-        - parameter_<x>=<value>
-        - parameter_<x>_gt=<value>
-        - parameter_<x>_lte=<value>
-
-        where:
-            - <x> is the ID of the PartParameterTemplate.
-            - <value> is the value to filter against.
-        """
-        # Allowed lookup operations for parameter values
-        operators = '|'.join(part.filters.PARAMETER_FILTER_OPERATORS)
-
-        regex_pattern = rf'^parameter_(\d+)(_({operators}))?$'
-
-        for param in self.request.query_params:
-            result = re.match(regex_pattern, param)
-
-            if not result:
-                continue
-
-            template_id = result.group(1)
-            operator = result.group(3) or ''
-
-            value = self.request.query_params.get(param, None)
-
-            queryset = part.filters.filter_by_parameter(
-                queryset, template_id, value, func=operator
-            )
-
-        return queryset
-
-    def order_by_parameter(self, queryset):
-        """Perform queryset ordering based on parameter value.
-
-        - Used if the 'ordering' query param points to a parameter
-        - e.g. '&ordering=param_<id>' where <id> specifies the PartParameterTemplate
-        - Only parts which have a matching parameter are returned
-        - Queryset is ordered based on parameter value
-        """
-        # Extract "ordering" parameter from query args
-        ordering = self.request.query_params.get('ordering', None)
-
-        if ordering:
-            # Ordering value must match required regex pattern
-            result = re.match(r'^\-?parameter_(\d+)$', ordering)
-
-            if result:
-                template_id = result.group(1)
-                ascending = not ordering.startswith('-')
-                queryset = part.filters.order_by_parameter(
-                    queryset, template_id, ascending
-                )
-
-        return queryset
 
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
@@ -1174,8 +1122,10 @@ class PartList(PartMixin, BulkUpdateMixin, DataExportViewMixin, ListCreateAPI):
     ]
 
 
-class PartDetail(PartMixin, RetrieveUpdateDestroyAPI):
+class PartDetail(PartMixin, OutputOptionsMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a single Part object."""
+
+    output_options = PartOutputOptions
 
     def update(self, request, *args, **kwargs):
         """Custom update functionality for Part instance.
@@ -1244,201 +1194,6 @@ class PartRelatedDetail(PartRelatedMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for accessing detail view of a PartRelated object."""
 
 
-class PartParameterTemplateFilter(FilterSet):
-    """FilterSet for PartParameterTemplate objects."""
-
-    class Meta:
-        """Metaclass options."""
-
-        model = PartParameterTemplate
-
-        # Simple filter fields
-        fields = ['name', 'units', 'checkbox']
-
-    has_choices = rest_filters.BooleanFilter(
-        method='filter_has_choices', label='Has Choice'
-    )
-
-    def filter_has_choices(self, queryset, name, value):
-        """Filter queryset to include only PartParameterTemplates with choices."""
-        if str2bool(value):
-            return queryset.exclude(Q(choices=None) | Q(choices=''))
-
-        return queryset.filter(Q(choices=None) | Q(choices='')).distinct()
-
-    has_units = rest_filters.BooleanFilter(method='filter_has_units', label='Has Units')
-
-    def filter_has_units(self, queryset, name, value):
-        """Filter queryset to include only PartParameterTemplates with units."""
-        if str2bool(value):
-            return queryset.exclude(Q(units=None) | Q(units=''))
-
-        return queryset.filter(Q(units=None) | Q(units='')).distinct()
-
-    part = rest_filters.ModelChoiceFilter(
-        queryset=Part.objects.all(), method='filter_part', label=_('Part')
-    )
-
-    @extend_schema_field(OpenApiTypes.INT)
-    def filter_part(self, queryset, name, part):
-        """Filter queryset to include only PartParameterTemplates which are referenced by a part."""
-        parameters = PartParameter.objects.filter(part=part)
-        template_ids = parameters.values_list('template').distinct()
-        return queryset.filter(pk__in=[el[0] for el in template_ids])
-
-    # Filter against a "PartCategory" - return only parameter templates which are referenced by parts in this category
-    category = rest_filters.ModelChoiceFilter(
-        queryset=PartCategory.objects.all(),
-        method='filter_category',
-        label=_('Category'),
-    )
-
-    @extend_schema_field(OpenApiTypes.INT)
-    def filter_category(self, queryset, name, category):
-        """Filter queryset to include only PartParameterTemplates which are referenced by parts in this category."""
-        cats = category.get_descendants(include_self=True)
-        parameters = PartParameter.objects.filter(part__category__in=cats)
-        template_ids = parameters.values_list('template').distinct()
-        return queryset.filter(pk__in=[el[0] for el in template_ids])
-
-
-class PartParameterTemplateMixin:
-    """Mixin class for PartParameterTemplate API endpoints."""
-
-    queryset = PartParameterTemplate.objects.all()
-    serializer_class = part_serializers.PartParameterTemplateSerializer
-
-    def get_queryset(self, *args, **kwargs):
-        """Return an annotated queryset for the PartParameterTemplateDetail endpoint."""
-        queryset = super().get_queryset(*args, **kwargs)
-
-        queryset = part_serializers.PartParameterTemplateSerializer.annotate_queryset(
-            queryset
-        )
-
-        return queryset
-
-
-class PartParameterTemplateList(
-    PartParameterTemplateMixin, DataExportViewMixin, ListCreateAPI
-):
-    """API endpoint for accessing a list of PartParameterTemplate objects.
-
-    - GET: Return list of PartParameterTemplate objects
-    - POST: Create a new PartParameterTemplate object
-    """
-
-    filterset_class = PartParameterTemplateFilter
-
-    filter_backends = SEARCH_ORDER_FILTER
-
-    search_fields = ['name', 'description']
-
-    ordering_fields = ['name', 'units', 'checkbox', 'parts']
-
-
-class PartParameterTemplateDetail(PartParameterTemplateMixin, RetrieveUpdateDestroyAPI):
-    """API endpoint for accessing the detail view for a PartParameterTemplate object."""
-
-
-class PartParameterAPIMixin:
-    """Mixin class for PartParameter API endpoints."""
-
-    queryset = PartParameter.objects.all()
-    serializer_class = part_serializers.PartParameterSerializer
-
-    def get_queryset(self, *args, **kwargs):
-        """Override get_queryset method to prefetch related fields."""
-        queryset = super().get_queryset(*args, **kwargs)
-        queryset = queryset.prefetch_related('part', 'template', 'updated_by')
-        return queryset
-
-    def get_serializer_context(self):
-        """Pass the 'request' object through to the serializer context."""
-        context = super().get_serializer_context()
-        context['request'] = self.request
-
-        return context
-
-    def get_serializer(self, *args, **kwargs):
-        """Return the serializer instance for this API endpoint.
-
-        If requested, extra detail fields are annotated to the queryset:
-        - part_detail
-        - template_detail
-        """
-        try:
-            kwargs['part_detail'] = str2bool(self.request.GET.get('part_detail', False))
-            kwargs['template_detail'] = str2bool(
-                self.request.GET.get('template_detail', True)
-            )
-        except AttributeError:
-            pass
-
-        return super().get_serializer(*args, **kwargs)
-
-
-class PartParameterFilter(FilterSet):
-    """Custom filters for the PartParameterList API endpoint."""
-
-    class Meta:
-        """Metaclass options for the filterset."""
-
-        model = PartParameter
-        fields = ['template', 'updated_by']
-
-    part = rest_filters.ModelChoiceFilter(
-        queryset=Part.objects.all(), method='filter_part'
-    )
-
-    def filter_part(self, queryset, name, part):
-        """Filter against the provided part.
-
-        If 'include_variants' query parameter is provided, filter against variant parts also
-        """
-        try:
-            include_variants = str2bool(self.request.GET.get('include_variants', False))
-        except AttributeError:
-            include_variants = False
-
-        if include_variants:
-            return queryset.filter(part__in=part.get_descendants(include_self=True))
-        else:
-            return queryset.filter(part=part)
-
-
-class PartParameterList(PartParameterAPIMixin, DataExportViewMixin, ListCreateAPI):
-    """API endpoint for accessing a list of PartParameter objects.
-
-    - GET: Return list of PartParameter objects
-    - POST: Create a new PartParameter object
-    """
-
-    filterset_class = PartParameterFilter
-
-    filter_backends = SEARCH_ORDER_FILTER_ALIAS
-
-    ordering_fields = ['name', 'data', 'part', 'template', 'updated', 'updated_by']
-
-    ordering_field_aliases = {
-        'name': 'template__name',
-        'units': 'template__units',
-        'data': ['data_numeric', 'data'],
-        'part': 'part__name',
-    }
-
-    search_fields = [
-        'data',
-        'template__name',
-        'template__description',
-        'template__units',
-    ]
-
-
-class PartParameterDetail(PartParameterAPIMixin, RetrieveUpdateDestroyAPI):
-    """API endpoint for detail view of a single PartParameter object."""
-
-
 class PartStocktakeFilter(FilterSet):
     """Custom filter for the PartStocktakeList endpoint."""
 
@@ -1449,11 +1204,18 @@ class PartStocktakeFilter(FilterSet):
         fields = ['part']
 
 
-class PartStocktakeList(BulkDeleteMixin, ListCreateAPI):
+class PartStocktakeMixin:
+    """Mixin class for PartStocktake API endpoints."""
+
+    queryset = PartStocktake.objects.all().prefetch_related('part')
+    serializer_class = part_serializers.PartStocktakeSerializer
+
+
+class PartStocktakeList(
+    PartStocktakeMixin, DataExportViewMixin, BulkDeleteMixin, ListCreateAPI
+):
     """API endpoint for listing part stocktake information."""
 
-    queryset = PartStocktake.objects.all()
-    serializer_class = part_serializers.PartStocktakeSerializer
     filterset_class = PartStocktakeFilter
 
     def get_serializer_context(self):
@@ -1471,14 +1233,65 @@ class PartStocktakeList(BulkDeleteMixin, ListCreateAPI):
     ordering = '-pk'
 
 
-class PartStocktakeDetail(RetrieveUpdateDestroyAPI):
+class PartStocktakeDetail(PartStocktakeMixin, RetrieveUpdateDestroyAPI):
     """Detail API endpoint for a single PartStocktake instance.
 
     Note: Only staff (admin) users can access this endpoint.
     """
 
+
+class PartStocktakeGenerate(CreateAPI):
+    """API endpoint for generating a PartStocktake instance."""
+
     queryset = PartStocktake.objects.all()
-    serializer_class = part_serializers.PartStocktakeSerializer
+    serializer_class = part_serializers.PartStocktakeGenerateSerializer
+
+    def post(self, request, *args, **kwargs):
+        """Perform stocktake generation on POST request."""
+        from common.models import DataOutput
+        from part.stocktake import perform_stocktake
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        data = serializer.validated_data
+
+        part = data.get('part', None)
+        category = data.get('category', None)
+        location = data.get('location', None)
+
+        # Do we want to generate a report?
+        if data.get('generate_report', True):
+            report_output = DataOutput.objects.create(
+                user=request.user, output_type='stocktake'
+            )
+        else:
+            report_output = None
+
+        # Offload the actual stocktake generation to a background task, as it may take some time to complete
+        offload_task(
+            perform_stocktake,
+            part_id=part.pk if part else None,
+            category_id=category.pk if category else None,
+            location_id=location.pk if location else None,
+            generate_entry=data.get('generate_entry', True),
+            report_output_id=report_output.pk if report_output else None,
+            group='stocktake',
+        )
+
+        if report_output:
+            report_output.refresh_from_db()
+
+        result = {
+            'category': category,
+            'location': location,
+            'part': part,
+            'output': report_output,
+        }
+
+        output_serializer = part_serializers.PartStocktakeGenerateSerializer(result)
+
+        return Response(output_serializer.data)
 
 
 class BomFilter(FilterSet):
@@ -1492,11 +1305,11 @@ class BomFilter(FilterSet):
 
     # Filters for linked 'part'
     part_active = rest_filters.BooleanFilter(
-        label='Assembly part is active', field_name='part__active'
+        label=_('Assembly part is active'), field_name='part__active'
     )
 
     part_trackable = rest_filters.BooleanFilter(
-        label='Assembly part is trackable', field_name='part__trackable'
+        label=_('Assembly part is trackable'), field_name='part__trackable'
     )
 
     part_testable = rest_filters.BooleanFilter(
@@ -1504,8 +1317,12 @@ class BomFilter(FilterSet):
     )
 
     # Filters for linked 'sub_part'
+    sub_part_active = rest_filters.BooleanFilter(
+        label=_('Component part is active'), field_name='sub_part__active'
+    )
+
     sub_part_trackable = rest_filters.BooleanFilter(
-        label='Component part is trackable', field_name='sub_part__trackable'
+        label=_('Component part is trackable'), field_name='sub_part__trackable'
     )
 
     sub_part_testable = rest_filters.BooleanFilter(
@@ -1513,15 +1330,15 @@ class BomFilter(FilterSet):
     )
 
     sub_part_assembly = rest_filters.BooleanFilter(
-        label='Component part is an assembly', field_name='sub_part__assembly'
+        label=_('Component part is an assembly'), field_name='sub_part__assembly'
     )
 
     sub_part_virtual = rest_filters.BooleanFilter(
-        label='Component part is virtual', field_name='sub_part__virtual'
+        label=_('Component part is virtual'), field_name='sub_part__virtual'
     )
 
     available_stock = rest_filters.BooleanFilter(
-        label='Has available stock', method='filter_available_stock'
+        label=_('Has available stock'), method='filter_available_stock'
     )
 
     def filter_available_stock(self, queryset, name, value):
@@ -1587,34 +1404,11 @@ class BomFilter(FilterSet):
         return queryset.filter(part.get_used_in_bom_item_filter())
 
 
-class BomMixin:
+class BomMixin(SerializerContextMixin):
     """Mixin class for BomItem API endpoints."""
 
     serializer_class = part_serializers.BomItemSerializer
     queryset = BomItem.objects.all()
-
-    def get_serializer(self, *args, **kwargs):
-        """Return the serializer instance for this API endpoint.
-
-        If requested, extra detail fields are annotated to the queryset:
-        - part_detail
-        - sub_part_detail
-        """
-        # Do we wish to include extra detail?
-        try:
-            params = self.request.query_params
-
-            kwargs['can_build'] = str2bool(params.get('can_build', True))
-            kwargs['part_detail'] = str2bool(params.get('part_detail', False))
-            kwargs['sub_part_detail'] = str2bool(params.get('sub_part_detail', False))
-
-        except AttributeError:
-            pass
-
-        # Ensure the request context is passed through!
-        kwargs['context'] = self.get_serializer_context()
-
-        return super().get_serializer(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
         """Return the queryset object for this endpoint."""
@@ -1625,18 +1419,38 @@ class BomMixin:
         return queryset
 
 
-class BomList(BomMixin, DataExportViewMixin, ListCreateDestroyAPIView):
+class BomOutputOptions(OutputConfiguration):
+    """Output options for BOM endpoints."""
+
+    OPTIONS = [
+        InvenTreeOutputOption('can_build', default=True),
+        InvenTreeOutputOption('part_detail'),
+        InvenTreeOutputOption('sub_part_detail'),
+        InvenTreeOutputOption('substitutes'),
+        InvenTreeOutputOption('pricing'),
+    ]
+
+
+class BomList(
+    BomMixin, DataExportViewMixin, OutputOptionsMixin, ListCreateDestroyAPIView
+):
     """API endpoint for accessing a list of BomItem objects.
 
     - GET: Return list of BomItem objects
     - POST: Create a new BomItem object
     """
 
+    output_options = BomOutputOptions
     filterset_class = BomFilter
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
     search_fields = [
         'reference',
+        'part__name',
+        'part__description',
+        'part__IPN',
+        'part__revision',
+        'part__keywords',
         'sub_part__name',
         'sub_part__description',
         'sub_part__IPN',
@@ -1647,11 +1461,13 @@ class BomList(BomMixin, DataExportViewMixin, ListCreateDestroyAPIView):
 
     ordering_fields = [
         'can_build',
+        'category',
         'quantity',
         'setup_quantity',
         'attrition',
         'rounding_multiple',
         'sub_part',
+        'IPN',
         'available_stock',
         'allow_variants',
         'inherited',
@@ -1667,7 +1483,9 @@ class BomList(BomMixin, DataExportViewMixin, ListCreateDestroyAPIView):
     ]
 
     ordering_field_aliases = {
+        'category': 'sub_part__category__name',
         'sub_part': 'sub_part__name',
+        'IPN': 'sub_part__IPN',
         'pricing_min': 'sub_part__pricing_data__overall_min',
         'pricing_max': 'sub_part__pricing_data__overall_max',
         'pricing_updated': 'sub_part__pricing_data__updated',
@@ -1680,8 +1498,10 @@ class BomList(BomMixin, DataExportViewMixin, ListCreateDestroyAPIView):
             bom_item.check_part_lock(bom_item.part)
 
 
-class BomDetail(BomMixin, RetrieveUpdateDestroyAPI):
+class BomDetail(BomMixin, OutputOptionsMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a single BomItem object."""
+
+    output_options = BomOutputOptions
 
 
 class BomItemValidate(UpdateAPI):
@@ -1744,13 +1564,7 @@ part_api_urls = [
                     path(
                         '<int:pk>/',
                         include([
-                            path(
-                                'metadata/',
-                                MetadataView.as_view(
-                                    model=PartCategoryParameterTemplate
-                                ),
-                                name='api-part-category-parameter-metadata',
-                            ),
+                            meta_path(PartCategoryParameterTemplate),
                             path(
                                 '',
                                 CategoryParameterDetail.as_view(),
@@ -1769,11 +1583,7 @@ part_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(model=PartCategory),
-                        name='api-part-category-metadata',
-                    ),
+                    meta_path(PartCategory),
                     # PartCategory detail endpoint
                     path('', CategoryDetail.as_view(), name='api-part-category-detail'),
                 ]),
@@ -1788,11 +1598,7 @@ part_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(model=PartTestTemplate),
-                        name='api-part-test-template-metadata',
-                    ),
+                    meta_path(PartTestTemplate),
                     path(
                         '',
                         PartTestTemplateDetail.as_view(),
@@ -1838,64 +1644,13 @@ part_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(model=PartRelated),
-                        name='api-part-related-metadata',
-                    ),
+                    meta_path(PartRelated),
                     path(
                         '', PartRelatedDetail.as_view(), name='api-part-related-detail'
                     ),
                 ]),
             ),
             path('', PartRelatedList.as_view(), name='api-part-related-list'),
-        ]),
-    ),
-    # Base URL for PartParameter API endpoints
-    path(
-        'parameter/',
-        include([
-            path(
-                'template/',
-                include([
-                    path(
-                        '<int:pk>/',
-                        include([
-                            path(
-                                'metadata/',
-                                MetadataView.as_view(model=PartParameterTemplate),
-                                name='api-part-parameter-template-metadata',
-                            ),
-                            path(
-                                '',
-                                PartParameterTemplateDetail.as_view(),
-                                name='api-part-parameter-template-detail',
-                            ),
-                        ]),
-                    ),
-                    path(
-                        '',
-                        PartParameterTemplateList.as_view(),
-                        name='api-part-parameter-template-list',
-                    ),
-                ]),
-            ),
-            path(
-                '<int:pk>/',
-                include([
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(model=PartParameter),
-                        name='api-part-parameter-metadata',
-                    ),
-                    path(
-                        '',
-                        PartParameterDetail.as_view(),
-                        name='api-part-parameter-detail',
-                    ),
-                ]),
-            ),
-            path('', PartParameterList.as_view(), name='api-part-parameter-list'),
         ]),
     ),
     # Part stocktake data
@@ -1906,6 +1661,11 @@ part_api_urls = [
                 '<int:pk>/',
                 PartStocktakeDetail.as_view(),
                 name='api-part-stocktake-detail',
+            ),
+            path(
+                'generate/',
+                PartStocktakeGenerate.as_view(),
+                name='api-part-stocktake-generate',
             ),
             path('', PartStocktakeList.as_view(), name='api-part-stocktake-list'),
         ]),
@@ -1940,9 +1700,7 @@ part_api_urls = [
                 'bom-validate/', PartValidateBOM.as_view(), name='api-part-bom-validate'
             ),
             # Part metadata
-            path(
-                'metadata/', MetadataView.as_view(model=Part), name='api-part-metadata'
-            ),
+            meta_path(Part),
             # Part pricing
             path('pricing/', PartPricingDetail.as_view(), name='api-part-pricing'),
             # Part detail endpoint
@@ -1960,11 +1718,7 @@ bom_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(model=BomItemSubstitute),
-                        name='api-bom-substitute-metadata',
-                    ),
+                    meta_path(BomItemSubstitute),
                     path(
                         '',
                         BomItemSubstituteDetail.as_view(),
@@ -1981,11 +1735,7 @@ bom_api_urls = [
         '<int:pk>/',
         include([
             path('validate/', BomItemValidate.as_view(), name='api-bom-item-validate'),
-            path(
-                'metadata/',
-                MetadataView.as_view(model=BomItem),
-                name='api-bom-item-metadata',
-            ),
+            meta_path(BomItem),
             path('', BomDetail.as_view(), name='api-bom-item-detail'),
         ]),
     ),

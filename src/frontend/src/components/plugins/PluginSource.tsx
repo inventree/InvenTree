@@ -1,3 +1,4 @@
+import type { InvenTreePluginContext } from '@lib/types/Plugins';
 import { generateUrl } from '../../functions/urls';
 import { useLocalState } from '../../states/LocalState';
 
@@ -55,4 +56,17 @@ export async function findExternalPluginFunction(
   }
 
   return null;
+}
+
+// Attempt to call an external plugin function, given the source URL and function name
+export async function callExternalPluginFunction(
+  source: string,
+  functionName: string,
+  context: InvenTreePluginContext
+): Promise<any> {
+  findExternalPluginFunction(source, functionName).then((func) => {
+    if (func) {
+      return func(context);
+    }
+  });
 }

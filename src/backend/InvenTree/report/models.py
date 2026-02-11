@@ -272,7 +272,7 @@ class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
             bytes: PDF data
         """
         html = self.render_as_string(instance, request, context, **kwargs)
-        pdf = HTML(string=html).write_pdf()
+        pdf = HTML(string=html).write_pdf(pdf_forms=True)
 
         return pdf
 
@@ -546,6 +546,9 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
                     msg = _('Template syntax error')
                     output.mark_failure(msg)
                     raise ValidationError(f'{msg}: {e!s}')
+                except ValidationError as e:
+                    output.mark_failure(str(e))
+                    raise e
                 except Exception as e:
                     msg = _('Error rendering report')
                     output.mark_failure(msg)
@@ -582,6 +585,9 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
                         msg = _('Template syntax error')
                         output.mark_failure(error=_('Template syntax error'))
                         raise ValidationError(f'{msg}: {e!s}')
+                    except ValidationError as e:
+                        output.mark_failure(str(e))
+                        raise e
                     except Exception as e:
                         msg = _('Error rendering report')
                         output.mark_failure(error=msg)

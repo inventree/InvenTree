@@ -18,21 +18,17 @@ import {
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { ActionButton } from '@lib/components/ActionButton';
 import { AddItemButton } from '@lib/components/AddItemButton';
 import { ProgressBar } from '@lib/components/ProgressBar';
-import {
-  type RowAction,
-  RowEditAction,
-  RowViewAction
-} from '@lib/components/RowActions';
+import { type RowAction, RowEditAction } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
+import type { StockOperationProps } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
 import { StylishText } from '../../components/items/StylishText';
 import { useApi } from '../../contexts/ApiContext';
@@ -43,7 +39,6 @@ import {
   useScrapBuildOutputsForm
 } from '../../forms/BuildForms';
 import {
-  type StockOperationProps,
   useStockFields,
   useStockItemSerializeFields
 } from '../../forms/StockForms';
@@ -155,7 +150,6 @@ export default function BuildOutputTable({
 }: Readonly<{ build: any; refreshBuild: () => void }>) {
   const api = useApi();
   const user = useUserState();
-  const navigate = useNavigate();
   const table = useTable('build-outputs');
 
   const buildId: number = useMemo(() => {
@@ -210,7 +204,9 @@ export default function BuildOutputTable({
         .get(apiUrl(ApiEndpoints.build_line_list), {
           params: {
             build: buildId,
-            tracked: true
+            tracked: true,
+            bom_item_detail: true,
+            allocations: true
           }
         })
         .then((response) => response.data);
@@ -494,12 +490,6 @@ export default function BuildOutputTable({
       const production = build?.status == buildStatus.PRODUCTION;
 
       return [
-        RowViewAction({
-          title: t`View Build Output`,
-          modelId: record.pk,
-          modelType: ModelType.stockitem,
-          navigate: navigate
-        }),
         {
           title: t`Allocate`,
           tooltip: t`Allocate stock to build output`,

@@ -132,7 +132,7 @@ def trigger_notification(obj: Model, category: str = '', obj_ref: str = 'pk', **
         logger.info(
             "Notification '%s' has recently been sent for '%s' - SKIPPING",
             category,
-            str(obj),
+            obj,
         )
         return
 
@@ -177,9 +177,9 @@ def trigger_notification(obj: Model, category: str = '', obj_ref: str = 'pk', **
     # Filter out any users who are inactive, or do not have the required model permissions
     valid_users = list(
         filter(
-            lambda u: u
-            and u.is_active
-            and (not obj or check_user_permission(u, obj, 'view')),
+            lambda u: (
+                u and u.is_active and (not obj or check_user_permission(u, obj, 'view'))
+            ),
             list(target_users),
         )
     )

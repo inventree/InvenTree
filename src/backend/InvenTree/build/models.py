@@ -76,6 +76,7 @@ class BuildReportContext(report.mixins.BaseReportContext):
 class Build(
     InvenTree.models.PluginValidationMixin,
     report.mixins.InvenTreeReportMixin,
+    InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,
@@ -85,7 +86,7 @@ class Build(
     InvenTree.models.MetadataMixin,
     InvenTree.models.InvenTreeTree,
 ):
-    """A Build object organises the creation of new StockItem objects from other existing StockItem objects.
+    """A Build object organizes the creation of new StockItem objects from other existing StockItem objects.
 
     Attributes:
         part: The part to be built (from component BOM items)
@@ -262,7 +263,7 @@ class Build(
         null=True,
         related_name='children',
         verbose_name=_('Parent Build'),
-        help_text=_('BuildOrder to which this build is allocated'),
+        help_text=_('Build Order to which this build is allocated'),
     )
 
     part = models.ForeignKey(
@@ -281,7 +282,7 @@ class Build(
         related_name='builds',
         null=True,
         blank=True,
-        help_text=_('SalesOrder to which this build is allocated'),
+        help_text=_('Sales Order to which this build is allocated'),
     )
 
     take_from = models.ForeignKey(
@@ -1115,7 +1116,9 @@ class Build(
         items.all().delete()
 
     @transaction.atomic
-    def scrap_build_output(self, output, quantity, location, **kwargs):
+    def scrap_build_output(
+        self, output: stock.models.StockItem, quantity, location, **kwargs
+    ):
         """Mark a particular build output as scrapped / rejected.
 
         - Mark the output as "complete"
@@ -1125,6 +1128,10 @@ class Build(
         """
         if not output:
             raise ValidationError(_('No build output specified'))
+
+        # If quantity is not specified, assume the entire output quantity
+        if quantity is None:
+            quantity = output.quantity
 
         if quantity <= 0:
             raise ValidationError({'quantity': _('Quantity must be greater than zero')})
@@ -1140,7 +1147,9 @@ class Build(
 
         if quantity < output.quantity:
             # Split output into two items
-            output = output.splitStock(quantity, location=location, user=user)
+            output = output.splitStock(
+                quantity, location=location, user=user, allow_production=True
+            )
             output.build = self
 
         # Update build output item
@@ -1164,6 +1173,7 @@ class Build(
             user,
             notes=notes,
             deltas={
+                'quantity': float(quantity),
                 'location': location.pk,
                 'status': StockStatus.REJECTED.value,
                 'buildorder': self.pk,
@@ -1171,19 +1181,28 @@ class Build(
         )
 
     @transaction.atomic
-    def complete_build_output(self, output, user, **kwargs):
+    def complete_build_output(
+        self,
+        output: stock.models.StockItem,
+        user: User,
+        quantity: Optional[decimal.Decimal] = None,
+        **kwargs,
+    ):
         """Complete a particular build output.
 
-        - Remove allocated StockItems
-        - Mark the output as complete
+        Arguments:
+            output: The StockItem instance (build output) to complete
+            user: The user who is completing the build output
+            quantity: The quantity to complete (defaults to entire output quantity)
+
+        Notes:
+            - Remove allocated StockItems
+            - Mark the output as complete
         """
         # Select the location for the build output
         location = kwargs.get('location', self.destination)
         status = kwargs.get('status', StockStatus.OK.value)
         notes = kwargs.get('notes', '')
-
-        # List the allocated BuildItem objects for the given output
-        allocated_items = output.items_to_install.all()
 
         required_tests = kwargs.get('required_tests', output.part.getRequiredTests())
         prevent_on_incomplete = kwargs.get(
@@ -1201,6 +1220,37 @@ class Build(
 
             raise ValidationError(msg)
 
+        # List the allocated BuildItem objects for the given output
+        allocated_items = output.items_to_install.all()
+
+        # Ensure that none of the allocated items are themselves still "in production"
+        for build_item in allocated_items:
+            if build_item.stock_item.is_building:
+                raise ValidationError(
+                    _('Allocated stock items are still in production')
+                )
+
+        # If a partial quantity is provided, split the stock output
+        if quantity is not None and quantity != output.quantity:
+            # Cannot split a build output with allocated items
+            if allocated_items.count() > 0:
+                raise ValidationError(
+                    _('Cannot partially complete a build output with allocated items')
+                )
+
+            if quantity <= 0:
+                raise ValidationError({
+                    'quantity': _('Quantity must be greater than zero')
+                })
+
+            if quantity > output.quantity:
+                raise ValidationError({
+                    'quantity': _('Quantity cannot be greater than the output quantity')
+                })
+
+            # Split the stock item
+            output = output.splitStock(quantity, user=user, allow_production=True)
+
         for build_item in allocated_items:
             # Complete the allocation of stock for that item
             build_item.complete_allocation(user=user)
@@ -1212,11 +1262,17 @@ class Build(
         output.build = self
         output.is_building = False
         output.location = location
-        output.status = status
+
+        # Assign the stock status
+        output.set_status(status)
 
         output.save(add_note=False)
 
-        deltas = {'status': status, 'buildorder': self.pk}
+        deltas = {
+            'status': status,
+            'buildorder': self.pk,
+            'quantity': float(output.quantity),
+        }
 
         if location:
             deltas['location'] = location.pk
@@ -1284,7 +1340,7 @@ class Build(
 
             # Check which parts we can "use" (may include variants and substitutes)
             available_parts = bom_item.get_valid_parts_for_allocation(
-                allow_variants=True, allow_substitutes=substitutes
+                allow_variants=True, allow_inactive=False, allow_substitutes=substitutes
             )
 
             # Look for available stock items
@@ -1327,10 +1383,7 @@ class Build(
                 key=lambda item, b=bom_item, v=variant_parts: stock_sort(item, b, v),
             )
 
-            if len(available_stock) == 0:
-                # No stock items are available
-                continue
-            elif len(available_stock) == 1 or interchangeable:
+            if len(available_stock) == 1 or interchangeable:
                 # Either there is only a single stock item available,
                 # or all items are "interchangeable" and we don't care where we take stock from
 
@@ -1704,11 +1757,10 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
 
     def save(self, *args, **kwargs):
         """Custom save method for the BuildItem model."""
-        self.clean()
-
+        self.clean(raise_error=False)
         super().save()
 
-    def clean(self):
+    def clean(self, raise_error: bool = True):
         """Check validity of this BuildItem instance.
 
         The following checks are performed:
@@ -1732,47 +1784,7 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
                     )
                 )
 
-            # Allocated quantity cannot exceed available stock quantity
-            if self.quantity > self.stock_item.quantity:
-                q = InvenTree.helpers.normalize(self.quantity)
-                a = InvenTree.helpers.normalize(self.stock_item.quantity)
-
-                raise ValidationError({
-                    'quantity': _(
-                        f'Allocated quantity ({q}) must not exceed available stock quantity ({a})'
-                    )
-                })
-
-            # Ensure that we do not 'over allocate' a stock item
-            available = decimal.Decimal(self.stock_item.quantity)
-            quantity = decimal.Decimal(self.quantity)
-            build_allocation_count = decimal.Decimal(
-                self.stock_item.build_allocation_count(
-                    exclude_allocations={'pk': self.pk}
-                )
-            )
-            sales_allocation_count = decimal.Decimal(
-                self.stock_item.sales_order_allocation_count()
-            )
-
-            total_allocation = (
-                build_allocation_count + sales_allocation_count + quantity
-            )
-
-            if total_allocation > available:
-                raise ValidationError({'quantity': _('Stock item is over-allocated')})
-
-            # Allocated quantity must be positive
-            if self.quantity <= 0:
-                raise ValidationError({
-                    'quantity': _('Allocation quantity must be greater than zero')
-                })
-
-            # Quantity must be 1 for serialized stock
-            if self.stock_item.serialized and self.quantity != 1:
-                raise ValidationError({
-                    'quantity': _('Quantity must be 1 for serialized stock')
-                })
+            self.check_allocated_quantity(raise_error=raise_error)
 
         except stock.models.StockItem.DoesNotExist:
             raise ValidationError('Stock item must be specified')
@@ -1834,6 +1846,60 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
                 'stock_item': _('Selected stock item does not match BOM line')
             })
 
+    def check_allocated_quantity(self, raise_error: bool = False):
+        """Ensure that the allocated quantity is valid.
+
+        Will reduce the allocated quantity if it exceeds available stock.
+
+        Arguments:
+            raise_error: If True, raise ValidationError on failure
+
+        Raises:
+            ValidationError: If the allocated quantity is invalid and raise_error is True
+        """
+        error = None
+
+        # Allocated quantity must be positive
+        if self.quantity <= 0:
+            self.quantity = 0
+            error = {'quantity': _('Allocated quantity must be greater than zero')}
+
+        # Quantity must be 1 for serialized stock
+        if self.stock_item.serialized and self.quantity != 1:
+            self.quantity = 1
+            raise ValidationError({
+                'quantity': _('Quantity must be 1 for serialized stock')
+            })
+
+        # Allocated quantity cannot exceed available stock quantity
+        if self.quantity > self.stock_item.quantity:
+            q = InvenTree.helpers.normalize(self.quantity)
+            a = InvenTree.helpers.normalize(self.stock_item.quantity)
+            self.quantity = self.stock_item.quantity
+            error = {
+                'quantity': _(
+                    f'Allocated quantity ({q}) must not exceed available stock quantity ({a})'
+                )
+            }
+
+        # Ensure that we do not 'over allocate' a stock item
+        available = decimal.Decimal(self.stock_item.quantity)
+        quantity = decimal.Decimal(self.quantity)
+        build_allocation_count = decimal.Decimal(
+            self.stock_item.build_allocation_count(exclude_allocations={'pk': self.pk})
+        )
+        sales_allocation_count = decimal.Decimal(
+            self.stock_item.sales_order_allocation_count()
+        )
+
+        total_allocation = build_allocation_count + sales_allocation_count + quantity
+
+        if total_allocation > available:
+            error = {'quantity': _('Stock item is over-allocated')}
+
+        if error and raise_error:
+            raise ValidationError(error)
+
     @property
     def build(self):
         """Return the BuildOrder associated with this BuildItem."""
@@ -1845,7 +1911,7 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
         return self.build_line.bom_item if self.build_line else None
 
     @transaction.atomic
-    def complete_allocation(self, quantity=None, notes='', user=None) -> None:
+    def complete_allocation(self, quantity=None, notes: str = '', user=None) -> None:
         """Complete the allocation of this BuildItem into the output stock item.
 
         Arguments:
@@ -1868,9 +1934,7 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
 
         # Ensure we are not allocating more than available
         if quantity > item.quantity:
-            raise ValidationError({
-                'quantity': _('Allocated quantity exceeds available stock quantity')
-            })
+            quantity = item.quantity
 
         # Split the allocated stock if there are more available than allocated
         if item.quantity > quantity:

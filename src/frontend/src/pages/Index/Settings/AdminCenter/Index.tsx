@@ -7,6 +7,7 @@ import {
   IconExclamationCircle,
   IconFileDownload,
   IconFileUpload,
+  IconHome,
   IconList,
   IconListDetails,
   IconMail,
@@ -40,6 +41,8 @@ const ReportTemplatePanel = Loadable(
 
 const LabelTemplatePanel = Loadable(lazy(() => import('./LabelTemplatePanel')));
 
+const HomePanel = Loadable(lazy(() => import('./HomePanel')));
+
 const UserManagementPanel = Loadable(
   lazy(() => import('./UserManagementPanel'))
 );
@@ -68,7 +71,7 @@ const MachineManagementPanel = Loadable(
   lazy(() => import('./MachineManagementPanel'))
 );
 
-const PartParameterPanel = Loadable(lazy(() => import('./PartParameterPanel')));
+const ParameterPanel = Loadable(lazy(() => import('./ParameterPanel')));
 
 const ErrorReportTable = Loadable(
   lazy(() => import('../../../../tables/settings/ErrorTable'))
@@ -107,6 +110,13 @@ export default function AdminCenter() {
 
   const adminCenterPanels: PanelType[] = useMemo(() => {
     return [
+      {
+        name: 'home',
+        label: t`Home`,
+        icon: <IconHome />,
+        content: <HomePanel />,
+        showHeadline: false
+      },
       {
         name: 'user',
         label: t`Users / Access`,
@@ -181,10 +191,10 @@ export default function AdminCenter() {
         content: <UnitManagementPanel />
       },
       {
-        name: 'part-parameters',
-        label: t`Part Parameters`,
+        name: 'parameters',
+        label: t`Parameters`,
         icon: <IconList />,
-        content: <PartParameterPanel />,
+        content: <ParameterPanel />,
         hidden: !user.hasViewRole(UserRoles.part)
       },
       {
@@ -231,6 +241,7 @@ export default function AdminCenter() {
   }, [user]);
   const grouping: PanelGroupType[] = useMemo(() => {
     return [
+      { id: 'home', label: '', panelIDs: ['home'] },
       {
         id: 'ops',
         label: t`Operations`,
@@ -263,7 +274,7 @@ export default function AdminCenter() {
         id: 'plm',
         label: t`PLM`,
         panelIDs: [
-          'part-parameters',
+          'parameters',
           'category-parameters',
           'location-types',
           'stocktake'

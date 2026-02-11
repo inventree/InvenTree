@@ -1,5 +1,6 @@
 import { t } from '@lingui/core/macro';
 import {
+  Group,
   Input,
   darken,
   useMantineColorScheme,
@@ -15,9 +16,16 @@ import {
 } from 'react-hook-form';
 import Select from 'react-select';
 
+import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import type { ApiFormFieldType } from '@lib/types/Forms';
 import { useApi } from '../../../contexts/ApiContext';
+import {
+  useGlobalSettingsState,
+  useUserSettingsState
+} from '../../../states/SettingsStates';
 import { vars } from '../../../theme';
+import { ScanButton } from '../../buttons/ScanButton';
+import Expand from '../../items/Expand';
 import { RenderInstance } from '../../render/Instance';
 
 /**
@@ -60,7 +68,109 @@ export function RelatedModelField({
   const [data, setData] = useState<any[]>([]);
   const dataRef = useRef<any[]>([]);
 
+  const globalSettings = useGlobalSettingsState();
+  const userSettings = useUserSettingsState();
+
+  // Search input query
+  const [value, setValue] = useState<string>('');
+  const [searchText] = useDebouncedValue(value, 250);
+
+  // Fetch a single field by primary key, using the provided API filters
+  const fetchSingleField = useCallback(
+    (pk: number) => {
+      if (!definition?.api_url) {
+        return;
+      }
+
+      const params = definition?.filters ?? {};
+      const url = `${definition.api_url}${pk}/`;
+
+      api
+        .get(url, {
+          params: params
+        })
+        .then((response) => {
+          const pk_field = definition.pk_field ?? 'pk';
+          if (response.data?.[pk_field]) {
+            const value = {
+              value: response.data[pk_field],
+              data: response.data
+            };
+
+            // Run custom callback for this field (if provided)
+            if (definition.onValueChange) {
+              definition.onValueChange(response.data[pk_field], response.data);
+            }
+
+            setInitialData(value);
+            dataRef.current = [value];
+            setPk(response.data[pk_field]);
+          }
+        });
+    },
+    [
+      definition.api_url,
+      definition.filters,
+      definition.onValueChange,
+      definition.pk_field,
+      setValue,
+      setPk
+    ]
+  );
+
+  // Memoize the model type information for this field
+  const modelInfo = useMemo(() => {
+    if (!definition.model) {
+      return null;
+    }
+    return ModelInformationDict[definition.model];
+  }, [definition.model]);
+
+  // Determine whether a barcode field should be added
+  const addBarcodeField: boolean = useMemo(() => {
+    if (!modelInfo || !modelInfo.supports_barcode) {
+      return false;
+    }
+
+    if (!globalSettings.isSet('BARCODE_ENABLE')) {
+      return false;
+    }
+
+    if (!userSettings.isSet('BARCODE_IN_FORM_FIELDS')) {
+      return false;
+    }
+
+    return true;
+  }, [globalSettings, userSettings, modelInfo]);
+
+  // Callback function to handle barcode scan results
+  const onBarcodeScan = useCallback(
+    (barcode: string, response: any) => {
+      // Fetch model information from the response
+      const modelData = response?.[definition.model ?? ''] ?? null;
+
+      if (modelData) {
+        const pk_field = definition.pk_field ?? 'pk';
+        const pk = modelData[pk_field];
+
+        if (pk) {
+          // Perform a full re-fetch of the field data
+          // This is necessary as the barcode scan does not provide full data necessarily
+          fetchSingleField(pk);
+        }
+      }
+    },
+    [definition.model, definition.pk_field, fetchSingleField]
+  );
+
   const [isOpen, setIsOpen] = useState<boolean>(false);
+
+  const [autoFilled, setAutoFilled] = useState<boolean>(false);
+
+  useEffect(() => {
+    // Reset auto-fill status when the form is reconstructed
+    setAutoFilled(false);
+  }, []);
 
   // Auto-fill the field with data from the API
   useEffect(() => {
@@ -69,9 +179,16 @@ export function RelatedModelField({
       return;
     }
 
+    // Return if the autofill has already been performed
+    if (autoFilled) {
+      return;
+    }
+
     if (field.value != undefined) {
       return;
     }
+
+    setAutoFilled(true);
 
     // Construct parameters for auto-filling the field
     const params = {
@@ -114,6 +231,7 @@ export function RelatedModelField({
         }
       });
   }, [
+    autoFilled,
     definition.autoFill,
     definition.api_url,
     definition.filters,
@@ -129,37 +247,7 @@ export function RelatedModelField({
     const id = pk || field.value;
 
     if (id !== null && id !== undefined && id !== '') {
-      const url = `${definition.api_url}${id}/`;
-
-      if (!url) {
-        setPk(null);
-        return;
-      }
-
-      const params = definition?.filters ?? {};
-
-      api
-        .get(url, {
-          params: params
-        })
-        .then((response) => {
-          const pk_field = definition.pk_field ?? 'pk';
-          if (response.data?.[pk_field]) {
-            const value = {
-              value: response.data[pk_field],
-              data: response.data
-            };
-
-            // Run custom callback for this field (if provided)
-            if (definition.onValueChange) {
-              definition.onValueChange(response.data[pk_field], response.data);
-            }
-
-            setInitialData(value);
-            dataRef.current = [value];
-            setPk(response.data[pk_field]);
-          }
-        });
+      fetchSingleField(id);
     } else {
       setPk(null);
     }
@@ -169,10 +257,6 @@ export function RelatedModelField({
     definition.pk_field,
     field.value
   ]);
-
-  // Search input query
-  const [value, setValue] = useState<string>('');
-  const [searchText] = useDebouncedValue(value, 250);
 
   const [filters, setFilters] = useState<any>({});
 
@@ -362,51 +446,68 @@ export function RelatedModelField({
       error={definition.error ?? error?.message}
       styles={{ description: { paddingBottom: '5px' } }}
     >
-      <Select
-        id={fieldId}
-        aria-label={`related-field-${field.name}`}
-        value={currentValue}
-        ref={field.ref}
-        options={data}
-        filterOption={null}
-        onInputChange={(value: any) => {
-          setValue(value);
-        }}
-        onChange={onChange}
-        onMenuScrollToBottom={() => setOffset(offset + limit)}
-        onMenuOpen={() => {
-          setIsOpen(true);
-          resetSearch();
-          selectQuery.refetch();
-        }}
-        onMenuClose={() => {
-          setIsOpen(false);
-        }}
-        isLoading={
-          selectQuery.isFetching ||
-          selectQuery.isLoading ||
-          selectQuery.isRefetching
-        }
-        isClearable={!definition.required}
-        isDisabled={definition.disabled}
-        isSearchable={true}
-        placeholder={definition.placeholder || `${t`Search`}...`}
-        loadingMessage={() => `${t`Loading`}...`}
-        menuPortalTarget={document.body}
-        noOptionsMessage={() => t`No results found`}
-        menuPosition='fixed'
-        styles={{ menuPortal: (base: any) => ({ ...base, zIndex: 9999 }) }}
-        formatOptionLabel={(option: any) => formatOption(option)}
-        theme={(theme) => {
-          return {
-            ...theme,
-            colors: {
-              ...theme.colors,
-              ...colors
+      <Group justify='space-between' wrap='nowrap' gap={3}>
+        <Expand>
+          <Select
+            id={fieldId}
+            aria-label={`related-field-${field.name}`}
+            value={currentValue}
+            ref={field.ref}
+            options={data}
+            filterOption={null}
+            onInputChange={(value: any) => {
+              setValue(value);
+            }}
+            onChange={onChange}
+            onMenuScrollToBottom={() => setOffset(offset + limit)}
+            onMenuOpen={() => {
+              setIsOpen(true);
+              resetSearch();
+              selectQuery.refetch();
+            }}
+            onMenuClose={() => {
+              setIsOpen(false);
+            }}
+            isLoading={
+              selectQuery.isFetching ||
+              selectQuery.isLoading ||
+              selectQuery.isRefetching
             }
-          };
-        }}
-      />
+            isClearable={!definition.required}
+            isDisabled={definition.disabled}
+            isSearchable={true}
+            placeholder={definition.placeholder || `${t`Search`}...`}
+            loadingMessage={() => `${t`Loading`}...`}
+            menuPortalTarget={document.body}
+            noOptionsMessage={() => t`No results found`}
+            menuPosition='fixed'
+            styles={{
+              menuPortal: (base: any) => ({ ...base, zIndex: 9999 }),
+              clearIndicator: (base: any) => ({
+                ...base,
+                color: 'red',
+                ':hover': { color: 'red' }
+              })
+            }}
+            formatOptionLabel={(option: any) => formatOption(option)}
+            theme={(theme) => {
+              return {
+                ...theme,
+                colors: {
+                  ...theme.colors,
+                  ...colors
+                }
+              };
+            }}
+          />
+        </Expand>
+        {addBarcodeField && (
+          <ScanButton
+            modelType={definition.model}
+            onScanSuccess={onBarcodeScan}
+          />
+        )}
+      </Group>
     </Input.Wrapper>
   );
 }

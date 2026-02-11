@@ -263,6 +263,7 @@
     level: 0
     lft: 1
     rght: 2
+    belongs_to: 105
 
 # Multiple stock items for "Bob" (PK 100)
 - model: stock.stockitem

@@ -1,4 +1,5 @@
 import { RowActions } from '@lib/components/RowActions';
+import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import { resolveItem } from '@lib/functions/Conversion';
 import { cancelEvent } from '@lib/functions/Events';
 import { getDetailUrl } from '@lib/functions/Navigation';
@@ -28,6 +29,7 @@ import { Boundary } from '../components/Boundary';
 import { useApi } from '../contexts/ApiContext';
 import { extractAvailableFields, mapFields } from '../functions/forms';
 import { showApiErrorMessage } from '../functions/notifications';
+import { hashString } from '../functions/tables';
 import { useLocalState } from '../states/LocalState';
 import { useUserSettingsState } from '../states/SettingsStates';
 import { useStoredTableState } from '../states/StoredTableState';
@@ -100,7 +102,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
 
   // Key used for caching table data
   const cacheKey = useMemo(() => {
-    const key: string = `table-${tableState.tableKey}`;
+    const key: string = `tbl-${tableState.tableKey}`;
 
     // Remove anything after (and including) "mantine"
     const mantineIndex = key.indexOf('-mantine');
@@ -243,6 +245,12 @@ export function InvenTreeTable<T extends Record<string, any>>({
     [tableState.setSelectedRecords]
   );
 
+  // A hash of the current column configuration
+  // This is a workaround to fix an issue with mantine-datatable where
+  // the columns do not update correctly when they are changed dynamically
+  // Ref: https://github.com/icflorescu/mantine-datatable/issues/759
+  const [columnHash, setColumnHash] = useState<string>('');
+
   // Update column visibility when hiddenColumns change
   const dataColumns: any = useMemo(() => {
     let cols: TableColumn[] = columns.filter((col) => col?.hidden != true);
@@ -295,6 +303,9 @@ export function InvenTreeTable<T extends Record<string, any>>({
       });
     }
 
+    const columnNames: string = cols.map((col) => col.accessor).join(',');
+    setColumnHash(hashString(columnNames));
+
     return cols;
   }, [
     columns,
@@ -327,31 +338,15 @@ export function InvenTreeTable<T extends Record<string, any>>({
 
   // Final state of the table columns
   const tableColumns = useDataTableColumns({
-    key: cacheKey,
+    key: `${cacheKey}-${columnHash}`,
     columns: dataColumns,
     getInitialValueInEffect: false
   });
 
-  // Cache the "ordering" of the columns
-  const dataColumnsOrder: string[] = useMemo(() => {
-    return dataColumns.map((col: any) => col.accessor);
-  }, [dataColumns]);
-
-  // Ensure that the "actions" column is always at the end of the list
-  // This effect is necessary as sometimes the underlying mantine-datatable columns change
-  useEffect(() => {
-    // Update the columns order only if it has changed
-    if (
-      JSON.stringify(tableColumns.columnsOrder) !=
-      JSON.stringify(dataColumnsOrder)
-    ) {
-      tableColumns.setColumnsOrder(dataColumnsOrder);
-    }
-  }, [cacheKey, dataColumnsOrder]);
-
   // Reset the pagination state when the search term changes
   useEffect(() => {
     tableState.setPage(1);
+    tableState.clearSelectedRecords();
   }, [
     tableState.searchTerm,
     tableState.filterSet.activeFilters,
@@ -677,14 +672,24 @@ export function InvenTreeTable<T extends Record<string, any>>({
       }));
     }
 
-    if (props.modelType) {
+    if (props.modelType && props.detailAction !== false) {
       // Add action to navigate to the detail view
       const accessor = props.modelField ?? 'pk';
       const pk = resolveItem(record, accessor);
       const url = getDetailUrl(props.modelType, pk);
+
+      const model: string | undefined =
+        ModelInformationDict[props.modelType]?.label?.();
+
+      let detailsText: string = t`View details`;
+
+      if (!!model) {
+        detailsText = t`View ${model}`;
+      }
+
       items.push({
         key: 'detail',
-        title: t`View details`,
+        title: detailsText,
         icon: <IconArrowRight />,
         onClick: (event: any) => {
           cancelEvent(event);
