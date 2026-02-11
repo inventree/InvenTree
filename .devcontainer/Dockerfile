@@ -38,10 +38,10 @@ RUN apt install -y nodejs npm
 RUN npm install -g n --ignore-scripts && n lts
 
 # Enable yarn
-RUN corepack enable
+RUN corepack enable && corepack prepare yarn@stable --activate
 
 RUN node --version && yarn --version
 
-RUN yarn config set network-timeout 600000
+RUN yarn config set httpTimeout 600000 --home
 
 ENTRYPOINT ["/bin/bash", "./init.sh"]
