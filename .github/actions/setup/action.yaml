@@ -41,7 +41,7 @@ runs:
 
       # Python installs
       - name: Set up Python ${{ env.python_version }}
-        if: ${{ inputs.python == 'true' }}
+        if: ${{ inputs.python == 'true' && env.python_version != '3.14' }}
         uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # pin@v5.0.0
         with:
           python-version: ${{ env.python_version }}
@@ -51,6 +51,11 @@ runs:
             src/backend/requirements-dev.txt
             contrib/container/requirements.txt
             contrib/dev_reqs/requirements.txt
+      - name: Setup Python 3.14
+        if: ${{ inputs.python == 'true' && env.python_version == '3.14' }}
+        uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # pin@v5.0.0
+        with:
+          python-version: ${{ env.python_version }}
       - name: Install Base Python Dependencies
         if: ${{ inputs.python == 'true' }}
         shell: bash
@@ -89,12 +94,12 @@ runs:
       - name: Install dev requirements
         if: ${{ inputs.dev-install == 'true' || inputs.install == 'true' }}
         shell: bash
-        run: uv pip install --require-hashes -r src/backend/requirements-dev.txt
+        run: invoke install --dev
       - name: Run invoke install
         if: ${{ inputs.install == 'true' }}
         shell: bash
-        run: invoke install --uv
+        run: invoke install
       - name: Run invoke update
         if: ${{ inputs.update == 'true' }}
         shell: bash
-        run: invoke update --uv --skip-backup --skip-static
+        run: invoke update --skip-backup --skip-static

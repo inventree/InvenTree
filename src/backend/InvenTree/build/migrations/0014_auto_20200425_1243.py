@@ -50,7 +50,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='build',
             name='sales_order',
-            field=models.ForeignKey(blank=True, help_text='SalesOrder to which this build is allocated', null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='builds', to='order.SalesOrder', verbose_name='Sales Order Reference'),
+            field=models.ForeignKey(blank=True, help_text='Sales Order to which this build is allocated', null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='builds', to='order.SalesOrder', verbose_name='Sales Order Reference'),
         ),
         migrations.AlterField(
             model_name='build',

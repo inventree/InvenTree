@@ -56,7 +56,7 @@ InvenTree is designed to be **extensible**, and provides multiple options for **
 * [InvenTree API](https://docs.inventree.org/en/latest/api/)
 * [Python module](https://docs.inventree.org/en/latest/api/python/)
 * [Plugin interface](https://docs.inventree.org/en/latest/plugins/)
-* [Third party tools](https://docs.inventree.org/en/latest/plugins/integrate/)
+* [Third party tools](https://inventree.org/extend/integrate/)
 
 <!-- TechStack -->
 ### :space_invader: Tech Stack
@@ -200,6 +200,7 @@ Find a full list of used third-party libraries in the license information dialog
   </a>
   <a href="https://www.netlify.com"> <img src="https://www.netlify.com/v3/img/components/netlify-color-bg.svg" alt="Deploys by Netlify" /> </a>
   <a href="https://crowdin.com"> <img src="https://crowdin.com/images/crowdin-logo.svg" alt="Translation by Crowdin" /> </a> <br>
+  <a href="https://codspeed.io/inventree/InvenTree?utm_source=badge"><img src="https://img.shields.io/endpoint?url=https://codspeed.io/badge.json" alt="CodSpeed Badge"/></a>
 </p>
 
 

@@ -253,10 +253,12 @@ export function useBuildAutoAllocateFields({
 
 function BuildOutputFormRow({
   props,
-  record
+  record,
+  withQuantityColumn = true
 }: Readonly<{
   props: TableFieldRowProps;
   record: any;
+  withQuantityColumn?: boolean;
 }>) {
   const stockItemColumn = useMemo(() => {
     if (record.serial) {
@@ -296,15 +298,18 @@ function BuildOutputFormRow({
           <RenderPartColumn part={record.part_detail} />
         </Table.Td>
         <Table.Td>{stockItemColumn}</Table.Td>
-        <Table.Td>
-          <TableFieldErrorWrapper props={props} errorKey='output'>
-            {quantityColumn}
-          </TableFieldErrorWrapper>
-        </Table.Td>
+        {withQuantityColumn && (
+          <Table.Td>
+            <TableFieldErrorWrapper props={props} errorKey='output'>
+              {quantityColumn}
+            </TableFieldErrorWrapper>
+          </Table.Td>
+        )}
         <Table.Td>{record.batch}</Table.Td>
         <Table.Td>
           <StatusRenderer
-            status={record.status}
+            status={record.custom_status_key || record.status}
+            fallbackStatus={record.status}
             type={ModelType.stockitem}
           />{' '}
         </Table.Td>
@@ -490,7 +495,12 @@ export function useCancelBuildOutputsForm({
         modelRenderer: (row: TableFieldRowProps) => {
           const record = outputs.find((output) => output.pk == row.item.output);
           return (
-            <BuildOutputFormRow props={row} record={record} key={record.pk} />
+            <BuildOutputFormRow
+              props={row}
+              record={record}
+              key={record.pk}
+              withQuantityColumn={false}
+            />
           );
         },
         headers: [

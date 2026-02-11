@@ -350,7 +350,8 @@ def parameter(
         raise TypeError("parameter tag requires a Model with 'parameters' attribute")
 
     return (
-        instance.parameters.prefetch_related('template')
+        instance.parameters
+        .prefetch_related('template')
         .filter(template__name=parameter_name)
         .first()
     )

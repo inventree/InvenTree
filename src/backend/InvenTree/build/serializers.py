@@ -1390,7 +1390,9 @@ class BuildLineSerializer(
     )
 
     allocations = enable_filter(
-        BuildItemSerializer(many=True, read_only=True, build_detail=False),
+        BuildItemSerializer(
+            many=True, read_only=True, allow_null=True, build_detail=False
+        ),
         True,
         prefetch_fields=[
             'allocations',
@@ -1438,6 +1440,7 @@ class BuildLineSerializer(
             source='bom_item',
             many=False,
             read_only=True,
+            allow_null=True,
             pricing=False,
             substitutes=False,
             sub_part_detail=False,
@@ -1467,6 +1470,7 @@ class BuildLineSerializer(
             source='bom_item.sub_part',
             many=False,
             read_only=True,
+            allow_null=True,
             pricing=False,
         ),
         False,

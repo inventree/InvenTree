@@ -106,6 +106,20 @@ def reload_plugin_registry(setting):
     registry.reload_plugins(full_reload=True, force_reload=True, collect=True)
 
 
+def enforce_mfa(setting):
+    """Enforce multifactor authentication for all users."""
+    from allauth.usersessions.models import UserSession
+
+    from common.models import logger
+
+    logger.info(
+        'Enforcing multifactor authentication for all users by signing out all sessions.'
+    )
+    for session in UserSession.objects.all():
+        session.end()
+    logger.info('All user sessions have been ended.')
+
+
 def barcode_plugins() -> list:
     """Return a list of plugin choices which can be used for barcode generation."""
     try:
@@ -1007,6 +1021,11 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'description': _('Users must use multifactor security.'),
         'default': False,
         'validator': bool,
+        'confirm': True,
+        'confirm_text': _(
+            'Enabling this setting will require all users to set up multifactor authentication. All sessions will be disconnected immediately.'
+        ),
+        'after_save': enforce_mfa,
     },
     'PLUGIN_ON_STARTUP': {
         'name': _('Check plugins on startup'),
@@ -1080,7 +1099,7 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'validator': bool,
     },
     'STOCKTAKE_ENABLE': {
-        'name': _('Enable Stock History'),
+        'name': _('Enable Stocktake'),
         'description': _(
             'Enable functionality for recording historical stock levels and value'
         ),
@@ -1090,30 +1109,47 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
     'STOCKTAKE_EXCLUDE_EXTERNAL': {
         'name': _('Exclude External Locations'),
         'description': _(
-            'Exclude stock items in external locations from stock history calculations'
+            'Exclude stock items in external locations from stocktake calculations'
         ),
         'validator': bool,
         'default': False,
     },
     'STOCKTAKE_AUTO_DAYS': {
         'name': _('Automatic Stocktake Period'),
-        'description': _('Number of days between automatic stock history recording'),
+        'description': _('Number of days between automatic stocktake recording'),
         'validator': [int, MinValueValidator(1)],
         'default': 7,
         'units': _('days'),
     },
     'STOCKTAKE_DELETE_OLD_ENTRIES': {
-        'name': _('Delete Old Stock History Entries'),
+        'name': _('Delete Old Stocktake Entries'),
         'description': _(
-            'Delete stock history entries older than the specified number of days'
+            'Delete stocktake entries older than the specified number of days'
         ),
         'default': False,
         'validator': bool,
     },
     'STOCKTAKE_DELETE_DAYS': {
-        'name': _('Stock History Deletion Interval'),
+        'name': _('Stocktake Deletion Interval'),
         'description': _(
-            'Stock history entries will be deleted after specified number of days'
+            'Stocktake entries will be deleted after specified number of days'
+        ),
+        'default': 365,
+        'units': _('days'),
+        'validator': [int, MinValueValidator(30)],
+    },
+    'STOCK_TRACKING_DELETE_OLD_ENTRIES': {
+        'name': _('Delete Old Stock Tracking Entries'),
+        'description': _(
+            'Delete stock tracking entries older than the specified number of days'
+        ),
+        'default': False,
+        'validator': bool,
+    },
+    'STOCK_TRACKING_DELETE_DAYS': {
+        'name': _('Stock Tracking Deletion Interval'),
+        'description': _(
+            'Stock tracking entries will be deleted after specified number of days'
         ),
         'default': 365,
         'units': _('days'),

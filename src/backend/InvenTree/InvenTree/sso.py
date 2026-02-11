@@ -10,7 +10,6 @@ import structlog
 from allauth.socialaccount.models import SocialAccount, SocialLogin
 
 from common.settings import get_global_setting
-from InvenTree.helpers import str2bool
 
 logger = structlog.get_logger('inventree')
 
@@ -69,21 +68,6 @@ def provider_display_name(provider):
     return provider.name
 
 
-def sso_login_enabled() -> bool:
-    """Return True if SSO login is enabled."""
-    return str2bool(get_global_setting('LOGIN_ENABLE_SSO'))
-
-
-def sso_registration_enabled() -> bool:
-    """Return True if SSO registration is enabled."""
-    return str2bool(get_global_setting('LOGIN_ENABLE_SSO_REG'))
-
-
-def auto_registration_enabled() -> bool:
-    """Return True if SSO auto-registration is enabled."""
-    return str2bool(get_global_setting('LOGIN_SIGNUP_SSO_AUTO'))
-
-
 def ensure_sso_groups(sender, sociallogin: SocialLogin, **kwargs):
     """Sync groups from IdP each time a SSO user logs on.
 
@@ -96,7 +80,9 @@ def ensure_sso_groups(sender, sociallogin: SocialLogin, **kwargs):
     group_map = json.loads(get_global_setting('SSO_GROUP_MAP'))
     # map SSO groups to InvenTree groups
     group_names = []
-    for sso_group in sociallogin.account.extra_data.get(group_key, []):
+    for sso_group in sociallogin.account.extra_data.get('userinfo', {}).get(
+        group_key, []
+    ):
         if mapped_name := group_map.get(sso_group):
             group_names.append(mapped_name)
 

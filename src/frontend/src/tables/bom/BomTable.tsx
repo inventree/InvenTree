@@ -132,7 +132,8 @@ export function BomTable({
       {
         accessor: 'sub_part_detail.IPN',
         title: t`IPN`,
-        sortable: true
+        sortable: true,
+        ordering: 'IPN'
       },
       CategoryColumn({
         accessor: 'category_detail',
@@ -423,6 +424,11 @@ export function BomTable({
         name: 'sub_part_trackable',
         label: t`Trackable Part`,
         description: t`Show trackable items`
+      },
+      {
+        name: 'sub_part_active',
+        label: t`Active Part`,
+        description: t`Show active items`
       },
       {
         name: 'sub_part_assembly',
