@@ -593,7 +593,17 @@ class PartLivePricingDetail(RetrieveAPI):
 
     def retrieve(self, request, *args, **kwargs):
         """Fetch live pricing data for this part."""
-        quantity = 1  # TODO: retrieve from request parameters
+        try:
+            quantity = int(request.query_params.get('quantity', 1))
+            if quantity < 1:
+                raise serializers.ValidationError({
+                    'quantity': _('Quantity must be a positive integer')
+                })
+        except ValueError:
+            raise serializers.ValidationError({
+                'quantity': _('Quantity must be an integer')
+            })
+
         part: Part = self.get_object()
         pricing = part.get_price_range(
             quantity, buy=True, bom=True, internal=True, purchase=True, info=True
