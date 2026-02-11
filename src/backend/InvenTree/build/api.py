@@ -899,12 +899,36 @@ class BuildItemOutputOptions(OutputConfiguration):
     """Output options for BuildItem endpoint."""
 
     OPTIONS = [
-        InvenTreeOutputOption('part_detail'),
-        InvenTreeOutputOption('location_detail'),
-        InvenTreeOutputOption('stock_detail'),
-        InvenTreeOutputOption('build_detail'),
-        InvenTreeOutputOption('supplier_part_detail'),
-        InvenTreeOutputOption('install_into_detail'),
+        InvenTreeOutputOption(
+            'part_detail',
+            default=False,
+            description='Include detailed information about the part associated with this build item.',
+        ),
+        InvenTreeOutputOption(
+            'location_detail',
+            default=False,
+            description='Include detailed information about the location of the allocated stock item.',
+        ),
+        InvenTreeOutputOption(
+            'stock_detail',
+            default=False,
+            description='Include detailed information about the allocated stock item.',
+        ),
+        InvenTreeOutputOption(
+            'build_detail',
+            default=False,
+            description='Include detailed information about the associated build order.',
+        ),
+        InvenTreeOutputOption(
+            'supplier_part_detail',
+            default=False,
+            description='Include detailed information about the supplier part associated with this build item.',
+        ),
+        InvenTreeOutputOption(
+            'install_into_detail',
+            default=False,
+            description='Include detailed information about the build output for this build item.',
+        ),
     ]
 
 
