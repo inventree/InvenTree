@@ -249,6 +249,9 @@ export function StockTrackingTable({
       StockColumn({
         title: t`Stock Item`,
         accessor: 'item_detail',
+        nullMessage: (
+          <Text size='sm' c='red'>{t`Stock item no longer exists`}</Text>
+        ),
         sortable: false,
         switchable: false,
         hidden: !partId

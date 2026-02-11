@@ -108,7 +108,7 @@ export function PartColumn(props: PartColumnProps): TableColumn {
 }
 
 export type StockColumnProps = TableColumnProps & {
-  nullMessage?: string;
+  nullMessage?: string | ReactNode;
 };
 
 // Render a StockItem instance within a table
@@ -131,7 +131,7 @@ export function StockColumn(props: StockColumnProps): TableColumn {
       let text = formatDecimal(quantity);
 
       // Handle case where stock item detail is not provided
-      if (!record || !record.pk) {
+      if (!stock_item || !stock_item.pk) {
         return props.nullMessage ?? '-';
       }
 

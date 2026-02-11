@@ -470,8 +470,8 @@ test('Stock - Tracking', async ({ browser }) => {
     .getByRole('cell', { name: 'Thumbnail Blue Widget' })
     .first()
     .waitFor();
-  await page.getByRole('cell', { name: 'Item ID 232' }).first().waitFor();
-  await page.getByRole('cell', { name: 'Serial #116' }).first().waitFor();
+
+  await page.getByText('# 162').first().waitFor();
 });
 
 test('Stock - Location', async ({ browser }) => {
