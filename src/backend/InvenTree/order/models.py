@@ -432,7 +432,8 @@ class Order(
         Makes use of the overdue_filter() method to avoid code duplication
         """
         return (
-            self.__class__.objects.filter(pk=self.pk)
+            self.__class__.objects
+            .filter(pk=self.pk)
             .filter(self.__class__.overdue_filter())
             .exists()
         )
@@ -1989,17 +1990,16 @@ class PurchaseOrderLineItem(OrderLineItem):
     def get_destination(self):
         """Show where the line item is or should be placed.
 
-        NOTE: If a line item gets split when received, only an arbitrary
-              stock items location will be reported as the location for the
-              entire line.
+        1. If a destination is specified against this line item, return that.
+        2. If a destination is specified against the PurchaseOrderPart, return that.
+        3. If a default location is specified against the linked Part, return that.
         """
-        for item in stock.models.StockItem.objects.filter(
-            supplier_part=self.part, purchase_order=self.order
-        ):
-            if item.location:
-                return item.location
         if self.destination:
             return self.destination
+
+        if self.order.destination:
+            return self.order.destination
+
         if self.part and self.part.part and self.part.part.default_location:
             return self.part.part.default_location
 
@@ -2910,18 +2910,23 @@ class ReturnOrder(TotalPriceMixin, Order):
             line.item = stock_item
             line.save()
 
-        status = kwargs.get('status')
+        status = kwargs.get('status', StockStatus.QUARANTINED.value)
 
         if status is None:
             status = StockStatus.QUARANTINED.value
 
-        deltas = {'status': status, 'returnorder': self.pk, 'location': location.pk}
+        deltas = {
+            'status': status,
+            'returnorder': self.pk,
+            'location': location.pk,
+            'quantity': float(line.quantity),
+        }
 
         if stock_item.customer:
             deltas['customer'] = stock_item.customer.pk
 
         # Update the StockItem
-        stock_item.status = status
+        stock_item.set_status(status)
         stock_item.location = location
         stock_item.customer = None
         stock_item.sales_order = None
@@ -3022,7 +3027,7 @@ class ReturnOrderLineItem(StatusCodeMixin, OrderLineItem):
         null=True,
         blank=True,
         verbose_name=_('Received Date'),
-        help_text=_('The date this this return item was received'),
+        help_text=_('The date this return item was received'),
     )
 
     @property

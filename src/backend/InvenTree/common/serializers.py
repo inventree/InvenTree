@@ -12,8 +12,8 @@ from error_report.models import Error
 from flags.state import flag_state
 from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied
-from taggit.serializers import TagListSerializerField
 
+import common.filters
 import common.models as common_models
 import common.validators
 import generic.states.custom
@@ -88,6 +88,18 @@ class SettingsSerializer(InvenTreeModelSerializer):
 
     choices = serializers.SerializerMethodField()
 
+    def get_choices(self, obj) -> list:
+        """Returns the choices available for a given item."""
+        results = []
+
+        choices = obj.choices()
+
+        if choices:
+            for choice in choices:
+                results.append({'value': choice[0], 'display_name': choice[1]})
+
+        return results
+
     model_name = serializers.CharField(read_only=True, allow_null=True)
 
     model_filters = serializers.DictField(read_only=True)
@@ -108,17 +120,26 @@ class SettingsSerializer(InvenTreeModelSerializer):
 
     typ = serializers.CharField(read_only=True)
 
-    def get_choices(self, obj) -> list:
-        """Returns the choices available for a given item."""
-        results = []
+    confirm = serializers.BooleanField(
+        read_only=True,
+        help_text=_('Indicates if changing this setting requires confirmation'),
+    )
 
-        choices = obj.choices()
+    confirm_text = serializers.CharField(read_only=True)
 
-        if choices:
-            for choice in choices:
-                results.append({'value': choice[0], 'display_name': choice[1]})
-
-        return results
+    def is_valid(self, *, raise_exception=False):
+        """Validate the setting, including confirmation if required."""
+        ret = super().is_valid(raise_exception=raise_exception)
+        # Check if confirmation was provided if required
+        if self.instance.confirm():
+            req_data = self.context['request'].data
+            if not 'manual_confirm' in req_data or not req_data['manual_confirm']:
+                raise serializers.ValidationError({
+                    'manual_confirm': _(
+                        'This setting requires confirmation before changing. Please confirm the change.'
+                    )
+                })
+        return ret
 
 
 class GlobalSettingsSerializer(SettingsSerializer):
@@ -141,6 +162,8 @@ class GlobalSettingsSerializer(SettingsSerializer):
             'api_url',
             'typ',
             'read_only',
+            'confirm',
+            'confirm_text',
         ]
 
     read_only = serializers.SerializerMethodField(
@@ -184,6 +207,8 @@ class UserSettingsSerializer(SettingsSerializer):
             'model_name',
             'api_url',
             'typ',
+            'confirm',
+            'confirm_text',
         ]
 
     user = serializers.PrimaryKeyRelatedField(read_only=True)
@@ -232,6 +257,8 @@ class GenericReferencedSettingSerializer(SettingsSerializer):
                 'typ',
                 'units',
                 'required',
+                'confirm',
+                'confirm_text',
             ]
 
         # set Meta class
@@ -612,7 +639,7 @@ class FailedTaskSerializer(InvenTreeModelSerializer):
     result = serializers.CharField()
 
 
-class AttachmentSerializer(InvenTreeModelSerializer):
+class AttachmentSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
     """Serializer class for the Attachment model."""
 
     class Meta:
@@ -645,7 +672,7 @@ class AttachmentSerializer(InvenTreeModelSerializer):
                 'model_type'
             ].choices = common.validators.attachment_model_options()
 
-    tags = TagListSerializerField(required=False)
+    tags = common.filters.enable_tags_filter()
 
     user_detail = UserSerializer(source='upload_user', read_only=True, many=False)
 
@@ -808,11 +835,17 @@ class ParameterSerializer(
     )
 
     updated_by_detail = enable_filter(
-        UserSerializer(source='updated_by', read_only=True, many=False), True
+        UserSerializer(
+            source='updated_by', read_only=True, allow_null=True, many=False
+        ),
+        True,
+        prefetch_fields=['updated_by'],
     )
 
     template_detail = enable_filter(
-        ParameterTemplateSerializer(source='template', read_only=True, many=False), True
+        ParameterTemplateSerializer(source='template', read_only=True, many=False),
+        True,
+        prefetch_fields=['template', 'template__model_type'],
     )
 
 

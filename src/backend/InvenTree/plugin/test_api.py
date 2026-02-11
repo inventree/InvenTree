@@ -17,7 +17,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
 
     def setUp(self):
         """Setup for all tests."""
-        self.MSG_NO_PKG = 'Either packagename of URL must be provided'
+        self.MSG_NO_PKG = 'Either packagename or URL must be provided'
 
         self.PKG_NAME = 'inventree-brother-plugin'
         self.PKG_URL = 'git+https://github.com/inventree/inventree-brother-plugin'
@@ -470,8 +470,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         cfg = PluginConfig.objects.filter(key='sample').first()
         self.assertIsNotNone(cfg)
 
-        url = reverse('api-plugin-metadata', kwargs={'plugin': cfg.key})
-        self.get(url, expected_code=200)
+        self.get(f'/api/plugins/{cfg.key}/metadata/', expected_code=200, follow=True)
 
     def test_settings(self):
         """Test settings endpoint for plugin."""

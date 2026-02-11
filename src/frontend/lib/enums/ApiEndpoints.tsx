@@ -20,6 +20,7 @@ export enum ApiEndpoints {
   user_simple_login = 'email/generate/',
 
   // User auth endpoints
+  auth_base = '/auth/',
   user_reset = 'auth/v1/auth/password/request',
   user_reset_set = 'auth/v1/auth/password/reset',
   auth_pwd_change = 'auth/v1/account/password/change',
@@ -119,6 +120,7 @@ export enum ApiEndpoints {
   part_pricing_internal = 'part/internal-price/',
   part_pricing_sale = 'part/sale-price/',
   part_stocktake_list = 'part/stocktake/',
+  part_stocktake_generate = 'part/stocktake/generate/',
   category_list = 'part/category/',
   category_tree = 'part/category/tree/',
   category_parameter_list = 'part/category/parameters/',

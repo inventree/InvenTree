@@ -9,12 +9,13 @@ import GetStartedWidget from './widgets/GetStartedWidget';
 import LanguageSelectDashboardWidget from './widgets/LanguageSelectWidget';
 import NewsWidget from './widgets/NewsWidget';
 import QueryCountDashboardWidget from './widgets/QueryCountDashboardWidget';
+import StocktakeDashboardWidget from './widgets/StocktakeDashboardWidget';
 
 /**
  *
  * @returns A list of built-in dashboard widgets which display the number of results for a particular query
  */
-export function BuiltinQueryCountWidgets(): DashboardWidgetProps[] {
+function BuiltinQueryCountWidgets(): DashboardWidgetProps[] {
   const user = useUserState.getState();
   const globalSettings = useGlobalSettingsState.getState();
 
@@ -186,7 +187,7 @@ export function BuiltinQueryCountWidgets(): DashboardWidgetProps[] {
   });
 }
 
-export function BuiltinGettingStartedWidgets(): DashboardWidgetProps[] {
+function BuiltinGettingStartedWidgets(): DashboardWidgetProps[] {
   return [
     {
       label: 'gstart',
@@ -207,8 +208,12 @@ export function BuiltinGettingStartedWidgets(): DashboardWidgetProps[] {
   ];
 }
 
-export function BuiltinSettingsWidgets(): DashboardWidgetProps[] {
+function BuiltinSettingsWidgets(): DashboardWidgetProps[] {
   return [ColorToggleDashboardWidget(), LanguageSelectDashboardWidget()];
+}
+
+function BuiltinActionWidgets(): DashboardWidgetProps[] {
+  return [StocktakeDashboardWidget()];
 }
 
 /**
@@ -219,6 +224,7 @@ export default function DashboardWidgetLibrary(): DashboardWidgetProps[] {
   return [
     ...BuiltinQueryCountWidgets(),
     ...BuiltinGettingStartedWidgets(),
-    ...BuiltinSettingsWidgets()
+    ...BuiltinSettingsWidgets(),
+    ...BuiltinActionWidgets()
   ];
 }

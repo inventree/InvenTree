@@ -24,7 +24,7 @@ from build.models import Build, BuildItem, BuildLine
 from build.status_codes import BuildStatus, BuildStatusGroups
 from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import StatusView
-from InvenTree.api import BulkDeleteMixin, MetadataView, ParameterListMixin
+from InvenTree.api import BulkDeleteMixin, ParameterListMixin, meta_path
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import (
     SEARCH_ORDER_FILTER_ALIAS,
@@ -317,15 +317,7 @@ class BuildMixin:
         """Return the queryset for the Build API endpoints."""
         queryset = super().get_queryset()
 
-        queryset = queryset.prefetch_related(
-            'responsible',
-            'issued_by',
-            'build_lines',
-            'build_lines__bom_item',
-            'build_lines__build',
-            'part',
-            'part__pricing_data',
-        )
+        queryset = build.serializers.BuildSerializer.annotate_queryset(queryset)
 
         return queryset
 
@@ -354,6 +346,8 @@ class BuildList(
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
     ordering_fields = [
         'reference',
+        'part',
+        'IPN',
         'part__name',
         'status',
         'creation_date',
@@ -372,6 +366,8 @@ class BuildList(
     ordering_field_aliases = {
         'reference': ['reference_int', 'reference'],
         'project_code': ['project_code__code'],
+        'part': ['part__name'],
+        'IPN': ['part__IPN'],
     }
     ordering = '-reference'
     search_fields = [
@@ -383,14 +379,6 @@ class BuildList(
         'project_code__code',
         'priority',
     ]
-
-    def get_queryset(self):
-        """Override the queryset filtering, as some of the fields don't natively play nicely with DRF."""
-        queryset = super().get_queryset().select_related('part')
-
-        queryset = build.serializers.BuildSerializer.annotate_queryset(queryset)
-
-        return queryset
 
     def get_serializer(self, *args, **kwargs):
         """Add extra context information to the endpoint serializer."""
@@ -575,26 +563,27 @@ class BuildLineOutputOptions(OutputConfiguration):
         InvenTreeOutputOption(
             'bom_item_detail',
             description='Include detailed information about the BOM item linked to this build line.',
-            default=True,
+            default=False,
         ),
         InvenTreeOutputOption(
             'assembly_detail',
             description='Include brief details of the assembly (parent part) related to the BOM item in this build line.',
-            default=True,
+            default=False,
         ),
         InvenTreeOutputOption(
             'part_detail',
             description='Include detailed information about the specific part being built or consumed in this build line.',
-            default=True,
+            default=False,
         ),
         InvenTreeOutputOption(
             'build_detail',
             description='Include detailed information about the associated build order.',
+            default=False,
         ),
         InvenTreeOutputOption(
             'allocations',
             description='Include allocation details showing which stock items are allocated to this build line.',
-            default=True,
+            default=False,
         ),
     ]
 
@@ -609,6 +598,7 @@ class BuildLineList(
     output_options = BuildLineOutputOptions
     ordering_fields = [
         'part',
+        'IPN',
         'allocated',
         'category',
         'consumed',
@@ -627,6 +617,7 @@ class BuildLineList(
 
     ordering_field_aliases = {
         'part': 'bom_item__sub_part__name',
+        'IPN': 'bom_item__sub_part__IPN',
         'reference': 'bom_item__reference',
         'unit_quantity': 'bom_item__quantity',
         'category': 'bom_item__sub_part__category__name',
@@ -817,11 +808,15 @@ class BuildCancel(BuildOrderContextMixin, CreateAPI):
     serializer_class = build.serializers.BuildCancelSerializer
 
 
-class BuildItemDetail(RetrieveUpdateDestroyAPI):
-    """API endpoint for detail view of a BuildItem object."""
+class BuildItemMixin:
+    """Mixin class for BuildItem API endpoints."""
 
-    queryset = BuildItem.objects.all()
+    queryset = BuildItem.objects.all().prefetch_related('stock_item__location')
     serializer_class = build.serializers.BuildItemSerializer
+
+
+class BuildItemDetail(BuildItemMixin, RetrieveUpdateDestroyAPI):
+    """API endpoint for detail view of a BuildItem object."""
 
 
 class BuildItemFilter(FilterSet):
@@ -908,15 +903,45 @@ class BuildItemOutputOptions(OutputConfiguration):
     """Output options for BuildItem endpoint."""
 
     OPTIONS = [
-        InvenTreeOutputOption('part_detail'),
-        InvenTreeOutputOption('location_detail'),
-        InvenTreeOutputOption('stock_detail'),
-        InvenTreeOutputOption('build_detail'),
+        InvenTreeOutputOption(
+            'part_detail',
+            default=False,
+            description='Include detailed information about the part associated with this build item.',
+        ),
+        InvenTreeOutputOption(
+            'location_detail',
+            default=False,
+            description='Include detailed information about the location of the allocated stock item.',
+        ),
+        InvenTreeOutputOption(
+            'stock_detail',
+            default=False,
+            description='Include detailed information about the allocated stock item.',
+        ),
+        InvenTreeOutputOption(
+            'build_detail',
+            default=False,
+            description='Include detailed information about the associated build order.',
+        ),
+        InvenTreeOutputOption(
+            'supplier_part_detail',
+            default=False,
+            description='Include detailed information about the supplier part associated with this build item.',
+        ),
+        InvenTreeOutputOption(
+            'install_into_detail',
+            default=False,
+            description='Include detailed information about the build output for this build item.',
+        ),
     ]
 
 
 class BuildItemList(
-    DataExportViewMixin, OutputOptionsMixin, BulkDeleteMixin, ListCreateAPI
+    BuildItemMixin,
+    DataExportViewMixin,
+    OutputOptionsMixin,
+    BulkDeleteMixin,
+    ListCreateAPI,
 ):
     """API endpoint for accessing a list of BuildItem objects.
 
@@ -925,8 +950,6 @@ class BuildItemList(
     """
 
     output_options = BuildItemOutputOptions
-    queryset = BuildItem.objects.all()
-    serializer_class = build.serializers.BuildItemSerializer
     filterset_class = BuildItemFilter
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
@@ -934,26 +957,9 @@ class BuildItemList(
         """Override the queryset method, to perform custom prefetch."""
         queryset = super().get_queryset()
 
-        queryset = queryset.select_related(
-            'build_line',
-            'build_line__build',
-            'build_line__build__part',
-            'build_line__build__responsible',
-            'build_line__build__issued_by',
-            'build_line__build__project_code',
-            'build_line__build__part__pricing_data',
-            'build_line__bom_item',
-            'build_line__bom_item__part',
-            'build_line__bom_item__sub_part',
-            'install_into',
-            'stock_item',
-            'stock_item__location',
-            'stock_item__part',
-            'stock_item__supplier_part__part',
-            'stock_item__supplier_part__supplier',
-            'stock_item__supplier_part__manufacturer_part',
-            'stock_item__supplier_part__manufacturer_part__manufacturer',
-        ).prefetch_related('stock_item__location__tags', 'stock_item__tags')
+        queryset = queryset.select_related('install_into').prefetch_related(
+            'build_line', 'build_line__build', 'build_line__bom_item'
+        )
 
         return queryset
 
@@ -991,11 +997,7 @@ build_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(model=BuildItem),
-                        name='api-build-item-metadata',
-                    ),
+                    meta_path(BuildItem),
                     path('', BuildItemDetail.as_view(), name='api-build-item-detail'),
                 ]),
             ),
@@ -1038,11 +1040,7 @@ build_api_urls = [
             path('finish/', BuildFinish.as_view(), name='api-build-finish'),
             path('cancel/', BuildCancel.as_view(), name='api-build-cancel'),
             path('unallocate/', BuildUnallocate.as_view(), name='api-build-unallocate'),
-            path(
-                'metadata/',
-                MetadataView.as_view(model=Build),
-                name='api-build-metadata',
-            ),
+            meta_path(Build),
             path('', BuildDetail.as_view(), name='api-build-detail'),
         ]),
     ),

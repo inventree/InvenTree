@@ -7,6 +7,7 @@ from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db.models import Q
+from django.http import JsonResponse
 from django.http.response import HttpResponse
 from django.urls import include, path, re_path
 from django.utils.decorators import method_decorator
@@ -33,11 +34,18 @@ import common.filters
 import common.models
 import common.serializers
 import InvenTree.conversion
+import InvenTree.ready
 from common.icons import get_icon_packs
 from common.settings import get_global_setting
 from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import urlpattern as generic_states_api_urls
-from InvenTree.api import BulkCreateMixin, BulkDeleteMixin, MetadataView
+from InvenTree.api import (
+    BulkCreateMixin,
+    BulkDeleteMixin,
+    GenericMetadataView,
+    SimpleGenericMetadataView,
+    meta_path,
+)
 from InvenTree.config import CONFIG_LOOKUPS
 from InvenTree.filters import (
     ORDER_FILTER,
@@ -848,7 +856,9 @@ class ParameterTemplateFilter(FilterSet):
 class ParameterTemplateMixin:
     """Mixin class for ParameterTemplate views."""
 
-    queryset = common.models.ParameterTemplate.objects.all()
+    queryset = common.models.ParameterTemplate.objects.all().prefetch_related(
+        'model_type'
+    )
     serializer_class = common.serializers.ParameterTemplateSerializer
     permission_classes = [IsAuthenticatedOrReadScope]
 
@@ -891,7 +901,7 @@ class ParameterFilter(FilterSet):
 class ParameterMixin:
     """Mixin class for Parameter views."""
 
-    queryset = common.models.Parameter.objects.all()
+    queryset = common.models.Parameter.objects.all().prefetch_related('model_type')
     serializer_class = common.serializers.ParameterSerializer
     permission_classes = [IsAuthenticatedOrReadScope]
 
@@ -1063,6 +1073,48 @@ class TestEmail(CreateAPI):
             )  # pragma: no cover
 
 
+class HealthCheckStatusSerializer(serializers.Serializer):
+    """Status of the overall system health."""
+
+    status = serializers.ChoiceField(
+        help_text='Health status of the InvenTree server',
+        choices=['ok', 'loading'],
+        read_only=True,
+        default='ok',
+    )
+
+
+class HealthCheckView(APIView):
+    """Simple JSON endpoint for InvenTree health check.
+
+    Intended to be used by external services to confirm that the InvenTree server is running.
+    """
+
+    permission_classes = [AllowAnyOrReadScope]
+
+    @extend_schema(
+        responses={
+            200: OpenApiResponse(
+                response=HealthCheckStatusSerializer,
+                description='InvenTree server health status',
+            )
+        }
+    )
+    def get(self, request, *args, **kwargs):
+        """Simple health check endpoint for monitoring purposes.
+
+        Use the root API endpoint for more detailed information (using an authenticated request).
+        """
+        status = (
+            InvenTree.ready.isPluginRegistryLoaded()
+            if settings.PLUGINS_ENABLED
+            else True
+        )
+        return JsonResponse(
+            {'status': 'ok' if status else 'loading'}, status=200 if status else 503
+        )
+
+
 selection_urls = [
     path(
         '<int:pk>/',
@@ -1152,11 +1204,7 @@ common_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(model=common.models.Attachment),
-                        name='api-attachment-metadata',
-                    ),
+                    meta_path(common.models.Attachment),
                     path('', AttachmentDetail.as_view(), name='api-attachment-detail'),
                 ]),
             ),
@@ -1173,13 +1221,7 @@ common_api_urls = [
                     path(
                         '<int:pk>/',
                         include([
-                            path(
-                                'metadata/',
-                                MetadataView.as_view(
-                                    model=common.models.ParameterTemplate
-                                ),
-                                name='api-parameter-template-metadata',
-                            ),
+                            meta_path(common.models.ParameterTemplate),
                             path(
                                 '',
                                 ParameterTemplateDetail.as_view(),
@@ -1197,11 +1239,7 @@ common_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(model=common.models.Parameter),
-                        name='api-parameter-metadata',
-                    ),
+                    meta_path(common.models.Parameter),
                     path('', ParameterDetail.as_view(), name='api-parameter-detail'),
                 ]),
             ),
@@ -1215,6 +1253,22 @@ common_api_urls = [
             path('', ErrorMessageList.as_view(), name='api-error-list'),
         ]),
     ),
+    # Metadata
+    path(
+        'metadata/',
+        include([
+            path(
+                '<str:model>/<str:lookup_field>/<str:lookup_value>/',
+                GenericMetadataView.as_view(),
+                name='api-generic-metadata',
+            ),
+            path(
+                '<str:model>/<int:pk>/',
+                SimpleGenericMetadataView.as_view(),
+                name='api-generic-metadata',
+            ),
+        ]),
+    ),
     # Project codes
     path(
         'project-code/',
@@ -1222,14 +1276,7 @@ common_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(
-                            model=common.models.ProjectCode,
-                            permission_classes=[IsStaffOrReadOnlyScope],
-                        ),
-                        name='api-project-code-metadata',
-                    ),
+                    meta_path(common.models.ProjectCode),
                     path(
                         '', ProjectCodeDetail.as_view(), name='api-project-code-detail'
                     ),
@@ -1342,6 +1389,11 @@ common_api_urls = [
             ),
             path('', DataOutputList.as_view(), name='api-data-output-list'),
         ]),
+    ),
+    # System APIs (related to basic system functions)
+    path(
+        'system/',
+        include([path('health/', HealthCheckView.as_view(), name='api-system-health')]),
     ),
 ]
 

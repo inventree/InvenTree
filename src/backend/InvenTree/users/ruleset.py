@@ -74,6 +74,7 @@ def get_ruleset_models() -> dict:
             'oauth2_provider_idtoken',
             'oauth2_provider_accesstoken',
             'oauth2_provider_refreshtoken',
+            'oauth2_provider_devicegrant',
             # Plugins
             'plugin_pluginconfig',
             'plugin_pluginsetting',

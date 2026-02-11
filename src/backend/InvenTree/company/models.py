@@ -238,8 +238,14 @@ class Company(
 
     @property
     def primary_address(self):
-        """Returns address object of primary address. Parsed by serializer."""
-        return Address.objects.filter(company=self.id).filter(primary=True).first()
+        """Returns address object of primary address for this Company."""
+        # We may have a pre-fetched primary address list
+        if hasattr(self, 'primary_address_list'):
+            addresses = self.primary_address_list
+            return addresses[0] if len(addresses) > 0 else None
+
+        # Otherwise, query the database
+        return self.addresses.filter(primary=True).first()
 
     @property
     def currency_code(self):
@@ -585,23 +591,6 @@ class ManufacturerPart(
         return s
 
 
-class SupplierPartManager(models.Manager):
-    """Define custom SupplierPart objects manager.
-
-    The main purpose of this manager is to improve database hit as the
-    SupplierPart model involves A LOT of foreign keys lookups
-    """
-
-    def get_queryset(self):
-        """Prefetch related fields when querying against the SupplierPart model."""
-        # Always prefetch related models
-        return (
-            super()
-            .get_queryset()
-            .prefetch_related('part', 'supplier', 'manufacturer_part__manufacturer')
-        )
-
-
 class SupplierPart(
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeParameterMixin,
@@ -640,8 +629,6 @@ class SupplierPart(
 
         # This model was moved from the 'Part' app
         db_table = 'part_supplierpart'
-
-    objects = SupplierPartManager()
 
     tags = TaggableManager(blank=True)
 

@@ -275,7 +275,8 @@ export default function SalesOrderShipmentDetail() {
       }),
       NotesPanel({
         model_type: ModelType.salesordershipment,
-        model_id: shipment.pk
+        model_id: shipment.pk,
+        has_note: !!shipment.notes
       })
     ];
   }, [isPending, shipment, detailsPanel]);

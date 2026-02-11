@@ -16,7 +16,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission, User
 from django.db import connections, models
 from django.http.response import StreamingHttpResponse
-from django.test import TestCase
+from django.test import TestCase, tag
 from django.test.utils import CaptureQueriesContext, override_settings
 from django.urls import reverse
 
@@ -655,7 +655,9 @@ class InvenTreeAPITestCase(
         # Append URL params
         url += '?' + '&'.join([f'{key}={value}' for key, value in params.items()])
 
-        response = self.client.get(url, data=None, format='json')
+        response = self.get(
+            url, data=None, format='json', expected_code=expected_code, **kwargs
+        )
         self.check_response(url, response, expected_code=expected_code)
 
         # Check that the response is of the correct type
@@ -728,6 +730,48 @@ class InvenTreeAPITestCase(
     def assertDictContainsSubset(self, a, b):
         """Assert that dictionary 'a' is a subset of dictionary 'b'."""
         self.assertEqual(b, b | a)
+
+    def run_ordering_test(
+        self, url: str, ordering_field: str, params: Optional[dict] = None
+    ):
+        """Run a test to check that the results are ordered correctly.
+
+        Arguments:
+            url: The URL to test
+            ordering_field: The field to order by (e.g. 'name')
+            params: Additional parameters to include in the request (e.g. filters)
+
+        Process:
+            - Run a GET request against the provided URL with the appropriate ordering parameter
+            - Run a separate GET request with the opposite ordering parameter (e.g. '-name')
+            - Check that the results are ordered differently in each case
+        """
+        query_params = {**(params or {})}
+
+        pk_values = set()
+
+        for ordering in [None, ordering_field, f'-{ordering_field}']:
+            response = self.get(
+                url,
+                data={**query_params, 'ordering': ordering}
+                if ordering
+                else query_params,
+                expected_code=200,
+            )
+
+            self.assertGreater(
+                len(response.data),
+                1,
+                f'No data returned from {url} with ordering={ordering}',
+            )
+
+            pk_values.add(response.data[0]['pk'])
+
+        self.assertGreater(
+            len(pk_values),
+            1,
+            f"Ordering by '{ordering_field}' does not change the order of results at {url}",
+        )
 
     def run_output_test(
         self,
@@ -824,3 +868,11 @@ class AdminTestCase(InvenTreeAPITestCase):
 def in_env_context(envs):
     """Patch the env to include the given dict."""
     return mock.patch.dict(os.environ, envs)
+
+
+@tag('performance_test')
+class InvenTreeAPIPerformanceTestCase(InvenTreeAPITestCase):
+    """Base class for InvenTree API performance tests."""
+
+    MAX_QUERY_COUNT = 50
+    MAX_QUERY_TIME = 60

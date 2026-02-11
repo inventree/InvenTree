@@ -93,10 +93,10 @@ export function PartColumn(props: PartColumnProps): TableColumn {
     switchable: false,
     minWidth: '175px',
     render: (record: any) => {
-      const part =
-        props.part === ''
-          ? record
-          : resolveItem(record, props.part ?? props.accessor ?? 'part_detail');
+      const part = resolveItem(
+        record,
+        props.part ?? props.accessor ?? 'part_detail'
+      );
 
       return RenderPartColumn({
         part: part,
@@ -104,6 +104,174 @@ export function PartColumn(props: PartColumnProps): TableColumn {
       });
     },
     ...props
+  };
+}
+
+export type StockColumnProps = TableColumnProps & {
+  nullMessage?: string | ReactNode;
+};
+
+// Render a StockItem instance within a table
+export function StockColumn(props: StockColumnProps): TableColumn {
+  return {
+    accessor: props.accessor ?? 'stock_item',
+    title: t`Stock Item`,
+    ...props,
+    render: (record: any) => {
+      const stock_item =
+        resolveItem(record, props.accessor ?? 'stock_item_detail') ?? {};
+      const part = stock_item.part_detail ?? {};
+
+      const quantity = stock_item.quantity ?? 0;
+      const allocated = stock_item.allocated ?? 0;
+      const available = quantity - allocated;
+
+      const extra: ReactNode[] = [];
+      let color = undefined;
+      let text = formatDecimal(quantity);
+
+      // Handle case where stock item detail is not provided
+      if (!stock_item || !stock_item.pk) {
+        return props.nullMessage ?? '-';
+      }
+
+      // Override with serial number if available
+      if (stock_item.serial && quantity == 1) {
+        text = `# ${stock_item.serial}`;
+      }
+
+      if (record.is_building) {
+        color = 'blue';
+        extra.push(
+          <Text
+            key='production'
+            size='sm'
+          >{t`This stock item is in production`}</Text>
+        );
+      } else if (record.sales_order) {
+        extra.push(
+          <Text
+            key='sales-order'
+            size='sm'
+          >{t`This stock item has been assigned to a sales order`}</Text>
+        );
+      } else if (record.customer) {
+        extra.push(
+          <Text
+            key='customer'
+            size='sm'
+          >{t`This stock item has been assigned to a customer`}</Text>
+        );
+      } else if (record.belongs_to) {
+        extra.push(
+          <Text
+            key='belongs-to'
+            size='sm'
+          >{t`This stock item is installed in another stock item`}</Text>
+        );
+      } else if (record.consumed_by) {
+        extra.push(
+          <Text
+            key='consumed-by'
+            size='sm'
+          >{t`This stock item has been consumed by a build order`}</Text>
+        );
+      } else if (!record.in_stock) {
+        extra.push(
+          <Text
+            key='unavailable'
+            size='sm'
+          >{t`This stock item is unavailable`}</Text>
+        );
+      }
+
+      if (record.expired) {
+        extra.push(
+          <Text key='expired' size='sm'>{t`This stock item has expired`}</Text>
+        );
+      } else if (record.stale) {
+        extra.push(
+          <Text key='stale' size='sm'>{t`This stock item is stale`}</Text>
+        );
+      }
+
+      if (record.in_stock) {
+        if (allocated > 0) {
+          if (allocated > quantity) {
+            color = 'red';
+            extra.push(
+              <Text
+                key='over-allocated'
+                size='sm'
+              >{t`This stock item is over-allocated`}</Text>
+            );
+          } else if (allocated == quantity) {
+            color = 'orange';
+            extra.push(
+              <Text
+                key='fully-allocated'
+                size='sm'
+              >{t`This stock item is fully allocated`}</Text>
+            );
+          } else {
+            extra.push(
+              <Text
+                key='partially-allocated'
+                size='sm'
+              >{t`This stock item is partially allocated`}</Text>
+            );
+          }
+        }
+
+        if (available != quantity) {
+          if (available > 0) {
+            extra.push(
+              <Text key='available' size='sm' c='orange'>
+                {`${t`Available`}: ${formatDecimal(available)}`}
+              </Text>
+            );
+          } else {
+            extra.push(
+              <Text
+                key='no-stock'
+                size='sm'
+                c='red'
+              >{t`No stock available`}</Text>
+            );
+          }
+        }
+
+        if (quantity <= 0) {
+          extra.push(
+            <Text
+              key='depleted'
+              size='sm'
+            >{t`This stock item has been depleted`}</Text>
+          );
+        }
+      }
+
+      if (!record.in_stock) {
+        color = 'red';
+      }
+
+      return (
+        <TableHoverCard
+          value={
+            <Group gap='xs' justify='left' wrap='nowrap'>
+              <Text c={color}>{text}</Text>
+              {part.units && (
+                <Text size='xs' c={color}>
+                  [{part.units}]
+                </Text>
+              )}
+            </Group>
+          }
+          title={t`Stock Information`}
+          extra={extra}
+        />
+      );
+    }
   };
 }
 
@@ -344,6 +512,25 @@ export function LineItemsProgressColumn(props: TableColumnProps): TableColumn {
       <ProgressBar
         progressLabel={true}
         value={record.completed_lines}
+        maximum={record.line_items}
+      />
+    ),
+    ...props
+  };
+}
+
+export function AllocatedLinesProgressColumn(
+  props: TableColumnProps
+): TableColumn {
+  return {
+    accessor: 'allocated_lines',
+    sortable: true,
+    title: t`Allocated Lines`,
+    minWidth: 125,
+    render: (record: any) => (
+      <ProgressBar
+        progressLabel={true}
+        value={record.allocated_lines}
         maximum={record.line_items}
       />
     ),

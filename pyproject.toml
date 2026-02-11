@@ -97,7 +97,7 @@ skip-magic-trailing-comma = true
 line-ending = "auto"
 
 [tool.uv.pip]
-python-version = "3.11.0"
+python-version = "3.11"
 no-strip-extras=true
 generate-hashes=true
 
@@ -133,3 +133,9 @@ sections=["FUTURE","STDLIB","DJANGO","THIRDPARTY","FIRSTPARTY","LOCALFOLDER"]
 
 [tool.codespell]
 ignore-words-list = ["assertIn","SME","intoto","fitH"]
+
+[tool.pytest]
+django_find_project = false
+pythonpath = ["src/backend/InvenTree"]
+DJANGO_SETTINGS_MODULE = "InvenTree.settings"
+python_files = ["test*.py",]

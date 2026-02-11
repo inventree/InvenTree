@@ -152,7 +152,7 @@ export const globalSearch = async (page: Page, query: string) => {
 };
 
 export const deletePart = async (name: string) => {
-  const api = await createApi();
+  const api = await createApi({});
   const parts = await api
     .get('part/', {
       params: { search: name }
@@ -166,4 +166,17 @@ export const deletePart = async (name: string) => {
     const res = await api.delete(`part/${existingPart.pk}/`);
     expect(res.status()).toBe(204);
   }
+};
+
+// Click on the column sorting toggle
+export const toggleColumnSorting = async (page: Page, columnName: string) => {
+  // Click on the column header to toggle sorting
+  const regex = new RegExp(
+    `^${columnName}\\s*(Not sorted|Sorted ascending|Sorted descending)$`,
+    'i'
+  );
+
+  await page.getByRole('button', { name: regex }).click();
+  await page.waitForTimeout(50);
+  await page.waitForLoadState('networkidle');
 };

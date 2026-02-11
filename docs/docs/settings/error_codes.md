@@ -192,6 +192,13 @@ Therefore the registration user interface elements will not be shown.
 
 To enable registration, the email settings must be configured correctly. See  [email configuration](../start/config.md#email-settings).
 
+#### INVE-W12
+**Signup attempt blocked because registration is disabled - Backend**
+
+A user attempted to sign up but registration is currently disabled via the system settings. This is to prevent unauthorized or unwanted user registrations.
+
+To enable registration, adjust the relevant settings (for regular or SSO registration) to allow user signups.
+
 ### INVE-I (InvenTree Information)
 Information — These are not errors but information messages. They might point out potential issues or just provide information.
 

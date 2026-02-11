@@ -1,5 +1,6 @@
 """Tasks for automating certain actions and interacting with InvenTree from the CLI."""
 
+import datetime
 import json
 import os
 import pathlib
@@ -357,6 +358,26 @@ def manage_py_path():
     return manage_py_dir().joinpath('manage.py')
 
 
+def _frontend_info():
+    """Return the path of the frontend info directory."""
+    return manage_py_dir().joinpath('web', 'static', 'web', '.vite')
+
+
+def version_target_pth():
+    """Return the path of the target version file."""
+    return _frontend_info().joinpath('tag.txt')
+
+
+def version_sha_pth():
+    """Return the path of the SHA version file."""
+    return _frontend_info().joinpath('sha.txt')
+
+
+def version_source_pth():
+    """Return the path of the source version file."""
+    return _frontend_info().joinpath('source.txt')
+
+
 # endregion
 
 if __name__ in ['__main__', 'tasks']:
@@ -394,6 +415,54 @@ def manage(c, cmd, pty: bool = False, env=None):
         env (dict, optional): Environment variables to pass to the command. Defaults to None.
     """
     run(c, f'python3 manage.py {cmd}', manage_py_dir(), pty, env)
+
+
+def run_install(
+    c,
+    uv: bool,
+    install_file: Path,
+    run_preflight=True,
+    version_check=False,
+    pinned=True,
+):
+    """Run the installation of python packages from a requirements file."""
+    if version_check:
+        # Test if there is a version specific requirements file
+        sys_ver_s = python_version().split('.')
+        sys_string = f'{sys_ver_s[0]}.{sys_ver_s[1]}'
+        install_file_vers = install_file.parent.joinpath(
+            f'{install_file.stem}-{sys_string}{install_file.suffix}'
+        )
+        if install_file_vers.exists():
+            install_file = install_file_vers
+            info(f"Using version-specific requirements file '{install_file_vers}'")
+
+    info(f"Installing required python packages from '{install_file}'")
+    if not Path(install_file).is_file():
+        raise FileNotFoundError(f"Requirements file '{install_file}' not found")
+
+    # Install required Python packages with PIP
+    if not uv:
+        if run_preflight:
+            run(
+                c,
+                'pip3 install --no-cache-dir --disable-pip-version-check -U pip setuptools',
+            )
+        run(
+            c,
+            f'pip3 install --no-cache-dir --disable-pip-version-check -U {"--require-hashes" if pinned else ""} -r {install_file}',
+        )
+    else:
+        if run_preflight:
+            run(
+                c,
+                'pip3 install --no-cache-dir --disable-pip-version-check -U uv setuptools',
+            )
+            info('Installed package manager')
+        run(
+            c,
+            f'uv pip install -U {"--require-hashes" if pinned else ""} -r {install_file}',
+        )
 
 
 def yarn(c, cmd):
@@ -471,16 +540,7 @@ def plugins(c, uv=False):
         get_plugin_file,
     )
 
-    plugin_file = get_plugin_file()
-
-    info(f"Installing plugin packages from '{plugin_file}'")
-
-    # Install the plugins
-    if not uv:
-        run(c, f"pip3 install --disable-pip-version-check -U -r '{plugin_file}'")
-    else:
-        run(c, 'pip3 install --no-cache-dir --disable-pip-version-check uv')
-        run(c, f"uv pip install -r '{plugin_file}'")
+    run_install(c, uv, get_plugin_file(), run_preflight=False, pinned=False)
 
     # Collect plugin static files
     manage(c, 'collectplugins')
@@ -490,35 +550,26 @@ def plugins(c, uv=False):
     help={
         'uv': 'Use UV package manager (experimental)',
         'skip_plugins': 'Skip plugin installation',
+        'dev': 'Install development requirements instead of production requirements',
     }
 )
 @state_logger('TASK02')
-def install(c, uv=False, skip_plugins=False):
+def install(c, uv=False, skip_plugins=False, dev=False):
     """Installs required python packages."""
+    if dev:
+        run_install(
+            c,
+            uv,
+            local_dir().joinpath('src/backend/requirements-dev.txt'),
+            version_check=True,
+        )
+        success('Dependency installation complete')
+        return
+
     # Ensure path is relative to *this* directory
-    INSTALL_FILE = local_dir().joinpath('src/backend/requirements.txt')
-
-    info(f"Installing required python packages from '{INSTALL_FILE}'")
-
-    if not Path(INSTALL_FILE).is_file():
-        raise FileNotFoundError(f"Requirements file '{INSTALL_FILE}' not found")
-
-    # Install required Python packages with PIP
-    if not uv:
-        run(
-            c,
-            'pip3 install --no-cache-dir --disable-pip-version-check -U pip setuptools',
-        )
-        run(
-            c,
-            f'pip3 install --no-cache-dir --disable-pip-version-check -U --require-hashes -r {INSTALL_FILE}',
-        )
-    else:
-        run(
-            c,
-            'pip3 install --no-cache-dir --disable-pip-version-check -U uv setuptools',
-        )
-        run(c, f'uv pip install -U --require-hashes  -r {INSTALL_FILE}')
+    run_install(
+        c, uv, local_dir().joinpath('src/backend/requirements.txt'), version_check=True
+    )
 
     # Run plugins install
     if not skip_plugins:
@@ -537,10 +588,8 @@ def install(c, uv=False, skip_plugins=False):
 @task(help={'tests': 'Set up test dataset at the end'})
 def setup_dev(c, tests=False):
     """Sets up everything needed for the dev environment."""
-    info("Installing required python packages from 'src/backend/requirements-dev.txt'")
-
     # Install required Python packages with PIP
-    run(c, 'pip3 install -U --require-hashes -r src/backend/requirements-dev.txt')
+    install(c, uv=False, skip_plugins=True, dev=True)
 
     # Install pre-commit hook
     info('Installing pre-commit for checks before git commits...')
@@ -598,14 +647,19 @@ def clean_settings(c):
     success('Settings cleaned successfully')
 
 
-@task(help={'mail': "mail of the user who's MFA should be disabled"})
-def remove_mfa(c, mail=''):
+@task(
+    help={
+        'mail': "mail of the user who's MFA should be disabled",
+        'username': "username of the user who's MFA should be disabled",
+    }
+)
+def remove_mfa(c, mail='', username=''):
     """Remove MFA for a user."""
-    if not mail:
-        warning('You must provide a users mail')
+    if not mail and not username:
+        warning('You must provide a users mail or username')
         return
 
-    manage(c, f'remove_mfa {mail}')
+    manage(c, f'remove_mfa --mail {mail} --username {username}')
 
 
 @task(
@@ -1284,6 +1338,7 @@ def test_translations(c):
         'coverage': 'Run code coverage analysis (requires coverage package)',
         'translations': 'Compile translations before running tests',
         'keepdb': 'Keep the test database after running tests (default = False)',
+        'pytest': 'Use pytest to run tests',
     }
 )
 def test(
@@ -1296,6 +1351,7 @@ def test(
     coverage=False,
     translations=False,
     keepdb=False,
+    pytest=False,
 ):
     """Run unit-tests for InvenTree codebase.
 
@@ -1341,10 +1397,16 @@ def test(
     else:
         cmd += ' --exclude-tag migration_test'
 
+    cmd += ' --exclude-tag performance_test'
+
     if coverage:
         # Run tests within coverage environment, and generate report
         run(c, f'coverage run {manage_py_path()} {cmd}')
         run(c, 'coverage xml -i')
+    elif pytest:
+        # Use pytest to run the tests
+        migrate(c)
+        run(c, f'pytest {manage_py_path().parent.parent} --codspeed')
     else:
         # Run simple test runner, without coverage
         manage(c, cmd, pty=pty)
@@ -1529,6 +1591,13 @@ def version(c):
         get_static_dir,
     )
 
+    def get_value(fnc):
+        """Helper function to safely get value from function, catching import exceptions."""
+        try:
+            return fnc()
+        except (ModuleNotFoundError, ImportError):
+            return wrap_color('ENVIRONMENT ERROR', '91')
+
     # Gather frontend version information
     _, node, yarn = node_available(versions=True)
 
@@ -1561,17 +1630,17 @@ Invoke Tool {invoke_path}
 
 Installation paths:
 Base        {local_dir()}
-Config      {get_config_file()}
-Plugin File {get_plugin_file() or NOT_SPECIFIED}
-Media       {get_media_dir(error=False) or NOT_SPECIFIED}
-Static      {get_static_dir(error=False) or NOT_SPECIFIED}
-Backup      {get_backup_dir(error=False) or NOT_SPECIFIED}
+Config      {get_value(get_config_file)}
+Plugin File {get_value(get_plugin_file) or NOT_SPECIFIED}
+Media       {get_value(lambda: get_media_dir(error=False)) or NOT_SPECIFIED}
+Static      {get_value(lambda: get_static_dir(error=False)) or NOT_SPECIFIED}
+Backup      {get_value(lambda: get_backup_dir(error=False)) or NOT_SPECIFIED}
 
 Versions:
 InvenTree   {InvenTreeVersion.inventreeVersion()}
 API         {InvenTreeVersion.inventreeApiVersion()}
 Python      {python_version()}
-Django      {InvenTreeVersion.inventreeDjangoVersion()}
+Django      {get_value(InvenTreeVersion.inventreeDjangoVersion)}
 Node        {node if node else NA}
 Yarn        {yarn if yarn else NA}
 
@@ -1648,6 +1717,31 @@ def frontend_build(c):
     """
     info('Building frontend')
     yarn(c, 'yarn run build')
+
+    def write_info(path: Path, content: str):
+        """Helper function to write version content to file after cleaning it if it exists."""
+        if path.exists():
+            path.unlink()
+        path.write_text(content, encoding='utf-8')
+
+    # Write version marker
+    try:
+        import src.backend.InvenTree.InvenTree.version as InvenTreeVersion  # type: ignore[import]
+
+        if version_hash := InvenTreeVersion.inventreeCommitHash():
+            write_info(version_sha_pth(), version_hash)
+        elif version_tag := InvenTreeVersion.inventreeVersion():
+            write_info(version_target_pth(), version_tag)
+        else:
+            warning('No version information available to write frontend version marker')
+
+        # Write source marker
+        write_info(
+            version_source_pth(),
+            f'local build on {datetime.datetime.now().isoformat()}',
+        )
+    except Exception:
+        warning('Failed to write frontend version marker')
 
 
 @task
@@ -1773,13 +1867,9 @@ def frontend_download(
         ref = 'tag' if tag else 'commit'
 
         if tag:
-            current = manage_py_dir().joinpath(
-                'web', 'static', 'web', '.vite', 'tag.txt'
-            )
+            current = version_target_pth()
         elif sha:
-            current = manage_py_dir().joinpath(
-                'web', 'static', 'web', '.vite', 'sha.txt'
-            )
+            current = version_sha_pth()
         else:
             raise ValueError('Either tag or sha needs to be set')
 
@@ -1904,7 +1994,7 @@ def doc_schema(c):
 @task(
     help={
         'address': 'Host and port to run the server on (default: localhost:8080)',
-        'compile_schema': 'Compile the schema documentation first (default: False)',
+        'compile_schema': 'Compile the API schema documentation first (default: False)',
     }
 )
 def docs_server(c, address='localhost:8080', compile_schema=False):

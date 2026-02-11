@@ -333,7 +333,8 @@ export default function BuildLineTable({
       }),
       {
         accessor: 'part_detail.IPN',
-        sortable: false,
+        sortable: true,
+        ordering: 'IPN',
         title: t`IPN`
       },
       CategoryColumn({
@@ -776,7 +777,7 @@ export default function BuildLineTable({
         {
           icon: <IconTool />,
           title: t`Build Stock`,
-          hidden: !canBuild,
+          hidden: !canBuild || !isActive,
           color: 'blue',
           onClick: () => {
             setInitialData({
@@ -795,7 +796,7 @@ export default function BuildLineTable({
         })
       ];
     },
-    [user, navigate, output, build, buildStatus]
+    [user, navigate, output, build, buildStatus, isActive]
   );
 
   const tableActions = useMemo(() => {
@@ -972,8 +973,10 @@ export default function BuildLineTable({
             ...params,
             build: build.pk,
             assembly_detail: false,
+            bom_item_detail: true,
             category_detail: true,
-            part_detail: true
+            part_detail: true,
+            allocations: true
           },
           tableActions: tableActions,
           tableFilters: tableFilters,

@@ -12,7 +12,6 @@ import sys
 from datetime import datetime as dt
 from datetime import timedelta as td
 
-import django
 from django.conf import settings
 
 from .api_version import INVENTREE_API_TEXT, INVENTREE_API_VERSION
@@ -25,6 +24,7 @@ MIN_PYTHON_VERSION = (3, 11)
 
 logger = logging.getLogger('inventree')
 
+git_warning_txt = 'INVE-W3: Could not detect git information.'
 
 # Discover git
 try:
@@ -36,8 +36,17 @@ try:
         main_repo = Repo(pathlib.Path(__file__).parent.parent.parent.parent.parent)
         main_commit = main_repo[main_repo.head()]
     except NotGitRepository:
-        # If we are running in a docker container, the repo may not be available
-        logger.warning('INVE-W3: Could not detect git information.')
+        output = logger.warning
+
+        try:
+            if settings.DOCKER:
+                output = logger.info
+        except Exception:
+            # We may not have access to settings at this point
+            pass
+
+        output(git_warning_txt)
+
         main_repo = None
         main_commit = None
 
@@ -54,7 +63,7 @@ except ImportError:
     main_commit = None
     main_branch = None
 except Exception as exc:
-    logger.warning('INVE-W3: Could not detect git information.', exc_info=exc)
+    logger.warning(git_warning_txt, exc_info=exc)
     main_repo = None
     main_commit = None
     main_branch = None
@@ -230,6 +239,8 @@ def inventreeApiText(versions: int = 10, start_version: int = 0):
 
 def inventreeDjangoVersion():
     """Returns the version of Django library."""
+    import django
+
     return django.get_version()
 
 
@@ -296,6 +307,8 @@ def inventreePlatform():
 
 def inventreeDatabase():
     """Return the InvenTree database backend e.g. 'postgresql'."""
+    from django.conf import settings
+
     return settings.DB_ENGINE
 
 
