@@ -151,6 +151,27 @@ class DataImportSession(models.Model):
 
         return supported_models().get(self.model_type, None)
 
+    def get_related_model(self, field_name: str) -> models.Model:
+        """Return the related model for a given field name.
+
+        Arguments:
+            field_name: The name of the field to check
+
+        Returns:
+            The related model class, if one exists, or None otherwise
+        """
+        model_class = self.model_class
+
+        if not model_class:
+            return None
+
+        try:
+            related_field = model_class._meta.get_field(field_name)
+            model = related_field.remote_field.model
+            return model
+        except (AttributeError, models.FieldDoesNotExist):
+            return None
+
     def extract_columns(self) -> None:
         """Run initial column extraction and mapping.
 
@@ -597,6 +618,8 @@ class DataImportRow(models.Model):
 
         data = {}
 
+        self.related_field_map = {}
+
         # We have mapped column (file) to field (serializer) already
         for field, col in field_mapping.items():
             # Data override (force value and skip any further checks)
@@ -623,6 +646,8 @@ class DataImportRow(models.Model):
                 value = InvenTree.helpers.str2bool(value)
             elif field_type == 'date':
                 value = value or None
+            elif field_type == 'related field':
+                value = self.lookup_related_field(field, value)
 
             # Use the default value, if provided
             if value is None and field in default_values:
@@ -666,6 +691,56 @@ class DataImportRow(models.Model):
 
         if commit:
             self.save()
+
+    def lookup_related_field(self, field_name: str, value: str) -> Optional[int]:
+        """Try to perform lookup against a related field.
+
+        - This is used to convert a human-readable value (e.g. a supplier name) into a database reference (e.g. supplier ID).
+        - Reference the value against the related model's allowable import fields
+
+        Arguments:
+            field_name: The name of the field to perform the lookup against
+            value: The value to be looked up
+
+        Returns:
+            A primary key value
+        """
+        if field_name in self.related_field_map:
+            model = self.related_field_map[field_name]
+        else:
+            # Cache the related model for this field name
+            model = self.related_field_map[field_name] = self.session.get_related_model(
+                field_name
+            )
+
+        if not model:
+            raise DjangoValidationError({
+                'session': f'No related model found for field: {field_name}'
+            })
+
+        valid_items = set()
+
+        if hasattr(model, 'import_id_fields'):
+            id_fields = model.import_id_fields()
+
+            # Iterate through the provided list - if any of the values match, we can perform the lookup
+            for id_field in id_fields:
+                try:
+                    queryset = model.objects.filter(**{id_field: value})
+                except ValueError:
+                    continue
+
+                if queryset.count() == 1:
+                    # We have a single match against this field
+                    valid_items.add(queryset.first().pk)
+
+        if len(valid_items) == 1:
+            # We found a single valid match against the related model - return this value
+            return valid_items.pop()
+
+        # We found either zero or multiple values matching against the related model
+        # Return the original value and let the serializer validation handle any errors against this field
+        return value
 
     def serializer_data(self):
         """Construct data object to be sent to the serializer.
