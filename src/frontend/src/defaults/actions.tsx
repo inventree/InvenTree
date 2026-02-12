@@ -179,5 +179,5 @@ export function getActions(navigate: NavigateFunction) {
     return _actions;
   }, [navigate, setNavigationOpen, globalSettings, user]);
 
-  return actions;
+  return actions.sort((a, b) => (a.label ?? '').localeCompare(b.label ?? ''));
 }
