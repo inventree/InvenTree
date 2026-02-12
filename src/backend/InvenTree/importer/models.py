@@ -706,7 +706,7 @@ class DataImportRow(models.Model):
             A primary key value
         """
         if value is None or value == '':
-            return None
+            return value
 
         if field_name is None or field_name == '':
             return value
