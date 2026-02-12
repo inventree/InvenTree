@@ -100,6 +100,12 @@ export function SupplierPartTable({
         render: (record: any) => record?.manufacturer_part_detail?.MPN
       },
       BooleanColumn({
+        accessor: 'primary',
+        sortable: true,
+        switchable: true,
+        defaultVisible: false
+      }),
+      BooleanColumn({
         accessor: 'active',
         title: t`Active`,
         sortable: true,
@@ -214,6 +220,11 @@ export function SupplierPartTable({
         name: 'active',
         label: t`Active`,
         description: t`Show active supplier parts`
+      },
+      {
+        name: 'primary',
+        label: t`Primary`,
+        description: t`Show primary supplier parts`
       },
       {
         name: 'part_active',
