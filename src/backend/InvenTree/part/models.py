@@ -52,7 +52,6 @@ from build.status_codes import BuildStatusGroups
 from common.currency import currency_code_default
 from common.icons import validate_icon
 from common.settings import get_global_setting
-from company.models import SupplierPart
 from InvenTree import helpers, validators
 from InvenTree.exceptions import log_error
 from InvenTree.fields import InvenTreeURLField
@@ -1230,15 +1229,14 @@ class Part(
         # Default to None if there are multiple suppliers to choose from
         return None
 
-    default_supplier = models.ForeignKey(
-        SupplierPart,
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-        verbose_name=_('Default Supplier'),
-        help_text=_('Default supplier part'),
-        related_name='default_parts',
-    )
+    @property
+    def default_supplier(self):
+        """Return the default (primary) SupplierPart for this Part.
+
+        This function is included for backwards compatibility,
+        as the 'Part' model used to have a 'default_supplier' field which was a ForeignKey to SupplierPart.
+        """
+        return self.supplier_parts.filter(primary=True).first()
 
     default_expiry = models.PositiveIntegerField(
         default=0,
