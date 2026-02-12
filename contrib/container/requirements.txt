@@ -53,6 +53,7 @@ packaging==25.0 \
     # via
     #   gunicorn
     #   mariadb
+    #   wheel
 psycopg[binary, pool]==3.2.11 \
     --hash=sha256:217231b2b6b72fba88281b94241b2f16043ee67f81def47c52a01b72ff0c086a \
     --hash=sha256:398bb484ed44361e041c8f804ed7af3d2fcefbffdace1d905b7446c319321706
@@ -250,7 +251,7 @@ uv==0.9.7 \
     --hash=sha256:d6e5fe28ca05a4b576c0e8da5f69251dc187a67054829cfc4afb2bfa1767114b \
     --hash=sha256:edd768f6730bba06aa10fdbd80ee064569f7236806f636bf65b68136a430aad0
     # via -r contrib/container/requirements.in
-wheel==0.45.1 \
-    --hash=sha256:661e1abd9198507b1409a20c02106d9670b2576e916d58f520316666abca6729 \
-    --hash=sha256:708e7481cc80179af0e556bbf0cc00b8444c7321e2700b8d8580231d13017248
+wheel==0.46.3 \
+    --hash=sha256:4b399d56c9d9338230118d705d9737a2a468ccca63d5e813e2a4fc7815d8bc4d \
+    --hash=sha256:e3e79874b07d776c40bd6033f8ddf76a7dad46a7b8aa1b2787a83083519a1803
     # via -r contrib/container/requirements.in
