@@ -380,7 +380,9 @@ class Address(InvenTree.models.InvenTreeModel):
 
         # Once this address is saved, check others
         if self.primary:
-            others.filter(primary=True).update(primary=False)
+            Address.objects.filter(company=self.company).exclude(pk=self.pk).filter(
+                primary=True
+            ).update(primary=False)
 
     @staticmethod
     def get_api_url():
@@ -739,7 +741,9 @@ class SupplierPart(
 
         # Once this SupplierPart is saved, check others
         if self.primary:
-            others.filter(primary=True).update(primary=False)
+            SupplierPart.objects.filter(part=self.part).exclude(pk=self.pk).filter(
+                primary=True
+            ).update(primary=False)
 
     part = models.ForeignKey(
         'part.Part',
