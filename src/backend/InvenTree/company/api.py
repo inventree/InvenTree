@@ -368,6 +368,7 @@ class SupplierPartList(
         'supplier',
         'manufacturer',
         'active',
+        'primary',
         'IPN',
         'MPN',
         'SKU',
