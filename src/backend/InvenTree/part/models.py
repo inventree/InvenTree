@@ -489,7 +489,6 @@ class Part(
         link: Link to an external page with more information about this part (e.g. internal Wiki)
         image: Image of this part
         default_location: Where the item is normally stored (may be null)
-        default_supplier: The default SupplierPart which should be used to procure and stock this part
         default_expiry: The default expiry duration for any StockItem instances of this part
         minimum_stock: Minimum preferred quantity to keep in stock
         units: Units of measure for this part (default='pcs')
@@ -1211,22 +1210,6 @@ class Part(
                     return cat.default_location
 
         # Default case - no default category found
-        return None
-
-    def get_default_supplier(self):
-        """Get the default supplier part for this part (may be None).
-
-        - If the part specifies a default_supplier, return that
-        - If there is only one supplier part available, return that
-        - Else, return None
-        """
-        if self.default_supplier:
-            return self.default_supplier
-
-        if self.supplier_count == 1:
-            return self.supplier_parts.first()
-
-        # Default to None if there are multiple suppliers to choose from
         return None
 
     @property
