@@ -12,7 +12,7 @@ def link_primary_supplier_part(apps, schema_editor):
     # Find any part which links to a "default_supplier"
     primary_supplier_ids = Part.objects.exclude(
         default_supplier=None,
-    ).values_list("pk", flat=True).distinct()
+    ).values_list("default_supplier_id", flat=True).distinct()
 
     if len(primary_supplier_ids) > 0:
         # Mark the relevant SupplierPart objects as "primary"
