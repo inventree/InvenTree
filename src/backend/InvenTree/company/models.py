@@ -298,6 +298,8 @@ class Contact(InvenTree.models.InvenTreeMetadataModel):
         role: position in company
     """
 
+    IMPORT_ID_FIELDS = ['name', 'email']
+
     class Meta:
         """Metaclass defines extra model options."""
 

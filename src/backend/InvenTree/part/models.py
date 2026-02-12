@@ -85,7 +85,7 @@ class PartCategory(
 
     ITEM_PARENT_KEY = 'category'
     EXTRA_PATH_FIELDS = ['icon']
-    IMPORT_ID_FIELDS = ['name']
+    IMPORT_ID_FIELDS = ['pathstring', 'name']
 
     class Meta:
         """Metaclass defines extra model properties."""

@@ -148,6 +148,8 @@ class UpdatedUserMixin(models.Model):
 class ProjectCode(InvenTree.models.InvenTreeMetadataModel):
     """A ProjectCode is a unique identifier for a project."""
 
+    IMPORT_ID_FIELDS = ['code']
+
     class Meta:
         """Class options for the ProjectCode model."""
 
@@ -2396,6 +2398,8 @@ class ParameterTemplate(
         selectionlist: Optional link to a SelectionList for this template
         enabled: Is this template enabled?
     """
+
+    IMPORT_ID_FIELDS = ['name']
 
     class Meta:
         """Metaclass options for the ParameterTemplate model."""
