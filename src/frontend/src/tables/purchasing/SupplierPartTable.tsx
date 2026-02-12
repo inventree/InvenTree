@@ -182,7 +182,9 @@ export function SupplierPartTable({
       supplier: supplierId,
       manufacturer_part: manufacturerPartId
     },
-    table: table,
+    onFormSuccess: (response: any) => {
+      table.refreshTable();
+    },
     successMessage: t`Supplier part created`
   });
 
@@ -254,7 +256,9 @@ export function SupplierPartTable({
     pk: selectedSupplierPart?.pk,
     title: t`Edit Supplier Part`,
     fields: useMemo(() => editSupplierPartFields, [editSupplierPartFields]),
-    table: table
+    onFormSuccess: (response: any) => {
+      table.refreshTable();
+    }
   });
 
   const duplicateSupplierPart = useCreateApiFormModal({
@@ -263,9 +267,12 @@ export function SupplierPartTable({
     fields: useMemo(() => editSupplierPartFields, [editSupplierPartFields]),
     initialData: {
       ...selectedSupplierPart,
+      primary: false,
       active: true
     },
-    table: table,
+    onFormSuccess: (response: any) => {
+      table.refreshTable();
+    },
     successMessage: t`Supplier part created`
   });
 
