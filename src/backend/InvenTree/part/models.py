@@ -10,7 +10,7 @@ import os
 import re
 from datetime import timedelta
 from decimal import Decimal, InvalidOperation
-from typing import cast
+from typing import Literal, cast
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -2176,9 +2176,11 @@ class Part(
             bom: Include BOM pricing (default = True)
             internal: Include internal pricing (default = False)
         """
-        price_range = self.get_price_range(quantity, buy, bom, internal)
+        price_range = self.get_price_range(quantity, buy, bom, internal, info=False)
 
         if price_range is None:
+            return None
+        if len(price_range) != 2:
             return None
 
         min_price, max_price = price_range
@@ -2272,7 +2274,15 @@ class Part(
         return (min_price, max_price)
 
     def get_price_range(
-        self, quantity=1, buy=True, bom=True, internal=False, purchase=False
+        self, quantity=1, buy=True, bom=True, internal=False, purchase=False, info=False
+    ) -> (
+        tuple[Decimal | None, Decimal | None]
+        | tuple[
+            Decimal | None,
+            Decimal | None,
+            Literal['internal', 'purchase', 'bom', 'buy', 'buy/bom'],
+        ]
+        | None
     ):
         """Return the price range for this part.
 
@@ -2285,16 +2295,24 @@ class Part(
         Returns:
             Minimum of the supplier, BOM, internal or purchase price. If no pricing available, returns None
         """
+
+        def return_info(r_min, r_max, source: str):
+            if not info:
+                return r_min, r_max
+            return r_min, r_max, source
+
         # only get internal price if set and should be used
         if internal and self.has_internal_price_breaks:
             internal_price = self.get_internal_price(quantity)
-            return internal_price, internal_price
+            return return_info(internal_price, internal_price, 'internal')
+
+        # TODO add sales pricing option?
 
         # only get purchase price if set and should be used
         if purchase:
             purchase_price = self.get_purchase_price(quantity)
             if purchase_price:
-                return purchase_price
+                return return_info(*purchase_price, 'purchase')  # type: ignore[too-many-positional-arguments]
 
         buy_price_range = self.get_supplier_price_range(quantity) if buy else None
         bom_price_range = (
@@ -2302,13 +2320,16 @@ class Part(
         )
 
         if buy_price_range is None:
-            return bom_price_range
+            if bom_price_range is None:
+                return None
+            return return_info(*bom_price_range, 'bom')  # type: ignore[too-many-positional-arguments]
 
         elif bom_price_range is None:
-            return buy_price_range
-        return (
+            return return_info(*buy_price_range, 'buy')  # type: ignore[too-many-positional-arguments]
+        return return_info(
             min(buy_price_range[0], bom_price_range[0]),
             max(buy_price_range[1], bom_price_range[1]),
+            'buy/bom',
         )
 
     base_cost = models.DecimalField(

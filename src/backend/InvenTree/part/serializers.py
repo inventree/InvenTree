@@ -1529,6 +1529,18 @@ class PartPricingSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             pricing.update_pricing()
 
 
+class PartLivePricingSerializer(serializers.Serializer):
+    """Serializer for Part live pricing information."""
+
+    price_min = InvenTree.serializers.InvenTreeMoneySerializer(
+        allow_null=True, read_only=True
+    )
+    price_max = InvenTree.serializers.InvenTreeMoneySerializer(
+        allow_null=True, read_only=True
+    )
+    source = serializers.CharField(allow_null=True, read_only=True)
+
+
 class PartSerialNumberSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     """Serializer for Part serial number information."""
 

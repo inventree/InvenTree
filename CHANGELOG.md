@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Adds parameter support for multiple new model types in [#10699](https://github.com/inventree/InvenTree/pull/10699)
 - Allows report generator to produce PDF input controls in [#10969](https://github.com/inventree/InvenTree/pull/10969)
 - UI overhaul of parameter management in [#10699](https://github.com/inventree/InvenTree/pull/10699)
+- Adds a API to gather live price information for a Part in [#10983](https://github.com/inventree/InvenTree/pull/10983)
 
 ### Changed
 
