@@ -1857,6 +1857,141 @@ class StockReturnSerializer(StockAdjustmentSerializer):
                 )
 
 
+class StockReconciliationItemSerializer(serializers.Serializer):
+    """Serializer for a single item in a stock reconciliation request."""
+
+    class Meta:
+        """Metaclass options."""
+
+        fields = ['pk', 'counted_quantity']
+
+    pk = serializers.PrimaryKeyRelatedField(
+        queryset=StockItem.objects.all(),
+        many=False,
+        allow_null=False,
+        required=True,
+        label='stock_item',
+        help_text=_('StockItem primary key value'),
+    )
+
+    counted_quantity = InvenTreeDecimalField(
+        required=True,
+        label=_('Counted Quantity'),
+        help_text=_('Physical count of this stock item during reconciliation'),
+    )
+
+    def validate_counted_quantity(self, counted_quantity):
+        """Validate the counted quantity."""
+        if counted_quantity < 0:
+            raise ValidationError(_('Counted quantity must not be negative'))
+
+        return counted_quantity
+
+
+class StockReconciliationSerializer(serializers.Serializer):
+    """Serializer for performing a full stock reconciliation (cycle count).
+
+    Accepts a list of stock items with their physically-counted quantities
+    and adjusts the recorded stock levels to match.  Designed for use with
+    handheld barcode scanners and mobile inventory-audit workflows.
+    """
+
+    class Meta:
+        """Metaclass options."""
+
+        fields = ['items', 'location', 'notes']
+
+    items = StockReconciliationItemSerializer(many=True)
+
+    location = serializers.PrimaryKeyRelatedField(
+        queryset=StockLocation.objects.all(),
+        many=False,
+        required=True,
+        allow_null=False,
+        label=_('Location'),
+        help_text=_('Stock location being reconciled'),
+    )
+
+    notes = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        label=_('Notes'),
+        help_text=_('Reconciliation notes'),
+    )
+
+    def validate(self, data):
+        """Ensure items list is not empty."""
+        super().validate(data)
+
+        items = data.get('items', [])
+
+        if len(items) == 0:
+            raise ValidationError(
+                _('A list of stock items must be provided for reconciliation')
+            )
+
+        location = data.get('location')
+
+        # Verify that each item actually belongs to the specified location
+        for item in items:
+            stock_item = item['pk']
+            if stock_item.location and stock_item.location.pk != location.pk:
+                raise ValidationError(
+                    _(
+                        'Stock item {item} is not located in {location}'
+                    ).format(item=stock_item.pk, location=location.name)
+                )
+
+        return data
+
+    def save(self):
+        """Perform the stock reconciliation.
+
+        Adjust quantities to match the physical count and record
+        the reconciliation event in the stock tracking history.
+        """
+        request = self.context['request']
+
+        data = self.validated_data
+        items = data['items']
+        notes = data.get('notes', '')
+
+        results = []
+
+        with transaction.atomic():
+            for item in items:
+                stock_item = item['pk']
+                counted = item['counted_quantity']
+
+                previous_quantity = stock_item.quantity
+                difference = counted - previous_quantity
+
+                if difference == 0:
+                    results.append({
+                        'pk': stock_item.pk,
+                        'status': 'unchanged',
+                        'quantity': float(stock_item.quantity),
+                    })
+                    continue
+
+                # Use the built-in stocktake method to record the adjustment
+                stock_item.stocktake(
+                    counted,
+                    request.user,
+                    notes=f'Reconciliation: {notes}' if notes else 'Stock reconciliation',
+                )
+
+                results.append({
+                    'pk': stock_item.pk,
+                    'status': 'adjusted',
+                    'previous_quantity': float(previous_quantity),
+                    'counted_quantity': float(counted),
+                    'difference': float(difference),
+                })
+
+        return results
+
+
 class StockItemSerialNumbersSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     """Serializer for extra serial number information about a stock item."""
 

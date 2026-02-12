@@ -261,6 +261,41 @@ class StockMerge(CreateAPI):
         return ctx
 
 
+class StockReconcile(CreateAPI):
+    """API endpoint for performing stock reconciliation (cycle counting).
+
+    Accepts a list of stock items with their physically counted quantities
+    and adjusts the recorded stock levels accordingly.  This is intended for
+    mobile barcode-scanner workflows where a warehouse associate walks through
+    a location and submits counted values for each item.
+    """
+
+    queryset = StockItem.objects.none()
+    serializer_class = StockSerializers.StockReconciliationSerializer
+    role_required = 'stock.change'
+
+    def get_serializer_context(self):
+        """Extend serializer context with request."""
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        return context
+
+    def create(self, request, *args, **kwargs):
+        """Perform the stock reconciliation and return results."""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        results = serializer.save()
+
+        return Response(
+            {
+                'success': True,
+                'items_processed': len(results),
+                'results': results,
+            },
+            status=status.HTTP_200_OK,
+        )
+
+
 class StockLocationFilter(FilterSet):
     """Base class for custom API filters for the StockLocation endpoint."""
 
@@ -1701,6 +1736,7 @@ stock_api_urls = [
     path('assign/', StockAssign.as_view(), name='api-stock-assign'),
     path('merge/', StockMerge.as_view(), name='api-stock-merge'),
     path('change_status/', StockChangeStatus.as_view(), name='api-stock-change-status'),
+    path('reconcile/', StockReconcile.as_view(), name='api-stock-reconcile'),
     # StockItemTestResult API endpoints
     path(
         'test/',
