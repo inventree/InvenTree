@@ -607,6 +607,7 @@ class SupplierPart(
         source_item: The sourcing item linked to this SupplierPart instance
         supplier: Company that supplies this SupplierPart object
         active: Boolean value, is this supplier part active
+        primary: Boolean value, is this the primary supplier part for the linked Part
         SKU: Stock keeping unit (supplier part number)
         link: Link to external website for this supplier part
         description: Descriptive notes field
@@ -762,6 +763,12 @@ class SupplierPart(
         default=True,
         verbose_name=_('Active'),
         help_text=_('Is this supplier part active?'),
+    )
+
+    primary = models.BooleanField(
+        default=False,
+        verbose_name=_('Primary'),
+        help_text=_('Is this the primary supplier part for the linked Part?'),
     )
 
     manufacturer_part = models.ForeignKey(
