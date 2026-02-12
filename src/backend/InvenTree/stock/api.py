@@ -33,7 +33,7 @@ from InvenTree.api import (
     BulkCreateMixin,
     BulkUpdateMixin,
     ListCreateDestroyAPIView,
-    MetadataView,
+    meta_path,
 )
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import (
@@ -1263,7 +1263,9 @@ class StockList(
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
     ordering_field_aliases = {
+        'part': 'part__name',
         'location': 'location__pathstring',
+        'IPN': 'part__IPN',
         'SKU': 'supplier_part__SKU',
         'MPN': 'supplier_part__manufacturer_part__MPN',
         'stock': ['quantity', 'serial_int', 'serial'],
@@ -1272,6 +1274,7 @@ class StockList(
     ordering_fields = [
         'batch',
         'location',
+        'part',
         'part__name',
         'part__IPN',
         'updated',
@@ -1281,6 +1284,7 @@ class StockList(
         'quantity',
         'stock',
         'status',
+        'IPN',
         'SKU',
         'MPN',
     ]
@@ -1452,7 +1456,13 @@ class StockItemTestResultList(
     output_options = StockItemTestResultOutputOptions
 
     filterset_fields = ['user', 'template', 'result', 'value']
-    ordering_fields = ['date', 'result']
+    ordering_fields = [
+        'date',
+        'result',
+        'started_datetime',
+        'finished_datetime',
+        'test_station',
+    ]
 
     ordering = 'date'
 
@@ -1484,6 +1494,54 @@ class StockTrackingOutputOptions(OutputConfiguration):
     ]
 
 
+class StockTrackingFilter(FilterSet):
+    """API filter options for the StockTrackingList endpoint."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = StockItemTracking
+        fields = ['item', 'user']
+
+    include_variants = rest_filters.BooleanFilter(
+        label=_('Include Part Variants'), method='filter_include_variants'
+    )
+
+    def filter_include_variants(self, queryset, name, value):
+        """Filter by whether or not to include part variants.
+
+        Note:
+        - This filter does nothing by itself, and is only used to modify the behavior of the 'part' filter.
+        - Refer to the 'filter_part' method for more information on how this works.
+        """
+        return queryset
+
+    part = rest_filters.ModelChoiceFilter(
+        label=_('Part'), queryset=Part.objects.all(), method='filter_part'
+    )
+
+    def filter_part(self, queryset, name, part):
+        """Filter StockTracking entries by the linked part.
+
+        Note:
+        - This filter behavior also takes into account the 'include_variants' filter, which determines whether or not to include part variants in the results.
+        """
+        include_variants = str2bool(self.data.get('include_variants', False))
+
+        if include_variants:
+            return queryset.filter(part__in=part.get_descendants(include_self=True))
+        else:
+            return queryset.filter(part=part)
+
+    min_date = InvenTreeDateFilter(
+        label=_('Date after'), field_name='date', lookup_expr='gt'
+    )
+
+    max_date = InvenTreeDateFilter(
+        label=_('Date before'), field_name='date', lookup_expr='lt'
+    )
+
+
 class StockTrackingList(
     SerializerContextMixin, DataExportViewMixin, OutputOptionsMixin, ListAPI
 ):
@@ -1495,8 +1553,9 @@ class StockTrackingList(
     - GET: Return list of StockItemTracking objects
     """
 
-    queryset = StockItemTracking.objects.all()
+    queryset = StockItemTracking.objects.all().prefetch_related('item', 'part')
     serializer_class = StockSerializers.StockTrackingSerializer
+    filterset_class = StockTrackingFilter
     output_options = StockTrackingOutputOptions
 
     def get_delta_model_map(self) -> dict:
@@ -1592,8 +1651,6 @@ class StockTrackingList(
 
     filter_backends = SEARCH_ORDER_FILTER
 
-    filterset_fields = ['item', 'user']
-
     ordering = '-date'
 
     ordering_fields = ['date']
@@ -1610,11 +1667,7 @@ stock_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(model=StockLocation),
-                        name='api-location-metadata',
-                    ),
+                    meta_path(StockLocation),
                     path('', StockLocationDetail.as_view(), name='api-location-detail'),
                 ]),
             ),
@@ -1628,11 +1681,7 @@ stock_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(model=StockLocationType),
-                        name='api-location-type-metadata',
-                    ),
+                    meta_path(StockLocationType),
                     path(
                         '',
                         StockLocationTypeDetail.as_view(),
@@ -1659,11 +1708,7 @@ stock_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(model=StockItemTestResult),
-                        name='api-stock-test-result-metadata',
-                    ),
+                    meta_path(StockItemTestResult),
                     path(
                         '',
                         StockItemTestResultDetail.as_view(),
@@ -1701,11 +1746,7 @@ stock_api_urls = [
         include([
             path('convert/', StockItemConvert.as_view(), name='api-stock-item-convert'),
             path('install/', StockItemInstall.as_view(), name='api-stock-item-install'),
-            path(
-                'metadata/',
-                MetadataView.as_view(model=StockItem),
-                name='api-stock-item-metadata',
-            ),
+            meta_path(StockItem),
             path(
                 'serialize/',
                 StockItemSerialize.as_view(),

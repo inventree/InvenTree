@@ -24,7 +24,7 @@ from build.models import Build, BuildItem, BuildLine
 from build.status_codes import BuildStatus, BuildStatusGroups
 from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import StatusView
-from InvenTree.api import BulkDeleteMixin, MetadataView, ParameterListMixin
+from InvenTree.api import BulkDeleteMixin, ParameterListMixin, meta_path
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import (
     SEARCH_ORDER_FILTER_ALIAS,
@@ -346,6 +346,8 @@ class BuildList(
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
     ordering_fields = [
         'reference',
+        'part',
+        'IPN',
         'part__name',
         'status',
         'creation_date',
@@ -364,6 +366,8 @@ class BuildList(
     ordering_field_aliases = {
         'reference': ['reference_int', 'reference'],
         'project_code': ['project_code__code'],
+        'part': ['part__name'],
+        'IPN': ['part__IPN'],
     }
     ordering = '-reference'
     search_fields = [
@@ -594,6 +598,7 @@ class BuildLineList(
     output_options = BuildLineOutputOptions
     ordering_fields = [
         'part',
+        'IPN',
         'allocated',
         'category',
         'consumed',
@@ -612,6 +617,7 @@ class BuildLineList(
 
     ordering_field_aliases = {
         'part': 'bom_item__sub_part__name',
+        'IPN': 'bom_item__sub_part__IPN',
         'reference': 'bom_item__reference',
         'unit_quantity': 'bom_item__quantity',
         'category': 'bom_item__sub_part__category__name',
@@ -802,11 +808,15 @@ class BuildCancel(BuildOrderContextMixin, CreateAPI):
     serializer_class = build.serializers.BuildCancelSerializer
 
 
-class BuildItemDetail(RetrieveUpdateDestroyAPI):
-    """API endpoint for detail view of a BuildItem object."""
+class BuildItemMixin:
+    """Mixin class for BuildItem API endpoints."""
 
-    queryset = BuildItem.objects.all()
+    queryset = BuildItem.objects.all().prefetch_related('stock_item__location')
     serializer_class = build.serializers.BuildItemSerializer
+
+
+class BuildItemDetail(BuildItemMixin, RetrieveUpdateDestroyAPI):
+    """API endpoint for detail view of a BuildItem object."""
 
 
 class BuildItemFilter(FilterSet):
@@ -893,16 +903,45 @@ class BuildItemOutputOptions(OutputConfiguration):
     """Output options for BuildItem endpoint."""
 
     OPTIONS = [
-        InvenTreeOutputOption('part_detail'),
-        InvenTreeOutputOption('location_detail'),
-        InvenTreeOutputOption('stock_detail'),
-        InvenTreeOutputOption('build_detail'),
-        InvenTreeOutputOption('supplier_part_detail'),
+        InvenTreeOutputOption(
+            'part_detail',
+            default=False,
+            description='Include detailed information about the part associated with this build item.',
+        ),
+        InvenTreeOutputOption(
+            'location_detail',
+            default=False,
+            description='Include detailed information about the location of the allocated stock item.',
+        ),
+        InvenTreeOutputOption(
+            'stock_detail',
+            default=False,
+            description='Include detailed information about the allocated stock item.',
+        ),
+        InvenTreeOutputOption(
+            'build_detail',
+            default=False,
+            description='Include detailed information about the associated build order.',
+        ),
+        InvenTreeOutputOption(
+            'supplier_part_detail',
+            default=False,
+            description='Include detailed information about the supplier part associated with this build item.',
+        ),
+        InvenTreeOutputOption(
+            'install_into_detail',
+            default=False,
+            description='Include detailed information about the build output for this build item.',
+        ),
     ]
 
 
 class BuildItemList(
-    DataExportViewMixin, OutputOptionsMixin, BulkDeleteMixin, ListCreateAPI
+    BuildItemMixin,
+    DataExportViewMixin,
+    OutputOptionsMixin,
+    BulkDeleteMixin,
+    ListCreateAPI,
 ):
     """API endpoint for accessing a list of BuildItem objects.
 
@@ -911,8 +950,6 @@ class BuildItemList(
     """
 
     output_options = BuildItemOutputOptions
-    queryset = BuildItem.objects.all()
-    serializer_class = build.serializers.BuildItemSerializer
     filterset_class = BuildItemFilter
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
@@ -960,11 +997,7 @@ build_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(model=BuildItem),
-                        name='api-build-item-metadata',
-                    ),
+                    meta_path(BuildItem),
                     path('', BuildItemDetail.as_view(), name='api-build-item-detail'),
                 ]),
             ),
@@ -1007,11 +1040,7 @@ build_api_urls = [
             path('finish/', BuildFinish.as_view(), name='api-build-finish'),
             path('cancel/', BuildCancel.as_view(), name='api-build-cancel'),
             path('unallocate/', BuildUnallocate.as_view(), name='api-build-unallocate'),
-            path(
-                'metadata/',
-                MetadataView.as_view(model=Build),
-                name='api-build-metadata',
-            ),
+            meta_path(Build),
             path('', BuildDetail.as_view(), name='api-build-detail'),
         ]),
     ),

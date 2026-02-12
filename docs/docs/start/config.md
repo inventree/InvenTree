@@ -100,6 +100,7 @@ The following debugging / logging options are available:
 | INVENTREE_JSON_LOG | json_log | log as json | False |
 | INVENTREE_WRITE_LOG | write_log | Enable writing of log messages to file at config base | False |
 | INVENTREE_CONSOLE_LOG | console_log | Enable logging to console | True |
+| INVENTREE_SCHEMA_LEVEL | schema.level | Set level of added schema extensions detail (0-3) 0 = including no additional detail | 0 |
 
 ### Debug Mode
 
@@ -333,8 +334,8 @@ The following email settings are available:
 | INVENTREE_EMAIL_PORT | email.port | Email server port | 25 |
 | INVENTREE_EMAIL_USERNAME | email.username | Email account username | *Not specified* |
 | INVENTREE_EMAIL_PASSWORD | email.password | Email account password | *Not specified* |
-| INVENTREE_EMAIL_TLS | email.tls | Enable TLS support | False |
-| INVENTREE_EMAIL_SSL | email.ssl | Enable SSL support | False |
+| INVENTREE_EMAIL_TLS | email.tls | Enable STARTTLS support (commonly port 567) | False |
+| INVENTREE_EMAIL_SSL | email.ssl | Enable legacy SSL/TLS support (commonly port 465) | False |
 | INVENTREE_EMAIL_SENDER | email.sender | Sending email address | *Not specified* |
 | INVENTREE_EMAIL_PREFIX | email.prefix | Prefix for subject text | [InvenTree] |
 

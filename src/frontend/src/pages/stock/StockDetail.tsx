@@ -623,7 +623,8 @@ export default function StockDetail() {
       }),
       NotesPanel({
         model_type: ModelType.stockitem,
-        model_id: stockitem.pk
+        model_id: stockitem.pk,
+        has_note: !!stockitem.notes
       })
     ];
   }, [
@@ -753,7 +754,7 @@ export default function StockDetail() {
   const stockAdjustActions = useStockAdjustActions({
     formProps: stockOperationProps,
     delete: false,
-    assign: !!stockitem.in_stock,
+    assign: !!stockitem.in_stock && stockitem.part_detail?.salable,
     return: !!stockitem.consumed_by || !!stockitem.customer,
     merge: false
   });
@@ -955,6 +956,7 @@ export default function StockDetail() {
           />,
           <StatusRenderer
             status={stockitem.status_custom_key || stockitem.status}
+            fallbackStatus={stockitem.status}
             type={ModelType.stockitem}
             options={{
               size: 'lg'

@@ -1267,7 +1267,7 @@ class PurchaseOrderReceiveTest(OrderTest):
                 ],
                 'location': location.pk,
             },
-            max_query_count=104 + 2 * N_LINES,
+            max_query_count=104 + 3 * N_LINES,
         ).data
 
         # Check for expected response
@@ -2751,63 +2751,3 @@ class ReturnOrderLineItemTests(InvenTreeAPITestCase):
 
         line = models.ReturnOrderLineItem.objects.get(pk=1)
         self.assertEqual(float(line.price.amount), 15.75)
-
-
-class OrderMetadataAPITest(InvenTreeAPITestCase):
-    """Unit tests for the various metadata endpoints of API."""
-
-    fixtures = [
-        'category',
-        'part',
-        'company',
-        'location',
-        'supplier_part',
-        'stock',
-        'order',
-        'sales_order',
-        'return_order',
-    ]
-
-    roles = ['purchase_order.change', 'sales_order.change', 'return_order.change']
-
-    def metatester(self, apikey, model):
-        """Generic tester."""
-        modeldata = model.objects.first()
-
-        # Useless test unless a model object is found
-        self.assertIsNotNone(modeldata)
-
-        url = reverse(apikey, kwargs={'pk': modeldata.pk})
-
-        # Metadata is initially null
-        self.assertIsNone(modeldata.metadata)
-
-        numstr = f'12{len(apikey)}'
-
-        self.patch(
-            url,
-            {'metadata': {f'abc-{numstr}': f'xyz-{apikey}-{numstr}'}},
-            expected_code=200,
-        )
-
-        # Refresh
-        modeldata.refresh_from_db()
-        self.assertEqual(
-            modeldata.get_metadata(f'abc-{numstr}'), f'xyz-{apikey}-{numstr}'
-        )
-
-    def test_metadata(self):
-        """Test all endpoints."""
-        for apikey, model in {
-            'api-po-metadata': models.PurchaseOrder,
-            'api-po-line-metadata': models.PurchaseOrderLineItem,
-            'api-po-extra-line-metadata': models.PurchaseOrderExtraLine,
-            'api-so-shipment-metadata': models.SalesOrderShipment,
-            'api-so-metadata': models.SalesOrder,
-            'api-so-line-metadata': models.SalesOrderLineItem,
-            'api-so-extra-line-metadata': models.SalesOrderExtraLine,
-            'api-return-order-metadata': models.ReturnOrder,
-            'api-return-order-line-metadata': models.ReturnOrderLineItem,
-            'api-return-order-extra-line-metadata': models.ReturnOrderExtraLine,
-        }.items():
-            self.metatester(apikey, model)

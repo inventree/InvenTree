@@ -31,8 +31,8 @@ from generic.states.api import StatusView
 from InvenTree.api import (
     BulkUpdateMixin,
     ListCreateDestroyAPIView,
-    MetadataView,
     ParameterListMixin,
+    meta_path,
 )
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import (
@@ -362,7 +362,9 @@ class PurchaseOrderOutputOptions(OutputConfiguration):
 class PurchaseOrderMixin(SerializerContextMixin):
     """Mixin class for PurchaseOrder endpoints."""
 
-    queryset = models.PurchaseOrder.objects.all()
+    queryset = models.PurchaseOrder.objects.all().prefetch_related(
+        'supplier', 'created_by'
+    )
     serializer_class = serializers.PurchaseOrderSerializer
 
     def get_queryset(self, *args, **kwargs):
@@ -370,8 +372,6 @@ class PurchaseOrderMixin(SerializerContextMixin):
         queryset = super().get_queryset(*args, **kwargs)
 
         queryset = serializers.PurchaseOrderSerializer.annotate_queryset(queryset)
-
-        queryset = queryset.prefetch_related('supplier', 'created_by')
 
         return queryset
 
@@ -824,14 +824,14 @@ class SalesOrderFilter(OrderFilter):
 class SalesOrderMixin(SerializerContextMixin):
     """Mixin class for SalesOrder endpoints."""
 
-    queryset = models.SalesOrder.objects.all()
+    queryset = models.SalesOrder.objects.all().prefetch_related(
+        'customer', 'created_by'
+    )
     serializer_class = serializers.SalesOrderSerializer
 
     def get_queryset(self, *args, **kwargs):
         """Return annotated queryset for this endpoint."""
         queryset = super().get_queryset(*args, **kwargs)
-
-        queryset = queryset.prefetch_related('customer', 'created_by')
 
         queryset = serializers.SalesOrderSerializer.annotate_queryset(queryset)
 
@@ -1051,6 +1051,7 @@ class SalesOrderLineItemList(
         'customer',
         'order',
         'part',
+        'IPN',
         'part__name',
         'quantity',
         'allocated',
@@ -1063,6 +1064,7 @@ class SalesOrderLineItemList(
     ordering_field_aliases = {
         'customer': 'order__customer__name',
         'part': 'part__name',
+        'IPN': 'part__IPN',
         'order': 'order__reference',
     }
 
@@ -1672,11 +1674,24 @@ class ReturnOrderLineItemList(
 
     filterset_class = ReturnOrderLineItemFilter
 
-    filter_backends = SEARCH_ORDER_FILTER
+    filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
     output_options = ReturnOrderLineItemOutputOptions
 
-    ordering_fields = ['reference', 'target_date', 'received_date']
+    ordering_fields = [
+        'part',
+        'IPN',
+        'stock',
+        'reference',
+        'target_date',
+        'received_date',
+    ]
+
+    ordering_field_aliases = {
+        'part': 'item__part__name',
+        'IPN': 'item__part__IPN',
+        'stock': ['item__quantity', 'item__serial_int', 'item__serial'],
+    }
 
     search_fields = [
         'item__serial',
@@ -1888,11 +1903,7 @@ order_api_urls = [
                         name='api-po-complete',
                     ),
                     path('issue/', PurchaseOrderIssue.as_view(), name='api-po-issue'),
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(model=models.PurchaseOrder),
-                        name='api-po-metadata',
-                    ),
+                    meta_path(models.PurchaseOrder),
                     path(
                         'receive/',
                         PurchaseOrderReceive.as_view(),
@@ -1920,11 +1931,7 @@ order_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(model=models.PurchaseOrderLineItem),
-                        name='api-po-line-metadata',
-                    ),
+                    meta_path(models.PurchaseOrderLineItem),
                     path(
                         '',
                         PurchaseOrderLineItemDetail.as_view(),
@@ -1942,11 +1949,7 @@ order_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(model=models.PurchaseOrderExtraLine),
-                        name='api-po-extra-line-metadata',
-                    ),
+                    meta_path(models.PurchaseOrderExtraLine),
                     path(
                         '',
                         PurchaseOrderExtraLineDetail.as_view(),
@@ -1974,11 +1977,7 @@ order_api_urls = [
                                 SalesOrderShipmentComplete.as_view(),
                                 name='api-so-shipment-ship',
                             ),
-                            path(
-                                'metadata/',
-                                MetadataView.as_view(model=models.SalesOrderShipment),
-                                name='api-so-shipment-metadata',
-                            ),
+                            meta_path(models.SalesOrderShipment),
                             path(
                                 '',
                                 SalesOrderShipmentDetail.as_view(),
@@ -2015,11 +2014,7 @@ order_api_urls = [
                         SalesOrderComplete.as_view(),
                         name='api-so-complete',
                     ),
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(model=models.SalesOrder),
-                        name='api-so-metadata',
-                    ),
+                    meta_path(models.SalesOrder),
                     # SalesOrder detail endpoint
                     path('', SalesOrderDetail.as_view(), name='api-so-detail'),
                 ]),
@@ -2042,11 +2037,7 @@ order_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(model=models.SalesOrderLineItem),
-                        name='api-so-line-metadata',
-                    ),
+                    meta_path(models.SalesOrderLineItem),
                     path(
                         '',
                         SalesOrderLineItemDetail.as_view(),
@@ -2064,11 +2055,7 @@ order_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(model=models.SalesOrderExtraLine),
-                        name='api-so-extra-line-metadata',
-                    ),
+                    meta_path(models.SalesOrderExtraLine),
                     path(
                         '',
                         SalesOrderExtraLineDetail.as_view(),
@@ -2120,11 +2107,7 @@ order_api_urls = [
                         ReturnOrderReceive.as_view(),
                         name='api-return-order-receive',
                     ),
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(model=models.ReturnOrder),
-                        name='api-return-order-metadata',
-                    ),
+                    meta_path(models.ReturnOrder),
                     path(
                         '', ReturnOrderDetail.as_view(), name='api-return-order-detail'
                     ),
@@ -2148,11 +2131,7 @@ order_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(model=models.ReturnOrderLineItem),
-                        name='api-return-order-line-metadata',
-                    ),
+                    meta_path(models.ReturnOrderLineItem),
                     path(
                         '',
                         ReturnOrderLineItemDetail.as_view(),
@@ -2179,11 +2158,7 @@ order_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(model=models.ReturnOrderExtraLine),
-                        name='api-return-order-extra-line-metadata',
-                    ),
+                    meta_path(models.ReturnOrderExtraLine),
                     path(
                         '',
                         ReturnOrderExtraLineDetail.as_view(),

@@ -1,10 +1,68 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 435
+INVENTREE_API_VERSION = 453
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v453 -> 2026-02-11 : https://github.com/inventree/InvenTree/pull/11244
+    - Adds (internal) endpoint to end a observability tooling session
+
+v452 -> 2026-02-10 : https://github.com/inventree/InvenTree/pull/11276
+    - Adds "install_into_detail" field to the BuildItem API endpoint
+
+v451 -> 2026-02-10 : https://github.com/inventree/InvenTree/pull/11277
+    - Adds sorting to multiple part related endpoints (part, IPN, ...)
+
+v450 -> 2026-02-10 : https://github.com/inventree/InvenTree/pull/11260
+    - Adds "part" field to the StockItemTracking model and API endpoints
+    - Additional filtering options for the StockItemTracking API endpoint
+
+v449 -> 2026-02-07 : https://github.com/inventree/InvenTree/pull/11266
+    - Add missing nullable annotations to PartStocktakeSerializer
+
+v448 -> 2026-02-05 : https://github.com/inventree/InvenTree/pull/11257
+    - Adds API endpoint for manually generating a stocktake entry
+
+v447 -> 2026-02-02 : https://github.com/inventree/InvenTree/pull/11242
+    - Adds "sub_part_active" filter to BomItem API endpoint
+
+v446 -> 2026-02-01 : https://github.com/inventree/InvenTree/pull/11232
+    - Allow ordering of test results by started_datetime and finished_datetime fields
+    - Allow ordering of test results by test_station field
+
+v445 -> 2026-01-29 : https://github.com/inventree/InvenTree/pull/11102
+    - Added "allocated_lines" field to SalesOrderSerializer to track fully allocated line items
+
+v444 -> 2026-01-27 : https://github.com/inventree/InvenTree/pull/11208
+    - Add customize option to disable theme loading from user profile (mainly for demo site use)
+
+v443 -> 2026-01-21 : https://github.com/inventree/InvenTree/pull/11177
+    - Adds IPN ordering option for BomItem API endpoint
+    - Adds IPN ordering option for BuildLine API endpoint
+
+v442 -> 2026-01-17 : https://github.com/inventree/InvenTree/pull/11157
+    - Typo fixes, no functional changes
+
+v441 -> 2026-01-17 : https://github.com/inventree/InvenTree/pull/11153
+    - Allow export of supplier part pricing data
+
+v440 -> 2026-01-15 : https://github.com/inventree/InvenTree/pull/10796
+    - Adds confirm and confirm_text to all settings
+
+v439 -> 2026-01-09 : https://github.com/inventree/InvenTree/pull/11092
+    - Add missing nullable annotations
+
+v438 -> 2026-01-09 : https://github.com/inventree/InvenTree/pull/11104
+    - Adds a simpler / faster health check endpoint at /api/system/health/
+
+v437 -> 2026-01-07 : https://github.com/inventree/InvenTree/pull/11084
+    - Adds generic parameter support for the StockLocation model
+
+v436 -> 2026-01-06 : https://github.com/inventree/InvenTree/pull/11035
+    - Removes model-specific metadata endpoints and replaces them with redirects
+    - Adds new generic /api/metadata/<model_name>/ endpoint to retrieve metadata for any model
 
 v435 -> 2025-12-16 : https://github.com/inventree/InvenTree/pull/11030
     - Adds token refresh endpoint to auth API

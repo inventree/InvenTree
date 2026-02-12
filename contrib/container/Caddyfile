@@ -20,7 +20,7 @@
 	header Allow GET,HEAD,OPTIONS
 	header Access-Control-Allow-Origin *
 	header Access-Control-Allow-Methods GET,HEAD,OPTIONS
-	header Access-Control-Allow-Headers Authorization,Content-Type,User-Agent
+	header Access-Control-Allow-Headers Authorization,Content-Type,User-Agent,traceparent
 
 	@cors_preflight{args[0]} method OPTIONS
 

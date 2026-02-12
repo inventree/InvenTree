@@ -39,6 +39,10 @@ test('Purchasing - Index', async ({ browser }) => {
     .getByRole('button', { name: 'segmented-icon-control-table' })
     .click();
 
+  // Check for expected values
+  await clearTableFilters(page);
+  await page.getByRole('cell', { name: 'DigiKey DigiKey' }).first().waitFor();
+
   // Supplier parts tab
   await loadTab(page, 'Supplier Parts');
   await page
@@ -47,6 +51,12 @@ test('Purchasing - Index', async ({ browser }) => {
   await page
     .getByRole('button', { name: 'segmented-icon-control-table' })
     .click();
+
+  // Check for expected values
+  await clearTableFilters(page);
+  await page.getByText('R_100K_0402_1%').first().waitFor();
+  await page.getByRole('cell', { name: 'RR05P100KDTR-ND' }).first().waitFor();
+  await page.getByRole('cell', { name: 'RT0402BRD07100KL' }).first().waitFor();
 
   // Manufacturers tab
   await loadTab(page, 'Manufacturers');
@@ -57,6 +67,13 @@ test('Purchasing - Index', async ({ browser }) => {
     .getByRole('button', { name: 'segmented-icon-control-table' })
     .click();
 
+  // Check for expected values
+  await clearTableFilters(page);
+  await page
+    .getByRole('cell', { name: 'Hammond Manufacturing Hammond' })
+    .first()
+    .waitFor();
+
   // Manufacturer parts tab
   await loadTab(page, 'Manufacturer Parts');
   await page
@@ -65,6 +82,14 @@ test('Purchasing - Index', async ({ browser }) => {
   await page
     .getByRole('button', { name: 'segmented-icon-control-table' })
     .click();
+
+  // Check for expected values
+  await clearTableFilters(page);
+  await page.getByRole('cell', { name: 'ERA-2AEB104X' }).first().waitFor();
+  await page
+    .getByRole('cell', { name: 'Bourns Inc. Bourns Inc.' })
+    .first()
+    .waitFor();
 });
 
 test('Purchase Orders - General', async ({ browser }) => {

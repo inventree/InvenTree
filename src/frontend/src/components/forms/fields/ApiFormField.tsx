@@ -6,6 +6,7 @@ import { type Control, type FieldValues, useController } from 'react-hook-form';
 
 import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
 import { IconFileUpload } from '@tabler/icons-react';
+import DateTimeField from '../DateTimeField';
 import { BooleanField } from './BooleanField';
 import { ChoiceField } from './ChoiceField';
 import DateField from './DateField';
@@ -161,9 +162,12 @@ export function ApiFormField({
           />
         );
       case 'date':
-      case 'datetime':
         return (
           <DateField controller={controller} definition={fieldDefinition} />
+        );
+      case 'datetime':
+        return (
+          <DateTimeField controller={controller} definition={fieldDefinition} />
         );
       case 'integer':
       case 'decimal':
@@ -175,6 +179,10 @@ export function ApiFormField({
             fieldName={fieldName}
             definition={reducedDefinition}
             placeholderAutofill={fieldDefinition.placeholderAutofill ?? false}
+            placeholderWarningCompare={
+              fieldDefinition.placeholderWarningCompare ?? undefined
+            }
+            placeholderWarning={fieldDefinition.placeholderWarning ?? undefined}
             onChange={(value: any) => {
               onChange(value);
             }}
