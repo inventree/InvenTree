@@ -732,19 +732,24 @@ class DataImportRow(models.Model):
             else {}
         )
 
-        if id_fields := getattr(model, 'IMPORT_ID_FIELDS', None):
-            # Iterate through the provided list - if any of the values match, we can perform the lookup
-            for id_field in id_fields:
-                try:
-                    queryset = model.objects.filter(**{id_field: value}, **base_filters)
-                except ValueError:
-                    continue
+        # First priority is the PK (primary key) field
+        id_fields = ['pk']
 
-                # Evaluate at most two results to determine if there is exactly one match
-                results = list(queryset[:2])
-                if len(results) == 1:
-                    # We have a single match against this field
-                    valid_items.add(results[0].pk)
+        if custom_id_fields := getattr(model, 'IMPORT_ID_FIELDS', None):
+            id_fields += custom_id_fields
+
+        # Iterate through the provided list - if any of the values match, we can perform the lookup
+        for id_field in id_fields:
+            try:
+                queryset = model.objects.filter(**{id_field: value}, **base_filters)
+            except ValueError:
+                continue
+
+            # Evaluate at most two results to determine if there is exactly one match
+            results = list(queryset[:2])
+            if len(results) == 1:
+                # We have a single match against this field
+                valid_items.add(results[0].pk)
 
         if len(valid_items) == 1:
             # We found a single valid match against the related model - return this value
