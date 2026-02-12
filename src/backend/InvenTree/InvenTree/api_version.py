@@ -1,10 +1,14 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 453
+INVENTREE_API_VERSION = 454
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v454 -> 2026-02-12 : https://github.com/inventree/InvenTree/pull/11303
+    - Adds "primary" field to the SupplierPart API
+    - Removes "default_supplier" field from the Part API
 
 v453 -> 2026-02-11 : https://github.com/inventree/InvenTree/pull/11244
     - Adds (internal) endpoint to end a observability tooling session
