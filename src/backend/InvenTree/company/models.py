@@ -382,10 +382,7 @@ class Address(InvenTree.models.InvenTreeModel):
 
         # Once this address is saved, check others
         if self.primary:
-            for addr in others:
-                if addr.primary:
-                    addr.primary = False
-                    addr.save()
+            others.filter(primary=True).update(primary=False)
 
     @staticmethod
     def get_api_url():
@@ -746,10 +743,7 @@ class SupplierPart(
 
         # Once this SupplierPart is saved, check others
         if self.primary:
-            for sp in others:
-                if sp.primary:
-                    sp.primary = False
-                    sp.save()
+            others.filter(primary=True).update(primary=False)
 
     part = models.ForeignKey(
         'part.Part',
