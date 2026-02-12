@@ -705,6 +705,12 @@ class DataImportRow(models.Model):
         Returns:
             A primary key value
         """
+        if value is None or value == '':
+            return None
+
+        if field_name is None or field_name == '':
+            return value
+
         if field_name in self.related_field_map:
             model = self.related_field_map[field_name]
         else:
