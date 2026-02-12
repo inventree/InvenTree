@@ -733,7 +733,23 @@ class SupplierPart(
         self.clean()
         self.validate_unique()
 
+        # Ensure that only one SupplierPart is marked as "primary" for a given Part
+        others = list(
+            SupplierPart.objects.filter(part=self.part).exclude(pk=self.pk).all()
+        )
+
+        # If this is the *only* SupplierPart for this Part, make it the primary one
+        if len(others) == 0:
+            self.primary = True
+
         super().save(*args, **kwargs)
+
+        # Once this SupplierPart is saved, check others
+        if self.primary:
+            for sp in others:
+                if sp.primary:
+                    sp.primary = False
+                    sp.save()
 
     part = models.ForeignKey(
         'part.Part',
