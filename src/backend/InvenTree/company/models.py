@@ -370,12 +370,10 @@ class Address(InvenTree.models.InvenTreeModel):
         Rules:
         - If this address is marked as "primary", ensure that all other addresses for this company are marked as non-primary
         """
-        others = list(
-            Address.objects.filter(company=self.company).exclude(pk=self.pk).all()
-        )
+        others = Address.objects.filter(company=self.company).exclude(pk=self.pk)
 
         # If this is the *only* address for this company, make it the primary one
-        if len(others) == 0:
+        if not others.exists():
             self.primary = True
 
         super().save(*args, **kwargs)
@@ -731,12 +729,10 @@ class SupplierPart(
         self.validate_unique()
 
         # Ensure that only one SupplierPart is marked as "primary" for a given Part
-        others = list(
-            SupplierPart.objects.filter(part=self.part).exclude(pk=self.pk).all()
-        )
+        others = SupplierPart.objects.filter(part=self.part).exclude(pk=self.pk)
 
         # If this is the *only* SupplierPart for this Part, make it the primary one
-        if len(others) == 0:
+        if not others.exists():
             self.primary = True
 
         super().save(*args, **kwargs)
