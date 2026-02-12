@@ -37,7 +37,7 @@ class InvenTreeInternalBarcodePlugin(SettingsMixin, BarcodeMixin, InvenTreePlugi
                 ('json', _('JSON barcodes (human readable)')),
                 ('short', _('Short barcodes (space optimized)')),
             ],
-            'default': 'json',
+            'default': 'short',
         },
         'SHORT_BARCODE_PREFIX': {
             'name': _('Short Barcode Prefix'),
