@@ -91,12 +91,20 @@ export function getActions(navigate: NavigateFunction) {
       {
         id: 'user-settings',
         label: t`User Settings`,
-
         description: t`Go to your user settings`,
         onClick: () => navigate('/settings/user'),
         leftSection: <IconUserCog size='1.2rem' />
       }
     ];
+
+    user?.isStaff() &&
+      _actions.push({
+        id: 'data-import',
+        label: t`Import Data`,
+        description: t`Import data from a file`,
+        onClick: () => navigate('/settings/admin/import'),
+        leftSection: <IconPlug size='1.2rem' />
+      });
 
     // Page Actions
     user?.hasViewRole(UserRoles.purchase_order) &&
