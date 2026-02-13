@@ -1206,7 +1206,9 @@ class WebhookMessageTests(TestCase):
         response = self.client.post(
             self.url,
             content_type=CONTENT_TYPE_JSON,
-            headers={'token': '68MXtc/OiXdA5e2Nq9hATEVrZFpLb3Zb0oau7n8s31I='},
+            headers={
+                'token': '68MXtc/OiXdA5e2Nq9hATEVrZFpLb3Zb0oau7n8s31I='  # gitleaks:allow
+            },
         )
 
         assert response.status_code == HTTPStatus.OK
