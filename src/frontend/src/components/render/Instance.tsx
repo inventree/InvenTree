@@ -46,7 +46,8 @@ import {
   RenderReturnOrder,
   RenderReturnOrderLineItem,
   RenderSalesOrder,
-  RenderSalesOrderShipment
+  RenderSalesOrderShipment,
+  RenderTransferOrder
 } from './Order';
 import { RenderPart, RenderPartCategory, RenderPartTestTemplate } from './Part';
 import { RenderPlugin } from './Plugin';
@@ -82,6 +83,7 @@ export const RendererLookup: ModelRendererDict = {
   [ModelType.returnorderlineitem]: RenderReturnOrderLineItem,
   [ModelType.salesorder]: RenderSalesOrder,
   [ModelType.salesordershipment]: RenderSalesOrderShipment,
+  [ModelType.transferorder]: RenderTransferOrder,
   [ModelType.stocklocation]: RenderStockLocation,
   [ModelType.stocklocationtype]: RenderStockLocationType,
   [ModelType.stockitem]: RenderStockItem,

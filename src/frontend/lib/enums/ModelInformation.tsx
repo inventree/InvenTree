@@ -206,6 +206,22 @@ export const ModelInformationDict: ModelDict = {
     api_endpoint: ApiEndpoints.return_order_line_list,
     icon: 'return_orders'
   },
+  transferorder: {
+    label: () => t`Transfer Order`,
+    label_multiple: () => t`Transfer Orders`,
+    url_overview: '/stock/location/index/transfer-orders',
+    url_detail: '/stock/transfer-order/:pk/',
+    api_endpoint: ApiEndpoints.transfer_order_list,
+    admin_url: '/order/transferorder/',
+    supports_barcode: true,
+    icon: 'transfer_orders'
+  },
+  transferorderlineitem: {
+    label: () => t`Transfer Order Line Item`,
+    label_multiple: () => t`Transfer Order Line Items`,
+    api_endpoint: ApiEndpoints.transfer_order_line_list,
+    icon: 'transfer-orders'
+  },
   address: {
     label: () => t`Address`,
     label_multiple: () => t`Addresses`,
