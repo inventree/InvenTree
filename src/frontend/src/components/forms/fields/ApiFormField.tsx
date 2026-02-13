@@ -179,6 +179,10 @@ export function ApiFormField({
             fieldName={fieldName}
             definition={reducedDefinition}
             placeholderAutofill={fieldDefinition.placeholderAutofill ?? false}
+            placeholderWarningCompare={
+              fieldDefinition.placeholderWarningCompare ?? undefined
+            }
+            placeholderWarning={fieldDefinition.placeholderWarning ?? undefined}
             onChange={(value: any) => {
               onChange(value);
             }}

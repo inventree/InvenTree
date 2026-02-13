@@ -1,15 +1,18 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 453
+INVENTREE_API_VERSION = 454
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v453 -> 2026-02-08 : https://github.com/inventree/InvenTree/pull/...
+v454 -> 2026-02-13 : https://github.com/inventree/InvenTree/pull/...
     - Expose InvenTreeImage model to api/image API endpoints
     - Adds 'image_url' and 'thumbnail_url' fields to relevant API serializers
     - Updates Part and Company API endpoints to use new image architecture
+
+v453 -> 2026-02-11 : https://github.com/inventree/InvenTree/pull/11244
+    - Adds (internal) endpoint to end a observability tooling session
 
 v452 -> 2026-02-10 : https://github.com/inventree/InvenTree/pull/11276
     - Adds "install_into_detail" field to the BuildItem API endpoint

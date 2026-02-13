@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 
 import { useShallow } from 'zustand/react/shallow';
-import { setApiDefaults } from '../../App';
+import { removeTraceId, setApiDefaults, setTraceId } from '../../App';
 import { AuthFormOptions } from '../../components/forms/AuthFormOptions';
 import { AuthenticationForm } from '../../components/forms/AuthenticationForm';
 import { InstanceOptions } from '../../components/forms/InstanceOptions';
@@ -63,7 +63,9 @@ export default function Login() {
     if (newHost === null) return;
     setHost(hostList[newHost]?.host, newHost);
     setApiDefaults();
+    const traceid = setTraceId();
     fetchServerApiState();
+    removeTraceId(traceid);
   }
 
   // Set default host to localhost if no host is selected

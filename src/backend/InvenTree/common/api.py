@@ -22,6 +22,7 @@ from django_q.tasks import async_task
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
 from drf_spectacular.utils import OpenApiResponse, extend_schema
 from error_report.models import Error
+from opentelemetry import trace
 from pint._typing import UnitLike
 from rest_framework import generics, serializers
 from rest_framework.exceptions import NotAcceptable, NotFound, PermissionDenied
@@ -1202,6 +1203,50 @@ class HealthCheckView(APIView):
         )
 
 
+class ObservabilityEndSerializer(serializers.Serializer):
+    """Serializer for observability end endpoint."""
+
+    traceid = serializers.CharField(
+        help_text='Trace ID to end', max_length=128, required=True
+    )
+    service = serializers.CharField(
+        help_text='Service name', max_length=128, required=True
+    )
+
+
+class ObservabilityEnd(CreateAPI):
+    """Endpoint for observability tools."""
+
+    permission_classes = [AllowAnyOrReadScope]
+    serializer_class = ObservabilityEndSerializer
+
+    def create(self, request, *args, **kwargs):
+        """End a trace in the observability system."""
+        if not settings.TRACING_ENABLED:
+            return Response({'status': 'ok'})
+
+        data = self.get_serializer(data=request.data)
+        data.is_valid(raise_exception=True)
+
+        traceid = data.validated_data['traceid']
+        # service = data.validated_data['service']  # This will become interesting with frontend observability
+
+        # End the foreign trend via the low level otel API
+        tracer = trace.get_tracer(__name__)
+        span_context = trace.SpanContext(
+            trace_id=int(traceid, 16),
+            span_id=0,
+            is_remote=True,
+            trace_flags=trace.TraceFlags(0x01),
+            trace_state=trace.TraceState(),
+        )
+        with tracer.start_span('Ending session') as span:
+            span.add_event('Ending external trace')
+            span.add_link(span_context)
+
+        return Response({'status': 'ok'})
+
+
 selection_urls = [
     path(
         '<int:pk>/',
@@ -1502,7 +1547,22 @@ common_api_urls = [
     # System APIs (related to basic system functions)
     path(
         'system/',
-        include([path('health/', HealthCheckView.as_view(), name='api-system-health')]),
+        include([
+            # Health check
+            path('health/', HealthCheckView.as_view(), name='api-system-health')
+        ]),
+    ),
+    # Internal System APIs - DO NOT USE
+    path(
+        'system-internal/',
+        include([
+            # Observability
+            path(
+                'observability/end',
+                ObservabilityEnd.as_view(),
+                name='api-system-observability',
+            )
+        ]),
     ),
 ]
 

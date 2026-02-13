@@ -1220,7 +1220,9 @@ class InvenTreeSetting(BaseInvenTreeSetting):
     even if that key does not exist.
     """
 
-    SETTINGS: dict[str, InvenTreeSettingsKeyType]
+    from common.setting.system import SYSTEM_SETTINGS
+
+    SETTINGS: dict[str, InvenTreeSettingsKeyType] = SYSTEM_SETTINGS
 
     CHECK_SETTING_KEY = True
 
@@ -1286,9 +1288,6 @@ class InvenTreeSetting(BaseInvenTreeSetting):
 
     The keys must be upper-case
     """
-    from common.setting.system import SYSTEM_SETTINGS
-
-    SETTINGS = SYSTEM_SETTINGS
 
     typ = 'inventree'
 
@@ -1314,6 +1313,8 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
 
     import common.setting.user
 
+    SETTINGS = common.setting.user.USER_SETTINGS
+
     CHECK_SETTING_KEY = True
 
     class Meta:
@@ -1324,8 +1325,6 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
         constraints = [
             models.UniqueConstraint(fields=['key', 'user'], name='unique key and user')
         ]
-
-    SETTINGS = common.setting.user.USER_SETTINGS
 
     typ = 'user'
     extra_unique_fields = ['user']
