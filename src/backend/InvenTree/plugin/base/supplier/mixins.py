@@ -109,8 +109,8 @@ class SupplierMixin(SettingsMixin, Generic[PartData]):
         *,
         part: part_models.Part,
         manufacturer_part: company.models.ManufacturerPart,
-    ) -> part_models.SupplierPart:
-        """Import a supplier part using the provided data.
+    ) -> company.models.SupplierPart:
+        """Import a SupplierPart using the provided data.
 
         This may include:
           - Creating a new supplier part

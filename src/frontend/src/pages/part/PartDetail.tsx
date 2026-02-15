@@ -693,16 +693,6 @@ export default function PartDetail() {
         hidden: !part.responsible
       },
       {
-        type: 'link',
-        name: 'default_supplier',
-        label: t`Default Supplier`,
-        model: ModelType.supplierpart,
-        model_formatter: (model: any) => {
-          return model.SKU;
-        },
-        hidden: !part.default_supplier
-      },
-      {
         name: 'default_expiry',
         label: t`Default Expiry`,
         hidden: !part.default_expiry,

@@ -55,14 +55,6 @@ export function usePartFields({
           structural: false
         }
       },
-      default_supplier: {
-        hidden: !partId || !purchaseable,
-        filters: {
-          part: partId,
-          part_detail: true,
-          supplier_detail: true
-        }
-      },
       default_expiry: {},
       minimum_stock: {},
       responsible: {

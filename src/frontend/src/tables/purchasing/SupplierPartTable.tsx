@@ -100,6 +100,12 @@ export function SupplierPartTable({
         render: (record: any) => record?.manufacturer_part_detail?.MPN
       },
       BooleanColumn({
+        accessor: 'primary',
+        sortable: true,
+        switchable: true,
+        defaultVisible: false
+      }),
+      BooleanColumn({
         accessor: 'active',
         title: t`Active`,
         sortable: true,
@@ -176,7 +182,9 @@ export function SupplierPartTable({
       supplier: supplierId,
       manufacturer_part: manufacturerPartId
     },
-    table: table,
+    onFormSuccess: (response: any) => {
+      table.refreshTable();
+    },
     successMessage: t`Supplier part created`
   });
 
@@ -216,6 +224,11 @@ export function SupplierPartTable({
         description: t`Show active supplier parts`
       },
       {
+        name: 'primary',
+        label: t`Primary`,
+        description: t`Show primary supplier parts`
+      },
+      {
         name: 'part_active',
         label: t`Active Part`,
         description: t`Show active internal parts`
@@ -243,7 +256,9 @@ export function SupplierPartTable({
     pk: selectedSupplierPart?.pk,
     title: t`Edit Supplier Part`,
     fields: useMemo(() => editSupplierPartFields, [editSupplierPartFields]),
-    table: table
+    onFormSuccess: (response: any) => {
+      table.refreshTable();
+    }
   });
 
   const duplicateSupplierPart = useCreateApiFormModal({
@@ -252,9 +267,12 @@ export function SupplierPartTable({
     fields: useMemo(() => editSupplierPartFields, [editSupplierPartFields]),
     initialData: {
       ...selectedSupplierPart,
+      primary: false,
       active: true
     },
-    table: table,
+    onFormSuccess: (response: any) => {
+      table.refreshTable();
+    },
     successMessage: t`Supplier part created`
   });
 
