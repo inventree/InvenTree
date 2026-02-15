@@ -299,6 +299,7 @@ class Order(
 
     REQUIRE_RESPONSIBLE_SETTING = None
     UNLOCK_SETTING = None
+    IMPORT_ID_FIELDS = ['reference']
 
     class Meta:
         """Metaclass options. Abstract ensures no database table is created."""
