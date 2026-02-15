@@ -1,6 +1,11 @@
 """JSON serializers for common components."""
 
+import io
+from pathlib import Path
+
 from django.contrib.contenttypes.models import ContentType
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
 from django.db.models import Count, OuterRef, Subquery
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -11,17 +16,23 @@ from drf_spectacular.utils import extend_schema_field
 from error_report.models import Error
 from flags.state import flag_state
 from rest_framework import serializers
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import PermissionDenied, ValidationError
 
 import common.filters
+import common.helpers as common_helper
 import common.models as common_models
 import common.validators
 import generic.states.custom
+import InvenTree.serializers
 from importer.registry import register_importer
-from InvenTree.helpers import get_objectreference
+from InvenTree.helpers import get_objectreference, getBlankImage
 from InvenTree.helpers_model import construct_absolute_url
 from InvenTree.mixins import DataImportExportSerializerMixin
-from InvenTree.models import InvenTreeParameterMixin
+from InvenTree.models import (
+    InvenTreeAttachmentMixin,
+    InvenTreeImageMixin,
+    InvenTreeParameterMixin,
+)
 from InvenTree.serializers import (
     ContentTypeField,
     FilterableSerializerMixin,
@@ -639,6 +650,186 @@ class FailedTaskSerializer(InvenTreeModelSerializer):
     result = serializers.CharField()
 
 
+class InvenTreeImageSerializer(
+    InvenTree.serializers.RemoteImageMixin, InvenTreeModelSerializer
+):
+    """Serializer for InvenTreeImage."""
+
+    image = InvenTreeImageSerializerField(required=False)
+    thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
+
+    # # we accept the model name here
+    # content_type = serializers.ChoiceField(
+    #     choices=[],  # populated in __init__
+    #     write_only=True,
+    #     label=_('Content Type'),
+    # )
+
+    model_type = ContentTypeField(
+        mixin_class=InvenTreeImageMixin,
+        choices=common.validators.image_model_options,
+        label=_('Model Type'),
+        help_text=_('Type of object this image is attached to'),
+    )
+
+    existing_image = serializers.CharField(
+        write_only=True,
+        required=False,
+        allow_blank=False,
+        help_text=_('Filename of an existing image'),
+        label=_('Existing Image'),
+    )
+
+    object_id = serializers.IntegerField(write_only=True)
+
+    class Meta:
+        """Meta options for the InvenTreeImageSerializer."""
+
+        model = common_models.InvenTreeImage
+        fields = [
+            'pk',
+            'primary',
+            'image',
+            'thumbnail',
+            'model_type',
+            'existing_image',
+            'remote_image',
+            'object_id',
+        ]
+        read_only_fields = ['pk', 'thumbnail']
+
+    def validate_existing_image(self, img):
+        """Check the file really exists in storage backend."""
+        if not img:
+            return img
+
+        image_name = Path(img).name
+        prefix = common_helper.UPLOADED_IMAGE_DIR
+        path = f'{prefix}/{image_name}'
+
+        if not default_storage.exists(path):
+            raise ValidationError(_('Image file does not exist in storage backend'))
+
+        return img
+
+    def _process_images(self, instance, data):
+        """Move any existing_image or remote_image_file into instance.image, then save."""
+        # Handle an existing image filename on disk
+        existing = data.get('existing_image', None)
+        if existing:
+            instance.image = existing
+            instance.save()
+
+        # Handle a remote image fetched via RemoteImageMixin
+        remote_img = getattr(self, 'remote_image_file', None)
+        if remote_img:
+            try:
+                fmt = remote_img.format or 'PNG'
+                buffer = io.BytesIO()
+                remote_img.save(buffer, format=fmt)
+                buffer.seek(0)
+
+                filename = f'part_{instance.pk}_image.{fmt.lower()}'
+                instance.image.save(filename, ContentFile(buffer.read()), save=True)
+            except Exception as e:
+                raise ValidationError(
+                    _('Failed to process remote image: {error}').format(error=str(e))
+                )
+        return instance
+
+    def create(self, validated_data):
+        """Create a new InvenTreeImage instance with the provided data."""
+        # Extract the fields from validated data
+
+        image = validated_data.get('image', None)
+        existing_image = validated_data.get('existing_image', None)
+        remote_image = validated_data.get(
+            'remote_image', None
+        )  # comes from RemoteImageMixin
+
+        # Validation: Ensure at least one image source is provided
+        if not image and not existing_image and not remote_image:
+            raise ValidationError(
+                _(
+                    "You must provide at least one of: 'image', 'existing_image', or 'remote_image'."
+                )
+            )
+
+        # Continue with normal creation
+        instance = super().create(validated_data)
+
+        return self._process_images(instance, validated_data)
+
+    def update(self, instance, validated_data):
+        """Update the InvenTreeImage instance with new data."""
+        instance = super().update(instance, validated_data)
+        return self._process_images(instance, validated_data)
+
+    def skip_create_fields(self):
+        """Skip these fields when instantiating a new Part instance."""
+        fields = super().skip_create_fields()
+
+        fields += ['existing_image']
+
+        return fields
+
+
+class InvenTreeImageSerializerMixin(metaclass=serializers.SerializerMetaclass):
+    """Mixin to add image fields to a serializer."""
+
+    image = serializers.SerializerMethodField(
+        help_text=_('The URL of the primary image for this instance (if any)')
+    )
+    thumbnail = serializers.SerializerMethodField(
+        help_text=_('The URL of the thumbnail for the primary image (if any)')
+    )
+
+    def _get_primary(self, instance):
+        """Return the primary image for the instance, if it exists."""
+        images = getattr(instance, 'all_images', None)
+        if not images or len(images) == 0:
+            return None
+        return next(img for img in images if img.primary)
+
+    def get_image(self, instance):
+        """Return the URL of the primary image."""
+        primary = self._get_primary(instance)
+        if not primary:
+            return None
+
+        image_file = primary.image
+        try:
+            url = image_file.url
+        except ValueError:
+            storage = getattr(image_file, 'storage', default_storage)
+            url = storage.url(image_file.name)
+
+        return url
+
+    def get_thumbnail(self, instance):
+        """Return the URL of the thumbnail."""
+        primary = self._get_primary(instance)
+        thumb_field = getattr(primary, 'image', None)
+        thumb_file = getattr(thumb_field, 'thumbnail', None)
+        if not primary or not thumb_file:
+            return getBlankImage()
+
+        try:
+            url = thumb_file.url
+        except (ValueError, AttributeError):
+            storage = getattr(thumb_file, 'storage', default_storage)
+            url = storage.url(thumb_file.name)
+
+        return url
+
+
+class InvenTreeImageThumbSerializer(serializers.Serializer):
+    """Serializer for a thumbnail of an uploaded image."""
+
+    image = InvenTreeImageSerializerField(read_only=True)
+    count = serializers.IntegerField(read_only=True)
+
+
 class AttachmentSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
     """Serializer class for the Attachment model."""
 
@@ -696,7 +887,6 @@ class AttachmentSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
 
     def save(self, **kwargs):
         """Override the save method to handle the model_type field."""
-        from InvenTree.models import InvenTreeAttachmentMixin
         from users.permissions import check_user_permission
 
         model_type = self.validated_data.get('model_type', None)

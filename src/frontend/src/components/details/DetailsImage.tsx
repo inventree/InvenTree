@@ -1,8 +1,13 @@
+import type { UserRoles } from '@lib/enums/Roles';
+import { cancelEvent } from '@lib/functions/Events';
+import { ApiEndpoints, type ModelType, apiUrl } from '@lib/index';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
+import { Carousel } from '@mantine/carousel';
 import {
   AspectRatio,
   Button,
+  Flex,
   Grid,
   Group,
   Image,
@@ -19,48 +24,68 @@ import {
 } from '@mantine/dropzone';
 import { useHover } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
-import { useMemo, useState } from 'react';
-
-import { ActionButton } from '@lib/components/ActionButton';
-import type { UserRoles } from '@lib/enums/Roles';
-import { cancelEvent } from '@lib/functions/Events';
 import { showNotification } from '@mantine/notifications';
+import { IconCameraPlus, IconDotsVertical } from '@tabler/icons-react';
+import { useQuery } from '@tanstack/react-query';
+import { useMemo, useState } from 'react';
 import { api } from '../../App';
 import { InvenTreeIcon } from '../../functions/icons';
 import { showApiErrorMessage } from '../../functions/notifications';
-import { useEditApiFormModal } from '../../hooks/UseForm';
+import {
+  useCreateApiFormModal,
+  useDeleteApiFormModal
+} from '../../hooks/UseForm';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import { PartThumbTable } from '../../tables/part/PartThumbTable';
 import { vars } from '../../theme';
 import { ApiImage } from '../images/ApiImage';
+import {
+  ActionDropdown,
+  type ActionDropdownItem
+} from '../items/ActionDropdown';
 import { StylishText } from '../items/StylishText';
 
 /**
  * Props for detail image
  */
-export type DetailImageProps = {
+export type ImageItemProps = {
   appRole?: UserRoles;
+  primary?: boolean;
   src: string;
-  apiPath: string;
   refresh?: () => void;
-  imageActions?: DetailImageButtonProps;
+  AddImageActions?: AddImageButtonProps;
+  EditImageActions?: EditImageButtonProps;
   pk: string;
+  image_id?: string;
+  model_type?: ModelType.part | ModelType.company;
+  hasAction?: boolean;
 };
 
 /**
- * Actions for Detail Images.
+ * Actions for add image in Detail Images (Only for multiple details images).
  * If true, the button type will be visible
  * @param {boolean} selectExisting - PART ONLY. Allows selecting existing images as part image
- * @param {boolean} downloadImage - Allows downloading image from a remote URL
- * @param {boolean} uploadFile - Allows uploading a new image
- * @param {boolean} deleteFile - Allows deleting the current image
+ * @param {boolean} uploadNewImage - PART ONLY. Allows uploading a new image.
  */
-export type DetailImageButtonProps = {
+export type AddImageButtonProps = {
   selectExisting?: boolean;
+  uploadNewImage?: boolean;
+};
+
+/**
+ * Actions for edit image in Detail Images.
+ * If true, the button type will be visible
+ * @param {boolean} downloadImage - Allows downloading image from a remote URL
+ * @param {boolean} replaceImage - PART ONLY. Allows replacing the current image with a new file
+ * @param {boolean} deleteImage - Allows deleting the current image
+ * @param {boolean} setAsPrimary - PART ONLY. Allows setting the current image as primary image
+ */
+export type EditImageButtonProps = {
   downloadImage?: boolean;
-  uploadFile?: boolean;
-  deleteFile?: boolean;
+  replaceImage?: boolean;
+  deleteImage?: boolean;
+  setAsPrimary?: boolean;
 };
 
 // Image is expected to be 1:1 square, so only 1 dimension is needed
@@ -70,32 +95,16 @@ const IMAGE_DIMENSION = 256;
 const backup_image = '/static/img/blank_image.png';
 
 /**
- * Modal used for removing/deleting the current image relation
- */
-const removeModal = (apiPath: string, setImage: (image: string) => void) =>
-  modals.openConfirmModal({
-    title: <StylishText size='xl'>{t`Remove Image`}</StylishText>,
-    children: (
-      <Text>
-        <Trans>Remove the associated image from this item?</Trans>
-      </Text>
-    ),
-    labels: { confirm: t`Remove`, cancel: t`Cancel` },
-    onConfirm: async () => {
-      await api.patch(apiPath, { image: null });
-      setImage(backup_image);
-    }
-  });
-
-/**
  * Modal used for uploading a new image
  */
 function UploadModal({
-  apiPath,
-  setImage
+  setImage,
+  object_id,
+  model_type
 }: Readonly<{
-  apiPath: string;
   setImage: (image: string) => void;
+  object_id: string;
+  model_type: string;
 }>) {
   const [currentFile, setCurrentFile] = useState<FileWithPath | null>(null);
   let uploading = false;
@@ -162,9 +171,13 @@ function UploadModal({
     uploading = true;
     const formData = new FormData();
     formData.append('image', file, file.name);
+    formData.append('model_type', model_type);
+    formData.append('object_id', object_id);
+
+    const url = apiUrl(ApiEndpoints.upload_image_list);
 
     api
-      .patch(apiPath, formData)
+      .post(url, formData)
       .then((response) => {
         setImage(response.data.image);
         modals.closeAll();
@@ -227,6 +240,7 @@ function UploadModal({
           </Dropzone.Idle>
         </Group>
       </Dropzone>
+
       <Paper
         style={{
           position: 'sticky',
@@ -264,110 +278,157 @@ function UploadModal({
  * Generate components for Action buttons used with the Details Image
  */
 function ImageActionButtons({
-  actions = {},
-  visible,
-  apiPath,
-  hasImage,
   pk,
-  setImage,
-  downloadImage
+  addActions,
+  editActions,
+  model_type,
+  setAsPrimary,
+  downloadImage,
+  setAndRefresh,
+  deleteUploadImage
 }: Readonly<{
-  actions?: DetailImageButtonProps;
-  visible: boolean;
-  apiPath: string;
-  hasImage: boolean;
   pk: string;
-  setImage: (image: string) => void;
+  addActions?: AddImageButtonProps;
+  editActions?: EditImageButtonProps;
+  model_type?: string;
+  setAsPrimary: () => void;
   downloadImage: () => void;
+  setAndRefresh: (image: string) => void;
+  deleteUploadImage: any;
 }>) {
   const globalSettings = useGlobalSettingsState();
 
+  const editImageActions: ActionDropdownItem[] = [
+    {
+      name: 'Set as primary',
+      onClick: (event: any) => {
+        cancelEvent(event);
+        setAsPrimary();
+      },
+      icon: <InvenTreeIcon icon='complete' />,
+      hidden: !editActions?.setAsPrimary
+    },
+    {
+      name: 'Replace image',
+      onClick: (e) => {
+        cancelEvent(e);
+        modals.open({
+          title: <StylishText size='xl'>{t`Replace Image`}</StylishText>,
+          children: (
+            <UploadModal
+              object_id={pk!}
+              model_type={String(model_type)}
+              setImage={setAndRefresh}
+            />
+          )
+        });
+      },
+      icon: <InvenTreeIcon icon='upload' />,
+      hidden: !editActions?.replaceImage
+    },
+    {
+      name: 'Download remote image',
+      onClick: (event: any) => {
+        cancelEvent(event);
+        downloadImage();
+      },
+      icon: <InvenTreeIcon icon='download' />,
+      hidden:
+        !editActions?.downloadImage ||
+        !globalSettings.isSet('INVENTREE_DOWNLOAD_FROM_URL')
+    },
+
+    {
+      name: 'Delete image',
+      onClick: (event: any) => {
+        cancelEvent(event);
+        deleteUploadImage.open();
+      },
+      icon: <InvenTreeIcon icon='delete' iconProps={{ color: 'red' }} />,
+      hidden: !editActions?.deleteImage
+    }
+  ];
+
+  const newImageActions: ActionDropdownItem[] = [
+    {
+      name: 'Upload new image',
+      onClick: (event: any) => {
+        cancelEvent(event);
+        modals.open({
+          title: <StylishText size='xl'>{t`Upload Image`}</StylishText>,
+          children: (
+            <UploadModal
+              model_type={String(model_type)}
+              object_id={pk!}
+              setImage={setAndRefresh}
+            />
+          )
+        });
+      },
+      icon: <InvenTreeIcon icon='upload' />,
+      hidden: !addActions?.uploadNewImage
+    },
+    {
+      name: 'Select from existing images',
+      onClick: (event: any) => {
+        cancelEvent(event);
+        modals.open({
+          title: <StylishText size='xl'>{t`Select Image`}</StylishText>,
+          size: '80%',
+          children: (
+            <PartThumbTable
+              pk={pk!}
+              onSuccess={(image) => {
+                setAndRefresh(image);
+                showNotification({
+                  title: t`Image set`,
+                  message: t`Image has been set successfully`,
+                  color: 'green'
+                });
+              }}
+            />
+          )
+        });
+      },
+      icon: <InvenTreeIcon icon='select_image' />,
+      hidden: !addActions?.selectExisting
+    }
+  ];
+
   return (
     <>
-      {visible && (
-        <Group
-          gap='xs'
-          style={{ zIndex: 2, position: 'absolute', top: '10px', left: '10px' }}
-        >
-          {actions.selectExisting && (
-            <ActionButton
-              icon={
-                <InvenTreeIcon
-                  icon='select_image'
-                  iconProps={{ color: 'white' }}
-                />
-              }
-              tooltip={t`Select from existing images`}
-              variant='outline'
-              size='lg'
-              tooltipAlignment='top'
-              onClick={(event: any) => {
-                cancelEvent(event);
+      <Flex onClick={(e) => cancelEvent(e)} pos={'absolute'} right={3} top={3}>
+        <ActionDropdown
+          noindicator={true}
+          icon={<IconDotsVertical color='white' size={30} stroke={1.5} />}
+          actions={editImageActions}
+          tooltip='Image Actions'
+          tooltipPosition='top'
+        />
+      </Flex>
 
-                modals.open({
-                  title: <StylishText size='xl'>{t`Select Image`}</StylishText>,
-                  size: '80%',
-                  children: <PartThumbTable pk={pk} setImage={setImage} />
-                });
-              }}
+      <Flex
+        onClick={(e) => cancelEvent(e)}
+        pos={'absolute'}
+        right={0}
+        bottom={5}
+      >
+        <ActionDropdown
+          position='top-end'
+          noindicator={true}
+          icon={
+            <IconCameraPlus
+              style={{ zIndex: 2, marginRight: 10 }}
+              color='white'
+              size={30}
+              stroke={1.5}
             />
-          )}
-          {actions.downloadImage &&
-            globalSettings.isSet('INVENTREE_DOWNLOAD_FROM_URL') && (
-              <ActionButton
-                icon={
-                  <InvenTreeIcon
-                    icon='download'
-                    iconProps={{ color: 'white' }}
-                  />
-                }
-                tooltip={t`Download remote image`}
-                variant='outline'
-                size='lg'
-                tooltipAlignment='top'
-                onClick={(event: any) => {
-                  cancelEvent(event);
-                  downloadImage();
-                }}
-              />
-            )}
-          {actions.uploadFile && (
-            <ActionButton
-              icon={
-                <InvenTreeIcon icon='upload' iconProps={{ color: 'white' }} />
-              }
-              tooltip={t`Upload new image`}
-              variant='outline'
-              size='lg'
-              tooltipAlignment='top'
-              onClick={(event: any) => {
-                cancelEvent(event);
-                modals.open({
-                  title: <StylishText size='xl'>{t`Upload Image`}</StylishText>,
-                  children: (
-                    <UploadModal apiPath={apiPath} setImage={setImage} />
-                  )
-                });
-              }}
-            />
-          )}
-          {actions.deleteFile && hasImage && (
-            <ActionButton
-              icon={
-                <InvenTreeIcon icon='delete' iconProps={{ color: 'red' }} />
-              }
-              tooltip={t`Delete image`}
-              variant='outline'
-              size='lg'
-              tooltipAlignment='top'
-              onClick={(event: any) => {
-                cancelEvent(event);
-                removeModal(apiPath, setImage);
-              }}
-            />
-          )}
-        </Group>
-      )}
+          }
+          actions={newImageActions}
+          tooltip='Add New Image'
+          tooltipPosition='bottom'
+        />
+      </Flex>
     </>
   );
 }
@@ -375,7 +436,7 @@ function ImageActionButtons({
 /**
  * Renders an image with action buttons for display on Details panels
  */
-export function DetailsImage(props: Readonly<DetailImageProps>) {
+function ImageItem(props: Readonly<ImageItemProps>) {
   // Displays a group of ActionButtons on hover
   const { hovered, ref } = useHover();
   const [img, setImg] = useState<string>(props.src ?? backup_image);
@@ -388,13 +449,16 @@ export function DetailsImage(props: Readonly<DetailImageProps>) {
 
   const permissions = useUserState();
 
-  const downloadImage = useEditApiFormModal({
-    url: props.apiPath,
+  const downloadImage = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.upload_image_list),
     title: t`Download Image`,
     fields: {
-      remote_image: {}
+      remote_image: {},
+      object_id: { hidden: true, value: props.pk },
+      model_type: { hidden: true, value: props.model_type }
     },
     timeout: 10000,
+    submitText: t`Download`,
     successMessage: t`Image downloaded successfully`,
     onFormSuccess: (response: any) => {
       if (response.image) {
@@ -403,14 +467,40 @@ export function DetailsImage(props: Readonly<DetailImageProps>) {
     }
   });
 
-  const hasOverlay: boolean = useMemo(() => {
-    return (
-      props.imageActions?.selectExisting ||
-      props.imageActions?.uploadFile ||
-      props.imageActions?.deleteFile ||
-      false
-    );
-  }, [props.imageActions]);
+  // Modal used for removing/deleting the current image
+  const deleteUploadImage = useDeleteApiFormModal({
+    url: ApiEndpoints.upload_image_list,
+    ignorePermissionCheck: true,
+    pk: props.image_id,
+    title: t`Delete Image`,
+    onFormSuccess: () => {
+      setAndRefresh(backup_image);
+    }
+  });
+
+  const setAsPrimary = () => {
+    const url = apiUrl(ApiEndpoints.upload_image_list, props.image_id);
+
+    api
+      .patch(url, { primary: true })
+      .then((response) => {
+        setImg(response.data.image);
+        showNotification({
+          title: t`Image Updated`,
+          message: t`Image has been set as primary`,
+          color: 'green'
+        });
+      })
+      .catch((error) => {
+        showApiErrorMessage({
+          error: error,
+          title: t`Upload Error`,
+          field: 'image'
+        });
+      });
+
+    props.refresh?.();
+  };
 
   const expandImage = (event: any) => {
     cancelEvent(event);
@@ -420,43 +510,200 @@ export function DetailsImage(props: Readonly<DetailImageProps>) {
     });
   };
 
+  const imageContent = (
+    <AspectRatio
+      ref={ref}
+      maw={IMAGE_DIMENSION}
+      ratio={1}
+      pos='relative'
+      visibleFrom='xs'
+    >
+      <>
+        <ApiImage
+          src={img}
+          mah={IMAGE_DIMENSION}
+          maw={IMAGE_DIMENSION}
+          onClick={expandImage}
+        />
+        {props.appRole &&
+          permissions.hasChangeRole(props.appRole) &&
+          props.hasAction && (
+            <Overlay
+              color='black'
+              opacity={hovered ? 0.8 : 0}
+              onClick={expandImage}
+            >
+              <ImageActionButtons
+                deleteUploadImage={deleteUploadImage}
+                addActions={props.AddImageActions}
+                editActions={props.EditImageActions}
+                pk={props.pk}
+                model_type={props.model_type}
+                downloadImage={downloadImage.open}
+                setAndRefresh={setAndRefresh}
+                setAsPrimary={setAsPrimary}
+              />
+            </Overlay>
+          )}
+      </>
+    </AspectRatio>
+  );
+
   return (
     <>
       {downloadImage.modal}
-      <Grid.Col span={{ base: 12, sm: 4 }}>
-        <AspectRatio
-          ref={ref}
-          maw={IMAGE_DIMENSION}
-          ratio={1}
-          pos='relative'
-          visibleFrom='xs'
-        >
-          <>
-            <ApiImage
-              src={img}
-              mah={IMAGE_DIMENSION}
-              maw={IMAGE_DIMENSION}
-              onClick={expandImage}
-            />
-            {props.appRole &&
-              permissions.hasChangeRole(props.appRole) &&
-              hasOverlay &&
-              hovered && (
-                <Overlay color='black' opacity={0.8} onClick={expandImage}>
-                  <ImageActionButtons
-                    visible={hovered}
-                    actions={props.imageActions}
-                    apiPath={props.apiPath}
-                    hasImage={!!props.src}
-                    pk={props.pk}
-                    setImage={setAndRefresh}
-                    downloadImage={downloadImage.open}
-                  />
-                </Overlay>
-              )}
-          </>
-        </AspectRatio>
-      </Grid.Col>
+      {deleteUploadImage.modal}
+
+      {imageContent}
     </>
+  );
+}
+interface UploadImage {
+  pk: string;
+  image: string;
+  primary?: boolean;
+}
+
+interface DetailsImageProps {
+  appRole?: UserRoles;
+  object_id: string;
+  model_type: ModelType.part | ModelType.company;
+  multiple?: boolean;
+  refresh?: () => void;
+  AddImageActions?: AddImageButtonProps;
+  EditImageActions?: EditImageButtonProps;
+}
+
+/**
+ * Fallback image used whenever the API returns no images for the given object.
+ */
+const FALLBACK_IMAGE: UploadImage = {
+  pk: 'fallback',
+  image: backup_image,
+  primary: true
+};
+
+/**
+ * Carousel component that displays uploaded images for a given model instance.
+ * Handles empty states by showing a fallback image and configures navigation /
+ * action controls based on the available data and provided props.
+ */
+export function DetailsImage({
+  appRole,
+  model_type,
+  multiple,
+  object_id,
+  refresh,
+  AddImageActions,
+  EditImageActions
+}: Readonly<DetailsImageProps>) {
+  const imgUrl = ApiEndpoints.upload_image_list;
+
+  /**
+   * Fetch the list of images associated with the current object.
+   * If the API returns an empty array, we substitute a fallback image.
+   */
+  const { data: images = [], isFetching: isImagesFetching } = useQuery<
+    UploadImage[]
+  >({
+    queryKey: [imgUrl, object_id],
+    queryFn: async () => {
+      const response = await api.get(apiUrl(imgUrl), {
+        params: {
+          model_type,
+          object_id
+        }
+      });
+
+      if (!response.data || response.data.length === 0) {
+        return [FALLBACK_IMAGE];
+      }
+
+      return response.data;
+    }
+  });
+
+  /**
+   * Pre-compute values needed by the carousel and its children.
+   */
+  const carouselConfig = useMemo(() => {
+    const isFallbackImage = images[0]?.pk === FALLBACK_IMAGE.pk;
+    const hasMultipleImages = Boolean(multiple && images.length > 1);
+
+    const hasAction =
+      Object.values(EditImageActions ?? {}).some(Boolean) ||
+      Object.values(AddImageActions ?? {}).some(Boolean) ||
+      false;
+
+    return {
+      hasAction,
+      hasMultipleImages,
+      startSlide: Math.max(
+        0,
+        images.findIndex((img) => img.primary)
+      ),
+      addImageActions: {
+        selectExisting: AddImageActions?.selectExisting,
+        uploadNewImage: AddImageActions?.uploadNewImage
+      },
+      editImageActions: {
+        deleteImage: EditImageActions?.deleteImage && !isFallbackImage,
+        setAsPrimary: images.length > 1 && EditImageActions?.setAsPrimary,
+        replaceImage: EditImageActions?.replaceImage,
+        downloadImage: EditImageActions?.downloadImage
+      }
+    };
+  }, [images]);
+
+  return (
+    <Grid.Col span={{ base: 12, sm: 4 }}>
+      {!isImagesFetching && images.length > 0 && (
+        <Carousel
+          slideSize='100%'
+          emblaOptions={{
+            loop: carouselConfig.hasMultipleImages,
+            align: 'center'
+          }}
+          initialSlide={carouselConfig.startSlide}
+          withControls={carouselConfig.hasMultipleImages}
+          previousControlProps={{
+            style: {
+              transform: 'translateX(-45%)',
+              color: 'white',
+              backgroundColor: 'rgba(0, 0, 0, 0.4)'
+            }
+          }}
+          nextControlProps={{
+            style: {
+              transform: 'translateX(45%)',
+              color: 'white',
+              backgroundColor: 'rgba(0, 0, 0, 0.6)'
+            }
+          }}
+          styles={{
+            control: {
+              '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.6)' }
+            }
+          }}
+        >
+          {images.map((imgObj: UploadImage) => (
+            <Carousel.Slide key={imgObj.pk}>
+              <ImageItem
+                appRole={appRole}
+                AddImageActions={carouselConfig.addImageActions}
+                EditImageActions={carouselConfig.editImageActions}
+                src={imgObj.image}
+                image_id={imgObj.pk}
+                pk={object_id}
+                primary={imgObj.primary}
+                model_type={model_type}
+                refresh={refresh}
+                hasAction={carouselConfig.hasAction}
+              />
+            </Carousel.Slide>
+          ))}
+        </Carousel>
+      )}
+    </Grid.Col>
   );
 }

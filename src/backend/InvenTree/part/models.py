@@ -50,6 +50,7 @@ import users.models
 from build import models as BuildModels
 from build.status_codes import BuildStatusGroups
 from common.currency import currency_code_default
+from common.helpers import UPLOADED_IMAGE_DIR
 from common.icons import validate_icon
 from common.settings import get_global_setting
 from company.models import SupplierPart
@@ -342,7 +343,7 @@ def rename_part_image(instance, filename):
     Returns:
         Cleaned filename in format part_<n>_img
     """
-    base = part_helpers.PART_IMAGE_DIR
+    base = UPLOADED_IMAGE_DIR
     fname = os.path.basename(filename)
 
     return os.path.join(base, fname)
@@ -488,7 +489,6 @@ class Part(
         revision: Part revision
         is_template: If True, this part is a 'template' part
         link: Link to an external page with more information about this part (e.g. internal Wiki)
-        image: Image of this part
         default_location: Where the item is normally stored (may be null)
         default_supplier: The default SupplierPart which should be used to procure and stock this part
         default_expiry: The default expiry duration for any StockItem instances of this part
@@ -602,29 +602,11 @@ class Part(
         super().delete()
 
     def save(self, *args, **kwargs):
-        """Overrides the save function for the Part model.
-
-        If the part image has been updated, then check if the "old" (previous) image is still used by another part.
-        If not, it is considered "orphaned" and will be deleted.
-        """
+        """Save the instance after validation, and ensure trackable for newly created parts."""
         _new = False
         if self.pk:
             try:
-                previous = Part.objects.get(pk=self.pk)
-
-                # Image has been changed
-                if previous.image is not None and self.image != previous.image:
-                    # Are there any (other) parts which reference the image?
-                    n_refs = (
-                        Part.objects
-                        .filter(image=previous.image)
-                        .exclude(pk=self.pk)
-                        .count()
-                    )
-
-                    if n_refs == 0:
-                        logger.info("Deleting unused image file '%s'", previous.image)
-                        previous.image.delete(save=False)
+                Part.objects.get(pk=self.pk)
             except Part.DoesNotExist:
                 pass
         else:

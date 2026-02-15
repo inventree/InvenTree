@@ -736,32 +736,35 @@ export default function PartDetail() {
 
     return part ? (
       <ItemDetailsGrid>
-        <Stack gap='xs'>
-          <Grid grow>
+        <Grid grow>
+          <Grid.Col pos='relative' span={{ base: 12, sm: 3 }}>
             <DetailsImage
               appRole={UserRoles.part}
-              imageActions={{
-                selectExisting: true,
-                downloadImage: true,
-                uploadFile: true,
-                deleteFile: true
-              }}
-              src={part.image}
-              apiPath={apiUrl(ApiEndpoints.part_list, part.pk)}
+              object_id={part.pk}
+              model_type={ModelType.part}
               refresh={refreshInstance}
-              pk={part.pk}
+              AddImageActions={{
+                selectExisting: true,
+                uploadNewImage: true
+              }}
+              EditImageActions={{
+                deleteImage: true,
+                setAsPrimary: true
+              }}
+              multiple={true}
             />
-            <Grid.Col span={{ base: 12, sm: 8 }}>
-              <DetailsTable fields={tl} item={data} />
-            </Grid.Col>
-          </Grid>
-          {enableRevisionSelection && (
-            <Stack gap='xs'>
-              <Text>{t`Select Part Revision`}</Text>
-              <RevisionSelector part={part} options={partRevisionOptions} />
-            </Stack>
-          )}
-        </Stack>
+          </Grid.Col>
+
+          <Grid.Col span={{ base: 12, sm: 5 }}>
+            <DetailsTable fields={tl} item={data} />
+          </Grid.Col>
+        </Grid>
+        {enableRevisionSelection && (
+          <Stack gap='xs'>
+            <Text>{t`Select Part Revision`}</Text>
+            <RevisionSelector part={part} options={partRevisionOptions} />
+          </Stack>
+        )}
         <DetailsTable fields={tr} item={data} />
         <DetailsTable fields={bl} item={data} />
         <DetailsTable fields={br} item={data} />
@@ -1108,7 +1111,10 @@ export default function PartDetail() {
     preFormContent: (
       <Alert color='red' title={t`Deleting this part cannot be reversed`}>
         <Stack gap='xs'>
-          <Thumbnail src={part.thumbnail ?? part.image} text={part.full_name} />
+          <Thumbnail
+            src={part?.thumbnail ?? part?.image}
+            text={part.full_name}
+          />
         </Stack>
       </Alert>
     )
@@ -1239,7 +1245,7 @@ export default function PartDetail() {
               ) : undefined
             }
             subtitle={part.description}
-            imageUrl={part.image}
+            imageUrl={part?.image}
             badges={badges}
             breadcrumbs={
               user.hasViewRole(UserRoles.part_category)

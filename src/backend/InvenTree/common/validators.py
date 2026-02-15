@@ -20,6 +20,15 @@ def parameter_model_types():
     )
 
 
+def image_model_types():
+    """Return a list of valid image model choices."""
+    import InvenTree.models
+
+    return list(
+        InvenTree.helpers_model.getModelsWithMixin(InvenTree.models.InvenTreeImageMixin)
+    )
+
+
 def parameter_model_options():
     """Return a list of options for models which support parameters."""
     return [
@@ -36,6 +45,14 @@ def parameter_template_model_options():
     ]
 
     return [(None, _('All models')), *options]
+
+
+def image_model_options():
+    """Return a list of options for models which support InvenTreeImageMixin."""
+    return [
+        (model.__name__.lower(), model._meta.verbose_name)
+        for model in image_model_types()
+    ]
 
 
 def attachment_model_types():
@@ -96,6 +113,13 @@ def validate_notes_model_type(value):
 
     if value.lower() not in model_names:
         raise ValidationError(f"Invalid model type '{value}'")
+
+
+def limit_image_content_types():
+    """Limit the content types for image uploads to those supported by InvenTreeImageMixin."""
+    allowed_models = image_model_types()
+    # Convert model classes to lowercase model names (strings)
+    return {'model__in': [model.__name__.lower() for model in allowed_models]}
 
 
 def validate_decimal_places_min(value):

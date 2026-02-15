@@ -31,7 +31,7 @@ import InvenTree.helpers
 import InvenTree.helpers_model
 import InvenTree.tasks
 from common.currency import currency_codes
-from common.models import CustomUnit, InvenTreeSetting
+from common.models import CustomUnit, InvenTreeImage, InvenTreeSetting
 from common.settings import get_global_setting
 from InvenTree.helpers_mixin import ClassProviderMixin, ClassValidationMixin
 from InvenTree.sanitizer import sanitize_svg
@@ -706,7 +706,7 @@ class TestHelpers(TestCase):
             helpers.getMediaUrl('xx/yy.png')  # type: ignore
 
         # Correct usage
-        part = Part().image
+        part = InvenTreeImage().image
         self.assertEqual(
             helpers.getMediaUrl(StdImageFieldFile(part, part, 'xx/yy.png')),  # type: ignore
             '/media/xx/yy.png',

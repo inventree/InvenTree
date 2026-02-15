@@ -191,6 +191,7 @@ def get_ruleset_ignore() -> list[str]:
         'common_inventreecustomuserstatemodel',
         'common_selectionlistentry',
         'common_selectionlist',
+        'common_inventreeimage',
         'users_owner',
         'users_userprofile',  # User profile is handled in the serializer - only own user can change
         # Third-party tables
