@@ -37,9 +37,10 @@ RUN apt install -y nodejs npm
 # Update to the latest stable node version
 RUN npm install -g n --ignore-scripts && n lts
 
-# Enable yarn
-RUN corepack enable && corepack prepare yarn@stable --activate
+# Install yarn
+RUN npm install -g yarn
 
+# Ensure node and yarn are available at the command line
 RUN node --version && yarn --version
 
 RUN yarn config set httpTimeout 600000 --home
