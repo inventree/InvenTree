@@ -26,7 +26,7 @@ class InvenTreeInternalBarcodePlugin(SettingsMixin, BarcodeMixin, InvenTreePlugi
     NAME = 'InvenTreeBarcode'
     TITLE = _('InvenTree Barcodes')
     DESCRIPTION = _('Provides native support for barcodes')
-    VERSION = '2.1.0'
+    VERSION = '2.2.0'
     AUTHOR = _('InvenTree contributors')
 
     SETTINGS = {
@@ -37,7 +37,7 @@ class InvenTreeInternalBarcodePlugin(SettingsMixin, BarcodeMixin, InvenTreePlugi
                 ('json', _('JSON barcodes (human readable)')),
                 ('short', _('Short barcodes (space optimized)')),
             ],
-            'default': 'json',
+            'default': 'short',
         },
         'SHORT_BARCODE_PREFIX': {
             'name': _('Short Barcode Prefix'),
