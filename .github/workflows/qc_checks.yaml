@@ -23,6 +23,8 @@ env:
   INVENTREE_SITE_URL: http://localhost:8000
   INVENTREE_DEBUG: true
 
+  use_performance: false
+
 permissions:
   contents: read
 
@@ -78,7 +80,7 @@ jobs:
       - name: Which runner to use?
         id: runner-perf
         # decide if we are running in inventree/inventree -> use codspeed-macro runner else ubuntu-24.04
-        run: echo "runner=$([[ '${{ github.repository }}' == 'inventree/InvenTree' ]] && echo 'codspeed-macro' || echo 'ubuntu-24.04')" >> $GITHUB_OUTPUT
+        run: echo "runner=$([[ '${{ github.repository }}' == 'inventree/InvenTree' && '${{ env.use_performance }}' == 'true' ]] && echo 'codspeed-macro' || echo 'ubuntu-24.04')" >> $GITHUB_OUTPUT
 
   pre-commit:
     name: Style [pre-commit]
