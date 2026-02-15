@@ -160,7 +160,7 @@ class PartTest(TestCase):
 
         p = Part.objects.get(pk=1)
         barcode = p.format_barcode()
-        self.assertEqual(barcode, '{"part": 1}')
+        self.assertEqual(barcode, 'INV-PA1')
 
     def test_str(self):
         """Test string representation of a Part."""
