@@ -1426,7 +1426,7 @@ export function useDeleteStockItem(props: StockOperationProps) {
   });
 }
 
-export function stockLocationFields(): ApiFormFieldSet {
+export function stockLocationFields(create = false): ApiFormFieldSet {
   const fields: ApiFormFieldSet = {
     parent: {
       description: t`Parent stock location`,
@@ -1439,7 +1439,10 @@ export function stockLocationFields(): ApiFormFieldSet {
     custom_icon: {
       field_type: 'icon'
     },
-    location_type: {}
+    location_type: {},
+    keep_form_open: {
+      hidden: !create
+    }
   };
 
   return fields;
