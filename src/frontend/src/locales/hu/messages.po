@@ -8,7 +8,7 @@ msgstr ""
 "Language: hu\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-02-12 06:47\n"
+"PO-Revision-Date: 2026-02-12 13:09\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -345,7 +345,7 @@ msgstr "Beszerzési rendelés"
 
 #: lib/enums/ModelInformation.tsx:160
 #: lib/enums/Roles.tsx:39
-#: src/defaults/actions.tsx:105
+#: src/defaults/actions.tsx:106
 #: src/pages/Index/Settings/SystemSettings.tsx:300
 #: src/pages/company/CompanyDetail.tsx:204
 #: src/pages/company/SupplierPartDetail.tsx:267
@@ -378,7 +378,7 @@ msgstr "Vevői rendelés"
 
 #: lib/enums/ModelInformation.tsx:176
 #: lib/enums/Roles.tsx:43
-#: src/defaults/actions.tsx:115
+#: src/defaults/actions.tsx:116
 #: src/pages/Index/Settings/SystemSettings.tsx:316
 #: src/pages/company/CompanyDetail.tsx:224
 #: src/pages/part/PartDetail.tsx:879
@@ -403,7 +403,7 @@ msgstr "Visszavétel"
 
 #: lib/enums/ModelInformation.tsx:195
 #: lib/enums/Roles.tsx:41
-#: src/defaults/actions.tsx:126
+#: src/defaults/actions.tsx:127
 #: src/pages/Index/Settings/SystemSettings.tsx:333
 #: src/pages/company/CompanyDetail.tsx:231
 #: src/pages/part/PartDetail.tsx:886
@@ -589,7 +589,7 @@ msgid "Admin"
 msgstr "Adminisztrátor"
 
 #: lib/enums/Roles.tsx:33
-#: src/defaults/actions.tsx:136
+#: src/defaults/actions.tsx:146
 #: src/pages/Index/Settings/SystemSettings.tsx:281
 #: src/pages/build/BuildIndex.tsx:67
 #: src/pages/part/PartDetail.tsx:896
@@ -637,7 +637,7 @@ msgstr "Vonalkód"
 
 #: src/components/barcodes/BarcodeInput.tsx:35
 #: src/components/barcodes/BarcodeKeyboardInput.tsx:18
-#: src/defaults/actions.tsx:86
+#: src/defaults/actions.tsx:137
 msgid "Scan"
 msgstr "Szkennelés"
 
@@ -1846,7 +1846,7 @@ msgstr "API verzió"
 
 #: src/components/forms/InstanceOptions.tsx:142
 #: src/components/nav/NavigationDrawer.tsx:197
-#: src/defaults/actions.tsx:163
+#: src/defaults/actions.tsx:173
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:228
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:46
 msgid "Plugins"
@@ -1900,7 +1900,7 @@ msgid "Uncategorized"
 msgstr "Kategorizálatlan"
 
 #: src/components/forms/fields/IconField.tsx:211
-#: src/components/nav/Layout.tsx:138
+#: src/components/nav/Layout.tsx:139
 #: src/tables/part/PartThumbTable.tsx:199
 msgid "Search..."
 msgstr "Keresés..."
@@ -2070,10 +2070,6 @@ msgstr "Oszlopok leképezése"
 #: src/components/importer/ImporterDrawer.tsx:45
 msgid "Import Rows"
 msgstr ""
-
-#: src/components/importer/ImporterDrawer.tsx:45
-#~ msgid "Import Data"
-#~ msgstr "Import Data"
 
 #: src/components/importer/ImporterDrawer.tsx:46
 msgid "Process Data"
@@ -2556,7 +2552,7 @@ msgstr "Tudjon meg többet: {code}"
 msgid "Notifications"
 msgstr "Értesítések"
 
-#: src/components/nav/Layout.tsx:141
+#: src/components/nav/Layout.tsx:142
 msgid "Nothing found..."
 msgstr "Nincs találat..."
 
@@ -2580,7 +2576,7 @@ msgstr "Beállítások"
 #: src/components/nav/MainMenu.tsx:61
 #: src/components/nav/NavigationDrawer.tsx:140
 #: src/components/nav/SettingsHeader.tsx:40
-#: src/defaults/actions.tsx:93
+#: src/defaults/actions.tsx:86
 #: src/pages/Index/Settings/UserSettings.tsx:142
 #: src/pages/Index/Settings/UserSettings.tsx:146
 msgid "User Settings"
@@ -2598,7 +2594,7 @@ msgstr "Felhasználói beállítások"
 #: src/components/nav/MainMenu.tsx:69
 #: src/components/nav/NavigationDrawer.tsx:146
 #: src/components/nav/SettingsHeader.tsx:41
-#: src/defaults/actions.tsx:145
+#: src/defaults/actions.tsx:155
 #: src/pages/Index/Settings/SystemSettings.tsx:365
 #: src/pages/Index/Settings/SystemSettings.tsx:370
 msgid "System Settings"
@@ -2611,7 +2607,7 @@ msgstr "Rendszerbeállítások"
 #: src/components/nav/MainMenu.tsx:78
 #: src/components/nav/NavigationDrawer.tsx:153
 #: src/components/nav/SettingsHeader.tsx:42
-#: src/defaults/actions.tsx:154
+#: src/defaults/actions.tsx:164
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:293
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:298
 msgid "Admin Center"
@@ -4123,38 +4119,46 @@ msgid "Open the main navigation menu"
 msgstr "Fő navigációs menü megnyitása"
 
 #: src/defaults/actions.tsx:87
-msgid "Scan a barcode or QR code"
-msgstr "Vonalkód vagy QR kód beolvasása"
-
-#: src/defaults/actions.tsx:95
 msgid "Go to your user settings"
 msgstr "Ugrás a felhasználói beállításokhoz"
 
-#: src/defaults/actions.tsx:106
+#: src/defaults/actions.tsx:96
+msgid "Import Data"
+msgstr ""
+
+#: src/defaults/actions.tsx:97
+msgid "Import data from a file"
+msgstr ""
+
+#: src/defaults/actions.tsx:107
 msgid "Go to Purchase Orders"
 msgstr "Ugrás a beszerzési rendelésekhez"
 
-#: src/defaults/actions.tsx:116
+#: src/defaults/actions.tsx:117
 msgid "Go to Sales Orders"
 msgstr "Ugrás az értékesítési rendelésekhez"
 
-#: src/defaults/actions.tsx:127
+#: src/defaults/actions.tsx:128
 msgid "Go to Return Orders"
 msgstr "Ugrás a visszáru rendelésekhez"
 
-#: src/defaults/actions.tsx:137
+#: src/defaults/actions.tsx:138
+msgid "Scan a barcode or QR code"
+msgstr "Vonalkód vagy QR kód beolvasása"
+
+#: src/defaults/actions.tsx:147
 msgid "Go to Build Orders"
 msgstr "Ugrás a gyártási rendelésekhez"
 
-#: src/defaults/actions.tsx:146
+#: src/defaults/actions.tsx:156
 msgid "Go to System Settings"
 msgstr "Ugrás a rendszer beállításokhoz"
 
-#: src/defaults/actions.tsx:155
+#: src/defaults/actions.tsx:165
 msgid "Go to the Admin Center"
 msgstr "Ugrás az Admin központhoz"
 
-#: src/defaults/actions.tsx:164
+#: src/defaults/actions.tsx:174
 msgid "Manage InvenTree plugins"
 msgstr ""
 
