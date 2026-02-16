@@ -31,8 +31,11 @@ RUN apt update && apt install -y \
    libpango1.0-0 libcairo2 \
    poppler-utils weasyprint
 
-#Install most up to date packages required for frontend development
-RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - && apt-get install -y nodejs && node -v
+# Install packages required for frontend development
+RUN apt install -y nodejs npm
+
+# Update to the latest stable node version
+RUN npm install -g n --ignore-scripts && n lts
 
 # Install yarn
 RUN npm install -g yarn
