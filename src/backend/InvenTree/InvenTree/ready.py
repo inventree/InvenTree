@@ -63,9 +63,9 @@ def isRebuildingData():
     return any(
         x in sys.argv
         for x in [
+            'rebuild',
             'rebuild_models',
             'rebuild_thumbnails',
-            'rebuild',
             'remove_stale_contenttypes',
         ]
     )
