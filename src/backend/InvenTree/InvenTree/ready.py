@@ -93,8 +93,6 @@ def isGeneratingSchema():
     if 'schema' in sys.argv:
         return True
 
-    print('isGeneratingSchema:', sys.argv)
-
     # This is a very inefficient call - so we only use it as a last resort
     return any('drf_spectacular' in frame.filename for frame in inspect.stack())
 
