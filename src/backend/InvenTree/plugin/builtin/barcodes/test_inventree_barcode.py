@@ -358,7 +358,7 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
         self.set_plugin_setting('INTERNAL_BARCODE_FORMAT', 'json')
         item = stock.models.StockLocation.objects.get(pk=5)
         data = self.generate('stocklocation', item.pk, expected_code=200).data
-        self.assertEqual(data['barcode'], 'INV-SL5')
+        self.assertEqual(data['barcode'], '{"stocklocation": 5}')
 
         # Revert to default setting
         self.set_plugin_setting('INTERNAL_BARCODE_FORMAT', 'short')

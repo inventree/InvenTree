@@ -248,7 +248,7 @@ class PartTest(TestCase):
     def test_barcode(self):
         """Test barcode format functionality."""
         barcode = self.r1.format_barcode()
-        self.assertEqual('{"part": 3}', barcode)
+        self.assertEqual('INV-PA3', barcode)
 
     def test_sell_pricing(self):
         """Check that the sell pricebreaks were loaded."""
