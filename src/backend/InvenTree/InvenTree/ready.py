@@ -6,6 +6,11 @@ import os
 import sys
 import warnings
 
+import structlog
+
+logger = structlog.get_logger('inventree')
+
+
 # Keep track of loaded apps, to prevent multiple executions of ready functions
 _loaded_apps = set()
 
@@ -94,7 +99,16 @@ def isGeneratingSchema():
         return True
 
     # This is a very inefficient call - so we only use it as a last resort
-    return any('drf_spectacular' in frame.filename for frame in inspect.stack())
+    result = any('drf_spectacular' in frame.filename for frame in inspect.stack())
+
+    if not result:
+        # We should only get here if we *are* generating schema
+        # Any other time this is called, it should be from a server thread, worker thread, or test mode
+        logger.warning(
+            'isGeneratingSchema called outside of expected contexts - this may be a sign of a problem with the ready() function'
+        )
+
+    return result
 
 
 def isInWorkerThread():
