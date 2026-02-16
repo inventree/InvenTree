@@ -33,6 +33,11 @@ def isInTestMode():
     return 'test' in sys.argv or sys.argv[0].endswith('pytest')
 
 
+def isWaitingForDatabase():
+    """Return True if we are currently waiting for the database to be ready."""
+    return 'wait_for_db' in sys.argv
+
+
 def isImportingData():
     """Returns True if the database is currently importing (or exporting) data, e.g. 'loaddata' command is performed."""
     return any(x in sys.argv for x in ['flush', 'loaddata', 'dumpdata'])
@@ -80,6 +85,9 @@ def isGeneratingSchema():
         return False
 
     if isInTestMode():
+        return False
+
+    if isWaitingForDatabase():
         return False
 
     if 'schema' in sys.argv:
