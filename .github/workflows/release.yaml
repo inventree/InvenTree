@@ -155,22 +155,26 @@ jobs:
           - ubuntu:24.04
           - debian:12
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
         with:
           fetch-depth: 0
+          persist-credentials: false
+
       - name: Get frontend artifact
         uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # pin@v7.0.0
         with:
           name: frontend-build
       - name: Setup
         id: setup
-        run: |
-          NODE_ID=${{github.event.release.node_id}}
-          BRANCH=${{github.event.release.target_commitish}}
-          TARGET=${{github.event.release.target_commitish}}
+        env:
+          NODE_ID: ${{ github.event.release.node_id }}
+          BRANCH: ${{ github.event.release.target_commitish }}
+          TARGET: ${{github.event.release.target_commitish}}
+          REPO: ${{ github.repository }}
 
+        run: |
           # Get info
-          gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /repos/${{ github.repository }}/commits/${{ github.event.release.target_commitish }} > commit.json
+          gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /repos/$REPO/commits/$TARGET > commit.json
 
           # Extract info
           echo "INFO extract | Extracting info from github"
@@ -199,7 +203,7 @@ jobs:
           mkdir -p src/backend/InvenTree/web/static
           unzip -qq frontend-build.zip -d src/backend/InvenTree/web/static/web
       - name: Package
-        uses: pkgr/action/package@main
+        uses: pkgr/action/package@c5666febcd31750da6428042193fc5b2fb765435 # pin@main
         id: package
         with:
           target: ${{ matrix.target }}
@@ -217,7 +221,7 @@ jobs:
             INVENTREE_CONFIG_FILE=/opt/inventree/config.yaml
             APP_REPO=inventree/InvenTree
       - name: Publish
-        uses: pkgr/action/publish@main
+        uses: pkgr/action/publish@3bce081ae512c5020856e237d37b3f5479d4aa71 # pin@main
         with:
           target: ${{ matrix.target }}
           token: ${{ secrets.PACKAGER_RELEASE_TOKEN }}
