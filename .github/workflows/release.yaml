@@ -220,7 +220,7 @@ jobs:
             INVENTREE_PLUGIN_FILE=/opt/inventree/plugins.txt
             INVENTREE_CONFIG_FILE=/opt/inventree/config.yaml
             APP_REPO=inventree/InvenTree
-      - name: Publish
+      - name: Publish to go.packager.io
         uses: pkgr/action/publish@3bce081ae512c5020856e237d37b3f5479d4aa71 # pin@main
         with:
           target: ${{ matrix.target }}
@@ -228,3 +228,11 @@ jobs:
           repository: inventree/inventree
           channel: ${{ github.ref_name }}
           file: ${{ steps.package.outputs.package_path }}
+      - name: Publish to artifact
+        uses: svenstaro/upload-release-action@6b7fa9f267e90b50a19fef07b3596790bb941741 # pin@2.11.3
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ steps.package.outputs.package_path }}
+          asset_name: ${{ matrix.target }}-{{ steps.setup.outputs.version }}.tar.gz
+          tag: ${{ github.ref }}
+          overwrite: true
