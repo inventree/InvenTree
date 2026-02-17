@@ -44,6 +44,13 @@ def get_global_setting(key, backup_value=None, environment_key=None, **kwargs):
 def set_global_setting(key, value, change_user=None, create=True, **kwargs):
     """Set the value of a global setting using the provided key."""
     from common.models import InvenTreeSetting
+    from InvenTree.ready import canAppAccessDatabase
+
+    if not canAppAccessDatabase(allow_shell=True, allow_test=True):
+        logger.warning(
+            f'Cannot set global setting "{key}" - database is not accessible'
+        )
+        return False
 
     kwargs['change_user'] = change_user
     kwargs['create'] = create
