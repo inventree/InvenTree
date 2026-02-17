@@ -564,7 +564,7 @@ class BarcodePOReceive(BarcodeView):
                 log_error('BarcodePOReceive.handle_barcode', plugin=current_plugin.slug)
                 continue
             
-            if result['NotFound'] is None:
+            if result['NotFound'] is True:
                 continue
 
             if 'error' in result:

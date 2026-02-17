@@ -406,7 +406,7 @@ class SupplierBarcodeMixin(BarcodeMixin):
         quantity = float(quantity)
 
         if bool(Debugresponse) == True:
-            Debugresponse['NotFound'] = None
+            Debugresponse['NotFound'] = True
             return Debugresponse
         # Construct a response object
         response = {
@@ -416,7 +416,8 @@ class SupplierBarcodeMixin(BarcodeMixin):
                 'supplier_part': supplier_part.pk,
                 'purchase_order': purchase_order.pk,
                 'location': location.pk if location else None,
-            }
+            },
+            'NotFound': False
         }
 
         if action_required:
