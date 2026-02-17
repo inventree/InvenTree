@@ -344,12 +344,13 @@ class SupplierBarcodeMixin(BarcodeMixin):
         # Extract supplier information
         supplier = supplier or self.get_supplier(cache=True)
 
+        # Construct Debug Response 
+        # Will hold info on what is missing from Barcode
         Debugresponse = {}
 
         if not supplier:
             # No supplier information available
             Debugresponse['supplier'] = 'No supplier Info available'
-            #return None
 
         # Extract purchase order information
         purchase_order = purchase_order or self.get_purchase_order()
@@ -357,14 +358,12 @@ class SupplierBarcodeMixin(BarcodeMixin):
         if not purchase_order or purchase_order.supplier != supplier:
             # Purchase order does not match supplier
             Debugresponse['PO'] = 'No Purchase Order matches Info available for Supplier'
-            #return None
 
         supplier_part = self.get_supplier_part()
 
         if not supplier_part:
             # No supplier part information available
             Debugresponse['supplier_part'] = 'No supplier Part Info available'
-            #return None
 
         # Attempt to find matching line item
         if not line_item:
@@ -374,8 +373,11 @@ class SupplierBarcodeMixin(BarcodeMixin):
 
         if not line_item:
             Debugresponse['line_Item'] = 'No line item Info available'
-            # return None
 
+        # If DebugResponse Exists throw debug dictionary instead of response dictionary
+        if bool(Debugresponse) == True:
+            Debugresponse['No_Match'] = True
+            return Debugresponse
 
         if line_item.part != supplier_part:
             return {'error': _('Supplier part does not match line item')}
@@ -400,14 +402,10 @@ class SupplierBarcodeMixin(BarcodeMixin):
         action_required = not auto_allocate or location is None or quantity is None
 
         if quantity is None:
-            Debugresponse['Quantity'] = 'No Quantity Info available'
             quantity = line_item.remaining()
 
         quantity = float(quantity)
 
-        if bool(Debugresponse) == True:
-            Debugresponse['NotFound'] = True
-            return Debugresponse
         # Construct a response object
         response = {
             'lineitem': {
@@ -417,7 +415,7 @@ class SupplierBarcodeMixin(BarcodeMixin):
                 'purchase_order': purchase_order.pk,
                 'location': location.pk if location else None,
             },
-            'NotFound': False
+            'No_Match': False
         }
 
         if action_required:
