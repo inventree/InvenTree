@@ -790,6 +790,7 @@ def backup(
         'db_file': 'Specify filename of compressed database archive (leave blank to use most recent backup)',
         'decrypt': 'Decrypt the backup files (requires GPG recipient to be set)',
         'media_file': 'Specify filename of compressed media archive (leave blank to use most recent backup)',
+        'no_drop': 'Do not drop existing database tables before restoring (advanced users only)',
         'skip_db': 'Do not import database archive (media restore only)',
         'skip_media': 'Do not import media archive (database restore only)',
         'uncompress': 'Uncompress the backup files before restoring (default behavior)',
@@ -801,6 +802,7 @@ def restore(
     db_file=None,
     media_file=None,
     decrypt: bool = False,
+    no_drop: bool = False,
     skip_db: bool = False,
     skip_media: bool = False,
     uncompress: bool = True,
@@ -830,6 +832,9 @@ def restore(
 
         if db_file:
             cmd += f' -i {db_file}'
+
+        if no_drop:
+            cmd += ' --no-drop'
 
         manage(c, cmd)
 
