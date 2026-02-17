@@ -320,6 +320,11 @@ class InvenTreeConfig(AppConfig):
         if MIGRATIONS_CHECK_DONE:
             return
 
+        # Exit early if we are not in a state where we can access the database,
+        # otherwise we might end up in a deadlock situation
+        if not InvenTree.ready.canAppAccessDatabase():
+            return
+
         if not InvenTree.tasks.check_for_migrations():
             logger.error('INVE-W8: Database Migrations required')
             sys.exit(1)
