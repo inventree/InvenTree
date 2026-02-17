@@ -320,7 +320,7 @@ class SupplierBarcodeMixin(BarcodeMixin):
         location=None,
         auto_allocate: bool = True,
         **kwargs,
-    ) -> dict | None:
+    ) -> dict :
         """Attempt to receive an item against a PurchaseOrder via barcode scanning.
 
         Arguments:
@@ -344,22 +344,27 @@ class SupplierBarcodeMixin(BarcodeMixin):
         # Extract supplier information
         supplier = supplier or self.get_supplier(cache=True)
 
+        Debugresponse = {}
+
         if not supplier:
             # No supplier information available
-            return None
+            Debugresponse['supplier'] = 'No supplier Info available'
+            #return None
 
         # Extract purchase order information
         purchase_order = purchase_order or self.get_purchase_order()
 
         if not purchase_order or purchase_order.supplier != supplier:
             # Purchase order does not match supplier
-            return None
+            Debugresponse['PO'] = 'No Purchase Order matches Info available for Supplier'
+            #return None
 
         supplier_part = self.get_supplier_part()
 
         if not supplier_part:
             # No supplier part information available
-            return None
+            Debugresponse['supplier_part'] = 'No supplier Part Info available'
+            #return None
 
         # Attempt to find matching line item
         if not line_item:
@@ -368,8 +373,9 @@ class SupplierBarcodeMixin(BarcodeMixin):
                 line_item = line_items.first()
 
         if not line_item:
-            # No line item information available
-            return None
+            Debugresponse['line_Item'] = 'No line item Info available'
+            # return None
+
 
         if line_item.part != supplier_part:
             return {'error': _('Supplier part does not match line item')}
@@ -394,10 +400,14 @@ class SupplierBarcodeMixin(BarcodeMixin):
         action_required = not auto_allocate or location is None or quantity is None
 
         if quantity is None:
+            Debugresponse['Quantity'] = 'No Quantity Info available'
             quantity = line_item.remaining()
 
         quantity = float(quantity)
 
+        if bool(Debugresponse) == True:
+            Debugresponse['NotFound'] = None
+            return Debugresponse
         # Construct a response object
         response = {
             'lineitem': {

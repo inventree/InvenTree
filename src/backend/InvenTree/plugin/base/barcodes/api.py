@@ -497,6 +497,10 @@ class BarcodePOReceive(BarcodeView):
         """Handle a barcode scan for a purchase order item."""
         logger.debug("BarcodePOReceive: scanned barcode - '%s'", barcode)
 
+        SuppliersError = []
+
+        
+
         # Extract optional fields from the dataset
         supplier = kwargs.get('supplier')
         purchase_order = kwargs.get('purchase_order')
@@ -534,6 +538,12 @@ class BarcodePOReceive(BarcodeView):
         plugins = registry.with_mixin(PluginMixinEnum.SUPPLIER_BARCODE)
 
         plugin_response = None
+       
+        # Add Suppliers attempted to use
+        SuppliersTested = []
+        # Add Suppliers error associated with Supplier
+        SuppliersError = []
+
 
         for current_plugin in plugins:
             try:
@@ -546,11 +556,15 @@ class BarcodePOReceive(BarcodeView):
                     line_item=line_item,
                     auto_allocate=auto_allocate,
                 )
+
+                SuppliersTested.append(current_plugin.name)
+
+                #SuppliersError.append(result)
             except Exception:
                 log_error('BarcodePOReceive.handle_barcode', plugin=current_plugin.slug)
                 continue
-
-            if result is None:
+            
+            if result['NotFound'] is None:
                 continue
 
             if 'error' in result:
@@ -566,6 +580,11 @@ class BarcodePOReceive(BarcodeView):
                 plugin = current_plugin
                 plugin_response = result
                 break
+        
+        # Prints which Suppliers were tested
+        response['Suppliers Tested'] = SuppliersTested
+        
+        response['Suppliers Error'] = SuppliersError
 
         response['plugin'] = plugin.name if plugin else None
 
