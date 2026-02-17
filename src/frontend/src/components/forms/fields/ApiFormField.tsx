@@ -5,7 +5,6 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { type Control, type FieldValues, useController } from 'react-hook-form';
 
 import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
-import { logger } from '@sentry/react';
 import { IconFileUpload } from '@tabler/icons-react';
 import DateTimeField from '../DateTimeField';
 import { BooleanField } from './BooleanField';
@@ -243,7 +242,7 @@ export function ApiFormField({
         );
       default:
         // This should never happen - it represents a critical UI issue which should be caught in CI
-        logger.error(
+        console.error(
           `Invalid field type for field '${fieldName}': '${fieldDefinition.field_type}'`
         );
 
