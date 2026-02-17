@@ -587,6 +587,12 @@ def update_exchange_rates(force: bool = False):
     Arguments:
         force: If True, force the update to run regardless of the last update time
     """
+    from InvenTree.ready import canAppAccessDatabase
+
+    # Do not update exchange rates if we cannot access the database
+    if not canAppAccessDatabase():
+        return
+
     try:
         from djmoney.contrib.exchange.models import Rate
 
