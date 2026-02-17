@@ -590,7 +590,7 @@ def update_exchange_rates(force: bool = False):
     from InvenTree.ready import canAppAccessDatabase
 
     # Do not update exchange rates if we cannot access the database
-    if not canAppAccessDatabase():
+    if not canAppAccessDatabase(allow_test=True, allow_shell=True):
         return
 
     try:
