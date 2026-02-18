@@ -535,10 +535,9 @@ class BarcodePOReceive(BarcodeView):
 
         plugin_response = None
 
-        PluginError = None
-
         for current_plugin in plugins:
             try:
+                # Will either Output Debugresponse if No_Match is True or return the regular response if No_Match is False
                 result = current_plugin.scan_receive_item(
                     barcode,
                     request.user,
@@ -553,6 +552,7 @@ class BarcodePOReceive(BarcodeView):
                 log_error('BarcodePOReceive.handle_barcode', plugin=current_plugin.slug)
                 continue
             
+            # No_Match Determines if it found a exact match for all the required fields from scan_recieve_item
             if result['No_Match'] is True:
 
                 # Supplier does not have associated Supplier ID
@@ -598,6 +598,8 @@ class BarcodePOReceive(BarcodeView):
         # A plugin has not been found!
         if plugin is None:
             response['error'] = _('No plugin match for supplier barcode')
+
+        # A plugin was found, with a Error
         elif PluginError:
             response['error'] = _(PluginError)
 
