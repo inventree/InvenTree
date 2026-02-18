@@ -350,29 +350,37 @@ class SupplierBarcodeMixin(BarcodeMixin):
 
         if not supplier:
             # No supplier information available
-            Debugresponse['supplier'] = 'No supplier Info available'
+            Debugresponse['supplier'] = None
+        else:
+            Debugresponse['supplier'] = supplier.name
 
         # Extract purchase order information
         purchase_order = purchase_order or self.get_purchase_order()
 
         if not purchase_order or purchase_order.supplier != supplier:
             # Purchase order does not match supplier
-            Debugresponse['PO'] = 'No Purchase Order matches Info available for Supplier'
+            Debugresponse['PO'] = None
+        else:
+            Debugresponse['PO'] = purchase_order
 
         supplier_part = self.get_supplier_part()
 
         if not supplier_part:
             # No supplier part information available
-            Debugresponse['supplier_part'] = 'No supplier Part Info available'
+            Debugresponse['supplier_part'] = None
+        else:
+            Debugresponse['supplier_part'] =  supplier_part
 
         # Attempt to find matching line item
-        if not line_item:
-            line_items = purchase_order.lines.filter(part=supplier_part)
-            if line_items.count() == 1:
-                line_item = line_items.first()
-
-        if not line_item:
-            Debugresponse['line_Item'] = 'No line item Info available'
+        if not line_item and purchase_order != None:
+            try:
+                line_items = purchase_order.lines.filter(part=supplier_part)
+                if line_items.count() == 1:
+                    line_item = line_items.first()
+            except Exception:
+                line_items = None
+                log_error('Failed to find line item', error_data= line_items)
+                Debugresponse['line_Item'] = None
 
         # If DebugResponse Exists throw debug dictionary instead of response dictionary
         if bool(Debugresponse) == True:
