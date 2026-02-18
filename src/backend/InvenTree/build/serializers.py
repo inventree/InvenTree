@@ -1254,18 +1254,19 @@ class BuildItemSerializer(
         ],
     )
 
-    install_into_detail = enable_filter(
-        StockItemSerializer(
-            source='install_into',
-            read_only=True,
-            allow_null=True,
-            label=_('Install Into'),
-            part_detail=False,
-            location_detail=False,
-            supplier_part_detail=False,
-            path_detail=False,
-        ),
-        False,
+    install_into_detail = OptionalField(
+        serializer_class=StockItemSerializer,
+        serializer_kwargs={
+            'source': 'install_into',
+            'read_only': True,
+            'allow_null': True,
+            'label': _('Install Into'),
+            'part_detail': False,
+            'location_detail': False,
+            'supplier_part_detail': False,
+            'path_detail': False,
+        },
+        default_include=False,
         prefetch_fields=['install_into', 'install_into__part'],
     )
 
