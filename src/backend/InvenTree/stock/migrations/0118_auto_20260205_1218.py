@@ -19,12 +19,18 @@ def add_part_links(apps, schema_editor):
 
         item = tracking.item
 
+        # No item link - skip
         if item is None:
             continue
 
         part = item.part
 
+        # No part link - skip
         if part is None:
+            continue
+
+        # Already linked to the correct part - skip
+        if tracking.part == part:
             continue
 
         tracking.part = part
