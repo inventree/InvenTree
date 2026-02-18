@@ -11,6 +11,7 @@ import structlog
 from moneyed import CURRENCIES
 
 import InvenTree.helpers
+import InvenTree.ready
 
 logger = structlog.get_logger('inventree')
 
@@ -18,16 +19,24 @@ logger = structlog.get_logger('inventree')
 def currency_code_default(create: bool = True):
     """Returns the default currency code (or USD if not specified)."""
     from common.settings import get_global_setting
+    from InvenTree.ready import isRunningBackup, isRunningMigrations
 
-    try:
-        code = get_global_setting(
-            'INVENTREE_DEFAULT_CURRENCY', create=create, cache=True
-        )
-    except Exception:  # pragma: no cover
-        # Database may not yet be ready, no need to throw an error here
-        code = ''
+    if isRunningMigrations() or isRunningBackup():
+        # Prevent database writes during migration or backup operations
+        create = False
 
-    if code not in CURRENCIES:
+    code = ''
+
+    if InvenTree.ready.isAppLoaded('common'):
+        try:
+            code = get_global_setting(
+                'INVENTREE_DEFAULT_CURRENCY', create=create, cache=True
+            )
+        except Exception:  # pragma: no cover
+            # Database may not yet be ready, no need to throw an error here
+            code = ''
+
+    if not code or code not in CURRENCIES:
         code = 'USD'  # pragma: no cover
 
     return code
@@ -47,9 +56,13 @@ def currency_codes() -> list:
     """Returns the current currency codes."""
     from common.settings import get_global_setting
 
-    codes = get_global_setting(
-        'CURRENCY_CODES', create=False, environment_key='INVENTREE_CURRENCY_CODES'
-    ).strip()
+    codes = None
+
+    # Ensure we do not hit the database until the common app is loaded
+    if InvenTree.ready.isAppLoaded('common'):
+        codes = get_global_setting(
+            'CURRENCY_CODES', create=False, environment_key='INVENTREE_CURRENCY_CODES'
+        ).strip()
 
     if not codes:
         codes = currency_codes_default_list()

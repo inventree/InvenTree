@@ -6,7 +6,7 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
-import { ActionButton } from '@lib/index';
+import { ActionButton, formatDecimal } from '@lib/index';
 import type { TableFilter } from '@lib/types/Filters';
 import type { StockOperationProps } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
@@ -25,7 +25,8 @@ import {
   LocationColumn,
   PartColumn,
   ReferenceColumn,
-  StatusColumn
+  StatusColumn,
+  StockColumn
 } from '../ColumnRenderers';
 import { IncludeVariantsFilter, StockLocationFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
@@ -114,13 +115,6 @@ export default function BuildAllocatedStockTable({
         switchable: true
       },
       {
-        accessor: 'serial',
-        title: t`Serial Number`,
-        sortable: false,
-        switchable: true,
-        render: (record: any) => record?.stock_item_detail?.serial
-      },
-      {
         accessor: 'batch',
         title: t`Batch Code`,
         sortable: false,
@@ -128,25 +122,32 @@ export default function BuildAllocatedStockTable({
         render: (record: any) => record?.stock_item_detail?.batch
       },
       DecimalColumn({
-        accessor: 'available',
+        accessor: 'stock_item_detail.quantity',
         title: t`Available`
       }),
-      DecimalColumn({
+      {
         accessor: 'quantity',
         title: t`Allocated`,
-        sortable: true,
-        switchable: false
-      }),
+        render: (record: any) => {
+          const serial = record?.stock_item_detail?.serial;
+
+          if (serial && record?.quantity == 1) {
+            return `${t`Serial`}: ${serial}`;
+          }
+
+          return formatDecimal(record.quantity);
+        }
+      },
       LocationColumn({
         accessor: 'location_detail',
         switchable: true,
         sortable: true
       }),
-      {
-        accessor: 'install_into',
+      StockColumn({
+        accessor: 'install_into_detail',
         title: t`Build Output`,
-        sortable: true
-      },
+        sortable: false
+      }),
       {
         accessor: 'sku',
         title: t`Supplier Part`,
@@ -307,11 +308,12 @@ export default function BuildAllocatedStockTable({
             part_detail: showPartInfo ?? false,
             location_detail: true,
             stock_detail: true,
+            install_into_detail: true,
             supplier_detail: true
           },
           enableBulkDelete: allowEdit && user.hasDeleteRole(UserRoles.build),
           enableDownload: true,
-          enableSelection: allowEdit && user.hasDeleteRole(UserRoles.build),
+          enableSelection: allowEdit && user.hasChangeRole(UserRoles.build),
           rowActions: rowActions,
           tableActions: tableActions,
           tableFilters: tableFilters,

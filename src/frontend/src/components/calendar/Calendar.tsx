@@ -175,7 +175,7 @@ export default function Calendar({
                 variant='transparent'
                 aria-label='calendar-export-data'
               >
-                <Tooltip label={t`Download data`} position='top-end'>
+                <Tooltip label={t`Export data`} position='top-end'>
                   <IconDownload onClick={state.exportModal.open} />
                 </Tooltip>
               </ActionIcon>

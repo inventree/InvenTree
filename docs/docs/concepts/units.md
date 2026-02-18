@@ -59,9 +59,9 @@ The [unit of measure](../part/index.md#units-of-measure) field for the [Part](..
 
 The [supplier part](../part/index.md/#supplier-parts) model uses real-world units to convert between supplier part quantities and internal stock quantities. Unit conversion rules ensure that only compatible unit types can be supplied
 
-### Part Parameter
+### Parameter
 
-The [part parameter template](../part/parameter.md#parameter-templates) model can specify units of measure, and part parameters can be specified against these templates with compatible units
+The [parameter template](../concepts/parameters.md#parameter-templates) model can specify units of measure, and part parameters can be specified against these templates with compatible units
 
 ## Custom Units
 
@@ -72,6 +72,27 @@ Custom units can be defined to provide a new physical quantity, link existing un
 !!! tip "More Info"
     For further information, refer to the [pint documentation](https://pint.readthedocs.io/en/stable/advanced/defining.html) regarding custom unit definition
 
+### Built-in Custom Units
+
+InvenTree provides the following built-in custom units:
+
+| Unit | Description |
+| ---- | ----------- |
+| `piece` | A single item, dimensionless |
+| `each` | A single item, dimensionless |
+| `dozen` | Twelve items, dimensionless |
+| `hundred` | One hundred items, dimensionless |
+| `thousand` | One thousand items, dimensionless |
+
 ### Create Custom Units
 
 To view, edit and create custom units, locate the *Physical Units* tab in the [settings panel](../settings/global.md).
+
+
+### Dimensionless Units
+
+It is possible to define custom dimensionless units. These units can be used to provide context to otherwise dimensionless quantities.
+
+To create a new dimensionless unit, you must enter the literal `1` as the definition of the unit:
+
+{{ image("concepts/unit_dimensionless.png", "Creating a dimensionless custom unit") }}

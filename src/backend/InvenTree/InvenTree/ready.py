@@ -1,13 +1,48 @@
 """Functions to check if certain parts of InvenTree are ready."""
 
+import functools
 import inspect
 import os
 import sys
+import warnings
+
+from django.conf import settings
+
+import structlog
+
+logger = structlog.get_logger('inventree')
+
+
+# Keep track of loaded apps, to prevent multiple executions of ready functions
+_loaded_apps = set()
+
+
+def clearLoadedApps():
+    """Clear the set of loaded apps."""
+    global _loaded_apps
+    _loaded_apps = set()
+
+
+def setAppLoaded(app_name: str):
+    """Mark an app as loaded."""
+    global _loaded_apps
+    _loaded_apps.add(app_name)
+
+
+def isAppLoaded(app_name: str) -> bool:
+    """Return True if the app has been marked as loaded."""
+    global _loaded_apps
+    return app_name in _loaded_apps
 
 
 def isInTestMode():
     """Returns True if the database is in testing mode."""
-    return 'test' in sys.argv
+    return 'test' in sys.argv or sys.argv[0].endswith('pytest')
+
+
+def isWaitingForDatabase():
+    """Return True if we are currently waiting for the database to be ready."""
+    return 'wait_for_db' in sys.argv
 
 
 def isImportingData():
@@ -26,7 +61,13 @@ def isRunningMigrations():
 def isRebuildingData():
     """Return true if any of the rebuilding commands are being executed."""
     return any(
-        x in sys.argv for x in ['rebuild_models', 'rebuild_thumbnails', 'rebuild']
+        x in sys.argv
+        for x in [
+            'rebuild',
+            'rebuild_models',
+            'rebuild_thumbnails',
+            'remove_stale_contenttypes',
+        ]
     )
 
 
@@ -38,7 +79,7 @@ def isRunningBackup():
             'backup',
             'restore',
             'dbbackup',
-            'dbresotore',
+            'dbrestore',
             'mediabackup',
             'mediarestore',
         ]
@@ -59,11 +100,26 @@ def isGeneratingSchema():
     if isInTestMode():
         return False
 
+    if isWaitingForDatabase():
+        return False
+
     if 'schema' in sys.argv:
         return True
 
     # This is a very inefficient call - so we only use it as a last resort
-    return any('drf_spectacular' in frame.filename for frame in inspect.stack())
+    result = any('drf_spectacular' in frame.filename for frame in inspect.stack())
+
+    if not result:
+        # We should only get here if we *are* generating schema
+        # Any other time this is called, it should be from a server thread, worker thread, or test mode
+
+        if settings.DEBUG:
+            logger.warning(
+                'isGeneratingSchema called outside of expected contexts - this may be a sign of a problem with the ready() function'
+            )
+            logger.warning('sys.argv: %s', sys.argv)
+
+    return result
 
 
 def isInWorkerThread():
@@ -157,3 +213,22 @@ def isPluginRegistryLoaded():
     from plugin import registry
 
     return registry.plugins_loaded
+
+
+def ignore_ready_warning(func):
+    """Decorator to ignore 'AppRegistryNotReady' warnings in functions called during app ready phase.
+
+    Ref: https://github.com/inventree/InvenTree/issues/10806
+    """
+
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        with warnings.catch_warnings():
+            warnings.filterwarnings(
+                'ignore',
+                message='Accessing the database during app initialization is discouraged',
+                category=RuntimeWarning,
+            )
+            return func(*args, **kwargs)
+
+    return wrapper

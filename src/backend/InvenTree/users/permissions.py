@@ -1,7 +1,10 @@
 """Helper functions for user permission checks."""
 
+from typing import Optional
+
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.models.query import Prefetch, QuerySet
 
 import InvenTree.cache
 from users.ruleset import RULESET_CHANGE_INHERIT, get_ruleset_ignore, get_ruleset_models
@@ -55,8 +58,26 @@ def split_permission(app: str, perm: str) -> tuple[str, str]:
     return perm, model
 
 
+def prefetch_rule_sets(user) -> QuerySet:
+    """Return a queryset of groups with prefetched rule sets for the given user.
+
+    Arguments:
+        user: The user object
+
+    Returns:
+        QuerySet: The queryset of groups with prefetched rule sets
+    """
+    return user.groups.all().prefetch_related(
+        Prefetch('rule_sets', to_attr='prefetched_rule_sets')
+    )
+
+
 def check_user_role(
-    user: User, role: str, permission: str, allow_inactive: bool = False
+    user: User,
+    role: str,
+    permission: str,
+    allow_inactive: bool = False,
+    groups: Optional[QuerySet] = None,
 ) -> bool:
     """Check if a user has a particular role:permission combination.
 
@@ -65,6 +86,7 @@ def check_user_role(
         role: The role to check (e.g. 'part' / 'stock')
         permission: The permission to check (e.g. 'view' / 'delete')
         allow_inactive: If False, disallow inactive users from having permissions
+        groups: Optional cached queryset of groups to check (defaults to user's groups)
 
     Returns:
         bool: True if the user has the specified role:permission combination
@@ -90,8 +112,10 @@ def check_user_role(
     # Default for no match
     result = False
 
-    for group in user.groups.all():
-        for rule in group.rule_sets.all():
+    groups = groups or prefetch_rule_sets(user)
+
+    for group in groups:
+        for rule in group.prefetched_rule_sets:
             if rule.name == role:
                 # Check if the rule has the specified permission
                 # e.g. "view" role maps to "can_view" attribute
@@ -106,7 +130,11 @@ def check_user_role(
 
 
 def check_user_permission(
-    user: User, model: models.Model, permission: str, allow_inactive: bool = False
+    user: User,
+    model: models.Model,
+    permission: str,
+    allow_inactive: bool = False,
+    groups: Optional[QuerySet] = None,
 ) -> bool:
     """Check if the user has a particular permission against a given model type.
 
@@ -115,6 +143,7 @@ def check_user_permission(
         model: The model class to check (e.g. 'part')
         permission: The permission to check (e.g. 'view' / 'delete')
         allow_inactive: If False, disallow inactive users from having permissions
+        groups: Optional cached queryset of groups to check (defaults to user's groups)
 
     Returns:
         bool: True if the user has the specified permission
@@ -136,9 +165,11 @@ def check_user_permission(
     if table_name in get_ruleset_ignore():
         return True
 
+    groups = groups or prefetch_rule_sets(user)
+
     for role, table_names in get_ruleset_models().items():
         if table_name in table_names:
-            if check_user_role(user, role, permission):
+            if check_user_role(user, role, permission, groups=groups):
                 return True
 
     # Check for children models which inherits from parent role
@@ -148,7 +179,7 @@ def check_user_permission(
 
         if parent_child_string == table_name:
             # Check if parent role has change permission
-            if check_user_role(user, parent, 'change'):
+            if check_user_role(user, parent, 'change', groups=groups):
                 return True
 
     # Generate the permission name based on the model and permission

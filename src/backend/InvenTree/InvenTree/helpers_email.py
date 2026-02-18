@@ -122,7 +122,8 @@ def get_email_for_user(user) -> Optional[str]:
     # Otherwise, find first matching email
     # Priority is given to primary or verified email addresses
     if (
-        email := EmailAddress.objects.filter(user=user)
+        email := EmailAddress.objects
+        .filter(user=user)
         .order_by('-primary', '-verified')
         .first()
     ):

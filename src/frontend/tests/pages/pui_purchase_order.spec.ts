@@ -13,6 +13,142 @@ import {
 } from '../helpers.ts';
 import { doCachedLogin } from '../login.ts';
 
+test('Purchasing - Index', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'purchasing/index/' });
+
+  // Purchase Orders tab
+  await loadTab(page, 'Purchase Orders');
+  await page
+    .getByRole('button', { name: 'segmented-icon-control-parametric' })
+    .click();
+
+  await page
+    .getByRole('button', { name: 'segmented-icon-control-calendar' })
+    .click();
+  await page.getByRole('button', { name: 'calendar-select-month' }).waitFor();
+  await page
+    .getByRole('button', { name: 'segmented-icon-control-table' })
+    .click();
+
+  // Suppliers tab
+  await loadTab(page, 'Suppliers');
+  await page
+    .getByRole('button', { name: 'segmented-icon-control-parametric' })
+    .click();
+  await page
+    .getByRole('button', { name: 'segmented-icon-control-table' })
+    .click();
+
+  // Check for expected values
+  await clearTableFilters(page);
+  await page.getByRole('cell', { name: 'DigiKey DigiKey' }).first().waitFor();
+
+  // Supplier parts tab
+  await loadTab(page, 'Supplier Parts');
+  await page
+    .getByRole('button', { name: 'segmented-icon-control-parametric' })
+    .click();
+  await page
+    .getByRole('button', { name: 'segmented-icon-control-table' })
+    .click();
+
+  // Check for expected values
+  await clearTableFilters(page);
+  await page.getByText('R_100K_0402_1%').first().waitFor();
+  await page.getByRole('cell', { name: 'RR05P100KDTR-ND' }).first().waitFor();
+  await page.getByRole('cell', { name: 'RT0402BRD07100KL' }).first().waitFor();
+
+  // Manufacturers tab
+  await loadTab(page, 'Manufacturers');
+  await page
+    .getByRole('button', { name: 'segmented-icon-control-parametric' })
+    .click();
+  await page
+    .getByRole('button', { name: 'segmented-icon-control-table' })
+    .click();
+
+  // Check for expected values
+  await clearTableFilters(page);
+  await page
+    .getByRole('cell', { name: 'Hammond Manufacturing Hammond' })
+    .first()
+    .waitFor();
+
+  // Manufacturer parts tab
+  await loadTab(page, 'Manufacturer Parts');
+  await page
+    .getByRole('button', { name: 'segmented-icon-control-parametric' })
+    .click();
+  await page
+    .getByRole('button', { name: 'segmented-icon-control-table' })
+    .click();
+
+  // Check for expected values
+  await clearTableFilters(page);
+  await page.getByRole('cell', { name: 'ERA-2AEB104X' }).first().waitFor();
+  await page
+    .getByRole('cell', { name: 'Bourns Inc. Bourns Inc.' })
+    .first()
+    .waitFor();
+});
+
+test('Purchase Orders - General', async ({ browser }) => {
+  const page = await doCachedLogin(browser);
+
+  await page.getByRole('tab', { name: 'Purchasing' }).click();
+  await page.waitForURL('**/purchasing/index/**');
+
+  await page.getByRole('cell', { name: 'PO0012' }).click();
+  await page.waitForTimeout(200);
+
+  await loadTab(page, 'Line Items');
+  await loadTab(page, 'Received Stock');
+  await loadTab(page, 'Parameters');
+  await loadTab(page, 'Attachments');
+
+  await page.getByRole('tab', { name: 'Purchasing' }).click();
+  await loadTab(page, 'Suppliers');
+  await page.getByText('Arrow', { exact: true }).click();
+  await page.waitForTimeout(200);
+
+  await loadTab(page, 'Supplied Parts');
+  await loadTab(page, 'Purchase Orders');
+  await loadTab(page, 'Stock Items');
+  await loadTab(page, 'Contacts');
+  await loadTab(page, 'Addresses');
+  await loadTab(page, 'Attachments');
+
+  await page.getByRole('tab', { name: 'Purchasing' }).click();
+  await loadTab(page, 'Manufacturers');
+  await page.getByText('AVX Corporation').click();
+  await page.waitForTimeout(200);
+
+  await loadTab(page, 'Addresses');
+  await page.getByRole('cell', { name: 'West Branch' }).click();
+  await page.locator('.mantine-ScrollArea-root').click();
+  await page
+    .getByRole('row', { name: 'West Branch Yes Surf Avenue 9' })
+    .getByRole('button')
+    .click();
+  await page.getByRole('menuitem', { name: 'Edit' }).click();
+
+  await page.getByLabel('text-field-title', { exact: true }).waitFor();
+  await page.getByLabel('text-field-line2', { exact: true }).waitFor();
+
+  // Read the current value of the cell, to ensure we always *change* it!
+  const value = await page
+    .getByLabel('text-field-line2', { exact: true })
+    .inputValue();
+  await page
+    .getByLabel('text-field-line2', { exact: true })
+    .fill(value == 'old' ? 'new' : 'old');
+
+  await page.getByRole('button', { name: 'Submit' }).isEnabled();
+
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByRole('tab', { name: 'Details' }).waitFor();
+});
+
 test('Purchase Orders - Table', async ({ browser }) => {
   const page = await doCachedLogin(browser);
 
@@ -114,7 +250,9 @@ test('Purchase Orders - Barcodes', async ({ browser }) => {
   // Ensure we can scan back to this page, with the associated barcode
   await page.getByRole('tab', { name: 'Sales' }).click();
   await page.waitForTimeout(250);
-  await page.getByRole('button', { name: 'Open Barcode Scanner' }).click();
+
+  await page.getByRole('button', { name: 'barcode-scan-button-any' }).click();
+
   await page.getByPlaceholder('Enter barcode data').fill('1234567890');
   await page.getByRole('button', { name: 'Scan', exact: true }).click();
 
@@ -128,62 +266,6 @@ test('Purchase Orders - Barcodes', async ({ browser }) => {
   await page.getByRole('button', { name: 'Unlink Barcode' }).click();
   await page.waitForTimeout(250);
   await page.getByRole('button', { name: 'Issue Order' }).waitFor();
-});
-
-test('Purchase Orders - General', async ({ browser }) => {
-  const page = await doCachedLogin(browser);
-
-  await page.getByRole('tab', { name: 'Purchasing' }).click();
-  await page.waitForURL('**/purchasing/index/**');
-
-  await page.getByRole('cell', { name: 'PO0012' }).click();
-  await page.waitForTimeout(200);
-
-  await loadTab(page, 'Line Items');
-  await loadTab(page, 'Received Stock');
-  await loadTab(page, 'Attachments');
-
-  await page.getByRole('tab', { name: 'Purchasing' }).click();
-  await loadTab(page, 'Suppliers');
-  await page.getByText('Arrow', { exact: true }).click();
-  await page.waitForTimeout(200);
-
-  await loadTab(page, 'Supplied Parts');
-  await loadTab(page, 'Purchase Orders');
-  await loadTab(page, 'Stock Items');
-  await loadTab(page, 'Contacts');
-  await loadTab(page, 'Addresses');
-  await loadTab(page, 'Attachments');
-
-  await page.getByRole('tab', { name: 'Purchasing' }).click();
-  await loadTab(page, 'Manufacturers');
-  await page.getByText('AVX Corporation').click();
-  await page.waitForTimeout(200);
-
-  await loadTab(page, 'Addresses');
-  await page.getByRole('cell', { name: 'West Branch' }).click();
-  await page.locator('.mantine-ScrollArea-root').click();
-  await page
-    .getByRole('row', { name: 'West Branch Yes Surf Avenue 9' })
-    .getByRole('button')
-    .click();
-  await page.getByRole('menuitem', { name: 'Edit' }).click();
-
-  await page.getByLabel('text-field-title', { exact: true }).waitFor();
-  await page.getByLabel('text-field-line2', { exact: true }).waitFor();
-
-  // Read the current value of the cell, to ensure we always *change* it!
-  const value = await page
-    .getByLabel('text-field-line2', { exact: true })
-    .inputValue();
-  await page
-    .getByLabel('text-field-line2', { exact: true })
-    .fill(value == 'old' ? 'new' : 'old');
-
-  await page.getByRole('button', { name: 'Submit' }).isEnabled();
-
-  await page.getByRole('button', { name: 'Submit' }).click();
-  await page.getByRole('tab', { name: 'Details' }).waitFor();
 });
 
 test('Purchase Orders - Filters', async ({ browser }) => {
@@ -362,7 +444,8 @@ test('Purchase Orders - Receive Items', async ({ browser }) => {
     .getByRole('cell', { name: /Choose Location/ })
     .getByText('Room 101')
     .waitFor();
-  await page.getByText('Mechanical Lab').waitFor();
+
+  await page.getByText('Mechanical Lab').first().waitFor();
 
   await page.getByRole('button', { name: 'Cancel' }).click();
 

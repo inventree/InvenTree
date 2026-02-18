@@ -11,6 +11,7 @@ from django import template
 from django.apps.registry import apps
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from django.db.models import Model
 from django.db.models.query import QuerySet
 from django.utils.safestring import SafeString, mark_safe
 from django.utils.translation import gettext_lazy as _
@@ -22,6 +23,7 @@ from PIL import Image
 
 import common.currency
 import common.icons
+import common.models
 import InvenTree.helpers
 import InvenTree.helpers_model
 import report.helpers
@@ -329,19 +331,39 @@ def part_image(part: Part, preview: bool = False, thumbnail: bool = False, **kwa
 
 
 @register.simple_tag()
-def part_parameter(part: Part, parameter_name: str) -> Optional[str]:
-    """Return a PartParameter object for the given part and parameter name.
+def parameter(
+    instance: Model, parameter_name: str
+) -> Optional[common.models.Parameter]:
+    """Return a Parameter object for the given part and parameter name.
 
     Arguments:
-        part: A Part object
+        instance: A Model object
         parameter_name: The name of the parameter to retrieve
 
     Returns:
-        A PartParameter object, or None if not found
+        A Parameter object, or None if not found
     """
-    if type(part) is Part:
-        return part.get_parameter(parameter_name)
-    return None
+    if instance is None:
+        raise ValueError('parameter tag requires a valid Model instance')
+
+    if not isinstance(instance, Model) or not hasattr(instance, 'parameters'):
+        raise TypeError("parameter tag requires a Model with 'parameters' attribute")
+
+    return (
+        instance.parameters
+        .prefetch_related('template')
+        .filter(template__name=parameter_name)
+        .first()
+    )
+
+
+@register.simple_tag()
+def part_parameter(instance, parameter_name):
+    """Included for backwards compatibility - use 'parameter' tag instead.
+
+    Ref: https://github.com/inventree/InvenTree/pull/10699
+    """
+    return parameter(instance, parameter_name)
 
 
 @register.simple_tag()

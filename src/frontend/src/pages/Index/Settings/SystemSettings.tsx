@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { Skeleton, Stack } from '@mantine/core';
+import { Divider, Skeleton, Stack } from '@mantine/core';
 import {
   IconBellCog,
   IconCategory,
@@ -7,6 +7,7 @@ import {
   IconCurrencyDollar,
   IconFileAnalytics,
   IconFingerprint,
+  IconList,
   IconPackages,
   IconPlugConnected,
   IconQrcode,
@@ -186,6 +187,12 @@ export default function SystemSettings() {
         )
       },
       {
+        name: 'parameters',
+        label: t`Parameters`,
+        icon: <IconList />,
+        content: <GlobalSettingList keys={['PARAMETER_ENFORCE_UNITS']} />
+      },
+      {
         name: 'parts',
         label: t`Parts`,
         icon: <IconCategory />,
@@ -213,8 +220,7 @@ export default function SystemSettings() {
               'PART_COPY_PARAMETERS',
               'PART_COPY_TESTS',
               'PART_CATEGORY_PARAMETERS',
-              'PART_CATEGORY_DEFAULT_ICON',
-              'PART_PARAMETER_ENFORCE_UNITS'
+              'PART_CATEGORY_DEFAULT_ICON'
             ]}
           />
         )
@@ -248,15 +254,26 @@ export default function SystemSettings() {
         label: t`Stock History`,
         icon: <IconClipboardList />,
         content: (
-          <GlobalSettingList
-            keys={[
-              'STOCKTAKE_ENABLE',
-              'STOCKTAKE_EXCLUDE_EXTERNAL',
-              'STOCKTAKE_AUTO_DAYS',
-              'STOCKTAKE_DELETE_OLD_ENTRIES',
-              'STOCKTAKE_DELETE_DAYS'
-            ]}
-          />
+          <Stack gap='xs'>
+            <GlobalSettingList
+              heading={t`Part Stocktake`}
+              keys={[
+                'STOCKTAKE_ENABLE',
+                'STOCKTAKE_EXCLUDE_EXTERNAL',
+                'STOCKTAKE_AUTO_DAYS',
+                'STOCKTAKE_DELETE_OLD_ENTRIES',
+                'STOCKTAKE_DELETE_DAYS'
+              ]}
+            />
+            <Divider />
+            <GlobalSettingList
+              heading={t`Stock Tracking`}
+              keys={[
+                'STOCK_TRACKING_DELETE_OLD_ENTRIES',
+                'STOCK_TRACKING_DELETE_DAYS'
+              ]}
+            />
+          </Stack>
         )
       },
       {

@@ -7,6 +7,7 @@ import base64
 import hashlib
 import hmac
 import json
+import math
 import os
 import uuid
 from datetime import timedelta, timezone
@@ -28,7 +29,7 @@ from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.core.mail import EmailMultiAlternatives, get_connection
 from django.core.mail.utils import DNS_NAME
-from django.core.validators import MinValueValidator
+from django.core.validators import MinLengthValidator, MinValueValidator
 from django.db import models, transaction
 from django.db.models import enums
 from django.db.models.signals import post_delete, post_save
@@ -48,11 +49,14 @@ from rest_framework.exceptions import PermissionDenied
 from taggit.managers import TaggableManager
 
 import common.validators
+import InvenTree.conversion
+import InvenTree.exceptions
 import InvenTree.fields
 import InvenTree.helpers
 import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
+import InvenTree.validators
 import users.models
 from common.setting.type import InvenTreeSettingsKeyType, SettingsKeyType
 from common.settings import get_global_setting, global_setting_overrides
@@ -966,6 +970,22 @@ class BaseInvenTreeSetting(models.Model):
 
         return setting.get('model', None)
 
+    def confirm(self) -> bool:
+        """Return if this setting requires confirmation on change."""
+        setting = self.get_setting_definition(
+            self.key, **self.get_filters_for_instance()
+        )
+
+        return setting.get('confirm', False)
+
+    def confirm_text(self) -> str:
+        """Return the confirmation text for this setting, if provided."""
+        setting = self.get_setting_definition(
+            self.key, **self.get_filters_for_instance()
+        )
+
+        return setting.get('confirm_text', '')
+
     def model_filters(self) -> Optional[dict]:
         """Return the model filters associated with this setting."""
         setting = self.get_setting_definition(
@@ -1196,7 +1216,9 @@ class InvenTreeSetting(BaseInvenTreeSetting):
     even if that key does not exist.
     """
 
-    SETTINGS: dict[str, InvenTreeSettingsKeyType]
+    from common.setting.system import SYSTEM_SETTINGS
+
+    SETTINGS: dict[str, InvenTreeSettingsKeyType] = SYSTEM_SETTINGS
 
     CHECK_SETTING_KEY = True
 
@@ -1262,9 +1284,6 @@ class InvenTreeSetting(BaseInvenTreeSetting):
 
     The keys must be upper-case
     """
-    from common.setting.system import SYSTEM_SETTINGS
-
-    SETTINGS = SYSTEM_SETTINGS
 
     typ = 'inventree'
 
@@ -1290,6 +1309,8 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
 
     import common.setting.user
 
+    SETTINGS = common.setting.user.USER_SETTINGS
+
     CHECK_SETTING_KEY = True
 
     class Meta:
@@ -1300,8 +1321,6 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
         constraints = [
             models.UniqueConstraint(fields=['key', 'user'], name='unique key and user')
         ]
-
-    SETTINGS = common.setting.user.USER_SETTINGS
 
     typ = 'user'
     extra_unique_fields = ['user']
@@ -1895,6 +1914,8 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
     An attachment can be either an uploaded file, or an external URL.
 
     Attributes:
+        model_type: The type of model to which this attachment is linked
+        model_id: The ID of the model to which this attachment is linked
         attachment: The uploaded file
         url: An external URL
         comment: A comment or description for the attachment
@@ -2050,7 +2071,7 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
         if not issubclass(model_class, InvenTreeAttachmentMixin):
             raise ValidationError(_('Invalid model type specified for attachment'))
 
-        return model_class.check_attachment_permission(permission, user)
+        return model_class.check_related_permission(permission, user)
 
 
 class InvenTreeCustomUserStateModel(models.Model):
@@ -2354,6 +2375,421 @@ class SelectionListEntry(models.Model):
         if not self.active:
             return f'{self.label} (Inactive)'
         return self.label
+
+
+class ParameterTemplate(
+    InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
+):
+    """A ParameterTemplate provides a template for defining parameter values against various models.
+
+    This allow for assigning arbitrary data fields against existing models,
+    extending their functionality beyond the built-in fields.
+
+    Attributes:
+        name: The name (key) of the template
+        description: A description of the template
+        model_type: The type of model to which this template applies (e.g. 'part')
+        units: The units associated with the template (if applicable)
+        checkbox: Is this template a checkbox (boolean) type?
+        choices: Comma-separated list of choices (if applicable)
+        selectionlist: Optional link to a SelectionList for this template
+        enabled: Is this template enabled?
+    """
+
+    class Meta:
+        """Metaclass options for the ParameterTemplate model."""
+
+        verbose_name = _('Parameter Template')
+        verbose_name_plural = _('Parameter Templates')
+
+        # Note: Data was migrated from the existing 'part_partparametertemplate' table
+        # Ref: https://github.com/inventree/InvenTree/pull/10699
+        # To avoid data loss, we retain the existing table name
+        db_table = 'part_partparametertemplate'
+
+    class ModelChoices(RenderChoices):
+        """Model choices for parameters."""
+
+        choice_fnc = common.validators.parameter_template_model_options
+
+    @staticmethod
+    def get_api_url() -> str:
+        """Return the API URL associated with the ParameterTemplate model."""
+        return reverse('api-parameter-template-list')
+
+    def __str__(self):
+        """Return a string representation of a ParameterTemplate instance."""
+        s = str(self.name)
+        if self.units:
+            s += f' ({self.units})'
+        return s
+
+    def clean(self):
+        """Custom cleaning step for this model.
+
+        Checks:
+        - A 'checkbox' field cannot have 'choices' set
+        - A 'checkbox' field cannot have 'units' set
+        """
+        super().clean()
+
+        # Check that checkbox parameters do not have units or choices
+        if self.checkbox:
+            if self.units:
+                raise ValidationError({
+                    'units': _('Checkbox parameters cannot have units')
+                })
+
+            if self.choices:
+                raise ValidationError({
+                    'choices': _('Checkbox parameters cannot have choices')
+                })
+
+        # Check that 'choices' are in fact valid
+        if self.choices is None:
+            self.choices = ''
+        else:
+            self.choices = str(self.choices).strip()
+
+        if self.choices:
+            choice_set = set()
+
+            for choice in self.choices.split(','):
+                choice = choice.strip()
+
+                # Ignore empty choices
+                if not choice:
+                    continue
+
+                if choice in choice_set:
+                    raise ValidationError({'choices': _('Choices must be unique')})
+
+                choice_set.add(choice)
+
+    def validate_unique(self, exclude=None):
+        """Ensure that ParameterTemplates cannot be created with the same name.
+
+        This test should be case-insensitive (which the unique caveat does not cover).
+        """
+        super().validate_unique(exclude)
+
+        try:
+            others = ParameterTemplate.objects.filter(name__iexact=self.name).exclude(
+                pk=self.pk
+            )
+
+            if others.exists():
+                msg = _('Parameter template name must be unique')
+                raise ValidationError({'name': msg})
+        except ParameterTemplate.DoesNotExist:
+            pass
+
+    def get_choices(self):
+        """Return a list of choices for this parameter template."""
+        if self.selectionlist:
+            return self.selectionlist.get_choices()
+
+        if not self.choices:
+            return []
+
+        return [x.strip() for x in self.choices.split(',') if x.strip()]
+
+    # TODO: Reintroduce validator for model_type
+    model_type = models.ForeignKey(
+        ContentType,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name=_('Model type'),
+        help_text=_('Target model type for this parameter template'),
+    )
+
+    name = models.CharField(
+        max_length=100,
+        verbose_name=_('Name'),
+        help_text=_('Parameter Name'),
+        unique=True,
+    )
+
+    units = models.CharField(
+        max_length=25,
+        verbose_name=_('Units'),
+        help_text=_('Physical units for this parameter'),
+        blank=True,
+        validators=[InvenTree.validators.validate_physical_units],
+    )
+
+    description = models.CharField(
+        max_length=250,
+        verbose_name=_('Description'),
+        help_text=_('Parameter description'),
+        blank=True,
+    )
+
+    checkbox = models.BooleanField(
+        default=False,
+        verbose_name=_('Checkbox'),
+        help_text=_('Is this parameter a checkbox?'),
+    )
+
+    choices = models.CharField(
+        max_length=5000,
+        verbose_name=_('Choices'),
+        help_text=_('Valid choices for this parameter (comma-separated)'),
+        blank=True,
+    )
+
+    selectionlist = models.ForeignKey(
+        SelectionList,
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name='templates',
+        verbose_name=_('Selection List'),
+        help_text=_('Selection list for this parameter'),
+    )
+
+    enabled = models.BooleanField(
+        default=True,
+        verbose_name=_('Enabled'),
+        help_text=_('Is this parameter template enabled?'),
+    )
+
+
+@receiver(
+    post_save, sender=ParameterTemplate, dispatch_uid='post_save_parameter_template'
+)
+def post_save_parameter_template(sender, instance, created, **kwargs):
+    """Callback function when a ParameterTemplate is created or saved."""
+    import common.tasks
+
+    if InvenTree.ready.canAppAccessDatabase() and not InvenTree.ready.isImportingData():
+        if not created:
+            # Schedule a background task to rebuild the parameters against this template
+            InvenTree.tasks.offload_task(
+                common.tasks.rebuild_parameters,
+                instance.pk,
+                force_async=True,
+                group='part',
+            )
+
+
+class Parameter(
+    UpdatedUserMixin, InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
+):
+    """Class which represents a parameter value assigned to a particular model instance.
+
+    Attributes:
+        model_type: The type of model to which this parameter is linked
+        model_id: The ID of the model to which this parameter is linked
+        template: The ParameterTemplate which defines this parameter
+        data: The value of the parameter [string]
+        data_numeric: Numeric value of the parameter (if applicable) [float]
+        note: Optional note associated with this parameter [string]
+        updated: Date/time that this parameter was last updated
+        updated_by: User who last updated this parameter
+    """
+
+    class Meta:
+        """Meta options for Parameter model."""
+
+        verbose_name = _('Parameter')
+        verbose_name_plural = _('Parameters')
+        unique_together = [['model_type', 'model_id', 'template']]
+        indexes = [models.Index(fields=['model_type', 'model_id'])]
+
+        # Note: Data was migrated from the existing 'part_partparameter' table
+        # Ref: https://github.com/inventree/InvenTree/pull/10699
+        # To avoid data loss, we retain the existing table name
+        db_table = 'part_partparameter'
+
+    class ModelChoices(RenderChoices):
+        """Model choices for parameters."""
+
+        choice_fnc = common.validators.parameter_model_options
+
+    @staticmethod
+    def get_api_url() -> str:
+        """Return the API URL associated with the Parameter model."""
+        return reverse('api-parameter-list')
+
+    def save(self, *args, **kwargs):
+        """Custom save method for Parameter model.
+
+        - Update the numeric data field (if applicable)
+        """
+        self.calculate_numeric_value()
+
+        # Convert 'boolean' values to 'True' / 'False'
+        if self.template.checkbox:
+            self.data = InvenTree.helpers.str2bool(self.data)
+            self.data_numeric = 1 if self.data else 0
+
+        self.check_save()
+        super().save(*args, **kwargs)
+
+    def delete(self):
+        """Perform custom delete checks before deleting a Parameter instance."""
+        self.check_delete()
+        super().delete()
+
+    def clean(self):
+        """Validate the Parameter before saving to the database."""
+        super().clean()
+
+        # Validate the parameter data against the template choices
+        if choices := self.template.get_choices():
+            if self.data not in choices:
+                raise ValidationError({'data': _('Invalid choice for parameter value')})
+
+        self.calculate_numeric_value()
+
+        # TODO: Check that the model_type for this parameter matches the template
+
+        # Validate the parameter data against the template units
+        if (
+            get_global_setting(
+                'PARAMETER_ENFORCE_UNITS', True, cache=False, create=False
+            )
+            and self.template.units
+        ):
+            try:
+                InvenTree.conversion.convert_physical_value(
+                    self.data, self.template.units
+                )
+            except ValidationError as e:
+                raise ValidationError({'data': e.message})
+
+        # Finally, run custom validation checks (via plugins)
+        from plugin import PluginMixinEnum, registry
+
+        for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
+            # Note: The validate_parameter function may raise a ValidationError
+            try:
+                if hasattr(plugin, 'validate_parameter'):
+                    result = plugin.validate_parameter(self, self.data)
+                    if result:
+                        break
+            except ValidationError as exc:
+                # Re-throw the ValidationError against the 'data' field
+                raise ValidationError({'data': exc.message})
+            except Exception:
+                InvenTree.exceptions.log_error('validate_parameter', plugin=plugin.slug)
+
+    def calculate_numeric_value(self):
+        """Calculate a numeric value for the parameter data.
+
+        - If a 'units' field is provided, then the data will be converted to the base SI unit.
+        - Otherwise, we'll try to do a simple float cast
+        """
+        if self.template.units:
+            try:
+                self.data_numeric = InvenTree.conversion.convert_physical_value(
+                    self.data, self.template.units
+                )
+            except (ValidationError, ValueError):
+                self.data_numeric = None
+
+        # No units provided, so try to cast to a float
+        else:
+            try:
+                self.data_numeric = float(self.data)
+            except ValueError:
+                self.data_numeric = None
+
+        if self.data_numeric is not None and type(self.data_numeric) is float:
+            # Prevent out of range numbers, etc
+            # Ref: https://github.com/inventree/InvenTree/issues/7593
+            if math.isnan(self.data_numeric) or math.isinf(self.data_numeric):
+                self.data_numeric = None
+
+    def check_permission(self, permission, user):
+        """Check if the user has the required permission for this parameter."""
+        from InvenTree.models import InvenTreeParameterMixin
+
+        model_class = self.model_type.model_class()
+
+        if not issubclass(model_class, InvenTreeParameterMixin):
+            raise ValidationError(_('Invalid model type specified for parameter'))
+
+        return model_class.check_related_permission(permission, user)
+
+    def check_save(self):
+        """Check if this parameter can be saved.
+
+        The linked content_object can implement custom checks by overriding
+        the 'check_parameter_edit' method.
+        """
+        from InvenTree.models import InvenTreeParameterMixin
+
+        try:
+            instance = self.content_object
+        except InvenTree.models.InvenTreeModel.DoesNotExist:
+            return
+
+        if instance and isinstance(instance, InvenTreeParameterMixin):
+            instance.check_parameter_save(self)
+
+    def check_delete(self):
+        """Check if this parameter can be deleted."""
+        from InvenTree.models import InvenTreeParameterMixin
+
+        try:
+            instance = self.content_object
+        except InvenTree.models.InvenTreeModel.DoesNotExist:
+            return
+
+        if instance and isinstance(instance, InvenTreeParameterMixin):
+            instance.check_parameter_delete(self)
+
+    # TODO: Reintroduce validator for model_type
+    model_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+
+    model_id = models.PositiveIntegerField(
+        verbose_name=_('Model ID'),
+        help_text=_('ID of the target model for this parameter'),
+    )
+
+    content_object = GenericForeignKey('model_type', 'model_id')
+
+    template = models.ForeignKey(
+        ParameterTemplate,
+        on_delete=models.CASCADE,
+        related_name='parameters',
+        verbose_name=_('Template'),
+        help_text=_('Parameter template'),
+    )
+
+    data = models.CharField(
+        max_length=500,
+        verbose_name=_('Data'),
+        help_text=_('Parameter Value'),
+        validators=[MinLengthValidator(1)],
+    )
+
+    data_numeric = models.FloatField(default=None, null=True, blank=True)
+
+    note = models.CharField(
+        max_length=500,
+        blank=True,
+        verbose_name=_('Note'),
+        help_text=_('Optional note field'),
+    )
+
+    @property
+    def units(self):
+        """Return the units associated with the template."""
+        return self.template.units
+
+    @property
+    def name(self):
+        """Return the name of the template."""
+        return self.template.name
+
+    @property
+    def description(self):
+        """Return the description of the template."""
+        return self.template.description
 
 
 class BarcodeScanResult(InvenTree.models.InvenTreeModel):

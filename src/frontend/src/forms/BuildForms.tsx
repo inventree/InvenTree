@@ -228,10 +228,12 @@ export function useBuildOrderOutputFields({
 
 function BuildOutputFormRow({
   props,
-  record
+  record,
+  withQuantityColumn = true
 }: Readonly<{
   props: TableFieldRowProps;
   record: any;
+  withQuantityColumn?: boolean;
 }>) {
   const stockItemColumn = useMemo(() => {
     if (record.serial) {
@@ -271,15 +273,18 @@ function BuildOutputFormRow({
           <RenderPartColumn part={record.part_detail} />
         </Table.Td>
         <Table.Td>{stockItemColumn}</Table.Td>
-        <Table.Td>
-          <TableFieldErrorWrapper props={props} errorKey='output'>
-            {quantityColumn}
-          </TableFieldErrorWrapper>
-        </Table.Td>
+        {withQuantityColumn && (
+          <Table.Td>
+            <TableFieldErrorWrapper props={props} errorKey='output'>
+              {quantityColumn}
+            </TableFieldErrorWrapper>
+          </Table.Td>
+        )}
         <Table.Td>{record.batch}</Table.Td>
         <Table.Td>
           <StatusRenderer
-            status={record.status}
+            status={record.custom_status_key || record.status}
+            fallbackStatus={record.status}
             type={ModelType.stockitem}
           />{' '}
         </Table.Td>
@@ -294,10 +299,12 @@ function BuildOutputFormRow({
 export function useCompleteBuildOutputsForm({
   build,
   outputs,
+  hasTrackedItems,
   onFormSuccess
 }: {
   build: any;
   outputs: any[];
+  hasTrackedItems: boolean;
   onFormSuccess: (response: any) => void;
 }) {
   const [location, setLocation] = useState<number | null>(null);
@@ -348,9 +355,11 @@ export function useCompleteBuildOutputsForm({
         }
       },
       notes: {},
-      accept_incomplete_allocation: {}
+      accept_incomplete_allocation: {
+        hidden: !hasTrackedItems
+      }
     };
-  }, [location, outputs]);
+  }, [location, outputs, hasTrackedItems]);
 
   return useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.build_output_complete, build.pk),
@@ -465,7 +474,12 @@ export function useCancelBuildOutputsForm({
         modelRenderer: (row: TableFieldRowProps) => {
           const record = outputs.find((output) => output.pk == row.item.output);
           return (
-            <BuildOutputFormRow props={row} record={record} key={record.pk} />
+            <BuildOutputFormRow
+              props={row}
+              record={record}
+              key={record.pk}
+              withQuantityColumn={false}
+            />
           );
         },
         headers: [
