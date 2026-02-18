@@ -975,7 +975,30 @@ class ExternalBuildTest(InvenTreeAPITestCase):
         )
 
         # Order some parts
-        po = PurchaseOrder.objects.create(supplier=supplier, reference='PO-9999')
+        from tenant.models import Tenant
+
+        tenant, _ = Tenant.objects.get_or_create(
+            name="Test Tenant",
+            defaults={"description": "Tenant created for build tests"},
+        )
+
+        from tenant.models import Tenant
+
+        tenant = Tenant.objects.first()
+        
+        if not tenant:
+            tenant = Tenant.objects.create(
+                name="Test Tenant",
+                description="Tenant created for build tests",
+            )
+        
+        po = PurchaseOrder.objects.create(
+            supplier=supplier,
+            reference='PO-9999',
+            tenant=tenant,
+        )
+
+
 
         # Create a line item to fulfil the build order
         po_line = PurchaseOrderLineItem.objects.create(

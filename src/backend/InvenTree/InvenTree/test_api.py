@@ -69,7 +69,7 @@ class HTMLAPITests(InvenTreeTestCase):
 class ApiAccessTests(InvenTreeAPITestCase):
     """Tests for various access scenarios with the InvenTree API."""
 
-    fixtures = ['location', 'category', 'part', 'stock']
+    fixtures = ['tenant', 'location', 'category', 'part', 'stock']
     roles = ['part.view']
     token = None
     auto_login = False
@@ -297,6 +297,7 @@ class SearchTests(InvenTreeAPITestCase):
     """Unit tests for global search endpoint."""
 
     fixtures = [
+        'tenant',
         'category',
         'part',
         'company',

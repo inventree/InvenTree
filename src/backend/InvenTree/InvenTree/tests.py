@@ -46,7 +46,7 @@ from .tasks import offload_task
 class TreeFixtureTest(TestCase):
     """Unit testing for our MPTT fixture data."""
 
-    fixtures = ['location', 'category', 'part', 'stock', 'build']
+    fixtures = ['tenant', 'location', 'category', 'part', 'stock', 'build']
 
     def node_string(self, node):
         """Construct a string representation of a tree node."""
@@ -864,7 +864,7 @@ class TestDownloadFile(TestCase):
 class TestMPTT(TestCase):
     """Tests for the MPTT tree models."""
 
-    fixtures = ['location']
+    fixtures = ['tenant', 'location']
 
     def test_self_as_parent(self):
         """Test that we cannot set self as parent."""
@@ -1461,7 +1461,7 @@ class TestInstanceName(InvenTreeTestCase):
 class TestOffloadTask(InvenTreeTestCase):
     """Tests for offloading tasks to the background worker."""
 
-    fixtures = ['category', 'part', 'location', 'stock']
+    fixtures = ['tenant', 'category', 'part', 'location', 'stock']
 
     def test_offload_tasks(self):
         """Test that we can offload various tasks to the background worker thread.
