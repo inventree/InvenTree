@@ -1,14 +1,18 @@
 import { t } from '@lingui/core/macro';
 import { Group, Text } from '@mantine/core';
-import { useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
+import { RowEditAction, UserRoles } from '@lib/index';
 import type { TableFilter } from '@lib/types/Filters';
-import type { TableColumn } from '@lib/types/Tables';
+import type { RowAction, TableColumn } from '@lib/types/Tables';
 import { formatDecimal } from '../../defaults/formatters';
+import { bomItemFields } from '../../forms/BomForms';
+import { useEditApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
+import { useUserState } from '../../states/UserState';
 import {
   DescriptionColumn,
   PartColumn,
@@ -27,6 +31,8 @@ export function UsedInTable({
   params?: any;
 }>) {
   const table = useTable('usedin');
+
+  const user = useUserState();
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
@@ -98,22 +104,56 @@ export function UsedInTable({
     ];
   }, [partId]);
 
+  const [selectedBomItem, setSelectedBomItem] = useState<any>({});
+
+  const editBomItem = useEditApiFormModal({
+    url: ApiEndpoints.bom_list,
+    pk: selectedBomItem.pk,
+    title: t`Edit BOM Item`,
+    fields: bomItemFields({
+      showAssembly: true
+    }),
+    successMessage: t`BOM item updated`,
+    table: table
+  });
+
+  const rowActions = useCallback(
+    (record: any): RowAction[] => {
+      const locked = record.part_detail?.locked;
+
+      return [
+        RowEditAction({
+          hidden: locked || !user.hasChangeRole(UserRoles.part),
+          onClick: () => {
+            setSelectedBomItem(record);
+            editBomItem.open();
+          }
+        })
+      ];
+    },
+    [user]
+  );
+
   return (
-    <InvenTreeTable
-      url={apiUrl(ApiEndpoints.bom_list)}
-      tableState={table}
-      columns={tableColumns}
-      props={{
-        params: {
-          ...params,
-          uses: partId,
-          part_detail: true,
-          sub_part_detail: true
-        },
-        tableFilters: tableFilters,
-        modelType: ModelType.part,
-        modelField: 'part'
-      }}
-    />
+    <>
+      {editBomItem.modal}
+      <InvenTreeTable
+        url={apiUrl(ApiEndpoints.bom_list)}
+        tableState={table}
+        columns={tableColumns}
+        props={{
+          params: {
+            ...params,
+            uses: partId,
+            part_detail: true,
+            sub_part_detail: true
+          },
+          rowActions: rowActions,
+          tableFilters: tableFilters,
+          modelType: ModelType.part,
+          modelField: 'part'
+        }}
+      />
+    </>
   );
 }

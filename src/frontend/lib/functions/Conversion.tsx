@@ -29,6 +29,11 @@ export function isTrue(value: any): boolean {
  * Allows for retrieval of nested items in an object.
  */
 export function resolveItem(obj: any, path: string): any {
+  // Return the top-level object if no path is provided
+  if (path == null || path === '') {
+    return obj;
+  }
+
   const properties = path.split('.');
   return properties.reduce((prev, curr) => prev?.[curr], obj);
 }
