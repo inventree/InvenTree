@@ -148,7 +148,7 @@ InvenTreeBackupMetadata = dict[str, str | int | bool | None]
 
 def _gather_environment_metadata() -> InvenTreeBackupMetadata:
     """Gather metadata about the current environment to be stored with the backup."""
-    from InvenTree.plugin.installer import plugins_file_hash
+    from InvenTree.plugin.installer import plugins_file_hash  # type: ignore[import]
 
     new_data: InvenTreeBackupMetadata = {}
 
