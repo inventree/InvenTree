@@ -15,7 +15,7 @@ def add_part_links(apps, schema_editor):
     if N > 0:
         print(f"\nUpdating {N} StockItemTracking entries with part links...")
 
-    for tracking in StockItemTracking.objects.all():
+    for tracking in StockItemTracking.objects.filter(part__isnull=True).select_related('item__part'):
 
         item = tracking.item
 
