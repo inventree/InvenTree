@@ -590,7 +590,7 @@ class BarcodePOReceive(BarcodeView):
                     # Adds info as to which Supplier part was found
                     response[current_plugin.name + " Debug"] = result
                     plugin_error = _('Supplier Part Found\rNo Purchase Order Match')
-                
+
             if 'error' in result:
                 logger.info(
                     '%s.scan_receive_item(...) returned an error: %s',
