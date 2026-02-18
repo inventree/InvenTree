@@ -535,6 +535,8 @@ class BarcodePOReceive(BarcodeView):
 
         plugin_response = None
 
+        no_supplier_plugin_error = []
+
         for current_plugin in plugins:
             try:
                 # Will either Output Debugresponse if No_Match is True or return the regular response if No_Match is False
@@ -557,7 +559,7 @@ class BarcodePOReceive(BarcodeView):
 
                 # Supplier does not have associated Supplier ID
                 if result['supplier'] is None:
-                    response['PluginError'] = current_plugin.name + ':No supplier ID found '
+                    no_supplier_plugin_error.append(current_plugin.name)
                     continue
                 
                 # No PO(Purchase Order) or Supplier Part Found
@@ -568,13 +570,13 @@ class BarcodePOReceive(BarcodeView):
                 if result['PO'] != None and result['supplier_part'] is None:
                     # Adds what is causing error for barcode scan
                     response[current_plugin.name + " Debug" ] = result
-                    PluginError = _('Purchase order Found\rNo supplier Part Match')
+                    plugin_error = _('Purchase order Found\rNo supplier Part Match')
 
                 # Supplier Part is Found but PO(Purchase Order) DNE
                 elif result['PO'] is None and result['supplier_part'] != None:
                     # Adds what is causing error for barcode scan
                     response[current_plugin.name + " Debug" ] = result
-                    PluginError = _('Supplier Part Found\rNo Purchase Order Match')
+                    plugin_error = _('Supplier Part Found\rNo Purchase Order Match')
                 
             if 'error' in result:
                 logger.info(
@@ -594,14 +596,16 @@ class BarcodePOReceive(BarcodeView):
 
         if plugin_response and plugin_response.get('No_Match') is False:
             response = {**response, **plugin_response}
+        elif no_supplier_plugin_error:
+            response['no_supplier_plugin_error'] = no_supplier_plugin_error
 
         # A plugin has not been found!
         if plugin is None:
             response['error'] = _('No plugin match for supplier barcode')
 
         # A plugin was found, with a Error
-        elif PluginError:
-            response['error'] = _(PluginError)
+        elif plugin_error:
+            response['error'] = _(plugin_error)
 
         self.log_scan(request, response, 'success' in response)
 
