@@ -320,7 +320,7 @@ class SupplierBarcodeMixin(BarcodeMixin):
         location=None,
         auto_allocate: bool = True,
         **kwargs,
-    ) -> dict :
+    ) -> dict:
         """Attempt to receive an item against a PurchaseOrder via barcode scanning.
 
         Arguments:
@@ -344,7 +344,7 @@ class SupplierBarcodeMixin(BarcodeMixin):
         # Extract supplier information
         supplier = supplier or self.get_supplier(cache=True)
 
-        # Construct Debug Response 
+        # Construct Debug Response
         # Will hold info on what is missing from Barcode
         Debugresponse = {}
 
@@ -369,7 +369,7 @@ class SupplierBarcodeMixin(BarcodeMixin):
             # No supplier part information available
             Debugresponse['supplier_part'] = None
         else:
-            Debugresponse['supplier_part'] =  supplier_part
+            Debugresponse['supplier_part'] = supplier_part
 
         # Attempt to find matching line item
         if not line_item and purchase_order != None:
@@ -379,7 +379,7 @@ class SupplierBarcodeMixin(BarcodeMixin):
                     line_item = line_items.first()
             except Exception:
                 line_items = None
-                log_error('Failed to find line item', error_data= line_items)
+                log_error('Failed to find line item', error_data=line_items)
                 Debugresponse['line_Item'] = None
 
         # If DebugResponse Exists throw debug dictionary instead of response dictionary
@@ -423,7 +423,7 @@ class SupplierBarcodeMixin(BarcodeMixin):
                 'purchase_order': purchase_order.pk,
                 'location': location.pk if location else None,
             },
-            'No_Match': False
+            'No_Match': False,
         }
 
         if action_required:
