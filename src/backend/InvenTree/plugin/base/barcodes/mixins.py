@@ -321,7 +321,6 @@ class SupplierBarcodeMixin(BarcodeMixin):
         auto_allocate: bool = True,
         **kwargs,
     ) -> dict:
-    ) -> dict:
         """Attempt to receive an item against a PurchaseOrder via barcode scanning.
 
         Arguments:
