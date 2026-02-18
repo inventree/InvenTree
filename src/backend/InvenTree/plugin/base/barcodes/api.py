@@ -535,6 +535,10 @@ class BarcodePOReceive(BarcodeView):
 
         plugin_response = None
 
+        response['plugin_debug'] = {}
+
+        plugin_error = None
+
         no_supplier_plugin_error = []
 
         supplier_purchase_order = None
@@ -557,15 +561,15 @@ class BarcodePOReceive(BarcodeView):
                     line_item=line_item,
                     auto_allocate=auto_allocate,
                 )
-
+                response[current_plugin.name + " Debug"] = result
             except Exception:
                 log_error('BarcodePOReceive.handle_barcode', plugin=current_plugin.slug)
                 continue
             
-            result['PO'] = supplier_purchase_order
-            result['No_Match'] = no_match
-            result['supplier'] = plugin_supplier
-            result['supplier_part'] = supplier_part
+            supplier_purchase_order = result['PO']
+            no_match = result['No_Match']
+            plugin_supplier = result['supplier']
+            supplier_part = result['supplier_part']
 
             # No_Match Determines if it found a exact match for all the required fields from scan_recieve_item
             if no_match is True:
@@ -582,13 +586,13 @@ class BarcodePOReceive(BarcodeView):
                 # Purchase Order exists and is found but Supplier part DNE
                 if supplier_purchase_order != None and supplier_part is None:
                     # Adds info as to which PO was found
-                    response[current_plugin.name + " Debug"] = result
+                    response['plugin_debug'][current_plugin.slug] = result
                     plugin_error = _('Purchase order Found\rNo supplier Part Match')
 
                 # Supplier Part is Found but Purchase Order DNE
                 elif supplier_purchase_order is None and supplier_part != None:
                     # Adds info as to which Supplier part was found
-                    response[current_plugin.name + " Debug"] = result
+                    response['plugin_debug'][current_plugin.slug] = result
                     plugin_error = _('Supplier Part Found\rNo Purchase Order Match')
 
             if 'error' in result:

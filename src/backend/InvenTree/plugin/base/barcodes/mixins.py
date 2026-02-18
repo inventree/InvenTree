@@ -369,7 +369,7 @@ class SupplierBarcodeMixin(BarcodeMixin):
             # Purchase order does not match supplier
             debug_response['PO'] = None
         else:
-            debug_response['PO'] = purchase_order
+            debug_response['PO'] = purchase_order.name
 
         supplier_part = self.get_supplier_part()
 
@@ -377,13 +377,16 @@ class SupplierBarcodeMixin(BarcodeMixin):
             # No supplier part information available
             debug_response['supplier_part'] = None
         else:
-            debug_response['supplier_part'] = supplier_part
+            debug_response['supplier_part'] = supplier_part.name
 
         # Attempt to find matching line item
         if not line_item and purchase_order != None:
-            line_items = purchase_order.lines.filter(part=supplier_part)
-            if line_items.count() == 1:
-                 line_item = line_items.first()
+            try:
+                line_items = purchase_order.lines.filter(part=supplier_part)
+                if line_items.count() == 1:
+                     line_item = line_items.first()
+            except Exception:
+                pass
         
         if line_item is None:
             debug_response['line_Item'] = None
