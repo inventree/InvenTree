@@ -263,6 +263,9 @@ DBBACKUP_EMAIL_SUBJECT_PREFIX = InvenTree.backup.backup_email_prefix()
 
 DBBACKUP_CONNECTORS = {'default': InvenTree.backup.get_backup_connector_options()}
 
+DBBACKUP_BACKUP_METADATA_SETTER = InvenTree.backup.metadata_set
+DBBACKUP_RESTORE_METADATA_VALIDATOR = InvenTree.backup.validate_restore
+
 # Data storage options
 DBBACKUP_STORAGE_CONFIG = {
     'BACKEND': InvenTree.backup.get_backup_storage_backend(),

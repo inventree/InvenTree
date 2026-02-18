@@ -562,9 +562,9 @@ django-cors-headers==4.9.0 \
     # via
     #   -c src/backend/requirements.txt
     #   -r src/backend/requirements.in
-django-dbbackup==5.1.2 \
-    --hash=sha256:4ebc0e3a8de73811393f401099dc35b4f3aca39044ca430ab6ab307df32849a1 \
-    --hash=sha256:792b646633e46622ee79536556a9e42d469758b8591dec06f99a9175c11f8e51
+django-dbbackup==5.2.0 \
+    --hash=sha256:540948869e44778b5b33333cbab0cfe44279defd47df635d309ede8666894370 \
+    --hash=sha256:72b11dd31758abcf8f2d405fd2efbc49c9624bc17196f8c68542d3dc8d8d53c3
     # via
     #   -c src/backend/requirements.txt
     #   -r src/backend/requirements.in
