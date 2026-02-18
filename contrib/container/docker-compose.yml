@@ -82,6 +82,8 @@ services:
             - inventree-cache
         env_file:
             - .env
+    environment:
+      INVENTREE_SERVER: http://inventree-server:${INVENTREE_WEB_PORT}
         volumes:
             # Data volume must map to /home/inventree/data
             - ${INVENTREE_EXT_VOLUME}:/home/inventree/data:z
