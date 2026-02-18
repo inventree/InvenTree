@@ -241,6 +241,11 @@ export function ApiFormField({
           />
         );
       default:
+        // This should never happen - it represents a critical UI issue which should be caught in CI
+        console.error(
+          `Invalid field type for field '${fieldName}': '${fieldDefinition.field_type}'`
+        );
+
         return (
           <Alert color='red' title={t`Error`}>
             Invalid field type for field '{fieldName}': '

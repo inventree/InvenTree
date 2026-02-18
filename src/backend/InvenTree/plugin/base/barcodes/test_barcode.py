@@ -178,7 +178,7 @@ class BarcodeAPITest(InvenTreeAPITestCase):
         item = StockItem.objects.get(pk=522)
 
         data = self.generateBarcode('stockitem', item.pk, expected_code=200).data
-        self.assertEqual(data['barcode'], '{"stockitem": 522}')
+        self.assertEqual(data['barcode'], 'INV-SI522')
 
     def test_barcode_generation_invalid(self):
         """Test barcode generation for invalid model/pk."""
