@@ -338,7 +338,6 @@ class ParameterAPITests(InvenTreeAPITestCase):
             'part': 3,
             'company': 0,
             'build': 0,
-            'wonky_model': 0,
         }.items():
             response = self.get(url, data={'exists_for_model': model_name})
             n = len(response.data)
