@@ -867,7 +867,6 @@ class ParameterTemplateFilter(FilterSet):
 
         Notes:
             - This filter can only be applied if the 'exists_for_model' filter is also applied, as the model_id is only meaningful in the context of a particular model type.
-            - This filter also can use the value supplied in 'exists_for_model_relation' to map to a particular field on the model, e.g. category for parts, which allows for more complex relationships to be mapped.
 
         Reference: https://github.com/inventree/InvenTree/issues/11381
         """
@@ -934,7 +933,6 @@ class ParameterTemplateFilter(FilterSet):
         Notes:
             - This filter can only be applied if the 'exists_for_model' filter is also applied, as the model_id is only meaningful in the context of a base model
             - This filter can only be applied if the 'exists_for_related_model' filter is also applied, as the related model id is only meaningful in the context of a particular model relation
-            - This filter also can use the value supplied in 'exists_for_model_relation' to map to a particular field on the model, e.g. category for parts, which allows for more complex relationships to be mapped.
 
         Example: To filter part parameters which have at least one parameter defined for any part in category 5, you could apply the following filters:
             - exists_for_model=part
