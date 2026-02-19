@@ -1,8 +1,6 @@
 """JSON serializers for Company app."""
 
-import io
-
-from django.core.files.base import ContentFile
+from django.contrib.contenttypes.models import ContentType
 from django.db.models import Prefetch
 from django.utils.translation import gettext_lazy as _
 
@@ -10,9 +8,12 @@ from rest_framework import serializers
 from sql_util.utils import SubqueryCount
 
 import common.filters
+import common.models as common_models
+import common.serializers as common_serializers
 import company.filters
 import part.filters
 import part.serializers as part_serializers
+from common.filters import prefetch_related_images
 from importer.registry import register_importer
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.ready import isGeneratingSchema
@@ -21,12 +22,10 @@ from InvenTree.serializers import (
     FilterableSerializerMixin,
     InvenTreeCurrencySerializer,
     InvenTreeDecimalField,
-    InvenTreeImageSerializerField,
     InvenTreeModelSerializer,
     InvenTreeMoneySerializer,
     InvenTreeTagModelSerializer,
     NotesFieldMixin,
-    RemoteImageMixin,
     enable_filter,
 )
 
@@ -40,7 +39,9 @@ from .models import (
 )
 
 
-class CompanyBriefSerializer(InvenTreeModelSerializer):
+class CompanyBriefSerializer(
+    common_serializers.InvenTreeImageSerializerMixin, InvenTreeModelSerializer
+):
     """Serializer for Company object (limited detail)."""
 
     class Meta:
@@ -58,10 +59,6 @@ class CompanyBriefSerializer(InvenTreeModelSerializer):
             'tax_id',
         ]
         read_only_fields = ['currency']
-
-    image = InvenTreeImageSerializerField(read_only=True)
-
-    thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
 
 
 @register_importer()
@@ -111,10 +108,10 @@ class AddressBriefSerializer(InvenTreeModelSerializer):
 
 @register_importer()
 class CompanySerializer(
+    common_serializers.InvenTreeImageSerializerMixin,
     FilterableSerializerMixin,
     DataImportExportSerializerMixin,
     NotesFieldMixin,
-    RemoteImageMixin,
     InvenTreeModelSerializer,
 ):
     """Serializer for Company object (full detail)."""
@@ -139,6 +136,7 @@ class CompanySerializer(
             'contact',
             'link',
             'image',
+            'thumbnail',
             'active',
             'is_customer',
             'is_manufacturer',
@@ -146,7 +144,6 @@ class CompanySerializer(
             'notes',
             'parts_supplied',
             'parts_manufactured',
-            'remote_image',
             'primary_address',
             'tax_id',
             'parameters',
@@ -161,6 +158,12 @@ class CompanySerializer(
         )
 
         queryset = queryset.annotate(parts_supplied=SubqueryCount('supplied_parts'))
+
+        ct = ContentType.objects.get_for_model(Company)
+        primary_img_qs = common_models.InvenTreeImage.objects.filter(
+            model_type=ct, primary=True
+        )
+        queryset = prefetch_related_images(queryset, images_queryset=primary_img_qs)
 
         return queryset
 
@@ -177,8 +180,6 @@ class CompanySerializer(
         ],
     )
 
-    image = InvenTreeImageSerializerField(required=False, allow_null=True)
-
     email = serializers.EmailField(
         required=False, default='', allow_blank=True, allow_null=True
     )
@@ -192,27 +193,6 @@ class CompanySerializer(
     )
 
     parameters = common.filters.enable_parameters_filter()
-
-    def save(self):
-        """Save the Company instance."""
-        super().save()
-
-        company = self.instance
-
-        # Check if an image was downloaded from a remote URL
-        remote_img = getattr(self, 'remote_image_file', None)
-
-        if remote_img and company:
-            fmt = remote_img.format or 'PNG'
-            buffer = io.BytesIO()
-            remote_img.save(buffer, format=fmt)
-
-            # Construct a simplified name for the image
-            filename = f'company_{company.pk}_image.{fmt.lower()}'
-
-            company.image.save(filename, ContentFile(buffer.getvalue()))
-
-        return self.instance
 
 
 @register_importer()
@@ -501,6 +481,8 @@ class SupplierPartSerializer(
             on_order=company.filters.annotate_on_order_quantity()
         )
 
+        queryset = prefetch_related_images(queryset, reference='part__')
+        queryset = prefetch_related_images(queryset, reference='supplier__')
         queryset = queryset.prefetch_related('supplier', 'manufacturer_part')
 
         return queryset

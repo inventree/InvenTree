@@ -117,5 +117,17 @@ api.yaml
 src/backend/InvenTree/web/static
 InvenTree/web/static
 
+
+media/*
+backup/*
+static/*
+
+schema.yml
+.yarn/*
+
+package-lock.json
+yarn.lock
+install-state.gz
+.yarnrc.yml
 # performance test results
 .codspeed/

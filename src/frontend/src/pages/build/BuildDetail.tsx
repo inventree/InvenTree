@@ -402,11 +402,11 @@ export default function BuildDetail() {
         <Grid grow>
           <DetailsImage
             appRole={UserRoles.part}
-            apiPath={ApiEndpoints.part_list}
-            src={build.part_detail?.image ?? build.part_detail?.thumbnail}
-            pk={build.part}
+            object_id={build.part}
+            model_type={ModelType.part}
+            multiple={true}
           />
-          <Grid.Col span={{ base: 12, sm: 8 }}>
+          <Grid.Col span={{ base: 12, sm: 6 }}>
             <DetailsTable fields={tl} item={data} />
           </Grid.Col>
         </Grid>
@@ -584,7 +584,7 @@ export default function BuildDetail() {
     // if we set the reference to null/undefined, it will be left blank in the form
     // if we omit the reference altogether, it will be auto-generated via reference pattern
     // from the OPTIONS response
-    delete data.reference;
+    // delete data.reference;
     return data;
   }, [build]);
 

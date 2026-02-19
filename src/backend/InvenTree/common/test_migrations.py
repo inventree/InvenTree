@@ -2,10 +2,16 @@
 
 import io
 import os
+import shutil
+import tempfile
 
 from django.core.files.base import ContentFile
+from django.test import override_settings
 
 from django_test_migrations.contrib.unittest_case import MigratorTestCase
+
+from common.helpers import generate_image
+from InvenTree import unit_test
 
 
 def get_legacy_models():
@@ -37,7 +43,7 @@ def generate_attachment():
     return ContentFile(file_object.getvalue(), 'test.txt')
 
 
-class TestForwardMigrations(MigratorTestCase):
+class TestLegacyAttachmentMigration(MigratorTestCase):
     """Test entire schema migration sequence for the common app."""
 
     migrate_from = ('common', '0024_notesimage_model_id_notesimage_model_type')
@@ -207,6 +213,374 @@ class TestForwardMigrations(MigratorTestCase):
             'stockitem',
         ]:
             self.assertEqual(Attachment.objects.filter(model_type=model).count(), 2)
+
+
+class TestLegacyImageMigration(MigratorTestCase):
+    """Test that any Company.image and Part.image values are correctly migrated."""
+
+    migrate_from = [('common', '0042_inventreeimage')]
+    migrate_to = [('common', unit_test.getNewestMigrationFile('common'))]
+
+    @classmethod
+    def setUpClass(cls):
+        """Set up the test class."""
+        super().setUpClass()
+        cls._temp_media = tempfile.mkdtemp(prefix='test_media_')
+        cls._override = override_settings(MEDIA_ROOT=cls._temp_media)
+        cls._override.enable()
+
+    @classmethod
+    def tearDownClass(cls):
+        """Clean up after the test class."""
+        super().tearDownClass()
+        cls._override.disable()
+        shutil.rmtree(cls._temp_media, ignore_errors=True)
+
+    def prepare(self):
+        """Populate the 'old' database state (before the migration)."""
+        # --- COMPANY SETUP ---
+
+        def simple_rename(filename):
+            """Simple rename function for test images."""
+            return f'images/{filename}'
+
+        Company = self.old_state.apps.get_model('company', 'company')
+
+        Company.IMAGE_RENAME = staticmethod(simple_rename)
+
+        self.company_initial_data = [
+            {'name': 'CoOne', 'file_name': 'test01.png'},
+            {'name': 'CoTwo', 'file_name': 'test02.png'},
+        ]
+        self.co_pks = []
+        for entry in self.company_initial_data:
+            co = Company.objects.create(
+                name=entry['name'], image=generate_image(filename=entry['file_name'])
+            )
+            self.co_pks.append(co.pk)
+
+        no_image_co = Company.objects.create(
+            name='NoImageCo', description='No image here'
+        )
+        self.no_image_pk = no_image_co.pk
+
+        # --- PART SETUP ---
+        Part = self.old_state.apps.get_model('part', 'part')
+        # Two parts sharing the same image filename (to test deduplication)
+        Part.IMAGE_RENAME = staticmethod(simple_rename)
+
+        # Dummy MPPT data
+        tree = {'tree_id': 0, 'level': 0, 'lft': 0, 'rght': 0}
+
+        self.part_initial_data = [
+            {'name': 'PartOne', 'file_name': 'part01.png'},
+            {'name': 'PartTwo', 'file_name': 'part01.png'},
+        ]
+        self.part_pks = []
+        for entry in self.part_initial_data:
+            part = Part.objects.create(
+                name=entry['name'],
+                description='Test Part Description',
+                active=True,
+                assembly=True,
+                purchaseable=True,
+                image=generate_image(filename=entry['file_name']),
+                **tree,
+            )
+            self.part_pks.append(part.pk)
+
+        # Part with no image
+        no_image_part = Part.objects.create(
+            name='NoImagePart',
+            description='Test NoImagePart Description',
+            active=True,
+            assembly=True,
+            purchaseable=True,
+            **tree,
+        )
+        self.no_image_part_pk = no_image_part.pk
+
+    def test_company_image_migrated(self):
+        """After applying the migration, Company images should be migrated."""
+        InvenTreeImage = self.new_state.apps.get_model('common', 'inventreeimage')
+        ContentType = self.new_state.apps.get_model('contenttypes', 'contenttype')
+
+        ct_company, _ = ContentType.objects.get_or_create(
+            app_label='company', model='company'
+        )
+
+        # Exactly two images should have been created
+        all_imgs = InvenTreeImage.objects.filter(model_type_id=ct_company.pk)
+        self.assertEqual(all_imgs.count(), len(self.company_initial_data))
+
+        # Check each migrated image
+        for idx, _ in enumerate(self.company_initial_data):
+            pk = self.co_pks[idx]
+            inv_img = InvenTreeImage.objects.get(
+                model_type_id=ct_company.pk, object_id=pk
+            )
+            self.assertTrue(
+                inv_img.primary, f'Image for company {pk} not marked primary'
+            )
+            #  Check that image file actually exists
+            self.assertTrue(inv_img.image, f'Image field is empty for company {pk}')
+            self.assertIsNotNone(
+                inv_img.image.name, f'Image name is None for company {pk}'
+            )
+
+        # Ensure no image was created for the company that had none
+        with self.assertRaises(InvenTreeImage.DoesNotExist):
+            InvenTreeImage.objects.get(
+                model_type_id=ct_company.pk, object_id=self.no_image_pk
+            )
+
+    def test_part_image_migrated(self):
+        """After applying the migration, Part images should be migrated and deduplicated."""
+        InvenTreeImage = self.new_state.apps.get_model('common', 'inventreeimage')
+        ContentType = self.new_state.apps.get_model('contenttypes', 'contenttype')
+
+        ct_part, _ = ContentType.objects.get_or_create(app_label='part', model='part')
+
+        # Should have one InvenTreeImage per Part with an image
+        part_imgs = InvenTreeImage.objects.filter(model_type_id=ct_part.pk)
+        self.assertEqual(part_imgs.count(), len(self.part_initial_data))
+
+        # Each part image must exist and be marked primary
+        for pk in self.part_pks:
+            img = InvenTreeImage.objects.get(model_type_id=ct_part.pk, object_id=pk)
+            self.assertTrue(img.primary, f'Image for part {pk} not marked primary')
+            self.assertTrue(img.image, f'Image field is empty for part {pk}')
+            self.assertIsNotNone(img.image.name, f'Image name is None for part {pk}')
+
+        # Deduplication: both entries should reference the _same_ stored filename
+        stored_names = {img.image.name for img in part_imgs}
+        self.assertEqual(len(stored_names), 1, 'Duplicate images were not deduplicated')
+
+        # Ensure no image was created for the part that had none
+        with self.assertRaises(InvenTreeImage.DoesNotExist):
+            InvenTreeImage.objects.get(
+                model_type_id=ct_part.pk, object_id=self.no_image_part_pk
+            )
+
+    def test_empty_database_migration(self):
+        """Test migration with no existing companies or parts."""
+        InvenTreeImage = self.new_state.apps.get_model('common', 'inventreeimage')
+
+        # Should handle empty database gracefully
+        self.assertIsNotNone(InvenTreeImage)
+
+    def test_image_file_integrity(self):
+        """Test that migrated image files are readable and valid."""
+        InvenTreeImage = self.new_state.apps.get_model('common', 'inventreeimage')
+        ContentType = self.new_state.apps.get_model('contenttypes', 'contenttype')
+
+        ct_company, _ = ContentType.objects.get_or_create(
+            app_label='company', model='company'
+        )
+        for pk in self.co_pks:
+            inv_img = InvenTreeImage.objects.get(
+                model_type_id=ct_company.pk, object_id=pk
+            )
+            # Check file exists and is readable
+            self.assertTrue(inv_img.image.storage.exists(inv_img.image.name))
+            # Try to open the file
+            with inv_img.image.open('rb') as f:
+                content = f.read()
+                self.assertGreater(len(content), 0, 'Image file is empty')
+
+    def test_content_type_exists(self):
+        """Verify that content types are properly set up."""
+        ContentType = self.new_state.apps.get_model('contenttypes', 'contenttype')
+
+        # Ensure ContentTypes exist for both company and part
+        ct_company = ContentType.objects.filter(app_label='company', model='company')
+        ct_part = ContentType.objects.filter(app_label='part', model='part')
+
+        self.assertTrue(ct_company.exists(), 'Company ContentType does not exist')
+        self.assertTrue(ct_part.exists(), 'Part ContentType does not exist')
+
+    def test_image_metadata_preserved(self):
+        """Test that image metadata is correctly preserved after migration."""
+        InvenTreeImage = self.new_state.apps.get_model('common', 'inventreeimage')
+        ContentType = self.new_state.apps.get_model('contenttypes', 'contenttype')
+
+        ct_company, _ = ContentType.objects.get_or_create(
+            app_label='company', model='company'
+        )
+
+        for idx, _data in enumerate(self.company_initial_data):
+            pk = self.co_pks[idx]
+            inv_img = InvenTreeImage.objects.get(
+                model_type_id=ct_company.pk, object_id=pk
+            )
+
+            # Verify image has a valid name and path
+            self.assertIsNotNone(inv_img.image.name, 'Image name is None')
+            self.assertGreater(len(inv_img.image.name), 0, 'Image name is empty')
+
+            # Verify file extension exists
+            name_parts = inv_img.image.name.split('.')
+            self.assertGreater(len(name_parts), 1, 'Image has no file extension')
+
+            # Verify extension is a common image format
+            ext = name_parts[-1].lower()
+            self.assertIn(
+                ext,
+                ['png', 'jpg', 'jpeg', 'gif', 'webp'],
+                f'Unexpected image extension: {ext}',
+            )
+
+            # Verify image is stored in images directory
+            self.assertTrue(
+                inv_img.image.name.startswith('images/'),
+                f'Image not stored in images directory: {inv_img.image.name}',
+            )
+
+
+class TestLegacyImageMigrationReverse(MigratorTestCase):
+    """Test that InvenTreeImage values are correctly migrated back to Company.image and Part.image."""
+
+    # Start from the new state (after migration) and migrate back
+    migrate_from = [('common', '0044_migrate_company_images')]
+    migrate_to = [('common', '0042_inventreeimage')]
+
+    @classmethod
+    def setUpClass(cls):
+        """Set up the test class."""
+        super().setUpClass()
+        cls._temp_media = tempfile.mkdtemp(prefix='test_media_reverse_')
+        cls._override = override_settings(MEDIA_ROOT=cls._temp_media)
+        cls._override.enable()
+
+    @classmethod
+    def tearDownClass(cls):
+        """Clean up after the test class."""
+        super().tearDownClass()
+        cls._override.disable()
+        shutil.rmtree(cls._temp_media, ignore_errors=True)
+
+    def prepare(self):
+        """Populate the 'new' database state (with InvenTreeImage model)."""
+        # Get models from the NEW state (after forward migration)
+        Company = self.old_state.apps.get_model('company', 'company')
+        Part = self.old_state.apps.get_model('part', 'part')
+        InvenTreeImage = self.old_state.apps.get_model('common', 'inventreeimage')
+        ContentType = self.old_state.apps.get_model('contenttypes', 'contenttype')
+
+        # --- COMPANY SETUP ---
+        ct_company, _ = ContentType.objects.get_or_create(
+            app_label='company', model='company'
+        )
+
+        self.company_data = [
+            {'name': 'CoOne', 'file_name': 'test01.png'},
+            {'name': 'CoTwo', 'file_name': 'test02.png'},
+        ]
+        self.co_pks = []
+
+        for entry in self.company_data:
+            # Create company without image
+            co = Company.objects.create(name=entry['name'])
+            self.co_pks.append(co.pk)
+
+            # Create InvenTreeImage for this company
+            img = generate_image(filename=entry['file_name'])
+            InvenTreeImage.objects.create(
+                content_type=ct_company, object_id=co.pk, image=img, primary=True
+            )
+
+        # Company with no image
+        no_image_co = Company.objects.create(
+            name='NoImageCo', description='No image here'
+        )
+        self.no_image_co_pk = no_image_co.pk
+
+        # --- PART SETUP ---
+        ct_part, _ = ContentType.objects.get_or_create(app_label='part', model='part')
+
+        # Dummy MPPT data
+        tree = {'tree_id': 0, 'level': 0, 'lft': 0, 'rght': 0}
+
+        self.part_data = [
+            {'name': 'PartOne', 'file_name': 'part01.png'},
+            {'name': 'PartTwo', 'file_name': 'part02.png'},
+        ]
+        self.part_pks = []
+
+        for entry in self.part_data:
+            # Create part without image
+            part = Part.objects.create(
+                name=entry['name'],
+                description='Test Part Description',
+                active=True,
+                assembly=True,
+                purchaseable=True,
+                **tree,
+            )
+            self.part_pks.append(part.pk)
+
+            # Create InvenTreeImage for this part
+            img = generate_image(filename=entry['file_name'])
+            InvenTreeImage.objects.create(
+                content_type=ct_part, object_id=part.pk, image=img, primary=True
+            )
+
+        # Part with no image
+        no_image_part = Part.objects.create(
+            name='NoImagePart',
+            description='Test NoImagePart Description',
+            active=True,
+            assembly=True,
+            purchaseable=True,
+            **tree,
+        )
+        self.no_image_part_pk = no_image_part.pk
+
+    def test_company_image_reverse_migrated(self):
+        """After reverse migration, Company.image should be restored."""
+        Company = self.new_state.apps.get_model('company', 'company')
+
+        # Check each company has its image restored
+        for idx, _data in enumerate(self.company_data):
+            pk = self.co_pks[idx]
+            co = Company.objects.get(pk=pk)
+
+            # Verify image field is populated
+            self.assertTrue(co.image, f'Image not restored for company {pk}')
+            self.assertIsNotNone(co.image.name, f'Image name is None for company {pk}')
+
+            # Verify image file exists
+            self.assertTrue(
+                co.image.storage.exists(co.image.name),
+                f'Image file does not exist for company {pk}',
+            )
+
+        # Verify company with no image still has no image
+        no_img_co = Company.objects.get(pk=self.no_image_co_pk)
+        self.assertFalse(no_img_co.image, 'Company should not have image')
+
+    def test_part_image_reverse_migrated(self):
+        """After reverse migration, Part.image should be restored."""
+        Part = self.new_state.apps.get_model('part', 'part')
+
+        # Check each part has its image restored
+        for idx, _data in enumerate(self.part_data):
+            pk = self.part_pks[idx]
+            part = Part.objects.get(pk=pk)
+
+            # Verify image field is populated
+            self.assertTrue(part.image, f'Image not restored for part {pk}')
+            self.assertIsNotNone(part.image.name, f'Image name is None for part {pk}')
+
+            # Verify image file exists
+            self.assertTrue(
+                part.image.storage.exists(part.image.name),
+                f'Image file does not exist for part {pk}',
+            )
+
+        # Verify part with no image still has no image
+        no_img_part = Part.objects.get(pk=self.no_image_part_pk)
+        self.assertFalse(no_img_part.image, 'Part should not have image')
 
 
 def prep_currency_migration(self, vals: str):

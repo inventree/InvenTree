@@ -3,7 +3,7 @@
 from collections.abc import Callable
 from datetime import datetime
 from string import Formatter
-from typing import Any, Optional
+from typing import Optional
 
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.fields import GenericRelation
@@ -23,7 +23,6 @@ from django_q.models import Task
 from error_report.models import Error
 from mptt.exceptions import InvalidMove
 from mptt.models import MPTTModel, TreeForeignKey
-from stdimage.models import StdImageField
 
 import common.settings
 import InvenTree.exceptions
@@ -1468,52 +1467,157 @@ def after_error_logged(sender, instance: Error, created: bool, **kwargs):
 
 
 class InvenTreeImageMixin(models.Model):
-    """A mixin class for adding image functionality to a model class.
+    """A mixin to add image  capability to any model.
 
-    The following fields are added to any model which implements this mixin:
-
-    - image : An image field for storing an image
+    Provides a GenericRelation back to InvenTreeImage, plus helpers for primary image logic.
     """
 
     IMAGE_RENAME: Callable | None = None
 
-    class Meta:
-        """Metaclass options for this mixin.
+    # if True, only one image may ever be attached
+    single_image = False
 
-        Note: abstract must be true, as this is only a mixin, not a separate table
-        """
+    images = GenericRelation(
+        'common.InvenTreeImage',
+        content_type_field='model_type',
+        object_id_field='object_id',
+        related_query_name='%(app_label)s_%(class)ss',
+    )
+
+    class Meta:
+        """Metaclass options for this mixin."""
 
         abstract = True
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        """Custom init method for InvenTreeImageMixin to ensure IMAGE_RENAME is implemented."""
-        if self.IMAGE_RENAME is None:
-            raise NotImplementedError(
-                'IMAGE_RENAME must be implemented in the model class'
-            )
-        super().__init__(*args, **kwargs)
+    def save_image(self, file, file_name, primary=False):
+        """Save an image to this instance.
+
+        Args:
+            file: File object or file-like object (e.g., UploadedFile, BytesIO, or file path)
+            file_name: Name for the image file
+            primary: If True, set this image as the primary image (default: False)
+
+        Returns:
+            InvenTreeImage: The created image instance
+
+        Raises:
+            ValueError: If single_image is True and an image already exists
+        """
+        from django.core.files import File
+
+        from common.models import InvenTreeImage
+
+        # Check if single_image constraint is violated
+        if self.single_image and self.images.exists():
+            raise ValueError('This object can only have a single image')
+
+        # If setting as primary, unset any existing primary images
+        if primary:
+            self.images.filter(primary=True).update(primary=False)
+
+        # Create the InvenTreeImage instance
+        img = InvenTreeImage(content_object=self, primary=primary)
+
+        # Handle different file input types
+        if isinstance(file, str):
+            # If file is a path string, open it
+            with open(file, 'rb') as f:
+                img.image.save(file_name, File(f), save=True)
+        else:
+            # Assume it's a file-like object (UploadedFile, BytesIO, etc.)
+            img.image.save(file_name, file, save=True)
+
+        return img
+
+    def delete(self, *args, **kwargs):
+        """Ensure related images are deleted first."""
+        # delete all related images
+        self.images.all().delete()
+        return super().delete(*args, **kwargs)
 
     def rename_image(self, filename):
         """Rename the uploaded image file using the IMAGE_RENAME function."""
         return self.IMAGE_RENAME(filename)  # type: ignore
 
-    image = StdImageField(
-        upload_to=rename_image,
-        null=True,
-        blank=True,
-        variations={'thumbnail': (128, 128), 'preview': (256, 256)},
-        delete_orphans=False,
-        verbose_name=_('Image'),
-    )
+    # image = StdImageField(
+    #     upload_to=rename_image,
+    #     null=True,
+    #     blank=True,
+    #     variations={'thumbnail': (128, 128), 'preview': (256, 256)},
+    #     delete_orphans=False,
+    #     verbose_name=_('Image'),
+    # )
 
-    def get_image_url(self):
-        """Return the URL of the image for this object."""
-        if self.image:
-            return InvenTree.helpers.getMediaUrl(self.image)
-        return InvenTree.helpers.getBlankImage()
+    @property
+    def image(self):
+        """Return the primary image, or None."""
+        return self.images.filter(primary=True).first()
 
-    def get_thumbnail_url(self) -> str:
-        """Return the URL of the image thumbnail for this object."""
-        if self.image:
-            return InvenTree.helpers.getMediaUrl(self.image, 'thumbnail')
-        return InvenTree.helpers.getBlankThumbnail()
+    def copy_images_to(self, target_pk):
+        """Copy all images from this instance to another instance of the same model with pk."""
+        from common.models import InvenTreeImage
+
+        ct = ContentType.objects.get_for_model(self, for_concrete_model=False)
+        new_images = []
+        for img in self.images.all():
+            new_img = InvenTreeImage(
+                model_type=ct,
+                object_id=target_pk,
+                primary=img.primary,
+                image=img.image.name,
+            )
+            new_images.append(new_img)
+
+        InvenTreeImage.objects.bulk_create(new_images)
+
+
+# class InvenTreeImageMixin(models.Model):
+#     """A mixin class for adding image functionality to a model class.
+
+#     The following fields are added to any model which implements this mixin:
+
+#     - image : An image field for storing an image
+#     """
+
+#     IMAGE_RENAME: Callable | None = None
+
+#     class Meta:
+#         """Metaclass options for this mixin.
+
+#         Note: abstract must be true, as this is only a mixin, not a separate table
+#         """
+
+#         abstract = True
+
+#     def __init__(self, *args: Any, **kwargs: Any) -> None:
+#         """Custom init method for InvenTreeImageMixin to ensure IMAGE_RENAME is implemented."""
+#         if self.IMAGE_RENAME is None:
+#             raise NotImplementedError(
+#                 'IMAGE_RENAME must be implemented in the model class'
+#             )
+#         super().__init__(*args, **kwargs)
+
+#     def rename_image(self, filename):
+#         """Rename the uploaded image file using the IMAGE_RENAME function."""
+#         return self.IMAGE_RENAME(filename)  # type: ignore
+
+#     image = StdImageField(
+#         upload_to=rename_image,
+#         null=True,
+#         blank=True,
+#         variations={'thumbnail': (128, 128), 'preview': (256, 256)},
+#         delete_orphans=False,
+#         verbose_name=_('Image'),
+#     )
+
+#     def get_image_url(self):
+#         """Return the URL of the image for this object."""
+#         if self.image:
+#             return InvenTree.helpers.getMediaUrl(self.image)
+#         return InvenTree.helpers.getBlankImage()
+
+#     def get_thumbnail_url(self) -> str:
+#         """Return the URL of the image thumbnail for this object."""
+#         if self.image:
+#             return InvenTree.helpers.getMediaUrl(self.image, 'thumbnail')
+#         return InvenTree.helpers.getBlankThumbnail()

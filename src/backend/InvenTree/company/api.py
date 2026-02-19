@@ -8,6 +8,7 @@ import django_filters.rest_framework.filters as rest_filters
 from django_filters.rest_framework.filterset import FilterSet
 
 import part.models
+from common.filters import prefetch_related_images
 from data_exporter.mixins import DataExportViewMixin
 from InvenTree.api import ListCreateDestroyAPIView, ParameterListMixin, meta_path
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
@@ -195,6 +196,14 @@ class ManufacturerPartList(
     - GET: Return list of ManufacturerPart objects
     - POST: Create a new ManufacturerPart object
     """
+
+    def get_queryset(self, *args, **kwargs):
+        """Return annotated queryset for the ManufacturerPart list endpoint."""
+        queryset = super().get_queryset(*args, **kwargs)
+        queryset = prefetch_related_images(queryset, reference='part__')
+        queryset = prefetch_related_images(queryset, reference='manufacturer__')
+
+        return queryset
 
     filterset_class = ManufacturerPartFilter
     filter_backends = SEARCH_ORDER_FILTER_ALIAS

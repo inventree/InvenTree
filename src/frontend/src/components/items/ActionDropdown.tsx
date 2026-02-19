@@ -53,6 +53,7 @@ export function ActionDropdown({
 }: {
   icon: ReactNode;
   tooltip: string;
+  menuPosition?: FloatingPosition;
   tooltipPosition?: FloatingPosition;
   actions: ActionDropdownItem[];
   disabled?: boolean;

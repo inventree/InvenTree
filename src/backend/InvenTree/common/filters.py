@@ -1,6 +1,7 @@
 """Custom API filters for InvenTree."""
 
 import re
+from typing import Optional
 
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
@@ -11,6 +12,7 @@ from django.db.models import (
     FloatField,
     Model,
     OuterRef,
+    Prefetch,
     Q,
     Subquery,
     Value,
@@ -22,6 +24,7 @@ from django.utils.translation import gettext_lazy as _
 import InvenTree.conversion
 import InvenTree.helpers
 import InvenTree.serializers
+from common.models import InvenTreeImage
 
 
 def determine_content_type(content_type: str | int | None) -> ContentType | None:
@@ -397,4 +400,23 @@ def enable_tags_filter(default: bool = False):
         default,
         filter_name='tags',
         prefetch_fields=['tags', 'tagged_items', 'tagged_items__tag'],
+    )
+
+
+def prefetch_related_images(
+    queryset: QuerySet, reference: str = '', images_queryset: Optional[QuerySet] = None
+) -> QuerySet:
+    """Prefetch all InvenTreeImage instances related via the provided reference.
+
+    Args:
+        queryset: The base QuerySet of parent model instances.
+        reference: The relationship name from the parent model to the target objects that have an 'images' relation.
+        images_queryset: Optional QuerySet for InvenTreeImage instances. Defaults to InvenTreeImage.objects.all().
+
+    """
+    if images_queryset is None:
+        images_queryset = InvenTreeImage.objects.all()
+
+    return queryset.prefetch_related(
+        Prefetch(f'{reference}images', queryset=images_queryset, to_attr='all_images')
     )
