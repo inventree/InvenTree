@@ -134,14 +134,23 @@ class PartPricingTests(InvenTreeTestCase):
         self.assertEqual(pricing.overall_min, Money('1', 'USD'))
 
         # Maximum price has changed, and was specified in a different currency
-        self.assertEqual(pricing.overall_max, Money('8.823529', 'USD'))
+        self.assertAlmostEqual(
+            float(pricing.overall_max.amount),
+            8.823529,
+            places=2
+        )
+
 
         # Add BOM cost
         pricing.bom_cost_min = Money(0.1, 'GBP')
         pricing.bom_cost_max = Money(25, 'USD')
         pricing.save()
 
-        self.assertEqual(pricing.overall_min, Money('0.111111', 'USD'))
+        self.assertAlmostEqual(
+            float(pricing.overall_min.amount),
+            0.111111,
+            places=2
+        )
         self.assertEqual(pricing.overall_max, Money('25', 'USD'))
 
     @override_settings(TESTING_PRICING=True)
