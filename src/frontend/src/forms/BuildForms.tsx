@@ -299,10 +299,12 @@ function BuildOutputFormRow({
 export function useCompleteBuildOutputsForm({
   build,
   outputs,
+  hasTrackedItems,
   onFormSuccess
 }: {
   build: any;
   outputs: any[];
+  hasTrackedItems: boolean;
   onFormSuccess: (response: any) => void;
 }) {
   const [location, setLocation] = useState<number | null>(null);
@@ -353,9 +355,11 @@ export function useCompleteBuildOutputsForm({
         }
       },
       notes: {},
-      accept_incomplete_allocation: {}
+      accept_incomplete_allocation: {
+        hidden: !hasTrackedItems
+      }
     };
-  }, [location, outputs]);
+  }, [location, outputs, hasTrackedItems]);
 
   return useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.build_output_complete, build.pk),

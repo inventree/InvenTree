@@ -309,6 +309,7 @@ export default function BuildOutputTable({
   const completeBuildOutputsForm = useCompleteBuildOutputsForm({
     build: build,
     outputs: selectedOutputs,
+    hasTrackedItems: hasTrackedItems,
     onFormSuccess: () => {
       table.refreshTable(true);
       refreshBuild();
