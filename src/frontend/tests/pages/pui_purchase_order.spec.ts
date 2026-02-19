@@ -9,7 +9,10 @@ import {
   loadTab,
   navigate,
   openFilterDrawer,
-  setTableChoiceFilter
+  setTableChoiceFilter,
+  showCalendarView,
+  showParametricView,
+  showTableView
 } from '../helpers.ts';
 import { doCachedLogin } from '../login.ts';
 
@@ -18,26 +21,14 @@ test('Purchasing - Index', async ({ browser }) => {
 
   // Purchase Orders tab
   await loadTab(page, 'Purchase Orders');
-  await page
-    .getByRole('button', { name: 'segmented-icon-control-parametric' })
-    .click();
-
-  await page
-    .getByRole('button', { name: 'segmented-icon-control-calendar' })
-    .click();
-  await page.getByRole('button', { name: 'calendar-select-month' }).waitFor();
-  await page
-    .getByRole('button', { name: 'segmented-icon-control-table' })
-    .click();
+  await showParametricView(page);
+  await showCalendarView(page);
+  await showTableView(page);
 
   // Suppliers tab
   await loadTab(page, 'Suppliers');
-  await page
-    .getByRole('button', { name: 'segmented-icon-control-parametric' })
-    .click();
-  await page
-    .getByRole('button', { name: 'segmented-icon-control-table' })
-    .click();
+  await showParametricView(page);
+  await showTableView(page);
 
   // Check for expected values
   await clearTableFilters(page);
@@ -45,12 +36,8 @@ test('Purchasing - Index', async ({ browser }) => {
 
   // Supplier parts tab
   await loadTab(page, 'Supplier Parts');
-  await page
-    .getByRole('button', { name: 'segmented-icon-control-parametric' })
-    .click();
-  await page
-    .getByRole('button', { name: 'segmented-icon-control-table' })
-    .click();
+  await showParametricView(page);
+  await showTableView(page);
 
   // Check for expected values
   await clearTableFilters(page);
@@ -60,12 +47,8 @@ test('Purchasing - Index', async ({ browser }) => {
 
   // Manufacturers tab
   await loadTab(page, 'Manufacturers');
-  await page
-    .getByRole('button', { name: 'segmented-icon-control-parametric' })
-    .click();
-  await page
-    .getByRole('button', { name: 'segmented-icon-control-table' })
-    .click();
+  await showParametricView(page);
+  await showTableView(page);
 
   // Check for expected values
   await clearTableFilters(page);
@@ -76,12 +59,8 @@ test('Purchasing - Index', async ({ browser }) => {
 
   // Manufacturer parts tab
   await loadTab(page, 'Manufacturer Parts');
-  await page
-    .getByRole('button', { name: 'segmented-icon-control-parametric' })
-    .click();
-  await page
-    .getByRole('button', { name: 'segmented-icon-control-table' })
-    .click();
+  await showParametricView(page);
+  await showTableView(page);
 
   // Check for expected values
   await clearTableFilters(page);
