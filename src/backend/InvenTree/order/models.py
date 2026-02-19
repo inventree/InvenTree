@@ -9,7 +9,7 @@ from django.core.validators import MinValueValidator
 from django.db import models, transaction
 from django.db.models import F, Q, QuerySet, Sum
 from django.db.models.functions import Coalesce
-from django.db.models.signals import post_save
+from django.db.models.signals import post_delete, post_save
 from django.dispatch.dispatcher import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -669,6 +669,12 @@ class PurchaseOrder(TotalPriceMixin, Order):
         null=True,
         verbose_name=_('Completion Date'),
         help_text=_('Date order was completed'),
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name=_('Updated At'),
+        help_text=_('Timestamp of last update'),
     )
 
     destination = TreeForeignKey(
@@ -2050,6 +2056,34 @@ class PurchaseOrderExtraLine(OrderExtraLine):
         related_name='extra_lines',
         verbose_name=_('Order'),
         help_text=_('Purchase Order'),
+    )
+
+
+@receiver(post_save, sender=PurchaseOrderLineItem, dispatch_uid='po_lineitem_post_save')
+@receiver(
+    post_delete, sender=PurchaseOrderLineItem, dispatch_uid='po_lineitem_post_delete'
+)
+def update_po_on_lineitem_change(sender, instance, **kwargs):
+    """Update PurchaseOrder updated_at when a line item is saved or deleted."""
+    if not InvenTree.ready.canAppAccessDatabase(allow_test=True):
+        return
+    PurchaseOrder.objects.filter(pk=instance.order_id).update(
+        updated_at=InvenTree.helpers.current_time()
+    )
+
+
+@receiver(
+    post_save, sender=PurchaseOrderExtraLine, dispatch_uid='po_extraline_post_save'
+)
+@receiver(
+    post_delete, sender=PurchaseOrderExtraLine, dispatch_uid='po_extraline_post_delete'
+)
+def update_po_on_extraline_change(sender, instance, **kwargs):
+    """Update PurchaseOrder updated_at when an extra line is saved or deleted."""
+    if not InvenTree.ready.canAppAccessDatabase(allow_test=True):
+        return
+    PurchaseOrder.objects.filter(pk=instance.order_id).update(
+        updated_at=InvenTree.helpers.current_time()
     )
 
 

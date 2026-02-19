@@ -373,8 +373,14 @@ class PurchaseOrderSerializer(
             'total_price',
             'order_currency',
             'destination',
+            'updated_at',
         ])
-        read_only_fields = ['issue_date', 'complete_date', 'creation_date']
+        read_only_fields = [
+            'issue_date',
+            'complete_date',
+            'creation_date',
+            'updated_at',
+        ]
         extra_kwargs = {
             'supplier': {'required': True},
             'order_currency': {'required': False},
