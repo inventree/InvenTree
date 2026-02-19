@@ -148,7 +148,7 @@ InvenTreeBackupMetadata = dict[str, str | int | bool | None]
 
 def _gather_environment_metadata() -> InvenTreeBackupMetadata:
     """Gather metadata about the current environment to be stored with the backup."""
-    from InvenTree.plugin.installer import plugins_file_hash  # type: ignore[import]
+    import plugin.installer
 
     new_data: InvenTreeBackupMetadata = {}
 
@@ -156,7 +156,7 @@ def _gather_environment_metadata() -> InvenTreeBackupMetadata:
     new_data['ivt_1_version'] = InvenTree.version.inventreeVersion()
     new_data['ivt_1_version_api'] = InvenTree.version.inventreeApiVersion()
     new_data['ivt_1_plugins_enabled'] = settings.PLUGINS_ENABLED
-    new_data['ivt_1_plugins_file_hash'] = plugins_file_hash()
+    new_data['ivt_1_plugins_file_hash'] = plugin.installer.plugins_file_hash()
     new_data['ivt_1_installer'] = InvenTree.config.inventreeInstaller()
     new_data['ivt_1_backup_time'] = datetime.now().isoformat()
 
@@ -180,11 +180,13 @@ def _parse_environment_metadata(metadata: InvenTreeBackupMetadata) -> dict[str, 
 
 def metadata_set(metadata) -> InvenTreeBackupMetadata:
     """Set backup metadata for the current backup operation."""
+    print('Gathering backup metadata...')
     return _gather_environment_metadata()
 
 
 def validate_restore(metadata: InvenTreeBackupMetadata) -> bool | None:
     """Validate whether a backup restore operation should proceed, based on the provided metadata."""
+    print('Validating backup restore metadata...')
     if metadata.get('ivt_1_version') is None:
         logger.warning('Backup metadata does not contain version information')
         return True
