@@ -35,6 +35,7 @@ import common.filters
 import common.models
 import common.serializers
 import InvenTree.conversion
+import InvenTree.models
 import InvenTree.ready
 from common.icons import get_icon_packs
 from common.settings import get_global_setting
@@ -841,6 +842,10 @@ class ParameterTemplateFilter(FilterSet):
         if not content_type:
             return queryset.none()
 
+        # If the 'filter_exists_for_model_id' filter is applied, defer to that
+        if self.request.query_params.get('exists_for_model_id', None):
+            return queryset
+
         queryset = queryset.prefetch_related('parameters')
 
         # Annotate the queryset to determine which ParameterTemplates have at least one Parameter for the given model type
@@ -851,6 +856,55 @@ class ParameterTemplateFilter(FilterSet):
         )
 
         # Return only those ParameterTemplates which have at least one Parameter for the given model type
+        return queryset.filter(parameter_count__gt=0)
+
+    exists_for_model_id = rest_filters.NumberFilter(
+        method='filter_exists_for_model_id', label='Exists For Model ID'
+    )
+
+    def filter_exists_for_model_id(self, queryset, name, value):
+        """Filter queryset to include only ParameterTemplates which have at least one Parameter for the given model type and model id.
+
+        Note: This filter can only be applied if the 'exists_for_model' filter is also applied, as the model_id is only meaningful in the context of a particular model type.
+        """
+        exists_for_model = self.request.query_params.get('exists_for_model', None)
+
+        if not exists_for_model:
+            # Return the queryset unfiltered
+            return queryset
+
+        print('FILTERING FOR MODEL ID:', exists_for_model, '->', value)
+
+        content_type = common.filters.determine_content_type(exists_for_model)
+        model_class = content_type.model_class()
+
+        print('MODEL TYPE:', model_class)
+
+        # Try to find the model instance
+        try:
+            instance = model_class.objects.get(pk=value)
+        except (model_class.DoesNotExist, ValueError):
+            # If the model instance does not exist, then we can return an empty queryset
+            return queryset.none()
+
+        # If the provided model is a "tree" structure, then we should also include any child objects in the filter
+        if issubclass(model_class, InvenTree.models.InvenTreeTree):
+            id_values = instance.get_descendants(include_self=True).values_list(
+                'pk', flat=True
+            )
+        else:
+            id_values = [instance.pk]
+
+        # Now, filter against model type and model id
+        queryset = queryset.prefetch_related('parameters')
+
+        # Annotate the queryset to determine which ParameterTemplates have at least one Parameter defined
+        queryset = queryset.annotate(
+            parameter_count=SubqueryCount(
+                'parameters', filter=Q(model_type=content_type, model_id__in=id_values)
+            )
+        )
+
         return queryset.filter(parameter_count__gt=0)
 
 
