@@ -891,7 +891,6 @@ class ParameterTemplateFilter(FilterSet):
             id_values = list(
                 instance.get_descendants(include_self=True).values_list('pk', flat=True)
             )
-            print(' instance is tree -> id_values:', id_values)
         else:
             id_values = [instance.pk]
 
