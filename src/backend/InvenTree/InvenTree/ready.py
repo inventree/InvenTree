@@ -136,7 +136,7 @@ def isGeneratingSchema():
 
     if not result:
         # We should only get here if we *are* generating schema
-        # Any other time this is called, it should be from a server thread, worker thread, or test mode
+        # Raise a warning, so that deevlopers can add extra checks above
 
         if settings.DEBUG:
             logger.warning(
