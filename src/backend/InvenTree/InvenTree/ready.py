@@ -86,6 +86,11 @@ def isRunningBackup():
     )
 
 
+def isCollectingPlugins():
+    """Return True if the 'collectplugins' command is being executed."""
+    return 'collectplugins' in sys.argv
+
+
 def isGeneratingSchema():
     """Return true if schema generation is being executed."""
     if isInServerThread() or isInWorkerThread():
@@ -103,6 +108,26 @@ def isGeneratingSchema():
     if isWaitingForDatabase():
         return False
 
+    if isCollectingPlugins():
+        return False
+
+    # Additional set of commands which should not trigger schema generation
+    excluded_commands = [
+        'compilemessages',
+        'createsuperuser',
+        'clean_settings',
+        'collectstatic',
+        'makemessages',
+        'wait_for_db',
+        'gunicorn',
+        'qcluster',
+        'check',
+        'shell',
+    ]
+
+    if any(cmd in sys.argv for cmd in excluded_commands):
+        return False
+
     if 'schema' in sys.argv:
         return True
 
@@ -111,7 +136,7 @@ def isGeneratingSchema():
 
     if not result:
         # We should only get here if we *are* generating schema
-        # Any other time this is called, it should be from a server thread, worker thread, or test mode
+        # Raise a warning, so that deevlopers can add extra checks above
 
         if settings.DEBUG:
             logger.warning(

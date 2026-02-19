@@ -114,9 +114,10 @@ export type StockColumnProps = TableColumnProps & {
 // Render a StockItem instance within a table
 export function StockColumn(props: StockColumnProps): TableColumn {
   return {
-    accessor: props.accessor ?? 'stock_item',
     title: t`Stock Item`,
     ...props,
+    ordering: props.ordering || 'stock',
+    accessor: props.accessor || 'stock',
     render: (record: any) => {
       const stock_item =
         resolveItem(record, props.accessor ?? 'stock_item_detail') ?? {};
