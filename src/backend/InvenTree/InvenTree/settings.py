@@ -32,7 +32,7 @@ from InvenTree.config import (
     get_oidc_private_key,
     get_setting,
 )
-from InvenTree.ready import isInMainThread
+from InvenTree.ready import isInMainThread, isRunningBackup
 from InvenTree.sentry import default_sentry_dsn, init_sentry
 from InvenTree.version import checkMinPythonVersion, inventreeCommitHash
 from users.oauth2_scopes import oauth2_scopes
@@ -870,7 +870,7 @@ TRACING_ENABLED = get_boolean_setting(
 )
 TRACING_DETAILS: Optional[dict] = None
 
-if TRACING_ENABLED:  # pragma: no cover
+if TRACING_ENABLED and not isRunningBackup():  # pragma: no cover
     from InvenTree.tracing import setup_instruments, setup_tracing
 
     _t_endpoint = get_setting('INVENTREE_TRACING_ENDPOINT', 'tracing.endpoint', None)
