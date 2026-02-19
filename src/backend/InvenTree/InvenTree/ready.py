@@ -113,11 +113,13 @@ def isGeneratingSchema():
 
     # Additional set of commands which should not trigger schema generation
     excluded_commands = [
-        'collectstatic',
-        'wait_for_db',
-        'makemessages',
         'compilemessages',
+        'createsuperuser',
+        'collectstatic',
+        'makemessages',
+        'wait_for_db',
         'check',
+        'shell',
     ]
 
     if any(cmd in sys.argv for cmd in excluded_commands):
