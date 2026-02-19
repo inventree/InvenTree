@@ -1,10 +1,15 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 454
+INVENTREE_API_VERSION = 455
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v455 -> 2026-02-19 : https://github.com/inventree/InvenTree/pull/11383
+    - Adds "exists_for_model_id" filter to ParameterTemplate API endpoint
+    - Adds "exists_for_related_model" filter to ParameterTemplate API endpoint
+    - Adds "exists_for_related_model_id" filter to ParameterTemplate API endpoint
 
 v454 -> 2026-02-19 : https://github.com/inventree/InvenTree/pull/11379
     - Adds "purchase_price" ordering option to StockItem API endpoint
