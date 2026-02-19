@@ -351,12 +351,11 @@ class SupplierBarcodeMixin(BarcodeMixin):
             'supplier': get supplier ID
             'PO': Represented for "Purchase Order", find PO number to supplier
             'supplier_part': find supplier part info to supplier
-            'line_item': get line item info from PO
-            'No_Match': Boolean, did we find a perfect match with info given? False is Yes, True is No
+            'no_match': Boolean, did we find a perfect match with info given? False is Yes, True is No
         """
         debug_response = {}
 
-        if not supplier:
+        if supplier is None:
             # No supplier information available
             debug_response['supplier'] = None
         else:
@@ -365,19 +364,19 @@ class SupplierBarcodeMixin(BarcodeMixin):
         # Extract purchase order information
         purchase_order = purchase_order or self.get_purchase_order()
 
-        if not purchase_order or purchase_order.supplier != supplier:
+        if purchase_order is None or purchase_order.supplier != supplier:
             # Purchase order does not match supplier
             debug_response['PO'] = None
         else:
-            debug_response['PO'] = purchase_order.name
+            debug_response['PO'] = purchase_order.reference
 
         supplier_part = self.get_supplier_part()
 
-        if not supplier_part:
+        if supplier_part is None:
             # No supplier part information available
             debug_response['supplier_part'] = None
         else:
-            debug_response['supplier_part'] = supplier_part.name
+            debug_response['supplier_part'] = supplier_part.part
 
         # Attempt to find matching line item
         if not line_item and purchase_order != None:
@@ -385,12 +384,9 @@ class SupplierBarcodeMixin(BarcodeMixin):
             if line_items.count() == 1:
                 line_item = line_items.first()
             
-        if line_item is None:
-            debug_response['line_Item'] = None
-
-        # If debug_response Exists throw debug dictionary instead of response dictionary
-        if bool(debug_response) == True:
-            debug_response['No_Match'] = True
+        # If Purchase Order or Supplier Part DNE throw debug response
+        if debug_response['PO'] is None or debug_response['supplier_part'] is None:
+            debug_response['no_match'] = True
             return debug_response
 
         if line_item.part != supplier_part:
@@ -429,7 +425,7 @@ class SupplierBarcodeMixin(BarcodeMixin):
                 'purchase_order': purchase_order.pk,
                 'location': location.pk if location else None,
             },
-            'No_Match': False,
+            'no_match': False,
         }
 
         if action_required:
