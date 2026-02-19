@@ -86,6 +86,11 @@ def isRunningBackup():
     )
 
 
+def isCollectingPlugins():
+    """Return True if the 'collectplugins' command is being executed."""
+    return 'collectplugins' in sys.argv
+
+
 def isGeneratingSchema():
     """Return true if schema generation is being executed."""
     if isInServerThread() or isInWorkerThread():
@@ -101,6 +106,9 @@ def isGeneratingSchema():
         return False
 
     if isWaitingForDatabase():
+        return False
+
+    if isCollectingPlugins():
         return False
 
     if 'schema' in sys.argv:
