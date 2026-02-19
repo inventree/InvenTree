@@ -115,9 +115,12 @@ def isGeneratingSchema():
     excluded_commands = [
         'compilemessages',
         'createsuperuser',
+        'clean_settings',
         'collectstatic',
         'makemessages',
         'wait_for_db',
+        'gunicorn',
+        'qcluster',
         'check',
         'shell',
     ]
