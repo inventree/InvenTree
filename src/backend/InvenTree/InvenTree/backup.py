@@ -180,13 +180,11 @@ def _parse_environment_metadata(metadata: InvenTreeBackupMetadata) -> dict[str, 
 
 def metadata_set(metadata) -> InvenTreeBackupMetadata:
     """Set backup metadata for the current backup operation."""
-    print('Gathering backup metadata...')
     return _gather_environment_metadata()
 
 
 def validate_restore(metadata: InvenTreeBackupMetadata) -> bool | None:
     """Validate whether a backup restore operation should proceed, based on the provided metadata."""
-    print('Validating backup restore metadata...')
     if metadata.get('ivt_1_version') is None:
         logger.warning('Backup metadata does not contain version information')
         return True
