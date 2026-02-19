@@ -566,14 +566,14 @@ class BarcodePOReceive(BarcodeView):
                 log_error('BarcodePOReceive.handle_barcode', plugin=current_plugin.slug)
                 continue
             
-            supplier_purchase_order = result['PO']
             no_match = result['No_Match']
-            plugin_supplier = result['supplier']
-            supplier_part = result['supplier_part']
 
             # No_Match Determines if it found a exact match for all the required fields from scan_recieve_item
             if no_match is True:
-
+                supplier_purchase_order = result['PO']
+                no_match = result['No_Match']
+                plugin_supplier = result['supplier']
+                supplier_part = result['supplier_part']
                 # Supplier does not have associated Supplier ID
                 if plugin_supplier is None:
                     no_supplier_plugin_error.append(current_plugin.slug)

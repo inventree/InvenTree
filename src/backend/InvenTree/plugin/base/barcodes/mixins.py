@@ -381,13 +381,10 @@ class SupplierBarcodeMixin(BarcodeMixin):
 
         # Attempt to find matching line item
         if not line_item and purchase_order != None:
-            try:
-                line_items = purchase_order.lines.filter(part=supplier_part)
-                if line_items.count() == 1:
-                     line_item = line_items.first()
-            except Exception:
-                pass
-        
+            line_items = purchase_order.lines.filter(part=supplier_part)
+            if line_items.count() == 1:
+                line_item = line_items.first()
+            
         if line_item is None:
             debug_response['line_Item'] = None
 
