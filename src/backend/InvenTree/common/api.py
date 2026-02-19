@@ -5,7 +5,7 @@ import json.decoder
 
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
-from django.core.exceptions import ValidationError
+from django.core.exceptions import FieldDoesNotExist, ValidationError
 from django.db.models import Q
 from django.http import JsonResponse
 from django.http.response import HttpResponse
@@ -840,7 +840,9 @@ class ParameterTemplateFilter(FilterSet):
         content_type = common.filters.determine_content_type(value)
 
         if not content_type:
-            return queryset.none()
+            raise ValidationError({
+                'exists_for_model': 'Invalid model type provided - unable to determine content type'
+            })
 
         # If the 'filter_exists_for_model_id' filter is applied, defer to that
         if self.request.query_params.get('exists_for_model_id', None):
@@ -873,10 +875,17 @@ class ParameterTemplateFilter(FilterSet):
         exists_for_model = self.request.query_params.get('exists_for_model', None)
 
         if not exists_for_model:
-            # Return the queryset unfiltered
-            return queryset
+            raise ValidationError({
+                'exists_for_model': 'Invalid model type provided - unable to determine content type'
+            })
 
         content_type = common.filters.determine_content_type(exists_for_model)
+
+        if not content_type:
+            raise ValidationError({
+                'exists_for_model': 'Invalid model type provided - unable to determine content type'
+            })
+
         model_class = content_type.model_class()
 
         # Try to find the model instance
@@ -884,7 +893,9 @@ class ParameterTemplateFilter(FilterSet):
             instance = model_class.objects.get(pk=value)
         except (model_class.DoesNotExist, ValueError):
             # If the model instance does not exist, then we can return an empty queryset
-            return queryset.none()
+            raise ValidationError({
+                'exists_for_model_id': 'Invalid model id provided - no such instance for the given model type'
+            })
 
         # If the provided model is a "tree" structure, then we should also include any child objects in the filter
         if isinstance(instance, InvenTree.models.InvenTreeTree):
@@ -942,8 +953,9 @@ class ParameterTemplateFilter(FilterSet):
         related_model = self.request.query_params.get('exists_for_related_model', None)
 
         if not model or not related_model:
-            # Return the queryset unfiltered
-            return queryset.none()
+            raise ValidationError({
+                'exists_for_model': 'Invalid model type provided - unable to determine content type'
+            })
 
         # Determine content type for the base model, to ensure they are valid
         model_type = common.filters.determine_content_type(model)
@@ -952,6 +964,14 @@ class ParameterTemplateFilter(FilterSet):
             return queryset.none()
 
         # Determine the model class for the 'related' model
+        try:
+            related_model_field = model_type.model_class()._meta.get_field(
+                related_model
+            )
+        except FieldDoesNotExist:
+            raise ValidationError({
+                'exists_for_related_model': 'Invalid related model - no such field on the base model'
+            })
         if related_model_field := model_type.model_class()._meta.get_field(
             related_model
         ):

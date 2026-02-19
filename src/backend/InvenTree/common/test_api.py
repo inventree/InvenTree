@@ -237,6 +237,218 @@ class ParameterAPITests(InvenTreeAPITestCase):
                 f'Incorrect number of templates for model "{model_name}"',
             )
 
+    def test_template_extended_filters(self):
+        """Unit testing for more complex filters on the ParameterTemplate endpoint.
+
+        Ref: https://github.com/inventree/InvenTree/pull/11383
+
+        In these tests we will filter by complex model relations.
+        """
+        from part.models import Part, PartCategory
+
+        # Create some part categories
+        cat_mech = PartCategory.objects.create(
+            name='Mechanical', description='Mechanical components'
+        )
+        cat_elec = PartCategory.objects.create(
+            name='Electronics', description='Electronic components'
+        )
+        cat_pass = PartCategory.objects.create(
+            name='Passive', description='Passive electronic components', parent=cat_elec
+        )
+        cat_res = PartCategory.objects.create(
+            name='Resistors', description='Resistor components', parent=cat_pass
+        )
+        cat_cap = PartCategory.objects.create(
+            name='Capacitors', description='Capacitor components', parent=cat_pass
+        )
+
+        # Create some parts
+        capacitors = [
+            Part.objects.create(
+                name=f'Capacitor {ii}', description='A capacitor', category=cat_cap
+            )
+            for ii in range(5)
+        ]
+
+        resistors = [
+            Part.objects.create(
+                name=f'Resistor {ii}', description='A resistor', category=cat_res
+            )
+            for ii in range(5)
+        ]
+
+        # Create some ParameterTemplates which relate to the category of the part
+        resistance = common.models.ParameterTemplate.objects.create(
+            name='Resistance', description='The resistance of a part', units='Ohms'
+        )
+
+        capacitance = common.models.ParameterTemplate.objects.create(
+            name='Capacitance', description='The capacitance of a part', units='Farads'
+        )
+
+        tolerance = common.models.ParameterTemplate.objects.create(
+            name='Tolerance', description='The tolerance of a part', units='%'
+        )
+
+        for idx, resistor in enumerate(resistors):
+            common.models.Parameter.objects.create(
+                template=resistance,
+                model_type=resistor.get_content_type(),
+                model_id=resistor.pk,
+                data=f'{10 * (idx + 1)}k',
+            )
+
+            common.models.Parameter.objects.create(
+                template=tolerance,
+                model_type=resistor.get_content_type(),
+                model_id=resistor.pk,
+                data=f'{idx + 1}%',
+            )
+
+        for idx, capacitor in enumerate(capacitors):
+            common.models.Parameter.objects.create(
+                template=capacitance,
+                model_type=capacitor.get_content_type(),
+                model_id=capacitor.pk,
+                data=f'{10 * (idx + 1)}uF',
+            )
+
+            common.models.Parameter.objects.create(
+                template=tolerance,
+                model_type=capacitor.get_content_type(),
+                model_id=capacitor.pk,
+                data=f'{5 * (idx + 1)}%',
+            )
+
+        # Ensure that we have the expected number of templates and parameters created for testing
+        self.assertEqual(common.models.ParameterTemplate.objects.count(), 3)
+        self.assertEqual(common.models.Parameter.objects.count(), 20)
+
+        # Now, we have some data - let's apply some filtering
+        url = reverse('api-parameter-template-list')
+
+        # Return *all* results, without filters
+        response = self.get(url)
+        self.assertEqual(len(response.data), 3)
+
+        # Filter by 'exists_for_model'
+        for model_name, count in {
+            'part.part': 3,
+            'part': 3,
+            'company': 0,
+            'build': 0,
+            'wonky_model': 0,
+        }.items():
+            response = self.get(url, data={'exists_for_model': model_name})
+            n = len(response.data)
+            self.assertEqual(
+                n,
+                count,
+                f'Incorrect number of templates ({n}) for model "{model_name}"',
+            )
+
+        # Filter by 'exists_for_model' and 'exists_for_model_id'
+        res = resistors[0]
+        response = self.get(
+            url, data={'exists_for_model': 'part.part', 'exists_for_model_id': res.pk}
+        )
+
+        self.assertEqual(len(response.data), 2)
+        pk_list = [t['pk'] for t in response.data]
+        self.assertIn(resistance.pk, pk_list)
+        self.assertIn(tolerance.pk, pk_list)
+
+        cap = capacitors[0]
+        response = self.get(
+            url, data={'exists_for_model': 'part.part', 'exists_for_model_id': cap.pk}
+        )
+        self.assertEqual(len(response.data), 2)
+        pk_list = [t['pk'] for t in response.data]
+        self.assertIn(capacitance.pk, pk_list)
+        self.assertIn(tolerance.pk, pk_list)
+
+        # Filter by 'exists_for_related_model' (test the "capacitor" relationship)
+
+        # Check the 'capacitor' category
+        response = self.get(
+            url,
+            data={
+                'exists_for_model': 'part.part',
+                'exists_for_related_model': 'category',
+                'exists_for_related_model_id': cat_cap.pk,
+            },
+        )
+
+        self.assertEqual(len(response.data), 2)
+        pk_list = [t['pk'] for t in response.data]
+        self.assertIn(capacitance.pk, pk_list)
+        self.assertIn(tolerance.pk, pk_list)
+
+        # Check the 'electronics' category - this should return all parameters
+        response = self.get(
+            url,
+            data={
+                'exists_for_model': 'part.part',
+                'exists_for_related_model': 'category',
+                'exists_for_related_model_id': cat_elec.pk,
+            },
+        )
+        self.assertEqual(len(response.data), 3)
+        pk_list = [t['pk'] for t in response.data]
+        self.assertIn(resistance.pk, pk_list)
+        self.assertIn(capacitance.pk, pk_list)
+        self.assertIn(tolerance.pk, pk_list)
+
+        # Check the 'mechanical' category - this should return no parameters
+        response = self.get(
+            url,
+            data={
+                'exists_for_model': 'part.part',
+                'exists_for_related_model': 'category',
+                'exists_for_related_model_id': cat_mech.pk,
+            },
+        )
+
+        self.assertEqual(len(response.data), 0)
+
+    def test_invalid_filters(self):
+        """Test error messages for invalid filter combinations."""
+        url = reverse('api-parameter-template-list')
+
+        # Invalid 'exists_for_model' value
+        response = self.get(
+            url, {'exists_for_model': 'asdf---invalid---model'}, expected_code=400
+        )
+
+        self.assertIn(
+            'Invalid model type provided', str(response.data['exists_for_model'])
+        )
+
+        # Invalid 'exists_for_model_id' value
+        for model_id in ['not_an_integer', -1, 9999]:
+            response = self.get(
+                url,
+                {'exists_for_model': 'part.part', 'exists_for_model_id': model_id},
+                expected_code=400,
+            )
+
+        # Invalid 'exists_for_related_model' value
+        response = self.get(
+            url,
+            {
+                'exists_for_model': 'part',
+                'exists_for_related_model': 'invalid_field',
+                'exists_for_related_model_id': 1,
+            },
+            expected_code=400,
+        )
+
+        self.assertIn(
+            'no such field on the base model',
+            str(response.data['exists_for_related_model']),
+        )
+
     def test_parameter_api(self):
         """Test Parameter API functionality."""
         # Create a simple part to test with
