@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- [#113729](https://github.com/inventree/InvenTree/pull/113729) adds backup metadata setter and restore metadata validator functions to ensure common footguns are harder to trigger when using the backup and restore functionality.
+- [#11372](https://github.com/inventree/InvenTree/pull/11372) adds backup metadata setter and restore metadata validator functions to ensure common footguns are harder to trigger when using the backup and restore functionality.
 
 ### Changed
 
