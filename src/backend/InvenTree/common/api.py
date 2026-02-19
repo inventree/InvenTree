@@ -918,7 +918,7 @@ class ParameterTemplateFilter(FilterSet):
 
         Note:
             - This filter has no effect on its own
-            - It requires the 'exits_for_model' filter to be applied (to specify the base model)
+            - It requires the 'exists_for_model' filter to be applied (to specify the base model)
             - It requires the 'exists_for_related_model_id' filter to be applied also (to specify the related model id)
         """
         return queryset
