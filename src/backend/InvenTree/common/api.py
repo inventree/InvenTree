@@ -865,7 +865,11 @@ class ParameterTemplateFilter(FilterSet):
     def filter_exists_for_model_id(self, queryset, name, value):
         """Filter queryset to include only ParameterTemplates which have at least one Parameter for the given model type and model id.
 
-        Note: This filter can only be applied if the 'exists_for_model' filter is also applied, as the model_id is only meaningful in the context of a particular model type.
+        Notes:
+            - This filter can only be applied if the 'exists_for_model' filter is also applied, as the model_id is only meaningful in the context of a particular model type.
+            - This filter also can use the value supplied in 'exists_for_model_relation' to map to a particular field on the model, e.g. category for parts, which allows for more complex relationships to be mapped.
+
+        Reference: https://github.com/inventree/InvenTree/issues/11381
         """
         exists_for_model = self.request.query_params.get('exists_for_model', None)
 
@@ -873,12 +877,8 @@ class ParameterTemplateFilter(FilterSet):
             # Return the queryset unfiltered
             return queryset
 
-        print('FILTERING FOR MODEL ID:', exists_for_model, '->', value)
-
         content_type = common.filters.determine_content_type(exists_for_model)
         model_class = content_type.model_class()
-
-        print('MODEL TYPE:', model_class)
 
         # Try to find the model instance
         try:
@@ -888,21 +888,111 @@ class ParameterTemplateFilter(FilterSet):
             return queryset.none()
 
         # If the provided model is a "tree" structure, then we should also include any child objects in the filter
-        if issubclass(model_class, InvenTree.models.InvenTreeTree):
-            id_values = instance.get_descendants(include_self=True).values_list(
-                'pk', flat=True
+        if isinstance(instance, InvenTree.models.InvenTreeTree):
+            id_values = list(
+                instance.get_descendants(include_self=True).values_list('pk', flat=True)
             )
+            print(' instance is tree -> id_values:', id_values)
         else:
             id_values = [instance.pk]
 
         # Now, filter against model type and model id
         queryset = queryset.prefetch_related('parameters')
 
+        filters = {'model_type': content_type, 'model_id__in': id_values}
+
         # Annotate the queryset to determine which ParameterTemplates have at least one Parameter defined
         queryset = queryset.annotate(
-            parameter_count=SubqueryCount(
-                'parameters', filter=Q(model_type=content_type, model_id__in=id_values)
+            parameter_count=SubqueryCount('parameters', filter=Q(**filters))
+        )
+
+        return queryset.filter(parameter_count__gt=0)
+
+    exists_for_related_model = rest_filters.CharFilter(
+        method='filter_exists_for_related_model', label='Exists For Related Model'
+    )
+
+    def filter_exists_for_related_model(self, queryset, name, value):
+        """Filter applied to map parameter templates to a particular model relation against the target model.
+
+        For instance, specify 'category' to filter part parameters which exist for any part in that category.
+
+        Note:
+            - This filter has no effect on its own
+            - It requires the 'exits_for_model' filter to be applied (to specify the base model)
+            - It requires the 'exists_for_related_model_id' filter to be applied also (to specify the related model id)
+        """
+        return queryset
+
+    exists_for_related_model_id = rest_filters.NumberFilter(
+        method='filter_exists_for_related_model_id', label='Exists For Model ID'
+    )
+
+    def filter_exists_for_related_model_id(self, queryset, name, value):
+        """Filter queryset to include only ParameterTemplates which have at least one Parameter for the given related model type and model id.
+
+        Notes:
+            - This filter can only be applied if the 'exists_for_model' filter is also applied, as the model_id is only meaningful in the context of a base model
+            - This filter can only be applied if the 'exists_for_related_model' filter is also applied, as the related model id is only meaningful in the context of a particular model relation
+            - This filter also can use the value supplied in 'exists_for_model_relation' to map to a particular field on the model, e.g. category for parts, which allows for more complex relationships to be mapped.
+
+        Example: To filter part parameters which have at least one parameter defined for any part in category 5, you could apply the following filters:
+            - exists_for_model=part
+            - exists_for_related_model=category
+            - exists_for_related_model_id=5
+        """
+        model = self.request.query_params.get('exists_for_model', None)
+        related_model = self.request.query_params.get('exists_for_related_model', None)
+
+        if not model or not related_model:
+            # Return the queryset unfiltered
+            return queryset.none()
+
+        # Determine content type for the base model, to ensure they are valid
+        model_type = common.filters.determine_content_type(model)
+
+        if not model_type:
+            return queryset.none()
+
+        # Determine the model class for the 'related' model
+        if related_model_field := model_type.model_class()._meta.get_field(
+            related_model
+        ):
+            related_model_class = related_model_field.related_model
+        else:
+            # Return an empty queryset if the provided related model is invalid
+            return queryset.none()
+
+        # Find all instances of the related model which match the provided related model id
+        try:
+            related_instance = related_model_class.objects.get(pk=value)
+        except (related_model_class.DoesNotExist, ValueError):
+            return queryset.none()
+
+        # Account for potential tree structure in the related model
+        if isinstance(related_instance, InvenTree.models.InvenTreeTree):
+            related_instances = list(
+                related_instance.get_descendants(include_self=True).values_list(
+                    'pk', flat=True
+                )
             )
+        else:
+            related_instances = [related_instance.pk]
+
+        # Next, find all instances of the base model which are related to the related model instances
+        model_instances = model_type.model_class().objects.filter(**{
+            f'{related_model}__in': related_instances
+        })
+        model_instance_ids = list(model_instances.values_list('pk', flat=True))
+
+        # Now, filter against model type and model id
+        queryset = queryset.prefetch_related('parameters')
+
+        filters = {'model_type': model_type, 'model_id__in': model_instance_ids}
+
+        # Annotate the queryset to determine which ParameterTemplates have at least one Parameter defined
+        queryset = queryset.annotate(
+            parameter_count=SubqueryCount('parameters', filter=Q(**filters))
         )
 
         return queryset.filter(parameter_count__gt=0)
