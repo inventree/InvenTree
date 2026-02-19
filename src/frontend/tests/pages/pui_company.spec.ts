@@ -1,5 +1,10 @@
 import { test } from '../baseFixtures.js';
-import { clickOnParamFilter, loadTab, navigate } from '../helpers.js';
+import {
+  clickOnParamFilter,
+  loadTab,
+  navigate,
+  showParametricView
+} from '../helpers.js';
 import { doCachedLogin } from '../login.js';
 
 test('Company', async ({ browser }) => {
@@ -49,9 +54,7 @@ test('Company - Parameters', async ({ browser }) => {
   });
 
   // Show parametric view
-  await page
-    .getByRole('button', { name: 'segmented-icon-control-parametric' })
-    .click();
+  await showParametricView(page);
 
   // Filter by "payment terms" parameter value
   await clickOnParamFilter(page, 'Payment Terms');

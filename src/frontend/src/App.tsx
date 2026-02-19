@@ -36,6 +36,11 @@ export const queryClient = new QueryClient({
   }
 });
 export function setTraceId() {
+  // check if we are in a secure context (https) - if not use of crypto is not allowed
+  if (!window.isSecureContext) {
+    return '';
+  }
+
   const runID = crypto.randomUUID().replace(/-/g, '');
   const traceid = `00-${runID}-${frontendID}-01`;
   api.defaults.headers['traceparent'] = traceid;

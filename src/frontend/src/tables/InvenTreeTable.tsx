@@ -486,6 +486,10 @@ export function InvenTreeTable<T extends Record<string, any>>({
       tableState.setPage(1);
       setSortStatus(status);
 
+      if (!status.columnAccessor) {
+        console.error(`Invalid column accessor provided for table ${cacheKey}`);
+      }
+
       setTableSorting(cacheKey)(status);
     },
     [cacheKey]

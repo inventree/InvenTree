@@ -6,6 +6,8 @@ import os
 import sys
 import warnings
 
+from django.conf import settings
+
 import structlog
 
 logger = structlog.get_logger('inventree')
@@ -59,7 +61,13 @@ def isRunningMigrations():
 def isRebuildingData():
     """Return true if any of the rebuilding commands are being executed."""
     return any(
-        x in sys.argv for x in ['rebuild_models', 'rebuild_thumbnails', 'rebuild']
+        x in sys.argv
+        for x in [
+            'rebuild',
+            'rebuild_models',
+            'rebuild_thumbnails',
+            'remove_stale_contenttypes',
+        ]
     )
 
 
@@ -76,6 +84,11 @@ def isRunningBackup():
             'mediarestore',
         ]
     )
+
+
+def isCollectingPlugins():
+    """Return True if the 'collectplugins' command is being executed."""
+    return 'collectplugins' in sys.argv
 
 
 def isGeneratingSchema():
@@ -95,6 +108,26 @@ def isGeneratingSchema():
     if isWaitingForDatabase():
         return False
 
+    if isCollectingPlugins():
+        return False
+
+    # Additional set of commands which should not trigger schema generation
+    excluded_commands = [
+        'compilemessages',
+        'createsuperuser',
+        'clean_settings',
+        'collectstatic',
+        'makemessages',
+        'wait_for_db',
+        'gunicorn',
+        'qcluster',
+        'check',
+        'shell',
+    ]
+
+    if any(cmd in sys.argv for cmd in excluded_commands):
+        return False
+
     if 'schema' in sys.argv:
         return True
 
@@ -103,10 +136,13 @@ def isGeneratingSchema():
 
     if not result:
         # We should only get here if we *are* generating schema
-        # Any other time this is called, it should be from a server thread, worker thread, or test mode
-        logger.warning(
-            'isGeneratingSchema called outside of expected contexts - this may be a sign of a problem with the ready() function'
-        )
+        # Raise a warning, so that deevlopers can add extra checks above
+
+        if settings.DEBUG:
+            logger.warning(
+                'isGeneratingSchema called outside of expected contexts - this may be a sign of a problem with the ready() function'
+            )
+            logger.warning('sys.argv: %s', sys.argv)
 
     return result
 
