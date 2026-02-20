@@ -708,6 +708,16 @@ export function ShipmentDateColumn(props: TableColumnProps): TableColumn {
   });
 }
 
+export function UpdatedAtColumn(props: TableColumnProps): TableColumn {
+  return DateColumn({
+    accessor: 'updated_at',
+    title: t`Updated`,
+    defaultVisible: false,
+    extra: { showTime: true },
+    ...props
+  });
+}
+
 export function CurrencyColumn({
   accessor,
   title,

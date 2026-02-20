@@ -273,6 +273,14 @@ export default function SalesOrderDetail() {
         label: t`Completion Date`,
         hidden: !order.shipment_date,
         copy: true
+      },
+      {
+        type: 'date',
+        name: 'updated_at',
+        label: t`Last Updated`,
+        icon: 'calendar',
+        copy: true,
+        showTime: true
       }
     ];
 
