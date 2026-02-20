@@ -1032,8 +1032,9 @@ class SalesOrderSerializer(
             'shipments_count',
             'completed_shipments_count',
             'allocated_lines',
+            'updated_at',
         ])
-        read_only_fields = ['status', 'creation_date', 'shipment_date']
+        read_only_fields = ['status', 'creation_date', 'shipment_date', 'updated_at']
         extra_kwargs = {'order_currency': {'required': False}}
 
     def skip_create_fields(self):
@@ -1924,8 +1925,9 @@ class ReturnOrderSerializer(
             'customer_reference',
             'order_currency',
             'total_price',
+            'updated_at',
         ])
-        read_only_fields = ['creation_date']
+        read_only_fields = ['creation_date', 'updated_at']
 
     def skip_create_fields(self):
         """Skip these fields when instantiating a new object."""
