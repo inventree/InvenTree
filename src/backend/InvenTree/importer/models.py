@@ -2,6 +2,7 @@
 
 import json
 from collections import OrderedDict
+from datetime import datetime
 from typing import Optional
 
 from django.contrib.auth.models import User
@@ -645,7 +646,7 @@ class DataImportRow(models.Model):
             if field_type == 'boolean':
                 value = InvenTree.helpers.str2bool(value)
             elif field_type == 'date':
-                value = value or None
+                value = self.convert_date_field(value)
             elif field_type == 'related field':
                 value = self.lookup_related_field(field, value)
 
@@ -691,6 +692,26 @@ class DataImportRow(models.Model):
 
         if commit:
             self.save()
+
+    def convert_date_field(self, value: str) -> str:
+        """Convert an incoming date field to the correct format for the database."""
+        if value in [None, '']:
+            return None
+
+        # Attempt conversion using accepted formats
+        date_formats = ['%Y-%m-%d', '%d/%m/%Y', '%m/%d/%Y', '%Y/%m/%d']
+
+        for fmt in date_formats:
+            try:
+                dt = datetime.strptime(value.strip(), fmt)
+
+                # If the date is valid, convert it to the standard format and return
+                return dt.strftime('%Y-%m-%d')
+            except ValueError:
+                continue
+
+        # If none of the formats matched, return the original value
+        return value
 
     def lookup_related_field(self, field_name: str, value: str) -> Optional[int]:
         """Try to perform lookup against a related field.
