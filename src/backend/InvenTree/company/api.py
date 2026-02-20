@@ -249,6 +249,8 @@ class SupplierPartFilter(FilterSet):
 
     active = rest_filters.BooleanFilter(label=_('Supplier Part is Active'))
 
+    primary = rest_filters.BooleanFilter(label=_('Primary Supplier Part'))
+
     # Filter by 'active' status of linked part
     part_active = rest_filters.BooleanFilter(
         field_name='part__active', label=_('Internal Part is Active')
@@ -366,6 +368,7 @@ class SupplierPartList(
         'supplier',
         'manufacturer',
         'active',
+        'primary',
         'IPN',
         'MPN',
         'SKU',

@@ -373,22 +373,19 @@ class Address(InvenTree.models.InvenTreeModel):
         Rules:
         - If this address is marked as "primary", ensure that all other addresses for this company are marked as non-primary
         """
-        others = list(
-            Address.objects.filter(company=self.company).exclude(pk=self.pk).all()
-        )
+        others = Address.objects.filter(company=self.company).exclude(pk=self.pk)
 
         # If this is the *only* address for this company, make it the primary one
-        if len(others) == 0:
+        if not others.exists():
             self.primary = True
 
         super().save(*args, **kwargs)
 
         # Once this address is saved, check others
         if self.primary:
-            for addr in others:
-                if addr.primary:
-                    addr.primary = False
-                    addr.save()
+            Address.objects.filter(company=self.company).exclude(pk=self.pk).filter(
+                primary=True
+            ).update(primary=False)
 
     @staticmethod
     def get_api_url():
@@ -612,6 +609,7 @@ class SupplierPart(
         source_item: The sourcing item linked to this SupplierPart instance
         supplier: Company that supplies this SupplierPart object
         active: Boolean value, is this supplier part active
+        primary: Boolean value, is this the primary supplier part for the linked Part
         SKU: Stock keeping unit (supplier part number)
         link: Link to external website for this supplier part
         description: Descriptive notes field
@@ -739,7 +737,20 @@ class SupplierPart(
         self.clean()
         self.validate_unique()
 
+        # Ensure that only one SupplierPart is marked as "primary" for a given Part
+        others = SupplierPart.objects.filter(part=self.part).exclude(pk=self.pk)
+
+        # If this is the *only* SupplierPart for this Part, make it the primary one
+        if not others.exists():
+            self.primary = True
+
         super().save(*args, **kwargs)
+
+        # Once this SupplierPart is saved, check others
+        if self.primary:
+            SupplierPart.objects.filter(part=self.part).exclude(pk=self.pk).filter(
+                primary=True
+            ).update(primary=False)
 
     part = models.ForeignKey(
         'part.Part',
@@ -769,6 +780,12 @@ class SupplierPart(
         default=True,
         verbose_name=_('Active'),
         help_text=_('Is this supplier part active?'),
+    )
+
+    primary = models.BooleanField(
+        default=False,
+        verbose_name=_('Primary'),
+        help_text=_('Is this the primary supplier part for the linked Part?'),
     )
 
     manufacturer_part = models.ForeignKey(

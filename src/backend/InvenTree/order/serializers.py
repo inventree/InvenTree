@@ -14,9 +14,9 @@ from sql_util.utils import SubqueryCount, SubquerySum
 
 import build.serializers
 import common.filters
+import company.models as company_models
 import order.models
 import part.filters as part_filters
-import part.models as part_models
 import stock.models
 import stock.serializers
 from company.serializers import (
@@ -587,7 +587,7 @@ class PurchaseOrderLineItemSerializer(
         return queryset
 
     part = serializers.PrimaryKeyRelatedField(
-        queryset=part_models.SupplierPart.objects.all(),
+        queryset=company_models.SupplierPart.objects.all(),
         many=False,
         required=True,
         allow_null=True,
