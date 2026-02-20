@@ -9,8 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Breaking Changes
 
+- [#11303](https://github.com/inventree/InvenTree/pull/11303) removes the `default_supplier` field from the `Part` model. Instead, the `SupplierPart` model now has a `primary` field which is used to indicate which supplier is the default for a given part. Any external client applications which made use of the old `default_supplier` field will need to be updated.
+
 ### Added
 
+- [#11222](https://github.com/inventree/InvenTree/pull/11222) adds support for data import using natural keys, allowing for easier association of related objects without needing to know their internal database IDs.
 - [#11372](https://github.com/inventree/InvenTree/pull/11372) adds backup metadata setter and restore metadata validator functions to ensure common footguns are harder to trigger when using the backup and restore functionality.
 
 ### Changed

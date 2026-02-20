@@ -184,10 +184,10 @@ class ImportPart(APIView):
                     import_data, part=part, manufacturer_part=manufacturer_part
                 )
 
-                # set default supplier if not set
+                # Set as primary supplier if not already set
                 if not part.default_supplier:
-                    part.default_supplier = supplier_part
-                    part.save()
+                    supplier_part.primary = True
+                    supplier_part.save()
 
                 # get pricing
                 pricing = supplier_plugin.get_pricing_data(import_data)
