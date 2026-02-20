@@ -186,7 +186,10 @@ def metadata_set(metadata) -> InvenTreeBackupMetadata:
 def validate_restore(metadata: InvenTreeBackupMetadata) -> bool | None:
     """Validate whether a backup restore operation should proceed, based on the provided metadata."""
     if metadata.get('ivt_1_version') is None:
-        logger.warning('Backup metadata does not contain version information')
+        logger.warning(
+            'INVE-W13: Backup metadata does not contain version information',
+            error_code='INVE-W13',
+        )
         return True
 
     current_environment = _gather_environment_metadata()
@@ -195,7 +198,8 @@ def validate_restore(metadata: InvenTreeBackupMetadata) -> bool | None:
     # Version mismatch
     if backup_environment['version'] != current_environment['version']:
         logger.warning(
-            f'Backup being restored was created with InvenTree version {backup_environment["version"]}, but current version is {current_environment["version"]}'
+            f'INVE-W13: Backup being restored was created with InvenTree version {backup_environment["version"]}, but current version is {current_environment["version"]}',
+            error_code='INVE-W13',
         )
 
         # Backup is from newer version - fail
@@ -204,12 +208,14 @@ def validate_restore(metadata: InvenTreeBackupMetadata) -> bool | None:
                 str(current_environment['version_api'])
             ):
                 logger.error(
-                    'Backup being restored was created with a newer version of InvenTree - restore cannot proceed'
+                    'INVE-E16: Backup being restored was created with a newer version of InvenTree - restore cannot proceed',
+                    error_code='INVE-E16',
                 )
                 return False
         except ValueError:
             logger.warning(
-                'Could not parse API version from backup metadata - cannot determine if backup is from newer version'
+                'INVE-W13: Could not parse API version from backup metadata - cannot determine if backup is from newer version',
+                error_code='INVE-W13',
             )
 
     # Plugins enabled on backup but not restore environment - warn
@@ -218,32 +224,40 @@ def validate_restore(metadata: InvenTreeBackupMetadata) -> bool | None:
         and not current_environment['plugins_enabled']
     ):
         logger.warning(
-            'Backup being restored was created with plugins enabled, but current environment has plugins disabled - this can lead to data loss'
+            'INVE-W13: Backup being restored was created with plugins enabled, but current environment has plugins disabled - this can lead to data loss',
+            error_code='INVE-W13',
         )
 
     # Plugins file hash mismatch - warn
     if pg_hash := backup_environment['plugins_file_hash']:
         if pg_hash != current_environment['plugins_file_hash']:
             logger.warning(
-                'Backup being restored has a different plugins file hash to the current environment - this can lead to data loss or corruption'
+                'INVE-W13: Backup being restored has a different plugins file hash to the current environment - this can lead to data loss or corruption',
+                error_code='INVE-W13',
             )
 
     # Installer mismatch - warn
     if installer := backup_environment['installer']:
         if installer != current_environment['installer']:
             logger.warning(
-                f"Backup being restored was created with installer '{installer}', but current environment has installer '{current_environment['installer']}'"
+                f"INVE-W13: Backup being restored was created with installer '{installer}', but current environment has installer '{current_environment['installer']}'",
+                error_code='INVE-W13',
             )
 
     # Age of backup
     last_backup_time = backup_environment.get('backup_time')
     if datetime.now() - datetime.fromisoformat(last_backup_time) > timedelta(days=120):
         logger.warning(
-            f'Backup being restored is over 120 days old (last backup time: {last_backup_time})'
+            f'INVE-W13: Backup being restored is over 120 days old (last backup time: {last_backup_time})',
+            error_code='INVE-W13',
         )
 
     if settings.DEBUG:
-        logger.info(f'Backup environment: {backup_environment}')
-        logger.info(f'Current environment: {current_environment}')
+        logger.info(
+            f'INVE-I3: Backup environment: {backup_environment}', error_code='INVE-I3'
+        )
+        logger.info(
+            f'INVE-I3: Current environment: {current_environment}', error_code='INVE-I3'
+        )
 
     return True

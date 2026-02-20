@@ -84,22 +84,24 @@ This is a security measure to prevent plugins from changing the core functionali
 An error occurred when discovering or initializing a machine type from a plugin. This likely indicates a faulty or incompatible plugin.
 
 #### INVE-E13
-
 **Error reading InvenTree configuration file**
 
 An error occurred while reading the InvenTree configuration file. This might be caused by a syntax error or invalid value in the configuration file.
 
 #### INVE-E14
-
 **Could not import Django**
 
 Django is not installed in the current Python environment. This means that the InvenTree backend is not running within the correct [python virtual environment](../start/index.md#virtual-environment) or that the required Python packages were not installed correctly.
 
 #### INVE-E15
-
 **Python version not supported**
 
 This error occurs attempting to run InvenTree on a version of Python which is older than the minimum required version. We [require Python {{ config.extra.min_python_version }} or newer](../start/index.md#python-requirements)
+
+#### INVE-E16
+**Restore was stopped due to critical issues with backup environment - Backend**
+
+A potentially critical mismatch between the backup environment and the current restore environment was detected during the restore process. The restore was stopped to prevent potential data loss or corruption. Check the logs for more information about the detected issues.
 
 ### INVE-W (InvenTree Warning)
 Warnings - These are non-critical errors which should be addressed when possible.
@@ -199,6 +201,14 @@ A user attempted to sign up but registration is currently disabled via the syste
 
 To enable registration, adjust the relevant settings (for regular or SSO registration) to allow user signups.
 
+#### INVE-W13
+**Current environment inconsistent with backup environment - Backend**
+
+The environment in which the backup was taken does not match the current environment. This might lead to issues with restoring the backup, as the backup might contain data that is not compatible with the current environment. Plugins for example might be missing or are present in a different version - this can lead to issues with restoring the backup.
+
+This warning will not prevent you from restoring the backup but it is recommended to ensure the mentioned issues are resolved before restoring the backup to prevent issues with the restored instance.
+
+
 ### INVE-I (InvenTree Information)
 Information — These are not errors but information messages. They might point out potential issues or just provide information.
 
@@ -214,6 +224,10 @@ See [Override global settings](../settings/global.md#override-global-settings) f
 An issue was detected with the application of a filtering serializer or decorator. This might lead to unexpected behaviour or performance issues. Therefore an issue is raised to make the developer aware of the possible issue. Look into the docstrings of enable_filter, FilterableSerializerField or FilterableSerializerMixin.
 
 This warning should only be raised during development and not in production, if you recently installed a plugin you might want to contact the plugin author.
+
+#### INVE-I3
+**Backup and restore information - Backend**
+Information about the metadata of a backup being restored or the environment in which a backup is being restored to. This information can be helpful to understand the backup and restore process and to identify potential issues with the backup or the restore process.
 
 ### INVE-M (InvenTree Miscellaneous)
 Miscellaneous — These are information messages that might be used to mark debug information or other messages helpful for the InvenTree team to understand behaviour.
