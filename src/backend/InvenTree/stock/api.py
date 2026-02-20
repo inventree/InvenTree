@@ -1278,6 +1278,7 @@ class StockList(
         'part__name',
         'part__IPN',
         'updated',
+        'purchase_price',
         'stocktake_date',
         'expiry_date',
         'packaging',

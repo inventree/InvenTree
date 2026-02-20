@@ -4,7 +4,8 @@ import {
   clickOnParamFilter,
   loadTab,
   navigate,
-  setTableChoiceFilter
+  setTableChoiceFilter,
+  showParametricView
 } from '../helpers.js';
 import { doCachedLogin } from '../login.js';
 
@@ -55,9 +56,7 @@ test('Company - Parameters', async ({ browser }) => {
   });
 
   // Show parametric view
-  await page
-    .getByRole('button', { name: 'segmented-icon-control-parametric' })
-    .click();
+  await showParametricView(page);
 
   // Filter by "payment terms" parameter value
   await clickOnParamFilter(page, 'Payment Terms');
