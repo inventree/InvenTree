@@ -19,6 +19,22 @@ External data can be imported via the admin interface, allowing for rapid integr
 
 To import data, the user must have the appropriate permissions. The user must be a *staff* user, and have the `change` permission for the model in question.
 
+### Mapping to Existing Data
+
+Many data models in InvenTree have relationships to other models. When importing data, the user must ensure that the related data is correctly mapped to existing records in the database. For example, when importing a list of parts, the user must ensure that the *part category* data has already been imported, and that the part category field in the imported file is correctly mapped to the existing part category records in the database.
+
+!!! warning "Multi Level Import"
+    Multi-level imports are explicitly not supported. Only one model can be imported at a time, and the user must ensure that any related data is imported beforehand.
+
+### Primary Key Fields
+
+The default field used to map to existing data (i.e. related models which have already been imported into the database) is using the `ID` (primary key) field. Thus, it is important to ensure that the imported data file contains the correct `ID` values for any related data, otherwise the import process will fail to correctly link the imported data to existing records in the database.
+
+Some models allow for mapping based on other "natural key" fields (e.g. the `reference` field for orders, or the `name` field for part categories). In such cases, the user must ensure that the correct field is mapped to the relevant column in the imported data file.
+
+!!! warning "Unique Identifiers"
+    If a unique identifier cannot be determined for any related field, the user must manually map the relevant field to the correct existing record in the database, during the import process.
+
 ## Import Session
 
 Importing data is a multi-step process, which is managed via an *import session*. An import session is created when the user initiates a data import, and is used to track the progress of the data import process.
@@ -32,6 +48,20 @@ Import sessions can be managed from the [Admin Center](./admin.md#admin-center) 
 ### Context Sensitive Importing
 
 Depending on the type of data being imported, an import session can be created from an appropriate page context in the user interface. In such cases, the import session will be automatically linked to the relevant data type being imported.
+
+### Starting an Import Session
+
+An import session can be initiated from a number of different contexts within the user interface:
+
+### Admin Center
+
+Staff users can create an import session from within the [Admin Center](./admin.md#admin-center). This is a general-purpose import session, and the user will be required to select the type of data to import.
+
+Users can quickly navigate to the data import managemement page from the [spotlight search](../concepts/user_interface.md#spotlight), by searching for "import" and selecting the "Import data" option.
+
+### Data Tables
+
+Some data tables allow the user to create an import session directly from the table view. In such cases, the import session will be automatically linked to the relevant data type being imported, and additional [context information](#context-sensitive-importing) will be automatically provided.
 
 ## Import Process
 
