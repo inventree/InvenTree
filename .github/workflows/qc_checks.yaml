@@ -670,8 +670,6 @@ jobs:
       INVENTREE_DB_PASSWORD: inventree_password
       INVENTREE_DEBUG: true
       INVENTREE_PLUGINS_ENABLED: false
-      INVENTREE_CUSTOM_LOGO: "img/playwright_custom_logo.png"
-      INVENTREE_CUSTOM_SPLASH: "img/playwright_custom_splash.png"
       VITE_COVERAGE_BUILD: true
 
     steps:
@@ -698,7 +696,10 @@ jobs:
           cd src/frontend && npx playwright install --with-deps
       - name: Run Playwright tests
         id: tests
-        run: cd src/frontend && npx nyc playwright test
+        run: cd src/frontend && npx nyc playwright test --project=chromium --project=firefox
+      - name: Run Customization test
+        id: customization_tests
+        run: cd src/frontend && INVENTREE_CUSTOM_LOGO="img/playwright_custom_logo.png" INVENTREE_CUSTOM_SPLASH="img/playwright_custom_splash.png" npx nyc playwright test --project=customization
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # pin@v6.0.0
         if: ${{ !cancelled() && steps.tests.outcome == 'failure' }}
         with:
