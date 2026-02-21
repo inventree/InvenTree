@@ -688,8 +688,6 @@ jobs:
         run: |
           invoke dev.setup-test -iv
           invoke int.rebuild-thumbnails
-          cp src/frontend/tests/fixtures/playwright_custom_logo.png src/backend/InvenTree/InvenTree/static/img/playwright_custom_logo.png
-          cp src/frontend/tests/fixtures/playwright_custom_splash.png src/backend/InvenTree/InvenTree/static/img/playwright_custom_splash.png
       - name: Install dependencies
         run: |
           invoke int.frontend-compile --extract
@@ -699,7 +697,10 @@ jobs:
         run: cd src/frontend && npx nyc playwright test --project=chromium --project=firefox
       - name: Run Customization test
         id: customization_tests
-        run: cd src/frontend && INVENTREE_CUSTOM_LOGO="img/playwright_custom_logo.png" INVENTREE_CUSTOM_SPLASH="img/playwright_custom_splash.png" npx nyc playwright test --project=customization
+        run: |
+          cp src/frontend/tests/fixtures/playwright_custom_logo.png src/backend/InvenTree/InvenTree/static/img/playwright_custom_logo.png
+          cp src/frontend/tests/fixtures/playwright_custom_splash.png src/backend/InvenTree/InvenTree/static/img/playwright_custom_splash.png
+          cd src/frontend && INVENTREE_CUSTOM_LOGO="img/playwright_custom_logo.png" INVENTREE_CUSTOM_SPLASH="img/playwright_custom_splash.png" npx nyc playwright test --project=customization
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # pin@v6.0.0
         if: ${{ !cancelled() && steps.tests.outcome == 'failure' }}
         with:
