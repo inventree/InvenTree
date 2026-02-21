@@ -48,13 +48,22 @@ export default defineConfig({
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome']
-      }
+      },
+      testIgnore: /customization/ // Ignore all tests in the "customization" folder for this project
     },
     {
       name: 'firefox',
       use: {
         ...devices['Desktop Firefox']
-      }
+      },
+      testIgnore: /customization/ // Ignore all tests in the "customization" folder for this project
+    },
+    {
+      name: 'customization',
+      use: {
+        ...devices['Desktop Firefox']
+      },
+      testIgnore: /pui_.*\.spec\.ts/ // Ignore all "pui_*.spec.ts" tests for this project
     }
   ],
 
@@ -80,7 +89,9 @@ export default defineConfig({
         INVENTREE_CORS_ORIGIN_ALLOW_ALL: 'True',
         INVENTREE_COOKIE_SAMESITE: 'False',
         INVENTREE_LOGIN_ATTEMPTS: '100',
-        INVENTREE_PLUGINS_MANDATORY: 'samplelocate'
+        INVENTREE_PLUGINS_MANDATORY: 'samplelocate',
+        INVENTREE_CUSTOM_LOGO: 'img/playwright_custom_logo.png',
+        INVENTREE_CUSTOM_SPLASH: 'img/playwright_custom_splash.png'
       },
       url: 'http://localhost:8000/api/',
       reuseExistingServer: IS_CI,

@@ -670,6 +670,8 @@ jobs:
       INVENTREE_DB_PASSWORD: inventree_password
       INVENTREE_DEBUG: true
       INVENTREE_PLUGINS_ENABLED: false
+      INVENTREE_CUSTOM_LOGO: "img/playwright_custom_logo.png"
+      INVENTREE_CUSTOM_SPLASH: "img/playwright_custom_splash.png"
       VITE_COVERAGE_BUILD: true
 
     steps:
@@ -688,6 +690,8 @@ jobs:
         run: |
           invoke dev.setup-test -iv
           invoke int.rebuild-thumbnails
+          cp src/frontend/tests/fixtures/playwright_custom_logo.png src/backend/InvenTree/InvenTree/static/img/playwright_custom_logo.png
+          cp src/frontend/tests/fixtures/playwright_custom_splash.png src/backend/InvenTree/InvenTree/static/img/playwright_custom_splash.png
       - name: Install dependencies
         run: |
           invoke int.frontend-compile --extract
