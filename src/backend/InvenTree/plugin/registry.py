@@ -477,7 +477,15 @@ class PluginsRegistry:
                     # Ensure mandatory plugins are marked as active
                     if config.is_mandatory() and not config.active:
                         config.active = True
-                        config.save(no_reload=True)
+
+                        try:
+                            config.save(no_reload=True)
+                        except (OperationalError, ProgrammingError):
+                            # Database is not ready, cannot save config
+                            logger.warning(
+                                "Database not ready - cannot set mandatory flag for plugin '%s'",
+                                plugin.slug,
+                            )
 
         except Exception as e:
             logger.exception('Unexpected error during plugin reload: %s', e)
