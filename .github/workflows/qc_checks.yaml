@@ -692,9 +692,9 @@ jobs:
         run: |
           invoke int.frontend-compile --extract
           cd src/frontend && npx playwright install --with-deps
-      # - name: Run Playwright tests
-      #   id: tests
-      #   run: cd src/frontend && npx nyc playwright test --project=chromium --project=firefox
+      - name: Run Playwright tests
+        id: tests
+        run: cd src/frontend && npx nyc playwright test --project=chromium --project=firefox
       - name: Run Customization test
         id: customization_tests
         run: |
