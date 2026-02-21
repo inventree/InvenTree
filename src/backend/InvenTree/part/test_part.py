@@ -102,7 +102,10 @@ class TemplateTagTest(InvenTreeTestCase):
         """Test the 'setting_object' template tag."""
         # Normal
         self.assertEqual(
-            inventree_extras.setting_object('PART_ALLOW_DUPLICATE_IPN').value, True
+            inventree_extras.str2bool(
+                inventree_extras.setting_object('PART_ALLOW_DUPLICATE_IPN').value
+            ), 
+            True
         )
 
         # User

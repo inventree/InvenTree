@@ -145,7 +145,7 @@ class TestParams(TestCase):
 class TestCategoryTemplates(TransactionTestCase):
     """Test class for PartCategoryParameterTemplate model."""
 
-    fixtures = ['location', 'category', 'part', 'params']
+    fixtures = ['tenant', 'location', 'category', 'part', 'params']
 
     def test_validate(self):
         """Test that category templates are correctly applied to Part instances."""
