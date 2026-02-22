@@ -48,13 +48,22 @@ export default defineConfig({
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome']
-      }
+      },
+      testIgnore: /customization/ // Ignore all tests in the "customization" folder for this project
     },
     {
       name: 'firefox',
       use: {
         ...devices['Desktop Firefox']
-      }
+      },
+      testIgnore: /customization/ // Ignore all tests in the "customization" folder for this project
+    },
+    {
+      name: 'customization',
+      use: {
+        ...devices['Desktop Firefox']
+      },
+      testIgnore: /pui_.*\.spec\.ts/ // Ignore all "pui_*.spec.ts" tests for this project
     }
   ],
 
