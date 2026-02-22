@@ -699,7 +699,7 @@ jobs:
           cd src/frontend
           cp ./tests/fixtures/playwright_custom_logo.png ../backend/InvenTree/InvenTree/static/img/playwright_custom_logo.png
           cp ./tests/fixtures/playwright_custom_splash.png ../backend/InvenTree/InvenTree/static/img/playwright_custom_splash.png
-          ls -la ../backend/InvenTree/InvenTree/static/img/
+          invoke static
           env INVENTREE_CUSTOM_SPLASH="img/playwright_custom_splash.png" INVENTREE_CUSTOM_LOGO="img/playwright_custom_logo.png" npx nyc playwright test --project=customization
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # pin@v6.0.0
         if: ${{ !cancelled() && steps.tests.outcome == 'failure' }}
