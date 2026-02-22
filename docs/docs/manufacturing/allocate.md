@@ -108,9 +108,9 @@ Set this option to *True* to allow substitute parts (as specified by the BOM) to
 
 Allocation of tracked stock items is slightly more complex. Instead of being allocated against the *Build Order*, tracked stock items must be allocated against an individual *Build Output*.
 
-Allocating tracked stock items to particular build outputs is performed in the *Pending Items* tab:
+Allocating tracked stock items to particular build outputs is performed in the *Incomplete Outputs* tab:
 
-In the *Pending Items* tab, we can see that each build output has a stock allocation requirement which must be met before that build output can be completed:
+In the *Incomplete Outputs* tab, we can see that each build output has a stock allocation requirement which must be met before that build output can be completed:
 
 {{ image("build/build_allocate_tracked_parts.png", "Allocate tracked parts") }}
 
@@ -125,6 +125,12 @@ Here we can see that the incomplete build outputs (serial numbers 15 and 14) now
 
 !!! note "Example: Tracked Stock"
     Let's say we have 5 units of "Tracked Part" in stock - with 1 unit allocated to the build output. Once we complete the build output, there will be 4 units of "Tracked Part" in stock, with 1 unit being marked as "installed" within the assembled part
+
+### Automatic Stock Allocation
+
+Tracked stock items can be automatically allocated to build outputs using the *Auto Allocate* button in the *Incomplete Outputs* tab. This will attempt to allocate tracked stock items to build outputs based on matching serial numbers.
+
+For each build output, the auto-allocation routine will attempt to find a matching component item with the same serial number. If such a stock item is found, and it is available for use, it will be allocated to that build output.
 
 ## Consuming Stock
 
