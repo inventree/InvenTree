@@ -25,7 +25,17 @@ from part.models import Part
 from stock.models import StockItem, StockLocation
 from users.models import Owner
 
-from .models import PurchaseOrder, PurchaseOrderExtraLine, PurchaseOrderLineItem
+from .models import (
+    PurchaseOrder,
+    PurchaseOrderExtraLine,
+    PurchaseOrderLineItem,
+    ReturnOrder,
+    ReturnOrderExtraLine,
+    ReturnOrderLineItem,
+    SalesOrder,
+    SalesOrderExtraLine,
+    SalesOrderLineItem,
+)
 
 
 class OrderTest(ExchangeRateMixin, PluginRegistryMixin, TestCase):
@@ -369,7 +379,8 @@ class OrderTest(ExchangeRateMixin, PluginRegistryMixin, TestCase):
             order=po,
             part=sp_1,
             quantity=3,
-            purchase_price=Money(1000, 'USD'),  # "Unit price" should be $100USD
+            # "Unit price" should be $100USD
+            purchase_price=Money(1000, 'USD'),
         )
 
         # 13 x 0.1 = 1.3
@@ -569,3 +580,151 @@ class OrderTest(ExchangeRateMixin, PluginRegistryMixin, TestCase):
                 p.set_metadata(k, k)
 
             self.assertEqual(len(p.metadata.keys()), 4)
+
+
+class OrderUpdatedAtTest(TestCase):
+    """Tests to verify that the updated_at field is correctly maintained on all order types."""
+
+    def setUp(self):
+        """Create minimal objects for all three order types."""
+        self.supplier = Company.objects.create(name='Test Supplier', is_supplier=True)
+        self.customer = Company.objects.create(name='Test Customer', is_customer=True)
+
+        self.po = PurchaseOrder.objects.create(
+            reference='PO-TEST-001', supplier=self.supplier
+        )
+        self.so = SalesOrder.objects.create(
+            reference='SO-TEST-001', customer=self.customer
+        )
+        self.ro = ReturnOrder.objects.create(
+            reference='RO-TEST-001', customer=self.customer
+        )
+
+        self.part = Part.objects.create(name='Test Part', description='Test Part')
+        self.stock_item = StockItem.objects.create(part=self.part, quantity=10)
+
+    def _refresh(self, instance):
+        """Return a fresh copy of the instance from the database."""
+        return instance.__class__.objects.get(pk=instance.pk)
+
+    def test_updated_at_set_on_save(self):
+        """updated_at should be populated when the order is first saved."""
+        for instance in [self.po, self.so, self.ro]:
+            self.assertIsNotNone(instance.updated_at)
+
+    def test_updated_at_changes_on_save(self):
+        """updated_at should advance when the order is saved again."""
+        for instance in [self.po, self.so, self.ro]:
+            original = instance.updated_at
+
+            instance.description = 'Updated description'
+            instance.save()
+
+            refreshed = self._refresh(instance)
+            self.assertGreaterEqual(refreshed.updated_at, original)
+
+    def test_updated_at_on_extra_line_add(self):
+        """updated_at should advance on the parent order when an extra line is added."""
+        for instance, ExtraLine in [
+            (self.po, PurchaseOrderExtraLine),
+            (self.so, SalesOrderExtraLine),
+            (self.ro, ReturnOrderExtraLine),
+        ]:
+            before = self._refresh(instance).updated_at
+
+            ExtraLine.objects.create(order=instance, quantity=1)
+
+            after = self._refresh(instance).updated_at
+            self.assertGreaterEqual(after, before)
+
+    def test_updated_at_on_extra_line_update(self):
+        """updated_at should advance on the parent order when an extra line is updated."""
+        for instance, ExtraLine in [
+            (self.po, PurchaseOrderExtraLine),
+            (self.so, SalesOrderExtraLine),
+            (self.ro, ReturnOrderExtraLine),
+        ]:
+            line = ExtraLine.objects.create(order=instance, quantity=1)
+
+            before = self._refresh(instance).updated_at
+
+            line.quantity = 5
+            line.save()
+
+            after = self._refresh(instance).updated_at
+            self.assertGreaterEqual(after, before)
+
+    def test_updated_at_on_extra_line_delete(self):
+        """updated_at should advance on the parent order when an extra line is deleted."""
+        for instance, ExtraLine in [
+            (self.po, PurchaseOrderExtraLine),
+            (self.so, SalesOrderExtraLine),
+            (self.ro, ReturnOrderExtraLine),
+        ]:
+            line = ExtraLine.objects.create(order=instance, quantity=1)
+
+            before = self._refresh(instance).updated_at
+
+            line.delete()
+
+            after = self._refresh(instance).updated_at
+            self.assertGreaterEqual(after, before)
+
+    def test_updated_at_on_line_item_add(self):
+        """updated_at should advance on the parent order when a regular line item is added."""
+        before_po = self._refresh(self.po).updated_at
+        PurchaseOrderLineItem.objects.create(order=self.po, part=None, quantity=1)
+        self.assertGreaterEqual(self._refresh(self.po).updated_at, before_po)
+
+        before_so = self._refresh(self.so).updated_at
+        SalesOrderLineItem.objects.create(order=self.so, part=None, quantity=1)
+        self.assertGreaterEqual(self._refresh(self.so).updated_at, before_so)
+
+        before_ro = self._refresh(self.ro).updated_at
+        ReturnOrderLineItem.objects.create(
+            order=self.ro, item=self.stock_item, quantity=1
+        )
+        self.assertGreaterEqual(self._refresh(self.ro).updated_at, before_ro)
+
+    def test_updated_at_on_line_item_update(self):
+        """updated_at should advance on the parent order when a regular line item is updated."""
+        po_line = PurchaseOrderLineItem.objects.create(
+            order=self.po, part=None, quantity=1
+        )
+        so_line = SalesOrderLineItem.objects.create(
+            order=self.so, part=None, quantity=1
+        )
+        ro_line = ReturnOrderLineItem.objects.create(
+            order=self.ro, item=self.stock_item, quantity=1
+        )
+
+        for instance, line in [
+            (self.po, po_line),
+            (self.so, so_line),
+            (self.ro, ro_line),
+        ]:
+            before = self._refresh(instance).updated_at
+            line.quantity = 5
+            line.save()
+            self.assertGreaterEqual(self._refresh(instance).updated_at, before)
+
+    def test_updated_at_on_line_item_delete(self):
+        """updated_at should advance on the parent order when a regular line item is deleted."""
+        po_line = PurchaseOrderLineItem.objects.create(
+            order=self.po, part=None, quantity=1
+        )
+        so_line = SalesOrderLineItem.objects.create(
+            order=self.so, part=None, quantity=1
+        )
+        ro_line = ReturnOrderLineItem.objects.create(
+            order=self.ro, item=self.stock_item, quantity=1
+        )
+
+        for instance, line in [
+            (self.po, po_line),
+            (self.so, so_line),
+            (self.ro, ro_line),
+        ]:
+            before = self._refresh(instance).updated_at
+            line.delete()
+            self.assertGreaterEqual(self._refresh(instance).updated_at, before)
