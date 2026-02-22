@@ -369,6 +369,7 @@ class SupplierPartSerializer(
             'on_order',
             'link',
             'active',
+            'primary',
             'manufacturer_detail',
             'manufacturer_part',
             'manufacturer_part_detail',

@@ -579,7 +579,6 @@ class PartSerializer(
             'default_expiry',
             'default_location',
             'default_location_detail',
-            'default_supplier',
             'description',
             'full_name',
             'image',

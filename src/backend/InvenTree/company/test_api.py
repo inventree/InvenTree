@@ -714,6 +714,32 @@ class SupplierPartTest(InvenTreeAPITestCase):
         for result in response.data:
             self.assertEqual(result['supplier'], company.pk)
 
+    def test_primary(self):
+        """Test for the 'primary' field in the SupplierPart model."""
+        for sp in SupplierPart.objects.filter(part=1):
+            self.patch(
+                reverse('api-supplier-part-detail', kwargs={'pk': sp.pk}),
+                {'primary': True},
+                expected_code=200,
+            )
+
+            # Only one supplier part should be primary for this part
+            self.assertEqual(
+                SupplierPart.objects.filter(part=1, primary=True).count(), 1
+            )
+
+            # Filter via the API
+            response = self.get(
+                reverse('api-supplier-part-list'),
+                {'part': 1, 'primary': True},
+                expected_code=200,
+            )
+
+            self.assertEqual(len(response.data), 1)
+
+        self.assertEqual(SupplierPart.objects.filter(part=1).count(), 4)
+        self.assertEqual(SupplierPart.objects.filter(part=1, primary=False).count(), 3)
+
     def test_filterable_fields(self):
         """Test inclusion/exclusion of optional API fields."""
         fields = {

@@ -2,6 +2,7 @@
 
 import json
 from collections import OrderedDict
+from datetime import datetime
 from typing import Optional
 
 from django.contrib.auth.models import User
@@ -150,6 +151,27 @@ class DataImportSession(models.Model):
         from importer.registry import supported_models
 
         return supported_models().get(self.model_type, None)
+
+    def get_related_model(self, field_name: str) -> models.Model:
+        """Return the related model for a given field name.
+
+        Arguments:
+            field_name: The name of the field to check
+
+        Returns:
+            The related model class, if one exists, or None otherwise
+        """
+        model_class = self.model_class
+
+        if not model_class:
+            return None
+
+        try:
+            related_field = model_class._meta.get_field(field_name)
+            model = related_field.remote_field.model
+            return model
+        except (AttributeError, models.FieldDoesNotExist):
+            return None
 
     def extract_columns(self) -> None:
         """Run initial column extraction and mapping.
@@ -604,6 +626,8 @@ class DataImportRow(models.Model):
 
         data = {}
 
+        self.related_field_map = {}
+
         # We have mapped column (file) to field (serializer) already
         for field, col in field_mapping.items():
             # Data override (force value and skip any further checks)
@@ -629,7 +653,9 @@ class DataImportRow(models.Model):
             if field_type == 'boolean':
                 value = InvenTree.helpers.str2bool(value)
             elif field_type == 'date':
-                value = value or None
+                value = self.convert_date_field(value)
+            elif field_type == 'related field':
+                value = self.lookup_related_field(field, value)
 
             # Use the default value, if provided
             if value is None and field in default_values:
@@ -673,6 +699,93 @@ class DataImportRow(models.Model):
 
         if commit:
             self.save()
+
+    def convert_date_field(self, value: str) -> str:
+        """Convert an incoming date field to the correct format for the database."""
+        if value in [None, '']:
+            return None
+
+        # Attempt conversion using accepted formats
+        date_formats = ['%Y-%m-%d', '%d/%m/%Y', '%m/%d/%Y', '%Y/%m/%d']
+
+        for fmt in date_formats:
+            try:
+                dt = datetime.strptime(value.strip(), fmt)
+
+                # If the date is valid, convert it to the standard format and return
+                return dt.strftime('%Y-%m-%d')
+            except ValueError:
+                continue
+
+        # If none of the formats matched, return the original value
+        return value
+
+    def lookup_related_field(self, field_name: str, value: str) -> Optional[int]:
+        """Try to perform lookup against a related field.
+
+        - This is used to convert a human-readable value (e.g. a supplier name) into a database reference (e.g. supplier ID).
+        - Reference the value against the related model's allowable import fields
+
+        Arguments:
+            field_name: The name of the field to perform the lookup against
+            value: The value to be looked up
+
+        Returns:
+            A primary key value
+        """
+        if value is None or value == '':
+            return value
+
+        if field_name is None or field_name == '':
+            return value
+
+        if field_name in self.related_field_map:
+            model = self.related_field_map[field_name]
+        else:
+            # Cache the related model for this field name
+            model = self.related_field_map[field_name] = self.session.get_related_model(
+                field_name
+            )
+
+        if not model:
+            raise DjangoValidationError({
+                'session': f'No related model found for field: {field_name}'
+            })
+
+        valid_items = set()
+
+        base_filters = (
+            self.session.field_filters.get(field_name, {})
+            if self.session.field_filters
+            else {}
+        )
+
+        # First priority is the PK (primary key) field
+        id_fields = ['pk']
+
+        if custom_id_fields := getattr(model, 'IMPORT_ID_FIELDS', None):
+            id_fields += custom_id_fields
+
+        # Iterate through the provided list - if any of the values match, we can perform the lookup
+        for id_field in id_fields:
+            try:
+                queryset = model.objects.filter(**{id_field: value}, **base_filters)
+            except ValueError:
+                continue
+
+            # Evaluate at most two results to determine if there is exactly one match
+            results = list(queryset[:2])
+            if len(results) == 1:
+                # We have a single match against this field
+                valid_items.add(results[0].pk)
+
+        if len(valid_items) == 1:
+            # We found a single valid match against the related model - return this value
+            return valid_items.pop()
+
+        # We found either zero or multiple values matching against the related model
+        # Return the original value and let the serializer validation handle any errors against this field
+        return value
 
     def serializer_data(self):
         """Construct data object to be sent to the serializer.
