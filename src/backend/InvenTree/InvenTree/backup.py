@@ -207,6 +207,7 @@ def validate_restore(metadata: InvenTreeBackupMetadata) -> bool | None:
             if int(backup_environment['version_api']) > int(
                 str(current_environment['version_api'])
             ):
+                # TODO - allow override with cli argument or environment variable if user is sure they want to proceed with restore
                 logger.error(
                     'INVE-E16: Backup being restored was created with a newer version of InvenTree - restore cannot proceed',
                     error_code='INVE-E16',
