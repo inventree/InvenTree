@@ -1142,7 +1142,7 @@ def import_records(
         os.remove(datafile)
         os.remove(authfile)
 
-    info('Data import completed')
+    success('Data import completed')
 
 
 @task(

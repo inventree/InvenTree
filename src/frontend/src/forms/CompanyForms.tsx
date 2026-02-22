@@ -71,6 +71,7 @@ export function useSupplierPartFields({
       packaging: {
         icon: <IconPackage />
       },
+      primary: {},
       active: {}
     };
 
