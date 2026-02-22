@@ -146,7 +146,9 @@ jobs:
     if: github.repository == 'inventree/InvenTree'
     name: ${{ matrix.target }}
     runs-on: ubuntu-latest
-    needs: [build, docs]
+    needs: [build]
+    permissions:
+      contents: write
     strategy:
       fail-fast: false
       matrix:
@@ -203,6 +205,17 @@ jobs:
           # Move frontend build into place
           mkdir -p src/backend/InvenTree/web/static
           unzip -qq frontend-build.zip -d src/backend/InvenTree/web/static/web
+
+          echo "INFO write release_version"
+          echo "VERSION=${{github.ref_name}}" >> $GITHUB_OUTPUT
+          echo "REF=${{github.ref}}" >> $GITHUB_OUTPUT
+
+          mv contrib/packager.io/before.sh contrib/packager.io/__
+          echo "#!/bin/bash" > contrib/packager.io/before.sh
+
+          echo "calculate release channel"
+          pip install --require-hashes -r contrib/dev_reqs/requirements.txt
+          python3 .github/scripts/version_check.py
       - name: Package
         uses: pkgr/action/package@c5666febcd31750da6428042193fc5b2fb765435 # pin@main
         id: package
@@ -227,7 +240,7 @@ jobs:
           target: ${{ matrix.target }}
           token: ${{ secrets.PACKAGER_RELEASE_TOKEN }}
           repository: inventree/inventree
-          channel: ${{ github.ref_name }}
+          channel: ${{ env.pkg_channel }}
           file: ${{ steps.package.outputs.package_path }}
       - name: Publish to artifact
         uses: svenstaro/upload-release-action@6b7fa9f267e90b50a19fef07b3596790bb941741 # pin@2.11.3
