@@ -93,8 +93,12 @@ function FilterItem({
             {flt.displayValue ??
               filterDisplayValue(flt.name, flt.value, availableFilters)}
           </Badge>
-          <Tooltip label={t`Remove filter`} withinPortal={true}>
-            <CloseButton size='md' color='red' onClick={removeFilter} />
+          <Tooltip
+            label={t`Remove filter`}
+            withinPortal={true}
+            position='top-end'
+          >
+            <CloseButton size='md' c='red' onClick={removeFilter} />
           </Tooltip>
         </Group>
       </Group>

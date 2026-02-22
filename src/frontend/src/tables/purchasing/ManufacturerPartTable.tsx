@@ -54,7 +54,18 @@ export function ManufacturerPartTable({
     return tId;
   }, [manufacturerId, partId]);
 
-  const table = useTable(tableId);
+  const table = useTable(tableId, {
+    initialFilters: [
+      {
+        name: 'manufacturer_active',
+        value: 'true'
+      },
+      {
+        name: 'part_active',
+        value: 'true'
+      }
+    ]
+  });
 
   const user = useUserState();
 

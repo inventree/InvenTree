@@ -54,7 +54,22 @@ export function SupplierPartTable({
   partId?: number;
   supplierId?: number;
 }>): ReactNode {
-  const table = useTable('supplierparts');
+  const table = useTable('supplierparts', {
+    initialFilters: [
+      {
+        name: 'active',
+        value: 'true'
+      },
+      {
+        name: 'part_active',
+        value: 'true'
+      },
+      {
+        name: 'supplier_active',
+        value: 'true'
+      }
+    ]
+  });
 
   const user = useUserState();
 
