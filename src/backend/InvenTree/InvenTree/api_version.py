@@ -1,13 +1,31 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 452
+INVENTREE_API_VERSION = 457
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v452 -> 2026-02-11 : https://github.com/inventree/InvenTree/pull/10887
+v457 -> 2026-02-11 : https://github.com/inventree/InvenTree/pull/10887
     - Extend the "auto allocate" wizard API to include tracked items
+
+v456 -> 2026-02-20 : https://github.com/inventree/InvenTree/pull/11303
+    - Adds "primary" field to the SupplierPart API
+    - Removes "default_supplier" field from the Part API
+
+v455 -> 2026-02-19 : https://github.com/inventree/InvenTree/pull/11383
+    - Adds "exists_for_model_id" filter to ParameterTemplate API endpoint
+    - Adds "exists_for_related_model" filter to ParameterTemplate API endpoint
+    - Adds "exists_for_related_model_id" filter to ParameterTemplate API endpoint
+
+v454 -> 2026-02-19 : https://github.com/inventree/InvenTree/pull/11379
+    - Adds "purchase_price" ordering option to StockItem API endpoint
+
+v453 -> 2026-02-11 : https://github.com/inventree/InvenTree/pull/11244
+    - Adds (internal) endpoint to end a observability tooling session
+
+v452 -> 2026-02-10 : https://github.com/inventree/InvenTree/pull/11276
+    - Adds "install_into_detail" field to the BuildItem API endpoint
 
 v451 -> 2026-02-10 : https://github.com/inventree/InvenTree/pull/11277
     - Adds sorting to multiple part related endpoints (part, IPN, ...)

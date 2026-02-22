@@ -180,3 +180,33 @@ export const toggleColumnSorting = async (page: Page, columnName: string) => {
   await page.waitForTimeout(50);
   await page.waitForLoadState('networkidle');
 };
+
+// Display the 'table' view
+export const showTableView = async (page: Page) => {
+  await page
+    .getByRole('button', { name: 'segmented-icon-control-table' })
+    .click();
+  await page.waitForLoadState('networkidle');
+};
+
+// Display the 'parameteric' view
+export const showParametricView = async (page: Page) => {
+  await page
+    .getByRole('button', { name: 'segmented-icon-control-parametric' })
+    .click();
+  await page.waitForLoadState('networkidle');
+};
+
+// Display the 'calendar' view
+export const showCalendarView = async (page: Page) => {
+  await page
+    .getByRole('button', { name: 'segmented-icon-control-calendar' })
+    .click();
+  await page.waitForLoadState('networkidle');
+};
+
+// Check for an expected number of columns in the visible table
+export const expectTableColumnCount = async (page: Page, count: number) => {
+  const columns = page.locator('table thead tr th');
+  await expect(columns).toHaveCount(count);
+};

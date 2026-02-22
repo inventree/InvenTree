@@ -1289,10 +1289,12 @@ CORS_ALLOWED_ORIGIN_REGEXES = get_setting(
     typecast=list,
 )
 
+_allowed_headers = (*default_cors_headers, 'traceparent')
 # Allow extra CORS headers in DEBUG mode
 # Required for serving /static/ and /media/ files
 if DEBUG:
-    CORS_ALLOW_HEADERS = (*default_cors_headers, 'cache-control', 'pragma', 'expires')
+    _allowed_headers = (*_allowed_headers, 'cache-control', 'pragma', 'expires')
+CORS_ALLOW_HEADERS = _allowed_headers
 
 # In debug mode allow CORS requests from localhost
 # This allows connection from the frontend development server

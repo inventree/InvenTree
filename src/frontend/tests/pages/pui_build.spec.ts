@@ -7,7 +7,10 @@ import {
   getRowFromCell,
   loadTab,
   navigate,
-  setTableChoiceFilter
+  setTableChoiceFilter,
+  showCalendarView,
+  showParametricView,
+  showTableView
 } from '../helpers.ts';
 import { doCachedLogin } from '../login.ts';
 
@@ -17,18 +20,10 @@ test('Build - Index', async ({ browser }) => {
   await loadTab(page, 'Build Orders');
 
   // Ensure all data views are available
-  await page
-    .getByRole('button', { name: 'segmented-icon-control-parametric' })
-    .click();
-
-  await page
-    .getByRole('button', { name: 'segmented-icon-control-calendar' })
-    .click();
+  await showParametricView(page);
+  await showCalendarView(page);
   await page.getByRole('button', { name: 'action-button-next-month' }).click();
-
-  await page
-    .getByRole('button', { name: 'segmented-icon-control-table' })
-    .click();
+  await showTableView(page);
 });
 
 test('Build Order - Basic Tests', async ({ browser }) => {

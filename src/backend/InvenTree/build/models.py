@@ -112,6 +112,7 @@ class Build(
     """
 
     STATUS_CLASS = BuildStatus
+    IMPORT_ID_FIELDS = ['reference']
 
     class Meta:
         """Metaclass options for the BuildOrder model."""

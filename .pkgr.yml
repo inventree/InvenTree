@@ -6,7 +6,7 @@ buildpack: https://github.com/matmair/null-buildpack#master
 env:
   - INVENTREE_DB_ENGINE=sqlite3
   - INVENTREE_DB_NAME=database.sqlite3
-  - INVENTREE_PLUGINS_ENABLED
+  - INVENTREE_PLUGINS_ENABLED=true
   - INVENTREE_MEDIA_ROOT=/opt/inventree/media
   - INVENTREE_STATIC_ROOT=/opt/inventree/static
   - INVENTREE_BACKUP_DIR=/opt/inventree/backup

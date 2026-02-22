@@ -1,5 +1,12 @@
 import { test } from '../baseFixtures.js';
-import { clickOnParamFilter, loadTab, navigate } from '../helpers.js';
+import {
+  clearTableFilters,
+  clickOnParamFilter,
+  loadTab,
+  navigate,
+  setTableChoiceFilter,
+  showParametricView
+} from '../helpers.js';
 import { doCachedLogin } from '../login.js';
 
 test('Company', async ({ browser }) => {
@@ -49,9 +56,7 @@ test('Company - Parameters', async ({ browser }) => {
   });
 
   // Show parametric view
-  await page
-    .getByRole('button', { name: 'segmented-icon-control-parametric' })
-    .click();
+  await showParametricView(page);
 
   // Filter by "payment terms" parameter value
   await clickOnParamFilter(page, 'Payment Terms');
@@ -59,4 +64,25 @@ test('Company - Parameters', async ({ browser }) => {
 
   await page.getByRole('cell', { name: 'Arrow Electronics' }).waitFor();
   await page.getByRole('cell', { name: 'PCB assembly house' }).waitFor();
+});
+
+test('Company - Supplier Parts', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    username: 'steven',
+    password: 'wizardstaff',
+    url: 'purchasing/index/suppliers'
+  });
+
+  await loadTab(page, 'Supplier Parts');
+  await clearTableFilters(page);
+
+  await page.getByText('- 25 / 777').waitFor();
+
+  await setTableChoiceFilter(page, 'Primary', 'Yes');
+  await page.getByText('- 25 / 318').waitFor();
+
+  await clearTableFilters(page);
+
+  await setTableChoiceFilter(page, 'Primary', 'No');
+  await page.getByText('- 25 / 459').waitFor();
 });
