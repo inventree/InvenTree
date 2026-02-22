@@ -253,6 +253,7 @@ def getLogoImage(as_file=False, custom=True):
     print('getLogoImage:')
     print('- as_file:', as_file)
     print('- custom:', custom)
+    print('- settings.CUSTOM_LOGO:', settings.CUSTOM_LOGO)
 
     if custom and settings.CUSTOM_LOGO:
         static_storage = StaticFilesStorage()
