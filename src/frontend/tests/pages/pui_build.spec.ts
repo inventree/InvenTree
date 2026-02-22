@@ -431,6 +431,40 @@ test('Build Order - Allocation', async ({ browser }) => {
     .waitFor();
 });
 
+test('Build Order - Auto Allocate Tracked', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    url: 'manufacturing/build-order/27/consumed-stock'
+  });
+
+  await loadTab(page, 'Incomplete Outputs');
+
+  await page.getByRole('cell', { name: '0 / 6' }).waitFor();
+
+  // Auto-allocate tracked stock
+  await page
+    .getByRole('button', { name: 'action-button-auto-allocate-' })
+    .click();
+
+  // Wait for auto-filled form field
+  await page
+    .locator('div')
+    .filter({ hasText: /^Factory$/ })
+    .first()
+    .waitFor();
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Wait for one of the required parts to be allocated
+  await page.getByRole('cell', { name: '1 / 6' }).waitFor({ timeout: 7500 });
+
+  // Deallocate the item to return to the initial state
+  const cell = await page.getByRole('cell', { name: '# 555' });
+  await clickOnRowMenu(cell);
+  await page.getByRole('menuitem', { name: 'Deallocate' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  await page.getByRole('cell', { name: '0 / 6' }).waitFor({ timeout: 7500 });
+});
+
 // Test partial stock consumption against build order
 test('Build Order - Consume Stock', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
