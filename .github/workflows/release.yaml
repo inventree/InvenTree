@@ -171,6 +171,7 @@ jobs:
           BRANCH: ${{ github.event.release.target_commitish }}
           TARGET: ${{github.event.release.target_commitish}}
           REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ github.token }}
 
         run: |
           # Get info
