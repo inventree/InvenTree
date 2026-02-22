@@ -209,7 +209,7 @@ jobs:
 
           echo "INFO write release_version"
           echo "VERSION=$VERSION_REF" >> $GITHUB_OUTPUT
-          echo "REF=${{github.ref}}" >> $GITHUB_OUTPUT
+          echo "REF=$GITHUB_REF" >> $GITHUB_OUTPUT
 
           # Disable before.sh for now - will need to be removed once we switch to go.packager.io fully
           echo "#!/bin/bash" > contrib/packager.io/before.sh
