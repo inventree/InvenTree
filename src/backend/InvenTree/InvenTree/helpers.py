@@ -250,20 +250,29 @@ def getBlankThumbnail():
 
 def getLogoImage(as_file=False, custom=True):
     """Return the InvenTree logo image, or a custom logo if available."""
+    print('getLogoImage:')
+    print('- as_file:', as_file)
+    print('- custom:', custom)
+
     if custom and settings.CUSTOM_LOGO:
         static_storage = StaticFilesStorage()
 
         if static_storage.exists(settings.CUSTOM_LOGO):
             storage = static_storage
+            print('- Found custom logo in static storage')
         elif default_storage.exists(settings.CUSTOM_LOGO):
             storage = default_storage
+            print('- Found custom logo in default storage')
         else:
             storage = None
+            print('- Custom logo not found in any storage')
 
         if storage is not None:
             if as_file:
                 return f'file://{storage.path(settings.CUSTOM_LOGO)}'
             return storage.url(settings.CUSTOM_LOGO)
+
+    print('- using default logo image')
 
     # If we have got to this point, return the default logo
     if as_file:
