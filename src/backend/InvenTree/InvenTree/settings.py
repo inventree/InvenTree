@@ -26,12 +26,7 @@ from corsheaders.defaults import default_headers as default_cors_headers
 
 import InvenTree.backup
 from InvenTree.cache import get_cache_config, is_global_cache_enabled
-from InvenTree.config import (
-    get_boolean_setting,
-    get_custom_file,
-    get_oidc_private_key,
-    get_setting,
-)
+from InvenTree.config import get_boolean_setting, get_oidc_private_key, get_setting
 from InvenTree.ready import isInMainThread
 from InvenTree.sentry import default_sentry_dsn, init_sentry
 from InvenTree.version import checkMinPythonVersion, inventreeCommitHash
@@ -1453,12 +1448,9 @@ if len(GLOBAL_SETTINGS_OVERRIDES) > 0:
         logger.debug('- Override value for %s = ********', key)
 
 # User interface customization values
-CUSTOM_LOGO = get_custom_file(
-    'INVENTREE_CUSTOM_LOGO', 'customize.logo', 'custom logo', lookup_media=True
-)
-CUSTOM_SPLASH = get_custom_file(
-    'INVENTREE_CUSTOM_SPLASH', 'customize.splash', 'custom splash'
-)
+CUSTOM_LOGO = get_setting('INVENTREE_CUSTOM_LOGO', 'customize.logo', typecast=str)
+
+CUSTOM_SPLASH = get_setting('INVENTREE_CUSTOM_SPLASH', 'customize.splash', typecast=str)
 
 CUSTOMIZE = get_setting(
     'INVENTREE_CUSTOMIZE', 'customize', default_value=None, typecast=dict
