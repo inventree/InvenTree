@@ -250,7 +250,6 @@ def getBlankThumbnail():
 
 def getLogoImage(as_file=False, custom=True):
     """Return the InvenTree logo image, or a custom logo if available."""
-    """Return the path to the logo-file."""
     if custom and settings.CUSTOM_LOGO:
         static_storage = StaticFilesStorage()
 

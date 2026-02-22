@@ -1124,6 +1124,17 @@ class BuildAutoAllocationSerializer(serializers.Serializer):
         help_text=_('Allocate optional BOM items to build order'),
     )
 
+    item_type = serializers.ChoiceField(
+        default=Build.BuildItemTypes.UNTRACKED,
+        choices=[
+            (Build.BuildItemTypes.ALL, _('All Items')),
+            (Build.BuildItemTypes.UNTRACKED, _('Untracked Items')),
+            (Build.BuildItemTypes.TRACKED, _('Tracked Items')),
+        ],
+        label=_('Item Type'),
+        help_text=_('Select item type to auto-allocate'),
+    )
+
     def save(self):
         """Perform the auto-allocation step."""
         import InvenTree.tasks
@@ -1140,6 +1151,7 @@ class BuildAutoAllocationSerializer(serializers.Serializer):
             interchangeable=data['interchangeable'],
             substitutes=data['substitutes'],
             optional_items=data['optional_items'],
+            item_type=data.get('item_type', 'untracked'),
             group='build',
         ):
             raise ValidationError(_('Failed to start auto-allocation task'))

@@ -1,2 +1,5 @@
 # Files generated during unit testing
 _testfolder/
+
+# Playwright files for CI
+InvenTree/static/img/playwright*.png

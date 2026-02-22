@@ -11,7 +11,7 @@ from django.core.exceptions import FieldDoesNotExist, ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator, URLValidator
 from django.utils.translation import gettext_lazy as _
 
-from jinja2 import Template
+from jinja2.sandbox import SandboxedEnvironment
 
 import build.validators
 import common.currency
@@ -52,7 +52,7 @@ def validate_part_name_format(value):
     p = Part(name='test part', description='some test part')
 
     try:
-        Template(value).render({'part': p})
+        SandboxedEnvironment().from_string(value).render({'part': p})
     except Exception as exc:
         raise ValidationError({'value': str(exc)})
 

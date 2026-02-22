@@ -920,6 +920,77 @@ class BuildAllocationTest(BuildAPITest):
             self.assertIsNotNone(bi)
             self.assertEqual(bi.build, build)
 
+    def test_auto_allocate_tracked(self):
+        """Test manual auto-allocation of tracked items against a Build."""
+        # Create a base assembly
+        assembly = Part.objects.create(
+            name='Test Assembly',
+            description='Test Assembly Description',
+            assembly=True,
+            trackable=True,
+        )
+
+        component = Part.objects.create(
+            name='Test Component',
+            description='Test Component Description',
+            trackable=True,
+            component=True,
+        )
+
+        # Create a BOM item for the assembly
+        BomItem.objects.create(part=assembly, sub_part=component, quantity=1)
+
+        # Create a build order for the assembly
+        build = Build.objects.create(part=assembly, reference='BO-12347', quantity=10)
+
+        SN = '123456'
+
+        # Create serialized component item
+        c = StockItem.objects.create(part=component, quantity=1, serial=SN)
+
+        N = BuildItem.objects.count()
+
+        # Create a new build output
+        response = self.post(
+            reverse('api-build-output-create', kwargs={'pk': build.pk}),
+            {'quantity': 1, 'serial_numbers': SN, 'auto_allocate': False},
+            expected_code=201,
+        )
+
+        output = response.data[0]
+
+        self.assertIsNotNone(output)
+        self.assertIsNotNone(output['pk'])
+        self.assertEqual(output['serial'], SN)
+
+        # No new build items (allocations) have been created yet
+        self.assertEqual(N, BuildItem.objects.count())
+
+        # Let's auto-allocate via the API now
+        url = reverse('api-build-auto-allocate', kwargs={'pk': build.pk})
+
+        # Allocate only 'untracked' items - this should not allocate our tracked item
+        self.post(url, data={'item_type': 'untracked'})
+
+        self.assertEqual(N, BuildItem.objects.count())
+
+        # Allocate 'tracked' items - this should allocate our tracked item
+        self.post(url, data={'item_type': 'tracked'})
+
+        # A new BuildItem should have been created
+        self.assertEqual(N + 1, BuildItem.objects.count())
+
+        line = build.build_lines.first()
+
+        self.assertIsNotNone(line)
+        allocations = line.allocations.filter(install_into_id=output['pk'])
+        self.assertEqual(allocations.count(), 1)
+
+        allocation = allocations.first()
+
+        self.assertEqual(allocation.stock_item, c)
+        self.assertEqual(allocation.quantity, 1)
+
 
 class BuildItemTest(BuildAPITest):
     """Unit tests for build items.
