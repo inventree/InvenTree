@@ -324,7 +324,15 @@ export function StockItemTable({
   allowReturn?: boolean;
   tableName: string;
 }>) {
-  const table = useTable(tableName);
+  const table = useTable(tableName, {
+    initialFilters: [
+      {
+        name: 'in_stock',
+        value: 'true'
+      }
+    ]
+  });
+
   const user = useUserState();
 
   const settings = useGlobalSettingsState();
