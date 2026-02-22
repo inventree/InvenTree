@@ -47,9 +47,7 @@ def set_global_setting(key, value, change_user=None, create=True, **kwargs):
     from InvenTree.ready import canAppAccessDatabase
 
     if not canAppAccessDatabase(allow_shell=True, allow_test=True):
-        logger.warning(
-            f'Cannot set global setting "{key}" - database is not accessible'
-        )
+        logger.info(f'Cannot set global setting "{key}" - database is not accessible')
         return False
 
     kwargs['change_user'] = change_user
