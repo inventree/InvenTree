@@ -240,7 +240,7 @@ jobs:
         with:
           target: ${{ matrix.target }}
           token: ${{ secrets.PACKAGER_RELEASE_TOKEN }}
-          repository: inventree/inventree
+          repository: inventree/InvenTree
           channel: ${{ env.pkg_channel }}
           file: ${{ steps.package.outputs.package_path }}
       - name: Publish to artifact
