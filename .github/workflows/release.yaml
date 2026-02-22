@@ -211,7 +211,7 @@ jobs:
           echo "VERSION=$VERSION_REF" >> $GITHUB_OUTPUT
           echo "REF=${{github.ref}}" >> $GITHUB_OUTPUT
 
-          mv contrib/packager.io/before.sh contrib/packager.io/__
+          # Disable before.sh for now - will need to be removed once we switch to go.packager.io fully
           echo "#!/bin/bash" > contrib/packager.io/before.sh
 
           echo "calculate release channel"
