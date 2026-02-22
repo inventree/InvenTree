@@ -28,17 +28,46 @@ import type {
 import { IconCheck } from '@tabler/icons-react';
 import { StandaloneField } from '../components/forms/StandaloneField';
 import { StylishText } from '../components/items/StylishText';
-import { getTableFilterOptions } from './Filter';
+import {
+  filterDisplayLabel,
+  filterDisplayValue,
+  getTableFilterOptions
+} from './Filter';
+
+/*
+ * Render a preview of a single filter
+ */
+export function FilterPreview({
+  filter,
+  filters
+}: Readonly<{
+  filter: TableFilter;
+  filters?: TableFilter[];
+}>) {
+  return (
+    <Group key={filter.name} justify='space-between' gap='xl' wrap='nowrap'>
+      <Text size='sm'>
+        {filter.label ?? filterDisplayLabel(filter.name, filters)}
+      </Text>
+      <Text size='xs'>
+        {filter.displayValue ??
+          filterDisplayValue(filter.name, filter.value, filters)}
+      </Text>
+    </Group>
+  );
+}
 
 /*
  * Render a single table filter item
  */
 function FilterItem({
   flt,
-  filterSet
+  filterSet,
+  availableFilters
 }: Readonly<{
   flt: TableFilter;
   filterSet: FilterSetState;
+  availableFilters?: TableFilter[];
 }>) {
   const removeFilter = useCallback(() => {
     const newFilters = filterSet.activeFilters.filter(
@@ -47,15 +76,23 @@ function FilterItem({
     filterSet.setActiveFilters(newFilters);
   }, [flt]);
 
+  // Find the matching filter definition
+  const filterProps: TableFilter | undefined = useMemo(() => {
+    return availableFilters?.find((f) => f.name === flt.name);
+  }, [availableFilters, flt]);
+
   return (
     <Paper p='sm' shadow='sm' radius='xs'>
       <Group justify='space-between' key={flt.name} wrap='nowrap'>
         <Stack gap='xs'>
-          <Text size='sm'>{flt.label}</Text>
-          <Text size='xs'>{flt.description}</Text>
+          <Text size='sm'>{flt.label ?? filterProps?.label ?? flt.name}</Text>
+          <Text size='xs'>{flt.description ?? filterProps?.description}</Text>
         </Stack>
         <Group justify='right'>
-          <Badge>{flt.displayValue ?? flt.value}</Badge>
+          <Badge>
+            {flt.displayValue ??
+              filterDisplayValue(flt.name, flt.value, availableFilters)}
+          </Badge>
           <Tooltip label={t`Remove filter`} withinPortal={true}>
             <CloseButton size='md' color='red' onClick={removeFilter} />
           </Tooltip>
@@ -174,10 +211,10 @@ function FilterAddGroup({
     return (
       availableFilters
         ?.filter((flt) => !activeFilterNames.includes(flt.name))
-        ?.sort((a, b) => a.label.localeCompare(b.label))
+        ?.sort((a, b) => (a.label ?? a.name).localeCompare(b.label ?? b.name))
         ?.map((flt) => ({
           value: flt.name,
-          label: flt.label,
+          label: flt.label ?? flt.name,
           description: flt.description
         })) ?? []
     );
@@ -317,7 +354,12 @@ export function FilterSelectDrawer({
       <Stack gap='xs'>
         {hasFilters &&
           filterSet.activeFilters?.map((f) => (
-            <FilterItem key={f.name} flt={f} filterSet={filterSet} />
+            <FilterItem
+              key={f.name}
+              flt={f}
+              filterSet={filterSet}
+              availableFilters={availableFilters}
+            />
           ))}
         {addFilter && (
           <Stack gap='xs'>
