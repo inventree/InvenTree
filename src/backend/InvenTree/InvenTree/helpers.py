@@ -250,30 +250,20 @@ def getBlankThumbnail():
 
 def getLogoImage(as_file=False, custom=True):
     """Return the InvenTree logo image, or a custom logo if available."""
-    print('getLogoImage:')
-    print('- as_file:', as_file)
-    print('- custom:', custom)
-    print('- settings.CUSTOM_LOGO:', settings.CUSTOM_LOGO)
-
     if custom and settings.CUSTOM_LOGO:
         static_storage = StaticFilesStorage()
 
         if static_storage.exists(settings.CUSTOM_LOGO):
             storage = static_storage
-            print('- Found custom logo in static storage')
         elif default_storage.exists(settings.CUSTOM_LOGO):
             storage = default_storage
-            print('- Found custom logo in default storage')
         else:
             storage = None
-            print('- Custom logo not found in any storage')
 
         if storage is not None:
             if as_file:
                 return f'file://{storage.path(settings.CUSTOM_LOGO)}'
             return storage.url(settings.CUSTOM_LOGO)
-
-    print('- using default logo image')
 
     # If we have got to this point, return the default logo
     if as_file:
@@ -286,19 +276,9 @@ def getSplashScreen(custom=True):
     """Return the InvenTree splash screen, or a custom splash if available."""
     static_storage = StaticFilesStorage()
 
-    print('getSplashScreen:')
-    print('- custom:', custom)
-    print('- settings.CUSTOM_SPLASH:', settings.CUSTOM_SPLASH)
-
     if custom and settings.CUSTOM_SPLASH:
         if static_storage.exists(settings.CUSTOM_SPLASH):
-            print('- Found custom splash in static storage')
-            print('- URL:', static_storage.url(settings.CUSTOM_SPLASH))
             return static_storage.url(settings.CUSTOM_SPLASH)
-        else:
-            print('- Custom splash not found in static storage')
-
-    print('- Using default splash screen')
 
     # No custom splash screen
     return static_storage.url('img/inventree_splash.jpg')

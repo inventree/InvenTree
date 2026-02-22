@@ -1456,10 +1456,6 @@ CUSTOMIZE = get_setting(
     'INVENTREE_CUSTOMIZE', 'customize', default_value=None, typecast=dict
 )
 
-print('CUSTOM_LOGO:', CUSTOM_LOGO)
-print('CUSTOM_SPLASH:', CUSTOM_SPLASH)
-print('CUSTOMIZE:', CUSTOMIZE)
-
 if DEBUG:
     logger.info('InvenTree running with DEBUG enabled')
 
