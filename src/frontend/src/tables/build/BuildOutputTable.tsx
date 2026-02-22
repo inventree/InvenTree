@@ -227,6 +227,12 @@ export default function BuildOutputTable({
       substitutes: true
     },
     successMessage: t`Auto-allocation in progress`,
+    onFormSuccess: () => {
+      // After a short delay, refresh the tracked items
+      setTimeout(() => {
+        refetchTrackedItems();
+      }, 2500);
+    },
     table: table,
     preFormContent: (
       <Alert color='green' title={t`Auto Allocate Stock`}>
