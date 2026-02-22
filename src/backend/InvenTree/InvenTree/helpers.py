@@ -276,9 +276,19 @@ def getSplashScreen(custom=True):
     """Return the InvenTree splash screen, or a custom splash if available."""
     static_storage = StaticFilesStorage()
 
+    print('getSplashScreen:')
+    print('- custom:', custom)
+    print('- settings.CUSTOM_SPLASH:', settings.CUSTOM_SPLASH)
+
     if custom and settings.CUSTOM_SPLASH:
         if static_storage.exists(settings.CUSTOM_SPLASH):
+            print('- Found custom splash in static storage')
+            print('- URL:', static_storage.url(settings.CUSTOM_SPLASH))
             return static_storage.url(settings.CUSTOM_SPLASH)
+        else:
+            print('- Custom splash not found in static storage')
+
+    print('- Using default splash screen')
 
     # No custom splash screen
     return static_storage.url('img/inventree_splash.jpg')
