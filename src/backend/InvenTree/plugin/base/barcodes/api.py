@@ -533,6 +533,8 @@ class BarcodePOReceive(BarcodeView):
         # Now, look just for "supplier-barcode" plugins
         plugins = registry.with_mixin(PluginMixinEnum.SUPPLIER_BARCODE)
 
+        plugin_slug = None
+        
         plugin_response = None
 
         plugin_error = None
@@ -570,6 +572,7 @@ class BarcodePOReceive(BarcodeView):
                 supplier_found = False
 
                 try:
+                    plugin_slug = current_plugin.slug
                     supplier_purchase_order = result.get('PO')
                     plugin_supplier = result.get('supplier')
                     supplier_part = result.get('supplier_part')
@@ -579,7 +582,7 @@ class BarcodePOReceive(BarcodeView):
 
                 # Supplier does not have associated Supplier ID
                 if plugin_supplier is None:
-                    no_supplier_plugin_error.append(current_plugin.slug)
+                    no_supplier_plugin_error.append(plugin_slug)
                     continue
                 
                 # No Purchase Order or Supplier Part Found
@@ -601,7 +604,7 @@ class BarcodePOReceive(BarcodeView):
                 # Supplier for PO or Supplier part in barcode was found
                 if supplier_found is True:
                     # Adds info on for what was found in the barcode
-                    response[current_plugin.slug + "_debug"] = {
+                    response['supplier_matches'] = {
                             'purchase_order':supplier_purchase_order,
                             'no_match':no_match,
                             'supplier':plugin_supplier,
