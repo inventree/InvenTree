@@ -25,6 +25,14 @@ test('Purchasing - Index', async ({ browser }) => {
   await showCalendarView(page);
   await showTableView(page);
 
+  // Check default filters are applied
+  // By default, only outstanding orders are visible
+  await page.getByText(/1 - \d+ \/ \d+/).waitFor();
+
+  // Clearing the filters, more orders should be visible
+  await clearTableFilters(page);
+  await page.getByText(/1 - 1\d \/ 1\d/).waitFor();
+
   // Suppliers tab
   await loadTab(page, 'Suppliers');
   await showParametricView(page);

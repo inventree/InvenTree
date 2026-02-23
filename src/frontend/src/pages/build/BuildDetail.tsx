@@ -469,6 +469,7 @@ export default function BuildDetail() {
             tableName='build-consumed'
             showLocation={false}
             allowReturn
+            defaultInStock={null}
             params={{
               consumed_by: id
             }}

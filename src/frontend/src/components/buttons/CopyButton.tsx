@@ -46,7 +46,11 @@ export function CopyButton({
           <ButtonComponent
             disabled={disabled}
             color={copied ? 'teal' : color}
-            onClick={copy}
+            onClick={(e: any) => {
+              e.stopPropagation();
+              e.preventDefault();
+              copy();
+            }}
             variant='transparent'
             size={size ?? 'sm'}
           >

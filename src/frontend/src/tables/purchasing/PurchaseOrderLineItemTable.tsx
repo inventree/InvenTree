@@ -237,7 +237,8 @@ export function PurchaseOrderLineItemTable({
         title: t`Supplier Code`,
         switchable: false,
         sortable: true,
-        ordering: 'SKU'
+        ordering: 'SKU',
+        copyable: true
       },
       LinkColumn({
         accessor: 'supplier_part_detail.link',
