@@ -1,7 +1,8 @@
 """Functions to sanitize user input files."""
 
 from bleach import clean
-from bleach.css_sanitizer import CSSSanitizer
+
+# from bleach.css_sanitizer import CSSSanitizer
 
 ALLOWED_ELEMENTS_SVG = [
     'a',
@@ -212,7 +213,7 @@ def sanitize_svg(
         attributes=attributes,
         strip=strip,
         strip_comments=strip,
-        css_sanitizer=CSSSanitizer(),
+        # css_sanitizer=CSSSanitizer(),
     )
 
     return cleaned

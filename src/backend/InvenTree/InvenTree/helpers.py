@@ -22,7 +22,8 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 import bleach
-import bleach.css_sanitizer
+
+# import bleach.css_sanitizer
 import bleach.sanitizer
 import structlog
 from bleach import clean
@@ -954,21 +955,21 @@ def clean_markdown(value: str) -> str:
     whitelist_attrs = markdownify_settings.get(
         'WHITELIST_ATTRS', bleach.sanitizer.ALLOWED_ATTRIBUTES
     )
-    whitelist_styles = markdownify_settings.get(
-        'WHITELIST_STYLES', bleach.css_sanitizer.ALLOWED_CSS_PROPERTIES
-    )
+    # whitelist_styles = markdownify_settings.get(
+    #     'WHITELIST_STYLES', bleach.css_sanitizer.ALLOWED_CSS_PROPERTIES
+    # )
     whitelist_protocols = markdownify_settings.get(
         'WHITELIST_PROTOCOLS', bleach.sanitizer.ALLOWED_PROTOCOLS
     )
     strip = markdownify_settings.get('STRIP', True)
 
-    css_sanitizer = bleach.css_sanitizer.CSSSanitizer(
-        allowed_css_properties=whitelist_styles
-    )
+    # css_sanitizer = bleach.css_sanitizer.CSSSanitizer(
+    #     allowed_css_properties=whitelist_styles
+    # )
     cleaner = bleach.Cleaner(
         tags=whitelist_tags,
         attributes=whitelist_attrs,
-        css_sanitizer=css_sanitizer,
+        # css_sanitizer=css_sanitizer,
         protocols=whitelist_protocols,
         strip=strip,
     )
