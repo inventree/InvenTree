@@ -20,11 +20,13 @@ export function CopyableCell({
 
   return (
     <Group
-      gap='xs'
+      gap={0}
+      p={0}
       wrap='nowrap'
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       justify='space-between'
+      align='center'
     >
       {children}
       {isHovered && value != null && (
