@@ -54,7 +54,34 @@ export function SupplierPartTable({
   partId?: number;
   supplierId?: number;
 }>): ReactNode {
-  const table = useTable('supplierparts');
+  const initialFilters = useMemo(() => {
+    const filters: TableFilter[] = [
+      {
+        name: 'active',
+        value: 'true'
+      }
+    ];
+
+    if (!supplierId) {
+      filters.push({
+        name: 'supplier_active',
+        value: 'true'
+      });
+    }
+
+    if (!partId) {
+      filters.push({
+        name: 'part_active',
+        value: 'true'
+      });
+    }
+
+    return filters;
+  }, [supplierId, partId]);
+
+  const table = useTable('supplierparts', {
+    initialFilters: initialFilters
+  });
 
   const user = useUserState();
 

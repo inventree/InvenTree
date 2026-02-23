@@ -338,17 +338,26 @@ export function PartListTable({
   enableImport = true,
   basePartInstance,
   props,
+  tableName = 'part-list',
   defaultPartData
 }: Readonly<{
   enableImport?: boolean;
   props?: InvenTreeTableProps;
   basePartInstance?: any;
+  tableName?: string;
   defaultPartData?: any;
 }>) {
   const tableColumns = useMemo(() => partTableColumns(), []);
   const tableFilters = useMemo(() => partTableFilters(), []);
 
-  const table = useTable('part-list');
+  const table = useTable(tableName ?? 'part-list', {
+    initialFilters: [
+      {
+        name: 'active',
+        value: 'true'
+      }
+    ]
+  });
   const user = useUserState();
   const globalSettings = useGlobalSettingsState();
 
