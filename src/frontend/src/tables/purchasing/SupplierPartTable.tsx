@@ -104,7 +104,8 @@ export function SupplierPartTable({
       {
         accessor: 'SKU',
         title: t`Supplier Part`,
-        sortable: true
+        sortable: true,
+        copyable: true
       },
       DescriptionColumn({}),
       {
@@ -119,7 +120,9 @@ export function SupplierPartTable({
         accessor: 'MPN',
         sortable: true,
         title: t`MPN`,
-        render: (record: any) => record?.manufacturer_part_detail?.MPN
+        render: (record: any) => record?.manufacturer_part_detail?.MPN,
+        copyable: true,
+        copyAccessor: 'record.manufacturer_part_detail.MPN'
       },
       BooleanColumn({
         accessor: 'primary',

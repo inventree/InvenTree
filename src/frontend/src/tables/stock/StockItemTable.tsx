@@ -97,13 +97,15 @@ function stockItemTableColumns({
       accessor: 'SKU',
       title: t`Supplier Part`,
       sortable: true,
-      defaultVisible: false
+      defaultVisible: false,
+      copyable: true
     },
     {
       accessor: 'MPN',
       title: t`Manufacturer Part`,
       sortable: true,
-      defaultVisible: false
+      defaultVisible: false,
+      copyable: true
     },
     {
       accessor: 'purchase_price',

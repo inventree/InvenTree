@@ -29,7 +29,8 @@ export default function ManufacturerPartParametricTable({
       {
         accessor: 'MPN',
         title: t`MPN`,
-        sortable: true
+        sortable: true,
+        copyable: true
       }
     ];
   }, []);

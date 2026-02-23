@@ -98,7 +98,8 @@ export function ManufacturerPartTable({
       {
         accessor: 'MPN',
         title: t`MPN`,
-        sortable: true
+        sortable: true,
+        copyable: true
       },
       DescriptionColumn({}),
       LinkColumn({})
