@@ -39,7 +39,7 @@ export type TableFilterType = 'boolean' | 'choice' | 'date' | 'text' | 'api';
  */
 export type TableFilter = {
   name: string;
-  label: string;
+  label?: string;
   description?: string;
   type?: TableFilterType;
   choices?: TableFilterChoice[];

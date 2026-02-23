@@ -64,7 +64,14 @@ export function BuildOrderTable({
   salesOrderId?: number;
 }>) {
   const globalSettings = useGlobalSettingsState();
-  const table = useTable(!!partId ? 'buildorder-part' : 'buildorder-index');
+  const table = useTable(!!partId ? 'buildorder-part' : 'buildorder-index', {
+    initialFilters: [
+      {
+        name: 'outstanding',
+        value: 'true'
+      }
+    ]
+  });
 
   const tableColumns = useMemo(() => {
     return [

@@ -33,7 +33,7 @@ test('Exporting - Orders', async ({ browser }) => {
   await page.getByText('Process completed successfully').waitFor();
 
   // Download list of purchase order items
-  await page.getByRole('cell', { name: 'PO0011' }).click();
+  await page.getByRole('cell', { name: 'PO0014' }).click();
   await loadTab(page, 'Line Items');
   await openExportDialog(page);
   await page.getByRole('button', { name: 'Export', exact: true }).click();

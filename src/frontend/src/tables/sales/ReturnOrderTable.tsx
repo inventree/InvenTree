@@ -56,7 +56,18 @@ export function ReturnOrderTable({
   partId?: number;
   customerId?: number;
 }>) {
-  const table = useTable(!!partId ? 'returnorders-part' : 'returnorders-index');
+  const table = useTable(
+    !!partId ? 'returnorders-part' : 'returnorders-index',
+    {
+      initialFilters: [
+        {
+          name: 'outstanding',
+          value: 'true'
+        }
+      ]
+    }
+  );
+
   const user = useUserState();
 
   const tableFilters: TableFilter[] = useMemo(() => {
