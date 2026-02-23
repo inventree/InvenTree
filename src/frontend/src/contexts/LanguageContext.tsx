@@ -86,6 +86,7 @@ export function LanguageContext({
     if (locale != activeLocale) {
       console.info('Changing locale from', activeLocale, 'to', locale);
       setActiveLocale(locale);
+      activateLocale(locale);
     }
   }, [activeLocale, language, server.default_locale, defaultLocale]);
 
@@ -176,8 +177,28 @@ export function LanguageContext({
   return <I18nProvider i18n={i18n}>{children}</I18nProvider>;
 }
 
-export async function activateLocale(locale: string) {
-  const { messages } = await import(`../locales/${locale}/messages.ts`);
-  i18n.load(locale, messages);
-  i18n.activate(locale);
+export async function activateLocale(locale: string | null) {
+  if (!locale) {
+    // No locale provided, iterate through priority list
+    const serverDefault = useServerApiState.getState().server.default_locale;
+    const userDefault = useLocalState.getState().language;
+
+    if (userDefault) {
+      locale = userDefault;
+    } else if (serverDefault) {
+      locale = serverDefault;
+    } else {
+      locale = defaultLocale;
+    }
+  }
+
+  const localeDir = locale.split('-')[0]; // Extract the base locale (e.g., 'en' from 'en-US')
+
+  try {
+    const { messages } = await import(`../locales/${localeDir}/messages.ts`);
+    i18n.load(locale, messages);
+    i18n.activate(locale);
+  } catch (err) {
+    console.error(`Failed to load locale ${locale}:`, err);
+  }
 }

@@ -3,7 +3,10 @@ import { useEffect, useState } from 'react';
 
 import { t } from '@lingui/core/macro';
 import { useShallow } from 'zustand/react/shallow';
-import { getSupportedLanguages } from '../../contexts/LanguageContext';
+import {
+  activateLocale,
+  getSupportedLanguages
+} from '../../contexts/LanguageContext';
 import { useLocalState } from '../../states/LocalState';
 
 export function LanguageSelect({ width = 80 }: Readonly<{ width?: number }>) {
@@ -28,8 +31,8 @@ export function LanguageSelect({ width = 80 }: Readonly<{ width?: number }>) {
       label: languages[key as string]
     }));
     setLangOptions(newLangOptions);
-
     setValue(locale);
+    activateLocale(locale); // Ensure the locale is activated on component load
   }, [locale]);
 
   return (
