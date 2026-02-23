@@ -1,6 +1,7 @@
 import { Select } from '@mantine/core';
 import { useEffect, useState } from 'react';
 
+import { t } from '@lingui/core/macro';
 import { useShallow } from 'zustand/react/shallow';
 import { getSupportedLanguages } from '../../contexts/LanguageContext';
 import { useLocalState } from '../../states/LocalState';
@@ -27,14 +28,22 @@ export function LanguageSelect({ width = 80 }: Readonly<{ width?: number }>) {
       label: languages[key as string]
     }));
     setLangOptions(newLangOptions);
+
     setValue(locale);
   }, [locale]);
 
   return (
     <Select
       w={width}
-      data={langOptions}
+      data={[
+        {
+          value: '',
+          label: t`Default Language`
+        },
+        ...langOptions
+      ]}
       value={value}
+      defaultValue={''}
       onChange={setValue}
       searchable
       aria-label='Select language'
