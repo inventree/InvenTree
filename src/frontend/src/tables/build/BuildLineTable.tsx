@@ -92,7 +92,9 @@ export function BuildLineSubTable({
       },
       {
         accessor: 'stock_item_detail.batch',
-        title: t`Batch`
+        title: t`Batch`,
+        copyable: true,
+        copyAccessor: 'stock_item_detail.batch'
       },
       LocationColumn({
         accessor: 'location_detail'

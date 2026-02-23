@@ -115,7 +115,9 @@ export default function BuildAllocatedStockTable({
         title: t`Batch Code`,
         sortable: false,
         switchable: true,
-        render: (record: any) => record?.stock_item_detail?.batch
+        render: (record: any) => record?.stock_item_detail?.batch,
+        copyable: true,
+        copyAccessor: 'stock_item_detail.batch'
       },
       DecimalColumn({
         accessor: 'stock_item_detail.quantity',

@@ -146,7 +146,9 @@ export default function SalesOrderAllocationTable({
         title: t`Batch Code`,
         sortable: true,
         switchable: true,
-        render: (record: any) => record?.item_detail?.batch
+        render: (record: any) => record?.item_detail?.batch,
+        copyable: true,
+        copyAccessor: 'item_detail.batch'
       },
       {
         accessor: 'available',

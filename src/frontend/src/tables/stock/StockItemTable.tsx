@@ -79,7 +79,8 @@ function stockItemTableColumns({
     StatusColumn({ model: ModelType.stockitem }),
     {
       accessor: 'batch',
-      sortable: true
+      sortable: true,
+      copyable: true
     },
     LocationColumn({
       hidden: !showLocation,

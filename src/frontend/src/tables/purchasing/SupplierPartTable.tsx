@@ -122,7 +122,7 @@ export function SupplierPartTable({
         title: t`MPN`,
         render: (record: any) => record?.manufacturer_part_detail?.MPN,
         copyable: true,
-        copyAccessor: 'record.manufacturer_part_detail.MPN'
+        copyAccessor: 'manufacturer_part_detail.MPN'
       },
       BooleanColumn({
         accessor: 'primary',
