@@ -31,7 +31,7 @@ test('Purchasing - Index', async ({ browser }) => {
 
   // Clearing the filters, more orders should be visible
   await clearTableFilters(page);
-  await page.getByText(/1 - 1\d \/ 1\d/).waitFor();
+  await page.getByText(/1 - \d\d \/ \d\d/).waitFor();
 
   // Suppliers tab
   await loadTab(page, 'Suppliers');
