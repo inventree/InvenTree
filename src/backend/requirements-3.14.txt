@@ -89,9 +89,9 @@ bcrypt==5.0.0 \
     # via
     #   -c src/backend/requirements.txt
     #   paramiko
-bleach[css]==6.3.0 \
-    --hash=sha256:6f3b91b1c0a02bb9a78b5a454c92506aa0fdf197e1d5e114d2e00c6f64306d22 \
-    --hash=sha256:fe10ec77c93ddf3d13a73b035abaac7a9f5e436513864ccdad516693213c65d6
+bleach==4.1.0 \
+    --hash=sha256:0900d8b37eba61a802ee40ac0061f8c2b5dee29c1927dd1d233e075ebf5a71da \
+    --hash=sha256:4d2651ab93271d1129ac9cbc679f524565cc8a1b791909c4a51eac4446a15994
     # via
     #   -c src/backend/requirements.txt
     #   django-markdownify
@@ -615,9 +615,9 @@ django-maintenance-mode==0.22.0 \
     # via
     #   -c src/backend/requirements.txt
     #   -r src/backend/requirements.in
-django-markdownify==0.9.6 \
-    --hash=sha256:9863b2bfa6d159ad1423dc93bf0d6eadc6413776de304049aa9fcfa5edd2ce1c \
-    --hash=sha256:edcf47b2026d55a8439049d35c8b54e11066a4856c4fad1060e139cb3d2eee52
+django-markdownify==0.9.1 \
+    --hash=sha256:06ff2994ff09ce030b50de8c6fc5b89b9c25a66796948aff55370716ca1233af \
+    --hash=sha256:24ba68b8a5996b6ec9632d11a3fd2e7159cb7e6becd3104e0a9372b5a2a148ef
     # via
     #   -c src/backend/requirements.txt
     #   -r src/backend/requirements.in
@@ -1431,6 +1431,7 @@ packaging==26.0 \
     --hash=sha256:b36f1fef9334a5588b4166f8bcd26a14e521f2b55e6b9de3aaa80d3ff7a37529
     # via
     #   -c src/backend/requirements.txt
+    #   bleach
     #   gunicorn
     #   opentelemetry-instrumentation
 paramiko==4.0.0 \
@@ -2070,6 +2071,7 @@ six==1.17.0 \
     --hash=sha256:ff70335d468e7eb6ec65b95b99d3a2836546063f63acc5171de367e834932a81
     # via
     #   -c src/backend/requirements.txt
+    #   bleach
     #   python-dateutil
 sqlparse==0.5.5 \
     --hash=sha256:12a08b3bf3eec877c519589833aed092e2444e68240a3577e8e26148acc7b1ba \
@@ -2090,12 +2092,11 @@ tablib[xls, xlsx, yaml]==3.9.0 \
     # via
     #   -c src/backend/requirements.txt
     #   -r src/backend/requirements.in
-tinycss2==1.4.0 \
-    --hash=sha256:10c0972f6fc0fbee87c3edb76549357415e94548c1ae10ebccdea16fb404a9b7 \
-    --hash=sha256:3a49cf47b7675da0b15d0c6e1df8df4ebd96e9394bb905a5775adb0d884c5289
+tinycss2==1.5.1 \
+    --hash=sha256:3415ba0f5839c062696996998176c4a3751d18b7edaaeeb658c9ce21ec150661 \
+    --hash=sha256:d339d2b616ba90ccce58da8495a78f46e55d4d25f9fd71dfd526f07e7d53f957
     # via
     #   -c src/backend/requirements.txt
-    #   bleach
     #   cssselect2
     #   weasyprint
 tinyhtml5==2.0.0 \
@@ -2149,9 +2150,9 @@ wcwidth==0.6.0 \
     #   -c src/backend/requirements.txt
     #   blessed
     #   prettytable
-weasyprint==66.0 \
-    --hash=sha256:82b0783b726fcd318e2c977dcdddca76515b30044bc7a830cc4fbe717582a6d0 \
-    --hash=sha256:da71dc87dc129ac9cffdc65e5477e90365ab9dbae45c744014ec1d06303dde40
+weasyprint==68.0 \
+    --hash=sha256:447f40898b747cb44ac31a5d493d512e7441fd56e13f63744c099383bbf9cda9 \
+    --hash=sha256:c2cb40c71b50837c5971f00171c9e4078e8c9912dd7c217f3e90e068f11e8aa1
     # via
     #   -c src/backend/requirements.txt
     #   -r src/backend/requirements.in
