@@ -107,6 +107,18 @@ export function PartColumn(props: PartColumnProps): TableColumn {
   };
 }
 
+export function IPNColumn(props: TableColumnProps): TableColumn {
+  return {
+    accessor: 'part_detail.IPN',
+    sortable: true,
+    ordering: 'IPN',
+    switchable: true,
+    title: t`IPN`,
+    copyable: true,
+    ...props
+  };
+}
+
 export type StockColumnProps = TableColumnProps & {
   nullMessage?: string | ReactNode;
 };

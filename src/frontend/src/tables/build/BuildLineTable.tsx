@@ -44,6 +44,7 @@ import {
   CategoryColumn,
   DecimalColumn,
   DescriptionColumn,
+  IPNColumn,
   LocationColumn,
   PartColumn,
   RenderPartColumn
@@ -332,12 +333,7 @@ export default function BuildLineTable({
           );
         }
       }),
-      {
-        accessor: 'part_detail.IPN',
-        sortable: true,
-        ordering: 'IPN',
-        title: t`IPN`
-      },
+      IPNColumn({}),
       CategoryColumn({
         accessor: 'category_detail',
         defaultVisible: false,

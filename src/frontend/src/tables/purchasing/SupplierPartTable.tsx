@@ -32,6 +32,7 @@ import {
   CompanyColumn,
   DecimalColumn,
   DescriptionColumn,
+  IPNColumn,
   LinkColumn,
   NoteColumn,
   PartColumn
@@ -92,13 +93,7 @@ export function SupplierPartTable({
         switchable: !!partId,
         part: 'part_detail'
       }),
-      {
-        accessor: 'part_detail.IPN',
-        title: t`IPN`,
-        sortable: true,
-        ordering: 'IPN',
-        switchable: true
-      },
+      IPNColumn({}),
       {
         accessor: 'supplier',
         sortable: true,

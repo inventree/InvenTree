@@ -24,6 +24,7 @@ import { useUserState } from '../../states/UserState';
 import {
   DateColumn,
   DescriptionColumn,
+  IPNColumn,
   LocationColumn,
   PartColumn,
   StatusColumn,
@@ -59,12 +60,7 @@ function stockItemTableColumns({
       accessor: 'part',
       part: 'part_detail'
     }),
-    {
-      accessor: 'part_detail.IPN',
-      title: t`IPN`,
-      sortable: true,
-      ordering: 'IPN'
-    },
+    IPNColumn({}),
     {
       accessor: 'part_detail.revision',
       title: t`Revision`,

@@ -22,6 +22,7 @@ import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import {
   DecimalColumn,
+  IPNColumn,
   LocationColumn,
   PartColumn,
   ReferenceColumn,
@@ -99,14 +100,9 @@ export default function BuildAllocatedStockTable({
         hidden: !showPartInfo,
         switchable: false
       }),
-      {
-        accessor: 'part_detail.IPN',
-        ordering: 'IPN',
-        hidden: !showPartInfo,
-        title: t`IPN`,
-        sortable: true,
-        switchable: true
-      },
+      IPNColumn({
+        hidden: !showPartInfo
+      }),
       {
         hidden: !showPartInfo,
         accessor: 'bom_reference',
