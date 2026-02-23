@@ -60,7 +60,7 @@ export default function Calendar({
   const [locale] = useLocalState(useShallow((s) => [s.language]));
 
   // Ensure underscore is replaced with dash
-  const calendarLocale = useMemo(() => locale.replace('_', '-'), [locale]);
+  const calendarLocale = useMemo(() => locale?.replace('_', '-'), [locale]);
 
   const selectMonth = useCallback(
     (date: DateValue) => {
