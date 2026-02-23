@@ -460,6 +460,7 @@ export function DescriptionColumn(props: TableColumnProps): TableColumn {
     sortable: false,
     switchable: true,
     minWidth: '200px',
+    copyable: true,
     ...props
   };
 }
