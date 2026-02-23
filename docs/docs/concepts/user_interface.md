@@ -296,6 +296,6 @@ If a user does not have permission to access a particular feature or section of 
 
 The InvenTree user interface supports multiple languages, allowing users to interact with the system in their preferred language.
 
-The default system language can by configured by the system administrator in the [server configuration options](../start/config.md#basic-options).
+The default system language can be configured by the system administrator in the [server configuration options](../start/config.md#basic-options).
 
 Additionally, users can select their preferred language in their [user settings](../settings/user.md), allowing them to override the system default language with their own choice. This provides a personalized experience for each user, ensuring that they can interact with the system in the language they are most comfortable with.
