@@ -538,9 +538,9 @@ django==5.2.11 \
     #   djangorestframework
     #   djangorestframework-simplejwt
     #   drf-spectacular
-django-allauth[headless, mfa, openid, saml, socialaccount]==65.13.1 \
-    --hash=sha256:2887294beedfd108b4b52ebd182e0ed373deaeb927fc5a22f77bbde3174704a6 \
-    --hash=sha256:2af0d07812f8c1a8e3732feaabe6a9db5ecf3fad6b45b6a0f7fd825f656c5a15
+django-allauth[headless, mfa, openid, saml, socialaccount]==65.14.3 \
+    --hash=sha256:1d8e1127bdffceb8001bdd9bafbf97661f81e92f4b7bd4f6e799167b0311286d \
+    --hash=sha256:548eef76ab85f6e48f46f98437abf22acf0e834f73e9915fb6cc3f31a0dcdf4d
     # via
     #   -c src/backend/requirements.txt
     #   -r src/backend/requirements.in
