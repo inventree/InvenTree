@@ -18,6 +18,7 @@ import {
   CreationDateColumn,
   DateColumn,
   DescriptionColumn,
+  LinkColumn,
   PartColumn,
   ProjectCodeColumn,
   ReferenceColumn,
@@ -150,7 +151,8 @@ export function BuildOrderTable({
         ordering: 'issued_by',
         title: t`Issued By`
       }),
-      ResponsibleColumn({})
+      ResponsibleColumn({}),
+      LinkColumn({})
     ];
   }, [parentBuildId, globalSettings]);
 
