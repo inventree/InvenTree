@@ -701,9 +701,13 @@ class PartOptionsAPITest(InvenTreeAPITestCase):
             'ordering': 'Bestellt',
             'stock_item_count': 'Lagerartikel',
         }
-
+        from django.utils.translation import get_language
         for field, value in translated.items():
             label = response.data['actions']['POST'][field]['label']
+            print("\nFIELD:", field)
+            print("ACTIVE LANGUAGE:", get_language())
+            print("LABEL RECEIVED:", label)
+            print("EXPECTED VALUE:", value)
             self.assertEqual(label, value)
 
     def test_category(self):

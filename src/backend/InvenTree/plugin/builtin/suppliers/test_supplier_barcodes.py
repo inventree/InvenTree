@@ -180,13 +180,17 @@ class SupplierBarcodePOReceiveTests(InvenTreeAPITestCase):
         """Create supplier part and purchase_order."""
         super().setUp()
 
+        from tenant.models import Tenant
+        self.tenant, _ = Tenant.objects.get_or_create(
+            name="Test Tenant"
+        )
         registry.set_plugin_state('digikeyplugin', True)
         registry.set_plugin_state('mouserplugin', True)
         registry.set_plugin_state('lcscplugin', True)
         registry.set_plugin_state('tmeplugin', True)
 
-        self.loc_1 = StockLocation.objects.create(name='Location 1')
-        self.loc_2 = StockLocation.objects.create(name='Location 2')
+        self.loc_1 = StockLocation.objects.create(name='Location 1', tenant=self.tenant)
+        self.loc_2 = StockLocation.objects.create(name='Location 2', tenant=self.tenant)
 
         part = Part.objects.create(name='Test Part', description='Test Part')
         digikey_supplier = Company.objects.create(name='Supplier', is_supplier=True)
@@ -197,9 +201,10 @@ class SupplierBarcodePOReceiveTests(InvenTreeAPITestCase):
         mouser = Company.objects.create(name='Mouser Test', is_supplier=True)
         mpart = ManufacturerPart.objects.create(
             part=part, manufacturer=manufacturer, MPN='MC34063ADR'
-        )
+        )   
 
         self.purchase_order1 = PurchaseOrder.objects.create(
+            tenant=self.tenant,
             supplier_reference='72991337',
             supplier=digikey_supplier,
             destination=self.loc_1,
@@ -222,7 +227,7 @@ class SupplierBarcodePOReceiveTests(InvenTreeAPITestCase):
             self.purchase_order1.add_line_item(supplier_part, 8, destination=self.loc_2)
 
         self.purchase_order2 = PurchaseOrder.objects.create(
-            reference='P0-1337', supplier=mouser, destination=self.loc_1
+            tenant=self.tenant, reference='P0-1337', supplier=mouser, destination=self.loc_1
         )
 
         self.purchase_order2.place_order()
@@ -319,7 +324,7 @@ class SupplierBarcodePOReceiveTests(InvenTreeAPITestCase):
 
     def test_receive_stock_location(self):
         """Test receiving an item when the location is provided."""
-        stock_location = StockLocation.objects.create(name='Test Location')
+        stock_location = StockLocation.objects.create(name='Test Location', tenant=self.tenant)
 
         url = reverse('api-barcode-po-receive')
 
@@ -342,8 +347,8 @@ class SupplierBarcodePOReceiveTests(InvenTreeAPITestCase):
 
     def test_receive_default_line_item_location(self):
         """Test receiving an item into the default line_item location."""
-        StockLocation.objects.create(name='Test Location 1')
-        stock_location2 = StockLocation.objects.create(name='Test Location 2')
+        StockLocation.objects.create(name='Test Location 1',tenant=self.tenant)
+        stock_location2 = StockLocation.objects.create(name='Test Location 2', tenant=self.tenant)
 
         line_item = PurchaseOrderLineItem.objects.filter(part__SKU='42')[0]
         line_item.destination = stock_location2
@@ -363,8 +368,8 @@ class SupplierBarcodePOReceiveTests(InvenTreeAPITestCase):
 
     def test_receive_default_part_location(self):
         """Test receiving an item into the default part location."""
-        StockLocation.objects.create(name='Test Location 1')
-        stock_location2 = StockLocation.objects.create(name='Test Location 2')
+        StockLocation.objects.create(name='Test Location 1', tenant=self.tenant)
+        stock_location2 = StockLocation.objects.create(name='Test Location 2', tenant=self.tenant)
 
         # Ensure no other fallback locations are set
         # This is to ensure that the part location is used instead
@@ -393,8 +398,8 @@ class SupplierBarcodePOReceiveTests(InvenTreeAPITestCase):
 
     def test_receive_specific_order_and_location(self):
         """Test receiving an item from a specific order into a specific location."""
-        StockLocation.objects.create(name='Test Location 1')
-        stock_location2 = StockLocation.objects.create(name='Test Location 2')
+        StockLocation.objects.create(name='Test Location 1', tenant=self.tenant)
+        stock_location2 = StockLocation.objects.create(name='Test Location 2', tenant=self.tenant)
 
         url = reverse('api-barcode-po-receive')
         barcode = MOUSER_BARCODE.replace('\x1dKP0-1337', '')
