@@ -66,12 +66,14 @@ test('Parts - Tabs', async ({ browser }) => {
 });
 
 test('Parts - Manufacturer Parts', async ({ browser }) => {
-  const page = await doCachedLogin(browser, { url: 'part/84/suppliers' });
+  const page = await doCachedLogin(browser, { url: 'part/84/' });
 
-  await page.getByText('1551ACLR - 1551ACLR').waitFor();
-
+  // Load the "suppliers" tab
   await loadTab(page, 'Suppliers');
   await page.getByText('Hammond Manufacturing').click();
+
+  // Wait for manufacturer part page to load
+  await page.getByText('1551ACLR - 1551ACLR').waitFor();
   await loadTab(page, 'Parameters');
   await loadTab(page, 'Attachments');
 });
