@@ -285,7 +285,9 @@ export function InvenTreeTable<T extends Record<string, any>>({
           }
           const copyValue = rawCopyValue == null ? '' : String(rawCopyValue);
 
-          return <CopyableCell value={copyValue}>{content}</CopyableCell>;
+          if (!!copyValue) {
+            return <CopyableCell value={copyValue}>{content}</CopyableCell>;
+          }
         };
       }
 
