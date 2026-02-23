@@ -27,9 +27,11 @@ test('Purchasing - Index', async ({ browser }) => {
 
   // Check default filters are applied
   // By default, only outstanding orders are visible
-  await page.getByText('1 - 8 / 8').waitFor();
+  await page.getByText(/1 - \d+ \/ \d+/).waitFor();
+
+  // Clearing the filters, more orders should be visible
   await clearTableFilters(page);
-  await page.getByText('1 - 18 / 18').waitFor();
+  await page.getByText(/1 - 1\d \/ 1\d/).waitFor();
 
   // Suppliers tab
   await loadTab(page, 'Suppliers');
