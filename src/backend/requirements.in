@@ -14,8 +14,6 @@ django-ical                             # iCal export for calendar views
 django-maintenance-mode                 # Shut down application while reloading etc.
 django-mailbox                          # Email scraping
 django-markdownify                      # Markdown rendering
-django-mptt                             # Modified Preorder Tree Traversal
-django-markdownify                      # Markdown rendering
 django-money                            # Django app for currency management
 django-mptt                             # Modified Preorder Tree Traversal
 django-redis>=5.0.0                     # Redis integration
@@ -39,6 +37,7 @@ drf-spectacular                         # DRF API documentation
 feedparser                              # RSS newsfeed parser
 gunicorn                                # Gunicorn web server
 jinja2                                  # Jinja2 templating engine
+nh3                                     # html sanitizer
 pdf2image                               # PDF to image conversion
 pillow                                  # Image manipulation
 pint                                    # Unit conversion
