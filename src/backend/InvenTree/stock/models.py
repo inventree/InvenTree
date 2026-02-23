@@ -65,6 +65,8 @@ class StockLocationType(InvenTree.models.MetadataMixin, models.Model):
         icon: icon class
     """
 
+    IMPORT_ID_FIELDS = ['name']
+
     class Meta:
         """Metaclass defines extra model properties."""
 
@@ -134,8 +136,8 @@ class StockLocation(
     """
 
     ITEM_PARENT_KEY = 'location'
-
     EXTRA_PATH_FIELDS = ['icon']
+    IMPORT_ID_FIELDS = ['pathstring', 'name']
 
     objects = TreeManager()
 
@@ -434,6 +436,7 @@ class StockItem(
         packaging: Description of how the StockItem is packaged (e.g. "reel", "loose", "tape" etc)
     """
 
+    IMPORT_ID_FIELDS = ['serial']
     STATUS_CLASS = StockStatus
 
     class Meta:

@@ -17,9 +17,9 @@ django-auth-ldap==5.3.0 \
     --hash=sha256:743d8107b146240b46f7e97207dc06cb11facc0cd70dce490b7ca09dd5643d19 \
     --hash=sha256:aa880415983149b072f876d976ef8ec755a438090e176817998263a6ed9e1038
     # via -r contrib/container/requirements.in
-gunicorn==25.0.3 \
-    --hash=sha256:aca364c096c81ca11acd4cede0aaeea91ba76ca74e2c0d7f879154db9d890f35 \
-    --hash=sha256:b53a7fff1a07b825b962af320554de44ae77a26abfa373711ff3f83d57d3506d
+gunicorn==25.1.0 \
+    --hash=sha256:1426611d959fa77e7de89f8c0f32eed6aa03ee735f98c01efba3e281b1c47616 \
+    --hash=sha256:d0b1236ccf27f72cfe14bce7caadf467186f19e865094ca84221424e839b8b8b
     # via
     #   -c src/backend/requirements.txt
     #   -r contrib/container/requirements.in
@@ -219,9 +219,9 @@ pyyaml==6.0.3 \
     # via
     #   -c src/backend/requirements.txt
     #   -r contrib/container/requirements.in
-setuptools==80.10.2 \
-    --hash=sha256:8b0e9d10c784bf7d262c4e5ec5d4ec94127ce206e8738f29a437945fbc219b70 \
-    --hash=sha256:95b30ddfb717250edb492926c92b5221f7ef3fbcc2b07579bcd4a27da21d0173
+setuptools==82.0.0 \
+    --hash=sha256:22e0a2d69474c6ae4feb01951cb69d515ed23728cf96d05513d36e42b62b37cb \
+    --hash=sha256:70b18734b607bd1da571d097d236cfcfacaf01de45717d59e6e04b96877532e0
     # via
     #   -c src/backend/requirements.txt
     #   -r contrib/container/requirements.in

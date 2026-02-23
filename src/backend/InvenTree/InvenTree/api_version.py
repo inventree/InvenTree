@@ -1,10 +1,22 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 454
+INVENTREE_API_VERSION = 457
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v457 -> 2026-02-11 : https://github.com/inventree/InvenTree/pull/10887
+    - Extend the "auto allocate" wizard API to include tracked items
+
+v456 -> 2026-02-20 : https://github.com/inventree/InvenTree/pull/11303
+    - Adds "primary" field to the SupplierPart API
+    - Removes "default_supplier" field from the Part API
+
+v455 -> 2026-02-19 : https://github.com/inventree/InvenTree/pull/11383
+    - Adds "exists_for_model_id" filter to ParameterTemplate API endpoint
+    - Adds "exists_for_related_model" filter to ParameterTemplate API endpoint
+    - Adds "exists_for_related_model_id" filter to ParameterTemplate API endpoint
 
 v454 -> 2026-02-19 : https://github.com/inventree/InvenTree/pull/11379
     - Adds "purchase_price" ordering option to StockItem API endpoint

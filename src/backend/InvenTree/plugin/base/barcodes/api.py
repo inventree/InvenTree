@@ -533,6 +533,8 @@ class BarcodePOReceive(BarcodeView):
         # Now, look just for "supplier-barcode" plugins
         plugins = registry.with_mixin(PluginMixinEnum.SUPPLIER_BARCODE)
 
+        plugin_slug = None
+
         plugin_response = None
 
         plugin_error = None
@@ -557,31 +559,33 @@ class BarcodePOReceive(BarcodeView):
                     line_item=line_item,
                     auto_allocate=auto_allocate,
                 )
-            
+
             except Exception:
                 log_error('BarcodePOReceive.handle_barcode', plugin=current_plugin.slug)
                 continue
-            
-            no_match = result.get('no_match',True)
-            
+
+            no_match = result.get('no_match', True)
+
             # No_Match Determines if it found a exact match for all the required fields from scan_recieve_item
             if no_match is True:
-
                 supplier_found = False
 
                 try:
+                    plugin_slug = current_plugin.slug
                     supplier_purchase_order = result.get('PO')
                     plugin_supplier = result.get('supplier')
                     supplier_part = result.get('supplier_part')
                 except KeyError as e:
-                    log_error('BarcodePOReceive.handle_barcode debugresponse: KeyError {e}')
+                    log_error(
+                        f'BarcodePOReceive.handle_barcode debugresponse: KeyError {e}'
+                    )
                     continue
 
                 # Supplier does not have associated Supplier ID
                 if plugin_supplier is None:
-                    no_supplier_plugin_error.append(current_plugin.slug)
+                    no_supplier_plugin_error.append(plugin_slug)
                     continue
-                
+
                 # No Purchase Order or Supplier Part Found
                 if supplier_purchase_order is None and supplier_part is None:
                     continue
@@ -601,12 +605,12 @@ class BarcodePOReceive(BarcodeView):
                 # Supplier for PO or Supplier part in barcode was found
                 if supplier_found is True:
                     # Adds info on for what was found in the barcode
-                    response[current_plugin.slug + "_debug"] = {
-                            'purchase_order':supplier_purchase_order,
-                            'no_match':no_match,
-                            'supplier':plugin_supplier,
-                            'supplier_part': supplier_part,
-                        }
+                    response['supplier_matches'] = {
+                        'purchase_order': supplier_purchase_order,
+                        'no_match': no_match,
+                        'supplier': plugin_supplier,
+                        'supplier_part': supplier_part,
+                    }
 
             if 'error' in result:
                 logger.info(

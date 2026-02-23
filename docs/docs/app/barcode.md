@@ -65,7 +65,7 @@ Transfer the currently selected stock location into another location. Scanning a
 
 #### Scan Received Parts
 
-Receive incoming purchase order items into the selected location. Scanning a *new* barcode which is associated with an item in an incoming purchase order will receive the item into the selected location. 
+Receive incoming purchase order items into the selected location. Scanning a *new* barcode which is associated with an item in an incoming purchase order will receive the item into the selected location.
 
 *Note: Both purchase order number and supplier SKU's are required to be found on the barcode for this function to find the associated line item. Missing one will lead to an error.*
 
