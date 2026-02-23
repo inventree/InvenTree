@@ -501,7 +501,8 @@ class Order(
     )
 
     updated_at = models.DateTimeField(
-        default=InvenTree.helpers.current_time,
+        null=True,
+        blank=True,
         verbose_name=_('Updated At'),
         help_text=_('Timestamp of last update'),
     )

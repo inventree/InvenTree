@@ -586,9 +586,9 @@ class OrderUpdatedAtTest(TestCase):
     """Tests to verify that the updated_at field is correctly maintained on all order types."""
 
     def setUp(self):
-        """Create minimal objects for all three order types."""
-        self.supplier = Company.objects.create(name='Test Supplier', is_supplier=True)
-        self.customer = Company.objects.create(name='Test Customer', is_customer=True)
+        """Set up objects for all three order types."""
+        self.supplier = Company.objects.filter(is_supplier=True).first()
+        self.customer = Company.objects.filter(is_customer=True).first()
 
         self.po = PurchaseOrder.objects.create(
             reference='PO-TEST-001', supplier=self.supplier
@@ -608,14 +608,14 @@ class OrderUpdatedAtTest(TestCase):
         return instance.__class__.objects.get(pk=instance.pk)
 
     def test_updated_at_set_on_save(self):
-        """updated_at should be populated when the order is first saved."""
+        """updated_at should be populated after the order is saved."""
         for instance in [self.po, self.so, self.ro]:
-            self.assertIsNotNone(instance.updated_at)
+            self.assertIsNotNone(self._refresh(instance).updated_at)
 
     def test_updated_at_changes_on_save(self):
         """updated_at should advance when the order is saved again."""
         for instance in [self.po, self.so, self.ro]:
-            original = instance.updated_at
+            original = self._refresh(instance).updated_at
 
             instance.description = 'Updated description'
             instance.save()

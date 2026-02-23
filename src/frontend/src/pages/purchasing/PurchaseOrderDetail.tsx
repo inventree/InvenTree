@@ -311,7 +311,8 @@ export default function PurchaseOrderDetail() {
         label: t`Last Updated`,
         icon: 'calendar',
         copy: true,
-        showTime: true
+        showTime: true,
+        hidden: !order.updated_at
       }
     ];
 
