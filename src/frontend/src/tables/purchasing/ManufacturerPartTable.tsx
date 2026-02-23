@@ -54,17 +54,28 @@ export function ManufacturerPartTable({
     return tId;
   }, [manufacturerId, partId]);
 
-  const table = useTable(tableId, {
-    initialFilters: [
-      {
+  const initialFilters = useMemo(() => {
+    const filters: TableFilter[] = [];
+
+    if (!manufacturerId) {
+      filters.push({
         name: 'manufacturer_active',
         value: 'true'
-      },
-      {
+      });
+    }
+
+    if (!partId) {
+      filters.push({
         name: 'part_active',
         value: 'true'
-      }
-    ]
+      });
+    }
+
+    return filters;
+  }, [manufacturerId, partId]);
+
+  const table = useTable(tableId, {
+    initialFilters: initialFilters
   });
 
   const user = useUserState();

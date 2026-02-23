@@ -315,6 +315,8 @@ export function StockItemTable({
   showLocation = true,
   showPricing = true,
   allowReturn = false,
+  initialFilters,
+  defaultInStock = true,
   tableName = 'stockitems'
 }: Readonly<{
   params?: any;
@@ -322,15 +324,32 @@ export function StockItemTable({
   showLocation?: boolean;
   showPricing?: boolean;
   allowReturn?: boolean;
+  defaultInStock?: boolean | null;
+  initialFilters?: TableFilter[];
   tableName: string;
 }>) {
-  const table = useTable(tableName, {
-    initialFilters: [
-      {
+  const initialStockFilters: TableFilter[] = useMemo(() => {
+    if (!!initialFilters) {
+      return initialFilters;
+    }
+
+    const filters: TableFilter[] = [];
+
+    // Optionally set the default "in_stock" filter
+    // Typically, we default to only displaying "in_stock" items,
+    // but this can be overridden by the caller if required
+    if (defaultInStock != undefined && defaultInStock != null) {
+      filters.push({
         name: 'in_stock',
-        value: 'true'
-      }
-    ]
+        value: defaultInStock ? 'true' : 'false'
+      });
+    }
+
+    return filters;
+  }, [defaultInStock, initialFilters]);
+
+  const table = useTable(tableName, {
+    initialFilters: initialStockFilters
   });
 
   const user = useUserState();

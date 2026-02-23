@@ -25,6 +25,12 @@ test('Purchasing - Index', async ({ browser }) => {
   await showCalendarView(page);
   await showTableView(page);
 
+  // Check default filters are applied
+  // By default, only outstanding orders are visible
+  await page.getByText('1 - 8 / 8').waitFor();
+  await clearTableFilters(page);
+  await page.getByText('1 - 18 / 18').waitFor();
+
   // Suppliers tab
   await loadTab(page, 'Suppliers');
   await showParametricView(page);
