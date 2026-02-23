@@ -264,6 +264,7 @@ def main() -> bool:
 
     # Determine which docker tag we are going to use
     docker_tags: Optional[list[str]] = None
+    pkg_channel = None
 
     if GITHUB_REF_TYPE == 'tag':
         # GITHUB_REF should be of the form /refs/heads/<tag>
@@ -278,10 +279,14 @@ def main() -> bool:
 
         docker_tags = [version_tag, 'stable'] if highest_release else [version_tag]
 
+        # Add release-line tag
+        pkg_channel = '.'.join(version_tag.split('.')[:2]) + '.x'
+
     elif GITHUB_REF_TYPE == 'branch':
         # Otherwise we know we are targeting the 'master' branch
         docker_tags = ['latest']
         highest_release = False
+        pkg_channel = GITHUB_BASE_REF
 
     else:
         print('Unsupported branch / version combination:')
@@ -310,6 +315,8 @@ def main() -> bool:
 
         if GITHUB_REF_TYPE == 'tag' and highest_release:
             env_file.write('stable_release=true\n')
+
+        env_file.write(f'pkg_channel={pkg_channel}\n')
     return True
 
 

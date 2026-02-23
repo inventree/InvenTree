@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+[#11405](https://github.com/inventree/InvenTree/pull/11405) adds default table filters, which hide inactive items by default. The default table filters are overridden by user filter selection, and only apply to the table view initially presented to the user. This means that users can still view inactive items if they choose to, but they will not be shown by default.
+
 [#11222](https://github.com/inventree/InvenTree/pull/11222) adds support for data import using natural keys, allowing for easier association of related objects without needing to know their internal database IDs.
 
 [#11383](https://github.com/inventree/InvenTree/pull/11383) adds "exists_for_model_id", "exists_for_related_model", and "exists_for_related_model_id" filters to the ParameterTemplate API endpoint. These filters allow users to check for the existence of parameters associated with specific models or related models, improving the flexibility and usability of the API.

@@ -58,7 +58,14 @@ export function SalesOrderTable({
   partId?: number;
   customerId?: number;
 }>) {
-  const table = useTable(!!partId ? 'salesorder-part' : 'salesorder-index');
+  const table = useTable(!!partId ? 'salesorder-part' : 'salesorder-index', {
+    initialFilters: [
+      {
+        name: 'outstanding',
+        value: 'true'
+      }
+    ]
+  });
   const user = useUserState();
 
   const tableFilters: TableFilter[] = useMemo(() => {

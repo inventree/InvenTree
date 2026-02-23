@@ -60,7 +60,14 @@ export function PurchaseOrderTable({
   supplierPartId?: number;
   externalBuildId?: number;
 }>) {
-  const table = useTable('purchase-order');
+  const table = useTable('purchase-order', {
+    initialFilters: [
+      {
+        name: 'outstanding',
+        value: 'true'
+      }
+    ]
+  });
   const user = useUserState();
 
   const tableFilters: TableFilter[] = useMemo(() => {
