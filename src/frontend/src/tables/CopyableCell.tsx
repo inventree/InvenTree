@@ -31,10 +31,19 @@ export function CopyableCell({
       {children}
       {isHovered && value != null && (
         <span
+          style={{ position: 'relative' }}
           onClick={(e) => e.stopPropagation()}
           onKeyDown={(e) => e.stopPropagation()}
         >
-          <CopyButton value={value} />
+          <div
+            style={{
+              position: 'absolute',
+              right: 0,
+              transform: 'translateY(-50%)'
+            }}
+          >
+            <CopyButton value={value} variant={'default'} />
+          </div>
         </span>
       )}
     </Group>
