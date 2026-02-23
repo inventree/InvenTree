@@ -54,7 +54,7 @@ export function CopyButton({
               e.preventDefault();
               copy();
             }}
-            variant={variant ?? 'transparent'}
+            variant={copied ? 'transparent' : (variant ?? 'transparent')}
             size={size ?? 'sm'}
           >
             {copied ? (

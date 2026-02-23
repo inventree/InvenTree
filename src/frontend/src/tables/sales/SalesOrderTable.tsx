@@ -147,7 +147,8 @@ export function SalesOrderTable({
       },
       {
         accessor: 'customer_reference',
-        title: t`Customer Reference`
+        title: t`Customer Reference`,
+        copyable: true
       },
       DescriptionColumn({}),
       LineItemsProgressColumn({}),
