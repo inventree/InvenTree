@@ -383,7 +383,7 @@ class SupplierBarcodeMixin(BarcodeMixin):
             line_items = purchase_order.lines.filter(part=supplier_part)
             if line_items.count() == 1:
                 line_item = line_items.first()
-            
+
         # If Purchase Order or Supplier Part does not exist, throw debug response
         if debug_response['PO'] is None or debug_response['supplier_part'] is None:
             debug_response['no_match'] = True
