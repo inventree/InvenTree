@@ -586,13 +586,13 @@ class BarcodePOReceive(BarcodeView):
                 if supplier_purchase_order is None and supplier_part is None:
                     continue
 
-                # Purchase Order exists and is found but Supplier part DNE
+                # Purchase Order exists and is found but Supplier part does not exist
                 if supplier_purchase_order != None and supplier_part is None:
                     # Supplier was Found
                     supplier_found = True
                     plugin_error = _('Purchase order Found\rNo supplier Part Match')
 
-                # Supplier Part is Found but Purchase Order DNE
+                # Supplier Part is Found but Purchase Order does not exist
                 elif supplier_purchase_order is None and supplier_part != None:
                     # Supplier was Found
                     supplier_found = True
