@@ -457,6 +457,8 @@ export function LinkColumn(props: TableColumnProps): TableColumn {
     accessor: 'link',
     sortable: false,
     defaultVisible: false,
+    copyable: true,
+    copyAccessor: props.accessor ?? 'link',
     render: (record: any) => {
       const url = resolveItem(record, props.accessor ?? 'link');
 
@@ -490,6 +492,7 @@ export function ReferenceColumn(props: TableColumnProps): TableColumn {
     title: t`Reference`,
     sortable: true,
     switchable: true,
+    copyable: true,
     ...props
   };
 }
@@ -664,6 +667,7 @@ export function DateColumn(props: TableColumnProps): TableColumn {
       formatDate(resolveItem(record, props.accessor ?? 'date'), {
         showTime: props.extra?.showTime
       }),
+    copyable: true,
     ...props
   };
 }
