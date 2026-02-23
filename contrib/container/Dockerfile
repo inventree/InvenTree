@@ -9,8 +9,8 @@
 # - Runs InvenTree web server under django development server
 # - Monitors source files for any changes, and live-reloads server
 
-# Base image last bumped 2026-02-12
-FROM python:3.11-slim-trixie@sha256:0b23cfb7425d065008b778022a17b1551c82f8b4866ee5a7a200084b7e2eafbf AS inventree_base
+# Base image last bumped 2026-02-23
+FROM python:3.14-slim-trixie@sha256:486b8092bfb12997e10d4920897213a06563449c951c5506c2a2cfaf591c599f AS inventree_base
 
 # Build arguments for this image
 ARG commit_tag=""
