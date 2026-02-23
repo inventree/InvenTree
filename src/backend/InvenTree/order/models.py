@@ -1193,6 +1193,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
             exclude=user,
             content=InvenTreeNotificationBodies.ItemsReceived,
             extra_users=line.part.part.get_subscribers(),
+            html_context={'order': self, 'stock_items': stock_items},
         )
 
         # Return a list of the created stock items
