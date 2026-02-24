@@ -793,6 +793,7 @@ def backup(
         'skip_db': 'Do not import database archive (media restore only)',
         'skip_media': 'Do not import media archive (database restore only)',
         'uncompress': 'Uncompress the backup files before restoring (default behavior)',
+        'restore_allow_newer_version': 'Allow restore from a newer version backup (use with caution)',
     }
 )
 def restore(
@@ -804,9 +805,15 @@ def restore(
     skip_db: bool = False,
     skip_media: bool = False,
     uncompress: bool = True,
+    restore_allow_newer_version: bool = False,
 ):
     """Restore the database and media files."""
     base_cmd = '--noinput -v 2'
+
+    env = {}
+
+    if restore_allow_newer_version:
+        env['INVENTREE_BACKUP_RESTORE_ALLOW_NEWER_VERSION'] = 'True'
 
     if uncompress:
         base_cmd += ' --uncompress'
@@ -831,7 +838,7 @@ def restore(
         if db_file:
             cmd += f' -i {db_file}'
 
-        manage(c, cmd)
+        manage(c, cmd, env=env)
 
     if skip_media:
         info('Skipping media restore...')
@@ -842,7 +849,7 @@ def restore(
         if media_file:
             cmd += f' -i {media_file}'
 
-        manage(c, cmd)
+        manage(c, cmd, env=env)
 
 
 @task()
