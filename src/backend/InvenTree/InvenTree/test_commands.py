@@ -119,6 +119,20 @@ class CommandTestCase(TestCase):
             'INVE-E16: Backup being restored was created with a newer version',
             str(cm[1]),
         )
+        # not with allow flag
+        with self.settings(BACKUP_RESTORE_ALLOW_NEWER_VERSION=True):
+            with self.assertLogs() as cm:
+                self.assertTrue(
+                    validate_restore({
+                        **metadata,
+                        'ivt_1_version': '9999',
+                        'ivt_1_version_api': '9999',
+                    })
+                )
+            self.assertIn(
+                'INVE-W13: Backup restore is allowing a restore from a newer version of InvenTree',
+                str(cm[1]),
+            )
 
         # Plugins enabled
         with self.settings(PLUGINS_ENABLED=False):

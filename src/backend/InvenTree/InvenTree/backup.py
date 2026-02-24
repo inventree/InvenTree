@@ -207,12 +207,18 @@ def validate_restore(metadata: InvenTreeBackupMetadata) -> bool | None:
             if int(backup_environment['version_api']) > int(
                 str(current_environment['version_api'])
             ):
-                # TODO - allow override with cli argument or environment variable if user is sure they want to proceed with restore
                 logger.error(
-                    'INVE-E16: Backup being restored was created with a newer version of InvenTree - restore cannot proceed',
+                    'INVE-E16: Backup being restored was created with a newer version of InvenTree - restore cannot proceed. If you are using the invoke task for your restore this warning might be overridden once with `--restore-allow-newer-version`',
                     error_code='INVE-E16',
                 )
-                return False
+                # Check for pass flag to allow restore
+                if not settings.BACKUP_RESTORE_ALLOW_NEWER_VERSION:  # defaults to False
+                    return False
+                else:
+                    logger.warning(
+                        'INVE-W13: Backup restore is allowing a restore from a newer version of InvenTree - this can lead to data loss or corruption',
+                        error_code='INVE-W13',
+                    )
         except ValueError:  # pragma: no cover
             logger.warning(
                 'INVE-W13: Could not parse API version from backup metadata - cannot determine if backup is from newer version',

@@ -103,6 +103,8 @@ This error occurs attempting to run InvenTree on a version of Python which is ol
 
 A potentially critical mismatch between the backup environment and the current restore environment was detected during the restore process. The restore was stopped to prevent potential data loss or corruption. Check the logs for more information about the detected issues.
 
+While using [invoke](../start/invoke.md), this can be overridden with the `--restore-allow-newer-version` flag.
+
 ### INVE-W (InvenTree Warning)
 Warnings - These are non-critical errors which should be addressed when possible.
 

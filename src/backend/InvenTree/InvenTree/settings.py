@@ -267,6 +267,13 @@ DBBACKUP_STORAGE_CONFIG = {
     'OPTIONS': InvenTree.backup.get_backup_storage_options(),
 }
 
+# This can also be overridden with a command line flag --restore-allow-newer-version when running the restore command
+BACKUP_RESTORE_ALLOW_NEWER_VERSION = get_boolean_setting(
+    'INVENTREE_BACKUP_RESTORE_ALLOW_NEWER_VERSION',
+    'backup_restore_allow_newer_version',
+    False,
+)
+
 # Enable django admin interface?
 INVENTREE_ADMIN_ENABLED = get_boolean_setting(
     'INVENTREE_ADMIN_ENABLED', config_key='admin_enabled', default_value=True
