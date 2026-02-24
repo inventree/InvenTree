@@ -2,9 +2,14 @@
 
 from pathlib import Path
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.management import call_command
 from django.test import TestCase
+
+from opentelemetry.instrumentation.sqlite3 import SQLite3Instrumentor
+
+from InvenTree.config import get_testfolder_dir
 
 
 class CommandTestCase(TestCase):
@@ -66,3 +71,61 @@ class CommandTestCase(TestCase):
         output = call_command('remove_mfa', username=my_admin3.username, verbosity=0)
         self.assertEqual(output, 'done')
         self.assertEqual(my_admin3.authenticator_set.all().count(), 0)
+
+    def test_backup_metadata(self):
+        """Test the backup metadata functions."""
+        from InvenTree.backup import (
+            _gather_environment_metadata,
+            _parse_environment_metadata,
+        )
+
+        metadata = _gather_environment_metadata()
+        self.assertIn('ivt_1_version', metadata)
+        self.assertIn('ivt_1_plugins_enabled', metadata)
+
+        parsed = _parse_environment_metadata(metadata)
+        self.assertIn('version', parsed)
+        self.assertIn('plugins_enabled', parsed)
+
+    def test_backup_command_e2e(self):
+        """Test the backup command."""
+        # disable tracing for now
+        if (
+            settings.TRACING_ENABLED
+            and settings.DB_ENGINE == 'django.db.backends.sqlite3'
+        ):
+            print('Disabling tracing for backup command test')
+            SQLite3Instrumentor().uninstrument()
+
+        output_path = get_testfolder_dir().joinpath('backup.zip').resolve()
+
+        # Backup
+        with self.assertLogs() as cm:
+            output = call_command(
+                'dbbackup', noinput=True, verbosity=2, output_path=str(output_path)
+            )
+            self.assertIsNone(output)
+        self.assertIn(f'Writing metadata file to {output_path}', str(cm[1]))
+
+        # Restore
+        with self.assertLogs() as cm:
+            output = call_command(
+                'dbrestore',
+                noinput=True,
+                interactive=False,
+                verbosity=2,
+                input_path=str(output_path),
+            )
+            self.assertIsNone(output)
+        self.assertIn('Using connector from metadata', str(cm[1]))
+
+        # Cleanup the generated backup file and metadata file
+        output_path.unlink()
+        Path(str(output_path) + '.metadata').unlink()
+
+        if (
+            settings.TRACING_ENABLED
+            and settings.DB_ENGINE == 'django.db.backends.sqlite3'
+        ):
+            print('Re-enabling tracing for backup command test')
+            SQLite3Instrumentor().instrument()

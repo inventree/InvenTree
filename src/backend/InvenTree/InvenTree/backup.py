@@ -192,7 +192,7 @@ def validate_restore(metadata: InvenTreeBackupMetadata) -> bool | None:
         )
         return True
 
-    current_environment = _gather_environment_metadata()
+    current_environment = _parse_environment_metadata(_gather_environment_metadata())
     backup_environment = _parse_environment_metadata(metadata)
 
     # Version mismatch
