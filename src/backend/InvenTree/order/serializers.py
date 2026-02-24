@@ -645,7 +645,7 @@ class PurchaseOrderLineItemSerializer(
         help_text=_(
             'Automatically calculate purchase price based on supplier part data'
         ),
-        default=True,
+        default=False,
     )
 
     destination_detail = enable_filter(
