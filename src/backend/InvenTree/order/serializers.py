@@ -475,8 +475,16 @@ class PurchaseOrderSerializer(
                 default=Value(False, output_field=BooleanField()),
             )
         )
-
-        queryset = queryset.prefetch_related('created_by')
+        
+        queryset = queryset.select_related(
+            'supplier',
+            'created_by',
+            'tenant',
+        ).prefetch_related(
+            'lines',
+            'lines__part',
+            'extra_lines',
+        )
 
         return queryset
 

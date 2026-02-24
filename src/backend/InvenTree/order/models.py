@@ -441,19 +441,34 @@ class TaxLineItemMixin(models.Model):
             if not self.is_tax_inclusive
             else self.getPrice() - self.tax_per_item
         )
+        #here bro
+        if priceWithoutTax is None:
+            return 0
         return priceWithoutTax * self.quantity
 
     def calculate_tax_amount(self):
         """Calculate the tax amount for this line item."""
         return self.tax_per_item * self.quantity
 
+    from djmoney.money import Money
     def calculate_price_with_tax(self):
         """Calculate the price with tax for this line item."""
-        return (
-            self.getPrice()
-            if self.is_tax_inclusive
-            else self.getPrice() + self.tax_per_item
-        )
+        price = self.getPrice()
+        tax = self.tax_per_item
+    
+        # If price is invalid, return None
+        if not isinstance(price, Money):
+            return None
+    
+        # If tax inclusive, just return price
+        if self.is_tax_inclusive:
+            return price
+    
+        # If tax missing or invalid, return price only
+        if not isinstance(tax, Money):
+            return price
+    
+        return price + tax
 
 
 class BaseOrderReportContext(report.mixins.BaseReportContext):

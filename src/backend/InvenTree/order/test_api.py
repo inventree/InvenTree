@@ -38,6 +38,7 @@ class OrderTest(InvenTreeAPITestCase):
     """Base class for order API unit testing."""
 
     fixtures = [
+        'tenant',
         'category',
         'part',
         'company',
@@ -158,6 +159,8 @@ class PurchaseOrderTest(OrderTest):
         """Unit tests for the 'total_price' field."""
         # Ensure we have exchange rate data
         self.generate_exchange_rates()
+        from tenant.models import Tenant
+        tenant = Tenant.objects.first()
 
         currencies = currency_codes()
         n = len(currencies)
@@ -170,7 +173,7 @@ class PurchaseOrderTest(OrderTest):
         for supplier in Company.objects.filter(is_supplier=True):
             for _idx in range(10):
                 new_orders.append(
-                    models.PurchaseOrder(supplier=supplier, reference=f'PO-{idx + 100}')
+                    models.PurchaseOrder(supplier=supplier, reference=f'PO-{idx + 100}', tenant=tenant)
                 )
 
                 idx += 1
@@ -239,6 +242,9 @@ class PurchaseOrderTest(OrderTest):
     def test_po_reference(self):
         """Test that a reference with a too big / small reference is handled correctly."""
         # get permissions
+        from tenant.models import Tenant
+        tenant = Tenant.objects.first()
+        self.assertIsNotNone(tenant)
         self.assignRole('purchase_order.add')
 
         url = reverse('api-po-list')
@@ -250,6 +256,7 @@ class PurchaseOrderTest(OrderTest):
                 'supplier': 1,
                 'reference': huge_number,
                 'description': 'PO created via the API',
+                'tenant': tenant.pk,
             },
             expected_code=201,
         )
@@ -266,6 +273,8 @@ class PurchaseOrderTest(OrderTest):
         """Test that a reference with a wildcard default."""
         # get permissions
         self.assignRole('purchase_order.add')
+        from tenant.models import Tenant
+        tenant = Tenant.objects.first()
 
         # set PO reference setting
         set_global_setting('PURCHASEORDER_REFERENCE_PATTERN', '{?:PO}-{ref:04d}')
@@ -286,6 +295,7 @@ class PurchaseOrderTest(OrderTest):
                     'supplier': 1,
                     'reference': ref,
                     'description': 'PO created via the API',
+                    'tenant': tenant.pk,
                 },
                 expected_code=201,
             )
@@ -301,6 +311,7 @@ class PurchaseOrderTest(OrderTest):
                     'supplier': 1,
                     'reference': ref,
                     'description': 'PO created via the API',
+                    'tenant': tenant.pk,
                 },
                 expected_code=400,
             )
@@ -322,6 +333,8 @@ class PurchaseOrderTest(OrderTest):
     def test_po_operations(self):
         """Test that we can create / edit and delete a PurchaseOrder via the API."""
         n = models.PurchaseOrder.objects.count()
+        from tenant.models import Tenant
+        tenant = Tenant.objects.first()
 
         url = reverse('api-po-list')
 
@@ -351,6 +364,7 @@ class PurchaseOrderTest(OrderTest):
                 'supplier': 1,
                 'reference': 'PO-123456789',
                 'description': 'PO created via the API',
+                'tenant': tenant.pk,
             },
             expected_code=201,
         )
@@ -366,6 +380,7 @@ class PurchaseOrderTest(OrderTest):
                 'supplier': 1,
                 'reference': '123456789-xyz',
                 'description': 'A different description',
+                'tenant': tenant.pk,
             },
             expected_code=400,
         )
@@ -409,10 +424,14 @@ class PurchaseOrderTest(OrderTest):
 
         InvenTreeSetting.set_setting(setting, False)
 
+        from tenant.models import Tenant
+        tenant = Tenant.objects.first()
+
         data = {
             'reference': 'PO-12345678',
             'supplier': 1,
             'description': 'A test purchase order',
+            'tenant': tenant.pk,
         }
 
         self.post(url, data, expected_code=201)
@@ -440,6 +459,9 @@ class PurchaseOrderTest(OrderTest):
         """Test that we can create set the creation_date field of PurchaseOrder via the API."""
         self.assignRole('purchase_order.add')
 
+        from tenant.models import Tenant
+        tenant = Tenant.objects.first()
+
         response = self.post(
             reverse('api-po-list'),
             {
@@ -447,6 +469,7 @@ class PurchaseOrderTest(OrderTest):
                 'supplier': 1,
                 'description': 'PO created on 1988-11-10',
                 'creation_date': '1988-11-10',
+                'tenant': tenant.pk,
             },
             expected_code=201,
         )
@@ -462,6 +485,7 @@ class PurchaseOrderTest(OrderTest):
                 'reference': 'PO-11111111',
                 'supplier': 1,
                 'description': 'Check that the creation date is today',
+                'tenant': tenant.pk,
             },
             expected_code=201,
         )
@@ -619,6 +643,8 @@ class PurchaseOrderTest(OrderTest):
         """Test the calendar export endpoint."""
         # Create required purchase orders
         self.assignRole('purchase_order.add')
+        from tenant.models import Tenant
+        tenant = Tenant.objects.first()
 
         for i in range(1, 9):
             self.post(
@@ -628,6 +654,7 @@ class PurchaseOrderTest(OrderTest):
                     'supplier': 1,
                     'description': f'Calendar PO {i}',
                     'target_date': f'2024-12-{i:02d}',
+                    'tenant': tenant.pk,
                 },
                 expected_code=201,
             )
