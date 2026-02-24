@@ -160,11 +160,12 @@ class CommandTestCase(TestCase):
 
     def test_backup_command_e2e(self):
         """Test the backup command."""
+        # we only test on sqlite, the environment in which we also run coverage
+        if settings.DB_ENGINE != 'django.db.backends.sqlite3':
+            self.skipTest('Backup command test only runs on sqlite database')
+
         # disable tracing for now
-        if (
-            settings.TRACING_ENABLED
-            and settings.DB_ENGINE == 'django.db.backends.sqlite3'
-        ):
+        if settings.TRACING_ENABLED:  # pragma: no cover
             print('Disabling tracing for backup command test')
             SQLite3Instrumentor().uninstrument()
 
@@ -194,9 +195,6 @@ class CommandTestCase(TestCase):
         output_path.unlink()
         Path(str(output_path) + '.metadata').unlink()
 
-        if (
-            settings.TRACING_ENABLED
-            and settings.DB_ENGINE == 'django.db.backends.sqlite3'
-        ):
+        if settings.TRACING_ENABLED:  # pragma: no cover
             print('Re-enabling tracing for backup command test')
             SQLite3Instrumentor().instrument()
