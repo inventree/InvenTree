@@ -107,6 +107,18 @@ export function PartColumn(props: PartColumnProps): TableColumn {
   };
 }
 
+export function IPNColumn(props: TableColumnProps): TableColumn {
+  return {
+    accessor: 'part_detail.IPN',
+    sortable: true,
+    ordering: 'IPN',
+    switchable: true,
+    title: t`IPN`,
+    copyable: true,
+    ...props
+  };
+}
+
 export type StockColumnProps = TableColumnProps & {
   nullMessage?: string | ReactNode;
 };
@@ -448,6 +460,7 @@ export function DescriptionColumn(props: TableColumnProps): TableColumn {
     sortable: false,
     switchable: true,
     minWidth: '200px',
+    copyable: true,
     ...props
   };
 }
@@ -457,6 +470,8 @@ export function LinkColumn(props: TableColumnProps): TableColumn {
     accessor: 'link',
     sortable: false,
     defaultVisible: false,
+    copyable: true,
+    copyAccessor: props.accessor ?? 'link',
     render: (record: any) => {
       const url = resolveItem(record, props.accessor ?? 'link');
 
@@ -490,6 +505,7 @@ export function ReferenceColumn(props: TableColumnProps): TableColumn {
     title: t`Reference`,
     sortable: true,
     switchable: true,
+    copyable: true,
     ...props
   };
 }
@@ -664,6 +680,7 @@ export function DateColumn(props: TableColumnProps): TableColumn {
       formatDate(resolveItem(record, props.accessor ?? 'date'), {
         showTime: props.extra?.showTime
       }),
+    copyable: true,
     ...props
   };
 }

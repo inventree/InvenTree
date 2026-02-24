@@ -288,7 +288,8 @@ export default function PartTestResultTable({
         accessor: 'batch',
         title: t`Batch Code`,
         sortable: true,
-        switchable: true
+        switchable: true,
+        copyable: true
       },
       LocationColumn({
         accessor: 'location_detail'

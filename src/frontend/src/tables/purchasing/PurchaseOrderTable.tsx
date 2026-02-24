@@ -19,6 +19,7 @@ import {
   CreationDateColumn,
   DescriptionColumn,
   LineItemsProgressColumn,
+  LinkColumn,
   ProjectCodeColumn,
   ReferenceColumn,
   ResponsibleColumn,
@@ -120,7 +121,8 @@ export function PurchaseOrderTable({
         )
       },
       {
-        accessor: 'supplier_reference'
+        accessor: 'supplier_reference',
+        copyable: true
       },
       LineItemsProgressColumn({}),
       StatusColumn({ model: ModelType.purchaseorder }),
@@ -150,7 +152,8 @@ export function PurchaseOrderTable({
           });
         }
       },
-      ResponsibleColumn({})
+      ResponsibleColumn({}),
+      LinkColumn({})
     ];
   }, []);
 

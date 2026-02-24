@@ -251,7 +251,8 @@ export function PurchaseOrderLineItemTable({
         ordering: 'MPN',
         title: t`Manufacturer Code`,
         sortable: true,
-        defaultVisible: false
+        defaultVisible: false,
+        copyable: true
       },
       CurrencyColumn({
         accessor: 'purchase_price',

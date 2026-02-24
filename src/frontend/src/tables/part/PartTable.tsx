@@ -41,6 +41,7 @@ import {
   CategoryColumn,
   DefaultLocationColumn,
   DescriptionColumn,
+  IPNColumn,
   LinkColumn,
   PartColumn
 } from '../ColumnRenderers';
@@ -56,17 +57,17 @@ function partTableColumns(): TableColumn[] {
       part: '',
       accessor: 'name'
     }),
-    {
-      accessor: 'IPN',
-      sortable: true
-    },
+    IPNColumn({
+      accessor: 'IPN'
+    }),
     {
       accessor: 'revision',
       sortable: true
     },
     {
       accessor: 'units',
-      sortable: true
+      sortable: true,
+      copyable: true
     },
     DescriptionColumn({}),
     CategoryColumn({
