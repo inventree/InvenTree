@@ -213,7 +213,7 @@ def validate_restore(metadata: InvenTreeBackupMetadata) -> bool | None:
                     error_code='INVE-E16',
                 )
                 return False
-        except ValueError:
+        except ValueError:  # pragma: no cover
             logger.warning(
                 'INVE-W13: Could not parse API version from backup metadata - cannot determine if backup is from newer version',
                 error_code='INVE-W13',
@@ -253,7 +253,7 @@ def validate_restore(metadata: InvenTreeBackupMetadata) -> bool | None:
             error_code='INVE-W13',
         )
 
-    if settings.DEBUG:
+    if settings.DEBUG:  # pragma: no cover
         logger.info(
             f'INVE-I3: Backup environment: {backup_environment}', error_code='INVE-I3'
         )

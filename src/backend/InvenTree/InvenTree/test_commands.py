@@ -87,6 +87,77 @@ class CommandTestCase(TestCase):
         self.assertIn('version', parsed)
         self.assertIn('plugins_enabled', parsed)
 
+    def test_restore_validation(self):
+        """Test the restore validation functions."""
+        from InvenTree.backup import _gather_environment_metadata, validate_restore
+
+        metadata = _gather_environment_metadata()
+
+        self.assertTrue(validate_restore(metadata))
+
+        # Version
+        with self.assertLogs() as cm:
+            self.assertTrue(validate_restore({}))
+        self.assertIn(
+            'INVE-W13: Backup metadata does not contain version information', str(cm[1])
+        )
+        with self.assertLogs() as cm:
+            self.assertTrue(validate_restore({**metadata, 'ivt_1_version': '123xx'}))
+        self.assertIn(
+            'INVE-W13: Backup being restored was created with InvenTree version',
+            str(cm[1]),
+        )
+        with self.assertLogs() as cm:
+            self.assertFalse(
+                validate_restore({
+                    **metadata,
+                    'ivt_1_version': '9999',
+                    'ivt_1_version_api': '9999',
+                })
+            )
+        self.assertIn(
+            'INVE-E16: Backup being restored was created with a newer version',
+            str(cm[1]),
+        )
+
+        # Plugins enabled
+        with self.settings(PLUGINS_ENABLED=False):
+            with self.assertLogs() as cm:
+                self.assertTrue(validate_restore(metadata))
+        self.assertIn(
+            'INVE-W13: Backup being restored was created with plugins enabled',
+            str(cm[1]),
+        )
+
+        # Plugin hash
+        with self.assertLogs() as cm:
+            self.assertTrue(
+                validate_restore({**metadata, 'ivt_1_plugins_file_hash': '123xx'})
+            )
+        self.assertIn(
+            'INVE-W13: Backup being restored has a different plugins file hash',
+            str(cm[1]),
+        )
+
+        # installer
+        with self.assertLogs() as cm:
+            self.assertTrue(validate_restore({**metadata, 'ivt_1_installer': '123xx'}))
+        self.assertIn(
+            'INVE-W13: Backup being restored was created with installer', str(cm[1])
+        )
+
+        # Age
+        with self.assertLogs() as cm:
+            self.assertTrue(
+                validate_restore({
+                    **metadata,
+                    'ivt_1_backup_time': '2020-02-02T00:00:00',
+                })
+            )
+        self.assertIn(
+            'INVE-W13: Backup being restored is over 120 days old', str(cm[1])
+        )
+
     def test_backup_command_e2e(self):
         """Test the backup command."""
         # disable tracing for now
