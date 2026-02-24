@@ -20,6 +20,7 @@ import {
   CreationDateColumn,
   DescriptionColumn,
   LineItemsProgressColumn,
+  LinkColumn,
   ProjectCodeColumn,
   ReferenceColumn,
   ResponsibleColumn,
@@ -146,7 +147,8 @@ export function SalesOrderTable({
       },
       {
         accessor: 'customer_reference',
-        title: t`Customer Reference`
+        title: t`Customer Reference`,
+        copyable: true
       },
       DescriptionColumn({}),
       LineItemsProgressColumn({}),
@@ -190,7 +192,8 @@ export function SalesOrderTable({
             currency: record.order_currency || record.customer_detail?.currency
           });
         }
-      }
+      },
+      LinkColumn({})
     ];
   }, []);
 

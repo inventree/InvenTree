@@ -20,19 +20,30 @@ export function CopyableCell({
 
   return (
     <Group
-      gap='xs'
+      gap={0}
+      p={0}
       wrap='nowrap'
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       justify='space-between'
+      align='center'
     >
       {children}
       {isHovered && value != null && (
         <span
+          style={{ position: 'relative' }}
           onClick={(e) => e.stopPropagation()}
           onKeyDown={(e) => e.stopPropagation()}
         >
-          <CopyButton value={value} />
+          <div
+            style={{
+              position: 'absolute',
+              right: 0,
+              transform: 'translateY(-50%)'
+            }}
+          >
+            <CopyButton value={value} variant={'default'} />
+          </div>
         </span>
       )}
     </Group>

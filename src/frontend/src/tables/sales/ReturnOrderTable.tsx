@@ -19,6 +19,7 @@ import {
   CreationDateColumn,
   DescriptionColumn,
   LineItemsProgressColumn,
+  LinkColumn,
   ProjectCodeColumn,
   ReferenceColumn,
   ResponsibleColumn,
@@ -123,7 +124,8 @@ export function ReturnOrderTable({
         )
       },
       {
-        accessor: 'customer_reference'
+        accessor: 'customer_reference',
+        copyable: true
       },
       DescriptionColumn({}),
       LineItemsProgressColumn({}),
@@ -154,7 +156,8 @@ export function ReturnOrderTable({
             currency: record.order_currency || record.customer_detail?.currency
           });
         }
-      }
+      },
+      LinkColumn({})
     ];
   }, []);
 

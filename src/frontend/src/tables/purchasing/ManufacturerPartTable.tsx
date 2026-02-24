@@ -25,6 +25,7 @@ import { useUserState } from '../../states/UserState';
 import {
   CompanyColumn,
   DescriptionColumn,
+  IPNColumn,
   LinkColumn,
   PartColumn
 } from '../ColumnRenderers';
@@ -86,13 +87,7 @@ export function ManufacturerPartTable({
       PartColumn({
         switchable: !!partId
       }),
-      {
-        accessor: 'part_detail.IPN',
-        title: t`IPN`,
-        sortable: true,
-        ordering: 'IPN',
-        switchable: true
-      },
+      IPNColumn({}),
       {
         accessor: 'manufacturer',
         sortable: true,
@@ -103,7 +98,8 @@ export function ManufacturerPartTable({
       {
         accessor: 'MPN',
         title: t`MPN`,
-        sortable: true
+        sortable: true,
+        copyable: true
       },
       DescriptionColumn({}),
       LinkColumn({})
