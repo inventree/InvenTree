@@ -176,19 +176,17 @@ export function LanguageContext({
   return <I18nProvider i18n={i18n}>{children}</I18nProvider>;
 }
 
+// This function is used to determine the locale to activate based on the prioritization rules.
+export function getPriorityLocale(): string {
+  const serverDefault = useServerApiState.getState().server.default_locale;
+  const userDefault = useLocalState.getState().language;
+
+  return userDefault || serverDefault || defaultLocale;
+}
+
 export async function activateLocale(locale: string | null) {
   if (!locale) {
-    // No locale provided, iterate through priority list
-    const serverDefault = useServerApiState.getState().server.default_locale;
-    const userDefault = useLocalState.getState().language;
-
-    if (userDefault) {
-      locale = userDefault;
-    } else if (serverDefault) {
-      locale = serverDefault;
-    } else {
-      locale = defaultLocale;
-    }
+    locale = getPriorityLocale();
   }
 
   const localeDir = locale.split('-')[0]; // Extract the base locale (e.g., 'en' from 'en-US')
