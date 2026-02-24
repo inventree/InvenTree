@@ -27,6 +27,7 @@ import { useTable } from '../../hooks/UseTable';
 import {
   DateColumn,
   DescriptionColumn,
+  IPNColumn,
   PartColumn,
   StockColumn
 } from '../ColumnRenderers';
@@ -238,14 +239,10 @@ export function StockTrackingTable({
         switchable: true,
         hidden: !partId
       }),
-      {
-        title: t`IPN`,
-        accessor: 'part_detail.IPN',
-        sortable: true,
+      IPNColumn({
         defaultVisible: false,
-        switchable: true,
         hidden: !partId
-      },
+      }),
       StockColumn({
         title: t`Stock Item`,
         accessor: 'item_detail',
