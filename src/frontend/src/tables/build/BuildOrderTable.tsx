@@ -18,6 +18,8 @@ import {
   CreationDateColumn,
   DateColumn,
   DescriptionColumn,
+  IPNColumn,
+  LinkColumn,
   PartColumn,
   ProjectCodeColumn,
   ReferenceColumn,
@@ -79,13 +81,7 @@ export function BuildOrderTable({
       PartColumn({
         switchable: false
       }),
-      {
-        accessor: 'part_detail.IPN',
-        sortable: true,
-        ordering: 'IPN',
-        switchable: true,
-        title: t`IPN`
-      },
+      IPNColumn({}),
       {
         accessor: 'part_detail.revision',
         title: t`Revision`,
@@ -150,7 +146,8 @@ export function BuildOrderTable({
         ordering: 'issued_by',
         title: t`Issued By`
       }),
-      ResponsibleColumn({})
+      ResponsibleColumn({}),
+      LinkColumn({})
     ];
   }, [parentBuildId, globalSettings]);
 

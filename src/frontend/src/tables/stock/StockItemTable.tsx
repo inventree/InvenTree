@@ -24,6 +24,7 @@ import { useUserState } from '../../states/UserState';
 import {
   DateColumn,
   DescriptionColumn,
+  IPNColumn,
   LocationColumn,
   PartColumn,
   StatusColumn,
@@ -59,12 +60,7 @@ function stockItemTableColumns({
       accessor: 'part',
       part: 'part_detail'
     }),
-    {
-      accessor: 'part_detail.IPN',
-      title: t`IPN`,
-      sortable: true,
-      ordering: 'IPN'
-    },
+    IPNColumn({}),
     {
       accessor: 'part_detail.revision',
       title: t`Revision`,
@@ -83,7 +79,8 @@ function stockItemTableColumns({
     StatusColumn({ model: ModelType.stockitem }),
     {
       accessor: 'batch',
-      sortable: true
+      sortable: true,
+      copyable: true
     },
     LocationColumn({
       hidden: !showLocation,
@@ -101,13 +98,15 @@ function stockItemTableColumns({
       accessor: 'SKU',
       title: t`Supplier Part`,
       sortable: true,
-      defaultVisible: false
+      defaultVisible: false,
+      copyable: true
     },
     {
       accessor: 'MPN',
       title: t`Manufacturer Part`,
       sortable: true,
-      defaultVisible: false
+      defaultVisible: false,
+      copyable: true
     },
     {
       accessor: 'purchase_price',
