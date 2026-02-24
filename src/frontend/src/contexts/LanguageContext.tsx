@@ -84,7 +84,6 @@ export function LanguageContext({
     }
 
     if (locale != activeLocale) {
-      console.info('Changing locale from', activeLocale, 'to', locale);
       setActiveLocale(locale);
       activateLocale(locale);
     }
