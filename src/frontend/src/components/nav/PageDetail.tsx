@@ -1,4 +1,4 @@
-import { Group, Paper, SimpleGrid, Stack, Text } from '@mantine/core';
+import { Group, Paper, Space, Stack, Text } from '@mantine/core';
 import { useHotkeys } from '@mantine/hooks';
 
 import { Fragment, type ReactNode, useMemo } from 'react';
@@ -14,7 +14,6 @@ interface PageDetailInterface {
   icon?: ReactNode;
   subtitle?: string;
   imageUrl?: string;
-  detail?: ReactNode;
   badges?: ReactNode[];
   breadcrumbs?: Breadcrumb[];
   lastCrumb?: Breadcrumb[];
@@ -34,7 +33,6 @@ export function PageDetail({
   title,
   icon,
   subtitle,
-  detail,
   badges,
   imageUrl,
   breadcrumbs,
@@ -74,20 +72,6 @@ export function PageDetail({
     [subtitle]
   );
 
-  const maxCols = useMemo(() => {
-    let cols = 1;
-
-    if (!!detail) {
-      cols++;
-    }
-
-    if (!!badges) {
-      cols++;
-    }
-
-    return cols;
-  }, [detail, badges]);
-
   // breadcrumb caching
   const computedBreadcrumbs = useMemo(() => {
     if (userSettings.isSet('ENABLE_LAST_BREADCRUMB', false)) {
@@ -114,14 +98,13 @@ export function PageDetail({
             wrap='nowrap'
             align='flex-start'
           >
-            <SimpleGrid
-              cols={{
-                base: 1,
-                md: Math.min(2, maxCols),
-                lg: Math.min(3, maxCols)
-              }}
+            <Group
+              justify='space-between'
+              wrap='nowrap'
+              align='flex-start'
+              style={{ flexGrow: 1 }}
             >
-              <Group justify='left' wrap='nowrap'>
+              <Group justify='start' wrap='nowrap' align='flex-start'>
                 {imageUrl && (
                   <ApiImage
                     src={imageUrl}
@@ -142,20 +125,15 @@ export function PageDetail({
                   )}
                 </Stack>
               </Group>
-              {detail && <div>{detail}</div>}
               {badges && (
-                <Group
-                  justify='center'
-                  gap='xs'
-                  align='flex-start'
-                  wrap='nowrap'
-                >
+                <Group justify='flex-end' gap='xs' align='center'>
                   {badges?.map((badge, idx) => (
                     <Fragment key={idx}>{badge}</Fragment>
                   ))}
+                  <Space w='md' />
                 </Group>
               )}
-            </SimpleGrid>
+            </Group>
             {actions && (
               <Group gap={5} justify='right' wrap='nowrap' align='flex-start'>
                 {actions.map((action, idx) => (

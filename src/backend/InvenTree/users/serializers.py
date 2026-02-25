@@ -1,18 +1,25 @@
 """DRF API serializers for the 'users' app."""
 
+import secrets
+import string
+
 from django.contrib.auth.models import Group, Permission, User
-from django.core.exceptions import AppRegistryNotReady
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied
 
-from InvenTree.ready import isGeneratingSchema
-from InvenTree.serializers import InvenTreeModelSerializer
+from InvenTree.serializers import (
+    FilterableListSerializer,
+    FilterableSerializerMethodField,
+    FilterableSerializerMixin,
+    InvenTreeModelSerializer,
+    enable_filter,
+)
 
 from .models import ApiToken, Owner, RuleSet, UserProfile
-from .permissions import check_user_role
+from .permissions import check_user_role, prefetch_rule_sets
 from .ruleset import RULESET_CHOICES, RULESET_PERMISSIONS, RuleSetEnum
 
 
@@ -49,6 +56,7 @@ class RuleSetSerializer(InvenTreeModelSerializer):
             'can_delete',
         ]
         read_only_fields = ['pk', 'name', 'label', 'group']
+        list_serializer_class = FilterableListSerializer
 
 
 class RoleSerializer(InvenTreeModelSerializer):
@@ -75,13 +83,16 @@ class RoleSerializer(InvenTreeModelSerializer):
         """Roles associated with the user."""
         roles = {}
 
+        # Cache the 'groups' queryset for the user
+        groups = prefetch_rule_sets(user)
+
         for ruleset in RULESET_CHOICES:
             role, _text = ruleset
 
             permissions = []
 
             for permission in RULESET_PERMISSIONS:
-                if check_user_role(user, role, permission):
+                if check_user_role(user, role, permission, groups=groups):
                     permissions.append(permission)
 
             if len(permissions) > 0:
@@ -115,23 +126,6 @@ def generate_permission_dict(permissions) -> dict:
 
         perms[model].append(perm)
     return perms
-
-
-def generate_roles_dict(roles) -> dict:
-    """Generate a dictionary of roles for a given set of roles."""
-    # Build out an (initially empty) dictionary of roles
-    role_dict = {name: [] for name, _ in RULESET_CHOICES}
-
-    for role in roles:
-        permissions = []
-
-        for permission in ['view', 'add', 'change', 'delete']:
-            if getattr(role, f'can_{permission}', False):
-                permissions.append(permission)
-
-        role_dict[role.name] = permissions
-
-    return role_dict
 
 
 class GetAuthTokenSerializer(serializers.Serializer):
@@ -190,8 +184,8 @@ class UserSerializer(InvenTreeModelSerializer):
 
         model = User
         fields = ['pk', 'username', 'first_name', 'last_name', 'email']
-
         read_only_fields = ['username', 'email']
+        list_serializer_class = FilterableListSerializer
 
     username = serializers.CharField(label=_('Username'), help_text=_('Username'))
 
@@ -251,7 +245,7 @@ class ApiTokenSerializer(InvenTreeModelSerializer):
     user_detail = UserSerializer(source='user', read_only=True)
 
 
-class GroupSerializer(InvenTreeModelSerializer):
+class GroupSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
     """Serializer for a 'Group'."""
 
     class Meta:
@@ -260,45 +254,34 @@ class GroupSerializer(InvenTreeModelSerializer):
         model = Group
         fields = ['pk', 'name', 'permissions', 'roles', 'users']
 
-    def __init__(self, *args, **kwargs):
-        """Initialize this serializer with extra fields as required."""
-        role_detail = kwargs.pop('role_detail', False)
-        user_detail = kwargs.pop('user_detail', False)
-        permission_detail = kwargs.pop('permission_detail', False)
-
-        super().__init__(*args, **kwargs)
-
-        try:
-            if not isGeneratingSchema():
-                if not permission_detail:
-                    self.fields.pop('permissions', None)
-                if not role_detail:
-                    self.fields.pop('roles', None)
-                if not user_detail:
-                    self.fields.pop('users', None)
-
-        except AppRegistryNotReady:
-            pass
-
-    permissions = serializers.SerializerMethodField(allow_null=True, read_only=True)
+    permissions = enable_filter(
+        FilterableSerializerMethodField(allow_null=True, read_only=True),
+        filter_name='permission_detail',
+    )
 
     def get_permissions(self, group: Group) -> dict:
         """Return a list of permissions associated with the group."""
         return generate_permission_dict(group.permissions.all())
 
-    roles = RuleSetSerializer(
-        source='rule_sets', many=True, read_only=True, allow_null=True
+    roles = enable_filter(
+        RuleSetSerializer(
+            source='rule_sets', many=True, read_only=True, allow_null=True
+        ),
+        filter_name='role_detail',
+        prefetch_fields=['rule_sets'],
     )
 
-    users = UserSerializer(
-        source='user_set', many=True, read_only=True, allow_null=True
+    users = enable_filter(
+        UserSerializer(source='user_set', many=True, read_only=True, allow_null=True),
+        filter_name='user_detail',
+        prefetch_fields=['user_set'],
     )
 
 
 class ExtendedUserSerializer(UserSerializer):
     """Serializer for a User with a bit more info."""
 
-    from users.serializers import GroupSerializer
+    # from users.serializers import GroupSerializer
 
     class Meta(UserSerializer.Meta):
         """Metaclass defines serializer fields."""
@@ -407,6 +390,20 @@ class MeUserSerializer(ExtendedUserSerializer):
     profile = UserProfileSerializer(many=False, read_only=True)
 
 
+def make_random_password(length=14):
+    """Generate a random password of given length."""
+    alphabet = string.ascii_letters + string.digits
+    while True:
+        password = ''.join(secrets.choice(alphabet) for i in range(length))
+        if (
+            any(c.islower() for c in password)
+            and any(c.isupper() for c in password)
+            and sum(c.isdigit() for c in password) >= 3
+        ):
+            break
+    return password
+
+
 class UserCreateSerializer(ExtendedUserSerializer):
     """Serializer for creating a new User."""
 
@@ -421,18 +418,13 @@ class UserCreateSerializer(ExtendedUserSerializer):
         user = self.context['request'].user
 
         # Check that the user trying to create a new user is a superuser
-        if not user.is_staff:
-            raise serializers.ValidationError(
-                _('Only staff users can create new users')
-            )
-
-        if not check_user_role(user, RuleSetEnum.ADMIN, 'add'):
-            raise serializers.ValidationError(
+        if not user.is_staff or not check_user_role(user, RuleSetEnum.ADMIN, 'add'):
+            raise serializers.ValidationError(  # pragma: no cover # Handled by permissions already
                 _('You do not have permission to create users')
             )
 
         # Generate a random password
-        password = User.objects.make_random_password(length=14)
+        password = make_random_password(length=14)
         attrs.update({'password': password})
         return super().validate(attrs)
 

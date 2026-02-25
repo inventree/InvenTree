@@ -71,12 +71,6 @@ def str2bool(x, *args, **kwargs):
 
 
 @register.simple_tag()
-def add(x, y, *args, **kwargs):
-    """Add two numbers together."""
-    return x + y
-
-
-@register.simple_tag()
 def to_list(*args):
     """Return the input arguments as list."""
     return args
@@ -150,11 +144,6 @@ def setting_object(key, *args, **kwargs):
 
         return plugin.models.PluginSetting.get_setting_object(
             key, plugin=plg, cache=cache
-        )
-
-    elif 'method' in kwargs:
-        return plugin.models.NotificationUserSetting.get_setting_object(
-            key, user=kwargs['user'], method=kwargs['method'], cache=cache
         )
 
     elif 'user' in kwargs:

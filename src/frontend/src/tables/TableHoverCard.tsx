@@ -1,5 +1,12 @@
 import { t } from '@lingui/core/macro';
-import { Divider, Group, HoverCard, Stack, Text } from '@mantine/core';
+import {
+  Divider,
+  type FloatingPosition,
+  Group,
+  HoverCard,
+  Stack,
+  Text
+} from '@mantine/core';
 import { type ReactNode, useMemo } from 'react';
 
 import type { InvenTreeIconType } from '@lib/types/Icons';
@@ -15,13 +22,17 @@ export function TableHoverCard({
   extra, // The extra information to display
   title, // The title of the hovercard
   icon, // The icon to display
-  iconColor // The icon color
+  iconColor, // The icon color
+  position, // The position of the hovercard
+  zIndex // Optional z-index for the hovercard
 }: Readonly<{
   value: any;
   extra?: ReactNode;
   title?: string;
   icon?: keyof InvenTreeIconType;
   iconColor?: string;
+  position?: FloatingPosition;
+  zIndex?: string | number;
 }>) {
   const extraItems: ReactNode = useMemo(() => {
     if (Array.isArray(extra)) {
@@ -47,7 +58,13 @@ export function TableHoverCard({
   }
 
   return (
-    <HoverCard withinPortal={true} closeDelay={20} openDelay={250}>
+    <HoverCard
+      withinPortal={true}
+      closeDelay={20}
+      openDelay={250}
+      position={position}
+      zIndex={zIndex}
+    >
       <HoverCard.Target>
         <Group gap='xs' justify='space-between' wrap='nowrap'>
           {value}

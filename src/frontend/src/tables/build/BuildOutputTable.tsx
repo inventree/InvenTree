@@ -14,30 +14,33 @@ import {
   IconBuildingFactory2,
   IconCircleCheck,
   IconCircleX,
-  IconExclamationCircle
+  IconExclamationCircle,
+  IconWand
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
+import { ActionButton } from '@lib/components/ActionButton';
+import { AddItemButton } from '@lib/components/AddItemButton';
+import { ProgressBar } from '@lib/components/ProgressBar';
+import { type RowAction, RowEditAction } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
-import { ActionButton } from '../../components/buttons/ActionButton';
-import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { ProgressBar } from '../../components/items/ProgressBar';
+import type { StockOperationProps } from '@lib/types/Forms';
+import type { TableColumn } from '@lib/types/Tables';
 import { StylishText } from '../../components/items/StylishText';
 import { useApi } from '../../contexts/ApiContext';
 import {
+  useBuildAutoAllocateFields,
   useBuildOrderOutputFields,
   useCancelBuildOutputsForm,
   useCompleteBuildOutputsForm,
   useScrapBuildOutputsForm
 } from '../../forms/BuildForms';
 import {
-  type StockOperationProps,
   useStockFields,
   useStockItemSerializeFields
 } from '../../forms/StockForms';
@@ -50,8 +53,12 @@ import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
-import { LocationColumn, PartColumn, StatusColumn } from '../ColumnRenderers';
+import {
+  LocationColumn,
+  PartColumn,
+  RenderPartColumn,
+  StatusColumn
+} from '../ColumnRenderers';
 import {
   BatchFilter,
   HasBatchCodeFilter,
@@ -63,7 +70,6 @@ import {
   StockLocationFilter
 } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { type RowAction, RowEditAction, RowViewAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
 import BuildLineTable from './BuildLineTable';
 
@@ -91,20 +97,24 @@ function OutputAllocationDrawer({
       position='bottom'
       size='lg'
       title={
-        <Group p='md' wrap='nowrap' justify='space-apart'>
+        <Group p='xs' wrap='nowrap' justify='space-apart'>
           <StylishText size='lg'>{t`Build Output Stock Allocation`}</StylishText>
           <Space h='lg' />
-          <PartColumn part={build.part_detail} />
-          {output?.serial && (
-            <Text size='sm'>
-              {t`Serial Number`}: {output.serial}
-            </Text>
-          )}
-          {output?.batch && (
-            <Text size='sm'>
-              {t`Batch Code`}: {output.batch}
-            </Text>
-          )}
+          <Paper withBorder p='sm'>
+            <Group gap='xs'>
+              <RenderPartColumn part={build.part_detail} />
+              {output?.serial && (
+                <Text size='sm'>
+                  {t`Serial Number`}: {output.serial}
+                </Text>
+              )}
+              {output?.batch && (
+                <Text size='sm'>
+                  {t`Batch Code`}: {output.batch}
+                </Text>
+              )}
+            </Group>
+          </Paper>
           <Space h='lg' />
         </Group>
       }
@@ -142,7 +152,6 @@ export default function BuildOutputTable({
 }: Readonly<{ build: any; refreshBuild: () => void }>) {
   const api = useApi();
   const user = useUserState();
-  const navigate = useNavigate();
   const table = useTable('build-outputs');
 
   const buildId: number = useMemo(() => {
@@ -156,7 +165,7 @@ export default function BuildOutputTable({
   const buildStatus = useStatusCodes({ modelType: ModelType.build });
 
   // Fetch the test templates associated with the partId
-  const { data: testTemplates } = useQuery({
+  const { data: testTemplates, refetch: refetchTestTemplates } = useQuery({
     queryKey: ['buildoutputtests', partId, build],
     queryFn: async () => {
       if (!partId || partId < 0) {
@@ -197,11 +206,39 @@ export default function BuildOutputTable({
         .get(apiUrl(ApiEndpoints.build_line_list), {
           params: {
             build: buildId,
-            tracked: true
+            tracked: true,
+            bom_item_detail: true,
+            allocations: true
           }
         })
         .then((response) => response.data);
     }
+  });
+
+  const autoAllocateStock = useCreateApiFormModal({
+    url: ApiEndpoints.build_order_auto_allocate,
+    pk: build.pk,
+    title: t`Allocate Stock`,
+    fields: useBuildAutoAllocateFields({
+      item_type: 'tracked'
+    }),
+    initialData: {
+      location: build.take_from,
+      substitutes: true
+    },
+    successMessage: t`Auto-allocation in progress`,
+    onFormSuccess: () => {
+      // After a short delay, refresh the tracked items
+      setTimeout(() => {
+        refetchTrackedItems();
+      }, 2500);
+    },
+    table: table,
+    preFormContent: (
+      <Alert color='green' title={t`Auto Allocate Stock`}>
+        <Text>{t`Automatically allocate tracked BOM items to this build according to the selected options`}</Text>
+      </Alert>
+    )
   });
 
   const hasTrackedItems: boolean = useMemo(() => {
@@ -281,12 +318,18 @@ export default function BuildOutputTable({
     title: t`Add Build Output`,
     modalId: 'add-build-output',
     fields: buildOutputFields,
+    successMessage: t`Build output created`,
     timeout: 10000,
     initialData: {
       batch_code: build.batch,
       location: build.destination ?? build.part_detail?.default_location
     },
-    table: table
+    onFormSuccess: () => {
+      // Refresh all associated table data
+      refetchTrackedItems();
+      refetchTestTemplates();
+      table.refreshTable(true);
+    }
   });
 
   const [selectedOutputs, setSelectedOutputs] = useState<any[]>([]);
@@ -294,6 +337,7 @@ export default function BuildOutputTable({
   const completeBuildOutputsForm = useCompleteBuildOutputsForm({
     build: build,
     outputs: selectedOutputs,
+    hasTrackedItems: hasTrackedItems,
     onFormSuccess: () => {
       table.refreshTable(true);
       refreshBuild();
@@ -423,6 +467,16 @@ export default function BuildOutputTable({
     return [
       stockAdjustActions.dropdown,
       <ActionButton
+        key='allocate-stock'
+        icon={<IconWand />}
+        color='blue'
+        tooltip={t`Auto Allocate Stock`}
+        hidden={!hasTrackedItems}
+        onClick={() => {
+          autoAllocateStock.open();
+        }}
+      />,
+      <ActionButton
         key='complete-selected-outputs'
         tooltip={t`Complete selected outputs`}
         icon={<InvenTreeIcon icon='success' />}
@@ -436,7 +490,7 @@ export default function BuildOutputTable({
       <ActionButton
         key='scrap-selected-outputs'
         tooltip={t`Scrap selected outputs`}
-        icon={<InvenTreeIcon icon='delete' />}
+        icon={<InvenTreeIcon icon='scrap' />}
         color='red'
         disabled={!table.hasSelectedRecords}
         onClick={() => {
@@ -464,6 +518,7 @@ export default function BuildOutputTable({
     ];
   }, [
     build,
+    hasTrackedItems,
     user,
     table.selectedRecords,
     table.hasSelectedRecords,
@@ -475,12 +530,6 @@ export default function BuildOutputTable({
       const production = build?.status == buildStatus.PRODUCTION;
 
       return [
-        RowViewAction({
-          title: t`View Build Output`,
-          modelId: record.pk,
-          modelType: ModelType.stockitem,
-          navigate: navigate
-        }),
         {
           title: t`Allocate`,
           tooltip: t`Allocate stock to build output`,
@@ -540,7 +589,7 @@ export default function BuildOutputTable({
         {
           title: t`Scrap`,
           tooltip: t`Scrap build output`,
-          icon: <InvenTreeIcon icon='delete' />,
+          icon: <InvenTreeIcon icon='scrap' />,
           color: 'red',
           onClick: () => {
             setSelectedOutputs([record]);
@@ -564,11 +613,7 @@ export default function BuildOutputTable({
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
-      {
-        accessor: 'part',
-        sortable: true,
-        render: (record: any) => PartColumn({ part: record?.part_detail })
-      },
+      PartColumn({}),
       {
         accessor: 'quantity',
         ordering: 'stock',
@@ -674,6 +719,7 @@ export default function BuildOutputTable({
   return (
     <>
       {addBuildOutput.modal}
+      {autoAllocateStock.modal}
       {completeBuildOutputsForm.modal}
       {scrapBuildOutputsForm.modal}
       {editBuildOutput.modal}
@@ -711,6 +757,7 @@ export default function BuildOutputTable({
             },
             enableLabels: true,
             enableReports: true,
+            modelType: ModelType.stockitem,
             dataFormatter: formatRecords,
             tableFilters: tableFilters,
             tableActions: tableActions,

@@ -17,15 +17,31 @@ import {
   INVENTREE_REACT_VERSION,
   type InvenTreePluginContext
 } from '@lib/types/Plugins';
+import { i18n } from '@lingui/core';
+import { defaultLocale } from '../../contexts/LanguageContext';
+import {
+  useAddStockItem,
+  useAssignStockItem,
+  useChangeStockStatus,
+  useCountStockItem,
+  useDeleteStockItem,
+  useMergeStockItem,
+  useRemoveStockItem,
+  useReturnStockItem,
+  useTransferStockItem
+} from '../../forms/StockForms';
 import {
   useBulkEditApiFormModal,
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
+import { useServerApiState } from '../../states/ServerApiState';
+import { RenderInstance } from '../render/Instance';
 
 export const useInvenTreeContext = () => {
   const [locale, host] = useLocalState(useShallow((s) => [s.language, s.host]));
+  const [server] = useServerApiState(useShallow((s) => [s.server]));
   const navigate = useNavigate();
   const user = useUserState();
   const { colorScheme } = useMantineColorScheme();
@@ -43,20 +59,33 @@ export const useInvenTreeContext = () => {
       },
       user: user,
       host: host,
-      locale: locale,
+      i18n: i18n,
+      locale: locale || server.default_locale || defaultLocale,
       api: api,
       queryClient: queryClient,
       navigate: navigate,
       globalSettings: globalSettings,
       userSettings: userSettings,
       modelInformation: ModelInformationDict,
+      renderInstance: RenderInstance,
       theme: theme,
       colorScheme: colorScheme,
       forms: {
         bulkEdit: useBulkEditApiFormModal,
         create: useCreateApiFormModal,
         delete: useDeleteApiFormModal,
-        edit: useEditApiFormModal
+        edit: useEditApiFormModal,
+        stockActions: {
+          addStock: useAddStockItem,
+          assignStock: useAssignStockItem,
+          changeStatus: useChangeStockStatus,
+          countStock: useCountStockItem,
+          deleteStock: useDeleteStockItem,
+          mergeStock: useMergeStockItem,
+          removeStock: useRemoveStockItem,
+          transferStock: useTransferStockItem,
+          returnStock: useReturnStockItem
+        }
       }
     };
   }, [

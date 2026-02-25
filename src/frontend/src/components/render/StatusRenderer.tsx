@@ -1,8 +1,8 @@
 import { Badge, Center, type MantineSize } from '@mantine/core';
 
 import type { ModelType } from '@lib/enums/ModelType';
+import { resolveItem } from '@lib/functions/Conversion';
 import { statusColorMap } from '../../defaults/backendMappings';
-import { resolveItem } from '../../functions/conversion';
 import { useGlobalStatusState } from '../../states/GlobalStatusState';
 
 export interface StatusCodeInterface {
@@ -30,7 +30,8 @@ interface RenderStatusLabelOptionsInterface {
 function renderStatusLabel(
   key: string | number,
   codes: StatusCodeListInterface,
-  options: RenderStatusLabelOptionsInterface = {}
+  options: RenderStatusLabelOptionsInterface = {},
+  fallback_key: string | number | null = null
 ) {
   let text = null;
   let color = null;
@@ -43,6 +44,19 @@ function renderStatusLabel(
       text = entry.label;
       color = entry.color;
       break;
+    }
+  }
+
+  if (!text && fallback_key !== null) {
+    // Handle fallback key (if provided)
+    for (const name in codes.values) {
+      const entry: StatusCodeInterface = codes.values[name];
+
+      if (entry?.key == fallback_key) {
+        text = entry.label;
+        color = entry.color;
+        break;
+      }
     }
   }
 
@@ -74,14 +88,16 @@ export function getStatusCodes(
   const statusCodeList = useGlobalStatusState.getState().status;
 
   if (statusCodeList === undefined) {
-    console.log('StatusRenderer: statusCodeList is undefined');
+    console.warn('StatusRenderer: statusCodeList is undefined');
     return null;
   }
 
   const statusCodes = statusCodeList[type];
 
   if (statusCodes === undefined) {
-    console.log('StatusRenderer: statusCodes is undefined');
+    console.warn(
+      `StatusRenderer: statusCodes is undefined for model '${type}'`
+    );
     return null;
   }
 
@@ -133,17 +149,42 @@ export function getStatusCodeName(
 }
 
 /*
+ * Return the human-readable label for a status code
+ */
+export function getStatusCodeLabel(
+  type: ModelType | string,
+  key: string | number
+): string | null {
+  const statusCodes = getStatusCodes(type);
+
+  if (!statusCodes) {
+    return null;
+  }
+
+  for (const name in statusCodes.values) {
+    const entry: StatusCodeInterface = statusCodes.values[name];
+
+    if (entry.key == key) {
+      return entry.label;
+    }
+  }
+  return null;
+}
+
+/*
  * Render the status for a object.
  * Uses the values specified in "status_codes.py"
  */
 export const StatusRenderer = ({
   status,
   type,
-  options
+  options,
+  fallbackStatus
 }: {
   status: string | number;
   type: ModelType | string;
   options?: RenderStatusLabelOptionsInterface;
+  fallbackStatus?: string | number | null;
 }) => {
   const statusCodes = getStatusCodes(type);
 
@@ -152,11 +193,13 @@ export const StatusRenderer = ({
   }
 
   if (statusCodes === undefined || statusCodes === null) {
-    console.warn('StatusRenderer: statusCodes is undefined');
+    console.warn(
+      `StatusRenderer: statusCodes is undefined for model '${type}'`
+    );
     return null;
   }
 
-  return renderStatusLabel(status, statusCodes, options);
+  return renderStatusLabel(status, statusCodes, options, fallbackStatus);
 };
 
 /*
@@ -167,7 +210,10 @@ export function TableStatusRenderer(
   accessor?: string
 ): ((record: any) => any) | undefined {
   return (record: any) => {
-    const status = resolveItem(record, accessor ?? 'status');
+    const status =
+      resolveItem(record, accessor ?? 'status') ??
+      resolveItem(record, 'status_custom_key') ??
+      resolveItem(record, 'status');
 
     return (
       status && (

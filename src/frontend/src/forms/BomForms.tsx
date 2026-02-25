@@ -16,25 +16,32 @@ import { useUserState } from '../states/UserState';
 /**
  * Field set for BomItem form
  */
-export function bomItemFields(): ApiFormFieldSet {
+export function bomItemFields({
+  showAssembly = false
+}: {
+  showAssembly?: boolean;
+}): ApiFormFieldSet {
   return {
     part: {
-      hidden: true
+      disabled: true,
+      hidden: !showAssembly
     },
     sub_part: {
       filters: {
-        component: true,
-        virtual: false
+        active: true, // Only show active parts when creating a new BOM item
+        component: true
       }
     },
     quantity: {},
     reference: {},
-    overage: {},
-    note: {},
+    setup_quantity: {},
+    attrition: {},
+    rounding_multiple: {},
     allow_variants: {},
     inherited: {},
     consumable: {},
-    optional: {}
+    optional: {},
+    note: {}
   };
 }
 

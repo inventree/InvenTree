@@ -1,11 +1,13 @@
 """Provides a JSON API for common components."""
 
 import json
+import json.decoder
 
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
-from django.core.exceptions import ValidationError
+from django.core.exceptions import FieldDoesNotExist, ValidationError
 from django.db.models import Q
+from django.http import JsonResponse
 from django.http.response import HttpResponse
 from django.urls import include, path, re_path
 from django.utils.decorators import method_decorator
@@ -13,36 +15,54 @@ from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import cache_control
 from django.views.decorators.csrf import csrf_exempt
 
+import django_filters.rest_framework.filters as rest_filters
 import django_q.models
-from django_filters import rest_framework as rest_filters
+from django_filters.rest_framework.filterset import FilterSet
 from django_q.tasks import async_task
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
 from drf_spectacular.utils import OpenApiResponse, extend_schema
 from error_report.models import Error
+from opentelemetry import trace
 from pint._typing import UnitLike
 from rest_framework import generics, serializers
 from rest_framework.exceptions import NotAcceptable, NotFound, PermissionDenied
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from sql_util.utils import SubqueryCount
 
+import common.filters
 import common.models
 import common.serializers
 import InvenTree.conversion
+import InvenTree.models
+import InvenTree.ready
 from common.icons import get_icon_packs
 from common.settings import get_global_setting
 from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import urlpattern as generic_states_api_urls
-from InvenTree.api import BulkDeleteMixin, MetadataView
+from InvenTree.api import (
+    BulkCreateMixin,
+    BulkDeleteMixin,
+    GenericMetadataView,
+    SimpleGenericMetadataView,
+    meta_path,
+)
 from InvenTree.config import CONFIG_LOOKUPS
-from InvenTree.filters import ORDER_FILTER, SEARCH_ORDER_FILTER
-from InvenTree.helpers import inheritors
+from InvenTree.filters import (
+    ORDER_FILTER,
+    SEARCH_ORDER_FILTER,
+    SEARCH_ORDER_FILTER_ALIAS,
+)
+from InvenTree.helpers import inheritors, str2bool
 from InvenTree.helpers_email import send_email
 from InvenTree.mixins import (
     CreateAPI,
     ListAPI,
     ListCreateAPI,
+    OutputOptionsMixin,
     RetrieveAPI,
+    RetrieveDestroyAPI,
     RetrieveUpdateAPI,
     RetrieveUpdateDestroyAPI,
 )
@@ -55,8 +75,6 @@ from InvenTree.permissions import (
     IsSuperuserOrSuperScope,
     UserSettingsPermissionsOrScope,
 )
-from plugin.models import NotificationUserSetting
-from plugin.serializers import NotificationUserSettingSerializer
 
 
 class CsrfExemptMixin:
@@ -277,6 +295,9 @@ class UserSettingsList(SettingsList):
 
         queryset = super().filter_queryset(queryset)
 
+        if not user.is_authenticated:  # pragma: no cover
+            raise PermissionDenied('User must be authenticated to access user settings')
+
         queryset = queryset.filter(user=user)
 
         return queryset
@@ -306,36 +327,6 @@ class UserSettingsDetail(RetrieveUpdateAPI):
         return common.models.InvenTreeUserSetting.get_setting_object(
             key, user=self.request.user, cache=False, create=True
         )
-
-
-class NotificationUserSettingsList(SettingsList):
-    """API endpoint for accessing a list of notification user settings objects."""
-
-    queryset = NotificationUserSetting.objects.all()
-    serializer_class = NotificationUserSettingSerializer
-    permission_classes = [UserSettingsPermissionsOrScope]
-
-    def filter_queryset(self, queryset):
-        """Only list settings which apply to the current user."""
-        try:
-            user = self.request.user
-        except AttributeError:
-            return NotificationUserSetting.objects.none()
-
-        queryset = super().filter_queryset(queryset)
-        queryset = queryset.filter(user=user)
-        return queryset
-
-
-class NotificationUserSettingsDetail(RetrieveUpdateAPI):
-    """Detail view for an individual "notification user setting" object.
-
-    - User can only view / edit settings their own settings objects
-    """
-
-    queryset = NotificationUserSetting.objects.all()
-    serializer_class = NotificationUserSettingSerializer
-    permission_classes = [UserSettingsPermissionsOrScope]
 
 
 class NotificationMessageMixin:
@@ -383,6 +374,10 @@ class NotificationList(NotificationMessageMixin, BulkDeleteMixin, ListAPI):
             return common.models.NotificationMessage.objects.none()
 
         queryset = super().filter_queryset(queryset)
+
+        if not user.is_authenticated:  # pragma: no cover
+            raise PermissionDenied('User must be authenticated to access notifications')
+
         queryset = queryset.filter(user=user)
         return queryset
 
@@ -579,6 +574,7 @@ class BackgroundTaskOverview(APIView):
     permission_classes = [IsAuthenticatedOrReadScope, IsAdminUser]
     serializer_class = None
 
+    @extend_schema(responses={200: common.serializers.TaskOverviewSerializer})
     def get(self, request, fmt=None):
         """Return information about the current status of the background task queue."""
         import django_q.models as q_models
@@ -646,6 +642,9 @@ class FlagList(ListAPI):
     serializer_class = common.serializers.FlagSerializer
     permission_classes = [AllowAnyOrReadScope]
 
+    # Specifically disable pagination for this view
+    pagination_class = None
+
 
 class FlagDetail(RetrieveAPI):
     """Detail view for an individual feature flag."""
@@ -700,7 +699,7 @@ class ContentTypeModelDetail(ContentTypeDetail):
         return super().get(request, *args, **kwargs)
 
 
-class AttachmentFilter(rest_filters.FilterSet):
+class AttachmentFilter(FilterSet):
     """Filterset for the AttachmentList API endpoint."""
 
     class Meta:
@@ -726,12 +725,16 @@ class AttachmentFilter(rest_filters.FilterSet):
         return queryset.filter(Q(attachment=None) | Q(attachment='')).distinct()
 
 
-class AttachmentList(BulkDeleteMixin, ListCreateAPI):
-    """List API endpoint for Attachment objects."""
+class AttachmentMixin:
+    """Mixin class for Attachment views."""
 
     queryset = common.models.Attachment.objects.all()
     serializer_class = common.serializers.AttachmentSerializer
     permission_classes = [IsAuthenticatedOrReadScope]
+
+
+class AttachmentList(AttachmentMixin, BulkDeleteMixin, ListCreateAPI):
+    """List API endpoint for Attachment objects."""
 
     filter_backends = SEARCH_ORDER_FILTER
     filterset_class = AttachmentFilter
@@ -764,12 +767,8 @@ class AttachmentList(BulkDeleteMixin, ListCreateAPI):
                     )
 
 
-class AttachmentDetail(RetrieveUpdateDestroyAPI):
+class AttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI):
     """Detail API endpoint for Attachment objects."""
-
-    queryset = common.models.Attachment.objects.all()
-    serializer_class = common.serializers.AttachmentSerializer
-    permission_classes = [IsAuthenticatedOrReadScope]
 
     def destroy(self, request, *args, **kwargs):
         """Check user permissions before deleting an attachment."""
@@ -781,6 +780,327 @@ class AttachmentDetail(RetrieveUpdateDestroyAPI):
             )
 
         return super().destroy(request, *args, **kwargs)
+
+
+class ParameterTemplateFilter(FilterSet):
+    """FilterSet class for the ParameterTemplateList API endpoint."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = common.models.ParameterTemplate
+        fields = ['name', 'units', 'checkbox', 'enabled']
+
+    has_choices = rest_filters.BooleanFilter(
+        method='filter_has_choices', label='Has Choice'
+    )
+
+    def filter_has_choices(self, queryset, name, value):
+        """Filter queryset to include only PartParameterTemplates with choices."""
+        if str2bool(value):
+            return queryset.exclude(Q(choices=None) | Q(choices=''))
+
+        return queryset.filter(Q(choices=None) | Q(choices='')).distinct()
+
+    has_units = rest_filters.BooleanFilter(method='filter_has_units', label='Has Units')
+
+    def filter_has_units(self, queryset, name, value):
+        """Filter queryset to include only PartParameterTemplates with units."""
+        if str2bool(value):
+            return queryset.exclude(Q(units=None) | Q(units=''))
+
+        return queryset.filter(Q(units=None) | Q(units='')).distinct()
+
+    model_type = rest_filters.CharFilter(method='filter_model_type', label='Model Type')
+
+    def filter_model_type(self, queryset, name, value):
+        """Filter queryset to include only ParameterTemplates of the given model type."""
+        return common.filters.filter_content_type(
+            queryset, 'model_type', value, allow_null=False
+        )
+
+    for_model = rest_filters.CharFilter(method='filter_for_model', label='For Model')
+
+    def filter_for_model(self, queryset, name, value):
+        """Filter queryset to include only ParameterTemplates which apply to the given model.
+
+        Note that this varies from the 'model_type' filter, in that ParameterTemplates
+        with a blank 'model_type' are considered to apply to all models.
+        """
+        return common.filters.filter_content_type(
+            queryset, 'model_type', value, allow_null=True
+        )
+
+    exists_for_model = rest_filters.CharFilter(
+        method='filter_exists_for_model', label='Exists For Model'
+    )
+
+    def filter_exists_for_model(self, queryset, name, value):
+        """Filter queryset to include only ParameterTemplates which have at least one Parameter for the given model type."""
+        content_type = common.filters.determine_content_type(value)
+
+        if not content_type:
+            raise ValidationError({
+                'exists_for_model': 'Invalid model type provided - unable to determine content type'
+            })
+
+        # If the 'filter_exists_for_model_id' filter is applied, defer to that
+        if self.request.query_params.get('exists_for_model_id', None):
+            return queryset
+
+        queryset = queryset.prefetch_related('parameters')
+
+        # Annotate the queryset to determine which ParameterTemplates have at least one Parameter for the given model type
+        queryset = queryset.annotate(
+            parameter_count=SubqueryCount(
+                'parameters', filter=Q(model_type=content_type)
+            )
+        )
+
+        # Return only those ParameterTemplates which have at least one Parameter for the given model type
+        return queryset.filter(parameter_count__gt=0)
+
+    exists_for_model_id = rest_filters.NumberFilter(
+        method='filter_exists_for_model_id', label='Exists For Model ID'
+    )
+
+    def filter_exists_for_model_id(self, queryset, name, value):
+        """Filter queryset to include only ParameterTemplates which have at least one Parameter for the given model type and model id.
+
+        Notes:
+            - This filter can only be applied if the 'exists_for_model' filter is also applied, as the model_id is only meaningful in the context of a particular model type.
+
+        Reference: https://github.com/inventree/InvenTree/issues/11381
+        """
+        exists_for_model = self.request.query_params.get('exists_for_model', None)
+
+        if not exists_for_model:
+            raise ValidationError({
+                'exists_for_model': 'Invalid model type provided - unable to determine content type'
+            })
+
+        content_type = common.filters.determine_content_type(exists_for_model)
+
+        if not content_type:
+            raise ValidationError({
+                'exists_for_model': 'Invalid model type provided - unable to determine content type'
+            })
+
+        model_class = content_type.model_class()
+
+        # Try to find the model instance
+        try:
+            instance = model_class.objects.get(pk=value)
+        except (model_class.DoesNotExist, ValueError):
+            # If the model instance does not exist, then we can return an empty queryset
+            raise ValidationError({
+                'exists_for_model_id': 'Invalid model id provided - no such instance for the given model type'
+            })
+
+        # If the provided model is a "tree" structure, then we should also include any child objects in the filter
+        if isinstance(instance, InvenTree.models.InvenTreeTree):
+            id_values = list(
+                instance.get_descendants(include_self=True).values_list('pk', flat=True)
+            )
+        else:
+            id_values = [instance.pk]
+
+        # Now, filter against model type and model id
+        queryset = queryset.prefetch_related('parameters')
+
+        filters = {'model_type': content_type, 'model_id__in': id_values}
+
+        # Annotate the queryset to determine which ParameterTemplates have at least one Parameter defined
+        queryset = queryset.annotate(
+            parameter_count=SubqueryCount('parameters', filter=Q(**filters))
+        )
+
+        return queryset.filter(parameter_count__gt=0)
+
+    exists_for_related_model = rest_filters.CharFilter(
+        method='filter_exists_for_related_model', label='Exists For Related Model'
+    )
+
+    def filter_exists_for_related_model(self, queryset, name, value):
+        """Filter applied to map parameter templates to a particular model relation against the target model.
+
+        For instance, specify 'category' to filter part parameters which exist for any part in that category.
+
+        Note:
+            - This filter has no effect on its own
+            - It requires the 'exists_for_model' filter to be applied (to specify the base model)
+            - It requires the 'exists_for_related_model_id' filter to be applied also (to specify the related model id)
+        """
+        return queryset
+
+    exists_for_related_model_id = rest_filters.NumberFilter(
+        method='filter_exists_for_related_model_id', label='Exists For Model ID'
+    )
+
+    def filter_exists_for_related_model_id(self, queryset, name, value):
+        """Filter queryset to include only ParameterTemplates which have at least one Parameter for the given related model type and model id.
+
+        Notes:
+            - This filter can only be applied if the 'exists_for_model' filter is also applied, as the model_id is only meaningful in the context of a base model
+            - This filter can only be applied if the 'exists_for_related_model' filter is also applied, as the related model id is only meaningful in the context of a particular model relation
+
+        Example: To filter part parameters which have at least one parameter defined for any part in category 5, you could apply the following filters:
+            - exists_for_model=part
+            - exists_for_related_model=category
+            - exists_for_related_model_id=5
+        """
+        model = self.request.query_params.get('exists_for_model', None)
+        related_model = self.request.query_params.get('exists_for_related_model', None)
+
+        if not model or not related_model:
+            raise ValidationError({
+                'exists_for_model': 'Invalid model type provided - unable to determine content type'
+            })
+
+        # Determine content type for the base model, to ensure they are valid
+        model_type = common.filters.determine_content_type(model)
+
+        if not model_type:
+            return queryset.none()
+
+        # Determine the model class for the 'related' model
+        try:
+            related_model_field = model_type.model_class()._meta.get_field(
+                related_model
+            )
+        except FieldDoesNotExist:
+            raise ValidationError({
+                'exists_for_related_model': 'Invalid related model - no such field on the base model'
+            })
+        if related_model_field := model_type.model_class()._meta.get_field(
+            related_model
+        ):
+            related_model_class = related_model_field.related_model
+        else:
+            # Return an empty queryset if the provided related model is invalid
+            return queryset.none()
+
+        # Find all instances of the related model which match the provided related model id
+        try:
+            related_instance = related_model_class.objects.get(pk=value)
+        except (related_model_class.DoesNotExist, ValueError):
+            return queryset.none()
+
+        # Account for potential tree structure in the related model
+        if isinstance(related_instance, InvenTree.models.InvenTreeTree):
+            related_instances = list(
+                related_instance.get_descendants(include_self=True).values_list(
+                    'pk', flat=True
+                )
+            )
+        else:
+            related_instances = [related_instance.pk]
+
+        # Next, find all instances of the base model which are related to the related model instances
+        model_instances = model_type.model_class().objects.filter(**{
+            f'{related_model}__in': related_instances
+        })
+        model_instance_ids = list(model_instances.values_list('pk', flat=True))
+
+        # Now, filter against model type and model id
+        queryset = queryset.prefetch_related('parameters')
+
+        filters = {'model_type': model_type, 'model_id__in': model_instance_ids}
+
+        # Annotate the queryset to determine which ParameterTemplates have at least one Parameter defined
+        queryset = queryset.annotate(
+            parameter_count=SubqueryCount('parameters', filter=Q(**filters))
+        )
+
+        return queryset.filter(parameter_count__gt=0)
+
+
+class ParameterTemplateMixin:
+    """Mixin class for ParameterTemplate views."""
+
+    queryset = common.models.ParameterTemplate.objects.all().prefetch_related(
+        'model_type'
+    )
+    serializer_class = common.serializers.ParameterTemplateSerializer
+    permission_classes = [IsAuthenticatedOrReadScope]
+
+
+class ParameterTemplateList(ParameterTemplateMixin, DataExportViewMixin, ListCreateAPI):
+    """List view for ParameterTemplate objects."""
+
+    filterset_class = ParameterTemplateFilter
+    filter_backends = SEARCH_ORDER_FILTER
+    search_fields = ['name', 'description']
+    ordering_fields = ['name', 'units', 'checkbox']
+
+
+class ParameterTemplateDetail(ParameterTemplateMixin, RetrieveUpdateDestroyAPI):
+    """Detail view for a ParameterTemplate object."""
+
+
+class ParameterFilter(FilterSet):
+    """Custom filters for the ParameterList API endpoint."""
+
+    class Meta:
+        """Metaclass options for the filterset."""
+
+        model = common.models.Parameter
+        fields = ['model_id', 'template', 'updated_by']
+
+    enabled = rest_filters.BooleanFilter(
+        label='Template Enabled', field_name='template__enabled'
+    )
+
+    model_type = rest_filters.CharFilter(method='filter_model_type', label='Model Type')
+
+    def filter_model_type(self, queryset, name, value):
+        """Filter queryset to include only Parameters of the given model type."""
+        return common.filters.filter_content_type(
+            queryset, 'model_type', value, allow_null=False
+        )
+
+
+class ParameterMixin:
+    """Mixin class for Parameter views."""
+
+    queryset = common.models.Parameter.objects.all().prefetch_related('model_type')
+    serializer_class = common.serializers.ParameterSerializer
+    permission_classes = [IsAuthenticatedOrReadScope]
+
+
+class ParameterList(
+    OutputOptionsMixin,
+    ParameterMixin,
+    BulkCreateMixin,
+    BulkDeleteMixin,
+    DataExportViewMixin,
+    ListCreateAPI,
+):
+    """List API endpoint for Parameter objects."""
+
+    filterset_class = ParameterFilter
+    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+
+    ordering_fields = ['name', 'data', 'units', 'template', 'updated', 'updated_by']
+
+    ordering_field_aliases = {
+        'name': 'template__name',
+        'units': 'template__units',
+        'data': ['data_numeric', 'data'],
+    }
+
+    search_fields = [
+        'data',
+        'template__name',
+        'template__description',
+        'template__units',
+    ]
+
+    unique_create_fields = ['model_type', 'model_id', 'template']
+
+
+class ParameterDetail(ParameterMixin, RetrieveUpdateDestroyAPI):
+    """Detail API endpoint for Parameter objects."""
 
 
 @method_decorator(cache_control(public=True, max_age=86400), name='dispatch')
@@ -867,7 +1187,7 @@ class EmailMessageMixin:
     permission_classes = [IsSuperuserOrSuperScope]
 
 
-class EmailMessageList(EmailMessageMixin, ListAPI):
+class EmailMessageList(EmailMessageMixin, BulkDeleteMixin, ListAPI):
     """List view for email objects."""
 
     filter_backends = SEARCH_ORDER_FILTER
@@ -890,7 +1210,7 @@ class EmailMessageList(EmailMessageMixin, ListAPI):
     ]
 
 
-class EmailMessageDetail(EmailMessageMixin, RetrieveAPI):
+class EmailMessageDetail(EmailMessageMixin, RetrieveDestroyAPI):
     """Detail view for an email object."""
 
 
@@ -913,6 +1233,92 @@ class TestEmail(CreateAPI):
             raise serializers.ValidationError(
                 detail=f'Failed to send test email: "{reason}"'
             )  # pragma: no cover
+
+
+class HealthCheckStatusSerializer(serializers.Serializer):
+    """Status of the overall system health."""
+
+    status = serializers.ChoiceField(
+        help_text='Health status of the InvenTree server',
+        choices=['ok', 'loading'],
+        read_only=True,
+        default='ok',
+    )
+
+
+class HealthCheckView(APIView):
+    """Simple JSON endpoint for InvenTree health check.
+
+    Intended to be used by external services to confirm that the InvenTree server is running.
+    """
+
+    permission_classes = [AllowAnyOrReadScope]
+
+    @extend_schema(
+        responses={
+            200: OpenApiResponse(
+                response=HealthCheckStatusSerializer,
+                description='InvenTree server health status',
+            )
+        }
+    )
+    def get(self, request, *args, **kwargs):
+        """Simple health check endpoint for monitoring purposes.
+
+        Use the root API endpoint for more detailed information (using an authenticated request).
+        """
+        status = (
+            InvenTree.ready.isPluginRegistryLoaded()
+            if settings.PLUGINS_ENABLED
+            else True
+        )
+        return JsonResponse(
+            {'status': 'ok' if status else 'loading'}, status=200 if status else 503
+        )
+
+
+class ObservabilityEndSerializer(serializers.Serializer):
+    """Serializer for observability end endpoint."""
+
+    traceid = serializers.CharField(
+        help_text='Trace ID to end', max_length=128, required=True
+    )
+    service = serializers.CharField(
+        help_text='Service name', max_length=128, required=True
+    )
+
+
+class ObservabilityEnd(CreateAPI):
+    """Endpoint for observability tools."""
+
+    permission_classes = [AllowAnyOrReadScope]
+    serializer_class = ObservabilityEndSerializer
+
+    def create(self, request, *args, **kwargs):
+        """End a trace in the observability system."""
+        if not settings.TRACING_ENABLED:
+            return Response({'status': 'ok'})
+
+        data = self.get_serializer(data=request.data)
+        data.is_valid(raise_exception=True)
+
+        traceid = data.validated_data['traceid']
+        # service = data.validated_data['service']  # This will become interesting with frontend observability
+
+        # End the foreign trend via the low level otel API
+        tracer = trace.get_tracer(__name__)
+        span_context = trace.SpanContext(
+            trace_id=int(traceid, 16),
+            span_id=0,
+            is_remote=True,
+            trace_flags=trace.TraceFlags(0x01),
+            trace_state=trace.TraceState(),
+        )
+        with tracer.start_span('Ending session') as span:
+            span.add_event('Ending external trace')
+            span.add_link(span_context)
+
+        return Response({'status': 'ok'})
 
 
 selection_urls = [
@@ -962,24 +1368,6 @@ settings_api_urls = [
             path('', UserSettingsList.as_view(), name='api-user-setting-list'),
         ]),
     ),
-    # Notification settings
-    path(
-        'notification/',
-        include([
-            # Notification Settings Detail
-            path(
-                '<int:pk>/',
-                NotificationUserSettingsDetail.as_view(),
-                name='api-notification-setting-detail',
-            ),
-            # Notification Settings List
-            path(
-                '',
-                NotificationUserSettingsList.as_view(),
-                name='api-notification-setting-list',
-            ),
-        ]),
-    ),
     # Global settings
     path(
         'global/',
@@ -1022,15 +1410,46 @@ common_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(model=common.models.Attachment),
-                        name='api-attachment-metadata',
-                    ),
+                    meta_path(common.models.Attachment),
                     path('', AttachmentDetail.as_view(), name='api-attachment-detail'),
                 ]),
             ),
             path('', AttachmentList.as_view(), name='api-attachment-list'),
+        ]),
+    ),
+    # Parameters and templates
+    path(
+        'parameter/',
+        include([
+            path(
+                'template/',
+                include([
+                    path(
+                        '<int:pk>/',
+                        include([
+                            meta_path(common.models.ParameterTemplate),
+                            path(
+                                '',
+                                ParameterTemplateDetail.as_view(),
+                                name='api-parameter-template-detail',
+                            ),
+                        ]),
+                    ),
+                    path(
+                        '',
+                        ParameterTemplateList.as_view(),
+                        name='api-parameter-template-list',
+                    ),
+                ]),
+            ),
+            path(
+                '<int:pk>/',
+                include([
+                    meta_path(common.models.Parameter),
+                    path('', ParameterDetail.as_view(), name='api-parameter-detail'),
+                ]),
+            ),
+            path('', ParameterList.as_view(), name='api-parameter-list'),
         ]),
     ),
     path(
@@ -1040,6 +1459,22 @@ common_api_urls = [
             path('', ErrorMessageList.as_view(), name='api-error-list'),
         ]),
     ),
+    # Metadata
+    path(
+        'metadata/',
+        include([
+            path(
+                '<str:model>/<str:lookup_field>/<str:lookup_value>/',
+                GenericMetadataView.as_view(),
+                name='api-generic-metadata',
+            ),
+            path(
+                '<str:model>/<int:pk>/',
+                SimpleGenericMetadataView.as_view(),
+                name='api-generic-metadata',
+            ),
+        ]),
+    ),
     # Project codes
     path(
         'project-code/',
@@ -1047,14 +1482,7 @@ common_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(
-                            model=common.models.ProjectCode,
-                            permission_classes=[IsStaffOrReadOnlyScope],
-                        ),
-                        name='api-project-code-metadata',
-                    ),
+                    meta_path(common.models.ProjectCode),
                     path(
                         '', ProjectCodeDetail.as_view(), name='api-project-code-detail'
                     ),
@@ -1166,6 +1594,26 @@ common_api_urls = [
                 '<int:pk>/', DataOutputDetail.as_view(), name='api-data-output-detail'
             ),
             path('', DataOutputList.as_view(), name='api-data-output-list'),
+        ]),
+    ),
+    # System APIs (related to basic system functions)
+    path(
+        'system/',
+        include([
+            # Health check
+            path('health/', HealthCheckView.as_view(), name='api-system-health')
+        ]),
+    ),
+    # Internal System APIs - DO NOT USE
+    path(
+        'system-internal/',
+        include([
+            # Observability
+            path(
+                'observability/end',
+                ObservabilityEnd.as_view(),
+                name='api-system-observability',
+            )
         ]),
     ),
 ]

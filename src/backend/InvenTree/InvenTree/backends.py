@@ -2,7 +2,6 @@
 
 import datetime
 import time
-from typing import Union
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -85,10 +84,11 @@ class InvenTreeMaintenanceModeBackend(AbstractStateBackend):
 
             r -= 1
 
-            if r == 0:
-                logger.warning(
-                    'Failed to set maintenance mode state after %s retries', retries
-                )
+            # Disable this warning message (for now) as it is confusing users with no upside
+            # if r == 0:
+            #     logger.warning(
+            #         'Failed to set maintenance mode state after %s retries', retries
+            #     )
 
 
 class InvenTreeMailLoggingBackend(BaseEmailBackend):
@@ -109,7 +109,7 @@ class InvenTreeMailLoggingBackend(BaseEmailBackend):
         return self.backend.open()
 
     def send_messages(
-        self, email_messages: list[Union[EmailMessage, EmailMultiAlternatives]]
+        self, email_messages: list[EmailMessage | EmailMultiAlternatives]
     ) -> int:
         """Send email messages and log them to the database.
 

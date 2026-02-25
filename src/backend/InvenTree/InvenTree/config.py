@@ -7,8 +7,9 @@ import os
 import random
 import shutil
 import string
+import sys
 from pathlib import Path
-from typing import Optional, Union
+from typing import Optional
 
 logger = logging.getLogger('inventree')
 CONFIG_DATA = None
@@ -76,8 +77,9 @@ def get_root_dir() -> Path:
 
 def inventreeInstaller() -> Optional[str]:
     """Returns the installer for the running codebase - if set or detectable."""
-    # First look in the environment variables, e.g. if running in docker
+    load_version_file()
 
+    # First look in the environment variables, e.g. if running in docker
     installer = os.environ.get('INVENTREE_PKG_INSTALLER', '')
 
     if installer:
@@ -119,6 +121,11 @@ def get_config_dir() -> Path:
 def get_testfolder_dir() -> Path:
     """Returns the InvenTree test folder directory."""
     return get_base_dir().joinpath('_testfolder').resolve()
+
+
+def get_version_file() -> Path:
+    """Returns the path of the InvenTree VERSION file. This does not ensure that the file exists."""
+    return get_root_dir().joinpath('VERSION').resolve()
 
 
 def ensure_dir(path: Path, storage=None) -> None:
@@ -171,7 +178,7 @@ def get_config_file(create=True) -> Path:
     return cfg_filename
 
 
-def load_config_data(set_cache: bool = False) -> map:
+def load_config_data(set_cache: bool = False) -> map | None:
     """Load configuration data from the config file.
 
     Arguments:
@@ -189,7 +196,15 @@ def load_config_data(set_cache: bool = False) -> map:
     cfg_file = get_config_file()
 
     with open(cfg_file, encoding='utf-8') as cfg:
-        data = yaml.safe_load(cfg)
+        try:
+            data = yaml.safe_load(cfg)
+        except yaml.parser.ParserError as error:
+            logger.error(
+                "INVE-E13: Error reading InvenTree configuration file '%s': %s",
+                cfg_file,
+                error,
+            )
+            sys.exit(1)
 
     # Set the cache if requested
     if set_cache:
@@ -216,6 +231,11 @@ def do_typecast(value, type, var_name=None):
     # Valid JSON string is required
     elif type is dict:
         value = to_dict(value)
+
+    # Special handling for boolean typecasting
+    elif type is bool:
+        val = is_true(value)
+        return val
 
     elif type is not None:
         # Try to typecast the value
@@ -386,7 +406,7 @@ def get_plugin_dir():
     return get_setting('INVENTREE_PLUGIN_DIR', 'plugin_dir')
 
 
-def get_secret_key(return_path: bool = False) -> Union[str, Path]:
+def get_secret_key(return_path: bool = False) -> str | Path:
     """Return the secret key value which will be used by django.
 
     Following options are tested, in descending order of preference:
@@ -430,7 +450,7 @@ def get_secret_key(return_path: bool = False) -> Union[str, Path]:
     return secret_key_file.read_text().strip()
 
 
-def get_oidc_private_key(return_path: bool = False) -> Union[str, Path]:
+def get_oidc_private_key(return_path: bool = False) -> str | Path:
     """Return the private key for OIDC authentication.
 
     Following options are tested, in descending order of preference:
@@ -592,3 +612,28 @@ def check_config_dir(
             pass
 
     return
+
+
+VERSION_LOADED = False
+"""Flag to indicate if the VERSION file has been loaded in this process."""
+
+
+def load_version_file():
+    """Load the VERSION file if it exists and place the contents into the general execution environment.
+
+    Returns:
+        True if the VERSION file was loaded (now or previously), False otherwise.
+    """
+    global VERSION_LOADED
+    if VERSION_LOADED:
+        return True
+
+    # Load the VERSION file if it exists
+    from dotenv import load_dotenv
+
+    version_file = get_version_file()
+    if version_file.exists():
+        load_dotenv(version_file)
+        VERSION_LOADED = True
+        return True
+    return False

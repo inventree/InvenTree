@@ -4,7 +4,7 @@ title: Mail Mixin
 
 ## MailMixin
 
-The MailMixin class provides basic functionality for processing in- and outgoing mails.
+The `MailMixin` class provides basic functionality for processing in- and outgoing mails.
 
 ### Sample Plugin
 

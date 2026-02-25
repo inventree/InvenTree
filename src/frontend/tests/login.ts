@@ -14,7 +14,7 @@ interface LoginOptions {
 /*
  * Perform form based login operation from the "login" URL
  */
-export const doLogin = async (page, options?: LoginOptions) => {
+export const doLogin = async (page: Page, options?: LoginOptions) => {
   const username: string = options?.username ?? user.username;
   const password: string = options?.password ?? user.password;
 

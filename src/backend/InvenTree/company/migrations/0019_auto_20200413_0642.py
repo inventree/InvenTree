@@ -51,7 +51,7 @@ def reverse_association(apps, schema_editor):  # pragma: no cover
 
         row = cursor.fetchone()
 
-        if len(row) > 0:
+        if row and len(row) > 0:
             try:
                 manufacturer_id = int(row[0])
             except (TypeError, ValueError):
@@ -67,12 +67,12 @@ def reverse_association(apps, schema_editor):  # pragma: no cover
         response = cursor.execute(f"SELECT name from company_company where id={manufacturer_id};")
 
         row = cursor.fetchone()
+        if row:
+            name = row[0]
 
-        name = row[0]
+            print(" - Manufacturer name: '{name}'".format(name=name))
 
-        print(" - Manufacturer name: '{name}'".format(name=name))
-
-        response = cursor.execute("UPDATE part_supplierpart SET manufacturer_name='{name}' WHERE id={ID};".format(name=name, ID=supplier_part_id))
+            response = cursor.execute("UPDATE part_supplierpart SET manufacturer_name='{name}' WHERE id={ID};".format(name=name, ID=supplier_part_id))
 
 def associate_manufacturers(apps, schema_editor):
     """
@@ -106,7 +106,7 @@ def associate_manufacturers(apps, schema_editor):
         response = cursor.execute(query)
         row = cursor.fetchone()
 
-        if len(row) > 0:
+        if row and len(row) > 0:
             return row[0]
         return ''  # pragma: no cover
 
@@ -296,11 +296,11 @@ def associate_manufacturers(apps, schema_editor):
 
                 # Double-check if the typed name corresponds to an existing item
                 elif response in companies.keys():
-                    link_part(part, companies[response])
+                    link_part(part_id, companies[response])
                     return
 
                 elif response in links.keys():
-                    link_part(part, links[response])
+                    link_part(part_id, links[response])
                     return
 
                 # No match, create a new manufacturer

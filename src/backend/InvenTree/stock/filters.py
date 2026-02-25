@@ -1,12 +1,14 @@
 """Custom query filters for the Stock models."""
 
+from typing import Optional
+
 from django.db.models import F, Func, IntegerField, OuterRef, Q, Subquery
 from django.db.models.functions import Coalesce
 
 import stock.models
 
 
-def annotate_location_items(filter: Q = None):
+def annotate_location_items(filter: Optional[Q] = None):
     """Construct a queryset annotation which returns the number of stock items in a particular location.
 
     - Includes items in subcategories also
@@ -26,7 +28,8 @@ def annotate_location_items(filter: Q = None):
 
     return Coalesce(
         Subquery(
-            subquery.annotate(
+            subquery
+            .annotate(
                 total=Func(F('pk'), function='COUNT', output_field=IntegerField())
             )
             .values('total')
@@ -48,7 +51,8 @@ def annotate_sub_locations():
 
     return Coalesce(
         Subquery(
-            subquery.annotate(
+            subquery
+            .annotate(
                 count=Func(F('pk'), function='COUNT', output_field=IntegerField())
             )
             .values('count')

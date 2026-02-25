@@ -8,6 +8,7 @@ import {
   IconExclamationCircle,
   IconFileDownload,
   IconFileUpload,
+  IconHome,
   IconList,
   IconListDetails,
   IconMail,
@@ -41,6 +42,8 @@ const ReportTemplatePanel = Loadable(
 
 const LabelTemplatePanel = Loadable(lazy(() => import('./LabelTemplatePanel')));
 
+const HomePanel = Loadable(lazy(() => import('./HomePanel')));
+
 const UserManagementPanel = Loadable(
   lazy(() => import('./UserManagementPanel'))
 );
@@ -69,7 +72,7 @@ const MachineManagementPanel = Loadable(
   lazy(() => import('./MachineManagementPanel'))
 );
 
-const PartParameterPanel = Loadable(lazy(() => import('./PartParameterPanel')));
+const ParameterPanel = Loadable(lazy(() => import('./ParameterPanel')));
 
 const TestTemplatePanel = Loadable(lazy(() => import('./TestTemplatePanel')));
 
@@ -105,13 +108,18 @@ const LocationTypesTable = Loadable(
   lazy(() => import('../../../../tables/stock/LocationTypesTable'))
 );
 
-const StocktakePanel = Loadable(lazy(() => import('./StocktakePanel')));
-
 export default function AdminCenter() {
   const user = useUserState();
 
   const adminCenterPanels: PanelType[] = useMemo(() => {
     return [
+      {
+        name: 'home',
+        label: t`Home`,
+        icon: <IconHome />,
+        content: <HomePanel />,
+        showHeadline: false
+      },
       {
         name: 'user',
         label: t`Users / Access`,
@@ -186,10 +194,10 @@ export default function AdminCenter() {
         content: <UnitManagementPanel />
       },
       {
-        name: 'part-parameters',
-        label: t`Part Parameters`,
+        name: 'parameters',
+        label: t`Parameters`,
         icon: <IconList />,
-        content: <PartParameterPanel />,
+        content: <ParameterPanel />,
         hidden: !user.hasViewRole(UserRoles.part)
       },
       {
@@ -205,13 +213,6 @@ export default function AdminCenter() {
         icon: <IconClipboardCheck />,
         content: <TestTemplatePanel />,
         hidden: !user.hasViewRole(UserRoles.part)
-      },
-      {
-        name: 'stocktake',
-        label: t`Stocktake`,
-        icon: <IconClipboardCheck />,
-        content: <StocktakePanel />,
-        hidden: !user.hasViewRole(UserRoles.stocktake)
       },
       {
         name: 'labels',
@@ -250,6 +251,7 @@ export default function AdminCenter() {
   }, [user]);
   const grouping: PanelGroupType[] = useMemo(() => {
     return [
+      { id: 'home', label: '', panelIDs: ['home'] },
       {
         id: 'ops',
         label: t`Operations`,
@@ -282,7 +284,7 @@ export default function AdminCenter() {
         id: 'plm',
         label: t`PLM`,
         panelIDs: [
-          'part-parameters',
+          'parameters',
           'category-parameters',
           'test-templates',
           'location-types',
@@ -312,7 +314,6 @@ export default function AdminCenter() {
             panels={adminCenterPanels}
             groups={grouping}
             collapsible={true}
-            markCustomPanels={true}
             model='admincenter'
             id={null}
           />

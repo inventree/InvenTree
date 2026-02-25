@@ -4,6 +4,7 @@ import enum
 import logging
 import re
 from enum import Enum
+from typing import Optional
 
 logger = logging.getLogger('inventree')
 
@@ -297,24 +298,54 @@ class StatusCodeMixin:
         """Return the status code for this object."""
         return getattr(self, self.STATUS_FIELD)
 
-    def get_custom_status(self) -> int:
+    def get_custom_status(self) -> Optional[int]:
         """Return the custom status code for this object."""
         return getattr(self, f'{self.STATUS_FIELD}_custom_key', None)
 
     def compare_status(self, status: int) -> bool:
-        """Determine if the current status matches the provided status code."""
+        """Determine if the current status matches the provided status code.
+
+        Arguments:
+            status: The status code to compare against
+
+        Returns:
+            True if the status matches, False otherwise.
+        """
+        try:
+            status = int(status)
+        except (ValueError, TypeError):
+            # Value cannot be converted to integer - so it cannot match
+            return False
+
         if status == self.get_status():
             return True
 
         return status is not None and status == self.get_custom_status()
 
-    def set_status(self, status: int) -> bool:
-        """Set the status code for this object."""
+    def set_status(self, status: int, custom_values=None) -> bool:
+        """Set the status code for this object.
+
+        Arguments:
+            status: The status code to set
+            custom_values: Optional list of custom values to consider (can be used to avoid DB queries)
+        """
         if not self.status_class:
             raise NotImplementedError('Status class not defined')
 
         base_values = self.status_class.values()
-        custom_value_set = self.status_class.custom_values()
+
+        custom_value_set = (
+            self.status_class.custom_values()
+            if custom_values is None
+            else custom_values
+        )
+
+        # The status must be an integer
+        try:
+            status = int(status)
+        except (ValueError, TypeError):
+            logger.warning(f'Invalid status value {status} for class {self.__class__}')
+            return False
 
         custom_field = f'{self.STATUS_FIELD}_custom_key'
 

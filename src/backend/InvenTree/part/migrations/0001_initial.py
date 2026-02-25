@@ -38,7 +38,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('quantity', models.PositiveIntegerField(default=1, help_text='BOM quantity for this BOM item', validators=[django.core.validators.MinValueValidator(0)])),
-                ('overage', models.CharField(blank=True, help_text='Estimated build wastage quantity (absolute or percentage)', max_length=24, validators=[InvenTree.validators.validate_overage])),
+                ('overage', models.CharField(blank=True, help_text='Estimated build wastage quantity (absolute or percentage)', max_length=24, validators=[])),
                 ('note', models.CharField(blank=True, help_text='BOM item notes', max_length=100)),
             ],
             options={

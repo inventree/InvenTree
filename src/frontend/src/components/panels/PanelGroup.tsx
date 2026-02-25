@@ -3,6 +3,7 @@ import {
   Box,
   Divider,
   Group,
+  Indicator,
   Loader,
   Paper,
   Stack,
@@ -32,12 +33,12 @@ import {
 } from 'react-router-dom';
 
 import type { ModelType } from '@lib/enums/ModelType';
+import { identifierString } from '@lib/functions/Conversion';
 import { cancelEvent } from '@lib/functions/Events';
 import { eventModified, getBaseUrl } from '@lib/functions/Navigation';
 import { navigateToLink } from '@lib/functions/Navigation';
 import { t } from '@lingui/core/macro';
 import { useShallow } from 'zustand/react/shallow';
-import { identifierString } from '../../functions/conversion';
 import { generateUrl } from '../../functions/urls';
 import { usePluginPanels } from '../../hooks/UsePluginPanels';
 import { useLocalState } from '../../states/LocalState';
@@ -71,7 +72,6 @@ export type PanelProps = {
   selectedPanel?: string;
   onPanelChange?: (panel: string) => void;
   collapsible?: boolean;
-  markCustomPanels?: boolean;
 };
 
 function BasePanelGroup({
@@ -84,8 +84,7 @@ function BasePanelGroup({
   instance,
   model,
   id,
-  collapsible = true,
-  markCustomPanels = false
+  collapsible = true
 }: Readonly<PanelProps>): ReactNode {
   const localState = useLocalState();
   const location = useLocation();
@@ -157,7 +156,7 @@ function BasePanelGroup({
     if (pluginPanels.length > 0) {
       _grouped_panels.push({
         id: 'plugins',
-        label: markCustomPanels ? t`Plugin Provided` : '',
+        label: t`Plugin Provided`,
         panels: pluginPanels
       });
     }
@@ -255,14 +254,31 @@ function BasePanelGroup({
                             handlePanelChange(panel.name, event)
                           }
                         >
-                          <UnstyledButton
-                            component={'a'}
-                            href={generateUrl(
-                              `/${getBaseUrl()}${location.pathname}/${panel.name}`
-                            )}
+                          <Indicator
+                            color={
+                              panel.notification_dot == 'info'
+                                ? 'blue'
+                                : panel.notification_dot == 'warning'
+                                  ? 'yellow'
+                                  : 'red'
+                            }
+                            position='middle-end'
+                            disabled={!panel.notification_dot}
                           >
-                            {expanded && panel.label}
-                          </UnstyledButton>
+                            <Group justify='left' gap='xs' wrap='nowrap'>
+                              <UnstyledButton
+                                component={'a'}
+                                style={{
+                                  textAlign: 'left'
+                                }}
+                                href={generateUrl(
+                                  `/${getBaseUrl()}${location.pathname}/${panel.name}`
+                                )}
+                              >
+                                {expanded && panel.label}
+                              </UnstyledButton>
+                            </Group>
+                          </Indicator>
                         </Tabs.Tab>
                       </Tooltip>
                     )

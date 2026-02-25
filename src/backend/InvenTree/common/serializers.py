@@ -12,8 +12,8 @@ from error_report.models import Error
 from flags.state import flag_state
 from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied
-from taggit.serializers import TagListSerializerField
 
+import common.filters
 import common.models as common_models
 import common.validators
 import generic.states.custom
@@ -21,10 +21,14 @@ from importer.registry import register_importer
 from InvenTree.helpers import get_objectreference
 from InvenTree.helpers_model import construct_absolute_url
 from InvenTree.mixins import DataImportExportSerializerMixin
+from InvenTree.models import InvenTreeParameterMixin
 from InvenTree.serializers import (
+    ContentTypeField,
+    FilterableSerializerMixin,
     InvenTreeAttachmentSerializerField,
     InvenTreeImageSerializerField,
     InvenTreeModelSerializer,
+    enable_filter,
 )
 from plugin import registry as plugin_registry
 from users.serializers import OwnerSerializer, UserSerializer
@@ -38,17 +42,30 @@ class SettingsValueField(serializers.Field):
         """Return the object instance, not the attribute value."""
         return instance
 
-    def to_representation(self, instance) -> str:
+    def to_representation(self, instance: common_models.InvenTreeSetting) -> str:
         """Return the value of the setting.
 
         Protected settings are returned as '***'
         """
         if instance.protected:
             return '***'
-        elif instance.value is None:
-            return ''
         else:
-            return str(instance.value)
+            value = instance.value
+
+            if value is None:
+                value = ''
+
+            # Attempt to coerce the value to a native type
+            if instance.is_int():
+                value = instance.as_int()
+
+            elif instance.is_float():
+                value = instance.as_float()
+
+            elif instance.is_bool():
+                value = instance.as_bool()
+
+            return value
 
     def to_internal_value(self, data) -> str:
         """Return the internal value of the setting."""
@@ -71,6 +88,18 @@ class SettingsSerializer(InvenTreeModelSerializer):
 
     choices = serializers.SerializerMethodField()
 
+    def get_choices(self, obj) -> list:
+        """Returns the choices available for a given item."""
+        results = []
+
+        choices = obj.choices()
+
+        if choices:
+            for choice in choices:
+                results.append({'value': choice[0], 'display_name': choice[1]})
+
+        return results
+
     model_name = serializers.CharField(read_only=True, allow_null=True)
 
     model_filters = serializers.DictField(read_only=True)
@@ -91,17 +120,26 @@ class SettingsSerializer(InvenTreeModelSerializer):
 
     typ = serializers.CharField(read_only=True)
 
-    def get_choices(self, obj) -> list:
-        """Returns the choices available for a given item."""
-        results = []
+    confirm = serializers.BooleanField(
+        read_only=True,
+        help_text=_('Indicates if changing this setting requires confirmation'),
+    )
 
-        choices = obj.choices()
+    confirm_text = serializers.CharField(read_only=True)
 
-        if choices:
-            for choice in choices:
-                results.append({'value': choice[0], 'display_name': choice[1]})
-
-        return results
+    def is_valid(self, *, raise_exception=False):
+        """Validate the setting, including confirmation if required."""
+        ret = super().is_valid(raise_exception=raise_exception)
+        # Check if confirmation was provided if required
+        if self.instance.confirm():
+            req_data = self.context['request'].data
+            if not 'manual_confirm' in req_data or not req_data['manual_confirm']:
+                raise serializers.ValidationError({
+                    'manual_confirm': _(
+                        'This setting requires confirmation before changing. Please confirm the change.'
+                    )
+                })
+        return ret
 
 
 class GlobalSettingsSerializer(SettingsSerializer):
@@ -124,6 +162,8 @@ class GlobalSettingsSerializer(SettingsSerializer):
             'api_url',
             'typ',
             'read_only',
+            'confirm',
+            'confirm_text',
         ]
 
     read_only = serializers.SerializerMethodField(
@@ -167,6 +207,8 @@ class UserSettingsSerializer(SettingsSerializer):
             'model_name',
             'api_url',
             'typ',
+            'confirm',
+            'confirm_text',
         ]
 
     user = serializers.PrimaryKeyRelatedField(read_only=True)
@@ -215,6 +257,8 @@ class GenericReferencedSettingSerializer(SettingsSerializer):
                 'typ',
                 'units',
                 'required',
+                'confirm',
+                'confirm_text',
             ]
 
         # set Meta class
@@ -327,6 +371,12 @@ class ConfigSerializer(serializers.Serializer):
     This is a read-only serializer.
     """
 
+    key = serializers.CharField(read_only=True)
+    env_var = serializers.CharField(read_only=True, allow_null=True)
+    config_key = serializers.CharField(read_only=True, allow_null=True)
+    source = serializers.CharField(read_only=True)
+    accessed = serializers.DateTimeField(read_only=True)
+
     def to_representation(self, instance):
         """Return the configuration data as a dictionary."""
         if not isinstance(instance, str):
@@ -392,6 +442,12 @@ class CustomStateSerializer(DataImportExportSerializerMixin, InvenTreeModelSeria
 
 class FlagSerializer(serializers.Serializer):
     """Serializer for feature flags."""
+
+    key = serializers.CharField(read_only=True)
+    state = serializers.CharField(read_only=True)
+    conditions = serializers.ListField(
+        child=serializers.DictField(), read_only=True, allow_null=True
+    )
 
     def to_representation(self, instance):
         """Return the configuration data as a dictionary."""
@@ -583,7 +639,7 @@ class FailedTaskSerializer(InvenTreeModelSerializer):
     result = serializers.CharField()
 
 
-class AttachmentSerializer(InvenTreeModelSerializer):
+class AttachmentSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
     """Serializer class for the Attachment model."""
 
     class Meta:
@@ -616,7 +672,7 @@ class AttachmentSerializer(InvenTreeModelSerializer):
                 'model_type'
             ].choices = common.validators.attachment_model_options()
 
-    tags = TagListSerializerField(required=False)
+    tags = common.filters.enable_tags_filter()
 
     user_detail = UserSerializer(source='upload_user', read_only=True, many=False)
 
@@ -666,10 +722,131 @@ class AttachmentSerializer(InvenTreeModelSerializer):
             raise PermissionDenied(permission_error_msg)
 
         # Check that the user has the required permissions to attach files to the target model
-        if not target_model_class.check_attachment_permission('change', user):
-            raise PermissionDenied(_(permission_error_msg))
+        if not target_model_class.check_related_permission('change', user):
+            raise PermissionDenied(permission_error_msg)
 
         return super().save(**kwargs)
+
+
+@register_importer()
+class ParameterTemplateSerializer(
+    DataImportExportSerializerMixin, InvenTreeModelSerializer
+):
+    """Serializer for the ParameterTemplate model."""
+
+    class Meta:
+        """Meta options for ParameterTemplateSerializer."""
+
+        model = common_models.ParameterTemplate
+        fields = [
+            'pk',
+            'name',
+            'units',
+            'description',
+            'model_type',
+            'checkbox',
+            'choices',
+            'selectionlist',
+            'enabled',
+        ]
+
+    # Note: The choices are overridden at run-time on class initialization
+    model_type = ContentTypeField(
+        mixin_class=InvenTreeParameterMixin,
+        choices=common.validators.parameter_template_model_options,
+        label=_('Model Type'),
+        default='',
+        required=False,
+        allow_null=True,
+    )
+
+    def validate_model_type(self, model_type):
+        """Convert an empty string to None for the model_type field."""
+        return model_type or None
+
+
+@register_importer()
+class ParameterSerializer(
+    FilterableSerializerMixin, DataImportExportSerializerMixin, InvenTreeModelSerializer
+):
+    """Serializer for the Parameter model."""
+
+    class Meta:
+        """Meta options for ParameterSerializer."""
+
+        model = common_models.Parameter
+        fields = [
+            'pk',
+            'template',
+            'model_type',
+            'model_id',
+            'data',
+            'data_numeric',
+            'note',
+            'updated',
+            'updated_by',
+            'template_detail',
+            'updated_by_detail',
+        ]
+
+        read_only_fields = ['updated', 'updated_by']
+
+    def save(self, **kwargs):
+        """Save the Parameter instance."""
+        from InvenTree.models import InvenTreeParameterMixin
+        from users.permissions import check_user_permission
+
+        model_type = self.validated_data.get('model_type', None)
+
+        if model_type is None and self.instance:
+            model_type = self.instance.model_type
+
+        # Ensure that the user has permission to modify parameters for the specified model
+        user = self.context.get('request').user
+
+        target_model_class = model_type.model_class()
+
+        if not issubclass(target_model_class, InvenTreeParameterMixin):
+            raise PermissionDenied(_('Invalid model type specified for parameter'))
+
+        permission_error_msg = _(
+            'User does not have permission to create or edit parameters for this model'
+        )
+
+        if not check_user_permission(user, target_model_class, 'change'):
+            raise PermissionDenied(permission_error_msg)
+
+        if not target_model_class.check_related_permission('change', user):
+            raise PermissionDenied(permission_error_msg)
+
+        instance = super().save(**kwargs)
+        instance.updated_by = user
+        instance.save()
+
+        return instance
+
+    # Note: The choices are overridden at run-time on class initialization
+    model_type = ContentTypeField(
+        mixin_class=InvenTreeParameterMixin,
+        choices=common.validators.parameter_model_options,
+        label=_('Model Type'),
+        default='',
+        allow_null=False,
+    )
+
+    updated_by_detail = enable_filter(
+        UserSerializer(
+            source='updated_by', read_only=True, allow_null=True, many=False
+        ),
+        True,
+        prefetch_fields=['updated_by'],
+    )
+
+    template_detail = enable_filter(
+        ParameterTemplateSerializer(source='template', read_only=True, many=False),
+        True,
+        prefetch_fields=['template', 'template__model_type'],
+    )
 
 
 class IconSerializer(serializers.Serializer):

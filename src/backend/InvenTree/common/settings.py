@@ -26,12 +26,12 @@ def global_setting_overrides() -> dict:
     return {}
 
 
-def get_global_setting(key, backup_value=None, enviroment_key=None, **kwargs):
+def get_global_setting(key, backup_value=None, environment_key=None, **kwargs):
     """Return the value of a global setting using the provided key."""
     from common.models import InvenTreeSetting
 
-    if enviroment_key:
-        value = environ.get(enviroment_key)
+    if environment_key:
+        value = environ.get(environment_key)
         if value:
             return value
 
@@ -44,6 +44,11 @@ def get_global_setting(key, backup_value=None, enviroment_key=None, **kwargs):
 def set_global_setting(key, value, change_user=None, create=True, **kwargs):
     """Set the value of a global setting using the provided key."""
     from common.models import InvenTreeSetting
+    from InvenTree.ready import canAppAccessDatabase
+
+    if not canAppAccessDatabase(allow_shell=True, allow_test=True):
+        logger.info(f'Cannot set global setting "{key}" - database is not accessible')
+        return False
 
     kwargs['change_user'] = change_user
     kwargs['create'] = create

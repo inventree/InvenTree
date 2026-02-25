@@ -1,6 +1,8 @@
 """Model definitions for the 'importer' app."""
 
 import json
+from collections import OrderedDict
+from datetime import datetime
 from typing import Optional
 
 from django.contrib.auth.models import User
@@ -38,6 +40,8 @@ class DataImportSession(models.Model):
         field_overrides: JSONField for field override values - used to force a value for a field
         field_filters: JSONField for field filter values - optional field API filters
     """
+
+    ID_FIELD_LABEL = 'id'
 
     class ModelChoices(RenderChoices):
         """Model choices for data import sessions."""
@@ -118,6 +122,12 @@ class DataImportSession(models.Model):
         validators=[importer.validators.validate_field_defaults],
     )
 
+    update_records = models.BooleanField(
+        default=False,
+        verbose_name=_('Update Existing Records'),
+        help_text=_('If enabled, existing records will be updated with new data'),
+    )
+
     @property
     def field_mapping(self) -> dict:
         """Construct a dict of field mappings for this import session.
@@ -141,6 +151,27 @@ class DataImportSession(models.Model):
         from importer.registry import supported_models
 
         return supported_models().get(self.model_type, None)
+
+    def get_related_model(self, field_name: str) -> models.Model:
+        """Return the related model for a given field name.
+
+        Arguments:
+            field_name: The name of the field to check
+
+        Returns:
+            The related model class, if one exists, or None otherwise
+        """
+        model_class = self.model_class
+
+        if not model_class:
+            return None
+
+        try:
+            related_field = model_class._meta.get_field(field_name)
+            model = related_field.remote_field.model
+            return model
+        except (AttributeError, models.FieldDoesNotExist):
+            return None
 
     def extract_columns(self) -> None:
         """Run initial column extraction and mapping.
@@ -288,15 +319,13 @@ class DataImportSession(models.Model):
 
         # Iterate through each "row" in the data file, and create a new DataImportRow object
         for idx, row in enumerate(df):
-            row_data = dict(zip(headers, row))
+            row_data = dict(zip(headers, row, strict=False))
 
             # Skip completely empty rows
             if not any(row_data.values()):
                 continue
 
-            row = importer.models.DataImportRow(
-                session=self, row_data=row_data, row_index=idx
-            )
+            row = DataImportRow(session=self, row_data=row_data, row_index=idx)
 
             row.extract_data(
                 field_mapping=field_mapping,
@@ -308,7 +337,7 @@ class DataImportSession(models.Model):
             imported_rows.append(row)
 
         # Perform database writes as a single operation
-        importer.models.DataImportRow.objects.bulk_create(imported_rows)
+        DataImportRow.objects.bulk_create(imported_rows)
 
         # Mark the import task as "PROCESSING"
         self.status = DataImportStatusCode.PROCESSING.value
@@ -351,13 +380,25 @@ class DataImportSession(models.Model):
 
         metadata = InvenTreeMetadata()
 
+        fields = OrderedDict()
+
+        if self.update_records:
+            # If we are updating records, ensure the ID field is included
+            fields[self.ID_FIELD_LABEL] = {
+                'label': _('ID'),
+                'help_text': _('Existing database identifier for the record'),
+                'type': 'integer',
+                'required': True,
+                'read_only': False,
+            }
+
         if serializer_class := self.serializer_class:
             serializer = serializer_class(data={}, importing=True)
-            fields = metadata.get_serializer_info(serializer)
-        else:
-            fields = {}
+            fields.update(metadata.get_serializer_info(serializer))
 
+        # Cache the available fields against this instance
         self._available_fields = fields
+
         return fields
 
     def required_fields(self) -> dict:
@@ -368,6 +409,10 @@ class DataImportSession(models.Model):
 
         for field, info in fields.items():
             if info.get('required', False):
+                required[field] = info
+
+            elif self.update_records and field == self.ID_FIELD_LABEL:
+                # If we are updating records, the ID field is required
                 required[field] = info
 
         return required
@@ -574,6 +619,8 @@ class DataImportRow(models.Model):
 
         data = {}
 
+        self.related_field_map = {}
+
         # We have mapped column (file) to field (serializer) already
         for field, col in field_mapping.items():
             # Data override (force value and skip any further checks)
@@ -599,11 +646,45 @@ class DataImportRow(models.Model):
             if field_type == 'boolean':
                 value = InvenTree.helpers.str2bool(value)
             elif field_type == 'date':
-                value = value or None
+                value = self.convert_date_field(value)
+            elif field_type == 'related field':
+                value = self.lookup_related_field(field, value)
 
             # Use the default value, if provided
             if value is None and field in default_values:
                 value = default_values[field]
+
+            # If the field provides a set of valid 'choices', use that as a lookup
+            if field_type == 'choice' and 'choices' in field_def:
+                choices = field_def.get('choices', None)
+
+                if callable(choices):
+                    choices = choices()
+
+                # Try to match the provided value against the available choices
+                choice_value = None
+
+                for choice in choices:
+                    primary_value = choice['value']
+                    display_value = choice['display_name']
+
+                    if primary_value == value:
+                        choice_value = primary_value
+                        # Break on first match against a primary choice value
+                        break
+
+                    if display_value == value:
+                        choice_value = primary_value
+
+                    elif (
+                        str(display_value).lower().strip() == str(value).lower().strip()
+                        and choice_value is None
+                    ):
+                        # Case-insensitive match against display value
+                        choice_value = primary_value
+
+                if choice_value is not None:
+                    value = choice_value
 
             data[field] = value
 
@@ -611,6 +692,93 @@ class DataImportRow(models.Model):
 
         if commit:
             self.save()
+
+    def convert_date_field(self, value: str) -> str:
+        """Convert an incoming date field to the correct format for the database."""
+        if value in [None, '']:
+            return None
+
+        # Attempt conversion using accepted formats
+        date_formats = ['%Y-%m-%d', '%d/%m/%Y', '%m/%d/%Y', '%Y/%m/%d']
+
+        for fmt in date_formats:
+            try:
+                dt = datetime.strptime(value.strip(), fmt)
+
+                # If the date is valid, convert it to the standard format and return
+                return dt.strftime('%Y-%m-%d')
+            except ValueError:
+                continue
+
+        # If none of the formats matched, return the original value
+        return value
+
+    def lookup_related_field(self, field_name: str, value: str) -> Optional[int]:
+        """Try to perform lookup against a related field.
+
+        - This is used to convert a human-readable value (e.g. a supplier name) into a database reference (e.g. supplier ID).
+        - Reference the value against the related model's allowable import fields
+
+        Arguments:
+            field_name: The name of the field to perform the lookup against
+            value: The value to be looked up
+
+        Returns:
+            A primary key value
+        """
+        if value is None or value == '':
+            return value
+
+        if field_name is None or field_name == '':
+            return value
+
+        if field_name in self.related_field_map:
+            model = self.related_field_map[field_name]
+        else:
+            # Cache the related model for this field name
+            model = self.related_field_map[field_name] = self.session.get_related_model(
+                field_name
+            )
+
+        if not model:
+            raise DjangoValidationError({
+                'session': f'No related model found for field: {field_name}'
+            })
+
+        valid_items = set()
+
+        base_filters = (
+            self.session.field_filters.get(field_name, {})
+            if self.session.field_filters
+            else {}
+        )
+
+        # First priority is the PK (primary key) field
+        id_fields = ['pk']
+
+        if custom_id_fields := getattr(model, 'IMPORT_ID_FIELDS', None):
+            id_fields += custom_id_fields
+
+        # Iterate through the provided list - if any of the values match, we can perform the lookup
+        for id_field in id_fields:
+            try:
+                queryset = model.objects.filter(**{id_field: value}, **base_filters)
+            except ValueError:
+                continue
+
+            # Evaluate at most two results to determine if there is exactly one match
+            results = list(queryset[:2])
+            if len(results) == 1:
+                # We have a single match against this field
+                valid_items.add(results[0].pk)
+
+        if len(valid_items) == 1:
+            # We found a single valid match against the related model - return this value
+            return valid_items.pop()
+
+        # We found either zero or multiple values matching against the related model
+        # Return the original value and let the serializer validation handle any errors against this field
+        return value
 
     def serializer_data(self):
         """Construct data object to be sent to the serializer.
@@ -630,11 +798,13 @@ class DataImportRow(models.Model):
 
         return data
 
-    def construct_serializer(self, request=None):
+    def construct_serializer(self, instance=None, request=None):
         """Construct a serializer object for this row."""
         if serializer_class := self.session.serializer_class:
             return serializer_class(
-                data=self.serializer_data(), context={'request': request}
+                instance=instance,
+                data=self.serializer_data(),
+                context={'request': request},
             )
 
     def validate(self, commit=False, request=None) -> bool:
@@ -654,7 +824,37 @@ class DataImportRow(models.Model):
             # Row has already been completed
             return True
 
-        serializer = self.construct_serializer(request=request)
+        if self.session.update_records:
+            # Extract the ID field from the data
+            instance_id = self.data.get(self.session.ID_FIELD_LABEL, None)
+
+            if not instance_id:
+                raise DjangoValidationError(
+                    _('ID is required for updating existing records.')
+                )
+
+            try:
+                instance = self.session.model_class.objects.get(pk=instance_id)
+            except self.session.model_class.DoesNotExist:
+                self.errors = {
+                    'non_field_errors': _('No record found with the provided ID')
+                    + f': {instance_id}'
+                }
+                return False
+            except ValueError:
+                self.errors = {
+                    'non_field_errors': _('Invalid ID format provided')
+                    + f': {instance_id}'
+                }
+                return False
+            except Exception as e:
+                self.errors = {'non_field_errors': str(e)}
+                return False
+
+            serializer = self.construct_serializer(instance=instance, request=request)
+
+        else:
+            serializer = self.construct_serializer(request=request)
 
         if not serializer:
             self.errors = {

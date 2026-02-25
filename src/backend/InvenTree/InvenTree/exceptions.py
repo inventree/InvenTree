@@ -66,7 +66,8 @@ def log_error(
         data = error_data
     else:
         try:
-            data = '\n'.join(traceback.format_exception(kind, info, data))
+            formatted_exception = traceback.format_exception(kind, info, data)  # type: ignore[no-matching-overload]
+            data = '\n'.join(formatted_exception)
         except AttributeError:
             data = 'No traceback information available'
 
@@ -150,8 +151,10 @@ def exception_handler(exc, context):
 
     if response is not None:
         # Convert errors returned under the label '__all__' to 'non_field_errors'
-        if '__all__' in response.data:
-            response.data['non_field_errors'] = response.data['__all__']
-            del response.data['__all__']
+        data = response.data
+
+        if data and '__all__' in data:
+            data['non_field_errors'] = data['__all__']
+            del data['__all__']
 
     return response

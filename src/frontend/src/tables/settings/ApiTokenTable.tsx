@@ -1,3 +1,5 @@
+import { AddItemButton } from '@lib/components/AddItemButton';
+import type { RowAction } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
@@ -8,15 +10,12 @@ import { useDisclosure } from '@mantine/hooks';
 import { IconCircleX } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 import { api } from '../../App';
-import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { CopyButton } from '../../components/buttons/CopyButton';
 import { StylishText } from '../../components/items/StylishText';
-import { RenderUser } from '../../components/render/User';
 import { showApiErrorMessage } from '../../functions/notifications';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
-import type { RowAction } from '../../tables/RowActions';
-import { BooleanColumn } from '../ColumnRenderers';
+import { BooleanColumn, UserColumn } from '../ColumnRenderers';
 import { UserFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
@@ -49,7 +48,7 @@ export function ApiTokenTable({
     return [];
   }, [only_myself]);
 
-  const table = useTable('api-tokens', 'id');
+  const table = useTable('api-tokens', { idAccessor: 'id' });
 
   const tableColumns = useMemo(() => {
     const cols = [
@@ -100,18 +99,13 @@ export function ApiTokenTable({
       }
     ];
     if (!only_myself) {
-      cols.push({
-        accessor: 'user',
-        title: t`User`,
-        sortable: true,
-        render: (record: any) => {
-          if (record.user_detail) {
-            return <RenderUser instance={record.user_detail} />;
-          } else {
-            return record.user;
-          }
-        }
-      });
+      cols.push(
+        UserColumn({
+          accessor: 'user_detail',
+          ordering: 'user',
+          title: t`User`
+        })
+      );
     }
     return cols;
   }, [only_myself]);

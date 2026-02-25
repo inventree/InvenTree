@@ -4,18 +4,20 @@ import json
 import os
 import re
 import warnings
+from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-from typing import Callable, Optional
+from typing import Optional
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.core.exceptions import AppRegistryNotReady
+from django.core.exceptions import AppRegistryNotReady, ValidationError
 from django.core.management import call_command
 from django.db import DEFAULT_DB_ALIAS, connections
 from django.db.migrations.executor import MigrationExecutor
 from django.db.utils import NotSupportedError, OperationalError, ProgrammingError
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 import requests
 import structlog
@@ -284,7 +286,7 @@ class ScheduledTask:
     QUARTERLY: str = 'Q'
     YEARLY: str = 'Y'
 
-    TYPE: tuple[str] = (MINUTES, HOURLY, DAILY, WEEKLY, MONTHLY, QUARTERLY, YEARLY)
+    TYPE: tuple[str] = (MINUTES, HOURLY, DAILY, WEEKLY, MONTHLY, QUARTERLY, YEARLY)  # type: ignore[invalid-assignment]
 
 
 class TaskRegister:
@@ -301,7 +303,9 @@ tasks = TaskRegister()
 
 
 def scheduled_task(
-    interval: str, minutes: Optional[int] = None, tasklist: TaskRegister = None
+    interval: str,
+    minutes: Optional[int] = None,
+    tasklist: Optional[TaskRegister] = None,
 ):
     """Register the given task as a scheduled task.
 
@@ -465,12 +469,41 @@ def delete_old_notifications():
         )
 
 
+@tracer.start_as_current_span('delete_old_emails')
+@scheduled_task(ScheduledTask.DAILY)
+def delete_old_emails():
+    """Delete old email messages."""
+    try:
+        from common.models import EmailMessage
+
+        days = get_global_setting('INVENTREE_DELETE_EMAIL_DAYS', 30)
+        threshold = timezone.now() - timedelta(days=days)
+
+        emails = EmailMessage.objects.filter(timestamp__lte=threshold)
+
+        if emails.count() > 0:
+            try:
+                emails.delete()
+                logger.info('Deleted %s old email messages', emails.count())
+            except ValidationError:
+                logger.info(
+                    'Did not delete %s old email messages because of a validation error',
+                    emails.count(),
+                )
+
+    except AppRegistryNotReady:  # pragma: no cover
+        logger.info("Could not perform 'delete_old_emails' - App registry not ready")
+
+
 @tracer.start_as_current_span('check_for_updates')
 @scheduled_task(ScheduledTask.DAILY)
 def check_for_updates():
     """Check if there is an update for InvenTree."""
     try:
-        from common.notifications import trigger_superuser_notification
+        from common.notifications import trigger_notification
+        from plugin.builtin.integration.core_notifications import (
+            InvenTreeUINotifications,
+        )
     except AppRegistryNotReady:  # pragma: no cover
         # Apps not yet loaded!
         logger.info("Could not perform 'check_for_updates' - App registry not ready")
@@ -514,7 +547,7 @@ def check_for_updates():
 
     match = re.match(r'^.*(\d+)\.(\d+)\.(\d+).*$', tag)
 
-    if len(match.groups()) != 3:  # pragma: no cover
+    if not match or len(match.groups()) != 3:  # pragma: no cover
         logger.warning("Version '%s' did not match expected pattern", tag)
         return
 
@@ -533,19 +566,16 @@ def check_for_updates():
 
     # Send notification if there is a new version
     if not isInvenTreeUpToDate():
-        logger.warning('InvenTree is not up-to-date, sending notification')
-
-        plg = registry.get_plugin('InvenTreeCoreNotificationsPlugin')
-        if not plg:
-            logger.warning('Cannot send notification - plugin not found')
-            return
-        plg = plg.plugin_config()
-        if not plg:
-            logger.warning('Cannot send notification - plugin config not found')
-            return
-        # Send notification
-        trigger_superuser_notification(
-            plg, f'An update for InvenTree to version {tag} is available'
+        # Send notification to superusers
+        trigger_notification(
+            None,
+            'update_available',
+            targets=get_user_model().objects.filter(is_superuser=True),
+            delivery_methods={InvenTreeUINotifications},
+            context={
+                'name': _('Update Available'),
+                'message': _('An update for InvenTree is available'),
+            },
         )
 
 
@@ -557,6 +587,12 @@ def update_exchange_rates(force: bool = False):
     Arguments:
         force: If True, force the update to run regardless of the last update time
     """
+    from InvenTree.ready import canAppAccessDatabase
+
+    # Do not update exchange rates if we cannot access the database
+    if not canAppAccessDatabase(allow_test=True, allow_shell=True):
+        return
+
     try:
         from djmoney.contrib.exchange.models import Rate
 
@@ -597,7 +633,7 @@ def update_exchange_rates(force: bool = False):
     except (AppRegistryNotReady, OperationalError, ProgrammingError):
         logger.warning('Could not update exchange rates - database not ready')
     except Exception as e:  # pragma: no cover
-        logger.exception('Error updating exchange rates: %s', str(type(e)))
+        logger.exception('Error updating exchange rates: %s', type(e))
 
 
 @tracer.start_as_current_span('run_backup')
@@ -632,6 +668,12 @@ def get_migration_plan():
     return plan
 
 
+def get_migration_count():
+    """Returns the number of all detected migrations."""
+    executor = MigrationExecutor(connections[DEFAULT_DB_ALIAS])
+    return executor.loader.applied_migrations
+
+
 @tracer.start_as_current_span('check_for_migrations')
 @scheduled_task(ScheduledTask.DAILY)
 def check_for_migrations(force: bool = False, reload_registry: bool = True) -> bool:
@@ -641,7 +683,11 @@ def check_for_migrations(force: bool = False, reload_registry: bool = True) -> b
 
     Returns bool indicating if migrations are up to date
     """
-    from plugin import registry
+    from . import ready
+
+    if ready.isRunningMigrations() or ready.isRunningBackup():
+        # Migrations are already running!
+        return False
 
     def set_pending_migrations(n: int):
         """Helper function to inform the user about pending migrations."""
@@ -677,7 +723,7 @@ def check_for_migrations(force: bool = False, reload_registry: bool = True) -> b
 
     # Log open migrations
     for migration in plan:
-        logger.info('- %s', str(migration[0]))
+        logger.info('- %s', migration[0])
 
     # Set the application to maintenance mode - no access from now on.
     set_maintenance_mode(True)
@@ -691,6 +737,8 @@ def check_for_migrations(force: bool = False, reload_registry: bool = True) -> b
         except NotSupportedError as e:  # pragma: no cover
             if settings.DATABASES['default']['ENGINE'] != 'django.db.backends.sqlite3':
                 raise e
+            logger.exception('Error during migrations: %s', e)
+        except Exception as e:  # pragma: no cover
             logger.exception('Error during migrations: %s', e)
         else:
             set_pending_migrations(0)

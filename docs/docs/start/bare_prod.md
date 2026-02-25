@@ -38,7 +38,7 @@ First, let's confirm that the gunicorn server is operational.
 cd /home/InvenTree
 source ./env/bin/activate
 
-cd src/InvenTree
+cd src/src/backend/InvenTree
 /home/inventree/env/bin/gunicorn -c gunicorn.conf.py InvenTree.wsgi -b 127.0.0.1:8000
 ```
 
@@ -74,6 +74,8 @@ Copy the supervisor configuration file:
 ```
 sudo cp /home/inventree/src/contrib/deploy/supervisord.conf /etc/supervisor/supervisord.conf
 ```
+
+Depending on your setup the IP and port under the `[inet_http_server]` section might need to be changed.
 
 ### Start Supervisor Daemon
 

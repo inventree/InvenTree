@@ -1,6 +1,6 @@
 """Code for managing email functionality in InvenTree."""
 
-from typing import Optional, Union
+from typing import Optional
 
 from django.conf import settings
 
@@ -8,14 +8,15 @@ import structlog
 from allauth.account.models import EmailAddress
 
 import InvenTree.ready
-import InvenTree.tasks
 from common.models import Priority, issue_mail
 
 logger = structlog.get_logger('inventree')
 
 
-def is_email_configured():
+def is_email_configured() -> bool:
     """Check if email backend is configured.
+
+    Fails on tests nominally, if no bypassed via settings.TESTING_BYPASS_MAILCHECK.
 
     NOTE: This does not check if the configuration is valid!
     """
@@ -23,7 +24,7 @@ def is_email_configured():
     testing = settings.TESTING
 
     if InvenTree.ready.isInTestMode():
-        return False
+        return settings.TESTING_BYPASS_MAILCHECK
 
     if InvenTree.ready.isImportingData():
         return False
@@ -62,7 +63,7 @@ def is_email_configured():
 def send_email(
     subject: str,
     body: str,
-    recipients: Union[str, list],
+    recipients: str | list,
     from_email: Optional[str] = None,
     html_message=None,
     prio: Priority = Priority.NORMAL,
@@ -90,7 +91,7 @@ def send_email(
         # If we still don't have a valid from_email, then we can't send emails
         if not from_email:
             if settings.TESTING:
-                from_email = 'from@test.com'
+                from_email = 'test@test.inventree.org'
             else:
                 logger.error(
                     'INVE-W7: send_email failed: DEFAULT_FROM_EMAIL not specified'
@@ -112,7 +113,7 @@ def send_email(
     return True, None
 
 
-def get_email_for_user(user) -> str:
+def get_email_for_user(user) -> Optional[str]:
     """Find an email address for the specified user."""
     # First check if the user has an associated email address
     if user.email:
@@ -121,7 +122,8 @@ def get_email_for_user(user) -> str:
     # Otherwise, find first matching email
     # Priority is given to primary or verified email addresses
     if (
-        email := EmailAddress.objects.filter(user=user)
+        email := EmailAddress.objects
+        .filter(user=user)
         .order_by('-primary', '-verified')
         .first()
     ):

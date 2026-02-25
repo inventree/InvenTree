@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404
 from django.urls import include, path
 
 from drf_spectacular.utils import extend_schema
-from rest_framework import permissions, serializers
+from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -25,38 +25,13 @@ from InvenTree.mixins import (
 from users.permissions import check_user_permission
 
 
-class DataImporterPermission(permissions.BasePermission):
-    """Mixin class for determining if the user has correct permissions."""
-
-    def has_permission(self, request, view):
-        """Class level permission checks are handled via InvenTree.permissions.IsAuthenticatedOrReadScope."""
-        return request.user and request.user.is_authenticated
-
-    def has_object_permission(self, request, view, obj):
-        """Check if the user has permission to access the imported object."""
-        # For safe methods (GET, HEAD, OPTIONS), allow access
-        if request.method in permissions.SAFE_METHODS:
-            return True
-
-        if isinstance(obj, importer.models.DataImportSession):
-            session = obj
-        else:
-            session = getattr(obj, 'session', None)
-
-        if session:
-            if model_class := session.model_class:
-                return check_user_permission(request.user, model_class, 'change')
-
-        return True
-
-
 class DataImporterPermissionMixin:
     """Mixin class for checking permissions on DataImporter objects."""
 
     # Default permissions: User must be authenticated
     permission_classes = [
         InvenTree.permissions.IsAuthenticatedOrReadScope,
-        DataImporterPermission,
+        InvenTree.permissions.DataImporterPermission,
     ]
 
 
@@ -96,7 +71,7 @@ class DataImportSessionMixin:
 
     queryset = importer.models.DataImportSession.objects.all()
     serializer_class = importer.serializers.DataImportSessionSerializer
-    permission_classes = [DataImporterPermission]
+    permission_classes = [InvenTree.permissions.DataImporterPermission]
 
 
 class DataImportSessionList(BulkDeleteMixin, DataImportSessionMixin, ListCreateAPI):
@@ -135,7 +110,7 @@ class DataImportSessionAcceptFields(APIView):
         return Response(importer.serializers.DataImportSessionSerializer(session).data)
 
 
-class DataImportSessionAcceptRows(DataImporterPermission, CreateAPI):
+class DataImportSessionAcceptRows(DataImporterPermissionMixin, CreateAPI):
     """API endpoint to accept the rows for a DataImportSession."""
 
     queryset = importer.models.DataImportSession.objects.all()
@@ -174,7 +149,7 @@ class DataImportColumnMappingDetail(DataImporterPermissionMixin, RetrieveUpdateA
     serializer_class = importer.serializers.DataImportColumnMapSerializer
 
 
-class DataImportRowList(DataImporterPermission, BulkDeleteMixin, ListAPI):
+class DataImportRowList(DataImporterPermissionMixin, BulkDeleteMixin, ListAPI):
     """API endpoint for accessing a list of DataImportRow objects."""
 
     queryset = importer.models.DataImportRow.objects.all()
@@ -189,7 +164,7 @@ class DataImportRowList(DataImporterPermission, BulkDeleteMixin, ListAPI):
     ordering = 'row_index'
 
 
-class DataImportRowDetail(DataImporterPermission, RetrieveUpdateDestroyAPI):
+class DataImportRowDetail(DataImporterPermissionMixin, RetrieveUpdateDestroyAPI):
     """Detail endpoint for a single DataImportRow object."""
 
     queryset = importer.models.DataImportRow.objects.all()

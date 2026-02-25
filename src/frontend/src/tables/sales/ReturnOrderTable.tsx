@@ -1,12 +1,12 @@
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 
+import { AddItemButton } from '@lib/components/AddItemButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
-import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { formatCurrency } from '../../defaults/formatters';
 import { useReturnOrderFields } from '../../forms/ReturnOrderForms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
@@ -19,6 +19,7 @@ import {
   CreationDateColumn,
   DescriptionColumn,
   LineItemsProgressColumn,
+  LinkColumn,
   ProjectCodeColumn,
   ReferenceColumn,
   ResponsibleColumn,
@@ -34,6 +35,7 @@ import {
   CreatedBeforeFilter,
   CreatedByFilter,
   HasProjectCodeFilter,
+  IncludeVariantsFilter,
   MaxDateFilter,
   MinDateFilter,
   OrderStatusFilter,
@@ -55,7 +57,18 @@ export function ReturnOrderTable({
   partId?: number;
   customerId?: number;
 }>) {
-  const table = useTable(!!partId ? 'returnorders-part' : 'returnorders-index');
+  const table = useTable(
+    !!partId ? 'returnorders-part' : 'returnorders-index',
+    {
+      initialFilters: [
+        {
+          name: 'outstanding',
+          value: 'true'
+        }
+      ]
+    }
+  );
+
   const user = useUserState();
 
   const tableFilters: TableFilter[] = useMemo(() => {
@@ -93,12 +106,7 @@ export function ReturnOrderTable({
     ];
 
     if (!!partId) {
-      filters.push({
-        name: 'include_variants',
-        type: 'boolean',
-        label: t`Include Variants`,
-        description: t`Include orders for part variants`
-      });
+      filters.push(IncludeVariantsFilter());
     }
 
     return filters;
@@ -116,10 +124,11 @@ export function ReturnOrderTable({
         )
       },
       {
-        accessor: 'customer_reference'
+        accessor: 'customer_reference',
+        copyable: true
       },
       DescriptionColumn({}),
-      LineItemsProgressColumn(),
+      LineItemsProgressColumn({}),
       StatusColumn({ model: ModelType.returnorder }),
       ProjectCodeColumn({
         defaultVisible: false
@@ -147,7 +156,8 @@ export function ReturnOrderTable({
             currency: record.order_currency || record.customer_detail?.currency
           });
         }
-      }
+      },
+      LinkColumn({})
     ];
   }, []);
 
@@ -193,7 +203,8 @@ export function ReturnOrderTable({
           modelType: ModelType.returnorder,
           enableSelection: true,
           enableDownload: true,
-          enableReports: true
+          enableReports: true,
+          enableLabels: true
         }}
       />
     </>

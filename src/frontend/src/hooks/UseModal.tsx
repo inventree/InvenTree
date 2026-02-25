@@ -4,11 +4,14 @@ import { useCallback } from 'react';
 
 import type { UseModalProps, UseModalReturn } from '@lib/types/Modals';
 import { StylishText } from '../components/items/StylishText';
+import { useUserSettingsState } from '../states/SettingsStates';
 
 export function useModal(props: UseModalProps): UseModalReturn {
   const onOpen = useCallback(() => {
     props.onOpen?.();
   }, [props.onOpen]);
+
+  const userSettings = useUserSettingsState();
 
   const onClose = useCallback(() => {
     props.onClose?.();
@@ -27,6 +30,7 @@ export function useModal(props: UseModalProps): UseModalReturn {
       <Modal
         key={props.id}
         opened={opened}
+        closeOnEscape={userSettings.isSet('FORMS_CLOSE_USING_ESCAPE')}
         onClose={close}
         closeOnClickOutside={props.closeOnClickOutside}
         size={props.size ?? 'xl'}

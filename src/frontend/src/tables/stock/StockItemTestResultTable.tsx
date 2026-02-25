@@ -10,15 +10,21 @@ import { useQuery } from '@tanstack/react-query';
 import { DataTable, type DataTableRowExpansionProps } from 'mantine-datatable';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
+import { AddItemButton } from '@lib/components/AddItemButton';
+import {
+  type RowAction,
+  RowActions,
+  RowDeleteAction,
+  RowEditAction
+} from '@lib/components/RowActions';
+import { PassFailButton } from '@lib/components/YesNoButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
-import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { PassFailButton } from '../../components/buttons/YesNoButton';
+import type { TableColumn } from '@lib/types/Tables';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
-import { RenderUser } from '../../components/render/User';
 import { useApi } from '../../contexts/ApiContext';
 import { formatDate } from '../../defaults/formatters';
 import { useTestResultFields } from '../../forms/StockForms';
@@ -30,15 +36,13 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
-import { DateColumn, DescriptionColumn, NoteColumn } from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
 import {
-  type RowAction,
-  RowActions,
-  RowDeleteAction,
-  RowEditAction
-} from '../RowActions';
+  DateColumn,
+  DescriptionColumn,
+  NoteColumn,
+  UserColumn
+} from '../ColumnRenderers';
+import { InvenTreeTable } from '../InvenTreeTable';
 import RowExpansionIcon from '../RowExpansionIcon';
 
 export default function StockItemTestResultTable({
@@ -149,19 +153,21 @@ export default function StockItemTestResultTable({
 
             return (
               <Group justify='space-between' wrap='nowrap'>
-                {!child && (
-                  <RowExpansionIcon
-                    enabled={multipleResults}
-                    expanded={table.isRowExpanded(record.pk)}
-                  />
-                )}
-                <Text
-                  style={{ fontStyle: installed ? 'italic' : undefined }}
-                  c={enabled ? undefined : 'red'}
-                >
-                  {!record.templateId && '- '}
-                  {record.test_name ?? record.template_detail?.test_name}
-                </Text>
+                <Group gap='xs'>
+                  {!child && (
+                    <RowExpansionIcon
+                      enabled={multipleResults}
+                      expanded={table.isRowExpanded(record.pk)}
+                    />
+                  )}
+                  <Text
+                    style={{ fontStyle: installed ? 'italic' : undefined }}
+                    c={enabled ? undefined : 'red'}
+                  >
+                    {!record.templateId && '- '}
+                    {record.test_name ?? record.template_detail?.test_name}
+                  </Text>
+                </Group>
                 <Group justify='right'>
                   {record.results && record.results.length > 1 && (
                     <Tooltip label={t`Test Results`}>
@@ -211,13 +217,10 @@ export default function StockItemTestResultTable({
         },
         NoteColumn({}),
         DateColumn({}),
-        {
-          accessor: 'user',
-          title: t`User`,
-          sortable: false,
-          render: (record: any) =>
-            record.user_detail && <RenderUser instance={record.user_detail} />
-        },
+        UserColumn({
+          accessor: 'user_detail',
+          ordering: 'user'
+        }),
         {
           accessor: 'test_station',
           sortable: true,
@@ -355,6 +358,7 @@ export default function StockItemTestResultTable({
           icon: <IconCircleCheck />,
           hidden:
             !record.templateId ||
+            !!record.choices ||
             record?.requires_attachment ||
             record?.requires_value ||
             record.result,

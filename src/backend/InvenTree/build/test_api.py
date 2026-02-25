@@ -1,6 +1,7 @@
 """Unit tests for the BuildOrder API."""
 
 from datetime import datetime, timedelta
+from typing import Optional
 
 from django.urls import reverse
 
@@ -21,7 +22,7 @@ class TestBuildAPI(InvenTreeAPITestCase):
     - Tests for BuildItem API
     """
 
-    fixtures = ['category', 'part', 'location', 'build']
+    fixtures = ['category', 'part', 'location', 'bom', 'build', 'build_line', 'stock']
 
     roles = ['build.change', 'build.add', 'build.delete']
 
@@ -65,22 +66,72 @@ class TestBuildAPI(InvenTreeAPITestCase):
         response = self.get(url, {'reference': 'BO-9999XX'}, expected_code=200)
         self.assertEqual(len(response.data), 0)
 
+        # Filter by 'issued_by'
+        response = self.get(url)
+
+        build = Build.objects.first()
+
+        build.issued_by = self.user
+        build.save()
+
+        response = self.get(url, {'issued_by': self.user.pk}, expected_code=200)
+
+        self.assertEqual(len(response.data), 1)
+
+        item = response.data[0]
+
+        self.assertEqual(item['pk'], build.pk)
+        self.assertEqual(item['issued_by'], self.user.pk)
+
     def test_get_build_item_list(self):
-        """Test that we can retrieve list of BuildItem objects."""
+        """Test retrieving BuildItem list and applying filters like 'part' and 'output'."""
         url = reverse('api-build-item-list')
 
+        #   Retrieve the full list of BuildItem objects
         response = self.get(url, expected_code=200)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 2)
 
-        # Test again, filtering by park ID
+        #  Filter by part ID (only items for part ID=1 expected)
         response = self.get(url, {'part': '1'}, expected_code=200)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+
+        # Filter: output=null (install_into=None)
+        response = self.get(url, {'output': 'null'}, expected_code=200)
+        ids = [item['pk'] for item in response.data]
+        self.assertIn(1, ids)
+        self.assertNotIn(2, ids)
+
+        #  Filter: output=<id> (install_into specific ID)
+        response = self.get(url, {'output': 100}, expected_code=200)
+        ids = [item['pk'] for item in response.data]
+        self.assertIn(2, ids)
+        self.assertNotIn(1, ids)
+
+        # test output options
+        # Test cases: (parameter_name, response_field_name)
+        test_cases = [
+            ('part_detail', 'part_detail'),
+            ('location_detail', 'location_detail'),
+            ('stock_detail', 'stock_item_detail'),
+            ('build_detail', 'build_detail'),
+        ]
+
+        for param, field in test_cases:
+            # Test with parameter set to 'true'
+            response = self.get(url, {param: 'true'}, expected_code=200)
+            self.assertIn(field, response.data[0])
+
+            # Test with parameter set to 'false'
+            response = self.get(url, {param: 'false'}, expected_code=200)
+            self.assertNotIn(field, response.data[0])
 
 
 class BuildAPITest(InvenTreeAPITestCase):
     """Series of tests for the Build DRF API."""
 
-    fixtures = ['category', 'part', 'location', 'bom', 'build', 'stock']
+    fixtures = ['category', 'part', 'location', 'bom', 'build', 'build_line', 'stock']
 
     # Required roles to access Build API endpoints
     roles = ['build.change', 'build.add']
@@ -166,6 +217,7 @@ class BuildTest(BuildAPITest):
         # We shall complete 4 of these outputs
         outputs = self.build.incomplete_outputs.all()
 
+        # TODO: (2025-07-15) Try to optimize this API query to reduce DB hits
         self.post(
             self.url,
             {
@@ -174,7 +226,7 @@ class BuildTest(BuildAPITest):
                 'status': StockStatus.ATTENTION.value,
             },
             expected_code=201,
-            max_query_count=600,  # TODO: Try to optimize this
+            max_query_count=400,
         )
 
         self.assertEqual(self.build.incomplete_outputs.count(), 0)
@@ -635,6 +687,11 @@ class BuildAllocationTest(BuildAPITest):
                 wrong_line = line
                 break
 
+        if not wrong_line:
+            raise self.fail(
+                'No matching BuildLine found for the given stock item'
+            )  # pragma: no cover
+
         data = self.post(
             self.url,
             {
@@ -661,6 +718,11 @@ class BuildAllocationTest(BuildAPITest):
             if line.bom_item.sub_part.pk == si.part.pk:
                 right_line = line
                 break
+
+        if not right_line:
+            raise self.fail(
+                'No matching BuildLine found for the given stock item'
+            )  # pragma: no cover
 
         self.post(
             self.url,
@@ -689,11 +751,15 @@ class BuildAllocationTest(BuildAPITest):
         # Find the correct BuildLine
         si = StockItem.objects.get(pk=2)
 
-        right_line = None
+        right_line: Optional[BuildLine] = None
         for line in self.build.build_lines.all():
             if line.bom_item.sub_part.pk == si.part.pk:
-                right_line = line
+                right_line: BuildLine = line
                 break
+        if not right_line:
+            raise self.fail(
+                'No matching BuildLine found for the given stock item'
+            )  # pragma: no cover
 
         self.post(
             self.url,
@@ -854,6 +920,77 @@ class BuildAllocationTest(BuildAPITest):
             self.assertIsNotNone(bi)
             self.assertEqual(bi.build, build)
 
+    def test_auto_allocate_tracked(self):
+        """Test manual auto-allocation of tracked items against a Build."""
+        # Create a base assembly
+        assembly = Part.objects.create(
+            name='Test Assembly',
+            description='Test Assembly Description',
+            assembly=True,
+            trackable=True,
+        )
+
+        component = Part.objects.create(
+            name='Test Component',
+            description='Test Component Description',
+            trackable=True,
+            component=True,
+        )
+
+        # Create a BOM item for the assembly
+        BomItem.objects.create(part=assembly, sub_part=component, quantity=1)
+
+        # Create a build order for the assembly
+        build = Build.objects.create(part=assembly, reference='BO-12347', quantity=10)
+
+        SN = '123456'
+
+        # Create serialized component item
+        c = StockItem.objects.create(part=component, quantity=1, serial=SN)
+
+        N = BuildItem.objects.count()
+
+        # Create a new build output
+        response = self.post(
+            reverse('api-build-output-create', kwargs={'pk': build.pk}),
+            {'quantity': 1, 'serial_numbers': SN, 'auto_allocate': False},
+            expected_code=201,
+        )
+
+        output = response.data[0]
+
+        self.assertIsNotNone(output)
+        self.assertIsNotNone(output['pk'])
+        self.assertEqual(output['serial'], SN)
+
+        # No new build items (allocations) have been created yet
+        self.assertEqual(N, BuildItem.objects.count())
+
+        # Let's auto-allocate via the API now
+        url = reverse('api-build-auto-allocate', kwargs={'pk': build.pk})
+
+        # Allocate only 'untracked' items - this should not allocate our tracked item
+        self.post(url, data={'item_type': 'untracked'})
+
+        self.assertEqual(N, BuildItem.objects.count())
+
+        # Allocate 'tracked' items - this should allocate our tracked item
+        self.post(url, data={'item_type': 'tracked'})
+
+        # A new BuildItem should have been created
+        self.assertEqual(N + 1, BuildItem.objects.count())
+
+        line = build.build_lines.first()
+
+        self.assertIsNotNone(line)
+        allocations = line.allocations.filter(install_into_id=output['pk'])
+        self.assertEqual(allocations.count(), 1)
+
+        allocation = allocations.first()
+
+        self.assertEqual(allocation.stock_item, c)
+        self.assertEqual(allocation.quantity, 1)
+
 
 class BuildItemTest(BuildAPITest):
     """Unit tests for build items.
@@ -972,11 +1109,12 @@ class BuildOverallocationTest(BuildAPITest):
             self.assertEqual(si.quantity, oq)
 
         # Accept overallocated stock
+        # TODO: (2025-07-16) Look into optimizing this API query to reduce DB hits
         self.post(
             self.url,
             {'accept_overallocated': 'accept'},
             expected_code=201,
-            max_query_count=1000,  # TODO: Come back and refactor this
+            max_query_count=400,
         )
 
         self.build.refresh_from_db()
@@ -991,11 +1129,12 @@ class BuildOverallocationTest(BuildAPITest):
 
     def test_overallocated_can_trim(self):
         """Test build order will trim/de-allocate overallocated stock when requested."""
+        # TODO: (2025-07-16) Look into optimizing this API query to reduce DB hits
         self.post(
             self.url,
             {'accept_overallocated': 'trim'},
             expected_code=201,
-            max_query_count=1000,  # TODO: Come back and refactor this
+            max_query_count=450,
         )
 
         # Note: Large number of queries is due to pricing recalculation for each stock item
@@ -1017,6 +1156,51 @@ class BuildListTest(BuildAPITest):
     """Tests for the BuildOrder LIST API."""
 
     url = reverse('api-build-list')
+
+    def test_api_options(self):
+        """Test OPTIONS endpoint for the Build list API."""
+        data = self.options(self.url, expected_code=200).data
+
+        self.assertEqual(data['name'], 'Build List')
+        actions = data['actions']['POST']
+
+        for field_name in [
+            'pk',
+            'title',
+            'part',
+            'part_detail',
+            'project_code',
+            'project_code_detail',
+            'quantity',
+        ]:
+            self.assertIn(field_name, actions)
+
+        # Specific checks for certain fields
+        for field_name in ['part', 'project_code', 'take_from']:
+            field = actions[field_name]
+            self.assertEqual(field['type'], 'related field')
+
+            for key in ['model', 'api_url', 'pk_field']:
+                self.assertIn(key, field)
+
+    def test_detail_fields(self):
+        """Test inclusion of detail fields."""
+        # Test without extra detail fields
+        for val in [True, False]:
+            response = self.get(
+                self.url,
+                data={'part_detail': val, 'project_code_detail': val, 'limit': 1},
+                expected_code=200,
+            )
+
+            data = response.data['results'][0]
+
+            if val:
+                self.assertIn('part_detail', data)
+                self.assertIn('project_code_detail', data)
+            else:
+                self.assertNotIn('part_detail', data)
+                self.assertNotIn('project_code_detail', data)
 
     def test_get_all_builds(self):
         """Retrieve *all* builds via the API."""
@@ -1079,7 +1263,6 @@ class BuildListTest(BuildAPITest):
         for ii, sub_build in enumerate(Build.objects.filter(parent=parent)):
             for i in range(3):
                 x = ii * 10 + i + 50
-
                 Build.objects.create(
                     part=part,
                     reference=f'BO-{x}',
@@ -1091,7 +1274,22 @@ class BuildListTest(BuildAPITest):
         # 20 new builds should have been created!
         self.assertEqual(Build.objects.count(), (n + 20))
 
-        Build.objects.rebuild()
+        parent.refresh_from_db()
+
+        # There should be 5 sub-builds
+        self.assertEqual(parent.get_children().count(), 5)
+
+        # Check tree structure for direct children
+        for sub_build in parent.get_children():
+            self.assertEqual(sub_build.parent, parent)
+            self.assertLess(sub_build.rght, parent.rght)
+            self.assertGreater(sub_build.lft, parent.lft)
+            self.assertEqual(sub_build.level, parent.level + 1)
+            self.assertEqual(sub_build.tree_id, parent.tree_id)
+            self.assertEqual(sub_build.get_children().count(), 3)
+
+        # And a total of 20 descendants
+        self.assertEqual(parent.get_descendants().count(), 20)
 
         # Search by parent
         response = self.get(self.url, data={'parent': parent.pk})
@@ -1106,6 +1304,20 @@ class BuildListTest(BuildAPITest):
         builds = response.data
 
         self.assertEqual(len(builds), 20)
+
+    def test_output_options(self):
+        """Test the output options for BuildOrderList list."""
+        self.run_output_test(
+            self.url,
+            [
+                'part_detail',
+                'project_code_detail',
+                ('user_detail', 'responsible_detail'),
+                ('user_detail', 'issued_by_detail'),
+            ],
+            additional_params={'limit': 1},
+            assert_fnc=lambda x: x.data['results'][0],
+        )
 
 
 class BuildOutputCreateTest(BuildAPITest):
@@ -1267,6 +1479,77 @@ class BuildOutputScrapTest(BuildAPITest):
             self.assertEqual(output.status, StockStatus.REJECTED)
             self.assertFalse(output.is_building)
 
+    def test_partial_scrap(self):
+        """Test partial scrapping of a build output."""
+        # Create a build output
+        build = Build.objects.get(pk=1)
+        output = build.create_build_output(10).first()
+
+        self.assertEqual(build.build_outputs.count(), 1)
+
+        data = {
+            'outputs': [{'output': output.pk, 'quantity': 3}],
+            'location': 1,
+            'notes': 'Invalid scrap',
+        }
+
+        # Ensure that an invalid quantity raises an error
+        for q in [-3, 0, 99]:
+            data['outputs'][0]['quantity'] = q
+            self.scrap(build.pk, data, expected_code=400)
+
+        # Partially scrap the output (with a valid quantity)
+        data['outputs'][0]['quantity'] = 3
+        self.scrap(build.pk, data)
+
+        self.assertEqual(build.build_outputs.count(), 2)
+        output.refresh_from_db()
+        self.assertEqual(output.quantity, 7)
+        self.assertTrue(output.is_building)
+
+        scrapped = output.children.first()
+        self.assertEqual(scrapped.quantity, 3)
+        self.assertEqual(scrapped.status, StockStatus.REJECTED)
+        self.assertFalse(scrapped.is_building)
+
+    def test_partial_complete(self):
+        """Test partial completion of a build output."""
+        build = Build.objects.get(pk=1)
+        output = build.create_build_output(10).first()
+        self.assertEqual(build.build_outputs.count(), 1)
+        self.assertEqual(output.quantity, 10)
+        self.assertTrue(output.is_building)
+        self.assertEqual(build.completed, 0)
+
+        url = reverse('api-build-output-complete', kwargs={'pk': build.pk})
+
+        data = {
+            'outputs': [{'output': output.pk, 'quantity': 4}],
+            'location': 1,
+            'notes': 'Partial complete',
+        }
+
+        # Ensure that an invalid quantity raises an error
+        for q in [-4, 0, 999]:
+            data['outputs'][0]['quantity'] = q
+            self.post(url, data, expected_code=400)
+
+        # Partially complete the output (with a valid quantity)
+        data['outputs'][0]['quantity'] = 4
+        self.post(url, data, expected_code=201)
+
+        build.refresh_from_db()
+        output.refresh_from_db()
+        self.assertEqual(build.completed, 4)
+        self.assertEqual(build.build_outputs.count(), 2)
+        self.assertEqual(output.quantity, 6)
+        self.assertTrue(output.is_building)
+
+        completed_output = output.children.first()
+        self.assertEqual(completed_output.quantity, 4)
+        self.assertEqual(completed_output.status, StockStatus.OK)
+        self.assertFalse(completed_output.is_building)
+
 
 class BuildLineTests(BuildAPITest):
     """Unit tests for the BuildLine API endpoints."""
@@ -1291,3 +1574,194 @@ class BuildLineTests(BuildAPITest):
         self.assertGreater(n_f, 0)
 
         self.assertEqual(n_t + n_f, BuildLine.objects.count())
+
+    def test_output_options(self):
+        """Test output options  for the BuildLine endpoint."""
+        self.run_output_test(
+            reverse('api-build-line-detail', kwargs={'pk': 2}),
+            [
+                'bom_item_detail',
+                'assembly_detail',
+                'part_detail',
+                'build_detail',
+                'allocations',
+            ],
+        )
+
+    def test_filter_consumed(self):
+        """Filter for the 'consumed' status."""
+        # Create a new build order
+        assembly = Part.objects.create(
+            name='Test Assembly',
+            description='Test Assembly Description',
+            assembly=True,
+            trackable=True,
+        )
+
+        for idx in range(3):
+            component = Part.objects.create(
+                name=f'Test Component {idx}',
+                description=f'Test Component Description {idx}',
+                trackable=True,
+                component=True,
+            )
+
+            # Create a BOM item for the assembly
+            BomItem.objects.create(part=assembly, sub_part=component, quantity=10)
+
+        build = Build.objects.create(
+            part=assembly, reference='BO-12348', quantity=10, title='Test Build'
+        )
+
+        lines = list(build.build_lines.all())
+        self.assertEqual(len(lines), 3)
+
+        for line in lines:
+            self.assertEqual(line.quantity, 100)
+            self.assertEqual(line.consumed, 0)
+
+        # Artificially "consume" some of the build lines
+        lines[0].consumed = 1
+        lines[0].save()
+
+        lines[1].consumed = 50
+        lines[1].save()
+
+        lines[2].consumed = 100
+        lines[2].save()
+
+        url = reverse('api-build-line-list')
+
+        response = self.get(url, {'build': build.pk, 'consumed': True})
+
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['pk'], lines[2].pk)
+        self.assertEqual(response.data[0]['consumed'], 100)
+        self.assertEqual(response.data[0]['quantity'], 100)
+
+        response = self.get(url, {'build': build.pk, 'consumed': False})
+
+        self.assertEqual(len(response.data), 2)
+        self.assertEqual(response.data[0]['pk'], lines[0].pk)
+        self.assertEqual(response.data[0]['consumed'], 1)
+        self.assertEqual(response.data[0]['quantity'], 100)
+        self.assertEqual(response.data[1]['pk'], lines[1].pk)
+        self.assertEqual(response.data[1]['consumed'], 50)
+        self.assertEqual(response.data[1]['quantity'], 100)
+
+        # Check that the 'available' filter works correctly also when lines are partially consumed
+        for line in lines:
+            StockItem.objects.create(part=line.bom_item.sub_part, quantity=60)
+
+        # TODO: 2025-10-02: Work out why this query takes so long with PostgreSQL (in CI)
+        # Note: The max_query_time is bumped up here, as postgresql backend has some strange issues (only during testing)
+        response = self.get(
+            url, {'build': build.pk, 'available': True}, max_query_time=30
+        )
+
+        # We expect 2 lines to have "available" stock
+        self.assertEqual(len(response.data), 2)
+
+        # TODO: 2025-10-02: Work out why this query takes so long with PostgreSQL (in CI)
+        # Note: The max_query_time is bumped up here, as postgresql backend has some strange issues (only during testing)
+        response = self.get(
+            url, {'build': build.pk, 'available': False}, max_query_time=30
+        )
+
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['pk'], lines[0].pk)
+
+
+class BuildConsumeTest(BuildAPITest):
+    """Test consuming allocated stock."""
+
+    def setUp(self):
+        """Set up test data."""
+        super().setUp()
+
+        self.assembly = Part.objects.create(
+            name='Test Assembly', description='Test Assembly Description', assembly=True
+        )
+
+        self.components = [
+            Part.objects.create(
+                name=f'Test Component {i}',
+                description=f'Test Component Description {i}',
+                component=True,
+            )
+            for i in range(3)
+        ]
+
+        self.stock_items = [
+            StockItem.objects.create(part=component, quantity=1000)
+            for component in self.components
+        ]
+
+        self.bom_items = [
+            BomItem.objects.create(part=self.assembly, sub_part=component, quantity=10)
+            for component in self.components
+        ]
+
+        self.build = Build.objects.create(
+            part=self.assembly, reference='BO-12349', quantity=10, title='Test Build'
+        )
+
+    def allocate_stock(self):
+        """Allocate stock items to the build."""
+        data = {
+            'items': [
+                {'build_line': line.pk, 'stock_item': si.pk, 'quantity': 100}
+                for line, si in zip(
+                    self.build.build_lines.all(), self.stock_items, strict=False
+                )
+            ]
+        }
+
+        self.post(
+            reverse('api-build-allocate', kwargs={'pk': self.build.pk}),
+            data,
+            expected_code=201,
+        )
+
+    def test_consume_lines(self):
+        """Test consuming against build lines."""
+        self.allocate_stock()
+
+        self.assertEqual(self.build.allocated_stock.count(), 3)
+        self.assertEqual(self.build.consumed_stock.count(), 0)
+        url = reverse('api-build-consume', kwargs={'pk': self.build.pk})
+
+        data = {
+            'lines': [{'build_line': line.pk} for line in self.build.build_lines.all()]
+        }
+
+        self.post(url, data, expected_code=201)
+
+        self.assertEqual(self.build.allocated_stock.count(), 0)
+        self.assertEqual(self.build.consumed_stock.count(), 3)
+
+        for line in self.build.build_lines.all():
+            self.assertEqual(line.consumed, 100)
+
+    def test_consume_items(self):
+        """Test consuming against build items."""
+        self.allocate_stock()
+
+        self.assertEqual(self.build.allocated_stock.count(), 3)
+        self.assertEqual(self.build.consumed_stock.count(), 0)
+        url = reverse('api-build-consume', kwargs={'pk': self.build.pk})
+
+        data = {
+            'items': [
+                {'build_item': item.pk, 'quantity': item.quantity}
+                for item in self.build.allocated_stock.all()
+            ]
+        }
+
+        self.post(url, data, expected_code=201)
+
+        self.assertEqual(self.build.allocated_stock.count(), 0)
+        self.assertEqual(self.build.consumed_stock.count(), 3)
+
+        for line in self.build.build_lines.all():
+            self.assertEqual(line.consumed, 100)

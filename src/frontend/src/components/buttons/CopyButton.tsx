@@ -1,7 +1,10 @@
 import { t } from '@lingui/core/macro';
 import {
   ActionIcon,
+  type ActionIconVariant,
   Button,
+  type DefaultMantineColor,
+  type FloatingPosition,
   CopyButton as MantineCopyButton,
   type MantineSize,
   Text,
@@ -15,24 +18,43 @@ import type { JSX } from 'react';
 export function CopyButton({
   value,
   label,
+  tooltip,
+  disabled,
+  tooltipPosition,
   content,
-  size
+  size,
+  color = 'gray',
+  variant = 'transparent'
 }: Readonly<{
   value: any;
   label?: string;
+  tooltip?: string;
+  disabled?: boolean;
+  tooltipPosition?: FloatingPosition;
   content?: JSX.Element;
   size?: MantineSize;
+  color?: DefaultMantineColor;
+  variant?: ActionIconVariant;
 }>) {
   const ButtonComponent = label ? Button : ActionIcon;
 
   return (
     <MantineCopyButton value={value}>
       {({ copied, copy }) => (
-        <Tooltip label={copied ? t`Copied` : t`Copy`} withArrow>
+        <Tooltip
+          label={copied ? t`Copied` : (tooltip ?? t`Copy`)}
+          withArrow
+          position={tooltipPosition}
+        >
           <ButtonComponent
-            color={copied ? 'teal' : 'gray'}
-            onClick={copy}
-            variant='transparent'
+            disabled={disabled}
+            color={copied ? 'teal' : color}
+            onClick={(e: any) => {
+              e.stopPropagation();
+              e.preventDefault();
+              copy();
+            }}
+            variant={copied ? 'transparent' : (variant ?? 'transparent')}
             size={size ?? 'sm'}
           >
             {copied ? (

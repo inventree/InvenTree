@@ -2,9 +2,13 @@ import { t } from '@lingui/core/macro';
 import {
   ActionIcon,
   Alert,
+  Divider,
   Group,
+  HoverCard,
   Indicator,
+  Paper,
   Space,
+  Stack,
   Tooltip
 } from '@mantine/core';
 import {
@@ -18,20 +22,21 @@ import {
 import { useMemo, useState } from 'react';
 import { Fragment } from 'react/jsx-runtime';
 
+import { ActionButton } from '@lib/components/ActionButton';
+import { ButtonMenu } from '@lib/components/ButtonMenu';
+import { SearchInput } from '@lib/components/SearchInput';
+import { resolveItem } from '@lib/functions/Conversion';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableState } from '@lib/types/Tables';
+import type { InvenTreeTableProps } from '@lib/types/Tables';
 import { showNotification } from '@mantine/notifications';
 import { Boundary } from '../components/Boundary';
-import { ActionButton } from '../components/buttons/ActionButton';
-import { ButtonMenu } from '../components/buttons/ButtonMenu';
 import { PrintingActions } from '../components/buttons/PrintingActions';
-import { resolveItem } from '../functions/conversion';
+import { StylishText } from '../components/items/StylishText';
 import useDataExport from '../hooks/UseDataExport';
 import { useDeleteApiFormModal } from '../hooks/UseForm';
 import { TableColumnSelect } from './ColumnSelect';
-import { FilterSelectDrawer } from './FilterSelectDrawer';
-import type { InvenTreeTableProps } from './InvenTreeTable';
-import { TableSearchInput } from './Search';
+import { FilterPreview, FilterSelectDrawer } from './FilterSelectDrawer';
 
 /**
  * Render a composite header for an InvenTree table
@@ -207,7 +212,7 @@ export default function InvenTreeTableHeader({
         <Space />
         <Group justify='right' gap={5} wrap='nowrap'>
           {tableProps.enableSearch && (
-            <TableSearchInput
+            <SearchInput
               disabled={hasCustomSearch}
               searchCallback={(term: string) => tableState.setSearchTerm(term)}
             />
@@ -241,17 +246,46 @@ export default function InvenTreeTableHeader({
                 variant='transparent'
                 aria-label='table-select-filters'
               >
-                <Tooltip label={t`Table Filters`} position='top-end'>
-                  <IconFilter
-                    onClick={() => setFiltersVisible(!filtersVisible)}
-                  />
-                </Tooltip>
+                <HoverCard
+                  position='bottom-end'
+                  withinPortal={true}
+                  disabled={
+                    hasCustomFilters ||
+                    !tableState.filterSet.activeFilters?.length
+                  }
+                >
+                  <HoverCard.Target>
+                    <Tooltip
+                      label={t`Table Filters`}
+                      position='top-end'
+                      disabled={!!tableState.filterSet.activeFilters?.length}
+                    >
+                      <IconFilter
+                        onClick={() => setFiltersVisible(!filtersVisible)}
+                      />
+                    </Tooltip>
+                  </HoverCard.Target>
+                  <HoverCard.Dropdown>
+                    <Paper p='sm' withBorder>
+                      <Stack gap='xs'>
+                        <StylishText size='md'>{t`Active Filters`}</StylishText>
+                        <Divider />
+                        {tableState.filterSet.activeFilters?.map((filter) => (
+                          <FilterPreview
+                            filter={filter}
+                            filters={tableProps.tableFilters}
+                          />
+                        ))}
+                      </Stack>
+                    </Paper>
+                  </HoverCard.Dropdown>
+                </HoverCard>
               </ActionIcon>
             </Indicator>
           )}
           {tableUrl && tableProps.enableDownload && (
             <ActionIcon variant='transparent' aria-label='table-export-data'>
-              <Tooltip label={t`Download data`} position='top-end'>
+              <Tooltip label={t`Export data`} position='top-end'>
                 <IconDownload onClick={exportModal.open} />
               </Tooltip>
             </ActionIcon>

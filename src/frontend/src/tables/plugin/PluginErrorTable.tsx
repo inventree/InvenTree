@@ -4,8 +4,8 @@ import { useMemo } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
+import type { TableColumn } from '@lib/types/Tables';
 import { useTable } from '../../hooks/UseTable';
-import type { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 export interface PluginRegistryErrorI {
@@ -19,7 +19,9 @@ export interface PluginRegistryErrorI {
  * Table displaying list of plugin registry errors
  */
 export default function PluginErrorTable() {
-  const table = useTable('registryErrors', 'id');
+  const table = useTable('registryErrors', {
+    idAccessor: 'id'
+  });
 
   const registryErrorTableColumns: TableColumn<PluginRegistryErrorI>[] =
     useMemo(

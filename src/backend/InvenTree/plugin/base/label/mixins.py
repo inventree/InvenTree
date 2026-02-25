@@ -1,7 +1,5 @@
 """Plugin mixin classes for label plugins."""
 
-from typing import Union
-
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
@@ -223,7 +221,7 @@ class LabelPrintingMixin:
 
     def get_printing_options_serializer(
         self, request: Request, *args, **kwargs
-    ) -> Union[serializers.Serializer, None]:
+    ) -> serializers.Serializer | None:
         """Return a serializer class instance with dynamic printing options.
 
         Arguments:

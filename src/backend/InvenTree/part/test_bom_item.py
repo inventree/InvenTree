@@ -6,6 +6,7 @@ import django.core.exceptions as django_exceptions
 from django.db import transaction
 from django.test import TestCase
 
+import build.models
 import stock.models
 
 from .models import BomItem, BomItemSubstitute, Part
@@ -28,8 +29,6 @@ class BomItemTest(TestCase):
     def setUp(self):
         """Create initial data."""
         super().setUp()
-
-        Part.objects.rebuild()
 
         self.bob = Part.objects.get(id=100)
         self.orphan = Part.objects.get(name='Orphan')
@@ -80,32 +79,12 @@ class BomItemTest(TestCase):
         # But with an integer quantity, should be fine
         BomItem.objects.create(part=self.bob, sub_part=p, quantity=21)
 
-    def test_overage(self):
-        """Test that BOM line overages are calculated correctly."""
+    def test_attrition(self):
+        """Test that BOM line attrition values are calculated correctly."""
         item = BomItem.objects.get(part=100, sub_part=50)
 
-        q = 300
-
-        item.quantity = q
-
-        # Test empty overage
-        n = item.get_overage_quantity(q)
-        self.assertEqual(n, 0)
-
-        # Test improper overage
-        item.overage = 'asf234?'
-        n = item.get_overage_quantity(q)
-        self.assertEqual(n, 0)
-
-        # Test absolute overage
-        item.overage = '3'
-        n = item.get_overage_quantity(q)
-        self.assertEqual(n, 3)
-
-        # Test percentage-based overage
-        item.overage = '5.0 % '
-        n = item.get_overage_quantity(q)
-        self.assertEqual(n, 15)
+        item.quantity = 300
+        item.attrition = 5  # 5% attrition
 
         # Calculate total required quantity
         # Quantity = 300 (+ 5%)
@@ -114,6 +93,67 @@ class BomItemTest(TestCase):
         n = item.get_required_quantity(10)
 
         self.assertEqual(n, 3150)
+
+    def test_setup_quantity(self):
+        """Test the 'setup_quantity' attribute."""
+        item = BomItem.objects.get(pk=4)
+
+        # Default is 0
+        self.assertEqual(item.setup_quantity, 0)
+        self.assertEqual(item.get_required_quantity(1), 3)
+        self.assertEqual(item.get_required_quantity(10), 30)
+
+        item.setup_quantity = 5
+        item.save()
+
+        # Now the required quantity should include the setup quantity
+        self.assertEqual(item.get_required_quantity(1), 8)  # 3 + 5 = 8
+        self.assertEqual(item.get_required_quantity(10), 35)  # 30 + 5 = 35
+
+    def test_round_up(self):
+        """Test the 'rounding_multiple' attribute."""
+        item = BomItem.objects.get(pk=4)
+
+        # Default is null
+        self.assertIsNone(item.rounding_multiple)
+        self.assertEqual(item.get_required_quantity(1), 3)  # 3 x 1 = 3
+        self.assertEqual(item.get_required_quantity(10), 30)  # 3 x 10 = 30
+        self.assertEqual(item.get_required_quantity(25), 75)  # 3 x 25 = 75
+
+        # Set a round-up multiple
+        item.rounding_multiple = 17
+        item.save()
+
+        # Now the required quantity should be rounded up to the nearest multiple of 17
+        self.assertEqual(
+            item.get_required_quantity(1), 17
+        )  # 3 x 1 = 3, rounded up to nearest multiple of 17
+        self.assertEqual(
+            item.get_required_quantity(2), 17
+        )  # 3 x 2 = 6, rounded up to nearest multiple of 17
+        self.assertEqual(
+            item.get_required_quantity(5), 17
+        )  # 3 x 5 = 15, rounded up to nearest multiple of 17
+        self.assertEqual(
+            item.get_required_quantity(10), 34
+        )  # 3 x 10 = 30, rounded up to nearest multiple of 17
+        self.assertEqual(
+            item.get_required_quantity(100), 306
+        )  # 3 x 100 = 300, rounded up to nearest multiple of 17
+
+        # Next, let's create a new Build order
+        bo = build.models.Build.objects.create(
+            part=item.part, quantity=21, reference='BO-9999', title='Test Build Order'
+        )
+
+        # Build line items have been auto created
+        lines = bo.build_lines.all().filter(bom_item=item)
+        self.assertEqual(lines.count(), 1)
+        line = lines.first()
+
+        self.assertEqual(
+            line.quantity, 68
+        )  # 3 x 21 = 63, rounded up to nearest multiple of 17
 
     def test_item_hash(self):
         """Test BOM item hash encoding."""

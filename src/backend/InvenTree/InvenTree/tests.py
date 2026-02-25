@@ -23,6 +23,7 @@ from djmoney.contrib.exchange.models import Rate, convert_money
 from djmoney.money import Money
 from maintenance_mode.core import get_maintenance_mode, set_maintenance_mode
 from sesame.utils import get_user
+from stdimage.models import StdImageFieldFile
 
 import InvenTree.conversion
 import InvenTree.format
@@ -40,7 +41,73 @@ from stock.models import StockItem, StockLocation
 
 from . import config, helpers, ready, schema, status, version
 from .tasks import offload_task
-from .validators import validate_overage
+
+
+class TreeFixtureTest(TestCase):
+    """Unit testing for our MPTT fixture data."""
+
+    fixtures = ['location', 'category', 'part', 'stock', 'build']
+
+    def node_string(self, node):
+        """Construct a string representation of a tree node."""
+        return ':'.join([
+            str(getattr(node, attr, None))
+            for attr in ['parent', 'level', 'lft', 'rght']
+        ])
+
+    def run_tree_test(self, model):
+        """Run MPTT test for a given model type.
+
+        The intent here is to check that the MPTT tree structure
+        does not change after rebuilding the tree.
+
+        This ensures that the fixutre data is consistent.
+        """
+        nodes = {}
+
+        for instance in model.objects.all():
+            nodes[instance.pk] = self.node_string(instance)
+
+        # Rebuild the tree structure
+        model.objects.rebuild()
+
+        faults = []
+
+        # Check that no nodes have changed
+        for instance in model.objects.all().order_by('pk'):
+            ns = self.node_string(instance)
+            if ns != nodes[instance.pk]:
+                faults.append(
+                    f'Node {instance.pk} changed: {nodes[instance.pk]} -> {ns}'
+                )
+
+        if len(faults) > 0:
+            print(f'!!! Fixture data changed for: {model.__name__} !!!')
+
+            for f in faults:
+                print('-', f)
+
+        assert len(faults) == 0
+
+    def test_part(self):
+        """Test MPTT tree structure for Part model."""
+        from part.models import Part, PartCategory
+
+        self.run_tree_test(Part)
+        self.run_tree_test(PartCategory)
+
+    def test_build(self):
+        """Test MPTT tree structure for Build model."""
+        from build.models import Build
+
+        self.run_tree_test(Build)
+
+    def test_stock(self):
+        """Test MPTT tree structure for Stock model."""
+        from stock.models import StockItem, StockLocation
+
+        self.run_tree_test(StockItem)
+        self.run_tree_test(StockLocation)
 
 
 class HostTest(InvenTreeTestCase):
@@ -122,7 +189,7 @@ class CorsTest(TestCase):
         Here, we are not authorized by default,
         but the CORS headers should still be included.
         """
-        url = '/auth/'
+        url = reverse('auth-check')
 
         # First, a preflight request with a "valid" origin
 
@@ -396,27 +463,6 @@ class ConversionTest(TestCase):
 class ValidatorTest(TestCase):
     """Simple tests for custom field validators."""
 
-    def test_overage(self):
-        """Test overage validator."""
-        validate_overage('100%')
-        validate_overage('10')
-        validate_overage('45.2 %')
-
-        with self.assertRaises(django_exceptions.ValidationError):
-            validate_overage('-1')
-
-        with self.assertRaises(django_exceptions.ValidationError):
-            validate_overage('-2.04 %')
-
-        with self.assertRaises(django_exceptions.ValidationError):
-            validate_overage('105%')
-
-        with self.assertRaises(django_exceptions.ValidationError):
-            validate_overage('xxx %')
-
-        with self.assertRaises(django_exceptions.ValidationError):
-            validate_overage('aaaa')
-
     def test_url_validation(self):
         """Test for AllowedURLValidator."""
         from common.models import InvenTreeSetting
@@ -655,7 +701,16 @@ class TestHelpers(TestCase):
 
     def testMediaUrl(self):
         """Test getMediaUrl."""
-        self.assertEqual(helpers.getMediaUrl('xx/yy.png'), '/media/xx/yy.png')
+        # Str should not work
+        with self.assertRaises(TypeError):
+            helpers.getMediaUrl('xx/yy.png')  # type: ignore
+
+        # Correct usage
+        part = Part().image
+        self.assertEqual(
+            helpers.getMediaUrl(StdImageFieldFile(part, part, 'xx/yy.png')),  # type: ignore
+            '/media/xx/yy.png',
+        )
 
     def testDecimal2String(self):
         """Test decimal2string."""
@@ -811,12 +866,6 @@ class TestMPTT(TestCase):
 
     fixtures = ['location']
 
-    @classmethod
-    def setUpTestData(cls):
-        """Setup for all tests."""
-        super().setUpTestData()
-        StockLocation.objects.rebuild()
-
     def test_self_as_parent(self):
         """Test that we cannot set self as parent."""
         loc = StockLocation.objects.get(pk=4)
@@ -955,12 +1004,14 @@ class TestSerialNumberExtraction(TestCase):
         # Extract a range of values with a smaller range
         with self.assertRaises(ValidationError) as exc:
             e('11-50', 10, 1)
-            self.assertIn('Range quantity exceeds 10', str(exc))
+        self.assertIn(
+            'Group range 11-50 exceeds allowed quantity (10)', str(exc.exception)
+        )
 
         # Test groups are not interpolated with alpha characters
         with self.assertRaises(ValidationError) as exc:
             e('1, A-2, 3+', 5, 1)
-            self.assertIn('Invalid group range: A-2', str(exc))
+        self.assertIn('Invalid group: A-2', str(exc.exception))
 
     def test_combinations(self):
         """Test complex serial number combinations."""

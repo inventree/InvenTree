@@ -1,5 +1,6 @@
 """Tasks for automating certain actions and interacting with InvenTree from the CLI."""
 
+import datetime
 import json
 import os
 import pathlib
@@ -77,8 +78,8 @@ def is_pkg_installer_by_path():
 def get_installer(content: Optional[dict] = None):
     """Get the installer for the current environment or a content dict."""
     if content is None:
-        content = os.environ
-    return content.get('INVENTREE_PKG_INSTALLER', None)
+        content = dict(os.environ)
+    return content.get('INVENTREE_PKG_INSTALLER')
 
 
 # region execution logging helpers
@@ -138,16 +139,16 @@ def state_logger(fn=None, method_name=None):
     """Decorator to log state markers before/after function execution, optionally accepting arguments."""
 
     def decorator(func):
-        func.method_name = method_name or f'invoke task named `{func.__name__}`'
+        func.method_name = method_name or func.__name__
 
         @wraps(func)
         def wrapped(c, *args, **kwargs):
             do_log = is_debug_environment()
             if do_log:
-                info(f'# {func.method_name}| start')
+                info(f'# task | {func.method_name} | start')
             func(c, *args, **kwargs)
             if do_log:
-                info(f'# {func.method_name}| done')
+                info(f'# task | {func.method_name} | done')
 
         return wrapped
 
@@ -223,7 +224,7 @@ def envcheck_invoke_cmd():
 
     correct_cmd: Optional[str] = None
     if is_rtd_environment() or is_docker_environment() or is_devcontainer_environment():
-        pass
+        return  # Skip invoke command check for Docker/RTD/DevContainer environments
     elif is_pkg_installer(load_content=True) and not is_pkg_installer_by_path():
         correct_cmd = 'inventree run invoke'
     else:
@@ -271,19 +272,21 @@ def apps():
 
 def content_excludes(
     allow_auth: bool = True,
-    allow_tokens: bool = True,
+    allow_email: bool = False,
     allow_plugins: bool = True,
-    allow_sso: bool = True,
     allow_session: bool = True,
+    allow_sso: bool = True,
+    allow_tokens: bool = True,
 ):
     """Returns a list of content types to exclude from import / export.
 
     Arguments:
         allow_auth (bool): Allow user authentication data to be exported / imported
-        allow_tokens (bool): Allow tokens to be exported / imported
+        allow_email (bool): Allow email log data to be exported / imported
         allow_plugins (bool): Allow plugin information to be exported / imported
-        allow_sso (bool): Allow SSO tokens to be exported / imported
         allow_session (bool): Allow user session data to be exported / imported
+        allow_sso (bool): Allow SSO tokens to be exported / imported
+        allow_tokens (bool): Allow tokens to be exported / imported
     """
     excludes = [
         'contenttypes',
@@ -296,6 +299,7 @@ def content_excludes(
         'exchange.rate',
         'exchange.exchangebackend',
         'common.dataoutput',
+        'common.newsfeedentry',
         'common.notificationentry',
         'common.notificationmessage',
         'importer.dataimportsession',
@@ -303,29 +307,33 @@ def content_excludes(
         'importer.dataimportrow',
     ]
 
+    # Optional exclude email message logs
+    if not allow_email:
+        excludes.extend(['common.emailmessage', 'common.emailthread'])
+
     # Optionally exclude user auth data
     if not allow_auth:
-        excludes.append('auth.group')
-        excludes.append('auth.user')
+        excludes.extend(['auth.group', 'auth.user'])
 
     # Optionally exclude user token information
     if not allow_tokens:
-        excludes.append('users.apitoken')
+        excludes.extend(['users.apitoken'])
 
     # Optionally exclude plugin information
     if not allow_plugins:
-        excludes.append('plugin.pluginconfig')
-        excludes.append('plugin.pluginsetting')
+        excludes.extend([
+            'plugin.pluginconfig',
+            'plugin.pluginsetting',
+            'plugin.pluginusersetting',
+        ])
 
     # Optionally exclude SSO application information
     if not allow_sso:
-        excludes.append('socialaccount.socialapp')
-        excludes.append('socialaccount.socialtoken')
+        excludes.extend(['socialaccount.socialapp', 'socialaccount.socialtoken'])
 
     # Optionally exclude user session information
     if not allow_session:
-        excludes.append('sessions.session')
-        excludes.append('usersessions.usersession')
+        excludes.extend(['sessions.session', 'usersessions.usersession'])
 
     return ' '.join([f'--exclude {e}' for e in excludes])
 
@@ -348,6 +356,26 @@ def manage_py_dir():
 def manage_py_path():
     """Return the path of the manage.py file."""
     return manage_py_dir().joinpath('manage.py')
+
+
+def _frontend_info():
+    """Return the path of the frontend info directory."""
+    return manage_py_dir().joinpath('web', 'static', 'web', '.vite')
+
+
+def version_target_pth():
+    """Return the path of the target version file."""
+    return _frontend_info().joinpath('tag.txt')
+
+
+def version_sha_pth():
+    """Return the path of the SHA version file."""
+    return _frontend_info().joinpath('sha.txt')
+
+
+def version_source_pth():
+    """Return the path of the source version file."""
+    return _frontend_info().joinpath('source.txt')
 
 
 # endregion
@@ -387,6 +415,54 @@ def manage(c, cmd, pty: bool = False, env=None):
         env (dict, optional): Environment variables to pass to the command. Defaults to None.
     """
     run(c, f'python3 manage.py {cmd}', manage_py_dir(), pty, env)
+
+
+def run_install(
+    c,
+    uv: bool,
+    install_file: Path,
+    run_preflight=True,
+    version_check=False,
+    pinned=True,
+):
+    """Run the installation of python packages from a requirements file."""
+    if version_check:
+        # Test if there is a version specific requirements file
+        sys_ver_s = python_version().split('.')
+        sys_string = f'{sys_ver_s[0]}.{sys_ver_s[1]}'
+        install_file_vers = install_file.parent.joinpath(
+            f'{install_file.stem}-{sys_string}{install_file.suffix}'
+        )
+        if install_file_vers.exists():
+            install_file = install_file_vers
+            info(f"Using version-specific requirements file '{install_file_vers}'")
+
+    info(f"Installing required python packages from '{install_file}'")
+    if not Path(install_file).is_file():
+        raise FileNotFoundError(f"Requirements file '{install_file}' not found")
+
+    # Install required Python packages with PIP
+    if not uv:
+        if run_preflight:
+            run(
+                c,
+                'pip3 install --no-cache-dir --disable-pip-version-check -U pip setuptools',
+            )
+        run(
+            c,
+            f'pip3 install --no-cache-dir --disable-pip-version-check -U {"--require-hashes" if pinned else ""} -r {install_file}',
+        )
+    else:
+        if run_preflight:
+            run(
+                c,
+                'pip3 install --no-cache-dir --disable-pip-version-check -U uv setuptools',
+            )
+            info('Installed package manager')
+        run(
+            c,
+            f'uv pip install -U {"--require-hashes" if pinned else ""} -r {install_file}',
+        )
 
 
 def yarn(c, cmd):
@@ -454,24 +530,25 @@ def check_file_existence(filename: Path, overwrite: bool = False):
             sys.exit(1)
 
 
+@task
+@state_logger
+def wait(c):
+    """Wait until the database connection is ready."""
+    info('Waiting for database connection...')
+    return manage(c, 'wait_for_db')
+
+
 # Install tasks
 # region tasks
 @task(help={'uv': 'Use UV (experimental package manager)'})
-@state_logger('TASK01')
+@state_logger
 def plugins(c, uv=False):
     """Installs all plugins as specified in 'plugins.txt'."""
-    from src.backend.InvenTree.InvenTree.config import get_plugin_file
+    from src.backend.InvenTree.InvenTree.config import (  # type: ignore[import]
+        get_plugin_file,
+    )
 
-    plugin_file = get_plugin_file()
-
-    info(f"Installing plugin packages from '{plugin_file}'")
-
-    # Install the plugins
-    if not uv:
-        run(c, f"pip3 install --disable-pip-version-check -U -r '{plugin_file}'")
-    else:
-        run(c, 'pip3 install --no-cache-dir --disable-pip-version-check uv')
-        run(c, f"uv pip install -r '{plugin_file}'")
+    run_install(c, uv, get_plugin_file(), run_preflight=False, pinned=False)
 
     # Collect plugin static files
     manage(c, 'collectplugins')
@@ -481,35 +558,26 @@ def plugins(c, uv=False):
     help={
         'uv': 'Use UV package manager (experimental)',
         'skip_plugins': 'Skip plugin installation',
+        'dev': 'Install development requirements instead of production requirements',
     }
 )
-@state_logger('TASK02')
-def install(c, uv=False, skip_plugins=False):
+@state_logger
+def install(c, uv=False, skip_plugins=False, dev=False):
     """Installs required python packages."""
+    if dev:
+        run_install(
+            c,
+            uv,
+            local_dir().joinpath('src/backend/requirements-dev.txt'),
+            version_check=True,
+        )
+        success('Dependency installation complete')
+        return
+
     # Ensure path is relative to *this* directory
-    INSTALL_FILE = local_dir().joinpath('src/backend/requirements.txt')
-
-    info(f"Installing required python packages from '{INSTALL_FILE}'")
-
-    if not Path(INSTALL_FILE).is_file():
-        raise FileNotFoundError(f"Requirements file '{INSTALL_FILE}' not found")
-
-    # Install required Python packages with PIP
-    if not uv:
-        run(
-            c,
-            'pip3 install --no-cache-dir --disable-pip-version-check -U pip setuptools',
-        )
-        run(
-            c,
-            f'pip3 install --no-cache-dir --disable-pip-version-check -U --require-hashes -r {INSTALL_FILE}',
-        )
-    else:
-        run(
-            c,
-            'pip3 install --no-cache-dir --disable-pip-version-check -U uv setuptools',
-        )
-        run(c, f'uv pip install -U --require-hashes  -r {INSTALL_FILE}')
+    run_install(
+        c, uv, local_dir().joinpath('src/backend/requirements.txt'), version_check=True
+    )
 
     # Run plugins install
     if not skip_plugins:
@@ -528,10 +596,8 @@ def install(c, uv=False, skip_plugins=False):
 @task(help={'tests': 'Set up test dataset at the end'})
 def setup_dev(c, tests=False):
     """Sets up everything needed for the dev environment."""
-    info("Installing required python packages from 'src/backend/requirements-dev.txt'")
-
     # Install required Python packages with PIP
-    run(c, 'pip3 install -U --require-hashes -r src/backend/requirements-dev.txt')
+    install(c, uv=False, skip_plugins=True, dev=True)
 
     # Install pre-commit hook
     info('Installing pre-commit for checks before git commits...')
@@ -572,14 +638,16 @@ def rebuild_models(c):
 @task
 def rebuild_thumbnails(c):
     """Rebuild missing image thumbnails."""
-    from src.backend.InvenTree.InvenTree.config import get_media_dir
+    from src.backend.InvenTree.InvenTree.config import (  # type: ignore[import]
+        get_media_dir,
+    )
 
     info(f'Rebuilding image thumbnails in {get_media_dir()}')
     manage(c, 'rebuild_thumbnails', pty=True)
 
 
 @task
-@state_logger('TASK09')
+@state_logger
 def clean_settings(c):
     """Clean the setting tables of old settings."""
     info('Cleaning old settings from the database')
@@ -587,14 +655,19 @@ def clean_settings(c):
     success('Settings cleaned successfully')
 
 
-@task(help={'mail': "mail of the user who's MFA should be disabled"})
-def remove_mfa(c, mail=''):
+@task(
+    help={
+        'mail': "mail of the user who's MFA should be disabled",
+        'username': "username of the user who's MFA should be disabled",
+    }
+)
+def remove_mfa(c, mail='', username=''):
     """Remove MFA for a user."""
-    if not mail:
-        warning('You must provide a users mail')
+    if not mail and not username:
+        warning('You must provide a users mail or username')
         return
 
-    manage(c, f'remove_mfa {mail}')
+    manage(c, f'remove_mfa --mail {mail} --username {username}')
 
 
 @task(
@@ -604,7 +677,7 @@ def remove_mfa(c, mail=''):
         'skip_plugins': 'Ignore collection of plugin static files',
     }
 )
-@state_logger('TASK08')
+@state_logger
 def static(c, frontend=False, clear=True, skip_plugins=False):
     """Copies required static files to the STATIC_ROOT directory, as per Django requirements."""
     if frontend and node_available():
@@ -652,18 +725,37 @@ def translate(c, ignore_static=False, no_frontend=False):
 @task(
     help={
         'clean': 'Clean up old backup files',
+        'compress': 'Compress the backup files',
+        'encrypt': 'Encrypt the backup files (requires GPG recipient to be set)',
         'path': 'Specify path for generated backup files (leave blank for default path)',
+        'quiet': 'Suppress informational output (only show errors)',
+        'skip_db': 'Skip database backup step (only backup media files)',
+        'skip_media': 'Skip media backup step (only backup database files)',
     }
 )
-@state_logger('TASK04')
-def backup(c, clean=False, path=None):
+@state_logger
+def backup(
+    c,
+    clean: bool = False,
+    compress: bool = True,
+    encrypt: bool = False,
+    path=None,
+    quiet: bool = False,
+    skip_db: bool = False,
+    skip_media: bool = False,
+):
     """Backup the database and media files."""
-    info('Backing up InvenTree database...')
+    cmd = '--noinput -v 2'
 
-    cmd = '--noinput --compress -v 2'
+    if compress:
+        cmd += ' --compress'
 
+    if encrypt:
+        cmd += ' --encrypt'
+
+    # A path to the backup dir can be specified here
+    # If not specified, the default backup dir is used
     if path:
-        # Resolve the provided path
         path = Path(path)
         if not os.path.isabs(path):
             path = local_dir().joinpath(path).resolve()
@@ -673,20 +765,35 @@ def backup(c, clean=False, path=None):
     if clean:
         cmd += ' --clean'
 
-    manage(c, f'dbbackup {cmd}')
-    info('Backing up InvenTree media files...')
-    manage(c, f'mediabackup {cmd}')
+    if quiet:
+        cmd += ' --quiet'
 
-    success('Backup completed successfully')
+    if skip_db:
+        info('Skipping database backup...')
+    else:
+        info('Backing up InvenTree database...')
+        manage(c, f'dbbackup {cmd}')
+
+    if skip_media:
+        info('Skipping media backup...')
+    else:
+        info('Backing up InvenTree media files...')
+        manage(c, f'mediabackup {cmd}')
+
+    if not skip_db or not skip_media:
+        success('Backup completed successfully')
 
 
 @task(
     help={
         'path': 'Specify path to locate backup files (leave blank for default path)',
         'db_file': 'Specify filename of compressed database archive (leave blank to use most recent backup)',
+        'decrypt': 'Decrypt the backup files (requires GPG recipient to be set)',
         'media_file': 'Specify filename of compressed media archive (leave blank to use most recent backup)',
-        'ignore_media': 'Do not import media archive (database restore only)',
-        'ignore_database': 'Do not import database archive (media restore only)',
+        'skip_db': 'Do not import database archive (media restore only)',
+        'skip_media': 'Do not import media archive (database restore only)',
+        'uncompress': 'Uncompress the backup files before restoring (default behavior)',
+        'restore_allow_newer_version': 'Allow restore from a newer version backup (use with caution)',
     }
 )
 def restore(
@@ -694,11 +801,25 @@ def restore(
     path=None,
     db_file=None,
     media_file=None,
-    ignore_media=False,
-    ignore_database=False,
+    decrypt: bool = False,
+    skip_db: bool = False,
+    skip_media: bool = False,
+    uncompress: bool = True,
+    restore_allow_newer_version: bool = False,
 ):
     """Restore the database and media files."""
-    base_cmd = '--noinput --uncompress -v 2'
+    base_cmd = '--noinput -v 2'
+
+    env = {}
+
+    if restore_allow_newer_version:
+        env['INVENTREE_BACKUP_RESTORE_ALLOW_NEWER_VERSION'] = 'True'
+
+    if uncompress:
+        base_cmd += ' --uncompress'
+
+    if decrypt:
+        base_cmd += ' --decrypt'
 
     if path:
         # Resolve the provided path
@@ -708,7 +829,7 @@ def restore(
 
         base_cmd += f' -I {path}'
 
-    if ignore_database:
+    if skip_db:
         info('Skipping database archive...')
     else:
         info('Restoring InvenTree database')
@@ -717,9 +838,9 @@ def restore(
         if db_file:
             cmd += f' -i {db_file}'
 
-        manage(c, cmd)
+        manage(c, cmd, env=env)
 
-    if ignore_media:
+    if skip_media:
         info('Skipping media restore...')
     else:
         info('Restoring InvenTree media files')
@@ -728,11 +849,19 @@ def restore(
         if media_file:
             cmd += f' -i {media_file}'
 
-        manage(c, cmd)
+        manage(c, cmd, env=env)
 
 
-@task(post=[rebuild_models, rebuild_thumbnails])
-@state_logger('TASK05')
+@task()
+@state_logger
+def listbackups(c):
+    """List available backup files."""
+    info('Finding available backup files...')
+    manage(c, 'listbackups')
+
+
+@task(pre=[wait], post=[rebuild_models, rebuild_thumbnails])
+@state_logger
 def migrate(c):
     """Performs database migrations.
 
@@ -765,7 +894,7 @@ def showmigrations(c, app=''):
         'uv': 'Use UV (experimental package manager)',
     },
 )
-@state_logger('TASK03')
+@state_logger
 def update(
     c,
     skip_backup: bool = False,
@@ -832,18 +961,21 @@ def update(
     help={
         'filename': "Output filename (default = 'data.json')",
         'overwrite': 'Overwrite existing files without asking first (default = False)',
+        'include_email': 'Include email logs in the output file (default = False)',
         'include_permissions': 'Include user and group permissions in the output file (default = False)',
         'include_tokens': 'Include API tokens in the output file (default = False)',
         'exclude_plugins': 'Exclude plugin data from the output file (default = False)',
         'include_sso': 'Include SSO token data in the output file (default = False)',
         'include_session': 'Include user session data in the output file (default = False)',
         'retain_temp': 'Retain temporary files (containing permissions) at end of process (default = False)',
-    }
+    },
+    pre=[wait],
 )
 def export_records(
     c,
     filename='data.json',
     overwrite=False,
+    include_email=False,
     include_permissions=False,
     include_tokens=False,
     exclude_plugins=False,
@@ -880,6 +1012,7 @@ def export_records(
     tmpfile = f'{target}.tmp'
 
     excludes = content_excludes(
+        allow_email=include_email,
         allow_tokens=include_tokens,
         allow_plugins=not exclude_plugins,
         allow_session=include_session,
@@ -933,6 +1066,7 @@ def export_records(
         'clear': 'Clear existing data before import',
         'retain_temp': 'Retain temporary files at end of process (default = False)',
     },
+    pre=[wait],
     post=[rebuild_models, rebuild_thumbnails],
 )
 def import_records(
@@ -1015,7 +1149,7 @@ def import_records(
         os.remove(datafile)
         os.remove(authfile)
 
-    info('Data import completed')
+    success('Data import completed')
 
 
 @task(
@@ -1082,12 +1216,6 @@ def import_fixtures(c):
 
 
 # Execution tasks
-@task
-@state_logger('TASK10')
-def wait(c):
-    """Wait until the database connection is ready."""
-    info('Waiting for database connection...')
-    return manage(c, 'wait_for_db')
 
 
 @task(
@@ -1115,15 +1243,16 @@ def gunicorn(c, address='0.0.0.0:8000', workers=None):
 @task(
     pre=[wait],
     help={
-        'address': 'Server address:port (default=127.0.0.1:8000)',
+        'address': 'Server address:port (default=0.0.0.0:8000)',
         'no_reload': 'Do not automatically reload the server in response to code changes',
         'no_threading': 'Disable multi-threading for the development server',
     },
 )
-def server(c, address='127.0.0.1:8000', no_reload=False, no_threading=False):
+def server(c, address='0.0.0.0:8000', no_reload=False, no_threading=False):
     """Launch a (development) server using Django's in-built webserver.
 
-    Note: This is *not* sufficient for a production installation.
+    - This is *not* sufficient for a production installation.
+    - The default address exposes the server on all network interfaces.
     """
     cmd = f'runserver {address}'
 
@@ -1164,7 +1293,7 @@ def test_translations(c):
     info('Fill in dummy translations...')
 
     file_path = pathlib.Path(settings.LOCALE_PATHS[0], 'xx', 'LC_MESSAGES', 'django.po')
-    new_file_path = str(file_path) + '_new'
+    new_file_path = Path(str(file_path) + '_new')
 
     # compile regex
     reg = re.compile(
@@ -1212,32 +1341,30 @@ def test_translations(c):
 
 @task(
     help={
+        'check': 'Run sanity check on the django install (default = False)',
         'disable_pty': 'Disable PTY',
         'runtest': 'Specify which tests to run, in format <module>.<file>.<class>.<method>',
         'migrations': 'Run migration unit tests',
         'report': 'Display a report of slow tests',
         'coverage': 'Run code coverage analysis (requires coverage package)',
+        'translations': 'Compile translations before running tests',
+        'keepdb': 'Keep the test database after running tests (default = False)',
+        'pytest': 'Use pytest to run tests',
     }
 )
 def test(
     c,
+    check=False,
     disable_pty=False,
     runtest='',
     migrations=False,
     report=False,
     coverage=False,
     translations=False,
+    keepdb=False,
+    pytest=False,
 ):
     """Run unit-tests for InvenTree codebase.
-
-    Args:
-        c: Command line context.
-        disable_pty (bool): Disable PTY (default = False)
-        runtest (str): Specify which tests to run, in format <module>.<file>.<class>.<method> (default = '')
-        migrations (bool): Run migration unit tests (default = False)
-        report (bool): Display a report of slow tests (default = False)
-        coverage (bool): Run code coverage analysis (requires coverage package) (default = False)
-        translations (bool): Compile translations before running tests (default = False)
 
     To run only certain test, use the argument --runtest.
     This can filter all the way down to:
@@ -1248,7 +1375,8 @@ def test(
     will run tests in the company/test_api.py file.
     """
     # Run sanity check on the django install
-    manage(c, 'check')
+    if check:
+        manage(c, 'check')
 
     if translations:
         try:
@@ -1272,15 +1400,24 @@ def test(
     if report:
         cmd += ' --slowreport'
 
+    if keepdb:
+        cmd += ' --keepdb'
+
     if migrations:
         cmd += ' --tag migration_test'
     else:
         cmd += ' --exclude-tag migration_test'
 
+    cmd += ' --exclude-tag performance_test'
+
     if coverage:
         # Run tests within coverage environment, and generate report
         run(c, f'coverage run {manage_py_path()} {cmd}')
         run(c, 'coverage xml -i')
+    elif pytest:
+        # Use pytest to run the tests
+        migrate(c)
+        run(c, f'pytest {manage_py_path().parent.parent} --codspeed')
     else:
         # Run simple test runner, without coverage
         manage(c, cmd, pty=pty)
@@ -1290,6 +1427,8 @@ def test(
     help={
         'dev': 'Set up development environment at the end',
         'validate_files': 'Validate media files are correctly copied',
+        'use_ssh': 'Use SSH protocol for cloning the demo dataset (requires SSH key)',
+        'branch': 'Specify branch of demo-dataset to clone (default = main)',
     }
 )
 def setup_test(
@@ -1297,10 +1436,14 @@ def setup_test(
     ignore_update=False,
     dev=False,
     validate_files=False,
+    use_ssh=False,
     path='inventree-demo-dataset',
+    branch='main',
 ):
     """Setup a testing environment."""
-    from src.backend.InvenTree.InvenTree.config import get_media_dir
+    from src.backend.InvenTree.InvenTree.config import (  # type: ignore[import]
+        get_media_dir,
+    )
 
     if not ignore_update:
         update(c)
@@ -1312,12 +1455,15 @@ def setup_test(
         info('Removing old data ...')
         run(c, f'rm {template_dir} -r')
 
+    URL = 'https://github.com/inventree/demo-dataset'
+
+    if use_ssh:
+        # Use SSH protocol for cloning the demo dataset
+        URL = 'git@github.com:inventree/demo-dataset.git'
+
     # Get test data
     info('Cloning demo dataset ...')
-    run(
-        c,
-        f'git clone https://github.com/inventree/demo-dataset {template_dir} -v --depth=1',
-    )
+    run(c, f'git clone {URL} {template_dir} -b {branch} -v --depth=1')
 
     # Make sure migrations are done - might have just deleted sqlite database
     if not ignore_update:
@@ -1371,7 +1517,7 @@ def setup_test(
         'no_default': 'Do not use default settings for schema (default = off/False)',
     }
 )
-@state_logger('TASK11')
+@state_logger
 def schema(
     c, filename='schema.yml', overwrite=False, ignore_warnings=False, no_default=False
 ):
@@ -1395,7 +1541,7 @@ def schema(
             'False'  # Disable plugins to ensure they are kep out of schema
         )
         envs['INVENTREE_CURRENCY_CODES'] = (
-            'AUD,CNY,EUR,USD'  # Default currency codes to ensure they are stable
+            'AUD,CAD,CNY,EUR,GBP,JPY,NZD,USD'  # Default currency codes to ensure they are stable
         )
 
     manage(c, cmd, pty=True, env=envs)
@@ -1447,14 +1593,21 @@ def export_definitions(c, basedir: str = ''):
 @task(default=True)
 def version(c):
     """Show the current version of InvenTree."""
-    import src.backend.InvenTree.InvenTree.version as InvenTreeVersion
-    from src.backend.InvenTree.InvenTree.config import (
+    import src.backend.InvenTree.InvenTree.version as InvenTreeVersion  # type: ignore[import]
+    from src.backend.InvenTree.InvenTree.config import (  # type: ignore[import]
         get_backup_dir,
         get_config_file,
         get_media_dir,
         get_plugin_file,
         get_static_dir,
     )
+
+    def get_value(fnc):
+        """Helper function to safely get value from function, catching import exceptions."""
+        try:
+            return fnc()
+        except (ModuleNotFoundError, ImportError):
+            return wrap_color('ENVIRONMENT ERROR', '91')
 
     # Gather frontend version information
     _, node, yarn = node_available(versions=True)
@@ -1488,17 +1641,17 @@ Invoke Tool {invoke_path}
 
 Installation paths:
 Base        {local_dir()}
-Config      {get_config_file()}
-Plugin File {get_plugin_file() or NOT_SPECIFIED}
-Media       {get_media_dir(error=False) or NOT_SPECIFIED}
-Static      {get_static_dir(error=False) or NOT_SPECIFIED}
-Backup      {get_backup_dir(error=False) or NOT_SPECIFIED}
+Config      {get_value(get_config_file)}
+Plugin File {get_value(get_plugin_file) or NOT_SPECIFIED}
+Media       {get_value(lambda: get_media_dir(error=False)) or NOT_SPECIFIED}
+Static      {get_value(lambda: get_static_dir(error=False)) or NOT_SPECIFIED}
+Backup      {get_value(lambda: get_backup_dir(error=False)) or NOT_SPECIFIED}
 
 Versions:
-Python      {python_version()}
-Django      {InvenTreeVersion.inventreeDjangoVersion()}
 InvenTree   {InvenTreeVersion.inventreeVersion()}
 API         {InvenTreeVersion.inventreeApiVersion()}
+Python      {python_version()}
+Django      {get_value(InvenTreeVersion.inventreeDjangoVersion)}
 Node        {node if node else NA}
 Yarn        {yarn if yarn else NA}
 
@@ -1526,7 +1679,7 @@ def frontend_check(c):
 
 
 @task(help={'extract': 'Extract translation strings. Default: False'})
-@state_logger('TASK06')
+@state_logger
 def frontend_compile(c, extract: bool = False):
     """Generate react frontend.
 
@@ -1576,6 +1729,31 @@ def frontend_build(c):
     info('Building frontend')
     yarn(c, 'yarn run build')
 
+    def write_info(path: Path, content: str):
+        """Helper function to write version content to file after cleaning it if it exists."""
+        if path.exists():
+            path.unlink()
+        path.write_text(content, encoding='utf-8')
+
+    # Write version marker
+    try:
+        import src.backend.InvenTree.InvenTree.version as InvenTreeVersion  # type: ignore[import]
+
+        if version_hash := InvenTreeVersion.inventreeCommitHash():
+            write_info(version_sha_pth(), version_hash)
+        elif version_tag := InvenTreeVersion.inventreeVersion():
+            write_info(version_target_pth(), version_tag)
+        else:
+            warning('No version information available to write frontend version marker')
+
+        # Write source marker
+        write_info(
+            version_source_pth(),
+            f'local build on {datetime.datetime.now().isoformat()}',
+        )
+    except Exception:
+        warning('Failed to write frontend version marker')
+
 
 @task
 def frontend_server(c):
@@ -1589,6 +1767,21 @@ def frontend_server(c):
     yarn(c, 'yarn run dev --host')
 
 
+@task
+def frontend_test(c, host: str = '0.0.0.0'):
+    """Start the playwright test runner for the frontend code."""
+    info('Starting frontend test runner')
+
+    frontend_path = local_dir().joinpath('src', 'frontend').resolve()
+
+    cmd = 'npx playwright test --ui'
+
+    if host:
+        cmd += f' --ui-host={host}'
+
+    run(c, cmd, path=frontend_path)
+
+
 @task(
     help={
         'ref': 'git ref, default: current git ref',
@@ -1599,7 +1792,7 @@ def frontend_server(c):
         'clean': 'Delete old files from InvenTree/web/static/web first, default: True',
     }
 )
-@state_logger('TASK07')
+@state_logger
 def frontend_download(
     c,
     ref=None,
@@ -1651,7 +1844,7 @@ def frontend_download(
         # if clean, delete static/web directory
         if clean:
             shutil.rmtree(dest_path, ignore_errors=True)
-            dest_path.mkdir()
+            dest_path.mkdir(parents=True, exist_ok=True)
             info(f'Cleaned directory: {dest_path}')
 
         # unzip build to static folder
@@ -1685,13 +1878,9 @@ def frontend_download(
         ref = 'tag' if tag else 'commit'
 
         if tag:
-            current = manage_py_dir().joinpath(
-                'web', 'static', 'web', '.vite', 'tag.txt'
-            )
+            current = version_target_pth()
         elif sha:
-            current = manage_py_dir().joinpath(
-                'web', 'static', 'web', '.vite', 'sha.txt'
-            )
+            current = version_sha_pth()
         else:
             raise ValueError('Either tag or sha needs to be set')
 
@@ -1715,6 +1904,7 @@ def frontend_download(
     # if zip file is specified, try to extract it directly
     if file:
         handle_extract(file)
+        static(c, frontend=False, skip_plugins=True)
         return
 
     # check arguments
@@ -1815,7 +2005,7 @@ def doc_schema(c):
 @task(
     help={
         'address': 'Host and port to run the server on (default: localhost:8080)',
-        'compile_schema': 'Compile the schema documentation first (default: False)',
+        'compile_schema': 'Compile the API schema documentation first (default: False)',
     }
 )
 def docs_server(c, address='localhost:8080', compile_schema=False):
@@ -1873,6 +2063,7 @@ development = Collection(
     delete_data,
     docs_server,
     frontend_server,
+    frontend_test,
     gunicorn,
     import_fixtures,
     schema,
@@ -1906,6 +2097,7 @@ ns = Collection(
     frontend_download,
     import_records,
     install,
+    listbackups,
     migrate,
     plugins,
     remove_mfa,

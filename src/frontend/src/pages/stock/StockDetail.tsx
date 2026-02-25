@@ -1,7 +1,6 @@
 import { t } from '@lingui/core/macro';
 import {
   Accordion,
-  Alert,
   Button,
   Grid,
   Group,
@@ -28,14 +27,15 @@ import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { ActionButton } from '@lib/components/ActionButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
-import { getDetailUrl } from '@lib/functions/Navigation';
+import { getDetailUrl, getOverviewUrl } from '@lib/functions/Navigation';
+import type { StockOperationProps } from '@lib/types/Forms';
 import { notifications } from '@mantine/notifications';
 import { useBarcodeScanDialog } from '../../components/barcodes/BarcodeScanDialog';
-import { ActionButton } from '../../components/buttons/ActionButton';
 import AdminButton from '../../components/buttons/AdminButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
 import {
@@ -65,9 +65,8 @@ import LocateItemButton from '../../components/plugins/LocateItemButton';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { useApi } from '../../contexts/ApiContext';
-import { formatCurrency } from '../../defaults/formatters';
+import { formatCurrency, formatDecimal } from '../../defaults/formatters';
 import {
-  type StockOperationProps,
   useFindSerialNumberForm,
   useStockFields,
   useStockItemSerializeFields
@@ -158,6 +157,14 @@ export default function StockDetail() {
         hidden: !part.IPN
       },
       {
+        name: 'part_detail.revision',
+        label: t`Revision`,
+        type: 'string',
+        copy: true,
+        icon: 'revision',
+        hidden: !part.revision
+      },
+      {
         name: 'status',
         type: 'status',
         label: t`Status`,
@@ -174,17 +181,12 @@ export default function StockDetail() {
           stockitem.status_custom_key == stockitem.status
       },
       {
-        type: 'text',
-        name: 'updated',
-        icon: 'calendar',
-        label: t`Last Updated`
-      },
-      {
-        type: 'text',
-        name: 'stocktake',
-        icon: 'calendar',
-        label: t`Last Stocktake`,
-        hidden: !stockitem.stocktake
+        type: 'link',
+        name: 'link',
+        label: t`Link`,
+        external: true,
+        copy: true,
+        hidden: !stockitem.link
       }
     ];
 
@@ -416,6 +418,19 @@ export default function StockDetail() {
         icon: 'part',
         label: t`Packaging`,
         hidden: !stockitem.packaging
+      },
+      {
+        type: 'text',
+        name: 'updated',
+        icon: 'calendar',
+        label: t`Last Updated`
+      },
+      {
+        type: 'text',
+        name: 'stocktake',
+        icon: 'calendar',
+        label: t`Last Stocktake`,
+        hidden: !stockitem.stocktake
       }
     ];
 
@@ -568,8 +583,8 @@ export default function StockDetail() {
         )
       },
       {
-        name: 'testdata',
-        label: t`Test Data`,
+        name: 'test-results',
+        label: t`Test Results`,
         icon: <IconChecklist />,
         hidden: !stockitem?.part_detail?.testable,
         content: stockitem?.pk ? (
@@ -608,7 +623,8 @@ export default function StockDetail() {
       }),
       NotesPanel({
         model_type: ModelType.stockitem,
-        model_id: stockitem.pk
+        model_id: stockitem.pk,
+        has_note: !!stockitem.notes
       })
     ];
   }, [
@@ -715,7 +731,20 @@ export default function StockDetail() {
     return {
       items: [stockitem],
       model: ModelType.stockitem,
-      refresh: refreshInstance,
+      refresh: () => {
+        const location = stockitem?.location;
+        refreshInstancePromise().then((response) => {
+          if (response.status == 'error') {
+            // If an error occurs refreshing the instance,
+            // the stock likely has likely been depleted
+            if (location) {
+              navigate(getDetailUrl(ModelType.stocklocation, location));
+            } else {
+              navigate(getOverviewUrl(ModelType.stockitem));
+            }
+          }
+        });
+      },
       filters: {
         in_stock: true
       }
@@ -725,6 +754,8 @@ export default function StockDetail() {
   const stockAdjustActions = useStockAdjustActions({
     formProps: stockOperationProps,
     delete: false,
+    assign: !!stockitem.in_stock && stockitem.part_detail?.salable,
+    return: !!stockitem.consumed_by || !!stockitem.customer,
     merge: false
   });
 
@@ -744,38 +775,16 @@ export default function StockDetail() {
       quantity: stockitem.quantity,
       destination: stockitem.location ?? stockitem.part_detail?.default_location
     },
-    onFormSuccess: () => {
-      const partId = stockitem.part;
-      refreshInstancePromise().catch(() => {
-        // Part may have been deleted - redirect to the part detail page
-        navigate(getDetailUrl(ModelType.part, partId));
-      });
+    onFormSuccess: (response: any) => {
+      if (response.length >= stockitem.quantity) {
+        // Entire item was serialized
+        // Navigate to the first result
+        navigate(getDetailUrl(ModelType.stockitem, response[0].pk));
+      } else {
+        refreshInstance();
+      }
     },
     successMessage: t`Stock item serialized`
-  });
-
-  const returnStockItem = useCreateApiFormModal({
-    url: ApiEndpoints.stock_return,
-    pk: stockitem.pk,
-    title: t`Return Stock Item`,
-    preFormContent: (
-      <Alert color='blue'>
-        {t`Return this item into stock. This will remove the customer assignment.`}
-      </Alert>
-    ),
-    fields: {
-      location: {},
-      status: {},
-      notes: {}
-    },
-    initialData: {
-      location: stockitem.location ?? stockitem.part_detail?.default_location,
-      status: stockitem.status_custom_key ?? stockitem.status
-    },
-    successMessage: t`Item returned to stock`,
-    onFormSuccess: () => {
-      refreshInstance();
-    }
   });
 
   const orderPartsWizard = OrderPartsWizard({
@@ -882,20 +891,6 @@ export default function StockDetail() {
             onClick: () => {
               orderPartsWizard.openWizard();
             }
-          },
-          {
-            name: t`Return`,
-            tooltip: t`Return from customer`,
-            hidden: !stockitem.customer,
-            icon: (
-              <InvenTreeIcon
-                icon='return_orders'
-                iconProps={{ color: 'blue' }}
-              />
-            ),
-            onClick: () => {
-              stockitem.pk && returnStockItem.open();
-            }
           }
         ]}
       />,
@@ -939,13 +934,13 @@ export default function StockDetail() {
           />,
           <DetailsBadge
             color='blue'
-            label={`${t`Quantity`}: ${stockitem.quantity}`}
+            label={`${t`Quantity`}: ${formatDecimal(stockitem.quantity)}`}
             visible={!stockitem.serial}
             key='quantity'
           />,
           <DetailsBadge
             color='yellow'
-            label={`${t`Available`}: ${available}`}
+            label={`${t`Available`}: ${formatDecimal(available)}`}
             visible={
               stockitem.in_stock &&
               !stockitem.serial &&
@@ -961,6 +956,7 @@ export default function StockDetail() {
           />,
           <StatusRenderer
             status={stockitem.status_custom_key || stockitem.status}
+            fallbackStatus={stockitem.status}
             type={ModelType.stockitem}
             options={{
               size: 'lg'
@@ -1043,7 +1039,6 @@ export default function StockDetail() {
       {duplicateStockItem.modal}
       {deleteStockItem.modal}
       {serializeStockItem.modal}
-      {returnStockItem.modal}
       {stockAdjustActions.modals.map((modal) => modal.modal)}
       {orderPartsWizard.wizard}
     </>

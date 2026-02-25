@@ -1,4 +1,5 @@
 import type { ApiFormFieldType } from '@lib/types/Forms';
+import { t } from '@lingui/core/macro';
 import { DateInput } from '@mantine/dates';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
@@ -21,12 +22,7 @@ export default function DateField({
     fieldState: { error }
   } = controller;
 
-  const valueFormat = useMemo(() => {
-    // Determine the format based on the field type
-    return definition.field_type == 'date'
-      ? 'YYYY-MM-DD'
-      : 'YYYY-MM-DD HH:mm:ss';
-  }, [definition.field_type]);
+  const valueFormat = 'YYYY-MM-DD';
 
   const onChange = useCallback(
     (value: any) => {
@@ -34,6 +30,8 @@ export default function DateField({
       if (value) {
         value = value.toString();
         value = dayjs(value).format(valueFormat);
+
+        // Strip the time portion from the date input
         value = value.toString().split('T')[0];
       }
 
@@ -72,7 +70,7 @@ export default function DateField({
       valueFormat={valueFormat}
       label={definition.label}
       description={definition.description}
-      placeholder={definition.placeholder}
+      placeholder={definition.placeholder ?? t`Select date`}
       leftSection={definition.icon}
       highlightToday
     />

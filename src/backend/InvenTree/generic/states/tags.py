@@ -20,4 +20,5 @@ def status_label(typ: str, key: int, include_custom: bool = False, *args, **kwar
 def display_status_label(typ: str, key: int, fallback: int, *args, **kwargs):
     """Render a status label."""
     render_key = int(key) if key else fallback
-    return status_label(typ, render_key, *args, include_custom=True, **kwargs)
+    kwargs['include_custom'] = True
+    return status_label(typ, render_key, *args, **kwargs)

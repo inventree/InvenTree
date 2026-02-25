@@ -8,7 +8,11 @@ import {
   Tooltip,
   UnstyledButton
 } from '@mantine/core';
-import { useDisclosure, useDocumentVisibility } from '@mantine/hooks';
+import {
+  useDisclosure,
+  useDocumentVisibility,
+  useHotkeys
+} from '@mantine/hooks';
 import { IconBell, IconSearch } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useEffect, useMemo, useState } from 'react';
@@ -49,10 +53,26 @@ export function Header() {
   const [server] = useServerApiState(useShallow((state) => [state.server]));
   const [navDrawerOpened, { open: openNavDrawer, close: closeNavDrawer }] =
     useDisclosure(navigationOpen);
+
   const [
     searchDrawerOpened,
     { open: openSearchDrawer, close: closeSearchDrawer }
   ] = useDisclosure(false);
+
+  useHotkeys([
+    [
+      '/',
+      () => {
+        openSearchDrawer();
+      }
+    ],
+    [
+      'mod+/',
+      () => {
+        openSearchDrawer();
+      }
+    ]
+  ]);
 
   const [
     notificationDrawerOpened,
@@ -62,6 +82,7 @@ export function Header() {
   const { isLoggedIn } = useUserState();
   const [notificationCount, setNotificationCount] = useState<number>(0);
   const globalSettings = useGlobalSettingsState();
+  const userSettings = useUserSettingsState();
 
   const navbar_message = useMemo(() => {
     return server.customize?.navbar_message;
@@ -107,8 +128,22 @@ export function Header() {
     else closeNavDrawer();
   }, [navigationOpen]);
 
+  const headerStyle: any = useMemo(() => {
+    const sticky: boolean = userSettings.isSet('STICKY_HEADER', true);
+
+    if (sticky) {
+      return {
+        position: 'sticky',
+        zIndex: 10,
+        top: 0
+      };
+    } else {
+      return {};
+    }
+  }, [userSettings]);
+
   return (
-    <div className={classes.layoutHeader}>
+    <div className={classes.layoutHeader} style={headerStyle}>
       <SearchDrawer opened={searchDrawerOpened} onClose={closeSearchDrawer} />
       <NavigationDrawer opened={navDrawerOpened} close={closeNavDrawer} />
       <NotificationDrawer
@@ -140,7 +175,7 @@ export function Header() {
                 <IconSearch />
               </ActionIcon>
             </Tooltip>
-            <SpotlightButton />
+            {userSettings.isSet('SHOW_SPOTLIGHT') && <SpotlightButton />}
             {globalSettings.isSet('BARCODE_ENABLE') && <ScanButton />}
             <Indicator
               radius='lg'

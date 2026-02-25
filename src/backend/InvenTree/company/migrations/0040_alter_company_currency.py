@@ -2,7 +2,6 @@
 
 import InvenTree.validators
 import common.currency
-import common.settings
 from django.db import migrations, models
 
 

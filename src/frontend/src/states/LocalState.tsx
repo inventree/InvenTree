@@ -17,8 +17,8 @@ interface LocalStateProps {
   hostKey: string;
   hostList: HostList;
   setHostList: (newHostList: HostList) => void;
-  language: string;
-  setLanguage: (newLanguage: string, noPatch?: boolean) => void;
+  language: string | null;
+  setLanguage: (newLanguage: string | null, noPatch?: boolean) => void;
   userTheme: UserTheme;
   setTheme: (
     newValues: {
@@ -31,6 +31,8 @@ interface LocalStateProps {
   setWidgets: (widgets: string[], noPatch?: boolean) => void;
   layouts: any;
   setLayouts: (layouts: any, noPatch?: boolean) => void;
+  showSampleDashboard: boolean;
+  setShowSampleDashboard: (value: boolean) => void;
   // panels
   lastUsedPanels: Record<string, string>;
   setLastUsedPanel: (panelKey: string) => (value: string) => void;
@@ -76,7 +78,7 @@ export const useLocalState = create<LocalStateProps>()(
       hostKey: '',
       hostList: {},
       setHostList: (newHostList) => set({ hostList: newHostList }),
-      language: 'en',
+      language: null,
       setLanguage: (newLanguage, noPatch = false) => {
         set({ language: newLanguage });
         if (!noPatch) patchUser('language', newLanguage);
@@ -117,6 +119,10 @@ export const useLocalState = create<LocalStateProps>()(
         set({ layouts: newLayouts });
         if (!noPatch)
           patchUser('widgets', { widgets: get().widgets, layouts: newLayouts });
+      },
+      showSampleDashboard: true,
+      setShowSampleDashboard: (value) => {
+        set({ showSampleDashboard: value });
       },
       // panels
       lastUsedPanels: {},

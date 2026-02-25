@@ -1,12 +1,18 @@
 import { t } from '@lingui/core/macro';
 import { useCallback, useMemo, useState } from 'react';
 
+import { type RowAction, RowEditAction } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import { ActionButton, formatDecimal } from '@lib/index';
 import type { TableFilter } from '@lib/types/Filters';
-import type { StockOperationProps } from '../../forms/StockForms';
+import type { StockOperationProps } from '@lib/types/Forms';
+import type { TableColumn } from '@lib/types/Tables';
+import { Alert } from '@mantine/core';
+import { IconCircleDashedCheck, IconCircleX } from '@tabler/icons-react';
+import { useConsumeBuildItemsForm } from '../../forms/BuildForms';
 import {
   useDeleteApiFormModal,
   useEditApiFormModal
@@ -14,16 +20,17 @@ import {
 import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import {
+  DecimalColumn,
+  IPNColumn,
   LocationColumn,
   PartColumn,
   ReferenceColumn,
-  StatusColumn
+  StatusColumn,
+  StockColumn
 } from '../ColumnRenderers';
-import { StockLocationFilter } from '../Filter';
+import { IncludeVariantsFilter, StockLocationFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 /**
  * Render a table of allocated stock for a build.
@@ -62,12 +69,7 @@ export default function BuildAllocatedStockTable({
     ];
 
     if (!!partId) {
-      filters.push({
-        name: 'include_variants',
-        type: 'boolean',
-        label: t`Include Variants`,
-        description: t`Include orders for part variants`
-      });
+      filters.push(IncludeVariantsFilter());
     }
 
     filters.push(StockLocationFilter());
@@ -94,22 +96,13 @@ export default function BuildAllocatedStockTable({
         title: t`Order Status`,
         hidden: showBuildInfo != true
       }),
-      {
-        accessor: 'part',
+      PartColumn({
         hidden: !showPartInfo,
-        title: t`Part`,
-        sortable: true,
-        switchable: false,
-        render: (record: any) => PartColumn({ part: record.part_detail })
-      },
-      {
-        accessor: 'part_detail.IPN',
-        ordering: 'IPN',
-        hidden: !showPartInfo,
-        title: t`IPN`,
-        sortable: true,
-        switchable: true
-      },
+        switchable: false
+      }),
+      IPNColumn({
+        hidden: !showPartInfo
+      }),
       {
         hidden: !showPartInfo,
         accessor: 'bom_reference',
@@ -118,40 +111,41 @@ export default function BuildAllocatedStockTable({
         switchable: true
       },
       {
-        accessor: 'serial',
-        title: t`Serial Number`,
-        sortable: false,
-        switchable: true,
-        render: (record: any) => record?.stock_item_detail?.serial
-      },
-      {
         accessor: 'batch',
         title: t`Batch Code`,
         sortable: false,
         switchable: true,
-        render: (record: any) => record?.stock_item_detail?.batch
+        render: (record: any) => record?.stock_item_detail?.batch,
+        copyable: true,
+        copyAccessor: 'stock_item_detail.batch'
       },
-      {
-        accessor: 'available',
-        title: t`Available Quantity`,
-        render: (record: any) => record?.stock_item_detail?.quantity
-      },
+      DecimalColumn({
+        accessor: 'stock_item_detail.quantity',
+        title: t`Available`
+      }),
       {
         accessor: 'quantity',
-        title: t`Allocated Quantity`,
-        sortable: true,
-        switchable: false
+        title: t`Allocated`,
+        render: (record: any) => {
+          const serial = record?.stock_item_detail?.serial;
+
+          if (serial && record?.quantity == 1) {
+            return `${t`Serial`}: ${serial}`;
+          }
+
+          return formatDecimal(record.quantity);
+        }
       },
       LocationColumn({
         accessor: 'location_detail',
         switchable: true,
         sortable: true
       }),
-      {
-        accessor: 'install_into',
+      StockColumn({
+        accessor: 'install_into_detail',
         title: t`Build Output`,
-        sortable: true
-      },
+        sortable: false
+      }),
       {
         accessor: 'sku',
         title: t`Supplier Part`,
@@ -161,10 +155,10 @@ export default function BuildAllocatedStockTable({
     ];
   }, []);
 
-  const [selectedItem, setSelectedItem] = useState<number>(0);
+  const [selectedItemId, setSelectedItemId] = useState<number>(0);
 
   const editItem = useEditApiFormModal({
-    pk: selectedItem,
+    pk: selectedItemId,
     url: ApiEndpoints.build_item_list,
     title: t`Edit Stock Allocation`,
     fields: {
@@ -177,10 +171,31 @@ export default function BuildAllocatedStockTable({
   });
 
   const deleteItem = useDeleteApiFormModal({
-    pk: selectedItem,
+    pk: selectedItemId,
     url: ApiEndpoints.build_item_list,
-    title: t`Delete Stock Allocation`,
-    table: table
+    title: t`Remove Allocated Stock`,
+    submitText: t`Remove`,
+    table: table,
+    preFormContent: (
+      <Alert color='red' title={t`Confirm Removal`}>
+        {t`Are you sure you want to remove this allocated stock from the order?`}
+      </Alert>
+    )
+  });
+
+  const [selectedItems, setSelectedItems] = useState<any[]>([]);
+
+  const itemsToConsume = useMemo(() => {
+    return selectedItems.filter((item) => !item.part_detail?.trackable);
+  }, [selectedItems]);
+
+  const consumeStock = useConsumeBuildItemsForm({
+    buildId: buildId ?? 0,
+    allocatedItems: itemsToConsume,
+    onFormSuccess: () => {
+      table.clearSelectedRecords();
+      table.refreshTable();
+    }
   });
 
   const stockOperationProps: StockOperationProps = useMemo(() => {
@@ -216,34 +231,67 @@ export default function BuildAllocatedStockTable({
 
   const rowActions = useCallback(
     (record: any): RowAction[] => {
+      const part = record.part_detail ?? {};
+      const trackable: boolean = part?.trackable ?? false;
+
       return [
+        {
+          color: 'green',
+          icon: <IconCircleDashedCheck />,
+          title: t`Consume`,
+          tooltip: t`Consume Stock`,
+          hidden: !buildId || trackable || !user.hasChangeRole(UserRoles.build),
+          onClick: () => {
+            setSelectedItems([record]);
+            consumeStock.open();
+          }
+        },
         RowEditAction({
           hidden: !user.hasChangeRole(UserRoles.build),
           onClick: () => {
-            setSelectedItem(record.pk);
+            setSelectedItemId(record.pk);
             editItem.open();
           }
         }),
-        RowDeleteAction({
+        {
+          title: t`Remove`,
+          tooltip: t`Remove allocated stock`,
+          icon: <IconCircleX />,
+          color: 'red',
           hidden: !user.hasDeleteRole(UserRoles.build),
           onClick: () => {
-            setSelectedItem(record.pk);
+            setSelectedItemId(record.pk);
             deleteItem.open();
           }
-        })
+        }
       ];
     },
     [user]
   );
 
   const tableActions = useMemo(() => {
-    return [stockAdjustActions.dropdown];
-  }, [stockAdjustActions.dropdown]);
+    return [
+      stockAdjustActions.dropdown,
+      <ActionButton
+        key='consume-stock'
+        icon={<IconCircleDashedCheck />}
+        tooltip={t`Consume Stock`}
+        hidden={!user.hasChangeRole(UserRoles.build)}
+        disabled={table.selectedRecords.length == 0}
+        color='green'
+        onClick={() => {
+          setSelectedItems(table.selectedRecords);
+          consumeStock.open();
+        }}
+      />
+    ];
+  }, [user, table.selectedRecords, stockAdjustActions.dropdown]);
 
   return (
     <>
       {editItem.modal}
       {deleteItem.modal}
+      {consumeStock.modal}
       {stockAdjustActions.modals.map((modal) => modal.modal)}
       <InvenTreeTable
         tableState={table}
@@ -258,11 +306,12 @@ export default function BuildAllocatedStockTable({
             part_detail: showPartInfo ?? false,
             location_detail: true,
             stock_detail: true,
+            install_into_detail: true,
             supplier_detail: true
           },
           enableBulkDelete: allowEdit && user.hasDeleteRole(UserRoles.build),
           enableDownload: true,
-          enableSelection: allowEdit && user.hasDeleteRole(UserRoles.build),
+          enableSelection: allowEdit && user.hasChangeRole(UserRoles.build),
           rowActions: rowActions,
           tableActions: tableActions,
           tableFilters: tableFilters,

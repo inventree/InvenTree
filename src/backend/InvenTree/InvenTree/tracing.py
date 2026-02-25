@@ -4,7 +4,7 @@ import base64
 import logging
 from typing import Optional
 
-from opentelemetry import metrics, trace
+from opentelemetry import metrics, trace  # type: ignore[import]
 from opentelemetry.instrumentation.django import DjangoInstrumentor
 from opentelemetry.instrumentation.redis import RedisInstrumentor
 from opentelemetry.instrumentation.requests import RequestsInstrumentor
@@ -29,8 +29,8 @@ TRACE_PROV = None
 
 
 def setup_tracing(
-    endpoint: str,
-    headers: dict,
+    endpoint: Optional[str] = None,
+    headers: Optional[dict] = None,
     resources_input: Optional[dict] = None,
     console: bool = False,
     auth: Optional[dict] = None,
@@ -50,6 +50,11 @@ def setup_tracing(
     """
     if InvenTree.ready.isImportingData() or InvenTree.ready.isRunningMigrations():
         return
+    if endpoint is None or headers is None:
+        print(
+            'Tracing endpoint or headers not specified - skipping tracing setup'
+        )  # pragma: no cover
+        return  # pragma: no cover
 
     # Logger configuration
     logger = logging.getLogger('inventree')

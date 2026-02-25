@@ -31,7 +31,7 @@ Before continuing, it is important that the difference between *untracked* and *
 
 #### BOM Considerations
 
-A [Bill of Materials](./bom.md) to generate an assembly may consist of a mixture of *untracked* and *tracked* components. The build order process can facilitate this, as documentated in the sections below.
+A [Bill of Materials](./bom.md) to generate an assembly may consist of a mixture of *untracked* and *tracked* components. The build order process can facilitate this, as documented in the sections below.
 
 ### Tracked Build Outputs
 
@@ -108,9 +108,9 @@ Set this option to *True* to allow substitute parts (as specified by the BOM) to
 
 Allocation of tracked stock items is slightly more complex. Instead of being allocated against the *Build Order*, tracked stock items must be allocated against an individual *Build Output*.
 
-Allocating tracked stock items to particular build outputs is performed in the *Pending Items* tab:
+Allocating tracked stock items to particular build outputs is performed in the *Incomplete Outputs* tab:
 
-In the *Pending Items* tab, we can see that each build output has a stock allocation requirement which must be met before that build output can be completed:
+In the *Incomplete Outputs* tab, we can see that each build output has a stock allocation requirement which must be met before that build output can be completed:
 
 {{ image("build/build_allocate_tracked_parts.png", "Allocate tracked parts") }}
 
@@ -125,6 +125,55 @@ Here we can see that the incomplete build outputs (serial numbers 15 and 14) now
 
 !!! note "Example: Tracked Stock"
     Let's say we have 5 units of "Tracked Part" in stock - with 1 unit allocated to the build output. Once we complete the build output, there will be 4 units of "Tracked Part" in stock, with 1 unit being marked as "installed" within the assembled part
+
+### Automatic Stock Allocation
+
+Tracked stock items can be automatically allocated to build outputs using the *Auto Allocate* button in the *Incomplete Outputs* tab. This will attempt to allocate tracked stock items to build outputs based on matching serial numbers.
+
+For each build output, the auto-allocation routine will attempt to find a matching component item with the same serial number. If such a stock item is found, and it is available for use, it will be allocated to that build output.
+
+## Consuming Stock
+
+Allocating stock items to a build order does not immediately remove them from stock. Instead, the stock items are marked as "allocated" against the build order, and are only removed from stock when they are "consumed" by the build order.
+
+In the *Required Parts* tab, you can see the *consumed* vs *allocated* state of each line item in the BOM:
+
+{{ image("build/parts_allocated_consumed.png", "Partially allocated and consumed") }}
+
+Consuming items against the build order can be performed in two ways:
+
+- Manually, by consuming selected stock allocations against the build order
+- Automatically, by completing the build order
+
+### Manual Consumption
+
+Manual consuming stock items (before the build order is completed) can be performed at any point after stock has been allocated against the build order. Manual stock consumption may be desired in some situations, for example if the build order is being performed in stages, or to ensure that stock levels are kept up to date.
+
+Manual consumption of stock items can be performed in the in the following ways:
+
+#### Required Parts Tab
+
+Consuming stock items can be performed against BOM line items in the *Required Parts* tab, either against a single line or multiple selected lines:
+
+- Navigate to the *Required Parts* tab
+- Select the individual line items which you wish to consume
+- Click the *Consume Stock* button
+
+#### Allocated Stock Tab
+
+Consuming stock items can also be performed against the *Allocated Stock* tab, either against a single allocation or multiple allocations:
+
+- Navigate to the *Allocated Stock* tab
+- Select the individual stock allocations which you wish to consume
+- Click the *Consume Stock* button
+
+### Automatic Consumption
+
+When a build order is completed, all remaining allocated stock items are automatically consumed by the build order.
+
+### Returning Items to Stock
+
+Consumed items may be manually returned into stock if required. This can be performed in the *Consumed Stock* tab.
 
 ## Completing a Build
 

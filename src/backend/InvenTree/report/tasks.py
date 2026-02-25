@@ -35,6 +35,9 @@ def print_reports(template_id: int, item_ids: list[int], output_id: int, **kwarg
     model = template.get_model()
     items = model.objects.filter(pk__in=item_ids)
 
+    # Ensure they are sorted by the order of the provided item IDs
+    items = sorted(items, key=lambda item: item_ids.index(item.pk))
+
     template.print(items, output=output)
 
 
@@ -67,6 +70,9 @@ def print_labels(
     # Fetch the items to be included in the report
     model = template.get_model()
     items = model.objects.filter(pk__in=item_ids)
+
+    # Ensure they are sorted by the order of the provided item IDs
+    items = sorted(items, key=lambda item: item_ids.index(item.pk))
 
     plugin = registry.get_plugin(plugin_slug, active=True)
 

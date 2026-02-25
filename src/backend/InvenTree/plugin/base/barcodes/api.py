@@ -5,7 +5,7 @@ from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
 
 import structlog
-from django_filters import rest_framework as rest_filters
+from django_filters.rest_framework.filterset import FilterSet
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import status
 from rest_framework.exceptions import PermissionDenied, ValidationError
@@ -93,7 +93,8 @@ class BarcodeView(CreateAPIView):
             if num_scans > max_scans:
                 n = num_scans - max_scans
                 old_scan_ids = list(
-                    BarcodeScanResult.objects.all()
+                    BarcodeScanResult.objects
+                    .all()
                     .order_by('timestamp')
                     .values_list('pk', flat=True)[:n]
                 )
@@ -770,7 +771,7 @@ class BarcodeScanResultMixin:
         return queryset
 
 
-class BarcodeScanResultFilter(rest_filters.FilterSet):
+class BarcodeScanResultFilter(FilterSet):
     """Custom filterset for the BarcodeScanResult API."""
 
     class Meta:

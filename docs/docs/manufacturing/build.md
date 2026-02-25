@@ -119,13 +119,42 @@ The *Build Details* panel provides an overview of the Build Order:
 
 {{ image ("build/build_panel_details.png", title="Build Details") }}
 
-### Line Items
+### Required Parts
 
-The *Line Items* panel displays all the line items (as defined by the [bill of materials](./bom.md)) required to complete the build order.
+The *Required Parts* panel displays all the line items (as defined by the [bill of materials](./bom.md)) required to complete the build order.
 
 {{ image("build/build_panel_line_items.png", title="Line Items") }}
 
 The allocation table (as shown above) provides an interface to allocate required stock, and also shows the stock allocation progress for each line item in the build.
+
+### Allocated Stock
+
+The *Allocated Stock* tab displays all stock items which have been *allocated* to this build order. These stock items are reserved for this build, and will be consumed when the build is completed:
+
+{{ image("build/allocated_stock_table.png", title="Allocated Stock Table") }}
+
+!!! info "No BOM"
+	If the part being built does not have a BOM, then the *Allocated Stock* tab will not be displayed.
+
+### Consumed Stock
+
+The *Consumed Stock* tab displays all stock items which have been *consumed* by this build order. These stock items remain in the database after the build order has been completed, but are no longer available for use.
+
+- [Tracked stock items](./allocate.md#tracked-stock) are consumed by specific build outputs
+- [Untracked stock items](./allocate.md#untracked-stock) are consumed by the build order
+
+!!! info "No BOM"
+	If the part being built does not have a BOM, then the *Consumed Stock* tab will not be displayed.
+
+#### Return to Stock
+
+After stock items have been *consumed* by a build order, it may be required to recover some of that stock back into the inventory. This can be done by selecting the desired items, and pressing the *Return to Stock* button:
+
+{{ image("build/build_return_stock.png", title="Return Stock") }}
+
+This will open the following dialog, which allows the user to specify the quantity of stock to return, and the location where the stock should be returned:
+
+{{ image("build/build_return_stock_dialog.png", title="Return Stock Dialog") }}
 
 ### Incomplete Outputs
 
@@ -144,19 +173,6 @@ The *Incomplete Outputs* panel shows the list of in-progress [build outputs](./o
 
 This panel displays all the completed build outputs (stock items) which have been created by this build order:
 
-### Allocated Stock
-
-The *Allocated Stock* tab displays all stock items which have been *allocated* to this build order. These stock items are reserved for this build, and will be consumed when the build is completed:
-
-{{ image("build/allocated_stock_table.png", title="Allocated Stock Table") }}
-
-### Consumed Stock
-
-The *Consumed Stock* tab displays all stock items which have been *consumed* by this build order. These stock items remain in the database after the build order has been completed, but are no longer available for use.
-
-- [Tracked stock items](./allocate.md#tracked-stock) are consumed by specific build outputs
-- [Untracked stock items](./allocate.md#untracked-stock) are consumed by the build order
-
 ### Child Builds
 
 If there exist any build orders which are *children* of the selected build order, they are displayed in the *Child Builds* tab:
@@ -170,6 +186,22 @@ For *trackable* parts, test results can be recorded against each build output. T
 {{ image("build/build_panel_test_results.png", title="Test Results") }}
 
 This table provides a summary of the test results for each build output, and allows test results to be quickly added for each build output.
+
+### Adding Test Results
+
+There are multiple ways to add test results against build outputs from this table view:
+
+#### Row Actions
+
+Open the row actions menu for a specific build output, and select the *Add Test Result* option.
+
+#### Table Buttons
+
+Each available test is rendered in the table as a separate column. Any output which does not already have a result registered for that test will display a button in the table cell, labelled *Add Test Result*. Clicking on this button will open the *Add Test Result* dialog for that test.
+
+#### Bulk Add Test Results
+
+Select the build outputs for which you wish to add test results, then click on the *Add Test Results* button at the top of the table. This will open the *Add Test Result* dialog, allowing you to select the test and enter the result for all selected outputs.
 
 ### Attachments
 

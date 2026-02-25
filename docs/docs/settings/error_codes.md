@@ -9,9 +9,12 @@ Errors - These are critical errors which should be addressed as soon as possible
 #### INVE-E1
 **No frontend included - Backend/web**
 
-Only stable / production releases of InvenTree include the frontend panel. This is both a measure of resource-saving and attack surface reduction. If you want to use the frontend panel, you can either:″
+Only stable / production releases of InvenTree include the frontend panel. This is both a measure of resource-saving and attack surface reduction.
+
+If you want to use the frontend panel, you can either:
+
 - use a docker image that is version-tagged or the stable version
-- use a package version that is from the stable or version stream
+- use a package version that is from the stable or version stream - if you are and it is not working, run `sudo inventree run invoke update` to re-run the upgrade
 - install node and yarn on the server to build the frontend with the [invoke](../start/invoke.md) task `int.frontend-build`
 
 Raise an issue if none of these options work.
@@ -49,6 +52,58 @@ This might be caused by an addition or removal of models to the code base or cha
 
 The settings for SITE_URL and ALLOWED_HOSTS do not match the host used to access the server. This might lead to issues with CSRF protection, CORS and other security features.
 The settings must be adjusted.
+
+#### INVE-E8
+**Email log deletion is protected - Backend**
+
+The email log is protected from deletion by a setting. This was set by an administrator to prevent accidental deletion of emails.
+If you want to delete the email log, you need to get the [`INVENTREE_PROTECT_EMAIL_LOG`](../settings/global.md#server-settings) setting set to `False`.
+
+#### INVE-E9
+**Transition handler error - Backend**
+An error occurred while discovering or executing a transition handler. This likely indicates a faulty or incompatible plugin.
+This error is raised by a plugin with the `TransitionMixin` and can be debugged by looking into the logs for more information.
+
+#### INVE-E10
+**Plugin cannot be uninstalled or deactivated - Backend**
+A plugin cannot be uninstalled if it is mandatory, a sample or a built-in plugin. Mandatory plugins can not be deactivated.
+
+This is to prevent accidental removal of essential system or compliance functionality. If you want to remove/deactivate a mandatory plugin, you need to remove it from the `INVENTREE_PLUGINS_MANDATORY` [setting](../start/config.md#plugin-options). Sample and built-in plugins can not be uninstalled at all but might be deactivated.
+
+See [Mandatory Plugins](../plugins/index.md#mandatory-plugins) for more information.
+
+#### INVE-E11
+**Plugin cannot override final method - Backend**
+A plugin is not allowed to override a *final method* from the `InvenTreePlugin` class.
+
+This is a security measure to prevent plugins from changing the core functionality of InvenTree. The code of the plugin must be changed to not override functions that are marked as *final*.
+
+#### INVE-E12
+**Plugin returned invalid machine type - Backend**
+
+An error occurred when discovering or initializing a machine type from a plugin. This likely indicates a faulty or incompatible plugin.
+
+#### INVE-E13
+**Error reading InvenTree configuration file**
+
+An error occurred while reading the InvenTree configuration file. This might be caused by a syntax error or invalid value in the configuration file.
+
+#### INVE-E14
+**Could not import Django**
+
+Django is not installed in the current Python environment. This means that the InvenTree backend is not running within the correct [python virtual environment](../start/index.md#virtual-environment) or that the required Python packages were not installed correctly.
+
+#### INVE-E15
+**Python version not supported**
+
+This error occurs attempting to run InvenTree on a version of Python which is older than the minimum required version. We [require Python {{ config.extra.min_python_version }} or newer](../start/index.md#python-requirements)
+
+#### INVE-E16
+**Restore was stopped due to critical issues with backup environment - Backend**
+
+A potentially critical mismatch between the backup environment and the current restore environment was detected during the restore process. The restore was stopped to prevent potential data loss or corruption. Check the logs for more information about the detected issues.
+
+While using [invoke](../start/invoke.md), this can be overridden with the `--restore-allow-newer-version` flag.
 
 ### INVE-W (InvenTree Warning)
 Warnings - These are non-critical errors which should be addressed when possible.
@@ -120,7 +175,7 @@ The warning text will show the recommended command for intended use.
 #### INVE-W10
 **Config not in recommended directory - Backend**
 
-A configuration file is not in the recommended directory. This might lead to issues with the deployment method you are using. It might also lead to confusinon.
+A configuration file is not in the recommended directory. This might lead to issues with the deployment method you are using. It might also lead to confusion.
 
 The warning text will show the recommended directory for your deployment method.
 
@@ -131,8 +186,50 @@ Collective exception for errors that occur during mail delivery. This might be c
 These issues are raised directly from the mail backend so it is unlikely that the error is caused by django or InvenTree itself.
 Check the logs for more information.
 
+#### INVE-W11
+**Registration cannot be enabled because of email settings - Backend**
+
+Registration was enabled but the email settings are not configured correctly. This might lead to issues with user registration, password reset and other authentication features that require email.
+
+Therefore the registration user interface elements will not be shown.
+
+
+To enable registration, the email settings must be configured correctly. See  [email configuration](../start/config.md#email-settings).
+
+#### INVE-W12
+**Signup attempt blocked because registration is disabled - Backend**
+
+A user attempted to sign up but registration is currently disabled via the system settings. This is to prevent unauthorized or unwanted user registrations.
+
+To enable registration, adjust the relevant settings (for regular or SSO registration) to allow user signups.
+
+#### INVE-W13
+**Current environment inconsistent with backup environment - Backend**
+
+The environment in which the backup was taken does not match the current environment. This might lead to issues with restoring the backup, as the backup might contain data that is not compatible with the current environment. Plugins for example might be missing or are present in a different version - this can lead to issues with restoring the backup.
+
+This warning will not prevent you from restoring the backup but it is recommended to ensure the mentioned issues are resolved before restoring the backup to prevent issues with the restored instance.
+
+
 ### INVE-I (InvenTree Information)
 Information — These are not errors but information messages. They might point out potential issues or just provide information.
+
+#### INVE-I1
+**Setting overridden - Backend**
+Overriding a global setting with a different value than the current one.
+
+See [Override global settings](../settings/global.md#override-global-settings) for more information.
+
+#### INVE-I2
+**Issue with filtering serializer or decorator - Backend**
+
+An issue was detected with the application of a filtering serializer or decorator. This might lead to unexpected behaviour or performance issues. Therefore an issue is raised to make the developer aware of the possible issue. Look into the docstrings of enable_filter, FilterableSerializerField or FilterableSerializerMixin.
+
+This warning should only be raised during development and not in production, if you recently installed a plugin you might want to contact the plugin author.
+
+#### INVE-I3
+**Backup and restore information - Backend**
+Information about the metadata of a backup being restored or the environment in which a backup is being restored to. This information can be helpful to understand the backup and restore process and to identify potential issues with the backup or the restore process.
 
 ### INVE-M (InvenTree Miscellaneous)
 Miscellaneous — These are information messages that might be used to mark debug information or other messages helpful for the InvenTree team to understand behaviour.

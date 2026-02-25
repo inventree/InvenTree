@@ -2,6 +2,7 @@ import { t } from '@lingui/core/macro';
 import { Alert, Grid, Skeleton, Stack, Text } from '@mantine/core';
 import {
   IconChecklist,
+  IconCircleCheck,
   IconClipboardCheck,
   IconClipboardList,
   IconInfoCircle,
@@ -19,6 +20,7 @@ import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { getDetailUrl } from '@lib/functions/Navigation';
+import type { ApiFormFieldSet } from '@lib/types/Forms';
 import AdminButton from '../../components/buttons/AdminButton';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
@@ -43,7 +45,9 @@ import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
+import ParametersPanel from '../../components/panels/ParametersPanel';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
+import { RenderStockLocation } from '../../components/render/Stock';
 import { useBuildOrderFields } from '../../forms/BuildForms';
 import {
   useCreateApiFormModal,
@@ -56,8 +60,8 @@ import { useUserState } from '../../states/UserState';
 import BuildAllocatedStockTable from '../../tables/build/BuildAllocatedStockTable';
 import BuildLineTable from '../../tables/build/BuildLineTable';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
-import BuildOrderTestTable from '../../tables/build/BuildOrderTestTable';
 import BuildOutputTable from '../../tables/build/BuildOutputTable';
+import PartTestResultTable from '../../tables/part/PartTestResultTable';
 import { PurchaseOrderTable } from '../../tables/purchasing/PurchaseOrderTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 
@@ -84,6 +88,13 @@ function BuildLinesPanel({
   isLoading: boolean;
   hasItems: boolean;
 }>) {
+  const buildLocation = useInstance({
+    endpoint: ApiEndpoints.stock_location_list,
+    pk: build?.take_from,
+    hasPrimaryKey: true,
+    defaultValue: {}
+  });
+
   if (isLoading || !build.pk) {
     return <Skeleton w={'100%'} h={400} animate />;
   }
@@ -92,7 +103,16 @@ function BuildLinesPanel({
     return <NoItems />;
   }
 
-  return <BuildLineTable build={build} />;
+  return (
+    <Stack gap='xs'>
+      {buildLocation.instance.pk && (
+        <Alert color='blue' icon={<IconSitemap />} title={t`Source Location`}>
+          <RenderStockLocation instance={buildLocation.instance} />
+        </Alert>
+      )}
+      <BuildLineTable build={build} />
+    </Stack>
+  );
 }
 
 function BuildAllocationsPanel({
@@ -130,12 +150,34 @@ export default function BuildDetail() {
       endpoint: ApiEndpoints.build_line_list,
       params: {
         build: id,
+        allocations: false,
+        part_detail: false,
+        build_detail: false,
+        bom_item_detail: false,
         limit: 1
       },
       disabled: !id,
       hasPrimaryKey: false,
       defaultValue: {}
     });
+
+  // Fetch the number of assembled BOM items associated with the build order
+  // i.e. how many items are subassemblies?
+  const { instance: subassemblyLineData } = useInstance({
+    endpoint: ApiEndpoints.build_line_list,
+    params: {
+      build: id,
+      allocations: false,
+      part_detail: false,
+      build_detail: false,
+      bom_item_detail: false,
+      assembly: true,
+      limit: 1
+    },
+    disabled: !id,
+    hasPrimaryKey: false,
+    defaultValue: {}
+  });
 
   const buildStatus = useStatusCodes({ modelType: ModelType.build });
 
@@ -214,17 +256,6 @@ export default function BuildDetail() {
         label: t`External`,
         icon: 'manufacturers',
         hidden: !build.external
-      },
-      {
-        type: 'text',
-        name: 'purchase_order',
-        label: t`Purchase Order`,
-        icon: 'purchase_orders',
-        copy: true,
-        hidden: !build.external,
-        value_formatter: () => {
-          return 'TODO: external PO';
-        }
       },
       {
         type: 'text',
@@ -417,7 +448,8 @@ export default function BuildDetail() {
         icon: <IconList />,
         hidden:
           build.status == buildStatus.COMPLETE ||
-          build.status == buildStatus.CANCELLED,
+          build.status == buildStatus.CANCELLED ||
+          (buildLineData?.count ?? 0) <= 0, // Hide if no required parts
         content: (
           <BuildAllocationsPanel
             build={build}
@@ -430,11 +462,14 @@ export default function BuildDetail() {
         name: 'consumed-stock',
         label: t`Consumed Stock`,
         icon: <IconListCheck />,
+        hidden: (buildLineData?.count ?? 0) <= 0, // Hide if no required parts
         content: (
           <StockItemTable
             allowAdd={false}
             tableName='build-consumed'
             showLocation={false}
+            allowReturn
+            defaultInStock={null}
             params={{
               consumed_by: id
             }}
@@ -487,6 +522,7 @@ export default function BuildDetail() {
         name: 'child-orders',
         label: t`Child Build Orders`,
         icon: <IconSitemap />,
+        hidden: (subassemblyLineData?.count ?? 0) <= 0, // Hide if no sub-assembly items
         content: build.pk ? (
           <BuildOrderTable parentBuildId={build.pk} />
         ) : (
@@ -499,18 +535,23 @@ export default function BuildDetail() {
         icon: <IconChecklist />,
         hidden: !build.part_detail?.testable,
         content: build.pk ? (
-          <BuildOrderTestTable buildId={build.pk} partId={build.part} />
+          <PartTestResultTable buildId={build.pk} partId={build.part} />
         ) : (
           <Skeleton />
         )
       },
+      ParametersPanel({
+        model_type: ModelType.build,
+        model_id: build.pk
+      }),
       AttachmentPanel({
         model_type: ModelType.build,
         model_id: build.pk
       }),
       NotesPanel({
         model_type: ModelType.build,
-        model_id: build.pk
+        model_id: build.pk,
+        has_note: !!build.notes
       })
     ];
   }, [
@@ -519,6 +560,7 @@ export default function BuildDetail() {
     user,
     buildStatus,
     globalSettings,
+    subassemblyLineData,
     buildLineQuery.isFetching,
     buildLineQuery.isLoading,
     buildLineData
@@ -590,17 +632,33 @@ export default function BuildDetail() {
     successMessage: t`Order issued`
   });
 
+  const completeOrderFields: ApiFormFieldSet = useMemo(() => {
+    const hasBom = (buildLineData?.count ?? 0) > 0;
+
+    return {
+      accept_overallocated: {
+        hidden: !hasBom
+      },
+      accept_unallocated: {
+        hidden: !hasBom
+      },
+      accept_incomplete: {}
+    };
+  }, [buildLineData.count]);
+
   const completeOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.build_order_complete, build.pk),
     title: t`Complete Build Order`,
     onFormSuccess: refreshInstance,
-    preFormWarning: t`Mark this order as complete`,
+    preFormContent: (
+      <Alert
+        color='green'
+        icon={<IconCircleCheck />}
+        title={t`Mark this order as complete`}
+      />
+    ),
     successMessage: t`Order completed`,
-    fields: {
-      accept_overallocated: {},
-      accept_unallocated: {},
-      accept_incomplete: {}
-    }
+    fields: completeOrderFields
   });
 
   const buildActions = useMemo(() => {
@@ -648,6 +706,7 @@ export default function BuildDetail() {
       <PrintingActions
         modelType={ModelType.build}
         items={[build.pk]}
+        enableLabels
         enableReports
       />,
       <OptionsActionDropdown

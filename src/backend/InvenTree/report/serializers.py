@@ -4,7 +4,6 @@ from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
 
-import plugin.models
 import plugin.serializers
 import report.helpers
 import report.models

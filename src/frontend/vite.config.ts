@@ -3,7 +3,7 @@ import { codecovVitePlugin } from '@codecov/vite-plugin';
 import { vanillaExtractPlugin } from '@vanilla-extract/vite-plugin';
 import react from '@vitejs/plugin-react';
 import license from 'rollup-plugin-license';
-import { defineConfig, splitVendorChunkPlugin } from 'vite';
+import { defineConfig } from 'vite';
 import istanbul from 'vite-plugin-istanbul';
 
 import { __INVENTREE_VERSION_INFO__ } from './version-info';
@@ -23,7 +23,6 @@ const OUTPUT_DIR = '../../src/backend/InvenTree/web/static/web';
 export default defineConfig(({ command, mode }) => {
   // In 'build' mode, we want to use an empty base URL (for static file generation)
   const baseUrl: string | undefined = command === 'build' ? '' : undefined;
-  console.log(`Running Vite in '${command}' mode -> base URL: ${baseUrl}`);
 
   return {
     plugins: [
@@ -33,7 +32,6 @@ export default defineConfig(({ command, mode }) => {
         }
       }),
       vanillaExtractPlugin(),
-      splitVendorChunkPlugin(),
       license({
         sourcemap: true,
         thirdParty: {

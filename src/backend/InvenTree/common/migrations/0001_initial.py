@@ -18,13 +18,13 @@ class CreateModelOrSkip(migrations.CreateModel):
 
         try:
             super().database_forwards(app_label, schema_editor, from_state, to_state)
-        except Exception:
+        except Exception:  # pragma: no cover
             pass
 
     def state_forwards(self, app_label, state) -> None:
         try:
             super().state_forwards(app_label, state)
-        except Exception:
+        except Exception:  # pragma: no cover
             pass
 
 

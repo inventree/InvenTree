@@ -27,8 +27,8 @@
     name: 'Dining Room'
     description: 'A table lives here'
     parent: 1
-    level: 0
     tree_id: 1
+    level: 1
     lft: 4
     rght: 5
 
@@ -49,8 +49,8 @@
     name: 'Drawer_1'
     description: 'In my desk'
     parent: 4
-    level: 0
     tree_id: 2
+    level: 1
     lft: 2
     rght: 3
 
@@ -60,8 +60,8 @@
     name: 'Drawer_2'
     description: 'Also in my desk'
     parent: 4
-    level: 0
     tree_id: 2
+    level: 1
     lft: 4
     rght: 5
 
@@ -71,7 +71,7 @@
     name: 'Drawer_3'
     description: 'Again, in my desk'
     parent: 4
-    level: 0
     tree_id: 2
+    level: 1
     lft: 6
     rght: 7

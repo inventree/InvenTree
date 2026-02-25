@@ -31,7 +31,6 @@ const BASE_URL: string = IS_CI
   : 'http://localhost:5173';
 
 console.log('Running Playwright Tests:');
-console.log(`- CI Mode: ${IS_CI}`);
 console.log('- Base URL:', BASE_URL);
 
 export default defineConfig({
@@ -49,13 +48,22 @@ export default defineConfig({
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome']
-      }
+      },
+      testIgnore: /customization/ // Ignore all tests in the "customization" folder for this project
     },
     {
       name: 'firefox',
       use: {
         ...devices['Desktop Firefox']
-      }
+      },
+      testIgnore: /customization/ // Ignore all tests in the "customization" folder for this project
+    },
+    {
+      name: 'customization',
+      use: {
+        ...devices['Desktop Firefox']
+      },
+      testIgnore: /pui_.*\.spec\.ts/ // Ignore all "pui_*.spec.ts" tests for this project
     }
   ],
 
@@ -70,7 +78,7 @@ export default defineConfig({
       timeout: 120 * 1000
     },
     {
-      command: 'invoke dev.server',
+      command: 'invoke dev.server -a 0.0.0.0:8000',
       env: {
         INVENTREE_DEBUG: 'True',
         INVENTREE_LOG_LEVEL: 'WARNING',
@@ -80,7 +88,8 @@ export default defineConfig({
         INVENTREE_FRONTEND_API_HOST: 'http://localhost:8000',
         INVENTREE_CORS_ORIGIN_ALLOW_ALL: 'True',
         INVENTREE_COOKIE_SAMESITE: 'False',
-        INVENTREE_LOGIN_ATTEMPTS: '100'
+        INVENTREE_LOGIN_ATTEMPTS: '100',
+        INVENTREE_PLUGINS_MANDATORY: 'samplelocate'
       },
       url: 'http://localhost:8000/api/',
       reuseExistingServer: IS_CI,
