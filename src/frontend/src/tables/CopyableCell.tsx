@@ -29,7 +29,7 @@ export function CopyableCell({
       align='center'
     >
       {children}
-      {isHovered && value != null && (
+      {window.isSecureContext && isHovered && value != null && (
         <span
           style={{ position: 'relative' }}
           onClick={(e) => e.stopPropagation()}
