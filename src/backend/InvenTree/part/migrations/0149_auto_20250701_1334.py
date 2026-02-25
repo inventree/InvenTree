@@ -23,7 +23,7 @@ def template_hash(template):
 def migrate_test_template(apps, schema_editor):
     """Migrate PartTestTemplate entries.
 
-    - In migration 0136 we added a PartTest model, to replace the PartTestTemplate model
+    - In migration 0148 we added a PartTest model, to replace the PartTestTemplate model
     - The PartTest will link either a Part or PartCategory to a PartTestTemplate
     - This migration will create PartTest entries for existing PartTestTemplate entries
     - It will also attemt to consolidate similar PartTestTemplate entries (where possible)
@@ -47,6 +47,8 @@ def migrate_test_template(apps, schema_editor):
     template_map = dict()
     duplicate_count = 0
 
+    templates_to_delete = []
+
     for template in templates.all():
         # Each existing template links to a Part - we need to generate a new PartTest instance
         # print("-", template.key, '->', template_hash(template))
@@ -64,7 +66,11 @@ def migrate_test_template(apps, schema_editor):
             assert StockItemTestResult.objects.filter(template=matching_template).count() == 0
 
             # Now that the results have been migrated, we can delete the old template
-            template.delete()
+            templates_to_delete.append(template)
+
+            if len(templates_to_delete) >= 100:
+                PartTestTemplate.objects.bulk_delete(templates_to_delete)
+                templates_to_delete = []
 
             duplicate_count += 1
             continue
@@ -77,6 +83,10 @@ def migrate_test_template(apps, schema_editor):
 
         template_map[key] = template
 
+    # Are there any duplicate templates that need to be deleted?
+    if len(templates_to_delete) > 0:
+        PartTestTemplate.objects.bulk_delete(templates_to_delete)
+
     N_PART_TEST = PartTest.objects.count()
 
     # The number of PartTest entries should match the number of unique PartTestTemplate entries
@@ -88,7 +98,7 @@ def migrate_test_template(apps, schema_editor):
     print(f"- Created {PartTest.objects.count()} PartTest entries.")
 
     if duplicate_count > 0:
-        print(f"- Removed {duplicate_count} duplicate PartTestTemplate entries.")
+        print(f"- Consolidated {duplicate_count} duplicate PartTestTemplate entries.")
 
 
 def reverse_migrate_test_template(apps, schema_editor):
@@ -100,7 +110,7 @@ def reverse_migrate_test_template(apps, schema_editor):
     PartTest = apps.get_model('part', 'PartTest')
 
     for test in PartTest.objects.all():
-        template = test.tempate
+        template = test.template
         template.part = test.part
         template.save()
 
