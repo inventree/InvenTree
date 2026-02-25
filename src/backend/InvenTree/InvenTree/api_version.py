@@ -1,10 +1,14 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 459
+INVENTREE_API_VERSION = 460
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v460 -> 2026-02-25 : https://github.com/inventree/InvenTree/pull/9928
+    - Refactor of "PartTestTemplate" models and API endpoints
+    - Add "PartTest" API endpoint
 
 v459 -> 2026-02-23 : https://github.com/inventree/InvenTree/pull/11411
     - Changed PurchaseOrderLine "auto_pricing" default value from true to false
