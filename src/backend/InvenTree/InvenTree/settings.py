@@ -170,7 +170,6 @@ logger = structlog.getLogger('inventree')
 # Load SECRET_KEY
 SECRET_KEY = config.get_secret_key()
 
-
 # The filesystem location for served static files
 STATIC_ROOT = config.get_static_dir()
 
