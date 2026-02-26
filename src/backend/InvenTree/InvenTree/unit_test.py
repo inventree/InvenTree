@@ -446,12 +446,34 @@ class PluginRegistryMixin:
 
 class InvenTreeTestCase(ExchangeRateMixin, PluginRegistryMixin, UserMixin, TestCase):
     """Testcase with user setup build in."""
+    @classmethod
+    def setUpTestData(cls):
+        from tenant.models import Tenant
+        from django.utils import translation
+
+        super().setUpTestData()
+
+        if not Tenant.objects.exists():
+            Tenant.objects.create(name="Test Tenant")
+        
+        translation.activate("en")
 
 
 class InvenTreeAPITestCase(
     ExchangeRateMixin, PluginRegistryMixin, TestQueryMixin, UserMixin, APITestCase
 ):
     """Base class for running InvenTree API tests."""
+    @classmethod
+    def setUpTestData(cls):
+        from tenant.models import Tenant
+        from django.utils import translation
+
+        super().setUpTestData()
+
+        if not Tenant.objects.exists():
+            Tenant.objects.create(name="Test Tenant")
+
+        translation.activate("en")
 
     def check_response(self, url, response, expected_code=None, msg=None):
         """Debug output for an unexpected response."""

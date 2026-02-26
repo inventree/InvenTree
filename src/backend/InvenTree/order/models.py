@@ -470,7 +470,6 @@ class TaxLineItemMixin(models.Model):
     
         return price + tax
 
-
 class BaseOrderReportContext(report.mixins.BaseReportContext):
     """Base context for all order models.
 
@@ -751,6 +750,8 @@ class Order(
         related_name='%(class)s_orders',
         verbose_name=_('Tenant'),
         help_text=_('Tenant this order belongs to'),
+        null=True,
+        blank=True,
     )
 
     link = InvenTreeURLField(

@@ -205,6 +205,9 @@ class StockLocation(
         related_name='stock_locations',
         verbose_name=_('Tenant'),
         help_text=_('Tenant this stock location belongs to'),
+        null=True,
+        blank=True,
+        db_constraint=False,
     )
 
     structural = models.BooleanField(
