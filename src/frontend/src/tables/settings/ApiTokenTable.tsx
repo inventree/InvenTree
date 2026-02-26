@@ -48,7 +48,7 @@ export function ApiTokenTable({
     return [];
   }, [only_myself]);
 
-  const table = useTable('api-tokens', 'id');
+  const table = useTable('api-tokens', { idAccessor: 'id' });
 
   const tableColumns = useMemo(() => {
     const cols = [

@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to this project will be documented in this file (starting with 1.0.0).
+All major notable changes to this project will be documented in this file (starting with 1.0.0).
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -9,7 +9,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Breaking Changes
 
-- [#10699](https://github.com/inventree/InvenTree/pull/10699) removes the `PartParameter` and `PartParameterTempalate` models (and associated API endpoints). These have been replaced with generic `Parameter` and `ParameterTemplate` models (and API endpoints). Any external client applications which made use of the old endpoints will need to be updated.
+- [#11303](https://github.com/inventree/InvenTree/pull/11303) removes the `default_supplier` field from the `Part` model. Instead, the `SupplierPart` model now has a `primary` field which is used to indicate which supplier is the default for a given part. Any external client applications which made use of the old `default_supplier` field will need to be updated.
+
+### Added
+
+- [#11405](https://github.com/inventree/InvenTree/pull/11405) adds default table filters, which hide inactive items by default. The default table filters are overridden by user filter selection, and only apply to the table view initially presented to the user. This means that users can still view inactive items if they choose to, but they will not be shown by default.
+- [#11222](https://github.com/inventree/InvenTree/pull/11222) adds support for data import using natural keys, allowing for easier association of related objects without needing to know their internal database IDs.
+- [#11383](https://github.com/inventree/InvenTree/pull/11383) adds "exists_for_model_id", "exists_for_related_model", and "exists_for_related_model_id" filters to the ParameterTemplate API endpoint. These filters allow users to check for the existence of parameters associated with specific models or related models, improving the flexibility and usability of the API.
+- [#10887](https://github.com/inventree/InvenTree/pull/10887) adds the ability to auto-allocate tracked items against specific build outputs. Currently, this will only allocate items where the serial number of the tracked item matches the serial number of the build output, but in future this may be extended to allow for more flexible allocation rules.
+- [#11372](https://github.com/inventree/InvenTree/pull/11372) adds backup metadata setter and restore metadata validator functions to ensure common footguns are harder to trigger when using the backup and restore functionality.
+
+### Changed
+
+### Removed
+
+## 1.2.0 - 2026-02-12
+
+### Breaking Changes
+
+- [#10699](https://github.com/inventree/InvenTree/pull/10699) removes the `PartParameter` and `PartParameterTemplate` models (and associated API endpoints). These have been replaced with generic `Parameter` and `ParameterTemplate` models (and API endpoints). Any external client applications which made use of the old endpoints will need to be updated.
 - [#11035](https://github.com/inventree/InvenTree/pull/11035) moves to a single endpoint for all metadata operations. The previous endpoints for PartMetadata, SupplierPartMetadata, etc have been removed. Any external client applications which made use of the old endpoints will need to be updated.
 
 ### Added
@@ -19,10 +37,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Adds parameter support for multiple new model types in [#10699](https://github.com/inventree/InvenTree/pull/10699)
 - Allows report generator to produce PDF input controls in [#10969](https://github.com/inventree/InvenTree/pull/10969)
 - UI overhaul of parameter management in [#10699](https://github.com/inventree/InvenTree/pull/10699)
+- Allow input controls within generated PDF reports in [#10969](https://github.com/inventree/InvenTree/pull/10969)
 
 ### Changed
 
--
+- Improved stocktake functionality in [#11257](https://github.com/inventree/InvenTree/pull/11257)
 
 ### Removed
 - Removed python 3.9 / 3.10 support as part of Django 5.2 upgrade in [#10730](https://github.com/inventree/InvenTree/pull/10730)

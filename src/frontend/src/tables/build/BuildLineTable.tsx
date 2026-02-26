@@ -27,6 +27,7 @@ import type { RowAction, TableColumn } from '@lib/types/Tables';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import {
   useAllocateStockToBuildForm,
+  useBuildAutoAllocateFields,
   useBuildOrderFields,
   useConsumeBuildLinesForm
 } from '../../forms/BuildForms';
@@ -43,6 +44,7 @@ import {
   CategoryColumn,
   DecimalColumn,
   DescriptionColumn,
+  IPNColumn,
   LocationColumn,
   PartColumn,
   RenderPartColumn
@@ -90,7 +92,9 @@ export function BuildLineSubTable({
       },
       {
         accessor: 'stock_item_detail.batch',
-        title: t`Batch`
+        title: t`Batch`,
+        copyable: true,
+        copyAccessor: 'stock_item_detail.batch'
       },
       LocationColumn({
         accessor: 'location_detail'
@@ -331,12 +335,7 @@ export default function BuildLineTable({
           );
         }
       }),
-      {
-        accessor: 'part_detail.IPN',
-        sortable: true,
-        ordering: 'IPN',
-        title: t`IPN`
-      },
+      IPNColumn({}),
       CategoryColumn({
         accessor: 'category_detail',
         defaultVisible: false,
@@ -574,17 +573,9 @@ export default function BuildLineTable({
     url: ApiEndpoints.build_order_auto_allocate,
     pk: build.pk,
     title: t`Allocate Stock`,
-    fields: {
-      location: {
-        filters: {
-          structural: false
-        }
-      },
-      exclude_location: {},
-      interchangeable: {},
-      substitutes: {},
-      optional_items: {}
-    },
+    fields: useBuildAutoAllocateFields({
+      item_type: 'untracked'
+    }),
     initialData: {
       location: build.take_from,
       interchangeable: true,
@@ -595,7 +586,7 @@ export default function BuildLineTable({
     table: table,
     preFormContent: (
       <Alert color='green' title={t`Auto Allocate Stock`}>
-        <Text>{t`Automatically allocate stock to this build according to the selected options`}</Text>
+        <Text>{t`Automatically allocate untracked BOM items to this build according to the selected options`}</Text>
       </Alert>
     )
   });
@@ -777,7 +768,7 @@ export default function BuildLineTable({
         {
           icon: <IconTool />,
           title: t`Build Stock`,
-          hidden: !canBuild,
+          hidden: !canBuild || !isActive,
           color: 'blue',
           onClick: () => {
             setInitialData({
@@ -796,7 +787,7 @@ export default function BuildLineTable({
         })
       ];
     },
-    [user, navigate, output, build, buildStatus]
+    [user, navigate, output, build, buildStatus, isActive]
   );
 
   const tableActions = useMemo(() => {

@@ -161,6 +161,24 @@ export default function BuildDetail() {
       defaultValue: {}
     });
 
+  // Fetch the number of assembled BOM items associated with the build order
+  // i.e. how many items are subassemblies?
+  const { instance: subassemblyLineData } = useInstance({
+    endpoint: ApiEndpoints.build_line_list,
+    params: {
+      build: id,
+      allocations: false,
+      part_detail: false,
+      build_detail: false,
+      bom_item_detail: false,
+      assembly: true,
+      limit: 1
+    },
+    disabled: !id,
+    hasPrimaryKey: false,
+    defaultValue: {}
+  });
+
   const buildStatus = useStatusCodes({ modelType: ModelType.build });
 
   const {
@@ -451,6 +469,7 @@ export default function BuildDetail() {
             tableName='build-consumed'
             showLocation={false}
             allowReturn
+            defaultInStock={null}
             params={{
               consumed_by: id
             }}
@@ -503,6 +522,7 @@ export default function BuildDetail() {
         name: 'child-orders',
         label: t`Child Build Orders`,
         icon: <IconSitemap />,
+        hidden: (subassemblyLineData?.count ?? 0) <= 0, // Hide if no sub-assembly items
         content: build.pk ? (
           <BuildOrderTable parentBuildId={build.pk} />
         ) : (
@@ -540,6 +560,7 @@ export default function BuildDetail() {
     user,
     buildStatus,
     globalSettings,
+    subassemblyLineData,
     buildLineQuery.isFetching,
     buildLineQuery.isLoading,
     buildLineData

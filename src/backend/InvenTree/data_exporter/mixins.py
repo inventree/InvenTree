@@ -304,7 +304,7 @@ class DataExportViewMixin:
         """Export the data in the specified format.
 
         Arguments:
-            export_plugin: The plugin instance to use for exporting the data
+            export_plugin: The plugin instance to use for exporting the data. If not provided, the default exporter is used
             export_format: The file format to export the data in
             export_context: Additional context data to pass to the plugin
             output: The DataOutput object to write to
@@ -312,6 +312,11 @@ class DataExportViewMixin:
         - By default, uses the provided serializer to generate the data, and return it as a file download.
         - If a plugin is specified, the plugin can be used to augment or replace the export functionality.
         """
+        if export_plugin is None:
+            from plugin.registry import registry
+
+            export_plugin = registry.get_plugin('inventree-exporter')
+
         # Get the base serializer class for the view
         serializer_class = self.get_serializer_class()
 

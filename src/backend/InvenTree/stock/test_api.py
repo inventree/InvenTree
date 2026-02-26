@@ -68,6 +68,11 @@ class StockLocationTest(StockAPITestCase):
         # Add some stock locations
         StockLocation.objects.create(name='top', description='top category')
 
+    def test_ordering(self):
+        """Test ordering options for the StockLocation list endpoint."""
+        for ordering in ['name', 'pathstring', 'level', 'tree_id']:
+            self.run_ordering_test(self.list_url, ordering)
+
     def test_list(self):
         """Test the StockLocationList API endpoint."""
         test_cases = [
@@ -565,6 +570,11 @@ class StockItemListTest(StockAPITestCase):
         # Return JSON data
         return response.data
 
+    def test_ordering(self):
+        """Run ordering tests against the StockItem list endpoint."""
+        for ordering in ['part', 'location', 'stock', 'status', 'IPN', 'MPN', 'SKU']:
+            self.run_ordering_test(self.list_url, ordering)
+
     def test_top_level_filtering(self):
         """Test filtering against "top level" stock location."""
         # No filters, should return *all* items
@@ -952,7 +962,9 @@ class StockItemListTest(StockAPITestCase):
 
         # Note: While the export is quick on pgsql, it is still quite slow on sqlite3
         with self.export_data(
-            self.list_url, max_query_count=50, max_query_time=9.0
+            self.list_url,
+            max_query_count=50,
+            max_query_time=12.0,  # Test time increased due to worker variability
         ) as data_file:
             data = self.process_csv(data_file)
 

@@ -52,7 +52,6 @@ from build.status_codes import BuildStatusGroups
 from common.currency import currency_code_default
 from common.icons import validate_icon
 from common.settings import get_global_setting
-from company.models import SupplierPart
 from InvenTree import helpers, validators
 from InvenTree.exceptions import log_error
 from InvenTree.fields import InvenTreeURLField
@@ -84,8 +83,8 @@ class PartCategory(
     """
 
     ITEM_PARENT_KEY = 'category'
-
     EXTRA_PATH_FIELDS = ['icon']
+    IMPORT_ID_FIELDS = ['pathstring', 'name']
 
     class Meta:
         """Metaclass defines extra model properties."""
@@ -490,7 +489,6 @@ class Part(
         link: Link to an external page with more information about this part (e.g. internal Wiki)
         image: Image of this part
         default_location: Where the item is normally stored (may be null)
-        default_supplier: The default SupplierPart which should be used to procure and stock this part
         default_expiry: The default expiry duration for any StockItem instances of this part
         minimum_stock: Minimum preferred quantity to keep in stock
         units: Units of measure for this part (default='pcs')
@@ -517,6 +515,7 @@ class Part(
 
     NODE_PARENT_KEY = 'variant_of'
     IMAGE_RENAME = rename_part_image
+    IMPORT_ID_FIELDS = ['IPN', 'name']
 
     objects = TreeManager()
 
@@ -1214,31 +1213,14 @@ class Part(
         # Default case - no default category found
         return None
 
-    def get_default_supplier(self):
-        """Get the default supplier part for this part (may be None).
+    @property
+    def default_supplier(self):
+        """Return the default (primary) SupplierPart for this Part.
 
-        - If the part specifies a default_supplier, return that
-        - If there is only one supplier part available, return that
-        - Else, return None
+        This function is included for backwards compatibility,
+        as the 'Part' model used to have a 'default_supplier' field which was a ForeignKey to SupplierPart.
         """
-        if self.default_supplier:
-            return self.default_supplier
-
-        if self.supplier_count == 1:
-            return self.supplier_parts.first()
-
-        # Default to None if there are multiple suppliers to choose from
-        return None
-
-    default_supplier = models.ForeignKey(
-        SupplierPart,
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-        verbose_name=_('Default Supplier'),
-        help_text=_('Default supplier part'),
-        related_name='default_parts',
-    )
+        return self.supplier_parts.filter(primary=True).first()
 
     default_expiry = models.PositiveIntegerField(
         default=0,
@@ -3635,6 +3617,8 @@ class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
     run on the model (refer to the validate_unique function).
     """
 
+    IMPORT_ID_FIELDS = ['key']
+
     class Meta:
         """Metaclass options for the PartTestTemplate model."""
 
@@ -4128,7 +4112,7 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
 
             # Normalize decimal values to ensure consistent representation
             # These values are only included if they are non-zero
-            # This is to provide some backwards compatibility from before these fields were addede
+            # This is to provide some backwards compatibility from before these fields were added
             if value is not None and field in [
                 'quantity',
                 'attrition',

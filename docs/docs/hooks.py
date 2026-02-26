@@ -304,6 +304,6 @@ def on_post_build(*args, **kwargs):
         if missing:
             raise NotImplementedError(
                 'Missing Settings:\n'
-                + f"There are {len(missing)} missing settings in the '{group}' group:\n"
+                + f"There are {len(missing)} missing settings in the '{group}' group:\n- "
                 + '\n- '.join(missing)
             )

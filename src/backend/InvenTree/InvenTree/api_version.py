@@ -1,13 +1,60 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 446
+INVENTREE_API_VERSION = 460
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v446 -> 2026-02-202 : https://github.com/inventree/InvenTree/pull/10715
+v460 -> 2026-02-26 : https://github.com/inventree/InvenTree/pull/10715
     - Adds GuideDefinition and GuideExecution models and API endpoints to provide tipps and guides within InvenTree's web frontend.v443 -> 2026-01-21 : https://github.com/inventree/InvenTree/pull/11177
+
+v459 -> 2026-02-23 : https://github.com/inventree/InvenTree/pull/11411
+    - Changed PurchaseOrderLine "auto_pricing" default value from true to false
+
+v458 -> 2026-02-22 : https://github.com/inventree/InvenTree/pull/11401
+    - Switches token refresh endpoint to use POST instead of GET (upstream allauth change)
+
+v457 -> 2026-02-11 : https://github.com/inventree/InvenTree/pull/10887
+    - Extend the "auto allocate" wizard API to include tracked items
+
+v456 -> 2026-02-20 : https://github.com/inventree/InvenTree/pull/11303
+    - Adds "primary" field to the SupplierPart API
+    - Removes "default_supplier" field from the Part API
+
+v455 -> 2026-02-19 : https://github.com/inventree/InvenTree/pull/11383
+    - Adds "exists_for_model_id" filter to ParameterTemplate API endpoint
+    - Adds "exists_for_related_model" filter to ParameterTemplate API endpoint
+    - Adds "exists_for_related_model_id" filter to ParameterTemplate API endpoint
+
+v454 -> 2026-02-19 : https://github.com/inventree/InvenTree/pull/11379
+    - Adds "purchase_price" ordering option to StockItem API endpoint
+
+v453 -> 2026-02-11 : https://github.com/inventree/InvenTree/pull/11244
+    - Adds (internal) endpoint to end a observability tooling session
+
+v452 -> 2026-02-10 : https://github.com/inventree/InvenTree/pull/11276
+    - Adds "install_into_detail" field to the BuildItem API endpoint
+
+v451 -> 2026-02-10 : https://github.com/inventree/InvenTree/pull/11277
+    - Adds sorting to multiple part related endpoints (part, IPN, ...)
+
+v450 -> 2026-02-10 : https://github.com/inventree/InvenTree/pull/11260
+    - Adds "part" field to the StockItemTracking model and API endpoints
+    - Additional filtering options for the StockItemTracking API endpoint
+
+v449 -> 2026-02-07 : https://github.com/inventree/InvenTree/pull/11266
+    - Add missing nullable annotations to PartStocktakeSerializer
+
+v448 -> 2026-02-05 : https://github.com/inventree/InvenTree/pull/11257
+    - Adds API endpoint for manually generating a stocktake entry
+
+v447 -> 2026-02-02 : https://github.com/inventree/InvenTree/pull/11242
+    - Adds "sub_part_active" filter to BomItem API endpoint
+
+v446 -> 2026-02-01 : https://github.com/inventree/InvenTree/pull/11232
+    - Allow ordering of test results by started_datetime and finished_datetime fields
+    - Allow ordering of test results by test_station field
 
 v445 -> 2026-01-29 : https://github.com/inventree/InvenTree/pull/11102
     - Added "allocated_lines" field to SalesOrderSerializer to track fully allocated line items
