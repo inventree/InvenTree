@@ -11,17 +11,25 @@ import type { DataTableRowExpansionProps } from 'mantine-datatable';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { ActionButton } from '@lib/components/ActionButton';
+import { AddItemButton } from '@lib/components/AddItemButton';
+import { ProgressBar } from '@lib/components/ProgressBar';
+import {
+  type RowAction,
+  RowDeleteAction,
+  RowDuplicateAction,
+  RowEditAction,
+  RowViewAction
+} from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
-import { ActionButton } from '../../components/buttons/ActionButton';
-import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { ProgressBar } from '../../components/items/ProgressBar';
+import type { TableColumn } from '@lib/types/Tables';
 import { RenderPart } from '../../components/render/Part';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
-import { formatCurrency } from '../../defaults/formatters';
+import { formatCurrency, formatDecimal } from '../../defaults/formatters';
 import { useBuildOrderFields } from '../../forms/BuildForms';
 import {
   useAllocateToSalesOrderForm,
@@ -35,27 +43,29 @@ import {
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
-import { DateColumn, LinkColumn, PartColumn } from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
 import {
-  type RowAction,
-  RowDeleteAction,
-  RowDuplicateAction,
-  RowEditAction,
-  RowViewAction
-} from '../RowActions';
+  DateColumn,
+  DecimalColumn,
+  DescriptionColumn,
+  IPNColumn,
+  LinkColumn,
+  ProjectCodeColumn,
+  RenderPartColumn
+} from '../ColumnRenderers';
+import { InvenTreeTable } from '../InvenTreeTable';
 import RowExpansionIcon from '../RowExpansionIcon';
 import { TableHoverCard } from '../TableHoverCard';
 import SalesOrderAllocationTable from './SalesOrderAllocationTable';
 
 export default function SalesOrderLineItemTable({
   orderId,
+  orderDetailRefresh,
   currency,
   customerId,
   editable
 }: Readonly<{
   orderId: number;
+  orderDetailRefresh: () => void;
   currency: string;
   customerId: number;
   editable: boolean;
@@ -70,38 +80,35 @@ export default function SalesOrderLineItemTable({
         accessor: 'part',
         sortable: true,
         switchable: false,
+        minWidth: 175,
         render: (record: any) => {
           return (
             <Group wrap='nowrap'>
-              <RowExpansionIcon
-                enabled={record.allocated}
-                expanded={table.isRowExpanded(record.pk)}
-              />
-              <PartColumn part={record.part_detail} />
+              {record.part_detail?.virtual || (
+                <RowExpansionIcon
+                  enabled={record.allocated}
+                  expanded={table.isRowExpanded(record.pk)}
+                />
+              )}
+              <RenderPartColumn part={record.part_detail} />
             </Group>
           );
         }
       },
-      {
-        accessor: 'part_detail.IPN',
-        title: t`IPN`,
-        switchable: true
-      },
-      {
-        accessor: 'part_detail.description',
-        title: t`Description`,
-        sortable: false,
-        switchable: true
-      },
+      IPNColumn({}),
+      DescriptionColumn({
+        accessor: 'part_detail.description'
+      }),
       {
         accessor: 'reference',
         sortable: false,
         switchable: true
       },
-      {
+      ProjectCodeColumn({}),
+      DecimalColumn({
         accessor: 'quantity',
         sortable: true
-      },
+      }),
       {
         accessor: 'sale_price',
         render: (record: any) =>
@@ -127,6 +134,10 @@ export default function SalesOrderLineItemTable({
         accessor: 'stock',
         title: t`Available Stock`,
         render: (record: any) => {
+          if (record.part_detail?.virtual) {
+            return <Text size='sm' fs='italic'>{t`Virtual part`}</Text>;
+          }
+
           const part_stock = record?.available_stock ?? 0;
           const variant_stock = record?.available_variant_stock ?? 0;
           const available = part_stock + variant_stock;
@@ -136,8 +147,8 @@ export default function SalesOrderLineItemTable({
             0
           );
 
-          let color: string | undefined = undefined;
-          let text = `${available}`;
+          let color: string | undefined;
+          let text = `${formatDecimal(available)}`;
 
           const extra: ReactNode[] = [];
 
@@ -155,7 +166,7 @@ export default function SalesOrderLineItemTable({
           if (record.building > 0) {
             extra.push(
               <Text size='sm'>
-                {t`In production`}: {record.building}
+                {t`In production`}: {formatDecimal(record.building)}
               </Text>
             );
           }
@@ -163,7 +174,7 @@ export default function SalesOrderLineItemTable({
           if (record.on_order > 0) {
             extra.push(
               <Text size='sm'>
-                {t`On order`}: {record.on_order}
+                {t`On order`}: {formatDecimal(record.on_order)}
               </Text>
             );
           }
@@ -180,24 +191,36 @@ export default function SalesOrderLineItemTable({
       {
         accessor: 'allocated',
         sortable: true,
-        render: (record: any) => (
-          <ProgressBar
-            progressLabel={true}
-            value={record.allocated}
-            maximum={record.quantity}
-          />
-        )
+        render: (record: any) => {
+          if (record.part_detail?.virtual) {
+            return <Text size='sm' fs='italic'>{t`Virtual part`}</Text>;
+          }
+
+          return (
+            <ProgressBar
+              progressLabel={true}
+              value={record.allocated}
+              maximum={record.quantity}
+            />
+          );
+        }
       },
       {
         accessor: 'shipped',
         sortable: true,
-        render: (record: any) => (
-          <ProgressBar
-            progressLabel={true}
-            value={record.shipped}
-            maximum={record.quantity}
-          />
-        )
+        render: (record: any) => {
+          if (record.part_detail?.virtual) {
+            return <Text size='sm' fs='italic'>{t`Virtual part`}</Text>;
+          }
+
+          return (
+            <ProgressBar
+              progressLabel={true}
+              value={record.shipped}
+              maximum={record.quantity}
+            />
+          );
+        }
       },
       {
         accessor: 'notes'
@@ -217,7 +240,8 @@ export default function SalesOrderLineItemTable({
   const createLineFields = useSalesOrderLineItemFields({
     orderId: orderId,
     customerId: customerId,
-    create: true
+    create: true,
+    currency: currency
   });
 
   const newLine = useCreateApiFormModal({
@@ -228,6 +252,7 @@ export default function SalesOrderLineItemTable({
       ...initialData,
       sale_price_currency: currency
     },
+    onFormSuccess: orderDetailRefresh,
     table: table
   });
 
@@ -242,6 +267,7 @@ export default function SalesOrderLineItemTable({
     pk: selectedLineId,
     title: t`Edit Line Item`,
     fields: editLineFields,
+    onFormSuccess: orderDetailRefresh,
     table: table
   });
 
@@ -249,6 +275,7 @@ export default function SalesOrderLineItemTable({
     url: ApiEndpoints.sales_order_line_list,
     pk: selectedLineId,
     title: t`Delete Line Item`,
+    onFormSuccess: orderDetailRefresh,
     table: table
   });
 
@@ -271,11 +298,15 @@ export default function SalesOrderLineItemTable({
     table: table
   });
 
-  const buildOrderFields = useBuildOrderFields({ create: true });
+  const buildOrderFields = useBuildOrderFields({
+    create: true,
+    modalId: 'build-order-create-from-sales-order'
+  });
 
   const newBuildOrder = useCreateApiFormModal({
     url: ApiEndpoints.build_order_list,
     title: t`Create Build Order`,
+    modalId: 'build-order-create-from-sales-order',
     fields: buildOrderFields,
     initialData: initialData,
     follow: true,
@@ -286,7 +317,9 @@ export default function SalesOrderLineItemTable({
 
   const allocateStock = useAllocateToSalesOrderForm({
     orderId: orderId,
-    lineItems: selectedItems,
+    lineItems: selectedItems.filter(
+      (item) => item.part_detail?.virtual !== true
+    ),
     onFormSuccess: () => {
       table.refreshTable();
       table.clearSelectedRecords();
@@ -358,18 +391,13 @@ export default function SalesOrderLineItemTable({
   const rowActions = useCallback(
     (record: any): RowAction[] => {
       const allocated = (record?.allocated ?? 0) > (record?.quantity ?? 0);
+      const virtual = record?.part_detail?.virtual ?? false;
 
       return [
-        RowViewAction({
-          title: t`View Part`,
-          modelType: ModelType.part,
-          modelId: record.part,
-          navigate: navigate,
-          hidden: !user.hasViewRole(UserRoles.part)
-        }),
         {
           hidden:
             allocated ||
+            virtual ||
             !editable ||
             !user.hasChangeRole(UserRoles.sales_order),
           title: t`Allocate Stock`,
@@ -384,6 +412,7 @@ export default function SalesOrderLineItemTable({
           hidden:
             !record?.part_detail?.trackable ||
             allocated ||
+            virtual ||
             !editable ||
             !user.hasChangeRole(UserRoles.sales_order),
           title: t`Allocate serials`,
@@ -401,6 +430,7 @@ export default function SalesOrderLineItemTable({
         {
           hidden:
             allocated ||
+            virtual ||
             !user.hasAddRole(UserRoles.build) ||
             !record?.part_detail?.assembly,
           title: t`Build stock`,
@@ -418,6 +448,7 @@ export default function SalesOrderLineItemTable({
         {
           hidden:
             allocated ||
+            virtual ||
             !user.hasAddRole(UserRoles.purchase_order) ||
             !record?.part_detail?.purchaseable,
           title: t`Order stock`,
@@ -448,6 +479,13 @@ export default function SalesOrderLineItemTable({
             setSelectedLineId(record.pk);
             deleteLine.open();
           }
+        }),
+        RowViewAction({
+          title: t`View Part`,
+          modelType: ModelType.part,
+          modelId: record.part,
+          navigate: navigate,
+          hidden: !user.hasViewRole(UserRoles.part)
         })
       ];
     },
@@ -459,6 +497,9 @@ export default function SalesOrderLineItemTable({
     return {
       allowMultiple: true,
       expandable: ({ record }: { record: any }) => {
+        if (record?.part_detail?.virtual) {
+          return false;
+        }
         return table.isRowExpanded(record.pk) || record.allocated > 0;
       },
       content: ({ record }: { record: any }) => {
@@ -469,7 +510,9 @@ export default function SalesOrderLineItemTable({
             orderId={orderId}
             lineItemId={record.pk}
             partId={record.part}
-            allowEdit
+            allowEdit={true}
+            modelTarget={ModelType.stockitem}
+            modelField={'item'}
             isSubTable
           />
         );

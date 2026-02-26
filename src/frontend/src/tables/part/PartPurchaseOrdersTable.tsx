@@ -2,16 +2,16 @@ import { t } from '@lingui/core/macro';
 import { Text } from '@mantine/core';
 import { useMemo } from 'react';
 
+import { ProgressBar } from '@lib/components/ProgressBar';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
-import { ProgressBar } from '../../components/items/ProgressBar';
-import { formatCurrency } from '../../defaults/formatters';
+import type { TableColumn } from '@lib/types/Tables';
+import { formatCurrency, formatDecimal } from '../../defaults/formatters';
 import { useTable } from '../../hooks/UseTable';
-import type { TableColumn } from '../Column';
 import { DateColumn, ReferenceColumn, StatusColumn } from '../ColumnRenderers';
-import { StatusFilterOptions } from '../Filter';
+import { IncludeVariantsFilter, StatusFilterOptions } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { TableHoverCard } from '../TableHoverCard';
 
@@ -69,14 +69,14 @@ export default function PartPurchaseOrdersTable({
             const total = record.quantity * supplier_part.pack_quantity_native;
 
             extra.push(
-              <Text key='pack-quantity'>
+              <Text key='pack-quantity' size='sm'>
                 {t`Pack Quantity`}: {supplier_part.pack_quantity}
               </Text>
             );
 
             extra.push(
-              <Text key='total-quantity'>
-                {t`Total Quantity`}: {total} {part?.units}
+              <Text key='total-quantity' size='sm'>
+                {t`Total Quantity`}: {formatDecimal(total)} {part?.units}
               </Text>
             );
           }
@@ -133,12 +133,7 @@ export default function PartPurchaseOrdersTable({
         description: t`Filter by order status`,
         choiceFunction: StatusFilterOptions(ModelType.purchaseorder)
       },
-      {
-        name: 'include_variants',
-        type: 'boolean',
-        label: t`Include Variants`,
-        description: t`Include orders for part variants`
-      }
+      IncludeVariantsFilter()
     ];
   }, []);
 

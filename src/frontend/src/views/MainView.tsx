@@ -13,8 +13,16 @@ function checkMobile() {
   return false;
 }
 
-const MobileAppView = Loadable(lazy(() => import('./MobileAppView')));
-const DesktopAppView = Loadable(lazy(() => import('./DesktopAppView')));
+const MobileAppView = Loadable(
+  lazy(() => import('./MobileAppView')),
+  true,
+  true
+);
+const DesktopAppView = Loadable(
+  lazy(() => import('./DesktopAppView')),
+  true,
+  true
+);
 
 // Main App
 export default function MainView() {
@@ -32,7 +40,11 @@ export default function MainView() {
   }, []);
 
   // Check if mobile
-  if (!allowMobile && checkMobile()) {
+  if (
+    !allowMobile &&
+    window.INVENTREE_SETTINGS.mobile_mode !== 'allow-always' &&
+    checkMobile()
+  ) {
     return <MobileAppView />;
   }
 

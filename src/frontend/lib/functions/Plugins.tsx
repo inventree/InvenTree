@@ -3,28 +3,27 @@ import {
   type InvenTreePluginContext
 } from '../types/Plugins';
 
-function extractVersion(version: string) {
-  // Extract the version number from the string
-  const [major, minor, patch] = version
-    .split('.')
-    .map((v) => Number.parseInt(v, 10));
+/**
+ * Check that the plugin version matches the expected version.
+ * This is a helper function which only generates a warning if there is a mismatch.
+ */
+export function checkPluginVersion(context: InvenTreePluginContext) {
+  const systemVersion: string = context?.version?.inventree || '';
 
-  return { major, minor, patch };
+  if (INVENTREE_PLUGIN_VERSION != systemVersion) {
+    console.info(
+      `Plugin version mismatch! Expected version ${INVENTREE_PLUGIN_VERSION}, got ${systemVersion}`
+    );
+  }
 }
 
 /**
- * Check th e
+ * Helper function to initialize the plugin context.
  */
-export function checkPluginVersion(context: InvenTreePluginContext) {
-  const pluginVersion = extractVersion(INVENTREE_PLUGIN_VERSION);
-  const systemVersion = extractVersion(context.version.inventree);
+export function initPlugin(context: InvenTreePluginContext) {
+  // Check that the plugin version matches the expected version
+  checkPluginVersion(context);
 
-  const mismatch = `Plugin version mismatch! Expected version ${INVENTREE_PLUGIN_VERSION}, got ${context.version}`;
-
-  // A major version mismatch indicates a potentially breaking change
-  if (pluginVersion.major !== systemVersion.major) {
-    console.warn(mismatch);
-  } else if (INVENTREE_PLUGIN_VERSION != context.version.inventree) {
-    console.info(mismatch);
-  }
+  // Activate the i18n context for the current locale
+  context.i18n?.activate?.(context.locale);
 }

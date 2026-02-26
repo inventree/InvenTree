@@ -13,9 +13,7 @@ InvenTree provides a powerful REST API for interacting with inventory data on th
 
 The API is self-documenting, and the documentation is provided alongside any InvenTree installation instance. If (for example) you have an InvenTree instance running at `http://127.0.0.1:8000` then the API documentation is available at `http://127.0.0.1:8000/api-doc/`
 
-{% with id="api_doc", url="api/api_doc.png", description="API documentation" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("api/api_doc.png", "API documentation") }}
 
 ### Browseble API
 
@@ -50,7 +48,7 @@ Users can authenticate against the API using basic authentication - specifically
 Each user is assigned an authentication token which can be used to access the API. This token is persistent for that user (unless invalidated by an administrator) and can be used across multiple sessions.
 
 !!! info "Token Administration"
-    User tokens can be created and/or invalidated via the user settings, admin center or admin interface.
+    User tokens can be created and/or invalidated via the user settings, [Admin Center](../settings/admin.md#admin-center) or admin interface.
 
 #### Requesting a Token
 
@@ -101,14 +99,14 @@ headers = {
 response = request.get('http://localhost:8080/api/part/', data=data, headers=headers)
 ```
 
-### oAuth2 / OIDC
+### oAuth2 and OIDC
 
 !!! warning "Experimental"
     This is an experimental feature that needs to be specifically enabled. See [Experimental features](../settings/experimental.md) for more information.
 
 InvenTree has built-in support for using [oAuth2](https://oauth.net/2/) and OpenID Connect (OIDC) for authentication to the API. This enables using the instance as a very limited identity provider.
 
-A default application using a public client with PKCE enabled ships with each instance. Intended to be used with the python api and configured with very wide scopes this can also be used for quick tests - the cliend_id is `zDFnsiRheJIOKNx6aCQ0quBxECg1QBHtVFDPloJ6`.
+A default application using a public client with PKCE enabled ships with each instance. Intended to be used with the python api and configured with very wide scopes this can also be used for quick tests - the client_id is `zDFnsiRheJIOKNx6aCQ0quBxECg1QBHtVFDPloJ6`.
 
 #### Managing applications
 
@@ -152,15 +150,11 @@ Once a user has *authenticated* via the API, a list of the available roles can b
 
 For example, when accessing the API from a *superuser* account:
 
-{% with id="api_roles", url="api/api_roles.png", description="API superuser roles" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("api/api_roles.png", "API superuser roles") }}
 
 Or, when accessing the API from an account which has read-only permissions:
 
-{% with id="api_roles_2", url="api/api_roles_2.png", description="API user roles" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("api/api_roles_2.png", "API user roles") }}
 
 ### Permission Denied
 

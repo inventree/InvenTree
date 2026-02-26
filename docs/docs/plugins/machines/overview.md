@@ -13,7 +13,7 @@ InvenTree has a builtin machine registry. There are different machine types avai
 
 The machine registry is the main component which gets initialized on server start and manages all configured machines.
 
-#### Initialization process
+#### Initialization Process
 
 The machine registry initialization process can be divided into three stages:
 
@@ -24,24 +24,27 @@ The machine registry initialization process can be divided into three stages:
     2. The driver.init_driver function is called for each used driver
     3. The machine.initialize function is called for each machine, which calls the driver.init_machine function for each machine, then the machine.initialized state is set to true
 
-#### Production setup (with a worker)
+#### Production Setup
+
+!!! warning "Cache Required"
+    A [shared cache](../../start/processes.md#cache-server) is required to run the machine registry in production setup with workers.
 
 If a worker is connected, there exist multiple instances of the machine registry (one in each worker thread and one in the main thread) due to the nature of how python handles state in different processes. Therefore the machine instances and drivers are instantiated multiple times (The `__init__` method is called multiple times). But the init functions and update hooks (e.g. `init_machine`) are only called once from the main process.
 
 The registry, driver and machine state (e.g. machine status codes, errors, ...) is stored in the cache. Therefore a shared redis cache is needed. (The local in-memory cache which is used by default is not capable to cache across multiple processes)
 
 
-### Machine types
+### Machine Types
 
 Each machine type can provide a different type of connection functionality between inventree and a physical machine. These machine types are already built into InvenTree.
 
-#### Built-in types
+#### Builtin Types
 
 | Name | Description  |
 | --- | --- |
 | [Label printer](./label_printer.md) | Directly print labels for various items. |
 
-#### Example machine type
+#### Example Machine Type
 
 If you want to create your own machine type, please also take a look at the already existing machine types in `machines/machine_types/*.py`. The following example creates a machine type called `abc`.
 
@@ -104,29 +107,39 @@ The machine type class gets instantiated for each machine on server startup and 
           - check_setting
           - set_status
           - set_status_text
+          - set_properties
 
 ### Drivers
 
 Drivers provide the connection layer between physical machines and inventree. There can be multiple drivers defined for the same machine type. Drivers are provided by plugins that are enabled and extend the corresponding base driver for the particular machine type. Each machine type already provides a base driver that needs to be inherited.
 
-#### Example driver
+#### Example Driver
 
 A basic driver only needs to specify the basic attributes like `SLUG`, `NAME`, `DESCRIPTION`. The others are given by the used base driver, so take a look at [Machine types](#machine-types). The following example will create an driver called `abc` for the `xyz` machine type. The class will be discovered if it is provided by an **installed & activated** plugin just like this:
 
-```py
+```python
+from plugin.mixins import MachineDriverMixin
 from plugin import InvenTreePlugin
 from plugin.machine.machine_types import ABCBaseDriver
 
-class MyXyzAbcDriverPlugin(InvenTreePlugin):
-    NAME = "XyzAbcDriver"
-    SLUG = "xyz-driver"
-    TITLE = "Xyz Abc Driver"
-    # ...
 
 class XYZDriver(ABCBaseDriver):
     SLUG = 'my-xyz-driver'
     NAME = 'My XYZ driver'
     DESCRIPTION = 'This is an awesome XYZ driver for a ABC machine'
+
+
+class MyXyzAbcDriverPlugin(MachineDriverMixin, InvenTreePlugin):
+    NAME = "XyzAbcDriver"
+    SLUG = "xyz-driver"
+    TITLE = "Xyz Abc Driver"
+    # ...
+
+    def get_machine_drivers(self):
+        """Return a list of machine drivers for this plugin."""
+        return [XYZDriver]
+
+
 ```
 
 #### Driver API
@@ -140,6 +153,7 @@ class XYZDriver(ABCBaseDriver):
           - init_machine
           - update_machine
           - restart_machine
+          - ping_machines
           - get_machines
           - handle_error
 
@@ -161,7 +175,7 @@ class MyXYZDriver(ABCBaseDriver):
 
 Settings can even marked as `'required': True` which prevents the machine from starting if the setting is not defined.
 
-### Machine status
+### Machine Status
 
 Machine status can be used to report the machine status to the users. They can be set by the driver for each machine, but get lost on a server restart.
 
@@ -186,7 +200,7 @@ class XYZMachineType(BaseMachineType):
 
 And to set a status code for a machine by the driver.
 
-```py
+```python
 class MyXYZDriver(ABCBaseDriver):
     # ...
     def init_machine(self, machine):
@@ -211,4 +225,25 @@ class MyXYZDriver(ABCBaseDriver):
     def init_machine(self, machine):
         # ... do some init stuff here
         machine.set_status_text("Paper missing")
+```
+
+### Machine Properties
+
+Machine properties such as the device model, firmware version, and total pages printed can be displayed in the machine detail drawer to provide users with relevant device information.
+
+To achieve this, use the `machine.set_properties` function to set the desired properties. This can be combined with a periodic task, such as `ping_machines`, to keep the information up to date.
+
+```py
+from plugin.machine import MachineProperty
+
+class MyXYZDriver(ABCBaseDriver):
+    # ...
+    def ping_machines(self):
+        for machine in self.get_machines():
+            # ... fetch machine info
+            props: list[MachineProperty] = [
+                { 'key': 'Model', 'value': 'ABC' },
+            ]
+            machine.set_properties(props)
+
 ```

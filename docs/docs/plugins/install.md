@@ -26,9 +26,7 @@ In certain container environments (such as docker), plugins are installed into a
 !!! tip "Check Plugins on Startup"
     Ensure the **Check Plugins on Startup** option is enabled, when running InvenTree in a container environment!
 
-{% with id="check_plugins", url="plugin/check_on_startup.png", description="Check plugins on startup" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("plugin/check_on_startup.png", "Check plugins on startup") }}
 
 ### Installation Methods
 
@@ -65,12 +63,16 @@ Installation via PIP (using the *plugins.txt* file) provides a number of advanta
 
 Admin users can install plugins directly from the web interface, via the "Plugin Settings" view:
 
-{% with id="plugin_install", url="plugin/plugin_install_web.png", description="Install via web interface" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("plugin/plugin_install_web.png", "Install plugin via web interface") }}
+
+Enter the package name into the form as shown below. You can add a path and a version. Leave the version field empty for the latest version. In case the package is on pypi the path can be omitted. Pip will find it automatically.
+
+{{ image("plugin/plugin_install_git.png", "Install plugin from git") }}
 
 !!! success "Plugin File"
-    A plugin installed via the web interface is added to the [plugins.txt](#plugin-installation-file-pip) plugin file.
+    A plugin installed via the web interface is added to the [plugins.txt](#plugin-installation-file-pip) plugin file as shown below.
+
+{{ image("plugin/plugin_install_txt.png", "Plugin.txt file") }}
 
 #### Local Directory
 

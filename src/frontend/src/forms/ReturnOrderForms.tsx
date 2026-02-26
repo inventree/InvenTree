@@ -21,7 +21,7 @@ import type {
 import type { TableFieldRowProps } from '../components/forms/fields/TableField';
 import { Thumbnail } from '../components/images/Thumbnail';
 import { useCreateApiFormModal } from '../hooks/UseForm';
-import { useGlobalSettingsState } from '../states/SettingsState';
+import { useGlobalSettingsState } from '../states/SettingsStates';
 import { StatusFilterOptions } from '../tables/Filter';
 
 export function useReturnOrderFields({
@@ -134,6 +134,9 @@ export function useReturnOrderLineItemFields({
       },
       price: {},
       price_currency: {},
+      project_code: {
+        description: t`Select project code for this line item`
+      },
       target_date: {},
       notes: {},
       link: {}

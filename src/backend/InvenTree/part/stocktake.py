@@ -1,302 +1,236 @@
-"""Stocktake report functionality."""
+"""Stock history functionality."""
 
-import io
-import time
+from typing import Optional
 
-from django.contrib.auth.models import User
 from django.core.files.base import ContentFile
-from django.utils.translation import gettext_lazy as _
 
 import structlog
 import tablib
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
 
-import common.currency
 import common.models
-import InvenTree.helpers
-import part.models
-import stock.models
+from InvenTree.helpers import current_date
 
 logger = structlog.get_logger('inventree')
 
 
 def perform_stocktake(
-    target: part.models.Part, user: User, note: str = '', commit=True, **kwargs
-):
-    """Perform stocktake action on a single part.
+    part_id: Optional[int] = None,
+    category_id: Optional[int] = None,
+    location_id: Optional[int] = None,
+    exclude_external: Optional[bool] = None,
+    generate_entry: bool = True,
+    report_output_id: Optional[int] = None,
+) -> None:
+    """Capture a snapshot of stock-on-hand and stock value.
 
     Arguments:
-        target: A single Part model instance
-        user: User who requested this stocktake
-        note: Optional note to attach to the stocktake
-        commit: If True (default) save the result to the database
+        part_id: Optional ID of a part to perform stocktake on. If not provided, all active parts will be processed.
+        category_id: Optional category ID to use to filter parts
+        location_id: Optional location ID to use to filter stock items
+        exclude_external: If True, exclude external stock items from the stocktake
+        generate_entry: If True, create stocktake entries in the database
+        report_output_id: Optional ID of a DataOutput object for the stocktake report (e.g. for download)
 
-    kwargs:
-        exclude_external: If True, exclude stock items in external locations (default = False)
-        location: Optional StockLocation to filter results for generated report
+    The default implementation creates stocktake entries for all active parts,
+    and writes these stocktake entries to the database.
 
-    Returns:
-        PartStocktake: A new PartStocktake model instance (for the specified Part)
-
-    Note that while we record a *total stocktake* for the Part instance which gets saved to the database,
-    the user may have requested a stocktake limited to a particular location.
-
-    In this case, the stocktake *report* will be limited to the specified location.
+    Alternatively, the scope of the stocktake can be limited by providing a queryset of parts,
+    or by providing a category ID or location ID to filter the parts/stock items.
     """
-    # Determine which locations are "valid" for the generated report
-    location = kwargs.get('location')
-    locations = location.get_descendants(include_self=True) if location else []
+    import InvenTree.helpers
+    import part.models as part_models
+    import part.serializers as part_serializers
+    import stock.models as stock_models
+    from common.currency import currency_code_default
+    from common.settings import get_global_setting
 
-    # Grab all "available" stock items for the Part
-    # We do not include variant stock when performing a stocktake,
-    # otherwise the stocktake entries will be duplicated
-    stock_entries = target.stock_entries(in_stock=True, include_variants=False)
-
-    exclude_external = kwargs.get('exclude_external', False)
-
-    if exclude_external:
-        stock_entries = stock_entries.exclude(location__external=True)
-
-    # Cache min/max pricing information for this Part
-    pricing = target.pricing
-
-    if not pricing.is_valid:
-        # If pricing is not valid, let's update
-        logger.info('Pricing not valid for %s - updating', target)
-        pricing.update_pricing(cascade=False)
-        pricing.refresh_from_db()
-
-    base_currency = common.currency.currency_code_default()
-
-    # Keep track of total quantity and cost for this part
-    total_quantity = 0
-    total_cost_min = Money(0, base_currency)
-    total_cost_max = Money(0, base_currency)
-
-    # Separately, keep track of stock quantity and value within the specified location
-    location_item_count = 0
-    location_quantity = 0
-    location_cost_min = Money(0, base_currency)
-    location_cost_max = Money(0, base_currency)
-
-    for entry in stock_entries:
-        entry_cost_min = None
-        entry_cost_max = None
-
-        # Update price range values
-        if entry.purchase_price:
-            entry_cost_min = entry.purchase_price
-            entry_cost_max = entry.purchase_price
-
-        else:
-            # If no purchase price is available, fall back to the part pricing data
-            entry_cost_min = pricing.overall_min or pricing.overall_max
-            entry_cost_max = pricing.overall_max or pricing.overall_min
-
-        # Convert to base currency
-        try:
-            entry_cost_min = (
-                convert_money(entry_cost_min, base_currency) * entry.quantity
-            )
-            entry_cost_max = (
-                convert_money(entry_cost_max, base_currency) * entry.quantity
-            )
-        except Exception:
-            entry_cost_min = Money(0, base_currency)
-            entry_cost_max = Money(0, base_currency)
-
-        # Update total cost values
-        total_quantity += entry.quantity
-        total_cost_min += entry_cost_min
-        total_cost_max += entry_cost_max
-
-        # Test if this stock item is within the specified location
-        if location and entry.location not in locations:
-            continue
-
-        # Update location cost values
-        location_item_count += 1
-        location_quantity += entry.quantity
-        location_cost_min += entry_cost_min
-        location_cost_max += entry_cost_max
-
-    # Construct PartStocktake instance
-    # Note that we use the *total* values for the PartStocktake instance
-    instance = part.models.PartStocktake(
-        part=target,
-        item_count=stock_entries.count(),
-        quantity=total_quantity,
-        cost_min=total_cost_min,
-        cost_max=total_cost_max,
-        note=note,
-        user=user,
-    )
-
-    if commit:
-        instance.save()
-
-    # Add location-specific data to the instance
-    instance.location_item_count = location_item_count
-    instance.location_quantity = location_quantity
-    instance.location_cost_min = location_cost_min
-    instance.location_cost_max = location_cost_max
-
-    return instance
-
-
-def generate_stocktake_report(**kwargs):
-    """Generated a new stocktake report.
-
-    Note that this method should be called only by the background worker process!
-
-    Unless otherwise specified, the stocktake report is generated for *all* Part instances.
-    Optional filters can by supplied via the kwargs
-
-    kwargs:
-        user: The user who requested this stocktake (set to None for automated stocktake)
-        part: Optional Part instance to filter by (including variant parts)
-        category: Optional PartCategory to filter results
-        location: Optional StockLocation to filter results
-        exclude_external: If True, exclude stock items in external locations (default = False)
-        generate_report: If True, generate a stocktake report from the calculated data (default=True)
-        update_parts: If True, save stocktake information against each filtered Part (default = True)
-    """
-    # Determine if external locations should be excluded
-    exclude_external = kwargs.get(
-        'exclude_exernal',
-        common.models.InvenTreeSetting.get_setting('STOCKTAKE_EXCLUDE_EXTERNAL', False),
-    )
-
-    parts = part.models.Part.objects.all()
-    user = kwargs.get('user')
-
-    generate_report = kwargs.get('generate_report', True)
-    update_parts = kwargs.get('update_parts', True)
-
-    # Filter by 'Part' instance
-    if p := kwargs.get('part'):
-        variants = p.get_descendants(include_self=True)
-        parts = parts.filter(pk__in=[v.pk for v in variants])
-
-    # Filter by 'Category' instance (cascading)
-    if category := kwargs.get('category'):
-        categories = category.get_descendants(include_self=True)
-        parts = parts.filter(category__in=categories)
-
-    # Filter by 'Location' instance (cascading)
-    # Stocktake report will be limited to parts which have stock items within this location
-    if location := kwargs.get('location'):
-        # Extract flat list of all sublocations
-        locations = list(location.get_descendants(include_self=True))
-
-        # Items which exist within these locations
-        items = stock.models.StockItem.objects.filter(location__in=locations)
-
-        if exclude_external:
-            items = items.exclude(location__external=True)
-
-        # List of parts which exist within these locations
-        unique_parts = items.order_by().values('part').distinct()
-
-        parts = parts.filter(pk__in=[result['part'] for result in unique_parts])
-
-    # Exit if filters removed all parts
-    n_parts = parts.count()
-
-    if n_parts == 0:
-        logger.info('No parts selected for stocktake report - exiting')
+    if not get_global_setting('STOCKTAKE_ENABLE', False, cache=False):
+        logger.info('Stocktake functionality is disabled - skipping')
         return
 
-    logger.info('Generating new stocktake report for %s parts', n_parts)
-
-    base_currency = common.currency.currency_code_default()
-
-    # Construct an initial dataset for the stocktake report
-    dataset = tablib.Dataset(
-        headers=[
-            _('Part ID'),
-            _('Part Name'),
-            _('Part Description'),
-            _('Category ID'),
-            _('Category Name'),
-            _('Stock Items'),
-            _('Total Quantity'),
-            _('Total Cost Min') + f' ({base_currency})',
-            _('Total Cost Max') + f' ({base_currency})',
-        ]
-    )
-
-    parts = parts.prefetch_related('category', 'stock_items')
-
-    # Simple profiling for this task
-    t_start = time.time()
-
-    # Keep track of each individual "stocktake" we perform.
-    # They may be bulk-commited to the database afterwards
-    stocktake_instances = []
-
-    total_parts = 0
-
-    # Iterate through each Part which matches the filters above
-    for p in parts:
-        # Create a new stocktake for this part (do not commit, this will take place later on)
-        stocktake = perform_stocktake(
-            p, user, commit=False, exclude_external=exclude_external, location=location
+    # If exclude_external is not provided, use global setting
+    if exclude_external is None:
+        exclude_external = get_global_setting(
+            'STOCKTAKE_EXCLUDE_EXTERNAL', False, cache=False
         )
 
-        total_parts += 1
+    # If a single part is provided, limit to that part
+    # Otherwise, start with all active parts
+    if part_id is not None:
+        try:
+            part = part_models.Part.objects.get(id=part_id)
+            parts = part.get_descendants(include_self=True)
+        except (ValueError, part_models.Part.DoesNotExist):
+            parts = part_models.Part.objects.all()
+    else:
+        parts = part_models.Part.objects.all()
 
-        stocktake_instances.append(stocktake)
+    # Only use active parts
+    parts = parts.filter(active=True)
 
-        # Add a row to the dataset
-        dataset.append([
-            p.pk,
-            p.full_name,
-            p.description,
-            p.category.pk if p.category else '',
-            p.category.name if p.category else '',
-            stocktake.location_item_count,
-            stocktake.location_quantity,
-            InvenTree.helpers.normalize(stocktake.location_cost_min.amount),
-            InvenTree.helpers.normalize(stocktake.location_cost_max.amount),
-        ])
+    # Prefetch related pricing information
+    parts = parts.prefetch_related('pricing_data', 'stock_items')
 
-    # Save a new PartStocktakeReport instance
-    buffer = io.StringIO()
-    buffer.write(dataset.export('csv'))
+    # Filter part queryset by category, if provided
+    if category_id is not None:
+        # Filter parts by category (including subcategories)
+        try:
+            category = part_models.PartCategory.objects.get(id=category_id)
+            parts = parts.filter(
+                category__in=category.get_descendants(include_self=True)
+            )
+        except (ValueError, part_models.PartCategory.DoesNotExist):
+            pass
 
-    today = InvenTree.helpers.current_date().isoformat()
-    filename = f'InvenTree_Stocktake_{today}.csv'
-    report_file = ContentFile(buffer.getvalue(), name=filename)
+    # Fetch location if provided
+    if location_id is not None:
+        try:
+            location = stock_models.StockLocation.objects.get(id=location_id)
+        except (ValueError, stock_models.StockLocation.DoesNotExist):
+            location = None
+    else:
+        location = None
 
-    if generate_report:
-        report_instance = part.models.PartStocktakeReport.objects.create(
-            report=report_file, part_count=total_parts, user=user
+    if location is not None:
+        # Location limited, so we will disable saving of stocktake entries
+        generate_entry = False
+
+    # New history entries to be created
+    history_entries = []
+
+    base_currency = currency_code_default()
+    today = InvenTree.helpers.current_date()
+
+    logger.info('Creating new stock history entries for %s parts', parts.count())
+
+    # Fetch report output object if provided
+    if report_output_id is not None:
+        try:
+            report_output = common.models.DataOutput.objects.get(id=report_output_id)
+        except (ValueError, common.models.DataOutput.DoesNotExist):
+            report_output = None
+    else:
+        report_output = None
+
+    if report_output:
+        # Initialize progress on the report output
+        report_output.total = parts.count()
+        report_output.progress = 0
+        report_output.complete = False
+        report_output.save()
+
+    for part in parts:
+        # Is there a recent stock history record for this part?
+        if (
+            generate_entry
+            and part_models.PartStocktake.objects.filter(
+                part=part, date__gte=today
+            ).exists()
+        ):
+            continue
+
+        try:
+            pricing = part.pricing_data
+        except Exception:
+            pricing = None
+
+        # Fetch all 'in stock' items for this part
+        stock_items = part.stock_entries(
+            location=location,
+            in_stock=True,
+            include_external=not exclude_external,
+            include_variants=True,
         )
 
-        # Notify the requesting user
-        if user:
-            common.notifications.trigger_notification(
-                report_instance,
-                category='generate_stocktake_report',
-                context={
-                    'name': _('Stocktake Report Available'),
-                    'message': _('A new stocktake report is available for download'),
-                },
-                targets=[user],
+        total_cost_min = Money(0, base_currency)
+        total_cost_max = Money(0, base_currency)
+
+        total_quantity = 0
+        items_count = 0
+
+        if stock_items.count() == 0:
+            # No stock items - skip this part if location is specified
+            if location:
+                continue
+
+        for item in stock_items:
+            # Extract cost information
+
+            entry_cost_min = (
+                (pricing.overall_min or pricing.overall_max) if pricing else None
+            )
+            entry_cost_max = (
+                (pricing.overall_max or pricing.overall_min) if pricing else None
             )
 
-    # If 'update_parts' is set, we save stocktake entries for each individual part
-    if update_parts:
-        # Use bulk_create for efficient insertion of stocktake
-        part.models.PartStocktake.objects.bulk_create(
-            stocktake_instances, batch_size=500
+            if item.purchase_price is not None:
+                entry_cost_min = item.purchase_price
+                entry_cost_max = item.purchase_price
+
+            try:
+                entry_cost_min = entry_cost_min * item.quantity
+                entry_cost_max = entry_cost_max * item.quantity
+
+                if entry_cost_min.currency != base_currency:
+                    entry_cost_min = convert_money(entry_cost_min, base_currency)
+
+                if entry_cost_max.currency != base_currency:
+                    entry_cost_max = convert_money(entry_cost_max, base_currency)
+            except Exception:
+                entry_cost_min = Money(0, base_currency)
+                entry_cost_max = Money(0, base_currency)
+
+            # Update total quantities
+            items_count += 1
+            total_quantity += item.quantity
+            total_cost_min += entry_cost_min
+            total_cost_max += entry_cost_max
+
+        if report_output:
+            report_output.progress += 1
+
+            # Update report progress every few items, to avoid excessive database writes
+            if report_output.progress % 50 == 0:
+                report_output.save()
+
+        # Add a new stocktake entry for this part
+        history_entries.append(
+            part_models.PartStocktake(
+                part=part,
+                item_count=items_count,
+                quantity=total_quantity,
+                cost_min=total_cost_min,
+                cost_max=total_cost_max,
+            )
         )
 
-    t_stocktake = time.time() - t_start
-    logger.info(
-        'Generated stocktake report for %s parts in %ss',
-        total_parts,
-        round(t_stocktake, 2),
-    )
+    if generate_entry:
+        # Bulk-create PartStocktake entries
+        part_models.PartStocktake.objects.bulk_create(history_entries)
+
+    if report_output:
+        # Save report data, and mark as complete
+
+        today = current_date()
+
+        serializer = part_serializers.PartStocktakeSerializer(exclude_pk=True)
+
+        headers = serializer.generate_headers()
+
+        # Export the data to a file
+        dataset = tablib.Dataset(headers=list(headers.values()))
+
+        header_keys = list(headers.keys())
+
+        for entry in history_entries:
+            entry.date = today
+            row = serializer.to_representation(entry)
+            dataset.append([row.get(header, '') for header in header_keys])
+
+        datafile = dataset.export('csv')
+
+        report_output.mark_complete(
+            output=ContentFile(datafile, 'stocktake_report.csv')
+        )

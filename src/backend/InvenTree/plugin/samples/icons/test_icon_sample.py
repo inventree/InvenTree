@@ -14,9 +14,7 @@ class SampleIconPackPluginTests(InvenTreeAPITestCase):
     def test_get_icons_api(self):
         """Check get icons api."""
         # Activate plugin
-        config = registry.get_plugin('sampleicons').plugin_config()
-        config.active = True
-        config.save()
+        registry.set_plugin_state('sampleicons', True)
 
         response = self.get(reverse('api-icon-list'), expected_code=200)
         self.assertEqual(len(response.data), 2)

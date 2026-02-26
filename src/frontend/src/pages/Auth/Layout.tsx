@@ -14,21 +14,13 @@ import SplashScreen from '../../components/SplashScreen';
 import { StylishText } from '../../components/items/StylishText';
 import { doLogout } from '../../functions/auth';
 
-export default function Layout() {
+export default function LoginLayoutComponent() {
   return (
     <SplashScreen>
-      <Center mih='100vh'>
-        <div
-          style={{
-            padding: '10px',
-            backgroundColor: 'rgba(0,0,0,0.5)',
-            boxShadow: '0 0 15px 10px rgba(0,0,0,0.5)'
-          }}
-        >
-          <Container w='md' miw={400}>
-            <Outlet />
-          </Container>
-        </div>
+      <Center mih='100vh' p='lg'>
+        <Container>
+          <Outlet />
+        </Container>
       </Center>
     </SplashScreen>
   );
@@ -50,7 +42,7 @@ export function Wrapper({
   const navigate = useNavigate();
 
   return (
-    <Paper p='xl' withBorder miw={425}>
+    <Paper p='xl' withBorder miw={425} shadow='lg'>
       <Stack gap={smallPadding ? 0 : 'md'}>
         <StylishText size='xl'>{titleText}</StylishText>
         <Divider p='xs' />

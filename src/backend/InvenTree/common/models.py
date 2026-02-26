@@ -4,17 +4,18 @@ These models are 'generic' and do not fit a particular business logic object.
 """
 
 import base64
-import enum
 import hashlib
 import hmac
 import json
+import math
 import os
 import uuid
 from datetime import timedelta, timezone
+from email.utils import make_msgid
 from enum import Enum
 from io import BytesIO
 from secrets import compare_digest
-from typing import Any, Union
+from typing import Any, Optional
 
 from django.apps import apps
 from django.conf import settings as django_settings
@@ -24,38 +25,53 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
+from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
-from django.core.validators import MinValueValidator
+from django.core.mail import EmailMultiAlternatives, get_connection
+from django.core.mail.utils import DNS_NAME
+from django.core.validators import MinLengthValidator, MinValueValidator
 from django.db import models, transaction
+from django.db.models import enums
 from django.db.models.signals import post_delete, post_save
 from django.db.utils import IntegrityError, OperationalError, ProgrammingError
-from django.dispatch.dispatcher import receiver
+from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
 
 import structlog
+from anymail.signals import inbound, tracking
+from django_q.signals import post_spawn
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
+from opentelemetry import trace
 from rest_framework.exceptions import PermissionDenied
 from taggit.managers import TaggableManager
 
 import common.validators
+import InvenTree.conversion
+import InvenTree.exceptions
 import InvenTree.fields
 import InvenTree.helpers
 import InvenTree.models
 import InvenTree.ready
+import InvenTree.tasks
+import InvenTree.validators
 import users.models
 from common.setting.type import InvenTreeSettingsKeyType, SettingsKeyType
+from common.settings import get_global_setting, global_setting_overrides
+from generic.enums import StringEnum
 from generic.states import ColorEnum
 from generic.states.custom import state_color_mappings
 from InvenTree.cache import get_session_cache, set_session_cache
 from InvenTree.sanitizer import sanitize_svg
+from InvenTree.tracing import TRACE_PROC, TRACE_PROV
+from InvenTree.version import inventree_identifier
 
 logger = structlog.get_logger('inventree')
 
 
-class RenderMeta(models.enums.ChoicesMeta):
+class RenderMeta(enums.ChoicesType):
     """Metaclass for rendering choices."""
 
     choice_fnc = None
@@ -69,7 +85,7 @@ class RenderMeta(models.enums.ChoicesMeta):
         return []
 
 
-class RenderChoices(models.TextChoices, metaclass=RenderMeta):
+class RenderChoices(models.TextChoices, metaclass=RenderMeta):  # type: ignore
     """Class for creating enumerated string choices for schema rendering."""
 
 
@@ -93,8 +109,46 @@ class MetaMixin(models.Model):
     )
 
 
+class UpdatedUserMixin(models.Model):
+    """A mixin which stores additional information about the user who created or last modified the object."""
+
+    class Meta:
+        """Meta options for MetaUserMixin."""
+
+        abstract = True
+
+    def save(self, *args, **kwargs):
+        """Extract the user object from kwargs, if provided."""
+        if updated_by := kwargs.pop('updated_by', None):
+            self.updated_by = updated_by
+
+        self.updated = InvenTree.helpers.current_time()
+
+        super().save(*args, **kwargs)
+
+    updated = models.DateTimeField(
+        verbose_name=_('Updated'),
+        help_text=_('Timestamp of last update'),
+        default=None,
+        blank=True,
+        null=True,
+    )
+
+    updated_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='%(class)s_updated',
+        verbose_name=_('Update By'),
+        help_text=_('User who last updated this object'),
+    )
+
+
 class ProjectCode(InvenTree.models.InvenTreeMetadataModel):
     """A ProjectCode is a unique identifier for a project."""
+
+    IMPORT_ID_FIELDS = ['code']
 
     class Meta:
         """Class options for the ProjectCode model."""
@@ -191,9 +245,7 @@ class BaseInvenTreeSetting(models.Model):
             missing_keys = set(settings_keys) - set(existing_keys)
 
             if len(missing_keys) > 0:
-                logger.info(
-                    'Building %s default values for %s', len(missing_keys), str(cls)
-                )
+                logger.info('Building %s default values for %s', len(missing_keys), cls)
                 cls.objects.bulk_create([
                     cls(key=key, value=cls.get_setting_default(key), **kwargs)
                     for key in missing_keys
@@ -201,7 +253,7 @@ class BaseInvenTreeSetting(models.Model):
                 ])
         except Exception as exc:
             logger.exception(
-                'Failed to build default values for %s (%s)', str(cls), str(type(exc))
+                'Failed to build default values for %s (%s)', cls, type(exc)
             )
 
     def _call_settings_function(self, reference: str, args, kwargs):
@@ -241,7 +293,7 @@ class BaseInvenTreeSetting(models.Model):
 
         try:
             cache.set(key, self, timeout=3600)
-        except Exception:
+        except Exception:  # pragma: no cover
             pass
 
     @classmethod
@@ -282,7 +334,7 @@ class BaseInvenTreeSetting(models.Model):
         cls,
         *,
         exclude_hidden=False,
-        settings_definition: Union[dict[str, SettingsKeyType], None] = None,
+        settings_definition: dict[str, SettingsKeyType] | None = None,
         **kwargs,
     ):
         """Return a list of "all" defined settings.
@@ -344,7 +396,7 @@ class BaseInvenTreeSetting(models.Model):
         cls,
         *,
         exclude_hidden=False,
-        settings_definition: Union[dict[str, SettingsKeyType], None] = None,
+        settings_definition: dict[str, SettingsKeyType] | None = None,
         **kwargs,
     ):
         """Return a dict of "all" defined global settings.
@@ -371,7 +423,7 @@ class BaseInvenTreeSetting(models.Model):
         cls,
         *,
         exclude_hidden=False,
-        settings_definition: Union[dict[str, SettingsKeyType], None] = None,
+        settings_definition: dict[str, SettingsKeyType] | None = None,
         **kwargs,
     ):
         """Check if all required settings are set by definition.
@@ -511,7 +563,7 @@ class BaseInvenTreeSetting(models.Model):
             or InvenTree.ready.isRunningMigrations()
             or InvenTree.ready.isRebuildingData()
             or InvenTree.ready.isRunningBackup()
-        ):
+        ):  # pragma: no cover
             create = False
             access_global_cache = False
 
@@ -556,7 +608,15 @@ class BaseInvenTreeSetting(models.Model):
         if not setting and create:
             # Attempt to create a new settings object
             default_value = cls.get_setting_default(key, **kwargs)
-            setting = cls(key=key, value=default_value, **kwargs)
+
+            extra_fields = {}
+
+            # Provide extra default fields
+            for field in cls.extra_unique_fields:
+                if field in kwargs:
+                    extra_fields[field] = kwargs[field]
+
+            setting = cls(key=key, value=default_value, **extra_fields)
 
             try:
                 # Wrap this statement in "atomic", so it can be rolled back if it fails
@@ -591,9 +651,7 @@ class BaseInvenTreeSetting(models.Model):
             and not key.startswith('_')
         ):
             logger.warning(
-                "get_setting: Setting key '%s' is not defined for class %s",
-                key,
-                str(cls),
+                "get_setting: Setting key '%s' is not defined for class %s", key, cls
             )
 
         # If no backup value is specified, attempt to retrieve a "default" value
@@ -637,9 +695,7 @@ class BaseInvenTreeSetting(models.Model):
             and not key.startswith('_')
         ):
             logger.warning(
-                "set_setting: Setting key '%s' is not defined for class %s",
-                key,
-                str(cls),
+                "set_setting: Setting key '%s' is not defined for class %s", key, cls
             )
 
         if change_user is not None and not change_user.is_staff:
@@ -651,10 +707,10 @@ class BaseInvenTreeSetting(models.Model):
             or InvenTree.ready.isRunningMigrations()
             or InvenTree.ready.isRebuildingData()
             or InvenTree.ready.isRunningBackup()
-        ):
+        ):  # pragma: no cover
             return
 
-        attempts = int(kwargs.get('attempts', 3))
+        attempts = int(kwargs.pop('attempts', 3))
 
         filters = {
             'key__iexact': key,
@@ -676,9 +732,9 @@ class BaseInvenTreeSetting(models.Model):
                 logger.warning("Database is locked, cannot set setting '%s'", key)
             # Likely the DB is locked - not much we can do here
             return
-        except Exception as exc:
+        except Exception as exc:  # pragma: no cover
             logger.exception(
-                "Error setting setting '%s' for %s: %s", key, str(cls), str(type(exc))
+                "Error setting setting '%s' for %s: %s", key, cls, type(exc)
             )
             return
 
@@ -697,7 +753,7 @@ class BaseInvenTreeSetting(models.Model):
             if attempts > 0:
                 # Try again
                 logger.info(
-                    "Duplicate setting key '%s' for %s - trying again", key, str(cls)
+                    "Duplicate setting key '%s' for %s - trying again", key, cls
                 )
                 cls.set_setting(
                     key,
@@ -711,10 +767,10 @@ class BaseInvenTreeSetting(models.Model):
         except (OperationalError, ProgrammingError):
             logger.warning("Database is locked, cannot set setting '%s'", key)
             # Likely the DB is locked - not much we can do here
-        except Exception as exc:
+        except Exception as exc:  # pragma: no cover
             # Some other error
             logger.exception(
-                "Error setting setting '%s' for %s: %s", key, str(cls), str(type(exc))
+                "Error setting setting '%s' for %s: %s", key, cls, type(exc)
             )
 
     key = models.CharField(
@@ -759,13 +815,13 @@ class BaseInvenTreeSetting(models.Model):
 
         # Encode as native values
         if self.is_int():
-            self.value = self.as_int()
+            self.value = self.as_int(raise_error=True)
 
         elif self.is_bool():
             self.value = self.as_bool()
 
         elif self.is_float():
-            self.value = self.as_float()
+            self.value = self.as_float(raise_error=True)
 
         validator = self.__class__.get_setting_validator(
             self.key, **self.get_filters_for_instance()
@@ -916,7 +972,23 @@ class BaseInvenTreeSetting(models.Model):
 
         return setting.get('model', None)
 
-    def model_filters(self) -> dict:
+    def confirm(self) -> bool:
+        """Return if this setting requires confirmation on change."""
+        setting = self.get_setting_definition(
+            self.key, **self.get_filters_for_instance()
+        )
+
+        return setting.get('confirm', False)
+
+    def confirm_text(self) -> str:
+        """Return the confirmation text for this setting, if provided."""
+        setting = self.get_setting_definition(
+            self.key, **self.get_filters_for_instance()
+        )
+
+        return setting.get('confirm_text', '')
+
+    def model_filters(self) -> Optional[dict]:
         """Return the model filters associated with this setting."""
         setting = self.get_setting_definition(
             self.key, **self.get_filters_for_instance()
@@ -1065,7 +1137,7 @@ class BaseInvenTreeSetting(models.Model):
 
         return False
 
-    def as_float(self):
+    def as_float(self, raise_error: bool = False) -> float:
         """Return the value of this setting converted to a float value.
 
         If an error occurs, return the default value
@@ -1073,6 +1145,8 @@ class BaseInvenTreeSetting(models.Model):
         try:
             value = float(self.value)
         except (ValueError, TypeError):
+            if raise_error:
+                raise ValidationError('Provided value is not a valid float')
             value = self.default_value
 
         return value
@@ -1098,7 +1172,7 @@ class BaseInvenTreeSetting(models.Model):
 
         return False
 
-    def as_int(self):
+    def as_int(self, raise_error: bool = False) -> int:
         """Return the value of this setting converted to a boolean value.
 
         If an error occurs, return the default value
@@ -1106,6 +1180,8 @@ class BaseInvenTreeSetting(models.Model):
         try:
             value = int(self.value)
         except (ValueError, TypeError):
+            if raise_error:
+                raise ValidationError('Provided value is not a valid integer')
             value = self.default_value
 
         return value
@@ -1142,7 +1218,9 @@ class InvenTreeSetting(BaseInvenTreeSetting):
     even if that key does not exist.
     """
 
-    SETTINGS: dict[str, InvenTreeSettingsKeyType]
+    from common.setting.system import SYSTEM_SETTINGS
+
+    SETTINGS: dict[str, InvenTreeSettingsKeyType] = SYSTEM_SETTINGS
 
     CHECK_SETTING_KEY = True
 
@@ -1157,10 +1235,41 @@ class InvenTreeSetting(BaseInvenTreeSetting):
 
         If so, set the "SERVER_RESTART_REQUIRED" setting to True
         """
+        overrides = global_setting_overrides()
+
+        # If an override is specified for this setting, use that value
+        if self.key in overrides:
+            self.value = overrides[self.key]
+
         super().save()
 
         if self.requires_restart() and not InvenTree.ready.isImportingData():
             InvenTreeSetting.set_setting('SERVER_RESTART_REQUIRED', True, None)
+
+    @classmethod
+    def get_setting_default(cls, key, **kwargs):
+        """Return the default value a particular setting."""
+        overrides = global_setting_overrides()
+
+        if key in overrides:
+            # If an override is specified for this setting, use that value
+            return overrides[key]
+
+        return super().get_setting_default(key, **kwargs)
+
+    @classmethod
+    def get_setting(cls, key, backup_value=None, **kwargs):
+        """Get the value of a particular setting.
+
+        If it does not exist, return the backup value (default = None)
+        """
+        overrides = global_setting_overrides()
+
+        if key in overrides:
+            # If an override is specified for this setting, use that value
+            return overrides[key]
+
+        return super().get_setting(key, backup_value=backup_value, **kwargs)
 
     """
     Dict of all global settings values:
@@ -1177,9 +1286,6 @@ class InvenTreeSetting(BaseInvenTreeSetting):
 
     The keys must be upper-case
     """
-    from common.setting.system import SYSTEM_SETTINGS
-
-    SETTINGS = SYSTEM_SETTINGS
 
     typ = 'inventree'
 
@@ -1205,6 +1311,8 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
 
     import common.setting.user
 
+    SETTINGS = common.setting.user.USER_SETTINGS
+
     CHECK_SETTING_KEY = True
 
     class Meta:
@@ -1215,8 +1323,6 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
         constraints = [
             models.UniqueConstraint(fields=['key', 'user'], name='unique key and user')
         ]
-
-    SETTINGS = common.setting.user.USER_SETTINGS
 
     typ = 'user'
     extra_unique_fields = ['user']
@@ -1415,8 +1521,8 @@ class WebhookEndpoint(models.Model):
             request (optional): Original request object. Defaults to None.
         """
         return WebhookMessage.objects.create(
-            host=request.get_host(),
-            header=json.dumps(dict(headers.items())),
+            host=request.get_host() if request else '',
+            header=json.dumps(dict(headers.items())) if headers else None,
             body=payload,
             endpoint=self,
         )
@@ -1810,6 +1916,8 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
     An attachment can be either an uploaded file, or an external URL.
 
     Attributes:
+        model_type: The type of model to which this attachment is linked
+        model_id: The ID of the model to which this attachment is linked
         attachment: The uploaded file
         url: An external URL
         comment: A comment or description for the attachment
@@ -1949,7 +2057,7 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
         if self.attachment:
             import InvenTree.helpers_model
 
-            media_url = InvenTree.helpers.getMediaUrl(self.attachment.url)
+            media_url = InvenTree.helpers.getMediaUrl(self.attachment)
             return InvenTree.helpers_model.construct_absolute_url(media_url)
 
         return ''
@@ -1965,7 +2073,7 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
         if not issubclass(model_class, InvenTreeAttachmentMixin):
             raise ValidationError(_('Invalid model type specified for attachment'))
 
-        return model_class.check_attachment_permission(permission, user)
+        return model_class.check_related_permission(permission, user)
 
 
 class InvenTreeCustomUserStateModel(models.Model):
@@ -2271,6 +2379,423 @@ class SelectionListEntry(models.Model):
         return self.label
 
 
+class ParameterTemplate(
+    InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
+):
+    """A ParameterTemplate provides a template for defining parameter values against various models.
+
+    This allow for assigning arbitrary data fields against existing models,
+    extending their functionality beyond the built-in fields.
+
+    Attributes:
+        name: The name (key) of the template
+        description: A description of the template
+        model_type: The type of model to which this template applies (e.g. 'part')
+        units: The units associated with the template (if applicable)
+        checkbox: Is this template a checkbox (boolean) type?
+        choices: Comma-separated list of choices (if applicable)
+        selectionlist: Optional link to a SelectionList for this template
+        enabled: Is this template enabled?
+    """
+
+    IMPORT_ID_FIELDS = ['name']
+
+    class Meta:
+        """Metaclass options for the ParameterTemplate model."""
+
+        verbose_name = _('Parameter Template')
+        verbose_name_plural = _('Parameter Templates')
+
+        # Note: Data was migrated from the existing 'part_partparametertemplate' table
+        # Ref: https://github.com/inventree/InvenTree/pull/10699
+        # To avoid data loss, we retain the existing table name
+        db_table = 'part_partparametertemplate'
+
+    class ModelChoices(RenderChoices):
+        """Model choices for parameters."""
+
+        choice_fnc = common.validators.parameter_template_model_options
+
+    @staticmethod
+    def get_api_url() -> str:
+        """Return the API URL associated with the ParameterTemplate model."""
+        return reverse('api-parameter-template-list')
+
+    def __str__(self):
+        """Return a string representation of a ParameterTemplate instance."""
+        s = str(self.name)
+        if self.units:
+            s += f' ({self.units})'
+        return s
+
+    def clean(self):
+        """Custom cleaning step for this model.
+
+        Checks:
+        - A 'checkbox' field cannot have 'choices' set
+        - A 'checkbox' field cannot have 'units' set
+        """
+        super().clean()
+
+        # Check that checkbox parameters do not have units or choices
+        if self.checkbox:
+            if self.units:
+                raise ValidationError({
+                    'units': _('Checkbox parameters cannot have units')
+                })
+
+            if self.choices:
+                raise ValidationError({
+                    'choices': _('Checkbox parameters cannot have choices')
+                })
+
+        # Check that 'choices' are in fact valid
+        if self.choices is None:
+            self.choices = ''
+        else:
+            self.choices = str(self.choices).strip()
+
+        if self.choices:
+            choice_set = set()
+
+            for choice in self.choices.split(','):
+                choice = choice.strip()
+
+                # Ignore empty choices
+                if not choice:
+                    continue
+
+                if choice in choice_set:
+                    raise ValidationError({'choices': _('Choices must be unique')})
+
+                choice_set.add(choice)
+
+    def validate_unique(self, exclude=None):
+        """Ensure that ParameterTemplates cannot be created with the same name.
+
+        This test should be case-insensitive (which the unique caveat does not cover).
+        """
+        super().validate_unique(exclude)
+
+        try:
+            others = ParameterTemplate.objects.filter(name__iexact=self.name).exclude(
+                pk=self.pk
+            )
+
+            if others.exists():
+                msg = _('Parameter template name must be unique')
+                raise ValidationError({'name': msg})
+        except ParameterTemplate.DoesNotExist:
+            pass
+
+    def get_choices(self):
+        """Return a list of choices for this parameter template."""
+        if self.selectionlist:
+            return self.selectionlist.get_choices()
+
+        if not self.choices:
+            return []
+
+        return [x.strip() for x in self.choices.split(',') if x.strip()]
+
+    # TODO: Reintroduce validator for model_type
+    model_type = models.ForeignKey(
+        ContentType,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name=_('Model type'),
+        help_text=_('Target model type for this parameter template'),
+    )
+
+    name = models.CharField(
+        max_length=100,
+        verbose_name=_('Name'),
+        help_text=_('Parameter Name'),
+        unique=True,
+    )
+
+    units = models.CharField(
+        max_length=25,
+        verbose_name=_('Units'),
+        help_text=_('Physical units for this parameter'),
+        blank=True,
+        validators=[InvenTree.validators.validate_physical_units],
+    )
+
+    description = models.CharField(
+        max_length=250,
+        verbose_name=_('Description'),
+        help_text=_('Parameter description'),
+        blank=True,
+    )
+
+    checkbox = models.BooleanField(
+        default=False,
+        verbose_name=_('Checkbox'),
+        help_text=_('Is this parameter a checkbox?'),
+    )
+
+    choices = models.CharField(
+        max_length=5000,
+        verbose_name=_('Choices'),
+        help_text=_('Valid choices for this parameter (comma-separated)'),
+        blank=True,
+    )
+
+    selectionlist = models.ForeignKey(
+        SelectionList,
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name='templates',
+        verbose_name=_('Selection List'),
+        help_text=_('Selection list for this parameter'),
+    )
+
+    enabled = models.BooleanField(
+        default=True,
+        verbose_name=_('Enabled'),
+        help_text=_('Is this parameter template enabled?'),
+    )
+
+
+@receiver(
+    post_save, sender=ParameterTemplate, dispatch_uid='post_save_parameter_template'
+)
+def post_save_parameter_template(sender, instance, created, **kwargs):
+    """Callback function when a ParameterTemplate is created or saved."""
+    import common.tasks
+
+    if InvenTree.ready.canAppAccessDatabase() and not InvenTree.ready.isImportingData():
+        if not created:
+            # Schedule a background task to rebuild the parameters against this template
+            InvenTree.tasks.offload_task(
+                common.tasks.rebuild_parameters,
+                instance.pk,
+                force_async=True,
+                group='part',
+            )
+
+
+class Parameter(
+    UpdatedUserMixin, InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
+):
+    """Class which represents a parameter value assigned to a particular model instance.
+
+    Attributes:
+        model_type: The type of model to which this parameter is linked
+        model_id: The ID of the model to which this parameter is linked
+        template: The ParameterTemplate which defines this parameter
+        data: The value of the parameter [string]
+        data_numeric: Numeric value of the parameter (if applicable) [float]
+        note: Optional note associated with this parameter [string]
+        updated: Date/time that this parameter was last updated
+        updated_by: User who last updated this parameter
+    """
+
+    class Meta:
+        """Meta options for Parameter model."""
+
+        verbose_name = _('Parameter')
+        verbose_name_plural = _('Parameters')
+        unique_together = [['model_type', 'model_id', 'template']]
+        indexes = [models.Index(fields=['model_type', 'model_id'])]
+
+        # Note: Data was migrated from the existing 'part_partparameter' table
+        # Ref: https://github.com/inventree/InvenTree/pull/10699
+        # To avoid data loss, we retain the existing table name
+        db_table = 'part_partparameter'
+
+    class ModelChoices(RenderChoices):
+        """Model choices for parameters."""
+
+        choice_fnc = common.validators.parameter_model_options
+
+    @staticmethod
+    def get_api_url() -> str:
+        """Return the API URL associated with the Parameter model."""
+        return reverse('api-parameter-list')
+
+    def save(self, *args, **kwargs):
+        """Custom save method for Parameter model.
+
+        - Update the numeric data field (if applicable)
+        """
+        self.calculate_numeric_value()
+
+        # Convert 'boolean' values to 'True' / 'False'
+        if self.template.checkbox:
+            self.data = InvenTree.helpers.str2bool(self.data)
+            self.data_numeric = 1 if self.data else 0
+
+        self.check_save()
+        super().save(*args, **kwargs)
+
+    def delete(self):
+        """Perform custom delete checks before deleting a Parameter instance."""
+        self.check_delete()
+        super().delete()
+
+    def clean(self):
+        """Validate the Parameter before saving to the database."""
+        super().clean()
+
+        # Validate the parameter data against the template choices
+        if choices := self.template.get_choices():
+            if self.data not in choices:
+                raise ValidationError({'data': _('Invalid choice for parameter value')})
+
+        self.calculate_numeric_value()
+
+        # TODO: Check that the model_type for this parameter matches the template
+
+        # Validate the parameter data against the template units
+        if (
+            get_global_setting(
+                'PARAMETER_ENFORCE_UNITS', True, cache=False, create=False
+            )
+            and self.template.units
+        ):
+            try:
+                InvenTree.conversion.convert_physical_value(
+                    self.data, self.template.units
+                )
+            except ValidationError as e:
+                raise ValidationError({'data': e.message})
+
+        # Finally, run custom validation checks (via plugins)
+        from plugin import PluginMixinEnum, registry
+
+        for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
+            # Note: The validate_parameter function may raise a ValidationError
+            try:
+                if hasattr(plugin, 'validate_parameter'):
+                    result = plugin.validate_parameter(self, self.data)
+                    if result:
+                        break
+            except ValidationError as exc:
+                # Re-throw the ValidationError against the 'data' field
+                raise ValidationError({'data': exc.message})
+            except Exception:
+                InvenTree.exceptions.log_error('validate_parameter', plugin=plugin.slug)
+
+    def calculate_numeric_value(self):
+        """Calculate a numeric value for the parameter data.
+
+        - If a 'units' field is provided, then the data will be converted to the base SI unit.
+        - Otherwise, we'll try to do a simple float cast
+        """
+        if self.template.units:
+            try:
+                self.data_numeric = InvenTree.conversion.convert_physical_value(
+                    self.data, self.template.units
+                )
+            except (ValidationError, ValueError):
+                self.data_numeric = None
+
+        # No units provided, so try to cast to a float
+        else:
+            try:
+                self.data_numeric = float(self.data)
+            except ValueError:
+                self.data_numeric = None
+
+        if self.data_numeric is not None and type(self.data_numeric) is float:
+            # Prevent out of range numbers, etc
+            # Ref: https://github.com/inventree/InvenTree/issues/7593
+            if math.isnan(self.data_numeric) or math.isinf(self.data_numeric):
+                self.data_numeric = None
+
+    def check_permission(self, permission, user):
+        """Check if the user has the required permission for this parameter."""
+        from InvenTree.models import InvenTreeParameterMixin
+
+        model_class = self.model_type.model_class()
+
+        if not issubclass(model_class, InvenTreeParameterMixin):
+            raise ValidationError(_('Invalid model type specified for parameter'))
+
+        return model_class.check_related_permission(permission, user)
+
+    def check_save(self):
+        """Check if this parameter can be saved.
+
+        The linked content_object can implement custom checks by overriding
+        the 'check_parameter_edit' method.
+        """
+        from InvenTree.models import InvenTreeParameterMixin
+
+        try:
+            instance = self.content_object
+        except InvenTree.models.InvenTreeModel.DoesNotExist:
+            return
+
+        if instance and isinstance(instance, InvenTreeParameterMixin):
+            instance.check_parameter_save(self)
+
+    def check_delete(self):
+        """Check if this parameter can be deleted."""
+        from InvenTree.models import InvenTreeParameterMixin
+
+        try:
+            instance = self.content_object
+        except InvenTree.models.InvenTreeModel.DoesNotExist:
+            return
+
+        if instance and isinstance(instance, InvenTreeParameterMixin):
+            instance.check_parameter_delete(self)
+
+    # TODO: Reintroduce validator for model_type
+    model_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+
+    model_id = models.PositiveIntegerField(
+        verbose_name=_('Model ID'),
+        help_text=_('ID of the target model for this parameter'),
+    )
+
+    content_object = GenericForeignKey('model_type', 'model_id')
+
+    template = models.ForeignKey(
+        ParameterTemplate,
+        on_delete=models.CASCADE,
+        related_name='parameters',
+        verbose_name=_('Template'),
+        help_text=_('Parameter template'),
+    )
+
+    data = models.CharField(
+        max_length=500,
+        verbose_name=_('Data'),
+        help_text=_('Parameter Value'),
+        validators=[MinLengthValidator(1)],
+    )
+
+    data_numeric = models.FloatField(default=None, null=True, blank=True)
+
+    note = models.CharField(
+        max_length=500,
+        blank=True,
+        verbose_name=_('Note'),
+        help_text=_('Optional note field'),
+    )
+
+    @property
+    def units(self):
+        """Return the units associated with the template."""
+        return self.template.units
+
+    @property
+    def name(self):
+        """Return the name of the template."""
+        return self.template.name
+
+    @property
+    def description(self):
+        """Return the description of the template."""
+        return self.template.description
+
+
 class BarcodeScanResult(InvenTree.models.InvenTreeModel):
     """Model for storing barcode scans results."""
 
@@ -2354,12 +2879,8 @@ class DataOutput(models.Model):
         errors: JSON field for storing any errors generated during the data output generation process
     """
 
-    class DataOutputTypes(str, enum.Enum):
+    class DataOutputTypes(StringEnum):
         """Enum for data output types."""
-
-        def __str__(self):
-            """Return the string representation of the data output type."""
-            return str(self.value)
 
         LABEL = 'label'
         REPORT = 'report'
@@ -2386,3 +2907,416 @@ class DataOutput(models.Model):
     output = models.FileField(upload_to='data_output', blank=True, null=True)
 
     errors = models.JSONField(blank=True, null=True)
+
+    def mark_complete(self, progress: int = 100, output: Optional[ContentFile] = None):
+        """Mark the data output generation process as complete.
+
+        Arguments:
+            progress (int, optional): Progress percentage of the data output generation. Defaults to 100.
+            output (ContentFile, optional): The generated output file. Defaults to None.
+        """
+        self.complete = True
+        self.progress = progress
+        self.output = output
+        self.save()
+
+    def mark_failure(
+        self, error: Optional[str] = None, error_dict: Optional[dict] = None
+    ):
+        """Log an error message to the errors field.
+
+        Arguments:
+            error (str, optional): Error message to log. Defaults to None.
+            error_dict (dict): Dictionary containing error messages. Defaults to None.
+        """
+        self.complete = False
+        self.output = None
+
+        if error_dict is not None:
+            self.errors = error_dict
+        elif error is not None:
+            self.errors = {'error': str(error)}
+        else:
+            self.errors = {'error': str(_('An error occurred'))}
+
+        self.save()
+
+
+# region Email
+class Priority(models.IntegerChoices):
+    """Enumeration for defining email priority levels."""
+
+    NONE = 0
+    VERY_HIGH = 1
+    HIGH = 2
+    NORMAL = 3
+    LOW = 4
+    VERY_LOW = 5
+
+
+HEADER_PRIORITY = 'X-Priority'
+HEADER_MSG_ID = 'Message-ID'
+
+del_error_msg = _(
+    'INVE-E8: Email log deletion is protected. Set INVENTREE_PROTECT_EMAIL_LOG to False to allow deletion.'
+)
+
+
+class NoDeleteQuerySet(models.query.QuerySet):
+    """Custom QuerySet to prevent deletion of EmailLog entries."""
+
+    def delete(self):
+        """Override delete method to prevent deletion of EmailLog entries."""
+        if get_global_setting('INVENTREE_PROTECT_EMAIL_LOG'):
+            raise ValidationError(del_error_msg)
+        super().delete()
+
+
+class NoDeleteManager(models.Manager):
+    """Custom Manager to use NoDeleteQuerySet."""
+
+    def get_queryset(self):
+        """Return a NoDeleteQuerySet."""
+        return NoDeleteQuerySet(self.model, using=self._db)
+
+
+class EmailMessage(models.Model):
+    """Model for storing email messages sent or received by the system.
+
+    Attributes:
+        global_id: Unique identifier for the email message
+        message_id_key: Identifier for the email message - might be supplied by external system
+        thread_id_key: Identifier of thread - might be supplied by external system
+        subject: Subject of the email message
+        body: Body of the email message
+        to: Recipient of the email message
+        sender: Sender of the email message
+        status: Status of the email message (e.g. 'sent', 'failed', etc)
+        timestamp: Date and time that the email message left the system or was received by the system
+        headers: Headers of the email message
+        full_message: Full email message content
+        direction: Direction of the email message (e.g. 'inbound', 'outbound')
+        error_code: Error code (if applicable)
+        error_message: Error message (if applicable)
+        error_timestamp: Date and time of the error (if applicable)
+        delivery_options: Delivery options for the email message
+    """
+
+    class Meta:
+        """Meta options for EmailMessage."""
+
+        verbose_name = _('Email Message')
+        verbose_name_plural = _('Email Messages')
+
+    class EmailStatus(models.TextChoices):
+        """Machine setting config type enum."""
+
+        ANNOUNCED = (
+            'A',
+            _('Announced'),
+        )  # Intend to send mail was announced (saved in system, pushed to queue)
+        SENT = 'S', _('Sent')  # Mail was sent to the email server
+        FAILED = 'F', _('Failed')  # There was en error sending the email
+        DELIVERED = (
+            'D',
+            _('Delivered'),
+        )  # Mail was delivered to the recipient - this means we got some kind of feedback from the email server or user
+        READ = (
+            'R',
+            _('Read'),
+        )  # Mail was read by the recipient - this means we got some kind of feedback from the user
+        CONFIRMED = (
+            'C',
+            _('Confirmed'),
+        )  # Mail delivery was confirmed by the recipient explicitly
+
+    class EmailDirection(models.TextChoices):
+        """Email direction enum."""
+
+        INBOUND = 'I', _('Inbound')
+        OUTBOUND = 'O', _('Outbound')
+
+    class DeliveryOptions(models.TextChoices):
+        """Email delivery options enum."""
+
+        NO_REPLY = 'no_reply', _('No Reply')
+        TRACK_DELIVERY = 'track_delivery', _('Track Delivery')
+        TRACK_READ = 'track_read', _('Track Read')
+        TRACK_CLICK = 'track_click', _('Track Click')
+
+    global_id = models.UUIDField(
+        verbose_name=_('Global ID'),
+        help_text=_('Unique identifier for this message'),
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+        unique=True,
+    )
+    message_id_key = models.CharField(
+        max_length=250,
+        blank=True,
+        null=True,
+        verbose_name=_('Message ID'),
+        help_text=_(
+            'Identifier for this message (might be supplied by external system)'
+        ),
+    )
+    thread_id_key = models.CharField(
+        max_length=250,
+        blank=True,
+        null=True,
+        verbose_name=_('Thread ID'),
+        help_text=_(
+            'Identifier for this message thread (might be supplied by external system)'
+        ),
+    )
+    thread = models.ForeignKey(
+        'EmailThread',
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name='messages',
+        verbose_name=_('Thread'),
+        help_text=_('Linked thread for this message'),
+    )
+    subject = models.CharField(max_length=250, blank=False, null=False)
+    body = models.TextField(blank=False, null=False)
+    to = models.EmailField(blank=False, null=False)
+    sender = models.EmailField(blank=False, null=False)
+    status = models.CharField(
+        max_length=50, blank=True, null=True, choices=EmailStatus.choices
+    )
+    timestamp = models.DateTimeField(auto_now_add=True, editable=False)
+    headers = models.JSONField(blank=True, null=True)
+    # Additional info
+    full_message = models.TextField(blank=True, null=True)
+    direction = models.CharField(
+        max_length=50, blank=True, null=True, choices=EmailDirection.choices
+    )
+    priority = models.IntegerField(verbose_name=_('Priority'), choices=Priority)
+    delivery_options = models.JSONField(
+        blank=True,
+        null=True,
+        # choices=DeliveryOptions.choices
+    )
+    # Optional tracking of delivery
+    error_code = models.CharField(max_length=50, blank=True, null=True)
+    error_message = models.TextField(blank=True, null=True)
+    error_timestamp = models.DateTimeField(blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        """Ensure threads exist before saving the email message."""
+        ret = super().save(*args, **kwargs)
+
+        # Ensure thread is linked
+        if not self.thread:
+            thread, created = EmailThread.objects.get_or_create(
+                key=self.thread_id_key, started_internal=True
+            )
+            self.thread = thread
+            if created and not self.thread_id_key:
+                self.thread_id_key = thread.global_id
+            self.save()
+
+        return ret
+
+    objects = NoDeleteManager()
+
+    def delete(self, *kwargs):
+        """Delete entry - if not protected."""
+        if get_global_setting('INVENTREE_PROTECT_EMAIL_LOG'):
+            raise ValidationError(del_error_msg)
+        return super().delete(*kwargs)
+
+
+class EmailThread(InvenTree.models.InvenTreeMetadataModel):
+    """Model for storing email threads."""
+
+    class Meta:
+        """Meta options for EmailThread."""
+
+        verbose_name = _('Email Thread')
+        verbose_name_plural = _('Email Threads')
+        unique_together = [['key', 'global_id']]
+        ordering = ['-updated']
+
+    key = models.CharField(
+        max_length=250,
+        verbose_name=_('Key'),
+        null=True,
+        blank=True,
+        help_text=_('Unique key for this thread (used to identify the thread)'),
+    )
+    global_id = models.UUIDField(
+        verbose_name=_('Global ID'),
+        help_text=_('Unique identifier for this thread'),
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+    started_internal = models.BooleanField(
+        default=False,
+        verbose_name=_('Started Internal'),
+        help_text=_('Was this thread started internally?'),
+    )
+    created = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_('Created'),
+        help_text=_('Date and time that the thread was created'),
+    )
+    updated = models.DateTimeField(
+        auto_now=True,
+        verbose_name=_('Updated'),
+        help_text=_('Date and time that the thread was last updated'),
+    )
+
+
+def issue_mail(
+    subject: str,
+    body: str,
+    from_email: str,
+    recipients: str | list,
+    fail_silently: bool = False,
+    html_message=None,
+    prio: Priority = Priority.NORMAL,
+    headers: Optional[dict] = None,
+):
+    """Send an email with the specified subject and body, to the specified recipients list.
+
+    Mostly used by tasks.
+    """
+    connection = get_connection(fail_silently=fail_silently)
+
+    message = EmailMultiAlternatives(
+        subject, body, from_email, recipients, connection=connection
+    )
+    if html_message:
+        message.attach_alternative(html_message, 'text/html')
+
+    # Add any extra headers
+    if headers is not None:
+        for key, value in headers.items():
+            message.extra_headers[key] = value
+
+    # Stabilize the message ID before creating the object
+    if HEADER_MSG_ID not in message.extra_headers:
+        message.extra_headers[HEADER_MSG_ID] = make_msgid(domain=DNS_NAME)
+
+    # TODO add `References` field for the thread ID
+
+    # Add headers for flags
+    message.extra_headers[HEADER_PRIORITY] = str(prio)
+
+    # And now send
+    return message.send()
+
+
+def log_email_messages(email_messages) -> list[EmailMessage]:
+    """Log email messages to the database.
+
+    Args:
+        email_messages (list): List of email messages to log.
+    """
+    instance_id = inventree_identifier(True)
+
+    msg_ids = []
+    for msg in email_messages:
+        try:
+            new_obj = EmailMessage.objects.create(
+                message_id_key=msg.extra_headers.get(HEADER_MSG_ID),
+                subject=msg.subject,
+                body=msg.body,
+                to=msg.to,
+                sender=msg.from_email,
+                status=EmailMessage.EmailStatus.ANNOUNCED,
+                direction=EmailMessage.EmailDirection.OUTBOUND,
+                priority=msg.extra_headers.get(HEADER_PRIORITY, '3'),
+                headers=msg.extra_headers,
+                full_message=msg,
+            )
+            msg_ids.append(new_obj)
+
+            # Add InvenTree specific headers to the message to help with identification if we see mails again
+            msg.extra_headers['X-InvenTree-MsgId-1'] = str(new_obj.global_id)
+            msg.extra_headers['X-InvenTree-ThreadId-1'] = str(new_obj.thread.global_id)
+            msg.extra_headers['X-InvenTree-Instance-1'] = str(instance_id)
+        except Exception as exc:  # pragma: no cover
+            logger.error(f' INVE-W10: Failed to log email message: {exc}')
+    return msg_ids
+
+
+@receiver(inbound)
+def handle_inbound(sender, event, esp_name, **kwargs):
+    """Handle inbound email messages from anymail."""
+    message = event.message
+
+    r_to = message.envelope_recipient or [a.addr_spec for a in message.to]
+    r_sender = message.envelope_sender or message.from_email.addr_spec
+
+    msg = EmailMessage.objects.create(
+        message_id_key=event.message[HEADER_MSG_ID],
+        subject=message.subject,
+        body=message.text,
+        to=r_to,
+        sender=r_sender,
+        status=EmailMessage.EmailStatus.READ,
+        direction=EmailMessage.EmailDirection.INBOUND,
+        priority=Priority.NONE,
+        timestamp=message.date,
+        headers=message._headers,
+        full_message=message.html,
+    )
+
+    # Schedule a task to process the email message
+    from plugin.base.mail.mail import process_mail_in
+
+    InvenTree.tasks.offload_task(process_mail_in, mail_id=msg.pk, group='mail')
+
+
+@receiver(tracking)
+def handle_event(sender, event, esp_name, **kwargs):
+    """Handle tracking events from anymail."""
+    try:
+        email = EmailMessage.objects.get(message_id_key=event.message_id)
+
+        if event.event_type == 'delivered':
+            email.status = EmailMessage.EmailStatus.DELIVERED
+        elif event.event_type == 'opened':
+            email.status = EmailMessage.EmailStatus.READ
+        elif event.event_type == 'clicked':
+            email.status = EmailMessage.EmailStatus.CONFIRMED
+        elif event.event_type == 'sent':
+            email.status = EmailMessage.EmailStatus.SENT
+        elif event.event_type == 'unknown':
+            email.error_message = event.esp_event
+        else:
+            if event.event_type in ('queued', 'deferred'):
+                # We ignore these
+                return True
+            else:
+                email.status = EmailMessage.EmailStatus.FAILED
+                email.error_code = event.event_type
+                email.error_message = event.esp_event
+                email.error_timestamp = event.timestamp
+        email.save()
+        return True
+    except EmailMessage.DoesNotExist:
+        return False
+    except Exception as exc:  # pragma: no cover
+        logger.error(f' INVE-W10: Failed to handle tracking event: {exc}')
+        return False
+
+
+# endregion Email
+
+# region tracing for django q
+if TRACE_PROC:  # pragma: no cover
+
+    @receiver(post_spawn)
+    def spawn_callback(sender, proc_name, **kwargs):
+        """Callback to patch in tracing support."""
+        TRACE_PROV.add_span_processor(TRACE_PROC)
+        trace.set_tracer_provider(TRACE_PROV)
+        trace.get_tracer(__name__)
+
+# endregion

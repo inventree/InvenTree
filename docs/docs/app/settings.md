@@ -17,18 +17,13 @@ The main settings view is shown below, and provides the following options:
 | [Part](#part-settings) | Configure part management options |
 | About | Display app version information |
 
-
-{% with id="settings_view", url="app/settings.png", maxheight="240px", description="Settings view" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("app/settings.png", "Settings view") }}
 
 ## App Settings
 
 The *App Settings* view provides configuration options for the InvenTree app:
 
-{% with id="app_settings", url="app/app_settings.png", maxheight="240px", description="App Settings" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("app/app_settings.png", "App settings") }}
 
 ### App Settings
 
@@ -57,9 +52,7 @@ Configure audible app notifications:
 
 The *Barcode Settings* view allows you to configure options relating to [barcode scanning](./barcode.md):
 
-{% with id="barcode_settings", url="app/barcode_settings.png", maxheight="240px", description="Barcode Settings" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("app/barcode_settings.png", "Barcode settings") }}
 
 | Option | Description |
 | --- | --- |
@@ -70,9 +63,7 @@ The *Barcode Settings* view allows you to configure options relating to [barcode
 
 The *Home Screen* view allows you to configure display options for the app 'home screen':
 
-{% with id="home_settings", url="app/home_settings.png", maxheight="240px", description="Home Screen Settings" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("app/home_settings.png", "Home screen settings") }}
 
 | Option | Description |
 | --- | --- |

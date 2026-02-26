@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load inventree_extras %}
+
+{% block page_title %}
+{% inventree_title %} | {% trans "Configuration Error" %}
+{% endblock page_title %}
+
+{% block content %}
+<h3>{% trans "Configuration Error" %}</h3>
+<p>{% blocktrans %}The {{ inventree_title }} server raised a configuration error{% endblocktrans %}</p>
+<p>{{ error_message }}</p>
+{% endblock content %}

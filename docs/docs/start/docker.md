@@ -141,3 +141,9 @@ When configuring a docker install, sometimes a misconfiguration can cause peculi
 If you have previously setup InvenTree, remove existing volume bindings using the following command:
 
 ```docker volume rm -f inventree-production_inventree_data```
+
+## Docker Compose Customization
+
+We provide a default `docker-compose.yml` file, which can be used to run InvenTree in production mode. This should be sufficient for most users.
+
+If you wish to customize the docker compose setup, you can do so by modifying the `docker-compose.yml` file. However, please note that we cannot provide support for custom docker compose configurations. If you choose to customize the setup, you are responsible for ensuring that it works correctly!

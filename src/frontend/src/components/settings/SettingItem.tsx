@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import {
   Button,
   Group,
@@ -6,10 +7,11 @@ import {
   Stack,
   Switch,
   Text,
+  Tooltip,
   useMantineColorScheme
 } from '@mantine/core';
 import { IconEdit } from '@tabler/icons-react';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import { ModelType } from '@lib/enums/ModelType';
@@ -20,6 +22,24 @@ import { vars } from '../../theme';
 import { Boundary } from '../Boundary';
 import { RenderInstance } from '../render/Instance';
 
+type ConfirmResult = {
+  requires_confirmation: boolean;
+  confirmed: boolean;
+  proceed?: boolean;
+};
+function confirmSettingChange(setting: Setting): ConfirmResult {
+  if (setting.confirm) {
+    const confirmed = window.confirm(
+      setting.confirm_text || t`Do you want to proceed to change this setting?`
+    );
+    return {
+      requires_confirmation: true,
+      confirmed: confirmed || false,
+      proceed: confirmed
+    };
+  }
+  return { requires_confirmation: false, confirmed: false, proceed: true };
+}
 /**
  * Render a single setting value
  */
@@ -29,8 +49,8 @@ function SettingValue({
   onToggle
 }: Readonly<{
   setting: Setting;
-  onEdit: (setting: Setting) => void;
-  onToggle: (setting: Setting, value: boolean) => void;
+  onEdit: (setting: Setting, confirmed: boolean) => void;
+  onToggle: (setting: Setting, value: boolean, confirmed: boolean) => void;
 }>) {
   // Determine the text to display for the setting value
   const valueText: string = useMemo(() => {
@@ -50,6 +70,27 @@ function SettingValue({
   }, [setting]);
 
   const [modelInstance, setModelInstance] = useState<any>(null);
+
+  // Launch the edit dialog for this setting
+  const editSetting = useCallback(() => {
+    if (!setting.read_only) {
+      const confirm = confirmSettingChange(setting);
+      if (!confirm.proceed) return;
+      onEdit(setting, confirm.confirmed);
+    }
+  }, [setting, onEdit]);
+
+  // Toggle the setting value (if it is a boolean)
+  const toggleSetting = useCallback(
+    (event: any) => {
+      if (!setting.read_only) {
+        const confirm = confirmSettingChange(setting);
+        if (!confirm.proceed) return;
+        onToggle(setting, event.currentTarget.checked, confirm.confirmed);
+      }
+    },
+    [setting, onToggle]
+  );
 
   // Does this setting map to an internal database model?
   const modelType: ModelType | null = useMemo(() => {
@@ -89,7 +130,8 @@ function SettingValue({
         <Button
           aria-label={`edit-setting-${setting.key}`}
           variant='subtle'
-          onClick={() => onEdit(setting)}
+          disabled={setting.read_only}
+          onClick={editSetting}
         >
           <IconEdit />
         </Button>
@@ -104,8 +146,12 @@ function SettingValue({
           size='sm'
           radius='lg'
           aria-label={`toggle-setting-${setting.key}`}
-          checked={setting.value.toLowerCase() == 'true'}
-          onChange={(event) => onToggle(setting, event.currentTarget.checked)}
+          disabled={setting.read_only}
+          checked={setting.value.toString().toLowerCase() == 'true'}
+          onChange={toggleSetting}
+          wrapperProps={{
+            'aria-label': `setting-${setting.key}-wrapper`
+          }}
           style={{
             paddingRight: '20px'
           }}
@@ -118,7 +164,8 @@ function SettingValue({
           <Button
             aria-label={`edit-setting-${setting.key}`}
             variant='subtle'
-            onClick={() => onEdit(setting)}
+            disabled={setting.read_only}
+            onClick={editSetting}
           >
             {valueText}
           </Button>
@@ -127,7 +174,8 @@ function SettingValue({
         <Button
           aria-label={`edit-setting-${setting.key}`}
           variant='subtle'
-          onClick={() => onEdit(setting)}
+          disabled={setting.read_only}
+          onClick={editSetting}
         >
           <IconEdit />
         </Button>
@@ -146,8 +194,8 @@ export function SettingItem({
 }: Readonly<{
   setting: Setting;
   shaded: boolean;
-  onEdit: (setting: Setting) => void;
-  onToggle: (setting: Setting, value: boolean) => void;
+  onEdit: (setting: Setting, confirmed: boolean) => void;
+  onToggle: (setting: Setting, value: boolean, confirmed: boolean) => void;
 }>) {
   const { colorScheme } = useMantineColorScheme();
 
@@ -168,7 +216,18 @@ export function SettingItem({
           <Text size='xs'>{setting.description}</Text>
         </Stack>
         <Boundary label={`setting-value-${setting.key}`}>
-          <SettingValue setting={setting} onEdit={onEdit} onToggle={onToggle} />
+          <Group gap='xs' justify='right'>
+            {setting.confirm && (
+              <Tooltip label={t`This setting requires confirmation`}>
+                <IconEdit color={vars.colors.yellow[7]} size={16} />
+              </Tooltip>
+            )}
+            <SettingValue
+              setting={setting}
+              onEdit={onEdit}
+              onToggle={onToggle}
+            />
+          </Group>
         </Boundary>
       </Group>
     </Paper>

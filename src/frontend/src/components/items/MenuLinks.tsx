@@ -8,7 +8,7 @@ import {
   Tooltip,
   UnstyledButton
 } from '@mantine/core';
-import { useMemo } from 'react';
+import { type JSX, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { navigateToLink } from '@lib/functions/Navigation';

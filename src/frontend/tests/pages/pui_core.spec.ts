@@ -15,7 +15,7 @@ test('Core User/Group/Contact', async ({ browser }) => {
 
   // users
   await loadTab(page, 'Users');
-  await page.getByRole('cell', { name: 'admin' }).click();
+  await page.getByRole('cell', { name: 'admin', exact: true }).click();
   await page.getByText('User: admin', { exact: true }).waitFor();
   await page.getByLabel('User Details').waitFor();
   await page.getByLabel('breadcrumb-1-users').click();

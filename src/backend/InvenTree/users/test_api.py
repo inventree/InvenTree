@@ -42,6 +42,24 @@ class UserAPITests(InvenTreeAPITestCase):
             fields['is_staff']['help_text'], 'Does this user have staff permissions'
         )
 
+    def test_api_url(self):
+        """Test the 'api_url attribute in related API endpoints.
+
+        Ref: https://github.com/inventree/InvenTree/pull/10182
+        """
+        self.user.is_superuser = True
+        self.user.save()
+
+        url = reverse('api-build-list')
+        response = self.options(url)
+        actions = response.data['actions']['POST']
+        issued_by = actions['issued_by']
+
+        self.assertEqual(issued_by['pk_field'], 'pk')
+        self.assertEqual(issued_by['model'], 'user')
+        self.assertEqual(issued_by['api_url'], reverse('api-user-list'))
+        self.assertEqual(issued_by['default'], self.user.pk)
+
     def test_user_api(self):
         """Tests for User API endpoints."""
         url = reverse('api-user-list')
@@ -113,6 +131,8 @@ class UserAPITests(InvenTreeAPITestCase):
     def test_user_detail(self):
         """Test the UserDetail API endpoint."""
         user = User.objects.first()
+        assert user
+
         url = reverse('api-user-detail', kwargs={'pk': user.pk})
 
         user.is_staff = False
@@ -209,6 +229,32 @@ class UserAPITests(InvenTreeAPITestCase):
         self.assertEqual(len(data['permissions']), len(perms) + len(build_perms))
 
 
+class SuperuserAPITests(InvenTreeAPITestCase):
+    """Tests for user API endpoints that require superuser rights."""
+
+    fixtures = ['users']
+    superuser = True
+
+    def test_user_password_set(self):
+        """Test the set-password/ endpoint."""
+        user = User.objects.get(pk=2)
+        url = reverse('api-user-set-password', kwargs={'pk': user.pk})
+
+        # to simple password
+        resp = self.put(url, {'password': 1}, expected_code=400)
+        self.assertContains(resp, 'This password is too short', status_code=400)
+
+        # now with overwerite
+        resp = self.put(
+            url, {'password': 1, 'override_warning': True}, expected_code=200
+        )
+        self.assertEqual(resp.data, {})
+
+        # complex enough pwd
+        resp = self.put(url, {'password': 'inventree'}, expected_code=200)
+        self.assertEqual(resp.data, {})
+
+
 class UserTokenTests(InvenTreeAPITestCase):
     """Tests for user token functionality."""
 
@@ -230,6 +276,7 @@ class UserTokenTests(InvenTreeAPITestCase):
 
         # If we re-generate a token, the value changes
         token = ApiToken.objects.filter(name='cat').first()
+        assert token
 
         # Request the token with the same name
         data = self.get(url, data={'name': 'cat'}, expected_code=200).data
@@ -287,6 +334,7 @@ class UserTokenTests(InvenTreeAPITestCase):
 
         # Grab the token, and update
         token = ApiToken.objects.first()
+        assert token
         self.assertEqual(token.key, token_key)
         self.assertIsNotNone(token.last_seen)
 
@@ -347,3 +395,25 @@ class UserTokenTests(InvenTreeAPITestCase):
         # Get token without auth (should fail)
         self.client.logout()
         self.get(reverse('api-token'), expected_code=401)
+
+
+class GroupDetialTests(InvenTreeAPITestCase):
+    """Tests for the GroupDetail API endpoint."""
+
+    fixtures = ['users']
+
+    def test_group_list(self):
+        """Test the GroupDetail API endpoint."""
+        url = reverse('api-group-detail', kwargs={'pk': 1})
+
+        response = self.get(url, {'user_detail': 'true'}, expected_code=200)
+        self.assertIn('users', response.data)
+
+        response = self.get(url, {'role_detail': 'true'}, expected_code=200)
+        self.assertIn('roles', response.data)
+
+        response = self.get(url, {'permission_detail': 'true'}, expected_code=200)
+        self.assertIn('permissions', response.data)
+
+        response = self.get(url, {'permission_detail': 'false'}, expected_code=200)
+        self.assertNotIn('permissions', response.data)

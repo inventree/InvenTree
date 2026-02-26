@@ -79,7 +79,7 @@ def get_icon_packs():
             try:
                 icon_packs.extend(plugin.icon_packs())
             except Exception as e:
-                log_error('get_icon_packs')
+                log_error('get_icon_packs', plugin=plugin.slug)
                 logger.warning('Error loading icon pack from plugin %s: %s', plugin, e)
 
         _icon_packs = {pack.prefix: pack for pack in icon_packs}

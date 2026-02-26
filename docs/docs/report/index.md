@@ -57,9 +57,7 @@ Report and label templates can be created (and edited) via the [admin interface]
 
 Select the type of template you are wanting to create (a *Report Template* or *Label Template*) and press the *Add* button in the top right corner:
 
-{% with id="report-list", url="report/report_template_admin.png", description="Report templates in admin interface" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("report/report_template_admin.png", "Report template admin") }}
 
 !!! tip "Staff Access Only"
     Only users with staff access can upload or edit report template files.
@@ -84,9 +82,7 @@ The filename pattern used to generate the output `.pdf` file. Defaults to "repor
 
 The filename pattern allows custom rendering with any context variables which are available to the report. For example, a test report for a particular [Stock Item](../stock/index.md#stock-item) can use the part name and serial number of the stock item when generating the report name:
 
-{% with id="report-filename-pattern", url="report/filename_pattern.png", description="Report filename pattern" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("report/filename_pattern.png", "Report filename pattern") }}
 
 
 ### Template Filters
@@ -95,18 +91,28 @@ Each template instance provides a *filters* field, which can be used to filter w
 
 As an example, let's say that a certain `StockItem` report should only be generated for "trackable" stock items. A filter could easily be constructed to accommodate this, by limiting available items to those where the associated [Part](../part/index.md) is *trackable*:
 
-{% with id="report-filter-valid", url="report/filters_valid.png", description="Report filter  selection" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("report/filters_valid.png", "Report filter selection") }}
 
 If you enter an invalid option for the filter field, an error message will be displayed:
 
-{% with id="report-filter-invalid", url="report/filters_invalid.png", description="Invalid filter selection" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("report/filters_invalid.png", "Report filter error") }}
 
 !!! warning "Advanced Users"
     Report filtering is an advanced topic, and requires a little bit of knowledge of the underlying data structure!
+
+#### List Filtering
+
+To filter a queryset against a list of ID values, you can use the following "list" syntax:
+
+```
+item__in=[1,2,3]
+```
+
+Note that:
+
+- The list must be enclosed in square brackets `[]`
+- The items in the list must be comma-separated
+- The key must end with `__in` to indicate that it is a list filter (*note the double underscore*).
 
 ### Metadata
 
@@ -116,9 +122,7 @@ A JSON field made available to any [plugins](../plugins/index.md) - but not used
 
 A number of global reporting options are available for customizing InvenTree reports:
 
-{% with id="report-options", url="report/report.png", description="Report Options" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("report/report.png", "Report options") }}
 
 ### Enable Reports
 
@@ -194,7 +198,7 @@ Snippets are included in a template as follows:
 {% raw %}{% include 'snippets/<snippet_name.html>' %}{% endraw %}
 ```
 
-For example, consider a stocktake report for a particular stock location, where we wish to render a table with a row for each item in that location.
+For example, consider a custom stocktake report for a particular stock location, where we wish to render a table with a row for each item in that location.
 
 ```html
 {% raw %}

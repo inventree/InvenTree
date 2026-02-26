@@ -1,6 +1,6 @@
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
-import { UserRoles } from '@lib/index';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
 import { Table } from '@mantine/core';
@@ -16,25 +16,32 @@ import { useUserState } from '../states/UserState';
 /**
  * Field set for BomItem form
  */
-export function bomItemFields(): ApiFormFieldSet {
+export function bomItemFields({
+  showAssembly = false
+}: {
+  showAssembly?: boolean;
+}): ApiFormFieldSet {
   return {
     part: {
-      hidden: true
+      disabled: true,
+      hidden: !showAssembly
     },
     sub_part: {
       filters: {
-        component: true,
-        virtual: false
+        active: true, // Only show active parts when creating a new BOM item
+        component: true
       }
     },
     quantity: {},
     reference: {},
-    overage: {},
-    note: {},
+    setup_quantity: {},
+    attrition: {},
+    rounding_multiple: {},
     allow_variants: {},
     inherited: {},
     consumable: {},
-    optional: {}
+    optional: {},
+    note: {}
   };
 }
 
@@ -77,7 +84,7 @@ function BomItemSubstituteRow({
 
 type BomItemSubstituteFormProps = {
   bomItemId: number;
-  substitutes: any[];
+  bomItem: any;
   onClose?: () => void;
 };
 
@@ -88,8 +95,8 @@ export function useEditBomSubstitutesForm(props: BomItemSubstituteFormProps) {
   const [substitutes, setSubstitutes] = useState<any[]>([]);
 
   useEffect(() => {
-    setSubstitutes(props.substitutes);
-  }, [props.substitutes]);
+    setSubstitutes(props.bomItem?.substitutes ?? []);
+  }, [props.bomItem.substitutes]);
 
   const formFields: ApiFormFieldSet = useMemo(() => {
     return {

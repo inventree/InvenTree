@@ -2,10 +2,10 @@
 
 from django.test import TestCase
 
-from plugin import InvenTreePlugin, registry
+from plugin import InvenTreePlugin
 from plugin.helpers import MixinImplementationError
 from plugin.mixins import ScheduleMixin
-from plugin.registry import call_plugin_function
+from plugin.registry import call_plugin_function, registry
 
 
 class ExampleScheduledTaskPluginTests(TestCase):
@@ -42,9 +42,19 @@ class ExampleScheduledTaskPluginTests(TestCase):
         # test updating the schedule
         hello_schedule = Schedule.objects.get(name='plugin.schedule.hello')
         self.assertEqual(hello_schedule.minutes, 45)
-        # change the schedule and reregister
+        # change the schedule and reregister -> the interval should be preserved
         plg.scheduled_tasks['hello']['minutes'] = 15
+        # add a doubly scheduled task - this should be removed
+        Schedule.objects.create(name='plugin.schedule.hello')
+        self.assertEqual(
+            Schedule.objects.filter(name='plugin.schedule.hello').count(), 2
+        )
+
         plg.register_tasks()
+        # The duplicate task should be removed
+        self.assertEqual(
+            Schedule.objects.filter(name='plugin.schedule.hello').count(), 1
+        )
 
         # Check that the schedule was updated
         hello_schedule = Schedule.objects.get(name='plugin.schedule.hello')
@@ -66,7 +76,15 @@ class ExampleScheduledTaskPluginTests(TestCase):
 
     def test_calling(self):
         """Test calling of plugin functions by name."""
-        # Check with right parameters
+        # First, plugin is *not* enabled
+        registry.set_plugin_state('schedule', False)
+
+        with self.assertRaises(AttributeError):
+            self.assertEqual(call_plugin_function('schedule', 'member_func'), False)
+
+        registry.set_plugin_state('schedule', True)
+
+        # Should work now
         self.assertEqual(call_plugin_function('schedule', 'member_func'), False)
 
         # Check with wrong key

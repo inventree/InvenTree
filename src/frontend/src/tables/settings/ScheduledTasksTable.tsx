@@ -5,8 +5,8 @@ import { useMemo } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
+import type { TableColumn } from '@lib/types/Tables';
 import { useTable } from '../../hooks/UseTable';
-import type { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 export default function ScheduledTasksTable() {
@@ -15,10 +15,13 @@ export default function ScheduledTasksTable() {
   const columns: TableColumn[] = useMemo(() => {
     return [
       {
-        accessor: 'func',
+        accessor: 'name',
         title: t`Task`,
         sortable: true,
-        switchable: false
+        switchable: false,
+        render: (record: any) => {
+          return record.name || record.task;
+        }
       },
       {
         accessor: 'last_run',

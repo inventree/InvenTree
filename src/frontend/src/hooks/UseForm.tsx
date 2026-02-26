@@ -1,13 +1,14 @@
 import { t } from '@lingui/core/macro';
 import { Alert, Divider, Stack } from '@mantine/core';
 import { useId } from '@mantine/hooks';
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import type {
   ApiFormModalProps,
   BulkEditApiFormModalProps
 } from '@lib/types/Forms';
 import { OptionsApiForm } from '../components/forms/ApiForm';
+import { useModalState } from '../states/ModalState';
 import { useModal } from './UseModal';
 
 /**
@@ -16,6 +17,12 @@ import { useModal } from './UseModal';
 export function useApiFormModal(props: ApiFormModalProps) {
   const id = useId();
   const modalClose = useRef(() => {});
+
+  const modalState = useModalState();
+
+  const modalId = useMemo(() => {
+    return props.modalId ?? id;
+  }, [props.modalId, id]);
 
   const formProps = useMemo<ApiFormModalProps>(
     () => ({
@@ -43,16 +50,27 @@ export function useApiFormModal(props: ApiFormModalProps) {
     [props]
   );
 
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+
   const modal = useModal({
+    id: modalId,
     title: formProps.title,
-    onOpen: formProps.onOpen,
-    onClose: formProps.onClose,
+    onOpen: () => {
+      setIsOpen(true);
+      modalState.setModalOpen(modalId, true);
+      formProps.onOpen?.();
+    },
+    onClose: () => {
+      setIsOpen(false);
+      modalState.setModalOpen(modalId, false);
+      formProps.onClose?.();
+    },
     closeOnClickOutside: formProps.closeOnClickOutside,
     size: props.size ?? 'xl',
     children: (
       <Stack gap={'xs'}>
         <Divider />
-        <OptionsApiForm props={formProps} id={id} />
+        <OptionsApiForm props={formProps} id={modalId} opened={isOpen} />
       </Stack>
     )
   });
@@ -143,8 +161,8 @@ export function useDeleteApiFormModal(props: ApiFormModalProps) {
     () => ({
       ...props,
       method: props.method ?? 'DELETE',
-      submitText: t`Delete`,
-      submitColor: 'red',
+      submitText: props.submitText ?? t`Delete`,
+      submitColor: props.submitColor ?? 'red',
       successMessage:
         props.successMessage === null
           ? null

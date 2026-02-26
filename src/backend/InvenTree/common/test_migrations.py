@@ -1,12 +1,11 @@
 """Data migration unit tests for the 'common' app."""
 
 import io
+import os
 
 from django.core.files.base import ContentFile
 
 from django_test_migrations.contrib.unittest_case import MigratorTestCase
-
-from InvenTree import unit_test
 
 
 def get_legacy_models():
@@ -42,7 +41,7 @@ class TestForwardMigrations(MigratorTestCase):
     """Test entire schema migration sequence for the common app."""
 
     migrate_from = ('common', '0024_notesimage_model_id_notesimage_model_type')
-    migrate_to = ('common', unit_test.getNewestMigrationFile('common'))
+    migrate_to = ('common', '0039_emailthread_emailmessage')
 
     def prepare(self):
         """Create initial data.
@@ -208,3 +207,55 @@ class TestForwardMigrations(MigratorTestCase):
             'stockitem',
         ]:
             self.assertEqual(Attachment.objects.filter(model_type=model).count(), 2)
+
+
+def prep_currency_migration(self, vals: str):
+    """Prepare the environment for the currency migration tests."""
+    # Set keys
+    os.environ['INVENTREE_CURRENCIES'] = vals
+
+    # And setting
+    InvenTreeSetting = self.old_state.apps.get_model('common', 'InvenTreeSetting')
+
+    setting = InvenTreeSetting(key='CURRENCY_CODES', value='123')
+    setting.save()
+
+
+class TestCurrencyMigration(MigratorTestCase):
+    """Test currency migration."""
+
+    migrate_from = ('common', '0022_projectcode_responsible')
+    migrate_to = ('common', '0023_auto_20240602_1332')
+
+    def prepare(self):
+        """Prepare the environment for the migration test."""
+        prep_currency_migration(self, 'USD,EUR,GBP')
+
+    def test_currency_migration(self):
+        """Test that the currency migration works."""
+        InvenTreeSetting = self.old_state.apps.get_model('common', 'InvenTreeSetting')
+        setting = InvenTreeSetting.objects.filter(key='CURRENCY_CODES').first()
+
+        codes = str(setting.value).split(',')
+
+        self.assertEqual(len(codes), 3)
+
+        for code in ['USD', 'EUR', 'GBP']:
+            self.assertIn(code, codes)
+
+
+class TestCurrencyMigrationNo(MigratorTestCase):
+    """Test currency migration."""
+
+    migrate_from = ('common', '0022_projectcode_responsible')
+    migrate_to = ('common', '0023_auto_20240602_1332')
+
+    def prepare(self):
+        """Prepare the environment for the migration test."""
+        prep_currency_migration(self, 'YYY,ZZZ')
+
+    def test_currency_migration(self):
+        """Test that no currency migration occurs if wrong currencies are set."""
+        InvenTreeSetting = self.old_state.apps.get_model('common', 'InvenTreeSetting')
+        setting = InvenTreeSetting.objects.filter(key='CURRENCY_CODES').first()
+        self.assertEqual(setting.value, '123')

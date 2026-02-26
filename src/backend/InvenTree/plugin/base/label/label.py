@@ -24,12 +24,14 @@ def print_label(plugin_slug: str, **kwargs):
     kwargs:
         passed through to the plugin.print_label() method
     """
+    from plugin.builtin.integration.core_notifications import InvenTreeUINotifications
+
     logger.info("Plugin '%s' is printing a label", plugin_slug)
 
-    plugin = registry.get_plugin(plugin_slug)
+    plugin = registry.get_plugin(plugin_slug, active=True)
 
     if plugin is None:  # pragma: no cover
-        logger.error("Could not find matching plugin for '%s'", plugin_slug)
+        logger.error("Could not find matching active plugin for '%s'", plugin_slug)
         return
 
     try:
@@ -42,7 +44,7 @@ def print_label(plugin_slug: str, **kwargs):
 
         if user:
             # Log an error message to the database
-            log_error('plugin.print_label')
+            log_error('print_label', plugin=plugin.slug)
             logger.exception(
                 "Label printing failed: Sending notification to user '%s'", user
             )  # pragma: no cover
@@ -53,7 +55,7 @@ def print_label(plugin_slug: str, **kwargs):
                 'label.printing_failed',
                 targets=[user],
                 context=ctx,
-                delivery_methods={common.notifications.UIMessageNotification},
+                delivery_methods={InvenTreeUINotifications},
             )
 
         if settings.TESTING:

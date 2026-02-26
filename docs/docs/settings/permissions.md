@@ -25,28 +25,30 @@ A *role* is a set of distinct permissions linked to a given subset of InvenTree 
 
 InvenTree functionality is split into a number of distinct roles. A group will have a set of permissions assigned to each of the following roles:
 
-- **Admin** - The *admin* role is related to assigning user permissions.
-- **Part Category** - The *part category* role is related to accessing Part Category data
-- **Part** - The *part* role is related to accessing Part data
-- **Stock Location** - The *stock location* role is related to accessing Stock Location data
-- **Stock Item** - The *stock item* role is related to accessing Stock Item data
-- **Build** - The *build* role is related to accessing Build Order and Bill of Materials data
-- **Purchase Order** - The *purchase* role is related to accessing Purchase Order data
-- **Sales Order** - The *sales* role is related to accessing Sales Order data
-- **Return Order** - The *return* role is related to accessing Return Order data
+| Role | Description |
+| ---- | ----------- |
+| **Admin** | The *admin* role is related to assigning user permissions. |
+| **Build** | The *build* role is related to accessing Build Order and Bill of Materials data |
+| **Part** | The *part* role is related to accessing Part data |
+| **Part Category** | The *part category* role is related to accessing Part Category data |
+| **Purchase Order** | The *purchase* role is related to accessing Purchase Order data |
+| **Return Order** | The *return* role is related to accessing Return Order data |
+| **Sales Order** | The *sales* role is related to accessing Sales Order data |
+| **Stock Item** | The *stock item* role is related to accessing Stock Item data |
+| **Stock Location** | The *stock location* role is related to accessing Stock Location data |
 
-{% with id="Roles Admin View", url="admin/roles.png", description="Roles" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("admin/roles.png", "Roles") }}
 
 ### Role Permissions
 
 Within each role, there are four levels of available permissions:
 
-- **View** - The *view* permission allows viewing of content related to the particular role
-- **Change** - The *change* permission allows the user to edit / alter / change data associated with the particular role
-- **Add** - The *add* permission allows the user to add / create database records associated with the particular role
-- **Delete** - The *delete* permission allows the user to delete / remove database records associated with the particular role
+| Permission | Description |
+| ---------- | ----------- |
+| **View** | The *view* permission allows viewing of content related to the particular role |
+| **Change** | The *change* permission allows the user to edit / alter / change data associated with the particular role |
+| **Add** | The *add* permission allows the user to add / create database records associated with the particular role |
+| **Delete** | The *delete* permission allows the user to delete / remove database records associated with the particular role |
 
 ## Admin Interface Permissions
 

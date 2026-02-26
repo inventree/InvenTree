@@ -1,6 +1,9 @@
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import {
+  Alert,
   Anchor,
   Button,
   Divider,
@@ -8,16 +11,15 @@ import {
   Loader,
   PasswordInput,
   Stack,
-  TextInput
+  Text,
+  TextInput,
+  VisuallyHidden
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useDisclosure } from '@mantine/hooks';
+import { showNotification } from '@mantine/notifications';
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { apiUrl } from '@lib/functions/Api';
-import { showNotification } from '@mantine/notifications';
 import { useShallow } from 'zustand/react/shallow';
 import { api } from '../../App';
 import {
@@ -27,13 +29,14 @@ import {
   followRedirect
 } from '../../functions/auth';
 import { showLoginNotification } from '../../functions/notifications';
-import { useServerApiState } from '../../states/ApiState';
+import { useServerApiState } from '../../states/ServerApiState';
 import { useUserState } from '../../states/UserState';
 import { SsoButton } from '../buttons/SSOButton';
+import { errorCodeLink } from '../nav/Alerts';
 
 export function AuthenticationForm() {
   const classicForm = useForm({
-    initialValues: { username: '', password: '' }
+    initialValues: { username: '', password: '', code: '' }
   });
   const simpleForm = useForm({ initialValues: { email: '' } });
   const [classicLoginMode, setMode] = useDisclosure(true);
@@ -58,7 +61,9 @@ export function AuthenticationForm() {
       doBasicLogin(
         classicForm.values.username,
         classicForm.values.password,
-        navigate
+
+        navigate,
+        classicForm.values.code
       )
         .then((success) => {
           setIsLoggingIn(false);
@@ -140,6 +145,13 @@ export function AuthenticationForm() {
               placeholder={t`Your password`}
               {...classicForm.getInputProps('password')}
             />
+            <VisuallyHidden>
+              <TextInput
+                name='TOTP'
+                {...classicForm.getInputProps('code')}
+                hidden={true}
+              />
+            </VisuallyHidden>
             {password_forgotten_enabled() === true && (
               <Group justify='space-between' mt='0'>
                 <Anchor
@@ -331,6 +343,12 @@ export function RegistrationForm() {
             <SsoButton provider={provider} key={provider.id} />
           ))}
         </Group>
+      )}
+      {!registration_enabled() && !sso_registration() && (
+        <Alert title={t`Registration not active`} color='orange'>
+          <Text>{t`This might be related to missing mail settings or could be a deliberate decision.`}</Text>
+          {errorCodeLink('INVE-W11')}
+        </Alert>
       )}
     </>
   );

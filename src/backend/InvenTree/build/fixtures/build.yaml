@@ -12,10 +12,10 @@
     status: 10  # PENDING
     creation_date: '2019-03-16'
     link: http://www.google.com
+    tree_id: 1
     level: 0
-    lft: 0
-    rght: 0
-    tree_id: 0
+    lft: 1
+    rght: 2
 
 - model: build.build
   pk: 2
@@ -28,10 +28,10 @@
     quantity: 21
     notes: 'Some more simple notes'
     creation_date: '2019-03-16'
+    tree_id: 2
     level: 0
-    lft: 0
-    rght: 0
-    tree_id: 1
+    lft: 1
+    rght: 2
 
 - model: build.build
   pk: 3
@@ -44,10 +44,10 @@
     quantity: 21
     notes: 'Some even more simple notes'
     creation_date: '2019-03-16'
+    tree_id: 4
     level: 0
-    lft: 0
-    rght: 0
-    tree_id: 1
+    lft: 1
+    rght: 2
 
 - model: build.build
   pk: 4
@@ -60,10 +60,10 @@
     quantity: 21
     notes: 'Some even even more simple notes'
     creation_date: '2019-03-16'
+    tree_id: 5
     level: 0
-    lft: 0
-    rght: 0
-    tree_id: 1
+    lft: 1
+    rght: 2
 
 - model: build.build
   pk: 5
@@ -76,7 +76,20 @@
     quantity: 10
     creation_date: '2019-03-16'
     notes: "A thing"
+    tree_id: 3
     level: 0
-    lft: 0
-    rght: 0
-    tree_id: 1
+    lft: 1
+    rght: 2
+
+- model: build.builditem
+  pk: 1
+  fields:
+    quantity: 3
+    stock_item: 1
+
+- model: build.builditem
+  pk: 2
+  fields:
+    quantity: 10
+    stock_item: 11
+    install_into: 100

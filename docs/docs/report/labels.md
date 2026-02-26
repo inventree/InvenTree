@@ -19,9 +19,7 @@ A label template is a single `.html` file which is uploaded to the InvenTree ser
 
 Below is a reasonably simple example of a label template which demonstrates much of the available functionality. The template code shown below will produce the following label:
 
-{% with id="label_example", url="report/label_example.png", description="Example label" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("report/label_example.png", "Example label") }}
 
 ```html
 {% raw %}

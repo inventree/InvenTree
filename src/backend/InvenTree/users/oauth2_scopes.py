@@ -13,7 +13,6 @@ _roles = {
     'admin': 'Role Admin',
     'part_category': 'Role Part Categories',
     'part': 'Role Parts',
-    'stocktake': 'Role Stocktake',
     'stock_location': 'Role Stock Locations',
     'stock': 'Role Stock Items',
     'build': 'Role Build Orders',

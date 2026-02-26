@@ -26,7 +26,7 @@ def prep_name(ref):
     return f'{dja_ref_prefix}.{ref}'
 
 
-def sub_component_name(name: T) -> T:
+def sub_component_name(name: T) -> T | str:
     """Clean up component references."""
     if not isinstance(name, str):
         return name
@@ -70,8 +70,11 @@ class Command(spectacular.Command):
         # Reformat paths
         for p_name, p_spec in spec['paths'].items():
             # strip path name
-            p_name = p_name.removeprefix(dja_path_prefix).removeprefix(
-                '/_allauth/browser/v1/'
+            p_name = (
+                p_name
+                .removeprefix(dja_path_prefix)
+                .removeprefix('/_allauth/browser/v1/')
+                .removeprefix('/_allauth/app/v1/')
             )
 
             # fix refs

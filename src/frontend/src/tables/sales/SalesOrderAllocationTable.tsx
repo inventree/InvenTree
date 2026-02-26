@@ -1,13 +1,22 @@
 import { t } from '@lingui/core/macro';
 import { useCallback, useMemo, useState } from 'react';
 
+import { ActionButton } from '@lib/components/ActionButton';
+import {
+  type RowAction,
+  RowEditAction,
+  RowViewAction
+} from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
-import { IconTruckDelivery } from '@tabler/icons-react';
-import { ActionButton } from '../../components/buttons/ActionButton';
+import type { StockOperationProps } from '@lib/types/Forms';
+import type { TableColumn } from '@lib/types/Tables';
+import { Alert } from '@mantine/core';
+import { IconCircleX, IconTruckDelivery } from '@tabler/icons-react';
+import { useNavigate } from 'react-router-dom';
 import { formatDate } from '../../defaults/formatters';
 import { useSalesOrderAllocationFields } from '../../forms/SalesOrderForms';
 import {
@@ -15,17 +24,19 @@ import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
+import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import {
+  DescriptionColumn,
+  IPNColumn,
   LocationColumn,
   PartColumn,
   ReferenceColumn,
   StatusColumn
 } from '../ColumnRenderers';
+import { IncludeVariantsFilter, StockLocationFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 export default function SalesOrderAllocationTable({
   partId,
@@ -53,6 +64,7 @@ export default function SalesOrderAllocationTable({
   modelField?: string;
 }>) {
   const user = useUserState();
+  const navigate = useNavigate();
 
   const tableId = useMemo(() => {
     let id = 'salesorderallocations';
@@ -81,16 +93,12 @@ export default function SalesOrderAllocationTable({
         name: 'assigned_to_shipment',
         label: t`Assigned to Shipment`,
         description: t`Show allocations assigned to a shipment`
-      }
+      },
+      StockLocationFilter()
     ];
 
     if (!!partId) {
-      filters.push({
-        name: 'include_variants',
-        type: 'boolean',
-        label: t`Include Variants`,
-        description: t`Include orders for part variants`
-      });
+      filters.push(IncludeVariantsFilter());
     }
 
     return filters;
@@ -105,37 +113,27 @@ export default function SalesOrderAllocationTable({
         sortable: true,
         hidden: showOrderInfo != true
       }),
-      {
+      DescriptionColumn({
         accessor: 'order_detail.description',
-        title: t`Description`,
         hidden: showOrderInfo != true
-      },
+      }),
       StatusColumn({
         accessor: 'order_detail.status',
         model: ModelType.salesorder,
         title: t`Order Status`,
         hidden: showOrderInfo != true
       }),
-      {
-        accessor: 'part',
+      PartColumn({
         hidden: showPartInfo != true,
-        title: t`Part`,
-        sortable: true,
-        switchable: false,
-        render: (record: any) => PartColumn({ part: record.part_detail })
-      },
-      {
+        part: 'part_detail'
+      }),
+      DescriptionColumn({
         accessor: 'part_detail.description',
-        title: t`Description`,
-        hidden: showPartInfo != true,
-        sortable: false
-      },
-      {
-        accessor: 'part_detail.IPN',
-        title: t`IPN`,
-        hidden: showPartInfo != true,
-        sortable: false
-      },
+        hidden: showPartInfo != true
+      }),
+      IPNColumn({
+        hidden: showPartInfo != true
+      }),
       {
         accessor: 'serial',
         title: t`Serial Number`,
@@ -148,7 +146,9 @@ export default function SalesOrderAllocationTable({
         title: t`Batch Code`,
         sortable: true,
         switchable: true,
-        render: (record: any) => record?.item_detail?.batch
+        render: (record: any) => record?.item_detail?.batch,
+        copyable: true,
+        copyAccessor: 'item_detail.batch'
       },
       {
         accessor: 'available',
@@ -214,7 +214,13 @@ export default function SalesOrderAllocationTable({
   const deleteAllocation = useDeleteApiFormModal({
     url: ApiEndpoints.sales_order_allocation_list,
     pk: selectedAllocation,
-    title: t`Delete Allocation`,
+    title: t`Remove Allocated Stock`,
+    preFormContent: (
+      <Alert color='red' title={t`Confirm Removal`}>
+        {t`Are you sure you want to remove this allocated stock from the order?`}
+      </Alert>
+    ),
+    submitText: t`Remove`,
     onFormSuccess: () => table.refreshTable()
   });
 
@@ -223,30 +229,76 @@ export default function SalesOrderAllocationTable({
       // Do not allow "shipped" items to be manipulated
       const isShipped = !!record.shipment_detail?.shipment_date;
 
-      if (isShipped || !allowEdit) {
-        return [];
-      }
-
       return [
         RowEditAction({
           tooltip: t`Edit Allocation`,
+          hidden:
+            isShipped ||
+            !allowEdit ||
+            !user.hasChangeRole(UserRoles.sales_order),
           onClick: () => {
             setSelectedAllocation(record.pk);
             setSelectedShipment(record.shipment);
             editAllocation.open();
           }
         }),
-        RowDeleteAction({
-          tooltip: t`Delete Allocation`,
+        {
+          title: t`Remove`,
+          tooltip: t`Remove allocated stock`,
+          icon: <IconCircleX />,
+          color: 'red',
+          hidden:
+            isShipped ||
+            !allowEdit ||
+            !user.hasDeleteRole(UserRoles.sales_order),
           onClick: () => {
             setSelectedAllocation(record.pk);
             deleteAllocation.open();
           }
+        },
+        RowViewAction({
+          tooltip: t`View Shipment`,
+          title: t`View Shipment`,
+          hidden: !record.shipment || !!shipmentId,
+          modelId: record.shipment,
+          modelType: ModelType.salesordershipment,
+          navigate: navigate
         })
       ];
     },
-    [allowEdit, user]
+    [allowEdit, shipmentId, user]
   );
+
+  const stockOperationProps: StockOperationProps = useMemo(() => {
+    // Extract stock items from the selected records
+    // Note that the table is actually a list of SalesOrderAllocation instances,
+    // so we need to reconstruct the stock item details
+    const stockItems: any[] = table.selectedRecords
+      .filter((item: any) => !!item.item_detail)
+      .map((item: any) => {
+        return {
+          ...item.item_detail,
+          part_detail: item.part_detail,
+          location_detail: item.location_detail
+        };
+      });
+
+    return {
+      items: stockItems,
+      model: ModelType.stockitem,
+      refresh: table.refreshTable
+    };
+  }, [table.selectedRecords, table.refreshTable]);
+
+  const stockAdjustActions = useStockAdjustActions({
+    formProps: stockOperationProps,
+    merge: false,
+    assign: false,
+    delete: false,
+    add: false,
+    count: false,
+    remove: false
+  });
 
   // A subset of the selected allocations, which can be assigned to a shipment
   const nonShippedAllocationIds: number[] = useMemo(() => {
@@ -275,6 +327,7 @@ export default function SalesOrderAllocationTable({
 
   const tableActions = useMemo(() => {
     return [
+      stockAdjustActions.dropdown,
       <ActionButton
         tooltip={t`Assign to shipment`}
         icon={<IconTruckDelivery />}
@@ -288,13 +341,20 @@ export default function SalesOrderAllocationTable({
         // TODO: Hide if order is already shipped
       />
     ];
-  }, [allowEdit, nonShippedAllocationIds, orderId, user]);
+  }, [
+    allowEdit,
+    nonShippedAllocationIds,
+    orderId,
+    user,
+    stockAdjustActions.dropdown
+  ]);
 
   return (
     <>
       {setShipment.modal}
       {editAllocation.modal}
       {deleteAllocation.modal}
+      {!isSubTable && stockAdjustActions.modals.map((modal) => modal.modal)}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.sales_order_allocation_list)}
         tableState={table}
@@ -322,6 +382,9 @@ export default function SalesOrderAllocationTable({
           tableActions: isSubTable ? undefined : tableActions,
           tableFilters: tableFilters,
           modelField: modelField ?? 'order',
+          enableReports: !isSubTable,
+          enableLabels: !isSubTable,
+          printingAccessor: 'item',
           modelType: modelTarget ?? ModelType.salesorder
         }}
       />

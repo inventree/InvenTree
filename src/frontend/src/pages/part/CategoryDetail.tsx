@@ -3,9 +3,11 @@ import { Group, LoadingOverlay, Skeleton, Stack, Text } from '@mantine/core';
 import {
   IconCategory,
   IconInfoCircle,
+  IconListCheck,
   IconListDetails,
   IconPackages,
-  IconSitemap
+  IconSitemap,
+  IconTable
 } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -14,6 +16,7 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { getDetailUrl } from '@lib/functions/Navigation';
+import { useLocalStorage } from '@mantine/hooks';
 import AdminButton from '../../components/buttons/AdminButton';
 import StarredToggleButton from '../../components/buttons/StarredToggleButton';
 import {
@@ -32,6 +35,7 @@ import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
+import SegmentedControlPanel from '../../components/panels/SegmentedControlPanel';
 import { partCategoryFields } from '../../forms/PartForms';
 import {
   useDeleteApiFormModal,
@@ -41,6 +45,7 @@ import { useInstance } from '../../hooks/UseInstance';
 import { useUserState } from '../../states/UserState';
 import ParametricPartTable from '../../tables/part/ParametricPartTable';
 import { PartCategoryTable } from '../../tables/part/PartCategoryTable';
+import PartCategoryTemplateTable from '../../tables/part/PartCategoryTemplateTable';
 import { PartListTable } from '../../tables/part/PartTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 
@@ -64,8 +69,7 @@ export default function CategoryDetail() {
   const {
     instance: category,
     refreshInstance,
-    instanceQuery,
-    requestStatus
+    instanceQuery
   } = useInstance({
     endpoint: ApiEndpoints.category_list,
     hasPrimaryKey: true,
@@ -184,11 +188,11 @@ export default function CategoryDetail() {
   const deleteOptions = useMemo(() => {
     return [
       {
-        value: 0,
+        value: 'false',
         display_name: t`Move items to parent category`
       },
       {
-        value: 1,
+        value: 'true',
         display_name: t`Delete items`
       }
     ];
@@ -203,12 +207,14 @@ export default function CategoryDetail() {
         label: t`Parts Action`,
         description: t`Action for parts in this category`,
         choices: deleteOptions,
+        required: true,
         field_type: 'choice'
       },
       delete_child_categories: {
         label: t`Child Categories Action`,
         description: t`Action for child categories in this category`,
         choices: deleteOptions,
+        required: true,
         field_type: 'choice'
       }
     },
@@ -255,6 +261,11 @@ export default function CategoryDetail() {
     ];
   }, [id, user, category.pk, category.starred]);
 
+  const [partsView, setPartsView] = useLocalStorage<string>({
+    key: 'category-parts-view',
+    defaultValue: 'table'
+  });
+
   const panels: PanelType[] = useMemo(
     () => [
       {
@@ -265,24 +276,39 @@ export default function CategoryDetail() {
       },
       {
         name: 'subcategories',
-        label: t`Subcategories`,
+        label: id ? t`Subcategories` : t`Part Categories`,
         icon: <IconSitemap />,
         content: <PartCategoryTable parentId={id} />
       },
-      {
+      SegmentedControlPanel({
         name: 'parts',
         label: t`Parts`,
         icon: <IconCategory />,
-        content: (
-          <PartListTable
-            props={{
-              params: {
-                category: id
-              }
-            }}
-          />
-        )
-      },
+        selection: partsView,
+        onChange: setPartsView,
+        options: [
+          {
+            value: 'table',
+            label: t`Table View`,
+            icon: <IconTable />,
+            content: (
+              <PartListTable
+                props={{
+                  params: {
+                    category: id
+                  }
+                }}
+              />
+            )
+          },
+          {
+            value: 'parametric',
+            label: t`Parametric View`,
+            icon: <IconListDetails />,
+            content: <ParametricPartTable categoryId={id} />
+          }
+        ]
+      }),
       {
         name: 'stockitem',
         label: t`Stock Items`,
@@ -299,13 +325,14 @@ export default function CategoryDetail() {
         )
       },
       {
-        name: 'parameters',
-        label: t`Part Parameters`,
-        icon: <IconListDetails />,
-        content: <ParametricPartTable categoryId={id} />
+        name: 'category_parameters',
+        label: t`Category Parameters`,
+        icon: <IconListCheck />,
+        hidden: !id || !category.pk,
+        content: <PartCategoryTemplateTable categoryId={category?.pk} />
       }
     ],
-    [category, id]
+    [category, id, partsView]
   );
 
   const breadcrumbs = useMemo(
@@ -325,8 +352,7 @@ export default function CategoryDetail() {
       {editCategory.modal}
       {deleteCategory.modal}
       <InstanceDetail
-        status={requestStatus}
-        loading={id ? instanceQuery.isFetching : false}
+        query={instanceQuery}
         requiredRole={UserRoles.part_category}
       >
         <Stack gap='xs'>
@@ -342,7 +368,7 @@ export default function CategoryDetail() {
             selectedId={category?.pk}
           />
           <PageDetail
-            title={category?.name ?? t`Part Category`}
+            title={(category?.name ?? id) ? t`Part Category` : t`Parts`}
             subtitle={category?.description}
             icon={category?.icon && <ApiIcon name={category?.icon} />}
             breadcrumbs={breadcrumbs}

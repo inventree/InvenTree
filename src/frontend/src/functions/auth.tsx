@@ -1,3 +1,8 @@
+import {
+  type CredentialRequestOptionsJSON,
+  get,
+  parseRequestOptionsFromJSON
+} from '@github/webauthn-json/browser-ponyfill';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import { type AuthProvider, FlowEnum } from '@lib/types/Auth';
@@ -7,8 +12,8 @@ import axios from 'axios';
 import type { AxiosRequestConfig } from 'axios';
 import type { Location, NavigateFunction } from 'react-router-dom';
 import { api, setApiDefaults } from '../App';
-import { useServerApiState } from '../states/ApiState';
 import { useLocalState } from '../states/LocalState';
+import { useServerApiState } from '../states/ServerApiState';
 import { useUserState } from '../states/UserState';
 import { fetchGlobalStates } from '../states/states';
 import { showLoginNotification } from './notifications';
@@ -62,15 +67,16 @@ function post(path: string, params: any, method = 'post') {
  * If login is successful, an API token will be returned.
  * This API token is used for any future API requests.
  */
-export const doBasicLogin = async (
+export async function doBasicLogin(
   username: string,
   password: string,
-  navigate: NavigateFunction
-) => {
+  navigate: NavigateFunction,
+  code?: string
+) {
   const { getHost } = useLocalState.getState();
   const { clearUserState, setAuthenticated, fetchUserState } =
     useUserState.getState();
-  const { setAuthContext } = useServerApiState.getState();
+  const { setAuthContext, setMfaContext } = useServerApiState.getState();
 
   if (username.length == 0 || password.length == 0) {
     return;
@@ -84,7 +90,7 @@ export const doBasicLogin = async (
 
   const host: string = getHost();
 
-  // Attempt login with
+  // Attempt login with basic info
   await api
     .post(
       apiUrl(ApiEndpoints.auth_login),
@@ -104,36 +110,93 @@ export const doBasicLogin = async (
         success = true;
       }
     })
-    .catch((err) => {
-      if (err?.response?.status == 401) {
-        setAuthContext(err.response.data?.data);
-        const mfa_flow = err.response.data.data.flows.find(
-          (flow: any) => flow.id == FlowEnum.MfaAuthenticate
-        );
-        if (mfa_flow && mfa_flow.is_pending == true) {
-          success = true;
-          navigate('/mfa');
+    .catch(async (err) => {
+      notifications.hide('auth-login-error');
+
+      if (err?.response?.status) {
+        switch (err.response.status) {
+          case 401:
+            await handlePossibleMFAError(err);
+            break;
+          case 409:
+            doLogout(navigate);
+            notifications.show({
+              title: t`Logged Out`,
+              message: t`There was a conflicting session for this browser, which has been logged out.`,
+              color: 'red',
+              id: 'auth-login-error',
+              autoClose: true
+            });
+            break;
+          default:
+            notifications.show({
+              title: `${t`Login failed`} (${err.response.status})`,
+              message: t`Check your input and try again.`,
+              id: 'auth-login-error',
+              color: 'red'
+            });
+            break;
         }
-      } else if (err?.response?.status == 409) {
+      } else {
         notifications.show({
-          title: t`Already logged in`,
-          message: t`There is a conflicting session on the server for this browser. Please logout of that first.`,
+          title: t`Login failed`,
+          message: t`No response from server.`,
           color: 'red',
-          autoClose: false
+          id: 'login-error'
         });
       }
     });
 
+  // see if mfa registration is required
+  if (loginDone) {
+    // stop further processing if mfa setup is required
+    if (!(await MfaSetupOk(navigate))) loginDone = false;
+  }
+
+  // we are successfully logged in - gather required states for app
   if (loginDone) {
     await fetchUserState();
-    // see if mfa registration is required
-    await fetchGlobalStates(navigate);
+    await fetchGlobalStates();
     observeProfile();
   } else if (!success) {
     clearUserState();
   }
   return success;
-};
+
+  async function handlePossibleMFAError(err: any) {
+    setAuthContext(err.response.data?.data);
+    const mfa_flow = err.response.data.data.flows.find(
+      (flow: any) => flow.id == FlowEnum.MfaAuthenticate
+    );
+    if (mfa_flow?.is_pending) {
+      setMfaContext(mfa_flow);
+      // MFA is required - we might already have a code
+      if (code && code.length > 0) {
+        const rslt = await handleMfaLogin(
+          navigate,
+          undefined,
+          { code: code },
+          () => {}
+        );
+        if (rslt) {
+          setAuthenticated(true);
+          loginDone = true;
+          success = true;
+          notifications.show({
+            title: t`MFA Login successful`,
+            message: t`MFA details were automatically provided in the browser`,
+            color: 'green'
+          });
+        }
+      }
+      // No code or success - off to the mfa page
+      if (!loginDone) {
+        success = true;
+        navigate('/mfa');
+      }
+    }
+  }
+}
 
 /**
  * Logout the user from the current session
@@ -142,6 +205,7 @@ export const doBasicLogin = async (
  */
 export const doLogout = async (navigate: NavigateFunction) => {
   const { clearUserState, isLoggedIn } = useUserState.getState();
+  const { setAuthContext } = useServerApiState.getState();
 
   // Logout from the server session
   if (isLoggedIn() || !!getCsrfCookie()) {
@@ -156,6 +220,7 @@ export const doLogout = async (navigate: NavigateFunction) => {
 
   clearUserState();
   clearCsrfCookie();
+  setAuthContext(undefined);
   navigate('/login');
 };
 
@@ -179,13 +244,41 @@ export const doSimpleLogin = async (email: string) => {
   return mail;
 };
 
+function MfaSetupOk(navigate: NavigateFunction) {
+  return api
+    .get(apiUrl(ApiEndpoints.auth_base))
+    .then(() => {
+      return true;
+    })
+    .catch((err) => {
+      if (err?.response?.status == 401) {
+        const mfa_register = err.response.data.id == FlowEnum.MfaRegister;
+        if (mfa_register && navigate != undefined) {
+          navigate('/mfa-setup');
+          return false;
+        }
+      } else {
+        console.error(err);
+      }
+      return true;
+    });
+}
+
 function observeProfile() {
   // overwrite language and theme info in session with profile info
 
   const user = useUserState.getState().getUser();
   const { language, setLanguage, userTheme, setTheme, setWidgets, setLayouts } =
     useLocalState.getState();
+  const { server } = useServerApiState.getState(); //(useShallow((state) => [state.server]));
+
+  // fast exit if loading is disabled for this server
+  if (server.customize?.disable_theme_storage) {
+    return;
+  }
+
   if (user) {
+    // set profile language
     if (user.profile?.language && language != user.profile.language) {
       showNotification({
         title: t`Language changed`,
@@ -196,6 +289,7 @@ function observeProfile() {
       setLanguage(user.profile.language, true);
     }
 
+    // set profile theme
     if (user.profile?.theme) {
       // extract keys of usertheme and set them to the values of user.profile.theme
       const newTheme = Object.keys(userTheme).map((key) => {
@@ -217,6 +311,7 @@ function observeProfile() {
       }
     }
 
+    // set profile widgets/layouts
     if (user.profile?.widgets) {
       const data = user.profile.widgets;
       // split data into widgets and layouts (either might be undefined)
@@ -259,29 +354,23 @@ export function handleReset(
   });
 }
 
-export function handleMfaLogin(
+export async function handleMfaLogin(
   navigate: NavigateFunction,
-  location: Location<any>,
-  values: { code: string },
+  location: Location<any> | undefined,
+  values: { code: string; remember?: boolean },
   setError: (message: string | undefined) => void
 ) {
-  const { setAuthenticated, fetchUserState } = useUserState.getState();
   const { setAuthContext } = useServerApiState.getState();
 
-  authApi(apiUrl(ApiEndpoints.auth_login_2fa), undefined, 'post', {
+  return await authApi(apiUrl(ApiEndpoints.auth_login_2fa), undefined, 'post', {
     code: values.code
   })
     .then((response) => {
-      setError(undefined);
-      setAuthContext(response.data?.data);
-      setAuthenticated();
-
-      fetchUserState().finally(() => {
-        observeProfile();
-        followRedirect(navigate, location?.state);
-      });
+      handleSuccessFullAuth(response, navigate, location, setError);
+      return true;
     })
-    .catch((err) => {
+    .catch(async (err) => {
+      // Already logged in, but with a different session
       if (err?.response?.status == 409) {
         notifications.show({
           title: t`Already logged in`,
@@ -289,6 +378,20 @@ export function handleMfaLogin(
           color: 'red',
           autoClose: false
         });
+        // MFA trust flow pending
+      } else if (err?.response?.status == 401) {
+        const mfa_trust = err.response.data.data.flows.find(
+          (flow: any) => flow.id == FlowEnum.MfaTrust
+        );
+        if (mfa_trust?.is_pending) {
+          setAuthContext(err.response.data.data);
+          await authApi(apiUrl(ApiEndpoints.auth_trust), undefined, 'post', {
+            trust: values.remember ?? false
+          }).then((response) => {
+            handleSuccessFullAuth(response, navigate, location, setError);
+          });
+          return true;
+        }
       } else {
         const errors = err.response?.data?.errors;
         let msg = t`An error occurred`;
@@ -298,6 +401,7 @@ export function handleMfaLogin(
         }
         setError(msg);
       }
+      return false;
     });
 }
 
@@ -309,10 +413,11 @@ export function handleMfaLogin(
  * - An existing CSRF cookie is stored in the browser
  */
 export const checkLoginState = async (
-  navigate: any,
+  navigate: NavigateFunction,
   redirect?: any,
   no_redirect?: boolean
 ) => {
+  const { setLoginChecked } = useUserState.getState();
   setApiDefaults();
 
   if (redirect == '/') {
@@ -322,21 +427,25 @@ export const checkLoginState = async (
   const { isLoggedIn, fetchUserState } = useUserState.getState();
 
   // Callback function when login is successful
-  const loginSuccess = () => {
+  const loginSuccess = async () => {
+    setLoginChecked(true);
     showLoginNotification({
       title: t`Logged In`,
       message: t`Successfully logged in`
     });
+    MfaSetupOk(navigate).then(async (isOk) => {
+      if (isOk) {
+        observeProfile();
+        await fetchGlobalStates();
 
-    observeProfile();
-
-    fetchGlobalStates(navigate);
-    followRedirect(navigate, redirect);
+        followRedirect(navigate, redirect);
+      }
+    });
   };
 
   if (isLoggedIn()) {
     // Already logged in
-    loginSuccess();
+    await loginSuccess();
     return;
   }
 
@@ -345,11 +454,46 @@ export const checkLoginState = async (
   await fetchUserState();
 
   if (isLoggedIn()) {
-    loginSuccess();
+    await loginSuccess();
   } else if (!no_redirect) {
+    setLoginChecked(true);
     navigate('/login', { state: redirect });
   }
+  setLoginChecked(true);
 };
+
+function handleSuccessFullAuth(
+  response: any,
+  navigate: NavigateFunction,
+  location?: Location<any>,
+  setError?: (message: string | undefined) => void
+) {
+  const { setAuthenticated, fetchUserState } = useUserState.getState();
+  const { setAuthContext } = useServerApiState.getState();
+
+  if (setError) {
+    // If an error function is provided, clear any previous errors
+    setError(undefined);
+  }
+
+  if (response.data?.data) {
+    setAuthContext(response.data?.data);
+  }
+  setAuthenticated();
+
+  // see if mfa registration is required
+  MfaSetupOk(navigate).then(async (isOk) => {
+    if (isOk) {
+      await fetchUserState();
+      observeProfile();
+      await fetchGlobalStates();
+
+      if (location !== undefined) {
+        followRedirect(navigate, location?.state);
+      }
+    }
+  });
+}
 
 /*
  * Return the value of the CSRF cookie, if available
@@ -439,7 +583,12 @@ export function handleVerifyTotp(
     authApi(apiUrl(ApiEndpoints.auth_totp), undefined, 'post', {
       code: value
     }).then(() => {
-      followRedirect(navigate, location?.state);
+      showNotification({
+        title: t`MFA Setup successful`,
+        message: t`MFA via TOTP has been set up successfully; you will need to login again.`,
+        color: 'green'
+      });
+      doLogout(navigate);
     });
   };
 }
@@ -580,4 +729,58 @@ export function handleChangePassword(
         passwordError(errors);
       }
     });
+}
+
+export async function handleWebauthnLogin(
+  navigate: NavigateFunction,
+  location: Location<any>
+) {
+  const { setAuthContext } = useServerApiState.getState();
+
+  const webauthn_challenge = await api
+    .get(apiUrl(ApiEndpoints.auth_webauthn_login))
+    .catch(() => {})
+    .then((response) => {
+      if (response && response.status === 200) {
+        return response.data.data.request_options;
+      }
+    });
+
+  if (!webauthn_challenge) {
+    return;
+  }
+
+  try {
+    const credential = await get(
+      parseRequestOptionsFromJSON(
+        webauthn_challenge as CredentialRequestOptionsJSON
+      )
+    );
+    await api
+      .post(apiUrl(ApiEndpoints.auth_webauthn_login), {
+        credential: credential
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          handleSuccessFullAuth(response, navigate, location, undefined);
+        }
+      })
+      .catch((err) => {
+        if (err?.response?.status == 401) {
+          const mfa_trust = err.response.data.data.flows.find(
+            (flow: any) => flow.id == FlowEnum.MfaTrust
+          );
+          if (mfa_trust?.is_pending) {
+            setAuthContext(err.response.data.data);
+            authApi(apiUrl(ApiEndpoints.auth_trust), undefined, 'post', {
+              trust: false
+            }).then((response) => {
+              handleSuccessFullAuth(response, navigate, location, undefined);
+            });
+          }
+        }
+      });
+  } catch (e) {
+    console.error(e);
+  }
 }

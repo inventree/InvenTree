@@ -1,24 +1,25 @@
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 
+import { AddItemButton } from '@lib/components/AddItemButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
-import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { Thumbnail } from '../../components/images/Thumbnail';
 import { formatCurrency } from '../../defaults/formatters';
 import { usePurchaseOrderFields } from '../../forms/PurchaseOrderForms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import {
+  CompanyColumn,
   CompletionDateColumn,
   CreatedByColumn,
   CreationDateColumn,
   DescriptionColumn,
   LineItemsProgressColumn,
+  LinkColumn,
   ProjectCodeColumn,
   ReferenceColumn,
   ResponsibleColumn,
@@ -53,12 +54,21 @@ import { InvenTreeTable } from '../InvenTreeTable';
  */
 export function PurchaseOrderTable({
   supplierId,
-  supplierPartId
+  supplierPartId,
+  externalBuildId
 }: Readonly<{
   supplierId?: number;
   supplierPartId?: number;
+  externalBuildId?: number;
 }>) {
-  const table = useTable('purchase-order');
+  const table = useTable('purchase-order', {
+    initialFilters: [
+      {
+        name: 'outstanding',
+        value: 'true'
+      }
+    ]
+  });
   const user = useUserState();
 
   const tableFilters: TableFilter[] = useMemo(() => {
@@ -98,33 +108,36 @@ export function PurchaseOrderTable({
 
   const tableColumns = useMemo(() => {
     return [
-      ReferenceColumn({}),
+      ReferenceColumn({
+        switchable: false
+      }),
       DescriptionColumn({}),
       {
         accessor: 'supplier__name',
         title: t`Supplier`,
         sortable: true,
-        render: (record: any) => {
-          const supplier = record.supplier_detail ?? {};
-
-          return (
-            <Thumbnail
-              src={supplier?.image}
-              alt={supplier.name}
-              text={supplier.name}
-            />
-          );
-        }
+        render: (record: any) => (
+          <CompanyColumn company={record.supplier_detail} />
+        )
       },
       {
-        accessor: 'supplier_reference'
+        accessor: 'supplier_reference',
+        copyable: true
       },
-      LineItemsProgressColumn(),
+      LineItemsProgressColumn({}),
       StatusColumn({ model: ModelType.purchaseorder }),
-      ProjectCodeColumn({}),
-      CreationDateColumn({}),
-      CreatedByColumn({}),
-      StartDateColumn({}),
+      ProjectCodeColumn({
+        defaultVisible: false
+      }),
+      CreationDateColumn({
+        defaultVisible: false
+      }),
+      CreatedByColumn({
+        defaultVisible: false
+      }),
+      StartDateColumn({
+        defaultVisible: false
+      }),
       TargetDateColumn({}),
       CompletionDateColumn({
         accessor: 'complete_date'
@@ -139,7 +152,8 @@ export function PurchaseOrderTable({
           });
         }
       },
-      ResponsibleColumn({})
+      ResponsibleColumn({}),
+      LinkColumn({})
     ];
   }, []);
 
@@ -178,14 +192,16 @@ export function PurchaseOrderTable({
           params: {
             supplier_detail: true,
             supplier: supplierId,
-            supplier_part: supplierPartId
+            supplier_part: supplierPartId,
+            external_build: externalBuildId
           },
           tableFilters: tableFilters,
           tableActions: tableActions,
           modelType: ModelType.purchaseorder,
           enableSelection: true,
           enableDownload: true,
-          enableReports: true
+          enableReports: true,
+          enableLabels: true
         }}
       />
     </>

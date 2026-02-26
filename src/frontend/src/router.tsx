@@ -5,10 +5,14 @@ import { Loadable } from './functions/loading';
 
 // Lazy loaded pages
 export const LayoutComponent = Loadable(
-  lazy(() => import('./components/nav/Layout'))
+  lazy(() => import('./components/nav/Layout')),
+  true,
+  true
 );
 export const LoginLayoutComponent = Loadable(
-  lazy(() => import('./pages/Auth/Layout'))
+  lazy(() => import('./pages/Auth/Layout')),
+  true,
+  true
 );
 
 export const Home = Loadable(lazy(() => import('./pages/Index/Home')));
@@ -119,7 +123,11 @@ export const NotFound = Loadable(
 
 // Auth
 export const Login = Loadable(lazy(() => import('./pages/Auth/Login')));
-export const LoggedIn = Loadable(lazy(() => import('./pages/Auth/LoggedIn')));
+export const LoggedIn = Loadable(
+  lazy(() => import('./pages/Auth/LoggedIn')),
+  true,
+  true
+);
 export const Logout = Loadable(lazy(() => import('./pages/Auth/Logout')));
 export const Register = Loadable(lazy(() => import('./pages/Auth/Register')));
 export const Mfa = Loadable(lazy(() => import('./pages/Auth/MFA')));
@@ -132,7 +140,9 @@ export const ResetPassword = Loadable(
   lazy(() => import('./pages/Auth/ResetPassword'))
 );
 export const VerifyEmail = Loadable(
-  lazy(() => import('./pages/Auth/VerifyEmail'))
+  lazy(() => import('./pages/Auth/VerifyEmail')),
+  true,
+  true
 );
 
 // Routes

@@ -11,7 +11,7 @@ import type {
   PluginUIFeatureAPIResponse,
   PluginUIFuncWithoutInvenTreeContextType
 } from '../components/plugins/PluginUIFeatureTypes';
-import { useGlobalSettingsState } from '../states/SettingsState';
+import { useGlobalSettingsState } from '../states/SettingsStates';
 
 export function usePluginUIFeature<UIFeatureT extends BaseUIFeature>({
   enabled = true,

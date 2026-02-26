@@ -11,12 +11,9 @@ python:
 build:
   os: "ubuntu-22.04"
   tools:
-    python: "3.9"
+    python: "3.11"
   jobs:
     post_install:
-      - echo "Generating API schema file"
       - pip install -U invoke
-      - invoke migrate
-      - invoke int.export-definitions --basedir "docs"
-      - invoke dev.schema --filename docs/schema.yml --ignore-warnings
-      - python docs/extract_schema.py docs/schema.yml
+      - echo "Generating API schema file"
+      - invoke build-docs

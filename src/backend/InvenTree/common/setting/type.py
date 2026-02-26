@@ -1,7 +1,8 @@
 """Types for settings."""
 
 import sys
-from typing import Any, Callable, TypedDict, Union
+from collections.abc import Callable
+from typing import Any, TypedDict
 
 if sys.version_info >= (3, 11):
     from typing import NotRequired  # pragma: no cover
@@ -31,20 +32,24 @@ class SettingsKeyType(TypedDict, total=False):
         protected: Protected values are not returned to the client, instead "***" is returned (optional, default: False)
         required: Is this setting required to work, can be used in combination with .check_all_settings(...) (optional, default: False)
         model: Auto create a dropdown menu to select an associated model instance (e.g. 'company.company', 'auth.user' and 'auth.group' are possible too, optional)
+        confirm: Require an explicit confirmation before changing the setting (optional, default: False)
+        confirm_text: Text to display in the confirmation dialog (optional)
     """
 
     name: str
     description: str
     units: str
-    validator: Union[Callable, list[Callable], tuple[Callable]]
-    default: Union[Callable, Any]
-    choices: Union[list[tuple[str, str]], Callable[[], list[tuple[str, str]]]]
+    validator: Callable | list[Callable] | tuple[Callable]
+    default: Callable | Any
+    choices: list[tuple[str, str]] | Callable[[], list[tuple[str, str]]]
     hidden: bool
     before_save: Callable[..., None]
     after_save: Callable[..., None]
     protected: bool
     required: bool
     model: str
+    confirm: bool
+    confirm_text: str
 
 
 class InvenTreeSettingsKeyType(SettingsKeyType):

@@ -2,12 +2,18 @@ import { t } from '@lingui/core/macro';
 import { Group, Text } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 
+import { AddItemButton } from '@lib/components/AddItemButton';
+import {
+  type RowAction,
+  RowDeleteAction,
+  RowEditAction
+} from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
-import { AddItemButton } from '../../components/buttons/AddItemButton';
+import type { TableColumn } from '@lib/types/Tables';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -15,21 +21,26 @@ import {
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
-export default function PartCategoryTemplateTable() {
+export default function PartCategoryTemplateTable({
+  categoryId
+}: {
+  categoryId?: number;
+}) {
   const table = useTable('part-category-parameter-templates');
   const user = useUserState();
 
   const formFields: ApiFormFieldSet = useMemo(() => {
     return {
-      category: {},
-      parameter_template: {},
+      category: {
+        value: categoryId,
+        disabled: categoryId !== undefined
+      },
+      template: {},
       default_value: {}
     };
-  }, []);
+  }, [categoryId]);
 
   const [selectedTemplate, setSelectedTemplate] = useState<number>(0);
 
@@ -72,7 +83,7 @@ export default function PartCategoryTemplateTable() {
         accessor: 'category_detail.pathstring'
       },
       {
-        accessor: 'parameter_template_detail.name',
+        accessor: 'template_detail.name',
         title: t`Parameter Template`,
         sortable: true,
         switchable: false
@@ -88,8 +99,8 @@ export default function PartCategoryTemplateTable() {
 
           let units = '';
 
-          if (record?.parameter_template_detail?.units) {
-            units = `[${record.parameter_template_detail.units}]`;
+          if (record?.template_detail?.units) {
+            units = `[${record.template_detail.units}]`;
           }
 
           return (
@@ -149,7 +160,12 @@ export default function PartCategoryTemplateTable() {
           rowActions: rowActions,
           tableFilters: tableFilters,
           tableActions: tableActions,
-          enableDownload: true
+          enableDownload: true,
+          params: {
+            category: categoryId,
+            template_detail: true,
+            category_detail: true
+          }
         }}
       />
     </>

@@ -18,8 +18,12 @@ import { useMemo } from 'react';
  * Field set for SupplierPart instance
  */
 export function useSupplierPartFields({
+  manufacturerId,
+  manufacturerPartId,
   partId
 }: {
+  manufacturerId?: number;
+  manufacturerPartId?: number;
   partId?: number;
 }) {
   return useMemo(() => {
@@ -34,7 +38,10 @@ export function useSupplierPartFields({
         }
       },
       manufacturer_part: {
+        value: manufacturerPartId,
+        autoFill: true,
         filters: {
+          manufacturer: manufacturerId,
           part_detail: true,
           manufacturer_detail: true
         },
@@ -65,11 +72,12 @@ export function useSupplierPartFields({
       packaging: {
         icon: <IconPackage />
       },
+      primary: {},
       active: {}
     };
 
     return fields;
-  }, [partId]);
+  }, [manufacturerId, manufacturerPartId, partId]);
 }
 
 export function useManufacturerPartFields() {
@@ -85,21 +93,6 @@ export function useManufacturerPartFields() {
       MPN: {},
       description: {},
       link: {}
-    };
-
-    return fields;
-  }, []);
-}
-
-export function useManufacturerPartParameterFields() {
-  return useMemo(() => {
-    const fields: ApiFormFieldSet = {
-      manufacturer_part: {
-        disabled: true
-      },
-      name: {},
-      value: {},
-      units: {}
     };
 
     return fields;
@@ -125,6 +118,7 @@ export function companyFields(): ApiFormFieldSet {
     email: {
       icon: <IconAt />
     },
+    tax_id: {},
     is_supplier: {},
     is_manufacturer: {},
     is_customer: {},

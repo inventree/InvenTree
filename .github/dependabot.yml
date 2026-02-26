@@ -4,6 +4,8 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 7
     groups:
       dependencies:
         patterns:
@@ -13,34 +15,27 @@ updates:
     directory: /contrib/container
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 7
 
   - package-ecosystem: docker
     directory: /.devcontainer
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 7
 
   - package-ecosystem: pip
     directories:
     - /docs
     - /contrib/dev_reqs
-    schedule:
-      interval: weekly
-      day: friday
-    groups:
-      dependencies:
-        patterns:
-          - "*" # Include all dependencies
-    assignees:
-      - "matmair"
-    versioning-strategy: increase
-
-  - package-ecosystem: pip
-    directories:
     - /contrib/container
     - /src/backend
     schedule:
       interval: weekly
       day: friday
+    cooldown:
+      default-days: 7
     groups:
       dependencies:
         patterns:
@@ -54,6 +49,8 @@ updates:
     - /src/frontend
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 7
     groups:
       dependencies:
         patterns:

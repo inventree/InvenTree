@@ -6,22 +6,22 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import never_cache
 
-from django_filters import rest_framework as rest_filters
+import django_filters.rest_framework.filters as rest_filters
 from django_filters.rest_framework import DjangoFilterBackend
+from django_filters.rest_framework.filterset import FilterSet
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 
-import InvenTree.exceptions
-import InvenTree.helpers
 import InvenTree.permissions
 import report.helpers
 import report.models
 import report.serializers
 from common.models import DataOutput
 from common.serializers import DataOutputSerializer
-from InvenTree.api import MetadataView
+from InvenTree.api import meta_path
 from InvenTree.filters import InvenTreeSearchFilter
 from InvenTree.mixins import ListCreateAPI, RetrieveUpdateDestroyAPI
+from plugin import PluginMixinEnum
 from plugin.builtin.labels.inventree_label import InvenTreeLabelPlugin
 
 
@@ -32,7 +32,7 @@ class TemplatePermissionMixin:
     permission_classes = [InvenTree.permissions.IsStaffOrReadOnlyScope]
 
 
-class ReportFilterBase(rest_filters.FilterSet):
+class ReportFilterBase(FilterSet):
     """Base filter class for label and report templates."""
 
     enabled = rest_filters.BooleanFilter()
@@ -101,27 +101,19 @@ class LabelPrint(GenericAPIView):
 
     def get_plugin_class(self, plugin_slug: str, raise_error=False):
         """Return the plugin class for the given plugin key."""
-        from plugin.models import PluginConfig
+        from plugin import registry
 
         if not plugin_slug:
             # Use the default label printing plugin
             plugin_slug = InvenTreeLabelPlugin.NAME.lower()
 
-        plugin = None
-
-        try:
-            plugin_config = PluginConfig.objects.get(key=plugin_slug)
-            plugin = plugin_config.plugin
-        except (ValueError, PluginConfig.DoesNotExist):
-            pass
+        plugin = registry.get_plugin(plugin_slug, active=True)
 
         error = None
 
         if not plugin:
             error = _('Plugin not found')
-        elif not plugin.is_active():
-            error = _('Plugin is not active')
-        elif not plugin.mixin_enabled('labels'):
+        elif not plugin.mixin_enabled(PluginMixinEnum.LABELS):
             error = _('Plugin does not support label printing')
 
         if error:
@@ -184,7 +176,10 @@ class LabelPrint(GenericAPIView):
 
         instances = template.get_model().objects.filter(pk__in=items)
 
-        if instances.count() == 0:
+        # Sort the instances by the order of the provided items
+        instances = sorted(instances, key=lambda item: items.index(item.pk))
+
+        if len(instances) == 0:
             raise ValidationError(_('No valid items provided to template'))
 
         return self.print(template, instances, plugin, request)
@@ -212,6 +207,8 @@ class LabelPrint(GenericAPIView):
             template_name=template.name,
             output=None,
         )
+
+        output.refresh_from_db()
 
         offload_task(
             report.tasks.print_labels,
@@ -263,7 +260,10 @@ class ReportPrint(GenericAPIView):
 
         instances = template.get_model().objects.filter(pk__in=items)
 
-        if instances.count() == 0:
+        # Sort the instances by the order of the provided items
+        instances = sorted(instances, key=lambda item: items.index(item.pk))
+
+        if len(instances) == 0:
             raise ValidationError(_('No valid items provided to template'))
 
         return self.print(template, instances, request)
@@ -356,11 +356,7 @@ label_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(model=report.models.LabelTemplate),
-                        name='api-label-template-metadata',
-                    ),
+                    meta_path(report.models.LabelTemplate),
                     path(
                         '',
                         LabelTemplateDetail.as_view(),
@@ -383,11 +379,7 @@ report_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(model=report.models.ReportTemplate),
-                        name='api-report-template-metadata',
-                    ),
+                    meta_path(report.models.ReportTemplate),
                     path(
                         '',
                         ReportTemplateDetail.as_view(),

@@ -119,6 +119,20 @@ The translation process is as follows:
 
 The [API version]({{ sourcefile("src/backend/InvenTree/InvenTree/api_version.py") }}) needs to be bumped every time when the API is changed.
 
+### Understanding API shape
+
+While the default Open API schema generation provides a good overview of the API endpoints, it does not provide insights into the shape of the underlying API (serializer) code.
+
+The default schema generation cli command `invoke dev.schema` / endpoint `/api/schema/` can be enhanced by setting the schema generation level in the config file or via the [debugging environment variable or config value](../start/config.md#debugging-and-logging-options) `INVENTREE_SCHEMA_LEVEL`.
+
+At level 1 only simple attributes describing the underlying Django Rest Framework API view of a endpoint are added under the `x-inventree-meta` key.
+
+At level 2 details about the inheritance of the view (key `x-inventree-components`) and model (key `x-inventree-model`) are added. This allows to trace back the view to the underlying serializer and model and ensure naming of endpoints is consistent with the data model.
+
+!!! note "For experiments only"
+    There are no CI or system checks to use these additional attributes yet. This is an experimental feature to help developers understand the API shape and how it changes better.
+
+
 ## Environment
 
 ### Software Versions
@@ -186,6 +200,10 @@ To see all the available options:
 invoke dev.test --help
 ```
 
+```
+{{ invoke_commands('dev.test --help') }}
+```
+
 #### Database Permission Issues
 
 For local testing django creates a test database and removes it after testing. If you encounter permission issues while running unit test, ensure that your database user has permission to create new databases.
@@ -198,6 +216,30 @@ alter user myuser createdb;
 
 !!! info "Devcontainer"
     The default database container which is provided in the devcontainer is already setup with the required permissions
+
+### Trace coverage to specific tests
+
+Sometimes it is valuable to get insights how many tests cover a specific statement and which ones do. coverage.py calls this information contexts. Contexts are automatically captured by the invoke task test (with coverage enabled) and can be rendered with below command into a HTML report.
+```bash
+coverage html -i
+```
+
+The coverage database is also generated in the CI-pipeline and exposd for 14 days as a artifact named `coverage`.
+
+### Database Query Profiling
+
+It may be useful during development to profile parts of the backend code to see how many database queries are executed. To that end, the `count_queries` context manager can be used to count the number of queries executed in a specific code block.
+
+```python
+from InvenTree.helpers import count_queries
+
+with count_queries("My code block"):
+    # Code block to profile
+    ...
+```
+
+A developer can use this to profile a specific code block, and the number of queries executed will be printed to the console.
+
 
 ## Code Style
 
@@ -236,6 +278,12 @@ T002: Double quotes should be used in tags
 ## Documentation
 
 New features or updates to existing features should be accompanied by user documentation.
+
+### Stable link references
+
+The documentation framework enables addition of redirections. This is used to build stable references for linking in external resources.
+
+New references can be added in `docs/mkdocs.yml` in the `redirect_maps` section. Both external targets and documentation pages are possible targets. All references are linted in the docs CI pipeline.
 
 ## Translations
 

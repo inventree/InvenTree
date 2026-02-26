@@ -58,6 +58,7 @@ ignore = [
 	"N812",
     # - RUF032 - decimal-from-float-literal
     "RUF032",
+    # - RUF045 - implicit-class-var-in-dataclass
     "RUF045",
     # - UP045 - Use `X | None` instead of `Optional[X]`
     "UP045",
@@ -96,12 +97,30 @@ skip-magic-trailing-comma = true
 line-ending = "auto"
 
 [tool.uv.pip]
-python-version = "3.9.2"
+python-version = "3.11"
 no-strip-extras=true
 generate-hashes=true
 
+[tool.ty.environment]
+root = ["src/backend/InvenTree"]
+
+[tool.ty.rules]
+unresolved-reference="ignore"  # 21 # see https://github.com/astral-sh/ty/issues/220
+unresolved-attribute="ignore"  # 505 # need Plugin Mixin typing
+call-non-callable="ignore"  # 8 ##
+invalid-return-type="ignore"  # 22 ##
+invalid-argument-type="ignore"  # 49
+possibly-unbound-attribute="ignore"  # 25 # https://github.com/astral-sh/ty/issues/164
+unknown-argument="ignore"  # 3  # need to wait for betterdjango field stubs
+invalid-assignment="ignore"  # 17  # need to wait for betterdjango field stubs
+no-matching-overload="ignore"  # 3  # need to wait for betterdjango field stubs
+
 [tool.coverage.run]
 source = ["src/backend/InvenTree", "InvenTree"]
+dynamic_context = "test_function"
+
+[tool.coverage.html]
+show_contexts = true
 
 [tool.djlint]
 ignore = "D018,H006,H008,H020,H021,H023,H025,H030,H031,T002"
@@ -114,3 +133,9 @@ sections=["FUTURE","STDLIB","DJANGO","THIRDPARTY","FIRSTPARTY","LOCALFOLDER"]
 
 [tool.codespell]
 ignore-words-list = ["assertIn","SME","intoto","fitH"]
+
+[tool.pytest]
+django_find_project = false
+pythonpath = ["src/backend/InvenTree"]
+DJANGO_SETTINGS_MODULE = "InvenTree.settings"
+python_files = ["test*.py",]

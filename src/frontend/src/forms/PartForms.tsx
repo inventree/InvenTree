@@ -1,22 +1,29 @@
-import { t } from '@lingui/core/macro';
-import { IconPackages } from '@tabler/icons-react';
-import { useMemo, useState } from 'react';
-
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { apiUrl } from '@lib/functions/Api';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
-import { useApi } from '../contexts/ApiContext';
-import { useGlobalSettingsState } from '../states/SettingsState';
+import { t } from '@lingui/core/macro';
+import { IconBuildingStore, IconCopy, IconPackages } from '@tabler/icons-react';
+import { useMemo, useState } from 'react';
+import { useGlobalSettingsState } from '../states/SettingsStates';
 
 /**
  * Construct a set of fields for creating / editing a Part instance
  */
 export function usePartFields({
-  create = false
+  create = false,
+  partId,
+  duplicatePartInstance
 }: {
+  partId?: number;
+  duplicatePartInstance?: any;
   create?: boolean;
 }): ApiFormFieldSet {
   const settings = useGlobalSettingsState();
+
+  const globalSettings = useGlobalSettingsState();
+
+  const [virtual, setVirtual] = useState<boolean | undefined>(undefined);
+  const [purchaseable, setPurchaseable] = useState<boolean | undefined>(
+    undefined
+  );
 
   return useMemo(() => {
     const fields: ApiFormFieldSet = {
@@ -55,14 +62,38 @@ export function usePartFields({
           is_active: true
         }
       },
-      component: {},
-      assembly: {},
-      is_template: {},
-      testable: {},
-      trackable: {},
-      purchaseable: {},
-      salable: {},
-      virtual: {},
+      component: {
+        default: globalSettings.isSet('PART_COMPONENT')
+      },
+      assembly: {
+        default: globalSettings.isSet('PART_ASSEMBLY')
+      },
+      is_template: {
+        default: globalSettings.isSet('PART_TEMPLATE')
+      },
+      testable: {
+        default: false
+      },
+      trackable: {
+        default: globalSettings.isSet('PART_TRACKABLE')
+      },
+      purchaseable: {
+        value: purchaseable,
+        default: globalSettings.isSet('PART_PURCHASEABLE'),
+        onValueChange: (value: boolean) => {
+          setPurchaseable(value);
+        }
+      },
+      salable: {
+        default: globalSettings.isSet('PART_SALABLE')
+      },
+      virtual: {
+        default: globalSettings.isSet('PART_VIRTUAL'),
+        value: virtual,
+        onValueChange: (value: boolean) => {
+          setVirtual(value);
+        }
+      },
       locked: {},
       active: {},
       starred: {
@@ -78,30 +109,65 @@ export function usePartFields({
     if (create) {
       fields.copy_category_parameters = {};
 
-      fields.initial_stock = {
-        icon: <IconPackages />,
-        children: {
-          quantity: {
-            value: 0
-          },
-          location: {}
-        }
-      };
+      if (virtual != false) {
+        fields.initial_stock = {
+          icon: <IconPackages />,
+          children: {
+            quantity: {
+              value: 0
+            },
+            location: {}
+          }
+        };
+      }
 
-      fields.initial_supplier = {
+      if (purchaseable) {
+        fields.initial_supplier = {
+          icon: <IconBuildingStore />,
+          children: {
+            supplier: {
+              filters: {
+                is_supplier: true
+              }
+            },
+            sku: {},
+            manufacturer: {
+              filters: {
+                is_manufacturer: true
+              }
+            },
+            mpn: {}
+          }
+        };
+      }
+    }
+
+    // Additional fields for part duplication
+    if (create && duplicatePartInstance?.pk) {
+      fields.duplicate = {
+        icon: <IconCopy />,
         children: {
-          supplier: {
-            filters: {
-              is_supplier: true
-            }
+          part: {
+            value: duplicatePartInstance?.pk,
+            hidden: true
           },
-          sku: {},
-          manufacturer: {
-            filters: {
-              is_manufacturer: true
-            }
+          copy_image: {
+            value: true
           },
-          mpn: {}
+          copy_bom: {
+            value: settings.isSet('PART_COPY_BOM'),
+            hidden: !duplicatePartInstance?.assembly
+          },
+          copy_notes: {
+            value: true
+          },
+          copy_parameters: {
+            value: settings.isSet('PART_COPY_PARAMETERS')
+          },
+          copy_tests: {
+            value: true,
+            hidden: !duplicatePartInstance?.testable
+          }
         }
       };
     }
@@ -126,7 +192,15 @@ export function usePartFields({
     }
 
     return fields;
-  }, [create, settings]);
+  }, [
+    partId,
+    virtual,
+    purchaseable,
+    create,
+    globalSettings,
+    duplicatePartInstance,
+    settings
+  ]);
 }
 
 /**
@@ -174,86 +248,6 @@ export function partCategoryFields({
   return fields;
 }
 
-export function usePartParameterFields({
-  editTemplate
-}: {
-  editTemplate?: boolean;
-}): ApiFormFieldSet {
-  const api = useApi();
-
-  // Valid field choices
-  const [choices, setChoices] = useState<any[]>([]);
-
-  // Field type for "data" input
-  const [fieldType, setFieldType] = useState<'string' | 'boolean' | 'choice'>(
-    'string'
-  );
-
-  return useMemo(() => {
-    return {
-      part: {
-        disabled: true
-      },
-      template: {
-        disabled: editTemplate == false,
-        onValueChange: (value: any, record: any) => {
-          // Adjust the type of the "data" field based on the selected template
-          if (record?.checkbox) {
-            // This is a "checkbox" field
-            setChoices([]);
-            setFieldType('boolean');
-          } else if (record?.choices) {
-            const _choices: string[] = record.choices.split(',');
-
-            if (_choices.length > 0) {
-              setChoices(
-                _choices.map((choice) => {
-                  return {
-                    display_name: choice.trim(),
-                    value: choice.trim()
-                  };
-                })
-              );
-              setFieldType('choice');
-            } else {
-              setChoices([]);
-              setFieldType('string');
-            }
-          } else if (record?.selectionlist) {
-            api
-              .get(
-                apiUrl(ApiEndpoints.selectionlist_detail, record.selectionlist)
-              )
-              .then((res) => {
-                setChoices(
-                  res.data.choices.map((item: any) => {
-                    return {
-                      value: item.value,
-                      display_name: item.label
-                    };
-                  })
-                );
-                setFieldType('choice');
-              });
-          } else {
-            setChoices([]);
-            setFieldType('string');
-          }
-        }
-      },
-      data: {
-        type: fieldType,
-        field_type: fieldType,
-        choices: fieldType === 'choice' ? choices : undefined,
-        adjustValue: (value: any) => {
-          // Coerce boolean value into a string (required by backend)
-          return value.toString();
-        }
-      }
-    };
-  }, [editTemplate, fieldType, choices]);
-}
-
 export function partStocktakeFields(): ApiFormFieldSet {
   return {
     part: {
@@ -264,18 +258,6 @@ export function partStocktakeFields(): ApiFormFieldSet {
     cost_min: {},
     cost_min_currency: {},
     cost_max: {},
-    cost_max_currency: {},
-    note: {}
-  };
-}
-
-export function generateStocktakeReportFields(): ApiFormFieldSet {
-  return {
-    part: {},
-    category: {},
-    location: {},
-    exclude_external: {},
-    generate_report: {},
-    update_parts: {}
+    cost_max_currency: {}
   };
 }

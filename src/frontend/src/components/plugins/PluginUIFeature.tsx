@@ -25,6 +25,7 @@ import type {
  * Enumeration for available plugin UI feature types.
  */
 export enum PluginUIFeatureType {
+  spotlight_action = 'spotlight_action',
   dashboard = 'dashboard',
   panel = 'panel',
   template_editor = 'template_editor',
@@ -63,12 +64,12 @@ export const getPluginTemplateEditor = (
   template: TemplateI
 ) =>
   forwardRef((props, ref) => {
-    const elRef = useRef<HTMLDivElement>();
+    const elRef = useRef<HTMLDivElement | null>(null);
     const [error, setError] = useState<string | undefined>(undefined);
 
-    const initialCodeRef = useRef<string>();
-    const setCodeRef = useRef<(code: string) => void>();
-    const getCodeRef = useRef<() => string>();
+    const initialCodeRef = useRef<string | null>(null);
+    const setCodeRef = useRef<((code: string) => void) | null>(null);
+    const getCodeRef = useRef<(() => string) | null>(null);
 
     useImperativeHandle(ref, () => ({
       setCode: (code) => {
@@ -132,10 +133,12 @@ export const getPluginTemplatePreview = (
   template: TemplateI
 ) =>
   forwardRef((props, ref) => {
-    const elRef = useRef<HTMLDivElement>();
+    const elRef = useRef<HTMLDivElement | null>(null);
     const [error, setError] = useState<string | undefined>(undefined);
 
-    const updatePreviewRef = useRef<PreviewAreaRef['updatePreview']>();
+    const updatePreviewRef = useRef<PreviewAreaRef['updatePreview'] | null>(
+      null
+    );
 
     useImperativeHandle(ref, () => ({
       updatePreview: (...args) => updatePreviewRef.current?.(...args)

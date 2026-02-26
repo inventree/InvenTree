@@ -3,23 +3,19 @@ Title: Unit Tests
 ---
 
 ## Unit Tests
-For complicated plugins it makes sense to add unit tests the code to ensure
-that plugins work correctly and are compatible with future versions too.
-You can run these tests as part of your ci against the current stable and
-latest tag to get notified when something breaks before it gets released as
-part of stable. InvenTree offers a framework for testing. Please refer
-to [Unit Tests](../develop/contributing.md) for more information.
+For complicated plugins it makes sense to add unit tests the code to ensure that plugins work correctly and are compatible with future versions too. You can run these tests as part of your ci against the current stable and latest tag to get notified when something breaks before it gets released as part of stable. InvenTree offers a framework for testing. Please refer to [Unit Tests](../develop/contributing.md#unit-testing) for more information.
 
 ### Prerequisites
+
 For plugin testing the following environment variables must be set to True:
 
 | Name | Function | Value |
-| --- | --- | --- |
+| ---- | -------- | ----- |
 | INVENTREE_PLUGINS_ENABLED | Enables the use of 3rd party plugins | True |
 | INVENTREE_PLUGIN_TESTING | Enables enables all plugins no matter of their active state in the db or built-in flag | True |
 | INVENTREE_PLUGIN_TESTING_SETUP | Enables the url mixin | True |
 
-### Test program
+### Test Program
 
 A file called test_plugin_name.py should be added to the plugin directory. It can have the
 following structure:
@@ -46,7 +42,8 @@ I that case module must be omitted.
 invoke dev.test -r plugin_directory.test_plugin_name.TestMyPlugin
 ```
 
-### do some work here... A simple Example
+### Simple Example
+
 A simple example is shown here. Assume the plugin has a function that converts a price string
 that comes from a supplier API to a float value. The price might have the form "1.456,34 €".
 It can be different based on country and local settings.

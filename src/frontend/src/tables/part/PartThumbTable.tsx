@@ -71,9 +71,7 @@ function PartThumbComponent({
     color = hoverColor;
   }
 
-  const src: string | undefined = element?.image
-    ? `/media/${element?.image}`
-    : undefined;
+  const src: string | undefined = element?.image ? element?.image : undefined;
 
   return (
     <Paper
@@ -137,6 +135,11 @@ export function PartThumbTable({ pk, setImage }: Readonly<ThumbTableProps>) {
   // Fetch thumbnails from API
   const thumbQuery = useQuery({
     queryKey: [ApiEndpoints.part_thumbs_list, page, searchText],
+    throwOnError: (error: any) => {
+      setTotalPages(1);
+      setPage(1);
+      return true;
+    },
     queryFn: async () => {
       const offset = Math.max(0, page - 1) * limit;
 
@@ -152,11 +155,6 @@ export function PartThumbTable({ pk, setImage }: Readonly<ThumbTableProps>) {
           const records = response?.data?.count ?? 1;
           setTotalPages(Math.ceil(records / limit));
           return response.data?.results ?? response.data;
-        })
-        .catch((error) => {
-          setTotalPages(1);
-          setPage(1);
-          return [];
         });
     }
   });
@@ -172,7 +170,7 @@ export function PartThumbTable({ pk, setImage }: Readonly<ThumbTableProps>) {
             spacing='xs'
           >
             {!thumbQuery.isFetching
-              ? thumbQuery?.data.map((data: ImageElement, index: number) => (
+              ? thumbQuery?.data?.map((data: ImageElement, index: number) => (
                   <PartThumbComponent
                     element={data}
                     key={index}

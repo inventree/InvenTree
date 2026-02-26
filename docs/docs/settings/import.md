@@ -19,6 +19,22 @@ External data can be imported via the admin interface, allowing for rapid integr
 
 To import data, the user must have the appropriate permissions. The user must be a *staff* user, and have the `change` permission for the model in question.
 
+### Mapping to Existing Data
+
+Many data models in InvenTree have relationships to other models. When importing data, the user must ensure that the related data is correctly mapped to existing records in the database. For example, when importing a list of parts, the user must ensure that the *part category* data has already been imported, and that the part category field in the imported file is correctly mapped to the existing part category records in the database.
+
+!!! warning "Multi Level Import"
+    Multi-level imports are explicitly not supported. Only one model can be imported at a time, and the user must ensure that any related data is imported beforehand.
+
+### Primary Key Fields
+
+The default field used to map to existing data (i.e. related models which have already been imported into the database) is using the `ID` (primary key) field. Thus, it is important to ensure that the imported data file contains the correct `ID` values for any related data, otherwise the import process will fail to correctly link the imported data to existing records in the database.
+
+Some models allow for mapping based on other "natural key" fields (e.g. the `reference` field for orders, or the `name` field for part categories). In such cases, the user must ensure that the correct field is mapped to the relevant column in the imported data file.
+
+!!! warning "Unique Identifiers"
+    If a unique identifier cannot be determined for any related field, the user must manually map the relevant field to the correct existing record in the database, during the import process.
+
 ## Import Session
 
 Importing data is a multi-step process, which is managed via an *import session*. An import session is created when the user initiates a data import, and is used to track the progress of the data import process.
@@ -27,11 +43,25 @@ Importing data is a multi-step process, which is managed via an *import session*
 
 The import session is managed by the InvenTree server, and all import session data is stored on the server. As the import process can be time-consuming, the user can navigate away from the import page and return later to check on the progress of the import.
 
-Import sessions can be managed from the *Admin Center* page, which lists all available import sessions
+Import sessions can be managed from the [Admin Center](./admin.md#admin-center) page, which lists all available import sessions
 
 ### Context Sensitive Importing
 
 Depending on the type of data being imported, an import session can be created from an appropriate page context in the user interface. In such cases, the import session will be automatically linked to the relevant data type being imported.
+
+### Starting an Import Session
+
+An import session can be initiated from a number of different contexts within the user interface:
+
+### Admin Center
+
+Staff users can create an import session from within the [Admin Center](./admin.md#admin-center). This is a general-purpose import session, and the user will be required to select the type of data to import.
+
+Users can quickly navigate to the data import managemement page from the [spotlight search](../concepts/user_interface.md#spotlight), by searching for "import" and selecting the "Import data" option.
+
+### Data Tables
+
+Some data tables allow the user to create an import session directly from the table view. In such cases, the import session will be automatically linked to the relevant data type being imported, and additional [context information](#context-sensitive-importing) will be automatically provided.
 
 ## Import Process
 
@@ -41,17 +71,13 @@ The following steps outline the process of importing data into InvenTree:
 
 An import session can be created via the methods outlined above. The first step is to create an import session, and upload the data file to import. Note that depending on the context of the data import, the user may have to select the database model to import data into.
 
-{% with id="import-create", url="admin/import_session_create.png", description="Create import session" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("admin/import_session_create.png", "Create import session") }}
 
 ### Map Data Fields
 
 Next, the user must map the data fields in the uploaded file to the fields in the database model. This is a critical step, as the data fields must be correctly matched to the database fields.
 
-{% with id="import-map", url="admin/import_session_map.png", description="Map data fields" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("admin/import_session_map.png", "Map data fields") }}
 
 The InvenTree server will attempt to automatically associate the data fields in the uploaded file with the database fields. However, the user may need to manually adjust the field mappings to ensure that the data is imported correctly.
 
@@ -65,9 +91,7 @@ Note that this process may take some time if the data file is large. The import 
 
 Once the data has been loaded into the import session, the user can process the data. This step will attempt to validate the data, and check for any errors or issues that may prevent the data from being imported.
 
-{% with id="import-process", url="admin/import_session_process.png", description="Process data" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("admin/import_session_process.png", "Process data") }}
 
 Note that each row must be selected and confirmed by the user before it is actually imported into the database. Any errors which are detected will be displayed to the user, and the user can choose to correct the data and re-process it.
 
@@ -82,3 +106,37 @@ Each individual row can be imported, or removed (deleted) by the user. Once all 
 ### Import Completed
 
 Once all records have been processed, the import session is considered complete. The import session can be closed, and the imported records are now stored in the database.
+
+## Updating Existing Records
+
+The data import process can also be used to update existing records in the database. This requires that the imported data file contains a unique identifier for each record, which can be used to match the records in the database.
+
+The basic outline of this process is:
+
+1. Export the existing records to a CSV file.
+2. Modify the CSV file to update the records as required.
+3. Upload the modified CSV file to the import session.
+
+!!! note "Mixing Creation and Update"
+    It is not possible to mix the creation of new records with the updating of existing records in a single import session. If you wish to create new records, you must create a separate import session for that purpose.
+
+### Create Import Session
+
+!!! note "Admin Center"
+    Updating existing records can only be performed when creating a new import session from the [Admin Center](./admin.md#admin-center).
+
+Create a new import session, and ensure that the *Update Existing Records* option is selected. This will allow the import session to update existing records in the database.
+
+{{ image("admin/import_session_create_update.png", "Update existing records") }}
+
+### Map Data Fields
+
+When mapping the data fields, ensure that the `ID` field is correctly mapped to the corresponding column in the file:
+
+{{ image("admin/import_select_id.png", "Update existing records") }}
+
+### Process Data
+
+When processing the data, each row will be matched against an existing record in the database. If a match is found, the existing record will be updated with the new data from the imported file.
+
+{{ image("admin/import_update_process.png", "Update existing records") }}

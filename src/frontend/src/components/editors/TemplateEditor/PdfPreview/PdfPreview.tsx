@@ -1,7 +1,9 @@
 import { Trans } from '@lingui/react/macro';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 
-import { ApiEndpoints, apiUrl } from '@lib/index';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
+import { t } from '@lingui/core/macro';
 import { api } from '../../../../App';
 import type { PreviewAreaComponent } from '../TemplateEditor';
 
@@ -44,14 +46,21 @@ export const PdfPreviewComponent: PreviewAreaComponent = forwardRef(
         );
 
         if (preview.status !== 200 && preview.status !== 201) {
-          if (preview.data?.non_field_errors) {
-            throw new Error(preview.data?.non_field_errors.join(', '));
+          let message: string =
+            preview.data?.toString() ?? t`Error rendering preview`;
+
+          for (const field of ['non_field_errors', 'detail', 'error']) {
+            if (preview.data?.[field]) {
+              message = preview.data[field].join(', ');
+              break;
+            }
           }
 
-          throw new Error(preview.data);
+          throw new Error(message);
         }
 
         let outputUrl = preview?.data?.output;
+
         if (preview.data && !preview.data.complete) {
           outputUrl = await new Promise((res, rej) => {
             let cnt = 0;

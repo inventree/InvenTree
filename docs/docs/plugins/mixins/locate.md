@@ -14,17 +14,13 @@ The possibilities are endless!
 
 ### Web Integration
 
-{% with id="web_locate", url="plugin/web_locate.png", description="Locate stock item from web interface", maxheight="400px" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("plugin/web_locate.png", "Locate stock item from web interface", maxheight="400px") }}
 
 ### App Integration
 
 If a locate plugin is installed and activated, the [InvenTree mobile app](../../app/index.md) displays a button for locating a StockItem or StockLocation (see below):
 
-{% with id="app_locate", url="plugin/app_locate.png", description="Locate stock item from app", maxheight="400px" %}
-{% include 'img.html' %}
-{% endwith %}
+{{ image("plugin/app_locate.png", "Locate stock item from app", maxheight="400px") }}
 
 ### Implementation
 
