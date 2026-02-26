@@ -1046,6 +1046,7 @@ class SalesOrderLineItemList(
         'customer',
         'order',
         'part',
+        'IPN',
         'part__name',
         'quantity',
         'allocated',
@@ -1058,6 +1059,7 @@ class SalesOrderLineItemList(
     ordering_field_aliases = {
         'customer': 'order__customer__name',
         'part': 'part__name',
+        'IPN': 'part__IPN',
         'order': 'order__reference',
     }
 
@@ -1667,11 +1669,24 @@ class ReturnOrderLineItemList(
 
     filterset_class = ReturnOrderLineItemFilter
 
-    filter_backends = SEARCH_ORDER_FILTER
+    filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
     output_options = ReturnOrderLineItemOutputOptions
 
-    ordering_fields = ['reference', 'target_date', 'received_date']
+    ordering_fields = [
+        'part',
+        'IPN',
+        'stock',
+        'reference',
+        'target_date',
+        'received_date',
+    ]
+
+    ordering_field_aliases = {
+        'part': 'item__part__name',
+        'IPN': 'item__part__IPN',
+        'stock': ['item__quantity', 'item__serial_int', 'item__serial'],
+    }
 
     search_fields = [
         'item__serial',

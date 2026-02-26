@@ -19,6 +19,7 @@ import {
   CreationDateColumn,
   DescriptionColumn,
   LineItemsProgressColumn,
+  LinkColumn,
   ProjectCodeColumn,
   ReferenceColumn,
   ResponsibleColumn,
@@ -56,7 +57,18 @@ export function ReturnOrderTable({
   partId?: number;
   customerId?: number;
 }>) {
-  const table = useTable(!!partId ? 'returnorders-part' : 'returnorders-index');
+  const table = useTable(
+    !!partId ? 'returnorders-part' : 'returnorders-index',
+    {
+      initialFilters: [
+        {
+          name: 'outstanding',
+          value: 'true'
+        }
+      ]
+    }
+  );
+
   const user = useUserState();
 
   const tableFilters: TableFilter[] = useMemo(() => {
@@ -112,7 +124,8 @@ export function ReturnOrderTable({
         )
       },
       {
-        accessor: 'customer_reference'
+        accessor: 'customer_reference',
+        copyable: true
       },
       DescriptionColumn({}),
       LineItemsProgressColumn({}),
@@ -143,7 +156,8 @@ export function ReturnOrderTable({
             currency: record.order_currency || record.customer_detail?.currency
           });
         }
-      }
+      },
+      LinkColumn({})
     ];
   }, []);
 

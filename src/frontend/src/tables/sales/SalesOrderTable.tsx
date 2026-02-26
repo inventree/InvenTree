@@ -14,11 +14,13 @@ import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import {
+  AllocatedLinesProgressColumn,
   CompanyColumn,
   CreatedByColumn,
   CreationDateColumn,
   DescriptionColumn,
   LineItemsProgressColumn,
+  LinkColumn,
   ProjectCodeColumn,
   ReferenceColumn,
   ResponsibleColumn,
@@ -57,7 +59,14 @@ export function SalesOrderTable({
   partId?: number;
   customerId?: number;
 }>) {
-  const table = useTable(!!partId ? 'salesorder-part' : 'salesorder-index');
+  const table = useTable(!!partId ? 'salesorder-part' : 'salesorder-index', {
+    initialFilters: [
+      {
+        name: 'outstanding',
+        value: 'true'
+      }
+    ]
+  });
   const user = useUserState();
 
   const tableFilters: TableFilter[] = useMemo(() => {
@@ -138,10 +147,14 @@ export function SalesOrderTable({
       },
       {
         accessor: 'customer_reference',
-        title: t`Customer Reference`
+        title: t`Customer Reference`,
+        copyable: true
       },
       DescriptionColumn({}),
       LineItemsProgressColumn({}),
+      AllocatedLinesProgressColumn({
+        defaultVisible: false
+      }),
       {
         accessor: 'shipments_count',
         title: t`Shipments`,
@@ -179,7 +192,8 @@ export function SalesOrderTable({
             currency: record.order_currency || record.customer_detail?.currency
           });
         }
-      }
+      },
+      LinkColumn({})
     ];
   }, []);
 

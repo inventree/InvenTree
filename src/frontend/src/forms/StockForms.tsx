@@ -646,7 +646,8 @@ function StockOperationsRow({
           <Group grow justify='space-between' wrap='nowrap'>
             <Text>{stockString}</Text>
             <StatusRenderer
-              status={record.status_custom_key}
+              status={record.status_custom_key || record.status}
+              fallbackStatus={record.status}
               type={ModelType.stockitem}
             />
           </Group>
@@ -1502,6 +1503,10 @@ export function useTestResultFields({
               setChoices([]);
               setFieldType('string');
             }
+          } else {
+            // No choices defined - this is a free-form text field
+            setChoices([]);
+            setFieldType('string');
           }
         }
       },

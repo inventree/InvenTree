@@ -174,7 +174,9 @@ export function useSalesOrderLineItemFields({
       },
       sale_price: {
         placeholder: salePrice,
-        placeholderAutofill: true
+        placeholderAutofill: true,
+        placeholderWarningCompare: salePrice,
+        placeholderWarning: t`Price based on part and quantity differs${salePrice ? `; suggested: (${salePrice})` : '.'}`
       },
       sale_price_currency: {
         icon: <IconCoins />,

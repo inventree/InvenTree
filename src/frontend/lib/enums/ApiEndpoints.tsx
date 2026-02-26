@@ -120,6 +120,7 @@ export enum ApiEndpoints {
   part_pricing_internal = 'part/internal-price/',
   part_pricing_sale = 'part/sale-price/',
   part_stocktake_list = 'part/stocktake/',
+  part_stocktake_generate = 'part/stocktake/generate/',
   category_list = 'part/category/',
   category_tree = 'part/category/tree/',
   category_parameter_list = 'part/category/parameters/',
@@ -243,5 +244,8 @@ export enum ApiEndpoints {
   email_test = 'admin/email/test/',
   config_list = 'admin/config/',
   parameter_list = 'parameter/',
-  parameter_template_list = 'parameter/template/'
+  parameter_template_list = 'parameter/template/',
+
+  // Internal system things
+  system_internal_trace_end = 'system-internal/observability/end'
 }

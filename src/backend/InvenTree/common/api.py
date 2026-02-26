@@ -5,7 +5,7 @@ import json.decoder
 
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
-from django.core.exceptions import ValidationError
+from django.core.exceptions import FieldDoesNotExist, ValidationError
 from django.db.models import Q
 from django.http import JsonResponse
 from django.http.response import HttpResponse
@@ -22,6 +22,7 @@ from django_q.tasks import async_task
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
 from drf_spectacular.utils import OpenApiResponse, extend_schema
 from error_report.models import Error
+from opentelemetry import trace
 from pint._typing import UnitLike
 from rest_framework import generics, serializers
 from rest_framework.exceptions import NotAcceptable, NotFound, PermissionDenied
@@ -34,6 +35,7 @@ import common.filters
 import common.models
 import common.serializers
 import InvenTree.conversion
+import InvenTree.models
 import InvenTree.ready
 from common.icons import get_icon_packs
 from common.settings import get_global_setting
@@ -837,7 +839,13 @@ class ParameterTemplateFilter(FilterSet):
         content_type = common.filters.determine_content_type(value)
 
         if not content_type:
-            return queryset.none()
+            raise ValidationError({
+                'exists_for_model': 'Invalid model type provided - unable to determine content type'
+            })
+
+        # If the 'filter_exists_for_model_id' filter is applied, defer to that
+        if self.request.query_params.get('exists_for_model_id', None):
+            return queryset
 
         queryset = queryset.prefetch_related('parameters')
 
@@ -849,6 +857,160 @@ class ParameterTemplateFilter(FilterSet):
         )
 
         # Return only those ParameterTemplates which have at least one Parameter for the given model type
+        return queryset.filter(parameter_count__gt=0)
+
+    exists_for_model_id = rest_filters.NumberFilter(
+        method='filter_exists_for_model_id', label='Exists For Model ID'
+    )
+
+    def filter_exists_for_model_id(self, queryset, name, value):
+        """Filter queryset to include only ParameterTemplates which have at least one Parameter for the given model type and model id.
+
+        Notes:
+            - This filter can only be applied if the 'exists_for_model' filter is also applied, as the model_id is only meaningful in the context of a particular model type.
+
+        Reference: https://github.com/inventree/InvenTree/issues/11381
+        """
+        exists_for_model = self.request.query_params.get('exists_for_model', None)
+
+        if not exists_for_model:
+            raise ValidationError({
+                'exists_for_model': 'Invalid model type provided - unable to determine content type'
+            })
+
+        content_type = common.filters.determine_content_type(exists_for_model)
+
+        if not content_type:
+            raise ValidationError({
+                'exists_for_model': 'Invalid model type provided - unable to determine content type'
+            })
+
+        model_class = content_type.model_class()
+
+        # Try to find the model instance
+        try:
+            instance = model_class.objects.get(pk=value)
+        except (model_class.DoesNotExist, ValueError):
+            # If the model instance does not exist, then we can return an empty queryset
+            raise ValidationError({
+                'exists_for_model_id': 'Invalid model id provided - no such instance for the given model type'
+            })
+
+        # If the provided model is a "tree" structure, then we should also include any child objects in the filter
+        if isinstance(instance, InvenTree.models.InvenTreeTree):
+            id_values = list(
+                instance.get_descendants(include_self=True).values_list('pk', flat=True)
+            )
+        else:
+            id_values = [instance.pk]
+
+        # Now, filter against model type and model id
+        queryset = queryset.prefetch_related('parameters')
+
+        filters = {'model_type': content_type, 'model_id__in': id_values}
+
+        # Annotate the queryset to determine which ParameterTemplates have at least one Parameter defined
+        queryset = queryset.annotate(
+            parameter_count=SubqueryCount('parameters', filter=Q(**filters))
+        )
+
+        return queryset.filter(parameter_count__gt=0)
+
+    exists_for_related_model = rest_filters.CharFilter(
+        method='filter_exists_for_related_model', label='Exists For Related Model'
+    )
+
+    def filter_exists_for_related_model(self, queryset, name, value):
+        """Filter applied to map parameter templates to a particular model relation against the target model.
+
+        For instance, specify 'category' to filter part parameters which exist for any part in that category.
+
+        Note:
+            - This filter has no effect on its own
+            - It requires the 'exists_for_model' filter to be applied (to specify the base model)
+            - It requires the 'exists_for_related_model_id' filter to be applied also (to specify the related model id)
+        """
+        return queryset
+
+    exists_for_related_model_id = rest_filters.NumberFilter(
+        method='filter_exists_for_related_model_id', label='Exists For Model ID'
+    )
+
+    def filter_exists_for_related_model_id(self, queryset, name, value):
+        """Filter queryset to include only ParameterTemplates which have at least one Parameter for the given related model type and model id.
+
+        Notes:
+            - This filter can only be applied if the 'exists_for_model' filter is also applied, as the model_id is only meaningful in the context of a base model
+            - This filter can only be applied if the 'exists_for_related_model' filter is also applied, as the related model id is only meaningful in the context of a particular model relation
+
+        Example: To filter part parameters which have at least one parameter defined for any part in category 5, you could apply the following filters:
+            - exists_for_model=part
+            - exists_for_related_model=category
+            - exists_for_related_model_id=5
+        """
+        model = self.request.query_params.get('exists_for_model', None)
+        related_model = self.request.query_params.get('exists_for_related_model', None)
+
+        if not model or not related_model:
+            raise ValidationError({
+                'exists_for_model': 'Invalid model type provided - unable to determine content type'
+            })
+
+        # Determine content type for the base model, to ensure they are valid
+        model_type = common.filters.determine_content_type(model)
+
+        if not model_type:
+            return queryset.none()
+
+        # Determine the model class for the 'related' model
+        try:
+            related_model_field = model_type.model_class()._meta.get_field(
+                related_model
+            )
+        except FieldDoesNotExist:
+            raise ValidationError({
+                'exists_for_related_model': 'Invalid related model - no such field on the base model'
+            })
+        if related_model_field := model_type.model_class()._meta.get_field(
+            related_model
+        ):
+            related_model_class = related_model_field.related_model
+        else:
+            # Return an empty queryset if the provided related model is invalid
+            return queryset.none()
+
+        # Find all instances of the related model which match the provided related model id
+        try:
+            related_instance = related_model_class.objects.get(pk=value)
+        except (related_model_class.DoesNotExist, ValueError):
+            return queryset.none()
+
+        # Account for potential tree structure in the related model
+        if isinstance(related_instance, InvenTree.models.InvenTreeTree):
+            related_instances = list(
+                related_instance.get_descendants(include_self=True).values_list(
+                    'pk', flat=True
+                )
+            )
+        else:
+            related_instances = [related_instance.pk]
+
+        # Next, find all instances of the base model which are related to the related model instances
+        model_instances = model_type.model_class().objects.filter(**{
+            f'{related_model}__in': related_instances
+        })
+        model_instance_ids = list(model_instances.values_list('pk', flat=True))
+
+        # Now, filter against model type and model id
+        queryset = queryset.prefetch_related('parameters')
+
+        filters = {'model_type': model_type, 'model_id__in': model_instance_ids}
+
+        # Annotate the queryset to determine which ParameterTemplates have at least one Parameter defined
+        queryset = queryset.annotate(
+            parameter_count=SubqueryCount('parameters', filter=Q(**filters))
+        )
+
         return queryset.filter(parameter_count__gt=0)
 
 
@@ -1114,6 +1276,50 @@ class HealthCheckView(APIView):
         )
 
 
+class ObservabilityEndSerializer(serializers.Serializer):
+    """Serializer for observability end endpoint."""
+
+    traceid = serializers.CharField(
+        help_text='Trace ID to end', max_length=128, required=True
+    )
+    service = serializers.CharField(
+        help_text='Service name', max_length=128, required=True
+    )
+
+
+class ObservabilityEnd(CreateAPI):
+    """Endpoint for observability tools."""
+
+    permission_classes = [AllowAnyOrReadScope]
+    serializer_class = ObservabilityEndSerializer
+
+    def create(self, request, *args, **kwargs):
+        """End a trace in the observability system."""
+        if not settings.TRACING_ENABLED:
+            return Response({'status': 'ok'})
+
+        data = self.get_serializer(data=request.data)
+        data.is_valid(raise_exception=True)
+
+        traceid = data.validated_data['traceid']
+        # service = data.validated_data['service']  # This will become interesting with frontend observability
+
+        # End the foreign trend via the low level otel API
+        tracer = trace.get_tracer(__name__)
+        span_context = trace.SpanContext(
+            trace_id=int(traceid, 16),
+            span_id=0,
+            is_remote=True,
+            trace_flags=trace.TraceFlags(0x01),
+            trace_state=trace.TraceState(),
+        )
+        with tracer.start_span('Ending session') as span:
+            span.add_event('Ending external trace')
+            span.add_link(span_context)
+
+        return Response({'status': 'ok'})
+
+
 selection_urls = [
     path(
         '<int:pk>/',
@@ -1368,7 +1574,22 @@ common_api_urls = [
     # System APIs (related to basic system functions)
     path(
         'system/',
-        include([path('health/', HealthCheckView.as_view(), name='api-system-health')]),
+        include([
+            # Health check
+            path('health/', HealthCheckView.as_view(), name='api-system-health')
+        ]),
+    ),
+    # Internal System APIs - DO NOT USE
+    path(
+        'system-internal/',
+        include([
+            # Observability
+            path(
+                'observability/end',
+                ObservabilityEnd.as_view(),
+                name='api-system-observability',
+            )
+        ]),
     ),
 ]
 

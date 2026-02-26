@@ -55,14 +55,6 @@ export function usePartFields({
           structural: false
         }
       },
-      default_supplier: {
-        hidden: !partId || !purchaseable,
-        filters: {
-          part: partId,
-          part_detail: true,
-          supplier_detail: true
-        }
-      },
       default_expiry: {},
       minimum_stock: {},
       responsible: {
@@ -266,7 +258,6 @@ export function partStocktakeFields(): ApiFormFieldSet {
     cost_min: {},
     cost_min_currency: {},
     cost_max: {},
-    cost_max_currency: {},
-    note: {}
+    cost_max_currency: {}
   };
 }

@@ -9,7 +9,10 @@ import {
   loadTab,
   navigate,
   openFilterDrawer,
-  setTableChoiceFilter
+  setTableChoiceFilter,
+  showCalendarView,
+  showParametricView,
+  showTableView
 } from '../helpers.ts';
 import { doCachedLogin } from '../login.ts';
 
@@ -18,53 +21,64 @@ test('Purchasing - Index', async ({ browser }) => {
 
   // Purchase Orders tab
   await loadTab(page, 'Purchase Orders');
-  await page
-    .getByRole('button', { name: 'segmented-icon-control-parametric' })
-    .click();
+  await showParametricView(page);
+  await showCalendarView(page);
+  await showTableView(page);
 
-  await page
-    .getByRole('button', { name: 'segmented-icon-control-calendar' })
-    .click();
-  await page.getByRole('button', { name: 'calendar-select-month' }).waitFor();
-  await page
-    .getByRole('button', { name: 'segmented-icon-control-table' })
-    .click();
+  // Check default filters are applied
+  // By default, only outstanding orders are visible
+  await page.getByText(/1 - \d+ \/ \d+/).waitFor();
+
+  // Clearing the filters, more orders should be visible
+  await clearTableFilters(page);
+  await page.getByText(/1 - \d\d \/ \d\d/).waitFor();
 
   // Suppliers tab
   await loadTab(page, 'Suppliers');
-  await page
-    .getByRole('button', { name: 'segmented-icon-control-parametric' })
-    .click();
-  await page
-    .getByRole('button', { name: 'segmented-icon-control-table' })
-    .click();
+  await showParametricView(page);
+  await showTableView(page);
+
+  // Check for expected values
+  await clearTableFilters(page);
+  await page.getByRole('cell', { name: 'DigiKey DigiKey' }).first().waitFor();
 
   // Supplier parts tab
   await loadTab(page, 'Supplier Parts');
+  await showParametricView(page);
+  await showTableView(page);
+
+  // Check for expected values
+  await clearTableFilters(page);
   await page
-    .getByRole('button', { name: 'segmented-icon-control-parametric' })
-    .click();
-  await page
-    .getByRole('button', { name: 'segmented-icon-control-table' })
-    .click();
+    .getByRole('textbox', { name: 'table-search-input' })
+    .fill('R_100K_0402');
+  await page.getByText('R_100K_0402_1%').first().waitFor();
+  await page.getByRole('cell', { name: 'RR05P100KDTR-ND' }).first().waitFor();
 
   // Manufacturers tab
   await loadTab(page, 'Manufacturers');
+  await showParametricView(page);
+  await showTableView(page);
+
+  // Check for expected values
+  await clearTableFilters(page);
   await page
-    .getByRole('button', { name: 'segmented-icon-control-parametric' })
-    .click();
-  await page
-    .getByRole('button', { name: 'segmented-icon-control-table' })
-    .click();
+    .getByRole('cell', { name: 'Hammond Manufacturing Hammond' })
+    .first()
+    .waitFor();
 
   // Manufacturer parts tab
   await loadTab(page, 'Manufacturer Parts');
+  await showParametricView(page);
+  await showTableView(page);
+
+  // Check for expected values
+  await clearTableFilters(page);
+  await page.getByRole('cell', { name: 'ERA-2AEB104X' }).first().waitFor();
   await page
-    .getByRole('button', { name: 'segmented-icon-control-parametric' })
-    .click();
-  await page
-    .getByRole('button', { name: 'segmented-icon-control-table' })
-    .click();
+    .getByRole('cell', { name: 'Bourns Inc. Bourns Inc.' })
+    .first()
+    .waitFor();
 });
 
 test('Purchase Orders - General', async ({ browser }) => {

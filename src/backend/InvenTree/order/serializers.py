@@ -14,9 +14,9 @@ from sql_util.utils import SubqueryCount, SubquerySum
 
 import build.serializers
 import common.filters
+import company.models as company_models
 import order.models
 import part.filters as part_filters
-import part.models as part_models
 import stock.models
 import stock.serializers
 from company.serializers import (
@@ -587,7 +587,7 @@ class PurchaseOrderLineItemSerializer(
         return queryset
 
     part = serializers.PrimaryKeyRelatedField(
-        queryset=part_models.SupplierPart.objects.all(),
+        queryset=company_models.SupplierPart.objects.all(),
         many=False,
         required=True,
         allow_null=True,
@@ -639,7 +639,7 @@ class PurchaseOrderLineItemSerializer(
         help_text=_(
             'Automatically calculate purchase price based on supplier part data'
         ),
-        default=True,
+        default=False,
     )
 
     destination_detail = enable_filter(
@@ -1025,6 +1025,7 @@ class SalesOrderSerializer(
             'order_currency',
             'shipments_count',
             'completed_shipments_count',
+            'allocated_lines',
         ])
         read_only_fields = ['status', 'creation_date', 'shipment_date']
         extra_kwargs = {'order_currency': {'required': False}}
@@ -1040,6 +1041,7 @@ class SalesOrderSerializer(
         """Add extra information to the queryset.
 
         - Number of line items in the SalesOrder
+        - Number of fully allocated line items
         - Number of completed line items in the SalesOrder
         - Overdue status of the SalesOrder
         """
@@ -1047,6 +1049,19 @@ class SalesOrderSerializer(
 
         queryset = queryset.annotate(
             completed_lines=SubqueryCount('lines', filter=Q(quantity__lte=F('shipped')))
+        )
+
+        queryset = queryset.annotate(
+            allocated_lines=SubqueryCount(
+                'lines',
+                filter=Q(part__virtual=True)
+                | Q(shipped__gte=F('quantity'))
+                | Q(
+                    quantity__lte=Coalesce(
+                        SubquerySum('allocations__quantity'), Decimal(0)
+                    )
+                ),
+            )
         )
 
         queryset = queryset.annotate(
@@ -1082,6 +1097,10 @@ class SalesOrderSerializer(
 
     completed_shipments_count = serializers.IntegerField(
         read_only=True, allow_null=True, label=_('Completed Shipments')
+    )
+
+    allocated_lines = serializers.IntegerField(
+        read_only=True, allow_null=True, label=_('Allocated Lines')
     )
 
 

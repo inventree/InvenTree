@@ -226,6 +226,31 @@ export function useBuildOrderOutputFields({
   }, [quantity, batchGenerator.result, serialGenerator.result, trackable]);
 }
 
+export function useBuildAutoAllocateFields({
+  item_type
+}: {
+  item_type: 'all' | 'tracked' | 'untracked';
+}): ApiFormFieldSet {
+  return useMemo(() => {
+    return {
+      location: {},
+      exclude_location: {},
+      item_type: {
+        value: item_type,
+        hidden: true
+      },
+      interchangeable: {
+        hidden: item_type === 'tracked'
+      },
+      substitutes: {},
+      optional_items: {
+        hidden: item_type === 'tracked',
+        value: item_type === 'tracked' ? false : undefined
+      }
+    };
+  }, [item_type]);
+}
+
 function BuildOutputFormRow({
   props,
   record,
@@ -283,7 +308,8 @@ function BuildOutputFormRow({
         <Table.Td>{record.batch}</Table.Td>
         <Table.Td>
           <StatusRenderer
-            status={record.status}
+            status={record.custom_status_key || record.status}
+            fallbackStatus={record.status}
             type={ModelType.stockitem}
           />{' '}
         </Table.Td>
@@ -298,10 +324,12 @@ function BuildOutputFormRow({
 export function useCompleteBuildOutputsForm({
   build,
   outputs,
+  hasTrackedItems,
   onFormSuccess
 }: {
   build: any;
   outputs: any[];
+  hasTrackedItems: boolean;
   onFormSuccess: (response: any) => void;
 }) {
   const [location, setLocation] = useState<number | null>(null);
@@ -352,9 +380,11 @@ export function useCompleteBuildOutputsForm({
         }
       },
       notes: {},
-      accept_incomplete_allocation: {}
+      accept_incomplete_allocation: {
+        hidden: !hasTrackedItems
+      }
     };
-  }, [location, outputs]);
+  }, [location, outputs, hasTrackedItems]);
 
   return useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.build_output_complete, build.pk),

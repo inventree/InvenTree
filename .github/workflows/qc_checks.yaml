@@ -23,6 +23,8 @@ env:
   INVENTREE_SITE_URL: http://localhost:8000
   INVENTREE_DEBUG: true
 
+  use_performance: false
+
 permissions:
   contents: read
 
@@ -42,7 +44,7 @@ jobs:
       runner-perf: ${{ steps.runner-perf.outputs.runner }}
 
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # pin@v6.0.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
         with:
           persist-credentials: false
       - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # pin@v3.0.2
@@ -78,7 +80,7 @@ jobs:
       - name: Which runner to use?
         id: runner-perf
         # decide if we are running in inventree/inventree -> use codspeed-macro runner else ubuntu-24.04
-        run: echo "runner=$([[ '${{ github.repository }}' == 'inventree/InvenTree' ]] && echo 'codspeed-macro' || echo 'ubuntu-24.04')" >> $GITHUB_OUTPUT
+        run: echo "runner=$([[ '${{ github.repository }}' == 'inventree/InvenTree' && '${{ env.use_performance }}' == 'true' ]] && echo 'codspeed-macro' || echo 'ubuntu-24.04')" >> $GITHUB_OUTPUT
 
   pre-commit:
     name: Style [pre-commit]
@@ -87,11 +89,11 @@ jobs:
     if: needs.paths-filter.outputs.cicd == 'true' || needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.frontend == 'true' || needs.paths-filter.outputs.requirements == 'true' || needs.paths-filter.outputs.force == 'true'
 
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # pin@v6.0.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
         with:
           persist-credentials: false
       - name: Set up Python ${{ env.python_version }}
-        uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548 # pin@v6.1.0
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # pin@v6.2.0
         with:
           python-version: ${{ env.python_version }}
           cache: "pip"
@@ -109,7 +111,7 @@ jobs:
     if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.requirements == 'true' || needs.paths-filter.outputs.force == 'true'
 
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # pin@v6.0.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
         with:
           persist-credentials: false
       - name: Environment Setup
@@ -131,11 +133,11 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # pin@v6.0.1
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
         with:
           persist-credentials: false
       - name: Set up Python ${{ env.python_version }}
-        uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548 # pin@v6.1.0
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # pin@v6.2.0
         with:
           python-version: ${{ env.python_version }}
       - name: Check Config
@@ -169,7 +171,7 @@ jobs:
       version: ${{ steps.version.outputs.version }}
 
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # pin@v6.0.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
         with:
           persist-credentials: false
       - name: Environment Setup
@@ -254,7 +256,7 @@ jobs:
       version: ${{ needs.schema.outputs.version }}
 
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # pin@v6.0.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
         name: Checkout Code
         with:
           repository: inventree/schema
@@ -311,7 +313,7 @@ jobs:
       node_version: '>=20.19.6'
 
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # pin@v6.0.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
         with:
           persist-credentials: false
       - name: Environment Setup
@@ -356,8 +358,7 @@ jobs:
     continue-on-error: true # continue if a step fails so that coverage gets pushed
     strategy:
       matrix:
-        python_version: [3.11]
-        # python_version: [3.11, 3.14]  # Disabled due to requirement issues
+        python_version: [3.11, 3.14]
 
     env:
       INVENTREE_DB_NAME: ./inventree.sqlite
@@ -368,7 +369,7 @@ jobs:
       python_version: ${{ matrix.python_version }}
 
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # pin@v6.0.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
         with:
           persist-credentials: false
       - name: Environment Setup
@@ -418,7 +419,7 @@ jobs:
       INVENTREE_AUTO_UPDATE: true
 
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # pin@v6.0.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
         with:
           persist-credentials: false
       - name: Environment Setup
@@ -469,7 +470,7 @@ jobs:
           - 6379:6379
 
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # pin@v6.0.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
         with:
           persist-credentials: false
       - name: Environment Setup
@@ -517,7 +518,7 @@ jobs:
           - 3306:3306
 
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # pin@v6.0.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
         with:
           persist-credentials: false
       - name: Environment Setup
@@ -559,7 +560,7 @@ jobs:
           - 5432:5432
 
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # pin@v6.0.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
         with:
           persist-credentials: false
       - name: Environment Setup
@@ -593,7 +594,7 @@ jobs:
       INVENTREE_PLUGINS_ENABLED: false
 
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # pin@v6.0.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
         with:
           persist-credentials: false
         name: Checkout Code
@@ -672,7 +673,7 @@ jobs:
       VITE_COVERAGE_BUILD: true
 
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # pin@v6.0.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
         with:
           persist-credentials: false
       - name: Environment Setup
@@ -693,7 +694,13 @@ jobs:
           cd src/frontend && npx playwright install --with-deps
       - name: Run Playwright tests
         id: tests
-        run: cd src/frontend && npx nyc playwright test
+        run: |
+          cd src/frontend
+          cp ./tests/fixtures/playwright_custom_logo.png ../backend/InvenTree/InvenTree/static/img/playwright_custom_logo.png
+          cp ./tests/fixtures/playwright_custom_splash.png ../backend/InvenTree/InvenTree/static/img/playwright_custom_splash.png
+          invoke static
+          env INVENTREE_CUSTOM_SPLASH="img/playwright_custom_splash.png" INVENTREE_CUSTOM_LOGO="img/playwright_custom_logo.png" npx nyc playwright test --project=customization
+          npx nyc playwright test --project=chromium --project=firefox
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # pin@v6.0.0
         if: ${{ !cancelled() && steps.tests.outcome == 'failure' }}
         with:
@@ -722,7 +729,7 @@ jobs:
     timeout-minutes: 60
 
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # pin@v6.0.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
         with:
           persist-credentials: false
       - name: Environment Setup
@@ -755,7 +762,7 @@ jobs:
       security-events: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # pin@v6.0.1
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
         with:
           persist-credentials: false
       - uses: hynek/setup-cached-uv@757bedc3f972eb7227a1aa657651f15a8527c817 # pin@v2

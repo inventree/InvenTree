@@ -18,6 +18,8 @@ import {
   CreationDateColumn,
   DateColumn,
   DescriptionColumn,
+  IPNColumn,
+  LinkColumn,
   PartColumn,
   ProjectCodeColumn,
   ReferenceColumn,
@@ -64,7 +66,14 @@ export function BuildOrderTable({
   salesOrderId?: number;
 }>) {
   const globalSettings = useGlobalSettingsState();
-  const table = useTable(!!partId ? 'buildorder-part' : 'buildorder-index');
+  const table = useTable(!!partId ? 'buildorder-part' : 'buildorder-index', {
+    initialFilters: [
+      {
+        name: 'outstanding',
+        value: 'true'
+      }
+    ]
+  });
 
   const tableColumns = useMemo(() => {
     return [
@@ -72,12 +81,7 @@ export function BuildOrderTable({
       PartColumn({
         switchable: false
       }),
-      {
-        accessor: 'part_detail.IPN',
-        sortable: true,
-        switchable: true,
-        title: t`IPN`
-      },
+      IPNColumn({}),
       {
         accessor: 'part_detail.revision',
         title: t`Revision`,
@@ -142,7 +146,8 @@ export function BuildOrderTable({
         ordering: 'issued_by',
         title: t`Issued By`
       }),
-      ResponsibleColumn({})
+      ResponsibleColumn({}),
+      LinkColumn({})
     ];
   }, [parentBuildId, globalSettings]);
 

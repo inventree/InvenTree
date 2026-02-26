@@ -693,16 +693,6 @@ export default function PartDetail() {
         hidden: !part.responsible
       },
       {
-        type: 'link',
-        name: 'default_supplier',
-        label: t`Default Supplier`,
-        model: ModelType.supplierpart,
-        model_formatter: (model: any) => {
-          return model.SKU;
-        },
-        hidden: !part.default_supplier
-      },
-      {
         name: 'default_expiry',
         label: t`Default Expiry`,
         hidden: !part.default_expiry,
@@ -971,7 +961,8 @@ export default function PartDetail() {
       }),
       NotesPanel({
         model_type: ModelType.part,
-        model_id: part?.pk
+        model_id: part?.pk,
+        has_note: !!part?.notes
       })
     ];
   }, [id, part, user, globalSettings, userSettings, detailsPanel]);

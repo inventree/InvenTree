@@ -22,10 +22,12 @@ import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import {
   DecimalColumn,
+  IPNColumn,
   LocationColumn,
   PartColumn,
   ReferenceColumn,
-  StatusColumn
+  StatusColumn,
+  StockColumn
 } from '../ColumnRenderers';
 import { IncludeVariantsFilter, StockLocationFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
@@ -98,14 +100,9 @@ export default function BuildAllocatedStockTable({
         hidden: !showPartInfo,
         switchable: false
       }),
-      {
-        accessor: 'part_detail.IPN',
-        ordering: 'IPN',
-        hidden: !showPartInfo,
-        title: t`IPN`,
-        sortable: true,
-        switchable: true
-      },
+      IPNColumn({
+        hidden: !showPartInfo
+      }),
       {
         hidden: !showPartInfo,
         accessor: 'bom_reference',
@@ -118,7 +115,9 @@ export default function BuildAllocatedStockTable({
         title: t`Batch Code`,
         sortable: false,
         switchable: true,
-        render: (record: any) => record?.stock_item_detail?.batch
+        render: (record: any) => record?.stock_item_detail?.batch,
+        copyable: true,
+        copyAccessor: 'stock_item_detail.batch'
       },
       DecimalColumn({
         accessor: 'stock_item_detail.quantity',
@@ -142,11 +141,11 @@ export default function BuildAllocatedStockTable({
         switchable: true,
         sortable: true
       }),
-      {
-        accessor: 'install_into',
+      StockColumn({
+        accessor: 'install_into_detail',
         title: t`Build Output`,
-        sortable: true
-      },
+        sortable: false
+      }),
       {
         accessor: 'sku',
         title: t`Supplier Part`,
@@ -307,11 +306,12 @@ export default function BuildAllocatedStockTable({
             part_detail: showPartInfo ?? false,
             location_detail: true,
             stock_detail: true,
+            install_into_detail: true,
             supplier_detail: true
           },
           enableBulkDelete: allowEdit && user.hasDeleteRole(UserRoles.build),
           enableDownload: true,
-          enableSelection: allowEdit && user.hasDeleteRole(UserRoles.build),
+          enableSelection: allowEdit && user.hasChangeRole(UserRoles.build),
           rowActions: rowActions,
           tableActions: tableActions,
           tableFilters: tableFilters,

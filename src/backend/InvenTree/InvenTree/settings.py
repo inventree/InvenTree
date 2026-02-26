@@ -26,13 +26,8 @@ from corsheaders.defaults import default_headers as default_cors_headers
 
 import InvenTree.backup
 from InvenTree.cache import get_cache_config, is_global_cache_enabled
-from InvenTree.config import (
-    get_boolean_setting,
-    get_custom_file,
-    get_oidc_private_key,
-    get_setting,
-)
-from InvenTree.ready import isInMainThread
+from InvenTree.config import get_boolean_setting, get_oidc_private_key, get_setting
+from InvenTree.ready import isInMainThread, isRunningBackup
 from InvenTree.sentry import default_sentry_dsn, init_sentry
 from InvenTree.version import checkMinPythonVersion, inventreeCommitHash
 from users.oauth2_scopes import oauth2_scopes
@@ -263,11 +258,21 @@ DBBACKUP_EMAIL_SUBJECT_PREFIX = InvenTree.backup.backup_email_prefix()
 
 DBBACKUP_CONNECTORS = {'default': InvenTree.backup.get_backup_connector_options()}
 
+DBBACKUP_BACKUP_METADATA_SETTER = InvenTree.backup.metadata_set
+DBBACKUP_RESTORE_METADATA_VALIDATOR = InvenTree.backup.validate_restore
+
 # Data storage options
 DBBACKUP_STORAGE_CONFIG = {
     'BACKEND': InvenTree.backup.get_backup_storage_backend(),
     'OPTIONS': InvenTree.backup.get_backup_storage_options(),
 }
+
+# This can also be overridden with a command line flag --restore-allow-newer-version when running the restore command
+BACKUP_RESTORE_ALLOW_NEWER_VERSION = get_boolean_setting(
+    'INVENTREE_BACKUP_RESTORE_ALLOW_NEWER_VERSION',
+    'backup_restore_allow_newer_version',
+    False,
+)
 
 # Enable django admin interface?
 INVENTREE_ADMIN_ENABLED = get_boolean_setting(
@@ -867,7 +872,7 @@ TRACING_ENABLED = get_boolean_setting(
 )
 TRACING_DETAILS: Optional[dict] = None
 
-if TRACING_ENABLED:  # pragma: no cover
+if TRACING_ENABLED and not isRunningBackup():  # pragma: no cover
     from InvenTree.tracing import setup_instruments, setup_tracing
 
     _t_endpoint = get_setting('INVENTREE_TRACING_ENDPOINT', 'tracing.endpoint', None)
@@ -1289,10 +1294,12 @@ CORS_ALLOWED_ORIGIN_REGEXES = get_setting(
     typecast=list,
 )
 
+_allowed_headers = (*default_cors_headers, 'traceparent')
 # Allow extra CORS headers in DEBUG mode
 # Required for serving /static/ and /media/ files
 if DEBUG:
-    CORS_ALLOW_HEADERS = (*default_cors_headers, 'cache-control', 'pragma', 'expires')
+    _allowed_headers = (*_allowed_headers, 'cache-control', 'pragma', 'expires')
+CORS_ALLOW_HEADERS = _allowed_headers
 
 # In debug mode allow CORS requests from localhost
 # This allows connection from the frontend development server
@@ -1451,12 +1458,9 @@ if len(GLOBAL_SETTINGS_OVERRIDES) > 0:
         logger.debug('- Override value for %s = ********', key)
 
 # User interface customization values
-CUSTOM_LOGO = get_custom_file(
-    'INVENTREE_CUSTOM_LOGO', 'customize.logo', 'custom logo', lookup_media=True
-)
-CUSTOM_SPLASH = get_custom_file(
-    'INVENTREE_CUSTOM_SPLASH', 'customize.splash', 'custom splash'
-)
+CUSTOM_LOGO = get_setting('INVENTREE_CUSTOM_LOGO', 'customize.logo', typecast=str)
+
+CUSTOM_SPLASH = get_setting('INVENTREE_CUSTOM_SPLASH', 'customize.splash', typecast=str)
 
 CUSTOMIZE = get_setting(
     'INVENTREE_CUSTOMIZE', 'customize', default_value=None, typecast=dict
@@ -1495,6 +1499,9 @@ LOGIN_REDIRECT_URL = '/api/auth/login-redirect/'
 
 # Configuration for API schema generation / oAuth2
 SPECTACULAR_SETTINGS = spectacular.get_spectacular_settings()
+SCHEMA_VENDOREXTENSION_LEVEL = get_setting(
+    'INVENTREE_SCHEMA_LEVEL', 'schema.level', default_value=0, typecast=int
+)
 
 OAUTH2_PROVIDER = {
     # default scopes
