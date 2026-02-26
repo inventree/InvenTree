@@ -20,13 +20,14 @@ import { useNavigate } from 'react-router-dom';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
+import type { TableColumn } from '@lib/types/Tables';
+import type { InvenTreeTableProps } from '@lib/types/Tables';
 import { InfoItem } from '../../components/items/InfoItem';
 import { StylishText } from '../../components/items/StylishText';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import { useTable } from '../../hooks/UseTable';
-import type { TableColumn } from '../Column';
-import { BooleanColumn } from '../ColumnRenderers';
-import { InvenTreeTable, type InvenTreeTableProps } from '../InvenTreeTable';
+import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
+import { InvenTreeTable } from '../InvenTreeTable';
 import { MachineListTable, useMachineTypeDriver } from './MachineListTable';
 
 export interface MachineTypeI {
@@ -49,37 +50,65 @@ export interface MachineDriverI {
   driver_errors: string[];
 }
 
-function MachineTypeDrawer({
-  machineTypeSlug
-}: Readonly<{ machineTypeSlug: string }>) {
+export function MachineDriverTable({
+  machineType,
+  prefix
+}: {
+  machineType?: string;
+  prefix?: string;
+}) {
   const navigate = useNavigate();
+  const table = useTable('machine-drivers');
 
-  const { machineTypes, refresh, isFetching } = useMachineTypeDriver({
-    includeDrivers: false
-  });
-  const machineType = useMemo(
-    () => machineTypes?.find((m) => m.slug === machineTypeSlug),
-    [machineTypes, machineTypeSlug]
-  );
-
-  const table = useTable('machineDrivers');
-
-  const machineDriverTableColumns = useMemo<TableColumn<MachineDriverI>[]>(
-    () => [
+  const tableColumns: TableColumn[] = useMemo(() => {
+    return [
       {
         accessor: 'name',
         title: t`Name`
       },
+      DescriptionColumn({}),
       {
-        accessor: 'description',
-        title: t`Description`
+        accessor: 'machine_type',
+        title: t`Driver Type`
       },
       BooleanColumn({
         accessor: 'is_builtin',
         title: t`Builtin driver`
       })
-    ],
-    []
+    ];
+  }, []);
+
+  return (
+    <InvenTreeTable
+      url={apiUrl(ApiEndpoints.machine_driver_list)}
+      tableState={table}
+      columns={tableColumns}
+      props={{
+        enableDownload: false,
+        enableSearch: false,
+        onRowClick: (machine) => {
+          navigate(`${prefix ?? '.'}/driver-${machine.slug}/`);
+        },
+        dataFormatter: (data: any) => {
+          if (machineType) {
+            return data.filter((d: any) => d.machine_type === machineType);
+          }
+          return data;
+        }
+      }}
+    />
+  );
+}
+
+function MachineTypeDrawer({
+  machineTypeSlug
+}: Readonly<{ machineTypeSlug: string }>) {
+  const { machineTypes, isFetching } = useMachineTypeDriver({
+    includeDrivers: false
+  });
+  const machineType = useMemo(
+    () => machineTypes?.find((m) => m.slug === machineTypeSlug),
+    [machineTypes, machineTypeSlug]
   );
 
   return (
@@ -164,22 +193,7 @@ function MachineTypeDrawer({
             </Accordion.Control>
             <Accordion.Panel>
               <Card withBorder>
-                <InvenTreeTable
-                  url={apiUrl(ApiEndpoints.machine_driver_list)}
-                  tableState={table}
-                  columns={machineDriverTableColumns}
-                  props={{
-                    dataFormatter: (data: any) => {
-                      return data.filter(
-                        (d: any) => d.machine_type === machineTypeSlug
-                      );
-                    },
-                    enableDownload: false,
-                    enableSearch: false,
-                    onRowClick: (machine) =>
-                      navigate(`../driver-${machine.slug}/`)
-                  }}
-                />
+                <MachineDriverTable machineType={machineTypeSlug} prefix='..' />
               </Card>
             </Accordion.Panel>
           </Accordion.Item>
@@ -340,10 +354,7 @@ export function MachineTypeListTable({
         accessor: 'name',
         title: t`Name`
       },
-      {
-        accessor: 'description',
-        title: t`Description`
-      },
+      DescriptionColumn({}),
       BooleanColumn({
         accessor: 'is_builtin',
         title: t`Builtin type`
@@ -384,7 +395,7 @@ export function MachineTypeListTable({
           ...props,
           enableDownload: false,
           enableSearch: false,
-          onRowClick: (machine) => navigate(`type-${machine.slug}/`),
+          onRowClick: (machine) => navigate(`./type-${machine.slug}/`),
           params: {
             ...props.params
           }

@@ -8,7 +8,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { StylishText } from '../../../../components/items/StylishText';
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
 import { Loadable } from '../../../../functions/loading';
-import { useServerApiState } from '../../../../states/ApiState';
+import { useServerApiState } from '../../../../states/ServerApiState';
 import { useUserState } from '../../../../states/UserState';
 
 const PluginListTable = Loadable(
@@ -63,6 +63,7 @@ export default function PluginManagementPanel() {
                 'ENABLE_PLUGINS_URL',
                 'ENABLE_PLUGINS_NAVIGATION',
                 'ENABLE_PLUGINS_APP',
+                'ENABLE_PLUGINS_MAILS',
                 'PLUGIN_ON_STARTUP',
                 'PLUGIN_UPDATE_CHECK'
               ]}

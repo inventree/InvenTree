@@ -166,8 +166,8 @@ class MachineTypesList(APIView):
 
     @extend_schema(responses={200: MachineSerializers.MachineTypeSerializer(many=True)})
     def get(self, request):
-        """List all machine types."""
-        machine_types = list(registry.machine_types.values())
+        """List of all machine types."""
+        machine_types = list(registry.get_machine_types())
         results = MachineSerializers.MachineTypeSerializer(
             machine_types, many=True
         ).data
@@ -175,10 +175,7 @@ class MachineTypesList(APIView):
 
 
 class MachineDriverList(APIView):
-    """List API Endpoint for all discovered machine drivers.
-
-    - GET: List all machine drivers
-    """
+    """List API Endpoint for all discovered machine driver types."""
 
     permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
 
@@ -187,9 +184,9 @@ class MachineDriverList(APIView):
     )
     def get(self, request):
         """List all machine drivers."""
-        drivers = registry.drivers.values()
-        if machine_type := request.query_params.get('machine_type', None):
-            drivers = filter(lambda d: d.machine_type == machine_type, drivers)
+        machine_type = request.query_params.get('machine_type', None)
+
+        drivers = registry.get_driver_types(machine_type)
 
         results = MachineSerializers.MachineDriverSerializer(
             list(drivers), many=True

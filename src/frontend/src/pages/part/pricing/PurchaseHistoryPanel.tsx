@@ -5,9 +5,9 @@ import { type ReactNode, useCallback, useMemo } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
+import type { TableColumn } from '@lib/types/Tables';
 import { formatCurrency, formatDate } from '../../../defaults/formatters';
 import { useTable } from '../../../hooks/UseTable';
-import type { TableColumn } from '../../../tables/Column';
 import { InvenTreeTable } from '../../../tables/InvenTreeTable';
 import { NoPricingData } from './PricingPanel';
 

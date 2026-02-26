@@ -4,12 +4,14 @@ title: Customers
 
 ## Customers
 
-A *customer* is an external client to whom parts or services are sold.
+A *customer* is an external [company](../concepts/company.md) to which parts or services are sold.
 
 To access the customer page, click on the <span class="badge inventree nav main">{{ icon("truck-delivery") }} Sales</span> navigation tab and click on <span class="badge inventree nav main">{{ icon("building-store") }} Customers</span> option in the dropdown list.
 
 !!! warning
 	**Viewing**, **adding**, **editing** and **deleting** customers require the corresponding [Sales Orders user permissions](../settings/permissions.md)
+
+{{ image("sales/customers.png", "Customers list") }}
 
 ### Add Customer
 

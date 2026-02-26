@@ -31,7 +31,7 @@ Each *Part* defined in the database provides a number of different attributes wh
 
 ### Virtual
 
-A *Virtual* part is one which does not physically exist but should still be tracked in the system. This could be a process step, machine time, software license, etc.
+A *Virtual* part is one which does not physically exist but should still be tracked in the system. This could be a process step, machine time, software license, etc. Refer to the [virtual parts documentation](./virtual.md) for more information.
 
 ### Template
 

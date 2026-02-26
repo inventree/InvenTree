@@ -191,7 +191,8 @@ class SupplierBarcodeMixin(BarcodeMixin):
             q1 = Q(manufacturer=supplier)
             # Case 2: Supplied by this supplier
             m = (
-                SupplierPart.objects.filter(supplier=supplier)
+                SupplierPart.objects
+                .filter(supplier=supplier)
                 .values_list('manufacturer_part', flat=True)
                 .distinct()
             )
@@ -260,7 +261,7 @@ class SupplierBarcodeMixin(BarcodeMixin):
             'extract_barcode_fields must be implemented by each plugin'
         )
 
-    def scan(self, barcode_data: str) -> dict:
+    def scan(self, barcode_data: str) -> dict | None:
         """Perform a generic 'scan' operation on a supplier barcode.
 
         The supplier barcode may provide sufficient information to match against
@@ -425,7 +426,7 @@ class SupplierBarcodeMixin(BarcodeMixin):
                 response['error'] = e.message
             except Exception:
                 # Handle any other exceptions
-                log_error('scan_receive_item')
+                log_error('scan_receive_item', plugin=self.slug)
                 response['error'] = _('Failed to receive line item')
 
         return response
@@ -461,9 +462,12 @@ class SupplierBarcodeMixin(BarcodeMixin):
         if len(suppliers) != 1:
             return _cache_supplier(None)
 
-        self.set_setting('SUPPLIER_ID', suppliers.first().pk)
+        supplier = suppliers.first()
+        assert supplier
 
-        return _cache_supplier(suppliers.first())
+        self.set_setting('SUPPLIER_ID', supplier.pk)
+
+        return _cache_supplier(supplier)
 
     @classmethod
     def ecia_field_map(cls):

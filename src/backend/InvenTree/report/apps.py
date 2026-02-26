@@ -4,7 +4,7 @@ import logging
 import os
 
 from django.apps import AppConfig
-from django.core.exceptions import AppRegistryNotReady
+from django.core.exceptions import AppRegistryNotReady, ValidationError
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.db.utils import IntegrityError, OperationalError, ProgrammingError
@@ -52,6 +52,8 @@ class ReportConfig(AppConfig):
             try:
                 self.create_default_labels()
                 self.create_default_reports()
+            except ValidationError:
+                logger.warning('Validation error when creating default templates')
             except (
                 AppRegistryNotReady,
                 IntegrityError,
@@ -67,7 +69,7 @@ class ReportConfig(AppConfig):
     def cleanup(self):
         """Cleanup old label and report outputs."""
         try:
-            from report.tasks import cleanup_old_report_outputs
+            from report.tasks import cleanup_old_report_outputs  # type: ignore[import]
 
             cleanup_old_report_outputs()
         except Exception:
@@ -162,8 +164,12 @@ class ReportConfig(AppConfig):
                     **template, template=self.file_from_template('label', filename)
                 )
                 logger.info("Creating new label template: '%s'", template['name'])
+            except ValidationError:
+                logger.warning(
+                    "Could not create label template: '%s'", template['name']
+                )
             except Exception:
-                InvenTree.exceptions.log_error('create_default_labels')
+                InvenTree.exceptions.log_error('create_default_labels', scope='init')
 
     def create_default_reports(self):
         """Create default report templates."""
@@ -225,6 +231,13 @@ class ReportConfig(AppConfig):
                 'model_type': 'stockitem',
             },
             {
+                'file': 'inventree_stock_report_merge.html',
+                'name': 'InvenTree Default Stock Report Merge',
+                'description': 'Sample stock item report merge',
+                'model_type': 'stockitem',
+                'merge': True,
+            },
+            {
                 'file': 'inventree_stock_location_report.html',
                 'name': 'InvenTree Stock Location Report',
                 'description': 'Sample stock location report',
@@ -254,5 +267,9 @@ class ReportConfig(AppConfig):
                     **template, template=self.file_from_template('report', filename)
                 )
                 logger.info("Created new report template: '%s'", template['name'])
+            except ValidationError:
+                logger.warning(
+                    "Could not create report template: '%s'", template['name']
+                )
             except Exception:
-                InvenTree.exceptions.log_error('create_default_reports')
+                InvenTree.exceptions.log_error('create_default_reports', scope='init')

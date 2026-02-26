@@ -4,6 +4,7 @@ import { IconX } from '@tabler/icons-react';
 
 import { Boundary } from '../Boundary';
 
+import type { ModelType } from '@lib/index';
 import type { JSX } from 'react';
 
 /**
@@ -20,6 +21,7 @@ export interface DashboardWidgetProps {
   enabled?: boolean;
   minWidth?: number;
   minHeight?: number;
+  modelType?: ModelType;
   render: () => JSX.Element;
   visible?: () => boolean;
 }
@@ -55,6 +57,20 @@ export default function DashboardWidget({
             overflowY: 'hidden'
           }}
         >
+          {/* Overlay to prevent mouse events when editing */}
+          {editing && (
+            <Box
+              style={{
+                position: 'absolute',
+                top: 0,
+                right: 0,
+                bottom: 0,
+                left: 0,
+                backgroundColor: 'rgba(255, 255, 255, 0.5)',
+                pointerEvents: 'auto'
+              }}
+            />
+          )}
           {item.render()}
         </Box>
         {removing && (

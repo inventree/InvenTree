@@ -3,11 +3,12 @@ import { Skeleton } from '@mantine/core';
 import { IconUnlink } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
+import { AddItemButton } from '@lib/components/AddItemButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
-import { AddItemButton } from '../../components/buttons/AddItemButton';
+import type { TableColumn } from '@lib/types/Tables';
 import {
   useStockItemInstallFields,
   useStockItemUninstallFields
@@ -15,8 +16,7 @@ import {
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import type { TableColumn } from '../Column';
-import { PartColumn, StatusColumn } from '../ColumnRenderers';
+import { PartColumn, StatusColumn, StockColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 export default function InstalledItemsTable({
@@ -58,24 +58,14 @@ export default function InstalledItemsTable({
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
-      {
-        accessor: 'part',
-        switchable: false,
-        render: (record: any) => PartColumn({ part: record?.part_detail })
-      },
-      {
-        accessor: 'quantity',
-        switchable: false,
-        render: (record: any) => {
-          let text = record.quantity;
-
-          if (record.serial && record.quantity == 1) {
-            text = `# ${record.serial}`;
-          }
-
-          return text;
-        }
-      },
+      PartColumn({
+        part: 'part_detail'
+      }),
+      StockColumn({
+        accessor: '',
+        title: t`Stock Item`,
+        sortable: false
+      }),
       {
         accessor: 'batch',
         switchable: false
@@ -130,6 +120,9 @@ export default function InstalledItemsTable({
           columns={tableColumns}
           props={{
             tableActions: tableActions,
+            enableSelection: true,
+            enableLabels: true,
+            enableReports: true,
             rowActions: rowActions,
             modelType: ModelType.stockitem,
             params: {

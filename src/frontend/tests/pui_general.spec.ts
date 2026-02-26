@@ -5,7 +5,7 @@ import { doCachedLogin } from './login.js';
 /**
  * Test for integration of django admin button
  */
-test('Admin Button', async ({ browser }) => {
+test('General - Admin Button', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
     username: 'admin',
     password: 'inventree',
@@ -21,11 +21,16 @@ test('Admin Button', async ({ browser }) => {
 });
 
 // Tests for the global search functionality
-test('Search', async ({ browser }) => {
+test('General - Search', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
     username: 'steven',
     password: 'wizardstaff'
   });
+
+  // Open the search drawer with a shortcut
+  await page.keyboard.press('Control+/');
+  await page.getByRole('textbox', { name: 'global-search-input' }).waitFor();
+  await page.keyboard.press('Escape');
 
   await globalSearch(page, 'another customer');
 

@@ -7,6 +7,7 @@ import os
 import random
 import shutil
 import string
+import sys
 from pathlib import Path
 from typing import Optional
 
@@ -74,9 +75,57 @@ def get_root_dir() -> Path:
     return get_base_dir().parent.parent.parent
 
 
+def inventreeInstaller() -> Optional[str]:
+    """Returns the installer for the running codebase - if set or detectable."""
+    load_version_file()
+
+    # First look in the environment variables, e.g. if running in docker
+    installer = os.environ.get('INVENTREE_PKG_INSTALLER', '')
+
+    if installer:
+        return str(installer)
+
+    if is_true(os.environ.get('INVENTREE_DEVCONTAINER', 'False')):
+        return 'DEV'
+
+    if is_true(os.environ.get('INVENTREE_DOCKER', 'False')):
+        return 'DOC'
+
+    try:
+        from django.conf import settings
+
+        from InvenTree.version import main_commit
+
+        if settings.DOCKER:
+            return 'DOC'
+        elif main_commit is not None:
+            return 'GIT'
+    except Exception:
+        pass
+    return None
+
+
 def get_config_dir() -> Path:
-    """Returns the InvenTree configuration directory."""
+    """Returns the InvenTree configuration directory depending on the install type."""
+    if inst := inventreeInstaller():
+        if inst == 'DOC':
+            return Path('/home/inventree/data/').resolve()
+        elif inst == 'DEV':
+            return Path('/home/inventree/dev/').resolve()
+        elif inst == 'PKG':
+            return Path('/etc/inventree/').resolve()
+
     return get_root_dir().joinpath('config').resolve()
+
+
+def get_testfolder_dir() -> Path:
+    """Returns the InvenTree test folder directory."""
+    return get_base_dir().joinpath('_testfolder').resolve()
+
+
+def get_version_file() -> Path:
+    """Returns the path of the InvenTree VERSION file. This does not ensure that the file exists."""
+    return get_root_dir().joinpath('VERSION').resolve()
 
 
 def ensure_dir(path: Path, storage=None) -> None:
@@ -108,6 +157,9 @@ def get_config_file(create=True) -> Path:
 
     if cfg_filename:
         cfg_filename = Path(cfg_filename.strip()).resolve()
+    elif get_base_dir().joinpath('config.yaml').exists():
+        # If the config file is in the old directory, use that
+        cfg_filename = base_dir.joinpath('config.yaml').resolve()
     else:
         # Config file is *not* specified - use the default
         cfg_filename = conf_dir.joinpath('config.yaml').resolve()
@@ -126,7 +178,7 @@ def get_config_file(create=True) -> Path:
     return cfg_filename
 
 
-def load_config_data(set_cache: bool = False) -> map:
+def load_config_data(set_cache: bool = False) -> map | None:
     """Load configuration data from the config file.
 
     Arguments:
@@ -144,7 +196,15 @@ def load_config_data(set_cache: bool = False) -> map:
     cfg_file = get_config_file()
 
     with open(cfg_file, encoding='utf-8') as cfg:
-        data = yaml.safe_load(cfg)
+        try:
+            data = yaml.safe_load(cfg)
+        except yaml.parser.ParserError as error:
+            logger.error(
+                "INVE-E13: Error reading InvenTree configuration file '%s': %s",
+                cfg_file,
+                error,
+            )
+            sys.exit(1)
 
     # Set the cache if requested
     if set_cache:
@@ -171,6 +231,11 @@ def do_typecast(value, type, var_name=None):
     # Valid JSON string is required
     elif type is dict:
         value = to_dict(value)
+
+    # Special handling for boolean typecasting
+    elif type is bool:
+        val = is_true(value)
+        return val
 
     elif type is not None:
         # Try to typecast the value
@@ -304,7 +369,7 @@ def get_backup_dir(create=True, error=True):
     return bd
 
 
-def get_plugin_file():
+def get_plugin_file() -> Path:
     """Returns the path of the InvenTree plugins specification file.
 
     Note: It will be created if it does not already exist!
@@ -341,7 +406,7 @@ def get_plugin_dir():
     return get_setting('INVENTREE_PLUGIN_DIR', 'plugin_dir')
 
 
-def get_secret_key():
+def get_secret_key(return_path: bool = False) -> str | Path:
     """Return the secret key value which will be used by django.
 
     Following options are tested, in descending order of preference:
@@ -350,15 +415,20 @@ def get_secret_key():
     B) Check for environment variable INVENTREE_SECRET_KEY_FILE => Load key data from file
     C) Look for default key file "secret_key.txt"
     D) Create "secret_key.txt" if it does not exist
+
+    Args:
+        return_path (bool): If True, return the path to the secret key file instead of the key data.
     """
     # Look for environment variable
     if secret_key := get_setting('INVENTREE_SECRET_KEY', 'secret_key'):
         logger.info('SECRET_KEY loaded by INVENTREE_SECRET_KEY')  # pragma: no cover
-        return secret_key
+        return str(secret_key)
 
     # Look for secret key file
     if secret_key_file := get_setting('INVENTREE_SECRET_KEY_FILE', 'secret_key_file'):
         secret_key_file = Path(secret_key_file).resolve()
+    elif get_base_dir().joinpath('secret_key.txt').exists():
+        secret_key_file = get_base_dir().joinpath('secret_key.txt')
     else:
         # Default location for secret key file
         secret_key_file = get_config_dir().joinpath('secret_key.txt').resolve()
@@ -373,14 +443,14 @@ def get_secret_key():
         key = ''.join([random.choice(options) for _idx in range(100)])
         secret_key_file.write_text(key)
 
+    if return_path:
+        return secret_key_file
+
     logger.debug("Loading SECRET_KEY from '%s'", secret_key_file)
-
-    key_data = secret_key_file.read_text().strip()
-
-    return key_data
+    return secret_key_file.read_text().strip()
 
 
-def get_oidc_private_key():
+def get_oidc_private_key(return_path: bool = False) -> str | Path:
     """Return the private key for OIDC authentication.
 
     Following options are tested, in descending order of preference:
@@ -402,9 +472,15 @@ def get_oidc_private_key():
         )
     )
 
+    # Trying old default location
+    if not key_loc.exists():
+        old_def_path = get_base_dir().joinpath('oidc.pem')
+        if old_def_path.exists():
+            key_loc = old_def_path.resolve()
+
     check_config_dir('INVENTREE_OIDC_PRIVATE_KEY_FILE', key_loc)
     if key_loc.exists():
-        return key_loc.read_text()
+        return key_loc.read_text() if not return_path else key_loc
     else:
         from cryptography.hazmat.primitives import serialization
         from cryptography.hazmat.primitives.asymmetric import rsa
@@ -424,7 +500,7 @@ def get_oidc_private_key():
                     encryption_algorithm=serialization.NoEncryption(),
                 )
             )
-        return key_loc.read_text()
+        return key_loc.read_text() if not return_path else key_loc
 
 
 def get_custom_file(
@@ -526,4 +602,38 @@ def check_config_dir(
             config_dir,
         )
 
+        try:
+            from common.settings import GlobalWarningCode, set_global_warning
+
+            set_global_warning(
+                GlobalWarningCode.UNCOMMON_CONFIG, {'path': str(config_dir)}
+            )
+        except ModuleNotFoundError:  # pragma: no cover
+            pass
+
     return
+
+
+VERSION_LOADED = False
+"""Flag to indicate if the VERSION file has been loaded in this process."""
+
+
+def load_version_file():
+    """Load the VERSION file if it exists and place the contents into the general execution environment.
+
+    Returns:
+        True if the VERSION file was loaded (now or previously), False otherwise.
+    """
+    global VERSION_LOADED
+    if VERSION_LOADED:
+        return True
+
+    # Load the VERSION file if it exists
+    from dotenv import load_dotenv
+
+    version_file = get_version_file()
+    if version_file.exists():
+        load_dotenv(version_file)
+        VERSION_LOADED = True
+        return True
+    return False

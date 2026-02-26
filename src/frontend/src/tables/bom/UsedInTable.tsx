@@ -1,15 +1,24 @@
 import { t } from '@lingui/core/macro';
 import { Group, Text } from '@mantine/core';
-import { useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
+import { RowEditAction, UserRoles } from '@lib/index';
 import type { TableFilter } from '@lib/types/Filters';
+import type { RowAction, TableColumn } from '@lib/types/Tables';
 import { formatDecimal } from '../../defaults/formatters';
+import { bomItemFields } from '../../forms/BomForms';
+import { useEditApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
-import type { TableColumn } from '../Column';
-import { PartColumn, ReferenceColumn } from '../ColumnRenderers';
+import { useUserState } from '../../states/UserState';
+import {
+  DescriptionColumn,
+  IPNColumn,
+  PartColumn,
+  ReferenceColumn
+} from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 /*
@@ -24,36 +33,32 @@ export function UsedInTable({
 }>) {
   const table = useTable('usedin');
 
+  const user = useUserState();
+
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
-      {
-        accessor: 'part',
-        switchable: false,
-        sortable: true,
+      PartColumn({
         title: t`Assembly`,
-        render: (record: any) => PartColumn({ part: record.part_detail })
-      },
-      {
-        accessor: 'part_detail.IPN',
-        sortable: false,
-        title: t`IPN`
-      },
+        part: 'part_detail'
+      }),
+      IPNColumn({
+        sortable: false
+      }),
       {
         accessor: 'part_detail.revision',
         title: t`Revision`,
-        sortable: true
+        sortable: true,
+        defaultVisible: false
       },
-      {
-        accessor: 'part_detail.description',
-        sortable: false,
-        title: t`Description`
-      },
-      {
+      DescriptionColumn({
+        accessor: 'part_detail.description'
+      }),
+      PartColumn({
         accessor: 'sub_part',
         sortable: true,
         title: t`Component`,
-        render: (record: any) => PartColumn({ part: record.sub_part_detail })
-      },
+        part: 'sub_part_detail'
+      }),
       {
         accessor: 'quantity',
         switchable: false,
@@ -98,22 +103,56 @@ export function UsedInTable({
     ];
   }, [partId]);
 
+  const [selectedBomItem, setSelectedBomItem] = useState<any>({});
+
+  const editBomItem = useEditApiFormModal({
+    url: ApiEndpoints.bom_list,
+    pk: selectedBomItem.pk,
+    title: t`Edit BOM Item`,
+    fields: bomItemFields({
+      showAssembly: true
+    }),
+    successMessage: t`BOM item updated`,
+    table: table
+  });
+
+  const rowActions = useCallback(
+    (record: any): RowAction[] => {
+      const locked = record.part_detail?.locked;
+
+      return [
+        RowEditAction({
+          hidden: locked || !user.hasChangeRole(UserRoles.part),
+          onClick: () => {
+            setSelectedBomItem(record);
+            editBomItem.open();
+          }
+        })
+      ];
+    },
+    [user]
+  );
+
   return (
-    <InvenTreeTable
-      url={apiUrl(ApiEndpoints.bom_list)}
-      tableState={table}
-      columns={tableColumns}
-      props={{
-        params: {
-          ...params,
-          uses: partId,
-          part_detail: true,
-          sub_part_detail: true
-        },
-        tableFilters: tableFilters,
-        modelType: ModelType.part,
-        modelField: 'part'
-      }}
-    />
+    <>
+      {editBomItem.modal}
+      <InvenTreeTable
+        url={apiUrl(ApiEndpoints.bom_list)}
+        tableState={table}
+        columns={tableColumns}
+        props={{
+          params: {
+            ...params,
+            uses: partId,
+            part_detail: true,
+            sub_part_detail: true
+          },
+          rowActions: rowActions,
+          tableFilters: tableFilters,
+          modelType: ModelType.part,
+          modelField: 'part'
+        }}
+      />
+    </>
   );
 }

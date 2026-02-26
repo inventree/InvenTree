@@ -5,7 +5,7 @@ This does not function in real usage and is more to show the required components
 
 from rest_framework import serializers
 
-from InvenTree.settings import BASE_DIR
+from InvenTree.config import get_testfolder_dir
 from plugin import InvenTreePlugin
 from plugin.mixins import LabelPrintingMixin
 
@@ -38,7 +38,7 @@ class SampleLabelPrinter(LabelPrintingMixin, InvenTreePlugin):
             kwargs['label_instance'], kwargs['item_instance'], **kwargs
         )
 
-        filename = str(BASE_DIR / '_testfolder' / 'label.pdf')
+        filename = str(get_testfolder_dir() / 'label.pdf')
 
         # Dump the PDF to a local file
         with open(filename, 'wb') as pdf_out:

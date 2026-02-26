@@ -16,7 +16,7 @@ in admin panel. It just hides buttons for edit, add and delete actions. This mea
 should have access by ownership needs to have stock item write access set in the admin panel. By
 this he also gets write access to all other items, except the item has a different owner.
 
-Example
+#### Example
 
 * Stock item 1111 has an owner called Daniel
 * Stock item 2222 has an owner called Peter

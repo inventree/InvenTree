@@ -11,6 +11,7 @@ from django.utils import timezone
 import feedparser
 import requests
 import structlog
+from opentelemetry import trace
 
 import common.models
 import InvenTree.helpers
@@ -18,9 +19,11 @@ from InvenTree.helpers_model import getModelsWithMixin
 from InvenTree.models import InvenTreeNotesMixin
 from InvenTree.tasks import ScheduledTask, scheduled_task
 
+tracer = trace.get_tracer(__name__)
 logger = structlog.get_logger('inventree')
 
 
+@tracer.start_as_current_span('cleanup_old_data_outputs')
 @scheduled_task(ScheduledTask.DAILY)
 def cleanup_old_data_outputs():
     """Remove old data outputs from the database."""
@@ -32,6 +35,7 @@ def cleanup_old_data_outputs():
         output.delete()
 
 
+@tracer.start_as_current_span('delete_old_notifications')
 @scheduled_task(ScheduledTask.DAILY)
 def delete_old_notifications():
     """Remove old notifications from the database.
@@ -52,6 +56,7 @@ def delete_old_notifications():
     NotificationEntry.objects.filter(updated__lte=before).delete()
 
 
+@tracer.start_as_current_span('update_news_feed')
 @scheduled_task(ScheduledTask.DAILY)
 def update_news_feed():
     """Update the newsfeed."""
@@ -105,6 +110,7 @@ def update_news_feed():
     logger.info('update_news_feed: Sync done')
 
 
+@tracer.start_as_current_span('delete_old_notes_images')
 @scheduled_task(ScheduledTask.DAILY)
 def delete_old_notes_images():
     """Remove old notes images from the database.
@@ -166,3 +172,35 @@ def delete_old_notes_images():
         if not found:
             logger.info('Deleting note %s - image file not linked to a note', image)
             os.remove(os.path.join(notes_dir, image))
+
+
+@tracer.start_as_current_span('rebuild_parameters')
+def rebuild_parameters(template_id):
+    """Rebuild all parameters for a given template.
+
+    This function is called when a base template is changed,
+    which may cause the base unit to be adjusted.
+    """
+    from common.models import Parameter, ParameterTemplate
+
+    try:
+        template = ParameterTemplate.objects.get(pk=template_id)
+    except ParameterTemplate.DoesNotExist:
+        return
+
+    parameters = Parameter.objects.filter(template=template)
+
+    n = 0
+
+    for parameter in parameters:
+        # Update the parameter if the numeric value has changed
+        value_old = parameter.data_numeric
+        parameter.calculate_numeric_value()
+
+        if value_old != parameter.data_numeric:
+            parameter.full_clean()
+            parameter.save()
+            n += 1
+
+    if n > 0:
+        logger.info("Rebuilt %s parameters for template '%s'", n, template.name)

@@ -3,14 +3,14 @@
  */
 
 import test from '@playwright/test';
-import { loadTab } from './helpers';
+import { clickOnRowMenu, loadTab } from './helpers';
 import { doCachedLogin } from './login';
 
 /**
  * Test the "admin" account
  * - This is a superuser account, so should have *all* permissions available
  */
-test('Permissions - Admin', async ({ browser, request }) => {
+test('Permissions - Admin', async ({ browser }) => {
   // Login, and start on the "admin" page
   const page = await doCachedLogin(browser, {
     username: 'admin',
@@ -23,17 +23,41 @@ test('Permissions - Admin', async ({ browser, request }) => {
   await loadTab(page, 'Plugins');
   await loadTab(page, 'Users / Access');
 
-  // Let's create a new user
+  // Let's check creating a new user
   await page.getByLabel('action-button-add-user').click();
   await page.getByRole('button', { name: 'Submit' }).waitFor();
   await page.getByRole('button', { name: 'Cancel' }).click();
+
+  // Change password
+  await clickOnRowMenu(
+    await page.getByRole('cell', { name: 'Ian', exact: true })
+  );
+  await page.getByRole('menuitem', { name: 'Change Password' }).click();
+  await page.getByLabel('text-field-password').fill('123');
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText("['This password is too short").waitFor();
+  await page
+    .locator('label')
+    .filter({ hasText: 'Override warning' })
+    .locator('div')
+    .first()
+    .click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Password updated').click();
+
+  // Open profile
+  await clickOnRowMenu(
+    await page.getByRole('cell', { name: 'Ian', exact: true })
+  );
+  await page.getByRole('menuitem', { name: 'Open Profile' }).click();
+  await page.getByText('User: ian', { exact: true }).click();
 });
 
 /**
  * Test the "reader" account
  * - This account is read-only, but should be able to access *most* pages
  */
-test('Permissions - Reader', async ({ browser, request }) => {
+test('Permissions - Reader', async ({ browser }) => {
   // Login, and start on the "admin" page
   const page = await doCachedLogin(browser, {
     username: 'reader',
@@ -79,7 +103,7 @@ test('Permissions - Reader', async ({ browser, request }) => {
 
   // Go to the user profile page
   await page.getByRole('button', { name: 'Ronald Reader' }).click();
-  await page.getByRole('menuitem', { name: 'Account Settings' }).click();
+  await page.getByRole('menuitem', { name: 'User Settings' }).click();
 
   await loadTab(page, 'Notifications');
   await loadTab(page, 'Display Options');

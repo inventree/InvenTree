@@ -22,12 +22,12 @@ import {
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { type JSX, Suspense, useEffect, useMemo, useState } from 'react';
 
+import { ActionButton } from '@lib/components/ActionButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import dayjs from 'dayjs';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../App';
-import { ActionButton } from '../components/buttons/ActionButton';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
 
@@ -37,7 +37,8 @@ import type {
   ApiFormAdjustFilterType,
   ApiFormFieldChoice,
   ApiFormFieldSet,
-  ApiFormModalProps
+  ApiFormModalProps,
+  StockOperationProps
 } from '@lib/types/Forms';
 import {
   TableFieldExtraRow,
@@ -46,6 +47,7 @@ import {
 import { Thumbnail } from '../components/images/Thumbnail';
 import { StylishText } from '../components/items/StylishText';
 import { StatusRenderer } from '../components/render/StatusRenderer';
+import { RenderStockLocation } from '../components/render/Stock';
 import { InvenTreeIcon } from '../functions/icons';
 import {
   useApiFormModal,
@@ -56,8 +58,8 @@ import {
   useBatchCodeGenerator,
   useSerialNumberGenerator
 } from '../hooks/UseGenerator';
-import { useSerialNumberPlaceholder } from '../hooks/UsePlaceholder';
-import { useGlobalSettingsState } from '../states/SettingsState';
+import useStatusCodes from '../hooks/UseStatusCodes';
+import { useGlobalSettingsState } from '../states/SettingsStates';
 import { StatusFilterOptions } from '../tables/Filter';
 
 /**
@@ -66,59 +68,99 @@ import { StatusFilterOptions } from '../tables/Filter';
 export function useStockFields({
   partId,
   stockItem,
-  create = false
+  create = false,
+  supplierPartId,
+  pricing,
+  modalId
 }: {
   partId?: number;
   stockItem?: any;
+  modalId: string;
   create: boolean;
+  supplierPartId?: number;
+  pricing?: { [priceBreak: number]: [number, string] };
 }): ApiFormFieldSet {
   const globalSettings = useGlobalSettingsState();
 
   // Keep track of the "part" instance
   const [partInstance, setPartInstance] = useState<any>({});
 
-  const [supplierPart, setSupplierPart] = useState<number | null>(null);
-
-  const [nextBatchCode, setNextBatchCode] = useState<string>('');
-  const [nextSerialNumber, setNextSerialNumber] = useState<string>('');
+  const [supplierPart, setSupplierPart] = useState<number | null>(
+    supplierPartId ?? null
+  );
 
   const [expiryDate, setExpiryDate] = useState<string | null>(null);
+  const [quantity, setQuantity] = useState<number | null>(null);
+  const [purchasePrice, setPurchasePrice] = useState<number | null>(null);
+  const [purchasePriceCurrency, setPurchasePriceCurrency] = useState<
+    string | null
+  >(null);
 
-  const batchGenerator = useBatchCodeGenerator((value: any) => {
-    if (value) {
-      setNextBatchCode(`${t`Next batch code`}: ${value}`);
-    } else {
-      setNextBatchCode('');
+  const batchGenerator = useBatchCodeGenerator({
+    modalId: modalId,
+    initialQuery: {
+      part: partId
     }
   });
 
-  const serialGenerator = useSerialNumberGenerator((value: any) => {
-    if (value) {
-      setNextSerialNumber(`${t`Next serial number`}: ${value}`);
-    } else {
-      setNextSerialNumber('');
+  const serialGenerator = useSerialNumberGenerator({
+    modalId: modalId,
+    initialQuery: {
+      part: partId
     }
   });
 
+  // Update pricing when quantity changes
   useEffect(() => {
-    if (partInstance?.pk) {
-      // Update the generators whenever the part ID changes
-      batchGenerator.update({ part: partInstance.pk });
-      serialGenerator.update({ part: partInstance.pk });
+    if (quantity === null || quantity === undefined || !pricing) return;
+
+    // Find the highest price break that is less than or equal to the quantity
+    const priceBreak = Object.entries(pricing)
+      .sort(([a], [b]) => Number.parseInt(b) - Number.parseInt(a))
+      .find(([br]) => quantity >= Number.parseInt(br));
+
+    if (priceBreak) {
+      setPurchasePrice(priceBreak[1][0]);
+      setPurchasePriceCurrency(priceBreak[1][1]);
     }
-  }, [partInstance.pk]);
+  }, [pricing, quantity]);
+
+  // Set the supplier part if provided
+  useEffect(() => {
+    if (supplierPartId && !supplierPart) setSupplierPart(supplierPartId);
+  }, [partInstance, supplierPart, supplierPartId]);
+
+  // Set default currency from global settings
+  useEffect(() => {
+    setPurchasePriceCurrency(
+      globalSettings.getSetting('INVENTREE_DEFAULT_CURRENCY')
+    );
+  }, [globalSettings]);
+
+  const stockItemStatusCodes = useStatusCodes({
+    modelType: ModelType.stockitem
+  });
 
   return useMemo(() => {
     const fields: ApiFormFieldSet = {
       part: {
         value: partInstance.pk,
-        disabled: !create,
+        disabled: !create || !!partId,
         filters: {
+          virtual: false,
           active: create ? true : undefined
         },
         onValueChange: (value, record) => {
           // Update the tracked part instance
           setPartInstance(record);
+
+          serialGenerator.update({
+            part: value
+          });
+
+          batchGenerator.update({
+            part: value
+          });
 
           // Clear the 'supplier_part' field if the part is changed
           setSupplierPart(null);
@@ -136,6 +178,7 @@ export function useStockFields({
       },
       supplier_part: {
         hidden: partInstance?.purchaseable == false,
+        disabled: !!supplierPartId,
         value: supplierPart,
         onValueChange: (value) => {
           setSupplierPart(value);
@@ -172,6 +215,7 @@ export function useStockFields({
         description: t`Enter initial quantity for this stock item`,
         onValueChange: (value) => {
           batchGenerator.update({ quantity: value });
+          setQuantity(value);
         }
       },
       serial_numbers: {
@@ -181,19 +225,25 @@ export function useStockFields({
         description: t`Enter serial numbers for new stock (or leave blank)`,
         required: false,
         hidden: !create,
-        placeholder: nextSerialNumber
+        placeholderAutofill: true,
+        placeholder: serialGenerator.result && `${serialGenerator.result}+`
       },
       serial: {
+        placeholderAutofill: true,
+        placeholder: serialGenerator.result,
         hidden:
           create ||
           partInstance.trackable == false ||
           (stockItem?.quantity != undefined && stockItem?.quantity != 1)
       },
       batch: {
-        placeholder: nextBatchCode
+        default: '',
+        placeholderAutofill: true,
+        placeholder: batchGenerator.result
       },
       status_custom_key: {
-        label: t`Stock Status`
+        label: t`Stock Status`,
+        default: stockItemStatusCodes.OK
       },
       expiry_date: {
         icon: <IconCalendarExclamation />,
@@ -204,10 +254,19 @@ export function useStockFields({
         }
       },
       purchase_price: {
-        icon: <IconCurrencyDollar />
+        icon: <IconCurrencyDollar />,
+        value: purchasePrice,
+        onValueChange: (value) => {
+          setPurchasePrice(value);
+        }
       },
       purchase_price_currency: {
-        icon: <IconCoins />
+        icon: <IconCoins />,
+        default: globalSettings.getSetting('INVENTREE_DEFAULT_CURRENCY'),
+        value: purchasePriceCurrency,
+        onValueChange: (value) => {
+          setPurchasePriceCurrency(value);
+        }
       },
       packaging: {
         icon: <IconPackage />
@@ -226,6 +285,10 @@ export function useStockFields({
       delete fields.expiry_date;
     }
 
+    if (!create) {
+      delete fields.serial_numbers;
+    }
+
     return fields;
   }, [
     stockItem,
@@ -234,8 +297,12 @@ export function useStockFields({
     partId,
     globalSettings,
     supplierPart,
-    nextSerialNumber,
-    nextBatchCode,
+    create,
+    supplierPartId,
+    purchasePrice,
+    purchasePriceCurrency,
+    serialGenerator.result,
+    batchGenerator.result,
     create
   ]);
 }
@@ -244,11 +311,15 @@ export function useStockFields({
  * Launch a form to create a new StockItem instance
  */
 export function useCreateStockItem() {
-  const fields = useStockFields({ create: true });
+  const fields = useStockFields({
+    create: true,
+    modalId: 'create-stock-item'
+  });
 
   return useCreateApiFormModal({
     url: ApiEndpoints.stock_item_list,
     fields: fields,
+    modalId: 'create-stock-item',
     title: t`Add Stock Item`
   });
 }
@@ -327,26 +398,31 @@ export function useStockItemInstallFields({
  */
 export function useStockItemSerializeFields({
   partId,
-  trackable
+  trackable,
+  modalId
 }: {
   partId: number;
   trackable: boolean;
-}) {
-  const snPlaceholder = useSerialNumberPlaceholder({
-    partId: partId,
-    key: 'stock-item-serialize',
-    enabled: trackable
+  modalId: string;
+}): ApiFormFieldSet {
+  const serialGenerator = useSerialNumberGenerator({
+    modalId: modalId,
+    isEnabled: () => trackable,
+    initialQuery: {
+      part: partId
+    }
   });
 
   return useMemo(() => {
     return {
       quantity: {},
       serial_numbers: {
-        placeholder: snPlaceholder
+        placeholder: serialGenerator.result && `${serialGenerator.result}+`,
+        placeholderAutofill: true
       },
       destination: {}
     };
-  }, [snPlaceholder]);
+  }, [serialGenerator.result]);
 }
 
 function StockItemDefaultMove({
@@ -563,14 +639,15 @@ function StockOperationsRow({
           </Stack>
         </Table.Td>
         <Table.Td>
-          {record.location ? record.location_detail?.pathstring : '-'}
+          <RenderStockLocation instance={record.location_detail} />
         </Table.Td>
         <Table.Td>{record.batch ? record.batch : '-'}</Table.Td>
         <Table.Td>
           <Group grow justify='space-between' wrap='nowrap'>
             <Text>{stockString}</Text>
             <StatusRenderer
-              status={record.status_custom_key}
+              status={record.status_custom_key || record.status}
+              fallbackStatus={record.status}
               type={ModelType.stockitem}
             />
           </Group>
@@ -696,6 +773,9 @@ function stockTransferFields(items: any[]): ApiFormFieldSet {
 
   const records = Object.fromEntries(items.map((item) => [item.pk, item]));
 
+  // Extract all location values from the items
+  const locations = [...new Set(items.map((item) => item.location))];
+
   const fields: ApiFormFieldSet = {
     items: {
       field_type: 'table',
@@ -724,12 +804,61 @@ function stockTransferFields(items: any[]): ApiFormFieldSet {
       ]
     },
     location: {
+      value: locations.length === 1 ? locations[0] : undefined,
       filters: {
         structural: false
       }
     },
     notes: {}
   };
+  return fields;
+}
+
+function stockReturnFields(items: any[]): ApiFormFieldSet {
+  if (!items) {
+    return {};
+  }
+
+  // Only include items that are currently *not* in stock
+  const records = Object.fromEntries(
+    items.filter((item) => !item.in_stock).map((item) => [item.pk, item])
+  );
+
+  const fields: ApiFormFieldSet = {
+    items: {
+      field_type: 'table',
+      value: mapAdjustmentItems(items),
+      modelRenderer: (row: TableFieldRowProps) => {
+        const record = records[row.item.pk];
+
+        return (
+          <StockOperationsRow
+            props={row}
+            key={record.pk}
+            record={record}
+            transfer
+            changeStatus
+          />
+        );
+      },
+      headers: [
+        { title: t`Part` },
+        { title: t`Location` },
+        { title: t`Batch` },
+        { title: t`Quantity` },
+        { title: t`Return`, style: { width: '200px' } },
+        { title: t`Actions` }
+      ]
+    },
+    location: {
+      filters: {
+        structural: false
+      }
+    },
+    merge: {},
+    notes: {}
+  };
+
   return fields;
 }
 
@@ -740,10 +869,17 @@ function stockRemoveFields(items: any[]): ApiFormFieldSet {
 
   const records = Object.fromEntries(items.map((item) => [item.pk, item]));
 
+  const initialValue = mapAdjustmentItems(items).map((elem) => {
+    return {
+      ...elem,
+      quantity: 0
+    };
+  });
+
   const fields: ApiFormFieldSet = {
     items: {
       field_type: 'table',
-      value: mapAdjustmentItems(items),
+      value: initialValue,
       modelRenderer: (row: TableFieldRowProps) => {
         const record = records[row.item.pk];
 
@@ -780,10 +916,17 @@ function stockAddFields(items: any[]): ApiFormFieldSet {
 
   const records = Object.fromEntries(items.map((item) => [item.pk, item]));
 
+  const initialValue = mapAdjustmentItems(items).map((elem) => {
+    return {
+      ...elem,
+      quantity: 0
+    };
+  });
+
   const fields: ApiFormFieldSet = {
     items: {
       field_type: 'table',
-      value: mapAdjustmentItems(items),
+      value: initialValue,
       modelRenderer: (row: TableFieldRowProps) => {
         const record = records[row.item.pk];
 
@@ -819,10 +962,12 @@ function stockCountFields(items: any[]): ApiFormFieldSet {
 
   const records = Object.fromEntries(items.map((item) => [item.pk, item]));
 
+  const initialValue = mapAdjustmentItems(items);
+
   const fields: ApiFormFieldSet = {
     items: {
       field_type: 'table',
-      value: mapAdjustmentItems(items),
+      value: initialValue,
       modelRenderer: (row: TableFieldRowProps) => {
         return (
           <StockOperationsRow
@@ -855,6 +1000,11 @@ function stockChangeStatusFields(items: any[]): ApiFormFieldSet {
 
   const records = Object.fromEntries(items.map((item) => [item.pk, item]));
 
+  // Extract all status values from the items
+  const statusValues = [
+    ...new Set(items.map((item) => item.status_custom_key ?? item.status))
+  ];
+
   const fields: ApiFormFieldSet = {
     items: {
       field_type: 'table',
@@ -879,7 +1029,9 @@ function stockChangeStatusFields(items: any[]): ApiFormFieldSet {
         { title: '', style: { width: '50px' } }
       ]
     },
-    status: {},
+    status: {
+      value: statusValues.length === 1 ? statusValues[0] : undefined
+    },
     note: {}
   };
 
@@ -892,6 +1044,30 @@ function stockMergeFields(items: any[]): ApiFormFieldSet {
   }
 
   const records = Object.fromEntries(items.map((item) => [item.pk, item]));
+
+  // Extract all non-null location values from the items
+  const locationValues = [
+    ...new Set(
+      items.filter((item) => item.location).map((item) => item.location)
+    )
+  ];
+
+  // Extract all non-null default location values from the items
+  const defaultLocationValues = [
+    ...new Set(
+      items
+        .filter((item) => item.part_detail?.default_location)
+        .map((item) => item.part_detail?.default_location)
+    )
+  ];
+
+  // Select a default location value
+  const defaultLocation =
+    locationValues.length === 1
+      ? locationValues[0]
+      : defaultLocationValues.length === 1
+        ? defaultLocationValues[0]
+        : undefined;
 
   const fields: ApiFormFieldSet = {
     items: {
@@ -922,7 +1098,7 @@ function stockMergeFields(items: any[]): ApiFormFieldSet {
       ]
     },
     location: {
-      default: items[0]?.part_detail.default_location,
+      default: defaultLocation,
       filters: {
         structural: false
       }
@@ -1025,7 +1201,7 @@ type apiModalFunc = (props: ApiFormModalProps) => {
   modal: JSX.Element;
 };
 
-function stockOperationModal({
+function useStockOperationModal({
   items,
   pk,
   model,
@@ -1068,26 +1244,27 @@ function stockOperationModal({
     return query_params;
   }, [baseParams, filters, model, pk]);
 
+  const [opened, setOpened] = useState<boolean>(false);
+
   const { data } = useQuery({
-    queryKey: ['stockitems', model, pk, items, params],
+    queryKey: ['stockitems', opened, model, pk, items, params],
     queryFn: async () => {
       if (items) {
+        // If a list of items is provided, use that directly
         return Array.isArray(items) ? items : [items];
       }
+
+      if (!pk || !opened) {
+        return [];
+      }
+
       const url = apiUrl(ApiEndpoints.stock_item_list);
 
       return api
         .get(url, {
           params: params
         })
-        .then((response) => {
-          if (response.status === 200) {
-            return response.data;
-          }
-        })
-        .catch(() => {
-          return null;
-        });
+        .then((response) => response.data ?? []);
     }
   });
 
@@ -1102,70 +1279,104 @@ function stockOperationModal({
     title: title,
     size: '80%',
     successMessage: successMessage,
-    onFormSuccess: () => refresh()
+    onFormSuccess: () => refresh(),
+    onClose: () => setOpened(false),
+    onOpen: () => setOpened(true)
   });
 }
 
-export type StockOperationProps = {
-  items?: any[];
-  pk?: number;
-  filters?: any;
-  model: ModelType.stockitem | 'location' | ModelType.part;
-  refresh: () => void;
-};
-
 export function useAddStockItem(props: StockOperationProps) {
-  return stockOperationModal({
+  return useStockOperationModal({
     ...props,
     fieldGenerator: stockAddFields,
     endpoint: ApiEndpoints.stock_add,
     title: t`Add Stock`,
-    successMessage: t`Stock added`
+    successMessage: t`Stock added`,
+    preFormContent: (
+      <Alert color='blue'>
+        {t`Increase the quantity of the selected stock items by a given amount.`}
+      </Alert>
+    )
   });
 }
 
 export function useRemoveStockItem(props: StockOperationProps) {
-  return stockOperationModal({
+  return useStockOperationModal({
     ...props,
     fieldGenerator: stockRemoveFields,
     endpoint: ApiEndpoints.stock_remove,
     title: t`Remove Stock`,
-    successMessage: t`Stock removed`
+    successMessage: t`Stock removed`,
+    preFormContent: (
+      <Alert color='blue'>
+        {t`Decrease the quantity of the selected stock items by a given amount.`}
+      </Alert>
+    )
   });
 }
 
 export function useTransferStockItem(props: StockOperationProps) {
-  return stockOperationModal({
+  return useStockOperationModal({
     ...props,
     fieldGenerator: stockTransferFields,
     endpoint: ApiEndpoints.stock_transfer,
     title: t`Transfer Stock`,
-    successMessage: t`Stock transferred`
+    successMessage: t`Stock transferred`,
+    preFormContent: (
+      <Alert color='blue'>
+        {t`Transfer selected items to the specified location.`}
+      </Alert>
+    )
+  });
+}
+
+export function useReturnStockItem(props: StockOperationProps) {
+  return useStockOperationModal({
+    ...props,
+    fieldGenerator: stockReturnFields,
+    endpoint: ApiEndpoints.stock_return,
+    title: t`Return Stock`,
+    successMessage: t`Stock returned`,
+    preFormContent: (
+      <Alert color='blue'>
+        {t`Return selected items into stock, to the specified location.`}
+      </Alert>
+    )
   });
 }
 
 export function useCountStockItem(props: StockOperationProps) {
-  return stockOperationModal({
+  return useStockOperationModal({
     ...props,
     fieldGenerator: stockCountFields,
     endpoint: ApiEndpoints.stock_count,
     title: t`Count Stock`,
-    successMessage: t`Stock counted`
+    successMessage: t`Stock counted`,
+    preFormContent: (
+      <Alert color='blue'>
+        {t`Count the selected stock items, and adjust the quantity accordingly.`}
+      </Alert>
+    )
   });
 }
 
 export function useChangeStockStatus(props: StockOperationProps) {
-  return stockOperationModal({
+  return useStockOperationModal({
     ...props,
     fieldGenerator: stockChangeStatusFields,
     endpoint: ApiEndpoints.stock_change_status,
     title: t`Change Stock Status`,
-    successMessage: t`Stock status changed`
+    successMessage: t`Stock status changed`,
+    preFormContent: (
+      <Alert color='blue'>
+        {t`Change the status of the selected stock items.`}
+      </Alert>
+    )
   });
 }
 
 export function useMergeStockItem(props: StockOperationProps) {
-  return stockOperationModal({
+  return useStockOperationModal({
     ...props,
     fieldGenerator: stockMergeFields,
     endpoint: ApiEndpoints.stock_merge,
@@ -1189,7 +1400,7 @@ export function useAssignStockItem(props: StockOperationProps) {
     return props.items?.filter((item) => item?.part_detail?.salable);
   }, [props.items]);
 
-  return stockOperationModal({
+  return useStockOperationModal({
     ...props,
     items: items,
     fieldGenerator: stockAssignFields,
@@ -1200,13 +1411,18 @@ export function useAssignStockItem(props: StockOperationProps) {
 }
 
 export function useDeleteStockItem(props: StockOperationProps) {
-  return stockOperationModal({
+  return useStockOperationModal({
     ...props,
     fieldGenerator: stockDeleteFields,
     endpoint: ApiEndpoints.stock_item_list,
     modalFunc: useDeleteApiFormModal,
     title: t`Delete Stock Items`,
-    successMessage: t`Stock deleted`
+    successMessage: t`Stock deleted`,
+    preFormContent: (
+      <Alert color='red'>
+        {t`This operation will permanently delete the selected stock items.`}
+      </Alert>
+    )
   });
 }
 
@@ -1287,6 +1503,10 @@ export function useTestResultFields({
               setChoices([]);
               setFieldType('string');
             }
+          } else {
+            // No choices defined - this is a free-form text field
+            setChoices([]);
+            setFieldType('string');
           }
         }
       },
@@ -1350,7 +1570,7 @@ export function useFindSerialNumberForm({
       }
     },
     checkClose: (data, form) => {
-      if (data.length == 0) {
+      if (!data || data?.length == 0) {
         form.setError('serial', { message: t`No matching items` });
         return false;
       }

@@ -99,7 +99,7 @@ class AutoIssueOrdersPlugin(ScheduleMixin, SettingsMixin, InvenTreePlugin):
             try:
                 getattr(order, func_name)()
             except Exception as e:
-                logger.error('Failed to issue order %s: %s', order.pk, str(e))
+                logger.error('Failed to issue order %s: %s', order.pk, e)
 
     def auto_issue_build_orders(self):
         """Automatically issue build orders on the assigned target date."""

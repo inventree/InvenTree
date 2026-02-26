@@ -6,6 +6,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from common.settings import set_global_setting
+from InvenTree.helpers_mfa import get_codes
 from InvenTree.unit_test import AdminTestCase, InvenTreeAPITestCase, InvenTreeTestCase
 from users.models import ApiToken, Owner
 from users.oauth2_scopes import _roles
@@ -332,47 +333,67 @@ class OwnerModelTest(InvenTreeTestCase):
 class MFALoginTest(InvenTreeAPITestCase):
     """Some simplistic tests to ensure that MFA is working."""
 
-    """
     def test_api(self):
-        ""Test that the API is working.""
+        """Test that the API is working."""
         auth_data = {'username': self.username, 'password': self.password}
-        login_url = reverse('api-login')
+        login_url = reverse('browser:account:login')
 
-        # Normal login
-        response = self.post(login_url, auth_data, expected_code=200)
-        self.assertIn('key', response.data)
+        # Double login is not allowed
+        self.post(login_url, auth_data, expected_code=409)
+
+        # Normal login - no mfa
         self.client.logout()
+        response = self.post(login_url, auth_data, expected_code=200)
+        self._helper_meta_val(response)
 
-        # Add MFA
-        totp_model = self.user.totpdevice_set.create()
+        # Add MFA - trying in a limited loop in case of timing issues
+        rc_code = get_codes(user=self.user)[1][0]
+
+        # There must be a TOTP device now - success
+        self.get(reverse('browser:mfa:manage_totp'), expected_code=200)
+        self.get(reverse('api-token'), expected_code=200)
 
         # Login with MFA enabled but not provided
-        response = self.post(login_url, auth_data, expected_code=403)
-        self.assertContains(response, 'MFA required for this user', status_code=403)
-
-        # Login with MFA enabled and provided - should redirect to MFA page
-        auth_data['mfa'] = 'anything'
-        response = self.post(login_url, auth_data, expected_code=302)
-        self.assertEqual(response.url, reverse('two-factor-authenticate'))
-        # MFA not finished - no access allowed
+        self.client.logout()
+        response = self.post(login_url, auth_data, expected_code=401)
+        self._helper_meta_val(response, val=False)
+        self.assertEqual(self._helper_get_flow(response)['is_pending'], True)
         self.get(reverse('api-token'), expected_code=401)
 
+        # Login with MFA enabled and provided - second api call an success
+        self.client.logout()
+        response = self.post(login_url, auth_data, expected_code=401)
+        # MFA not finished - no access allowed
+        self.get(reverse('api-token'), expected_code=401)
+        # Complete MFA (with recovery code to avoid timing issues)
+        self.post(
+            reverse('browser:mfa:authenticate'), {'code': rc_code}, expected_code=401
+        )
+        self.post(reverse('browser:mfa:trust'), {'trust': False}, expected_code=200)
+        # and run through trust
+        self.get(reverse('api-token'), expected_code=200)
+
         # Login with MFA enabled and provided - but incorrect pwd
+        self.client.logout()
         auth_data['password'] = 'wrong'
-        self.post(login_url, auth_data, expected_code=401)
+        response = self.post(login_url, auth_data, expected_code=400)
+        self.assertContains(
+            response,
+            'The username and/or password you specified are not correct',
+            status_code=400,
+        )
         auth_data['password'] = self.password
 
-        # Remove MFA
-        totp_model.delete()
+    def _helper_meta_val(
+        self, response, key: str = 'is_authenticated', val: bool = True
+    ):
+        """Helper to run a test on meta response."""
+        self.assertEqual(response.json()['meta'][key], val)
 
-        # Login with MFA disabled but correct credentials provided
-        response = self.post(login_url, auth_data, expected_code=200)
-        self.assertIn('key', response.data)
-
-        # Wrong login should not work
-        auth_data['password'] = 'wrong'
-        self.post(login_url, auth_data, expected_code=401)
-    """
+    def _helper_get_flow(self, response, flow_id: str = 'mfa_authenticate'):
+        """Helper to run a test on flow response."""
+        flows = response.json()['data']['flows']
+        return next(a for a in flows if a['id'] == flow_id)
 
 
 class AdminTest(AdminTestCase):

@@ -1,7 +1,8 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
+import type { UseQueryResult } from '@tanstack/react-query';
 import { useInstance } from './UseInstance';
 import useStatusCodes from './UseStatusCodes';
 
@@ -14,7 +15,7 @@ export type ImportSessionState = {
   sessionData: any;
   setSessionData: (data: any) => void;
   refreshSession: () => void;
-  sessionQuery: any;
+  sessionQuery: UseQueryResult;
   status: number;
   availableFields: Record<string, any>;
   availableColumns: string[];
@@ -41,6 +42,7 @@ export function useImportSession({
   } = useInstance({
     endpoint: ApiEndpoints.import_session_list,
     pk: sessionId,
+    hasPrimaryKey: true,
     defaultValue: {}
   });
 
@@ -48,14 +50,23 @@ export function useImportSession({
     setInstance(data);
   }, []);
 
-  const importSessionStatus = useStatusCodes({
+  useStatusCodes({
     modelType: ModelType.importsession
   });
 
-  // Current step of the import process
-  const status: number = useMemo(() => {
-    return sessionData?.status ?? importSessionStatus.INITIAL;
-  }, [sessionData, importSessionStatus]);
+  // Session status (we update whenever the session data changes)
+  const [status, setStatus] = useState<number>(0);
+
+  // Reset the status when the sessionId changes
+  useEffect(() => {
+    setStatus(0);
+  }, [sessionId]);
+
+  useEffect(() => {
+    if (!!sessionData.status && sessionData.status !== status) {
+      setStatus(sessionData.status);
+    }
+  }, [sessionData?.status]);
 
   // List of available writeable database field definitions
   const availableFields: any[] = useMemo(() => {

@@ -4,7 +4,7 @@ import json
 import os
 import re
 from datetime import datetime
-from distutils.version import StrictVersion
+from distutils.version import StrictVersion  # type: ignore[import]
 from pathlib import Path
 
 import requests
@@ -304,6 +304,6 @@ def on_post_build(*args, **kwargs):
         if missing:
             raise NotImplementedError(
                 'Missing Settings:\n'
-                + f"There are {len(missing)} missing settings in the '{group}' group:\n"
+                + f"There are {len(missing)} missing settings in the '{group}' group:\n- "
                 + '\n- '.join(missing)
             )

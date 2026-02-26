@@ -47,7 +47,9 @@ User.add_to_class('__str__', user_model_str)  # Overriding User.__str__
 
 
 if settings.LDAP_AUTH:
-    from django_auth_ldap.backend import populate_user
+    from django_auth_ldap.backend import (  # type: ignore[unresolved-import]
+        populate_user,
+    )
 
     @receiver(populate_user)
     def create_email_address(user, **kwargs):
@@ -61,7 +63,10 @@ if settings.LDAP_AUTH:
         user.save()
 
         # if they got an email address from LDAP, create it now and make it the primary
-        if user.email:
+        if (
+            user.email
+            and not EmailAddress.objects.filter(user=user, email=user.email).exists()
+        ):
             EmailAddress.objects.create(user=user, email=user.email, primary=True)
 
 
@@ -73,17 +78,6 @@ def default_token():
 def default_token_expiry():
     """Generate an expiry date for a newly created token."""
     return InvenTree.helpers.current_date() + datetime.timedelta(days=365)
-
-
-def default_create_token(token_model, user, serializer):
-    """Generate a default value for the token."""
-    token = token_model.objects.filter(user=user, name='', revoked=False)
-
-    if token.exists():
-        return token.first()
-
-    else:
-        return token_model.objects.create(user=user, name='')
 
 
 class ApiToken(AuthToken, InvenTree.models.MetadataMixin):

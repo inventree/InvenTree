@@ -55,6 +55,48 @@ The Part expiry time can be altered using the Part editing form.
 
 {{ image("stock/part_expiry.png", title="Edit part expiry") }}
 
+## Stale Stock Notifications
+
+InvenTree can automatically notify users when stock items are approaching their expiry dates. This feature helps prevent stock from expiring unnoticed by providing advance warning.
+
+### Configuration
+
+The stale stock notification system uses the `STOCK_STALE_DAYS` global setting to determine when to send notifications. This setting specifies how many days before expiry (or after expiry) to consider stock items as "stale".
+
+For example, if `STOCK_STALE_DAYS` is set to 10:
+- Stock items expiring within the next 10 days will trigger notifications
+- Stock items that expired within the last 10 days will also trigger notifications
+
+### How It Works
+
+The system runs a daily background task that:
+
+1. **Checks for stale stock**: Identifies stock items with expiry dates within the configured threshold
+2. **Groups by user**: Organizes stale items by users who are subscribed to notifications for the relevant parts
+3. **Sends consolidated emails**: Each user receives a single email containing all their stale stock items
+
+
+
+### Prerequisites
+
+For stale stock notifications to work:
+
+1. **Stock expiry must be enabled**: The `STOCK_ENABLE_EXPIRY` setting must be enabled
+2. **Stale days configured**: The `STOCK_STALE_DAYS` setting must be greater than 0
+3. **Email configuration**: [Email settings](../settings/email.md) must be properly configured
+4. **User subscriptions**: Users must be subscribed to notifications for the relevant parts
+
+
+### User Subscriptions
+
+Users will only receive notifications for parts they are subscribed to. To subscribe to part notifications:
+
+1. Navigate to the part detail page
+2. Click the notification bell icon to subscribe
+3. Users can also subscribe to entire part categories
+
+For more information on part subscriptions, see the [Part Notifications](../part/notification.md) documentation.
+
 ## Sales and Build Orders
 
 By default, expired Stock Items cannot be added to neither a Sales Order nor a Build Order. This behavior can be adjusted using the *Sell Expired Stock* and *Build Expired Stock* settings:

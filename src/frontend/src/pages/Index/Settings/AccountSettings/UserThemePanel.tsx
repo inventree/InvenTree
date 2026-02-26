@@ -40,19 +40,19 @@ export function UserTheme({ height }: Readonly<{ height: number }>) {
   );
 
   // radius
-  function getMark(value: number) {
+  function getRadiusFromValue(value: number) {
     const obj = SizeMarks.find((mark) => mark.value === value);
-    if (obj) return obj;
-    return SizeMarks[0];
+    if (obj) return obj.label;
+    return 'sm';
   }
-  function getDefaultRadius() {
-    const value = Number.parseInt(userTheme.radius.toString());
-    return SizeMarks.some((mark) => mark.value === value) ? value : 50;
-  }
-  const [radius, setRadius] = useState(getDefaultRadius());
+
+  const [radius, setRadius] = useState(25);
+
   function changeRadius(value: number) {
+    const r = getRadiusFromValue(value);
     setRadius(value);
-    setTheme([{ key: 'radius', value: value.toString() }]);
+
+    setTheme([{ key: 'radius', value: r.toString() }]);
   }
 
   return (
@@ -163,7 +163,7 @@ export function UserTheme({ height }: Readonly<{ height: number }>) {
             </Table.Td>
             <Table.Td>
               <Slider
-                label={(val) => getMark(val).label}
+                label={(val) => getRadiusFromValue(val)}
                 defaultValue={50}
                 step={25}
                 marks={SizeMarks}

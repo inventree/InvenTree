@@ -2,7 +2,6 @@
 
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -14,6 +13,7 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 
 import InvenTree.version
+from InvenTree.helpers_email import send_email
 
 logger = structlog.get_logger('inventree')
 
@@ -27,11 +27,11 @@ def send_simple_login_email(user, link):
         'InvenTree/user_simple_login.txt', context
     )
 
-    send_mail(
+    send_email(
         f'[{site_name}] ' + _('Log in to the app'),
         email_plaintext_message,
-        settings.DEFAULT_FROM_EMAIL,
         [user.email],
+        settings.DEFAULT_FROM_EMAIL,
     )
 
 

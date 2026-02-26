@@ -1,14 +1,16 @@
 import { t } from '@lingui/core/macro';
 import { useCallback, useMemo, useState } from 'react';
 
+import { AddItemButton } from '@lib/components/AddItemButton';
+import { ProgressBar } from '@lib/components/ProgressBar';
+import { type RowAction, RowDeleteAction } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
-import { AddItemButton } from '../../components/buttons/AddItemButton';
+import type { TableColumn } from '@lib/types/Tables';
 import ImporterDrawer from '../../components/importer/ImporterDrawer';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
-import { ProgressBar } from '../../components/items/ProgressBar';
 import { RenderUser } from '../../components/render/User';
 import { dataImporterSessionFields } from '../../forms/ImporterForms';
 import { useFilters } from '../../hooks/UseFilter';
@@ -17,11 +19,9 @@ import {
   useDeleteApiFormModal
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
-import type { TableColumn } from '../Column';
 import { DateColumn, StatusColumn } from '../ColumnRenderers';
 import { StatusFilterOptions, UserFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { type RowAction, RowDeleteAction } from '../RowActions';
 
 export default function ImportSessionTable() {
   const table = useTable('importsession');
@@ -42,7 +42,9 @@ export default function ImportSessionTable() {
   const newImportSession = useCreateApiFormModal({
     url: ApiEndpoints.import_session_list,
     title: t`Create Import Session`,
-    fields: dataImporterSessionFields(),
+    fields: dataImporterSessionFields({
+      allowUpdate: true
+    }),
     onFormSuccess: (response: any) => {
       setSelectedSession(response.pk);
       setOpened(true);

@@ -6,7 +6,7 @@ on:
       - master
 
 env:
-  python_version: 3.9
+  python_version: 3.11
   node_version: 20
 
 permissions:
@@ -32,9 +32,9 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6.0.2
         with:
-          persist-credentials: true
+          persist-credentials: false
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -56,7 +56,7 @@ jobs:
           echo "Resetting to HEAD~"
           git reset HEAD~ || true
       - name: crowdin action
-        uses: crowdin/github-action@f214c8723025f41fc55b2ad26e67b60b80b1885d # pin@v2
+        uses: crowdin/github-action@b4b468cffefb50bdd99dd83e5d2eaeb63c880380 # pin@v2
         with:
           upload_sources: true
           upload_translations: false

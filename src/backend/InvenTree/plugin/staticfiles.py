@@ -111,7 +111,7 @@ def copy_plugin_static_files(slug, check_reload=True):
             with item.open('rb') as src:
                 staticfiles_storage.save(destination_path, src)
 
-            logger.debug('- copied %s to %s', str(item), str(destination_path))
+            logger.debug('- copied %s to %s', item, destination_path)
             copied += 1
 
     if copied > 0:

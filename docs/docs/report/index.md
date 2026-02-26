@@ -100,6 +100,20 @@ If you enter an invalid option for the filter field, an error message will be di
 !!! warning "Advanced Users"
     Report filtering is an advanced topic, and requires a little bit of knowledge of the underlying data structure!
 
+#### List Filtering
+
+To filter a queryset against a list of ID values, you can use the following "list" syntax:
+
+```
+item__in=[1,2,3]
+```
+
+Note that:
+
+- The list must be enclosed in square brackets `[]`
+- The items in the list must be comma-separated
+- The key must end with `__in` to indicate that it is a list filter (*note the double underscore*).
+
 ### Metadata
 
 A JSON field made available to any [plugins](../plugins/index.md) - but not used by internal code.
@@ -184,7 +198,7 @@ Snippets are included in a template as follows:
 {% raw %}{% include 'snippets/<snippet_name.html>' %}{% endraw %}
 ```
 
-For example, consider a stocktake report for a particular stock location, where we wish to render a table with a row for each item in that location.
+For example, consider a custom stocktake report for a particular stock location, where we wish to render a table with a row for each item in that location.
 
 ```html
 {% raw %}

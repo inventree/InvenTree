@@ -6,7 +6,6 @@ from rest_framework import serializers
 
 import InvenTree.exceptions
 import InvenTree.helpers
-import InvenTree.serializers
 from plugin import PluginMixinEnum, registry
 
 
@@ -53,7 +52,7 @@ class DataExportOptionsSerializer(serializers.Serializer):
             try:
                 supports_export = plugin.supports_export(
                     model_class,
-                    user=request.user,
+                    user=request.user if request else None,
                     serializer_class=serializer_class,
                     view_class=view_class,
                 )

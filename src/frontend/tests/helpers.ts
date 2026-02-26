@@ -1,10 +1,20 @@
-import { baseUrl } from './defaults';
+import { type Page, expect } from '@playwright/test';
+import { createApi } from './api';
+
+export const clickOnParamFilter = async (page: Page, name: string) => {
+  const button = await page
+    .getByRole('button', { name: `${name} Not sorted` })
+    .getByRole('button')
+    .first();
+  await button.scrollIntoViewIfNeeded();
+  await button.click();
+};
 
 /**
  * Open the filter drawer for the currently visible table
  * @param page - The page object
  */
-export const openFilterDrawer = async (page) => {
+export const openFilterDrawer = async (page: Page) => {
   await page.getByLabel('table-select-filters').click();
 };
 
@@ -12,7 +22,7 @@ export const openFilterDrawer = async (page) => {
  * Close the filter drawer for the currently visible table
  * @param page - The page object
  */
-export const closeFilterDrawer = async (page) => {
+export const closeFilterDrawer = async (page: Page) => {
   await page.getByLabel('filter-drawer-close').click();
 };
 
@@ -21,7 +31,11 @@ export const closeFilterDrawer = async (page) => {
  * @param page - The page object
  * @param name - The name of the button to click
  */
-export const clickButtonIfVisible = async (page, name, timeout = 500) => {
+export const clickButtonIfVisible = async (
+  page: Page,
+  name: string,
+  timeout = 500
+) => {
   await page.waitForTimeout(timeout);
 
   if (await page.getByRole('button', { name }).isVisible()) {
@@ -33,14 +47,18 @@ export const clickButtonIfVisible = async (page, name, timeout = 500) => {
  * Clear all filters from the currently visible table
  * @param page - The page object
  */
-export const clearTableFilters = async (page) => {
+export const clearTableFilters = async (page: Page) => {
   await openFilterDrawer(page);
-  await clickButtonIfVisible(page, 'Clear Filters');
+  await clickButtonIfVisible(page, 'Clear Filters', 250);
   await closeFilterDrawer(page);
   await page.waitForLoadState('networkidle');
 };
 
-export const setTableChoiceFilter = async (page, filter, value) => {
+export const setTableChoiceFilter = async (
+  page: Page,
+  filter: string,
+  value: string
+) => {
   await openFilterDrawer(page);
 
   await page.getByRole('button', { name: 'Add Filter' }).click();
@@ -73,41 +91,52 @@ export const clickOnRowMenu = async (cell) => {
   await row.getByLabel(/row-action-menu-/i).click();
 };
 
+interface NavigateOptions {
+  waitUntil?: 'load' | 'domcontentloaded' | 'networkidle';
+  baseUrl?: string;
+}
+
 /**
  * Navigate to the provided page, and wait for loading to complete
  * @param page
  * @param url
  */
-export const navigate = async (page, url: string) => {
-  if (!url.startsWith(baseUrl)) {
-    if (url.startsWith('/')) {
-      url = url.slice(1);
-    }
-
-    url = `${baseUrl}/${url}`;
+export const navigate = async (
+  page,
+  url: string,
+  options?: NavigateOptions
+) => {
+  if (!url.startsWith('http') && !url.includes('web')) {
+    url = `/web/${url}`.replaceAll('//', '/');
   }
 
-  await page.goto(url);
+  const path: string = options?.baseUrl
+    ? new URL(url, options.baseUrl).toString()
+    : url;
+
+  await page.goto(path, { waitUntil: options?.waitUntil ?? 'load' });
 };
 
 /**
  * CLick on the 'tab' element with the provided name
  */
-export const loadTab = async (page, tabName) => {
+export const loadTab = async (page: Page, tabName: string, exact?: boolean) => {
   await page
     .getByLabel(/panel-tabs-/)
-    .getByRole('tab', { name: tabName })
+    .getByRole('tab', { name: tabName, exact: exact ?? false })
     .click();
+
+  await page.waitForLoadState('networkidle');
 };
 
 // Activate "table" view in certain contexts
-export const activateTableView = async (page) => {
+export const activateTableView = async (page: Page) => {
   await page.getByLabel('segmented-icon-control-table').click();
   await page.waitForLoadState('networkidle');
 };
 
 // Activate "calendar" view in certain contexts
-export const activateCalendarView = async (page) => {
+export const activateCalendarView = async (page: Page) => {
   await page.getByLabel('segmented-icon-control-calendar').click();
   await page.waitForLoadState('networkidle');
 };
@@ -115,9 +144,69 @@ export const activateCalendarView = async (page) => {
 /**
  * Perform a 'global search' on the provided page, for the provided query text
  */
-export const globalSearch = async (page, query) => {
+export const globalSearch = async (page: Page, query: string) => {
   await page.getByLabel('open-search').click();
   await page.getByLabel('global-search-input').clear();
   await page.getByPlaceholder('Enter search text').fill(query);
   await page.waitForTimeout(300);
+};
+
+export const deletePart = async (name: string) => {
+  const api = await createApi({});
+  const parts = await api
+    .get('part/', {
+      params: { search: name }
+    })
+    .then((res) => res.json());
+  const existingPart = parts.find((p: any) => p.name === name);
+  if (existingPart) {
+    await api.patch(`part/${existingPart.pk}/`, {
+      data: { active: false }
+    });
+    const res = await api.delete(`part/${existingPart.pk}/`);
+    expect(res.status()).toBe(204);
+  }
+};
+
+// Click on the column sorting toggle
+export const toggleColumnSorting = async (page: Page, columnName: string) => {
+  // Click on the column header to toggle sorting
+  const regex = new RegExp(
+    `^${columnName}\\s*(Not sorted|Sorted ascending|Sorted descending)$`,
+    'i'
+  );
+
+  await page.getByRole('button', { name: regex }).click();
+  await page.waitForTimeout(50);
+  await page.waitForLoadState('networkidle');
+};
+
+// Display the 'table' view
+export const showTableView = async (page: Page) => {
+  await page
+    .getByRole('button', { name: 'segmented-icon-control-table' })
+    .click();
+  await page.waitForLoadState('networkidle');
+};
+
+// Display the 'parameteric' view
+export const showParametricView = async (page: Page) => {
+  await page
+    .getByRole('button', { name: 'segmented-icon-control-parametric' })
+    .click();
+  await page.waitForLoadState('networkidle');
+};
+
+// Display the 'calendar' view
+export const showCalendarView = async (page: Page) => {
+  await page
+    .getByRole('button', { name: 'segmented-icon-control-calendar' })
+    .click();
+  await page.waitForLoadState('networkidle');
+};
+
+// Check for an expected number of columns in the visible table
+export const expectTableColumnCount = async (page: Page, count: number) => {
+  const columns = page.locator('table thead tr th');
+  await expect(columns).toHaveCount(count);
 };

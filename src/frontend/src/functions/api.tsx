@@ -15,7 +15,7 @@ export function extractErrorMessage({
   field?: string;
   defaultMessage?: string;
 }): string {
-  const error_data = error.response?.data ?? null;
+  const error_data = error.response?.data ?? error.data ?? null;
 
   let message = '';
 
@@ -25,7 +25,7 @@ export function extractErrorMessage({
 
   // No message? Look at the response status codes
   if (!message) {
-    const status = error.response?.status ?? null;
+    const status = error.status ?? error.response?.status ?? null;
 
     if (status) {
       switch (status) {
@@ -48,8 +48,11 @@ export function extractErrorMessage({
           message = t`Internal server error`;
           break;
         default:
+          message = t`Unknown error`;
           break;
       }
+
+      message = `${status} - ${message}`;
     }
   }
 

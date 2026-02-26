@@ -57,7 +57,7 @@ class AppMixin:
 
             # add them to the INSTALLED_APPS
             for _key, plugin in plugins:
-                if plugin.mixin_enabled('app'):
+                if plugin.mixin_enabled(PluginMixinEnum.APP):
                     plugin_path = cls._get_plugin_path(plugin)
                     if plugin_path not in settings.INSTALLED_APPS:
                         settings.INSTALLED_APPS += [plugin_path]

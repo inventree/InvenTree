@@ -12,6 +12,8 @@ import WizardDrawer from '../components/wizards/WizardDrawer';
 export interface WizardProps {
   title: string;
   steps: string[];
+  disableManualStepChange?: boolean;
+  onClose?: () => void;
   renderStep: (step: number) => ReactNode;
   canStepForward?: (step: number) => boolean;
   canStepBackward?: (step: number) => boolean;
@@ -30,6 +32,7 @@ export interface WizardState {
   nextStep: () => void;
   previousStep: () => void;
   wizard: ReactNode;
+  setStep: (step: number) => void;
 }
 
 /**
@@ -65,32 +68,44 @@ export default function useWizard(props: WizardProps): WizardState {
 
   // Close the wizard
   const closeWizard = useCallback(() => {
+    props.onClose?.();
     setOpened(false);
   }, []);
 
   // Progress the wizard to the next step
   const nextStep = useCallback(() => {
-    if (props.canStepForward && !props.canStepForward(currentStep)) {
-      return;
-    }
-
-    if (props.steps && currentStep < props.steps.length - 1) {
-      setCurrentStep(currentStep + 1);
-      clearError();
-    }
-  }, [currentStep, props.canStepForward]);
+    setCurrentStep((c) => {
+      if (props.canStepForward && !props.canStepForward(c)) {
+        return c;
+      }
+      const newStep = Math.min(c + 1, props.steps.length - 1);
+      if (newStep !== c) clearError();
+      return newStep;
+    });
+  }, [props.canStepForward]);
 
   // Go back to the previous step
   const previousStep = useCallback(() => {
-    if (props.canStepBackward && !props.canStepBackward(currentStep)) {
-      return;
-    }
+    setCurrentStep((c) => {
+      if (props.canStepBackward && !props.canStepBackward(c)) {
+        return c;
+      }
+      const newStep = Math.max(c - 1, 0);
+      if (newStep !== c) clearError();
+      return newStep;
+    });
+  }, [props.canStepBackward]);
 
-    if (currentStep > 0) {
-      setCurrentStep(currentStep - 1);
+  const setStep = useCallback(
+    (step: number) => {
+      if (step < 0 || step >= props.steps.length) {
+        return;
+      }
+      setCurrentStep(step);
       clearError();
-    }
-  }, [currentStep, props.canStepBackward]);
+    },
+    [props.steps.length]
+  );
 
   // Render the wizard contents for the current step
   const contents = useMemo(() => {
@@ -109,8 +124,10 @@ export default function useWizard(props: WizardProps): WizardState {
     closeWizard,
     nextStep,
     previousStep,
+    setStep,
     wizard: (
       <WizardDrawer
+        disableManualStepChange={props.disableManualStepChange}
         title={props.title}
         currentStep={currentStep}
         steps={props.steps}

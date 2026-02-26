@@ -144,7 +144,7 @@ class InvenTreeCustomStatusModelField(models.PositiveIntegerField):
             validators.append(CustomStatusCodeValidator(status_class=self.status_class))
 
         help_text = _('Additional status information for this item')
-        if InvenTree.ready.isGeneratingSchema():
+        if InvenTree.ready.isGeneratingSchema() and self.status_class:
             help_text = (
                 help_text
                 + '\n\n'

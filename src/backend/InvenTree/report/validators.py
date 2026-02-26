@@ -13,7 +13,7 @@ def validate_report_model_type(value):
         raise ValidationError('Not a valid model type')
 
 
-def validate_filters(value, model=None):
+def validate_filters(value: str, model=None) -> dict:
     """Validate that the provided model filters are valid."""
     from InvenTree.helpers import validateFilterString
 

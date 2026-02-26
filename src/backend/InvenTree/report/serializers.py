@@ -4,7 +4,6 @@ from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
 
-import plugin.models
 import plugin.serializers
 import report.helpers
 import report.models
@@ -65,7 +64,12 @@ class ReportTemplateSerializer(ReportSerializerBase):
         """Metaclass options."""
 
         model = report.models.ReportTemplate
-        fields = [*ReportSerializerBase.base_fields(), 'page_size', 'landscape']
+        fields = [
+            *ReportSerializerBase.base_fields(),
+            'page_size',
+            'landscape',
+            'merge',
+        ]
 
     page_size = serializers.ChoiceField(
         required=False,
