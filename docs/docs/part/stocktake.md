@@ -1,10 +1,10 @@
 ---
-title: Part Stock History
+title: Part Stocktake
 ---
 
-## Part Stock History
+## Part Stocktake
 
-InvenTree can track the historical stock levels of parts, allowing users to view past stocktake data and generate reports based on this information.
+InvenTree can record the historical stock levels of parts, allowing users to view past stocktake data and generate reports based on this information.
 
 A *Stocktake* refers to a "snapshot" of stock levels for a particular part, at a specific point in time. Stocktake information is used for tracking a historical record of the quantity and value of part stock.
 
@@ -75,9 +75,9 @@ A dashboard widget is available for generating stocktake reports, which can be a
 
 Here, the user can specify the report parameters, and then click the *Generate Report* button to generate a new stocktake report based on the specified parameters.
 
-## Stock History Settings
+## Stocktake Settings
 
-There are a number of configuration options available in the [settings view](../settings/global.md):
+There are a number of configuration options available for controlling the behavior of part stocktake functionality in the [system settings view](../settings/global.md):
 
 | Name | Description | Default | Units |
 | ---- | ----------- | ------- | ----- |
@@ -87,9 +87,9 @@ There are a number of configuration options available in the [settings view](../
 {{ globalsetting("STOCKTAKE_DELETE_OLD_ENTRIES")}}
 {{ globalsetting("STOCKTAKE_DELETE_DAYS") }}
 
-{{ image("part/part_stocktake_settings.png", "Stock history settings") }}
+{{ image("part/part_stocktake_settings.png", "Stocktake settings") }}
 
-### Enable Stock History
+### Enable Stocktake
 
 Enable or disable stocktake functionality. Note that by default, stocktake functionality is disabled.
 
@@ -97,10 +97,10 @@ Enable or disable stocktake functionality. Note that by default, stocktake funct
 
 Configure the number of days between generation of [automatic stocktake reports](#automatic-stocktake). If this value is set to zero, automatic stocktake reports will not be generated.
 
-### Delete Old Stock History Entries
+### Delete Old Stocktake Entries
 
-If enabled, stock history entries older than the specified number of days will be automatically deleted from the database.
+If enabled, stocktake entries older than the specified number of days will be automatically deleted from the database.
 
-### Stock History Deletion Interval
+### Stocktake Deletion Interval
 
-Configure how many days historical stock records are retained in the database.
+Configure how many days historical stocktake records are retained in the database.

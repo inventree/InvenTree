@@ -2,9 +2,14 @@ import { randomId } from '@mantine/hooks';
 import { useCallback, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
-import type { FilterSetState } from '@lib/types/Filters';
+import type { FilterSetState, TableFilter } from '@lib/types/Filters';
 import type { TableState } from '@lib/types/Tables';
 import { useFilterSet } from './UseFilterSet';
+
+export type TableStateExtraProps = {
+  idAccessor?: string;
+  initialFilters?: TableFilter[];
+};
 
 /**
  * A custom hook for managing the state of an <InvenTreeTable> component.
@@ -12,7 +17,13 @@ import { useFilterSet } from './UseFilterSet';
  * Refer to the TableState type definition for more information.
  */
 
-export function useTable(tableName: string, idAccessor = 'pk'): TableState {
+export function useTable(
+  tableName: string,
+  tableProps: TableStateExtraProps = {
+    idAccessor: 'pk',
+    initialFilters: []
+  }
+): TableState {
   // Function to generate a new ID (to refresh the table)
   function generateTableName() {
     return `${tableName.replaceAll('-', '')}-${randomId()}`;
@@ -38,7 +49,10 @@ export function useTable(tableName: string, idAccessor = 'pk'): TableState {
     [generateTableName]
   );
 
-  const filterSet: FilterSetState = useFilterSet(`table-${tableName}`);
+  const filterSet: FilterSetState = useFilterSet(
+    `table-${tableName}`,
+    tableProps.initialFilters
+  );
 
   // Array of expanded records
   const [expandedRecords, setExpandedRecords] = useState<any[]>([]);
@@ -59,7 +73,7 @@ export function useTable(tableName: string, idAccessor = 'pk'): TableState {
 
   // Array of selected primary key values
   const selectedIds = useMemo(
-    () => selectedRecords.map((r) => r[idAccessor || 'pk']),
+    () => selectedRecords.map((r) => r[tableProps.idAccessor || 'pk']),
     [selectedRecords]
   );
 
@@ -89,7 +103,7 @@ export function useTable(tableName: string, idAccessor = 'pk'): TableState {
 
       // Find the matching record in the table
       const index = _records.findIndex(
-        (r) => r[idAccessor || 'pk'] === record.pk
+        (r) => r[tableProps.idAccessor || 'pk'] === record.pk
       );
 
       if (index >= 0) {
@@ -104,6 +118,11 @@ export function useTable(tableName: string, idAccessor = 'pk'): TableState {
       setRecords(_records);
     },
     [records]
+  );
+
+  const idAccessor = useMemo(
+    () => tableProps.idAccessor || 'pk',
+    [tableProps.idAccessor]
   );
 
   const [isLoading, setIsLoading] = useState<boolean>(false);

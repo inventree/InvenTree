@@ -244,7 +244,11 @@ export default function ImporterDataSelector({
     url: ApiEndpoints.import_session_row_list,
     pk: selectedRow.pk,
     title: t`Delete Row`,
-    onFormSuccess: () => table.refreshTable()
+    onFormSuccess: () => {
+      table.clearSelectedRecords();
+      table.refreshTable();
+      session.refreshSession();
+    }
   });
 
   const rowErrors = useCallback((row: any) => {
@@ -431,6 +435,8 @@ export default function ImporterDataSelector({
             enableSelection: true,
             enableBulkDelete: true,
             afterBulkDelete: () => {
+              table.clearSelectedRecords();
+              table.refreshTable();
               session.refreshSession();
             }
           }}

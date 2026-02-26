@@ -139,16 +139,16 @@ def state_logger(fn=None, method_name=None):
     """Decorator to log state markers before/after function execution, optionally accepting arguments."""
 
     def decorator(func):
-        func.method_name = method_name or f'invoke task named `{func.__name__}`'
+        func.method_name = method_name or func.__name__
 
         @wraps(func)
         def wrapped(c, *args, **kwargs):
             do_log = is_debug_environment()
             if do_log:
-                info(f'# {func.method_name}| start')
+                info(f'# task | {func.method_name} | start')
             func(c, *args, **kwargs)
             if do_log:
-                info(f'# {func.method_name}| done')
+                info(f'# task | {func.method_name} | done')
 
         return wrapped
 
@@ -530,10 +530,18 @@ def check_file_existence(filename: Path, overwrite: bool = False):
             sys.exit(1)
 
 
+@task
+@state_logger
+def wait(c):
+    """Wait until the database connection is ready."""
+    info('Waiting for database connection...')
+    return manage(c, 'wait_for_db')
+
+
 # Install tasks
 # region tasks
 @task(help={'uv': 'Use UV (experimental package manager)'})
-@state_logger('TASK01')
+@state_logger
 def plugins(c, uv=False):
     """Installs all plugins as specified in 'plugins.txt'."""
     from src.backend.InvenTree.InvenTree.config import (  # type: ignore[import]
@@ -553,7 +561,7 @@ def plugins(c, uv=False):
         'dev': 'Install development requirements instead of production requirements',
     }
 )
-@state_logger('TASK02')
+@state_logger
 def install(c, uv=False, skip_plugins=False, dev=False):
     """Installs required python packages."""
     if dev:
@@ -639,7 +647,7 @@ def rebuild_thumbnails(c):
 
 
 @task
-@state_logger('TASK09')
+@state_logger
 def clean_settings(c):
     """Clean the setting tables of old settings."""
     info('Cleaning old settings from the database')
@@ -669,7 +677,7 @@ def remove_mfa(c, mail='', username=''):
         'skip_plugins': 'Ignore collection of plugin static files',
     }
 )
-@state_logger('TASK08')
+@state_logger
 def static(c, frontend=False, clear=True, skip_plugins=False):
     """Copies required static files to the STATIC_ROOT directory, as per Django requirements."""
     if frontend and node_available():
@@ -725,7 +733,7 @@ def translate(c, ignore_static=False, no_frontend=False):
         'skip_media': 'Skip media backup step (only backup database files)',
     }
 )
-@state_logger('TASK04')
+@state_logger
 def backup(
     c,
     clean: bool = False,
@@ -785,6 +793,7 @@ def backup(
         'skip_db': 'Do not import database archive (media restore only)',
         'skip_media': 'Do not import media archive (database restore only)',
         'uncompress': 'Uncompress the backup files before restoring (default behavior)',
+        'restore_allow_newer_version': 'Allow restore from a newer version backup (use with caution)',
     }
 )
 def restore(
@@ -796,9 +805,15 @@ def restore(
     skip_db: bool = False,
     skip_media: bool = False,
     uncompress: bool = True,
+    restore_allow_newer_version: bool = False,
 ):
     """Restore the database and media files."""
     base_cmd = '--noinput -v 2'
+
+    env = {}
+
+    if restore_allow_newer_version:
+        env['INVENTREE_BACKUP_RESTORE_ALLOW_NEWER_VERSION'] = 'True'
 
     if uncompress:
         base_cmd += ' --uncompress'
@@ -823,7 +838,7 @@ def restore(
         if db_file:
             cmd += f' -i {db_file}'
 
-        manage(c, cmd)
+        manage(c, cmd, env=env)
 
     if skip_media:
         info('Skipping media restore...')
@@ -834,19 +849,19 @@ def restore(
         if media_file:
             cmd += f' -i {media_file}'
 
-        manage(c, cmd)
+        manage(c, cmd, env=env)
 
 
 @task()
-@state_logger()
+@state_logger
 def listbackups(c):
     """List available backup files."""
     info('Finding available backup files...')
     manage(c, 'listbackups')
 
 
-@task(post=[rebuild_models, rebuild_thumbnails])
-@state_logger('TASK05')
+@task(pre=[wait], post=[rebuild_models, rebuild_thumbnails])
+@state_logger
 def migrate(c):
     """Performs database migrations.
 
@@ -879,7 +894,7 @@ def showmigrations(c, app=''):
         'uv': 'Use UV (experimental package manager)',
     },
 )
-@state_logger('TASK03')
+@state_logger
 def update(
     c,
     skip_backup: bool = False,
@@ -953,7 +968,8 @@ def update(
         'include_sso': 'Include SSO token data in the output file (default = False)',
         'include_session': 'Include user session data in the output file (default = False)',
         'retain_temp': 'Retain temporary files (containing permissions) at end of process (default = False)',
-    }
+    },
+    pre=[wait],
 )
 def export_records(
     c,
@@ -1050,6 +1066,7 @@ def export_records(
         'clear': 'Clear existing data before import',
         'retain_temp': 'Retain temporary files at end of process (default = False)',
     },
+    pre=[wait],
     post=[rebuild_models, rebuild_thumbnails],
 )
 def import_records(
@@ -1132,7 +1149,7 @@ def import_records(
         os.remove(datafile)
         os.remove(authfile)
 
-    info('Data import completed')
+    success('Data import completed')
 
 
 @task(
@@ -1199,12 +1216,6 @@ def import_fixtures(c):
 
 
 # Execution tasks
-@task
-@state_logger('TASK10')
-def wait(c):
-    """Wait until the database connection is ready."""
-    info('Waiting for database connection...')
-    return manage(c, 'wait_for_db')
 
 
 @task(
@@ -1506,7 +1517,7 @@ def setup_test(
         'no_default': 'Do not use default settings for schema (default = off/False)',
     }
 )
-@state_logger('TASK11')
+@state_logger
 def schema(
     c, filename='schema.yml', overwrite=False, ignore_warnings=False, no_default=False
 ):
@@ -1668,7 +1679,7 @@ def frontend_check(c):
 
 
 @task(help={'extract': 'Extract translation strings. Default: False'})
-@state_logger('TASK06')
+@state_logger
 def frontend_compile(c, extract: bool = False):
     """Generate react frontend.
 
@@ -1781,7 +1792,7 @@ def frontend_test(c, host: str = '0.0.0.0'):
         'clean': 'Delete old files from InvenTree/web/static/web first, default: True',
     }
 )
-@state_logger('TASK07')
+@state_logger
 def frontend_download(
     c,
     ref=None,

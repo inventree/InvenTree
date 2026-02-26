@@ -423,6 +423,55 @@ test('Stock - Tracking', async ({ browser }) => {
   await page.getByText('- - Factory/Office Block/Room').first().waitFor();
   await page.getByRole('link', { name: 'Widget Assembly' }).waitFor();
   await page.getByRole('cell', { name: 'Installed into assembly' }).waitFor();
+
+  /* Add some more stock items and tracking information:
+   * - Duplicate this stock item
+   * - Give it a unique serial number
+   * - Ensure the tracking information is duplicated correctly
+   * - Delete the new stock item
+   * - Ensure that the tracking information is retained against the base part
+   */
+
+  // Duplicate the stock item
+  await page
+    .getByRole('button', { name: 'action-menu-stock-item-actions' })
+    .click();
+  await page
+    .getByRole('menuitem', { name: 'action-menu-stock-item-actions-duplicate' })
+    .click();
+  await page
+    .getByRole('textbox', { name: 'text-field-serial_numbers' })
+    .fill('9876');
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Check stock tracking information is correct
+  await page.getByText('Serial Number: 9876').first().waitFor();
+  await loadTab(page, 'Stock Tracking');
+  await page
+    .getByRole('cell', { name: 'Stock item created' })
+    .first()
+    .waitFor();
+
+  // Delete this stock item
+  await page
+    .getByRole('button', { name: 'action-menu-stock-item-actions' })
+    .click();
+  await page
+    .getByRole('menuitem', { name: 'action-menu-stock-item-actions-delete' })
+    .click();
+  await page.getByRole('button', { name: 'Delete' }).click();
+
+  // Check stock tracking for base part
+  await loadTab(page, 'Stock History');
+  await page.getByRole('button', { name: 'Stock Tracking' }).click();
+
+  await page.getByText('Stock item no longer exists').first().waitFor();
+  await page
+    .getByRole('cell', { name: 'Thumbnail Blue Widget' })
+    .first()
+    .waitFor();
+
+  await page.getByText('# 162').first().waitFor();
 });
 
 test('Stock - Location', async ({ browser }) => {

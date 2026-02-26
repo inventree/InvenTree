@@ -1117,6 +1117,17 @@ class BuildAutoAllocationSerializer(serializers.Serializer):
         help_text=_('Allocate optional BOM items to build order'),
     )
 
+    item_type = serializers.ChoiceField(
+        default=Build.BuildItemTypes.UNTRACKED,
+        choices=[
+            (Build.BuildItemTypes.ALL, _('All Items')),
+            (Build.BuildItemTypes.UNTRACKED, _('Untracked Items')),
+            (Build.BuildItemTypes.TRACKED, _('Tracked Items')),
+        ],
+        label=_('Item Type'),
+        help_text=_('Select item type to auto-allocate'),
+    )
+
     def save(self):
         """Perform the auto-allocation step."""
         import InvenTree.tasks
@@ -1133,6 +1144,7 @@ class BuildAutoAllocationSerializer(serializers.Serializer):
             interchangeable=data['interchangeable'],
             substitutes=data['substitutes'],
             optional_items=data['optional_items'],
+            item_type=data.get('item_type', 'untracked'),
             group='build',
         ):
             raise ValidationError(_('Failed to start auto-allocation task'))
@@ -1179,6 +1191,7 @@ class BuildItemSerializer(
             'part_detail',
             'stock_item_detail',
             'supplier_part_detail',
+            'install_into_detail',
             # The following fields are only used for data export
             'bom_reference',
             'bom_part_id',
@@ -1242,6 +1255,21 @@ class BuildItemSerializer(
             'stock_item__supplier_part',
             'stock_item__supplier_part__manufacturer_part',
         ],
+    )
+
+    install_into_detail = enable_filter(
+        StockItemSerializer(
+            source='install_into',
+            read_only=True,
+            allow_null=True,
+            label=_('Install Into'),
+            part_detail=False,
+            location_detail=False,
+            supplier_part_detail=False,
+            path_detail=False,
+        ),
+        False,
+        prefetch_fields=['install_into', 'install_into__part'],
     )
 
     location = serializers.PrimaryKeyRelatedField(

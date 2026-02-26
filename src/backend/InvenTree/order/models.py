@@ -299,6 +299,7 @@ class Order(
 
     REQUIRE_RESPONSIBLE_SETTING = None
     UNLOCK_SETTING = None
+    IMPORT_ID_FIELDS = ['reference']
 
     class Meta:
         """Metaclass options. Abstract ensures no database table is created."""
@@ -2915,7 +2916,12 @@ class ReturnOrder(TotalPriceMixin, Order):
         if status is None:
             status = StockStatus.QUARANTINED.value
 
-        deltas = {'status': status, 'returnorder': self.pk, 'location': location.pk}
+        deltas = {
+            'status': status,
+            'returnorder': self.pk,
+            'location': location.pk,
+            'quantity': float(line.quantity),
+        }
 
         if stock_item.customer:
             deltas['customer'] = stock_item.customer.pk

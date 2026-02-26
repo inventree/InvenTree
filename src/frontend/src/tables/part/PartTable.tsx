@@ -41,6 +41,7 @@ import {
   CategoryColumn,
   DefaultLocationColumn,
   DescriptionColumn,
+  IPNColumn,
   LinkColumn,
   PartColumn
 } from '../ColumnRenderers';
@@ -56,17 +57,17 @@ function partTableColumns(): TableColumn[] {
       part: '',
       accessor: 'name'
     }),
-    {
-      accessor: 'IPN',
-      sortable: true
-    },
+    IPNColumn({
+      accessor: 'IPN'
+    }),
     {
       accessor: 'revision',
       sortable: true
     },
     {
       accessor: 'units',
-      sortable: true
+      sortable: true,
+      copyable: true
     },
     DescriptionColumn({}),
     CategoryColumn({
@@ -338,17 +339,26 @@ export function PartListTable({
   enableImport = true,
   basePartInstance,
   props,
+  tableName = 'part-list',
   defaultPartData
 }: Readonly<{
   enableImport?: boolean;
   props?: InvenTreeTableProps;
   basePartInstance?: any;
+  tableName?: string;
   defaultPartData?: any;
 }>) {
   const tableColumns = useMemo(() => partTableColumns(), []);
   const tableFilters = useMemo(() => partTableFilters(), []);
 
-  const table = useTable('part-list');
+  const table = useTable(tableName ?? 'part-list', {
+    initialFilters: [
+      {
+        name: 'active',
+        value: 'true'
+      }
+    ]
+  });
   const user = useUserState();
   const globalSettings = useGlobalSettingsState();
 

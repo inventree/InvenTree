@@ -3,7 +3,7 @@
 # In contrast with the "production" image (which is based on an Alpine image)
 # we use a Debian-based image for the devcontainer
 
-FROM mcr.microsoft.com/devcontainers/python:3.11-bookworm@sha256:5140e54af7a0399a4932dd4c4653d085fcf451b093d7424867df1828ffbb9b81
+FROM mcr.microsoft.com/devcontainers/python:3.11-bookworm@sha256:e754c29c4e3ffcf6c794c1020e36a0812341d88ec9569a34704b975fa89e8848
 
 # InvenTree paths
 ENV INVENTREE_HOME="/home/inventree"
@@ -32,12 +32,17 @@ RUN apt update && apt install -y \
    poppler-utils weasyprint
 
 # Install packages required for frontend development
-RUN apt install -y \
-   yarn nodejs npm
+RUN apt install -y nodejs npm
 
 # Update to the latest stable node version
 RUN npm install -g n --ignore-scripts && n lts
 
-RUN yarn config set network-timeout 600000 -g
+# Install yarn
+RUN npm install -g yarn
+
+# Ensure node and yarn are available at the command line
+RUN node --version && yarn --version
+
+RUN yarn config set httpTimeout 600000 --home
 
 ENTRYPOINT ["/bin/bash", "./init.sh"]

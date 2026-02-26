@@ -19,6 +19,7 @@ import {
   CreationDateColumn,
   DescriptionColumn,
   LineItemsProgressColumn,
+  LinkColumn,
   ProjectCodeColumn,
   ReferenceColumn,
   ResponsibleColumn,
@@ -60,7 +61,14 @@ export function PurchaseOrderTable({
   supplierPartId?: number;
   externalBuildId?: number;
 }>) {
-  const table = useTable('purchase-order');
+  const table = useTable('purchase-order', {
+    initialFilters: [
+      {
+        name: 'outstanding',
+        value: 'true'
+      }
+    ]
+  });
   const user = useUserState();
 
   const tableFilters: TableFilter[] = useMemo(() => {
@@ -113,7 +121,8 @@ export function PurchaseOrderTable({
         )
       },
       {
-        accessor: 'supplier_reference'
+        accessor: 'supplier_reference',
+        copyable: true
       },
       LineItemsProgressColumn({}),
       StatusColumn({ model: ModelType.purchaseorder }),
@@ -143,7 +152,8 @@ export function PurchaseOrderTable({
           });
         }
       },
-      ResponsibleColumn({})
+      ResponsibleColumn({}),
+      LinkColumn({})
     ];
   }, []);
 

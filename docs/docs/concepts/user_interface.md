@@ -266,6 +266,20 @@ To remove a particular category of search results from the global search menu, c
 
 ## Spotlight
 
+The user interface features a "spotlight" search functionality, which provides a quick and efficient way to access common actions or navigate to specific pages within the InvenTree system. The spotlight search is designed to enhance user productivity by allowing users to quickly find and execute actions without needing to navigate through menus or remember specific page locations.
+
+{{ image("concepts/ui_spotlight.png", "Spotlight Search") }}
+
+### Open Spotlight
+
+To open the "spotlight" search, click on the "spotlight" icon located in the main menu at the top of the interface. This will open the spotlight search menu, allowing you to enter search queries and view available actions.
+
+Alternatively, the spotlight search can be opened using the keyboard shortcut `Ctrl + K` (or `Cmd + K` on macOS), providing a quick and convenient way to access the spotlight functionality without needing to click on the menu icon.
+
+### Disable Spotlight
+
+Users may opt to disable the spotlight search functionality if they do not find it useful or prefer not to use it. To disable the spotlight search, navigate to your [user settings](../settings/user.md) and locate the option to disable the spotlight feature. Once disabled, the spotlight search will no longer be accessible from the main menu or via keyboard shortcuts.
+
 ## Barcode Scanning
 
 ## Notifications
@@ -273,3 +287,15 @@ To remove a particular category of search results from the global search menu, c
 ## Customization
 
 ## User Permissions
+
+Many aspects of the user interface are controlled by user permissions, which determine what actions and features are available to each user based on their assigned roles and permissions within the system. This allows for a highly customizable user experience, where different users can have access to different features and functionality based on their specific needs and responsibilities within the organization.
+
+If a user does not have permission to access a particular feature or section of the system, that feature will be hidden from their view in the user interface. This helps to ensure that users only see the features and information that are relevant to their role, reducing clutter and improving usability.
+
+## Language Support
+
+The InvenTree user interface supports multiple languages, allowing users to interact with the system in their preferred language.
+
+The default system language can be configured by the system administrator in the [server configuration options](../start/config.md#basic-options).
+
+Additionally, users can select their preferred language in their [user settings](../settings/user.md), allowing them to override the system default language with their own choice. This provides a personalized experience for each user, ensuring that they can interact with the system in the language they are most comfortable with.

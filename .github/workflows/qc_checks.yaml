@@ -23,6 +23,8 @@ env:
   INVENTREE_SITE_URL: http://localhost:8000
   INVENTREE_DEBUG: true
 
+  use_performance: false
+
 permissions:
   contents: read
 
@@ -78,7 +80,7 @@ jobs:
       - name: Which runner to use?
         id: runner-perf
         # decide if we are running in inventree/inventree -> use codspeed-macro runner else ubuntu-24.04
-        run: echo "runner=$([[ '${{ github.repository }}' == 'inventree/InvenTree' ]] && echo 'codspeed-macro' || echo 'ubuntu-24.04')" >> $GITHUB_OUTPUT
+        run: echo "runner=$([[ '${{ github.repository }}' == 'inventree/InvenTree' && '${{ env.use_performance }}' == 'true' ]] && echo 'codspeed-macro' || echo 'ubuntu-24.04')" >> $GITHUB_OUTPUT
 
   pre-commit:
     name: Style [pre-commit]
@@ -692,7 +694,13 @@ jobs:
           cd src/frontend && npx playwright install --with-deps
       - name: Run Playwright tests
         id: tests
-        run: cd src/frontend && npx nyc playwright test
+        run: |
+          cd src/frontend
+          cp ./tests/fixtures/playwright_custom_logo.png ../backend/InvenTree/InvenTree/static/img/playwright_custom_logo.png
+          cp ./tests/fixtures/playwright_custom_splash.png ../backend/InvenTree/InvenTree/static/img/playwright_custom_splash.png
+          invoke static
+          env INVENTREE_CUSTOM_SPLASH="img/playwright_custom_splash.png" INVENTREE_CUSTOM_LOGO="img/playwright_custom_logo.png" npx nyc playwright test --project=customization
+          npx nyc playwright test --project=chromium --project=firefox
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # pin@v6.0.0
         if: ${{ !cancelled() && steps.tests.outcome == 'failure' }}
         with:

@@ -1,6 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
-import { Alert, Skeleton, Stack, Text } from '@mantine/core';
+import { Alert, Divider, Skeleton, Stack, Text, Title } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useStore } from 'zustand';
@@ -24,11 +24,13 @@ import { SettingItem } from './SettingItem';
  * Display a list of setting items, based on a list of provided keys
  */
 export function SettingList({
+  heading,
   settingsState,
   keys,
   onChange,
   onLoaded
 }: Readonly<{
+  heading?: string;
   settingsState: SettingsStateProps;
   keys?: string[];
   onChange?: () => void;
@@ -162,6 +164,8 @@ export function SettingList({
     <>
       {editSettingModal.modal}
       <Stack gap='xs'>
+        {heading && <Title order={4}>{heading}</Title>}
+        {heading && <Divider />}
         {(keys || allKeys)?.map((key, i) => {
           const setting = settingsState?.settings?.find(
             (s: any) => s.key === key
@@ -198,16 +202,26 @@ export function SettingList({
   );
 }
 
-export function UserSettingList({ keys }: Readonly<{ keys: string[] }>) {
+export function UserSettingList({
+  keys,
+  heading
+}: Readonly<{ keys: string[]; heading?: string }>) {
   const userSettings = useUserSettingsState();
 
-  return <SettingList settingsState={userSettings} keys={keys} />;
+  return (
+    <SettingList settingsState={userSettings} keys={keys} heading={heading} />
+  );
 }
 
-export function GlobalSettingList({ keys }: Readonly<{ keys: string[] }>) {
+export function GlobalSettingList({
+  keys,
+  heading
+}: Readonly<{ keys: string[]; heading?: string }>) {
   const globalSettings = useGlobalSettingsState();
 
-  return <SettingList settingsState={globalSettings} keys={keys} />;
+  return (
+    <SettingList settingsState={globalSettings} keys={keys} heading={heading} />
+  );
 }
 
 export function PluginSettingList({
