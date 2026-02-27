@@ -883,6 +883,26 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'TRANSFERORDER_ENABLED': {
+        'name': _('Enable Transfer Orders'),
+        'description': _('Enable transfer order functionality in the user interface'),
+        'validator': bool,
+        'default': False,
+    },
+    'TRANSFERORDER_REFERENCE_PATTERN': {
+        'name': _('Transfer Order Reference Pattern'),
+        'description': _(
+            'Required pattern for generating Transfer Order reference field'
+        ),
+        'default': 'TO-{ref:04d}',
+        'validator': order.validators.validate_transfer_order_reference,
+    },
+    'TRANSFERORDER_REQUIRE_RESPONSIBLE': {
+        'name': _('Require Responsible Owner'),
+        'description': _('A responsible owner must be assigned to each order'),
+        'default': False,
+        'validator': bool,
+    },
     'PURCHASEORDER_REFERENCE_PATTERN': {
         'name': _('Purchase Order Reference Pattern'),
         'description': _(

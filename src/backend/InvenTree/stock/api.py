@@ -54,11 +54,12 @@ from InvenTree.mixins import (
     RetrieveUpdateDestroyAPI,
     SerializerContextMixin,
 )
-from order.models import PurchaseOrder, ReturnOrder, SalesOrder
+from order.models import PurchaseOrder, ReturnOrder, SalesOrder, TransferOrder
 from order.serializers import (
     PurchaseOrderSerializer,
     ReturnOrderSerializer,
     SalesOrderSerializer,
+    TransferOrderSerializer,
 )
 from part.models import BomItem, Part, PartCategory
 from part.serializers import PartBriefSerializer
@@ -669,13 +670,17 @@ class StockFilter(FilterSet):
     def filter_allocated(self, queryset, name, value):
         """Filter by whether or not the stock item is 'allocated'."""
         if str2bool(value):
-            # Filter StockItem with either build allocations or sales order allocations
+            # Filter StockItem with either build allocations or transfer order allocations or sales order allocations
             return queryset.filter(
-                Q(sales_order_allocations__isnull=False) | Q(allocations__isnull=False)
+                Q(sales_order_allocations__isnull=False)
+                | Q(transfer_order_allocations__isnull=False)
+                | Q(allocations__isnull=False)
             ).distinct()
-        # Filter StockItem without build allocations or sales order allocations
+        # Filter StockItem without build allocations or transfer order allocations or sales order allocations
         return queryset.filter(
-            Q(sales_order_allocations__isnull=True) & Q(allocations__isnull=True)
+            Q(sales_order_allocations__isnull=True)
+            & Q(transfer_order_allocations__isnull=True)
+            & Q(allocations__isnull=True)
         )
 
     expired = rest_filters.BooleanFilter(label='Expired', method='filter_expired')
@@ -1572,6 +1577,7 @@ class StockTrackingList(
             'purchaseorder': (PurchaseOrder, PurchaseOrderSerializer),
             'salesorder': (SalesOrder, SalesOrderSerializer),
             'returnorder': (ReturnOrder, ReturnOrderSerializer),
+            'transferorder': (TransferOrder, TransferOrderSerializer),
             'buildorder': (Build, BuildSerializer),
             'item': (StockItem, StockSerializers.StockItemSerializer),
             'stockitem': (StockItem, StockSerializers.StockItemSerializer),

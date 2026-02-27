@@ -88,6 +88,10 @@ export const ReturnOrderDetail = Loadable(
   lazy(() => import('./pages/sales/ReturnOrderDetail'))
 );
 
+export const TransferOrderDetail = Loadable(
+  lazy(() => import('./pages/stock/TransferOrderDetail'))
+);
+
 export const Scan = Loadable(lazy(() => import('./pages/Index/Scan')));
 
 export const ErrorPage = Loadable(lazy(() => import('./pages/ErrorPage')));
@@ -169,6 +173,7 @@ export const routes = (
         <Route index element={<Navigate to='location/index/' />} />
         <Route path='location/:id?/*' element={<LocationDetail />} />
         <Route path='item/:id/*' element={<StockDetail />} />
+        <Route path='transfer-order/:id/*' element={<TransferOrderDetail />} />
       </Route>
       <Route path='manufacturing/'>
         <Route index element={<Navigate to='index/' />} />

@@ -49,6 +49,7 @@ from order.status_codes import (
     ReturnOrderLineStatus,
     ReturnOrderStatus,
     SalesOrderStatusGroups,
+    TransferOrderStatusGroups,
 )
 from part.serializers import PartBriefSerializer
 from stock.status_codes import StockStatus
@@ -2162,3 +2163,590 @@ class ReturnOrderExtraLineSerializer(
             source='order', many=False, read_only=True, allow_null=True
         )
     )
+
+
+@register_importer()
+class TransferOrderSerializer(
+    NotesFieldMixin,
+    InvenTreeCustomStatusSerializerMixin,
+    AbstractOrderSerializer,
+    InvenTreeModelSerializer,
+):
+    """Serializer for a TransferOrder object."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = order.models.TransferOrder
+        fields = AbstractOrderSerializer.order_fields([
+            'take_from',
+            'take_from_detail',
+            'destination',
+            'destination_detail',
+            'consume',
+            'complete_date',
+        ])
+        read_only_fields = ['creation_date']
+        extra_kwargs = {}
+
+    def skip_create_fields(self):
+        """Skip these fields when instantiating a new object."""
+        fields = super().skip_create_fields()
+
+        return [*fields, 'duplicate']
+
+    @staticmethod
+    def annotate_queryset(queryset):
+        """Add extra information to the queryset.
+
+        - Number of line items in the TransferOrder
+        - Number of completed line items in the TransferOrder
+        - Overdue status of the TransferOrder
+        """
+        queryset = AbstractOrderSerializer.annotate_queryset(queryset)
+
+        queryset = queryset.annotate(
+            completed_lines=SubqueryCount(
+                'lines', filter=Q(quantity__lte=F('transferred'))
+            )
+        )
+
+        queryset = queryset.annotate(
+            overdue=Case(
+                When(
+                    order.models.TransferOrder.overdue_filter(),
+                    then=Value(True, output_field=BooleanField()),
+                ),
+                default=Value(False, output_field=BooleanField()),
+            )
+        )
+
+        return queryset
+
+    take_from_detail = enable_filter(
+        stock.serializers.LocationSerializer(
+            source='take_from', many=False, read_only=True, allow_null=True
+        ),
+        default_include=True,
+    )
+
+    destination_detail = enable_filter(
+        stock.serializers.LocationSerializer(
+            source='destination', many=False, read_only=True, allow_null=True
+        ),
+        default_include=True,
+    )
+
+
+class TransferOrderHoldSerializer(OrderAdjustSerializer):
+    """Serializer for placing a TransferOrder on hold."""
+
+    def save(self):
+        """Save the serializer to 'hold' the order."""
+        self.order.hold_order()
+
+
+class TransferOrderIssueSerializer(OrderAdjustSerializer):
+    """Serializer for issuing a transfer order."""
+
+    def save(self):
+        """Save the serializer to 'issue' the order."""
+        self.order.issue_order()
+
+
+class TransferOrderCancelSerializer(OrderAdjustSerializer):
+    """Serializer for cancelling a TransferOrder."""
+
+    def save(self):
+        """Save the serializer to 'cancel' the order."""
+        if not self.order.can_cancel:
+            raise ValidationError(_('Order cannot be cancelled'))
+
+        self.order.cancel_order()
+
+
+class TransferOrderCompleteSerializer(OrderAdjustSerializer):
+    """Serializer for completing a transfer order."""
+
+    class Meta:
+        """Metaclass options."""
+
+        fields = ['accept_incomplete_allocation']
+
+    accept_incomplete_allocation = serializers.BooleanField(
+        label=_('Accept Incomplete Allocation'),
+        help_text=_('Allow order to complete with incomplete allocations'),
+        required=False,
+        default=False,
+    )
+
+    def validate_accept_incomplete_allocation(self, value):
+        """Check if the 'accept_incomplete_allocation' field is required."""
+        order = self.context['order']
+
+        if not value and not order.is_fully_allocated():
+            raise ValidationError(_('Order has incomplete allocations'))
+
+        return value
+
+    def get_context_data(self):
+        """Custom context information for this serializer."""
+        order = self.context['order']
+
+        return {'is_complete': order.is_completed()}
+
+    def validate(self, data):
+        """Custom validation for the serializer."""
+        data = super().validate(data)
+        self.order.can_complete(
+            raise_error=True,
+            allow_incomplete_lines=str2bool(
+                data.get('accept_incomplete_allocation', False)
+            ),
+        )
+        return data
+
+    def save(self):
+        """Save the serializer to 'complete' the order."""
+        request = self.context.get('request')
+        data = self.validated_data
+        user = request.user if request else None
+
+        self.order.complete_order(
+            user=user,
+            allow_incomplete_lines=data.get('accept_incomplete_allocation', False),
+        )
+
+
+@register_importer()
+class TransferOrderLineItemSerializer(
+    DataImportExportSerializerMixin,
+    AbstractLineItemSerializer,
+    InvenTreeModelSerializer,
+):
+    """Serializer for a TransferOrderLineItem object."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = order.models.TransferOrderLineItem
+        fields = AbstractLineItemSerializer.line_fields([
+            'allocated',
+            'overdue',
+            'part',
+            'part_detail',
+            'transferred',
+            # Annotated fields for part stocking information
+            'available_stock',
+            'available_variant_stock',
+            'building',
+            'on_order',
+            # Filterable detail fields
+        ])
+
+    @staticmethod
+    def annotate_queryset(queryset):
+        """Add some extra annotations to this queryset.
+
+        - "overdue" status (boolean field)
+        - "available_quantity"
+        - "building"
+        - "on_order"
+        """
+        queryset = queryset.annotate(
+            overdue=Case(
+                When(
+                    Q(order__status__in=TransferOrderStatusGroups.OPEN)
+                    & order.models.TransferOrderLineItem.OVERDUE_FILTER,
+                    then=Value(True, output_field=BooleanField()),
+                ),
+                default=Value(False, output_field=BooleanField()),
+            )
+        )
+
+        # Annotate each line with the available stock quantity
+        # To do this, we need to look at the total stock and any allocations
+        queryset = queryset.alias(
+            total_stock=part_filters.annotate_total_stock(reference='part__'),
+            allocated_to_sales_orders=part_filters.annotate_sales_order_allocations(
+                reference='part__'
+            ),
+            allocated_to_build_orders=part_filters.annotate_build_order_allocations(
+                reference='part__'
+            ),
+        )
+
+        queryset = queryset.annotate(
+            available_stock=Greatest(
+                ExpressionWrapper(
+                    F('total_stock')
+                    - F('allocated_to_sales_orders')
+                    - F('allocated_to_build_orders'),
+                    output_field=models.DecimalField(),
+                ),
+                0,
+                output_field=models.DecimalField(),
+            )
+        )
+
+        # Add information about the quantity of parts currently on order
+        queryset = queryset.annotate(
+            on_order=part_filters.annotate_on_order_quantity(reference='part__')
+        )
+
+        # Add information about the quantity of parts currently in production
+        queryset = queryset.annotate(
+            building=part_filters.annotate_in_production_quantity(reference='part__')
+        )
+
+        # Annotate total 'allocated' stock quantity
+        queryset = queryset.annotate(
+            allocated=Coalesce(
+                SubquerySum('allocations__quantity'),
+                Decimal(0),
+                output_field=models.DecimalField(),
+            )
+        )
+
+        return queryset
+
+    order_detail = enable_filter(
+        TransferOrderSerializer(
+            source='order', many=False, read_only=True, allow_null=True
+        ),
+        prefetch_fields=[
+            'order__created_by',
+            'order__responsible',
+            'order__project_code',
+        ],
+    )
+
+    part_detail = enable_filter(
+        PartBriefSerializer(source='part', many=False, read_only=True, allow_null=True)
+        # prefetch_fields=['part__pricing_data'],
+    )
+
+    # Annotated fields
+    overdue = serializers.BooleanField(read_only=True, allow_null=True)
+    available_stock = serializers.FloatField(read_only=True)
+    available_variant_stock = serializers.FloatField(read_only=True)
+    on_order = serializers.FloatField(label=_('On Order'), read_only=True)
+    building = serializers.FloatField(label=_('In Production'), read_only=True)
+
+    quantity = InvenTreeDecimalField()
+
+    allocated = serializers.FloatField(read_only=True)
+
+    transferred = InvenTreeDecimalField(read_only=True)
+
+
+class TransferOrderAllocationItemSerializer(serializers.Serializer):
+    """A serializer for allocating a single stock-item against a TransferOrder line item."""
+
+    class Meta:
+        """Metaclass options."""
+
+        fields = ['line_item', 'stock_item', 'quantity']
+
+    line_item = serializers.PrimaryKeyRelatedField(
+        queryset=order.models.TransferOrderLineItem.objects.all(),
+        many=False,
+        allow_null=False,
+        required=True,
+        label=_('Stock Item'),
+    )
+
+    def validate_line_item(self, line_item):
+        """Custom validation for the 'line_item' field.
+
+        - Ensure the line_item is associated with the particular TransferOrder
+        """
+        order = self.context['order']
+
+        # Ensure that the line item points to the correct order
+        if line_item.order != order:
+            raise ValidationError(_('Line item is not associated with this order'))
+
+        return line_item
+
+    stock_item = serializers.PrimaryKeyRelatedField(
+        queryset=stock.models.StockItem.objects.all(),
+        many=False,
+        allow_null=False,
+        required=True,
+        label=_('Stock Item'),
+    )
+
+    quantity = serializers.DecimalField(
+        max_digits=15, decimal_places=5, min_value=Decimal(0), required=True
+    )
+
+    def validate_quantity(self, quantity):
+        """Custom validation for the 'quantity' field."""
+        if quantity <= 0:
+            raise ValidationError(_('Quantity must be positive'))
+
+        return quantity
+
+    def validate(self, data):
+        """Custom validation for the serializer.
+
+        - Ensure that the quantity is 1 for serialized stock
+        - Quantity cannot exceed the available amount
+        """
+        data = super().validate(data)
+
+        stock_item = data['stock_item']
+        quantity = data['quantity']
+
+        if stock_item.serialized and quantity != 1:
+            raise ValidationError({
+                'quantity': _('Quantity must be 1 for serialized stock item')
+            })
+
+        q = normalize(stock_item.unallocated_quantity())
+
+        if quantity > q:
+            raise ValidationError({'quantity': _(f'Available quantity ({q}) exceeded')})
+
+        return data
+
+
+class TransferOrderLineItemAllocationSerializer(serializers.Serializer):
+    """DRF serializer for allocation of stock items against a transfer order line item."""
+
+    class Meta:
+        """Metaclass options."""
+
+        fields = ['items']
+
+    items = TransferOrderAllocationItemSerializer(many=True)
+
+    def validate(self, data):
+        """Serializer validation."""
+        data = super().validate(data)
+
+        # Extract TransferOrder from serializer context
+        # order = self.context['order']
+
+        items = data.get('items', [])
+
+        if len(items) == 0:
+            raise ValidationError(_('Allocation items must be provided'))
+
+        return data
+
+    def save(self):
+        """Perform the allocation of items against this order."""
+        data = self.validated_data
+
+        items = data['items']
+
+        with transaction.atomic():
+            for entry in items:
+                # Create a new TransferOrderAllocation
+                allocation = order.models.TransferOrderAllocation(
+                    line=entry.get('line_item'),
+                    item=entry.get('stock_item'),
+                    quantity=entry.get('quantity'),
+                )
+
+                allocation.full_clean()
+                allocation.save()
+
+
+class TransferOrderAllocationSerializer(
+    FilterableSerializerMixin, InvenTreeModelSerializer
+):
+    """Serializer for the TransferOrderAllocation model.
+
+    This includes some fields from the related model objects.
+    """
+
+    class Meta:
+        """Metaclass options."""
+
+        model = order.models.TransferOrderAllocation
+        fields = [
+            'pk',
+            'item',
+            'quantity',
+            # Annotated read-only fields
+            'line',
+            'part',
+            'order',
+            'serial',
+            'location',
+            # Extra detail fields
+            'item_detail',
+            'part_detail',
+            'order_detail',
+            'location_detail',
+        ]
+        read_only_fields = ['line', '']
+
+    part = serializers.PrimaryKeyRelatedField(source='item.part', read_only=True)
+    order = serializers.PrimaryKeyRelatedField(
+        source='line.order', many=False, read_only=True
+    )
+    serial = serializers.CharField(source='get_serial', read_only=True, allow_null=True)
+    quantity = serializers.FloatField(read_only=False)
+    location = serializers.PrimaryKeyRelatedField(
+        source='item.location', many=False, read_only=True
+    )
+
+    # Extra detail fields
+    order_detail = enable_filter(
+        TransferOrderSerializer(
+            source='line.order', many=False, read_only=True, allow_null=True
+        )
+    )
+    part_detail = enable_filter(
+        PartBriefSerializer(
+            source='item.part', many=False, read_only=True, allow_null=True
+        ),
+        True,
+    )
+    item_detail = enable_filter(
+        stock.serializers.StockItemSerializer(
+            source='item',
+            many=False,
+            read_only=True,
+            allow_null=True,
+            part_detail=False,
+            location_detail=False,
+            supplier_part_detail=False,
+        ),
+        True,
+    )
+    location_detail = enable_filter(
+        stock.serializers.LocationBriefSerializer(
+            source='item.location', many=False, read_only=True, allow_null=True
+        )
+    )
+
+
+class TransferOrderSerialAllocationSerializer(serializers.Serializer):
+    """DRF serializer for allocation of serial numbers against a transfer order."""
+
+    class Meta:
+        """Metaclass options."""
+
+        fields = ['line_item', 'quantity', 'serial_numbers']
+
+    line_item = serializers.PrimaryKeyRelatedField(
+        queryset=order.models.TransferOrderLineItem.objects.all(),
+        many=False,
+        required=True,
+        allow_null=False,
+        label=_('Line Item'),
+    )
+
+    def validate_line_item(self, line_item):
+        """Ensure that the line_item is valid."""
+        order = self.context['order']
+
+        # Ensure that the line item points to the correct order
+        if line_item.order != order:
+            raise ValidationError(_('Line item is not associated with this order'))
+
+        return line_item
+
+    quantity = serializers.IntegerField(
+        min_value=1, required=True, allow_null=False, label=_('Quantity')
+    )
+
+    serial_numbers = serializers.CharField(
+        label=_('Serial Numbers'),
+        help_text=_('Enter serial numbers to allocate'),
+        required=True,
+        allow_blank=False,
+    )
+
+    def validate(self, data):
+        """Validation for the serializer.
+
+        - Ensure the serial_numbers and quantity fields match
+        - Check that all serial numbers exist
+        - Check that the serial numbers are not yet allocated
+        """
+        data = super().validate(data)
+
+        line_item = data['line_item']
+        quantity = data['quantity']
+        serial_numbers = data['serial_numbers']
+
+        part = line_item.part
+
+        try:
+            data['serials'] = extract_serial_numbers(
+                serial_numbers, quantity, part.get_latest_serial_number(), part=part
+            )
+        except DjangoValidationError as e:
+            raise ValidationError({'serial_numbers': e.messages})
+
+        serials_not_exist = set()
+        serials_unavailable = set()
+        stock_items_to_allocate = []
+
+        for serial in data['serials']:
+            serial = str(serial).strip()
+
+            items = stock.models.StockItem.objects.filter(
+                part=part, serial=serial, quantity=1
+            )
+
+            if not items.exists():
+                serials_not_exist.add(str(serial))
+                continue
+
+            stock_item = items[0]
+
+            if not stock_item.in_stock:
+                serials_unavailable.add(str(serial))
+                continue
+
+            if stock_item.unallocated_quantity() < 1:
+                serials_unavailable.add(str(serial))
+                continue
+
+            # At this point, the serial number is valid, and can be added to the list
+            stock_items_to_allocate.append(stock_item)
+
+        if len(serials_not_exist) > 0:
+            error_msg = _('No match found for the following serial numbers')
+            error_msg += ': '
+            error_msg += ','.join(sorted(serials_not_exist))
+
+            raise ValidationError({'serial_numbers': error_msg})
+
+        if len(serials_unavailable) > 0:
+            error_msg = _('The following serial numbers are unavailable')
+            error_msg += ': '
+            error_msg += ','.join(sorted(serials_unavailable))
+
+            raise ValidationError({'serial_numbers': error_msg})
+
+        data['stock_items'] = stock_items_to_allocate
+
+        return data
+
+    def save(self):
+        """Allocate stock items against the transfer order."""
+        data = self.validated_data
+
+        line_item = data['line_item']
+        stock_items = data['stock_items']
+
+        allocations = []
+
+        for stock_item in stock_items:
+            # Create a new TransferOrderAllocation
+            allocations.append(
+                order.models.TransferOrderAllocation(
+                    line=line_item, item=stock_item, quantity=1
+                )
+            )
+
+        with transaction.atomic():
+            order.models.TransferOrderAllocation.objects.bulk_create(allocations)

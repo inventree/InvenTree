@@ -506,6 +506,8 @@ class StockItemSerializer(
             allocated=Coalesce(
                 SubquerySum('sales_order_allocations__quantity'), Decimal(0)
             )
+            # For now, stock allocated to a transfer order will not impact its availability
+            # + Coalesce(SubquerySum('transfer_order_allocations__quantity'), Decimal(0))
             + Coalesce(SubquerySum('allocations__quantity'), Decimal(0))
         )
 
@@ -1324,6 +1326,10 @@ class StockAssignmentItemSerializer(serializers.Serializer):
         # The item must not be allocated to a sales order
         if item.sales_order_allocations.count() > 0:
             raise ValidationError(_('Item is allocated to a sales order'))
+
+        # The item must not be allocated to a transfer order
+        if item.transfer_order_allocations.count() > 0:
+            raise ValidationError(_('Item is allocated to a transfer order'))
 
         # The item must not be allocated to a build order
         if item.allocations.count() > 0:

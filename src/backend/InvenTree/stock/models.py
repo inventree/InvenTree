@@ -47,6 +47,7 @@ from InvenTree.status_codes import (
     StockStatus,
     StockStatusGroups,
 )
+from order.status_codes import TransferOrderStatusGroups
 from part import models as PartModels
 from plugin.events import trigger_event
 from stock.events import StockEvents
@@ -1509,7 +1510,7 @@ class StockItem(
             item.save(add_note=False)
 
     def is_allocated(self):
-        """Return True if this StockItem is allocated to a SalesOrder or a Build."""
+        """Return True if this StockItem is allocated to a SalesOrder, TransferOrder, or a Build."""
         return self.allocation_count() > 0
 
     def build_allocation_count(self, **kwargs):
@@ -1569,12 +1570,48 @@ class StockItem(
 
         return total
 
+    def get_transfer_order_allocations(self, active=True, **kwargs):
+        """Return a queryset for TransferOrderAllocations against this StockItem, with optional filters.
+
+        Arguments:
+            active: Filter by 'active' status of the allocation
+        """
+        query = self.transfer_order_allocations.all()
+
+        if filter_allocations := kwargs.get('filter_allocations'):
+            query = query.filter(**filter_allocations)
+
+        if exclude_allocations := kwargs.get('exclude_allocations'):
+            query = query.exclude(**exclude_allocations)
+
+        if active is True:
+            query = query.filter(line__order__status__in=TransferOrderStatusGroups.OPEN)
+        elif active is False:
+            query = query.exclude(
+                line__order__status__in=TransferOrderStatusGroups.OPEN
+            )
+
+        return query
+
+    def transfer_order_allocation_count(self, active=True, **kwargs):
+        """Return the total quantity allocated to TransferOrders."""
+        query = self.get_transfer_order_allocations(active=active, **kwargs)
+        query = query.aggregate(q=Coalesce(Sum('quantity'), Decimal(0)))
+
+        total = query['q']
+
+        if total is None:
+            total = Decimal(0)
+
+        return total
+
     def allocation_count(self):
         """Return the total quantity allocated to builds or orders."""
         bo = self.build_allocation_count()
         so = self.sales_order_allocation_count()
+        to = self.transfer_order_allocation_count()
 
-        return bo + so
+        return bo + so + to
 
     def unallocated_quantity(self):
         """Return the quantity of this StockItem which is *not* allocated."""
@@ -2304,6 +2341,10 @@ class StockItem(
 
         deltas = {'stockitem': self.pk}
 
+        transferorder = kwargs.pop('transferorder', None)
+        if transferorder:
+            deltas['transferorder'] = transferorder.pk
+
         # Optional fields which can be supplied in a 'move' call
         for field in StockItem.optional_transfer_fields():
             if field in kwargs:
@@ -2451,6 +2492,10 @@ class StockItem(
                 old_custom_status if old_custom_status else old_status_logical
             )
             tracking_info['old_status_logical'] = old_status_logical
+
+        transferorder = kwargs.pop('transferorder', None)
+        if transferorder:
+            tracking_info['transferorder'] = transferorder.pk
 
         # Optional fields which can be supplied in a 'move' call
         for field in StockItem.optional_transfer_fields():
@@ -2690,6 +2735,10 @@ class StockItem(
                 if field in kwargs:
                     setattr(self, field, kwargs[field])
                     deltas[field] = kwargs[field]
+
+            transferorder = kwargs.pop('transferorder', None)
+            if transferorder:
+                deltas['transferorder'] = transferorder.pk
 
             self.save(add_note=False)
 

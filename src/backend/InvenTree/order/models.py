@@ -45,7 +45,12 @@ from InvenTree.fields import (
 )
 from InvenTree.helpers import decimal2string, pui_url
 from InvenTree.helpers_model import notify_responsible
-from order.events import PurchaseOrderEvents, ReturnOrderEvents, SalesOrderEvents
+from order.events import (
+    PurchaseOrderEvents,
+    ReturnOrderEvents,
+    SalesOrderEvents,
+    TransferOrderEvents,
+)
 from order.status_codes import (
     PurchaseOrderStatus,
     PurchaseOrderStatusGroups,
@@ -54,6 +59,8 @@ from order.status_codes import (
     ReturnOrderStatusGroups,
     SalesOrderStatus,
     SalesOrderStatusGroups,
+    TransferOrderStatus,
+    TransferOrderStatusGroups,
 )
 from part import models as PartModels
 from plugin.events import trigger_event
@@ -372,11 +379,15 @@ class Order(
                     })
 
         # Check that the referenced 'contact' matches the correct 'company'
-        if self.company and self.contact:
-            if self.contact.company != self.company:
-                raise ValidationError({
-                    'contact': _('Contact does not match selected company')
-                })
+        if (
+            hasattr(self, 'company')
+            and self.company
+            and self.contact
+            and (self.contact.company != self.company)
+        ):
+            raise ValidationError({
+                'contact': _('Contact does not match selected company')
+            })
 
         # Target date should be *after* the start date
         if self.start_date and self.target_date and self.start_date > self.target_date:
@@ -386,11 +397,15 @@ class Order(
             })
 
         # Check that the referenced 'address' matches the correct 'company'
-        if self.company and self.address:
-            if self.address.company != self.company:
-                raise ValidationError({
-                    'address': _('Address does not match selected company')
-                })
+        if (
+            hasattr(self, 'company')
+            and self.company
+            and self.address
+            and (self.address.company != self.company)
+        ):
+            raise ValidationError({
+                'address': _('Address does not match selected company')
+            })
 
     def clean_line_item(self, line):
         """Clean a line item for this order.
@@ -406,7 +421,9 @@ class Order(
         """Generate context data for the reporting interface."""
         return {
             'description': self.description,
-            'extra_lines': self.extra_lines,
+            'extra_lines': getattr(
+                self, 'extra_lines', None
+            ),  # Transfer Order doesn't have extra lines
             'lines': self.lines,
             'order': self,
             'reference': self.reference,
@@ -3072,3 +3089,614 @@ class ReturnOrderExtraLine(OrderExtraLine):
         verbose_name=_('Order'),
         help_text=_('Return Order'),
     )
+
+
+class TransferOrder(Order):
+    """A Transfer Order represents a request to transfer stock from one location to another. It provides a place to queue and review changes before execution.
+
+    Attributes:
+        take_from: The stock location to source items from (or null to )
+        destination: The stock location to move items to
+        consume: Rather than move the stock, "consume" it. Helpful if you want to queue up removing stock from inventory
+    """
+
+    # Global setting for specifying reference pattern
+    REFERENCE_PATTERN_SETTING = 'TRANSFERORDER_REFERENCE_PATTERN'
+    REQUIRE_RESPONSIBLE_SETTING = 'TRANSFERORDER_REQUIRE_RESPONSIBLE'
+    STATUS_CLASS = TransferOrderStatus
+    # UNLOCK_SETTING = 'TRANSFERORDER_EDIT_COMPLETED_ORDERS'
+
+    class Meta:
+        """Model meta options."""
+
+        verbose_name = _('Transfer Order')
+
+    # TODO:
+    # def report_context(self) -> TransferOrderReportContext:
+    #     """Return report context data for this TransferOrder."""
+    #     return {**super().report_context(), 'supplier': self.supplier}
+
+    def get_absolute_url(self) -> str:
+        """Get the 'web' URL for this order."""
+        return pui_url(f'/stock/transfer-order/{self.pk}')
+
+    @staticmethod
+    def get_api_url() -> str:
+        """Return the API URL associated with the TransferOrder model."""
+        return reverse('api-transfer-order-list')
+
+    @classmethod
+    def get_status_class(cls):
+        """Return the TransferOrderStatus class."""
+        return TransferOrderStatusGroups
+
+    @classmethod
+    def api_defaults(cls, request=None):
+        """Return default values for this model when issuing an API OPTIONS request."""
+        defaults = {
+            'reference': order.validators.generate_next_transfer_order_reference()
+        }
+
+        return defaults
+
+    def subscribed_users(self) -> list[User]:
+        """Return a list of users subscribed to this TransferOrder.
+
+        By this, we mean users to are interested in any of the parts associated with this order.
+        """
+        subscribed_users = set()
+
+        # TODO: add these when I implement line items for the Transfer Order
+        # for line in self.lines.all():
+        #     if line.part and line.part.part:
+        #         # Add the part to the list of subscribed users
+        #         for user in line.part.part.get_subscribers():
+        #             subscribed_users.add(user)
+
+        return list(subscribed_users)
+
+    def clean_line_item(self, line):
+        """Clean a line item for this PurchaseOrder."""
+        super().clean_line_item(line)
+        line.transferred = 0
+
+    def __str__(self):
+        """Render a string representation of this TransferOrder."""
+        return f'{self.reference} - {self.take_from.name if self.take_from else _("deleted")} --> {self.destination.name if self.destination else _("deleted")}'
+
+    reference = models.CharField(
+        unique=True,
+        max_length=64,
+        blank=False,
+        help_text=_('Transfer Order Reference'),
+        verbose_name=_('Reference'),
+        default=order.validators.generate_next_transfer_order_reference,
+        validators=[order.validators.validate_transfer_order_reference],
+    )
+
+    status = InvenTreeCustomStatusModelField(
+        default=TransferOrderStatus.PENDING.value,
+        choices=TransferOrderStatus.items(),
+        status_class=TransferOrderStatus,
+        verbose_name=_('Status'),
+        help_text=_('Transfer order status'),
+    )
+
+    @property
+    def status_text(self):
+        """Return the text representation of the status field."""
+        return TransferOrderStatus.text(self.status)
+
+    take_from = models.ForeignKey(
+        'stock.StockLocation',
+        verbose_name=_('Source Location'),
+        on_delete=models.SET_NULL,
+        related_name='sourcing_transfers',
+        blank=True,
+        null=True,
+        help_text=_('Source for transferred items'),
+    )
+
+    destination = models.ForeignKey(
+        'stock.StockLocation',
+        verbose_name=_('Destination Location'),
+        on_delete=models.SET_NULL,
+        related_name='incoming_transfers',
+        blank=True,
+        null=True,
+        help_text=_('Destination for transferred items'),
+    )
+
+    consume = models.BooleanField(
+        default=False,
+        verbose_name=_('Consume Stock'),
+        help_text=_(
+            'Rather than transfer the stock to the destination, "consume" it, by removing transferred quantity from the allocated stock item'
+        ),
+    )
+
+    complete_date = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Completion Date'),
+        help_text=_('Date order was completed'),
+    )
+
+    @property
+    def is_pending(self) -> bool:
+        """Return True if the TransferOrder is 'pending'."""
+        return self.status == TransferOrderStatus.PENDING.value
+
+    @property
+    def is_open(self) -> bool:
+        """Return True if the TransferOrder is 'open'."""
+        return self.status in TransferOrderStatusGroups.OPEN
+
+    @property
+    def stock_allocations(self) -> QuerySet:
+        """Return a queryset containing all allocations for this order."""
+        return TransferOrderAllocation.objects.filter(
+            line__in=[line.pk for line in self.lines.all()]
+        )
+
+    def is_fully_allocated(self) -> bool:
+        """Return True if all line items are fully allocated."""
+        return all(line.is_fully_allocated() for line in self.lines.all())
+
+    def is_overallocated(self) -> bool:
+        """Return true if any lines in the order are over-allocated."""
+        return any(line.is_overallocated() for line in self.lines.all())
+
+    def is_completed(self) -> bool:
+        """Check if this order is "transferred" (all line items transferred)."""
+        return all(line.is_completed() for line in self.lines.all())
+
+    def can_complete(
+        self, raise_error: bool = False, allow_incomplete_lines: bool = False
+    ) -> bool:
+        """Test if this TransferOrder can be completed."""
+        try:
+            if self.status == TransferOrderStatus.COMPLETE.value:
+                raise ValidationError(_('Order is already complete'))
+
+            if self.status == TransferOrderStatus.CANCELLED.value:
+                raise ValidationError(_('Order is already cancelled'))
+
+            if not self.consume and not self.destination:
+                raise ValidationError(
+                    _('Order cannot be completed until a destination location is set')
+                )
+
+            if not (self.is_fully_allocated() or allow_incomplete_lines):
+                raise ValidationError(
+                    _('Order cannot be completed until it is fully allocated')
+                )
+        except ValidationError as e:
+            if raise_error:
+                raise e
+            else:
+                return False
+
+        return True
+
+    @property
+    def can_issue(self) -> bool:
+        """Return True if this order can be issued."""
+        return self.status in [
+            TransferOrderStatus.PENDING.value,
+            TransferOrderStatus.ON_HOLD.value,
+        ]
+
+    @transaction.atomic
+    def issue_order(self):
+        """Attempt to transition to PLACED status."""
+        return self.handle_transition(
+            self.status, TransferOrderStatus.ISSUED.value, self, self._action_issue
+        )
+
+    # region state changes
+    def _action_issue(self, *args, **kwargs):
+        """Marks the TransferOrder as ISSUED.
+
+        Order must be currently PENDING.
+        """
+        if self.can_issue:
+            self.status = TransferOrderStatus.ISSUED.value
+            self.issue_date = InvenTree.helpers.current_date()
+            self.save()
+
+            trigger_event(TransferOrderEvents.ISSUED, id=self.pk)
+
+            # Notify users that the order has been issued
+            notify_responsible(
+                self,
+                TransferOrder,
+                exclude=self.created_by,
+                content=InvenTreeNotificationBodies.NewOrder,
+                extra_users=self.subscribed_users(),
+            )
+
+    @property
+    def can_hold(self) -> bool:
+        """Return True if this order can be placed on hold."""
+        return self.status in [
+            TransferOrderStatus.PENDING.value,
+            TransferOrderStatus.ISSUED.value,
+        ]
+
+    def _action_hold(self, *args, **kwargs):
+        """Mark this transfer order as 'on hold'."""
+        if self.can_hold:
+            self.status = TransferOrderStatus.ON_HOLD.value
+            self.save()
+
+            trigger_event(TransferOrderEvents.HOLD, id=self.pk)
+
+    @transaction.atomic
+    def _action_complete(self, *args, **kwargs):
+        """Marks the TransferOrder as COMPLETE.
+
+        Order must be currently ISSUED.
+        """
+        user = kwargs.pop('user', None)
+
+        if not self.can_complete(raise_error=True, **kwargs):
+            return False
+
+        if self.status == TransferOrderStatus.ISSUED:
+            for allocation in self.allocations():
+                # execute each transfer
+                allocation.complete_allocation(user)
+
+            self.status = TransferOrderStatus.COMPLETE.value
+            self.complete_date = InvenTree.helpers.current_date()
+
+            self.save()
+
+            trigger_event(TransferOrderEvents.COMPLETED, id=self.pk)
+
+            return True
+
+    @transaction.atomic
+    def complete_order(self, user, **kwargs):
+        """Attempt to transition to COMPLETE status."""
+        return self.handle_transition(
+            self.status,
+            TransferOrderStatus.COMPLETE.value,
+            self,
+            self._action_complete,
+            user=user,
+            **kwargs,
+        )
+
+    @transaction.atomic
+    def hold_order(self):
+        """Attempt to transition to ON_HOLD status."""
+        return self.handle_transition(
+            self.status, TransferOrderStatus.ON_HOLD.value, self, self._action_hold
+        )
+
+    @transaction.atomic
+    def cancel_order(self):
+        """Attempt to transition to CANCELLED status."""
+        return self.handle_transition(
+            self.status, TransferOrderStatus.CANCELLED.value, self, self._action_cancel
+        )
+
+    @property
+    def can_cancel(self) -> bool:
+        """A TransferOrder can only be cancelled under the following circumstances.
+
+        - Status is ISSUED
+        - Status is PENDING (or ON_HOLD)
+        """
+        return self.status in TransferOrderStatusGroups.OPEN
+
+    def _action_cancel(self, *args, **kwargs):
+        """Marks the TransferOrder as CANCELLED."""
+        if self.can_cancel:
+            self.status = TransferOrderStatus.CANCELLED.value
+            self.save()
+
+            trigger_event(TransferOrderEvents.CANCELLED, id=self.pk)
+
+            # Notify users that the order has been canceled
+            notify_responsible(
+                self,
+                TransferOrder,
+                exclude=self.created_by,
+                content=InvenTreeNotificationBodies.OrderCanceled,
+                extra_users=self.subscribed_users(),
+            )
+
+    # endregion
+
+    @property
+    def line_count(self) -> int:
+        """Return the total number of lines associated with this order."""
+        return self.lines.count()
+
+    def completed_line_items(self) -> QuerySet:
+        """Return a queryset of the completed line items for this order."""
+        return self.lines.filter(transferred__gte=F('quantity'))
+
+    def pending_line_items(self) -> QuerySet:
+        """Return a queryset of the pending line items for this order."""
+        return self.lines.filter(transferred__lt=F('quantity'))
+
+    @property
+    def completed_line_count(self) -> int:
+        """Return the number of completed lines for this order."""
+        return self.completed_line_items().count()
+
+    @property
+    def pending_line_count(self) -> int:
+        """Return the number of pending (incomplete) lines associated with this order."""
+        return self.pending_line_items().count()
+
+    def allocations(self) -> QuerySet:
+        """Return a queryset of all allocations for this order."""
+        return TransferOrderAllocation.objects.filter(line__order=self)
+
+
+class TransferOrderLineItem(OrderLineItem):
+    """Model for a single LineItem in a TransferOrder.
+
+    Attributes:
+        order: Link to the TransferOrder that this line item belongs to
+        part: Link to a Part object (may be null)
+        transferred: The number of items which have actually transferred against this line item
+    """
+
+    class Meta:
+        """Model meta options."""
+
+        verbose_name = _('Transfer Order Line Item')
+
+    # Filter for determining if a particular TransferOrderLineItem is overdue
+    OVERDUE_FILTER = (
+        Q(transferred__lt=F('quantity'))
+        & ~Q(target_date=None)
+        & Q(target_date__lt=InvenTree.helpers.current_date())
+    )
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL associated with the TransferOrderLineItem model."""
+        return reverse('api-to-line-list')
+
+    order = models.ForeignKey(
+        TransferOrder,
+        on_delete=models.CASCADE,
+        related_name='lines',
+        verbose_name=_('Order'),
+        help_text=_('Transfer Order'),
+    )
+
+    part = models.ForeignKey(
+        'part.Part',
+        on_delete=models.SET_NULL,
+        related_name='transfer_order_line_items',
+        null=True,
+        verbose_name=_('Part'),
+        help_text=_('Part'),
+        # limit_choices_to={'salable': True},
+    )
+
+    transferred = RoundingDecimalField(
+        verbose_name=_('transferred'),
+        help_text=_('transferred quantity'),
+        default=0,
+        max_digits=15,
+        decimal_places=5,
+        validators=[MinValueValidator(0)],
+    )
+
+    def fulfilled_quantity(self):
+        """Return the total stock quantity fulfilled against this line item."""
+        if not self.pk:
+            return 0
+
+        query = self.order.stock_items.filter(part=self.part).aggregate(
+            fulfilled=Coalesce(Sum('quantity'), Decimal(0))
+        )
+
+        return query['fulfilled']
+
+    def allocated_quantity(self):
+        """Return the total stock quantity allocated to this LineItem.
+
+        This is a summation of the quantity of each attached StockItem
+        """
+        if not self.pk:
+            return 0
+
+        query = self.allocations.aggregate(
+            allocated=Coalesce(Sum('quantity'), Decimal(0))
+        )
+
+        return query['allocated']
+
+    def is_fully_allocated(self) -> bool:
+        """Return True if this line item is fully allocated."""
+        # If the linked part is "virtual", then we cannot allocate stock against it
+        if self.part and self.part.virtual:
+            return True
+
+        if self.order.status == TransferOrderStatus.COMPLETE:
+            return self.fulfilled_quantity() >= self.quantity
+
+        return self.allocated_quantity() >= self.quantity
+
+    def is_overallocated(self) -> bool:
+        """Return True if this line item is over allocated."""
+        return self.allocated_quantity() > self.quantity
+
+    def is_completed(self) -> bool:
+        """Return True if this line item is completed (has been fully shipped)."""
+        # A "virtual" part is always considered to be "completed"
+        if self.part and self.part.virtual:
+            return True
+
+        return self.transferred >= self.quantity
+
+
+class TransferOrderAllocation(models.Model):
+    """This model is used to 'allocate' stock items to a TransferOrder. Items that are "allocated" to a TransferOrder are not yet "attached" to the order, but they will be once the order is fulfilled.
+
+    Attributes:
+        line: TransferOrderLineItem reference
+        item: StockItem reference
+        quantity: Quantity to take from the StockItem
+    """
+
+    class Meta:
+        """Model meta options."""
+
+        verbose_name = _('Transfer Order Allocation')
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL associated with the TransferOrderAllocation model."""
+        return reverse('api-to-allocation-list')
+
+    def clean(self):
+        """Validate the TransferOrderAllocation object.
+
+        Executes:
+        - Cannot allocate stock to a line item without a part reference
+        - The referenced part must match the part associated with the line item
+        - Allocated quantity cannot exceed the quantity of the stock item
+        - Allocation quantity must be "1" if the StockItem is serialized
+        - Allocation quantity cannot be zero
+        """
+        super().clean()
+
+        errors = {}
+
+        try:
+            if not self.item:
+                raise ValidationError({'item': _('Stock item has not been assigned')})
+        except stock.models.StockItem.DoesNotExist:
+            raise ValidationError({'item': _('Stock item has not been assigned')})
+
+        try:
+            if self.line.part != self.item.part:
+                variants = self.line.part.get_descendants(include_self=True)
+                if self.line.part not in variants:
+                    errors['item'] = _(
+                        'Cannot allocate stock item to a line with a different part'
+                    )
+        except PartModels.Part.DoesNotExist:
+            errors['line'] = _('Cannot allocate stock to a line without a part')
+
+        if self.quantity > self.item.quantity:
+            errors['quantity'] = _('Allocation quantity cannot exceed stock quantity')
+
+        # Ensure that we do not 'over allocate' a stock item
+        build_allocation_count = self.item.build_allocation_count()
+        sales_allocation_count = self.item.sales_order_allocation_count(
+            exclude_allocations={'pk': self.pk}
+        )
+
+        total_allocation = (
+            build_allocation_count + sales_allocation_count + self.quantity
+        )
+
+        if total_allocation > self.item.quantity:
+            errors['quantity'] = _('Stock item is over-allocated')
+
+        if self.quantity <= 0:
+            errors['quantity'] = _('Allocation quantity must be greater than zero')
+
+        if self.item.serial and self.quantity != 1:
+            errors['quantity'] = _('Quantity must be 1 for serialized stock item')
+
+        if len(errors) > 0:
+            raise ValidationError(errors)
+
+    line = models.ForeignKey(
+        TransferOrderLineItem,
+        on_delete=models.CASCADE,
+        verbose_name=_('Line'),
+        related_name='allocations',
+    )
+
+    item = models.ForeignKey(
+        'stock.StockItem',
+        on_delete=models.CASCADE,
+        related_name='transfer_order_allocations',
+        limit_choices_to={
+            'part__virtual': False,
+            'belongs_to': None,
+            'sales_order': None,
+        },
+        verbose_name=_('Item'),
+        help_text=_('Select stock item to allocate'),
+    )
+
+    quantity = RoundingDecimalField(
+        max_digits=15,
+        decimal_places=5,
+        validators=[MinValueValidator(0)],
+        default=1,
+        verbose_name=_('Quantity'),
+        help_text=_('Enter stock allocation quantity'),
+    )
+
+    def get_location(self):
+        """Return the <pk> value of the location associated with this allocation."""
+        return self.item.location.id if self.item.location else None
+
+    def get_po(self):
+        """Return the PurchaseOrder associated with this allocation."""
+        return self.item.purchase_order
+
+    def complete_allocation(self, user):
+        """Complete this allocation (called when the parent TransferOrder is marked as "completed").
+
+        Executes:
+        - Determine if the referenced StockItem needs to be "split" (if allocated quantity != stock quantity)
+        - Move the StockItem to the new location
+        - Updates the transferred qty
+        - If order is marked as "consume", reduce quantity rather than move
+        """
+        order: TransferOrder = self.line.order
+        self.item: stock.models.StockItem  # for type hints
+        self.line: TransferOrderLineItem  # for type hints
+
+        # The allocation is the only thing linking this stock item to the transfer
+        # As a result, we must keep the allocation present even after completion
+        # This means allocations to transfer orders don't affect "available" stock
+        # (otherwise it would permanently reduce available stock)
+
+        if order.consume:
+            # rather than transferring the stock, we simply reduce its quantity to release it from tracked inventory
+            # NOTE: if delete_on_deplete is enabled, this will result in the "transferred stock" panel being empty
+            #       after completion. A more sophesticated immutable tracking that doesn't rely on allocations
+            #       would be helpful here
+            self.item.take_stock(
+                quantity=self.quantity,
+                user=user,
+                code=StockHistoryCode.STOCK_REMOVE,
+                transferorder=order,
+            )
+        else:
+            if self.quantity < self.item.quantity:
+                # update our own reference to the StockItem which was split
+                self.item = self.item.splitStock(
+                    quantity=self.quantity,
+                    location=order.destination,
+                    user=user,
+                    transferorder=order,
+                )
+                self.save()
+            else:
+                # move item directly, we don't have to split
+                self.item.move(
+                    location=order.destination, user=user, transferorder=order, notes=''
+                )
+
+        # Update the transferred qty
+        self.line.transferred += self.quantity
+        self.line.save()
