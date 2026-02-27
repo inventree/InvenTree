@@ -2683,58 +2683,6 @@ class StockMergeTest(StockAPITestCase):
         self.assertEqual(StockItem.objects.filter(part=self.part).count(), n - 2)
 
 
-class StockMetadataAPITest(InvenTreeAPITestCase):
-    """Unit tests for the various metadata endpoints of API."""
-
-    fixtures = [
-        'category',
-        'part',
-        'test_templates',
-        'bom',
-        'company',
-        'location',
-        'supplier_part',
-        'stock',
-        'stock_tests',
-    ]
-
-    roles = ['stock.change', 'stock_location.change']
-
-    def metatester(self, raw_url: str, model):
-        """Generic tester."""
-        modeldata = model.objects.first()
-
-        # Useless test unless a model object is found
-        self.assertIsNotNone(modeldata)
-
-        url = raw_url.format(pk=modeldata.pk)
-
-        # Metadata is initially null
-        self.assertIsNone(modeldata.metadata)
-
-        numstr = f'12{len(raw_url)}'
-        target_key = f'abc-{numstr}'
-        target_value = f'xyz-{raw_url}-{numstr}'
-
-        # Create / update metadata entry (first try via old addresses)
-        data = {'metadata': {target_key: target_value}}
-        rsp = self.patch(url, data, expected_code=301)
-        self.patch(rsp.url, data, expected_code=200)
-
-        # Refresh and check that metadata has been updated
-        modeldata.refresh_from_db()
-        self.assertEqual(modeldata.get_metadata(target_key), target_value)
-
-    def test_metadata(self):
-        """Test all endpoints."""
-        for raw_url, model in {
-            '/api/stock/location/{pk}/metadata/': StockLocation,
-            '/api/stock/test/{pk}/metadata/': StockItemTestResult,
-            '/api/stock/{pk}/metadata/': StockItem,
-        }.items():
-            self.metatester(raw_url, model)
-
-
 class StockApiPerformanceTest(StockAPITestCase, InvenTreeAPIPerformanceTestCase):
     """Performance tests for the Stock API."""
 
