@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('stock', '0118_alter_stocklocation_tenant'),
+        ('stock', '0117_stocklocation_tenant'),
         ('tenant', '0002_create_default_tenant'),
     ]
 

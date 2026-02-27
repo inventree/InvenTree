@@ -453,8 +453,11 @@ class InvenTreeTestCase(ExchangeRateMixin, PluginRegistryMixin, UserMixin, TestC
 
         super().setUpTestData()
 
-        if not Tenant.objects.exists():
-            Tenant.objects.create(name="Test Tenant")
+        if not Tenant.objects.filter(id=1).exists():
+            Tenant.objects.create(
+                id=1,
+                name="Test Tenant"
+            )
         
         translation.activate("en")
 
@@ -470,8 +473,11 @@ class InvenTreeAPITestCase(
 
         super().setUpTestData()
 
-        if not Tenant.objects.exists():
-            Tenant.objects.create(name="Test Tenant")
+        if not Tenant.objects.filter(id=1).exists():
+            Tenant.objects.create(
+                id=1,
+                name="Test Tenant"
+            )
 
         translation.activate("en")
 

@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('order', '0116_alter_purchaseorder_tenant_alter_returnorder_tenant_and_more'),
+        ('order', '0114_purchaseorderextraline_project_code_and_more'),
         ('tenant', '0002_create_default_tenant'),
     ]
 
