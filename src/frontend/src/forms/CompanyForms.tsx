@@ -39,6 +39,7 @@ export function useSupplierPartFields({
       },
       manufacturer_part: {
         value: manufacturerPartId,
+        autoFill: true,
         filters: {
           manufacturer: manufacturerId,
           part_detail: true,
