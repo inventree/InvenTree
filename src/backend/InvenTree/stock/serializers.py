@@ -506,7 +506,8 @@ class StockItemSerializer(
             allocated=Coalesce(
                 SubquerySum('sales_order_allocations__quantity'), Decimal(0)
             )
-            + Coalesce(SubquerySum('transfer_order_allocations__quantity'), Decimal(0))
+            # For now, stock allocated to a transfer order will not impact its availability
+            # + Coalesce(SubquerySum('transfer_order_allocations__quantity'), Decimal(0))
             + Coalesce(SubquerySum('allocations__quantity'), Decimal(0))
         )
 

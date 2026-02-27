@@ -1324,14 +1324,10 @@ class StockItem(
 
         Clears:
         - SalesOrder allocations
-        - TransferOrder allocations
         - Build allocations
         """
         # Delete outstanding SalesOrder allocations
         self.sales_order_allocations.all().delete()
-
-        # Delete outstanding TransferOrder allocations
-        self.transfer_order_allocations.all().delete()
 
         # Delete outstanding BuildOrder allocations
         self.allocations.all().delete()

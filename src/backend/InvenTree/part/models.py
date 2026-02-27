@@ -1817,7 +1817,8 @@ class Part(
         return sum([
             self.build_order_allocation_count(**kwargs),
             self.sales_order_allocation_count(**kwargs),
-            self.transfer_order_allocation_count(**kwargs),
+            # For now, stock allocated to a transfer order will not impact its availability
+            # self.transfer_order_allocation_count(**kwargs),
         ])
 
     def stock_entries(
