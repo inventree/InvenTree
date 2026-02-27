@@ -3210,7 +3210,9 @@ class TransferOrder(Order):
     consume = models.BooleanField(
         default=False,
         verbose_name=_('Consume Stock'),
-        help_text=_('Rather than transfer the stock to the destination, consume it'),
+        help_text=_(
+            'Rather than transfer the stock to the destination, "consume" it, by removing transferred quantity from the allocated stock item'
+        ),
     )
 
     complete_date = models.DateField(
@@ -3260,7 +3262,7 @@ class TransferOrder(Order):
             if self.status == TransferOrderStatus.CANCELLED.value:
                 raise ValidationError(_('Order is already cancelled'))
 
-            if not self.destination:
+            if not self.consume and not self.destination:
                 raise ValidationError(
                     _('Order cannot be completed until a destination location is set')
                 )
@@ -3657,23 +3659,43 @@ class TransferOrderAllocation(models.Model):
         - Determine if the referenced StockItem needs to be "split" (if allocated quantity != stock quantity)
         - Move the StockItem to the new location
         - Updates the transferred qty
+        - If order is marked as "consume", reduce quantity rather than move
         """
-        order = self.line.order
+        order: TransferOrder = self.line.order
+        self.item: stock.models.StockItem  # for type hints
+        self.line: TransferOrderLineItem  # for type hints
 
-        if self.quantity < self.item.quantity:
-            # update our own reference to the StockItem which was split
-            self.item = self.item.splitStock(
+        # The allocation is the only thing linking this stock item to the transfer
+        # As a result, we must keep the allocation present even after completion
+        # This means allocations to transfer orders don't affect "available" stock
+        # (otherwise it would permanently reduce available stock)
+
+        if order.consume:
+            # rather than transferring the stock, we simply reduce its quantity to release it from tracked inventory
+            # NOTE: if delete_on_deplete is enabled, this will result in the "transferred stock" panel being empty
+            #       after completion. A more sophesticated immutable tracking that doesn't rely on allocations
+            #       would be helpful here
+            self.item.take_stock(
                 quantity=self.quantity,
-                location=order.destination,
                 user=user,
+                code=StockHistoryCode.STOCK_REMOVE,
                 transferorder=order,
             )
-            self.save()
         else:
-            # move item directly, we don't have to split
-            self.item.move(
-                location=order.destination, user=user, transferorder=order, notes=''
-            )
+            if self.quantity < self.item.quantity:
+                # update our own reference to the StockItem which was split
+                self.item = self.item.splitStock(
+                    quantity=self.quantity,
+                    location=order.destination,
+                    user=user,
+                    transferorder=order,
+                )
+                self.save()
+            else:
+                # move item directly, we don't have to split
+                self.item.move(
+                    location=order.destination, user=user, transferorder=order, notes=''
+                )
 
         # Update the transferred qty
         self.line.transferred += self.quantity

@@ -2736,6 +2736,10 @@ class StockItem(
                     setattr(self, field, kwargs[field])
                     deltas[field] = kwargs[field]
 
+            transferorder = kwargs.pop('transferorder', None)
+            if transferorder:
+                deltas['transferorder'] = transferorder.pk
+
             self.save(add_note=False)
 
             self.add_tracking_entry(
