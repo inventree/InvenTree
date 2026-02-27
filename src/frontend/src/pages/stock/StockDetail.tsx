@@ -477,7 +477,10 @@ export default function StockDetail() {
   }, [stockitem]);
 
   const showTransferAllocations: boolean = useMemo(() => {
-    return !stockitem?.part_detail?.virtual;
+    return (
+      !stockitem?.part_detail?.virtual &&
+      globalSettings.isSet('TRANSFERORDER_ENABLED')
+    );
   }, [stockitem]);
 
   // API query to determine if this stock item has trackable BOM items

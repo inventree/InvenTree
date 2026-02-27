@@ -1767,7 +1767,7 @@ class TransferOrderFilter(OrderFilter):
             parts = Part.objects.filter(pk=part.pk)
 
         # Now that we have a queryset of parts, find all the matching return orders
-        line_items = models.TransferOrderLineItem.objects.filter(item__part__in=parts)
+        line_items = models.TransferOrderLineItem.objects.filter(part__in=parts)
 
         # Generate a list of ID values for the matching transfer orders
         transfer_orders = line_items.values_list('order', flat=True).distinct()

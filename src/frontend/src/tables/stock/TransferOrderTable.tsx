@@ -46,11 +46,9 @@ import {
 import { InvenTreeTable } from '../InvenTreeTable';
 
 export function TransferOrderTable({
-  partId,
-  customerId
+  partId
 }: Readonly<{
   partId?: number;
-  customerId?: number;
 }>) {
   const table = useTable(
     !!partId ? 'transferorders-part' : 'transferorders-index'
