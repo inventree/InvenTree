@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 459
+INVENTREE_API_VERSION = 460
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v460 -> 2026-02-26 : https://github.com/inventree/InvenTree/pull/10715
+    - Adds GuideDefinition and GuideExecution models and API endpoints to provide tipps and guides within InvenTree's web frontend.v443 -> 2026-01-21 : https://github.com/inventree/InvenTree/pull/11177
 
 v459 -> 2026-02-23 : https://github.com/inventree/InvenTree/pull/11411
     - Changed PurchaseOrderLine "auto_pricing" default value from true to false
