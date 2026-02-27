@@ -58,6 +58,7 @@ from order.status_codes import (
     ReturnOrderStatus,
     SalesOrderStatus,
     SalesOrderStatusGroups,
+    TransferOrderStatus,
     TransferOrderStatusGroups,
 )
 from part.models import Part
@@ -2317,6 +2318,8 @@ class OrderCalendarExport(ICalFeed):
             ordertype_title = _('Sales Order')
         elif obj['ordertype'] == 'return-order':
             ordertype_title = _('Return Order')
+        elif obj['ordertype'] == 'transfer-order':
+            ordertype_title = _('Transfer Order')
         else:
             ordertype_title = _('Unknown')
 
@@ -2362,6 +2365,15 @@ class OrderCalendarExport(ICalFeed):
                 ).filter(status__lt=ReturnOrderStatus.COMPLETE.value)
             else:
                 outlist = models.ReturnOrder.objects.filter(target_date__isnull=False)
+        elif obj['ordertype'] == 'transfer-order':
+            if obj['include_completed'] is False:
+                # Do not include completed orders from list in this case
+                # Complete status = 30
+                outlist = models.TransferOrder.objects.filter(
+                    target_date__isnull=False
+                ).filter(status__lt=TransferOrderStatus.COMPLETE.value)
+            else:
+                outlist = models.TransferOrder.objects.filter(target_date__isnull=False)
         else:
             outlist = []
 
@@ -2373,7 +2385,12 @@ class OrderCalendarExport(ICalFeed):
 
     def item_description(self, item):
         """Set the event description."""
-        return f'Company: {item.company.name}\nStatus: {item.get_status_display()}\nDescription: {item.description}'
+        if hasattr(item, 'company'):
+            return f'Company: {item.company.name}\nStatus: {item.get_status_display()}\nDescription: {item.description}'
+        else:
+            return (
+                f'Status: {item.get_status_display()}\nDescription: {item.description}'
+            )
 
     def item_start_datetime(self, item):
         """Set event start to target date. Goal is all-day event."""
@@ -2769,7 +2786,7 @@ order_api_urls = [
     ),
     # API endpoint for subscribing to ICS calendar of purchase/sales/return orders
     re_path(
-        r'^calendar/(?P<ordertype>purchase-order|sales-order|return-order)/calendar.ics',
+        r'^calendar/(?P<ordertype>purchase-order|sales-order|return-order|transfer-order)/calendar.ics',
         OrderCalendarExport(),
         name='api-po-so-calendar',
     ),
