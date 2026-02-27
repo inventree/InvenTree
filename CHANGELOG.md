@@ -5,6 +5,12 @@ All major notable changes to this project will be documented in this file (start
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2.0 - yyyy-mm-dd
+
+### Breaking Changes - Remove deprecated features and APIs
+
+- [#9604](https://github.com/inventree/InvenTree/pull/9604) - refactors user APi endpoint to be less ambiguous
+
 ## Unreleased - YYYY-MM-DD
 
 ### Breaking Changes
