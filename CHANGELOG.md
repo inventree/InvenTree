@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## 2.0 - yyyy-mm-dd
 
-#### Breaking Changes - Remove deprecated features and APIs
+### Breaking Changes - Remove deprecated features and APIs
 
 - [#11111](https://github.com/inventree/InvenTree/pull/11111) - removes legacy metadata APIs
 
