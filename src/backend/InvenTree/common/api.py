@@ -46,7 +46,6 @@ from InvenTree.api import (
     BulkDeleteMixin,
     GenericMetadataView,
     SimpleGenericMetadataView,
-    meta_path,
 )
 from InvenTree.config import CONFIG_LOOKUPS
 from InvenTree.filters import (
@@ -1407,13 +1406,7 @@ common_api_urls = [
     path(
         'attachment/',
         include([
-            path(
-                '<int:pk>/',
-                include([
-                    meta_path(common.models.Attachment),
-                    path('', AttachmentDetail.as_view(), name='api-attachment-detail'),
-                ]),
-            ),
+            path('<int:pk>/', AttachmentDetail.as_view(), name='api-attachment-detail'),
             path('', AttachmentList.as_view(), name='api-attachment-list'),
         ]),
     ),
@@ -1426,14 +1419,8 @@ common_api_urls = [
                 include([
                     path(
                         '<int:pk>/',
-                        include([
-                            meta_path(common.models.ParameterTemplate),
-                            path(
-                                '',
-                                ParameterTemplateDetail.as_view(),
-                                name='api-parameter-template-detail',
-                            ),
-                        ]),
+                        ParameterTemplateDetail.as_view(),
+                        name='api-parameter-template-detail',
                     ),
                     path(
                         '',
@@ -1442,13 +1429,7 @@ common_api_urls = [
                     ),
                 ]),
             ),
-            path(
-                '<int:pk>/',
-                include([
-                    meta_path(common.models.Parameter),
-                    path('', ParameterDetail.as_view(), name='api-parameter-detail'),
-                ]),
-            ),
+            path('<int:pk>/', ParameterDetail.as_view(), name='api-parameter-detail'),
             path('', ParameterList.as_view(), name='api-parameter-list'),
         ]),
     ),
@@ -1480,13 +1461,7 @@ common_api_urls = [
         'project-code/',
         include([
             path(
-                '<int:pk>/',
-                include([
-                    meta_path(common.models.ProjectCode),
-                    path(
-                        '', ProjectCodeDetail.as_view(), name='api-project-code-detail'
-                    ),
-                ]),
+                '<int:pk>/', ProjectCodeDetail.as_view(), name='api-project-code-detail'
             ),
             path('', ProjectCodeList.as_view(), name='api-project-code-list'),
         ]),

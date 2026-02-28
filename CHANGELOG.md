@@ -10,7 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Breaking Changes - Remove deprecated features and APIs
 
+- [#11111](https://github.com/inventree/InvenTree/pull/11111) - removes legacy metadata APIs
 - [#9814](https://github.com/inventree/InvenTree/pull/9814) - removes legacy config path support
+
 
 ## Unreleased - YYYY-MM-DD
 

@@ -24,7 +24,7 @@ from build.models import Build, BuildItem, BuildLine
 from build.status_codes import BuildStatus, BuildStatusGroups
 from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import StatusView
-from InvenTree.api import BulkDeleteMixin, ParameterListMixin, meta_path
+from InvenTree.api import BulkDeleteMixin, ParameterListMixin
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import (
     SEARCH_ORDER_FILTER_ALIAS,
@@ -994,13 +994,7 @@ build_api_urls = [
     path(
         'item/',
         include([
-            path(
-                '<int:pk>/',
-                include([
-                    meta_path(BuildItem),
-                    path('', BuildItemDetail.as_view(), name='api-build-item-detail'),
-                ]),
-            ),
+            path('<int:pk>/', BuildItemDetail.as_view(), name='api-build-item-detail'),
             path('', BuildItemList.as_view(), name='api-build-item-list'),
         ]),
     ),
@@ -1040,7 +1034,6 @@ build_api_urls = [
             path('finish/', BuildFinish.as_view(), name='api-build-finish'),
             path('cancel/', BuildCancel.as_view(), name='api-build-cancel'),
             path('unallocate/', BuildUnallocate.as_view(), name='api-build-unallocate'),
-            meta_path(Build),
             path('', BuildDetail.as_view(), name='api-build-detail'),
         ]),
     ),
