@@ -38,7 +38,9 @@ export function useApiFormModal(props: ApiFormModalProps) {
         }
       ],
       onFormSuccess: (data, form) => {
-        if (props.checkClose?.(data, form) ?? true) {
+        const keepOpen = form.getValues()?.keep_form_open ?? false;
+
+        if (!keepOpen && (props.checkClose?.(data, form) ?? true)) {
           modalClose.current();
         }
         props.onFormSuccess?.(data, form);

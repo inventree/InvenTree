@@ -5,6 +5,7 @@ import { apiUrl } from '@lib/functions/Api';
 import type { PathParams } from '@lib/types/Core';
 import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
 import { invalidResponse, permissionDenied } from './notifications';
+import {ExtraFormData} from "../forms/CommonForms";
 
 /**
  * Construct an API url from the provided ApiFormProps object
@@ -133,13 +134,19 @@ export function mapFields(
  */
 export function constructField({
   field,
-  definition
+  definition,
+  field_name
 }: {
   field: ApiFormFieldType;
   definition?: ApiFormFieldType;
+  field_name?: string;
 }) {
+
+  const extra_definition = ExtraFormData[field_name ?? ''] ?? {};
+
   const def = {
     ...definition,
+    ...extra_definition,
     ...field
   };
 
@@ -149,7 +156,8 @@ export function constructField({
       for (const k of Object.keys(field.children ?? {})) {
         def.children[k] = constructField({
           field: field.children?.[k] ?? {},
-          definition: definition?.children?.[k] ?? {}
+          definition: definition?.children?.[k] ?? {},
+          field_name: k
         });
       }
       break;

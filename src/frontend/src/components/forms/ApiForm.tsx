@@ -131,7 +131,8 @@ export function OptionsApiForm({
     for (const [k, v] of Object.entries(_props.fields)) {
       _props.fields[k] = constructField({
         field: v,
-        definition: optionsQuery?.data?.[k]
+        definition: optionsQuery?.data?.[k],
+        field_name: k
       });
 
       // If the user has specified initial data, use that value here
@@ -459,9 +460,16 @@ export function ApiForm({
               props.onFormSuccess(response.data, form);
             }
 
-            if (props.follow && props.modelType && response.data?.pk) {
+            const keepOpen = form.getValues()?.keep_form_open ?? false;
+
+            if (
+              props.follow &&
+              props.modelType &&
+              response.data?.pk &&
+              !keepOpen
+            ) {
               // If we want to automatically follow the returned data
-              if (!!navigate) {
+              if (!!navigate && !keepOpen) {
                 navigate(getDetailUrl(props.modelType, response.data?.pk));
               }
             } else if (props.table) {
