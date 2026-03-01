@@ -113,16 +113,6 @@ export function usePurchaseOrderLineItemFields({
     }
   }, [create, part, quantity, priceBreaks]);
 
-  useEffect(() => {
-    if (autoPricing) {
-      setPurchasePrice('');
-    }
-  }, [autoPricing]);
-
-  useEffect(() => {
-    setAutoPricing(purchasePrice === '');
-  }, [purchasePrice]);
-
   const fields = useMemo(() => {
     const fields: ApiFormFieldSet = {
       order: {
@@ -159,6 +149,7 @@ export function usePurchaseOrderLineItemFields({
       purchase_price: {
         icon: <IconCurrencyDollar />,
         value: purchasePrice,
+        disabled: autoPricing,
         placeholder: suggestedPurchasePrice,
         placeholderAutofill: true,
         onValueChange: setPurchasePrice
@@ -169,6 +160,7 @@ export function usePurchaseOrderLineItemFields({
         onValueChange: setPurchasePriceCurrency
       },
       auto_pricing: {
+        default: create !== false,
         value: autoPricing,
         onValueChange: setAutoPricing
       },

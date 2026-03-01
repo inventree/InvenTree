@@ -1,6 +1,7 @@
 import { t } from '@lingui/core/macro';
 import {
   ActionIcon,
+  type ActionIconVariant,
   Button,
   type DefaultMantineColor,
   type FloatingPosition,
@@ -22,7 +23,8 @@ export function CopyButton({
   tooltipPosition,
   content,
   size,
-  color = 'gray'
+  color = 'gray',
+  variant = 'transparent'
 }: Readonly<{
   value: any;
   label?: string;
@@ -32,8 +34,14 @@ export function CopyButton({
   content?: JSX.Element;
   size?: MantineSize;
   color?: DefaultMantineColor;
+  variant?: ActionIconVariant;
 }>) {
   const ButtonComponent = label ? Button : ActionIcon;
+
+  // Disable the copy button if we are not in a secure context, as the Clipboard API is not available
+  if (!window.isSecureContext) {
+    return null;
+  }
 
   return (
     <MantineCopyButton value={value}>
@@ -51,7 +59,7 @@ export function CopyButton({
               e.preventDefault();
               copy();
             }}
-            variant='transparent'
+            variant={copied ? 'transparent' : (variant ?? 'transparent')}
             size={size ?? 'sm'}
           >
             {copied ? (

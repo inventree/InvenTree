@@ -19,12 +19,14 @@ import {
   CreationDateColumn,
   DescriptionColumn,
   LineItemsProgressColumn,
+  LinkColumn,
   ProjectCodeColumn,
   ReferenceColumn,
   ResponsibleColumn,
   StartDateColumn,
   StatusColumn,
-  TargetDateColumn
+  TargetDateColumn,
+  UpdatedAtColumn
 } from '../ColumnRenderers';
 import {
   AssignedToMeFilter,
@@ -44,7 +46,9 @@ import {
   StartDateAfterFilter,
   StartDateBeforeFilter,
   TargetDateAfterFilter,
-  TargetDateBeforeFilter
+  TargetDateBeforeFilter,
+  UpdatedAfterFilter,
+  UpdatedBeforeFilter
 } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
@@ -98,6 +102,8 @@ export function PurchaseOrderTable({
       },
       CompletedBeforeFilter(),
       CompletedAfterFilter(),
+      UpdatedBeforeFilter(),
+      UpdatedAfterFilter(),
       ProjectCodeFilter(),
       HasProjectCodeFilter(),
       ResponsibleFilter(),
@@ -120,7 +126,8 @@ export function PurchaseOrderTable({
         )
       },
       {
-        accessor: 'supplier_reference'
+        accessor: 'supplier_reference',
+        copyable: true
       },
       LineItemsProgressColumn({}),
       StatusColumn({ model: ModelType.purchaseorder }),
@@ -140,6 +147,9 @@ export function PurchaseOrderTable({
       CompletionDateColumn({
         accessor: 'complete_date'
       }),
+      UpdatedAtColumn({
+        defaultVisible: false
+      }),
       {
         accessor: 'total_price',
         title: t`Total Price`,
@@ -150,7 +160,8 @@ export function PurchaseOrderTable({
           });
         }
       },
-      ResponsibleColumn({})
+      ResponsibleColumn({}),
+      LinkColumn({})
     ];
   }, []);
 
