@@ -587,7 +587,10 @@ def update_exchange_rates(force: bool = False):
     Arguments:
         force: If True, force the update to run regardless of the last update time
     """
-    from InvenTree.ready import canAppAccessDatabase
+    from InvenTree.ready import canAppAccessDatabase, isRunningMigrations
+
+    if isRunningMigrations():
+        return
 
     # Do not update exchange rates if we cannot access the database
     if not canAppAccessDatabase(allow_test=True, allow_shell=True):

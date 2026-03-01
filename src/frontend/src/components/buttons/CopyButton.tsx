@@ -38,6 +38,11 @@ export function CopyButton({
 }>) {
   const ButtonComponent = label ? Button : ActionIcon;
 
+  // Disable the copy button if we are not in a secure context, as the Clipboard API is not available
+  if (!window.isSecureContext) {
+    return null;
+  }
+
   return (
     <MantineCopyButton value={value}>
       {({ copied, copy }) => (

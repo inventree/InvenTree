@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#11383](https://github.com/inventree/InvenTree/pull/11383) adds "exists_for_model_id", "exists_for_related_model", and "exists_for_related_model_id" filters to the ParameterTemplate API endpoint. These filters allow users to check for the existence of parameters associated with specific models or related models, improving the flexibility and usability of the API.
 - [#10887](https://github.com/inventree/InvenTree/pull/10887) adds the ability to auto-allocate tracked items against specific build outputs. Currently, this will only allocate items where the serial number of the tracked item matches the serial number of the build output, but in future this may be extended to allow for more flexible allocation rules.
 - [#11372](https://github.com/inventree/InvenTree/pull/11372) adds backup metadata setter and restore metadata validator functions to ensure common footguns are harder to trigger when using the backup and restore functionality.
+- [#11374](https://github.com/inventree/InvenTree/pull/11374) adds `updated_at` field on purchase, sales and return orders.
 
 ### Changed
 
