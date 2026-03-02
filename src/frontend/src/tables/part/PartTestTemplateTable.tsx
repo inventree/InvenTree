@@ -26,12 +26,7 @@ import {
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import {
-  BooleanColumn,
-  CategoryColumn,
-  DescriptionColumn,
-  PartColumn
-} from '../ColumnRenderers';
+import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { TableHoverCard } from '../TableHoverCard';
 
@@ -48,14 +43,6 @@ export function TestTemplateTable({
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
-      PartColumn({
-        accessor: 'part',
-        title: t`Part`
-      }),
-      CategoryColumn({
-        accessor: 'category_detail',
-        title: t`Category`
-      }),
       {
         accessor: 'test_name',
         switchable: false,
@@ -152,9 +139,6 @@ export function TestTemplateTable({
 
   const partTestTemplateFields: ApiFormFieldSet = useMemo(() => {
     return {
-      part: {
-        hidden: !user.isStaff()
-      },
       test_name: {},
       description: {},
       required: {},
@@ -163,7 +147,7 @@ export function TestTemplateTable({
       choices: {},
       enabled: {}
     };
-  }, [user]);
+  }, []);
 
   const newTestTemplate = useCreateApiFormModal({
     url: ApiEndpoints.part_test_template_list,
