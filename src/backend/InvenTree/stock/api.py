@@ -37,9 +37,8 @@ from InvenTree.api import (
 )
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import (
-    ORDER_FILTER_ALIAS,
+    ORDER_FILTER,
     SEARCH_ORDER_FILTER,
-    SEARCH_ORDER_FILTER_ALIAS,
     InvenTreeDateFilter,
     NumberOrNullFilter,
 )
@@ -455,7 +454,7 @@ class StockLocationTree(ListAPI):
     queryset = StockLocation.objects.all()
     serializer_class = StockSerializers.LocationTreeSerializer
 
-    filter_backends = ORDER_FILTER_ALIAS
+    filter_backends = ORDER_FILTER
 
     ordering_fields = ['level', 'name', 'sublocations']
 
@@ -1260,7 +1259,7 @@ class StockList(
             headers=self.get_success_headers(serializer.data),
         )
 
-    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+    filter_backends = SEARCH_ORDER_FILTER
 
     ordering_field_aliases = {
         'part': 'part__name',
