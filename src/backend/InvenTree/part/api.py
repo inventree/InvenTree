@@ -519,7 +519,7 @@ class PartTestFilter(FilterSet):
         - Any parent categories
         """
         categories = category.get_ancestors(include_self=True)
-        return queryset.filter(part__category__in=categories)
+        return queryset.filter(category__in=categories)
 
 
 class PartTestMixin:
