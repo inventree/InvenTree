@@ -1,4 +1,5 @@
 import {
+  AddItemButton,
   ApiEndpoints,
   type ApiFormFieldSet,
   ModelType,
@@ -76,6 +77,7 @@ export function PartTestTable({
       part: partId,
       category: categoryId
     },
+    focus: 'template',
     table: table
   });
 
@@ -84,6 +86,7 @@ export function PartTestTable({
     pk: selectedTestId,
     title: t`Edit Test`,
     fields: useMemo(() => ({ ...partTestFields }), [partTestFields]),
+    focus: 'template',
     table: table
   });
 
@@ -96,7 +99,17 @@ export function PartTestTable({
 
   // TODO: Table filters
 
-  // TODO: Table actions
+  const tableActions = useMemo(() => {
+    return [
+      <AddItemButton
+        key='add-test'
+        tooltip={t`Add Test`}
+        onClick={() => {
+          newTest.open();
+        }}
+      />
+    ];
+  }, []);
 
   const rowActions = useCallback(
     (record: any): RowAction[] => {
@@ -158,7 +171,8 @@ export function PartTestTable({
             part: partId,
             category: categoryId
           },
-          rowActions: rowActions
+          rowActions: rowActions,
+          tableActions: tableActions
         }}
       />
     </>
