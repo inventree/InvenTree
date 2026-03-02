@@ -908,6 +908,24 @@ export default function PartDetail() {
         label: t`Tests`,
         icon: <IconTestPipe />,
         hidden: !part.testable,
+        controls: (
+          <HoverCard position='bottom-end'>
+            <HoverCard.Target>
+              <ActionIcon variant='transparent' aria-label='test-info'>
+                <IconInfoCircle />
+              </ActionIcon>
+            </HoverCard.Target>
+            <HoverCard.Dropdown>
+              <Alert
+                color='blue'
+                icon={<IconInfoCircle />}
+                title={t`Part Tests`}
+              >
+                <Text>{t`Tests associated with this part. These tests may be inherited from a parent part or part category.`}</Text>
+              </Alert>
+            </HoverCard.Dropdown>
+          </HoverCard>
+        ),
         content: part?.pk ? <PartTestTable partId={part?.pk} /> : <Skeleton />
       },
       {
