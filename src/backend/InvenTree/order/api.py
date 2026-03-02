@@ -228,6 +228,14 @@ class OrderFilter(FilterSet):
         label=_('Target Date After'), field_name='target_date', lookup_expr='gt'
     )
 
+    updated_before = InvenTreeDateFilter(
+        label=_('Updated Before'), field_name='updated_at', lookup_expr='lt'
+    )
+
+    updated_after = InvenTreeDateFilter(
+        label=_('Updated After'), field_name='updated_at', lookup_expr='gt'
+    )
+
     min_date = InvenTreeDateFilter(label=_('Min Date'), method='filter_min_date')
 
     def filter_min_date(self, queryset, name, value):
@@ -420,6 +428,7 @@ class PurchaseOrderList(
         'responsible',
         'total_price',
         'project_code',
+        'updated_at',
     ]
 
     ordering = '-reference'
@@ -882,6 +891,7 @@ class SalesOrderList(
         'shipment_date',
         'total_price',
         'project_code',
+        'updated_at',
     ]
 
     search_fields = [
@@ -1549,6 +1559,7 @@ class ReturnOrderList(
         'target_date',
         'complete_date',
         'project_code',
+        'updated_at',
     ]
 
     search_fields = [
