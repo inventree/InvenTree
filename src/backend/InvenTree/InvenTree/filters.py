@@ -232,18 +232,10 @@ class NumericInFilter(rest_filters.BaseInFilter):
         return super().filter(qs, numeric_values)
 
 
+ORDER_FILTER = [drf_backend.DjangoFilterBackend, InvenTreeOrderingFilter]
+
 SEARCH_ORDER_FILTER = [
     drf_backend.DjangoFilterBackend,
     InvenTreeSearchFilter,
     InvenTreeOrderingFilter,
 ]
-
-SEARCH_ORDER_FILTER_ALIAS = [
-    drf_backend.DjangoFilterBackend,
-    InvenTreeSearchFilter,
-    InvenTreeOrderingFilter,
-]
-
-ORDER_FILTER = [drf_backend.DjangoFilterBackend, InvenTreeOrderingFilter]
-
-ORDER_FILTER_ALIAS = [drf_backend.DjangoFilterBackend, InvenTreeOrderingFilter]
