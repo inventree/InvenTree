@@ -159,6 +159,9 @@ class InvenTreeOrderingFilter(filters.OrderingFilter):
 
                     ordering.append(a)
 
+        # Ensure that any API filtering appends the primary-key field
+        # This is to prevent "ambiguous ordering" errors across pagination boundaries
+        # Ref: https://github.com/inventree/InvenTree/issues/11442
         if lookup_field and not any(
             field in ordering for field in [lookup_field, f'-{lookup_field}']
         ):
@@ -232,7 +235,7 @@ class NumericInFilter(rest_filters.BaseInFilter):
 SEARCH_ORDER_FILTER = [
     drf_backend.DjangoFilterBackend,
     InvenTreeSearchFilter,
-    filters.OrderingFilter,
+    InvenTreeOrderingFilter,
 ]
 
 SEARCH_ORDER_FILTER_ALIAS = [
@@ -241,6 +244,6 @@ SEARCH_ORDER_FILTER_ALIAS = [
     InvenTreeOrderingFilter,
 ]
 
-ORDER_FILTER = [drf_backend.DjangoFilterBackend, filters.OrderingFilter]
+ORDER_FILTER = [drf_backend.DjangoFilterBackend, InvenTreeOrderingFilter]
 
 ORDER_FILTER_ALIAS = [drf_backend.DjangoFilterBackend, InvenTreeOrderingFilter]
