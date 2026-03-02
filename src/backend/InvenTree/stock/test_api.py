@@ -585,7 +585,9 @@ class StockItemListTest(StockAPITestCase):
 
         items = []
 
-        StockItem.objects.all().delete()
+        # Delete all existing stock item objects
+        for item in StockItem.objects.all():
+            item.delete()
 
         for idx in range(1000):
             items.append(
