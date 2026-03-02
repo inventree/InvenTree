@@ -111,7 +111,7 @@ class InvenTreeOrderingFilter(filters.OrderingFilter):
 
     def get_ordering(self, request, queryset, view):
         """Override ordering for supporting aliases."""
-        ordering = super().get_ordering(request, queryset, view) or []
+        ordering = list(super().get_ordering(request, queryset, view) or [])
 
         aliases = getattr(view, 'ordering_field_aliases', None)
         lookup_field = getattr(view, 'lookup_field', 'pk')
