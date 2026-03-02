@@ -429,6 +429,8 @@ class PluginRegistryMixin:
 
         assert registry.is_ready, 'Plugin registry is not ready'
 
+        registry.reload_plugins()
+
         InvenTreeSetting.build_default_values()
         super().setUpTestData()
 
@@ -453,12 +455,6 @@ class InvenTreeTestCase(ExchangeRateMixin, PluginRegistryMixin, UserMixin, TestC
 
         super().setUpTestData()
 
-        if not Tenant.objects.filter(id=1).exists():
-            Tenant.objects.create(
-                id=1,
-                name="Test Tenant"
-            )
-        
         translation.activate("en")
 
 
@@ -472,12 +468,6 @@ class InvenTreeAPITestCase(
         from django.utils import translation
 
         super().setUpTestData()
-
-        if not Tenant.objects.filter(id=1).exists():
-            Tenant.objects.create(
-                id=1,
-                name="Test Tenant"
-            )
 
         translation.activate("en")
 

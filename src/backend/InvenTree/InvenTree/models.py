@@ -190,7 +190,7 @@ class MetadataMixin(models.Model):
         if self.metadata is None:
             return
 
-        if type(self.metadata) is not dict:
+        if not isinstance(self.metadata, dict):
             raise ValidationError({
                 'metadata': _('Metadata must be a python dict object')
             })

@@ -42,12 +42,10 @@ class PluginAppConfig(AppConfig):
         else:
             logger.info('Loading InvenTree plugins')
 
-            if not registry.is_ready:
-                # Mark the registry as ready
-                # This ensures that other apps cannot access the registry before it is fully initialized
-                logger.info('Plugin registry is ready - performing initial load')
-                registry.set_ready()
+            # Ensure registry ready state is reset for test DB
+            registry.set_ready()
 
-                # drop out of maintenance
-                # makes sure we did not have an error in reloading and maintenance is still active
-                set_maintenance_mode(False)
+            # Always reload plugins
+            registry.reload_plugins()
+
+            set_maintenance_mode(False)

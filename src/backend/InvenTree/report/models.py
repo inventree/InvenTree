@@ -204,11 +204,14 @@ class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
         unique_together = ('name', 'model_type')
 
     def save(self, *args, **kwargs):
-        """Perform additional actions when the report is saved."""
+        # Ensure metadata is never None
+        if self.metadata is None:
+            self.metadata = {}
+    
         # Increment revision number
         self.revision += 1
-
-        super().save()
+    
+        super().save(*args, **kwargs)
 
     name = models.CharField(
         blank=False,
